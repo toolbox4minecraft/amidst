@@ -8,3 +8,4 @@
 # IntelliJ IDEA project files #
 ./AMIDST.eml
 ./AMIDST.iml
+./.idea/*
