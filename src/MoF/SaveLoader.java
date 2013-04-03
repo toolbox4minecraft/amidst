@@ -1,4 +1,6 @@
 package MoF;
+import amidst.nbt.Tag;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
