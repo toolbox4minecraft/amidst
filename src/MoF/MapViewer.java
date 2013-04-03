@@ -1,6 +1,8 @@
 package MoF;
 
 
+import amidst.Options;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -399,7 +401,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	private int tempX, tempY;
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (e.isPopupTrigger()&&!MoF.DISABLE_SAVE) {
+		if (e.isPopupTrigger() && Options.instance.saveEnabled) {
 			if (proj.saveLoaded) {
 				tempX = e.getX();
 				tempY = e.getY();

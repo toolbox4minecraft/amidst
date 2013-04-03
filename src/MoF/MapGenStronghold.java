@@ -25,11 +25,11 @@ public class MapGenStronghold
 			int k = (int)Math.round(Math.cos(d1) * d2);
 			int m = (int)Math.round(Math.sin(d1) * d2);
 			Biome[] v = a;
-			if (MoF.version.equals("1.9-pre6")||MoF.version.equals("1.0"))
+			if (ReflectionInfo.version.equals("1.9-pre6")|| ReflectionInfo.version.equals("1.0"))
 				v = b;
-			if (MoF.version.equals("1.1"))
+			if (ReflectionInfo.version.equals("1.1"))
 				v = ab;
-			if (MoF.versionID >= 9)
+			if (ReflectionInfo.versionID >= 9)
 				v = ac;
 			ArrayList<Biome> localArrayList = new ArrayList<Biome>();
 			for (Object localObject2 : v) {

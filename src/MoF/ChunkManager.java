@@ -7,8 +7,6 @@ import amidst.map.MapMarkers;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -35,10 +33,10 @@ public class ChunkManager extends Thread
 	public ChunkManager(long seed) {
         try {
         	if (firstRun) {
-    			iBiome = ClassLoader.getSystemClassLoader().loadClass(MoF.chunkName);
-    			iCache = ClassLoader.getSystemClassLoader().loadClass(MoF.intCacheName);
+    			iBiome = ClassLoader.getSystemClassLoader().loadClass(ReflectionInfo.chunkName);
+    			iCache = ClassLoader.getSystemClassLoader().loadClass(ReflectionInfo.intCacheName);
     			Type t = null;
-    			if (MoF.versionID >= 9) {
+    			if (ReflectionInfo.versionID >= 9) {
     				Method cs[] = iBiome.getDeclaredMethods();
     				for (int i = 0; i < cs.length; i++) {
     					Class<?>[] types = cs[i].getParameterTypes();
@@ -57,7 +55,7 @@ public class ChunkManager extends Thread
         	Object[] ret = null;
 			Method init;
 			clearCache = iCache.getDeclaredMethod("a");
-			if (MoF.versionID >= 9) {
+			if (ReflectionInfo.versionID >= 9) {
 				init = iBiome.getDeclaredMethod("a", new Class[] {Long.TYPE, s12w03a});
 				String genString = "b";
 				if (SaveLoader.genType.equals("flat"))
@@ -135,7 +133,7 @@ public class ChunkManager extends Thread
 					getSlimeData(frag);
 					getPlayerData(frag);
 					getNetherholdData(frag);
-					if (MoF.versionID >= 21)
+					if (ReflectionInfo.versionID >= 21)
 						getPyramidData(frag);
 			    	/*try {
 						Thread.sleep(5L);

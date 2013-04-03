@@ -1,6 +1,7 @@
 package MoF;
 
 
+import amidst.Amidst;
 import amidst.Options;
 import amidst.resources.ResourceLoader;
 
@@ -8,7 +9,6 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
@@ -50,7 +49,7 @@ public class FinderWindow extends JFrame {
 	private JFileChooser fc;
 	public FinderWindow() throws IOException {
 		//Initialize window
-		super("Amidst v" + MoF.version());
+		super("Amidst v" + Amidst.version());
 		pref = Preferences.userRoot().node(this.getClass().getName());
 		
 		boolean first = pref.getBoolean("firstRun", true);
@@ -196,7 +195,7 @@ public class FinderWindow extends JFrame {
 		gotoChunkMenu.setEnabled(false);
 		gotoSpawnMenu.setEnabled(false);
 		layerIconMenu.setSelected(true);
-		if (MoF.DISABLE_SAVE)
+		if (!Options.instance.saveEnabled)
 			saveMenu.setEnabled(false);
 		captureMenu.addActionListener(new ActionListener() {
 			@Override
@@ -426,13 +425,7 @@ public class FinderWindow extends JFrame {
 			e.printStackTrace();
 			fc.addChoosableFileFilter(new FileFilter() {
 				public boolean accept(File f) {
-					
-				    if (f.isDirectory()) {
-				        return true;
-				    }
-				    if (f.getName().toLowerCase().endsWith(".jar"))
-				    	return true;
-				    return false;
+					return f.isDirectory() || f.getName().toLowerCase().endsWith(".jar");
 				}
 
 				@Override
@@ -463,16 +456,15 @@ public class FinderWindow extends JFrame {
 			
 			String typeDump = "";
 			Field fields[] = mc.getDeclaredFields();
-			for (int i = 0; i < fields.length; i++) {
-				String typeString = fields[i].getType().toString();
+			for (Field field : fields) {
+				String typeString = field.getType().toString();
 				if (typeString.startsWith("class ") && !typeString.contains("."))
 					typeDump += typeString.substring(6);
 			}
-			typeDump.replace("[", "-");
-			System.out.println(typeDump);
-			String worldName = "";
-			Field f = null;
-			java.lang.reflect.Type t = null;
+			System.out.println(typeDump.replace("[", "-"));
+			String worldName;
+			Field f;
+			java.lang.reflect.Type t;
 			
 			boolean is25 = false;
 			boolean is131 = false;
@@ -567,7 +559,7 @@ public class FinderWindow extends JFrame {
 				t = m.getReturnType();
 				System.out.println("Version 12w07a or newer found!");
 			}
-			if (t.equals("void")) {
+			if (t.toString().equals("void")) {
 				System.out.println("Version 1.4.2 or newer found.");
 				
 			}
@@ -589,159 +581,159 @@ public class FinderWindow extends JFrame {
 				t = f.getType();
 				biomeName = t.toString().split(" ")[1];
 			}
-			MoF.chunkName = biomeName;
+			ReflectionInfo.chunkName = biomeName;
 			f = mc.getDeclaredField(is131?"d":"a");
 			t = f.getType();
-			MoF.biomeName = t.toString().split(" ")[1];
-			String intCache = "";
+			ReflectionInfo.biomeName = t.toString().split(" ")[1];
+			String intCache;
 			System.out.println(biomeName);
 			if (biomeName.equals("ait")&&is131) {
-				MoF.version = "1.5.1";
-				MoF.versionID = 60;
+				ReflectionInfo.version = "1.5.1";
+				ReflectionInfo.versionID = 60;
 				intCache = "air";
 			} else if (biomeName.equals("ain")&&is131) {
-				MoF.version = "1.5.0";
-				MoF.versionID = 58;
+				ReflectionInfo.version = "1.5.0";
+				ReflectionInfo.versionID = 58;
 				intCache = "ail";
 			} else if (biomeName.equals("agw")&&is131) {
-				MoF.version = "1.4.6";
-				MoF.versionID = 54;
+				ReflectionInfo.version = "1.4.6";
+				ReflectionInfo.versionID = 54;
 				intCache = "agu";
 			} else if (biomeName.equals("agp")&&is131) {
-				MoF.version = "1.4.5";
-				MoF.versionID = 53;
+				ReflectionInfo.version = "1.4.5";
+				ReflectionInfo.versionID = 53;
 				intCache = "agn";
 			} else if (biomeName.equals("afu")&&is131) {
-				MoF.version = "1.4.2";
-				MoF.versionID = 50;
+				ReflectionInfo.version = "1.4.2";
+				ReflectionInfo.versionID = 50;
 				intCache = "afs";
 			} else if (biomeName.equals("adc")&&is131) {
-				MoF.version = "1.3.2";
-				MoF.versionID = 43;
+				ReflectionInfo.version = "1.3.2";
+				ReflectionInfo.versionID = 43;
 				intCache = "ada";
 			} else if (biomeName.equals("adb")&&is131) {
-				MoF.version = "1.3.1";
-				MoF.versionID = 42;
+				ReflectionInfo.version = "1.3.1";
+				ReflectionInfo.versionID = 42;
 				intCache = "acz";
 			} else if (biomeName.equals("acl")&&v13) {
-				MoF.version = "1.3pre";
-				MoF.versionID = 40;
+				ReflectionInfo.version = "1.3pre";
+				ReflectionInfo.versionID = 40;
 				intCache = "acj";
 			} else if (biomeName.equals("acs")) {
-				MoF.version = "12w27a";
-				MoF.versionID = 28;
+				ReflectionInfo.version = "12w27a";
+				ReflectionInfo.versionID = 28;
 				intCache = "av";
 			} else  if (biomeName.equals("acl")) {
-				MoF.version = "12w26a";
-				MoF.versionID = 27;
+				ReflectionInfo.version = "12w26a";
+				ReflectionInfo.versionID = 27;
 				intCache = "av";
 			} else if (biomeName.equals("aca")) {
-				MoF.version = "12w24a";
-				MoF.versionID = 25;
+				ReflectionInfo.version = "12w24a";
+				ReflectionInfo.versionID = 25;
 				intCache = "av";
 			} else if (biomeName.equals("acg")) {
 				if (is25) {
-					MoF.version = "12w25a";
-					MoF.versionID = 26;
+					ReflectionInfo.version = "12w25a";
+					ReflectionInfo.versionID = 26;
 					intCache = "av";
 				} else {
-					MoF.version = "12w23b";
-					MoF.versionID = 24;
+					ReflectionInfo.version = "12w23b";
+					ReflectionInfo.versionID = 24;
 					intCache = "ay";
 				}
 			} else if (biomeName.equals("ace")) {
-				MoF.version = "12w22a";
-				MoF.versionID = 23;
+				ReflectionInfo.version = "12w22a";
+				ReflectionInfo.versionID = 23;
 				intCache = "ay";
-				MoF.DISABLE_SAVE = true;
+				Options.instance.saveEnabled = false;
 			} else if (biomeName.equals("aby")) {
-				MoF.version = "12w21b";
-				MoF.versionID = 22;
+				ReflectionInfo.version = "12w21b";
+				ReflectionInfo.versionID = 22;
 				intCache = "ax";
-				MoF.DISABLE_SAVE = true;
+				Options.instance.saveEnabled = false;
 			} else if (biomeName.equals("abm")) {
-				MoF.version = "12w21a";
-				MoF.versionID = 21;
+				ReflectionInfo.version = "12w21a";
+				ReflectionInfo.versionID = 21;
 				intCache = "ar";
-				MoF.DISABLE_SAVE = true;
+				Options.instance.saveEnabled = false;
 			} else if (biomeName.equals("aau")) {
-				MoF.version = "12w19a";
-				MoF.versionID = 19;
+				ReflectionInfo.version = "12w19a";
+				ReflectionInfo.versionID = 19;
 				intCache = "ao";
 			} else if (biomeName.equals("wp")) {
-				MoF.version = "1.2.4";
-				MoF.versionID = 17;
+				ReflectionInfo.version = "1.2.4";
+				ReflectionInfo.versionID = 17;
 				intCache = "ad";
 			} else if (biomeName.equals("wl")) {
-				MoF.version = "1.2.2";
-				MoF.versionID = 16;
+				ReflectionInfo.version = "1.2.2";
+				ReflectionInfo.versionID = 16;
 				intCache = "ac";
 			} else if (biomeName.equals("wj")) {
-				MoF.version = "12w08a";
-				MoF.versionID = 15;
+				ReflectionInfo.version = "12w08a";
+				ReflectionInfo.versionID = 15;
 				intCache = "ac";
 			} else if (biomeName.equals("wd")) {
-				MoF.version = "12w07b";
+				ReflectionInfo.version = "12w07b";
 				intCache = "ab";
-				MoF.versionID = 14;
+				ReflectionInfo.versionID = 14;
 				
 				//Skipping 12w07a
 			} else if (biomeName.equals("wb")) {
-				MoF.version = "12w06a";
+				ReflectionInfo.version = "12w06a";
 				intCache = "ab";
-				MoF.versionID = 12;
+				ReflectionInfo.versionID = 12;
 			} else if (biomeName.equals("vy")) {
-				MoF.version = "12w05a";
+				ReflectionInfo.version = "12w05a";
 				intCache = "ab";
-				MoF.versionID = 11;
+				ReflectionInfo.versionID = 11;
 			} else if (biomeName.equals("vu")) {
-				MoF.version = "12w04a";
+				ReflectionInfo.version = "12w04a";
 				intCache = "ab";
-				MoF.versionID = 10;
+				ReflectionInfo.versionID = 10;
 			} else if (biomeName.equals("vj")) {
 				intCache = "ab";
-				MoF.version = "12w03a";
-				MoF.versionID = 9;
+				ReflectionInfo.version = "12w03a";
+				ReflectionInfo.versionID = 9;
 			} else if (biomeName.equals("vc")) {
 				intCache = "ab";
-				MoF.version = "1.1";
-				MoF.versionID = 8;
+				ReflectionInfo.version = "1.1";
+				ReflectionInfo.versionID = 8;
 			} else if (biomeName.equals("jx")) {
 				intCache = "bm";
-				MoF.version = "1.0";
-				MoF.versionID = 7;
+				ReflectionInfo.version = "1.0";
+				ReflectionInfo.versionID = 7;
 			} else if (biomeName.equals("uk")) {
 				intCache = "z";
-				MoF.version = "1.9-pre6";
-				MoF.versionID = 6;
+				ReflectionInfo.version = "1.9-pre6";
+				ReflectionInfo.versionID = 6;
 			} else if (biomeName.equals("ug")) {
 				intCache = "y";
-				MoF.version = "1.9-pre5";
-				MoF.versionID = 5;
+				ReflectionInfo.version = "1.9-pre5";
+				ReflectionInfo.versionID = 5;
 			} else if (biomeName.equals("uh")) {
 				intCache = "y";
-				MoF.version = "1.9-pre4";
+				ReflectionInfo.version = "1.9-pre4";
 				MapGenStronghold.reset0 = true;
-				MoF.versionID = 4;
+				ReflectionInfo.versionID = 4;
 			} else if (biomeName.equals("to")) {
 				intCache = "x";
-				MoF.version = "1.9-pre3";
-				MoF.versionID = 3;
+				ReflectionInfo.version = "1.9-pre3";
+				ReflectionInfo.versionID = 3;
 			} else if (biomeName.equals("sv")) {
 				intCache = "x";
-				MoF.version = "1.9-pre2";
-				MoF.versionID = 2;
+				ReflectionInfo.version = "1.9-pre2";
+				ReflectionInfo.versionID = 2;
 			} else if (biomeName.equals("sq")) {
 				intCache = "x";
-				MoF.version = "1.9-pre1";
-				MoF.versionID = 1;
+				ReflectionInfo.version = "1.9-pre1";
+				ReflectionInfo.versionID = 1;
 			} else if (biomeName.equals("rj")) {
 				intCache = "w";
-				MoF.version = "1.8.1";
-				MoF.versionID = 0;
+				ReflectionInfo.version = "1.8.1";
+				ReflectionInfo.versionID = 0;
 			} else {
-				MoF.version = "unknown";
-				MoF.versionID = -1;
+				ReflectionInfo.version = "unknown";
+				ReflectionInfo.versionID = -1;
 				intCache = "ab";
 				String st = JOptionPane.showInputDialog(null, "Unsupported version of minecraft detected!\nEnter code to continue:\n(Name of the IntCache class)", "Error", 1);
 				if (st==null) {
@@ -750,19 +742,18 @@ public class FinderWindow extends JFrame {
 					intCache = st;
 				}
 			}
-			System.out.println("Version " + MoF.version + " detected. " + (MoF.DISABLE_SAVE?"Saves disabled.":""));
+			System.out.println("Version " + ReflectionInfo.version + " detected. " + (Options.instance.saveEnabled ? "" : "Saves disabled."));
 //			pre5 - y, ug
 //			pre4 - y, uh
 //			pre3 - x, to
 //			pre2 - x, sv
 //			pre1 - x, sq
 //			pre0 - w, rj
-			MoF.intCacheName = intCache;
+			ReflectionInfo.intCacheName = intCache;
 		} catch (java.lang.NoClassDefFoundError e2) {
 			JOptionPane.showMessageDialog(this, "AMIDST ran in JAR mode without -noverify!\nUse: java -noverify -jar AMIDST.jar");
 			System.exit(0);
 		} catch (Exception e) {
-			
 			e.printStackTrace();
 		}
 	}
