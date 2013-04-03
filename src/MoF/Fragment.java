@@ -1,6 +1,8 @@
 package MoF;
 
 
+import amidst.map.MapMarkers;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -119,9 +121,9 @@ public class Fragment extends  BufferedImage {
 		sY -= this.y*fs;
 		m.rx = sX;
 		m.ry = sY;
-		if (m.type.toLowerCase().equals("stronghold")) {
+		if (m.type == MapMarkers.STRONGHOLD) {
 			strongholdCount++;
-		} else if (m.type.toLowerCase().equals("village")) {
+		} else if (m.type == MapMarkers.VILLAGE) {
 			villageCount++;
 		}
 		objects.add(m);

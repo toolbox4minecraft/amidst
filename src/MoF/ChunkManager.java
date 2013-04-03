@@ -2,6 +2,8 @@ package MoF;
 
 
 
+import amidst.map.MapMarkers;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -181,7 +183,7 @@ public class ChunkManager extends Thread
 				Random rnd = new Random(seed + (long) (xPosition * xPosition * 0x4c1906) + (long) (xPosition * 0x5ac0db) +
 			             (long) (zPosition * zPosition) * 0x4307a7L + (long) (zPosition * 0x5f24f) ^ 0x3ad8025f);
 				if (rnd.nextInt(10) == 0) {
-					g2d.drawImage(MapMarker.slime,
+					g2d.drawImage(MapMarkers.SLIME.image,
 							x << 2,
 							y << 2,
 							4, 4, null);
@@ -197,7 +199,7 @@ public class ChunkManager extends Thread
 		for (int y = 0; y < fs; y++) {
 			for (int x = 0; x < fs; x++) {
 				if (netherholdFinder.checkChunk((frag.x*fs) + (x), (frag.y*fs) + (y))) {
-					frag.addMapObject(new NetherMapObject("Netherhold", (frag.x*ls) + (x << 4), (frag.y*ls) + (y << 4)));
+					frag.addMapObject(new NetherMapObject((frag.x*ls) + (x << 4), (frag.y*ls) + (y << 4)));
 				}
 			}
 		}
@@ -209,7 +211,7 @@ public class ChunkManager extends Thread
 			for (int x = 0; x < fs; x++) {
 				if (pyramidFinder.checkChunk((frag.x*fs) + (x), (frag.y*fs) + (y),seed,this)) {
 					int biome = frag.getBiomeAt((x << 2) + 2, (y << 2) + 2);
-					String type = (biome == 6)?"Witch":"Temple";
+					MapMarkers type = (biome == 6) ? MapMarkers.WITCH : MapMarkers.TEMPLE;
 					
 					frag.addMapObject(new MapObject(type, (frag.x*ls) + (x << 4), (frag.y*ls) + (y << 4)));
 				}
@@ -223,7 +225,7 @@ public class ChunkManager extends Thread
 		for (int i = 0; i < 3; i++) {
 			Point t = strongholds[i];
 			if (frag.isInside(t.x, t.y)) {
-				frag.addMapObject(new MapObject("Stronghold", t.x, t.y));
+				frag.addMapObject(new MapObject(MapMarkers.STRONGHOLD, t.x, t.y));
 			}
 		}
 	}
@@ -234,7 +236,7 @@ public class ChunkManager extends Thread
 		for (int y = 0; y < fs; y++) {
 			for (int x = 0; x < fs; x++) {
 				if (villageFinder.checkChunk((frag.x*fs) + (x), (frag.y*fs) + (y), seed, this)) {
-					frag.addMapObject(new MapObject("Village", (frag.x*ls) + (x << 4), (frag.y*ls) + (y << 4)));
+					frag.addMapObject(new MapObject(MapMarkers.VILLAGE, (frag.x*ls) + (x << 4), (frag.y*ls) + (y << 4)));
 				}
 			}
 		}

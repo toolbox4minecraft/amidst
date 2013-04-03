@@ -1,6 +1,9 @@
 package MoF;
 
 
+import amidst.Options;
+import amidst.resources.ResourceLoader;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Image;
@@ -13,6 +16,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -44,7 +48,7 @@ public class FinderWindow extends JFrame {
 	public static Preferences pref;
 	public static boolean dataCollect;
 	private JFileChooser fc;
-	public FinderWindow() {
+	public FinderWindow() throws IOException {
 		//Initialize window
 		super("Amidst v" + MoF.version());
 		pref = Preferences.userRoot().node(this.getClass().getName());
@@ -65,7 +69,7 @@ public class FinderWindow extends JFrame {
 		(new UpdateManager(this, true)).start();
 		setJMenuBar(createMainMenu());
 		setVisible(true);
-		Image icon = Toolkit.getDefaultToolkit().getImage(MoF.getURL("images/icon.png"));
+		Image icon = ResourceLoader.getImage("icon.png");
 		setIconImage(icon);
 		//OnClose
 		/*
@@ -142,7 +146,9 @@ public class FinderWindow extends JFrame {
 				layerSlimeMenu = new JCheckBoxMenuItem("Slimes"); layerSlimeMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.CTRL_MASK));
 				layerGridMenu = new JCheckBoxMenuItem("Grid"); layerGridMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ActionEvent.CTRL_MASK));
 				layerNetherMenu = new JCheckBoxMenuItem("Netherholds"); layerNetherMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, ActionEvent.CTRL_MASK));
+					layerNetherMenu.setModel(Options.instance.showNetherFortresses);
 				layerIconMenu = new JCheckBoxMenuItem("Icons"); layerIconMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, ActionEvent.CTRL_MASK));
+					layerIconMenu.setModel(Options.instance.showIcons);
 			JMenuItem captureMenu = new JMenuItem("Capture"); captureMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
 		JMenu helpMenu = new JMenu("Help");
 			JMenuItem checkMenu = new JMenuItem("Check for updates");
@@ -182,7 +188,7 @@ public class FinderWindow extends JFrame {
 		
 
 		final FinderWindow window = this;
-		scriptMenu.setEnabled(false);	
+		scriptMenu.setEnabled(false);
 		findBiomeMenu.setEnabled(false);
 		mapMenu.setEnabled(false);
 		findVillageMenu.setEnabled(false);

@@ -1,5 +1,6 @@
 
 package MoF;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 public class MoF {
 	public static double version_major = 2.0;
 	public static int version_minor = 44;
-	public static FinderWindow mainWindow;
 	public static String biomeName;
 	public static String intCacheName;
 	public static String chunkName;
@@ -29,26 +29,7 @@ public class MoF {
 		stuff += "....I cry a little bit every time I make an update...\n";
 	}
 	
-	public static URL getURL(String s) {
-		Object c = new Object();
-		
-		try {
-			if (DEBUG)
-				return new URL("file:" + s);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-		
-		return c.getClass().getResource("/" + s);
-	}
-	
 	public static String version() {
 		return MoF.version_major + "." + MoF.version_minor;
-	}
-	public static void main(String[] args) {
-		Google.startTracking();
-		Google.track("Run");
-		MapMarker.init();
-		mainWindow = new FinderWindow();
 	}
 }

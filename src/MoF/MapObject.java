@@ -1,48 +1,42 @@
 package MoF;
+import amidst.Options;
+import amidst.map.MapMarkers;
+
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 
 public class MapObject {
-	public String type;
+	public MapMarkers type;
 	public int x, y, rx, ry;
-	public BufferedImage marker;
 	public double localScale = 1.0;
 	public boolean selectable = true;
 	public double tempDist = 0;
-	public MapObject(String eType, int eX, int eY) {
+	protected JToggleButton.ToggleButtonModel model;
+	public MapObject(MapMarkers eType, int eX, int eY) {
 		type = eType;
 		x = eX;
 		y = eY;
-		if (eType == "Stronghold") {
-			marker = MapMarker.stronghold;
-		} else if (eType == "Village") {
-			marker = MapMarker.village;
-		} else if (eType == "Slime") {
-			marker = MapMarker.slime;
-		} else if (eType == "Player") {
-			marker = MapMarker.player;
-		} else if (eType == "Netherhold") {
-			marker = MapMarker.nether;
-		} else if (eType == "Temple") {
-			marker = MapMarker.pyramid;
-		} else if (eType == "Witch") {
-			marker = MapMarker.witch;
-		}
+		model = Options.instance.showIcons;
 	}
 	public String getName() {
-		return type;
+		return type.toString();
 	}
 	public int getWidth() {
-		if (MoF.mainWindow.layerIconMenu.isSelected())
-			return (int)(marker.getWidth()*localScale);
+		if (model.isSelected())
+			return (int)(type.image.getWidth()*localScale);
 		return 0;
 	}
 	public int getHeight() {
-		if (MoF.mainWindow.layerIconMenu.isSelected())
-			return (int)(marker.getHeight()*localScale);
+		if (model.isSelected())
+			return (int)(type.image.getHeight()*localScale);
 		return 0;
 	}
 	
+	public BufferedImage getImage() {
+		return type.image;
+	}
+	
 	public boolean isSelectable() {
-		return MoF.mainWindow.layerIconMenu.isSelected();
+		return Options.instance.showIcons.isSelected();
 	}
 }

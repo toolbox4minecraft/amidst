@@ -127,14 +127,12 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 			for (int ex = 0; ex < fragXMax; ex++) {
 				Fragment tempFrag = frags.get(ey).get(ex);
 				markers = tempFrag.objects;
-				for (int i = 0; i < markers.size(); i++) {
-					MapObject m = markers.get(i);
-					BufferedImage img = m.marker;
-					g2d.drawImage(img,
-							(int)(tempFrag.tempX + m.rx*scale - (m.getWidth() >> 1)),
-							(int)(tempFrag.tempY + m.ry*scale - (m.getHeight() >> 1)), 
-							(int)(m.getWidth()), 
-							(int)(m.getHeight()), 
+				for (MapObject m : markers) {
+					g2d.drawImage(m.getImage(),
+							(int) (tempFrag.tempX + m.rx * scale - (m.getWidth() >> 1)),
+							(int) (tempFrag.tempY + m.ry * scale - (m.getHeight() >> 1)),
+							m.getWidth(),
+							m.getHeight(),
 							null);
 				}
 			}
@@ -471,14 +469,12 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 			for (int ex = 0; ex < fragXMax; ex++) {
 				Fragment tempFrag = frags.get(ey).get(ex);
 				markers = tempFrag.objects;
-				for (int i = 0; i < markers.size(); i++) {
-					MapObject m = markers.get(i);
-					BufferedImage img2 = m.marker;
-					g2d.drawImage(img2,
-							(int)(tempFrag.tempX + m.rx - (m.getWidth() >> 1)),
-							(int)(tempFrag.tempY + m.ry - (m.getHeight() >> 1)), 
-							(int)(m.getWidth()), 
-							(int)(m.getHeight()), 
+				for (MapObject m : markers) {
+					g2d.drawImage(m.getImage(),
+							tempFrag.tempX + m.rx - (m.getWidth() >> 1),
+							tempFrag.tempY + m.ry - (m.getHeight() >> 1),
+							m.getWidth(),
+							m.getHeight(),
 							null);
 				}
 			}
