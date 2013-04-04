@@ -23,6 +23,12 @@ public class Util {
 			JOptionPane.ERROR_MESSAGE);
 	}
 	
+	public static void setLookAndFeel() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception ignored) {}
+	}
+	
 //	public static void main(String[] args) {
 //		try {
 //			int infinity = 1 / 0;

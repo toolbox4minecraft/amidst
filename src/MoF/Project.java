@@ -1,14 +1,12 @@
 package MoF;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JPanel;
-
 
 public class Project extends JPanel {
 	private static final long serialVersionUID = 1132526465987018165L;
@@ -30,8 +28,9 @@ public class Project extends JPanel {
 	public Project(long seed, FinderWindow window) {
 		this(seed, window, "default");
 	}
+	
 	public Project(long seed, FinderWindow window, String type) {
-		SaveLoader.genType=type;
+		SaveLoader.genType = type;
 		saveLoaded = false;
 		//Enter seed data:
 		this.setSeed(seed);
@@ -43,18 +42,21 @@ public class Project extends JPanel {
 		map.repaint();
 		minfo.repaint();
 	}
+	
 	public Project(String seed, FinderWindow window, String type) {
 		this(stringToLong(seed), window, type);
 		this.seedText = "Seed: \"" + seed + "\" (" + this.seed +  ")";
-
+		
 		Google.track("seed/" + seed + "/" + this.seed);
 	}
+	
 	public Project(String seed, FinderWindow window) {
 		this(stringToLong(seed), window);
 		this.seedText = "Seed: \"" + seed + "\" (" + this.seed +  ")";
-
+		
 		Google.track("seed/" + seed + "/" + this.seed);
 	}
+	
 	public void dispose() {
 		map.dispose();
 		map = null;
@@ -69,16 +71,16 @@ public class Project extends JPanel {
 		
 	}
 	
-	public Project(SaveLoader file, FinderWindow window) {
+	public Project(SaveLoader file) {
 		saveLoaded = true;
 		save = file;
 		//Enter seed data:
 		this.setSeed(file.seed);
 		this.seedText = "Seed: " + seed;
 		init();
-
+		
 		Google.track("seed/file/" + this.seed);
-		ArrayList<Player> players = file.getPlayers();
+		List<Player> players = file.getPlayers();
 		manager.setPlayerData(players);
 		
 	}
@@ -97,20 +99,20 @@ public class Project extends JPanel {
 		//Debug
 		this.setBackground(Color.BLUE);	
 		
-
+		
 		//Timer:
 		timer = new Timer();
 		
-	    	
-	    timer.scheduleAtFixedRate(new TimerTask() {
-	    	public void run() {
-	    		tick();
-	    	}
-	    }, 20, 20);
+		
+		timer.scheduleAtFixedRate(new TimerTask() {
+			public void run() {
+				tick();
+			}
+		}, 20, 20);
 	}
 	
 	private static long stringToLong(String seed) {
-		long ret = 0L;
+		long ret;
 		try {
 			ret = Long.parseLong(seed);
 		} catch (NumberFormatException err) { 

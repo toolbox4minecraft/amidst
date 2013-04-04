@@ -10,9 +10,9 @@ public class MapListener implements ActionListener {
 		this.name = name;
 		map = p;
 	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		map.movePlayer(name, e);
 	}
-
 }

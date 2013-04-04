@@ -20,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
@@ -82,11 +83,11 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		this.addMouseWheelListener(this);
 		menu = new JPopupMenu();
 		if (proj.saveLoaded) {
-			ArrayList<Player> pl = proj.save.getPlayers();
-			for (int i = 0; i < pl.size(); i++) {
-				JMenuItem tj = new JMenuItem("Move " + pl.get(i).getName() + " here.");
+			List<Player> pl = proj.save.getPlayers();
+			for (Player player : pl) {
+				JMenuItem tj = new JMenuItem("Move " + player.getName() + " here.");
 				
-				tj.addActionListener(new MapListener(this, pl.get(i).getName()));
+				tj.addActionListener(new MapListener(this, player.getName()));
 				menu.add(tj);
 			}
 		}
@@ -100,7 +101,6 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		g2d.setColor(Color.black);
 		g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
 		updateFragments();
-		ArrayList<MapObject> markers = null;
 		if (firstRun) {
 			centerAt(0,0);
 			firstRun = false;
@@ -128,8 +128,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		for (int ey = 0; ey < fragYMax; ey++) {
 			for (int ex = 0; ex < fragXMax; ex++) {
 				Fragment tempFrag = frags.get(ey).get(ex);
-				markers = tempFrag.objects;
-				for (MapObject m : markers) {
+				for (MapObject m : tempFrag.objects) {
 					g2d.drawImage(m.getImage(),
 							(int) (tempFrag.tempX + m.rx * scale - (m.getWidth() >> 1)),
 							(int) (tempFrag.tempY + m.ry * scale - (m.getHeight() >> 1)),
@@ -259,16 +258,12 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		
 		return p;
 	}
+	
 	public PixelInfo getCursorInformation() {
-		
 		Point c = this.getMousePosition();
-		PixelInfo p = null;
-		
-		p = getCursorInformation(c);
-		
-		return p;
-		
+		return getCursorInformation(c);
 	}
+	
 	private void updateFragments() {
 		double fragSize = scale*Project.FRAGMENT_SIZE;
 		if (mX > fragSize) {
@@ -443,7 +438,6 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		PixelInfo p = getCursorInformation(new Point(tempX, tempY));
 		
 		proj.movePlayer(name, p);
-		
 	}
 
 	public void saveToFile(File f) {
@@ -453,17 +447,17 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		g2d.setColor(Color.black);
 		g2d.fillRect(0, 0, img.getWidth(), img.getHeight());
 		
-		ArrayList<MapObject> markers = null;
+		List<MapObject> markers;
 		for (int ey = 0; ey < fragYMax; ey++) {
 			for (int ex = 0; ex < fragXMax; ex++) {
 				Fragment tempFrag = frags.get(ey).get(ex);
-				tempFrag.tempX = (int)((tempFrag.x - fragX)*Project.FRAGMENT_SIZE);
-				tempFrag.tempY = (int)((tempFrag.y - fragY)*Project.FRAGMENT_SIZE);
+				tempFrag.tempX = (tempFrag.x - fragX)*Project.FRAGMENT_SIZE;
+				tempFrag.tempY = (tempFrag.y - fragY)*Project.FRAGMENT_SIZE;
 				tempFrag.paint(g2d,
 						tempFrag.tempX,
-						tempFrag.tempY, 
-						(int)(Project.FRAGMENT_SIZE), 
-						(int)(Project.FRAGMENT_SIZE));
+						tempFrag.tempY,
+						Project.FRAGMENT_SIZE,
+						Project.FRAGMENT_SIZE);
 			}
 		}
 		

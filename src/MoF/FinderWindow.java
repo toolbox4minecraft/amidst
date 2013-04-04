@@ -9,17 +9,12 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -30,8 +25,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 
 public class FinderWindow extends JFrame {
@@ -120,10 +113,10 @@ public class FinderWindow extends JFrame {
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 			JMenu newMenu = new JMenu("New"); 
 			newMenu.setMnemonic(KeyEvent.VK_N);
-				JMenuItem fromSeedMenu = new JMenuItem("From Seed"); fromSeedMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+				JMenuItem fromSeedMenu = new JMenuItem("From Seed"); fromSeedMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
 				JMenuItem fromFileMenu = new JMenuItem("From File"); 
 				JMenuItem fromServerMenu = new JMenuItem("From Server");
-			JMenuItem saveMenu = new JMenuItem("Save Player Locations"); saveMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+			JMenuItem saveMenu = new JMenuItem("Save Player Locations"); saveMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
 			JMenuItem exitMenu = new JMenuItem("Exit");
 		JMenu scriptMenu = new JMenu("Script");
 			JMenuItem newScriptMenu = new JMenuItem("New");
@@ -135,20 +128,20 @@ public class FinderWindow extends JFrame {
 			JMenu findMenu = new JMenu("Find");
 				JMenuItem findBiomeMenu = new JMenuItem("Biome"); 
 				JMenuItem findVillageMenu = new JMenuItem("Village");
-				JMenuItem findStrongholdMenu = new JMenuItem("Stronghold");findStrongholdMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK));
+				JMenuItem findStrongholdMenu = new JMenuItem("Stronghold");findStrongholdMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
 			JMenu gotoMenu = new JMenu("Go To");
-				JMenuItem gotoCoordMenu = new JMenuItem("Coordinate"); gotoCoordMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
+				JMenuItem gotoCoordMenu = new JMenuItem("Coordinate"); gotoCoordMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK));
 				JMenuItem gotoPlayerMenu = new JMenuItem("Player");
 				JMenuItem gotoSpawnMenu = new JMenuItem("Spawn");
 				JMenuItem gotoChunkMenu = new JMenuItem("Chunk");
 			JMenu layersMenu = new JMenu("Layers");
-				layerSlimeMenu = new JCheckBoxMenuItem("Slimes"); layerSlimeMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.CTRL_MASK));
-				layerGridMenu = new JCheckBoxMenuItem("Grid"); layerGridMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ActionEvent.CTRL_MASK));
-				layerNetherMenu = new JCheckBoxMenuItem("Netherholds"); layerNetherMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, ActionEvent.CTRL_MASK));
+				layerSlimeMenu = new JCheckBoxMenuItem("Slimes"); layerSlimeMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_DOWN_MASK));
+				layerGridMenu = new JCheckBoxMenuItem("Grid"); layerGridMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_DOWN_MASK));
+				layerNetherMenu = new JCheckBoxMenuItem("Netherholds"); layerNetherMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_DOWN_MASK));
 					layerNetherMenu.setModel(Options.instance.showNetherFortresses);
-				layerIconMenu = new JCheckBoxMenuItem("Icons"); layerIconMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, ActionEvent.CTRL_MASK));
+				layerIconMenu = new JCheckBoxMenuItem("Icons"); layerIconMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.CTRL_DOWN_MASK));
 					layerIconMenu.setModel(Options.instance.showIcons);
-			JMenuItem captureMenu = new JMenuItem("Capture"); captureMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
+			JMenuItem captureMenu = new JMenuItem("Capture"); captureMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK));
 		JMenu helpMenu = new JMenu("Help");
 			JMenuItem checkMenu = new JMenuItem("Check for updates");
 			JMenuItem aboutMenu = new JMenuItem("About");
@@ -208,9 +201,7 @@ public class FinderWindow extends JFrame {
 					        return true;
 					    }
 					    String[] st = f.getName().split("/.");
-					    if (st[st.length-1].toLowerCase().equals("png"))
-					    	return true;
-					    return false;
+						return st[st.length - 1].equalsIgnoreCase("png");
 					}
 					@Override
 					public String getDescription() {
@@ -260,11 +251,10 @@ public class FinderWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (curProject.saveLoaded) {
-					ArrayList<Player> ar = curProject.save.getPlayers();
-					for (int i = 0; i < ar.size(); i++) {
-						if (ar.get(i).needSave) {
-							curProject.save.movePlayer(ar.get(i).getName(), ar.get(i).x, ar.get(i).y);
-							ar.get(i).needSave = false;
+					for (Player player : curProject.save.getPlayers()) {
+						if (player.needSave) {
+							curProject.save.movePlayer(player.getName(), player.x, player.y);
+							player.needSave = false;
 						}
 					}
 				}
@@ -274,10 +264,10 @@ public class FinderWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (curProject.saveLoaded) {
-					ArrayList<Player> ar = curProject.save.getPlayers();
-					Object[] options = new Object[ar.size()];
+					List<Player> players = curProject.save.getPlayers();
+					Object[] options = new Object[players.size()];
 					for (int i = 0; i < options.length; i++) {
-						options[i] = "Player \"" + ar.get(i).getName() + "\" at (" + ar.get(i).x + ", " + ar.get(i).y + ")";
+						options[i] = "Player \"" + players.get(i).getName() + "\" at (" + players.get(i).x + ", " + players.get(i).y + ")";
 					}
 					String s = (String)JOptionPane.showInputDialog(
 					                    window,
@@ -289,7 +279,7 @@ public class FinderWindow extends JFrame {
 					                    options[0]);
 					for (int i = 0; i < options.length; i++) {
 						if (s.equals(options[i])) {
-							curProject.moveMapTo(ar.get(i).x >> 2, ar.get(i).y >> 2);
+							curProject.moveMapTo(players.get(i).x >> 2, players.get(i).y >> 2);
 						}
 					}
 				}
@@ -327,13 +317,13 @@ public class FinderWindow extends JFrame {
 				fc = new JFileChooser();
 				fc.addChoosableFileFilter(SaveLoader.getFilter());
 				fc.setAcceptAllFileFilterUsed(false);
-				fc.setCurrentDirectory(SaveLoader.getPath("saves/"));
+				fc.setCurrentDirectory(SaveLoader.getPath("saves"));
 				int returnVal = fc.showOpenDialog(window);
 				
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File f = fc.getSelectedFile();
 					SaveLoader s = new SaveLoader(f);
-					setProject(new Project(s, window));
+					setProject(new Project(s));
 				}
 			}
 		});
@@ -341,7 +331,7 @@ public class FinderWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 		        //Create the JOptionPane.
-				String s = JOptionPane.showInputDialog(null, "Enter seed...", "New Project", 1);
+				String s = JOptionPane.showInputDialog(null, "Enter seed...", "New Project", JOptionPane.QUESTION_MESSAGE);
 				if (s!=null) {
 					Object[] possibilities = {"default","flat", "largeBiomes"};
 					String worldType = (String)JOptionPane.showInputDialog(
@@ -363,7 +353,7 @@ public class FinderWindow extends JFrame {
 		gotoCoordMenu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String s = JOptionPane.showInputDialog(null, "Enter coordinates: (Ex. 123,456)", "Go To", 1);
+				String s = JOptionPane.showInputDialog(null, "Enter coordinates: (Ex. 123,456)", "Go To", JOptionPane.QUESTION_MESSAGE);
 				if (s!=null) {
 					String[] c = s.split(",");
 					long x = 0, y = 0;
@@ -409,7 +399,7 @@ public class FinderWindow extends JFrame {
 	private void loadMinecraft() {
 		fc = new JFileChooser();
 		Class<?> mc = null;
-		String s = null;
+		File s = null;
 		
 		//Temporary fix -- Should be removed in a few patches.
 		if (pref.getBoolean("osxMistake", true)) {
@@ -418,8 +408,9 @@ public class FinderWindow extends JFrame {
 		}
 		
 		try {
-			s = SaveLoader.getDefaultPath() + "bin/minecraft.jar";
-			ClasspathHacker.addFile(pref.get("jar", s));
+			s = SaveLoader.getPath("bin/minecraft.jar");
+			String jar = pref.get("jar", null);
+			ClasspathHacker.addFile((jar != null) ? new File(jar) : s);
 			mc = ClassLoader.getSystemClassLoader().loadClass("net.minecraft.client.Minecraft");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -439,7 +430,7 @@ public class FinderWindow extends JFrame {
 			int returnVal = fc.showOpenDialog(this);
 			
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				s = fc.getSelectedFile().toString();
+				s = fc.getSelectedFile();
 				try {
 					ClasspathHacker.addFile(s);
 					mc = ClassLoader.getSystemClassLoader().loadClass("net.minecraft.client.Minecraft");
@@ -452,7 +443,7 @@ public class FinderWindow extends JFrame {
 			}
 		}
 		try {
-			pref.put("jar", s);
+			pref.put("jar", s.getCanonicalPath());
 			
 			String typeDump = "";
 			Field fields[] = mc.getDeclaredFields();
@@ -735,7 +726,11 @@ public class FinderWindow extends JFrame {
 				ReflectionInfo.version = "unknown";
 				ReflectionInfo.versionID = -1;
 				intCache = "ab";
-				String st = JOptionPane.showInputDialog(null, "Unsupported version of minecraft detected!\nEnter code to continue:\n(Name of the IntCache class)", "Error", 1);
+				String st = JOptionPane.showInputDialog(
+					null,
+					"Unsupported version of minecraft detected!\nEnter code to continue:\n(Name of the IntCache class)",
+					"Error",
+					JOptionPane.ERROR_MESSAGE);
 				if (st==null) {
 					System.exit(0);
 				} else {
@@ -756,12 +751,5 @@ public class FinderWindow extends JFrame {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	private void setLookAndFeel() {
-		try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } 
-		catch (ClassNotFoundException e1)          {         e1.printStackTrace(); }
-		catch (InstantiationException e1)          {         e1.printStackTrace(); }
-		catch (IllegalAccessException e1)          {         e1.printStackTrace(); }
-		catch (UnsupportedLookAndFeelException e1) {         e1.printStackTrace(); }
 	}
 }

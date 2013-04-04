@@ -27,7 +27,7 @@ public class ChunkManager extends Thread
 	private boolean active;
 	private static Class<?> iBiome, iCache, s12w03a;
 	private Method getData, clearCache;
-	private ArrayList<Player> players;
+	private List<Player> players;
 	private static boolean firstRun = true;
 	private SkinManager m;
 	public ChunkManager(long seed) {
@@ -38,13 +38,13 @@ public class ChunkManager extends Thread
     			Type t = null;
     			if (ReflectionInfo.versionID >= 9) {
     				Method cs[] = iBiome.getDeclaredMethods();
-    				for (int i = 0; i < cs.length; i++) {
-    					Class<?>[] types = cs[i].getParameterTypes();
-
-    					if ((types.length == 2)&&(types[1]!=long.class)) {
-    						t = types[1];
-    					}
-    				}
+					for (Method c : cs) {
+						Class<?>[] types = c.getParameterTypes();
+						
+						if ((types.length == 2) && (types[1] != long.class)) {
+							t = types[1];
+						}
+					}
     				System.out.println("Err: " + t.toString());
     				s12w03a = ClassLoader.getSystemClassLoader().loadClass(t.toString().split(" ")[1]);
     			}
@@ -52,7 +52,7 @@ public class ChunkManager extends Thread
     			
     			firstRun = false;
     		}
-        	Object[] ret = null;
+        	Object[] ret;
 			Method init;
 			clearCache = iCache.getDeclaredMethod("a");
 			if (ReflectionInfo.versionID >= 9) {
@@ -103,9 +103,8 @@ public class ChunkManager extends Thread
 	private int[] ba(int a, int b, int c, int d) {
 		try {
 			clearCache.invoke(iCache);
-			int[] temp =  (int[])getData.invoke(this.b, a,b,c,d);
 			
-			return temp;
+			return (int[]) getData.invoke(this.b, a,b,c,d);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -153,8 +152,7 @@ public class ChunkManager extends Thread
 	}
 	
 	private void getPlayerData(Fragment frag) {
-		for (int i = 0; i < players.size(); i++) {
-			Player p = players.get(i);
+		for (Player p : players) {
 			if (frag.isInside(p.x, p.y)) {
 				frag.addMapObject(p);
 			}
@@ -164,11 +162,10 @@ public class ChunkManager extends Thread
 		players.add(p);
 		m.addPlayer(p);
 	}
-	public void setPlayerData(ArrayList<Player> ar) {
+	public void setPlayerData(List<Player> ar) {
 		players = ar;
-		for (int i = 0; i < ar.size(); i++) {
-			m.addPlayer(ar.get(i));
-		}
+		for (Player player : ar)
+			m.addPlayer(player);
 	}
 	
 	private void getSlimeData(Fragment frag) {
