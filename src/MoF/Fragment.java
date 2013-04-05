@@ -1,6 +1,5 @@
 package MoF;
 
-
 import amidst.Options;
 import amidst.map.MapMarkers;
 
@@ -8,55 +7,51 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 
-
-public class Fragment extends  BufferedImage {
+public class Fragment extends BufferedImage {
 	public int x, y, range;
 	public boolean active;
-	public ArrayList<MapObject> objects;
+	public List<MapObject> objects;
 	public int tempX, tempY;
 	public byte[] data;
 	public boolean marked = false;
-	public ArrayList<BufferedImage> layers;
-	private Project proj;
+	public List<BufferedImage> layers;
 	public float stat[];
 	public int strongholdCount = 0;
 	public int villageCount = 0;
 	
-	public Fragment(int x, int y, int range, Project proj) {
-		super(range,range,BufferedImage.TYPE_INT_ARGB);
+	public Fragment(int x, int y, int range) {
+		super(range, range, BufferedImage.TYPE_INT_ARGB);
 		this.range = range;
 		this.x = x;
 		this.y = y;
 		active = true;
-    	Graphics2D g2d = this.createGraphics();
-    	g2d.setColor(Color.blue);
-    	g2d.fillRect(0, 0, Project.FRAGMENT_SIZE, Project.FRAGMENT_SIZE);
-    	objects = new ArrayList<MapObject>();
-    	layers = new ArrayList<BufferedImage>();
-    	this.proj = proj;
-    	stat = new float[Biome.colors.length];
+		Graphics2D g2d = this.createGraphics();
+		g2d.setColor(Color.blue);
+		g2d.fillRect(0, 0, Project.FRAGMENT_SIZE, Project.FRAGMENT_SIZE);
+		objects = new ArrayList<MapObject>();
+		layers = new ArrayList<BufferedImage>();
+		stat = new float[Biome.colors.length];
 	}
+	
 	public void dispose() {
-
 		this.flush();
-		for (int i = 0; i < layers.size(); i++) {
-			layers.get(i).flush();
-		}
+		for (BufferedImage layer : layers)
+			layer.flush();
 		this.objects.clear();
 		this.objects = null;
 		this.data = null;
 		this.layers.clear();
 		this.layers = null;
-		this.proj = null;
 		this.stat = null;
 		active = false;
 	}
+	
 	public void disable() {
 		this.active = false;
-		for (int i = 0; i < layers.size(); i++) {
-			layers.get(i).flush();
-		}
+		for (BufferedImage layer : layers)
+			layer.flush();
 		flush();
 	}
 	
@@ -88,26 +83,21 @@ public class Fragment extends  BufferedImage {
 		int fs = Project.FRAGMENT_SIZE;
 		sX -= this.x*fs;
 		sY -= this.y*fs;
-		if ((sX >= 0) & (sY >= 0) & (sX < fs) & (sY < fs)) {
-			return true;
-		} else {
-			return false;
-		}
-		
+		return (sX >= 0) & (sY >= 0) & (sX < fs) & (sY < fs);
 	}
 	
 	public MapObject getObjectAt(int x, int y) {
 		MapObject m = null;
 		double td = 1600;
-		for (int i = 0; i < objects.size(); i++) {
-			if (objects.get(i).isSelectable()) {
-				int sx = x - (objects.get(i).x >> 2);
-				int sy = y - (objects.get(i).y >> 2);
-				double dist = sx*sx + sy*sy;
+		for (MapObject object : objects) {
+			if (object.isSelectable()) {
+				int sx = x - (object.x >> 2);
+				int sy = y - (object.y >> 2);
+				double dist = sx * sx + sy * sy;
 				if (dist < td) {
 					td = dist;
-					objects.get(i).tempDist = dist;
-					m = objects.get(i);
+					object.tempDist = dist;
+					m = object;
 				}
 			}
 		}
@@ -118,8 +108,8 @@ public class Fragment extends  BufferedImage {
 		int sX = m.x >> 2;
 		int sY = m.y >> 2;
 		int fs = Project.FRAGMENT_SIZE;
-		sX -= this.x*fs;
-		sY -= this.y*fs;
+		sX -= this.x * fs;
+		sY -= this.y * fs;
 		m.rx = sX;
 		m.ry = sY;
 		if (m.type == MapMarkers.STRONGHOLD) {

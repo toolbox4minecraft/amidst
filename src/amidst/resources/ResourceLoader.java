@@ -18,7 +18,7 @@ public class ResourceLoader {
 	public static BufferedImage getImage(String name) {
 		try {
 			return ImageIO.read(getResourceURL(name));
-		} catch (IOException e) {
+		} catch (IOException e) { //Don’t forget to run the tests :)
 			throw new RuntimeException(e);
 		}
 	}

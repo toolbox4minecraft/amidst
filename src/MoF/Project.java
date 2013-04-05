@@ -24,36 +24,68 @@ public class Project extends JPanel {
 	
 	public String seedText;
 	
-	public Project(long seed, FinderWindow window) {
-		this(seed, window, SaveLoader.Type.DEFAULT);
+	public Project(String seed) {
+		this(stringToLong(seed));
+		this.seedText = "Seed: \"" + seed + "\" (" + this.seed +  ")";
+		
+		Google.track("seed/" + seed + "/" + this.seed);
 	}
 	
-	public Project(long seed, FinderWindow window, SaveLoader.Type type) {
+	public Project(long seed) {
+		this(seed, SaveLoader.Type.DEFAULT);
+	}
+	
+	public Project(SaveLoader file) {
+		this(file.seed, SaveLoader.genType);
+		saveLoaded = true;
+		save = file;
+		
+		Google.track("seed/file/" + this.seed);
+		List<Player> players = file.getPlayers();
+		manager.setPlayerData(players);
+	}
+	
+	public Project(String seed, SaveLoader.Type type) {
+		this(stringToLong(seed), type);
+		this.seedText = "Seed: \"" + seed + "\" (" + this.seed +  ")";
+		
+		Google.track("seed/" + seed + "/" + this.seed);
+	}
+	
+	public Project(long seed, SaveLoader.Type type) {
 		SaveLoader.genType = type;
 		saveLoaded = false;
 		//Enter seed data:
-		this.setSeed(seed);
+		this.seed = seed;
 		this.seedText = "Seed: " + seed;
-		init();
+		
+		manager = new ChunkManager(seed);
+		manager.start();
+		BorderLayout layout = new BorderLayout();
+		this.setLayout(layout);
+		
+		//Create MapViewer
+		map = new MapViewer(this);
+		add(map, BorderLayout.CENTER);
+		minfo = new MapInfoPanel(map);
+		add(minfo, BorderLayout.EAST);
+		
+		//Debug
+		this.setBackground(Color.BLUE);
+		
+		//Timer:
+		timer = new Timer();
+		
+		timer.scheduleAtFixedRate(new TimerTask() {
+			public void run() {
+				tick();
+			}
+		}, 20, 20);
 	}
 	
 	public void tick() {
 		map.repaint();
 		minfo.repaint();
-	}
-	
-	public Project(String seed, FinderWindow window, SaveLoader.Type type) {
-		this(stringToLong(seed), window, type);
-		this.seedText = "Seed: \"" + seed + "\" (" + this.seed +  ")";
-		
-		Google.track("seed/" + seed + "/" + this.seed);
-	}
-	
-	public Project(String seed, FinderWindow window) {
-		this(stringToLong(seed), window);
-		this.seedText = "Seed: \"" + seed + "\" (" + this.seed +  ")";
-		
-		Google.track("seed/" + seed + "/" + this.seed);
 	}
 	
 	public void dispose() {
@@ -68,46 +100,6 @@ public class Project extends JPanel {
 		minfo = null;
 		save = null;
 		
-	}
-	
-	public Project(SaveLoader file) {
-		saveLoaded = true;
-		save = file;
-		//Enter seed data:
-		this.setSeed(file.seed);
-		this.seedText = "Seed: " + seed;
-		init();
-		
-		Google.track("seed/file/" + this.seed);
-		List<Player> players = file.getPlayers();
-		manager.setPlayerData(players);
-		
-	}
-	private void init() {
-		manager = new ChunkManager(seed);
-		manager.start();
-		BorderLayout layout = new BorderLayout();
-		this.setLayout(layout);
-		
-		//Create MapViewer
-		map = new MapViewer(this);
-		add(map, BorderLayout.CENTER);
-		minfo = new MapInfoPanel(map);
-		add(minfo, BorderLayout.EAST);
-		
-		//Debug
-		this.setBackground(Color.BLUE);	
-		
-		
-		//Timer:
-		timer = new Timer();
-		
-		
-		timer.scheduleAtFixedRate(new TimerTask() {
-			public void run() {
-				tick();
-			}
-		}, 20, 20);
 	}
 	
 	private static long stringToLong(String seed) {
@@ -138,7 +130,7 @@ public class Project extends JPanel {
 	}
 	
 	public Fragment getFragment(int x, int y) {
-		Fragment frag = new Fragment(x,y,FRAGMENT_SIZE, this);
+		Fragment frag = new Fragment(x, y, FRAGMENT_SIZE);
 		manager.requestChunk(frag);
 		
 		return frag;
@@ -147,5 +139,4 @@ public class Project extends JPanel {
 	public void moveMapTo(int x, int y) {
 		map.centerAndReset(x, y);
 	}
-	
 }

@@ -20,7 +20,6 @@ public enum MapMarkers {
 	
 	public final BufferedImage image;
 	
-	//we test, therefore this exception isn’t thrown.
 	private MapMarkers() {
 		String fileName = this.toString().toLowerCase() + ".png";
 		image = ResourceLoader.getImage(fileName);
