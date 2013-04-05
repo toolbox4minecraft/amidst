@@ -2,6 +2,7 @@ package amidst;
 
 import javax.swing.*;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
 
 public class Util {
@@ -27,6 +28,22 @@ public class Util {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception ignored) {}
+	}
+	
+	public static final File minecraftDirectory;
+	static {
+		File mcDir = null;
+		File homeDirectory = new File(System.getProperty("user.home", "."));
+		String os = System.getProperty("os.name").toLowerCase();
+		
+		if (os.contains("win")) {
+			File appData = new File(System.getenv("APPDATA"));
+			if (appData.isDirectory())
+				mcDir = new File(appData, ".minecraft");
+		} else if (os.contains("mac"))
+			mcDir = new File(homeDirectory, "Library/Application Support/minecraft");
+		
+		minecraftDirectory = (mcDir != null) ? mcDir : new File(homeDirectory, ".minecraft");
 	}
 	
 //	public static void main(String[] args) {

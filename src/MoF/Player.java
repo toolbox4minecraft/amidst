@@ -8,7 +8,7 @@ public class Player extends MapObject {
 	private String name;
 	public boolean needSave;
 	private BufferedImage marker;
-
+	
 	public Player(String name, int x, int y) {
 		super(MapMarkers.PLAYER, x , y);
 		marker = type.image;
@@ -40,5 +40,10 @@ public class Player extends MapObject {
 	
 	public void setMarker(BufferedImage img) {
 		this.marker = img;
+	}
+	
+	@Override
+	public String toString() {
+		return "Player \"" + name + "\" at (" + x + ", " + y + ")";
 	}
 }

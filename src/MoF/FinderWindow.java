@@ -3,28 +3,23 @@ package MoF;
 
 import amidst.Amidst;
 import amidst.Options;
+import amidst.Util;
+import amidst.gui.AmidstMenu;
 import amidst.resources.ResourceLoader;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.prefs.Preferences;
 
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 
 public class FinderWindow extends JFrame {
@@ -34,12 +29,10 @@ public class FinderWindow extends JFrame {
 	public static Class<?> biomeFinder;
 	private static final long serialVersionUID = 196896954675968191L;
 	private Container pane;
-	private Project curProject;
-	private JMenu mapMenu;
-	public JCheckBoxMenuItem layerGridMenu, layerSlimeMenu, layerNetherMenu, layerIconMenu;
+	public Project curProject;  //TODO
 	public static Preferences pref;
 	public static boolean dataCollect;
-	private JFileChooser fc;
+	private final AmidstMenu menuBar;
 	public FinderWindow() throws IOException {
 		//Initialize window
 		super("Amidst v" + Amidst.version());
@@ -59,7 +52,7 @@ public class FinderWindow extends JFrame {
 		pane.setLayout(new BorderLayout());
 		loadMinecraft();
 		(new UpdateManager(this, true)).start();
-		setJMenuBar(createMainMenu());
+		setJMenuBar(menuBar = new AmidstMenu(this));
 		setVisible(true);
 		Image icon = ResourceLoader.getImage("icon.png");
 		setIconImage(icon);
@@ -67,21 +60,20 @@ public class FinderWindow extends JFrame {
 		/*
 		boolean dcFirst = pref.getBoolean("datacheckfirst", false);
 		if (!dcFirst) {
-	        int result = JOptionPane.YES_OPTION;
-	        result = JOptionPane.showConfirmDialog(null, "AMIDST would like to collect data about the maps you search, anonymously.\n You will only be prompted for this once:\n Would you like to allow data to be collected?", "Important alert!", JOptionPane.YES_NO_OPTION);
-	        pref.putBoolean("datacollect", (result==0));
+			int result = JOptionPane.YES_OPTION;
+			result = JOptionPane.showConfirmDialog(null, "AMIDST would like to collect data about the maps you search, anonymously.\n You will only be prompted for this once:\n Would you like to allow data to be collected?", "Important alert!", JOptionPane.YES_NO_OPTION);
+			pref.putBoolean("datacollect", (result==0));
 		}
 		dataCollect = pref.getBoolean("datacollect", false);
-	    */addWindowListener(new WindowAdapter()
-	    {
-	    	public void windowClosing(WindowEvent e)
-	    	{
-	    		dispose();
-	    		System.exit(0);
-	    	}
-	    });
-	    this.addKeyListener(new KeyListener() {
-
+		*/addWindowListener(new WindowAdapter()
+		{
+			public void windowClosing(WindowEvent e)
+			{
+				dispose();
+				System.exit(0);
+			}
+		});
+		this.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
 				if (arg0.getKeyCode() == KeyEvent.VK_EQUALS) {
@@ -92,294 +84,14 @@ public class FinderWindow extends JFrame {
 						curProject.map.scaleBy(0.5);
 				}
 			}
-
-			@Override
-			public void keyReleased(KeyEvent arg0) {
-			}
-
-			@Override
-			public void keyTyped(KeyEvent arg0) {
-				
-			}
 			
+			@Override
+			public void keyReleased(KeyEvent arg0) {}
+			
+			@Override
+			public void keyTyped(KeyEvent arg0) {}
 		});
 	    
-	}
-	
-	private JMenuBar createMainMenu() {
-		JMenuBar menu = new JMenuBar();
-			
-		JMenu fileMenu = new JMenu("File");
-		fileMenu.setMnemonic(KeyEvent.VK_F);
-			JMenu newMenu = new JMenu("New"); 
-			newMenu.setMnemonic(KeyEvent.VK_N);
-				JMenuItem fromSeedMenu = new JMenuItem("From Seed"); fromSeedMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
-				JMenuItem fromFileMenu = new JMenuItem("From File"); 
-				JMenuItem fromServerMenu = new JMenuItem("From Server");
-			JMenuItem saveMenu = new JMenuItem("Save Player Locations"); saveMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
-			JMenuItem exitMenu = new JMenuItem("Exit");
-		JMenu scriptMenu = new JMenu("Script");
-			JMenuItem newScriptMenu = new JMenuItem("New");
-			JMenuItem openScriptMenu = new JMenuItem("Open");
-			JMenuItem saveScriptMenu = new JMenuItem("Save");
-			JMenuItem runScriptMenu = new JMenuItem("Run");
-		mapMenu = new JMenu("Map");
-		mapMenu.setMnemonic(KeyEvent.VK_M);
-			JMenu findMenu = new JMenu("Find");
-				JMenuItem findBiomeMenu = new JMenuItem("Biome"); 
-				JMenuItem findVillageMenu = new JMenuItem("Village");
-				JMenuItem findStrongholdMenu = new JMenuItem("Stronghold");findStrongholdMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
-			JMenu gotoMenu = new JMenu("Go To");
-				JMenuItem gotoCoordMenu = new JMenuItem("Coordinate"); gotoCoordMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK));
-				JMenuItem gotoPlayerMenu = new JMenuItem("Player");
-				JMenuItem gotoSpawnMenu = new JMenuItem("Spawn");
-				JMenuItem gotoChunkMenu = new JMenuItem("Chunk");
-			JMenu layersMenu = new JMenu("Layers");
-				layerSlimeMenu = new JCheckBoxMenuItem("Slimes"); layerSlimeMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_DOWN_MASK));
-				layerGridMenu = new JCheckBoxMenuItem("Grid"); layerGridMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_DOWN_MASK));
-				layerNetherMenu = new JCheckBoxMenuItem("Netherholds"); layerNetherMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_DOWN_MASK));
-					layerNetherMenu.setModel(Options.instance.showNetherFortresses);
-				layerIconMenu = new JCheckBoxMenuItem("Icons"); layerIconMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.CTRL_DOWN_MASK));
-					layerIconMenu.setModel(Options.instance.showIcons);
-			JMenuItem captureMenu = new JMenuItem("Capture"); captureMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK));
-		JMenu helpMenu = new JMenu("Help");
-			JMenuItem checkMenu = new JMenuItem("Check for updates");
-			JMenuItem aboutMenu = new JMenuItem("About");
-
-		menu.add(fileMenu);
-			fileMenu.add(newMenu);
-				newMenu.add(fromSeedMenu);
-				newMenu.add(fromFileMenu);
-				//newMenu.add(fromServerMenu);
-			fileMenu.add(saveMenu);
-			fileMenu.add(exitMenu);
-		//menu.add(scriptMenu);
-			scriptMenu.add(newScriptMenu);
-			scriptMenu.add(openScriptMenu);
-			scriptMenu.add(saveScriptMenu);
-			scriptMenu.add(runScriptMenu);
-		menu.add(mapMenu);
-			mapMenu.add(findMenu);
-				//findMenu.add(findBiomeMenu);
-				//findMenu.add(findVillageMenu);
-				findMenu.add(findStrongholdMenu);
-			mapMenu.add(gotoMenu);
-				gotoMenu.add(gotoCoordMenu);
-				gotoMenu.add(gotoPlayerMenu);
-				//gotoMenu.add(gotoSpawnMenu);
-				//gotoMenu.add(gotoChunkMenu);
-			mapMenu.add(layersMenu);
-				layersMenu.add(layerSlimeMenu);
-				layersMenu.add(layerGridMenu);
-				layersMenu.add(layerNetherMenu);
-				layersMenu.add(layerIconMenu);
-			mapMenu.add(captureMenu);
-		menu.add(helpMenu);
-			helpMenu.add(checkMenu);
-			helpMenu.add(aboutMenu);
-		
-
-		final FinderWindow window = this;
-		scriptMenu.setEnabled(false);
-		findBiomeMenu.setEnabled(false);
-		mapMenu.setEnabled(false);
-		findVillageMenu.setEnabled(false);
-		fromServerMenu.setEnabled(false);
-		gotoChunkMenu.setEnabled(false);
-		gotoSpawnMenu.setEnabled(false);
-		layerIconMenu.setSelected(true);
-		if (!Options.instance.saveEnabled)
-			saveMenu.setEnabled(false);
-		captureMenu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				fc = new JFileChooser();
-				fc.addChoosableFileFilter(new FileFilter() {
-					public boolean accept(File f) {
-						
-					    if (f.isDirectory()) {
-					        return true;
-					    }
-					    String[] st = f.getName().split("/.");
-						return st[st.length - 1].equalsIgnoreCase("png");
-					}
-					@Override
-					public String getDescription() {
-						return "Portable Network Graphic (*.PNG)";
-					}
-				});
-				fc.setAcceptAllFileFilterUsed(false);
-				int returnVal = fc.showSaveDialog(window);
-				
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					String s = fc.getSelectedFile().toString();
-					if (!s.toLowerCase().endsWith(".png")) {
-						s += ".png";
-					}
-					curProject.map.saveToFile(new File(s));
-					
-				}
-			}
-		});
-		
-		layerGridMenu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				curProject.setGridLayer(layerGridMenu.isSelected());
-			}
-		});
-		layerSlimeMenu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				curProject.setSlimeLayer(layerSlimeMenu.isSelected());
-			}
-		});
-		checkMenu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				(new UpdateManager(window)).start();
-			}
-		});
-		aboutMenu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(window, "Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\nBy Skidoodle (amidst.project@gmail.com)");
-			}
-		});
-		
-		saveMenu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (curProject.saveLoaded) {
-					for (Player player : curProject.save.getPlayers()) {
-						if (player.needSave) {
-							curProject.save.movePlayer(player.getName(), player.x, player.y);
-							player.needSave = false;
-						}
-					}
-				}
-			}
-		});
-		gotoPlayerMenu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (curProject.saveLoaded) {
-					List<Player> players = curProject.save.getPlayers();
-					Object[] options = new Object[players.size()];
-					for (int i = 0; i < options.length; i++) {
-						options[i] = "Player \"" + players.get(i).getName() + "\" at (" + players.get(i).x + ", " + players.get(i).y + ")";
-					}
-					String s = (String)JOptionPane.showInputDialog(
-					                    window,
-					                    "Select Player:",
-					                    "Go to...",
-					                    JOptionPane.PLAIN_MESSAGE,
-					                    null,
-					                    options,
-					                    options[0]);
-					for (int i = 0; i < options.length; i++) {
-						if (s.equals(options[i])) {
-							curProject.moveMapTo(players.get(i).x >> 2, players.get(i).y >> 2);
-						}
-					}
-				}
-			}
-		});
-		findStrongholdMenu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				Point[] sholds = curProject.manager.strongholds;
-				Object[] options = {
-						"Stronghold at (" + sholds[0].x + ", " + sholds[0].y + ")", 
-						"Stronghold at (" + sholds[1].x + ", " + sholds[1].y + ")", 
-						"Stronghold at (" + sholds[2].x + ", " + sholds[2].y + ")"};
-				String s = (String)JOptionPane.showInputDialog(
-				                    window,
-				                    "Select Stronghold:",
-				                    "Go to...",
-				                    JOptionPane.PLAIN_MESSAGE,
-				                    null,
-				                    options,
-				                    options[0]);
-				if (s!=null) {
-					for (int i = 0; i < 3; i++) {
-						if (s.equals(options[i])) {
-							curProject.moveMapTo(sholds[i].x >> 2, sholds[i].y >> 2);
-						}
-					}
-				}
-			}
-		});
-		
-		fromFileMenu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				fc = new JFileChooser();
-				fc.addChoosableFileFilter(SaveLoader.getFilter());
-				fc.setAcceptAllFileFilterUsed(false);
-				fc.setCurrentDirectory(SaveLoader.getPath("saves"));
-				int returnVal = fc.showOpenDialog(window);
-				
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File f = fc.getSelectedFile();
-					SaveLoader s = new SaveLoader(f);
-					setProject(new Project(s));
-				}
-			}
-		});
-		fromSeedMenu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-		        //Create the JOptionPane.
-				String s = JOptionPane.showInputDialog(null, "Enter seed...", "New Project", JOptionPane.QUESTION_MESSAGE);
-				if (s!=null) {
-					Object[] possibilities = {"default","flat", "largeBiomes"};
-					String worldType = (String)JOptionPane.showInputDialog(
-					                    null,
-					                    "Enter world type...\n",
-					                    "New Project",
-					                    JOptionPane.PLAIN_MESSAGE,
-					                    null,
-					                    possibilities,
-					                    "default");
-	
-					//If a string was returned, say so.
-					if (worldType != null) {
-						setProject(new Project(s, window, worldType));
-					}
-				}
-			}
-		});
-		gotoCoordMenu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				String s = JOptionPane.showInputDialog(null, "Enter coordinates: (Ex. 123,456)", "Go To", JOptionPane.QUESTION_MESSAGE);
-				if (s!=null) {
-					String[] c = s.split(",");
-					long x = 0, y = 0;
-					boolean w = true;
-					try {
-						x = Long.parseLong(c[0]) >> 2;
-						y = Long.parseLong(c[1]) >> 2;
-					} catch (Exception e) {
-						w = false;
-					}
-					if (w)
-						curProject.moveMapTo((int)x, (int)y);
-				}
-			}
-		});
-		exitMenu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				int ret = JOptionPane.showConfirmDialog(window, "Are you sure you want to exit?");
-				if (ret==0) {
-					System.exit(0);
-				}
-			}
-		});
-		
-		return menu;
 	}
 	
 	public void setProject(Project ep) {
@@ -389,15 +101,15 @@ public class FinderWindow extends JFrame {
 			pane.remove(curProject);
 			System.gc();
 		}
-		mapMenu.setEnabled(true);
+		menuBar.mapMenu.setEnabled(true);
 		curProject = ep;
 		pane.add(curProject, BorderLayout.CENTER);
 		
 		this.validate();
-		
 	}
+	
 	private void loadMinecraft() {
-		fc = new JFileChooser();
+		JFileChooser fc = new JFileChooser();
 		Class<?> mc = null;
 		File s = null;
 		
@@ -408,7 +120,7 @@ public class FinderWindow extends JFrame {
 		}
 		
 		try {
-			s = SaveLoader.getPath("bin/minecraft.jar");
+			s = new File(Util.minecraftDirectory, "bin/minecraft.jar");
 			String jar = pref.get("jar", null);
 			ClasspathHacker.addFile((jar != null) ? new File(jar) : s);
 			mc = ClassLoader.getSystemClassLoader().loadClass("net.minecraft.client.Minecraft");
@@ -418,7 +130,7 @@ public class FinderWindow extends JFrame {
 				public boolean accept(File f) {
 					return f.isDirectory() || f.getName().toLowerCase().endsWith(".jar");
 				}
-
+				
 				@Override
 				public String getDescription() {
 					return "Java Executable (*.JAR)";
@@ -442,6 +154,7 @@ public class FinderWindow extends JFrame {
 				System.exit(0);
 			}
 		}
+		
 		try {
 			pref.put("jar", s.getCanonicalPath());
 			

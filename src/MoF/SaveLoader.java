@@ -29,24 +29,6 @@ public class SaveLoader {
 		});
 	}
 	
-	public static File getPath(String post) {
-		return new File(getMinecraftDirectory(), post);
-	}
-	
-	public static File getMinecraftDirectory() {
-		File homeDirectory = new File(System.getProperty("user.home", "."));
-		String os = System.getProperty("os.name").toLowerCase();
-		
-		if (os.contains("win")) {
-			File appData = new File(System.getenv("APPDATA"));
-			if (appData.isDirectory())
-				return new File(appData, ".minecraft");
-		} else if (os.contains("mac"))
-			return new File(homeDirectory, "Library/Application Support/minecraft");
-		
-		return new File(homeDirectory, ".minecraft");
-	}
-	
 	private File file;
 	private List<Player> players;
 	public long seed;

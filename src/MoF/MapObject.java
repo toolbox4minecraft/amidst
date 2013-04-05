@@ -3,11 +3,12 @@ import amidst.Options;
 import amidst.map.MapMarkers;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class MapObject {
+public class MapObject extends Point {
 	public MapMarkers type;
-	public int x, y, rx, ry;
+	public int rx, ry;
 	public double localScale = 1.0;
 	public boolean selectable = true;
 	public double tempDist = 0;
@@ -23,12 +24,12 @@ public class MapObject {
 	}
 	public int getWidth() {
 		if (model.isSelected())
-			return (int)(type.image.getWidth()*localScale);
+			return (int)(type.image.getWidth() * localScale);
 		return 0;
 	}
 	public int getHeight() {
 		if (model.isSelected())
-			return (int)(type.image.getHeight()*localScale);
+			return (int)(type.image.getHeight() * localScale);
 		return 0;
 	}
 	

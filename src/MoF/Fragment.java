@@ -1,6 +1,7 @@
 package MoF;
 
 
+import amidst.Options;
 import amidst.map.MapMarkers;
 
 import java.awt.Color;
@@ -68,9 +69,9 @@ public class Fragment extends  BufferedImage {
 	
 	public void paint(Graphics2D g2d, int x, int y, int width, int height) {
 		g2d.drawImage(this, x, y, width, height, null);
-		if (proj.grid&(layers.size()>0))
+		if (Options.instance.showGrid.isSelected() & (layers.size()>0))
 			g2d.drawImage(layers.get(0), x, y, width, height, null);
-		if (proj.slimes&(layers.size()>1))
+		if (Options.instance.showSlimeChunks.isSelected() & (layers.size()>1))
 			g2d.drawImage(layers.get(1), x, y, width, height, null);
 	}
 	

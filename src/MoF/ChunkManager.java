@@ -3,6 +3,7 @@ package MoF;
 
 
 import amidst.map.MapMarkers;
+import amidst.map.Stronghold;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -19,7 +20,7 @@ public class ChunkManager extends Thread
 	private Object b;
 	public float[] a;
 	public long seed;
-	public Point[] strongholds;
+	public Stronghold[] strongholds;
 	private Stack<Fragment> queue;
 	private MapGenVillage villageFinder;
 	private MapGenNetherhold netherholdFinder;
@@ -78,7 +79,7 @@ public class ChunkManager extends Thread
         m = new SkinManager();
         m.start();
 		this.seed = seed;
-		strongholds = (new MapGenStronghold().a(seed, this));
+		strongholds = new MapGenStronghold().a(seed, this);
 		queue = new Stack<Fragment>();
 		players = new ArrayList<Player>();
 		active = true;

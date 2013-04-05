@@ -15,7 +15,11 @@ public class ResourceLoader {
 		return ResourceLoader.class.getResource(name);
 	}
 	
-	public static BufferedImage getImage(String name) throws IOException {
-		return ImageIO.read(getResourceURL(name));
+	public static BufferedImage getImage(String name) {
+		try {
+			return ImageIO.read(getResourceURL(name));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

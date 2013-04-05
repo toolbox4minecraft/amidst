@@ -7,14 +7,19 @@ import javax.swing.JToggleButton.ToggleButtonModel;
  */
 public enum Options {
 	instance;
-	
-	public ToggleButtonModel showIcons;
+
+	public ToggleButtonModel showSlimeChunks;
+	public ToggleButtonModel showGrid;
 	public ToggleButtonModel showNetherFortresses;
+	public ToggleButtonModel showIcons;
 	public boolean saveEnabled;
 	
 	private Options() {
-		showIcons = new ToggleButtonModel();
+		showSlimeChunks      = new ToggleButtonModel();
+		showGrid             = new ToggleButtonModel();
 		showNetherFortresses = new ToggleButtonModel();
+		showIcons            = new ToggleButtonModel();
+		showIcons.setSelected(true);
 		saveEnabled = true;
 	}
 }

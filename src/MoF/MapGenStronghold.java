@@ -1,19 +1,19 @@
 package MoF;
+import amidst.map.Stronghold;
+
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class MapGenStronghold
-{
+public class MapGenStronghold {
 	private Biome[] a  = { Biome.d, Biome.f, Biome.e, Biome.h };
 	private Biome[] b  = { Biome.d, Biome.f, Biome.e, Biome.h, Biome.g, Biome.n, Biome.o };
 	private Biome[] ab = { Biome.d, Biome.f, Biome.e, Biome.h, Biome.g, Biome.n, Biome.o, Biome.s, Biome.t, Biome.v };
 	private Biome[] ac = { Biome.d, Biome.f, Biome.e, Biome.h, Biome.g, Biome.n, Biome.o, Biome.s, Biome.t, Biome.v, Biome.w, Biome.x };
-	public Point[] coords = new Point[3];
+	public Stronghold[] coords = new Stronghold[3];
 	private Random c = new Random();
 	public static boolean reset0 = false;
-	protected Point[] a(long seed, ChunkManager x)
-	{
+	protected Stronghold[] a(long seed, ChunkManager x) {
 		int j;
 		c = new Random();
 		this.c.setSeed(seed);
@@ -41,13 +41,12 @@ public class MapGenStronghold
 				k = localPoint.x >> 4;
 				m = localPoint.y >> 4;
 			}
-			coords[j] = new Point((k << 4),(m << 4));
+			coords[j] = new Stronghold((k << 4), (m << 4));
 			
 			d1 += 6.283185307179586D / this.coords.length;
 		}
 		if (reset0)
-			coords[0] = new Point(0, 0);
-		
+			coords[0] = new Stronghold(0, 0);
 		
 		return coords;
 	}

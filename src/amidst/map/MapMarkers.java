@@ -23,10 +23,6 @@ public enum MapMarkers {
 	//we test, therefore this exception isn’t thrown.
 	private MapMarkers() {
 		String fileName = this.toString().toLowerCase() + ".png";
-		try {
-			image = ResourceLoader.getImage(fileName);
-		} catch (IOException e) {
-			throw new ExceptionInInitializerError("Enum creation " + this + " failed.\n" + e.getLocalizedMessage());
-		}
+		image = ResourceLoader.getImage(fileName);
 	}
 }

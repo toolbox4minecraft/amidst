@@ -16,7 +16,6 @@ public class Project extends JPanel {
 	private MapInfoPanel minfo;
 	public static int FRAGMENT_SIZE = 256;
 	public ChunkManager manager;
-	public boolean slimes, grid;
 	private Timer timer;
 	public MapObject curTarget;
 	
@@ -143,12 +142,6 @@ public class Project extends JPanel {
 		manager.requestChunk(frag);
 		
 		return frag;
-	}
-	public void setSlimeLayer(boolean b) {
-		slimes = b;
-	}
-	public void setGridLayer(boolean b) {
-		grid = b;
 	}
 	
 	public void moveMapTo(int x, int y) {
