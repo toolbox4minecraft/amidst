@@ -89,10 +89,9 @@ public class AmidstMenu extends JMenuBar {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						//Create the JOptionPane.
-						String s = JOptionPane.showInputDialog(null, "Enter seed...", "New Project", JOptionPane.QUESTION_MESSAGE);
+						String s = JOptionPane.showInputDialog(null, "Enter seed…", "New Project", JOptionPane.QUESTION_MESSAGE);
 						if (s != null) {
-							String[] possibilities = { "default", "flat", "largeBiomes" };
-							String worldType = choose("New Project", "Enter world type...\n", possibilities);
+							SaveLoader.Type worldType = choose("New Project", "Enter world type…\n", SaveLoader.Type.values());
 							
 							//If a string was returned, say so.
 							if (worldType != null)
@@ -190,8 +189,8 @@ public class AmidstMenu extends JMenuBar {
 						}
 					});
 				}});
-				//new JMenuItem("Spawn");
-				//new JMenuItem("Chunk");
+				//add(new JMenuItem("Spawn"));
+				//add(new JMenuItem("Chunk"));
 			}
 		}
 		
@@ -210,7 +209,7 @@ public class AmidstMenu extends JMenuBar {
 				add(new DisplayingCheckbox("Nether fortresses",
 					ResourceLoader.getImage("nether_fortress.png"),
 					KeyEvent.VK_3,
-					Options.instance.showNetherFortresses));  				
+					Options.instance.showNetherFortresses));
 				add(new DisplayingCheckbox("Icons",
 					null,
 					KeyEvent.VK_4,
@@ -239,7 +238,7 @@ public class AmidstMenu extends JMenuBar {
 						fc.addChoosableFileFilter(new PNGFileFilter());
 						fc.setAcceptAllFileFilterUsed(false);
 						int returnVal = fc.showSaveDialog(window);
-
+						
 						if (returnVal == JFileChooser.APPROVE_OPTION) {
 							String s = fc.getSelectedFile().toString();
 							if (!s.toLowerCase().endsWith(".png"))

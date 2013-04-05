@@ -25,10 +25,10 @@ public class Project extends JPanel {
 	public String seedText;
 	
 	public Project(long seed, FinderWindow window) {
-		this(seed, window, "default");
+		this(seed, window, SaveLoader.Type.DEFAULT);
 	}
 	
-	public Project(long seed, FinderWindow window, String type) {
+	public Project(long seed, FinderWindow window, SaveLoader.Type type) {
 		SaveLoader.genType = type;
 		saveLoaded = false;
 		//Enter seed data:
@@ -42,7 +42,7 @@ public class Project extends JPanel {
 		minfo.repaint();
 	}
 	
-	public Project(String seed, FinderWindow window, String type) {
+	public Project(String seed, FinderWindow window, SaveLoader.Type type) {
 		this(stringToLong(seed), window, type);
 		this.seedText = "Seed: \"" + seed + "\" (" + this.seed +  ")";
 		

@@ -10,7 +10,28 @@ import java.util.List;
 import javax.swing.filechooser.FileFilter;
 
 public class SaveLoader {
-	public static String genType = "default";
+	public static Type genType = Type.DEFAULT;
+	
+	public enum Type {
+		DEFAULT("default"), FLAT("flat"), LARGE_BIOMES("largeBiomes");
+		private final String s;
+		
+		Type(String s) {
+			this.s = s;
+		}
+		
+		@Override
+		public String toString() {
+			return s;
+		}
+		
+		public static Type fromMixedCase(String name) {
+			for (Type t : values())
+				if (t.s.equals(name))
+					return t;
+			throw new IllegalArgumentException("Value " + name + " not implemented");
+		}
+	}
 	
 	public static FileFilter getFilter() {
 		return (new FileFilter() {
@@ -98,7 +119,7 @@ public class SaveLoader {
 			TagCompound t = Tag.readFrom(new FileInputStream(f));
 			TagCompound pTag = (TagCompound) t.findTagByName("Player");
 			seed = (Long) t.findTagByName("RandomSeed").getValue();
-			genType = (String) t.findTagByName("generatorName").getValue();
+			genType = Type.fromMixedCase((String) t.findTagByName("generatorName").getValue());
 			System.out.println("Gen Type: " + genType);
 			multi = pTag == null;
 			if (!multi) {
