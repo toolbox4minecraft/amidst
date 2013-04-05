@@ -2,6 +2,8 @@ package MoF;
 
 
 import amidst.Options;
+import amidst.map.MapObject;
+import amidst.map.MapObjectPlayer;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -83,8 +85,8 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		this.addMouseWheelListener(this);
 		menu = new JPopupMenu();
 		if (proj.saveLoaded) {
-			List<Player> pl = proj.save.getPlayers();
-			for (Player player : pl) {
+			List<MapObjectPlayer> pl = proj.save.getPlayers();
+			for (MapObjectPlayer player : pl) {
 				JMenuItem tj = new JMenuItem("Move " + player.getName() + " here.");
 				
 				tj.addActionListener(new MapListener(this, player.getName()));

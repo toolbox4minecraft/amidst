@@ -1,5 +1,7 @@
 package MoF;
 
+import amidst.map.MapObjectPlayer;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -11,14 +13,14 @@ import java.util.Stack;
 import javax.imageio.ImageIO;
 
 public class SkinManager extends Thread {
-	private Stack<Player> players;
+	private Stack<MapObjectPlayer> players;
 	public boolean active;
 	public SkinManager() {
-		players = new Stack<Player>();
+		players = new Stack<MapObjectPlayer>();
 		active = true;
 	}
 	
-	public void addPlayer(Player p) {
+	public void addPlayer(MapObjectPlayer p) {
 		players.push(p);
 	}
 	public void run() {
@@ -27,7 +29,7 @@ public class SkinManager extends Thread {
 				if (players.isEmpty()) {
 					Thread.sleep(50L);
 				} else {
-					Player p = players.pop();
+					MapObjectPlayer p = players.pop();
 					try {
 						URL url = new URL("http://s3.amazonaws.com/MinecraftSkins/" + p.getName() + ".png");
 						BufferedImage img = ImageIO.read(url);

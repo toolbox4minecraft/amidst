@@ -2,8 +2,7 @@ package MoF;
 
 
 
-import amidst.map.MapMarkers;
-import amidst.map.Stronghold;
+import amidst.map.*;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -20,7 +19,7 @@ public class ChunkManager extends Thread
 	private Object b;
 	public float[] a;
 	public long seed;
-	public Stronghold[] strongholds;
+	public MapObjectStronghold[] strongholds;
 	private Stack<Fragment> queue;
 	private MapGenVillage villageFinder;
 	private MapGenNetherhold netherholdFinder;
@@ -28,7 +27,7 @@ public class ChunkManager extends Thread
 	private boolean active;
 	private static Class<?> iBiome, iCache, s12w03a;
 	private Method getData, clearCache;
-	private List<Player> players;
+	private List<MapObjectPlayer> players;
 	private static boolean firstRun = true;
 	private SkinManager m;
 	public ChunkManager(long seed) {
@@ -81,7 +80,7 @@ public class ChunkManager extends Thread
 		this.seed = seed;
 		strongholds = new MapGenStronghold().a(seed, this);
 		queue = new Stack<Fragment>();
-		players = new ArrayList<Player>();
+		players = new ArrayList<MapObjectPlayer>();
 		active = true;
 		villageFinder = new MapGenVillage();
 		netherholdFinder = new MapGenNetherhold(seed);
@@ -153,19 +152,19 @@ public class ChunkManager extends Thread
 	}
 	
 	private void getPlayerData(Fragment frag) {
-		for (Player p : players) {
+		for (MapObjectPlayer p : players) {
 			if (frag.isInside(p.x, p.y)) {
 				frag.addMapObject(p);
 			}
 		}
 	}
-	public void addPlayer(Player p) { 
+	public void addPlayer(MapObjectPlayer p) { 
 		players.add(p);
 		m.addPlayer(p);
 	}
-	public void setPlayerData(List<Player> ar) {
+	public void setPlayerData(List<MapObjectPlayer> ar) {
 		players = ar;
-		for (Player player : ar)
+		for (MapObjectPlayer player : ar)
 			m.addPlayer(player);
 	}
 	
@@ -195,7 +194,7 @@ public class ChunkManager extends Thread
 		for (int y = 0; y < fs; y++) {
 			for (int x = 0; x < fs; x++) {
 				if (netherholdFinder.checkChunk((frag.x*fs) + (x), (frag.y*fs) + (y))) {
-					frag.addMapObject(new NetherMapObject((frag.x*ls) + (x << 4), (frag.y*ls) + (y << 4)));
+					frag.addMapObject(new MapObjectNether((frag.x*ls) + (x << 4), (frag.y*ls) + (y << 4)));
 				}
 			}
 		}
@@ -211,8 +210,6 @@ public class ChunkManager extends Thread
 					
 					frag.addMapObject(new MapObject(type, (frag.x*ls) + (x << 4), (frag.y*ls) + (y << 4)));
 				}
-				
-				
 			}
 		}
 	}
@@ -221,7 +218,7 @@ public class ChunkManager extends Thread
 		for (int i = 0; i < 3; i++) {
 			Point t = strongholds[i];
 			if (frag.isInside(t.x, t.y)) {
-				frag.addMapObject(new MapObject(MapMarkers.STRONGHOLD, t.x, t.y));
+				frag.addMapObject(new MapObjectStronghold(t.x, t.y));
 			}
 		}
 	}

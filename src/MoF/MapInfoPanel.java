@@ -1,4 +1,6 @@
 package MoF;
+import amidst.map.MapObject;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;

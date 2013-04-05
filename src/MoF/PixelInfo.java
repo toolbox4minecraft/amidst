@@ -1,5 +1,7 @@
 package MoF;
 
+import amidst.map.MapObject;
+
 public class PixelInfo {
 	private int biome, x, y;
 	private MapObject obj;

@@ -3,6 +3,7 @@ package amidst.gui;
 import MoF.*;
 import amidst.Options;
 import amidst.Util;
+import amidst.map.MapObjectPlayer;
 import amidst.resources.ResourceLoader;
 
 import javax.swing.*;
@@ -13,7 +14,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /** Structured menubar-creation to alleviate the huge mess that it would be elsewise
@@ -60,7 +60,7 @@ public class AmidstMenu extends JMenuBar {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						if (window.curProject.saveLoaded)
-							for (Player player : window.curProject.save.getPlayers())
+							for (MapObjectPlayer player : window.curProject.save.getPlayers())
 								if (player.needSave) {
 									window.curProject.save.movePlayer(player.getName(), player.x, player.y);
 									player.needSave = false;
@@ -140,7 +140,7 @@ public class AmidstMenu extends JMenuBar {
 				super("Find");
 				//add(new JMenuItem("Biome"));
 				//add(new JMenuItem("Village"));
-				add(new JMenuItem("Stronghold") {{
+				add(new JMenuItem("MapObjectStronghold") {{
 					setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
 					addActionListener(new ActionListener() {
 						@Override
@@ -177,14 +177,14 @@ public class AmidstMenu extends JMenuBar {
 					});
 				}});
 				
-				add(new JMenuItem("Player") {{
+				add(new JMenuItem("MapObjectPlayer") {{
 					addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
 							if (window.curProject.saveLoaded) {
-								List<Player> playerList = window.curProject.save.getPlayers();
-								Player[] players = playerList.toArray(new Player[playerList.size()]);
-								goToChosenPoint(players, "Player");
+								List<MapObjectPlayer> playerList = window.curProject.save.getPlayers();
+								MapObjectPlayer[] players = playerList.toArray(new MapObjectPlayer[playerList.size()]);
+								goToChosenPoint(players, "MapObjectPlayer");
 							}
 						}
 					});

@@ -1,5 +1,8 @@
 package MoF;
 
+import amidst.map.MapObject;
+import amidst.map.MapObjectPlayer;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.util.List;
@@ -41,7 +44,7 @@ public class Project extends JPanel {
 		save = file;
 		
 		Google.track("seed/file/" + this.seed);
-		List<Player> players = file.getPlayers();
+		List<MapObjectPlayer> players = file.getPlayers();
 		manager.setPlayerData(players);
 	}
 	

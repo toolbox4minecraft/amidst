@@ -1,4 +1,4 @@
-package MoF;
+package amidst.map;
 import amidst.Options;
 import amidst.map.MapMarkers;
 
@@ -10,15 +10,15 @@ public class MapObject extends Point {
 	public MapMarkers type;
 	public int rx, ry;
 	public double localScale = 1.0;
-	public boolean selectable = true;
 	public double tempDist = 0;
 	protected JToggleButton.ToggleButtonModel model;
-	public MapObject(MapMarkers eType, int eX, int eY) {
+	
+	public MapObject(MapMarkers eType, int x, int y) {
+		super(x, y);
 		type = eType;
-		x = eX;
-		y = eY;
 		model = Options.instance.showIcons;
 	}
+	
 	public String getName() {
 		return type.toString();
 	}

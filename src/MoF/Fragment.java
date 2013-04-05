@@ -2,6 +2,7 @@ package MoF;
 
 import amidst.Options;
 import amidst.map.MapMarkers;
+import amidst.map.MapObject;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -105,13 +106,8 @@ public class Fragment extends BufferedImage {
 	}
 	
 	public void addMapObject(MapObject m) {
-		int sX = m.x >> 2;
-		int sY = m.y >> 2;
-		int fs = Project.FRAGMENT_SIZE;
-		sX -= this.x * fs;
-		sY -= this.y * fs;
-		m.rx = sX;
-		m.ry = sY;
+		m.rx = (m.x >> 2) - (this.x * Project.FRAGMENT_SIZE);
+		m.ry = (m.y >> 2) - (this.y * Project.FRAGMENT_SIZE);
 		if (m.type == MapMarkers.STRONGHOLD) {
 			strongholdCount++;
 		} else if (m.type == MapMarkers.VILLAGE) {

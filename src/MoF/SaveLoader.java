@@ -1,5 +1,6 @@
 package MoF;
 import amidst.Util;
+import amidst.map.MapObjectPlayer;
 import amidst.nbt.Tag;
 import amidst.nbt.TagCompound;
 
@@ -51,11 +52,11 @@ public class SaveLoader {
 	}
 	
 	private File file;
-	private List<Player> players;
+	private List<MapObjectPlayer> players;
 	public long seed;
 	private boolean multi;
 	private List<String> back;
-	public List<Player> getPlayers() {
+	public List<MapObjectPlayer> getPlayers() {
 		return players;
 	}
 	public void movePlayer(String name, int x, int y) {
@@ -113,17 +114,17 @@ public class SaveLoader {
 	
 	public SaveLoader(File f) {
 		file = f;
-		players = new ArrayList<Player>();
+		players = new ArrayList<MapObjectPlayer>();
 		back = new ArrayList<String>();
 		try {
 			TagCompound t = Tag.readFrom(new FileInputStream(f));
-			TagCompound pTag = (TagCompound) t.findTagByName("Player");
+			TagCompound pTag = (TagCompound) t.findTagByName("MapObjectPlayer");
 			seed = (Long) t.findTagByName("RandomSeed").getValue();
 			genType = Type.fromMixedCase((String) t.findTagByName("generatorName").getValue());
 			System.out.println("Gen Type: " + genType);
 			multi = pTag == null;
 			if (!multi) {
-				addPlayer("Player", pTag);
+				addPlayer("MapObjectPlayer", pTag);
 			} else {
 				File[] listing = new File(f.getParent(), "players").listFiles();
 				for (int i = 0; i < (listing != null ? listing.length : 0); i++) {
@@ -141,6 +142,6 @@ public class SaveLoader {
 		Tag<Double>[] pa = (Tag[]) pos.getValue();
 		double x = pa[0].getValue();
 		double z = pa[2].getValue();
-		players.add(new Player(name, (int) x, (int) z));
+		players.add(new MapObjectPlayer(name, (int) x, (int) z));
 	}
 }
