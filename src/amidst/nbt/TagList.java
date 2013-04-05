@@ -1,12 +1,9 @@
 package amidst.nbt;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.List;
 
 public class TagList<T> extends SequenceTagBase<T> {
 	Type listType;
@@ -32,25 +29,11 @@ public class TagList<T> extends SequenceTagBase<T> {
 	}
 	
 	TagList(String name, DataInputStream dis) throws IOException {
-		super(Type.TAG_List, name, new Tag[0]);
-		Object payload = readPayload(dis);
-		if (payload instanceof Type) {
-			listType = (Type) payload;
-		} else {
-			value = (Tag<T>[]) payload;
-			listType = value[0].type;
-		}
-	}
-	
-	private static <T> Object readPayload(DataInputStream dis) throws IOException {
-		Type type = Type.fromByte(dis.readByte());
-		Tag<T>[] lo = new Tag[dis.readInt()];
-		for (int i = 0; i < lo.length; i++)
-			lo[i] = type.readFrom(null, dis);
-		if (lo.length == 0)
-			return type;
-		else
-			return lo;
+		super(Type.TAG_List, name, null);
+		listType = Type.fromByte(dis.readByte());
+		value = new Tag[dis.readInt()];
+		for (int i = 0; i < value.length; i++)
+			value[i] = listType.readFrom(null, dis);
 	}
 	
 	void writePayload(DataOutputStream dos) throws IOException {
