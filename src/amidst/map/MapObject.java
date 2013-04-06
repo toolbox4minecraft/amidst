@@ -10,6 +10,7 @@ public class MapObject extends Point {
 	public MapMarkers type;
 	public int rx, ry;
 	public double localScale = 1.0;
+	@Deprecated
 	public double tempDist = 0;
 	protected JToggleButton.ToggleButtonModel model;
 	

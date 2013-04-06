@@ -29,16 +29,16 @@ public class AmidstMenu extends JMenuBar {
 	public AmidstMenu(FinderWindow win) {
 		this.window = win;
 		
-		add(fileMenu = new FileMenu());
-//		scriptMenu = new JMenu("Script") {{
+		fileMenu = add(new FileMenu());
+//		scriptMenu = add(new JMenu("Script") {{
 //			setEnabled(false);
 //			add(new JMenuItem("New"));
 //			add(new JMenuItem("Open"));
 //			add(new JMenuItem("Save"));
 //			add(new JMenuItem("Run"));
-//		}};
-		add(mapMenu = new MapMenu());
-		add(helpMenu = new HelpMenu());
+//		}});
+		mapMenu = add(new MapMenu());
+		helpMenu = add(new HelpMenu());
 	}
 	
 	private class FileMenu extends JMenu {
@@ -162,16 +162,11 @@ public class AmidstMenu extends JMenuBar {
 							String s = JOptionPane.showInputDialog(null, "Enter coordinates: (Ex. 123,456)", "Go To", JOptionPane.QUESTION_MESSAGE);
 							if (s != null) {
 								String[] c = s.split(",");
-								long x = 0, y = 0;
-								boolean w = true;
 								try {
-									x = Long.parseLong(c[0]) >> 2;
-									y = Long.parseLong(c[1]) >> 2;
-								} catch (Exception e) {
-									w = false;
-								}
-								if (w)
+									long x = Long.parseLong(c[0]) >> 2;
+									long y = Long.parseLong(c[1]) >> 2;
 									window.curProject.moveMapTo((int)x, (int)y);
+								} catch (NumberFormatException ignored) {}
 							}
 						}
 					});
