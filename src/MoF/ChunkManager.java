@@ -100,7 +100,7 @@ public class ChunkManager extends Thread
 		this.players = null;
 		this.netherholdFinder = null;
 	}
-	private int[] ba(int a, int b, int c, int d) {
+	public int[] ba(int a, int b, int c, int d) {
 		try {
 			clearCache.invoke(iCache);
 			
@@ -110,6 +110,7 @@ public class ChunkManager extends Thread
 		}
 		return null;
 	}
+	
 	
 	public byte[] getBiomeForArea(int x, int y, int range) {
 		byte[] barr = new byte[range*range];

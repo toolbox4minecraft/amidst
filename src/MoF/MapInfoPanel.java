@@ -79,7 +79,7 @@ public class MapInfoPanel extends JPanel {
 		
 	}
 	
-	public void bPaint(Graphics2D g2d) {
+	public void bPaint(Graphics2D g2d) {/*
 		PixelInfo p = map.getCursorInformation();
 		
 		int yOffset = getHeight() - 100;
@@ -101,7 +101,7 @@ public class MapInfoPanel extends JPanel {
 			g2d.drawString("Z: " + p.getBlockY(), 16, yOffset + 90);
 		} else {
 			
-		}
+		}*/
 		
 	}
 	public void dispose() {

@@ -46,6 +46,21 @@ public class Util {
 		minecraftDirectory = (mcDir != null) ? mcDir : new File(homeDirectory, ".minecraft");
 	}
 	
+	// Added for scripting support. (javascript has issues retaining the array types)
+	public static int[] arrayToColors(int[] src, int[] dst, int[] colors, int length) {
+		for (int i = 0; i < length; i++) {
+			dst[i] = colors[src[i]];
+		}
+		return dst;
+	}
+	
+	public static int makeColor(int r, int g, int b) {
+		int color = 0xFF000000;
+		color |= 0xFF0000 & (r << 16);
+		color |= 0xFF00 & (g << 8);
+		color |= 0xFF & b;
+		return color;
+	}
 //	public static void main(String[] args) {
 //		try {
 //			int infinity = 1 / 0;

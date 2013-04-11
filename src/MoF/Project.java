@@ -69,6 +69,7 @@ public class Project extends JPanel {
 		
 		//Create MapViewer
 		map = new MapViewer(this);
+		
 		add(map, BorderLayout.CENTER);
 		minfo = new MapInfoPanel(map);
 		add(minfo, BorderLayout.EAST);
@@ -114,11 +115,11 @@ public class Project extends JPanel {
 		}
 		return ret;
 	}
+	
 	public void movePlayer(String name, PixelInfo p) {
 		for (int i = 0; i < save.getPlayers().size(); i++) {
 			if (name.toLowerCase().equals(save.getPlayers().get(i).getName().toLowerCase())) {
 				save.getPlayers().get(i).setPosition(p.getBlockX(), p.getBlockY());
-				map.cleanUpdate();
 			}
 		}
 	}
@@ -132,12 +133,6 @@ public class Project extends JPanel {
 		this.seed = seed;
 	}
 	
-	public Fragment getFragment(int x, int y) {
-		Fragment frag = new Fragment(x, y, FRAGMENT_SIZE);
-		manager.requestChunk(frag);
-		
-		return frag;
-	}
 	
 	public void moveMapTo(int x, int y) {
 		map.centerAndReset(x, y);

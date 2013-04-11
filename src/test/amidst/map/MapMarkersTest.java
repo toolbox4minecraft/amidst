@@ -1,6 +1,8 @@
-package amidst.map;
+package test.amidst.map;
 
 import java.io.IOException;
+
+import amidst.map.MapMarkers;
 
 /** Tests if MapMarkers finds all files*/
 public class MapMarkersTest {

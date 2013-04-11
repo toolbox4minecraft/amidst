@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Allows to retrieve images, URLs, …
+ * Allows to retrieve images, URLs, 
  */
 public class ResourceLoader {
 	private ResourceLoader() {}
