@@ -102,6 +102,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		testMap.load();
 	}
 	
+	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D)g;
 		g2d.setColor(Color.black);
@@ -112,14 +113,14 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		g2d.setFont(new Font("arial", Font.BOLD, 15));
 		g2d.drawString(proj.seedText, 20, 30);
 		if (mTracking) { 
-    		Point p = this.getMousePosition();
-    		if (p!=null) {
-	    		mX += (p.x - tX);
-	    		mY += (p.y - tY);
-	    		tX = p.x;
-	    		tY = p.y;
-    		}
-    	}
+			Point p = this.getMousePosition();
+			if (p!=null) {
+				mX += (p.x - tX);
+				mY += (p.y - tY);
+				tX = p.x;
+				tY = p.y;
+			}
+		}
 		if (zoomTicksRemaining-- > 0) {
 			float lastZoom = curZoom;
 			curZoom = (targetZoom + curZoom) * 0.5f;
