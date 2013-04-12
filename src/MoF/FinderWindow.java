@@ -51,7 +51,7 @@ public class FinderWindow extends JFrame {
 		//UI Manager:
 		pane.setLayout(new BorderLayout());
 		loadMinecraft();
-		(new UpdateManager(this, true)).start();
+		new UpdateManager(this, true).start();
 		setJMenuBar(menuBar = new AmidstMenu(this));
 		setVisible(true);
 		Image icon = ResourceLoader.getImage("icon.png");

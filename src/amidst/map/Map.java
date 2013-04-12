@@ -1,7 +1,6 @@
 package amidst.map;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.Stack;
 
@@ -28,7 +27,7 @@ public class Map {
 	
 	private boolean isLoaded = false;
 	
-	private Object resizeLock = new Object();
+	private final Object resizeLock = new Object();
 	private AffineTransform mat;
 	private ChunkManager chunkManager;
 	
@@ -41,13 +40,11 @@ public class Map {
 	
 	public void draw(Graphics2D g) {
 		if (!isLoaded) return;
-		// TODO : Change this to directly reference the window that renders it.
-		int width = Amidst.getActiveWindow().getWidth();
-		int height = Amidst.getActiveWindow().getHeight();
+		Rectangle b = g.getClipBounds();
 		
-		double size = ((double)Fragment.SIZE)*scale;
-		int w = (width) / (int)size + 2;
-		int h = (height) / (int)size + 2;
+		int size = (int) (Fragment.SIZE * scale);
+		int w = b.width / size + 2;
+		int h = b.height / size + 2;
 		
 		while (tileWidth <  w) addColumn(END);
 		while (tileWidth >  w) removeColumn(END);
@@ -63,12 +60,12 @@ public class Map {
 		//g.fillRect(5, 5, width - 10, height - 10);
 		
 		Fragment frag = startNode;
-		size = (double)Fragment.SIZE;
+		size = Fragment.SIZE;
 		if (frag.hasNext) {
 			Fragment corner = frag.nextFragment;
 			double drawX = startX;
 			double drawY = startY;
-
+			
 			mat.setToIdentity();
 			mat.translate(drawX, drawY);
 			mat.scale(scale, scale);
@@ -187,7 +184,6 @@ public class Map {
 				frag.setNext(newFrag);
 			}
 		}
-
 	}
 	public void removeColumn(boolean start) {
 		synchronized (resizeLock) {
@@ -234,11 +230,11 @@ public class Map {
 	public void load() {
 		fManager.load();
 		fManager.start();
-
+		
 		addStart(0, 0);
 		isLoaded = true;
-
 	}
+	
 	public void setZoom(double scale) {
 		this.scale = scale;
 	}
@@ -247,13 +243,11 @@ public class Map {
 	}
 	public double getScaledX(double oldScale, double newScale, double x) {
 		double baseX = x - startX;
-		double dif = baseX - (baseX/oldScale) * newScale;
-		return dif;
+		return baseX - (baseX/oldScale) * newScale;
 	}
 	public double getScaledY(double oldScale, double newScale, double y) {
 		double baseY = y - startY;
-		double dif = baseY - (baseY/oldScale) * newScale;
-		return dif;
+		return baseY - (baseY/oldScale) * newScale;
 	}
 	public void close() {
 		isLoaded = false;
