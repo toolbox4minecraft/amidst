@@ -16,7 +16,6 @@ public class Amidst {
 		Util.setLookAndFeel();
 		Google.startTracking();
 		Google.track("Run");
-		//TODO: load options
 		FinderWindow w = new FinderWindow();
 		//TODO: redesign, move to optipns
 		if (args.length > 0) {

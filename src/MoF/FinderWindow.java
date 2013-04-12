@@ -30,21 +30,12 @@ public class FinderWindow extends JFrame {
 	private static final long serialVersionUID = 196896954675968191L;
 	private Container pane;
 	public Project curProject;  //TODO
-	public static Preferences pref;
 	public static boolean dataCollect;
 	private final AmidstMenu menuBar;
 	public FinderWindow() throws IOException {
 		//Initialize window
 		super("Amidst v" + Amidst.version());
-		pref = Preferences.userRoot().node(this.getClass().getName());
 		
-		boolean first = pref.getBoolean("firstRun", true);
-		if (first) {
-			Google.track("RunFirstTime");
-		} else {
-			Google.track("Run");
-		}
-		pref.putBoolean("firstRun", false);
 		setSize(800,800);
 		//setLookAndFeel();
 		pane = getContentPane();
@@ -113,16 +104,8 @@ public class FinderWindow extends JFrame {
 		Class<?> mc = null;
 		File s = null;
 		
-		//Temporary fix -- Should be removed in a few patches.
-		if (pref.getBoolean("osxMistake", true)) {
-			pref.putBoolean("osxMistake", false);
-			pref.remove("jar");
-		}
-		
 		try {
-			s = new File(Util.minecraftDirectory, "bin/minecraft.jar");
-			String jar = pref.get("jar", null);
-			ClasspathHacker.addFile((jar != null) ? new File(jar) : s);
+			ClasspathHacker.addFile(Options.instance.jar.get());
 			mc = ClassLoader.getSystemClassLoader().loadClass("net.minecraft.client.Minecraft");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -156,7 +139,8 @@ public class FinderWindow extends JFrame {
 		}
 		
 		try {
-			pref.put("jar", s.getCanonicalPath());
+			if (s != null)
+				Options.instance.jar.set(s);
 			
 			String typeDump = "";
 			Field fields[] = mc.getDeclaredFields();
