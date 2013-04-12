@@ -1,29 +1,42 @@
 package amidst;
 
-import javax.swing.JToggleButton.ToggleButtonModel;
+import amidst.preferences.BooleanPrefModel;
+import amidst.preferences.FilePrefModel;
+
+import java.io.File;
+import java.util.prefs.Preferences;
 
 /** Currently selected options that change AMIDST’s behavior
- * TODO: save and load
  */
 public enum Options {
 	instance;
 	
+	//per-run preferences. TODO: store elsewhere?
 	public long seed;
 	public String seedText;
-	public ToggleButtonModel showSlimeChunks;
-	public ToggleButtonModel showGrid;
-	public ToggleButtonModel showNetherFortresses;
-	public ToggleButtonModel showIcons;
+	
+	//permanent preferences
+	public final FilePrefModel jar;
+	public final BooleanPrefModel showSlimeChunks;
+	public final BooleanPrefModel showGrid;
+	public final BooleanPrefModel showNetherFortresses;
+	public final BooleanPrefModel showIcons;
+	
+	//maybe temporary preferences…?
 	public boolean saveEnabled;
 	
 	private Options() {
 		seed = 0L;
 		seedText = null;
-		showSlimeChunks      = new ToggleButtonModel();
-		showGrid             = new ToggleButtonModel();
-		showNetherFortresses = new ToggleButtonModel();
-		showIcons            = new ToggleButtonModel();
-		showIcons.setSelected(true);
+		
+		Preferences pref = Preferences.userNodeForPackage(Amidst.class);
+		
+		jar                  = new FilePrefModel(   pref, "jar", new File(Util.minecraftDirectory, "bin/minecraft.jar"));
+		showSlimeChunks      = new BooleanPrefModel(pref, "slimeChunks",      false);
+		showGrid             = new BooleanPrefModel(pref, "grid",             false);
+		showNetherFortresses = new BooleanPrefModel(pref, "netherFortresses", false);
+		showIcons            = new BooleanPrefModel(pref, "icons",            true);
+		
 		saveEnabled = true;
 	}
 	
