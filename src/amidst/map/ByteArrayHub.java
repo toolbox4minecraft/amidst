@@ -29,14 +29,14 @@ public class ByteArrayHub {
 	
 	private int unitOffset;
 	
-	public ByteArrayHub(long key, byte unitSize, int maxUnits, String strPath) {
+	public ByteArrayHub(long key, byte unitSize, int maxUnits, File basePath) {
 		this.unitSize = unitSize;
 		this.maxUnits = maxUnits;
 		this.key = key;
 		
 		unitOffset = maxUnits*unitSize;
 		
-		path = new File(strPath + Long.toHexString(key).toUpperCase() + ".acache");
+		path = new File(basePath, Long.toHexString(key).toUpperCase() + ".acache");
 		data = new byte[unitOffset*ByteArrayCache.CACHE_MAX_SIZE + ByteArrayCache.HEADER_SIZE];
 		returnCache = new byte[unitSize*maxUnits];
 		if (path.exists()) {
@@ -52,9 +52,6 @@ public class ByteArrayHub {
 				}
 				//Log.i("@@@@@ " + inStream.read(data));
 				inStream.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -80,9 +77,6 @@ public class ByteArrayHub {
 			outStream.flush();
 			outStream.close();
 			
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

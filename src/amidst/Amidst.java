@@ -25,8 +25,4 @@ public class Amidst {
 	public static FinderWindow getActiveWindow() {
 		return mainWindow;
 	}
-	
-	public static String getPath() {
-		return ClassLoader.getSystemClassLoader().getResource(".").getPath();
-	}
 }
