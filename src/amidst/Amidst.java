@@ -2,7 +2,10 @@ package amidst;
 
 import MoF.FinderWindow;
 import MoF.Google;
+import MoF.Project;
+import MoF.SaveLoader;
 
+import java.io.File;
 import java.io.IOException;
 
 public class Amidst {
@@ -14,7 +17,15 @@ public class Amidst {
 		Google.startTracking();
 		Google.track("Run");
 		//TODO: load options
-		new FinderWindow();
+		FinderWindow w = new FinderWindow();
+		//TODO: redesign, move to optipns
+		if (args.length > 0) {
+			File dat = new File(args[0]);
+			if (dat.isFile())
+				w.setProject(new Project(new SaveLoader(dat)));
+			else
+				w.setProject(new Project(args[0]));
+		}
 	}
 	
 	public static String version() {

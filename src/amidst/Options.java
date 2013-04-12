@@ -7,7 +7,9 @@ import javax.swing.JToggleButton.ToggleButtonModel;
  */
 public enum Options {
 	instance;
-
+	
+	public long seed;
+	public String seedText;
 	public ToggleButtonModel showSlimeChunks;
 	public ToggleButtonModel showGrid;
 	public ToggleButtonModel showNetherFortresses;
@@ -15,11 +17,20 @@ public enum Options {
 	public boolean saveEnabled;
 	
 	private Options() {
+		seed = 0L;
+		seedText = null;
 		showSlimeChunks      = new ToggleButtonModel();
 		showGrid             = new ToggleButtonModel();
 		showNetherFortresses = new ToggleButtonModel();
 		showIcons            = new ToggleButtonModel();
 		showIcons.setSelected(true);
 		saveEnabled = true;
+	}
+	
+	public String getSeedMessage() {
+		if (seedText == null)
+			return "Seed: " + seed;
+		else
+			return "Seed: \"" + seedText + "\" (" + seed +  ")";
 	}
 }

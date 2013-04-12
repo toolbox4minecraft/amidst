@@ -143,7 +143,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		g2d.setColor(new Color(25, 25, 25));
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2d.setFont(new Font("arial", Font.BOLD, 15));
-		g2d.drawString(proj.seedText, 20, 30);
+		g2d.drawString(Options.instance.getSeedMessage(), 20, 30);
 		if (mTracking) { 
     		Point p = this.getMousePosition();
     		if (p!=null) {

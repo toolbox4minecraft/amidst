@@ -1,5 +1,6 @@
 package MoF;
 
+import amidst.Options;
 import amidst.map.MapObject;
 import amidst.map.MapObjectPlayer;
 
@@ -11,9 +12,9 @@ import java.util.TimerTask;
 
 import javax.swing.JPanel;
 
+@Deprecated //TODO: we should remove this and integrate it into Options
 public class Project extends JPanel {
 	private static final long serialVersionUID = 1132526465987018165L;
-	private long seed;
 	
 	public MapViewer map;
 	private MapInfoPanel minfo;
@@ -25,13 +26,11 @@ public class Project extends JPanel {
 	public boolean saveLoaded;
 	public SaveLoader save;
 	
-	public String seedText;
-	
 	public Project(String seed) {
 		this(stringToLong(seed));
-		this.seedText = "Seed: \"" + seed + "\" (" + this.seed +  ")";
+		Options.instance.seedText = seed;
 		
-		Google.track("seed/" + seed + "/" + this.seed);
+		Google.track("seed/" + seed + "/" + Options.instance.seed);
 	}
 	
 	public Project(long seed) {
@@ -43,24 +42,22 @@ public class Project extends JPanel {
 		saveLoaded = true;
 		save = file;
 		
-		Google.track("seed/file/" + this.seed);
+		Google.track("seed/file/" + Options.instance.seed);
 		List<MapObjectPlayer> players = file.getPlayers();
 		manager.setPlayerData(players);
 	}
 	
 	public Project(String seed, SaveLoader.Type type) {
 		this(stringToLong(seed), type);
-		this.seedText = "Seed: \"" + seed + "\" (" + this.seed +  ")";
 		
-		Google.track("seed/" + seed + "/" + this.seed);
+		Google.track("seed/" + seed + "/" + Options.instance.seed);
 	}
 	
 	public Project(long seed, SaveLoader.Type type) {
 		SaveLoader.genType = type;
 		saveLoaded = false;
 		//Enter seed data:
-		this.seed = seed;
-		this.seedText = "Seed: " + seed;
+		Options.instance.seed = seed;
 		
 		manager = new ChunkManager(seed);
 		manager.start();
@@ -121,15 +118,6 @@ public class Project extends JPanel {
 				map.cleanUpdate();
 			}
 		}
-	}
-	public long getSeed() {
-		return seed;
-	}
-	public void setSeed(String seed) {
-		this.seed = stringToLong(seed);
-	}
-	public void setSeed(long seed) {
-		this.seed = seed;
 	}
 	
 	public Fragment getFragment(int x, int y) {
