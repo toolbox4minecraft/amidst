@@ -40,7 +40,7 @@ public class Log {
 		System.out.print("[" + tag + "] ");
 		for (int i=0; i<msgs.length; i++) {
 			System.out.print(msgs[i]);
-			System.out.print((i < msgs.length) ? ", " : "\n");
+			System.out.print((i < msgs.length - 1) ? " " : "\n");
 		}
 	}
 }

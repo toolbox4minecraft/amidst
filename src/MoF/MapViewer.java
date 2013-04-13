@@ -1,6 +1,7 @@
 package MoF;
 
 
+import amidst.Log;
 import amidst.Options;
 import amidst.map.Map;
 import amidst.map.MapObject;
@@ -53,7 +54,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	private Point zoomMouse;
 	
 	public void dispose() {
-		System.out.println("DISPOSING OF MAPVIEWER");
+		Log.debug("DISPOSING OF MAPVIEWER");
 		testMap.dispose();
 		chart.dispose();
 		menu.removeAll();

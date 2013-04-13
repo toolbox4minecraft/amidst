@@ -1,4 +1,5 @@
 package MoF;
+import amidst.Log;
 import amidst.Util;
 import amidst.map.MapObjectPlayer;
 import amidst.nbt.Tag;
@@ -121,7 +122,7 @@ public class SaveLoader {
 			TagCompound pTag = (TagCompound) t.findTagByName("MapObjectPlayer");
 			seed = (Long) t.findTagByName("RandomSeed").getValue();
 			genType = Type.fromMixedCase((String) t.findTagByName("generatorName").getValue());
-			System.out.println("Gen Type: " + genType);
+			Log.debug("Gen Type:", genType);
 			multi = pTag == null;
 			if (!multi) {
 				addPlayer("MapObjectPlayer", pTag);

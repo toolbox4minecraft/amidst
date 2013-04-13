@@ -2,6 +2,7 @@ package MoF;
 
 
 
+import amidst.Log;
 import amidst.map.*;
 
 import java.awt.Color;
@@ -45,7 +46,7 @@ public class ChunkManager extends Thread
 							t = types[1];
 						}
 					}
-    				System.out.println("Err: " + t.toString());
+					Log.debug("Err: " + t.toString());
     				s12w03a = ClassLoader.getSystemClassLoader().loadClass(t.toString().split(" ")[1]);
     			}
     				
@@ -62,7 +63,7 @@ public class ChunkManager extends Thread
 					genString = "c";
 				else if (SaveLoader.genType.equals("largeBiomes"))
 					genString = "d";
-				System.out.println("GenString: " + genString);
+				Log.debug("GenString: " + genString);
 				ret = (Object[])init.invoke(null, seed, s12w03a.getField(genString).get(null));
 			} else {
 				init = iBiome.getDeclaredMethod("a", new Class[] {Long.TYPE});
@@ -87,7 +88,7 @@ public class ChunkManager extends Thread
 		pyramidFinder = new MapGenPyramid();
 	}
 	public void dispose() {
-		System.out.println("DISPOSING OF CHUNKMANAGER");
+		Log.debug("DISPOSING OF CHUNKMANAGER");
 		this.active = false;
 		this.b = null;
 		this.strongholds = null;
@@ -305,7 +306,7 @@ public class ChunkManager extends Thread
 			int i4 = i + i3 % n << 2;
 			int i5 = j + i3 / n << 2;
 			if (arrayOfInt[i3] > Biome.a.length) {
-				System.out.println(arrayOfInt[i3]);
+				Log.debug(arrayOfInt[i3]);
 				System.exit(0);
 			}
 			Biome localBiome = Biome.a[arrayOfInt[i3]];

@@ -1,4 +1,5 @@
 package MoF;
+import amidst.Log;
 import amidst.map.MapObjectStronghold;
 
 import java.awt.Point;
@@ -21,7 +22,7 @@ public class MapGenStronghold {
 		double d1 = this.c.nextDouble() * 3.141592653589793D * 2.0D;
 		for (j = 0; j < this.coords.length; j++) {
 			double d2 = (1.25D + this.c.nextDouble()) * 32.0D;
-			System.out.println(d2);
+			Log.debug(d2);
 			int k = (int)Math.round(Math.cos(d1) * d2);
 			int m = (int)Math.round(Math.sin(d1) * d2);
 			Biome[] v = a;

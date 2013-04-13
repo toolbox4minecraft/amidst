@@ -2,6 +2,7 @@ package MoF;
 
 
 import amidst.Amidst;
+import amidst.Log;
 import amidst.Options;
 import amidst.Util;
 import amidst.gui.AmidstMenu;
@@ -149,7 +150,7 @@ public class FinderWindow extends JFrame {
 				if (typeString.startsWith("class ") && !typeString.contains("."))
 					typeDump += typeString.substring(6);
 			}
-			System.out.println(typeDump.replace("[", "-"));
+			Log.debug(typeDump.replace("[", "-"));
 			String worldName;
 			Field f;
 			java.lang.reflect.Type t;
@@ -212,7 +213,7 @@ public class FinderWindow extends JFrame {
 					worldName = "acv";
 				}
 			}
-			System.out.println("World class : " + worldName);
+			Log.debug("World class:", worldName);
 			
 			//Find biomeManager:
 			mc = ClassLoader.getSystemClassLoader().loadClass(worldName);
@@ -222,7 +223,7 @@ public class FinderWindow extends JFrame {
 				m = mc.getMethod("a");
 			} catch (NoSuchMethodException e3) {
 				v13 = true;
-				System.out.println("1.3-pre or newer found.");
+				Log.debug("1.3-pre or newer found.");
 			}
 			if (v13) {
 				try {
@@ -245,16 +246,15 @@ public class FinderWindow extends JFrame {
 				//12w07a or newer.
 				m = mc.getDeclaredMethod("i");
 				t = m.getReturnType();
-				System.out.println("Version 12w07a or newer found!");
+				Log.debug("Version 12w07a or newer found!");
 			}
 			if (t.toString().equals("void")) {
-				System.out.println("Version 1.4.2 or newer found.");
-				
+				Log.debug("Version 1.4.2 or newer found.");
 			}
 			String chunkName = t.toString().split(" ")[1];
 			mc = ClassLoader.getSystemClassLoader().loadClass(chunkName);
 			biomeFinder = mc;
-			System.out.println("Biome Finder : " + chunkName);
+			Log.debug("Biome Finder:", chunkName);
 			
 			f = mc.getDeclaredField(is131?"d":"b");
 			t = f.getType();
@@ -274,7 +274,7 @@ public class FinderWindow extends JFrame {
 			t = f.getType();
 			ReflectionInfo.biomeName = t.toString().split(" ")[1];
 			String intCache;
-			System.out.println(biomeName);
+			Log.debug("Biome class:", biomeName);
 			if (biomeName.equals("ait")&&is131) {
 				ReflectionInfo.version = "1.5.1";
 				ReflectionInfo.versionID = 60;
@@ -434,7 +434,8 @@ public class FinderWindow extends JFrame {
 					intCache = st;
 				}
 			}
-			System.out.println("Version " + ReflectionInfo.version + " detected. " + (Options.instance.saveEnabled ? "" : "Saves disabled."));
+			Log.debug("Version:", ReflectionInfo.version);
+			if (!Options.instance.saveEnabled) Log.debug("Saves disabled.");
 //			pre5 - y, ug
 //			pre4 - y, uh
 //			pre3 - x, to
