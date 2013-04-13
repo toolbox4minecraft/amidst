@@ -32,7 +32,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-public class MapViewer extends JComponent implements MouseListener, MouseWheelListener, ComponentListener {
+public class MapViewer extends JComponent implements MouseListener, MouseWheelListener {
 	/**
 	 * 
 	 */
@@ -68,7 +68,6 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		testMap = new Map(proj.manager, new BiomeLayer()); //TODO: implement more layers
 		
 		addMouseListener(this);
-		addComponentListener(this);
 		addMouseWheelListener(this);
 	}
 	
@@ -175,11 +174,6 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 			}
 		} else lastMouse = null;
 	}
-	
-	public void componentHidden(ComponentEvent arg0) {}
-	public void componentMoved(ComponentEvent arg0) {}
-	public void componentResized(ComponentEvent arg0) {}
-	public void componentShown(ComponentEvent arg0) {}
 	
 	public MapObject getSelectedObject() {
 		return proj.curTarget;

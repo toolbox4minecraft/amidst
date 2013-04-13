@@ -90,9 +90,7 @@ public class Map {
 			tileHeight = 1;
 		}
 	}
-	public void clear() {
-		
-	}
+	
 	public void addColumn(boolean start) {
 		synchronized (resizeLock) {
 			int x = 0;
@@ -121,7 +119,7 @@ public class Map {
 						}
 						newFrag.endOfLine = true;
 						frag.endOfLine = false;
-						frag.setNext(newFrag);	
+						frag.setNext(newFrag);
 						frag = newFrag;
 						
 					}
@@ -226,15 +224,17 @@ public class Map {
 	public void setZoom(double scale) {
 		this.scale = scale;
 	}
+	
 	public double getZoom() {
 		return scale;
 	}
+	
 	public Point2D.Double getScaled(double oldScale, double newScale, Point p) {
 		double baseX = p.x - start.x;
-		double scaledX = baseX - (baseX/oldScale) * newScale;
+		double scaledX = baseX - (baseX / oldScale) * newScale;
 		
 		double baseY = p.y - start.y;
-		double scaledY = baseY - (baseY/oldScale) * newScale;
+		double scaledY = baseY - (baseY / oldScale) * newScale;
 		
 		return new Point2D.Double(scaledX, scaledY);
 	}
