@@ -32,13 +32,13 @@ public class ChunkManager extends Thread
 	private static boolean firstRun = true;
 	private SkinManager m;
 	public ChunkManager(long seed) {
-        try {
-        	if (firstRun) {
-    			iBiome = ClassLoader.getSystemClassLoader().loadClass(ReflectionInfo.chunkName);
-    			iCache = ClassLoader.getSystemClassLoader().loadClass(ReflectionInfo.intCacheName);
-    			Type t = null;
-    			if (ReflectionInfo.versionID >= 9) {
-    				Method cs[] = iBiome.getDeclaredMethods();
+		try {
+			if (firstRun) {
+				iBiome = ClassLoader.getSystemClassLoader().loadClass(ReflectionInfo.instance.chunkName);
+				iCache = ClassLoader.getSystemClassLoader().loadClass(ReflectionInfo.instance.intCacheName);
+				Type t = null;
+				if (ReflectionInfo.instance.versionID >= 9) {
+					Method cs[] = iBiome.getDeclaredMethods();
 					for (Method c : cs) {
 						Class<?>[] types = c.getParameterTypes();
 						
@@ -46,24 +46,23 @@ public class ChunkManager extends Thread
 							t = types[1];
 						}
 					}
-					Log.debug("Err: " + t.toString());
-    				s12w03a = ClassLoader.getSystemClassLoader().loadClass(t.toString().split(" ")[1]);
-    			}
-    				
-    			
-    			firstRun = false;
-    		}
-        	Object[] ret;
+					Log.debug("Err:", t);
+					s12w03a = ClassLoader.getSystemClassLoader().loadClass(t.toString().split(" ")[1]);
+				}
+				
+				firstRun = false;
+			}
+			Object[] ret;
 			Method init;
 			clearCache = iCache.getDeclaredMethod("a");
-			if (ReflectionInfo.versionID >= 9) {
+			if (ReflectionInfo.instance.versionID >= 9) {
 				init = iBiome.getDeclaredMethod("a", new Class[] {Long.TYPE, s12w03a});
 				String genString = "b";
-				if (SaveLoader.genType.equals("flat"))
+				if (SaveLoader.genType == SaveLoader.Type.FLAT)
 					genString = "c";
-				else if (SaveLoader.genType.equals("largeBiomes"))
+				else if (SaveLoader.genType == SaveLoader.Type.LARGE_BIOMES)
 					genString = "d";
-				Log.debug("GenString: " + genString);
+				Log.debug("GenString:", genString);
 				ret = (Object[])init.invoke(null, seed, s12w03a.getField(genString).get(null));
 			} else {
 				init = iBiome.getDeclaredMethod("a", new Class[] {Long.TYPE});
@@ -134,7 +133,7 @@ public class ChunkManager extends Thread
 					getSlimeData(frag);
 					getPlayerData(frag);
 					getNetherholdData(frag);
-					if (ReflectionInfo.versionID >= 21)
+					if (ReflectionInfo.instance.versionID >= 21)
 						getPyramidData(frag);
 			    	/*try {
 						Thread.sleep(5L);

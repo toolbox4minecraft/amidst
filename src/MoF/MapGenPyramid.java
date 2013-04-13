@@ -32,9 +32,9 @@ public class MapGenPyramid {
 		
 		if ((paramInt1 == n) && (paramInt2 == i1)) {
 			boolean bool = false;
-			if (ReflectionInfo.versionID >= 50) //1.4.2
+			if (ReflectionInfo.instance.versionID >= 50) //1.4.2
 				bool = x.a(paramInt1 * 16 + 8, paramInt2 * 16 + 8, 0, c);
-			else if (ReflectionInfo.versionID >= 23) //12w22a
+			else if (ReflectionInfo.instance.versionID >= 23) //12w22a
 				bool = x.a(paramInt1 * 16 + 8, paramInt2 * 16 + 8, 0, b);
 			else
 				bool = x.a(paramInt1 * 16 + 8, paramInt2 * 16 + 8, 0, a);
