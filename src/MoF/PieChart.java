@@ -1,7 +1,6 @@
 package MoF;
 import java.awt.Graphics2D;
 
-
 public class PieChart {
 	private float[] slices;
 	private int sources;
@@ -11,9 +10,8 @@ public class PieChart {
 	}
 	
 	public void addData(float[] sData) {
-		for (int i = 0; i < slices.length; i++) {
-			slices[i] += sData[i]/(float)sources;
-		}
+		for (int i = 0; i < slices.length; i++)
+			slices[i] += sData[i] / (float)sources;
 	}
 	
 	public void setSources(int num) {
@@ -25,14 +23,15 @@ public class PieChart {
 			slices[i] = 0;
 		}
 	}
+	
 	public void dispose() {
 		this.slices = null;
 	}
+	
 	public void paint(Graphics2D g2d, int x, int y, int width, int height) {
 		float max = 0.0f;
-		for (int i = 0; i < slices.length; i++) {
-			max += slices[i];
-		}
+		for (float slice : slices)
+			max += slice;
 		int angle = 0;
 		float tp = 360f;
 		for (int i = 0; i < slices.length; i++) {
@@ -42,8 +41,6 @@ public class PieChart {
 				newangle = 360 - angle;
 			g2d.fillArc(x, y, width, height, angle, newangle);
 			angle += newangle;
-			
 		}
 	}
-	
 }

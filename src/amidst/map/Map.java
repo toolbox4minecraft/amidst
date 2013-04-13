@@ -2,6 +2,7 @@ package amidst.map;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.util.Stack;
 
 
@@ -17,29 +18,27 @@ public class Map {
 	
 	private Fragment startNode = new Fragment();
 	
-	private double drawPadding = Fragment.SIZE;
+	private double scale = 1.0;
+	private Point2D.Double start;
 	
-	private double scale = 1.0, startX, startY;
-	
-	private int sBlockX = 0;
-	private int eBlockX = 0;
 	private int tileWidth, tileHeight;
-	
-	private boolean isLoaded = false;
 	
 	private final Object resizeLock = new Object();
 	private AffineTransform mat;
-	private ChunkManager chunkManager;
 	
 	// TODO : This must be changed with the removal of ChunkManager
-	public Map(ChunkManager manager) {
-		chunkManager = manager;
-		fManager = new FragmentManager();
+	public Map(ChunkManager manager, Layer... layers) {
+		for (Layer layer : layers)
+			layer.setChunkManager(manager);
+		
+		fManager = new FragmentManager(layers);
 		mat = new AffineTransform();
+		
+		start = new Point2D.Double();
+		addStart(0, 0);
 	}
 	
 	public void draw(Graphics2D g) {
-		if (!isLoaded) return;
 		Rectangle b = g.getClipBounds();
 		
 		int size = (int) (Fragment.SIZE * scale);
@@ -51,10 +50,10 @@ public class Map {
 		while (tileHeight < h) addRow(END);
 		while (tileHeight > h) removeRow(END);
 		
-		while (startX >     0) { startX -= size; addColumn(START); removeColumn(END);   }
-		while (startX < -size) { startX += size; addColumn(END);   removeColumn(START); }
-		while (startY >     0) { startY -= size; addRow(START);    removeRow(END);      }
-		while (startY < -size) { startY += size; addRow(END);      removeRow(START);    }
+		while (start.x >     0) { start.x -= size; addColumn(START); removeColumn(END);   }
+		while (start.x < -size) { start.x += size; addColumn(END);   removeColumn(START); }
+		while (start.y >     0) { start.y -= size; addRow(START);    removeRow(END);      }
+		while (start.y < -size) { start.y += size; addRow(END);      removeRow(START);    }
 		
 		//g.setColor(Color.pink);
 		//g.fillRect(5, 5, width - 10, height - 10);
@@ -63,11 +62,9 @@ public class Map {
 		size = Fragment.SIZE;
 		if (frag.hasNext) {
 			Fragment corner = frag.nextFragment;
-			double drawX = startX;
-			double drawY = startY;
 			
 			mat.setToIdentity();
-			mat.translate(drawX, drawY);
+			mat.translate(start.x, start.y);
 			mat.scale(scale, scale);
 			while (frag.hasNext) {
 				frag = frag.nextFragment;
@@ -213,26 +210,17 @@ public class Map {
 		}
 	}
 	
+	public void moveBy(Point2D.Double speed) {
+		moveBy(speed.x, speed.y);
+	}
+	
 	public void moveBy(double x, double y) {
-		startX += x;
-		startY += y;
+		start.x += x;
+		start.y += y;
 	}
 	
-	public void centerOn(int x, int y) {
-		
-	}
-	
-	public void addLayer(Layer layer) {
-		layer.setChunkManager(chunkManager);
-		fManager.addLayer(layer);
-	}
-	
-	public void load() {
-		fManager.load();
-		fManager.start();
-		
-		addStart(0, 0);
-		isLoaded = true;
+	public void centerOn(double x, double y) {
+		//TODO
 	}
 	
 	public void setZoom(double scale) {
@@ -241,18 +229,17 @@ public class Map {
 	public double getZoom() {
 		return scale;
 	}
-	public double getScaledX(double oldScale, double newScale, double x) {
-		double baseX = x - startX;
-		return baseX - (baseX/oldScale) * newScale;
+	public Point2D.Double getScaled(double oldScale, double newScale, Point p) {
+		double baseX = p.x - start.x;
+		double scaledX = baseX - (baseX/oldScale) * newScale;
+		
+		double baseY = p.y - start.y;
+		double scaledY = baseY - (baseY/oldScale) * newScale;
+		
+		return new Point2D.Double(scaledX, scaledY);
 	}
-	public double getScaledY(double oldScale, double newScale, double y) {
-		double baseY = y - startY;
-		return baseY - (baseY/oldScale) * newScale;
-	}
-	public void close() {
-		isLoaded = false;
-		synchronized (resizeLock) {
-			fManager.close();
-		}
+	
+	public void dispose() {
+		fManager.close();
 	}
 }

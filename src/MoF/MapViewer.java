@@ -20,6 +20,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -38,68 +39,37 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	private static final long serialVersionUID = -8309927053337294612L;
 	private Project proj;
 	
-	private int fragXMax = 0, fragYMax = 0, fragX = 0, fragY = 0;
-	
-	private boolean mTracking = false, resized = false;
-	private double mX = 0, mY = 0, tX = 0, tY = 0;
 	private PieChart chart;
-	private ArrayList<ArrayList<Fragment>> frags;
-	private JPopupMenu  menu = new JPopupMenu();
+	private JPopupMenu menu = new JPopupMenu();
 	private double scale = 1;
-	private boolean dataChange, sizeChange, firstRun;
 	public int strongholdCount, villageCount;
 	
 	private Map testMap;
-	private float lastMouseX, lastMouseY;
-	private float panSpeedX, panSpeedY;
-	private boolean mouseDown;
+	private Point lastMouse;
+	private Point2D.Double panSpeed;
 	
 	private int zoomLevel = 0, zoomTicksRemaining = 0;
 	private float targetZoom = 1.0f, curZoom = 1.0f;
-	private float zoomMouseX, zoomMouseY;
-	
-	
-	private static int offset[] = new int[] {
-		-1,-1,
-		-1, 0,
-		-1, 1,
-		 0,-1,
-		 0, 1,
-		 1,-1,
-		 1, 0,
-		 1, 1
-	};
+	private Point zoomMouse;
 	
 	public void dispose() {
 		System.out.println("DISPOSING OF MAPVIEWER");
-		for (int ey = 0; ey < fragYMax; ey++) {
-			for (int ex = 0; ex < fragXMax; ex++) {
-				Fragment tempFrag = frags.get(ey).get(ex);
-				tempFrag.dispose();
-			}
-			frags.get(ey).clear();
-		}
-		frags.clear();
-		frags = null;
+		testMap.dispose();
 		chart.dispose();
 		menu.removeAll();
 		proj = null;
-		
 	}
 	
 	MapViewer(Project proj) {
-		dataChange = true;
-		sizeChange = true;
-		firstRun = true;
-		this.addMouseListener(this);
-		resized = true;
-		this.addComponentListener(this);
-		this.addMouseWheelListener(this);
+		chart = new PieChart(0, 0); //TODO: do something with chart
+		panSpeed = new Point2D.Double();
 		this.proj = proj;
 		
-		testMap = new Map(proj.manager);
-		testMap.addLayer(new BiomeLayer());
-		testMap.load();
+		testMap = new Map(proj.manager, new BiomeLayer()); //TODO: implement more layers
+		
+		addMouseListener(this);
+		addComponentListener(this);
+		addMouseWheelListener(this);
 	}
 	
 	@Override
@@ -112,105 +82,55 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2d.setFont(new Font("arial", Font.BOLD, 15));
 		g2d.drawString(Options.instance.getSeedMessage(), 20, 30);
-		if (mTracking) { 
-			Point p = this.getMousePosition();
-			if (p!=null) {
-				mX += (p.x - tX);
-				mY += (p.y - tY);
-				tX = p.x;
-				tY = p.y;
-			}
-		}
 		if (zoomTicksRemaining-- > 0) {
 			float lastZoom = curZoom;
 			curZoom = (targetZoom + curZoom) * 0.5f;
 			
-			double targetZoomX = testMap.getScaledX(lastZoom, curZoom, zoomMouseX);
-			double targetZoomY = testMap.getScaledY(lastZoom, curZoom, zoomMouseY);
-			testMap.moveBy(targetZoomX, targetZoomY);
+			Point2D.Double targetZoom = testMap.getScaled(lastZoom, curZoom, zoomMouse);
+			testMap.moveBy(targetZoom);
 			testMap.setZoom(curZoom);
 		}
 		
-		if (mouseDown) {
-			Point curMouse = this.getMousePosition();
+		if (lastMouse != null) {
+			Point curMouse = getMousePosition();
 			if (curMouse != null) {
-				float difX = curMouse.x - lastMouseX;
-				float difY = curMouse.y - lastMouseY;
+				double difX = curMouse.x - lastMouse.x;
+				double difY = curMouse.y - lastMouse.y;
 				// TODO : Scale with time
-				panSpeedX = difX * 0.2f;
-				panSpeedY = difY * 0.2f;
-				
-				lastMouseX += panSpeedX;
-				lastMouseY += panSpeedY;
+				panSpeed.setLocation(difX * 0.2f, difY * 0.2f);
 			}
+			
+			lastMouse.translate((int) panSpeed.x, (int)panSpeed.y);
 		}
-		panSpeedX *= 0.95f;
-		panSpeedY *= 0.95f;
 		
+		panSpeed.x *= 0.95f;
+		panSpeed.y *= 0.95f;
 		
-		
-		testMap.moveBy(panSpeedX, panSpeedY);
-		
+		testMap.moveBy(panSpeed.x, panSpeed.y);
 		
 		testMap.draw(g2d);
 	}
-	public Project getProject() {
-		return proj;
-	}
-	
 	
 	public void centerAt(double x, double y) {
-		double adjX, adjY, zx, zy;
-		zx = x;
-		zy = y;
-		scale = 1;
-		int fs = Project.FRAGMENT_SIZE;
-		adjX = Math.floor(zx/fs) - 1;
-		adjY = Math.floor(zy/fs) - 1;
-		mX = -1*(Math.floor(zx - getWidth()/(2)) - (adjX + 1)*fs);
-		mY = -1*(Math.floor(zy - getHeight()/(2)) - (adjY + 1)*fs);
-		fragX = (int)adjX;
-		fragY = (int)adjY;
+		testMap.centerOn(x, y);
 	}
+	
 	public void centerAndReset(double x, double y) {
-		centerAt(x,y);
-		
+		scale = 1;
+		centerAt(x, y);
 	}
 	
 	public void setScale(double scale) {
-		if ((scale <= 8)&&(scale >= 0.25)) {
+		if ((scale <= 8) && (scale >= 0.25)) {
 			this.scale = scale;
-			sizeChange = true;
 		}
 	}
 	public void scaleBy(double scale) {
 		setScale(this.scale*scale);
 	}
 	
-	private int getWriteX(int in) {
-		int ex = in % fragXMax;
-		if (ex < 0)
-			ex += fragXMax;
-		return ex;
-	}
-	private int getWriteY(int in) {
-		int ey = in % fragYMax;
-		if (ey < 0)
-			ey += fragYMax;
-		return ey;
-	}
-	@SuppressWarnings("unused")
-	private int getWrite(int in, int max) {
-		int ew = in % max;
-		if (ew < 0)
-			ew += max;
-		return ew;
-	}
-	
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		Point curMouse = getMousePosition();
-		zoomMouseX = curMouse.x;
-		zoomMouseY = curMouse.y;
+		zoomMouse = getMousePosition();
 		int notches = e.getWheelRotation();
 		
 		if (notches > 0) {
@@ -242,68 +162,45 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	public void mouseExited(MouseEvent arg0) {
 	}
 	@Override
-	public void mousePressed(MouseEvent arg0) {
-
-		if (!arg0.isMetaDown()) {
-			mTracking = true;
-			Point curMouse = this.getMousePosition();
-			tX = curMouse.x;
-			tY = curMouse.y;
-			
-			lastMouseX = curMouse.x;
-			lastMouseY = curMouse.y;
-			mouseDown = true;
-		}
+	public void mousePressed(MouseEvent e) {
+		if (!e.isMetaDown())
+			lastMouse = getMousePosition();
 	}
-	private int tempX, tempY;
+	
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (e.isPopupTrigger() && Options.instance.saveEnabled) {
 			if (proj.saveLoaded) {
-				tempX = e.getX();
-				tempY = e.getY();
 				menu.show(e.getComponent(), e.getX(), e.getY());
 			}
-		} else {
-			mouseDown = false;
-			mTracking = false;
-		}
+		} else lastMouse = null;
 	}
-	@Override
-	public void componentHidden(ComponentEvent arg0) {
-	}
-	@Override
-	public void componentMoved(ComponentEvent arg0) {
-		
-	}
-	@Override
-	public void componentResized(ComponentEvent arg0) {
-		resized = true;
-		
-	}
-	@Override
-	public void componentShown(ComponentEvent arg0) {
-	}
-
+	
+	public void componentHidden(ComponentEvent arg0) {}
+	public void componentMoved(ComponentEvent arg0) {}
+	public void componentResized(ComponentEvent arg0) {}
+	public void componentShown(ComponentEvent arg0) {}
+	
 	public MapObject getSelectedObject() {
 		return proj.curTarget;
 	}
-
+	
 	public PieChart getChart() {
 		return chart;
 	}
-
+	
 	public void setChart(PieChart chart) {
 		this.chart = chart;
 	}
-
+	
 	public void movePlayer(String name, ActionEvent e) {
 		//PixelInfo p = getCursorInformation(new Point(tempX, tempY));
 		
 		//proj.movePlayer(name, p);
 	}
-
+	
 	public void saveToFile(File f) {
+		/*TODO
 		int fs = Project.FRAGMENT_SIZE;
 		BufferedImage img = new BufferedImage(fragXMax*fs,fragYMax*fs,BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = img.createGraphics();
@@ -345,6 +242,6 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		}
 		g2d.dispose();
 		img.flush();
-		
+		*/
 	}
 }
