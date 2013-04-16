@@ -54,7 +54,7 @@ public class AmidstMenu extends JMenuBar {
 			}});
 			
 			add(new JMenuItem("Save player locations") {{
-				setEnabled(Options.instance.saveEnabled);
+				setEnabled(ReflectionInfo.instance.version.saveEnabled());
 				setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
 				addActionListener(new ActionListener() {
 					@Override

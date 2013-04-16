@@ -1,5 +1,6 @@
 package MoF;
 import amidst.Log;
+import amidst.foreign.VersionInfo;
 import amidst.map.MapObjectStronghold;
 
 import java.awt.Point;
@@ -26,11 +27,11 @@ public class MapGenStronghold {
 			int k = (int)Math.round(Math.cos(d1) * d2);
 			int m = (int)Math.round(Math.sin(d1) * d2);
 			Biome[] v = a;
-			if (ReflectionInfo.instance.version.equals("1.9-pre6")|| ReflectionInfo.instance.version.equals("1.0"))
+			if (ReflectionInfo.instance.version == VersionInfo.V1_9pre6 || ReflectionInfo.instance.version == VersionInfo.V1_0)
 				v = b;
-			if (ReflectionInfo.instance.version.equals("1.1"))
+			if (ReflectionInfo.instance.version == VersionInfo.V1_1)
 				v = ab;
-			if (ReflectionInfo.instance.versionID >= 9)
+			if (ReflectionInfo.instance.version.isAtLeast(VersionInfo.V12w03a))
 				v = ac;
 			ArrayList<Biome> localArrayList = new ArrayList<Biome>();
 			for (Object localObject2 : v) {

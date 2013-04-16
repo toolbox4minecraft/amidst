@@ -22,9 +22,6 @@ public enum Options {
 	public final BooleanPrefModel showNetherFortresses;
 	public final BooleanPrefModel showIcons;
 	
-	//maybe temporary preferences…?
-	public boolean saveEnabled;
-	
 	private Options() {
 		seed = 0L;
 		seedText = null;
@@ -36,8 +33,6 @@ public enum Options {
 		showGrid             = new BooleanPrefModel(pref, "grid",             false);
 		showNetherFortresses = new BooleanPrefModel(pref, "netherFortresses", false);
 		showIcons            = new BooleanPrefModel(pref, "icons",            true);
-		
-		saveEnabled = true;
 	}
 	
 	public String getSeedMessage() {

@@ -32,29 +32,30 @@ public class Fragment {
 		this.layers = layers;
 		imgBuffers = new BufferedImage[layers.length];
 		for (int i = 0; i < layers.length; i++) {
-			imgBuffers[i] =  new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_ARGB);
+			imgBuffers[i] = new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_ARGB);
 		}
 	}
-
+	
 	public void load() {
-		if (isLoaded) {
-			Log.i("This should never happen!");
-		}
+		if (isLoaded)
+			Log.w("This should never happen!");
 		for (int i = 0; i < layers.length; i++) {
 			if (!layers[i].isLive())
 				layers[i].draw(this, i);
 		}
 		isLoaded = true;
 	}
+	
 	public void recycle() {
 		isActive = false;
 		if (isLoaded) {
-			for (int i = 0; i < layers.length; i++) {
-				layers[i].unload(this);
-			}
+			for (Layer layer : layers)
+				layer.unload(this);
 		}
+		
 		isLoaded = false;
 	}
+	
 	public void clear() {
 		//isLoaded = false;
 		hasNext = false;
@@ -75,6 +76,7 @@ public class Fragment {
 			}
 		}
 	}
+	
 	public void setImageData(int layerID, int[] data) {
 		Layer layer = layers[layerID];
 		imgBuffers[layerID].setRGB(0, 0, layer.size, layer.size, data, 0, layer.size);
@@ -98,20 +100,24 @@ public class Fragment {
 		frag.prevFragment = this;
 		hasNext = true;
 	}
+	
 	public void remove() {
 		if (hasNext)
 			prevFragment.setNext(nextFragment);
 		else
 			prevFragment.hasNext = false;
 	}
+	
 	public Graphics2D getDraw(int layerID) {
 		Graphics2D g2d =  imgBuffers[layerID].createGraphics();
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		return g2d;
 	}
+	
 	public static int[] getIntArray() {
 		return dataCache;
 	}
+	
 	public BufferedImage getBufferedImage(int layerID) {
 		return imgBuffers[layerID];
 	}

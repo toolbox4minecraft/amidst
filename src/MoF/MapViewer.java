@@ -5,7 +5,6 @@ import amidst.Log;
 import amidst.Options;
 import amidst.map.Map;
 import amidst.map.MapObject;
-import amidst.map.MapObjectPlayer;
 import amidst.map.layers.BiomeLayer;
 
 import java.awt.Color;
@@ -15,22 +14,14 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 public class MapViewer extends JComponent implements MouseListener, MouseWheelListener {
@@ -169,7 +160,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (e.isPopupTrigger() && Options.instance.saveEnabled) {
+		if (e.isPopupTrigger() && ReflectionInfo.instance.version.saveEnabled()) {
 			if (proj.saveLoaded) {
 				menu.show(e.getComponent(), e.getX(), e.getY());
 			}

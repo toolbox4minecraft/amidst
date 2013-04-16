@@ -3,6 +3,7 @@ package MoF;
 
 
 import amidst.Log;
+import amidst.foreign.VersionInfo;
 import amidst.map.*;
 
 import java.awt.Color;
@@ -35,9 +36,9 @@ public class ChunkManager extends Thread
 		try {
 			if (firstRun) {
 				iBiome = ClassLoader.getSystemClassLoader().loadClass(ReflectionInfo.instance.chunkName);
-				iCache = ClassLoader.getSystemClassLoader().loadClass(ReflectionInfo.instance.intCacheName);
+				iCache = ClassLoader.getSystemClassLoader().loadClass(ReflectionInfo.instance.version.intCacheName);
 				Type t = null;
-				if (ReflectionInfo.instance.versionID >= 9) {
+				if (ReflectionInfo.instance.version.isAtLeast(VersionInfo.V12w03a)) {
 					Method cs[] = iBiome.getDeclaredMethods();
 					for (Method c : cs) {
 						Class<?>[] types = c.getParameterTypes();
@@ -47,6 +48,7 @@ public class ChunkManager extends Thread
 						}
 					}
 					Log.debug("Err:", t);
+					assert t != null;
 					s12w03a = ClassLoader.getSystemClassLoader().loadClass(t.toString().split(" ")[1]);
 				}
 				
@@ -55,8 +57,8 @@ public class ChunkManager extends Thread
 			Object[] ret;
 			Method init;
 			clearCache = iCache.getDeclaredMethod("a");
-			if (ReflectionInfo.instance.versionID >= 9) {
-				init = iBiome.getDeclaredMethod("a", new Class[] {Long.TYPE, s12w03a});
+			if (ReflectionInfo.instance.version.isAtLeast(VersionInfo.V12w03a)) {
+				init = iBiome.getDeclaredMethod("a", Long.TYPE, s12w03a);
 				String genString = "b";
 				if (SaveLoader.genType == SaveLoader.Type.FLAT)
 					genString = "c";
@@ -65,18 +67,18 @@ public class ChunkManager extends Thread
 				Log.debug("GenString:", genString);
 				ret = (Object[])init.invoke(null, seed, s12w03a.getField(genString).get(null));
 			} else {
-				init = iBiome.getDeclaredMethod("a", new Class[] {Long.TYPE});
+				init = iBiome.getDeclaredMethod("a", Long.TYPE);
 				ret = (Object[])init.invoke(null, seed);
 			}
 			this.b = ret[0];
 			
-			getData = iBiome.getMethod("a", new Class[] {Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE} );
+			getData = iBiome.getMethod("a", Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        m = new SkinManager();
-        m.start();
+		m = new SkinManager();
+		m.start();
 		this.seed = seed;
 		strongholds = new MapGenStronghold().a(seed, this);
 		queue = new Stack<Fragment>();
@@ -86,6 +88,7 @@ public class ChunkManager extends Thread
 		netherholdFinder = new MapGenNetherhold(seed);
 		pyramidFinder = new MapGenPyramid();
 	}
+	
 	public void dispose() {
 		Log.debug("DISPOSING OF CHUNKMANAGER");
 		this.active = false;
@@ -100,11 +103,12 @@ public class ChunkManager extends Thread
 		this.players = null;
 		this.netherholdFinder = null;
 	}
-	public int[] ba(int a, int b, int c, int d) {
+	
+	public int[] ba(int x, int y, int c, int d) {
 		try {
 			clearCache.invoke(iCache);
 			
-			return (int[]) getData.invoke(this.b, a,b,c,d);
+			return (int[]) getData.invoke(this.b, x,y,c,d);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -120,36 +124,6 @@ public class ChunkManager extends Thread
 		}
 		
 		return barr;
-	}
-	
-	public void run() {
-		while (this.active) {
-			if (!queue.isEmpty()) {
-				Fragment frag = queue.pop();
-				if (frag.active) {
-					drawBiomeData(frag);
-					getStrongholdData(frag);
-					getVillageData(frag);
-					getSlimeData(frag);
-					getPlayerData(frag);
-					getNetherholdData(frag);
-					if (ReflectionInfo.instance.versionID >= 21)
-						getPyramidData(frag);
-			    	/*try {
-						Thread.sleep(5L);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}*/
-				}
-			} else {
-				try {
-					Thread.sleep(5L);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			
-		}
 	}
 	
 	private void getPlayerData(Fragment frag) {
@@ -242,59 +216,59 @@ public class ChunkManager extends Thread
 		int range = frag.range;
 		byte[] data = getBiomeForArea(x, y, range);
 		frag.data = data;
-    	Graphics2D g2d = frag.createGraphics();
-    	int i = 0;
-    	long[] stat = new long[Biome.colors.length];
-    	for (int i1 = 0; i1 < stat.length; i1++) {
-    		stat[i1] = 0;
-    	}
-    	for (int ey = 0; ey < range; ey++) {
-    		for (int ex = 0; ex < range; ex++) {
-    			stat[data[i]]++;
-    			g2d.setColor(Biome.colors[data[i]]);
-    			g2d.fillRect(ex, ey, 1, 1);
-    			i++;
-    		}
-    	}
-    	for (int i1 = 0; i1 < stat.length; i1++) {
-    		frag.stat[i1] = stat[i1]/(float)i;
-    	}
-    	
-    	Graphics2D g2d2 = frag.newLayer();
-    	g2d2.setColor(Color.black);
-    	g2d2.drawRect(0, 0, Project.FRAGMENT_SIZE, Project.FRAGMENT_SIZE);
-    	g2d2.drawString(((x*Project.FRAGMENT_SIZE) << 2) + ", " + ((y*Project.FRAGMENT_SIZE) << 2), 5, 15);
-    	g2d.dispose();
-    	g2d2.dispose();
+		Graphics2D g2d = frag.createGraphics();
+		int i = 0;
+		long[] stat = new long[Biome.colors.length];
+		for (int i1 = 0; i1 < stat.length; i1++) {
+			stat[i1] = 0;
+		}
+		for (int ey = 0; ey < range; ey++) {
+			for (int ex = 0; ex < range; ex++) {
+				stat[data[i]]++;
+				g2d.setColor(Biome.colors[data[i]]);
+				g2d.fillRect(ex, ey, 1, 1);
+				i++;
+			}
+		}
+		for (int i1 = 0; i1 < stat.length; i1++) {
+			frag.stat[i1] = stat[i1]/(float)i;
+		}
+		
+		Graphics2D g2d2 = frag.newLayer();
+		g2d2.setColor(Color.black);
+		g2d2.drawRect(0, 0, Project.FRAGMENT_SIZE, Project.FRAGMENT_SIZE);
+		g2d2.drawString(((x*Project.FRAGMENT_SIZE) << 2) + ", " + ((y*Project.FRAGMENT_SIZE) << 2), 5, 15);
+		g2d.dispose();
+		g2d2.dispose();
 	}
 	
 	public void requestChunk(Fragment frag) {
 		queue.add(frag);
 	}
 	
-    public boolean a(int paramInt1, int paramInt2, int paramInt3, List<Biome> paramList) {
-      int i = paramInt1 - paramInt3 >> 2;
-      int j = paramInt2 - paramInt3 >> 2;
-      int k = paramInt1 + paramInt3 >> 2;
-      int m = paramInt2 + paramInt3 >> 2;
-
-      int n = k - i + 1;
-      int i1 = m - j + 1;
-
-      int[] arrayOfInt = ba(i, j, n, i1);
-      for (int i2 = 0; i2 < n * i1; i2++) {
-        Biome localBiome = Biome.a[arrayOfInt[i2]];
-        if (!paramList.contains(localBiome)) return false;
-      }
-
-      return true;
-    }
-    
-	public Point a(int paramInt1, int paramInt2, int paramInt3, List<Biome> paramList, Random paramRandom) {
-		int i = paramInt1 - paramInt3 >> 2;
-		int j = paramInt2 - paramInt3 >> 2;
-		int k = paramInt1 + paramInt3 >> 2;
-		int m = paramInt2 + paramInt3 >> 2;
+	public boolean a(int x, int y, int size, List<Biome> paramList) {
+		int i = x - size >> 2;
+		int j = y - size >> 2;
+		int k = x + size >> 2;
+		int m = y + size >> 2;
+		
+		int n = k - i + 1;
+		int i1 = m - j + 1;
+		
+		int[] arrayOfInt = ba(i, j, n, i1);
+		for (int i2 = 0; i2 < n * i1; i2++) {
+			Biome localBiome = Biome.a[arrayOfInt[i2]];
+			if (!paramList.contains(localBiome)) return false;
+		}
+		
+		return true;
+	}
+	
+	public Point a(int x, int y, int size, List<Biome> paramList, Random paramRandom) {
+		int i = x - size >> 2;
+		int j = y - size >> 2;
+		int k = x + size >> 2;
+		int m = y + size >> 2;
 		
 		int n = k - i + 1;
 		int i1 = m - j + 1;

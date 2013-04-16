@@ -1,14 +1,13 @@
 package MoF;
 
+import amidst.foreign.VersionInfo;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 
 public class MapGenPyramid {
-	private static List<Biome> a = Arrays.asList(new Biome[] { Biome.d, Biome.s});
-	private static List<Biome> b = Arrays.asList(new Biome[] { Biome.d, Biome.s, Biome.w});
-	private static List<Biome> c = Arrays.asList(new Biome[] {Biome.d, Biome.s, Biome.w, Biome.x, Biome.h});
 	public boolean checkChunk(int paramInt1, int paramInt2, long seed, ChunkManager x) {
 		int i = 32;
 		int j = 8;
@@ -27,22 +26,21 @@ public class MapGenPyramid {
 		i1 *= i;
 		n += localRandom.nextInt(i - j);
 		i1 += localRandom.nextInt(i - j);
-		paramInt1 = k;
-		paramInt2 = m;
 		
-		if ((paramInt1 == n) && (paramInt2 == i1)) {
-			boolean bool = false;
-			if (ReflectionInfo.instance.versionID >= 50) //1.4.2
-				bool = x.a(paramInt1 * 16 + 8, paramInt2 * 16 + 8, 0, c);
-			else if (ReflectionInfo.instance.versionID >= 23) //12w22a
-				bool = x.a(paramInt1 * 16 + 8, paramInt2 * 16 + 8, 0, b);
-			else
-				bool = x.a(paramInt1 * 16 + 8, paramInt2 * 16 + 8, 0, a);
-			if (bool) {
-				return true;
-			}
-		}
+		return (k == n) && (m == i1)
+				&& x.a(k * 16 + 8, m * 16 + 8, 0, templeBiomes());
+	}
+	
+	public List<Biome> templeBiomes() {
+		Biome[] ret;
 		
-		return false;
+		if (ReflectionInfo.instance.version.isAtLeast(VersionInfo.V1_4_2))
+			ret = new Biome[] { Biome.d, Biome.s, Biome.w, Biome.x, Biome.h };
+		else if (ReflectionInfo.instance.version.isAtLeast(VersionInfo.V12w22a))
+			ret = new Biome[] { Biome.d, Biome.s, Biome.w };
+		else
+			ret = new Biome[] { Biome.d, Biome.s };
+		
+		return Arrays.asList(ret);
 	}
 }

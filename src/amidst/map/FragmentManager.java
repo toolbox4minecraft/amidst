@@ -75,34 +75,31 @@ public class FragmentManager extends Thread {
 	public void run() {
 		this.setPriority(MIN_PRIORITY);
 		while (running) {
-			boolean needsSleep = requestQueue.isEmpty();
-			if (!requestQueue.isEmpty()) {
-				Fragment frag = requestQueue.poll();
-				if (frag.isActive && !frag.isLoaded) {
-					frag.load();
-					sleepTick++;
-					if (sleepTick == 10) {
-						sleepTick = 0;
-						try {
-							Thread.sleep(1L);
-						} catch (InterruptedException ignored) {}
+			if(!requestQueue.isEmpty() || !recycleQueue.isEmpty()) {
+				if (!requestQueue.isEmpty()) {
+					Fragment frag = requestQueue.poll();
+					if (frag.isActive && !frag.isLoaded) {
+						frag.load();
+						sleepTick++;
+						if (sleepTick == 10) {
+							sleepTick = 0;
+							try {
+								Thread.sleep(1L);
+							} catch (InterruptedException ignored) {}
+						}
 					}
 				}
-			}
-			needsSleep &= recycleQueue.isEmpty();
-			while (!recycleQueue.isEmpty()) {
-				Fragment frag = recycleQueue.poll();
-				frag.recycle();
-				fragmentStack.offer(frag);
-			}
-			
-			if (needsSleep) {
+				
+				while (!recycleQueue.isEmpty()) {
+					Fragment frag = recycleQueue.poll();
+					frag.recycle();
+					fragmentStack.offer(frag);
+				}
+			} else {
 				sleepTick = 0;
 				try {
 					Thread.sleep(2L);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				} catch (InterruptedException ignored) {}
 			}
 		}
 	}
