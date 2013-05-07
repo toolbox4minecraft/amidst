@@ -73,7 +73,12 @@ public enum ReflectionInfo {
 			
 			boolean is25 = false;
 			boolean atLeast131 = false;
-			if (typeDump.equals("[Bbeabdsbawemabdtbfzbdwngngbevawfbgfawvawvaxrawbbfrausbjhaycawwaraavybkdavwbjvbkila")) {
+			boolean atLeast152 = false;
+			if (typeDump.equals("[Bbdzbdrbawemabdsbfybdvngngbeuawfbgeawvawvaxrawbbfqausbjgaycawwaraavybkcavwbjubkila")) {
+				worldName = "aab";
+				atLeast131 = true;
+				atLeast152 = true;
+			} else if (typeDump.equals("[Bbeabdsbawemabdtbfzbdwngngbevawfbgfawvawvaxrawbbfrausbjhaycawwaraavybkdavwbjvbkila")) {
 				worldName = "aab";
 				atLeast131 = true;
 			} else if (typeDump.equals("[Baywayoaaszleaypbavaysmdazratabbaatqatqaulaswbanarnbdzauwatraohastbevasrbenbezbdmbdjkh")) {
@@ -149,7 +154,12 @@ public enum ReflectionInfo {
 						try {
 							m = mc.getMethod("s");
 						} catch (NoSuchMethodException e6) {
-							m = mc.getMethod("t");
+							try {
+								m = mc.getMethod("t");
+							} catch (NoSuchMethodException e7) {
+								m = mc.getMethod("u");
+							}
+							
 						}
 					}
 				}
