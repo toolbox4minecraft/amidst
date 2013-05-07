@@ -54,6 +54,7 @@ public class UpdateManager extends Thread {
 				}
 			}
 			int n = JOptionPane.NO_OPTION;
+			
 			if (major > Amidst.version_major) {
 				n = JOptionPane.showConfirmDialog(
 					window,

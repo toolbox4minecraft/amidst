@@ -9,8 +9,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class Amidst {
-	public final static int version_major = 3;
-	public final static int version_minor = 0;
+	public final static int version_major = 2;
+	public final static int version_minor = 1;
 	
 	public static void main(String args[]) throws IOException {
 		Util.setLookAndFeel();
