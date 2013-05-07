@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Allows to retrieve images, URLs, …
+ * Allows to retrieve images, URLs, :
  */
 public class ResourceLoader {
 	private ResourceLoader() {}
 	
 	public static URL getResourceURL(String name) {
+		// This is also a valid way to load resources, although I'm not sure which is better.
+		//return ClassLoader.getSystemClassLoader().getResource("amidst/resources/" + name);
 		return ResourceLoader.class.getResource(name);
 	}
 	

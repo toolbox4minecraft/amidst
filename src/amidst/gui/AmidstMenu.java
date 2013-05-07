@@ -89,9 +89,9 @@ public class AmidstMenu extends JMenuBar {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						//Create the JOptionPane.
-						String s = JOptionPane.showInputDialog(null, "Enter seed…", "New Project", JOptionPane.QUESTION_MESSAGE);
+						String s = JOptionPane.showInputDialog(null, "Enter seed:", "New Project", JOptionPane.QUESTION_MESSAGE);
 						if (s != null) {
-							SaveLoader.Type worldType = choose("New Project", "Enter world type…\n", SaveLoader.Type.values());
+							SaveLoader.Type worldType = choose("New Project", "Enter world type:\n", SaveLoader.Type.values());
 							
 							//If a string was returned, say so.
 							if (worldType != null)
@@ -292,7 +292,7 @@ public class AmidstMenu extends JMenuBar {
 	 * @param name name displayed in the choice
 	 */
 	private <T extends Point> void goToChosenPoint(T[] points, String name) {
-		T p = choose("Go to…", "Select " + name + ":", points);
+		T p = choose("Go to:", "Select " + name + ":", points);
 		if (p != null)
 			window.curProject.moveMapTo(p.x >> 2, p.y >> 2);
 	}

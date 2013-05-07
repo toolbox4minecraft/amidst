@@ -22,7 +22,7 @@ public enum Options {
 	public final BooleanPrefModel showNetherFortresses;
 	public final BooleanPrefModel showIcons;
 	
-	//maybe temporary preferences…?
+	//maybe temporary preferences:?
 	public boolean saveEnabled;
 	
 	private Options() {

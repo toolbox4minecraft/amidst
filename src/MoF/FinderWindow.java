@@ -156,7 +156,12 @@ public class FinderWindow extends JFrame {
 			
 			boolean is25 = false;
 			boolean is131 = false;
-			if (typeDump.equals("[Bbeabdsbawemabdtbfzbdwngngbevawfbgfawvawvaxrawbbfrausbjhaycawwaraavybkdavwbjvbkila")) {
+			boolean atLeast152 = false;
+			if (typeDump.equals("[Bbdzbdrbawemabdsbfybdvngngbeuawfbgeawvawvaxrawbbfqausbjgaycawwaraavybkcavwbjubkila")) {
+				worldName = "aab";
+				is131 = true;
+				atLeast152 = true;
+			} else if (typeDump.equals("[Bbeabdsbawemabdtbfzbdwngngbevawfbgfawvawvaxrawbbfrausbjhaycawwaraavybkdavwbjvbkila")) {
 				worldName = "aab";
 				is131 = true;
 			} else if (typeDump.equals("[Baywayoaaszleaypbavaysmdazratabbaatqatqaulaswbanarnbdzauwatraohastbevasrbenbezbdmbdjkh")) {
@@ -234,7 +239,12 @@ public class FinderWindow extends JFrame {
 						try {
 							m = mc.getMethod("s");
 						} catch (NoSuchMethodException e6) {
-							m = mc.getMethod("t");
+							try {
+								m = mc.getMethod("t");
+							} catch (NoSuchMethodException e7) {
+
+								m = mc.getMethod("u");
+							}
 						}
 					}
 				
