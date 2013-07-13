@@ -8,15 +8,21 @@ import MoF.SaveLoader;
 import java.io.File;
 import java.io.IOException;
 
+import amidst.gui.VersionSelectWindow;
+import amidst.json.InstallInformation;
+
 public class Amidst {
 	public final static int version_major = 3;
 	public final static int version_minor = 0;
+	public static InstallInformation installInformation = new InstallInformation(false);
 	
 	public static void main(String args[]) throws IOException {
 		Util.setLookAndFeel();
 		Google.startTracking();
 		Google.track("Run");
-		FinderWindow w = new FinderWindow(); //as long as we design it well, we won’t need a reference to it ;)
+		new VersionSelectWindow();
+		
+		/*FinderWindow w = new FinderWindow(); //as long as we design it well, we won't need a reference to it ;)
 		//TODO: redesign, move to optipns
 		if (args.length > 0) {
 			File dat = new File(args[0]);
@@ -24,7 +30,7 @@ public class Amidst {
 				w.setProject(new Project(new SaveLoader(dat)));
 			else
 				w.setProject(new Project(args[0]));
-		}
+		}*/
 	}
 	
 	public static String version() {

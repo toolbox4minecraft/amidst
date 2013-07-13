@@ -68,13 +68,17 @@ public enum ReflectionInfo {
 				if (typeString.startsWith("class ") && !typeString.contains("."))
 					typeDump += typeString.substring(6);
 			}
-			Log.debug(typeDump.replace("[", "-"));
+			Log.debug(typeDump);
 			String worldName;
 			
 			boolean is25 = false;
 			boolean atLeast131 = false;
 			boolean atLeast152 = false;
 			if (typeDump.equals("[Bbdzbdrbawemabdsbfybdvngngbeuawfbgeawvawvaxrawbbfqausbjgaycawwaraavybkcavwbjubkila")) {
+				worldName = "aab";
+				atLeast131 = true;
+				atLeast152 = true;
+			} else if (typeDump.equals("[Bbdzbdrbawemabdsbfybdvngngbeuawfbgeawvawvaxrawbbfqausbjgaycawwaraavybkcavwbjubkila")) {
 				worldName = "aab";
 				atLeast131 = true;
 				atLeast152 = true;
@@ -235,7 +239,10 @@ public enum ReflectionInfo {
 //			pre1 - x, sq
 //			pre0 - w, rj
 		} catch (java.lang.NoClassDefFoundError e2) {
-			JOptionPane.showMessageDialog(null, "AMIDST ran in JAR mode without -noverify!\nUse: java -noverify -jar AMIDST.jar");
+			JOptionPane.showMessageDialog(null, "AMIDST encountered an error loading your copy of Minecraft!\nThis can be caused by an unsupported version or modified copy.");
+			System.exit(0);
+		} catch (java.lang.ClassNotFoundException e3) {
+			JOptionPane.showMessageDialog(null, "AMIDST encountered an error loading your copy of Minecraft!\nThis can be caused by an unsupported version or modified copy.");
 			System.exit(0);
 		} catch (Exception e) {
 			e.printStackTrace();
