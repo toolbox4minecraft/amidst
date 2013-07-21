@@ -14,6 +14,7 @@ public class Fragment {
 	public int blockX, blockY;
 	
 	private Layer[] layers;
+	private IconLayer[] iconLayers;
 	
 	private BufferedImage[] imgBuffers;
 	private MapObject[] objects;
@@ -29,14 +30,17 @@ public class Fragment {
 	
 	private static int[] dataCache = new int[SIZE*SIZE];
 	
-	
 	public Fragment(Layer... layers) {
+		this(layers, null);
+	}
+	public Fragment(Layer[] layers, IconLayer[] iconLayers) {
 		this.layers = layers;
 		imgBuffers = new BufferedImage[layers.length];
 		for (int i = 0; i < layers.length; i++) {
 			if (!layers[i].isLive())
 				imgBuffers[i] = new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_ARGB);
 		}
+		this.iconLayers = iconLayers;
 		objects = new MapObject[MAX_OBJECTS_PER_FRAGMENT];
 	}
 	
@@ -46,6 +50,9 @@ public class Fragment {
 		for (int i = 0; i < layers.length; i++) {
 			if (!layers[i].isLive())
 				layers[i].draw(this, i);
+		}
+		for (int i = 0; i < iconLayers.length; i++) {
+			iconLayers[i].generateMapObjects(this);
 		}
 		isLoaded = true;
 	}
@@ -83,6 +90,20 @@ public class Fragment {
 				}
 			}
 		}
+	}
+	
+	public void drawObjects(Graphics2D g, AffineTransform mat) {
+		for (int i = 0; i < objectsLength; i++) {
+			if (objects[i].parentLayer.isVisible()) {
+				g.setTransform(mat);
+				g.drawImage(objects[i].getImage(), objects[i].x, objects[i].y, null);
+			}
+		}
+	}
+	
+	public void addObject(MapObject object) {
+		objects[objectsLength] = object;
+		objectsLength++;
 	}
 	
 	public void setImageData(int layerID, int[] data) {

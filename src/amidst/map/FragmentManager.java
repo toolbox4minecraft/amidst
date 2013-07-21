@@ -26,7 +26,7 @@ public class FragmentManager extends Thread {
 	
 	private Stack<Layer> layerList;
 	
-	public FragmentManager(Layer... layers) {
+	public FragmentManager(Layer[] layers, IconLayer[] iconLayers) {
 		cacheEnabled = false;
 		fragmentStack = new ConcurrentLinkedQueue<Fragment>();
 		requestQueue = new ConcurrentLinkedQueue<Fragment>();
@@ -38,7 +38,7 @@ public class FragmentManager extends Thread {
 		
 		Arrays.sort(layers);
 		for (int i = 0; i < CACHE_SIZE; i++) {
-			fragmentCache[i] = new Fragment(layers);
+			fragmentCache[i] = new Fragment(layers, iconLayers);
 			fragmentStack.offer(fragmentCache[i]);
 		}
 		
@@ -46,7 +46,7 @@ public class FragmentManager extends Thread {
 	}
 	
 	public FragmentManager(File cachePath) {
-		this();
+		this(null, null); // TODO: What is this doing here?
 		cacheEnabled = true;
 		this.cachePath = cachePath;
 	}

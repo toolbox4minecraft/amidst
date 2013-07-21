@@ -3,11 +3,14 @@ package MoF;
 
 import amidst.Log;
 import amidst.Options;
+import amidst.map.IconLayer;
+import amidst.map.Layer;
 import amidst.map.Map;
 import amidst.map.MapObject;
 import amidst.map.layers.BiomeLayer;
 import amidst.map.layers.GridLayer;
 import amidst.map.layers.SlimeLayer;
+import amidst.map.layers.VillageLayer;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -59,7 +62,16 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		panSpeed = new Point2D.Double();
 		this.proj = proj;
 		
-		testMap = new Map(proj.manager, new BiomeLayer(), new SlimeLayer(), new GridLayer()); //TODO: implement more layers
+		testMap = new Map(proj.manager, 
+				new Layer[] {
+					new BiomeLayer(),
+					new SlimeLayer(),
+					new GridLayer()
+				},
+				new IconLayer[] {
+					new VillageLayer()
+				}
+		); //TODO: implement more layers
 		
 		addMouseListener(this);
 		addMouseWheelListener(this);

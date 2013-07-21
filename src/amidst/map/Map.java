@@ -27,13 +27,17 @@ public class Map {
 	private AffineTransform mat;
 	
 	// TODO : This must be changed with the removal of ChunkManager
-	public Map(ChunkManager manager, Layer... layers) {
+	public Map(ChunkManager manager, Layer[] layers, IconLayer[] iconLayers) {
 		for (Layer layer : layers) {
 			layer.setChunkManager(manager);
 			layer.setMap(this);
 		}
+		for (IconLayer layer : iconLayers) {
+			layer.setChunkManager(manager);
+			layer.setMap(this);
+		}
 		
-		fManager = new FragmentManager(layers);
+		fManager = new FragmentManager(layers, iconLayers);
 		mat = new AffineTransform();
 		
 		start = new Point2D.Double();
@@ -63,8 +67,6 @@ public class Map {
 		Fragment frag = startNode;
 		size = Fragment.SIZE;
 		if (frag.hasNext) {
-			Fragment corner = frag.nextFragment;
-			
 			mat.setToIdentity();
 			mat.translate(start.x, start.y);
 			mat.scale(scale, scale);
@@ -76,7 +78,20 @@ public class Map {
 					mat.translate(-size * w, size);
 				}
 			}
-			
+		}
+		frag = startNode;
+		if (frag.hasNext) {
+			mat.setToIdentity();
+			mat.translate(start.x, start.y);
+			mat.scale(scale, scale);
+			while (frag.hasNext) {
+				frag = frag.nextFragment;
+				frag.drawObjects(g, mat);
+				mat.translate(size, 0);
+				if (frag.endOfLine) {
+					mat.translate(-size * w, size);
+				}
+			}
 		}
 		g.setTransform(iMat);
 		/*if (frag != null) {
