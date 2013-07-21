@@ -35,6 +35,14 @@ public enum Options {
 		showIcons            = new BooleanPrefModel(pref, "icons",            true);
 	}
 	
+	public File getJar() {
+		if (Amidst.installInformation.isPre161)
+			return jar.get();
+		else
+			return Amidst.installInformation.getJarFile();
+		
+	}
+	
 	public String getSeedMessage() {
 		if (seedText == null)
 			return "Seed: " + seed;

@@ -17,7 +17,6 @@ public class Project extends JPanel {
 	private static final long serialVersionUID = 1132526465987018165L;
 	
 	public MapViewer map;
-	private MapInfoPanel minfo;
 	public static int FRAGMENT_SIZE = 256;
 	public ChunkManager manager;
 	private Timer timer;
@@ -66,11 +65,7 @@ public class Project extends JPanel {
 		
 		//Create MapViewer
 		map = new MapViewer(this);
-		
 		add(map, BorderLayout.CENTER);
-		minfo = new MapInfoPanel(map);
-		add(minfo, BorderLayout.EAST);
-		
 		//Debug
 		this.setBackground(Color.BLUE);
 		
@@ -86,7 +81,6 @@ public class Project extends JPanel {
 	
 	public void tick() {
 		map.repaint();
-		minfo.repaint();
 	}
 	
 	public void dispose() {
@@ -97,8 +91,6 @@ public class Project extends JPanel {
 		timer.cancel();
 		timer = null;
 		curTarget = null;
-		minfo.dispose();
-		minfo = null;
 		save = null;
 		
 	}

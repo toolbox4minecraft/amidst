@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 
 import MoF.ChunkManager;
 import amidst.Log;
+import amidst.preferences.BooleanPrefModel;
 
 public class Layer implements Comparable<Layer> {
 	public String name;
@@ -28,8 +29,11 @@ public class Layer implements Comparable<Layer> {
 	public CacheManager cacheManager;
 	public String cachePath;
 	
+	protected Map map;
 	private boolean live;
 	protected ChunkManager chunkManager;
+	
+	private BooleanPrefModel visible = null;
 	
 	public Layer(String name) {
 		this(name, null);
@@ -50,6 +54,15 @@ public class Layer implements Comparable<Layer> {
 		scale = ((double)Fragment.SIZE)/((double)size);
 		for (int i = 0; i < defaultData.length; i++)
 			defaultData[i] = 0x00000000;
+	}
+	public void setMap(Map map) {
+		this.map = map;
+	}
+	public boolean isVisible() {
+		return (visible == null) || visible.get();
+	}
+	public void setVisibilityPref(BooleanPrefModel visibility) {
+		visible = visibility;
 	}
 	
 	public void unload(Fragment frag) {

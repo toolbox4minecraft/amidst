@@ -75,7 +75,6 @@ public class Util {
 	public static File getTempDir(String name) {
 		File baseDir = new File(System.getProperty("java.io.tmpdir"));
 		String baseName = name + "-";
-		
 		for (int counter=0; counter<TEMP_DIR_ATTEMPTS; counter++) {
 			File tempDir = new File(baseDir, baseName + counter);
 			if (tempDir.isDirectory() || tempDir.mkdir())

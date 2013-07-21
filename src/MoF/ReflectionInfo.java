@@ -1,5 +1,6 @@
 package MoF;
 
+import amidst.Amidst;
 import amidst.Log;
 import amidst.Options;
 import amidst.foreign.VersionInfo;
@@ -7,6 +8,7 @@ import amidst.foreign.VersionInfo;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -25,9 +27,9 @@ public enum ReflectionInfo {
 		File s = null;
 		
 		try {
-			ClasspathHacker.addFile(Options.instance.jar.get());
+			ClasspathHacker.addFile(Options.instance.getJar());
 			mc = ClassLoader.getSystemClassLoader().loadClass("net.minecraft.client.Minecraft");
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			fc.addChoosableFileFilter(new FileFilter() {
 				public boolean accept(File f) {
@@ -56,6 +58,12 @@ public enum ReflectionInfo {
 			} else {
 				System.exit(0);
 			}
+		} catch (ClassNotFoundException e) {
+			try {
+				mc = ClassLoader.getSystemClassLoader().loadClass("net.minecraft.server.MinecraftServer");
+			} catch (ClassNotFoundException e1) {
+				e1.printStackTrace();
+			}
 		}
 		
 		try {
@@ -74,7 +82,15 @@ public enum ReflectionInfo {
 			boolean is25 = false;
 			boolean atLeast131 = false;
 			boolean atLeast152 = false;
-			if (typeDump.equals("[Bbdzbdrbawemabdsbfybdvngngbeuawfbgeawvawvaxrawbbfqausbjgaycawwaraavybkcavwbjubkila")) {
+			if (typeDump.equals("mulu[Ljr;hm[J[J[J[J[J[[J")) {
+				worldName = "abv";
+				atLeast131 = true;
+				atLeast152 = true;
+			} else if (typeDump.equals("msls[Ljp;hk[J[J[J[J[J[[J")) {
+				worldName = "abr";
+				atLeast131 = true;
+				atLeast152 = true;
+			} else if (typeDump.equals("[Bbdzbdrbawemabdsbfybdvngngbeuawfbgeawvawvaxrawbbfqausbjgaycawwaraavybkcavwbjubkila")) {
 				worldName = "aab";
 				atLeast131 = true;
 				atLeast152 = true;

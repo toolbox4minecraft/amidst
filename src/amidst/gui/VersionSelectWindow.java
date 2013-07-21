@@ -40,7 +40,6 @@ public class VersionSelectWindow extends JFrame {
 		Object[] profileArray = null;
 		try {
 			LauncherProfile profile = readObject(profileJsonFile, LauncherProfile.class);
-			System.out.println(profile.profiles.get("New Profile5").name);
 			profile.profiles.put("(Default)",  new InstallInformation());
 			
 			profileArray = profile.profiles.values().toArray();

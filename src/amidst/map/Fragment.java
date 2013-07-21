@@ -9,13 +9,15 @@ import java.util.Vector;
 import amidst.Log;
 
 public class Fragment {
-	public static final int SIZE = 256, SIZE_SHIFT = 8;
+	public static final int SIZE = 256, SIZE_SHIFT = 8, MAX_OBJECTS_PER_FRAGMENT = 20;
 	
 	public int blockX, blockY;
 	
 	private Layer[] layers;
 	
 	private BufferedImage[] imgBuffers;
+	private MapObject[] objects;
+	private int objectsLength = 0;
 	
 	public boolean isActive = false;
 	public boolean isLoaded = false;
@@ -32,8 +34,10 @@ public class Fragment {
 		this.layers = layers;
 		imgBuffers = new BufferedImage[layers.length];
 		for (int i = 0; i < layers.length; i++) {
-			imgBuffers[i] = new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_ARGB);
+			if (!layers[i].isLive())
+				imgBuffers[i] = new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_ARGB);
 		}
+		objects = new MapObject[MAX_OBJECTS_PER_FRAGMENT];
 	}
 	
 	public void load() {
@@ -57,22 +61,26 @@ public class Fragment {
 	}
 	
 	public void clear() {
+		objectsLength = 0;
 		//isLoaded = false;
 		hasNext = false;
 		endOfLine = false;
 		isActive = true;
 		for (int i = 0; i < imgBuffers.length; i++) {
-			imgBuffers[i].setRGB(0, 0, layers[i].size, layers[i].size, layers[i].getDefaultData(), 0, layers[i].size);
+			if (!layers[i].isLive())
+				imgBuffers[i].setRGB(0, 0, layers[i].size, layers[i].size, layers[i].getDefaultData(), 0, layers[i].size);
 		}
 	}
 	
 	public void draw(Graphics2D g, AffineTransform mat) {
 		for (int i = 0; i < imgBuffers.length; i++) {
-			if (layers[i].isLive()) {
-				layers[i].drawLive(this, g, layers[i].getMatrix(mat));
-			} else {
-				g.setTransform(layers[i].getScaledMatrix(mat));
-				g.drawImage(imgBuffers[i], 0, 0, null);
+			if (layers[i].isVisible()) {
+				if (layers[i].isLive()) {
+					layers[i].drawLive(this, g, layers[i].getMatrix(mat));
+				} else {
+					g.setTransform(layers[i].getScaledMatrix(mat));
+					g.drawImage(imgBuffers[i], 0, 0, null);
+				}
 			}
 		}
 	}

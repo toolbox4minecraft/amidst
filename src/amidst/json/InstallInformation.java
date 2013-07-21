@@ -1,5 +1,7 @@
 package amidst.json;
 
+import java.io.File;
+
 import amidst.Util;
 
 public class InstallInformation {
@@ -20,7 +22,7 @@ public class InstallInformation {
 	public InstallInformation(boolean isOld) {
 		if (!isOld) {
 			name = "(Default)";
-			lastVersionId = "1.6.1";
+			lastVersionId = "1.6.2";
 		} else {
 			name = "Minecraft";
 			lastVersionId = "None";
@@ -31,5 +33,9 @@ public class InstallInformation {
 	
 	public String toString() {
 		return name;
+	}
+	
+	public File getJarFile() {
+		return new File(gameDir + "/versions/" + lastVersionId + "/" + lastVersionId + ".jar");
 	}
 }

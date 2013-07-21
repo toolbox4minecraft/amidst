@@ -63,9 +63,5 @@ public class BiomeLayer extends Layer {
 		
 	}
 	
-	public void drawLive(Fragment fragment, Graphics2D g, AffineTransform mat) {
-		g.setColor(Color.black);
-		g.setTransform(mat);
-		g.fillRect(2, 2, 20, 20);
-	}
+
 }

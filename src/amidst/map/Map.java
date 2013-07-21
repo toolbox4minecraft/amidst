@@ -28,8 +28,10 @@ public class Map {
 	
 	// TODO : This must be changed with the removal of ChunkManager
 	public Map(ChunkManager manager, Layer... layers) {
-		for (Layer layer : layers)
+		for (Layer layer : layers) {
 			layer.setChunkManager(manager);
+			layer.setMap(this);
+		}
 		
 		fManager = new FragmentManager(layers);
 		mat = new AffineTransform();

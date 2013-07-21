@@ -8,7 +8,8 @@ import java.util.List;
 /** Information about what each supported version is
  */
 public enum VersionInfo {
-	V1_6_1("aab", "air"),
+	V1_6_2("akn", "akl"),
+	V1_6_1("akj", "akh"),
 	V1_5_1("ait", "air"),
 	V1_5_0("ain", "ail"),
 	V1_4_6("agw", "agu"),
