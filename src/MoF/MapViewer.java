@@ -14,6 +14,7 @@ import amidst.map.layers.VillageLayer;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -41,17 +42,24 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	private double scale = 1;
 	public int strongholdCount, villageCount;
 	
-	private Map testMap;
+	private Map worldMap;
+	private MapObject selectedObject = null;
 	private Point lastMouse;
 	private Point2D.Double panSpeed;
 	
+	private boolean isMouseInside = false;
 	private int zoomLevel = 0, zoomTicksRemaining = 0;
 	private float targetZoom = 1.0f, curZoom = 1.0f;
 	private Point zoomMouse;
 	
+	private Color textColor = new Color(1f, 1f, 1f),
+				  panelColor = new Color(0.2f, 0.2f, 0.2f, 0.7f);
+	private Font textFont = new Font("arial", Font.BOLD, 15);
+	
+	
 	public void dispose() {
 		Log.debug("DISPOSING OF MAPVIEWER");
-		testMap.dispose();
+		worldMap.dispose();
 		chart.dispose();
 		menu.removeAll();
 		proj = null;
@@ -62,7 +70,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		panSpeed = new Point2D.Double();
 		this.proj = proj;
 		
-		testMap = new Map(proj.manager, 
+		worldMap = new Map(proj.manager, 
 				new Layer[] {
 					new BiomeLayer(),
 					new SlimeLayer(),
@@ -83,21 +91,19 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		g2d.setColor(Color.black);
 		g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
 		
-		g2d.setColor(new Color(25, 25, 25));
-		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2d.setFont(new Font("arial", Font.BOLD, 15));
-		g2d.drawString(Options.instance.getSeedMessage(), 20, 30);
+
 		if (zoomTicksRemaining-- > 0) {
 			float lastZoom = curZoom;
 			curZoom = (targetZoom + curZoom) * 0.5f;
 			
-			Point2D.Double targetZoom = testMap.getScaled(lastZoom, curZoom, zoomMouse);
-			testMap.moveBy(targetZoom);
-			testMap.setZoom(curZoom);
+			Point2D.Double targetZoom = worldMap.getScaled(lastZoom, curZoom, zoomMouse);
+			worldMap.moveBy(targetZoom);
+			worldMap.setZoom(curZoom);
 		}
-		
+
+		Point curMouse = getMousePosition();
+		isMouseInside = (curMouse != null);
 		if (lastMouse != null) {
-			Point curMouse = getMousePosition();
 			if (curMouse != null) {
 				double difX = curMouse.x - lastMouse.x;
 				double difY = curMouse.y - lastMouse.y;
@@ -111,13 +117,55 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		panSpeed.x *= 0.95f;
 		panSpeed.y *= 0.95f;
 		
-		testMap.moveBy(panSpeed.x, panSpeed.y);
+		worldMap.moveBy(panSpeed.x, panSpeed.y);
 		
-		testMap.draw(g2d);
+		worldMap.draw(g2d);
+		
+		FontMetrics textMetrics = g2d.getFontMetrics(textFont);
+		
+		
+		boolean hasSelection = (selectedObject != null);
+		g2d.setColor(panelColor);
+		g2d.fillRect(10, 10, textMetrics.stringWidth(Options.instance.getSeedMessage()) + 20, 30);
+		
+		String selectionMessage = "";
+		if (hasSelection) {
+			selectionMessage = selectedObject.getName() + " [" + selectedObject.rx + ", " + selectedObject.ry + "]";
+			g2d.fillRect(10, 45, 45 + textMetrics.stringWidth(selectionMessage), 35);
+			// TODO: Use the text size request method
+		}
+		
+		Point mouseLocation = null;
+		String mouseLocationText = null; 
+		int stringWidth = 0;
+		
+		if (isMouseInside) {
+			mouseLocation = worldMap.screenToLocal(curMouse);
+			int biome = worldMap.getBiomeData(mouseLocation);
+			// TODO: Biome is an obsolete class
+			String biomeName = Biome.a[biome].name;
+			mouseLocationText = biomeName + " [" + mouseLocation.x + ", " + mouseLocation.y + "]";
+			stringWidth = textMetrics.stringWidth(mouseLocationText);
+			g2d.fillRect(getWidth() - (25 + stringWidth), 10, (15 + stringWidth), 30);
+		}
+		g2d.setColor(textColor);
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2d.setFont(textFont);
+		g2d.drawString(Options.instance.getSeedMessage(), 20, 30);
+		
+		
+		if (hasSelection) {
+			g2d.drawImage(selectedObject.getImage(), 15, 50, null);
+			g2d.drawString(selectionMessage, 50, 68);
+		}
+		
+		if (isMouseInside) {
+			g2d.drawString(mouseLocationText, getWidth() - (18 + stringWidth), 30);
+		}
 	}
 	
 	public void centerAt(double x, double y) {
-		testMap.centerOn(x, y);
+		worldMap.centerOn(x, y);
 	}
 	
 	public void centerAndReset(double x, double y) {
@@ -158,7 +206,17 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		scaleBy(z);
 	}
 	@Override
-	public void mouseClicked(MouseEvent me) {
+	public void mouseClicked(MouseEvent e) {
+		if (!e.isMetaDown()) {
+			Point mouse = getMousePosition();
+			MapObject object = worldMap.getObjectAt(mouse, 50.0);
+			if (object != null)
+				object.localScale = 1.5;
+			
+			if (selectedObject != null)
+				selectedObject.localScale = 1.0;
+			selectedObject = object;
+		}
 	}
 	@Override
 	public void mouseEntered(MouseEvent arg0) {

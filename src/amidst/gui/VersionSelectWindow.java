@@ -80,7 +80,8 @@ public class VersionSelectWindow extends JFrame {
 				}
 			}
 		});
-		
+		getRootPane().setDefaultButton(btnConfirm);
+		btnConfirm.requestFocus();
 		setTitle("Temporary profile selector");
 		setSize(300, 100);
 		setVisible(true);

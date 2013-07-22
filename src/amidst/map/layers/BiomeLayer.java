@@ -11,7 +11,7 @@ import amidst.map.Fragment;
 import amidst.map.Layer;
 
 public class BiomeLayer extends Layer {
-	private static int[] biomeColors = new int[] {
+	public static int[] biomeColors = new int[] {
 		Util.makeColor(13 ,51 ,219), //Ocean;
 		Util.makeColor(104,222,104), //Plains;
 		Util.makeColor(226,242,131), //Desert;
@@ -59,9 +59,8 @@ public class BiomeLayer extends Layer {
 		int[] biomeData = chunkManager.ba(x, y, size, size);
 		dataCache = Util.arrayToColors(biomeData, dataCache, biomeColors, size*size);
 		fragment.setImageData(layerID, dataCache);
-		
-		
 	}
+	
 	
 
 }

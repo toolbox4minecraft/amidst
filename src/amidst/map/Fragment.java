@@ -17,8 +17,8 @@ public class Fragment {
 	private IconLayer[] iconLayers;
 	
 	private BufferedImage[] imgBuffers;
-	private MapObject[] objects;
-	private int objectsLength = 0;
+	public MapObject[] objects;
+	public int objectsLength = 0;
 	
 	public boolean isActive = false;
 	public boolean isLoaded = false;
@@ -92,16 +92,29 @@ public class Fragment {
 		}
 	}
 	
-	public void drawObjects(Graphics2D g, AffineTransform mat) {
+	public void drawObjects(Graphics2D g, AffineTransform inMatrix) {
+		AffineTransform drawMatrix = new AffineTransform();
 		for (int i = 0; i < objectsLength; i++) {
 			if (objects[i].parentLayer.isVisible()) {
-				g.setTransform(mat);
-				g.drawImage(objects[i].getImage(), objects[i].x, objects[i].y, null);
+				drawMatrix.setTransform(inMatrix);
+				drawMatrix.translate(objects[i].x, objects[i].y);
+				double invZoom = 1.0 / objects[i].parentLayer.map.getZoom();
+				drawMatrix.scale(invZoom, invZoom);
+				g.setTransform(drawMatrix);
+				
+				g.drawImage(objects[i].getImage(), 
+						    -(objects[i].getWidth() >> 1),
+						    -(objects[i].getHeight() >> 1),
+						    objects[i].getWidth(),
+						    objects[i].getHeight(),
+						    null);
 			}
 		}
 	}
 	
 	public void addObject(MapObject object) {
+		object.rx = object.x + this.blockX;
+		object.ry = object.y + this.blockY;
 		objects[objectsLength] = object;
 		objectsLength++;
 	}

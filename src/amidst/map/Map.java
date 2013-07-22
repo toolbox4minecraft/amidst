@@ -10,6 +10,7 @@ import MoF.ChunkManager;
 import amidst.Amidst;
 
 import amidst.Log;
+import amidst.map.layers.BiomeLayer;
 
 public class Map {
 	private static final boolean START = true, END = false;
@@ -93,6 +94,7 @@ public class Map {
 				}
 			}
 		}
+
 		g.setTransform(iMat);
 		/*if (frag != null) {
 			frag.draw(g, 0, 0, Fragment.SIZE);
@@ -258,5 +260,77 @@ public class Map {
 	
 	public void dispose() {
 		fManager.close();
+	}
+	
+	public MapObject getObjectAt(Point position, double maxRange) {
+		double x = start.x;
+		double y = start.y;
+		MapObject closestObject = null;
+		double closestDistance = maxRange;
+		Fragment frag = startNode;
+		int size = (int) (Fragment.SIZE * scale);
+		while (frag.hasNext) {
+			frag = frag.nextFragment;
+			for (int i = 0; i < frag.objectsLength; i ++) {
+				if (frag.objects[i].parentLayer.isVisible()) {
+					Point objPosition = frag.objects[i].getLocation();
+					objPosition.x *= scale;
+					objPosition.y *= scale;
+					objPosition.x += x;
+					objPosition.y += y;
+					
+					double distance = objPosition.distance(position);
+					if (distance < closestDistance) {
+						closestDistance = distance;
+						closestObject = frag.objects[i];
+					}
+				}
+			}
+			x += size;
+			if (frag.endOfLine) {
+				x = start.x;
+				y += size;
+			}
+		}
+		return closestObject;
+	}
+
+	public Point screenToLocal(Point inPoint) {
+		Point point = inPoint.getLocation();
+
+		point.x -= start.x;
+		point.y -= start.y;
+		
+		// TODO: int -> double -> int = bad?
+		point.x /= scale;
+		point.y /= scale;
+
+		point.x += startNode.nextFragment.blockX;
+		point.y += startNode.nextFragment.blockY;
+
+		return point;
+	}
+	public int getBiomeData(Point point) {
+		Fragment frag = startNode;
+		while (frag.hasNext) {
+			frag = frag.nextFragment;
+			if ((frag.blockX < point.x) &&
+				(frag.blockY < point.y) &&
+				(frag.blockX + Fragment.SIZE > point.x) &&
+				(frag.blockY + Fragment.SIZE > point.y)) {
+				int x = point.x - frag.blockX;
+				int y = point.y - frag.blockY;
+				x >>= 2;
+				y >>= 2;
+			
+				// TODO: This is sloppy!
+				int pixel = frag.getBufferedImage(0).getRGB(x, y);
+				for (int i = 0; i < BiomeLayer.biomeColors.length; i++) {
+					if (pixel == BiomeLayer.biomeColors[i])
+						return i;
+				}
+			}
+		}
+		return 0;
 	}
 }
