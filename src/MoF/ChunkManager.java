@@ -264,6 +264,7 @@ public class ChunkManager extends Thread
 		return true;
 	}
 	
+	
 	public Point a(int x, int y, int size, List<Biome> paramList, Random paramRandom) {
 		int i = x - size >> 2;
 		int j = y - size >> 2;

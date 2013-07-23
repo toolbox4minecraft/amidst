@@ -14,7 +14,7 @@ import amidst.map.MapObjectNether;
 import amidst.map.MapObjectVillage;
 
 public class VillageLayer extends IconLayer {
-	public static List<Biome> a = Arrays.asList(new Biome[] { Biome.c, Biome.d });
+	public static List<Biome> validBiomes = Arrays.asList(new Biome[] { Biome.c, Biome.d });
 	
 	public VillageLayer() {
 		super("villages");
@@ -60,7 +60,7 @@ public class VillageLayer extends IconLayer {
 		chunkX = k;
 		chunkY = m;
 		if ((chunkX == n) && (chunkY == i1))
-			return chunkManager.a(chunkX * 16 + 8, chunkY * 16 + 8, 0, a);
+			return chunkManager.a(chunkX * 16 + 8, chunkY * 16 + 8, 0, validBiomes);
 		
 		return false;
 	}

@@ -43,6 +43,39 @@ public class BiomeLayer extends Layer {
 		Util.makeColor(26 ,87 ,34 ),
 		Util.makeColor(73 ,105,33 )
 	};
+	public static String[] biomeNames = new String[] {
+		"Ocean",
+		"Plains",
+		"Desert",
+		
+		"Extreme Hills",
+		"Forest",
+		"Taiga",
+		
+		"Swampland",
+		"River",
+		
+		"Hell",
+		"Sky",
+		
+		"Frozen Ocean",
+		"Frozen River",
+		"Ice Plains",
+		"Ice Mountains",
+		
+		"Mushroom Island",
+		"Mushroom Island Shore",
+		
+		"Beach",
+		"Desert Hills",
+		"Forest Hills",
+		"Taiga Hills",
+		"Extreme Hills Edge",
+		
+		"Jungle",
+		"Jungle Hills"
+	};
+	
 	private static int size = Fragment.SIZE >> 2;
 	
 	public BiomeLayer() {
@@ -60,7 +93,19 @@ public class BiomeLayer extends Layer {
 		dataCache = Util.arrayToColors(biomeData, dataCache, biomeColors, size*size);
 		fragment.setImageData(layerID, dataCache);
 	}
+	// TODO: This shouldn't be static, it should use the ID provided when it's loaded in for getBufferedImage
+	public static int getBiomeForFragment(Fragment frag, int blockX, int blockY) {
+		int pixel = frag.getBufferedImage(0).getRGB(blockX >> 2, blockY >> 2);
+		for (int i = 0; i < BiomeLayer.biomeColors.length; i++) {
+			if (pixel == BiomeLayer.biomeColors[i])
+				return i;
+		}
+		return 0;
+	}
+	
+	public static String getBiomeNameForFragment(Fragment frag, int blockX, int blockY) {
+		return biomeNames[getBiomeForFragment(frag, blockX, blockY)];
+	}
 	
 	
-
 }

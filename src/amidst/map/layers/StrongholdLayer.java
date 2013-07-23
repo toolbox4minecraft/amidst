@@ -11,11 +11,10 @@ import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
 import amidst.map.MapObjectNether;
+import amidst.map.MapObjectStronghold;
 import amidst.map.MapObjectVillage;
 
 public class StrongholdLayer extends IconLayer {
-	public static List<Biome> a = Arrays.asList(new Biome[] { Biome.c, Biome.d });
-	
 	public StrongholdLayer() {
 		super("strongholds");
 		setVisibilityPref(Options.instance.showIcons);
@@ -27,7 +26,7 @@ public class StrongholdLayer extends IconLayer {
 				int chunkX = x + frag.getChunkX();
 				int chunkY = y + frag.getChunkY();
 				if (checkChunk(chunkX, chunkY, chunkManager)) {
-					frag.addObject(new MapObjectVillage(x << 4, y << 4).setParent(this));
+					frag.addObject(new MapObjectStronghold(x << 4, y << 4).setParent(this));
 				}
 			}
 		}
@@ -36,7 +35,11 @@ public class StrongholdLayer extends IconLayer {
 
 	public boolean checkChunk(int chunkX, int chunkY, ChunkManager chunkManager) {
 		for (int i = 0; i < 3; i++) {
-			//if (chunkManager.strongholds[i].)
+			int strongholdChunkX = chunkManager.strongholds[i].x >> 4;
+			int strongholdChunkY = chunkManager.strongholds[i].y >> 4;
+			if ((strongholdChunkX == chunkX) && (strongholdChunkY == chunkY))
+				return true;
+			
 			
 		}
 		return false;

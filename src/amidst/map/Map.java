@@ -310,7 +310,7 @@ public class Map {
 
 		return point;
 	}
-	public int getBiomeData(Point point) {
+	public String getBiomeNameAt(Point point) {
 		Fragment frag = startNode;
 		while (frag.hasNext) {
 			frag = frag.nextFragment;
@@ -320,17 +320,10 @@ public class Map {
 				(frag.blockY + Fragment.SIZE > point.y)) {
 				int x = point.x - frag.blockX;
 				int y = point.y - frag.blockY;
-				x >>= 2;
-				y >>= 2;
-			
-				// TODO: This is sloppy!
-				int pixel = frag.getBufferedImage(0).getRGB(x, y);
-				for (int i = 0; i < BiomeLayer.biomeColors.length; i++) {
-					if (pixel == BiomeLayer.biomeColors[i])
-						return i;
-				}
+				
+				return BiomeLayer.getBiomeNameForFragment(frag, x, y);
 			}
 		}
-		return 0;
+		return "Unknown";
 	}
 }

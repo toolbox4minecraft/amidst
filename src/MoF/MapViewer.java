@@ -10,6 +10,8 @@ import amidst.map.MapObject;
 import amidst.map.layers.BiomeLayer;
 import amidst.map.layers.GridLayer;
 import amidst.map.layers.SlimeLayer;
+import amidst.map.layers.StrongholdLayer;
+import amidst.map.layers.TempleLayer;
 import amidst.map.layers.VillageLayer;
 
 import java.awt.Color;
@@ -77,7 +79,9 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 					new GridLayer()
 				},
 				new IconLayer[] {
-					new VillageLayer()
+					new VillageLayer(),
+					new StrongholdLayer(),
+					new TempleLayer()
 				}
 		); //TODO: implement more layers
 		
@@ -141,9 +145,8 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		
 		if (isMouseInside) {
 			mouseLocation = worldMap.screenToLocal(curMouse);
-			int biome = worldMap.getBiomeData(mouseLocation);
 			// TODO: Biome is an obsolete class
-			String biomeName = Biome.a[biome].name;
+			String biomeName = worldMap.getBiomeNameAt(mouseLocation);
 			mouseLocationText = biomeName + " [" + mouseLocation.x + ", " + mouseLocation.y + "]";
 			stringWidth = textMetrics.stringWidth(mouseLocationText);
 			g2d.fillRect(getWidth() - (25 + stringWidth), 10, (15 + stringWidth), 30);
