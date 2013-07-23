@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import amidst.Log;
 
 public class FragmentManager extends Thread {
-	private static final int CACHE_SIZE = 512;
+	private static final int CACHE_SIZE = 2048;
 	
 	// TODO : Implement custom cache paths?
 	private boolean cacheEnabled = false;

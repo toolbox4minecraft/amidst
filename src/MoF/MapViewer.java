@@ -187,7 +187,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		int notches = e.getWheelRotation();
 		
 		if (notches > 0) {
-			if (zoomLevel < 10) {
+			if (zoomLevel < 20) {
 				targetZoom /= 1.1;
 				zoomLevel++;
 				zoomTicksRemaining = 100;

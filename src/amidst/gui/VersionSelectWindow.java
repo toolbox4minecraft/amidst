@@ -33,7 +33,6 @@ import amidst.json.LauncherProfile;
 import com.google.gson.Gson;
 
 public class VersionSelectWindow extends JFrame {
-	
 	public VersionSelectWindow() {
 		File profileJsonFile = new File(Util.minecraftDirectory + "\\launcher_profiles.json");
 		
