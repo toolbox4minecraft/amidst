@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
+import java.util.Random;
 
 /** Structured menubar-creation to alleviate the huge mess that it would be elsewise
  */
@@ -50,6 +51,7 @@ public class AmidstMenu extends JMenuBar {
 				setMnemonic(KeyEvent.VK_N);
 				add(new SeedMenuItem());
 				add(new FileMenuItem());
+				add(new RandomSeedMenuItem());
 				//add(new JMenuItem("From Server"));
 			}});
 			
@@ -98,6 +100,27 @@ public class AmidstMenu extends JMenuBar {
 								window.setProject(new Project(s, worldType));
 						}
 					}
+				});
+			}
+		}
+		
+		private class RandomSeedMenuItem extends JMenuItem {
+			private RandomSeedMenuItem() {
+				super("From random seed");
+				setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
+				addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						//Create the JOptionPane.
+							Random random = new Random();
+							long seed = random.nextLong();
+							SaveLoader.Type worldType = choose("New Project", "Enter world type\n", SaveLoader.Type.values());
+							
+							//If a string was returned, say so.
+							if (worldType != null)
+								window.setProject(new Project(seed, worldType));
+						}
+					
 				});
 			}
 		}
