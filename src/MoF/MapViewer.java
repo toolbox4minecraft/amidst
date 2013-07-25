@@ -122,7 +122,8 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		panSpeed.y *= 0.95f;
 		
 		worldMap.moveBy(panSpeed.x, panSpeed.y);
-		
+		worldMap.width = getWidth();
+		worldMap.height = getHeight();
 		worldMap.draw(g2d);
 		
 		FontMetrics textMetrics = g2d.getFontMetrics(textFont);
@@ -167,28 +168,12 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		}
 	}
 	
-	public void centerAt(double x, double y) {
+	public void centerAt(long x, long y) {
 		worldMap.centerOn(x, y);
 	}
 	
-	public void centerAndReset(double x, double y) {
-		scale = 1;
-		centerAt(x, y);
-	}
-	
-	public void setScale(double scale) {
-		if ((scale <= 8) && (scale >= 0.25)) {
-			this.scale = scale;
-		}
-	}
-	public void scaleBy(double scale) {
-		setScale(this.scale*scale);
-	}
-	
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		zoomMouse = getMousePosition();
-		int notches = e.getWheelRotation();
-		
+	public void adjustZoom(Point position, int notches) {
+		zoomMouse = position;
 		if (notches > 0) {
 			if (zoomLevel < 20) {
 				targetZoom /= 1.1;
@@ -202,11 +187,12 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 				zoomTicksRemaining = 100;
 			}
 		}
+	}
+	
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		int notches = e.getWheelRotation();
 		
-		double z = 2;
-		if (notches == 1)
-			z = 0.5;
-		scaleBy(z);
+		adjustZoom(getMousePosition(), notches);
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {

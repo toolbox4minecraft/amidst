@@ -114,7 +114,7 @@ public class Project extends JPanel {
 	}
 	
 	
-	public void moveMapTo(int x, int y) {
-		map.centerAndReset(x, y);
+	public void moveMapTo(long x, long y) {
+		map.centerAt(x, y);
 	}
 }

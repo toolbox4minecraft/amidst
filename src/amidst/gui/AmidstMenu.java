@@ -184,12 +184,14 @@ public class AmidstMenu extends JMenuBar {
 						public void actionPerformed(ActionEvent arg0) {
 							String s = JOptionPane.showInputDialog(null, "Enter coordinates: (Ex. 123,456)", "Go To", JOptionPane.QUESTION_MESSAGE);
 							if (s != null) {
-								String[] c = s.split(",");
+								String[] c = s.replaceAll(" ", "").split(",");
 								try {
-									long x = Long.parseLong(c[0]) >> 2;
-									long y = Long.parseLong(c[1]) >> 2;
-									window.curProject.moveMapTo((int)x, (int)y);
-								} catch (NumberFormatException ignored) {}
+									long x = Long.parseLong(c[0]);
+									long y = Long.parseLong(c[1]);
+									window.curProject.moveMapTo(x, y);
+								} catch (NumberFormatException ignored) {
+									ignored.printStackTrace();
+								}
 							}
 						}
 					});

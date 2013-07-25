@@ -11,6 +11,7 @@ import amidst.resources.ResourceLoader;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -63,12 +64,15 @@ public class FinderWindow extends JFrame {
 		this.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
+				Point mouse = getMousePosition();
+				if (mouse == null)
+					mouse = new Point((int)(getWidth() >> 1), (int)(getHeight () >> 1));
 				if (arg0.getKeyCode() == KeyEvent.VK_EQUALS) {
 					if (curProject!=null)
-						curProject.map.scaleBy(2);
+						curProject.map.adjustZoom(mouse, 1);
 				} else if (arg0.getKeyCode() == KeyEvent.VK_MINUS) {
 					if (curProject!=null)
-						curProject.map.scaleBy(0.5);
+						curProject.map.adjustZoom(mouse, -1);
 				}
 			}
 			

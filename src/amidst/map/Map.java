@@ -23,8 +23,9 @@ public class Map {
 	private Point2D.Double start;
 	
 	private int tileWidth, tileHeight;
+	public int width = 1, height = 1;
 	
-	private final Object resizeLock = new Object();
+	private final Object resizeLock = new Object(), drawLock = new Object();
 	private AffineTransform mat;
 	
 	// TODO : This must be changed with the removal of ChunkManager
@@ -46,56 +47,56 @@ public class Map {
 	}
 	
 	public void draw(Graphics2D g) {
-		Rectangle b = g.getClipBounds();
-		
-		int size = (int) (Fragment.SIZE * scale);
-		int w = b.width / size + 2;
-		int h = b.height / size + 2;
-		
-		while (tileWidth <  w) addColumn(END);
-		while (tileWidth >  w) removeColumn(END);
-		while (tileHeight < h) addRow(END);
-		while (tileHeight > h) removeRow(END);
-		
-		while (start.x >     0) { start.x -= size; addColumn(START); removeColumn(END);   }
-		while (start.x < -size) { start.x += size; addColumn(END);   removeColumn(START); }
-		while (start.y >     0) { start.y -= size; addRow(START);    removeRow(END);      }
-		while (start.y < -size) { start.y += size; addRow(END);      removeRow(START);    }
-		
-		//g.setColor(Color.pink);
-		//g.fillRect(5, 5, width - 10, height - 10);
-		
-		Fragment frag = startNode;
-		size = Fragment.SIZE;
-		if (frag.hasNext) {
-			mat.setToIdentity();
-			mat.translate(start.x, start.y);
-			mat.scale(scale, scale);
-			while (frag.hasNext) {
-				frag = frag.nextFragment;
-				frag.draw(g, mat);
-				mat.translate(size, 0);
-				if (frag.endOfLine) {
-					mat.translate(-size * w, size);
+		synchronized (drawLock) {
+			int size = (int) (Fragment.SIZE * scale);
+			int w = width / size + 2;
+			int h = height / size + 2;
+			
+			while (tileWidth <  w) addColumn(END);
+			while (tileWidth >  w) removeColumn(END);
+			while (tileHeight < h) addRow(END);
+			while (tileHeight > h) removeRow(END);
+			
+			while (start.x >     0) { start.x -= size; addColumn(START); removeColumn(END);   }
+			while (start.x < -size) { start.x += size; addColumn(END);   removeColumn(START); }
+			while (start.y >     0) { start.y -= size; addRow(START);    removeRow(END);      }
+			while (start.y < -size) { start.y += size; addRow(END);      removeRow(START);    }
+			
+			//g.setColor(Color.pink);
+			//g.fillRect(5, 5, width - 10, height - 10);
+			
+			Fragment frag = startNode;
+			size = Fragment.SIZE;
+			if (frag.hasNext) {
+				mat.setToIdentity();
+				mat.translate(start.x, start.y);
+				mat.scale(scale, scale);
+				while (frag.hasNext) {
+					frag = frag.nextFragment;
+					frag.draw(g, mat);
+					mat.translate(size, 0);
+					if (frag.endOfLine) {
+						mat.translate(-size * w, size);
+					}
 				}
 			}
-		}
-		frag = startNode;
-		if (frag.hasNext) {
-			mat.setToIdentity();
-			mat.translate(start.x, start.y);
-			mat.scale(scale, scale);
-			while (frag.hasNext) {
-				frag = frag.nextFragment;
-				frag.drawObjects(g, mat);
-				mat.translate(size, 0);
-				if (frag.endOfLine) {
-					mat.translate(-size * w, size);
+			frag = startNode;
+			if (frag.hasNext) {
+				mat.setToIdentity();
+				mat.translate(start.x, start.y);
+				mat.scale(scale, scale);
+				while (frag.hasNext) {
+					frag = frag.nextFragment;
+					frag.drawObjects(g, mat);
+					mat.translate(size, 0);
+					if (frag.endOfLine) {
+						mat.translate(-size * w, size);
+					}
 				}
 			}
+	
+			g.setTransform(iMat);
 		}
-
-		g.setTransform(iMat);
 		/*if (frag != null) {
 			frag.draw(g, 0, 0, Fragment.SIZE);
 		}*/
@@ -236,8 +237,18 @@ public class Map {
 		start.y += y;
 	}
 	
-	public void centerOn(double x, double y) {
-		//TODO
+	public void centerOn(long x, long y) {
+		synchronized (drawLock) {
+			while (tileHeight > 1) removeRow(false);
+			while (tileWidth > 1) removeColumn(false);
+			Fragment frag = startNode.nextFragment;
+			frag.remove();
+			fManager.returnFragment(frag);
+			// TODO: Support longs?
+			addStart((int)x, (int)y);
+			
+			Log.i(x + ", " + y);
+		}
 	}
 	
 	public void setZoom(double scale) {
