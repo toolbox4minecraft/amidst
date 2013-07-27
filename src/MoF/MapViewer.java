@@ -22,6 +22,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
@@ -32,7 +34,7 @@ import java.io.File;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 
-public class MapViewer extends JComponent implements MouseListener, MouseWheelListener {
+public class MapViewer extends JComponent implements MouseListener, MouseWheelListener, KeyListener {
 	/**
 	 * 
 	 */
@@ -87,6 +89,8 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		
 		addMouseListener(this);
 		addMouseWheelListener(this);
+		addKeyListener(this);
+		setFocusable(true);
 	}
 	
 	@Override
@@ -117,11 +121,16 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 			
 			lastMouse.translate((int) panSpeed.x, (int)panSpeed.y);
 		}
-		
-		panSpeed.x *= 0.95f;
-		panSpeed.y *= 0.95f;
-		
+
 		worldMap.moveBy(panSpeed.x, panSpeed.y);
+		if (Options.instance.mapFlicking.get()) {
+			panSpeed.x *= 0.95f;
+			panSpeed.y *= 0.95f;
+		} else {
+			panSpeed.x *= 0.f;
+			panSpeed.y *= 0.f;
+		}
+		
 		worldMap.width = getWidth();
 		worldMap.height = getHeight();
 		worldMap.draw(g2d);
@@ -175,7 +184,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	public void adjustZoom(Point position, int notches) {
 		zoomMouse = position;
 		if (notches > 0) {
-			if (zoomLevel < 20) {
+			if (zoomLevel < (Options.instance.maxZoom.get()?20:10000)) {
 				targetZoom /= 1.1;
 				zoomLevel++;
 				zoomTicksRemaining = 100;
@@ -207,6 +216,8 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 			selectedObject = object;
 		}
 	}
+	
+	
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 	}
@@ -290,5 +301,28 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		g2d.dispose();
 		img.flush();
 		*/
+	}
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		Point mouse = getMousePosition();
+		if (mouse == null)
+			mouse = new Point((int)(getWidth() >> 1), (int)(getHeight () >> 1));
+		if (e.getKeyCode() == KeyEvent.VK_EQUALS)
+				adjustZoom(mouse, -1);
+		else if (e.getKeyCode() == KeyEvent.VK_MINUS)
+				adjustZoom(mouse, 1);
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

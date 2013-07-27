@@ -61,27 +61,7 @@ public class FinderWindow extends JFrame {
 				System.exit(0);
 			}
 		});
-		this.addKeyListener(new KeyListener() {
-			@Override
-			public void keyPressed(KeyEvent arg0) {
-				Point mouse = getMousePosition();
-				if (mouse == null)
-					mouse = new Point((int)(getWidth() >> 1), (int)(getHeight () >> 1));
-				if (arg0.getKeyCode() == KeyEvent.VK_EQUALS) {
-					if (curProject!=null)
-						curProject.map.adjustZoom(mouse, 1);
-				} else if (arg0.getKeyCode() == KeyEvent.VK_MINUS) {
-					if (curProject!=null)
-						curProject.map.adjustZoom(mouse, -1);
-				}
-			}
-			
-			@Override
-			public void keyReleased(KeyEvent arg0) {}
-			
-			@Override
-			public void keyTyped(KeyEvent arg0) {}
-		});
+
 	    
 	}
 	
@@ -94,6 +74,7 @@ public class FinderWindow extends JFrame {
 		}
 		menuBar.mapMenu.setEnabled(true);
 		curProject = ep;
+		
 		pane.add(curProject, BorderLayout.CENTER);
 		
 		this.validate();

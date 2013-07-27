@@ -3,7 +3,7 @@ package amidst.map;
 import java.awt.image.BufferedImage;
 
 public class MapObjectPlayer extends MapObject {
-	private String name;
+	public String name;
 	public boolean needSave;
 	private BufferedImage marker;
 	
@@ -11,12 +11,6 @@ public class MapObjectPlayer extends MapObject {
 		super(MapMarkers.PLAYER, x , y);
 		marker = type.image;
 		needSave = false;
-		this.setName(name);
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
 		this.name = name;
 	}
 	public int getWidth() {

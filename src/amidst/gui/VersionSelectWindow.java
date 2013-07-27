@@ -83,6 +83,7 @@ public class VersionSelectWindow extends JFrame {
 		btnConfirm.requestFocus();
 		setTitle("Temporary profile selector");
 		setSize(300, 100);
+		setLocation(200, 200);
 		setVisible(true);
 	}
 	

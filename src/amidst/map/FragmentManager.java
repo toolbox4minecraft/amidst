@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import amidst.Log;
 
 public class FragmentManager extends Thread {
-	private static final int CACHE_SIZE = 2048;
+	private int cacheSize = 2048;
 	
 	// TODO : Implement custom cache paths?
 	private boolean cacheEnabled = false;
@@ -26,6 +26,9 @@ public class FragmentManager extends Thread {
 	
 	private Stack<Layer> layerList;
 	
+	private Layer[] layers;
+	private IconLayer[] iconLayers;
+	
 	public FragmentManager(Layer[] layers, IconLayer[] iconLayers) {
 		cacheEnabled = false;
 		fragmentStack = new ConcurrentLinkedQueue<Fragment>();
@@ -34,14 +37,15 @@ public class FragmentManager extends Thread {
 		layerList = new Stack<Layer>();
 		Collections.addAll(layerList, layers);
 		
-		fragmentCache = new Fragment[CACHE_SIZE];
+		fragmentCache = new Fragment[cacheSize];
 		
 		Arrays.sort(layers);
-		for (int i = 0; i < CACHE_SIZE; i++) {
+		for (int i = 0; i < cacheSize; i++) {
 			fragmentCache[i] = new Fragment(layers, iconLayers);
 			fragmentStack.offer(fragmentCache[i]);
 		}
-		
+		this.layers = layers;
+		this.iconLayers = iconLayers;
 		start();
 	}
 	
@@ -55,10 +59,29 @@ public class FragmentManager extends Thread {
 		// TODO : Unload all fragments
 	}
 	
+	private void increaseFragmentCache() {
+		Fragment[] newFragments = new Fragment[cacheSize << 1];
+		for (int i = 0; i < cacheSize; i++) {
+			newFragments[i] = fragmentCache[i];
+			fragmentCache[i] = null;
+		}
+		for (int i = cacheSize; i < cacheSize << 1; i++) {
+			newFragments[i] = new Fragment(layers, iconLayers);
+			fragmentStack.offer(newFragments[i]);
+		}
+		fragmentCache = newFragments;
+		Log.i("FragmentManager cache size increased from " + cacheSize + " to " + (cacheSize << 1));
+		cacheSize <<= 1;
+		System.gc();
+	}
+	
 	public Fragment requestFragment(int x, int y) {
 		if (!running)
 			return null;
-		Fragment frag = fragmentStack.poll();
+		Fragment frag = null;
+		while ((frag = fragmentStack.poll()) == null)
+			increaseFragmentCache();
+		
 		frag.clear();
 		frag.blockX = x;
 		frag.blockY = y;

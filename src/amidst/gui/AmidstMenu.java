@@ -8,6 +8,10 @@ import amidst.resources.ResourceLoader;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -94,7 +98,8 @@ public class AmidstMenu extends JMenuBar {
 						String s = JOptionPane.showInputDialog(null, "Enter seed", "New Project", JOptionPane.QUESTION_MESSAGE);
 						if (s != null) {
 							SaveLoader.Type worldType = choose("New Project", "Enter world type\n", SaveLoader.Type.values());
-							
+							if (s.equals(""))
+								s = "" + (new Random()).nextLong();
 							//If a string was returned, say so.
 							if (worldType != null)
 								window.setProject(new Project(s, worldType));
@@ -134,11 +139,12 @@ public class AmidstMenu extends JMenuBar {
 						JFileChooser fc = new JFileChooser();
 						fc.addChoosableFileFilter(SaveLoader.getFilter());
 						fc.setAcceptAllFileFilterUsed(false);
+						fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 						fc.setCurrentDirectory(new File(Util.minecraftDirectory, "saves"));
 						
 						if (fc.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {
 							File f = fc.getSelectedFile();
-							SaveLoader s = new SaveLoader(f);
+							SaveLoader s = new SaveLoader(new File(f.getAbsoluteFile() + "\\level.dat"));
 							window.setProject(new Project(s));
 						}
 					}
@@ -155,7 +161,9 @@ public class AmidstMenu extends JMenuBar {
 			add(new FindMenu());
 			add(new GoToMenu());
 			add(new LayersMenu());
+			add(new MiscMenu());
 			add(new CaptureMenuItem());
+		
 		}
 		
 		private class FindMenu extends JMenu {
@@ -174,7 +182,23 @@ public class AmidstMenu extends JMenuBar {
 				}});
 			}
 		}
-		
+		private class MiscMenu extends JMenu {
+			private MiscMenu() {
+				super("Miscellaneous");
+
+				add(new DisplayingCheckbox("Map Flicking",
+						null,
+						KeyEvent.VK_I,
+						Options.instance.mapFlicking));
+				add(new CopySeedMenuItem());
+				
+				add(new DisplayingCheckbox("Max Zoom",
+						null,
+						KeyEvent.VK_Z,
+						Options.instance.maxZoom));
+			}
+			
+		}
 		private class GoToMenu extends JMenu {
 			private GoToMenu() {
 				super("Go to");
@@ -236,15 +260,15 @@ public class AmidstMenu extends JMenuBar {
 					Options.instance.showIcons));
 			}
 			
-			private class DisplayingCheckbox extends JCheckBoxMenuItem {
-				private DisplayingCheckbox(String text, BufferedImage icon, int key, JToggleButton.ToggleButtonModel model) {
-					super(text, (icon != null) ? new ImageIcon(icon) : null);
-					setAccelerator(KeyStroke.getKeyStroke(key, InputEvent.CTRL_DOWN_MASK));
-					setModel(model);
-				}
+
+		}
+		public class DisplayingCheckbox extends JCheckBoxMenuItem {
+			private DisplayingCheckbox(String text, BufferedImage icon, int key, JToggleButton.ToggleButtonModel model) {
+				super(text, (icon != null) ? new ImageIcon(icon) : null);
+				setAccelerator(KeyStroke.getKeyStroke(key, InputEvent.CTRL_DOWN_MASK));
+				setModel(model);
 			}
 		}
-		
 		private class CaptureMenuItem extends JMenuItem {
 			private CaptureMenuItem() {
 				super("Capture");
@@ -265,6 +289,28 @@ public class AmidstMenu extends JMenuBar {
 								s += ".png";
 							window.curProject.map.saveToFile(new File(s));
 						}
+					}
+				});
+			}
+		}
+		private class CopySeedMenuItem extends JMenuItem {
+			private CopySeedMenuItem() {
+				super("Copy Seed to Clipboard");
+				
+				setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
+				
+				addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						StringSelection stringSelection = new StringSelection(Options.instance.seed + "");
+					    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					    clipboard.setContents(stringSelection, new ClipboardOwner() {
+							@Override
+							public void lostOwnership(Clipboard arg0, Transferable arg1) {
+								// TODO Auto-generated method stub
+								
+							}
+					    });
 					}
 				});
 			}
