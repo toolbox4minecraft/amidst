@@ -238,6 +238,10 @@ public class Map {
 	}
 	
 	public void centerOn(long x, long y) {
+		long fragOffsetX = x % Fragment.SIZE;
+		long fragOffsetY = y % Fragment.SIZE;
+		long startX = x - fragOffsetX;
+		long startY = y - fragOffsetY;
 		synchronized (drawLock) {
 			while (tileHeight > 1) removeRow(false);
 			while (tileWidth > 1) removeColumn(false);
@@ -245,9 +249,17 @@ public class Map {
 			frag.remove();
 			fManager.returnFragment(frag);
 			// TODO: Support longs?
-			addStart((int)x, (int)y);
+			double offsetX = (double)(width >> 1);
+			double offsetY = (double)(height >> 1);
+
+
+			offsetX -= fragOffsetX;
+			offsetY -= fragOffsetY;
 			
-			Log.i(x + ", " + y);
+			start.x = offsetX;
+			start.y = offsetY;
+			
+			addStart((int)startX, (int)startY);
 		}
 	}
 	
