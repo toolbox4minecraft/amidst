@@ -6,6 +6,7 @@ import amidst.map.MapObjectPlayer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.KeyListener;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -115,7 +116,9 @@ public class Project extends JPanel {
 		}
 	}
 	
-	
+	public KeyListener getKeyListener() {
+		return map;
+	}
 	public void moveMapTo(long x, long y) {
 		map.centerAt(x, y);
 	}

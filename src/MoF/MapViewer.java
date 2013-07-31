@@ -7,6 +7,7 @@ import amidst.map.IconLayer;
 import amidst.map.Layer;
 import amidst.map.Map;
 import amidst.map.MapObject;
+import amidst.map.MapObjectPlayer;
 import amidst.map.layers.BiomeLayer;
 import amidst.map.layers.GridLayer;
 import amidst.map.layers.NetherFortressLayer;
@@ -34,6 +35,7 @@ import java.awt.geom.Point2D;
 import java.io.File;
 
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 public class MapViewer extends JComponent implements MouseListener, MouseWheelListener, KeyListener {
@@ -88,7 +90,12 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 				new NetherFortressLayer(),
 				new PlayerLayer(proj.save)
 			};
+			
+			for (MapObjectPlayer player : proj.save.getPlayers()) {
+				menu.add(new JMenuItem(player.getName()));
+			}
 		}
+		
 		worldMap = new Map(proj.manager, 
 				new Layer[] {
 					new BiomeLayer(),
@@ -100,7 +107,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		
 		addMouseListener(this);
 		addMouseWheelListener(this);
-		addKeyListener(this);
+		
 		setFocusable(true);
 	}
 	
@@ -249,6 +256,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	public void mouseReleased(MouseEvent e) {
 		if (e.isPopupTrigger() && ReflectionInfo.instance.version.saveEnabled()) {
 			if (proj.saveLoaded) {
+				Log.debug("Test");
 				menu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		} else lastMouse = null;
@@ -271,7 +279,6 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
-		Log.debug("Key");
 		// TODO Auto-generated method stub
 		Point mouse = getMousePosition();
 		if (mouse == null)

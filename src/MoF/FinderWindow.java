@@ -69,12 +69,14 @@ public class FinderWindow extends JFrame {
 		// FIXME Release resources.
 		if (curProject != null) {
 			curProject.dispose();
+			this.removeKeyListener(curProject.getKeyListener());
 			pane.remove(curProject);
 			System.gc();
 		}
 		menuBar.mapMenu.setEnabled(true);
 		curProject = ep;
-		
+
+		addKeyListener(ep.getKeyListener());
 		pane.add(curProject, BorderLayout.CENTER);
 		
 		this.validate();
