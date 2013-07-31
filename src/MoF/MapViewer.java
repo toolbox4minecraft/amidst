@@ -9,6 +9,7 @@ import amidst.map.Map;
 import amidst.map.MapObject;
 import amidst.map.layers.BiomeLayer;
 import amidst.map.layers.GridLayer;
+import amidst.map.layers.NetherFortressLayer;
 import amidst.map.layers.PlayerLayer;
 import amidst.map.layers.SlimeLayer;
 import amidst.map.layers.StrongholdLayer;
@@ -76,13 +77,15 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 			iconLayers = new IconLayer[] {
 				new VillageLayer(),
 				new StrongholdLayer(),
-				new TempleLayer()
+				new TempleLayer(),
+				new NetherFortressLayer()
 			};
 		} else {
 			iconLayers = new IconLayer[] {
 				new VillageLayer(),
 				new StrongholdLayer(),
 				new TempleLayer(),
+				new NetherFortressLayer(),
 				new PlayerLayer(proj.save)
 			};
 		}
