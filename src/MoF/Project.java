@@ -37,9 +37,7 @@ public class Project extends JPanel {
 	}
 	
 	public Project(SaveLoader file) {
-		this(file.seed, SaveLoader.genType);
-		saveLoaded = true;
-		save = file;
+		this(file.seed, SaveLoader.genType, file);
 		
 		Google.track("seed/file/" + Options.instance.seed);
 		List<MapObjectPlayer> players = file.getPlayers();
@@ -53,8 +51,12 @@ public class Project extends JPanel {
 	}
 	
 	public Project(long seed, SaveLoader.Type type) {
+		this(seed, type, null);
+	}
+	public Project(long seed, SaveLoader.Type type, SaveLoader saveLoader) {
 		SaveLoader.genType = type;
-		saveLoaded = false;
+		saveLoaded = !(saveLoader == null);
+		save = saveLoader;
 		//Enter seed data:
 		Options.instance.seed = seed;
 		

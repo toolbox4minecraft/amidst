@@ -1,19 +1,20 @@
 package MoF;
 
-//import com.boxysystems.jgoogleanalytics.*;
+import amidst.Amidst;
+
+import com.boxysystems.jgoogleanalytics.*;
 
 
 public class Google {
-	//private static JGoogleAnalyticsTracker tracker;
+	private static JGoogleAnalyticsTracker tracker;
 	public static void startTracking() {
-		  //tracker = new JGoogleAnalyticsTracker("AMIDST", Amidst.version(), "UA-27092717-1");
+		  tracker = new JGoogleAnalyticsTracker("AMIDST", Amidst.version(), "UA-27092717-1");
 
 	}
 	
 	public static void track(String s) {
-		  //FocusPoint focusPoint = new FocusPoint(s);
-		  //tracker.trackAsynchronously(focusPoint);
-		  
+		  FocusPoint focusPoint = new FocusPoint(s);
+		  tracker.trackAsynchronously(focusPoint);
 	}
 	
 }

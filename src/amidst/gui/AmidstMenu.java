@@ -144,7 +144,7 @@ public class AmidstMenu extends JMenuBar {
 						
 						if (fc.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {
 							File f = fc.getSelectedFile();
-							SaveLoader s = new SaveLoader(new File(f.getAbsoluteFile() + "\\level.dat"));
+							SaveLoader s = new SaveLoader(new File(f.getAbsoluteFile() + "/level.dat"));
 							window.setProject(new Project(s));
 						}
 					}
@@ -171,12 +171,12 @@ public class AmidstMenu extends JMenuBar {
 				super("Find");
 				//add(new JMenuItem("Biome"));
 				//add(new JMenuItem("Village"));
-				add(new JMenuItem("MapObjectStronghold") {{
+				add(new JMenuItem("Stronghold") {{
 					setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
 					addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
-							goToChosenPoint(window.curProject.manager.strongholds, "stronghold");
+							goToChosenPoint(window.curProject.manager.strongholds, "Stronghold");
 						}
 					});
 				}});
@@ -221,14 +221,14 @@ public class AmidstMenu extends JMenuBar {
 					});
 				}});
 				
-				add(new JMenuItem("MapObjectPlayer") {{
+				add(new JMenuItem("Player") {{
 					addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
 							if (window.curProject.saveLoaded) {
 								List<MapObjectPlayer> playerList = window.curProject.save.getPlayers();
 								MapObjectPlayer[] players = playerList.toArray(new MapObjectPlayer[playerList.size()]);
-								goToChosenPoint(players, "MapObjectPlayer");
+								goToChosenPoint(players, "Player");
 							}
 						}
 					});
@@ -365,6 +365,6 @@ public class AmidstMenu extends JMenuBar {
 	private <T extends Point> void goToChosenPoint(T[] points, String name) {
 		T p = choose("Go to", "Select " + name + ":", points);
 		if (p != null)
-			window.curProject.moveMapTo(p.x >> 2, p.y >> 2);
+			window.curProject.moveMapTo(p.x, p.y);
 	}
 }

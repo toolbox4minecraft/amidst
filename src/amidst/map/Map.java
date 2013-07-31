@@ -3,7 +3,12 @@ package amidst.map;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Stack;
+
+import javax.imageio.ImageIO;
 
 
 import MoF.ChunkManager;
@@ -252,9 +257,8 @@ public class Map {
 			double offsetX = (double)(width >> 1);
 			double offsetY = (double)(height >> 1);
 
-
-			offsetX -= fragOffsetX;
-			offsetY -= fragOffsetY;
+			offsetX -= ((double)fragOffsetX)*scale;
+			offsetY -= ((double)fragOffsetY)*scale;
 			
 			start.x = offsetX;
 			start.y = offsetY;
@@ -348,5 +352,21 @@ public class Map {
 			}
 		}
 		return "Unknown";
+	}
+
+	public void saveViewToFile(File file) {
+		BufferedImage image = new BufferedImage(Fragment.SIZE * tileWidth, Fragment.SIZE * tileHeight, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = image.createGraphics();
+		
+		draw(g2d);
+		
+		try {
+			ImageIO.write(image, "png", file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		g2d.dispose();
+		image.flush();
 	}
 }

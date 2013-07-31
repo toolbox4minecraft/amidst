@@ -2,13 +2,18 @@ package amidst.map;
 
 import java.awt.image.BufferedImage;
 
+import MoF.SaveLoader;
+
 public class MapObjectPlayer extends MapObject {
 	public String name;
 	public boolean needSave;
 	private BufferedImage marker;
+	public int globalX, globalY;
 	
 	public MapObjectPlayer(String name, int x, int y) {
-		super(MapMarkers.PLAYER, x , y);
+		super(MapMarkers.PLAYER, x % Fragment.SIZE, y % Fragment.SIZE);
+		globalX = x;
+		globalY = y;
 		marker = type.image;
 		needSave = false;
 		this.name = name;
@@ -33,9 +38,11 @@ public class MapObjectPlayer extends MapObject {
 	public void setMarker(BufferedImage img) {
 		this.marker = img;
 	}
-	
+	public String getName() {
+		return name;
+	}
 	@Override
 	public String toString() {
-		return "MapObjectPlayer \"" + name + "\" at (" + x + ", " + y + ")";
+		return "Player \"" + name + "\" at (" + x + ", " + y + ")";
 	}
 }

@@ -24,6 +24,8 @@ public class MapObject extends Point {
 	public String getName() {
 		return type.toString();
 	}
+	
+	
 	public int getWidth() {
 		if (model.isSelected())
 			return (int)(type.image.getWidth() * localScale);

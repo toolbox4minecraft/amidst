@@ -31,7 +31,6 @@ public class ChunkManager extends Thread
 	private Method getData, clearCache;
 	private List<MapObjectPlayer> players;
 	private static boolean firstRun = true;
-	private SkinManager m;
 	public ChunkManager(long seed) {
 		try {
 			if (firstRun) {
@@ -77,8 +76,6 @@ public class ChunkManager extends Thread
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		m = new SkinManager();
-		m.start();
 		this.seed = seed;
 		strongholds = new MapGenStronghold().a(seed, this);
 		queue = new Stack<Fragment>();
@@ -135,12 +132,9 @@ public class ChunkManager extends Thread
 	}
 	public void addPlayer(MapObjectPlayer p) { 
 		players.add(p);
-		m.addPlayer(p);
 	}
 	public void setPlayerData(List<MapObjectPlayer> ar) {
 		players = ar;
-		for (MapObjectPlayer player : ar)
-			m.addPlayer(player);
 	}
 	
 	private void getSlimeData(Fragment frag) {

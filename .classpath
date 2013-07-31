@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="C:/Users/Skiphs/Documents/Minecraft/AMIDST Lib/lib/commons-lang3-3.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Skiphs/Documents/Minecraft/AMIDST Lib/lib/gson-2.2.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Skiphs/Documents/Minecraft/AMIDST Lib/lib/guava-14.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Skiphs/Documents/Minecraft/AMIDST Lib/lib/JGoogleAnalytics_0.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

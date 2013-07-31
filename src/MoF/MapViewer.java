@@ -9,6 +9,7 @@ import amidst.map.Map;
 import amidst.map.MapObject;
 import amidst.map.layers.BiomeLayer;
 import amidst.map.layers.GridLayer;
+import amidst.map.layers.PlayerLayer;
 import amidst.map.layers.SlimeLayer;
 import amidst.map.layers.StrongholdLayer;
 import amidst.map.layers.TempleLayer;
@@ -41,7 +42,6 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	private static final long serialVersionUID = -8309927053337294612L;
 	private Project proj;
 	
-	private PieChart chart;
 	private JPopupMenu menu = new JPopupMenu();
 	private double scale = 1;
 	public int strongholdCount, villageCount;
@@ -64,27 +64,35 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	public void dispose() {
 		Log.debug("DISPOSING OF MAPVIEWER");
 		worldMap.dispose();
-		chart.dispose();
 		menu.removeAll();
 		proj = null;
 	}
 	
 	MapViewer(Project proj) {
-		chart = new PieChart(0, 0); //TODO: do something with chart
 		panSpeed = new Point2D.Double();
 		this.proj = proj;
-		
+		IconLayer[] iconLayers = null;
+		if (!proj.saveLoaded) {
+			iconLayers = new IconLayer[] {
+				new VillageLayer(),
+				new StrongholdLayer(),
+				new TempleLayer()
+			};
+		} else {
+			iconLayers = new IconLayer[] {
+				new VillageLayer(),
+				new StrongholdLayer(),
+				new TempleLayer(),
+				new PlayerLayer(proj.save)
+			};
+		}
 		worldMap = new Map(proj.manager, 
 				new Layer[] {
 					new BiomeLayer(),
 					new SlimeLayer(),
 					new GridLayer()
 				},
-				new IconLayer[] {
-					new VillageLayer(),
-					new StrongholdLayer(),
-					new TempleLayer()
-				}
+				iconLayers
 		); //TODO: implement more layers
 		
 		addMouseListener(this);
@@ -122,7 +130,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 			lastMouse.translate((int) panSpeed.x, (int)panSpeed.y);
 		}
 
-		worldMap.moveBy(panSpeed.x, panSpeed.y);
+		worldMap.moveBy((int)panSpeed.x, (int)panSpeed.y);
 		if (Options.instance.mapFlicking.get()) {
 			panSpeed.x *= 0.95f;
 			panSpeed.y *= 0.95f;
@@ -168,7 +176,11 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		
 		
 		if (hasSelection) {
-			g2d.drawImage(selectedObject.getImage(), 15, 50, null);
+			double width = selectedObject.getWidth();
+			double height = selectedObject.getHeight();
+			double ratio = width/height;
+			
+			g2d.drawImage(selectedObject.getImage(), 15, 50, (int)(25.*ratio), 25, null);
 			g2d.drawString(selectionMessage, 50, 68);
 		}
 		
@@ -243,13 +255,6 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		return proj.curTarget;
 	}
 	
-	public PieChart getChart() {
-		return chart;
-	}
-	
-	public void setChart(PieChart chart) {
-		this.chart = chart;
-	}
 	
 	public void movePlayer(String name, ActionEvent e) {
 		//PixelInfo p = getCursorInformation(new Point(tempX, tempY));
@@ -258,52 +263,12 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	}
 	
 	public void saveToFile(File f) {
-		/*TODO
-		int fs = Project.FRAGMENT_SIZE;
-		BufferedImage img = new BufferedImage(fragXMax*fs,fragYMax*fs,BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2d = img.createGraphics();
-		g2d.setColor(Color.black);
-		g2d.fillRect(0, 0, img.getWidth(), img.getHeight());
-		
-		List<MapObject> markers;
-		for (int ey = 0; ey < fragYMax; ey++) {
-			for (int ex = 0; ex < fragXMax; ex++) {
-				Fragment tempFrag = frags.get(ey).get(ex);
-				tempFrag.tempX = (tempFrag.x - fragX)*Project.FRAGMENT_SIZE;
-				tempFrag.tempY = (tempFrag.y - fragY)*Project.FRAGMENT_SIZE;
-				tempFrag.paint(g2d,
-						tempFrag.tempX,
-						tempFrag.tempY,
-						Project.FRAGMENT_SIZE,
-						Project.FRAGMENT_SIZE);
-			}
-		}
-		
-		for (int ey = 0; ey < fragYMax; ey++) {
-			for (int ex = 0; ex < fragXMax; ex++) {
-				Fragment tempFrag = frags.get(ey).get(ex);
-				markers = tempFrag.objects;
-				for (MapObject m : markers) {
-					g2d.drawImage(m.getImage(),
-							tempFrag.tempX + m.rx - (m.getWidth() >> 1),
-							tempFrag.tempY + m.ry - (m.getHeight() >> 1),
-							m.getWidth(),
-							m.getHeight(),
-							null);
-				}
-			}
-		}
-		try {
-			ImageIO.write(img, "png", f);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		g2d.dispose();
-		img.flush();
-		*/
+		worldMap.saveViewToFile(f);
 	}
+	
 	@Override
 	public void keyPressed(KeyEvent e) {
+		Log.debug("Key");
 		// TODO Auto-generated method stub
 		Point mouse = getMousePosition();
 		if (mouse == null)
