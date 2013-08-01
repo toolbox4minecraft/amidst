@@ -192,7 +192,7 @@ public class AmidstMenu extends JMenuBar {
 						Options.instance.mapFlicking));
 				add(new CopySeedMenuItem());
 				
-				add(new DisplayingCheckbox("Max Zoom",
+				add(new DisplayingCheckbox("Restrict Maximum Zoom",
 						null,
 						KeyEvent.VK_Z,
 						Options.instance.maxZoom));

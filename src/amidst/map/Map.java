@@ -24,7 +24,7 @@ public class Map {
 	
 	private Fragment startNode = new Fragment();
 	
-	private double scale = 1.0;
+	private double scale = 0.25;
 	private Point2D.Double start;
 	
 	private int tileWidth, tileHeight;
@@ -32,6 +32,8 @@ public class Map {
 	
 	private final Object resizeLock = new Object(), drawLock = new Object();
 	private AffineTransform mat;
+	
+	private boolean firstDraw = true;
 	
 	// TODO : This must be changed with the removal of ChunkManager
 	public Map(ChunkManager manager, Layer[] layers, IconLayer[] iconLayers) {
@@ -51,7 +53,12 @@ public class Map {
 		addStart(0, 0);
 	}
 	
+	
 	public void draw(Graphics2D g) {
+		if (firstDraw) {
+			firstDraw = false;
+			centerOn(0, 0);
+		}
 		synchronized (drawLock) {
 			int size = (int) (Fragment.SIZE * scale);
 			int w = width / size + 2;

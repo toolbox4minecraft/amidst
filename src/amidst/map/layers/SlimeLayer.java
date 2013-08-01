@@ -25,13 +25,12 @@ public class SlimeLayer extends Layer {
 			for (int x = 0; x < size; x++) {
 				int xPosition = fragment.getChunkX() + x;
 				int yPosition = fragment.getChunkY() + y;
-				random.setSeed(
-					this.chunkManager.seed +
-					(xPosition * xPosition * 0x4c1906) +
-					(xPosition * 0x5ac0db) +
-					(yPosition * yPosition) * 0x4307a7 + 
-					(yPosition * 0x5f24f) ^ 0x3ad8025f
-				);
+				random.setSeed(this.chunkManager.seed +
+					(long) (xPosition * xPosition * 0x4c1906) + 
+                    (long) (xPosition * 0x5ac0db) + 
+                    (long) (yPosition * yPosition) * 0x4307a7L + 
+                    (long) (yPosition * 0x5f24f) ^ 0x3ad8025f);
+				
 				dataCache[y * size + x] = (random.nextInt(10) == 0) ? 0xA0FF00FF : 0x00000000;
 			}
 		}

@@ -56,7 +56,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	
 	private boolean isMouseInside = false;
 	private int zoomLevel = 0, zoomTicksRemaining = 0;
-	private float targetZoom = 1.0f, curZoom = 1.0f;
+	private double targetZoom = 2.0f, curZoom;
 	private Point zoomMouse;
 	
 	private Color textColor = new Color(1f, 1f, 1f),
@@ -96,7 +96,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 			}
 		}
 		
-		worldMap = new Map(proj.manager, 
+		worldMap = new Map(proj.manager,
 				new Layer[] {
 					new BiomeLayer(),
 					new SlimeLayer(),
@@ -104,6 +104,8 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 				},
 				iconLayers
 		); //TODO: implement more layers
+		targetZoom = worldMap.getZoom();
+		curZoom = worldMap.getZoom();
 		
 		addMouseListener(this);
 		addMouseWheelListener(this);
@@ -119,8 +121,8 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		
 
 		if (zoomTicksRemaining-- > 0) {
-			float lastZoom = curZoom;
-			curZoom = (targetZoom + curZoom) * 0.5f;
+			double lastZoom = curZoom;
+			curZoom = (targetZoom + curZoom) * 0.5;
 			
 			Point2D.Double targetZoom = worldMap.getScaled(lastZoom, curZoom, zoomMouse);
 			worldMap.moveBy(targetZoom);
@@ -134,7 +136,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 				double difX = curMouse.x - lastMouse.x;
 				double difY = curMouse.y - lastMouse.y;
 				// TODO : Scale with time
-				panSpeed.setLocation(difX * 0.2f, difY * 0.2f);
+				panSpeed.setLocation(difX * 0.2, difY * 0.2);
 			}
 			
 			lastMouse.translate((int) panSpeed.x, (int)panSpeed.y);
@@ -206,13 +208,13 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	public void adjustZoom(Point position, int notches) {
 		zoomMouse = position;
 		if (notches > 0) {
-			if (zoomLevel < (Options.instance.maxZoom.get()?20:10000)) {
+			if (zoomLevel < (Options.instance.maxZoom.get()?10:10000)) {
 				targetZoom /= 1.1;
 				zoomLevel++;
 				zoomTicksRemaining = 100;
 			}
 		} else {
-			if (zoomLevel > -10) {
+			if (zoomLevel > -20) {
 				targetZoom *= 1.1;
 				zoomLevel--;
 				zoomTicksRemaining = 100;

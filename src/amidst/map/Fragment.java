@@ -9,7 +9,7 @@ import java.util.Vector;
 import amidst.Log;
 
 public class Fragment {
-	public static final int SIZE = 256, SIZE_SHIFT = 8, MAX_OBJECTS_PER_FRAGMENT = 20;
+	public static final int SIZE = 512, SIZE_SHIFT = 9, MAX_OBJECTS_PER_FRAGMENT = 20;
 	
 	public int blockX, blockY;
 	
