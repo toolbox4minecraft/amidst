@@ -95,7 +95,7 @@ public class Project extends JPanel {
 		timer = null;
 		curTarget = null;
 		save = null;
-		
+		System.gc();
 	}
 	
 	private static long stringToLong(String seed) {

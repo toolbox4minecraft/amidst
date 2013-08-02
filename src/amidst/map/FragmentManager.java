@@ -28,8 +28,9 @@ public class FragmentManager extends Thread {
 	
 	private Layer[] layers;
 	private IconLayer[] iconLayers;
+	private Layer[] liveLayers;
 	
-	public FragmentManager(Layer[] layers, IconLayer[] iconLayers) {
+	public FragmentManager(Layer[] layers, Layer[] liveLayers, IconLayer[] iconLayers) {
 		cacheEnabled = false;
 		fragmentStack = new ConcurrentLinkedQueue<Fragment>();
 		requestQueue = new ConcurrentLinkedQueue<Fragment>();
@@ -41,16 +42,17 @@ public class FragmentManager extends Thread {
 		
 		Arrays.sort(layers);
 		for (int i = 0; i < cacheSize; i++) {
-			fragmentCache[i] = new Fragment(layers, iconLayers);
+			fragmentCache[i] = new Fragment(layers, liveLayers, iconLayers);
 			fragmentStack.offer(fragmentCache[i]);
 		}
 		this.layers = layers;
 		this.iconLayers = iconLayers;
+		this.liveLayers = liveLayers;
 		start();
 	}
 	
 	public FragmentManager(File cachePath) {
-		this(null, null); // TODO: What is this doing here?
+		this(null, null, null); // TODO: What is this doing here?
 		cacheEnabled = true;
 		this.cachePath = cachePath;
 	}
@@ -66,7 +68,7 @@ public class FragmentManager extends Thread {
 			fragmentCache[i] = null;
 		}
 		for (int i = cacheSize; i < cacheSize << 1; i++) {
-			newFragments[i] = new Fragment(layers, iconLayers);
+			newFragments[i] = new Fragment(layers, liveLayers, iconLayers);
 			fragmentStack.offer(newFragments[i]);
 		}
 		fragmentCache = newFragments;
@@ -129,6 +131,9 @@ public class FragmentManager extends Thread {
 	
 	public void close() {
 		this.running = false;
-		for (Fragment f : fragmentCache) f.recycle();
+		for (Fragment f : fragmentCache) {
+			f.recycle();
+			f.destroy();
+		}
 	}
 }

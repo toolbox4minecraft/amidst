@@ -99,7 +99,9 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		worldMap = new Map(proj.manager,
 				new Layer[] {
 					new BiomeLayer(),
-					new SlimeLayer(),
+					new SlimeLayer()
+				},
+				new Layer[] {
 					new GridLayer()
 				},
 				iconLayers

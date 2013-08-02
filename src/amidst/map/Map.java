@@ -36,8 +36,12 @@ public class Map {
 	private boolean firstDraw = true;
 	
 	// TODO : This must be changed with the removal of ChunkManager
-	public Map(ChunkManager manager, Layer[] layers, IconLayer[] iconLayers) {
+	public Map(ChunkManager manager, Layer[] layers,  Layer[] liveLayers, IconLayer[] iconLayers) {
 		for (Layer layer : layers) {
+			layer.setChunkManager(manager);
+			layer.setMap(this);
+		}
+		for (Layer layer : liveLayers) {
 			layer.setChunkManager(manager);
 			layer.setMap(this);
 		}
@@ -46,7 +50,7 @@ public class Map {
 			layer.setMap(this);
 		}
 		
-		fManager = new FragmentManager(layers, iconLayers);
+		fManager = new FragmentManager(layers, liveLayers, iconLayers);
 		mat = new AffineTransform();
 		
 		start = new Point2D.Double();
@@ -92,6 +96,22 @@ public class Map {
 					}
 				}
 			}
+			
+			frag = startNode;
+			if (frag.hasNext) {
+				mat.setToIdentity();
+				mat.translate(start.x, start.y);
+				mat.scale(scale, scale);
+				while (frag.hasNext) {
+					frag = frag.nextFragment;
+					frag.drawLive(g, mat);
+					mat.translate(size, 0);
+					if (frag.endOfLine) {
+						mat.translate(-size * w, size);
+					}
+				}
+			}
+			
 			frag = startNode;
 			if (frag.hasNext) {
 				mat.setToIdentity();

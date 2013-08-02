@@ -14,6 +14,7 @@ public class Fragment {
 	public int blockX, blockY;
 	
 	private Layer[] layers;
+	private Layer[] liveLayers;
 	private IconLayer[] iconLayers;
 	
 	private BufferedImage[] imgBuffers;
@@ -31,10 +32,11 @@ public class Fragment {
 	private static int[] dataCache = new int[SIZE*SIZE];
 	
 	public Fragment(Layer... layers) {
-		this(layers, null);
+		this(layers, null, null);
 	}
-	public Fragment(Layer[] layers, IconLayer[] iconLayers) {
+	public Fragment(Layer[] layers, Layer[] liveLayers, IconLayer[] iconLayers) {
 		this.layers = layers;
+		this.liveLayers = liveLayers;
 		imgBuffers = new BufferedImage[layers.length];
 		for (int i = 0; i < layers.length; i++) {
 			if (!layers[i].isLive())
@@ -78,7 +80,14 @@ public class Fragment {
 				imgBuffers[i].setRGB(0, 0, layers[i].size, layers[i].size, layers[i].getDefaultData(), 0, layers[i].size);
 		}
 	}
-	
+	public void drawLive(Graphics2D g, AffineTransform mat) {
+		for (int i = 0; i < liveLayers.length; i++) {
+			if (liveLayers[i].isVisible()) {
+				liveLayers[i].drawLive(this, g, liveLayers[i].getMatrix(mat));
+			}
+		}
+		
+	}
 	public void draw(Graphics2D g, AffineTransform mat) {
 		for (int i = 0; i < imgBuffers.length; i++) {
 			if (layers[i].isVisible()) {
@@ -162,5 +171,9 @@ public class Fragment {
 	
 	public BufferedImage getBufferedImage(int layerID) {
 		return imgBuffers[layerID];
+	}
+	public void destroy() {
+		for (int i = 0; i < imgBuffers.length; i++)
+			imgBuffers[i].flush();
 	}
 }
