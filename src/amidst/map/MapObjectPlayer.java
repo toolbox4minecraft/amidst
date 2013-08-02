@@ -11,7 +11,9 @@ public class MapObjectPlayer extends MapObject {
 	public int globalX, globalY;
 	
 	public MapObjectPlayer(String name, int x, int y) {
-		super(MapMarkers.PLAYER, x % Fragment.SIZE, y % Fragment.SIZE);
+		super(MapMarkers.PLAYER,
+				(x < 0)?(Fragment.SIZE + x % Fragment.SIZE):(x % Fragment.SIZE),
+				(y < 0)?(Fragment.SIZE + y % Fragment.SIZE):(y % Fragment.SIZE));
 		globalX = x;
 		globalY = y;
 		marker = type.image;
