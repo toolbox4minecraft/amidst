@@ -233,11 +233,12 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		if (!e.isMetaDown()) {
 			Point mouse = getMousePosition();
 			MapObject object = worldMap.getObjectAt(mouse, 50.0);
-			if (object != null)
-				object.localScale = 1.5;
 			
 			if (selectedObject != null)
 				selectedObject.localScale = 1.0;
+
+			if (object != null)
+				object.localScale = 1.5;
 			selectedObject = object;
 		}
 	}
