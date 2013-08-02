@@ -55,9 +55,9 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	private Point2D.Double panSpeed;
 	
 	private boolean isMouseInside = false;
-	private int zoomLevel = 0, zoomTicksRemaining = 0;
-	private double targetZoom = 2.0f, curZoom;
-	private Point zoomMouse;
+	private static int zoomLevel = 0, zoomTicksRemaining = 0;
+	private static double targetZoom = 0.25f, curZoom = 0.25f;
+	private Point zoomMouse = new Point();
 	
 	private Color textColor = new Color(1f, 1f, 1f),
 				  panelColor = new Color(0.2f, 0.2f, 0.2f, 0.7f);
@@ -104,8 +104,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 				},
 				iconLayers
 		); //TODO: implement more layers
-		targetZoom = worldMap.getZoom();
-		curZoom = worldMap.getZoom();
+		worldMap.setZoom(curZoom);
 		
 		addMouseListener(this);
 		addMouseWheelListener(this);
