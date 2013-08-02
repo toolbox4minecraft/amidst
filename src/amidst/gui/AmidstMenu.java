@@ -132,19 +132,24 @@ public class AmidstMenu extends JMenuBar {
 		
 		private class FileMenuItem extends JMenuItem {
 			private FileMenuItem() {
-				super("From file");
+				super("From file or folder");
 				addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						JFileChooser fc = new JFileChooser();
 						fc.addChoosableFileFilter(SaveLoader.getFilter());
 						fc.setAcceptAllFileFilterUsed(false);
-						fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+						fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 						fc.setCurrentDirectory(new File(Util.minecraftDirectory, "saves"));
 						
 						if (fc.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {
 							File f = fc.getSelectedFile();
-							SaveLoader s = new SaveLoader(new File(f.getAbsoluteFile() + "/level.dat"));
+							
+							SaveLoader s = null;
+							if (f.isDirectory())
+								s = new SaveLoader(new File(f.getAbsoluteFile() + "/level.dat"));
+							else
+								s = new SaveLoader(f);
 							window.setProject(new Project(s));
 						}
 					}
