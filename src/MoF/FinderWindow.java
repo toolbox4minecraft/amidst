@@ -68,8 +68,8 @@ public class FinderWindow extends JFrame {
 	public void setProject(Project ep) {
 		// FIXME Release resources.
 		if (curProject != null) {
+			removeKeyListener(curProject.getKeyListener());
 			curProject.dispose();
-			this.removeKeyListener(curProject.getKeyListener());
 			pane.remove(curProject);
 			System.gc();
 		}
