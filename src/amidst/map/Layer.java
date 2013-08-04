@@ -58,6 +58,10 @@ public class Layer implements Comparable<Layer> {
 	public void setMap(Map map) {
 		this.map = map;
 	}
+	public Map getMap() {
+		return map;
+	}
+	
 	public boolean isVisible() {
 		return (visible == null) || visible.get();
 	}
@@ -70,6 +74,8 @@ public class Layer implements Comparable<Layer> {
 			cacheManager.unload(frag);
 		}
 	}
+	
+	
 	
 	public void setLive(boolean live) {
 		this.live = live;

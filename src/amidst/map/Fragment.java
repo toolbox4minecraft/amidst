@@ -70,7 +70,8 @@ public class Fragment {
 	}
 	
 	public void clear() {
-		objectsLength = 0;
+		for (IconLayer layer : iconLayers)
+			layer.clearMapObjects(this);
 		//isLoaded = false;
 		hasNext = false;
 		endOfLine = false;
@@ -175,5 +176,13 @@ public class Fragment {
 	public void destroy() {
 		for (int i = 0; i < imgBuffers.length; i++)
 			imgBuffers[i].flush();
+	}
+	public void removeObject(MapObjectPlayer player) {
+		for (int i = 0; i < objectsLength; i++) {
+			if (objects[i] == player) {
+				objects[i] = objects[objectsLength - 1];
+				objectsLength--;
+			}
+		}
 	}
 }

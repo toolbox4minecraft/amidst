@@ -3,6 +3,7 @@ package MoF;
 
 import amidst.Log;
 import amidst.Options;
+import amidst.gui.PlayerMenuItem;
 import amidst.map.IconLayer;
 import amidst.map.Layer;
 import amidst.map.Map;
@@ -52,6 +53,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	private Map worldMap;
 	private MapObject selectedObject = null;
 	private Point lastMouse;
+	public Point lastRightClick = null;
 	private Point2D.Double panSpeed;
 	
 	private boolean isMouseInside = false;
@@ -75,6 +77,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		panSpeed = new Point2D.Double();
 		this.proj = proj;
 		IconLayer[] iconLayers = null;
+		PlayerLayer playerLayer = null;
 		if (!proj.saveLoaded) {
 			iconLayers = new IconLayer[] {
 				new VillageLayer(),
@@ -88,11 +91,11 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 				new StrongholdLayer(),
 				new TempleLayer(),
 				new NetherFortressLayer(),
-				new PlayerLayer(proj.save)
+				playerLayer = new PlayerLayer(proj.save)
 			};
 			
 			for (MapObjectPlayer player : proj.save.getPlayers()) {
-				menu.add(new JMenuItem(player.getName()));
+				menu.add(new PlayerMenuItem(this, player, playerLayer));
 			}
 		}
 		
@@ -259,8 +262,8 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (e.isPopupTrigger() && ReflectionInfo.instance.version.saveEnabled()) {
+			lastRightClick = getMousePosition();
 			if (proj.saveLoaded) {
-				Log.debug("Test");
 				menu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		} else lastMouse = null;

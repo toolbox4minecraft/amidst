@@ -34,7 +34,7 @@ import com.google.gson.Gson;
 
 public class VersionSelectWindow extends JFrame {
 	public VersionSelectWindow() {
-		File profileJsonFile = new File(Util.minecraftDirectory + "\\launcher_profiles.json");
+		File profileJsonFile = new File(Util.minecraftDirectory + "/launcher_profiles.json");
 		
 		Object[] profileArray = null;
 		try {

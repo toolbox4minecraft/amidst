@@ -65,12 +65,14 @@ public class AmidstMenu extends JMenuBar {
 				addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						if (window.curProject.saveLoaded)
-							for (MapObjectPlayer player : window.curProject.save.getPlayers())
+						if (window.curProject.saveLoaded) {
+							for (MapObjectPlayer player : window.curProject.save.getPlayers()) {
 								if (player.needSave) {
-									window.curProject.save.movePlayer(player.getName(), player.x, player.y);
+									window.curProject.save.movePlayer(player.getName(), player.globalX, player.globalY);
 									player.needSave = false;
 								}
+							}
+						}
 					}
 				});
 			}});

@@ -316,6 +316,20 @@ public class Map {
 		fManager.close();
 	}
 	
+	public Fragment getFragmentAt(Point position) {
+		Fragment frag = startNode;
+		Point cornerPosition = new Point(position.x >> Fragment.SIZE_SHIFT, position.y >> Fragment.SIZE_SHIFT);
+		Point fragmentPosition = new Point();
+		while (frag.hasNext) {
+			frag = frag.nextFragment;
+			fragmentPosition.x = frag.getFragmentX();
+			fragmentPosition.y = frag.getFragmentY();
+			if (cornerPosition.equals(fragmentPosition))
+				return frag;
+		}
+		return null;
+	}
+	
 	public MapObject getObjectAt(Point position, double maxRange) {
 		double x = start.x;
 		double y = start.y;

@@ -2,14 +2,21 @@ package MoF;
 import amidst.Log;
 import amidst.Util;
 import amidst.map.MapObjectPlayer;
-import amidst.nbt.Tag;
-import amidst.nbt.TagCompound;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.filechooser.FileFilter;
+
+import org.jnbt.CompoundTag;
+import org.jnbt.DoubleTag;
+import org.jnbt.ListTag;
+import org.jnbt.NBTInputStream;
+import org.jnbt.NBTOutputStream;
+import org.jnbt.Tag;
 
 public class SaveLoader {
 	public static Type genType = Type.DEFAULT;
@@ -63,13 +70,20 @@ public class SaveLoader {
 			out = new File(outPath);
 			backupFile(out);
 			try {
-				TagCompound t = Tag.readFrom(new FileInputStream(out));
-				Tag pos = t.findTagByName("Pos");
-				Tag<Double>[] pa = (Tag[]) pos.getValue();
-				pa[0].setValue((double) x);
-				pa[1].setValue((double) 120);
-				pa[2].setValue((double) y);
-				t.writeTo(new FileOutputStream(out));
+				NBTInputStream inStream = new NBTInputStream(new FileInputStream(out));
+				CompoundTag root = (CompoundTag)inStream.readTag();
+				inStream.close();
+				
+				HashMap<String, Tag> rootMap = new HashMap<String, Tag>(root.getValue());
+				ArrayList<Tag> posTag = new ArrayList<Tag>(((ListTag)rootMap.get("Pos")).getValue());
+				posTag.set(0, new DoubleTag("x", x));
+				posTag.set(1, new DoubleTag("y", 120));
+				posTag.set(2, new DoubleTag("z", y));
+				rootMap.put("Pos", new ListTag("Pos", DoubleTag.class, posTag));
+				root = new CompoundTag("Data", rootMap);
+				NBTOutputStream outStream = new NBTOutputStream(new FileOutputStream(out));
+				outStream.writeTag(root);
+				outStream.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -78,13 +92,25 @@ public class SaveLoader {
 			out = file;
 			backupFile(out);
 			try {
-				TagCompound t = Tag.readFrom(new FileInputStream(out));
-				Tag pos = t.findTagByName("Pos");
-				Tag<Double>[] pa = (Tag[]) pos.getValue();
-				pa[0].setValue((double) x);
-				pa[1].setValue((double) 120);
-				pa[2].setValue((double) y);
-				t.writeTo(new FileOutputStream(out));
+				NBTInputStream inStream = new NBTInputStream(new FileInputStream(out));
+				CompoundTag root = (CompoundTag)(((CompoundTag)inStream.readTag()).getValue().get("Data"));
+				inStream.close();
+				
+				HashMap<String, Tag> rootMap = new HashMap<String, Tag>(root.getValue());
+				HashMap<String, Tag> playerMap = new HashMap<String, Tag>(((CompoundTag)rootMap.get("Player")).getValue());
+				ArrayList<Tag> posTag = new ArrayList<Tag>(((ListTag)playerMap.get("Pos")).getValue());
+				posTag.set(0, new DoubleTag("x", x));
+				posTag.set(1, new DoubleTag("y", 120));
+				posTag.set(2, new DoubleTag("z", y));
+				rootMap.put("Player", new CompoundTag("Player", playerMap));
+				playerMap.put("Pos", new ListTag("Pos", DoubleTag.class, posTag));
+				root = new CompoundTag("Data", rootMap);
+				HashMap<String, Tag> base = new HashMap<String, Tag>();
+				base.put("Data", root);
+				root = new CompoundTag("Base", base);
+				NBTOutputStream outStream = new NBTOutputStream(new FileOutputStream(out));
+				outStream.writeTag(root);
+				outStream.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -92,7 +118,11 @@ public class SaveLoader {
 	}
 	
 	private void backupFile(File inputFile) {
-		File outputFile = new File(inputFile.toString() + ".moth");
+		File backupFolder = new File(inputFile.getParentFile() + "/amidst_backup/");
+		if (!backupFolder.exists())
+			backupFolder.mkdir();
+		
+		File outputFile = new File(backupFolder + "/" + inputFile.getName());
 		if (!back.contains(outputFile.toString())) {
 			try {
 				FileReader in = new FileReader(inputFile);
@@ -114,7 +144,30 @@ public class SaveLoader {
 		players = new ArrayList<MapObjectPlayer>();
 		back = new ArrayList<String>();
 		try {
-			TagCompound t = Tag.readFrom(new FileInputStream(f));
+			NBTInputStream inStream = new NBTInputStream(new FileInputStream(f));
+			CompoundTag root = (CompoundTag) ((CompoundTag)inStream.readTag()).getValue().get("Data");
+			//inStream.close();
+			seed = (Long)(root.getValue().get("RandomSeed").getValue());
+			genType = Type.fromMixedCase((String)(root.getValue().get("generatorName").getValue()));
+			
+			CompoundTag playerTag = (CompoundTag)root.getValue().get("Player");
+			
+			multi = (playerTag == null);
+			Log.i(multi);
+			if (!multi) {
+				addPlayer("Player", playerTag);
+			} else {
+				File[] listing = new File(f.getParent(), "players").listFiles();
+				for (int i = 0; i < (listing != null ? listing.length : 0); i++) {
+					if (listing[i].isFile()) {
+						NBTInputStream playerInputStream = new NBTInputStream(new FileInputStream(listing[i]));
+						addPlayer(listing[i].getName().split("\\.")[0], (CompoundTag) ((CompoundTag)playerInputStream.readTag()));
+						playerInputStream.close();
+					}
+				}
+				
+			}
+			/*TagCompound t = Tag.readFrom(new FileInputStream(f));
 			TagCompound pTag = (TagCompound) t.findTagByName("MapObjectPlayer");
 			seed = (Long) t.findTagByName("RandomSeed").getValue();
 			genType = Type.fromMixedCase((String) t.findTagByName("generatorName").getValue());
@@ -128,17 +181,16 @@ public class SaveLoader {
 					TagCompound ps = Tag.readFrom(new FileInputStream(listing[i]));
 					addPlayer(listing[i].getName().split("\\.")[0], ps);
 				}
-			}
+			}*/
 		} catch (Exception e) {
 			Util.showError(e);
 		}
 	}
 	
-	private void addPlayer(String name, TagCompound ps) {
-		Tag pos = ps.findTagByName("Pos");
-		Tag<Double>[] pa = (Tag[]) pos.getValue();
-		double x = pa[0].getValue();
-		double z = pa[2].getValue();
+	private void addPlayer(String name, CompoundTag ps) {
+		List<Tag> pos = ((ListTag)(ps.getValue().get("Pos"))).getValue();
+		double x = (Double)pos.get(0).getValue();
+		double z = (Double)pos.get(2).getValue();
 		players.add(new MapObjectPlayer(name, (int) x, (int) z));
 	}
 }

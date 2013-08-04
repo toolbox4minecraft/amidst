@@ -12,20 +12,22 @@ import amidst.Log;
 import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
+import amidst.map.Map;
 import amidst.map.MapObjectNether;
 import amidst.map.MapObjectPlayer;
 import amidst.map.MapObjectStronghold;
 import amidst.map.MapObjectVillage;
 
 public class PlayerLayer extends IconLayer {
-	SaveLoader saveLoader;
-	SkinManager skinManager = new SkinManager();
+	public SaveLoader saveLoader;
+	public static SkinManager skinManager = new SkinManager();
+	static {
+		skinManager.start();
+	}
 	public PlayerLayer(SaveLoader saveLoader) {
 		super("players");
-		Log.i("players added");
 		setVisibilityPref(Options.instance.showIcons);
 		this.saveLoader = saveLoader;
-		skinManager.start();
 		
 		for (MapObjectPlayer player : saveLoader.getPlayers())
 			skinManager.addPlayer(player);
@@ -38,8 +40,19 @@ public class PlayerLayer extends IconLayer {
 				(player.globalY > frag.blockY) &&
 				(player.globalY < frag.blockY + Fragment.SIZE)) {
 				player.parentLayer = this;
+				player.parentFragment = frag;
 				frag.addObject(player);
 			}
 		}
+	}
+	
+	public void clearMapObjects(Fragment frag) {
+		for (int i = 0; i < frag.objectsLength; i++) {
+			if (frag.objects[i] instanceof MapObjectPlayer)
+				((MapObjectPlayer)frag.objects[i]).parentFragment = null;
+			
+		}
+		super.clearMapObjects(frag);
+		
 	}
 }

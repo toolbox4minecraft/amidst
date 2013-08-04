@@ -19,6 +19,9 @@ public class IconLayer {
 	public void setMap(Map map) {
 		this.map = map;
 	}
+	public Map getMap() {
+		return map;
+	}
 	public boolean isVisible() {
 		return (visible == null) || visible.get();
 	}
@@ -32,5 +35,9 @@ public class IconLayer {
 	
 	public void generateMapObjects(Fragment frag) {
 		
+	}
+	
+	public void clearMapObjects(Fragment frag) {
+		frag.objectsLength = 0;
 	}
 }

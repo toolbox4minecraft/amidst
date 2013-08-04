@@ -1,5 +1,6 @@
 package amidst.map;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import MoF.SaveLoader;
@@ -9,17 +10,20 @@ public class MapObjectPlayer extends MapObject {
 	public boolean needSave;
 	private BufferedImage marker;
 	public int globalX, globalY;
+	public Fragment parentFragment = null;
 	
 	public MapObjectPlayer(String name, int x, int y) {
 		super(MapMarkers.PLAYER,
-				(x < 0)?(Fragment.SIZE + x % Fragment.SIZE):(x % Fragment.SIZE),
-				(y < 0)?(Fragment.SIZE + y % Fragment.SIZE):(y % Fragment.SIZE));
+				((x < 0)?Fragment.SIZE:0) + x % Fragment.SIZE,
+				((y < 0)?Fragment.SIZE:0) + y % Fragment.SIZE);
 		globalX = x;
 		globalY = y;
 		marker = type.image;
 		needSave = false;
 		this.name = name;
 	}
+	
+	
 	public int getWidth() {
 		return (int)(marker.getWidth()*localScale*3);
 	}
@@ -27,8 +31,10 @@ public class MapObjectPlayer extends MapObject {
 		return (int)(marker.getHeight()*localScale*3);
 	}
 	public void setPosition(int x, int y) {
-		this.x = x;
-		this.y = y;
+		this.globalX = x;
+		this.globalY = y;
+		this.x = ((x < 0)?Fragment.SIZE:0) + x % Fragment.SIZE;
+		this.y = ((y < 0)?Fragment.SIZE:0) + y % Fragment.SIZE;
 		needSave = true;
 	}
 	
