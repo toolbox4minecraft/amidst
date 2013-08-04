@@ -236,6 +236,9 @@ public class AmidstMenu extends JMenuBar {
 								List<MapObjectPlayer> playerList = window.curProject.save.getPlayers();
 								MapObjectPlayer[] players = playerList.toArray(new MapObjectPlayer[playerList.size()]);
 								goToChosenPoint(players, "Player");
+								MapObjectPlayer p = choose("Go to", "Select player:", players);
+								if (p != null)
+									window.curProject.moveMapTo(p.globalX, p.globalY);
 							}
 						}
 					});
