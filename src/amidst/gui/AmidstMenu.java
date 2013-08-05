@@ -206,6 +206,7 @@ public class AmidstMenu extends JMenuBar {
 			}
 			
 		}
+		
 		private class GoToMenu extends JMenu {
 			private GoToMenu() {
 				super("Go to");
@@ -327,6 +328,21 @@ public class AmidstMenu extends JMenuBar {
 		}
 	}
 	
+	private class OptionsMenu extends JMenu {
+		private OptionsMenu() {
+			super("Options");
+			setEnabled(false);
+			setMnemonic(KeyEvent.VK_M);
+			add(new WorldTypeMenu());
+		}
+		
+		private class WorldTypeMenu extends JMenu {
+			private WorldTypeMenu() {
+				super("Default world type");
+			}
+			
+		}
+	}
 	private class HelpMenu extends JMenu {
 		private HelpMenu() {
 			super("Help");
