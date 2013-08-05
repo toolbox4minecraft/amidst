@@ -21,14 +21,8 @@ public enum Options {
 	public final BooleanPrefModel showGrid;
 	public final BooleanPrefModel showNetherFortresses;
 	public final BooleanPrefModel showIcons;
-<<<<<<< HEAD
-	
-	//maybe temporary preferences:?
-	public boolean saveEnabled;
-=======
 	public final BooleanPrefModel mapFlicking;
 	public final BooleanPrefModel maxZoom;
->>>>>>> Map-Overhaul
 	
 	private Options() {
 		seed = 0L;

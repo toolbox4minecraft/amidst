@@ -97,18 +97,12 @@ public class AmidstMenu extends JMenuBar {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						//Create the JOptionPane.
-<<<<<<< HEAD
-						String s = JOptionPane.showInputDialog(null, "Enter seed:", "New Project", JOptionPane.QUESTION_MESSAGE);
-						if (s != null) {
-							SaveLoader.Type worldType = choose("New Project", "Enter world type:\n", SaveLoader.Type.values());
-							
-=======
+
 						String s = JOptionPane.showInputDialog(null, "Enter seed", "New Project", JOptionPane.QUESTION_MESSAGE);
 						if (s != null) {
 							SaveLoader.Type worldType = choose("New Project", "Enter world type\n", SaveLoader.Type.values());
 							if (s.equals(""))
 								s = "" + (new Random()).nextLong();
->>>>>>> Map-Overhaul
 							//If a string was returned, say so.
 							if (worldType != null)
 								window.setProject(new Project(s, worldType));
@@ -396,11 +390,8 @@ public class AmidstMenu extends JMenuBar {
 	 * @param name name displayed in the choice
 	 */
 	private <T extends Point> void goToChosenPoint(T[] points, String name) {
-<<<<<<< HEAD
-		T p = choose("Go to:", "Select " + name + ":", points);
-=======
+
 		T p = choose("Go to", "Select " + name + ":", points);
->>>>>>> Map-Overhaul
 		if (p != null)
 			window.curProject.moveMapTo(p.x, p.y);
 	}

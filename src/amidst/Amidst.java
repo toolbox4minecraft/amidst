@@ -12,14 +12,9 @@ import amidst.gui.VersionSelectWindow;
 import amidst.json.InstallInformation;
 
 public class Amidst {
-<<<<<<< HEAD
-	public final static int version_major = 2;
-	public final static int version_minor = 1;
-=======
 	public final static int version_major = 3;
 	public final static int version_minor = 0;
 	public static InstallInformation installInformation = new InstallInformation(false);
->>>>>>> Map-Overhaul
 	
 	public static void main(String args[]) throws IOException {
 		Util.setLookAndFeel();
