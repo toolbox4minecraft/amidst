@@ -21,9 +21,14 @@ public enum Options {
 	public final BooleanPrefModel showGrid;
 	public final BooleanPrefModel showNetherFortresses;
 	public final BooleanPrefModel showIcons;
+<<<<<<< HEAD
 	
 	//maybe temporary preferences:?
 	public boolean saveEnabled;
+=======
+	public final BooleanPrefModel mapFlicking;
+	public final BooleanPrefModel maxZoom;
+>>>>>>> Map-Overhaul
 	
 	private Options() {
 		seed = 0L;
@@ -36,8 +41,16 @@ public enum Options {
 		showGrid             = new BooleanPrefModel(pref, "grid",             false);
 		showNetherFortresses = new BooleanPrefModel(pref, "netherFortresses", false);
 		showIcons            = new BooleanPrefModel(pref, "icons",            true);
+		mapFlicking          = new BooleanPrefModel(pref, "mapFlicking",      true);
+		maxZoom              = new BooleanPrefModel(pref, "maxZoom",          true);
+	}
+	
+	public File getJar() {
+		if (Amidst.installInformation.isPre161)
+			return jar.get();
+		else
+			return Amidst.installInformation.getJarFile();
 		
-		saveEnabled = true;
 	}
 	
 	public String getSeedMessage() {

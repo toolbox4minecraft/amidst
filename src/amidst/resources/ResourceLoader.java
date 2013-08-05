@@ -6,7 +6,11 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
+<<<<<<< HEAD
  * Allows to retrieve images, URLs, :
+=======
+ * Allows to retrieve images, URLs, 
+>>>>>>> Map-Overhaul
  */
 public class ResourceLoader {
 	private ResourceLoader() {}

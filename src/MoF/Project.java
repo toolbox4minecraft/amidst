@@ -6,6 +6,7 @@ import amidst.map.MapObjectPlayer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.KeyListener;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -17,7 +18,6 @@ public class Project extends JPanel {
 	private static final long serialVersionUID = 1132526465987018165L;
 	
 	public MapViewer map;
-	private MapInfoPanel minfo;
 	public static int FRAGMENT_SIZE = 256;
 	public ChunkManager manager;
 	private Timer timer;
@@ -38,9 +38,7 @@ public class Project extends JPanel {
 	}
 	
 	public Project(SaveLoader file) {
-		this(file.seed, SaveLoader.genType);
-		saveLoaded = true;
-		save = file;
+		this(file.seed, SaveLoader.genType, file);
 		
 		Google.track("seed/file/" + Options.instance.seed);
 		List<MapObjectPlayer> players = file.getPlayers();
@@ -54,8 +52,12 @@ public class Project extends JPanel {
 	}
 	
 	public Project(long seed, SaveLoader.Type type) {
+		this(seed, type, null);
+	}
+	public Project(long seed, SaveLoader.Type type, SaveLoader saveLoader) {
 		SaveLoader.genType = type;
-		saveLoaded = false;
+		saveLoaded = !(saveLoader == null);
+		save = saveLoader;
 		//Enter seed data:
 		Options.instance.seed = seed;
 		
@@ -67,9 +69,6 @@ public class Project extends JPanel {
 		//Create MapViewer
 		map = new MapViewer(this);
 		add(map, BorderLayout.CENTER);
-		minfo = new MapInfoPanel(map);
-		add(minfo, BorderLayout.EAST);
-		
 		//Debug
 		this.setBackground(Color.BLUE);
 		
@@ -85,7 +84,6 @@ public class Project extends JPanel {
 	
 	public void tick() {
 		map.repaint();
-		minfo.repaint();
 	}
 	
 	public void dispose() {
@@ -96,10 +94,8 @@ public class Project extends JPanel {
 		timer.cancel();
 		timer = null;
 		curTarget = null;
-		minfo.dispose();
-		minfo = null;
 		save = null;
-		
+		System.gc();
 	}
 	
 	private static long stringToLong(String seed) {
@@ -111,23 +107,19 @@ public class Project extends JPanel {
 		}
 		return ret;
 	}
+	
 	public void movePlayer(String name, PixelInfo p) {
 		for (int i = 0; i < save.getPlayers().size(); i++) {
 			if (name.toLowerCase().equals(save.getPlayers().get(i).getName().toLowerCase())) {
 				save.getPlayers().get(i).setPosition(p.getBlockX(), p.getBlockY());
-				map.cleanUpdate();
 			}
 		}
 	}
 	
-	public Fragment getFragment(int x, int y) {
-		Fragment frag = new Fragment(x, y, FRAGMENT_SIZE);
-		manager.requestChunk(frag);
-		
-		return frag;
+	public KeyListener getKeyListener() {
+		return map;
 	}
-	
-	public void moveMapTo(int x, int y) {
-		map.centerAndReset(x, y);
+	public void moveMapTo(long x, long y) {
+		map.centerAt(x, y);
 	}
 }

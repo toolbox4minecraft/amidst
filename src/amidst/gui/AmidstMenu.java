@@ -8,6 +8,10 @@ import amidst.resources.ResourceLoader;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -15,6 +19,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
+import java.util.Random;
 
 /** Structured menubar-creation to alleviate the huge mess that it would be elsewise
  */
@@ -50,21 +55,24 @@ public class AmidstMenu extends JMenuBar {
 				setMnemonic(KeyEvent.VK_N);
 				add(new SeedMenuItem());
 				add(new FileMenuItem());
+				add(new RandomSeedMenuItem());
 				//add(new JMenuItem("From Server"));
 			}});
 			
 			add(new JMenuItem("Save player locations") {{
-				setEnabled(Options.instance.saveEnabled);
+				setEnabled(ReflectionInfo.instance.version.saveEnabled());
 				setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
 				addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						if (window.curProject.saveLoaded)
-							for (MapObjectPlayer player : window.curProject.save.getPlayers())
+						if (window.curProject.saveLoaded) {
+							for (MapObjectPlayer player : window.curProject.save.getPlayers()) {
 								if (player.needSave) {
-									window.curProject.save.movePlayer(player.getName(), player.x, player.y);
+									window.curProject.save.movePlayer(player.getName(), player.globalX, player.globalY);
 									player.needSave = false;
 								}
+							}
+						}
 					}
 				});
 			}});
@@ -89,10 +97,18 @@ public class AmidstMenu extends JMenuBar {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						//Create the JOptionPane.
+<<<<<<< HEAD
 						String s = JOptionPane.showInputDialog(null, "Enter seed:", "New Project", JOptionPane.QUESTION_MESSAGE);
 						if (s != null) {
 							SaveLoader.Type worldType = choose("New Project", "Enter world type:\n", SaveLoader.Type.values());
 							
+=======
+						String s = JOptionPane.showInputDialog(null, "Enter seed", "New Project", JOptionPane.QUESTION_MESSAGE);
+						if (s != null) {
+							SaveLoader.Type worldType = choose("New Project", "Enter world type\n", SaveLoader.Type.values());
+							if (s.equals(""))
+								s = "" + (new Random()).nextLong();
+>>>>>>> Map-Overhaul
 							//If a string was returned, say so.
 							if (worldType != null)
 								window.setProject(new Project(s, worldType));
@@ -102,20 +118,47 @@ public class AmidstMenu extends JMenuBar {
 			}
 		}
 		
+		private class RandomSeedMenuItem extends JMenuItem {
+			private RandomSeedMenuItem() {
+				super("From random seed");
+				setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
+				addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						//Create the JOptionPane.
+							Random random = new Random();
+							long seed = random.nextLong();
+							SaveLoader.Type worldType = choose("New Project", "Enter world type\n", SaveLoader.Type.values());
+							
+							//If a string was returned, say so.
+							if (worldType != null)
+								window.setProject(new Project(seed, worldType));
+						}
+					
+				});
+			}
+		}
+		
 		private class FileMenuItem extends JMenuItem {
 			private FileMenuItem() {
-				super("From file");
+				super("From file or folder");
 				addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						JFileChooser fc = new JFileChooser();
 						fc.addChoosableFileFilter(SaveLoader.getFilter());
 						fc.setAcceptAllFileFilterUsed(false);
+						fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 						fc.setCurrentDirectory(new File(Util.minecraftDirectory, "saves"));
-						
+						//fc.setCurrentDirectory(new File("D:\\Minecraft\\Server7"));
 						if (fc.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {
 							File f = fc.getSelectedFile();
-							SaveLoader s = new SaveLoader(f);
+							
+							SaveLoader s = null;
+							if (f.isDirectory())
+								s = new SaveLoader(new File(f.getAbsoluteFile() + "/level.dat"));
+							else
+								s = new SaveLoader(f);
 							window.setProject(new Project(s));
 						}
 					}
@@ -132,7 +175,9 @@ public class AmidstMenu extends JMenuBar {
 			add(new FindMenu());
 			add(new GoToMenu());
 			add(new LayersMenu());
+			add(new MiscMenu());
 			add(new CaptureMenuItem());
+		
 		}
 		
 		private class FindMenu extends JMenu {
@@ -140,16 +185,33 @@ public class AmidstMenu extends JMenuBar {
 				super("Find");
 				//add(new JMenuItem("Biome"));
 				//add(new JMenuItem("Village"));
-				add(new JMenuItem("MapObjectStronghold") {{
+				add(new JMenuItem("Stronghold") {{
 					setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
 					addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
-							goToChosenPoint(window.curProject.manager.strongholds, "stronghold");
+							goToChosenPoint(window.curProject.manager.strongholds, "Stronghold");
 						}
 					});
 				}});
 			}
+		}
+		private class MiscMenu extends JMenu {
+			private MiscMenu() {
+				super("Miscellaneous");
+
+				add(new DisplayingCheckbox("Map Flicking",
+						null,
+						KeyEvent.VK_I,
+						Options.instance.mapFlicking));
+				add(new CopySeedMenuItem());
+				
+				add(new DisplayingCheckbox("Restrict Maximum Zoom",
+						null,
+						KeyEvent.VK_Z,
+						Options.instance.maxZoom));
+			}
+			
 		}
 		
 		private class GoToMenu extends JMenu {
@@ -161,25 +223,30 @@ public class AmidstMenu extends JMenuBar {
 						public void actionPerformed(ActionEvent arg0) {
 							String s = JOptionPane.showInputDialog(null, "Enter coordinates: (Ex. 123,456)", "Go To", JOptionPane.QUESTION_MESSAGE);
 							if (s != null) {
-								String[] c = s.split(",");
+								String[] c = s.replaceAll(" ", "").split(",");
 								try {
-									long x = Long.parseLong(c[0]) >> 2;
-									long y = Long.parseLong(c[1]) >> 2;
-									window.curProject.moveMapTo((int)x, (int)y);
-								} catch (NumberFormatException ignored) {}
+									long x = Long.parseLong(c[0]);
+									long y = Long.parseLong(c[1]);
+									window.curProject.moveMapTo(x, y);
+								} catch (NumberFormatException ignored) {
+									ignored.printStackTrace();
+								}
 							}
 						}
 					});
 				}});
 				
-				add(new JMenuItem("MapObjectPlayer") {{
+				add(new JMenuItem("Player") {{
 					addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
 							if (window.curProject.saveLoaded) {
 								List<MapObjectPlayer> playerList = window.curProject.save.getPlayers();
 								MapObjectPlayer[] players = playerList.toArray(new MapObjectPlayer[playerList.size()]);
-								goToChosenPoint(players, "MapObjectPlayer");
+								goToChosenPoint(players, "Player");
+								MapObjectPlayer p = choose("Go to", "Select player:", players);
+								if (p != null)
+									window.curProject.moveMapTo(p.globalX, p.globalY);
 							}
 						}
 					});
@@ -211,15 +278,15 @@ public class AmidstMenu extends JMenuBar {
 					Options.instance.showIcons));
 			}
 			
-			private class DisplayingCheckbox extends JCheckBoxMenuItem {
-				private DisplayingCheckbox(String text, BufferedImage icon, int key, JToggleButton.ToggleButtonModel model) {
-					super(text, (icon != null) ? new ImageIcon(icon) : null);
-					setAccelerator(KeyStroke.getKeyStroke(key, InputEvent.CTRL_DOWN_MASK));
-					setModel(model);
-				}
+
+		}
+		public class DisplayingCheckbox extends JCheckBoxMenuItem {
+			private DisplayingCheckbox(String text, BufferedImage icon, int key, JToggleButton.ToggleButtonModel model) {
+				super(text, (icon != null) ? new ImageIcon(icon) : null);
+				setAccelerator(KeyStroke.getKeyStroke(key, InputEvent.CTRL_DOWN_MASK));
+				setModel(model);
 			}
 		}
-		
 		private class CaptureMenuItem extends JMenuItem {
 			private CaptureMenuItem() {
 				super("Capture");
@@ -244,8 +311,45 @@ public class AmidstMenu extends JMenuBar {
 				});
 			}
 		}
+		private class CopySeedMenuItem extends JMenuItem {
+			private CopySeedMenuItem() {
+				super("Copy Seed to Clipboard");
+				
+				setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
+				
+				addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						StringSelection stringSelection = new StringSelection(Options.instance.seed + "");
+					    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					    clipboard.setContents(stringSelection, new ClipboardOwner() {
+							@Override
+							public void lostOwnership(Clipboard arg0, Transferable arg1) {
+								// TODO Auto-generated method stub
+								
+							}
+					    });
+					}
+				});
+			}
+		}
 	}
 	
+	private class OptionsMenu extends JMenu {
+		private OptionsMenu() {
+			super("Options");
+			setEnabled(false);
+			setMnemonic(KeyEvent.VK_M);
+			add(new WorldTypeMenu());
+		}
+		
+		private class WorldTypeMenu extends JMenu {
+			private WorldTypeMenu() {
+				super("Default world type");
+			}
+			
+		}
+	}
 	private class HelpMenu extends JMenu {
 		private HelpMenu() {
 			super("Help");
@@ -292,8 +396,12 @@ public class AmidstMenu extends JMenuBar {
 	 * @param name name displayed in the choice
 	 */
 	private <T extends Point> void goToChosenPoint(T[] points, String name) {
+<<<<<<< HEAD
 		T p = choose("Go to:", "Select " + name + ":", points);
+=======
+		T p = choose("Go to", "Select " + name + ":", points);
+>>>>>>> Map-Overhaul
 		if (p != null)
-			window.curProject.moveMapTo(p.x >> 2, p.y >> 2);
+			window.curProject.moveMapTo(p.x, p.y);
 	}
 }

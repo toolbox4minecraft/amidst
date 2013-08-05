@@ -46,6 +46,46 @@ public class Util {
 		minecraftDirectory = (mcDir != null) ? mcDir : new File(homeDirectory, ".minecraft");
 	}
 	
+	
+	// Added for scripting support. (javascript has issues retaining the array types)
+	public static int[] arrayToColors(int[] src, int[] dst, int[] colors, int length) {
+		for (int i = 0; i < length; i++) {
+			dst[i] = colors[src[i]];
+		}
+		return dst;
+	}
+	
+	public static int makeColor(int r, int g, int b) {
+		int color = 0xFF000000;
+		color |= 0xFF0000 & (r << 16);
+		color |= 0xFF00 & (g << 8);
+		color |= 0xFF & b;
+		return color;
+	}
+	
+	private static final int TEMP_DIR_ATTEMPTS = 1000;
+	
+	/** Guava’s method, moved here to avoid a huge dependency
+	 * TODO: maybe switch to JDK 7 to use its java.nio.file.Files#createTempDirectory()
+	 */
+	public static File createTempDir() {
+		return getTempDir(System.currentTimeMillis() + "");
+	}
+	
+	public static File getTempDir(String name) {
+		File baseDir = new File(System.getProperty("java.io.tmpdir"));
+		String baseName = name + "-";
+		for (int counter=0; counter<TEMP_DIR_ATTEMPTS; counter++) {
+			File tempDir = new File(baseDir, baseName + counter);
+			if (tempDir.isDirectory() || tempDir.mkdir())
+				return tempDir;
+		}
+		
+		throw new IllegalStateException("Failed to create directory within "
+			+ TEMP_DIR_ATTEMPTS + " attempts (tried "
+			+ baseName + "0 to " + baseName + (TEMP_DIR_ATTEMPTS - 1) + ')');
+	}
+	
 //	public static void main(String[] args) {
 //		try {
 //			int infinity = 1 / 0;

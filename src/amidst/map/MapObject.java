@@ -13,6 +13,7 @@ public class MapObject extends Point {
 	@Deprecated
 	public double tempDist = 0;
 	protected JToggleButton.ToggleButtonModel model;
+	public IconLayer parentLayer;
 	
 	public MapObject(MapMarkers eType, int x, int y) {
 		super(x, y);
@@ -23,6 +24,8 @@ public class MapObject extends Point {
 	public String getName() {
 		return type.toString();
 	}
+	
+	
 	public int getWidth() {
 		if (model.isSelected())
 			return (int)(type.image.getWidth() * localScale);
@@ -40,5 +43,10 @@ public class MapObject extends Point {
 	
 	public boolean isSelectable() {
 		return Options.instance.showIcons.isSelected();
+	}
+	
+	public MapObject setParent(IconLayer layer) {
+		parentLayer = layer;
+		return this;
 	}
 }
