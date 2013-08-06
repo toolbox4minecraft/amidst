@@ -146,7 +146,7 @@ public class SaveLoader {
 		try {
 			NBTInputStream inStream = new NBTInputStream(new FileInputStream(f));
 			CompoundTag root = (CompoundTag) ((CompoundTag)inStream.readTag()).getValue().get("Data");
-			//inStream.close();
+			inStream.close();
 			seed = (Long)(root.getValue().get("RandomSeed").getValue());
 			genType = Type.fromMixedCase((String)(root.getValue().get("generatorName").getValue()));
 			
