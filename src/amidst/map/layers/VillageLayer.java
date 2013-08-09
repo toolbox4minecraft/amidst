@@ -35,17 +35,16 @@ public class VillageLayer extends IconLayer {
 	 
 
 	public boolean checkChunk(int chunkX, int chunkY, ChunkManager chunkManager) {
-		// TODO: Confirm this code is the same for 1.6.2+
-		byte i = 32;
-		byte j = 8;
+		byte villageParam1 = 32;
+		byte villageParam2 = 8;
 		
 		int k = chunkX;
 		int m = chunkY;
-		if (chunkX < 0) chunkX -= i - 1;
-		if (chunkY < 0) chunkY -= i - 1;
+		if (chunkX < 0) chunkX -= villageParam1 - 1;
+		if (chunkY < 0) chunkY -= villageParam1 - 1;
 		
-		int n = chunkX / i;
-		int i1 = chunkY / i;
+		int n = chunkX / villageParam1;
+		int i1 = chunkY / villageParam1;
 		
 		Random localRandom = new Random();
 		long positionSeed = n * 341873128712L + i1 * 132897987541L + chunkManager.seed + 10387312L;
@@ -53,10 +52,10 @@ public class VillageLayer extends IconLayer {
 		
 		
 		
-		n *= i;
-		i1 *= i;
-		n += localRandom.nextInt(i - j);
-		i1 += localRandom.nextInt(i - j);
+		n *= villageParam1;
+		i1 *= villageParam1;
+		n += localRandom.nextInt(villageParam1 - villageParam2);
+		i1 += localRandom.nextInt(villageParam1 - villageParam2);
 		chunkX = k;
 		chunkY = m;
 		if ((chunkX == n) && (chunkY == i1))

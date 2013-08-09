@@ -129,9 +129,6 @@ public class Map {
 	
 			g.setTransform(iMat);
 		}
-		/*if (frag != null) {
-			frag.draw(g, 0, 0, Fragment.SIZE);
-		}*/
 	}
 	public void addStart(int x, int y) {
 		synchronized (resizeLock) {
@@ -396,7 +393,7 @@ public class Map {
 	}
 
 	public void saveViewToFile(File file) {
-		BufferedImage image = new BufferedImage(Fragment.SIZE * tileWidth, Fragment.SIZE * tileHeight, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = image.createGraphics();
 		
 		draw(g2d);
