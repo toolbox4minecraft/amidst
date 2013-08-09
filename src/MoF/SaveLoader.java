@@ -45,7 +45,10 @@ public class SaveLoader {
 	public static FileFilter getFilter() {
 		return (new FileFilter() {
 			public boolean accept(File f) {
-				return f.isDirectory();
+				if (f.isDirectory())
+					return true;
+				String[] st = f.getName().split("\\/");
+                return st[st.length - 1].equalsIgnoreCase("level.dat");
 			}
 			
 			@Override
