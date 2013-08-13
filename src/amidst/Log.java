@@ -1,8 +1,11 @@
 package amidst;
 
+import javax.swing.JOptionPane;
+
 public class Log {
 	private static LogListener listener;
 	private static boolean isUsingListener;
+	public static boolean isUsingAlerts = true;
 	
 	public static void i(Object... s) {
 		printwithTag("info", s);
@@ -28,6 +31,8 @@ public class Log {
 		printwithTag("kill", s);
 		if (isUsingListener)
 			listener.kill(s);
+		if (isUsingAlerts)
+			JOptionPane.showMessageDialog(null, s);
 		System.exit(0);
 	}
 	
