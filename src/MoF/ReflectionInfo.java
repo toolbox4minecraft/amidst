@@ -52,6 +52,7 @@ public enum ReflectionInfo {
 					ClasspathHacker.addFile(s);
 					mc = ClassLoader.getSystemClassLoader().loadClass("net.minecraft.client.Minecraft");
 				} catch (Exception e1) {
+					// TODO: This is bad! BAD BAD BAD! D: This won't handle the missing class (used in newer versions) correctly!
 					JOptionPane.showMessageDialog(null, "Error loading minecraft.jar");
 					System.exit(0);
 				}
