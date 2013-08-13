@@ -8,14 +8,14 @@ import java.util.List;
 /** Information about what each supported version is
  */
 public enum VersionInfo {
-	V1_6_2("akn", "akl"),
-	V1_6_1("akj", "akh"),
-	V1_5_1("ait", "air"),
-	V1_5_0("ain", "ail"),
-	V1_4_6("agw", "agu"),
-	V1_4_5("agp", "agn"),
-	V1_4_2("afu", "afs"),
-	V1_3_2("adc", "ada"),
+	V1_6_2("mulu[Ljr;hm[J[J[J[J[J[[J", "akl"),
+	V1_6_1("msls[Ljp;hk[J[J[J[J[J[[J", "akh"),
+	V1_5_1("[Bbeabdsbawemabdtbfzbdwngngbevawfbgfawvawvaxrawbbfrausbjhaycawwaraavybkdavwbjvbkila", "air"),
+	V1_5_0("ain", "ail"), // TODO: This makes no sense? 1.5.0 is not on the version list!
+	V1_4_6("[Baywayoaaszleaypbavaysmdazratabbaatqatqaulaswbanarnbdzauwatraohastbevasrbenbezbdmbdjkh", "agu"), // Includes 1.4.7
+	V1_4_5("[Bayoaygaasrleayhbakaykmdazfassbapatjatjaueasobacarfbdoaupatkanzaslbekasjbecbenbdbbcykh", "agn"),
+	V1_4_2("[Baxgawyaarjkpawzayyaxclnaxxarkazcasbasbaswargaytaqabcbathascamuardbcxarbbcpbdabbobbljy", "afs"),
+	V1_3_2("[Batkatcaaofjbatdavbatgjwaubaogavfaovaovapnaocauwamxaxvapyaowajqanzayqanxayjaytaxkaxhik", "ada"),
 	V1_3_1("adb", "acz"),
 	V1_3pre("acl", "acj"),
 	V12w27a("acs", "av"),
@@ -27,7 +27,7 @@ public enum VersionInfo {
 	V12w21b("aby", "ax"),
 	V12w21a("abm", "ar"),
 	V12w19a("aau", "ao"),
-	V1_2_4("wp", "ad"),
+	V1_2_4("[Bkivmaftxdlvqacqcwfcaawnlnlvpjclrckqdaiyxgplhusdakagi[J[Jalfqabv", "ad"), // Includes 1.2.5
 	V1_2_2("wl", "ac"),
 	V12w08a("wj", "ac"),
 	V12w07b("wd", "ab"),
@@ -46,12 +46,12 @@ public enum VersionInfo {
 	V1_8_1("rj", "w"),
 	unknown(null, "ab");
 	
-	public final String biomeName;
 	public final String intCacheName;
+	public final String versionId;
 	
-	VersionInfo(String biomeName, String intCacheName) {
-		this.biomeName = biomeName;
+	VersionInfo(String versionId, String intCacheName) {
 		this.intCacheName = intCacheName;
+		this.versionId = versionId;
 	}
 	
 	public boolean saveEnabled() {

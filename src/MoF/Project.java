@@ -1,12 +1,15 @@
 package MoF;
 
+import amidst.Log;
 import amidst.Options;
 import amidst.map.MapObject;
 import amidst.map.MapObjectPlayer;
+import amidst.minecraft.Minecraft;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.KeyListener;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -60,7 +63,7 @@ public class Project extends JPanel {
 		
 		BorderLayout layout = new BorderLayout();
 		this.setLayout(layout);
-		
+
 		//Create MapViewer
 		map = new MapViewer(this);
 		add(map, BorderLayout.CENTER);

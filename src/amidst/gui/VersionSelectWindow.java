@@ -48,6 +48,7 @@ public class VersionSelectWindow extends JFrame {
 			e.printStackTrace();
 			dispose();
 			try {
+				new Minecraft();
 				new FinderWindow();
 			} catch (IOException e1) {
 				// TODO Figure out what to do with this exception
@@ -73,8 +74,9 @@ public class VersionSelectWindow extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				Amidst.installInformation = (InstallInformation)profileBox.getSelectedItem();
 				try {
-					new Minecraft(Amidst.installInformation.getJarFile().toURI().toURL());
+					new Minecraft();
 				} catch (MalformedURLException e1) {
+					// TODO
 					e1.printStackTrace();
 				}
 				window.dispose();

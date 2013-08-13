@@ -1,35 +1,18 @@
 package amidst.minecraft;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Vector;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
+import amidst.Amidst;
 import amidst.Log;
 import amidst.foreign.VersionInfo;
 
 public class Minecraft {
 	private Class<?> mainClass;
 	private URLClassLoader classLoader;
-	private String versionID; 
+	private String versionId; 
 	private URL urlToJar;
 	private static Minecraft activeMinecraft; 
 	
@@ -63,9 +46,14 @@ public class Minecraft {
 			if (typeString.startsWith("class ") && !typeString.contains("."))
 				typeDump += typeString.substring(6);
 		}
-		versionID = typeDump;
+		versionId = typeDump;
+		Log.i("Loaded Minecraft with versionID of " + versionId);
 	}
 	
+	public Minecraft() throws MalformedURLException {
+		this(Amidst.installInformation.getJarFile().toURI().toURL());
+	}
+
 	public void setGlobal(String name, MinecraftObject object) {
 		globalMap.put(name, object);
 	}
@@ -130,8 +118,8 @@ public class Minecraft {
 		Thread.currentThread().setContextClassLoader(classLoader);
 	}
 	
-	public String getVersionID() {
-		return versionID;
+	public String getVersionId() {
+		return versionId;
 	}
 	public MinecraftClass getClassByName(String name) {
 		return nameMap.get(name);
