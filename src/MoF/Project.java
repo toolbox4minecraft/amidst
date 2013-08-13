@@ -19,7 +19,6 @@ public class Project extends JPanel {
 	
 	public MapViewer map;
 	public static int FRAGMENT_SIZE = 256;
-	public ChunkManager manager;
 	private Timer timer;
 	public MapObject curTarget;
 	
@@ -41,8 +40,6 @@ public class Project extends JPanel {
 		this(file.seed, SaveLoader.genType, file);
 		
 		Google.track("seed/file/" + Options.instance.seed);
-		List<MapObjectPlayer> players = file.getPlayers();
-		manager.setPlayerData(players);
 	}
 	
 	public Project(String seed, SaveLoader.Type type) {
@@ -61,8 +58,6 @@ public class Project extends JPanel {
 		//Enter seed data:
 		Options.instance.seed = seed;
 		
-		manager = new ChunkManager(seed);
-		manager.start();
 		BorderLayout layout = new BorderLayout();
 		this.setLayout(layout);
 		
@@ -89,8 +84,6 @@ public class Project extends JPanel {
 	public void dispose() {
 		map.dispose();
 		map = null;
-		manager.dispose();
-		manager = null;
 		timer.cancel();
 		timer = null;
 		curTarget = null;

@@ -15,7 +15,7 @@ import java.lang.reflect.Type;
 
 public enum ReflectionInfo {
 	instance;
-	
+/*	
 	public Class<?> biomeFinder;
 	public String biomeName;
 	public String chunkName;
@@ -264,5 +264,5 @@ public enum ReflectionInfo {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 }

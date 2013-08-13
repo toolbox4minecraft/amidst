@@ -1,7 +1,5 @@
 package amidst.minecraft;
 
-import com.skiphs.AMIDST.Log;
-
 public class MinecraftObject {
 	private MinecraftClass type;
 	private Object value;

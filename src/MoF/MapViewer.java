@@ -17,6 +17,7 @@ import amidst.map.layers.SlimeLayer;
 import amidst.map.layers.StrongholdLayer;
 import amidst.map.layers.TempleLayer;
 import amidst.map.layers.VillageLayer;
+import amidst.minecraft.Minecraft;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -99,7 +100,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 			}
 		}
 		
-		worldMap = new Map(proj.manager,
+		worldMap = new Map(
 				new Layer[] {
 					new BiomeLayer(),
 					new SlimeLayer()
@@ -261,7 +262,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (e.isPopupTrigger() && ReflectionInfo.instance.version.saveEnabled()) {
+		if (e.isPopupTrigger() && Minecraft.getActiveMinecraft().version.saveEnabled()) {
 			lastRightClick = getMousePosition();
 			if (proj.saveLoaded) {
 				menu.show(e.getComponent(), e.getX(), e.getY());

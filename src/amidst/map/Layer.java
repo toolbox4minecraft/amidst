@@ -31,7 +31,6 @@ public class Layer implements Comparable<Layer> {
 	
 	protected Map map;
 	private boolean live;
-	protected ChunkManager chunkManager;
 	
 	private BooleanPrefModel visible = null;
 	
@@ -127,9 +126,6 @@ public class Layer implements Comparable<Layer> {
 	
 	public void drawLive(Fragment fragment, Graphics2D g, AffineTransform mat) {
 		
-	}
-	public void setChunkManager(ChunkManager chunkManager) {
-		this.chunkManager = chunkManager;
 	}
 }
 

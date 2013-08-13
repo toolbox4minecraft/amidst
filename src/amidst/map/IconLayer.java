@@ -8,8 +8,6 @@ public class IconLayer {
 	public String name;
 	protected Map map;
 	
-	protected ChunkManager chunkManager;
-	
 	private BooleanPrefModel visible = null;
 	
 	public IconLayer(String name) {
@@ -29,9 +27,6 @@ public class IconLayer {
 		visible = visibility;
 	}
 	
-	public void setChunkManager(ChunkManager chunkManager) {
-		this.chunkManager = chunkManager;
-	}
 	
 	public void generateMapObjects(Fragment frag) {
 		

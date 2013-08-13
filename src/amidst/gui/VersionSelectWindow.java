@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -29,6 +30,7 @@ import amidst.Amidst;
 import amidst.Util;
 import amidst.json.InstallInformation;
 import amidst.json.LauncherProfile;
+import amidst.minecraft.Minecraft;
 
 import com.google.gson.Gson;
 
@@ -70,6 +72,11 @@ public class VersionSelectWindow extends JFrame {
 		btnConfirm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				Amidst.installInformation = (InstallInformation)profileBox.getSelectedItem();
+				try {
+					new Minecraft(Amidst.installInformation.getJarFile().toURI().toURL());
+				} catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
 				window.dispose();
 				try {
 					new FinderWindow();

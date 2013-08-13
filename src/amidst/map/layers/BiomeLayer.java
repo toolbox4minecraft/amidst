@@ -9,6 +9,7 @@ import amidst.map.ByteArrayCache;
 import amidst.map.CacheManager;
 import amidst.map.Fragment;
 import amidst.map.Layer;
+import amidst.minecraft.MinecraftUtil;
 
 public class BiomeLayer extends Layer {
 	public static int[] biomeColors = new int[] {
@@ -77,7 +78,6 @@ public class BiomeLayer extends Layer {
 	};
 	
 	private static int size = Fragment.SIZE >> 2;
-	
 	public BiomeLayer() {
 		super("biome", null, 0.0f, size);
 		setLive(false);
@@ -89,7 +89,7 @@ public class BiomeLayer extends Layer {
 		int y = fragment.getChunkY() << 2;
 		
 		// TODO : Change this when ChunkManager is removed!
-		int[] biomeData = chunkManager.ba(x, y, size, size);
+		int[] biomeData = MinecraftUtil.getBiomeData(x, y, size, size);
 		dataCache = Util.arrayToColors(biomeData, dataCache, biomeColors, size*size);
 		fragment.setImageData(layerID, dataCache);
 	}

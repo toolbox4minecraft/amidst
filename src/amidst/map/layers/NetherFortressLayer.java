@@ -26,7 +26,7 @@ public class NetherFortressLayer extends IconLayer {
 			for (int y = 0; y < size; y++) {
 				int chunkX = x + frag.getChunkX();
 				int chunkY = y + frag.getChunkY();
-				if (checkChunk(chunkX, chunkY, chunkManager)) {
+				if (checkChunk(chunkX, chunkY)) {
 					frag.addObject(new MapObjectNether(x << 4, y << 4).setParent(this));
 				}
 			}
@@ -34,11 +34,11 @@ public class NetherFortressLayer extends IconLayer {
 	}
 	 
 
-	public boolean checkChunk(int chunkX, int chunkY, ChunkManager chunkManager) {
+	public boolean checkChunk(int chunkX, int chunkY) {
 		int i = chunkX >> 4;
 		int j = chunkY >> 4;
 
-		random.setSeed((long)(i ^ j << 4) ^ chunkManager.seed);
+		random.setSeed((long)(i ^ j << 4) ^ Options.instance.seed);
 		random.nextInt();
 
 		if (random.nextInt(3) != 0) {

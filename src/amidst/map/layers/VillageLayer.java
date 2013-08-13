@@ -12,6 +12,7 @@ import amidst.map.Fragment;
 import amidst.map.IconLayer;
 import amidst.map.MapObjectNether;
 import amidst.map.MapObjectVillage;
+import amidst.minecraft.MinecraftUtil;
 
 public class VillageLayer extends IconLayer {
 	public static List<Biome> validBiomes = Arrays.asList(new Biome[] { Biome.c, Biome.d });
@@ -26,7 +27,7 @@ public class VillageLayer extends IconLayer {
 			for (int y = 0; y < size; y++) {
 				int chunkX = x + frag.getChunkX();
 				int chunkY = y + frag.getChunkY();
-				if (checkChunk(chunkX, chunkY, chunkManager)) {
+				if (checkChunk(chunkX, chunkY)) {
 					frag.addObject(new MapObjectVillage(x << 4, y << 4).setParent(this));
 				}
 			}
@@ -34,7 +35,7 @@ public class VillageLayer extends IconLayer {
 	}
 	 
 
-	public boolean checkChunk(int chunkX, int chunkY, ChunkManager chunkManager) {
+	public boolean checkChunk(int chunkX, int chunkY) {
 		byte villageParam1 = 32;
 		byte villageParam2 = 8;
 		
@@ -47,7 +48,7 @@ public class VillageLayer extends IconLayer {
 		int i1 = chunkY / villageParam1;
 		
 		Random localRandom = new Random();
-		long positionSeed = n * 341873128712L + i1 * 132897987541L + chunkManager.seed + 10387312L;
+		long positionSeed = n * 341873128712L + i1 * 132897987541L + Options.instance.seed + 10387312L;
 		localRandom.setSeed(positionSeed);
 		
 		
@@ -59,7 +60,7 @@ public class VillageLayer extends IconLayer {
 		chunkX = k;
 		chunkY = m;
 		if ((chunkX == n) && (chunkY == i1))
-			return chunkManager.a(chunkX * 16 + 8, chunkY * 16 + 8, 0, validBiomes);
+			return MinecraftUtil.isValidBiome(chunkX * 16 + 8, chunkY * 16 + 8, 0, validBiomes);
 		
 		return false;
 	}

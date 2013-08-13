@@ -16,8 +16,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
-public class ChunkManager extends Thread
+public class ChunkManager
 {
+	/*
 	private Object b;
 	public float[] a;
 	public long seed;
@@ -285,5 +286,5 @@ public class ChunkManager extends Thread
 		}
 		
 		return localPoint;
-	}
+	}*/
 }

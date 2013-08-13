@@ -2,6 +2,8 @@ package amidst.minecraft;
 
 import java.lang.reflect.Field;
 
+import amidst.Log;
+
 public class MinecraftProperty {
 	private String name, internalName;
 	private MinecraftClass parent;
@@ -47,7 +49,7 @@ public class MinecraftProperty {
 				String[] typeSplit = propType.split("\\.");
 				propType = typeSplit[typeSplit.length-1];
 			}
-			type = minecraft.getClassByType(propType);
+			type = mc.getClassByType(propType);
 			if (type == null)
 				isMinecraftClass = false;
 			property.setAccessible(true);

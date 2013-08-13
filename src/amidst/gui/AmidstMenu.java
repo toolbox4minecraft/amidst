@@ -4,6 +4,8 @@ import MoF.*;
 import amidst.Options;
 import amidst.Util;
 import amidst.map.MapObjectPlayer;
+import amidst.map.layers.StrongholdLayer;
+import amidst.minecraft.Minecraft;
 import amidst.resources.ResourceLoader;
 
 import javax.swing.*;
@@ -60,7 +62,7 @@ public class AmidstMenu extends JMenuBar {
 			}});
 			
 			add(new JMenuItem("Save player locations") {{
-				setEnabled(ReflectionInfo.instance.version.saveEnabled());
+				setEnabled(Minecraft.getActiveMinecraft().version.saveEnabled());
 				setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
 				addActionListener(new ActionListener() {
 					@Override
@@ -184,7 +186,7 @@ public class AmidstMenu extends JMenuBar {
 					addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
-							goToChosenPoint(window.curProject.manager.strongholds, "Stronghold");
+							goToChosenPoint(StrongholdLayer.instance.getStrongholds(), "Stronghold");
 						}
 					});
 				}});

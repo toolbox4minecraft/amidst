@@ -5,7 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-import com.skiphs.AMIDST.Log;
+import amidst.Log;
+
 
 public class MinecraftConstructor {
 	private MinecraftClass parent;

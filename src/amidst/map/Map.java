@@ -36,19 +36,16 @@ public class Map {
 	private boolean firstDraw = true;
 	
 	// TODO : This must be changed with the removal of ChunkManager
-	public Map(ChunkManager manager, Layer[] layers,  Layer[] liveLayers, IconLayer[] iconLayers) {
-		for (Layer layer : layers) {
-			layer.setChunkManager(manager);
+	public Map(Layer[] layers,  Layer[] liveLayers, IconLayer[] iconLayers) {
+		for (Layer layer : layers)
 			layer.setMap(this);
-		}
-		for (Layer layer : liveLayers) {
-			layer.setChunkManager(manager);
+		
+		for (Layer layer : liveLayers)
 			layer.setMap(this);
-		}
-		for (IconLayer layer : iconLayers) {
-			layer.setChunkManager(manager);
+		
+		for (IconLayer layer : iconLayers)
 			layer.setMap(this);
-		}
+		
 		
 		fManager = new FragmentManager(layers, liveLayers, iconLayers);
 		mat = new AffineTransform();
