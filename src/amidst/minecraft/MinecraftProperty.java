@@ -1,0 +1,91 @@
+package amidst.minecraft;
+
+import java.lang.reflect.Field;
+
+public class MinecraftProperty {
+	private String name, internalName;
+	private MinecraftClass parent;
+	private Field property;
+	private boolean isMinecraftClass = true;
+	private MinecraftClass type;
+	public MinecraftProperty(MinecraftClass parent, String name, String propertyName) {
+		this.parent = parent;
+		this.name = name;
+		this.internalName = propertyName;
+	}
+	
+	
+	
+	public String toString() {
+		return "[Method " + name +" (" + internalName +") of class " + parent.getName() + "]";
+	}
+
+
+
+	public String getName() {
+		return name;
+	}
+
+	public String getInternalName() {
+		return internalName;
+	}
+	public void setValue(Object obj, Object val) {
+		try {
+			property.set(obj, val);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
+	public void load(Minecraft mc, MinecraftClass mcClass) {
+		Class<?> clazz = mcClass.getClazz();
+		try {
+			property = clazz.getDeclaredField(internalName);
+			String propType = property.getType().getName();
+			if (propType.contains(".")) {
+				String[] typeSplit = propType.split("\\.");
+				propType = typeSplit[typeSplit.length-1];
+			}
+			type = minecraft.getClassByType(propType);
+			if (type == null)
+				isMinecraftClass = false;
+			property.setAccessible(true);
+		} catch (SecurityException e) {
+			Log.e("SecurityException on (" + mcClass.getName() + " / " + mcClass.getClassName() + ") property (" + name + " / " + internalName +")");
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			Log.e("Unable to find class property (" + mcClass.getName() + " / " + mcClass.getClassName() + ") (" + name + " / " + internalName +")");
+			e.printStackTrace();
+		}
+	}
+	
+	public MinecraftObject getValue(MinecraftObject mcObject) {
+		Object object = mcObject.get();
+		Object value = getValue(object);
+		Log.i(value.toString());
+		
+		return null;
+	}
+	public Object getStaticValue() {
+		Object value = getValue((Object)null);
+		if (isMinecraftClass) {
+			return new MinecraftObject(type, value);
+		}
+		return value;
+	}
+	private Object getValue(Object obj) {
+		try {
+			return property.get(obj);
+		} catch (IllegalArgumentException e) { // TODO : Add error text.
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String getParentName() {
+		return parent.getName();
+	}
+}
