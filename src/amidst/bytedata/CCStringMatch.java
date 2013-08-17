@@ -2,7 +2,8 @@ package amidst.bytedata;
 
 import java.io.UnsupportedEncodingException;
 
-import com.skiphs.AMIDST.minecraft.Minecraft;
+import amidst.minecraft.Minecraft;
+
 
 public class CCStringMatch extends ClassChecker {
 	private String checkData;

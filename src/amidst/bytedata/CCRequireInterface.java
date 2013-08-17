@@ -1,7 +1,6 @@
 package amidst.bytedata;
 
-import com.skiphs.AMIDST.Log;
-import com.skiphs.AMIDST.minecraft.Minecraft;
+import amidst.minecraft.Minecraft;
 
 public class CCRequireInterface extends CCRequireSimple {
 	public CCRequireInterface(ClassChecker checker) {

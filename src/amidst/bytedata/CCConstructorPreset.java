@@ -1,6 +1,6 @@
 package amidst.bytedata;
 
-import com.skiphs.AMIDST.minecraft.Minecraft;
+import amidst.minecraft.Minecraft;
 
 public class CCConstructorPreset extends ClassChecker {
 	private String[] constructor;

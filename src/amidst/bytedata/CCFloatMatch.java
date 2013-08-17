@@ -1,6 +1,6 @@
 package amidst.bytedata;
 
-import com.skiphs.AMIDST.minecraft.Minecraft;
+import amidst.minecraft.Minecraft;
 
 public class CCFloatMatch extends ClassChecker {
 	private float[] checkData;

@@ -3,8 +3,7 @@ package amidst.bytedata;
 import java.awt.AlphaComposite;
 import java.util.Vector;
 
-import com.skiphs.AMIDST.Log;
-import com.skiphs.AMIDST.minecraft.Minecraft;
+import amidst.minecraft.Minecraft;
 
 public class CCMethodByReturnType extends ClassChecker {
 	private String name, className, returnType, param;

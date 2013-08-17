@@ -1,6 +1,7 @@
 package amidst.bytedata;
 
-import com.skiphs.AMIDST.minecraft.Minecraft;
+import amidst.minecraft.Minecraft;
+
 
 public class CCPropertyPreset extends ClassChecker {
 	private String[] properties;

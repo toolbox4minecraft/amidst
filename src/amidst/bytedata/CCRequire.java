@@ -1,6 +1,7 @@
 package amidst.bytedata;
 
-import com.skiphs.AMIDST.minecraft.Minecraft;
+import amidst.minecraft.Minecraft;
+
 
 public class CCRequire extends ClassChecker {
 	private ClassChecker checker;
