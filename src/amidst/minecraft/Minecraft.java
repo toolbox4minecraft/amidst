@@ -37,6 +37,7 @@ import amidst.bytedata.CCPropertyPreset;
 import amidst.bytedata.CCRequire;
 import amidst.bytedata.CCStringMatch;
 import amidst.bytedata.ClassChecker;
+import amidst.bytedata.DeobfuscationUtil;
 import amidst.foreign.VersionInfo;
 
 public class Minecraft {
@@ -51,14 +52,6 @@ public class Minecraft {
 	private static ClassChecker[] classChecks = new ClassChecker[] {
 			new CCStringMatch("BiomeGenBase", "MushroomIsland"),
 			new CCStringMatch("WorldType", "default_1_1"),
-			new CCStringMatch("Server", "To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\""),
-			new CCRequire(
-					new CCStringMatch("WorldSolo", "iceandsnow")
-			, "WorldCore"),
-			new CCStringMatch("MapGenStronghold", "Placed stronghold in INVALID biome at"),
-			new CCStringMatch("AnvilSaveConverter", "Scanning folders..."),
-			new CCFloatMatch("WorldProvider", 0.84705883f),
-			new CCStringMatch("Chunk", "recheckGaps"),
 			new CCLongMatch("GenLayer", 1000L, 2001L, 2000L),
 			new CCRequire(
 					new CCPropertyPreset(
@@ -75,12 +68,6 @@ public class Minecraft {
 							"a(int, int, int, int)", "getInts"
 					)
 			, "GenLayer"),
-			new CCRequire(
-					new CCConstructorPreset(
-							"WorldSettings",
-							0, "init"
-					)
-			,"WorldSettings"),
 			new CCRequire(new CCMulti(
 					new CCMethodPreset(
 							"IntCache",
@@ -95,13 +82,7 @@ public class Minecraft {
 							"d","freeLargeArrays",
 							"e","inUseLargeArrays"
 					)
-			), "IntCache"),
-			new CCRequire(
-					new CCMethodPreset(
-							"WorldProvider",
-							"a(int)", "getProviderForDimension"
-					)
-			, "WorldProvider"),
+			), "IntCache")
 	};
 	private HashMap<String, ByteClass> byteClassMap;
 	private HashMap<String, MinecraftClass> nameMap;
@@ -160,7 +141,7 @@ public class Minecraft {
 					if (!found[q]) {
 						classChecks[q].check(this, (ByteClass)byteClasses[i]);
 						if (classChecks[q].isComplete) {
-							Log.i("Found: " + byteClasses[i] + " as " + classChecks[q].getName());
+							Log.debug("Found: " + byteClasses[i] + " as " + classChecks[q].getName() + " | " + classChecks[q].getClass().getSimpleName());
 							found[q] = true;
 							checksRemaining--;
 						}
