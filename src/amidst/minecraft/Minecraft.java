@@ -15,6 +15,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Stack;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -44,7 +45,6 @@ public class Minecraft {
 	private URLClassLoader classLoader;
 	private String versionID; 
 	private URL urlToJar;
-	private boolean live;
 	private static Minecraft activeMinecraft; 
 	public HashMap<String, MinecraftObject> globalMap;
 	
@@ -110,120 +110,61 @@ public class Minecraft {
 	
 	public VersionInfo version = VersionInfo.unknown;
 	
-	public Minecraft(String version) {
+	public Minecraft() throws MalformedURLException {
+		this(Amidst.installInformation.getJarFile().toURI().toURL());
+	}
+	
+	public Minecraft(URL url) {
 		byteClassNames = new Vector<String>();
-		live = false;
-		Log.i("Creating a fresh set of data files.");
-		versionID = version;
-		try {
-			urlToJar = new URL("file:" + Amidst.getPath() + "data/" + versionID + "/minecraft.jar");
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-		Minecraft curVersion = Amidst.getInstalledMinecraft();
-		
-		Log.i("Copying minecraft.jar...");
-		try {
-			File sourceFile = new File(curVersion.getPath().getFile());
-			File destFile = new File(Amidst.getPath() + "data/" + versionID + "/minecraft.jar");
-			JarManager.copyFile(sourceFile, destFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		/*File tempTitle = new File(Amidst.getPath() + "data/" + versionID + "/" + Amidst.TEMP_VERSION);
-		if (!tempTitle.exists())
-			try {
-				tempTitle.createNewFile();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		*/
-		File contentsDir = new File(Amidst.getPath() + "data/" + versionID + "/contents");
-		if (!contentsDir.exists()) {
-			Log.i("Extracting minecraft.jar contents...");
-			contentsDir.mkdirs();
-
-			int bufferSize = 2048;
-	        byte dataBuffer[] = new byte[bufferSize];
-			try {
-				ZipFile jar = new ZipFile(urlToJar.getFile());
-				Enumeration<? extends ZipEntry> enu = jar.entries();
-				
-				while (enu.hasMoreElements()) {
-				
-				    ZipEntry entry = (ZipEntry)enu.nextElement();
-				    //Log.i(entry);
-				    String currentEntry = entry.getName();
-				    if (currentEntry.equals("aux.class"))
-				    	currentEntry = "_" + currentEntry;
-				    File dest = new File(Amidst.getPath() + "data/" + versionID + "/contents/", currentEntry);
-				    
-				    File parentDirectory = dest.getParentFile();
-				    parentDirectory.mkdirs();
-				    
-				    if (!entry.isDirectory()) {
-				        BufferedInputStream is = new BufferedInputStream(jar.getInputStream(entry));
-				        int currentByte;
-				        
-				        FileOutputStream fos = new FileOutputStream(dest);
-				        BufferedOutputStream bos = new BufferedOutputStream(fos, bufferSize);
-				        while ((currentByte = is.read(dataBuffer, 0, bufferSize)) != -1) {
-				        	bos.write(dataBuffer, 0, currentByte);
-				        }
-				        bos.flush();
-				        bos.close();
-				        is.close();
-				    }
-				}
-
-				Log.i("Extraction complete.");
-			} catch (Exception e) {
-				e.printStackTrace(); // TODO : Error
-			}
-		} else {
-			Log.i("Contents already found.");
-		}
-		Log.i("Looking up classes...");
 		byteClassMap = new HashMap<String, ByteClass>(MAX_CLASSES);
+		urlToJar = url;
 		
-		int checksRemaining = classChecks.length;
-		File[] classFiles = contentsDir.listFiles();
-		ByteClass[] byteClasses = new ByteClass[classFiles.length];
-		DataInputStream inStream = null;
+		Log.i("Reading minecraft.jar...");
+		
+		int bufferSize = 2048;
+		byte dataBuffer[] = new byte[bufferSize];
+
+		Stack<ByteClass> byteClassStack = new Stack<ByteClass>();
 		try {
-			for (int i = 0; i < classFiles.length; i++) {
-				if (!classFiles[i].isDirectory()) {
-					inStream = new DataInputStream(new BufferedInputStream(new FileInputStream(classFiles[i])));
-					byte[] classData = new byte[inStream.available()]; // TODO : Move this outside the loop!
-					inStream.read(classData, 0, classData.length);
-					
-					String className = classFiles[i].getName().split("\\.")[0];
-					if (className.startsWith("_")) {
-						className = className.substring(1);
-					}
-					byteClasses[i] = new ByteClass(className, classData);
-					
-					inStream.close();
+			ZipFile jar = new ZipFile(urlToJar.getFile());
+			Enumeration<? extends ZipEntry> enu = jar.entries();
+			
+			while (enu.hasMoreElements()) {
+				ZipEntry entry = enu.nextElement();
+				
+				String currentEntry = entry.getName();
+				String[] nameSplit = currentEntry.split("\\.");
+				if (!entry.isDirectory() && (nameSplit.length == 2) && (nameSplit[0].indexOf('/') == -1) && nameSplit[1].equals("class")) {
+			        BufferedInputStream is = new BufferedInputStream(jar.getInputStream(entry));
+			        byte[] classData = new byte[is.available()];
+			        is.read(classData);
+			        is.close();
+					byteClassStack.push(new ByteClass(nameSplit[0], classData));
 				}
 			}
+
+			Log.i("Jar load complete.");
 		} catch (Exception e) {
 			e.printStackTrace();
+			Log.kill("Error extracting jar data.");
 		}
-
+		
+		Log.i("Searching for classes...");
+		int checksRemaining = classChecks.length;
+		Object[] byteClasses = byteClassStack.toArray();
 		boolean[] found = new boolean[byteClasses.length];
 		while (checksRemaining != 0) {
 			for (int q = 0; q < classChecks.length; q++) {
 				for (int i = 0; i < byteClasses.length; i++) {
 
 					if (!found[q]) {
-						if (!classFiles[i].isDirectory()) {
-							classChecks[q].check(this, byteClasses[i]);
-							if (classChecks[q].isComplete) {
-								found[q] = true;
-								checksRemaining--;
-							}
+						classChecks[q].check(this, (ByteClass)byteClasses[i]);
+						if (classChecks[q].isComplete) {
+							Log.i("Found: " + byteClasses[i] + " as " + classChecks[q].getName());
+							found[q] = true;
+							checksRemaining--;
 						}
+						// TODO: What is this line, and why is it commented
 						//byteClassMap.put(classChecks[q].getName(), classFiles[i].getName().split("\\.")[0]);
 					}
 				}
@@ -238,6 +179,10 @@ public class Minecraft {
 
 			}
 		}
+		Log.i("Class search complete.");
+		System.exit(0);
+
+/*
 		String output = "";
 		for (String name : byteClassNames) {
 			ByteClass bClass = byteClassMap.get(name);
@@ -262,54 +207,9 @@ public class Minecraft {
 			String match = output.substring(cMatcher.start(), cMatcher.end());
 			tempOutput = tempOutput.replaceAll(match, getByteClass(match.substring(1)).getClassName());
 		}
-		output = tempOutput;
-		Log.i(output);
-		File ainfo = new File(Amidst.getPath() + "data/" + versionID +"/names.ainfo");
-		try {
-			FileWriter fstream = new FileWriter(ainfo);
-			BufferedWriter out = new BufferedWriter(fstream);
-			out.write(output);
-			out.close();
-		} catch (Exception e) {
-			Log.e("Unable to write names.ainfo file!");
-			e.printStackTrace();
-		}
-		createFromMCInfo(new MCInfo(ainfo));
+		output = tempOutput;*/
 	}
-	
-	      
-	
-	public Minecraft(URL jar) { // TODO : Change this to a static "get version from jar" method?
-		live = true;
-		
-		urlToJar = jar;
-		try {
-			classLoader = new URLClassLoader(new URL[]{jar});
-			use();
-			mainClass = classLoader.loadClass("net.minecraft.client.Minecraft");
-		} catch (Exception e) {
-			e.printStackTrace();
-			// TODO : add error - Not a minecraft.jar file
-		}
-		String typeDump = "";
-		Field fields[] = mainClass.getDeclaredFields();
-		for (int i = 0; i < fields.length; i++) {
-			String typeString = fields[i].getType().toString();
-			if (typeString.startsWith("class ") && !typeString.contains("."))
-				typeDump += typeString.substring(6);
-		}
-		versionID = typeDump;		
-	}
-	public Minecraft(String version, MCInfo info) {
-		live = false;
-		versionID = version;
-		try {
-			urlToJar = new URL("file:" + Amidst.getPath() + "data/" + version + "/minecraft.jar");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		createFromMCInfo(info);
-	}
+	/*
 	private void createFromMCInfo(MCInfo info) {
 		nameMap = new HashMap<String, MinecraftClass>();
 		classMap = new HashMap<String, MinecraftClass>();
@@ -350,7 +250,9 @@ public class Minecraft {
 		
 		Log.i(nameMap.toString());
 		
-	}
+	}*/
+	
+	
 	public URL getPath() {
 		return urlToJar;
 	}
@@ -397,4 +299,12 @@ public class Minecraft {
 	public static Minecraft getActiveMinecraft() {
 		return activeMinecraft;
 	}
+
+	public void setGlobal(String name, MinecraftObject object) {
+		globalMap.put(name, object);
+	}
+	public MinecraftObject getGlobal(String name) {
+		return globalMap.get(name);
+	}
+	
 }

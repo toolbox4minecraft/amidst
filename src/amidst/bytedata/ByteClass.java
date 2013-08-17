@@ -7,6 +7,8 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import amidst.Log;
+
 public class ByteClass {
 	private byte[] data;
 	private boolean isValidClass;
@@ -33,7 +35,6 @@ public class ByteClass {
 		floatConstants = new Vector<Float>();
 		longConstants = new Vector<Long>();
 		methodIndices = new Vector<ReferenceIndex>();
-		
 		stringIndices = new Vector<ClassConstant<Integer>>();
 		try {
 			data = classData;
@@ -46,7 +47,6 @@ public class ByteClass {
 				constants = new ClassConstant<?>[cpSize];
 				constantTypes = new int[cpSize];
 				long offset = 10;
-				
 				for (int q = 0; q < cpSize; q++) {
 					byte tag = stream.readByte();
 					offset++;
