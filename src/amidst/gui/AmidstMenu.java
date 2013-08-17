@@ -1,6 +1,7 @@
 package amidst.gui;
 
 import MoF.*;
+import amidst.Log;
 import amidst.Options;
 import amidst.Util;
 import amidst.map.MapObjectPlayer;

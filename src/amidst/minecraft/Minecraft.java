@@ -48,6 +48,12 @@ public class Minecraft {
 		}
 		versionId = typeDump;
 		Log.i("Loaded Minecraft with versionID of " + versionId);
+		
+		nameMap = new HashMap<String, MinecraftClass>();
+		classMap = new HashMap<String, MinecraftClass>();
+		
+		// TODO: Move this somewhere else?
+		identifyClasses();
 	}
 	
 	public Minecraft() throws MalformedURLException {
@@ -62,12 +68,10 @@ public class Minecraft {
 	}
 	
 	public void identifyClasses() {
-		
-		
-	}
-	public void isAtLeast(VersionInfo version) {
+		MinecraftClass classGenLayer = new MinecraftClass("GenLayer", "a");
 		
 	}
+	
 	/*
 	private void createFromMCInfo(MCInfo info) {
 		nameMap = new HashMap<String, MinecraftClass>();
@@ -116,6 +120,7 @@ public class Minecraft {
 	
 	public void use() {
 		Thread.currentThread().setContextClassLoader(classLoader);
+		activeMinecraft = this;
 	}
 	
 	public String getVersionId() {

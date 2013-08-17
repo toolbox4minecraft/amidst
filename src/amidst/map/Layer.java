@@ -9,7 +9,6 @@ import java.net.MalformedURLException;
 
 import javax.imageio.ImageIO;
 
-import MoF.ChunkManager;
 import amidst.Log;
 import amidst.preferences.BooleanPrefModel;
 

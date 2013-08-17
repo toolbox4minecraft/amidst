@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Random;
 
 import MoF.Biome;
-import MoF.ChunkManager;
 import amidst.Log;
 import amidst.Options;
 import amidst.map.Fragment;

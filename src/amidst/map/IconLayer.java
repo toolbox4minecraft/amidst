@@ -1,6 +1,5 @@
 package amidst.map;
 
-import MoF.ChunkManager;
 import amidst.preferences.BooleanPrefModel;
 
 
