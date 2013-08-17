@@ -24,6 +24,8 @@ public class Log {
 	}
 	public static void e(Object... s) {
 		printwithTag("error", s);
+		if (isUsingAlerts)
+			JOptionPane.showMessageDialog(null, s, "Error", JOptionPane.ERROR_MESSAGE);
 		if (isUsingListener)
 			listener.error(s);
 	}
@@ -32,7 +34,7 @@ public class Log {
 		if (isUsingListener)
 			listener.kill(s);
 		if (isUsingAlerts)
-			JOptionPane.showMessageDialog(null, s);
+			JOptionPane.showMessageDialog(null, s, "Fatal Error", JOptionPane.ERROR_MESSAGE);
 		System.exit(0);
 	}
 	
@@ -43,7 +45,7 @@ public class Log {
 	
 	private static void printwithTag(String tag, Object... msgs) {
 		System.out.print("[" + tag + "] ");
-		for (int i=0; i<msgs.length; i++) {
+		for (int i = 0; i < msgs.length; i++) {
 			System.out.print(msgs[i]);
 			System.out.print((i < msgs.length - 1) ? " " : "\n");
 		}

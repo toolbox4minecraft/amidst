@@ -102,4 +102,7 @@ public class MinecraftConstructor {
 	public Class<?>[] getParameters() {
 		return paramClasses;
 	}
+	public String toString() {
+		return "[Constructor " + name +" of class " + parent.getName() + "]";
+	}
 }

@@ -13,13 +13,15 @@ import amidst.json.InstallInformation;
 
 public class Amidst {
 	public final static int version_major = 3;
-	public final static int version_minor = 0;
-	public static InstallInformation installInformation = new InstallInformation(false);
+	public final static int version_minor = 1;
+	public final static String versionOffset = "b";
+	public static InstallInformation installInformation = new InstallInformation(true);
 	
-	public static void main(String args[]) throws IOException {
+	public static void main(String args[]) {
 		Util.setLookAndFeel();
 		Google.startTracking();
 		Google.track("Run");
+		Log.i(installInformation.getJarFile());
 		new VersionSelectWindow();
 		
 		/*FinderWindow w = new FinderWindow(); //as long as we design it well, we won't need a reference to it ;)
@@ -34,6 +36,6 @@ public class Amidst {
 	}
 	
 	public static String version() {
-		return version_major + "." + version_minor;
+		return version_major + "." + version_minor + versionOffset;
 	}
 }

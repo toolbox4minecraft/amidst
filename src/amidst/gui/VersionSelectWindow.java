@@ -27,6 +27,7 @@ import javax.swing.ListSelectionModel;
 
 import MoF.FinderWindow;
 import amidst.Amidst;
+import amidst.Log;
 import amidst.Util;
 import amidst.json.InstallInformation;
 import amidst.json.LauncherProfile;

@@ -40,11 +40,7 @@ public enum Options {
 	}
 	
 	public File getJar() {
-		if (Amidst.installInformation.isPre161)
-			return jar.get();
-		else
-			return Amidst.installInformation.getJarFile();
-		
+		return jar.get();
 	}
 	
 	public String getSeedMessage() {
