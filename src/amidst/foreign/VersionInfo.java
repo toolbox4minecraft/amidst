@@ -11,7 +11,7 @@ public enum VersionInfo {
 	V1_6_2("mulu[Ljr;hm[J[J[J[J[J[[J", "akl"),
 	V1_6_1("msls[Ljp;hk[J[J[J[J[J[[J", "akh"),
 	V1_5_1("[Bbeabdsbawemabdtbfzbdwngngbevawfbgfawvawvaxrawbbfrausbjhaycawwaraavybkdavwbjvbkila", "air"),
-	V1_5_0("ain", "ail"), // TODO: This makes no sense? 1.5.0 is not on the version list!
+	V1_5_0("THIS IS INVALID", "ail"), // TODO: This makes no sense? 1.5.0 is not on the version list!
 	V1_4_6("[Baywayoaaszleaypbavaysmdazratabbaatqatqaulaswbanarnbdzauwatraohastbevasrbenbezbdmbdjkh", "agu"), // Includes 1.4.7
 	V1_4_5("[Bayoaygaasrleayhbakaykmdazfassbapatjatjaueasobacarfbdoaupatkanzaslbekasjbecbenbdbbcykh", "agn"),
 	V1_4_2("[Baxgawyaarjkpawzayyaxclnaxxarkazcasbasbaswargaytaqabcbathascamuardbcxarbbcpbdabbobbljy", "afs"),

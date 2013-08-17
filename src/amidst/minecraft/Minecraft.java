@@ -1,15 +1,6 @@
 package amidst.minecraft;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -17,27 +8,20 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Stack;
 import java.util.Vector;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import amidst.Amidst;
 import amidst.Log;
 import amidst.bytedata.ByteClass;
-import amidst.bytedata.CCByteSearch;
-import amidst.bytedata.CCConstructorPreset;
-import amidst.bytedata.CCFloatMatch;
 import amidst.bytedata.CCLongMatch;
 import amidst.bytedata.CCMethodPreset;
 import amidst.bytedata.CCMulti;
 import amidst.bytedata.CCPropertyPreset;
 import amidst.bytedata.CCRequire;
 import amidst.bytedata.CCStringMatch;
+import amidst.bytedata.CCWildcardByteSearch;
 import amidst.bytedata.ClassChecker;
-import amidst.bytedata.DeobfuscationUtil;
 import amidst.foreign.VersionInfo;
 
 public class Minecraft {
@@ -50,6 +34,7 @@ public class Minecraft {
 	public HashMap<String, MinecraftObject> globalMap;
 	
 	private static ClassChecker[] classChecks = new ClassChecker[] {
+			new CCWildcardByteSearch("IntCache", DeobfuscationData.intCache),
 			new CCStringMatch("BiomeGenBase", "MushroomIsland"),
 			new CCStringMatch("WorldType", "default_1_1"),
 			new CCLongMatch("GenLayer", 1000L, 2001L, 2000L),
@@ -102,8 +87,6 @@ public class Minecraft {
 		
 		Log.i("Reading minecraft.jar...");
 		
-		int bufferSize = 2048;
-		byte dataBuffer[] = new byte[bufferSize];
 
 		Stack<ByteClass> byteClassStack = new Stack<ByteClass>();
 		try {
