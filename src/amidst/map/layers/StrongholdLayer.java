@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Random;
 
 import MoF.Biome;
-import MoF.ReflectionInfo;
 import amidst.Log;
 import amidst.Options;
 import amidst.foreign.VersionInfo;
@@ -28,7 +27,7 @@ public class StrongholdLayer extends IconLayer {
 	private static Biome[] biomes1_1 = { Biome.d, Biome.f, Biome.e, Biome.h, Biome.g, Biome.n, Biome.o, Biome.s, Biome.t, Biome.v };
 	private static Biome[] biomes12w03a = { Biome.d, Biome.f, Biome.e, Biome.h, Biome.g, Biome.n, Biome.o, Biome.s, Biome.t, Biome.v, Biome.w, Biome.x };
 	
-	private MapObjectStronghold[] strongholds;
+	private MapObjectStronghold[] strongholds = new MapObjectStronghold[3];
 	
 	public StrongholdLayer() {
 		super("strongholds");

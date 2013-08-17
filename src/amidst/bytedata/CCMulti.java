@@ -6,6 +6,7 @@ import amidst.minecraft.Minecraft;
 public class CCMulti extends ClassChecker {
 	private ClassChecker[] checks;
 	public CCMulti(ClassChecker... checks) {
+		super(checks[0].getName());
 		this.checks = checks;
 	}
 	public void check(Minecraft mc, ByteClass bClass) {

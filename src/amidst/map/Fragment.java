@@ -32,7 +32,7 @@ public class Fragment {
 	private static int[] dataCache = new int[SIZE*SIZE];
 	
 	// TODO: This shouldn't be hard coded!
-	public int[] biomeDataCache =  new int[SIZE*SIZE];
+	//public int[] biomeDataCache =  new int[SIZE*SIZE];
 	
 	public Fragment(Layer... layers) {
 		this(layers, null, null);

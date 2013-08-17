@@ -7,6 +7,7 @@ import java.util.Random;
 import amidst.Log;
 
 import MoF.Biome;
+import MoF.SaveLoader.Type;
 
 public class MinecraftUtil {
 	public static int[] getBiomeData(int x, int y, int width, int height) {
@@ -56,5 +57,13 @@ public class MinecraftUtil {
 		}
 		
 		return true;
+	}
+	
+	public static void createBiomeGenerator(long seed, Type type) {
+		Minecraft minecraft = Minecraft.getActiveMinecraft();
+		MinecraftClass genLayerClass = minecraft.getClassByName("GenLayer");
+		MinecraftClass worldTypeClass = minecraft.getClassByName("WorldType");
+		Object[] genLayer = (Object[])genLayerClass.callFunction("initializeAllBiomeGenerators", seed, type.get().get());
+		minecraft.setGlobal("biomeGen", new MinecraftObject(genLayerClass, genLayer[0]));
 	}
 }

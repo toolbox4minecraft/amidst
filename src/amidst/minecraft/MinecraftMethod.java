@@ -53,10 +53,10 @@ public class MinecraftMethod {
 				for (; i < paramNames.length; i++) {
 					paramClasses[i] = primitives.get(paramNames[i]);
 					if (paramClasses[i] == null)
-						paramClasses[i] = mc.getClassLoader().loadClass(paramNames[i]);
+						paramClasses[i] = mc.getClassLoader().loadClass(paramNames[i]); // TODO: Does this cause duplicate loads?
 				}
 			}
-
+			
 			method = clazz.getDeclaredMethod(internalName, paramClasses);
 			method.setAccessible(true);
 			String methodType = method.getReturnType().getName();

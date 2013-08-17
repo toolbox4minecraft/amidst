@@ -5,6 +5,7 @@ import amidst.Options;
 import amidst.map.MapObject;
 import amidst.map.MapObjectPlayer;
 import amidst.minecraft.Minecraft;
+import amidst.minecraft.MinecraftUtil;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -63,7 +64,7 @@ public class Project extends JPanel {
 		
 		BorderLayout layout = new BorderLayout();
 		this.setLayout(layout);
-
+		MinecraftUtil.createBiomeGenerator(seed, type);
 		//Create MapViewer
 		map = new MapViewer(this);
 		add(map, BorderLayout.CENTER);

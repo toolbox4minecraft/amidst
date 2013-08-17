@@ -1,6 +1,7 @@
 package amidst.minecraft;
 
 import java.io.BufferedInputStream;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -8,6 +9,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Stack;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -31,7 +34,7 @@ public class Minecraft {
 	private String versionID; 
 	private URL urlToJar;
 	private static Minecraft activeMinecraft; 
-	public HashMap<String, MinecraftObject> globalMap;
+	public HashMap<String, MinecraftObject> globalMap = new HashMap<String, MinecraftObject>();
 	
 	private static ClassChecker[] classChecks = new ClassChecker[] {
 			new CCWildcardByteSearch("IntCache", DeobfuscationData.intCache),
@@ -41,9 +44,9 @@ public class Minecraft {
 			new CCRequire(
 					new CCPropertyPreset(
 							"WorldType",
-							"b", "DEFAULT",
-							"c", "FLAT",
-							"d", "LARGE_BIOMES"
+							"b", "default",
+							"c", "flat",
+							"d", "largeBiomes"
 					)
 			, "WorldType"),
 			new CCRequire(
@@ -57,7 +60,7 @@ public class Minecraft {
 					new CCMethodPreset(
 							"IntCache",
 							"a(int)", "getIntCache",
-							"a()", "removeIntCache"
+							"a()", "resetIntCache"
 					),
 					new CCPropertyPreset(
 							"IntCache",
@@ -74,6 +77,7 @@ public class Minecraft {
 	private HashMap<String, MinecraftClass> classMap;
 	private Vector<String> byteClassNames;
 	
+	public String versionId;
 	public VersionInfo version = VersionInfo.unknown;
 	
 	public Minecraft() throws MalformedURLException {
@@ -147,76 +151,92 @@ public class Minecraft {
 		}
 		Log.i("Class search complete.");
 		
-		
-/*
-		String output = "";
-		for (String name : byteClassNames) {
-			ByteClass bClass = byteClassMap.get(name);
-			output += "c:" + bClass.getClassName() + "=" + name + "\n";
-			Vector<String[]> methods = bClass.getMethods();
-			Vector<String[]> properties = bClass.getProperties();
-			Vector<String[]> constructors = bClass.getConstructors();
-			for (String[] method : methods) {
-				output += "m:" + method[0] + "=" + method[1] + "\n";
-			}
-			for (String[] property : properties) {
-				output += "p:" + property[0] + "=" + property[1] + "\n";
-			}
-			for (String[] constructor : constructors) {
-				output += "i:" + constructor[0] + "=" + constructor[1] + "\n";
-			}
-		}
-		Pattern cPattern = Pattern.compile("@[A-Za-z]+");
-		Matcher cMatcher = cPattern.matcher(output);
-		String tempOutput = output;
-		while (cMatcher.find()) {
-			String match = output.substring(cMatcher.start(), cMatcher.end());
-			tempOutput = tempOutput.replaceAll(match, getByteClass(match.substring(1)).getClassName());
-		}
-		output = tempOutput;*/
-	}
-	/*
-	private void createFromMCInfo(MCInfo info) {
-		nameMap = new HashMap<String, MinecraftClass>();
-		classMap = new HashMap<String, MinecraftClass>();
+		Log.i("Generating version ID...");
 		try {
 			classLoader = new URLClassLoader(new URL[]{urlToJar});
 			use();
-			mainClass = classLoader.loadClass("net.minecraft.client.Minecraft");
-			
-			Vector<MinecraftClass> classes = info.getMinecraftClasses();
-			Vector<MinecraftProperty> properties = info.getMinecraftProperties();
-			Vector<MinecraftMethod> methods = info.getMinecraftMethods();
-			Vector<MinecraftConstructor> constructors = info.getMinecraftConstructors();
-			for (MinecraftClass clazz : classes) { //Load all the classes into the name dictionary.
-				clazz.load(this);
-				nameMap.put(clazz.getName(), clazz);
-				classMap.put(clazz.getClassName(), clazz);
-			}
-			for (MinecraftClass clazz : classes) { //Load all the properties and methods.
-				for (MinecraftProperty property : properties) {
-					if (clazz.getName().equals(property.getParentName()))
-						clazz.addProperty(property);
-				}
-				for (MinecraftMethod method : methods) {
-					if (clazz.getName().equals(method.getParentName()))
-						clazz.addMethod(method);
-				}
-				for (MinecraftConstructor constructor : constructors) {
-					if (clazz.getName().equals(constructor.getParentName()))
-						clazz.addConstructor(constructor);
-				}
-			}
-			activeMinecraft = this;
-			//classMap = info.getMinecraftClasses(this);
-			//Log.i(classMap.toString());
+			if (classLoader.findResource("net/minecraft/client/Minecraft.class") != null)
+				mainClass = classLoader.loadClass("net.minecraft.client.Minecraft");
+			else if (classLoader.findResource("net/minecraft/server/MinecraftServer.class") != null)
+				mainClass = classLoader.loadClass("net.minecraft.server.MinecraftServer");
+			else
+				throw new RuntimeException();
 		} catch (Exception e) {
 			e.printStackTrace();
+			Log.kill("Attempted to load non-minecraft jar, or unable to locate starting point.");
+		}
+		String typeDump = "";
+		Field fields[] = mainClass.getDeclaredFields();
+		for (int i = 0; i < fields.length; i++) {
+			String typeString = fields[i].getType().toString();
+			if (typeString.startsWith("class ") && !typeString.contains("."))
+				typeDump += typeString.substring(6);
+		}
+		versionId = typeDump;
+		for (VersionInfo v : VersionInfo.values()) {
+			if (versionId.equals(v.versionId)) {
+				version = v;
+				break;
+			}
+		}
+
+		Log.i("Identified Minecraft [" + version.name() + "] with versionID of " + versionId);
+		Log.i("Loading classes...");
+		nameMap = new HashMap<String, MinecraftClass>();
+		classMap = new HashMap<String, MinecraftClass>();
+
+		for (String name : byteClassNames) {
+			ByteClass byteClass = byteClassMap.get(name);
+			MinecraftClass minecraftClass = new MinecraftClass(name, byteClass.getClassName());
+			minecraftClass.load(this);
+			nameMap.put(minecraftClass.getName(), minecraftClass);
+			classMap.put(minecraftClass.getClassName(), minecraftClass);
 		}
 		
-		Log.i(nameMap.toString());
-		
-	}*/
+		for (MinecraftClass minecraftClass : nameMap.values()) {
+			ByteClass byteClass = byteClassMap.get(minecraftClass.getName());
+			for (String[] property : byteClass.getProperties())
+				minecraftClass.addProperty(new MinecraftProperty(minecraftClass, property[1], property[0]));
+			for (String[] method : byteClass.getMethods()) {
+				String methodString = obfuscateStringClasses(method[0].replaceAll(" ", ""));
+				String methodDeobfName = method[1];
+				String methodObfName = methodString.substring(0, methodString.indexOf('('));
+				String parameterString = methodString.substring(methodString.indexOf('(') + 1, methodString.indexOf(')'));
+				
+				if (parameterString.equals("")) {
+					minecraftClass.addMethod(new MinecraftMethod(minecraftClass, methodDeobfName, methodObfName));
+				} else {
+					String[] parameterClasses = parameterString.split(",");
+					minecraftClass.addMethod(new MinecraftMethod(minecraftClass, methodDeobfName, methodObfName, parameterClasses));
+				}
+			}
+			for (String[] constructor : byteClass.getConstructors()) {
+				String methodString = obfuscateStringClasses(constructor[0].replaceAll(" ", ""));
+				String methodDeobfName = constructor[1];
+				String methodObfName = methodString.substring(0, methodString.indexOf('('));
+				String parameterString = methodString.substring(methodString.indexOf('(') + 1, methodString.indexOf(')'));
+				
+				if (parameterString.equals("")) {
+					minecraftClass.addMethod(new MinecraftMethod(minecraftClass, methodDeobfName, methodObfName));
+				} else {
+					String[] parameterClasses = parameterString.split(",");
+					minecraftClass.addMethod(new MinecraftMethod(minecraftClass, methodDeobfName, methodObfName, parameterClasses));
+				}
+			}
+		}
+		Log.i("Classes loaded.");
+		Log.i("Minecraft load complete.");
+	}
+	private String obfuscateStringClasses(String inString) {
+		Pattern cPattern = Pattern.compile("@[A-Za-z]+");
+		Matcher cMatcher = cPattern.matcher(inString);
+		String tempOutput = inString;
+		while (cMatcher.find()) {
+			String match = inString.substring(cMatcher.start(), cMatcher.end());
+			tempOutput = tempOutput.replaceAll(match, getByteClass(match.substring(1)).getClassName());
+		}
+		return tempOutput;
+	}
 	
 	
 	public URL getPath() {
@@ -257,7 +277,6 @@ public class Minecraft {
 			byteClassMap.put(publicName, bClass);
 			byteClassNames.add(publicName);
 		}
-		//Log.i(publicName);
 	}
 	public ByteClass getByteClass(String name) {
 		return byteClassMap.get(name);

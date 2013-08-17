@@ -2,6 +2,8 @@ package MoF;
 import amidst.Log;
 import amidst.Util;
 import amidst.map.MapObjectPlayer;
+import amidst.minecraft.Minecraft;
+import amidst.minecraft.MinecraftObject;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -33,6 +35,9 @@ public class SaveLoader {
 		public String toString() {
 			return s;
 		}
+		public MinecraftObject get() {
+			return (MinecraftObject) Minecraft.getActiveMinecraft().getClassByName("WorldType").getValue(s);
+		}
 		
 		public static Type fromMixedCase(String name) {
 			for (Type t : values())
@@ -40,6 +45,7 @@ public class SaveLoader {
 					return t;
 			throw new IllegalArgumentException("Value " + name + " not implemented");
 		}
+	
 	}
 	
 	public static FileFilter getFilter() {
