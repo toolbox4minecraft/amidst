@@ -100,10 +100,12 @@ public class Minecraft {
 				String[] nameSplit = currentEntry.split("\\.");
 				if (!entry.isDirectory() && (nameSplit.length == 2) && (nameSplit[0].indexOf('/') == -1) && nameSplit[1].equals("class")) {
 			        BufferedInputStream is = new BufferedInputStream(jar.getInputStream(entry));
-			        byte[] classData = new byte[is.available()];
-			        is.read(classData);
-			        is.close();
-					byteClassStack.push(new ByteClass(nameSplit[0], classData));
+			        if (is.available() < 8000) { // TODO: Double check that this filter won't mess anything up.
+				        byte[] classData = new byte[is.available()];
+				        is.read(classData);
+				        is.close();
+						byteClassStack.push(new ByteClass(nameSplit[0], classData));
+			        }
 				}
 			}
 
@@ -144,8 +146,8 @@ public class Minecraft {
 			}
 		}
 		Log.i("Class search complete.");
-		System.exit(0);
-
+		
+		
 /*
 		String output = "";
 		for (String name : byteClassNames) {
