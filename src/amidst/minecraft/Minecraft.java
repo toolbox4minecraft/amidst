@@ -198,7 +198,8 @@ public class Minecraft {
 			for (String[] property : byteClass.getProperties())
 				minecraftClass.addProperty(new MinecraftProperty(minecraftClass, property[1], property[0]));
 			for (String[] method : byteClass.getMethods()) {
-				String methodString = obfuscateStringClasses(method[0].replaceAll(" ", ""));
+				String methodString = obfuscateStringClasses(method[0]);
+				methodString = methodString.replaceAll(",INVALID", "").replaceAll("INVALID,","").replaceAll("INVALID", "");
 				String methodDeobfName = method[1];
 				String methodObfName = methodString.substring(0, methodString.indexOf('('));
 				String parameterString = methodString.substring(methodString.indexOf('(') + 1, methodString.indexOf(')'));
@@ -211,7 +212,7 @@ public class Minecraft {
 				}
 			}
 			for (String[] constructor : byteClass.getConstructors()) {
-				String methodString = obfuscateStringClasses(constructor[0].replaceAll(" ", ""));
+				String methodString = obfuscateStringClasses(constructor[0]).replaceAll(",INVALID", "").replaceAll("INVALID,","").replaceAll("INVALID", "");
 				String methodDeobfName = constructor[1];
 				String methodObfName = methodString.substring(0, methodString.indexOf('('));
 				String parameterString = methodString.substring(methodString.indexOf('(') + 1, methodString.indexOf(')'));
@@ -228,12 +229,19 @@ public class Minecraft {
 		Log.i("Minecraft load complete.");
 	}
 	private String obfuscateStringClasses(String inString) {
+		inString = inString.replaceAll(" ", "");
 		Pattern cPattern = Pattern.compile("@[A-Za-z]+");
 		Matcher cMatcher = cPattern.matcher(inString);
 		String tempOutput = inString;
 		while (cMatcher.find()) {
 			String match = inString.substring(cMatcher.start(), cMatcher.end());
-			tempOutput = tempOutput.replaceAll(match, getByteClass(match.substring(1)).getClassName());
+			ByteClass byteClass = getByteClass(match.substring(1));
+			if (byteClass != null) {
+				tempOutput = tempOutput.replaceAll(match, byteClass.getClassName());
+			} else {
+				tempOutput = tempOutput.replaceAll(match, "INVALID");
+			}
+			cMatcher = cPattern.matcher(tempOutput);
 		}
 		return tempOutput;
 	}

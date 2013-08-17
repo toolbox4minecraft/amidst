@@ -35,15 +35,15 @@ public enum VersionInfo {
 	V12w05a("vy"),
 	V12w04a("vu"),
 	V12w03a("vj"),
-	V1_1("vc"),
-	V1_0("jx"),
-	V1_9pre6("uk"),
+	V1_1("[Bjsudadrvqluhaarcqevyzmqmqugiokzcepgagqvsonhhrgahqfy[J[Jaitpdbo"),
+	V1_0("[Baesmmaijryafvdinqfdrzhabeabexexwadtnglkqdfagvkiahmhsadk[J[Jtkgkyu"),
+	V1_9pre6("uk"), // TODO: Remove these versions?
 	V1_9pre5("ug"),
 	V1_9pre4("uh"),  //TODO stronghold reset??
 	V1_9pre3("to"),
 	V1_9pre2("sv"),
 	V1_9pre1("sq"),
-	V1_8_1("rj"),
+	V1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"),
 	unknown(null);
 	
 	public final String versionId;

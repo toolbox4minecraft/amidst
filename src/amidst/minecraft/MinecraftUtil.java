@@ -62,7 +62,13 @@ public class MinecraftUtil {
 	public static void createBiomeGenerator(long seed, Type type) {
 		Minecraft minecraft = Minecraft.getActiveMinecraft();
 		MinecraftClass genLayerClass = minecraft.getClassByName("GenLayer");
-		Object[] genLayer = (Object[])genLayerClass.callFunction("initializeAllBiomeGenerators", seed, type.get().get());
-		minecraft.setGlobal("biomeGen", new MinecraftObject(genLayerClass, genLayer[0]));
+		MinecraftClass worldTypeClass = minecraft.getClassByName("WorldType");
+		Object[] genLayers = null;
+		if (worldTypeClass == null) {
+			genLayers = (Object[])genLayerClass.callFunction("initializeAllBiomeGenerators", seed);
+		} else {
+			genLayers = (Object[])genLayerClass.callFunction("initializeAllBiomeGenerators", seed, type.get().get());
+		}
+		minecraft.setGlobal("biomeGen", new MinecraftObject(genLayerClass, genLayers[0]));
 	}
 }
