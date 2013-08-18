@@ -88,7 +88,6 @@ public class BiomeLayer extends Layer {
 		int x = fragment.getChunkX() << 2;
 		int y = fragment.getChunkY() << 2;
 		
-		// TODO : Change this when ChunkManager is removed!
 		int[] biomeData = MinecraftUtil.getBiomeData(x, y, size, size);
 		dataCache = Util.arrayToColors(biomeData, dataCache, biomeColors, size*size);
 		fragment.setImageData(layerID, dataCache);
