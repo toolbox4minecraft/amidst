@@ -105,13 +105,6 @@ public class Project extends JPanel {
 		return ret;
 	}
 	
-	public void movePlayer(String name, PixelInfo p) {
-		for (int i = 0; i < save.getPlayers().size(); i++) {
-			if (name.toLowerCase().equals(save.getPlayers().get(i).getName().toLowerCase())) {
-				save.getPlayers().get(i).setPosition(p.getBlockX(), p.getBlockY());
-			}
-		}
-	}
 	
 	public KeyListener getKeyListener() {
 		return map;

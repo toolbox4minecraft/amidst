@@ -14,6 +14,9 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.swing.JFrame;
+import javax.swing.JProgressBar;
+
 import amidst.Amidst;
 import amidst.Log;
 import amidst.bytedata.ByteClass;
@@ -91,7 +94,7 @@ public class Minecraft {
 		
 		Log.i("Reading minecraft.jar...");
 		
-
+		
 		Stack<ByteClass> byteClassStack = new Stack<ByteClass>();
 		try {
 			ZipFile jar = new ZipFile(urlToJar.getFile());
@@ -99,7 +102,6 @@ public class Minecraft {
 			
 			while (enu.hasMoreElements()) {
 				ZipEntry entry = enu.nextElement();
-				
 				String currentEntry = entry.getName();
 				String[] nameSplit = currentEntry.split("\\.");
 				if (!entry.isDirectory() && (nameSplit.length == 2) && (nameSplit[0].indexOf('/') == -1) && nameSplit[1].equals("class")) {

@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import MoF.Biome;
 import MoF.SaveLoader;
 import MoF.SkinManager;
 import amidst.Log;

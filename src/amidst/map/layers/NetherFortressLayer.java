@@ -3,8 +3,6 @@ package amidst.map.layers;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-
-import MoF.Biome;
 import amidst.Log;
 import amidst.Options;
 import amidst.map.Fragment;

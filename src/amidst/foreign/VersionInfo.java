@@ -1,6 +1,5 @@
 package amidst.foreign;
 
-import MoF.Biome;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +7,7 @@ import java.util.List;
 /** Information about what each supported version is
  */
 public enum VersionInfo {
+	unknown(null),
 	V1_6_2("mulu[Ljr;hm[J[J[J[J[J[[J"),
 	V1_6_1("msls[Ljp;hk[J[J[J[J[J[[J"),
 	V1_5_1("[Bbeabdsbawemabdtbfzbdwngngbevawfbgfawvawvaxrawbbfrausbjhaycawwaraavybkdavwbjvbkila"),
@@ -43,8 +43,7 @@ public enum VersionInfo {
 	V1_9pre3("to"),
 	V1_9pre2("sv"),
 	V1_9pre1("sq"),
-	V1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"),
-	unknown(null);
+	V1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb");
 	
 	public final String versionId;
 	
