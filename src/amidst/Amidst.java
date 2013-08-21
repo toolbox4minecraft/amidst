@@ -14,7 +14,7 @@ import amidst.json.InstallInformation;
 public class Amidst {
 	public final static int version_major = 3;
 	public final static int version_minor = 1;
-	public final static String versionOffset = "b";
+	public final static String versionOffset = "-beta";
 	public static InstallInformation installInformation = new InstallInformation(true);
 	
 	public static void main(String args[]) {
