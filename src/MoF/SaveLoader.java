@@ -157,7 +157,8 @@ public class SaveLoader {
 			CompoundTag root = (CompoundTag) ((CompoundTag)inStream.readTag()).getValue().get("Data");
 			inStream.close();
 			seed = (Long)(root.getValue().get("RandomSeed").getValue());
-			genType = Type.fromMixedCase((String)(root.getValue().get("generatorName").getValue()));
+			if (root.getValue().get("generatorName") != null)
+				genType = Type.fromMixedCase((String)(root.getValue().get("generatorName").getValue()));
 			
 			CompoundTag playerTag = (CompoundTag)root.getValue().get("Player");
 			
