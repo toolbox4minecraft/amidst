@@ -13,8 +13,8 @@ public class BooleanPrefModel extends ToggleButtonModel implements PrefModel<Boo
 		super();
 		this.pref = pref;
 		this.key = key;
-		//if the preference doesn’t exist, set it,
-		//else sync the ToggleButtonModel’s status
+		//if the preference doesn't exist, set it,
+		//else sync the ToggleButtonModel's status
 		set(pref.getBoolean(key, selected));
 	}
 	

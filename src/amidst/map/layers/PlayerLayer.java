@@ -24,7 +24,7 @@ public class PlayerLayer extends IconLayer {
 	}
 	public PlayerLayer(SaveLoader saveLoader) {
 		super("players");
-		setVisibilityPref(Options.instance.showIcons);
+		setVisibilityPref(Options.instance.showPlayers);
 		this.saveLoader = saveLoader;
 		
 		for (MapObjectPlayer player : saveLoader.getPlayers())

@@ -1,14 +1,10 @@
 package amidst.map.layers;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
-import amidst.Log;
 import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
 import amidst.map.MapObjectNether;
-import amidst.map.MapObjectVillage;
 
 public class NetherFortressLayer extends IconLayer {
 	private Random random = new Random();

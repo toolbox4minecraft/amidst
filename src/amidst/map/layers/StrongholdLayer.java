@@ -32,7 +32,7 @@ public class StrongholdLayer extends IconLayer {
 	public StrongholdLayer() {
 		super("strongholds");
 		instance = this;
-		setVisibilityPref(Options.instance.showIcons);
+		setVisibilityPref(Options.instance.showStrongholds);
 		
 		findStrongholds();
 	

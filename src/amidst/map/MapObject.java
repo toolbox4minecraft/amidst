@@ -12,13 +12,11 @@ public class MapObject extends Point {
 	public double localScale = 1.0;
 	@Deprecated
 	public double tempDist = 0;
-	protected JToggleButton.ToggleButtonModel model;
 	public IconLayer parentLayer;
 	
 	public MapObject(MapMarkers eType, int x, int y) {
 		super(x, y);
 		type = eType;
-		model = Options.instance.showIcons;
 	}
 	
 	public String getName() {
@@ -27,14 +25,10 @@ public class MapObject extends Point {
 	
 	
 	public int getWidth() {
-		if (model.isSelected())
-			return (int)(type.image.getWidth() * localScale);
-		return 0;
+		return (int)(type.image.getWidth() * localScale);
 	}
 	public int getHeight() {
-		if (model.isSelected())
-			return (int)(type.image.getHeight() * localScale);
-		return 0;
+		return (int)(type.image.getHeight() * localScale);
 	}
 	
 	public BufferedImage getImage() {
@@ -42,7 +36,7 @@ public class MapObject extends Point {
 	}
 	
 	public boolean isSelectable() {
-		return Options.instance.showIcons.isSelected();
+		return Options.instance.showVillages.isSelected();
 	}
 	
 	public MapObject setParent(IconLayer layer) {

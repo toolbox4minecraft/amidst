@@ -10,6 +10,7 @@ import amidst.Options;
 import amidst.foreign.VersionInfo;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
+import amidst.map.MapObject;
 import amidst.map.MapObjectNether;
 import amidst.map.MapObjectStronghold;
 import amidst.map.MapObjectTemple;
@@ -23,7 +24,7 @@ public class TempleLayer extends IconLayer {
 	
 	public TempleLayer() {
 		super("temples");
-		setVisibilityPref(Options.instance.showIcons);
+		setVisibilityPref(Options.instance.showTemples);
 		
 		validBiomes = getValidBiomes();
 	}
@@ -34,6 +35,7 @@ public class TempleLayer extends IconLayer {
 				int chunkX = x + frag.getChunkX();
 				int chunkY = y + frag.getChunkY();
 				if (checkChunk(chunkX, chunkY)) {
+					getValidTemple(frag, x << 4, y << 4);
 					String biomeName = BiomeLayer.getBiomeNameForFragment(frag, x << 4, y << 4);
 					if (biomeName.equals("Swampland"))
 						frag.addObject(new MapObjectWitchHut(x << 4, y << 4).setParent(this));
@@ -44,6 +46,14 @@ public class TempleLayer extends IconLayer {
 		}
 	}
 	
+	private MapObject getValidTemple(Fragment frag, int x, int y) {
+		String biomeName = BiomeLayer.getBiomeNameForFragment(frag, x, y);
+		if (biomeName.equals("Swampland"))
+			frag.addObject(new MapObjectWitchHut(x << 4, y << 4).setParent(this));
+		else
+			frag.addObject(new MapObjectTemple(x << 4, y << 4).setParent(this));
+		return null;
+	}
 	public List<Biome> getValidBiomes() {
 		Biome[] validBiomes;
 		

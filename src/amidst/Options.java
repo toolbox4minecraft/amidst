@@ -20,7 +20,7 @@ public enum Options {
 	public final BooleanPrefModel showSlimeChunks;
 	public final BooleanPrefModel showGrid;
 	public final BooleanPrefModel showNetherFortresses;
-	public final BooleanPrefModel showIcons;
+	public final BooleanPrefModel showTemples, showPlayers, showStrongholds, showVillages;
 	public final BooleanPrefModel mapFlicking;
 	public final BooleanPrefModel maxZoom;
 	
@@ -31,12 +31,15 @@ public enum Options {
 		Preferences pref = Preferences.userNodeForPackage(Amidst.class);
 		
 		jar                  = new FilePrefModel(   pref, "jar", new File(Util.minecraftDirectory, "bin/minecraft.jar"));
-		showSlimeChunks      = new BooleanPrefModel(pref, "slimeChunks",      false);
-		showGrid             = new BooleanPrefModel(pref, "grid",             false);
-		showNetherFortresses = new BooleanPrefModel(pref, "netherFortresses", false);
-		showIcons            = new BooleanPrefModel(pref, "icons",            true);
-		mapFlicking          = new BooleanPrefModel(pref, "mapFlicking",      true);
-		maxZoom              = new BooleanPrefModel(pref, "maxZoom",          true);
+		showSlimeChunks      = new BooleanPrefModel(pref, "slimeChunks",         false);
+		showGrid             = new BooleanPrefModel(pref, "grid",                false);
+		showNetherFortresses = new BooleanPrefModel(pref, "netherFortressIcons", false);
+		mapFlicking          = new BooleanPrefModel(pref, "mapFlicking",         true);
+		maxZoom              = new BooleanPrefModel(pref, "maxZoom",             true);
+		showStrongholds      = new BooleanPrefModel(pref, "strongholdIcons",     true);
+		showPlayers          = new BooleanPrefModel(pref, "playerIcons",         true);
+		showTemples          = new BooleanPrefModel(pref, "templeIcons",         true);
+		showVillages         = new BooleanPrefModel(pref, "villageIcons",        true);
 	}
 	
 	public File getJar() {

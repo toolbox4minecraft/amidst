@@ -18,7 +18,7 @@ public class VillageLayer extends IconLayer {
 	
 	public VillageLayer() {
 		super("villages");
-		setVisibilityPref(Options.instance.showIcons);
+		setVisibilityPref(Options.instance.showVillages);
 	}
 	public void generateMapObjects(Fragment frag) {
 		int size = Fragment.SIZE >> 4;

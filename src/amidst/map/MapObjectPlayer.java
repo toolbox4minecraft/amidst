@@ -3,6 +3,8 @@ package amidst.map;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import amidst.Options;
+
 import MoF.SaveLoader;
 
 public class MapObjectPlayer extends MapObject {
@@ -25,10 +27,10 @@ public class MapObjectPlayer extends MapObject {
 	
 	
 	public int getWidth() {
-		return (int)(marker.getWidth()*localScale*3);
+		return (int)(marker.getWidth()*localScale*1.5);
 	}
 	public int getHeight() {
-		return (int)(marker.getHeight()*localScale*3);
+		return (int)(marker.getHeight()*localScale*1.5);
 	}
 	public void setPosition(int x, int y) {
 		this.globalX = x;

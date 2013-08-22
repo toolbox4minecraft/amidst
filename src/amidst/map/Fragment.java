@@ -31,6 +31,7 @@ public class Fragment {
 	
 	private static int[] dataCache = new int[SIZE*SIZE];
 	
+	
 	public Fragment(Layer... layers) {
 		this(layers, null, null);
 	}

@@ -256,23 +256,42 @@ public class AmidstMenu extends JMenuBar {
 		private class LayersMenu extends JMenu {
 			private LayersMenu() {
 				super("Layers");
+
+				add(new DisplayingCheckbox("Grid",
+					ResourceLoader.getImage("grid.png"),
+					KeyEvent.VK_1,
+					Options.instance.showGrid));
 				
 				add(new DisplayingCheckbox("Slime chunks",
 					ResourceLoader.getImage("slime.png"),
-					KeyEvent.VK_1,
-					Options.instance.showSlimeChunks));
-				add(new DisplayingCheckbox("Grid",
-					null,
 					KeyEvent.VK_2,
-					Options.instance.showGrid));
-				add(new DisplayingCheckbox("Nether fortresses",
-					ResourceLoader.getImage("nether_fortress.png"),
+					Options.instance.showSlimeChunks));
+				
+				add(new DisplayingCheckbox("Village Icons",
+					ResourceLoader.getImage("village.png"),
 					KeyEvent.VK_3,
-					Options.instance.showNetherFortresses));
-				add(new DisplayingCheckbox("Icons",
-					null,
+					Options.instance.showVillages));
+				
+				add(new DisplayingCheckbox("Temple/Witch Hut Icons",
+					ResourceLoader.getImage("temple.png"),
 					KeyEvent.VK_4,
-					Options.instance.showIcons));
+					Options.instance.showTemples));
+				
+				add(new DisplayingCheckbox("Stronghold Icons",
+					ResourceLoader.getImage("stronghold.png"),
+					KeyEvent.VK_5,
+					Options.instance.showStrongholds));
+				
+				add(new DisplayingCheckbox("Player Icons",
+					ResourceLoader.getImage("player.png"),
+					KeyEvent.VK_6,
+					Options.instance.showPlayers));
+				
+				add(new DisplayingCheckbox("Nether Fortress Icons",
+					ResourceLoader.getImage("nether_fortress.png"),
+					KeyEvent.VK_7,
+					Options.instance.showNetherFortresses));
+				
 			}
 			
 
@@ -280,7 +299,8 @@ public class AmidstMenu extends JMenuBar {
 		public class DisplayingCheckbox extends JCheckBoxMenuItem {
 			private DisplayingCheckbox(String text, BufferedImage icon, int key, JToggleButton.ToggleButtonModel model) {
 				super(text, (icon != null) ? new ImageIcon(icon) : null);
-				setAccelerator(KeyStroke.getKeyStroke(key, InputEvent.CTRL_DOWN_MASK));
+				if (key != -1)
+					setAccelerator(KeyStroke.getKeyStroke(key, InputEvent.CTRL_DOWN_MASK));
 				setModel(model);
 			}
 		}
