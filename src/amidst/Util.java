@@ -47,14 +47,6 @@ public class Util {
 	}
 	
 	
-	// Added for scripting support. (javascript has issues retaining the array types)
-	public static int[] arrayToColors(int[] src, int[] dst, int[] colors, int length) {
-		for (int i = 0; i < length; i++) {
-			dst[i] = colors[src[i]];
-		}
-		return dst;
-	}
-	
 	public static int makeColor(int r, int g, int b) {
 		int color = 0xFF000000;
 		color |= 0xFF0000 & (r << 16);
@@ -65,7 +57,7 @@ public class Util {
 	
 	private static final int TEMP_DIR_ATTEMPTS = 1000;
 	
-	/** Guava’s method, moved here to avoid a huge dependency
+	/** Guava's method, moved here to avoid a huge dependency
 	 * TODO: maybe switch to JDK 7 to use its java.nio.file.Files#createTempDirectory()
 	 */
 	public static File createTempDir() {

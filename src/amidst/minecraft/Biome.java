@@ -6,6 +6,7 @@ import java.awt.Color;
 import amidst.Util;
 
 public class Biome {
+	public static final int length = 23;
 	public static final Biome[] biomes = new Biome[256];
 	public static final Biome ocean               = new Biome("Ocean",                  0, Util.makeColor( 13,  51, 219));
 	public static final Biome plains              = new Biome("Plains",                 1, Util.makeColor(104, 222, 104));
