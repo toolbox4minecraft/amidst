@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import MoF.Biome;
 import amidst.Log;
 import amidst.Options;
 import amidst.foreign.VersionInfo;
@@ -15,6 +14,7 @@ import amidst.map.IconLayer;
 import amidst.map.MapObjectNether;
 import amidst.map.MapObjectStronghold;
 import amidst.map.MapObjectVillage;
+import amidst.minecraft.Biome;
 import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftObject;
 import amidst.minecraft.MinecraftUtil;
@@ -22,10 +22,47 @@ import amidst.minecraft.MinecraftUtil;
 public class StrongholdLayer extends IconLayer {
 	public static StrongholdLayer instance;
 	
-	private static Biome[] biomesDefault  = { Biome.d, Biome.f, Biome.e, Biome.h };
-	private static Biome[] biomes1_0  = { Biome.d, Biome.f, Biome.e, Biome.h, Biome.g, Biome.n, Biome.o };
-	private static Biome[] biomes1_1 = { Biome.d, Biome.f, Biome.e, Biome.h, Biome.g, Biome.n, Biome.o, Biome.s, Biome.t, Biome.v };
-	private static Biome[] biomes12w03a = { Biome.d, Biome.f, Biome.e, Biome.h, Biome.g, Biome.n, Biome.o, Biome.s, Biome.t, Biome.v, Biome.w, Biome.x };
+	private static final Biome[] biomesDefault = {
+		Biome.desert, 
+		Biome.forest, 
+		Biome.extremeHills,
+		Biome.swampland
+	};
+	private static final Biome[] biomes1_0 = {
+		Biome.desert, 
+		Biome.forest,
+		Biome.extremeHills, 
+		Biome.swampland, 
+		Biome.taiga, 
+		Biome.icePlains, 
+		Biome.iceMountains
+	};
+	private static final Biome[] biomes1_1 = {
+		Biome.desert, 
+		Biome.forest, 
+		Biome.extremeHills, 
+		Biome.swampland, 
+		Biome.taiga, 
+		Biome.icePlains, 
+		Biome.iceMountains, 
+		Biome.desertHills, 
+		Biome.forestHills, 
+		Biome.extremeHillsEdge
+	};
+	private static final Biome[] biomes12w03a = {
+		Biome.desert,
+		Biome.forest, 
+		Biome.extremeHills,
+		Biome.swampland, 
+		Biome.taiga, 
+		Biome.icePlains, 
+		Biome.iceMountains, 
+		Biome.desertHills, 
+		Biome.forestHills,
+		Biome.extremeHillsEdge, 
+		Biome.jungle, 
+		Biome.jungleHills
+	};
 	
 	private MapObjectStronghold[] strongholds = new MapObjectStronghold[3];
 	

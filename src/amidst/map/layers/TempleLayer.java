@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import MoF.Biome;
 import amidst.Log;
 import amidst.Options;
 import amidst.foreign.VersionInfo;
@@ -16,6 +15,7 @@ import amidst.map.MapObjectStronghold;
 import amidst.map.MapObjectTemple;
 import amidst.map.MapObjectVillage;
 import amidst.map.MapObjectWitchHut;
+import amidst.minecraft.Biome;
 import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 
@@ -57,12 +57,26 @@ public class TempleLayer extends IconLayer {
 	public List<Biome> getValidBiomes() {
 		Biome[] validBiomes;
 		
-		if (Minecraft.getActiveMinecraft().version.isAtLeast(VersionInfo.V1_4_2))
-			validBiomes = new Biome[] { Biome.d, Biome.s, Biome.w, Biome.x, Biome.h };
-		else if (Minecraft.getActiveMinecraft().version.isAtLeast(VersionInfo.V12w22a))
-			validBiomes = new Biome[] { Biome.d, Biome.s, Biome.w };
-		else
-			validBiomes = new Biome[] { Biome.d, Biome.s };
+		if (Minecraft.getActiveMinecraft().version.isAtLeast(VersionInfo.V1_4_2)) {
+			validBiomes = new Biome[] {
+				Biome.desert,
+				Biome.desertHills,
+				Biome.jungle,
+				Biome.jungleHills,
+				Biome.swampland
+			};
+		} else if (Minecraft.getActiveMinecraft().version.isAtLeast(VersionInfo.V12w22a)) {
+			validBiomes = new Biome[] {
+				Biome.desert,
+				Biome.desertHills,
+				Biome.jungle
+			};
+		} else {
+			validBiomes = new Biome[] {
+				Biome.desert,
+				Biome.desertHills
+			};
+		}
 		
 		return Arrays.asList(validBiomes);
 	}
@@ -79,8 +93,8 @@ public class TempleLayer extends IconLayer {
 		int n = chunkX / i;
 		int i1 = chunkY / i;
 		Random localRandom = new Random();
-	    long l1 = n * 341873128712L + i1 * 132897987541L + Options.instance.seed + 14357617;
-	    localRandom.setSeed(l1);
+		long l1 = n * 341873128712L + i1 * 132897987541L + Options.instance.seed + 14357617;
+		localRandom.setSeed(l1);
 		n *= i;
 		i1 *= i;
 		n += localRandom.nextInt(i - j);

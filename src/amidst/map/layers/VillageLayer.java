@@ -4,17 +4,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import MoF.Biome;
 import amidst.Log;
 import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
 import amidst.map.MapObjectNether;
 import amidst.map.MapObjectVillage;
+import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 
 public class VillageLayer extends IconLayer {
-	public static List<Biome> validBiomes = Arrays.asList(new Biome[] { Biome.c, Biome.d });
+	public static List<Biome> validBiomes = Arrays.asList(new Biome[] { Biome.plains, Biome.desert });
 	
 	public VillageLayer() {
 		super("villages");
