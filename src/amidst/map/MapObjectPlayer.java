@@ -27,10 +27,10 @@ public class MapObjectPlayer extends MapObject {
 	
 	
 	public int getWidth() {
-		return (int)(marker.getWidth()*localScale*1.5);
+		return (int)(marker.getWidth()*localScale);
 	}
 	public int getHeight() {
-		return (int)(marker.getHeight()*localScale*1.5);
+		return (int)(marker.getHeight()*localScale);
 	}
 	public void setPosition(int x, int y) {
 		this.globalX = x;

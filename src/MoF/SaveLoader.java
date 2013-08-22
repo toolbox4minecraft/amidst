@@ -164,7 +164,12 @@ public class SaveLoader {
 			multi = (playerTag == null);
 			Log.i(multi);
 			if (!multi) {
-				addPlayer("Player", playerTag);
+				File playersFolder = new File(f.getParent(), "players");
+				File[] playerListing = null;
+				if (playersFolder.exists() && ((playerListing = playersFolder.listFiles()).length > 0))
+					addPlayer(playerListing[0].getName().split("\\.")[0], playerTag);
+				else
+					addPlayer("Player", playerTag);
 			} else {
 				File[] listing = new File(f.getParent(), "players").listFiles();
 				for (int i = 0; i < (listing != null ? listing.length : 0); i++) {
@@ -176,21 +181,6 @@ public class SaveLoader {
 				}
 				
 			}
-			/*TagCompound t = Tag.readFrom(new FileInputStream(f));
-			TagCompound pTag = (TagCompound) t.findTagByName("MapObjectPlayer");
-			seed = (Long) t.findTagByName("RandomSeed").getValue();
-			genType = Type.fromMixedCase((String) t.findTagByName("generatorName").getValue());
-			Log.debug("Gen Type:", genType);
-			multi = pTag == null;
-			if (!multi) {
-				addPlayer("MapObjectPlayer", pTag);
-			} else {
-				File[] listing = new File(f.getParent(), "players").listFiles();
-				for (int i = 0; i < (listing != null ? listing.length : 0); i++) {
-					TagCompound ps = Tag.readFrom(new FileInputStream(listing[i]));
-					addPlayer(listing[i].getName().split("\\.")[0], ps);
-				}
-			}*/
 		} catch (Exception e) {
 			Util.showError(e);
 		}
