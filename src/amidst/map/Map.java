@@ -388,19 +388,4 @@ public class Map {
 		return "Unknown";
 	}
 
-	public void saveViewToFile(File file) {
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2d = image.createGraphics();
-		
-		draw(g2d);
-		
-		try {
-			ImageIO.write(image, "png", file);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		g2d.dispose();
-		image.flush();
-	}
 }

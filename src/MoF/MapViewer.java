@@ -34,8 +34,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -282,7 +285,32 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	}
 	
 	public void saveToFile(File f) {
-		worldMap.saveViewToFile(f);
+		BufferedImage image = new BufferedImage(worldMap.width, worldMap.height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = image.createGraphics();
+		
+		worldMap.draw(g2d);
+
+		FontMetrics textMetrics = g2d.getFontMetrics(textFont);
+		
+		
+		g2d.setColor(panelColor);
+		g2d.fillRect(10, 10, textMetrics.stringWidth(Options.instance.getSeedMessage()) + 20, 30);
+		
+		
+		g2d.setColor(textColor);
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2d.setFont(textFont);
+		g2d.drawString(Options.instance.getSeedMessage(), 20, 30);
+		
+		
+		try {
+			ImageIO.write(image, "png", f);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		g2d.dispose();
+		image.flush();
 	}
 	
 	@Override
