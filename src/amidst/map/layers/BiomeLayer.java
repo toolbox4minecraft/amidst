@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
+import amidst.Log;
 import amidst.Util;
 import amidst.map.ByteArrayCache;
 import amidst.map.CacheManager;
@@ -27,7 +28,10 @@ public class BiomeLayer extends Layer {
 		
 		int[] biomeData = MinecraftUtil.getBiomeData(x, y, size, size);
 		for (int i = 0; i < size*size; i++)
-			dataCache[i] = Biome.biomes[biomeData[i]].color;
+			if (Biome.biomes[biomeData[i]] != null)
+				dataCache[i] = Biome.biomes[biomeData[i]].color;
+			else
+				Log.debug("Failed to find biome ID: " + biomeData[i]);
 		fragment.setImageData(layerID, dataCache);
 	}
 	// TODO: This shouldn't be static, it should use the ID provided when it's loaded in for getBufferedImage

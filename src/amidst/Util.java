@@ -54,6 +54,9 @@ public class Util {
 		color |= 0xFF & b;
 		return color;
 	}
+	public static int mcColor(int color) {
+		return 0xFF000000 | color;
+	}
 	
 	private static final int TEMP_DIR_ATTEMPTS = 1000;
 	

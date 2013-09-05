@@ -35,7 +35,7 @@ public class TempleLayer extends IconLayer {
 				int chunkX = x + frag.getChunkX();
 				int chunkY = y + frag.getChunkY();
 				if (checkChunk(chunkX, chunkY)) {
-					getValidTemple(frag, x << 4, y << 4);
+					//getValidTemple(frag, x << 4, y << 4);
 					String biomeName = BiomeLayer.getBiomeNameForFragment(frag, x << 4, y << 4);
 					if (biomeName.equals("Swampland"))
 						frag.addObject(new MapObjectWitchHut(x << 4, y << 4).setParent(this));

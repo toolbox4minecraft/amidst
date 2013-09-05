@@ -8,6 +8,7 @@ import java.util.List;
  */
 public enum VersionInfo {
 	unknown(null),
+	V13w36a("nkmk[Lkd;hx[J[J[J[J[J[[J"),
 	V1_6_2("mulu[Ljr;hm[J[J[J[J[J[[J"),
 	V1_6_1("msls[Ljp;hk[J[J[J[J[J[[J"),
 	V1_5_1("[Bbeabdsbawemabdtbfzbdwngngbevawfbgfawvawvaxrawbbfrausbjhaycawwaraavybkdavwbjvbkila"),

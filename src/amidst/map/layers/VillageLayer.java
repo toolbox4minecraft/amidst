@@ -14,7 +14,7 @@ import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 
 public class VillageLayer extends IconLayer {
-	public static List<Biome> validBiomes = Arrays.asList(new Biome[] { Biome.plains, Biome.desert });
+	public static List<Biome> validBiomes = Arrays.asList(new Biome[] { Biome.plains, Biome.desert, Biome.savanna});
 	
 	public VillageLayer() {
 		super("villages");

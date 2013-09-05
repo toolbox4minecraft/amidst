@@ -63,6 +63,39 @@ public class StrongholdLayer extends IconLayer {
 		Biome.jungle, 
 		Biome.jungleHills
 	};
+	private static final Biome[] biomes13w36a = {
+		Biome.plains,
+		Biome.desert,
+		Biome.extremeHills,
+		Biome.forest,
+		Biome.taiga,
+		Biome.hell,
+		Biome.sky,
+		Biome.icePlains,
+		Biome.iceMountains,
+		Biome.mushroomIsland,
+		Biome.desertHills,
+		Biome.forestHills,
+		Biome.taigaHills,
+		Biome.extremeHillsEdge,
+		Biome.jungle,
+		Biome.jungleHills,
+		Biome.jungleEdge,
+		Biome.stoneBeach,
+		Biome.birchForest,
+		Biome.birchForestHills,
+		Biome.roofedForest,
+		Biome.coldTaiga,
+		Biome.coldTaigaHills,
+		Biome.megaTaiga,
+		Biome.megaTaigaHills,
+		Biome.extremeHillsPlus,
+		Biome.savanna,
+		Biome.savannaPlateau,
+		Biome.mesa,
+		Biome.mesaPlateauF,
+		Biome.mesaPlateau
+	};
 	
 	private MapObjectStronghold[] strongholds = new MapObjectStronghold[3];
 	
@@ -107,7 +140,8 @@ public class StrongholdLayer extends IconLayer {
 			validBiomes = biomes1_1;
 		if (Minecraft.getActiveMinecraft().version.isAtLeast(VersionInfo.V12w03a))
 			validBiomes = biomes12w03a;
-		
+		if (Minecraft.getActiveMinecraft().version.isAtLeast(VersionInfo.V13w36a))
+			validBiomes = biomes13w36a;
 		List<Biome> biomeArrayList = Arrays.asList(validBiomes);
 		
 		double angle = random.nextDouble() * 3.141592653589793D * 2.0D;
