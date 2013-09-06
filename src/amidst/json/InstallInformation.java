@@ -19,7 +19,6 @@ public class InstallInformation {
 	
 	public InstallInformation() {
 		this(false);
-		// TODO Support various directories
 	}
 	
 	public InstallInformation(boolean old) {
@@ -40,16 +39,18 @@ public class InstallInformation {
 	
 	public File getJarFile() {
 		File returnFile;
-		returnFile = new File(gameDir + "/versions/" + lastVersionId + "/" + lastVersionId + ".jar");
-		if (returnFile.exists())
-			return returnFile;
-		File versionsPath = new File(gameDir + "/versions/");
-		if (versionsPath.exists()) {
-			File[] files = versionsPath.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				File jar = new File(files[i] + "/" + files[i].getName() + ".jar");
-				if (jar.exists())
-					return jar;
+		if (!isOld) {
+			returnFile = new File(gameDir + "/versions/" + lastVersionId + "/" + lastVersionId + ".jar");
+			if (returnFile.exists())
+				return returnFile;
+			File versionsPath = new File(gameDir + "/versions/");
+			if (versionsPath.exists()) {
+				File[] files = versionsPath.listFiles();
+				for (int i = 0; i < files.length; i++) {
+					File jar = new File(files[i] + "/" + files[i].getName() + ".jar");
+					if (jar.exists())
+						return jar;
+				}
 			}
 		}
 		returnFile = new File(Util.minecraftDirectory.toString() + "/bin/minecraft.jar");
