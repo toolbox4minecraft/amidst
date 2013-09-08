@@ -1,13 +1,6 @@
 package amidst;
 
-import MoF.FinderWindow;
 import MoF.Google;
-import MoF.Project;
-import MoF.SaveLoader;
-
-import java.io.File;
-import java.io.IOException;
-
 import amidst.gui.VersionSelectWindow;
 import amidst.json.InstallInformation;
 import amidst.minecraft.Minecraft;

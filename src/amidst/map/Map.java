@@ -375,8 +375,8 @@ public class Map {
 		Fragment frag = startNode;
 		while (frag.hasNext) {
 			frag = frag.nextFragment;
-			if ((frag.blockX < point.x) &&
-				(frag.blockY < point.y) &&
+			if ((frag.blockX <= point.x) &&
+				(frag.blockY <= point.y) &&
 				(frag.blockX + Fragment.SIZE > point.x) &&
 				(frag.blockY + Fragment.SIZE > point.y)) {
 				int x = point.x - frag.blockX;
