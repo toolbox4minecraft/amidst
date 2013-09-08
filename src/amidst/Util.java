@@ -1,8 +1,12 @@
 package amidst;
 
 import javax.swing.*;
+
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.PrintStream;
 
 public class Util {
@@ -80,12 +84,18 @@ public class Util {
 			+ TEMP_DIR_ATTEMPTS + " attempts (tried "
 			+ baseName + "0 to " + baseName + (TEMP_DIR_ATTEMPTS - 1) + ')');
 	}
+
+
+	public static <T> T readObject(BufferedReader reader, final Class<T> clazz) throws FileNotFoundException {
+		return Amidst.gson.fromJson(reader, clazz);
+	}
 	
-//	public static void main(String[] args) {
-//		try {
-//			int infinity = 1 / 0;
-//		} catch (Exception e) {
-//			showError(e);
-//		}
-//	}
+	public static <T> T readObject(File path, final Class<T> clazz) throws FileNotFoundException {
+		final BufferedReader reader = new BufferedReader(new FileReader(path));
+		return Amidst.gson.fromJson(reader, clazz);
+	}
+	
+	public static <T> T readObject(String path, final Class<T> clazz) throws FileNotFoundException {
+		return readObject(new File(path), clazz);
+	}
 }

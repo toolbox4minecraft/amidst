@@ -41,9 +41,8 @@ public class VersionSelectWindow extends JFrame {
 		
 		Object[] profileArray = null;
 		try {
-			LauncherProfile profile = readObject(profileJsonFile, LauncherProfile.class);
-			profile.profiles.put("(Default)",  new InstallInformation());
-			
+			LauncherProfile profile = Util.readObject(profileJsonFile, LauncherProfile.class);
+			profile.profiles.put("(Default)",  new InstallInformation("(Default) ", "1.6.2"));
 			profileArray = profile.profiles.values().toArray();
 		} catch (Exception e) { // TODO This is a very broad exception to catch for
 			e.printStackTrace();
@@ -74,6 +73,9 @@ public class VersionSelectWindow extends JFrame {
 		btnConfirm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				Amidst.installInformation = (InstallInformation)profileBox.getSelectedItem();
+				boolean isValid = Amidst.installInformation.validate();
+				if (!isValid)
+					Log.e("\"Latest\" profile option detected, but there was an issue loading the version list.\nUsing alternative jar.");
 				try {
 					new Minecraft();
 				} catch (MalformedURLException e1) {
@@ -97,13 +99,4 @@ public class VersionSelectWindow extends JFrame {
 		setVisible(true);
 	}
 	
-	public static <T> T readObject(File path, final Class<T> clazz) throws FileNotFoundException {
-		final BufferedReader reader = new BufferedReader(new FileReader(path));
-		final Gson gson = new Gson();
-		return gson.fromJson(reader, clazz);
-	}
-	
-	public static <T> T readObject(String path, final Class<T> clazz) throws FileNotFoundException {
-		return readObject(new File(path), clazz);
-	}
 }

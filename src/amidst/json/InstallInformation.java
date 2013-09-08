@@ -1,9 +1,23 @@
 package amidst.json;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.HashMap;
 
 import javax.swing.JOptionPane;
 
+import com.google.gson.Gson;
+
+import amidst.Amidst;
 import amidst.Log;
 import amidst.Util;
 
@@ -14,7 +28,7 @@ public class InstallInformation {
 	public String javaDir;
 	public String javaArgs;
 	public Resolution resolution;
-	public String[] allowedReleaseTypes;
+	public String[] allowedReleaseTypes = new String[] { "release" };
 	public boolean isOld;
 	
 	public InstallInformation() {
@@ -22,19 +36,88 @@ public class InstallInformation {
 	}
 	
 	public InstallInformation(boolean old) {
-		if (!old) {
-			name = "(Default)";
-			lastVersionId = "1.6.2";
-		} else {
+		if (old) {
 			name = "Minecraft";
 			lastVersionId = "None";
 		}
 		gameDir = Util.minecraftDirectory.toString();
 		isOld = old;
 	}
-	
+	public InstallInformation(String name, String version) {
+		this.name = name;
+		lastVersionId = version;
+		gameDir = Util.minecraftDirectory.toString();
+		isOld = false;
+	}
+	public boolean validate() {
+		Log.i("Validating version: " + lastVersionId);
+		if (lastVersionId != null) {
+			Log.i("Version valid without further testing.");
+			return true;
+		}
+		URL versionUrl = null;
+		try {
+			versionUrl = new URL("https://s3.amazonaws.com/Minecraft.Download/versions/versions.json");
+		} catch (MalformedURLException e) {
+			Log.i("MalformedURLException on version list loader.");
+			e.printStackTrace();
+			return false;
+		}
+		URLConnection urlConnection = null;
+		try {
+			urlConnection = versionUrl.openConnection();
+		} catch (IOException e) {
+			Log.i("IOException on version list loader.");
+			e.printStackTrace();
+			return false;
+		}
+		int contentLength = urlConnection.getContentLength();
+		if (contentLength == -1) {
+			Log.i("Version list returned content length of -1.");
+			return false;
+		}
+		InputStream inputStream = null;
+		try {
+			inputStream = urlConnection.getInputStream();
+		} catch (IOException e) {
+			Log.i("IOException on opening input stream to version list.");
+			e.printStackTrace();
+			return false;
+		}
+		InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+		BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+		
+		VersionList versionList = null;
+		try {
+			versionList = Util.readObject(bufferedReader, VersionList.class);
+		} catch (FileNotFoundException e) {
+			Log.i("FileNotFoundException when parsing the version list.");
+			e.printStackTrace();
+			return false;
+		}
+		for (int i = 0; i < versionList.versions.length; i++) {
+			for (int q = 0; q < allowedReleaseTypes.length; q++) {
+				if (versionList.versions[i].get("type").equals(allowedReleaseTypes[q])) {
+					lastVersionId = versionList.versions[i].get("id");
+					if (doesJarExist()) {
+						Log.i("Found compatable version. Version ID: " + lastVersionId);
+						return true;
+					}
+				}
+			}
+		}
+		Log.i("Unable to find compatable version with release types.");
+		return false;
+		
+	}
 	public String toString() {
 		return name;
+	}
+	public boolean doesJarExist() {
+		if (isOld)
+			return (new File(Util.minecraftDirectory.toString() + "/bin/minecraft.jar")).exists();
+		else
+			return (new File(gameDir + "/versions/" + lastVersionId + "/" + lastVersionId + ".jar")).exists();
 	}
 	
 	public File getJarFile() {
@@ -45,7 +128,7 @@ public class InstallInformation {
 				return returnFile;
 			Log.i("Attempt to get jar failed. Path: " + returnFile);
 			File versionsPath = new File(gameDir + "/versions/");
-			if (versionsPath.exists()) {
+			if (versionsPath.exists()) { // https://s3.amazonaws.com/Minecraft.Download/versions/versions.json
 				File[] files = versionsPath.listFiles();
 				for (int i = 0; i < files.length; i++) {
 					File jar = new File(files[i] + "/" + files[i].getName() + ".jar");
@@ -64,5 +147,10 @@ public class InstallInformation {
 		Log.kill("Found profile selection, but unable to locate minecraft.jar.");
 		System.exit(0);
 		return null;
+	}
+
+	private class VersionList {
+		public HashMap<String, String> latest;
+		public HashMap<String, String>[] versions;
 	}
 }

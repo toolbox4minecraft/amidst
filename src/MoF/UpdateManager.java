@@ -17,7 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException; 
 
 public class UpdateManager extends Thread {
-	public static String updateURL = "https://sites.google.com/site/mothfinder/update.xml";
+	public static final String updateURL = "https://sites.google.com/site/mothfinder/update.xml";
 	private JFrame window;
 	private boolean silent;
 	public UpdateManager(JFrame window) {

@@ -1,5 +1,7 @@
 package amidst;
 
+import com.google.gson.Gson;
+
 import MoF.Google;
 import amidst.gui.VersionSelectWindow;
 import amidst.json.InstallInformation;
@@ -10,6 +12,7 @@ public class Amidst {
 	public final static int version_minor = 1;
 	public final static String versionOffset = "";
 	public static InstallInformation installInformation = new InstallInformation(true);
+	public static final Gson gson = new Gson();
 	
 	public static void main(String args[]) {
 		Util.setLookAndFeel();
@@ -30,7 +33,7 @@ public class Amidst {
 	
 	public static String version() {
 		if (Minecraft.getActiveMinecraft() != null)
-			return version_major + "." + version_minor + versionOffset + " [Using Minecraft version: " + Minecraft.getActiveMinecraft().version + " | " + installInformation.lastVersionId + "]";
+			return version_major + "." + version_minor + versionOffset + " [Using Minecraft version: " + Minecraft.getActiveMinecraft().version + " | Attempted: " + installInformation.lastVersionId + "]";
 		else
 			return version_major + "." + version_minor + versionOffset;
 	}
