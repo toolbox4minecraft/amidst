@@ -43,6 +43,7 @@ public class InstallInformation {
 			returnFile = new File(gameDir + "/versions/" + lastVersionId + "/" + lastVersionId + ".jar");
 			if (returnFile.exists())
 				return returnFile;
+			Log.i("Attempt to get jar failed. Path: " + returnFile);
 			File versionsPath = new File(gameDir + "/versions/");
 			if (versionsPath.exists()) {
 				File[] files = versionsPath.listFiles();
@@ -51,6 +52,9 @@ public class InstallInformation {
 					if (jar.exists())
 						return jar;
 				}
+				Log.i("Attempt to use alternative version failed. Path: " + versionsPath);
+			} else {
+				Log.i("Attempt to browse versions folder failed. Path: " + versionsPath);
 			}
 		}
 		returnFile = new File(Util.minecraftDirectory.toString() + "/bin/minecraft.jar");
