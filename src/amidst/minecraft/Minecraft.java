@@ -1,6 +1,7 @@
 package amidst.minecraft;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -84,20 +85,20 @@ public class Minecraft {
 	public VersionInfo version = VersionInfo.unknown;
 	
 	public Minecraft() throws MalformedURLException {
-		this(Amidst.installInformation.getJarFile().toURI().toURL());
+		this(Amidst.installInformation.getJarFile());
 	}
 	
-	public Minecraft(URL url) {
+	public Minecraft(File jarFile)  throws MalformedURLException {
 		byteClassNames = new Vector<String>();
 		byteClassMap = new HashMap<String, ByteClass>(MAX_CLASSES);
-		urlToJar = url;
+		urlToJar = jarFile.toURI().toURL();
 		
 		Log.i("Reading minecraft.jar...");
-		
-		
+		if (!jarFile.exists())
+			Log.kill("Attempted to load jar file at: " + jarFile + " but it does not exist.");
 		Stack<ByteClass> byteClassStack = new Stack<ByteClass>();
 		try {
-			ZipFile jar = new ZipFile(urlToJar.getFile());
+			ZipFile jar = new ZipFile(jarFile);
 			Enumeration<? extends ZipEntry> enu = jar.entries();
 			
 			while (enu.hasMoreElements()) {
