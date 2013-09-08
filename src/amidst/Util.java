@@ -98,4 +98,20 @@ public class Util {
 	public static <T> T readObject(String path, final Class<T> clazz) throws FileNotFoundException {
 		return readObject(new File(path), clazz);
 	}
+
+	public static int lightenColor(int color, int brightness) {
+		int r = (color & 0x00FF0000) >> 16;
+		int g = (color & 0x0000FF00) >> 8;
+		int b = (color & 0x000000FF);
+		
+		r += brightness;
+		g += brightness;
+		b += brightness;
+		
+		if (r > 0xFF) r = 0xFF;
+		if (g > 0xFF) g = 0xFF;
+		if (b > 0xFF) b = 0xFF;
+		
+		return makeColor(r, g, b);
+	}
 }

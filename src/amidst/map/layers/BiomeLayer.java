@@ -41,6 +41,10 @@ public class BiomeLayer extends Layer {
 			if (pixel == Biome.biomes[i].color)
 				return i;
 		}
+		for (int i = 128; i < Biome.length + 128; i++) {
+			if (pixel == Biome.biomes[i].color)
+				return i;
+		}
 		return 0;
 	}
 	
