@@ -30,7 +30,7 @@ public class Amidst {
 	
 	public static String version() {
 		if (Minecraft.getActiveMinecraft() != null)
-			return version_major + "." + version_minor + versionOffset + " [Using Minecraft version: " + Minecraft.getActiveMinecraft().version + "]";
+			return version_major + "." + version_minor + versionOffset + " [Using Minecraft version: " + Minecraft.getActiveMinecraft().version + " | " + installInformation.lastVersionId + "]";
 		else
 			return version_major + "." + version_minor + versionOffset;
 	}
