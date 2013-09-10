@@ -63,39 +63,6 @@ public class StrongholdLayer extends IconLayer {
 		Biome.jungle, 
 		Biome.jungleHills
 	};
-	private static final Biome[] biomes13w36a = {
-		Biome.plains,
-		Biome.desert,
-		Biome.extremeHills,
-		Biome.forest,
-		Biome.taiga,
-		Biome.hell,
-		Biome.sky,
-		Biome.icePlains,
-		Biome.iceMountains,
-		Biome.mushroomIsland,
-		Biome.desertHills,
-		Biome.forestHills,
-		Biome.taigaHills,
-		Biome.extremeHillsEdge,
-		Biome.jungle,
-		Biome.jungleHills,
-		Biome.jungleEdge,
-		Biome.stoneBeach,
-		Biome.birchForest,
-		Biome.birchForestHills,
-		Biome.roofedForest,
-		Biome.coldTaiga,
-		Biome.coldTaigaHills,
-		Biome.megaTaiga,
-		Biome.megaTaigaHills,
-		Biome.extremeHillsPlus,
-		Biome.savanna,
-		Biome.savannaPlateau,
-		Biome.mesa,
-		Biome.mesaPlateauF,
-		Biome.mesaPlateau
-	};
 	
 	private MapObjectStronghold[] strongholds = new MapObjectStronghold[3];
 	
@@ -105,7 +72,7 @@ public class StrongholdLayer extends IconLayer {
 		setVisibilityPref(Options.instance.showStrongholds);
 		
 		findStrongholds();
-	
+		
 	}
 	/*		public class MapGenStronghold {
 
@@ -133,6 +100,8 @@ public class StrongholdLayer extends IconLayer {
 		Random random = new Random();
 		random.setSeed(Options.instance.seed);
 		
+		
+		// TODO: Replace this system!
 		Biome[] validBiomes = biomesDefault;
 		if (Minecraft.getActiveMinecraft().version == VersionInfo.V1_9pre6 || Minecraft.getActiveMinecraft().version == VersionInfo.V1_0)
 			validBiomes = biomes1_0;
@@ -140,9 +109,17 @@ public class StrongholdLayer extends IconLayer {
 			validBiomes = biomes1_1;
 		if (Minecraft.getActiveMinecraft().version.isAtLeast(VersionInfo.V12w03a))
 			validBiomes = biomes12w03a;
-		if (Minecraft.getActiveMinecraft().version.isAtLeast(VersionInfo.V13w36a))
-			validBiomes = biomes13w36a;
+
 		List<Biome> biomeArrayList = Arrays.asList(validBiomes);
+		
+		if (Minecraft.getActiveMinecraft().version.isAtLeast(VersionInfo.V13w36a)) {
+			biomeArrayList = new ArrayList<Biome>();
+			for (int i = 0; i < Biome.biomes.length; i++) {
+				if ((Biome.biomes[i] != null) && (Biome.biomes[i].type.value1 > 0f)) {
+					biomeArrayList.add(Biome.biomes[i]);
+				}
+			}
+		}
 		
 		double angle = random.nextDouble() * 3.141592653589793D * 2.0D;
 		for (int i = 0; i < 3; i++) {
@@ -158,7 +135,7 @@ public class StrongholdLayer extends IconLayer {
 				y = strongholdLocation.y >> 4;
 			}
 			strongholds[i] = new MapObjectStronghold((x << 4), (y << 4));
-			
+			Log.i(strongholds[i]);
 			angle += 6.283185307179586D / 3.0D;
 		}
 	}
