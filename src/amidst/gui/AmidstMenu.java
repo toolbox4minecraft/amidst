@@ -30,6 +30,7 @@ public class AmidstMenu extends JMenuBar {
 	final JMenu fileMenu;
 	//final JMenu scriptMenu;
 	public final JMenu mapMenu; //TODO: protected
+	//final JMenu optionsMenu;
 	final JMenu helpMenu;
 	
 	private final FinderWindow window;
@@ -38,14 +39,8 @@ public class AmidstMenu extends JMenuBar {
 		this.window = win;
 		
 		fileMenu = add(new FileMenu());
-//		scriptMenu = add(new JMenu("Script") {{
-//			setEnabled(false);
-//			add(new JMenuItem("New"));
-//			add(new JMenuItem("Open"));
-//			add(new JMenuItem("Save"));
-//			add(new JMenuItem("Run"));
-//		}});
 		mapMenu = add(new MapMenu());
+		//optionsMenu = add(new OptionsMenu());
 		helpMenu = add(new HelpMenu());
 	}
 	
@@ -355,18 +350,19 @@ public class AmidstMenu extends JMenuBar {
 	private class OptionsMenu extends JMenu {
 		private OptionsMenu() {
 			super("Options");
-			setEnabled(false);
 			setMnemonic(KeyEvent.VK_M);
-			add(new WorldTypeMenu());
+			add(new JMenuItem("Biome colors") {{
+				addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new BiomeColorWindow(window);
+					}
+				});
+			}});
 		}
 		
-		private class WorldTypeMenu extends JMenu {
-			private WorldTypeMenu() {
-				super("Default world type");
-			}
-			
-		}
 	}
+	
 	private class HelpMenu extends JMenu {
 		private HelpMenu() {
 			super("Help");
