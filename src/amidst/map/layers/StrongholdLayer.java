@@ -135,7 +135,6 @@ public class StrongholdLayer extends IconLayer {
 				y = strongholdLocation.y >> 4;
 			}
 			strongholds[i] = new MapObjectStronghold((x << 4), (y << 4));
-			Log.i(strongholds[i]);
 			angle += 6.283185307179586D / 3.0D;
 		}
 	}
