@@ -31,7 +31,7 @@ public class BiomeLayer extends Layer {
 			if (Biome.biomes[biomeData[i]] != null)
 				dataCache[i] = Biome.biomes[biomeData[i]].color;
 			else
-				Log.debug("Failed to find biome ID: " + biomeData[i]);
+				Log.debug("Failed to find biome ID: " + biomeData[i]); // TODO: This could turn into spam
 		fragment.setImageData(layerID, dataCache);
 	}
 	// TODO: This shouldn't be static, it should use the ID provided when it's loaded in for getBufferedImage

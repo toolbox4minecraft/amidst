@@ -15,6 +15,7 @@ import amidst.minecraft.MinecraftUtil;
 
 public class VillageLayer extends IconLayer {
 	public static List<Biome> validBiomes = Arrays.asList(new Biome[] { Biome.plains, Biome.desert, Biome.savanna});
+	private Random random = new Random();
 	
 	public VillageLayer() {
 		super("villages");
@@ -46,16 +47,15 @@ public class VillageLayer extends IconLayer {
 		int n = chunkX / villageParam1;
 		int i1 = chunkY / villageParam1;
 		
-		Random localRandom = new Random();
 		long positionSeed = n * 341873128712L + i1 * 132897987541L + Options.instance.seed + 10387312L;
-		localRandom.setSeed(positionSeed);
+		random.setSeed(positionSeed);
 		
 		
 		
 		n *= villageParam1;
 		i1 *= villageParam1;
-		n += localRandom.nextInt(villageParam1 - villageParam2);
-		i1 += localRandom.nextInt(villageParam1 - villageParam2);
+		n += random.nextInt(villageParam1 - villageParam2);
+		i1 += random.nextInt(villageParam1 - villageParam2);
 		chunkX = k;
 		chunkY = m;
 		if ((chunkX == n) && (chunkY == i1))
