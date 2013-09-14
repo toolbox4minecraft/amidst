@@ -1,5 +1,8 @@
 package amidst;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+
 import com.google.gson.Gson;
 
 import MoF.Google;
@@ -15,6 +18,7 @@ public class Amidst {
 	public static final Gson gson = new Gson();
 	
 	public static void main(String args[]) {
+
 		Util.setLookAndFeel();
 		Google.startTracking();
 		Google.track("Run");
@@ -29,6 +33,7 @@ public class Amidst {
 			else
 				w.setProject(new Project(args[0]));
 		}*/
+		
 	}
 	
 	public static String version() {

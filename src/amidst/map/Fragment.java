@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.util.Vector;
 
 import amidst.Log;
@@ -18,6 +19,7 @@ public class Fragment {
 	private IconLayer[] iconLayers;
 	
 	private BufferedImage[] imgBuffers;
+	private int[][] imgDataBuffers;
 	public MapObject[] objects;
 	public int objectsLength = 0;
 	
@@ -39,9 +41,12 @@ public class Fragment {
 		this.layers = layers;
 		this.liveLayers = liveLayers;
 		imgBuffers = new BufferedImage[layers.length];
+		imgDataBuffers = new int[layers.length][];
 		for (int i = 0; i < layers.length; i++) {
-			if (!layers[i].isLive())
+			if (!layers[i].isLive()) {
 				imgBuffers[i] = new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_ARGB);
+				imgDataBuffers[i] = ((DataBufferInt)imgBuffers[i].getRaster().getDataBuffer()).getData();
+			}
 		}
 		this.iconLayers = iconLayers;
 		objects = new MapObject[MAX_OBJECTS_PER_FRAGMENT];
@@ -79,7 +84,7 @@ public class Fragment {
 		isActive = true;
 		for (int i = 0; i < imgBuffers.length; i++) {
 			if (!layers[i].isLive())
-				imgBuffers[i].setRGB(0, 0, layers[i].size, layers[i].size, layers[i].getDefaultData(), 0, layers[i].size);
+				System.arraycopy(layers[i].getDefaultData(), 0, imgDataBuffers[i], 0, layers[i].size * layers[i].size);
 		}
 	}
 	public void drawLive(Graphics2D g, AffineTransform mat) {
@@ -132,7 +137,7 @@ public class Fragment {
 	
 	public void setImageData(int layerID, int[] data) {
 		Layer layer = layers[layerID];
-		imgBuffers[layerID].setRGB(0, 0, layer.size, layer.size, data, 0, layer.size);
+		System.arraycopy(data, 0, imgDataBuffers[layerID], 0, layer.size * layer.size);
 	}
 	
 	public int getChunkX() {
