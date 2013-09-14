@@ -101,7 +101,7 @@ public class Layer implements Comparable<Layer> {
 		if (cacheEnabled) {
 			cacheManager.load(frag, layerID);
 		} else {
-			drawCached(frag, layerID);
+			drawToCache(frag, layerID);
 			//PluginManager.call(funcDraw, frag, layerID);
 		}
 	}
@@ -119,7 +119,7 @@ public class Layer implements Comparable<Layer> {
 		return live;
 	}
 	
-	public void drawCached(Fragment fragment, int layerID) {
+	public void drawToCache(Fragment fragment, int layerID) {
 		
 	}
 	

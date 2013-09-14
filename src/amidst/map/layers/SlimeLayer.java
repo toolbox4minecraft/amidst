@@ -19,7 +19,7 @@ public class SlimeLayer extends Layer {
 		setVisibilityPref(Options.instance.showSlimeChunks);
 	}
 	
-	public void drawCached(Fragment fragment, int layerID) {
+	public void drawToCache(Fragment fragment, int layerID) {
 		int[] dataCache = Fragment.getIntArray();
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {

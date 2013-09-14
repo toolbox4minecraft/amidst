@@ -20,7 +20,7 @@ public class BiomeLayer extends Layer {
 		super("biome", null, 0.0f, size);
 		setLive(false);
 	}
-	public void drawCached(Fragment fragment, int layerID) {
+	public void drawToCache(Fragment fragment, int layerID) {
 		int[] dataCache = Fragment.getIntArray();
 		
 		int x = fragment.getChunkX() << 2;
