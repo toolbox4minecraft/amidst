@@ -33,6 +33,8 @@ public class Layer implements Comparable<Layer> {
 	
 	private BooleanPrefModel visible = null;
 	
+	public boolean isTransparent;
+	
 	public Layer(String name) {
 		this(name, null);
 	}
@@ -52,6 +54,7 @@ public class Layer implements Comparable<Layer> {
 		scale = ((double)Fragment.SIZE)/((double)size);
 		for (int i = 0; i < defaultData.length; i++)
 			defaultData[i] = 0x00000000;
+		isTransparent = true;
 	}
 	public void setMap(Map map) {
 		this.map = map;
