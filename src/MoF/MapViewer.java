@@ -208,6 +208,8 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		if (isMouseInside) {
 			g2d.drawString(mouseLocationText, getWidth() - (18 + stringWidth), 30);
 		}
+		
+		
 	}
 	
 	public void centerAt(long x, long y) {

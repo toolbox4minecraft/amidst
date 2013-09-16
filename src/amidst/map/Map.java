@@ -110,7 +110,6 @@ public class Map {
 					}
 				}
 			}
-			
 			frag = startNode;
 			if (frag.hasNext) {
 				mat.setToIdentity();
@@ -140,7 +139,6 @@ public class Map {
 					}
 				}
 			}
-			
 			g.setTransform(iMat);
 			
 		}

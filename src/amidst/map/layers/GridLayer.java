@@ -13,6 +13,8 @@ import amidst.map.Layer;
 
 public class GridLayer extends Layer {
 	private static Font drawFont = new Font("arial", Font.BOLD, 16);
+	private static StringBuffer textBuffer = new StringBuffer(128);
+	private static char[] textCache = new char[128];
 	public GridLayer() {
 		super("grid", null, 1.1f);
 		setLive(true);
@@ -20,7 +22,13 @@ public class GridLayer extends Layer {
 	}
 	
 	public void drawLive(Fragment fragment, Graphics2D g, AffineTransform mat) {
-		String text = (fragment.getChunkX() << 4) + ", " +(fragment.getChunkY() << 4);
+		textBuffer.setLength(0);
+		textBuffer.append(fragment.getChunkX() << 4);
+		textBuffer.append(", ");
+		textBuffer.append(fragment.getChunkY() << 4);
+		
+		textBuffer.getChars(0, textBuffer.length(), textCache, 0);
+		
 		int stride = (int)(.25/map.getZoom());
 		
 
@@ -46,7 +54,7 @@ public class GridLayer extends Layer {
 		mat.scale(invZoom, invZoom);
 		g.setTransform(mat);
 		g.setFont(drawFont);
-		g.drawString(text, 10, 20);
+		g.drawChars(textCache, 0, textBuffer.length(), 10, 10);
 	}
 
 }
