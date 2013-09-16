@@ -1,11 +1,13 @@
 package amidst.map;
 
 import java.awt.*;
+import java.awt.RenderingHints.Key;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Stack;
 
 import javax.imageio.ImageIO;
@@ -34,6 +36,9 @@ public class Map {
 	
 	private boolean firstDraw = true;
 	
+	
+	private RenderingHints renderingHints;
+	
 	// TODO : This must be changed with the removal of ChunkManager
 	public Map(Layer[] layers,  Layer[] liveLayers, IconLayer[] iconLayers) {
 		for (Layer layer : layers)
@@ -51,6 +56,19 @@ public class Map {
 		
 		start = new Point2D.Double();
 		addStart(0, 0);
+		
+		HashMap<Key, Object> hintMap = new HashMap<Key, Object>();
+		hintMap.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		hintMap.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+		hintMap.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+		hintMap.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
+		hintMap.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
+		hintMap.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+		hintMap.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+		hintMap.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+		hintMap.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+		
+		renderingHints = new RenderingHints(hintMap);
 	}
 	
 	
@@ -59,6 +77,8 @@ public class Map {
 			firstDraw = false;
 			centerOn(0, 0);
 		}
+		// TODO: Enable via settings?
+		//g.setRenderingHints(renderingHints);
 		synchronized (drawLock) {
 			int size = (int) (Fragment.SIZE * scale);
 			int w = width / size + 2;
@@ -75,8 +95,6 @@ public class Map {
 			while (start.y < -size) { start.y += size; addRow(END);      removeRow(START);    }
 			
 			//g.setColor(Color.pink);
-			//g.fillRect(5, 5, width - 10, height - 10);
-			
 			Fragment frag = startNode;
 			size = Fragment.SIZE;
 			if (frag.hasNext) {
@@ -122,8 +140,9 @@ public class Map {
 					}
 				}
 			}
-	
+			
 			g.setTransform(iMat);
+			
 		}
 	}
 	public void addStart(int x, int y) {

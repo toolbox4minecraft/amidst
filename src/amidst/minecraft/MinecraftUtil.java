@@ -13,6 +13,10 @@ public class MinecraftUtil {
 		Minecraft.getActiveMinecraft().getClassByName("IntCache").callFunction("resetIntCache");
 		return (int[])Minecraft.getActiveMinecraft().getGlobal("biomeGen").callFunction("getInts", x, y, width, height);
 	}
+	
+	public static String getIntCacheInfo() {
+		return (String) Minecraft.getActiveMinecraft().getClassByName("IntCache").callFunction("getInformation");
+	}
 	public static Point findValidLocation(int x, int y, int size, List<Biome> paramList, Random random) {
 		// TODO: Clean up this code
 		int i = x - size >> 2;

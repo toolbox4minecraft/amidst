@@ -18,7 +18,6 @@ public class Amidst {
 	public static final Gson gson = new Gson();
 	
 	public static void main(String args[]) {
-
 		Util.setLookAndFeel();
 		Google.startTracking();
 		Google.track("Run");

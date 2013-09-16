@@ -24,7 +24,6 @@ import amidst.Util;
 public class InstallInformation {
 	public String name;
 	public String lastVersionId;
-	public String gameDir;
 	public String javaDir;
 	public String javaArgs;
 	public Resolution resolution;
@@ -40,13 +39,11 @@ public class InstallInformation {
 			name = "Minecraft";
 			lastVersionId = "None";
 		}
-		gameDir = Util.minecraftDirectory.toString();
 		isOld = old;
 	}
 	public InstallInformation(String name, String version) {
 		this.name = name;
 		lastVersionId = version;
-		gameDir = Util.minecraftDirectory.toString();
 		isOld = false;
 	}
 	public boolean validate() {
@@ -115,19 +112,19 @@ public class InstallInformation {
 	}
 	public boolean doesJarExist() {
 		if (isOld)
-			return (new File(Util.minecraftDirectory.toString() + "/bin/minecraft.jar")).exists();
+			return (new File(Util.minecraftDirectory + "/bin/minecraft.jar")).exists();
 		else
-			return (new File(gameDir + "/versions/" + lastVersionId + "/" + lastVersionId + ".jar")).exists();
+			return (new File(Util.minecraftDirectory + "/versions/" + lastVersionId + "/" + lastVersionId + ".jar")).exists();
 	}
 	
 	public File getJarFile() {
 		File returnFile;
 		if (!isOld) {
-			returnFile = new File(gameDir + "/versions/" + lastVersionId + "/" + lastVersionId + ".jar");
+			returnFile = new File(Util.minecraftDirectory + "/versions/" + lastVersionId + "/" + lastVersionId + ".jar");
 			if (returnFile.exists())
 				return returnFile;
 			Log.i("Attempt to get jar failed. Path: " + returnFile);
-			File versionsPath = new File(gameDir + "/versions/");
+			File versionsPath = new File(Util.minecraftDirectory + "/versions/");
 			if (versionsPath.exists()) { // https://s3.amazonaws.com/Minecraft.Download/versions/versions.json
 				File[] files = versionsPath.listFiles();
 				for (int i = 0; i < files.length; i++) {
@@ -140,7 +137,7 @@ public class InstallInformation {
 				Log.i("Attempt to browse versions folder failed. Path: " + versionsPath);
 			}
 		}
-		returnFile = new File(Util.minecraftDirectory.toString() + "/bin/minecraft.jar");
+		returnFile = new File(Util.minecraftDirectory + "/bin/minecraft.jar");
 		if (returnFile.exists())
 			return returnFile;
 		

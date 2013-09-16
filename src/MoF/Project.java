@@ -79,6 +79,7 @@ public class Project extends JPanel {
 				tick();
 			}
 		}, 20, 20);
+		
 	}
 	
 	public void tick() {

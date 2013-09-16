@@ -64,7 +64,8 @@ public class Minecraft {
 					new CCMethodPreset(
 							"IntCache",
 							"a(int)", "getIntCache",
-							"a()", "resetIntCache"
+							"a()", "resetIntCache",
+							"b()", "getInformation"
 					),
 					new CCPropertyPreset(
 							"IntCache",
