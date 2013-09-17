@@ -44,7 +44,10 @@ public class Fragment {
 		imgDataBuffers = new int[layers.length][];
 		for (int i = 0; i < layers.length; i++) {
 			if (!layers[i].isLive()) {
-				imgBuffers[i] = new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_ARGB);
+				if (layers[i].isTransparent)
+					imgBuffers[i] = new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_ARGB);
+				else
+					imgBuffers[i] = new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_RGB);
 				imgDataBuffers[i] = ((DataBufferInt)imgBuffers[i].getRaster().getDataBuffer()).getData();
 			}
 		}
