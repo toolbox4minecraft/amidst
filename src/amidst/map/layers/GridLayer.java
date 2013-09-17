@@ -54,7 +54,7 @@ public class GridLayer extends Layer {
 		mat.scale(invZoom, invZoom);
 		g.setTransform(mat);
 		g.setFont(drawFont);
-		g.drawChars(textCache, 0, textBuffer.length(), 10, 10);
+		g.drawChars(textCache, 0, textBuffer.length(), 10, 15);
 	}
 
 }

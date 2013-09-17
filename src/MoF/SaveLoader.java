@@ -162,8 +162,6 @@ public class SaveLoader {
 			
 			CompoundTag playerTag = (CompoundTag)root.getValue().get("Player");
 			
-			boolean hasPlayerTag = (playerTag == null);
-			
 			File playersFolder = new File(f.getParent(), "players");
 			boolean multi = (playersFolder.exists() && (playersFolder.listFiles().length > 0));
 			
