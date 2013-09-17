@@ -19,6 +19,7 @@ import amidst.map.layers.StrongholdLayer;
 import amidst.map.layers.TempleLayer;
 import amidst.map.layers.VillageLayer;
 import amidst.minecraft.Minecraft;
+import amidst.utilties.FramerateTimer;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -70,7 +71,10 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 				  panelColor = new Color(0.2f, 0.2f, 0.2f, 0.7f);
 	private Font textFont = new Font("arial", Font.BOLD, 15);
 	
-	
+	private FramerateTimer fps = new FramerateTimer(2);
+	private boolean showFPS = true;
+	private FontMetrics textMetrics;
+
 	public void dispose() {
 		Log.debug("DISPOSING OF MAPVIEWER");
 		worldMap.dispose();
@@ -164,52 +168,59 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		worldMap.height = getHeight();
 		worldMap.draw(g2d);
 		
-		FontMetrics textMetrics = g2d.getFontMetrics(textFont);
-		
-		
-		boolean hasSelection = (selectedObject != null);
-		g2d.setColor(panelColor);
-		g2d.fillRect(10, 10, textMetrics.stringWidth(Options.instance.getSeedMessage()) + 20, 30);
-		
-		String selectionMessage = "";
-		if (hasSelection) {
-			selectionMessage = selectedObject.getName() + " [" + selectedObject.rx + ", " + selectedObject.ry + "]";
-			g2d.fillRect(10, 45, 45 + textMetrics.stringWidth(selectionMessage), 35);
-			// TODO: Use the text size request method
-		}
-		
-		Point mouseLocation = null;
-		String mouseLocationText = null; 
-		int stringWidth = 0;
-		
-		if (isMouseInside) {
-			mouseLocation = worldMap.screenToLocal(curMouse);
-			// TODO: Biome is an obsolete class
-			String biomeName = worldMap.getBiomeNameAt(mouseLocation);
-			mouseLocationText = biomeName + " [" + mouseLocation.x + ", " + mouseLocation.y + "]";
-			stringWidth = textMetrics.stringWidth(mouseLocationText);
-			g2d.fillRect(getWidth() - (25 + stringWidth), 10, (15 + stringWidth), 30);
-		}
-		g2d.setColor(textColor);
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2d.setFont(textFont);
+		
+		textMetrics = g2d.getFontMetrics(textFont);
+		
+		drawSeed(g2d);
+		if (selectedObject != null)
+			drawSelectedInformation(g2d);
+		if (isMouseInside)
+			drawMouseInformation(g2d, curMouse);
+		if (showFPS)
+			drawFramerate(g2d);
+	}
+	
+	private void drawSeed(Graphics2D g2d) {
+		g2d.setColor(panelColor);
+		g2d.fillRect(10, 10, textMetrics.stringWidth(Options.instance.getSeedMessage()) + 20, 30);
+		g2d.setColor(textColor);
 		g2d.drawString(Options.instance.getSeedMessage(), 20, 30);
+	}
+	
+	private void drawMouseInformation(Graphics2D g2d, Point mousePosition) {		
+		g2d.setColor(panelColor);
+		Point mouseLocation = worldMap.screenToLocal(mousePosition);
+		String biomeName = worldMap.getBiomeNameAt(mouseLocation);
+		String mouseLocationText = biomeName + " [" + mouseLocation.x + ", " + mouseLocation.y + "]";
+		int stringWidth = textMetrics.stringWidth(mouseLocationText);
+		g2d.fillRect(getWidth() - (25 + stringWidth), 10, (15 + stringWidth), 30);
 		
+		g2d.setColor(textColor);
+		g2d.drawString(mouseLocationText, getWidth() - (18 + stringWidth), 30);
+	}
+	private void drawSelectedInformation(Graphics2D g2d) {
+		g2d.setColor(panelColor);
+		String selectionMessage = selectedObject.getName() + " [" + selectedObject.rx + ", " + selectedObject.ry + "]";
+		g2d.fillRect(10, 45, 45 + textMetrics.stringWidth(selectionMessage), 35);
+
+		g2d.setColor(textColor);
+		double width = selectedObject.getWidth();
+		double height = selectedObject.getHeight();
+		double ratio = width/height;
 		
-		if (hasSelection) {
-			double width = selectedObject.getWidth();
-			double height = selectedObject.getHeight();
-			double ratio = width/height;
-			
-			g2d.drawImage(selectedObject.getImage(), 15, 50, (int)(25.*ratio), 25, null);
-			g2d.drawString(selectionMessage, 50, 68);
-		}
-		
-		if (isMouseInside) {
-			g2d.drawString(mouseLocationText, getWidth() - (18 + stringWidth), 30);
-		}
-		
-		
+		g2d.drawImage(selectedObject.getImage(), 15, 50, (int)(25.*ratio), 25, null);
+		g2d.drawString(selectionMessage, 50, 68);
+	
+	}
+	private void drawFramerate(Graphics2D g2d) {
+		fps.tick();
+		String framerate = fps.toString();
+		g2d.setColor(panelColor);
+		g2d.fillRect(10, getHeight() - 40, textMetrics.stringWidth(framerate) + 20, 30);
+		g2d.setColor(textColor);
+		g2d.drawString(framerate, 20, getHeight() - 20);
 	}
 	
 	public void centerAt(long x, long y) {
