@@ -65,7 +65,6 @@ public class MinecraftProperty {
 	public MinecraftObject getValue(MinecraftObject mcObject) {
 		Object object = mcObject.get();
 		Object value = getValue(object);
-		Log.i(value.toString());
 		
 		return null;
 	}

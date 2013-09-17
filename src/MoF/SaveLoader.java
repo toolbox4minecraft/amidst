@@ -162,17 +162,19 @@ public class SaveLoader {
 			
 			CompoundTag playerTag = (CompoundTag)root.getValue().get("Player");
 			
-			multi = (playerTag == null);
-			Log.i(multi);
+			boolean hasPlayerTag = (playerTag == null);
+			
+			File playersFolder = new File(f.getParent(), "players");
+			boolean multi = (playersFolder.exists() && (playersFolder.listFiles().length > 0));
+			
+			if (multi)
+				Log.i("Multiplayer map detected.");
+			else
+				Log.i("Singleplayer map detected.");
 			if (!multi) {
-				File playersFolder = new File(f.getParent(), "players");
-				File[] playerListing = null;
-				if (playersFolder.exists() && ((playerListing = playersFolder.listFiles()).length > 0))
-					addPlayer(playerListing[0].getName().split("\\.")[0], playerTag);
-				else
-					addPlayer("Player", playerTag);
+				addPlayer("Player", playerTag);
 			} else {
-				File[] listing = new File(f.getParent(), "players").listFiles();
+				File[] listing = playersFolder.listFiles();
 				for (int i = 0; i < (listing != null ? listing.length : 0); i++) {
 					if (listing[i].isFile()) {
 						NBTInputStream playerInputStream = new NBTInputStream(new FileInputStream(listing[i]));
