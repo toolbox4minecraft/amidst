@@ -16,6 +16,7 @@ public enum MapMarkers {
 	STRONGHOLD,
 	TEMPLE,
 	VILLAGE,
+	SPAWN,
 	WITCH;
 	
 	public final BufferedImage image;

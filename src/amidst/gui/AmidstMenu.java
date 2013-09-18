@@ -287,6 +287,11 @@ public class AmidstMenu extends JMenuBar {
 					KeyEvent.VK_7,
 					Options.instance.showNetherFortresses));
 				
+				add(new DisplayingCheckbox("Spawn Location Icon",
+						ResourceLoader.getImage("spawn.png"),
+						KeyEvent.VK_8,
+						Options.instance.showSpawn));
+				
 			}
 			
 

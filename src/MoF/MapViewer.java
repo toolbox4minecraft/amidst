@@ -92,6 +92,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 				new VillageLayer(),
 				new StrongholdLayer(),
 				new TempleLayer(),
+				new SpawnLayer(),
 				new NetherFortressLayer()
 			};
 		} else {
@@ -99,6 +100,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 				new VillageLayer(),
 				new StrongholdLayer(),
 				new TempleLayer(),
+				new SpawnLayer(),
 				new NetherFortressLayer(),
 				playerLayer = new PlayerLayer(proj.save)
 			};

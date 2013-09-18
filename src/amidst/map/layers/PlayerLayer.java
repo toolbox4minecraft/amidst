@@ -33,9 +33,9 @@ public class PlayerLayer extends IconLayer {
 	public void generateMapObjects(Fragment frag) {
 		List<MapObjectPlayer> players =  saveLoader.getPlayers();
 		for (MapObjectPlayer player : players) {
-			if ((player.globalX > frag.blockX) &&
+			if ((player.globalX >= frag.blockX) &&
 				(player.globalX < frag.blockX + Fragment.SIZE) &&
-				(player.globalY > frag.blockY) &&
+				(player.globalY >= frag.blockY) &&
 				(player.globalY < frag.blockY + Fragment.SIZE)) {
 				player.parentLayer = this;
 				player.parentFragment = frag;

@@ -15,12 +15,15 @@ import java.util.Random;
 import amidst.Log;
 import amidst.Options;
 import amidst.map.Fragment;
+import amidst.map.IconLayer;
 import amidst.map.Layer;
+import amidst.map.MapObjectSpawn;
+import amidst.map.MapObjectStronghold;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 
-public class SpawnLayer extends Layer {
-
+public class SpawnLayer extends IconLayer {
+	private MapObjectSpawn spawnObject;
 	public static final ArrayList<Biome> validBiomes = new ArrayList<Biome>(Arrays.asList(
 			Biome.forest, 
 			Biome.plains, 
@@ -30,28 +33,22 @@ public class SpawnLayer extends Layer {
 			Biome.jungle, 
 			Biome.jungleHills
 		));
-	private static final Color drawColor = new Color(100, 120, 240, 100);
-	private int drawFragX, drawFragY;
-	private Point drawCorner;
 	
 	public SpawnLayer() {
-		super("spawnLayer", null, 1.1f);
-		setVisibilityPref(Options.instance.showGrid);
+		super("spawnPoint");
+		setVisibilityPref(Options.instance.showSpawn);
 		
 		Point spawnCenter = getSpawnPosition();
-		drawFragX = spawnCenter.x >> Fragment.SIZE_SHIFT;
-		drawFragY = spawnCenter.y >> Fragment.SIZE_SHIFT;
-		int drawX = ((spawnCenter.x < 0)?Fragment.SIZE:0) + spawnCenter.x % Fragment.SIZE;
-		int drawY = ((spawnCenter.y < 0)?Fragment.SIZE:0) + spawnCenter.y % Fragment.SIZE;
-		drawCorner = new Point(drawX - 10, drawY - 10);
+		spawnObject = new MapObjectSpawn(spawnCenter.x, spawnCenter.y);
 	}
 	
-	public void drawLive(Fragment fragment, Graphics2D g, AffineTransform mat) {
-		if ((fragment.getFragmentX() == drawFragX) && (fragment.getFragmentY() == drawFragY)) {
-
-			g.setColor(drawColor);
-			g.setTransform(mat);
-			g.fillRect(drawCorner.x, drawCorner.y, 20, 20);
+	public void generateMapObjects(Fragment frag) {
+		if ((spawnObject.globalX >= frag.blockX) &&
+			(spawnObject.globalX < frag.blockX + Fragment.SIZE) &&
+			(spawnObject.globalY >= frag.blockY) &&
+			(spawnObject.globalY < frag.blockY + Fragment.SIZE)) {
+			spawnObject.parentLayer = this;
+			frag.addObject(spawnObject);
 		}
 	}
 	

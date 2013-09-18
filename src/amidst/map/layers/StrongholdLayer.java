@@ -72,24 +72,16 @@ public class StrongholdLayer extends IconLayer {
 		setVisibilityPref(Options.instance.showStrongholds);
 		
 		findStrongholds();
-		
 	}
-	/*		public class MapGenStronghold {
-
-			public MapObjectStronghold[] coords = new MapObjectStronghold[3];
-			private Random c = new Random();
-			public static boolean reset0 = false;
-			protected MapObjectStronghold[] a(long seed, ChunkManager x) {
-				
-			}
-		}*/
+	
 	public void generateMapObjects(Fragment frag) {
 		int size = Fragment.SIZE >> 4;
 		for (int x = 0; x < size; x++) {
 			for (int y = 0; y < size; y++) {
 				int chunkX = x + frag.getChunkX();
 				int chunkY = y + frag.getChunkY();
-				if (checkChunk(chunkX, chunkY)) {
+				if (checkChunk(chunkX, chunkY)) { // TODO: This does not need a per-chunk test!
+					// FIXME: Possible use of checkChunk causing negative icons to be misaligned!
 					frag.addObject(new MapObjectStronghold(x << 4, y << 4).setParent(this));
 				}
 			}
@@ -145,11 +137,10 @@ public class StrongholdLayer extends IconLayer {
 			int strongholdChunkY = strongholds[i].y >> 4;
 			if ((strongholdChunkX == chunkX) && (strongholdChunkY == chunkY))
 				return true;
-			
-			
 		}
 		return false;
 	}
+	
 	public MapObjectStronghold[] getStrongholds() {
 		return strongholds;
 	}

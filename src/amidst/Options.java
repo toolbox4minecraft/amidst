@@ -20,8 +20,8 @@ public enum Options {
 	public final BooleanPrefModel showSlimeChunks;
 	public final BooleanPrefModel showGrid;
 	public final BooleanPrefModel showNetherFortresses;
-	public final BooleanPrefModel showTemples, showPlayers, showStrongholds, showVillages;
-	public final BooleanPrefModel mapFlicking;
+	public final BooleanPrefModel showTemples, showPlayers, showStrongholds, showVillages, showSpawn;
+	public final BooleanPrefModel mapFlicking, showFPS;
 	public final BooleanPrefModel maxZoom;
 	
 	private Options() {
@@ -40,6 +40,9 @@ public enum Options {
 		showPlayers          = new BooleanPrefModel(pref, "playerIcons",         true);
 		showTemples          = new BooleanPrefModel(pref, "templeIcons",         true);
 		showVillages         = new BooleanPrefModel(pref, "villageIcons",        true);
+		showSpawn            = new BooleanPrefModel(pref, "spawnIcon",           true);
+		
+		showFPS              = new BooleanPrefModel(pref, "showFPS",           true);
 	}
 	
 	public File getJar() {
