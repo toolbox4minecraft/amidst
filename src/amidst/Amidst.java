@@ -12,8 +12,8 @@ import amidst.minecraft.Minecraft;
 
 public class Amidst {
 	public final static int version_major = 3;
-	public final static int version_minor = 2;
-	public final static String versionOffset = "";
+	public final static int version_minor = 3;
+	public final static String versionOffset = " - alpha 1";
 	public static InstallInformation installInformation = new InstallInformation(true);
 	public static final Gson gson = new Gson();
 	
