@@ -15,7 +15,6 @@ public class SlimeLayer extends Layer {
 	private Random random = new Random();
 	public SlimeLayer() {
 		super("slime", null, 0.0f, size);
-		setLive(false);
 		setVisibilityPref(Options.instance.showSlimeChunks);
 	}
 	

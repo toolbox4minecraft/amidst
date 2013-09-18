@@ -10,7 +10,7 @@ import java.util.Vector;
 import amidst.Log;
 
 public class Fragment {
-	public static final int SIZE = 512, SIZE_SHIFT = 9, MAX_OBJECTS_PER_FRAGMENT = 20;
+	public static final int SIZE = 512, SIZE_SHIFT = 9, MAX_OBJECTS_PER_FRAGMENT = 20, MIPMAP_LEVELS = 3;
 	
 	public int blockX, blockY;
 	
@@ -18,8 +18,7 @@ public class Fragment {
 	private Layer[] liveLayers;
 	private IconLayer[] iconLayers;
 	
-	private BufferedImage[] imgBuffers;
-	private int[][] imgDataBuffers;
+	private MipMapImage[] images;
 	public MapObject[] objects;
 	public int objectsLength = 0;
 	
@@ -40,17 +39,9 @@ public class Fragment {
 	public Fragment(Layer[] layers, Layer[] liveLayers, IconLayer[] iconLayers) {
 		this.layers = layers;
 		this.liveLayers = liveLayers;
-		imgBuffers = new BufferedImage[layers.length];
-		imgDataBuffers = new int[layers.length][];
-		for (int i = 0; i < layers.length; i++) {
-			if (!layers[i].isLive()) {
-				if (layers[i].isTransparent)
-					imgBuffers[i] = new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_ARGB);
-				else
-					imgBuffers[i] = new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_RGB);
-				imgDataBuffers[i] = ((DataBufferInt)imgBuffers[i].getRaster().getDataBuffer()).getData();
-			}
-		}
+		images = new MipMapImage[layers.length];
+		for (int i = 0; i < layers.length; i++)
+			images[i] = new MipMapImage(layers[i].size, layers[i].size, MIPMAP_LEVELS, layers[i].isTransparent);
 		this.iconLayers = iconLayers;
 		objects = new MapObject[MAX_OBJECTS_PER_FRAGMENT];
 	}
@@ -58,13 +49,10 @@ public class Fragment {
 	public void load() {
 		if (isLoaded)
 			Log.w("This should never happen!");
-		for (int i = 0; i < layers.length; i++) {
-			if (!layers[i].isLive())
-				layers[i].draw(this, i);
-		}
-		for (int i = 0; i < iconLayers.length; i++) {
+		for (int i = 0; i < layers.length; i++)
+			layers[i].load(this, i);
+		for (int i = 0; i < iconLayers.length; i++)
 			iconLayers[i].generateMapObjects(this);
-		}
 		isLoaded = true;
 	}
 	
@@ -85,10 +73,8 @@ public class Fragment {
 		hasNext = false;
 		endOfLine = false;
 		isActive = true;
-		for (int i = 0; i < imgBuffers.length; i++) {
-			if (!layers[i].isLive())
-				System.arraycopy(layers[i].getDefaultData(), 0, imgDataBuffers[i], 0, layers[i].size * layers[i].size);
-		}
+		for (int i = 0; i < images.length; i++)
+			images[i].setData(layers[i].getDefaultData()); // TODO: Is this needed?
 	}
 	public void drawLive(Graphics2D g, AffineTransform mat) {
 		for (int i = 0; i < liveLayers.length; i++) {
@@ -99,14 +85,12 @@ public class Fragment {
 		
 	}
 	public void draw(Graphics2D g, AffineTransform mat) {
-		for (int i = 0; i < imgBuffers.length; i++) {
+		for (int i = 0; i < images.length; i++) {
 			if (layers[i].isVisible()) {
-				if (layers[i].isLive()) {
-					layers[i].drawLive(this, g, layers[i].getMatrix(mat));
-				} else {
-					g.setTransform(layers[i].getScaledMatrix(mat));
-					g.drawImage(imgBuffers[i], 0, 0, null);
-				}
+				int level = (int)Math.floor(Math.log((1./mat.getScaleX())/layers[i].scale) / Math.log(2));
+				level = Math.min(MIPMAP_LEVELS - 1, Math.max(0, level));
+				g.setTransform(layers[i].getScaledMatrix(mat, (float)(1 << level)));
+				g.drawImage(images[i].getImage(level), 0, 0, null);
 			}
 		}
 	}
@@ -139,8 +123,7 @@ public class Fragment {
 	}
 	
 	public void setImageData(int layerID, int[] data) {
-		Layer layer = layers[layerID];
-		System.arraycopy(data, 0, imgDataBuffers[layerID], 0, layer.size * layer.size);
+		images[layerID].setData(data);
 	}
 	
 	public int getChunkX() {
@@ -169,22 +152,14 @@ public class Fragment {
 			prevFragment.hasNext = false;
 	}
 	
-	public Graphics2D getDraw(int layerID) {
-		Graphics2D g2d =  imgBuffers[layerID].createGraphics();
-		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		return g2d;
-	}
 	
 	public static int[] getIntArray() {
 		return dataCache;
 	}
 	
-	public BufferedImage getBufferedImage(int layerID) {
-		return imgBuffers[layerID];
-	}
 	public void destroy() {
-		for (int i = 0; i < imgBuffers.length; i++)
-			imgBuffers[i].flush();
+		for (int i = 0; i < images.length; i++)
+			images[i].flush();
 	}
 	public void removeObject(MapObjectPlayer player) {
 		for (int i = 0; i < objectsLength; i++) {
@@ -193,5 +168,8 @@ public class Fragment {
 				objectsLength--;
 			}
 		}
+	}
+	public BufferedImage getBufferedImage(int layer) {
+		return images[layer].getImage(0);
 	}
 }

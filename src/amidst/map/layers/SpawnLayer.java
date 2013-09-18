@@ -36,7 +36,6 @@ public class SpawnLayer extends Layer {
 	
 	public SpawnLayer() {
 		super("spawnLayer", null, 1.1f);
-		setLive(true);
 		setVisibilityPref(Options.instance.showGrid);
 		
 		Point spawnCenter = getSpawnPosition();

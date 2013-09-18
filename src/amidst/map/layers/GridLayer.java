@@ -17,7 +17,6 @@ public class GridLayer extends Layer {
 	private static char[] textCache = new char[128];
 	public GridLayer() {
 		super("grid", null, 1.1f);
-		setLive(true);
 		setVisibilityPref(Options.instance.showGrid);
 	}
 	

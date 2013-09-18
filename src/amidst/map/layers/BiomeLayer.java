@@ -18,7 +18,6 @@ public class BiomeLayer extends Layer {
 	private static int size = Fragment.SIZE >> 2;
 	public BiomeLayer() {
 		super("biome", null, 0.0f, size);
-		setLive(false);
 		isTransparent = false;
 	}
 	public void drawToCache(Fragment fragment, int layerID) {

@@ -29,7 +29,6 @@ public class Layer implements Comparable<Layer> {
 	public String cachePath;
 	
 	protected Map map;
-	private boolean live;
 	
 	private BooleanPrefModel visible = null;
 	
@@ -78,9 +77,6 @@ public class Layer implements Comparable<Layer> {
 	
 	
 	
-	public void setLive(boolean live) {
-		this.live = live;
-	}
 	public Layer setMaxZoom(float maxZoom) {
 		this.maxZoom = maxZoom;
 		return this;
@@ -100,7 +96,7 @@ public class Layer implements Comparable<Layer> {
 		return defaultData;
 	}
 	
-	public void draw(Fragment frag, int layerID) {
+	public void load(Fragment frag, int layerID) {
 		if (cacheEnabled) {
 			cacheManager.load(frag, layerID);
 		} else {
@@ -117,9 +113,9 @@ public class Layer implements Comparable<Layer> {
 		mat.setTransform(inMat); mat.scale(scale, scale);
 		return mat;
 	}
-
-	public boolean isLive() {
-		return live;
+	public AffineTransform getScaledMatrix(AffineTransform inMat, float mipmapScale) {
+		mat.setTransform(inMat); mat.scale(scale * mipmapScale, scale * mipmapScale);
+		return mat;
 	}
 	
 	public void drawToCache(Fragment fragment, int layerID) {
