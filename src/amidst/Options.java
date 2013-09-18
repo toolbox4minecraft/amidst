@@ -42,7 +42,7 @@ public enum Options {
 		showVillages         = new BooleanPrefModel(pref, "villageIcons",        true);
 		showSpawn            = new BooleanPrefModel(pref, "spawnIcon",           true);
 		
-		showFPS              = new BooleanPrefModel(pref, "showFPS",           true);
+		showFPS              = new BooleanPrefModel(pref, "showFPS",             true);
 	}
 	
 	public File getJar() {

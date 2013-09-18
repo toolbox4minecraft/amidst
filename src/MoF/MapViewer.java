@@ -72,7 +72,6 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	private Font textFont = new Font("arial", Font.BOLD, 15);
 	
 	private FramerateTimer fps = new FramerateTimer(2);
-	private boolean showFPS = true;
 	private FontMetrics textMetrics;
 
 	public void dispose() {
@@ -180,7 +179,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 			drawSelectedInformation(g2d);
 		if (isMouseInside)
 			drawMouseInformation(g2d, curMouse);
-		if (showFPS)
+		if (Options.instance.showFPS.get())
 			drawFramerate(g2d);
 	}
 	
@@ -308,7 +307,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 
 		FontMetrics textMetrics = g2d.getFontMetrics(textFont);
 		
-		
+		// TODO: Change this to drawSeed
 		g2d.setColor(panelColor);
 		g2d.fillRect(10, 10, textMetrics.stringWidth(Options.instance.getSeedMessage()) + 20, 30);
 		

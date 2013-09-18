@@ -202,6 +202,12 @@ public class AmidstMenu extends JMenuBar {
 						null,
 						KeyEvent.VK_Z,
 						Options.instance.maxZoom));
+				
+				
+				add(new DisplayingCheckbox("Show Framerate",
+						null,
+						KeyEvent.VK_L,
+						Options.instance.showFPS));
 			}
 			
 		}
