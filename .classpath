@@ -3,12 +3,12 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="C:/Users/Skiphs/Documents/Minecraft/AMIDST Lib/lib/commons-io-2.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Skiphs/Documents/Minecraft/AMIDST Lib/lib/commons-lang3-3.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Skiphs/Documents/Minecraft/AMIDST Lib/lib/gson-2.2.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Skiphs/Documents/Minecraft/AMIDST Lib/lib/guava-14.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Skiphs/Documents/Minecraft/AMIDST Lib/lib/JGoogleAnalytics_0.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Skiphs/Documents/Minecraft/AMIDST Lib/lib/JNBT_1.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Skiphs/Documents/Minecraft/AMIDST Lib/lib/trove4j-3.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/gson-2.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/guava-14.0.jar"/>
+	<classpathentry kind="lib" path="lib/JGoogleAnalytics_0.4.jar"/>
+	<classpathentry kind="lib" path="lib/JNBT_1.3.jar"/>
+	<classpathentry kind="lib" path="lib/trove4j-3.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
