@@ -24,7 +24,7 @@ public class SaveLoader {
 	public static Type genType = Type.DEFAULT;
 	
 	public enum Type {
-		DEFAULT("default"), FLAT("flat"), LARGE_BIOMES("largeBiomes");
+		DEFAULT("default"), FLAT("flat"), LARGE_BIOMES("largeBiomes"), AMPLIFIED("amplified");
 		private final String s;
 		
 		Type(String s) {
