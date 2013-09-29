@@ -2,6 +2,7 @@ package amidst;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.File;
 
 import com.google.gson.Gson;
 
@@ -29,5 +30,13 @@ public class Amidst {
 			return version_major + "." + version_minor + versionOffset + " [Using Minecraft version: " + Minecraft.getActiveMinecraft().version + " | Attempted: " + installInformation.lastVersionId + "]";
 		else
 			return version_major + "." + version_minor + versionOffset;
+	}
+	
+	private static void loadAllLibraries() {
+		File libPath = new File(Util.minecraftDirectory + "lib/");
+		if (!libPath.exists())
+			return;
+		
+		
 	}
 }
