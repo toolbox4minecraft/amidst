@@ -20,6 +20,7 @@ import javax.swing.JProgressBar;
 
 import amidst.Amidst;
 import amidst.Log;
+import amidst.Util;
 import amidst.bytedata.ByteClass;
 import amidst.bytedata.CCLongMatch;
 import amidst.bytedata.CCMethodPreset;
@@ -157,7 +158,6 @@ public class Minecraft {
 		
 		Log.i("Generating version ID...");
 		try {
-			classLoader = new URLClassLoader(new URL[]{urlToJar});
 			use();
 			if (classLoader.findResource("net/minecraft/client/Minecraft.class") != null)
 				mainClass = classLoader.loadClass("net.minecraft.client.Minecraft");
@@ -170,7 +170,12 @@ public class Minecraft {
 			Log.kill("Attempted to load non-minecraft jar, or unable to locate starting point.");
 		}
 		String typeDump = "";
-		Field fields[] = mainClass.getDeclaredFields();
+		Field fields[] = null;
+		try {
+			fields = mainClass.getDeclaredFields();
+		} catch (NoClassDefFoundError e) {
+			Log.kill("Unable to find critical external class while loading.\nPlease ensure you have the correct Minecraft libraries installed.");
+		}
 		for (int i = 0; i < fields.length; i++) {
 			String typeString = fields[i].getType().toString();
 			if (typeString.startsWith("class ") && !typeString.contains("."))
@@ -255,7 +260,39 @@ public class Minecraft {
 		return urlToJar;
 	}
 	
+	private Stack<URL> getLibraries(File path) {
+		Log.i("Loading libraries.");
+		return getLibraries(path, new Stack<URL>());
+	}
+	private Stack<URL> getLibraries(File path, Stack<URL> urls) {
+		File[] files = path.listFiles();
+		for (int i = 0; i < files.length; i++) {
+			if (files[i].isDirectory()) {
+				getLibraries(files[i], urls);
+			} else {
+				try {
+					Log.i("Found library: " + files[i]);
+					urls.push(files[i].toURI().toURL());
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return urls;
+	}
+	
 	public void use() {
+		File librariesPath = new File(Util.minecraftDirectory + "/libraries/");
+		if (librariesPath.exists()) {
+			Stack<URL> libraries = getLibraries(librariesPath);
+			URL[] libraryArray = new URL[libraries.size() + 1];
+			libraries.toArray(libraryArray);
+			libraryArray[libraries.size()] = urlToJar;
+			classLoader = new URLClassLoader(libraryArray);
+		} else {
+			Log.i("Unable to find Minecraft library directory. Continuing");
+			classLoader = new URLClassLoader(new URL[] { urlToJar });
+		}
 		Thread.currentThread().setContextClassLoader(classLoader);
 		activeMinecraft = this;
 	}

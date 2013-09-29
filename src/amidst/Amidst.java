@@ -32,11 +32,4 @@ public class Amidst {
 			return version_major + "." + version_minor + versionOffset;
 	}
 	
-	private static void loadAllLibraries() {
-		File libPath = new File(Util.minecraftDirectory + "lib/");
-		if (!libPath.exists())
-			return;
-		
-		
-	}
 }
