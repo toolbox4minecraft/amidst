@@ -5,5 +5,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/gson-2.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/JGoogleAnalytics_0.4.jar"/>
+	<classpathentry kind="lib" path="lib/JNBT_1.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
