@@ -19,10 +19,15 @@ public class Amidst {
 	public static final Gson gson = new Gson();
 	
 	public static void main(String args[]) {
-		Util.setLookAndFeel();
+		if (!isOSX()) { Util.setLookAndFeel(); }
 		Google.startTracking();
 		Google.track("Run");
 		new VersionSelectWindow();
+	}
+	
+	public static boolean isOSX() {
+	    String osName = System.getProperty("os.name");
+	    return osName.contains("OS X");
 	}
 	
 	public static String version() {
