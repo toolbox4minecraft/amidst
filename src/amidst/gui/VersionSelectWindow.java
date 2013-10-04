@@ -74,20 +74,22 @@ public class VersionSelectWindow extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				Amidst.installInformation = (InstallInformation)profileBox.getSelectedItem();
 				boolean isValid = Amidst.installInformation.validate();
-				if (!isValid)
+				if (!isValid) {
 					Log.e("\"Latest\" profile option detected, but there was an issue loading the version list.\nUsing alternative jar.");
-				try {
-					new Minecraft();
-				} catch (MalformedURLException e1) {
-					// TODO
-					e1.printStackTrace();
-				}
-				window.dispose();
-				try {
-					new FinderWindow();
-				} catch (IOException e) {
-					// TODO Figure out why this throws an exception
-					e.printStackTrace();
+				} else {
+					try {
+						new Minecraft();
+					} catch (MalformedURLException e1) {
+						// TODO
+						e1.printStackTrace();
+					}
+					window.dispose();
+					try {
+						new FinderWindow();
+					} catch (IOException e) {
+						// TODO Figure out why this throws an exception
+						e.printStackTrace();
+					}
 				}
 			}
 		});
