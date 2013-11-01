@@ -2,6 +2,7 @@ package amidst;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.File;
 
 import com.google.gson.Gson;
 
@@ -12,27 +13,21 @@ import amidst.minecraft.Minecraft;
 
 public class Amidst {
 	public final static int version_major = 3;
-	public final static int version_minor = 3;
-	public final static String versionOffset = " - alpha 1";
+	public final static int version_minor = 4;
+	public final static String versionOffset = "";
 	public static InstallInformation installInformation = new InstallInformation(true);
 	public static final Gson gson = new Gson();
 	
 	public static void main(String args[]) {
-		Util.setLookAndFeel();
+		if (!isOSX()) { Util.setLookAndFeel(); }
 		Google.startTracking();
 		Google.track("Run");
 		new VersionSelectWindow();
-		
-		/*FinderWindow w = new FinderWindow(); //as long as we design it well, we won't need a reference to it ;)
-		//TODO: redesign, move to optipns
-		if (args.length > 0) {
-			File dat = new File(args[0]);
-			if (dat.isFile())
-				w.setProject(new Project(new SaveLoader(dat)));
-			else
-				w.setProject(new Project(args[0]));
-		}*/
-		
+	}
+	
+	public static boolean isOSX() {
+	    String osName = System.getProperty("os.name");
+	    return osName.contains("OS X");
 	}
 	
 	public static String version() {
@@ -41,4 +36,5 @@ public class Amidst {
 		else
 			return version_major + "." + version_minor + versionOffset;
 	}
+	
 }
