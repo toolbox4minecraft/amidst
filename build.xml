@@ -59,7 +59,7 @@
     <delete dir="${dist}"/>
   </target>
 
-  <target name="run" description="runs amidst">
+  <target name="run" description="runs amidst" depends="jar">
     <!-- Run amidst -->
     <java fork="true" jar="${dist}/amidst.jar" />
   </target>
