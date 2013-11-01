@@ -50,6 +50,9 @@
         <attribute name="Build-Date" value="${DSTAMP}"/>
         <attribute name="Build-Time" value="${TSTAMP}"/>
       </manifest>
+      <fileset dir="${src}">
+        <include name="**/*.png" />
+      </fileset>
     </jar>
   </target>
 
