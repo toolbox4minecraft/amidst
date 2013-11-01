@@ -34,15 +34,15 @@
     </javac>
   </target>
 
-  <manifestclasspath property="lib.list" jarfile="${dist}/amidst.jar">
-    <classpath refid="libs.class.path" />
-  </manifestclasspath>
-
   <target name="jar" depends="compile" description="generate the distribution" >
     <!-- Create the distribution directory -->
-    <mkdir dir="${dist}"/>
+    <mkdir dir="${dist}/"/>
 
-    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+    <manifestclasspath property="lib.list" jarfile="${dist}/amidst.jar">
+      <classpath refid="libs.class.path" />
+    </manifestclasspath>
+
+    <!-- Put everything in ${build} into the jar file -->
     <jar jarfile="${dist}/amidst.jar" basedir="${build}">
       <manifest>
         <attribute name="Main-Class" value="amidst.Amidst"/>
@@ -60,6 +60,7 @@
   </target>
 
   <target name="run" description="runs amidst">
+    <!-- Run amidst -->
     <java fork="true" jar="${dist}/amidst.jar" />
   </target>
 </project>
