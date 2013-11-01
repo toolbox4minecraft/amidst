@@ -35,14 +35,17 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 public class MapViewer extends JComponent implements MouseListener, MouseWheelListener, KeyListener {
@@ -126,13 +129,13 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		
 		setFocusable(true);
 	}
-	
+
 	@Override
-	public void paint(Graphics g) {
-		Graphics2D g2d = (Graphics2D)g;
+	public void paint(Graphics g) {     
+		Graphics2D g2d = (Graphics2D)g.create();
+                
 		g2d.setColor(Color.black);
 		g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
-		
 
 		if (zoomTicksRemaining-- > 0) {
 			double lastZoom = curZoom;
@@ -167,8 +170,8 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		
 		worldMap.width = getWidth();
 		worldMap.height = getHeight();
-		worldMap.draw(g2d);
-		
+                worldMap.draw((Graphics2D)g2d.create());
+                
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2d.setFont(textFont);
 		
