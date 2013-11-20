@@ -15,9 +15,6 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
-
 import amidst.Amidst;
 import amidst.Log;
 import amidst.Util;
@@ -51,7 +48,8 @@ public class Minecraft {
 							"WorldType",
 							"b", "default",
 							"c", "flat",
-							"d", "largeBiomes"
+							"d", "largeBiomes",
+							"e", "amplified"
 					)
 			, "WorldType"),
 			new CCRequire(
