@@ -42,7 +42,8 @@ public class VersionSelectWindow extends JFrame {
 		Object[] profileArray = null;
 		try {
 			LauncherProfile profile = Util.readObject(profileJsonFile, LauncherProfile.class);
-			profile.profiles.put("(Default)",  new InstallInformation("(Default) ", "1.6.4"));
+			// TODO This should use latest, not a preset version.
+			profile.profiles.put("(Default)",  new InstallInformation("(Default) ", "1.7.2"));
 			profileArray = profile.profiles.values().toArray();
 		} catch (Exception e) { // TODO This is a very broad exception to catch for
 			e.printStackTrace();
