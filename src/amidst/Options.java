@@ -1,5 +1,6 @@
 package amidst;
 
+import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BooleanPrefModel;
 import amidst.preferences.FilePrefModel;
 
@@ -23,10 +24,12 @@ public enum Options {
 	public final BooleanPrefModel showTemples, showPlayers, showStrongholds, showVillages, showSpawn;
 	public final BooleanPrefModel mapFlicking, showFPS;
 	public final BooleanPrefModel maxZoom;
+	public BiomeColorProfile biomeColorProfile;
 	
 	private Options() {
 		seed = 0L;
 		seedText = null;
+		
 		
 		Preferences pref = Preferences.userNodeForPackage(Amidst.class);
 		
@@ -41,8 +44,12 @@ public enum Options {
 		showTemples          = new BooleanPrefModel(pref, "templeIcons",         true);
 		showVillages         = new BooleanPrefModel(pref, "villageIcons",        true);
 		showSpawn            = new BooleanPrefModel(pref, "spawnIcon",           true);
-		
 		showFPS              = new BooleanPrefModel(pref, "showFPS",             true);
+		biomeColorProfile    = new BiomeColorProfile();
+		biomeColorProfile.fillColorArray();
+		
+
+				
 	}
 	
 	public File getJar() {

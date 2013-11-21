@@ -6,7 +6,7 @@ import java.util.HashMap;
 import amidst.Util;
 
 public class Biome {
-	
+	public static final HashMap<String,Biome> biomeMap = new HashMap<String,Biome>();
 	public static final BiomeType typeA = new BiomeType(0.1F, 0.2F);
 	public static final BiomeType typeB = new BiomeType(-0.5F, 0.0F);
 	public static final BiomeType typeC = new BiomeType(-1.0F, 0.1F);
@@ -121,9 +121,16 @@ public class Biome {
 		this.index = index;
 		this.color = color;
 		this.type = type;
+		biomeMap.put(name, this);
 		
 		if (index >= 128)
 			this.color = Util.lightenColor(color, 40);
+	}
+	public static int indexFromName(String name) {
+		Biome biome = biomeMap.get(name);
+		if (biome != null)
+			return biome.index;
+		return -1;
 	}
 	
 	public static final class BiomeType { // TODO: Rename once we figure out what this actually is!

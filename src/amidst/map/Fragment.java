@@ -66,6 +66,14 @@ public class Fragment {
 		isLoaded = false;
 	}
 	
+	public void clearData() {
+		for (IconLayer layer : iconLayers)
+			layer.clearMapObjects(this);
+		isLoaded = false;
+		for (int i = 0; i < images.length; i++)
+			images[i].setData(layers[i].getDefaultData()); // TODO: Is this needed?		
+	}
+	
 	public void clear() {
 		for (IconLayer layer : iconLayers)
 			layer.clearMapObjects(this);

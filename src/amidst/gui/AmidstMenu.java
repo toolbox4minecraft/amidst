@@ -7,6 +7,7 @@ import amidst.Util;
 import amidst.map.MapObjectPlayer;
 import amidst.map.layers.StrongholdLayer;
 import amidst.minecraft.Minecraft;
+import amidst.preferences.BiomeColorProfile;
 import amidst.resources.ResourceLoader;
 
 import javax.swing.*;
@@ -21,6 +22,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -339,16 +341,43 @@ public class AmidstMenu extends JMenuBar {
 		private OptionsMenu() {
 			super("Options");
 			add(new MapOptionsMenu());
+			if (BiomeColorProfile.isEnabled)
+				add(new BiomeColorMenu());
 			
 			setMnemonic(KeyEvent.VK_M);
-			add(new JMenuItem("Biome colors") {{
-				addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						//new BiomeColorWindow(window);
-					}
-				});
-			}});
+		}
+		private class BiomeColorMenu extends JMenu {
+			private class BiomeProfileActionListener implements ActionListener {
+				private BiomeColorProfile profile;
+				private ArrayList<JCheckBoxMenuItem> profileCheckboxes;
+				private JCheckBoxMenuItem checkBox;
+				public BiomeProfileActionListener(BiomeColorProfile profile, JCheckBoxMenuItem checkBox, ArrayList<JCheckBoxMenuItem> profileCheckboxes) {
+					this.profile = profile;
+					this.checkBox = checkBox;
+					this.profileCheckboxes = profileCheckboxes;
+				}
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					for (int i = 0; i < profileCheckboxes.size(); i++)
+						profileCheckboxes.get(i).setSelected(false);
+					checkBox.setSelected(true);
+					profile.activate();
+				}
+			}
+			private BiomeColorMenu() {
+				super("Biome profile");
+				ArrayList<JCheckBoxMenuItem> profileCheckboxes = new ArrayList<JCheckBoxMenuItem>();
+				for (int i = 0; i < BiomeColorProfile.profiles.size(); i++) {
+					BiomeColorProfile profile = BiomeColorProfile.profiles.get(i);
+					JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(profile.name);
+					menuItem.addActionListener(new BiomeProfileActionListener(profile, menuItem, profileCheckboxes));
+					profileCheckboxes.add(
+							menuItem);
+					add(menuItem);
+				}
+				profileCheckboxes.get(0).setSelected(true);
+			}
+			
 		}
 		private class MapOptionsMenu extends JMenu {
 			private MapOptionsMenu() {

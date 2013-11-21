@@ -10,11 +10,12 @@ import MoF.Google;
 import amidst.gui.VersionSelectWindow;
 import amidst.json.InstallInformation;
 import amidst.minecraft.Minecraft;
+import amidst.preferences.BiomeColorProfile;
 
 public class Amidst {
 	public final static int version_major = 3;
-	public final static int version_minor = 4;
-	public final static String versionOffset = "";
+	public final static int version_minor = 5;
+	public final static String versionOffset = " test build";
 	public static InstallInformation installInformation = new InstallInformation(true);
 	public static final Gson gson = new Gson();
 	
@@ -22,6 +23,11 @@ public class Amidst {
 		if (!isOSX()) { Util.setLookAndFeel(); }
 		Google.startTracking();
 		Google.track("Run");
+		
+		// TODO this is a really ugly way of doing this.
+		Options options = Options.instance;
+		BiomeColorProfile.scanAndLoad();
+		
 		new VersionSelectWindow();
 	}
 	

@@ -76,7 +76,10 @@ public class FragmentManager extends Thread {
 		cacheSize <<= 1;
 		System.gc();
 	}
-	
+	public void repaintFragment(Fragment frag) {
+		frag.clearData();
+		requestQueue.offer(frag);
+	}
 	public Fragment requestFragment(int x, int y) {
 		if (!running)
 			return null;

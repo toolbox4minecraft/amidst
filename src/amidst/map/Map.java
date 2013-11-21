@@ -19,6 +19,7 @@ import amidst.Log;
 import amidst.map.layers.BiomeLayer;
 
 public class Map {
+	public static Map instance = null;
 	private static final boolean START = true, END = false;
 	private static final AffineTransform iMat = new AffineTransform();
 	private FragmentManager fManager;
@@ -69,8 +70,18 @@ public class Map {
 		hintMap.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 		
 		renderingHints = new RenderingHints(hintMap);
+		instance = this;
 	}
 	
+	public void resetFragments() {
+		synchronized (drawLock) {
+			Fragment frag = startNode;
+			while (frag.hasNext) {
+				frag = frag.nextFragment;
+				fManager.repaintFragment(frag);
+			}
+		}
+	}
 	
 	public void draw(Graphics2D g) {
                 AffineTransform originalTransform = g.getTransform();
