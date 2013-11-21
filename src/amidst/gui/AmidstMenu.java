@@ -30,7 +30,7 @@ public class AmidstMenu extends JMenuBar {
 	final JMenu fileMenu;
 	//final JMenu scriptMenu;
 	public final JMenu mapMenu; //TODO: protected
-	//final JMenu optionsMenu;
+	final JMenu optionsMenu;
 	final JMenu helpMenu;
 	
 	private final FinderWindow window;
@@ -40,7 +40,7 @@ public class AmidstMenu extends JMenuBar {
 		
 		fileMenu = add(new FileMenu());
 		mapMenu = add(new MapMenu());
-		//optionsMenu = add(new OptionsMenu());
+		optionsMenu = add(new OptionsMenu());
 		helpMenu = add(new HelpMenu());
 	}
 	
@@ -142,7 +142,7 @@ public class AmidstMenu extends JMenuBar {
 						fc.setAcceptAllFileFilterUsed(false);
 						fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 						fc.setCurrentDirectory(new File(Util.minecraftDirectory, "saves"));
-						//fc.setCurrentDirectory(new File("D:\\Minecraft\\Server7"));
+						
 						if (fc.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {
 							File f = fc.getSelectedFile();
 							
@@ -158,7 +158,15 @@ public class AmidstMenu extends JMenuBar {
 			}
 		}
 	}
-	
+
+	public class DisplayingCheckbox extends JCheckBoxMenuItem {
+		private DisplayingCheckbox(String text, BufferedImage icon, int key, JToggleButton.ToggleButtonModel model) {
+			super(text, (icon != null) ? new ImageIcon(icon) : null);
+			if (key != -1)
+				setAccelerator(KeyStroke.getKeyStroke(key, InputEvent.CTRL_DOWN_MASK));
+			setModel(model);
+		}
+	}
 	private class MapMenu extends JMenu {
 		private MapMenu() {
 			super("Map");
@@ -167,7 +175,7 @@ public class AmidstMenu extends JMenuBar {
 			add(new FindMenu());
 			add(new GoToMenu());
 			add(new LayersMenu());
-			add(new MiscMenu());
+			add(new CopySeedMenuItem());
 			add(new CaptureMenuItem());
 		
 		}
@@ -187,29 +195,6 @@ public class AmidstMenu extends JMenuBar {
 					});
 				}});
 			}
-		}
-		private class MiscMenu extends JMenu {
-			private MiscMenu() {
-				super("Miscellaneous");
-
-				add(new DisplayingCheckbox("Map Flicking",
-						null,
-						KeyEvent.VK_I,
-						Options.instance.mapFlicking));
-				add(new CopySeedMenuItem());
-				
-				add(new DisplayingCheckbox("Restrict Maximum Zoom",
-						null,
-						KeyEvent.VK_Z,
-						Options.instance.maxZoom));
-				
-				
-				add(new DisplayingCheckbox("Show Framerate",
-						null,
-						KeyEvent.VK_L,
-						Options.instance.showFPS));
-			}
-			
 		}
 		
 		private class GoToMenu extends JMenu {
@@ -302,14 +287,6 @@ public class AmidstMenu extends JMenuBar {
 			
 
 		}
-		public class DisplayingCheckbox extends JCheckBoxMenuItem {
-			private DisplayingCheckbox(String text, BufferedImage icon, int key, JToggleButton.ToggleButtonModel model) {
-				super(text, (icon != null) ? new ImageIcon(icon) : null);
-				if (key != -1)
-					setAccelerator(KeyStroke.getKeyStroke(key, InputEvent.CTRL_DOWN_MASK));
-				setModel(model);
-			}
-		}
 		private class CaptureMenuItem extends JMenuItem {
 			private CaptureMenuItem() {
 				super("Capture");
@@ -361,15 +338,39 @@ public class AmidstMenu extends JMenuBar {
 	private class OptionsMenu extends JMenu {
 		private OptionsMenu() {
 			super("Options");
+			add(new MapOptionsMenu());
+			
 			setMnemonic(KeyEvent.VK_M);
 			add(new JMenuItem("Biome colors") {{
 				addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						new BiomeColorWindow(window);
+						//new BiomeColorWindow(window);
 					}
 				});
 			}});
+		}
+		private class MapOptionsMenu extends JMenu {
+			private MapOptionsMenu() {
+				super("Map");
+
+				add(new DisplayingCheckbox("Map Flicking",
+						null,
+						KeyEvent.VK_I,
+						Options.instance.mapFlicking));
+				
+				add(new DisplayingCheckbox("Restrict Maximum Zoom",
+						null,
+						KeyEvent.VK_Z,
+						Options.instance.maxZoom));
+				
+				
+				add(new DisplayingCheckbox("Show Framerate",
+						null,
+						KeyEvent.VK_L,
+						Options.instance.showFPS));
+			}
+			
 		}
 		
 	}
