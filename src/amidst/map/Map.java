@@ -73,6 +73,7 @@ public class Map {
 	
 	
 	public void draw(Graphics2D g) {
+                AffineTransform originalTransform = g.getTransform();
 		if (firstDraw) {
 			firstDraw = false;
 			centerOn(0, 0);
@@ -99,6 +100,7 @@ public class Map {
 			size = Fragment.SIZE;
 			if (frag.hasNext) {
 				mat.setToIdentity();
+                                mat.concatenate(originalTransform);
 				mat.translate(start.x, start.y);
 				mat.scale(scale, scale);
 				while (frag.hasNext) {
@@ -113,6 +115,7 @@ public class Map {
 			frag = startNode;
 			if (frag.hasNext) {
 				mat.setToIdentity();
+                                mat.concatenate(originalTransform);
 				mat.translate(start.x, start.y);
 				mat.scale(scale, scale);
 				while (frag.hasNext) {
@@ -128,6 +131,7 @@ public class Map {
 			frag = startNode;
 			if (frag.hasNext) {
 				mat.setToIdentity();
+                                mat.concatenate(originalTransform);
 				mat.translate(start.x, start.y);
 				mat.scale(scale, scale);
 				while (frag.hasNext) {
@@ -139,8 +143,8 @@ public class Map {
 					}
 				}
 			}
-			g.setTransform(iMat);
-			
+		
+                        g.setTransform(originalTransform);
 		}
 	}
 	public void addStart(int x, int y) {
