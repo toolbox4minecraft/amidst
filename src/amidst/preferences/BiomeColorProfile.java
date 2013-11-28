@@ -66,8 +66,8 @@ public class BiomeColorProfile {
 	public boolean save(File path) {
 		String output = "";
 		output += "{\r\n";
-		output += "\t\"name\"=\"" + name +"\",\r\n";
-		output += "\t\"colorMap\"=[\r\n";
+		output += "\t\"name\":\"" + name +"\",\r\n";
+		output += "\t\"colorMap\":[\r\n";
 		
 		for (Map.Entry<String, BiomeColor> pairs : colorMap.entrySet()) {
 			output += "\t\t[\r\n";

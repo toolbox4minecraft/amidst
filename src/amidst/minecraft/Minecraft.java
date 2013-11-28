@@ -2,6 +2,7 @@ package amidst.minecraft;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,6 +29,8 @@ import amidst.bytedata.CCStringMatch;
 import amidst.bytedata.CCWildcardByteSearch;
 import amidst.bytedata.ClassChecker;
 import amidst.foreign.VersionInfo;
+import amidst.json.JarLibrary;
+import amidst.json.JarProfile;
 
 public class Minecraft {
 	private static final int MAX_CLASSES = 128;
@@ -35,6 +38,7 @@ public class Minecraft {
 	private URLClassLoader classLoader;
 	private String versionID; 
 	private URL urlToJar;
+	private File jarFile;
 	private static Minecraft activeMinecraft; 
 	public HashMap<String, MinecraftObject> globalMap = new HashMap<String, MinecraftObject>();
 	
@@ -89,6 +93,7 @@ public class Minecraft {
 	}
 	
 	public Minecraft(File jarFile)  throws MalformedURLException {
+		this.jarFile = jarFile;
 		byteClassNames = new Vector<String>();
 		byteClassMap = new HashMap<String, ByteClass>(MAX_CLASSES);
 		urlToJar = jarFile.toURI().toURL();
@@ -258,10 +263,37 @@ public class Minecraft {
 		return urlToJar;
 	}
 	
-	private Stack<URL> getLibraries(File path) {
+	private Stack<URL> getLibraries(File jsonFile) {
 		Log.i("Loading libraries.");
-		return getLibraries(path, new Stack<URL>());
+		Stack<URL> libraries = new Stack<URL>();
+		JarProfile profile = null;
+		try {
+			profile = Util.readObject(jsonFile, JarProfile.class);
+		} catch (FileNotFoundException e) {
+			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: " + jsonFile + ")");
+			return libraries;
+		}
+		
+		for (int i = 0; i < profile.libraries.size(); i++) {
+			JarLibrary library = profile.libraries.get(i);
+			if (library.isActive()) {
+				try {
+					libraries.add(library.getFile().toURI().toURL());
+					Log.i("Found library: " + library.getFile());
+				} catch (MalformedURLException e) {
+					Log.w("Unable to convert library file to URL with path: " + library.getFile());
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return libraries;
 	}
+	
+	/* 
+	 * This was the old search-and-add-all libraries method. This may still be useful
+	 * if the user doesn't have a json file, or mojang changes the format.
+	 * 
 	private Stack<URL> getLibraries(File path, Stack<URL> urls) {
 		File[] files = path.listFiles();
 		for (int i = 0; i < files.length; i++) {
@@ -278,17 +310,18 @@ public class Minecraft {
 		}
 		return urls;
 	}
+	*/
 	
 	public void use() {
-		File librariesPath = new File(Util.minecraftDirectory + "/libraries/");
-		if (librariesPath.exists()) {
-			Stack<URL> libraries = getLibraries(librariesPath);
+		File librariesJson = new File(jarFile.getPath().replace(".jar", ".json"));
+		if (librariesJson.exists()) {
+			Stack<URL> libraries = getLibraries(librariesJson);
 			URL[] libraryArray = new URL[libraries.size() + 1];
 			libraries.toArray(libraryArray);
 			libraryArray[libraries.size()] = urlToJar;
 			classLoader = new URLClassLoader(libraryArray);
 		} else {
-			Log.i("Unable to find Minecraft library directory. Continuing");
+			Log.i("Unable to find Minecraft library JSON at: " + librariesJson + ". Skipping.");
 			classLoader = new URLClassLoader(new URL[] { urlToJar });
 		}
 		Thread.currentThread().setContextClassLoader(classLoader);
