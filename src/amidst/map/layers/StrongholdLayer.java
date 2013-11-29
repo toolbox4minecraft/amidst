@@ -21,7 +21,7 @@ import amidst.minecraft.MinecraftUtil;
 
 public class StrongholdLayer extends IconLayer {
 	public static StrongholdLayer instance;
-	private boolean hasFoundStrongholds = false;
+	
 	private static final Biome[] biomesDefault = {
 		Biome.desert, 
 		Biome.forest, 
@@ -71,13 +71,10 @@ public class StrongholdLayer extends IconLayer {
 		instance = this;
 		setVisibilityPref(Options.instance.showStrongholds);
 		
+		findStrongholds();
 	}
 	
 	public void generateMapObjects(Fragment frag) {
-		if (!hasFoundStrongholds) {
-			findStrongholds();
-			hasFoundStrongholds = true;
-		}
 		int size = Fragment.SIZE >> 4;
 		for (int x = 0; x < size; x++) {
 			for (int y = 0; y < size; y++) {

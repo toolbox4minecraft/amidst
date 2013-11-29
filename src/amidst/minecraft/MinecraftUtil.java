@@ -11,7 +11,7 @@ import MoF.SaveLoader.Type;
 public class MinecraftUtil {
 	public static int[] getBiomeData(int x, int y, int width, int height) {
 		Minecraft.getActiveMinecraft().getClassByName("IntCache").callFunction("resetIntCache");
-		return (int[])Minecraft.getActiveMinecraft().getGlobal(Thread.currentThread().getName()).callFunction("getInts", x, y, width, height);
+		return (int[])Minecraft.getActiveMinecraft().getGlobal("biomeGen").callFunction("getInts", x, y, width, height);
 	}
 	
 	public static String getIntCacheInfo() {
@@ -66,14 +66,12 @@ public class MinecraftUtil {
 		Minecraft minecraft = Minecraft.getActiveMinecraft();
 		MinecraftClass genLayerClass = minecraft.getClassByName("GenLayer");
 		MinecraftClass worldTypeClass = minecraft.getClassByName("WorldType");
-		for (int i = 0; i < 8; i++) {
 		Object[] genLayers = null;
 		if (worldTypeClass == null) {
 			genLayers = (Object[])genLayerClass.callFunction("initializeAllBiomeGenerators", seed);
 		} else {
 			genLayers = (Object[])genLayerClass.callFunction("initializeAllBiomeGenerators", seed, type.get().get());
 		}
-		minecraft.setGlobal("FragmentThread" + i, new MinecraftObject(genLayerClass, genLayers[0]));
-		}
+		minecraft.setGlobal("biomeGen", new MinecraftObject(genLayerClass, genLayers[0]));
 	}
 }

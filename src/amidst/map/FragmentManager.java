@@ -1,7 +1,9 @@
 package amidst.map;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Queue;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -10,14 +12,17 @@ import amidst.Log;
 public class FragmentManager extends Thread {
 	private int cacheSize = 1024;
 	
+	// TODO : Implement custom cache paths?
+	private boolean cacheEnabled = false;
+	private File cachePath;
 	
 	private boolean running = true;
 	
 	private Fragment[] fragmentCache;
 	private ConcurrentLinkedQueue<Fragment> fragmentStack;
+	private ConcurrentLinkedQueue<Fragment> requestQueue;
 	private ConcurrentLinkedQueue<Fragment> recycleQueue;
-	private FragmentThread[] threads;
-	private int lastThreadUsed;
+	private int sleepTick = 0;
 	
 	private Stack<Layer> layerList;
 	
@@ -26,7 +31,9 @@ public class FragmentManager extends Thread {
 	private Layer[] liveLayers;
 	
 	public FragmentManager(Layer[] layers, Layer[] liveLayers, IconLayer[] iconLayers) {
+		cacheEnabled = false;
 		fragmentStack = new ConcurrentLinkedQueue<Fragment>();
+		requestQueue = new ConcurrentLinkedQueue<Fragment>();
 		recycleQueue = new ConcurrentLinkedQueue<Fragment>();
 		layerList = new Stack<Layer>();
 		Collections.addAll(layerList, layers);
@@ -41,16 +48,13 @@ public class FragmentManager extends Thread {
 		this.layers = layers;
 		this.iconLayers = iconLayers;
 		this.liveLayers = liveLayers;
-		
-		Log.i("FragmentManager running with " + Runtime.getRuntime().availableProcessors() + " threads.");
-		threads = new FragmentThread[Runtime.getRuntime().availableProcessors()];
-		lastThreadUsed = 0;
-		for (int i = 0; i < threads.length; i++) {
-			threads[i] = new FragmentThread(i);
-			threads[i].start();
-		}
-		
 		start();
+	}
+	
+	public FragmentManager(File cachePath) {
+		this(null, null, null); // TODO: What is this doing here?
+		cacheEnabled = true;
+		this.cachePath = cachePath;
 	}
 	
 	public void reset() {
@@ -74,8 +78,7 @@ public class FragmentManager extends Thread {
 	}
 	public void repaintFragment(Fragment frag) {
 		frag.clearData();
-		lastThreadUsed = (lastThreadUsed + 1) % threads.length;
-		threads[lastThreadUsed].offer(frag);
+		requestQueue.offer(frag);
 	}
 	public Fragment requestFragment(int x, int y) {
 		if (!running)
@@ -88,8 +91,7 @@ public class FragmentManager extends Thread {
 		frag.blockX = x;
 		frag.blockY = y;
 		frag.isActive = true;
-		lastThreadUsed = (lastThreadUsed + 1) % threads.length;
-		threads[lastThreadUsed].offer(frag);
+		requestQueue.offer(frag);
 		return frag;
 	}
 	
@@ -100,24 +102,38 @@ public class FragmentManager extends Thread {
 	@Override
 	public void run() {
 		this.setPriority(MIN_PRIORITY);
-		Fragment frag;
 		while (running) {
-			while ((frag = recycleQueue.poll()) != null) {
-				synchronized (frag) {
+			if(!requestQueue.isEmpty() || !recycleQueue.isEmpty()) {
+				if (!requestQueue.isEmpty()) {
+					Fragment frag = requestQueue.poll();
+					if (frag.isActive && !frag.isLoaded) {
+						frag.load();
+						sleepTick++;
+						if (sleepTick == 10) {
+							sleepTick = 0;
+							try {
+								Thread.sleep(1L);
+							} catch (InterruptedException ignored) {}
+						}
+					}
+				}
+				
+				while (!recycleQueue.isEmpty()) {
+					Fragment frag = recycleQueue.poll();
 					frag.recycle();
 					fragmentStack.offer(frag);
 				}
+			} else {
+				sleepTick = 0;
+				try {
+					Thread.sleep(2L);
+				} catch (InterruptedException ignored) {}
 			}
-			try {
-				Thread.sleep(1L);
-			} catch (InterruptedException ignored) {}
 		}
 	}
 	
 	public void close() {
 		this.running = false;
-		for (int i = 0; i < threads.length; i++)
-			threads[i].shutdown();
 		for (Fragment f : fragmentCache) {
 			f.recycle();
 			f.destroy();

@@ -70,8 +70,9 @@ public class Layer implements Comparable<Layer> {
 	}
 	
 	public void unload(Fragment frag) {
-		if (cacheEnabled)
+		if (cacheEnabled) {
 			cacheManager.unload(frag);
+		}
 	}
 	
 	

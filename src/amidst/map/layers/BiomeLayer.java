@@ -14,6 +14,7 @@ import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 
 public class BiomeLayer extends Layer {
+
 	private static int size = Fragment.SIZE >> 2;
 	public BiomeLayer() {
 		super("biome", null, 0.0f, size);
