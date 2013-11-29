@@ -24,6 +24,7 @@ import amidst.minecraft.MinecraftUtil;
 
 public class SpawnLayer extends IconLayer {
 	private MapObjectSpawn spawnObject;
+	private boolean hasGenerated = false;
 	public static final ArrayList<Biome> validBiomes = new ArrayList<Biome>(Arrays.asList(
 			Biome.forest, 
 			Biome.plains, 
@@ -38,11 +39,14 @@ public class SpawnLayer extends IconLayer {
 		super("spawnPoint");
 		setVisibilityPref(Options.instance.showSpawn);
 		
-		Point spawnCenter = getSpawnPosition();
-		spawnObject = new MapObjectSpawn(spawnCenter.x, spawnCenter.y);
 	}
 	
 	public void generateMapObjects(Fragment frag) {
+		if (!hasGenerated) {
+			Point spawnCenter = getSpawnPosition();
+			spawnObject = new MapObjectSpawn(spawnCenter.x, spawnCenter.y);
+			hasGenerated = true;
+		}
 		if ((spawnObject.globalX >= frag.blockX) &&
 			(spawnObject.globalX < frag.blockX + Fragment.SIZE) &&
 			(spawnObject.globalY >= frag.blockY) &&

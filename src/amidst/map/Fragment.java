@@ -30,6 +30,8 @@ public class Fragment {
 	
 	public boolean endOfLine = false;
 	
+	public String lastLoadedThreadName;
+	
 	private static int[] dataCache = new int[SIZE*SIZE];
 	
 	
@@ -49,6 +51,7 @@ public class Fragment {
 	public void load() {
 		if (isLoaded)
 			Log.w("This should never happen!");
+		lastLoadedThreadName = Thread.currentThread().getName();
 		for (int i = 0; i < layers.length; i++)
 			layers[i].load(this, i);
 		for (int i = 0; i < iconLayers.length; i++)
@@ -58,6 +61,7 @@ public class Fragment {
 	
 	public void recycle() {
 		isActive = false;
+		lastLoadedThreadName = "Recycled";
 		if (isLoaded) {
 			for (Layer layer : layers)
 				layer.unload(this);
