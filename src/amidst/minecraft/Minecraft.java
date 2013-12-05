@@ -276,7 +276,7 @@ public class Minecraft {
 		
 		for (int i = 0; i < profile.libraries.size(); i++) {
 			JarLibrary library = profile.libraries.get(i);
-			if (library.isActive()) {
+			if (library.isActive() && library.getFile().exists()) {
 				try {
 					libraries.add(library.getFile().toURI().toURL());
 					Log.i("Found library: " + library.getFile());
@@ -284,6 +284,8 @@ public class Minecraft {
 					Log.w("Unable to convert library file to URL with path: " + library.getFile());
 					e.printStackTrace();
 				}
+			} else {
+				Log.i("Skipping library: " + library.getFile());
 			}
 		}
 		
