@@ -22,6 +22,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -347,6 +348,7 @@ public class AmidstMenu extends JMenuBar {
 			setMnemonic(KeyEvent.VK_M);
 		}
 		private class BiomeColorMenu extends JMenu {
+			private ArrayList<JCheckBoxMenuItem> profileCheckboxes = new ArrayList<JCheckBoxMenuItem>();;
 			private class BiomeProfileActionListener implements ActionListener {
 				private BiomeColorProfile profile;
 				private ArrayList<JCheckBoxMenuItem> profileCheckboxes;
@@ -366,16 +368,41 @@ public class AmidstMenu extends JMenuBar {
 			}
 			private BiomeColorMenu() {
 				super("Biome profile");
-				ArrayList<JCheckBoxMenuItem> profileCheckboxes = new ArrayList<JCheckBoxMenuItem>();
-				for (int i = 0; i < BiomeColorProfile.profiles.size(); i++) {
-					BiomeColorProfile profile = BiomeColorProfile.profiles.get(i);
-					JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(profile.name);
-					menuItem.addActionListener(new BiomeProfileActionListener(profile, menuItem, profileCheckboxes));
-					profileCheckboxes.add(
-							menuItem);
-					add(menuItem);
-				}
+				
+				Log.i("Checking for additional biome color profiles.");
+				File colorProfileFolder = new File("./biome");
+				scanAndLoad(colorProfileFolder, this);
 				profileCheckboxes.get(0).setSelected(true);
+			}
+			
+			private boolean scanAndLoad(File folder, JMenu menu) {
+				File[] files = folder.listFiles();
+				BiomeColorProfile profile;
+				boolean foundProfiles = false;
+				for (int i = 0; i < files.length; i++) {
+					if (files[i].isFile()) {
+						if ((profile = BiomeColorProfile.createFromFile(files[i])) != null) {
+							JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(profile.name);
+							menuItem.addActionListener(new BiomeProfileActionListener(profile, menuItem, profileCheckboxes));
+							if (profile.shortcut != null) {
+								KeyStroke accelerator = KeyStroke.getKeyStroke(profile.shortcut);
+								if (accelerator != null)
+									menuItem.setAccelerator(accelerator);
+								else
+									Log.i("Unable to create keyboard shortcut from: " + profile.shortcut);
+							}
+							menu.add(menuItem);
+							profileCheckboxes.add(menuItem);
+							foundProfiles = true;
+						}
+					} else {
+						JMenu subMenu = new JMenu(files[i].getName());
+						if (scanAndLoad(files[i], subMenu)) {
+							menu.add(subMenu);
+						}
+					}
+				}
+				return foundProfiles;
 			}
 			
 		}

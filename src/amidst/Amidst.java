@@ -24,7 +24,7 @@ public class Amidst {
 		Google.startTracking();
 		Google.track("Run");
 		
-		BiomeColorProfile.scanAndLoad();
+		BiomeColorProfile.scan();
 		
 		new VersionSelectWindow();
 	}

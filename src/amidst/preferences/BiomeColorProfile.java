@@ -37,11 +37,11 @@ public class BiomeColorProfile {
 		}
 	};
 	public static boolean isEnabled = false;
-	public static ArrayList<BiomeColorProfile> profiles = new ArrayList<BiomeColorProfile>();
 	
 	public HashMap<String, BiomeColor> colorMap = new HashMap<String, BiomeColor>(); 
 	public int colorArray[] = new int[Biome.length << 1];
 	public String name;
+	public String shortcut;
 	
 	public BiomeColorProfile() {
 		name = "default";
@@ -113,7 +113,7 @@ public class BiomeColorProfile {
 	}
 	
 	
-	public static void scanAndLoad() {
+	public static void scan() {
 		Log.i("Searching for biome color profiles.");
 		File colorProfileFolder = new File("./biome");
 		
@@ -127,6 +127,7 @@ public class BiomeColorProfile {
 			if (!Options.instance.biomeColorProfile.save(defaultProfileFile))
 				Log.i("Attempted to save default biome color profile, but encountered an error.");
 		
+		/*
 		File[] colorProfiles = colorProfileFolder.listFiles();
 		for (int i = 0; i < colorProfiles.length; i++) {
 			if (colorProfiles[i].exists() && colorProfiles[i].isFile()) {
@@ -138,7 +139,20 @@ public class BiomeColorProfile {
 					Log.i("Unable to load file: " + colorProfiles[i]);
 				}
 			}
-		}
+		}*/
 		isEnabled = true;
+	}
+	
+	public static BiomeColorProfile createFromFile(File file) {
+		BiomeColorProfile profile = null;
+		if (file.exists() && file.isFile()) {
+			try {
+				profile = Util.readObject(file, BiomeColorProfile.class);
+				profile.fillColorArray();
+			} catch (FileNotFoundException e) {
+				Log.i("Unable to load file: " + file);
+			}
+		}
+		return profile;
 	}
 }
