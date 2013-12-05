@@ -15,7 +15,7 @@ import amidst.preferences.BiomeColorProfile;
 public class Amidst {
 	public final static int version_major = 3;
 	public final static int version_minor = 5;
-	public final static String versionOffset = " beta 1";
+	public final static String versionOffset = "";
 	public static InstallInformation installInformation = new InstallInformation(true);
 	public static final Gson gson = new Gson();
 	
