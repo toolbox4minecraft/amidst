@@ -3,6 +3,7 @@ package amidst.minecraft;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -269,7 +270,7 @@ public class Minecraft {
 		JarProfile profile = null;
 		try {
 			profile = Util.readObject(jsonFile, JarProfile.class);
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: " + jsonFile + ")");
 			return libraries;
 		}

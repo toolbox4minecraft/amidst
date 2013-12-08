@@ -19,14 +19,10 @@ import amidst.minecraft.Biome;
 
 public class BiomeColorProfile {
 	private class BiomeColor {
+		public String alias;
 		public int r = 0;
 		public int g = 0;
 		public int b = 0;
-		public BiomeColor(int r, int g, int b) {
-			this.r = r;
-			this.g = g;
-			this.b = b;
-		}
 		public BiomeColor(int rgb) {
 			r = (rgb >> 16) & 0xFF;
 			g = (rgb >> 8) & 0xFF;
@@ -40,6 +36,7 @@ public class BiomeColorProfile {
 	
 	public HashMap<String, BiomeColor> colorMap = new HashMap<String, BiomeColor>(); 
 	public int colorArray[] = new int[Biome.length << 1];
+	public String[] nameArray = new String[Biome.length << 1];
 	public String name;
 	public String shortcut;
 	
@@ -54,36 +51,31 @@ public class BiomeColorProfile {
 	public void fillColorArray() {
 		for (Map.Entry<String, BiomeColor> pairs : colorMap.entrySet()) {
 			int index = Biome.indexFromName(pairs.getKey());
+			int localIndex = index;
 			if (index >= 128)
-				index = index - 128 + Biome.length;
-			if (index != -1)
-				colorArray[index] = pairs.getValue().toColorInt();
-			else
+				localIndex = index - 128 + Biome.length;
+			if (index != -1) {
+				colorArray[localIndex] = pairs.getValue().toColorInt();
+				nameArray[localIndex] = (pairs.getValue().alias != null)?pairs.getValue().alias:Biome.biomes[index].name;
+			} else {
 				Log.i("Failed to find biome for: " + pairs.getKey() + " in profile: " + name);
+			}
 		}
 	}
 	
 	public boolean save(File path) {
 		String output = "";
-		output += "{\r\n";
-		output += "\t\"name\":\"" + name +"\",\r\n";
-		output += "\t\"colorMap\":[\r\n";
+		output += "{ \"name\":\"" + name + "\", \"colorMap\":[\r\n";
 		
 		for (Map.Entry<String, BiomeColor> pairs : colorMap.entrySet()) {
-			output += "\t\t[\r\n";
-			output += "\t\t\t\"" + pairs.getKey() +"\",\r\n";
-			output += "\t\t\t{\r\n";
-			output += "\t\t\t\t\"r\":" + pairs.getValue().r + ",\r\n"; 
-			output += "\t\t\t\t\"g\":" + pairs.getValue().g + ",\r\n";
-			output += "\t\t\t\t\"b\":" + pairs.getValue().b + "\r\n"; 
-			output += "\t\t\t}\r\n";
-			output += "\t\t],\r\n";
+			output += "[ \"" + pairs.getKey() + "\", { ";
+			output += "\"r\":" + pairs.getValue().r + ", "; 
+			output += "\"g\":" + pairs.getValue().g + ", ";
+			output += "\"b\":" + pairs.getValue().b + " } ],\r\n"; 
 		}
 		output = output.substring(0, output.length() - 3);
-		output += "\r\n";
 		
-		output += "\t]\r\n";
-		output += "}\r\n";
+		output += " ] }\r\n";
 		BufferedWriter writer = null;
 		try {
 			writer = new BufferedWriter(new FileWriter(path));
@@ -149,10 +141,16 @@ public class BiomeColorProfile {
 			try {
 				profile = Util.readObject(file, BiomeColorProfile.class);
 				profile.fillColorArray();
-			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
 				Log.i("Unable to load file: " + file);
 			}
 		}
 		return profile;
+	}
+
+	public String getAliasForId(int id) {
+		if (id >= 128)
+			id = id - 128 + Biome.length;
+		return nameArray[id];
 	}
 }

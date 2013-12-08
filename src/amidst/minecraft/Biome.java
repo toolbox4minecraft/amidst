@@ -3,6 +3,7 @@ package amidst.minecraft;
 import java.awt.Color;
 import java.util.HashMap;
 
+import amidst.Options;
 import amidst.Util;
 
 public class Biome {
@@ -147,4 +148,5 @@ public class Biome {
 			return new BiomeType(value1 + 0.1F, value2 + 0.2F);
 		}
 	}
+
 }

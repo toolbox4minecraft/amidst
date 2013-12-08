@@ -4,11 +4,14 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import amidst.Log;
+import amidst.minecraft.MinecraftUtil;
 
 public class Fragment {
-	public static final int SIZE = 512, SIZE_SHIFT = 9, MAX_OBJECTS_PER_FRAGMENT = 20, MIPMAP_LEVELS = 3;
+	public static final int SIZE = 512, SIZE_SHIFT = 9, MAX_OBJECTS_PER_FRAGMENT = 20, MIPMAP_LEVELS = 3, BIOME_SIZE = SIZE >> 2;
 	
 	public int blockX, blockY;
+	
+	public short[] biomeData = new short[BIOME_SIZE * BIOME_SIZE];
 	
 	private Layer[] layers;
 	private Layer[] liveLayers;
@@ -37,7 +40,7 @@ public class Fragment {
 		this.liveLayers = liveLayers;
 		images = new BufferedImage[layers.length];
 		for (int i = 0; i < layers.length; i++)
-			images[i] = new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_RGB); //GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleVolatileImage(layers[i].size, layers[i].size);
+			images[i] = new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_ARGB); //GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleVolatileImage(layers[i].size, layers[i].size);
 		this.iconLayers = iconLayers;
 		objects = new MapObject[MAX_OBJECTS_PER_FRAGMENT];
 	}
@@ -45,6 +48,9 @@ public class Fragment {
 	public void load() {
 		if (isLoaded)
 			Log.w("This should never happen!");
+		int[] data = MinecraftUtil.getBiomeData(blockX >> 2, blockY >> 2, BIOME_SIZE, BIOME_SIZE);
+		for (int i = 0; i < BIOME_SIZE * BIOME_SIZE; i++)
+			biomeData[i] = (short)data[i];
 		for (int i = 0; i < layers.length; i++)
 			layers[i].load(this, i);
 		for (int i = 0; i < iconLayers.length; i++)
@@ -123,10 +129,16 @@ public class Fragment {
 	}
 	
 	public void setImageData(int layerId, int[] data) {
-		Graphics2D g2d = (Graphics2D)images[layerId].getGraphics();
 		images[layerId].setRGB(0, 0, layers[layerId].size, layers[layerId].size, data, 0, layers[layerId].size);
 	}
 	
+	
+	public int getBlockX() {
+		return blockX;
+	}
+	public int getBlockY() {
+		return blockY;
+	}
 	public int getChunkX() {
 		return blockX >> 4;
 	}

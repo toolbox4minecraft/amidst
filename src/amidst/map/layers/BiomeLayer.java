@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import amidst.Log;
+import amidst.Options;
 import amidst.Util;
 import amidst.map.ByteArrayCache;
 import amidst.map.CacheManager;
@@ -23,33 +24,23 @@ public class BiomeLayer extends Layer {
 	public void drawToCache(Fragment fragment, int layerID) {
 		int[] dataCache = Fragment.getIntArray();
 		
-		int x = fragment.getChunkX() << 2;
-		int y = fragment.getChunkY() << 2;
-		
-		int[] biomeData = MinecraftUtil.getBiomeData(x, y, size, size);
 		for (int i = 0; i < size*size; i++)
-			if (Biome.biomes[biomeData[i]] != null)
-				dataCache[i] = Biome.biomes[biomeData[i]].color;
+			if (Biome.biomes[fragment.biomeData[i]] != null)
+				dataCache[i] = Biome.biomes[fragment.biomeData[i]].color;
 			else
-				Log.debug("Failed to find biome ID: " + biomeData[i]); // TODO: This could turn into spam
+				Log.debug("Failed to find biome ID: " + fragment.biomeData[i]); // TODO: This could turn into spam
 		fragment.setImageData(layerID, dataCache);
 	}
-	// TODO: This shouldn't be static, it should use the ID provided when it's loaded in for getBufferedImage
+	
 	public static int getBiomeForFragment(Fragment frag, int blockX, int blockY) {
-		int pixel = frag.getBufferedImage(0).getRGB(blockX >> 2, blockY >> 2);
-		for (int i = 0; i < Biome.length; i++) {
-			if (pixel == Biome.biomes[i].color)
-				return i;
-		}
-		for (int i = 128; i < Biome.length + 128; i++) {
-			if (pixel == Biome.biomes[i].color)
-				return i;
-		}
-		return 0;
+		return (int)frag.biomeData[(blockY >> 2) * Fragment.BIOME_SIZE + (blockX >> 2)];
 	}
 	
 	public static String getBiomeNameForFragment(Fragment frag, int blockX, int blockY) {
 		return Biome.biomes[getBiomeForFragment(frag, blockX, blockY)].name;
+	}
+	public static String getBiomeAliasForFragment(Fragment frag, int blockX, int blockY) {
+		return Options.instance.biomeColorProfile.getAliasForId(getBiomeForFragment(frag, blockX, blockY));
 	}
 	
 	

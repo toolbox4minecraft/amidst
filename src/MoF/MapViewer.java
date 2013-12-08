@@ -131,9 +131,9 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	}
 
 	@Override
-	public void paint(Graphics g) {     
+	public void paint(Graphics g) {	 
 		Graphics2D g2d = (Graphics2D)g.create();
-                
+				
 		g2d.setColor(Color.black);
 		g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
 
@@ -170,8 +170,8 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		
 		worldMap.width = getWidth();
 		worldMap.height = getHeight();
-                worldMap.draw((Graphics2D)g2d.create());
-                
+		worldMap.draw((Graphics2D)g2d.create());
+		
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2d.setFont(textFont);
 		
@@ -196,7 +196,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	private void drawMouseInformation(Graphics2D g2d, Point mousePosition) {		
 		g2d.setColor(panelColor);
 		Point mouseLocation = worldMap.screenToLocal(mousePosition);
-		String biomeName = worldMap.getBiomeNameAt(mouseLocation);
+		String biomeName = worldMap.getBiomeAliasAt(mouseLocation);
 		String mouseLocationText = biomeName + " [" + mouseLocation.x + ", " + mouseLocation.y + "]";
 		int stringWidth = textMetrics.stringWidth(mouseLocationText);
 		g2d.fillRect(getWidth() - (25 + stringWidth), 10, (15 + stringWidth), 30);
