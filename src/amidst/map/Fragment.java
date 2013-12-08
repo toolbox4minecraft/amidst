@@ -1,12 +1,8 @@
 package amidst.map;
 
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.util.Vector;
-
 import amidst.Log;
 
 public class Fragment {
@@ -18,7 +14,7 @@ public class Fragment {
 	private Layer[] liveLayers;
 	private IconLayer[] iconLayers;
 	
-	private MipMapImage[] images;
+	private BufferedImage[] images;
 	public MapObject[] objects;
 	public int objectsLength = 0;
 	
@@ -39,9 +35,9 @@ public class Fragment {
 	public Fragment(Layer[] layers, Layer[] liveLayers, IconLayer[] iconLayers) {
 		this.layers = layers;
 		this.liveLayers = liveLayers;
-		images = new MipMapImage[layers.length];
+		images = new BufferedImage[layers.length];
 		for (int i = 0; i < layers.length; i++)
-			images[i] = new MipMapImage(layers[i].size, layers[i].size, MIPMAP_LEVELS, layers[i].isTransparent);
+			images[i] = new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_RGB); //GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleVolatileImage(layers[i].size, layers[i].size);
 		this.iconLayers = iconLayers;
 		objects = new MapObject[MAX_OBJECTS_PER_FRAGMENT];
 	}
@@ -70,8 +66,6 @@ public class Fragment {
 		for (IconLayer layer : iconLayers)
 			layer.clearMapObjects(this);
 		isLoaded = false;
-		for (int i = 0; i < images.length; i++)
-			images[i].setData(layers[i].getDefaultData()); // TODO: Is this needed?		
 	}
 	
 	public void clear() {
@@ -81,8 +75,6 @@ public class Fragment {
 		hasNext = false;
 		endOfLine = false;
 		isActive = true;
-		for (int i = 0; i < images.length; i++)
-			images[i].setData(layers[i].getDefaultData()); // TODO: Is this needed?
 	}
 	public void drawLive(Graphics2D g, AffineTransform mat) {
 		for (int i = 0; i < liveLayers.length; i++) {
@@ -93,12 +85,12 @@ public class Fragment {
 		
 	}
 	public void draw(Graphics2D g, AffineTransform mat) {
-		for (int i = 0; i < images.length; i++) {
-			if (layers[i].isVisible()) {
-				int level = (int)Math.floor(Math.log((1./mat.getScaleX())/layers[i].scale) / Math.log(2));
-				level = Math.min(MIPMAP_LEVELS - 1, Math.max(0, level));
-				g.setTransform(layers[i].getScaledMatrix(mat, (float)(1 << level)));
-				g.drawImage(images[i].getImage(level), 0, 0, null);
+		if (isLoaded) {
+			for (int i = 0; i < images.length; i++) {
+				if (layers[i].isVisible()) {
+					g.setTransform(layers[i].getScaledMatrix(mat));
+					g.drawImage(images[i], 0, 0, null);
+				}
 			}
 		}
 	}
@@ -130,8 +122,9 @@ public class Fragment {
 		objectsLength++;
 	}
 	
-	public void setImageData(int layerID, int[] data) {
-		images[layerID].setData(data);
+	public void setImageData(int layerId, int[] data) {
+		Graphics2D g2d = (Graphics2D)images[layerId].getGraphics();
+		images[layerId].setRGB(0, 0, layers[layerId].size, layers[layerId].size, data, 0, layers[layerId].size);
 	}
 	
 	public int getChunkX() {
@@ -178,6 +171,6 @@ public class Fragment {
 		}
 	}
 	public BufferedImage getBufferedImage(int layer) {
-		return images[layer].getImage(0);
+		return images[layer];
 	}
 }
