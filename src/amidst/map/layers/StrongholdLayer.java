@@ -8,7 +8,6 @@ import java.util.Random;
 
 import amidst.Log;
 import amidst.Options;
-import amidst.foreign.VersionInfo;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
 import amidst.map.MapObjectNether;
@@ -18,6 +17,7 @@ import amidst.minecraft.Biome;
 import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftObject;
 import amidst.minecraft.MinecraftUtil;
+import amidst.version.VersionInfo;
 
 public class StrongholdLayer extends IconLayer {
 	public static StrongholdLayer instance;

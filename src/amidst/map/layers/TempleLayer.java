@@ -6,7 +6,6 @@ import java.util.Random;
 
 import amidst.Log;
 import amidst.Options;
-import amidst.foreign.VersionInfo;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
 import amidst.map.MapObject;
@@ -18,6 +17,7 @@ import amidst.map.MapObjectWitchHut;
 import amidst.minecraft.Biome;
 import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
+import amidst.version.VersionInfo;
 
 public class TempleLayer extends IconLayer {
 	public static List<Biome> validBiomes;

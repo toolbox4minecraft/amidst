@@ -1,4 +1,4 @@
-package amidst.foreign;
+package amidst.version;
 
 
 import java.util.Arrays;

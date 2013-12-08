@@ -28,9 +28,9 @@ import amidst.bytedata.CCRequire;
 import amidst.bytedata.CCStringMatch;
 import amidst.bytedata.CCWildcardByteSearch;
 import amidst.bytedata.ClassChecker;
-import amidst.foreign.VersionInfo;
 import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
+import amidst.version.VersionInfo;
 
 public class Minecraft {
 	private static final int MAX_CLASSES = 128;
