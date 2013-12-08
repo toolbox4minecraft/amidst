@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintStream;
 
 public class Util {
@@ -90,12 +91,14 @@ public class Util {
 		return Amidst.gson.fromJson(reader, clazz);
 	}
 	
-	public static <T> T readObject(File path, final Class<T> clazz) throws FileNotFoundException {
+	public static <T> T readObject(File path, final Class<T> clazz) throws IOException {
 		final BufferedReader reader = new BufferedReader(new FileReader(path));
-		return Amidst.gson.fromJson(reader, clazz);
+		T object = Amidst.gson.fromJson(reader, clazz);
+		reader.close();
+		return object;
 	}
 	
-	public static <T> T readObject(String path, final Class<T> clazz) throws FileNotFoundException {
+	public static <T> T readObject(String path, final Class<T> clazz) throws IOException {
 		return readObject(new File(path), clazz);
 	}
 
