@@ -348,7 +348,8 @@ public class AmidstMenu extends JMenuBar {
 			setMnemonic(KeyEvent.VK_M);
 		}
 		private class BiomeColorMenu extends JMenu {
-			private ArrayList<JCheckBoxMenuItem> profileCheckboxes = new ArrayList<JCheckBoxMenuItem>();;
+			private ArrayList<JCheckBoxMenuItem> profileCheckboxes = new ArrayList<JCheckBoxMenuItem>();
+			private JMenuItem reloadMenuItem;
 			private class BiomeProfileActionListener implements ActionListener {
 				private BiomeColorProfile profile;
 				private ArrayList<JCheckBoxMenuItem> profileCheckboxes;
@@ -368,11 +369,23 @@ public class AmidstMenu extends JMenuBar {
 			}
 			private BiomeColorMenu() {
 				super("Biome profile");
-				
+				reloadMenuItem = new JMenuItem("Reload Menu");
+				final BiomeColorMenu biomeColorMenu = this;
+				reloadMenuItem.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg) {
+						profileCheckboxes.clear();
+						Log.i("Reloading additional biome color profiles.");
+						File colorProfileFolder = new File("./biome");
+						biomeColorMenu.removeAll();
+						scanAndLoad(colorProfileFolder, biomeColorMenu);
+						biomeColorMenu.add(reloadMenuItem);
+					}
+				});
 				Log.i("Checking for additional biome color profiles.");
 				File colorProfileFolder = new File("./biome");
 				scanAndLoad(colorProfileFolder, this);
 				profileCheckboxes.get(0).setSelected(true);
+				add(reloadMenuItem);
 			}
 			
 			private boolean scanAndLoad(File folder, JMenu menu) {
