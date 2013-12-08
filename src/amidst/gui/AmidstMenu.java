@@ -381,6 +381,7 @@ public class AmidstMenu extends JMenuBar {
 						biomeColorMenu.add(reloadMenuItem);
 					}
 				});
+				reloadMenuItem.setAccelerator(KeyStroke.getKeyStroke("ctrl B"));
 				Log.i("Checking for additional biome color profiles.");
 				File colorProfileFolder = new File("./biome");
 				scanAndLoad(colorProfileFolder, this);
