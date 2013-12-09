@@ -170,10 +170,6 @@ public class Fragment {
 		return dataCache;
 	}
 	
-	public void destroy() {
-		for (int i = 0; i < images.length; i++)
-			images[i].flush();
-	}
 	public void removeObject(MapObjectPlayer player) {
 		for (int i = 0; i < objectsLength; i++) {
 			if (objects[i] == player) {
@@ -184,5 +180,16 @@ public class Fragment {
 	}
 	public BufferedImage getBufferedImage(int layer) {
 		return images[layer];
+	}
+	public void reset() {
+		objectsLength = 0;
+		isActive = false;
+		isLoaded = false;
+		
+		nextFragment = null;
+		prevFragment = null;
+		hasNext = false;
+		
+		endOfLine = false;
 	}
 }

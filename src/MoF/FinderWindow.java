@@ -44,6 +44,7 @@ public class FinderWindow extends JFrame {
 		setVisible(true);
 		Image icon = ResourceLoader.getImage("icon.png");
 		setIconImage(icon);
+		
 		//OnClose
 		/*
 		boolean dcFirst = pref.getBoolean("datacheckfirst", false);
@@ -65,7 +66,7 @@ public class FinderWindow extends JFrame {
 	    
 	}
 	
-	public void setProject(Project ep) {
+	public void clearProject() {
 		// FIXME Release resources.
 		if (curProject != null) {
 			removeKeyListener(curProject.getKeyListener());
@@ -73,6 +74,8 @@ public class FinderWindow extends JFrame {
 			pane.remove(curProject);
 			System.gc();
 		}
+	}
+	public void setProject(Project ep) {
 		menuBar.mapMenu.setEnabled(true);
 		curProject = ep;
 

@@ -45,7 +45,7 @@ public class Map {
 		
 		
 		fManager = fragmentManager;
-		fManager.setMap(this); 
+		fManager.setMap(this);
 		mat = new AffineTransform();
 		
 		start = new Point2D.Double();
@@ -331,7 +331,9 @@ public class Map {
 	}
 	
 	public void dispose() {
-		fManager.reset();
+		synchronized (drawLock) {
+			fManager.reset();
+		}
 	}
 	
 	public Fragment getFragmentAt(Point position) {

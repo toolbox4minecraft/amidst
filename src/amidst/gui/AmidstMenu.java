@@ -105,8 +105,10 @@ public class AmidstMenu extends JMenuBar {
 							if (s.equals(""))
 								s = "" + (new Random()).nextLong();
 							//If a string was returned, say so.
-							if (worldType != null)
+							if (worldType != null) {
+								window.clearProject();
 								window.setProject(new Project(s, worldType));
+							}
 						}
 					}
 				});
@@ -126,8 +128,10 @@ public class AmidstMenu extends JMenuBar {
 							SaveLoader.Type worldType = choose("New Project", "Enter world type\n", SaveLoader.Type.values());
 							
 							//If a string was returned, say so.
-							if (worldType != null)
+							if (worldType != null) {
+								window.clearProject();
 								window.setProject(new Project(seed, worldType));
+							}
 						}
 					
 				});
@@ -154,6 +158,7 @@ public class AmidstMenu extends JMenuBar {
 								s = new SaveLoader(new File(f.getAbsoluteFile() + "/level.dat"));
 							else
 								s = new SaveLoader(f);
+							window.clearProject();
 							window.setProject(new Project(s));
 						}
 					}

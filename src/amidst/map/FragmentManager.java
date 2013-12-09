@@ -9,13 +9,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.Log;
 
-public class FragmentManager extends Thread {
+public class FragmentManager implements Runnable {
 	private int cacheSize = 1024;
 	
-	// TODO : Implement custom cache paths?
-	private boolean cacheEnabled = false;
-	private File cachePath;
-	
+	private Thread currentThread;
 	private boolean running = true;
 	
 	private Fragment[] fragmentCache;
@@ -31,7 +28,6 @@ public class FragmentManager extends Thread {
 	private Layer[] liveLayers;
 	
 	public FragmentManager(Layer[] layers, Layer[] liveLayers, IconLayer[] iconLayers) {
-		cacheEnabled = false;
 		fragmentStack = new ConcurrentLinkedQueue<Fragment>();
 		requestQueue = new ConcurrentLinkedQueue<Fragment>();
 		recycleQueue = new ConcurrentLinkedQueue<Fragment>();
@@ -48,21 +44,21 @@ public class FragmentManager extends Thread {
 		this.layers = layers;
 		this.iconLayers = iconLayers;
 		this.liveLayers = liveLayers;
-		start();
-	}
-	
-	public FragmentManager(File cachePath) {
-		this(null, null, null); // TODO: What is this doing here?
-		cacheEnabled = true;
-		this.cachePath = cachePath;
 	}
 	
 	public void reset() {
+		running = false;
+		try {
+			currentThread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		recycleQueue.clear();
 		requestQueue.clear();
 		fragmentStack.clear();
 		for (int i = 0; i < cacheSize; i++) {
-			fragmentCache[i].recycle();
+			fragmentCache[i].reset();
 			fragmentStack.offer(fragmentCache[i]);
 		}
 	}
@@ -107,7 +103,8 @@ public class FragmentManager extends Thread {
 	
 	@Override
 	public void run() {
-		this.setPriority(MIN_PRIORITY);
+		currentThread.setPriority(Thread.MIN_PRIORITY);
+
 		while (running) {
 			if(!requestQueue.isEmpty() || !recycleQueue.isEmpty()) {
 				if (!requestQueue.isEmpty()) {
@@ -136,14 +133,7 @@ public class FragmentManager extends Thread {
 				} catch (InterruptedException ignored) {}
 			}
 		}
-	}
-	
-	public void close() {
-		this.running = false;
-		for (Fragment f : fragmentCache) {
-			f.recycle();
-			f.destroy();
-		}
+		
 	}
 	
 	public void setMap(Map map) {
@@ -155,5 +145,10 @@ public class FragmentManager extends Thread {
 		
 		for (IconLayer layer : iconLayers)
 			layer.setMap(map);
+		
+		currentThread = new Thread(this);
+
+		running = true;
+		currentThread.start();
 	}
 }

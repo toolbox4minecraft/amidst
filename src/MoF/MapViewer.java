@@ -100,7 +100,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	private FontMetrics textMetrics;
 
 	public void dispose() {
-		Log.debug("DISPOSING OF MAPVIEWER");
+		Log.debug("Disposing of map viewer.");
 		worldMap.dispose();
 		menu.removeAll();
 		proj = null;
