@@ -16,6 +16,21 @@ public class Util {
 	/** Shows an error message for an exception
 	 * @param e the exception for which the stachtrace is to be shown
 	 */
+	private static String osString;
+	
+	public static String getOs() {
+		if (osString == null) {
+			String os = System.getProperty("os.name").toLowerCase();
+			if (os.contains("win"))
+				osString = "windows";
+			else if (os.contains("mac"))
+				osString = "osx";
+			else
+				osString = "linux";
+		}
+		return osString;
+	}
+	
 	public static void showError(Exception e) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PrintStream ps = new PrintStream(baos);
