@@ -178,6 +178,7 @@ public class Minecraft {
 		try {
 			fields = mainClass.getDeclaredFields();
 		} catch (NoClassDefFoundError e) {
+			e.printStackTrace();
 			Log.kill("Unable to find critical external class while loading.\nPlease ensure you have the correct Minecraft libraries installed.");
 		}
 		for (int i = 0; i < fields.length; i++) {
