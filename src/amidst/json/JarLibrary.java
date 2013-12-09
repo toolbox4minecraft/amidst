@@ -41,10 +41,18 @@ public class JarLibrary {
 				Log.w("Failed attempt to load library at: " + searchPathFile);
 				return null;
 			}
+			
 			File[] libraryFiles = searchPathFile.listFiles();
-			if (libraryFiles.length > 0)
-				file = libraryFiles[0];
-			else
+			for (int i = 0; i < libraryFiles.length; i++) {
+				String extension = "";
+				String fileName = libraryFiles[i].getName();
+				int q = fileName.lastIndexOf('.');
+				if (q > 0)
+				    extension = fileName.substring(q+1);
+				if (extension.equals("jar"))
+					file = libraryFiles[i];
+			}
+			if (file == null)
 				Log.w("Attempted to search for file at path: " + searchPath + " but found nothing. Skipping.");
 		}
 		return file;
