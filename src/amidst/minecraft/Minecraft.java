@@ -286,7 +286,7 @@ public class Minecraft {
 					e.printStackTrace();
 				}
 			} else {
-				Log.i("Skipping library: " + library.getFile());
+				Log.i("Skipping library: " + library.name);
 			}
 		}
 		
