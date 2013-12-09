@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.gson.JsonSyntaxException;
+
 import amidst.Log;
 import amidst.Options;
 import amidst.Util;
@@ -141,6 +143,9 @@ public class BiomeColorProfile {
 			try {
 				profile = Util.readObject(file, BiomeColorProfile.class);
 				profile.fillColorArray();
+			} catch (JsonSyntaxException e) {
+				Log.w("Unable to load file: " + file);
+				e.printStackTrace();
 			} catch (IOException e) {
 				Log.i("Unable to load file: " + file);
 			}
