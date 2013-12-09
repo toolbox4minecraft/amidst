@@ -18,11 +18,15 @@ public class JarLibrary {
 	}
 	
 	public boolean isActive() {
-		// lwjgl/jinput would require natives and is not needed to load AMIDST.
-		if (name.contains("lwjgl") || name.contains("jinput") || name.contains("twitch")) return false;
+		if (rules.size() == 0)
+			return true;
 		
-		// Currently this just accepts all libraries regardless of the rules.
-		return true;
+		boolean isAllowed = false;
+		for (JarRule rule : rules)
+			if (rule.isApplicable())
+				isAllowed = rule.isAllowed();
+		
+		return isAllowed;
 	}
 	
 	public File getFile() {

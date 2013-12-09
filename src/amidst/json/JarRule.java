@@ -6,4 +6,10 @@ public class JarRule {
 	
 	public JarRule() {
 	}
+	public boolean isApplicable() {
+		return os.check();
+	}
+	public boolean isAllowed() {
+		return action.equals("allow");
+	}
 }
