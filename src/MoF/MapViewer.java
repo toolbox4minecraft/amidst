@@ -4,6 +4,7 @@ package MoF;
 import amidst.Log;
 import amidst.Options;
 import amidst.gui.PlayerMenuItem;
+import amidst.map.FragmentManager;
 import amidst.map.IconLayer;
 import amidst.map.Layer;
 import amidst.map.Map;
@@ -53,6 +54,27 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	 * 
 	 */
 	private static final long serialVersionUID = -8309927053337294612L;
+	private static FragmentManager fragmentManager;
+	private static PlayerLayer playerLayer;
+	static {
+		fragmentManager = new FragmentManager(
+			new Layer[] {
+				new BiomeLayer(),
+				new SlimeLayer()
+			},
+			new Layer[] {
+				new GridLayer()
+			},
+			new IconLayer[] {
+				new VillageLayer(),
+				new StrongholdLayer(),
+				new TempleLayer(),
+				new SpawnLayer(),
+				new NetherFortressLayer(),
+				playerLayer = new PlayerLayer()
+			});
+	}
+	
 	private Project proj;
 	
 	private JPopupMenu menu = new JPopupMenu();
@@ -87,41 +109,14 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	MapViewer(Project proj) {
 		panSpeed = new Point2D.Double();
 		this.proj = proj;
-		IconLayer[] iconLayers = null;
-		PlayerLayer playerLayer = null;
-		if (!proj.saveLoaded) {
-			iconLayers = new IconLayer[] {
-				new VillageLayer(),
-				new StrongholdLayer(),
-				new TempleLayer(),
-				new SpawnLayer(),
-				new NetherFortressLayer()
-			};
-		} else {
-			iconLayers = new IconLayer[] {
-				new VillageLayer(),
-				new StrongholdLayer(),
-				new TempleLayer(),
-				new SpawnLayer(),
-				new NetherFortressLayer(),
-				playerLayer = new PlayerLayer(proj.save)
-			};
-			
+		if (playerLayer.isEnabled = proj.saveLoaded) {
+			playerLayer.setPlayers(proj.save);
 			for (MapObjectPlayer player : proj.save.getPlayers()) {
 				menu.add(new PlayerMenuItem(this, player, playerLayer));
 			}
 		}
 		
-		worldMap = new Map(
-				new Layer[] {
-					new BiomeLayer(),
-					new SlimeLayer()
-				},
-				new Layer[] {
-					new GridLayer()
-				},
-				iconLayers
-		); //TODO: implement more layers
+		worldMap = new Map(fragmentManager); //TODO: implement more layers
 		worldMap.setZoom(curZoom);
 		
 		addMouseListener(this);

@@ -19,18 +19,16 @@ import amidst.map.MapObjectVillage;
 public class PlayerLayer extends IconLayer {
 	public SaveLoader saveLoader;
 	public static SkinManager skinManager = new SkinManager();
+	public boolean isEnabled;
 	static {
 		skinManager.start();
 	}
-	public PlayerLayer(SaveLoader saveLoader) {
+	public PlayerLayer() {
 		super("players");
 		setVisibilityPref(Options.instance.showPlayers);
-		this.saveLoader = saveLoader;
-		
-		for (MapObjectPlayer player : saveLoader.getPlayers())
-			skinManager.addPlayer(player);
 	}
 	public void generateMapObjects(Fragment frag) {
+		if (!isEnabled) return;
 		List<MapObjectPlayer> players =  saveLoader.getPlayers();
 		for (MapObjectPlayer player : players) {
 			if ((player.globalX >= frag.blockX) &&
@@ -52,5 +50,11 @@ public class PlayerLayer extends IconLayer {
 		}
 		super.clearMapObjects(frag);
 		
+	}
+	public void setPlayers(SaveLoader save) {
+		saveLoader = save;
+		
+		for (MapObjectPlayer player : saveLoader.getPlayers())
+			skinManager.addPlayer(player);
 	}
 }

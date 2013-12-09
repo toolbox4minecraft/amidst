@@ -41,18 +41,11 @@ public class Map {
 	private RenderingHints renderingHints;
 	
 	// TODO : This must be changed with the removal of ChunkManager
-	public Map(Layer[] layers,  Layer[] liveLayers, IconLayer[] iconLayers) {
-		for (Layer layer : layers)
-			layer.setMap(this);
-		
-		for (Layer layer : liveLayers)
-			layer.setMap(this);
-		
-		for (IconLayer layer : iconLayers)
-			layer.setMap(this);
+	public Map(FragmentManager fragmentManager) {
 		
 		
-		fManager = new FragmentManager(layers, liveLayers, iconLayers);
+		fManager = fragmentManager;
+		fManager.setMap(this); 
 		mat = new AffineTransform();
 		
 		start = new Point2D.Double();
@@ -84,7 +77,7 @@ public class Map {
 	}
 	
 	public void draw(Graphics2D g) {
-                AffineTransform originalTransform = g.getTransform();
+		AffineTransform originalTransform = g.getTransform();
 		if (firstDraw) {
 			firstDraw = false;
 			centerOn(0, 0);
@@ -111,7 +104,7 @@ public class Map {
 			size = Fragment.SIZE;
 			if (frag.hasNext) {
 				mat.setToIdentity();
-                                mat.concatenate(originalTransform);
+				mat.concatenate(originalTransform);
 				mat.translate(start.x, start.y);
 				mat.scale(scale, scale);
 				while (frag.hasNext) {
@@ -126,7 +119,7 @@ public class Map {
 			frag = startNode;
 			if (frag.hasNext) {
 				mat.setToIdentity();
-                                mat.concatenate(originalTransform);
+				mat.concatenate(originalTransform);
 				mat.translate(start.x, start.y);
 				mat.scale(scale, scale);
 				while (frag.hasNext) {
@@ -142,7 +135,7 @@ public class Map {
 			frag = startNode;
 			if (frag.hasNext) {
 				mat.setToIdentity();
-                                mat.concatenate(originalTransform);
+				mat.concatenate(originalTransform);
 				mat.translate(start.x, start.y);
 				mat.scale(scale, scale);
 				while (frag.hasNext) {
@@ -155,7 +148,7 @@ public class Map {
 				}
 			}
 		
-                        g.setTransform(originalTransform);
+			g.setTransform(originalTransform);
 		}
 	}
 	public void addStart(int x, int y) {
@@ -338,7 +331,7 @@ public class Map {
 	}
 	
 	public void dispose() {
-		fManager.close();
+		fManager.reset();
 	}
 	
 	public Fragment getFragmentAt(Point position) {

@@ -58,7 +58,13 @@ public class FragmentManager extends Thread {
 	}
 	
 	public void reset() {
-		// TODO : Unload all fragments
+		recycleQueue.clear();
+		requestQueue.clear();
+		fragmentStack.clear();
+		for (int i = 0; i < cacheSize; i++) {
+			fragmentCache[i].recycle();
+			fragmentStack.offer(fragmentCache[i]);
+		}
 	}
 	
 	private void increaseFragmentCache() {
@@ -138,5 +144,16 @@ public class FragmentManager extends Thread {
 			f.recycle();
 			f.destroy();
 		}
+	}
+	
+	public void setMap(Map map) {
+		for (Layer layer : layers)
+			layer.setMap(map);
+		
+		for (Layer layer : liveLayers)
+			layer.setMap(map);
+		
+		for (IconLayer layer : iconLayers)
+			layer.setMap(map);
 	}
 }
