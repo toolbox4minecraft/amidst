@@ -2,6 +2,8 @@ package amidst;
 
 import javax.swing.*;
 
+import com.google.gson.JsonSyntaxException;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -91,7 +93,7 @@ public class Util {
 		return Amidst.gson.fromJson(reader, clazz);
 	}
 	
-	public static <T> T readObject(File path, final Class<T> clazz) throws IOException {
+	public static <T> T readObject(File path, final Class<T> clazz) throws IOException, JsonSyntaxException {
 		final BufferedReader reader = new BufferedReader(new FileReader(path));
 		T object = Amidst.gson.fromJson(reader, clazz);
 		reader.close();
