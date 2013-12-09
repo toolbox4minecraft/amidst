@@ -17,45 +17,45 @@ public class MinecraftUtil {
 	public static String getIntCacheInfo() {
 		return (String) Minecraft.getActiveMinecraft().getClassByName("IntCache").callFunction("getInformation");
 	}
-	public static Point findValidLocation(int x, int y, int size, List<Biome> paramList, Random random) {
+	public static Point findValidLocation(int searchX, int searchY, int size, List<Biome> paramList, Random random) {
 		// TODO: Clean up this code
-		int i = x - size >> 2;
-		int j = y - size >> 2;
-		int k = x + size >> 2;
-		int m = y + size >> 2;
+		int x1 = searchX - size >> 2;
+		int y1 = searchY - size >> 2;
+		int x2 = searchX + size >> 2;
+		int y2 = searchY + size >> 2;
 		
-		int n = k - i + 1;
-		int i1 = m - j + 1;
-		int[] arrayOfInt = getBiomeData(i, j, n, i1);
-		Point localPoint = null;
-		int i2 = 0;
-		for (int i3 = 0; i3 < n*i1; i3++) {
-			int i4 = i + i3 % n << 2;
-			int i5 = j + i3 / n << 2;
-			if (arrayOfInt[i3] > Biome.biomes.length) {
+		int width = x2 - x1 + 1;
+		int height = y2 - y1 + 1;
+		int[] arrayOfInt = getBiomeData(x1, y1, width, height);
+		Point location = null;
+		int numberOfValidFound = 0;
+		for (int i = 0; i < width*height; i++) {
+			int x = x1 + i % width << 2;
+			int y = y1 + i / width << 2;
+			if (arrayOfInt[i] > Biome.biomes.length) {
 				Log.kill("Unsupported biome type detected");
 			}
-			Biome localBiome = Biome.biomes[arrayOfInt[i3]];
-			if ((!paramList.contains(localBiome)) || (
-					(localPoint != null) && (random.nextInt(i2 + 1) != 0))) continue;
-				localPoint = new Point(i4, i5);
-				i2++;
+			Biome localBiome = Biome.biomes[arrayOfInt[i]];
+			if ((!paramList.contains(localBiome)) || ((location != null) && (random.nextInt(numberOfValidFound + 1) != 0)))
+				continue;
+			location = new Point(x, y);
+			numberOfValidFound++;
 		}
 		
-		return localPoint;
+		return location;
 	}
 	public static boolean isValidBiome(int x, int y, int size, List<Biome> validBiomes) {
-		int i = x - size >> 2;
-		int j = y - size >> 2;
-		int k = x + size >> 2;
-		int m = y + size >> 2;
+		int x1 = x - size >> 2;
+		int y1 = y - size >> 2;
+		int x2 = x + size >> 2;
+		int y2 = y + size >> 2;
 		
-		int n = k - i + 1;
-		int i1 = m - j + 1;
+		int width = x2 - x1 + 1;
+		int height = y2 - y1 + 1;
 		
-		int[] arrayOfInt = getBiomeData(i, j, n, i1);
-		for (int i2 = 0; i2 < n * i1; i2++) {
-			Biome localBiome = Biome.biomes[arrayOfInt[i2]];
+		int[] arrayOfInt = getBiomeData(x1, y1, width, height);
+		for (int i = 0; i < width * height; i++) {
+			Biome localBiome = Biome.biomes[arrayOfInt[i]];
 			if (!validBiomes.contains(localBiome)) return false;
 		}
 		
