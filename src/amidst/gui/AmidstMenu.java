@@ -445,6 +445,11 @@ public class AmidstMenu extends JMenuBar {
 						null,
 						KeyEvent.VK_L,
 						Options.instance.showFPS));
+				
+				add(new DisplayingCheckbox("Show Debug Info",
+						null,
+						-1,
+						Options.instance.showDebug));
 			}
 			
 		}

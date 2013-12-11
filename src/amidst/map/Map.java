@@ -29,7 +29,7 @@ public class Map {
 	private double scale = 0.25;
 	private Point2D.Double start;
 	
-	private int tileWidth, tileHeight;
+	public int tileWidth, tileHeight;
 	public int width = 1, height = 1;
 	
 	private final Object resizeLock = new Object(), drawLock = new Object();

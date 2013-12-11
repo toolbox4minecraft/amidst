@@ -10,6 +10,7 @@ import amidst.map.Layer;
 import amidst.map.Map;
 import amidst.map.MapObject;
 import amidst.map.MapObjectPlayer;
+import amidst.map.layers.BiomeFilterLayer;
 import amidst.map.layers.BiomeLayer;
 import amidst.map.layers.GridLayer;
 import amidst.map.layers.NetherFortressLayer;
@@ -42,6 +43,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,6 +62,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		fragmentManager = new FragmentManager(
 			new Layer[] {
 				new BiomeLayer(),
+				//new BiomeFilterLayer(),
 				new SlimeLayer()
 			},
 			new Layer[] {
@@ -179,6 +182,39 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 			drawMouseInformation(g2d, curMouse);
 		if (Options.instance.showFPS.get())
 			drawFramerate(g2d);
+		if (Options.instance.showDebug.get())
+			drawDebugInformation(g2d);
+	}
+	
+	private void drawDebugInformation(Graphics2D g2d) {
+		ArrayList<String> panelText  = new ArrayList<String>();
+		panelText.add("Fragment Manager:");
+		panelText.add("Pool Size: " + fragmentManager.getCacheSize());
+		panelText.add("Free Queue Size: " + fragmentManager.getFreeFragmentQueueSize());
+		panelText.add("Request Queue Size: " + fragmentManager.getRequestQueueSize());
+		panelText.add("Recycle Queue Size: " + fragmentManager.getRecycleQueueSize());
+		panelText.add("");
+		panelText.add("Map Viewer:");
+		panelText.add("Map Size: " + worldMap.tileWidth + "x" + worldMap.tileHeight + " [" + (worldMap.tileWidth * worldMap.tileHeight) + "]");
+		
+		int width = 0, height;
+		for (int i = 0; i < panelText.size(); i++) {
+			int textWidth = textMetrics.stringWidth(panelText.get(i));
+			if (textWidth > width)
+				width = textWidth;
+		}
+		width += 20;
+		height = panelText.size() * 20 + 10;
+		
+		g2d.setColor(panelColor);
+		int x = getWidth() - (10 + width);
+		int y = getHeight() - (5 + height);
+		g2d.fillRect(x, y, width, height);
+		
+		g2d.setColor(textColor);
+		for (int i = 0; i < panelText.size(); i++) {
+			g2d.drawString(panelText.get(i), x + 10, y + 20 + i*20);
+		}
 	}
 	
 	private void drawSeed(Graphics2D g2d) {

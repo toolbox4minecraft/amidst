@@ -16,7 +16,7 @@ public class FragmentManager implements Runnable {
 	private boolean running = true;
 	
 	private Fragment[] fragmentCache;
-	private ConcurrentLinkedQueue<Fragment> fragmentStack;
+	private ConcurrentLinkedQueue<Fragment> fragmentQueue;
 	private ConcurrentLinkedQueue<Fragment> requestQueue;
 	private ConcurrentLinkedQueue<Fragment> recycleQueue;
 	private int sleepTick = 0;
@@ -28,7 +28,7 @@ public class FragmentManager implements Runnable {
 	private Layer[] liveLayers;
 	
 	public FragmentManager(Layer[] layers, Layer[] liveLayers, IconLayer[] iconLayers) {
-		fragmentStack = new ConcurrentLinkedQueue<Fragment>();
+		fragmentQueue = new ConcurrentLinkedQueue<Fragment>();
 		requestQueue = new ConcurrentLinkedQueue<Fragment>();
 		recycleQueue = new ConcurrentLinkedQueue<Fragment>();
 		layerList = new Stack<Layer>();
@@ -39,7 +39,7 @@ public class FragmentManager implements Runnable {
 		Arrays.sort(layers);
 		for (int i = 0; i < cacheSize; i++) {
 			fragmentCache[i] = new Fragment(layers, liveLayers, iconLayers);
-			fragmentStack.offer(fragmentCache[i]);
+			fragmentQueue.offer(fragmentCache[i]);
 		}
 		this.layers = layers;
 		this.iconLayers = iconLayers;
@@ -56,10 +56,10 @@ public class FragmentManager implements Runnable {
 		
 		recycleQueue.clear();
 		requestQueue.clear();
-		fragmentStack.clear();
+		fragmentQueue.clear();
 		for (int i = 0; i < cacheSize; i++) {
 			fragmentCache[i].reset();
-			fragmentStack.offer(fragmentCache[i]);
+			fragmentQueue.offer(fragmentCache[i]);
 		}
 	}
 	
@@ -71,7 +71,7 @@ public class FragmentManager implements Runnable {
 		}
 		for (int i = cacheSize; i < cacheSize << 1; i++) {
 			newFragments[i] = new Fragment(layers, liveLayers, iconLayers);
-			fragmentStack.offer(newFragments[i]);
+			fragmentQueue.offer(newFragments[i]);
 		}
 		fragmentCache = newFragments;
 		Log.i("FragmentManager cache size increased from " + cacheSize + " to " + (cacheSize << 1));
@@ -86,7 +86,7 @@ public class FragmentManager implements Runnable {
 		if (!running)
 			return null;
 		Fragment frag = null;
-		while ((frag = fragmentStack.poll()) == null)
+		while ((frag = fragmentQueue.poll()) == null)
 			increaseFragmentCache();
 		
 		frag.clear();
@@ -124,7 +124,7 @@ public class FragmentManager implements Runnable {
 				while (!recycleQueue.isEmpty()) {
 					Fragment frag = recycleQueue.poll();
 					frag.recycle();
-					fragmentStack.offer(frag);
+					fragmentQueue.offer(frag);
 				}
 			} else {
 				sleepTick = 0;
@@ -150,5 +150,18 @@ public class FragmentManager implements Runnable {
 
 		running = true;
 		currentThread.start();
+	}
+
+	public int getCacheSize() {
+		return cacheSize;
+	}
+	public int getFreeFragmentQueueSize() {
+		return fragmentQueue.size();
+	}
+	public int getRecycleQueueSize() {
+		return recycleQueue.size();
+	}
+	public int getRequestQueueSize() {
+		return requestQueue.size();
 	}
 }
