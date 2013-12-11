@@ -219,8 +219,9 @@ public class AmidstMenu extends JMenuBar {
 									long x = Long.parseLong(c[0]);
 									long y = Long.parseLong(c[1]);
 									window.curProject.moveMapTo(x, y);
-								} catch (NumberFormatException ignored) {
-									ignored.printStackTrace();
+								} catch (NumberFormatException e1) {
+									Log.w("Invalid location entered, ignoring.");
+									e1.printStackTrace();
 								}
 							}
 						}
