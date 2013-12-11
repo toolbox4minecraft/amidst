@@ -10,10 +10,15 @@ import amidst.minecraft.MinecraftUtil;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.swing.JPanel;
 
@@ -56,6 +61,26 @@ public class Project extends JPanel {
 		this(seed, type, null);
 	}
 	public Project(long seed, SaveLoader.Type type, SaveLoader saveLoader) {
+		File historyFile = new File("./history.txt");
+		if (historyFile.exists() && historyFile.isFile()) {
+			FileWriter writer = null;
+			try {
+				writer = new FileWriter(historyFile);
+				writer.write(new Timestamp(new Date().getTime()).toString() + " " + seed);
+			} catch (IOException e) {
+				Log.w("Unable to write to history.txt.");
+				e.printStackTrace();
+			} finally {
+				try {
+					if (writer != null)
+						writer.close();
+				} catch (IOException e) {
+					Log.w("Unable to close writer for history.txt.");
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		SaveLoader.genType = type;
 		saveLoaded = !(saveLoader == null);
 		save = saveLoader;
