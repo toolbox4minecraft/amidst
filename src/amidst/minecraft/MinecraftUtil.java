@@ -1,6 +1,7 @@
 package amidst.minecraft;
 
 import java.awt.Point;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Random;
 

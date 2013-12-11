@@ -73,4 +73,7 @@ public class MinecraftClass {
 	public MinecraftConstructor getConstructor(String name) {
 		return constructorByName.get(name);
 	}
+	public Object getValue(String propertyName, MinecraftObject minecraftObject) {
+		return propertiesByName.get(propertyName).getValue(minecraftObject);
+	}
 }

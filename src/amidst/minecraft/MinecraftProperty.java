@@ -62,11 +62,12 @@ public class MinecraftProperty {
 		}
 	}
 	
-	public MinecraftObject getValue(MinecraftObject mcObject) {
+	public Object getValue(MinecraftObject mcObject) {
 		Object object = mcObject.get();
 		Object value = getValue(object);
-		
-		return null;
+		if (isMinecraftClass)
+			return new MinecraftObject(type, value);
+		return value;
 	}
 	public Object getStaticValue() {
 		Object value = getValue((Object)null);

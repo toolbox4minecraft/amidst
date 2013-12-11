@@ -18,4 +18,8 @@ public class MinecraftObject {
 	public Object callFunction(String funcName, Object... args) {
 		return type.callFunction(funcName, this, args);
 	}
+	
+	public Object getValue(String propertyName) {
+		return type.getValue(propertyName, this);
+	}
 }
