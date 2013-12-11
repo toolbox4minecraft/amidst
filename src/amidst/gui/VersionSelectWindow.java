@@ -2,6 +2,7 @@ package amidst.gui;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -32,11 +33,15 @@ import amidst.Util;
 import amidst.json.InstallInformation;
 import amidst.json.LauncherProfile;
 import amidst.minecraft.Minecraft;
+import amidst.resources.ResourceLoader;
 
 import com.google.gson.Gson;
 
 public class VersionSelectWindow extends JFrame {
 	public VersionSelectWindow() {
+		Image icon = ResourceLoader.getImage("icon.png");
+		setIconImage(icon);
+		
 		File profileJsonFile = new File(Util.minecraftDirectory + "/launcher_profiles.json");
 		
 		Object[] profileArray = null;
