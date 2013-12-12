@@ -3,7 +3,6 @@
 # Package Files #
 *.war
 *.ear
-*.jar
 
 # IntelliJ IDEA project files #
 ./AMIDST.eml
