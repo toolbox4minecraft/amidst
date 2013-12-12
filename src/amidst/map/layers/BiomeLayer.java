@@ -21,6 +21,7 @@ public class BiomeLayer extends Layer {
 		super("biome", null, 0.0f, size);
 		isTransparent = false;
 	}
+	
 	public void drawToCache(Fragment fragment, int layerID) {
 		int[] dataCache = Fragment.getIntArray();
 		
