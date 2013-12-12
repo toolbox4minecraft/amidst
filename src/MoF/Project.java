@@ -60,27 +60,46 @@ public class Project extends JPanel {
 	public Project(long seed, SaveLoader.Type type) {
 		this(seed, type, null);
 	}
-	public Project(long seed, SaveLoader.Type type, SaveLoader saveLoader) {
+	
+	private void logSeedHistory(long seed) {
 		File historyFile = new File("./history.txt");
+		if (Options.instance.historyPath != null) {
+			historyFile = new File(Options.instance.historyPath);
+			if (!historyFile.exists()) {
+				try {
+					historyFile.createNewFile();
+				} catch (IOException e) {
+					Log.w("Unable to create history file: " + historyFile);
+					e.printStackTrace();
+					return;
+				}
+			}
+		}
+		
 		if (historyFile.exists() && historyFile.isFile()) {
 			FileWriter writer = null;
 			try {
 				writer = new FileWriter(historyFile, true);
 				writer.append(new Timestamp(new Date().getTime()).toString() + " " + seed + "\r\n");
 			} catch (IOException e) {
-				Log.w("Unable to write to history.txt.");
+				Log.w("Unable to write to history file.");
 				e.printStackTrace();
 			} finally {
 				try {
 					if (writer != null)
 						writer.close();
 				} catch (IOException e) {
-					Log.w("Unable to close writer for history.txt.");
+					Log.w("Unable to close writer for history file.");
 					e.printStackTrace();
 				}
 			}
 		}
 		
+		
+	}
+	
+	public Project(long seed, SaveLoader.Type type, SaveLoader saveLoader) {
+		logSeedHistory(seed);
 		SaveLoader.genType = type;
 		saveLoaded = !(saveLoader == null);
 		save = saveLoader;

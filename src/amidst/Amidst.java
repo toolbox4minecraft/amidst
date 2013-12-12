@@ -4,6 +4,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.File;
 
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+
 import com.google.gson.Gson;
 
 import MoF.Google;
@@ -19,7 +22,17 @@ public class Amidst {
 	public static InstallInformation installInformation = new InstallInformation(true);
 	public static final Gson gson = new Gson();
 	
+	
 	public static void main(String args[]) {
+		CmdLineParser parser = new CmdLineParser(Options.instance); 
+		
+		try {
+			parser.parseArgument(args);
+		} catch (CmdLineException e) {
+			Log.w("There was an issue parsing command line options.");
+			e.printStackTrace();
+		}
+		
 		if (!isOSX()) { Util.setLookAndFeel(); }
 		Google.startTracking();
 		Google.track("Run");

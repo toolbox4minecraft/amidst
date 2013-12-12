@@ -7,6 +7,8 @@ import amidst.preferences.FilePrefModel;
 import java.io.File;
 import java.util.prefs.Preferences;
 
+import org.kohsuke.args4j.Option;
+
 /** Currently selected options that change AMIDST’s behavior
  */
 public enum Options {
@@ -25,6 +27,11 @@ public enum Options {
 	public final BooleanPrefModel mapFlicking, showFPS, showDebug;
 	public final BooleanPrefModel maxZoom;
 	public BiomeColorProfile biomeColorProfile;
+	
+	
+	//CLI
+	@Option (name="-history", usage="Sets the path to seed history file.", metaVar="<file>")
+	public String historyPath;
 	
 	private Options() {
 		seed = 0L;
