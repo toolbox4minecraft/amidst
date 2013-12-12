@@ -65,8 +65,8 @@ public class Project extends JPanel {
 		if (historyFile.exists() && historyFile.isFile()) {
 			FileWriter writer = null;
 			try {
-				writer = new FileWriter(historyFile);
-				writer.write(new Timestamp(new Date().getTime()).toString() + " " + seed);
+				writer = new FileWriter(historyFile, true);
+				writer.append(new Timestamp(new Date().getTime()).toString() + " " + seed + "\r\n");
 			} catch (IOException e) {
 				Log.w("Unable to write to history.txt.");
 				e.printStackTrace();
