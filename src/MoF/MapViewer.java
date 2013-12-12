@@ -3,7 +3,7 @@ package MoF;
 
 import amidst.Log;
 import amidst.Options;
-import amidst.gui.PlayerMenuItem;
+import amidst.gui.menu.PlayerMenuItem;
 import amidst.map.FragmentManager;
 import amidst.map.IconLayer;
 import amidst.map.Layer;
@@ -56,6 +56,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	 * 
 	 */
 	private static final long serialVersionUID = -8309927053337294612L;
+	// TODO: This should likely be moved somewhere else.
 	private static FragmentManager fragmentManager;
 	private static PlayerLayer playerLayer;
 	static {

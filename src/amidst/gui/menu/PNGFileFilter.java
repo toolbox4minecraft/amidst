@@ -1,4 +1,4 @@
-package amidst.gui;
+package amidst.gui.menu;
 
 import javax.swing.filechooser.FileFilter;
 import java.io.File;

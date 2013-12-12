@@ -1,4 +1,4 @@
-package amidst.gui;
+package amidst.gui.menu;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;

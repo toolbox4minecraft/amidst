@@ -5,7 +5,7 @@ import amidst.Amidst;
 import amidst.Log;
 import amidst.Options;
 import amidst.Util;
-import amidst.gui.AmidstMenu;
+import amidst.gui.menu.AmidstMenu;
 import amidst.resources.ResourceLoader;
 
 import java.awt.BorderLayout;

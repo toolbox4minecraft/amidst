@@ -1,9 +1,10 @@
-package amidst.gui;
+package amidst.gui.menu;
 
 import MoF.*;
 import amidst.Log;
 import amidst.Options;
 import amidst.Util;
+import amidst.gui.LicenseWindow;
 import amidst.map.MapObjectPlayer;
 import amidst.map.layers.StrongholdLayer;
 import amidst.minecraft.Minecraft;
@@ -29,6 +30,8 @@ import java.util.Random;
 
 /** Structured menubar-creation to alleviate the huge mess that it would be elsewise
  */
+
+// TODO: This class is a mess-- it should be split into pieces.
 public class AmidstMenu extends JMenuBar {
 	final JMenu fileMenu;
 	//final JMenu scriptMenu;
@@ -38,8 +41,8 @@ public class AmidstMenu extends JMenuBar {
 	
 	private final FinderWindow window;
 	
-	public AmidstMenu(FinderWindow win) {
-		this.window = win;
+	public AmidstMenu(FinderWindow window) {
+		this.window = window;
 		
 		fileMenu = add(new FileMenu());
 		mapMenu = add(new MapMenu());
@@ -476,6 +479,15 @@ public class AmidstMenu extends JMenuBar {
 						JOptionPane.showMessageDialog(window,
 							"Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n" +
 							"By Skidoodle (amidst.project@gmail.com)");
+					}
+				});
+			}});
+			
+			add(new JMenuItem("View licenses") {{
+				addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new LicenseWindow();
 					}
 				});
 			}});
