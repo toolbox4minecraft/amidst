@@ -39,8 +39,7 @@ import com.google.gson.Gson;
 
 public class VersionSelectWindow extends JFrame {
 	public VersionSelectWindow() {
-		Image icon = ResourceLoader.getImage("icon.png");
-		setIconImage(icon);
+		setIconImage(Amidst.icon);
 		
 		File profileJsonFile = new File(Util.minecraftDirectory + "/launcher_profiles.json");
 		

@@ -13,6 +13,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import amidst.Amidst;
+
 import net.miginfocom.swing.MigLayout;
 
 public class LicenseWindow extends JFrame {
@@ -21,7 +23,7 @@ public class LicenseWindow extends JFrame {
 	private JTextArea licenseText = new JTextArea();
 	public LicenseWindow() {
 		super("Licenses");
-		
+		setIconImage(Amidst.icon);
 		licenseText.setEditable(false);
 		
 		licenses.add(new License("AMIDST", "licenses/amidst.txt"));

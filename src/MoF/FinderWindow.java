@@ -42,8 +42,7 @@ public class FinderWindow extends JFrame {
 		new UpdateManager(this, true).start();
 		setJMenuBar(menuBar = new AmidstMenu(this));
 		setVisible(true);
-		Image icon = ResourceLoader.getImage("icon.png");
-		setIconImage(icon);
+		setIconImage(Amidst.icon);
 		
 		//OnClose
 		/*

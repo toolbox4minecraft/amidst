@@ -1,5 +1,6 @@
 package amidst;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.File;
@@ -14,12 +15,14 @@ import amidst.gui.VersionSelectWindow;
 import amidst.json.InstallInformation;
 import amidst.minecraft.Minecraft;
 import amidst.preferences.BiomeColorProfile;
+import amidst.resources.ResourceLoader;
 
 public class Amidst {
 	public final static int version_major = 3;
 	public final static int version_minor = 6;
 	public final static String versionOffset = " beta 2";
 	public static InstallInformation installInformation = new InstallInformation(true);
+	public static Image icon = ResourceLoader.getImage("icon.png");
 	public static final Gson gson = new Gson();
 	
 	
