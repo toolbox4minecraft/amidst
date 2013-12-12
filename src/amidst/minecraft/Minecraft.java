@@ -51,10 +51,12 @@ public class Minecraft {
 			new CCRequire(
 					new CCPropertyPreset(
 							"WorldType",
+							"a", "types",
 							"b", "default",
 							"c", "flat",
 							"d", "largeBiomes",
-							"e", "amplified"
+							"e", "amplified",
+							"g", "name"
 					)
 			, "WorldType"),
 			new CCRequire(
