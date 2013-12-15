@@ -31,7 +31,7 @@ public class FinderWindow extends JFrame {
 	public Project curProject;  //TODO
 	public static boolean dataCollect;
 	private final AmidstMenu menuBar;
-	public FinderWindow() throws IOException {
+	public FinderWindow() {
 		//Initialize window
 		super("Amidst v" + Amidst.version());
 		
@@ -45,16 +45,8 @@ public class FinderWindow extends JFrame {
 		setVisible(true);
 		setIconImage(Amidst.icon);
 		instance = this;
-		//OnClose
-		/*
-		boolean dcFirst = pref.getBoolean("datacheckfirst", false);
-		if (!dcFirst) {
-			int result = JOptionPane.YES_OPTION;
-			result = JOptionPane.showConfirmDialog(null, "AMIDST would like to collect data about the maps you search, anonymously.\n You will only be prompted for this once:\n Would you like to allow data to be collected?", "Important alert!", JOptionPane.YES_NO_OPTION);
-			pref.putBoolean("datacollect", (result==0));
-		}
-		dataCollect = pref.getBoolean("datacollect", false);
-		*/addWindowListener(new WindowAdapter()
+		
+		addWindowListener(new WindowAdapter()
 		{
 			public void windowClosing(WindowEvent e)
 			{

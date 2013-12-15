@@ -85,16 +85,10 @@ public class VersionSelectWindow extends JFrame {
 					try {
 						new Minecraft();
 					} catch (MalformedURLException e1) {
-						// TODO
-						e1.printStackTrace();
+						Log.crash(e1, "MalformedURLException when creating Minecraft object.");
 					}
 					window.dispose();
-					try {
-						new FinderWindow();
-					} catch (IOException e) {
-						// TODO Figure out why this throws an exception
-						e.printStackTrace();
-					}
+					new FinderWindow();
 				}
 			}
 		});
