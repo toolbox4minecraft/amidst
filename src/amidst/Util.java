@@ -142,4 +142,12 @@ public class Util {
 		
 		return makeColor(r, g, b);
 	}
+
+	public static int greyScale(int color) {
+		int r = (color & 0x00FF0000) >> 16;
+		int g = (color & 0x0000FF00) >> 8;
+		int b = (color & 0x000000FF);
+		int average = (r + g + b) / 3;
+		return makeColor(average, average, average);
+	}
 }
