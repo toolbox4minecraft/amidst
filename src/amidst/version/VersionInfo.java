@@ -5,10 +5,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import amidst.logging.Log;
+import amidst.minecraft.Minecraft;
+
 /** Information about what each supported version is
  */
 public enum VersionInfo {
 	unknown(null),
+	V1_7_4("pzozmvjs[Lmm;lg[J[[J"),
 	V1_7_2("pvovmsjp[Lmj;ld[J[[J"),
 	V13w39a_or_b("npmp[Lkn;jh[J[J[J[J[J[[J"),
 	V13w37b_or_38a("ntmt[Lkm;jg[J[J[J[J[J[[J"),
