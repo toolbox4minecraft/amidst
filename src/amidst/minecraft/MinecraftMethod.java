@@ -68,13 +68,13 @@ public class MinecraftMethod {
 			if (returnType == null)
 				isMinecraftClass = false;
 		} catch (ClassNotFoundException e) {
-			Log.e("Unabled to find class for parameter. (" + paramNames[i] + ") on (" + mcClass.getName() + " / " + mcClass.getClassName() + ")");
+			Log.crash(e, "Unabled to find class for parameter. (" + paramNames[i] + ") on (" + mcClass.getName() + " / " + mcClass.getClassName() + ")");
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			Log.e("SecurityException on (" + mcClass.getName() + " / " + mcClass.getClassName() + ") method (" + name + " / " + internalName +")");
+			Log.crash(e, "SecurityException on (" + mcClass.getName() + " / " + mcClass.getClassName() + ") method (" + name + " / " + internalName +")");
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
-			Log.e("Unable to find class method (" + mcClass.getName() + " / " + mcClass.getClassName() + ") (" + name + " / " + internalName +")");
+			Log.crash(e, "Unable to find class method (" + mcClass.getName() + " / " + mcClass.getClassName() + ") (" + name + " / " + internalName +")");
 			e.printStackTrace();
 		}
 	}

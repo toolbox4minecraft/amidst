@@ -54,10 +54,10 @@ public class MinecraftProperty {
 				isMinecraftClass = false;
 			property.setAccessible(true);
 		} catch (SecurityException e) {
-			Log.kill("SecurityException on (" + mcClass.getName() + " / " + mcClass.getClassName() + ") property (" + name + " / " + internalName +")");
+			Log.crash(e, "SecurityException on (" + mcClass.getName() + " / " + mcClass.getClassName() + ") property (" + name + " / " + internalName +")");
 			e.printStackTrace();
 		} catch (NoSuchFieldException e) {
-			Log.kill("Unable to find class property (" + mcClass.getName() + " / " + mcClass.getClassName() + ") (" + name + " / " + internalName +")");
+			Log.crash(e, "Unable to find class property (" + mcClass.getName() + " / " + mcClass.getClassName() + ") (" + name + " / " + internalName +")");
 			e.printStackTrace();
 		}
 	}
@@ -81,10 +81,10 @@ public class MinecraftProperty {
 			return property.get(obj);
 		} catch (IllegalArgumentException e) { // TODO : Add error text.
 			e.printStackTrace();
-			Log.kill("Error [IllegalArgumentException] loading property (" + toString() + ")");
+			Log.crash(e, "Error [IllegalArgumentException] loading property (" + toString() + ")");
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
-			Log.kill("Error [IllegalAccessException] loading property (" + toString() + ")");
+			Log.crash(e, "Error [IllegalAccessException] loading property (" + toString() + ")");
 		}
 		return null;
 	}

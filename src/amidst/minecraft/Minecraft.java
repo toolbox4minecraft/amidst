@@ -103,7 +103,7 @@ public class Minecraft {
 		
 		Log.i("Reading minecraft.jar...");
 		if (!jarFile.exists())
-			Log.kill("Attempted to load jar file at: " + jarFile + " but it does not exist.");
+			Log.crash("Attempted to load jar file at: " + jarFile + " but it does not exist.");
 		Stack<ByteClass> byteClassStack = new Stack<ByteClass>();
 		try {
 			ZipFile jar = new ZipFile(jarFile);
@@ -127,7 +127,7 @@ public class Minecraft {
 			Log.i("Jar load complete.");
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.kill("Error extracting jar data.");
+			Log.crash(e, "Error extracting jar data.");
 		}
 		
 		Log.i("Searching for classes...");
@@ -173,7 +173,7 @@ public class Minecraft {
 				throw new RuntimeException();
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.kill("Attempted to load non-minecraft jar, or unable to locate starting point.");
+			Log.crash(e, "Attempted to load non-minecraft jar, or unable to locate starting point.");
 		}
 		String typeDump = "";
 		Field fields[] = null;
@@ -181,7 +181,7 @@ public class Minecraft {
 			fields = mainClass.getDeclaredFields();
 		} catch (NoClassDefFoundError e) {
 			e.printStackTrace();
-			Log.kill("Unable to find critical external class while loading.\nPlease ensure you have the correct Minecraft libraries installed.");
+			Log.crash(e, "Unable to find critical external class while loading.\nPlease ensure you have the correct Minecraft libraries installed.");
 		}
 		for (int i = 0; i < fields.length; i++) {
 			String typeString = fields[i].getType().toString();
@@ -347,7 +347,7 @@ public class Minecraft {
 		try {
 			return classLoader.loadClass(name);
 		} catch (ClassNotFoundException e) {
-			Log.e("Error loading a class (" + name + ")");
+			Log.crash(e, "Error loading a class (" + name + ")");
 			e.printStackTrace();
 		}
 		return null;

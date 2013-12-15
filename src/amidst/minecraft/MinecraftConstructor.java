@@ -64,13 +64,13 @@ public class MinecraftConstructor {
 			constructor = clazz.getConstructor(paramClasses);
 			constructor.setAccessible(true);
 		} catch (ClassNotFoundException e) {
-			Log.e("Unabled to find class for constructor. (" + paramNames[i] + ") on (" + mcClass.getName() + " / " + mcClass.getClassName() + ")");
+			Log.crash(e, "Unabled to find class for constructor. (" + paramNames[i] + ") on (" + mcClass.getName() + " / " + mcClass.getClassName() + ")");
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			Log.e("SecurityException on (" + mcClass.getName() + " / " + mcClass.getClassName() + ") contructor (" + name + ")");
+			Log.crash(e, "SecurityException on (" + mcClass.getName() + " / " + mcClass.getClassName() + ") contructor (" + name + ")");
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
-			Log.e("Unable to find class constructor (" + mcClass.getName() + " / " + mcClass.getClassName() + ") (" + name + ")");
+			Log.crash(e, "Unable to find class constructor (" + mcClass.getName() + " / " + mcClass.getClassName() + ") (" + name + ")");
 			e.printStackTrace();
 		}
 	}

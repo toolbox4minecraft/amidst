@@ -26,6 +26,7 @@ import javax.swing.filechooser.FileFilter;
 
 public class FinderWindow extends JFrame {
 	private static final long serialVersionUID = 196896954675968191L;
+	public static FinderWindow instance;
 	private Container pane;
 	public Project curProject;  //TODO
 	public static boolean dataCollect;
@@ -43,7 +44,7 @@ public class FinderWindow extends JFrame {
 		setJMenuBar(menuBar = new AmidstMenu(this));
 		setVisible(true);
 		setIconImage(Amidst.icon);
-		
+		instance = this;
 		//OnClose
 		/*
 		boolean dcFirst = pref.getBoolean("datacheckfirst", false);

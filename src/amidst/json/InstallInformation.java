@@ -141,7 +141,7 @@ public class InstallInformation {
 		if (returnFile.exists())
 			return returnFile;
 		
-		Log.kill("Found profile selection, but unable to locate minecraft.jar.");
+		Log.crash("Found profile selection, but unable to locate minecraft.jar.");
 		System.exit(0);
 		return null;
 	}
