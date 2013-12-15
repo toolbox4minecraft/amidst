@@ -43,7 +43,7 @@ public class CrashDialog extends JFrame {
 			public void windowClosing(WindowEvent e)
 			{
 				dispose();
-				System.exit(0);
+				System.exit(4);
 			}
 		});
 		
