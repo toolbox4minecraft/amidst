@@ -22,6 +22,7 @@ public class Map {
 	public static Map instance = null;
 	private static final boolean START = true, END = false;
 	private static final AffineTransform iMat = new AffineTransform();
+	private long lastTime;
 	private FragmentManager fManager;
 	
 	private Fragment startNode = new Fragment();
@@ -64,6 +65,8 @@ public class Map {
 		
 		renderingHints = new RenderingHints(hintMap);
 		instance = this;
+
+		lastTime = System.currentTimeMillis();
 	}
 	
 	public void resetFragments() {
@@ -82,6 +85,10 @@ public class Map {
 			firstDraw = false;
 			centerOn(0, 0);
 		}
+		long currentTime = System.currentTimeMillis();
+		long elapsed = Math.max(Math.min(0, currentTime - lastTime), 100);
+		float time = ((float)elapsed) / 1000.0f;
+		
 		// TODO: Enable via settings?
 		//g.setRenderingHints(renderingHints);
 		synchronized (drawLock) {
@@ -109,7 +116,7 @@ public class Map {
 				mat.scale(scale, scale);
 				while (frag.hasNext) {
 					frag = frag.nextFragment;
-					frag.draw(g, mat);
+					frag.draw(time, g, mat);
 					mat.translate(size, 0);
 					if (frag.endOfLine) {
 						mat.translate(-size * w, size);
@@ -124,7 +131,7 @@ public class Map {
 				mat.scale(scale, scale);
 				while (frag.hasNext) {
 					frag = frag.nextFragment;
-					frag.drawLive(g, mat);
+					frag.drawLive(time, g, mat);
 					mat.translate(size, 0);
 					if (frag.endOfLine) {
 						mat.translate(-size * w, size);
