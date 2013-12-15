@@ -192,4 +192,9 @@ public class Fragment {
 		
 		endOfLine = false;
 	}
+	public void repaint() {
+		if (isLoaded)
+			for (int i = 0; i < layers.length; i++)
+				layers[i].load(this, i);
+	}
 }

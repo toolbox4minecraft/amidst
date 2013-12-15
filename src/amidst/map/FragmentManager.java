@@ -79,8 +79,7 @@ public class FragmentManager implements Runnable {
 		System.gc();
 	}
 	public void repaintFragment(Fragment frag) {
-		frag.clearData();
-		requestQueue.offer(frag);
+		frag.repaint();
 	}
 	public Fragment requestFragment(int x, int y) {
 		if (!running)
