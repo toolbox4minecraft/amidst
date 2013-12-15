@@ -127,6 +127,11 @@ public class Biome {
 		if (index >= 128)
 			this.color = Util.lightenColor(color, 40);
 	}
+	
+	public String toString() {
+		return "[Biome " + name + "]";
+	}
+	
 	public static int indexFromName(String name) {
 		Biome biome = biomeMap.get(name);
 		if (biome != null)
