@@ -22,7 +22,7 @@ import amidst.resources.ResourceLoader;
 public class Amidst {
 	public final static int version_major = 3;
 	public final static int version_minor = 6;
-	public final static String versionOffset = " beta 2";
+	public final static String versionOffset = " beta 3";
 	public static InstallInformation installInformation = new InstallInformation(true);
 	public static Image icon = ResourceLoader.getImage("icon.png");
 	public static final Gson gson = new Gson();
