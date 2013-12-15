@@ -2,7 +2,7 @@ package amidst.version;
 
 import amidst.logging.Log;
 import amidst.minecraft.Minecraft;
-import amidst.utilties.ProgressListener;
+import amidst.utilties.ProgressMeter;
 
 public class VersionFactory {
 	private boolean hasScanedRemoteVersionList = false;
@@ -15,10 +15,12 @@ public class VersionFactory {
 		
 	}
 	
-	public ProgressListener scanRemoteVersionList() {
+	public ProgressMeter scanRemoteVersionList() {
+		Log.i("Downloading remote version list.");
+
+		ProgressMeter progress = new ProgressMeter();
 		
-		hasScanedRemoteVersionList = true;
-		return null;
+		return progress;
 	}
 	
 	public Minecraft produceByVersion(String version) {
