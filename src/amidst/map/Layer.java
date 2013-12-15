@@ -9,7 +9,7 @@ import java.net.MalformedURLException;
 
 import javax.imageio.ImageIO;
 
-import amidst.Log;
+import amidst.logging.Log;
 import amidst.preferences.BooleanPrefModel;
 
 public class Layer implements Comparable<Layer> {

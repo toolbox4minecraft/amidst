@@ -7,7 +7,7 @@ import java.util.Queue;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import amidst.Log;
+import amidst.logging.Log;
 
 public class FragmentManager implements Runnable {
 	private int cacheSize = 1024;

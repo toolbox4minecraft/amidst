@@ -6,8 +6,8 @@ import java.util.Random;
 
 import MoF.SaveLoader;
 import MoF.SkinManager;
-import amidst.Log;
 import amidst.Options;
+import amidst.logging.Log;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
 import amidst.map.Map;

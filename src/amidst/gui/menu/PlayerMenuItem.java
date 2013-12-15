@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 
 import MoF.MapViewer;
-import amidst.Log;
+import amidst.logging.Log;
 import amidst.map.Fragment;
 import amidst.map.Map;
 import amidst.map.MapObjectPlayer;

@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import MoF.Google;
 import amidst.gui.VersionSelectWindow;
 import amidst.json.InstallInformation;
+import amidst.logging.Log;
 import amidst.minecraft.Minecraft;
 import amidst.preferences.BiomeColorProfile;
 import amidst.resources.ResourceLoader;

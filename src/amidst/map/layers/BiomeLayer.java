@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
-import amidst.Log;
 import amidst.Options;
 import amidst.Util;
+import amidst.logging.Log;
 import amidst.map.ByteArrayCache;
 import amidst.map.CacheManager;
 import amidst.map.Fragment;

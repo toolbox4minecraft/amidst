@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-import amidst.Log;
+import amidst.logging.Log;
 
 
 public class MinecraftConstructor {

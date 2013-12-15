@@ -1,5 +1,6 @@
 package amidst.version;
 
+import amidst.logging.Log;
 import amidst.minecraft.Minecraft;
 import amidst.utilties.ProgressListener;
 

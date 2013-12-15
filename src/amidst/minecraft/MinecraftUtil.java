@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Random;
 
-import amidst.Log;
+import amidst.logging.Log;
 
 import MoF.SaveLoader.Type;
 

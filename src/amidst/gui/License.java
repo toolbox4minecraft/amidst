@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import amidst.Log;
+import amidst.logging.Log;
 import amidst.resources.ResourceLoader;
 
 public class License {

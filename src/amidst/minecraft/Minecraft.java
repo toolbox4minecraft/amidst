@@ -18,7 +18,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import amidst.Amidst;
-import amidst.Log;
 import amidst.Util;
 import amidst.bytedata.ByteClass;
 import amidst.bytedata.CCLongMatch;
@@ -31,6 +30,7 @@ import amidst.bytedata.CCWildcardByteSearch;
 import amidst.bytedata.ClassChecker;
 import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
+import amidst.logging.Log;
 import amidst.version.VersionInfo;
 
 public class Minecraft {

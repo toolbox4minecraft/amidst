@@ -3,7 +3,8 @@ package amidst.map;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import amidst.Log;
+
+import amidst.logging.Log;
 import amidst.minecraft.MinecraftUtil;
 
 public class Fragment {

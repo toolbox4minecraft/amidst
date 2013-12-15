@@ -18,8 +18,8 @@ import javax.swing.JOptionPane;
 import com.google.gson.Gson;
 
 import amidst.Amidst;
-import amidst.Log;
 import amidst.Util;
+import amidst.logging.Log;
 
 public class InstallInformation {
 	public String name;

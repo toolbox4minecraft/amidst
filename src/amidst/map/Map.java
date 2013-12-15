@@ -15,7 +15,7 @@ import javax.imageio.ImageIO;
 
 import amidst.Amidst;
 
-import amidst.Log;
+import amidst.logging.Log;
 import amidst.map.layers.BiomeLayer;
 
 public class Map {

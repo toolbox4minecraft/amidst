@@ -2,7 +2,7 @@ package amidst.map;
 
 import java.util.Vector;
 
-import amidst.Log;
+import amidst.logging.Log;
 
 public class ByteArrayCache extends CacheManager {
 	public static final int CACHE_SIZE = 32, CACHE_SHIFT = 5;

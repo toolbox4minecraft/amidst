@@ -4,6 +4,7 @@ package amidst.version;
 import java.util.Arrays;
 import java.util.List;
 
+import amidst.logging.Log;
 /** Information about what each supported version is
  */
 public enum VersionInfo {

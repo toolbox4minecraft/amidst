@@ -1,9 +1,9 @@
 package MoF;
 
 
-import amidst.Log;
 import amidst.Options;
 import amidst.gui.menu.PlayerMenuItem;
+import amidst.logging.Log;
 import amidst.map.FragmentManager;
 import amidst.map.IconLayer;
 import amidst.map.Layer;

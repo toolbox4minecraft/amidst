@@ -13,10 +13,10 @@ import java.util.Map.Entry;
 
 import com.google.gson.JsonSyntaxException;
 
-import amidst.Log;
 import amidst.Options;
 import amidst.Util;
 import amidst.json.LauncherProfile;
+import amidst.logging.Log;
 import amidst.minecraft.Biome;
 
 public class BiomeColorProfile {

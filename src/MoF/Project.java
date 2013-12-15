@@ -1,7 +1,7 @@
 package MoF;
 
-import amidst.Log;
 import amidst.Options;
+import amidst.logging.Log;
 import amidst.map.MapObject;
 import amidst.map.MapObjectPlayer;
 import amidst.minecraft.Minecraft;

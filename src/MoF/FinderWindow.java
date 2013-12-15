@@ -2,10 +2,10 @@ package MoF;
 
 
 import amidst.Amidst;
-import amidst.Log;
 import amidst.Options;
 import amidst.Util;
 import amidst.gui.menu.AmidstMenu;
+import amidst.logging.Log;
 import amidst.resources.ResourceLoader;
 
 import java.awt.BorderLayout;

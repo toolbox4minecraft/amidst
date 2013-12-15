@@ -1,10 +1,10 @@
 package amidst.gui.menu;
 
 import MoF.*;
-import amidst.Log;
 import amidst.Options;
 import amidst.Util;
 import amidst.gui.LicenseWindow;
+import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
 import amidst.map.layers.StrongholdLayer;
 import amidst.minecraft.Minecraft;

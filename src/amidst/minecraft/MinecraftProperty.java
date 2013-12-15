@@ -2,7 +2,7 @@ package amidst.minecraft;
 
 import java.lang.reflect.Field;
 
-import amidst.Log;
+import amidst.logging.Log;
 
 public class MinecraftProperty {
 	private String name, internalName;

@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import amidst.Log;
+import amidst.logging.Log;
 
 public class ByteArrayHub {
 	private File path;

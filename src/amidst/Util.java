@@ -2,6 +2,8 @@ package amidst;
 
 import javax.swing.*;
 
+import amidst.logging.Log;
+
 import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedReader;
