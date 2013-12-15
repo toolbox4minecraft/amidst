@@ -433,7 +433,7 @@ public class AmidstMenu extends JMenuBar {
 			private MapOptionsMenu() {
 				super("Map");
 
-				add(new DisplayingCheckbox("Map Flicking",
+				add(new DisplayingCheckbox("Map Flicking (Smooth Scrolling)",
 						null,
 						KeyEvent.VK_I,
 						Options.instance.mapFlicking));
@@ -443,11 +443,15 @@ public class AmidstMenu extends JMenuBar {
 						KeyEvent.VK_Z,
 						Options.instance.maxZoom));
 				
-				
 				add(new DisplayingCheckbox("Show Framerate",
 						null,
 						KeyEvent.VK_L,
 						Options.instance.showFPS));
+				
+				add(new DisplayingCheckbox("Use Fragment Fading",
+						null,
+						-1,
+						Options.instance.mapFading));
 				
 				add(new DisplayingCheckbox("Show Debug Info",
 						null,

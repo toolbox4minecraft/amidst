@@ -24,7 +24,7 @@ public enum Options {
 	public final BooleanPrefModel showGrid;
 	public final BooleanPrefModel showNetherFortresses;
 	public final BooleanPrefModel showTemples, showPlayers, showStrongholds, showVillages, showSpawn;
-	public final BooleanPrefModel mapFlicking, showFPS, showDebug;
+	public final BooleanPrefModel mapFlicking, mapFading, showFPS, showDebug;
 	public final BooleanPrefModel maxZoom;
 	public BiomeColorProfile biomeColorProfile;
 	
@@ -51,6 +51,7 @@ public enum Options {
 		showGrid             = new BooleanPrefModel(pref, "grid",                false);
 		showNetherFortresses = new BooleanPrefModel(pref, "netherFortressIcons", false);
 		mapFlicking          = new BooleanPrefModel(pref, "mapFlicking",         true);
+		mapFading            = new BooleanPrefModel(pref, "mapFading",           true);
 		maxZoom              = new BooleanPrefModel(pref, "maxZoom",             true);
 		showStrongholds      = new BooleanPrefModel(pref, "strongholdIcons",     true);
 		showPlayers          = new BooleanPrefModel(pref, "playerIcons",         true);

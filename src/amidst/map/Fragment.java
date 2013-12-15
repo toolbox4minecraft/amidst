@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+import amidst.Options;
 import amidst.logging.Log;
 import amidst.minecraft.MinecraftUtil;
 
@@ -59,7 +60,7 @@ public class Fragment {
 			layers[i].load(this, i);
 		for (int i = 0; i < iconLayers.length; i++)
 			iconLayers[i].generateMapObjects(this);
-		alpha = 0.0f;
+		alpha = Options.instance.mapFading.get()?0.0f:1.0f;
 		isLoaded = true;
 	}
 	
@@ -119,7 +120,6 @@ public class Fragment {
 	}
 	
 	public void drawObjects(Graphics2D g, AffineTransform inMatrix) {
-
 		if (alpha != 1.0f)
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 		
