@@ -19,6 +19,8 @@ public class Layer implements Comparable<Layer> {
 	public float minZoom = 0;
 	public float maxZoom = 1024;
 	
+	protected float alpha = 1.0f;
+	
 	public double scale;
 	private AffineTransform mat = new AffineTransform();
 	
@@ -124,6 +126,9 @@ public class Layer implements Comparable<Layer> {
 	
 	public void drawLive(Fragment fragment, Graphics2D g, AffineTransform mat) {
 		
+	}
+	public float getAlpha() {
+		return alpha;
 	}
 }
 
