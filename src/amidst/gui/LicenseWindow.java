@@ -32,7 +32,7 @@ public class LicenseWindow extends JFrame {
 		licenses.add(new License("JGoogleAnalytics", "licenses/jgoogleanalytics.txt"));
 		licenses.add(new License("JNBT",             "licenses/jnbt.txt"));
 		licenses.add(new License("MiG Layout",       "licenses/miglayout.txt"));
-		
+		licenses.add(new License("Rhino",            "licenses/rhino.txt"));
 		licenseList = new JList(licenses.toArray());
 		licenseList.setBorder(new LineBorder(Color.darkGray, 1));
 		Container contentPane = this.getContentPane();
