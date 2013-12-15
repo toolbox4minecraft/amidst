@@ -33,6 +33,9 @@ public enum Options {
 	@Option (name="-history", usage="Sets the path to seed history file.", metaVar="<file>")
 	public String historyPath;
 	
+	@Option (name="-log", usage="Sets the path to logging file.", metaVar="<file>")
+	public String logPath;
+	
 	@Option (name="-mcpath", usage="Sets the path to the .minecraft directory.", metaVar="<path>")
 	public String minecraftPath;
 	

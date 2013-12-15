@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import MoF.Google;
 import amidst.gui.VersionSelectWindow;
 import amidst.json.InstallInformation;
+import amidst.logging.FileLogger;
 import amidst.logging.Log;
 import amidst.minecraft.Minecraft;
 import amidst.preferences.BiomeColorProfile;
@@ -36,6 +37,10 @@ public class Amidst {
 			Log.w("There was an issue parsing command line options.");
 			e.printStackTrace();
 		}
+		
+		if (Options.instance.logPath != null)
+			Log.addListener("file", new FileLogger(new File(Options.instance.logPath)));
+		
 		
 		if (!isOSX()) { Util.setLookAndFeel(); }
 		Google.startTracking();
