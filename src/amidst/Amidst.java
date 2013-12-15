@@ -28,7 +28,7 @@ public class Amidst {
 	
 	public static void main(String args[]) {
 		CmdLineParser parser = new CmdLineParser(Options.instance); 
-		
+		Util.setMinecraftDirectory();
 		try {
 			parser.parseArgument(args);
 		} catch (CmdLineException e) {

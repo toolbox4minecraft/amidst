@@ -52,8 +52,14 @@ public class Util {
 		} catch (Exception ignored) {}
 	}
 	
-	public static final File minecraftDirectory;
-	static {
+	public static File minecraftDirectory;
+	public static void setMinecraftDirectory() {
+		if (Options.instance.minecraftPath != null) {
+			minecraftDirectory = new File(Options.instance.minecraftPath);
+			if (minecraftDirectory.exists() && minecraftDirectory.isDirectory())
+				return;
+			Log.w("Unable to set Minecraft directory to: " + minecraftDirectory + " as that location does not exist or is not a folder.");
+		}
 		File mcDir = null;
 		File homeDirectory = new File(System.getProperty("user.home", "."));
 		String os = System.getProperty("os.name").toLowerCase();
