@@ -1,5 +1,6 @@
 package amidst.map;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -9,7 +10,7 @@ import amidst.minecraft.MinecraftUtil;
 
 public class Fragment {
 	public static final int SIZE = 512, SIZE_SHIFT = 9, MAX_OBJECTS_PER_FRAGMENT = 20, MIPMAP_LEVELS = 3, BIOME_SIZE = SIZE >> 2;
-	
+	private static AffineTransform drawMatrix = new AffineTransform();
 	public int blockX, blockY;
 	
 	public short[] biomeData = new short[BIOME_SIZE * BIOME_SIZE];
@@ -21,6 +22,8 @@ public class Fragment {
 	private BufferedImage[] images;
 	public MapObject[] objects;
 	public int objectsLength = 0;
+	
+	private float alpha = 0.0f;
 	
 	public boolean isActive = false;
 	public boolean isLoaded = false;
@@ -41,7 +44,7 @@ public class Fragment {
 		this.liveLayers = liveLayers;
 		images = new BufferedImage[layers.length];
 		for (int i = 0; i < layers.length; i++)
-			images[i] = new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_ARGB); //GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleVolatileImage(layers[i].size, layers[i].size);
+			images[i] = new BufferedImage(layers[i].size, layers[i].size, BufferedImage.TYPE_INT_ARGB);
 		this.iconLayers = iconLayers;
 		objects = new MapObject[MAX_OBJECTS_PER_FRAGMENT];
 	}
@@ -56,6 +59,7 @@ public class Fragment {
 			layers[i].load(this, i);
 		for (int i = 0; i < iconLayers.length; i++)
 			iconLayers[i].generateMapObjects(this);
+		alpha = 0.0f;
 		isLoaded = true;
 	}
 	
@@ -83,7 +87,7 @@ public class Fragment {
 		endOfLine = false;
 		isActive = true;
 	}
-	public void drawLive(Graphics2D g, AffineTransform mat) {
+	public void drawLive(float time, Graphics2D g, AffineTransform mat) {
 		for (int i = 0; i < liveLayers.length; i++) {
 			if (liveLayers[i].isVisible()) {
 				liveLayers[i].drawLive(this, g, liveLayers[i].getMatrix(mat));
@@ -91,19 +95,34 @@ public class Fragment {
 		}
 		
 	}
-	public void draw(Graphics2D g, AffineTransform mat) {
+	public void draw(float time, Graphics2D g, AffineTransform mat) {
 		if (isLoaded) {
+			alpha = Math.min(1.0f, time + alpha);
+
+			if (alpha != 1.0f)
+				g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+			
 			for (int i = 0; i < images.length; i++) {
 				if (layers[i].isVisible()) {
+					//if (layers[i].isTransparent)
+					//	g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, layers[i].getAlpha()));
+					
 					g.setTransform(layers[i].getScaledMatrix(mat));
 					g.drawImage(images[i], 0, 0, null);
+
+					//if (layers[i].isTransparent)
 				}
 			}
 		}
+		if (alpha != 1.0f)
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 	}
 	
 	public void drawObjects(Graphics2D g, AffineTransform inMatrix) {
-		AffineTransform drawMatrix = new AffineTransform();
+
+		if (alpha != 1.0f)
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+		
 		for (int i = 0; i < objectsLength; i++) {
 			if (objects[i].parentLayer.isVisible()) {
 				drawMatrix.setTransform(inMatrix);
@@ -120,6 +139,8 @@ public class Fragment {
 						    null);
 			}
 		}
+		if (alpha != 1.0f)
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 	}
 	
 	public void addObject(MapObject object) {
