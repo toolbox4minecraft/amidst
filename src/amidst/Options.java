@@ -3,6 +3,9 @@ package amidst;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BooleanPrefModel;
 import amidst.preferences.FilePrefModel;
+import amidst.preferences.PrefModel;
+import amidst.preferences.SelectPrefModel;
+import amidst.preferences.StringPrefModel;
 
 import java.io.File;
 import java.util.prefs.Preferences;
@@ -26,6 +29,8 @@ public enum Options {
 	public final BooleanPrefModel showTemples, showPlayers, showStrongholds, showVillages, showSpawn;
 	public final BooleanPrefModel mapFlicking, mapFading, showFPS, showDebug;
 	public final BooleanPrefModel maxZoom;
+	
+	public final SelectPrefModel worldType;
 	public BiomeColorProfile biomeColorProfile;
 	
 	
@@ -45,7 +50,6 @@ public enum Options {
 		
 		
 		Preferences pref = Preferences.userNodeForPackage(Amidst.class);
-		
 		jar                  = new FilePrefModel(   pref, "jar", new File(Util.minecraftDirectory, "bin/minecraft.jar"));
 		showSlimeChunks      = new BooleanPrefModel(pref, "slimeChunks",         false);
 		showGrid             = new BooleanPrefModel(pref, "grid",                false);
@@ -61,6 +65,7 @@ public enum Options {
 		showFPS              = new BooleanPrefModel(pref, "showFPS",             true);
 		showDebug            = new BooleanPrefModel(pref, "showDebug",           false);
 		biomeColorProfile    = new BiomeColorProfile();
+		worldType            = new SelectPrefModel( pref, "worldType",  "Prompt each time", new String[] { "Prompt each time", "Default", "Flat", "Large Biomes", "Amplified" });
 		biomeColorProfile.fillColorArray();
 		
 

@@ -11,16 +11,18 @@ public class VersionFactory {
 		
 	}
 	
-	public void scanForInstalled() {
-		
+	public void scan() {
+		scanForInstalled();
+		scanRemoteVersionList();
 	}
 	
-	public ProgressMeter scanRemoteVersionList() {
+	private void scanForInstalled() {
+		Log.i("Scanning for local versions.");
+	}
+	
+	private void scanRemoteVersionList() {
 		Log.i("Downloading remote version list.");
-
-		ProgressMeter progress = new ProgressMeter();
 		
-		return progress;
 	}
 	
 	public Minecraft produceByVersion(String version) {

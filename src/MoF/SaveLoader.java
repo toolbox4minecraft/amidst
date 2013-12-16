@@ -24,24 +24,30 @@ public class SaveLoader {
 	public static Type genType = Type.DEFAULT;
 	
 	public enum Type {
-		DEFAULT("default"), FLAT("flat"), LARGE_BIOMES("largeBiomes"), AMPLIFIED("amplified");
-		private final String s;
-		
-		Type(String s) {
-			this.s = s;
+		DEFAULT("Default", "default"), FLAT("Flat", "flat"), LARGE_BIOMES("Large Biomes", "largeBiomes"), AMPLIFIED("Amplified", "amplified");
+		private final String name;
+		private final String value;
+		Type(String name, String value) {
+			this.name = name;
+			this.value = value;
 		}
 		
 		@Override
 		public String toString() {
-			return s;
+			return name;
 		}
+		
+		public String getName() {
+			return name;
+		}
+		
 		public MinecraftObject get() {
-			return (MinecraftObject) Minecraft.getActiveMinecraft().getClassByName("WorldType").getValue(s);
+			return (MinecraftObject) Minecraft.getActiveMinecraft().getClassByName("WorldType").getValue(value);
 		}
 		
 		public static Type fromMixedCase(String name) {
 			for (Type t : values())
-				if (t.s.equals(name))
+				if (t.name.equals(name))
 					return t;
 			throw new IllegalArgumentException("Value " + name + " not implemented");
 		}

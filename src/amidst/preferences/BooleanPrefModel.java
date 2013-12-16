@@ -3,9 +3,9 @@ package amidst.preferences;
 import javax.swing.JToggleButton.ToggleButtonModel;
 import java.util.prefs.Preferences;
 
-/** Autosaving ToggleButtonModel
- */
 public class BooleanPrefModel extends ToggleButtonModel implements PrefModel<Boolean> {
+	private static final long serialVersionUID = -2291122955784916836L;
+	
 	private final String key;
 	private final Preferences pref;
 	
@@ -13,8 +13,6 @@ public class BooleanPrefModel extends ToggleButtonModel implements PrefModel<Boo
 		super();
 		this.pref = pref;
 		this.key = key;
-		//if the preference doesn't exist, set it,
-		//else sync the ToggleButtonModel's status
 		set(pref.getBoolean(key, selected));
 	}
 	
