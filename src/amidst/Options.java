@@ -5,7 +5,6 @@ import amidst.preferences.BooleanPrefModel;
 import amidst.preferences.FilePrefModel;
 import amidst.preferences.PrefModel;
 import amidst.preferences.SelectPrefModel;
-import amidst.preferences.StringPrefModel;
 
 import java.io.File;
 import java.util.prefs.Preferences;
