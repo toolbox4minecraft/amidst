@@ -281,7 +281,7 @@ public class ByteClass {
 				}
 				arg =   arg.substring(0, Math.max(0, objectMatcher.end()-1)) +
 						replaceWith +
-					    arg.substring(Math.min(objectMatcher.end(), arg.length()));
+						arg.substring(Math.min(objectMatcher.end(), arg.length()));
 				
 			}
 			argStack.push(arg);

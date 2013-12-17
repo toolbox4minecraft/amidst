@@ -53,8 +53,8 @@ public class Amidst {
 	}
 	
 	public static boolean isOSX() {
-	    String osName = System.getProperty("os.name");
-	    return osName.contains("OS X");
+		String osName = System.getProperty("os.name");
+		return osName.contains("OS X");
 	}
 	
 	public static String version() {

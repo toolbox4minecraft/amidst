@@ -101,10 +101,10 @@ public class Map {
 			while (tileHeight < h) addRow(END);
 			while (tileHeight > h) removeRow(END);
 			
-			while (start.x >     0) { start.x -= size; addColumn(START); removeColumn(END);   }
+			while (start.x >	 0) { start.x -= size; addColumn(START); removeColumn(END);   }
 			while (start.x < -size) { start.x += size; addColumn(END);   removeColumn(START); }
-			while (start.y >     0) { start.y -= size; addRow(START);    removeRow(END);      }
-			while (start.y < -size) { start.y += size; addRow(END);      removeRow(START);    }
+			while (start.y >	 0) { start.y -= size; addRow(START);	removeRow(END);	  }
+			while (start.y < -size) { start.y += size; addRow(END);	  removeRow(START);	}
 			
 			//g.setColor(Color.pink);
 			Fragment frag = startNode;

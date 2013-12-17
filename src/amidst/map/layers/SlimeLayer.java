@@ -26,9 +26,9 @@ public class SlimeLayer extends Layer {
 				int yPosition = fragment.getChunkY() + y;
 				random.setSeed(Options.instance.seed +
 					(long) (xPosition * xPosition * 0x4c1906) + 
-                    (long) (xPosition * 0x5ac0db) + 
-                    (long) (yPosition * yPosition) * 0x4307a7L + 
-                    (long) (yPosition * 0x5f24f) ^ 0x3ad8025f);
+					(long) (xPosition * 0x5ac0db) + 
+					(long) (yPosition * yPosition) * 0x4307a7L + 
+					(long) (yPosition * 0x5f24f) ^ 0x3ad8025f);
 				
 				dataCache[y * size + x] = (random.nextInt(10) == 0) ? 0xA0FF00FF : 0x00000000;
 			}

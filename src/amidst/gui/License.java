@@ -44,29 +44,29 @@ public class License {
 			e.printStackTrace();
 			return;
 		}
-	    BufferedReader bufferedReader = new BufferedReader(fileReader);
-	    try {
-	        StringBuilder stringBuilder = new StringBuilder();
-	        String line = bufferedReader.readLine();
+		BufferedReader bufferedReader = new BufferedReader(fileReader);
+		try {
+			StringBuilder stringBuilder = new StringBuilder();
+			String line = bufferedReader.readLine();
 
-	        while (line != null) {
-	        	stringBuilder.append(line);
-	        	stringBuilder.append('\n');
-	            line = bufferedReader.readLine();
-	        }
-	        contents = stringBuilder.toString();
-	        loaded = true;
-	    } catch (IOException e) {
-	    	Log.w("Unable to read file: " + name + " with path " + file);
-	    	e.printStackTrace();
-	    } finally {
-	        try {
+			while (line != null) {
+				stringBuilder.append(line);
+				stringBuilder.append('\n');
+				line = bufferedReader.readLine();
+			}
+			contents = stringBuilder.toString();
+			loaded = true;
+		} catch (IOException e) {
+			Log.w("Unable to read file: " + name + " with path " + file);
+			e.printStackTrace();
+		} finally {
+			try {
 				bufferedReader.close();
 			} catch (IOException e) {
 				Log.w("Unable to close BufferedReader for: " + name + " with file: " + file);
 				e.printStackTrace();
 			}
-	    }
+		}
 		
 	}
 	

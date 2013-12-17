@@ -55,7 +55,7 @@ public class FinderWindow extends JFrame {
 			}
 		});
 
-	    
+		
 	}
 	
 	public void clearProject() {

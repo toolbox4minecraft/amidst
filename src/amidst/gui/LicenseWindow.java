@@ -26,13 +26,13 @@ public class LicenseWindow extends JFrame {
 		setIconImage(Amidst.icon);
 		licenseText.setEditable(false);
 		
-		licenses.add(new License("AMIDST",           "licenses/amidst.txt"));
-		licenses.add(new License("Args4j",           "licenses/args4j.txt"));
-		licenses.add(new License("Gson",             "licenses/gson.txt"));
+		licenses.add(new License("AMIDST",		   "licenses/amidst.txt"));
+		licenses.add(new License("Args4j",		   "licenses/args4j.txt"));
+		licenses.add(new License("Gson",			 "licenses/gson.txt"));
 		licenses.add(new License("JGoogleAnalytics", "licenses/jgoogleanalytics.txt"));
-		licenses.add(new License("JNBT",             "licenses/jnbt.txt"));
-		licenses.add(new License("MiG Layout",       "licenses/miglayout.txt"));
-		licenses.add(new License("Rhino",            "licenses/rhino.txt"));
+		licenses.add(new License("JNBT",			 "licenses/jnbt.txt"));
+		licenses.add(new License("MiG Layout",	   "licenses/miglayout.txt"));
+		licenses.add(new License("Rhino",			"licenses/rhino.txt"));
 		licenseList = new JList(licenses.toArray());
 		licenseList.setBorder(new LineBorder(Color.darkGray, 1));
 		Container contentPane = this.getContentPane();

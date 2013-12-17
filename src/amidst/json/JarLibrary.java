@@ -48,7 +48,7 @@ public class JarLibrary {
 				String fileName = libraryFiles[i].getName();
 				int q = fileName.lastIndexOf('.');
 				if (q > 0)
-				    extension = fileName.substring(q+1);
+					extension = fileName.substring(q+1);
 				if (extension.equals("jar"))
 					file = libraryFiles[i];
 			}

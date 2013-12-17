@@ -60,7 +60,7 @@ public class SaveLoader {
 				if (f.isDirectory())
 					return true;
 				String[] st = f.getName().split("\\/");
-                return st[st.length - 1].equalsIgnoreCase("level.dat");
+				return st[st.length - 1].equalsIgnoreCase("level.dat");
 			}
 			
 			@Override
@@ -151,7 +151,7 @@ public class SaveLoader {
 				out.close();
 				back.add(outputFile.toString());
 			} catch (Exception ignored) {}
-	    }
+		}
 	}
 	
 	public SaveLoader(File f) {

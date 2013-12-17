@@ -49,22 +49,22 @@ public enum Options {
 		
 		
 		Preferences pref = Preferences.userNodeForPackage(Amidst.class);
-		jar                  = new FilePrefModel(   pref, "jar", new File(Util.minecraftDirectory, "bin/minecraft.jar"));
-		showSlimeChunks      = new BooleanPrefModel(pref, "slimeChunks",         false);
-		showGrid             = new BooleanPrefModel(pref, "grid",                false);
+		jar				  = new FilePrefModel(   pref, "jar", new File(Util.minecraftDirectory, "bin/minecraft.jar"));
+		showSlimeChunks	  = new BooleanPrefModel(pref, "slimeChunks",		 false);
+		showGrid			 = new BooleanPrefModel(pref, "grid",				false);
 		showNetherFortresses = new BooleanPrefModel(pref, "netherFortressIcons", false);
-		mapFlicking          = new BooleanPrefModel(pref, "mapFlicking",         true);
-		mapFading            = new BooleanPrefModel(pref, "mapFading",           true);
-		maxZoom              = new BooleanPrefModel(pref, "maxZoom",             true);
-		showStrongholds      = new BooleanPrefModel(pref, "strongholdIcons",     true);
-		showPlayers          = new BooleanPrefModel(pref, "playerIcons",         true);
-		showTemples          = new BooleanPrefModel(pref, "templeIcons",         true);
-		showVillages         = new BooleanPrefModel(pref, "villageIcons",        true);
-		showSpawn            = new BooleanPrefModel(pref, "spawnIcon",           true);
-		showFPS              = new BooleanPrefModel(pref, "showFPS",             true);
-		showDebug            = new BooleanPrefModel(pref, "showDebug",           false);
-		biomeColorProfile    = new BiomeColorProfile();
-		worldType            = new SelectPrefModel( pref, "worldType",  "Prompt each time", new String[] { "Prompt each time", "Default", "Flat", "Large Biomes", "Amplified" });
+		mapFlicking		  = new BooleanPrefModel(pref, "mapFlicking",		 true);
+		mapFading			= new BooleanPrefModel(pref, "mapFading",		   true);
+		maxZoom			  = new BooleanPrefModel(pref, "maxZoom",			 true);
+		showStrongholds	  = new BooleanPrefModel(pref, "strongholdIcons",	 true);
+		showPlayers		  = new BooleanPrefModel(pref, "playerIcons",		 true);
+		showTemples		  = new BooleanPrefModel(pref, "templeIcons",		 true);
+		showVillages		 = new BooleanPrefModel(pref, "villageIcons",		true);
+		showSpawn			= new BooleanPrefModel(pref, "spawnIcon",		   true);
+		showFPS			  = new BooleanPrefModel(pref, "showFPS",			 true);
+		showDebug			= new BooleanPrefModel(pref, "showDebug",		   false);
+		biomeColorProfile	= new BiomeColorProfile();
+		worldType			= new SelectPrefModel( pref, "worldType",  "Prompt each time", new String[] { "Prompt each time", "Default", "Flat", "Large Biomes", "Amplified" });
 		biomeColorProfile.fillColorArray();
 		
 

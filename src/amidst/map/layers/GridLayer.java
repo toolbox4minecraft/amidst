@@ -20,10 +20,10 @@ public class GridLayer extends Layer {
 		setVisibilityPref(Options.instance.showGrid);
 	}
 	
-        @Override
+		@Override
 	public void drawLive(Fragment fragment, Graphics2D g, AffineTransform mat) {
-        AffineTransform originalTransform = g.getTransform();
-                
+		AffineTransform originalTransform = g.getTransform();
+				
 		textBuffer.setLength(0);
 		textBuffer.append(fragment.getChunkX() << 4);
 		textBuffer.append(", ");

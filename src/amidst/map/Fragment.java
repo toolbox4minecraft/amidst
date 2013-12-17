@@ -132,11 +132,11 @@ public class Fragment {
 				g.setTransform(drawMatrix);
 				
 				g.drawImage(objects[i].getImage(), 
-						    -(objects[i].getWidth() >> 1),
-						    -(objects[i].getHeight() >> 1),
-						    objects[i].getWidth(),
-						    objects[i].getHeight(),
-						    null);
+							-(objects[i].getWidth() >> 1),
+							-(objects[i].getHeight() >> 1),
+							objects[i].getWidth(),
+							objects[i].getHeight(),
+							null);
 			}
 		}
 		if (alpha != 1.0f)

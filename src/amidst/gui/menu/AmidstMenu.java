@@ -403,14 +403,14 @@ public class AmidstMenu extends JMenuBar {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						StringSelection stringSelection = new StringSelection(Options.instance.seed + "");
-					    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-					    clipboard.setContents(stringSelection, new ClipboardOwner() {
+						Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+						clipboard.setContents(stringSelection, new ClipboardOwner() {
 							@Override
 							public void lostOwnership(Clipboard arg0, Transferable arg1) {
 								// TODO Auto-generated method stub
 								
 							}
-					    });
+						});
 					}
 				});
 			}
