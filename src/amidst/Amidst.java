@@ -11,6 +11,7 @@ import org.kohsuke.args4j.CmdLineParser;
 import com.google.gson.Gson;
 
 import MoF.Google;
+import amidst.gui.OldVersionSelectWindow;
 import amidst.gui.VersionSelectWindow;
 import amidst.json.InstallInformation;
 import amidst.logging.FileLogger;
@@ -49,7 +50,7 @@ public class Amidst {
 		System.setProperty("sun.java2d.accthreshold", "0");
 		BiomeColorProfile.scan();
 		
-		new VersionSelectWindow();
+		new OldVersionSelectWindow();
 	}
 	
 	public static boolean isOSX() {
