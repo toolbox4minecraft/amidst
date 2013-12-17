@@ -1,6 +1,8 @@
 package amidst.gui;
 
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -26,6 +28,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+import net.miginfocom.swing.MigLayout;
+
 import MoF.FinderWindow;
 import amidst.Amidst;
 import amidst.Util;
@@ -39,62 +43,21 @@ import com.google.gson.Gson;
 
 public class VersionSelectWindow extends JFrame {
 	public VersionSelectWindow() {
+		super("Profile Selector");
 		setIconImage(Amidst.icon);
+		Container contentPane = getContentPane();
+		contentPane.setLayout(new MigLayout());
 		
-		File profileJsonFile = new File(Util.minecraftDirectory + "/launcher_profiles.json");
+		final JLabel titleLabel = new JLabel("Please select a Minecraft version:", JLabel.CENTER);
+		titleLabel.setFont(new Font("arial", Font.BOLD, 16));
 		
-		Object[] profileArray = null;
-		try {
-			LauncherProfile profile = Util.readObject(profileJsonFile, LauncherProfile.class);
-			// TODO This should use latest, not a preset version.
-			profile.profiles.put("(Default)",  new InstallInformation("(Default) ", "1.7.4"));
-			profileArray = profile.profiles.values().toArray();
-		} catch (Exception e) { // TODO This is a very broad exception to catch for
-			e.printStackTrace();
-			dispose();
-			try {
-				new Minecraft();
-				new FinderWindow();
-			} catch (MalformedURLException e1) {
-				Log.crash(e1, "MalformedURLException when creating Minecraft object.");
-			}
-			return; // TODO Do stuff here
-		}
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				dispose();
-				System.exit(0);
-			}
-		});
-		final JComboBox profileBox = new JComboBox(profileArray);
-		profileBox.selectWithKeyChar('(');
-		JButton btnConfirm = new JButton("Okay");
-		this.setLayout(new GridLayout(3,1));
-		getContentPane().add(new JLabel("  Multiple profiles detected, please select one."));
-		getContentPane().add(profileBox);
-		getContentPane().add(btnConfirm);
-		final JFrame window = this;
-		btnConfirm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				Amidst.installInformation = (InstallInformation)profileBox.getSelectedItem();
-				boolean isValid = Amidst.installInformation.validate();
-				if (!isValid) {
-					Log.e("\"Latest\" profile option detected, but there was an issue loading the version list.\nUsing alternative jar.");
-				} else {
-					try {
-						new Minecraft();
-					} catch (MalformedURLException e1) {
-						Log.crash(e1, "MalformedURLException when creating Minecraft object.");
-					}
-					window.dispose();
-					new FinderWindow();
-				}
-			}
-		});
-		getRootPane().setDefaultButton(btnConfirm);
-		btnConfirm.requestFocus();
-		setTitle("Temporary profile selector");
-		setSize(300, 100);
+		add(titleLabel, "w 300!,wrap");
+		
+		VersionSelectPanel versionSelector = new VersionSelectPanel();
+		add(versionSelector);
+		versionSelector.addVersion(new VersionComponent(null));
+		
+		pack();
 		setLocation(200, 200);
 		setVisible(true);
 	}
