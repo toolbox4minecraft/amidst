@@ -46,16 +46,12 @@ public class FinderWindow extends JFrame {
 		setIconImage(Amidst.icon);
 		instance = this;
 		
-		addWindowListener(new WindowAdapter()
-		{
-			public void windowClosing(WindowEvent e)
-			{
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
 				dispose();
 				System.exit(0);
 			}
 		});
-
-		
 	}
 	
 	public void clearProject() {
