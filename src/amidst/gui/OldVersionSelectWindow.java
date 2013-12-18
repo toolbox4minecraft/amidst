@@ -40,7 +40,7 @@ import com.google.gson.Gson;
 
 public class OldVersionSelectWindow extends JFrame {
 	public OldVersionSelectWindow() {
-		setIconImage(Amidst.icon);
+		/*setIconImage(Amidst.icon);
 		
 		File profileJsonFile = new File(Util.minecraftDirectory + "/launcher_profiles.json");
 		
@@ -97,7 +97,7 @@ public class OldVersionSelectWindow extends JFrame {
 		setTitle("Temporary profile selector");
 		setSize(300, 100);
 		setLocation(200, 200);
-		setVisible(true);
+		setVisible(true);*/
 	}
 	
 }

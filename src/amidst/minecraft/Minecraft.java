@@ -91,9 +91,9 @@ public class Minecraft {
 	public String versionId;
 	public VersionInfo version = VersionInfo.unknown;
 	
-	public Minecraft() throws MalformedURLException {
+	/*public Minecraft() throws MalformedURLException {
 		this(Amidst.installInformation.getJarFile());
-	}
+	}*/
 	
 	public Minecraft(File jarFile)  throws MalformedURLException {
 		this.jarFile = jarFile;

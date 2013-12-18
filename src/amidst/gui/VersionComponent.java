@@ -11,7 +11,7 @@ import amidst.version.MinecraftVersion;
 public class VersionComponent extends JComponent {
 	private MinecraftVersion version;
 	public VersionComponent(MinecraftVersion version) {
-		this.setMinimumSize(new Dimension(300, 20));
+		this.setMinimumSize(new Dimension(300, 40));
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -19,5 +19,6 @@ public class VersionComponent extends JComponent {
 		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setColor(Color.black);
 		g.drawRect(0, 0, getWidth()-1, getHeight()-1);
+		
 	}
 }

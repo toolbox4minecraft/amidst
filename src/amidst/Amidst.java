@@ -24,7 +24,6 @@ public class Amidst {
 	public final static int version_major = 3;
 	public final static int version_minor = 6;
 	public final static String versionOffset = " beta 3";
-	public static InstallInformation installInformation = new InstallInformation(true);
 	public static Image icon = ResourceLoader.getImage("icon.png");
 	public static final Gson gson = new Gson();
 	
@@ -50,7 +49,7 @@ public class Amidst {
 		System.setProperty("sun.java2d.accthreshold", "0");
 		BiomeColorProfile.scan();
 		
-		new OldVersionSelectWindow();
+		new VersionSelectWindow();
 	}
 	
 	public static boolean isOSX() {
@@ -59,9 +58,9 @@ public class Amidst {
 	}
 	
 	public static String version() {
-		if (Minecraft.getActiveMinecraft() != null)
-			return version_major + "." + version_minor + versionOffset + " [Using Minecraft version: " + Minecraft.getActiveMinecraft().version + " | Attempted: " + installInformation.lastVersionId + "]";
-		else
+		//if (Minecraft.getActiveMinecraft() != null)
+		//	return version_major + "." + version_minor + versionOffset + " [Using Minecraft version: " + Minecraft.getActiveMinecraft().version + " | Attempted: " + installInformation.lastVersionId + "]";
+		//else
 			return version_major + "." + version_minor + versionOffset;
 	}
 	

@@ -38,10 +38,14 @@ import amidst.json.LauncherProfile;
 import amidst.logging.Log;
 import amidst.minecraft.Minecraft;
 import amidst.resources.ResourceLoader;
+import amidst.version.MinecraftVersion;
+import amidst.version.VersionFactory;
 
 import com.google.gson.Gson;
 
 public class VersionSelectWindow extends JFrame {
+	private VersionFactory versionFactory = new VersionFactory();
+	
 	public VersionSelectWindow() {
 		super("Profile Selector");
 		setIconImage(Amidst.icon);
@@ -51,15 +55,42 @@ public class VersionSelectWindow extends JFrame {
 		final JLabel titleLabel = new JLabel("Please select a Minecraft version:", JLabel.CENTER);
 		titleLabel.setFont(new Font("arial", Font.BOLD, 16));
 		
-		add(titleLabel, "w 300!,wrap");
+		add(titleLabel, "h 20!, growx, pushx, wrap");
 		
-		VersionSelectPanel versionSelector = new VersionSelectPanel();
-		add(versionSelector);
+		final VersionSelectPanel versionSelector = new VersionSelectPanel();
+		
+		(new Thread(new Runnable() {
+			@Override
+			public void run() {
+				versionFactory.scanForLocalVersions();
+				MinecraftVersion[] localVersions = versionFactory.getLocalVersions();
+				if (localVersions == null) {
+					versionSelector.setEmptyMessage("Empty");
+					return;
+				}
+				for (int i = 0; i < localVersions.length; i++)
+					versionSelector.addVersion(new VersionComponent(localVersions[i]));
+			}
+		})).start();
+		
+		versionSelector.setEmptyMessage("Scanning...");
+		/*versionSelector.addVersion(new VersionComponent(null));
 		versionSelector.addVersion(new VersionComponent(null));
+		versionSelector.addVersion(new VersionComponent(null));
+		versionSelector.addVersion(new VersionComponent(null));*/
 		
+		JScrollPane scrollPane = new JScrollPane(versionSelector);
+		add(scrollPane, "grow, push, h 40::");
 		pack();
 		setLocation(200, 200);
 		setVisible(true);
+		
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				dispose();
+				System.exit(0);
+			}
+		});
 	}
 	
 }

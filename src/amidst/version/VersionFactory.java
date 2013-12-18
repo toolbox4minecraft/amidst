@@ -8,6 +8,8 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Stack;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -26,15 +28,30 @@ import amidst.minecraft.Minecraft;
 import amidst.utilties.ProgressMeter;
 
 public class VersionFactory {
+	private MinecraftVersion[] localVersions;
 	public VersionFactory() {
 		
 	}
 	
-	public void load() {
+	public void scanForLocalVersions() {
+		File versionPath = new File(Util.minecraftDirectory + "/versions");
+		if (!versionPath.exists()) {
+			Log.e("Cannot find version directory.");
+			return;
+		} else if (!versionPath.isDirectory()) {
+			Log.e("Attempted to open version directory but found file.");
+			return;
+		}
+		File[] versionDirectories = versionPath.listFiles();
+		Stack<MinecraftVersion> versionStack = new Stack<MinecraftVersion>();
+		for (int i = 0; i < versionDirectories.length; i++) {
+			MinecraftVersion version = MinecraftVersion.fromVersionPath(versionDirectories[i]);
+			if (version != null)
+				versionStack.add(version);
+		}
+		if (versionStack.size() == 0)
+			return;
 		
-	}
-	
-	private void scanForLocalVersions() {
 		
 	}
 	
@@ -44,11 +61,15 @@ public class VersionFactory {
 		try {
 			LauncherProfile profile = Util.readObject(profileJsonFile, LauncherProfile.class);
 		} catch (JsonSyntaxException e) {
-			// TODO Auto-generated catch block
+			Log.crash(e, "Syntax exception thrown from launch_profiles.json");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			Log.crash(e, "Unable to open launch_profiles.json");
 			e.printStackTrace();
 		}
+	}
+
+	public MinecraftVersion[] getLocalVersions() {
+		return localVersions;
 	}
 }
