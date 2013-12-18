@@ -46,10 +46,12 @@ public class SaveLoader {
 		}
 		
 		public static Type fromMixedCase(String name) {
+			name = name.toLowerCase();
 			for (Type t : values())
-				if (t.name.equals(name))
+				if (t.name.toLowerCase().equals(name) || t.value.toLowerCase().equals(name))
 					return t;
-			throw new IllegalArgumentException("Value " + name + " not implemented");
+			Log.crash("Unable to find World Type: " + name);
+			return null;
 		}
 	
 	}
