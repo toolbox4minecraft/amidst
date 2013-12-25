@@ -55,7 +55,8 @@ public class FileLogger extends Thread implements LogListener {
 	@Override
 	public void crash(Throwable e, String exceptionText, String message) {
 		write("crash", message);
-		write("crash", exceptionText);
+		if (exceptionText.length() > 0)
+			write("crash", exceptionText);
 	}
 	
 	
