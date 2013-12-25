@@ -31,6 +31,13 @@ public class Log {
 			listeners.remove(name);
 		}
 	}
+	public static void printTraceStack(Throwable e) {
+		StringWriter stringWriter = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(stringWriter);
+		e.printStackTrace(printWriter);
+		String exceptionText = stringWriter.toString();
+		w(exceptionText);
+	}
 	
 	public static void i(Object... s) {
 		synchronized (logLock) {
