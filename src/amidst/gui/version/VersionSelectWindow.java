@@ -63,13 +63,13 @@ public class VersionSelectWindow extends JFrame {
 		titleLabel.setFont(new Font("arial", Font.BOLD, 16));
 		
 		add(titleLabel, "h 20!, growx, pushx, wrap");
-		
+
 		final VersionSelectPanel versionSelector = new VersionSelectPanel();
 		
 		(new Thread(new Runnable() {
 			@Override
 			public void run() {
-				versionFactory.scanForLocalVersions();
+				versionFactory.scanForProfiles();
 				MinecraftVersion[] localVersions = versionFactory.getLocalVersions();
 				if (localVersions == null) {
 					versionSelector.setEmptyMessage("Empty");
@@ -82,10 +82,6 @@ public class VersionSelectWindow extends JFrame {
 		})).start();
 		
 		versionSelector.setEmptyMessage("Scanning...");
-		/*versionSelector.addVersion(new VersionComponent(null));
-		versionSelector.addVersion(new VersionComponent(null));
-		versionSelector.addVersion(new VersionComponent(null));
-		versionSelector.addVersion(new VersionComponent(null));*/
 		
 		JScrollPane scrollPane = new JScrollPane(versionSelector);
 		add(scrollPane, "grow, push, h 40::");

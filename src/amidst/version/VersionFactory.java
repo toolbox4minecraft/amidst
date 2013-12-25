@@ -29,6 +29,7 @@ import amidst.utilties.ProgressMeter;
 
 public class VersionFactory {
 	private MinecraftVersion[] localVersions;
+	private MinecraftProfile[] profiles;
 	public VersionFactory() {
 		
 	}
@@ -56,20 +57,25 @@ public class VersionFactory {
 		versionStack.toArray(localVersions);
 	}
 	
-	private void loadProfileList() {
+	public void scanForProfiles() {
+		Log.i("Scanning for profiles.");
 		File profileJsonFile = new File(Util.minecraftDirectory + "/launcher_profiles.json");
-		Object[] profileArray = null;
+		LauncherProfile profile = null;
 		try {
-			LauncherProfile profile = Util.readObject(profileJsonFile, LauncherProfile.class);
+			profile = Util.readObject(profileJsonFile, LauncherProfile.class);
 		} catch (JsonSyntaxException e) {
 			Log.crash(e, "Syntax exception thrown from launch_profiles.json");
-			e.printStackTrace();
+			return;
 		} catch (IOException e) {
 			Log.crash(e, "Unable to open launch_profiles.json");
-			e.printStackTrace();
+			return;
 		}
+		Log.i("Successfully loaded profile list.");
+	
 	}
-
+	public MinecraftProfile[] getProfiles() {
+		return profiles;
+	}
 	public MinecraftVersion[] getLocalVersions() {
 		return localVersions;
 	}
