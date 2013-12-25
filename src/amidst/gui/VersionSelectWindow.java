@@ -52,6 +52,11 @@ public class VersionSelectWindow extends JFrame {
 		Container contentPane = getContentPane();
 		contentPane.setLayout(new MigLayout());
 		
+		if (!Util.minecraftDirectory.exists() || !Util.minecraftDirectory.isDirectory()) {
+			Log.crash("Unable to find Minecraft directory at: " + Util.minecraftDirectory);
+			return;
+		}
+		
 		final JLabel titleLabel = new JLabel("Please select a Minecraft version:", JLabel.CENTER);
 		titleLabel.setFont(new Font("arial", Font.BOLD, 16));
 		
