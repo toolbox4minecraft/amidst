@@ -172,7 +172,7 @@ public class Minecraft {
 			else
 				throw new RuntimeException();
 		} catch (Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(); // TODO: Make this exception far less broad.
 			Log.crash(e, "Attempted to load non-minecraft jar, or unable to locate starting point.");
 		}
 		String typeDump = "";
