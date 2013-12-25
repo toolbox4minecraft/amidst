@@ -23,9 +23,10 @@ public class CrashDialog extends JFrame {
 		super("AMIDST encountered an unexpected error.");
 		Container contentPane = getContentPane();
 		contentPane.setLayout(new MigLayout());
-
-		JLabel errorText = new JLabel("AMIDST has crashed with the following message: " + message);
-		add(errorText, "w 0:4000:4000, wrap");
+		
+		add(new JLabel("AMIDST has crashed with the following message:"), "growx, pushx, wrap");
+		add(new JLabel(message), "growx, pushx, wrap");
+		
 		JTextArea logText = new JTextArea(LogRecorder.getContents());
 
 		JScrollPane scrollPane = new JScrollPane(logText);
@@ -34,7 +35,7 @@ public class CrashDialog extends JFrame {
 		logText.setFont(new Font("arial", Font.PLAIN, 10));
 		scrollPane.setBorder(new LineBorder(Color.darkGray, 1));
 		
-		add(scrollPane,"w 0:4000:4000");
+		add(scrollPane,"grow, push");
 		
 		setSize(500, 400);
 		setVisible(true);
