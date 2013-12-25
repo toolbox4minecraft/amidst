@@ -36,6 +36,7 @@ public class LatestVersionList {
 	private boolean usingRemoteList = true;
 	
 	private ArrayList<ILatestVersionListListener> loadListeners = new ArrayList<ILatestVersionListListener>();
+	private Object listenerLock = new Object();
 	
 	public LatestVersionList() {
 		
@@ -145,17 +146,30 @@ public class LatestVersionList {
 	}
 	
 	private void setLoadState(LoadState state) {
-		loadState = state;
-		for (ILatestVersionListListener listener : loadListeners)
-			listener.onLoadStateChange(new LatestVersionListEvent(this));
+		synchronized (listenerLock) {
+			loadState = state;
+			for (ILatestVersionListListener listener : loadListeners)
+				listener.onLoadStateChange(new LatestVersionListEvent(this));
+		}
 	}
 	
 	public void addLoadListener(ILatestVersionListListener listener) {
-		loadListeners.add(listener);
+		synchronized (listenerLock) {
+			loadListeners.add(listener);
+		}
 	}
 	
 	public void removeLoadListener(ILatestVersionListListener listener) {
-		loadListeners.remove(listener);
+		synchronized (listenerLock) {
+			loadListeners.remove(listener);
+		}
+	}
+	
+	public void addAndNotifyLoadListener(ILatestVersionListListener listener) {
+		synchronized (listenerLock) {
+			loadListeners.add(listener);
+			listener.onLoadStateChange(new LatestVersionListEvent(this));
+		}
 	}
 	
 	private class VersionList {
