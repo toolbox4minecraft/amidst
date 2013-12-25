@@ -5,7 +5,6 @@ import java.io.File;
 import amidst.logging.Log;
 
 public class MinecraftVersion {
-	private b
 	private MinecraftVersion(String name) {
 		
 	}
@@ -23,7 +22,7 @@ public class MinecraftVersion {
 			return null;
 		}
 		
-		MinecraftVersion version = new MinecraftVersion(path.getName(), );
+		//MinecraftVersion version = new MinecraftVersion(path.getName(), );
 		
 		
 		return null;
