@@ -4,6 +4,7 @@ import javax.swing.*;
 
 import amidst.logging.Log;
 
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedReader;
@@ -114,11 +115,11 @@ public class Util {
 	}
 
 
-	public static <T> T readObject(BufferedReader reader, final Class<T> clazz) throws FileNotFoundException {
+	public static <T> T readObject(BufferedReader reader, final Class<T> clazz) throws FileNotFoundException, JsonIOException, JsonSyntaxException {
 		return Amidst.gson.fromJson(reader, clazz);
 	}
 	
-	public static <T> T readObject(File path, final Class<T> clazz) throws IOException, JsonSyntaxException {
+	public static <T> T readObject(File path, final Class<T> clazz) throws IOException, JsonIOException, JsonSyntaxException {
 		final BufferedReader reader = new BufferedReader(new FileReader(path));
 		T object = Amidst.gson.fromJson(reader, clazz);
 		reader.close();
