@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 
 import MoF.Google;
 import amidst.gui.OldVersionSelectWindow;
-import amidst.gui.VersionSelectWindow;
+import amidst.gui.version.VersionSelectWindow;
 import amidst.json.InstallInformation;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;

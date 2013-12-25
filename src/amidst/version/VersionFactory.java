@@ -52,7 +52,8 @@ public class VersionFactory {
 		if (versionStack.size() == 0)
 			return;
 		
-		
+		localVersions = new MinecraftVersion[versionStack.size()];
+		versionStack.toArray(localVersions);
 	}
 	
 	private void loadProfileList() {

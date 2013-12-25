@@ -5,8 +5,18 @@ import java.io.File;
 import amidst.logging.Log;
 
 public class MinecraftVersion {
-	private MinecraftVersion(String name) {
+	private File jarFile, jsonFile;
+	private String name;
+	private String shortName;
+	
+	private MinecraftVersion(String name, File jarFile, File jsonFile) {
+		this.name = name;
+		if (name.length() > 10)
+			name = name.substring(0, 7) + "...";
+		shortName = name;
 		
+		this.jarFile = jarFile;
+		this.jsonFile = jsonFile;
 	}
 
 	public static MinecraftVersion fromVersionPath(File path) {
@@ -22,9 +32,14 @@ public class MinecraftVersion {
 			return null;
 		}
 		
-		//MinecraftVersion version = new MinecraftVersion(path.getName(), );
-		
-		
-		return null;
+		MinecraftVersion version = new MinecraftVersion(path.getName(), jarFile, jsonFile);
+		return version;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	public String getShortName() {
+		return shortName;
 	}
 }

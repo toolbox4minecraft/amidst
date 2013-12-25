@@ -1,4 +1,4 @@
-package amidst.gui;
+package amidst.gui.version;
 
 import java.awt.Color;
 import java.awt.Container;

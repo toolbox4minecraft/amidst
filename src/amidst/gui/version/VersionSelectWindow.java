@@ -1,4 +1,4 @@
-package amidst.gui;
+package amidst.gui.version;
 
 import java.awt.Container;
 import java.awt.Dimension;
@@ -29,7 +29,6 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
 import net.miginfocom.swing.MigLayout;
-
 import MoF.FinderWindow;
 import amidst.Amidst;
 import amidst.Util;
@@ -38,6 +37,7 @@ import amidst.json.LauncherProfile;
 import amidst.logging.Log;
 import amidst.minecraft.Minecraft;
 import amidst.resources.ResourceLoader;
+import amidst.version.LatestVersionList;
 import amidst.version.MinecraftVersion;
 import amidst.version.VersionFactory;
 
@@ -51,6 +51,8 @@ public class VersionSelectWindow extends JFrame {
 		setIconImage(Amidst.icon);
 		Container contentPane = getContentPane();
 		contentPane.setLayout(new MigLayout());
+		
+		LatestVersionList.get().load(true);
 		
 		if (!Util.minecraftDirectory.exists() || !Util.minecraftDirectory.isDirectory()) {
 			Log.crash("Unable to find Minecraft directory at: " + Util.minecraftDirectory);
@@ -75,6 +77,7 @@ public class VersionSelectWindow extends JFrame {
 				}
 				for (int i = 0; i < localVersions.length; i++)
 					versionSelector.addVersion(new VersionComponent(localVersions[i]));
+				pack();
 			}
 		})).start();
 		
