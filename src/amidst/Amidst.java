@@ -29,6 +29,12 @@ public class Amidst {
 	
 	
 	public static void main(String args[]) {
+		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+			@Override
+			public void uncaughtException(Thread thread, Throwable e) {
+				Log.crash(e, "Amidst has encounted an uncaught exception on thread: " + thread);
+			}
+		});
 		CmdLineParser parser = new CmdLineParser(Options.instance); 
 		Util.setMinecraftDirectory();
 		try {
