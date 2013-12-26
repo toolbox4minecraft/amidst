@@ -42,6 +42,10 @@ public class LatestVersionList {
 		
 	}
 	
+	public HashMap<String, String>[] getVersions() {
+		return profile.versions;
+	}
+	
 	public void load(boolean threaded) {
 		if (threaded) {
 			(new Thread(new Runnable() {

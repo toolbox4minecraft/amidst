@@ -38,6 +38,7 @@ import amidst.logging.Log;
 import amidst.minecraft.Minecraft;
 import amidst.resources.ResourceLoader;
 import amidst.version.LatestVersionList;
+import amidst.version.MinecraftProfile;
 import amidst.version.MinecraftVersion;
 import amidst.version.VersionFactory;
 
@@ -62,7 +63,7 @@ public class VersionSelectWindow extends JFrame {
 		final JLabel titleLabel = new JLabel("Please select a Minecraft version:", JLabel.CENTER);
 		titleLabel.setFont(new Font("arial", Font.BOLD, 16));
 		
-		add(titleLabel, "h 20!, growx, pushx, wrap");
+		add(titleLabel, "h 20!,w :300:, growx, pushx, wrap");
 
 		final VersionSelectPanel versionSelector = new VersionSelectPanel();
 		
@@ -70,7 +71,7 @@ public class VersionSelectWindow extends JFrame {
 			@Override
 			public void run() {
 				versionFactory.scanForProfiles();
-				MinecraftVersion[] localVersions = versionFactory.getLocalVersions();
+				MinecraftProfile[] localVersions = versionFactory.getProfiles();
 				if (localVersions == null) {
 					versionSelector.setEmptyMessage("Empty");
 					return;

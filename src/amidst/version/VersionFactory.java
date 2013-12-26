@@ -60,9 +60,9 @@ public class VersionFactory {
 	public void scanForProfiles() {
 		Log.i("Scanning for profiles.");
 		File profileJsonFile = new File(Util.minecraftDirectory + "/launcher_profiles.json");
-		LauncherProfile profile = null;
+		LauncherProfile launcherProfile = null;
 		try {
-			profile = Util.readObject(profileJsonFile, LauncherProfile.class);
+			launcherProfile = Util.readObject(profileJsonFile, LauncherProfile.class);
 		} catch (JsonSyntaxException e) {
 			Log.crash(e, "Syntax exception thrown from launch_profiles.json");
 			return;
@@ -72,6 +72,13 @@ public class VersionFactory {
 		}
 		Log.i("Successfully loaded profile list.");
 	
+		profiles = new MinecraftProfile[launcherProfile.profiles.size()];
+		
+		int i = 0;
+		for (InstallInformation installInformation : launcherProfile.profiles.values())
+			profiles[i++] = new MinecraftProfile(installInformation);
+	
+		
 	}
 	public MinecraftProfile[] getProfiles() {
 		return profiles;
