@@ -31,7 +31,7 @@ public enum Options {
 	
 	public final SelectPrefModel worldType;
 	public BiomeColorProfile biomeColorProfile;
-	
+	private Preferences preferences;
 	
 	//CLI
 	@Option (name="-history", usage="Sets the path to seed history file.", metaVar="<file>")
@@ -49,6 +49,7 @@ public enum Options {
 		
 		
 		Preferences pref = Preferences.userNodeForPackage(Amidst.class);
+		preferences = pref;
 		jar				     = new FilePrefModel(   pref, "jar", new File(Util.minecraftDirectory, "bin/minecraft.jar"));
 		showSlimeChunks	     = new BooleanPrefModel(pref, "slimeChunks",		 false);
 		showGrid			 = new BooleanPrefModel(pref, "grid",				false);
@@ -67,8 +68,11 @@ public enum Options {
 		worldType			 = new SelectPrefModel( pref, "worldType",  "Prompt each time", new String[] { "Prompt each time", "Default", "Flat", "Large Biomes", "Amplified" });
 		biomeColorProfile.fillColorArray();
 		
-
 				
+	}
+	
+	public Preferences getPreferences() {
+		return preferences;
 	}
 	
 	public File getJar() {

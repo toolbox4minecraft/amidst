@@ -31,6 +31,7 @@ import javax.swing.ListSelectionModel;
 import net.miginfocom.swing.MigLayout;
 import MoF.FinderWindow;
 import amidst.Amidst;
+import amidst.Options;
 import amidst.Util;
 import amidst.json.InstallInformation;
 import amidst.json.LauncherProfile;
@@ -74,12 +75,17 @@ public class VersionSelectWindow extends JFrame {
 			public void run() {
 				versionFactory.scanForProfiles();
 				MinecraftProfile[] localVersions = versionFactory.getProfiles();
+				String selectedProfile = Options.instance.getPreferences().get("profile", null);
+				
 				if (localVersions == null) {
 					versionSelector.setEmptyMessage("Empty");
 					return;
 				}
-				for (int i = 0; i < localVersions.length; i++)
+				for (int i = 0; i < localVersions.length; i++) {
 					versionSelector.addVersion(new VersionComponent(localVersions[i]));
+					if ((selectedProfile != null) && localVersions[i].getProfileName().equals(selectedProfile))
+						versionSelector.select(i);
+				}
 				pack();
 			}
 		})).start();

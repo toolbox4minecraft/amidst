@@ -36,6 +36,8 @@ public class VersionSelectPanel extends JPanel implements MouseListener, KeyList
 		setLayout(new MigLayout("ins 0", "", "[]0[]"));
 		setEmptyMessage("Empty");
 		addMouseListener(this);
+		
+		
 	}
 	
 	public void addVersion(VersionComponent version) {
@@ -78,7 +80,7 @@ public class VersionSelectPanel extends JPanel implements MouseListener, KeyList
 			emptyMessageWidth = emptyMessageMetric.stringWidth(emptyMessage);
 	}
 	
-	private void select(int index) {
+	public void select(int index) {
 		if (selected != null) {
 			selected.setSelected(false);
 			selected.repaint();

@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import javax.swing.JComponent;
 
 import MoF.FinderWindow;
+import amidst.Options;
 import amidst.logging.Log;
 import amidst.minecraft.Minecraft;
 import amidst.resources.ResourceLoader;
@@ -123,6 +124,7 @@ public class VersionComponent extends JComponent {
 	public void load() {
 		isLoading = true;
 		repaint();
+		Options.instance.getPreferences().put("profile", profile.getProfileName());
 		(new Thread(new Runnable() {
 			@Override
 			public void run() {
