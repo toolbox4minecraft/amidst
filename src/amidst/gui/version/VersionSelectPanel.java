@@ -8,6 +8,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -16,16 +18,19 @@ import java.util.HashMap;
 import javax.swing.JPanel;
 
 import amidst.logging.Log;
+import amidst.version.MinecraftProfile.Status;
 import net.miginfocom.swing.MigLayout;
 
-public class VersionSelectPanel extends JPanel implements MouseListener {
+public class VersionSelectPanel extends JPanel implements MouseListener, KeyListener {
 	private String emptyMessage;
 	private int emptyMessageWidth;
 	private FontMetrics emptyMessageMetric;
 	private Font emptyMessageFont = new Font("arial", Font.BOLD, 30);
+	private boolean isLoading = false;
 	
 	private ArrayList<VersionComponent> componentMap = new ArrayList<VersionComponent>();
 	private VersionComponent selected = null;
+	private int selectedIndex = -1;
 	
 	public VersionSelectPanel() {
 		setLayout(new MigLayout("ins 0", "", "[]0[]"));
@@ -72,19 +77,8 @@ public class VersionSelectPanel extends JPanel implements MouseListener {
 		if (emptyMessageMetric != null)
 			emptyMessageWidth = emptyMessageMetric.stringWidth(emptyMessage);
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-	}
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-	}
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-	}
-	@Override
-	public void mousePressed(MouseEvent event)  {
-		int index = event.getPoint().y / 40;
+	
+	private void select(int index) {
 		if (selected != null) {
 			selected.setSelected(false);
 			selected.repaint();
@@ -96,10 +90,63 @@ public class VersionSelectPanel extends JPanel implements MouseListener {
 			selected = componentMap.get(index);
 			selected.setSelected(true);
 			selected.repaint();
+			selectedIndex = index;
 		}
+	}
+	
+	private void loadSelectedProfile() {
+		if ((selected == null) || (selected.getProfile().getStatus() != Status.FOUND))
+			return;
+		isLoading = true;
+		selected.load();
+	}
+	
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+	}
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+	}
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+	}
+	@Override
+	public void mousePressed(MouseEvent event)  {
+		if (isLoading)
+			return;
+		
+		int index = event.getPoint().y / 40;
+		select(index);
 	}
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent event) {
+		if (isLoading)
+			return;
+		int key = event.getKeyCode();
+		switch (key) {
+			case KeyEvent.VK_DOWN:
+				if (selectedIndex < componentMap.size() - 1)
+					select(selectedIndex + 1);
+				break;
+			case KeyEvent.VK_UP:
+				if (selectedIndex > 0)
+					select(selectedIndex - 1);
+				else if (selectedIndex == -1)
+					select(0);
+				break;
+			case KeyEvent.VK_ENTER:
+				loadSelectedProfile();
+				break;
+		}
+	}
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+	}
+	@Override
+	public void keyTyped(KeyEvent event) {
 	}
 }

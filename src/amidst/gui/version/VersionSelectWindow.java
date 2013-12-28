@@ -45,10 +45,12 @@ import amidst.version.VersionFactory;
 import com.google.gson.Gson;
 
 public class VersionSelectWindow extends JFrame {
+	private static VersionSelectWindow instance;
 	private VersionFactory versionFactory = new VersionFactory();
 	
 	public VersionSelectWindow() {
 		super("Profile Selector");
+		instance = this;
 		setIconImage(Amidst.icon);
 		Container contentPane = getContentPane();
 		contentPane.setLayout(new MigLayout());
@@ -90,6 +92,8 @@ public class VersionSelectWindow extends JFrame {
 		setLocation(200, 200);
 		setVisible(true);
 		
+		addKeyListener(versionSelector);
+		
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				dispose();
@@ -98,4 +102,7 @@ public class VersionSelectWindow extends JFrame {
 		});
 	}
 	
+	public static VersionSelectWindow get() {
+		return instance;
+	}
 }

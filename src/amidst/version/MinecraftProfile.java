@@ -1,5 +1,6 @@
 package amidst.version;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import amidst.json.InstallInformation;
@@ -94,5 +95,9 @@ public class MinecraftProfile implements ILatestVersionListListener {
 		}
 		for (IProfileUpdateListener listener: listeners)
 			listener.onProfileUpdate(new ProfileUpdateEvent(this));
+	}
+
+	public File getJarFile() {
+		return version.getJarFile();
 	}
 }

@@ -60,4 +60,7 @@ public class MinecraftVersion {
 	public String getName() {
 		return name;
 	}
+	public File getJarFile() {
+		return jarFile;
+	}
 }
