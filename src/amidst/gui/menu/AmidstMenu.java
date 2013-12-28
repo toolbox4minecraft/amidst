@@ -14,6 +14,8 @@ import amidst.resources.ResourceLoader;
 
 import javax.swing.*;
 import javax.swing.JToggleButton.ToggleButtonModel;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -103,6 +105,21 @@ public class AmidstMenu extends JMenuBar {
 			final String trailingSpaceText = "Warning: There is a space at the end!";
 			
 			final JTextField inputText = new JTextField();
+
+			inputText.addAncestorListener( new AncestorListener() {
+				@Override
+				public void ancestorAdded(AncestorEvent arg0) {
+					inputText.requestFocus();
+				}
+				@Override
+				public void ancestorMoved(AncestorEvent arg0) {
+					inputText.requestFocus();
+				}
+				@Override
+				public void ancestorRemoved(AncestorEvent arg0) {
+					inputText.requestFocus();
+				}
+			});
 			
 			final JLabel inputInformation = new JLabel(blankText);
 			inputInformation.setForeground(Color.red);
