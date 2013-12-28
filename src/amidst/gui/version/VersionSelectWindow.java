@@ -66,7 +66,7 @@ public class VersionSelectWindow extends JFrame {
 		final JLabel titleLabel = new JLabel("Please select a Minecraft version:", JLabel.CENTER);
 		titleLabel.setFont(new Font("arial", Font.BOLD, 16));
 		
-		add(titleLabel, "h 20!,w :300:, growx, pushx, wrap");
+		add(titleLabel, "h 20!,w :400:, growx, pushx, wrap");
 
 		final VersionSelectPanel versionSelector = new VersionSelectPanel();
 		
@@ -93,7 +93,7 @@ public class VersionSelectWindow extends JFrame {
 		versionSelector.setEmptyMessage("Scanning...");
 		
 		JScrollPane scrollPane = new JScrollPane(versionSelector);
-		add(scrollPane, "grow, push, h 40::");
+		add(scrollPane, "grow, push, h 80::");
 		pack();
 		setLocation(200, 200);
 		setVisible(true);
