@@ -119,6 +119,9 @@ public class VersionSelectPanel extends JPanel implements MouseListener, KeyList
 		
 		int index = event.getPoint().y / 40;
 		select(index);
+		
+		if (event.getPoint().x > getWidth() - 40)
+			loadSelectedProfile();
 	}
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
