@@ -71,7 +71,6 @@ public class StrongholdLayer extends IconLayer {
 		instance = this;
 		setVisibilityPref(Options.instance.showStrongholds);
 		
-		findStrongholds();
 	}
 	
 	public void generateMapObjects(Fragment frag) {
@@ -143,5 +142,9 @@ public class StrongholdLayer extends IconLayer {
 	
 	public MapObjectStronghold[] getStrongholds() {
 		return strongholds;
+	}
+	
+	public void reload() {
+		findStrongholds();
 	}
 }

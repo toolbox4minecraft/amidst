@@ -38,8 +38,6 @@ public class SpawnLayer extends IconLayer {
 		super("spawnPoint");
 		setVisibilityPref(Options.instance.showSpawn);
 		
-		Point spawnCenter = getSpawnPosition();
-		spawnObject = new MapObjectSpawn(spawnCenter.x, spawnCenter.y);
 	}
 	
 	public void generateMapObjects(Fragment frag) {
@@ -65,6 +63,11 @@ public class SpawnLayer extends IconLayer {
 		}
 
 		return new Point(x, y);
+	}
+	
+	public void reload() {
+		Point spawnCenter = getSpawnPosition();
+		spawnObject = new MapObjectSpawn(spawnCenter.x, spawnCenter.y);
 	}
 	
 }

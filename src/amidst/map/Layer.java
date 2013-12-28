@@ -130,5 +130,6 @@ public class Layer implements Comparable<Layer> {
 	public float getAlpha() {
 		return alpha;
 	}
+	
 }
 

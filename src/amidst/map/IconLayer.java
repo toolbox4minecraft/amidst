@@ -34,4 +34,9 @@ public class IconLayer {
 	public void clearMapObjects(Fragment frag) {
 		frag.objectsLength = 0;
 	}
+	
+
+	public void reload() {
+		
+	}
 }

@@ -142,8 +142,10 @@ public class FragmentManager implements Runnable {
 		for (Layer layer : liveLayers)
 			layer.setMap(map);
 		
-		for (IconLayer layer : iconLayers)
+		for (IconLayer layer : iconLayers) {
 			layer.setMap(map);
+			layer.reload();
+		}
 		
 		currentThread = new Thread(this);
 
