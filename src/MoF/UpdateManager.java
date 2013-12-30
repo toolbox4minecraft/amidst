@@ -18,6 +18,7 @@ import org.xml.sax.SAXException;
 
 public class UpdateManager extends Thread {
 	public static final String updateURL = "https://sites.google.com/site/mothfinder/update.xml";
+	public static final String updateUnstableURL = "https://sites.google.com/site/mothfinder/update_unstable.xml";
 	private JFrame window;
 	private boolean silent;
 	public UpdateManager(JFrame window) {
