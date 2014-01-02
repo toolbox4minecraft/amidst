@@ -15,6 +15,7 @@ import MoF.FinderWindow;
 import amidst.Options;
 import amidst.logging.Log;
 import amidst.minecraft.Minecraft;
+import amidst.minecraft.MinecraftUtil;
 import amidst.resources.ResourceLoader;
 import amidst.version.IProfileUpdateListener;
 import amidst.version.MinecraftProfile;
@@ -129,7 +130,7 @@ public class VersionComponent extends JComponent {
 			@Override
 			public void run() {
 				try {
-					new Minecraft(profile.getJarFile());
+					MinecraftUtil.setBiomeInterface(new Minecraft(profile.getJarFile()).createInterface());
 					new FinderWindow();
 					VersionSelectWindow.get().dispose();
 				} catch (MalformedURLException e) {

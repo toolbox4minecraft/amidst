@@ -8,6 +8,7 @@ import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
 import amidst.map.layers.StrongholdLayer;
 import amidst.minecraft.Minecraft;
+import amidst.minecraft.MinecraftUtil;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.SelectPrefModel.SelectButtonModel;
 import amidst.resources.ResourceLoader;
@@ -73,7 +74,7 @@ public class AmidstMenu extends JMenuBar {
 			}});
 			
 			add(new JMenuItem("Save player locations") {{
-				setEnabled(Minecraft.getActiveMinecraft().version.saveEnabled());
+				setEnabled(MinecraftUtil.getVersion().saveEnabled());
 				setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
 				addActionListener(new ActionListener() {
 					@Override
@@ -191,7 +192,7 @@ public class AmidstMenu extends JMenuBar {
 								seed = "" + (new Random()).nextLong();
 							if (worldType != null) {
 								window.clearProject();
-								window.setProject(new Project(seed, worldType));
+								window.setProject(new Project(seed, worldType.getValue()));
 							}
 						}
 					}
@@ -220,7 +221,7 @@ public class AmidstMenu extends JMenuBar {
 							//If a string was returned, say so.
 							if (worldType != null) {
 								window.clearProject();
-								window.setProject(new Project(seed, worldType));
+								window.setProject(new Project(seed, worldType.getValue()));
 							}
 						}
 					

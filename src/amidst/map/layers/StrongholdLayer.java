@@ -94,16 +94,16 @@ public class StrongholdLayer extends IconLayer {
 		
 		// TODO: Replace this system!
 		Biome[] validBiomes = biomesDefault;
-		if (Minecraft.getActiveMinecraft().version == VersionInfo.V1_9pre6 || Minecraft.getActiveMinecraft().version == VersionInfo.V1_0)
+		if (MinecraftUtil.getVersion() == VersionInfo.V1_9pre6 || MinecraftUtil.getVersion() == VersionInfo.V1_0)
 			validBiomes = biomes1_0;
-		if (Minecraft.getActiveMinecraft().version == VersionInfo.V1_1)
+		if (MinecraftUtil.getVersion() == VersionInfo.V1_1)
 			validBiomes = biomes1_1;
-		if (Minecraft.getActiveMinecraft().version.isAtLeast(VersionInfo.V12w03a))
+		if (MinecraftUtil.getVersion().isAtLeast(VersionInfo.V12w03a))
 			validBiomes = biomes12w03a;
 
 		List<Biome> biomeArrayList = Arrays.asList(validBiomes);
 		
-		if (Minecraft.getActiveMinecraft().version.isAtLeast(VersionInfo.V13w36a)) {
+		if (MinecraftUtil.getVersion().isAtLeast(VersionInfo.V13w36a)) {
 			biomeArrayList = new ArrayList<Biome>();
 			for (int i = 0; i < Biome.biomes.length; i++) {
 				if ((Biome.biomes[i] != null) && (Biome.biomes[i].type.value1 > 0f)) {

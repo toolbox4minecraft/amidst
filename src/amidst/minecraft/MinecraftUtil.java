@@ -6,18 +6,16 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.logging.Log;
-
+import amidst.version.VersionInfo;
 import MoF.SaveLoader.Type;
 
 public class MinecraftUtil {
+	private static IMinecraftInterface minecraftInterface;
+	
 	public static int[] getBiomeData(int x, int y, int width, int height) {
-		Minecraft.getActiveMinecraft().getClassByName("IntCache").callFunction("resetIntCache");
-		return (int[])Minecraft.getActiveMinecraft().getGlobal("biomeGen").callFunction("getInts", x, y, width, height);
+		return minecraftInterface.getBiomeData(x, y, width, height);
 	}
 	
-	public static String getIntCacheInfo() {
-		return (String) Minecraft.getActiveMinecraft().getClassByName("IntCache").callFunction("getInformation");
-	}
 	public static Point findValidLocation(int searchX, int searchY, int size, List<Biome> paramList, Random random) {
 		// TODO: Clean up this code
 		int x1 = searchX - size >> 2;
@@ -62,16 +60,14 @@ public class MinecraftUtil {
 		return true;
 	}
 	
-	public static void createBiomeGenerator(long seed, Type type) {
-		Minecraft minecraft = Minecraft.getActiveMinecraft();
-		MinecraftClass genLayerClass = minecraft.getClassByName("GenLayer");
-		MinecraftClass worldTypeClass = minecraft.getClassByName("WorldType");
-		Object[] genLayers = null;
-		if (worldTypeClass == null) {
-			genLayers = (Object[])genLayerClass.callFunction("initializeAllBiomeGenerators", seed);
-		} else {
-			genLayers = (Object[])genLayerClass.callFunction("initializeAllBiomeGenerators", seed, type.get().get());
-		}
-		minecraft.setGlobal("biomeGen", new MinecraftObject(genLayerClass, genLayers[0]));
+	public static void createWorld(long seed, String type) {
+		minecraftInterface.createWorld(seed, type);
+	}
+	
+	public static void setBiomeInterface(IMinecraftInterface biomeInterface) {
+		MinecraftUtil.minecraftInterface = biomeInterface;
+	}
+	public static VersionInfo getVersion() {
+		return minecraftInterface.getVersion();
 	}
 }

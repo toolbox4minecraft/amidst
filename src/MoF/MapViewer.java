@@ -21,6 +21,7 @@ import amidst.map.layers.StrongholdLayer;
 import amidst.map.layers.TempleLayer;
 import amidst.map.layers.VillageLayer;
 import amidst.minecraft.Minecraft;
+import amidst.minecraft.MinecraftUtil;
 import amidst.utilties.FramerateTimer;
 
 import java.awt.Color;
@@ -315,7 +316,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (e.isPopupTrigger() && Minecraft.getActiveMinecraft().version.saveEnabled()) {
+		if (e.isPopupTrigger() && MinecraftUtil.getVersion().saveEnabled()) {
 			lastRightClick = getMousePosition();
 			if (proj.saveLoaded) {
 				menu.show(e.getComponent(), e.getX(), e.getY());

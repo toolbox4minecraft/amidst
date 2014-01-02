@@ -1,5 +1,6 @@
 package MoF;
 
+import MoF.SaveLoader.Type;
 import amidst.Options;
 import amidst.logging.Log;
 import amidst.map.MapObject;
@@ -42,22 +43,22 @@ public class Project extends JPanel {
 	}
 	
 	public Project(long seed) {
-		this(seed, SaveLoader.Type.DEFAULT);
+		this(seed, SaveLoader.Type.DEFAULT.getName());
 	}
 	
 	public Project(SaveLoader file) {
-		this(file.seed, SaveLoader.genType, file);
+		this(file.seed, SaveLoader.genType.getName(), file);
 		
 		Google.track("seed/file/" + Options.instance.seed);
 	}
 	
-	public Project(String seed, SaveLoader.Type type) {
+	public Project(String seed, String type) {
 		this(stringToLong(seed), type);
 		
 		Google.track("seed/" + seed + "/" + Options.instance.seed);
 	}
 	
-	public Project(long seed, SaveLoader.Type type) {
+	public Project(long seed, String type) {
 		this(seed, type, null);
 	}
 	
@@ -98,9 +99,8 @@ public class Project extends JPanel {
 		
 	}
 	
-	public Project(long seed, SaveLoader.Type type, SaveLoader saveLoader) {
+	public Project(long seed, String type, SaveLoader saveLoader) {
 		logSeedHistory(seed);
-		SaveLoader.genType = type;
 		saveLoaded = !(saveLoader == null);
 		save = saveLoader;
 		//Enter seed data:
@@ -108,7 +108,7 @@ public class Project extends JPanel {
 		
 		BorderLayout layout = new BorderLayout();
 		this.setLayout(layout);
-		MinecraftUtil.createBiomeGenerator(seed, type);
+		MinecraftUtil.createWorld(seed, type);
 		//Create MapViewer
 		map = new MapViewer(this);
 		add(map, BorderLayout.CENTER);

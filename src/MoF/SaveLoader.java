@@ -4,6 +4,7 @@ import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
 import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftObject;
+import amidst.minecraft.MinecraftUtil;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -41,8 +42,8 @@ public class SaveLoader {
 			return name;
 		}
 		
-		public MinecraftObject get() {
-			return (MinecraftObject) Minecraft.getActiveMinecraft().getClassByName("WorldType").getValue(value);
+		public String getValue() {
+			return value;
 		}
 		
 		public static Type fromMixedCase(String name) {

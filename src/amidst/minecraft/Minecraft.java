@@ -40,8 +40,6 @@ public class Minecraft {
 	private String versionID; 
 	private URL urlToJar;
 	private File jarFile;
-	private static Minecraft activeMinecraft; 
-	public HashMap<String, MinecraftObject> globalMap = new HashMap<String, MinecraftObject>();
 	
 	private static ClassChecker[] classChecks = new ClassChecker[] {
 			new CCWildcardByteSearch("IntCache", DeobfuscationData.intCache),
@@ -90,10 +88,6 @@ public class Minecraft {
 	
 	public String versionId;
 	public VersionInfo version = VersionInfo.unknown;
-	
-	/*public Minecraft() throws MalformedURLException {
-		this(Amidst.installInformation.getJarFile());
-	}*/
 	
 	public Minecraft(File jarFile)  throws MalformedURLException {
 		this.jarFile = jarFile;
@@ -331,7 +325,6 @@ public class Minecraft {
 			classLoader = new URLClassLoader(new URL[] { urlToJar });
 		}
 		Thread.currentThread().setContextClassLoader(classLoader);
-		activeMinecraft = this;
 	}
 	
 	public String getVersionID() {
@@ -367,15 +360,9 @@ public class Minecraft {
 	public ByteClass getByteClass(String name) {
 		return byteClassMap.get(name);
 	}
-	public static Minecraft getActiveMinecraft() {
-		return activeMinecraft;
-	}
-
-	public void setGlobal(String name, MinecraftObject object) {
-		globalMap.put(name, object);
-	}
-	public MinecraftObject getGlobal(String name) {
-		return globalMap.get(name);
+	
+	public IMinecraftInterface createInterface() {
+		return new LocalMinecraftInterface(this);
 	}
 	
 }
