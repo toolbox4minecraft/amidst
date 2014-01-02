@@ -44,9 +44,10 @@ public class BiomeColorProfile {
 	
 	public BiomeColorProfile() {
 		name = "default";
-		for (int i = 0; i < Biome.length; i++) {
-			colorMap.put(Biome.biomes[i].name, new BiomeColor(Biome.biomes[i].color));
-			colorMap.put(Biome.biomes[i+128].name, new BiomeColor(Biome.biomes[i+128].color));
+		for (int i = 0; i < Biome.biomes[i].length; i++) {
+			if (Biome.biomes[i] != null) {
+				colorMap.put(Biome.biomes[i].name, new BiomeColor(Biome.biomes[i].color));
+			}
 		}
 	}
 	
@@ -98,6 +99,7 @@ public class BiomeColorProfile {
 	
 	public void activate() {
 		Options.instance.biomeColorProfile = this;
+		Log.i("Biome color profile activated.");
 		for (int i = 0; i < Biome.length; i++) {
 			Biome.biomes[i].color = colorArray[i];
 			Biome.biomes[i+128].color = colorArray[i + Biome.length];
@@ -156,6 +158,9 @@ public class BiomeColorProfile {
 	public String getAliasForId(int id) {
 		if (id >= 128)
 			id = id - 128 + Biome.length;
-		return nameArray[id];
+		if (nameArray[id] != null)
+			return nameArray[id];
+		else
+			return Biome.biomes[id].name;
 	}
 }

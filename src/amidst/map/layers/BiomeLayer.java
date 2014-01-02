@@ -30,6 +30,7 @@ public class BiomeLayer extends Layer {
 				dataCache[i] = Biome.biomes[fragment.biomeData[i]].color;
 			else
 				Log.debug("Failed to find biome ID: " + fragment.biomeData[i]); // TODO: This could turn into spam
+		
 		fragment.setImageData(layerID, dataCache);
 	}
 	

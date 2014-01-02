@@ -22,7 +22,7 @@ public class Biome {
 	public static final BiomeType typeL = new BiomeType(0.2F, 0.3F);
 	public static final BiomeType typeM = new BiomeType(-0.2F, 0.1F);
 	
-	public static final int length = 40;
+	public static final int length = 128;
 	public static final Biome[] biomes = new Biome[256];
 	public static final Biome ocean				= new Biome("Ocean",				  0, Util.makeColor(0, 0, 112),	   typeC);
 	public static final Biome plains			   = new Biome("Plains",				 1, Util.makeColor(141, 179, 96),	typeA);
@@ -112,6 +112,15 @@ public class Biome {
 	public int index;
 	public int color;
 	public BiomeType type;
+	
+	public Biome(String name, int index, int color, boolean remote) {
+		biomes[index] = this;
+		this.name = name;
+		this.index = index;
+		this.color = color;
+		this.type = typeC;
+		biomeMap.put(name, this);
+	}
 	
 	public Biome(String name, int index, int color) {
 		this(name, index, color, biomes[index - 128].type.getRare());

@@ -33,12 +33,12 @@ public class VersionComponent extends JComponent {
 	private static Color selectedBgColor = new Color(160, 190, 255);
 	private static Color loadingBgColor = new Color(112, 203, 91);
 	
-	private MinecraftProfile profile;
+	protected MinecraftProfile profile;
 	private int oldWidth = 0;
 	private String drawName;
 	
-	private boolean selected = false;
-	private boolean isLoading = false;
+	protected boolean selected = false;
+	protected boolean isLoading = false;
 	
 	public VersionComponent(MinecraftProfile profile) {
 		this.setMinimumSize(new Dimension(300, 40));
