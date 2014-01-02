@@ -25,6 +25,8 @@ public class LicenseWindow extends JFrame {
 		super("Licenses");
 		setIconImage(Amidst.icon);
 		licenseText.setEditable(false);
+		licenseText.setLineWrap(true);
+		licenseText.setWrapStyleWord(true);
 		
 		licenses.add(new License("AMIDST",		     "licenses/amidst.txt"));
 		licenses.add(new License("Args4j",		     "licenses/args4j.txt"));
