@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="lib/miglayout-4.0-swing.jar"/>
 	<classpathentry kind="lib" path="lib/args4j-2.0.21.jar"/>
 	<classpathentry kind="lib" path="lib/js.jar"/>
+	<classpathentry kind="lib" path="lib/kryonet-2.21-all.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
