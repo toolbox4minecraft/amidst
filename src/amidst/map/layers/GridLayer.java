@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 
 import amidst.Options;
@@ -22,6 +23,7 @@ public class GridLayer extends Layer {
 	
 		@Override
 	public void drawLive(Fragment fragment, Graphics2D g, AffineTransform mat) {
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		AffineTransform originalTransform = g.getTransform();
 				
 		textBuffer.setLength(0);
@@ -56,8 +58,20 @@ public class GridLayer extends Layer {
 		mat.scale(invZoom, invZoom);
 		g.setTransform(mat);
 		g.setFont(drawFont);
+		g.drawChars(textCache, 0, textBuffer.length(), 12, 17);
+		g.drawChars(textCache, 0, textBuffer.length(),  8, 17);
+		g.drawChars(textCache, 0, textBuffer.length(), 10, 19);
 		g.drawChars(textCache, 0, textBuffer.length(), 10, 15);
-
+		
+		// This makes the text outline a bit thicker, but seems unneeded.
+		/*g.drawChars(textCache, 0, textBuffer.length(), 12, 15);
+		g.drawChars(textCache, 0, textBuffer.length(), 12, 19);
+		g.drawChars(textCache, 0, textBuffer.length(),  8, 15);
+		g.drawChars(textCache, 0, textBuffer.length(),  8, 19);*/
+		
+		g.setColor(Color.white);
+		g.drawChars(textCache, 0, textBuffer.length(), 10, 17);
+		
 		g.setTransform(originalTransform);
 	}
 
