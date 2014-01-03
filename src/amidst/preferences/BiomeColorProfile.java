@@ -37,14 +37,14 @@ public class BiomeColorProfile {
 	public static boolean isEnabled = false;
 	
 	public HashMap<String, BiomeColor> colorMap = new HashMap<String, BiomeColor>(); 
-	public int colorArray[] = new int[Biome.length << 1];
-	public String[] nameArray = new String[Biome.length << 1];
+	public int colorArray[] = new int[Biome.biomes.length];
+	public String[] nameArray = new String[Biome.biomes.length];
 	public String name;
 	public String shortcut;
 	
 	public BiomeColorProfile() {
 		name = "default";
-		for (int i = 0; i < Biome.biomes[i].length; i++) {
+		for (int i = 0; i < Biome.biomes.length; i++) {
 			if (Biome.biomes[i] != null) {
 				colorMap.put(Biome.biomes[i].name, new BiomeColor(Biome.biomes[i].color));
 			}
@@ -54,12 +54,9 @@ public class BiomeColorProfile {
 	public void fillColorArray() {
 		for (Map.Entry<String, BiomeColor> pairs : colorMap.entrySet()) {
 			int index = Biome.indexFromName(pairs.getKey());
-			int localIndex = index;
-			if (index >= 128)
-				localIndex = index - 128 + Biome.length;
 			if (index != -1) {
-				colorArray[localIndex] = pairs.getValue().toColorInt();
-				nameArray[localIndex] = (pairs.getValue().alias != null)?pairs.getValue().alias:Biome.biomes[index].name;
+				colorArray[index] = pairs.getValue().toColorInt();
+				nameArray[index] = (pairs.getValue().alias != null)?pairs.getValue().alias:Biome.biomes[index].name;
 			} else {
 				Log.i("Failed to find biome for: " + pairs.getKey() + " in profile: " + name);
 			}
@@ -100,9 +97,10 @@ public class BiomeColorProfile {
 	public void activate() {
 		Options.instance.biomeColorProfile = this;
 		Log.i("Biome color profile activated.");
-		for (int i = 0; i < Biome.length; i++) {
-			Biome.biomes[i].color = colorArray[i];
-			Biome.biomes[i+128].color = colorArray[i + Biome.length];
+		for (int i = 0; i < Biome.biomes.length; i++) {
+			if (Biome.biomes[i] != null) {
+				Biome.biomes[i].color = colorArray[i];
+			}
 		}
 		if (amidst.map.Map.instance != null)
 			amidst.map.Map.instance.resetFragments();
@@ -156,8 +154,6 @@ public class BiomeColorProfile {
 	}
 
 	public String getAliasForId(int id) {
-		if (id >= 128)
-			id = id - 128 + Biome.length;
 		if (nameArray[id] != null)
 			return nameArray[id];
 		else
