@@ -75,7 +75,7 @@ public class VersionSelectWindow extends JFrame {
 			public void run() {
 				versionFactory.scanForProfiles();
 				MinecraftProfile[] localVersions = versionFactory.getProfiles();
-				String selectedProfile = Options.instance.getPreferences().get("profile", null);
+				String selectedProfile = Options.instance.lastProfile.get();
 				
 				if (localVersions == null) {
 					versionSelector.setEmptyMessage("Empty");

@@ -19,7 +19,7 @@ public class DebugRemoteComponent extends VersionComponent {
 	public void load() {
 		isLoading = true;
 		repaint();
-		Options.instance.getPreferences().put("profile", profile.getProfileName());
+		Options.instance.lastProfile.set(profile.getProfileName());
 		(new Thread(new Runnable() {
 			@Override
 			public void run() {

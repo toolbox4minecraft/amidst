@@ -5,6 +5,7 @@ import amidst.preferences.BooleanPrefModel;
 import amidst.preferences.FilePrefModel;
 import amidst.preferences.PrefModel;
 import amidst.preferences.SelectPrefModel;
+import amidst.preferences.StringPreference;
 
 import java.io.File;
 import java.util.prefs.Preferences;
@@ -29,6 +30,8 @@ public enum Options {
 	public final BooleanPrefModel mapFlicking, mapFading, showFPS, showDebug;
 	public final BooleanPrefModel updateToUnstable;
 	public final BooleanPrefModel maxZoom;
+	
+	public final StringPreference lastProfile;
 	
 	public final SelectPrefModel worldType;
 	public BiomeColorProfile biomeColorProfile;
@@ -66,6 +69,7 @@ public enum Options {
 		showFPS			     = new BooleanPrefModel(pref, "showFPS",			 true);
 		showDebug			 = new BooleanPrefModel(pref, "showDebug",		     false);
 		updateToUnstable     = new BooleanPrefModel(pref, "updateToUnstable",    false);
+		lastProfile          = new StringPreference(pref, "profile",             null);
 		biomeColorProfile	 = new BiomeColorProfile();
 		worldType			 = new SelectPrefModel( pref, "worldType",  "Prompt each time", new String[] { "Prompt each time", "Default", "Flat", "Large Biomes", "Amplified" });
 		biomeColorProfile.fillColorArray();
