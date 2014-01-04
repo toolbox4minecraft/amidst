@@ -16,13 +16,14 @@ import amidst.json.InstallInformation;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
 import amidst.minecraft.Minecraft;
+import amidst.minecraft.MinecraftUtil;
 import amidst.preferences.BiomeColorProfile;
 import amidst.resources.ResourceLoader;
 
 public class Amidst {
 	public final static int version_major = 3;
-	public final static int version_minor = 6;
-	public final static String versionOffset = "";
+	public final static int version_minor = 7;
+	public final static String versionOffset = " beta 1";
 	public static Image icon = ResourceLoader.getImage("icon.png");
 	public static final Gson gson = new Gson();
 	
@@ -63,9 +64,9 @@ public class Amidst {
 	}
 	
 	public static String version() {
-		//if (Minecraft.getActiveMinecraft() != null)
-		//	return version_major + "." + version_minor + versionOffset + " [Using Minecraft version: " + Minecraft.getActiveMinecraft().version + " | Attempted: " + installInformation.lastVersionId + "]";
-		//else
+		if (MinecraftUtil.hasInterface())
+			return version_major + "." + version_minor + versionOffset + " [Using Minecraft version: " + MinecraftUtil.getVersion() + "]";
+		else
 			return version_major + "." + version_minor + versionOffset;
 	}
 	

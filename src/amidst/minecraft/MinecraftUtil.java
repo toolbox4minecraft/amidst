@@ -70,4 +70,8 @@ public class MinecraftUtil {
 	public static VersionInfo getVersion() {
 		return minecraftInterface.getVersion();
 	}
+
+	public static boolean hasInterface() {
+		return minecraftInterface != null;
+	}
 }
