@@ -26,23 +26,21 @@ public class PanelWidget extends Widget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time) {
+		updatePosition();
 		g2d.setColor(panelColor);
 		g2d.fillRect(x, y, width, height);
 	}
 	
 	public void setWidth(int width) {
 		this.width = width;
-		updatePosition();
 	}
 	public void setHeight(int height) {
 		this.height = height;
-		updatePosition();
 	}
 	
 	public void setDimensions(int width, int height) {
 		this.width = width;
 		this.height = height;
-		updatePosition();
 	}
 	
 	protected void updatePosition() {
@@ -70,7 +68,6 @@ public class PanelWidget extends Widget {
 	
 	public PanelWidget setAnchorPoint(CornerAnchorPoint anchor) {
 		this.anchor = anchor;
-		updatePosition();
 		return this;
 	}
 }
