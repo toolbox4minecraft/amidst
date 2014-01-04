@@ -63,7 +63,7 @@ public class Util {
 			minecraftDirectory = new File(Options.instance.minecraftPath);
 			if (minecraftDirectory.exists() && minecraftDirectory.isDirectory())
 				return;
-			Log.w("Unable to set Minecraft directory to: " + minecraftDirectory + " as that location does not exist or is not a folder.");
+			Log.w("Unable to set Minecraft directory 	 to: " + minecraftDirectory + " as that location does not exist or is not a folder.");
 		}
 		File mcDir = null;
 		File homeDirectory = new File(System.getProperty("user.home", "."));
@@ -73,9 +73,9 @@ public class Util {
 			File appData = new File(System.getenv("APPDATA"));
 			if (appData.isDirectory())
 				mcDir = new File(appData, ".minecraft");
-		} else if (os.contains("mac"))
+		} else if (os.contains("mac")) {
 			mcDir = new File(homeDirectory, "Library/Application Support/minecraft");
-		
+		}
 		minecraftDirectory = (mcDir != null) ? mcDir : new File(homeDirectory, ".minecraft");
 	}
 	
