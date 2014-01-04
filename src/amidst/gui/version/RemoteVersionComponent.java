@@ -25,7 +25,7 @@ public class RemoteVersionComponent extends VersionComponent {
 		(new Thread(new Runnable() {
 			@Override
 			public void run() {
-				MinecraftUtil.setBiomeInterface(new RemoteMinecraft());
+				MinecraftUtil.setBiomeInterface(new RemoteMinecraft(remoteAddress));
 				new FinderWindow();
 				VersionSelectWindow.get().dispose();
 			}
@@ -37,7 +37,7 @@ public class RemoteVersionComponent extends VersionComponent {
 		return true;
 	}
 	@Override
-	public String getName() {
+	public String getVersionName() {
 		return name;
 	}
 }

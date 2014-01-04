@@ -26,8 +26,6 @@ public class LocalVersionComponent extends VersionComponent {
 	
 	
 	public LocalVersionComponent(MinecraftProfile profile) {
-		this.setMinimumSize(new Dimension(300, 40));
-		this.setPreferredSize(new Dimension(500, 40));
 		this.profile = profile;
 		drawName = profile.getProfileName();
 		name = "local:" + profile.getProfileName();
@@ -127,7 +125,7 @@ public class LocalVersionComponent extends VersionComponent {
 	}
 
 	@Override
-	public String getName() {
+	public String getVersionName() {
 		return name;
 	}
 }

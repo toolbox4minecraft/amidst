@@ -1,6 +1,7 @@
 package amidst.gui.version;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 
@@ -21,6 +22,11 @@ public abstract class VersionComponent extends JComponent {
 	protected boolean selected = false;
 	protected boolean isLoading = false;
 	
+	public VersionComponent() {
+		this.setMinimumSize(new Dimension(300, 40));
+		this.setPreferredSize(new Dimension(500, 40));
+	}
+	
 	public boolean isSelected() {
 		return selected;
 	}
@@ -30,6 +36,5 @@ public abstract class VersionComponent extends JComponent {
 	
 	public abstract void load();
 	public abstract boolean isReadyToLoad();
-	@Override
-	public abstract String getName();
+	public abstract String getVersionName();
 }

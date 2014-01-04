@@ -8,7 +8,6 @@ import amidst.map.layers.BiomeLayer;
 public class Map {
 	public static Map instance = null;
 	private static final boolean START = true, END = false;
-	private long lastTime;
 	private FragmentManager fManager;
 	
 	private Fragment startNode = new Fragment();
@@ -38,8 +37,6 @@ public class Map {
 		addStart(0, 0);
 		
 		instance = this;
-
-		lastTime = System.currentTimeMillis();
 	}
 	
 	public void resetFragments() {
@@ -52,15 +49,13 @@ public class Map {
 		}
 	}
 	
-	public void draw(Graphics2D g) {
+	public void draw(Graphics2D g, float time) {
 		AffineTransform originalTransform = g.getTransform();
 		if (firstDraw) {
 			firstDraw = false;
 			centerOn(0, 0);
 		}
-		long currentTime = System.currentTimeMillis();
-		long elapsed = Math.max(Math.min(0, currentTime - lastTime), 100);
-		float time = elapsed / 1000.0f;
+		
 		
 		// TODO: Enable via settings?
 		//g.setRenderingHints(renderingHints);

@@ -55,12 +55,13 @@ public class VersionSelectWindow extends JFrame {
 					versionSelector.setEmptyMessage("Empty");
 					return;
 				}
-				for (int i = 0; i < localVersions.length; i++) {
-					LocalVersionComponent component = new LocalVersionComponent(localVersions[i]);
-					versionSelector.addVersion(component);
-					if ((selectedProfile != null) && component.getName().equals(selectedProfile))
-						versionSelector.select(i);
-				}
+				for (int i = 0; i < localVersions.length; i++)
+					versionSelector.addVersion(new LocalVersionComponent(localVersions[i]));
+				versionSelector.addVersion(new RemoteVersionComponent());
+				
+				if (selectedProfile != null)
+					versionSelector.select(selectedProfile);
+				
 				pack();
 			}
 		})).start();

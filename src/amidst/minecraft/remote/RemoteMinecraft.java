@@ -15,7 +15,7 @@ public class RemoteMinecraft implements IMinecraftInterface {
 	Client client;
 	static NetGetBiomeDataResult currentResults = null;
 	
-	public RemoteMinecraft() {
+	public RemoteMinecraft(String address) {
 		client = new Client(65536, 65536);
 		Kryo kryo = client.getKryo();
 		kryo.register(NetCreateWorldRequest.class);
@@ -45,7 +45,7 @@ public class RemoteMinecraft implements IMinecraftInterface {
 		
 		client.start();
 		try {
-			client.connect(5000, "127.0.0.1", 54580, 54580);
+			client.connect(5000, address, 54580, 54580);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

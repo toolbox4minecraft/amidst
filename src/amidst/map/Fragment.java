@@ -98,7 +98,7 @@ public class Fragment {
 	}
 	public void draw(float time, Graphics2D g, AffineTransform mat) {
 		if (isLoaded) {
-			alpha = Math.min(1.0f, time + alpha);
+			alpha = Math.min(1.0f, time*3.0f + alpha);
 
 			if (alpha != 1.0f)
 				g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
