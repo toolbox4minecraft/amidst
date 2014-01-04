@@ -8,6 +8,7 @@ public class CCFloatMatch extends ClassChecker {
 		super(name);
 		checkData = data;
 	}
+	@Override
 	public void check(Minecraft m, ByteClass bClass) {
 		boolean isMatch = true;
 		for (int i = 0; i < checkData.length; i++) {

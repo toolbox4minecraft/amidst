@@ -9,6 +9,7 @@ public class CCRequireAccessFlags extends CCRequireSimple {
 		super(checker);
 		this.flags = flags;
 	}
+	@Override
 	public boolean canPass(Minecraft mc, ByteClass bClass) {
 		return bClass.accessFlags == flags;
 	}

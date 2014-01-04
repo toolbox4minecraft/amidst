@@ -62,8 +62,7 @@ public class Amidst {
 	public static String version() {
 		if (MinecraftUtil.hasInterface())
 			return version_major + "." + version_minor + versionOffset + " [Using Minecraft version: " + MinecraftUtil.getVersion() + "]";
-		else
-			return version_major + "." + version_minor + versionOffset;
+		return version_major + "." + version_minor + versionOffset;
 	}
 	
 }

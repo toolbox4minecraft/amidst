@@ -8,6 +8,7 @@ public class CCWildcardByteSearch extends ClassChecker {
 		super(publicName);
 		checkData = data;
 	}
+	@Override
 	public void check(Minecraft m, ByteClass bClass) {
 		byte[] data = bClass.getData();
 		

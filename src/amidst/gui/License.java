@@ -65,6 +65,7 @@ public class License {
 		return loaded;
 	}
 	
+	@Override
 	public String toString() {
 		return name;
 	}

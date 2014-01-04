@@ -10,6 +10,7 @@ public class CCMethodByReturnType extends ClassChecker {
 		this.param = param;
 		this.returnType = returnType;
 	}
+	@Override
 	public void check(Minecraft mc, ByteClass bClass) {
 		ByteClass clazz = mc.getByteClass(className);
 		String internalName = mc.getByteClass(returnType).getClassName();

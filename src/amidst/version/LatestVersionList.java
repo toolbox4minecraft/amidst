@@ -121,11 +121,6 @@ public class LatestVersionList {
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 		try {
 			profile = Util.readObject(bufferedReader, VersionList.class);
-		} catch (FileNotFoundException e) {
-			Log.w("FileNotFoundException when parsing the version list.");
-			Log.printTraceStack(e);
-			Log.w("Aborting version list load. URL: " + versionUrl);
-			return false;
 		} catch (JsonSyntaxException e) {
 			Log.w("Unable to parse version list.");
 			Log.printTraceStack(e);

@@ -9,6 +9,7 @@ public class CCPropertyPreset extends ClassChecker {
 		super(name);
 		this.properties = properties;
 	}
+	@Override
 	public void check(Minecraft mc, ByteClass bClass) {
 		ByteClass clazz = mc.getByteClass(publicName);
 		for (int i = 0; i < properties.length; i += 2) {

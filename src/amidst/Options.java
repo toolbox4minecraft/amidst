@@ -87,7 +87,6 @@ public enum Options {
 	public String getSeedMessage() {
 		if (seedText == null)
 			return "Seed: " + seed;
-		else
-			return "Seed: \"" + seedText + "\" (" + seed +  ")";
+		return "Seed: \"" + seedText + "\" (" + seed +  ")";
 	}
 }

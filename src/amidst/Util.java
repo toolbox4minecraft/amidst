@@ -10,7 +10,6 @@ import com.google.gson.JsonSyntaxException;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -53,7 +52,9 @@ public class Util {
 	public static void setLookAndFeel() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception ignored) {}
+		} catch (Exception e) {
+			Log.printTraceStack(e);
+		}
 	}
 	
 	public static File minecraftDirectory;
@@ -114,7 +115,7 @@ public class Util {
 	}
 
 
-	public static <T> T readObject(BufferedReader reader, final Class<T> clazz) throws FileNotFoundException, JsonIOException, JsonSyntaxException {
+	public static <T> T readObject(BufferedReader reader, final Class<T> clazz) throws JsonIOException, JsonSyntaxException {
 		return Amidst.gson.fromJson(reader, clazz);
 	}
 	

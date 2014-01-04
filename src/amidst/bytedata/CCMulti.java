@@ -9,6 +9,7 @@ public class CCMulti extends ClassChecker {
 		super(checks[0].getName());
 		this.checks = checks;
 	}
+	@Override
 	public void check(Minecraft mc, ByteClass bClass) {
 		boolean complete = true;
 		for (int i = 0; i < checks.length; i++) {

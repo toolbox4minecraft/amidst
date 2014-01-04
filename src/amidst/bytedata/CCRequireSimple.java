@@ -9,9 +9,9 @@ public class CCRequireSimple extends ClassChecker {
 		this.checker = checker;
 	}
 	public boolean canPass(Minecraft mc, ByteClass bClass) {
-		
 		return true;
 	}
+	@Override
 	public void check(Minecraft mc, ByteClass bClass) {
 		if (canPass(mc, bClass)) {
 			checker.check(mc, bClass);

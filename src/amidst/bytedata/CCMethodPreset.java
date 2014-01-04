@@ -9,6 +9,7 @@ public class CCMethodPreset extends ClassChecker {
 		super(name);
 		this.methods = methods;
 	}
+	@Override
 	public void check(Minecraft mc, ByteClass bClass) {
 		ByteClass clazz = mc.getByteClass(publicName);
 		for (int i = 0; i < methods.length; i += 2) {

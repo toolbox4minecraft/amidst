@@ -174,6 +174,8 @@ public class ByteClass {
 		
 		return data;
 	}
+	
+	@Override
 	public String toString() {
 		return "[ByteClass " + name + "]";
 	}
