@@ -8,7 +8,7 @@ public class FramerateTimer {
 	private float currentFPS = 0.0f;
 	
 	public FramerateTimer(int updatesPerSecond) {
-		msPerUpdate = (long)(1000f * (1f/(float)updatesPerSecond));
+		msPerUpdate = (long)(1000f * (1f/updatesPerSecond));
 		reset();
 	}
 	
@@ -22,10 +22,10 @@ public class FramerateTimer {
 		long curTime = System.currentTimeMillis();
 		
 		if (curTime - lastUpdate > msPerUpdate) {
-			float timeDifference = (float)(curTime - lastUpdate);
+			float timeDifference = curTime - lastUpdate;
 			
 			timeDifference /= 1000f;
-			timeDifference = ((float)tickCounter)/timeDifference;
+			timeDifference = tickCounter/timeDifference;
 			
 			currentFPS = timeDifference;
 			
@@ -39,6 +39,7 @@ public class FramerateTimer {
 		return currentFPS;
 	}
 	
+	@Override
 	public String toString() {
 		return "FPS: " + String.format("%.1f", currentFPS);
 	}

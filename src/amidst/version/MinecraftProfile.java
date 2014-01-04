@@ -21,7 +21,7 @@ public class MinecraftProfile implements ILatestVersionListListener {
 		public String toString() {
 			return name;
 		}
-	};
+	}
 	private ArrayList<IProfileUpdateListener> listeners = new ArrayList<IProfileUpdateListener>();
 	
 	private MinecraftVersion version;

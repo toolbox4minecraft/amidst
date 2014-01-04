@@ -134,6 +134,7 @@ public class Biome {
 			this.color = Util.lightenColor(color, 40);
 	}
 	
+	@Override
 	public String toString() {
 		return "[Biome " + name + "]";
 	}

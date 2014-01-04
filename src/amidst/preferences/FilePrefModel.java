@@ -17,16 +17,19 @@ public class FilePrefModel implements PrefModel<File> {
 			set(init);
 	}
 
+	@Override
 	public String getKey() {
 		return key;
 	}
 	
+	@Override
 	public File get() {
 		String path = pref.get(key, null);
 		assert path != null;
 		return new File(path);
 	}
 	
+	@Override
 	public void set(File value) {
 		try {
 			pref.put(key, value.getCanonicalPath());

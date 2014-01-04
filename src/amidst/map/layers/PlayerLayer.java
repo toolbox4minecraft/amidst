@@ -19,6 +19,7 @@ public class PlayerLayer extends IconLayer {
 		super("players");
 		setVisibilityPref(Options.instance.showPlayers);
 	}
+	@Override
 	public void generateMapObjects(Fragment frag) {
 		if (!isEnabled) return;
 		List<MapObjectPlayer> players =  saveLoader.getPlayers();
@@ -34,6 +35,7 @@ public class PlayerLayer extends IconLayer {
 		}
 	}
 	
+	@Override
 	public void clearMapObjects(Fragment frag) {
 		for (int i = 0; i < frag.objectsLength; i++) {
 			if (frag.objects[i] instanceof MapObjectPlayer)

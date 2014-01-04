@@ -31,6 +31,7 @@ public class SpawnLayer extends IconLayer {
 		
 	}
 	
+	@Override
 	public void generateMapObjects(Fragment frag) {
 		if ((spawnObject.globalX >= frag.blockX) &&
 			(spawnObject.globalX < frag.blockX + Fragment.SIZE) &&
@@ -56,6 +57,7 @@ public class SpawnLayer extends IconLayer {
 		return new Point(x, y);
 	}
 	
+	@Override
 	public void reload() {
 		Point spawnCenter = getSpawnPosition();
 		spawnObject = new MapObjectSpawn(spawnCenter.x, spawnCenter.y);

@@ -1,7 +1,6 @@
 package amidst.version;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,7 +31,6 @@ public class LatestVersionList {
 	private LoadState loadState = LoadState.IDLE;
 	
 	private VersionList profile;
-	private boolean usingRemoteList = true;
 	
 	private ArrayList<ILatestVersionListListener> loadListeners = new ArrayList<ILatestVersionListListener>();
 	private Object listenerLock = new Object();

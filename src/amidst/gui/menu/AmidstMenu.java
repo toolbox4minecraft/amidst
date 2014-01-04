@@ -146,7 +146,7 @@ public class AmidstMenu extends JMenuBar {
 						inputInformation.setForeground(Color.red);
 					} else {
 						try {
-							Long seed = Long.parseLong(text);
+							Long.parseLong(text);
 							inputInformation.setText("Seed is valid.");
 							inputInformation.setForeground(Color.gray);
 						} catch (NumberFormatException e) {
@@ -464,6 +464,7 @@ public class AmidstMenu extends JMenuBar {
 				reloadMenuItem = new JMenuItem("Reload Menu");
 				final BiomeColorMenu biomeColorMenu = this;
 				reloadMenuItem.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(ActionEvent arg) {
 						profileCheckboxes.clear();
 						Log.i("Reloading additional biome color profiles.");

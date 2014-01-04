@@ -16,10 +16,12 @@ public class BooleanPrefModel extends ToggleButtonModel implements PrefModel<Boo
 		set(pref.getBoolean(key, selected));
 	}
 	
+	@Override
 	public String getKey() {
 		return key;
 	}
 	
+	@Override
 	public Boolean get() {
 		assert pref.get(key, null) != null && pref.getBoolean(key, false) == super.isSelected();
 		return super.isSelected();
@@ -30,6 +32,7 @@ public class BooleanPrefModel extends ToggleButtonModel implements PrefModel<Boo
 		return get();
 	}
 	
+	@Override
 	public void set(Boolean value) {
 		super.setSelected(value);
 		pref.putBoolean(key, value);

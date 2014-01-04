@@ -27,7 +27,7 @@ public class BiomeColorProfile {
 		public int toColorInt() {
 			return Util.makeColor(r, g, b);
 		}
-	};
+	}
 	public static boolean isEnabled = false;
 	
 	public HashMap<String, BiomeColor> colorMap = new HashMap<String, BiomeColor>(); 
@@ -150,7 +150,6 @@ public class BiomeColorProfile {
 	public String getAliasForId(int id) {
 		if (nameArray[id] != null)
 			return nameArray[id];
-		else
-			return Biome.biomes[id].name;
+		return Biome.biomes[id].name;
 	}
 }

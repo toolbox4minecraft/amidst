@@ -68,6 +68,7 @@ public class StrongholdLayer extends IconLayer {
 		
 	}
 	
+	@Override
 	public void generateMapObjects(Fragment frag) {
 		int size = Fragment.SIZE >> 4;
 		for (int x = 0; x < size; x++) {
@@ -139,6 +140,7 @@ public class StrongholdLayer extends IconLayer {
 		return strongholds;
 	}
 	
+	@Override
 	public void reload() {
 		findStrongholds();
 	}

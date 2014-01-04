@@ -14,6 +14,7 @@ public class BiomeLayer extends Layer {
 		isTransparent = false;
 	}
 	
+	@Override
 	public void drawToCache(Fragment fragment, int layerID) {
 		int[] dataCache = Fragment.getIntArray();
 		
@@ -27,7 +28,7 @@ public class BiomeLayer extends Layer {
 	}
 	
 	public static int getBiomeForFragment(Fragment frag, int blockX, int blockY) {
-		return (int)frag.biomeData[(blockY >> 2) * Fragment.BIOME_SIZE + (blockX >> 2)];
+		return frag.biomeData[(blockY >> 2) * Fragment.BIOME_SIZE + (blockX >> 2)];
 	}
 	
 	public static String getBiomeNameForFragment(Fragment frag, int blockX, int blockY) {

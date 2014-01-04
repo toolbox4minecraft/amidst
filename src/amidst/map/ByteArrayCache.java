@@ -57,6 +57,7 @@ public class ByteArrayCache extends CacheManager {
 		hub.activeFragments++;
 	}
 	
+	@Override
 	public void unload(Fragment frag) {
 		long keyX = frag.getFragmentX() >> CACHE_SHIFT;
 		long keyY = frag.getFragmentY() >> CACHE_SHIFT;

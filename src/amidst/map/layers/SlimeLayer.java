@@ -14,6 +14,7 @@ public class SlimeLayer extends Layer {
 		setVisibilityPref(Options.instance.showSlimeChunks);
 	}
 	
+	@Override
 	public void drawToCache(Fragment fragment, int layerID) {
 		int[] dataCache = Fragment.getIntArray();
 		for (int y = 0; y < size; y++) {
@@ -21,10 +22,10 @@ public class SlimeLayer extends Layer {
 				int xPosition = fragment.getChunkX() + x;
 				int yPosition = fragment.getChunkY() + y;
 				random.setSeed(Options.instance.seed +
-					(long) (xPosition * xPosition * 0x4c1906) + 
-					(long) (xPosition * 0x5ac0db) + 
-					(long) (yPosition * yPosition) * 0x4307a7L + 
-					(long) (yPosition * 0x5f24f) ^ 0x3ad8025f);
+					xPosition * xPosition * 0x4c1906 + 
+					xPosition * 0x5ac0db + 
+					yPosition * yPosition * 0x4307a7L + 
+					yPosition * 0x5f24f ^ 0x3ad8025f);
 				
 				dataCache[y * size + x] = (random.nextInt(10) == 0) ? 0xA0FF00FF : 0x00000000;
 			}

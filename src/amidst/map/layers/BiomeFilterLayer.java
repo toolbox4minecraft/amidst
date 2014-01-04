@@ -12,6 +12,7 @@ public class BiomeFilterLayer extends Layer {
 		super("biomefilter", null, 0.0f, size);
 		isTransparent = true;
 	}
+	@Override
 	public void drawToCache(Fragment fragment, int layerID) {
 		int[] dataCache = Fragment.getIntArray();
 		
@@ -25,8 +26,9 @@ public class BiomeFilterLayer extends Layer {
 		fragment.setImageData(layerID, dataCache);
 	}
 	
+	@Override
 	public float getAlpha() {
-		 float val = (float) Math.sin(((float)(System.currentTimeMillis() % 3141592)/200.0f)) + 0.5f;
+		 float val = (float) Math.sin(System.currentTimeMillis() % 3141592/200.0f) + 0.5f;
 		 if (val > 1.0f) val = 1.0f;
 		 if (val < 0.0f) val = 0.0f;
 		 return val;

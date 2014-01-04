@@ -27,6 +27,7 @@ public class RemoteMinecraft implements IMinecraftInterface {
 		kryo.register(int[].class);
 		
 		client.addListener(new Listener() {
+			@Override
 			public void received(Connection connection, Object object) {
 				if (object instanceof NetGetBiomeDataResult) {
 					currentResults = (NetGetBiomeDataResult)object;

@@ -115,7 +115,7 @@ public class Minecraft {
 					}
 				}
 			}
-
+			jar.close();
 			Log.i("Jar load complete.");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -175,6 +175,7 @@ public class Minecraft {
 			e.printStackTrace();
 			Log.crash(e, "Unable to find critical external class while loading.\nPlease ensure you have the correct Minecraft libraries installed.");
 		}
+		
 		for (int i = 0; i < fields.length; i++) {
 			String typeString = fields[i].getType().toString();
 			if (typeString.startsWith("class ") && !typeString.contains("."))

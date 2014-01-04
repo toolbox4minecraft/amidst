@@ -17,8 +17,6 @@ import amidst.logging.LogRecorder;
 import net.miginfocom.swing.MigLayout;
 
 public class CrashDialog extends JFrame {
-	private static final long serialVersionUID = 2016466949762866300L;
-
 	public CrashDialog(String message) {
 		super("AMIDST encountered an unexpected error.");
 		Container contentPane = getContentPane();

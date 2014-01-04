@@ -12,6 +12,7 @@ public class DebugRemoteComponent extends VersionComponent {
 		super(profile);
 	}
 	
+	@Override
 	public void load() {
 		isLoading = true;
 		repaint();

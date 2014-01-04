@@ -4,9 +4,12 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+
 import net.miginfocom.swing.MigLayout;
 import amidst.Amidst;
 import amidst.Options;
@@ -34,7 +37,7 @@ public class VersionSelectWindow extends JFrame {
 			return;
 		}
 		
-		final JLabel titleLabel = new JLabel("Please select a Minecraft version:", JLabel.CENTER);
+		final JLabel titleLabel = new JLabel("Please select a Minecraft version:", SwingConstants.CENTER);
 		titleLabel.setFont(new Font("arial", Font.BOLD, 16));
 		
 		add(titleLabel, "h 20!,w :400:, growx, pushx, wrap");
@@ -72,6 +75,7 @@ public class VersionSelectWindow extends JFrame {
 		addKeyListener(versionSelector);
 		
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent e) {
 				dispose();
 				System.exit(0);

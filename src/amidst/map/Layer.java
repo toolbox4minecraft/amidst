@@ -80,10 +80,10 @@ public class Layer implements Comparable<Layer> {
 		return this;
 	}
 	
-	public int compareTo(Layer obj) {
-		Layer lObj = (Layer)obj;
-		if (depth < lObj.depth) return -1;
-		return (depth > lObj.depth)?1:0;
+	@Override
+	public int compareTo(Layer layer) {
+		if (depth < layer.depth) return -1;
+		return (depth > layer.depth)?1:0;
 	}
 	
 	public int[] getDefaultData() {

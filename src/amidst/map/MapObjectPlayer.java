@@ -21,9 +21,11 @@ public class MapObjectPlayer extends MapObject {
 	}
 	
 	
+	@Override
 	public int getWidth() {
 		return (int)(marker.getWidth()*localScale);
 	}
+	@Override
 	public int getHeight() {
 		return (int)(marker.getHeight()*localScale);
 	}
@@ -43,6 +45,7 @@ public class MapObjectPlayer extends MapObject {
 	public void setMarker(BufferedImage img) {
 		this.marker = img;
 	}
+	@Override
 	public String getName() {
 		return name;
 	}

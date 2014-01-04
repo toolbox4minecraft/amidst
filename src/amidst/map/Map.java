@@ -1,16 +1,13 @@
 package amidst.map;
 
 import java.awt.*;
-import java.awt.RenderingHints.Key;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.util.HashMap;
 import amidst.map.layers.BiomeLayer;
 
 public class Map {
 	public static Map instance = null;
 	private static final boolean START = true, END = false;
-	private static final AffineTransform iMat = new AffineTransform();
 	private long lastTime;
 	private FragmentManager fManager;
 	
@@ -28,7 +25,6 @@ public class Map {
 	private boolean firstDraw = true;
 	
 	
-	private RenderingHints renderingHints;
 	
 	// TODO : This must be changed with the removal of ChunkManager
 	public Map(FragmentManager fragmentManager) {
@@ -41,18 +37,6 @@ public class Map {
 		start = new Point2D.Double();
 		addStart(0, 0);
 		
-		HashMap<Key, Object> hintMap = new HashMap<Key, Object>();
-		hintMap.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-		hintMap.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-		hintMap.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
-		hintMap.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
-		hintMap.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
-		hintMap.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-		hintMap.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-		hintMap.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-		hintMap.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-		
-		renderingHints = new RenderingHints(hintMap);
 		instance = this;
 
 		lastTime = System.currentTimeMillis();
@@ -76,7 +60,7 @@ public class Map {
 		}
 		long currentTime = System.currentTimeMillis();
 		long elapsed = Math.max(Math.min(0, currentTime - lastTime), 100);
-		float time = ((float)elapsed) / 1000.0f;
+		float time = elapsed / 1000.0f;
 		
 		// TODO: Enable via settings?
 		//g.setRenderingHints(renderingHints);
@@ -295,11 +279,11 @@ public class Map {
 			frag.remove();
 			fManager.returnFragment(frag);
 			// TODO: Support longs?
-			double offsetX = (double)(width >> 1);
-			double offsetY = (double)(height >> 1);
+			double offsetX = width >> 1;
+			double offsetY = height >> 1;
 
-			offsetX -= ((double)fragOffsetX)*scale;
-			offsetY -= ((double)fragOffsetY)*scale;
+			offsetX -= (fragOffsetX)*scale;
+			offsetY -= (fragOffsetY)*scale;
 			
 			start.x = offsetX;
 			start.y = offsetY;

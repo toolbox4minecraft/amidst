@@ -13,7 +13,7 @@ public class MinecraftConstructor {
 	private Class<?>[] paramClasses;
 	private String[] paramNames;
 	private boolean hasParameters;
-	private Constructor constructor;
+	private Constructor<?> constructor;
 	private String name;
 	private static HashMap<String, Class<?>> primitives;
 	static {
@@ -101,6 +101,7 @@ public class MinecraftConstructor {
 	public Class<?>[] getParameters() {
 		return paramClasses;
 	}
+	@Override
 	public String toString() {
 		return "[Constructor " + name +" of class " + parent.getName() + "]";
 	}

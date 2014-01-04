@@ -18,6 +18,7 @@ public class MinecraftProperty {
 	
 	
 	
+	@Override
 	public String toString() {
 		return "[Method " + name +" (" + internalName +") of class " + parent.getName() + "]";
 	}

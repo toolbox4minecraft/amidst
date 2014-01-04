@@ -31,7 +31,7 @@ public class LogRecorder implements LogListener {
 			write("crash", exceptionText);
 	}
 	
-	private void write(String tag, Object... msgs) {
+	private static void write(String tag, Object... msgs) {
 		buffer.append("[" + tag + "] ");
 		for (int i = 0; i < msgs.length; i++)
 			buffer.append(msgs[i] + ((i < msgs.length - 1) ? " " : "\n"));
