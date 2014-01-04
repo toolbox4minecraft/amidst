@@ -56,8 +56,9 @@ public class VersionSelectWindow extends JFrame {
 					return;
 				}
 				for (int i = 0; i < localVersions.length; i++) {
-					versionSelector.addVersion(new VersionComponent(localVersions[i]));
-					if ((selectedProfile != null) && localVersions[i].getProfileName().equals(selectedProfile))
+					LocalVersionComponent component = new LocalVersionComponent(localVersions[i]);
+					versionSelector.addVersion(component);
+					if ((selectedProfile != null) && component.getName().equals(selectedProfile))
 						versionSelector.select(i);
 				}
 				pack();

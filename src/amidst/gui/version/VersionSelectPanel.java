@@ -13,7 +13,6 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 
-import amidst.version.MinecraftProfile.Status;
 import net.miginfocom.swing.MigLayout;
 
 public class VersionSelectPanel extends JPanel implements MouseListener, KeyListener {
@@ -92,7 +91,7 @@ public class VersionSelectPanel extends JPanel implements MouseListener, KeyList
 	}
 	
 	private void loadSelectedProfile() {
-		if ((selected == null) || (selected.getProfile().getStatus() != Status.FOUND))
+		if ((selected == null) || !selected.isReadyToLoad())
 			return;
 		isLoading = true;
 		selected.load();

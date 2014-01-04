@@ -4,19 +4,24 @@ import MoF.FinderWindow;
 import amidst.Options;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.remote.RemoteMinecraft;
-import amidst.version.MinecraftProfile;
 
-public class DebugRemoteComponent extends VersionComponent {
-
-	public DebugRemoteComponent(MinecraftProfile profile) {
-		super(profile);
+public class RemoteVersionComponent extends VersionComponent {
+	private String remoteAddress;
+	private String name;
+	
+	public RemoteVersionComponent(String address) {
+		remoteAddress = address;
+		name = "remote:" + address;
+	}
+	public RemoteVersionComponent() {
+		this("127.0.0.1");
 	}
 	
 	@Override
 	public void load() {
 		isLoading = true;
 		repaint();
-		Options.instance.lastProfile.set(profile.getProfileName());
+		Options.instance.lastProfile.set(name);
 		(new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -25,5 +30,14 @@ public class DebugRemoteComponent extends VersionComponent {
 				VersionSelectWindow.get().dispose();
 			}
 		})).start();
+	}
+
+	@Override
+	public boolean isReadyToLoad() {
+		return true;
+	}
+	@Override
+	public String getName() {
+		return name;
 	}
 }
