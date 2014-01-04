@@ -222,6 +222,18 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	public void mouseClicked(MouseEvent e) {
 		if (!e.isMetaDown()) {
 			Point mouse = getMousePosition();
+			boolean hitWidget = false;
+			for (Widget widget : widgets) {
+				if ((mouse.x > widget.getX()) &&
+					(mouse.y > widget.getY()) &&
+					(mouse.x < widget.getX() + widget.getWidth()) &&
+					(mouse.y < widget.getY() + widget.getHeight())) {
+					widget.onClick(mouse.x - widget.getX(), mouse.y - widget.getY());
+					hitWidget = true;
+				}
+			}
+			if (hitWidget)
+				return;
 			MapObject object = worldMap.getObjectAt(mouse, 50.0);
 			
 			if (selectedObject != null)
