@@ -2,20 +2,14 @@ package amidst.preferences;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import com.google.gson.JsonSyntaxException;
 
 import amidst.Options;
 import amidst.Util;
-import amidst.json.LauncherProfile;
 import amidst.logging.Log;
 import amidst.minecraft.Biome;
 

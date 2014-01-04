@@ -2,14 +2,6 @@ package amidst.map;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-
-import javax.imageio.ImageIO;
-
-import amidst.logging.Log;
 import amidst.preferences.BooleanPrefModel;
 
 public class Layer implements Comparable<Layer> {

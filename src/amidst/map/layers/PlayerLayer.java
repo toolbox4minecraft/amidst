@@ -1,20 +1,12 @@
 package amidst.map.layers;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-
 import MoF.SaveLoader;
 import MoF.SkinManager;
 import amidst.Options;
-import amidst.logging.Log;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
-import amidst.map.Map;
-import amidst.map.MapObjectNether;
 import amidst.map.MapObjectPlayer;
-import amidst.map.MapObjectStronghold;
-import amidst.map.MapObjectVillage;
 
 public class PlayerLayer extends IconLayer {
 	public SaveLoader saveLoader;

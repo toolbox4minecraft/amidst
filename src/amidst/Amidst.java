@@ -1,8 +1,6 @@
 package amidst;
 
 import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 import java.io.File;
 
 import org.kohsuke.args4j.CmdLineException;
@@ -12,10 +10,8 @@ import com.google.gson.Gson;
 
 import MoF.Google;
 import amidst.gui.version.VersionSelectWindow;
-import amidst.json.InstallInformation;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
-import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 import amidst.preferences.BiomeColorProfile;
 import amidst.resources.ResourceLoader;

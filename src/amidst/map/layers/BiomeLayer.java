@@ -1,18 +1,10 @@
 package amidst.map.layers;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-
 import amidst.Options;
-import amidst.Util;
 import amidst.logging.Log;
-import amidst.map.ByteArrayCache;
-import amidst.map.CacheManager;
 import amidst.map.Fragment;
 import amidst.map.Layer;
 import amidst.minecraft.Biome;
-import amidst.minecraft.MinecraftUtil;
 
 public class BiomeLayer extends Layer {
 

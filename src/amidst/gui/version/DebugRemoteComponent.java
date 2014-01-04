@@ -1,11 +1,7 @@
 package amidst.gui.version;
 
-import java.net.MalformedURLException;
-
 import MoF.FinderWindow;
 import amidst.Options;
-import amidst.logging.Log;
-import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.remote.RemoteMinecraft;
 import amidst.version.MinecraftProfile;

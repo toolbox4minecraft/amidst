@@ -1,8 +1,5 @@
 package amidst.bytedata;
 
-import java.awt.AlphaComposite;
-import java.util.Vector;
-
 import amidst.minecraft.Minecraft;
 
 public class CCMethodByReturnType extends ClassChecker {

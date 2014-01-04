@@ -1,11 +1,8 @@
 package MoF;
 
-import MoF.SaveLoader.Type;
 import amidst.Options;
 import amidst.logging.Log;
 import amidst.map.MapObject;
-import amidst.map.MapObjectPlayer;
-import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 
 import java.awt.BorderLayout;
@@ -14,8 +11,6 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.sql.Timestamp;

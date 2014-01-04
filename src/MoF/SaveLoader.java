@@ -2,16 +2,10 @@ package MoF;
 import amidst.Util;
 import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
-import amidst.minecraft.Minecraft;
-import amidst.minecraft.MinecraftObject;
-import amidst.minecraft.MinecraftUtil;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.swing.filechooser.FileFilter;
 
 import org.jnbt.CompoundTag;

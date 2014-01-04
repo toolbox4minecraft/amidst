@@ -3,7 +3,6 @@ package amidst;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BooleanPrefModel;
 import amidst.preferences.FilePrefModel;
-import amidst.preferences.PrefModel;
 import amidst.preferences.SelectPrefModel;
 import amidst.preferences.StringPreference;
 

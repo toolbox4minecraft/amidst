@@ -1,7 +1,6 @@
 package amidst.minecraft;
 
 import amidst.version.VersionInfo;
-import MoF.SaveLoader.Type;
 
 /**
  * Acts as an additional layer of abstraction for interfacing with Minecraft.<br>

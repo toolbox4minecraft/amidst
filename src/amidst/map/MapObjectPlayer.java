@@ -1,11 +1,6 @@
 package amidst.map;
 
-import java.awt.Point;
 import java.awt.image.BufferedImage;
-
-import amidst.Options;
-
-import MoF.SaveLoader;
 
 public class MapObjectPlayer extends MapObject {
 	public String name;

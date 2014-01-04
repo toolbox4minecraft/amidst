@@ -1,13 +1,6 @@
 package amidst.map.layers;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -16,9 +9,7 @@ import amidst.Options;
 import amidst.logging.Log;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
-import amidst.map.Layer;
 import amidst.map.MapObjectSpawn;
-import amidst.map.MapObjectStronghold;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 

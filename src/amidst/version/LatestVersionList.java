@@ -14,7 +14,6 @@ import java.util.HashMap;
 import com.google.gson.JsonSyntaxException;
 
 import amidst.Util;
-import amidst.json.LauncherProfile;
 import amidst.logging.Log;
 import amidst.resources.ResourceLoader;
 

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import amidst.json.InstallInformation;
-import amidst.version.LatestVersionList.LoadState;
 
 public class MinecraftProfile implements ILatestVersionListListener {
 	public enum Status {

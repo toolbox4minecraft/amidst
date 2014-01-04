@@ -7,7 +7,6 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
-import amidst.logging.Log;
 import amidst.minecraft.Biome;
 import amidst.minecraft.IMinecraftInterface;
 import amidst.version.VersionInfo;

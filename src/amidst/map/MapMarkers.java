@@ -3,7 +3,6 @@ package amidst.map;
 import amidst.resources.ResourceLoader;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 /** Contains information about all possible Map Markers.
  * Map objects use either its or their own icon

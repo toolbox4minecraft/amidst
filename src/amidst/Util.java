@@ -14,7 +14,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.URL;
 
 public class Util {
 	/** Shows an error message for an exception

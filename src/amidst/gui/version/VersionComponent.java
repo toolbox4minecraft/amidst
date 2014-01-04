@@ -20,7 +20,6 @@ import amidst.resources.ResourceLoader;
 import amidst.version.IProfileUpdateListener;
 import amidst.version.MinecraftProfile;
 import amidst.version.MinecraftProfile.Status;
-import amidst.version.MinecraftVersion;
 import amidst.version.ProfileUpdateEvent;
 
 public class VersionComponent extends JComponent {

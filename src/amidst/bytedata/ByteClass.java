@@ -7,8 +7,6 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import amidst.logging.Log;
-
 public class ByteClass {
 	private byte[] data;
 	private boolean isValidClass;

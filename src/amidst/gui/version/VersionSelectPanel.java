@@ -1,8 +1,6 @@
 package amidst.gui.version;
 
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -13,11 +11,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.HashMap;
-
 import javax.swing.JPanel;
 
-import amidst.logging.Log;
 import amidst.version.MinecraftProfile.Status;
 import net.miginfocom.swing.MigLayout;
 

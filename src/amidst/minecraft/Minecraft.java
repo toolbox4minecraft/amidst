@@ -2,7 +2,6 @@ package amidst.minecraft;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
@@ -17,7 +16,6 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import amidst.Amidst;
 import amidst.Util;
 import amidst.bytedata.ByteClass;
 import amidst.bytedata.CCLongMatch;

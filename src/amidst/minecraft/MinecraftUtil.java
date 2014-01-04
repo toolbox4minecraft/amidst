@@ -1,13 +1,11 @@
 package amidst.minecraft;
 
 import java.awt.Point;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Random;
 
 import amidst.logging.Log;
 import amidst.version.VersionInfo;
-import MoF.SaveLoader.Type;
 
 public class MinecraftUtil {
 	private static IMinecraftInterface minecraftInterface;

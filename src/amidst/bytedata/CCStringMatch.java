@@ -1,7 +1,5 @@
 package amidst.bytedata;
 
-import java.io.UnsupportedEncodingException;
-
 import amidst.minecraft.Minecraft;
 
 

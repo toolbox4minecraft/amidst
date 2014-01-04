@@ -1,12 +1,5 @@
 package amidst.version;
 
-
-import java.util.Arrays;
-import java.util.List;
-
-import amidst.logging.Log;
-import amidst.minecraft.Minecraft;
-
 /** Information about what each supported version is
  */
 public enum VersionInfo {

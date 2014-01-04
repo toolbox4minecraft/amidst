@@ -7,15 +7,10 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.Options;
-import amidst.logging.Log;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
-import amidst.map.MapObjectNether;
 import amidst.map.MapObjectStronghold;
-import amidst.map.MapObjectVillage;
 import amidst.minecraft.Biome;
-import amidst.minecraft.Minecraft;
-import amidst.minecraft.MinecraftObject;
 import amidst.minecraft.MinecraftUtil;
 import amidst.version.VersionInfo;
 

@@ -1,7 +1,6 @@
 package amidst.minecraft;
 
 import amidst.version.VersionInfo;
-import MoF.SaveLoader;
 import MoF.SaveLoader.Type;
 
 public class LocalMinecraftInterface implements IMinecraftInterface {

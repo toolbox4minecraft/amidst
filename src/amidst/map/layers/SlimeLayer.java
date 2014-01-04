@@ -1,12 +1,8 @@
 package amidst.map.layers;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.util.Random;
 
 import amidst.Options;
-import amidst.Util;
 import amidst.map.Fragment;
 import amidst.map.Layer;
 

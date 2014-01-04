@@ -3,12 +3,9 @@ package amidst.logging;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import javax.swing.JOptionPane;
 
 import MoF.FinderWindow;
-import amidst.Options;
 import amidst.gui.CrashDialog;
 
 public class Log {
