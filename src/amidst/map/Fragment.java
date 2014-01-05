@@ -2,6 +2,7 @@ package amidst.map;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
@@ -107,8 +108,14 @@ public class Fragment {
 				if (layers[i].isVisible()) {
 					//if (layers[i].isTransparent)
 					//	g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, layers[i].getAlpha()));
+
 					
+					// TOOD: FIX THIS
 					g.setTransform(layers[i].getScaledMatrix(mat));
+					if (g.getTransform().getScaleX() < 1.0f)
+						g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+					else
+						g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 					g.drawImage(images[i], 0, 0, null);
 
 					//if (layers[i].isTransparent)

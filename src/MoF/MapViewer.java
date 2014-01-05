@@ -180,11 +180,6 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		
 		worldMap.width = getWidth();
 		worldMap.height = getHeight();
-		if (curZoom < 0.25f)
-			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		else
-			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-		
 		
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		worldMap.draw((Graphics2D)g2d.create(), time);
