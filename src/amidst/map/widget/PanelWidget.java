@@ -3,10 +3,21 @@ package amidst.map.widget;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
+import amidst.resources.ResourceLoader;
 import MoF.MapViewer;
 
 public class PanelWidget extends Widget {
+	private static BufferedImage
+			dropShadowBottomLeft  = ResourceLoader.getImage("dropshadow/dropshadow_bottom_left.png"),
+			dropShadowBottomRight = ResourceLoader.getImage("dropshadow/dropshadow_bottom_right.png"),
+			dropShadowTopLeft     = ResourceLoader.getImage("dropshadow/dropshadow_top_left.png"),
+			dropShadowTopRight    = ResourceLoader.getImage("dropshadow/dropshadow_top_right.png"),
+			dropShadowBottom      = ResourceLoader.getImage("dropshadow/dropshadow_bottom.png"),
+			dropShadowTop         = ResourceLoader.getImage("dropshadow/dropshadow_top.png"),
+			dropShadowLeft        = ResourceLoader.getImage("dropshadow/dropshadow_left.png"),
+			dropShadowRight       = ResourceLoader.getImage("dropshadow/dropshadow_right.png");
 	public enum CornerAnchorPoint {
 		TOP_LEFT,
 		TOP_RIGHT,
@@ -15,7 +26,7 @@ public class PanelWidget extends Widget {
 		NONE
 	}
 	protected Color textColor = new Color(1f, 1f, 1f);
-	protected Color panelColor = new Color(0.2f, 0.2f, 0.2f, 0.8f);
+	protected Color panelColor = new Color(0.15f, 0.15f, 0.15f, 0.8f);
 	protected Font textFont = new Font("arial", Font.BOLD, 15);
 	protected CornerAnchorPoint anchor = CornerAnchorPoint.NONE;
 	protected int xPadding = 10, yPadding = 10;
@@ -39,6 +50,16 @@ public class PanelWidget extends Widget {
 		
 		updatePosition();
 		g2d.setColor(panelColor);
+		g2d.drawImage(dropShadowTopLeft,     x - 10,    y - 10,     null);
+		g2d.drawImage(dropShadowTopRight,    x + width, y - 10,     null);
+		g2d.drawImage(dropShadowBottomLeft,  x - 10,    y + height, null);
+		g2d.drawImage(dropShadowBottomRight, x + width, y + height, null);
+		
+		g2d.drawImage(dropShadowTop,    x,         y - 10,     width, 10,  null);
+		g2d.drawImage(dropShadowBottom, x,         y + height, width, 10,  null);
+		g2d.drawImage(dropShadowLeft,   x - 10,    y,          10, height, null);
+		g2d.drawImage(dropShadowRight,  x + width, y,          10, height, null);
+		
 		g2d.fillRect(x, y, width, height);
 	}
 	
