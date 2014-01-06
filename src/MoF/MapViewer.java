@@ -21,6 +21,7 @@ import amidst.map.layers.SpawnLayer;
 import amidst.map.layers.StrongholdLayer;
 import amidst.map.layers.TempleLayer;
 import amidst.map.layers.VillageLayer;
+import amidst.map.widget.BiomeWidget;
 import amidst.map.widget.CursorInformationWidget;
 import amidst.map.widget.DebugWidget;
 import amidst.map.widget.FpsWidget;
@@ -129,6 +130,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		widgets.add(new DebugWidget(this).setAnchorPoint(CornerAnchorPoint.BOTTOM_RIGHT));
 		widgets.add(new SelectedObjectWidget(this).setAnchorPoint(CornerAnchorPoint.TOP_LEFT));
 		widgets.add(new CursorInformationWidget(this).setAnchorPoint(CornerAnchorPoint.TOP_RIGHT));
+		widgets.add(new BiomeWidget(this).setAnchorPoint(CornerAnchorPoint.BOTTOM_RIGHT));
 		
 		addMouseListener(this);
 		addMouseWheelListener(this);
