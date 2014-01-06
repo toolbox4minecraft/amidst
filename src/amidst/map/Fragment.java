@@ -18,7 +18,7 @@ public class Fragment {
 	public short[] biomeData = new short[BIOME_SIZE * BIOME_SIZE];
 	
 	private Layer[] layers;
-	private Layer[] liveLayers;
+	private LiveLayer[] liveLayers;
 	private IconLayer[] iconLayers;
 	
 	private BufferedImage[] images;
@@ -37,11 +37,10 @@ public class Fragment {
 	
 	private static int[] dataCache = new int[SIZE*SIZE];
 	
-	
 	public Fragment(Layer... layers) {
 		this(layers, null, null);
 	}
-	public Fragment(Layer[] layers, Layer[] liveLayers, IconLayer[] iconLayers) {
+	public Fragment(Layer[] layers, LiveLayer[] liveLayers, IconLayer[] iconLayers) {
 		this.layers = layers;
 		this.liveLayers = liveLayers;
 		images = new BufferedImage[layers.length];
@@ -66,12 +65,7 @@ public class Fragment {
 	}
 	
 	public void recycle() {
-		isActive = false;
-		if (isLoaded) {
-			for (Layer layer : layers)
-				layer.unload(this);
-		}
-		
+		isActive = false;		
 		isLoaded = false;
 	}
 	
@@ -84,47 +78,39 @@ public class Fragment {
 	public void clear() {
 		for (IconLayer layer : iconLayers)
 			layer.clearMapObjects(this);
-		//isLoaded = false;
 		hasNext = false;
 		endOfLine = false;
 		isActive = true;
 	}
+	
 	public void drawLive(float time, Graphics2D g, AffineTransform mat) {
 		for (int i = 0; i < liveLayers.length; i++) {
 			if (liveLayers[i].isVisible()) {
-				liveLayers[i].drawLive(this, g, liveLayers[i].getMatrix(mat));
+				liveLayers[i].drawLive(this, g, mat);
 			}
 		}
 		
 	}
 	public void draw(float time, Graphics2D g, AffineTransform mat) {
-		if (isLoaded) {
-			alpha = Math.min(1.0f, time*3.0f + alpha);
+		if (!isLoaded)
+			return;
+		
+		alpha = Math.min(1.0f, time*3.0f + alpha);
+		for (int i = 0; i < images.length; i++) {
+			if (layers[i].isVisible()) {
+				g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha * layers[i].getAlpha()));
 
-			if (alpha != 1.0f)
-				g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-			
-			for (int i = 0; i < images.length; i++) {
-				if (layers[i].isVisible()) {
-					if (layers[i].isTransparent)
-						g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha * layers[i].getAlpha()));
-
-					
-					// TOOD: FIX THIS
-					g.setTransform(layers[i].getScaledMatrix(mat));
-					if (g.getTransform().getScaleX() < 1.0f)
-						g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-					else
-						g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-					g.drawImage(images[i], 0, 0, null);
-
-					if (layers[i].isTransparent)
-						g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-				}
+				
+				// TOOD: FIX THIS
+				g.setTransform(layers[i].getScaledMatrix(mat));
+				if (g.getTransform().getScaleX() < 1.0f)
+					g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+				else
+					g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+				g.drawImage(images[i], 0, 0, null);
 			}
 		}
-		if (alpha != 1.0f)
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 	}
 	
 	public void drawObjects(Graphics2D g, AffineTransform inMatrix) {

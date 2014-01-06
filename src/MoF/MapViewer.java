@@ -7,9 +7,11 @@ import amidst.logging.Log;
 import amidst.map.FragmentManager;
 import amidst.map.IconLayer;
 import amidst.map.Layer;
+import amidst.map.LiveLayer;
 import amidst.map.Map;
 import amidst.map.MapObject;
 import amidst.map.MapObjectPlayer;
+import amidst.map.layers.BiomeFilterLayer;
 import amidst.map.layers.BiomeLayer;
 import amidst.map.layers.GridLayer;
 import amidst.map.layers.NetherFortressLayer;
@@ -65,10 +67,9 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		fragmentManager = new FragmentManager(
 			new Layer[] {
 				new BiomeLayer(),
-				//new BiomeFilterLayer(),
 				new SlimeLayer()
 			},
-			new Layer[] {
+			new LiveLayer[] {
 				new GridLayer()
 			},
 			new IconLayer[] {

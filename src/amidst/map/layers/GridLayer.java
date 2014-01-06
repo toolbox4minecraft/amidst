@@ -9,18 +9,22 @@ import java.awt.geom.AffineTransform;
 import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.Layer;
+import amidst.map.LiveLayer;
 
 
-public class GridLayer extends Layer {
+public class GridLayer extends LiveLayer {
 	private static Font drawFont = new Font("arial", Font.BOLD, 16);
 	private static StringBuffer textBuffer = new StringBuffer(128);
 	private static char[] textCache = new char[128];
+	
 	public GridLayer() {
-		super("grid", null, 1.1f);
-		setVisibilityPref(Options.instance.showGrid);
 	}
 	
-		@Override
+	@Override
+	public boolean isVisible() {
+		return Options.instance.showGrid.get();
+	}
+	@Override
 	public void drawLive(Fragment fragment, Graphics2D g, AffineTransform mat) {
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		AffineTransform originalTransform = g.getTransform();
@@ -41,13 +45,13 @@ public class GridLayer extends Layer {
 		int gridX = (fragment.getFragmentX() % (stride + 1));
 		int gridY = (fragment.getFragmentY() % (stride + 1));
 		if (gridY == 0)
-			g.drawLine(0, 0, size, 0);
+			g.drawLine(0, 0, Fragment.SIZE, 0);
 		if (gridY == stride)
-			g.drawLine(0, size, size, size);
+			g.drawLine(0, Fragment.SIZE, Fragment.SIZE, Fragment.SIZE);
 		if (gridX == 0)
-			g.drawLine(0, 0, 0, size);
+			g.drawLine(0, 0, 0, Fragment.SIZE);
 		if (gridX == stride)
-			g.drawLine(size, 0, size, size);
+			g.drawLine(Fragment.SIZE, 0, Fragment.SIZE, Fragment.SIZE);
 		
 		if (gridX != 0)
 			return;

@@ -7,11 +7,9 @@ import amidst.map.Layer;
 import amidst.minecraft.Biome;
 
 public class BiomeLayer extends Layer {
-
 	private static int size = Fragment.SIZE >> 2;
 	public BiomeLayer() {
-		super("biome", null, 0.0f, size);
-		isTransparent = false;
+		super(size);
 	}
 	
 	@Override

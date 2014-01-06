@@ -23,9 +23,9 @@ public class FragmentManager implements Runnable {
 	
 	private Layer[] layers;
 	private IconLayer[] iconLayers;
-	private Layer[] liveLayers;
+	private LiveLayer[] liveLayers;
 	
-	public FragmentManager(Layer[] layers, Layer[] liveLayers, IconLayer[] iconLayers) {
+	public FragmentManager(Layer[] layers, LiveLayer[] liveLayers, IconLayer[] iconLayers) {
 		fragmentQueue = new ConcurrentLinkedQueue<Fragment>();
 		requestQueue = new ConcurrentLinkedQueue<Fragment>();
 		recycleQueue = new ConcurrentLinkedQueue<Fragment>();
@@ -34,7 +34,6 @@ public class FragmentManager implements Runnable {
 		
 		fragmentCache = new Fragment[cacheSize];
 		
-		Arrays.sort(layers);
 		for (int i = 0; i < cacheSize; i++) {
 			fragmentCache[i] = new Fragment(layers, liveLayers, iconLayers);
 			fragmentQueue.offer(fragmentCache[i]);
@@ -137,7 +136,7 @@ public class FragmentManager implements Runnable {
 		for (Layer layer : layers)
 			layer.setMap(map);
 		
-		for (Layer layer : liveLayers)
+		for (LiveLayer layer : liveLayers)
 			layer.setMap(map);
 		
 		for (IconLayer layer : iconLayers) {

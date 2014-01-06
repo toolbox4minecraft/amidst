@@ -10,8 +10,12 @@ public class SlimeLayer extends Layer {
 	private static int size = Fragment.SIZE >> 4;
 	private Random random = new Random();
 	public SlimeLayer() {
-		super("slime", null, 0.0f, size);
-		setVisibilityPref(Options.instance.showSlimeChunks);
+		super(size);
+	}
+	
+	@Override
+	public boolean isVisible() {
+		return Options.instance.showSlimeChunks.get();
 	}
 	
 	@Override

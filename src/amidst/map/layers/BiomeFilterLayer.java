@@ -4,14 +4,17 @@ import amidst.Util;
 import amidst.map.Fragment;
 import amidst.map.Layer;
 import amidst.minecraft.Biome;
+import amidst.preferences.BooleanPrefModel;
 
 public class BiomeFilterLayer extends Layer {
 
 	private static int size = Fragment.SIZE >> 2;
+	
 	public BiomeFilterLayer() {
-		super("biomefilter", null, 0.0f, size);
-		isTransparent = true;
+		super(size);
 	}
+
+	
 	@Override
 	public void drawToCache(Fragment fragment, int layerID) {
 		int[] dataCache = Fragment.getIntArray();
