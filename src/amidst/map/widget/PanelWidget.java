@@ -20,12 +20,23 @@ public class PanelWidget extends Widget {
 	protected CornerAnchorPoint anchor = CornerAnchorPoint.NONE;
 	protected int xPadding = 10, yPadding = 10;
 	
+	protected float alpha = 1.0f, targetAlpha = 1.0f;
+	protected boolean isFading = false;
+	protected boolean targetVisibility = true;
+	
 	public PanelWidget(MapViewer mapViewer) {
 		super(mapViewer);
 	}
 
 	@Override
 	public void draw(Graphics2D g2d, float time) {
+		targetAlpha = targetVisibility?1.0f:0.0f;
+		if (alpha < targetAlpha)
+			alpha = Math.min(targetAlpha, alpha + time*4.0f);
+		else if (alpha > targetAlpha)
+			alpha = Math.max(targetAlpha, alpha - time*4.0f);
+		isFading = (alpha != targetAlpha);
+		
 		updatePosition();
 		g2d.setColor(panelColor);
 		g2d.fillRect(x, y, width, height);
@@ -64,6 +75,29 @@ public class PanelWidget extends Widget {
 		case NONE:
 			break;
 		}
+	}
+	
+	@Override
+	public boolean isVisible() {
+		boolean value = (visible && targetVisibility) || isFading;
+		targetVisibility = onVisibilityCheck();
+		return value;
+	}
+	
+	protected boolean onVisibilityCheck() {
+		return visible;
+	}
+	
+	public void forceVisibility(boolean value) {
+		targetVisibility = value;
+		isFading = false;
+		targetAlpha = value?1.0f:0.0f;
+		alpha = value?1.0f:0.0f;
+	}
+	
+	@Override
+	public float getAlpha() {
+		return alpha;
 	}
 	
 	public PanelWidget setAnchorPoint(CornerAnchorPoint anchor) {

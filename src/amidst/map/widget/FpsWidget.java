@@ -11,6 +11,7 @@ public class FpsWidget extends PanelWidget {
 	public FpsWidget(MapViewer mapViewer) {
 		super(mapViewer);
 		setDimensions(20, 30);
+		forceVisibility(onVisibilityCheck());
 	}
 	
 	@Override 
@@ -23,8 +24,9 @@ public class FpsWidget extends PanelWidget {
 		g2d.setColor(textColor);
 		g2d.drawString(framerate, x + 10, y + 20);
 	}
+	
 	@Override
-	public boolean isVisible() {
-		return visible && Options.instance.showFPS.get();
+	protected boolean onVisibilityCheck() {
+		return Options.instance.showFPS.get();
 	}
 }

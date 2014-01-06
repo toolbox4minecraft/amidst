@@ -10,6 +10,7 @@ import amidst.map.FragmentManager;
 public class DebugWidget extends PanelWidget {
 	public DebugWidget(MapViewer mapViewer) {
 		super(mapViewer);
+		forceVisibility(onVisibilityCheck());
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public class DebugWidget extends PanelWidget {
 	}
 	
 	@Override
-	public boolean isVisible() {
-		return visible && Options.instance.showDebug.get();
+	protected boolean onVisibilityCheck() {
+		return Options.instance.showDebug.get();
 	}
 }

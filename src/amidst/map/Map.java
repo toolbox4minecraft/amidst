@@ -3,6 +3,7 @@ package amidst.map;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+
 import amidst.map.layers.BiomeLayer;
 
 public class Map {
@@ -91,6 +92,8 @@ public class Map {
 					}
 				}
 			}
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+			
 			frag = startNode;
 			if (frag.hasNext) {
 				mat.setToIdentity();

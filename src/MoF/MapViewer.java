@@ -28,6 +28,7 @@ import amidst.map.widget.SelectedObjectWidget;
 import amidst.map.widget.Widget;
 import amidst.minecraft.MinecraftUtil;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -186,9 +187,12 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		
 
 		g2d.setFont(textFont);
-		for (Widget widget : widgets)
-			if (widget.isVisible())
+		for (Widget widget : widgets) {
+			if (widget.isVisible()) {
+				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, widget.getAlpha()));
 				widget.draw(g2d, time);
+			}
+		}
 	}
 	
 	

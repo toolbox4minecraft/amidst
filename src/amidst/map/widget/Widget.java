@@ -43,4 +43,8 @@ public class Widget {
 	public void setVisibility(boolean value) {
 		visible = value;
 	}
+	
+	public float getAlpha() {
+		return 1.0f;
+	}
 }

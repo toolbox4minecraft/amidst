@@ -6,26 +6,31 @@ import java.awt.Point;
 import MoF.MapViewer;
 
 public class CursorInformationWidget extends PanelWidget {
+	private String message = "";
+	
 	public CursorInformationWidget(MapViewer mapViewer) {
 		super(mapViewer);
 		setDimensions(20, 30);
+		forceVisibility(false);
 	}
 
 	@Override
 	public void draw(Graphics2D g2d, float time) {
-		Point mouseLocation = map.screenToLocal(mapViewer.getMousePosition());
-		String biomeName = map.getBiomeAliasAt(mouseLocation);
-		String mouseLocationText = biomeName + " [ " + mouseLocation.x + ", " + mouseLocation.y + " ]";
-		int stringWidth = mapViewer.getFontMetrics().stringWidth(mouseLocationText);
+		if (targetVisibility) {
+			Point mouseLocation = map.screenToLocal(mapViewer.getMousePosition());
+			String biomeName = map.getBiomeAliasAt(mouseLocation);
+			message = biomeName + " [ " + mouseLocation.x + ", " + mouseLocation.y + " ]";
+		}
+		int stringWidth = mapViewer.getFontMetrics().stringWidth(message);
 		setWidth(stringWidth + 20);
 		super.draw(g2d, time);
 		
 		g2d.setColor(textColor);
-		g2d.drawString(mouseLocationText, x + 10, y + 20);
+		g2d.drawString(message, x + 10, y + 20);
 	}
 	
 	@Override
-	public boolean isVisible() {
-		return visible && (mapViewer.getMousePosition() != null);
+	protected boolean onVisibilityCheck() {
+		return (mapViewer.getMousePosition() != null);
 	}
 }

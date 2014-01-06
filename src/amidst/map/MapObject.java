@@ -22,7 +22,6 @@ public class MapObject extends Point {
 		return type.toString();
 	}
 	
-	
 	public int getWidth() {
 		return (int)(type.image.getWidth() * localScale);
 	}
