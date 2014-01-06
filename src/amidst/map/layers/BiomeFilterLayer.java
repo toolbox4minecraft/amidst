@@ -2,11 +2,10 @@ package amidst.map.layers;
 
 import amidst.Util;
 import amidst.map.Fragment;
-import amidst.map.Layer;
+import amidst.map.ImageLayer;
 import amidst.minecraft.Biome;
-import amidst.preferences.BooleanPrefModel;
 
-public class BiomeFilterLayer extends Layer {
+public class BiomeFilterLayer extends ImageLayer {
 
 	private static int size = Fragment.SIZE >> 2;
 	

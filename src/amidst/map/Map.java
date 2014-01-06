@@ -85,7 +85,7 @@ public class Map {
 				mat.scale(scale, scale);
 				while (frag.hasNext) {
 					frag = frag.nextFragment;
-					frag.draw(time, g, mat);
+					frag.drawImageLayers(time, g, mat);
 					mat.translate(size, 0);
 					if (frag.endOfLine) {
 						mat.translate(-size * w, size);
@@ -102,7 +102,7 @@ public class Map {
 				mat.scale(scale, scale);
 				while (frag.hasNext) {
 					frag = frag.nextFragment;
-					frag.drawLive(time, g, mat);
+					frag.drawLiveLayers(time, g, mat);
 					mat.translate(size, 0);
 					if (frag.endOfLine) {
 						mat.translate(-size * w, size);

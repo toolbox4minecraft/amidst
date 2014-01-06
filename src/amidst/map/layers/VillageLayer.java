@@ -16,9 +16,13 @@ public class VillageLayer extends IconLayer {
 	private Random random = new Random();
 	
 	public VillageLayer() {
-		super("villages");
-		setVisibilityPref(Options.instance.showVillages);
 	}
+	
+	@Override
+	public boolean isVisible() {
+		return Options.instance.showVillages.get();		
+	}
+	
 	@Override
 	public void generateMapObjects(Fragment frag) {
 		int size = Fragment.SIZE >> 4;

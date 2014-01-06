@@ -62,10 +62,12 @@ public class StrongholdLayer extends IconLayer {
 	private MapObjectStronghold[] strongholds = new MapObjectStronghold[3];
 	
 	public StrongholdLayer() {
-		super("strongholds");
 		instance = this;
-		setVisibilityPref(Options.instance.showStrongholds);
-		
+	}
+	
+	@Override
+	public boolean isVisible() {
+		return Options.instance.showStrongholds.get();		
 	}
 	
 	@Override

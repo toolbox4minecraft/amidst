@@ -18,11 +18,14 @@ public class TempleLayer extends IconLayer {
 	private Random random = new Random();
 	
 	public TempleLayer() {
-		super("temples");
-		setVisibilityPref(Options.instance.showTemples);
-		
 		validBiomes = getValidBiomes();
 	}
+	
+	@Override
+	public boolean isVisible() {
+		return Options.instance.showTemples.get();		
+	}
+	
 	@Override
 	public void generateMapObjects(Fragment frag) {
 		int size = Fragment.SIZE >> 4;

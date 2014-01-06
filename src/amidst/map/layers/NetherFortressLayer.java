@@ -10,8 +10,11 @@ public class NetherFortressLayer extends IconLayer {
 	private Random random = new Random();
 	
 	public NetherFortressLayer() {
-		super("netherfortress");
-		setVisibilityPref(Options.instance.showNetherFortresses);
+	}
+	
+	@Override
+	public boolean isVisible() {
+		return Options.instance.showNetherFortresses.get();
 	}
 	@Override
 	public void generateMapObjects(Fragment frag) {

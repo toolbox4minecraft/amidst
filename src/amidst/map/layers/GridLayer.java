@@ -8,7 +8,6 @@ import java.awt.geom.AffineTransform;
 
 import amidst.Options;
 import amidst.map.Fragment;
-import amidst.map.Layer;
 import amidst.map.LiveLayer;
 
 

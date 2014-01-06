@@ -1,6 +1,5 @@
 package amidst.map;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -19,26 +18,25 @@ public class FragmentManager implements Runnable {
 	private ConcurrentLinkedQueue<Fragment> recycleQueue;
 	private int sleepTick = 0;
 	
-	private Stack<Layer> layerList;
+	private Stack<ImageLayer> layerList;
 	
-	private Layer[] layers;
+	private ImageLayer[] imageLayers;
 	private IconLayer[] iconLayers;
 	private LiveLayer[] liveLayers;
 	
-	public FragmentManager(Layer[] layers, LiveLayer[] liveLayers, IconLayer[] iconLayers) {
+	public FragmentManager(ImageLayer[] imageLayers, LiveLayer[] liveLayers, IconLayer[] iconLayers) {
 		fragmentQueue = new ConcurrentLinkedQueue<Fragment>();
 		requestQueue = new ConcurrentLinkedQueue<Fragment>();
 		recycleQueue = new ConcurrentLinkedQueue<Fragment>();
-		layerList = new Stack<Layer>();
-		Collections.addAll(layerList, layers);
+		layerList = new Stack<ImageLayer>();
+		Collections.addAll(layerList, imageLayers);
 		
 		fragmentCache = new Fragment[cacheSize];
-		
 		for (int i = 0; i < cacheSize; i++) {
-			fragmentCache[i] = new Fragment(layers, liveLayers, iconLayers);
+			fragmentCache[i] = new Fragment(imageLayers, liveLayers, iconLayers);
 			fragmentQueue.offer(fragmentCache[i]);
 		}
-		this.layers = layers;
+		this.imageLayers = imageLayers;
 		this.iconLayers = iconLayers;
 		this.liveLayers = liveLayers;
 	}
@@ -67,7 +65,7 @@ public class FragmentManager implements Runnable {
 			fragmentCache[i] = null;
 		}
 		for (int i = cacheSize; i < cacheSize << 1; i++) {
-			newFragments[i] = new Fragment(layers, liveLayers, iconLayers);
+			newFragments[i] = new Fragment(imageLayers, liveLayers, iconLayers);
 			fragmentQueue.offer(newFragments[i]);
 		}
 		fragmentCache = newFragments;
@@ -133,7 +131,7 @@ public class FragmentManager implements Runnable {
 	}
 	
 	public void setMap(Map map) {
-		for (Layer layer : layers)
+		for (ImageLayer layer : imageLayers)
 			layer.setMap(map);
 		
 		for (LiveLayer layer : liveLayers)

@@ -3,10 +3,10 @@ package amidst.map.layers;
 import amidst.Options;
 import amidst.logging.Log;
 import amidst.map.Fragment;
-import amidst.map.Layer;
+import amidst.map.ImageLayer;
 import amidst.minecraft.Biome;
 
-public class BiomeLayer extends Layer {
+public class BiomeLayer extends ImageLayer {
 	private static int size = Fragment.SIZE >> 2;
 	public BiomeLayer() {
 		super(size);

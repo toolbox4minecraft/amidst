@@ -6,7 +6,7 @@ import amidst.gui.menu.PlayerMenuItem;
 import amidst.logging.Log;
 import amidst.map.FragmentManager;
 import amidst.map.IconLayer;
-import amidst.map.Layer;
+import amidst.map.ImageLayer;
 import amidst.map.LiveLayer;
 import amidst.map.Map;
 import amidst.map.MapObject;
@@ -65,7 +65,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	private static PlayerLayer playerLayer;
 	static {
 		fragmentManager = new FragmentManager(
-			new Layer[] {
+			new ImageLayer[] {
 				new BiomeLayer(),
 				new SlimeLayer()
 			},

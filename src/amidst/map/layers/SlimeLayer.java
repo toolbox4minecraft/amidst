@@ -4,9 +4,9 @@ import java.util.Random;
 
 import amidst.Options;
 import amidst.map.Fragment;
-import amidst.map.Layer;
+import amidst.map.ImageLayer;
 
-public class SlimeLayer extends Layer {
+public class SlimeLayer extends ImageLayer {
 	private static int size = Fragment.SIZE >> 4;
 	private Random random = new Random();
 	public SlimeLayer() {

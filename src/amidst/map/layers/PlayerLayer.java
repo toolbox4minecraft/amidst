@@ -16,9 +16,14 @@ public class PlayerLayer extends IconLayer {
 		skinManager.start();
 	}
 	public PlayerLayer() {
-		super("players");
-		setVisibilityPref(Options.instance.showPlayers);
+		
 	}
+	
+	@Override
+	public boolean isVisible() {
+		return Options.instance.showPlayers.get();		
+	}
+	
 	@Override
 	public void generateMapObjects(Fragment frag) {
 		if (!isEnabled) return;

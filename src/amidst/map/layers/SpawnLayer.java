@@ -26,9 +26,11 @@ public class SpawnLayer extends IconLayer {
 		));
 	
 	public SpawnLayer() {
-		super("spawnPoint");
-		setVisibilityPref(Options.instance.showSpawn);
-		
+	}
+	
+	@Override
+	public boolean isVisible() {
+		return Options.instance.showSpawn.get();		
 	}
 	
 	@Override
