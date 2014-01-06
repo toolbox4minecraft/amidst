@@ -106,8 +106,8 @@ public class Fragment {
 			
 			for (int i = 0; i < images.length; i++) {
 				if (layers[i].isVisible()) {
-					//if (layers[i].isTransparent)
-					//	g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, layers[i].getAlpha()));
+					if (layers[i].isTransparent)
+						g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha * layers[i].getAlpha()));
 
 					
 					// TOOD: FIX THIS
@@ -118,7 +118,8 @@ public class Fragment {
 						g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 					g.drawImage(images[i], 0, 0, null);
 
-					//if (layers[i].isTransparent)
+					if (layers[i].isTransparent)
+						g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 				}
 			}
 		}
