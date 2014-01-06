@@ -57,9 +57,6 @@ public class Map {
 			centerOn(0, 0);
 		}
 		
-		
-		// TODO: Enable via settings?
-		//g.setRenderingHints(renderingHints);
 		synchronized (drawLock) {
 			int size = (int) (Fragment.SIZE * scale);
 			int w = width / size + 2;
@@ -75,7 +72,6 @@ public class Map {
 			while (start.y >	 0) { start.y -= size; addRow(START);	removeRow(END);	  }
 			while (start.y < -size) { start.y += size; addRow(END);	  removeRow(START);	}
 			
-			//g.setColor(Color.pink);
 			Fragment frag = startNode;
 			size = Fragment.SIZE;
 			if (frag.hasNext) {
