@@ -40,6 +40,14 @@ public class FragmentManager implements Runnable {
 		this.iconLayers = iconLayers;
 		this.liveLayers = liveLayers;
 	}
+	public void updateLayers(float time) {
+		for (ImageLayer layer : imageLayers)
+			layer.update(time);
+		for (LiveLayer layer : liveLayers)
+			layer.update(time);
+		for (IconLayer layer : iconLayers)
+			layer.update(time);
+	}
 	
 	public void reset() {
 		running = false;
@@ -131,11 +139,15 @@ public class FragmentManager implements Runnable {
 	}
 	
 	public void setMap(Map map) {
-		for (ImageLayer layer : imageLayers)
+		for (ImageLayer layer : imageLayers) {
 			layer.setMap(map);
+			layer.reload();
+		}
 		
-		for (LiveLayer layer : liveLayers)
+		for (LiveLayer layer : liveLayers) {
 			layer.setMap(map);
+			layer.reload();
+		}
 		
 		for (IconLayer layer : iconLayers) {
 			layer.setMap(map);

@@ -12,9 +12,4 @@ public class IconLayer extends Layer {
 	public void clearMapObjects(Fragment frag) {
 		frag.objectsLength = 0;
 	}
-	
-
-	public void reload() {
-		
-	}
 }

@@ -9,7 +9,7 @@ import amidst.map.layers.BiomeLayer;
 public class Map {
 	public static Map instance = null;
 	private static final boolean START = true, END = false;
-	private FragmentManager fManager;
+	private FragmentManager fragmentManager;
 	
 	private Fragment startNode = new Fragment();
 	
@@ -30,8 +30,8 @@ public class Map {
 	public Map(FragmentManager fragmentManager) {
 		
 		
-		fManager = fragmentManager;
-		fManager.setMap(this);
+		this.fragmentManager = fragmentManager;
+		fragmentManager.setMap(this);
 		mat = new AffineTransform();
 		
 		start = new Point2D.Double();
@@ -45,7 +45,7 @@ public class Map {
 			Fragment frag = startNode;
 			while (frag.hasNext) {
 				frag = frag.nextFragment;
-				fManager.repaintFragment(frag);
+				fragmentManager.repaintFragment(frag);
 			}
 		}
 	}
@@ -93,7 +93,7 @@ public class Map {
 				}
 			}
 			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-			
+			fragmentManager.updateLayers(time);
 			frag = startNode;
 			if (frag.hasNext) {
 				mat.setToIdentity();
@@ -131,7 +131,7 @@ public class Map {
 	}
 	public void addStart(int x, int y) {
 		synchronized (resizeLock) {
-			Fragment start = fManager.requestFragment(x, y);
+			Fragment start = fragmentManager.requestFragment(x, y);
 			start.endOfLine = true;
 			startNode.setNext(start);
 			tileWidth = 1;
@@ -145,7 +145,7 @@ public class Map {
 			Fragment frag = startNode;
 			if (start) {
 				x = frag.nextFragment.blockX - Fragment.SIZE;
-				Fragment newFrag = fManager.requestFragment(x, frag.nextFragment.blockY);
+				Fragment newFrag = fragmentManager.requestFragment(x, frag.nextFragment.blockY);
 				newFrag.setNext(startNode.nextFragment);
 				startNode.setNext(newFrag);
 			}
@@ -154,13 +154,13 @@ public class Map {
 				if (frag.endOfLine) {
 					if (start) {
 						if (frag.hasNext) {
-							Fragment newFrag = fManager.requestFragment(x, frag.blockY + Fragment.SIZE);
+							Fragment newFrag = fragmentManager.requestFragment(x, frag.blockY + Fragment.SIZE);
 							newFrag.setNext(frag.nextFragment);
 							frag.setNext(newFrag);
 							frag = newFrag;
 						}
 					} else {
-						Fragment newFrag = fManager.requestFragment(frag.blockX + Fragment.SIZE, frag.blockY);
+						Fragment newFrag = fragmentManager.requestFragment(frag.blockX + Fragment.SIZE, frag.blockY);
 						
 						if (frag.hasNext) {
 							newFrag.setNext(frag.nextFragment);
@@ -182,7 +182,7 @@ public class Map {
 				for (int i = 0; i < tileWidth; i++) {
 					Fragment frag = startNode.nextFragment;
 					frag.remove();
-					fManager.returnFragment(frag);
+					fragmentManager.returnFragment(frag);
 				}
 			} else {
 				Fragment frag = startNode;
@@ -190,7 +190,7 @@ public class Map {
 					frag = frag.nextFragment;
 				for (int i = 0; i < tileWidth; i++) {
 					frag.remove();
-					fManager.returnFragment(frag);
+					fragmentManager.returnFragment(frag);
 					frag = frag.prevFragment;
 				}
 			}
@@ -211,10 +211,10 @@ public class Map {
 			}
 			
 			tileHeight++;
-			Fragment newFrag = fManager.requestFragment(startNode.nextFragment.blockX, y);
+			Fragment newFrag = fragmentManager.requestFragment(startNode.nextFragment.blockX, y);
 			Fragment chainFrag = newFrag;
 			for (int i = 1; i < tileWidth; i++) {
-				Fragment tempFrag = fManager.requestFragment(chainFrag.blockX + Fragment.SIZE, chainFrag.blockY);
+				Fragment tempFrag = fragmentManager.requestFragment(chainFrag.blockX + Fragment.SIZE, chainFrag.blockY);
 				chainFrag.setNext(tempFrag);
 				chainFrag = tempFrag;
 				if (i == (tileWidth - 1))
@@ -232,7 +232,7 @@ public class Map {
 		synchronized (resizeLock) {
 			Fragment frag = startNode;
 			if (start) {
-				fManager.returnFragment(frag.nextFragment);
+				fragmentManager.returnFragment(frag.nextFragment);
 				startNode.nextFragment.remove();
 			}
 			while (frag.hasNext) {
@@ -242,12 +242,12 @@ public class Map {
 						if (frag.hasNext) {
 							Fragment tempFrag = frag.nextFragment;
 							tempFrag.remove();
-							fManager.returnFragment(tempFrag);
+							fragmentManager.returnFragment(tempFrag);
 						}
 					} else {
 						frag.prevFragment.endOfLine = true;
 						frag.remove();
-						fManager.returnFragment(frag);
+						fragmentManager.returnFragment(frag);
 						frag = frag.prevFragment;
 					}
 				}
@@ -275,7 +275,7 @@ public class Map {
 			while (tileWidth > 1) removeColumn(false);
 			Fragment frag = startNode.nextFragment;
 			frag.remove();
-			fManager.returnFragment(frag);
+			fragmentManager.returnFragment(frag);
 			// TODO: Support longs?
 			double offsetX = width >> 1;
 			double offsetY = height >> 1;
@@ -310,7 +310,7 @@ public class Map {
 	
 	public void dispose() {
 		synchronized (drawLock) {
-			fManager.reset();
+			fragmentManager.reset();
 		}
 	}
 	

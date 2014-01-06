@@ -17,5 +17,8 @@ public class Layer {
 	public boolean isVisible() {
 		return true;
 	}
-	
+
+	public void reload() {
+		
+	}
 }
