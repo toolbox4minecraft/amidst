@@ -16,8 +16,9 @@ public class CursorInformationWidget extends PanelWidget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time) {
-		if (targetVisibility) {
-			Point mouseLocation = map.screenToLocal(mapViewer.getMousePosition());
+		Point mouseLocation = null;
+		if ((mouseLocation = mapViewer.getMousePosition()) != null) {
+			mouseLocation = map.screenToLocal(mouseLocation);
 			String biomeName = map.getBiomeAliasAt(mouseLocation);
 			message = biomeName + " [ " + mouseLocation.x + ", " + mouseLocation.y + " ]";
 		}
