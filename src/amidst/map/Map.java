@@ -39,21 +39,17 @@ public class Map {
 	}
 	
 	public void resetImageLayer(int id) {
-		synchronized (drawLock) {
-			Fragment frag = startNode;
-			while (frag.hasNext) {
-				frag = frag.nextFragment;
-				frag.repaintImageLayer(id);
-			}
+		Fragment frag = startNode;
+		while (frag.hasNext) {
+			frag = frag.nextFragment;
+			fragmentManager.repaintFragmentLayer(frag, id);
 		}
 	}
 	public void resetFragments() {
-		synchronized (drawLock) {
-			Fragment frag = startNode;
-			while (frag.hasNext) {
-				frag = frag.nextFragment;
-				fragmentManager.repaintFragment(frag);
-			}
+		Fragment frag = startNode;
+		while (frag.hasNext) {
+			frag = frag.nextFragment;
+			fragmentManager.repaintFragment(frag);
 		}
 	}
 	

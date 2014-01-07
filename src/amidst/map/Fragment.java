@@ -21,6 +21,8 @@ public class Fragment {
 	private LiveLayer[] liveLayers;
 	private IconLayer[] iconLayers;
 	
+	private Object loadLock = new Object();
+	
 	private BufferedImage[] images;
 	public MapObject[] objects;
 	public int objectsLength = 0;
@@ -51,17 +53,19 @@ public class Fragment {
 	}
 	
 	public void load() {
-		if (isLoaded)
-			Log.w("This should never happen!");
-		int[] data = MinecraftUtil.getBiomeData(blockX >> 2, blockY >> 2, BIOME_SIZE, BIOME_SIZE);
-		for (int i = 0; i < BIOME_SIZE * BIOME_SIZE; i++)
-			biomeData[i] = (short)data[i];
-		for (int i = 0; i < imageLayers.length; i++)
-			imageLayers[i].load(this);
-		for (int i = 0; i < iconLayers.length; i++)
-			iconLayers[i].generateMapObjects(this);
-		alpha = Options.instance.mapFading.get()?0.0f:1.0f;
-		isLoaded = true;
+		synchronized (loadLock) {
+			if (isLoaded)
+				Log.w("This should never happen!");
+			int[] data = MinecraftUtil.getBiomeData(blockX >> 2, blockY >> 2, BIOME_SIZE, BIOME_SIZE);
+			for (int i = 0; i < BIOME_SIZE * BIOME_SIZE; i++)
+				biomeData[i] = (short)data[i];
+			for (int i = 0; i < imageLayers.length; i++)
+				imageLayers[i].load(this);
+			for (int i = 0; i < iconLayers.length; i++)
+				iconLayers[i].generateMapObjects(this);
+			alpha = Options.instance.mapFading.get()?0.0f:1.0f;
+			isLoaded = true;
+		}
 	}
 	
 	public void recycle() {
@@ -209,13 +213,17 @@ public class Fragment {
 		endOfLine = false;
 	}
 	public void repaint() {
-		if (isLoaded)
-			for (int i = 0; i < imageLayers.length; i++)
-				imageLayers[i].load(this);
+		synchronized (loadLock) {
+			if (isLoaded)
+				for (int i = 0; i < imageLayers.length; i++)
+					imageLayers[i].load(this);
+		}
 	}
 	
 	public void repaintImageLayer(int id) {
-		if (isLoaded)
-			imageLayers[id].load(this);
+		synchronized (loadLock) {
+			if (isLoaded)
+				imageLayers[id].load(this);
+		}
 	}
 }

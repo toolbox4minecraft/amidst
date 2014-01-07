@@ -183,4 +183,9 @@ public class FragmentManager implements Runnable {
 	public int getRequestQueueSize() {
 		return requestQueue.size();
 	}
+	public void repaintFragmentLayer(Fragment frag, int id) {
+		synchronized (queueLock) {
+			frag.repaintImageLayer(id);
+		}
+	}
 }
