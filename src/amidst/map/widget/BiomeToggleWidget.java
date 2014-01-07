@@ -3,6 +3,7 @@ package amidst.map.widget;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import amidst.map.layers.BiomeLayer;
 import amidst.resources.ResourceLoader;
 import MoF.MapViewer;
 
@@ -25,5 +26,13 @@ public class BiomeToggleWidget extends PanelWidget {
 	@Override
 	public void onClick(int x, int y) {
 		isBiomeWidgetVisible = !isBiomeWidgetVisible;
+		BiomeLayer.instance.setHighlightMode(isBiomeWidgetVisible);
+		(new Thread(new Runnable() {
+			@Override
+			public void run() {
+				map.resetImageLayer(BiomeLayer.instance.getLayerId());
+			}
+		})).start();
+		//MapViewer.biomeFilterLayer.setEnabled(isBiomeWidgetVisible);
 	}
 }

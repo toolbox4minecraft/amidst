@@ -11,7 +11,7 @@ import amidst.logging.Log;
 import amidst.minecraft.MinecraftUtil;
 
 public class Fragment {
-	public static final int SIZE = 512, SIZE_SHIFT = 9, MAX_OBJECTS_PER_FRAGMENT = 20, MIPMAP_LEVELS = 3, BIOME_SIZE = SIZE >> 2;
+	public static final int SIZE = 512, SIZE_SHIFT = 9, MAX_OBJECTS_PER_FRAGMENT = 40, MIPMAP_LEVELS = 3, BIOME_SIZE = SIZE >> 2;
 	private static AffineTransform drawMatrix = new AffineTransform();
 	public int blockX, blockY;
 	

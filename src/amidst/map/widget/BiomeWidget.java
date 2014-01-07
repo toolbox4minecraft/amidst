@@ -5,13 +5,15 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import amidst.logging.Log;
+import amidst.map.layers.BiomeLayer;
 import amidst.minecraft.Biome;
 import MoF.MapViewer;
 
 public class BiomeWidget extends PanelWidget {
 	private ArrayList<Biome> biomes = new ArrayList<Biome>();
 	private int maxNameWidth = 0;
-	private int columns = 4;
+	private int columns = 1;
 	public BiomeWidget(MapViewer mapViewer) {
 		super(mapViewer);
 		
@@ -46,6 +48,15 @@ public class BiomeWidget extends PanelWidget {
 	
 	@Override
 	public void onClick(int x, int y) {
+		int id = y / 18;
+		Log.i(id-20);
+		BiomeLayer.instance.toggleBiomeSelect(id);
+		(new Thread(new Runnable() {
+			@Override
+			public void run() {
+				map.resetImageLayer(BiomeLayer.instance.getLayerId());
+			}
+		})).start();
 	}
 	
 	@Override

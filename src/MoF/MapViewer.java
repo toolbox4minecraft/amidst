@@ -11,7 +11,6 @@ import amidst.map.LiveLayer;
 import amidst.map.Map;
 import amidst.map.MapObject;
 import amidst.map.MapObjectPlayer;
-import amidst.map.layers.BiomeFilterLayer;
 import amidst.map.layers.BiomeLayer;
 import amidst.map.layers.GridLayer;
 import amidst.map.layers.NetherFortressLayer;
@@ -63,13 +62,10 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	private static FragmentManager fragmentManager;
 	private static PlayerLayer playerLayer;
 	
-	public static BiomeLayer biomeLayer;
-	public static BiomeFilterLayer biomeFilterLayer;
 	static {
 		fragmentManager = new FragmentManager(
 			new ImageLayer[] {
-				biomeLayer = new BiomeLayer(),
-				biomeFilterLayer = new BiomeFilterLayer(),
+				new BiomeLayer(),
 				new SlimeLayer()
 			},
 			new LiveLayer[] {

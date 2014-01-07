@@ -9,13 +9,16 @@ import amidst.map.ImageLayer;
 import amidst.minecraft.Biome;
 
 public class BiomeLayer extends ImageLayer {
+	public static BiomeLayer instance;
 	protected static int size = Fragment.SIZE >> 2;
 
 	protected boolean[] selectedBiomes = new boolean[Biome.biomes.length];
+	private boolean inHighlightMode = false;
 	
 	public BiomeLayer() {
 		super(size);
-		selectAllBiomes();
+		instance = this;
+		deselectAllBiomes();
 	}
 	
 	public void selectAllBiomes() {
@@ -31,8 +34,16 @@ public class BiomeLayer extends ImageLayer {
 	public void deselectBiome(int id) { 
 		setSelected(id, false);
 	}
+
+	public void setHighlightMode(boolean enabled) {
+		inHighlightMode = enabled;
+	}
+	
+	public void toggleBiomeSelect(int id) {
+		setSelected(id, !selectedBiomes[id]);
+	}
 	public void setSelected(int id, boolean value) {
-		
+		selectedBiomes[id] = value;
 	}
 	
 	public void setSelectedAllBiomes(boolean value) {
@@ -43,12 +54,17 @@ public class BiomeLayer extends ImageLayer {
 	@Override
 	public void drawToCache(Fragment fragment) {
 		int[] dataCache = Fragment.getIntArray();
-
-		for (int i = 0; i < size*size; i++)
-			if (!selectedBiomes[fragment.biomeData[i]])
-				dataCache[i] = Util.deselectColor(Biome.biomes[fragment.biomeData[i]].color);
-			else
+		if (inHighlightMode) {
+			for (int i = 0; i < size*size; i++)
+				if (!selectedBiomes[fragment.biomeData[i]])
+					dataCache[i] = Util.deselectColor(Biome.biomes[fragment.biomeData[i]].color);
+				else
+					dataCache[i] = Biome.biomes[fragment.biomeData[i]].color;
+		} else {
+			for (int i = 0; i < size*size; i++)
 				dataCache[i] = Biome.biomes[fragment.biomeData[i]].color;
+		}
+
 		
 		fragment.setImageData(layerId, dataCache);
 	}
@@ -62,10 +78,5 @@ public class BiomeLayer extends ImageLayer {
 	}
 	public static String getBiomeAliasForFragment(Fragment frag, int blockX, int blockY) {
 		return Options.instance.biomeColorProfile.getAliasForId(getBiomeForFragment(frag, blockX, blockY));
-	}
-	
-	@Override
-	public boolean isVisible() {
-		return MapViewer.biomeFilterLayer.getAlpha() != 1.0f;
 	}
 }
