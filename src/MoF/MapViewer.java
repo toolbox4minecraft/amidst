@@ -57,18 +57,18 @@ import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 
 public class MapViewer extends JComponent implements MouseListener, MouseWheelListener, KeyListener {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8309927053337294612L;
 	// TODO: This should likely be moved somewhere else.
 	private static FragmentManager fragmentManager;
 	private static PlayerLayer playerLayer;
+	
+	public static BiomeLayer biomeLayer;
+	public static BiomeFilterLayer biomeFilterLayer;
 	static {
 		fragmentManager = new FragmentManager(
 			new ImageLayer[] {
-				new BiomeLayer(),
-				new BiomeFilterLayer(),
+				biomeLayer = new BiomeLayer(),
+				biomeFilterLayer = new BiomeFilterLayer(),
 				new SlimeLayer()
 			},
 			new LiveLayer[] {

@@ -129,7 +129,19 @@ public class Util {
 	public static <T> T readObject(String path, final Class<T> clazz) throws IOException {
 		return readObject(new File(path), clazz);
 	}
-
+	
+	public static int deselectColor(int color) {
+		int r = (color & 0x00FF0000) >> 16;
+		int g = (color & 0x0000FF00) >> 8;
+		int b = (color & 0x000000FF);
+		
+		int average = (r + g + b);
+		r = (r + average) / 20;
+		g = (g + average) / 20;
+		b = (b + average) / 20;
+		return makeColor(r, g, b);
+	}
+	
 	public static int lightenColor(int color, int brightness) {
 		int r = (color & 0x00FF0000) >> 16;
 		int g = (color & 0x0000FF00) >> 8;

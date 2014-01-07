@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
+import amidst.logging.Log;
 import amidst.map.layers.BiomeLayer;
 
 public class Map {

@@ -1,28 +1,54 @@
 package amidst.map.layers;
 
+import MoF.MapViewer;
 import amidst.Options;
+import amidst.Util;
 import amidst.logging.Log;
 import amidst.map.Fragment;
 import amidst.map.ImageLayer;
 import amidst.minecraft.Biome;
 
 public class BiomeLayer extends ImageLayer {
-	public BiomeLayer instance;
-	private static int size = Fragment.SIZE >> 2;
+	protected static int size = Fragment.SIZE >> 2;
+
+	protected boolean[] selectedBiomes = new boolean[Biome.biomes.length];
+	
 	public BiomeLayer() {
 		super(size);
-		instance = this;
+		selectAllBiomes();
+	}
+	
+	public void selectAllBiomes() {
+		setSelectedAllBiomes(true);
+	}
+	public void deselectAllBiomes() {
+		setSelectedAllBiomes(false);
+	}
+	
+	public void selectBiome(int id) {
+		setSelected(id, true);
+	}
+	public void deselectBiome(int id) { 
+		setSelected(id, false);
+	}
+	public void setSelected(int id, boolean value) {
+		
+	}
+	
+	public void setSelectedAllBiomes(boolean value) {
+		for (int i = 0; i < selectedBiomes.length; i++)
+			selectedBiomes[i] = value;
 	}
 	
 	@Override
 	public void drawToCache(Fragment fragment) {
 		int[] dataCache = Fragment.getIntArray();
-		
+
 		for (int i = 0; i < size*size; i++)
-			if (Biome.biomes[fragment.biomeData[i]] != null)
-				dataCache[i] = Biome.biomes[fragment.biomeData[i]].color;
+			if (!selectedBiomes[fragment.biomeData[i]])
+				dataCache[i] = Util.deselectColor(Biome.biomes[fragment.biomeData[i]].color);
 			else
-				Log.debug("Failed to find biome ID: " + fragment.biomeData[i]); // TODO: This could turn into spam
+				dataCache[i] = Biome.biomes[fragment.biomeData[i]].color;
 		
 		fragment.setImageData(layerId, dataCache);
 	}
@@ -38,5 +64,8 @@ public class BiomeLayer extends ImageLayer {
 		return Options.instance.biomeColorProfile.getAliasForId(getBiomeForFragment(frag, blockX, blockY));
 	}
 	
-	
+	@Override
+	public boolean isVisible() {
+		return MapViewer.biomeFilterLayer.getAlpha() != 1.0f;
+	}
 }
