@@ -45,7 +45,7 @@ public class Fragment {
 		this.liveLayers = liveLayers;
 		images = new BufferedImage[imageLayers.length];
 		for (int i = 0; i < imageLayers.length; i++)
-			images[i] = new BufferedImage(imageLayers[i].size, imageLayers[i].size, BufferedImage.TYPE_INT_ARGB);
+			images[imageLayers[i].getLayerId()] = new BufferedImage(imageLayers[i].size, imageLayers[i].size, BufferedImage.TYPE_INT_ARGB);
 		this.iconLayers = iconLayers;
 		objects = new MapObject[MAX_OBJECTS_PER_FRAGMENT];
 	}
@@ -57,7 +57,7 @@ public class Fragment {
 		for (int i = 0; i < BIOME_SIZE * BIOME_SIZE; i++)
 			biomeData[i] = (short)data[i];
 		for (int i = 0; i < imageLayers.length; i++)
-			imageLayers[i].load(this, i);
+			imageLayers[i].load(this);
 		for (int i = 0; i < iconLayers.length; i++)
 			iconLayers[i].generateMapObjects(this);
 		alpha = Options.instance.mapFading.get()?0.0f:1.0f;
@@ -211,6 +211,11 @@ public class Fragment {
 	public void repaint() {
 		if (isLoaded)
 			for (int i = 0; i < imageLayers.length; i++)
-				imageLayers[i].load(this, i);
+				imageLayers[i].load(this);
+	}
+	
+	public void repaintImageLayer(int id) {
+		if (isLoaded)
+			imageLayers[id].load(this);
 	}
 }

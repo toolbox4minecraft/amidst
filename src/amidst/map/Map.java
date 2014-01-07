@@ -28,8 +28,6 @@ public class Map {
 	
 	// TODO : This must be changed with the removal of ChunkManager
 	public Map(FragmentManager fragmentManager) {
-		
-		
 		this.fragmentManager = fragmentManager;
 		fragmentManager.setMap(this);
 		mat = new AffineTransform();
@@ -40,6 +38,15 @@ public class Map {
 		instance = this;
 	}
 	
+	public void resetImageLayer(int id) {
+		synchronized (drawLock) {
+			Fragment frag = startNode;
+			while (frag.hasNext) {
+				frag = frag.nextFragment;
+				frag.repaintImageLayer(id);
+			}
+		}
+	}
 	public void resetFragments() {
 		synchronized (drawLock) {
 			Fragment frag = startNode;
@@ -69,8 +76,8 @@ public class Map {
 			
 			while (start.x >	 0) { start.x -= size; addColumn(START); removeColumn(END);   }
 			while (start.x < -size) { start.x += size; addColumn(END);   removeColumn(START); }
-			while (start.y >	 0) { start.y -= size; addRow(START);	removeRow(END);	  }
-			while (start.y < -size) { start.y += size; addRow(END);	  removeRow(START);	}
+			while (start.y >	 0) { start.y -= size; addRow(START);	 removeRow(END);      }
+			while (start.y < -size) { start.y += size; addRow(END);	     removeRow(START);    }
 			
 			Fragment frag = startNode;
 			size = Fragment.SIZE;
@@ -83,9 +90,8 @@ public class Map {
 					frag = frag.nextFragment;
 					frag.drawImageLayers(time, g, mat);
 					mat.translate(size, 0);
-					if (frag.endOfLine) {
+					if (frag.endOfLine)
 						mat.translate(-size * w, size);
-					}
 				}
 			}
 			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
@@ -100,9 +106,8 @@ public class Map {
 					frag = frag.nextFragment;
 					frag.drawLiveLayers(time, g, mat);
 					mat.translate(size, 0);
-					if (frag.endOfLine) {
+					if (frag.endOfLine)
 						mat.translate(-size * w, size);
-					}
 				}
 			}
 			
@@ -116,9 +121,8 @@ public class Map {
 					frag = frag.nextFragment;
 					frag.drawObjects(g, mat);
 					mat.translate(size, 0);
-					if (frag.endOfLine) {
+					if (frag.endOfLine)
 						mat.translate(-size * w, size);
-					}
 				}
 			}
 		

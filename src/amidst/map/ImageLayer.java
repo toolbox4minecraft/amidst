@@ -7,6 +7,7 @@ public abstract class ImageLayer extends Layer {
 	protected double scale;
 	protected int size;
 	private AffineTransform cachedScalingMatrix = new AffineTransform();
+	protected int layerId;
 	
 	private int[] defaultData;
 	
@@ -22,8 +23,8 @@ public abstract class ImageLayer extends Layer {
 		return defaultData;
 	}
 	
-	public void load(Fragment frag, int layerId) {
-		drawToCache(frag, layerId);
+	public void load(Fragment frag) {
+		drawToCache(frag);
 	}
 	
 	public AffineTransform getMatrix(AffineTransform inMat) {
@@ -39,6 +40,12 @@ public abstract class ImageLayer extends Layer {
 	public float getAlpha() {
 		return alpha;
 	}
-	public abstract void drawToCache(Fragment fragment, int layerID);
+	public int getLayerId() {
+		return layerId;
+	}
+	public void setLayerId(int id) {
+		layerId = id;
+	}
+	public abstract void drawToCache(Fragment fragment);
 }
 

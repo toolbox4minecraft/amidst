@@ -7,13 +7,15 @@ import amidst.map.ImageLayer;
 import amidst.minecraft.Biome;
 
 public class BiomeLayer extends ImageLayer {
+	public BiomeLayer instance;
 	private static int size = Fragment.SIZE >> 2;
 	public BiomeLayer() {
 		super(size);
+		instance = this;
 	}
 	
 	@Override
-	public void drawToCache(Fragment fragment, int layerID) {
+	public void drawToCache(Fragment fragment) {
 		int[] dataCache = Fragment.getIntArray();
 		
 		for (int i = 0; i < size*size; i++)
@@ -22,7 +24,7 @@ public class BiomeLayer extends ImageLayer {
 			else
 				Log.debug("Failed to find biome ID: " + fragment.biomeData[i]); // TODO: This could turn into spam
 		
-		fragment.setImageData(layerID, dataCache);
+		fragment.setImageData(layerId, dataCache);
 	}
 	
 	public static int getBiomeForFragment(Fragment frag, int blockX, int blockY) {

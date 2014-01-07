@@ -18,6 +18,8 @@ public class FragmentManager implements Runnable {
 	private ConcurrentLinkedQueue<Fragment> recycleQueue;
 	private int sleepTick = 0;
 	
+	private Object queueLock = new Object();
+	
 	private Stack<ImageLayer> layerList;
 	
 	private ImageLayer[] imageLayers;
@@ -32,6 +34,8 @@ public class FragmentManager implements Runnable {
 		Collections.addAll(layerList, imageLayers);
 		
 		fragmentCache = new Fragment[cacheSize];
+		for (int i = 0; i < imageLayers.length; i++)
+			imageLayers[i].setLayerId(i);
 		for (int i = 0; i < cacheSize; i++) {
 			fragmentCache[i] = new Fragment(imageLayers, liveLayers, iconLayers);
 			fragmentQueue.offer(fragmentCache[i]);
@@ -81,8 +85,11 @@ public class FragmentManager implements Runnable {
 		cacheSize <<= 1;
 		System.gc();
 	}
+	
 	public void repaintFragment(Fragment frag) {
-		frag.repaint();
+		synchronized (queueLock) {
+			frag.repaint();
+		}
 	}
 	public Fragment requestFragment(int x, int y) {
 		if (!running)
@@ -110,23 +117,27 @@ public class FragmentManager implements Runnable {
 		while (running) {
 			if(!requestQueue.isEmpty() || !recycleQueue.isEmpty()) {
 				if (!requestQueue.isEmpty()) {
-					Fragment frag = requestQueue.poll();
-					if (frag.isActive && !frag.isLoaded) {
-						frag.load();
-						sleepTick++;
-						if (sleepTick == 10) {
-							sleepTick = 0;
-							try {
-								Thread.sleep(1L);
-							} catch (InterruptedException ignored) {}
+					synchronized (queueLock) {
+						Fragment frag = requestQueue.poll();
+						if (frag.isActive && !frag.isLoaded) {
+							frag.load();
+							sleepTick++;
+							if (sleepTick == 10) {
+								sleepTick = 0;
+								try {
+									Thread.sleep(1L);
+								} catch (InterruptedException ignored) {}
+							}
 						}
 					}
 				}
 				
 				while (!recycleQueue.isEmpty()) {
-					Fragment frag = recycleQueue.poll();
-					frag.recycle();
-					fragmentQueue.offer(frag);
+					synchronized (queueLock) {
+						Fragment frag = recycleQueue.poll();
+						frag.recycle();
+						fragmentQueue.offer(frag);
+					}
 				}
 			} else {
 				sleepTick = 0;

@@ -68,6 +68,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		fragmentManager = new FragmentManager(
 			new ImageLayer[] {
 				new BiomeLayer(),
+				//new BiomeFilterLayer(),
 				new SlimeLayer()
 			},
 			new LiveLayer[] {

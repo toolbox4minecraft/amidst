@@ -18,5 +18,6 @@ public class BiomeWidget extends PanelWidget {
 	
 	@Override
 	public void onClick(int x, int y) {
+		mapViewer.getMap().resetFragments();
 	}
 }
