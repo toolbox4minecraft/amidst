@@ -19,7 +19,7 @@ public class FinderWindow extends JFrame {
 		//Initialize window
 		super("Amidst v" + Amidst.version());
 		
-		setSize(800,800);
+		setSize(1000,800);
 		//setLookAndFeel();
 		pane = getContentPane();
 		//UI Manager:

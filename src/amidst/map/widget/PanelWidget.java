@@ -23,6 +23,7 @@ public class PanelWidget extends Widget {
 		TOP_RIGHT,
 		BOTTOM_LEFT,
 		BOTTOM_RIGHT,
+		CENTER,
 		NONE
 	}
 	protected Color textColor = new Color(1f, 1f, 1f);
@@ -92,6 +93,10 @@ public class PanelWidget extends Widget {
 		case TOP_RIGHT:
 			x = mapViewer.getWidth()  - (width  + xPadding);
 			y = yPadding;
+			break;
+		case CENTER:
+			x = (mapViewer.getWidth() >> 1) - (width >> 1);
+			y = (mapViewer.getHeight() >> 1) - (height >> 1);
 			break;
 		case NONE:
 			break;

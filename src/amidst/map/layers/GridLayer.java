@@ -24,10 +24,10 @@ public class GridLayer extends LiveLayer {
 		return Options.instance.showGrid.get();
 	}
 	@Override
-	public void drawLive(Fragment fragment, Graphics2D g, AffineTransform mat) {
+	public void drawLive(Fragment fragment, Graphics2D g, AffineTransform inMat) {
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		AffineTransform originalTransform = g.getTransform();
-				
+		AffineTransform mat = new AffineTransform(inMat);
+		
 		textBuffer.setLength(0);
 		textBuffer.append(fragment.getChunkX() << 4);
 		textBuffer.append(", ");
@@ -66,15 +66,15 @@ public class GridLayer extends LiveLayer {
 		g.drawChars(textCache, 0, textBuffer.length(), 10, 15);
 		
 		// This makes the text outline a bit thicker, but seems unneeded.
-		/*g.drawChars(textCache, 0, textBuffer.length(), 12, 15);
-		g.drawChars(textCache, 0, textBuffer.length(), 12, 19);
-		g.drawChars(textCache, 0, textBuffer.length(),  8, 15);
-		g.drawChars(textCache, 0, textBuffer.length(),  8, 19);*/
+		//g.drawChars(textCache, 0, textBuffer.length(), 12, 15);
+		//g.drawChars(textCache, 0, textBuffer.length(), 12, 19);
+		//g.drawChars(textCache, 0, textBuffer.length(),  8, 15);
+		//g.drawChars(textCache, 0, textBuffer.length(),  8, 19);
 		
 		g.setColor(Color.white);
 		g.drawChars(textCache, 0, textBuffer.length(), 10, 17);
 		
-		g.setTransform(originalTransform);
+		g.setTransform(inMat);
 	}
 
 }
