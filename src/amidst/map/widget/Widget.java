@@ -20,8 +20,12 @@ public class Widget {
 	public void draw(Graphics2D g2d, float time) {
 		
 	}
-	public void onClick(int x, int y) {
-		
+	public boolean onClick(int x, int y) {
+		return true;
+	}
+	
+	public boolean onMouseWheelMoved(int x, int y, int rotation) {
+		return false;
 	}
 	
 	public int getX() {
@@ -46,5 +50,12 @@ public class Widget {
 	
 	public float getAlpha() {
 		return 1.0f;
+	}
+
+	public boolean onMousePressed(int x, int y) {
+		return true;
+	}
+
+	public void onMouseReleased() {
 	}
 }

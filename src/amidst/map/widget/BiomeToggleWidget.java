@@ -24,7 +24,7 @@ public class BiomeToggleWidget extends PanelWidget {
 	}
 
 	@Override
-	public void onClick(int x, int y) {
+	public boolean onClick(int x, int y) {
 		isBiomeWidgetVisible = !isBiomeWidgetVisible;
 		BiomeLayer.instance.setHighlightMode(isBiomeWidgetVisible);
 		(new Thread(new Runnable() {
@@ -33,6 +33,6 @@ public class BiomeToggleWidget extends PanelWidget {
 				map.resetImageLayer(BiomeLayer.instance.getLayerId());
 			}
 		})).start();
-		//MapViewer.biomeFilterLayer.setEnabled(isBiomeWidgetVisible);
+		return true;
 	}
 }

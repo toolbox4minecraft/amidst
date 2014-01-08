@@ -62,6 +62,8 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	private static FragmentManager fragmentManager;
 	private static PlayerLayer playerLayer;
 	
+	private Widget mouseOwner;
+	
 	static {
 		fragmentManager = new FragmentManager(
 			new ImageLayer[] {
@@ -221,25 +223,31 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		int notches = e.getWheelRotation();
-		
+		Point mouse = getMousePosition();
+		for (Widget widget : widgets) {
+			if ((mouse.x > widget.getX()) &&
+				(mouse.y > widget.getY()) &&
+				(mouse.x < widget.getX() + widget.getWidth()) &&
+				(mouse.y < widget.getY() + widget.getHeight())) {
+				if (widget.onMouseWheelMoved(mouse.x - widget.getX(), mouse.y - widget.getY(), notches))
+					return;
+			}
+		}
 		adjustZoom(getMousePosition(), notches);
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (!e.isMetaDown()) {
 			Point mouse = getMousePosition();
-			boolean hitWidget = false;
 			for (Widget widget : widgets) {
 				if ((mouse.x > widget.getX()) &&
 					(mouse.y > widget.getY()) &&
 					(mouse.x < widget.getX() + widget.getWidth()) &&
 					(mouse.y < widget.getY() + widget.getHeight())) {
-					widget.onClick(mouse.x - widget.getX(), mouse.y - widget.getY());
-					hitWidget = true;
+					if (widget.onClick(mouse.x - widget.getX(), mouse.y - widget.getY()))
+						return;
 				}
 			}
-			if (hitWidget)
-				return;
 			MapObject object = worldMap.getObjectAt(mouse, 50.0);
 			
 			if (selectedObject != null)
@@ -260,8 +268,21 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	}
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (!e.isMetaDown())
-			lastMouse = getMousePosition();
+		if (e.isMetaDown())
+			return;
+		Point mouse = getMousePosition();
+		for (Widget widget : widgets) {
+			if ((mouse.x > widget.getX()) &&
+				(mouse.y > widget.getY()) &&
+				(mouse.x < widget.getX() + widget.getWidth()) &&
+				(mouse.y < widget.getY() + widget.getHeight())) {
+				if (widget.onMousePressed(mouse.x - widget.getX(), mouse.y - widget.getY())) {
+					mouseOwner = widget;
+					return;
+				}
+			}
+		}
+		lastMouse = mouse;
 	}
 	
 	@Override
@@ -271,7 +292,14 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 			if (proj.saveLoaded) {
 				menu.show(e.getComponent(), e.getX(), e.getY());
 			}
-		} else lastMouse = null;
+		} else {
+			if (mouseOwner != null) {
+				mouseOwner.onMouseReleased();
+				mouseOwner = null;
+			} else {
+				lastMouse = null;
+			}
+		}
 	}
 	
 	public MapObject getSelectedObject() {

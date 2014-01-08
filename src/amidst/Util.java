@@ -136,9 +136,9 @@ public class Util {
 		int b = (color & 0x000000FF);
 		
 		int average = (r + g + b);
-		r = (r + average) / 20;
-		g = (g + average) / 20;
-		b = (b + average) / 20;
+		r = (r + average) / 30;
+		g = (g + average) / 30;
+		b = (b + average) / 30;
 		return makeColor(r, g, b);
 	}
 	
