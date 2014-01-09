@@ -4,6 +4,7 @@ package amidst.version;
  */
 public enum VersionInfo {
 	unknown(null),
+	V14w02a("qrponkki[Lnb;lv[J[[J"),
 	V1_7_4("pzozmvjs[Lmm;lg[J[[J"),
 	V1_7_2("pvovmsjp[Lmj;ld[J[[J"),
 	V13w39a_or_b("npmp[Lkn;jh[J[J[J[J[J[[J"),
