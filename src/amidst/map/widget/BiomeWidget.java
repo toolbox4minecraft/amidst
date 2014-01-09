@@ -13,7 +13,6 @@ import MoF.MapViewer;
 public class BiomeWidget extends PanelWidget {
 	private ArrayList<Biome> biomes = new ArrayList<Biome>();
 	private int maxNameWidth = 0;
-	private int columns = 1;
 	public BiomeWidget(MapViewer mapViewer) {
 		super(mapViewer);
 		
@@ -24,12 +23,14 @@ public class BiomeWidget extends PanelWidget {
 				maxNameWidth = Math.max(fontMetrics.stringWidth(Biome.biomes[i].name), maxNameWidth);
 			}
 		}
+		setDimensions(250, 400);
+		y = 100;
 		forceVisibility(false);
-		setDimensions(maxNameWidth * columns + 20 + columns * 20, biomes.size() * 18 / columns + 15);
 	}
 
 	@Override
 	public void draw(Graphics2D g2d, float time) {
+		x = mapViewer.getWidth() - width;
 		super.draw(g2d, time);
 		g2d.setColor(textColor);
 	}
@@ -50,6 +51,7 @@ public class BiomeWidget extends PanelWidget {
 	
 	@Override
 	public boolean onVisibilityCheck() {
-		return BiomeToggleWidget.instance.isBiomeWidgetVisible;
+		height = Math.max(200, mapViewer.getHeight() - 200);
+		return BiomeToggleWidget.instance.isBiomeWidgetVisible & (height > 200);
 	}
 }

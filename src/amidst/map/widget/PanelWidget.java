@@ -10,14 +10,14 @@ import MoF.MapViewer;
 
 public class PanelWidget extends Widget {
 	private static BufferedImage
-			dropShadowBottomLeft  = ResourceLoader.getImage("dropshadow/dropshadow_bottom_left.png"),
-			dropShadowBottomRight = ResourceLoader.getImage("dropshadow/dropshadow_bottom_right.png"),
-			dropShadowTopLeft     = ResourceLoader.getImage("dropshadow/dropshadow_top_left.png"),
-			dropShadowTopRight    = ResourceLoader.getImage("dropshadow/dropshadow_top_right.png"),
-			dropShadowBottom      = ResourceLoader.getImage("dropshadow/dropshadow_bottom.png"),
-			dropShadowTop         = ResourceLoader.getImage("dropshadow/dropshadow_top.png"),
-			dropShadowLeft        = ResourceLoader.getImage("dropshadow/dropshadow_left.png"),
-			dropShadowRight       = ResourceLoader.getImage("dropshadow/dropshadow_right.png");
+			dropShadowBottomLeft  = ResourceLoader.getImage("dropshadow/outer_bottom_left.png"),
+			dropShadowBottomRight = ResourceLoader.getImage("dropshadow/outer_bottom_right.png"),
+			dropShadowTopLeft     = ResourceLoader.getImage("dropshadow/outer_top_left.png"),
+			dropShadowTopRight    = ResourceLoader.getImage("dropshadow/outer_top_right.png"),
+			dropShadowBottom      = ResourceLoader.getImage("dropshadow/outer_bottom.png"),
+			dropShadowTop         = ResourceLoader.getImage("dropshadow/outer_top.png"),
+			dropShadowLeft        = ResourceLoader.getImage("dropshadow/outer_left.png"),
+			dropShadowRight       = ResourceLoader.getImage("dropshadow/outer_right.png");
 	public enum CornerAnchorPoint {
 		TOP_LEFT,
 		TOP_RIGHT,
