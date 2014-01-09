@@ -30,6 +30,7 @@ import amidst.map.widget.SeedWidget;
 import amidst.map.widget.SelectedObjectWidget;
 import amidst.map.widget.Widget;
 import amidst.minecraft.MinecraftUtil;
+import amidst.resources.ResourceLoader;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -63,7 +64,15 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	private static PlayerLayer playerLayer;
 	
 	private Widget mouseOwner;
-	
+	private static BufferedImage
+		dropShadowBottomLeft  = ResourceLoader.getImage("dropshadow/inner_bottom_left.png"),
+		dropShadowBottomRight = ResourceLoader.getImage("dropshadow/inner_bottom_right.png"),
+		dropShadowTopLeft     = ResourceLoader.getImage("dropshadow/inner_top_left.png"),
+		dropShadowTopRight    = ResourceLoader.getImage("dropshadow/inner_top_right.png"),
+		dropShadowBottom      = ResourceLoader.getImage("dropshadow/inner_bottom.png"),
+		dropShadowTop         = ResourceLoader.getImage("dropshadow/inner_top.png"),
+		dropShadowLeft        = ResourceLoader.getImage("dropshadow/inner_left.png"),
+		dropShadowRight       = ResourceLoader.getImage("dropshadow/inner_right.png");
 	static {
 		fragmentManager = new FragmentManager(
 			new ImageLayer[] {
@@ -131,7 +140,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		widgets.add(new SelectedObjectWidget(this).setAnchorPoint(CornerAnchorPoint.TOP_LEFT));
 		widgets.add(new CursorInformationWidget(this).setAnchorPoint(CornerAnchorPoint.TOP_RIGHT));
 		widgets.add(new BiomeToggleWidget(this).setAnchorPoint(CornerAnchorPoint.BOTTOM_RIGHT));
-		widgets.add(new BiomeWidget(this).setAnchorPoint(CornerAnchorPoint.CENTER));
+		widgets.add(new BiomeWidget(this).setAnchorPoint(CornerAnchorPoint.NONE));
 		addMouseListener(this);
 		addMouseWheelListener(this);
 		
@@ -187,7 +196,15 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		worldMap.draw((Graphics2D)g2d.create(), time);
+		g2d.drawImage(dropShadowTopLeft,     0,               0,                null);
+		g2d.drawImage(dropShadowTopRight,    getWidth() - 10, 0,                null);
+		g2d.drawImage(dropShadowBottomLeft,  0,               getHeight() - 10, null);
+		g2d.drawImage(dropShadowBottomRight, getWidth() - 10, getHeight() - 10, null);
 		
+		g2d.drawImage(dropShadowTop,    10, 0, getWidth() - 20, 10,  null);
+		g2d.drawImage(dropShadowBottom, 10, getHeight() - 10, getWidth() - 20, 10,  null);
+		g2d.drawImage(dropShadowLeft,   0, 10, 10, getHeight() - 20, null);
+		g2d.drawImage(dropShadowRight,  getWidth() - 10, 10, 10, getHeight() - 20, null);
 
 		g2d.setFont(textFont);
 		for (Widget widget : widgets) {
