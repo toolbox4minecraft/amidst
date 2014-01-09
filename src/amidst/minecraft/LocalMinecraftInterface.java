@@ -25,7 +25,6 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 		MinecraftClass blockInit; // FIXME: This is a bit hackish!
 		if ((blockInit = minecraft.getClassByName("BlockInit")) != null) {
 			Class<?> clazz = blockInit.getClazz();
-			Log.i(clazz);
 			try {
 				Field isLoadedField = clazz.getDeclaredField("a");
 				isLoadedField.setAccessible(true);
