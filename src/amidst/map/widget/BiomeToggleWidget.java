@@ -8,13 +8,11 @@ import amidst.resources.ResourceLoader;
 import MoF.MapViewer;
 
 public class BiomeToggleWidget extends PanelWidget {
-	public static BiomeToggleWidget instance;
 	private static BufferedImage highlighterIcon = ResourceLoader.getImage("highlighter.png");
-	public boolean isBiomeWidgetVisible = false;
+	public static boolean isBiomeWidgetVisible = false;
 	public BiomeToggleWidget(MapViewer mapViewer) {
 		super(mapViewer);
 		setDimensions(36, 36);
-		instance = this;
 	}
 	
 	@Override

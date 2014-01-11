@@ -140,7 +140,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		widgets.add(new SelectedObjectWidget(this).setAnchorPoint(CornerAnchorPoint.TOP_LEFT));
 		widgets.add(new CursorInformationWidget(this).setAnchorPoint(CornerAnchorPoint.TOP_RIGHT));
 		widgets.add(new BiomeToggleWidget(this).setAnchorPoint(CornerAnchorPoint.BOTTOM_RIGHT));
-		widgets.add(new BiomeWidget(this).setAnchorPoint(CornerAnchorPoint.NONE));
+		widgets.add(BiomeWidget.get(this).setAnchorPoint(CornerAnchorPoint.NONE));
 		addMouseListener(this);
 		addMouseWheelListener(this);
 		
