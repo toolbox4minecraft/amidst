@@ -22,7 +22,7 @@ public class BiomeToggleWidget extends PanelWidget {
 	}
 
 	@Override
-	public boolean onClick(int x, int y) {
+	public boolean onMousePressed(int x, int y) {
 		isBiomeWidgetVisible = !isBiomeWidgetVisible;
 		BiomeLayer.instance.setHighlightMode(isBiomeWidgetVisible);
 		(new Thread(new Runnable() {
