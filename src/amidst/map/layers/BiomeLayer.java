@@ -79,4 +79,8 @@ public class BiomeLayer extends ImageLayer {
 	public static String getBiomeAliasForFragment(Fragment frag, int blockX, int blockY) {
 		return Options.instance.biomeColorProfile.getAliasForId(getBiomeForFragment(frag, blockX, blockY));
 	}
+
+	public boolean isBiomeSelected(int id) {
+		return selectedBiomes[id];
+	}
 }

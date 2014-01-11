@@ -8,6 +8,7 @@ import java.awt.Shape;
 import java.util.ArrayList;
 
 import amidst.logging.Log;
+import amidst.map.layers.BiomeLayer;
 import amidst.minecraft.Biome;
 import MoF.MapViewer;
 
@@ -16,7 +17,12 @@ public class BiomeWidget extends PanelWidget {
 	private static Color innerBoxBgColor = new Color(0.3f, 0.3f, 0.3f, 0.3f);
 	private static Color biomeBgColor1 = new Color(0.8f, 0.8f, 0.8f, 0.2f);
 	private static Color biomeBgColor2 = new Color(0.6f, 0.6f, 0.6f, 0.2f);
+	private static Color biomeLitBgColor1 = new Color(0.8f, 0.8f, 1.0f, 0.7f);
+	private static Color biomeLitBgColor2 = new Color(0.6f, 0.6f, 0.8f, 0.7f);
 	private static Color innerBoxBorderColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+	
+	private static Color selectButtonColor = new Color(0.6f, 0.6f, 0.8f, 1.0f);
+	
 	private ArrayList<Biome> biomes = new ArrayList<Biome>();
 	private int maxNameWidth = 0;
 	private Rectangle innerBox = new Rectangle(0, 0, 1, 1);
@@ -49,7 +55,7 @@ public class BiomeWidget extends PanelWidget {
 		innerBox.x = x + 8;
 		innerBox.y = y + 30;
 		innerBox.width = width - 16;
-		innerBox.height = height - 38;
+		innerBox.height = height - 58;
 		g2d.setColor(innerBoxBgColor);
 		g2d.fillRect(innerBox.x, innerBox.y, innerBox.width, innerBox.height);
 		g2d.setColor(innerBoxBorderColor);
@@ -58,7 +64,10 @@ public class BiomeWidget extends PanelWidget {
 		
 		for (int i = 0; i < biomes.size(); i++) {
 			Biome biome = biomes.get(i);
-			g2d.setColor(((i % 2) == 1)?biomeBgColor1:biomeBgColor2);
+			if (BiomeLayer.instance.isBiomeSelected(biome.index))
+				g2d.setColor(((i % 2) == 1)?biomeLitBgColor1:biomeLitBgColor2);
+			else
+				g2d.setColor(((i % 2) == 1)?biomeBgColor1:biomeBgColor2);
 			g2d.fillRect(innerBox.x, innerBox.y + i * 16 + biomeListYOffset,innerBox.width, 16);
 			g2d.setColor(new Color(biome.color));
 			g2d.fillRect(innerBox.x, innerBox.y + i*16 + biomeListYOffset, 20, 16);
@@ -66,8 +75,11 @@ public class BiomeWidget extends PanelWidget {
 			g2d.drawString(biome.name, innerBox.x + 25, innerBox.y + 13 + i*16 + biomeListYOffset);
 		}
 		biomeListYOffset = Math.max(-biomes.size() * 16 + innerBox.height, Math.min(0, biomeListYOffset));
-		
 		g2d.setClip(null);
+		g2d.setColor(Color.white);
+		g2d.drawString("Select:", x + 8, y + height - 10);
+		g2d.setColor(selectButtonColor);
+		g2d.drawString("All  Special  None", x + 120, y + height - 10);
 	}
 	
 	@Override
@@ -82,17 +94,42 @@ public class BiomeWidget extends PanelWidget {
 	}
 	
 	@Override
-	public boolean onClick(int x, int y) {
-		
-		/*int id = y / 18;
-		Log.i(id-20);
-		BiomeLayer.instance.toggleBiomeSelect(id);
-		(new Thread(new Runnable() {
-			@Override
-			public void run() {
-				map.resetImageLayer(BiomeLayer.instance.getLayerId());
+	public boolean onClick(int mouseX, int mouseY) {
+		boolean needsRedraw = false;
+		if ((mouseX > innerBox.x - x) &&
+			(mouseX < innerBox.x - x + innerBox.width) &&
+			(mouseY > innerBox.y - y) &&
+			(mouseY < innerBox.y - y + innerBox.height)) {
+			int id = (mouseY - (innerBox.y - y) - biomeListYOffset) / 16;
+			if (id < biomes.size()) {
+				BiomeLayer.instance.toggleBiomeSelect(biomes.get(id).index);
+				needsRedraw = true;
 			}
-		})).start();*/
+		}
+		
+		// TODO: These values are temporarly hard coded for the sake of a fast release
+		if ((mouseY > 516) && (mouseY < 530)) {
+			if ((mouseX > 117) && (mouseX < 139)) {
+				BiomeLayer.instance.selectAllBiomes();
+				needsRedraw = true;
+			} else if ((mouseX > 143) && (mouseX < 197)) {
+				for (int i = 128; i < Biome.biomes.length; i++)
+					if (Biome.biomes[i] != null)
+						BiomeLayer.instance.selectBiome(i);
+				needsRedraw = true;
+			} else if ((mouseX > 203) && (mouseX < 242)) {
+				BiomeLayer.instance.deselectAllBiomes();
+				needsRedraw = true;
+			}
+		}
+		if (needsRedraw) {
+			(new Thread(new Runnable() {
+				@Override
+				public void run() {
+					map.resetImageLayer(BiomeLayer.instance.getLayerId());
+				}
+			})).start();
+		}
 		return true;
 	}
 	
