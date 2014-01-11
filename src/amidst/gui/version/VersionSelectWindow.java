@@ -63,6 +63,10 @@ public class VersionSelectWindow extends JFrame {
 					versionSelector.select(selectedProfile);
 				
 				pack();
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException ignored) { }
+				pack();
 			}
 		})).start();
 		
