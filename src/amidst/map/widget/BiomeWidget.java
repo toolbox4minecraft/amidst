@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import amidst.logging.Log;
 import amidst.map.layers.BiomeLayer;
 import amidst.minecraft.Biome;
 import MoF.MapViewer;
@@ -166,8 +167,9 @@ public class BiomeWidget extends PanelWidget {
 			}
 		}
 		
+		Log.i(height - mouseY);
 		// TODO: These values are temporarly hard coded for the sake of a fast release
-		if ((mouseY > 516) && (mouseY < 530)) {
+		if ((mouseY > height - 25) && (mouseY < height - 9)) {
 			if ((mouseX > 117) && (mouseX < 139)) {
 				BiomeLayer.instance.selectAllBiomes();
 				needsRedraw = true;
