@@ -231,7 +231,7 @@ public class AmidstMenu extends JMenuBar {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						JFileChooser fc = new JFileChooser();
-						fc.addChoosableFileFilter(SaveLoader.getFilter());
+						fc.setFileFilter(SaveLoader.getFilter());
 						fc.setAcceptAllFileFilterUsed(false);
 						fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 						fc.setCurrentDirectory(new File(Util.minecraftDirectory, "saves"));
@@ -392,7 +392,7 @@ public class AmidstMenu extends JMenuBar {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						JFileChooser fc = new JFileChooser();
-						fc.addChoosableFileFilter(new PNGFileFilter());
+						fc.setFileFilter(new PNGFileFilter());
 						fc.setAcceptAllFileFilterUsed(false);
 						int returnVal = fc.showSaveDialog(window);
 						
