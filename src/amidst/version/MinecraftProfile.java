@@ -49,6 +49,10 @@ public class MinecraftProfile implements ILatestVersionListListener {
 		return profile.name;
 	}
 	
+	public String getGameDir() {
+		return profile.gameDir;
+	}
+
 	public String getVersionName() {
 		return versionName;
 	}

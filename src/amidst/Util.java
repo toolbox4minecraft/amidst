@@ -79,6 +79,16 @@ public class Util {
 		minecraftDirectory = (mcDir != null) ? mcDir : new File(homeDirectory, ".minecraft");
 	}
 	
+	public static File profileDirectory;
+	public static void setProfileDirectory(String gameDir) {
+		if (gameDir != null && !gameDir.isEmpty()) {
+			profileDirectory = new File(gameDir);
+			if (profileDirectory.exists() && profileDirectory.isDirectory())
+				return;
+			Log.w("Unable to set Profile directory 	 to: " + profileDirectory + " as that location does not exist or is not a folder.");
+		}
+		profileDirectory = null;
+	}
 	
 	public static int makeColor(int r, int g, int b) {
 		int color = 0xFF000000;

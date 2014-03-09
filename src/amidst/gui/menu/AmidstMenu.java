@@ -234,7 +234,10 @@ public class AmidstMenu extends JMenuBar {
 						fc.setFileFilter(SaveLoader.getFilter());
 						fc.setAcceptAllFileFilterUsed(false);
 						fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-						fc.setCurrentDirectory(new File(Util.minecraftDirectory, "saves"));
+						if (Util.profileDirectory != null)
+							fc.setCurrentDirectory(new File(Util.profileDirectory, "saves"));
+						else
+    						fc.setCurrentDirectory(new File(Util.minecraftDirectory, "saves"));
 						fc.setFileHidingEnabled(false);
 						if (fc.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {
 							File f = fc.getSelectedFile();
