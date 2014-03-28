@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 
 import MoF.FinderWindow;
 import amidst.Options;
+import amidst.Util;
 import amidst.logging.Log;
 import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
@@ -114,6 +115,7 @@ public class LocalVersionComponent extends VersionComponent {
 			@Override
 			public void run() {
 				try {
+					Util.setProfileDirectory(profile.getGameDir());
 					MinecraftUtil.setBiomeInterface(new Minecraft(profile.getJarFile()).createInterface());
 					new FinderWindow();
 					VersionSelectWindow.get().dispose();
