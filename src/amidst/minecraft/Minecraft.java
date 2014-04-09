@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import amidst.Options;
 import amidst.Util;
 import amidst.bytedata.ByteClass;
 import amidst.bytedata.ByteClass.AccessFlags;
@@ -285,7 +286,7 @@ public class Minecraft {
 		
 		for (int i = 0; i < profile.libraries.size(); i++) {
 			JarLibrary library = profile.libraries.get(i);
-			if (library.isActive() && library.getFile().exists()) {
+			if (library.isActive() && library.getFile() != null && library.getFile().exists()) {
 				try {
 					libraries.add(library.getFile().toURI().toURL());
 					Log.i("Found library: " + library.getFile());
@@ -324,7 +325,9 @@ public class Minecraft {
 	*/
 	
 	public void use() {
-		File librariesJson = new File(jarFile.getPath().replace(".jar", ".json"));
+		File librariesJson = Options.instance.minecraftJson == null ?
+				new File(jarFile.getPath().replace(".jar", ".json"))
+			  : new File(Options.instance.minecraftJson);
 		if (librariesJson.exists()) {
 			Stack<URL> libraries = getLibraries(librariesJson);
 			URL[] libraryArray = new URL[libraries.size() + 1];

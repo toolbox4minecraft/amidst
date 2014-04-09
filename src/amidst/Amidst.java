@@ -2,16 +2,19 @@ package amidst;
 
 import java.awt.Image;
 import java.io.File;
+import java.net.MalformedURLException;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 import com.google.gson.Gson;
 
+import MoF.FinderWindow;
 import MoF.Google;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
+import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 import amidst.preferences.BiomeColorProfile;
 import amidst.resources.ResourceLoader;
@@ -51,7 +54,20 @@ public class Amidst {
 		System.setProperty("sun.java2d.accthreshold", "0");
 		BiomeColorProfile.scan();
 		
-		new VersionSelectWindow();
+		if (Options.instance.minecraftJar != null)
+		{
+			try {
+				Util.setProfileDirectory(Options.instance.minecraftPath);
+				MinecraftUtil.setBiomeInterface(new Minecraft(new File(Options.instance.minecraftJar)).createInterface());
+				new FinderWindow();
+			} catch (MalformedURLException e) {
+				Log.crash(e, "MalformedURLException on Minecraft load.");
+			}
+		}
+		else
+		{
+			new VersionSelectWindow();
+		}
 	}
 	
 	public static boolean isOSX() {

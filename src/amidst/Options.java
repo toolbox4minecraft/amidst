@@ -46,6 +46,12 @@ public enum Options {
 	@Option (name="-mcpath", usage="Sets the path to the .minecraft directory.", metaVar="<path>")
 	public String minecraftPath;
 	
+	@Option (name="-mcjar", usage="Sets the path to the minecraft .jar", metaVar="<path>")
+	public String minecraftJar;
+	
+	@Option (name="-mcjson", usage="Sets the path to the minecraft .json", metaVar="<path>")
+	public String minecraftJson;
+	
 	private Options() {
 		seed = 0L;
 		seedText = null;
