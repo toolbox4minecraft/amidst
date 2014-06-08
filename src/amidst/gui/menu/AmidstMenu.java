@@ -357,7 +357,7 @@ public class AmidstMenu extends JMenuBar {
 					Options.instance.showVillages));
 				
 				add(new DisplayingCheckbox("Temple/Witch Hut Icons",
-					ResourceLoader.getImage("temple.png"),
+					ResourceLoader.getImage("desert.png"),
 					KeyEvent.VK_4,
 					Options.instance.showTemples));
 				
