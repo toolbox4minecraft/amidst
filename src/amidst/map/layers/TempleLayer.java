@@ -7,7 +7,8 @@ import java.util.Random;
 import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
-import amidst.map.MapObjectTemple;
+import amidst.map.MapObjectDesertTemple;
+import amidst.map.MapObjectJungleTemple;
 import amidst.map.MapObjectWitchHut;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
@@ -38,8 +39,10 @@ public class TempleLayer extends IconLayer {
 					String biomeName = BiomeLayer.getBiomeNameForFragment(frag, x << 4, y << 4);
 					if (biomeName.equals("Swampland"))
 						frag.addObject(new MapObjectWitchHut(x << 4, y << 4).setParent(this));
-					else
-						frag.addObject(new MapObjectTemple(x << 4, y << 4).setParent(this));
+					else if (biomeName.contains("Jungle"))
+						frag.addObject(new MapObjectJungleTemple(x << 4, y << 4).setParent(this));
+					else 
+						frag.addObject(new MapObjectDesertTemple(x << 4, y << 4).setParent(this));
 				}
 			}
 		}

@@ -13,7 +13,8 @@ public enum MapMarkers {
 	PLAYER,
 	SLIME,
 	STRONGHOLD,
-	TEMPLE,
+	JUNGLE,
+	DESERT,
 	VILLAGE,
 	SPAWN,
 	WITCH;

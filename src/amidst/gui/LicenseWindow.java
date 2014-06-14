@@ -20,7 +20,7 @@ import net.miginfocom.swing.MigLayout;
 public class LicenseWindow extends JFrame {
 	private static final long serialVersionUID = 3936119740592768287L;
 	private ArrayList<License> licenses = new ArrayList<License>();
-	private JList<Object> licenseList;
+	private JList licenseList;
 	private JTextArea licenseText = new JTextArea();
 	public LicenseWindow() {
 		super("Licenses");
@@ -37,7 +37,7 @@ public class LicenseWindow extends JFrame {
 		licenses.add(new License("Kryonet",          "licenses/kryonet.txt"));
 		licenses.add(new License("MiG Layout",	     "licenses/miglayout.txt"));
 		licenses.add(new License("Rhino",			 "licenses/rhino.txt"));
-		licenseList = new JList<Object>(licenses.toArray());
+		licenseList = new JList(licenses.toArray());
 		licenseList.setBorder(new LineBorder(Color.darkGray, 1));
 		Container contentPane = this.getContentPane();
 		MigLayout layout = new MigLayout();
