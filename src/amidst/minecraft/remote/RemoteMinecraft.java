@@ -73,7 +73,7 @@ public class RemoteMinecraft implements IMinecraftInterface {
 	}
 
 	@Override
-	public void createWorld(long seed, String type) {
+	public void createWorld(long seed, String type, String generatorOptions) {
 		client.sendTCP(new NetCreateWorldRequest(seed));
 	}
 

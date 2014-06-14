@@ -59,7 +59,11 @@ public class MinecraftUtil {
 	}
 	
 	public static void createWorld(long seed, String type) {
-		minecraftInterface.createWorld(seed, type);
+		minecraftInterface.createWorld(seed, type, "");
+	}
+	
+	public static void createWorld(long seed, String type, String generatorOptions) {
+		minecraftInterface.createWorld(seed, type, generatorOptions);
 	}
 	
 	public static void setBiomeInterface(IMinecraftInterface biomeInterface) {

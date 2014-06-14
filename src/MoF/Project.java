@@ -103,7 +103,10 @@ public class Project extends JPanel {
 		
 		BorderLayout layout = new BorderLayout();
 		this.setLayout(layout);
-		MinecraftUtil.createWorld(seed, type);
+		if (saveLoaded)
+			MinecraftUtil.createWorld(seed, type, save.getGeneratorOptions());
+		else
+			MinecraftUtil.createWorld(seed, type);
 		//Create MapViewer
 		map = new MapViewer(this);
 		add(map, BorderLayout.CENTER);

@@ -19,7 +19,7 @@ public class SaveLoader {
 	public static Type genType = Type.DEFAULT;
 	
 	public enum Type {
-		DEFAULT("Default", "default"), FLAT("Flat", "flat"), LARGE_BIOMES("Large Biomes", "largeBiomes"), AMPLIFIED("Amplified", "amplified");
+		DEFAULT("Default", "default"), FLAT("Flat", "flat"), LARGE_BIOMES("Large Biomes", "largeBiomes"), AMPLIFIED("Amplified", "amplified"), CUSTOMIZED("Customized", "customized");
 		private final String name;
 		private final String value;
 		Type(String name, String value) {
@@ -72,6 +72,8 @@ public class SaveLoader {
 	public long seed;
 	private boolean multi;
 	private List<String> back;
+	private String generatorOptions  = "";
+	
 	public List<MapObjectPlayer> getPlayers() {
 		return players;
 	}
@@ -160,9 +162,12 @@ public class SaveLoader {
 			CompoundTag root = (CompoundTag) ((CompoundTag)inStream.readTag()).getValue().get("Data");
 			inStream.close();
 			seed = (Long)(root.getValue().get("RandomSeed").getValue());
-			if (root.getValue().get("generatorName") != null)
+			if (root.getValue().get("generatorName") != null) {
 				genType = Type.fromMixedCase((String)(root.getValue().get("generatorName").getValue()));
-			
+				
+				if (genType == Type.CUSTOMIZED)
+					generatorOptions = (String)root.getValue().get("generatorOptions").getValue();
+			}
 			CompoundTag playerTag = (CompoundTag)root.getValue().get("Player");
 			
 			File playersFolder = new File(f.getParent(), "players");
@@ -172,6 +177,7 @@ public class SaveLoader {
 				Log.i("Multiplayer map detected.");
 			else
 				Log.i("Singleplayer map detected.");
+			
 			if (!multi) {
 				addPlayer("Player", playerTag);
 			} else {
@@ -195,5 +201,9 @@ public class SaveLoader {
 		double x = (Double)pos.get(0).getValue();
 		double z = (Double)pos.get(2).getValue();
 		players.add(new MapObjectPlayer(name, (int) x, (int) z));
+	}
+	
+	public String getGeneratorOptions() {
+		return generatorOptions;
 	}
 }

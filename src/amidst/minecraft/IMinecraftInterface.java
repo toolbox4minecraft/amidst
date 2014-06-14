@@ -8,6 +8,6 @@ import amidst.version.VersionInfo;
  */
 public interface IMinecraftInterface {
 	public int[] getBiomeData(int x, int y, int width, int height);
-	public void createWorld(long seed, String type);
+	public void createWorld(long seed, String type, String generatorOptions);
 	public VersionInfo getVersion();
 }

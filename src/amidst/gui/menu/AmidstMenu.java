@@ -239,8 +239,10 @@ public class AmidstMenu extends JMenuBar {
 							savesDir = new File(Util.profileDirectory, "saves");
 						else
 							savesDir = new File(Util.minecraftDirectory, "saves");
-						if (!savesDir.mkdirs())
-							return;
+						//if (!savesDir.mkdirs()) {
+						//	Log.w("Unable to create save directory!");
+						//	return;
+						//}
 						fc.setCurrentDirectory(savesDir);
 						fc.setFileHidingEnabled(false);
 						if (fc.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {

@@ -65,7 +65,8 @@ public class Minecraft {
 					"c", "flat",
 					"d", "largeBiomes",
 					"e", "amplified",
-					"g", "name"
+					"g", "default_1_1",
+					"f", "customized"
 				)
 			, "WorldType"),
 			new CCRequire(

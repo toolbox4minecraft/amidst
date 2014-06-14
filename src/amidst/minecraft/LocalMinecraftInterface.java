@@ -21,7 +21,9 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 	}
 
 	@Override
-	public void createWorld(long seed, String typeName) {
+	public void createWorld(long seed, String typeName, String generatorOptions) {
+		Log.debug("Attempting to create world with seed: " + seed + ", type: " + typeName + ", and the following generator options:");
+		Log.debug(generatorOptions);
 		MinecraftClass blockInit; // FIXME: This is a bit hackish!
 		if ((blockInit = minecraft.getClassByName("BlockInit")) != null) {
 			Class<?> clazz = blockInit.getClazz();
@@ -43,7 +45,7 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 		} else {
 			Object worldType = ((MinecraftObject) worldTypeClass.getValue(type.getValue())).get();
 			if (genLayerClass.getMethod("initializeAllBiomeGeneratorsWithParams").exists()) {
-				genLayers = (Object[])genLayerClass.callFunction("initializeAllBiomeGeneratorsWithParams", seed, worldType, "");
+				genLayers = (Object[])genLayerClass.callFunction("initializeAllBiomeGeneratorsWithParams", seed, worldType, generatorOptions);
 			} else {
 				genLayers = (Object[])genLayerClass.callFunction("initializeAllBiomeGenerators", seed, worldType);	
 			}
