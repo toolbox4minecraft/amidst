@@ -16,6 +16,8 @@ public class MinecraftMethod {
 	private String name, internalName;
 	private MinecraftClass returnType;
 	private boolean isMinecraftClass = false;
+	private boolean loadFailed = false;
+	
 	private static HashMap<String, Class<?>> primitives;
 	static {
 		primitives = new HashMap<String, Class<?>>();
@@ -68,13 +70,16 @@ public class MinecraftMethod {
 			if (returnType == null)
 				isMinecraftClass = false;
 		} catch (ClassNotFoundException e) {
-			Log.crash(e, "Unabled to find class for parameter. (" + paramNames[i] + ") on (" + mcClass.getName() + " / " + mcClass.getClassName() + ")");
+			loadFailed = true;
+			Log.w(e, "Unabled to find class for parameter. (" + paramNames[i] + ") on (" + mcClass.getName() + " / " + mcClass.getClassName() + ")");
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			Log.crash(e, "SecurityException on (" + mcClass.getName() + " / " + mcClass.getClassName() + ") method (" + name + " / " + internalName +")");
+			loadFailed = true;
+			Log.w(e, "SecurityException on (" + mcClass.getName() + " / " + mcClass.getClassName() + ") method (" + name + " / " + internalName +")");
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
-			Log.crash(e, "Unable to find class method (" + mcClass.getName() + " / " + mcClass.getClassName() + ") (" + name + " / " + internalName +")");
+			loadFailed = true;
+			Log.w(e, "Unable to find class method (" + mcClass.getName() + " / " + mcClass.getClassName() + ") (" + name + " / " + internalName +")");
 			e.printStackTrace();
 		}
 	}
@@ -111,5 +116,8 @@ public class MinecraftMethod {
 	}
 	public String getName() {
 		return name;
+	}
+	public boolean exists() {
+		return !loadFailed;
 	}
 }

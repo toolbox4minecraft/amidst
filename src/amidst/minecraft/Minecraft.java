@@ -72,6 +72,7 @@ public class Minecraft {
 				new CCMethodPreset(
 					"GenLayer",
 					"a(long, @WorldType)", "initializeAllBiomeGenerators",
+					"a(long, @WorldType, String)", "initializeAllBiomeGeneratorsWithParams",
 					"a(int, int, int, int)", "getInts"
 				)
 			, "GenLayer"),

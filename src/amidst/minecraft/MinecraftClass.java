@@ -74,4 +74,7 @@ public class MinecraftClass {
 	public Object getValue(String propertyName, MinecraftObject minecraftObject) {
 		return propertiesByName.get(propertyName).getValue(minecraftObject);
 	}
+	public MinecraftMethod getMethod(String name) {
+		return methodsByName.get(name);
+	}
 }

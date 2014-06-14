@@ -41,7 +41,13 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 		if (worldTypeClass == null) {
 			genLayers = (Object[])genLayerClass.callFunction("initializeAllBiomeGenerators", seed);
 		} else {
-			genLayers = (Object[])genLayerClass.callFunction("initializeAllBiomeGenerators", seed, ((MinecraftObject) worldTypeClass.getValue(type.getValue())).get());
+			Object worldType = ((MinecraftObject) worldTypeClass.getValue(type.getValue())).get();
+			if (genLayerClass.getMethod("initializeAllBiomeGeneratorsWithParams").exists()) {
+				genLayers = (Object[])genLayerClass.callFunction("initializeAllBiomeGeneratorsWithParams", seed, worldType, "");
+			} else {
+				genLayers = (Object[])genLayerClass.callFunction("initializeAllBiomeGenerators", seed, worldType);	
+			}
+				
 		}
 
 		biomeGen = new MinecraftObject(genLayerClass, genLayers[0]);
