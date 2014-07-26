@@ -240,7 +240,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		int notches = e.getWheelRotation();
-		Point mouse = getMousePosition();
+		Point mouse = e.getPoint(); // Don't use getMousePosition() because when computer is swapping/grinding, mouse may have moved out of window before execution reaches here.
 		for (Widget widget : widgets) {
 			if ((widget.isVisible()) &&
 				(mouse.x > widget.getX()) &&
@@ -256,7 +256,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (!e.isMetaDown()) {
-			Point mouse = getMousePosition();
+			Point mouse = e.getPoint(); // Don't use getMousePosition() because when computer is swapping/grinding, mouse may have moved out of window before execution reaches here.
 			for (Widget widget : widgets) {
 				if ((widget.isVisible()) &&
 					(mouse.x > widget.getX()) &&
@@ -289,7 +289,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 	public void mousePressed(MouseEvent e) {
 		if (e.isMetaDown())
 			return;
-		Point mouse = getMousePosition();
+		Point mouse = e.getPoint(); // Don't use getMousePosition() because when computer is swapping/grinding, mouse may have moved out of window before execution reaches here.
 		for (Widget widget : widgets) {
 			if ((widget.isVisible()) &&
 				(mouse.x > widget.getX()) &&
