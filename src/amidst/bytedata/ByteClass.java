@@ -47,9 +47,11 @@ ACC_TRANSIENT	 0x0080	 Declared transient; not written or read by a persistent o
 	private Vector<String[]> methods, properties, constructors;
 	private Vector<Float> floatConstants;
 	private Vector<Long> longConstants;
+	private Vector<String> utfConstants;
 	
 	public Field[] fields;
-	public int methodCount;
+	public int methodCount; // (Method count includes constructors)
+	public int constructorCount;
 	
 	public ByteClass(String name, byte[] classData) {
 		this.name = name;
@@ -60,6 +62,8 @@ ACC_TRANSIENT	 0x0080	 Declared transient; not written or read by a persistent o
 		longConstants = new Vector<Long>();
 		methodIndices = new Vector<ReferenceIndex>();
 		stringIndices = new Vector<ClassConstant<Integer>>();
+		utfConstants = new Vector<String>();
+		
 		try {
 			data = classData;
 			stream = new DataInputStream(new ByteArrayInputStream(data));
@@ -82,6 +86,7 @@ ACC_TRANSIENT	 0x0080	 Declared transient; not written or read by a persistent o
 							for (int i = 0; i < len; i++)
 								strVal += (char)stream.readByte();
 							constants[q] = new ClassConstant<String>(tag, offset, strVal);
+							utfConstants.add(strVal);
 							offset += 2 + len;
 							break;
 						case 3: //Int
@@ -169,7 +174,12 @@ ACC_TRANSIENT	 0x0080	 Declared transient; not written or read by a persistent o
 				methodCount = stream.readUnsignedShort();
 				for (int i = 0; i < methodCount; i++) {
 					stream.skip(2);
-					methodIndices.add(new ReferenceIndex(stream.readUnsignedShort(), stream.readUnsignedShort()));
+					int nameIndex = stream.readUnsignedShort();
+					methodIndices.add(new ReferenceIndex(nameIndex, stream.readUnsignedShort()));
+					
+					if (((String)constants[nameIndex - 1].get()).contains("<init>"))
+						constructorCount++;
+					
 					int attributeInfoCount = stream.readUnsignedShort();
 					for (int q = 0; q < attributeInfoCount; q++) {
 						stream.skip(2);
@@ -193,6 +203,14 @@ ACC_TRANSIENT	 0x0080	 Declared transient; not written or read by a persistent o
 	public boolean searchForString(String str) {
 		for (ClassConstant<Integer> i : stringIndices) {
 			if (((String)constants[i.get() - 1].get()).contains(str))
+				return true;
+		}
+		return false;
+	}
+	
+	public boolean searchForUtf(String str) {
+		for (String text : utfConstants) {
+			if (text.equals(str))
 				return true;
 		}
 		return false;

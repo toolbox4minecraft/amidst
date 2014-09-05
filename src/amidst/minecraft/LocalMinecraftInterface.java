@@ -24,17 +24,11 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 	public void createWorld(long seed, String typeName, String generatorOptions) {
 		Log.debug("Attempting to create world with seed: " + seed + ", type: " + typeName + ", and the following generator options:");
 		Log.debug(generatorOptions);
-		MinecraftClass blockInit; // FIXME: This is a bit hackish!
-		if ((blockInit = minecraft.getClassByName("BlockInit")) != null) {
-			Class<?> clazz = blockInit.getClazz();
-			try {
-				Field isLoadedField = clazz.getDeclaredField("a");
-				isLoadedField.setAccessible(true);
-				isLoadedField.set(null, true);
-			} catch (Exception e) {
-				Log.crash(e, "Unable to use 14w02a hack.");
-			}
-		}
+		
+		// Minecraft 1.8 and higher require block initialization to be called before creating a biome generator.
+		MinecraftClass blockInit;
+		if ((blockInit = minecraft.getClassByName("BlockInit")) != null)
+			blockInit.callFunction("initialize");
 		
 		Type type = Type.fromMixedCase(typeName);
 		MinecraftClass genLayerClass = minecraft.getClassByName("GenLayer");

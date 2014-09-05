@@ -49,9 +49,15 @@ public class Minecraft {
 			(new ClassChecker() {
 				@Override
 				public void check(Minecraft m, ByteClass bClass) {
-					if ((bClass.fields.length == 1) && 
-						(bClass.fields[0].accessFlags == (AccessFlags.PRIVATE | AccessFlags.STATIC)) &&
-						(bClass.methodCount == 4)) {
+					if (bClass.fields.length != 3)
+						return;
+					int privateStatic = AccessFlags.PRIVATE | AccessFlags.STATIC;
+					for (int i = 0; i < 3; i++) {
+						if ((bClass.fields[i].accessFlags & privateStatic) != privateStatic)
+							return;
+					}
+					
+					if ((bClass.constructorCount == 0) && (bClass.methodCount == 6) && (bClass.searchForUtf("isDebugEnabled"))) {
 						m.registerClass("BlockInit", bClass);
 						isComplete = true;
 					}
@@ -69,6 +75,12 @@ public class Minecraft {
 					"f", "customized"
 				)
 			, "WorldType"),
+			new CCRequire(
+				new CCMethodPreset(
+						"BlockInit",
+						"c()", "initialize"
+					)
+			, "BlockInit"),
 			new CCRequire(
 				new CCMethodPreset(
 					"GenLayer",
