@@ -78,6 +78,11 @@ public class Util {
 		}
 		minecraftDirectory = (mcDir != null) ? mcDir : new File(homeDirectory, ".minecraft");
 	}
+
+	public static File minecraftLibraries;
+	public static void setMinecraftLibraries() {
+		minecraftLibraries = (Options.instance.minecraftLibraries == null) ? new File(minecraftDirectory, "libraries") : new File(Options.instance.minecraftLibraries);
+	}
 	
 	public static File profileDirectory;
 	public static void setProfileDirectory(String gameDir) {

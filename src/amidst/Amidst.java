@@ -35,13 +35,14 @@ public class Amidst {
 			}
 		});
 		CmdLineParser parser = new CmdLineParser(Options.instance); 
-		Util.setMinecraftDirectory();
 		try {
 			parser.parseArgument(args);
 		} catch (CmdLineException e) {
 			Log.w("There was an issue parsing command line options.");
 			e.printStackTrace();
 		}
+		Util.setMinecraftDirectory();
+		Util.setMinecraftLibraries();
 		
 		if (Options.instance.logPath != null)
 			Log.addListener("file", new FileLogger(new File(Options.instance.logPath)));
