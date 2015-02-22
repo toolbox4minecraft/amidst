@@ -51,6 +51,9 @@ public enum Options {
 	
 	@Option (name="-mcjson", usage="Sets the path to the minecraft .json", metaVar="<path>")
 	public String minecraftJson;
+
+	@Option (name="-mclibs", usage="Sets the path to the libraries/ folder", metaVar="<path>")
+	public String minecraftLibraries;
 	
 	private Options() {
 		seed = 0L;

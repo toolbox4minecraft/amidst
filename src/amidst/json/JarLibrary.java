@@ -30,7 +30,7 @@ public class JarLibrary {
 	
 	public File getFile() {
 		if (file == null) {
-			String searchPath = Util.minecraftDirectory + "/libraries/";
+			String searchPath = Util.minecraftLibraries.getAbsolutePath() + "/";
 			String[] pathSplit = name.split(":");
 			pathSplit[0] = pathSplit[0].replace('.', '/');
 			for (int i = 0; i < pathSplit.length; i++)
