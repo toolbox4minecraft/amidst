@@ -4,8 +4,11 @@ package amidst.version;
  */
 public enum VersionInfo {
 	unknown(null),
+	V1_8_3("osnulmjt[Llf;ly[J[[Jlu"), // 1.8.3 and 1.8.2 have the same typeDump version ID - probably because 1.8.2 -> 1.8.3 was a fix for a server-side bug (https://mojang.com/2015/02/minecraft-1-8-2-is-now-available/)
+	V1_8_1("wduyrdnq[Lqu;sp[J[[Jsa"),
 	V1_8("wbuwrcnp[Lqt;sn[J[[Jry"),
 	V14w21b("tjseoylw[Loq;qd[J[[Jpo"),
+	V1_7_10("riqinckb[Lmt;oi[J[[Jns"),
 	V1_7_9("rhqhnbkb[Lms;oh[J[[Jnr"),
 	V14w02a("qrponkki[Lnb;lv[J[[J"),
 	V1_7_4("pzozmvjs[Lmm;lg[J[[J"),
@@ -51,7 +54,7 @@ public enum VersionInfo {
 	V1_9pre3("to"),
 	V1_9pre2("sv"),
 	V1_9pre1("sq"),
-	V1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb");
+	Vbeta_1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"); // Had to rename from V1_8_1 - should it just be removed?
 	
 	public final String versionId;
 	

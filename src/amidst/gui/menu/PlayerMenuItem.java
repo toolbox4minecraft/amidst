@@ -32,11 +32,14 @@ public class PlayerMenuItem extends JMenuItem implements ActionListener {
 		if (player.parentFragment != null) {
 			player.parentFragment.removeObject(player);
 		}
-		Point location = map.screenToLocal(mapViewer.lastRightClick);
-		player.setPosition(location.x, location.y);
-		Fragment fragment = map.getFragmentAt(location);
-		fragment.addObject(player);
-		player.parentFragment = fragment;
+		Point lastRightClick = mapViewer.lastRightClick;
+		if (lastRightClick != null) {
+			Point location = map.screenToLocal(lastRightClick);
+			player.setPosition(location.x, location.y);
+			Fragment fragment = map.getFragmentAt(location);
+			fragment.addObject(player);
+			player.parentFragment = fragment;
+		}
 	}
 	
 }
