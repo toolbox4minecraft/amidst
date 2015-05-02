@@ -10,11 +10,13 @@ import amidst.version.VersionInfo;
 public class MinecraftUtil {
 	private static IMinecraftInterface minecraftInterface;
 	
-	public static int[] getBiomeData(int x, int y, int width, int height) {
-		return minecraftInterface.getBiomeData(x, y, width, height);
+	/** Returns a copy of the biome data (threadsafe). */
+	public static int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolutionMap) {
+		return minecraftInterface.getBiomeData(x, y, width, height, useQuarterResolutionMap);
 	}
 	
 	public static Point findValidLocation(int searchX, int searchY, int size, List<Biome> paramList, Random random) {
+		// TODO: Find out if we should useQuarterResolutionMap or not
 		// TODO: Clean up this code
 		int x1 = searchX - size >> 2;
 		int y1 = searchY - size >> 2;
@@ -23,7 +25,7 @@ public class MinecraftUtil {
 		
 		int width = x2 - x1 + 1;
 		int height = y2 - y1 + 1;
-		int[] arrayOfInt = getBiomeData(x1, y1, width, height);
+		int[] arrayOfInt = getBiomeData(x1, y1, width, height, true);
 		Point location = null;
 		int numberOfValidFound = 0;
 		for (int i = 0; i < width*height; i++) {
@@ -41,15 +43,15 @@ public class MinecraftUtil {
 		return location;
 	}
 	public static boolean isValidBiome(int x, int y, int size, List<Biome> validBiomes) {
-		int x1 = x - size >> 2;
-		int y1 = y - size >> 2;
-		int x2 = x + size >> 2;
-		int y2 = y + size >> 2;
+		int x1 = x - size;
+		int y1 = y - size;
+		int x2 = x + size;
+		int y2 = y + size;
 		
 		int width = x2 - x1 + 1;
 		int height = y2 - y1 + 1;
 		
-		int[] arrayOfInt = getBiomeData(x1, y1, width, height);
+		int[] arrayOfInt = getBiomeData(x1, y1, width, height, false);
 		for (int i = 0; i < width * height; i++) {
 			Biome localBiome = Biome.biomes[arrayOfInt[i]];
 			if (!validBiomes.contains(localBiome)) return false;
