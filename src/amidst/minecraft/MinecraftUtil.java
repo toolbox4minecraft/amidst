@@ -43,20 +43,19 @@ public class MinecraftUtil {
 		return location;
 	}
 	public static boolean isValidBiome(int x, int y, int size, List<Biome> validBiomes) {
-		int x1 = x - size;
-		int y1 = y - size;
-		int x2 = x + size;
-		int y2 = y + size;
+		int x1 = x - size >> 2;
+		int y1 = y - size >> 2;
+		int x2 = x + size >> 2;
+		int y2 = y + size >> 2;
 		
 		int width = x2 - x1 + 1;
 		int height = y2 - y1 + 1;
 		
-		int[] arrayOfInt = getBiomeData(x1, y1, width, height, false);
+		int[] arrayOfInt = getBiomeData(x1, y1, width, height, true);
 		for (int i = 0; i < width * height; i++) {
 			Biome localBiome = Biome.biomes[arrayOfInt[i]];
 			if (!validBiomes.contains(localBiome)) return false;
 		}
-		
 		return true;
 	}
 	
