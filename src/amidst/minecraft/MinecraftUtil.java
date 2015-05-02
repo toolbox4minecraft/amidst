@@ -42,6 +42,20 @@ public class MinecraftUtil {
 		
 		return location;
 	}
+	
+	/**
+	 * Gets the biome located at the block-coordinates.
+	 * This is not a fast routine, it was added for rare things like
+	 * accurately testing structures.
+	 * (uses the 1:1 scale biome-map)
+	 * @return Assume this may return null.
+	 */
+	public static Biome getBiomeAt(int x, int y) {
+		
+		int[] arrayOfInt = getBiomeData(x, y, 1, 1, false);
+		return Biome.biomes[arrayOfInt[0] & 0xFF];
+	}
+	
 	public static boolean isValidBiome(int x, int y, int size, List<Biome> validBiomes) {
 		int x1 = x - size >> 2;
 		int y1 = y - size >> 2;
