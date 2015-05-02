@@ -26,7 +26,7 @@ public enum Options {
 	public final BooleanPrefModel showGrid;
 	public final BooleanPrefModel showNetherFortresses;
 	public final BooleanPrefModel showTemples, showPlayers, showStrongholds, showVillages, showOceanMonuments, showSpawn;
-	public final BooleanPrefModel mapFlicking, mapFading, showFPS, showDebug;
+	public final BooleanPrefModel mapFlicking, mapFading, showFPS, showScale, showDebug;
 	public final BooleanPrefModel updateToUnstable;
 	public final BooleanPrefModel maxZoom;
 	
@@ -76,6 +76,7 @@ public enum Options {
 		showOceanMonuments	 = new BooleanPrefModel(pref, "oceanMonumentIcons",	 true);
 		showSpawn			 = new BooleanPrefModel(pref, "spawnIcon",		     true);
 		showFPS			     = new BooleanPrefModel(pref, "showFPS",			 true);
+		showScale		     = new BooleanPrefModel(pref, "showScale",			 true);
 		showDebug			 = new BooleanPrefModel(pref, "showDebug",		     false);
 		updateToUnstable     = new BooleanPrefModel(pref, "updateToUnstable",    false);
 		lastProfile          = new StringPreference(pref, "profile",             null);

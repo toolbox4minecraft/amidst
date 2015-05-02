@@ -545,6 +545,11 @@ public class AmidstMenu extends JMenuBar {
 						null,
 						KeyEvent.VK_L,
 						Options.instance.showFPS));
+
+				add(new DisplayingCheckbox("Show Scale",
+						null,
+						KeyEvent.VK_K,
+						Options.instance.showScale));
 				
 				add(new DisplayingCheckbox("Use Fragment Fading",
 						null,
