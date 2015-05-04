@@ -55,9 +55,9 @@ public class RemoteMinecraft implements IMinecraftInterface {
 	}
 	
 	@Override
-	public int[] getBiomeData(int x, int y, int width, int height) {
+	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolutionMap) {
 		//Log.i("Send NetGetBiomeDataRequest");
-		client.sendTCP(new NetGetBiomeDataRequest(x, y, width, height));
+		client.sendTCP(new NetGetBiomeDataRequest(x, y, width, height, useQuarterResolutionMap));
 		while (currentResults == null) {
 			try {
 				Thread.sleep(1);

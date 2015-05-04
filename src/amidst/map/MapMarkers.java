@@ -17,7 +17,8 @@ public enum MapMarkers {
 	DESERT,
 	VILLAGE,
 	SPAWN,
-	WITCH;
+	WITCH,
+	OCEAN_MONUMENT;
 	
 	public final BufferedImage image;
 	

@@ -358,33 +358,38 @@ public class AmidstMenu extends JMenuBar {
 					Options.instance.showSlimeChunks));
 				
 				add(new DisplayingCheckbox("Village Icons",
-					ResourceLoader.getImage("village.png"),
-					KeyEvent.VK_3,
-					Options.instance.showVillages));
-				
+						ResourceLoader.getImage("village.png"),
+						KeyEvent.VK_3,
+						Options.instance.showVillages));
+					
+				add(new DisplayingCheckbox("Ocean Monument Icons",
+						ResourceLoader.getImage("ocean_monument.png"),
+						KeyEvent.VK_4,
+						Options.instance.showOceanMonuments));
+					
 				add(new DisplayingCheckbox("Temple/Witch Hut Icons",
 					ResourceLoader.getImage("desert.png"),
-					KeyEvent.VK_4,
+					KeyEvent.VK_5,
 					Options.instance.showTemples));
 				
 				add(new DisplayingCheckbox("Stronghold Icons",
 					ResourceLoader.getImage("stronghold.png"),
-					KeyEvent.VK_5,
+					KeyEvent.VK_6,
 					Options.instance.showStrongholds));
 				
 				add(new DisplayingCheckbox("Player Icons",
 					ResourceLoader.getImage("player.png"),
-					KeyEvent.VK_6,
+					KeyEvent.VK_7,
 					Options.instance.showPlayers));
 				
 				add(new DisplayingCheckbox("Nether Fortress Icons",
 					ResourceLoader.getImage("nether_fortress.png"),
-					KeyEvent.VK_7,
+					KeyEvent.VK_8,
 					Options.instance.showNetherFortresses));
 				
 				add(new DisplayingCheckbox("Spawn Location Icon",
 						ResourceLoader.getImage("spawn.png"),
-						KeyEvent.VK_8,
+						KeyEvent.VK_9,
 						Options.instance.showSpawn));
 				
 			}
@@ -540,6 +545,11 @@ public class AmidstMenu extends JMenuBar {
 						null,
 						KeyEvent.VK_L,
 						Options.instance.showFPS));
+
+				add(new DisplayingCheckbox("Show Scale",
+						null,
+						KeyEvent.VK_K,
+						Options.instance.showScale));
 				
 				add(new DisplayingCheckbox("Use Fragment Fading",
 						null,

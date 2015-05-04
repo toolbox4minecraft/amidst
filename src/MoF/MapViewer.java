@@ -14,6 +14,7 @@ import amidst.map.MapObjectPlayer;
 import amidst.map.layers.BiomeLayer;
 import amidst.map.layers.GridLayer;
 import amidst.map.layers.NetherFortressLayer;
+import amidst.map.layers.OceanMonumentLayer;
 import amidst.map.layers.PlayerLayer;
 import amidst.map.layers.SlimeLayer;
 import amidst.map.layers.SpawnLayer;
@@ -25,6 +26,7 @@ import amidst.map.widget.BiomeWidget;
 import amidst.map.widget.CursorInformationWidget;
 import amidst.map.widget.DebugWidget;
 import amidst.map.widget.FpsWidget;
+import amidst.map.widget.ScaleWidget;
 import amidst.map.widget.PanelWidget.CornerAnchorPoint;
 import amidst.map.widget.SeedWidget;
 import amidst.map.widget.SelectedObjectWidget;
@@ -84,6 +86,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 			},
 			new IconLayer[] {
 				new VillageLayer(),
+				new OceanMonumentLayer(),
 				new StrongholdLayer(),
 				new TempleLayer(),
 				new SpawnLayer(),
@@ -135,6 +138,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		worldMap.setZoom(curZoom);
 		
 		widgets.add(new FpsWidget(this).setAnchorPoint(CornerAnchorPoint.BOTTOM_LEFT));
+		widgets.add(new ScaleWidget(this).setAnchorPoint(CornerAnchorPoint.BOTTOM_CENTER));
 		widgets.add(new SeedWidget(this).setAnchorPoint(CornerAnchorPoint.TOP_LEFT));
 		widgets.add(new DebugWidget(this).setAnchorPoint(CornerAnchorPoint.BOTTOM_RIGHT));
 		widgets.add(new SelectedObjectWidget(this).setAnchorPoint(CornerAnchorPoint.TOP_LEFT));

@@ -10,11 +10,13 @@ import amidst.version.VersionInfo;
 public class MinecraftUtil {
 	private static IMinecraftInterface minecraftInterface;
 	
-	public static int[] getBiomeData(int x, int y, int width, int height) {
-		return minecraftInterface.getBiomeData(x, y, width, height);
+	/** Returns a copy of the biome data (threadsafe). */
+	public static int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolutionMap) {
+		return minecraftInterface.getBiomeData(x, y, width, height, useQuarterResolutionMap);
 	}
 	
 	public static Point findValidLocation(int searchX, int searchY, int size, List<Biome> paramList, Random random) {
+		// TODO: Find out if we should useQuarterResolutionMap or not
 		// TODO: Clean up this code
 		int x1 = searchX - size >> 2;
 		int y1 = searchY - size >> 2;
@@ -23,7 +25,7 @@ public class MinecraftUtil {
 		
 		int width = x2 - x1 + 1;
 		int height = y2 - y1 + 1;
-		int[] arrayOfInt = getBiomeData(x1, y1, width, height);
+		int[] arrayOfInt = getBiomeData(x1, y1, width, height, true);
 		Point location = null;
 		int numberOfValidFound = 0;
 		for (int i = 0; i < width*height; i++) {
@@ -40,6 +42,20 @@ public class MinecraftUtil {
 		
 		return location;
 	}
+	
+	/**
+	 * Gets the biome located at the block-coordinates.
+	 * This is not a fast routine, it was added for rare things like
+	 * accurately testing structures.
+	 * (uses the 1:1 scale biome-map)
+	 * @return Assume this may return null.
+	 */
+	public static Biome getBiomeAt(int x, int y) {
+		
+		int[] arrayOfInt = getBiomeData(x, y, 1, 1, false);
+		return Biome.biomes[arrayOfInt[0] & 0xFF];
+	}
+	
 	public static boolean isValidBiome(int x, int y, int size, List<Biome> validBiomes) {
 		int x1 = x - size >> 2;
 		int y1 = y - size >> 2;
@@ -49,12 +65,11 @@ public class MinecraftUtil {
 		int width = x2 - x1 + 1;
 		int height = y2 - y1 + 1;
 		
-		int[] arrayOfInt = getBiomeData(x1, y1, width, height);
+		int[] arrayOfInt = getBiomeData(x1, y1, width, height, true);
 		for (int i = 0; i < width * height; i++) {
 			Biome localBiome = Biome.biomes[arrayOfInt[i]];
 			if (!validBiomes.contains(localBiome)) return false;
 		}
-		
 		return true;
 	}
 	

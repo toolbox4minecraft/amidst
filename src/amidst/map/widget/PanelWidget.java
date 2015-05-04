@@ -1,8 +1,10 @@
 package amidst.map.widget;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 
 import amidst.resources.ResourceLoader;
@@ -23,12 +25,15 @@ public class PanelWidget extends Widget {
 		TOP_RIGHT,
 		BOTTOM_LEFT,
 		BOTTOM_RIGHT,
-		CENTER,
+		BOTTOM_CENTER,
+		CENTER,		
 		NONE
 	}
 	protected Color textColor = new Color(1f, 1f, 1f);
 	protected Color panelColor = new Color(0.15f, 0.15f, 0.15f, 0.8f);
 	protected Font textFont = new Font("arial", Font.BOLD, 15);
+	protected Stroke lineStroke1 = new BasicStroke(1);
+	protected Stroke lineStroke2 = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
 	protected CornerAnchorPoint anchor = CornerAnchorPoint.NONE;
 	protected int xPadding = 10, yPadding = 10;
 	
@@ -88,6 +93,10 @@ public class PanelWidget extends Widget {
 			break;
 		case BOTTOM_RIGHT:
 			x = mapViewer.getWidth()  - (width  + xPadding);
+			y = mapViewer.getHeight() - (height + yPadding);
+			break;
+		case BOTTOM_CENTER:
+			x = (mapViewer.getWidth() >> 1) - (width >> 1);
 			y = mapViewer.getHeight() - (height + yPadding);
 			break;
 		case TOP_RIGHT:

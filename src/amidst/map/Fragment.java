@@ -11,7 +11,7 @@ import amidst.logging.Log;
 import amidst.minecraft.MinecraftUtil;
 
 public class Fragment {
-	public static final int SIZE = 512, SIZE_SHIFT = 9, MAX_OBJECTS_PER_FRAGMENT = 32, MIPMAP_LEVELS = 3, BIOME_SIZE = SIZE >> 2;
+	public static final int SIZE = 512, SIZE_SHIFT = 9, MAX_OBJECTS_PER_FRAGMENT = 32, BIOME_SIZE = SIZE >> 2;
 	private static AffineTransform drawMatrix = new AffineTransform();
 	public int blockX, blockY;
 	
@@ -56,7 +56,7 @@ public class Fragment {
 		synchronized (loadLock) {
 			if (isLoaded)
 				Log.w("This should never happen!");
-			int[] data = MinecraftUtil.getBiomeData(blockX >> 2, blockY >> 2, BIOME_SIZE, BIOME_SIZE);
+			int[] data = MinecraftUtil.getBiomeData(blockX >> 2, blockY >> 2, BIOME_SIZE, BIOME_SIZE, true);
 			for (int i = 0; i < BIOME_SIZE * BIOME_SIZE; i++)
 				biomeData[i] = (short)data[i];
 			for (int i = 0; i < imageLayers.length; i++)
