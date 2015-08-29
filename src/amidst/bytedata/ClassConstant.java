@@ -1,16 +1,25 @@
 package amidst.bytedata;
 
 public class ClassConstant<T> {
-	private T value;
 	private byte type;
+	private long offset;
+	private T value;
+
 	public ClassConstant(byte type, long offset, T value) {
-		this.value = value;
 		this.type = type;
+		this.offset = offset;
+		this.value = value;
 	}
-	public T get() {
-		return value;
-	}
-	public int getTag() {
+
+	public int getType() {
 		return type;
+	}
+
+	public long getOffset() {
+		return offset;
+	}
+
+	public T getValue() {
+		return value;
 	}
 }

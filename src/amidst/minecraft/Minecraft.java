@@ -20,6 +20,7 @@ import amidst.Options;
 import amidst.Util;
 import amidst.bytedata.ByteClass;
 import amidst.bytedata.ByteClass.AccessFlags;
+import amidst.bytedata.ByteClass.ByteClassFactory;
 import amidst.bytedata.CCLongMatch;
 import amidst.bytedata.CCMethodPreset;
 import amidst.bytedata.CCMulti;
@@ -31,7 +32,6 @@ import amidst.bytedata.ClassChecker;
 import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
 import amidst.logging.Log;
-import amidst.utilties.PathUtils;
 import amidst.version.VersionInfo;
 
 public class Minecraft {
@@ -50,15 +50,15 @@ public class Minecraft {
 			(new ClassChecker() {
 				@Override
 				public void check(Minecraft m, ByteClass bClass) {
-					if (bClass.fields.length != 3)
+					if (bClass.getFields().length != 3)
 						return;
 					int privateStatic = AccessFlags.PRIVATE | AccessFlags.STATIC;
 					for (int i = 0; i < 3; i++) {
-						if ((bClass.fields[i].accessFlags & privateStatic) != privateStatic)
+						if ((bClass.getFields()[i].accessFlags & privateStatic) != privateStatic)
 							return;
 					}
 					
-					if ((bClass.constructorCount == 0) && (bClass.methodCount == 6) && (bClass.searchForUtf("isDebugEnabled"))) {
+					if ((bClass.getConstructorCount() == 0) && (bClass.getMethodAndConstructorCount() == 6) && (bClass.searchForUtf("isDebugEnabled"))) {
 						m.registerClass("BlockInit", bClass);
 						isComplete = true;
 					}
@@ -128,6 +128,7 @@ public class Minecraft {
 		try {
 			ZipFile jar = new ZipFile(jarFile);
 			Enumeration<? extends ZipEntry> enu = jar.entries();
+			ByteClassFactory byteClassFactory = ByteClass.factory();
 			
 			while (enu.hasMoreElements()) {
 				ZipEntry entry = enu.nextElement();
@@ -139,7 +140,7 @@ public class Minecraft {
 						byte[] classData = new byte[is.available()];
 						is.read(classData);
 						is.close();
-						byteClassStack.push(new ByteClass(nameSplit[0], classData));
+						byteClassStack.push(byteClassFactory.create(nameSplit[0], classData));
 					}
 				}
 			}
