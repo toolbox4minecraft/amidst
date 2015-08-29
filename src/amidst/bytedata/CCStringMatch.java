@@ -13,7 +13,7 @@ public class CCStringMatch extends ClassChecker {
 	public void check(Minecraft m, ByteClass bClass) {
 		if (bClass.searchForString(checkData)) {
 			m.registerClass(publicName, bClass);
-			isComplete = true;
+			complete();
 		}
 	}
 	

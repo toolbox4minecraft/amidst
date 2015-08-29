@@ -13,11 +13,13 @@ public class CCMulti extends ClassChecker {
 	public void check(Minecraft mc, ByteClass bClass) {
 		boolean complete = true;
 		for (int i = 0; i < checks.length; i++) {
-			if (!checks[i].isComplete)
+			if (!checks[i].isComplete())
 				checks[i].check(mc, bClass);
-			complete &= checks[i].isComplete;
+			complete &= checks[i].isComplete();
 		}
-		isComplete = complete;
+		if (complete) {
+			complete();
+		}
 	}
 
 }

@@ -20,7 +20,7 @@ public class CCByteSearch extends ClassChecker {
 					searching = false;
 				sIndex++;
 				if (searching && (sIndex == checkData.length)) {
-					isComplete = true;
+					complete();
 					m.registerClass(publicName, bClass);
 					return;
 				}

@@ -15,6 +15,6 @@ public class CCMethodByReturnType extends ClassChecker {
 		ByteClass clazz = mc.getByteClass(className);
 		String internalName = mc.getByteClass(returnType).getClassName();
 		clazz.addMethod(clazz.searchByReturnType(internalName) + param, name);
-		isComplete = true;
+		complete();
 	}
 }

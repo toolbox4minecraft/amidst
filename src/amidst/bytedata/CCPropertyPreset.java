@@ -15,6 +15,6 @@ public class CCPropertyPreset extends ClassChecker {
 		for (int i = 0; i < properties.length; i += 2) {
 			clazz.addProperty(properties[i], properties[i+1]);
 		}
-		isComplete = true;
+		complete();
 	}
 }

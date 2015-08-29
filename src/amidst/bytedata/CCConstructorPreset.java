@@ -29,6 +29,6 @@ public class CCConstructorPreset extends ClassChecker {
 			String args = clazz.getArguementsForConstructor(ID);
 			clazz.addConstructor(args, name);
 		}
-		isComplete = true;
+		complete();
 	}
 }

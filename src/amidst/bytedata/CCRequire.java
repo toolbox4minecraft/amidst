@@ -17,7 +17,9 @@ public class CCRequire extends ClassChecker {
 			if (mc.getByteClass(names[i]) == null) return;
 		}
 		checker.check(mc, bClass);
-		isComplete = checker.isComplete;
+		if (checker.isComplete()) {
+			complete();
+		}
 	}
 	@Override
 	public String toString() {

@@ -16,6 +16,8 @@ public class CCRequireSimple extends ClassChecker {
 		if (canPass(mc, bClass)) {
 			checker.check(mc, bClass);
 		}
-		isComplete = checker.isComplete;
+		if (checker.isComplete()) {
+			complete();
+		}
 	}
 }

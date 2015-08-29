@@ -15,6 +15,6 @@ public class CCMethodPreset extends ClassChecker {
 		for (int i = 0; i < methods.length; i += 2) {
 			clazz.addMethod(methods[i], methods[i+1]);
 		}
-		isComplete = true;
+		complete();
 	}
 }

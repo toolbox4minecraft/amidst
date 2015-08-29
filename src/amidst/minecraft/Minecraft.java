@@ -60,7 +60,7 @@ public class Minecraft {
 					
 					if ((bClass.getConstructorCount() == 0) && (bClass.getMethodAndConstructorCount() == 6) && (bClass.searchForUtf("isDebugEnabled"))) {
 						m.registerClass("BlockInit", bClass);
-						isComplete = true;
+						complete();
 					}
 				}
 			}),
@@ -160,7 +160,7 @@ public class Minecraft {
 				for (int i = 0; i < byteClasses.length; i++) {
 					if (!found[q]) {
 						classChecks[q].check(this, (ByteClass)byteClasses[i]);
-						if (classChecks[q].isComplete) {
+						if (classChecks[q].isComplete()) {
 							Log.debug("Found: " + byteClasses[i] + " as " + classChecks[q].getName() + " | " + classChecks[q].getClass().getSimpleName());
 							found[q] = true;
 							checksRemaining--;
