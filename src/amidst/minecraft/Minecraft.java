@@ -31,6 +31,7 @@ import amidst.bytedata.ClassChecker;
 import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
 import amidst.logging.Log;
+import amidst.utilties.PathUtils;
 import amidst.version.VersionInfo;
 
 public class Minecraft {
@@ -298,18 +299,18 @@ public class Minecraft {
 			return libraries;
 		}
 		
-		for (int i = 0; i < profile.libraries.size(); i++) {
-			JarLibrary library = profile.libraries.get(i);
-			if (library.isActive() && library.getFile() != null && library.getFile().exists()) {
+		for (JarLibrary library : profile.getLibraries()) {
+			File libraryFile = library.getFile();
+			if (libraryFile != null) {
 				try {
-					libraries.add(library.getFile().toURI().toURL());
-					Log.i("Found library: " + library.getFile());
+					libraries.add(libraryFile.toURI().toURL());
+					Log.i("Found library: " + libraryFile);
 				} catch (MalformedURLException e) {
-					Log.w("Unable to convert library file to URL with path: " + library.getFile());
+					Log.w("Unable to convert library file to URL with path: " + libraryFile);
 					e.printStackTrace();
 				}
 			} else {
-				Log.i("Skipping library: " + library.name);
+				Log.i("Skipping library: " + library.getName());
 			}
 		}
 		

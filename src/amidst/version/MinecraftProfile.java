@@ -32,10 +32,10 @@ public class MinecraftProfile implements ILatestVersionListListener {
 	
 	public MinecraftProfile(InstallInformation profile) {
 		this.profile = profile;
-		if (profile.lastVersionId.equals("latest")) {
+		if (profile.getLastVersionId().equals("latest")) {
 			LatestVersionList.get().addAndNotifyLoadListener(this);
 		} else {
-			version = MinecraftVersion.fromVersionId(profile.lastVersionId);
+			version = MinecraftVersion.fromVersionId(profile.getLastVersionId());
 			if (version == null) {
 				status = Status.MISSING;
 				return;
@@ -46,11 +46,11 @@ public class MinecraftProfile implements ILatestVersionListListener {
 	}
 	
 	public String getProfileName() {
-		return profile.name;
+		return profile.getName();
 	}
 	
 	public String getGameDir() {
-		return profile.gameDir;
+		return profile.getGameDir();
 	}
 
 	public String getVersionName() {
@@ -80,8 +80,8 @@ public class MinecraftProfile implements ILatestVersionListListener {
 		case LOADED:
 			status = Status.FOUND;
 			boolean usingSnapshots = false;
-			for (int i = 0; i < profile.allowedReleaseTypes.length; i++)
-				if (profile.allowedReleaseTypes[i].equals("snapshot"))
+			for (int i = 0; i < profile.getAllowedReleaseTypes().length; i++)
+				if (profile.getAllowedReleaseTypes()[i].equals("snapshot"))
 					usingSnapshots = true;
 			if (usingSnapshots)
 				version = MinecraftVersion.fromLatestSnapshot();

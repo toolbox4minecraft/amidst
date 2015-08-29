@@ -1,20 +1,19 @@
 package amidst.json;
 
-import amidst.Util;
+import amidst.utilties.PlatformUtils;
 
 public class RuleOs {
-	public String name;
-	public RuleOs() {
-		
-	}
+	private String name;
+
 	public RuleOs(String name) {
 		this.name = name;
 	}
+
 	public boolean check() {
-		if (name.equals("any"))
-			return true;
-		if (name.equals(Util.getOs()))
-			return true;
-		return false;
+		return name.equals("any") || name.equals(PlatformUtils.getOs());
+	}
+
+	public String getName() {
+		return name;
 	}
 }

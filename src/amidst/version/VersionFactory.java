@@ -56,10 +56,10 @@ public class VersionFactory {
 		}
 		Log.i("Successfully loaded profile list.");
 	
-		profiles = new MinecraftProfile[launcherProfile.profiles.size()];
+		profiles = new MinecraftProfile[launcherProfile.getProfiles().size()];
 		
 		int i = 0;
-		for (InstallInformation installInformation : launcherProfile.profiles.values())
+		for (InstallInformation installInformation : launcherProfile.getProfiles().values())
 			profiles[i++] = new MinecraftProfile(installInformation);
 	
 		

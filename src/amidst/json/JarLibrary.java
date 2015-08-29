@@ -2,58 +2,43 @@ package amidst.json;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
-import amidst.Util;
-import amidst.logging.Log;
+import amidst.utilties.PathUtils;
 
 public class JarLibrary {
-	public String name;
-	public ArrayList<JarRule> rules;
-	
-	private File file;
-	
-	public JarLibrary() {
-		rules = new ArrayList<JarRule>();
+	private String name;
+	private List<JarRule> rules = new ArrayList<JarRule>();
+
+	public String getName() {
+		return name;
 	}
-	
-	public boolean isActive() {
-		if (rules.size() == 0)
-			return true;
-		
-		boolean isAllowed = false;
-		for (JarRule rule : rules)
-			if (rule.isApplicable())
-				isAllowed = rule.isAllowed();
-		
-		return isAllowed;
+
+	public List<JarRule> getRules() {
+		return rules;
 	}
-	
+
 	public File getFile() {
-		if (file == null) {
-			String searchPath = Util.minecraftLibraries.getAbsolutePath() + "/";
-			String[] pathSplit = name.split(":");
-			pathSplit[0] = pathSplit[0].replace('.', '/');
-			for (int i = 0; i < pathSplit.length; i++)
-				searchPath += pathSplit[i] + "/";
-			File searchPathFile = new File(searchPath);
-			if (!searchPathFile.exists()) {
-				Log.w("Failed attempt to load library at: " + searchPathFile);
-				return null;
+		if (isActive()) {
+			File result = PathUtils.getLibraryFile(name);
+			if (result != null && result.exists()) {
+				return result;
 			}
-			
-			File[] libraryFiles = searchPathFile.listFiles();
-			for (int i = 0; i < libraryFiles.length; i++) {
-				String extension = "";
-				String fileName = libraryFiles[i].getName();
-				int q = fileName.lastIndexOf('.');
-				if (q > 0)
-					extension = fileName.substring(q+1);
-				if (extension.equals("jar"))
-					file = libraryFiles[i];
-			}
-			if (file == null)
-				Log.w("Attempted to search for file at path: " + searchPath + " but found nothing. Skipping.");
 		}
-		return file;
+		return null;
+	}
+
+	private boolean isActive() {
+		if (rules.isEmpty()) {
+			return true;
+		}
+
+		for (JarRule rule : rules) {
+			if (rule.isApplicable() && rule.isAllowed()) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
