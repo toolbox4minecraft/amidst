@@ -19,8 +19,8 @@ import java.util.zip.ZipFile;
 import amidst.Options;
 import amidst.Util;
 import amidst.bytedata.ByteClass;
-import amidst.bytedata.ByteClass.AccessFlags;
 import amidst.bytedata.ByteClass.ByteClassFactory;
+import amidst.bytedata.CCJustAnother;
 import amidst.bytedata.CCLongMatch;
 import amidst.bytedata.CCMethodPreset;
 import amidst.bytedata.CCMulti;
@@ -47,23 +47,7 @@ public class Minecraft {
 			new CCStringMatch("WorldType", "default_1_1"),
 			new CCLongMatch("GenLayer", 1000L, 2001L, 2000L),
 			new CCStringMatch("IntCache", ", tcache: "),
-			(new ClassChecker() {
-				@Override
-				public void check(Minecraft m, ByteClass bClass) {
-					if (bClass.getFields().length != 3)
-						return;
-					int privateStatic = AccessFlags.PRIVATE | AccessFlags.STATIC;
-					for (int i = 0; i < 3; i++) {
-						if ((bClass.getFields()[i].accessFlags & privateStatic) != privateStatic)
-							return;
-					}
-					
-					if ((bClass.getConstructorCount() == 0) && (bClass.getMethodAndConstructorCount() == 6) && (bClass.searchForUtf("isDebugEnabled"))) {
-						m.registerClass("BlockInit", bClass);
-						complete();
-					}
-				}
-			}),
+			new CCJustAnother("BlockInit"),
 			new CCRequire(
 				new CCPropertyPreset(
 					"WorldType",
