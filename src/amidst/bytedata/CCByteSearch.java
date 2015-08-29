@@ -4,27 +4,31 @@ import amidst.minecraft.Minecraft;
 
 public class CCByteSearch extends ClassChecker {
 	private byte[] checkData;
-	public CCByteSearch(String publicName, byte[] data) {
-		super(publicName);
-		checkData = data;
+
+	public CCByteSearch(String name, byte[] checkData) {
+		super(name);
+		this.checkData = checkData;
 	}
+
 	@Override
 	public void check(Minecraft m, ByteClass bClass) {
 		byte[] data = bClass.getData();
-		
-		for (int i = 0; i < data.length + 1 - checkData.length; i++) {
-			boolean searching = true;
-			int sIndex = 0;
-			while (searching) {
-				if (data[i + sIndex] != checkData[sIndex])
-					searching = false;
-				sIndex++;
-				if (searching && (sIndex == checkData.length)) {
-					complete();
-					m.registerClass(getName(), bClass);
-					return;
-				}
+		int loopLimit = data.length - (checkData.length - 1);
+		for (int startIndex = 0; startIndex < loopLimit; startIndex++) {
+			if (isMatchingAt(data, startIndex)) {
+				complete();
+				m.registerClass(getName(), bClass);
+				return;
 			}
 		}
+	}
+
+	private boolean isMatchingAt(byte[] data, int startIndex) {
+		for (int offset = 0; offset < checkData.length; offset++) {
+			if (data[startIndex + offset] != checkData[offset]) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
