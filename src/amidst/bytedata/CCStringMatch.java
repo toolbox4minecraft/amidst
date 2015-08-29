@@ -12,7 +12,7 @@ public class CCStringMatch extends ClassChecker {
 	@Override
 	public void check(Minecraft m, ByteClass bClass) {
 		if (bClass.searchForString(checkData)) {
-			m.registerClass(publicName, bClass);
+			m.registerClass(getName(), bClass);
 			complete();
 		}
 	}

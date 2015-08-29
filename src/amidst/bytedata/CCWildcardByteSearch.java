@@ -21,7 +21,7 @@ public class CCWildcardByteSearch extends ClassChecker {
 				sIndex++;
 				if (searching && (sIndex == checkData.length)) {
 					complete();
-					m.registerClass(publicName, bClass);
+					m.registerClass(getName(), bClass);
 					return;
 				}
 			}

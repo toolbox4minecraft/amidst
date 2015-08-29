@@ -16,7 +16,7 @@ public class CCLongMatch extends ClassChecker {
 			isMatch &= bClass.searchForLong(checkData[i]);
 		}
 		if (isMatch) {
-			m.registerClass(publicName, bClass);
+			m.registerClass(getName(), bClass);
 			complete();
 		}
 	}

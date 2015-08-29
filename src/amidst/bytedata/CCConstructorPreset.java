@@ -20,7 +20,7 @@ public class CCConstructorPreset extends ClassChecker {
 	}
 	@Override
 	public void check(Minecraft mc, ByteClass bClass) {
-		ByteClass clazz = mc.getByteClass(publicName);
+		ByteClass clazz = mc.getByteClass(getName());
 		if (multiple) {
 			for (int i = 0; i < constructor.length; i += 2) {
 				clazz.addConstructor(constructor[i], constructor[i+1]);

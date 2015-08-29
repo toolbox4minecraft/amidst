@@ -15,7 +15,7 @@ public class CCFloatMatch extends ClassChecker {
 			isMatch &= bClass.searchForFloat(checkData[i]);
 		}
 		if (isMatch) {
-			m.registerClass(publicName, bClass);
+			m.registerClass(getName(), bClass);
 			complete();
 		}
 	}
