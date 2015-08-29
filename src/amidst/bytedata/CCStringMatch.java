@@ -11,9 +11,9 @@ public class CCStringMatch extends ClassChecker {
 	}
 
 	@Override
-	public void check(Minecraft m, ByteClass bClass) {
+	public void check(Minecraft mc, ByteClass bClass) {
 		if (bClass.searchForString(checkData)) {
-			m.registerClass(getName(), bClass);
+			mc.registerClass(getName(), bClass);
 			complete();
 		}
 	}

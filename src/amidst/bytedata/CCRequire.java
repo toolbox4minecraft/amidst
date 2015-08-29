@@ -2,27 +2,37 @@ package amidst.bytedata;
 
 import amidst.minecraft.Minecraft;
 
-
 public class CCRequire extends ClassChecker {
 	private ClassChecker checker;
-	private String[] names;
-	public CCRequire(ClassChecker cc, String... requiredNames) {
-		super(cc.getName());
-		checker = cc;
-		names = requiredNames;
+	private String[] requiredNames;
+
+	public CCRequire(ClassChecker checker, String... requiredNames) {
+		super(checker.getName());
+		this.checker = checker;
+		this.requiredNames = requiredNames;
 	}
+
 	@Override
 	public void check(Minecraft mc, ByteClass bClass) {
-		for (int i = 0; i < names.length; i++) {
-			if (mc.getByteClass(names[i]) == null) return;
-		}
-		checker.check(mc, bClass);
-		if (checker.isComplete()) {
-			complete();
+		if (hasAllRequiredClasses(mc)) {
+			checker.check(mc, bClass);
+			if (checker.isComplete()) {
+				complete();
+			}
 		}
 	}
+
+	private boolean hasAllRequiredClasses(Minecraft mc) {
+		for (String requiredName : requiredNames) {
+			if (mc.getByteClass(requiredName) == null) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public String toString() {
-		return "[Require " + names[0] + " " + checker + "]";
+		return "[Require " + requiredNames[0] + " " + checker + "]";
 	}
 }
