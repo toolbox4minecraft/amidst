@@ -5,7 +5,7 @@ import amidst.minecraft.Minecraft;
 public abstract class ClassChecker {
 	protected String publicName;
 	private boolean isComplete = false;
-	public int passes = 10;
+	private int passes = 10;
 
 	public ClassChecker() {
 		this.publicName = "unknown";
@@ -13,6 +13,14 @@ public abstract class ClassChecker {
 
 	public ClassChecker(String publicName) {
 		this.publicName = publicName;
+	}
+
+	public int getPasses() {
+		return passes;
+	}
+
+	public void decreasePasses() {
+		passes--;
 	}
 
 	public boolean isComplete() {

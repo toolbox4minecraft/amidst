@@ -170,8 +170,8 @@ public class Minecraft {
 					}
 				}
 				if (!found[q]) {
-					classChecks[q].passes--;
-					if (classChecks[q].passes == 0) {
+					classChecks[q].decreasePasses();
+					if (classChecks[q].getPasses() == 0) {
 						found[q] = true;
 						checksRemaining--;
 					}
