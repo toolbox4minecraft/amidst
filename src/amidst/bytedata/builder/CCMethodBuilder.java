@@ -1,21 +1,21 @@
-package amidst.bytedata.factory;
+package amidst.bytedata.builder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import amidst.bytedata.CCMethod;
 import amidst.bytedata.ClassChecker;
-import amidst.bytedata.factory.ClassCheckerBuilder.ClassCheckerFactory;
+import amidst.bytedata.builder.ClassCheckerBuilder.SimpleClassCheckerBuilder;
 
-public class CCMethodFactory extends ClassCheckerFactory {
+public class CCMethodBuilder extends SimpleClassCheckerBuilder {
 	private String name;
 	private List<String> methods = new ArrayList<String>();
 
-	public CCMethodFactory(String name) {
+	public CCMethodBuilder(String name) {
 		this.name = name;
 	}
 
-	public CCMethodFactory method(String val1, String val2) {
+	public CCMethodBuilder method(String val1, String val2) {
 		methods.add(val1);
 		methods.add(val2);
 		return this;

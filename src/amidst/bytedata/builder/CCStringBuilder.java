@@ -1,20 +1,20 @@
-package amidst.bytedata.factory;
+package amidst.bytedata.builder;
 
 import java.util.Objects;
 
 import amidst.bytedata.CCString;
 import amidst.bytedata.ClassChecker;
-import amidst.bytedata.factory.ClassCheckerBuilder.ClassCheckerFactory;
+import amidst.bytedata.builder.ClassCheckerBuilder.SimpleClassCheckerBuilder;
 
-public class CCStringFactory extends ClassCheckerFactory {
+public class CCStringBuilder extends SimpleClassCheckerBuilder {
 	private String name;
 	private String checkData;
 
-	public CCStringFactory(String name) {
+	public CCStringBuilder(String name) {
 		this.name = name;
 	}
 
-	public CCStringFactory data(String checkData) {
+	public CCStringBuilder data(String checkData) {
 		this.checkData = checkData;
 		return this;
 	}

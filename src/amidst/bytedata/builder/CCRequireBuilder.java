@@ -1,10 +1,10 @@
-package amidst.bytedata.factory;
+package amidst.bytedata.builder;
 
 import java.util.List;
 
 import amidst.bytedata.CCRequire;
 import amidst.bytedata.ClassChecker;
-import amidst.bytedata.factory.ClassCheckerBuilder.SubClassCheckerBuilder;
+import amidst.bytedata.builder.ClassCheckerBuilder.SubClassCheckerBuilder;
 
 public class CCRequireBuilder extends SubClassCheckerBuilder {
 	private String[] requiredNames;

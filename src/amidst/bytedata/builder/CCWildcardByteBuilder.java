@@ -1,20 +1,20 @@
-package amidst.bytedata.factory;
+package amidst.bytedata.builder;
 
 import java.util.Objects;
 
 import amidst.bytedata.CCWildcardByte;
 import amidst.bytedata.ClassChecker;
-import amidst.bytedata.factory.ClassCheckerBuilder.ClassCheckerFactory;
+import amidst.bytedata.builder.ClassCheckerBuilder.SimpleClassCheckerBuilder;
 
-public class CCWildcardByteFactory extends ClassCheckerFactory {
+public class CCWildcardByteBuilder extends SimpleClassCheckerBuilder {
 	private String name;
 	private int[] checkData;
 
-	public CCWildcardByteFactory(String name) {
+	public CCWildcardByteBuilder(String name) {
 		this.name = name;
 	}
 
-	public CCWildcardByteFactory data(int[] checkData) {
+	public CCWildcardByteBuilder data(int[] checkData) {
 		this.checkData = checkData;
 		return this;
 	}

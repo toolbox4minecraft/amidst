@@ -1,6 +1,6 @@
 package amidst.bytedata;
 
-import amidst.bytedata.factory.ClassCheckerBuilder;
+import amidst.bytedata.builder.ClassCheckerBuilder;
 import amidst.minecraft.Minecraft;
 
 public abstract class ClassChecker {

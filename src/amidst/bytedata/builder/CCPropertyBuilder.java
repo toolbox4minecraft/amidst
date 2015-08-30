@@ -1,21 +1,21 @@
-package amidst.bytedata.factory;
+package amidst.bytedata.builder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import amidst.bytedata.CCProperty;
 import amidst.bytedata.ClassChecker;
-import amidst.bytedata.factory.ClassCheckerBuilder.ClassCheckerFactory;
+import amidst.bytedata.builder.ClassCheckerBuilder.SimpleClassCheckerBuilder;
 
-public class CCPropertyFactory extends ClassCheckerFactory {
+public class CCPropertyBuilder extends SimpleClassCheckerBuilder {
 	private String name;
 	private List<String> properties = new ArrayList<String>();
 
-	public CCPropertyFactory(String name) {
+	public CCPropertyBuilder(String name) {
 		this.name = name;
 	}
 
-	public CCPropertyFactory property(String val1, String val2) {
+	public CCPropertyBuilder property(String val1, String val2) {
 		properties.add(val1);
 		properties.add(val2);
 		return this;

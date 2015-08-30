@@ -1,4 +1,4 @@
-package amidst.bytedata.factory;
+package amidst.bytedata.builder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class ClassCheckerBuilder {
 		protected abstract ClassChecker get();
 	}
 
-	public static abstract class ClassCheckerFactory {
+	public static abstract class SimpleClassCheckerBuilder {
 		private ClassCheckerBuilder builder;
 
 		void setBuilder(ClassCheckerBuilder builder) {
@@ -48,28 +48,28 @@ public class ClassCheckerBuilder {
 	public ClassCheckerBuilder() {
 	}
 
-	public CCJustAnotherFactory matchJustAnother(String name) {
-		return setBuilder(new CCJustAnotherFactory(name));
+	public CCJustAnotherBuilder matchJustAnother(String name) {
+		return setBuilder(new CCJustAnotherBuilder(name));
 	}
 
-	public CCLongFactory matchLong(String name) {
-		return setBuilder(new CCLongFactory(name));
+	public CCLongBuilder matchLong(String name) {
+		return setBuilder(new CCLongBuilder(name));
 	}
 
-	public CCMethodFactory matchMethods(String name) {
-		return setBuilder(new CCMethodFactory(name));
+	public CCMethodBuilder matchMethods(String name) {
+		return setBuilder(new CCMethodBuilder(name));
 	}
 
-	public CCPropertyFactory matchProperties(String name) {
-		return setBuilder(new CCPropertyFactory(name));
+	public CCPropertyBuilder matchProperties(String name) {
+		return setBuilder(new CCPropertyBuilder(name));
 	}
 
-	public CCStringFactory matchString(String name) {
-		return setBuilder(new CCStringFactory(name));
+	public CCStringBuilder matchString(String name) {
+		return setBuilder(new CCStringBuilder(name));
 	}
 
-	public CCWildcardByteFactory matchWildcardBytes(String name) {
-		return setBuilder(new CCWildcardByteFactory(name));
+	public CCWildcardByteBuilder matchWildcardBytes(String name) {
+		return setBuilder(new CCWildcardByteBuilder(name));
 	}
 
 	public CCMultiBuilder multi() {
@@ -80,9 +80,9 @@ public class ClassCheckerBuilder {
 		return setParent(new CCRequireBuilder(requiredNames));
 	}
 
-	private <T extends ClassCheckerFactory> T setBuilder(T factory) {
-		factory.setBuilder(nextBuilder);
-		return factory;
+	private <T extends SimpleClassCheckerBuilder> T setBuilder(T builder) {
+		builder.setBuilder(nextBuilder);
+		return builder;
 	}
 
 	private <T extends SubClassCheckerBuilder> T setParent(T builder) {
