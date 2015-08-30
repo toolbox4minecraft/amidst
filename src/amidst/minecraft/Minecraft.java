@@ -30,61 +30,6 @@ import amidst.logging.Log;
 import amidst.version.VersionInfo;
 
 public class Minecraft {
-	// @formatter:off
-	// This deactivates the automatic formatter of Eclipse.
-	// However, you need to activate this in:
-	// Java -> Code Style -> Formatter -> Edit -> Off/On Tags
-	// see: http://stackoverflow.com/questions/1820908/how-to-turn-off-the-eclipse-code-formatter-for-certain-sections-of-java-code
-	private ClassChecker[] createClassCheckers() {
-		return ClassChecker.builder()
-			.matchWildcardBytes("IntCache").data(DeobfuscationData.intCache).end()
-			.matchString("WorldType").data("default_1_1").end()
-			.matchLong("GenLayer").data(1000L, 2001L, 2000L).end()
-			.matchString("IntCache").data(", tcache: ").end()
-			.matchJustAnother("BlockInit").end()
-			.require("WorldType")
-				.matchProperties("WorldType")
-					.property("a", "types")
-					.property("b", "default")
-					.property("c", "flat")
-					.property("d", "largeBiomes")
-					.property("e", "amplified")
-					.property("g", "default_1_1")
-					.property("f", "customized")
-				.end()
-			.end()
-			.require("BlockInit")
-				.matchMethods("BlockInit")
-					.method("c()", "initialize")
-				.end()
-			.end()
-			.require("GenLayer")
-				.matchMethods("GenLayer")
-					.method("a(long, @WorldType)", "initializeAllBiomeGenerators")
-					.method("a(long, @WorldType, String)", "initializeAllBiomeGeneratorsWithParams")
-					.method("a(int, int, int, int)", "getInts")
-				.end()
-			.end()
-			.require("IntCache")
-				.multi()
-					.matchMethods("IntCache")
-						.method("a(int)", "getIntCache")
-						.method("a()", "resetIntCache")
-						.method("b()", "getInformation")
-					.end()
-					.matchProperties("IntCache")
-						.property("a", "intCacheSize")
-						.property("b","freeSmallArrays")
-						.property("c","inUseSmallArrays")
-						.property("d","freeLargeArrays")
-						.property("e","inUseLargeArrays")
-					.end()
-				.end()
-			.end()
-		.construct();
-	}
-	// @formatter:on
-
 	private static final int MAX_CLASSES = 128;
 
 	private Class<?> mainClass;
@@ -210,6 +155,61 @@ public class Minecraft {
 		}
 		Log.i("Class search complete.");
 	}
+
+	// @formatter:off
+	// This deactivates the automatic formatter of Eclipse.
+	// However, you need to activate this in:
+	// Java -> Code Style -> Formatter -> Edit -> Off/On Tags
+	// see: http://stackoverflow.com/questions/1820908/how-to-turn-off-the-eclipse-code-formatter-for-certain-sections-of-java-code
+	private ClassChecker[] createClassCheckers() {
+		return ClassChecker.builder()
+			.matchWildcardBytes("IntCache").data(DeobfuscationData.intCache).end()
+			.matchString("WorldType").data("default_1_1").end()
+			.matchLong("GenLayer").data(1000L, 2001L, 2000L).end()
+			.matchString("IntCache").data(", tcache: ").end()
+			.matchJustAnother("BlockInit").end()
+			.require("WorldType")
+				.matchProperties("WorldType")
+					.property("a", "types")
+					.property("b", "default")
+					.property("c", "flat")
+					.property("d", "largeBiomes")
+					.property("e", "amplified")
+					.property("g", "default_1_1")
+					.property("f", "customized")
+				.end()
+			.end()
+			.require("BlockInit")
+				.matchMethods("BlockInit")
+					.method("c()", "initialize")
+				.end()
+			.end()
+			.require("GenLayer")
+				.matchMethods("GenLayer")
+					.method("a(long, @WorldType)", "initializeAllBiomeGenerators")
+					.method("a(long, @WorldType, String)", "initializeAllBiomeGeneratorsWithParams")
+					.method("a(int, int, int, int)", "getInts")
+				.end()
+			.end()
+			.require("IntCache")
+				.multi()
+					.matchMethods("IntCache")
+						.method("a(int)", "getIntCache")
+						.method("a()", "resetIntCache")
+						.method("b()", "getInformation")
+					.end()
+					.matchProperties("IntCache")
+						.property("a", "intCacheSize")
+						.property("b","freeSmallArrays")
+						.property("c","inUseSmallArrays")
+						.property("d","freeLargeArrays")
+						.property("e","inUseLargeArrays")
+					.end()
+				.end()
+			.end()
+		.construct();
+	}
+	// @formatter:on
 
 	private void generateVersionID() {
 		Log.i("Generating version ID...");
