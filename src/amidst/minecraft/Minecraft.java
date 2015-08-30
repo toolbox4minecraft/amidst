@@ -82,9 +82,9 @@ public class Minecraft {
 			Log.i("Classes loaded.");
 			Log.i("Minecraft load complete.");
 		} catch (RuntimeException e) {
-			e.printStackTrace();
 			Log.crash(e.getCause(), "error while loading minecraft jar file: "
 					+ e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -468,7 +468,6 @@ public class Minecraft {
 
 	public MinecraftClass getClassByType(String name) {
 		return typeToMinecraftClassMap.get(name);
-
 	}
 
 	public IMinecraftInterface createInterface() {

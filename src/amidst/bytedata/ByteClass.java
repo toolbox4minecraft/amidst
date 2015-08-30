@@ -262,7 +262,9 @@ public class ByteClass {
 		}
 	}
 
-	public static class ByteClassFactory {
+	public static enum ByteClassFactory {
+		INSTANCE;
+
 		private Map<Character, String> primitiveTypeConversionMap = new HashMap<Character, String>();
 		private Pattern argRegex = Pattern
 				.compile("([\\[]+)?([BCDFIJSZ]|L[^;]+)");
@@ -285,7 +287,7 @@ public class ByteClass {
 	}
 
 	public static ByteClassFactory factory() {
-		return new ByteClassFactory();
+		return ByteClassFactory.INSTANCE;
 	}
 
 	private byte[] data;
