@@ -2,10 +2,10 @@ package amidst.bytedata;
 
 import amidst.minecraft.Minecraft;
 
-public class CCWildcardByteSearch extends ClassChecker {
+public class CCWildcardByte extends ClassChecker {
 	private int[] checkData;
 
-	public CCWildcardByteSearch(String name, int[] checkData) {
+	public CCWildcardByte(String name, int[] checkData) {
 		super(name);
 		this.checkData = checkData;
 	}

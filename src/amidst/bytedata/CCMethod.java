@@ -2,10 +2,10 @@ package amidst.bytedata;
 
 import amidst.minecraft.Minecraft;
 
-public class CCMethodPreset extends ClassChecker {
+public class CCMethod extends ClassChecker {
 	private String[] methods;
 
-	public CCMethodPreset(String name, String... methods) {
+	public CCMethod(String name, String... methods) {
 		super(name);
 		this.methods = methods;
 	}

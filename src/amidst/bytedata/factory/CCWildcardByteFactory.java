@@ -2,19 +2,19 @@ package amidst.bytedata.factory;
 
 import java.util.Objects;
 
-import amidst.bytedata.CCWildcardByteSearch;
+import amidst.bytedata.CCWildcardByte;
 import amidst.bytedata.ClassChecker;
 import amidst.bytedata.factory.ClassCheckerBuilder.ClassCheckerFactory;
 
-public class CCWildcardByteSearchFactory extends ClassCheckerFactory {
+public class CCWildcardByteFactory extends ClassCheckerFactory {
 	private String name;
 	private int[] checkData;
 
-	public CCWildcardByteSearchFactory(String name) {
+	public CCWildcardByteFactory(String name) {
 		this.name = name;
 	}
 
-	public CCWildcardByteSearchFactory data(int[] checkData) {
+	public CCWildcardByteFactory data(int[] checkData) {
 		this.checkData = checkData;
 		return this;
 	}
@@ -23,6 +23,6 @@ public class CCWildcardByteSearchFactory extends ClassCheckerFactory {
 	protected ClassChecker get() {
 		Objects.requireNonNull(checkData,
 				"wildcard bytes matcher needs data to check");
-		return new CCWildcardByteSearch(name, checkData);
+		return new CCWildcardByte(name, checkData);
 	}
 }

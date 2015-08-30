@@ -3,19 +3,19 @@ package amidst.bytedata.factory;
 import java.util.ArrayList;
 import java.util.List;
 
-import amidst.bytedata.CCPropertyPreset;
+import amidst.bytedata.CCProperty;
 import amidst.bytedata.ClassChecker;
 import amidst.bytedata.factory.ClassCheckerBuilder.ClassCheckerFactory;
 
-public class CCPropertyPresetFactory extends ClassCheckerFactory {
+public class CCPropertyFactory extends ClassCheckerFactory {
 	private String name;
 	private List<String> properties = new ArrayList<String>();
 
-	public CCPropertyPresetFactory(String name) {
+	public CCPropertyFactory(String name) {
 		this.name = name;
 	}
 
-	public CCPropertyPresetFactory property(String val1, String val2) {
+	public CCPropertyFactory property(String val1, String val2) {
 		properties.add(val1);
 		properties.add(val2);
 		return this;
@@ -24,7 +24,7 @@ public class CCPropertyPresetFactory extends ClassCheckerFactory {
 	@Override
 	protected ClassChecker get() {
 		ensurePropertyPresent();
-		return new CCPropertyPreset(name,
+		return new CCProperty(name,
 				properties.toArray(new String[properties.size()]));
 	}
 

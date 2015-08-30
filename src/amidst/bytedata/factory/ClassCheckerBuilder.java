@@ -52,24 +52,24 @@ public class ClassCheckerBuilder {
 		return setBuilder(new CCJustAnotherFactory(name));
 	}
 
-	public CCLongMatchFactory matchLong(String name) {
-		return setBuilder(new CCLongMatchFactory(name));
+	public CCLongFactory matchLong(String name) {
+		return setBuilder(new CCLongFactory(name));
 	}
 
-	public CCMethodPresetFactory matchMethodPreset(String name) {
-		return setBuilder(new CCMethodPresetFactory(name));
+	public CCMethodFactory matchMethods(String name) {
+		return setBuilder(new CCMethodFactory(name));
 	}
 
-	public CCPropertyPresetFactory matchPropertyPreset(String name) {
-		return setBuilder(new CCPropertyPresetFactory(name));
+	public CCPropertyFactory matchProperties(String name) {
+		return setBuilder(new CCPropertyFactory(name));
 	}
 
-	public CCStringMatchFactory matchString(String name) {
-		return setBuilder(new CCStringMatchFactory(name));
+	public CCStringFactory matchString(String name) {
+		return setBuilder(new CCStringFactory(name));
 	}
 
-	public CCWildcardByteSearchFactory matchWildcardBytes(String name) {
-		return setBuilder(new CCWildcardByteSearchFactory(name));
+	public CCWildcardByteFactory matchWildcardBytes(String name) {
+		return setBuilder(new CCWildcardByteFactory(name));
 	}
 
 	public CCMultiBuilder multi() {

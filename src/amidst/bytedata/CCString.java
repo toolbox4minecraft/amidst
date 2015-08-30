@@ -2,10 +2,10 @@ package amidst.bytedata;
 
 import amidst.minecraft.Minecraft;
 
-public class CCStringMatch extends ClassChecker {
+public class CCString extends ClassChecker {
 	private String checkData;
 
-	public CCStringMatch(String name, String checkData) {
+	public CCString(String name, String checkData) {
 		super(name);
 		this.checkData = checkData;
 	}

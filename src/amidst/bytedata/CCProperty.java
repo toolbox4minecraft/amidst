@@ -2,10 +2,10 @@ package amidst.bytedata;
 
 import amidst.minecraft.Minecraft;
 
-public class CCPropertyPreset extends ClassChecker {
+public class CCProperty extends ClassChecker {
 	private String[] properties;
 
-	public CCPropertyPreset(String name, String... properties) {
+	public CCProperty(String name, String... properties) {
 		super(name);
 		this.properties = properties;
 	}
