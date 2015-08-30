@@ -54,7 +54,7 @@ public class Minecraft {
 		this.jarFile = jarFile;
 		this.urlToJar = jarFile.toURI().toURL();
 		readByteClassesFromJarFile();
-		searchClasses();
+		identifyClasses();
 		generateVersionID();
 		loadClasses();
 		Log.i("Minecraft load complete.");
@@ -117,43 +117,32 @@ public class Minecraft {
 		}
 	}
 
-	private void searchClasses() {
+	private void identifyClasses() {
 		Log.i("Searching for classes...");
 		ClassChecker[] classCheckers = createClassCheckers();
-		int checksRemaining = classCheckers.length;
-		boolean[] found = new boolean[byteClasses.length];
-		while (checksRemaining != 0) {
-			for (int q = 0; q < classCheckers.length; q++) {
-				for (int i = 0; i < byteClasses.length; i++) {
-					if (!found[q]) {
-						classCheckers[q].check(this, byteClasses[i]);
-						if (classCheckers[q].isComplete()) {
-							Log.debug("Found: "
-									+ byteClasses[i]
-									+ " as "
-									+ classCheckers[q].getName()
-									+ " | "
-									+ classCheckers[q].getClass()
-											.getSimpleName());
-							found[q] = true;
-							checksRemaining--;
-						}
-						// TODO: What is this line, and why is it commented
-						// byteClassMap.put(classChecks[q].getName(),
-						// classFiles[i].getName().split("\\.")[0]);
-					}
-				}
-				if (!found[q]) {
-					classCheckers[q].decreasePasses();
-					if (classCheckers[q].getPasses() == 0) {
-						found[q] = true;
-						checksRemaining--;
-					}
-				}
-
+		for (int q = 0; q < classCheckers.length; q++) {
+			ClassChecker classChecker = classCheckers[q];
+			ByteClass byteClass = findClass(classChecker);
+			if (byteClass != null) {
+				Log.debug("Found: " + byteClass + " as "
+						+ classChecker.getName() + " | "
+						+ classChecker.getClass().getSimpleName());
+			} else {
+				Log.w("Missing: " + classChecker.getName() + " | "
+						+ classChecker.getClass().getSimpleName());
 			}
 		}
 		Log.i("Class search complete.");
+	}
+
+	private ByteClass findClass(ClassChecker classChecker) {
+		for (ByteClass byteClass : byteClasses) {
+			classChecker.check(this, byteClass);
+			if (classChecker.isComplete()) {
+				return byteClass;
+			}
+		}
+		return null;
 	}
 
 	// @formatter:off
