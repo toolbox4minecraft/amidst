@@ -62,7 +62,16 @@ public class Minecraft {
 			Log.i("Searching for classes...");
 			identifyClasses(byteClasses);
 			Log.i("Class search complete.");
-			classLoader = createAndUseClassLoader();
+			File librariesJson = getLibrariesJsonFile();
+			if (librariesJson.exists()) {
+				Log.i("Loading libraries.");
+				classLoader = createClassLoader(getJarFileUrl(),
+						getLibraries(librariesJson));
+			} else {
+				Log.i("Unable to find Minecraft library JSON at: "
+						+ librariesJson + ". Skipping.");
+				classLoader = createClassLoader(getJarFileUrl());
+			}
 			Log.i("Generating version ID...");
 			versionID = generateVersionID(getMainClassFields(loadMainClass()));
 			version = findMatchingVersion();
@@ -328,8 +337,33 @@ public class Minecraft {
 		return result;
 	}
 
+	private File getLibrariesJsonFile() {
+		if (Options.instance.minecraftJson != null) {
+			return new File(Options.instance.minecraftJson);
+		} else {
+			return new File(jarFile.getPath().replace(".jar", ".json"));
+		}
+	}
+
+	private URL getJarFileUrl() {
+		try {
+			return jarFile.toURI().toURL();
+		} catch (MalformedURLException e) {
+			throw new RuntimeException("minecraft jar file has malformed url",
+					e);
+		}
+	}
+	
+	private URLClassLoader createClassLoader(URL jarFileUrl, List<URL> libraries) {
+		libraries.add(jarFileUrl);
+		return new URLClassLoader(Utils.toArray(libraries, URL.class));
+	}
+	
+	private URLClassLoader createClassLoader(URL jarFileUrl) {
+		return new URLClassLoader(new URL[] { jarFileUrl });
+	}
+	
 	private List<URL> getLibraries(File jsonFile) {
-		Log.i("Loading libraries.");
 		List<URL> libraries = new ArrayList<URL>();
 		JarProfile profile = null;
 		try {
@@ -357,36 +391,6 @@ public class Minecraft {
 		}
 
 		return libraries;
-	}
-
-	public URLClassLoader createAndUseClassLoader() {
-		try {
-			File librariesJson = getLibrariesJsonFile();
-			URL[] urls;
-			if (librariesJson.exists()) {
-				List<URL> libraries = getLibraries(librariesJson);
-				libraries.add(jarFile.toURI().toURL());
-				urls = Utils.toArray(libraries, URL.class);
-			} else {
-				Log.i("Unable to find Minecraft library JSON at: "
-						+ librariesJson + ". Skipping.");
-				urls = new URL[] { jarFile.toURI().toURL() };
-			}
-			URLClassLoader classLoader = new URLClassLoader(urls);
-			Thread.currentThread().setContextClassLoader(classLoader);
-			return classLoader;
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("minecraft jar file has malformed url",
-					e);
-		}
-	}
-
-	private File getLibrariesJsonFile() {
-		if (Options.instance.minecraftJson != null) {
-			return new File(Options.instance.minecraftJson);
-		} else {
-			return new File(jarFile.getPath().replace(".jar", ".json"));
-		}
 	}
 
 	public Class<?> loadClass(String name) {
