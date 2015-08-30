@@ -7,10 +7,6 @@ public abstract class ClassChecker {
 	private boolean isComplete = false;
 	private int passes = 10;
 
-	public ClassChecker() {
-		this.name = "unknown";
-	}
-
 	public ClassChecker(String name) {
 		this.name = name;
 	}
