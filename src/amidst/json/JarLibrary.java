@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import amidst.utilties.PathUtils;
+import amidst.utilties.FileSystemUtils;
 
 public class JarLibrary {
 	private String name;
@@ -20,7 +20,7 @@ public class JarLibrary {
 
 	public File getFile() {
 		if (isActive()) {
-			File result = PathUtils.getLibraryFile(name);
+			File result = FileSystemUtils.getLibraryFile(name);
 			if (result != null && result.exists()) {
 				return result;
 			}

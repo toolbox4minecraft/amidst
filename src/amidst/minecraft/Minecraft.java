@@ -26,6 +26,7 @@ import amidst.bytedata.ClassChecker;
 import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
 import amidst.logging.Log;
+import amidst.utilties.FileSystemUtils;
 import amidst.utilties.Utils;
 import amidst.version.VersionInfo;
 
@@ -94,7 +95,8 @@ public class Minecraft {
 
 	private ByteClass readJarFileEntry(ZipFile jar, ZipEntry entry)
 			throws IOException {
-		String className = getClassName(entry);
+		String className = FileSystemUtils.getFileNameWithoutExtension(entry,
+				"class");
 		if (className != null) {
 			BufferedInputStream is = new BufferedInputStream(
 					jar.getInputStream(entry));
@@ -107,17 +109,6 @@ public class Minecraft {
 			}
 		}
 		return null;
-	}
-
-	private String getClassName(ZipEntry entry) {
-		String[] nameSplit = entry.getName().split("\\.");
-		if (!entry.isDirectory() && nameSplit.length == 2
-				&& nameSplit[0].indexOf('/') == -1
-				&& nameSplit[1].equals("class")) {
-			return nameSplit[0];
-		} else {
-			return null;
-		}
 	}
 
 	private void identifyClasses() {

@@ -1,12 +1,13 @@
 package amidst.utilties;
 
 import java.io.File;
+import java.util.zip.ZipEntry;
 
 import amidst.Util;
 import amidst.logging.Log;
 
-public class PathUtils {
-	private PathUtils() {
+public class FileSystemUtils {
+	private FileSystemUtils() {
 	}
 
 	public static File getLibraryFile(String libraryName) {
@@ -57,5 +58,17 @@ public class PathUtils {
 		String[] result = libraryName.split(":");
 		result[0] = result[0].replace('.', '/');
 		return result;
+	}
+
+	public static String getFileNameWithoutExtension(ZipEntry entry,
+			String extension) {
+		String[] nameSplit = entry.getName().split("\\.");
+		if (!entry.isDirectory() && nameSplit.length == 2
+				&& nameSplit[0].indexOf('/') == -1
+				&& nameSplit[1].equals(extension)) {
+			return nameSplit[0];
+		} else {
+			return null;
+		}
 	}
 }
