@@ -265,8 +265,9 @@ public class ByteClass {
 
 	public static class ByteClassFactory {
 		private Map<Character, String> primitiveTypeConversionMap = new HashMap<Character, String>();
-		private Pattern argRegex;
-		private Pattern objectRegex;
+		private Pattern argRegex = Pattern
+				.compile("([\\[]+)?([BCDFIJSZ]|L[^;]+)");
+		private Pattern objectRegex = Pattern.compile("^([\\[]+)?[LBCDFIJSZ]");
 
 		private ByteClassFactory() {
 			primitiveTypeConversionMap.put('B', "byte");
@@ -277,8 +278,6 @@ public class ByteClass {
 			primitiveTypeConversionMap.put('J', "long");
 			primitiveTypeConversionMap.put('S', "short");
 			primitiveTypeConversionMap.put('Z', "boolean");
-			argRegex = Pattern.compile("([\\[]+)?([BCDFIJSZ]|L[^;]+)");
-			objectRegex = Pattern.compile("^([\\[]+)?[LBCDFIJSZ]");
 		}
 
 		public ByteClass create(String name, byte[] classData) {

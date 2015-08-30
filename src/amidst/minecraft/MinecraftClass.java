@@ -15,9 +15,11 @@ public class MinecraftClass {
 	private HashMap<String, MinecraftConstructor> constructorByName;
 	private Constructor<?>[] constructors;
 	private Minecraft minecraft;
-	public MinecraftClass(String name, String className) {
+	public MinecraftClass(String name, String className, Minecraft minecraft) {
 		this.name = name;
 		this.className = className;
+		this.minecraft = minecraft;
+		this.clazz = minecraft.loadClass(className);
 		methods = new HashMap<String, MinecraftMethod>();
 		propertiesByName = new HashMap<String, MinecraftProperty>();
 		propertiesByObfName = new HashMap<String, MinecraftProperty>();
@@ -27,10 +29,6 @@ public class MinecraftClass {
 	}
 	public String getName() {
 		return name;
-	}
-	public void load(Minecraft mc) {
-		minecraft = mc;
-		clazz = minecraft.loadClass(className);
 	}
 	public String getClassName() {
 		return className;
