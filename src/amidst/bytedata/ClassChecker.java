@@ -35,5 +35,5 @@ public abstract class ClassChecker {
 		isComplete = true;
 	}
 
-	public abstract void check(Minecraft m, ByteClass bClass);
+	public abstract void check(Minecraft mc, ByteClass bClass);
 }
