@@ -1,23 +1,20 @@
 package amidst.gui.version;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.net.MalformedURLException;
 
 import MoF.FinderWindow;
 import amidst.Options;
 import amidst.Util;
-import amidst.logging.Log;
 import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 import amidst.version.IProfileUpdateListener;
 import amidst.version.MinecraftProfile;
-import amidst.version.ProfileUpdateEvent;
 import amidst.version.MinecraftProfile.Status;
+import amidst.version.ProfileUpdateEvent;
 
 public class LocalVersionComponent extends VersionComponent {
 	protected MinecraftProfile profile;
@@ -114,14 +111,10 @@ public class LocalVersionComponent extends VersionComponent {
 		(new Thread(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					Util.setProfileDirectory(profile.getGameDir());
-					MinecraftUtil.setBiomeInterface(new Minecraft(profile.getJarFile()).createInterface());
-					new FinderWindow();
-					VersionSelectWindow.get().dispose();
-				} catch (MalformedURLException e) {
-					Log.crash(e, "MalformedURLException on Minecraft load.");
-				}
+				Util.setProfileDirectory(profile.getGameDir());
+				MinecraftUtil.setBiomeInterface(new Minecraft(profile.getJarFile()).createInterface());
+				new FinderWindow();
+				VersionSelectWindow.get().dispose();
 			}
 		})).start();
 	}
