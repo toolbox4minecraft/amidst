@@ -364,28 +364,6 @@ public class Minecraft {
 		return libraries;
 	}
 
-	/*-
-	 * This was the old search-and-add-all libraries method. This may still be useful
-	 * if the user doesn't have a json file, or mojang changes the format.
-	 * 
-	private Stack<URL> getLibraries(File path, Stack<URL> urls) {
-		File[] files = path.listFiles();
-		for (int i = 0; i < files.length; i++) {
-			if (files[i].isDirectory()) {
-				getLibraries(files[i], urls);
-			} else {
-				try {
-					Log.i("Found library: " + files[i]);
-					urls.push(files[i].toURI().toURL());
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return urls;
-	}
-	 */
-
 	public void use() {
 		File librariesJson = Options.instance.minecraftJson == null ? new File(
 				jarFile.getPath().replace(".jar", ".json")) : new File(
