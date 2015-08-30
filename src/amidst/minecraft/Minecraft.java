@@ -7,8 +7,11 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -27,19 +30,13 @@ import amidst.logging.Log;
 import amidst.version.VersionInfo;
 
 public class Minecraft {
-	private static final int MAX_CLASSES = 128;
-	private Class<?> mainClass;
-	private URLClassLoader classLoader;
-	private String versionID;
-	private URL urlToJar;
-	private File jarFile;
-
 	// @formatter:off
 	// This deactivates the automatic formatter of Eclipse.
 	// However, you need to activate this in:
 	// Java -> Code Style -> Formatter -> Edit -> Off/On Tags
 	// see: http://stackoverflow.com/questions/1820908/how-to-turn-off-the-eclipse-code-formatter-for-certain-sections-of-java-code
-	private static ClassChecker[] classChecks = ClassChecker.builder()
+	private ClassChecker[] createClassCheckers() {
+		return ClassChecker.builder()
 			.matchWildcardBytes("IntCache").data(DeobfuscationData.intCache).end()
 			.matchString("WorldType").data("default_1_1").end()
 			.matchLong("GenLayer").data(1000L, 2001L, 2000L).end()
@@ -85,72 +82,114 @@ public class Minecraft {
 				.end()
 			.end()
 		.construct();
+	}
 	// @formatter:on
 
-	private HashMap<String, ByteClass> byteClassMap;
-	private HashMap<String, MinecraftClass> nameMap;
-	private HashMap<String, MinecraftClass> classMap;
-	private Vector<String> byteClassNames;
+	private static final int MAX_CLASSES = 128;
+
+	private Class<?> mainClass;
+	private URLClassLoader classLoader;
+	private String versionID;
+	private URL urlToJar;
+	private File jarFile;
+
+	private Map<String, ByteClass> byteClassMap = new HashMap<String, ByteClass>(
+			MAX_CLASSES);
+	private Map<String, MinecraftClass> nameMap = new HashMap<String, MinecraftClass>();
+	private Map<String, MinecraftClass> classMap = new HashMap<String, MinecraftClass>();
+	private Vector<String> byteClassNames = new Vector<String>();
 
 	public String versionId;
 	public VersionInfo version = VersionInfo.unknown;
 
+	private ByteClassFactory byteClassFactory = ByteClass.factory();
+	private ByteClass[] byteClasses;
+
 	public Minecraft(File jarFile) throws MalformedURLException {
 		this.jarFile = jarFile;
-		byteClassNames = new Vector<String>();
-		byteClassMap = new HashMap<String, ByteClass>(MAX_CLASSES);
-		urlToJar = jarFile.toURI().toURL();
+		this.urlToJar = jarFile.toURI().toURL();
+		readByteClassesFromJarFile();
+		searchClasses();
+		generateVersionID();
+		loadClasses();
+		Log.i("Minecraft load complete.");
+	}
 
+	private void readByteClassesFromJarFile() {
 		Log.i("Reading minecraft.jar...");
-		if (!jarFile.exists())
+		if (!jarFile.exists()) {
 			Log.crash("Attempted to load jar file at: " + jarFile
 					+ " but it does not exist.");
-		Stack<ByteClass> byteClassStack = new Stack<ByteClass>();
+		}
 		try {
 			ZipFile jar = new ZipFile(jarFile);
-			Enumeration<? extends ZipEntry> enu = jar.entries();
-			ByteClassFactory byteClassFactory = ByteClass.factory();
-
-			while (enu.hasMoreElements()) {
-				ZipEntry entry = enu.nextElement();
-				String currentEntry = entry.getName();
-				String[] nameSplit = currentEntry.split("\\.");
-				if (!entry.isDirectory() && (nameSplit.length == 2)
-						&& (nameSplit[0].indexOf('/') == -1)
-						&& nameSplit[1].equals("class")) {
-					BufferedInputStream is = new BufferedInputStream(
-							jar.getInputStream(entry));
-					if (is.available() < 8000) { // TODO: Double check that this
-													// filter won't mess
-													// anything up.
-						byte[] classData = new byte[is.available()];
-						is.read(classData);
-						is.close();
-						byteClassStack.push(byteClassFactory.create(
-								nameSplit[0], classData));
-					}
-				}
-			}
+			byteClasses = readJarFile(jar);
 			jar.close();
 			Log.i("Jar load complete.");
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.crash(e, "Error extracting jar data.");
 		}
+	}
 
+	private ByteClass[] readJarFile(ZipFile jar) throws IOException {
+		Enumeration<? extends ZipEntry> enu = jar.entries();
+		List<ByteClass> byteClassList = new ArrayList<ByteClass>();
+		while (enu.hasMoreElements()) {
+			ByteClass entry = readJarFileEntry(jar, enu.nextElement());
+			if (entry != null) {
+				byteClassList.add(entry);
+			}
+		}
+		return byteClassList.toArray(new ByteClass[byteClassList.size()]);
+	}
+
+	private ByteClass readJarFileEntry(ZipFile jar, ZipEntry entry)
+			throws IOException {
+		String className = getClassName(entry);
+		if (className != null) {
+			BufferedInputStream is = new BufferedInputStream(
+					jar.getInputStream(entry));
+			// TODO: Double check that this filter won't mess anything up.
+			if (is.available() < 8000) {
+				byte[] classData = new byte[is.available()];
+				is.read(classData);
+				is.close();
+				return byteClassFactory.create(className, classData);
+			}
+		}
+		return null;
+	}
+
+	private String getClassName(ZipEntry entry) {
+		String[] nameSplit = entry.getName().split("\\.");
+		if (!entry.isDirectory() && nameSplit.length == 2
+				&& nameSplit[0].indexOf('/') == -1
+				&& nameSplit[1].equals("class")) {
+			return nameSplit[0];
+		} else {
+			return null;
+		}
+	}
+
+	private void searchClasses() {
 		Log.i("Searching for classes...");
-		int checksRemaining = classChecks.length;
-		Object[] byteClasses = byteClassStack.toArray();
+		ClassChecker[] classCheckers = createClassCheckers();
+		int checksRemaining = classCheckers.length;
 		boolean[] found = new boolean[byteClasses.length];
 		while (checksRemaining != 0) {
-			for (int q = 0; q < classChecks.length; q++) {
+			for (int q = 0; q < classCheckers.length; q++) {
 				for (int i = 0; i < byteClasses.length; i++) {
 					if (!found[q]) {
-						classChecks[q].check(this, (ByteClass) byteClasses[i]);
-						if (classChecks[q].isComplete()) {
-							Log.debug("Found: " + byteClasses[i] + " as "
-									+ classChecks[q].getName() + " | "
-									+ classChecks[q].getClass().getSimpleName());
+						classCheckers[q].check(this, byteClasses[i]);
+						if (classCheckers[q].isComplete()) {
+							Log.debug("Found: "
+									+ byteClasses[i]
+									+ " as "
+									+ classCheckers[q].getName()
+									+ " | "
+									+ classCheckers[q].getClass()
+											.getSimpleName());
 							found[q] = true;
 							checksRemaining--;
 						}
@@ -160,8 +199,8 @@ public class Minecraft {
 					}
 				}
 				if (!found[q]) {
-					classChecks[q].decreasePasses();
-					if (classChecks[q].getPasses() == 0) {
+					classCheckers[q].decreasePasses();
+					if (classCheckers[q].getPasses() == 0) {
 						found[q] = true;
 						checksRemaining--;
 					}
@@ -170,7 +209,9 @@ public class Minecraft {
 			}
 		}
 		Log.i("Class search complete.");
+	}
 
+	private void generateVersionID() {
 		Log.i("Generating version ID...");
 		use();
 		try {
@@ -213,12 +254,12 @@ public class Minecraft {
 				break;
 			}
 		}
-
 		Log.i("Identified Minecraft [" + version.name()
 				+ "] with versionID of " + versionId);
+	}
+
+	private void loadClasses() {
 		Log.i("Loading classes...");
-		nameMap = new HashMap<String, MinecraftClass>();
-		classMap = new HashMap<String, MinecraftClass>();
 
 		for (String name : byteClassNames) {
 			ByteClass byteClass = byteClassMap.get(name);
@@ -278,7 +319,6 @@ public class Minecraft {
 			}
 		}
 		Log.i("Classes loaded.");
-		Log.i("Minecraft load complete.");
 	}
 
 	private String obfuscateStringClasses(String inString) {
