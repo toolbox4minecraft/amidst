@@ -28,7 +28,7 @@ import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
 import amidst.logging.Log;
 import amidst.utilties.FileSystemUtils;
-import amidst.utilties.Utils;
+import amidst.utilties.JavaUtils;
 import amidst.version.VersionInfo;
 
 public class Minecraft {
@@ -118,9 +118,9 @@ public class Minecraft {
 
 	private ByteClass readJarFileEntry(ZipFile jar, ZipEntry entry)
 			throws IOException {
-		String className = FileSystemUtils.getFileNameWithoutExtension(entry,
-				"class");
-		if (className != null) {
+		String className = FileSystemUtils.getFileNameWithoutExtension(
+				entry.getName(), "class");
+		if (!entry.isDirectory() && className != null) {
 			BufferedInputStream is = new BufferedInputStream(
 					jar.getInputStream(entry));
 			// TODO: Double check that this filter won't mess anything up.
@@ -356,7 +356,7 @@ public class Minecraft {
 	
 	private URLClassLoader createClassLoader(URL jarFileUrl, List<URL> libraries) {
 		libraries.add(jarFileUrl);
-		return new URLClassLoader(Utils.toArray(libraries, URL.class));
+		return new URLClassLoader(JavaUtils.toArray(libraries, URL.class));
 	}
 	
 	private URLClassLoader createClassLoader(URL jarFileUrl) {
@@ -375,7 +375,7 @@ public class Minecraft {
 		}
 
 		for (JarLibrary library : profile.getLibraries()) {
-			File libraryFile = library.getFile();
+			File libraryFile = getLibraryFile(library);
 			if (libraryFile != null) {
 				try {
 					libraries.add(libraryFile.toURI().toURL());
@@ -391,6 +391,42 @@ public class Minecraft {
 		}
 
 		return libraries;
+	}
+
+	private File getLibraryFile(JarLibrary library) {
+		if (library.isActive()) {
+			File result = getLibraryFile(library.getName());
+			if (result != null && result.exists()) {
+				return result;
+			}
+		}
+		return null;
+	}
+
+	private File getLibraryFile(String libraryName) {
+		String searchPath = getLibrarySearchPath(libraryName);
+		File searchPathFile = new File(searchPath);
+		if (!searchPathFile.exists()) {
+			Log.w("Failed attempt to load library at: " + searchPathFile);
+			return null;
+		}
+		File result = FileSystemUtils.getFirstFileWithExtension(
+				searchPathFile.listFiles(), "jar");
+		if (result == null) {
+			Log.w("Attempted to search for file at path: " + searchPath
+					+ " but found nothing. Skipping.");
+		}
+		return result;
+	}
+
+	private String getLibrarySearchPath(String libraryName) {
+		String result = Util.minecraftLibraries.getAbsolutePath() + "/";
+		String[] split = libraryName.split(":");
+		split[0] = split[0].replace('.', '/');
+		for (int i = 0; i < split.length; i++) {
+			result += split[i] + "/";
+		}
+		return result;
 	}
 
 	public Class<?> loadClass(String name) {
