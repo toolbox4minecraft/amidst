@@ -42,31 +42,42 @@ public class Minecraft {
 	private ByteClassFactory byteClassFactory = ByteClass.factory();
 	private Pattern classNamePattern = Pattern.compile("@[A-Za-z]+");
 
-	private File jarFile;
 	private URLClassLoader classLoader;
+
+	private File jarFile;
+	private String versionID;
+	private VersionInfo version;
 
 	private Map<String, ByteClass> nameToByteClassMap = new HashMap<String, ByteClass>(
 			MAX_CLASSES);
 	private Map<String, MinecraftClass> nameToMinecraftClassMap = new HashMap<String, MinecraftClass>();
 	private Map<String, MinecraftClass> typeToMinecraftClassMap = new HashMap<String, MinecraftClass>();
 
-	private String versionID;
-	public VersionInfo version = VersionInfo.unknown;
-
 	public Minecraft(File jarFile) {
-		Log.i("Reading minecraft.jar...");
 		try {
 			this.jarFile = jarFile;
-			identifyClasses(readByteClassesFromJarFile());
+			Log.i("Reading minecraft.jar...");
+			ByteClass[] byteClasses = readByteClassesFromJarFile();
+			Log.i("Jar load complete.");
+			Log.i("Searching for classes...");
+			identifyClasses(byteClasses);
+			Log.i("Class search complete.");
 			classLoader = createAndUseClassLoader();
-			generateVersion(getMainClassFields(loadMainClass()));
-			loadClasses();
+			Log.i("Generating version ID...");
+			versionID = generateVersionID(getMainClassFields(loadMainClass()));
+			version = findMatchingVersion();
+			Log.i("Identified Minecraft [" + version.name()
+					+ "] with versionID of " + versionID);
+			Log.i("Loading classes...");
+			populateMinecraftClassMaps();
+			addPropertiesMethodsConstructors();
+			Log.i("Classes loaded.");
+			Log.i("Minecraft load complete.");
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 			Log.crash(e.getCause(), "error while loading minecraft jar file: "
 					+ e.getMessage());
 		}
-		Log.i("Minecraft load complete.");
 	}
 
 	private ByteClass[] readByteClassesFromJarFile() {
@@ -78,7 +89,6 @@ public class Minecraft {
 			ZipFile jar = new ZipFile(jarFile);
 			ByteClass[] byteClasses = readJarFile(jar);
 			jar.close();
-			Log.i("Jar load complete.");
 			return byteClasses;
 		} catch (IOException e) {
 			throw new RuntimeException("Error extracting jar data.", e);
@@ -116,7 +126,6 @@ public class Minecraft {
 	}
 
 	private void identifyClasses(ByteClass[] byteClasses) {
-		Log.i("Searching for classes...");
 		ClassChecker[] classCheckers = createClassCheckers();
 		for (int q = 0; q < classCheckers.length; q++) {
 			ClassChecker classChecker = classCheckers[q];
@@ -130,7 +139,6 @@ public class Minecraft {
 						+ classChecker.getClass().getSimpleName());
 			}
 		}
-		Log.i("Class search complete.");
 	}
 
 	private ByteClass findClass(ClassChecker classChecker,
@@ -197,16 +205,6 @@ public class Minecraft {
 			.end()
 		.construct();
 	}
-	// @formatter:on
-
-	private void generateVersion(Field[] mainClassFields) {
-		Log.i("Generating version ID...");
-		versionID = generateVersionID(mainClassFields);
-		version = findMatchingVersion();
-		Log.i("Identified Minecraft [" + version.name()
-				+ "] with versionID of " + versionID);
-	}
-
 	private Field[] getMainClassFields(Class<?> mainClass) {
 		try {
 			return mainClass.getDeclaredFields();
@@ -234,7 +232,7 @@ public class Minecraft {
 				return versionInfo;
 			}
 		}
-		return null;
+		return VersionInfo.unknown;
 	}
 
 	private Class<?> loadMainClass() {
@@ -251,15 +249,6 @@ public class Minecraft {
 					"Attempted to load non-minecraft jar, or unable to locate starting point.",
 					e);
 		}
-	}
-
-	private void loadClasses() {
-		Log.i("Loading classes...");
-
-		populateMinecraftClassMaps();
-		addPropertiesMethodsConstructors();
-
-		Log.i("Classes loaded.");
 	}
 
 	private void populateMinecraftClassMaps() {
@@ -400,18 +389,6 @@ public class Minecraft {
 		}
 	}
 
-	public String getVersionID() {
-		return versionID;
-	}
-
-	public MinecraftClass getClassByName(String name) {
-		return nameToMinecraftClassMap.get(name);
-	}
-
-	public URLClassLoader getClassLoader() {
-		return classLoader;
-	}
-
 	public Class<?> loadClass(String name) {
 		try {
 			return classLoader.loadClass(name);
@@ -422,19 +399,39 @@ public class Minecraft {
 		return null;
 	}
 
-	public MinecraftClass getClassByType(String name) {
-		return typeToMinecraftClassMap.get(name);
-
-	}
-
 	public void registerClass(String name, ByteClass bClass) {
-		if (nameToByteClassMap.get(name) == null) {
+		if (!nameToByteClassMap.containsKey(name)) {
 			nameToByteClassMap.put(name, bClass);
 		}
 	}
 
+	public URLClassLoader getClassLoader() {
+		return classLoader;
+	}
+
+	public File getJarFile() {
+		return jarFile;
+	}
+
+	public VersionInfo getVersion() {
+		return version;
+	}
+
+	public String getVersionID() {
+		return versionID;
+	}
+
 	public ByteClass getByteClass(String name) {
 		return nameToByteClassMap.get(name);
+	}
+
+	public MinecraftClass getClassByName(String name) {
+		return nameToMinecraftClassMap.get(name);
+	}
+
+	public MinecraftClass getClassByType(String name) {
+		return typeToMinecraftClassMap.get(name);
+
 	}
 
 	public IMinecraftInterface createInterface() {
