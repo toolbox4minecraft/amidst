@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -298,14 +297,14 @@ public class ByteClass {
 	private String name;
 	private int accessFlags;
 
-	private Vector<ClassConstant<Integer>> stringIndices = new Vector<ClassConstant<Integer>>();
-	private Vector<ReferenceIndex> methodIndices = new Vector<ReferenceIndex>();
-	private Vector<String[]> methods = new Vector<String[]>();
-	private Vector<String[]> properties = new Vector<String[]>();
-	private Vector<String[]> constructors = new Vector<String[]>();
-	private Vector<Float> floatConstants = new Vector<Float>();
-	private Vector<Long> longConstants = new Vector<Long>();
-	private Vector<String> utfConstants = new Vector<String>();
+	private List<ClassConstant<Integer>> stringIndices = new ArrayList<ClassConstant<Integer>>();
+	private List<ReferenceIndex> methodIndices = new ArrayList<ReferenceIndex>();
+	private List<String[]> methods = new ArrayList<String[]>();
+	private List<String[]> properties = new ArrayList<String[]>();
+	private List<String[]> constructors = new ArrayList<String[]>();
+	private List<Float> floatConstants = new ArrayList<Float>();
+	private List<Long> longConstants = new ArrayList<Long>();
+	private List<String> utfConstants = new ArrayList<String>();
 
 	private Field[] fields;
 	private int methodAndConstructorCount;
@@ -368,15 +367,15 @@ public class ByteClass {
 		return name;
 	}
 
-	public Vector<String[]> getMethods() {
+	public List<String[]> getMethods() {
 		return methods;
 	}
 
-	public Vector<String[]> getProperties() {
+	public List<String[]> getProperties() {
 		return properties;
 	}
 
-	public Vector<String[]> getConstructors() {
+	public List<String[]> getConstructors() {
 		return constructors;
 	}
 

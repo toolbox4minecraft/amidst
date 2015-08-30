@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -57,7 +56,7 @@ public class Minecraft {
 		try {
 			this.jarFile = jarFile;
 			Log.i("Reading minecraft.jar...");
-			ByteClass[] byteClasses = readByteClassesFromJarFile();
+			List<ByteClass> byteClasses = readByteClassesFromJarFile();
 			Log.i("Jar load complete.");
 			Log.i("Searching for classes...");
 			identifyClasses(byteClasses);
@@ -89,14 +88,14 @@ public class Minecraft {
 		}
 	}
 
-	private ByteClass[] readByteClassesFromJarFile() {
+	private List<ByteClass> readByteClassesFromJarFile() {
 		if (!jarFile.exists()) {
 			throw new RuntimeException("Attempted to load jar file at: "
 					+ jarFile + " but it does not exist.");
 		}
 		try {
 			ZipFile jar = new ZipFile(jarFile);
-			ByteClass[] byteClasses = readJarFile(jar);
+			List<ByteClass> byteClasses = readJarFile(jar);
 			jar.close();
 			return byteClasses;
 		} catch (IOException e) {
@@ -104,7 +103,7 @@ public class Minecraft {
 		}
 	}
 
-	private ByteClass[] readJarFile(ZipFile jar) throws IOException {
+	private List<ByteClass> readJarFile(ZipFile jar) throws IOException {
 		Enumeration<? extends ZipEntry> enu = jar.entries();
 		List<ByteClass> byteClassList = new ArrayList<ByteClass>();
 		while (enu.hasMoreElements()) {
@@ -113,7 +112,7 @@ public class Minecraft {
 				byteClassList.add(entry);
 			}
 		}
-		return byteClassList.toArray(new ByteClass[byteClassList.size()]);
+		return byteClassList;
 	}
 
 	private ByteClass readJarFileEntry(ZipFile jar, ZipEntry entry)
@@ -134,10 +133,8 @@ public class Minecraft {
 		return null;
 	}
 
-	private void identifyClasses(ByteClass[] byteClasses) {
-		ClassChecker[] classCheckers = createClassCheckers();
-		for (int q = 0; q < classCheckers.length; q++) {
-			ClassChecker classChecker = classCheckers[q];
+	private void identifyClasses(List<ByteClass> byteClasses) {
+		for (ClassChecker classChecker : createClassCheckers()) {
 			ByteClass byteClass = findClass(classChecker, byteClasses);
 			if (byteClass != null) {
 				Log.debug("Found: " + byteClass + " as "
@@ -151,7 +148,7 @@ public class Minecraft {
 	}
 
 	private ByteClass findClass(ClassChecker classChecker,
-			ByteClass[] byteClasses) {
+			List<ByteClass> byteClasses) {
 		for (ByteClass byteClass : byteClasses) {
 			classChecker.check(this, byteClass);
 			if (classChecker.isComplete()) {
@@ -166,7 +163,7 @@ public class Minecraft {
 	// However, you need to activate this in:
 	// Java -> Code Style -> Formatter -> Edit -> Off/On Tags
 	// see: http://stackoverflow.com/questions/1820908/how-to-turn-off-the-eclipse-code-formatter-for-certain-sections-of-java-code
-	private ClassChecker[] createClassCheckers() {
+	private List<ClassChecker> createClassCheckers() {
 		return ClassChecker.builder()
 			.matchWildcardBytes("IntCache").data(DeobfuscationData.intCache).end()
 			.matchString("WorldType").data("default_1_1").end()
@@ -284,16 +281,16 @@ public class Minecraft {
 	}
 
 	private void addProperties(MinecraftClass minecraftClass,
-			Vector<String[]> properties) {
-		for (String[] property : properties) {
+			List<String[]> list) {
+		for (String[] property : list) {
 			minecraftClass.addProperty(new MinecraftProperty(minecraftClass,
 					property[1], property[0]));
 		}
 	}
 
 	private void addMethods(MinecraftClass minecraftClass,
-			Vector<String[]> methods) {
-		for (String[] method : methods) {
+			List<String[]> list) {
+		for (String[] method : list) {
 			String methodString = obfuscateStringClasses(method[0]);
 			String methodDeobfName = method[1];
 			String methodObfName = methodString.substring(0,

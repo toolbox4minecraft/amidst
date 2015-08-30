@@ -14,7 +14,7 @@ public class ClassCheckerBuilder {
 			this.parent = parent;
 		}
 
-		public ClassChecker[] construct() {
+		public List<ClassChecker> construct() {
 			throw new IllegalStateException(
 					"only the main builder can be constructed");
 		}
@@ -102,8 +102,8 @@ public class ClassCheckerBuilder {
 		this.nextBuilder = nextBuilder;
 	}
 
-	public ClassChecker[] construct() {
-		return checkers.toArray(new ClassChecker[checkers.size()]);
+	public List<ClassChecker> construct() {
+		return checkers;
 	}
 
 	public ClassCheckerBuilder end() {
