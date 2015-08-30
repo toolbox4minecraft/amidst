@@ -3,11 +3,11 @@ package amidst.bytedata;
 import amidst.minecraft.Minecraft;
 
 public class CCMulti extends ClassChecker {
-	private ClassChecker[] checks;
+	private ClassChecker[] checkers;
 
-	public CCMulti(ClassChecker... checks) {
-		super(checks[0].getName());
-		this.checks = checks;
+	public CCMulti(ClassChecker... checkers) {
+		super(checkers[0].getName());
+		this.checkers = checkers;
 	}
 
 	@Override
@@ -18,10 +18,10 @@ public class CCMulti extends ClassChecker {
 	}
 
 	private boolean isMatching(Minecraft mc, ByteClass bClass) {
-		for (int i = 0; i < checks.length; i++) {
-			if (!checks[i].isComplete()) {
-				checks[i].check(mc, bClass);
-				if (!checks[i].isComplete()) {
+		for (int i = 0; i < checkers.length; i++) {
+			if (!checkers[i].isComplete()) {
+				checkers[i].check(mc, bClass);
+				if (!checkers[i].isComplete()) {
 					return false;
 				}
 			}

@@ -1,8 +1,13 @@
 package amidst.bytedata;
 
+import amidst.bytedata.factory.ClassCheckerBuilder;
 import amidst.minecraft.Minecraft;
 
 public abstract class ClassChecker {
+	public static ClassCheckerBuilder builder() {
+		return new ClassCheckerBuilder();
+	}
+
 	private String name;
 	private boolean isComplete = false;
 	private int passes = 10;

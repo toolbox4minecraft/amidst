@@ -20,14 +20,6 @@ import amidst.Options;
 import amidst.Util;
 import amidst.bytedata.ByteClass;
 import amidst.bytedata.ByteClass.ByteClassFactory;
-import amidst.bytedata.CCJustAnother;
-import amidst.bytedata.CCLongMatch;
-import amidst.bytedata.CCMethodPreset;
-import amidst.bytedata.CCMulti;
-import amidst.bytedata.CCPropertyPreset;
-import amidst.bytedata.CCRequire;
-import amidst.bytedata.CCStringMatch;
-import amidst.bytedata.CCWildcardByteSearch;
 import amidst.bytedata.ClassChecker;
 import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
@@ -42,55 +34,53 @@ public class Minecraft {
 	private URL urlToJar;
 	private File jarFile;
 	
-	private static ClassChecker[] classChecks = new ClassChecker[] {
-			new CCWildcardByteSearch("IntCache", DeobfuscationData.intCache),
-			new CCStringMatch("WorldType", "default_1_1"),
-			new CCLongMatch("GenLayer", 1000L, 2001L, 2000L),
-			new CCStringMatch("IntCache", ", tcache: "),
-			new CCJustAnother("BlockInit"),
-			new CCRequire(
-				new CCPropertyPreset(
-					"WorldType",
-					"a", "types",
-					"b", "default",
-					"c", "flat",
-					"d", "largeBiomes",
-					"e", "amplified",
-					"g", "default_1_1",
-					"f", "customized"
-				)
-			, "WorldType"),
-			new CCRequire(
-				new CCMethodPreset(
-						"BlockInit",
-						"c()", "initialize"
-					)
-			, "BlockInit"),
-			new CCRequire(
-				new CCMethodPreset(
-					"GenLayer",
-					"a(long, @WorldType)", "initializeAllBiomeGenerators",
-					"a(long, @WorldType, String)", "initializeAllBiomeGeneratorsWithParams",
-					"a(int, int, int, int)", "getInts"
-				)
-			, "GenLayer"),
-			new CCRequire(new CCMulti(
-				new CCMethodPreset(
-					"IntCache",
-					"a(int)", "getIntCache",
-					"a()", "resetIntCache",
-					"b()", "getInformation"
-				),
-				new CCPropertyPreset(
-					"IntCache",
-					"a", "intCacheSize",
-					"b","freeSmallArrays",
-					"c","inUseSmallArrays",
-					"d","freeLargeArrays",
-					"e","inUseLargeArrays"
-				)
-			), "IntCache")
-	};
+	private static ClassChecker[] classChecks = ClassChecker.builder()
+			.matchWildcardBytes("IntCache").data(DeobfuscationData.intCache).end()
+			.matchString("WorldType").data("default_1_1").end()
+			.matchLong("GenLayer").data(1000L, 2001L, 2000L).end()
+			.matchString("IntCache").data(", tcache: ").end()
+			.matchJustAnother("BlockInit").end()
+			.require("WorldType")
+				.matchPropertyPreset("WorldType")
+					.property("a", "types")
+					.property("b", "default")
+					.property("c", "flat")
+					.property("d", "largeBiomes")
+					.property("e", "amplified")
+					.property("g", "default_1_1")
+					.property("f", "customized")
+				.end()
+			.end()
+			.require("BlockInit")
+				.matchMethodPreset("BlockInit")
+					.method("c()", "initialize")
+				.end()
+			.end()
+			.require("GenLayer")
+				.matchMethodPreset("GenLayer")
+					.method("a(long, @WorldType)", "initializeAllBiomeGenerators")
+					.method("a(long, @WorldType, String)", "initializeAllBiomeGeneratorsWithParams")
+					.method("a(int, int, int, int)", "getInts")
+				.end()
+			.end()
+			.require("IntCache")
+				.multi()
+					.matchMethodPreset("IntCache")
+						.method("a(int)", "getIntCache")
+						.method("a()", "resetIntCache")
+						.method("b()", "getInformation")
+					.end()
+					.matchPropertyPreset("IntCache")
+						.property("a", "intCacheSize")
+						.property("b","freeSmallArrays")
+						.property("c","inUseSmallArrays")
+						.property("d","freeLargeArrays")
+						.property("e","inUseLargeArrays")
+					.end()
+				.end()
+			.end()
+		.construct();
+
 	private HashMap<String, ByteClass> byteClassMap;
 	private HashMap<String, MinecraftClass> nameMap;
 	private HashMap<String, MinecraftClass> classMap;
