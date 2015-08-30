@@ -38,10 +38,10 @@ public class Minecraft {
 
 	private static final int MAX_CLASSES = 128;
 
-	private Class<?> mainClass;
-	private URLClassLoader classLoader;
-	private String versionID;
+	private ByteClassFactory byteClassFactory = ByteClass.factory();
+
 	private File jarFile;
+	private URLClassLoader classLoader;
 
 	private Map<String, ByteClass> byteClassMap = new HashMap<String, ByteClass>(
 			MAX_CLASSES);
@@ -49,35 +49,37 @@ public class Minecraft {
 	private Map<String, MinecraftClass> classMap = new HashMap<String, MinecraftClass>();
 	private Vector<String> byteClassNames = new Vector<String>();
 
-	public String versionId;
+	private String versionID;
 	public VersionInfo version = VersionInfo.unknown;
 
-	private ByteClassFactory byteClassFactory = ByteClass.factory();
-	private ByteClass[] byteClasses;
-
 	public Minecraft(File jarFile) {
-		this.jarFile = jarFile;
-		readByteClassesFromJarFile();
-		identifyClasses();
-		generateVersionID();
-		loadClasses();
+		Log.i("Reading minecraft.jar...");
+		try {
+			this.jarFile = jarFile;
+			identifyClasses(readByteClassesFromJarFile());
+			classLoader = createAndUseClassLoader();
+			generateVersion(getMainClassFields(loadMainClass()));
+			loadClasses();
+		} catch (RuntimeException e) {
+			Log.crash(e.getCause(), "error while loading minecraft jar file: "
+					+ e.getMessage());
+		}
 		Log.i("Minecraft load complete.");
 	}
 
-	private void readByteClassesFromJarFile() {
-		Log.i("Reading minecraft.jar...");
+	private ByteClass[] readByteClassesFromJarFile() {
 		if (!jarFile.exists()) {
-			Log.crash("Attempted to load jar file at: " + jarFile
-					+ " but it does not exist.");
+			throw new RuntimeException("Attempted to load jar file at: "
+					+ jarFile + " but it does not exist.");
 		}
 		try {
 			ZipFile jar = new ZipFile(jarFile);
-			byteClasses = readJarFile(jar);
+			ByteClass[] byteClasses = readJarFile(jar);
 			jar.close();
 			Log.i("Jar load complete.");
-		} catch (Exception e) {
-			e.printStackTrace();
-			Log.crash(e, "Error extracting jar data.");
+			return byteClasses;
+		} catch (IOException e) {
+			throw new RuntimeException("Error extracting jar data.", e);
 		}
 	}
 
@@ -111,25 +113,26 @@ public class Minecraft {
 		return null;
 	}
 
-	private void identifyClasses() {
+	private void identifyClasses(ByteClass[] byteClasses) {
 		Log.i("Searching for classes...");
 		ClassChecker[] classCheckers = createClassCheckers();
 		for (int q = 0; q < classCheckers.length; q++) {
 			ClassChecker classChecker = classCheckers[q];
-			ByteClass byteClass = findClass(classChecker);
+			ByteClass byteClass = findClass(classChecker, byteClasses);
 			if (byteClass != null) {
 				Log.debug("Found: " + byteClass + " as "
 						+ classChecker.getName() + " | "
 						+ classChecker.getClass().getSimpleName());
 			} else {
-				Log.w("Missing: " + classChecker.getName() + " | "
+				Log.debug("Missing: " + classChecker.getName() + " | "
 						+ classChecker.getClass().getSimpleName());
 			}
 		}
 		Log.i("Class search complete.");
 	}
 
-	private ByteClass findClass(ClassChecker classChecker) {
+	private ByteClass findClass(ClassChecker classChecker,
+			ByteClass[] byteClasses) {
 		for (ByteClass byteClass : byteClasses) {
 			classChecker.check(this, byteClass);
 			if (classChecker.isComplete()) {
@@ -194,47 +197,58 @@ public class Minecraft {
 	}
 	// @formatter:on
 
-	private void generateVersionID() {
+	private void generateVersion(Field[] mainClassFields) {
 		Log.i("Generating version ID...");
+		versionID = generateVersionID(mainClassFields);
+		version = findMatchingVersion();
+		Log.i("Identified Minecraft [" + version.name()
+				+ "] with versionID of " + versionID);
+	}
+
+	private Field[] getMainClassFields(Class<?> mainClass) {
 		try {
-			createAndUseClassLoader();
+			return mainClass.getDeclaredFields();
+		} catch (NoClassDefFoundError e) {
+			throw new RuntimeException(
+					"Unable to find critical external class while loading.\nPlease ensure you have the correct Minecraft libraries installed.",
+					e);
+		}
+	}
+
+	private String generateVersionID(Field[] fields) {
+		String result = "";
+		for (Field field : fields) {
+			String typeString = field.getType().toString();
+			if (typeString.startsWith("class ") && !typeString.contains(".")) {
+				result += typeString.substring(6);
+			}
+		}
+		return result;
+	}
+
+	private VersionInfo findMatchingVersion() {
+		for (VersionInfo versionInfo : VersionInfo.values()) {
+			if (versionInfo.versionID.equals(versionID)) {
+				return versionInfo;
+			}
+		}
+		return null;
+	}
+
+	private Class<?> loadMainClass() {
+		try {
 			if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
-				mainClass = classLoader.loadClass(CLIENT_CLASS);
+				return classLoader.loadClass(CLIENT_CLASS);
 			} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {
-				mainClass = classLoader.loadClass(SERVER_CLASS);
+				return classLoader.loadClass(SERVER_CLASS);
 			} else {
 				throw new RuntimeException("cannot find minecraft jar file");
 			}
-		} catch (Exception e) {
-			e.printStackTrace(); // TODO: Make this exception far less broad.
-			Log.crash(e,
-					"Attempted to load non-minecraft jar, or unable to locate starting point.");
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(
+					"Attempted to load non-minecraft jar, or unable to locate starting point.",
+					e);
 		}
-		String typeDump = "";
-		Field fields[] = null;
-		try {
-			fields = mainClass.getDeclaredFields();
-		} catch (NoClassDefFoundError e) {
-			e.printStackTrace();
-			Log.crash(
-					e,
-					"Unable to find critical external class while loading.\nPlease ensure you have the correct Minecraft libraries installed.");
-		}
-
-		for (int i = 0; i < fields.length; i++) {
-			String typeString = fields[i].getType().toString();
-			if (typeString.startsWith("class ") && !typeString.contains("."))
-				typeDump += typeString.substring(6);
-		}
-		versionId = typeDump;
-		for (VersionInfo v : VersionInfo.values()) {
-			if (versionId.equals(v.versionId)) {
-				version = v;
-				break;
-			}
-		}
-		Log.i("Identified Minecraft [" + version.name()
-				+ "] with versionID of " + versionId);
 	}
 
 	private void loadClasses() {
@@ -350,20 +364,26 @@ public class Minecraft {
 		return libraries;
 	}
 
-	public void createAndUseClassLoader() throws MalformedURLException {
-		File librariesJson = getLibrariesJsonFile();
-		URL[] urls;
-		if (librariesJson.exists()) {
-			List<URL> libraries = getLibraries(librariesJson);
-			libraries.add(jarFile.toURI().toURL());
-			urls = Utils.toArray(libraries, URL.class);
-		} else {
-			Log.i("Unable to find Minecraft library JSON at: " + librariesJson
-					+ ". Skipping.");
-			urls = new URL[] { jarFile.toURI().toURL() };
+	public URLClassLoader createAndUseClassLoader() {
+		try {
+			File librariesJson = getLibrariesJsonFile();
+			URL[] urls;
+			if (librariesJson.exists()) {
+				List<URL> libraries = getLibraries(librariesJson);
+				libraries.add(jarFile.toURI().toURL());
+				urls = Utils.toArray(libraries, URL.class);
+			} else {
+				Log.i("Unable to find Minecraft library JSON at: "
+						+ librariesJson + ". Skipping.");
+				urls = new URL[] { jarFile.toURI().toURL() };
+			}
+			URLClassLoader classLoader = new URLClassLoader(urls);
+			Thread.currentThread().setContextClassLoader(classLoader);
+			return classLoader;
+		} catch (MalformedURLException e) {
+			throw new RuntimeException("minecraft jar file has malformed url",
+					e);
 		}
-		classLoader = new URLClassLoader(urls);
-		Thread.currentThread().setContextClassLoader(classLoader);
 	}
 
 	private File getLibrariesJsonFile() {

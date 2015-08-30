@@ -1,8 +1,10 @@
 package amidst.version;
 
-/** Information about what each supported version is
+/**
+ * Information about what each supported version is
  */
 public enum VersionInfo {
+	// @formatter:off
 	unknown(null),
 	V1_8_4("orntlljs[Lle;lx[J[[Jlt"),
 	V1_8_3("osnulmjt[Llf;ly[J[[Jlu"), // 1.8.3 and 1.8.2 have the same typeDump version ID - probably because 1.8.2 -> 1.8.3 was a fix for a server-side bug (https://mojang.com/2015/02/minecraft-1-8-2-is-now-available/)
@@ -56,23 +58,24 @@ public enum VersionInfo {
 	V1_9pre2("sv"),
 	V1_9pre1("sq"),
 	Vbeta_1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"); // Had to rename from V1_8_1 - should it just be removed?
-	
-	public final String versionId;
-	
-	VersionInfo(String versionId) {
-		this.versionId = versionId;
+	// @formatter:on
+
+	public final String versionID;
+
+	private VersionInfo(String versionID) {
+		this.versionID = versionID;
 	}
-	
+
 	public boolean saveEnabled() {
 		return this != V12w21a && this != V12w21b && this != V12w22a;
 	}
-	
+
 	@Override
 	public String toString() {
 		return super.toString().replace("_", ".");
 	}
-	
+
 	public boolean isAtLeast(VersionInfo other) {
-		return this.ordinal() <= other.ordinal(); 
+		return this.ordinal() <= other.ordinal();
 	}
 }
