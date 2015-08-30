@@ -30,6 +30,11 @@ import amidst.utilties.Utils;
 import amidst.version.VersionInfo;
 
 public class Minecraft {
+	private static final String CLIENT_CLASS_RESOURCE = "net/minecraft/client/Minecraft.class";
+	private static final String CLIENT_CLASS = "net.minecraft.client.Minecraft";
+	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
+	private static final String SERVER_CLASS = "net.minecraft.server.MinecraftServer";
+
 	private static final int MAX_CLASSES = 128;
 
 	private Class<?> mainClass;
@@ -202,16 +207,13 @@ public class Minecraft {
 		Log.i("Generating version ID...");
 		try {
 			createAndUseClassLoader();
-			if (classLoader
-					.findResource("net/minecraft/client/Minecraft.class") != null)
-				mainClass = classLoader
-						.loadClass("net.minecraft.client.Minecraft");
-			else if (classLoader
-					.findResource("net/minecraft/server/MinecraftServer.class") != null)
-				mainClass = classLoader
-						.loadClass("net.minecraft.server.MinecraftServer");
-			else
-				throw new RuntimeException();
+			if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
+				mainClass = classLoader.loadClass(CLIENT_CLASS);
+			} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {
+				mainClass = classLoader.loadClass(SERVER_CLASS);
+			} else {
+				throw new RuntimeException("cannot find minecraft jar file");
+			}
 		} catch (Exception e) {
 			e.printStackTrace(); // TODO: Make this exception far less broad.
 			Log.crash(e,
