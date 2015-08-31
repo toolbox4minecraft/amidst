@@ -1,6 +1,7 @@
 package amidst.bytedata;
 
 import amidst.bytedata.ByteClass.AccessFlags;
+import amidst.bytedata.ByteClass.Field;
 import amidst.minecraft.Minecraft;
 
 public class CCJustAnother extends ClassChecker {
@@ -9,21 +10,45 @@ public class CCJustAnother extends ClassChecker {
 	}
 
 	@Override
-	public void check(Minecraft mc, ByteClass bClass) {
-		if (bClass.getFields().length != 3) {
-			return;
-		}
-		int privateStatic = AccessFlags.PRIVATE | AccessFlags.STATIC;
-		for (int i = 0; i < 3; i++) {
-			if ((bClass.getFields()[i].accessFlags & privateStatic) != privateStatic)
-				return;
-		}
+	public boolean isMatching(ByteClass byteClass) {
+		return matchNumberOfFields(byteClass, 3)
+				&& matchFieldFlag(byteClass, AccessFlags.PRIVATE
+						| AccessFlags.STATIC, 0, 1, 2)
+				&& matchNumberOfConstructors(byteClass, 0)
+				&& matchNumberOfMethodsAndConstructors(byteClass, 6)
+				&& matchUtf8(byteClass, "isDebugEnabled");
+	}
 
-		if ((bClass.getConstructorCount() == 0)
-				&& (bClass.getMethodAndConstructorCount() == 6)
-				&& (bClass.searchForUtf("isDebugEnabled"))) {
-			mc.registerClass(getName(), bClass);
-			complete();
+	private boolean matchUtf8(ByteClass byteClass, String string) {
+		return byteClass.searchForUtf(string);
+	}
+
+	private boolean matchNumberOfMethodsAndConstructors(ByteClass byteClass,
+			int count) {
+		return byteClass.getMethodAndConstructorCount() == count;
+	}
+
+	private boolean matchNumberOfConstructors(ByteClass byteClass, int count) {
+		return byteClass.getConstructorCount() == count;
+	}
+
+	private boolean matchFieldFlag(ByteClass byteClass, int flags,
+			int... fieldIndices) {
+		for (int fieldIndex : fieldIndices) {
+			Field field = byteClass.getField(fieldIndex);
+			if (!field.hasFlags(flags)) {
+				return false;
+			}
 		}
+		return true;
+	}
+
+	private boolean matchNumberOfFields(ByteClass byteClass, int count) {
+		return byteClass.getFields().length == count;
+	}
+
+	@Override
+	public void execute(Minecraft mc, ByteClass byteClass) {
+		mc.registerClass(getName(), byteClass);
 	}
 }

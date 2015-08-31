@@ -11,16 +11,18 @@ public class CCWildcardByte extends ClassChecker {
 	}
 
 	@Override
-	public void check(Minecraft mc, ByteClass bClass) {
-		byte[] data = bClass.getData();
+	public boolean isMatching(ByteClass byteClass) {
+		return isMatching(byteClass.getData());
+	}
+
+	private boolean isMatching(byte[] data) {
 		int loopLimit = data.length + 1 - checkData.length;
 		for (int startIndex = 0; startIndex < loopLimit; startIndex++) {
 			if (isMatchingAt(data, startIndex)) {
-				complete();
-				mc.registerClass(getName(), bClass);
-				return;
+				return true;
 			}
 		}
+		return false;
 	}
 
 	private boolean isMatchingAt(byte[] data, int startIndex) {
@@ -31,5 +33,10 @@ public class CCWildcardByte extends ClassChecker {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public void execute(Minecraft mc, ByteClass byteClass) {
+		mc.registerClass(getName(), byteClass);
 	}
 }

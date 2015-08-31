@@ -11,19 +11,17 @@ public class CCLong extends ClassChecker {
 	}
 
 	@Override
-	public void check(Minecraft mc, ByteClass bClass) {
-		if (isMatching(bClass)) {
-			mc.registerClass(getName(), bClass);
-			complete();
-		}
-	}
-
-	private boolean isMatching(ByteClass bClass) {
+	public boolean isMatching(ByteClass byteClass) {
 		for (long element : checkData) {
-			if (!bClass.searchForLong(element)) {
+			if (!byteClass.searchForLong(element)) {
 				return false;
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public void execute(Minecraft mc, ByteClass byteClass) {
+		mc.registerClass(getName(), byteClass);
 	}
 }

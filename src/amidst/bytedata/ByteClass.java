@@ -33,7 +33,11 @@ public class ByteClass {
 	}
 
 	public static class Field {
-		public int accessFlags;
+		private int accessFlags;
+
+		public boolean hasFlags(int flags) {
+			return ByteClass.hasFlags(accessFlags, flags);
+		}
 	}
 
 	private static class Builder {
@@ -290,6 +294,10 @@ public class ByteClass {
 		return ByteClassFactory.INSTANCE;
 	}
 
+	private static boolean hasFlags(int accessFlags, int flags) {
+		return (accessFlags & flags) == flags;
+	}
+
 	private byte[] data;
 	private int cpSize;
 	private int[] constantTypes;
@@ -341,10 +349,6 @@ public class ByteClass {
 		return constants;
 	}
 
-	public String getName() {
-		return name;
-	}
-
 	public int getAccessFlags() {
 		return accessFlags;
 	}
@@ -393,16 +397,16 @@ public class ByteClass {
 		constructors.add(new String[] { constructor, name });
 	}
 
+	public Field getField(int index) {
+		return fields[index];
+	}
+
 	public boolean isInterface() {
-		return isFlag(AccessFlags.INTERFACE);
+		return hasFlags(accessFlags, AccessFlags.INTERFACE);
 	}
 
 	public boolean isFinal() {
-		return isFlag(AccessFlags.FINAL);
-	}
-
-	private boolean isFlag(int flag) {
-		return (accessFlags & flag) == flag;
+		return hasFlags(accessFlags, AccessFlags.FINAL);
 	}
 
 	public String getArguementsForConstructor(int ID) {

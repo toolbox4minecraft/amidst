@@ -11,10 +11,12 @@ public class CCString extends ClassChecker {
 	}
 
 	@Override
-	public void check(Minecraft mc, ByteClass bClass) {
-		if (bClass.searchForString(checkData)) {
-			mc.registerClass(getName(), bClass);
-			complete();
-		}
+	public boolean isMatching(ByteClass byteClass) {
+		return byteClass.searchForString(checkData);
+	}
+
+	@Override
+	public void execute(Minecraft mc, ByteClass byteClass) {
+		mc.registerClass(getName(), byteClass);
 	}
 }

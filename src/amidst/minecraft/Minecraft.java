@@ -137,12 +137,9 @@ public class Minecraft {
 		for (ClassChecker classChecker : createClassCheckers()) {
 			ByteClass byteClass = findClass(classChecker, byteClasses);
 			if (byteClass != null) {
-				Log.debug("Found: " + byteClass + " as "
-						+ classChecker.getName() + " | "
-						+ classChecker.getClass().getSimpleName());
+				Log.debug("Found: " + byteClass + " as " + classChecker);
 			} else {
-				Log.debug("Missing: " + classChecker.getName() + " | "
-						+ classChecker.getClass().getSimpleName());
+				Log.debug("Missing: " + classChecker);
 			}
 		}
 	}
@@ -150,8 +147,8 @@ public class Minecraft {
 	private ByteClass findClass(ClassChecker classChecker,
 			List<ByteClass> byteClasses) {
 		for (ByteClass byteClass : byteClasses) {
-			classChecker.check(this, byteClass);
-			if (classChecker.isComplete()) {
+			if (classChecker.isMatching(byteClass)) {
+				classChecker.execute(this, byteClass);
 				return byteClass;
 			}
 		}
@@ -170,43 +167,37 @@ public class Minecraft {
 			.matchLong("GenLayer").data(1000L, 2001L, 2000L).end()
 			.matchString("IntCache").data(", tcache: ").end()
 			.matchJustAnother("BlockInit").end()
-			.require("WorldType")
-				.matchProperties("WorldType")
-					.property("a", "types")
-					.property("b", "default")
-					.property("c", "flat")
-					.property("d", "largeBiomes")
-					.property("e", "amplified")
-					.property("g", "default_1_1")
-					.property("f", "customized")
+			.className("WorldType")
+				.matchAll()
+					.addProperty("a", "types").end()
+					.addProperty("b", "default").end()
+					.addProperty("c", "flat").end()
+					.addProperty("d", "largeBiomes").end()
+					.addProperty("e", "amplified").end()
+					.addProperty("g", "default_1_1").end()
+					.addProperty("f", "customized").end()
 				.end()
 			.end()
-			.require("BlockInit")
-				.matchMethods("BlockInit")
-					.method("c()", "initialize")
+			.className("BlockInit")
+				.addMethod("c()", "initialize").end()
+			.end()
+			.className("GenLayer")
+				.matchAll()
+					.addMethod("a(long, @WorldType)", "initializeAllBiomeGenerators").end()
+					.addMethod("a(long, @WorldType, String)", "initializeAllBiomeGeneratorsWithParams").end()
+					.addMethod("a(int, int, int, int)", "getInts").end()
 				.end()
 			.end()
-			.require("GenLayer")
-				.matchMethods("GenLayer")
-					.method("a(long, @WorldType)", "initializeAllBiomeGenerators")
-					.method("a(long, @WorldType, String)", "initializeAllBiomeGeneratorsWithParams")
-					.method("a(int, int, int, int)", "getInts")
-				.end()
-			.end()
-			.require("IntCache")
-				.multi()
-					.matchMethods("IntCache")
-						.method("a(int)", "getIntCache")
-						.method("a()", "resetIntCache")
-						.method("b()", "getInformation")
-					.end()
-					.matchProperties("IntCache")
-						.property("a", "intCacheSize")
-						.property("b","freeSmallArrays")
-						.property("c","inUseSmallArrays")
-						.property("d","freeLargeArrays")
-						.property("e","inUseLargeArrays")
-					.end()
+			.className("IntCache")
+				.matchAll()
+					.addMethod("a(int)", "getIntCache").end()
+					.addMethod("a()", "resetIntCache").end()
+					.addMethod("b()", "getInformation").end()
+					.addProperty("a", "intCacheSize").end()
+					.addProperty("b","freeSmallArrays").end()
+					.addProperty("c","inUseSmallArrays").end()
+					.addProperty("d","freeLargeArrays").end()
+					.addProperty("e","inUseLargeArrays").end()
 				.end()
 			.end()
 		.construct();

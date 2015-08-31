@@ -2,6 +2,7 @@ package amidst.utilties;
 
 import java.lang.reflect.Array;
 import java.util.List;
+import java.util.Set;
 
 public class JavaUtils {
 	@SuppressWarnings("unchecked")
@@ -9,5 +10,11 @@ public class JavaUtils {
 			Class<? extends T> clazz) {
 		T[] array = (T[]) Array.newInstance(clazz, list.size());
 		return list.toArray(array);
+	}
+
+	public static <T> void addAll(Set<T> set, T[] array) {
+		for (T entry : array) {
+			set.add(entry);
+		}
 	}
 }

@@ -56,14 +56,6 @@ public class ClassCheckerBuilder {
 		return setBuilder(new CCLongBuilder(name));
 	}
 
-	public CCMethodBuilder matchMethods(String name) {
-		return setBuilder(new CCMethodBuilder(name));
-	}
-
-	public CCPropertyBuilder matchProperties(String name) {
-		return setBuilder(new CCPropertyBuilder(name));
-	}
-
 	public CCStringBuilder matchString(String name) {
 		return setBuilder(new CCStringBuilder(name));
 	}
@@ -72,12 +64,20 @@ public class ClassCheckerBuilder {
 		return setBuilder(new CCWildcardByteBuilder(name));
 	}
 
-	public CCMultiBuilder multi() {
-		return setParent(new CCMultiBuilder());
+	public CCAddMethodBuilder addMethod(String method, String methodName) {
+		return setBuilder(new CCAddMethodBuilder(method, methodName));
 	}
 
-	public CCRequireBuilder require(String... requiredNames) {
-		return setParent(new CCRequireBuilder(requiredNames));
+	public CCAddPropertyBuilder addProperty(String property, String propertyName) {
+		return setBuilder(new CCAddPropertyBuilder(property, propertyName));
+	}
+
+	public CCMatchAllBuilder matchAll() {
+		return setParent(new CCMatchAllBuilder());
+	}
+
+	public CCClassNameBuilder className(String className) {
+		return setParent(new CCClassNameBuilder(className));
 	}
 
 	private <T extends SimpleClassCheckerBuilder> T setBuilder(T builder) {

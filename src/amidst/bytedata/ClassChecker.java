@@ -9,32 +9,21 @@ public abstract class ClassChecker {
 	}
 
 	private String name;
-	private boolean isComplete = false;
-	private int passes = 10;
 
 	public ClassChecker(String name) {
 		this.name = name;
-	}
-
-	public int getPasses() {
-		return passes;
-	}
-
-	public void decreasePasses() {
-		passes--;
-	}
-
-	public boolean isComplete() {
-		return isComplete;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	protected void complete() {
-		isComplete = true;
-	}
+	public abstract boolean isMatching(ByteClass byteClass);
 
-	public abstract void check(Minecraft mc, ByteClass bClass);
+	public abstract void execute(Minecraft mc, ByteClass byteClass);
+
+	@Override
+	public String toString() {
+		return name + " | " + getClass().getSimpleName();
+	}
 }
