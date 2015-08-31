@@ -21,8 +21,10 @@ import java.util.zip.ZipFile;
 import amidst.Options;
 import amidst.Util;
 import amidst.bytedata.ByteClass;
+import amidst.bytedata.ByteClass.AccessFlags;
 import amidst.bytedata.ByteClass.ByteClassFactory;
-import amidst.bytedata.ClassChecker;
+import amidst.bytedata.ByteClassFinder;
+import amidst.bytedata.builder.BCFBuilder;
 import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
 import amidst.logging.Log;
@@ -134,21 +136,20 @@ public class Minecraft {
 	}
 
 	private void identifyClasses(List<ByteClass> byteClasses) {
-		for (ClassChecker classChecker : createClassCheckers()) {
-			ByteClass byteClass = findClass(classChecker, byteClasses);
+		for (ByteClassFinder finder : createByteClassFinders()) {
+			ByteClass byteClass = findClass(finder, byteClasses);
 			if (byteClass != null) {
-				Log.debug("Found: " + byteClass + " as " + classChecker);
+				Log.debug("Found: " + byteClass + " as " + finder.getName());
 			} else {
-				Log.debug("Missing: " + classChecker);
+				Log.debug("Missing: " + finder.getName());
 			}
 		}
 	}
 
-	private ByteClass findClass(ClassChecker classChecker,
+	private ByteClass findClass(ByteClassFinder finder,
 			List<ByteClass> byteClasses) {
 		for (ByteClass byteClass : byteClasses) {
-			if (classChecker.isMatching(byteClass)) {
-				classChecker.execute(this, byteClass);
+			if (finder.find(this, byteClass)) {
 				return byteClass;
 			}
 		}
@@ -160,47 +161,53 @@ public class Minecraft {
 	// However, you need to activate this in:
 	// Java -> Code Style -> Formatter -> Edit -> Off/On Tags
 	// see: http://stackoverflow.com/questions/1820908/how-to-turn-off-the-eclipse-code-formatter-for-certain-sections-of-java-code
-	private List<ClassChecker> createClassCheckers() {
-		return ClassChecker.builder()
-			.matchWildcardBytes("IntCache").data(DeobfuscationData.intCache).end()
-			.matchString("WorldType").data("default_1_1").end()
-			.matchLong("GenLayer").data(1000L, 2001L, 2000L).end()
-			.matchString("IntCache").data(", tcache: ").end()
-			.matchJustAnother("BlockInit").end()
-			.className("WorldType")
-				.matchAll()
-					.addProperty("a", "types").end()
-					.addProperty("b", "default").end()
-					.addProperty("c", "flat").end()
-					.addProperty("d", "largeBiomes").end()
-					.addProperty("e", "amplified").end()
-					.addProperty("g", "default_1_1").end()
-					.addProperty("f", "customized").end()
-				.end()
-			.end()
-			.className("BlockInit")
-				.addMethod("c()", "initialize").end()
-			.end()
-			.className("GenLayer")
-				.matchAll()
-					.addMethod("a(long, @WorldType)", "initializeAllBiomeGenerators").end()
-					.addMethod("a(long, @WorldType, String)", "initializeAllBiomeGeneratorsWithParams").end()
-					.addMethod("a(int, int, int, int)", "getInts").end()
-				.end()
-			.end()
-			.className("IntCache")
-				.matchAll()
-					.addMethod("a(int)", "getIntCache").end()
-					.addMethod("a()", "resetIntCache").end()
-					.addMethod("b()", "getInformation").end()
-					.addProperty("a", "intCacheSize").end()
-					.addProperty("b","freeSmallArrays").end()
-					.addProperty("c","inUseSmallArrays").end()
-					.addProperty("d","freeLargeArrays").end()
-					.addProperty("e","inUseLargeArrays").end()
-				.end()
-			.end()
-		.construct();
+	private List<ByteClassFinder> createByteClassFinders() {
+		return BCFBuilder.builder()
+			.name("IntCache")
+				.detect()
+					.wildcardBytes(DeobfuscationData.intCache)
+					.or()
+					.strings(", tcache: ")
+				.prepare()
+					.addMethod("a(int)", "getIntCache")
+					.addMethod("a()", "resetIntCache")
+					.addMethod("b()", "getInformation")
+					.addProperty("a", "intCacheSize")
+					.addProperty("b","freeSmallArrays")
+					.addProperty("c","inUseSmallArrays")
+					.addProperty("d","freeLargeArrays")
+					.addProperty("e","inUseLargeArrays")
+			.next()
+			.name("WorldType")
+				.detect()
+					.strings("default_1_1")
+				.prepare()
+					.addProperty("a", "types")
+					.addProperty("b", "default")
+					.addProperty("c", "flat")
+					.addProperty("d", "largeBiomes")
+					.addProperty("e", "amplified")
+					.addProperty("g", "default_1_1")
+					.addProperty("f", "customized")
+			.next()
+			.name("GenLayer")
+				.detect()
+					.longs(1000L, 2001L, 2000L)
+				.prepare()
+					.addMethod("a(long, @WorldType)", "initializeAllBiomeGenerators")
+					.addMethod("a(long, @WorldType, String)", "initializeAllBiomeGeneratorsWithParams")
+					.addMethod("a(int, int, int, int)", "getInts")
+			.next()
+			.name("BlockInit")
+				.detect()
+					.numberOfFields(3)
+					.fieldFlags(AccessFlags.PRIVATE | AccessFlags.STATIC, 0, 1, 2)
+					.numberOfConstructors(0)
+					.numberOfMethodsAndConstructors(6)
+					.utf8s("isDebugEnabled")
+				.prepare()
+					.addMethod("c()", "initialize")
+			.construct();
 	}
 	private Field[] getMainClassFields(Class<?> mainClass) {
 		try {
