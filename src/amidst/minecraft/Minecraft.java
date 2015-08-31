@@ -33,6 +33,12 @@ import amidst.utilties.JavaUtils;
 import amidst.version.VersionInfo;
 
 public class Minecraft {
+	private static final int[] INT_CACHE_WILDCARD_BYTES = new int[] { 0x11,
+			0x01, 0x00, 0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59, 0xB7, 0x00, -1,
+			0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59, 0xB7, 0x00, -1, 0xB3, 0x00,
+			-1, 0xBB, 0x00, -1, 0x59, 0xB7, 0x00, -1, 0xB3, 0x00, -1, 0xBB,
+			0x00, -1, 0x59, 0xB7, 0x00, -1, 0xB3, 0x00, -1, 0xB1 };
+
 	private static final String CLIENT_CLASS_RESOURCE = "net/minecraft/client/Minecraft.class";
 	private static final String CLIENT_CLASS = "net.minecraft.client.Minecraft";
 	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
@@ -165,7 +171,7 @@ public class Minecraft {
 		return BCFBuilder.builder()
 			.name("IntCache")
 				.detect()
-					.wildcardBytes(DeobfuscationData.intCache)
+					.wildcardBytes(INT_CACHE_WILDCARD_BYTES)
 					.or()
 					.strings(", tcache: ")
 				.prepare()
@@ -209,6 +215,8 @@ public class Minecraft {
 					.addMethod("c()", "initialize")
 			.construct();
 	}
+	// @formatter:on
+
 	private Field[] getMainClassFields(Class<?> mainClass) {
 		try {
 			return mainClass.getDeclaredFields();
@@ -286,8 +294,7 @@ public class Minecraft {
 		}
 	}
 
-	private void addMethods(MinecraftClass minecraftClass,
-			List<String[]> list) {
+	private void addMethods(MinecraftClass minecraftClass, List<String[]> list) {
 		for (String[] method : list) {
 			String methodString = obfuscateStringClasses(method[0]);
 			String methodDeobfName = method[1];
@@ -348,16 +355,16 @@ public class Minecraft {
 					e);
 		}
 	}
-	
+
 	private URLClassLoader createClassLoader(URL jarFileUrl, List<URL> libraries) {
 		libraries.add(jarFileUrl);
 		return new URLClassLoader(JavaUtils.toArray(libraries, URL.class));
 	}
-	
+
 	private URLClassLoader createClassLoader(URL jarFileUrl) {
 		return new URLClassLoader(new URL[] { jarFileUrl });
 	}
-	
+
 	private List<URL> getLibraries(File jsonFile) {
 		List<URL> libraries = new ArrayList<URL>();
 		JarProfile profile = null;
@@ -434,9 +441,9 @@ public class Minecraft {
 		return null;
 	}
 
-	public void registerClass(String name, ByteClass bClass) {
+	public void registerClass(String name, ByteClass byteClass) {
 		if (!nameToByteClassMap.containsKey(name)) {
-			nameToByteClassMap.put(name, bClass);
+			nameToByteClassMap.put(name, byteClass);
 		}
 	}
 
