@@ -11,6 +11,6 @@ public class NumberOfConstructorsBCD extends ByteClassDetector {
 
 	@Override
 	public boolean detect(ByteClass byteClass) {
-		return byteClass.getMethodAndConstructorCount() == count;
+		return byteClass.getConstructorCount() == count;
 	}
 }
