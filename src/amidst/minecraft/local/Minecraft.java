@@ -33,6 +33,68 @@ import amidst.utilties.JavaUtils;
 import amidst.version.VersionInfo;
 
 public class Minecraft {
+	private class MinecraftMethodBuilder {
+		private String minecraftMethodName;
+		private String byteMethodName;
+		private String[] byteParameterArray;
+
+		private MinecraftMethodBuilder(String minecraftMethodString,
+				String minecraftMethodName) {
+			this.minecraftMethodName = minecraftMethodName;
+			String byteMethodString = replaceMinecraftClassNamesWithByteClassNames(minecraftMethodString);
+			this.byteMethodName = byteMethodString.substring(0,
+					byteMethodString.indexOf('('));
+			String byteParameterString = byteMethodString.substring(
+					byteMethodString.indexOf('(') + 1,
+					byteMethodString.indexOf(')'));
+			if (byteParameterString.isEmpty()) {
+				this.byteParameterArray = new String[0];
+			} else {
+				this.byteParameterArray = byteParameterString.split(",");
+			}
+		}
+
+		private MinecraftMethod createMinecraftMethod(
+				MinecraftClass minecraftClass) {
+			return new MinecraftMethod(minecraftClass, minecraftMethodName,
+					byteMethodName, byteParameterArray);
+		}
+
+		private MinecraftConstructor createMinecraftConstructor(
+				MinecraftClass minecraftClass) {
+			return new MinecraftConstructor(minecraftClass,
+					minecraftMethodName, byteParameterArray);
+		}
+
+		private String replaceMinecraftClassNamesWithByteClassNames(
+				String inString) {
+			return doReplaceMinecraftClassNamesWithByteClassNames(
+					inString.replaceAll(" ", "")).replaceAll(",INVALID", "")
+					.replaceAll("INVALID,", "").replaceAll("INVALID", "");
+		}
+
+		private String doReplaceMinecraftClassNamesWithByteClassNames(
+				String result) {
+			Matcher matcher = classNameRegex.matcher(result);
+			while (matcher.find()) {
+				String match = result.substring(matcher.start(), matcher.end());
+				result = replaceWithByteClassName(result, match);
+				matcher = classNameRegex.matcher(result);
+			}
+			return result;
+		}
+
+		private String replaceWithByteClassName(String result, String match) {
+			ByteClass byteClass = getByteClass(match.substring(1));
+			if (byteClass != null) {
+				result = result.replaceAll(match, byteClass.getByteClassName());
+			} else {
+				result = result.replaceAll(match, "INVALID");
+			}
+			return result;
+		}
+	}
+
 	private static final int[] INT_CACHE_WILDCARD_BYTES = new int[] { 0x11,
 			0x01, 0x00, 0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59, 0xB7, 0x00, -1,
 			0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59, 0xB7, 0x00, -1, 0xB3, 0x00,
@@ -283,7 +345,7 @@ public class Minecraft {
 					.get(entry.getKey());
 			addProperties(minecraftClass, byteClass.getProperties());
 			addMethods(minecraftClass, byteClass.getMethods());
-			addMethods(minecraftClass, byteClass.getConstructors());
+			addConstructors(minecraftClass, byteClass.getConstructors());
 		}
 	}
 
@@ -298,51 +360,18 @@ public class Minecraft {
 	private void addMethods(MinecraftClass minecraftClass,
 			List<String[]> methods) {
 		for (String[] method : methods) {
-			String minecraftMethodString = method[0];
-			String byteMethodString = replaceMinecraftClassNamesWithByteClassNames(minecraftMethodString);
-			String minecraftMethodName = method[1];
-			String byteMethodName = byteMethodString.substring(0,
-					byteMethodString.indexOf('('));
-			String byteParameterString = byteMethodString.substring(
-					byteMethodString.indexOf('(') + 1,
-					byteMethodString.indexOf(')'));
-			if (byteParameterString.isEmpty()) {
-				minecraftClass.addMethod(new MinecraftMethod(minecraftClass,
-						minecraftMethodName, byteMethodName));
-			} else {
-				String[] byteParameterArray = byteParameterString.split(",");
-				minecraftClass
-						.addMethod(new MinecraftMethod(minecraftClass,
-								minecraftMethodName, byteMethodName,
-								byteParameterArray));
-			}
+			minecraftClass.addMethod(new MinecraftMethodBuilder(method[0],
+					method[1]).createMinecraftMethod(minecraftClass));
 		}
 	}
 
-	private String replaceMinecraftClassNamesWithByteClassNames(String inString) {
-		return doReplaceMinecraftClassNamesWithByteClassNames(
-				inString.replaceAll(" ", "")).replaceAll(",INVALID", "")
-				.replaceAll("INVALID,", "").replaceAll("INVALID", "");
-	}
-
-	private String doReplaceMinecraftClassNamesWithByteClassNames(String result) {
-		Matcher matcher = classNameRegex.matcher(result);
-		while (matcher.find()) {
-			String match = result.substring(matcher.start(), matcher.end());
-			result = replaceWithByteClassName(result, match);
-			matcher = classNameRegex.matcher(result);
+	private void addConstructors(MinecraftClass minecraftClass,
+			List<String[]> constructors) {
+		for (String[] constructor : constructors) {
+			minecraftClass.addConstructor(new MinecraftMethodBuilder(
+					constructor[0], constructor[1])
+					.createMinecraftConstructor(minecraftClass));
 		}
-		return result;
-	}
-
-	private String replaceWithByteClassName(String result, String match) {
-		ByteClass byteClass = getByteClass(match.substring(1));
-		if (byteClass != null) {
-			result = result.replaceAll(match, byteClass.getByteClassName());
-		} else {
-			result = result.replaceAll(match, "INVALID");
-		}
-		return result;
 	}
 
 	private File getLibrariesJsonFile() {
