@@ -30,7 +30,7 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 	
 	@Override
 	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolutionMap) {
-		minecraft.getClassByName("IntCache").callFunction("resetIntCache");
+		minecraft.getMinecraftClassByMinecraftClassName("IntCache").callFunction("resetIntCache");
 		return (int[])(useQuarterResolutionMap ? biomeGen : biomeGen_fullResolution).callFunction("getInts", x, y, width, height);
 	}
 
@@ -41,12 +41,12 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 		
 		// Minecraft 1.8 and higher require block initialization to be called before creating a biome generator.
 		MinecraftClass blockInit;
-		if ((blockInit = minecraft.getClassByName("BlockInit")) != null)
+		if ((blockInit = minecraft.getMinecraftClassByMinecraftClassName("BlockInit")) != null)
 			blockInit.callFunction("initialize");
 		
 		Type type = Type.fromMixedCase(typeName);
-		MinecraftClass genLayerClass = minecraft.getClassByName("GenLayer");
-		MinecraftClass worldTypeClass = minecraft.getClassByName("WorldType");
+		MinecraftClass genLayerClass = minecraft.getMinecraftClassByMinecraftClassName("GenLayer");
+		MinecraftClass worldTypeClass = minecraft.getMinecraftClassByMinecraftClassName("WorldType");
 		Object[] genLayers = null;
 		if (worldTypeClass == null) {
 			genLayers = (Object[])genLayerClass.callFunction("initializeAllBiomeGenerators", seed);

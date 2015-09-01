@@ -5,7 +5,8 @@ import java.util.HashMap;
 
 
 public class MinecraftClass {
-	private String name, className;
+	private String minecraftClassName;
+	private String byteClassName;
 	private HashMap<String, MinecraftMethod> methods;
 	private Class<?> clazz;
 	private HashMap<String, MinecraftProperty> propertiesByName;
@@ -15,11 +16,11 @@ public class MinecraftClass {
 	private HashMap<String, MinecraftConstructor> constructorByName;
 	private Constructor<?>[] constructors;
 	private Minecraft minecraft;
-	public MinecraftClass(String name, String className, Minecraft minecraft) {
-		this.name = name;
-		this.className = className;
+	public MinecraftClass(String minecraftClassName, String byteClassName, Minecraft minecraft) {
+		this.minecraftClassName = minecraftClassName;
+		this.byteClassName = byteClassName;
 		this.minecraft = minecraft;
-		this.clazz = minecraft.loadClass(className);
+		this.clazz = minecraft.loadClass(byteClassName);
 		methods = new HashMap<String, MinecraftMethod>();
 		propertiesByName = new HashMap<String, MinecraftProperty>();
 		propertiesByObfName = new HashMap<String, MinecraftProperty>();
@@ -27,11 +28,11 @@ public class MinecraftClass {
 		methodsByObfName = new HashMap<String, MinecraftMethod>();
 		constructorByName = new HashMap<String, MinecraftConstructor>();
 	}
-	public String getName() {
-		return name;
+	public String getMinecraftClassName() {
+		return minecraftClassName;
 	}
-	public String getClassName() {
-		return className;
+	public String getByteClassName() {
+		return byteClassName;
 	}
 	public Class<?> getClazz() {
 		return clazz;
@@ -61,7 +62,7 @@ public class MinecraftClass {
 		constructorByName.put(constructor.getName(), constructor);
 	}
 	public String toString() {
-		return className;
+		return byteClassName;
 	}
 	public MinecraftObject newInstance(String constructor, Object... param) {
 		return constructorByName.get(constructor).getNew(param);

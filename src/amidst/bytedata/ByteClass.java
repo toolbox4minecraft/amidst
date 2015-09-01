@@ -45,8 +45,9 @@ public class ByteClass {
 		private ByteClass product;
 		private long offset;
 
-		private Builder(ByteClassFactory factory, String name, byte[] classData) {
-			product = new ByteClass(name, classData);
+		private Builder(ByteClassFactory factory, String byteClassName,
+				byte[] classData) {
+			product = new ByteClass(byteClassName, classData);
 			product.primitiveTypeConversionMap = factory.primitiveTypeConversionMap;
 			product.argRegex = factory.argRegex;
 			product.objectRegex = factory.objectRegex;
@@ -75,7 +76,8 @@ public class ByteClass {
 		}
 
 		private DataInputStream createStream() {
-			return new DataInputStream(new ByteArrayInputStream(product.data));
+			return new DataInputStream(new ByteArrayInputStream(
+					product.classData));
 		}
 
 		private boolean isValidClass() throws IOException {
@@ -285,8 +287,8 @@ public class ByteClass {
 			primitiveTypeConversionMap.put('Z', "boolean");
 		}
 
-		public ByteClass create(String name, byte[] classData) {
-			return new Builder(this, name, classData).get();
+		public ByteClass create(String byteClassName, byte[] classData) {
+			return new Builder(this, byteClassName, classData).get();
 		}
 	}
 
@@ -298,13 +300,13 @@ public class ByteClass {
 		return (accessFlags & flags) == flags;
 	}
 
-	private byte[] data;
+	private byte[] classData;
 	private int cpSize;
 	private int[] constantTypes;
 	private int minorVersion;
 	private int majorVersion;
 	private ClassConstant<?>[] constants;
-	private String name;
+	private String byteClassName;
 	private int accessFlags;
 
 	private List<ClassConstant<Integer>> stringIndices = new ArrayList<ClassConstant<Integer>>();
@@ -324,9 +326,9 @@ public class ByteClass {
 	private Pattern argRegex;
 	private Pattern objectRegex;
 
-	private ByteClass(String name, byte[] classData) {
-		this.name = name;
-		this.data = classData;
+	private ByteClass(String byteClassName, byte[] classData) {
+		this.byteClassName = byteClassName;
+		this.classData = classData;
 	}
 
 	public int getCpSize() {
@@ -365,12 +367,12 @@ public class ByteClass {
 		return constructorCount;
 	}
 
-	public byte[] getData() {
-		return data;
+	public byte[] getClassData() {
+		return classData;
 	}
 
-	public String getClassName() {
-		return name;
+	public String getByteClassName() {
+		return byteClassName;
 	}
 
 	public List<String[]> getMethods() {
@@ -513,6 +515,6 @@ public class ByteClass {
 
 	@Override
 	public String toString() {
-		return "[ByteClass " + name + "]";
+		return "[ByteClass " + byteClassName + "]";
 	}
 }

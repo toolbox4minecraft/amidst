@@ -44,10 +44,8 @@ public class Minecraft {
 	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
 	private static final String SERVER_CLASS = "net.minecraft.server.MinecraftServer";
 
-	private static final int MAX_CLASSES = 128;
-
 	private ByteClassFactory byteClassFactory = ByteClass.factory();
-	private Pattern classNamePattern = Pattern.compile("@[A-Za-z]+");
+	private Pattern classNameRegex = Pattern.compile("@[A-Za-z]+");
 
 	private URLClassLoader classLoader;
 
@@ -55,10 +53,9 @@ public class Minecraft {
 	private String versionID;
 	private VersionInfo version;
 
-	private Map<String, ByteClass> nameToByteClassMap = new HashMap<String, ByteClass>(
-			MAX_CLASSES);
-	private Map<String, MinecraftClass> nameToMinecraftClassMap = new HashMap<String, MinecraftClass>();
-	private Map<String, MinecraftClass> typeToMinecraftClassMap = new HashMap<String, MinecraftClass>();
+	private Map<String, ByteClass> minecraftClassNameToByteClassMap = new HashMap<String, ByteClass>();
+	private Map<String, MinecraftClass> minecraftClassNameToMinecraftClassMap = new HashMap<String, MinecraftClass>();
+	private Map<String, MinecraftClass> byteClassNameToMinecraftClassMap = new HashMap<String, MinecraftClass>();
 
 	public Minecraft(File jarFile) {
 		try {
@@ -125,9 +122,9 @@ public class Minecraft {
 
 	private ByteClass readJarFileEntry(ZipFile jar, ZipEntry entry)
 			throws IOException {
-		String className = FileSystemUtils.getFileNameWithoutExtension(
+		String byteClassName = FileSystemUtils.getFileNameWithoutExtension(
 				entry.getName(), "class");
-		if (!entry.isDirectory() && className != null) {
+		if (!entry.isDirectory() && byteClassName != null) {
 			BufferedInputStream is = new BufferedInputStream(
 					jar.getInputStream(entry));
 			// TODO: Double check that this filter won't mess anything up.
@@ -135,7 +132,7 @@ public class Minecraft {
 				byte[] classData = new byte[is.available()];
 				is.read(classData);
 				is.close();
-				return byteClassFactory.create(className, classData);
+				return byteClassFactory.create(byteClassName, classData);
 			}
 		}
 		return null;
@@ -145,9 +142,10 @@ public class Minecraft {
 		for (ByteClassFinder finder : createByteClassFinders()) {
 			ByteClass byteClass = findClass(finder, byteClasses);
 			if (byteClass != null) {
-				Log.debug("Found: " + byteClass + " as " + finder.getName());
+				Log.debug("Found: " + byteClass.getByteClassName() + " as "
+						+ finder.getMinecraftClassName());
 			} else {
-				Log.debug("Missing: " + finder.getName());
+				Log.debug("Missing: " + finder.getMinecraftClassName());
 			}
 		}
 	}
@@ -264,22 +262,25 @@ public class Minecraft {
 	}
 
 	private void populateMinecraftClassMaps() {
-		for (Entry<String, ByteClass> entry : nameToByteClassMap.entrySet()) {
+		for (Entry<String, ByteClass> entry : minecraftClassNameToByteClassMap
+				.entrySet()) {
+			String minecraftClassName = entry.getKey();
 			ByteClass byteClass = entry.getValue();
-			String name = entry.getKey();
-			String className = byteClass.getClassName();
-			MinecraftClass minecraftClass = new MinecraftClass(name, className,
-					this);
-			nameToMinecraftClassMap.put(name, minecraftClass);
-			typeToMinecraftClassMap.put(className, minecraftClass);
+			String byteClassName = byteClass.getByteClassName();
+			MinecraftClass minecraftClass = new MinecraftClass(
+					minecraftClassName, byteClassName, this);
+			minecraftClassNameToMinecraftClassMap.put(minecraftClassName,
+					minecraftClass);
+			byteClassNameToMinecraftClassMap.put(byteClassName, minecraftClass);
 		}
 	}
 
 	private void addPropertiesMethodsConstructors() {
-		for (Entry<String, ByteClass> entry : nameToByteClassMap.entrySet()) {
+		for (Entry<String, ByteClass> entry : minecraftClassNameToByteClassMap
+				.entrySet()) {
 			ByteClass byteClass = entry.getValue();
-			MinecraftClass minecraftClass = nameToMinecraftClassMap.get(entry
-					.getKey());
+			MinecraftClass minecraftClass = minecraftClassNameToMinecraftClassMap
+					.get(entry.getKey());
 			addProperties(minecraftClass, byteClass.getProperties());
 			addMethods(minecraftClass, byteClass.getMethods());
 			addMethods(minecraftClass, byteClass.getConstructors());
@@ -320,11 +321,11 @@ public class Minecraft {
 	}
 
 	private String doObfuscateStringClasses(String result) {
-		Matcher matcher = classNamePattern.matcher(result);
+		Matcher matcher = classNameRegex.matcher(result);
 		while (matcher.find()) {
 			String match = result.substring(matcher.start(), matcher.end());
 			result = replaceWithByteClassName(result, match);
-			matcher = classNamePattern.matcher(result);
+			matcher = classNameRegex.matcher(result);
 		}
 		return result;
 	}
@@ -332,7 +333,7 @@ public class Minecraft {
 	private String replaceWithByteClassName(String result, String match) {
 		ByteClass byteClass = getByteClass(match.substring(1));
 		if (byteClass != null) {
-			result = result.replaceAll(match, byteClass.getClassName());
+			result = result.replaceAll(match, byteClass.getByteClassName());
 		} else {
 			result = result.replaceAll(match, "INVALID");
 		}
@@ -431,19 +432,19 @@ public class Minecraft {
 		return result;
 	}
 
-	public Class<?> loadClass(String name) {
+	public Class<?> loadClass(String byteClassName) {
 		try {
-			return classLoader.loadClass(name);
+			return classLoader.loadClass(byteClassName);
 		} catch (ClassNotFoundException e) {
-			Log.crash(e, "Error loading a class (" + name + ")");
+			Log.crash(e, "Error loading a class (" + byteClassName + ")");
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public void registerClass(String name, ByteClass byteClass) {
-		if (!nameToByteClassMap.containsKey(name)) {
-			nameToByteClassMap.put(name, byteClass);
+	public void registerClass(String minecraftClassName, ByteClass byteClass) {
+		if (!minecraftClassNameToByteClassMap.containsKey(minecraftClassName)) {
+			minecraftClassNameToByteClassMap.put(minecraftClassName, byteClass);
 		}
 	}
 
@@ -463,16 +464,17 @@ public class Minecraft {
 		return versionID;
 	}
 
-	public ByteClass getByteClass(String name) {
-		return nameToByteClassMap.get(name);
+	public ByteClass getByteClass(String minecraftClassName) {
+		return minecraftClassNameToByteClassMap.get(minecraftClassName);
 	}
 
-	public MinecraftClass getClassByName(String name) {
-		return nameToMinecraftClassMap.get(name);
+	public MinecraftClass getMinecraftClassByMinecraftClassName(
+			String minecraftClassName) {
+		return minecraftClassNameToMinecraftClassMap.get(minecraftClassName);
 	}
 
-	public MinecraftClass getClassByType(String name) {
-		return typeToMinecraftClassMap.get(name);
+	public MinecraftClass getMinecraftClassByByteClassName(String byteClassName) {
+		return byteClassNameToMinecraftClassMap.get(byteClassName);
 	}
 
 	public IMinecraftInterface createInterface() {

@@ -8,7 +8,7 @@ public class MinecraftObject {
 		this.value = value;
 	}
 	public MinecraftObject(Minecraft mc, Object value) {
-		this.type = mc.getClassByType(value.getClass().getCanonicalName());
+		this.type = mc.getMinecraftClassByByteClassName(value.getClass().getCanonicalName());
 		this.value = value;
 	}
 	public Object get() {

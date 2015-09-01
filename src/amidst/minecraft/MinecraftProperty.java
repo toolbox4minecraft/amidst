@@ -20,7 +20,7 @@ public class MinecraftProperty {
 	
 	@Override
 	public String toString() {
-		return "[Method " + name +" (" + internalName +") of class " + parent.getName() + "]";
+		return "[Method " + name +" (" + internalName +") of class " + parent.getMinecraftClassName() + "]";
 	}
 
 
@@ -50,15 +50,15 @@ public class MinecraftProperty {
 				String[] typeSplit = propType.split("\\.");
 				propType = typeSplit[typeSplit.length-1];
 			}
-			type = mc.getClassByType(propType);
+			type = mc.getMinecraftClassByByteClassName(propType);
 			if (type == null)
 				isMinecraftClass = false;
 			property.setAccessible(true);
 		} catch (SecurityException e) {
-			Log.crash(e, "SecurityException on (" + mcClass.getName() + " / " + mcClass.getClassName() + ") property (" + name + " / " + internalName +")");
+			Log.crash(e, "SecurityException on (" + mcClass.getMinecraftClassName() + " / " + mcClass.getByteClassName() + ") property (" + name + " / " + internalName +")");
 			e.printStackTrace();
 		} catch (NoSuchFieldException e) {
-			Log.crash(e, "Unable to find class property (" + mcClass.getName() + " / " + mcClass.getClassName() + ") (" + name + " / " + internalName +")");
+			Log.crash(e, "Unable to find class property (" + mcClass.getMinecraftClassName() + " / " + mcClass.getByteClassName() + ") (" + name + " / " + internalName +")");
 			e.printStackTrace();
 		}
 	}
@@ -91,6 +91,6 @@ public class MinecraftProperty {
 	}
 
 	public String getParentName() {
-		return parent.getName();
+		return parent.getMinecraftClassName();
 	}
 }

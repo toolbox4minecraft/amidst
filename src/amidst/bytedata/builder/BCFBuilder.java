@@ -126,7 +126,7 @@ public class BCFBuilder {
 
 	private BCFBuilder previous;
 
-	private String name;
+	private String minecraftClassName;
 	private BCDBuilder detectorBuilder = new BCDBuilder();
 	private BCPBuilder preparerBuilder = new BCPBuilder();
 
@@ -134,8 +134,8 @@ public class BCFBuilder {
 		this.previous = previous;
 	}
 
-	public BCFBuilder name(String name) {
-		this.name = name;
+	public BCFBuilder name(String minecraftClassName) {
+		this.minecraftClassName = minecraftClassName;
 		return this;
 	}
 
@@ -155,8 +155,10 @@ public class BCFBuilder {
 	}
 
 	private ByteClassFinder constructThis() {
-		Objects.requireNonNull(name, "a byte class finder needs to have a name");
-		return new ByteClassFinder(name, detectorBuilder.constructThis(),
+		Objects.requireNonNull(minecraftClassName,
+				"a byte class finder needs to have a name");
+		return new ByteClassFinder(minecraftClassName,
+				detectorBuilder.constructThis(),
 				preparerBuilder.constructThis());
 	}
 }

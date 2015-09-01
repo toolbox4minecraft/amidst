@@ -63,13 +63,13 @@ public class MinecraftConstructor {
 			constructor = clazz.getConstructor(paramClasses);
 			constructor.setAccessible(true);
 		} catch (ClassNotFoundException e) {
-			Log.crash(e, "Unabled to find class for constructor. (" + paramNames[i] + ") on (" + mcClass.getName() + " / " + mcClass.getClassName() + ")");
+			Log.crash(e, "Unabled to find class for constructor. (" + paramNames[i] + ") on (" + mcClass.getMinecraftClassName() + " / " + mcClass.getByteClassName() + ")");
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			Log.crash(e, "SecurityException on (" + mcClass.getName() + " / " + mcClass.getClassName() + ") contructor (" + name + ")");
+			Log.crash(e, "SecurityException on (" + mcClass.getMinecraftClassName() + " / " + mcClass.getByteClassName() + ") contructor (" + name + ")");
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
-			Log.crash(e, "Unable to find class constructor (" + mcClass.getName() + " / " + mcClass.getClassName() + ") (" + name + ")");
+			Log.crash(e, "Unable to find class constructor (" + mcClass.getMinecraftClassName() + " / " + mcClass.getByteClassName() + ") (" + name + ")");
 			e.printStackTrace();
 		}
 	}
@@ -93,7 +93,7 @@ public class MinecraftConstructor {
 		return null;
 	}
 	public Object getParentName() {
-		return parent.getName();
+		return parent.getMinecraftClassName();
 	}
 	public String getName() {
 		return name;
@@ -103,6 +103,6 @@ public class MinecraftConstructor {
 	}
 	@Override
 	public String toString() {
-		return "[Constructor " + name +" of class " + parent.getName() + "]";
+		return "[Constructor " + name +" of class " + parent.getMinecraftClassName() + "]";
 	}
 }

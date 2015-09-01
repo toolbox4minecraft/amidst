@@ -5,28 +5,28 @@ import amidst.bytedata.prepare.ByteClassPreparer;
 import amidst.minecraft.Minecraft;
 
 public class ByteClassFinder {
-	private String name;
+	private String minecraftClassName;
 	private ByteClassDetector detector;
 	private ByteClassPreparer preparer;
 
-	public ByteClassFinder(String name, ByteClassDetector detector,
-			ByteClassPreparer preparer) {
-		this.name = name;
+	public ByteClassFinder(String minecraftClassName,
+			ByteClassDetector detector, ByteClassPreparer preparer) {
+		this.minecraftClassName = minecraftClassName;
 		this.detector = detector;
 		this.preparer = preparer;
 	}
 
-	public boolean find(Minecraft mc, ByteClass byteClass) {
+	public boolean find(Minecraft minecraft, ByteClass byteClass) {
 		if (detector.detect(byteClass)) {
 			preparer.prepare(byteClass);
-			mc.registerClass(name, byteClass);
+			minecraft.registerClass(minecraftClassName, byteClass);
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public String getName() {
-		return name;
+	public String getMinecraftClassName() {
+		return minecraftClassName;
 	}
 }

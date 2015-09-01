@@ -66,20 +66,20 @@ public class MinecraftMethod {
 				String[] typeSplit = methodType.split("\\.");
 				methodType = typeSplit[typeSplit.length-1];
 			}
-			returnType = minecraft.getClassByType(methodType);
+			returnType = minecraft.getMinecraftClassByByteClassName(methodType);
 			if (returnType == null)
 				isMinecraftClass = false;
 		} catch (ClassNotFoundException e) {
 			loadFailed = true;
-			Log.w(e, "Unabled to find class for parameter. (" + paramNames[i] + ") on (" + mcClass.getName() + " / " + mcClass.getClassName() + ")");
+			Log.w(e, "Unabled to find class for parameter. (" + paramNames[i] + ") on (" + mcClass.getMinecraftClassName() + " / " + mcClass.getByteClassName() + ")");
 			e.printStackTrace();
 		} catch (SecurityException e) {
 			loadFailed = true;
-			Log.w(e, "SecurityException on (" + mcClass.getName() + " / " + mcClass.getClassName() + ") method (" + name + " / " + internalName +")");
+			Log.w(e, "SecurityException on (" + mcClass.getMinecraftClassName() + " / " + mcClass.getByteClassName() + ") method (" + name + " / " + internalName +")");
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
 			loadFailed = true;
-			Log.w(e, "Unable to find class method (" + mcClass.getName() + " / " + mcClass.getClassName() + ") (" + name + " / " + internalName +")");
+			Log.w(e, "Unable to find class method (" + mcClass.getMinecraftClassName() + " / " + mcClass.getByteClassName() + ") (" + name + " / " + internalName +")");
 			e.printStackTrace();
 		}
 	}
@@ -109,7 +109,7 @@ public class MinecraftMethod {
 		return null;
 	}
 	public Object getParentName() {
-		return parent.getName();
+		return parent.getMinecraftClassName();
 	}
 	public String getInternalName() {
 		return internalName;

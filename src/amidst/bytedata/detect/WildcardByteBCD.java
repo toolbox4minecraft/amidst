@@ -11,7 +11,7 @@ public class WildcardByteBCD extends ByteClassDetector {
 
 	@Override
 	public boolean detect(ByteClass byteClass) {
-		return isMatching(byteClass.getData());
+		return isMatching(byteClass.getClassData());
 	}
 
 	private boolean isMatching(byte[] data) {
