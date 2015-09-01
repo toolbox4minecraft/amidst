@@ -21,7 +21,6 @@ public class MinecraftConstructor {
 		this.parent = parent;
 		this.minecraftName = minecraftName;
 		this.parameterNames = parameterNames;
-		this.parameterClasses = new Class<?>[parameterNames.length];
 	}
 
 	public String getMinecraftName() {
@@ -50,11 +49,10 @@ public class MinecraftConstructor {
 	public void initialize(Minecraft minecraft, MinecraftClass minecraftClass) {
 		Class<?> clazz = minecraftClass.getClazz();
 		try {
-			for (int i = 0; i < parameterNames.length; i++) {
-				parameterClasses[i] = getParameterClass(minecraft,
-						parameterNames[i]);
-			}
-			constructor = getConstructor(clazz);
+			parameterClasses = MinecraftFeatureUtils.getParameterClasses(
+					minecraft, parameterNames, primitivesMap);
+			constructor = MinecraftFeatureUtils.getConstructor(clazz,
+					parameterClasses);
 		} catch (SecurityException e) {
 			Log.crash(
 					e,
@@ -72,21 +70,6 @@ public class MinecraftConstructor {
 							+ minecraftName + ")");
 			e.printStackTrace();
 		}
-	}
-
-	private Class<?> getParameterClass(Minecraft minecraft, String parameterName) {
-		Class<?> result = primitivesMap.get(parameterName);
-		if (result == null && parameterName.charAt(0) != '@') {
-			result = minecraft.loadClass(parameterName);
-		}
-		return result;
-	}
-
-	private Constructor<?> getConstructor(Class<?> clazz)
-			throws NoSuchMethodException {
-		Constructor<?> result = clazz.getConstructor(parameterClasses);
-		result.setAccessible(true);
-		return result;
 	}
 
 	@Override

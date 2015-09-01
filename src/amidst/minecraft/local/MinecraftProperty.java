@@ -83,8 +83,8 @@ public class MinecraftProperty {
 	public void initialize(Minecraft minecraft, MinecraftClass minecraftClass) {
 		Class<?> clazz = minecraftClass.getClazz();
 		try {
-			field = getField(clazz);
-			type = getType(minecraft);
+			field = MinecraftFeatureUtils.getField(clazz, byteName);
+			type = MinecraftFeatureUtils.getType(minecraft, field.getType());
 		} catch (SecurityException e) {
 			Log.crash(
 					e,
@@ -102,21 +102,6 @@ public class MinecraftProperty {
 							+ minecraftName + " / " + byteName + ")");
 			e.printStackTrace();
 		}
-	}
-
-	private Field getField(Class<?> clazz) throws NoSuchFieldException {
-		Field result = clazz.getDeclaredField(byteName);
-		result.setAccessible(true);
-		return result;
-	}
-
-	private MinecraftClass getType(Minecraft minecraft) {
-		String result = field.getType().getName();
-		if (result.contains(".")) {
-			String[] typeSplit = result.split("\\.");
-			result = typeSplit[typeSplit.length - 1];
-		}
-		return minecraft.getMinecraftClassByByteClassName(result);
 	}
 
 	@Override

@@ -33,37 +33,35 @@ import amidst.utilties.JavaUtils;
 import amidst.version.VersionInfo;
 
 public class Minecraft {
-	private class MinecraftMethodBuilder {
-		private String minecraftMethodName;
-		private String byteMethodName;
-		private String[] byteParameterArray;
+	private class MinecraftMethodAndConstructorBuilder {
+		private String minecraftName;
+		private String byteName;
+		private String[] byteParameterNames;
 
-		private MinecraftMethodBuilder(String minecraftMethodString,
-				String minecraftMethodName) {
-			this.minecraftMethodName = minecraftMethodName;
-			String byteMethodString = replaceMinecraftClassNamesWithByteClassNames(minecraftMethodString);
-			this.byteMethodName = byteMethodString.substring(0,
-					byteMethodString.indexOf('('));
-			String byteParameterString = byteMethodString.substring(
-					byteMethodString.indexOf('(') + 1,
-					byteMethodString.indexOf(')'));
+		private MinecraftMethodAndConstructorBuilder(
+				String minecraftMethodString, String minecraftName) {
+			this.minecraftName = minecraftName;
+			String byteString = replaceMinecraftClassNamesWithByteClassNames(minecraftMethodString);
+			this.byteName = byteString.substring(0, byteString.indexOf('('));
+			String byteParameterString = byteString.substring(
+					byteString.indexOf('(') + 1, byteString.indexOf(')'));
 			if (byteParameterString.isEmpty()) {
-				this.byteParameterArray = new String[0];
+				this.byteParameterNames = new String[0];
 			} else {
-				this.byteParameterArray = byteParameterString.split(",");
+				this.byteParameterNames = byteParameterString.split(",");
 			}
 		}
 
 		private MinecraftMethod createMinecraftMethod(
 				MinecraftClass minecraftClass) {
-			return new MinecraftMethod(primitivesMap, minecraftClass,
-					minecraftMethodName, byteMethodName, byteParameterArray);
+			return new MinecraftMethod(primitivesMap, minecraftName, byteName,
+					byteParameterNames);
 		}
 
 		private MinecraftConstructor createMinecraftConstructor(
 				MinecraftClass minecraftClass) {
 			return new MinecraftConstructor(primitivesMap, minecraftClass,
-					minecraftMethodName, byteParameterArray);
+					minecraftName, byteParameterNames);
 		}
 
 		private String replaceMinecraftClassNamesWithByteClassNames(
@@ -378,17 +376,20 @@ public class Minecraft {
 	private void addMethods(MinecraftClass minecraftClass,
 			List<String[]> methods) {
 		for (String[] method : methods) {
-			minecraftClass.addMethod(new MinecraftMethodBuilder(method[0],
-					method[1]).createMinecraftMethod(minecraftClass));
+			minecraftClass
+					.addMethod(new MinecraftMethodAndConstructorBuilder(
+							method[0], method[1])
+							.createMinecraftMethod(minecraftClass));
 		}
 	}
 
 	private void addConstructors(MinecraftClass minecraftClass,
 			List<String[]> constructors) {
 		for (String[] constructor : constructors) {
-			minecraftClass.addConstructor(new MinecraftMethodBuilder(
-					constructor[0], constructor[1])
-					.createMinecraftConstructor(minecraftClass));
+			minecraftClass
+					.addConstructor(new MinecraftMethodAndConstructorBuilder(
+							constructor[0], constructor[1])
+							.createMinecraftConstructor(minecraftClass));
 		}
 	}
 

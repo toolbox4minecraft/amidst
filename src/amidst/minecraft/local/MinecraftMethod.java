@@ -8,7 +8,6 @@ import amidst.logging.Log;
 
 public class MinecraftMethod {
 	private Map<String, Class<?>> primitivesMap;
-	private MinecraftClass parent;
 	private String minecraftName;
 	private String byteName;
 	private String[] parameterNames;
@@ -18,14 +17,11 @@ public class MinecraftMethod {
 	private boolean loadFailed = false;
 
 	public MinecraftMethod(Map<String, Class<?>> primitivesMap,
-			MinecraftClass parent, String minecraftName, String byteName,
-			String... parameterNames) {
+			String minecraftName, String byteName, String... parameterNames) {
 		this.primitivesMap = primitivesMap;
-		this.parent = parent;
 		this.minecraftName = minecraftName;
 		this.byteName = byteName;
 		this.parameterNames = parameterNames;
-		this.parameterClasses = new Class<?>[parameterNames.length];
 	}
 
 	public String getMinecraftName() {
@@ -76,13 +72,12 @@ public class MinecraftMethod {
 	public void initialize(Minecraft minecraft, MinecraftClass minecraftClass) {
 		Class<?> clazz = minecraftClass.getClazz();
 		try {
-			for (int i = 0; i < parameterNames.length; i++) {
-				parameterClasses[i] = getParameterClass(minecraft,
-						parameterNames[i]);
-			}
-
-			method = getMethod(clazz);
-			returnType = getReturnType(minecraft);
+			parameterClasses = MinecraftFeatureUtils.getParameterClasses(
+					minecraft, parameterNames, primitivesMap);
+			method = MinecraftFeatureUtils.getMethod(clazz, byteName,
+					parameterClasses);
+			returnType = MinecraftFeatureUtils.getType(minecraft,
+					method.getReturnType());
 		} catch (SecurityException e) {
 			loadFailed = true;
 			Log.w(e,
@@ -100,30 +95,5 @@ public class MinecraftMethod {
 							+ minecraftName + " / " + byteName + ")");
 			e.printStackTrace();
 		}
-	}
-
-	private Class<?> getParameterClass(Minecraft minecraft, String parameterName) {
-		Class<?> result = primitivesMap.get(parameterName);
-		if (result == null && parameterName.charAt(0) != '@') {
-			// TODO: Does this cause duplicate loads?
-			result = minecraft.loadClass(parameterName);
-		}
-		return result;
-	}
-
-	private Method getMethod(Class<?> clazz) throws NoSuchMethodException {
-		Method result = clazz.getDeclaredMethod(byteName, parameterClasses);
-		result.setAccessible(true);
-		return result;
-	}
-
-	private MinecraftClass getReturnType(Minecraft minecraft) {
-		String result = method.getReturnType().getName();
-		if (result.contains(".")) {
-			String[] typeSplit = result.split("\\.");
-			result = typeSplit[typeSplit.length - 1];
-		}
-		MinecraftClass e = minecraft.getMinecraftClassByByteClassName(result);
-		return e;
 	}
 }
