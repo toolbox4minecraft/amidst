@@ -6,7 +6,6 @@ import java.util.HashMap;
 
 import amidst.logging.Log;
 
-
 public class MinecraftConstructor {
 	private MinecraftClass parent;
 	private Minecraft minecraft;
@@ -28,19 +27,23 @@ public class MinecraftConstructor {
 		primitives.put("char", char.class);
 		primitives.put("String", String.class);
 	}
+
 	public MinecraftConstructor(MinecraftClass parent, String name) {
 		this.parent = parent;
 		hasParameters = false;
 		this.name = name;
 		paramClasses = new Class<?>[] {};
 	}
-	public MinecraftConstructor(MinecraftClass minecraftClass, String minecraftConstructorName, String... byteParameterArray) {
+
+	public MinecraftConstructor(MinecraftClass minecraftClass,
+			String minecraftConstructorName, String... byteParameterArray) {
 		this.parent = minecraftClass;
 		paramNames = byteParameterArray;
 		paramClasses = new Class<?>[paramNames.length];
 		hasParameters = true;
 		this.name = minecraftConstructorName;
 	}
+
 	public void load(Minecraft mc, MinecraftClass mcClass) {
 		minecraft = mc;
 		Class<?> clazz = mcClass.getClazz();
@@ -51,31 +54,44 @@ public class MinecraftConstructor {
 					paramClasses[i] = primitives.get(paramNames[i]);
 					if (paramClasses[i] == null) {
 						if (paramNames[i].charAt(0) == '@') {
-							
+
 						} else {
-							paramClasses[i] = Class.forName(paramNames[i], true, minecraft.getClassLoader());
+							paramClasses[i] = Class.forName(paramNames[i],
+									true, minecraft.getClassLoader());
 						}
 					}
-						
+
 				}
 			}
 
 			constructor = clazz.getConstructor(paramClasses);
 			constructor.setAccessible(true);
 		} catch (ClassNotFoundException e) {
-			Log.crash(e, "Unabled to find class for constructor. (" + paramNames[i] + ") on (" + mcClass.getMinecraftClassName() + " / " + mcClass.getByteClassName() + ")");
+			Log.crash(e,
+					"Unabled to find class for constructor. (" + paramNames[i]
+							+ ") on (" + mcClass.getMinecraftClassName()
+							+ " / " + mcClass.getByteClassName() + ")");
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			Log.crash(e, "SecurityException on (" + mcClass.getMinecraftClassName() + " / " + mcClass.getByteClassName() + ") contructor (" + name + ")");
+			Log.crash(e,
+					"SecurityException on (" + mcClass.getMinecraftClassName()
+							+ " / " + mcClass.getByteClassName()
+							+ ") contructor (" + name + ")");
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
-			Log.crash(e, "Unable to find class constructor (" + mcClass.getMinecraftClassName() + " / " + mcClass.getByteClassName() + ") (" + name + ")");
+			Log.crash(
+					e,
+					"Unable to find class constructor ("
+							+ mcClass.getMinecraftClassName() + " / "
+							+ mcClass.getByteClassName() + ") (" + name + ")");
 			e.printStackTrace();
 		}
 	}
+
 	public MinecraftObject getNew(Object... param) {
 		return new MinecraftObject(parent, call(param));
 	}
+
 	private Object call(Object... param) {
 		try {
 			return constructor.newInstance(param);
@@ -86,23 +102,28 @@ public class MinecraftConstructor {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		} catch (InstantiationException e) {
-			
+
 			e.printStackTrace();
-			
+
 		}
 		return null;
 	}
+
 	public Object getParentName() {
 		return parent.getMinecraftClassName();
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public Class<?>[] getParameters() {
 		return paramClasses;
 	}
+
 	@Override
 	public String toString() {
-		return "[Constructor " + name +" of class " + parent.getMinecraftClassName() + "]";
+		return "[Constructor " + name + " of class "
+				+ parent.getMinecraftClassName() + "]";
 	}
 }
