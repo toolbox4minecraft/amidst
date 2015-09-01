@@ -23,7 +23,6 @@ import amidst.Util;
 import amidst.byteclass.ByteClass;
 import amidst.byteclass.ByteClass.AccessFlags;
 import amidst.byteclass.ByteClass.ByteClassFactory;
-import amidst.byteclass.finder.BCFBuilder;
 import amidst.byteclass.finder.ByteClassFinder;
 import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
@@ -166,7 +165,7 @@ public class Minecraft {
 	// Java -> Code Style -> Formatter -> Edit -> Off/On Tags
 	// see: http://stackoverflow.com/questions/1820908/how-to-turn-off-the-eclipse-code-formatter-for-certain-sections-of-java-code
 	private List<ByteClassFinder> createByteClassFinders() {
-		return BCFBuilder.builder()
+		return ByteClassFinder.builder()
 			.name("IntCache")
 				.detect()
 					.wildcardBytes(INT_CACHE_WILDCARD_BYTES)

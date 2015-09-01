@@ -6,6 +6,10 @@ import amidst.byteclass.finder.prepare.ByteClassPreparer;
 import amidst.minecraft.Minecraft;
 
 public class ByteClassFinder {
+	public static BCFBuilder builder() {
+		return BCFBuilder.builder();
+	}
+
 	private String minecraftClassName;
 	private ByteClassDetector detector;
 	private ByteClassPreparer preparer;
