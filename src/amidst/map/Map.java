@@ -1,10 +1,11 @@
 package amidst.map;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
-import amidst.logging.Log;
 import amidst.map.layers.BiomeLayer;
 
 public class Map {

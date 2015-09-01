@@ -2,8 +2,6 @@ package amidst.map;
 
 import java.awt.geom.AffineTransform;
 
-import amidst.logging.Log;
-
 public abstract class ImageLayer extends Layer {
 	protected float alpha = 1.0f;
 	protected double scale;
