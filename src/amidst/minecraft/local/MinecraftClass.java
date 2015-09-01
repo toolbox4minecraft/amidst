@@ -1,4 +1,4 @@
-package amidst.minecraft;
+package amidst.minecraft.local;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;

@@ -11,8 +11,8 @@ import MoF.Google;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
-import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
+import amidst.minecraft.local.Minecraft;
 import amidst.preferences.BiomeColorProfile;
 import amidst.resources.ResourceLoader;
 

@@ -1,4 +1,4 @@
-package amidst.minecraft;
+package amidst.minecraft.local;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -27,6 +27,7 @@ import amidst.byteclass.finder.ByteClassFinder;
 import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
 import amidst.logging.Log;
+import amidst.minecraft.IMinecraftInterface;
 import amidst.utilties.FileSystemUtils;
 import amidst.utilties.JavaUtils;
 import amidst.version.VersionInfo;

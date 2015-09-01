@@ -11,11 +11,11 @@ import amidst.minecraft.Biome;
 import amidst.minecraft.IMinecraftInterface;
 import amidst.version.VersionInfo;
 
-public class RemoteMinecraft implements IMinecraftInterface {
+public class RemoteMinecraftInterface implements IMinecraftInterface {
 	Client client;
 	static NetGetBiomeDataResult currentResults = null;
 	
-	public RemoteMinecraft(String address) {
+	public RemoteMinecraftInterface(String address) {
 		client = new Client(65536, 65536);
 		Kryo kryo = client.getKryo();
 		kryo.register(NetCreateWorldRequest.class);

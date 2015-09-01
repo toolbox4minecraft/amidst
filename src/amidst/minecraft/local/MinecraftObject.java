@@ -1,4 +1,4 @@
-package amidst.minecraft;
+package amidst.minecraft.local;
 
 public class MinecraftObject {
 	private MinecraftClass type;

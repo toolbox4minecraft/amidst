@@ -1,8 +1,9 @@
-package amidst.minecraft;
+package amidst.minecraft.local;
 
 import java.lang.reflect.Field;
 
 import amidst.logging.Log;
+import amidst.minecraft.IMinecraftInterface;
 import amidst.version.VersionInfo;
 import MoF.SaveLoader.Type;
 

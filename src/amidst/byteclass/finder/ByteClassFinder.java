@@ -3,7 +3,7 @@ package amidst.byteclass.finder;
 import amidst.byteclass.ByteClass;
 import amidst.byteclass.finder.detect.ByteClassDetector;
 import amidst.byteclass.finder.prepare.ByteClassPreparer;
-import amidst.minecraft.Minecraft;
+import amidst.minecraft.local.Minecraft;
 
 public class ByteClassFinder {
 	public static BCFBuilder builder() {

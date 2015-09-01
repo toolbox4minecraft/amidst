@@ -3,7 +3,7 @@ package amidst.gui.version;
 import MoF.FinderWindow;
 import amidst.Options;
 import amidst.minecraft.MinecraftUtil;
-import amidst.minecraft.remote.RemoteMinecraft;
+import amidst.minecraft.remote.RemoteMinecraftInterface;
 
 public class RemoteVersionComponent extends VersionComponent {
 	private String remoteAddress;
@@ -25,7 +25,7 @@ public class RemoteVersionComponent extends VersionComponent {
 		(new Thread(new Runnable() {
 			@Override
 			public void run() {
-				MinecraftUtil.setBiomeInterface(new RemoteMinecraft(remoteAddress));
+				MinecraftUtil.setBiomeInterface(new RemoteMinecraftInterface(remoteAddress));
 				new FinderWindow();
 				VersionSelectWindow.get().dispose();
 			}
