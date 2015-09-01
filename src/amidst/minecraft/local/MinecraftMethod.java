@@ -132,11 +132,11 @@ public class MinecraftMethod {
 		return parent.getMinecraftClassName();
 	}
 
-	public String getInternalName() {
+	public String getByteName() {
 		return internalName;
 	}
 
-	public String getName() {
+	public String getMinecraftName() {
 		return name;
 	}
 

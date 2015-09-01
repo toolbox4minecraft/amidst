@@ -8,11 +8,11 @@ public class MinecraftClass {
 	private String byteClassName;
 	private Minecraft minecraft;
 	private Class<?> clazz;
-	private Map<String, MinecraftProperty> propertiesByMinecraftName = new HashMap<String, MinecraftProperty>();
-	private Map<String, MinecraftProperty> propertiesByByteName = new HashMap<String, MinecraftProperty>();
+	private Map<String, MinecraftConstructor> constructorsByMinecraftName = new HashMap<String, MinecraftConstructor>();
 	private Map<String, MinecraftMethod> methodsByMinecraftName = new HashMap<String, MinecraftMethod>();
 	private Map<String, MinecraftMethod> methodsByByteName = new HashMap<String, MinecraftMethod>();
-	private Map<String, MinecraftConstructor> constructorsByMinecraftName = new HashMap<String, MinecraftConstructor>();
+	private Map<String, MinecraftProperty> propertiesByMinecraftName = new HashMap<String, MinecraftProperty>();
+	private Map<String, MinecraftProperty> propertiesByByteName = new HashMap<String, MinecraftProperty>();
 
 	public MinecraftClass(String minecraftClassName, String byteClassName,
 			Minecraft minecraft) {
@@ -34,45 +34,46 @@ public class MinecraftClass {
 		return clazz;
 	}
 
-	public void addProperty(MinecraftProperty property) {
-		property.load(minecraft, this);
-		propertiesByMinecraftName.put(property.getName(), property);
-		propertiesByByteName.put(property.getInternalName(), property);
+	public MinecraftConstructor getConstructor(String minecraftName) {
+		return constructorsByMinecraftName.get(minecraftName);
 	}
 
-	public Object getStaticPropertyValue(String name) {
-		return propertiesByMinecraftName.get(name).getStaticValue();
+	public MinecraftMethod getMethod(String minecraftName) {
+		return methodsByMinecraftName.get(minecraftName);
 	}
 
-	public Object callMethod(String name, Object... args) {
-		return methodsByMinecraftName.get(name).callStatic(args);
-	}
-
-	public Object callMethod(String name, MinecraftObject obj, Object... args) {
-		return methodsByMinecraftName.get(name).call(obj, args);
-	}
-
-	public void addMethod(MinecraftMethod method) {
-		method.load(minecraft, this);
-		methodsByMinecraftName.put(method.getName(), method);
-		methodsByByteName.put(method.getInternalName(), method);
+	public MinecraftProperty getProperty(String minecraftName) {
+		return propertiesByMinecraftName.get(minecraftName);
 	}
 
 	public void addConstructor(MinecraftConstructor constructor) {
 		constructor.load(minecraft, this);
-		constructorsByMinecraftName.put(constructor.getName(), constructor);
+		constructorsByMinecraftName.put(constructor.getMinecraftName(),
+				constructor);
 	}
 
-	public String toString() {
-		return byteClassName;
+	public void addMethod(MinecraftMethod method) {
+		method.load(minecraft, this);
+		methodsByMinecraftName.put(method.getMinecraftName(), method);
+		methodsByByteName.put(method.getByteName(), method);
+	}
+
+	public void addProperty(MinecraftProperty property) {
+		property.load(minecraft, this);
+		propertiesByMinecraftName.put(property.getMinecraftName(), property);
+		propertiesByByteName.put(property.getByteName(), property);
 	}
 
 	public MinecraftObject newInstance(String constructor, Object... param) {
 		return constructorsByMinecraftName.get(constructor).getNew(param);
 	}
 
-	public MinecraftConstructor getConstructor(String name) {
-		return constructorsByMinecraftName.get(name);
+	public Object callMethod(String name, MinecraftObject obj, Object... args) {
+		return methodsByMinecraftName.get(name).call(obj, args);
+	}
+
+	public Object callStaticMethod(String name, Object... args) {
+		return methodsByMinecraftName.get(name).callStatic(args);
 	}
 
 	public Object getPropertyValue(String propertyName,
@@ -81,7 +82,11 @@ public class MinecraftClass {
 				minecraftObject);
 	}
 
-	public MinecraftMethod getMethod(String name) {
-		return methodsByMinecraftName.get(name);
+	public Object getStaticPropertyValue(String name) {
+		return propertiesByMinecraftName.get(name).getStaticValue();
+	}
+
+	public String toString() {
+		return byteClassName;
 	}
 }

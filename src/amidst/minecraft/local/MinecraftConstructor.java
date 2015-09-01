@@ -113,7 +113,7 @@ public class MinecraftConstructor {
 		return parent.getMinecraftClassName();
 	}
 
-	public String getName() {
+	public String getMinecraftName() {
 		return name;
 	}
 

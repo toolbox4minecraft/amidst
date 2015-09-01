@@ -30,7 +30,7 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 	public int[] getBiomeData(int x, int y, int width, int height,
 			boolean useQuarterResolutionMap) {
 		minecraft.getMinecraftClassByMinecraftClassName("IntCache")
-				.callMethod("resetIntCache");
+				.callStaticMethod("resetIntCache");
 		return (int[]) (useQuarterResolutionMap ? biomeGen
 				: biomeGen_fullResolution).callMethod("getInts", x, y, width,
 				height);
@@ -47,7 +47,7 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 		MinecraftClass blockInit;
 		if ((blockInit = minecraft
 				.getMinecraftClassByMinecraftClassName("BlockInit")) != null)
-			blockInit.callMethod("initialize");
+			blockInit.callStaticMethod("initialize");
 
 		Type type = Type.fromMixedCase(typeName);
 		MinecraftClass genLayerClass = minecraft
@@ -56,18 +56,18 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 				.getMinecraftClassByMinecraftClassName("WorldType");
 		Object[] genLayers = null;
 		if (worldTypeClass == null) {
-			genLayers = (Object[]) genLayerClass.callMethod(
+			genLayers = (Object[]) genLayerClass.callStaticMethod(
 					"initializeAllBiomeGenerators", seed);
 		} else {
 			Object worldType = ((MinecraftObject) worldTypeClass.getStaticPropertyValue(type
 					.getValue())).getObject();
 			if (genLayerClass.getMethod(
 					"initializeAllBiomeGeneratorsWithParams").exists()) {
-				genLayers = (Object[]) genLayerClass.callMethod(
+				genLayers = (Object[]) genLayerClass.callStaticMethod(
 						"initializeAllBiomeGeneratorsWithParams", seed,
 						worldType, generatorOptions);
 			} else {
-				genLayers = (Object[]) genLayerClass.callMethod(
+				genLayers = (Object[]) genLayerClass.callStaticMethod(
 						"initializeAllBiomeGenerators", seed, worldType);
 			}
 

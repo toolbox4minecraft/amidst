@@ -24,11 +24,11 @@ public class MinecraftProperty {
 				+ parent.getMinecraftClassName() + "]";
 	}
 
-	public String getName() {
+	public String getMinecraftName() {
 		return name;
 	}
 
-	public String getInternalName() {
+	public String getByteName() {
 		return internalName;
 	}
 
