@@ -1,4 +1,4 @@
-package amidst.minecraft.local;
+package amidst.symbolicclass;
 
 public class MinecraftObject {
 	private MinecraftClass minecraftClass;

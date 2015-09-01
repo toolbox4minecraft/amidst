@@ -20,6 +20,8 @@ import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
 import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;
+import amidst.symbolicclass.MinecraftClass;
+import amidst.symbolicclass.MinecraftClasses;
 import amidst.utilties.FileSystemUtils;
 import amidst.utilties.JavaUtils;
 import amidst.version.VersionInfo;

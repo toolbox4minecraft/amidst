@@ -1,4 +1,4 @@
-package amidst.minecraft.local;
+package amidst.symbolicclass;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -12,6 +12,7 @@ import amidst.byteclass.MethodDeclaration;
 import amidst.byteclass.ParameterDeclarationList.Entry;
 import amidst.byteclass.PropertyDeclaration;
 import amidst.logging.Log;
+import amidst.minecraft.local.StatelessResources;
 
 public class MinecraftClasses {
 	private MinecraftClasses() {

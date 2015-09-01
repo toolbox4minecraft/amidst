@@ -6,6 +6,8 @@ import java.util.Map;
 import MoF.SaveLoader.Type;
 import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;
+import amidst.symbolicclass.MinecraftClass;
+import amidst.symbolicclass.MinecraftObject;
 import amidst.version.VersionInfo;
 
 public class LocalMinecraftInterface implements IMinecraftInterface {

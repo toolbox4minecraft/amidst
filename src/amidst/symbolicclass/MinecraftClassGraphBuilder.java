@@ -1,4 +1,4 @@
-package amidst.minecraft.local;
+package amidst.symbolicclass;
 
 import java.util.HashMap;
 import java.util.List;
