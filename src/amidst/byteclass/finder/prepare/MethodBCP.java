@@ -3,16 +3,16 @@ package amidst.byteclass.finder.prepare;
 import amidst.byteclass.ByteClass;
 
 public class MethodBCP extends ByteClassPreparer {
-	private String method;
-	private String methodName;
+	private String minecraftMethodString;
+	private String minecraftMethodName;
 
-	public MethodBCP(String method, String methodName) {
-		this.method = method;
-		this.methodName = methodName;
+	public MethodBCP(String minecraftMethodString, String minecraftMethodName) {
+		this.minecraftMethodString = minecraftMethodString;
+		this.minecraftMethodName = minecraftMethodName;
 	}
 
 	@Override
 	public void prepare(ByteClass byteClass) {
-		byteClass.addMethod(method, methodName);
+		byteClass.addMethod(minecraftMethodString, minecraftMethodName);
 	}
 }

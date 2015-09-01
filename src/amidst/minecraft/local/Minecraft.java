@@ -288,39 +288,44 @@ public class Minecraft {
 	}
 
 	private void addProperties(MinecraftClass minecraftClass,
-			List<String[]> list) {
-		for (String[] property : list) {
+			List<String[]> properties) {
+		for (String[] property : properties) {
 			minecraftClass.addProperty(new MinecraftProperty(minecraftClass,
 					property[1], property[0]));
 		}
 	}
 
-	private void addMethods(MinecraftClass minecraftClass, List<String[]> list) {
-		for (String[] method : list) {
-			String methodString = obfuscateStringClasses(method[0]);
-			String methodDeobfName = method[1];
-			String methodObfName = methodString.substring(0,
-					methodString.indexOf('('));
-			String parameterString = methodString.substring(
-					methodString.indexOf('(') + 1, methodString.indexOf(')'));
-			if (parameterString.isEmpty()) {
+	private void addMethods(MinecraftClass minecraftClass,
+			List<String[]> methods) {
+		for (String[] method : methods) {
+			String minecraftMethodString = method[0];
+			String byteMethodString = replaceMinecraftClassNamesWithByteClassNames(minecraftMethodString);
+			String minecraftMethodName = method[1];
+			String byteMethodName = byteMethodString.substring(0,
+					byteMethodString.indexOf('('));
+			String byteParameterString = byteMethodString.substring(
+					byteMethodString.indexOf('(') + 1,
+					byteMethodString.indexOf(')'));
+			if (byteParameterString.isEmpty()) {
 				minecraftClass.addMethod(new MinecraftMethod(minecraftClass,
-						methodDeobfName, methodObfName));
+						minecraftMethodName, byteMethodName));
 			} else {
-				String[] parameterClasses = parameterString.split(",");
-				minecraftClass.addMethod(new MinecraftMethod(minecraftClass,
-						methodDeobfName, methodObfName, parameterClasses));
+				String[] byteParameterArray = byteParameterString.split(",");
+				minecraftClass
+						.addMethod(new MinecraftMethod(minecraftClass,
+								minecraftMethodName, byteMethodName,
+								byteParameterArray));
 			}
 		}
 	}
 
-	private String obfuscateStringClasses(String inString) {
-		return doObfuscateStringClasses(inString.replaceAll(" ", ""))
-				.replaceAll(",INVALID", "").replaceAll("INVALID,", "")
-				.replaceAll("INVALID", "");
+	private String replaceMinecraftClassNamesWithByteClassNames(String inString) {
+		return doReplaceMinecraftClassNamesWithByteClassNames(
+				inString.replaceAll(" ", "")).replaceAll(",INVALID", "")
+				.replaceAll("INVALID,", "").replaceAll("INVALID", "");
 	}
 
-	private String doObfuscateStringClasses(String result) {
+	private String doReplaceMinecraftClassNamesWithByteClassNames(String result) {
 		Matcher matcher = classNameRegex.matcher(result);
 		while (matcher.find()) {
 			String match = result.substring(matcher.start(), matcher.end());

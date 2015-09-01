@@ -387,16 +387,21 @@ public class ByteClass {
 		return constructors;
 	}
 
-	public void addMethod(String method, String name) {
-		methods.add(new String[] { method, name });
+	public void addMethod(String minecraftMethodString,
+			String minecraftMethodName) {
+		methods.add(new String[] { minecraftMethodString, minecraftMethodName });
 	}
 
-	public void addProperty(String property, String name) {
-		properties.add(new String[] { property, name });
+	public void addProperty(String bytePropertyName,
+			String minecraftPropertyName) {
+		properties
+				.add(new String[] { bytePropertyName, minecraftPropertyName });
 	}
 
-	public void addConstructor(String constructor, String name) {
-		constructors.add(new String[] { constructor, name });
+	public void addConstructor(String minecraftConstructorString,
+			String minecraftConstructorName) {
+		constructors.add(new String[] { minecraftConstructorString,
+				minecraftConstructorName });
 	}
 
 	public Field getField(int index) {

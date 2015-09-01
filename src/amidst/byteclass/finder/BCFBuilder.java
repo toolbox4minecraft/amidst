@@ -16,6 +16,7 @@ import amidst.byteclass.finder.detect.StringBCD;
 import amidst.byteclass.finder.detect.Utf8BCD;
 import amidst.byteclass.finder.detect.WildcardByteBCD;
 import amidst.byteclass.finder.prepare.ByteClassPreparer;
+import amidst.byteclass.finder.prepare.ConstructorBCP;
 import amidst.byteclass.finder.prepare.MethodBCP;
 import amidst.byteclass.finder.prepare.MultiBCP;
 import amidst.byteclass.finder.prepare.PropertyBCP;
@@ -108,13 +109,24 @@ public class BCFBuilder {
 			return BCFBuilder.this.construct();
 		}
 
-		public BCPBuilder addMethod(String method, String methodName) {
-			preparers.add(new MethodBCP(method, methodName));
+		public BCPBuilder addConstructor(String minecraftConstructorString,
+				String minecraftConstructorName) {
+			preparers.add(new ConstructorBCP(minecraftConstructorString,
+					minecraftConstructorName));
 			return this;
 		}
 
-		public BCPBuilder addProperty(String property, String propertyName) {
-			preparers.add(new PropertyBCP(property, propertyName));
+		public BCPBuilder addMethod(String minecraftMethodString,
+				String minecraftMethodName) {
+			preparers.add(new MethodBCP(minecraftMethodString,
+					minecraftMethodName));
+			return this;
+		}
+
+		public BCPBuilder addProperty(String bytePropertyName,
+				String minecraftPropertyName) {
+			preparers.add(new PropertyBCP(bytePropertyName,
+					minecraftPropertyName));
 			return this;
 		}
 	}
