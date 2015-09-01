@@ -12,10 +12,12 @@ public class MinecraftProperty {
 	private MinecraftClass type;
 
 	public MinecraftProperty(MinecraftClass parent, String minecraftName,
-			String byteName) {
+			String byteName, Field field, MinecraftClass type) {
 		this.parent = parent;
 		this.minecraftName = minecraftName;
 		this.byteName = byteName;
+		this.field = field;
+		this.type = type;
 	}
 
 	public String getMinecraftName() {
@@ -76,30 +78,6 @@ public class MinecraftProperty {
 			Log.crash(e,
 					"Error [IllegalAccessException] setting property value ("
 							+ toString() + ")");
-			e.printStackTrace();
-		}
-	}
-
-	public void initialize(LocalMinecraftInterfaceBuilder minecraft, MinecraftClass minecraftClass) {
-		Class<?> clazz = minecraftClass.getClazz();
-		try {
-			field = MinecraftFeatureUtils.getField(clazz, byteName);
-			type = MinecraftFeatureUtils.getType(minecraft, field.getType());
-		} catch (SecurityException e) {
-			Log.crash(
-					e,
-					"SecurityException on ("
-							+ minecraftClass.getMinecraftName() + " / "
-							+ minecraftClass.getByteName() + ") property ("
-							+ minecraftName + " / " + byteName + ")");
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			Log.crash(
-					e,
-					"Unable to find class property ("
-							+ minecraftClass.getMinecraftName() + " / "
-							+ minecraftClass.getByteName() + ") ("
-							+ minecraftName + " / " + byteName + ")");
 			e.printStackTrace();
 		}
 	}

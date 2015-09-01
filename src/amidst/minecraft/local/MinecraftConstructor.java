@@ -2,25 +2,17 @@ package amidst.minecraft.local;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
-
-import amidst.logging.Log;
 
 public class MinecraftConstructor {
-	private Map<String, Class<?>> primitivesMap;
 	private MinecraftClass parent;
 	private String minecraftName;
-	private String[] parameterNames;
-	private Class<?>[] parameterClasses;
 	private Constructor<?> constructor;
 
-	public MinecraftConstructor(Map<String, Class<?>> primitivesMap,
-			MinecraftClass parent, String minecraftName,
-			String... parameterNames) {
-		this.primitivesMap = primitivesMap;
+	public MinecraftConstructor(MinecraftClass parent, String minecraftName,
+			Constructor<?> constructor) {
 		this.parent = parent;
 		this.minecraftName = minecraftName;
-		this.parameterNames = parameterNames;
+		this.constructor = constructor;
 	}
 
 	public String getMinecraftName() {
@@ -44,32 +36,6 @@ public class MinecraftConstructor {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	public void initialize(LocalMinecraftInterfaceBuilder minecraft, MinecraftClass minecraftClass) {
-		Class<?> clazz = minecraftClass.getClazz();
-		try {
-			parameterClasses = MinecraftFeatureUtils.getParameterClasses(
-					minecraft, parameterNames, primitivesMap);
-			constructor = MinecraftFeatureUtils.getConstructor(clazz,
-					parameterClasses);
-		} catch (SecurityException e) {
-			Log.crash(
-					e,
-					"SecurityException on ("
-							+ minecraftClass.getMinecraftName() + " / "
-							+ minecraftClass.getByteName() + ") contructor ("
-							+ minecraftName + ")");
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			Log.crash(
-					e,
-					"Unable to find class constructor ("
-							+ minecraftClass.getMinecraftName() + " / "
-							+ minecraftClass.getByteName() + ") ("
-							+ minecraftName + ")");
-			e.printStackTrace();
-		}
 	}
 
 	@Override

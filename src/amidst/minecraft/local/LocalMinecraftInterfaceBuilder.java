@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
 
 import amidst.Options;
 import amidst.Util;
@@ -27,80 +25,13 @@ import amidst.utilties.JavaUtils;
 import amidst.version.VersionInfo;
 
 public class LocalMinecraftInterfaceBuilder {
-	private class MinecraftMethodAndConstructorBuilder {
-		private String minecraftName;
-		private String byteName;
-		private String[] byteParameterNames;
-
-		private MinecraftMethodAndConstructorBuilder(
-				String minecraftMethodString, String minecraftName) {
-			this.minecraftName = minecraftName;
-			String byteString = replaceMinecraftClassNamesWithByteClassNames(minecraftMethodString);
-			this.byteName = byteString.substring(0, byteString.indexOf('('));
-			String byteParameterString = byteString.substring(
-					byteString.indexOf('(') + 1, byteString.indexOf(')'));
-			if (byteParameterString.isEmpty()) {
-				this.byteParameterNames = new String[0];
-			} else {
-				this.byteParameterNames = byteParameterString.split(",");
-			}
-		}
-
-		private MinecraftMethod createMinecraftMethod(
-				MinecraftClass minecraftClass) {
-			return new MinecraftMethod(
-					StatelessResources.INSTANCE.getPrimitivesMap(),
-					minecraftName, byteName, byteParameterNames);
-		}
-
-		private MinecraftConstructor createMinecraftConstructor(
-				MinecraftClass minecraftClass) {
-			return new MinecraftConstructor(
-					StatelessResources.INSTANCE.getPrimitivesMap(),
-					minecraftClass, minecraftName, byteParameterNames);
-		}
-
-		private String replaceMinecraftClassNamesWithByteClassNames(
-				String inString) {
-			return doReplaceMinecraftClassNamesWithByteClassNames(
-					inString.replaceAll(" ", "")).replaceAll(",INVALID", "")
-					.replaceAll("INVALID,", "").replaceAll("INVALID", "");
-		}
-
-		private String doReplaceMinecraftClassNamesWithByteClassNames(
-				String result) {
-			Matcher matcher = StatelessResources.INSTANCE.getClassNameRegex()
-					.matcher(result);
-			while (matcher.find()) {
-				String match = result.substring(matcher.start(), matcher.end());
-				result = replaceWithByteClassName(result, match);
-				matcher = StatelessResources.INSTANCE.getClassNameRegex()
-						.matcher(result);
-			}
-			return result;
-		}
-
-		private String replaceWithByteClassName(String result, String match) {
-			String minecraftClassName = match.substring(1);
-			ByteClass byteClass = minecraftClassNameToByteClassMap
-					.get(minecraftClassName);
-			if (byteClass != null) {
-				result = result.replaceAll(match, byteClass.getByteClassName());
-			} else {
-				result = result.replaceAll(match, "INVALID");
-			}
-			return result;
-		}
-	}
-
 	private URLClassLoader classLoader;
 
 	private File jarFile;
 	private VersionInfo version;
 
-	private Map<String, ByteClass> minecraftClassNameToByteClassMap = new HashMap<String, ByteClass>();
-	private Map<String, MinecraftClass> minecraftClassNameToMinecraftClassMap = new HashMap<String, MinecraftClass>();
-	private Map<String, MinecraftClass> byteClassNameToMinecraftClassMap = new HashMap<String, MinecraftClass>();
+	private Map<String, ByteClass> byteClassesByMinecraftClassName = new HashMap<String, ByteClass>();
+	private Map<String, MinecraftClass> minecraftClassesByMinecraftClassName;
 
 	public LocalMinecraftInterfaceBuilder(File jarFile) {
 		try {
@@ -127,8 +58,8 @@ public class LocalMinecraftInterfaceBuilder {
 			Log.i("Identified Minecraft [" + version.name()
 					+ "] with versionID of " + versionID);
 			Log.i("Loading classes...");
-			populateMinecraftClassMaps();
-			addPropertiesMethodsConstructors();
+			minecraftClassesByMinecraftClassName = MinecraftClasses
+					.createClasses(classLoader, byteClassesByMinecraftClassName);
 			Log.i("Classes loaded.");
 			Log.i("Minecraft load complete.");
 		} catch (RuntimeException e) {
@@ -153,8 +84,8 @@ public class LocalMinecraftInterfaceBuilder {
 	}
 
 	private void registerClass(String minecraftClassName, ByteClass byteClass) {
-		if (!minecraftClassNameToByteClassMap.containsKey(minecraftClassName)) {
-			minecraftClassNameToByteClassMap.put(minecraftClassName, byteClass);
+		if (!byteClassesByMinecraftClassName.containsKey(minecraftClassName)) {
+			byteClassesByMinecraftClassName.put(minecraftClassName, byteClass);
 		}
 	}
 
@@ -196,60 +127,6 @@ public class LocalMinecraftInterfaceBuilder {
 			throw new RuntimeException(
 					"Attempted to load non-minecraft jar, or unable to locate starting point.",
 					e);
-		}
-	}
-
-	private void populateMinecraftClassMaps() {
-		for (Entry<String, ByteClass> entry : minecraftClassNameToByteClassMap
-				.entrySet()) {
-			String minecraftClassName = entry.getKey();
-			ByteClass byteClass = entry.getValue();
-			String byteClassName = byteClass.getByteClassName();
-			MinecraftClass minecraftClass = new MinecraftClass(
-					minecraftClassName, byteClassName, this);
-			minecraftClassNameToMinecraftClassMap.put(minecraftClassName,
-					minecraftClass);
-			byteClassNameToMinecraftClassMap.put(byteClassName, minecraftClass);
-		}
-	}
-
-	private void addPropertiesMethodsConstructors() {
-		for (Entry<String, ByteClass> entry : minecraftClassNameToByteClassMap
-				.entrySet()) {
-			ByteClass byteClass = entry.getValue();
-			MinecraftClass minecraftClass = minecraftClassNameToMinecraftClassMap
-					.get(entry.getKey());
-			addProperties(minecraftClass, byteClass.getProperties());
-			addMethods(minecraftClass, byteClass.getMethods());
-			addConstructors(minecraftClass, byteClass.getConstructors());
-		}
-	}
-
-	private void addProperties(MinecraftClass minecraftClass,
-			List<String[]> properties) {
-		for (String[] property : properties) {
-			minecraftClass.addProperty(new MinecraftProperty(minecraftClass,
-					property[1], property[0]));
-		}
-	}
-
-	private void addMethods(MinecraftClass minecraftClass,
-			List<String[]> methods) {
-		for (String[] method : methods) {
-			minecraftClass
-					.addMethod(new MinecraftMethodAndConstructorBuilder(
-							method[0], method[1])
-							.createMinecraftMethod(minecraftClass));
-		}
-	}
-
-	private void addConstructors(MinecraftClass minecraftClass,
-			List<String[]> constructors) {
-		for (String[] constructor : constructors) {
-			minecraftClass
-					.addConstructor(new MinecraftMethodAndConstructorBuilder(
-							constructor[0], constructor[1])
-							.createMinecraftConstructor(minecraftClass));
 		}
 	}
 
@@ -355,12 +232,8 @@ public class LocalMinecraftInterfaceBuilder {
 		return null;
 	}
 
-	public MinecraftClass getMinecraftClassByByteClassName(String byteClassName) {
-		return byteClassNameToMinecraftClassMap.get(byteClassName);
-	}
-
 	public IMinecraftInterface create() {
 		return new LocalMinecraftInterface(
-				minecraftClassNameToMinecraftClassMap, version);
+				minecraftClassesByMinecraftClassName, version);
 	}
 }

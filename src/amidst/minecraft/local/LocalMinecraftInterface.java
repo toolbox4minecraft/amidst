@@ -105,7 +105,7 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 
 	private boolean initializeAllBiomeGeneratorsWithParamsExists() {
 		return genLayerClass
-				.getMethod("initializeAllBiomeGeneratorsWithParams").exists();
+				.hasMethod("initializeAllBiomeGeneratorsWithParams");
 	}
 
 	private Object[] initializeAllBiomeGenerators(long seed, Object worldType) {
