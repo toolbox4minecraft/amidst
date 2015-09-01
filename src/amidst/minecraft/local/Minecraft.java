@@ -523,6 +523,7 @@ public class Minecraft {
 	}
 
 	public IMinecraftInterface createInterface() {
-		return new LocalMinecraftInterface(this);
+		return new LocalMinecraftInterface(
+				minecraftClassNameToMinecraftClassMap, version);
 	}
 }
