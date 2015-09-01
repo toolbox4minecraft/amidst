@@ -119,7 +119,7 @@ public class MinecraftClasses {
 		Class<?>[] result = new Class<?>[entries.size()];
 		for (int i = 0; i < entries.size(); i++) {
 			result[i] = getParameterClass(classLoader,
-					byteClassesByMinecraftClassName, entries.get(0));
+					byteClassesByMinecraftClassName, entries.get(i));
 		}
 		return result;
 	}
