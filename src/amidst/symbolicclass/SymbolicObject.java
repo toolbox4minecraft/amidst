@@ -1,11 +1,11 @@
 package amidst.symbolicclass;
 
 public class SymbolicObject {
-	private SymbolicClass minecraftClass;
+	private SymbolicClass symbolicClass;
 	private Object object;
 
-	public SymbolicObject(SymbolicClass minecraftClass, Object object) {
-		this.minecraftClass = minecraftClass;
+	public SymbolicObject(SymbolicClass symbolicClass, Object object) {
+		this.symbolicClass = symbolicClass;
 		this.object = object;
 	}
 
@@ -13,11 +13,11 @@ public class SymbolicObject {
 		return object;
 	}
 
-	public Object callMethod(String functionName, Object... args) {
-		return minecraftClass.callMethod(functionName, this, args);
+	public Object callMethod(String symbolicName, Object... parameters) {
+		return symbolicClass.callMethod(symbolicName, this, parameters);
 	}
 
-	public Object getPropertyValue(String propertyName) {
-		return minecraftClass.getPropertyValue(propertyName, this);
+	public Object getPropertyValue(String symbolicName) {
+		return symbolicClass.getPropertyValue(symbolicName, this);
 	}
 }

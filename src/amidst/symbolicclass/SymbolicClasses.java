@@ -3,6 +3,7 @@ package amidst.symbolicclass;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,9 +13,28 @@ import amidst.byteclass.MethodDeclaration;
 import amidst.byteclass.ParameterDeclarationList.Entry;
 import amidst.byteclass.PropertyDeclaration;
 import amidst.logging.Log;
-import amidst.minecraft.local.StatelessResources;
 
 public class SymbolicClasses {
+	private static enum StatelessResources {
+		INSTANCE;
+
+		private Map<String, Class<?>> primitivesMap = createPrimitivesMap();
+
+		private Map<String, Class<?>> createPrimitivesMap() {
+			Map<String, Class<?>> result = new HashMap<String, Class<?>>();
+			result.put("byte", byte.class);
+			result.put("int", int.class);
+			result.put("float", float.class);
+			result.put("short", short.class);
+			result.put("long", long.class);
+			result.put("double", double.class);
+			result.put("boolean", boolean.class);
+			result.put("char", char.class);
+			result.put("String", String.class);
+			return result;
+		}
+	}
+
 	private SymbolicClasses() {
 	}
 
@@ -128,8 +148,8 @@ public class SymbolicClasses {
 	private static Class<?> getParameterClass(ClassLoader classLoader,
 			Map<String, ByteClass> realClassesBySymbolicClassName, Entry entry)
 			throws ClassNotFoundException {
-		Class<?> result = StatelessResources.INSTANCE.getPrimitivesMap().get(
-				entry.getType());
+		Class<?> result = StatelessResources.INSTANCE.primitivesMap.get(entry
+				.getType());
 		if (result != null) {
 			return result;
 		} else if (entry.isSymbolic()) {

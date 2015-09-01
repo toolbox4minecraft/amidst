@@ -5,13 +5,13 @@ import java.lang.reflect.InvocationTargetException;
 
 public class SymbolicConstructor {
 	private SymbolicClass parent;
-	private String minecraftName;
+	private String symbolicName;
 	private Constructor<?> constructor;
 
-	public SymbolicConstructor(SymbolicClass parent, String minecraftName,
+	public SymbolicConstructor(SymbolicClass parent, String symbolicName,
 			Constructor<?> constructor) {
 		this.parent = parent;
-		this.minecraftName = minecraftName;
+		this.symbolicName = symbolicName;
 		this.constructor = constructor;
 	}
 
@@ -36,7 +36,7 @@ public class SymbolicConstructor {
 
 	@Override
 	public String toString() {
-		return "[Constructor " + minecraftName + " of class "
+		return "[Constructor " + symbolicName + " of class "
 				+ parent.getSymbolicName() + "]";
 	}
 }

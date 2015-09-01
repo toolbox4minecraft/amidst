@@ -17,8 +17,16 @@ public class SymbolicMethod {
 		this.returnType = returnType;
 	}
 
-	public Object call(SymbolicObject minecraftObject, Object... parameters) {
-		return callFromObject(minecraftObject.getObject(), parameters);
+	public String getSymbolicName() {
+		return symbolicName;
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public Object call(SymbolicObject symbolicObject, Object... parameters) {
+		return callFromObject(symbolicObject.getObject(), parameters);
 	}
 
 	public Object callStatic(Object... parameters) {
@@ -27,7 +35,7 @@ public class SymbolicMethod {
 
 	private Object callFromObject(Object object, Object... parameters) {
 		Object value = invoke(object, parameters);
-		if (isReturnTypeMinecraftClass()) {
+		if (isReturnTypeSymbolicClass()) {
 			return new SymbolicObject(returnType, value);
 		}
 		return value;
@@ -46,7 +54,7 @@ public class SymbolicMethod {
 		return null;
 	}
 
-	private boolean isReturnTypeMinecraftClass() {
+	private boolean isReturnTypeSymbolicClass() {
 		return returnType != null;
 	}
 }

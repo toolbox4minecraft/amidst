@@ -1,8 +1,6 @@
 package amidst.minecraft.local;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import amidst.byteclass.ByteClass.AccessFlags;
 import amidst.byteclass.finder.ByteClassFinder;
@@ -15,7 +13,6 @@ public enum StatelessResources {
 	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
 	private static final String SERVER_CLASS = "net.minecraft.server.MinecraftServer";
 
-	private Map<String, Class<?>> primitivesMap = createPrimitivesMap();
 	private List<ByteClassFinder> byteClassFinders = createByteClassFinders();
 
 	private int[] createIntCacheWildcardBytes() {
@@ -24,20 +21,6 @@ public enum StatelessResources {
 				0xB7, 0x00, -1, 0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59, 0xB7,
 				0x00, -1, 0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59, 0xB7, 0x00, -1,
 				0xB3, 0x00, -1, 0xB1 };
-	}
-
-	private Map<String, Class<?>> createPrimitivesMap() {
-		Map<String, Class<?>> result = new HashMap<String, Class<?>>();
-		result.put("byte", byte.class);
-		result.put("int", int.class);
-		result.put("float", float.class);
-		result.put("short", short.class);
-		result.put("long", long.class);
-		result.put("double", double.class);
-		result.put("boolean", boolean.class);
-		result.put("char", char.class);
-		result.put("String", String.class);
-		return result;
 	}
 
 	// @formatter:off
@@ -109,10 +92,6 @@ public enum StatelessResources {
 
 	public String getServerClass() {
 		return SERVER_CLASS;
-	}
-
-	public Map<String, Class<?>> getPrimitivesMap() {
-		return primitivesMap;
 	}
 
 	public List<ByteClassFinder> getByteClassFinders() {

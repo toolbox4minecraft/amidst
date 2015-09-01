@@ -20,8 +20,8 @@ public class SymbolicProperty {
 		this.type = type;
 	}
 
-	public Object getValue(SymbolicObject object) {
-		return getValueFromObject(object.getObject());
+	public Object getValue(SymbolicObject symbolicObject) {
+		return getValueFromObject(symbolicObject.getObject());
 	}
 
 	public Object getStaticValue() {
