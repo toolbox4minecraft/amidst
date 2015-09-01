@@ -5,29 +5,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import amidst.byteclass.ByteClass;
 import amidst.byteclass.ByteClass.AccessFlags;
-import amidst.byteclass.ByteClass.ByteClassFactory;
 import amidst.byteclass.finder.ByteClassFinder;
 
-public enum SingletonResources {
+public enum StatelessResources {
 	INSTANCE;
-
-	private static final int[] INT_CACHE_WILDCARD_BYTES = new int[] { 0x11,
-			0x01, 0x00, 0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59, 0xB7, 0x00, -1,
-			0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59, 0xB7, 0x00, -1, 0xB3, 0x00,
-			-1, 0xBB, 0x00, -1, 0x59, 0xB7, 0x00, -1, 0xB3, 0x00, -1, 0xBB,
-			0x00, -1, 0x59, 0xB7, 0x00, -1, 0xB3, 0x00, -1, 0xB1 };
 
 	private static final String CLIENT_CLASS_RESOURCE = "net/minecraft/client/Minecraft.class";
 	private static final String CLIENT_CLASS = "net.minecraft.client.Minecraft";
 	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
 	private static final String SERVER_CLASS = "net.minecraft.server.MinecraftServer";
 
-	private ByteClassFactory byteClassFactory = ByteClass.factory();
 	private Pattern classNameRegex = Pattern.compile("@[A-Za-z]+");
 	private Map<String, Class<?>> primitivesMap = createPrimitivesMap();
 	private List<ByteClassFinder> byteClassFinders = createByteClassFinders();
+
+	private int[] createIntCacheWildcardBytes() {
+		return new int[] { 0x11, 0x01, 0x00, 0xB3, 0x00, -1, 0xBB, 0x00, -1,
+				0x59, 0xB7, 0x00, -1, 0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59,
+				0xB7, 0x00, -1, 0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59, 0xB7,
+				0x00, -1, 0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59, 0xB7, 0x00, -1,
+				0xB3, 0x00, -1, 0xB1 };
+	}
 
 	private Map<String, Class<?>> createPrimitivesMap() {
 		Map<String, Class<?>> result = new HashMap<String, Class<?>>();
@@ -52,7 +51,7 @@ public enum SingletonResources {
 		return ByteClassFinder.builder()
 			.name("IntCache")
 				.detect()
-					.wildcardBytes(INT_CACHE_WILDCARD_BYTES)
+					.wildcardBytes(createIntCacheWildcardBytes())
 					.or()
 					.strings(", tcache: ")
 				.prepare()
@@ -98,10 +97,6 @@ public enum SingletonResources {
 	}
 	// @formatter:on
 
-	public int[] getIntCacheWildcardBytes() {
-		return INT_CACHE_WILDCARD_BYTES;
-	}
-
 	public String getClientClassResource() {
 		return CLIENT_CLASS_RESOURCE;
 	}
@@ -116,10 +111,6 @@ public enum SingletonResources {
 
 	public String getServerClass() {
 		return SERVER_CLASS;
-	}
-
-	public ByteClassFactory getByteClassFactory() {
-		return byteClassFactory;
 	}
 
 	public Pattern getClassNameRegex() {

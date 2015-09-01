@@ -292,8 +292,8 @@ public class ByteClass {
 		}
 	}
 
-	public static ByteClassFactory factory() {
-		return ByteClassFactory.INSTANCE;
+	public static ByteClass newInstance(String byteClassName, byte[] classData) {
+		return ByteClassFactory.INSTANCE.create(byteClassName, classData);
 	}
 
 	private static boolean hasFlags(int accessFlags, int flags) {

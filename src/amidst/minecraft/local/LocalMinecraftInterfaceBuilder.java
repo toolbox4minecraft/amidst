@@ -52,14 +52,14 @@ public class LocalMinecraftInterfaceBuilder {
 		private MinecraftMethod createMinecraftMethod(
 				MinecraftClass minecraftClass) {
 			return new MinecraftMethod(
-					SingletonResources.INSTANCE.getPrimitivesMap(),
+					StatelessResources.INSTANCE.getPrimitivesMap(),
 					minecraftName, byteName, byteParameterNames);
 		}
 
 		private MinecraftConstructor createMinecraftConstructor(
 				MinecraftClass minecraftClass) {
 			return new MinecraftConstructor(
-					SingletonResources.INSTANCE.getPrimitivesMap(),
+					StatelessResources.INSTANCE.getPrimitivesMap(),
 					minecraftClass, minecraftName, byteParameterNames);
 		}
 
@@ -72,12 +72,12 @@ public class LocalMinecraftInterfaceBuilder {
 
 		private String doReplaceMinecraftClassNamesWithByteClassNames(
 				String result) {
-			Matcher matcher = SingletonResources.INSTANCE.getClassNameRegex()
+			Matcher matcher = StatelessResources.INSTANCE.getClassNameRegex()
 					.matcher(result);
 			while (matcher.find()) {
 				String match = result.substring(matcher.start(), matcher.end());
 				result = replaceWithByteClassName(result, match);
-				matcher = SingletonResources.INSTANCE.getClassNameRegex()
+				matcher = StatelessResources.INSTANCE.getClassNameRegex()
 						.matcher(result);
 			}
 			return result;
@@ -181,15 +181,14 @@ public class LocalMinecraftInterfaceBuilder {
 				byte[] classData = new byte[is.available()];
 				is.read(classData);
 				is.close();
-				return SingletonResources.INSTANCE.getByteClassFactory()
-						.create(byteClassName, classData);
+				return ByteClass.newInstance(byteClassName, classData);
 			}
 		}
 		return null;
 	}
 
 	private void identifyClasses(List<ByteClass> byteClasses) {
-		for (ByteClassFinder finder : SingletonResources.INSTANCE
+		for (ByteClassFinder finder : StatelessResources.INSTANCE
 				.getByteClassFinders()) {
 			ByteClass byteClass = findClass(finder, byteClasses);
 			if (byteClass != null) {
@@ -250,13 +249,13 @@ public class LocalMinecraftInterfaceBuilder {
 
 	private Class<?> loadMainClass() {
 		try {
-			if (classLoader.findResource(SingletonResources.INSTANCE
+			if (classLoader.findResource(StatelessResources.INSTANCE
 					.getClientClassResource()) != null) {
-				return classLoader.loadClass(SingletonResources.INSTANCE
+				return classLoader.loadClass(StatelessResources.INSTANCE
 						.getClientClass());
-			} else if (classLoader.findResource(SingletonResources.INSTANCE
+			} else if (classLoader.findResource(StatelessResources.INSTANCE
 					.getServerClassResource()) != null) {
-				return classLoader.loadClass(SingletonResources.INSTANCE
+				return classLoader.loadClass(StatelessResources.INSTANCE
 						.getServerClass());
 			} else {
 				throw new RuntimeException("cannot find minecraft jar file");
