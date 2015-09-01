@@ -69,7 +69,7 @@ public class Minecraft {
 			if (librariesJson.exists()) {
 				Log.i("Loading libraries.");
 				classLoader = createClassLoader(getJarFileUrl(),
-						getLibraries(librariesJson));
+						getAllLibraryUrls(librariesJson));
 			} else {
 				Log.i("Unable to find Minecraft library JSON at: "
 						+ librariesJson + ". Skipping.");
@@ -365,7 +365,7 @@ public class Minecraft {
 		return new URLClassLoader(new URL[] { jarFileUrl });
 	}
 
-	private List<URL> getLibraries(File jsonFile) {
+	private List<URL> getAllLibraryUrls(File jsonFile) {
 		List<URL> libraries = new ArrayList<URL>();
 		JarProfile profile = null;
 		try {
