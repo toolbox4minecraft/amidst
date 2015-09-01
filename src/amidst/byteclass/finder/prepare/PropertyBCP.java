@@ -1,6 +1,6 @@
-package amidst.bytedata.prepare;
+package amidst.byteclass.finder.prepare;
 
-import amidst.bytedata.ByteClass;
+import amidst.byteclass.ByteClass;
 
 public class PropertyBCP extends ByteClassPreparer {
 	private String property;

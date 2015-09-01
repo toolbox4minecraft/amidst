@@ -1,6 +1,6 @@
-package amidst.bytedata.prepare;
+package amidst.byteclass.finder.prepare;
 
-import amidst.bytedata.ByteClass;
+import amidst.byteclass.ByteClass;
 
 public class MethodBCP extends ByteClassPreparer {
 	private String method;

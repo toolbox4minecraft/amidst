@@ -1,8 +1,8 @@
-package amidst.bytedata.prepare;
+package amidst.byteclass.finder.prepare;
 
 import java.util.List;
 
-import amidst.bytedata.ByteClass;
+import amidst.byteclass.ByteClass;
 
 public class MultiBCP extends ByteClassPreparer {
 	private List<ByteClassPreparer> preparers;

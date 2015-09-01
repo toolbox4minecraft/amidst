@@ -1,25 +1,24 @@
-package amidst.bytedata.builder;
+package amidst.byteclass.finder;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import amidst.bytedata.ByteClassFinder;
-import amidst.bytedata.detect.AllBCD;
-import amidst.bytedata.detect.AnyBCD;
-import amidst.bytedata.detect.ByteClassDetector;
-import amidst.bytedata.detect.FieldFlagsBCD;
-import amidst.bytedata.detect.LongBCD;
-import amidst.bytedata.detect.NumberOfConstructorsBCD;
-import amidst.bytedata.detect.NumberOfFieldsBCD;
-import amidst.bytedata.detect.NumberOfMethodsAndConstructorsBCD;
-import amidst.bytedata.detect.StringBCD;
-import amidst.bytedata.detect.Utf8BCD;
-import amidst.bytedata.detect.WildcardByteBCD;
-import amidst.bytedata.prepare.ByteClassPreparer;
-import amidst.bytedata.prepare.MethodBCP;
-import amidst.bytedata.prepare.MultiBCP;
-import amidst.bytedata.prepare.PropertyBCP;
+import amidst.byteclass.finder.detect.AllBCD;
+import amidst.byteclass.finder.detect.AnyBCD;
+import amidst.byteclass.finder.detect.ByteClassDetector;
+import amidst.byteclass.finder.detect.FieldFlagsBCD;
+import amidst.byteclass.finder.detect.LongBCD;
+import amidst.byteclass.finder.detect.NumberOfConstructorsBCD;
+import amidst.byteclass.finder.detect.NumberOfFieldsBCD;
+import amidst.byteclass.finder.detect.NumberOfMethodsAndConstructorsBCD;
+import amidst.byteclass.finder.detect.StringBCD;
+import amidst.byteclass.finder.detect.Utf8BCD;
+import amidst.byteclass.finder.detect.WildcardByteBCD;
+import amidst.byteclass.finder.prepare.ByteClassPreparer;
+import amidst.byteclass.finder.prepare.MethodBCP;
+import amidst.byteclass.finder.prepare.MultiBCP;
+import amidst.byteclass.finder.prepare.PropertyBCP;
 
 public class BCFBuilder {
 	public class BCDBuilder {

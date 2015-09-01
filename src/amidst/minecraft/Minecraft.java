@@ -20,11 +20,11 @@ import java.util.zip.ZipFile;
 
 import amidst.Options;
 import amidst.Util;
-import amidst.bytedata.ByteClass;
-import amidst.bytedata.ByteClass.AccessFlags;
-import amidst.bytedata.ByteClass.ByteClassFactory;
-import amidst.bytedata.ByteClassFinder;
-import amidst.bytedata.builder.BCFBuilder;
+import amidst.byteclass.ByteClass;
+import amidst.byteclass.ByteClass.AccessFlags;
+import amidst.byteclass.ByteClass.ByteClassFactory;
+import amidst.byteclass.finder.BCFBuilder;
+import amidst.byteclass.finder.ByteClassFinder;
 import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
 import amidst.logging.Log;

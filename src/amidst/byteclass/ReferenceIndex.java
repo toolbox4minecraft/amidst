@@ -1,4 +1,4 @@
-package amidst.bytedata;
+package amidst.byteclass;
 
 public class ReferenceIndex {
 	private int val1;

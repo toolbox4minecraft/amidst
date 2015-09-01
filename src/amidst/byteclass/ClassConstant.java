@@ -1,4 +1,4 @@
-package amidst.bytedata;
+package amidst.byteclass;
 
 public class ClassConstant<T> {
 	private byte type;

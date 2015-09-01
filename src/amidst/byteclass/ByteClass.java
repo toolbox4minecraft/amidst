@@ -1,4 +1,4 @@
-package amidst.bytedata;
+package amidst.byteclass;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;

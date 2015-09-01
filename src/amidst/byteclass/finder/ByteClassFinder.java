@@ -1,7 +1,8 @@
-package amidst.bytedata;
+package amidst.byteclass.finder;
 
-import amidst.bytedata.detect.ByteClassDetector;
-import amidst.bytedata.prepare.ByteClassPreparer;
+import amidst.byteclass.ByteClass;
+import amidst.byteclass.finder.detect.ByteClassDetector;
+import amidst.byteclass.finder.prepare.ByteClassPreparer;
 import amidst.minecraft.Minecraft;
 
 public class ByteClassFinder {

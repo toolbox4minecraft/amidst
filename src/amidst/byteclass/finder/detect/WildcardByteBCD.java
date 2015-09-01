@@ -1,6 +1,6 @@
-package amidst.bytedata.detect;
+package amidst.byteclass.finder.detect;
 
-import amidst.bytedata.ByteClass;
+import amidst.byteclass.ByteClass;
 
 public class WildcardByteBCD extends ByteClassDetector {
 	private int[] bytes;
