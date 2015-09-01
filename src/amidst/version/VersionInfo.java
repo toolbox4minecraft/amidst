@@ -60,6 +60,15 @@ public enum VersionInfo {
 	Vbeta_1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"); // Had to rename from V1_8_1 - should it just be removed?
 	// @formatter:on
 
+	public static VersionInfo from(String versionID) {
+		for (VersionInfo versionInfo : VersionInfo.values()) {
+			if (versionID.equals(versionInfo.versionID)) {
+				return versionInfo;
+			}
+		}
+		return VersionInfo.unknown;
+	}
+
 	public final String versionID;
 
 	private VersionInfo(String versionID) {

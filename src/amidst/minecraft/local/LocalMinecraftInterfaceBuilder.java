@@ -1,6 +1,5 @@
 package amidst.minecraft.local;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -8,18 +7,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import amidst.Options;
 import amidst.Util;
 import amidst.byteclass.ByteClass;
+import amidst.byteclass.ByteClasses;
 import amidst.byteclass.finder.ByteClassFinder;
 import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
@@ -99,7 +96,6 @@ public class LocalMinecraftInterfaceBuilder {
 	private URLClassLoader classLoader;
 
 	private File jarFile;
-	private String versionID;
 	private VersionInfo version;
 
 	private Map<String, ByteClass> minecraftClassNameToByteClassMap = new HashMap<String, ByteClass>();
@@ -110,7 +106,7 @@ public class LocalMinecraftInterfaceBuilder {
 		try {
 			this.jarFile = jarFile;
 			Log.i("Reading minecraft.jar...");
-			List<ByteClass> byteClasses = readByteClassesFromJarFile();
+			List<ByteClass> byteClasses = ByteClasses.fromJarFile(jarFile);
 			Log.i("Jar load complete.");
 			Log.i("Searching for classes...");
 			identifyClasses(byteClasses);
@@ -126,8 +122,8 @@ public class LocalMinecraftInterfaceBuilder {
 				classLoader = createClassLoader(getJarFileUrl());
 			}
 			Log.i("Generating version ID...");
-			versionID = generateVersionID(getMainClassFields(loadMainClass()));
-			version = findMatchingVersion();
+			String versionID = generateVersionID(getMainClassFields(loadMainClass()));
+			version = VersionInfo.from(versionID);
 			Log.i("Identified Minecraft [" + version.name()
 					+ "] with versionID of " + versionID);
 			Log.i("Loading classes...");
@@ -142,73 +138,18 @@ public class LocalMinecraftInterfaceBuilder {
 		}
 	}
 
-	private List<ByteClass> readByteClassesFromJarFile() {
-		if (!jarFile.exists()) {
-			throw new RuntimeException("Attempted to load jar file at: "
-					+ jarFile + " but it does not exist.");
-		}
-		try {
-			ZipFile jar = new ZipFile(jarFile);
-			List<ByteClass> byteClasses = readJarFile(jar);
-			jar.close();
-			return byteClasses;
-		} catch (IOException e) {
-			throw new RuntimeException("Error extracting jar data.", e);
-		}
-	}
-
-	private List<ByteClass> readJarFile(ZipFile jar) throws IOException {
-		Enumeration<? extends ZipEntry> enu = jar.entries();
-		List<ByteClass> byteClassList = new ArrayList<ByteClass>();
-		while (enu.hasMoreElements()) {
-			ByteClass entry = readJarFileEntry(jar, enu.nextElement());
-			if (entry != null) {
-				byteClassList.add(entry);
-			}
-		}
-		return byteClassList;
-	}
-
-	private ByteClass readJarFileEntry(ZipFile jar, ZipEntry entry)
-			throws IOException {
-		String byteClassName = FileSystemUtils.getFileNameWithoutExtension(
-				entry.getName(), "class");
-		if (!entry.isDirectory() && byteClassName != null) {
-			BufferedInputStream is = new BufferedInputStream(
-					jar.getInputStream(entry));
-			// TODO: Double check that this filter won't mess anything up.
-			if (is.available() < 8000) {
-				byte[] classData = new byte[is.available()];
-				is.read(classData);
-				is.close();
-				return ByteClass.newInstance(byteClassName, classData);
-			}
-		}
-		return null;
-	}
-
 	private void identifyClasses(List<ByteClass> byteClasses) {
 		for (ByteClassFinder finder : StatelessResources.INSTANCE
 				.getByteClassFinders()) {
-			ByteClass byteClass = findClass(finder, byteClasses);
+			ByteClass byteClass = finder.find(byteClasses);
 			if (byteClass != null) {
+				registerClass(finder.getMinecraftClassName(), byteClass);
 				Log.debug("Found: " + byteClass.getByteClassName() + " as "
 						+ finder.getMinecraftClassName());
 			} else {
 				Log.debug("Missing: " + finder.getMinecraftClassName());
 			}
 		}
-	}
-
-	private ByteClass findClass(ByteClassFinder finder,
-			List<ByteClass> byteClasses) {
-		for (ByteClass byteClass : byteClasses) {
-			if (finder.find(byteClass)) {
-				registerClass(finder.getMinecraftClassName(), byteClass);
-				return byteClass;
-			}
-		}
-		return null;
 	}
 
 	private void registerClass(String minecraftClassName, ByteClass byteClass) {
@@ -236,15 +177,6 @@ public class LocalMinecraftInterfaceBuilder {
 			}
 		}
 		return result;
-	}
-
-	private VersionInfo findMatchingVersion() {
-		for (VersionInfo versionInfo : VersionInfo.values()) {
-			if (versionID.equals(versionInfo.versionID)) {
-				return versionInfo;
-			}
-		}
-		return VersionInfo.unknown;
 	}
 
 	private Class<?> loadMainClass() {

@@ -1,5 +1,7 @@
 package amidst.byteclass.finder;
 
+import java.util.List;
+
 import amidst.byteclass.ByteClass;
 import amidst.byteclass.finder.detect.ByteClassDetector;
 import amidst.byteclass.finder.prepare.ByteClassPreparer;
@@ -27,6 +29,15 @@ public class ByteClassFinder {
 		} else {
 			return false;
 		}
+	}
+
+	public ByteClass find(List<ByteClass> byteClasses) {
+		for (ByteClass byteClass : byteClasses) {
+			if (find(byteClass)) {
+				return byteClass;
+			}
+		}
+		return null;
 	}
 
 	public String getMinecraftClassName() {
