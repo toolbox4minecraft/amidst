@@ -1,5 +1,6 @@
 package amidst.minecraft.local;
 
+import java.io.File;
 import java.util.Map;
 
 import MoF.SaveLoader.Type;
@@ -8,6 +9,14 @@ import amidst.minecraft.IMinecraftInterface;
 import amidst.version.VersionInfo;
 
 public class LocalMinecraftInterface implements IMinecraftInterface {
+	public static IMinecraftInterface newInstance(String jarFileName) {
+		return newInstance(new File(jarFileName));
+	}
+
+	public static IMinecraftInterface newInstance(File jarFile) {
+		return new LocalMinecraftInterfaceBuilder(jarFile).create();
+	}
+
 	/**
 	 * A GenLayer instance, at quarter scale to the final biome layer (i.e. both
 	 * axis are divided by 4). Minecraft calculates biomes at
@@ -30,8 +39,8 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 	private MinecraftClass worldTypeClass;
 	private VersionInfo version;
 
-	public LocalMinecraftInterface(
-			Map<String, MinecraftClass> minecraftClassMap, VersionInfo version) {
+	LocalMinecraftInterface(Map<String, MinecraftClass> minecraftClassMap,
+			VersionInfo version) {
 		this.intCacheClass = minecraftClassMap.get("IntCache");
 		this.blockInitClass = minecraftClassMap.get("BlockInit");
 		this.genLayerClass = minecraftClassMap.get("GenLayer");

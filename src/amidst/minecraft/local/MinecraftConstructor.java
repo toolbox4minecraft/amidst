@@ -46,7 +46,7 @@ public class MinecraftConstructor {
 		return null;
 	}
 
-	public void initialize(Minecraft minecraft, MinecraftClass minecraftClass) {
+	public void initialize(LocalMinecraftInterfaceBuilder minecraft, MinecraftClass minecraftClass) {
 		Class<?> clazz = minecraftClass.getClazz();
 		try {
 			parameterClasses = MinecraftFeatureUtils.getParameterClasses(

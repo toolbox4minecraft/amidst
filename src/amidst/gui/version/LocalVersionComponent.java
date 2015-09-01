@@ -10,7 +10,7 @@ import MoF.FinderWindow;
 import amidst.Options;
 import amidst.Util;
 import amidst.minecraft.MinecraftUtil;
-import amidst.minecraft.local.Minecraft;
+import amidst.minecraft.local.LocalMinecraftInterface;
 import amidst.version.IProfileUpdateListener;
 import amidst.version.MinecraftProfile;
 import amidst.version.MinecraftProfile.Status;
@@ -112,7 +112,7 @@ public class LocalVersionComponent extends VersionComponent {
 			@Override
 			public void run() {
 				Util.setProfileDirectory(profile.getGameDir());
-				MinecraftUtil.setBiomeInterface(new Minecraft(profile.getJarFile()).createInterface());
+				MinecraftUtil.setBiomeInterface(LocalMinecraftInterface.newInstance(profile.getJarFile()));
 				new FinderWindow();
 				VersionSelectWindow.get().dispose();
 			}

@@ -30,7 +30,7 @@ public class MinecraftFeatureUtils {
 		return result;
 	}
 
-	public static Class<?>[] getParameterClasses(Minecraft minecraft,
+	public static Class<?>[] getParameterClasses(LocalMinecraftInterfaceBuilder minecraft,
 			String[] parameterNames, Map<String, Class<?>> primitivesMap) {
 		Class<?>[] result = new Class<?>[parameterNames.length];
 		for (int i = 0; i < parameterNames.length; i++) {
@@ -40,7 +40,7 @@ public class MinecraftFeatureUtils {
 		return result;
 	}
 
-	public static Class<?> getParameterClass(Minecraft minecraft,
+	public static Class<?> getParameterClass(LocalMinecraftInterfaceBuilder minecraft,
 			String parameterName, Map<String, Class<?>> primitivesMap) {
 		Class<?> result = primitivesMap.get(parameterName);
 		if (result == null && parameterName.charAt(0) != '@') {
@@ -50,7 +50,7 @@ public class MinecraftFeatureUtils {
 		return result;
 	}
 
-	public static MinecraftClass getType(Minecraft minecraft, Class<?> type) {
+	public static MinecraftClass getType(LocalMinecraftInterfaceBuilder minecraft, Class<?> type) {
 		String result = type.getName();
 		if (result.contains(".")) {
 			String[] typeSplit = result.split("\\.");

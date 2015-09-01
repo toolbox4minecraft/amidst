@@ -9,12 +9,6 @@ public class MinecraftObject {
 		this.object = object;
 	}
 
-	public MinecraftObject(Minecraft minecraft, Object object) {
-		this.minecraftClass = minecraft.getMinecraftClassByByteClassName(object
-				.getClass().getCanonicalName());
-		this.object = object;
-	}
-
 	public Object getObject() {
 		return object;
 	}

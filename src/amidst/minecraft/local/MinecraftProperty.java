@@ -80,7 +80,7 @@ public class MinecraftProperty {
 		}
 	}
 
-	public void initialize(Minecraft minecraft, MinecraftClass minecraftClass) {
+	public void initialize(LocalMinecraftInterfaceBuilder minecraft, MinecraftClass minecraftClass) {
 		Class<?> clazz = minecraftClass.getClazz();
 		try {
 			field = MinecraftFeatureUtils.getField(clazz, byteName);

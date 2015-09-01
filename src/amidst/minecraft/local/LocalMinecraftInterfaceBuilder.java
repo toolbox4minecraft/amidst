@@ -14,15 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import amidst.Options;
 import amidst.Util;
 import amidst.byteclass.ByteClass;
-import amidst.byteclass.ByteClass.AccessFlags;
-import amidst.byteclass.ByteClass.ByteClassFactory;
 import amidst.byteclass.finder.ByteClassFinder;
 import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
@@ -32,7 +29,7 @@ import amidst.utilties.FileSystemUtils;
 import amidst.utilties.JavaUtils;
 import amidst.version.VersionInfo;
 
-public class Minecraft {
+public class LocalMinecraftInterfaceBuilder {
 	private class MinecraftMethodAndConstructorBuilder {
 		private String minecraftName;
 		private String byteName;
@@ -54,14 +51,16 @@ public class Minecraft {
 
 		private MinecraftMethod createMinecraftMethod(
 				MinecraftClass minecraftClass) {
-			return new MinecraftMethod(primitivesMap, minecraftName, byteName,
-					byteParameterNames);
+			return new MinecraftMethod(
+					SingletonResources.INSTANCE.getPrimitivesMap(),
+					minecraftName, byteName, byteParameterNames);
 		}
 
 		private MinecraftConstructor createMinecraftConstructor(
 				MinecraftClass minecraftClass) {
-			return new MinecraftConstructor(primitivesMap, minecraftClass,
-					minecraftName, byteParameterNames);
+			return new MinecraftConstructor(
+					SingletonResources.INSTANCE.getPrimitivesMap(),
+					minecraftClass, minecraftName, byteParameterNames);
 		}
 
 		private String replaceMinecraftClassNamesWithByteClassNames(
@@ -73,11 +72,13 @@ public class Minecraft {
 
 		private String doReplaceMinecraftClassNamesWithByteClassNames(
 				String result) {
-			Matcher matcher = classNameRegex.matcher(result);
+			Matcher matcher = SingletonResources.INSTANCE.getClassNameRegex()
+					.matcher(result);
 			while (matcher.find()) {
 				String match = result.substring(matcher.start(), matcher.end());
 				result = replaceWithByteClassName(result, match);
-				matcher = classNameRegex.matcher(result);
+				matcher = SingletonResources.INSTANCE.getClassNameRegex()
+						.matcher(result);
 			}
 			return result;
 		}
@@ -95,91 +96,6 @@ public class Minecraft {
 		}
 	}
 
-	// @formatter:off
-	// This deactivates the automatic formatter of Eclipse.
-	// However, you need to activate this in:
-	// Java -> Code Style -> Formatter -> Edit -> Off/On Tags
-	// see: http://stackoverflow.com/questions/1820908/how-to-turn-off-the-eclipse-code-formatter-for-certain-sections-of-java-code
-	private static List<ByteClassFinder> createByteClassFinders() {
-		return ByteClassFinder.builder()
-			.name("IntCache")
-				.detect()
-					.wildcardBytes(INT_CACHE_WILDCARD_BYTES)
-					.or()
-					.strings(", tcache: ")
-				.prepare()
-					.addMethod("a(int)", "getIntCache")
-					.addMethod("a()", "resetIntCache")
-					.addMethod("b()", "getInformation")
-					.addProperty("a", "intCacheSize")
-					.addProperty("b","freeSmallArrays")
-					.addProperty("c","inUseSmallArrays")
-					.addProperty("d","freeLargeArrays")
-					.addProperty("e","inUseLargeArrays")
-			.next()
-			.name("WorldType")
-				.detect()
-					.strings("default_1_1")
-				.prepare()
-					.addProperty("a", "types")
-					.addProperty("b", "default")
-					.addProperty("c", "flat")
-					.addProperty("d", "largeBiomes")
-					.addProperty("e", "amplified")
-					.addProperty("g", "default_1_1")
-					.addProperty("f", "customized")
-			.next()
-			.name("GenLayer")
-				.detect()
-					.longs(1000L, 2001L, 2000L)
-				.prepare()
-					.addMethod("a(long, @WorldType)", "initializeAllBiomeGenerators")
-					.addMethod("a(long, @WorldType, String)", "initializeAllBiomeGeneratorsWithParams")
-					.addMethod("a(int, int, int, int)", "getInts")
-			.next()
-			.name("BlockInit")
-				.detect()
-					.numberOfFields(3)
-					.fieldFlags(AccessFlags.PRIVATE | AccessFlags.STATIC, 0, 1, 2)
-					.numberOfConstructors(0)
-					.numberOfMethodsAndConstructors(6)
-					.utf8s("isDebugEnabled")
-				.prepare()
-					.addMethod("c()", "initialize")
-			.construct();
-	}
-	// @formatter:on
-
-	private static Map<String, Class<?>> createPrimitivesMap() {
-		Map<String, Class<?>> result = new HashMap<String, Class<?>>();
-		result.put("byte", byte.class);
-		result.put("int", int.class);
-		result.put("float", float.class);
-		result.put("short", short.class);
-		result.put("long", long.class);
-		result.put("double", double.class);
-		result.put("boolean", boolean.class);
-		result.put("char", char.class);
-		result.put("String", String.class);
-		return result;
-	}
-
-	private static final int[] INT_CACHE_WILDCARD_BYTES = new int[] { 0x11,
-			0x01, 0x00, 0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59, 0xB7, 0x00, -1,
-			0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59, 0xB7, 0x00, -1, 0xB3, 0x00,
-			-1, 0xBB, 0x00, -1, 0x59, 0xB7, 0x00, -1, 0xB3, 0x00, -1, 0xBB,
-			0x00, -1, 0x59, 0xB7, 0x00, -1, 0xB3, 0x00, -1, 0xB1 };
-
-	private static final String CLIENT_CLASS_RESOURCE = "net/minecraft/client/Minecraft.class";
-	private static final String CLIENT_CLASS = "net.minecraft.client.Minecraft";
-	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
-	private static final String SERVER_CLASS = "net.minecraft.server.MinecraftServer";
-
-	private ByteClassFactory byteClassFactory = ByteClass.factory();
-	private Pattern classNameRegex = Pattern.compile("@[A-Za-z]+");
-	private Map<String, Class<?>> primitivesMap = createPrimitivesMap();
-	private List<ByteClassFinder> byteClassFinders = createByteClassFinders();
-
 	private URLClassLoader classLoader;
 
 	private File jarFile;
@@ -190,7 +106,7 @@ public class Minecraft {
 	private Map<String, MinecraftClass> minecraftClassNameToMinecraftClassMap = new HashMap<String, MinecraftClass>();
 	private Map<String, MinecraftClass> byteClassNameToMinecraftClassMap = new HashMap<String, MinecraftClass>();
 
-	public Minecraft(File jarFile) {
+	public LocalMinecraftInterfaceBuilder(File jarFile) {
 		try {
 			this.jarFile = jarFile;
 			Log.i("Reading minecraft.jar...");
@@ -265,14 +181,16 @@ public class Minecraft {
 				byte[] classData = new byte[is.available()];
 				is.read(classData);
 				is.close();
-				return byteClassFactory.create(byteClassName, classData);
+				return SingletonResources.INSTANCE.getByteClassFactory()
+						.create(byteClassName, classData);
 			}
 		}
 		return null;
 	}
 
 	private void identifyClasses(List<ByteClass> byteClasses) {
-		for (ByteClassFinder finder : byteClassFinders) {
+		for (ByteClassFinder finder : SingletonResources.INSTANCE
+				.getByteClassFinders()) {
 			ByteClass byteClass = findClass(finder, byteClasses);
 			if (byteClass != null) {
 				Log.debug("Found: " + byteClass.getByteClassName() + " as "
@@ -286,11 +204,18 @@ public class Minecraft {
 	private ByteClass findClass(ByteClassFinder finder,
 			List<ByteClass> byteClasses) {
 		for (ByteClass byteClass : byteClasses) {
-			if (finder.find(this, byteClass)) {
+			if (finder.find(byteClass)) {
+				registerClass(finder.getMinecraftClassName(), byteClass);
 				return byteClass;
 			}
 		}
 		return null;
+	}
+
+	private void registerClass(String minecraftClassName, ByteClass byteClass) {
+		if (!minecraftClassNameToByteClassMap.containsKey(minecraftClassName)) {
+			minecraftClassNameToByteClassMap.put(minecraftClassName, byteClass);
+		}
 	}
 
 	private Field[] getMainClassFields(Class<?> mainClass) {
@@ -325,10 +250,14 @@ public class Minecraft {
 
 	private Class<?> loadMainClass() {
 		try {
-			if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
-				return classLoader.loadClass(CLIENT_CLASS);
-			} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {
-				return classLoader.loadClass(SERVER_CLASS);
+			if (classLoader.findResource(SingletonResources.INSTANCE
+					.getClientClassResource()) != null) {
+				return classLoader.loadClass(SingletonResources.INSTANCE
+						.getClientClass());
+			} else if (classLoader.findResource(SingletonResources.INSTANCE
+					.getServerClassResource()) != null) {
+				return classLoader.loadClass(SingletonResources.INSTANCE
+						.getServerClass());
 			} else {
 				throw new RuntimeException("cannot find minecraft jar file");
 			}
@@ -495,34 +424,11 @@ public class Minecraft {
 		return null;
 	}
 
-	public void registerClass(String minecraftClassName, ByteClass byteClass) {
-		if (!minecraftClassNameToByteClassMap.containsKey(minecraftClassName)) {
-			minecraftClassNameToByteClassMap.put(minecraftClassName, byteClass);
-		}
-	}
-
-	public File getJarFile() {
-		return jarFile;
-	}
-
-	public VersionInfo getVersion() {
-		return version;
-	}
-
-	public String getVersionID() {
-		return versionID;
-	}
-
-	public MinecraftClass getMinecraftClassByMinecraftClassName(
-			String minecraftClassName) {
-		return minecraftClassNameToMinecraftClassMap.get(minecraftClassName);
-	}
-
 	public MinecraftClass getMinecraftClassByByteClassName(String byteClassName) {
 		return byteClassNameToMinecraftClassMap.get(byteClassName);
 	}
 
-	public IMinecraftInterface createInterface() {
+	public IMinecraftInterface create() {
 		return new LocalMinecraftInterface(
 				minecraftClassNameToMinecraftClassMap, version);
 	}

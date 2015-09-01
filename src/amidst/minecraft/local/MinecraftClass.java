@@ -6,7 +6,7 @@ import java.util.Map;
 public class MinecraftClass {
 	private String minecraftClassName;
 	private String byteClassName;
-	private Minecraft minecraft;
+	private LocalMinecraftInterfaceBuilder minecraft;
 	private Class<?> clazz;
 	private Map<String, MinecraftConstructor> constructorsByMinecraftName = new HashMap<String, MinecraftConstructor>();
 	private Map<String, MinecraftMethod> methodsByMinecraftName = new HashMap<String, MinecraftMethod>();
@@ -15,7 +15,7 @@ public class MinecraftClass {
 	private Map<String, MinecraftProperty> propertiesByByteName = new HashMap<String, MinecraftProperty>();
 
 	public MinecraftClass(String minecraftClassName, String byteClassName,
-			Minecraft minecraft) {
+			LocalMinecraftInterfaceBuilder minecraft) {
 		this.minecraftClassName = minecraftClassName;
 		this.byteClassName = byteClassName;
 		this.minecraft = minecraft;

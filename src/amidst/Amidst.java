@@ -12,7 +12,7 @@ import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
 import amidst.minecraft.MinecraftUtil;
-import amidst.minecraft.local.Minecraft;
+import amidst.minecraft.local.LocalMinecraftInterface;
 import amidst.preferences.BiomeColorProfile;
 import amidst.resources.ResourceLoader;
 
@@ -57,7 +57,7 @@ public class Amidst {
 		if (Options.instance.minecraftJar != null)
 		{
 			Util.setProfileDirectory(Options.instance.minecraftPath);
-			MinecraftUtil.setBiomeInterface(new Minecraft(new File(Options.instance.minecraftJar)).createInterface());
+			MinecraftUtil.setBiomeInterface(LocalMinecraftInterface.newInstance(Options.instance.minecraftJar));
 			new FinderWindow();
 		}
 		else
