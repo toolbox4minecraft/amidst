@@ -85,7 +85,9 @@ public class Minecraft {
 		}
 
 		private String replaceWithByteClassName(String result, String match) {
-			ByteClass byteClass = getByteClass(match.substring(1));
+			String minecraftClassName = match.substring(1);
+			ByteClass byteClass = minecraftClassNameToByteClassMap
+					.get(minecraftClassName);
 			if (byteClass != null) {
 				result = result.replaceAll(match, byteClass.getByteClassName());
 			} else {
@@ -496,10 +498,6 @@ public class Minecraft {
 
 	public String getVersionID() {
 		return versionID;
-	}
-
-	public ByteClass getByteClass(String minecraftClassName) {
-		return minecraftClassNameToByteClassMap.get(minecraftClassName);
 	}
 
 	public MinecraftClass getMinecraftClassByMinecraftClassName(

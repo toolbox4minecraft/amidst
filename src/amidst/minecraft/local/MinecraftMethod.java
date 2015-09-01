@@ -33,18 +33,19 @@ public class MinecraftMethod {
 	}
 	public MinecraftMethod(MinecraftClass parent, String name, String methodName) {
 		this.parent = parent;
+		paramNames = null;
+		paramClasses = new Class<?>[] {};
 		hasParameters = false;
 		this.name = name;
 		internalName = methodName;
-		paramClasses = new Class<?>[] {};
 	}
-	public MinecraftMethod(MinecraftClass parent, String name, String methodName, String... args) {
-		this.parent = parent;
-		paramNames = args;
+	public MinecraftMethod(MinecraftClass minecraftClass, String minecraftMethodName, String byteMethodName, String... byteParameterArray) {
+		this.parent = minecraftClass;
+		paramNames = byteParameterArray;
 		paramClasses = new Class<?>[paramNames.length];
 		hasParameters = true;
-		this.name = name;
-		internalName = methodName;
+		this.name = minecraftMethodName;
+		internalName = byteMethodName;
 	}
 	public void load(Minecraft mc, MinecraftClass mcClass) {
 		minecraft = mc;

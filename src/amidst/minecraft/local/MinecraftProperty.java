@@ -10,10 +10,10 @@ public class MinecraftProperty {
 	private Field property;
 	private boolean isMinecraftClass = true;
 	private MinecraftClass type;
-	public MinecraftProperty(MinecraftClass parent, String name, String propertyName) {
-		this.parent = parent;
-		this.name = name;
-		this.internalName = propertyName;
+	public MinecraftProperty(MinecraftClass minecraftClass, String minecraftPropertyName, String bytePropertyName) {
+		this.parent = minecraftClass;
+		this.name = minecraftPropertyName;
+		this.internalName = bytePropertyName;
 	}
 	
 	

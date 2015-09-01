@@ -34,12 +34,12 @@ public class MinecraftConstructor {
 		this.name = name;
 		paramClasses = new Class<?>[] {};
 	}
-	public MinecraftConstructor(MinecraftClass parent, String name, String... args) {
-		this.parent = parent;
-		paramNames = args;
+	public MinecraftConstructor(MinecraftClass minecraftClass, String minecraftConstructorName, String... byteParameterArray) {
+		this.parent = minecraftClass;
+		paramNames = byteParameterArray;
 		paramClasses = new Class<?>[paramNames.length];
 		hasParameters = true;
-		this.name = name;
+		this.name = minecraftConstructorName;
 	}
 	public void load(Minecraft mc, MinecraftClass mcClass) {
 		minecraft = mc;
