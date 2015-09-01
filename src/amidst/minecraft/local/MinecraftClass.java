@@ -22,11 +22,11 @@ public class MinecraftClass {
 		this.clazz = minecraft.loadClass(byteClassName);
 	}
 
-	public String getMinecraftClassName() {
+	public String getMinecraftName() {
 		return minecraftClassName;
 	}
 
-	public String getByteClassName() {
+	public String getByteName() {
 		return byteClassName;
 	}
 
@@ -47,25 +47,25 @@ public class MinecraftClass {
 	}
 
 	public void addConstructor(MinecraftConstructor constructor) {
-		constructor.load(minecraft, this);
+		constructor.initialize(minecraft, this);
 		constructorsByMinecraftName.put(constructor.getMinecraftName(),
 				constructor);
 	}
 
 	public void addMethod(MinecraftMethod method) {
-		method.load(minecraft, this);
+		method.initialize(minecraft, this);
 		methodsByMinecraftName.put(method.getMinecraftName(), method);
 		methodsByByteName.put(method.getByteName(), method);
 	}
 
 	public void addProperty(MinecraftProperty property) {
-		property.load(minecraft, this);
+		property.initialize(minecraft, this);
 		propertiesByMinecraftName.put(property.getMinecraftName(), property);
 		propertiesByByteName.put(property.getByteName(), property);
 	}
 
-	public MinecraftObject newInstance(String constructor, Object... param) {
-		return constructorsByMinecraftName.get(constructor).getNew(param);
+	public MinecraftObject callConstructor(String constructor, Object... param) {
+		return constructorsByMinecraftName.get(constructor).call(param);
 	}
 
 	public Object callMethod(String name, MinecraftObject obj, Object... args) {
@@ -86,6 +86,7 @@ public class MinecraftClass {
 		return propertiesByMinecraftName.get(name).getStaticValue();
 	}
 
+	@Override
 	public String toString() {
 		return byteClassName;
 	}

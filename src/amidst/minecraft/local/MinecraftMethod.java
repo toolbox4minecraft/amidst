@@ -2,120 +2,61 @@ package amidst.minecraft.local;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.Map;
 
 import amidst.logging.Log;
 
 public class MinecraftMethod {
+	private Map<String, Class<?>> primitivesMap;
 	private MinecraftClass parent;
-	private Minecraft minecraft;
-	private Class<?>[] paramClasses;
-	private String[] paramNames;
-	private boolean hasParameters;
+	private String minecraftName;
+	private String byteName;
+	private String[] parameterNames;
+	private Class<?>[] parameterClasses;
 	private Method method;
-	private String name, internalName;
 	private MinecraftClass returnType;
-	private boolean isMinecraftClass = false;
 	private boolean loadFailed = false;
 
-	private static HashMap<String, Class<?>> primitives;
-	static {
-		primitives = new HashMap<String, Class<?>>();
-		primitives.put("byte", byte.class);
-		primitives.put("int", int.class);
-		primitives.put("float", float.class);
-		primitives.put("short", short.class);
-		primitives.put("long", long.class);
-		primitives.put("double", double.class);
-		primitives.put("boolean", boolean.class);
-		primitives.put("char", char.class);
-		primitives.put("String", String.class);
-	}
-
-	public MinecraftMethod(MinecraftClass parent, String name, String methodName) {
+	public MinecraftMethod(Map<String, Class<?>> primitivesMap,
+			MinecraftClass parent, String minecraftName, String byteName,
+			String... parameterNames) {
+		this.primitivesMap = primitivesMap;
 		this.parent = parent;
-		paramNames = null;
-		paramClasses = new Class<?>[] {};
-		hasParameters = false;
-		this.name = name;
-		internalName = methodName;
+		this.minecraftName = minecraftName;
+		this.byteName = byteName;
+		this.parameterNames = parameterNames;
+		this.parameterClasses = new Class<?>[parameterNames.length];
 	}
 
-	public MinecraftMethod(MinecraftClass minecraftClass,
-			String minecraftMethodName, String byteMethodName,
-			String... byteParameterArray) {
-		this.parent = minecraftClass;
-		paramNames = byteParameterArray;
-		paramClasses = new Class<?>[paramNames.length];
-		hasParameters = true;
-		this.name = minecraftMethodName;
-		internalName = byteMethodName;
+	public String getMinecraftName() {
+		return minecraftName;
 	}
 
-	public void load(Minecraft mc, MinecraftClass mcClass) {
-		minecraft = mc;
-		Class<?> clazz = mcClass.getClazz();
-		int i = 0;
-		try {
-			if (hasParameters) {
-				for (; i < paramNames.length; i++) {
-					paramClasses[i] = primitives.get(paramNames[i]);
-					if (paramClasses[i] == null)
-						paramClasses[i] = mc.getClassLoader().loadClass(
-								paramNames[i]); // TODO: Does this cause
-												// duplicate loads?
-				}
-			}
-
-			method = clazz.getDeclaredMethod(internalName, paramClasses);
-			method.setAccessible(true);
-			String methodType = method.getReturnType().getName();
-			if (methodType.contains(".")) {
-				String[] typeSplit = methodType.split("\\.");
-				methodType = typeSplit[typeSplit.length - 1];
-			}
-			returnType = minecraft.getMinecraftClassByByteClassName(methodType);
-			if (returnType == null)
-				isMinecraftClass = false;
-		} catch (ClassNotFoundException e) {
-			loadFailed = true;
-			Log.w(e, "Unabled to find class for parameter. (" + paramNames[i]
-					+ ") on (" + mcClass.getMinecraftClassName() + " / "
-					+ mcClass.getByteClassName() + ")");
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			loadFailed = true;
-			Log.w(e, "SecurityException on (" + mcClass.getMinecraftClassName()
-					+ " / " + mcClass.getByteClassName() + ") method (" + name
-					+ " / " + internalName + ")");
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			loadFailed = true;
-			Log.w(e,
-					"Unable to find class method ("
-							+ mcClass.getMinecraftClassName() + " / "
-							+ mcClass.getByteClassName() + ") (" + name + " / "
-							+ internalName + ")");
-			e.printStackTrace();
-		}
+	public String getByteName() {
+		return byteName;
 	}
 
-	public Object callStatic(Object... param) {
-		Object value = call((Object) null, param);
-		if (isMinecraftClass) {
+	public boolean exists() {
+		return !loadFailed;
+	}
+
+	public Object call(MinecraftObject minecraftObject, Object... parameters) {
+		return callFromObject(minecraftObject.getObject(), parameters);
+	}
+
+	public Object callStatic(Object... parameters) {
+		return callFromObject(null, parameters);
+	}
+
+	private Object callFromObject(Object object, Object... parameters) {
+		Object value = invoke(object, parameters);
+		if (isReturnTypeMinecraftClass()) {
 			return new MinecraftObject(returnType, value);
 		}
 		return value;
 	}
 
-	public Object call(MinecraftObject obj, Object... param) {
-		Object value = call(obj.getObject(), param);
-		if (isMinecraftClass)
-			return new MinecraftObject(returnType, value);
-		return value;
-	}
-
-	private Object call(Object obj, Object... param) {
+	private Object invoke(Object obj, Object... param) {
 		try {
 			return method.invoke(obj, param);
 		} catch (IllegalArgumentException e) { // TODO : Add error text
@@ -128,19 +69,61 @@ public class MinecraftMethod {
 		return null;
 	}
 
-	public Object getParentName() {
-		return parent.getMinecraftClassName();
+	private boolean isReturnTypeMinecraftClass() {
+		return returnType != null;
 	}
 
-	public String getByteName() {
-		return internalName;
+	public void initialize(Minecraft minecraft, MinecraftClass minecraftClass) {
+		Class<?> clazz = minecraftClass.getClazz();
+		try {
+			for (int i = 0; i < parameterNames.length; i++) {
+				parameterClasses[i] = getParameterClass(minecraft,
+						parameterNames[i]);
+			}
+
+			method = getMethod(clazz);
+			returnType = getReturnType(minecraft);
+		} catch (SecurityException e) {
+			loadFailed = true;
+			Log.w(e,
+					"SecurityException on ("
+							+ minecraftClass.getMinecraftName() + " / "
+							+ minecraftClass.getByteName() + ") method ("
+							+ minecraftName + " / " + byteName + ")");
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			loadFailed = true;
+			Log.w(e,
+					"Unable to find class method ("
+							+ minecraftClass.getMinecraftName() + " / "
+							+ minecraftClass.getByteName() + ") ("
+							+ minecraftName + " / " + byteName + ")");
+			e.printStackTrace();
+		}
 	}
 
-	public String getMinecraftName() {
-		return name;
+	private Class<?> getParameterClass(Minecraft minecraft, String parameterName) {
+		Class<?> result = primitivesMap.get(parameterName);
+		if (result == null && parameterName.charAt(0) != '@') {
+			// TODO: Does this cause duplicate loads?
+			result = minecraft.loadClass(parameterName);
+		}
+		return result;
 	}
 
-	public boolean exists() {
-		return !loadFailed;
+	private Method getMethod(Class<?> clazz) throws NoSuchMethodException {
+		Method result = clazz.getDeclaredMethod(byteName, parameterClasses);
+		result.setAccessible(true);
+		return result;
+	}
+
+	private MinecraftClass getReturnType(Minecraft minecraft) {
+		String result = method.getReturnType().getName();
+		if (result.contains(".")) {
+			String[] typeSplit = result.split("\\.");
+			result = typeSplit[typeSplit.length - 1];
+		}
+		MinecraftClass e = minecraft.getMinecraftClassByByteClassName(result);
+		return e;
 	}
 }
