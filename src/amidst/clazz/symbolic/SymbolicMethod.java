@@ -1,4 +1,4 @@
-package amidst.symbolicclass;
+package amidst.clazz.symbolic;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

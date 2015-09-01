@@ -1,4 +1,4 @@
-package amidst.symbolicclass;
+package amidst.clazz.symbolic;
 
 public class SymbolicObject {
 	private SymbolicClass symbolicClass;

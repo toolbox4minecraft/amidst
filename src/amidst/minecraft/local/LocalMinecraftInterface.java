@@ -4,10 +4,10 @@ import java.io.File;
 import java.util.Map;
 
 import MoF.SaveLoader.Type;
+import amidst.clazz.symbolic.SymbolicClass;
+import amidst.clazz.symbolic.SymbolicObject;
 import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;
-import amidst.symbolicclass.SymbolicClass;
-import amidst.symbolicclass.SymbolicObject;
 import amidst.version.VersionInfo;
 
 public class LocalMinecraftInterface implements IMinecraftInterface {

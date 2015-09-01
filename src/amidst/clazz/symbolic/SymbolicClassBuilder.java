@@ -1,4 +1,4 @@
-package amidst.symbolicclass;
+package amidst.clazz.symbolic;
 
 import java.util.HashMap;
 import java.util.Map;
