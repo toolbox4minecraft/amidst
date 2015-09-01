@@ -15,10 +15,6 @@ public class MinecraftConstructor {
 		this.constructor = constructor;
 	}
 
-	public String getMinecraftName() {
-		return minecraftName;
-	}
-
 	public MinecraftObject call(Object... parameters) {
 		return new MinecraftObject(parent, newInstance(parameters));
 	}

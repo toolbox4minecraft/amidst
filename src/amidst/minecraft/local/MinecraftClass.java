@@ -36,15 +36,15 @@ public class MinecraftClass {
 	}
 
 	public boolean hasConstructor(String minecraftName) {
-		return constructorsByMinecraftName.containsKey(minecraftName);
+		return constructorsByMinecraftName.get(minecraftName) != null;
 	}
 
 	public boolean hasMethod(String minecraftName) {
-		return methodsByMinecraftName.containsKey(minecraftName);
+		return methodsByMinecraftName.get(minecraftName) != null;
 	}
 
 	public boolean hasProperty(String minecraftName) {
-		return propertiesByMinecraftName.containsKey(minecraftName);
+		return propertiesByMinecraftName.get(minecraftName) != null;
 	}
 
 	public MinecraftObject callConstructor(String constructor, Object... param) {

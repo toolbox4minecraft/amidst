@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import amidst.byteclass.ByteClass;
+import amidst.byteclass.ConstructorDeclaration;
+import amidst.byteclass.MethodDeclaration;
+import amidst.byteclass.PropertyDeclaration;
 
 public class MinecraftClassGraphBuilder {
 	private ClassLoader classLoader;
@@ -53,30 +56,23 @@ public class MinecraftClassGraphBuilder {
 	}
 
 	private void addConstructors(MinecraftClassBuilder builder,
-			List<String[]> constructors) {
-		for (String[] constructor : constructors) {
-			ParameterStringParser parser = new ParameterStringParser(
-					byteClassesByMinecraftClassName, constructor[0],
-					constructor[1]);
-			builder.addConstructor(parser.getMinecraftName(),
-					parser.getParameterByteNames());
+			List<ConstructorDeclaration> constructors) {
+		for (ConstructorDeclaration constructor : constructors) {
+			builder.addConstructor(byteClassesByMinecraftClassName, constructor);
 		}
 	}
 
 	private void addMethods(MinecraftClassBuilder builder,
-			List<String[]> methods) {
-		for (String[] method : methods) {
-			ParameterStringParser parser = new ParameterStringParser(
-					byteClassesByMinecraftClassName, method[0], method[1]);
-			builder.addMethod(parser.getMinecraftName(), parser.getByteName(),
-					parser.getParameterByteNames());
+			List<MethodDeclaration> methods) {
+		for (MethodDeclaration method : methods) {
+			builder.addMethod(byteClassesByMinecraftClassName, method);
 		}
 	}
 
 	private void addProperties(MinecraftClassBuilder builder,
-			List<String[]> properties) {
-		for (String[] property : properties) {
-			builder.addProperty(property[1], property[0]);
+			List<PropertyDeclaration> properties) {
+		for (PropertyDeclaration property : properties) {
+			builder.addProperty(property);
 		}
 	}
 

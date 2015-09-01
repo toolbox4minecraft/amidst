@@ -17,14 +17,6 @@ public class MinecraftMethod {
 		this.returnType = returnType;
 	}
 
-	public String getMinecraftName() {
-		return minecraftName;
-	}
-
-	public String getByteName() {
-		return byteName;
-	}
-
 	public Object call(MinecraftObject minecraftObject, Object... parameters) {
 		return callFromObject(minecraftObject.getObject(), parameters);
 	}
@@ -41,9 +33,9 @@ public class MinecraftMethod {
 		return value;
 	}
 
-	private Object invoke(Object obj, Object... param) {
+	private Object invoke(Object object, Object... parameters) {
 		try {
-			return method.invoke(obj, param);
+			return method.invoke(object, parameters);
 		} catch (IllegalArgumentException e) { // TODO : Add error text
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {

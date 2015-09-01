@@ -311,9 +311,9 @@ public class ByteClass {
 
 	private List<ClassConstant<Integer>> stringIndices = new ArrayList<ClassConstant<Integer>>();
 	private List<ReferenceIndex> methodIndices = new ArrayList<ReferenceIndex>();
-	private List<String[]> methods = new ArrayList<String[]>();
-	private List<String[]> properties = new ArrayList<String[]>();
-	private List<String[]> constructors = new ArrayList<String[]>();
+	private List<ConstructorDeclaration> constructors = new ArrayList<ConstructorDeclaration>();
+	private List<MethodDeclaration> methods = new ArrayList<MethodDeclaration>();
+	private List<PropertyDeclaration> properties = new ArrayList<PropertyDeclaration>();
 	private List<Float> floatConstants = new ArrayList<Float>();
 	private List<Long> longConstants = new ArrayList<Long>();
 	private List<String> utfConstants = new ArrayList<String>();
@@ -375,33 +375,28 @@ public class ByteClass {
 		return byteClassName;
 	}
 
-	public List<String[]> getMethods() {
-		return methods;
-	}
-
-	public List<String[]> getProperties() {
-		return properties;
-	}
-
-	public List<String[]> getConstructors() {
+	public List<ConstructorDeclaration> getConstructors() {
 		return constructors;
 	}
 
-	public void addMethod(String minecraftMethodString,
-			String minecraftMethodName) {
-		methods.add(new String[] { minecraftMethodString, minecraftMethodName });
+	public List<MethodDeclaration> getMethods() {
+		return methods;
 	}
 
-	public void addProperty(String bytePropertyName,
-			String minecraftPropertyName) {
-		properties
-				.add(new String[] { bytePropertyName, minecraftPropertyName });
+	public List<PropertyDeclaration> getProperties() {
+		return properties;
 	}
 
-	public void addConstructor(String minecraftConstructorString,
-			String minecraftConstructorName) {
-		constructors.add(new String[] { minecraftConstructorString,
-				minecraftConstructorName });
+	public void addConstructor(ConstructorDeclaration constructor) {
+		constructors.add(constructor);
+	}
+
+	public void addMethod(MethodDeclaration method) {
+		methods.add(method);
+	}
+
+	public void addProperty(PropertyDeclaration property) {
+		properties.add(property);
 	}
 
 	public Field getField(int index) {

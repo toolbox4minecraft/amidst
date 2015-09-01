@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import amidst.byteclass.ParameterDeclarationList;
+import amidst.byteclass.ParameterDeclarationList.Builder;
+import amidst.byteclass.ParameterDeclarationList.ExecuteOnEnd;
 import amidst.byteclass.finder.detect.AllBCD;
 import amidst.byteclass.finder.detect.AnyBCD;
 import amidst.byteclass.finder.detect.ByteClassDetector;
@@ -109,24 +112,28 @@ public class BCFBuilder {
 			return BCFBuilder.this.construct();
 		}
 
-		public BCPBuilder addConstructor(String minecraftConstructorString,
-				String minecraftConstructorName) {
-			preparers.add(new ConstructorBCP(minecraftConstructorString,
-					minecraftConstructorName));
-			return this;
+		public Builder<BCPBuilder> addConstructor(final String externalName) {
+			return ParameterDeclarationList.builder(this, new ExecuteOnEnd() {
+				@Override
+				public void run(ParameterDeclarationList parameters) {
+					preparers.add(new ConstructorBCP(externalName, parameters));
+				}
+			});
 		}
 
-		public BCPBuilder addMethod(String minecraftMethodString,
-				String minecraftMethodName) {
-			preparers.add(new MethodBCP(minecraftMethodString,
-					minecraftMethodName));
-			return this;
+		public Builder<BCPBuilder> addMethod(final String externalName,
+				final String internalName) {
+			return ParameterDeclarationList.builder(this, new ExecuteOnEnd() {
+				@Override
+				public void run(ParameterDeclarationList parameters) {
+					preparers.add(new MethodBCP(externalName, internalName,
+							parameters));
+				}
+			});
 		}
 
-		public BCPBuilder addProperty(String bytePropertyName,
-				String minecraftPropertyName) {
-			preparers.add(new PropertyBCP(bytePropertyName,
-					minecraftPropertyName));
+		public BCPBuilder addProperty(String externalName, String internalName) {
+			preparers.add(new PropertyBCP(externalName, internalName));
 			return this;
 		}
 	}

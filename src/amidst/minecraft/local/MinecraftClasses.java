@@ -3,9 +3,14 @@ package amidst.minecraft.local;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 
 import amidst.byteclass.ByteClass;
+import amidst.byteclass.ConstructorDeclaration;
+import amidst.byteclass.MethodDeclaration;
+import amidst.byteclass.ParameterDeclarationList.Entry;
+import amidst.byteclass.PropertyDeclaration;
 import amidst.logging.Log;
 
 public class MinecraftClasses {
@@ -21,60 +26,68 @@ public class MinecraftClasses {
 
 	public static MinecraftConstructor createConstructor(
 			ClassLoader classLoader, MinecraftClass parent,
-			String minecraftName, String[] parameterByteNames) {
+			Map<String, ByteClass> byteClassesByMinecraftClassName,
+			ConstructorDeclaration declaration) {
+		String externalName = declaration.getExternalName();
 		try {
-			Class<?>[] parameterClasses = MinecraftClasses.getParameterClasses(
-					classLoader, parameterByteNames);
-			Constructor<?> constructor = MinecraftClasses.getConstructor(
-					parent.getClazz(), parameterClasses);
-			return new MinecraftConstructor(parent, minecraftName, constructor);
+			Class<?>[] parameterClasses = getParameterClasses(classLoader,
+					byteClassesByMinecraftClassName, declaration
+							.getParameters().getEntries());
+			Constructor<?> constructor = getConstructor(parent.getClazz(),
+					parameterClasses);
+			return new MinecraftConstructor(parent, externalName, constructor);
 		} catch (SecurityException e) {
-			throwRuntimeException(parent, minecraftName, e, "constructor");
+			throwRuntimeException(parent, externalName, e, "constructor");
 		} catch (NoSuchMethodException e) {
-			throwRuntimeException(parent, minecraftName, e, "constructor");
+			throwRuntimeException(parent, externalName, e, "constructor");
 		} catch (ClassNotFoundException e) {
-			throwRuntimeException(parent, minecraftName, e, "constructor");
+			throwRuntimeException(parent, externalName, e, "constructor");
 		}
 		return null;
 	}
 
 	public static MinecraftMethod createMethod(ClassLoader classLoader,
 			Map<String, MinecraftClass> minecraftClassesByByteClassName,
-			MinecraftClass parent, String minecraftName, String byteName,
-			String[] parameterByteNames) {
+			MinecraftClass parent,
+			Map<String, ByteClass> byteClassesByMinecraftClassName,
+			MethodDeclaration declaration) {
+		String externalName = declaration.getExternalName();
+		String internalName = declaration.getInternalName();
 		try {
-			Class<?>[] parameterClasses = MinecraftClasses.getParameterClasses(
-					classLoader, parameterByteNames);
-			Method method = MinecraftClasses.getMethod(parent.getClazz(),
-					byteName, parameterClasses);
-			MinecraftClass returnType = MinecraftClasses.getType(
+			Class<?>[] parameterClasses = getParameterClasses(classLoader,
+					byteClassesByMinecraftClassName, declaration
+							.getParameters().getEntries());
+			Method method = getMethod(parent.getClazz(), internalName,
+					parameterClasses);
+			MinecraftClass returnType = getType(
 					minecraftClassesByByteClassName, method.getReturnType());
-			return new MinecraftMethod(minecraftName, byteName, method,
+			return new MinecraftMethod(externalName, internalName, method,
 					returnType);
 		} catch (SecurityException e) {
-			warn(parent, minecraftName, e, "method");
+			warn(parent, externalName, e, "method");
 		} catch (NoSuchMethodException e) {
-			warn(parent, minecraftName, e, "method");
+			warn(parent, externalName, e, "method");
 		} catch (ClassNotFoundException e) {
-			throwRuntimeException(parent, minecraftName, e, "method");
+			throwRuntimeException(parent, externalName, e, "method");
 		}
 		return null;
 	}
 
 	public static MinecraftProperty createProperty(
 			Map<String, MinecraftClass> minecraftClassesByByteClassName,
-			MinecraftClass parent, String minecraftName, String byteName) {
+			MinecraftClass parent, PropertyDeclaration declaration) {
+		String externalName = declaration.getExternalName();
+		String internalName = declaration.getInternalName();
 		try {
-			Field field = MinecraftClasses
-					.getField(parent.getClazz(), byteName);
-			MinecraftClass type = MinecraftClasses.getType(
-					minecraftClassesByByteClassName, field.getType());
-			return new MinecraftProperty(parent, minecraftName, byteName,
+			Field field = getField(parent.getClazz(), internalName);
+			MinecraftClass type = getType(minecraftClassesByByteClassName,
+					field.getType());
+			return new MinecraftProperty(parent, externalName, internalName,
 					field, type);
 		} catch (SecurityException e) {
-			throwRuntimeException(parent, minecraftName, e, "property");
+			throwRuntimeException(parent, externalName, e, "property");
 		} catch (NoSuchFieldException e) {
-			throwRuntimeException(parent, minecraftName, e, "property");
+			throwRuntimeException(parent, externalName, e, "property");
 		}
 		return null;
 	}
@@ -101,22 +114,36 @@ public class MinecraftClasses {
 	}
 
 	private static Class<?>[] getParameterClasses(ClassLoader classLoader,
-			String[] parameterByteNames) throws ClassNotFoundException {
-		Class<?>[] result = new Class<?>[parameterByteNames.length];
-		for (int i = 0; i < parameterByteNames.length; i++) {
-			result[i] = getParameterClass(classLoader, parameterByteNames[i]);
+			Map<String, ByteClass> byteClassesByMinecraftClassName,
+			List<Entry> entries) throws ClassNotFoundException {
+		Class<?>[] result = new Class<?>[entries.size()];
+		for (int i = 0; i < entries.size(); i++) {
+			result[i] = getParameterClass(classLoader,
+					byteClassesByMinecraftClassName, entries.get(0));
 		}
 		return result;
 	}
 
 	private static Class<?> getParameterClass(ClassLoader classLoader,
-			String parameterByteName) throws ClassNotFoundException {
+			Map<String, ByteClass> byteClassesByMinecraftClassName, Entry entry)
+			throws ClassNotFoundException {
 		Class<?> result = StatelessResources.INSTANCE.getPrimitivesMap().get(
-				parameterByteName);
-		if (result == null && parameterByteName.charAt(0) != '@') {
-			result = classLoader.loadClass(parameterByteName);
+				entry.getType());
+		if (result != null) {
+			return result;
+		} else if (entry.isExternal()) {
+			ByteClass byteClass = byteClassesByMinecraftClassName.get(entry
+					.getType());
+			if (byteClass != null) {
+				return classLoader.loadClass(byteClass.getByteClassName());
+			} else {
+				throw new ClassNotFoundException(
+						"cannot resolce external class name: "
+								+ entry.getType());
+			}
+		} else {
+			return classLoader.loadClass(entry.getType());
 		}
-		return result;
 	}
 
 	private static MinecraftClass getType(

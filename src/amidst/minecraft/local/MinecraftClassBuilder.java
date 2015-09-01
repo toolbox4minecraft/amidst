@@ -3,6 +3,11 @@ package amidst.minecraft.local;
 import java.util.HashMap;
 import java.util.Map;
 
+import amidst.byteclass.ByteClass;
+import amidst.byteclass.ConstructorDeclaration;
+import amidst.byteclass.MethodDeclaration;
+import amidst.byteclass.PropertyDeclaration;
+
 public class MinecraftClassBuilder {
 	private Map<String, MinecraftConstructor> constructorsByMinecraftName = new HashMap<String, MinecraftConstructor>();
 	private Map<String, MinecraftMethod> methodsByMinecraftName = new HashMap<String, MinecraftMethod>();
@@ -31,26 +36,29 @@ public class MinecraftClassBuilder {
 		}
 	}
 
-	public void addConstructor(String minecraftName,
-			String... parameterByteNames) {
+	public void addConstructor(
+			Map<String, ByteClass> byteClassesByMinecraftClassName,
+			ConstructorDeclaration declaration) {
 		MinecraftConstructor constructor = MinecraftClasses.createConstructor(
-				classLoader, product, minecraftName, parameterByteNames);
-		constructorsByMinecraftName.put(minecraftName, constructor);
+				classLoader, product, byteClassesByMinecraftClassName,
+				declaration);
+		constructorsByMinecraftName.put(declaration.getExternalName(),
+				constructor);
 	}
 
-	public void addMethod(String minecraftName, String byteName,
-			String... parameterByteNames) {
+	public void addMethod(
+			Map<String, ByteClass> byteClassesByMinecraftClassName,
+			MethodDeclaration declaration) {
 		MinecraftMethod method = MinecraftClasses.createMethod(classLoader,
-				minecraftClassesByByteClassName, product, minecraftName,
-				byteName, parameterByteNames);
-		methodsByMinecraftName.put(minecraftName, method);
+				minecraftClassesByByteClassName, product,
+				byteClassesByMinecraftClassName, declaration);
+		methodsByMinecraftName.put(declaration.getExternalName(), method);
 	}
 
-	public void addProperty(String minecraftName, String byteName) {
+	public void addProperty(PropertyDeclaration declaration) {
 		MinecraftProperty property = MinecraftClasses.createProperty(
-				minecraftClassesByByteClassName, product, minecraftName,
-				byteName);
-		propertiesByMinecraftName.put(minecraftName, property);
+				minecraftClassesByByteClassName, product, declaration);
+		propertiesByMinecraftName.put(declaration.getExternalName(), property);
 	}
 
 	public MinecraftClass create() {

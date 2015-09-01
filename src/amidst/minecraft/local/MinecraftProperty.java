@@ -20,14 +20,6 @@ public class MinecraftProperty {
 		this.type = type;
 	}
 
-	public String getMinecraftName() {
-		return minecraftName;
-	}
-
-	public String getByteName() {
-		return byteName;
-	}
-
 	public Object getValue(MinecraftObject minecraftObject) {
 		return getValueFromObject(minecraftObject.getObject());
 	}

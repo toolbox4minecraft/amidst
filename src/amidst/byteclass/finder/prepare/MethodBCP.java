@@ -1,18 +1,24 @@
 package amidst.byteclass.finder.prepare;
 
 import amidst.byteclass.ByteClass;
+import amidst.byteclass.MethodDeclaration;
+import amidst.byteclass.ParameterDeclarationList;
 
 public class MethodBCP extends ByteClassPreparer {
-	private String minecraftMethodString;
-	private String minecraftMethodName;
+	private String externalName;
+	private String internalName;
+	private ParameterDeclarationList parameters;
 
-	public MethodBCP(String minecraftMethodString, String minecraftMethodName) {
-		this.minecraftMethodString = minecraftMethodString;
-		this.minecraftMethodName = minecraftMethodName;
+	public MethodBCP(String externalName, String internalName,
+			ParameterDeclarationList parameters) {
+		this.externalName = externalName;
+		this.internalName = internalName;
+		this.parameters = parameters;
 	}
 
 	@Override
 	public void prepare(ByteClass byteClass) {
-		byteClass.addMethod(minecraftMethodString, minecraftMethodName);
+		byteClass.addMethod(new MethodDeclaration(externalName, internalName,
+				parameters));
 	}
 }

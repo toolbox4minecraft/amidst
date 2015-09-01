@@ -1,18 +1,20 @@
 package amidst.byteclass.finder.prepare;
 
 import amidst.byteclass.ByteClass;
+import amidst.byteclass.PropertyDeclaration;
 
 public class PropertyBCP extends ByteClassPreparer {
-	private String bytePropertyName;
-	private String minecraftPropertyName;
+	private String externalName;
+	private String internalName;
 
-	public PropertyBCP(String bytePropertyName, String minecraftPropertyName) {
-		this.bytePropertyName = bytePropertyName;
-		this.minecraftPropertyName = minecraftPropertyName;
+	public PropertyBCP(String externalName, String internalName) {
+		this.externalName = externalName;
+		this.internalName = internalName;
 	}
 
 	@Override
 	public void prepare(ByteClass byteClass) {
-		byteClass.addProperty(bytePropertyName, minecraftPropertyName);
+		byteClass.addProperty(new PropertyDeclaration(externalName,
+				internalName));
 	}
 }

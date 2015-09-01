@@ -3,7 +3,6 @@ package amidst.minecraft.local;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import amidst.byteclass.ByteClass.AccessFlags;
 import amidst.byteclass.finder.ByteClassFinder;
@@ -16,7 +15,6 @@ public enum StatelessResources {
 	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
 	private static final String SERVER_CLASS = "net.minecraft.server.MinecraftServer";
 
-	private Pattern classNameRegex = Pattern.compile("@[A-Za-z]+");
 	private Map<String, Class<?>> primitivesMap = createPrimitivesMap();
 	private List<ByteClassFinder> byteClassFinders = createByteClassFinders();
 
@@ -55,34 +53,34 @@ public enum StatelessResources {
 					.or()
 					.strings(", tcache: ")
 				.prepare()
-					.addMethod("a(int)", "getIntCache")
-					.addMethod("a()", "resetIntCache")
-					.addMethod("b()", "getInformation")
-					.addProperty("a", "intCacheSize")
-					.addProperty("b","freeSmallArrays")
-					.addProperty("c","inUseSmallArrays")
-					.addProperty("d","freeLargeArrays")
-					.addProperty("e","inUseLargeArrays")
+					.addMethod("getIntCache", 			"a").i("int").end()
+					.addMethod("resetIntCache", 		"a").end()
+					.addMethod("getInformation", 		"b").end()
+					.addProperty("intCacheSize", 		"a")
+					.addProperty("freeSmallArrays", 	"b")
+					.addProperty("inUseSmallArrays", 	"c")
+					.addProperty("freeLargeArrays", 	"d")
+					.addProperty("inUseLargeArrays", 	"e")
 			.next()
 			.name("WorldType")
 				.detect()
 					.strings("default_1_1")
 				.prepare()
-					.addProperty("a", "types")
-					.addProperty("b", "default")
-					.addProperty("c", "flat")
-					.addProperty("d", "largeBiomes")
-					.addProperty("e", "amplified")
-					.addProperty("g", "default_1_1")
-					.addProperty("f", "customized")
+					.addProperty("types", 			"a")
+					.addProperty("default", 		"b")
+					.addProperty("flat", 			"c")
+					.addProperty("largeBiomes", 	"d")
+					.addProperty("amplified", 		"e")
+					.addProperty("customized", 		"f")
+					.addProperty("default_1_1", 	"g")
 			.next()
 			.name("GenLayer")
 				.detect()
 					.longs(1000L, 2001L, 2000L)
 				.prepare()
-					.addMethod("a(long, @WorldType)", "initializeAllBiomeGenerators")
-					.addMethod("a(long, @WorldType, String)", "initializeAllBiomeGeneratorsWithParams")
-					.addMethod("a(int, int, int, int)", "getInts")
+					.addMethod("initializeAllBiomeGenerators", 				"a")	.i("long")	.e("WorldType")	.end()
+					.addMethod("initializeAllBiomeGeneratorsWithParams", 	"a")	.i("long")	.e("WorldType")	.i("String").end()
+					.addMethod("getInts", 									"a")	.i("int")	.i("int")		.i("int")	.i("int").end()
 			.next()
 			.name("BlockInit")
 				.detect()
@@ -92,7 +90,7 @@ public enum StatelessResources {
 					.numberOfMethodsAndConstructors(6)
 					.utf8s("isDebugEnabled")
 				.prepare()
-					.addMethod("c()", "initialize")
+					.addMethod("initialize", "c").end()
 			.construct();
 	}
 	// @formatter:on
@@ -111,10 +109,6 @@ public enum StatelessResources {
 
 	public String getServerClass() {
 		return SERVER_CLASS;
-	}
-
-	public Pattern getClassNameRegex() {
-		return classNameRegex;
 	}
 
 	public Map<String, Class<?>> getPrimitivesMap() {
