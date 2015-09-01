@@ -14,8 +14,7 @@ public class MinecraftClasses {
 
 	public static Map<String, MinecraftClass> createClasses(
 			ClassLoader classLoader,
-			Map<String, ByteClass> byteClassesByMinecraftClassName)
-			throws ClassNotFoundException {
+			Map<String, ByteClass> byteClassesByMinecraftClassName) {
 		return new MinecraftClassGraphBuilder(classLoader,
 				byteClassesByMinecraftClassName).create();
 	}
@@ -30,23 +29,11 @@ public class MinecraftClasses {
 					parent.getClazz(), parameterClasses);
 			return new MinecraftConstructor(parent, minecraftName, constructor);
 		} catch (SecurityException e) {
-			Log.crash(e, "SecurityException on (" + parent.getMinecraftName()
-					+ " / " + parent.getByteName() + ") contructor ("
-					+ minecraftName + ")");
-			e.printStackTrace();
+			throwRuntimeException(parent, minecraftName, e, "constructor");
 		} catch (NoSuchMethodException e) {
-			Log.crash(
-					e,
-					"Unable to find class constructor ("
-							+ parent.getMinecraftName() + " / "
-							+ parent.getByteName() + ") (" + minecraftName
-							+ ")");
-			e.printStackTrace();
+			throwRuntimeException(parent, minecraftName, e, "constructor");
 		} catch (ClassNotFoundException e) {
-			Log.crash(e, "Unable to load class (" + parent.getMinecraftName()
-					+ " / " + parent.getByteName() + ") (" + minecraftName
-					+ ")");
-			e.printStackTrace();
+			throwRuntimeException(parent, minecraftName, e, "constructor");
 		}
 		return null;
 	}
@@ -65,21 +52,11 @@ public class MinecraftClasses {
 			return new MinecraftMethod(minecraftName, byteName, method,
 					returnType);
 		} catch (SecurityException e) {
-			Log.w(e, "SecurityException on (" + parent.getMinecraftName()
-					+ " / " + parent.getByteName() + ") method ("
-					+ minecraftName + " / " + byteName + ")");
-			e.printStackTrace();
+			warn(parent, minecraftName, e, "method");
 		} catch (NoSuchMethodException e) {
-			Log.w(e,
-					"Unable to find class method (" + parent.getMinecraftName()
-							+ " / " + parent.getByteName() + ") ("
-							+ minecraftName + " / " + byteName + ")");
-			e.printStackTrace();
+			warn(parent, minecraftName, e, "method");
 		} catch (ClassNotFoundException e) {
-			Log.crash(e, "Unable to load class (" + parent.getMinecraftName()
-					+ " / " + parent.getByteName() + ") (" + minecraftName
-					+ ")");
-			e.printStackTrace();
+			throwRuntimeException(parent, minecraftName, e, "method");
 		}
 		return null;
 	}
@@ -95,18 +72,9 @@ public class MinecraftClasses {
 			return new MinecraftProperty(parent, minecraftName, byteName,
 					field, type);
 		} catch (SecurityException e) {
-			Log.crash(e, "SecurityException on (" + parent.getMinecraftName()
-					+ " / " + parent.getByteName() + ") property ("
-					+ minecraftName + " / " + byteName + ")");
-			e.printStackTrace();
+			throwRuntimeException(parent, minecraftName, e, "property");
 		} catch (NoSuchFieldException e) {
-			Log.crash(
-					e,
-					"Unable to find class property ("
-							+ parent.getMinecraftName() + " / "
-							+ parent.getByteName() + ") (" + minecraftName
-							+ " / " + byteName + ")");
-			e.printStackTrace();
+			throwRuntimeException(parent, minecraftName, e, "property");
 		}
 		return null;
 	}
@@ -160,5 +128,24 @@ public class MinecraftClasses {
 			result = typeSplit[typeSplit.length - 1];
 		}
 		return minecraftClassesByByteClassName.get(result);
+	}
+
+	private static void throwRuntimeException(MinecraftClass parent,
+			String minecraftName, Exception e, String featureType) {
+		throw new RuntimeException(errorMessage(parent, minecraftName, e,
+				featureType), e);
+	}
+
+	private static void warn(MinecraftClass parent, String minecraftName,
+			Exception e, String featureType) {
+		Log.w(errorMessage(parent, minecraftName, e, featureType));
+		e.printStackTrace();
+	}
+
+	private static String errorMessage(MinecraftClass parent,
+			String minecraftName, Exception e, String featureType) {
+		return e.getClass().getSimpleName() + " on ("
+				+ parent.getMinecraftName() + " / " + parent.getByteName()
+				+ ") " + featureType + " (" + minecraftName + ")";
 	}
 }

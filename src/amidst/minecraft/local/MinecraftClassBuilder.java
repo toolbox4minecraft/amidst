@@ -14,18 +14,25 @@ public class MinecraftClassBuilder {
 
 	public MinecraftClassBuilder(ClassLoader classLoader,
 			Map<String, MinecraftClass> minecraftClassesByByteClassName,
-			String minecraftClassName, String byteClassName)
-			throws ClassNotFoundException {
+			String minecraftClassName, String byteClassName) {
 		this.classLoader = classLoader;
 		this.minecraftClassesByByteClassName = minecraftClassesByByteClassName;
 		this.product = new MinecraftClass(minecraftClassName, byteClassName,
-				classLoader.loadClass(byteClassName),
-				constructorsByMinecraftName, methodsByMinecraftName,
-				propertiesByMinecraftName);
+				loadClass(byteClassName), constructorsByMinecraftName,
+				methodsByMinecraftName, propertiesByMinecraftName);
+	}
+
+	public Class<?> loadClass(String byteClassName) {
+		try {
+			return classLoader.loadClass(byteClassName);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Error loading a class ("
+					+ byteClassName + ")", e);
+		}
 	}
 
 	public void addConstructor(String minecraftName,
-			String... parameterByteNames) throws ClassNotFoundException {
+			String... parameterByteNames) {
 		MinecraftConstructor constructor = MinecraftClasses.createConstructor(
 				classLoader, product, minecraftName, parameterByteNames);
 		constructorsByMinecraftName.put(minecraftName, constructor);

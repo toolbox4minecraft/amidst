@@ -63,7 +63,7 @@ public class LocalMinecraftInterfaceBuilder {
 			Log.i("Classes loaded.");
 			Log.i("Minecraft load complete.");
 		} catch (RuntimeException e) {
-			Log.crash(e.getCause(), "error while loading minecraft jar file: "
+			Log.crash(e.getCause(), "error while building local minecraft interface: "
 					+ e.getMessage());
 			e.printStackTrace();
 		}
@@ -220,16 +220,6 @@ public class LocalMinecraftInterfaceBuilder {
 			result += split[i] + "/";
 		}
 		return result;
-	}
-
-	public Class<?> loadClass(String byteClassName) {
-		try {
-			return classLoader.loadClass(byteClassName);
-		} catch (ClassNotFoundException e) {
-			Log.crash(e, "Error loading a class (" + byteClassName + ")");
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	public IMinecraftInterface create() {

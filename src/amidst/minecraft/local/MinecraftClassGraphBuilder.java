@@ -19,13 +19,13 @@ public class MinecraftClassGraphBuilder {
 		this.byteClassesByMinecraftClassName = byteClassesByMinecraftClassName;
 	}
 
-	public Map<String, MinecraftClass> create() throws ClassNotFoundException {
+	public Map<String, MinecraftClass> create() {
 		populateMinecraftClassMaps();
 		addPropertiesMethodsAndConstructors();
 		return createProduct();
 	}
 
-	private void populateMinecraftClassMaps() throws ClassNotFoundException {
+	private void populateMinecraftClassMaps() {
 		for (Entry<String, ByteClass> entry : byteClassesByMinecraftClassName
 				.entrySet()) {
 			String minecraftClassName = entry.getKey();
@@ -40,8 +40,7 @@ public class MinecraftClassGraphBuilder {
 		}
 	}
 
-	private void addPropertiesMethodsAndConstructors()
-			throws ClassNotFoundException {
+	private void addPropertiesMethodsAndConstructors() {
 		for (Entry<String, ByteClass> entry : byteClassesByMinecraftClassName
 				.entrySet()) {
 			ByteClass byteClass = entry.getValue();
@@ -54,7 +53,7 @@ public class MinecraftClassGraphBuilder {
 	}
 
 	private void addConstructors(MinecraftClassBuilder builder,
-			List<String[]> constructors) throws ClassNotFoundException {
+			List<String[]> constructors) {
 		for (String[] constructor : constructors) {
 			ParameterStringParser parser = new ParameterStringParser(
 					byteClassesByMinecraftClassName, constructor[0],
