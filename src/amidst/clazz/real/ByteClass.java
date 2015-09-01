@@ -10,6 +10,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import amidst.clazz.ConstructorDeclaration;
+import amidst.clazz.MethodDeclaration;
+import amidst.clazz.PropertyDeclaration;
+
 public class ByteClass {
 	/*-
 	 * 	ACC_PUBLIC	 	0x0001	 Declared public; may be accessed from outside its package.

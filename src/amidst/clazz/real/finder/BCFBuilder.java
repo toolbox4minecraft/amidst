@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import amidst.clazz.real.ParameterDeclarationList;
-import amidst.clazz.real.ParameterDeclarationList.Builder;
-import amidst.clazz.real.ParameterDeclarationList.ExecuteOnEnd;
+import amidst.clazz.ParameterDeclarationList;
+import amidst.clazz.ParameterDeclarationList.Builder;
+import amidst.clazz.ParameterDeclarationList.ExecuteOnEnd;
 import amidst.clazz.real.finder.detect.AllBCD;
 import amidst.clazz.real.finder.detect.AnyBCD;
 import amidst.clazz.real.finder.detect.ByteClassDetector;

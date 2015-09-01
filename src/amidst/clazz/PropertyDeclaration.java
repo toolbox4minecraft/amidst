@@ -1,4 +1,4 @@
-package amidst.clazz.real;
+package amidst.clazz;
 
 public class PropertyDeclaration {
 	private String symbolicName;

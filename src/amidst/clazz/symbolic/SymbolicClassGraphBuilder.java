@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import amidst.clazz.ConstructorDeclaration;
+import amidst.clazz.MethodDeclaration;
+import amidst.clazz.PropertyDeclaration;
 import amidst.clazz.real.ByteClass;
-import amidst.clazz.real.ConstructorDeclaration;
-import amidst.clazz.real.MethodDeclaration;
-import amidst.clazz.real.PropertyDeclaration;
 
 public class SymbolicClassGraphBuilder {
 	private ClassLoader classLoader;

@@ -1,4 +1,4 @@
-package amidst.clazz.real;
+package amidst.clazz;
 
 public class ConstructorDeclaration {
 	private String symbolicName;

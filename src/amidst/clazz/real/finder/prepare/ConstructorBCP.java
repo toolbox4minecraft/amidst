@@ -1,8 +1,8 @@
 package amidst.clazz.real.finder.prepare;
 
+import amidst.clazz.ConstructorDeclaration;
+import amidst.clazz.ParameterDeclarationList;
 import amidst.clazz.real.ByteClass;
-import amidst.clazz.real.ConstructorDeclaration;
-import amidst.clazz.real.ParameterDeclarationList;
 
 public class ConstructorBCP extends ByteClassPreparer {
 	private String symbolicName;

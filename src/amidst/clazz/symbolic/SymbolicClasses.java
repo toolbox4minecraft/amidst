@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import amidst.clazz.ConstructorDeclaration;
+import amidst.clazz.MethodDeclaration;
+import amidst.clazz.ParameterDeclarationList.Entry;
+import amidst.clazz.PropertyDeclaration;
 import amidst.clazz.real.ByteClass;
-import amidst.clazz.real.ConstructorDeclaration;
-import amidst.clazz.real.MethodDeclaration;
-import amidst.clazz.real.PropertyDeclaration;
-import amidst.clazz.real.ParameterDeclarationList.Entry;
 import amidst.logging.Log;
 
 public class SymbolicClasses {
