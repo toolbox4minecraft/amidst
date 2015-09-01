@@ -24,13 +24,13 @@ public class ParameterDeclarationList {
 			this.executeOnEnd = executeOnEnd;
 		}
 
-		public Builder<T> i(String internalType) {
-			product.addEntry(internalType, false);
+		public Builder<T> real(String realType) {
+			product.addEntry(realType, false);
 			return this;
 		}
 
-		public Builder<T> e(String externalType) {
-			product.addEntry(externalType, true);
+		public Builder<T> symbolic(String symbolicType) {
+			product.addEntry(symbolicType, true);
 			return this;
 		}
 
@@ -42,19 +42,19 @@ public class ParameterDeclarationList {
 
 	public class Entry {
 		private String type;
-		private boolean isExternal;
+		private boolean isSymbolic;
 
-		private Entry(String type, boolean isExternal) {
+		private Entry(String type, boolean isSymbolic) {
 			this.type = type;
-			this.isExternal = isExternal;
+			this.isSymbolic = isSymbolic;
 		}
 
 		public String getType() {
 			return type;
 		}
 
-		public boolean isExternal() {
-			return isExternal;
+		public boolean isSymbolic() {
+			return isSymbolic;
 		}
 	}
 
@@ -65,8 +65,8 @@ public class ParameterDeclarationList {
 		this.entriesView = Collections.unmodifiableList(entries);
 	}
 
-	private void addEntry(String type, boolean isExternal) {
-		entries.add(new Entry(type, isExternal));
+	private void addEntry(String type, boolean isSymbolic) {
+		entries.add(new Entry(type, isSymbolic));
 	}
 
 	public List<Entry> getEntries() {

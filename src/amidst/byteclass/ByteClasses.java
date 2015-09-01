@@ -15,8 +15,8 @@ public class ByteClasses {
 	private ByteClasses() {
 	}
 
-	public static ByteClass fromByteArray(String byteClassName, byte[] classData) {
-		return ByteClass.newInstance(byteClassName, classData);
+	public static ByteClass fromByteArray(String realClassName, byte[] classData) {
+		return ByteClass.newInstance(realClassName, classData);
 	}
 
 	public static List<ByteClass> fromJarFile(File jarFile) {
@@ -52,9 +52,9 @@ public class ByteClasses {
 
 	private static ByteClass readJarFileEntry(ZipFile jar, ZipEntry entry)
 			throws IOException {
-		String byteClassName = FileSystemUtils.getFileNameWithoutExtension(
+		String realClassName = FileSystemUtils.getFileNameWithoutExtension(
 				entry.getName(), "class");
-		if (!entry.isDirectory() && byteClassName != null) {
+		if (!entry.isDirectory() && realClassName != null) {
 			BufferedInputStream is = new BufferedInputStream(
 					jar.getInputStream(entry));
 			// TODO: Double check that this filter won't mess anything up.
@@ -62,7 +62,7 @@ public class ByteClasses {
 				byte[] classData = new byte[is.available()];
 				is.read(classData);
 				is.close();
-				return ByteClass.newInstance(byteClassName, classData);
+				return ByteClass.newInstance(realClassName, classData);
 			}
 		}
 		return null;

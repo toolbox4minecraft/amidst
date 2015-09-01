@@ -4,15 +4,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class MinecraftMethod {
-	private String minecraftName;
-	private String byteName;
+	private String symbolicName;
+	private String realName;
 	private Method method;
 	private MinecraftClass returnType;
 
-	public MinecraftMethod(String minecraftName, String byteName,
-			Method method, MinecraftClass returnType) {
-		this.minecraftName = minecraftName;
-		this.byteName = byteName;
+	public MinecraftMethod(String symbolicName, String realName, Method method,
+			MinecraftClass returnType) {
+		this.symbolicName = symbolicName;
+		this.realName = realName;
 		this.method = method;
 		this.returnType = returnType;
 	}

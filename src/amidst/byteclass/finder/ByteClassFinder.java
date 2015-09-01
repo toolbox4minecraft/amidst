@@ -11,13 +11,13 @@ public class ByteClassFinder {
 		return BCFBuilder.builder();
 	}
 
-	private String minecraftClassName;
+	private String symbolicClassName;
 	private ByteClassDetector detector;
 	private ByteClassPreparer preparer;
 
-	public ByteClassFinder(String minecraftClassName,
+	public ByteClassFinder(String symbolicClassName,
 			ByteClassDetector detector, ByteClassPreparer preparer) {
-		this.minecraftClassName = minecraftClassName;
+		this.symbolicClassName = symbolicClassName;
 		this.detector = detector;
 		this.preparer = preparer;
 	}
@@ -40,7 +40,7 @@ public class ByteClassFinder {
 		return null;
 	}
 
-	public String getMinecraftClassName() {
-		return minecraftClassName;
+	public String getSymbolicClassName() {
+		return symbolicClassName;
 	}
 }

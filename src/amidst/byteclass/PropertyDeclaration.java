@@ -1,19 +1,19 @@
 package amidst.byteclass;
 
 public class PropertyDeclaration {
-	private String externalName;
-	private String internalName;
+	private String symbolicName;
+	private String realName;
 
-	public PropertyDeclaration(String externalName, String internalName) {
-		this.externalName = externalName;
-		this.internalName = internalName;
+	public PropertyDeclaration(String symbolicName, String realName) {
+		this.symbolicName = symbolicName;
+		this.realName = realName;
 	}
 
-	public String getExternalName() {
-		return externalName;
+	public String getSymbolicName() {
+		return symbolicName;
 	}
 
-	public String getInternalName() {
-		return internalName;
+	public String getRealName() {
+		return realName;
 	}
 }

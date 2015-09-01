@@ -112,28 +112,28 @@ public class BCFBuilder {
 			return BCFBuilder.this.construct();
 		}
 
-		public Builder<BCPBuilder> addConstructor(final String externalName) {
+		public Builder<BCPBuilder> addConstructor(final String symbolicName) {
 			return ParameterDeclarationList.builder(this, new ExecuteOnEnd() {
 				@Override
 				public void run(ParameterDeclarationList parameters) {
-					preparers.add(new ConstructorBCP(externalName, parameters));
+					preparers.add(new ConstructorBCP(symbolicName, parameters));
 				}
 			});
 		}
 
-		public Builder<BCPBuilder> addMethod(final String externalName,
-				final String internalName) {
+		public Builder<BCPBuilder> addMethod(final String symbolicName,
+				final String realName) {
 			return ParameterDeclarationList.builder(this, new ExecuteOnEnd() {
 				@Override
 				public void run(ParameterDeclarationList parameters) {
-					preparers.add(new MethodBCP(externalName, internalName,
+					preparers.add(new MethodBCP(symbolicName, realName,
 							parameters));
 				}
 			});
 		}
 
-		public BCPBuilder addProperty(String externalName, String internalName) {
-			preparers.add(new PropertyBCP(externalName, internalName));
+		public BCPBuilder addProperty(String symbolicName, String realName) {
+			preparers.add(new PropertyBCP(symbolicName, realName));
 			return this;
 		}
 	}
@@ -144,7 +144,7 @@ public class BCFBuilder {
 
 	private BCFBuilder previous;
 
-	private String minecraftClassName;
+	private String symbolicClassName;
 	private BCDBuilder detectorBuilder = new BCDBuilder();
 	private BCPBuilder preparerBuilder = new BCPBuilder();
 
@@ -152,8 +152,8 @@ public class BCFBuilder {
 		this.previous = previous;
 	}
 
-	public BCFBuilder name(String minecraftClassName) {
-		this.minecraftClassName = minecraftClassName;
+	public BCFBuilder name(String symbolicClassName) {
+		this.symbolicClassName = symbolicClassName;
 		return this;
 	}
 
@@ -173,9 +173,9 @@ public class BCFBuilder {
 	}
 
 	private ByteClassFinder constructThis() {
-		Objects.requireNonNull(minecraftClassName,
+		Objects.requireNonNull(symbolicClassName,
 				"a byte class finder needs to have a name");
-		return new ByteClassFinder(minecraftClassName,
+		return new ByteClassFinder(symbolicClassName,
 				detectorBuilder.constructThis(),
 				preparerBuilder.constructThis());
 	}

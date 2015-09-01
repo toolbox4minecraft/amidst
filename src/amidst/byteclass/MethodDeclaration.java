@@ -1,23 +1,23 @@
 package amidst.byteclass;
 
 public class MethodDeclaration {
-	private String externalName;
-	private String internalName;
+	private String symbolicName;
+	private String realName;
 	private ParameterDeclarationList parameters;
 
-	public MethodDeclaration(String externalName, String internalName,
+	public MethodDeclaration(String symbolicName, String realName,
 			ParameterDeclarationList parameters) {
-		this.externalName = externalName;
-		this.internalName = internalName;
+		this.symbolicName = symbolicName;
+		this.realName = realName;
 		this.parameters = parameters;
 	}
 
-	public String getExternalName() {
-		return externalName;
+	public String getSymbolicName() {
+		return symbolicName;
 	}
 
-	public String getInternalName() {
-		return internalName;
+	public String getRealName() {
+		return realName;
 	}
 
 	public ParameterDeclarationList getParameters() {

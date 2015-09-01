@@ -12,60 +12,59 @@ import amidst.byteclass.PropertyDeclaration;
 
 public class MinecraftClassGraphBuilder {
 	private ClassLoader classLoader;
-	private Map<String, ByteClass> byteClassesByMinecraftClassName;
-	private Map<String, MinecraftClass> minecraftClassesByByteClassName = new HashMap<String, MinecraftClass>();
-	private Map<String, MinecraftClassBuilder> minecraftClassBuildersByMinecraftClassName = new HashMap<String, MinecraftClassBuilder>();
+	private Map<String, ByteClass> realClassesBySymbolicClassName;
+	private Map<String, MinecraftClass> symbolicClassesByRealClassName = new HashMap<String, MinecraftClass>();
+	private Map<String, MinecraftClassBuilder> symbolicClassBuildersBySymbolicClassName = new HashMap<String, MinecraftClassBuilder>();
 
 	public MinecraftClassGraphBuilder(ClassLoader classLoader,
-			Map<String, ByteClass> byteClassesByMinecraftClassName) {
+			Map<String, ByteClass> realClassesBySymbolicClassName) {
 		this.classLoader = classLoader;
-		this.byteClassesByMinecraftClassName = byteClassesByMinecraftClassName;
+		this.realClassesBySymbolicClassName = realClassesBySymbolicClassName;
 	}
 
 	public Map<String, MinecraftClass> create() {
-		populateMinecraftClassMaps();
-		addPropertiesMethodsAndConstructors();
+		populateSymbolicClassMaps();
+		addConstructorsMethodsAndProperties();
 		return createProduct();
 	}
 
-	private void populateMinecraftClassMaps() {
-		for (Entry<String, ByteClass> entry : byteClassesByMinecraftClassName
+	private void populateSymbolicClassMaps() {
+		for (Entry<String, ByteClass> entry : realClassesBySymbolicClassName
 				.entrySet()) {
-			String minecraftClassName = entry.getKey();
-			String byteClassName = entry.getValue().getByteClassName();
+			String symbolicClassName = entry.getKey();
+			String realClassName = entry.getValue().getRealClassName();
 			MinecraftClassBuilder builder = new MinecraftClassBuilder(
-					classLoader, minecraftClassesByByteClassName,
-					minecraftClassName, byteClassName);
-			minecraftClassesByByteClassName
-					.put(byteClassName, builder.create());
-			minecraftClassBuildersByMinecraftClassName.put(minecraftClassName,
+					classLoader, symbolicClassesByRealClassName,
+					symbolicClassName, realClassName);
+			symbolicClassesByRealClassName.put(realClassName, builder.create());
+			symbolicClassBuildersBySymbolicClassName.put(symbolicClassName,
 					builder);
 		}
 	}
 
-	private void addPropertiesMethodsAndConstructors() {
-		for (Entry<String, ByteClass> entry : byteClassesByMinecraftClassName
+	private void addConstructorsMethodsAndProperties() {
+		for (Entry<String, ByteClass> entry : realClassesBySymbolicClassName
 				.entrySet()) {
-			ByteClass byteClass = entry.getValue();
-			MinecraftClassBuilder builder = minecraftClassBuildersByMinecraftClassName
+			ByteClass realClass = entry.getValue();
+			MinecraftClassBuilder builder = symbolicClassBuildersBySymbolicClassName
 					.get(entry.getKey());
-			addConstructors(builder, byteClass.getConstructors());
-			addMethods(builder, byteClass.getMethods());
-			addProperties(builder, byteClass.getProperties());
+			addConstructors(builder, realClass.getConstructors());
+			addMethods(builder, realClass.getMethods());
+			addProperties(builder, realClass.getProperties());
 		}
 	}
 
 	private void addConstructors(MinecraftClassBuilder builder,
 			List<ConstructorDeclaration> constructors) {
 		for (ConstructorDeclaration constructor : constructors) {
-			builder.addConstructor(byteClassesByMinecraftClassName, constructor);
+			builder.addConstructor(realClassesBySymbolicClassName, constructor);
 		}
 	}
 
 	private void addMethods(MinecraftClassBuilder builder,
 			List<MethodDeclaration> methods) {
 		for (MethodDeclaration method : methods) {
-			builder.addMethod(byteClassesByMinecraftClassName, method);
+			builder.addMethod(realClassesBySymbolicClassName, method);
 		}
 	}
 
@@ -78,7 +77,7 @@ public class MinecraftClassGraphBuilder {
 
 	private Map<String, MinecraftClass> createProduct() {
 		Map<String, MinecraftClass> result = new HashMap<String, MinecraftClass>();
-		for (Entry<String, MinecraftClassBuilder> entry : minecraftClassBuildersByMinecraftClassName
+		for (Entry<String, MinecraftClassBuilder> entry : symbolicClassBuildersBySymbolicClassName
 				.entrySet()) {
 			result.put(entry.getKey(), entry.getValue().create());
 		}

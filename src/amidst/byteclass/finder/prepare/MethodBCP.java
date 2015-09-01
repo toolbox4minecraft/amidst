@@ -5,20 +5,20 @@ import amidst.byteclass.MethodDeclaration;
 import amidst.byteclass.ParameterDeclarationList;
 
 public class MethodBCP extends ByteClassPreparer {
-	private String externalName;
-	private String internalName;
+	private String symbolicName;
+	private String realName;
 	private ParameterDeclarationList parameters;
 
-	public MethodBCP(String externalName, String internalName,
+	public MethodBCP(String symbolicName, String realName,
 			ParameterDeclarationList parameters) {
-		this.externalName = externalName;
-		this.internalName = internalName;
+		this.symbolicName = symbolicName;
+		this.realName = realName;
 		this.parameters = parameters;
 	}
 
 	@Override
 	public void prepare(ByteClass byteClass) {
-		byteClass.addMethod(new MethodDeclaration(externalName, internalName,
+		byteClass.addMethod(new MethodDeclaration(symbolicName, realName,
 				parameters));
 	}
 }

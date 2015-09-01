@@ -1,17 +1,17 @@
 package amidst.byteclass;
 
 public class ConstructorDeclaration {
-	private String externalName;
+	private String symbolicName;
 	private ParameterDeclarationList parameters;
 
-	public ConstructorDeclaration(String externalName,
+	public ConstructorDeclaration(String symbolicName,
 			ParameterDeclarationList parameters) {
-		this.externalName = externalName;
+		this.symbolicName = symbolicName;
 		this.parameters = parameters;
 	}
 
-	public String getExternalName() {
-		return externalName;
+	public String getSymbolicName() {
+		return symbolicName;
 	}
 
 	public ParameterDeclarationList getParameters() {

@@ -19,75 +19,75 @@ public class MinecraftClasses {
 
 	public static Map<String, MinecraftClass> createClasses(
 			ClassLoader classLoader,
-			Map<String, ByteClass> byteClassesByMinecraftClassName) {
+			Map<String, ByteClass> realClassesBySymbolicClassName) {
 		return new MinecraftClassGraphBuilder(classLoader,
-				byteClassesByMinecraftClassName).create();
+				realClassesBySymbolicClassName).create();
 	}
 
 	public static MinecraftConstructor createConstructor(
 			ClassLoader classLoader, MinecraftClass parent,
-			Map<String, ByteClass> byteClassesByMinecraftClassName,
+			Map<String, ByteClass> realClassesBySymbolicClassName,
 			ConstructorDeclaration declaration) {
-		String externalName = declaration.getExternalName();
+		String symbolicName = declaration.getSymbolicName();
 		try {
 			Class<?>[] parameterClasses = getParameterClasses(classLoader,
-					byteClassesByMinecraftClassName, declaration
-							.getParameters().getEntries());
+					realClassesBySymbolicClassName, declaration.getParameters()
+							.getEntries());
 			Constructor<?> constructor = getConstructor(parent.getClazz(),
 					parameterClasses);
-			return new MinecraftConstructor(parent, externalName, constructor);
+			return new MinecraftConstructor(parent, symbolicName, constructor);
 		} catch (SecurityException e) {
-			throwRuntimeException(parent, externalName, e, "constructor");
+			throwRuntimeException(parent, symbolicName, e, "constructor");
 		} catch (NoSuchMethodException e) {
-			throwRuntimeException(parent, externalName, e, "constructor");
+			throwRuntimeException(parent, symbolicName, e, "constructor");
 		} catch (ClassNotFoundException e) {
-			throwRuntimeException(parent, externalName, e, "constructor");
+			throwRuntimeException(parent, symbolicName, e, "constructor");
 		}
 		return null;
 	}
 
 	public static MinecraftMethod createMethod(ClassLoader classLoader,
-			Map<String, MinecraftClass> minecraftClassesByByteClassName,
+			Map<String, MinecraftClass> symbolicClassesByRealClassName,
 			MinecraftClass parent,
-			Map<String, ByteClass> byteClassesByMinecraftClassName,
+			Map<String, ByteClass> realClassesBySymbolicClassName,
 			MethodDeclaration declaration) {
-		String externalName = declaration.getExternalName();
-		String internalName = declaration.getInternalName();
+		String symbolicName = declaration.getSymbolicName();
+		String realName = declaration.getRealName();
 		try {
 			Class<?>[] parameterClasses = getParameterClasses(classLoader,
-					byteClassesByMinecraftClassName, declaration
-							.getParameters().getEntries());
-			Method method = getMethod(parent.getClazz(), internalName,
+					realClassesBySymbolicClassName, declaration.getParameters()
+							.getEntries());
+			Method method = getMethod(parent.getClazz(), realName,
 					parameterClasses);
-			MinecraftClass returnType = getType(
-					minecraftClassesByByteClassName, method.getReturnType());
-			return new MinecraftMethod(externalName, internalName, method,
+			MinecraftClass returnType = getType(symbolicClassesByRealClassName,
+					method.getReturnType());
+			return new MinecraftMethod(symbolicName, realName, method,
 					returnType);
 		} catch (SecurityException e) {
-			warn(parent, externalName, e, "method");
+			warn(parent, symbolicName, e, "method");
 		} catch (NoSuchMethodException e) {
-			warn(parent, externalName, e, "method");
+			warn(parent, symbolicName, e, "method");
 		} catch (ClassNotFoundException e) {
-			throwRuntimeException(parent, externalName, e, "method");
+			throwRuntimeException(parent, symbolicName, e, "method");
 		}
 		return null;
 	}
 
 	public static MinecraftProperty createProperty(
-			Map<String, MinecraftClass> minecraftClassesByByteClassName,
+			Map<String, MinecraftClass> symbolicClassesByRealClassName,
 			MinecraftClass parent, PropertyDeclaration declaration) {
-		String externalName = declaration.getExternalName();
-		String internalName = declaration.getInternalName();
+		String symbolicName = declaration.getSymbolicName();
+		String realName = declaration.getRealName();
 		try {
-			Field field = getField(parent.getClazz(), internalName);
-			MinecraftClass type = getType(minecraftClassesByByteClassName,
+			Field field = getField(parent.getClazz(), realName);
+			MinecraftClass type = getType(symbolicClassesByRealClassName,
 					field.getType());
-			return new MinecraftProperty(parent, externalName, internalName,
-					field, type);
+			return new MinecraftProperty(parent, symbolicName, realName, field,
+					type);
 		} catch (SecurityException e) {
-			throwRuntimeException(parent, externalName, e, "property");
+			throwRuntimeException(parent, symbolicName, e, "property");
 		} catch (NoSuchFieldException e) {
-			throwRuntimeException(parent, externalName, e, "property");
+			throwRuntimeException(parent, symbolicName, e, "property");
 		}
 		return null;
 	}
@@ -99,46 +99,46 @@ public class MinecraftClasses {
 		return result;
 	}
 
-	private static Method getMethod(Class<?> clazz, String byteName,
+	private static Method getMethod(Class<?> clazz, String realName,
 			Class<?>[] parameterClasses) throws NoSuchMethodException {
-		Method result = clazz.getDeclaredMethod(byteName, parameterClasses);
+		Method result = clazz.getDeclaredMethod(realName, parameterClasses);
 		result.setAccessible(true);
 		return result;
 	}
 
-	private static Field getField(Class<?> clazz, String byteName)
+	private static Field getField(Class<?> clazz, String realName)
 			throws NoSuchFieldException {
-		Field result = clazz.getDeclaredField(byteName);
+		Field result = clazz.getDeclaredField(realName);
 		result.setAccessible(true);
 		return result;
 	}
 
 	private static Class<?>[] getParameterClasses(ClassLoader classLoader,
-			Map<String, ByteClass> byteClassesByMinecraftClassName,
+			Map<String, ByteClass> realClassesBySymbolicClassName,
 			List<Entry> entries) throws ClassNotFoundException {
 		Class<?>[] result = new Class<?>[entries.size()];
 		for (int i = 0; i < entries.size(); i++) {
 			result[i] = getParameterClass(classLoader,
-					byteClassesByMinecraftClassName, entries.get(i));
+					realClassesBySymbolicClassName, entries.get(i));
 		}
 		return result;
 	}
 
 	private static Class<?> getParameterClass(ClassLoader classLoader,
-			Map<String, ByteClass> byteClassesByMinecraftClassName, Entry entry)
+			Map<String, ByteClass> realClassesBySymbolicClassName, Entry entry)
 			throws ClassNotFoundException {
 		Class<?> result = StatelessResources.INSTANCE.getPrimitivesMap().get(
 				entry.getType());
 		if (result != null) {
 			return result;
-		} else if (entry.isExternal()) {
-			ByteClass byteClass = byteClassesByMinecraftClassName.get(entry
+		} else if (entry.isSymbolic()) {
+			ByteClass realClass = realClassesBySymbolicClassName.get(entry
 					.getType());
-			if (byteClass != null) {
-				return classLoader.loadClass(byteClass.getByteClassName());
+			if (realClass != null) {
+				return classLoader.loadClass(realClass.getRealClassName());
 			} else {
 				throw new ClassNotFoundException(
-						"cannot resolce external class name: "
+						"cannot resolve symbolic class name: "
 								+ entry.getType());
 			}
 		} else {
@@ -147,32 +147,32 @@ public class MinecraftClasses {
 	}
 
 	private static MinecraftClass getType(
-			Map<String, MinecraftClass> minecraftClassesByByteClassName,
+			Map<String, MinecraftClass> symbolicClassesByRealClassName,
 			Class<?> type) {
 		String result = type.getName();
 		if (result.contains(".")) {
 			String[] typeSplit = result.split("\\.");
 			result = typeSplit[typeSplit.length - 1];
 		}
-		return minecraftClassesByByteClassName.get(result);
+		return symbolicClassesByRealClassName.get(result);
 	}
 
 	private static void throwRuntimeException(MinecraftClass parent,
-			String minecraftName, Exception e, String featureType) {
-		throw new RuntimeException(errorMessage(parent, minecraftName, e,
+			String symbolicName, Exception e, String featureType) {
+		throw new RuntimeException(errorMessage(parent, symbolicName, e,
 				featureType), e);
 	}
 
-	private static void warn(MinecraftClass parent, String minecraftName,
+	private static void warn(MinecraftClass parent, String symbolicName,
 			Exception e, String featureType) {
-		Log.w(errorMessage(parent, minecraftName, e, featureType));
+		Log.w(errorMessage(parent, symbolicName, e, featureType));
 		e.printStackTrace();
 	}
 
 	private static String errorMessage(MinecraftClass parent,
-			String minecraftName, Exception e, String featureType) {
+			String symbolicName, Exception e, String featureType) {
 		return e.getClass().getSimpleName() + " on ("
-				+ parent.getMinecraftName() + " / " + parent.getByteName()
-				+ ") " + featureType + " (" + minecraftName + ")";
+				+ parent.getSymbolicName() + " / " + parent.getRealName()
+				+ ") " + featureType + " (" + symbolicName + ")";
 	}
 }

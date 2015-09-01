@@ -30,17 +30,17 @@ public class LocalMinecraftInterfaceBuilder {
 	private File jarFile;
 	private VersionInfo version;
 
-	private Map<String, ByteClass> byteClassesByMinecraftClassName = new HashMap<String, ByteClass>();
-	private Map<String, MinecraftClass> minecraftClassesByMinecraftClassName;
+	private Map<String, ByteClass> realClassesBySymbolicClassName = new HashMap<String, ByteClass>();
+	private Map<String, MinecraftClass> symbolicClassesBySymbolicClassName;
 
 	public LocalMinecraftInterfaceBuilder(File jarFile) {
 		try {
 			this.jarFile = jarFile;
 			Log.i("Reading minecraft.jar...");
-			List<ByteClass> byteClasses = ByteClasses.fromJarFile(jarFile);
+			List<ByteClass> realClasses = ByteClasses.fromJarFile(jarFile);
 			Log.i("Jar load complete.");
 			Log.i("Searching for classes...");
-			identifyClasses(byteClasses);
+			identifyClasses(realClasses);
 			Log.i("Class search complete.");
 			File librariesJson = getLibrariesJsonFile();
 			if (librariesJson.exists()) {
@@ -58,34 +58,36 @@ public class LocalMinecraftInterfaceBuilder {
 			Log.i("Identified Minecraft [" + version.name()
 					+ "] with versionID of " + versionID);
 			Log.i("Loading classes...");
-			minecraftClassesByMinecraftClassName = MinecraftClasses
-					.createClasses(classLoader, byteClassesByMinecraftClassName);
+			symbolicClassesBySymbolicClassName = MinecraftClasses
+					.createClasses(classLoader, realClassesBySymbolicClassName);
 			Log.i("Classes loaded.");
 			Log.i("Minecraft load complete.");
 		} catch (RuntimeException e) {
-			Log.crash(e.getCause(), "error while building local minecraft interface: "
-					+ e.getMessage());
+			Log.crash(
+					e.getCause(),
+					"error while building local minecraft interface: "
+							+ e.getMessage());
 			e.printStackTrace();
 		}
 	}
 
-	private void identifyClasses(List<ByteClass> byteClasses) {
+	private void identifyClasses(List<ByteClass> realClasses) {
 		for (ByteClassFinder finder : StatelessResources.INSTANCE
 				.getByteClassFinders()) {
-			ByteClass byteClass = finder.find(byteClasses);
-			if (byteClass != null) {
-				registerClass(finder.getMinecraftClassName(), byteClass);
-				Log.debug("Found: " + byteClass.getByteClassName() + " as "
-						+ finder.getMinecraftClassName());
+			ByteClass realClass = finder.find(realClasses);
+			if (realClass != null) {
+				registerClass(finder.getSymbolicClassName(), realClass);
+				Log.debug("Found: " + realClass.getRealClassName() + " as "
+						+ finder.getSymbolicClassName());
 			} else {
-				Log.debug("Missing: " + finder.getMinecraftClassName());
+				Log.debug("Missing: " + finder.getSymbolicClassName());
 			}
 		}
 	}
 
-	private void registerClass(String minecraftClassName, ByteClass byteClass) {
-		if (!byteClassesByMinecraftClassName.containsKey(minecraftClassName)) {
-			byteClassesByMinecraftClassName.put(minecraftClassName, byteClass);
+	private void registerClass(String symbolicClassName, ByteClass realClass) {
+		if (!realClassesBySymbolicClassName.containsKey(symbolicClassName)) {
+			realClassesBySymbolicClassName.put(symbolicClassName, realClass);
 		}
 	}
 
@@ -223,7 +225,7 @@ public class LocalMinecraftInterfaceBuilder {
 	}
 
 	public IMinecraftInterface create() {
-		return new LocalMinecraftInterface(
-				minecraftClassesByMinecraftClassName, version);
+		return new LocalMinecraftInterface(symbolicClassesBySymbolicClassName,
+				version);
 	}
 }

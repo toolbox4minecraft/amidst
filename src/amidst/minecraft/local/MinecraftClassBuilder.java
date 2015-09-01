@@ -9,56 +9,56 @@ import amidst.byteclass.MethodDeclaration;
 import amidst.byteclass.PropertyDeclaration;
 
 public class MinecraftClassBuilder {
-	private Map<String, MinecraftConstructor> constructorsByMinecraftName = new HashMap<String, MinecraftConstructor>();
-	private Map<String, MinecraftMethod> methodsByMinecraftName = new HashMap<String, MinecraftMethod>();
-	private Map<String, MinecraftProperty> propertiesByMinecraftName = new HashMap<String, MinecraftProperty>();
+	private Map<String, MinecraftConstructor> constructorsBySymbolicName = new HashMap<String, MinecraftConstructor>();
+	private Map<String, MinecraftMethod> methodsBySymbolicName = new HashMap<String, MinecraftMethod>();
+	private Map<String, MinecraftProperty> propertiesBySymbolicName = new HashMap<String, MinecraftProperty>();
 
 	private ClassLoader classLoader;
-	private Map<String, MinecraftClass> minecraftClassesByByteClassName;
+	private Map<String, MinecraftClass> symbolicClassesByRealClassName;
 	private MinecraftClass product;
 
 	public MinecraftClassBuilder(ClassLoader classLoader,
-			Map<String, MinecraftClass> minecraftClassesByByteClassName,
-			String minecraftClassName, String byteClassName) {
+			Map<String, MinecraftClass> symbolicClassesByRealClassName,
+			String symbolicClassName, String realClassName) {
 		this.classLoader = classLoader;
-		this.minecraftClassesByByteClassName = minecraftClassesByByteClassName;
-		this.product = new MinecraftClass(minecraftClassName, byteClassName,
-				loadClass(byteClassName), constructorsByMinecraftName,
-				methodsByMinecraftName, propertiesByMinecraftName);
+		this.symbolicClassesByRealClassName = symbolicClassesByRealClassName;
+		this.product = new MinecraftClass(symbolicClassName, realClassName,
+				loadClass(realClassName), constructorsBySymbolicName,
+				methodsBySymbolicName, propertiesBySymbolicName);
 	}
 
-	public Class<?> loadClass(String byteClassName) {
+	public Class<?> loadClass(String realClassName) {
 		try {
-			return classLoader.loadClass(byteClassName);
+			return classLoader.loadClass(realClassName);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Error loading a class ("
-					+ byteClassName + ")", e);
+					+ realClassName + ")", e);
 		}
 	}
 
 	public void addConstructor(
-			Map<String, ByteClass> byteClassesByMinecraftClassName,
+			Map<String, ByteClass> realClassesBySymbolicClassName,
 			ConstructorDeclaration declaration) {
 		MinecraftConstructor constructor = MinecraftClasses.createConstructor(
-				classLoader, product, byteClassesByMinecraftClassName,
+				classLoader, product, realClassesBySymbolicClassName,
 				declaration);
-		constructorsByMinecraftName.put(declaration.getExternalName(),
+		constructorsBySymbolicName.put(declaration.getSymbolicName(),
 				constructor);
 	}
 
 	public void addMethod(
-			Map<String, ByteClass> byteClassesByMinecraftClassName,
+			Map<String, ByteClass> realClassesBySymbolicClassName,
 			MethodDeclaration declaration) {
 		MinecraftMethod method = MinecraftClasses.createMethod(classLoader,
-				minecraftClassesByByteClassName, product,
-				byteClassesByMinecraftClassName, declaration);
-		methodsByMinecraftName.put(declaration.getExternalName(), method);
+				symbolicClassesByRealClassName, product,
+				realClassesBySymbolicClassName, declaration);
+		methodsBySymbolicName.put(declaration.getSymbolicName(), method);
 	}
 
 	public void addProperty(PropertyDeclaration declaration) {
 		MinecraftProperty property = MinecraftClasses.createProperty(
-				minecraftClassesByByteClassName, product, declaration);
-		propertiesByMinecraftName.put(declaration.getExternalName(), property);
+				symbolicClassesByRealClassName, product, declaration);
+		propertiesBySymbolicName.put(declaration.getSymbolicName(), property);
 	}
 
 	public MinecraftClass create() {

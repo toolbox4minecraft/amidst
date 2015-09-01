@@ -6,22 +6,22 @@ import amidst.logging.Log;
 
 public class MinecraftProperty {
 	private MinecraftClass parent;
-	private String minecraftName;
-	private String byteName;
+	private String symbolicName;
+	private String realName;
 	private Field field;
 	private MinecraftClass type;
 
-	public MinecraftProperty(MinecraftClass parent, String minecraftName,
-			String byteName, Field field, MinecraftClass type) {
+	public MinecraftProperty(MinecraftClass parent, String symbolicName,
+			String realName, Field field, MinecraftClass type) {
 		this.parent = parent;
-		this.minecraftName = minecraftName;
-		this.byteName = byteName;
+		this.symbolicName = symbolicName;
+		this.realName = realName;
 		this.field = field;
 		this.type = type;
 	}
 
-	public Object getValue(MinecraftObject minecraftObject) {
-		return getValueFromObject(minecraftObject.getObject());
+	public Object getValue(MinecraftObject object) {
+		return getValueFromObject(object.getObject());
 	}
 
 	public Object getStaticValue() {
@@ -30,16 +30,16 @@ public class MinecraftProperty {
 
 	private Object getValueFromObject(Object object) {
 		Object value = get(object);
-		if (isTypeMinecraftClass()) {
+		if (isTypeSymbolicClass()) {
 			return new MinecraftObject(type, value);
 		} else {
 			return value;
 		}
 	}
 
-	private Object get(Object obj) {
+	private Object get(Object object) {
 		try {
-			return field.get(obj);
+			return field.get(object);
 		} catch (IllegalArgumentException e) {
 			Log.crash(e,
 					"Error [IllegalArgumentException] getting property value ("
@@ -54,7 +54,7 @@ public class MinecraftProperty {
 		return null;
 	}
 
-	private boolean isTypeMinecraftClass() {
+	private boolean isTypeSymbolicClass() {
 		return type != null;
 	}
 
@@ -76,7 +76,7 @@ public class MinecraftProperty {
 
 	@Override
 	public String toString() {
-		return "[Method " + minecraftName + " (" + byteName + ") of class "
-				+ parent.getMinecraftName() + "]";
+		return "[Method " + symbolicName + " (" + realName + ") of class "
+				+ parent.getSymbolicName() + "]";
 	}
 }

@@ -45,9 +45,9 @@ public class ByteClass {
 		private ByteClass product;
 		private long offset;
 
-		private Builder(ByteClassFactory factory, String byteClassName,
+		private Builder(ByteClassFactory factory, String realClassName,
 				byte[] classData) {
-			product = new ByteClass(byteClassName, classData);
+			product = new ByteClass(realClassName, classData);
 			product.primitiveTypeConversionMap = factory.primitiveTypeConversionMap;
 			product.argRegex = factory.argRegex;
 			product.objectRegex = factory.objectRegex;
@@ -287,13 +287,13 @@ public class ByteClass {
 			primitiveTypeConversionMap.put('Z', "boolean");
 		}
 
-		public ByteClass create(String byteClassName, byte[] classData) {
-			return new Builder(this, byteClassName, classData).get();
+		public ByteClass create(String realClassName, byte[] classData) {
+			return new Builder(this, realClassName, classData).get();
 		}
 	}
 
-	public static ByteClass newInstance(String byteClassName, byte[] classData) {
-		return ByteClassFactory.INSTANCE.create(byteClassName, classData);
+	public static ByteClass newInstance(String realClassName, byte[] classData) {
+		return ByteClassFactory.INSTANCE.create(realClassName, classData);
 	}
 
 	private static boolean hasFlags(int accessFlags, int flags) {
@@ -306,7 +306,7 @@ public class ByteClass {
 	private int minorVersion;
 	private int majorVersion;
 	private ClassConstant<?>[] constants;
-	private String byteClassName;
+	private String realClassName;
 	private int accessFlags;
 
 	private List<ClassConstant<Integer>> stringIndices = new ArrayList<ClassConstant<Integer>>();
@@ -326,8 +326,8 @@ public class ByteClass {
 	private Pattern argRegex;
 	private Pattern objectRegex;
 
-	private ByteClass(String byteClassName, byte[] classData) {
-		this.byteClassName = byteClassName;
+	private ByteClass(String realClassName, byte[] classData) {
+		this.realClassName = realClassName;
 		this.classData = classData;
 	}
 
@@ -371,8 +371,8 @@ public class ByteClass {
 		return classData;
 	}
 
-	public String getByteClassName() {
-		return byteClassName;
+	public String getRealClassName() {
+		return realClassName;
 	}
 
 	public List<ConstructorDeclaration> getConstructors() {
@@ -515,6 +515,6 @@ public class ByteClass {
 
 	@Override
 	public String toString() {
-		return "[ByteClass " + byteClassName + "]";
+		return "[ByteClass " + realClassName + "]";
 	}
 }

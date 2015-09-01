@@ -5,18 +5,18 @@ import amidst.byteclass.ConstructorDeclaration;
 import amidst.byteclass.ParameterDeclarationList;
 
 public class ConstructorBCP extends ByteClassPreparer {
-	private String externalName;
+	private String symbolicName;
 	private ParameterDeclarationList parameters;
 
-	public ConstructorBCP(String externalName,
+	public ConstructorBCP(String symbolicName,
 			ParameterDeclarationList parameters) {
-		this.externalName = externalName;
+		this.symbolicName = symbolicName;
 		this.parameters = parameters;
 	}
 
 	@Override
 	public void prepare(ByteClass byteClass) {
-		byteClass.addConstructor(new ConstructorDeclaration(externalName,
+		byteClass.addConstructor(new ConstructorDeclaration(symbolicName,
 				parameters));
 	}
 }

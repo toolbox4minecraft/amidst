@@ -37,6 +37,6 @@ public class MinecraftConstructor {
 	@Override
 	public String toString() {
 		return "[Constructor " + minecraftName + " of class "
-				+ parent.getMinecraftName() + "]";
+				+ parent.getSymbolicName() + "]";
 	}
 }

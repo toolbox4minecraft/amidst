@@ -3,32 +3,32 @@ package amidst.minecraft.local;
 import java.util.Map;
 
 public class MinecraftClass {
-	private String minecraftClassName;
-	private String byteClassName;
+	private String symbolicClassName;
+	private String realClassName;
 	private Class<?> clazz;
 	private Map<String, MinecraftConstructor> constructorsByMinecraftName;
 	private Map<String, MinecraftMethod> methodsByMinecraftName;
 	private Map<String, MinecraftProperty> propertiesByMinecraftName;
 
-	public MinecraftClass(String minecraftClassName, String byteClassName,
+	public MinecraftClass(String symbolicClassName, String realClassName,
 			Class<?> clazz,
 			Map<String, MinecraftConstructor> constructorsByMinecraftName,
 			Map<String, MinecraftMethod> methodsByMinecraftName,
 			Map<String, MinecraftProperty> propertiesByMinecraftName) {
-		this.minecraftClassName = minecraftClassName;
-		this.byteClassName = byteClassName;
+		this.symbolicClassName = symbolicClassName;
+		this.realClassName = realClassName;
 		this.clazz = clazz;
 		this.constructorsByMinecraftName = constructorsByMinecraftName;
 		this.methodsByMinecraftName = methodsByMinecraftName;
 		this.propertiesByMinecraftName = propertiesByMinecraftName;
 	}
 
-	public String getMinecraftName() {
-		return minecraftClassName;
+	public String getSymbolicName() {
+		return symbolicClassName;
 	}
 
-	public String getByteName() {
-		return byteClassName;
+	public String getRealName() {
+		return realClassName;
 	}
 
 	public Class<?> getClazz() {
@@ -71,6 +71,6 @@ public class MinecraftClass {
 
 	@Override
 	public String toString() {
-		return byteClassName;
+		return realClassName;
 	}
 }
