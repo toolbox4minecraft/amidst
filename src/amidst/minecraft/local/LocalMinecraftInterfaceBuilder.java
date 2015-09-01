@@ -13,9 +13,9 @@ import java.util.Map;
 
 import amidst.Options;
 import amidst.Util;
-import amidst.byteclass.ByteClass;
-import amidst.byteclass.ByteClasses;
-import amidst.byteclass.finder.ByteClassFinder;
+import amidst.clazz.real.ByteClass;
+import amidst.clazz.real.ByteClasses;
+import amidst.clazz.real.finder.ByteClassFinder;
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicClasses;
 import amidst.json.JarLibrary;

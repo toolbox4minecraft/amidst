@@ -1,28 +1,28 @@
-package amidst.byteclass.finder;
+package amidst.clazz.real.finder;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import amidst.byteclass.ParameterDeclarationList;
-import amidst.byteclass.ParameterDeclarationList.Builder;
-import amidst.byteclass.ParameterDeclarationList.ExecuteOnEnd;
-import amidst.byteclass.finder.detect.AllBCD;
-import amidst.byteclass.finder.detect.AnyBCD;
-import amidst.byteclass.finder.detect.ByteClassDetector;
-import amidst.byteclass.finder.detect.FieldFlagsBCD;
-import amidst.byteclass.finder.detect.LongBCD;
-import amidst.byteclass.finder.detect.NumberOfConstructorsBCD;
-import amidst.byteclass.finder.detect.NumberOfFieldsBCD;
-import amidst.byteclass.finder.detect.NumberOfMethodsAndConstructorsBCD;
-import amidst.byteclass.finder.detect.StringBCD;
-import amidst.byteclass.finder.detect.Utf8BCD;
-import amidst.byteclass.finder.detect.WildcardByteBCD;
-import amidst.byteclass.finder.prepare.ByteClassPreparer;
-import amidst.byteclass.finder.prepare.ConstructorBCP;
-import amidst.byteclass.finder.prepare.MethodBCP;
-import amidst.byteclass.finder.prepare.MultiBCP;
-import amidst.byteclass.finder.prepare.PropertyBCP;
+import amidst.clazz.real.ParameterDeclarationList;
+import amidst.clazz.real.ParameterDeclarationList.Builder;
+import amidst.clazz.real.ParameterDeclarationList.ExecuteOnEnd;
+import amidst.clazz.real.finder.detect.AllBCD;
+import amidst.clazz.real.finder.detect.AnyBCD;
+import amidst.clazz.real.finder.detect.ByteClassDetector;
+import amidst.clazz.real.finder.detect.FieldFlagsBCD;
+import amidst.clazz.real.finder.detect.LongBCD;
+import amidst.clazz.real.finder.detect.NumberOfConstructorsBCD;
+import amidst.clazz.real.finder.detect.NumberOfFieldsBCD;
+import amidst.clazz.real.finder.detect.NumberOfMethodsAndConstructorsBCD;
+import amidst.clazz.real.finder.detect.StringBCD;
+import amidst.clazz.real.finder.detect.Utf8BCD;
+import amidst.clazz.real.finder.detect.WildcardByteBCD;
+import amidst.clazz.real.finder.prepare.ByteClassPreparer;
+import amidst.clazz.real.finder.prepare.ConstructorBCP;
+import amidst.clazz.real.finder.prepare.MethodBCP;
+import amidst.clazz.real.finder.prepare.MultiBCP;
+import amidst.clazz.real.finder.prepare.PropertyBCP;
 
 public class BCFBuilder {
 	public class BCDBuilder {

@@ -1,4 +1,4 @@
-package amidst.byteclass;
+package amidst.clazz.real;
 
 import java.util.ArrayList;
 import java.util.Collections;

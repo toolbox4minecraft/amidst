@@ -1,6 +1,6 @@
-package amidst.byteclass.finder.detect;
+package amidst.clazz.real.finder.detect;
 
-import amidst.byteclass.ByteClass;
+import amidst.clazz.real.ByteClass;
 
 public class NumberOfMethodsAndConstructorsBCD extends ByteClassDetector {
 	private int count;

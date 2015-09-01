@@ -1,10 +1,10 @@
-package amidst.byteclass.finder;
+package amidst.clazz.real.finder;
 
 import java.util.List;
 
-import amidst.byteclass.ByteClass;
-import amidst.byteclass.finder.detect.ByteClassDetector;
-import amidst.byteclass.finder.prepare.ByteClassPreparer;
+import amidst.clazz.real.ByteClass;
+import amidst.clazz.real.finder.detect.ByteClassDetector;
+import amidst.clazz.real.finder.prepare.ByteClassPreparer;
 
 public class ByteClassFinder {
 	public static BCFBuilder builder() {

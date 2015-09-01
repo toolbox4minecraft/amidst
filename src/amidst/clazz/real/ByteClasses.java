@@ -1,4 +1,4 @@
-package amidst.byteclass;
+package amidst.clazz.real;
 
 import java.io.BufferedInputStream;
 import java.io.File;

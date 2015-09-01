@@ -1,7 +1,7 @@
-package amidst.byteclass.finder.prepare;
+package amidst.clazz.real.finder.prepare;
 
-import amidst.byteclass.ByteClass;
-import amidst.byteclass.PropertyDeclaration;
+import amidst.clazz.real.ByteClass;
+import amidst.clazz.real.PropertyDeclaration;
 
 public class PropertyBCP extends ByteClassPreparer {
 	private String symbolicName;

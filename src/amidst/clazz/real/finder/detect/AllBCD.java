@@ -1,8 +1,8 @@
-package amidst.byteclass.finder.detect;
+package amidst.clazz.real.finder.detect;
 
 import java.util.List;
 
-import amidst.byteclass.ByteClass;
+import amidst.clazz.real.ByteClass;
 
 public class AllBCD extends ByteClassDetector {
 	private List<ByteClassDetector> detectors;

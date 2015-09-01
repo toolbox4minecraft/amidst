@@ -3,10 +3,10 @@ package amidst.clazz.symbolic;
 import java.util.HashMap;
 import java.util.Map;
 
-import amidst.byteclass.ByteClass;
-import amidst.byteclass.ConstructorDeclaration;
-import amidst.byteclass.MethodDeclaration;
-import amidst.byteclass.PropertyDeclaration;
+import amidst.clazz.real.ByteClass;
+import amidst.clazz.real.ConstructorDeclaration;
+import amidst.clazz.real.MethodDeclaration;
+import amidst.clazz.real.PropertyDeclaration;
 
 public class SymbolicClassBuilder {
 	private Map<String, SymbolicConstructor> constructorsBySymbolicName = new HashMap<String, SymbolicConstructor>();

@@ -2,8 +2,8 @@ package amidst.minecraft.local;
 
 import java.util.List;
 
-import amidst.byteclass.ByteClass.AccessFlags;
-import amidst.byteclass.finder.ByteClassFinder;
+import amidst.clazz.real.ByteClass.AccessFlags;
+import amidst.clazz.real.finder.ByteClassFinder;
 
 public enum StatelessResources {
 	INSTANCE;

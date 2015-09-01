@@ -1,23 +1,17 @@
-package amidst.byteclass;
+package amidst.clazz.real;
 
-public class MethodDeclaration {
+public class ConstructorDeclaration {
 	private String symbolicName;
-	private String realName;
 	private ParameterDeclarationList parameters;
 
-	public MethodDeclaration(String symbolicName, String realName,
+	public ConstructorDeclaration(String symbolicName,
 			ParameterDeclarationList parameters) {
 		this.symbolicName = symbolicName;
-		this.realName = realName;
 		this.parameters = parameters;
 	}
 
 	public String getSymbolicName() {
 		return symbolicName;
-	}
-
-	public String getRealName() {
-		return realName;
 	}
 
 	public ParameterDeclarationList getParameters() {

@@ -1,7 +1,7 @@
-package amidst.byteclass.finder.detect;
+package amidst.clazz.real.finder.detect;
 
-import amidst.byteclass.ByteClass;
-import amidst.byteclass.ByteClass.Field;
+import amidst.clazz.real.ByteClass;
+import amidst.clazz.real.ByteClass.Field;
 
 public class FieldFlagsBCD extends ByteClassDetector {
 	private int flags;

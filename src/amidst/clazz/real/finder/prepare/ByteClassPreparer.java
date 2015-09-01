@@ -1,6 +1,6 @@
-package amidst.byteclass.finder.prepare;
+package amidst.clazz.real.finder.prepare;
 
-import amidst.byteclass.ByteClass;
+import amidst.clazz.real.ByteClass;
 
 public abstract class ByteClassPreparer {
 	public abstract void prepare(ByteClass byteClass);
