@@ -1,20 +1,18 @@
 package amidst.minecraft.local;
 
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
+import java.util.Map;
 
 public class MinecraftClass {
 	private String minecraftClassName;
 	private String byteClassName;
-	private HashMap<String, MinecraftMethod> methods;
-	private Class<?> clazz;
-	private HashMap<String, MinecraftProperty> propertiesByName;
-	private HashMap<String, MinecraftProperty> propertiesByObfName;
-	private HashMap<String, MinecraftMethod> methodsByName;
-	private HashMap<String, MinecraftMethod> methodsByObfName;
-	private HashMap<String, MinecraftConstructor> constructorByName;
-	private Constructor<?>[] constructors;
 	private Minecraft minecraft;
+	private Class<?> clazz;
+	private Map<String, MinecraftProperty> propertiesByMinecraftName = new HashMap<String, MinecraftProperty>();
+	private Map<String, MinecraftProperty> propertiesByByteName = new HashMap<String, MinecraftProperty>();
+	private Map<String, MinecraftMethod> methodsByMinecraftName = new HashMap<String, MinecraftMethod>();
+	private Map<String, MinecraftMethod> methodsByByteName = new HashMap<String, MinecraftMethod>();
+	private Map<String, MinecraftConstructor> constructorsByMinecraftName = new HashMap<String, MinecraftConstructor>();
 
 	public MinecraftClass(String minecraftClassName, String byteClassName,
 			Minecraft minecraft) {
@@ -22,12 +20,6 @@ public class MinecraftClass {
 		this.byteClassName = byteClassName;
 		this.minecraft = minecraft;
 		this.clazz = minecraft.loadClass(byteClassName);
-		methods = new HashMap<String, MinecraftMethod>();
-		propertiesByName = new HashMap<String, MinecraftProperty>();
-		propertiesByObfName = new HashMap<String, MinecraftProperty>();
-		methodsByName = new HashMap<String, MinecraftMethod>();
-		methodsByObfName = new HashMap<String, MinecraftMethod>();
-		constructorByName = new HashMap<String, MinecraftConstructor>();
 	}
 
 	public String getMinecraftClassName() {
@@ -44,32 +36,31 @@ public class MinecraftClass {
 
 	public void addProperty(MinecraftProperty property) {
 		property.load(minecraft, this);
-		propertiesByName.put(property.getName(), property);
-		propertiesByObfName.put(property.getInternalName(), property);
+		propertiesByMinecraftName.put(property.getName(), property);
+		propertiesByByteName.put(property.getInternalName(), property);
 	}
 
-	public Object getValue(String name) {
-		MinecraftProperty prop = propertiesByName.get(name);
-		return prop.getStaticValue();
+	public Object getStaticPropertyValue(String name) {
+		return propertiesByMinecraftName.get(name).getStaticValue();
 	}
 
-	public Object callFunction(String name, Object... args) {
-		return methodsByName.get(name).callStatic(args);
+	public Object callMethod(String name, Object... args) {
+		return methodsByMinecraftName.get(name).callStatic(args);
 	}
 
-	public Object callFunction(String name, MinecraftObject obj, Object... args) {
-		return methodsByName.get(name).call(obj, args);
+	public Object callMethod(String name, MinecraftObject obj, Object... args) {
+		return methodsByMinecraftName.get(name).call(obj, args);
 	}
 
 	public void addMethod(MinecraftMethod method) {
 		method.load(minecraft, this);
-		methodsByName.put(method.getName(), method);
-		methodsByObfName.put(method.getInternalName(), method);
+		methodsByMinecraftName.put(method.getName(), method);
+		methodsByByteName.put(method.getInternalName(), method);
 	}
 
 	public void addConstructor(MinecraftConstructor constructor) {
 		constructor.load(minecraft, this);
-		constructorByName.put(constructor.getName(), constructor);
+		constructorsByMinecraftName.put(constructor.getName(), constructor);
 	}
 
 	public String toString() {
@@ -77,18 +68,20 @@ public class MinecraftClass {
 	}
 
 	public MinecraftObject newInstance(String constructor, Object... param) {
-		return constructorByName.get(constructor).getNew(param);
+		return constructorsByMinecraftName.get(constructor).getNew(param);
 	}
 
 	public MinecraftConstructor getConstructor(String name) {
-		return constructorByName.get(name);
+		return constructorsByMinecraftName.get(name);
 	}
 
-	public Object getValue(String propertyName, MinecraftObject minecraftObject) {
-		return propertiesByName.get(propertyName).getValue(minecraftObject);
+	public Object getPropertyValue(String propertyName,
+			MinecraftObject minecraftObject) {
+		return propertiesByMinecraftName.get(propertyName).getValue(
+				minecraftObject);
 	}
 
 	public MinecraftMethod getMethod(String name) {
-		return methodsByName.get(name);
+		return methodsByMinecraftName.get(name);
 	}
 }

@@ -1,29 +1,29 @@
 package amidst.minecraft.local;
 
 public class MinecraftObject {
-	private MinecraftClass type;
-	private Object value;
+	private MinecraftClass minecraftClass;
+	private Object object;
 
-	public MinecraftObject(MinecraftClass type, Object value) {
-		this.type = type;
-		this.value = value;
+	public MinecraftObject(MinecraftClass minecraftClass, Object object) {
+		this.minecraftClass = minecraftClass;
+		this.object = object;
 	}
 
-	public MinecraftObject(Minecraft mc, Object value) {
-		this.type = mc.getMinecraftClassByByteClassName(value.getClass()
-				.getCanonicalName());
-		this.value = value;
+	public MinecraftObject(Minecraft minecraft, Object object) {
+		this.minecraftClass = minecraft.getMinecraftClassByByteClassName(object
+				.getClass().getCanonicalName());
+		this.object = object;
 	}
 
-	public Object get() {
-		return value;
+	public Object getObject() {
+		return object;
 	}
 
-	public Object callFunction(String funcName, Object... args) {
-		return type.callFunction(funcName, this, args);
+	public Object callMethod(String functionName, Object... args) {
+		return minecraftClass.callMethod(functionName, this, args);
 	}
 
-	public Object getValue(String propertyName) {
-		return type.getValue(propertyName, this);
+	public Object getPropertyValue(String propertyName) {
+		return minecraftClass.getPropertyValue(propertyName, this);
 	}
 }

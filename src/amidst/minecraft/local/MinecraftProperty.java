@@ -74,10 +74,11 @@ public class MinecraftProperty {
 	}
 
 	public Object getValue(MinecraftObject mcObject) {
-		Object object = mcObject.get();
+		Object object = mcObject.getObject();
 		Object value = getValue(object);
-		if (isMinecraftClass)
+		if (isMinecraftClass) {
 			return new MinecraftObject(type, value);
+		}
 		return value;
 	}
 

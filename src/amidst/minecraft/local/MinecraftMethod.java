@@ -109,7 +109,7 @@ public class MinecraftMethod {
 	}
 
 	public Object call(MinecraftObject obj, Object... param) {
-		Object value = call(obj.get(), param);
+		Object value = call(obj.getObject(), param);
 		if (isMinecraftClass)
 			return new MinecraftObject(returnType, value);
 		return value;
