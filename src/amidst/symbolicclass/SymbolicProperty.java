@@ -4,15 +4,15 @@ import java.lang.reflect.Field;
 
 import amidst.logging.Log;
 
-public class MinecraftProperty {
-	private MinecraftClass parent;
+public class SymbolicProperty {
+	private SymbolicClass parent;
 	private String symbolicName;
 	private String realName;
 	private Field field;
-	private MinecraftClass type;
+	private SymbolicClass type;
 
-	public MinecraftProperty(MinecraftClass parent, String symbolicName,
-			String realName, Field field, MinecraftClass type) {
+	public SymbolicProperty(SymbolicClass parent, String symbolicName,
+			String realName, Field field, SymbolicClass type) {
 		this.parent = parent;
 		this.symbolicName = symbolicName;
 		this.realName = realName;
@@ -20,7 +20,7 @@ public class MinecraftProperty {
 		this.type = type;
 	}
 
-	public Object getValue(MinecraftObject object) {
+	public Object getValue(SymbolicObject object) {
 		return getValueFromObject(object.getObject());
 	}
 
@@ -31,7 +31,7 @@ public class MinecraftProperty {
 	private Object getValueFromObject(Object object) {
 		Object value = get(object);
 		if (isTypeSymbolicClass()) {
-			return new MinecraftObject(type, value);
+			return new SymbolicObject(type, value);
 		} else {
 			return value;
 		}

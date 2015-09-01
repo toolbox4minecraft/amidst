@@ -20,8 +20,8 @@ import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
 import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;
-import amidst.symbolicclass.MinecraftClass;
-import amidst.symbolicclass.MinecraftClasses;
+import amidst.symbolicclass.SymbolicClass;
+import amidst.symbolicclass.SymbolicClasses;
 import amidst.utilties.FileSystemUtils;
 import amidst.utilties.JavaUtils;
 import amidst.version.VersionInfo;
@@ -33,7 +33,7 @@ public class LocalMinecraftInterfaceBuilder {
 	private VersionInfo version;
 
 	private Map<String, ByteClass> realClassesBySymbolicClassName = new HashMap<String, ByteClass>();
-	private Map<String, MinecraftClass> symbolicClassesBySymbolicClassName;
+	private Map<String, SymbolicClass> symbolicClassesBySymbolicClassName;
 
 	public LocalMinecraftInterfaceBuilder(File jarFile) {
 		try {
@@ -60,7 +60,7 @@ public class LocalMinecraftInterfaceBuilder {
 			Log.i("Identified Minecraft [" + version.name()
 					+ "] with versionID of " + versionID);
 			Log.i("Loading classes...");
-			symbolicClassesBySymbolicClassName = MinecraftClasses
+			symbolicClassesBySymbolicClassName = SymbolicClasses
 					.createClasses(classLoader, realClassesBySymbolicClassName);
 			Log.i("Classes loaded.");
 			Log.i("Minecraft load complete.");

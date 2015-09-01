@@ -14,19 +14,19 @@ import amidst.byteclass.PropertyDeclaration;
 import amidst.logging.Log;
 import amidst.minecraft.local.StatelessResources;
 
-public class MinecraftClasses {
-	private MinecraftClasses() {
+public class SymbolicClasses {
+	private SymbolicClasses() {
 	}
 
-	public static Map<String, MinecraftClass> createClasses(
+	public static Map<String, SymbolicClass> createClasses(
 			ClassLoader classLoader,
 			Map<String, ByteClass> realClassesBySymbolicClassName) {
-		return new MinecraftClassGraphBuilder(classLoader,
+		return new SymbolicClassGraphBuilder(classLoader,
 				realClassesBySymbolicClassName).create();
 	}
 
-	public static MinecraftConstructor createConstructor(
-			ClassLoader classLoader, MinecraftClass parent,
+	public static SymbolicConstructor createConstructor(
+			ClassLoader classLoader, SymbolicClass parent,
 			Map<String, ByteClass> realClassesBySymbolicClassName,
 			ConstructorDeclaration declaration) {
 		String symbolicName = declaration.getSymbolicName();
@@ -36,7 +36,7 @@ public class MinecraftClasses {
 							.getEntries());
 			Constructor<?> constructor = getConstructor(parent.getClazz(),
 					parameterClasses);
-			return new MinecraftConstructor(parent, symbolicName, constructor);
+			return new SymbolicConstructor(parent, symbolicName, constructor);
 		} catch (SecurityException e) {
 			throwRuntimeException(parent, symbolicName, e, "constructor");
 		} catch (NoSuchMethodException e) {
@@ -47,9 +47,9 @@ public class MinecraftClasses {
 		return null;
 	}
 
-	public static MinecraftMethod createMethod(ClassLoader classLoader,
-			Map<String, MinecraftClass> symbolicClassesByRealClassName,
-			MinecraftClass parent,
+	public static SymbolicMethod createMethod(ClassLoader classLoader,
+			Map<String, SymbolicClass> symbolicClassesByRealClassName,
+			SymbolicClass parent,
 			Map<String, ByteClass> realClassesBySymbolicClassName,
 			MethodDeclaration declaration) {
 		String symbolicName = declaration.getSymbolicName();
@@ -60,9 +60,9 @@ public class MinecraftClasses {
 							.getEntries());
 			Method method = getMethod(parent.getClazz(), realName,
 					parameterClasses);
-			MinecraftClass returnType = getType(symbolicClassesByRealClassName,
+			SymbolicClass returnType = getType(symbolicClassesByRealClassName,
 					method.getReturnType());
-			return new MinecraftMethod(symbolicName, realName, method,
+			return new SymbolicMethod(symbolicName, realName, method,
 					returnType);
 		} catch (SecurityException e) {
 			warn(parent, symbolicName, e, "method");
@@ -74,16 +74,16 @@ public class MinecraftClasses {
 		return null;
 	}
 
-	public static MinecraftProperty createProperty(
-			Map<String, MinecraftClass> symbolicClassesByRealClassName,
-			MinecraftClass parent, PropertyDeclaration declaration) {
+	public static SymbolicProperty createProperty(
+			Map<String, SymbolicClass> symbolicClassesByRealClassName,
+			SymbolicClass parent, PropertyDeclaration declaration) {
 		String symbolicName = declaration.getSymbolicName();
 		String realName = declaration.getRealName();
 		try {
 			Field field = getField(parent.getClazz(), realName);
-			MinecraftClass type = getType(symbolicClassesByRealClassName,
+			SymbolicClass type = getType(symbolicClassesByRealClassName,
 					field.getType());
-			return new MinecraftProperty(parent, symbolicName, realName, field,
+			return new SymbolicProperty(parent, symbolicName, realName, field,
 					type);
 		} catch (SecurityException e) {
 			throwRuntimeException(parent, symbolicName, e, "property");
@@ -147,8 +147,8 @@ public class MinecraftClasses {
 		}
 	}
 
-	private static MinecraftClass getType(
-			Map<String, MinecraftClass> symbolicClassesByRealClassName,
+	private static SymbolicClass getType(
+			Map<String, SymbolicClass> symbolicClassesByRealClassName,
 			Class<?> type) {
 		String result = type.getName();
 		if (result.contains(".")) {
@@ -158,19 +158,19 @@ public class MinecraftClasses {
 		return symbolicClassesByRealClassName.get(result);
 	}
 
-	private static void throwRuntimeException(MinecraftClass parent,
+	private static void throwRuntimeException(SymbolicClass parent,
 			String symbolicName, Exception e, String featureType) {
 		throw new RuntimeException(errorMessage(parent, symbolicName, e,
 				featureType), e);
 	}
 
-	private static void warn(MinecraftClass parent, String symbolicName,
+	private static void warn(SymbolicClass parent, String symbolicName,
 			Exception e, String featureType) {
 		Log.w(errorMessage(parent, symbolicName, e, featureType));
 		e.printStackTrace();
 	}
 
-	private static String errorMessage(MinecraftClass parent,
+	private static String errorMessage(SymbolicClass parent,
 			String symbolicName, Exception e, String featureType) {
 		return e.getClass().getSimpleName() + " on ("
 				+ parent.getSymbolicName() + " / " + parent.getRealName()

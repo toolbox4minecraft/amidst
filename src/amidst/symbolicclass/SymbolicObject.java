@@ -1,10 +1,10 @@
 package amidst.symbolicclass;
 
-public class MinecraftObject {
-	private MinecraftClass minecraftClass;
+public class SymbolicObject {
+	private SymbolicClass minecraftClass;
 	private Object object;
 
-	public MinecraftObject(MinecraftClass minecraftClass, Object object) {
+	public SymbolicObject(SymbolicClass minecraftClass, Object object) {
 		this.minecraftClass = minecraftClass;
 		this.object = object;
 	}

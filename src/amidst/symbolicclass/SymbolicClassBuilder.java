@@ -8,21 +8,21 @@ import amidst.byteclass.ConstructorDeclaration;
 import amidst.byteclass.MethodDeclaration;
 import amidst.byteclass.PropertyDeclaration;
 
-public class MinecraftClassBuilder {
-	private Map<String, MinecraftConstructor> constructorsBySymbolicName = new HashMap<String, MinecraftConstructor>();
-	private Map<String, MinecraftMethod> methodsBySymbolicName = new HashMap<String, MinecraftMethod>();
-	private Map<String, MinecraftProperty> propertiesBySymbolicName = new HashMap<String, MinecraftProperty>();
+public class SymbolicClassBuilder {
+	private Map<String, SymbolicConstructor> constructorsBySymbolicName = new HashMap<String, SymbolicConstructor>();
+	private Map<String, SymbolicMethod> methodsBySymbolicName = new HashMap<String, SymbolicMethod>();
+	private Map<String, SymbolicProperty> propertiesBySymbolicName = new HashMap<String, SymbolicProperty>();
 
 	private ClassLoader classLoader;
-	private Map<String, MinecraftClass> symbolicClassesByRealClassName;
-	private MinecraftClass product;
+	private Map<String, SymbolicClass> symbolicClassesByRealClassName;
+	private SymbolicClass product;
 
-	public MinecraftClassBuilder(ClassLoader classLoader,
-			Map<String, MinecraftClass> symbolicClassesByRealClassName,
+	public SymbolicClassBuilder(ClassLoader classLoader,
+			Map<String, SymbolicClass> symbolicClassesByRealClassName,
 			String symbolicClassName, String realClassName) {
 		this.classLoader = classLoader;
 		this.symbolicClassesByRealClassName = symbolicClassesByRealClassName;
-		this.product = new MinecraftClass(symbolicClassName, realClassName,
+		this.product = new SymbolicClass(symbolicClassName, realClassName,
 				loadClass(realClassName), constructorsBySymbolicName,
 				methodsBySymbolicName, propertiesBySymbolicName);
 	}
@@ -39,7 +39,7 @@ public class MinecraftClassBuilder {
 	public void addConstructor(
 			Map<String, ByteClass> realClassesBySymbolicClassName,
 			ConstructorDeclaration declaration) {
-		MinecraftConstructor constructor = MinecraftClasses.createConstructor(
+		SymbolicConstructor constructor = SymbolicClasses.createConstructor(
 				classLoader, product, realClassesBySymbolicClassName,
 				declaration);
 		constructorsBySymbolicName.put(declaration.getSymbolicName(),
@@ -49,19 +49,19 @@ public class MinecraftClassBuilder {
 	public void addMethod(
 			Map<String, ByteClass> realClassesBySymbolicClassName,
 			MethodDeclaration declaration) {
-		MinecraftMethod method = MinecraftClasses.createMethod(classLoader,
+		SymbolicMethod method = SymbolicClasses.createMethod(classLoader,
 				symbolicClassesByRealClassName, product,
 				realClassesBySymbolicClassName, declaration);
 		methodsBySymbolicName.put(declaration.getSymbolicName(), method);
 	}
 
 	public void addProperty(PropertyDeclaration declaration) {
-		MinecraftProperty property = MinecraftClasses.createProperty(
+		SymbolicProperty property = SymbolicClasses.createProperty(
 				symbolicClassesByRealClassName, product, declaration);
 		propertiesBySymbolicName.put(declaration.getSymbolicName(), property);
 	}
 
-	public MinecraftClass create() {
+	public SymbolicClass create() {
 		return product;
 	}
 }

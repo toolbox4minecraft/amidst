@@ -6,8 +6,8 @@ import java.util.Map;
 import MoF.SaveLoader.Type;
 import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;
-import amidst.symbolicclass.MinecraftClass;
-import amidst.symbolicclass.MinecraftObject;
+import amidst.symbolicclass.SymbolicClass;
+import amidst.symbolicclass.SymbolicObject;
 import amidst.version.VersionInfo;
 
 public class LocalMinecraftInterface implements IMinecraftInterface {
@@ -26,22 +26,22 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 	 * resolution when needed, this is the biome GenLayer before it is
 	 * interpolated.
 	 */
-	private MinecraftObject approximationBiomeGenerator;
+	private SymbolicObject approximationBiomeGenerator;
 
 	/**
 	 * A GenLayer instance, the biome layer. (1:1 scale) Minecraft calculates
 	 * biomes at quarter-resolution, then noisily interpolates the biome-map up
 	 * to 1:1 resolution when needed, this is the interpolated biome GenLayer.
 	 */
-	private MinecraftObject exactBiomeGenerator;
+	private SymbolicObject exactBiomeGenerator;
 
-	private MinecraftClass intCacheClass;
-	private MinecraftClass blockInitClass;
-	private MinecraftClass genLayerClass;
-	private MinecraftClass worldTypeClass;
+	private SymbolicClass intCacheClass;
+	private SymbolicClass blockInitClass;
+	private SymbolicClass genLayerClass;
+	private SymbolicClass worldTypeClass;
 	private VersionInfo version;
 
-	LocalMinecraftInterface(Map<String, MinecraftClass> minecraftClassMap,
+	LocalMinecraftInterface(Map<String, SymbolicClass> minecraftClassMap,
 			VersionInfo version) {
 		this.intCacheClass = minecraftClassMap.get("IntCache");
 		this.blockInitClass = minecraftClassMap.get("BlockInit");
@@ -58,7 +58,7 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 				"getInts", x, y, width, height);
 	}
 
-	private MinecraftObject getBiomeGenerator(boolean useQuarterResolutionMap) {
+	private SymbolicObject getBiomeGenerator(boolean useQuarterResolutionMap) {
 		if (useQuarterResolutionMap) {
 			return approximationBiomeGenerator;
 		} else {
@@ -73,9 +73,9 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 		Log.debug(generatorOptions);
 		initializeBlock();
 		Object[] genLayers = getGenLayers(seed, typeName, generatorOptions);
-		approximationBiomeGenerator = new MinecraftObject(genLayerClass,
+		approximationBiomeGenerator = new SymbolicObject(genLayerClass,
 				genLayers[0]);
-		exactBiomeGenerator = new MinecraftObject(genLayerClass, genLayers[1]);
+		exactBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[1]);
 	}
 
 	private void initializeBlock() {
@@ -100,7 +100,7 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 
 	private Object getWorldType(String typeName) {
 		String type = Type.fromMixedCase(typeName).getValue();
-		MinecraftObject object = (MinecraftObject) worldTypeClass
+		SymbolicObject object = (SymbolicObject) worldTypeClass
 				.getStaticPropertyValue(type);
 		return object.getObject();
 	}

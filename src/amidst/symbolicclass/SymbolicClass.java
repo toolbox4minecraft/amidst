@@ -2,19 +2,19 @@ package amidst.symbolicclass;
 
 import java.util.Map;
 
-public class MinecraftClass {
+public class SymbolicClass {
 	private String symbolicClassName;
 	private String realClassName;
 	private Class<?> clazz;
-	private Map<String, MinecraftConstructor> constructorsByMinecraftName;
-	private Map<String, MinecraftMethod> methodsByMinecraftName;
-	private Map<String, MinecraftProperty> propertiesByMinecraftName;
+	private Map<String, SymbolicConstructor> constructorsByMinecraftName;
+	private Map<String, SymbolicMethod> methodsByMinecraftName;
+	private Map<String, SymbolicProperty> propertiesByMinecraftName;
 
-	public MinecraftClass(String symbolicClassName, String realClassName,
+	public SymbolicClass(String symbolicClassName, String realClassName,
 			Class<?> clazz,
-			Map<String, MinecraftConstructor> constructorsByMinecraftName,
-			Map<String, MinecraftMethod> methodsByMinecraftName,
-			Map<String, MinecraftProperty> propertiesByMinecraftName) {
+			Map<String, SymbolicConstructor> constructorsByMinecraftName,
+			Map<String, SymbolicMethod> methodsByMinecraftName,
+			Map<String, SymbolicProperty> propertiesByMinecraftName) {
 		this.symbolicClassName = symbolicClassName;
 		this.realClassName = realClassName;
 		this.clazz = clazz;
@@ -47,11 +47,11 @@ public class MinecraftClass {
 		return propertiesByMinecraftName.get(minecraftName) != null;
 	}
 
-	public MinecraftObject callConstructor(String constructor, Object... param) {
+	public SymbolicObject callConstructor(String constructor, Object... param) {
 		return constructorsByMinecraftName.get(constructor).call(param);
 	}
 
-	public Object callMethod(String name, MinecraftObject obj, Object... args) {
+	public Object callMethod(String name, SymbolicObject obj, Object... args) {
 		return methodsByMinecraftName.get(name).call(obj, args);
 	}
 
@@ -60,7 +60,7 @@ public class MinecraftClass {
 	}
 
 	public Object getPropertyValue(String propertyName,
-			MinecraftObject minecraftObject) {
+			SymbolicObject minecraftObject) {
 		return propertiesByMinecraftName.get(propertyName).getValue(
 				minecraftObject);
 	}

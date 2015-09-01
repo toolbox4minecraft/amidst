@@ -3,20 +3,20 @@ package amidst.symbolicclass;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-public class MinecraftConstructor {
-	private MinecraftClass parent;
+public class SymbolicConstructor {
+	private SymbolicClass parent;
 	private String minecraftName;
 	private Constructor<?> constructor;
 
-	public MinecraftConstructor(MinecraftClass parent, String minecraftName,
+	public SymbolicConstructor(SymbolicClass parent, String minecraftName,
 			Constructor<?> constructor) {
 		this.parent = parent;
 		this.minecraftName = minecraftName;
 		this.constructor = constructor;
 	}
 
-	public MinecraftObject call(Object... parameters) {
-		return new MinecraftObject(parent, newInstance(parameters));
+	public SymbolicObject call(Object... parameters) {
+		return new SymbolicObject(parent, newInstance(parameters));
 	}
 
 	private Object newInstance(Object... parameters) {

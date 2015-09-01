@@ -3,21 +3,21 @@ package amidst.symbolicclass;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class MinecraftMethod {
+public class SymbolicMethod {
 	private String symbolicName;
 	private String realName;
 	private Method method;
-	private MinecraftClass returnType;
+	private SymbolicClass returnType;
 
-	public MinecraftMethod(String symbolicName, String realName, Method method,
-			MinecraftClass returnType) {
+	public SymbolicMethod(String symbolicName, String realName, Method method,
+			SymbolicClass returnType) {
 		this.symbolicName = symbolicName;
 		this.realName = realName;
 		this.method = method;
 		this.returnType = returnType;
 	}
 
-	public Object call(MinecraftObject minecraftObject, Object... parameters) {
+	public Object call(SymbolicObject minecraftObject, Object... parameters) {
 		return callFromObject(minecraftObject.getObject(), parameters);
 	}
 
@@ -28,7 +28,7 @@ public class MinecraftMethod {
 	private Object callFromObject(Object object, Object... parameters) {
 		Object value = invoke(object, parameters);
 		if (isReturnTypeMinecraftClass()) {
-			return new MinecraftObject(returnType, value);
+			return new SymbolicObject(returnType, value);
 		}
 		return value;
 	}
