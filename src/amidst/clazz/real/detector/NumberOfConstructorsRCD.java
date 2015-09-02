@@ -1,4 +1,4 @@
-package amidst.clazz.real.finder.detect;
+package amidst.clazz.real.detector;
 
 import amidst.clazz.real.RealClass;
 

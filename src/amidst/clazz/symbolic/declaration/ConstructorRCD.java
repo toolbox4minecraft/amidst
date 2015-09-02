@@ -1,6 +1,5 @@
-package amidst.clazz.real.finder.prepare;
+package amidst.clazz.symbolic.declaration;
 
-import amidst.clazz.ConstructorDeclaration;
 import amidst.clazz.real.RealClass;
 
 public class ConstructorRCD extends RealClassPreparer {

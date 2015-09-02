@@ -1,12 +1,12 @@
-package amidst.clazz.real.finder;
+package amidst.clazz.finder;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import amidst.clazz.real.RealClass;
-import amidst.clazz.real.finder.detect.RealClassDetector;
-import amidst.clazz.real.finder.prepare.RealClassPreparer;
+import amidst.clazz.real.detector.RealClassDetector;
+import amidst.clazz.symbolic.declaration.RealClassPreparer;
 import amidst.logging.Log;
 
 public class RealClassFinder {

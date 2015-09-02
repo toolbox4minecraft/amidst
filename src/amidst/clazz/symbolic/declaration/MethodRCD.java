@@ -1,6 +1,5 @@
-package amidst.clazz.real.finder.prepare;
+package amidst.clazz.symbolic.declaration;
 
-import amidst.clazz.MethodDeclaration;
 import amidst.clazz.real.RealClass;
 
 public class MethodRCD extends RealClassPreparer {

@@ -5,9 +5,9 @@ import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Map;
 
+import amidst.clazz.finder.RealClassFinder;
 import amidst.clazz.real.RealClass;
 import amidst.clazz.real.RealClasses;
-import amidst.clazz.real.finder.RealClassFinder;
 import amidst.logging.Log;
 
 public class SymbolicClasses {

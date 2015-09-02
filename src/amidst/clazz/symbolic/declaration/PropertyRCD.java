@@ -1,6 +1,5 @@
-package amidst.clazz.real.finder.prepare;
+package amidst.clazz.symbolic.declaration;
 
-import amidst.clazz.PropertyDeclaration;
 import amidst.clazz.real.RealClass;
 
 public class PropertyRCD extends RealClassPreparer {

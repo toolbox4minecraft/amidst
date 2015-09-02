@@ -1,4 +1,4 @@
-package amidst.clazz;
+package amidst.clazz.symbolic.declaration;
 
 import java.util.ArrayList;
 import java.util.Collections;

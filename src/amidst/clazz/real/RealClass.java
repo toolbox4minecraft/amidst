@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import amidst.clazz.ConstructorDeclaration;
-import amidst.clazz.MethodDeclaration;
-import amidst.clazz.PropertyDeclaration;
+import amidst.clazz.symbolic.declaration.ConstructorDeclaration;
+import amidst.clazz.symbolic.declaration.MethodDeclaration;
+import amidst.clazz.symbolic.declaration.PropertyDeclaration;
 
 public class RealClass {
 	/*-

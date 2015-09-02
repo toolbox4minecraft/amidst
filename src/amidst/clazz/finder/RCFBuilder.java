@@ -1,31 +1,31 @@
-package amidst.clazz.real.finder;
+package amidst.clazz.finder;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import amidst.clazz.ConstructorDeclaration;
-import amidst.clazz.MethodDeclaration;
-import amidst.clazz.ParameterDeclarationList;
-import amidst.clazz.ParameterDeclarationList.Builder;
-import amidst.clazz.ParameterDeclarationList.ExecuteOnEnd;
-import amidst.clazz.PropertyDeclaration;
-import amidst.clazz.real.finder.detect.AllRCD;
-import amidst.clazz.real.finder.detect.AnyRCD;
-import amidst.clazz.real.finder.detect.FieldFlagsRCD;
-import amidst.clazz.real.finder.detect.LongRCD;
-import amidst.clazz.real.finder.detect.NumberOfConstructorsRCD;
-import amidst.clazz.real.finder.detect.NumberOfFieldsRCD;
-import amidst.clazz.real.finder.detect.NumberOfMethodsAndConstructorsRCD;
-import amidst.clazz.real.finder.detect.RealClassDetector;
-import amidst.clazz.real.finder.detect.StringRCD;
-import amidst.clazz.real.finder.detect.Utf8RCD;
-import amidst.clazz.real.finder.detect.WildcardByteRCD;
-import amidst.clazz.real.finder.prepare.ConstructorRCD;
-import amidst.clazz.real.finder.prepare.MethodRCD;
-import amidst.clazz.real.finder.prepare.MultiRCD;
-import amidst.clazz.real.finder.prepare.PropertyRCD;
-import amidst.clazz.real.finder.prepare.RealClassPreparer;
+import amidst.clazz.real.detector.AllRCD;
+import amidst.clazz.real.detector.AnyRCD;
+import amidst.clazz.real.detector.FieldFlagsRCD;
+import amidst.clazz.real.detector.LongRCD;
+import amidst.clazz.real.detector.NumberOfConstructorsRCD;
+import amidst.clazz.real.detector.NumberOfFieldsRCD;
+import amidst.clazz.real.detector.NumberOfMethodsAndConstructorsRCD;
+import amidst.clazz.real.detector.RealClassDetector;
+import amidst.clazz.real.detector.StringRCD;
+import amidst.clazz.real.detector.Utf8RCD;
+import amidst.clazz.real.detector.WildcardByteRCD;
+import amidst.clazz.symbolic.declaration.ConstructorDeclaration;
+import amidst.clazz.symbolic.declaration.ConstructorRCD;
+import amidst.clazz.symbolic.declaration.MethodDeclaration;
+import amidst.clazz.symbolic.declaration.MethodRCD;
+import amidst.clazz.symbolic.declaration.MultiRCD;
+import amidst.clazz.symbolic.declaration.ParameterDeclarationList;
+import amidst.clazz.symbolic.declaration.PropertyDeclaration;
+import amidst.clazz.symbolic.declaration.PropertyRCD;
+import amidst.clazz.symbolic.declaration.RealClassPreparer;
+import amidst.clazz.symbolic.declaration.ParameterDeclarationList.Builder;
+import amidst.clazz.symbolic.declaration.ParameterDeclarationList.ExecuteOnEnd;
 
 public class RCFBuilder {
 	public class BCDBuilder {

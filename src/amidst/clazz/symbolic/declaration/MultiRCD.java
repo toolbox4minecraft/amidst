@@ -1,4 +1,4 @@
-package amidst.clazz.real.finder.prepare;
+package amidst.clazz.symbolic.declaration;
 
 import java.util.List;
 

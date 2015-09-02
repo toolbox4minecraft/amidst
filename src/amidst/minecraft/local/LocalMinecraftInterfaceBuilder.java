@@ -12,8 +12,8 @@ import java.util.Map;
 
 import amidst.Options;
 import amidst.Util;
+import amidst.clazz.finder.RealClassFinder;
 import amidst.clazz.real.RealClass.AccessFlags;
-import amidst.clazz.real.finder.RealClassFinder;
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicClasses;
 import amidst.json.JarLibrary;
