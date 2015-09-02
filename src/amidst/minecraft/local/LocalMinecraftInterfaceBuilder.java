@@ -12,9 +12,7 @@ import java.util.Map;
 
 import amidst.Options;
 import amidst.Util;
-import amidst.clazz.real.RealClass;
 import amidst.clazz.real.RealClass.AccessFlags;
-import amidst.clazz.real.RealClasses;
 import amidst.clazz.real.finder.RealClassFinder;
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicClasses;
@@ -106,24 +104,11 @@ public class LocalMinecraftInterfaceBuilder {
 
 	public LocalMinecraftInterfaceBuilder(File jarFile) {
 		try {
-			Log.i("Reading minecraft.jar...");
-			List<RealClass> realClasses = RealClasses.fromJarFile(jarFile);
-			Log.i("Jar load complete.");
-			Log.i("Searching for classes...");
-			Map<String, RealClass> realClassesBySymbolicClassName = RealClassFinder
-					.findAllClasses(realClasses,
-							StatelessResources.INSTANCE.realClassFinders);
-			Log.i("Class search complete.");
 			URLClassLoader classLoader = getClassLoader(jarFile);
-			Log.i("Generating version ID...");
-			version = VersionInfo
-					.from(generateVersionID(getMainClassFields(loadMainClass(classLoader))));
-			Log.i("Identified Minecraft [" + version.name()
-					+ "] with versionID of " + version.versionID);
-			Log.i("Loading classes...");
-			symbolicClassesBySymbolicClassName = SymbolicClasses.createClasses(
-					classLoader, realClassesBySymbolicClassName);
-			Log.i("Classes loaded.");
+			version = getVersion(classLoader);
+			symbolicClassesBySymbolicClassName = SymbolicClasses.loadClasses(
+					jarFile, classLoader,
+					StatelessResources.INSTANCE.realClassFinders);
 			Log.i("Minecraft load complete.");
 		} catch (RuntimeException e) {
 			Log.crash(
@@ -147,6 +132,15 @@ public class LocalMinecraftInterfaceBuilder {
 			classLoader = createClassLoader(getJarFileUrl(jarFile));
 		}
 		return classLoader;
+	}
+
+	private VersionInfo getVersion(URLClassLoader classLoader) {
+		Log.i("Generating version ID...");
+		VersionInfo result = VersionInfo
+				.from(generateVersionID(getMainClassFields(loadMainClass(classLoader))));
+		Log.i("Identified Minecraft [" + result.name() + "] with versionID of "
+				+ result.versionID);
+		return result;
 	}
 
 	private Field[] getMainClassFields(Class<?> mainClass) {
