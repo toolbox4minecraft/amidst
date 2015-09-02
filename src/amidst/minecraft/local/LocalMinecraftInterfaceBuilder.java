@@ -12,7 +12,7 @@ import java.util.Map;
 
 import amidst.Options;
 import amidst.Util;
-import amidst.clazz.finder.RealClassFinder;
+import amidst.clazz.finder.ClassFinder;
 import amidst.clazz.real.RealClass.AccessFlags;
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicClasses;
@@ -28,7 +28,7 @@ public class LocalMinecraftInterfaceBuilder {
 	private static enum StatelessResources {
 		INSTANCE;
 
-		private List<RealClassFinder> realClassFinders = createRealClassFinders();
+		private List<ClassFinder> classFinders = createClassFinders();
 
 		private int[] createIntCacheWildcardBytes() {
 			return new int[] { 0x11, 0x01, 0x00, 0xB3, 0x00, -1, 0xBB, 0x00,
@@ -43,8 +43,8 @@ public class LocalMinecraftInterfaceBuilder {
 		// However, you need to activate this in:
 		// Java -> Code Style -> Formatter -> Edit -> Off/On Tags
 		// see: http://stackoverflow.com/questions/1820908/how-to-turn-off-the-eclipse-code-formatter-for-certain-sections-of-java-code
-		private List<RealClassFinder> createRealClassFinders() {
-			return RealClassFinder.builder()
+		private List<ClassFinder> createClassFinders() {
+			return ClassFinder.builder()
 				.name("IntCache")
 					.detect()
 						.wildcardBytes(createIntCacheWildcardBytes())
@@ -108,7 +108,7 @@ public class LocalMinecraftInterfaceBuilder {
 			version = getVersion(classLoader);
 			symbolicClassesBySymbolicClassName = SymbolicClasses.loadClasses(
 					jarFile, classLoader,
-					StatelessResources.INSTANCE.realClassFinders);
+					StatelessResources.INSTANCE.classFinders);
 			Log.i("Minecraft load complete.");
 		} catch (RuntimeException e) {
 			Log.crash(

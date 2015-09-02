@@ -27,7 +27,7 @@ import amidst.clazz.symbolic.declaration.RealClassPreparer;
 import amidst.clazz.symbolic.declaration.ParameterDeclarationList.Builder;
 import amidst.clazz.symbolic.declaration.ParameterDeclarationList.ExecuteOnEnd;
 
-public class RCFBuilder {
+public class CFBuilder {
 	public class BCDBuilder {
 		private List<List<RealClassDetector>> allDetectors = new ArrayList<List<RealClassDetector>>();
 		private List<RealClassDetector> detectors = new ArrayList<RealClassDetector>();
@@ -52,7 +52,7 @@ public class RCFBuilder {
 
 		public BCPBuilder prepare() {
 			allDetectors.add(detectors);
-			return RCFBuilder.this.preparerBuilder;
+			return CFBuilder.this.preparerBuilder;
 		}
 
 		public BCDBuilder fieldFlags(int flags, int... fieldIndices) {
@@ -107,12 +107,12 @@ public class RCFBuilder {
 			}
 		}
 
-		public RCFBuilder next() {
-			return new RCFBuilder(RCFBuilder.this);
+		public CFBuilder next() {
+			return new CFBuilder(CFBuilder.this);
 		}
 
-		public List<RealClassFinder> construct() {
-			return RCFBuilder.this.construct();
+		public List<ClassFinder> construct() {
+			return CFBuilder.this.construct();
 		}
 
 		public Builder<BCPBuilder> addConstructor(final String symbolicName) {
@@ -144,21 +144,21 @@ public class RCFBuilder {
 		}
 	}
 
-	public static RCFBuilder builder() {
-		return new RCFBuilder(null);
+	public static CFBuilder builder() {
+		return new CFBuilder(null);
 	}
 
-	private RCFBuilder previous;
+	private CFBuilder previous;
 
 	private String symbolicClassName;
 	private BCDBuilder detectorBuilder = new BCDBuilder();
 	private BCPBuilder preparerBuilder = new BCPBuilder();
 
-	private RCFBuilder(RCFBuilder previous) {
+	private CFBuilder(CFBuilder previous) {
 		this.previous = previous;
 	}
 
-	public RCFBuilder name(String symbolicClassName) {
+	public CFBuilder name(String symbolicClassName) {
 		this.symbolicClassName = symbolicClassName;
 		return this;
 	}
@@ -167,21 +167,21 @@ public class RCFBuilder {
 		return detectorBuilder;
 	}
 
-	public List<RealClassFinder> construct() {
-		List<RealClassFinder> result;
+	public List<ClassFinder> construct() {
+		List<ClassFinder> result;
 		if (previous != null) {
 			result = previous.construct();
 		} else {
-			result = new ArrayList<RealClassFinder>();
+			result = new ArrayList<ClassFinder>();
 		}
 		result.add(constructThis());
 		return result;
 	}
 
-	private RealClassFinder constructThis() {
+	private ClassFinder constructThis() {
 		Objects.requireNonNull(symbolicClassName,
 				"a real class finder needs to have a name");
-		return new RealClassFinder(symbolicClassName,
+		return new ClassFinder(symbolicClassName,
 				detectorBuilder.constructThis(),
 				preparerBuilder.constructThis());
 	}

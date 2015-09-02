@@ -9,15 +9,15 @@ import amidst.clazz.real.detector.RealClassDetector;
 import amidst.clazz.symbolic.declaration.RealClassPreparer;
 import amidst.logging.Log;
 
-public class RealClassFinder {
-	public static RCFBuilder builder() {
-		return RCFBuilder.builder();
+public class ClassFinder {
+	public static CFBuilder builder() {
+		return CFBuilder.builder();
 	}
 
 	public static Map<String, RealClass> findAllClasses(
-			List<RealClass> realClasses, List<RealClassFinder> finders) {
+			List<RealClass> realClasses, List<ClassFinder> finders) {
 		Map<String, RealClass> result = new HashMap<String, RealClass>();
-		for (RealClassFinder finder : finders) {
+		for (ClassFinder finder : finders) {
 			RealClass realClass = finder.find(realClasses);
 			if (realClass != null) {
 				if (!result.containsKey(finder.getSymbolicClassName())) {
@@ -36,8 +36,8 @@ public class RealClassFinder {
 	private RealClassDetector detector;
 	private RealClassPreparer preparer;
 
-	public RealClassFinder(String symbolicClassName,
-			RealClassDetector detector, RealClassPreparer preparer) {
+	public ClassFinder(String symbolicClassName, RealClassDetector detector,
+			RealClassPreparer preparer) {
 		this.symbolicClassName = symbolicClassName;
 		this.detector = detector;
 		this.preparer = preparer;
