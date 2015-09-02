@@ -29,39 +29,40 @@ public class RealClasses {
 					+ jarFile + " but it does not exist.");
 		}
 		try {
-			ZipFile jar = new ZipFile(jarFile);
-			List<RealClass> realClasses = readJarFile(jar);
-			jar.close();
+			ZipFile zipFile = new ZipFile(jarFile);
+			List<RealClass> realClasses = readJarFile(zipFile);
+			zipFile.close();
 			return realClasses;
 		} catch (IOException e) {
 			throw new RuntimeException("Error extracting jar data.", e);
 		}
 	}
 
-	private static List<RealClass> readJarFile(ZipFile jar) throws IOException {
-		Enumeration<? extends ZipEntry> enu = jar.entries();
-		List<RealClass> realClassList = new ArrayList<RealClass>();
+	private static List<RealClass> readJarFile(ZipFile zipFile)
+			throws IOException {
+		Enumeration<? extends ZipEntry> enu = zipFile.entries();
+		List<RealClass> result = new ArrayList<RealClass>();
 		while (enu.hasMoreElements()) {
-			RealClass entry = readJarFileEntry(jar, enu.nextElement());
+			RealClass entry = readJarFileEntry(zipFile, enu.nextElement());
 			if (entry != null) {
-				realClassList.add(entry);
+				result.add(entry);
 			}
 		}
-		return realClassList;
+		return result;
 	}
 
-	private static RealClass readJarFileEntry(ZipFile jar, ZipEntry entry)
+	private static RealClass readJarFileEntry(ZipFile zipFile, ZipEntry entry)
 			throws IOException {
 		String realClassName = FileSystemUtils.getFileNameWithoutExtension(
 				entry.getName(), "class");
 		if (!entry.isDirectory() && realClassName != null) {
-			BufferedInputStream is = new BufferedInputStream(
-					jar.getInputStream(entry));
+			BufferedInputStream stream = new BufferedInputStream(
+					zipFile.getInputStream(entry));
 			// TODO: Double check that this filter won't mess anything up.
-			if (is.available() < 8000) {
-				byte[] classData = new byte[is.available()];
-				is.read(classData);
-				is.close();
+			if (stream.available() < 8000) {
+				byte[] classData = new byte[stream.available()];
+				stream.read(classData);
+				stream.close();
 				return RealClass.newInstance(realClassName, classData);
 			}
 		}

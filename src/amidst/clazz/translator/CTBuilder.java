@@ -47,7 +47,7 @@ public class CTBuilder {
 			return this;
 		}
 
-		public SCDBuilder declare(String symbolicClassName) {
+		public SCDBuilder thenDeclare(String symbolicClassName) {
 			allDetectors.add(detectors);
 			CTBuilder.this.declarationBuilder
 					.setSymbolicClassName(symbolicClassName);
@@ -168,7 +168,7 @@ public class CTBuilder {
 		return this;
 	}
 
-	public RCDBuilder detect() {
+	public RCDBuilder ifDetect() {
 		return detectorBuilder;
 	}
 
