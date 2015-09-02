@@ -101,13 +101,11 @@ public class LocalMinecraftInterfaceBuilder {
 	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
 	private static final String SERVER_CLASS = "net.minecraft.server.MinecraftServer";
 
-	private File jarFile;
-	private VersionInfo version;
 	private Map<String, SymbolicClass> symbolicClassesBySymbolicClassName;
+	private VersionInfo version;
 
 	public LocalMinecraftInterfaceBuilder(File jarFile) {
 		try {
-			this.jarFile = jarFile;
 			Log.i("Reading minecraft.jar...");
 			List<RealClass> realClasses = RealClasses.fromJarFile(jarFile);
 			Log.i("Jar load complete.");
@@ -116,16 +114,16 @@ public class LocalMinecraftInterfaceBuilder {
 					.findAllClasses(realClasses,
 							StatelessResources.INSTANCE.realClassFinders);
 			Log.i("Class search complete.");
-			File librariesJson = getLibrariesJsonFile();
+			File librariesJson = getLibrariesJsonFile(jarFile);
 			URLClassLoader classLoader;
 			if (librariesJson.exists()) {
 				Log.i("Loading libraries.");
-				classLoader = createClassLoader(getJarFileUrl(),
+				classLoader = createClassLoader(getJarFileUrl(jarFile),
 						getAllLibraryUrls(librariesJson));
 			} else {
 				Log.i("Unable to find Minecraft library JSON at: "
 						+ librariesJson + ". Skipping.");
-				classLoader = createClassLoader(getJarFileUrl());
+				classLoader = createClassLoader(getJarFileUrl(jarFile));
 			}
 			Log.i("Generating version ID...");
 			version = VersionInfo
@@ -183,7 +181,7 @@ public class LocalMinecraftInterfaceBuilder {
 		}
 	}
 
-	private File getLibrariesJsonFile() {
+	private File getLibrariesJsonFile(File jarFile) {
 		if (Options.instance.minecraftJson != null) {
 			return new File(Options.instance.minecraftJson);
 		} else {
@@ -191,7 +189,7 @@ public class LocalMinecraftInterfaceBuilder {
 		}
 	}
 
-	private URL getJarFileUrl() {
+	private URL getJarFileUrl(File jarFile) {
 		try {
 			return jarFile.toURI().toURL();
 		} catch (MalformedURLException e) {
