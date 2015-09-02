@@ -10,7 +10,7 @@ public class NumberOfConstructorsRCD extends RealClassDetector {
 	}
 
 	@Override
-	public boolean detect(RealClass byteClass) {
-		return byteClass.getConstructorCount() == count;
+	public boolean detect(RealClass realClass) {
+		return realClass.getConstructorCount() == count;
 	}
 }

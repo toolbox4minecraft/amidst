@@ -12,9 +12,9 @@ public class MultiRCD extends RealClassPreparer {
 	}
 
 	@Override
-	public void prepare(RealClass byteClass) {
+	public void prepare(RealClass realClass) {
 		for (RealClassPreparer preparer : preparers) {
-			preparer.prepare(byteClass);
+			preparer.prepare(realClass);
 		}
 	}
 }

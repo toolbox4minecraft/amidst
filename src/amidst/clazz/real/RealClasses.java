@@ -20,19 +20,19 @@ public class RealClasses {
 	}
 
 	public static List<RealClass> fromJarFile(File jarFile) {
-		return readByteClassesFromJarFile(jarFile);
+		return readRealClassesFromJarFile(jarFile);
 	}
 
-	private static List<RealClass> readByteClassesFromJarFile(File jarFile) {
+	private static List<RealClass> readRealClassesFromJarFile(File jarFile) {
 		if (!jarFile.exists()) {
 			throw new RuntimeException("Attempted to load jar file at: "
 					+ jarFile + " but it does not exist.");
 		}
 		try {
 			ZipFile jar = new ZipFile(jarFile);
-			List<RealClass> byteClasses = readJarFile(jar);
+			List<RealClass> realClasses = readJarFile(jar);
 			jar.close();
-			return byteClasses;
+			return realClasses;
 		} catch (IOException e) {
 			throw new RuntimeException("Error extracting jar data.", e);
 		}
@@ -40,14 +40,14 @@ public class RealClasses {
 
 	private static List<RealClass> readJarFile(ZipFile jar) throws IOException {
 		Enumeration<? extends ZipEntry> enu = jar.entries();
-		List<RealClass> byteClassList = new ArrayList<RealClass>();
+		List<RealClass> realClassList = new ArrayList<RealClass>();
 		while (enu.hasMoreElements()) {
 			RealClass entry = readJarFileEntry(jar, enu.nextElement());
 			if (entry != null) {
-				byteClassList.add(entry);
+				realClassList.add(entry);
 			}
 		}
-		return byteClassList;
+		return realClassList;
 	}
 
 	private static RealClass readJarFileEntry(ZipFile jar, ZipEntry entry)

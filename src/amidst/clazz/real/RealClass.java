@@ -49,7 +49,7 @@ public class RealClass {
 		private RealClass product;
 		private long offset;
 
-		private Builder(ByteClassFactory factory, String realClassName,
+		private Builder(RealClassFactory factory, String realClassName,
 				byte[] classData) {
 			product = new RealClass(realClassName, classData);
 			product.primitiveTypeConversionMap = factory.primitiveTypeConversionMap;
@@ -272,7 +272,7 @@ public class RealClass {
 		}
 	}
 
-	public static enum ByteClassFactory {
+	public static enum RealClassFactory {
 		INSTANCE;
 
 		private Map<Character, String> primitiveTypeConversionMap = new HashMap<Character, String>();
@@ -280,7 +280,7 @@ public class RealClass {
 				.compile("([\\[]+)?([BCDFIJSZ]|L[^;]+)");
 		private Pattern objectRegex = Pattern.compile("^([\\[]+)?[LBCDFIJSZ]");
 
-		private ByteClassFactory() {
+		private RealClassFactory() {
 			primitiveTypeConversionMap.put('B', "byte");
 			primitiveTypeConversionMap.put('C', "char");
 			primitiveTypeConversionMap.put('D', "double");
@@ -297,7 +297,7 @@ public class RealClass {
 	}
 
 	public static RealClass newInstance(String realClassName, byte[] classData) {
-		return ByteClassFactory.INSTANCE.create(realClassName, classData);
+		return RealClassFactory.INSTANCE.create(realClassName, classData);
 	}
 
 	private static boolean hasFlags(int accessFlags, int flags) {
@@ -519,6 +519,6 @@ public class RealClass {
 
 	@Override
 	public String toString() {
-		return "[ByteClass " + realClassName + "]";
+		return "[RealClass " + realClassName + "]";
 	}
 }

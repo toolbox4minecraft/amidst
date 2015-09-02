@@ -15,8 +15,8 @@ public class ConstructorRCD extends RealClassPreparer {
 	}
 
 	@Override
-	public void prepare(RealClass byteClass) {
-		byteClass.addConstructor(new ConstructorDeclaration(symbolicName,
+	public void prepare(RealClass realClass) {
+		realClass.addConstructor(new ConstructorDeclaration(symbolicName,
 				parameters));
 	}
 }

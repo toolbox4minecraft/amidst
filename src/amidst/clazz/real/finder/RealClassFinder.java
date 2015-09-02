@@ -22,19 +22,19 @@ public class RealClassFinder {
 		this.preparer = preparer;
 	}
 
-	public boolean find(RealClass byteClass) {
-		if (detector.detect(byteClass)) {
-			preparer.prepare(byteClass);
+	public boolean find(RealClass realClass) {
+		if (detector.detect(realClass)) {
+			preparer.prepare(realClass);
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public RealClass find(List<RealClass> byteClasses) {
-		for (RealClass byteClass : byteClasses) {
-			if (find(byteClass)) {
-				return byteClass;
+	public RealClass find(List<RealClass> realClasses) {
+		for (RealClass realClass : realClasses) {
+			if (find(realClass)) {
+				return realClass;
 			}
 		}
 		return null;

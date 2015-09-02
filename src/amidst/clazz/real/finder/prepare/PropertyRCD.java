@@ -13,7 +13,7 @@ public class PropertyRCD extends RealClassPreparer {
 	}
 
 	@Override
-	public void prepare(RealClass byteClass) {
-		byteClass.addProperty(new PropertyDeclaration(symbolicName, realName));
+	public void prepare(RealClass realClass) {
+		realClass.addProperty(new PropertyDeclaration(symbolicName, realName));
 	}
 }

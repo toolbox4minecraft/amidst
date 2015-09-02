@@ -17,8 +17,8 @@ public class MethodRCD extends RealClassPreparer {
 	}
 
 	@Override
-	public void prepare(RealClass byteClass) {
-		byteClass.addMethod(new MethodDeclaration(symbolicName, realName,
+	public void prepare(RealClass realClass) {
+		realClass.addMethod(new MethodDeclaration(symbolicName, realName,
 				parameters));
 	}
 }

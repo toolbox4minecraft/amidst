@@ -12,9 +12,9 @@ public class AnyRCD extends RealClassDetector {
 	}
 
 	@Override
-	public boolean detect(RealClass byteClass) {
+	public boolean detect(RealClass realClass) {
 		for (RealClassDetector detector : detectors) {
-			if (detector.detect(byteClass)) {
+			if (detector.detect(realClass)) {
 				return true;
 			}
 		}

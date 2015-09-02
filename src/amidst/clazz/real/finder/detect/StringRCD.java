@@ -10,9 +10,9 @@ public class StringRCD extends RealClassDetector {
 	}
 
 	@Override
-	public boolean detect(RealClass byteClass) {
+	public boolean detect(RealClass realClass) {
 		for (String element : strings) {
-			if (!byteClass.searchForString(element)) {
+			if (!realClass.searchForString(element)) {
 				return false;
 			}
 		}

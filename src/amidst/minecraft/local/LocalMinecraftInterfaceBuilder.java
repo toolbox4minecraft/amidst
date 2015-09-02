@@ -75,7 +75,7 @@ public class LocalMinecraftInterfaceBuilder {
 
 	private void identifyClasses(List<RealClass> realClasses) {
 		for (RealClassFinder finder : StatelessResources.INSTANCE
-				.getByteClassFinders()) {
+				.getRealClassFinders()) {
 			RealClass realClass = finder.find(realClasses);
 			if (realClass != null) {
 				registerClass(finder.getSymbolicClassName(), realClass);

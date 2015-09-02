@@ -10,7 +10,7 @@ public class NumberOfFieldsRCD extends RealClassDetector {
 	}
 
 	@Override
-	public boolean detect(RealClass byteClass) {
-		return byteClass.getFields().length == count;
+	public boolean detect(RealClass realClass) {
+		return realClass.getFields().length == count;
 	}
 }

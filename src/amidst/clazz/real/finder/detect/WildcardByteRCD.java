@@ -10,8 +10,8 @@ public class WildcardByteRCD extends RealClassDetector {
 	}
 
 	@Override
-	public boolean detect(RealClass byteClass) {
-		return isMatching(byteClass.getClassData());
+	public boolean detect(RealClass realClass) {
+		return isMatching(realClass.getClassData());
 	}
 
 	private boolean isMatching(byte[] data) {

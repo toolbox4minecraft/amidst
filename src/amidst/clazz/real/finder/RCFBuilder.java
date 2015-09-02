@@ -9,20 +9,20 @@ import amidst.clazz.ParameterDeclarationList.Builder;
 import amidst.clazz.ParameterDeclarationList.ExecuteOnEnd;
 import amidst.clazz.real.finder.detect.AllRCD;
 import amidst.clazz.real.finder.detect.AnyRCD;
-import amidst.clazz.real.finder.detect.RealClassDetector;
 import amidst.clazz.real.finder.detect.FieldFlagsRCD;
 import amidst.clazz.real.finder.detect.LongRCD;
 import amidst.clazz.real.finder.detect.NumberOfConstructorsRCD;
 import amidst.clazz.real.finder.detect.NumberOfFieldsRCD;
 import amidst.clazz.real.finder.detect.NumberOfMethodsAndConstructorsRCD;
+import amidst.clazz.real.finder.detect.RealClassDetector;
 import amidst.clazz.real.finder.detect.StringRCD;
 import amidst.clazz.real.finder.detect.Utf8RCD;
 import amidst.clazz.real.finder.detect.WildcardByteRCD;
-import amidst.clazz.real.finder.prepare.RealClassPreparer;
 import amidst.clazz.real.finder.prepare.ConstructorRCD;
 import amidst.clazz.real.finder.prepare.MethodRCD;
 import amidst.clazz.real.finder.prepare.MultiRCD;
 import amidst.clazz.real.finder.prepare.PropertyRCD;
+import amidst.clazz.real.finder.prepare.RealClassPreparer;
 
 public class RCFBuilder {
 	public class BCDBuilder {
@@ -174,7 +174,7 @@ public class RCFBuilder {
 
 	private RealClassFinder constructThis() {
 		Objects.requireNonNull(symbolicClassName,
-				"a byte class finder needs to have a name");
+				"a real class finder needs to have a name");
 		return new RealClassFinder(symbolicClassName,
 				detectorBuilder.constructThis(),
 				preparerBuilder.constructThis());

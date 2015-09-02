@@ -10,9 +10,9 @@ public class LongRCD extends RealClassDetector {
 	}
 
 	@Override
-	public boolean detect(RealClass byteClass) {
+	public boolean detect(RealClass realClass) {
 		for (long element : longs) {
-			if (!byteClass.searchForLong(element)) {
+			if (!realClass.searchForLong(element)) {
 				return false;
 			}
 		}
