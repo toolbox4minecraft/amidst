@@ -1,16 +1,16 @@
 package amidst.clazz.real.finder.detect;
 
-import amidst.clazz.real.ByteClass;
+import amidst.clazz.real.RealClass;
 
-public class StringBCD extends ByteClassDetector {
+public class StringRCD extends RealClassDetector {
 	private String[] strings;
 
-	public StringBCD(String... strings) {
+	public StringRCD(String... strings) {
 		this.strings = strings;
 	}
 
 	@Override
-	public boolean detect(ByteClass byteClass) {
+	public boolean detect(RealClass byteClass) {
 		for (String element : strings) {
 			if (!byteClass.searchForString(element)) {
 				return false;

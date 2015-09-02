@@ -13,9 +13,9 @@ import java.util.Map;
 
 import amidst.Options;
 import amidst.Util;
-import amidst.clazz.real.ByteClass;
-import amidst.clazz.real.ByteClasses;
-import amidst.clazz.real.finder.ByteClassFinder;
+import amidst.clazz.real.RealClass;
+import amidst.clazz.real.RealClasses;
+import amidst.clazz.real.finder.RealClassFinder;
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicClasses;
 import amidst.json.JarLibrary;
@@ -32,14 +32,14 @@ public class LocalMinecraftInterfaceBuilder {
 	private File jarFile;
 	private VersionInfo version;
 
-	private Map<String, ByteClass> realClassesBySymbolicClassName = new HashMap<String, ByteClass>();
+	private Map<String, RealClass> realClassesBySymbolicClassName = new HashMap<String, RealClass>();
 	private Map<String, SymbolicClass> symbolicClassesBySymbolicClassName;
 
 	public LocalMinecraftInterfaceBuilder(File jarFile) {
 		try {
 			this.jarFile = jarFile;
 			Log.i("Reading minecraft.jar...");
-			List<ByteClass> realClasses = ByteClasses.fromJarFile(jarFile);
+			List<RealClass> realClasses = RealClasses.fromJarFile(jarFile);
 			Log.i("Jar load complete.");
 			Log.i("Searching for classes...");
 			identifyClasses(realClasses);
@@ -73,10 +73,10 @@ public class LocalMinecraftInterfaceBuilder {
 		}
 	}
 
-	private void identifyClasses(List<ByteClass> realClasses) {
-		for (ByteClassFinder finder : StatelessResources.INSTANCE
+	private void identifyClasses(List<RealClass> realClasses) {
+		for (RealClassFinder finder : StatelessResources.INSTANCE
 				.getByteClassFinders()) {
-			ByteClass realClass = finder.find(realClasses);
+			RealClass realClass = finder.find(realClasses);
 			if (realClass != null) {
 				registerClass(finder.getSymbolicClassName(), realClass);
 				Log.debug("Found: " + realClass.getRealClassName() + " as "
@@ -87,7 +87,7 @@ public class LocalMinecraftInterfaceBuilder {
 		}
 	}
 
-	private void registerClass(String symbolicClassName, ByteClass realClass) {
+	private void registerClass(String symbolicClassName, RealClass realClass) {
 		if (!realClassesBySymbolicClassName.containsKey(symbolicClassName)) {
 			realClassesBySymbolicClassName.put(symbolicClassName, realClass);
 		}

@@ -11,7 +11,7 @@ import amidst.clazz.ConstructorDeclaration;
 import amidst.clazz.MethodDeclaration;
 import amidst.clazz.ParameterDeclarationList.Entry;
 import amidst.clazz.PropertyDeclaration;
-import amidst.clazz.real.ByteClass;
+import amidst.clazz.real.RealClass;
 import amidst.logging.Log;
 
 public class SymbolicClasses {
@@ -40,14 +40,14 @@ public class SymbolicClasses {
 
 	public static Map<String, SymbolicClass> createClasses(
 			ClassLoader classLoader,
-			Map<String, ByteClass> realClassesBySymbolicClassName) {
+			Map<String, RealClass> realClassesBySymbolicClassName) {
 		return new SymbolicClassGraphBuilder(classLoader,
 				realClassesBySymbolicClassName).create();
 	}
 
 	public static SymbolicConstructor createConstructor(
 			ClassLoader classLoader, SymbolicClass parent,
-			Map<String, ByteClass> realClassesBySymbolicClassName,
+			Map<String, RealClass> realClassesBySymbolicClassName,
 			ConstructorDeclaration declaration) {
 		String symbolicName = declaration.getSymbolicName();
 		try {
@@ -70,7 +70,7 @@ public class SymbolicClasses {
 	public static SymbolicMethod createMethod(ClassLoader classLoader,
 			Map<String, SymbolicClass> symbolicClassesByRealClassName,
 			SymbolicClass parent,
-			Map<String, ByteClass> realClassesBySymbolicClassName,
+			Map<String, RealClass> realClassesBySymbolicClassName,
 			MethodDeclaration declaration) {
 		String symbolicName = declaration.getSymbolicName();
 		String realName = declaration.getRealName();
@@ -135,7 +135,7 @@ public class SymbolicClasses {
 	}
 
 	private static Class<?>[] getParameterClasses(ClassLoader classLoader,
-			Map<String, ByteClass> realClassesBySymbolicClassName,
+			Map<String, RealClass> realClassesBySymbolicClassName,
 			List<Entry> entries) throws ClassNotFoundException {
 		Class<?>[] result = new Class<?>[entries.size()];
 		for (int i = 0; i < entries.size(); i++) {
@@ -146,14 +146,14 @@ public class SymbolicClasses {
 	}
 
 	private static Class<?> getParameterClass(ClassLoader classLoader,
-			Map<String, ByteClass> realClassesBySymbolicClassName, Entry entry)
+			Map<String, RealClass> realClassesBySymbolicClassName, Entry entry)
 			throws ClassNotFoundException {
 		Class<?> result = StatelessResources.INSTANCE.primitivesMap.get(entry
 				.getType());
 		if (result != null) {
 			return result;
 		} else if (entry.isSymbolic()) {
-			ByteClass realClass = realClassesBySymbolicClassName.get(entry
+			RealClass realClass = realClassesBySymbolicClassName.get(entry
 					.getType());
 			if (realClass != null) {
 				return classLoader.loadClass(realClass.getRealClassName());

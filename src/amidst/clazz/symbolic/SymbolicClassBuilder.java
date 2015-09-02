@@ -6,7 +6,7 @@ import java.util.Map;
 import amidst.clazz.ConstructorDeclaration;
 import amidst.clazz.MethodDeclaration;
 import amidst.clazz.PropertyDeclaration;
-import amidst.clazz.real.ByteClass;
+import amidst.clazz.real.RealClass;
 
 public class SymbolicClassBuilder {
 	private Map<String, SymbolicConstructor> constructorsBySymbolicName = new HashMap<String, SymbolicConstructor>();
@@ -37,7 +37,7 @@ public class SymbolicClassBuilder {
 	}
 
 	public void addConstructor(
-			Map<String, ByteClass> realClassesBySymbolicClassName,
+			Map<String, RealClass> realClassesBySymbolicClassName,
 			ConstructorDeclaration declaration) {
 		SymbolicConstructor constructor = SymbolicClasses.createConstructor(
 				classLoader, product, realClassesBySymbolicClassName,
@@ -47,7 +47,7 @@ public class SymbolicClassBuilder {
 	}
 
 	public void addMethod(
-			Map<String, ByteClass> realClassesBySymbolicClassName,
+			Map<String, RealClass> realClassesBySymbolicClassName,
 			MethodDeclaration declaration) {
 		SymbolicMethod method = SymbolicClasses.createMethod(classLoader,
 				symbolicClassesByRealClassName, product,

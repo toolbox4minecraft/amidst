@@ -1,16 +1,16 @@
 package amidst.clazz.real.finder.detect;
 
-import amidst.clazz.real.ByteClass;
+import amidst.clazz.real.RealClass;
 
-public class WildcardByteBCD extends ByteClassDetector {
+public class WildcardByteRCD extends RealClassDetector {
 	private int[] bytes;
 
-	public WildcardByteBCD(int[] bytes) {
+	public WildcardByteRCD(int[] bytes) {
 		this.bytes = bytes;
 	}
 
 	@Override
-	public boolean detect(ByteClass byteClass) {
+	public boolean detect(RealClass byteClass) {
 		return isMatching(byteClass.getClassData());
 	}
 

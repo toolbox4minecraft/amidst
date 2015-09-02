@@ -14,7 +14,7 @@ import amidst.clazz.ConstructorDeclaration;
 import amidst.clazz.MethodDeclaration;
 import amidst.clazz.PropertyDeclaration;
 
-public class ByteClass {
+public class RealClass {
 	/*-
 	 * 	ACC_PUBLIC	 	0x0001	 Declared public; may be accessed from outside its package.
 	 *	ACC_PRIVATE	 	0x0002	 Declared private; usable only within the defining class.
@@ -40,18 +40,18 @@ public class ByteClass {
 		private int accessFlags;
 
 		public boolean hasFlags(int flags) {
-			return ByteClass.hasFlags(accessFlags, flags);
+			return RealClass.hasFlags(accessFlags, flags);
 		}
 	}
 
 	private static class Builder {
 		private DataInputStream stream;
-		private ByteClass product;
+		private RealClass product;
 		private long offset;
 
 		private Builder(ByteClassFactory factory, String realClassName,
 				byte[] classData) {
-			product = new ByteClass(realClassName, classData);
+			product = new RealClass(realClassName, classData);
 			product.primitiveTypeConversionMap = factory.primitiveTypeConversionMap;
 			product.argRegex = factory.argRegex;
 			product.objectRegex = factory.objectRegex;
@@ -75,7 +75,7 @@ public class ByteClass {
 			}
 		}
 
-		public ByteClass get() {
+		public RealClass get() {
 			return product;
 		}
 
@@ -291,12 +291,12 @@ public class ByteClass {
 			primitiveTypeConversionMap.put('Z', "boolean");
 		}
 
-		public ByteClass create(String realClassName, byte[] classData) {
+		public RealClass create(String realClassName, byte[] classData) {
 			return new Builder(this, realClassName, classData).get();
 		}
 	}
 
-	public static ByteClass newInstance(String realClassName, byte[] classData) {
+	public static RealClass newInstance(String realClassName, byte[] classData) {
 		return ByteClassFactory.INSTANCE.create(realClassName, classData);
 	}
 
@@ -330,7 +330,7 @@ public class ByteClass {
 	private Pattern argRegex;
 	private Pattern objectRegex;
 
-	private ByteClass(String realClassName, byte[] classData) {
+	private RealClass(String realClassName, byte[] classData) {
 		this.realClassName = realClassName;
 		this.classData = classData;
 	}

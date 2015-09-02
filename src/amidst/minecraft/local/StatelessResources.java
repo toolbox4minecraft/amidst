@@ -2,8 +2,8 @@ package amidst.minecraft.local;
 
 import java.util.List;
 
-import amidst.clazz.real.ByteClass.AccessFlags;
-import amidst.clazz.real.finder.ByteClassFinder;
+import amidst.clazz.real.RealClass.AccessFlags;
+import amidst.clazz.real.finder.RealClassFinder;
 
 public enum StatelessResources {
 	INSTANCE;
@@ -13,7 +13,7 @@ public enum StatelessResources {
 	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
 	private static final String SERVER_CLASS = "net.minecraft.server.MinecraftServer";
 
-	private List<ByteClassFinder> byteClassFinders = createByteClassFinders();
+	private List<RealClassFinder> byteClassFinders = createByteClassFinders();
 
 	private int[] createIntCacheWildcardBytes() {
 		return new int[] { 0x11, 0x01, 0x00, 0xB3, 0x00, -1, 0xBB, 0x00, -1,
@@ -28,8 +28,8 @@ public enum StatelessResources {
 	// However, you need to activate this in:
 	// Java -> Code Style -> Formatter -> Edit -> Off/On Tags
 	// see: http://stackoverflow.com/questions/1820908/how-to-turn-off-the-eclipse-code-formatter-for-certain-sections-of-java-code
-	private List<ByteClassFinder> createByteClassFinders() {
-		return ByteClassFinder.builder()
+	private List<RealClassFinder> createByteClassFinders() {
+		return RealClassFinder.builder()
 			.name("IntCache")
 				.detect()
 					.wildcardBytes(createIntCacheWildcardBytes())
@@ -94,7 +94,7 @@ public enum StatelessResources {
 		return SERVER_CLASS;
 	}
 
-	public List<ByteClassFinder> getByteClassFinders() {
+	public List<RealClassFinder> getByteClassFinders() {
 		return byteClassFinders;
 	}
 }

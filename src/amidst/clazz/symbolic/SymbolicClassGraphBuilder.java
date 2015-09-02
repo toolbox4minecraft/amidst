@@ -8,16 +8,16 @@ import java.util.Map.Entry;
 import amidst.clazz.ConstructorDeclaration;
 import amidst.clazz.MethodDeclaration;
 import amidst.clazz.PropertyDeclaration;
-import amidst.clazz.real.ByteClass;
+import amidst.clazz.real.RealClass;
 
 public class SymbolicClassGraphBuilder {
 	private ClassLoader classLoader;
-	private Map<String, ByteClass> realClassesBySymbolicClassName;
+	private Map<String, RealClass> realClassesBySymbolicClassName;
 	private Map<String, SymbolicClass> symbolicClassesByRealClassName = new HashMap<String, SymbolicClass>();
 	private Map<String, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassName = new HashMap<String, SymbolicClassBuilder>();
 
 	public SymbolicClassGraphBuilder(ClassLoader classLoader,
-			Map<String, ByteClass> realClassesBySymbolicClassName) {
+			Map<String, RealClass> realClassesBySymbolicClassName) {
 		this.classLoader = classLoader;
 		this.realClassesBySymbolicClassName = realClassesBySymbolicClassName;
 	}
@@ -29,7 +29,7 @@ public class SymbolicClassGraphBuilder {
 	}
 
 	private void populateSymbolicClassMaps() {
-		for (Entry<String, ByteClass> entry : realClassesBySymbolicClassName
+		for (Entry<String, RealClass> entry : realClassesBySymbolicClassName
 				.entrySet()) {
 			String symbolicClassName = entry.getKey();
 			String realClassName = entry.getValue().getRealClassName();
@@ -43,9 +43,9 @@ public class SymbolicClassGraphBuilder {
 	}
 
 	private void addConstructorsMethodsAndProperties() {
-		for (Entry<String, ByteClass> entry : realClassesBySymbolicClassName
+		for (Entry<String, RealClass> entry : realClassesBySymbolicClassName
 				.entrySet()) {
-			ByteClass realClass = entry.getValue();
+			RealClass realClass = entry.getValue();
 			SymbolicClassBuilder builder = symbolicClassBuildersBySymbolicClassName
 					.get(entry.getKey());
 			addConstructors(builder, realClass.getConstructors());

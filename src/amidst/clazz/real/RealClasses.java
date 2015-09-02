@@ -11,26 +11,26 @@ import java.util.zip.ZipFile;
 
 import amidst.utilties.FileSystemUtils;
 
-public class ByteClasses {
-	private ByteClasses() {
+public class RealClasses {
+	private RealClasses() {
 	}
 
-	public static ByteClass fromByteArray(String realClassName, byte[] classData) {
-		return ByteClass.newInstance(realClassName, classData);
+	public static RealClass fromByteArray(String realClassName, byte[] classData) {
+		return RealClass.newInstance(realClassName, classData);
 	}
 
-	public static List<ByteClass> fromJarFile(File jarFile) {
+	public static List<RealClass> fromJarFile(File jarFile) {
 		return readByteClassesFromJarFile(jarFile);
 	}
 
-	private static List<ByteClass> readByteClassesFromJarFile(File jarFile) {
+	private static List<RealClass> readByteClassesFromJarFile(File jarFile) {
 		if (!jarFile.exists()) {
 			throw new RuntimeException("Attempted to load jar file at: "
 					+ jarFile + " but it does not exist.");
 		}
 		try {
 			ZipFile jar = new ZipFile(jarFile);
-			List<ByteClass> byteClasses = readJarFile(jar);
+			List<RealClass> byteClasses = readJarFile(jar);
 			jar.close();
 			return byteClasses;
 		} catch (IOException e) {
@@ -38,11 +38,11 @@ public class ByteClasses {
 		}
 	}
 
-	private static List<ByteClass> readJarFile(ZipFile jar) throws IOException {
+	private static List<RealClass> readJarFile(ZipFile jar) throws IOException {
 		Enumeration<? extends ZipEntry> enu = jar.entries();
-		List<ByteClass> byteClassList = new ArrayList<ByteClass>();
+		List<RealClass> byteClassList = new ArrayList<RealClass>();
 		while (enu.hasMoreElements()) {
-			ByteClass entry = readJarFileEntry(jar, enu.nextElement());
+			RealClass entry = readJarFileEntry(jar, enu.nextElement());
 			if (entry != null) {
 				byteClassList.add(entry);
 			}
@@ -50,7 +50,7 @@ public class ByteClasses {
 		return byteClassList;
 	}
 
-	private static ByteClass readJarFileEntry(ZipFile jar, ZipEntry entry)
+	private static RealClass readJarFileEntry(ZipFile jar, ZipEntry entry)
 			throws IOException {
 		String realClassName = FileSystemUtils.getFileNameWithoutExtension(
 				entry.getName(), "class");
@@ -62,7 +62,7 @@ public class ByteClasses {
 				byte[] classData = new byte[is.available()];
 				is.read(classData);
 				is.close();
-				return ByteClass.newInstance(realClassName, classData);
+				return RealClass.newInstance(realClassName, classData);
 			}
 		}
 		return null;

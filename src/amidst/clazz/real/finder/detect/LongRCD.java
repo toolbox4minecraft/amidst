@@ -1,16 +1,16 @@
 package amidst.clazz.real.finder.detect;
 
-import amidst.clazz.real.ByteClass;
+import amidst.clazz.real.RealClass;
 
-public class LongBCD extends ByteClassDetector {
+public class LongRCD extends RealClassDetector {
 	private long[] longs;
 
-	public LongBCD(long... longs) {
+	public LongRCD(long... longs) {
 		this.longs = longs;
 	}
 
 	@Override
-	public boolean detect(ByteClass byteClass) {
+	public boolean detect(RealClass byteClass) {
 		for (long element : longs) {
 			if (!byteClass.searchForLong(element)) {
 				return false;
