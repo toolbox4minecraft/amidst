@@ -136,10 +136,10 @@ public class LocalMinecraftInterfaceBuilder {
 
 	private VersionInfo getVersion(URLClassLoader classLoader) {
 		Log.i("Generating version ID...");
-		VersionInfo result = VersionInfo
-				.from(generateVersionID(getMainClassFields(loadMainClass(classLoader))));
+		String versionID = generateVersionID(getMainClassFields(loadMainClass(classLoader)));
+		VersionInfo result = VersionInfo.from(versionID);
 		Log.i("Identified Minecraft [" + result.name() + "] with versionID of "
-				+ result.versionID);
+				+ versionID);
 		return result;
 	}
 
