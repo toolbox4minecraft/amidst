@@ -4,16 +4,14 @@ import amidst.clazz.PropertyDeclaration;
 import amidst.clazz.real.RealClass;
 
 public class PropertyRCD extends RealClassPreparer {
-	private String symbolicName;
-	private String realName;
+	private PropertyDeclaration propertyDeclaration;
 
-	public PropertyRCD(String symbolicName, String realName) {
-		this.symbolicName = symbolicName;
-		this.realName = realName;
+	public PropertyRCD(PropertyDeclaration propertyDeclaration) {
+		this.propertyDeclaration = propertyDeclaration;
 	}
 
 	@Override
 	public void prepare(RealClass realClass) {
-		realClass.addProperty(new PropertyDeclaration(symbolicName, realName));
+		realClass.addProperty(propertyDeclaration);
 	}
 }

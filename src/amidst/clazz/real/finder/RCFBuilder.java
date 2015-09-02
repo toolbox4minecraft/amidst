@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import amidst.clazz.ConstructorDeclaration;
+import amidst.clazz.MethodDeclaration;
 import amidst.clazz.ParameterDeclarationList;
 import amidst.clazz.ParameterDeclarationList.Builder;
 import amidst.clazz.ParameterDeclarationList.ExecuteOnEnd;
+import amidst.clazz.PropertyDeclaration;
 import amidst.clazz.real.finder.detect.AllRCD;
 import amidst.clazz.real.finder.detect.AnyRCD;
 import amidst.clazz.real.finder.detect.FieldFlagsRCD;
@@ -116,7 +119,9 @@ public class RCFBuilder {
 			return ParameterDeclarationList.builder(this, new ExecuteOnEnd() {
 				@Override
 				public void run(ParameterDeclarationList parameters) {
-					preparers.add(new ConstructorRCD(symbolicName, parameters));
+					preparers
+							.add(new ConstructorRCD(new ConstructorDeclaration(
+									symbolicName, parameters)));
 				}
 			});
 		}
@@ -126,14 +131,15 @@ public class RCFBuilder {
 			return ParameterDeclarationList.builder(this, new ExecuteOnEnd() {
 				@Override
 				public void run(ParameterDeclarationList parameters) {
-					preparers.add(new MethodRCD(symbolicName, realName,
-							parameters));
+					preparers.add(new MethodRCD(new MethodDeclaration(
+							symbolicName, realName, parameters)));
 				}
 			});
 		}
 
 		public BCPBuilder addProperty(String symbolicName, String realName) {
-			preparers.add(new PropertyRCD(symbolicName, realName));
+			preparers.add(new PropertyRCD(new PropertyDeclaration(symbolicName,
+					realName)));
 			return this;
 		}
 	}
