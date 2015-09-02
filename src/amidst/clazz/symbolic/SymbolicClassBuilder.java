@@ -57,7 +57,7 @@ public class SymbolicClassBuilder {
 		return product;
 	}
 
-	public Class<?> loadClass(String realClassName) {
+	private Class<?> loadClass(String realClassName) {
 		try {
 			return classLoader.loadClass(realClassName);
 		} catch (ClassNotFoundException e) {
@@ -69,8 +69,8 @@ public class SymbolicClassBuilder {
 	public void addConstructor(
 			Map<String, RealClass> realClassesBySymbolicClassName,
 			ConstructorDeclaration declaration) {
-		SymbolicConstructor constructor = createConstructor(classLoader,
-				product, realClassesBySymbolicClassName, declaration);
+		SymbolicConstructor constructor = createConstructor(
+				realClassesBySymbolicClassName, declaration);
 		constructorsBySymbolicName.put(declaration.getSymbolicName(),
 				constructor);
 	}
@@ -78,119 +78,110 @@ public class SymbolicClassBuilder {
 	public void addMethod(
 			Map<String, RealClass> realClassesBySymbolicClassName,
 			MethodDeclaration declaration) {
-		SymbolicMethod method = createMethod(classLoader,
-				symbolicClassesByRealClassName, product,
-				realClassesBySymbolicClassName, declaration);
+		SymbolicMethod method = createMethod(realClassesBySymbolicClassName,
+				declaration);
 		methodsBySymbolicName.put(declaration.getSymbolicName(), method);
 	}
 
 	public void addProperty(PropertyDeclaration declaration) {
-		SymbolicProperty property = createProperty(
-				symbolicClassesByRealClassName, product, declaration);
+		SymbolicProperty property = createProperty(declaration);
 		propertiesBySymbolicName.put(declaration.getSymbolicName(), property);
 	}
 
-	public static SymbolicConstructor createConstructor(
-			ClassLoader classLoader, SymbolicClass parent,
+	private SymbolicConstructor createConstructor(
 			Map<String, RealClass> realClassesBySymbolicClassName,
 			ConstructorDeclaration declaration) {
 		String symbolicName = declaration.getSymbolicName();
 		try {
-			Class<?>[] parameterClasses = getParameterClasses(classLoader,
+			Class<?>[] parameterClasses = getParameterClasses(
 					realClassesBySymbolicClassName, declaration.getParameters()
 							.getEntries());
-			Constructor<?> constructor = getConstructor(parent.getClazz(),
+			Constructor<?> constructor = getConstructor(product.getClazz(),
 					parameterClasses);
-			return new SymbolicConstructor(parent, symbolicName, constructor);
+			return new SymbolicConstructor(product, symbolicName, constructor);
 		} catch (SecurityException e) {
-			throwRuntimeException(parent, symbolicName, e, "constructor");
+			throwRuntimeException(symbolicName, e, "constructor");
 		} catch (NoSuchMethodException e) {
-			throwRuntimeException(parent, symbolicName, e, "constructor");
+			throwRuntimeException(symbolicName, e, "constructor");
 		} catch (ClassNotFoundException e) {
-			throwRuntimeException(parent, symbolicName, e, "constructor");
+			throwRuntimeException(symbolicName, e, "constructor");
 		}
 		return null;
 	}
 
-	public static SymbolicMethod createMethod(ClassLoader classLoader,
-			Map<String, SymbolicClass> symbolicClassesByRealClassName,
-			SymbolicClass parent,
+	private SymbolicMethod createMethod(
 			Map<String, RealClass> realClassesBySymbolicClassName,
 			MethodDeclaration declaration) {
 		String symbolicName = declaration.getSymbolicName();
 		String realName = declaration.getRealName();
 		try {
-			Class<?>[] parameterClasses = getParameterClasses(classLoader,
+			Class<?>[] parameterClasses = getParameterClasses(
 					realClassesBySymbolicClassName, declaration.getParameters()
 							.getEntries());
-			Method method = getMethod(parent.getClazz(), realName,
+			Method method = getMethod(product.getClazz(), realName,
 					parameterClasses);
-			SymbolicClass returnType = getType(symbolicClassesByRealClassName,
-					method.getReturnType());
+			SymbolicClass returnType = getType(method.getReturnType());
 			return new SymbolicMethod(symbolicName, realName, method,
 					returnType);
 		} catch (SecurityException e) {
-			warn(parent, symbolicName, e, "method");
+			warn(symbolicName, e, "method");
 		} catch (NoSuchMethodException e) {
-			warn(parent, symbolicName, e, "method");
+			warn(symbolicName, e, "method");
 		} catch (ClassNotFoundException e) {
-			throwRuntimeException(parent, symbolicName, e, "method");
+			throwRuntimeException(symbolicName, e, "method");
 		}
 		return null;
 	}
 
-	public static SymbolicProperty createProperty(
-			Map<String, SymbolicClass> symbolicClassesByRealClassName,
-			SymbolicClass parent, PropertyDeclaration declaration) {
+	private SymbolicProperty createProperty(PropertyDeclaration declaration) {
 		String symbolicName = declaration.getSymbolicName();
 		String realName = declaration.getRealName();
 		try {
-			Field field = getField(parent.getClazz(), realName);
-			SymbolicClass type = getType(symbolicClassesByRealClassName,
-					field.getType());
-			return new SymbolicProperty(parent, symbolicName, realName, field,
+			Field field = getField(product.getClazz(), realName);
+			SymbolicClass type = getType(field.getType());
+			return new SymbolicProperty(product, symbolicName, realName, field,
 					type);
 		} catch (SecurityException e) {
-			throwRuntimeException(parent, symbolicName, e, "property");
+			throwRuntimeException(symbolicName, e, "property");
 		} catch (NoSuchFieldException e) {
-			throwRuntimeException(parent, symbolicName, e, "property");
+			throwRuntimeException(symbolicName, e, "property");
 		}
 		return null;
 	}
 
-	private static Constructor<?> getConstructor(Class<?> clazz,
+	private Constructor<?> getConstructor(Class<?> clazz,
 			Class<?>[] parameterClasses) throws NoSuchMethodException {
 		Constructor<?> result = clazz.getConstructor(parameterClasses);
 		result.setAccessible(true);
 		return result;
 	}
 
-	private static Method getMethod(Class<?> clazz, String realName,
+	private Method getMethod(Class<?> clazz, String realName,
 			Class<?>[] parameterClasses) throws NoSuchMethodException {
 		Method result = clazz.getDeclaredMethod(realName, parameterClasses);
 		result.setAccessible(true);
 		return result;
 	}
 
-	private static Field getField(Class<?> clazz, String realName)
+	private Field getField(Class<?> clazz, String realName)
 			throws NoSuchFieldException {
 		Field result = clazz.getDeclaredField(realName);
 		result.setAccessible(true);
 		return result;
 	}
 
-	private static Class<?>[] getParameterClasses(ClassLoader classLoader,
+	private Class<?>[] getParameterClasses(
 			Map<String, RealClass> realClassesBySymbolicClassName,
 			List<Entry> entries) throws ClassNotFoundException {
 		Class<?>[] result = new Class<?>[entries.size()];
 		for (int i = 0; i < entries.size(); i++) {
-			result[i] = getParameterClass(classLoader,
-					realClassesBySymbolicClassName, entries.get(i));
+			result[i] = getParameterClass(realClassesBySymbolicClassName,
+					entries.get(i));
 		}
 		return result;
 	}
 
-	private static Class<?> getParameterClass(ClassLoader classLoader,
+	private Class<?> getParameterClass(
 			Map<String, RealClass> realClassesBySymbolicClassName, Entry entry)
 			throws ClassNotFoundException {
 		Class<?> result = StatelessResources.INSTANCE.primitivesMap.get(entry
@@ -212,9 +203,7 @@ public class SymbolicClassBuilder {
 		}
 	}
 
-	private static SymbolicClass getType(
-			Map<String, SymbolicClass> symbolicClassesByRealClassName,
-			Class<?> type) {
+	private SymbolicClass getType(Class<?> type) {
 		String result = type.getName();
 		if (result.contains(".")) {
 			String[] typeSplit = result.split("\\.");
@@ -223,22 +212,21 @@ public class SymbolicClassBuilder {
 		return symbolicClassesByRealClassName.get(result);
 	}
 
-	private static void throwRuntimeException(SymbolicClass parent,
-			String symbolicName, Exception e, String featureType) {
-		throw new RuntimeException(errorMessage(parent, symbolicName, e,
-				featureType), e);
+	private void throwRuntimeException(String symbolicName, Exception e,
+			String featureType) {
+		throw new RuntimeException(errorMessage(symbolicName, e, featureType),
+				e);
 	}
 
-	private static void warn(SymbolicClass parent, String symbolicName,
-			Exception e, String featureType) {
-		Log.w(errorMessage(parent, symbolicName, e, featureType));
+	private void warn(String symbolicName, Exception e, String featureType) {
+		Log.w(errorMessage(symbolicName, e, featureType));
 		e.printStackTrace();
 	}
 
-	private static String errorMessage(SymbolicClass parent,
-			String symbolicName, Exception e, String featureType) {
+	private String errorMessage(String symbolicName, Exception e,
+			String featureType) {
 		return e.getClass().getSimpleName() + " on ("
-				+ parent.getSymbolicName() + " / " + parent.getRealName()
+				+ product.getSymbolicName() + " / " + product.getRealName()
 				+ ") " + featureType + " (" + symbolicName + ")";
 	}
 }
