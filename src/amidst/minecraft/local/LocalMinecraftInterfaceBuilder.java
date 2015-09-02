@@ -13,6 +13,7 @@ import java.util.Map;
 import amidst.Options;
 import amidst.Util;
 import amidst.clazz.real.RealClass;
+import amidst.clazz.real.RealClass.AccessFlags;
 import amidst.clazz.real.RealClasses;
 import amidst.clazz.real.finder.RealClassFinder;
 import amidst.clazz.symbolic.SymbolicClass;
@@ -26,6 +27,80 @@ import amidst.utilties.JavaUtils;
 import amidst.version.VersionInfo;
 
 public class LocalMinecraftInterfaceBuilder {
+	private static enum StatelessResources {
+		INSTANCE;
+
+		private List<RealClassFinder> realClassFinders = createRealClassFinders();
+
+		private int[] createIntCacheWildcardBytes() {
+			return new int[] { 0x11, 0x01, 0x00, 0xB3, 0x00, -1, 0xBB, 0x00,
+					-1, 0x59, 0xB7, 0x00, -1, 0xB3, 0x00, -1, 0xBB, 0x00, -1,
+					0x59, 0xB7, 0x00, -1, 0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59,
+					0xB7, 0x00, -1, 0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59, 0xB7,
+					0x00, -1, 0xB3, 0x00, -1, 0xB1 };
+		}
+
+		// @formatter:off
+		// This deactivates the automatic formatter of Eclipse.
+		// However, you need to activate this in:
+		// Java -> Code Style -> Formatter -> Edit -> Off/On Tags
+		// see: http://stackoverflow.com/questions/1820908/how-to-turn-off-the-eclipse-code-formatter-for-certain-sections-of-java-code
+		private List<RealClassFinder> createRealClassFinders() {
+			return RealClassFinder.builder()
+				.name("IntCache")
+					.detect()
+						.wildcardBytes(createIntCacheWildcardBytes())
+						.or()
+						.strings(", tcache: ")
+					.prepare()
+						.addMethod("getIntCache", 			"a").real("int").end()
+						.addMethod("resetIntCache", 		"a").end()
+						.addMethod("getInformation", 		"b").end()
+						.addProperty("intCacheSize", 		"a")
+						.addProperty("freeSmallArrays", 	"b")
+						.addProperty("inUseSmallArrays", 	"c")
+						.addProperty("freeLargeArrays", 	"d")
+						.addProperty("inUseLargeArrays", 	"e")
+				.next()
+				.name("WorldType")
+					.detect()
+						.strings("default_1_1")
+					.prepare()
+						.addProperty("types", 			"a")
+						.addProperty("default", 		"b")
+						.addProperty("flat", 			"c")
+						.addProperty("largeBiomes", 	"d")
+						.addProperty("amplified", 		"e")
+						.addProperty("customized", 		"f")
+						.addProperty("default_1_1", 	"g")
+				.next()
+				.name("GenLayer")
+					.detect()
+						.longs(1000L, 2001L, 2000L)
+					.prepare()
+						.addMethod("initializeAllBiomeGenerators", 				"a").real("long").symbolic("WorldType").end()
+						.addMethod("initializeAllBiomeGeneratorsWithParams", 	"a").real("long").symbolic("WorldType").real("String").end()
+						.addMethod("getInts", 									"a").real("int") .real("int")          .real("int")   .real("int").end()
+				.next()
+				.name("BlockInit")
+					.detect()
+						.numberOfFields(3)
+						.fieldFlags(AccessFlags.PRIVATE | AccessFlags.STATIC, 0, 1, 2)
+						.numberOfConstructors(0)
+						.numberOfMethodsAndConstructors(6)
+						.utf8s("isDebugEnabled")
+					.prepare()
+						.addMethod("initialize", "c").end()
+				.construct();
+		}
+		// @formatter:on
+	}
+
+	private static final String CLIENT_CLASS_RESOURCE = "net/minecraft/client/Minecraft.class";
+	private static final String CLIENT_CLASS = "net.minecraft.client.Minecraft";
+	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
+	private static final String SERVER_CLASS = "net.minecraft.server.MinecraftServer";
+
 	private File jarFile;
 	private VersionInfo version;
 	private Map<String, SymbolicClass> symbolicClassesBySymbolicClassName;
@@ -39,7 +114,7 @@ public class LocalMinecraftInterfaceBuilder {
 			Log.i("Searching for classes...");
 			Map<String, RealClass> realClassesBySymbolicClassName = RealClassFinder
 					.findAllClasses(realClasses,
-							StatelessResources.INSTANCE.getRealClassFinders());
+							StatelessResources.INSTANCE.realClassFinders);
 			Log.i("Class search complete.");
 			File librariesJson = getLibrariesJsonFile();
 			URLClassLoader classLoader;
@@ -94,14 +169,10 @@ public class LocalMinecraftInterfaceBuilder {
 
 	private Class<?> loadMainClass(URLClassLoader classLoader) {
 		try {
-			if (classLoader.findResource(StatelessResources.INSTANCE
-					.getClientClassResource()) != null) {
-				return classLoader.loadClass(StatelessResources.INSTANCE
-						.getClientClass());
-			} else if (classLoader.findResource(StatelessResources.INSTANCE
-					.getServerClassResource()) != null) {
-				return classLoader.loadClass(StatelessResources.INSTANCE
-						.getServerClass());
+			if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
+				return classLoader.loadClass(CLIENT_CLASS);
+			} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {
+				return classLoader.loadClass(SERVER_CLASS);
 			} else {
 				throw new RuntimeException("cannot find minecraft jar file");
 			}
