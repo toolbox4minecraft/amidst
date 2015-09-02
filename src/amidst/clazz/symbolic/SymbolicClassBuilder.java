@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import amidst.clazz.real.RealClass;
 import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.ParameterDeclaration;
@@ -40,16 +39,16 @@ public class SymbolicClassBuilder {
 	private Map<String, SymbolicProperty> propertiesBySymbolicName = new HashMap<String, SymbolicProperty>();
 
 	private ClassLoader classLoader;
-	private Map<String, RealClass> realClassesBySymbolicClassName;
+	private Map<String, String> realClassNamesBySymbolicClassName;
 	private Map<String, SymbolicClass> symbolicClassesByRealClassName;
 	private SymbolicClass product;
 
 	public SymbolicClassBuilder(ClassLoader classLoader,
-			Map<String, RealClass> realClassesBySymbolicClassName,
+			Map<String, String> realClassNamesBySymbolicClassName,
 			Map<String, SymbolicClass> symbolicClassesByRealClassName,
 			String symbolicClassName, String realClassName) {
 		this.classLoader = classLoader;
-		this.realClassesBySymbolicClassName = realClassesBySymbolicClassName;
+		this.realClassNamesBySymbolicClassName = realClassNamesBySymbolicClassName;
 		this.symbolicClassesByRealClassName = symbolicClassesByRealClassName;
 		this.product = new SymbolicClass(symbolicClassName, realClassName,
 				loadClass(realClassName), constructorsBySymbolicName,
@@ -179,10 +178,10 @@ public class SymbolicClassBuilder {
 		if (result != null) {
 			return result;
 		} else if (declaration.isSymbolic()) {
-			RealClass realClass = realClassesBySymbolicClassName
+			String realClassName = realClassNamesBySymbolicClassName
 					.get(declaration.getType());
-			if (realClass != null) {
-				return classLoader.loadClass(realClass.getRealClassName());
+			if (realClassName != null) {
+				return classLoader.loadClass(realClassName);
 			} else {
 				throw new ClassNotFoundException(
 						"cannot resolve symbolic class name: "

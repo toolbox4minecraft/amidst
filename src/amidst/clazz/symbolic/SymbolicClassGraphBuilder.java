@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import amidst.clazz.real.RealClass;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
@@ -13,16 +12,16 @@ import amidst.clazz.symbolic.declaration.SymbolicPropertyDeclaration;
 
 public class SymbolicClassGraphBuilder {
 	private ClassLoader classLoader;
-	private Map<SymbolicClassDeclaration, RealClass> realClassesBySymbolicClassDeclaration;
-	private Map<String, RealClass> realClassesBySymbolicClassName = new HashMap<String, RealClass>();
+	private Map<SymbolicClassDeclaration, String> realClassNamesBySymbolicClassDeclaration;
+	private Map<String, String> realClassNamesBySymbolicClassName = new HashMap<String, String>();
 	private Map<String, SymbolicClass> symbolicClassesByRealClassName = new HashMap<String, SymbolicClass>();
 	private Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration = new HashMap<SymbolicClassDeclaration, SymbolicClassBuilder>();
 
 	public SymbolicClassGraphBuilder(
 			ClassLoader classLoader,
-			Map<SymbolicClassDeclaration, RealClass> realClassesBySymbolicClassDeclaration) {
+			Map<SymbolicClassDeclaration, String> realClassNamesBySymbolicClassDeclaration) {
 		this.classLoader = classLoader;
-		this.realClassesBySymbolicClassDeclaration = realClassesBySymbolicClassDeclaration;
+		this.realClassNamesBySymbolicClassDeclaration = realClassNamesBySymbolicClassDeclaration;
 	}
 
 	public Map<String, SymbolicClass> create() {
@@ -32,18 +31,18 @@ public class SymbolicClassGraphBuilder {
 	}
 
 	private void createSymbolicClasses() {
-		for (Entry<SymbolicClassDeclaration, RealClass> entry : realClassesBySymbolicClassDeclaration
+		for (Entry<SymbolicClassDeclaration, String> entry : realClassNamesBySymbolicClassDeclaration
 				.entrySet()) {
 			SymbolicClassDeclaration declaration = entry.getKey();
-			RealClass realClass = entry.getValue();
 			String symbolicClassName = declaration.getSymbolicClassName();
-			String realClassName = realClass.getRealClassName();
+			String realClassName = entry.getValue();
 			SymbolicClassBuilder builder = new SymbolicClassBuilder(
-					classLoader, realClassesBySymbolicClassName,
+					classLoader, realClassNamesBySymbolicClassName,
 					symbolicClassesByRealClassName,
 					declaration.getSymbolicClassName(), realClassName);
 			SymbolicClass symbolicClass = builder.create();
-			realClassesBySymbolicClassName.put(symbolicClassName, realClass);
+			realClassNamesBySymbolicClassName.put(symbolicClassName,
+					realClassName);
 			symbolicClassesByRealClassName.put(realClassName, symbolicClass);
 			symbolicClassBuildersBySymbolicClassDeclaration.put(declaration,
 					builder);

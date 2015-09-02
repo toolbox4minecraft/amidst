@@ -20,12 +20,12 @@ public class Classes {
 		List<RealClass> realClasses = RealClasses.fromJarFile(jarFile);
 		Log.i("Jar load complete.");
 		Log.i("Searching for classes...");
-		Map<SymbolicClassDeclaration, RealClass> realClassesBySymbolicClassDeclaration = translator
+		Map<SymbolicClassDeclaration, String> realClassNamesBySymbolicClassDeclaration = translator
 				.translate(realClasses);
 		Log.i("Class search complete.");
 		Log.i("Loading classes...");
-		Map<String, SymbolicClass> result = SymbolicClasses.fromRealClasses(
-				realClassesBySymbolicClassDeclaration, classLoader);
+		Map<String, SymbolicClass> result = SymbolicClasses.from(
+				realClassNamesBySymbolicClassDeclaration, classLoader);
 		Log.i("Classes loaded.");
 		return result;
 	}

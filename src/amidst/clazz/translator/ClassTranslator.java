@@ -22,24 +22,25 @@ public class ClassTranslator {
 		this.translations = translations;
 	}
 
-	public Map<SymbolicClassDeclaration, RealClass> translate(
+	public Map<SymbolicClassDeclaration, String> translate(
 			List<RealClass> realClasses) {
-		Map<SymbolicClassDeclaration, RealClass> result = new HashMap<SymbolicClassDeclaration, RealClass>();
+		Map<SymbolicClassDeclaration, String> result = new HashMap<SymbolicClassDeclaration, String>();
 		for (Entry<RealClassDetector, SymbolicClassDeclaration> entry : translations
 				.entrySet()) {
 			addResult(result, entry.getValue(),
-					entry.getKey().firstMatching(realClasses));
+					entry.getKey().firstMatching(realClasses)
+							.getRealClassName());
 		}
 		return result;
 	}
 
-	private void addResult(Map<SymbolicClassDeclaration, RealClass> result,
-			SymbolicClassDeclaration declaration, RealClass realClass) {
-		if (realClass != null) {
+	private void addResult(Map<SymbolicClassDeclaration, String> result,
+			SymbolicClassDeclaration declaration, String realClassName) {
+		if (realClassName != null) {
 			if (!result.containsKey(declaration)) {
-				result.put(declaration, realClass);
+				result.put(declaration, realClassName);
 			}
-			Log.debug("Found: " + realClass.getRealClassName() + " as "
+			Log.debug("Found: " + realClassName + " as "
 					+ declaration.getSymbolicClassName());
 		} else {
 			Log.debug("Missing: " + declaration.getSymbolicClassName());
