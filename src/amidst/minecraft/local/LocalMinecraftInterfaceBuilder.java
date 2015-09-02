@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,12 +26,8 @@ import amidst.utilties.JavaUtils;
 import amidst.version.VersionInfo;
 
 public class LocalMinecraftInterfaceBuilder {
-	private URLClassLoader classLoader;
-
 	private File jarFile;
 	private VersionInfo version;
-
-	private Map<String, RealClass> realClassesBySymbolicClassName = new HashMap<String, RealClass>();
 	private Map<String, SymbolicClass> symbolicClassesBySymbolicClassName;
 
 	public LocalMinecraftInterfaceBuilder(File jarFile) {
@@ -42,9 +37,12 @@ public class LocalMinecraftInterfaceBuilder {
 			List<RealClass> realClasses = RealClasses.fromJarFile(jarFile);
 			Log.i("Jar load complete.");
 			Log.i("Searching for classes...");
-			identifyClasses(realClasses);
+			Map<String, RealClass> realClassesBySymbolicClassName = RealClassFinder
+					.findAllClasses(realClasses,
+							StatelessResources.INSTANCE.getRealClassFinders());
 			Log.i("Class search complete.");
 			File librariesJson = getLibrariesJsonFile();
+			URLClassLoader classLoader;
 			if (librariesJson.exists()) {
 				Log.i("Loading libraries.");
 				classLoader = createClassLoader(getJarFileUrl(),
@@ -55,13 +53,13 @@ public class LocalMinecraftInterfaceBuilder {
 				classLoader = createClassLoader(getJarFileUrl());
 			}
 			Log.i("Generating version ID...");
-			String versionID = generateVersionID(getMainClassFields(loadMainClass()));
-			version = VersionInfo.from(versionID);
+			version = VersionInfo
+					.from(generateVersionID(getMainClassFields(loadMainClass(classLoader))));
 			Log.i("Identified Minecraft [" + version.name()
-					+ "] with versionID of " + versionID);
+					+ "] with versionID of " + version.versionID);
 			Log.i("Loading classes...");
-			symbolicClassesBySymbolicClassName = SymbolicClasses
-					.createClasses(classLoader, realClassesBySymbolicClassName);
+			symbolicClassesBySymbolicClassName = SymbolicClasses.createClasses(
+					classLoader, realClassesBySymbolicClassName);
 			Log.i("Classes loaded.");
 			Log.i("Minecraft load complete.");
 		} catch (RuntimeException e) {
@@ -70,26 +68,6 @@ public class LocalMinecraftInterfaceBuilder {
 					"error while building local minecraft interface: "
 							+ e.getMessage());
 			e.printStackTrace();
-		}
-	}
-
-	private void identifyClasses(List<RealClass> realClasses) {
-		for (RealClassFinder finder : StatelessResources.INSTANCE
-				.getRealClassFinders()) {
-			RealClass realClass = finder.find(realClasses);
-			if (realClass != null) {
-				registerClass(finder.getSymbolicClassName(), realClass);
-				Log.debug("Found: " + realClass.getRealClassName() + " as "
-						+ finder.getSymbolicClassName());
-			} else {
-				Log.debug("Missing: " + finder.getSymbolicClassName());
-			}
-		}
-	}
-
-	private void registerClass(String symbolicClassName, RealClass realClass) {
-		if (!realClassesBySymbolicClassName.containsKey(symbolicClassName)) {
-			realClassesBySymbolicClassName.put(symbolicClassName, realClass);
 		}
 	}
 
@@ -114,7 +92,7 @@ public class LocalMinecraftInterfaceBuilder {
 		return result;
 	}
 
-	private Class<?> loadMainClass() {
+	private Class<?> loadMainClass(URLClassLoader classLoader) {
 		try {
 			if (classLoader.findResource(StatelessResources.INSTANCE
 					.getClientClassResource()) != null) {
