@@ -52,9 +52,10 @@ public class SymbolicClass {
 		return constructorsBySymbolicName.get(symbolicName).call(parameters);
 	}
 
-	public Object callMethod(String symbolicName, SymbolicObject obj,
-			Object... parameters) {
-		return methodsBySymbolicName.get(symbolicName).call(obj, parameters);
+	public Object callMethod(String symbolicName,
+			SymbolicObject symbolicObject, Object... parameters) {
+		return methodsBySymbolicName.get(symbolicName).call(symbolicObject,
+				parameters);
 	}
 
 	public Object callStaticMethod(String symbolicName, Object... parameters) {
