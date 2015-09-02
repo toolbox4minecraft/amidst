@@ -114,17 +114,7 @@ public class LocalMinecraftInterfaceBuilder {
 					.findAllClasses(realClasses,
 							StatelessResources.INSTANCE.realClassFinders);
 			Log.i("Class search complete.");
-			File librariesJson = getLibrariesJsonFile(jarFile);
-			URLClassLoader classLoader;
-			if (librariesJson.exists()) {
-				Log.i("Loading libraries.");
-				classLoader = createClassLoader(getJarFileUrl(jarFile),
-						getAllLibraryUrls(librariesJson));
-			} else {
-				Log.i("Unable to find Minecraft library JSON at: "
-						+ librariesJson + ". Skipping.");
-				classLoader = createClassLoader(getJarFileUrl(jarFile));
-			}
+			URLClassLoader classLoader = getClassLoader(jarFile);
 			Log.i("Generating version ID...");
 			version = VersionInfo
 					.from(generateVersionID(getMainClassFields(loadMainClass(classLoader))));
@@ -142,6 +132,21 @@ public class LocalMinecraftInterfaceBuilder {
 							+ e.getMessage());
 			e.printStackTrace();
 		}
+	}
+
+	private URLClassLoader getClassLoader(File jarFile) {
+		File librariesJson = getLibrariesJsonFile(jarFile);
+		URLClassLoader classLoader;
+		if (librariesJson.exists()) {
+			Log.i("Loading libraries.");
+			classLoader = createClassLoader(getJarFileUrl(jarFile),
+					getAllLibraryUrls(librariesJson));
+		} else {
+			Log.i("Unable to find Minecraft library JSON at: " + librariesJson
+					+ ". Skipping.");
+			classLoader = createClassLoader(getJarFileUrl(jarFile));
+		}
+		return classLoader;
 	}
 
 	private Field[] getMainClassFields(Class<?> mainClass) {
