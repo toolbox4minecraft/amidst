@@ -6,80 +6,88 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import amidst.clazz.real.RealClass;
-import amidst.clazz.symbolic.declaration.ConstructorDeclaration;
-import amidst.clazz.symbolic.declaration.MethodDeclaration;
-import amidst.clazz.symbolic.declaration.PropertyDeclaration;
+import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
+import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
+import amidst.clazz.symbolic.declaration.SymbolicPropertyDeclaration;
+import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 
 public class SymbolicClassGraphBuilder {
 	private ClassLoader classLoader;
-	private Map<String, RealClass> realClassesBySymbolicClassName;
+	private Map<SymbolicClassDeclaration, RealClass> realClassesBySymbolicClassDeclaration;
+	private Map<String, RealClass> realClassesBySymbolicClassName = new HashMap<String, RealClass>();
 	private Map<String, SymbolicClass> symbolicClassesByRealClassName = new HashMap<String, SymbolicClass>();
-	private Map<String, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassName = new HashMap<String, SymbolicClassBuilder>();
+	private Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration = new HashMap<SymbolicClassDeclaration, SymbolicClassBuilder>();
 
-	public SymbolicClassGraphBuilder(ClassLoader classLoader,
-			Map<String, RealClass> realClassesBySymbolicClassName) {
+	public SymbolicClassGraphBuilder(
+			ClassLoader classLoader,
+			Map<SymbolicClassDeclaration, RealClass> realClassesBySymbolicClassDeclaration) {
 		this.classLoader = classLoader;
-		this.realClassesBySymbolicClassName = realClassesBySymbolicClassName;
+		this.realClassesBySymbolicClassDeclaration = realClassesBySymbolicClassDeclaration;
 	}
 
 	public Map<String, SymbolicClass> create() {
-		populateSymbolicClassMaps();
+		createSymbolicClasses();
 		addConstructorsMethodsAndProperties();
 		return createProduct();
 	}
 
-	private void populateSymbolicClassMaps() {
-		for (Entry<String, RealClass> entry : realClassesBySymbolicClassName
+	private void createSymbolicClasses() {
+		for (Entry<SymbolicClassDeclaration, RealClass> entry : realClassesBySymbolicClassDeclaration
 				.entrySet()) {
-			String symbolicClassName = entry.getKey();
-			String realClassName = entry.getValue().getRealClassName();
+			SymbolicClassDeclaration declaration = entry.getKey();
+			RealClass realClass = entry.getValue();
+			String symbolicClassName = declaration.getSymbolicClassName();
+			String realClassName = realClass.getRealClassName();
 			SymbolicClassBuilder builder = new SymbolicClassBuilder(
-					classLoader, symbolicClassesByRealClassName,
-					symbolicClassName, realClassName);
-			symbolicClassesByRealClassName.put(realClassName, builder.create());
-			symbolicClassBuildersBySymbolicClassName.put(symbolicClassName,
+					classLoader, realClassesBySymbolicClassName,
+					symbolicClassesByRealClassName,
+					declaration.getSymbolicClassName(), realClassName);
+			SymbolicClass symbolicClass = builder.create();
+			realClassesBySymbolicClassName.put(symbolicClassName, realClass);
+			symbolicClassesByRealClassName.put(realClassName, symbolicClass);
+			symbolicClassBuildersBySymbolicClassDeclaration.put(declaration,
 					builder);
 		}
 	}
 
 	private void addConstructorsMethodsAndProperties() {
-		for (Entry<String, RealClass> entry : realClassesBySymbolicClassName
+		for (Entry<SymbolicClassDeclaration, SymbolicClassBuilder> entry : symbolicClassBuildersBySymbolicClassDeclaration
 				.entrySet()) {
-			RealClass realClass = entry.getValue();
-			SymbolicClassBuilder builder = symbolicClassBuildersBySymbolicClassName
-					.get(entry.getKey());
-			addConstructors(builder, realClass.getConstructors());
-			addMethods(builder, realClass.getMethods());
-			addProperties(builder, realClass.getProperties());
+			SymbolicClassDeclaration declaration = entry.getKey();
+			SymbolicClassBuilder builder = entry.getValue();
+			addConstructors(builder, declaration.getConstructors());
+			addMethods(builder, declaration.getMethods());
+			addProperties(builder, declaration.getProperties());
 		}
 	}
 
 	private void addConstructors(SymbolicClassBuilder builder,
-			List<ConstructorDeclaration> constructors) {
-		for (ConstructorDeclaration constructor : constructors) {
-			builder.addConstructor(realClassesBySymbolicClassName, constructor);
+			List<SymbolicConstructorDeclaration> constructors) {
+		for (SymbolicConstructorDeclaration constructor : constructors) {
+			builder.addConstructor(constructor);
 		}
 	}
 
 	private void addMethods(SymbolicClassBuilder builder,
-			List<MethodDeclaration> methods) {
-		for (MethodDeclaration method : methods) {
-			builder.addMethod(realClassesBySymbolicClassName, method);
+			List<SymbolicMethodDeclaration> methods) {
+		for (SymbolicMethodDeclaration method : methods) {
+			builder.addMethod(method);
 		}
 	}
 
 	private void addProperties(SymbolicClassBuilder builder,
-			List<PropertyDeclaration> properties) {
-		for (PropertyDeclaration property : properties) {
+			List<SymbolicPropertyDeclaration> properties) {
+		for (SymbolicPropertyDeclaration property : properties) {
 			builder.addProperty(property);
 		}
 	}
 
 	private Map<String, SymbolicClass> createProduct() {
 		Map<String, SymbolicClass> result = new HashMap<String, SymbolicClass>();
-		for (Entry<String, SymbolicClassBuilder> entry : symbolicClassBuildersBySymbolicClassName
+		for (Entry<SymbolicClassDeclaration, SymbolicClassBuilder> entry : symbolicClassBuildersBySymbolicClassDeclaration
 				.entrySet()) {
-			result.put(entry.getKey(), entry.getValue().create());
+			result.put(entry.getKey().getSymbolicClassName(), entry.getValue()
+					.create());
 		}
 		return result;
 	}

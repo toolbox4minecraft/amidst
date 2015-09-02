@@ -10,10 +10,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import amidst.clazz.symbolic.declaration.ConstructorDeclaration;
-import amidst.clazz.symbolic.declaration.MethodDeclaration;
-import amidst.clazz.symbolic.declaration.PropertyDeclaration;
-
 public class RealClass {
 	/*-
 	 * 	ACC_PUBLIC	 	0x0001	 Declared public; may be accessed from outside its package.
@@ -315,9 +311,6 @@ public class RealClass {
 
 	private List<ClassConstant<Integer>> stringIndices = new ArrayList<ClassConstant<Integer>>();
 	private List<ReferenceIndex> methodIndices = new ArrayList<ReferenceIndex>();
-	private List<ConstructorDeclaration> constructors = new ArrayList<ConstructorDeclaration>();
-	private List<MethodDeclaration> methods = new ArrayList<MethodDeclaration>();
-	private List<PropertyDeclaration> properties = new ArrayList<PropertyDeclaration>();
 	private List<Float> floatConstants = new ArrayList<Float>();
 	private List<Long> longConstants = new ArrayList<Long>();
 	private List<String> utfConstants = new ArrayList<String>();
@@ -377,30 +370,6 @@ public class RealClass {
 
 	public String getRealClassName() {
 		return realClassName;
-	}
-
-	public List<ConstructorDeclaration> getConstructors() {
-		return constructors;
-	}
-
-	public List<MethodDeclaration> getMethods() {
-		return methods;
-	}
-
-	public List<PropertyDeclaration> getProperties() {
-		return properties;
-	}
-
-	public void addConstructor(ConstructorDeclaration constructor) {
-		constructors.add(constructor);
-	}
-
-	public void addMethod(MethodDeclaration method) {
-		methods.add(method);
-	}
-
-	public void addProperty(PropertyDeclaration property) {
-		properties.add(property);
 	}
 
 	public Field getField(int index) {

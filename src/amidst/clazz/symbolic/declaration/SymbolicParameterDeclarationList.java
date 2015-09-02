@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ParameterDeclarationList {
+public class SymbolicParameterDeclarationList {
 	public static interface ExecuteOnEnd {
-		public void run(ParameterDeclarationList parameters);
+		public void run(SymbolicParameterDeclarationList parameters);
 	}
 
 	public static <T> Builder<T> builder(T nextBuilder,
@@ -16,7 +16,7 @@ public class ParameterDeclarationList {
 
 	public static class Builder<T> {
 		private T nextBuilder;
-		private ParameterDeclarationList product = new ParameterDeclarationList();
+		private SymbolicParameterDeclarationList product = new SymbolicParameterDeclarationList();
 		private ExecuteOnEnd executeOnEnd;
 
 		private Builder(T nextBuilder, ExecuteOnEnd executeOnEnd) {
@@ -25,12 +25,12 @@ public class ParameterDeclarationList {
 		}
 
 		public Builder<T> real(String realType) {
-			product.addEntry(realType, false);
+			product.add(realType, false);
 			return this;
 		}
 
 		public Builder<T> symbolic(String symbolicType) {
-			product.addEntry(symbolicType, true);
+			product.add(symbolicType, true);
 			return this;
 		}
 
@@ -40,11 +40,11 @@ public class ParameterDeclarationList {
 		}
 	}
 
-	public class Entry {
+	public class ParameterDeclaration {
 		private String type;
 		private boolean isSymbolic;
 
-		private Entry(String type, boolean isSymbolic) {
+		private ParameterDeclaration(String type, boolean isSymbolic) {
 			this.type = type;
 			this.isSymbolic = isSymbolic;
 		}
@@ -58,18 +58,18 @@ public class ParameterDeclarationList {
 		}
 	}
 
-	private List<Entry> entries = new ArrayList<Entry>();
-	private List<Entry> entriesView;
+	private List<ParameterDeclaration> declarations = new ArrayList<ParameterDeclaration>();
+	private List<ParameterDeclaration> declarationsView;
 
-	public ParameterDeclarationList() {
-		this.entriesView = Collections.unmodifiableList(entries);
+	public SymbolicParameterDeclarationList() {
+		this.declarationsView = Collections.unmodifiableList(declarations);
 	}
 
-	private void addEntry(String type, boolean isSymbolic) {
-		entries.add(new Entry(type, isSymbolic));
+	private void add(String type, boolean isSymbolic) {
+		declarations.add(new ParameterDeclaration(type, isSymbolic));
 	}
 
-	public List<Entry> getEntries() {
-		return entriesView;
+	public List<ParameterDeclaration> getDeclarations() {
+		return declarationsView;
 	}
 }

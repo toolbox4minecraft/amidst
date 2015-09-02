@@ -8,14 +8,15 @@ import java.util.Map;
 import amidst.clazz.finder.ClassFinder;
 import amidst.clazz.real.RealClass;
 import amidst.clazz.real.RealClasses;
+import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.logging.Log;
 
 public class SymbolicClasses {
 	public static Map<String, SymbolicClass> createClasses(
 			ClassLoader classLoader,
-			Map<String, RealClass> realClassesBySymbolicClassName) {
+			Map<SymbolicClassDeclaration, RealClass> realClassesBySymbolicClassDeclaration) {
 		return new SymbolicClassGraphBuilder(classLoader,
-				realClassesBySymbolicClassName).create();
+				realClassesBySymbolicClassDeclaration).create();
 	}
 
 	public static Map<String, SymbolicClass> loadClasses(File jarFile,
@@ -24,12 +25,12 @@ public class SymbolicClasses {
 		List<RealClass> realClasses = RealClasses.fromJarFile(jarFile);
 		Log.i("Jar load complete.");
 		Log.i("Searching for classes...");
-		Map<String, RealClass> realClassesBySymbolicClassName = ClassFinder
+		Map<SymbolicClassDeclaration, RealClass> realClassesBySymbolicClassDeclaration = ClassFinder
 				.findAllClasses(realClasses, finders);
 		Log.i("Class search complete.");
 		Log.i("Loading classes...");
 		Map<String, SymbolicClass> result = SymbolicClasses.createClasses(
-				classLoader, realClassesBySymbolicClassName);
+				classLoader, realClassesBySymbolicClassDeclaration);
 		Log.i("Classes loaded.");
 		return result;
 	}

@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 import amidst.clazz.real.RealClass;
-import amidst.clazz.symbolic.declaration.ConstructorDeclaration;
-import amidst.clazz.symbolic.declaration.MethodDeclaration;
-import amidst.clazz.symbolic.declaration.PropertyDeclaration;
-import amidst.clazz.symbolic.declaration.ParameterDeclarationList.Entry;
+import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
+import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
+import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.ParameterDeclaration;
+import amidst.clazz.symbolic.declaration.SymbolicPropertyDeclaration;
 import amidst.logging.Log;
 
 public class SymbolicClassBuilder {
@@ -40,13 +40,16 @@ public class SymbolicClassBuilder {
 	private Map<String, SymbolicProperty> propertiesBySymbolicName = new HashMap<String, SymbolicProperty>();
 
 	private ClassLoader classLoader;
+	private Map<String, RealClass> realClassesBySymbolicClassName;
 	private Map<String, SymbolicClass> symbolicClassesByRealClassName;
 	private SymbolicClass product;
 
 	public SymbolicClassBuilder(ClassLoader classLoader,
+			Map<String, RealClass> realClassesBySymbolicClassName,
 			Map<String, SymbolicClass> symbolicClassesByRealClassName,
 			String symbolicClassName, String realClassName) {
 		this.classLoader = classLoader;
+		this.realClassesBySymbolicClassName = realClassesBySymbolicClassName;
 		this.symbolicClassesByRealClassName = symbolicClassesByRealClassName;
 		this.product = new SymbolicClass(symbolicClassName, realClassName,
 				loadClass(realClassName), constructorsBySymbolicName,
@@ -66,36 +69,27 @@ public class SymbolicClassBuilder {
 		}
 	}
 
-	public void addConstructor(
-			Map<String, RealClass> realClassesBySymbolicClassName,
-			ConstructorDeclaration declaration) {
-		SymbolicConstructor constructor = createConstructor(
-				realClassesBySymbolicClassName, declaration);
+	public void addConstructor(SymbolicConstructorDeclaration declaration) {
 		constructorsBySymbolicName.put(declaration.getSymbolicName(),
-				constructor);
+				createConstructor(declaration));
 	}
 
-	public void addMethod(
-			Map<String, RealClass> realClassesBySymbolicClassName,
-			MethodDeclaration declaration) {
-		SymbolicMethod method = createMethod(realClassesBySymbolicClassName,
-				declaration);
-		methodsBySymbolicName.put(declaration.getSymbolicName(), method);
+	public void addMethod(SymbolicMethodDeclaration declaration) {
+		methodsBySymbolicName.put(declaration.getSymbolicName(),
+				createMethod(declaration));
 	}
 
-	public void addProperty(PropertyDeclaration declaration) {
-		SymbolicProperty property = createProperty(declaration);
-		propertiesBySymbolicName.put(declaration.getSymbolicName(), property);
+	public void addProperty(SymbolicPropertyDeclaration declaration) {
+		propertiesBySymbolicName.put(declaration.getSymbolicName(),
+				createProperty(declaration));
 	}
 
 	private SymbolicConstructor createConstructor(
-			Map<String, RealClass> realClassesBySymbolicClassName,
-			ConstructorDeclaration declaration) {
+			SymbolicConstructorDeclaration declaration) {
 		String symbolicName = declaration.getSymbolicName();
 		try {
-			Class<?>[] parameterClasses = getParameterClasses(
-					realClassesBySymbolicClassName, declaration.getParameters()
-							.getEntries());
+			Class<?>[] parameterClasses = getParameterClasses(declaration
+					.getParameters().getDeclarations());
 			Constructor<?> constructor = getConstructor(product.getClazz(),
 					parameterClasses);
 			return new SymbolicConstructor(product, symbolicName, constructor);
@@ -109,15 +103,12 @@ public class SymbolicClassBuilder {
 		return null;
 	}
 
-	private SymbolicMethod createMethod(
-			Map<String, RealClass> realClassesBySymbolicClassName,
-			MethodDeclaration declaration) {
+	private SymbolicMethod createMethod(SymbolicMethodDeclaration declaration) {
 		String symbolicName = declaration.getSymbolicName();
 		String realName = declaration.getRealName();
 		try {
-			Class<?>[] parameterClasses = getParameterClasses(
-					realClassesBySymbolicClassName, declaration.getParameters()
-							.getEntries());
+			Class<?>[] parameterClasses = getParameterClasses(declaration
+					.getParameters().getDeclarations());
 			Method method = getMethod(product.getClazz(), realName,
 					parameterClasses);
 			SymbolicClass returnType = getType(method.getReturnType());
@@ -133,7 +124,7 @@ public class SymbolicClassBuilder {
 		return null;
 	}
 
-	private SymbolicProperty createProperty(PropertyDeclaration declaration) {
+	private SymbolicProperty createProperty(SymbolicPropertyDeclaration declaration) {
 		String symbolicName = declaration.getSymbolicName();
 		String realName = declaration.getRealName();
 		try {
@@ -171,35 +162,33 @@ public class SymbolicClassBuilder {
 	}
 
 	private Class<?>[] getParameterClasses(
-			Map<String, RealClass> realClassesBySymbolicClassName,
-			List<Entry> entries) throws ClassNotFoundException {
-		Class<?>[] result = new Class<?>[entries.size()];
-		for (int i = 0; i < entries.size(); i++) {
-			result[i] = getParameterClass(realClassesBySymbolicClassName,
-					entries.get(i));
+			List<ParameterDeclaration> declarations)
+			throws ClassNotFoundException {
+		Class<?>[] result = new Class<?>[declarations.size()];
+		for (int i = 0; i < declarations.size(); i++) {
+			result[i] = getParameterClass(declarations.get(i));
 		}
 		return result;
 	}
 
-	private Class<?> getParameterClass(
-			Map<String, RealClass> realClassesBySymbolicClassName, Entry entry)
+	private Class<?> getParameterClass(ParameterDeclaration declaration)
 			throws ClassNotFoundException {
-		Class<?> result = StatelessResources.INSTANCE.primitivesMap.get(entry
-				.getType());
+		Class<?> result = StatelessResources.INSTANCE.primitivesMap
+				.get(declaration.getType());
 		if (result != null) {
 			return result;
-		} else if (entry.isSymbolic()) {
-			RealClass realClass = realClassesBySymbolicClassName.get(entry
-					.getType());
+		} else if (declaration.isSymbolic()) {
+			RealClass realClass = realClassesBySymbolicClassName
+					.get(declaration.getType());
 			if (realClass != null) {
 				return classLoader.loadClass(realClass.getRealClassName());
 			} else {
 				throw new ClassNotFoundException(
 						"cannot resolve symbolic class name: "
-								+ entry.getType());
+								+ declaration.getType());
 			}
 		} else {
-			return classLoader.loadClass(entry.getType());
+			return classLoader.loadClass(declaration.getType());
 		}
 	}
 

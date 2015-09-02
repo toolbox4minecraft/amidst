@@ -1,12 +1,12 @@
 package amidst.clazz.symbolic.declaration;
 
-public class MethodDeclaration {
+public class SymbolicMethodDeclaration {
 	private String symbolicName;
 	private String realName;
-	private ParameterDeclarationList parameters;
+	private SymbolicParameterDeclarationList parameters;
 
-	public MethodDeclaration(String symbolicName, String realName,
-			ParameterDeclarationList parameters) {
+	public SymbolicMethodDeclaration(String symbolicName, String realName,
+			SymbolicParameterDeclarationList parameters) {
 		this.symbolicName = symbolicName;
 		this.realName = realName;
 		this.parameters = parameters;
@@ -20,7 +20,7 @@ public class MethodDeclaration {
 		return realName;
 	}
 
-	public ParameterDeclarationList getParameters() {
+	public SymbolicParameterDeclarationList getParameters() {
 		return parameters;
 	}
 }

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import amidst.clazz.real.RealClass;
 import amidst.clazz.real.detector.RealClassDetector;
-import amidst.clazz.symbolic.declaration.RealClassPreparer;
+import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.logging.Log;
 
 public class ClassFinder {
@@ -14,42 +14,36 @@ public class ClassFinder {
 		return CFBuilder.builder();
 	}
 
-	public static Map<String, RealClass> findAllClasses(
+	public static Map<SymbolicClassDeclaration, RealClass> findAllClasses(
 			List<RealClass> realClasses, List<ClassFinder> finders) {
-		Map<String, RealClass> result = new HashMap<String, RealClass>();
+		Map<SymbolicClassDeclaration, RealClass> result = new HashMap<SymbolicClassDeclaration, RealClass>();
 		for (ClassFinder finder : finders) {
 			RealClass realClass = finder.find(realClasses);
 			if (realClass != null) {
-				if (!result.containsKey(finder.getSymbolicClassName())) {
-					result.put(finder.getSymbolicClassName(), realClass);
+				if (!result.containsKey(finder.declaration)) {
+					result.put(finder.declaration, realClass);
 				}
 				Log.debug("Found: " + realClass.getRealClassName() + " as "
-						+ finder.getSymbolicClassName());
+						+ finder.declaration.getSymbolicClassName());
 			} else {
-				Log.debug("Missing: " + finder.getSymbolicClassName());
+				Log.debug("Missing: "
+						+ finder.declaration.getSymbolicClassName());
 			}
 		}
 		return result;
 	}
 
-	private String symbolicClassName;
 	private RealClassDetector detector;
-	private RealClassPreparer preparer;
+	private SymbolicClassDeclaration declaration;
 
-	public ClassFinder(String symbolicClassName, RealClassDetector detector,
-			RealClassPreparer preparer) {
-		this.symbolicClassName = symbolicClassName;
+	public ClassFinder(RealClassDetector detector,
+			SymbolicClassDeclaration declaration) {
 		this.detector = detector;
-		this.preparer = preparer;
+		this.declaration = declaration;
 	}
 
 	public boolean find(RealClass realClass) {
-		if (detector.detect(realClass)) {
-			preparer.prepare(realClass);
-			return true;
-		} else {
-			return false;
-		}
+		return detector.detect(realClass);
 	}
 
 	public RealClass find(List<RealClass> realClasses) {
@@ -59,9 +53,5 @@ public class ClassFinder {
 			}
 		}
 		return null;
-	}
-
-	public String getSymbolicClassName() {
-		return symbolicClassName;
 	}
 }

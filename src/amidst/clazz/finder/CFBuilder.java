@@ -2,7 +2,6 @@ package amidst.clazz.finder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import amidst.clazz.real.detector.AllRCD;
 import amidst.clazz.real.detector.AnyRCD;
@@ -15,20 +14,16 @@ import amidst.clazz.real.detector.RealClassDetector;
 import amidst.clazz.real.detector.StringRCD;
 import amidst.clazz.real.detector.Utf8RCD;
 import amidst.clazz.real.detector.WildcardByteRCD;
-import amidst.clazz.symbolic.declaration.ConstructorDeclaration;
-import amidst.clazz.symbolic.declaration.ConstructorRCD;
-import amidst.clazz.symbolic.declaration.MethodDeclaration;
-import amidst.clazz.symbolic.declaration.MethodRCD;
-import amidst.clazz.symbolic.declaration.MultiRCD;
-import amidst.clazz.symbolic.declaration.ParameterDeclarationList;
-import amidst.clazz.symbolic.declaration.PropertyDeclaration;
-import amidst.clazz.symbolic.declaration.PropertyRCD;
-import amidst.clazz.symbolic.declaration.RealClassPreparer;
-import amidst.clazz.symbolic.declaration.ParameterDeclarationList.Builder;
-import amidst.clazz.symbolic.declaration.ParameterDeclarationList.ExecuteOnEnd;
+import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
+import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
+import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList;
+import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.Builder;
+import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.ExecuteOnEnd;
+import amidst.clazz.symbolic.declaration.SymbolicPropertyDeclaration;
+import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 
 public class CFBuilder {
-	public class BCDBuilder {
+	public class RCDBuilder {
 		private List<List<RealClassDetector>> allDetectors = new ArrayList<List<RealClassDetector>>();
 		private List<RealClassDetector> detectors = new ArrayList<RealClassDetector>();
 
@@ -44,67 +39,73 @@ public class CFBuilder {
 			}
 		}
 
-		public BCDBuilder or() {
+		public RCDBuilder or() {
 			allDetectors.add(detectors);
 			detectors = new ArrayList<RealClassDetector>();
 			return this;
 		}
 
-		public BCPBuilder prepare() {
+		public SCDBuilder declare(String symbolicClassName) {
 			allDetectors.add(detectors);
-			return CFBuilder.this.preparerBuilder;
+			CFBuilder.this.declarationBuilder
+					.setSymbolicClassName(symbolicClassName);
+			return CFBuilder.this.declarationBuilder;
 		}
 
-		public BCDBuilder fieldFlags(int flags, int... fieldIndices) {
+		public RCDBuilder fieldFlags(int flags, int... fieldIndices) {
 			detectors.add(new FieldFlagsRCD(flags, fieldIndices));
 			return this;
 		}
 
-		public BCDBuilder longs(long... longs) {
+		public RCDBuilder longs(long... longs) {
 			detectors.add(new LongRCD(longs));
 			return this;
 		}
 
-		public BCDBuilder numberOfConstructors(int count) {
+		public RCDBuilder numberOfConstructors(int count) {
 			detectors.add(new NumberOfConstructorsRCD(count));
 			return this;
 		}
 
-		public BCDBuilder numberOfFields(int count) {
+		public RCDBuilder numberOfFields(int count) {
 			detectors.add(new NumberOfFieldsRCD(count));
 			return this;
 		}
 
-		public BCDBuilder numberOfMethodsAndConstructors(int count) {
+		public RCDBuilder numberOfMethodsAndConstructors(int count) {
 			detectors.add(new NumberOfMethodsAndConstructorsRCD(count));
 			return this;
 		}
 
-		public BCDBuilder strings(String... strings) {
+		public RCDBuilder strings(String... strings) {
 			detectors.add(new StringRCD(strings));
 			return this;
 		}
 
-		public BCDBuilder utf8s(String... utf8s) {
+		public RCDBuilder utf8s(String... utf8s) {
 			detectors.add(new Utf8RCD(utf8s));
 			return this;
 		}
 
-		public BCDBuilder wildcardBytes(int[] bytes) {
+		public RCDBuilder wildcardBytes(int[] bytes) {
 			detectors.add(new WildcardByteRCD(bytes));
 			return this;
 		}
 	}
 
-	public class BCPBuilder {
-		private List<RealClassPreparer> preparers = new ArrayList<RealClassPreparer>();
+	public class SCDBuilder {
+		private String symbolicClassName;
+		private List<SymbolicConstructorDeclaration> constructors = new ArrayList<SymbolicConstructorDeclaration>();
+		private List<SymbolicMethodDeclaration> methods = new ArrayList<SymbolicMethodDeclaration>();
+		private List<SymbolicPropertyDeclaration> properties = new ArrayList<SymbolicPropertyDeclaration>();
 
-		private RealClassPreparer constructThis() {
-			if (preparers.size() == 1) {
-				return preparers.get(0);
-			} else {
-				return new MultiRCD(preparers);
-			}
+		private void setSymbolicClassName(String symbolicClassName) {
+			this.symbolicClassName = symbolicClassName;
+		}
+
+		private SymbolicClassDeclaration constructThis() {
+			return new SymbolicClassDeclaration(symbolicClassName,
+					constructors, methods, properties);
 		}
 
 		public CFBuilder next() {
@@ -115,31 +116,29 @@ public class CFBuilder {
 			return CFBuilder.this.construct();
 		}
 
-		public Builder<BCPBuilder> addConstructor(final String symbolicName) {
-			return ParameterDeclarationList.builder(this, new ExecuteOnEnd() {
+		public Builder<SCDBuilder> addConstructor(final String symbolicName) {
+			return SymbolicParameterDeclarationList.builder(this, new ExecuteOnEnd() {
 				@Override
-				public void run(ParameterDeclarationList parameters) {
-					preparers
-							.add(new ConstructorRCD(new ConstructorDeclaration(
-									symbolicName, parameters)));
+				public void run(SymbolicParameterDeclarationList parameters) {
+					constructors.add(new SymbolicConstructorDeclaration(symbolicName,
+							parameters));
 				}
 			});
 		}
 
-		public Builder<BCPBuilder> addMethod(final String symbolicName,
+		public Builder<SCDBuilder> method(final String symbolicName,
 				final String realName) {
-			return ParameterDeclarationList.builder(this, new ExecuteOnEnd() {
+			return SymbolicParameterDeclarationList.builder(this, new ExecuteOnEnd() {
 				@Override
-				public void run(ParameterDeclarationList parameters) {
-					preparers.add(new MethodRCD(new MethodDeclaration(
-							symbolicName, realName, parameters)));
+				public void run(SymbolicParameterDeclarationList parameters) {
+					methods.add(new SymbolicMethodDeclaration(symbolicName, realName,
+							parameters));
 				}
 			});
 		}
 
-		public BCPBuilder addProperty(String symbolicName, String realName) {
-			preparers.add(new PropertyRCD(new PropertyDeclaration(symbolicName,
-					realName)));
+		public SCDBuilder property(String symbolicName, String realName) {
+			properties.add(new SymbolicPropertyDeclaration(symbolicName, realName));
 			return this;
 		}
 	}
@@ -150,20 +149,18 @@ public class CFBuilder {
 
 	private CFBuilder previous;
 
-	private String symbolicClassName;
-	private BCDBuilder detectorBuilder = new BCDBuilder();
-	private BCPBuilder preparerBuilder = new BCPBuilder();
+	private RCDBuilder detectorBuilder = new RCDBuilder();
+	private SCDBuilder declarationBuilder = new SCDBuilder();
 
 	private CFBuilder(CFBuilder previous) {
 		this.previous = previous;
 	}
 
-	public CFBuilder name(String symbolicClassName) {
-		this.symbolicClassName = symbolicClassName;
+	public CFBuilder name() {
 		return this;
 	}
 
-	public BCDBuilder detect() {
+	public RCDBuilder detect() {
 		return detectorBuilder;
 	}
 
@@ -179,10 +176,7 @@ public class CFBuilder {
 	}
 
 	private ClassFinder constructThis() {
-		Objects.requireNonNull(symbolicClassName,
-				"a real class finder needs to have a name");
-		return new ClassFinder(symbolicClassName,
-				detectorBuilder.constructThis(),
-				preparerBuilder.constructThis());
+		return new ClassFinder(detectorBuilder.constructThis(),
+				declarationBuilder.constructThis());
 	}
 }
