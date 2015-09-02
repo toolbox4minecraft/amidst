@@ -12,10 +12,10 @@ import java.util.Map;
 
 import amidst.Options;
 import amidst.Util;
-import amidst.clazz.finder.ClassFinder;
+import amidst.clazz.Classes;
 import amidst.clazz.real.RealClass.AccessFlags;
 import amidst.clazz.symbolic.SymbolicClass;
-import amidst.clazz.symbolic.SymbolicClasses;
+import amidst.clazz.translator.ClassTranslator;
 import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
 import amidst.logging.Log;
@@ -28,7 +28,7 @@ public class LocalMinecraftInterfaceBuilder {
 	private static enum StatelessResources {
 		INSTANCE;
 
-		private List<ClassFinder> classFinders = createClassFinders();
+		private ClassTranslator classTranslator = createClassTranslator();
 
 		private int[] createIntCacheWildcardBytes() {
 			return new int[] { 0x11, 0x01, 0x00, 0xB3, 0x00, -1, 0xBB, 0x00,
@@ -43,8 +43,8 @@ public class LocalMinecraftInterfaceBuilder {
 		// However, you need to activate this in:
 		// Java -> Code Style -> Formatter -> Edit -> Off/On Tags
 		// see: http://stackoverflow.com/questions/1820908/how-to-turn-off-the-eclipse-code-formatter-for-certain-sections-of-java-code
-		private List<ClassFinder> createClassFinders() {
-			return ClassFinder
+		private ClassTranslator createClassTranslator() {
+			return ClassTranslator
 				.builder()
 					.detect()
 						.wildcardBytes(createIntCacheWildcardBytes())
@@ -96,16 +96,15 @@ public class LocalMinecraftInterfaceBuilder {
 	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
 	private static final String SERVER_CLASS = "net.minecraft.server.MinecraftServer";
 
-	private Map<String, SymbolicClass> symbolicClassesBySymbolicClassName;
+	private Map<String, SymbolicClass> symbolicClassMap;
 	private VersionInfo version;
 
 	public LocalMinecraftInterfaceBuilder(File jarFile) {
 		try {
 			URLClassLoader classLoader = getClassLoader(jarFile);
 			version = getVersion(classLoader);
-			symbolicClassesBySymbolicClassName = SymbolicClasses.loadClasses(
-					jarFile, classLoader,
-					StatelessResources.INSTANCE.classFinders);
+			symbolicClassMap = Classes.createSymbolicClassMap(jarFile,
+					classLoader, StatelessResources.INSTANCE.classTranslator);
 			Log.i("Minecraft load complete.");
 		} catch (RuntimeException e) {
 			Log.crash(
@@ -270,7 +269,6 @@ public class LocalMinecraftInterfaceBuilder {
 	}
 
 	public IMinecraftInterface create() {
-		return new LocalMinecraftInterface(symbolicClassesBySymbolicClassName,
-				version);
+		return new LocalMinecraftInterface(symbolicClassMap, version);
 	}
 }

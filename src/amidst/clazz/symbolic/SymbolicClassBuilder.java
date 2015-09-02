@@ -124,7 +124,8 @@ public class SymbolicClassBuilder {
 		return null;
 	}
 
-	private SymbolicProperty createProperty(SymbolicPropertyDeclaration declaration) {
+	private SymbolicProperty createProperty(
+			SymbolicPropertyDeclaration declaration) {
 		String symbolicName = declaration.getSymbolicName();
 		String realName = declaration.getRealName();
 		try {

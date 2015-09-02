@@ -1,7 +1,9 @@
-package amidst.clazz.finder;
+package amidst.clazz.translator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import amidst.clazz.real.detector.AllRCD;
 import amidst.clazz.real.detector.AnyRCD;
@@ -14,15 +16,15 @@ import amidst.clazz.real.detector.RealClassDetector;
 import amidst.clazz.real.detector.StringRCD;
 import amidst.clazz.real.detector.Utf8RCD;
 import amidst.clazz.real.detector.WildcardByteRCD;
+import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.Builder;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.ExecuteOnEnd;
 import amidst.clazz.symbolic.declaration.SymbolicPropertyDeclaration;
-import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 
-public class CFBuilder {
+public class CTBuilder {
 	public class RCDBuilder {
 		private List<List<RealClassDetector>> allDetectors = new ArrayList<List<RealClassDetector>>();
 		private List<RealClassDetector> detectors = new ArrayList<RealClassDetector>();
@@ -47,9 +49,9 @@ public class CFBuilder {
 
 		public SCDBuilder declare(String symbolicClassName) {
 			allDetectors.add(detectors);
-			CFBuilder.this.declarationBuilder
+			CTBuilder.this.declarationBuilder
 					.setSymbolicClassName(symbolicClassName);
-			return CFBuilder.this.declarationBuilder;
+			return CTBuilder.this.declarationBuilder;
 		}
 
 		public RCDBuilder fieldFlags(int flags, int... fieldIndices) {
@@ -108,55 +110,61 @@ public class CFBuilder {
 					constructors, methods, properties);
 		}
 
-		public CFBuilder next() {
-			return new CFBuilder(CFBuilder.this);
+		public CTBuilder next() {
+			return new CTBuilder(CTBuilder.this);
 		}
 
-		public List<ClassFinder> construct() {
-			return CFBuilder.this.construct();
+		public ClassTranslator construct() {
+			return CTBuilder.this.construct();
 		}
 
 		public Builder<SCDBuilder> addConstructor(final String symbolicName) {
-			return SymbolicParameterDeclarationList.builder(this, new ExecuteOnEnd() {
-				@Override
-				public void run(SymbolicParameterDeclarationList parameters) {
-					constructors.add(new SymbolicConstructorDeclaration(symbolicName,
-							parameters));
-				}
-			});
+			return SymbolicParameterDeclarationList.builder(this,
+					new ExecuteOnEnd() {
+						@Override
+						public void run(
+								SymbolicParameterDeclarationList parameters) {
+							constructors
+									.add(new SymbolicConstructorDeclaration(
+											symbolicName, parameters));
+						}
+					});
 		}
 
 		public Builder<SCDBuilder> method(final String symbolicName,
 				final String realName) {
-			return SymbolicParameterDeclarationList.builder(this, new ExecuteOnEnd() {
-				@Override
-				public void run(SymbolicParameterDeclarationList parameters) {
-					methods.add(new SymbolicMethodDeclaration(symbolicName, realName,
-							parameters));
-				}
-			});
+			return SymbolicParameterDeclarationList.builder(this,
+					new ExecuteOnEnd() {
+						@Override
+						public void run(
+								SymbolicParameterDeclarationList parameters) {
+							methods.add(new SymbolicMethodDeclaration(
+									symbolicName, realName, parameters));
+						}
+					});
 		}
 
 		public SCDBuilder property(String symbolicName, String realName) {
-			properties.add(new SymbolicPropertyDeclaration(symbolicName, realName));
+			properties.add(new SymbolicPropertyDeclaration(symbolicName,
+					realName));
 			return this;
 		}
 	}
 
-	public static CFBuilder builder() {
-		return new CFBuilder(null);
+	public static CTBuilder newInstance() {
+		return new CTBuilder(null);
 	}
 
-	private CFBuilder previous;
+	private CTBuilder previous;
 
 	private RCDBuilder detectorBuilder = new RCDBuilder();
 	private SCDBuilder declarationBuilder = new SCDBuilder();
 
-	private CFBuilder(CFBuilder previous) {
+	private CTBuilder(CTBuilder previous) {
 		this.previous = previous;
 	}
 
-	public CFBuilder name() {
+	public CTBuilder name() {
 		return this;
 	}
 
@@ -164,19 +172,22 @@ public class CFBuilder {
 		return detectorBuilder;
 	}
 
-	public List<ClassFinder> construct() {
-		List<ClassFinder> result;
-		if (previous != null) {
-			result = previous.construct();
-		} else {
-			result = new ArrayList<ClassFinder>();
-		}
-		result.add(constructThis());
+	public ClassTranslator construct() {
+		return new ClassTranslator(constructResult());
+	}
+
+	private Map<RealClassDetector, SymbolicClassDeclaration> constructResult() {
+		Map<RealClassDetector, SymbolicClassDeclaration> result = constructPreviousResult();
+		result.put(detectorBuilder.constructThis(),
+				declarationBuilder.constructThis());
 		return result;
 	}
 
-	private ClassFinder constructThis() {
-		return new ClassFinder(detectorBuilder.constructThis(),
-				declarationBuilder.constructThis());
+	private Map<RealClassDetector, SymbolicClassDeclaration> constructPreviousResult() {
+		if (previous != null) {
+			return previous.constructResult();
+		} else {
+			return new HashMap<RealClassDetector, SymbolicClassDeclaration>();
+		}
 	}
 }

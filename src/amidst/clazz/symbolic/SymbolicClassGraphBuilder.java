@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import amidst.clazz.real.RealClass;
+import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicPropertyDeclaration;
-import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 
 public class SymbolicClassGraphBuilder {
 	private ClassLoader classLoader;
