@@ -7,8 +7,8 @@ import java.util.Map.Entry;
 
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
+import amidst.clazz.symbolic.declaration.SymbolicFieldDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
-import amidst.clazz.symbolic.declaration.SymbolicPropertyDeclaration;
 
 public class SymbolicClassGraphBuilder {
 	private ClassLoader classLoader;
@@ -26,7 +26,7 @@ public class SymbolicClassGraphBuilder {
 
 	public Map<String, SymbolicClass> create() {
 		createSymbolicClasses();
-		addConstructorsMethodsAndProperties();
+		addConstructorsMethodsAndFields();
 		return createProduct();
 	}
 
@@ -49,14 +49,14 @@ public class SymbolicClassGraphBuilder {
 		}
 	}
 
-	private void addConstructorsMethodsAndProperties() {
+	private void addConstructorsMethodsAndFields() {
 		for (Entry<SymbolicClassDeclaration, SymbolicClassBuilder> entry : symbolicClassBuildersBySymbolicClassDeclaration
 				.entrySet()) {
 			SymbolicClassDeclaration declaration = entry.getKey();
 			SymbolicClassBuilder builder = entry.getValue();
 			addConstructors(builder, declaration.getConstructors());
 			addMethods(builder, declaration.getMethods());
-			addProperties(builder, declaration.getProperties());
+			addFields(builder, declaration.getFields());
 		}
 	}
 
@@ -74,10 +74,10 @@ public class SymbolicClassGraphBuilder {
 		}
 	}
 
-	private void addProperties(SymbolicClassBuilder builder,
-			List<SymbolicPropertyDeclaration> properties) {
-		for (SymbolicPropertyDeclaration property : properties) {
-			builder.addProperty(property);
+	private void addFields(SymbolicClassBuilder builder,
+			List<SymbolicFieldDeclaration> fields) {
+		for (SymbolicFieldDeclaration field : fields) {
+			builder.addField(field);
 		}
 	}
 

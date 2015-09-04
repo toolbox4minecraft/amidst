@@ -101,7 +101,7 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 	private Object getWorldType(String typeName) {
 		String type = Type.fromMixedCase(typeName).getValue();
 		SymbolicObject object = (SymbolicObject) worldTypeClass
-				.getStaticPropertyValue(type);
+				.getStaticFieldValue(type);
 		return object.getObject();
 	}
 

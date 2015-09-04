@@ -4,14 +4,14 @@ import java.lang.reflect.Field;
 
 import amidst.logging.Log;
 
-public class SymbolicProperty {
+public class SymbolicField {
 	private SymbolicClass parent;
 	private String symbolicName;
 	private String realName;
 	private Field field;
 	private SymbolicClass type;
 
-	public SymbolicProperty(SymbolicClass parent, String symbolicName,
+	public SymbolicField(SymbolicClass parent, String symbolicName,
 			String realName, Field field, SymbolicClass type) {
 		this.parent = parent;
 		this.symbolicName = symbolicName;
@@ -42,13 +42,12 @@ public class SymbolicProperty {
 			return field.get(object);
 		} catch (IllegalArgumentException e) {
 			Log.crash(e,
-					"Error [IllegalArgumentException] getting property value ("
+					"Error [IllegalArgumentException] getting field value ("
 							+ toString() + ")");
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			Log.crash(e,
-					"Error [IllegalAccessException] getting property value ("
-							+ toString() + ")");
+			Log.crash(e, "Error [IllegalAccessException] getting field value ("
+					+ toString() + ")");
 			e.printStackTrace();
 		}
 		return null;
@@ -63,20 +62,19 @@ public class SymbolicProperty {
 			field.set(object, value);
 		} catch (IllegalArgumentException e) {
 			Log.crash(e,
-					"Error [IllegalArgumentException] setting property value ("
+					"Error [IllegalArgumentException] setting field value ("
 							+ toString() + ")");
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			Log.crash(e,
-					"Error [IllegalAccessException] setting property value ("
-							+ toString() + ")");
+			Log.crash(e, "Error [IllegalAccessException] setting field value ("
+					+ toString() + ")");
 			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public String toString() {
-		return "[Method " + symbolicName + " (" + realName + ") of class "
+		return "[Field " + symbolicName + " (" + realName + ") of class "
 				+ parent.getSymbolicName() + "]";
 	}
 }

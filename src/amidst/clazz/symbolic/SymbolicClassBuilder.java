@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
+import amidst.clazz.symbolic.declaration.SymbolicFieldDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.ParameterDeclaration;
-import amidst.clazz.symbolic.declaration.SymbolicPropertyDeclaration;
 import amidst.logging.Log;
 
 public class SymbolicClassBuilder {
@@ -36,7 +36,7 @@ public class SymbolicClassBuilder {
 
 	private Map<String, SymbolicConstructor> constructorsBySymbolicName = new HashMap<String, SymbolicConstructor>();
 	private Map<String, SymbolicMethod> methodsBySymbolicName = new HashMap<String, SymbolicMethod>();
-	private Map<String, SymbolicProperty> propertiesBySymbolicName = new HashMap<String, SymbolicProperty>();
+	private Map<String, SymbolicField> fieldsBySymbolicName = new HashMap<String, SymbolicField>();
 
 	private ClassLoader classLoader;
 	private Map<String, String> realClassNamesBySymbolicClassName;
@@ -52,7 +52,7 @@ public class SymbolicClassBuilder {
 		this.symbolicClassesByRealClassName = symbolicClassesByRealClassName;
 		this.product = new SymbolicClass(symbolicClassName, realClassName,
 				loadClass(realClassName), constructorsBySymbolicName,
-				methodsBySymbolicName, propertiesBySymbolicName);
+				methodsBySymbolicName, fieldsBySymbolicName);
 	}
 
 	public SymbolicClass create() {
@@ -78,9 +78,9 @@ public class SymbolicClassBuilder {
 				createMethod(declaration));
 	}
 
-	public void addProperty(SymbolicPropertyDeclaration declaration) {
-		propertiesBySymbolicName.put(declaration.getSymbolicName(),
-				createProperty(declaration));
+	public void addField(SymbolicFieldDeclaration declaration) {
+		fieldsBySymbolicName.put(declaration.getSymbolicName(),
+				createField(declaration));
 	}
 
 	private SymbolicConstructor createConstructor(
@@ -111,7 +111,7 @@ public class SymbolicClassBuilder {
 			Method method = getMethod(product.getClazz(), realName,
 					parameterClasses);
 			SymbolicClass returnType = getType(method.getReturnType());
-			return new SymbolicMethod(symbolicName, realName, method,
+			return new SymbolicMethod(product, symbolicName, realName, method,
 					returnType);
 		} catch (SecurityException e) {
 			warn(symbolicName, e, "method");
@@ -123,19 +123,18 @@ public class SymbolicClassBuilder {
 		return null;
 	}
 
-	private SymbolicProperty createProperty(
-			SymbolicPropertyDeclaration declaration) {
+	private SymbolicField createField(SymbolicFieldDeclaration declaration) {
 		String symbolicName = declaration.getSymbolicName();
 		String realName = declaration.getRealName();
 		try {
 			Field field = getField(product.getClazz(), realName);
 			SymbolicClass type = getType(field.getType());
-			return new SymbolicProperty(product, symbolicName, realName, field,
+			return new SymbolicField(product, symbolicName, realName, field,
 					type);
 		} catch (SecurityException e) {
-			throwRuntimeException(symbolicName, e, "property");
+			throwRuntimeException(symbolicName, e, "field");
 		} catch (NoSuchFieldException e) {
-			throwRuntimeException(symbolicName, e, "property");
+			throwRuntimeException(symbolicName, e, "field");
 		}
 		return null;
 	}

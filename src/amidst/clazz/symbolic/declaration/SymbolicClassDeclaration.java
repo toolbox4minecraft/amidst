@@ -7,16 +7,16 @@ public class SymbolicClassDeclaration {
 	private String symbolicClassName;
 	private List<SymbolicConstructorDeclaration> constructors;
 	private List<SymbolicMethodDeclaration> methods;
-	private List<SymbolicPropertyDeclaration> properties;
+	private List<SymbolicFieldDeclaration> fields;
 
 	public SymbolicClassDeclaration(String symbolicClassName,
 			List<SymbolicConstructorDeclaration> constructors,
 			List<SymbolicMethodDeclaration> methods,
-			List<SymbolicPropertyDeclaration> properties) {
+			List<SymbolicFieldDeclaration> fields) {
 		this.symbolicClassName = symbolicClassName;
 		this.constructors = Collections.unmodifiableList(constructors);
 		this.methods = Collections.unmodifiableList(methods);
-		this.properties = Collections.unmodifiableList(properties);
+		this.fields = Collections.unmodifiableList(fields);
 	}
 
 	public String getSymbolicClassName() {
@@ -31,7 +31,7 @@ public class SymbolicClassDeclaration {
 		return methods;
 	}
 
-	public List<SymbolicPropertyDeclaration> getProperties() {
-		return properties;
+	public List<SymbolicFieldDeclaration> getFields() {
+		return fields;
 	}
 }

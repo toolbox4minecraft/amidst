@@ -18,11 +18,11 @@ import amidst.clazz.real.detector.Utf8RCD;
 import amidst.clazz.real.detector.WildcardByteRCD;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
+import amidst.clazz.symbolic.declaration.SymbolicFieldDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.Builder;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.ExecuteOnEnd;
-import amidst.clazz.symbolic.declaration.SymbolicPropertyDeclaration;
 
 public class CTBuilder {
 	public class RCDBuilder {
@@ -99,7 +99,7 @@ public class CTBuilder {
 		private String symbolicClassName;
 		private List<SymbolicConstructorDeclaration> constructors = new ArrayList<SymbolicConstructorDeclaration>();
 		private List<SymbolicMethodDeclaration> methods = new ArrayList<SymbolicMethodDeclaration>();
-		private List<SymbolicPropertyDeclaration> properties = new ArrayList<SymbolicPropertyDeclaration>();
+		private List<SymbolicFieldDeclaration> fields = new ArrayList<SymbolicFieldDeclaration>();
 
 		private void setSymbolicClassName(String symbolicClassName) {
 			this.symbolicClassName = symbolicClassName;
@@ -107,7 +107,7 @@ public class CTBuilder {
 
 		private SymbolicClassDeclaration constructThis() {
 			return new SymbolicClassDeclaration(symbolicClassName,
-					constructors, methods, properties);
+					constructors, methods, fields);
 		}
 
 		public CTBuilder next() {
@@ -118,7 +118,7 @@ public class CTBuilder {
 			return CTBuilder.this.construct();
 		}
 
-		public Builder<SCDBuilder> addConstructor(final String symbolicName) {
+		public Builder<SCDBuilder> constructor(final String symbolicName) {
 			return SymbolicParameterDeclarationList.builder(this,
 					new ExecuteOnEnd() {
 						@Override
@@ -144,9 +144,8 @@ public class CTBuilder {
 					});
 		}
 
-		public SCDBuilder property(String symbolicName, String realName) {
-			properties.add(new SymbolicPropertyDeclaration(symbolicName,
-					realName));
+		public SCDBuilder field(String symbolicName, String realName) {
+			fields.add(new SymbolicFieldDeclaration(symbolicName, realName));
 			return this;
 		}
 	}

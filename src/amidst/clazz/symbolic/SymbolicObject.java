@@ -21,15 +21,15 @@ public class SymbolicObject {
 		return type.hasMethod(symbolicName);
 	}
 
-	public boolean hasProperty(String symbolicName) {
-		return type.hasProperty(symbolicName);
+	public boolean hasField(String symbolicName) {
+		return type.hasField(symbolicName);
 	}
 
 	public Object callMethod(String symbolicName, Object... parameters) {
 		return type.callMethod(symbolicName, this, parameters);
 	}
 
-	public Object getPropertyValue(String symbolicName) {
-		return type.getPropertyValue(symbolicName, this);
+	public Object getFieldValue(String symbolicName) {
+		return type.getFieldValue(symbolicName, this);
 	}
 }

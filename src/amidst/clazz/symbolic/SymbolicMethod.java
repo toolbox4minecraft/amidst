@@ -4,13 +4,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class SymbolicMethod {
+	private SymbolicClass parent;
 	private String symbolicName;
 	private String realName;
 	private Method method;
 	private SymbolicClass returnType;
 
-	public SymbolicMethod(String symbolicName, String realName, Method method,
-			SymbolicClass returnType) {
+	public SymbolicMethod(SymbolicClass parent, String symbolicName,
+			String realName, Method method, SymbolicClass returnType) {
+		this.parent = parent;
 		this.symbolicName = symbolicName;
 		this.realName = realName;
 		this.method = method;
@@ -56,5 +58,11 @@ public class SymbolicMethod {
 
 	private boolean isReturnTypeSymbolicClass() {
 		return returnType != null;
+	}
+
+	@Override
+	public String toString() {
+		return "[Method " + symbolicName + " (" + realName + ") of class "
+				+ parent.getSymbolicName() + "]";
 	}
 }
