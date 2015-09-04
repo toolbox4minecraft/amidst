@@ -88,8 +88,9 @@ public class RealClass {
 		}
 
 		private void readMethods() throws IOException {
-			product.methodAndConstructorCount = stream.readUnsignedShort();
-			for (int i = 0; i < product.methodAndConstructorCount; i++) {
+			int numberOfMethodsAndConstructors = stream.readUnsignedShort();
+			product.numberOfMethods = numberOfMethodsAndConstructors;
+			for (int i = 0; i < numberOfMethodsAndConstructors; i++) {
 				stream.skip(2);
 				int nameIndex = stream.readUnsignedShort();
 				product.methodIndices.add(new ReferenceIndex(nameIndex, stream
@@ -97,7 +98,8 @@ public class RealClass {
 
 				if (((String) product.constants[nameIndex - 1].getValue())
 						.contains("<init>")) {
-					product.constructorCount++;
+					product.numberOfConstructors++;
+					product.numberOfMethods--;
 				}
 
 				int attributeInfoCount = stream.readUnsignedShort();
@@ -315,9 +317,9 @@ public class RealClass {
 	private List<Long> longConstants = new ArrayList<Long>();
 	private List<String> utfConstants = new ArrayList<String>();
 
+	private int numberOfConstructors;
+	private int numberOfMethods;
 	private Field[] fields;
-	private int methodAndConstructorCount;
-	private int constructorCount;
 
 	private Map<Character, String> primitiveTypeConversionMap;
 	private Pattern argRegex;
@@ -356,12 +358,16 @@ public class RealClass {
 		return fields;
 	}
 
-	public int getMethodAndConstructorCount() {
-		return methodAndConstructorCount;
+	public int getNumberOfConstructors() {
+		return numberOfConstructors;
 	}
 
-	public int getConstructorCount() {
-		return constructorCount;
+	public int getNumberOfMethods() {
+		return numberOfMethods;
+	}
+
+	public int getNumberOfFields() {
+		return fields.length;
 	}
 
 	public byte[] getClassData() {

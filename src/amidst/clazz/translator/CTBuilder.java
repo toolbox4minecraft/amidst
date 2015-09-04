@@ -11,7 +11,7 @@ import amidst.clazz.real.detector.FieldFlagsRCD;
 import amidst.clazz.real.detector.LongRCD;
 import amidst.clazz.real.detector.NumberOfConstructorsRCD;
 import amidst.clazz.real.detector.NumberOfFieldsRCD;
-import amidst.clazz.real.detector.NumberOfMethodsAndConstructorsRCD;
+import amidst.clazz.real.detector.NumberOfMethodsRCD;
 import amidst.clazz.real.detector.RealClassDetector;
 import amidst.clazz.real.detector.StringRCD;
 import amidst.clazz.real.detector.Utf8RCD;
@@ -74,8 +74,8 @@ public class CTBuilder {
 			return this;
 		}
 
-		public RCDBuilder numberOfMethodsAndConstructors(int count) {
-			detectors.add(new NumberOfMethodsAndConstructorsRCD(count));
+		public RCDBuilder numberOfMethods(int count) {
+			detectors.add(new NumberOfMethodsRCD(count));
 			return this;
 		}
 

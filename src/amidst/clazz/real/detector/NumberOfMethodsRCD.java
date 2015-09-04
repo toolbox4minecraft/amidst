@@ -2,15 +2,15 @@ package amidst.clazz.real.detector;
 
 import amidst.clazz.real.RealClass;
 
-public class NumberOfFieldsRCD extends RealClassDetector {
+public class NumberOfMethodsRCD extends RealClassDetector {
 	private int count;
 
-	public NumberOfFieldsRCD(int count) {
+	public NumberOfMethodsRCD(int count) {
 		this.count = count;
 	}
 
 	@Override
 	public boolean detect(RealClass realClass) {
-		return realClass.getNumberOfFields() == count;
+		return realClass.getNumberOfMethods() == count;
 	}
 }
