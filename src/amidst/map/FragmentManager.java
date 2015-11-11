@@ -2,18 +2,92 @@ package amidst.map;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class FragmentManager implements Runnable {
-	private LayerContainer layerContainer;
-	private FragmentCache cache;
+public class FragmentManager {
+	private class QueueProcessor implements Runnable {
+		private Thread currentThread;
+		private boolean running = true;
+		private int sleepTick = 0;
+
+		@Override
+		public void run() {
+			currentThread.setPriority(Thread.MIN_PRIORITY);
+
+			while (running) {
+				if (!requestQueue.isEmpty() || !recycleQueue.isEmpty()) {
+					if (!requestQueue.isEmpty()) {
+						processRequestQueueEntry();
+					}
+					while (!recycleQueue.isEmpty()) {
+						processRecycleQueueEntry();
+					}
+				} else {
+					sleep(2);
+				}
+			}
+		}
+
+		private void processRecycleQueueEntry() {
+			synchronized (queueLock) {
+				Fragment fragment = recycleQueue.poll();
+				fragment.recycle();
+				fragmentQueue.offer(fragment);
+			}
+		}
+
+		private void processRequestQueueEntry() {
+			synchronized (queueLock) {
+				Fragment fragment = requestQueue.poll();
+				if (fragment.isActive && !fragment.isLoaded) {
+					fragment.load();
+					sleepIfNecessary();
+				}
+			}
+		}
+
+		private void sleepIfNecessary() {
+			sleepTick++;
+			if (sleepTick == 10) {
+				sleep(1);
+			}
+		}
+
+		private void sleep(long millis) {
+			sleepTick = 0;
+			try {
+				Thread.sleep(millis);
+			} catch (InterruptedException ignored) {
+			}
+		}
+
+		public void startNewThread() {
+			running = true;
+			currentThread = new Thread(queueProcessor);
+			currentThread.start();
+		}
+
+		public void gracefullyShutdownCurrentThread() {
+			running = false;
+			try {
+				currentThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		public boolean isRunning() {
+			return running;
+		}
+	}
 
 	private ConcurrentLinkedQueue<Fragment> fragmentQueue = new ConcurrentLinkedQueue<Fragment>();
 	private ConcurrentLinkedQueue<Fragment> requestQueue = new ConcurrentLinkedQueue<Fragment>();
 	private ConcurrentLinkedQueue<Fragment> recycleQueue = new ConcurrentLinkedQueue<Fragment>();
 
+	private QueueProcessor queueProcessor = new QueueProcessor();
 	private Object queueLock = new Object();
-	private Thread currentThread;
-	private boolean running = true;
-	private int sleepTick = 0;
+
+	private LayerContainer layerContainer;
+	private FragmentCache cache;
 
 	public FragmentManager(LayerContainer layerContainer) {
 		this.layerContainer = layerContainer;
@@ -21,58 +95,16 @@ public class FragmentManager implements Runnable {
 	}
 
 	public Fragment requestFragment(int x, int y) {
-		if (!running) {
+		if (!queueProcessor.isRunning()) {
 			return null;
 		}
 		Fragment fragment;
 		while ((fragment = fragmentQueue.poll()) == null) {
 			cache.doubleSize();
 		}
-
 		fragment.init(x, y);
 		requestQueue.offer(fragment);
 		return fragment;
-	}
-
-	@Override
-	public void run() {
-		currentThread.setPriority(Thread.MIN_PRIORITY);
-
-		while (running) {
-			if (!requestQueue.isEmpty() || !recycleQueue.isEmpty()) {
-				if (!requestQueue.isEmpty()) {
-					processRequestQueueEntry();
-				}
-				while (!recycleQueue.isEmpty()) {
-					processRecycleQueueEntry();
-				}
-			} else {
-				sleepTick = 0;
-				try {
-					Thread.sleep(2);
-				} catch (InterruptedException ignored) {
-				}
-			}
-		}
-
-	}
-
-	private void processRecycleQueueEntry() {
-		synchronized (queueLock) {
-			Fragment fragment = recycleQueue.poll();
-			fragment.recycle();
-			fragmentQueue.offer(fragment);
-		}
-	}
-
-	private void processRequestQueueEntry() {
-		synchronized (queueLock) {
-			Fragment fragment = requestQueue.poll();
-			if (fragment.isActive && !fragment.isLoaded) {
-				fragment.load();
-				sleepIfNecessary();
-			}
-		}
 	}
 
 	public void repaintFragment(Fragment fragment) {
@@ -87,45 +119,19 @@ public class FragmentManager implements Runnable {
 		}
 	}
 
-	private void sleepIfNecessary() {
-		sleepTick++;
-		if (sleepTick == 10) {
-			sleepTick = 0;
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException ignored) {
-			}
-		}
-	}
-
 	public void returnFragment(Fragment frag) {
 		recycleQueue.offer(frag);
 	}
 
 	public void reset() {
-		gracefullyShutdownCurrentThread();
+		queueProcessor.gracefullyShutdownCurrentThread();
 		clearAllQueues();
 		cache.resetAllFragments();
 	}
 
 	public void setMap(Map map) {
 		layerContainer.reloadAllLayers(map);
-		startNewThread();
-	}
-
-	private void startNewThread() {
-		running = true;
-		currentThread = new Thread(this);
-		currentThread.start();
-	}
-
-	private void gracefullyShutdownCurrentThread() {
-		running = false;
-		try {
-			currentThread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		queueProcessor.startNewThread();
 	}
 
 	public void updateAllLayers(float time) {
