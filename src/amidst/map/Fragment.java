@@ -44,7 +44,12 @@ public class Fragment {
 		this(layers, null, null);
 	}
 
-	public Fragment(ImageLayer[] imageLayers, LiveLayer[] liveLayers,
+	public Fragment(LayerContainer layerContainer) {
+		this(layerContainer.getImageLayers(), layerContainer.getLiveLayers(),
+				layerContainer.getIconLayers());
+	}
+
+	private Fragment(ImageLayer[] imageLayers, LiveLayer[] liveLayers,
 			IconLayer[] iconLayers) {
 		this.imageLayers = imageLayers;
 		this.liveLayers = liveLayers;

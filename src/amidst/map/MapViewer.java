@@ -76,13 +76,16 @@ public class MapViewer extends JComponent implements MouseListener,
 			dropShadowRight = ResourceLoader
 					.getImage("dropshadow/inner_right.png");
 	static {
-		fragmentManager = new FragmentManager(new ImageLayer[] {
-				new BiomeLayer(), new SlimeLayer() },
-				new LiveLayer[] { new GridLayer() }, new IconLayer[] {
-						new VillageLayer(), new OceanMonumentLayer(),
-						new StrongholdLayer(), new TempleLayer(),
-						new SpawnLayer(), new NetherFortressLayer(),
-						playerLayer = new PlayerLayer() });
+		playerLayer = new PlayerLayer();
+		ImageLayer[] imageLayers = { new BiomeLayer(), new SlimeLayer() };
+		LiveLayer[] liveLayers = { new GridLayer() };
+		IconLayer[] iconLayers = { new VillageLayer(),
+				new OceanMonumentLayer(), new StrongholdLayer(),
+				new TempleLayer(), new SpawnLayer(), new NetherFortressLayer(),
+				playerLayer };
+		LayerContainer layerContainer = new LayerContainer(imageLayers,
+				liveLayers, iconLayers);
+		fragmentManager = new FragmentManager(layerContainer);
 	}
 
 	private Project proj;
