@@ -22,6 +22,23 @@ public class ClassTranslator {
 		this.translations = translations;
 	}
 
+	public Map<SymbolicClassDeclaration, List<RealClass>> translateToAllMatching(
+			List<RealClass> realClasses) {
+		Map<SymbolicClassDeclaration, List<RealClass>> result = new HashMap<SymbolicClassDeclaration, List<RealClass>>();
+		for (Entry<RealClassDetector, SymbolicClassDeclaration> entry : translations
+				.entrySet()) {
+			SymbolicClassDeclaration declaration = entry.getValue();
+			List<RealClass> allMatching = entry.getKey().allMatching(
+					realClasses);
+			if (result.containsKey(declaration)) {
+				result.get(declaration).addAll(allMatching);
+			} else {
+				result.put(declaration, allMatching);
+			}
+		}
+		return result;
+	}
+
 	public Map<SymbolicClassDeclaration, String> translate(
 			List<RealClass> realClasses) {
 		Map<SymbolicClassDeclaration, String> result = new HashMap<SymbolicClassDeclaration, String>();

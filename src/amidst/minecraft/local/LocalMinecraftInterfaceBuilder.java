@@ -25,10 +25,10 @@ import amidst.utilties.JavaUtils;
 import amidst.version.VersionInfo;
 
 public class LocalMinecraftInterfaceBuilder {
-	private static enum StatelessResources {
+	public static enum StatelessResources {
 		INSTANCE;
 
-		private ClassTranslator classTranslator = createClassTranslator();
+		public ClassTranslator classTranslator = createClassTranslator();
 
 		private int[] createIntCacheWildcardBytes() {
 			return new int[] { 0x11, 0x01, 0x00, 0xB3, 0x00, -1, 0xBB, 0x00,
