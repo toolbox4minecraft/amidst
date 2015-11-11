@@ -3,9 +3,9 @@ package amidst.map.widget;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import amidst.map.MapViewer;
 import amidst.map.layers.BiomeLayer;
 import amidst.resources.ResourceLoader;
-import MoF.MapViewer;
 
 public class BiomeToggleWidget extends PanelWidget {
 	private static BufferedImage highlighterIcon = ResourceLoader.getImage("highlighter.png");

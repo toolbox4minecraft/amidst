@@ -3,9 +3,9 @@ package amidst.map.widget;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import MoF.MapViewer;
 import amidst.Options;
 import amidst.map.FragmentManager;
+import amidst.map.MapViewer;
 
 public class DebugWidget extends PanelWidget {
 	public DebugWidget(MapViewer mapViewer) {

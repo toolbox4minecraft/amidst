@@ -1,16 +1,10 @@
-package MoF;
+package amidst.map;
 
 
+import MoF.Project;
 import amidst.Options;
 import amidst.gui.menu.PlayerMenuItem;
 import amidst.logging.Log;
-import amidst.map.FragmentManager;
-import amidst.map.IconLayer;
-import amidst.map.ImageLayer;
-import amidst.map.LiveLayer;
-import amidst.map.Map;
-import amidst.map.MapObject;
-import amidst.map.MapObjectPlayer;
 import amidst.map.layers.BiomeLayer;
 import amidst.map.layers.GridLayer;
 import amidst.map.layers.NetherFortressLayer;
@@ -124,7 +118,7 @@ public class MapViewer extends JComponent implements MouseListener, MouseWheelLi
 		proj = null;
 	}
 	
-	MapViewer(Project proj) {
+	public MapViewer(Project proj) {
 		panSpeed = new Point2D.Double();
 		this.proj = proj;
 		if (playerLayer.isEnabled = proj.saveLoaded) {

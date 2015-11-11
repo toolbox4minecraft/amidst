@@ -8,9 +8,9 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import amidst.logging.Log;
+import amidst.map.MapViewer;
 import amidst.map.layers.BiomeLayer;
 import amidst.minecraft.Biome;
-import MoF.MapViewer;
 
 public class BiomeWidget extends PanelWidget {
 	private static BiomeWidget instance;

@@ -2,8 +2,8 @@ package amidst.map.widget;
 
 import java.awt.Graphics2D;
 
-import MoF.MapViewer;
 import amidst.Options;
+import amidst.map.MapViewer;
 
 public class SeedWidget extends PanelWidget {
 	public SeedWidget(MapViewer mapViewer) {

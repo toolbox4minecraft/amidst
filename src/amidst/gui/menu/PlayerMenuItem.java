@@ -6,10 +6,10 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-import MoF.MapViewer;
 import amidst.map.Fragment;
 import amidst.map.Map;
 import amidst.map.MapObjectPlayer;
+import amidst.map.MapViewer;
 import amidst.map.layers.PlayerLayer;
 
 public class PlayerMenuItem extends JMenuItem implements ActionListener {

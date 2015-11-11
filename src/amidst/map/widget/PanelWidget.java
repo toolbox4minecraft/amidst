@@ -7,8 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 
+import amidst.map.MapViewer;
 import amidst.resources.ResourceLoader;
-import MoF.MapViewer;
 
 public class PanelWidget extends Widget {
 	private static BufferedImage

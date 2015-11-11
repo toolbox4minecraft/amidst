@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import amidst.Options;
-import MoF.MapViewer;
+import amidst.map.MapViewer;
 
 public class ScaleWidget extends PanelWidget {
 	

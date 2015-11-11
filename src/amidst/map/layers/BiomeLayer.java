@@ -1,11 +1,11 @@
 package amidst.map.layers;
 
-import MoF.MapViewer;
 import amidst.Options;
 import amidst.Util;
 import amidst.logging.Log;
 import amidst.map.Fragment;
 import amidst.map.ImageLayer;
+import amidst.map.MapViewer;
 import amidst.minecraft.Biome;
 
 public class BiomeLayer extends ImageLayer {

@@ -3,7 +3,7 @@ package amidst.map.widget;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
-import MoF.MapViewer;
+import amidst.map.MapViewer;
 
 public class CursorInformationWidget extends PanelWidget {
 	private String message = "";

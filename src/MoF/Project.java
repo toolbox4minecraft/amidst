@@ -3,6 +3,7 @@ package MoF;
 import amidst.Options;
 import amidst.logging.Log;
 import amidst.map.MapObject;
+import amidst.map.MapViewer;
 import amidst.minecraft.MinecraftUtil;
 
 import java.awt.BorderLayout;

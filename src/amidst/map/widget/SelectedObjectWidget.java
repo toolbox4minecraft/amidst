@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import amidst.map.MapObject;
-import MoF.MapViewer;
+import amidst.map.MapViewer;
 
 public class SelectedObjectWidget extends PanelWidget {
 	private String message = "";
