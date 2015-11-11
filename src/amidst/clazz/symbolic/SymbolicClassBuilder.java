@@ -208,13 +208,20 @@ public class SymbolicClassBuilder {
 
 	private void warn(String symbolicName, Exception e, String featureType) {
 		Log.w(errorMessage(symbolicName, e, featureType));
-		e.printStackTrace();
 	}
 
 	private String errorMessage(String symbolicName, Exception e,
 			String featureType) {
+
+		// TODO: find a way to remove this ugly workaround
+		String initializeAllBiomeGeneratorsWorkaroundText = "";
+		if (symbolicName.equals("initializeAllBiomeGenerators")) {
+			initializeAllBiomeGeneratorsWorkaroundText = ". Don't worry about this warning. It is normal in current Minecraft versions.";
+		}
+
 		return e.getClass().getSimpleName() + " on ("
 				+ product.getSymbolicName() + " / " + product.getRealName()
-				+ ") " + featureType + " (" + symbolicName + ")";
+				+ ") " + featureType + " (" + symbolicName + ")"
+				+ initializeAllBiomeGeneratorsWorkaroundText;
 	}
 }
