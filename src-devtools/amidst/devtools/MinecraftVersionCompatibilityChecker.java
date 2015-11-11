@@ -3,10 +3,14 @@ package amidst.devtools;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import amidst.Util;
 import amidst.clazz.Classes;
+import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.devtools.mojangapi.Version;
 import amidst.devtools.mojangapi.Versions;
@@ -24,6 +28,9 @@ public class MinecraftVersionCompatibilityChecker {
 				Versions.retrieve()).checkAll();
 	}
 
+	private static final List<String> OPTIONAL_CLASSES = Arrays
+			.asList("BlockInit");
+
 	private String basePath;
 	private Versions versions;
 
@@ -35,19 +42,19 @@ public class MinecraftVersionCompatibilityChecker {
 
 	public void checkAll() {
 		initCreepyStuff();
-		List<Version> successful = new ArrayList<Version>();
-		List<Version> failed = new ArrayList<Version>();
+		List<Version> supported = new ArrayList<Version>();
+		List<Version> unsupported = new ArrayList<Version>();
 		for (Version version : versions.getVersions()) {
 			if (checkOne(version)) {
-				successful.add(version);
+				supported.add(version);
 			} else {
-				failed.add(version);
+				unsupported.add(version);
 			}
 		}
-		displayVersionList(successful,
-				"================ SUCCESSFUL VERSIONS ============");
-		displayVersionList(failed,
-				"================ FAILED VERSIONS ================");
+		displayVersionList(supported,
+				"================= SUPPORTED VERSIONS =================");
+		displayVersionList(unsupported,
+				"================ UNSUPPORTED VERSIONS ================");
 	}
 
 	private void initCreepyStuff() {
@@ -60,12 +67,25 @@ public class MinecraftVersionCompatibilityChecker {
 			try {
 				File jarFile = version.getLocalClientJarPath(basePath).toFile();
 				ClassTranslator translator = LocalMinecraftInterfaceBuilder.StatelessResources.INSTANCE.classTranslator;
-				return Classes.ensureExactlyOneMatches(jarFile, translator);
+				return isSupported(Classes.countMatches(jarFile, translator));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		return false;
+	}
+
+	private boolean isSupported(
+			Map<SymbolicClassDeclaration, Integer> matchesMap) {
+		for (Entry<SymbolicClassDeclaration, Integer> entry : matchesMap
+				.entrySet()) {
+			String symbolicClassName = entry.getKey().getSymbolicClassName();
+			if ((entry.getValue() == 0 && !OPTIONAL_CLASSES
+					.contains(symbolicClassName)) || entry.getValue() > 1) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private void displayVersionList(List<Version> versionList, String message) {

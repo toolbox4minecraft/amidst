@@ -2,6 +2,7 @@ package amidst.clazz;
 
 import java.io.File;
 import java.net.URLClassLoader;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,24 +32,21 @@ public class Classes {
 		return result;
 	}
 
-	public static boolean ensureExactlyOneMatches(File jarFile,
-			ClassTranslator translator) {
-		Log.i("Reading " + jarFile.getName());
+	public static Map<SymbolicClassDeclaration, Integer> countMatches(
+			File jarFile, ClassTranslator translator) {
+		Log.i("Checking " + jarFile.getName());
 		List<RealClass> realClasses = RealClasses.fromJarFile(jarFile);
-		Log.i("Jar load complete.");
-		Log.i("Searching for classes...");
 		Map<SymbolicClassDeclaration, List<RealClass>> map = translator
 				.translateToAllMatching(realClasses);
-		Log.i("Class search complete.");
 
-		boolean result = true;
+		Map<SymbolicClassDeclaration, Integer> result = new HashMap<SymbolicClassDeclaration, Integer>();
 		for (Entry<SymbolicClassDeclaration, List<RealClass>> entry : map
 				.entrySet()) {
+			result.put(entry.getKey(), entry.getValue().size());
 			if (entry.getValue().isEmpty()) {
 				Log.w(entry.getKey().getSymbolicClassName()
 						+ " has no matching class");
-				result = false;
-			} else if (entry.getValue().size() != 1) {
+			} else if (entry.getValue().size() > 1) {
 				StringBuilder builder = new StringBuilder();
 				for (RealClass realClass : entry.getValue()) {
 					builder.append(", ").append(realClass.getRealClassName());
@@ -56,7 +54,6 @@ public class Classes {
 				Log.w(entry.getKey().getSymbolicClassName()
 						+ " has multiple matching classes: "
 						+ builder.toString().substring(2));
-				result = false;
 			}
 		}
 		return result;
