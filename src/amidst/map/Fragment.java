@@ -255,4 +255,11 @@ public class Fragment {
 				imageLayers[id].load(this);
 		}
 	}
+
+	public void init(int x, int y) {
+		clear();
+		blockX = x;
+		blockY = y;
+		isActive = true;
+	}
 }
