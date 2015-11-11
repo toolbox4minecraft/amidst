@@ -6,7 +6,9 @@ package amidst.version;
 public enum VersionInfo {
 	// @formatter:off
 	unknown(null),
-	V1_8_4("orntlljs[Lle;lx[J[[Jlt"),
+	v15w44b("qtoombkapb[Llq;mn[J[[Jmj"),
+	V15w31c("oxnvlnjt[Llg;lz[J[[Jlv"),
+	V1_8_8("orntlljs[Lle;lx[J[[Jlt"), // 1.8.4, 1.8.5, 1.8.6, 1.8.7, and 1.8.8 all have the same typeDump version ID. They are all security issue fixes.
 	V1_8_3("osnulmjt[Llf;ly[J[[Jlu"), // 1.8.3 and 1.8.2 have the same typeDump version ID - probably because 1.8.2 -> 1.8.3 was a fix for a server-side bug (https://mojang.com/2015/02/minecraft-1-8-2-is-now-available/)
 	V1_8_1("wduyrdnq[Lqu;sp[J[[Jsa"),
 	V1_8("wbuwrcnp[Lqt;sn[J[[Jry"),

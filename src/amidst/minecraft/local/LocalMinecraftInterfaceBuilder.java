@@ -84,6 +84,13 @@ public class LocalMinecraftInterfaceBuilder {
 						.numberOfFields(3)
 						.fieldFlags(AccessFlags.PRIVATE | AccessFlags.STATIC, 0, 1, 2)
 						.utf8s("isDebugEnabled")
+						.or()
+						.numberOfConstructors(0)
+						.numberOfMethods(6)
+						.numberOfFields(3)
+						.fieldFlags(AccessFlags.PUBLIC | AccessFlags.STATIC, 0)
+						.fieldFlags(AccessFlags.PRIVATE | AccessFlags.STATIC, 1, 2)
+						.utf8s("isDebugEnabled")
 					.thenDeclare("BlockInit")
 						.method("initialize", "c").end()
 				.construct();
