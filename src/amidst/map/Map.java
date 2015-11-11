@@ -113,7 +113,7 @@ public class Map {
 			}
 			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-			fragmentManager.updateLayers(time);
+			fragmentManager.updateAllLayers(time);
 			frag = startNode;
 			if (frag.hasNext) {
 				mat.setToIdentity();

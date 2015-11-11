@@ -7,111 +7,92 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import amidst.logging.Log;
 
 public class FragmentManager implements Runnable {
-	private int cacheSize = 1024;
+	private static final int INITIAL_CACHE_SIZE = 1024;
 
-	private Thread currentThread;
-	private boolean running = true;
+	private ImageLayer[] imageLayers;
+	private LiveLayer[] liveLayers;
+	private IconLayer[] iconLayers;
 
-	private Fragment[] fragmentCache;
-	private ConcurrentLinkedQueue<Fragment> fragmentQueue;
-	private ConcurrentLinkedQueue<Fragment> requestQueue;
-	private ConcurrentLinkedQueue<Fragment> recycleQueue;
-	private int sleepTick = 0;
+	private Stack<ImageLayer> layerList = new Stack<ImageLayer>();
+
+	private Fragment[] fragmentCache = new Fragment[INITIAL_CACHE_SIZE];
+	private ConcurrentLinkedQueue<Fragment> fragmentQueue = new ConcurrentLinkedQueue<Fragment>();
+	private ConcurrentLinkedQueue<Fragment> requestQueue = new ConcurrentLinkedQueue<Fragment>();
+	private ConcurrentLinkedQueue<Fragment> recycleQueue = new ConcurrentLinkedQueue<Fragment>();
 
 	private Object queueLock = new Object();
 
-	private Stack<ImageLayer> layerList;
-
-	private ImageLayer[] imageLayers;
-	private IconLayer[] iconLayers;
-	private LiveLayer[] liveLayers;
+	private Thread currentThread;
+	private boolean running = true;
+	private int sleepTick = 0;
 
 	public FragmentManager(ImageLayer[] imageLayers, LiveLayer[] liveLayers,
 			IconLayer[] iconLayers) {
-		fragmentQueue = new ConcurrentLinkedQueue<Fragment>();
-		requestQueue = new ConcurrentLinkedQueue<Fragment>();
-		recycleQueue = new ConcurrentLinkedQueue<Fragment>();
-		layerList = new Stack<ImageLayer>();
+		this.imageLayers = imageLayers;
+		this.liveLayers = liveLayers;
+		this.iconLayers = iconLayers;
+
 		Collections.addAll(layerList, imageLayers);
 
-		fragmentCache = new Fragment[cacheSize];
-		for (int i = 0; i < imageLayers.length; i++)
+		initImageLayerIds();
+		fragmentCache = initWithFragments(fragmentCache, 0,
+				fragmentCache.length);
+	}
+
+	private void initImageLayerIds() {
+		for (int i = 0; i < imageLayers.length; i++) {
 			imageLayers[i].setLayerId(i);
-		for (int i = 0; i < cacheSize; i++) {
+		}
+	}
+
+	private Fragment[] initWithFragments(Fragment[] fragmentCache, int from,
+			int to) {
+		for (int i = from; i < to; i++) {
 			fragmentCache[i] = new Fragment(imageLayers, liveLayers, iconLayers);
 			fragmentQueue.offer(fragmentCache[i]);
 		}
-		this.imageLayers = imageLayers;
-		this.iconLayers = iconLayers;
-		this.liveLayers = liveLayers;
-	}
-
-	public void updateLayers(float time) {
-		for (ImageLayer layer : imageLayers)
-			layer.update(time);
-		for (LiveLayer layer : liveLayers)
-			layer.update(time);
-		for (IconLayer layer : iconLayers)
-			layer.update(time);
-	}
-
-	public void reset() {
-		running = false;
-		try {
-			currentThread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		recycleQueue.clear();
-		requestQueue.clear();
-		fragmentQueue.clear();
-		for (int i = 0; i < cacheSize; i++) {
-			fragmentCache[i].reset();
-			fragmentQueue.offer(fragmentCache[i]);
-		}
+		return fragmentCache;
 	}
 
 	private void increaseFragmentCache() {
-		Fragment[] newFragments = new Fragment[cacheSize << 1];
-		for (int i = 0; i < cacheSize; i++) {
-			newFragments[i] = fragmentCache[i];
-			fragmentCache[i] = null;
-		}
-		for (int i = cacheSize; i < cacheSize << 1; i++) {
-			newFragments[i] = new Fragment(imageLayers, liveLayers, iconLayers);
-			fragmentQueue.offer(newFragments[i]);
-		}
-		fragmentCache = newFragments;
-		Log.i("FragmentManager cache size increased from " + cacheSize + " to "
-				+ (cacheSize << 1));
-		cacheSize <<= 1;
+		int currentCacheSize = fragmentCache.length;
+		int newCacheSize = currentCacheSize << 1;
+		Fragment[] newFragmentCache = newFromOldFragmentCache(newCacheSize);
+		fragmentCache = initWithFragments(newFragmentCache, currentCacheSize,
+				newCacheSize);
+		Log.i("FragmentManager cache size increased from " + currentCacheSize
+				+ " to " + newCacheSize);
+
+		// TODO: do we really need to run the gc manually?
 		System.gc();
 	}
 
-	public void repaintFragment(Fragment frag) {
-		synchronized (queueLock) {
-			frag.repaint();
-		}
+	private Fragment[] newFromOldFragmentCache(int newCacheSize) {
+		Fragment[] newCache = new Fragment[newCacheSize];
+		System.arraycopy(this.fragmentCache, 0, newCache, 0,
+				this.fragmentCache.length);
+		return newCache;
 	}
 
 	public Fragment requestFragment(int x, int y) {
-		if (!running)
+		if (!running) {
 			return null;
-		Fragment frag = null;
-		while ((frag = fragmentQueue.poll()) == null)
+		}
+		Fragment fragment;
+		while ((fragment = fragmentQueue.poll()) == null) {
 			increaseFragmentCache();
+		}
 
-		frag.clear();
-		frag.blockX = x;
-		frag.blockY = y;
-		frag.isActive = true;
-		requestQueue.offer(frag);
-		return frag;
+		initFragment(fragment, x, y);
+		requestQueue.offer(fragment);
+		return fragment;
 	}
 
-	public void returnFragment(Fragment frag) {
-		recycleQueue.offer(frag);
+	private void initFragment(Fragment fragment, int x, int y) {
+		fragment.clear();
+		fragment.blockX = x;
+		fragment.blockY = y;
+		fragment.isActive = true;
 	}
 
 	@Override
@@ -121,33 +102,15 @@ public class FragmentManager implements Runnable {
 		while (running) {
 			if (!requestQueue.isEmpty() || !recycleQueue.isEmpty()) {
 				if (!requestQueue.isEmpty()) {
-					synchronized (queueLock) {
-						Fragment frag = requestQueue.poll();
-						if (frag.isActive && !frag.isLoaded) {
-							frag.load();
-							sleepTick++;
-							if (sleepTick == 10) {
-								sleepTick = 0;
-								try {
-									Thread.sleep(1L);
-								} catch (InterruptedException ignored) {
-								}
-							}
-						}
-					}
+					processRequestQueueEntry();
 				}
-
 				while (!recycleQueue.isEmpty()) {
-					synchronized (queueLock) {
-						Fragment frag = recycleQueue.poll();
-						frag.recycle();
-						fragmentQueue.offer(frag);
-					}
+					processRecycleQueueEntry();
 				}
 			} else {
 				sleepTick = 0;
 				try {
-					Thread.sleep(2L);
+					Thread.sleep(2);
 				} catch (InterruptedException ignored) {
 				}
 			}
@@ -155,30 +118,115 @@ public class FragmentManager implements Runnable {
 
 	}
 
+	private void processRecycleQueueEntry() {
+		synchronized (queueLock) {
+			Fragment fragment = recycleQueue.poll();
+			fragment.recycle();
+			fragmentQueue.offer(fragment);
+		}
+	}
+
+	private void processRequestQueueEntry() {
+		synchronized (queueLock) {
+			Fragment fragment = requestQueue.poll();
+			if (fragment.isActive && !fragment.isLoaded) {
+				fragment.load();
+				sleepIfNecessary();
+			}
+		}
+	}
+
+	private void sleepIfNecessary() {
+		sleepTick++;
+		if (sleepTick == 10) {
+			sleepTick = 0;
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException ignored) {
+			}
+		}
+	}
+
+	public void returnFragment(Fragment frag) {
+		recycleQueue.offer(frag);
+	}
+
+	public void repaintFragment(Fragment frag) {
+		synchronized (queueLock) {
+			frag.repaint();
+		}
+	}
+
+	public void repaintFragmentLayer(Fragment frag, int id) {
+		synchronized (queueLock) {
+			frag.repaintImageLayer(id);
+		}
+	}
+
+	public void reset() {
+		gracefullyShutdownCurrentThread();
+		clearAllQueues();
+		resetAllFragments();
+	}
+
 	public void setMap(Map map) {
+		reloadAllLayers(map);
+		startNewThread();
+	}
+
+	private void startNewThread() {
+		running = true;
+		currentThread = new Thread(this);
+		currentThread.start();
+	}
+
+	private void gracefullyShutdownCurrentThread() {
+		running = false;
+		try {
+			currentThread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void resetAllFragments() {
+		for (int i = 0; i < fragmentCache.length; i++) {
+			fragmentCache[i].reset();
+			fragmentQueue.offer(fragmentCache[i]);
+		}
+	}
+
+	private void clearAllQueues() {
+		recycleQueue.clear();
+		requestQueue.clear();
+		fragmentQueue.clear();
+	}
+
+	public void updateAllLayers(float time) {
+		for (ImageLayer layer : imageLayers) {
+			layer.update(time);
+		}
+		for (LiveLayer layer : liveLayers) {
+			layer.update(time);
+		}
+		for (IconLayer layer : iconLayers) {
+			layer.update(time);
+		}
+	}
+
+	private void reloadAllLayers(Map map) {
 		for (ImageLayer layer : imageLayers) {
 			layer.setMap(map);
 			layer.reload();
 		}
-
 		for (LiveLayer layer : liveLayers) {
 			layer.setMap(map);
 			layer.reload();
 		}
-
 		for (IconLayer layer : iconLayers) {
 			layer.setMap(map);
 			layer.reload();
 		}
-
-		currentThread = new Thread(this);
-
-		running = true;
-		currentThread.start();
-	}
-
-	public int getCacheSize() {
-		return cacheSize;
 	}
 
 	public int getFreeFragmentQueueSize() {
@@ -193,9 +241,7 @@ public class FragmentManager implements Runnable {
 		return requestQueue.size();
 	}
 
-	public void repaintFragmentLayer(Fragment frag, int id) {
-		synchronized (queueLock) {
-			frag.repaintImageLayer(id);
-		}
+	public int getCacheSize() {
+		return fragmentCache.length;
 	}
 }
