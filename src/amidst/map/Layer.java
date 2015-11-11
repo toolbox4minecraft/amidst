@@ -1,7 +1,7 @@
 package amidst.map;
 
 public class Layer {
-	protected Map map;
+	private Map map;
 
 	public void setMap(Map map) {
 		this.map = map;
@@ -13,6 +13,10 @@ public class Layer {
 
 	public boolean isVisible() {
 		return true;
+	}
+
+	public double getMapZoom() {
+		return map.getZoom();
 	}
 
 	public void reload() {

@@ -125,7 +125,7 @@ public class Fragment {
 			if (objects[i].parentLayer.isVisible()) {
 				drawMatrix.setTransform(inMatrix);
 				drawMatrix.translate(objects[i].x, objects[i].y);
-				double invZoom = 1.0 / objects[i].parentLayer.map.getZoom();
+				double invZoom = 1.0 / objects[i].parentLayer.getMapZoom();
 				drawMatrix.scale(invZoom, invZoom);
 				g.setTransform(drawMatrix);
 				

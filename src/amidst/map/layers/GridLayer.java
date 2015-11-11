@@ -36,7 +36,7 @@ public class GridLayer extends LiveLayer {
 
 		textBuffer.getChars(0, textBuffer.length(), textCache, 0);
 
-		int stride = (int) (.25 / map.getZoom());
+		int stride = (int) (.25 / getMapZoom());
 
 		g.setColor(Color.black);
 		g.setTransform(mat);
@@ -55,7 +55,7 @@ public class GridLayer extends LiveLayer {
 			return;
 		if (gridY != 0)
 			return;
-		double invZoom = 1.0 / map.getZoom();
+		double invZoom = 1.0 / getMapZoom();
 		mat.scale(invZoom, invZoom);
 		g.setTransform(mat);
 		g.setFont(drawFont);
