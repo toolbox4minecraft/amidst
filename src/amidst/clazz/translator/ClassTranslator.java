@@ -44,9 +44,12 @@ public class ClassTranslator {
 		Map<SymbolicClassDeclaration, String> result = new HashMap<SymbolicClassDeclaration, String>();
 		for (Entry<RealClassDetector, SymbolicClassDeclaration> entry : translations
 				.entrySet()) {
-			addResult(result, entry.getValue(),
-					entry.getKey().firstMatching(realClasses)
-							.getRealClassName());
+			RealClass firstMatching = entry.getKey().firstMatching(realClasses);
+			String realClassName = null;
+			if (firstMatching != null) {
+				realClassName = firstMatching.getRealClassName();
+			}
+			addResult(result, entry.getValue(), realClassName);
 		}
 		return result;
 	}
