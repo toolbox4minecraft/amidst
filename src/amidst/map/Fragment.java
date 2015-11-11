@@ -11,10 +11,22 @@ import amidst.logging.Log;
 import amidst.minecraft.MinecraftUtil;
 
 public class Fragment {
-	public static final int SIZE = 512, SIZE_SHIFT = 9,
-			MAX_OBJECTS_PER_FRAGMENT = 32, BIOME_SIZE = SIZE >> 2;
+	public static final int SIZE = 512;
+	public static final int SIZE_SHIFT = 9;
+	public static final int MAX_OBJECTS_PER_FRAGMENT = 32;
+	public static final int BIOME_SIZE = SIZE >> 2;
+
 	private static AffineTransform drawMatrix = new AffineTransform();
-	public int blockX, blockY;
+
+	// TODO: what is this? move it to another place?
+	private static int[] imageRGBDataCache = new int[SIZE * SIZE];
+
+	public static int[] getImageRGBDataCache() {
+		return imageRGBDataCache;
+	}
+
+	public int blockX;
+	public int blockY;
 
 	public short[] biomeData = new short[BIOME_SIZE * BIOME_SIZE];
 
@@ -22,23 +34,22 @@ public class Fragment {
 	private LiveLayer[] liveLayers;
 	private IconLayer[] iconLayers;
 
-	private Object loadLock = new Object();
-
 	private BufferedImage[] images;
 	public MapObject[] objects;
 	public int objectsLength = 0;
 
+	private Object loadLock = new Object();
+
 	private float alpha = 0.0f;
 
-	public boolean isActive = false;
-	public boolean isLoaded = false;
+	private boolean isActive = false;
+	private boolean isLoaded = false;
 
-	public Fragment nextFragment = null, prevFragment = null;
+	public Fragment nextFragment = null;
+	public Fragment prevFragment = null;
 	public boolean hasNext = false;
 
 	public boolean endOfLine = false;
-
-	private static int[] dataCache = new int[SIZE * SIZE];
 
 	public Fragment(ImageLayer... layers) {
 		this(layers, null, null);
@@ -53,58 +64,56 @@ public class Fragment {
 			IconLayer[] iconLayers) {
 		this.imageLayers = imageLayers;
 		this.liveLayers = liveLayers;
-		images = new BufferedImage[imageLayers.length];
-		for (int i = 0; i < imageLayers.length; i++)
-			images[imageLayers[i].getLayerId()] = new BufferedImage(
-					imageLayers[i].size, imageLayers[i].size,
-					BufferedImage.TYPE_INT_ARGB);
 		this.iconLayers = iconLayers;
-		objects = new MapObject[MAX_OBJECTS_PER_FRAGMENT];
+		initImages();
+		initObjects();
+	}
+
+	private void initImages() {
+		this.images = new BufferedImage[imageLayers.length];
+		for (ImageLayer imageLayer : imageLayers) {
+			int layerId = imageLayer.getLayerId();
+			int layerSize = imageLayer.getSize();
+			images[layerId] = new BufferedImage(layerSize, layerSize,
+					BufferedImage.TYPE_INT_ARGB);
+		}
+	}
+
+	private void initObjects() {
+		this.objects = new MapObject[MAX_OBJECTS_PER_FRAGMENT];
 	}
 
 	public void load() {
 		synchronized (loadLock) {
-			if (isLoaded)
+			if (isLoaded) {
 				Log.w("This should never happen!");
+			}
 			int[] data = MinecraftUtil.getBiomeData(blockX >> 2, blockY >> 2,
 					BIOME_SIZE, BIOME_SIZE, true);
-			for (int i = 0; i < BIOME_SIZE * BIOME_SIZE; i++)
+			for (int i = 0; i < BIOME_SIZE * BIOME_SIZE; i++) {
 				biomeData[i] = (short) data[i];
-			for (int i = 0; i < imageLayers.length; i++)
+			}
+			for (int i = 0; i < imageLayers.length; i++) {
 				imageLayers[i].load(this);
-			for (int i = 0; i < iconLayers.length; i++)
+			}
+			for (int i = 0; i < iconLayers.length; i++) {
 				iconLayers[i].generateMapObjects(this);
+			}
 			alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
 			isLoaded = true;
 		}
 	}
 
-	public void recycle() {
-		isActive = false;
-		isLoaded = false;
-	}
-
-	public void clearData() {
-		for (IconLayer layer : iconLayers)
-			layer.clearMapObjects(this);
-		isLoaded = false;
-	}
-
-	public void clear() {
-		for (IconLayer layer : iconLayers)
-			layer.clearMapObjects(this);
-		hasNext = false;
-		endOfLine = false;
-		isActive = true;
+	public boolean needsLoading() {
+		return isActive && !isLoaded;
 	}
 
 	public void drawLiveLayers(float time, Graphics2D g, AffineTransform mat) {
-		for (int i = 0; i < liveLayers.length; i++) {
-			if (liveLayers[i].isVisible()) {
-				liveLayers[i].drawLive(this, g, mat);
+		for (LiveLayer liveLayer : liveLayers) {
+			if (liveLayer.isVisible()) {
+				liveLayer.drawLive(this, g, mat);
 			}
 		}
-
 	}
 
 	public void drawImageLayers(float time, Graphics2D g, AffineTransform mat) {
@@ -170,9 +179,10 @@ public class Fragment {
 		objectsLength++;
 	}
 
-	public void setImageData(int layerId, int[] data) {
-		images[layerId].setRGB(0, 0, imageLayers[layerId].size,
-				imageLayers[layerId].size, data, 0, imageLayers[layerId].size);
+	public void setImageRGB(int layerId, int[] rgbArray) {
+		int layerSize = imageLayers[layerId].getSize();
+		images[layerId].setRGB(0, 0, layerSize, layerSize, rgbArray, 0,
+				layerSize);
 	}
 
 	public int getBlockX() {
@@ -199,21 +209,18 @@ public class Fragment {
 		return blockY >> SIZE_SHIFT;
 	}
 
-	public void setNext(Fragment frag) {
-		nextFragment = frag;
-		frag.prevFragment = this;
+	public void setNext(Fragment fragment) {
+		nextFragment = fragment;
+		fragment.prevFragment = this;
 		hasNext = true;
 	}
 
 	public void remove() {
-		if (hasNext)
+		if (hasNext) {
 			prevFragment.setNext(nextFragment);
-		else
+		} else {
 			prevFragment.hasNext = false;
-	}
-
-	public static int[] getIntArray() {
-		return dataCache;
+		}
 	}
 
 	public void removeObject(MapObjectPlayer player) {
@@ -229,6 +236,40 @@ public class Fragment {
 		return images[layer];
 	}
 
+	public void repaint() {
+		synchronized (loadLock) {
+			if (isLoaded) {
+				for (int i = 0; i < imageLayers.length; i++) {
+					imageLayers[i].load(this);
+				}
+			}
+		}
+	}
+
+	public void repaintImageLayer(int id) {
+		synchronized (loadLock) {
+			if (isLoaded) {
+				imageLayers[id].load(this);
+			}
+		}
+	}
+
+	public void recycle() {
+		isActive = false;
+		isLoaded = false;
+	}
+
+	public void init(int x, int y) {
+		for (IconLayer layer : iconLayers) {
+			layer.clearMapObjects(this);
+		}
+		hasNext = false;
+		endOfLine = false;
+		blockX = x;
+		blockY = y;
+		isActive = true;
+	}
+
 	public void reset() {
 		objectsLength = 0;
 		isActive = false;
@@ -239,27 +280,5 @@ public class Fragment {
 		hasNext = false;
 
 		endOfLine = false;
-	}
-
-	public void repaint() {
-		synchronized (loadLock) {
-			if (isLoaded)
-				for (int i = 0; i < imageLayers.length; i++)
-					imageLayers[i].load(this);
-		}
-	}
-
-	public void repaintImageLayer(int id) {
-		synchronized (loadLock) {
-			if (isLoaded)
-				imageLayers[id].load(this);
-		}
-	}
-
-	public void init(int x, int y) {
-		clear();
-		blockX = x;
-		blockY = y;
-		isActive = true;
 	}
 }

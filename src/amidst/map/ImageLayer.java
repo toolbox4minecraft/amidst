@@ -5,7 +5,7 @@ import java.awt.geom.AffineTransform;
 public abstract class ImageLayer extends Layer {
 	protected float alpha = 1.0f;
 	protected double scale;
-	protected int size;
+	private int size;
 	private AffineTransform cachedScalingMatrix = new AffineTransform();
 	protected int layerId;
 
@@ -48,6 +48,10 @@ public abstract class ImageLayer extends Layer {
 
 	public void setLayerId(int id) {
 		layerId = id;
+	}
+
+	public int getSize() {
+		return size;
 	}
 
 	public abstract void drawToCache(Fragment fragment);

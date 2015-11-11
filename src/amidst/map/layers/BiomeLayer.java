@@ -53,7 +53,7 @@ public class BiomeLayer extends ImageLayer {
 	
 	@Override
 	public void drawToCache(Fragment fragment) {
-		int[] dataCache = Fragment.getIntArray();
+		int[] dataCache = Fragment.getImageRGBDataCache();
 		if (inHighlightMode) {
 			for (int i = 0; i < size*size; i++)
 				if (!selectedBiomes[fragment.biomeData[i]])
@@ -66,7 +66,7 @@ public class BiomeLayer extends ImageLayer {
 		}
 
 		
-		fragment.setImageData(layerId, dataCache);
+		fragment.setImageRGB(layerId, dataCache);
 	}
 	
 	public static int getBiomeForFragment(Fragment frag, int blockX, int blockY) {

@@ -20,7 +20,7 @@ public class SlimeLayer extends ImageLayer {
 	
 	@Override
 	public void drawToCache(Fragment fragment) {
-		int[] dataCache = Fragment.getIntArray();
+		int[] dataCache = Fragment.getImageRGBDataCache();
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
 				int xPosition = fragment.getChunkX() + x;
@@ -35,7 +35,7 @@ public class SlimeLayer extends ImageLayer {
 			}
 		}
 		
-		fragment.setImageData(layerId, dataCache);
+		fragment.setImageRGB(layerId, dataCache);
 	}
 	
 }

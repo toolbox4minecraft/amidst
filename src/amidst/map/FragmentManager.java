@@ -37,7 +37,7 @@ public class FragmentManager {
 		private void processRequestQueueEntry() {
 			synchronized (queueLock) {
 				Fragment fragment = requestQueue.poll();
-				if (fragment.isActive && !fragment.isLoaded) {
+				if (fragment.needsLoading()) {
 					fragment.load();
 					sleepIfNecessary();
 				}
