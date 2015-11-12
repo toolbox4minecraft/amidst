@@ -61,14 +61,12 @@ public class MapViewer extends JComponent {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
-			// TODO Auto-generated method stub
-			Point mouse = getMousePosition();
-			if (mouse == null)
-				mouse = new Point(getWidth() >> 1, getHeight() >> 1);
-			if (e.getKeyCode() == KeyEvent.VK_EQUALS)
+			Point mouse = getMousePositionFromJComponent();
+			if (e.getKeyCode() == KeyEvent.VK_EQUALS) {
 				adjustZoom(mouse, -1);
-			else if (e.getKeyCode() == KeyEvent.VK_MINUS)
+			} else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
 				adjustZoom(mouse, 1);
+			}
 		}
 
 		@Override
@@ -78,87 +76,57 @@ public class MapViewer extends JComponent {
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			int notches = e.getWheelRotation();
-			Point mouse = e.getPoint(); // Don't use getMousePosition() because
-										// when
-										// computer is swapping/grinding, mouse
-										// may
-										// have moved out of window before
-										// execution
-										// reaches here.
-			for (Widget widget : widgets) {
-				if ((widget.isVisible()) && (mouse.x > widget.getX())
-						&& (mouse.y > widget.getY())
-						&& (mouse.x < widget.getX() + widget.getWidth())
-						&& (mouse.y < widget.getY() + widget.getHeight())) {
-					if (widget.onMouseWheelMoved(mouse.x - widget.getX(),
-							mouse.y - widget.getY(), notches))
-						return;
-				}
+			Point mouse = getMousePositionFromEvent(e);
+			Widget widget = findWidget(mouse);
+			if (widget != null
+					&& widget.onMouseWheelMoved(
+							translateMouseXCoordinateToWidget(mouse, widget),
+							translateMouseYCoordinateToWidget(mouse, widget),
+							notches)) {
+				// noop
+			} else {
+				adjustZoom(mouse, notches);
 			}
-			adjustZoom(getMousePosition(), notches);
 		}
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (!e.isMetaDown()) {
-				Point mouse = e.getPoint(); // Don't use getMousePosition()
-											// because
-											// when computer is
-											// swapping/grinding,
-											// mouse may have moved out of
-											// window
-											// before execution reaches here.
-				for (Widget widget : widgets) {
-					if ((widget.isVisible()) && (mouse.x > widget.getX())
-							&& (mouse.y > widget.getY())
-							&& (mouse.x < widget.getX() + widget.getWidth())
-							&& (mouse.y < widget.getY() + widget.getHeight())) {
-						if (widget.onClick(mouse.x - widget.getX(), mouse.y
-								- widget.getY()))
-							return;
-					}
-				}
-				MapObject object = worldMap.getObjectAt(mouse, 50.0);
-
-				if (selectedObject != null)
-					selectedObject.localScale = 1.0;
-
-				if (object != null)
-					object.localScale = 1.5;
-				selectedObject = object;
+			if (e.isMetaDown()) {
+				return;
+			}
+			Point mouse = getMousePositionFromEvent(e);
+			Widget widget = findWidget(mouse);
+			if (widget != null
+					&& widget.onClick(
+							translateMouseXCoordinateToWidget(mouse, widget),
+							translateMouseYCoordinateToWidget(mouse, widget))) {
+				// noop
+			} else {
+				mouseClickedOnMap(mouse);
 			}
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (e.isMetaDown())
+			if (e.isMetaDown()) {
 				return;
-			Point mouse = e.getPoint(); // Don't use getMousePosition() because
-										// when
-										// computer is swapping/grinding, mouse
-										// may
-										// have moved out of window before
-										// execution
-										// reaches here.
-			for (Widget widget : widgets) {
-				if ((widget.isVisible()) && (mouse.x > widget.getX())
-						&& (mouse.y > widget.getY())
-						&& (mouse.x < widget.getX() + widget.getWidth())
-						&& (mouse.y < widget.getY() + widget.getHeight())) {
-					if (widget.onMousePressed(mouse.x - widget.getX(), mouse.y
-							- widget.getY())) {
-						mouseOwner = widget;
-						return;
-					}
-				}
 			}
-			lastMouse = mouse;
+			Point mouse = getMousePositionFromEvent(e);
+			Widget widget = findWidget(mouse);
+			if (widget != null
+					&& widget.onMousePressed(
+							translateMouseXCoordinateToWidget(mouse, widget),
+							translateMouseYCoordinateToWidget(mouse, widget))) {
+				mouseOwner = widget;
+			} else {
+				lastMouse = mouse;
+			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (e.isPopupTrigger() && MinecraftUtil.getVersion().saveEnabled()) {
-				lastRightClick = getMousePosition();
+				lastRightClick = getMousePositionFromEvent(e);
 				if (proj.saveLoaded) {
 					menu.show(e.getComponent(), e.getX(), e.getY());
 				}
@@ -178,6 +146,51 @@ public class MapViewer extends JComponent {
 
 		@Override
 		public void mouseExited(MouseEvent e) {
+		}
+
+		private void mouseClickedOnMap(Point mouse) {
+			MapObject object = worldMap.getObjectAt(mouse, 50.0);
+
+			if (selectedObject != null) {
+				selectedObject.localScale = 1.0;
+			}
+
+			if (object != null) {
+				object.localScale = 1.5;
+			}
+			selectedObject = object;
+		}
+
+		/**
+		 * Don't use getMousePosition() of the JComponent in mouse events,
+		 * because when computer is swapping/grinding, mouse may have moved out
+		 * of window before execution reaches here.
+		 */
+		private Point getMousePositionFromEvent(MouseEvent e) {
+			return e.getPoint();
+		}
+
+		private Widget findWidget(Point mouse) {
+			for (Widget widget : widgets) {
+				if (widget.isVisible() && isMouseInWidgetBounds(mouse, widget)) {
+					return widget;
+				}
+			}
+			return null;
+		}
+
+		private int translateMouseXCoordinateToWidget(Point mouse, Widget widget) {
+			return mouse.x - widget.getX();
+		}
+
+		private int translateMouseYCoordinateToWidget(Point mouse, Widget widget) {
+			return mouse.y - widget.getY();
+		}
+
+		private boolean isMouseInWidgetBounds(Point mouse, Widget widget) {
+			return mouse.x > widget.getX() && mouse.y > widget.getY()
+					&& mouse.x < widget.getX() + widget.getWidth()
+					&& mouse.y < widget.getY() + widget.getHeight();
 		}
 	}
 
@@ -300,7 +313,7 @@ public class MapViewer extends JComponent {
 			worldMap.setZoom(curZoom);
 		}
 
-		Point curMouse = getMousePosition();
+		Point curMouse = getMousePositionFromJComponent();
 		if (lastMouse != null) {
 			if (curMouse != null) {
 				double difX = curMouse.x - lastMouse.x;
@@ -392,6 +405,14 @@ public class MapViewer extends JComponent {
 		// PixelInfo p = getCursorInformation(new Point(tempX, tempY));
 
 		// proj.movePlayer(name, p);
+	}
+
+	private Point getMousePositionFromJComponent() {
+		Point mouse = getMousePosition();
+		if (mouse == null) {
+			mouse = new Point(getWidth() >> 1, getHeight() >> 1);
+		}
+		return mouse;
 	}
 
 	public void dispose() {
