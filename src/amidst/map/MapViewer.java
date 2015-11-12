@@ -52,8 +52,135 @@ import amidst.map.widget.Widget;
 import amidst.minecraft.MinecraftUtil;
 import amidst.resources.ResourceLoader;
 
-public class MapViewer extends JComponent implements MouseListener,
-		MouseWheelListener, KeyListener {
+public class MapViewer extends JComponent {
+	private class Listeners implements MouseListener, MouseWheelListener,
+			KeyListener {
+		@Override
+		public void keyTyped(KeyEvent e) {
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			// TODO Auto-generated method stub
+			Point mouse = getMousePosition();
+			if (mouse == null)
+				mouse = new Point(getWidth() >> 1, getHeight() >> 1);
+			if (e.getKeyCode() == KeyEvent.VK_EQUALS)
+				adjustZoom(mouse, -1);
+			else if (e.getKeyCode() == KeyEvent.VK_MINUS)
+				adjustZoom(mouse, 1);
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+		}
+
+		@Override
+		public void mouseWheelMoved(MouseWheelEvent e) {
+			int notches = e.getWheelRotation();
+			Point mouse = e.getPoint(); // Don't use getMousePosition() because
+										// when
+										// computer is swapping/grinding, mouse
+										// may
+										// have moved out of window before
+										// execution
+										// reaches here.
+			for (Widget widget : widgets) {
+				if ((widget.isVisible()) && (mouse.x > widget.getX())
+						&& (mouse.y > widget.getY())
+						&& (mouse.x < widget.getX() + widget.getWidth())
+						&& (mouse.y < widget.getY() + widget.getHeight())) {
+					if (widget.onMouseWheelMoved(mouse.x - widget.getX(),
+							mouse.y - widget.getY(), notches))
+						return;
+				}
+			}
+			adjustZoom(getMousePosition(), notches);
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (!e.isMetaDown()) {
+				Point mouse = e.getPoint(); // Don't use getMousePosition()
+											// because
+											// when computer is
+											// swapping/grinding,
+											// mouse may have moved out of
+											// window
+											// before execution reaches here.
+				for (Widget widget : widgets) {
+					if ((widget.isVisible()) && (mouse.x > widget.getX())
+							&& (mouse.y > widget.getY())
+							&& (mouse.x < widget.getX() + widget.getWidth())
+							&& (mouse.y < widget.getY() + widget.getHeight())) {
+						if (widget.onClick(mouse.x - widget.getX(), mouse.y
+								- widget.getY()))
+							return;
+					}
+				}
+				MapObject object = worldMap.getObjectAt(mouse, 50.0);
+
+				if (selectedObject != null)
+					selectedObject.localScale = 1.0;
+
+				if (object != null)
+					object.localScale = 1.5;
+				selectedObject = object;
+			}
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if (e.isMetaDown())
+				return;
+			Point mouse = e.getPoint(); // Don't use getMousePosition() because
+										// when
+										// computer is swapping/grinding, mouse
+										// may
+										// have moved out of window before
+										// execution
+										// reaches here.
+			for (Widget widget : widgets) {
+				if ((widget.isVisible()) && (mouse.x > widget.getX())
+						&& (mouse.y > widget.getY())
+						&& (mouse.x < widget.getX() + widget.getWidth())
+						&& (mouse.y < widget.getY() + widget.getHeight())) {
+					if (widget.onMousePressed(mouse.x - widget.getX(), mouse.y
+							- widget.getY())) {
+						mouseOwner = widget;
+						return;
+					}
+				}
+			}
+			lastMouse = mouse;
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			if (e.isPopupTrigger() && MinecraftUtil.getVersion().saveEnabled()) {
+				lastRightClick = getMousePosition();
+				if (proj.saveLoaded) {
+					menu.show(e.getComponent(), e.getX(), e.getY());
+				}
+			} else {
+				if (mouseOwner != null) {
+					mouseOwner.onMouseReleased();
+					mouseOwner = null;
+				} else {
+					lastMouse = null;
+				}
+			}
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+		}
+	}
+
 	private static final BufferedImage DROP_SHADOW_BOTTOM_LEFT = ResourceLoader
 			.getImage("dropshadow/inner_bottom_left.png");
 	private static final BufferedImage DROP_SHADOW_BOTTOM_RIGHT = ResourceLoader
@@ -87,6 +214,8 @@ public class MapViewer extends JComponent implements MouseListener,
 				liveLayers, iconLayers);
 		fragmentManager = new FragmentManager(layerContainer);
 	}
+
+	private Listeners listeners = new Listeners();
 
 	private Widget mouseOwner;
 
@@ -148,8 +277,8 @@ public class MapViewer extends JComponent implements MouseListener,
 				.setAnchorPoint(CornerAnchorPoint.BOTTOM_RIGHT));
 		widgets.add(BiomeWidget.get(this)
 				.setAnchorPoint(CornerAnchorPoint.NONE));
-		addMouseListener(this);
-		addMouseWheelListener(this);
+		addMouseListener(listeners);
+		addMouseWheelListener(listeners);
 
 		setFocusable(true);
 		lastTime = System.currentTimeMillis();
@@ -249,102 +378,6 @@ public class MapViewer extends JComponent implements MouseListener,
 		}
 	}
 
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		int notches = e.getWheelRotation();
-		Point mouse = e.getPoint(); // Don't use getMousePosition() because when
-									// computer is swapping/grinding, mouse may
-									// have moved out of window before execution
-									// reaches here.
-		for (Widget widget : widgets) {
-			if ((widget.isVisible()) && (mouse.x > widget.getX())
-					&& (mouse.y > widget.getY())
-					&& (mouse.x < widget.getX() + widget.getWidth())
-					&& (mouse.y < widget.getY() + widget.getHeight())) {
-				if (widget.onMouseWheelMoved(mouse.x - widget.getX(), mouse.y
-						- widget.getY(), notches))
-					return;
-			}
-		}
-		adjustZoom(getMousePosition(), notches);
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		if (!e.isMetaDown()) {
-			Point mouse = e.getPoint(); // Don't use getMousePosition() because
-										// when computer is swapping/grinding,
-										// mouse may have moved out of window
-										// before execution reaches here.
-			for (Widget widget : widgets) {
-				if ((widget.isVisible()) && (mouse.x > widget.getX())
-						&& (mouse.y > widget.getY())
-						&& (mouse.x < widget.getX() + widget.getWidth())
-						&& (mouse.y < widget.getY() + widget.getHeight())) {
-					if (widget.onClick(mouse.x - widget.getX(), mouse.y
-							- widget.getY()))
-						return;
-				}
-			}
-			MapObject object = worldMap.getObjectAt(mouse, 50.0);
-
-			if (selectedObject != null)
-				selectedObject.localScale = 1.0;
-
-			if (object != null)
-				object.localScale = 1.5;
-			selectedObject = object;
-		}
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		if (e.isMetaDown())
-			return;
-		Point mouse = e.getPoint(); // Don't use getMousePosition() because when
-									// computer is swapping/grinding, mouse may
-									// have moved out of window before execution
-									// reaches here.
-		for (Widget widget : widgets) {
-			if ((widget.isVisible()) && (mouse.x > widget.getX())
-					&& (mouse.y > widget.getY())
-					&& (mouse.x < widget.getX() + widget.getWidth())
-					&& (mouse.y < widget.getY() + widget.getHeight())) {
-				if (widget.onMousePressed(mouse.x - widget.getX(), mouse.y
-						- widget.getY())) {
-					mouseOwner = widget;
-					return;
-				}
-			}
-		}
-		lastMouse = mouse;
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		if (e.isPopupTrigger() && MinecraftUtil.getVersion().saveEnabled()) {
-			lastRightClick = getMousePosition();
-			if (proj.saveLoaded) {
-				menu.show(e.getComponent(), e.getX(), e.getY());
-			}
-		} else {
-			if (mouseOwner != null) {
-				mouseOwner.onMouseReleased();
-				mouseOwner = null;
-			} else {
-				lastMouse = null;
-			}
-		}
-	}
-
 	public MapObject getSelectedObject() {
 		return selectedObject;
 	}
@@ -376,28 +409,8 @@ public class MapViewer extends JComponent implements MouseListener,
 		image.flush();
 	}
 
-	@Override
-	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		Point mouse = getMousePosition();
-		if (mouse == null)
-			mouse = new Point(getWidth() >> 1, getHeight() >> 1);
-		if (e.getKeyCode() == KeyEvent.VK_EQUALS)
-			adjustZoom(mouse, -1);
-		else if (e.getKeyCode() == KeyEvent.VK_MINUS)
-			adjustZoom(mouse, 1);
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-
+	public KeyListener getKeyListener() {
+		return listeners;
 	}
 
 	public FragmentManager getFragmentManager() {

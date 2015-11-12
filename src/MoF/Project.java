@@ -151,7 +151,7 @@ public class Project extends JPanel {
 	
 	
 	public KeyListener getKeyListener() {
-		return map;
+		return map.getKeyListener();
 	}
 	public void moveMapTo(long x, long y) {
 		map.centerAt(x, y);
