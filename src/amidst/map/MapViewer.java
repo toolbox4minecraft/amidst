@@ -195,7 +195,6 @@ public class MapViewer {
 
 	private class Component extends JComponent {
 		private long lastTime = System.currentTimeMillis();
-		private Point2D.Double mapMovementSpeed = new Point2D.Double();
 
 		@Override
 		public void paint(Graphics g) {
@@ -205,9 +204,7 @@ public class MapViewer {
 			clear(g2d);
 
 			updateMapZoom();
-			updateMapMovementSpeed();
-			moveMap();
-			throttleMapMovementSpeed();
+			updateMapMovement();
 
 			setViewerDimensions();
 
@@ -232,32 +229,8 @@ public class MapViewer {
 			zoom.update(map);
 		}
 
-		private void updateMapMovementSpeed() {
-			if (lastMouse != null) {
-				Point currentMouse = getMousePosition();
-				if (currentMouse != null) {
-					double dX = currentMouse.x - lastMouse.x;
-					double dY = currentMouse.y - lastMouse.y;
-					// TODO : Scale with time
-					mapMovementSpeed.setLocation(dX * 0.2, dY * 0.2);
-				}
-				lastMouse.translate((int) mapMovementSpeed.x,
-						(int) mapMovementSpeed.y);
-			}
-		}
-
-		private void moveMap() {
-			map.moveBy((int) mapMovementSpeed.x, (int) mapMovementSpeed.y);
-		}
-
-		private void throttleMapMovementSpeed() {
-			if (Options.instance.mapFlicking.get()) {
-				mapMovementSpeed.x *= 0.95f;
-				mapMovementSpeed.y *= 0.95f;
-			} else {
-				mapMovementSpeed.x = 0;
-				mapMovementSpeed.y = 0;
-			}
+		private void updateMapMovement() {
+			movement.update();
 		}
 
 		private void setViewerDimensions() {
@@ -294,6 +267,43 @@ public class MapViewer {
 							AlphaComposite.SRC_OVER, widget.getAlpha()));
 					widget.draw(g2d, time);
 				}
+			}
+		}
+	}
+
+	private class MapMovement {
+		private Point2D.Double speed = new Point2D.Double();
+
+		public void update() {
+			updateMapMovementSpeed();
+			moveMap();
+			throttleMapMovementSpeed();
+		}
+
+		private void updateMapMovementSpeed() {
+			if (lastMouse != null) {
+				Point currentMouse = getMousePosition();
+				if (currentMouse != null) {
+					double dX = currentMouse.x - lastMouse.x;
+					double dY = currentMouse.y - lastMouse.y;
+					// TODO : Scale with time
+					speed.setLocation(dX * 0.2, dY * 0.2);
+				}
+				lastMouse.translate((int) speed.x, (int) speed.y);
+			}
+		}
+
+		private void moveMap() {
+			map.moveBy((int) speed.x, (int) speed.y);
+		}
+
+		private void throttleMapMovementSpeed() {
+			if (Options.instance.mapFlicking.get()) {
+				speed.x *= 0.95f;
+				speed.y *= 0.95f;
+			} else {
+				speed.x = 0;
+				speed.y = 0;
 			}
 		}
 	}
@@ -386,6 +396,7 @@ public class MapViewer {
 	private Listeners listeners = new Listeners();
 	private Component component = new Component();
 	private MapZoom zoom = new MapZoom();
+	private MapMovement movement = new MapMovement();
 
 	private Widget mouseOwner;
 
