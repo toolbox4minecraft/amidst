@@ -25,18 +25,18 @@ public class Fragment {
 		return imageRGBDataCache;
 	}
 
-	public int blockX;
-	public int blockY;
+	private int blockX;
+	private int blockY;
 
-	public short[] biomeData = new short[BIOME_SIZE * BIOME_SIZE];
+	private short[] biomeData = new short[BIOME_SIZE * BIOME_SIZE];
 
 	private ImageLayer[] imageLayers;
 	private LiveLayer[] liveLayers;
 	private IconLayer[] iconLayers;
 
 	private BufferedImage[] images;
-	public MapObject[] objects;
-	public int objectsLength = 0;
+	private MapObject[] objects;
+	private int objectsLength = 0;
 
 	private Object loadLock = new Object();
 
@@ -45,11 +45,11 @@ public class Fragment {
 	private boolean isActive = false;
 	private boolean isLoaded = false;
 
-	public Fragment nextFragment = null;
-	public Fragment prevFragment = null;
-	public boolean hasNext = false;
+	private Fragment nextFragment = null;
+	private Fragment previousFragment = null;
+	private boolean hasNext = false;
 
-	public boolean endOfLine = false;
+	private boolean endOfLine = false;
 
 	public Fragment(ImageLayer... layers) {
 		this(layers, null, null);
@@ -185,41 +185,17 @@ public class Fragment {
 				layerSize);
 	}
 
-	public int getBlockX() {
-		return blockX;
-	}
-
-	public int getBlockY() {
-		return blockY;
-	}
-
-	public int getChunkX() {
-		return blockX >> 4;
-	}
-
-	public int getChunkY() {
-		return blockY >> 4;
-	}
-
-	public int getFragmentX() {
-		return blockX >> SIZE_SHIFT;
-	}
-
-	public int getFragmentY() {
-		return blockY >> SIZE_SHIFT;
-	}
-
 	public void setNext(Fragment fragment) {
 		nextFragment = fragment;
-		fragment.prevFragment = this;
+		fragment.previousFragment = this;
 		hasNext = true;
 	}
 
 	public void remove() {
 		if (hasNext) {
-			prevFragment.setNext(nextFragment);
+			previousFragment.setNext(nextFragment);
 		} else {
-			prevFragment.hasNext = false;
+			previousFragment.hasNext = false;
 		}
 	}
 
@@ -276,9 +252,69 @@ public class Fragment {
 		isLoaded = false;
 
 		nextFragment = null;
-		prevFragment = null;
+		previousFragment = null;
 		hasNext = false;
 
 		endOfLine = false;
+	}
+
+	public Fragment getNext() {
+		return nextFragment;
+	}
+
+	public Fragment getPrevious() {
+		return previousFragment;
+	}
+
+	public boolean hasNext() {
+		return hasNext;
+	}
+
+	public boolean isEndOfLine() {
+		return endOfLine;
+	}
+
+	public void setEndOfLine(boolean endOfLine) {
+		this.endOfLine = endOfLine;
+	}
+
+	public short[] getBiomeData() {
+		return biomeData;
+	}
+
+	public int getBlockX() {
+		return blockX;
+	}
+
+	public int getBlockY() {
+		return blockY;
+	}
+
+	public int getChunkX() {
+		return blockX >> 4;
+	}
+
+	public int getChunkY() {
+		return blockY >> 4;
+	}
+
+	public int getFragmentX() {
+		return blockX >> SIZE_SHIFT;
+	}
+
+	public int getFragmentY() {
+		return blockY >> SIZE_SHIFT;
+	}
+
+	public MapObject[] getObjects() {
+		return objects;
+	}
+
+	public int getObjectsLength() {
+		return objectsLength;
+	}
+
+	public void setObjectsLength(int objectsLength) {
+		this.objectsLength = objectsLength;
 	}
 }

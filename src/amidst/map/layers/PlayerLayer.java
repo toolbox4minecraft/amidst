@@ -29,10 +29,10 @@ public class PlayerLayer extends IconLayer {
 		if (!isEnabled) return;
 		List<MapObjectPlayer> players =  saveLoader.getPlayers();
 		for (MapObjectPlayer player : players) {
-			if ((player.globalX >= frag.blockX) &&
-				(player.globalX < frag.blockX + Fragment.SIZE) &&
-				(player.globalY >= frag.blockY) &&
-				(player.globalY < frag.blockY + Fragment.SIZE)) {
+			if ((player.globalX >= frag.getBlockX()) &&
+				(player.globalX < frag.getBlockX() + Fragment.SIZE) &&
+				(player.globalY >= frag.getBlockY()) &&
+				(player.globalY < frag.getBlockY() + Fragment.SIZE)) {
 				player.parentLayer = this;
 				player.parentFragment = frag;
 				frag.addObject(player);
@@ -42,9 +42,9 @@ public class PlayerLayer extends IconLayer {
 	
 	@Override
 	public void clearMapObjects(Fragment frag) {
-		for (int i = 0; i < frag.objectsLength; i++) {
-			if (frag.objects[i] instanceof MapObjectPlayer)
-				((MapObjectPlayer)frag.objects[i]).parentFragment = null;
+		for (int i = 0; i < frag.getObjectsLength(); i++) {
+			if (frag.getObjects()[i] instanceof MapObjectPlayer)
+				((MapObjectPlayer)frag.getObjects()[i]).parentFragment = null;
 			
 		}
 		super.clearMapObjects(frag);

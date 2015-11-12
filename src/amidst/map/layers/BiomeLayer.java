@@ -56,13 +56,13 @@ public class BiomeLayer extends ImageLayer {
 		int[] dataCache = Fragment.getImageRGBDataCache();
 		if (inHighlightMode) {
 			for (int i = 0; i < size*size; i++)
-				if (!selectedBiomes[fragment.biomeData[i]])
-					dataCache[i] = Util.deselectColor(Biome.biomes[fragment.biomeData[i]].color);
+				if (!selectedBiomes[fragment.getBiomeData()[i]])
+					dataCache[i] = Util.deselectColor(Biome.biomes[fragment.getBiomeData()[i]].color);
 				else
-					dataCache[i] = Biome.biomes[fragment.biomeData[i]].color;
+					dataCache[i] = Biome.biomes[fragment.getBiomeData()[i]].color;
 		} else {
 			for (int i = 0; i < size*size; i++)
-				dataCache[i] = Biome.biomes[fragment.biomeData[i]].color;
+				dataCache[i] = Biome.biomes[fragment.getBiomeData()[i]].color;
 		}
 
 		
@@ -70,7 +70,7 @@ public class BiomeLayer extends ImageLayer {
 	}
 	
 	public static int getBiomeForFragment(Fragment frag, int blockX, int blockY) {
-		return frag.biomeData[(blockY >> 2) * Fragment.BIOME_SIZE + (blockX >> 2)];
+		return frag.getBiomeData()[(blockY >> 2) * Fragment.BIOME_SIZE + (blockX >> 2)];
 	}
 	
 	public static String getBiomeNameForFragment(Fragment frag, int blockX, int blockY) {

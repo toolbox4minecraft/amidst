@@ -4,10 +4,10 @@ public class IconLayer extends Layer {
 	public IconLayer() {
 	}
 
-	public void generateMapObjects(Fragment frag) {
+	public void generateMapObjects(Fragment fragment) {
 	}
 
-	public void clearMapObjects(Fragment frag) {
-		frag.objectsLength = 0;
+	public void clearMapObjects(Fragment fragment) {
+		fragment.setObjectsLength(0);
 	}
 }

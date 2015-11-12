@@ -35,10 +35,10 @@ public class SpawnLayer extends IconLayer {
 	
 	@Override
 	public void generateMapObjects(Fragment frag) {
-		if ((spawnObject.globalX >= frag.blockX) &&
-			(spawnObject.globalX < frag.blockX + Fragment.SIZE) &&
-			(spawnObject.globalY >= frag.blockY) &&
-			(spawnObject.globalY < frag.blockY + Fragment.SIZE)) {
+		if ((spawnObject.globalX >= frag.getBlockX()) &&
+			(spawnObject.globalX < frag.getBlockX() + Fragment.SIZE) &&
+			(spawnObject.globalY >= frag.getBlockY()) &&
+			(spawnObject.globalY < frag.getBlockY() + Fragment.SIZE)) {
 			spawnObject.parentLayer = this;
 			frag.addObject(spawnObject);
 		}

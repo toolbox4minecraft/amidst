@@ -40,16 +40,16 @@ public class Map {
 
 	public void resetImageLayer(int id) {
 		Fragment frag = startNode;
-		while (frag.hasNext) {
-			frag = frag.nextFragment;
+		while (frag.hasNext()) {
+			frag = frag.getNext();
 			fragmentManager.repaintFragmentLayer(frag, id);
 		}
 	}
 
 	public void resetFragments() {
 		Fragment frag = startNode;
-		while (frag.hasNext) {
-			frag = frag.nextFragment;
+		while (frag.hasNext()) {
+			frag = frag.getNext();
 			fragmentManager.repaintFragment(frag);
 		}
 	}
@@ -98,16 +98,16 @@ public class Map {
 
 			Fragment frag = startNode;
 			size = Fragment.SIZE;
-			if (frag.hasNext) {
+			if (frag.hasNext()) {
 				mat.setToIdentity();
 				mat.concatenate(originalTransform);
 				mat.translate(start.x, start.y);
 				mat.scale(scale, scale);
-				while (frag.hasNext) {
-					frag = frag.nextFragment;
+				while (frag.hasNext()) {
+					frag = frag.getNext();
 					frag.drawImageLayers(time, g, mat);
 					mat.translate(size, 0);
-					if (frag.endOfLine)
+					if (frag.isEndOfLine())
 						mat.translate(-size * w, size);
 				}
 			}
@@ -115,31 +115,31 @@ public class Map {
 					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 			fragmentManager.updateAllLayers(time);
 			frag = startNode;
-			if (frag.hasNext) {
+			if (frag.hasNext()) {
 				mat.setToIdentity();
 				mat.concatenate(originalTransform);
 				mat.translate(start.x, start.y);
 				mat.scale(scale, scale);
-				while (frag.hasNext) {
-					frag = frag.nextFragment;
+				while (frag.hasNext()) {
+					frag = frag.getNext();
 					frag.drawLiveLayers(time, g, mat);
 					mat.translate(size, 0);
-					if (frag.endOfLine)
+					if (frag.isEndOfLine())
 						mat.translate(-size * w, size);
 				}
 			}
 
 			frag = startNode;
-			if (frag.hasNext) {
+			if (frag.hasNext()) {
 				mat.setToIdentity();
 				mat.concatenate(originalTransform);
 				mat.translate(start.x, start.y);
 				mat.scale(scale, scale);
-				while (frag.hasNext) {
-					frag = frag.nextFragment;
+				while (frag.hasNext()) {
+					frag = frag.getNext();
 					frag.drawObjects(g, mat);
 					mat.translate(size, 0);
-					if (frag.endOfLine)
+					if (frag.isEndOfLine())
 						mat.translate(-size * w, size);
 				}
 			}
@@ -151,7 +151,7 @@ public class Map {
 	public void addStart(int x, int y) {
 		synchronized (resizeLock) {
 			Fragment start = fragmentManager.requestFragment(x, y);
-			start.endOfLine = true;
+			start.setEndOfLine(true);
 			startNode.setNext(start);
 			tileWidth = 1;
 			tileHeight = 1;
@@ -163,32 +163,32 @@ public class Map {
 			int x = 0;
 			Fragment frag = startNode;
 			if (start) {
-				x = frag.nextFragment.blockX - Fragment.SIZE;
+				x = frag.getNext().getBlockX() - Fragment.SIZE;
 				Fragment newFrag = fragmentManager.requestFragment(x,
-						frag.nextFragment.blockY);
-				newFrag.setNext(startNode.nextFragment);
+						frag.getNext().getBlockY());
+				newFrag.setNext(startNode.getNext());
 				startNode.setNext(newFrag);
 			}
-			while (frag.hasNext) {
-				frag = frag.nextFragment;
-				if (frag.endOfLine) {
+			while (frag.hasNext()) {
+				frag = frag.getNext();
+				if (frag.isEndOfLine()) {
 					if (start) {
-						if (frag.hasNext) {
+						if (frag.hasNext()) {
 							Fragment newFrag = fragmentManager.requestFragment(
-									x, frag.blockY + Fragment.SIZE);
-							newFrag.setNext(frag.nextFragment);
+									x, frag.getBlockY() + Fragment.SIZE);
+							newFrag.setNext(frag.getNext());
 							frag.setNext(newFrag);
 							frag = newFrag;
 						}
 					} else {
 						Fragment newFrag = fragmentManager.requestFragment(
-								frag.blockX + Fragment.SIZE, frag.blockY);
+								frag.getBlockX() + Fragment.SIZE, frag.getBlockY());
 
-						if (frag.hasNext) {
-							newFrag.setNext(frag.nextFragment);
+						if (frag.hasNext()) {
+							newFrag.setNext(frag.getNext());
 						}
-						newFrag.endOfLine = true;
-						frag.endOfLine = false;
+						newFrag.setEndOfLine(true);
+						frag.setEndOfLine(false);
 						frag.setNext(newFrag);
 						frag = newFrag;
 
@@ -203,18 +203,18 @@ public class Map {
 		synchronized (resizeLock) {
 			if (start) {
 				for (int i = 0; i < tileWidth; i++) {
-					Fragment frag = startNode.nextFragment;
+					Fragment frag = startNode.getNext();
 					frag.remove();
 					fragmentManager.returnFragment(frag);
 				}
 			} else {
 				Fragment frag = startNode;
-				while (frag.hasNext)
-					frag = frag.nextFragment;
+				while (frag.hasNext())
+					frag = frag.getNext();
 				for (int i = 0; i < tileWidth; i++) {
 					frag.remove();
 					fragmentManager.returnFragment(frag);
-					frag = frag.prevFragment;
+					frag = frag.getPrevious();
 				}
 			}
 			tileHeight--;
@@ -226,25 +226,25 @@ public class Map {
 			Fragment frag = startNode;
 			int y;
 			if (start) {
-				frag = startNode.nextFragment;
-				y = frag.blockY - Fragment.SIZE;
+				frag = startNode.getNext();
+				y = frag.getBlockY() - Fragment.SIZE;
 			} else {
-				while (frag.hasNext)
-					frag = frag.nextFragment;
-				y = frag.blockY + Fragment.SIZE;
+				while (frag.hasNext())
+					frag = frag.getNext();
+				y = frag.getBlockY() + Fragment.SIZE;
 			}
 
 			tileHeight++;
 			Fragment newFrag = fragmentManager.requestFragment(
-					startNode.nextFragment.blockX, y);
+					startNode.getNext().getBlockX(), y);
 			Fragment chainFrag = newFrag;
 			for (int i = 1; i < tileWidth; i++) {
 				Fragment tempFrag = fragmentManager.requestFragment(
-						chainFrag.blockX + Fragment.SIZE, chainFrag.blockY);
+						chainFrag.getBlockX() + Fragment.SIZE, chainFrag.getBlockY());
 				chainFrag.setNext(tempFrag);
 				chainFrag = tempFrag;
 				if (i == (tileWidth - 1))
-					chainFrag.endOfLine = true;
+					chainFrag.setEndOfLine(true);
 			}
 			if (start) {
 				chainFrag.setNext(frag);
@@ -259,23 +259,23 @@ public class Map {
 		synchronized (resizeLock) {
 			Fragment frag = startNode;
 			if (start) {
-				fragmentManager.returnFragment(frag.nextFragment);
-				startNode.nextFragment.remove();
+				fragmentManager.returnFragment(frag.getNext());
+				startNode.getNext().remove();
 			}
-			while (frag.hasNext) {
-				frag = frag.nextFragment;
-				if (frag.endOfLine) {
+			while (frag.hasNext()) {
+				frag = frag.getNext();
+				if (frag.isEndOfLine()) {
 					if (start) {
-						if (frag.hasNext) {
-							Fragment tempFrag = frag.nextFragment;
+						if (frag.hasNext()) {
+							Fragment tempFrag = frag.getNext();
 							tempFrag.remove();
 							fragmentManager.returnFragment(tempFrag);
 						}
 					} else {
-						frag.prevFragment.endOfLine = true;
+						frag.getPrevious().setEndOfLine(true);
 						frag.remove();
 						fragmentManager.returnFragment(frag);
-						frag = frag.prevFragment;
+						frag = frag.getPrevious();
 					}
 				}
 			}
@@ -302,7 +302,7 @@ public class Map {
 				removeRow(false);
 			while (tileWidth > 1)
 				removeColumn(false);
-			Fragment frag = startNode.nextFragment;
+			Fragment frag = startNode.getNext();
 			frag.remove();
 			fragmentManager.returnFragment(frag);
 			// TODO: Support longs?
@@ -348,8 +348,8 @@ public class Map {
 		Point cornerPosition = new Point(position.x >> Fragment.SIZE_SHIFT,
 				position.y >> Fragment.SIZE_SHIFT);
 		Point fragmentPosition = new Point();
-		while (frag.hasNext) {
-			frag = frag.nextFragment;
+		while (frag.hasNext()) {
+			frag = frag.getNext();
 			fragmentPosition.x = frag.getFragmentX();
 			fragmentPosition.y = frag.getFragmentY();
 			if (cornerPosition.equals(fragmentPosition))
@@ -365,11 +365,11 @@ public class Map {
 		double closestDistance = maxRange;
 		Fragment frag = startNode;
 		int size = (int) (Fragment.SIZE * scale);
-		while (frag.hasNext) {
-			frag = frag.nextFragment;
-			for (int i = 0; i < frag.objectsLength; i++) {
-				if (frag.objects[i].parentLayer.isVisible()) {
-					Point objPosition = frag.objects[i].getLocation();
+		while (frag.hasNext()) {
+			frag = frag.getNext();
+			for (int i = 0; i < frag.getObjectsLength(); i++) {
+				if (frag.getObjects()[i].parentLayer.isVisible()) {
+					Point objPosition = frag.getObjects()[i].getLocation();
 					objPosition.x *= scale;
 					objPosition.y *= scale;
 					objPosition.x += x;
@@ -378,12 +378,12 @@ public class Map {
 					double distance = objPosition.distance(position);
 					if (distance < closestDistance) {
 						closestDistance = distance;
-						closestObject = frag.objects[i];
+						closestObject = frag.getObjects()[i];
 					}
 				}
 			}
 			x += size;
-			if (frag.endOfLine) {
+			if (frag.isEndOfLine()) {
 				x = start.x;
 				y += size;
 			}
@@ -401,21 +401,21 @@ public class Map {
 		point.x /= scale;
 		point.y /= scale;
 
-		point.x += startNode.nextFragment.blockX;
-		point.y += startNode.nextFragment.blockY;
+		point.x += startNode.getNext().getBlockX();
+		point.y += startNode.getNext().getBlockY();
 
 		return point;
 	}
 
 	public String getBiomeNameAt(Point point) {
 		Fragment frag = startNode;
-		while (frag.hasNext) {
-			frag = frag.nextFragment;
-			if ((frag.blockX <= point.x) && (frag.blockY <= point.y)
-					&& (frag.blockX + Fragment.SIZE > point.x)
-					&& (frag.blockY + Fragment.SIZE > point.y)) {
-				int x = point.x - frag.blockX;
-				int y = point.y - frag.blockY;
+		while (frag.hasNext()) {
+			frag = frag.getNext();
+			if ((frag.getBlockX() <= point.x) && (frag.getBlockY() <= point.y)
+					&& (frag.getBlockX() + Fragment.SIZE > point.x)
+					&& (frag.getBlockY() + Fragment.SIZE > point.y)) {
+				int x = point.x - frag.getBlockX();
+				int y = point.y - frag.getBlockY();
 
 				return BiomeLayer.getBiomeNameForFragment(frag, x, y);
 			}
@@ -425,13 +425,13 @@ public class Map {
 
 	public String getBiomeAliasAt(Point point) {
 		Fragment frag = startNode;
-		while (frag.hasNext) {
-			frag = frag.nextFragment;
-			if ((frag.blockX <= point.x) && (frag.blockY <= point.y)
-					&& (frag.blockX + Fragment.SIZE > point.x)
-					&& (frag.blockY + Fragment.SIZE > point.y)) {
-				int x = point.x - frag.blockX;
-				int y = point.y - frag.blockY;
+		while (frag.hasNext()) {
+			frag = frag.getNext();
+			if ((frag.getBlockX() <= point.x) && (frag.getBlockY() <= point.y)
+					&& (frag.getBlockX() + Fragment.SIZE > point.x)
+					&& (frag.getBlockY() + Fragment.SIZE > point.y)) {
+				int x = point.x - frag.getBlockX();
+				int y = point.y - frag.getBlockY();
 
 				return BiomeLayer.getBiomeAliasForFragment(frag, x, y);
 			}
