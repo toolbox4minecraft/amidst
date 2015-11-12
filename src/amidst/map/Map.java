@@ -111,22 +111,6 @@ public class Map {
 		instance = this;
 	}
 
-	public void repaintFragmentsLayer(int id) {
-		Fragment fragment = startNode;
-		while (fragment.hasNext()) {
-			fragment = fragment.getNext();
-			fragmentManager.repaintFragmentLayer(fragment, id);
-		}
-	}
-
-	public void repaintFragments() {
-		Fragment fragment = startNode;
-		while (fragment.hasNext()) {
-			fragment = fragment.getNext();
-			fragmentManager.repaintFragment(fragment);
-		}
-	}
-
 	public void draw(Graphics2D g, float time) {
 		if (drawer.isFirstDraw()) {
 			centerOn(0, 0);
@@ -140,6 +124,22 @@ public class Map {
 					desiredFragmentsPerColumn);
 			moveStart(scaledFragmentSize);
 			drawer.draw(g, time, scaledFragmentSize);
+		}
+	}
+
+	private void adjustNumberOfRowsAndColumns(int desiredFragmentsPerRow,
+			int desiredFragmentsPerColumn) {
+		while (fragmentsPerRow < desiredFragmentsPerRow) {
+			addColumn(END);
+		}
+		while (fragmentsPerRow > desiredFragmentsPerRow) {
+			removeColumn(END);
+		}
+		while (fragmentsPerColumn < desiredFragmentsPerColumn) {
+			addRow(END);
+		}
+		while (fragmentsPerColumn > desiredFragmentsPerColumn) {
+			removeRow(END);
 		}
 	}
 
@@ -166,22 +166,6 @@ public class Map {
 		}
 	}
 
-	private void adjustNumberOfRowsAndColumns(int desiredFragmentsPerRow,
-			int desiredFragmentsPerColumn) {
-		while (fragmentsPerRow < desiredFragmentsPerRow) {
-			addColumn(END);
-		}
-		while (fragmentsPerRow > desiredFragmentsPerRow) {
-			removeColumn(END);
-		}
-		while (fragmentsPerColumn < desiredFragmentsPerColumn) {
-			addRow(END);
-		}
-		while (fragmentsPerColumn > desiredFragmentsPerColumn) {
-			removeRow(END);
-		}
-	}
-
 	public void addStart(int x, int y) {
 		synchronized (resizeLock) {
 			Fragment start = fragmentManager.requestFragment(x, y);
@@ -189,6 +173,43 @@ public class Map {
 			startNode.setNext(start);
 			fragmentsPerRow = 1;
 			fragmentsPerColumn = 1;
+		}
+	}
+
+	public void addRow(boolean start) {
+		synchronized (resizeLock) {
+			Fragment fragment = startNode;
+			int y;
+			if (start) {
+				fragment = startNode.getNext();
+				y = fragment.getBlockY() - Fragment.SIZE;
+			} else {
+				while (fragment.hasNext()) {
+					fragment = fragment.getNext();
+				}
+				y = fragment.getBlockY() + Fragment.SIZE;
+			}
+
+			fragmentsPerColumn++;
+			Fragment newFrag = fragmentManager.requestFragment(startNode
+					.getNext().getBlockX(), y);
+			Fragment chainFrag = newFrag;
+			for (int i = 1; i < fragmentsPerRow; i++) {
+				Fragment tempFrag = fragmentManager.requestFragment(
+						chainFrag.getBlockX() + Fragment.SIZE,
+						chainFrag.getBlockY());
+				chainFrag.setNext(tempFrag);
+				chainFrag = tempFrag;
+				if (i == (fragmentsPerRow - 1)) {
+					chainFrag.setEndOfLine(true);
+				}
+			}
+			if (start) {
+				chainFrag.setNext(fragment);
+				startNode.setNext(newFrag);
+			} else {
+				fragment.setNext(newFrag);
+			}
 		}
 	}
 
@@ -256,43 +277,6 @@ public class Map {
 		}
 	}
 
-	public void addRow(boolean start) {
-		synchronized (resizeLock) {
-			Fragment fragment = startNode;
-			int y;
-			if (start) {
-				fragment = startNode.getNext();
-				y = fragment.getBlockY() - Fragment.SIZE;
-			} else {
-				while (fragment.hasNext()) {
-					fragment = fragment.getNext();
-				}
-				y = fragment.getBlockY() + Fragment.SIZE;
-			}
-
-			fragmentsPerColumn++;
-			Fragment newFrag = fragmentManager.requestFragment(startNode
-					.getNext().getBlockX(), y);
-			Fragment chainFrag = newFrag;
-			for (int i = 1; i < fragmentsPerRow; i++) {
-				Fragment tempFrag = fragmentManager.requestFragment(
-						chainFrag.getBlockX() + Fragment.SIZE,
-						chainFrag.getBlockY());
-				chainFrag.setNext(tempFrag);
-				chainFrag = tempFrag;
-				if (i == (fragmentsPerRow - 1)) {
-					chainFrag.setEndOfLine(true);
-				}
-			}
-			if (start) {
-				chainFrag.setNext(fragment);
-				startNode.setNext(newFrag);
-			} else {
-				fragment.setNext(newFrag);
-			}
-		}
-	}
-
 	public void removeColumn(boolean start) {
 		synchronized (resizeLock) {
 			Fragment fragment = startNode;
@@ -321,15 +305,6 @@ public class Map {
 		}
 	}
 
-	public void moveBy(Point2D.Double speed) {
-		moveBy(speed.x, speed.y);
-	}
-
-	public void moveBy(double x, double y) {
-		start.x += x;
-		start.y += y;
-	}
-
 	public void centerOn(long x, long y) {
 		long fragOffsetX = x % Fragment.SIZE;
 		long fragOffsetY = y % Fragment.SIZE;
@@ -356,30 +331,6 @@ public class Map {
 			start.y = offsetY;
 
 			addStart((int) startX, (int) startY);
-		}
-	}
-
-	public void setZoom(double scale) {
-		this.scale = scale;
-	}
-
-	public double getZoom() {
-		return scale;
-	}
-
-	public Point2D.Double getScaled(double oldScale, double newScale, Point p) {
-		double baseX = p.x - start.x;
-		double scaledX = baseX - (baseX / oldScale) * newScale;
-
-		double baseY = p.y - start.y;
-		double scaledY = baseY - (baseY / oldScale) * newScale;
-
-		return new Point2D.Double(scaledX, scaledY);
-	}
-
-	public void dispose() {
-		synchronized (drawLock) {
-			fragmentManager.reset();
 		}
 	}
 
@@ -431,22 +382,6 @@ public class Map {
 		return closestObject;
 	}
 
-	public Point screenToLocal(Point inPoint) {
-		Point point = inPoint.getLocation();
-
-		point.x -= start.x;
-		point.y -= start.y;
-
-		// TODO: int -> double -> int = bad?
-		point.x /= scale;
-		point.y /= scale;
-
-		point.x += startNode.getNext().getBlockX();
-		point.y += startNode.getNext().getBlockY();
-
-		return point;
-	}
-
 	public String getBiomeNameAt(Point point) {
 		Fragment frag = startNode;
 		while (frag.hasNext()) {
@@ -477,6 +412,71 @@ public class Map {
 			}
 		}
 		return "Unknown";
+	}
+
+	public void moveBy(Point2D.Double speed) {
+		moveBy(speed.x, speed.y);
+	}
+
+	public void moveBy(double x, double y) {
+		start.x += x;
+		start.y += y;
+	}
+
+	public Point screenToLocal(Point inPoint) {
+		Point point = inPoint.getLocation();
+
+		point.x -= start.x;
+		point.y -= start.y;
+
+		// TODO: int -> double -> int = bad?
+		point.x /= scale;
+		point.y /= scale;
+
+		point.x += startNode.getNext().getBlockX();
+		point.y += startNode.getNext().getBlockY();
+
+		return point;
+	}
+
+	public Point2D.Double getScaled(double oldScale, double newScale, Point p) {
+		double baseX = p.x - start.x;
+		double scaledX = baseX - (baseX / oldScale) * newScale;
+
+		double baseY = p.y - start.y;
+		double scaledY = baseY - (baseY / oldScale) * newScale;
+
+		return new Point2D.Double(scaledX, scaledY);
+	}
+
+	public void repaintFragmentsLayer(int id) {
+		Fragment fragment = startNode;
+		while (fragment.hasNext()) {
+			fragment = fragment.getNext();
+			fragmentManager.repaintFragmentLayer(fragment, id);
+		}
+	}
+
+	public void repaintFragments() {
+		Fragment fragment = startNode;
+		while (fragment.hasNext()) {
+			fragment = fragment.getNext();
+			fragmentManager.repaintFragment(fragment);
+		}
+	}
+
+	public void dispose() {
+		synchronized (drawLock) {
+			fragmentManager.reset();
+		}
+	}
+
+	public void setZoom(double scale) {
+		this.scale = scale;
+	}
+
+	public double getZoom() {
+		return scale;
 	}
 
 	public int getFragmentsPerRow() {
