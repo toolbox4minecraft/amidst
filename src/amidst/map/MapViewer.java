@@ -238,7 +238,7 @@ public class MapViewer {
 			map.setViewerHeight(getHeight());
 		}
 
-		private void drawMap(Graphics2D g2d, float time) {
+		public void drawMap(Graphics2D g2d, float time) {
 			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			map.draw((Graphics2D) g2d.create(), time);
@@ -259,7 +259,7 @@ public class MapViewer {
 			g2d.drawImage(DROP_SHADOW_RIGHT, width10, 10, 10, height20, null);
 		}
 
-		private void drawWidgets(Graphics2D g2d, float time) {
+		public void drawWidgets(Graphics2D g2d, float time) {
 			g2d.setFont(textFont);
 			for (Widget widget : widgets) {
 				if (widget.isVisible()) {
@@ -464,21 +464,16 @@ public class MapViewer {
 
 	// TODO: find another place for this
 	@Deprecated
-	public void saveToFile(File f) {
+	public void saveToFile(File file) {
 		BufferedImage image = new BufferedImage(map.getViewerWidth(),
 				map.getViewerHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = image.createGraphics();
 
-		map.draw(g2d, 0);
-
-		for (Widget widget : widgets) {
-			if (widget.isVisible()) {
-				widget.draw(g2d, 0);
-			}
-		}
+		component.drawMap(g2d, 0);
+		component.drawWidgets(g2d, 0);
 
 		try {
-			ImageIO.write(image, "png", f);
+			ImageIO.write(image, "png", file);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
