@@ -17,14 +17,12 @@ public class Map {
 		public void draw(Graphics2D g, float time, int size) {
 			isFirstDraw = false;
 			AffineTransform originalTransform = g.getTransform();
-
 			drawLayer(originalTransform, createImageLayersDrawer(g, time));
 			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 			fragmentManager.updateAllLayers(time);
 			drawLayer(originalTransform, createLiveLayersDrawer(g, time));
 			drawLayer(originalTransform, createObjectsDrawer(g));
-
 			g.setTransform(originalTransform);
 		}
 
@@ -109,25 +107,23 @@ public class Map {
 	public Map(FragmentManager fragmentManager) {
 		this.fragmentManager = fragmentManager;
 		this.fragmentManager.setMap(this);
-
 		addStart(0, 0);
-
 		instance = this;
 	}
 
-	public void resetImageLayer(int id) {
-		Fragment frag = startNode;
-		while (frag.hasNext()) {
-			frag = frag.getNext();
-			fragmentManager.repaintFragmentLayer(frag, id);
+	public void repaintFragmentsLayer(int id) {
+		Fragment fragment = startNode;
+		while (fragment.hasNext()) {
+			fragment = fragment.getNext();
+			fragmentManager.repaintFragmentLayer(fragment, id);
 		}
 	}
 
-	public void resetFragments() {
-		Fragment frag = startNode;
-		while (frag.hasNext()) {
-			frag = frag.getNext();
-			fragmentManager.repaintFragment(frag);
+	public void repaintFragments() {
+		Fragment fragment = startNode;
+		while (fragment.hasNext()) {
+			fragment = fragment.getNext();
+			fragmentManager.repaintFragment(fragment);
 		}
 	}
 

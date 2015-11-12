@@ -186,7 +186,7 @@ public class BiomeWidget extends PanelWidget {
 			(new Thread(new Runnable() {
 				@Override
 				public void run() {
-					map.resetImageLayer(BiomeLayer.instance.getLayerId());
+					map.repaintFragmentsLayer(BiomeLayer.instance.getLayerId());
 				}
 			})).start();
 		}

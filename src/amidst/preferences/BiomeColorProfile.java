@@ -97,7 +97,7 @@ public class BiomeColorProfile {
 			}
 		}
 		if (amidst.map.Map.instance != null)
-			amidst.map.Map.instance.resetFragments();
+			amidst.map.Map.instance.repaintFragments();
 	}
 	
 	
