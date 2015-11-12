@@ -162,7 +162,7 @@ public class AmidstMenu extends JMenuBar {
 					inputInformation,
 					inputText
 			};
-			int result = JOptionPane.showConfirmDialog(window, inputs, title, JOptionPane.OK_CANCEL_OPTION);
+			int result = JOptionPane.showConfirmDialog(window.getFrame(), inputs, title, JOptionPane.OK_CANCEL_OPTION);
 			return (result == 0)?inputText.getText():null;
 		}
 		
@@ -245,7 +245,7 @@ public class AmidstMenu extends JMenuBar {
 						//}
 						fc.setCurrentDirectory(savesDir);
 						fc.setFileHidingEnabled(false);
-						if (fc.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {
+						if (fc.showOpenDialog(window.getFrame()) == JFileChooser.APPROVE_OPTION) {
 							File f = fc.getSelectedFile();
 							
 							SaveLoader s = null;
@@ -408,7 +408,7 @@ public class AmidstMenu extends JMenuBar {
 						JFileChooser fc = new JFileChooser();
 						fc.setFileFilter(new PNGFileFilter());
 						fc.setAcceptAllFileFilterUsed(false);
-						int returnVal = fc.showSaveDialog(window);
+						int returnVal = fc.showSaveDialog(window.getFrame());
 						
 						if (returnVal == JFileChooser.APPROVE_OPTION) {
 							String s = fc.getSelectedFile().toString();
@@ -588,7 +588,7 @@ public class AmidstMenu extends JMenuBar {
 				addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						new UpdateManager(window).start();
+						new UpdateManager(window.getFrame()).start();
 					}
 				});
 			}});
@@ -606,7 +606,7 @@ public class AmidstMenu extends JMenuBar {
 				addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						JOptionPane.showMessageDialog(window,
+						JOptionPane.showMessageDialog(window.getFrame(),
 							"Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n" +
 							"By Skidoodle (amidst.project@gmail.com)");
 					}
@@ -622,7 +622,7 @@ public class AmidstMenu extends JMenuBar {
 	 */
 	private <T> T choose(String title, String message, T[] choices) {
 		return (T) JOptionPane.showInputDialog(
-			window,
+			window.getFrame(),
 			message,
 			title,
 			JOptionPane.PLAIN_MESSAGE,

@@ -95,8 +95,8 @@ public class Log {
 			
 			
 			new CrashDialog(message);
-			if (FinderWindow.instance != null)
-				FinderWindow.instance.dispose();
+			if (FinderWindow.getInstance() != null)
+				FinderWindow.getInstance().dispose();
 			//System.exit(0);
 		}
 	}

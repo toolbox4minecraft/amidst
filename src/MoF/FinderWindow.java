@@ -10,28 +10,48 @@ import javax.swing.JFrame;
 import amidst.Amidst;
 import amidst.gui.menu.AmidstMenu;
 
-public class FinderWindow extends JFrame {
-	public static FinderWindow instance;
-	private Container pane;
+public class FinderWindow {
+	private static FinderWindow instance;
+
+	public static FinderWindow getInstance() {
+		return instance;
+	}
+
+	private JFrame frame = new JFrame();
+	private Container contentPane;
 	private Project project;
-	private final AmidstMenu menuBar;
+	private AmidstMenu menuBar;
 
 	public FinderWindow() {
-		super("Amidst v" + Amidst.version());
-
-		setSize(1000, 800);
-		pane = getContentPane();
-		pane.setLayout(new BorderLayout());
-		new UpdateManager(this, true).start();
-		setJMenuBar(menuBar = new AmidstMenu(this));
-		setVisible(true);
-		setIconImage(Amidst.icon);
+		frame.setTitle("Amidst v" + Amidst.version());
+		frame.setSize(1000, 800);
+		frame.setIconImage(Amidst.icon);
+		initContentPane();
+		initUpdateManager();
+		initMenuBar();
+		initCloseListener();
 		instance = this;
+	}
 
-		addWindowListener(new WindowAdapter() {
+	private void initContentPane() {
+		contentPane = frame.getContentPane();
+		contentPane.setLayout(new BorderLayout());
+	}
+
+	private void initUpdateManager() {
+		new UpdateManager(frame, true).start();
+	}
+
+	private void initMenuBar() {
+		menuBar = new AmidstMenu(this);
+		frame.setJMenuBar(menuBar);
+	}
+
+	private void initCloseListener() {
+		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				dispose();
+				frame.dispose();
 				System.exit(0);
 			}
 		});
@@ -40,23 +60,33 @@ public class FinderWindow extends JFrame {
 	public void clearProject() {
 		// TODO: Release resources
 		if (project != null) {
-			removeKeyListener(project.getKeyListener());
+			frame.removeKeyListener(project.getKeyListener());
 			project.dispose();
-			pane.remove(project.getPanel());
+			contentPane.remove(project.getPanel());
 		}
 	}
 
 	public void setProject(Project project) {
-		menuBar.mapMenu.setEnabled(true);
 		this.project = project;
+		menuBar.mapMenu.setEnabled(true);
 
-		addKeyListener(project.getKeyListener());
-		pane.add(this.project.getPanel(), BorderLayout.CENTER);
+		frame.addKeyListener(project.getKeyListener());
+		contentPane.add(this.project.getPanel(), BorderLayout.CENTER);
 
-		this.validate();
+		frame.validate();
 	}
 
 	public Project getProject() {
 		return project;
+	}
+
+	@Deprecated
+	public JFrame getFrame() {
+		return frame;
+	}
+
+	@Deprecated
+	public void dispose() {
+		frame.dispose();
 	}
 }
