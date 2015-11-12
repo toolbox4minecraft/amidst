@@ -9,19 +9,16 @@ import java.util.TimerTask;
 import javax.swing.JPanel;
 
 import amidst.Options;
-import amidst.map.MapObject;
 import amidst.map.MapViewer;
 import amidst.minecraft.MinecraftUtil;
 
 // TODO: we should remove this and integrate it into Options
 @Deprecated
-public class Project extends JPanel {
+public class Project {
 	private SeedHistoryLogger seedHistoryLogger = new SeedHistoryLogger();
-	public MapViewer map;
-	public static int FRAGMENT_SIZE = 256;
-	private Timer timer;
-	public MapObject curTarget;
-
+	private Timer timer = new Timer();
+	private JPanel panel = new JPanel();
+	private MapViewer mapViewer;
 	private SaveLoader saveLoader;
 
 	public Project(SaveLoader file) {
@@ -30,12 +27,13 @@ public class Project extends JPanel {
 	}
 
 	public Project(String seed, String type) {
-		this(getSeedFromString(seed), type);
+		this(getSeedFromString(seed), type, null);
 		Google.track("seed/" + seed + "/" + Options.instance.seed);
 	}
 
 	public Project(long seed, String type) {
 		this(seed, type, null);
+		// no Google.track(), because this is only called with a random seed?
 	}
 
 	private Project(long seed, String type, SaveLoader saveLoader) {
@@ -44,7 +42,7 @@ public class Project extends JPanel {
 		logSeed(seed);
 		createWorld(seed, type);
 		initMapViewer();
-		initComponent();
+		initPanel();
 		initTimer();
 	}
 
@@ -62,18 +60,18 @@ public class Project extends JPanel {
 	}
 
 	private void initMapViewer() {
-		map = new MapViewer(this);
+		mapViewer = new MapViewer(this);
 	}
 
-	private void initComponent() {
-		setLayout(new BorderLayout());
-		add(map.getComponent(), BorderLayout.CENTER);
-		setBackground(Color.BLUE);
+	private void initPanel() {
+		panel.setLayout(new BorderLayout());
+		panel.add(mapViewer.getComponent(), BorderLayout.CENTER);
+		panel.setBackground(Color.BLUE);
 	}
 
 	private void initTimer() {
-		timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
 			public void run() {
 				tick();
 			}
@@ -90,15 +88,19 @@ public class Project extends JPanel {
 
 	@Deprecated
 	public KeyListener getKeyListener() {
-		return map.getKeyListener();
+		return mapViewer.getKeyListener();
+	}
+
+	public MapViewer getMapViewer() {
+		return mapViewer;
 	}
 
 	public void moveMapTo(long x, long y) {
-		map.centerAt(x, y);
+		mapViewer.centerAt(x, y);
 	}
 
 	public void tick() {
-		map.repaint();
+		mapViewer.repaint();
 	}
 
 	public SaveLoader getSaveLoader() {
@@ -110,14 +112,11 @@ public class Project extends JPanel {
 	}
 
 	public void dispose() {
-		map.dispose();
-		map = null;
+		mapViewer.dispose();
 		timer.cancel();
+		seedHistoryLogger = null;
+		mapViewer = null;
 		timer = null;
-		curTarget = null;
 		saveLoader = null;
-
-		// TODO: do we really need this?
-		System.gc();
 	}
 }

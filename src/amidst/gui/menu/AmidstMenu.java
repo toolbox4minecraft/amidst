@@ -414,7 +414,7 @@ public class AmidstMenu extends JMenuBar {
 							String s = fc.getSelectedFile().toString();
 							if (!s.toLowerCase().endsWith(".png"))
 								s += ".png";
-							window.curProject.map.saveToFile(new File(s));
+							window.curProject.getMapViewer().saveToFile(new File(s));
 						}
 					}
 				});
