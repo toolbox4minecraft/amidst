@@ -11,83 +11,35 @@ import amidst.map.layers.BiomeLayer;
 public class Map {
 	public class Drawer {
 		private AffineTransform mat = new AffineTransform();
-		private boolean firstDraw = true;
+		private boolean isFirstDraw = true;
 		private Fragment currentFragment;
 
-		public void draw(Graphics2D g, float time) {
+		public void draw(Graphics2D g, float time, int size) {
+			isFirstDraw = false;
 			AffineTransform originalTransform = g.getTransform();
-			if (firstDraw) {
-				firstDraw = false;
-				centerOn(0, 0);
-			}
 
-			synchronized (drawLock) {
-				int size = (int) (Fragment.SIZE * scale);
-				int w = width / size + 2;
-				int h = height / size + 2;
+			drawLayer(originalTransform, createImageLayersDrawer(g, time));
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+			fragmentManager.updateAllLayers(time);
+			drawLayer(originalTransform, createLiveLayersDrawer(g, time));
+			drawLayer(originalTransform, createObjectsDrawer(g));
 
-				while (tileWidth < w) {
-					addColumn(END);
-				}
-				while (tileWidth > w) {
-					removeColumn(END);
-				}
-				while (tileHeight < h) {
-					addRow(END);
-				}
-				while (tileHeight > h) {
-					removeRow(END);
-				}
-
-				while (start.x > 0) {
-					start.x -= size;
-					addColumn(START);
-					removeColumn(END);
-				}
-				while (start.x < -size) {
-					start.x += size;
-					addColumn(END);
-					removeColumn(START);
-				}
-				while (start.y > 0) {
-					start.y -= size;
-					addRow(START);
-					removeRow(END);
-				}
-				while (start.y < -size) {
-					start.y += size;
-					addRow(END);
-					removeRow(START);
-				}
-
-				drawLayer(originalTransform, Fragment.SIZE, w,
-						createImageLayersDrawer(g, time));
-
-				g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-						RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-				fragmentManager.updateAllLayers(time);
-
-				drawLayer(originalTransform, Fragment.SIZE, w,
-						createLiveLayersDrawer(g, time));
-
-				drawLayer(originalTransform, Fragment.SIZE, w,
-						createObjectsDrawer(g));
-
-				g.setTransform(originalTransform);
-			}
+			g.setTransform(originalTransform);
 		}
 
-		private void drawLayer(AffineTransform originalTransform, int size,
-				int w, Runnable currentDrawer) {
+		private void drawLayer(AffineTransform originalTransform,
+				Runnable theDrawer) {
 			currentFragment = startNode;
 			if (currentFragment.hasNext()) {
 				initMat(originalTransform);
 				while (currentFragment.hasNext()) {
 					currentFragment = currentFragment.getNext();
-					currentDrawer.run();
-					mat.translate(size, 0);
+					theDrawer.run();
+					mat.translate(Fragment.SIZE, 0);
 					if (currentFragment.isEndOfLine()) {
-						mat.translate(-size * w, size);
+						mat.translate(-Fragment.SIZE * fragmentsPerRow,
+								Fragment.SIZE);
 					}
 				}
 			}
@@ -128,6 +80,10 @@ public class Map {
 			mat.translate(start.x, start.y);
 			mat.scale(scale, scale);
 		}
+
+		public boolean isFirstDraw() {
+			return isFirstDraw;
+		}
 	}
 
 	private Drawer drawer = new Drawer();
@@ -142,10 +98,10 @@ public class Map {
 	private double scale = 0.25;
 	private Point2D.Double start = new Point2D.Double();
 
-	public int tileWidth;
-	public int tileHeight;
-	public int width = 1;
-	public int height = 1;
+	private int fragmentsPerRow;
+	private int fragmentsPerColumn;
+	private int viewerWidth = 1;
+	private int viewerHeight = 1;
 
 	private final Object resizeLock = new Object();
 	private final Object drawLock = new Object();
@@ -176,7 +132,58 @@ public class Map {
 	}
 
 	public void draw(Graphics2D g, float time) {
-		drawer.draw(g, time);
+		if (drawer.isFirstDraw()) {
+			centerOn(0, 0);
+		}
+		synchronized (drawLock) {
+			int scaledFragmentSize = (int) (Fragment.SIZE * scale);
+			int desiredFragmentsPerRow = viewerWidth / scaledFragmentSize + 2;
+			int desiredFragmentsPerColumn = viewerHeight / scaledFragmentSize
+					+ 2;
+			adjustNumberOfRowsAndColumns(desiredFragmentsPerRow,
+					desiredFragmentsPerColumn);
+			moveStart(scaledFragmentSize);
+			drawer.draw(g, time, scaledFragmentSize);
+		}
+	}
+
+	private void moveStart(int size) {
+		while (start.x > 0) {
+			start.x -= size;
+			addColumn(START);
+			removeColumn(END);
+		}
+		while (start.x < -size) {
+			start.x += size;
+			addColumn(END);
+			removeColumn(START);
+		}
+		while (start.y > 0) {
+			start.y -= size;
+			addRow(START);
+			removeRow(END);
+		}
+		while (start.y < -size) {
+			start.y += size;
+			addRow(END);
+			removeRow(START);
+		}
+	}
+
+	private void adjustNumberOfRowsAndColumns(int desiredFragmentsPerRow,
+			int desiredFragmentsPerColumn) {
+		while (fragmentsPerRow < desiredFragmentsPerRow) {
+			addColumn(END);
+		}
+		while (fragmentsPerRow > desiredFragmentsPerRow) {
+			removeColumn(END);
+		}
+		while (fragmentsPerColumn < desiredFragmentsPerColumn) {
+			addRow(END);
+		}
+		while (fragmentsPerColumn > desiredFragmentsPerColumn) {
+			removeRow(END);
+		}
 	}
 
 	public void addStart(int x, int y) {
@@ -184,8 +191,8 @@ public class Map {
 			Fragment start = fragmentManager.requestFragment(x, y);
 			start.setEndOfLine(true);
 			startNode.setNext(start);
-			tileWidth = 1;
-			tileHeight = 1;
+			fragmentsPerRow = 1;
+			fragmentsPerColumn = 1;
 		}
 	}
 
@@ -226,14 +233,14 @@ public class Map {
 					}
 				}
 			}
-			tileWidth++;
+			fragmentsPerRow++;
 		}
 	}
 
 	public void removeRow(boolean start) {
 		synchronized (resizeLock) {
 			if (start) {
-				for (int i = 0; i < tileWidth; i++) {
+				for (int i = 0; i < fragmentsPerRow; i++) {
 					Fragment frag = startNode.getNext();
 					frag.remove();
 					fragmentManager.recycleFragment(frag);
@@ -243,13 +250,13 @@ public class Map {
 				while (fragment.hasNext()) {
 					fragment = fragment.getNext();
 				}
-				for (int i = 0; i < tileWidth; i++) {
+				for (int i = 0; i < fragmentsPerRow; i++) {
 					fragment.remove();
 					fragmentManager.recycleFragment(fragment);
 					fragment = fragment.getPrevious();
 				}
 			}
-			tileHeight--;
+			fragmentsPerColumn--;
 		}
 	}
 
@@ -267,17 +274,17 @@ public class Map {
 				y = fragment.getBlockY() + Fragment.SIZE;
 			}
 
-			tileHeight++;
+			fragmentsPerColumn++;
 			Fragment newFrag = fragmentManager.requestFragment(startNode
 					.getNext().getBlockX(), y);
 			Fragment chainFrag = newFrag;
-			for (int i = 1; i < tileWidth; i++) {
+			for (int i = 1; i < fragmentsPerRow; i++) {
 				Fragment tempFrag = fragmentManager.requestFragment(
 						chainFrag.getBlockX() + Fragment.SIZE,
 						chainFrag.getBlockY());
 				chainFrag.setNext(tempFrag);
 				chainFrag = tempFrag;
-				if (i == (tileWidth - 1)) {
+				if (i == (fragmentsPerRow - 1)) {
 					chainFrag.setEndOfLine(true);
 				}
 			}
@@ -314,7 +321,7 @@ public class Map {
 					}
 				}
 			}
-			tileWidth--;
+			fragmentsPerRow--;
 		}
 	}
 
@@ -333,18 +340,18 @@ public class Map {
 		long startX = x - fragOffsetX;
 		long startY = y - fragOffsetY;
 		synchronized (drawLock) {
-			while (tileHeight > 1) {
+			while (fragmentsPerColumn > 1) {
 				removeRow(false);
 			}
-			while (tileWidth > 1) {
+			while (fragmentsPerRow > 1) {
 				removeColumn(false);
 			}
 			Fragment frag = startNode.getNext();
 			frag.remove();
 			fragmentManager.recycleFragment(frag);
 			// TODO: Support longs?
-			double offsetX = width >> 1;
-			double offsetY = height >> 1;
+			double offsetX = viewerWidth >> 1;
+			double offsetY = viewerHeight >> 1;
 
 			offsetX -= (fragOffsetX) * scale;
 			offsetY -= (fragOffsetY) * scale;
@@ -476,4 +483,27 @@ public class Map {
 		return "Unknown";
 	}
 
+	public int getFragmentsPerRow() {
+		return fragmentsPerRow;
+	}
+
+	public int getFragmentsPerColumn() {
+		return fragmentsPerColumn;
+	}
+
+	public int getViewerWidth() {
+		return viewerWidth;
+	}
+
+	public void setViewerWidth(int viewerWidth) {
+		this.viewerWidth = viewerWidth;
+	}
+
+	public int getViewerHeight() {
+		return viewerHeight;
+	}
+
+	public void setViewerHeight(int viewerHeight) {
+		this.viewerHeight = viewerHeight;
+	}
 }

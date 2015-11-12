@@ -197,8 +197,8 @@ public class MapViewer extends JComponent implements MouseListener,
 			panSpeed.y *= 0.f;
 		}
 
-		worldMap.width = getWidth();
-		worldMap.height = getHeight();
+		worldMap.setViewerWidth(getWidth());
+		worldMap.setViewerHeight(getHeight());
 
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -354,8 +354,8 @@ public class MapViewer extends JComponent implements MouseListener,
 	}
 
 	public void saveToFile(File f) {
-		BufferedImage image = new BufferedImage(worldMap.width,
-				worldMap.height, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = new BufferedImage(worldMap.getViewerWidth(),
+				worldMap.getViewerHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = image.createGraphics();
 
 		worldMap.draw(g2d, 0);

@@ -24,7 +24,7 @@ public class DebugWidget extends PanelWidget {
 		panelText.add("Recycle Queue Size: " + fragmentManager.getRecycleQueueSize());
 		panelText.add("");
 		panelText.add("Map Viewer:");
-		panelText.add("Map Size: " + map.tileWidth + "x" + map.tileHeight + " [" + (map.tileWidth * map.tileHeight) + "]");
+		panelText.add("Map Size: " + map.getFragmentsPerRow() + "x" + map.getFragmentsPerColumn() + " [" + (map.getFragmentsPerRow() * map.getFragmentsPerColumn()) + "]");
 		
 		int width = 0, height;
 		for (int i = 0; i < panelText.size(); i++) {
