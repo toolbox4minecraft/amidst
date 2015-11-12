@@ -8,7 +8,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -20,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
@@ -44,6 +44,7 @@ import amidst.map.widget.BiomeWidget;
 import amidst.map.widget.CursorInformationWidget;
 import amidst.map.widget.DebugWidget;
 import amidst.map.widget.FpsWidget;
+import amidst.map.widget.PanelWidget;
 import amidst.map.widget.PanelWidget.CornerAnchorPoint;
 import amidst.map.widget.ScaleWidget;
 import amidst.map.widget.SeedWidget;
@@ -63,9 +64,9 @@ public class MapViewer {
 		public void keyPressed(KeyEvent e) {
 			Point mouse = getMousePositionOrCenterFromComponent();
 			if (e.getKeyCode() == KeyEvent.VK_EQUALS) {
-				adjustZoom(mouse, -1);
+				zoom.adjustZoom(mouse, -1);
 			} else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
-				adjustZoom(mouse, 1);
+				zoom.adjustZoom(mouse, 1);
 			}
 		}
 
@@ -85,7 +86,7 @@ public class MapViewer {
 							notches)) {
 				// noop
 			} else {
-				adjustZoom(mouse, notches);
+				zoom.adjustZoom(mouse, notches);
 			}
 		}
 
@@ -127,7 +128,7 @@ public class MapViewer {
 		public void mouseReleased(MouseEvent e) {
 			if (e.isPopupTrigger() && MinecraftUtil.getVersion().saveEnabled()) {
 				lastRightClick = getMousePositionFromEvent(e);
-				if (proj.saveLoaded) {
+				if (project.saveLoaded) {
 					menu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			} else if (mouseOwner != null) {
@@ -228,16 +229,7 @@ public class MapViewer {
 		}
 
 		private void updateMapZoom() {
-			zoomTicksRemaining--;
-			if (zoomTicksRemaining >= 0) {
-				double lastZoom = currentZoom;
-				currentZoom = (targetZoom + currentZoom) * 0.5;
-
-				Point2D.Double targetZoom = map.getScaled(lastZoom,
-						currentZoom, zoomMouse);
-				map.moveBy(targetZoom);
-				map.setZoom(currentZoom);
-			}
+			zoom.update(map);
 		}
 
 		private void updateMapMovementSpeed() {
@@ -306,6 +298,57 @@ public class MapViewer {
 		}
 	}
 
+	private static class MapZoom {
+		// TODO: make these non-static! They are static to keep the zoom level
+		// after loading a new map.
+		private static int remainingTicks = 0;
+		private static int level = 0;
+		private static double target = 0.25f;
+		private static double current = 0.25f;
+
+		private Point zoomMouse = new Point();
+
+		public void update(Map map) {
+			remainingTicks--;
+			if (remainingTicks >= 0) {
+				double previous = current;
+				current = (target + current) * 0.5;
+
+				Point2D.Double targetZoom = map.getScaled(previous, current,
+						zoomMouse);
+				map.moveBy(targetZoom);
+				map.setZoom(current);
+			}
+		}
+
+		public void adjustZoom(Point position, int notches) {
+			zoomMouse = position;
+			if (notches > 0) {
+				if (level < getMaxZoomLevel()) {
+					target /= 1.1;
+					level++;
+					remainingTicks = 100;
+				}
+			} else if (level > -20) {
+				target *= 1.1;
+				level--;
+				remainingTicks = 100;
+			}
+		}
+
+		private int getMaxZoomLevel() {
+			if (Options.instance.maxZoom.get()) {
+				return 10;
+			} else {
+				return 10000;
+			}
+		}
+
+		public double getCurrentValue() {
+			return current;
+		}
+	}
+
 	private static final BufferedImage DROP_SHADOW_BOTTOM_LEFT = ResourceLoader
 			.getImage("dropshadow/inner_bottom_left.png");
 	private static final BufferedImage DROP_SHADOW_BOTTOM_RIGHT = ResourceLoader
@@ -342,82 +385,74 @@ public class MapViewer {
 
 	private Listeners listeners = new Listeners();
 	private Component component = new Component();
+	private MapZoom zoom = new MapZoom();
 
 	private Widget mouseOwner;
 
-	private Project proj;
+	private Project project;
 
 	private JPopupMenu menu = new JPopupMenu();
-	public int strongholdCount, villageCount;
+	public int strongholdCount;
+	public int villageCount;
 
 	private Map map;
 	private MapObject selectedObject = null;
 	private Point lastMouse;
 	public Point lastRightClick = null;
 
-	private static int zoomLevel = 0, zoomTicksRemaining = 0;
-	private static double targetZoom = 0.25f, currentZoom = 0.25f;
-	private Point zoomMouse = new Point();
-
 	private Font textFont = new Font("arial", Font.BOLD, 15);
-
 	private FontMetrics textMetrics;
 
-	private ArrayList<Widget> widgets = new ArrayList<Widget>();
+	private List<Widget> widgets = new ArrayList<Widget>();
 
 	public MapViewer(Project proj) {
-		this.proj = proj;
-		if (playerLayer.isEnabled = proj.saveLoaded) {
+		this.project = proj;
+		initPlayerLayer(proj);
+		initMap();
+		initWidgets();
+		initComponent();
+	}
+
+	private void initPlayerLayer(Project proj) {
+		playerLayer.isEnabled = proj.saveLoaded;
+		if (playerLayer.isEnabled) {
 			playerLayer.setPlayers(proj.save);
 			for (MapObjectPlayer player : proj.save.getPlayers()) {
 				menu.add(new PlayerMenuItem(this, player, playerLayer));
 			}
 		}
+	}
 
+	private void initMap() {
 		map = new Map(fragmentManager);
-		map.setZoom(currentZoom);
+		map.setZoom(zoom.getCurrentValue());
+	}
 
-		widgets.add(new FpsWidget(this)
-				.setAnchorPoint(CornerAnchorPoint.BOTTOM_LEFT));
-		widgets.add(new ScaleWidget(this)
-				.setAnchorPoint(CornerAnchorPoint.BOTTOM_CENTER));
-		widgets.add(new SeedWidget(this)
-				.setAnchorPoint(CornerAnchorPoint.TOP_LEFT));
-		widgets.add(new DebugWidget(this)
-				.setAnchorPoint(CornerAnchorPoint.BOTTOM_RIGHT));
-		widgets.add(new SelectedObjectWidget(this)
-				.setAnchorPoint(CornerAnchorPoint.TOP_LEFT));
-		widgets.add(new CursorInformationWidget(this)
-				.setAnchorPoint(CornerAnchorPoint.TOP_RIGHT));
-		widgets.add(new BiomeToggleWidget(this)
-				.setAnchorPoint(CornerAnchorPoint.BOTTOM_RIGHT));
-		widgets.add(BiomeWidget.get(this)
-				.setAnchorPoint(CornerAnchorPoint.NONE));
+	private void initWidgets() {
+		initWidget(new FpsWidget(this), CornerAnchorPoint.BOTTOM_LEFT);
+		initWidget(new ScaleWidget(this), CornerAnchorPoint.BOTTOM_CENTER);
+		initWidget(new SeedWidget(this), CornerAnchorPoint.TOP_LEFT);
+		initWidget(new DebugWidget(this), CornerAnchorPoint.BOTTOM_RIGHT);
+		initWidget(new SelectedObjectWidget(this), CornerAnchorPoint.TOP_LEFT);
+		initWidget(new CursorInformationWidget(this),
+				CornerAnchorPoint.TOP_RIGHT);
+		initWidget(new BiomeToggleWidget(this), CornerAnchorPoint.BOTTOM_RIGHT);
+		initWidget(BiomeWidget.get(this), CornerAnchorPoint.NONE);
+	}
+
+	private void initWidget(PanelWidget widget, CornerAnchorPoint anchorPoint) {
+		widgets.add(widget.setAnchorPoint(anchorPoint));
+	}
+
+	private void initComponent() {
 		component.addMouseListener(listeners);
 		component.addMouseWheelListener(listeners);
-
 		component.setFocusable(true);
-
 		textMetrics = component.getFontMetrics(textFont);
 	}
 
-	public void adjustZoom(Point position, int notches) {
-		zoomMouse = position;
-		if (notches > 0) {
-			if (zoomLevel < (Options.instance.maxZoom.get() ? 10 : 10000)) {
-				targetZoom /= 1.1;
-				zoomLevel++;
-				zoomTicksRemaining = 100;
-			}
-		} else {
-			if (zoomLevel > -20) {
-				targetZoom *= 1.1;
-				zoomLevel--;
-				zoomTicksRemaining = 100;
-			}
-		}
-	}
-
+	// TODO: find another place for this
+	@Deprecated
 	public void saveToFile(File f) {
 		BufferedImage image = new BufferedImage(map.getViewerWidth(),
 				map.getViewerHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -425,9 +460,11 @@ public class MapViewer {
 
 		map.draw(g2d, 0);
 
-		for (Widget widget : widgets)
-			if (widget.isVisible())
+		for (Widget widget : widgets) {
+			if (widget.isVisible()) {
 				widget.draw(g2d, 0);
+			}
+		}
 
 		try {
 			ImageIO.write(image, "png", f);
@@ -437,11 +474,6 @@ public class MapViewer {
 
 		g2d.dispose();
 		image.flush();
-	}
-
-	public void movePlayer(String name, ActionEvent e) {
-		// PixelInfo p = getCursorInformation(new Point(tempX, tempY));
-		// proj.movePlayer(name, p);
 	}
 
 	private Point getMousePositionOrCenterFromComponent() {
@@ -457,7 +489,7 @@ public class MapViewer {
 		Log.debug("Disposing of map viewer.");
 		map.dispose();
 		menu.removeAll();
-		proj = null;
+		project = null;
 	}
 
 	public void centerAt(long x, long y) {
