@@ -50,16 +50,9 @@ import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.SelectPrefModel.SelectButtonModel;
 import amidst.resources.ResourceLoader;
 
-/**
- * Structured menubar-creation to alleviate the huge mess that it would be
- * elsewise
- */
-
-// TODO: This class is a mess-- it should be split into pieces.
 public class AmidstMenu extends JMenuBar {
 	final JMenu fileMenu;
-	// final JMenu scriptMenu;
-	public final JMenu mapMenu; // TODO: protected
+	private JMenu mapMenu;
 	final JMenu optionsMenu;
 	final JMenu helpMenu;
 
@@ -85,7 +78,6 @@ public class AmidstMenu extends JMenuBar {
 					add(new SeedMenuItem());
 					add(new FileMenuItem());
 					add(new RandomSeedMenuItem());
-					// add(new JMenuItem("From Server"));
 				}
 			});
 
@@ -723,5 +715,9 @@ public class AmidstMenu extends JMenuBar {
 		T p = choose("Go to", "Select " + name + ":", points);
 		if (p != null)
 			window.getProject().moveMapTo(p.x, p.y);
+	}
+
+	public void setMapMenuEnabled(boolean value) {
+		mapMenu.setEnabled(value);
 	}
 }

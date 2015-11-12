@@ -68,7 +68,7 @@ public class FinderWindow {
 
 	public void setProject(Project project) {
 		this.project = project;
-		menuBar.mapMenu.setEnabled(true);
+		menuBar.setMapMenuEnabled(true);
 
 		frame.addKeyListener(project.getKeyListener());
 		contentPane.add(this.project.getPanel(), BorderLayout.CENTER);
