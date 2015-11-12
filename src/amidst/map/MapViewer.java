@@ -52,7 +52,7 @@ import amidst.map.widget.Widget;
 import amidst.minecraft.MinecraftUtil;
 import amidst.resources.ResourceLoader;
 
-public class MapViewer extends JComponent {
+public class MapViewer {
 	private class Listeners implements MouseListener, MouseWheelListener,
 			KeyListener {
 		@Override
@@ -61,7 +61,7 @@ public class MapViewer extends JComponent {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
-			Point mouse = getMousePositionFromJComponent();
+			Point mouse = getMousePositionOrCenterFromComponent();
 			if (e.getKeyCode() == KeyEvent.VK_EQUALS) {
 				adjustZoom(mouse, -1);
 			} else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
@@ -194,6 +194,79 @@ public class MapViewer extends JComponent {
 		}
 	}
 
+	private class Component extends JComponent {
+		@Override
+		public void paint(Graphics g) {
+			Graphics2D g2d = (Graphics2D) g.create();
+
+			long currentTime = System.currentTimeMillis();
+			float time = Math.min(Math.max(0, currentTime - lastTime), 100) / 1000.0f;
+			lastTime = currentTime;
+
+			g2d.setColor(Color.black);
+			g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
+
+			if (zoomTicksRemaining-- > 0) {
+				double lastZoom = curZoom;
+				curZoom = (targetZoom + curZoom) * 0.5;
+
+				Point2D.Double targetZoom = worldMap.getScaled(lastZoom,
+						curZoom, zoomMouse);
+				worldMap.moveBy(targetZoom);
+				worldMap.setZoom(curZoom);
+			}
+
+			Point curMouse = getMousePosition();
+			if (lastMouse != null) {
+				if (curMouse != null) {
+					double difX = curMouse.x - lastMouse.x;
+					double difY = curMouse.y - lastMouse.y;
+					// TODO : Scale with time
+					panSpeed.setLocation(difX * 0.2, difY * 0.2);
+				}
+
+				lastMouse.translate((int) panSpeed.x, (int) panSpeed.y);
+			}
+
+			worldMap.moveBy((int) panSpeed.x, (int) panSpeed.y);
+			if (Options.instance.mapFlicking.get()) {
+				panSpeed.x *= 0.95f;
+				panSpeed.y *= 0.95f;
+			} else {
+				panSpeed.x *= 0.f;
+				panSpeed.y *= 0.f;
+			}
+
+			worldMap.setViewerWidth(getWidth());
+			worldMap.setViewerHeight(getHeight());
+
+			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			worldMap.draw((Graphics2D) g2d.create(), time);
+			g2d.drawImage(DROP_SHADOW_TOP_LEFT, 0, 0, null);
+			g2d.drawImage(DROP_SHADOW_TOP_RIGHT, getWidth() - 10, 0, null);
+			g2d.drawImage(DROP_SHADOW_BOTTOM_LEFT, 0, getHeight() - 10, null);
+			g2d.drawImage(DROP_SHADOW_BOTTOM_RIGHT, getWidth() - 10,
+					getHeight() - 10, null);
+
+			g2d.drawImage(DROP_SHADOW_TOP, 10, 0, getWidth() - 20, 10, null);
+			g2d.drawImage(DROP_SHADOW_BOTTOM, 10, getHeight() - 10,
+					getWidth() - 20, 10, null);
+			g2d.drawImage(DROP_SHADOW_LEFT, 0, 10, 10, getHeight() - 20, null);
+			g2d.drawImage(DROP_SHADOW_RIGHT, getWidth() - 10, 10, 10,
+					getHeight() - 20, null);
+
+			g2d.setFont(textFont);
+			for (Widget widget : widgets) {
+				if (widget.isVisible()) {
+					g2d.setComposite(AlphaComposite.getInstance(
+							AlphaComposite.SRC_OVER, widget.getAlpha()));
+					widget.draw(g2d, time);
+				}
+			}
+		}
+	}
+
 	private static final BufferedImage DROP_SHADOW_BOTTOM_LEFT = ResourceLoader
 			.getImage("dropshadow/inner_bottom_left.png");
 	private static final BufferedImage DROP_SHADOW_BOTTOM_RIGHT = ResourceLoader
@@ -229,6 +302,7 @@ public class MapViewer extends JComponent {
 	}
 
 	private Listeners listeners = new Listeners();
+	private Component component = new Component();
 
 	private Widget mouseOwner;
 
@@ -283,84 +357,13 @@ public class MapViewer extends JComponent {
 				.setAnchorPoint(CornerAnchorPoint.BOTTOM_RIGHT));
 		widgets.add(BiomeWidget.get(this)
 				.setAnchorPoint(CornerAnchorPoint.NONE));
-		addMouseListener(listeners);
-		addMouseWheelListener(listeners);
+		component.addMouseListener(listeners);
+		component.addMouseWheelListener(listeners);
 
-		setFocusable(true);
+		component.setFocusable(true);
 		lastTime = System.currentTimeMillis();
 
-		textMetrics = getFontMetrics(textFont);
-	}
-
-	@Override
-	public void paint(Graphics g) {
-		Graphics2D g2d = (Graphics2D) g.create();
-
-		long currentTime = System.currentTimeMillis();
-		float time = Math.min(Math.max(0, currentTime - lastTime), 100) / 1000.0f;
-		lastTime = currentTime;
-
-		g2d.setColor(Color.black);
-		g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
-
-		if (zoomTicksRemaining-- > 0) {
-			double lastZoom = curZoom;
-			curZoom = (targetZoom + curZoom) * 0.5;
-
-			Point2D.Double targetZoom = worldMap.getScaled(lastZoom, curZoom,
-					zoomMouse);
-			worldMap.moveBy(targetZoom);
-			worldMap.setZoom(curZoom);
-		}
-
-		Point curMouse = getMousePositionFromJComponent();
-		if (lastMouse != null) {
-			if (curMouse != null) {
-				double difX = curMouse.x - lastMouse.x;
-				double difY = curMouse.y - lastMouse.y;
-				// TODO : Scale with time
-				panSpeed.setLocation(difX * 0.2, difY * 0.2);
-			}
-
-			lastMouse.translate((int) panSpeed.x, (int) panSpeed.y);
-		}
-
-		worldMap.moveBy((int) panSpeed.x, (int) panSpeed.y);
-		if (Options.instance.mapFlicking.get()) {
-			panSpeed.x *= 0.95f;
-			panSpeed.y *= 0.95f;
-		} else {
-			panSpeed.x *= 0.f;
-			panSpeed.y *= 0.f;
-		}
-
-		worldMap.setViewerWidth(getWidth());
-		worldMap.setViewerHeight(getHeight());
-
-		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		worldMap.draw((Graphics2D) g2d.create(), time);
-		g2d.drawImage(DROP_SHADOW_TOP_LEFT, 0, 0, null);
-		g2d.drawImage(DROP_SHADOW_TOP_RIGHT, getWidth() - 10, 0, null);
-		g2d.drawImage(DROP_SHADOW_BOTTOM_LEFT, 0, getHeight() - 10, null);
-		g2d.drawImage(DROP_SHADOW_BOTTOM_RIGHT, getWidth() - 10,
-				getHeight() - 10, null);
-
-		g2d.drawImage(DROP_SHADOW_TOP, 10, 0, getWidth() - 20, 10, null);
-		g2d.drawImage(DROP_SHADOW_BOTTOM, 10, getHeight() - 10,
-				getWidth() - 20, 10, null);
-		g2d.drawImage(DROP_SHADOW_LEFT, 0, 10, 10, getHeight() - 20, null);
-		g2d.drawImage(DROP_SHADOW_RIGHT, getWidth() - 10, 10, 10,
-				getHeight() - 20, null);
-
-		g2d.setFont(textFont);
-		for (Widget widget : widgets) {
-			if (widget.isVisible()) {
-				g2d.setComposite(AlphaComposite.getInstance(
-						AlphaComposite.SRC_OVER, widget.getAlpha()));
-				widget.draw(g2d, time);
-			}
-		}
+		textMetrics = component.getFontMetrics(textFont);
 	}
 
 	public void adjustZoom(Point position, int notches) {
@@ -403,14 +406,14 @@ public class MapViewer extends JComponent {
 
 	public void movePlayer(String name, ActionEvent e) {
 		// PixelInfo p = getCursorInformation(new Point(tempX, tempY));
-
 		// proj.movePlayer(name, p);
 	}
 
-	private Point getMousePositionFromJComponent() {
-		Point mouse = getMousePosition();
+	private Point getMousePositionOrCenterFromComponent() {
+		Point mouse = component.getMousePosition();
 		if (mouse == null) {
-			mouse = new Point(getWidth() >> 1, getHeight() >> 1);
+			mouse = new Point(component.getWidth() >> 1,
+					component.getHeight() >> 1);
 		}
 		return mouse;
 	}
@@ -426,12 +429,12 @@ public class MapViewer extends JComponent {
 		worldMap.centerOn(x, y);
 	}
 
-	public MapObject getSelectedObject() {
-		return selectedObject;
+	public void repaint() {
+		component.repaint();
 	}
 
-	public KeyListener getKeyListener() {
-		return listeners;
+	public MapObject getSelectedObject() {
+		return selectedObject;
 	}
 
 	public FragmentManager getFragmentManager() {
@@ -442,7 +445,38 @@ public class MapViewer extends JComponent {
 		return worldMap;
 	}
 
+	@Deprecated
 	public FontMetrics getFontMetrics() {
 		return textMetrics;
+	}
+
+	@Deprecated
+	public FontMetrics getFontMetrics(Font font) {
+		return component.getFontMetrics(font);
+	}
+
+	@Deprecated
+	public KeyListener getKeyListener() {
+		return listeners;
+	}
+
+	@Deprecated
+	public JComponent getComponent() {
+		return component;
+	}
+
+	@Deprecated
+	public Point getMousePosition() {
+		return component.getMousePosition();
+	}
+
+	@Deprecated
+	public int getWidth() {
+		return component.getWidth();
+	}
+
+	@Deprecated
+	public int getHeight() {
+		return component.getHeight();
 	}
 }

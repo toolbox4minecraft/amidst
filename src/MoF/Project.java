@@ -110,7 +110,7 @@ public class Project extends JPanel {
 			MinecraftUtil.createWorld(seed, type);
 		//Create MapViewer
 		map = new MapViewer(this);
-		add(map, BorderLayout.CENTER);
+		add(map.getComponent(), BorderLayout.CENTER);
 		//Debug
 		this.setBackground(Color.BLUE);
 		
