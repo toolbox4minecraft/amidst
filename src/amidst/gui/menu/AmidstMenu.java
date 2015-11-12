@@ -12,14 +12,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -28,7 +24,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
@@ -46,8 +41,6 @@ import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
 import amidst.map.layers.StrongholdLayer;
 import amidst.minecraft.MinecraftUtil;
-import amidst.preferences.BiomeColorProfile;
-import amidst.preferences.SelectPrefModel.SelectButtonModel;
 import amidst.resources.ResourceLoader;
 
 public class AmidstMenu extends JMenuBar {
@@ -306,17 +299,6 @@ public class AmidstMenu extends JMenuBar {
 		}
 	}
 
-	public class DisplayingCheckbox extends JCheckBoxMenuItem {
-		private DisplayingCheckbox(String text, BufferedImage icon, int key,
-				JToggleButton.ToggleButtonModel model) {
-			super(text, (icon != null) ? new ImageIcon(icon) : null);
-			if (key != -1)
-				setAccelerator(KeyStroke.getKeyStroke(key,
-						InputEvent.CTRL_DOWN_MASK));
-			setModel(model);
-		}
-	}
-
 	private class MapMenu extends JMenu {
 		private MapMenu() {
 			super("Map");
@@ -508,143 +490,6 @@ public class AmidstMenu extends JMenuBar {
 					}
 				});
 			}
-		}
-	}
-
-	private class OptionsMenu extends JMenu {
-		private OptionsMenu() {
-			super("Options");
-			add(new MapOptionsMenu());
-			if (BiomeColorProfile.isEnabled)
-				add(new BiomeColorMenu());
-			add(new WorldTypeMenu());
-			setMnemonic(KeyEvent.VK_M);
-		}
-
-		private class BiomeColorMenu extends JMenu {
-			private ArrayList<JCheckBoxMenuItem> profileCheckboxes = new ArrayList<JCheckBoxMenuItem>();
-			private JMenuItem reloadMenuItem;
-
-			private class BiomeProfileActionListener implements ActionListener {
-				private BiomeColorProfile profile;
-				private ArrayList<JCheckBoxMenuItem> profileCheckboxes;
-				private JCheckBoxMenuItem checkBox;
-
-				public BiomeProfileActionListener(BiomeColorProfile profile,
-						JCheckBoxMenuItem checkBox,
-						ArrayList<JCheckBoxMenuItem> profileCheckboxes) {
-					this.profile = profile;
-					this.checkBox = checkBox;
-					this.profileCheckboxes = profileCheckboxes;
-				}
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					for (int i = 0; i < profileCheckboxes.size(); i++)
-						profileCheckboxes.get(i).setSelected(false);
-					checkBox.setSelected(true);
-					profile.activate();
-				}
-			}
-
-			private BiomeColorMenu() {
-				super("Biome profile");
-				reloadMenuItem = new JMenuItem("Reload Menu");
-				final BiomeColorMenu biomeColorMenu = this;
-				reloadMenuItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent arg) {
-						profileCheckboxes.clear();
-						Log.i("Reloading additional biome color profiles.");
-						File colorProfileFolder = new File("./biome");
-						biomeColorMenu.removeAll();
-						scanAndLoad(colorProfileFolder, biomeColorMenu);
-						biomeColorMenu.add(reloadMenuItem);
-					}
-				});
-				reloadMenuItem.setAccelerator(KeyStroke.getKeyStroke("ctrl B"));
-				Log.i("Checking for additional biome color profiles.");
-				File colorProfileFolder = new File("./biome");
-				scanAndLoad(colorProfileFolder, this);
-				profileCheckboxes.get(0).setSelected(true);
-				add(reloadMenuItem);
-			}
-
-			private boolean scanAndLoad(File folder, JMenu menu) {
-				File[] files = folder.listFiles();
-				BiomeColorProfile profile;
-				boolean foundProfiles = false;
-				for (int i = 0; i < files.length; i++) {
-					if (files[i].isFile()) {
-						if ((profile = BiomeColorProfile
-								.createFromFile(files[i])) != null) {
-							JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(
-									profile.name);
-							menuItem.addActionListener(new BiomeProfileActionListener(
-									profile, menuItem, profileCheckboxes));
-							if (profile.shortcut != null) {
-								KeyStroke accelerator = KeyStroke
-										.getKeyStroke(profile.shortcut);
-								if (accelerator != null)
-									menuItem.setAccelerator(accelerator);
-								else
-									Log.i("Unable to create keyboard shortcut from: "
-											+ profile.shortcut);
-							}
-							menu.add(menuItem);
-							profileCheckboxes.add(menuItem);
-							foundProfiles = true;
-						}
-					} else {
-						JMenu subMenu = new JMenu(files[i].getName());
-						if (scanAndLoad(files[i], subMenu)) {
-							menu.add(subMenu);
-						}
-					}
-				}
-				return foundProfiles;
-			}
-
-		}
-
-		private class MapOptionsMenu extends JMenu {
-			private MapOptionsMenu() {
-				super("Map");
-
-				add(new DisplayingCheckbox("Map Flicking (Smooth Scrolling)",
-						null, KeyEvent.VK_I, Options.instance.mapFlicking));
-
-				add(new DisplayingCheckbox("Restrict Maximum Zoom", null,
-						KeyEvent.VK_Z, Options.instance.maxZoom));
-
-				add(new DisplayingCheckbox("Show Framerate", null,
-						KeyEvent.VK_L, Options.instance.showFPS));
-
-				add(new DisplayingCheckbox("Show Scale", null, KeyEvent.VK_K,
-						Options.instance.showScale));
-
-				add(new DisplayingCheckbox("Use Fragment Fading", null, -1,
-						Options.instance.mapFading));
-
-				add(new DisplayingCheckbox("Show Debug Info", null, -1,
-						Options.instance.showDebug));
-			}
-
-		}
-
-		private class WorldTypeMenu extends JMenu {
-			private WorldTypeMenu() {
-				super("World type");
-
-				SelectButtonModel[] buttonModels = Options.instance.worldType
-						.getButtonModels();
-
-				for (int i = 0; i < buttonModels.length; i++) {
-					add(new DisplayingCheckbox(buttonModels[i].getName(), null,
-							-1, buttonModels[i]));
-				}
-			}
-
 		}
 	}
 
