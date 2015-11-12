@@ -109,13 +109,13 @@ public class FragmentManager {
 
 	public void repaintFragment(Fragment fragment) {
 		synchronized (queueLock) {
-			fragment.repaint();
+			fragment.repaintAllImageLayers();
 		}
 	}
 
-	public void repaintFragmentLayer(Fragment fragment, int id) {
+	public void repaintFragmentLayer(Fragment fragment, int layerId) {
 		synchronized (queueLock) {
-			fragment.repaintImageLayer(id);
+			fragment.repaintImageLayer(layerId);
 		}
 	}
 

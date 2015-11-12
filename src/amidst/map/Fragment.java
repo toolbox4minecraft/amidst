@@ -16,8 +16,6 @@ public class Fragment {
 	public static final int MAX_OBJECTS_PER_FRAGMENT = 32;
 	public static final int BIOME_SIZE = SIZE >> 2;
 
-	private static AffineTransform drawMatrix = new AffineTransform();
-
 	// TODO: what is this? move it to another place?
 	private static int[] imageRGBDataCache = new int[SIZE * SIZE];
 
@@ -104,10 +102,6 @@ public class Fragment {
 		}
 	}
 
-	public boolean needsLoading() {
-		return isActive && !isLoaded;
-	}
-
 	public void drawLiveLayers(float time, Graphics2D g, AffineTransform mat) {
 		for (LiveLayer liveLayer : liveLayers) {
 			if (liveLayer.isVisible()) {
@@ -117,53 +111,59 @@ public class Fragment {
 	}
 
 	public void drawImageLayers(float time, Graphics2D g, AffineTransform mat) {
-		if (!isLoaded)
+		if (!isLoaded) {
 			return;
+		}
 
 		alpha = Math.min(1.0f, time * 3.0f + alpha);
 		for (int i = 0; i < images.length; i++) {
 			if (imageLayers[i].isVisible()) {
-				g.setComposite(AlphaComposite.getInstance(
-						AlphaComposite.SRC_OVER,
-						alpha * imageLayers[i].getAlpha()));
+				setAlphaComposite(g, alpha * imageLayers[i].getAlpha());
 
 				// TOOD: FIX THIS
 				g.setTransform(imageLayers[i].getScaledMatrix(mat));
-				if (g.getTransform().getScaleX() < 1.0f)
+				if (g.getTransform().getScaleX() < 1.0f) {
 					g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 							RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-				else
+				} else {
 					g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 							RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+				}
 				g.drawImage(images[i], 0, 0, null);
 			}
 		}
-		g.setComposite(AlphaComposite
-				.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+		setAlphaComposite(g, 1.0f);
 	}
 
-	public void drawObjects(Graphics2D g, AffineTransform inMatrix) {
-		if (alpha != 1.0f)
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-					alpha));
-
-		for (int i = 0; i < objectsLength; i++) {
-			if (objects[i].parentLayer.isVisible()) {
-				drawMatrix.setTransform(inMatrix);
-				drawMatrix.translate(objects[i].x, objects[i].y);
-				double invZoom = 1.0 / objects[i].parentLayer.getMapZoom();
-				drawMatrix.scale(invZoom, invZoom);
-				g.setTransform(drawMatrix);
-
-				g.drawImage(objects[i].getImage(),
-						-(objects[i].getWidth() >> 1),
-						-(objects[i].getHeight() >> 1), objects[i].getWidth(),
-						objects[i].getHeight(), null);
-			}
+	public void drawObjects(Graphics2D g, AffineTransform mat) {
+		if (alpha != 1.0f) {
+			setAlphaComposite(g, alpha);
 		}
-		if (alpha != 1.0f)
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-					1.0f));
+		for (int i = 0; i < objectsLength; i++) {
+			drawObject(g, mat, objects[i]);
+		}
+		if (alpha != 1.0f) {
+			setAlphaComposite(g, 1.0f);
+		}
+	}
+
+	private void drawObject(Graphics2D g, AffineTransform mat,
+			MapObject mapObject) {
+		if (mapObject.parentLayer.isVisible()) {
+			double invZoom = 1.0 / mapObject.parentLayer.getMapZoom();
+			int width = mapObject.getWidth();
+			int height = mapObject.getHeight();
+			g.setTransform(mat);
+			g.translate(mapObject.x, mapObject.y);
+			g.scale(invZoom, invZoom);
+			g.drawImage(mapObject.getImage(), -(width >> 1), -(height >> 1),
+					width, height, null);
+		}
+	}
+
+	private void setAlphaComposite(Graphics2D g, float alpha) {
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+				alpha));
 	}
 
 	public void addObject(MapObject object) {
@@ -171,12 +171,22 @@ public class Fragment {
 		object.ry = object.y + this.blockY;
 		if (objectsLength >= objects.length) {
 			MapObject[] tempObjects = new MapObject[objects.length << 1];
-			for (int i = 0; i < objects.length; i++)
+			for (int i = 0; i < objects.length; i++) {
 				tempObjects[i] = objects[i];
+			}
 			objects = tempObjects;
 		}
 		objects[objectsLength] = object;
 		objectsLength++;
+	}
+
+	public void removeObject(MapObjectPlayer player) {
+		for (int i = 0; i < objectsLength; i++) {
+			if (objects[i] == player) {
+				objects[i] = objects[objectsLength - 1];
+				objectsLength--;
+			}
+		}
 	}
 
 	public void setImageRGB(int layerId, int[] rgbArray) {
@@ -199,20 +209,7 @@ public class Fragment {
 		}
 	}
 
-	public void removeObject(MapObjectPlayer player) {
-		for (int i = 0; i < objectsLength; i++) {
-			if (objects[i] == player) {
-				objects[i] = objects[objectsLength - 1];
-				objectsLength--;
-			}
-		}
-	}
-
-	public BufferedImage getBufferedImage(int layer) {
-		return images[layer];
-	}
-
-	public void repaint() {
+	public void repaintAllImageLayers() {
 		synchronized (loadLock) {
 			if (isLoaded) {
 				for (int i = 0; i < imageLayers.length; i++) {
@@ -222,10 +219,10 @@ public class Fragment {
 		}
 	}
 
-	public void repaintImageLayer(int id) {
+	public void repaintImageLayer(int layerId) {
 		synchronized (loadLock) {
 			if (isLoaded) {
-				imageLayers[id].load(this);
+				imageLayers[layerId].load(this);
 			}
 		}
 	}
@@ -256,6 +253,10 @@ public class Fragment {
 		hasNext = false;
 
 		endOfLine = false;
+	}
+
+	public boolean needsLoading() {
+		return isActive && !isLoaded;
 	}
 
 	public Fragment getNext() {
