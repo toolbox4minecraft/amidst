@@ -74,10 +74,10 @@ public class AmidstMenu extends JMenuBar {
 				addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						if (window.curProject.saveLoaded) {
-							for (MapObjectPlayer player : window.curProject.save.getPlayers()) {
+						if (window.curProject.isSaveLoaded()) {
+							for (MapObjectPlayer player : window.curProject.getSaveLoader().getPlayers()) {
 								if (player.needSave) {
-									window.curProject.save.movePlayer(player.getName(), player.globalX, player.globalY);
+									window.curProject.getSaveLoader().movePlayer(player.getName(), player.globalX, player.globalY);
 									player.needSave = false;
 								}
 							}
@@ -327,8 +327,8 @@ public class AmidstMenu extends JMenuBar {
 					addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
-							if (window.curProject.saveLoaded) {
-								List<MapObjectPlayer> playerList = window.curProject.save.getPlayers();
+							if (window.curProject.isSaveLoaded()) {
+								List<MapObjectPlayer> playerList = window.curProject.getSaveLoader().getPlayers();
 								MapObjectPlayer[] players = playerList.toArray(new MapObjectPlayer[playerList.size()]);
 								goToChosenPoint(players, "Player");
 								MapObjectPlayer p = choose("Go to", "Select player:", players);

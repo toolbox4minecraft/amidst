@@ -27,18 +27,15 @@ public class Project extends JPanel {
 	private Timer timer;
 	public MapObject curTarget;
 
-	public boolean saveLoaded;
-	public SaveLoader save;
+	private SaveLoader saveLoader;
 
 	public Project(SaveLoader file) {
 		this(file.seed, SaveLoader.genType.getName(), file);
-
 		Google.track("seed/file/" + Options.instance.seed);
 	}
 
 	public Project(String seed, String type) {
 		this(getSeedFromString(seed), type);
-
 		Google.track("seed/" + seed + "/" + Options.instance.seed);
 	}
 
@@ -47,30 +44,13 @@ public class Project extends JPanel {
 	}
 
 	private Project(long seed, String type, SaveLoader saveLoader) {
-		logSeedHistory(seed);
-		saveLoaded = saveLoader != null;
-		save = saveLoader;
 		Options.instance.seed = seed;
-
-		BorderLayout layout = new BorderLayout();
-		this.setLayout(layout);
-		if (saveLoaded) {
-			MinecraftUtil.createWorld(seed, type, save.getGeneratorOptions());
-		} else {
-			MinecraftUtil.createWorld(seed, type);
-		}
-		map = new MapViewer(this);
-		add(map.getComponent(), BorderLayout.CENTER);
-
-		this.setBackground(Color.BLUE);
-
-		timer = new Timer();
-
-		timer.scheduleAtFixedRate(new TimerTask() {
-			public void run() {
-				tick();
-			}
-		}, 20, 20);
+		this.saveLoader = saveLoader;
+		logSeedHistory(seed);
+		createWorld(seed, type);
+		initMapViewer();
+		initComponent();
+		initTimer();
 	}
 
 	private void logSeedHistory(long seed) {
@@ -110,6 +90,34 @@ public class Project extends JPanel {
 
 	}
 
+	private void createWorld(long seed, String type) {
+		if (isSaveLoaded()) {
+			MinecraftUtil.createWorld(seed, type,
+					this.saveLoader.getGeneratorOptions());
+		} else {
+			MinecraftUtil.createWorld(seed, type);
+		}
+	}
+
+	private void initMapViewer() {
+		map = new MapViewer(this);
+	}
+
+	private void initComponent() {
+		setLayout(new BorderLayout());
+		add(map.getComponent(), BorderLayout.CENTER);
+		setBackground(Color.BLUE);
+	}
+
+	private void initTimer() {
+		timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+			public void run() {
+				tick();
+			}
+		}, 20, 20);
+	}
+
 	private static long getSeedFromString(String seed) {
 		try {
 			return Long.parseLong(seed);
@@ -131,13 +139,23 @@ public class Project extends JPanel {
 		map.repaint();
 	}
 
+	public SaveLoader getSaveLoader() {
+		return saveLoader;
+	}
+
+	public boolean isSaveLoaded() {
+		return saveLoader != null;
+	}
+
 	public void dispose() {
 		map.dispose();
 		map = null;
 		timer.cancel();
 		timer = null;
 		curTarget = null;
-		save = null;
+		saveLoader = null;
+
+		// TODO: do we really need this?
 		System.gc();
 	}
 }

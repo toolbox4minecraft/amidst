@@ -128,7 +128,7 @@ public class MapViewer {
 		public void mouseReleased(MouseEvent e) {
 			if (e.isPopupTrigger() && MinecraftUtil.getVersion().saveEnabled()) {
 				lastRightClick = getMousePositionFromEvent(e);
-				if (project.saveLoaded) {
+				if (project.isSaveLoaded()) {
 					menu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			} else if (mouseOwner != null) {
@@ -416,19 +416,19 @@ public class MapViewer {
 
 	private List<Widget> widgets = new ArrayList<Widget>();
 
-	public MapViewer(Project proj) {
-		this.project = proj;
-		initPlayerLayer(proj);
+	public MapViewer(Project project) {
+		this.project = project;
+		initPlayerLayer();
 		initMap();
 		initWidgets();
 		initComponent();
 	}
 
-	private void initPlayerLayer(Project proj) {
-		playerLayer.isEnabled = proj.saveLoaded;
+	private void initPlayerLayer() {
+		playerLayer.isEnabled = project.isSaveLoaded();
 		if (playerLayer.isEnabled) {
-			playerLayer.setPlayers(proj.save);
-			for (MapObjectPlayer player : proj.save.getPlayers()) {
+			playerLayer.setPlayers(project.getSaveLoader());
+			for (MapObjectPlayer player : project.getSaveLoader().getPlayers()) {
 				menu.add(new PlayerMenuItem(this, player, playerLayer));
 			}
 		}
