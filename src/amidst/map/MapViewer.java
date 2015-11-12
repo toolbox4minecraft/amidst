@@ -130,13 +130,11 @@ public class MapViewer {
 				if (proj.saveLoaded) {
 					menu.show(e.getComponent(), e.getX(), e.getY());
 				}
+			} else if (mouseOwner != null) {
+				mouseOwner.onMouseReleased();
+				mouseOwner = null;
 			} else {
-				if (mouseOwner != null) {
-					mouseOwner.onMouseReleased();
-					mouseOwner = null;
-				} else {
-					lastMouse = null;
-				}
+				lastMouse = null;
 			}
 		}
 
@@ -196,57 +194,83 @@ public class MapViewer {
 
 	private class Component extends JComponent {
 		private long lastTime = System.currentTimeMillis();
+		private Point2D.Double mapMovementSpeed = new Point2D.Double();
 
 		@Override
 		public void paint(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g.create();
-
 			float time = calculateTimeSpanSinceLastDrawInSeconds();
 
 			clear(g2d);
 
-			if (zoomTicksRemaining-- > 0) {
-				double lastZoom = curZoom;
-				curZoom = (targetZoom + curZoom) * 0.5;
+			updateMapZoom();
+			updateMapMovementSpeed();
+			moveMap();
+			throttleMapMovementSpeed();
 
-				Point2D.Double targetZoom = map.getScaled(lastZoom, curZoom,
-						zoomMouse);
-				map.moveBy(targetZoom);
-				map.setZoom(curZoom);
-			}
-
-			Point curMouse = getMousePosition();
-			if (lastMouse != null) {
-				if (curMouse != null) {
-					double difX = curMouse.x - lastMouse.x;
-					double difY = curMouse.y - lastMouse.y;
-					// TODO : Scale with time
-					panSpeed.setLocation(difX * 0.2, difY * 0.2);
-				}
-
-				lastMouse.translate((int) panSpeed.x, (int) panSpeed.y);
-			}
-
-			map.moveBy((int) panSpeed.x, (int) panSpeed.y);
-			if (Options.instance.mapFlicking.get()) {
-				panSpeed.x *= 0.95f;
-				panSpeed.y *= 0.95f;
-			} else {
-				panSpeed.x *= 0.f;
-				panSpeed.y *= 0.f;
-			}
-
-			map.setViewerWidth(getWidth());
-			map.setViewerHeight(getHeight());
+			setViewerDimensions();
 
 			drawMap(g2d, time);
 			drawBorder(g2d);
 			drawWidgets(g2d, time);
 		}
 
+		private float calculateTimeSpanSinceLastDrawInSeconds() {
+			long currentTime = System.currentTimeMillis();
+			float result = Math.min(Math.max(0, currentTime - lastTime), 100) / 1000.0f;
+			lastTime = currentTime;
+			return result;
+		}
+
 		private void clear(Graphics2D g2d) {
 			g2d.setColor(Color.black);
 			g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
+		}
+
+		private void updateMapZoom() {
+			zoomTicksRemaining--;
+			if (zoomTicksRemaining >= 0) {
+				double lastZoom = currentZoom;
+				currentZoom = (targetZoom + currentZoom) * 0.5;
+
+				Point2D.Double targetZoom = map.getScaled(lastZoom,
+						currentZoom, zoomMouse);
+				map.moveBy(targetZoom);
+				map.setZoom(currentZoom);
+			}
+		}
+
+		private void updateMapMovementSpeed() {
+			if (lastMouse != null) {
+				Point currentMouse = getMousePosition();
+				if (currentMouse != null) {
+					double dX = currentMouse.x - lastMouse.x;
+					double dY = currentMouse.y - lastMouse.y;
+					// TODO : Scale with time
+					mapMovementSpeed.setLocation(dX * 0.2, dY * 0.2);
+				}
+				lastMouse.translate((int) mapMovementSpeed.x,
+						(int) mapMovementSpeed.y);
+			}
+		}
+
+		private void moveMap() {
+			map.moveBy((int) mapMovementSpeed.x, (int) mapMovementSpeed.y);
+		}
+
+		private void throttleMapMovementSpeed() {
+			if (Options.instance.mapFlicking.get()) {
+				mapMovementSpeed.x *= 0.95f;
+				mapMovementSpeed.y *= 0.95f;
+			} else {
+				mapMovementSpeed.x = 0;
+				mapMovementSpeed.y = 0;
+			}
+		}
+
+		private void setViewerDimensions() {
+			map.setViewerWidth(getWidth());
+			map.setViewerHeight(getHeight());
 		}
 
 		private void drawMap(Graphics2D g2d, float time) {
@@ -279,13 +303,6 @@ public class MapViewer {
 					widget.draw(g2d, time);
 				}
 			}
-		}
-
-		private float calculateTimeSpanSinceLastDrawInSeconds() {
-			long currentTime = System.currentTimeMillis();
-			float time = Math.min(Math.max(0, currentTime - lastTime), 100) / 1000.0f;
-			lastTime = currentTime;
-			return time;
 		}
 	}
 
@@ -337,10 +354,9 @@ public class MapViewer {
 	private MapObject selectedObject = null;
 	private Point lastMouse;
 	public Point lastRightClick = null;
-	private Point2D.Double panSpeed;
 
 	private static int zoomLevel = 0, zoomTicksRemaining = 0;
-	private static double targetZoom = 0.25f, curZoom = 0.25f;
+	private static double targetZoom = 0.25f, currentZoom = 0.25f;
 	private Point zoomMouse = new Point();
 
 	private Font textFont = new Font("arial", Font.BOLD, 15);
@@ -350,7 +366,6 @@ public class MapViewer {
 	private ArrayList<Widget> widgets = new ArrayList<Widget>();
 
 	public MapViewer(Project proj) {
-		panSpeed = new Point2D.Double();
 		this.proj = proj;
 		if (playerLayer.isEnabled = proj.saveLoaded) {
 			playerLayer.setPlayers(proj.save);
@@ -360,7 +375,7 @@ public class MapViewer {
 		}
 
 		map = new Map(fragmentManager);
-		map.setZoom(curZoom);
+		map.setZoom(currentZoom);
 
 		widgets.add(new FpsWidget(this)
 				.setAnchorPoint(CornerAnchorPoint.BOTTOM_LEFT));
