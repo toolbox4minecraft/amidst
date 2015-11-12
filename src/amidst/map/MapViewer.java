@@ -149,7 +149,7 @@ public class MapViewer {
 		}
 
 		private void mouseClickedOnMap(Point mouse) {
-			MapObject object = worldMap.getObjectAt(mouse, 50.0);
+			MapObject object = map.getObjectAt(mouse, 50.0);
 
 			if (selectedObject != null) {
 				selectedObject.localScale = 1.0;
@@ -195,25 +195,24 @@ public class MapViewer {
 	}
 
 	private class Component extends JComponent {
+		private long lastTime = System.currentTimeMillis();
+
 		@Override
 		public void paint(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g.create();
 
-			long currentTime = System.currentTimeMillis();
-			float time = Math.min(Math.max(0, currentTime - lastTime), 100) / 1000.0f;
-			lastTime = currentTime;
+			float time = calculateTimeSpanSinceLastDrawInSeconds();
 
-			g2d.setColor(Color.black);
-			g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
+			clear(g2d);
 
 			if (zoomTicksRemaining-- > 0) {
 				double lastZoom = curZoom;
 				curZoom = (targetZoom + curZoom) * 0.5;
 
-				Point2D.Double targetZoom = worldMap.getScaled(lastZoom,
-						curZoom, zoomMouse);
-				worldMap.moveBy(targetZoom);
-				worldMap.setZoom(curZoom);
+				Point2D.Double targetZoom = map.getScaled(lastZoom, curZoom,
+						zoomMouse);
+				map.moveBy(targetZoom);
+				map.setZoom(curZoom);
 			}
 
 			Point curMouse = getMousePosition();
@@ -228,7 +227,7 @@ public class MapViewer {
 				lastMouse.translate((int) panSpeed.x, (int) panSpeed.y);
 			}
 
-			worldMap.moveBy((int) panSpeed.x, (int) panSpeed.y);
+			map.moveBy((int) panSpeed.x, (int) panSpeed.y);
 			if (Options.instance.mapFlicking.get()) {
 				panSpeed.x *= 0.95f;
 				panSpeed.y *= 0.95f;
@@ -237,25 +236,41 @@ public class MapViewer {
 				panSpeed.y *= 0.f;
 			}
 
-			worldMap.setViewerWidth(getWidth());
-			worldMap.setViewerHeight(getHeight());
+			map.setViewerWidth(getWidth());
+			map.setViewerHeight(getHeight());
 
+			drawMap(g2d, time);
+			drawBorder(g2d);
+			drawWidgets(g2d, time);
+		}
+
+		private void clear(Graphics2D g2d) {
+			g2d.setColor(Color.black);
+			g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
+		}
+
+		private void drawMap(Graphics2D g2d, float time) {
 			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-			worldMap.draw((Graphics2D) g2d.create(), time);
+			map.draw((Graphics2D) g2d.create(), time);
+		}
+
+		private void drawBorder(Graphics2D g2d) {
+			int width10 = getWidth() - 10;
+			int height10 = getHeight() - 10;
+			int width20 = getWidth() - 20;
+			int height20 = getHeight() - 20;
 			g2d.drawImage(DROP_SHADOW_TOP_LEFT, 0, 0, null);
-			g2d.drawImage(DROP_SHADOW_TOP_RIGHT, getWidth() - 10, 0, null);
-			g2d.drawImage(DROP_SHADOW_BOTTOM_LEFT, 0, getHeight() - 10, null);
-			g2d.drawImage(DROP_SHADOW_BOTTOM_RIGHT, getWidth() - 10,
-					getHeight() - 10, null);
+			g2d.drawImage(DROP_SHADOW_TOP_RIGHT, width10, 0, null);
+			g2d.drawImage(DROP_SHADOW_BOTTOM_LEFT, 0, height10, null);
+			g2d.drawImage(DROP_SHADOW_BOTTOM_RIGHT, width10, height10, null);
+			g2d.drawImage(DROP_SHADOW_TOP, 10, 0, width20, 10, null);
+			g2d.drawImage(DROP_SHADOW_BOTTOM, 10, height10, width20, 10, null);
+			g2d.drawImage(DROP_SHADOW_LEFT, 0, 10, 10, height20, null);
+			g2d.drawImage(DROP_SHADOW_RIGHT, width10, 10, 10, height20, null);
+		}
 
-			g2d.drawImage(DROP_SHADOW_TOP, 10, 0, getWidth() - 20, 10, null);
-			g2d.drawImage(DROP_SHADOW_BOTTOM, 10, getHeight() - 10,
-					getWidth() - 20, 10, null);
-			g2d.drawImage(DROP_SHADOW_LEFT, 0, 10, 10, getHeight() - 20, null);
-			g2d.drawImage(DROP_SHADOW_RIGHT, getWidth() - 10, 10, 10,
-					getHeight() - 20, null);
-
+		private void drawWidgets(Graphics2D g2d, float time) {
 			g2d.setFont(textFont);
 			for (Widget widget : widgets) {
 				if (widget.isVisible()) {
@@ -264,6 +279,13 @@ public class MapViewer {
 					widget.draw(g2d, time);
 				}
 			}
+		}
+
+		private float calculateTimeSpanSinceLastDrawInSeconds() {
+			long currentTime = System.currentTimeMillis();
+			float time = Math.min(Math.max(0, currentTime - lastTime), 100) / 1000.0f;
+			lastTime = currentTime;
+			return time;
 		}
 	}
 
@@ -311,7 +333,7 @@ public class MapViewer {
 	private JPopupMenu menu = new JPopupMenu();
 	public int strongholdCount, villageCount;
 
-	private Map worldMap;
+	private Map map;
 	private MapObject selectedObject = null;
 	private Point lastMouse;
 	public Point lastRightClick = null;
@@ -326,7 +348,6 @@ public class MapViewer {
 	private FontMetrics textMetrics;
 
 	private ArrayList<Widget> widgets = new ArrayList<Widget>();
-	private long lastTime;
 
 	public MapViewer(Project proj) {
 		panSpeed = new Point2D.Double();
@@ -338,8 +359,8 @@ public class MapViewer {
 			}
 		}
 
-		worldMap = new Map(fragmentManager);
-		worldMap.setZoom(curZoom);
+		map = new Map(fragmentManager);
+		map.setZoom(curZoom);
 
 		widgets.add(new FpsWidget(this)
 				.setAnchorPoint(CornerAnchorPoint.BOTTOM_LEFT));
@@ -361,7 +382,6 @@ public class MapViewer {
 		component.addMouseWheelListener(listeners);
 
 		component.setFocusable(true);
-		lastTime = System.currentTimeMillis();
 
 		textMetrics = component.getFontMetrics(textFont);
 	}
@@ -384,11 +404,11 @@ public class MapViewer {
 	}
 
 	public void saveToFile(File f) {
-		BufferedImage image = new BufferedImage(worldMap.getViewerWidth(),
-				worldMap.getViewerHeight(), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = new BufferedImage(map.getViewerWidth(),
+				map.getViewerHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = image.createGraphics();
 
-		worldMap.draw(g2d, 0);
+		map.draw(g2d, 0);
 
 		for (Widget widget : widgets)
 			if (widget.isVisible())
@@ -420,13 +440,13 @@ public class MapViewer {
 
 	public void dispose() {
 		Log.debug("Disposing of map viewer.");
-		worldMap.dispose();
+		map.dispose();
 		menu.removeAll();
 		proj = null;
 	}
 
 	public void centerAt(long x, long y) {
-		worldMap.centerOn(x, y);
+		map.centerOn(x, y);
 	}
 
 	public void repaint() {
@@ -442,7 +462,7 @@ public class MapViewer {
 	}
 
 	public Map getMap() {
-		return worldMap;
+		return map;
 	}
 
 	@Deprecated
