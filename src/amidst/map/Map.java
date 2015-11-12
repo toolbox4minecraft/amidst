@@ -9,6 +9,129 @@ import java.awt.geom.Point2D;
 import amidst.map.layers.BiomeLayer;
 
 public class Map {
+	public class Drawer {
+		private AffineTransform mat = new AffineTransform();
+		private boolean firstDraw = true;
+		private Fragment currentFragment;
+
+		public void draw(Graphics2D g, float time) {
+			AffineTransform originalTransform = g.getTransform();
+			if (firstDraw) {
+				firstDraw = false;
+				centerOn(0, 0);
+			}
+
+			synchronized (drawLock) {
+				int size = (int) (Fragment.SIZE * scale);
+				int w = width / size + 2;
+				int h = height / size + 2;
+
+				while (tileWidth < w) {
+					addColumn(END);
+				}
+				while (tileWidth > w) {
+					removeColumn(END);
+				}
+				while (tileHeight < h) {
+					addRow(END);
+				}
+				while (tileHeight > h) {
+					removeRow(END);
+				}
+
+				while (start.x > 0) {
+					start.x -= size;
+					addColumn(START);
+					removeColumn(END);
+				}
+				while (start.x < -size) {
+					start.x += size;
+					addColumn(END);
+					removeColumn(START);
+				}
+				while (start.y > 0) {
+					start.y -= size;
+					addRow(START);
+					removeRow(END);
+				}
+				while (start.y < -size) {
+					start.y += size;
+					addRow(END);
+					removeRow(START);
+				}
+
+				drawLayer(originalTransform, Fragment.SIZE, w,
+						createImageLayersDrawer(g, time));
+
+				g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+						RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+				fragmentManager.updateAllLayers(time);
+
+				drawLayer(originalTransform, Fragment.SIZE, w,
+						createLiveLayersDrawer(g, time));
+
+				drawLayer(originalTransform, Fragment.SIZE, w,
+						createObjectsDrawer(g));
+
+				g.setTransform(originalTransform);
+			}
+		}
+
+		private void drawLayer(AffineTransform originalTransform, int size,
+				int w, Runnable currentDrawer) {
+			currentFragment = startNode;
+			if (currentFragment.hasNext()) {
+				initMat(originalTransform);
+				while (currentFragment.hasNext()) {
+					currentFragment = currentFragment.getNext();
+					currentDrawer.run();
+					mat.translate(size, 0);
+					if (currentFragment.isEndOfLine()) {
+						mat.translate(-size * w, size);
+					}
+				}
+			}
+		}
+
+		private Runnable createImageLayersDrawer(final Graphics2D g,
+				final float time) {
+			return new Runnable() {
+				@Override
+				public void run() {
+					currentFragment.drawImageLayers(time, g, mat);
+				}
+			};
+		}
+
+		private Runnable createLiveLayersDrawer(final Graphics2D g,
+				final float time) {
+			return new Runnable() {
+				@Override
+				public void run() {
+					currentFragment.drawLiveLayers(time, g, mat);
+				}
+			};
+		}
+
+		private Runnable createObjectsDrawer(final Graphics2D g) {
+			return new Runnable() {
+				@Override
+				public void run() {
+					currentFragment.drawObjects(g, mat);
+				}
+			};
+		}
+
+		private void initMat(AffineTransform originalTransform) {
+			mat.setToIdentity();
+			mat.concatenate(originalTransform);
+			mat.translate(start.x, start.y);
+			mat.scale(scale, scale);
+		}
+	}
+
+	private Drawer drawer = new Drawer();
+
 	public static Map instance = null;
 	private static final boolean START = true;
 	private static final boolean END = false;
@@ -26,13 +149,10 @@ public class Map {
 
 	private final Object resizeLock = new Object();
 	private final Object drawLock = new Object();
-	private AffineTransform mat = new AffineTransform();
-
-	private boolean firstDraw = true;
 
 	public Map(FragmentManager fragmentManager) {
 		this.fragmentManager = fragmentManager;
-		fragmentManager.setMap(this);
+		this.fragmentManager.setMap(this);
 
 		addStart(0, 0);
 
@@ -56,105 +176,7 @@ public class Map {
 	}
 
 	public void draw(Graphics2D g, float time) {
-		AffineTransform originalTransform = g.getTransform();
-		if (firstDraw) {
-			firstDraw = false;
-			centerOn(0, 0);
-		}
-
-		synchronized (drawLock) {
-			int size = (int) (Fragment.SIZE * scale);
-			int w = width / size + 2;
-			int h = height / size + 2;
-
-			while (tileWidth < w) {
-				addColumn(END);
-			}
-			while (tileWidth > w) {
-				removeColumn(END);
-			}
-			while (tileHeight < h) {
-				addRow(END);
-			}
-			while (tileHeight > h) {
-				removeRow(END);
-			}
-
-			while (start.x > 0) {
-				start.x -= size;
-				addColumn(START);
-				removeColumn(END);
-			}
-			while (start.x < -size) {
-				start.x += size;
-				addColumn(END);
-				removeColumn(START);
-			}
-			while (start.y > 0) {
-				start.y -= size;
-				addRow(START);
-				removeRow(END);
-			}
-			while (start.y < -size) {
-				start.y += size;
-				addRow(END);
-				removeRow(START);
-			}
-
-			size = Fragment.SIZE;
-
-			Fragment fragment = startNode;
-			if (fragment.hasNext()) {
-				initMat(originalTransform);
-				while (fragment.hasNext()) {
-					fragment = fragment.getNext();
-					fragment.drawImageLayers(time, g, mat);
-					mat.translate(size, 0);
-					if (fragment.isEndOfLine()) {
-						mat.translate(-size * w, size);
-					}
-				}
-			}
-
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-			fragmentManager.updateAllLayers(time);
-
-			fragment = startNode;
-			if (fragment.hasNext()) {
-				initMat(originalTransform);
-				while (fragment.hasNext()) {
-					fragment = fragment.getNext();
-					fragment.drawLiveLayers(time, g, mat);
-					mat.translate(size, 0);
-					if (fragment.isEndOfLine()) {
-						mat.translate(-size * w, size);
-					}
-				}
-			}
-
-			fragment = startNode;
-			if (fragment.hasNext()) {
-				initMat(originalTransform);
-				while (fragment.hasNext()) {
-					fragment = fragment.getNext();
-					fragment.drawObjects(g, mat);
-					mat.translate(size, 0);
-					if (fragment.isEndOfLine()) {
-						mat.translate(-size * w, size);
-					}
-				}
-			}
-
-			g.setTransform(originalTransform);
-		}
-	}
-
-	private void initMat(AffineTransform originalTransform) {
-		mat.setToIdentity();
-		mat.concatenate(originalTransform);
-		mat.translate(start.x, start.y);
-		mat.scale(scale, scale);
+		drawer.draw(g, time);
 	}
 
 	public void addStart(int x, int y) {
