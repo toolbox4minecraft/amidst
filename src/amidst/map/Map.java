@@ -10,29 +10,30 @@ import amidst.map.layers.BiomeLayer;
 
 public class Map {
 	public static Map instance = null;
-	private static final boolean START = true, END = false;
+	private static final boolean START = true;
+	private static final boolean END = false;
 	private FragmentManager fragmentManager;
 
 	private Fragment startNode = new Fragment();
 
 	private double scale = 0.25;
-	private Point2D.Double start;
+	private Point2D.Double start = new Point2D.Double();
 
-	public int tileWidth, tileHeight;
-	public int width = 1, height = 1;
+	public int tileWidth;
+	public int tileHeight;
+	public int width = 1;
+	public int height = 1;
 
-	private final Object resizeLock = new Object(), drawLock = new Object();
-	private AffineTransform mat;
+	private final Object resizeLock = new Object();
+	private final Object drawLock = new Object();
+	private AffineTransform mat = new AffineTransform();
 
 	private boolean firstDraw = true;
 
-	// TODO : This must be changed with the removal of ChunkManager
 	public Map(FragmentManager fragmentManager) {
 		this.fragmentManager = fragmentManager;
 		fragmentManager.setMap(this);
-		mat = new AffineTransform();
 
-		start = new Point2D.Double();
 		addStart(0, 0);
 
 		instance = this;
@@ -66,14 +67,18 @@ public class Map {
 			int w = width / size + 2;
 			int h = height / size + 2;
 
-			while (tileWidth < w)
+			while (tileWidth < w) {
 				addColumn(END);
-			while (tileWidth > w)
+			}
+			while (tileWidth > w) {
 				removeColumn(END);
-			while (tileHeight < h)
+			}
+			while (tileHeight < h) {
 				addRow(END);
-			while (tileHeight > h)
+			}
+			while (tileHeight > h) {
 				removeRow(END);
+			}
 
 			while (start.x > 0) {
 				start.x -= size;
@@ -96,56 +101,60 @@ public class Map {
 				removeRow(START);
 			}
 
-			Fragment frag = startNode;
 			size = Fragment.SIZE;
-			if (frag.hasNext()) {
-				mat.setToIdentity();
-				mat.concatenate(originalTransform);
-				mat.translate(start.x, start.y);
-				mat.scale(scale, scale);
-				while (frag.hasNext()) {
-					frag = frag.getNext();
-					frag.drawImageLayers(time, g, mat);
+
+			Fragment fragment = startNode;
+			if (fragment.hasNext()) {
+				initMat(originalTransform);
+				while (fragment.hasNext()) {
+					fragment = fragment.getNext();
+					fragment.drawImageLayers(time, g, mat);
 					mat.translate(size, 0);
-					if (frag.isEndOfLine())
+					if (fragment.isEndOfLine()) {
 						mat.translate(-size * w, size);
-				}
-			}
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-			fragmentManager.updateAllLayers(time);
-			frag = startNode;
-			if (frag.hasNext()) {
-				mat.setToIdentity();
-				mat.concatenate(originalTransform);
-				mat.translate(start.x, start.y);
-				mat.scale(scale, scale);
-				while (frag.hasNext()) {
-					frag = frag.getNext();
-					frag.drawLiveLayers(time, g, mat);
-					mat.translate(size, 0);
-					if (frag.isEndOfLine())
-						mat.translate(-size * w, size);
+					}
 				}
 			}
 
-			frag = startNode;
-			if (frag.hasNext()) {
-				mat.setToIdentity();
-				mat.concatenate(originalTransform);
-				mat.translate(start.x, start.y);
-				mat.scale(scale, scale);
-				while (frag.hasNext()) {
-					frag = frag.getNext();
-					frag.drawObjects(g, mat);
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+			fragmentManager.updateAllLayers(time);
+
+			fragment = startNode;
+			if (fragment.hasNext()) {
+				initMat(originalTransform);
+				while (fragment.hasNext()) {
+					fragment = fragment.getNext();
+					fragment.drawLiveLayers(time, g, mat);
 					mat.translate(size, 0);
-					if (frag.isEndOfLine())
+					if (fragment.isEndOfLine()) {
 						mat.translate(-size * w, size);
+					}
+				}
+			}
+
+			fragment = startNode;
+			if (fragment.hasNext()) {
+				initMat(originalTransform);
+				while (fragment.hasNext()) {
+					fragment = fragment.getNext();
+					fragment.drawObjects(g, mat);
+					mat.translate(size, 0);
+					if (fragment.isEndOfLine()) {
+						mat.translate(-size * w, size);
+					}
 				}
 			}
 
 			g.setTransform(originalTransform);
 		}
+	}
+
+	private void initMat(AffineTransform originalTransform) {
+		mat.setToIdentity();
+		mat.concatenate(originalTransform);
+		mat.translate(start.x, start.y);
+		mat.scale(scale, scale);
 	}
 
 	public void addStart(int x, int y) {
@@ -161,37 +170,37 @@ public class Map {
 	public void addColumn(boolean start) {
 		synchronized (resizeLock) {
 			int x = 0;
-			Fragment frag = startNode;
+			Fragment fragment = startNode;
 			if (start) {
-				x = frag.getNext().getBlockX() - Fragment.SIZE;
-				Fragment newFrag = fragmentManager.requestFragment(x,
-						frag.getNext().getBlockY());
+				x = fragment.getNext().getBlockX() - Fragment.SIZE;
+				Fragment newFrag = fragmentManager.requestFragment(x, fragment
+						.getNext().getBlockY());
 				newFrag.setNext(startNode.getNext());
 				startNode.setNext(newFrag);
 			}
-			while (frag.hasNext()) {
-				frag = frag.getNext();
-				if (frag.isEndOfLine()) {
+			while (fragment.hasNext()) {
+				fragment = fragment.getNext();
+				if (fragment.isEndOfLine()) {
 					if (start) {
-						if (frag.hasNext()) {
+						if (fragment.hasNext()) {
 							Fragment newFrag = fragmentManager.requestFragment(
-									x, frag.getBlockY() + Fragment.SIZE);
-							newFrag.setNext(frag.getNext());
-							frag.setNext(newFrag);
-							frag = newFrag;
+									x, fragment.getBlockY() + Fragment.SIZE);
+							newFrag.setNext(fragment.getNext());
+							fragment.setNext(newFrag);
+							fragment = newFrag;
 						}
 					} else {
 						Fragment newFrag = fragmentManager.requestFragment(
-								frag.getBlockX() + Fragment.SIZE, frag.getBlockY());
+								fragment.getBlockX() + Fragment.SIZE,
+								fragment.getBlockY());
 
-						if (frag.hasNext()) {
-							newFrag.setNext(frag.getNext());
+						if (fragment.hasNext()) {
+							newFrag.setNext(fragment.getNext());
 						}
 						newFrag.setEndOfLine(true);
-						frag.setEndOfLine(false);
-						frag.setNext(newFrag);
-						frag = newFrag;
-
+						fragment.setEndOfLine(false);
+						fragment.setNext(newFrag);
+						fragment = newFrag;
 					}
 				}
 			}
@@ -205,16 +214,17 @@ public class Map {
 				for (int i = 0; i < tileWidth; i++) {
 					Fragment frag = startNode.getNext();
 					frag.remove();
-					fragmentManager.returnFragment(frag);
+					fragmentManager.recycleFragment(frag);
 				}
 			} else {
-				Fragment frag = startNode;
-				while (frag.hasNext())
-					frag = frag.getNext();
+				Fragment fragment = startNode;
+				while (fragment.hasNext()) {
+					fragment = fragment.getNext();
+				}
 				for (int i = 0; i < tileWidth; i++) {
-					frag.remove();
-					fragmentManager.returnFragment(frag);
-					frag = frag.getPrevious();
+					fragment.remove();
+					fragmentManager.recycleFragment(fragment);
+					fragment = fragment.getPrevious();
 				}
 			}
 			tileHeight--;
@@ -223,59 +233,62 @@ public class Map {
 
 	public void addRow(boolean start) {
 		synchronized (resizeLock) {
-			Fragment frag = startNode;
+			Fragment fragment = startNode;
 			int y;
 			if (start) {
-				frag = startNode.getNext();
-				y = frag.getBlockY() - Fragment.SIZE;
+				fragment = startNode.getNext();
+				y = fragment.getBlockY() - Fragment.SIZE;
 			} else {
-				while (frag.hasNext())
-					frag = frag.getNext();
-				y = frag.getBlockY() + Fragment.SIZE;
+				while (fragment.hasNext()) {
+					fragment = fragment.getNext();
+				}
+				y = fragment.getBlockY() + Fragment.SIZE;
 			}
 
 			tileHeight++;
-			Fragment newFrag = fragmentManager.requestFragment(
-					startNode.getNext().getBlockX(), y);
+			Fragment newFrag = fragmentManager.requestFragment(startNode
+					.getNext().getBlockX(), y);
 			Fragment chainFrag = newFrag;
 			for (int i = 1; i < tileWidth; i++) {
 				Fragment tempFrag = fragmentManager.requestFragment(
-						chainFrag.getBlockX() + Fragment.SIZE, chainFrag.getBlockY());
+						chainFrag.getBlockX() + Fragment.SIZE,
+						chainFrag.getBlockY());
 				chainFrag.setNext(tempFrag);
 				chainFrag = tempFrag;
-				if (i == (tileWidth - 1))
+				if (i == (tileWidth - 1)) {
 					chainFrag.setEndOfLine(true);
+				}
 			}
 			if (start) {
-				chainFrag.setNext(frag);
+				chainFrag.setNext(fragment);
 				startNode.setNext(newFrag);
 			} else {
-				frag.setNext(newFrag);
+				fragment.setNext(newFrag);
 			}
 		}
 	}
 
 	public void removeColumn(boolean start) {
 		synchronized (resizeLock) {
-			Fragment frag = startNode;
+			Fragment fragment = startNode;
 			if (start) {
-				fragmentManager.returnFragment(frag.getNext());
+				fragmentManager.recycleFragment(fragment.getNext());
 				startNode.getNext().remove();
 			}
-			while (frag.hasNext()) {
-				frag = frag.getNext();
-				if (frag.isEndOfLine()) {
+			while (fragment.hasNext()) {
+				fragment = fragment.getNext();
+				if (fragment.isEndOfLine()) {
 					if (start) {
-						if (frag.hasNext()) {
-							Fragment tempFrag = frag.getNext();
+						if (fragment.hasNext()) {
+							Fragment tempFrag = fragment.getNext();
 							tempFrag.remove();
-							fragmentManager.returnFragment(tempFrag);
+							fragmentManager.recycleFragment(tempFrag);
 						}
 					} else {
-						frag.getPrevious().setEndOfLine(true);
-						frag.remove();
-						fragmentManager.returnFragment(frag);
-						frag = frag.getPrevious();
+						fragment.getPrevious().setEndOfLine(true);
+						fragment.remove();
+						fragmentManager.recycleFragment(fragment);
+						fragment = fragment.getPrevious();
 					}
 				}
 			}
@@ -298,13 +311,15 @@ public class Map {
 		long startX = x - fragOffsetX;
 		long startY = y - fragOffsetY;
 		synchronized (drawLock) {
-			while (tileHeight > 1)
+			while (tileHeight > 1) {
 				removeRow(false);
-			while (tileWidth > 1)
+			}
+			while (tileWidth > 1) {
 				removeColumn(false);
+			}
 			Fragment frag = startNode.getNext();
 			frag.remove();
-			fragmentManager.returnFragment(frag);
+			fragmentManager.recycleFragment(frag);
 			// TODO: Support longs?
 			double offsetX = width >> 1;
 			double offsetY = height >> 1;

@@ -119,7 +119,7 @@ public class FragmentManager {
 		}
 	}
 
-	public void returnFragment(Fragment frag) {
+	public void recycleFragment(Fragment frag) {
 		recycleQueue.offer(frag);
 	}
 
