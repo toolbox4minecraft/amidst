@@ -54,27 +54,27 @@ import amidst.resources.ResourceLoader;
 
 public class MapViewer extends JComponent implements MouseListener,
 		MouseWheelListener, KeyListener {
-	private static final long serialVersionUID = -8309927053337294612L;
+	private static final BufferedImage DROP_SHADOW_BOTTOM_LEFT = ResourceLoader
+			.getImage("dropshadow/inner_bottom_left.png");
+	private static final BufferedImage DROP_SHADOW_BOTTOM_RIGHT = ResourceLoader
+			.getImage("dropshadow/inner_bottom_right.png");
+	private static final BufferedImage DROP_SHADOW_TOP_LEFT = ResourceLoader
+			.getImage("dropshadow/inner_top_left.png");
+	private static final BufferedImage DROP_SHADOW_TOP_RIGHT = ResourceLoader
+			.getImage("dropshadow/inner_top_right.png");
+	private static final BufferedImage DROP_SHADOW_BOTTOM = ResourceLoader
+			.getImage("dropshadow/inner_bottom.png");
+	private static final BufferedImage DROP_SHADOW_TOP = ResourceLoader
+			.getImage("dropshadow/inner_top.png");
+	private static final BufferedImage DROP_SHADOW_LEFT = ResourceLoader
+			.getImage("dropshadow/inner_left.png");
+	private static final BufferedImage DROP_SHADOW_RIGHT = ResourceLoader
+			.getImage("dropshadow/inner_right.png");
+
 	// TODO: This should likely be moved somewhere else.
 	private static FragmentManager fragmentManager;
 	private static PlayerLayer playerLayer;
 
-	private Widget mouseOwner;
-	private static BufferedImage dropShadowBottomLeft = ResourceLoader
-			.getImage("dropshadow/inner_bottom_left.png"),
-			dropShadowBottomRight = ResourceLoader
-					.getImage("dropshadow/inner_bottom_right.png"),
-			dropShadowTopLeft = ResourceLoader
-					.getImage("dropshadow/inner_top_left.png"),
-			dropShadowTopRight = ResourceLoader
-					.getImage("dropshadow/inner_top_right.png"),
-			dropShadowBottom = ResourceLoader
-					.getImage("dropshadow/inner_bottom.png"),
-			dropShadowTop = ResourceLoader.getImage("dropshadow/inner_top.png"),
-			dropShadowLeft = ResourceLoader
-					.getImage("dropshadow/inner_left.png"),
-			dropShadowRight = ResourceLoader
-					.getImage("dropshadow/inner_right.png");
 	static {
 		playerLayer = new PlayerLayer();
 		ImageLayer[] imageLayers = { new BiomeLayer(), new SlimeLayer() };
@@ -87,6 +87,8 @@ public class MapViewer extends JComponent implements MouseListener,
 				liveLayers, iconLayers);
 		fragmentManager = new FragmentManager(layerContainer);
 	}
+
+	private Widget mouseOwner;
 
 	private Project proj;
 
@@ -203,17 +205,17 @@ public class MapViewer extends JComponent implements MouseListener,
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		worldMap.draw((Graphics2D) g2d.create(), time);
-		g2d.drawImage(dropShadowTopLeft, 0, 0, null);
-		g2d.drawImage(dropShadowTopRight, getWidth() - 10, 0, null);
-		g2d.drawImage(dropShadowBottomLeft, 0, getHeight() - 10, null);
-		g2d.drawImage(dropShadowBottomRight, getWidth() - 10, getHeight() - 10,
-				null);
+		g2d.drawImage(DROP_SHADOW_TOP_LEFT, 0, 0, null);
+		g2d.drawImage(DROP_SHADOW_TOP_RIGHT, getWidth() - 10, 0, null);
+		g2d.drawImage(DROP_SHADOW_BOTTOM_LEFT, 0, getHeight() - 10, null);
+		g2d.drawImage(DROP_SHADOW_BOTTOM_RIGHT, getWidth() - 10,
+				getHeight() - 10, null);
 
-		g2d.drawImage(dropShadowTop, 10, 0, getWidth() - 20, 10, null);
-		g2d.drawImage(dropShadowBottom, 10, getHeight() - 10, getWidth() - 20,
-				10, null);
-		g2d.drawImage(dropShadowLeft, 0, 10, 10, getHeight() - 20, null);
-		g2d.drawImage(dropShadowRight, getWidth() - 10, 10, 10,
+		g2d.drawImage(DROP_SHADOW_TOP, 10, 0, getWidth() - 20, 10, null);
+		g2d.drawImage(DROP_SHADOW_BOTTOM, 10, getHeight() - 10,
+				getWidth() - 20, 10, null);
+		g2d.drawImage(DROP_SHADOW_LEFT, 0, 10, 10, getHeight() - 20, null);
+		g2d.drawImage(DROP_SHADOW_RIGHT, getWidth() - 10, 10, 10,
 				getHeight() - 20, null);
 
 		g2d.setFont(textFont);
