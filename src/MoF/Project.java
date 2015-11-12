@@ -91,6 +91,10 @@ public class Project {
 		return mapViewer.getKeyListener();
 	}
 
+	public JPanel getPanel() {
+		return panel;
+	}
+
 	public MapViewer getMapViewer() {
 		return mapViewer;
 	}

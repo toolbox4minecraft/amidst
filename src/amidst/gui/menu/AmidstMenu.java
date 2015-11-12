@@ -74,10 +74,10 @@ public class AmidstMenu extends JMenuBar {
 				addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						if (window.curProject.isSaveLoaded()) {
-							for (MapObjectPlayer player : window.curProject.getSaveLoader().getPlayers()) {
+						if (window.getProject().isSaveLoaded()) {
+							for (MapObjectPlayer player : window.getProject().getSaveLoader().getPlayers()) {
 								if (player.needSave) {
-									window.curProject.getSaveLoader().movePlayer(player.getName(), player.globalX, player.globalY);
+									window.getProject().getSaveLoader().movePlayer(player.getName(), player.globalX, player.globalY);
 									player.needSave = false;
 								}
 							}
@@ -313,7 +313,7 @@ public class AmidstMenu extends JMenuBar {
 								try {
 									long x = Long.parseLong(c[0]);
 									long y = Long.parseLong(c[1]);
-									window.curProject.moveMapTo(x, y);
+									window.getProject().moveMapTo(x, y);
 								} catch (NumberFormatException e1) {
 									Log.w("Invalid location entered, ignoring.");
 									e1.printStackTrace();
@@ -327,13 +327,13 @@ public class AmidstMenu extends JMenuBar {
 					addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
-							if (window.curProject.isSaveLoaded()) {
-								List<MapObjectPlayer> playerList = window.curProject.getSaveLoader().getPlayers();
+							if (window.getProject().isSaveLoaded()) {
+								List<MapObjectPlayer> playerList = window.getProject().getSaveLoader().getPlayers();
 								MapObjectPlayer[] players = playerList.toArray(new MapObjectPlayer[playerList.size()]);
 								goToChosenPoint(players, "Player");
 								MapObjectPlayer p = choose("Go to", "Select player:", players);
 								if (p != null)
-									window.curProject.moveMapTo(p.globalX, p.globalY);
+									window.getProject().moveMapTo(p.globalX, p.globalY);
 							}
 						}
 					});
@@ -414,7 +414,7 @@ public class AmidstMenu extends JMenuBar {
 							String s = fc.getSelectedFile().toString();
 							if (!s.toLowerCase().endsWith(".png"))
 								s += ".png";
-							window.curProject.getMapViewer().saveToFile(new File(s));
+							window.getProject().getMapViewer().saveToFile(new File(s));
 						}
 					}
 				});
@@ -639,6 +639,6 @@ public class AmidstMenu extends JMenuBar {
 
 		T p = choose("Go to", "Select " + name + ":", points);
 		if (p != null)
-			window.curProject.moveMapTo(p.x, p.y);
+			window.getProject().moveMapTo(p.x, p.y);
 	}
 }
