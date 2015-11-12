@@ -241,13 +241,6 @@ public class MapViewer extends JComponent {
 	private ArrayList<Widget> widgets = new ArrayList<Widget>();
 	private long lastTime;
 
-	public void dispose() {
-		Log.debug("Disposing of map viewer.");
-		worldMap.dispose();
-		menu.removeAll();
-		proj = null;
-	}
-
 	public MapViewer(Project proj) {
 		panSpeed = new Point2D.Double();
 		this.proj = proj;
@@ -258,7 +251,7 @@ public class MapViewer extends JComponent {
 			}
 		}
 
-		worldMap = new Map(fragmentManager); // TODO: implement more layers
+		worldMap = new Map(fragmentManager);
 		worldMap.setZoom(curZoom);
 
 		widgets.add(new FpsWidget(this)
@@ -357,10 +350,6 @@ public class MapViewer extends JComponent {
 		}
 	}
 
-	public void centerAt(long x, long y) {
-		worldMap.centerOn(x, y);
-	}
-
 	public void adjustZoom(Point position, int notches) {
 		zoomMouse = position;
 		if (notches > 0) {
@@ -376,16 +365,6 @@ public class MapViewer extends JComponent {
 				zoomTicksRemaining = 100;
 			}
 		}
-	}
-
-	public MapObject getSelectedObject() {
-		return selectedObject;
-	}
-
-	public void movePlayer(String name, ActionEvent e) {
-		// PixelInfo p = getCursorInformation(new Point(tempX, tempY));
-
-		// proj.movePlayer(name, p);
 	}
 
 	public void saveToFile(File f) {
@@ -407,6 +386,27 @@ public class MapViewer extends JComponent {
 
 		g2d.dispose();
 		image.flush();
+	}
+
+	public void movePlayer(String name, ActionEvent e) {
+		// PixelInfo p = getCursorInformation(new Point(tempX, tempY));
+
+		// proj.movePlayer(name, p);
+	}
+
+	public void dispose() {
+		Log.debug("Disposing of map viewer.");
+		worldMap.dispose();
+		menu.removeAll();
+		proj = null;
+	}
+
+	public void centerAt(long x, long y) {
+		worldMap.centerOn(x, y);
+	}
+
+	public MapObject getSelectedObject() {
+		return selectedObject;
 	}
 
 	public KeyListener getKeyListener() {
