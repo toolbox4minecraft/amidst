@@ -29,7 +29,7 @@ public class BiomeColorMenuFactory {
 			BiomeColorProfileVisitor {
 		private List<JCheckBoxMenuItem> allCheckBoxes = new ArrayList<JCheckBoxMenuItem>();
 		private List<JMenu> menuStack = new ArrayList<JMenu>();
-		private JCheckBoxMenuItem firstCheckBox;
+		private ActionListener firstListener;
 
 		private BiomeColorProfileVisitorImpl(JMenu parentMenu) {
 			menuStack.add(parentMenu);
@@ -48,7 +48,6 @@ public class BiomeColorMenuFactory {
 		public void visitProfile(BiomeColorProfile profile) {
 			JCheckBoxMenuItem checkBox = createCheckBox(profile);
 			allCheckBoxes.add(checkBox);
-			initFirstCheckBox(checkBox);
 			getLastMenu().add(checkBox);
 		}
 
@@ -61,22 +60,12 @@ public class BiomeColorMenuFactory {
 			return menuStack.size() == 1;
 		}
 
-		private void initFirstCheckBox(JCheckBoxMenuItem checkBox) {
-			if (firstCheckBox == null) {
-				firstCheckBox = checkBox;
-			}
-		}
-
 		private JMenu getLastMenu() {
 			return menuStack.get(menuStack.size() - 1);
 		}
 
 		private void removeLastMenu() {
 			menuStack.remove(menuStack.size() - 1);
-		}
-
-		public JCheckBoxMenuItem getFirstCheckBox() {
-			return firstCheckBox;
 		}
 
 		private JCheckBoxMenuItem createCheckBox(BiomeColorProfile profile) {
@@ -101,7 +90,7 @@ public class BiomeColorMenuFactory {
 
 		private ActionListener listener(final BiomeColorProfile profile,
 				final JCheckBoxMenuItem selectedCheckBox) {
-			return new ActionListener() {
+			ActionListener result = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					for (JCheckBoxMenuItem checkBox : allCheckBoxes) {
@@ -111,6 +100,16 @@ public class BiomeColorMenuFactory {
 					profile.activate();
 				}
 			};
+			if (firstListener == null) {
+				firstListener = result;
+			}
+			return result;
+		}
+
+		public void selectFirstProfile() {
+			if (firstListener != null) {
+				firstListener.actionPerformed(null);
+			}
 		}
 	}
 
@@ -131,7 +130,7 @@ public class BiomeColorMenuFactory {
 				parentMenu);
 		createMenuItems(new File("./biome"), visitor);
 		parentMenu.add(createReloadMenuItem());
-		visitor.getFirstCheckBox().setSelected(true);
+		visitor.selectFirstProfile();
 	}
 
 	private void createMenuItems(File folder, BiomeColorProfileVisitor visitor) {
