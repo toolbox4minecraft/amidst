@@ -17,7 +17,6 @@ import MoF.Project;
 import MoF.SaveLoader;
 import MoF.UpdateManager;
 import amidst.Options;
-import amidst.Util;
 import amidst.gui.LicenseWindow;
 import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
@@ -66,7 +65,6 @@ public class MenuActions {
 			if (seed.equals(""))
 				seed = "" + (new Random()).nextLong();
 			if (worldType != null) {
-				window.clearProject();
 				window.setProject(new Project(seed, worldType.getValue()));
 			}
 		}
@@ -87,37 +85,15 @@ public class MenuActions {
 
 		// If a string was returned, say so.
 		if (worldType != null) {
-			window.clearProject();
 			window.setProject(new Project(seed, worldType.getValue()));
 		}
 	}
 
 	public void newFromFileOrFolder() {
-		JFileChooser fc = new JFileChooser();
-		fc.setFileFilter(SaveLoader.getFilter());
-		fc.setAcceptAllFileFilterUsed(false);
-		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		File savesDir = null;
-		if (Util.profileDirectory != null)
-			savesDir = new File(Util.profileDirectory, "saves");
-		else
-			savesDir = new File(Util.minecraftDirectory, "saves");
-		// if (!savesDir.mkdirs()) {
-		// Log.w("Unable to create save directory!");
-		// return;
-		// }
-		fc.setCurrentDirectory(savesDir);
-		fc.setFileHidingEnabled(false);
-		if (fc.showOpenDialog(window.getFrame()) == JFileChooser.APPROVE_OPTION) {
-			File f = fc.getSelectedFile();
-
-			SaveLoader s = null;
-			if (f.isDirectory())
-				s = new SaveLoader(new File(f.getAbsoluteFile() + "/level.dat"));
-			else
-				s = new SaveLoader(f);
-			window.clearProject();
-			window.setProject(new Project(s));
+		JFileChooser fileChooser = helper.createMinecraftMapFileChooser();
+		if (helper.showFileChooser(fileChooser) == JFileChooser.APPROVE_OPTION) {
+			window.setProject(new Project(helper.getSaveLoader(fileChooser
+					.getSelectedFile())));
 		}
 	}
 

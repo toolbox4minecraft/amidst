@@ -58,7 +58,7 @@ public class FinderWindow {
 		});
 	}
 
-	public void clearProject() {
+	private void clearProject() {
 		// TODO: Release resources
 		if (project != null) {
 			frame.removeKeyListener(project.getKeyListener());
@@ -68,12 +68,12 @@ public class FinderWindow {
 	}
 
 	public void setProject(Project project) {
+		clearProject();
+
 		this.project = project;
 		menuBar.setMapMenuEnabled(true);
-
 		frame.addKeyListener(project.getKeyListener());
 		contentPane.add(this.project.getPanel(), BorderLayout.CENTER);
-
 		frame.validate();
 	}
 

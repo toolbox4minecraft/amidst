@@ -3,8 +3,10 @@ package amidst.gui.menu;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
+import java.io.File;
 
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -14,6 +16,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import MoF.FinderWindow;
+import MoF.SaveLoader;
+import amidst.Util;
 
 public class MenuActionsHelper {
 	private FinderWindow window;
@@ -95,6 +99,37 @@ public class MenuActionsHelper {
 		int result = JOptionPane.showConfirmDialog(window.getFrame(), inputs,
 				title, JOptionPane.OK_CANCEL_OPTION);
 		return (result == 0) ? inputText.getText() : null;
+	}
+
+	public File getSavesDirectory() {
+		if (Util.profileDirectory != null) {
+			return new File(Util.profileDirectory, "saves");
+		} else {
+			return new File(Util.minecraftDirectory, "saves");
+		}
+	}
+
+	public SaveLoader getSaveLoader(File file) {
+		if (file.isDirectory()) {
+			return new SaveLoader(new File(file.getAbsoluteFile()
+					+ "/level.dat"));
+		} else {
+			return new SaveLoader(file);
+		}
+	}
+
+	public int showFileChooser(JFileChooser fileChooser) {
+		return fileChooser.showOpenDialog(window.getFrame());
+	}
+
+	public JFileChooser createMinecraftMapFileChooser() {
+		JFileChooser result = new JFileChooser();
+		result.setFileFilter(SaveLoader.getFilter());
+		result.setAcceptAllFileFilterUsed(false);
+		result.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		result.setCurrentDirectory(getSavesDirectory());
+		result.setFileHidingEnabled(false);
+		return result;
 	}
 
 	/**
