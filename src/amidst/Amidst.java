@@ -55,18 +55,9 @@ public class Amidst {
 		System.setProperty("sun.java2d.accthreshold", "0");
 		BiomeColorProfile.scan();
 		
-		if (Options.instance.minecraftJar != null)
-		{
-			try {
-				Util.setProfileDirectory(Options.instance.minecraftPath);
-				MinecraftUtil.setBiomeInterface(new Minecraft(new File(Options.instance.minecraftJar)).createInterface());
-				new MapWindow();
-			} catch (MalformedURLException e) {
-				Log.crash(e, "MalformedURLException on Minecraft load.");
-			}
-		}
-		else
-		{
+		if (Options.instance.minecraftJar != null) {
+			new Application().displayMapWindow(Options.instance.minecraftJar, Options.instance.minecraftPath);
+		} else {
 			new Application().displayVersionSelectWindow();
 		}
 	}

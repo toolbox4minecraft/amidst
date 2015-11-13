@@ -55,6 +55,7 @@ public class VersionSelectWindow {
 
 		frame.pack();
 		frame.setLocation(200, 200);
+		frame.setVisible(true);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -103,8 +104,9 @@ public class VersionSelectWindow {
 		}
 		versionSelector.addVersion(new RemoteVersionComponent(application));
 
-		if (selectedProfile != null)
+		if (selectedProfile != null) {
 			versionSelector.select(selectedProfile);
+		}
 
 		frame.pack();
 		try {

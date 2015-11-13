@@ -7,13 +7,15 @@ import amidst.version.MinecraftProfile.Status;
 import amidst.version.ProfileUpdateEvent;
 
 public class LocalVersionComponent extends VersionComponent {
+	private Application application;
 	private MinecraftProfile profile;
 
 	public LocalVersionComponent(Application application,
 			MinecraftProfile profile) {
-		super(application);
+		this.application = application;
 		this.profile = profile;
 		initProfile();
+		initComponent();
 	}
 
 	private void initProfile() {
@@ -36,7 +38,7 @@ public class LocalVersionComponent extends VersionComponent {
 
 	@Override
 	public void doLoad() {
-		versionSelected(profile);
+		application.displayMapWindow(profile);
 	}
 
 	@Override
@@ -46,7 +48,7 @@ public class LocalVersionComponent extends VersionComponent {
 
 	@Override
 	public String getVersionName() {
-		return "local:" + profile.getProfileName();
+		return profile.getProfileName();
 	}
 
 	@Override

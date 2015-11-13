@@ -6,6 +6,7 @@ import amidst.minecraft.remote.RemoteMinecraft;
 public class RemoteVersionComponent extends VersionComponent {
 	private static final String DEFAULT_ADDRESS = "127.0.0.1";
 
+	private Application application;
 	private String address;
 
 	public RemoteVersionComponent(Application application) {
@@ -13,13 +14,14 @@ public class RemoteVersionComponent extends VersionComponent {
 	}
 
 	public RemoteVersionComponent(Application application, String address) {
-		super(application);
+		this.application = application;
 		this.address = address;
+		initComponent();
 	}
 
 	@Override
 	public void doLoad() {
-		versionSelected(new RemoteMinecraft(address));
+		application.displayMapWindow(new RemoteMinecraft(address));
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class RemoteVersionComponent extends VersionComponent {
 
 	@Override
 	public String getVersionName() {
-		return "remote:" + address;
+		return address;
 	}
 
 	@Override

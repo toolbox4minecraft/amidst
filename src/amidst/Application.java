@@ -1,5 +1,6 @@
 package amidst;
 
+import java.io.File;
 import java.net.MalformedURLException;
 
 import MoF.MapWindow;
@@ -41,7 +42,12 @@ public class Application {
 
 	public void displayMapWindow(MinecraftProfile profile) {
 		Util.setProfileDirectory(profile.getGameDir());
-		displayMapWindow(createLocalMinecraftInterface(profile));
+		displayMapWindow(createLocalMinecraftInterface(profile.getJarFile()));
+	}
+
+	public void displayMapWindow(String jarFile, String gameDirectory) {
+		Util.setProfileDirectory(gameDirectory);
+		displayMapWindow(createLocalMinecraftInterface(new File(jarFile)));
 	}
 
 	private void displayMapWindow(IMinecraftInterface minecraftInterface) {
@@ -50,10 +56,9 @@ public class Application {
 		setMapWindow(new MapWindow());
 	}
 
-	private IMinecraftInterface createLocalMinecraftInterface(
-			MinecraftProfile profile) {
+	private IMinecraftInterface createLocalMinecraftInterface(File jarFile) {
 		try {
-			return new Minecraft(profile.getJarFile()).createInterface();
+			return new Minecraft(jarFile).createInterface();
 		} catch (MalformedURLException e) {
 			Log.crash(e, "MalformedURLException on Minecraft load.");
 			return null;

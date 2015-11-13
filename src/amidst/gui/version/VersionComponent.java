@@ -10,10 +10,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 
-import amidst.Application;
-import amidst.minecraft.remote.RemoteMinecraft;
 import amidst.resources.ResourceLoader;
-import amidst.version.MinecraftProfile;
 
 public abstract class VersionComponent {
 	@SuppressWarnings("serial")
@@ -131,22 +128,8 @@ public abstract class VersionComponent {
 	private static final Color DEFAULT_BG_COLOR = Color.white;
 
 	private Component component;
-	private Application application;
 	private boolean isLoading = false;
 	private boolean isSelected = false;
-
-	public VersionComponent(Application application) {
-		this.application = application;
-		this.component = new Component(getDisplayName());
-	}
-
-	protected void versionSelected(RemoteMinecraft minecraftInterface) {
-		application.displayMapWindow(minecraftInterface);
-	}
-
-	protected void versionSelected(MinecraftProfile profile) {
-		application.displayMapWindow(profile);
-	}
 
 	public boolean isSelected() {
 		return isSelected;
@@ -160,10 +143,6 @@ public abstract class VersionComponent {
 		return component;
 	}
 
-	protected void repaintComponent() {
-		component.repaint();
-	}
-
 	public void load() {
 		isLoading = true;
 		component.repaint();
@@ -173,6 +152,14 @@ public abstract class VersionComponent {
 				doLoad();
 			}
 		}).start();
+	}
+
+	protected void initComponent() {
+		this.component = new Component(getDisplayName());
+	}
+
+	protected void repaintComponent() {
+		component.repaint();
 	}
 
 	protected abstract void doLoad();
