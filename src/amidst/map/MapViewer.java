@@ -27,7 +27,7 @@ import javax.swing.JPopupMenu;
 
 import MoF.Project;
 import amidst.Options;
-import amidst.gui.menu.PlayerMenuItem;
+import amidst.gui.menu.PlayerMenuItemFactory;
 import amidst.logging.Log;
 import amidst.map.layers.BiomeLayer;
 import amidst.map.layers.GridLayer;
@@ -428,8 +428,10 @@ public class MapViewer {
 		playerLayer.isEnabled = project.isSaveLoaded();
 		if (playerLayer.isEnabled) {
 			playerLayer.setPlayers(project.getSaveLoader());
+			PlayerMenuItemFactory factory = new PlayerMenuItemFactory(this,
+					playerLayer);
 			for (MapObjectPlayer player : project.getSaveLoader().getPlayers()) {
-				menu.add(new PlayerMenuItem(this, player, playerLayer));
+				menu.add(factory.create(player));
 			}
 		}
 	}

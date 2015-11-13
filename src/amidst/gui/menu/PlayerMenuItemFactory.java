@@ -12,23 +12,28 @@ import amidst.map.MapObjectPlayer;
 import amidst.map.MapViewer;
 import amidst.map.layers.PlayerLayer;
 
-public class PlayerMenuItem extends JMenuItem implements ActionListener {
-	private PlayerLayer playerLayer;
-	private MapObjectPlayer player;
+public class PlayerMenuItemFactory {
 	private MapViewer mapViewer;
-	
-	public PlayerMenuItem(MapViewer mapViewer, MapObjectPlayer player, PlayerLayer playerLayer) {
-		super(player.getName());
-		this.playerLayer = playerLayer;
-		this.player = player;
+	private PlayerLayer playerLayer;
+
+	public PlayerMenuItemFactory(MapViewer mapViewer, PlayerLayer playerLayer) {
 		this.mapViewer = mapViewer;
-		addActionListener(this);
+		this.playerLayer = playerLayer;
 	}
-	
-	@Override
-	public void actionPerformed(ActionEvent event) {
+
+	public JMenuItem create(final MapObjectPlayer player) {
+		JMenuItem result = new JMenuItem(player.getName());
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				playerSelected(player);
+			}
+		});
+		return result;
+	}
+
+	private void playerSelected(MapObjectPlayer player) {
 		Map map = playerLayer.getMap();
-		
 		if (player.parentFragment != null) {
 			player.parentFragment.removeObject(player);
 		}
@@ -41,5 +46,4 @@ public class PlayerMenuItem extends JMenuItem implements ActionListener {
 			player.parentFragment = fragment;
 		}
 	}
-	
 }
