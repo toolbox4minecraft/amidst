@@ -12,7 +12,7 @@ import java.util.Random;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import MoF.FinderWindow;
+import MoF.MapWindow;
 import MoF.Project;
 import MoF.SaveLoader;
 import MoF.UpdateManager;
@@ -24,9 +24,9 @@ import amidst.map.layers.StrongholdLayer;
 
 public class MenuActions {
 	private MenuActionsHelper helper;
-	private FinderWindow window;
+	private MapWindow window;
 
-	public MenuActions(FinderWindow window) {
+	public MenuActions(MapWindow window) {
 		this.window = window;
 		this.helper = new MenuActionsHelper(window);
 	}

@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 
-import MoF.FinderWindow;
+import MoF.MapWindow;
 import amidst.Options;
 import amidst.Util;
 import amidst.logging.Log;
@@ -117,7 +117,7 @@ public class LocalVersionComponent extends VersionComponent {
 				try {
 					Util.setProfileDirectory(profile.getGameDir());
 					MinecraftUtil.setBiomeInterface(new Minecraft(profile.getJarFile()).createInterface());
-					new FinderWindow();
+					new MapWindow();
 					VersionSelectWindow.get().dispose();
 				} catch (MalformedURLException e) {
 					Log.crash(e, "MalformedURLException on Minecraft load.");

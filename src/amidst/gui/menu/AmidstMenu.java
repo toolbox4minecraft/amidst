@@ -14,7 +14,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 
-import MoF.FinderWindow;
+import MoF.MapWindow;
 import amidst.Options;
 import amidst.minecraft.MinecraftUtil;
 import amidst.preferences.BiomeColorProfile;
@@ -26,7 +26,7 @@ public class AmidstMenu {
 	private JMenuBar menuBar;
 	private JMenu mapMenu;
 
-	public AmidstMenu(FinderWindow window) {
+	public AmidstMenu(MapWindow window) {
 		this.actions = new MenuActions(window);
 		this.menuBar = createMenuBar();
 	}

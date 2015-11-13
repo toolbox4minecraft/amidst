@@ -10,10 +10,10 @@ import javax.swing.JFrame;
 import amidst.Amidst;
 import amidst.gui.menu.AmidstMenu;
 
-public class FinderWindow {
-	private static FinderWindow instance;
+public class MapWindow {
+	private static MapWindow instance;
 
-	public static FinderWindow getInstance() {
+	public static MapWindow getInstance() {
 		return instance;
 	}
 
@@ -22,7 +22,7 @@ public class FinderWindow {
 	private Project project;
 	private AmidstMenu menuBar;
 
-	public FinderWindow() {
+	public MapWindow() {
 		frame.setTitle("Amidst v" + Amidst.version());
 		frame.setSize(1000, 800);
 		frame.setIconImage(Amidst.icon);

@@ -15,14 +15,14 @@ import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import MoF.FinderWindow;
+import MoF.MapWindow;
 import MoF.SaveLoader;
 import amidst.Util;
 
 public class MenuActionsHelper {
-	private FinderWindow window;
+	private MapWindow window;
 
-	public MenuActionsHelper(FinderWindow window) {
+	public MenuActionsHelper(MapWindow window) {
 		this.window = window;
 	}
 

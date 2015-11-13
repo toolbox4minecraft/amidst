@@ -1,19 +1,19 @@
 package amidst;
 
-import MoF.FinderWindow;
+import MoF.MapWindow;
 import MoF.Project;
 import amidst.gui.version.VersionSelectWindow;
 
 public class Application {
 	private VersionSelectWindow versionSelectWindow = new VersionSelectWindow();
-	private FinderWindow mapWindow;
+	private MapWindow mapWindow;
 	private Project project;
 
-	public Application(FinderWindow mapWindow) {
+	public Application(MapWindow mapWindow) {
 		this.mapWindow = mapWindow;
 	}
 
-	public FinderWindow getWindow() {
+	public MapWindow getWindow() {
 		return mapWindow;
 	}
 

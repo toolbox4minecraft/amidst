@@ -5,7 +5,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
 
-import MoF.FinderWindow;
+import MoF.MapWindow;
 import amidst.gui.CrashDialog;
 
 public class Log {
@@ -95,8 +95,8 @@ public class Log {
 			
 			
 			new CrashDialog(message);
-			if (FinderWindow.getInstance() != null)
-				FinderWindow.getInstance().dispose();
+			if (MapWindow.getInstance() != null)
+				MapWindow.getInstance().dispose();
 			//System.exit(0);
 		}
 	}

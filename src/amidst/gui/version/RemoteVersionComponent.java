@@ -1,6 +1,6 @@
 package amidst.gui.version;
 
-import MoF.FinderWindow;
+import MoF.MapWindow;
 import amidst.Options;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.remote.RemoteMinecraft;
@@ -26,7 +26,7 @@ public class RemoteVersionComponent extends VersionComponent {
 			@Override
 			public void run() {
 				MinecraftUtil.setBiomeInterface(new RemoteMinecraft(remoteAddress));
-				new FinderWindow();
+				new MapWindow();
 				VersionSelectWindow.get().dispose();
 			}
 		})).start();

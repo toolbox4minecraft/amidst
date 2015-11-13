@@ -9,7 +9,7 @@ import org.kohsuke.args4j.CmdLineParser;
 
 import com.google.gson.Gson;
 
-import MoF.FinderWindow;
+import MoF.MapWindow;
 import MoF.Google;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.FileLogger;
@@ -60,7 +60,7 @@ public class Amidst {
 			try {
 				Util.setProfileDirectory(Options.instance.minecraftPath);
 				MinecraftUtil.setBiomeInterface(new Minecraft(new File(Options.instance.minecraftJar)).createInterface());
-				new FinderWindow();
+				new MapWindow();
 			} catch (MalformedURLException e) {
 				Log.crash(e, "MalformedURLException on Minecraft load.");
 			}
