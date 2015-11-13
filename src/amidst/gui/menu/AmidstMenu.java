@@ -319,11 +319,15 @@ public class AmidstMenu {
 	}
 
 	private ImageIcon getIcon(String image) {
-		BufferedImage icon = ResourceLoader.getImage(image);
-		if (icon != null) {
-			return new ImageIcon(icon);
-		} else {
+		if (image == null) {
 			return null;
+		} else {
+			BufferedImage icon = ResourceLoader.getImage(image);
+			if (icon != null) {
+				return null;
+			} else {
+				return new ImageIcon(icon);
+			}
 		}
 	}
 
