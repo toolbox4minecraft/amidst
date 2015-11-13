@@ -40,7 +40,7 @@ public class RemoteVersionComponent extends VersionComponent {
 	}
 
 	@Override
-	public String getDisplayName() {
-		return "remote:" + address;
+	public String getVersionPrefix() {
+		return "remote";
 	}
 }

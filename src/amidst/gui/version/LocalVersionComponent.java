@@ -52,7 +52,7 @@ public class LocalVersionComponent extends VersionComponent {
 	}
 
 	@Override
-	public String getDisplayName() {
-		return profile.getProfileName();
+	public String getVersionPrefix() {
+		return "local";
 	}
 }

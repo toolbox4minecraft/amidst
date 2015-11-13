@@ -15,13 +15,13 @@ import amidst.resources.ResourceLoader;
 public abstract class VersionComponent {
 	@SuppressWarnings("serial")
 	private class Component extends JComponent {
-		private String shortenedDisplayName;
-		private String oldDisplayName;
+		private String shortenedVersionName;
+		private String oldVersionName;
 		private int oldWidth = 0;
 
-		public Component(String displayName) {
-			this.shortenedDisplayName = displayName;
-			this.oldDisplayName = displayName;
+		public Component() {
+			this.shortenedVersionName = getVersionName();
+			this.oldVersionName = getVersionName();
 			this.setMinimumSize(new Dimension(300, 40));
 			this.setPreferredSize(new Dimension(500, 40));
 		}
@@ -30,8 +30,8 @@ public abstract class VersionComponent {
 		public void paintComponent(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g;
 			drawBackground(g2d);
-			int versionNameX = drawVersionName(g2d);
-			drawDisplayName(g2d, versionNameX);
+			int versionNameX = drawFullVersionName(g2d);
+			drawVersionName(g2d, versionNameX);
 			drawStatus(g2d);
 			drawIcon(g2d);
 		}
@@ -47,36 +47,38 @@ public abstract class VersionComponent {
 			g2d.fillRect(0, 0, getWidth(), getHeight());
 		}
 
-		private int drawVersionName(Graphics2D g2d) {
+		private int drawFullVersionName(Graphics2D g2d) {
 			FontMetrics fontMetrics;
 			g2d.setColor(Color.black);
 			g2d.setFont(VERSION_FONT);
 			fontMetrics = g2d.getFontMetrics();
+			String fullVersionName = getFullVersionName();
 			int versionNameX = getWidth() - 40
-					- fontMetrics.stringWidth(getVersionName());
-			g2d.drawString(getVersionName(), versionNameX, 20);
+					- fontMetrics.stringWidth(fullVersionName);
+			g2d.drawString(fullVersionName, versionNameX, 20);
 			return versionNameX;
 		}
 
-		private void drawDisplayName(Graphics2D g2d, int versionNameX) {
+		private void drawVersionName(Graphics2D g2d, int versionNameX) {
 			g2d.setColor(Color.black);
 			g2d.setFont(NAME_FONT);
-			updateShortenedDisplayName(g2d, versionNameX);
-			g2d.drawString(shortenedDisplayName, 5, 30);
+			updateShortenedVersionName(g2d, versionNameX);
+			g2d.drawString(shortenedVersionName, 5, 30);
 		}
 
-		private void updateShortenedDisplayName(Graphics2D g2d, int versionNameX) {
-			if (oldWidth != getWidth() || oldDisplayName != getDisplayName()) {
-				shortenedDisplayName = createShortenedDisplayName(g2d,
-						versionNameX);
+		private void updateShortenedVersionName(Graphics2D g2d, int versionNameX) {
+			String versionName = getVersionName();
+			if (oldWidth != getWidth() || oldVersionName != versionName) {
+				shortenedVersionName = createShortenedVersionName(g2d,
+						versionName, versionNameX);
 				oldWidth = getWidth();
 			}
 		}
 
-		private String createShortenedDisplayName(Graphics2D g2d,
-				int versionNameX) {
+		private String createShortenedVersionName(Graphics2D g2d,
+				String versionName, int versionNameX) {
 			FontMetrics fontMetrics = g2d.getFontMetrics();
-			String result = getDisplayName();
+			String result = versionName;
 			if (fontMetrics.stringWidth(result) > versionNameX - 25) {
 				int widthSum = 0;
 				for (int i = 0; i < result.length(); i++) {
@@ -154,8 +156,12 @@ public abstract class VersionComponent {
 		}).start();
 	}
 
+	public String getFullVersionName() {
+		return getVersionPrefix() + ":" + getVersionName();
+	}
+
 	protected void initComponent() {
-		this.component = new Component(getDisplayName());
+		this.component = new Component();
 	}
 
 	protected void repaintComponent() {
@@ -170,5 +176,5 @@ public abstract class VersionComponent {
 
 	public abstract String getVersionName();
 
-	public abstract String getDisplayName();
+	public abstract String getVersionPrefix();
 }

@@ -78,7 +78,7 @@ public class VersionSelectPanel extends JPanel implements MouseListener, KeyList
 	
 	public void select(String name) {
 		for (int i = 0; i < components.size(); i++) {
-			if (components.get(i).getVersionName().equals(name)) {
+			if (components.get(i).getFullVersionName().equals(name)) {
 				select(i);
 				break;
 			}
@@ -116,7 +116,7 @@ public class VersionSelectPanel extends JPanel implements MouseListener, KeyList
 		}
 		isLoading = true;
 		selected.load();
-		Options.instance.lastProfile.set(selected.getVersionName());
+		Options.instance.lastProfile.set(selected.getFullVersionName());
 	}
 	
 	@Override
