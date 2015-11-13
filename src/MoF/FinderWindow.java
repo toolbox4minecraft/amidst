@@ -31,6 +31,7 @@ public class FinderWindow {
 		initMenuBar();
 		initCloseListener();
 		instance = this;
+		frame.setVisible(true);
 	}
 
 	private void initContentPane() {
