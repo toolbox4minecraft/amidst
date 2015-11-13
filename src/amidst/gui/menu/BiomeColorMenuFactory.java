@@ -1,0 +1,172 @@
+package amidst.gui.menu;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
+
+import amidst.logging.Log;
+import amidst.preferences.BiomeColorProfile;
+
+public class BiomeColorMenuFactory {
+	private static interface BiomeColorProfileVisitor {
+		void enterFolder(String name);
+
+		void visitProfile(BiomeColorProfile profile);
+
+		void leaveFolder();
+	}
+
+	private static class BiomeColorProfileVisitorImpl implements
+			BiomeColorProfileVisitor {
+		private List<JCheckBoxMenuItem> allCheckBoxes = new ArrayList<JCheckBoxMenuItem>();
+		private List<JMenu> menuStack = new ArrayList<JMenu>();
+		private JCheckBoxMenuItem firstCheckBox;
+
+		private BiomeColorProfileVisitorImpl(JMenu parentMenu) {
+			menuStack.add(parentMenu);
+		}
+
+		@Override
+		public void enterFolder(String name) {
+			if (!isFirstContainer()) {
+				JMenu newMenu = new JMenu(name);
+				getLastMenu().add(newMenu);
+				menuStack.add(newMenu);
+			}
+		}
+
+		@Override
+		public void visitProfile(BiomeColorProfile profile) {
+			JCheckBoxMenuItem checkBox = createCheckBox(profile);
+			allCheckBoxes.add(checkBox);
+			initFirstCheckBox(checkBox);
+			getLastMenu().add(checkBox);
+		}
+
+		@Override
+		public void leaveFolder() {
+			removeLastMenu();
+		}
+
+		private boolean isFirstContainer() {
+			return menuStack.size() == 1;
+		}
+
+		private void initFirstCheckBox(JCheckBoxMenuItem checkBox) {
+			if (firstCheckBox == null) {
+				firstCheckBox = checkBox;
+			}
+		}
+
+		private JMenu getLastMenu() {
+			return menuStack.get(menuStack.size() - 1);
+		}
+
+		private void removeLastMenu() {
+			menuStack.remove(menuStack.size() - 1);
+		}
+
+		public JCheckBoxMenuItem getFirstCheckBox() {
+			return firstCheckBox;
+		}
+
+		private JCheckBoxMenuItem createCheckBox(BiomeColorProfile profile) {
+			JCheckBoxMenuItem result = new JCheckBoxMenuItem(profile.name);
+			tryCreateKeyboardShortcut(profile.shortcut, result);
+			result.addActionListener(listener(profile, result));
+			return result;
+		}
+
+		private void tryCreateKeyboardShortcut(String shortcut,
+				JCheckBoxMenuItem checkBox) {
+			if (shortcut != null) {
+				KeyStroke accelerator = KeyStroke.getKeyStroke(shortcut);
+				if (accelerator != null) {
+					checkBox.setAccelerator(accelerator);
+				} else {
+					Log.i("Unable to create keyboard shortcut from: "
+							+ shortcut);
+				}
+			}
+		}
+
+		private ActionListener listener(final BiomeColorProfile profile,
+				final JCheckBoxMenuItem selectedCheckBox) {
+			return new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					for (JCheckBoxMenuItem checkBox : allCheckBoxes) {
+						checkBox.setSelected(false);
+					}
+					selectedCheckBox.setSelected(true);
+					profile.activate();
+				}
+			};
+		}
+	}
+
+	private JMenu parentMenu = new JMenu("Biome profile");
+
+	public BiomeColorMenuFactory() {
+		Log.i("Checking for additional biome color profiles.");
+		initParentMenu();
+	}
+
+	public JMenu getMenu() {
+		return parentMenu;
+	}
+
+	private void initParentMenu() {
+		parentMenu.removeAll();
+		BiomeColorProfileVisitorImpl visitor = new BiomeColorProfileVisitorImpl(
+				parentMenu);
+		createMenuItems(new File("./biome"), visitor);
+		parentMenu.add(createReloadMenuItem());
+		visitor.getFirstCheckBox().setSelected(true);
+	}
+
+	private void createMenuItems(File folder, BiomeColorProfileVisitor visitor) {
+		boolean entered = false;
+		for (File file : folder.listFiles()) {
+			if (file.isFile()) {
+				BiomeColorProfile profile = BiomeColorProfile
+						.createFromFile(file);
+				if (profile != null) {
+					if (!entered) {
+						entered = true;
+						visitor.enterFolder(folder.getName());
+					}
+					visitor.visitProfile(profile);
+				}
+			} else {
+				createMenuItems(file, visitor);
+			}
+		}
+		if (entered) {
+			visitor.leaveFolder();
+		}
+	}
+
+	private JMenuItem createReloadMenuItem() {
+		final JMenuItem result = new JMenuItem("Reload Menu");
+		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B,
+				InputEvent.CTRL_DOWN_MASK));
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg) {
+				Log.i("Reloading additional biome color profiles.");
+				initParentMenu();
+			}
+		});
+		return result;
+	}
+}

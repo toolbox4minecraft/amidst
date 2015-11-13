@@ -251,7 +251,7 @@ public class AmidstMenu {
 	}
 
 	private JMenu create_Options_BiomeColor() {
-		return new BiomeColorMenu();
+		return new BiomeColorMenuFactory().getMenu();
 	}
 
 	private JMenu create_Options_WorldType() {
