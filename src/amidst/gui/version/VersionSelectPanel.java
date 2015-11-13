@@ -11,8 +11,10 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+
 import javax.swing.JPanel;
 
+import amidst.Options;
 import net.miginfocom.swing.MigLayout;
 
 public class VersionSelectPanel extends JPanel implements MouseListener, KeyListener {
@@ -35,7 +37,7 @@ public class VersionSelectPanel extends JPanel implements MouseListener, KeyList
 	}
 	
 	public void addVersion(VersionComponent version) {
-		add(version, "growx, pushx, wrap");
+		add(version.getComponent(), "growx, pushx, wrap");
 		components.add(version);
 	}
 	
@@ -95,7 +97,7 @@ public class VersionSelectPanel extends JPanel implements MouseListener, KeyList
 	public void select(int index) {
 		if (selected != null) {
 			selected.setSelected(false);
-			selected.repaint();
+			selected.repaintComponent();
 		}
 		
 		selected = null;
@@ -103,16 +105,18 @@ public class VersionSelectPanel extends JPanel implements MouseListener, KeyList
 		if (index < components.size()) {
 			selected = components.get(index);
 			selected.setSelected(true);
-			selected.repaint();
+			selected.repaintComponent();
 			selectedIndex = index;
 		}
 	}
 	
 	private void loadSelectedProfile() {
-		if ((selected == null) || !selected.isReadyToLoad())
+		if ((selected == null) || !selected.isReadyToLoad()) {
 			return;
+		}
 		isLoading = true;
 		selected.load();
+		Options.instance.lastProfile.set(selected.getVersionName());
 	}
 	
 	@Override

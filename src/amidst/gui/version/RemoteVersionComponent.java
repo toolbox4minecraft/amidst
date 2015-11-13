@@ -1,43 +1,44 @@
 package amidst.gui.version;
 
-import MoF.MapWindow;
-import amidst.Options;
-import amidst.minecraft.MinecraftUtil;
+import amidst.Application;
 import amidst.minecraft.remote.RemoteMinecraft;
 
 public class RemoteVersionComponent extends VersionComponent {
-	private String remoteAddress;
-	private String name;
-	
-	public RemoteVersionComponent(String address) {
-		remoteAddress = address;
-		name = "remote:" + address;
+	private static final String DEFAULT_ADDRESS = "127.0.0.1";
+
+	private String address;
+
+	public RemoteVersionComponent(Application application) {
+		this(application, DEFAULT_ADDRESS);
 	}
-	public RemoteVersionComponent() {
-		this("127.0.0.1");
+
+	public RemoteVersionComponent(Application application, String address) {
+		super(application);
+		this.address = address;
 	}
-	
+
 	@Override
-	public void load() {
-		isLoading = true;
-		repaint();
-		Options.instance.lastProfile.set(name);
-		(new Thread(new Runnable() {
-			@Override
-			public void run() {
-				MinecraftUtil.setBiomeInterface(new RemoteMinecraft(remoteAddress));
-				new MapWindow();
-				VersionSelectWindow.get().dispose();
-			}
-		})).start();
+	public void doLoad() {
+		versionSelected(new RemoteMinecraft(address));
 	}
 
 	@Override
 	public boolean isReadyToLoad() {
 		return true;
 	}
+
+	@Override
+	protected String getLoadingStatus() {
+		return "";
+	}
+
 	@Override
 	public String getVersionName() {
-		return name;
+		return "remote:" + address;
+	}
+
+	@Override
+	public String getDisplayName() {
+		return "remote:" + address;
 	}
 }

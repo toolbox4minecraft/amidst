@@ -67,7 +67,7 @@ public class Amidst {
 		}
 		else
 		{
-			new VersionSelectWindow();
+			new Application().displayVersionSelectWindow();
 		}
 	}
 	

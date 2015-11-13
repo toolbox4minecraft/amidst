@@ -86,7 +86,6 @@ public class MapWindow {
 		return frame;
 	}
 
-	@Deprecated
 	public void dispose() {
 		frame.dispose();
 	}

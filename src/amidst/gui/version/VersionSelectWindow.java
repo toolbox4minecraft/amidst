@@ -1,6 +1,5 @@
 package amidst.gui.version;
 
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -12,6 +11,7 @@ import javax.swing.SwingConstants;
 
 import net.miginfocom.swing.MigLayout;
 import amidst.Amidst;
+import amidst.Application;
 import amidst.Options;
 import amidst.Util;
 import amidst.logging.Log;
@@ -19,82 +19,102 @@ import amidst.version.LatestVersionList;
 import amidst.version.MinecraftProfile;
 import amidst.version.VersionFactory;
 
-public class VersionSelectWindow extends JFrame {
-	private static VersionSelectWindow instance;
+public class VersionSelectWindow {
+	private Application application;
 	private VersionFactory versionFactory = new VersionFactory();
+	private JFrame frame = new JFrame();
 
-	public VersionSelectWindow() {
-		super("Profile Selector");
-		instance = this;
-		setIconImage(Amidst.icon);
-		Container contentPane = getContentPane();
-		contentPane.setLayout(new MigLayout());
+	public VersionSelectWindow(Application application) {
+		this.application = application;
 
 		LatestVersionList.get().load(true);
 
-		if (!Util.minecraftDirectory.exists()
-				|| !Util.minecraftDirectory.isDirectory()) {
+		if (!isValidMinecraftDirectory()) {
 			Log.crash("Unable to find Minecraft directory at: "
 					+ Util.minecraftDirectory);
 			return;
 		}
 
-		final JLabel titleLabel = new JLabel(
-				"Please select a Minecraft version:", SwingConstants.CENTER);
-		titleLabel.setFont(new Font("arial", Font.BOLD, 16));
+		initFrame();
+	}
 
-		add(titleLabel, "h 20!,w :400:, growx, pushx, wrap");
+	private boolean isValidMinecraftDirectory() {
+		return Util.minecraftDirectory.exists()
+				&& Util.minecraftDirectory.isDirectory();
+	}
 
-		final VersionSelectPanel versionSelector = new VersionSelectPanel();
+	private void initFrame() {
+		frame = new JFrame("Profile Selector");
+		frame.setIconImage(Amidst.icon);
+		frame.getContentPane().setLayout(new MigLayout());
+		frame.add(createTitleLabel(), "h 20!,w :400:, growx, pushx, wrap");
 
-		(new Thread(new Runnable() {
-			@Override
-			public void run() {
-				versionFactory.scanForProfiles();
-				MinecraftProfile[] localVersions = versionFactory.getProfiles();
-				String selectedProfile = Options.instance.lastProfile.get();
+		VersionSelectPanel versionSelector = createVersionSelectPanel();
+		frame.add(new JScrollPane(versionSelector), "grow, push, h 80::");
+		frame.addKeyListener(versionSelector);
 
-				if (localVersions == null) {
-					versionSelector.setEmptyMessage("Empty");
-					return;
-				}
-				for (int i = 0; i < localVersions.length; i++)
-					versionSelector.addVersion(new LocalVersionComponent(
-							localVersions[i]));
-				versionSelector.addVersion(new RemoteVersionComponent());
-
-				if (selectedProfile != null)
-					versionSelector.select(selectedProfile);
-
-				pack();
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException ignored) {
-				}
-				pack();
-			}
-		})).start();
-
-		versionSelector.setEmptyMessage("Scanning...");
-
-		JScrollPane scrollPane = new JScrollPane(versionSelector);
-		add(scrollPane, "grow, push, h 80::");
-		pack();
-		setLocation(200, 200);
-		setVisible(true);
-
-		addKeyListener(versionSelector);
-
-		addWindowListener(new WindowAdapter() {
+		frame.pack();
+		frame.setLocation(200, 200);
+		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				dispose();
+				frame.dispose();
 				System.exit(0);
 			}
 		});
 	}
 
-	public static VersionSelectWindow get() {
-		return instance;
+	private JLabel createTitleLabel() {
+		final JLabel result = new JLabel("Please select a Minecraft version:",
+				SwingConstants.CENTER);
+		result.setFont(new Font("arial", Font.BOLD, 16));
+		return result;
+	}
+
+	private VersionSelectPanel createVersionSelectPanel() {
+		VersionSelectPanel versionSelector = new VersionSelectPanel();
+		versionSelector.setEmptyMessage("Scanning...");
+		startLoadVersionsThread(versionSelector);
+		return versionSelector;
+	}
+
+	private void startLoadVersionsThread(
+			final VersionSelectPanel versionSelector) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				loadVersions(versionSelector);
+			}
+		}).start();
+	}
+
+	private void loadVersions(final VersionSelectPanel versionSelector) {
+		versionFactory.scanForProfiles();
+		MinecraftProfile[] localVersions = versionFactory.getProfiles();
+		String selectedProfile = Options.instance.lastProfile.get();
+
+		if (localVersions == null) {
+			versionSelector.setEmptyMessage("Empty");
+			return;
+		}
+		for (int i = 0; i < localVersions.length; i++) {
+			versionSelector.addVersion(new LocalVersionComponent(application,
+					localVersions[i]));
+		}
+		versionSelector.addVersion(new RemoteVersionComponent(application));
+
+		if (selectedProfile != null)
+			versionSelector.select(selectedProfile);
+
+		frame.pack();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException ignored) {
+		}
+		frame.pack();
+	}
+
+	public void dispose() {
+		frame.dispose();
 	}
 }
