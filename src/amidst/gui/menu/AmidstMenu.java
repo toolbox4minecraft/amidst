@@ -1,568 +1,337 @@
 package amidst.gui.menu;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.util.List;
-import java.util.Random;
+import java.awt.image.BufferedImage;
 
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import MoF.FinderWindow;
-import MoF.Project;
-import MoF.SaveLoader;
-import MoF.UpdateManager;
 import amidst.Options;
-import amidst.Util;
-import amidst.gui.LicenseWindow;
-import amidst.logging.Log;
-import amidst.map.MapObjectPlayer;
-import amidst.map.layers.StrongholdLayer;
 import amidst.minecraft.MinecraftUtil;
+import amidst.preferences.BiomeColorProfile;
+import amidst.preferences.SelectPrefModel.SelectButtonModel;
 import amidst.resources.ResourceLoader;
 
-public class AmidstMenu extends JMenuBar {
-	final JMenu fileMenu;
+public class AmidstMenu {
+	private MenuActions actions;
+	private JMenuBar menuBar;
 	private JMenu mapMenu;
-	final JMenu optionsMenu;
-	final JMenu helpMenu;
-
-	private final FinderWindow window;
 
 	public AmidstMenu(FinderWindow window) {
-		this.window = window;
-
-		fileMenu = add(new FileMenu());
-		mapMenu = add(new MapMenu());
-		optionsMenu = add(new OptionsMenu());
-		helpMenu = add(new HelpMenu());
+		this.actions = new MenuActions(window);
+		this.menuBar = createMenuBar();
 	}
 
-	private class FileMenu extends JMenu {
-		private FileMenu() {
-			super("File");
-			setMnemonic(KeyEvent.VK_F);
-
-			add(new JMenu("New") {
-				{
-					setMnemonic(KeyEvent.VK_N);
-					add(new SeedMenuItem());
-					add(new FileMenuItem());
-					add(new RandomSeedMenuItem());
-				}
-			});
-
-			add(new JMenuItem("Save player locations") {
-				{
-					setEnabled(MinecraftUtil.getVersion().saveEnabled());
-					setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-							InputEvent.CTRL_DOWN_MASK));
-					addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent arg0) {
-							if (window.getProject().isSaveLoaded()) {
-								for (MapObjectPlayer player : window
-										.getProject().getSaveLoader()
-										.getPlayers()) {
-									if (player.needSave) {
-										window.getProject()
-												.getSaveLoader()
-												.movePlayer(player.getName(),
-														player.globalX,
-														player.globalY);
-										player.needSave = false;
-									}
-								}
-							}
-						}
-					});
-				}
-			});
-
-			add(new JMenuItem("Exit") {
-				{
-					addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							System.exit(0);
-						}
-					});
-				}
-			});
-		}
-
-		private String showSeedPrompt(String title) {
-			final String blankText = "A random seed will be generated if left blank.";
-			final String leadingSpaceText = "Warning: There is a space at the start!";
-			final String trailingSpaceText = "Warning: There is a space at the end!";
-
-			final JTextField inputText = new JTextField();
-
-			inputText.addAncestorListener(new AncestorListener() {
-				@Override
-				public void ancestorAdded(AncestorEvent arg0) {
-					inputText.requestFocus();
-				}
-
-				@Override
-				public void ancestorMoved(AncestorEvent arg0) {
-					inputText.requestFocus();
-				}
-
-				@Override
-				public void ancestorRemoved(AncestorEvent arg0) {
-					inputText.requestFocus();
-				}
-			});
-
-			final JLabel inputInformation = new JLabel(blankText);
-			inputInformation.setForeground(Color.red);
-			inputInformation.setFont(new Font("arial", Font.BOLD, 10));
-			inputText.getDocument().addDocumentListener(new DocumentListener() {
-				@Override
-				public void changedUpdate(DocumentEvent e) {
-					update();
-				}
-
-				@Override
-				public void insertUpdate(DocumentEvent e) {
-					update();
-				}
-
-				@Override
-				public void removeUpdate(DocumentEvent e) {
-					update();
-				}
-
-				public void update() {
-					String text = inputText.getText();
-					if (text.equals("")) {
-						inputInformation.setText(blankText);
-						inputInformation.setForeground(Color.red);
-					} else if (text.startsWith(" ")) {
-						inputInformation.setText(leadingSpaceText);
-						inputInformation.setForeground(Color.red);
-					} else if (text.endsWith(" ")) {
-						inputInformation.setText(trailingSpaceText);
-						inputInformation.setForeground(Color.red);
-					} else {
-						try {
-							Long.parseLong(text);
-							inputInformation.setText("Seed is valid.");
-							inputInformation.setForeground(Color.gray);
-						} catch (NumberFormatException e) {
-							inputInformation.setText("This seed's value is "
-									+ text.hashCode() + ".");
-							inputInformation.setForeground(Color.black);
-						}
-					}
-				}
-			});
-
-			final JComponent[] inputs = new JComponent[] {
-					new JLabel("Enter your seed: "), inputInformation,
-					inputText };
-			int result = JOptionPane.showConfirmDialog(window.getFrame(),
-					inputs, title, JOptionPane.OK_CANCEL_OPTION);
-			return (result == 0) ? inputText.getText() : null;
-		}
-
-		private class SeedMenuItem extends JMenuItem {
-			private SeedMenuItem() {
-				super("From seed");
-				setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
-						InputEvent.CTRL_DOWN_MASK));
-				addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent arg0) {
-						String seed = showSeedPrompt("New Project");
-						if (seed != null) {
-							String worldTypePreference = Options.instance.worldType
-									.get();
-							SaveLoader.Type worldType = null;
-							if (worldTypePreference.equals("Prompt each time")) {
-								worldType = choose("New Project",
-										"Enter world type\n",
-										SaveLoader.selectableTypes);
-							} else {
-								worldType = SaveLoader.Type
-										.fromMixedCase(worldTypePreference);
-							}
-
-							if (seed.equals(""))
-								seed = "" + (new Random()).nextLong();
-							if (worldType != null) {
-								window.clearProject();
-								window.setProject(new Project(seed, worldType
-										.getValue()));
-							}
-						}
-					}
-				});
-			}
-		}
-
-		private class RandomSeedMenuItem extends JMenuItem {
-			private RandomSeedMenuItem() {
-				super("From random seed");
-				setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
-						InputEvent.CTRL_DOWN_MASK));
-				addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent arg0) {
-						// Create the JOptionPane.
-						Random random = new Random();
-						long seed = random.nextLong();
-						String worldTypePreference = Options.instance.worldType
-								.get();
-						SaveLoader.Type worldType = null;
-						if (worldTypePreference.equals("Prompt each time")) {
-							worldType = choose("New Project",
-									"Enter world type\n",
-									SaveLoader.selectableTypes);
-						} else {
-							worldType = SaveLoader.Type
-									.fromMixedCase(worldTypePreference);
-						}
-
-						// If a string was returned, say so.
-						if (worldType != null) {
-							window.clearProject();
-							window.setProject(new Project(seed, worldType
-									.getValue()));
-						}
-					}
-
-				});
-			}
-		}
-
-		private class FileMenuItem extends JMenuItem {
-			private FileMenuItem() {
-				super("From file or folder");
-				addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent arg0) {
-						JFileChooser fc = new JFileChooser();
-						fc.setFileFilter(SaveLoader.getFilter());
-						fc.setAcceptAllFileFilterUsed(false);
-						fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-						File savesDir = null;
-						if (Util.profileDirectory != null)
-							savesDir = new File(Util.profileDirectory, "saves");
-						else
-							savesDir = new File(Util.minecraftDirectory,
-									"saves");
-						// if (!savesDir.mkdirs()) {
-						// Log.w("Unable to create save directory!");
-						// return;
-						// }
-						fc.setCurrentDirectory(savesDir);
-						fc.setFileHidingEnabled(false);
-						if (fc.showOpenDialog(window.getFrame()) == JFileChooser.APPROVE_OPTION) {
-							File f = fc.getSelectedFile();
-
-							SaveLoader s = null;
-							if (f.isDirectory())
-								s = new SaveLoader(new File(f.getAbsoluteFile()
-										+ "/level.dat"));
-							else
-								s = new SaveLoader(f);
-							window.clearProject();
-							window.setProject(new Project(s));
-						}
-					}
-				});
-			}
-		}
+	private JMenuBar createMenuBar() {
+		JMenuBar result = new JMenuBar();
+		result.add(create_File());
+		mapMenu = result.add(create_Map());
+		result.add(create_Options());
+		result.add(create_Help());
+		return result;
 	}
 
-	private class MapMenu extends JMenu {
-		private MapMenu() {
-			super("Map");
-			setEnabled(false);
-			setMnemonic(KeyEvent.VK_M);
-			add(new FindMenu());
-			add(new GoToMenu());
-			add(new LayersMenu());
-			add(new CopySeedMenuItem());
-			add(new CaptureMenuItem());
+	private JMenu create_File() {
+		JMenu result = new JMenu("File");
+		result.setMnemonic(KeyEvent.VK_F);
+		result.add(create_File_New());
+		result.add(create_File_SavePlayerLocations());
+		result.add(create_File_Exit());
+		return result;
+	}
 
-		}
+	private JMenuItem create_File_New() {
+		JMenu result = new JMenu("New");
+		result.setMnemonic(KeyEvent.VK_N);
+		result.add(create_File_New_Seed());
+		result.add(create_File_New_File());
+		result.add(create_File_New_Random());
+		return result;
+	}
 
-		private class FindMenu extends JMenu {
-			private FindMenu() {
-				super("Find");
-				// add(new JMenuItem("Biome"));
-				// add(new JMenuItem("Village"));
-				add(new JMenuItem("Stronghold") {
-					{
-						setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
-								InputEvent.CTRL_DOWN_MASK));
-						addActionListener(new ActionListener() {
-							@Override
-							public void actionPerformed(ActionEvent arg0) {
-								goToChosenPoint(
-										StrongholdLayer.instance
-												.getStrongholds(),
-										"Stronghold");
-							}
-						});
-					}
-				});
+	private JMenuItem create_File_New_Seed() {
+		JMenuItem result = new JMenuItem("From seed");
+		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
+				InputEvent.CTRL_DOWN_MASK));
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				actions.newFromSeed();
 			}
-		}
+		});
+		return result;
+	}
 
-		private class GoToMenu extends JMenu {
-			private GoToMenu() {
-				super("Go to");
-				add(new JMenuItem("Coordinate") {
-					{
-						setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
-								InputEvent.CTRL_DOWN_MASK));
-						addActionListener(new ActionListener() {
-							@Override
-							public void actionPerformed(ActionEvent arg0) {
-								String s = JOptionPane.showInputDialog(null,
-										"Enter coordinates: (Ex. 123,456)",
-										"Go To", JOptionPane.QUESTION_MESSAGE);
-								if (s != null) {
-									String[] c = s.replaceAll(" ", "").split(
-											",");
-									try {
-										long x = Long.parseLong(c[0]);
-										long y = Long.parseLong(c[1]);
-										window.getProject().moveMapTo(x, y);
-									} catch (NumberFormatException e1) {
-										Log.w("Invalid location entered, ignoring.");
-										e1.printStackTrace();
-									}
-								}
-							}
-						});
-					}
-				});
-
-				add(new JMenuItem("Player") {
-					{
-						addActionListener(new ActionListener() {
-							@Override
-							public void actionPerformed(ActionEvent arg0) {
-								if (window.getProject().isSaveLoaded()) {
-									List<MapObjectPlayer> playerList = window
-											.getProject().getSaveLoader()
-											.getPlayers();
-									MapObjectPlayer[] players = playerList
-											.toArray(new MapObjectPlayer[playerList
-													.size()]);
-									goToChosenPoint(players, "Player");
-									MapObjectPlayer p = choose("Go to",
-											"Select player:", players);
-									if (p != null)
-										window.getProject().moveMapTo(
-												p.globalX, p.globalY);
-								}
-							}
-						});
-					}
-				});
-				// add(new JMenuItem("Spawn"));
-				// add(new JMenuItem("Chunk"));
+	private JMenuItem create_File_New_File() {
+		JMenuItem result = new JMenuItem("From file or folder");
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				actions.newFromFileOrFolder();
 			}
-		}
+		});
+		return result;
+	}
 
-		private class LayersMenu extends JMenu {
-			private LayersMenu() {
-				super("Layers");
-
-				add(new DisplayingCheckbox("Grid",
-						ResourceLoader.getImage("grid.png"), KeyEvent.VK_1,
-						Options.instance.showGrid));
-
-				add(new DisplayingCheckbox("Slime chunks",
-						ResourceLoader.getImage("slime.png"), KeyEvent.VK_2,
-						Options.instance.showSlimeChunks));
-
-				add(new DisplayingCheckbox("Village Icons",
-						ResourceLoader.getImage("village.png"), KeyEvent.VK_3,
-						Options.instance.showVillages));
-
-				add(new DisplayingCheckbox("Ocean Monument Icons",
-						ResourceLoader.getImage("ocean_monument.png"),
-						KeyEvent.VK_4, Options.instance.showOceanMonuments));
-
-				add(new DisplayingCheckbox("Temple/Witch Hut Icons",
-						ResourceLoader.getImage("desert.png"), KeyEvent.VK_5,
-						Options.instance.showTemples));
-
-				add(new DisplayingCheckbox("Stronghold Icons",
-						ResourceLoader.getImage("stronghold.png"),
-						KeyEvent.VK_6, Options.instance.showStrongholds));
-
-				add(new DisplayingCheckbox("Player Icons",
-						ResourceLoader.getImage("player.png"), KeyEvent.VK_7,
-						Options.instance.showPlayers));
-
-				add(new DisplayingCheckbox("Nether Fortress Icons",
-						ResourceLoader.getImage("nether_fortress.png"),
-						KeyEvent.VK_8, Options.instance.showNetherFortresses));
-
-				add(new DisplayingCheckbox("Spawn Location Icon",
-						ResourceLoader.getImage("spawn.png"), KeyEvent.VK_9,
-						Options.instance.showSpawn));
-
+	private JMenuItem create_File_New_Random() {
+		JMenuItem result = new JMenuItem("From random seed");
+		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
+				InputEvent.CTRL_DOWN_MASK));
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				actions.newFromRandom();
 			}
+		});
+		return result;
+	}
 
-		}
-
-		private class CaptureMenuItem extends JMenuItem {
-			private CaptureMenuItem() {
-				super("Capture");
-
-				setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,
-						InputEvent.CTRL_DOWN_MASK));
-
-				addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						JFileChooser fc = new JFileChooser();
-						fc.setFileFilter(new PNGFileFilter());
-						fc.setAcceptAllFileFilterUsed(false);
-						int returnVal = fc.showSaveDialog(window.getFrame());
-
-						if (returnVal == JFileChooser.APPROVE_OPTION) {
-							String s = fc.getSelectedFile().toString();
-							if (!s.toLowerCase().endsWith(".png"))
-								s += ".png";
-							window.getProject().getMapViewer()
-									.saveToFile(new File(s));
-						}
-					}
-				});
+	private JMenuItem create_File_SavePlayerLocations() {
+		JMenuItem result = new JMenuItem("Save player locations");
+		result.setEnabled(MinecraftUtil.getVersion().saveEnabled());
+		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+				InputEvent.CTRL_DOWN_MASK));
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				actions.savePlayerLocations();
 			}
-		}
+		});
+		return result;
+	}
 
-		private class CopySeedMenuItem extends JMenuItem {
-			private CopySeedMenuItem() {
-				super("Copy Seed to Clipboard");
-
-				setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
-						InputEvent.CTRL_DOWN_MASK));
-
-				addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						StringSelection stringSelection = new StringSelection(
-								Options.instance.seed + "");
-						Clipboard clipboard = Toolkit.getDefaultToolkit()
-								.getSystemClipboard();
-						clipboard.setContents(stringSelection,
-								new ClipboardOwner() {
-									@Override
-									public void lostOwnership(Clipboard arg0,
-											Transferable arg1) {
-										// TODO Auto-generated method stub
-
-									}
-								});
-					}
-				});
+	private JMenuItem create_File_Exit() {
+		JMenuItem result = new JMenuItem("Exit");
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				actions.exit();
 			}
+		});
+		return result;
+	}
+
+	private JMenu create_Map() {
+		JMenu result = new JMenu("Map");
+		result.setEnabled(false);
+		result.setMnemonic(KeyEvent.VK_M);
+		result.add(create_Map_Find());
+		result.add(create_Map_GoTo());
+		result.add(create_Map_Layers());
+		result.add(create_Map_CopySeed());
+		result.add(create_Map_Capture());
+		return result;
+	}
+
+	private JMenuItem create_Map_Find() {
+		JMenu result = new JMenu("Find");
+		result.add(create_Map_Find_Stronghold());
+		return result;
+	}
+
+	private JMenuItem create_Map_Find_Stronghold() {
+		JMenuItem result = new JMenuItem("Stronghold");
+		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
+				InputEvent.CTRL_DOWN_MASK));
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				actions.findStronghold();
+			}
+		});
+		return result;
+	}
+
+	private JMenuItem create_Map_GoTo() {
+		JMenu result = new JMenu("Go to");
+		result.add(create_Map_GoTo_Coordinate());
+		result.add(create_Map_GoTo_Player());
+		return result;
+	}
+
+	private JMenuItem create_Map_GoTo_Coordinate() {
+		JMenuItem result = new JMenuItem("Coordinate");
+		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
+				InputEvent.CTRL_DOWN_MASK));
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				actions.gotoCoordinate();
+			}
+		});
+		return result;
+	}
+
+	private JMenuItem create_Map_GoTo_Player() {
+		JMenuItem result = new JMenuItem("Player");
+		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
+				InputEvent.CTRL_DOWN_MASK));
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				actions.gotoPlayer();
+			}
+		});
+		return result;
+	}
+
+	private JMenuItem create_Map_Layers() {
+		JMenu result = new JMenu("Layers");
+		// @formatter:off
+		result.add(createJCheckBoxItem("Grid",						"grid.png",				KeyEvent.VK_1, Options.instance.showGrid));
+		result.add(createJCheckBoxItem("Slime chunks",				"slime.png",			KeyEvent.VK_2, Options.instance.showSlimeChunks));
+		result.add(createJCheckBoxItem("Village Icons",				"village.png",			KeyEvent.VK_3, Options.instance.showVillages));
+		result.add(createJCheckBoxItem("Ocean Monument Icons",		"ocean_monument.png",	KeyEvent.VK_4, Options.instance.showOceanMonuments));
+		result.add(createJCheckBoxItem("Temple/Witch Hut Icons",	"desert.png",			KeyEvent.VK_5, Options.instance.showTemples));
+		result.add(createJCheckBoxItem("Stronghold Icons",			"stronghold.png",		KeyEvent.VK_6, Options.instance.showStrongholds));
+		result.add(createJCheckBoxItem("Player Icons",				"player.png",			KeyEvent.VK_7, Options.instance.showPlayers));
+		result.add(createJCheckBoxItem("Nether Fortress Icons",		"nether_fortress.png",	KeyEvent.VK_8, Options.instance.showNetherFortresses));
+		result.add(createJCheckBoxItem("Spawn Location Icon",		"spawn.png",			KeyEvent.VK_9, Options.instance.showSpawn));
+		// @formatter:on
+		return result;
+	}
+
+	private JMenuItem create_Map_CopySeed() {
+		JMenuItem result = new JMenuItem("Copy Seed to Clipboard");
+		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
+				InputEvent.CTRL_DOWN_MASK));
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actions.copySeedToClipboard();
+			}
+		});
+		return result;
+	}
+
+	private JMenuItem create_Map_Capture() {
+		JMenuItem result = new JMenuItem("Capture");
+		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,
+				InputEvent.CTRL_DOWN_MASK));
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actions.capture();
+			}
+		});
+		return result;
+	}
+
+	private JMenu create_Options() {
+		JMenu result = new JMenu("Options");
+		result.setMnemonic(KeyEvent.VK_M);
+		result.add(create_Options_Map());
+		if (BiomeColorProfile.isEnabled) {
+			result.add(create_Options_BiomeColor());
+		}
+		result.add(create_Options_WorldType());
+		return result;
+	}
+
+	private JMenu create_Options_Map() {
+		JMenu result = new JMenu("Map");
+		// @formatter:off
+		result.add(createJCheckBoxItem("Map Flicking (Smooth Scrolling)",	null, KeyEvent.VK_I,	Options.instance.mapFlicking));
+		result.add(createJCheckBoxItem("Restrict Maximum Zoom",				null, KeyEvent.VK_Z,	Options.instance.maxZoom));
+		result.add(createJCheckBoxItem("Show Framerate",					null, KeyEvent.VK_L,	Options.instance.showFPS));
+		result.add(createJCheckBoxItem("Show Scale",						null, KeyEvent.VK_K,	Options.instance.showScale));
+		result.add(createJCheckBoxItem("Use Fragment Fading",				null, -1,				Options.instance.mapFading));
+		result.add(createJCheckBoxItem("Show Debug Info",					null, -1,				Options.instance.showDebug));
+		// @formatter:on
+		return result;
+	}
+
+	private JMenu create_Options_BiomeColor() {
+		return new BiomeColorMenu();
+	}
+
+	private JMenu create_Options_WorldType() {
+		JMenu result = new JMenu("World type");
+		SelectButtonModel[] buttonModels = Options.instance.worldType
+				.getButtonModels();
+		for (SelectButtonModel buttonModel : buttonModels) {
+			result.add(createJCheckBoxItem(buttonModel.getName(), null, -1,
+					buttonModel));
+		}
+		return result;
+	}
+
+	private JMenu create_Help() {
+		JMenu result = new JMenu("Help");
+		result.add(create_Help_CheckForUpdates());
+		result.add(create_Help_ViewLicenses());
+		result.add(create_Help_About());
+		return result;
+	}
+
+	private JMenuItem create_Help_CheckForUpdates() {
+		JMenuItem result = new JMenuItem("Check for updates");
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actions.checkForUpdates();
+			}
+		});
+		return result;
+	}
+
+	private JMenuItem create_Help_ViewLicenses() {
+		JMenuItem result = new JMenuItem("View licenses");
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actions.viewLicense();
+			}
+		});
+		return result;
+	}
+
+	private JMenuItem create_Help_About() {
+		JMenuItem result = new JMenuItem("About");
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actions.about();
+			}
+		});
+		return result;
+	}
+
+	private JCheckBoxMenuItem createJCheckBoxItem(String text, String image,
+			int key, JToggleButton.ToggleButtonModel preference) {
+		JCheckBoxMenuItem result = new JCheckBoxMenuItem(text);
+		result.setIcon(getIcon(image));
+		if (key != -1) {
+			result.setAccelerator(KeyStroke.getKeyStroke(key,
+					InputEvent.CTRL_DOWN_MASK));
+		}
+		result.setModel(preference);
+		return result;
+	}
+
+	private ImageIcon getIcon(String image) {
+		BufferedImage icon = ResourceLoader.getImage(image);
+		if (icon != null) {
+			return new ImageIcon(icon);
+		} else {
+			return null;
 		}
 	}
 
-	private class HelpMenu extends JMenu {
-		private HelpMenu() {
-			super("Help");
-
-			add(new JMenuItem("Check for updates") {
-				{
-					addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							new UpdateManager(window.getFrame()).start();
-						}
-					});
-				}
-			});
-
-			add(new JMenuItem("View licenses") {
-				{
-					addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							new LicenseWindow();
-						}
-					});
-				}
-			});
-
-			add(new JMenuItem("About") {
-				{
-					addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							JOptionPane
-									.showMessageDialog(
-											window.getFrame(),
-											"Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
-													+ "By Skidoodle (amidst.project@gmail.com)");
-						}
-					});
-				}
-			});
-
-		}
+	public JMenuBar getMenuBar() {
+		return menuBar;
 	}
 
-	/**
-	 * Allows the user to choose one of several things.
-	 * 
-	 * Convenience wrapper around JOptionPane.showInputDialog
-	 */
-	private <T> T choose(String title, String message, T[] choices) {
-		return (T) JOptionPane.showInputDialog(window.getFrame(), message,
-				title, JOptionPane.PLAIN_MESSAGE, null, choices, choices[0]);
-	}
-
-	/**
-	 * Lets the user decide one of the given points and go to it
-	 * 
-	 * @param points
-	 *            Given points to choose from
-	 * @param name
-	 *            name displayed in the choice
-	 */
-	private <T extends Point> void goToChosenPoint(T[] points, String name) {
-
-		T p = choose("Go to", "Select " + name + ":", points);
-		if (p != null)
-			window.getProject().moveMapTo(p.x, p.y);
-	}
-
-	public void setMapMenuEnabled(boolean value) {
-		mapMenu.setEnabled(value);
+	public void setMapMenuEnabled(boolean enabled) {
+		mapMenu.setEnabled(enabled);
 	}
 }

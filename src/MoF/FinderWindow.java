@@ -44,7 +44,7 @@ public class FinderWindow {
 
 	private void initMenuBar() {
 		menuBar = new AmidstMenu(this);
-		frame.setJMenuBar(menuBar);
+		frame.setJMenuBar(menuBar.getMenuBar());
 	}
 
 	private void initCloseListener() {
