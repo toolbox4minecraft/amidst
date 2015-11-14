@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -17,28 +18,98 @@ import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 import amidst.Options;
 
-public class VersionSelectPanel extends JPanel implements MouseListener,
-		KeyListener {
+public class VersionSelectPanel extends JPanel {
+	private class Listeners implements MouseListener, KeyListener {
+		@Override
+		public void keyTyped(KeyEvent e) {
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if (isLoading) {
+				return;
+			}
+			int key = e.getKeyCode();
+			if (key == KeyEvent.VK_DOWN) {
+				if (selectedIndex < versionComponents.size() - 1) {
+					select(selectedIndex + 1);
+				} else {
+					select(versionComponents.size() - 1);
+				}
+			} else if (key == KeyEvent.VK_UP) {
+				if (selectedIndex > 0) {
+					select(selectedIndex - 1);
+				} else if (selectedIndex == -1) {
+					select(0);
+				}
+			} else if (key == KeyEvent.VK_ENTER) {
+				loadSelectedProfile();
+			}
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if (isLoading) {
+				return;
+			}
+			Point mouse = e.getPoint();
+			select(getSelectedIndexFromYCoordinate(mouse));
+			if (isLoadButtonClicked(mouse)) {
+				loadSelectedProfile();
+			}
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+		}
+
+		private int getSelectedIndexFromYCoordinate(Point mouse) {
+			return mouse.y / 40;
+		}
+
+		private boolean isLoadButtonClicked(Point mouse) {
+			return mouse.x > getWidth() - 40;
+		}
+	}
+
+	private Listeners listeners = new Listeners();
+
 	private String emptyMessage;
 	private int emptyMessageWidth;
 	private FontMetrics emptyMessageMetric;
 	private Font emptyMessageFont = new Font("arial", Font.BOLD, 30);
 	private boolean isLoading = false;
 
-	private ArrayList<VersionComponent> components = new ArrayList<VersionComponent>();
+	private ArrayList<VersionComponent> versionComponents = new ArrayList<VersionComponent>();
 	private VersionComponent selected = null;
 	private int selectedIndex = -1;
 
 	public VersionSelectPanel() {
 		setLayout(new MigLayout("ins 0", "", "[]0[]"));
 		setEmptyMessage("Empty");
-		addMouseListener(this);
+		addMouseListener(listeners);
 
 	}
 
 	public void addVersion(VersionComponent version) {
 		add(version.getComponent(), "growx, pushx, wrap");
-		components.add(version);
+		versionComponents.add(version);
 	}
 
 	@Override
@@ -46,7 +117,7 @@ public class VersionSelectPanel extends JPanel implements MouseListener,
 		super.paintChildren(g);
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(Color.gray);
-		for (int i = 1; i <= components.size(); i++) {
+		for (int i = 1; i <= versionComponents.size(); i++) {
 			g2d.drawLine(0, i * 40, getWidth(), i * 40);
 		}
 	}
@@ -63,7 +134,7 @@ public class VersionSelectPanel extends JPanel implements MouseListener,
 		g.setColor(Color.white);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
-		if (components.size() == 0) {
+		if (versionComponents.size() == 0) {
 			g.setColor(Color.gray);
 			g.setFont(emptyMessageFont);
 			g.drawString(emptyMessage, (getWidth() >> 1)
@@ -79,8 +150,8 @@ public class VersionSelectPanel extends JPanel implements MouseListener,
 	}
 
 	public void select(String name) {
-		for (int i = 0; i < components.size(); i++) {
-			if (components.get(i).getFullVersionName().equals(name)) {
+		for (int i = 0; i < versionComponents.size(); i++) {
+			if (versionComponents.get(i).getFullVersionName().equals(name)) {
 				select(i);
 				break;
 			}
@@ -88,8 +159,8 @@ public class VersionSelectPanel extends JPanel implements MouseListener,
 	}
 
 	public void select(VersionComponent component) {
-		for (int i = 0; i < components.size(); i++) {
-			if (components.get(i) == component) {
+		for (int i = 0; i < versionComponents.size(); i++) {
+			if (versionComponents.get(i) == component) {
 				select(i);
 				break;
 			}
@@ -104,8 +175,8 @@ public class VersionSelectPanel extends JPanel implements MouseListener,
 
 		selected = null;
 
-		if (index < components.size()) {
-			selected = components.get(index);
+		if (index < versionComponents.size()) {
+			selected = versionComponents.get(index);
 			selected.setSelected(true);
 			selected.repaintComponent();
 			selectedIndex = index;
@@ -121,61 +192,8 @@ public class VersionSelectPanel extends JPanel implements MouseListener,
 		Options.instance.lastProfile.set(selected.getFullVersionName());
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mousePressed(MouseEvent event) {
-		if (isLoading)
-			return;
-
-		int index = event.getPoint().y / 40;
-		select(index);
-
-		if (event.getPoint().x > getWidth() - 40)
-			loadSelectedProfile();
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-	}
-
-	@Override
-	public void keyPressed(KeyEvent event) {
-		if (isLoading)
-			return;
-		int key = event.getKeyCode();
-		switch (key) {
-		case KeyEvent.VK_DOWN:
-			if (selectedIndex < components.size() - 1)
-				select(selectedIndex + 1);
-			break;
-		case KeyEvent.VK_UP:
-			if (selectedIndex > 0)
-				select(selectedIndex - 1);
-			else if (selectedIndex == -1)
-				select(0);
-			break;
-		case KeyEvent.VK_ENTER:
-			loadSelectedProfile();
-			break;
-		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent arg0) {
-	}
-
-	@Override
-	public void keyTyped(KeyEvent event) {
+	@Deprecated
+	public KeyListener getKeyListener() {
+		return listeners;
 	}
 }
