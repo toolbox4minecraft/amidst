@@ -2,7 +2,6 @@ package amidst.gui.version;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -31,17 +30,9 @@ public class VersionSelectPanel {
 			}
 			int key = e.getKeyCode();
 			if (key == KeyEvent.VK_DOWN) {
-				if (selectedIndex < versionComponents.size() - 1) {
-					select(selectedIndex + 1);
-				} else {
-					select(versionComponents.size() - 1);
-				}
+				select(selectedIndex + 1);
 			} else if (key == KeyEvent.VK_UP) {
-				if (selectedIndex > 0) {
-					select(selectedIndex - 1);
-				} else if (selectedIndex == -1) {
-					select(0);
-				}
+				select(selectedIndex - 1);
 			} else if (key == KeyEvent.VK_ENTER) {
 				loadSelectedProfile();
 			}
@@ -90,6 +81,15 @@ public class VersionSelectPanel {
 
 	@SuppressWarnings("serial")
 	private class Component extends JPanel {
+		private static final int INVALID_EMPTY_MESSAGE_WIDTH = -1;
+
+		private int emptyMessageWidth = INVALID_EMPTY_MESSAGE_WIDTH;
+		private String oldEmptyMessage;
+
+		public Component() {
+			this.oldEmptyMessage = emptyMessage;
+		}
+
 		@Override
 		public void paintChildren(Graphics g) {
 			super.paintChildren(g);
@@ -108,44 +108,61 @@ public class VersionSelectPanel {
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			Graphics2D g2d = (Graphics2D) g;
+			drawBackground(g2d);
+			if (versionComponents.isEmpty()) {
+				drawEmptyMessage(g2d);
+			}
+		}
+
+		private void drawBackground(Graphics2D g2d) {
 			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-			if (emptyMessageMetric == null) {
-				emptyMessageMetric = g.getFontMetrics(emptyMessageFont);
-				emptyMessageWidth = emptyMessageMetric
-						.stringWidth(emptyMessage);
-			}
-			g.setColor(Color.white);
-			g.fillRect(0, 0, getWidth(), getHeight());
+			g2d.setColor(Color.white);
+			g2d.fillRect(0, 0, getWidth(), getHeight());
+		}
 
-			if (versionComponents.size() == 0) {
-				g.setColor(Color.gray);
-				g.setFont(emptyMessageFont);
-				g.drawString(emptyMessage, (getWidth() >> 1)
-						- (emptyMessageWidth >> 1), 30);
-			}
+		private void drawEmptyMessage(Graphics2D g2d) {
+			g2d.setColor(Color.gray);
+			g2d.setFont(EMPTY_MESSAGE_FONT);
+			updateEmptyMessageWidth(g2d);
+			int x = (getWidth() >> 1) - (emptyMessageWidth >> 1);
+			g2d.drawString(emptyMessage, x, 30);
+		}
 
+		private void updateEmptyMessageWidth(Graphics2D g2d) {
+			if (!oldEmptyMessage.equals(emptyMessage)
+					|| emptyMessageWidth == INVALID_EMPTY_MESSAGE_WIDTH) {
+				emptyMessageWidth = g2d.getFontMetrics().stringWidth(
+						emptyMessage);
+			}
 		}
 	}
 
+	private static final Font EMPTY_MESSAGE_FONT = new Font("arial", Font.BOLD,
+			30);
+	private static final int INVALID_INDEX = -1;
+
 	private Listeners listeners = new Listeners();
 	private Component component = new Component();
+	private ArrayList<VersionComponent> versionComponents = new ArrayList<VersionComponent>();
 
+	private VersionComponent selected = null;
+	private int selectedIndex = INVALID_INDEX;
 	private String emptyMessage;
-	private int emptyMessageWidth;
-	private FontMetrics emptyMessageMetric;
-	private Font emptyMessageFont = new Font("arial", Font.BOLD, 30);
 	private boolean isLoading = false;
 
-	private ArrayList<VersionComponent> versionComponents = new ArrayList<VersionComponent>();
-	private VersionComponent selected = null;
-	private int selectedIndex = -1;
-
 	public VersionSelectPanel() {
-		component.setLayout(new MigLayout("ins 0", "", "[]0[]"));
-		setEmptyMessage("Empty");
-		component.addMouseListener(listeners);
+		this("Empty");
+	}
 
+	public VersionSelectPanel(String emptyMessage) {
+		this.emptyMessage = emptyMessage;
+		initComponent();
+	}
+
+	private void initComponent() {
+		component.setLayout(new MigLayout("ins 0", "", "[]0[]"));
+		component.addMouseListener(listeners);
 	}
 
 	public void addVersion(VersionComponent version) {
@@ -153,54 +170,64 @@ public class VersionSelectPanel {
 		versionComponents.add(version);
 	}
 
-	public void setEmptyMessage(String message) {
-		emptyMessage = message;
-		if (emptyMessageMetric != null) {
-			emptyMessageWidth = emptyMessageMetric.stringWidth(emptyMessage);
-		}
+	public void select(String fullVersionName) {
+		select(getIndex(fullVersionName));
 	}
 
-	public void select(String name) {
+	private int getIndex(String fullVersionName) {
 		for (int i = 0; i < versionComponents.size(); i++) {
-			if (versionComponents.get(i).getFullVersionName().equals(name)) {
-				select(i);
-				break;
+			if (versionComponents.get(i).getFullVersionName()
+					.equals(fullVersionName)) {
+				return i;
 			}
 		}
+		return INVALID_INDEX;
 	}
 
-	public void select(VersionComponent component) {
-		for (int i = 0; i < versionComponents.size(); i++) {
-			if (versionComponents.get(i) == component) {
-				select(i);
-				break;
-			}
-		}
+	private void select(int index) {
+		deselectSelected();
+		doSelect(getBoundedIndex(index));
 	}
 
-	public void select(int index) {
+	private void deselectSelected() {
 		if (selected != null) {
 			selected.setSelected(false);
-			selected.repaintComponent();
+			selected = null;
+			selectedIndex = INVALID_INDEX;
 		}
+	}
 
-		selected = null;
+	private int getBoundedIndex(int index) {
+		if (versionComponents.isEmpty()) {
+			return INVALID_INDEX;
+		} else if (index < 0) {
+			return 0;
+		} else if (index >= versionComponents.size()) {
+			return versionComponents.size() - 1;
+		} else {
+			return index;
+		}
+	}
 
-		if (index < versionComponents.size()) {
+	private void doSelect(int index) {
+		if (index != INVALID_INDEX) {
 			selected = versionComponents.get(index);
 			selected.setSelected(true);
-			selected.repaintComponent();
 			selectedIndex = index;
 		}
 	}
 
 	private void loadSelectedProfile() {
-		if ((selected == null) || !selected.isReadyToLoad()) {
+		if (selected == null || !selected.isReadyToLoad()) {
 			return;
 		}
 		isLoading = true;
 		selected.load();
 		Options.instance.lastProfile.set(selected.getFullVersionName());
+	}
+
+	public void setEmptyMessage(String emptyMessage) {
+		this.emptyMessage = emptyMessage;
 	}
 
 	@Deprecated

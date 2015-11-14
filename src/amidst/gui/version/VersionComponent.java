@@ -48,13 +48,11 @@ public abstract class VersionComponent {
 		}
 
 		private int drawFullVersionName(Graphics2D g2d) {
-			FontMetrics fontMetrics;
 			g2d.setColor(Color.black);
 			g2d.setFont(VERSION_FONT);
-			fontMetrics = g2d.getFontMetrics();
 			String fullVersionName = getFullVersionName();
 			int versionNameX = getWidth() - 40
-					- fontMetrics.stringWidth(fullVersionName);
+					- g2d.getFontMetrics().stringWidth(fullVersionName);
 			g2d.drawString(fullVersionName, versionNameX, 20);
 			return versionNameX;
 		}
@@ -137,8 +135,11 @@ public abstract class VersionComponent {
 		return isSelected;
 	}
 
-	public void setSelected(boolean value) {
-		isSelected = value;
+	public void setSelected(boolean isSelected) {
+		if (this.isSelected != isSelected) {
+			this.isSelected = isSelected;
+			component.repaint();
+		}
 	}
 
 	public Component getComponent() {

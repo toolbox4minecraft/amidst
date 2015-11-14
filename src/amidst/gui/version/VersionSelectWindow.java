@@ -22,7 +22,10 @@ import amidst.version.VersionFactory;
 public class VersionSelectWindow {
 	private Application application;
 	private VersionFactory versionFactory = new VersionFactory();
+
 	private JFrame frame = new JFrame();
+	private VersionSelectPanel versionSelectPanel = new VersionSelectPanel(
+			"Scanning...");
 
 	public VersionSelectWindow(Application application) {
 		this.application = application;
@@ -36,6 +39,7 @@ public class VersionSelectWindow {
 		}
 
 		initFrame();
+		startLoadVersionsThread(versionSelectPanel);
 	}
 
 	private boolean isValidMinecraftDirectory() {
@@ -48,15 +52,10 @@ public class VersionSelectWindow {
 		frame.setIconImage(Amidst.icon);
 		frame.getContentPane().setLayout(new MigLayout());
 		frame.add(createTitleLabel(), "h 20!,w :400:, growx, pushx, wrap");
-
-		VersionSelectPanel versionSelector = createVersionSelectPanel();
-		frame.add(new JScrollPane(versionSelector.getComponent()),
+		frame.add(new JScrollPane(versionSelectPanel.getComponent()),
 				"grow, push, h 80::");
-		frame.addKeyListener(versionSelector.getKeyListener());
-
 		frame.pack();
-		frame.setLocation(200, 200);
-		frame.setVisible(true);
+		frame.addKeyListener(versionSelectPanel.getKeyListener());
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -64,6 +63,8 @@ public class VersionSelectWindow {
 				System.exit(0);
 			}
 		});
+		frame.setLocation(200, 200);
+		frame.setVisible(true);
 	}
 
 	private JLabel createTitleLabel() {
@@ -71,13 +72,6 @@ public class VersionSelectWindow {
 				SwingConstants.CENTER);
 		result.setFont(new Font("arial", Font.BOLD, 16));
 		return result;
-	}
-
-	private VersionSelectPanel createVersionSelectPanel() {
-		VersionSelectPanel versionSelector = new VersionSelectPanel();
-		versionSelector.setEmptyMessage("Scanning...");
-		startLoadVersionsThread(versionSelector);
-		return versionSelector;
 	}
 
 	private void startLoadVersionsThread(
