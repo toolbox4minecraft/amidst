@@ -12,7 +12,6 @@ import javax.swing.JOptionPane;
 
 import MoF.Project;
 import MoF.SaveLoader;
-import MoF.UpdateManager;
 import amidst.Amidst;
 import amidst.Application;
 import amidst.Util;
@@ -53,7 +52,7 @@ public class MapWindow {
 	}
 
 	private void initUpdateManager() {
-		new UpdateManager(frame, true).start();
+		application.checkForUpdatesSilently();
 	}
 
 	private void initMenuBar() {
@@ -130,5 +129,10 @@ public class MapWindow {
 
 	public void displayMessage(String message) {
 		JOptionPane.showMessageDialog(frame, message);
+	}
+
+	public int askToConfirm(String message, String title) {
+		return JOptionPane.showConfirmDialog(frame, message, title,
+				JOptionPane.YES_NO_OPTION);
 	}
 }

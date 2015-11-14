@@ -16,6 +16,7 @@ import amidst.minecraft.remote.RemoteMinecraft;
 import amidst.version.MinecraftProfile;
 
 public class Application {
+	private UpdateManager updateManager = new UpdateManager();
 	private VersionSelectWindow versionSelectWindow;
 	private MapWindow mapWindow;
 	private Project project;
@@ -93,6 +94,10 @@ public class Application {
 	}
 
 	public void checkForUpdates() {
-		new UpdateManager(mapWindow.getFrame()).start();
+		updateManager.check(mapWindow);
+	}
+
+	public void checkForUpdatesSilently() {
+		updateManager.checkSilently(mapWindow);
 	}
 }
