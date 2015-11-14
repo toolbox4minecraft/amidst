@@ -1,4 +1,4 @@
-package MoF;
+package amidst.gui;
 
 import java.awt.Desktop;
 import java.io.IOException;
@@ -8,9 +8,9 @@ import java.net.URISyntaxException;
 
 import javax.swing.JOptionPane;
 
-import amidst.gui.MapWindow;
+import amidst.UpdateInformationRetriever;
 
-public class UpdateManager {
+public class UpdatePrompt {
 	private UpdateInformationRetriever retriever = new UpdateInformationRetriever();
 	private MapWindow mapWindow;
 	private boolean silent;

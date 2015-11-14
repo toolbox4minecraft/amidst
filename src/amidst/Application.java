@@ -4,9 +4,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 
 import MoF.Project;
-import MoF.UpdateManager;
 import amidst.gui.LicenseWindow;
 import amidst.gui.MapWindow;
+import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;
@@ -16,7 +16,7 @@ import amidst.minecraft.remote.RemoteMinecraft;
 import amidst.version.MinecraftProfile;
 
 public class Application {
-	private UpdateManager updateManager = new UpdateManager();
+	private UpdatePrompt updateManager = new UpdatePrompt();
 	private VersionSelectWindow versionSelectWindow;
 	private MapWindow mapWindow;
 	private Project project;

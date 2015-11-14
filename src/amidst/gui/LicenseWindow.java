@@ -17,6 +17,7 @@ import javax.swing.event.ListSelectionListener;
 
 import net.miginfocom.swing.MigLayout;
 import amidst.Amidst;
+import amidst.License;
 
 public class LicenseWindow {
 	private static final String LICENSES_DIRECTORY = "licenses";
