@@ -68,7 +68,7 @@ public abstract class VersionComponent {
 
 		private void updateShortenedVersionName(Graphics2D g2d, int versionNameX) {
 			String versionName = getVersionName();
-			if (oldWidth != getWidth() || oldVersionName != versionName) {
+			if (oldWidth != getWidth() || !oldVersionName.equals(versionName)) {
 				shortenedVersionName = createShortenedVersionName(g2d,
 						versionName, versionNameX);
 				oldWidth = getWidth();
