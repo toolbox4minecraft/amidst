@@ -146,32 +146,61 @@ public class SaveLoader {
 		return new File(file.getParent(), "players");
 	}
 
-	public void movePlayer(String name, int x, int y) {
-		File out;
+	public void movePlayer(String playerName, int x, int y) {
+		File file = getPlayerFile(playerName);
+		backupFile(file);
+		if (backupSuccessful()) {
+			movePlayer(file, x, y);
+		}
+	}
+
+	// TODO: implement me!
+	private boolean backupSuccessful() {
+		throw new UnsupportedOperationException("implement me!");
+	}
+
+	private void movePlayer(File file, int x, int y) {
 		if (isMultiPlayerMap) {
-			String outPath = file.getParent() + "/players/" + name + ".dat";
-			out = new File(outPath);
-			backupFile(out);
 			try {
-				CompoundTag dataTag = nbtUtils.readTagFromFile(out);
-				CompoundTag modifiedDataTag = modifyPositionInDataTagMultiPlayer(
-						dataTag, x, y);
-				nbtUtils.writeTagToFile(out, modifiedDataTag);
+				movePlayerOnMultiPlayerMap(file, x, y);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else {
-			out = file;
-			backupFile(out);
 			try {
-				CompoundTag baseTag = nbtUtils.readTagFromFile(out);
-				CompoundTag modifiedBaseTag = modifyPositionInBaseTagSinglePlayer(
-						baseTag, x, y);
-				nbtUtils.writeTagToFile(out, modifiedBaseTag);
+				movePlayerOnSinglePlayerMap(file, x, y);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private File getPlayerFile(String playerName) {
+		if (isMultiPlayerMap) {
+			return getMultiPlayerPlayerFile(playerName);
+		} else {
+			return file;
+		}
+	}
+
+	private File getMultiPlayerPlayerFile(String name) {
+		return new File(file.getParent() + "/players/" + name + ".dat");
+	}
+
+	private void movePlayerOnMultiPlayerMap(File file, int x, int y)
+			throws IOException, FileNotFoundException {
+		CompoundTag dataTag = nbtUtils.readTagFromFile(file);
+		CompoundTag modifiedDataTag = modifyPositionInDataTagMultiPlayer(
+				dataTag, x, y);
+		nbtUtils.writeTagToFile(file, modifiedDataTag);
+	}
+
+	private void movePlayerOnSinglePlayerMap(File file, int x, int y)
+			throws IOException, FileNotFoundException {
+		CompoundTag baseTag = nbtUtils.readTagFromFile(file);
+		CompoundTag modifiedBaseTag = modifyPositionInBaseTagSinglePlayer(
+				baseTag, x, y);
+		nbtUtils.writeTagToFile(file, modifiedBaseTag);
 	}
 
 	private CompoundTag modifyPositionInBaseTagSinglePlayer(
@@ -218,7 +247,6 @@ public class SaveLoader {
 		return new CompoundTag(TAG_KEY_PLAYER, modifiedPlayerMap);
 	}
 
-	// MP
 	private CompoundTag modifyPositionInDataTagMultiPlayer(CompoundTag dataTag,
 			int x, int y) {
 		Map<String, Tag> playerMap = dataTag.getValue();
