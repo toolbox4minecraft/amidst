@@ -14,10 +14,10 @@ import javax.swing.border.LineBorder;
 
 import net.miginfocom.swing.MigLayout;
 
-public class CrashDialog {
+public class CrashWindow {
 	private JFrame frame;
 
-	public CrashDialog(String message, String logMessages) {
+	public CrashWindow(String message, String logMessages) {
 		frame = new JFrame("AMIDST encountered an unexpected error.");
 		frame.getContentPane().setLayout(new MigLayout());
 		frame.add(new JLabel("AMIDST has crashed with the following message:"),

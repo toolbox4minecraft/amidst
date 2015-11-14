@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import javax.swing.JOptionPane;
 
-import amidst.gui.CrashDialog;
+import amidst.gui.CrashWindow;
 import amidst.gui.MapWindow;
 
 public class Log {
@@ -95,7 +95,7 @@ public class Log {
 					listener.crash(e, exceptionText, message);
 			
 			
-			new CrashDialog(message, LogRecorder.getContents());
+			new CrashWindow(message, LogRecorder.getContents());
 			if (MapWindow.getInstance() != null)
 				MapWindow.getInstance().dispose();
 			//System.exit(0);
