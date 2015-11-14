@@ -16,7 +16,6 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 public class PlayerMover {
-	private NBTUtils nbtUtils = new NBTUtils();
 	private List<String> back = new ArrayList<String>();
 
 	private boolean isMultiPlayerMap;
@@ -71,18 +70,18 @@ public class PlayerMover {
 
 	private void movePlayerOnMultiPlayerMap(File file, int x, int y)
 			throws IOException, FileNotFoundException {
-		CompoundTag dataTag = nbtUtils.readTagFromFile(file);
+		CompoundTag dataTag = NBTUtils.readTagFromFile(file);
 		CompoundTag modifiedDataTag = modifyPositionInDataTagMultiPlayer(
 				dataTag, x, y);
-		nbtUtils.writeTagToFile(file, modifiedDataTag);
+		NBTUtils.writeTagToFile(file, modifiedDataTag);
 	}
 
 	private void movePlayerOnSinglePlayerMap(File file, int x, int y)
 			throws IOException, FileNotFoundException {
-		CompoundTag baseTag = nbtUtils.readTagFromFile(file);
+		CompoundTag baseTag = NBTUtils.readTagFromFile(file);
 		CompoundTag modifiedBaseTag = modifyPositionInBaseTagSinglePlayer(
 				baseTag, x, y);
-		nbtUtils.writeTagToFile(file, modifiedBaseTag);
+		NBTUtils.writeTagToFile(file, modifiedBaseTag);
 	}
 
 	private CompoundTag modifyPositionInBaseTagSinglePlayer(
