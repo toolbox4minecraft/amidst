@@ -12,10 +12,10 @@ import java.util.Random;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import MoF.MapWindow;
 import MoF.Project;
 import MoF.SaveLoader;
 import MoF.UpdateManager;
+import amidst.Application;
 import amidst.Options;
 import amidst.gui.LicenseWindow;
 import amidst.logging.Log;
@@ -24,19 +24,20 @@ import amidst.map.layers.StrongholdLayer;
 
 public class MenuActions {
 	private MenuActionsHelper helper;
-	private MapWindow window;
+	private Application application;
 
-	public MenuActions(MapWindow window) {
-		this.window = window;
-		this.helper = new MenuActionsHelper(window);
+	public MenuActions(Application application) {
+		this.application = application;
+		this.helper = new MenuActionsHelper(application);
 	}
 
 	public void savePlayerLocations() {
-		if (window.getProject().isSaveLoaded()) {
-			for (MapObjectPlayer player : window.getProject().getSaveLoader()
-					.getPlayers()) {
+		if (application.getProject().isSaveLoaded()) {
+			for (MapObjectPlayer player : application.getProject()
+					.getSaveLoader().getPlayers()) {
 				if (player.needSave) {
-					window.getProject()
+					application
+							.getProject()
 							.getSaveLoader()
 							.movePlayer(player.getName(), player.globalX,
 									player.globalY);
@@ -65,7 +66,7 @@ public class MenuActions {
 			if (seed.equals(""))
 				seed = "" + (new Random()).nextLong();
 			if (worldType != null) {
-				window.setProject(new Project(seed, worldType.getValue()));
+				application.setProject(new Project(seed, worldType.getValue()));
 			}
 		}
 	}
@@ -85,14 +86,14 @@ public class MenuActions {
 
 		// If a string was returned, say so.
 		if (worldType != null) {
-			window.setProject(new Project(seed, worldType.getValue()));
+			application.setProject(new Project(seed, worldType.getValue()));
 		}
 	}
 
 	public void newFromFileOrFolder() {
 		JFileChooser fileChooser = helper.createMinecraftMapFileChooser();
 		if (helper.showFileChooser(fileChooser) == JFileChooser.APPROVE_OPTION) {
-			window.setProject(new Project(helper.getSaveLoader(fileChooser
+			application.setProject(new Project(helper.getSaveLoader(fileChooser
 					.getSelectedFile())));
 		}
 	}
@@ -111,7 +112,7 @@ public class MenuActions {
 			try {
 				long x = Long.parseLong(c[0]);
 				long y = Long.parseLong(c[1]);
-				window.getProject().moveMapTo(x, y);
+				application.getProject().moveMapTo(x, y);
 			} catch (NumberFormatException e1) {
 				Log.w("Invalid location entered, ignoring.");
 				e1.printStackTrace();
@@ -120,8 +121,8 @@ public class MenuActions {
 	}
 
 	public void gotoPlayer() {
-		if (window.getProject().isSaveLoaded()) {
-			List<MapObjectPlayer> playerList = window.getProject()
+		if (application.getProject().isSaveLoaded()) {
+			List<MapObjectPlayer> playerList = application.getProject()
 					.getSaveLoader().getPlayers();
 			MapObjectPlayer[] players = playerList
 					.toArray(new MapObjectPlayer[playerList.size()]);
@@ -129,7 +130,7 @@ public class MenuActions {
 			MapObjectPlayer p = helper.choose("Go to", "Select player:",
 					players);
 			if (p != null)
-				window.getProject().moveMapTo(p.globalX, p.globalY);
+				application.getProject().moveMapTo(p.globalX, p.globalY);
 		}
 	}
 
@@ -137,13 +138,15 @@ public class MenuActions {
 		JFileChooser fc = new JFileChooser();
 		fc.setFileFilter(new PNGFileFilter());
 		fc.setAcceptAllFileFilterUsed(false);
-		int returnVal = fc.showSaveDialog(window.getFrame());
+		int returnVal = fc
+				.showSaveDialog(application.getMapWindow().getFrame());
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			String s = fc.getSelectedFile().toString();
-			if (!s.toLowerCase().endsWith(".png"))
+			if (!s.toLowerCase().endsWith(".png")) {
 				s += ".png";
-			window.getProject().getMapViewer().saveToFile(new File(s));
+			}
+			application.getProject().getMapViewer().saveToFile(new File(s));
 		}
 	}
 
@@ -161,7 +164,7 @@ public class MenuActions {
 	}
 
 	public void checkForUpdates() {
-		new UpdateManager(window.getFrame()).start();
+		new UpdateManager(application.getMapWindow().getFrame()).start();
 	}
 
 	public void viewLicense() {
@@ -169,7 +172,7 @@ public class MenuActions {
 	}
 
 	public void about() {
-		JOptionPane.showMessageDialog(window.getFrame(),
+		JOptionPane.showMessageDialog(application.getMapWindow().getFrame(),
 				"Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
 						+ "By Skidoodle (amidst.project@gmail.com)");
 	}

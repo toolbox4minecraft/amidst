@@ -15,15 +15,15 @@ import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import MoF.MapWindow;
 import MoF.SaveLoader;
+import amidst.Application;
 import amidst.Util;
 
 public class MenuActionsHelper {
-	private MapWindow window;
+	private Application application;
 
-	public MenuActionsHelper(MapWindow window) {
-		this.window = window;
+	public MenuActionsHelper(Application application) {
+		this.application = application;
 	}
 
 	public String showSeedPrompt(String title) {
@@ -96,8 +96,8 @@ public class MenuActionsHelper {
 
 		final JComponent[] inputs = new JComponent[] {
 				new JLabel("Enter your seed: "), inputInformation, inputText };
-		int result = JOptionPane.showConfirmDialog(window.getFrame(), inputs,
-				title, JOptionPane.OK_CANCEL_OPTION);
+		int result = JOptionPane.showConfirmDialog(application.getMapWindow()
+				.getFrame(), inputs, title, JOptionPane.OK_CANCEL_OPTION);
 		return (result == 0) ? inputText.getText() : null;
 	}
 
@@ -119,7 +119,8 @@ public class MenuActionsHelper {
 	}
 
 	public int showFileChooser(JFileChooser fileChooser) {
-		return fileChooser.showOpenDialog(window.getFrame());
+		return fileChooser
+				.showOpenDialog(application.getMapWindow().getFrame());
 	}
 
 	public JFileChooser createMinecraftMapFileChooser() {
@@ -138,8 +139,9 @@ public class MenuActionsHelper {
 	 * Convenience wrapper around JOptionPane.showInputDialog
 	 */
 	public <T> T choose(String title, String message, T[] choices) {
-		return (T) JOptionPane.showInputDialog(window.getFrame(), message,
-				title, JOptionPane.PLAIN_MESSAGE, null, choices, choices[0]);
+		return (T) JOptionPane.showInputDialog(application.getMapWindow()
+				.getFrame(), message, title, JOptionPane.PLAIN_MESSAGE, null,
+				choices, choices[0]);
 	}
 
 	/**
@@ -151,9 +153,8 @@ public class MenuActionsHelper {
 	 *            name displayed in the choice
 	 */
 	public <T extends Point> void goToChosenPoint(T[] points, String name) {
-
 		T p = choose("Go to", "Select " + name + ":", points);
 		if (p != null)
-			window.getProject().moveMapTo(p.x, p.y);
+			application.getProject().moveMapTo(p.x, p.y);
 	}
 }

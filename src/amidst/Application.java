@@ -18,7 +18,7 @@ public class Application {
 	private MapWindow mapWindow;
 	private Project project;
 
-	public MapWindow getWindow() {
+	public MapWindow getMapWindow() {
 		return mapWindow;
 	}
 
@@ -52,7 +52,7 @@ public class Application {
 
 	private void displayMapWindow(IMinecraftInterface minecraftInterface) {
 		MinecraftUtil.setBiomeInterface(minecraftInterface);
-		setMapWindow(new MapWindow());
+		setMapWindow(new MapWindow(this));
 		setVersionSelectWindow(null);
 	}
 

@@ -8,6 +8,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 
 import amidst.Amidst;
+import amidst.Application;
 import amidst.gui.menu.AmidstMenu;
 
 public class MapWindow {
@@ -17,12 +18,15 @@ public class MapWindow {
 		return instance;
 	}
 
+	private Application application;
+
 	private JFrame frame = new JFrame();
+	private AmidstMenu menuBar;
 	private Container contentPane;
 	private Project project;
-	private AmidstMenu menuBar;
 
-	public MapWindow() {
+	public MapWindow(Application application) {
+		this.application = application;
 		frame.setTitle("Amidst v" + Amidst.version());
 		frame.setSize(1000, 800);
 		frame.setIconImage(Amidst.icon);
@@ -44,7 +48,7 @@ public class MapWindow {
 	}
 
 	private void initMenuBar() {
-		menuBar = new AmidstMenu(this);
+		menuBar = new AmidstMenu(application);
 		frame.setJMenuBar(menuBar.getMenuBar());
 	}
 
