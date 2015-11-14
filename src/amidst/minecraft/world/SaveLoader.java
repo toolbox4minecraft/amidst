@@ -1,22 +1,18 @@
 package amidst.minecraft.world;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jnbt.CompoundTag;
 import org.jnbt.DoubleTag;
 import org.jnbt.ListTag;
-import org.jnbt.NBTInputStream;
-import org.jnbt.NBTOutputStream;
 import org.jnbt.Tag;
 
 import amidst.Util;
@@ -26,12 +22,15 @@ import amidst.map.MapObjectPlayer;
 public class SaveLoader {
 	private static final String DEFAULT_SINGLE_PLAYER_PLAYER_NAME = "Player";
 
+	private static final String TAG_KEY_BASE = "Base";
+	private static final String TAG_KEY_DATA = "Data";
 	private static final String TAG_KEY_POS = "Pos";
 	private static final String TAG_KEY_PLAYER = "Player";
 	private static final String TAG_KEY_RANDOM_SEED = "RandomSeed";
 	private static final String TAG_KEY_GENERATOR_NAME = "generatorName";
 	private static final String TAG_KEY_GENERATOR_OPTIONS = "generatorOptions";
 
+	// TODO: make non-static!
 	public static WorldType genType = WorldType.DEFAULT;
 
 	public static SaveLoader newInstance(File file) {
@@ -43,6 +42,7 @@ public class SaveLoader {
 		}
 	}
 
+	private NBTUtils nbtUtils = new NBTUtils();
 	private List<MapObjectPlayer> players = new ArrayList<MapObjectPlayer>();
 	private List<String> back = new ArrayList<String>();
 
@@ -62,7 +62,7 @@ public class SaveLoader {
 	}
 
 	private void load() throws IOException, FileNotFoundException {
-		CompoundTag rootDataTag = getRootDataTag();
+		CompoundTag rootDataTag = getRootDataTag(file);
 		loadSeed(rootDataTag);
 		loadGenerator(rootDataTag);
 		File playersFolder = getPlayersFolder();
@@ -71,22 +71,23 @@ public class SaveLoader {
 		loadPlayers(rootDataTag, playerFiles);
 	}
 
-	private CompoundTag getRootDataTag() throws IOException,
+	private CompoundTag getRootDataTag(File file) throws IOException,
 			FileNotFoundException {
-		return (CompoundTag) getTagFromFile(file).getValue().get("Data");
+		return (CompoundTag) nbtUtils.readTagFromFile(file).getValue()
+				.get(TAG_KEY_DATA);
 	}
 
 	private void loadSeed(CompoundTag rootDataTag) {
-		seed = (Long) getValue(TAG_KEY_RANDOM_SEED, rootDataTag);
+		seed = (Long) nbtUtils.getValue(TAG_KEY_RANDOM_SEED, rootDataTag);
 	}
 
 	private void loadGenerator(CompoundTag rootDataTag) {
-		if (isValueExisting(TAG_KEY_GENERATOR_NAME, rootDataTag)) {
-			genType = WorldType.from((String) getValue(TAG_KEY_GENERATOR_NAME,
-					rootDataTag));
+		if (nbtUtils.isValueExisting(TAG_KEY_GENERATOR_NAME, rootDataTag)) {
+			genType = WorldType.from((String) nbtUtils.getValue(
+					TAG_KEY_GENERATOR_NAME, rootDataTag));
 			if (genType == WorldType.CUSTOMIZED) {
-				generatorOptions = (String) getValue(TAG_KEY_GENERATOR_OPTIONS,
-						rootDataTag);
+				generatorOptions = (String) nbtUtils.getValue(
+						TAG_KEY_GENERATOR_OPTIONS, rootDataTag);
 			}
 		}
 	}
@@ -124,7 +125,8 @@ public class SaveLoader {
 			FileNotFoundException {
 		for (File playerFile : playerFiles) {
 			if (playerFile.isFile()) {
-				addPlayer(getPlayerName(playerFile), getTagFromFile(playerFile));
+				addPlayer(getPlayerName(playerFile),
+						nbtUtils.readTagFromFile(playerFile));
 			}
 		}
 	}
@@ -144,28 +146,6 @@ public class SaveLoader {
 		return new File(file.getParent(), "players");
 	}
 
-	private CompoundTag getTagFromFile(File file) throws IOException,
-			FileNotFoundException {
-		NBTInputStream stream = createNBTInputStream(file);
-		CompoundTag result = (CompoundTag) stream.readTag();
-		stream.close();
-		return result;
-	}
-
-	private NBTInputStream createNBTInputStream(File file) throws IOException,
-			FileNotFoundException {
-		return new NBTInputStream(new BufferedInputStream(new FileInputStream(
-				file)));
-	}
-
-	private Object getValue(String key, CompoundTag rootDataTag) {
-		return rootDataTag.getValue().get(key).getValue();
-	}
-
-	private boolean isValueExisting(String key, CompoundTag rootDataTag) {
-		return rootDataTag.getValue().get(key) != null;
-	}
-
 	public void movePlayer(String name, int x, int y) {
 		File out;
 		if (isMultiPlayerMap) {
@@ -173,60 +153,92 @@ public class SaveLoader {
 			out = new File(outPath);
 			backupFile(out);
 			try {
-				CompoundTag root = getTagFromFile(out);
-
-				HashMap<String, Tag> rootMap = new HashMap<String, Tag>(
-						root.getValue());
-				ArrayList<Tag> posTag = new ArrayList<Tag>(
-						((ListTag) rootMap.get(TAG_KEY_POS)).getValue());
-				posTag.set(0, new DoubleTag("x", x));
-				posTag.set(1, new DoubleTag("y", 120));
-				posTag.set(2, new DoubleTag("z", y));
-				rootMap.put(TAG_KEY_POS, new ListTag(TAG_KEY_POS,
-						DoubleTag.class, posTag));
-				root = new CompoundTag("Data", rootMap);
-				NBTOutputStream outStream = new NBTOutputStream(
-						new FileOutputStream(out));
-				outStream.writeTag(root);
-				outStream.close();
+				CompoundTag dataTag = nbtUtils.readTagFromFile(out);
+				CompoundTag modifiedDataTag = modifyPositionInDataTag(dataTag,
+						x, y);
+				nbtUtils.writeTagToFile(out, modifiedDataTag);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
 		} else {
 			out = file;
 			backupFile(out);
 			try {
-				NBTInputStream inStream = createNBTInputStream(out);
-				CompoundTag root = (CompoundTag) (((CompoundTag) inStream
-						.readTag()).getValue().get("Data"));
-				inStream.close();
-
-				HashMap<String, Tag> rootMap = new HashMap<String, Tag>(
-						root.getValue());
-				HashMap<String, Tag> playerMap = new HashMap<String, Tag>(
-						((CompoundTag) rootMap.get(TAG_KEY_PLAYER)).getValue());
-				ArrayList<Tag> posTag = new ArrayList<Tag>(
-						((ListTag) playerMap.get(TAG_KEY_POS)).getValue());
-				posTag.set(0, new DoubleTag("x", x));
-				posTag.set(1, new DoubleTag("y", 120));
-				posTag.set(2, new DoubleTag("z", y));
-				rootMap.put(TAG_KEY_PLAYER, new CompoundTag(TAG_KEY_PLAYER,
-						playerMap));
-				playerMap.put(TAG_KEY_POS, new ListTag(TAG_KEY_POS,
-						DoubleTag.class, posTag));
-				root = new CompoundTag("Data", rootMap);
-				HashMap<String, Tag> base = new HashMap<String, Tag>();
-				base.put("Data", root);
-				root = new CompoundTag("Base", base);
-				NBTOutputStream outStream = new NBTOutputStream(
-						new FileOutputStream(out));
-				outStream.writeTag(root);
-				outStream.close();
+				CompoundTag baseTag = nbtUtils.readTagFromFile(out);
+				CompoundTag modifiedBaseTag = modifyPositionInBaseTag(baseTag,
+						x, y);
+				nbtUtils.writeTagToFile(out, modifiedBaseTag);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private CompoundTag modifyPositionInBaseTag(CompoundTag baseTag, int x,
+			int y) {
+		Map<String, Tag> baseMap = baseTag.getValue();
+		Map<String, Tag> modifiedBaseMap = modifyPositionInBaseMap(baseMap, x,
+				y);
+		return new CompoundTag(TAG_KEY_BASE, modifiedBaseMap);
+	}
+
+	private Map<String, Tag> modifyPositionInBaseMap(Map<String, Tag> baseMap,
+			int x, int y) {
+		// TODO: add baseMap in constructor?
+		Map<String, Tag> result = new HashMap<String, Tag>();
+		CompoundTag dataTag = (CompoundTag) baseMap.get(TAG_KEY_DATA);
+		CompoundTag modifiedDataTag = modifyPositionInDataTagSinglePlayer(
+				dataTag, x, y);
+		result.put(TAG_KEY_DATA, modifiedDataTag);
+		return result;
+	}
+
+	private CompoundTag modifyPositionInDataTagSinglePlayer(
+			CompoundTag dataTag, int x, int y) {
+		Map<String, Tag> dataMap = dataTag.getValue();
+		Map<String, Tag> modifiedDataMap = modifyPositionInDataMap(dataMap, x,
+				y);
+		return new CompoundTag(TAG_KEY_DATA, modifiedDataMap);
+	}
+
+	private Map<String, Tag> modifyPositionInDataMap(Map<String, Tag> dataMap,
+			int x, int y) {
+		Map<String, Tag> result = new HashMap<String, Tag>(dataMap);
+		CompoundTag dataTag = (CompoundTag) dataMap.get(TAG_KEY_PLAYER);
+		CompoundTag modifiedDataTag = modifyPositionInDataTag(dataTag, x, y);
+		result.put(TAG_KEY_PLAYER, modifiedDataTag);
+		return result;
+	}
+
+	private CompoundTag modifyPositionInDataTag(CompoundTag dataTag, int x,
+			int y) {
+		Map<String, Tag> playerMap = dataTag.getValue();
+		Map<String, Tag> modifiedPlayerMap = modifyPositionInPlayerMap(
+				playerMap, x, y);
+		return new CompoundTag(TAG_KEY_DATA, modifiedPlayerMap);
+	}
+
+	private Map<String, Tag> modifyPositionInPlayerMap(
+			Map<String, Tag> playerMap, int x, int y) {
+		Map<String, Tag> result = new HashMap<String, Tag>(playerMap);
+		ListTag posTag = (ListTag) playerMap.get(TAG_KEY_POS);
+		ListTag modifiedPosTag = modifyPositionInPosTag(posTag, x, y);
+		result.put(TAG_KEY_POS, modifiedPosTag);
+		return result;
+	}
+
+	private ListTag modifyPositionInPosTag(ListTag posTag, int x, int y) {
+		List<Tag> posList = posTag.getValue();
+		List<Tag> modifiedPosList = modifyPositionInPosList(posList, x, y);
+		return new ListTag(TAG_KEY_POS, DoubleTag.class, modifiedPosList);
+	}
+
+	private List<Tag> modifyPositionInPosList(List<Tag> posList, int x, int y) {
+		List<Tag> result = new ArrayList<Tag>(posList);
+		result.set(0, new DoubleTag("x", x));
+		result.set(1, new DoubleTag("y", 120));
+		result.set(2, new DoubleTag("z", y));
+		return result;
 	}
 
 	private void backupFile(File inputFile) {
