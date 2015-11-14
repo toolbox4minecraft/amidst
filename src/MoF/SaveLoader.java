@@ -2,10 +2,12 @@ package MoF;
 import amidst.Util;
 import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import javax.swing.filechooser.FileFilter;
 
 import org.jnbt.CompoundTag;
@@ -65,6 +67,15 @@ public class SaveLoader {
 				return "Minecraft Data File (level.dat)";
 			}
 		});
+	}
+	
+	public static SaveLoader newInstance(File file) {
+		if (file.isDirectory()) {
+			return new SaveLoader(new File(file.getAbsoluteFile()
+					+ "/level.dat"));
+		} else {
+			return new SaveLoader(file);
+		}
 	}
 	
 	private File file;
@@ -153,7 +164,7 @@ public class SaveLoader {
 		}
 	}
 	
-	public SaveLoader(File f) {
+	private SaveLoader(File f) {
 		file = f;
 		players = new ArrayList<MapObjectPlayer>();
 		back = new ArrayList<String>();

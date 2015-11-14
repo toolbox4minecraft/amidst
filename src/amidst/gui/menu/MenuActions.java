@@ -14,20 +14,21 @@ import javax.swing.JOptionPane;
 
 import MoF.Project;
 import MoF.SaveLoader;
-import MoF.UpdateManager;
 import amidst.Application;
 import amidst.Options;
 import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
+import amidst.map.MapObjectStronghold;
 import amidst.map.layers.StrongholdLayer;
 
 public class MenuActions {
-	private MenuActionsHelper helper;
+	private static final String ABOUT_MESSAGE = "Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
+			+ "By Skidoodle (amidst.project@gmail.com)";
+
 	private Application application;
 
 	public MenuActions(Application application) {
 		this.application = application;
-		this.helper = new MenuActionsHelper(application);
 	}
 
 	public void savePlayerLocations() {
@@ -56,7 +57,8 @@ public class MenuActions {
 			String worldTypePreference = Options.instance.worldType.get();
 			SaveLoader.Type worldType = null;
 			if (worldTypePreference.equals("Prompt each time")) {
-				worldType = helper.choose("New Project", "Enter world type\n",
+				worldType = application.getMapWindow().askForOptions(
+						"New Project", "Enter world type\n",
 						SaveLoader.selectableTypes);
 			} else {
 				worldType = SaveLoader.Type.fromMixedCase(worldTypePreference);
@@ -77,8 +79,8 @@ public class MenuActions {
 		String worldTypePreference = Options.instance.worldType.get();
 		SaveLoader.Type worldType = null;
 		if (worldTypePreference.equals("Prompt each time")) {
-			worldType = helper.choose("New Project", "Enter world type\n",
-					SaveLoader.selectableTypes);
+			worldType = application.getMapWindow().askForOptions("New Project",
+					"Enter world type\n", SaveLoader.selectableTypes);
 		} else {
 			worldType = SaveLoader.Type.fromMixedCase(worldTypePreference);
 		}
@@ -90,16 +92,20 @@ public class MenuActions {
 	}
 
 	public void newFromFileOrFolder() {
-		JFileChooser fileChooser = helper.createMinecraftMapFileChooser();
-		if (helper.showFileChooser(fileChooser) == JFileChooser.APPROVE_OPTION) {
-			application.setProject(new Project(helper.getSaveLoader(fileChooser
-					.getSelectedFile())));
+		File minecraftMap = application.getMapWindow().askForMinecraftMap();
+		if (minecraftMap != null) {
+			application.setProject(new Project(SaveLoader
+					.newInstance(minecraftMap)));
 		}
 	}
 
 	public void findStronghold() {
-		helper.goToChosenPoint(StrongholdLayer.instance.getStrongholds(),
-				"Stronghold");
+		MapObjectStronghold selection = application.getMapWindow()
+				.askForOptions("Go to", "Select Stronghold:",
+						StrongholdLayer.instance.getStrongholds());
+		if (selection != null) {
+			application.getProject().moveMapTo(selection.x, selection.y);
+		}
 	}
 
 	public void gotoCoordinate() {
@@ -120,16 +126,18 @@ public class MenuActions {
 	}
 
 	public void gotoPlayer() {
-		if (application.getProject().isSaveLoaded()) {
-			List<MapObjectPlayer> playerList = application.getProject()
-					.getSaveLoader().getPlayers();
-			MapObjectPlayer[] players = playerList
-					.toArray(new MapObjectPlayer[playerList.size()]);
-			helper.goToChosenPoint(players, "Player");
-			MapObjectPlayer p = helper.choose("Go to", "Select player:",
-					players);
-			if (p != null)
-				application.getProject().moveMapTo(p.globalX, p.globalY);
+		if (!application.getProject().isSaveLoaded()) {
+			return;
+		}
+		List<MapObjectPlayer> playerList = application.getProject()
+				.getSaveLoader().getPlayers();
+		MapObjectPlayer[] players = playerList
+				.toArray(new MapObjectPlayer[playerList.size()]);
+		MapObjectPlayer selection = application.getMapWindow().askForOptions(
+				"Go to", "Select player:", players);
+		if (selection != null) {
+			application.getProject().moveMapTo(selection.globalX,
+					selection.globalY);
 		}
 	}
 
@@ -163,7 +171,7 @@ public class MenuActions {
 	}
 
 	public void checkForUpdates() {
-		new UpdateManager(application.getMapWindow().getFrame()).start();
+		application.checkForUpdates();
 	}
 
 	public void viewLicense() {
@@ -171,8 +179,6 @@ public class MenuActions {
 	}
 
 	public void about() {
-		JOptionPane.showMessageDialog(application.getMapWindow().getFrame(),
-				"Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
-						+ "By Skidoodle (amidst.project@gmail.com)");
+		application.getMapWindow().displayMessage(ABOUT_MESSAGE);
 	}
 }

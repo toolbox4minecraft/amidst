@@ -4,13 +4,18 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import MoF.Project;
+import MoF.SaveLoader;
 import MoF.UpdateManager;
 import amidst.Amidst;
 import amidst.Application;
+import amidst.Util;
 import amidst.gui.menu.AmidstMenu;
 
 public class MapWindow {
@@ -96,5 +101,34 @@ public class MapWindow {
 
 	public String askForSeed() {
 		return seedPrompt.askForSeed();
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T askForOptions(String title, String message, T[] choices) {
+		return (T) JOptionPane.showInputDialog(frame, message, title,
+				JOptionPane.PLAIN_MESSAGE, null, choices, choices[0]);
+	}
+
+	public File askForMinecraftMap() {
+		JFileChooser fileChooser = createMinecraftMapFileChooser();
+		if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+			return fileChooser.getSelectedFile();
+		} else {
+			return null;
+		}
+	}
+
+	private JFileChooser createMinecraftMapFileChooser() {
+		JFileChooser result = new JFileChooser();
+		result.setFileFilter(SaveLoader.getFilter());
+		result.setAcceptAllFileFilterUsed(false);
+		result.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		result.setCurrentDirectory(Util.getSavesDirectory());
+		result.setFileHidingEnabled(false);
+		return result;
+	}
+
+	public void displayMessage(String message) {
+		JOptionPane.showMessageDialog(frame, message);
 	}
 }

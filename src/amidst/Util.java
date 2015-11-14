@@ -180,4 +180,12 @@ public class Util {
 		int average = (r + g + b) / 3;
 		return makeColor(average, average, average);
 	}
+
+	public static File getSavesDirectory() {
+		if (profileDirectory != null) {
+			return new File(profileDirectory, "saves");
+		} else {
+			return new File(minecraftDirectory, "saves");
+		}
+	}
 }

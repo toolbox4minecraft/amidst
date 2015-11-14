@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 
 import MoF.Project;
+import MoF.UpdateManager;
 import amidst.gui.LicenseWindow;
 import amidst.gui.MapWindow;
 import amidst.gui.version.VersionSelectWindow;
@@ -89,5 +90,9 @@ public class Application {
 
 	public void displayLicenseWindow() {
 		new LicenseWindow();
+	}
+
+	public void checkForUpdates() {
+		new UpdateManager(mapWindow.getFrame()).start();
 	}
 }
