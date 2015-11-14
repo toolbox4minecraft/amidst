@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 import amidst.logging.Log;
 import amidst.version.VersionInfo;
-import MoF.SaveLoader.Type;
+import MoF.SaveLoader.WorldType;
 
 public class LocalMinecraftInterface implements IMinecraftInterface {
 	private Minecraft minecraft;
@@ -44,7 +44,7 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 		if ((blockInit = minecraft.getClassByName("BlockInit")) != null)
 			blockInit.callFunction("initialize");
 		
-		Type type = Type.fromMixedCase(typeName);
+		WorldType type = WorldType.from(typeName);
 		MinecraftClass genLayerClass = minecraft.getClassByName("GenLayer");
 		MinecraftClass worldTypeClass = minecraft.getClassByName("WorldType");
 		Object[] genLayers = null;

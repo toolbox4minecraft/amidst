@@ -23,21 +23,39 @@ import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
 
 public class SaveLoader {
-	public enum Type {
-		DEFAULT("Default", "default"), FLAT("Flat", "flat"), LARGE_BIOMES(
-				"Large Biomes", "largeBiomes"), AMPLIFIED("Amplified",
-				"amplified"), CUSTOMIZED("Customized", "customized");
-		private final String name;
-		private final String value;
+	public static enum WorldType {
+		// @formatter:off
+		DEFAULT("Default", "default"),
+		FLAT("Flat", "flat"),
+		LARGE_BIOMES("Large Biomes", "largeBiomes"),
+		AMPLIFIED("Amplified", "amplified"),
+		CUSTOMIZED("Customized", "customized");
+		// @formatter:on
 
-		Type(String name, String value) {
-			this.name = name;
-			this.value = value;
+		public static WorldType from(String nameOrValue) {
+			WorldType result = findInstance(nameOrValue);
+			if (result == null) {
+				Log.crash("Unable to find World Type: " + nameOrValue);
+			}
+			return result;
 		}
 
-		@Override
-		public String toString() {
-			return name;
+		private static WorldType findInstance(String nameOrValue) {
+			for (WorldType worldType : values()) {
+				if (worldType.name.equalsIgnoreCase(nameOrValue)
+						|| worldType.value.equalsIgnoreCase(nameOrValue)) {
+					return worldType;
+				}
+			}
+			return null;
+		}
+
+		private String name;
+		private String value;
+
+		private WorldType(String name, String value) {
+			this.name = name;
+			this.value = value;
 		}
 
 		public String getName() {
@@ -48,22 +66,22 @@ public class SaveLoader {
 			return value;
 		}
 
-		public static Type fromMixedCase(String name) {
-			name = name.toLowerCase();
-			for (Type t : values())
-				if (t.name.toLowerCase().equals(name)
-						|| t.value.toLowerCase().equals(name))
-					return t;
-			Log.crash("Unable to find World Type: " + name);
-			return null;
+		@Override
+		public String toString() {
+			return name;
 		}
-
 	}
 
-	public static Type genType = Type.DEFAULT;
+	// @formatter:off
+	public static final WorldType[] SELECTABLE_WORLD_TYPES = {
+			WorldType.DEFAULT,
+			WorldType.FLAT,
+			WorldType.LARGE_BIOMES,
+			WorldType.AMPLIFIED
+	};
+	// @formatter:on
 
-	public static Type[] selectableTypes = new Type[] { Type.DEFAULT,
-			Type.FLAT, Type.LARGE_BIOMES, Type.AMPLIFIED };
+	public static WorldType genType = WorldType.DEFAULT;
 
 	public static FileFilter getFilter() {
 		return (new FileFilter() {
@@ -108,10 +126,10 @@ public class SaveLoader {
 			inStream.close();
 			seed = (Long) (root.getValue().get("RandomSeed").getValue());
 			if (root.getValue().get("generatorName") != null) {
-				genType = Type.fromMixedCase((String) (root.getValue().get(
+				genType = WorldType.from((String) (root.getValue().get(
 						"generatorName").getValue()));
 
-				if (genType == Type.CUSTOMIZED)
+				if (genType == WorldType.CUSTOMIZED)
 					generatorOptions = (String) root.getValue()
 							.get("generatorOptions").getValue();
 			}

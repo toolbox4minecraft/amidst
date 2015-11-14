@@ -54,13 +54,13 @@ public class MenuActions {
 		String seed = application.getMapWindow().askForSeed();
 		if (seed != null) {
 			String worldTypePreference = Options.instance.worldType.get();
-			SaveLoader.Type worldType = null;
+			SaveLoader.WorldType worldType = null;
 			if (worldTypePreference.equals("Prompt each time")) {
 				worldType = application.getMapWindow().askForOptions(
 						"New Project", "Enter world type\n",
-						SaveLoader.selectableTypes);
+						SaveLoader.SELECTABLE_WORLD_TYPES);
 			} else {
-				worldType = SaveLoader.Type.fromMixedCase(worldTypePreference);
+				worldType = SaveLoader.WorldType.from(worldTypePreference);
 			}
 
 			if (seed.equals(""))
@@ -76,12 +76,12 @@ public class MenuActions {
 		Random random = new Random();
 		long seed = random.nextLong();
 		String worldTypePreference = Options.instance.worldType.get();
-		SaveLoader.Type worldType = null;
+		SaveLoader.WorldType worldType = null;
 		if (worldTypePreference.equals("Prompt each time")) {
 			worldType = application.getMapWindow().askForOptions("New Project",
-					"Enter world type\n", SaveLoader.selectableTypes);
+					"Enter world type\n", SaveLoader.SELECTABLE_WORLD_TYPES);
 		} else {
-			worldType = SaveLoader.Type.fromMixedCase(worldTypePreference);
+			worldType = SaveLoader.WorldType.from(worldTypePreference);
 		}
 
 		// If a string was returned, say so.
