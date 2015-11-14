@@ -3,6 +3,7 @@ package amidst.gui;
 import java.awt.Color;
 import java.awt.Container;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -17,58 +18,81 @@ import javax.swing.event.ListSelectionListener;
 import net.miginfocom.swing.MigLayout;
 import amidst.Amidst;
 
-public class LicenseWindow extends JFrame {
-	private static final long serialVersionUID = 3936119740592768287L;
-	private ArrayList<License> licenses = new ArrayList<License>();
-	private JList licenseList;
-	private JTextArea licenseText = new JTextArea();
+public class LicenseWindow {
+	private static final String LICENSES_DIRECTORY = "licenses";
+
+	private List<License> licenses = new ArrayList<License>();
+
+	private JFrame frame;
+	private JList<License> licenseList;
+	private JTextArea licenseTextArea;
 
 	public LicenseWindow() {
-		super("Licenses");
-		setIconImage(Amidst.icon);
-		licenseText.setEditable(false);
-		licenseText.setLineWrap(true);
-		licenseText.setWrapStyleWord(true);
+		createLicenses();
+		createLicenseTextArea();
+		createLicenseList();
+		createFrame();
+	}
 
-		licenses.add(new License("AMIDST", "licenses/amidst.txt"));
-		licenses.add(new License("Args4j", "licenses/args4j.txt"));
-		licenses.add(new License("Gson", "licenses/gson.txt"));
-		licenses.add(new License("JGoogleAnalytics",
-				"licenses/jgoogleanalytics.txt"));
-		licenses.add(new License("JNBT", "licenses/jnbt.txt"));
-		licenses.add(new License("Kryonet", "licenses/kryonet.txt"));
-		licenses.add(new License("MiG Layout", "licenses/miglayout.txt"));
-		licenses.add(new License("Rhino", "licenses/rhino.txt"));
-		licenseList = new JList(licenses.toArray());
+	private void createLicenses() {
+		licenses.add(createLicense("AMIDST", "amidst.txt"));
+		licenses.add(createLicense("Args4j", "args4j.txt"));
+		licenses.add(createLicense("Gson", "gson.txt"));
+		licenses.add(createLicense("JGoogleAnalytics", "jgoogleanalytics.txt"));
+		licenses.add(createLicense("JNBT", "jnbt.txt"));
+		licenses.add(createLicense("Kryonet", "kryonet.txt"));
+		licenses.add(createLicense("MiG Layout", "miglayout.txt"));
+		licenses.add(createLicense("Rhino", "rhino.txt"));
+	}
+
+	private License createLicense(String name, String path) {
+		return new License(name, LICENSES_DIRECTORY + "/" + path);
+	}
+
+	private void createLicenseTextArea() {
+		licenseTextArea = new JTextArea();
+		licenseTextArea.setEditable(false);
+		licenseTextArea.setLineWrap(true);
+		licenseTextArea.setWrapStyleWord(true);
+	}
+
+	private void createLicenseList() {
+		licenseList = new JList<License>(getLicensesArray());
 		licenseList.setBorder(new LineBorder(Color.darkGray, 1));
-		Container contentPane = this.getContentPane();
-		MigLayout layout = new MigLayout();
-		contentPane.setLayout(layout);
-		contentPane.add(licenseList, "w 100!, h 0:2400:2400");
-		JScrollPane scrollPane = new JScrollPane(licenseText);
-		scrollPane
-				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		contentPane.add(scrollPane, "w 0:4800:4800, h 0:2400:2400");
-		setSize(870, 550);
-		setVisible(true);
 		licenseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		licenseList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				License license = (License) licenseList.getSelectedValue();
-				license.load();
-
-				if (license.isLoaded()) {
-					licenseText.setText(license.getContents());
-					licenseText.setCaretPosition(0);
-				}
+				licenseTextArea.setText(licenseList.getSelectedValue()
+						.getLicenseText());
+				licenseTextArea.setCaretPosition(0);
 			}
 		});
 		licenseList.setSelectedIndex(0);
 	}
 
-	public void addLicense(License license) {
-		licenses.add(license);
-		licenseList.setListData(licenses.toArray());
+	private License[] getLicensesArray() {
+		return licenses.toArray(new License[licenses.size()]);
+	}
+
+	private void createFrame() {
+		frame = new JFrame("Licenses");
+		initContentPane();
+		frame.setIconImage(Amidst.icon);
+		frame.setSize(870, 550);
+		frame.setVisible(true);
+	}
+
+	private void initContentPane() {
+		Container contentPane = frame.getContentPane();
+		contentPane.setLayout(new MigLayout());
+		contentPane.add(licenseList, "w 100!, h 0:2400:2400");
+		contentPane.add(createScrollPane(), "w 0:4800:4800, h 0:2400:2400");
+	}
+
+	private JScrollPane createScrollPane() {
+		JScrollPane result = new JScrollPane(licenseTextArea);
+		result.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		return result;
 	}
 }

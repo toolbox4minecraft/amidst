@@ -1,70 +1,46 @@
 package amidst.gui;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 
 import amidst.logging.Log;
 import amidst.resources.ResourceLoader;
 
 public class License {
-	private InputStream fileStream;
 	private String name;
-	private String contents;
-	private boolean loaded = false;
+	private String path;
+	private String licenseText;
 
 	public License(String name, String path) {
 		this.name = name;
-		try {
-			fileStream = ResourceLoader.getResourceStream(path);
-		} catch (NullPointerException e) {
-			Log.w("Error finding license for: " + name + " at path: " + path);
-			e.printStackTrace();
-		}
+		this.path = path;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void load() {
-		if (loaded)
-			return;
-		BufferedReader fileReader = new BufferedReader(new InputStreamReader(
-				fileStream));
-		BufferedReader bufferedReader = new BufferedReader(fileReader);
-		try {
-			StringBuilder stringBuilder = new StringBuilder();
-			String line = bufferedReader.readLine();
+	public String getLicenseText() {
+		if (licenseText == null) {
+			loadLicenseText();
+		}
+		if (licenseText == null) {
+			return "cannot read license text";
+		} else {
+			return licenseText;
+		}
+	}
 
-			while (line != null) {
-				stringBuilder.append(line);
-				stringBuilder.append('\n');
-				line = bufferedReader.readLine();
-			}
-			contents = stringBuilder.toString();
-			loaded = true;
+	private void loadLicenseText() {
+		try {
+			licenseText = ResourceLoader.getResourceAsString(path);
 		} catch (IOException e) {
 			Log.w("Unable to read file: " + name + ".");
 			e.printStackTrace();
-		} finally {
-			try {
-				bufferedReader.close();
-			} catch (IOException e) {
-				Log.w("Unable to close BufferedReader for: " + name + ".");
-				e.printStackTrace();
-			}
+		} catch (URISyntaxException e) {
+			Log.w("Unable to read file: " + name + ".");
+			e.printStackTrace();
 		}
-
-	}
-
-	public String getContents() {
-		return contents;
-	}
-
-	public boolean isLoaded() {
-		return loaded;
 	}
 
 	@Override
