@@ -17,7 +17,6 @@ import MoF.SaveLoader;
 import MoF.UpdateManager;
 import amidst.Application;
 import amidst.Options;
-import amidst.gui.LicenseWindow;
 import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
 import amidst.map.layers.StrongholdLayer;
@@ -168,7 +167,7 @@ public class MenuActions {
 	}
 
 	public void viewLicense() {
-		new LicenseWindow();
+		application.displayLicenseWindow();
 	}
 
 	public void about() {

@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 
 import MoF.MapWindow;
 import MoF.Project;
+import amidst.gui.LicenseWindow;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;
@@ -84,5 +85,9 @@ public class Application {
 		setVersionSelectWindow(null);
 		setMapWindow(null);
 		project.dispose();
+	}
+
+	public void displayLicenseWindow() {
+		new LicenseWindow();
 	}
 }
