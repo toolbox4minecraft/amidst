@@ -1,5 +1,6 @@
 package MoF;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -81,6 +82,14 @@ public class SaveLoader {
 	};
 	// @formatter:on
 
+	private static final String DEFAULT_SINGLE_PLAYER_PLAYER_NAME = "Player";
+
+	private static final String TAG_KEY_POS = "Pos";
+	private static final String TAG_KEY_PLAYER = "Player";
+	private static final String TAG_KEY_RANDOM_SEED = "RandomSeed";
+	private static final String TAG_KEY_GENERATOR_NAME = "generatorName";
+	private static final String TAG_KEY_GENERATOR_OPTIONS = "generatorOptions";
+
 	public static WorldType genType = WorldType.DEFAULT;
 
 	public static SaveLoader newInstance(File file) {
@@ -98,7 +107,7 @@ public class SaveLoader {
 	private File file;
 
 	private long seed;
-	private boolean multi;
+	private boolean isMultiPlayerMap;
 	private String generatorOptions = "";
 
 	private SaveLoader(File file) {
@@ -111,69 +120,128 @@ public class SaveLoader {
 	}
 
 	private void load() throws IOException, FileNotFoundException {
-		NBTInputStream inStream = new NBTInputStream(new FileInputStream(file));
-		CompoundTag root = (CompoundTag) ((CompoundTag) inStream.readTag())
-				.getValue().get("Data");
-		inStream.close();
-		seed = (Long) (root.getValue().get("RandomSeed").getValue());
-		if (root.getValue().get("generatorName") != null) {
-			genType = WorldType.from((String) (root.getValue().get(
-					"generatorName").getValue()));
+		CompoundTag rootDataTag = getRootDataTag();
+		loadSeed(rootDataTag);
+		loadGenerator(rootDataTag);
+		File playersFolder = getPlayersFolder();
+		File[] playerFiles = getPlayerFiles(playersFolder);
+		loadIsMultiPlayerMap(playersFolder, playerFiles);
+		loadPlayers(rootDataTag, playerFiles);
+	}
 
+	private CompoundTag getRootDataTag() throws IOException,
+			FileNotFoundException {
+		return (CompoundTag) getTagFromFile(file).getValue().get("Data");
+	}
+
+	private void loadSeed(CompoundTag rootDataTag) {
+		seed = (Long) getValue(TAG_KEY_RANDOM_SEED, rootDataTag);
+	}
+
+	private void loadGenerator(CompoundTag rootDataTag) {
+		if (isValueExisting(TAG_KEY_GENERATOR_NAME, rootDataTag)) {
+			genType = WorldType.from((String) getValue(TAG_KEY_GENERATOR_NAME,
+					rootDataTag));
 			if (genType == WorldType.CUSTOMIZED) {
-				generatorOptions = (String) root.getValue()
-						.get("generatorOptions").getValue();
+				generatorOptions = (String) getValue(TAG_KEY_GENERATOR_OPTIONS,
+						rootDataTag);
 			}
 		}
-		CompoundTag playerTag = (CompoundTag) root.getValue().get("Player");
+	}
 
-		File playersFolder = new File(file.getParent(), "players");
-		boolean multi = (playersFolder.exists() && (playersFolder.listFiles().length > 0));
+	private void loadIsMultiPlayerMap(File playersFolder, File[] playerFiles) {
+		isMultiPlayerMap = playersFolder.exists() && playerFiles.length > 0;
+	}
 
-		if (multi) {
+	private void loadPlayers(CompoundTag rootDataTag, File[] playerFiles)
+			throws IOException, FileNotFoundException {
+		if (isMultiPlayerMap) {
 			Log.i("Multiplayer map detected.");
+			loadPlayers(playerFiles);
 		} else {
 			Log.i("Singleplayer map detected.");
+			addPlayer(DEFAULT_SINGLE_PLAYER_PLAYER_NAME,
+					getSinglePlayerPlayerTag(rootDataTag));
 		}
+	}
 
-		if (!multi) {
-			addPlayer("Player", playerTag);
+	private CompoundTag getSinglePlayerPlayerTag(CompoundTag rootDataTag) {
+		return (CompoundTag) rootDataTag.getValue().get(TAG_KEY_PLAYER);
+	}
+
+	private File[] getPlayerFiles(File playersFolder) {
+		File[] files = playersFolder.listFiles();
+		if (files == null) {
+			return new File[0];
 		} else {
-			File[] listing = playersFolder.listFiles();
-			for (int i = 0; i < (listing != null ? listing.length : 0); i++) {
-				if (listing[i].isFile()) {
-					NBTInputStream playerInputStream = new NBTInputStream(
-							new FileInputStream(listing[i]));
-					addPlayer(listing[i].getName().split("\\.")[0],
-							(CompoundTag) ((CompoundTag) playerInputStream
-									.readTag()));
-					playerInputStream.close();
-				}
-			}
-
+			return files;
 		}
+	}
+
+	private void loadPlayers(File[] playerFiles) throws IOException,
+			FileNotFoundException {
+		for (File playerFile : playerFiles) {
+			if (playerFile.isFile()) {
+				addPlayer(getPlayerName(playerFile), getTagFromFile(playerFile));
+			}
+		}
+	}
+
+	private void addPlayer(String name, CompoundTag ps) {
+		List<Tag> pos = ((ListTag) (ps.getValue().get(TAG_KEY_POS))).getValue();
+		double x = (Double) pos.get(0).getValue();
+		double z = (Double) pos.get(2).getValue();
+		players.add(new MapObjectPlayer(name, (int) x, (int) z));
+	}
+
+	private String getPlayerName(File playerFile) {
+		return playerFile.getName().split("\\.")[0];
+	}
+
+	private File getPlayersFolder() {
+		return new File(file.getParent(), "players");
+	}
+
+	private CompoundTag getTagFromFile(File file) throws IOException,
+			FileNotFoundException {
+		NBTInputStream stream = createNBTInputStream(file);
+		CompoundTag result = (CompoundTag) stream.readTag();
+		stream.close();
+		return result;
+	}
+
+	private NBTInputStream createNBTInputStream(File file) throws IOException,
+			FileNotFoundException {
+		return new NBTInputStream(new BufferedInputStream(new FileInputStream(
+				file)));
+	}
+
+	private Object getValue(String key, CompoundTag rootDataTag) {
+		return rootDataTag.getValue().get(key).getValue();
+	}
+
+	private boolean isValueExisting(String key, CompoundTag rootDataTag) {
+		return rootDataTag.getValue().get(key) != null;
 	}
 
 	public void movePlayer(String name, int x, int y) {
 		File out;
-		if (multi) {
+		if (isMultiPlayerMap) {
 			String outPath = file.getParent() + "/players/" + name + ".dat";
 			out = new File(outPath);
 			backupFile(out);
 			try {
-				NBTInputStream inStream = new NBTInputStream(
-						new FileInputStream(out));
-				CompoundTag root = (CompoundTag) inStream.readTag();
-				inStream.close();
+				CompoundTag root = getTagFromFile(out);
 
 				HashMap<String, Tag> rootMap = new HashMap<String, Tag>(
 						root.getValue());
 				ArrayList<Tag> posTag = new ArrayList<Tag>(
-						((ListTag) rootMap.get("Pos")).getValue());
+						((ListTag) rootMap.get(TAG_KEY_POS)).getValue());
 				posTag.set(0, new DoubleTag("x", x));
 				posTag.set(1, new DoubleTag("y", 120));
 				posTag.set(2, new DoubleTag("z", y));
-				rootMap.put("Pos", new ListTag("Pos", DoubleTag.class, posTag));
+				rootMap.put(TAG_KEY_POS, new ListTag(TAG_KEY_POS,
+						DoubleTag.class, posTag));
 				root = new CompoundTag("Data", rootMap);
 				NBTOutputStream outStream = new NBTOutputStream(
 						new FileOutputStream(out));
@@ -187,8 +255,7 @@ public class SaveLoader {
 			out = file;
 			backupFile(out);
 			try {
-				NBTInputStream inStream = new NBTInputStream(
-						new FileInputStream(out));
+				NBTInputStream inStream = createNBTInputStream(out);
 				CompoundTag root = (CompoundTag) (((CompoundTag) inStream
 						.readTag()).getValue().get("Data"));
 				inStream.close();
@@ -196,15 +263,16 @@ public class SaveLoader {
 				HashMap<String, Tag> rootMap = new HashMap<String, Tag>(
 						root.getValue());
 				HashMap<String, Tag> playerMap = new HashMap<String, Tag>(
-						((CompoundTag) rootMap.get("Player")).getValue());
+						((CompoundTag) rootMap.get(TAG_KEY_PLAYER)).getValue());
 				ArrayList<Tag> posTag = new ArrayList<Tag>(
-						((ListTag) playerMap.get("Pos")).getValue());
+						((ListTag) playerMap.get(TAG_KEY_POS)).getValue());
 				posTag.set(0, new DoubleTag("x", x));
 				posTag.set(1, new DoubleTag("y", 120));
 				posTag.set(2, new DoubleTag("z", y));
-				rootMap.put("Player", new CompoundTag("Player", playerMap));
-				playerMap.put("Pos",
-						new ListTag("Pos", DoubleTag.class, posTag));
+				rootMap.put(TAG_KEY_PLAYER, new CompoundTag(TAG_KEY_PLAYER,
+						playerMap));
+				playerMap.put(TAG_KEY_POS, new ListTag(TAG_KEY_POS,
+						DoubleTag.class, posTag));
 				root = new CompoundTag("Data", rootMap);
 				HashMap<String, Tag> base = new HashMap<String, Tag>();
 				base.put("Data", root);
@@ -243,13 +311,6 @@ public class SaveLoader {
 			} catch (Exception ignored) {
 			}
 		}
-	}
-
-	private void addPlayer(String name, CompoundTag ps) {
-		List<Tag> pos = ((ListTag) (ps.getValue().get("Pos"))).getValue();
-		double x = (Double) pos.get(0).getValue();
-		double z = (Double) pos.get(2).getValue();
-		players.add(new MapObjectPlayer(name, (int) x, (int) z));
 	}
 
 	public List<MapObjectPlayer> getPlayers() {
