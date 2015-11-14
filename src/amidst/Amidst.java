@@ -9,8 +9,8 @@ import org.kohsuke.args4j.CmdLineParser;
 
 import com.google.gson.Gson;
 
-import MoF.MapWindow;
 import MoF.Google;
+import amidst.gui.MapWindow;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;

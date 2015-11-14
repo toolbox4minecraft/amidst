@@ -1,4 +1,4 @@
-package MoF;
+package amidst.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -7,9 +7,10 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
+import MoF.Project;
+import MoF.UpdateManager;
 import amidst.Amidst;
 import amidst.Application;
-import amidst.gui.SeedPrompt;
 import amidst.gui.menu.AmidstMenu;
 
 public class MapWindow {

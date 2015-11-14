@@ -3,9 +3,9 @@ package amidst;
 import java.io.File;
 import java.net.MalformedURLException;
 
-import MoF.MapWindow;
 import MoF.Project;
 import amidst.gui.LicenseWindow;
+import amidst.gui.MapWindow;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;

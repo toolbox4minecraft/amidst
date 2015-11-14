@@ -3,10 +3,11 @@ package amidst.logging;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
+
 import javax.swing.JOptionPane;
 
-import MoF.MapWindow;
 import amidst.gui.CrashDialog;
+import amidst.gui.MapWindow;
 
 public class Log {
 	private static Object logLock = new Object();
