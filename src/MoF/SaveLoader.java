@@ -2,9 +2,11 @@ package MoF;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,65 +92,66 @@ public class SaveLoader {
 		}
 	}
 
+	private List<MapObjectPlayer> players = new ArrayList<MapObjectPlayer>();
+	private List<String> back = new ArrayList<String>();
+
 	private File file;
-	private List<MapObjectPlayer> players;
-	public long seed;
+
+	private long seed;
 	private boolean multi;
-	private List<String> back;
 	private String generatorOptions = "";
 
-	private SaveLoader(File f) {
-		file = f;
-		players = new ArrayList<MapObjectPlayer>();
-		back = new ArrayList<String>();
+	private SaveLoader(File file) {
+		this.file = file;
 		try {
-			NBTInputStream inStream = new NBTInputStream(new FileInputStream(f));
-			CompoundTag root = (CompoundTag) ((CompoundTag) inStream.readTag())
-					.getValue().get("Data");
-			inStream.close();
-			seed = (Long) (root.getValue().get("RandomSeed").getValue());
-			if (root.getValue().get("generatorName") != null) {
-				genType = WorldType.from((String) (root.getValue().get(
-						"generatorName").getValue()));
-
-				if (genType == WorldType.CUSTOMIZED)
-					generatorOptions = (String) root.getValue()
-							.get("generatorOptions").getValue();
-			}
-			CompoundTag playerTag = (CompoundTag) root.getValue().get("Player");
-
-			File playersFolder = new File(f.getParent(), "players");
-			boolean multi = (playersFolder.exists() && (playersFolder
-					.listFiles().length > 0));
-
-			if (multi)
-				Log.i("Multiplayer map detected.");
-			else
-				Log.i("Singleplayer map detected.");
-
-			if (!multi) {
-				addPlayer("Player", playerTag);
-			} else {
-				File[] listing = playersFolder.listFiles();
-				for (int i = 0; i < (listing != null ? listing.length : 0); i++) {
-					if (listing[i].isFile()) {
-						NBTInputStream playerInputStream = new NBTInputStream(
-								new FileInputStream(listing[i]));
-						addPlayer(listing[i].getName().split("\\.")[0],
-								(CompoundTag) ((CompoundTag) playerInputStream
-										.readTag()));
-						playerInputStream.close();
-					}
-				}
-
-			}
+			load();
 		} catch (Exception e) {
 			Util.showError(e);
 		}
 	}
 
-	public List<MapObjectPlayer> getPlayers() {
-		return players;
+	private void load() throws IOException, FileNotFoundException {
+		NBTInputStream inStream = new NBTInputStream(new FileInputStream(file));
+		CompoundTag root = (CompoundTag) ((CompoundTag) inStream.readTag())
+				.getValue().get("Data");
+		inStream.close();
+		seed = (Long) (root.getValue().get("RandomSeed").getValue());
+		if (root.getValue().get("generatorName") != null) {
+			genType = WorldType.from((String) (root.getValue().get(
+					"generatorName").getValue()));
+
+			if (genType == WorldType.CUSTOMIZED) {
+				generatorOptions = (String) root.getValue()
+						.get("generatorOptions").getValue();
+			}
+		}
+		CompoundTag playerTag = (CompoundTag) root.getValue().get("Player");
+
+		File playersFolder = new File(file.getParent(), "players");
+		boolean multi = (playersFolder.exists() && (playersFolder.listFiles().length > 0));
+
+		if (multi) {
+			Log.i("Multiplayer map detected.");
+		} else {
+			Log.i("Singleplayer map detected.");
+		}
+
+		if (!multi) {
+			addPlayer("Player", playerTag);
+		} else {
+			File[] listing = playersFolder.listFiles();
+			for (int i = 0; i < (listing != null ? listing.length : 0); i++) {
+				if (listing[i].isFile()) {
+					NBTInputStream playerInputStream = new NBTInputStream(
+							new FileInputStream(listing[i]));
+					addPlayer(listing[i].getName().split("\\.")[0],
+							(CompoundTag) ((CompoundTag) playerInputStream
+									.readTag()));
+					playerInputStream.close();
+				}
+			}
+
+		}
 	}
 
 	public void movePlayer(String name, int x, int y) {
@@ -219,8 +222,9 @@ public class SaveLoader {
 	private void backupFile(File inputFile) {
 		File backupFolder = new File(inputFile.getParentFile()
 				+ "/amidst_backup/");
-		if (!backupFolder.exists())
+		if (!backupFolder.exists()) {
 			backupFolder.mkdir();
+		}
 
 		File outputFile = new File(backupFolder + "/" + inputFile.getName());
 		if (!back.contains(outputFile.toString())) {
@@ -229,8 +233,9 @@ public class SaveLoader {
 				FileWriter out = new FileWriter(outputFile);
 				int c;
 
-				while ((c = in.read()) != -1)
+				while ((c = in.read()) != -1) {
 					out.write(c);
+				}
 
 				in.close();
 				out.close();
@@ -247,7 +252,15 @@ public class SaveLoader {
 		players.add(new MapObjectPlayer(name, (int) x, (int) z));
 	}
 
+	public List<MapObjectPlayer> getPlayers() {
+		return players;
+	}
+
 	public String getGeneratorOptions() {
 		return generatorOptions;
+	}
+
+	public long getSeed() {
+		return seed;
 	}
 }

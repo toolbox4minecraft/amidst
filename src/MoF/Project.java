@@ -21,8 +21,8 @@ public class Project {
 	private MapViewer mapViewer;
 	private SaveLoader saveLoader;
 
-	public Project(SaveLoader file) {
-		this(file.seed, SaveLoader.genType.getName(), file);
+	public Project(SaveLoader saveLoader) {
+		this(saveLoader.getSeed(), SaveLoader.genType.getName(), saveLoader);
 		Google.track("seed/file/" + Options.instance.seed);
 	}
 
