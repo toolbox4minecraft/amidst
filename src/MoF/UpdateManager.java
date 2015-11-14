@@ -1,117 +1,157 @@
 package MoF;
+
+import java.awt.Desktop;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
-import amidst.Amidst;
-import org.w3c.dom.*;
-
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.xml.sax.SAXException; 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import amidst.Amidst;
 
 public class UpdateManager extends Thread {
-	public static final String updateURL = "https://sites.google.com/site/mothfinder/update.xml";
-	public static final String updateUnstableURL = "https://sites.google.com/site/mothfinder/update_unstable.xml";
-	private JFrame window;
+	public static final String UPDATE_URL = "https://sites.google.com/site/mothfinder/update.xml";
+	public static final String UPDATE_UNSTABLE_URL = "https://sites.google.com/site/mothfinder/update_unstable.xml";
+
+	private JFrame frame;
 	private boolean silent;
-	public UpdateManager(JFrame window) {
-		this.setWindow(window);
-		silent = false;
+	private String updateURL;
+	private int major;
+	private int minor;
+
+	public UpdateManager(JFrame frame) {
+		this(frame, false);
 	}
-	public UpdateManager(JFrame window, boolean silence) {
-		this.setWindow(window);
-		silent = silence;
+
+	public UpdateManager(JFrame frame, boolean silent) {
+		this.frame = frame;
+		this.silent = silent;
 	}
+
 	public void run() {
-		
 		try {
-			URL url = new URL(updateURL);
-			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(url.openStream());
-		   
-			doc.getDocumentElement().normalize();
-			NodeList vlist = doc.getDocumentElement().getElementsByTagName("version");
-			NodeList version = vlist.item(0).getChildNodes();
-			
-			int major = 0;
-			int minor = 0;
-			String updateURL = doc.getFirstChild().getAttributes().item(0).getNodeValue();
-			for (int i = 0; i < version.getLength(); i++) {
-				Node v = version.item(i);
-				if (v.getNodeType() == Node.ELEMENT_NODE) {
-					if (v.getNodeName().toLowerCase().equals("major")) {
-						major = Integer.parseInt(v.getAttributes().item(0).getNodeValue());
-					} else if (v.getNodeName().toLowerCase().equals("minor")) {
-						minor = Integer.parseInt(v.getAttributes().item(0).getNodeValue());
-					}
-				}
-			}
-			int n = JOptionPane.NO_OPTION;
-			
-			if (major > Amidst.version_major) {
-				n = JOptionPane.showConfirmDialog(
-					window,
-					"A new version was found. Would you like to update?",
-					"Update Found",
-					JOptionPane.YES_NO_OPTION);
-			} else if ((major == Amidst.version_major) && (minor > Amidst.version_minor)) {
-				n = JOptionPane.showConfirmDialog(
-					window,
-					"A minor revision was found. Update?",
-					"Update Found",
-					JOptionPane.YES_NO_OPTION);
-			} else if (!silent)
-				JOptionPane.showMessageDialog(window, "There are no new updates.");
-			
-			if (n==0) {
-				if( !java.awt.Desktop.isDesktopSupported()) {
-					JOptionPane.showMessageDialog(window, "Error unable to open browser.");
-				}
-				
-				java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
-				
-				if( !desktop.isSupported( java.awt.Desktop.Action.BROWSE ) ) {
-					JOptionPane.showMessageDialog(window, "Error unable to open browser page.");
-				}
-				java.net.URI uri = new java.net.URI(updateURL);
-				desktop.browse(uri);
-			}
+			doRun();
 		} catch (MalformedURLException e1) {
-			if (!silent)
-				JOptionPane.showMessageDialog(window, "Error connecting to update server: Malformed URL.");
+			errorIfNotSilent("Error connecting to update server: Malformed URL.");
 		} catch (IOException e1) {
-			if (!silent)
-				JOptionPane.showMessageDialog(window, "Error reading update data.");
-		}  catch (ParserConfigurationException e) {
-			if (!silent)
-				JOptionPane.showMessageDialog(window, "Error with XML parser configuration.");
-		}  catch (SAXException e) {
-			if (!silent)
-				JOptionPane.showMessageDialog(window, "Error parsing update file.");
+			errorIfNotSilent("Error reading update data.");
+		} catch (ParserConfigurationException e) {
+			errorIfNotSilent("Error with XML parser configuration.");
+		} catch (SAXException e) {
+			errorIfNotSilent("Error parsing update file.");
 		} catch (NumberFormatException e) {
-			if (!silent)
-				JOptionPane.showMessageDialog(window, "Error parsing version numbers.");
+			errorIfNotSilent("Error parsing version numbers.");
 		} catch (NullPointerException e) {
-			if (!silent)
-				JOptionPane.showMessageDialog(window, "Error \"NullPointerException\" in update.");
+			errorIfNotSilent("Error \"NullPointerException\" in update.");
 		} catch (URISyntaxException e) {
-			if (!silent)
-				JOptionPane.showMessageDialog(window, "Error parsing update URL.");
+			errorIfNotSilent("Error parsing update URL.");
 		}
-		
 	}
-	public JFrame getWindow() {
-		return window;
+
+	private void errorIfNotSilent(String message) {
+		if (!silent) {
+			error(message);
+		}
 	}
-	public void setWindow(JFrame window) {
-		this.window = window;
+
+	private void doRun() throws MalformedURLException,
+			ParserConfigurationException, SAXException, IOException,
+			URISyntaxException {
+		updateVersionInformation(getDocument());
+		if (getUserChoice() == JOptionPane.OK_OPTION) {
+			openUpdateURL();
+		}
+	}
+
+	private Document getDocument() throws MalformedURLException, SAXException,
+			IOException, ParserConfigurationException {
+		URL url = new URL(UPDATE_URL);
+		Document document = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder().parse(url.openStream());
+		document.getDocumentElement().normalize();
+		return document;
+	}
+
+	private void updateVersionInformation(Document document) {
+		updateUpdateURL(document);
+		updateVersionNumber(document);
+	}
+
+	private void updateUpdateURL(Document document) {
+		updateURL = document.getFirstChild().getAttributes().item(0)
+				.getNodeValue();
+	}
+
+	private void updateVersionNumber(Document document) {
+		NodeList version = document.getDocumentElement()
+				.getElementsByTagName("version").item(0).getChildNodes();
+		major = 0;
+		minor = 0;
+		for (int i = 0; i < version.getLength(); i++) {
+			Node v = version.item(i);
+			if (v.getNodeType() == Node.ELEMENT_NODE) {
+				if (v.getNodeName().toLowerCase().equals("major")) {
+					major = Integer.parseInt(v.getAttributes().item(0)
+							.getNodeValue());
+				} else if (v.getNodeName().toLowerCase().equals("minor")) {
+					minor = Integer.parseInt(v.getAttributes().item(0)
+							.getNodeValue());
+				}
+			}
+		}
+	}
+
+	private int getUserChoice() {
+		if (isNewMajorVersionAvailable()) {
+			return askToConfirm(
+					"A new version was found. Would you like to update?",
+					"Update Found");
+		} else if (isNewMinorVersionAvailable()) {
+			return askToConfirm("A minor revision was found. Update?",
+					"Update Found");
+		} else if (!silent) {
+			JOptionPane.showMessageDialog(frame, "There are no new updates.");
+		}
+		return JOptionPane.NO_OPTION;
+	}
+
+	private boolean isNewMajorVersionAvailable() {
+		return major > Amidst.version_major;
+	}
+
+	private boolean isNewMinorVersionAvailable() {
+		return major == Amidst.version_major && minor > Amidst.version_minor;
+	}
+
+	private int askToConfirm(String message, String title) {
+		return JOptionPane.showConfirmDialog(frame, message, title,
+				JOptionPane.YES_NO_OPTION);
+	}
+
+	private void openUpdateURL() throws IOException, URISyntaxException {
+		if (!Desktop.isDesktopSupported()) {
+			error("Error unable to open browser.");
+		} else {
+			Desktop desktop = Desktop.getDesktop();
+			if (!desktop.isSupported(Desktop.Action.BROWSE)) {
+				error("Error unable to open browser page.");
+			} else {
+				desktop.browse(new URI(updateURL));
+			}
+		}
+	}
+
+	private void error(String message) {
+		JOptionPane.showMessageDialog(frame, message);
 	}
 }
