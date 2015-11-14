@@ -94,7 +94,7 @@ public class Log {
 					listener.crash(e, exceptionText, message);
 			
 			
-			new CrashDialog(message);
+			new CrashDialog(message, LogRecorder.getContents());
 			if (MapWindow.getInstance() != null)
 				MapWindow.getInstance().dispose();
 			//System.exit(0);
