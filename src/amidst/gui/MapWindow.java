@@ -11,11 +11,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import MoF.Project;
-import MoF.SaveLoader;
 import amidst.Amidst;
 import amidst.Application;
 import amidst.Util;
 import amidst.gui.menu.AmidstMenu;
+import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
 
 public class MapWindow {
@@ -115,7 +115,7 @@ public class MapWindow {
 
 	private JFileChooser createMinecraftMapFileChooser() {
 		JFileChooser result = new JFileChooser();
-		result.setFileFilter(SaveLoader.getFilter());
+		result.setFileFilter(new LevelFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
 		result.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		result.setCurrentDirectory(Util.getSavesDirectory());

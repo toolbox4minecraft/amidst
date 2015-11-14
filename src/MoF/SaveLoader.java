@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.filechooser.FileFilter;
-
 import org.jnbt.CompoundTag;
 import org.jnbt.DoubleTag;
 import org.jnbt.ListTag;
@@ -82,22 +80,6 @@ public class SaveLoader {
 	// @formatter:on
 
 	public static WorldType genType = WorldType.DEFAULT;
-
-	public static FileFilter getFilter() {
-		return (new FileFilter() {
-			public boolean accept(File f) {
-				if (f.isDirectory())
-					return true;
-				String[] st = f.getName().split("\\/");
-				return st[st.length - 1].equalsIgnoreCase("level.dat");
-			}
-
-			@Override
-			public String getDescription() {
-				return "Minecraft Data File (level.dat)";
-			}
-		});
-	}
 
 	public static SaveLoader newInstance(File file) {
 		if (file.isDirectory()) {
