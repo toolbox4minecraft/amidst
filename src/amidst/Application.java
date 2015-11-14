@@ -100,4 +100,8 @@ public class Application {
 	public void checkForUpdatesSilently() {
 		updateManager.checkSilently(mapWindow);
 	}
+
+	public void exitGracefully() {
+		System.exit(0);
+	}
 }

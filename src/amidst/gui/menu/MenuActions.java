@@ -9,7 +9,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Random;
 
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import MoF.Project;
@@ -48,7 +47,7 @@ public class MenuActions {
 	}
 
 	public void exit() {
-		System.exit(0);
+		application.exitGracefully();
 	}
 
 	public void newFromSeed() {
@@ -92,10 +91,9 @@ public class MenuActions {
 	}
 
 	public void newFromFileOrFolder() {
-		File minecraftMap = application.getMapWindow().askForMinecraftMap();
-		if (minecraftMap != null) {
-			application.setProject(new Project(SaveLoader
-					.newInstance(minecraftMap)));
+		File file = application.getMapWindow().askForMinecraftMapFile();
+		if (file != null) {
+			application.setProject(new Project(SaveLoader.newInstance(file)));
 		}
 	}
 
@@ -104,7 +102,7 @@ public class MenuActions {
 				.askForOptions("Go to", "Select Stronghold:",
 						StrongholdLayer.instance.getStrongholds());
 		if (selection != null) {
-			application.getProject().moveMapTo(selection.x, selection.y);
+			application.getMapWindow().moveMapTo(selection.x, selection.y);
 		}
 	}
 
@@ -117,7 +115,7 @@ public class MenuActions {
 			try {
 				long x = Long.parseLong(c[0]);
 				long y = Long.parseLong(c[1]);
-				application.getProject().moveMapTo(x, y);
+				application.getMapWindow().moveMapTo(x, y);
 			} catch (NumberFormatException e1) {
 				Log.w("Invalid location entered, ignoring.");
 				e1.printStackTrace();
@@ -136,24 +134,20 @@ public class MenuActions {
 		MapObjectPlayer selection = application.getMapWindow().askForOptions(
 				"Go to", "Select player:", players);
 		if (selection != null) {
-			application.getProject().moveMapTo(selection.globalX,
+			application.getMapWindow().moveMapTo(selection.globalX,
 					selection.globalY);
 		}
 	}
 
 	public void capture() {
-		JFileChooser fc = new JFileChooser();
-		fc.setFileFilter(new PNGFileFilter());
-		fc.setAcceptAllFileFilterUsed(false);
-		int returnVal = fc
-				.showSaveDialog(application.getMapWindow().getFrame());
-
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			String s = fc.getSelectedFile().toString();
-			if (!s.toLowerCase().endsWith(".png")) {
-				s += ".png";
+		File file = application.getMapWindow().askForScreenshotSaveFile();
+		if (file != null) {
+			String filename = file.toString();
+			if (!filename.toLowerCase().endsWith(".png")) {
+				filename += ".png";
 			}
-			application.getProject().getMapViewer().saveToFile(new File(s));
+			application.getProject().getMapViewer()
+					.saveToFile(new File(filename));
 		}
 	}
 

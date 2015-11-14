@@ -16,6 +16,7 @@ import amidst.Amidst;
 import amidst.Application;
 import amidst.Util;
 import amidst.gui.menu.AmidstMenu;
+import amidst.gui.menu.PNGFileFilter;
 
 public class MapWindow {
 	private static MapWindow instance;
@@ -108,13 +109,8 @@ public class MapWindow {
 				JOptionPane.PLAIN_MESSAGE, null, choices, choices[0]);
 	}
 
-	public File askForMinecraftMap() {
-		JFileChooser fileChooser = createMinecraftMapFileChooser();
-		if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-			return fileChooser.getSelectedFile();
-		} else {
-			return null;
-		}
+	public File askForMinecraftMapFile() {
+		return getSelectedFileOrNull(createMinecraftMapFileChooser());
 	}
 
 	private JFileChooser createMinecraftMapFileChooser() {
@@ -134,5 +130,28 @@ public class MapWindow {
 	public int askToConfirm(String message, String title) {
 		return JOptionPane.showConfirmDialog(frame, message, title,
 				JOptionPane.YES_NO_OPTION);
+	}
+
+	public File askForScreenshotSaveFile() {
+		return getSelectedFileOrNull(createScreenshotSaveFileChooser());
+	}
+
+	private File getSelectedFileOrNull(JFileChooser fileChooser) {
+		if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+			return fileChooser.getSelectedFile();
+		} else {
+			return null;
+		}
+	}
+
+	private JFileChooser createScreenshotSaveFileChooser() {
+		JFileChooser result = new JFileChooser();
+		result.setFileFilter(new PNGFileFilter());
+		result.setAcceptAllFileFilterUsed(false);
+		return result;
+	}
+
+	public void moveMapTo(long x, long y) {
+		application.getProject().moveMapTo(x, y);
 	}
 }
