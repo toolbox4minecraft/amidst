@@ -7,10 +7,10 @@ import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
 import amidst.map.MapObjectPlayer;
-import amidst.minecraft.world.SaveLoader;
+import amidst.minecraft.world.PlayerMover;
 
 public class PlayerLayer extends IconLayer {
-	public SaveLoader saveLoader;
+	public PlayerMover saveLoader;
 	public static SkinManager skinManager = new SkinManager();
 	public boolean isEnabled;
 	static {
@@ -51,7 +51,7 @@ public class PlayerLayer extends IconLayer {
 		super.clearMapObjects(frag);
 		
 	}
-	public void setPlayers(SaveLoader save) {
+	public void setPlayers(PlayerMover save) {
 		saveLoader = save;
 		
 		for (MapObjectPlayer player : saveLoader.getPlayers())

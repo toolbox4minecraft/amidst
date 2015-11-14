@@ -15,135 +15,17 @@ import org.jnbt.DoubleTag;
 import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
-import amidst.Util;
-import amidst.logging.Log;
-import amidst.map.MapObjectPlayer;
-
-public class SaveLoader {
-	private static final String DEFAULT_SINGLE_PLAYER_PLAYER_NAME = "Player";
-
-	private static final String TAG_KEY_BASE = "Base";
-	private static final String TAG_KEY_DATA = "Data";
-	private static final String TAG_KEY_POS = "Pos";
-	private static final String TAG_KEY_PLAYER = "Player";
-	private static final String TAG_KEY_RANDOM_SEED = "RandomSeed";
-	private static final String TAG_KEY_GENERATOR_NAME = "generatorName";
-	private static final String TAG_KEY_GENERATOR_OPTIONS = "generatorOptions";
-
-	// TODO: make non-static!
-	public static WorldType genType = WorldType.DEFAULT;
-
-	public static SaveLoader newInstance(File file) {
-		if (file.isDirectory()) {
-			return new SaveLoader(new File(file.getAbsoluteFile()
-					+ "/level.dat"));
-		} else {
-			return new SaveLoader(file);
-		}
-	}
-
+public class PlayerMover {
 	private NBTUtils nbtUtils = new NBTUtils();
-	private List<MapObjectPlayer> players = new ArrayList<MapObjectPlayer>();
 	private List<String> back = new ArrayList<String>();
 
+	private boolean isMultiPlayerMap;
 	private File file;
 
-	private long seed;
-	private boolean isMultiPlayerMap;
-	private String generatorOptions = "";
-
-	private SaveLoader(File file) {
-		this.file = file;
-		try {
-			load();
-		} catch (Exception e) {
-			Util.showError(e);
-		}
-	}
-
-	private void load() throws IOException, FileNotFoundException {
-		CompoundTag rootDataTag = getRootDataTag(file);
-		loadSeed(rootDataTag);
-		loadGenerator(rootDataTag);
-		File playersFolder = getPlayersFolder();
-		File[] playerFiles = getPlayerFiles(playersFolder);
-		loadIsMultiPlayerMap(playersFolder, playerFiles);
-		loadPlayers(rootDataTag, playerFiles);
-	}
-
-	private CompoundTag getRootDataTag(File file) throws IOException,
-			FileNotFoundException {
-		return (CompoundTag) nbtUtils.readTagFromFile(file).getValue()
-				.get(TAG_KEY_DATA);
-	}
-
-	private void loadSeed(CompoundTag rootDataTag) {
-		seed = (Long) nbtUtils.getValue(TAG_KEY_RANDOM_SEED, rootDataTag);
-	}
-
-	private void loadGenerator(CompoundTag rootDataTag) {
-		if (nbtUtils.isValueExisting(TAG_KEY_GENERATOR_NAME, rootDataTag)) {
-			genType = WorldType.from((String) nbtUtils.getValue(
-					TAG_KEY_GENERATOR_NAME, rootDataTag));
-			if (genType == WorldType.CUSTOMIZED) {
-				generatorOptions = (String) nbtUtils.getValue(
-						TAG_KEY_GENERATOR_OPTIONS, rootDataTag);
-			}
-		}
-	}
-
-	private void loadIsMultiPlayerMap(File playersFolder, File[] playerFiles) {
-		isMultiPlayerMap = playersFolder.exists() && playerFiles.length > 0;
-	}
-
-	private void loadPlayers(CompoundTag rootDataTag, File[] playerFiles)
-			throws IOException, FileNotFoundException {
-		if (isMultiPlayerMap) {
-			Log.i("Multiplayer map detected.");
-			loadPlayers(playerFiles);
-		} else {
-			Log.i("Singleplayer map detected.");
-			addPlayer(DEFAULT_SINGLE_PLAYER_PLAYER_NAME,
-					getSinglePlayerPlayerTag(rootDataTag));
-		}
-	}
-
-	private CompoundTag getSinglePlayerPlayerTag(CompoundTag rootDataTag) {
-		return (CompoundTag) rootDataTag.getValue().get(TAG_KEY_PLAYER);
-	}
-
-	private File[] getPlayerFiles(File playersFolder) {
-		File[] files = playersFolder.listFiles();
-		if (files == null) {
-			return new File[0];
-		} else {
-			return files;
-		}
-	}
-
-	private void loadPlayers(File[] playerFiles) throws IOException,
-			FileNotFoundException {
-		for (File playerFile : playerFiles) {
-			if (playerFile.isFile()) {
-				addPlayer(getPlayerName(playerFile),
-						nbtUtils.readTagFromFile(playerFile));
-			}
-		}
-	}
-
-	private void addPlayer(String name, CompoundTag ps) {
-		List<Tag> pos = ((ListTag) (ps.getValue().get(TAG_KEY_POS))).getValue();
-		double x = (Double) pos.get(0).getValue();
-		double z = (Double) pos.get(2).getValue();
-		players.add(new MapObjectPlayer(name, (int) x, (int) z));
-	}
-
-	private String getPlayerName(File playerFile) {
-		return playerFile.getName().split("\\.")[0];
-	}
-
-	private File getPlayersFolder() {
-		return new File(file.getParent(), "players");
+	public PlayerMover() {
+		// TODO: initme
+		this.isMultiPlayerMap = false;
+		this.file = null;
 	}
 
 	public void movePlayer(String playerName, int x, int y) {
@@ -208,16 +90,17 @@ public class SaveLoader {
 		Map<String, Tag> baseMap = baseTag.getValue();
 		Map<String, Tag> modifiedBaseMap = modifyPositionInBaseMapSinglePlayer(
 				baseMap, x, y);
-		return new CompoundTag(TAG_KEY_BASE, modifiedBaseMap);
+		return new CompoundTag(NBTTagKeys.TAG_KEY_BASE, modifiedBaseMap);
 	}
 
 	private Map<String, Tag> modifyPositionInBaseMapSinglePlayer(
 			Map<String, Tag> baseMap, int x, int y) {
 		Map<String, Tag> result = new HashMap<String, Tag>();
-		CompoundTag dataTag = (CompoundTag) baseMap.get(TAG_KEY_DATA);
+		CompoundTag dataTag = (CompoundTag) baseMap
+				.get(NBTTagKeys.TAG_KEY_DATA);
 		CompoundTag modifiedDataTag = modifyPositionInDataTagSinglePlayer(
 				dataTag, x, y);
-		result.put(TAG_KEY_DATA, modifiedDataTag);
+		result.put(NBTTagKeys.TAG_KEY_DATA, modifiedDataTag);
 		return result;
 	}
 
@@ -226,16 +109,17 @@ public class SaveLoader {
 		Map<String, Tag> dataMap = dataTag.getValue();
 		Map<String, Tag> modifiedDataMap = modifyPositionInDataMapSinglePlayer(
 				dataMap, x, y);
-		return new CompoundTag(TAG_KEY_DATA, modifiedDataMap);
+		return new CompoundTag(NBTTagKeys.TAG_KEY_DATA, modifiedDataMap);
 	}
 
 	private Map<String, Tag> modifyPositionInDataMapSinglePlayer(
 			Map<String, Tag> dataMap, int x, int y) {
 		Map<String, Tag> result = new HashMap<String, Tag>(dataMap);
-		CompoundTag playerTag = (CompoundTag) dataMap.get(TAG_KEY_PLAYER);
+		CompoundTag playerTag = (CompoundTag) dataMap
+				.get(NBTTagKeys.TAG_KEY_PLAYER);
 		CompoundTag modifiedPlayerTag = modifyPositionInPlayerTagSinglePlayer(
 				playerTag, x, y);
-		result.put(TAG_KEY_PLAYER, modifiedPlayerTag);
+		result.put(NBTTagKeys.TAG_KEY_PLAYER, modifiedPlayerTag);
 		return result;
 	}
 
@@ -244,7 +128,7 @@ public class SaveLoader {
 		Map<String, Tag> playerMap = playerTag.getValue();
 		Map<String, Tag> modifiedPlayerMap = modifyPositionInPlayerMap(
 				playerMap, x, y);
-		return new CompoundTag(TAG_KEY_PLAYER, modifiedPlayerMap);
+		return new CompoundTag(NBTTagKeys.TAG_KEY_PLAYER, modifiedPlayerMap);
 	}
 
 	private CompoundTag modifyPositionInDataTagMultiPlayer(CompoundTag dataTag,
@@ -252,22 +136,23 @@ public class SaveLoader {
 		Map<String, Tag> playerMap = dataTag.getValue();
 		Map<String, Tag> modifiedPlayerMap = modifyPositionInPlayerMap(
 				playerMap, x, y);
-		return new CompoundTag(TAG_KEY_DATA, modifiedPlayerMap);
+		return new CompoundTag(NBTTagKeys.TAG_KEY_DATA, modifiedPlayerMap);
 	}
 
 	private Map<String, Tag> modifyPositionInPlayerMap(
 			Map<String, Tag> playerMap, int x, int y) {
 		Map<String, Tag> result = new HashMap<String, Tag>(playerMap);
-		ListTag posTag = (ListTag) playerMap.get(TAG_KEY_POS);
+		ListTag posTag = (ListTag) playerMap.get(NBTTagKeys.TAG_KEY_POS);
 		ListTag modifiedPosTag = modifyPositionInPosTag(posTag, x, y);
-		result.put(TAG_KEY_POS, modifiedPosTag);
+		result.put(NBTTagKeys.TAG_KEY_POS, modifiedPosTag);
 		return result;
 	}
 
 	private ListTag modifyPositionInPosTag(ListTag posTag, int x, int y) {
 		List<Tag> posList = posTag.getValue();
 		List<Tag> modifiedPosList = modifyPositionInPosList(posList, x, y);
-		return new ListTag(TAG_KEY_POS, DoubleTag.class, modifiedPosList);
+		return new ListTag(NBTTagKeys.TAG_KEY_POS, DoubleTag.class,
+				modifiedPosList);
 	}
 
 	private List<Tag> modifyPositionInPosList(List<Tag> posList, int x, int y) {
@@ -302,17 +187,5 @@ public class SaveLoader {
 			} catch (Exception ignored) {
 			}
 		}
-	}
-
-	public List<MapObjectPlayer> getPlayers() {
-		return players;
-	}
-
-	public String getGeneratorOptions() {
-		return generatorOptions;
-	}
-
-	public long getSeed() {
-		return seed;
 	}
 }

@@ -18,7 +18,7 @@ import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
 import amidst.map.MapObjectStronghold;
 import amidst.map.layers.StrongholdLayer;
-import amidst.minecraft.world.SaveLoader;
+import amidst.minecraft.world.PlayerMover;
 import amidst.minecraft.world.WorldType;
 
 public class MenuActions {
@@ -94,7 +94,7 @@ public class MenuActions {
 	public void newFromFileOrFolder() {
 		File file = application.getMapWindow().askForMinecraftMapFile();
 		if (file != null) {
-			application.setProject(new Project(SaveLoader.newInstance(file)));
+			application.setProject(new Project(PlayerMover.newInstance(file)));
 		}
 	}
 

@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import amidst.Options;
 import amidst.map.MapViewer;
 import amidst.minecraft.MinecraftUtil;
-import amidst.minecraft.world.SaveLoader;
+import amidst.minecraft.world.PlayerMover;
 
 // TODO: we should remove this and integrate it into Options
 @Deprecated
@@ -20,10 +20,10 @@ public class Project {
 	private Timer timer = new Timer();
 	private JPanel panel = new JPanel();
 	private MapViewer mapViewer;
-	private SaveLoader saveLoader;
+	private PlayerMover saveLoader;
 
-	public Project(SaveLoader saveLoader) {
-		this(saveLoader.getSeed(), SaveLoader.genType.getName(), saveLoader);
+	public Project(PlayerMover saveLoader) {
+		this(saveLoader.getSeed(), PlayerMover.genType.getName(), saveLoader);
 		Google.track("seed/file/" + Options.instance.seed);
 	}
 
@@ -37,7 +37,7 @@ public class Project {
 		// no Google.track(), because this is only called with a random seed?
 	}
 
-	private Project(long seed, String type, SaveLoader saveLoader) {
+	private Project(long seed, String type, PlayerMover saveLoader) {
 		Options.instance.seed = seed;
 		this.saveLoader = saveLoader;
 		logSeed(seed);
@@ -108,7 +108,7 @@ public class Project {
 		mapViewer.repaint();
 	}
 
-	public SaveLoader getSaveLoader() {
+	public PlayerMover getSaveLoader() {
 		return saveLoader;
 	}
 
