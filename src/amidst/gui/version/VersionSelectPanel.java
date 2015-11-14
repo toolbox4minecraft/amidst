@@ -143,7 +143,7 @@ public class VersionSelectPanel {
 	private static final int INVALID_INDEX = -1;
 
 	private Listeners listeners = new Listeners();
-	private Component component = new Component();
+	private Component component;
 	private ArrayList<VersionComponent> versionComponents = new ArrayList<VersionComponent>();
 
 	private VersionComponent selected = null;
@@ -161,6 +161,7 @@ public class VersionSelectPanel {
 	}
 
 	private void initComponent() {
+		component = new Component();
 		component.setLayout(new MigLayout("ins 0", "", "[]0[]"));
 		component.addMouseListener(listeners);
 	}
