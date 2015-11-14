@@ -70,7 +70,7 @@ public class BiomeColorMenuFactory {
 		private JCheckBoxMenuItem createCheckBox(BiomeColorProfile profile) {
 			JCheckBoxMenuItem result = new JCheckBoxMenuItem(profile.name);
 			tryCreateKeyboardShortcut(profile.shortcut, result);
-			result.addActionListener(listener(profile, result));
+			result.addActionListener(createListener(profile, result));
 			return result;
 		}
 
@@ -87,7 +87,7 @@ public class BiomeColorMenuFactory {
 			}
 		}
 
-		private ActionListener listener(final BiomeColorProfile profile,
+		private ActionListener createListener(final BiomeColorProfile profile,
 				final JCheckBoxMenuItem selectedCheckBox) {
 			ActionListener result = new ActionListener() {
 				@Override
