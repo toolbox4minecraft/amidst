@@ -23,8 +23,6 @@ import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
 
 public class SaveLoader {
-	public static Type genType = Type.DEFAULT;
-
 	public enum Type {
 		DEFAULT("Default", "default"), FLAT("Flat", "flat"), LARGE_BIOMES(
 				"Large Biomes", "largeBiomes"), AMPLIFIED("Amplified",
@@ -62,6 +60,8 @@ public class SaveLoader {
 
 	}
 
+	public static Type genType = Type.DEFAULT;
+
 	public static Type[] selectableTypes = new Type[] { Type.DEFAULT,
 			Type.FLAT, Type.LARGE_BIOMES, Type.AMPLIFIED };
 
@@ -96,6 +96,56 @@ public class SaveLoader {
 	private boolean multi;
 	private List<String> back;
 	private String generatorOptions = "";
+
+	private SaveLoader(File f) {
+		file = f;
+		players = new ArrayList<MapObjectPlayer>();
+		back = new ArrayList<String>();
+		try {
+			NBTInputStream inStream = new NBTInputStream(new FileInputStream(f));
+			CompoundTag root = (CompoundTag) ((CompoundTag) inStream.readTag())
+					.getValue().get("Data");
+			inStream.close();
+			seed = (Long) (root.getValue().get("RandomSeed").getValue());
+			if (root.getValue().get("generatorName") != null) {
+				genType = Type.fromMixedCase((String) (root.getValue().get(
+						"generatorName").getValue()));
+
+				if (genType == Type.CUSTOMIZED)
+					generatorOptions = (String) root.getValue()
+							.get("generatorOptions").getValue();
+			}
+			CompoundTag playerTag = (CompoundTag) root.getValue().get("Player");
+
+			File playersFolder = new File(f.getParent(), "players");
+			boolean multi = (playersFolder.exists() && (playersFolder
+					.listFiles().length > 0));
+
+			if (multi)
+				Log.i("Multiplayer map detected.");
+			else
+				Log.i("Singleplayer map detected.");
+
+			if (!multi) {
+				addPlayer("Player", playerTag);
+			} else {
+				File[] listing = playersFolder.listFiles();
+				for (int i = 0; i < (listing != null ? listing.length : 0); i++) {
+					if (listing[i].isFile()) {
+						NBTInputStream playerInputStream = new NBTInputStream(
+								new FileInputStream(listing[i]));
+						addPlayer(listing[i].getName().split("\\.")[0],
+								(CompoundTag) ((CompoundTag) playerInputStream
+										.readTag()));
+						playerInputStream.close();
+					}
+				}
+
+			}
+		} catch (Exception e) {
+			Util.showError(e);
+		}
+	}
 
 	public List<MapObjectPlayer> getPlayers() {
 		return players;
@@ -187,56 +237,6 @@ public class SaveLoader {
 				back.add(outputFile.toString());
 			} catch (Exception ignored) {
 			}
-		}
-	}
-
-	private SaveLoader(File f) {
-		file = f;
-		players = new ArrayList<MapObjectPlayer>();
-		back = new ArrayList<String>();
-		try {
-			NBTInputStream inStream = new NBTInputStream(new FileInputStream(f));
-			CompoundTag root = (CompoundTag) ((CompoundTag) inStream.readTag())
-					.getValue().get("Data");
-			inStream.close();
-			seed = (Long) (root.getValue().get("RandomSeed").getValue());
-			if (root.getValue().get("generatorName") != null) {
-				genType = Type.fromMixedCase((String) (root.getValue().get(
-						"generatorName").getValue()));
-
-				if (genType == Type.CUSTOMIZED)
-					generatorOptions = (String) root.getValue()
-							.get("generatorOptions").getValue();
-			}
-			CompoundTag playerTag = (CompoundTag) root.getValue().get("Player");
-
-			File playersFolder = new File(f.getParent(), "players");
-			boolean multi = (playersFolder.exists() && (playersFolder
-					.listFiles().length > 0));
-
-			if (multi)
-				Log.i("Multiplayer map detected.");
-			else
-				Log.i("Singleplayer map detected.");
-
-			if (!multi) {
-				addPlayer("Player", playerTag);
-			} else {
-				File[] listing = playersFolder.listFiles();
-				for (int i = 0; i < (listing != null ? listing.length : 0); i++) {
-					if (listing[i].isFile()) {
-						NBTInputStream playerInputStream = new NBTInputStream(
-								new FileInputStream(listing[i]));
-						addPlayer(listing[i].getName().split("\\.")[0],
-								(CompoundTag) ((CompoundTag) playerInputStream
-										.readTag()));
-						playerInputStream.close();
-					}
-				}
-
-			}
-		} catch (Exception e) {
-			Util.showError(e);
 		}
 	}
 
