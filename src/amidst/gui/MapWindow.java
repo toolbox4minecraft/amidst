@@ -85,10 +85,6 @@ public class MapWindow {
 		frame.validate();
 	}
 
-	public Project getProject() {
-		return project;
-	}
-
 	@Deprecated
 	public JFrame getFrame() {
 		return frame;
