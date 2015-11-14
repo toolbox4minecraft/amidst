@@ -50,7 +50,8 @@ public class VersionSelectWindow {
 		frame.add(createTitleLabel(), "h 20!,w :400:, growx, pushx, wrap");
 
 		VersionSelectPanel versionSelector = createVersionSelectPanel();
-		frame.add(new JScrollPane(versionSelector), "grow, push, h 80::");
+		frame.add(new JScrollPane(versionSelector.getComponent()),
+				"grow, push, h 80::");
 		frame.addKeyListener(versionSelector.getKeyListener());
 
 		frame.pack();

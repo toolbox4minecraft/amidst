@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 import amidst.Options;
 
-public class VersionSelectPanel extends JPanel {
+public class VersionSelectPanel {
 	private class Listeners implements MouseListener, KeyListener {
 		@Override
 		public void keyTyped(KeyEvent e) {
@@ -84,11 +84,52 @@ public class VersionSelectPanel extends JPanel {
 		}
 
 		private boolean isLoadButtonClicked(Point mouse) {
-			return mouse.x > getWidth() - 40;
+			return mouse.x > component.getWidth() - 40;
+		}
+	}
+
+	@SuppressWarnings("serial")
+	private class Component extends JPanel {
+		@Override
+		public void paintChildren(Graphics g) {
+			super.paintChildren(g);
+			Graphics2D g2d = (Graphics2D) g;
+			drawSeparatorLines(g2d);
+		}
+
+		private void drawSeparatorLines(Graphics2D g2d) {
+			g2d.setColor(Color.gray);
+			for (int i = 1; i <= versionComponents.size(); i++) {
+				g2d.drawLine(0, i * 40, getWidth(), i * 40);
+			}
+		}
+
+		@Override
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			Graphics2D g2d = (Graphics2D) g;
+			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			if (emptyMessageMetric == null) {
+				emptyMessageMetric = g.getFontMetrics(emptyMessageFont);
+				emptyMessageWidth = emptyMessageMetric
+						.stringWidth(emptyMessage);
+			}
+			g.setColor(Color.white);
+			g.fillRect(0, 0, getWidth(), getHeight());
+
+			if (versionComponents.size() == 0) {
+				g.setColor(Color.gray);
+				g.setFont(emptyMessageFont);
+				g.drawString(emptyMessage, (getWidth() >> 1)
+						- (emptyMessageWidth >> 1), 30);
+			}
+
 		}
 	}
 
 	private Listeners listeners = new Listeners();
+	private Component component = new Component();
 
 	private String emptyMessage;
 	private int emptyMessageWidth;
@@ -101,52 +142,22 @@ public class VersionSelectPanel extends JPanel {
 	private int selectedIndex = -1;
 
 	public VersionSelectPanel() {
-		setLayout(new MigLayout("ins 0", "", "[]0[]"));
+		component.setLayout(new MigLayout("ins 0", "", "[]0[]"));
 		setEmptyMessage("Empty");
-		addMouseListener(listeners);
+		component.addMouseListener(listeners);
 
 	}
 
 	public void addVersion(VersionComponent version) {
-		add(version.getComponent(), "growx, pushx, wrap");
+		component.add(version.getComponent(), "growx, pushx, wrap");
 		versionComponents.add(version);
-	}
-
-	@Override
-	public void paintChildren(Graphics g) {
-		super.paintChildren(g);
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.setColor(Color.gray);
-		for (int i = 1; i <= versionComponents.size(); i++) {
-			g2d.drawLine(0, i * 40, getWidth(), i * 40);
-		}
-	}
-
-	@Override
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		if (emptyMessageMetric == null) {
-			emptyMessageMetric = g.getFontMetrics(emptyMessageFont);
-			emptyMessageWidth = emptyMessageMetric.stringWidth(emptyMessage);
-		}
-		g.setColor(Color.white);
-		g.fillRect(0, 0, getWidth(), getHeight());
-
-		if (versionComponents.size() == 0) {
-			g.setColor(Color.gray);
-			g.setFont(emptyMessageFont);
-			g.drawString(emptyMessage, (getWidth() >> 1)
-					- (emptyMessageWidth >> 1), 30);
-		}
-
 	}
 
 	public void setEmptyMessage(String message) {
 		emptyMessage = message;
-		if (emptyMessageMetric != null)
+		if (emptyMessageMetric != null) {
 			emptyMessageWidth = emptyMessageMetric.stringWidth(emptyMessage);
+		}
 	}
 
 	public void select(String name) {
@@ -195,5 +206,9 @@ public class VersionSelectPanel extends JPanel {
 	@Deprecated
 	public KeyListener getKeyListener() {
 		return listeners;
+	}
+
+	public JPanel getComponent() {
+		return component;
 	}
 }
