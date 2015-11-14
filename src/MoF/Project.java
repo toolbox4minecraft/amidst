@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import amidst.Options;
 import amidst.map.MapViewer;
 import amidst.minecraft.MinecraftUtil;
+import amidst.minecraft.world.SaveLoader;
 
 // TODO: we should remove this and integrate it into Options
 @Deprecated

@@ -1,4 +1,4 @@
-package MoF;
+package amidst.minecraft.world;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -22,7 +22,6 @@ import org.jnbt.Tag;
 import amidst.Util;
 import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
-import amidst.minecraft.world.WorldType;
 
 public class SaveLoader {
 	private static final String DEFAULT_SINGLE_PLAYER_PLAYER_NAME = "Player";

@@ -12,13 +12,13 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 
 import MoF.Project;
-import MoF.SaveLoader;
 import amidst.Application;
 import amidst.Options;
 import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
 import amidst.map.MapObjectStronghold;
 import amidst.map.layers.StrongholdLayer;
+import amidst.minecraft.world.SaveLoader;
 import amidst.minecraft.world.WorldType;
 
 public class MenuActions {

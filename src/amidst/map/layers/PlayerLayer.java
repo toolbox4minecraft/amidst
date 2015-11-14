@@ -1,12 +1,13 @@
 package amidst.map.layers;
 
 import java.util.List;
-import MoF.SaveLoader;
+
 import MoF.SkinManager;
 import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
 import amidst.map.MapObjectPlayer;
+import amidst.minecraft.world.SaveLoader;
 
 public class PlayerLayer extends IconLayer {
 	public SaveLoader saveLoader;
