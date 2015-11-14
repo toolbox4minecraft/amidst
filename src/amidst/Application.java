@@ -32,8 +32,8 @@ public class Application {
 	}
 
 	public void displayVersionSelectWindow() {
-		setMapWindow(null);
 		setVersionSelectWindow(new VersionSelectWindow(this));
+		setMapWindow(null);
 	}
 
 	public void displayMapWindow(RemoteMinecraft minecraftInterface) {
@@ -52,8 +52,8 @@ public class Application {
 
 	private void displayMapWindow(IMinecraftInterface minecraftInterface) {
 		MinecraftUtil.setBiomeInterface(minecraftInterface);
-		setVersionSelectWindow(null);
 		setMapWindow(new MapWindow());
+		setVersionSelectWindow(null);
 	}
 
 	private IMinecraftInterface createLocalMinecraftInterface(File jarFile) {
