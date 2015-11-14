@@ -30,6 +30,7 @@ public class BiomeColorMenuFactory {
 		private List<JCheckBoxMenuItem> allCheckBoxes = new ArrayList<JCheckBoxMenuItem>();
 		private List<JMenu> menuStack = new ArrayList<JMenu>();
 		private ActionListener firstListener;
+		private boolean isFirstContainer = true;
 
 		private BiomeColorProfileVisitorImpl(JMenu parentMenu) {
 			menuStack.add(parentMenu);
@@ -37,7 +38,9 @@ public class BiomeColorMenuFactory {
 
 		@Override
 		public void enterFolder(String name) {
-			if (!isFirstContainer()) {
+			if (isFirstContainer) {
+				isFirstContainer = false;
+			} else {
 				JMenu newMenu = new JMenu(name);
 				getLastMenu().add(newMenu);
 				menuStack.add(newMenu);
@@ -54,10 +57,6 @@ public class BiomeColorMenuFactory {
 		@Override
 		public void leaveFolder() {
 			removeLastMenu();
-		}
-
-		private boolean isFirstContainer() {
-			return menuStack.size() == 1;
 		}
 
 		private JMenu getLastMenu() {
