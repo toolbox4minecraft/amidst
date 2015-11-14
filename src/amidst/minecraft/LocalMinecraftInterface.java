@@ -1,10 +1,8 @@
 package amidst.minecraft;
 
-import java.lang.reflect.Field;
-
 import amidst.logging.Log;
+import amidst.minecraft.world.WorldType;
 import amidst.version.VersionInfo;
-import MoF.SaveLoader.WorldType;
 
 public class LocalMinecraftInterface implements IMinecraftInterface {
 	private Minecraft minecraft;

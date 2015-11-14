@@ -22,66 +22,9 @@ import org.jnbt.Tag;
 import amidst.Util;
 import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
+import amidst.minecraft.world.WorldType;
 
 public class SaveLoader {
-	public static enum WorldType {
-		// @formatter:off
-		DEFAULT("Default", "default"),
-		FLAT("Flat", "flat"),
-		LARGE_BIOMES("Large Biomes", "largeBiomes"),
-		AMPLIFIED("Amplified", "amplified"),
-		CUSTOMIZED("Customized", "customized");
-		// @formatter:on
-
-		public static WorldType from(String nameOrValue) {
-			WorldType result = findInstance(nameOrValue);
-			if (result == null) {
-				Log.crash("Unable to find World Type: " + nameOrValue);
-			}
-			return result;
-		}
-
-		private static WorldType findInstance(String nameOrValue) {
-			for (WorldType worldType : values()) {
-				if (worldType.name.equalsIgnoreCase(nameOrValue)
-						|| worldType.value.equalsIgnoreCase(nameOrValue)) {
-					return worldType;
-				}
-			}
-			return null;
-		}
-
-		private String name;
-		private String value;
-
-		private WorldType(String name, String value) {
-			this.name = name;
-			this.value = value;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public String getValue() {
-			return value;
-		}
-
-		@Override
-		public String toString() {
-			return name;
-		}
-	}
-
-	// @formatter:off
-	public static final WorldType[] SELECTABLE_WORLD_TYPES = {
-			WorldType.DEFAULT,
-			WorldType.FLAT,
-			WorldType.LARGE_BIOMES,
-			WorldType.AMPLIFIED
-	};
-	// @formatter:on
-
 	private static final String DEFAULT_SINGLE_PLAYER_PLAYER_NAME = "Player";
 
 	private static final String TAG_KEY_POS = "Pos";

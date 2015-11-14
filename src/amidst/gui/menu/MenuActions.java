@@ -19,6 +19,7 @@ import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
 import amidst.map.MapObjectStronghold;
 import amidst.map.layers.StrongholdLayer;
+import amidst.minecraft.world.WorldType;
 
 public class MenuActions {
 	private static final String ABOUT_MESSAGE = "Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
@@ -54,13 +55,13 @@ public class MenuActions {
 		String seed = application.getMapWindow().askForSeed();
 		if (seed != null) {
 			String worldTypePreference = Options.instance.worldType.get();
-			SaveLoader.WorldType worldType = null;
+			WorldType worldType = null;
 			if (worldTypePreference.equals("Prompt each time")) {
 				worldType = application.getMapWindow().askForOptions(
 						"New Project", "Enter world type\n",
-						SaveLoader.SELECTABLE_WORLD_TYPES);
+						WorldType.getSelectable());
 			} else {
-				worldType = SaveLoader.WorldType.from(worldTypePreference);
+				worldType = WorldType.from(worldTypePreference);
 			}
 
 			if (seed.equals(""))
@@ -76,12 +77,12 @@ public class MenuActions {
 		Random random = new Random();
 		long seed = random.nextLong();
 		String worldTypePreference = Options.instance.worldType.get();
-		SaveLoader.WorldType worldType = null;
+		WorldType worldType = null;
 		if (worldTypePreference.equals("Prompt each time")) {
 			worldType = application.getMapWindow().askForOptions("New Project",
-					"Enter world type\n", SaveLoader.SELECTABLE_WORLD_TYPES);
+					"Enter world type\n", WorldType.getSelectable());
 		} else {
-			worldType = SaveLoader.WorldType.from(worldTypePreference);
+			worldType = WorldType.from(worldTypePreference);
 		}
 
 		// If a string was returned, say so.
