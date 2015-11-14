@@ -165,8 +165,8 @@ public class SaveLoader {
 			backupFile(out);
 			try {
 				CompoundTag baseTag = nbtUtils.readTagFromFile(out);
-				CompoundTag modifiedBaseTag = modifyPositionInBaseTag(baseTag,
-						x, y);
+				CompoundTag modifiedBaseTag = modifyPositionInBaseTagSinglePlayer(
+						baseTag, x, y);
 				nbtUtils.writeTagToFile(out, modifiedBaseTag);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -174,16 +174,16 @@ public class SaveLoader {
 		}
 	}
 
-	private CompoundTag modifyPositionInBaseTag(CompoundTag baseTag, int x,
-			int y) {
+	private CompoundTag modifyPositionInBaseTagSinglePlayer(
+			CompoundTag baseTag, int x, int y) {
 		Map<String, Tag> baseMap = baseTag.getValue();
-		Map<String, Tag> modifiedBaseMap = modifyPositionInBaseMap(baseMap, x,
-				y);
+		Map<String, Tag> modifiedBaseMap = modifyPositionInBaseMapSinglePlayer(
+				baseMap, x, y);
 		return new CompoundTag(TAG_KEY_BASE, modifiedBaseMap);
 	}
 
-	private Map<String, Tag> modifyPositionInBaseMap(Map<String, Tag> baseMap,
-			int x, int y) {
+	private Map<String, Tag> modifyPositionInBaseMapSinglePlayer(
+			Map<String, Tag> baseMap, int x, int y) {
 		Map<String, Tag> result = new HashMap<String, Tag>();
 		CompoundTag dataTag = (CompoundTag) baseMap.get(TAG_KEY_DATA);
 		CompoundTag modifiedDataTag = modifyPositionInDataTagSinglePlayer(
@@ -195,23 +195,23 @@ public class SaveLoader {
 	private CompoundTag modifyPositionInDataTagSinglePlayer(
 			CompoundTag dataTag, int x, int y) {
 		Map<String, Tag> dataMap = dataTag.getValue();
-		Map<String, Tag> modifiedDataMap = modifyPositionInDataMap(dataMap, x,
-				y);
+		Map<String, Tag> modifiedDataMap = modifyPositionInDataMapSinglePlayer(
+				dataMap, x, y);
 		return new CompoundTag(TAG_KEY_DATA, modifiedDataMap);
 	}
 
-	private Map<String, Tag> modifyPositionInDataMap(Map<String, Tag> dataMap,
-			int x, int y) {
+	private Map<String, Tag> modifyPositionInDataMapSinglePlayer(
+			Map<String, Tag> dataMap, int x, int y) {
 		Map<String, Tag> result = new HashMap<String, Tag>(dataMap);
 		CompoundTag playerTag = (CompoundTag) dataMap.get(TAG_KEY_PLAYER);
-		CompoundTag modifiedPlayerTag = modifyPositionInPlayerTag(playerTag, x,
-				y);
+		CompoundTag modifiedPlayerTag = modifyPositionInPlayerTagSinglePlayer(
+				playerTag, x, y);
 		result.put(TAG_KEY_PLAYER, modifiedPlayerTag);
 		return result;
 	}
 
-	private CompoundTag modifyPositionInPlayerTag(CompoundTag playerTag, int x,
-			int y) {
+	private CompoundTag modifyPositionInPlayerTagSinglePlayer(
+			CompoundTag playerTag, int x, int y) {
 		Map<String, Tag> playerMap = playerTag.getValue();
 		Map<String, Tag> modifiedPlayerMap = modifyPositionInPlayerMap(
 				playerMap, x, y);
