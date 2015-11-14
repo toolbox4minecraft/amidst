@@ -89,25 +89,36 @@ public class VersionSelectWindow {
 		}).start();
 	}
 
-	private void loadVersions(final VersionSelectPanel versionSelector) {
+	private void loadVersions(VersionSelectPanel versionSelector) {
 		versionFactory.scanForProfiles();
 		MinecraftProfile[] localVersions = versionFactory.getProfiles();
-		String selectedProfile = Options.instance.lastProfile.get();
-
 		if (localVersions == null) {
 			versionSelector.setEmptyMessage("Empty");
-			return;
+		} else {
+			addVersions(versionSelector, localVersions);
+			restoreSelection(versionSelector);
+			packFrameTwice();
 		}
-		for (int i = 0; i < localVersions.length; i++) {
+	}
+
+	private void addVersions(VersionSelectPanel versionSelector,
+			MinecraftProfile[] localVersions) {
+		for (MinecraftProfile localVersion : localVersions) {
 			versionSelector.addVersion(new LocalVersionComponent(application,
-					localVersions[i]));
+					localVersion));
 		}
 		versionSelector.addVersion(new RemoteVersionComponent(application));
+	}
 
+	private void restoreSelection(VersionSelectPanel versionSelector) {
+		String selectedProfile = Options.instance.lastProfile.get();
 		if (selectedProfile != null) {
 			versionSelector.select(selectedProfile);
 		}
+	}
 
+	private void packFrameTwice() {
+		// TODO: why do we call this twice?
 		frame.pack();
 		try {
 			Thread.sleep(100);
