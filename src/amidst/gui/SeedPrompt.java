@@ -116,6 +116,7 @@ public class SeedPrompt {
 
 	public String askForSeed() {
 		textField.setText("");
+		textField.requestFocus();
 		if (JOptionPane.showConfirmDialog(frame, inputs, TITLE,
 				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 			return textField.getText();
