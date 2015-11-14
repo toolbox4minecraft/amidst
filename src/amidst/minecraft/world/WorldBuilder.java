@@ -13,7 +13,7 @@ import org.jnbt.Tag;
 import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
 
-public class PlayerLoader {
+public class WorldBuilder {
 	private static final String DEFAULT_SINGLE_PLAYER_PLAYER_NAME = "Player";
 
 	private File worldFile;
@@ -26,7 +26,7 @@ public class PlayerLoader {
 	private boolean isMultiPlayerMap;
 	private List<MapObjectPlayer> players = new ArrayList<MapObjectPlayer>();
 
-	public PlayerLoader(File file) {
+	public WorldBuilder(File file) {
 		this.worldFile = getWorldFile(file);
 		try {
 			load();
@@ -35,7 +35,7 @@ public class PlayerLoader {
 		}
 	}
 
-	public File getWorldFile(File file) {
+	private File getWorldFile(File file) {
 		if (file.isDirectory()) {
 			return new File(file.getAbsoluteFile() + "/level.dat");
 		} else {
@@ -167,23 +167,12 @@ public class PlayerLoader {
 		return exception;
 	}
 
-	public long getSeed() {
-		return seed;
-	}
-
-	public WorldType getGeneratorType() {
-		return generatorType;
-	}
-
-	public String getGeneratorOptions() {
-		return generatorOptions;
-	}
-
-	public boolean isMultiPlayerMap() {
-		return isMultiPlayerMap;
-	}
-
-	public List<MapObjectPlayer> getPlayers() {
-		return players;
+	public World get() {
+		if (isLoadedSuccessfully()) {
+			return new World(seed, generatorType, generatorOptions,
+					isMultiPlayerMap, players);
+		} else {
+			return null;
+		}
 	}
 }
