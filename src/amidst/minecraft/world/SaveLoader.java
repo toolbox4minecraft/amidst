@@ -154,8 +154,8 @@ public class SaveLoader {
 			backupFile(out);
 			try {
 				CompoundTag dataTag = nbtUtils.readTagFromFile(out);
-				CompoundTag modifiedDataTag = modifyPositionInDataTag(dataTag,
-						x, y);
+				CompoundTag modifiedDataTag = modifyPositionInDataTagMultiPlayer(
+						dataTag, x, y);
 				nbtUtils.writeTagToFile(out, modifiedDataTag);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -184,7 +184,6 @@ public class SaveLoader {
 
 	private Map<String, Tag> modifyPositionInBaseMap(Map<String, Tag> baseMap,
 			int x, int y) {
-		// TODO: add baseMap in constructor?
 		Map<String, Tag> result = new HashMap<String, Tag>();
 		CompoundTag dataTag = (CompoundTag) baseMap.get(TAG_KEY_DATA);
 		CompoundTag modifiedDataTag = modifyPositionInDataTagSinglePlayer(
@@ -204,14 +203,24 @@ public class SaveLoader {
 	private Map<String, Tag> modifyPositionInDataMap(Map<String, Tag> dataMap,
 			int x, int y) {
 		Map<String, Tag> result = new HashMap<String, Tag>(dataMap);
-		CompoundTag dataTag = (CompoundTag) dataMap.get(TAG_KEY_PLAYER);
-		CompoundTag modifiedDataTag = modifyPositionInDataTag(dataTag, x, y);
-		result.put(TAG_KEY_PLAYER, modifiedDataTag);
+		CompoundTag playerTag = (CompoundTag) dataMap.get(TAG_KEY_PLAYER);
+		CompoundTag modifiedPlayerTag = modifyPositionInPlayerTag(playerTag, x,
+				y);
+		result.put(TAG_KEY_PLAYER, modifiedPlayerTag);
 		return result;
 	}
 
-	private CompoundTag modifyPositionInDataTag(CompoundTag dataTag, int x,
+	private CompoundTag modifyPositionInPlayerTag(CompoundTag playerTag, int x,
 			int y) {
+		Map<String, Tag> playerMap = playerTag.getValue();
+		Map<String, Tag> modifiedPlayerMap = modifyPositionInPlayerMap(
+				playerMap, x, y);
+		return new CompoundTag(TAG_KEY_PLAYER, modifiedPlayerMap);
+	}
+
+	// MP
+	private CompoundTag modifyPositionInDataTagMultiPlayer(CompoundTag dataTag,
+			int x, int y) {
 		Map<String, Tag> playerMap = dataTag.getValue();
 		Map<String, Tag> modifiedPlayerMap = modifyPositionInPlayerMap(
 				playerMap, x, y);
