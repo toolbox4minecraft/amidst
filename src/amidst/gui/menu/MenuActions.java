@@ -52,7 +52,7 @@ public class MenuActions {
 	}
 
 	public void newFromSeed() {
-		String seed = helper.showSeedPrompt("New Project");
+		String seed = application.getMapWindow().askForSeed();
 		if (seed != null) {
 			String worldTypePreference = Options.instance.worldType.get();
 			SaveLoader.Type worldType = null;

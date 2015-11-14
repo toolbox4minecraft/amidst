@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 
 import amidst.Amidst;
 import amidst.Application;
+import amidst.gui.SeedPrompt;
 import amidst.gui.menu.AmidstMenu;
 
 public class MapWindow {
@@ -24,6 +25,8 @@ public class MapWindow {
 	private AmidstMenu menuBar;
 	private Container contentPane;
 	private Project project;
+
+	private SeedPrompt seedPrompt = new SeedPrompt(frame);
 
 	public MapWindow(Application application) {
 		this.application = application;
@@ -92,5 +95,9 @@ public class MapWindow {
 
 	public void dispose() {
 		frame.dispose();
+	}
+
+	public String askForSeed() {
+		return seedPrompt.askForSeed();
 	}
 }

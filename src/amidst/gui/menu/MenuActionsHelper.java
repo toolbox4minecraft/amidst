@@ -1,19 +1,10 @@
 package amidst.gui.menu;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Point;
 import java.io.File;
 
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import MoF.SaveLoader;
 import amidst.Application;
@@ -24,81 +15,6 @@ public class MenuActionsHelper {
 
 	public MenuActionsHelper(Application application) {
 		this.application = application;
-	}
-
-	public String showSeedPrompt(String title) {
-		final String blankText = "A random seed will be generated if left blank.";
-		final String leadingSpaceText = "Warning: There is a space at the start!";
-		final String trailingSpaceText = "Warning: There is a space at the end!";
-
-		final JTextField inputText = new JTextField();
-
-		inputText.addAncestorListener(new AncestorListener() {
-			@Override
-			public void ancestorAdded(AncestorEvent arg0) {
-				inputText.requestFocus();
-			}
-
-			@Override
-			public void ancestorMoved(AncestorEvent arg0) {
-				inputText.requestFocus();
-			}
-
-			@Override
-			public void ancestorRemoved(AncestorEvent arg0) {
-				inputText.requestFocus();
-			}
-		});
-
-		final JLabel inputInformation = new JLabel(blankText);
-		inputInformation.setForeground(Color.red);
-		inputInformation.setFont(new Font("arial", Font.BOLD, 10));
-		inputText.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				update();
-			}
-
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				update();
-			}
-
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				update();
-			}
-
-			public void update() {
-				String text = inputText.getText();
-				if (text.equals("")) {
-					inputInformation.setText(blankText);
-					inputInformation.setForeground(Color.red);
-				} else if (text.startsWith(" ")) {
-					inputInformation.setText(leadingSpaceText);
-					inputInformation.setForeground(Color.red);
-				} else if (text.endsWith(" ")) {
-					inputInformation.setText(trailingSpaceText);
-					inputInformation.setForeground(Color.red);
-				} else {
-					try {
-						Long.parseLong(text);
-						inputInformation.setText("Seed is valid.");
-						inputInformation.setForeground(Color.gray);
-					} catch (NumberFormatException e) {
-						inputInformation.setText("This seed's value is "
-								+ text.hashCode() + ".");
-						inputInformation.setForeground(Color.black);
-					}
-				}
-			}
-		});
-
-		final JComponent[] inputs = new JComponent[] {
-				new JLabel("Enter your seed: "), inputInformation, inputText };
-		int result = JOptionPane.showConfirmDialog(application.getMapWindow()
-				.getFrame(), inputs, title, JOptionPane.OK_CANCEL_OPTION);
-		return (result == 0) ? inputText.getText() : null;
 	}
 
 	public File getSavesDirectory() {
