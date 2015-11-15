@@ -15,38 +15,34 @@ import amidst.minecraft.MinecraftUtil;
 
 public class SpawnLayer extends IconLayer {
 	private MapObjectSpawn spawnObject;
-	public static final ArrayList<Biome> validBiomes = new ArrayList<Biome>(Arrays.asList(
-			Biome.forest, 
-			Biome.plains, 
-			Biome.taiga, 
-			Biome.taigaHills, 
-			Biome.forestHills, 
-			Biome.jungle, 
-			Biome.jungleHills
-		));
-	
+	public static final ArrayList<Biome> validBiomes = new ArrayList<Biome>(
+			Arrays.asList(Biome.forest, Biome.plains, Biome.taiga,
+					Biome.taigaHills, Biome.forestHills, Biome.jungle,
+					Biome.jungleHills));
+
 	public SpawnLayer() {
 	}
-	
+
 	@Override
 	public boolean isVisible() {
-		return Options.instance.showSpawn.get();		
+		return Options.instance.showSpawn.get();
 	}
-	
+
 	@Override
 	public void generateMapObjects(Fragment frag) {
-		if ((spawnObject.globalX >= frag.getBlockX()) &&
-			(spawnObject.globalX < frag.getBlockX() + Fragment.SIZE) &&
-			(spawnObject.globalY >= frag.getBlockY()) &&
-			(spawnObject.globalY < frag.getBlockY() + Fragment.SIZE)) {
+		if ((spawnObject.globalX >= frag.getBlockX())
+				&& (spawnObject.globalX < frag.getBlockX() + Fragment.SIZE)
+				&& (spawnObject.globalY >= frag.getBlockY())
+				&& (spawnObject.globalY < frag.getBlockY() + Fragment.SIZE)) {
 			spawnObject.parentLayer = this;
 			frag.addObject(spawnObject);
 		}
 	}
-	
+
 	private Point getSpawnPosition() {
 		Random random = new Random(Options.instance.seed);
-		Point location = MinecraftUtil.findValidLocation(0, 0, 256, validBiomes, random);
+		Point location = MinecraftUtil.findValidLocation(0, 0, 256,
+				validBiomes, random);
 		int x = 0;
 		int y = 0;
 		if (location != null) {
@@ -58,11 +54,10 @@ public class SpawnLayer extends IconLayer {
 
 		return new Point(x, y);
 	}
-	
+
 	@Override
 	public void reload() {
 		Point spawnCenter = getSpawnPosition();
 		spawnObject = new MapObjectSpawn(spawnCenter.x, spawnCenter.y);
 	}
-	
 }

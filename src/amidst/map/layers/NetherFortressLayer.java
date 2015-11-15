@@ -1,6 +1,7 @@
 package amidst.map.layers;
 
 import java.util.Random;
+
 import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
@@ -8,14 +9,15 @@ import amidst.map.MapObjectNether;
 
 public class NetherFortressLayer extends IconLayer {
 	private Random random = new Random();
-	
+
 	public NetherFortressLayer() {
 	}
-	
+
 	@Override
 	public boolean isVisible() {
 		return Options.instance.showNetherFortresses.get();
 	}
+
 	@Override
 	public void generateMapObjects(Fragment frag) {
 		int size = Fragment.SIZE >> 4;
@@ -24,12 +26,12 @@ public class NetherFortressLayer extends IconLayer {
 				int chunkX = x + frag.getChunkX();
 				int chunkY = y + frag.getChunkY();
 				if (checkChunk(chunkX, chunkY)) {
-					frag.addObject(new MapObjectNether(x << 4, y << 4).setParent(this));
+					frag.addObject(new MapObjectNether(x << 4, y << 4)
+							.setParent(this));
 				}
 			}
 		}
 	}
-	 
 
 	public boolean checkChunk(int chunkX, int chunkY) {
 		int i = chunkX >> 4;
@@ -39,10 +41,10 @@ public class NetherFortressLayer extends IconLayer {
 		random.nextInt();
 
 		if (random.nextInt(3) != 0) {
-		  return false;
+			return false;
 		}
 		if (chunkX != (i << 4) + 4 + random.nextInt(8)) {
-		  return false;
+			return false;
 		}
 
 		return chunkY == (j << 4) + 4 + random.nextInt(8);

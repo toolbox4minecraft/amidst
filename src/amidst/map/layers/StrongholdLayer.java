@@ -16,60 +16,32 @@ import amidst.version.VersionInfo;
 
 public class StrongholdLayer extends IconLayer {
 	public static StrongholdLayer instance;
-	
-	private static final Biome[] biomesDefault = {
-		Biome.desert, 
-		Biome.forest, 
-		Biome.extremeHills,
-		Biome.swampland
-	};
-	private static final Biome[] biomes1_0 = {
-		Biome.desert, 
-		Biome.forest,
-		Biome.extremeHills, 
-		Biome.swampland, 
-		Biome.taiga, 
-		Biome.icePlains, 
-		Biome.iceMountains
-	};
-	private static final Biome[] biomes1_1 = {
-		Biome.desert, 
-		Biome.forest, 
-		Biome.extremeHills, 
-		Biome.swampland, 
-		Biome.taiga, 
-		Biome.icePlains, 
-		Biome.iceMountains, 
-		Biome.desertHills, 
-		Biome.forestHills, 
-		Biome.extremeHillsEdge
-	};
-	private static final Biome[] biomes12w03a = {
-		Biome.desert,
-		Biome.forest, 
-		Biome.extremeHills,
-		Biome.swampland, 
-		Biome.taiga, 
-		Biome.icePlains, 
-		Biome.iceMountains, 
-		Biome.desertHills, 
-		Biome.forestHills,
-		Biome.extremeHillsEdge, 
-		Biome.jungle, 
-		Biome.jungleHills
-	};
-	
+
+	private static final Biome[] biomesDefault = { Biome.desert, Biome.forest,
+			Biome.extremeHills, Biome.swampland };
+	private static final Biome[] biomes1_0 = { Biome.desert, Biome.forest,
+			Biome.extremeHills, Biome.swampland, Biome.taiga, Biome.icePlains,
+			Biome.iceMountains };
+	private static final Biome[] biomes1_1 = { Biome.desert, Biome.forest,
+			Biome.extremeHills, Biome.swampland, Biome.taiga, Biome.icePlains,
+			Biome.iceMountains, Biome.desertHills, Biome.forestHills,
+			Biome.extremeHillsEdge };
+	private static final Biome[] biomes12w03a = { Biome.desert, Biome.forest,
+			Biome.extremeHills, Biome.swampland, Biome.taiga, Biome.icePlains,
+			Biome.iceMountains, Biome.desertHills, Biome.forestHills,
+			Biome.extremeHillsEdge, Biome.jungle, Biome.jungleHills };
+
 	private MapObjectStronghold[] strongholds = new MapObjectStronghold[3];
-	
+
 	public StrongholdLayer() {
 		instance = this;
 	}
-	
+
 	@Override
 	public boolean isVisible() {
-		return Options.instance.showStrongholds.get();		
+		return Options.instance.showStrongholds.get();
 	}
-	
+
 	@Override
 	public void generateMapObjects(Fragment frag) {
 		int size = Fragment.SIZE >> 4;
@@ -77,22 +49,25 @@ public class StrongholdLayer extends IconLayer {
 			for (int y = 0; y < size; y++) {
 				int chunkX = x + frag.getChunkX();
 				int chunkY = y + frag.getChunkY();
-				if (checkChunk(chunkX, chunkY)) { // TODO: This does not need a per-chunk test!
-					// FIXME: Possible use of checkChunk causing negative icons to be misaligned!
-					frag.addObject(new MapObjectStronghold(x << 4, y << 4).setParent(this));
+				if (checkChunk(chunkX, chunkY)) { // TODO: This does not need a
+													// per-chunk test!
+					// FIXME: Possible use of checkChunk causing negative icons
+					// to be misaligned!
+					frag.addObject(new MapObjectStronghold(x << 4, y << 4)
+							.setParent(this));
 				}
 			}
 		}
 	}
-	 
+
 	public void findStrongholds() {
 		Random random = new Random();
 		random.setSeed(Options.instance.seed);
-		
-		
+
 		// TODO: Replace this system!
 		Biome[] validBiomes = biomesDefault;
-		if (MinecraftUtil.getVersion() == VersionInfo.V1_9pre6 || MinecraftUtil.getVersion() == VersionInfo.V1_0)
+		if (MinecraftUtil.getVersion() == VersionInfo.V1_9pre6
+				|| MinecraftUtil.getVersion() == VersionInfo.V1_0)
 			validBiomes = biomes1_0;
 		if (MinecraftUtil.getVersion() == VersionInfo.V1_1)
 			validBiomes = biomes1_1;
@@ -100,25 +75,25 @@ public class StrongholdLayer extends IconLayer {
 			validBiomes = biomes12w03a;
 
 		List<Biome> biomeArrayList = Arrays.asList(validBiomes);
-		
+
 		if (MinecraftUtil.getVersion().isAtLeast(VersionInfo.V13w36a)) {
 			biomeArrayList = new ArrayList<Biome>();
 			for (int i = 0; i < Biome.biomes.length; i++) {
-				if ((Biome.biomes[i] != null) && (Biome.biomes[i].type.value1 > 0f)) {
+				if ((Biome.biomes[i] != null)
+						&& (Biome.biomes[i].type.value1 > 0f)) {
 					biomeArrayList.add(Biome.biomes[i]);
 				}
 			}
 		}
-		
+
 		double angle = random.nextDouble() * 3.141592653589793D * 2.0D;
 		for (int i = 0; i < 3; i++) {
 			double distance = (1.25D + random.nextDouble()) * 32.0D;
-			int x = (int)Math.round(Math.cos(angle) * distance);
-			int y = (int)Math.round(Math.sin(angle) * distance);
+			int x = (int) Math.round(Math.cos(angle) * distance);
+			int y = (int) Math.round(Math.sin(angle) * distance);
 
-
-			
-			Point strongholdLocation = MinecraftUtil.findValidLocation((x << 4) + 8, (y << 4) + 8, 112, biomeArrayList, random);
+			Point strongholdLocation = MinecraftUtil.findValidLocation(
+					(x << 4) + 8, (y << 4) + 8, 112, biomeArrayList, random);
 			if (strongholdLocation != null) {
 				x = strongholdLocation.x >> 4;
 				y = strongholdLocation.y >> 4;
@@ -137,11 +112,11 @@ public class StrongholdLayer extends IconLayer {
 		}
 		return false;
 	}
-	
+
 	public MapObjectStronghold[] getStrongholds() {
 		return strongholds;
 	}
-	
+
 	@Override
 	public void reload() {
 		findStrongholds();
