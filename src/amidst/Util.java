@@ -4,6 +4,7 @@ import javax.swing.*;
 
 import amidst.logging.Log;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
@@ -19,6 +20,8 @@ public class Util {
 	 * @param e the exception for which the stachtrace is to be shown
 	 */
 	public static final String REMOTE_VERSION_LIST_URL = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
+	public static final Gson GSON = new Gson();
+
 	private static String osString;
 	
 	public static String getOs() {
@@ -131,12 +134,12 @@ public class Util {
 
 
 	public static <T> T readObject(BufferedReader reader, final Class<T> clazz) throws JsonIOException, JsonSyntaxException {
-		return Amidst.gson.fromJson(reader, clazz);
+		return GSON.fromJson(reader, clazz);
 	}
 	
 	public static <T> T readObject(File path, final Class<T> clazz) throws IOException, JsonIOException, JsonSyntaxException {
 		final BufferedReader reader = new BufferedReader(new FileReader(path));
-		T object = Amidst.gson.fromJson(reader, clazz);
+		T object = GSON.fromJson(reader, clazz);
 		reader.close();
 		return object;
 	}

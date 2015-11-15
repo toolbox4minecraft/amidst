@@ -1,6 +1,5 @@
 package amidst;
 
-import java.awt.Image;
 import java.io.File;
 
 import org.kohsuke.args4j.CmdLineException;
@@ -8,51 +7,80 @@ import org.kohsuke.args4j.CmdLineParser;
 
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
-import amidst.minecraft.MinecraftUtil;
 import amidst.preferences.BiomeColorProfile;
-import amidst.resources.ResourceLoader;
 import amidst.utilities.Google;
 
-import com.google.gson.Gson;
-
 public class Amidst {
-	public final static int version_major = 3;
-	public final static int version_minor = 7;
-	public final static String versionOffset = "";
-	public static Image icon = ResourceLoader.getImage("icon.png");
-	public static final Gson gson = new Gson();
+	private static final String UNCAUGHT_EXCEPTION_ERROR_MESSAGE = "Amidst has encounted an uncaught exception on thread: ";
+	private static final String COMMAND_LINE_PARSING_ERROR_MESSAGE = "There was an issue parsing command line options.";
 
 	public static void main(String args[]) {
+		initUncaughtExceptionHandler();
+		parseCommandLineArguments(args);
+		initUtil();
+		initLogger();
+		initLookAndFeel();
+		trackRunning();
+		setEnvironmentVariables();
+		scanForBiomeColorProfiles();
+		startApplication();
+	}
+
+	private static void initUncaughtExceptionHandler() {
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread thread, Throwable e) {
-				Log.crash(e,
-						"Amidst has encounted an uncaught exception on thread: "
-								+ thread);
+				Log.crash(e, UNCAUGHT_EXCEPTION_ERROR_MESSAGE + thread);
 			}
 		});
+	}
+
+	private static void parseCommandLineArguments(String[] args) {
 		CmdLineParser parser = new CmdLineParser(Options.instance);
 		try {
 			parser.parseArgument(args);
 		} catch (CmdLineException e) {
-			Log.w("There was an issue parsing command line options.");
+			Log.w(COMMAND_LINE_PARSING_ERROR_MESSAGE);
 			e.printStackTrace();
 		}
+	}
+
+	private static void initUtil() {
 		Util.setMinecraftDirectory();
 		Util.setMinecraftLibraries();
+	}
 
-		if (Options.instance.logPath != null)
+	private static void initLogger() {
+		if (Options.instance.logPath != null) {
 			Log.addListener("file", new FileLogger(new File(
 					Options.instance.logPath)));
+		}
+	}
 
+	private static void initLookAndFeel() {
 		if (!isOSX()) {
 			Util.setLookAndFeel();
 		}
+	}
+
+	private static boolean isOSX() {
+		return System.getProperty("os.name").contains("OS X");
+	}
+
+	private static void trackRunning() {
 		Google.track("Run");
+	}
+
+	private static void setEnvironmentVariables() {
 		System.setProperty("sun.java2d.opengl", "True");
 		System.setProperty("sun.java2d.accthreshold", "0");
-		BiomeColorProfile.scan();
+	}
 
+	private static void scanForBiomeColorProfiles() {
+		BiomeColorProfile.scan();
+	}
+
+	private static void startApplication() {
 		if (Options.instance.minecraftJar != null) {
 			new Application().displayMapWindow(Options.instance.minecraftJar,
 					Options.instance.minecraftPath);
@@ -60,18 +88,4 @@ public class Amidst {
 			new Application().displayVersionSelectWindow();
 		}
 	}
-
-	public static boolean isOSX() {
-		String osName = System.getProperty("os.name");
-		return osName.contains("OS X");
-	}
-
-	public static String version() {
-		if (MinecraftUtil.hasInterface())
-			return version_major + "." + version_minor + versionOffset
-					+ " [Using Minecraft version: "
-					+ MinecraftUtil.getVersion() + "]";
-		return version_major + "." + version_minor + versionOffset;
-	}
-
 }

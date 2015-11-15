@@ -96,11 +96,12 @@ public class UpdateInformationRetriever {
 	}
 
 	public boolean isNewMajorVersionAvailable() {
-		return major > Amidst.version_major;
+		return major > AmidstMetaData.MAJOR_VERSION;
 	}
 
 	public boolean isNewMinorVersionAvailable() {
-		return major == Amidst.version_major && minor > Amidst.version_minor;
+		return major == AmidstMetaData.MAJOR_VERSION
+				&& minor > AmidstMetaData.MINOR_VERSION;
 	}
 
 	public boolean isSuccessful() {

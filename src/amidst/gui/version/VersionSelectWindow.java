@@ -10,7 +10,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import net.miginfocom.swing.MigLayout;
-import amidst.Amidst;
+import amidst.AmidstMetaData;
 import amidst.Application;
 import amidst.Options;
 import amidst.Util;
@@ -49,7 +49,7 @@ public class VersionSelectWindow {
 
 	private void initFrame() {
 		frame = new JFrame("Profile Selector");
-		frame.setIconImage(Amidst.icon);
+		frame.setIconImage(AmidstMetaData.ICON);
 		frame.getContentPane().setLayout(new MigLayout());
 		frame.add(createTitleLabel(), "h 20!,w :400:, growx, pushx, wrap");
 		frame.add(new JScrollPane(versionSelectPanel.getComponent()),

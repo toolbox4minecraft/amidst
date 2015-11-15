@@ -16,7 +16,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import net.miginfocom.swing.MigLayout;
-import amidst.Amidst;
+import amidst.AmidstMetaData;
 import amidst.License;
 
 public class LicenseWindow {
@@ -79,7 +79,7 @@ public class LicenseWindow {
 	private void createFrame() {
 		frame = new JFrame("Licenses");
 		initContentPane();
-		frame.setIconImage(Amidst.icon);
+		frame.setIconImage(AmidstMetaData.ICON);
 		frame.setSize(870, 550);
 		frame.setVisible(true);
 	}

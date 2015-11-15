@@ -12,9 +12,8 @@ import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 
-public class ResourceLoader {
-	private ResourceLoader() {
-	}
+public enum ResourceLoader {
+	;
 
 	public static URL getResourceURL(String name) {
 		return ResourceLoader.class.getResource(name);

@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import amidst.Amidst;
+import amidst.AmidstMetaData;
 import amidst.Application;
 import amidst.Options;
 import amidst.Util;
@@ -22,6 +22,7 @@ import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.map.MapViewer;
+import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.WorldType;
 
 public class MapWindow {
@@ -43,15 +44,25 @@ public class MapWindow {
 
 	public MapWindow(Application application) {
 		this.application = application;
-		frame.setTitle("Amidst v" + Amidst.version());
+		frame.setTitle("Amidst v" + getVersionString());
 		frame.setSize(1000, 800);
-		frame.setIconImage(Amidst.icon);
+		frame.setIconImage(AmidstMetaData.ICON);
 		initContentPane();
 		initUpdateManager();
 		initMenuBar();
 		initCloseListener();
 		instance = this;
 		frame.setVisible(true);
+	}
+
+	private String getVersionString() {
+		if (MinecraftUtil.hasInterface()) {
+			return AmidstMetaData.getFullVersionString()
+					+ " [Using Minecraft version: "
+					+ MinecraftUtil.getVersion() + "]";
+		} else {
+			return AmidstMetaData.getFullVersionString();
+		}
 	}
 
 	private void initContentPane() {
