@@ -3,28 +3,33 @@ package amidst.map;
 import java.awt.geom.AffineTransform;
 
 public abstract class ImageLayer extends Layer {
-	protected float alpha = 1.0f;
-	protected double scale;
-	private int size;
 	private AffineTransform cachedScalingMatrix = new AffineTransform();
-	protected int layerId;
 
+	private int size;
+	private double scale;
 	private int[] defaultData;
+
+	private int layerId;
 
 	public ImageLayer(int size) {
 		this.size = size;
-		defaultData = new int[size * size];
+		initScale(size);
+		initDefaultData(size);
+	}
+
+	private void initScale(int size) {
 		scale = Fragment.SIZE / (double) size;
-		for (int i = 0; i < defaultData.length; i++)
+	}
+
+	private void initDefaultData(int size) {
+		defaultData = new int[size * size];
+		for (int i = 0; i < defaultData.length; i++) {
 			defaultData[i] = 0x00000000;
+		}
 	}
 
-	public int[] getDefaultData() {
-		return defaultData;
-	}
-
-	public void load(Fragment frag) {
-		drawToCache(frag);
+	public void load(Fragment fragment) {
+		drawToCache(fragment);
 	}
 
 	public AffineTransform getMatrix(AffineTransform inMat) {
@@ -38,20 +43,24 @@ public abstract class ImageLayer extends Layer {
 		return cachedScalingMatrix;
 	}
 
+	public int getSize() {
+		return size;
+	}
+
+	public int[] getDefaultData() {
+		return defaultData;
+	}
+
 	public float getAlpha() {
-		return alpha;
+		return 1;
 	}
 
 	public int getLayerId() {
 		return layerId;
 	}
 
-	public void setLayerId(int id) {
-		layerId = id;
-	}
-
-	public int getSize() {
-		return size;
+	public void setLayerId(int layerId) {
+		this.layerId = layerId;
 	}
 
 	public abstract void drawToCache(Fragment fragment);

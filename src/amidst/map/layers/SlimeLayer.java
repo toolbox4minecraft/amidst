@@ -35,7 +35,7 @@ public class SlimeLayer extends ImageLayer {
 			}
 		}
 		
-		fragment.setImageRGB(layerId, dataCache);
+		fragment.setImageRGB(getLayerId(), dataCache);
 	}
 	
 }

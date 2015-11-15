@@ -66,7 +66,7 @@ public class BiomeLayer extends ImageLayer {
 		}
 
 		
-		fragment.setImageRGB(layerId, dataCache);
+		fragment.setImageRGB(getLayerId(), dataCache);
 	}
 	
 	public static int getBiomeForFragment(Fragment frag, int blockX, int blockY) {
