@@ -49,7 +49,6 @@ public class Amidst {
 		
 		
 		if (!isOSX()) { Util.setLookAndFeel(); }
-		Google.startTracking();
 		Google.track("Run");
 		System.setProperty("sun.java2d.opengl","True");
 		System.setProperty("sun.java2d.accthreshold", "0");
