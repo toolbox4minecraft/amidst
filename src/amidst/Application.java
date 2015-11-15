@@ -3,7 +3,6 @@ package amidst;
 import java.io.File;
 import java.net.MalformedURLException;
 
-import MoF.SeedHistoryLogger;
 import amidst.gui.LicenseWindow;
 import amidst.gui.MapWindow;
 import amidst.gui.UpdatePrompt;
@@ -15,6 +14,7 @@ import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.remote.RemoteMinecraft;
 import amidst.minecraft.world.FileWorld;
 import amidst.minecraft.world.World;
+import amidst.utilties.SeedHistoryLogger;
 import amidst.version.MinecraftProfile;
 
 public class Application {
