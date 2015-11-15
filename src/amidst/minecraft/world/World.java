@@ -1,8 +1,11 @@
 package amidst.minecraft.world;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import amidst.map.MapObjectPlayer;
 
 public class World {
 	public static class Player {
@@ -69,6 +72,7 @@ public class World {
 	private String generatorOptions;
 	private boolean isMultiPlayerMap;
 	private List<Player> players;
+	private List<MapObjectPlayer> mapObjectPlayers;
 
 	World(File worldFile, long seed, WorldType generatorType,
 			String generatorOptions, boolean isMultiPlayerMap,
@@ -80,12 +84,21 @@ public class World {
 		this.players = Collections.unmodifiableList(players);
 		this.mover = new PlayerMover(worldFile, isMultiPlayerMap);
 		initPlayers();
+		initMapObjectPlayers();
 	}
 
 	private void initPlayers() {
 		for (Player player : players) {
 			player.setWorld(this);
 		}
+	}
+
+	private void initMapObjectPlayers() {
+		List<MapObjectPlayer> result = new ArrayList<MapObjectPlayer>();
+		for (Player player : players) {
+			result.add(new MapObjectPlayer(player));
+		}
+		mapObjectPlayers = Collections.unmodifiableList(result);
 	}
 
 	public long getSeed() {
@@ -106,5 +119,9 @@ public class World {
 
 	public List<Player> getPlayers() {
 		return players;
+	}
+
+	public List<MapObjectPlayer> getMapObjectPlayers() {
+		return mapObjectPlayers;
 	}
 }

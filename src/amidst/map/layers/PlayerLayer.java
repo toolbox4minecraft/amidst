@@ -1,26 +1,21 @@
 package amidst.map.layers;
 
-import java.util.List;
-
 import MoF.SkinManager;
 import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
 import amidst.map.MapObjectPlayer;
-import amidst.minecraft.world.PlayerMover;
+import amidst.minecraft.world.World;
 
 public class PlayerLayer extends IconLayer {
-	public PlayerMover saveLoader;
-	public static SkinManager skinManager = new SkinManager();
-	public boolean isEnabled;
+	private static SkinManager skinManager = new SkinManager();
 
 	static {
 		skinManager.start();
 	}
 
-	public PlayerLayer() {
-
-	}
+	private World world;
+	public boolean isEnabled;
 
 	@Override
 	public boolean isVisible() {
@@ -28,37 +23,42 @@ public class PlayerLayer extends IconLayer {
 	}
 
 	@Override
-	public void generateMapObjects(Fragment frag) {
-		if (!isEnabled)
+	public void generateMapObjects(Fragment fragment) {
+		if (!isEnabled) {
 			return;
-		List<MapObjectPlayer> players = saveLoader.getPlayers();
-		for (MapObjectPlayer player : players) {
-			if ((player.globalX >= frag.getBlockX())
-					&& (player.globalX < frag.getBlockX() + Fragment.SIZE)
-					&& (player.globalY >= frag.getBlockY())
-					&& (player.globalY < frag.getBlockY() + Fragment.SIZE)) {
+		}
+		for (MapObjectPlayer player : world.getMapObjectPlayers()) {
+			if (isPlayerInFragment(fragment, player)) {
 				player.parentLayer = this;
-				player.parentFragment = frag;
-				frag.addObject(player);
+				player.parentFragment = fragment;
+				fragment.addObject(player);
 			}
 		}
 	}
 
-	@Override
-	public void clearMapObjects(Fragment frag) {
-		for (int i = 0; i < frag.getObjectsLength(); i++) {
-			if (frag.getObjects()[i] instanceof MapObjectPlayer)
-				((MapObjectPlayer) frag.getObjects()[i]).parentFragment = null;
-
-		}
-		super.clearMapObjects(frag);
-
+	private boolean isPlayerInFragment(Fragment frag, MapObjectPlayer player) {
+		return player.getGlobalX() >= frag.getBlockX()
+				&& player.getGlobalX() < frag.getBlockX() + Fragment.SIZE
+				&& player.getGlobalY() >= frag.getBlockY()
+				&& player.getGlobalY() < frag.getBlockY() + Fragment.SIZE;
 	}
 
-	public void setPlayers(PlayerMover save) {
-		saveLoader = save;
+	@Override
+	public void clearMapObjects(Fragment fragment) {
+		for (int i = 0; i < fragment.getObjectsLength(); i++) {
+			if (fragment.getObjects()[i] instanceof MapObjectPlayer) {
+				MapObjectPlayer mapObjectPlayer = (MapObjectPlayer) fragment
+						.getObjects()[i];
+				mapObjectPlayer.parentFragment = null;
+			}
+		}
+		super.clearMapObjects(fragment);
+	}
 
-		for (MapObjectPlayer player : saveLoader.getPlayers())
+	public void setWorld(World world) {
+		this.world = world;
+		for (MapObjectPlayer player : this.world.getMapObjectPlayers()) {
 			skinManager.addPlayer(player);
+		}
 	}
 }

@@ -49,6 +49,14 @@ public class MapObjectPlayer extends MapObject {
 		this.y = calc(player.getZ());
 	}
 
+	public int getGlobalX() {
+		return player.getX();
+	}
+
+	public int getGlobalY() {
+		return player.getZ();
+	}
+
 	@Override
 	public int getWidth() {
 		return (int) (marker.getWidth() * localScale);
