@@ -5,10 +5,13 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -207,7 +210,17 @@ public class MapWindow {
 	}
 
 	public void capture(File file) {
-		mapViewer.saveToFile(addPNGFileExtensionIfNecessary(file));
+		BufferedImage image = mapViewer.createCaptureImage();
+		saveToFile(image, file);
+		image.flush();
+	}
+
+	private void saveToFile(BufferedImage image, File file) {
+		try {
+			ImageIO.write(image, "png", addPNGFileExtensionIfNecessary(file));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private File addPNGFileExtensionIfNecessary(File file) {

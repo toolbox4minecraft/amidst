@@ -16,14 +16,11 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 
@@ -195,6 +192,7 @@ public class MapViewer {
 		}
 	}
 
+	@SuppressWarnings("serial")
 	private class Component extends JComponent {
 		private long lastTime = System.currentTimeMillis();
 
@@ -284,7 +282,7 @@ public class MapViewer {
 
 		private void updateMapMovementSpeed() {
 			if (lastMouse != null) {
-				Point currentMouse = getMousePosition();
+				Point currentMouse = component.getMousePosition();
 				if (currentMouse != null) {
 					double dX = currentMouse.x - lastMouse.x;
 					double dY = currentMouse.y - lastMouse.y;
@@ -480,24 +478,14 @@ public class MapViewer {
 		}, 20, 20);
 	}
 
-	// TODO: find another place for this
-	@Deprecated
-	public void saveToFile(File file) {
+	public BufferedImage createCaptureImage() {
 		BufferedImage image = new BufferedImage(map.getViewerWidth(),
 				map.getViewerHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = image.createGraphics();
-
 		component.drawMap(g2d, 0);
 		component.drawWidgets(g2d, 0);
-
-		try {
-			ImageIO.write(image, "png", file);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 		g2d.dispose();
-		image.flush();
+		return image;
 	}
 
 	private Point getMousePositionOrCenterFromComponent() {
@@ -543,12 +531,10 @@ public class MapViewer {
 		return component.getFontMetrics(font);
 	}
 
-	@Deprecated
 	public KeyListener getKeyListener() {
 		return listeners;
 	}
 
-	@Deprecated
 	public JComponent getComponent() {
 		return component;
 	}
