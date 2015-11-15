@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import amidst.Options;
 import amidst.map.MapViewer;
 import amidst.minecraft.MinecraftUtil;
-import amidst.minecraft.world.PlayerMover;
+import amidst.minecraft.world.World;
 
 // TODO: we should remove this and integrate it into Options
 @Deprecated
@@ -20,10 +20,10 @@ public class Project {
 	private Timer timer = new Timer();
 	private JPanel panel = new JPanel();
 	private MapViewer mapViewer;
-	private PlayerMover saveLoader;
+	private World world;
 
-	public Project(PlayerMover saveLoader) {
-		this(saveLoader.getSeed(), PlayerMover.genType.getName(), saveLoader);
+	public Project(World world) {
+		this(world.getSeed(), world.getGeneratorType().getName(), world);
 		Google.track("seed/file/" + Options.instance.seed);
 	}
 
@@ -37,9 +37,9 @@ public class Project {
 		// no Google.track(), because this is only called with a random seed?
 	}
 
-	private Project(long seed, String type, PlayerMover saveLoader) {
+	private Project(long seed, String type, World world) {
 		Options.instance.seed = seed;
-		this.saveLoader = saveLoader;
+		this.world = world;
 		logSeed(seed);
 		createWorld(seed, type);
 		initMapViewer();
@@ -53,7 +53,7 @@ public class Project {
 
 	private void createWorld(long seed, String type) {
 		if (isSaveLoaded()) {
-			String options = this.saveLoader.getGeneratorOptions();
+			String options = this.world.getGeneratorOptions();
 			MinecraftUtil.createWorld(seed, type, options);
 		} else {
 			MinecraftUtil.createWorld(seed, type);
@@ -108,12 +108,12 @@ public class Project {
 		mapViewer.repaint();
 	}
 
-	public PlayerMover getSaveLoader() {
-		return saveLoader;
+	public World getWorld() {
+		return world;
 	}
 
 	public boolean isSaveLoaded() {
-		return saveLoader != null;
+		return world != null;
 	}
 
 	public void dispose() {
@@ -122,6 +122,6 @@ public class Project {
 		seedHistoryLogger = null;
 		mapViewer = null;
 		timer = null;
-		saveLoader = null;
+		world = null;
 	}
 }

@@ -15,10 +15,9 @@ import MoF.Project;
 import amidst.Application;
 import amidst.Options;
 import amidst.logging.Log;
-import amidst.map.MapObjectPlayer;
 import amidst.map.MapObjectStronghold;
 import amidst.map.layers.StrongholdLayer;
-import amidst.minecraft.world.PlayerMover;
+import amidst.minecraft.world.World.Player;
 import amidst.minecraft.world.WorldType;
 
 public class MenuActions {
@@ -32,18 +31,8 @@ public class MenuActions {
 	}
 
 	public void savePlayerLocations() {
-		if (application.getProject().isSaveLoaded()) {
-			for (MapObjectPlayer player : application.getProject()
-					.getSaveLoader().getPlayers()) {
-				if (player.needSave) {
-					application
-							.getProject()
-							.getSaveLoader()
-							.movePlayer(player.getName(), player.globalX,
-									player.globalY);
-					player.needSave = false;
-				}
-			}
+		for (Player player : application.getWorld().getPlayers()) {
+			player.saveLocation();
 		}
 	}
 
@@ -92,9 +81,9 @@ public class MenuActions {
 	}
 
 	public void newFromFileOrFolder() {
-		File file = application.getMapWindow().askForMinecraftMapFile();
-		if (file != null) {
-			application.setProject(new Project(PlayerMover.newInstance(file)));
+		File worldFile = application.getMapWindow().askForMinecraftMapFile();
+		if (worldFile != null) {
+			application.loadWorld(worldFile);
 		}
 	}
 
@@ -125,18 +114,14 @@ public class MenuActions {
 	}
 
 	public void gotoPlayer() {
-		if (!application.getProject().isSaveLoaded()) {
-			return;
-		}
-		List<MapObjectPlayer> playerList = application.getProject()
-				.getSaveLoader().getPlayers();
-		MapObjectPlayer[] players = playerList
-				.toArray(new MapObjectPlayer[playerList.size()]);
-		MapObjectPlayer selection = application.getMapWindow().askForOptions(
-				"Go to", "Select player:", players);
+		List<Player> playerList = application.getWorld().getPlayers();
+		Player[] playerArray = playerList
+				.toArray(new Player[playerList.size()]);
+		Player selection = application.getMapWindow().askForOptions("Go to",
+				"Select player:", playerArray);
 		if (selection != null) {
-			application.getMapWindow().moveMapTo(selection.globalX,
-					selection.globalY);
+			application.getMapWindow().moveMapTo(selection.getX(),
+					selection.getZ());
 		}
 	}
 

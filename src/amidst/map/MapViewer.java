@@ -427,10 +427,10 @@ public class MapViewer {
 	private void initPlayerLayer() {
 		playerLayer.isEnabled = project.isSaveLoaded();
 		if (playerLayer.isEnabled) {
-			playerLayer.setPlayers(project.getSaveLoader());
+			playerLayer.setPlayers(project.getWorld());
 			PlayerMenuItemFactory factory = new PlayerMenuItemFactory(this,
 					playerLayer);
-			for (MapObjectPlayer player : project.getSaveLoader().getPlayers()) {
+			for (MapObjectPlayer player : project.getWorld().getPlayers()) {
 				menu.add(factory.create(player));
 			}
 		}

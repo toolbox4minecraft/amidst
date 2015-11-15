@@ -5,6 +5,8 @@ import java.awt.Container;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -125,6 +127,16 @@ public class MapWindow {
 
 	public void displayMessage(String message) {
 		JOptionPane.showMessageDialog(frame, message);
+	}
+
+	public void displayException(Exception exception) {
+		displayMessage(getStackTraceAsString(exception));
+	}
+
+	private String getStackTraceAsString(Exception exception) {
+		StringWriter writer = new StringWriter();
+		exception.printStackTrace(new PrintWriter(writer));
+		return writer.toString();
 	}
 
 	public int askToConfirm(String message, String title) {

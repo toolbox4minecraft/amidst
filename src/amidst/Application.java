@@ -13,6 +13,8 @@ import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.remote.RemoteMinecraft;
+import amidst.minecraft.world.World;
+import amidst.minecraft.world.WorldLoader;
 import amidst.version.MinecraftProfile;
 
 public class Application {
@@ -20,6 +22,7 @@ public class Application {
 	private VersionSelectWindow versionSelectWindow;
 	private MapWindow mapWindow;
 	private Project project;
+	private World world;
 
 	public MapWindow getMapWindow() {
 		return mapWindow;
@@ -103,5 +106,26 @@ public class Application {
 
 	public void exitGracefully() {
 		System.exit(0);
+	}
+
+	public void loadWorld(File worldFile) {
+		world = getWorld(worldFile);
+		if (world != null) {
+			setProject(new Project(world));
+		}
+	}
+
+	private World getWorld(File worldFile) {
+		WorldLoader worldLoader = new WorldLoader(worldFile);
+		if (worldLoader.isLoadedSuccessfully()) {
+			return worldLoader.get();
+		} else {
+			mapWindow.displayException(worldLoader.getException());
+			return null;
+		}
+	}
+
+	public World getWorld() {
+		return world;
 	}
 }

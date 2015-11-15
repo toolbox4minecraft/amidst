@@ -6,11 +6,15 @@ import java.util.List;
 
 public class World {
 	public static class Player {
+		private Runnable positionChangedListener;
+
 		private World world;
 
 		private String playerName;
 		private int x;
 		private int z;
+
+		private boolean moved = false;
 
 		public Player(String playerName, int x, int z) {
 			this.playerName = playerName;
@@ -37,7 +41,24 @@ public class World {
 		public void moveTo(int x, int z) {
 			this.x = x;
 			this.z = z;
-			world.mover.movePlayer(this);
+			positionChangedListener.run();
+			moved = true;
+		}
+
+		public void saveLocation() {
+			if (moved) {
+				world.mover.movePlayer(this);
+				moved = false;
+			}
+		}
+
+		public void setPositionChangedListener(Runnable listener) {
+			this.positionChangedListener = listener;
+		}
+
+		@Override
+		public String toString() {
+			return "Player \"" + playerName + "\" at (" + x + ", " + z + ")";
 		}
 	}
 
@@ -49,7 +70,7 @@ public class World {
 	private boolean isMultiPlayerMap;
 	private List<Player> players;
 
-	public World(File worldFile, long seed, WorldType generatorType,
+	World(File worldFile, long seed, WorldType generatorType,
 			String generatorOptions, boolean isMultiPlayerMap,
 			List<Player> players) {
 		this.seed = seed;

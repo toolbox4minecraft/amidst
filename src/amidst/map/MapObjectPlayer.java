@@ -72,9 +72,4 @@ public class MapObjectPlayer extends MapObject {
 	public String getName() {
 		return player.getPlayerName();
 	}
-
-	@Override
-	public String toString() {
-		return "Player \"" + getName() + "\" at (" + x + ", " + y + ")";
-	}
 }
