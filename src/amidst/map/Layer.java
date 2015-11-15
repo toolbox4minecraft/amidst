@@ -15,10 +15,6 @@ public abstract class Layer {
 		return true;
 	}
 
-	public double getMapZoom() {
-		return map.getZoom();
-	}
-
 	public void reload() {
 	}
 

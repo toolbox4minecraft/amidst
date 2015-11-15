@@ -150,7 +150,7 @@ public class Fragment {
 	private void drawObject(Graphics2D g, AffineTransform mat,
 			MapObject mapObject) {
 		if (mapObject.parentLayer.isVisible()) {
-			double invZoom = 1.0 / mapObject.parentLayer.getMapZoom();
+			double invZoom = 1.0 / mapObject.parentLayer.getMap().getZoom();
 			int width = mapObject.getWidth();
 			int height = mapObject.getHeight();
 			g.setTransform(mat);
