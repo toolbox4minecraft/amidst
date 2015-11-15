@@ -17,7 +17,7 @@ import amidst.Options;
 import amidst.logging.Log;
 import amidst.map.MapObjectStronghold;
 import amidst.map.layers.StrongholdLayer;
-import amidst.minecraft.world.World.Player;
+import amidst.minecraft.world.FileWorld.Player;
 import amidst.minecraft.world.WorldType;
 
 public class MenuActions {
@@ -31,8 +31,10 @@ public class MenuActions {
 	}
 
 	public void savePlayerLocations() {
-		for (Player player : application.getWorld().getPlayers()) {
-			player.saveLocation();
+		if (application.isFileWorld()) {
+			for (Player player : application.getWorldAsFileWorld().getPlayers()) {
+				player.saveLocation();
+			}
 		}
 	}
 
@@ -56,7 +58,8 @@ public class MenuActions {
 			if (seed.equals(""))
 				seed = "" + (new Random()).nextLong();
 			if (worldType != null) {
-				application.setProject(new Project(seed, worldType.getValue()));
+				application.setProject(new Project(application, seed, worldType
+						.getValue()));
 			}
 		}
 	}
@@ -76,7 +79,8 @@ public class MenuActions {
 
 		// If a string was returned, say so.
 		if (worldType != null) {
-			application.setProject(new Project(seed, worldType.getValue()));
+			application.setProject(new Project(application, seed, worldType
+					.getValue()));
 		}
 	}
 
@@ -114,14 +118,20 @@ public class MenuActions {
 	}
 
 	public void gotoPlayer() {
-		List<Player> playerList = application.getWorld().getPlayers();
-		Player[] playerArray = playerList
-				.toArray(new Player[playerList.size()]);
-		Player selection = application.getMapWindow().askForOptions("Go to",
-				"Select player:", playerArray);
-		if (selection != null) {
-			application.getMapWindow().moveMapTo(selection.getX(),
-					selection.getZ());
+		if (application.isFileWorld()) {
+			List<Player> playerList = application.getWorldAsFileWorld()
+					.getPlayers();
+			Player[] playerArray = playerList.toArray(new Player[playerList
+					.size()]);
+			Player selection = application.getMapWindow().askForOptions(
+					"Go to", "Select player:", playerArray);
+			if (selection != null) {
+				application.getMapWindow().moveMapTo(selection.getX(),
+						selection.getZ());
+			}
+		} else {
+			application.getMapWindow().displayMessage(
+					"There are no players on the map");
 		}
 	}
 

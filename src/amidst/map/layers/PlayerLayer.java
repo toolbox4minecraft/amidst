@@ -5,17 +5,18 @@ import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
 import amidst.map.MapObjectPlayer;
+import amidst.minecraft.world.FileWorld;
 import amidst.minecraft.world.World;
 
 public class PlayerLayer extends IconLayer {
+	// TODO: make this non-static
 	private static SkinManager skinManager = new SkinManager();
 
 	static {
 		skinManager.start();
 	}
 
-	private World world;
-	public boolean isEnabled;
+	private FileWorld world;
 
 	@Override
 	public boolean isVisible() {
@@ -24,14 +25,13 @@ public class PlayerLayer extends IconLayer {
 
 	@Override
 	public void generateMapObjects(Fragment fragment) {
-		if (!isEnabled) {
-			return;
-		}
-		for (MapObjectPlayer player : world.getMapObjectPlayers()) {
-			if (isPlayerInFragment(fragment, player)) {
-				player.parentLayer = this;
-				player.parentFragment = fragment;
-				fragment.addObject(player);
+		if (world != null) {
+			for (MapObjectPlayer player : world.getMapObjectPlayers()) {
+				if (isPlayerInFragment(fragment, player)) {
+					player.parentLayer = this;
+					player.parentFragment = fragment;
+					fragment.addObject(player);
+				}
 			}
 		}
 	}
@@ -56,8 +56,16 @@ public class PlayerLayer extends IconLayer {
 	}
 
 	public void setWorld(World world) {
-		this.world = world;
-		for (MapObjectPlayer player : this.world.getMapObjectPlayers()) {
+		if (world instanceof FileWorld) {
+			this.world = (FileWorld) world;
+			updateSkinManager();
+		} else {
+			this.world = null;
+		}
+	}
+
+	private void updateSkinManager() {
+		for (MapObjectPlayer player : world.getMapObjectPlayers()) {
 			skinManager.addPlayer(player);
 		}
 	}

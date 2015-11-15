@@ -14,7 +14,7 @@ import org.jnbt.DoubleTag;
 import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
-import amidst.minecraft.world.World.Player;
+import amidst.minecraft.world.FileWorld.Player;
 
 import com.esotericsoftware.minlog.Log;
 

@@ -8,6 +8,7 @@ import java.util.TimerTask;
 
 import javax.swing.JPanel;
 
+import amidst.Application;
 import amidst.Options;
 import amidst.map.MapViewer;
 import amidst.minecraft.MinecraftUtil;
@@ -21,23 +22,26 @@ public class Project {
 	private JPanel panel = new JPanel();
 	private MapViewer mapViewer;
 	private World world;
+	private Application application;
 
-	public Project(World world) {
-		this(world.getSeed(), world.getGeneratorType().getName(), world);
+	public Project(Application application, World world) {
+		this(application, world.getSeed(), world.getGeneratorType().getName(),
+				world);
 		Google.track("seed/file/" + Options.instance.seed);
 	}
 
-	public Project(String seed, String type) {
-		this(getSeedFromString(seed), type, null);
+	public Project(Application application, String seed, String type) {
+		this(application, getSeedFromString(seed), type, null);
 		Google.track("seed/" + seed + "/" + Options.instance.seed);
 	}
 
-	public Project(long seed, String type) {
-		this(seed, type, null);
+	public Project(Application application, long seed, String type) {
+		this(application, seed, type, null);
 		// no Google.track(), because this is only called with a random seed?
 	}
 
-	private Project(long seed, String type, World world) {
+	private Project(Application application, long seed, String type, World world) {
+		this.application = application;
 		Options.instance.seed = seed;
 		this.world = world;
 		logSeed(seed);
@@ -52,8 +56,9 @@ public class Project {
 	}
 
 	private void createWorld(long seed, String type) {
-		if (isSaveLoaded()) {
-			String options = this.world.getGeneratorOptions();
+		if (application.isFileWorld()) {
+			String options = application.getWorldAsFileWorld()
+					.getGeneratorOptions();
 			MinecraftUtil.createWorld(seed, type, options);
 		} else {
 			MinecraftUtil.createWorld(seed, type);
@@ -61,7 +66,7 @@ public class Project {
 	}
 
 	private void initMapViewer() {
-		mapViewer = new MapViewer(this);
+		mapViewer = new MapViewer(this, application);
 	}
 
 	private void initPanel() {
@@ -108,6 +113,7 @@ public class Project {
 		mapViewer.repaint();
 	}
 
+	@Deprecated
 	public World getWorld() {
 		return world;
 	}

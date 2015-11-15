@@ -11,7 +11,7 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.logging.Log;
-import amidst.minecraft.world.World.Player;
+import amidst.minecraft.world.FileWorld.Player;
 
 public class WorldLoader {
 	private static final String DEFAULT_SINGLE_PLAYER_PLAYER_NAME = "Player";
@@ -169,8 +169,8 @@ public class WorldLoader {
 
 	public World get() {
 		if (isLoadedSuccessfully()) {
-			return new World(worldFile, seed, generatorType, generatorOptions,
-					isMultiPlayerMap, players);
+			return new FileWorld(worldFile, seed, generatorType,
+					generatorOptions, isMultiPlayerMap, players);
 		} else {
 			return null;
 		}

@@ -13,6 +13,7 @@ import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.remote.RemoteMinecraft;
+import amidst.minecraft.world.FileWorld;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.WorldLoader;
 import amidst.version.MinecraftProfile;
@@ -111,7 +112,7 @@ public class Application {
 	public void loadWorld(File worldFile) {
 		world = getWorld(worldFile);
 		if (world != null) {
-			setProject(new Project(world));
+			setProject(new Project(this, world));
 		}
 	}
 
@@ -127,5 +128,13 @@ public class Application {
 
 	public World getWorld() {
 		return world;
+	}
+
+	public boolean isFileWorld() {
+		return world instanceof FileWorld;
+	}
+
+	public FileWorld getWorldAsFileWorld() {
+		return (FileWorld) world;
 	}
 }

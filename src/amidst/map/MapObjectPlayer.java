@@ -2,7 +2,7 @@ package amidst.map;
 
 import java.awt.image.BufferedImage;
 
-import amidst.minecraft.world.World.Player;
+import amidst.minecraft.world.FileWorld.Player;
 
 public class MapObjectPlayer extends MapObject {
 	// TODO: understand what happens and rename the method

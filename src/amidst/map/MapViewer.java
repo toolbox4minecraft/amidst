@@ -26,6 +26,7 @@ import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 
 import MoF.Project;
+import amidst.Application;
 import amidst.Options;
 import amidst.gui.menu.PlayerMenuItemFactory;
 import amidst.logging.Log;
@@ -401,6 +402,7 @@ public class MapViewer {
 	private Widget mouseOwner;
 
 	private Project project;
+	Application application;
 
 	private JPopupMenu menu = new JPopupMenu();
 	public int strongholdCount;
@@ -416,8 +418,9 @@ public class MapViewer {
 
 	private List<Widget> widgets = new ArrayList<Widget>();
 
-	public MapViewer(Project project) {
+	public MapViewer(Project project, Application application) {
 		this.project = project;
+		this.application = application;
 		initPlayerLayer();
 		initMap();
 		initWidgets();
@@ -425,12 +428,11 @@ public class MapViewer {
 	}
 
 	private void initPlayerLayer() {
-		playerLayer.isEnabled = project.isSaveLoaded();
-		if (playerLayer.isEnabled) {
-			playerLayer.setWorld(project.getWorld());
+		if (application.isFileWorld()) {
+			playerLayer.setWorld(application.getWorldAsFileWorld());
 			PlayerMenuItemFactory factory = new PlayerMenuItemFactory(this,
 					playerLayer);
-			for (MapObjectPlayer player : project.getWorld()
+			for (MapObjectPlayer player : application.getWorldAsFileWorld()
 					.getMapObjectPlayers()) {
 				menu.add(factory.create(player));
 			}
