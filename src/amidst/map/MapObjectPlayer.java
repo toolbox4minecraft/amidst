@@ -2,22 +2,51 @@ package amidst.map;
 
 import java.awt.image.BufferedImage;
 
+import amidst.minecraft.world.World.Player;
+
 public class MapObjectPlayer extends MapObject {
-	public String name;
-	public boolean needSave;
+	// TODO: understand what happens and rename the method
+	private static int calc(int coordinate) {
+		return calc1(coordinate) + coordinate % Fragment.SIZE;
+	}
+
+	// TODO: understand what happens and rename the method
+	private static int calc1(int coordinate) {
+		if (coordinate < 0) {
+			return Fragment.SIZE;
+		} else {
+			return 0;
+		}
+	}
+
+	private Player player;
 	private BufferedImage marker;
-	public int globalX, globalY;
+	// TODO: make this private
 	public Fragment parentFragment = null;
 
-	public MapObjectPlayer(String name, int x, int y) {
-		super(MapMarkers.PLAYER, ((x < 0) ? Fragment.SIZE : 0) + x
-				% Fragment.SIZE, ((y < 0) ? Fragment.SIZE : 0) + y
-				% Fragment.SIZE);
-		globalX = x;
-		globalY = y;
+	public MapObjectPlayer(Player player) {
+		super(MapMarkers.PLAYER, calc(player.getX()), calc(player.getZ()));
+		this.player = player;
+		initPlayerListener();
+		initMarker();
+	}
+
+	private void initPlayerListener() {
+		this.player.setPositionChangedListener(new Runnable() {
+			@Override
+			public void run() {
+				updatePosition();
+			}
+		});
+	}
+
+	private void initMarker() {
 		marker = type.image;
-		needSave = false;
-		this.name = name;
+	}
+
+	private void updatePosition() {
+		this.x = calc(player.getX());
+		this.y = calc(player.getZ());
 	}
 
 	@Override
@@ -30,30 +59,22 @@ public class MapObjectPlayer extends MapObject {
 		return (int) (marker.getHeight() * localScale);
 	}
 
-	public void setPosition(int x, int y) {
-		this.globalX = x;
-		this.globalY = y;
-		this.x = ((x < 0) ? Fragment.SIZE : 0) + x % Fragment.SIZE;
-		this.y = ((y < 0) ? Fragment.SIZE : 0) + y % Fragment.SIZE;
-		needSave = true;
-	}
-
 	@Override
 	public BufferedImage getImage() {
 		return marker;
 	}
 
-	public void setMarker(BufferedImage img) {
-		this.marker = img;
+	public void setMarker(BufferedImage image) {
+		this.marker = image;
 	}
 
 	@Override
 	public String getName() {
-		return name;
+		return player.getPlayerName();
 	}
 
 	@Override
 	public String toString() {
-		return "Player \"" + name + "\" at (" + x + ", " + y + ")";
+		return "Player \"" + getName() + "\" at (" + x + ", " + y + ")";
 	}
 }
