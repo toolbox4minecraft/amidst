@@ -7,11 +7,9 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.File;
 import java.util.List;
-import java.util.Random;
 
 import javax.swing.JOptionPane;
 
-import MoF.Project;
 import amidst.Application;
 import amidst.Options;
 import amidst.logging.Log;
@@ -46,42 +44,22 @@ public class MenuActions {
 	public void newFromSeed() {
 		String seed = application.getMapWindow().askForSeed();
 		if (seed != null) {
-			String worldTypePreference = Options.instance.worldType.get();
-			WorldType worldType = null;
-			if (worldTypePreference.equals("Prompt each time")) {
-				worldType = application.getMapWindow().askForOptions(
-						"New Project", "Enter world type\n",
-						WorldType.getSelectable());
+			if (seed.isEmpty()) {
+				newFromRandom();
 			} else {
-				worldType = WorldType.from(worldTypePreference);
-			}
-
-			if (seed.equals(""))
-				seed = "" + (new Random()).nextLong();
-			if (worldType != null) {
-				application.setProject(new Project(application, seed, worldType
-						.getValue()));
+				WorldType worldType = application.getMapWindow()
+						.askForWorldType();
+				if (worldType != null) {
+					application.setWorld(Worlds.fromSeed(seed, worldType));
+				}
 			}
 		}
 	}
 
 	public void newFromRandom() {
-		// Create the JOptionPane.
-		Random random = new Random();
-		long seed = random.nextLong();
-		String worldTypePreference = Options.instance.worldType.get();
-		WorldType worldType = null;
-		if (worldTypePreference.equals("Prompt each time")) {
-			worldType = application.getMapWindow().askForOptions("New Project",
-					"Enter world type\n", WorldType.getSelectable());
-		} else {
-			worldType = WorldType.from(worldTypePreference);
-		}
-
-		// If a string was returned, say so.
+		WorldType worldType = application.getMapWindow().askForWorldType();
 		if (worldType != null) {
-			application.setProject(new Project(application, seed, worldType
-					.getValue()));
+			application.setWorld(Worlds.random(worldType));
 		}
 	}
 

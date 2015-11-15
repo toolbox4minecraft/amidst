@@ -15,10 +15,12 @@ import javax.swing.JOptionPane;
 import MoF.Project;
 import amidst.Amidst;
 import amidst.Application;
+import amidst.Options;
 import amidst.Util;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
+import amidst.minecraft.world.WorldType;
 
 public class MapWindow {
 	private static MapWindow instance;
@@ -165,5 +167,15 @@ public class MapWindow {
 
 	public void moveMapTo(long x, long y) {
 		application.getProject().moveMapTo(x, y);
+	}
+
+	public WorldType askForWorldType() {
+		String worldTypePreference = Options.instance.worldType.get();
+		if (worldTypePreference.equals("Prompt each time")) {
+			return askForOptions("New Project", "Enter world type\n",
+					WorldType.getSelectable());
+		} else {
+			return WorldType.from(worldTypePreference);
+		}
 	}
 }

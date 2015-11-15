@@ -9,7 +9,6 @@ import java.util.TimerTask;
 import javax.swing.JPanel;
 
 import amidst.Application;
-import amidst.Options;
 import amidst.map.MapViewer;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.World;
@@ -25,27 +24,11 @@ public class Project {
 	private Application application;
 
 	public Project(Application application, World world) {
-		this(application, world.getSeed(), world.getWorldType().getName(),
-				world);
-		Google.track("seed/file/" + Options.instance.seed);
-	}
-
-	public Project(Application application, String seed, String type) {
-		this(application, getSeedFromString(seed), type, null);
-		Google.track("seed/" + seed + "/" + Options.instance.seed);
-	}
-
-	public Project(Application application, long seed, String type) {
-		this(application, seed, type, null);
-		// no Google.track(), because this is only called with a random seed?
-	}
-
-	private Project(Application application, long seed, String type, World world) {
+		long seed = world.getSeed();
 		this.application = application;
-		Options.instance.seed = seed;
 		this.world = world;
 		logSeed(seed);
-		createWorld(seed, type);
+		createWorld(seed, world.getWorldType().getName());
 		initMapViewer();
 		initPanel();
 		initTimer();
@@ -82,14 +65,6 @@ public class Project {
 				tick();
 			}
 		}, 20, 20);
-	}
-
-	private static long getSeedFromString(String seed) {
-		try {
-			return Long.parseLong(seed);
-		} catch (NumberFormatException err) {
-			return seed.hashCode();
-		}
 	}
 
 	@Deprecated
