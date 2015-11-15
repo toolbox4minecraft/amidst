@@ -11,12 +11,10 @@ import amidst.map.Fragment;
 import amidst.map.LiveLayer;
 
 public class GridLayer extends LiveLayer {
-	private static Font drawFont = new Font("arial", Font.BOLD, 16);
-	private static StringBuffer textBuffer = new StringBuffer(128);
-	private static char[] textCache = new char[128];
+	private static final Font DRAW_FONT = new Font("arial", Font.BOLD, 16);
 
-	public GridLayer() {
-	}
+	private StringBuffer textBuffer = new StringBuffer(128);
+	private char[] textCache = new char[128];
 
 	@Override
 	public boolean isVisible() {
@@ -24,56 +22,99 @@ public class GridLayer extends LiveLayer {
 	}
 
 	@Override
-	public void drawLive(Fragment fragment, Graphics2D g, AffineTransform inMat) {
-		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+	public void drawLive(Fragment fragment, Graphics2D g2d,
+			AffineTransform inMat) {
 		AffineTransform mat = new AffineTransform(inMat);
+		initGraphics(g2d, mat);
+		int stride = getStride();
+		int gridX = getGridX(fragment, stride);
+		int gridY = getGridY(fragment, stride);
+		drawGridLines(g2d, stride, gridX, gridY);
+		if (isGrid00(gridX, gridY)) {
+			scaleGraphics(g2d, mat);
+			updateText(fragment);
+			drawText(g2d);
+			// drawThickTextOutline(g2d);
+			drawTextOutline(g2d);
+			resetTransformation(g2d, inMat);
+		}
+	}
 
+	private void initGraphics(Graphics2D g2d, AffineTransform mat) {
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2d.setFont(DRAW_FONT);
+		g2d.setColor(Color.black);
+		g2d.setTransform(mat);
+	}
+
+	private int getStride() {
+		return (int) (.25 / getMap().getZoom());
+	}
+
+	private int getGridX(Fragment fragment, int stride) {
+		return fragment.getFragmentX() % (stride + 1);
+	}
+
+	private int getGridY(Fragment fragment, int stride) {
+		return fragment.getFragmentY() % (stride + 1);
+	}
+
+	private void drawGridLines(Graphics2D g2d, int stride, int gridX, int gridY) {
+		if (gridY == 0) {
+			g2d.drawLine(0, 0, Fragment.SIZE, 0);
+		}
+		if (gridY == stride) {
+			g2d.drawLine(0, Fragment.SIZE, Fragment.SIZE, Fragment.SIZE);
+		}
+		if (gridX == 0) {
+			g2d.drawLine(0, 0, 0, Fragment.SIZE);
+		}
+		if (gridX == stride) {
+			g2d.drawLine(Fragment.SIZE, 0, Fragment.SIZE, Fragment.SIZE);
+		}
+	}
+
+	private boolean isGrid00(int gridX, int gridY) {
+		return gridX == 0 && gridY == 0;
+	}
+
+	private void scaleGraphics(Graphics2D g2d, AffineTransform mat) {
+		double invZoom = 1.0 / getMap().getZoom();
+		mat.scale(invZoom, invZoom);
+		g2d.setTransform(mat);
+	}
+
+	private void updateText(Fragment fragment) {
 		textBuffer.setLength(0);
 		textBuffer.append(fragment.getChunkX() << 4);
 		textBuffer.append(", ");
 		textBuffer.append(fragment.getChunkY() << 4);
-
 		textBuffer.getChars(0, textBuffer.length(), textCache, 0);
-
-		int stride = (int) (.25 / getMap().getZoom());
-
-		g.setColor(Color.black);
-		g.setTransform(mat);
-		int gridX = (fragment.getFragmentX() % (stride + 1));
-		int gridY = (fragment.getFragmentY() % (stride + 1));
-		if (gridY == 0)
-			g.drawLine(0, 0, Fragment.SIZE, 0);
-		if (gridY == stride)
-			g.drawLine(0, Fragment.SIZE, Fragment.SIZE, Fragment.SIZE);
-		if (gridX == 0)
-			g.drawLine(0, 0, 0, Fragment.SIZE);
-		if (gridX == stride)
-			g.drawLine(Fragment.SIZE, 0, Fragment.SIZE, Fragment.SIZE);
-
-		if (gridX != 0)
-			return;
-		if (gridY != 0)
-			return;
-		double invZoom = 1.0 / getMap().getZoom();
-		mat.scale(invZoom, invZoom);
-		g.setTransform(mat);
-		g.setFont(drawFont);
-		g.drawChars(textCache, 0, textBuffer.length(), 12, 17);
-		g.drawChars(textCache, 0, textBuffer.length(), 8, 17);
-		g.drawChars(textCache, 0, textBuffer.length(), 10, 19);
-		g.drawChars(textCache, 0, textBuffer.length(), 10, 15);
-
-		// This makes the text outline a bit thicker, but seems unneeded.
-		// g.drawChars(textCache, 0, textBuffer.length(), 12, 15);
-		// g.drawChars(textCache, 0, textBuffer.length(), 12, 19);
-		// g.drawChars(textCache, 0, textBuffer.length(), 8, 15);
-		// g.drawChars(textCache, 0, textBuffer.length(), 8, 19);
-
-		g.setColor(Color.white);
-		g.drawChars(textCache, 0, textBuffer.length(), 10, 17);
-
-		g.setTransform(inMat);
 	}
 
+	private void drawText(Graphics2D g2d) {
+		g2d.drawChars(textCache, 0, textBuffer.length(), 12, 17);
+		g2d.drawChars(textCache, 0, textBuffer.length(), 8, 17);
+		g2d.drawChars(textCache, 0, textBuffer.length(), 10, 19);
+		g2d.drawChars(textCache, 0, textBuffer.length(), 10, 15);
+	}
+
+	// This makes the text outline a bit thicker, but seems unneeded.
+	@SuppressWarnings("unused")
+	private void drawThickTextOutline(Graphics2D g2d) {
+		g2d.drawChars(textCache, 0, textBuffer.length(), 12, 15);
+		g2d.drawChars(textCache, 0, textBuffer.length(), 12, 19);
+		g2d.drawChars(textCache, 0, textBuffer.length(), 8, 15);
+		g2d.drawChars(textCache, 0, textBuffer.length(), 8, 19);
+	}
+
+	private void drawTextOutline(Graphics2D g2d) {
+		g2d.setColor(Color.white);
+		g2d.drawChars(textCache, 0, textBuffer.length(), 10, 17);
+	}
+
+	private void resetTransformation(Graphics2D g2d, AffineTransform inMat) {
+		g2d.setTransform(inMat);
+	}
 }
