@@ -2,9 +2,8 @@ package amidst.minecraft.world;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,29 +14,56 @@ import org.jnbt.DoubleTag;
 import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
+import com.esotericsoftware.minlog.Log;
+
 public class PlayerMover {
-	private List<String> back = new ArrayList<String>();
-
-	private boolean isMultiPlayerMap;
 	private File file;
+	private boolean isMultiPlayerMap;
 
-	public PlayerMover() {
-		// TODO: initme
-		this.isMultiPlayerMap = false;
-		this.file = null;
+	public PlayerMover(File file, boolean isMultiPlayerMap) {
+		this.file = file;
+		this.isMultiPlayerMap = isMultiPlayerMap;
 	}
 
 	public void movePlayer(String playerName, int x, int y) {
 		File file = getPlayerFile(playerName);
-		backupFile(file);
-		if (backupSuccessful()) {
+		if (createBackup(file)) {
 			movePlayer(file, x, y);
+		} else {
+			// TODO: gui feedback
+			Log.warn("Creation of backup file failed. Skipping player movement.");
 		}
 	}
 
-	// TODO: implement me!
-	private boolean backupSuccessful() {
-		throw new UnsupportedOperationException("implement me!");
+	private boolean createBackup(File inputFile) {
+		File backupFolder = getBackupFolder(inputFile);
+		createIfNecessary(backupFolder);
+		File outputFile = getOutputFile(backupFolder, inputFile);
+		return doBackupFile(inputFile, outputFile);
+	}
+
+	private File getBackupFolder(File inputFile) {
+		return new File(inputFile.getParentFile(), "amidst_backup");
+	}
+
+	private void createIfNecessary(File backupFolder) {
+		if (!backupFolder.exists()) {
+			backupFolder.mkdir();
+		}
+	}
+
+	private File getOutputFile(File backupFolder, File inputFile) {
+		return new File(backupFolder, inputFile.getName() + "_"
+				+ System.currentTimeMillis());
+	}
+
+	private boolean doBackupFile(File inputFile, File outputFile) {
+		try {
+			Files.copy(inputFile.toPath(), outputFile.toPath());
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	private void movePlayer(File file, int x, int y) {
@@ -160,31 +186,5 @@ public class PlayerMover {
 		result.set(1, new DoubleTag("y", 120));
 		result.set(2, new DoubleTag("z", y));
 		return result;
-	}
-
-	private void backupFile(File inputFile) {
-		File backupFolder = new File(inputFile.getParentFile()
-				+ "/amidst_backup/");
-		if (!backupFolder.exists()) {
-			backupFolder.mkdir();
-		}
-
-		File outputFile = new File(backupFolder + "/" + inputFile.getName());
-		if (!back.contains(outputFile.toString())) {
-			try {
-				FileReader in = new FileReader(inputFile);
-				FileWriter out = new FileWriter(outputFile);
-				int c;
-
-				while ((c = in.read()) != -1) {
-					out.write(c);
-				}
-
-				in.close();
-				out.close();
-				back.add(outputFile.toString());
-			} catch (Exception ignored) {
-			}
-		}
 	}
 }
