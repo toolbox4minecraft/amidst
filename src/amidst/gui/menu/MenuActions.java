@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 
 import amidst.Application;
 import amidst.Options;
+import amidst.gui.MapWindow;
 import amidst.logging.Log;
 import amidst.map.MapObjectStronghold;
 import amidst.map.layers.StrongholdLayer;
@@ -24,9 +25,11 @@ public class MenuActions {
 			+ "By Skidoodle (amidst.project@gmail.com)";
 
 	private Application application;
+	private MapWindow mapWindow;
 
-	public MenuActions(Application application) {
+	public MenuActions(Application application, MapWindow mapWindow) {
 		this.application = application;
+		this.mapWindow = mapWindow;
 	}
 
 	public void savePlayerLocations() {
@@ -42,13 +45,12 @@ public class MenuActions {
 	}
 
 	public void newFromSeed() {
-		String seed = application.getMapWindow().askForSeed();
+		String seed = mapWindow.askForSeed();
 		if (seed != null) {
 			if (seed.isEmpty()) {
 				newFromRandom();
 			} else {
-				WorldType worldType = application.getMapWindow()
-						.askForWorldType();
+				WorldType worldType = mapWindow.askForWorldType();
 				if (worldType != null) {
 					application.setWorld(Worlds.fromSeed(seed, worldType));
 				}
@@ -57,29 +59,29 @@ public class MenuActions {
 	}
 
 	public void newFromRandom() {
-		WorldType worldType = application.getMapWindow().askForWorldType();
+		WorldType worldType = mapWindow.askForWorldType();
 		if (worldType != null) {
 			application.setWorld(Worlds.random(worldType));
 		}
 	}
 
 	public void newFromFileOrFolder() {
-		File worldFile = application.getMapWindow().askForMinecraftMapFile();
+		File worldFile = mapWindow.askForMinecraftMapFile();
 		if (worldFile != null) {
 			try {
 				application.setWorld(Worlds.fromFile(worldFile));
 			} catch (Exception e) {
-				application.getMapWindow().displayException(e);
+				mapWindow.displayException(e);
 			}
 		}
 	}
 
 	public void findStronghold() {
-		MapObjectStronghold selection = application.getMapWindow()
+		MapObjectStronghold selection = mapWindow
 				.askForOptions("Go to", "Select Stronghold:",
 						StrongholdLayer.instance.getStrongholds());
 		if (selection != null) {
-			application.getMapWindow().moveMapTo(selection.x, selection.y);
+			mapWindow.moveMapTo(selection.x, selection.y);
 		}
 	}
 
@@ -92,7 +94,7 @@ public class MenuActions {
 			try {
 				long x = Long.parseLong(c[0]);
 				long y = Long.parseLong(c[1]);
-				application.getMapWindow().moveMapTo(x, y);
+				mapWindow.moveMapTo(x, y);
 			} catch (NumberFormatException e1) {
 				Log.w("Invalid location entered, ignoring.");
 				e1.printStackTrace();
@@ -106,22 +108,20 @@ public class MenuActions {
 					.getPlayers();
 			Player[] playerArray = playerList.toArray(new Player[playerList
 					.size()]);
-			Player selection = application.getMapWindow().askForOptions(
-					"Go to", "Select player:", playerArray);
+			Player selection = mapWindow.askForOptions("Go to",
+					"Select player:", playerArray);
 			if (selection != null) {
-				application.getMapWindow().moveMapTo(selection.getX(),
-						selection.getZ());
+				mapWindow.moveMapTo(selection.getX(), selection.getZ());
 			}
 		} else {
-			application.getMapWindow().displayMessage(
-					"There are no players on the map");
+			mapWindow.displayMessage("There are no players on the map");
 		}
 	}
 
 	public void capture() {
-		File file = application.getMapWindow().askForScreenshotSaveFile();
+		File file = mapWindow.askForScreenshotSaveFile();
 		if (file != null) {
-			application.getMapWindow().capture(file);
+			mapWindow.capture(file);
 		}
 	}
 
@@ -147,6 +147,6 @@ public class MenuActions {
 	}
 
 	public void about() {
-		application.getMapWindow().displayMessage(ABOUT_MESSAGE);
+		mapWindow.displayMessage(ABOUT_MESSAGE);
 	}
 }

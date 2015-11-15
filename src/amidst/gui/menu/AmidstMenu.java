@@ -16,6 +16,7 @@ import javax.swing.KeyStroke;
 
 import amidst.Application;
 import amidst.Options;
+import amidst.gui.MapWindow;
 import amidst.minecraft.MinecraftUtil;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.SelectPrefModel.SelectButtonModel;
@@ -26,8 +27,8 @@ public class AmidstMenu {
 	private JMenuBar menuBar;
 	private JMenu mapMenu;
 
-	public AmidstMenu(Application application) {
-		this.actions = new MenuActions(application);
+	public AmidstMenu(Application application, MapWindow mapWindow) {
+		this.actions = new MenuActions(application, mapWindow);
 		this.menuBar = createMenuBar();
 	}
 

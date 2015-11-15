@@ -75,7 +75,7 @@ public class MapWindow {
 	}
 
 	private void initMenuBar() {
-		menuBar = new AmidstMenu(application);
+		menuBar = new AmidstMenu(application, this);
 		frame.setJMenuBar(menuBar.getMenuBar());
 	}
 
