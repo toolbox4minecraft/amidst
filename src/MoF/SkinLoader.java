@@ -15,7 +15,7 @@ import javax.imageio.ImageIO;
 import amidst.logging.Log;
 import amidst.map.MapObjectPlayer;
 
-public class SkinManager extends Thread {
+public class SkinLoader extends Thread {
 	private BlockingQueue<MapObjectPlayer> playerQueue = new LinkedBlockingQueue<MapObjectPlayer>();
 	private boolean active = true;
 
@@ -27,6 +27,7 @@ public class SkinManager extends Thread {
 		}
 	}
 
+	@Override
 	public void run() {
 		while (active) {
 			MapObjectPlayer player = getNextPlayer();

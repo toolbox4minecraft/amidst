@@ -1,6 +1,6 @@
 package amidst.map.layers;
 
-import MoF.SkinManager;
+import MoF.SkinLoader;
 import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
@@ -10,7 +10,7 @@ import amidst.minecraft.world.World;
 
 public class PlayerLayer extends IconLayer {
 	// TODO: make this non-static
-	private static SkinManager skinManager = new SkinManager();
+	private static SkinLoader skinManager = new SkinLoader();
 
 	static {
 		skinManager.start();
