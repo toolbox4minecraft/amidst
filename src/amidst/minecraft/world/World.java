@@ -33,9 +33,15 @@ public class World {
 		public int getZ() {
 			return z;
 		}
+
+		public void moveTo(int x, int z) {
+			this.x = x;
+			this.z = z;
+			world.mover.movePlayer(this);
+		}
 	}
 
-	private File worldFile;
+	private PlayerMover mover;
 
 	private long seed;
 	private WorldType generatorType;
@@ -46,12 +52,12 @@ public class World {
 	public World(File worldFile, long seed, WorldType generatorType,
 			String generatorOptions, boolean isMultiPlayerMap,
 			List<Player> players) {
-		this.worldFile = worldFile;
 		this.seed = seed;
 		this.generatorType = generatorType;
 		this.generatorOptions = generatorOptions;
 		this.isMultiPlayerMap = isMultiPlayerMap;
 		this.players = Collections.unmodifiableList(players);
+		this.mover = new PlayerMover(worldFile, isMultiPlayerMap);
 		initPlayers();
 	}
 
