@@ -113,15 +113,6 @@ public class Project {
 		mapViewer.repaint();
 	}
 
-	@Deprecated
-	public World getWorld() {
-		return world;
-	}
-
-	public boolean isSaveLoaded() {
-		return world != null;
-	}
-
 	public void dispose() {
 		mapViewer.dispose();
 		timer.cancel();

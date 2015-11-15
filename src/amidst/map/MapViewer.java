@@ -129,7 +129,7 @@ public class MapViewer {
 		public void mouseReleased(MouseEvent e) {
 			if (e.isPopupTrigger() && MinecraftUtil.getVersion().saveEnabled()) {
 				lastRightClick = getMousePositionFromEvent(e);
-				if (project.isSaveLoaded()) {
+				if (application.isFileWorld()) {
 					menu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			} else if (mouseOwner != null) {
