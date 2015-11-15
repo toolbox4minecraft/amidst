@@ -19,6 +19,7 @@ import amidst.map.MapObjectStronghold;
 import amidst.map.layers.StrongholdLayer;
 import amidst.minecraft.world.FileWorld.Player;
 import amidst.minecraft.world.WorldType;
+import amidst.minecraft.world.Worlds;
 
 public class MenuActions {
 	private static final String ABOUT_MESSAGE = "Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
@@ -87,7 +88,11 @@ public class MenuActions {
 	public void newFromFileOrFolder() {
 		File worldFile = application.getMapWindow().askForMinecraftMapFile();
 		if (worldFile != null) {
-			application.loadWorld(worldFile);
+			try {
+				application.setWorld(Worlds.fromFile(worldFile));
+			} catch (Exception e) {
+				application.getMapWindow().displayException(e);
+			}
 		}
 	}
 
