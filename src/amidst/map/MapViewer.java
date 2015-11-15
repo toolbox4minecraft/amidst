@@ -430,7 +430,8 @@ public class MapViewer {
 			playerLayer.setWorld(project.getWorld());
 			PlayerMenuItemFactory factory = new PlayerMenuItemFactory(this,
 					playerLayer);
-			for (MapObjectPlayer player : project.getWorld().getPlayers()) {
+			for (MapObjectPlayer player : project.getWorld()
+					.getMapObjectPlayers()) {
 				menu.add(factory.create(player));
 			}
 		}

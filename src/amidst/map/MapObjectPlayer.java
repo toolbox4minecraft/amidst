@@ -80,4 +80,9 @@ public class MapObjectPlayer extends MapObject {
 	public String getName() {
 		return player.getPlayerName();
 	}
+
+	@Deprecated
+	public void setPosition(int x, int z) {
+		player.moveTo(x, z);
+	}
 }
