@@ -16,26 +16,18 @@ import amidst.minecraft.world.World;
 // TODO: we should remove this and integrate it into Options
 @Deprecated
 public class Project {
-	private SeedHistoryLogger seedHistoryLogger = new SeedHistoryLogger();
 	private Timer timer = new Timer();
 	private JPanel panel = new JPanel();
 	private MapViewer mapViewer;
-	private World world;
 	private Application application;
 
 	public Project(Application application, World world) {
 		long seed = world.getSeed();
 		this.application = application;
-		this.world = world;
-		logSeed(seed);
 		createWorld(seed, world.getWorldType().getName());
 		initMapViewer();
 		initPanel();
 		initTimer();
-	}
-
-	private void logSeed(long seed) {
-		seedHistoryLogger.log(seed);
 	}
 
 	private void createWorld(long seed, String type) {
@@ -91,9 +83,7 @@ public class Project {
 	public void dispose() {
 		mapViewer.dispose();
 		timer.cancel();
-		seedHistoryLogger = null;
 		mapViewer = null;
 		timer = null;
-		world = null;
 	}
 }

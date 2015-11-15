@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 
 import MoF.Project;
+import MoF.SeedHistoryLogger;
 import amidst.gui.LicenseWindow;
 import amidst.gui.MapWindow;
 import amidst.gui.UpdatePrompt;
@@ -18,6 +19,7 @@ import amidst.minecraft.world.World;
 import amidst.version.MinecraftProfile;
 
 public class Application {
+	private SeedHistoryLogger seedHistoryLogger = new SeedHistoryLogger();
 	private UpdatePrompt updateManager = new UpdatePrompt();
 	private VersionSelectWindow versionSelectWindow;
 	private MapWindow mapWindow;
@@ -123,6 +125,7 @@ public class Application {
 	public void setWorld(World world) {
 		this.world = world;
 		if (world != null) {
+			seedHistoryLogger.log(world.getSeed());
 			setProject(new Project(this, world));
 		}
 	}
