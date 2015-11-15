@@ -14,9 +14,8 @@ import org.jnbt.DoubleTag;
 import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
+import amidst.logging.Log;
 import amidst.minecraft.world.FileWorld.Player;
-
-import com.esotericsoftware.minlog.Log;
 
 public class PlayerMover {
 	private File file;
@@ -33,7 +32,7 @@ public class PlayerMover {
 			doMovePlayer(player, file);
 		} else {
 			// TODO: gui feedback
-			Log.warn("Creation of backup file failed. Skipping player movement.");
+			Log.w("Creation of backup file failed. Skipping player movement.");
 		}
 	}
 
