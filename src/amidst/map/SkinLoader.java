@@ -14,11 +14,12 @@ import javax.imageio.ImageIO;
 
 import amidst.logging.Log;
 
-public class SkinLoader extends Thread {
+public class SkinLoader {
 	private BlockingQueue<MapObjectPlayer> playerQueue = new LinkedBlockingQueue<MapObjectPlayer>();
-	private boolean active = true;
+	private boolean active = false;
+	private boolean running = false;
 
-	public void addPlayer(MapObjectPlayer player) {
+	public void loadSkin(MapObjectPlayer player) {
 		try {
 			playerQueue.put(player);
 		} catch (InterruptedException e) {
@@ -26,13 +27,30 @@ public class SkinLoader extends Thread {
 		}
 	}
 
-	@Override
-	public void run() {
+	public void start() {
+		if (!running) {
+			active = true;
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					doRun();
+				}
+			}).start();
+		}
+	}
+
+	// TODO: call me!
+	public void stop() {
+		active = false;
+	}
+
+	private void doRun() {
+		running = true;
 		while (active) {
 			MapObjectPlayer player = getNextPlayer();
-			if (player != null) {
+			if (active && player != null) {
 				try {
-					loadSkin(player);
+					doLoadSkin(player);
 				} catch (MalformedURLException e) {
 					error(player, e);
 				} catch (IOException e) {
@@ -40,6 +58,7 @@ public class SkinLoader extends Thread {
 				}
 			}
 		}
+		running = false;
 	}
 
 	private void error(MapObjectPlayer player, Exception e) {
@@ -55,8 +74,8 @@ public class SkinLoader extends Thread {
 		}
 	}
 
-	private void loadSkin(MapObjectPlayer player) throws MalformedURLException,
-			IOException {
+	private void doLoadSkin(MapObjectPlayer player)
+			throws MalformedURLException, IOException {
 		player.setMarker(createMarker(player));
 	}
 
@@ -85,12 +104,5 @@ public class SkinLoader extends Thread {
 	private URL getSkinURL(MapObjectPlayer player) throws MalformedURLException {
 		return new URL("http://s3.amazonaws.com/MinecraftSkins/"
 				+ player.getName() + ".png");
-	}
-
-	// TODO: call me!
-	public void dispose() {
-		active = false;
-		playerQueue.clear();
-		playerQueue = null;
 	}
 }

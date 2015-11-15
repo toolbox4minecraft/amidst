@@ -9,14 +9,12 @@ import amidst.minecraft.world.FileWorld;
 import amidst.minecraft.world.World;
 
 public class PlayerLayer extends IconLayer {
-	// TODO: make this non-static
-	private static SkinLoader skinManager = new SkinLoader();
-
-	static {
-		skinManager.start();
-	}
-
+	private SkinLoader skinLoader;
 	private FileWorld world;
+
+	public PlayerLayer(SkinLoader skinLoader) {
+		this.skinLoader = skinLoader;
+	}
 
 	@Override
 	public boolean isVisible() {
@@ -66,7 +64,7 @@ public class PlayerLayer extends IconLayer {
 
 	private void updateSkinManager() {
 		for (MapObjectPlayer player : world.getMapObjectPlayers()) {
-			skinManager.addPlayer(player);
+			skinLoader.loadSkin(player);
 		}
 	}
 }

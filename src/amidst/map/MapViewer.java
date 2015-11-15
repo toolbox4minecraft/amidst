@@ -383,7 +383,9 @@ public class MapViewer {
 	private static PlayerLayer playerLayer;
 
 	static {
-		playerLayer = new PlayerLayer();
+		SkinLoader skinLoader = new SkinLoader();
+		skinLoader.start();
+		playerLayer = new PlayerLayer(skinLoader);
 		ImageLayer[] imageLayers = { new BiomeLayer(), new SlimeLayer() };
 		LiveLayer[] liveLayers = { new GridLayer() };
 		IconLayer[] iconLayers = { new VillageLayer(),
