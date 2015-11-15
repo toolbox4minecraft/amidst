@@ -1,10 +1,10 @@
 package amidst.map.layers;
 
-import MoF.SkinLoader;
 import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
 import amidst.map.MapObjectPlayer;
+import amidst.map.SkinLoader;
 import amidst.minecraft.world.FileWorld;
 import amidst.minecraft.world.World;
 

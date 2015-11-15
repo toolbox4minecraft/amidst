@@ -1,4 +1,4 @@
-package MoF;
+package amidst.map;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 
 import amidst.logging.Log;
-import amidst.map.MapObjectPlayer;
 
 public class SkinLoader extends Thread {
 	private BlockingQueue<MapObjectPlayer> playerQueue = new LinkedBlockingQueue<MapObjectPlayer>();
