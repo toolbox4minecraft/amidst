@@ -1,4 +1,4 @@
-package MoF;
+package amidst.utilties;
 
 import amidst.Amidst;
 

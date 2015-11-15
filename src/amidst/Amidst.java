@@ -9,7 +9,6 @@ import org.kohsuke.args4j.CmdLineParser;
 
 import com.google.gson.Gson;
 
-import MoF.Google;
 import amidst.gui.MapWindow;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.FileLogger;
@@ -18,6 +17,7 @@ import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 import amidst.preferences.BiomeColorProfile;
 import amidst.resources.ResourceLoader;
+import amidst.utilties.Google;
 
 public class Amidst {
 	public final static int version_major = 3;

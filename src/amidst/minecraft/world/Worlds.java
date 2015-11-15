@@ -3,8 +3,8 @@ package amidst.minecraft.world;
 import java.io.File;
 import java.util.Random;
 
-import MoF.Google;
 import amidst.Options;
+import amidst.utilties.Google;
 
 public enum Worlds {
 	;
