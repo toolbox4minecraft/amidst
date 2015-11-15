@@ -10,8 +10,6 @@ import javax.swing.JPanel;
 
 import amidst.Application;
 import amidst.map.MapViewer;
-import amidst.minecraft.MinecraftUtil;
-import amidst.minecraft.world.World;
 
 // TODO: we should remove this and integrate it into Options
 @Deprecated
@@ -21,23 +19,11 @@ public class Project {
 	private MapViewer mapViewer;
 	private Application application;
 
-	public Project(Application application, World world) {
-		long seed = world.getSeed();
+	public Project(Application application) {
 		this.application = application;
-		createWorld(seed, world.getWorldType().getName());
 		initMapViewer();
 		initPanel();
 		initTimer();
-	}
-
-	private void createWorld(long seed, String type) {
-		if (application.isFileWorld()) {
-			String options = application.getWorldAsFileWorld()
-					.getGeneratorOptions();
-			MinecraftUtil.createWorld(seed, type, options);
-		} else {
-			MinecraftUtil.createWorld(seed, type);
-		}
 	}
 
 	private void initMapViewer() {

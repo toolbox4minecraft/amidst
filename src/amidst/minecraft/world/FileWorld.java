@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import amidst.map.MapObjectPlayer;
+import amidst.minecraft.MinecraftUtil;
 
 public class FileWorld implements World {
 	public static class Player {
@@ -85,6 +86,11 @@ public class FileWorld implements World {
 		this.mover = new PlayerMover(worldFile, isMultiPlayerMap);
 		initPlayers();
 		initMapObjectPlayers();
+		initMinecraftInterface();
+	}
+
+	private void initMinecraftInterface() {
+		MinecraftUtil.createWorld(seed, worldType.getName(), generatorOptions);
 	}
 
 	private void initPlayers() {

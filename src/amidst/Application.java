@@ -126,7 +126,7 @@ public class Application {
 		this.world = world;
 		if (world != null) {
 			seedHistoryLogger.log(world.getSeed());
-			setProject(new Project(this, world));
+			setProject(new Project(this));
 		}
 	}
 }
