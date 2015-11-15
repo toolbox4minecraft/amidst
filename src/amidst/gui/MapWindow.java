@@ -101,13 +101,14 @@ public class MapWindow {
 
 	private void setMapViewer(MapViewer mapViewer) {
 		clearMapViewer();
-
 		this.mapViewer = mapViewer;
-		createPanel(mapViewer);
-		menuBar.setMapMenuEnabled(true);
-		frame.addKeyListener(mapViewer.getKeyListener());
-		contentPane.add(panel, BorderLayout.CENTER);
-		frame.validate();
+		if (mapViewer != null) {
+			createPanel(mapViewer);
+			menuBar.setMapMenuEnabled(true);
+			frame.addKeyListener(mapViewer.getKeyListener());
+			contentPane.add(panel, BorderLayout.CENTER);
+			frame.validate();
+		}
 	}
 
 	private void createPanel(MapViewer mapViewer) {
