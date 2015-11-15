@@ -132,4 +132,10 @@ public class FileWorld implements World {
 	public List<MapObjectPlayer> getMapObjectPlayers() {
 		return mapObjectPlayers;
 	}
+
+	public void savePlayerLocations() {
+		for (Player player : players) {
+			player.saveLocation();
+		}
+	}
 }

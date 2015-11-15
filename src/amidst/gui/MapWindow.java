@@ -164,7 +164,7 @@ public class MapWindow {
 		return writer.toString();
 	}
 
-	public int askToConfirm(String message, String title) {
+	public int askToConfirm(String title, String message) {
 		return JOptionPane.showConfirmDialog(frame, message, title,
 				JOptionPane.YES_NO_OPTION);
 	}
@@ -188,7 +188,7 @@ public class MapWindow {
 		return result;
 	}
 
-	public void moveMapTo(long x, long y) {
+	public void moveMapToCoordinates(long x, long y) {
 		mapViewer.centerAt(x, y);
 	}
 
@@ -216,5 +216,35 @@ public class MapWindow {
 			filename += ".png";
 		}
 		return new File(filename);
+	}
+
+	public long[] askForCoordinates() {
+		String coordinates = askForString("Go To",
+				"Enter coordinates: (Ex. 123,456)");
+		if (coordinates != null) {
+			return parseCoordinates(coordinates);
+		} else {
+			return null;
+		}
+	}
+
+	private String askForString(String title, String message) {
+		return JOptionPane.showInputDialog(frame, message, title,
+				JOptionPane.QUESTION_MESSAGE);
+	}
+
+	private long[] parseCoordinates(String coordinates) {
+		String[] parsedCoordinates = coordinates.replaceAll(" ", "").split(",");
+		if (parsedCoordinates.length != 2) {
+			return null;
+		}
+		try {
+			long[] result = new long[2];
+			result[0] = Long.parseLong(parsedCoordinates[0]);
+			result[1] = Long.parseLong(parsedCoordinates[1]);
+			return result;
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 }

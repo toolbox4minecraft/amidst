@@ -56,12 +56,11 @@ public class UpdatePrompt {
 
 	private int getUserChoice() {
 		if (retriever.isNewMajorVersionAvailable()) {
-			return mapWindow.askToConfirm(
-					"A new version was found. Would you like to update?",
-					"Update Found");
+			return mapWindow.askToConfirm("Update Found",
+					"A new version was found. Would you like to update?");
 		} else if (retriever.isNewMinorVersionAvailable()) {
-			return mapWindow.askToConfirm(
-					"A minor revision was found. Update?", "Update Found");
+			return mapWindow.askToConfirm("Update Found",
+					"A minor revision was found. Update?");
 		} else if (!silent) {
 			mapWindow.displayMessage("There are no new updates.");
 		}

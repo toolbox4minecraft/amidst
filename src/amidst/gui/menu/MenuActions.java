@@ -1,17 +1,11 @@
 package amidst.gui.menu;
 
 import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.io.File;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import amidst.Application;
-import amidst.Options;
 import amidst.gui.MapWindow;
 import amidst.logging.Log;
 import amidst.map.MapObjectStronghold;
@@ -34,9 +28,7 @@ public class MenuActions {
 
 	public void savePlayerLocations() {
 		if (application.isFileWorld()) {
-			for (Player player : application.getWorldAsFileWorld().getPlayers()) {
-				player.saveLocation();
-			}
+			application.getWorldAsFileWorld().savePlayerLocations();
 		}
 	}
 
@@ -77,28 +69,21 @@ public class MenuActions {
 	}
 
 	public void findStronghold() {
-		MapObjectStronghold selection = mapWindow
+		MapObjectStronghold stronghold = mapWindow
 				.askForOptions("Go to", "Select Stronghold:",
 						StrongholdLayer.instance.getStrongholds());
-		if (selection != null) {
-			mapWindow.moveMapTo(selection.x, selection.y);
+		if (stronghold != null) {
+			mapWindow.moveMapToCoordinates(stronghold.x, stronghold.y);
 		}
 	}
 
 	public void gotoCoordinate() {
-		String s = JOptionPane.showInputDialog(null,
-				"Enter coordinates: (Ex. 123,456)", "Go To",
-				JOptionPane.QUESTION_MESSAGE);
-		if (s != null) {
-			String[] c = s.replaceAll(" ", "").split(",");
-			try {
-				long x = Long.parseLong(c[0]);
-				long y = Long.parseLong(c[1]);
-				mapWindow.moveMapTo(x, y);
-			} catch (NumberFormatException e1) {
-				Log.w("Invalid location entered, ignoring.");
-				e1.printStackTrace();
-			}
+		long[] coordinates = mapWindow.askForCoordinates();
+		if (coordinates != null) {
+			mapWindow.moveMapToCoordinates(coordinates[0], coordinates[1]);
+		} else {
+			mapWindow.displayMessage("You entered an invalid location.");
+			Log.w("Invalid location entered, ignoring.");
 		}
 	}
 
@@ -108,10 +93,10 @@ public class MenuActions {
 					.getPlayers();
 			Player[] playerArray = playerList.toArray(new Player[playerList
 					.size()]);
-			Player selection = mapWindow.askForOptions("Go to",
-					"Select player:", playerArray);
-			if (selection != null) {
-				mapWindow.moveMapTo(selection.getX(), selection.getZ());
+			Player player = mapWindow.askForOptions("Go to", "Select player:",
+					playerArray);
+			if (player != null) {
+				mapWindow.moveMapToCoordinates(player.getX(), player.getZ());
 			}
 		} else {
 			mapWindow.displayMessage("There are no players on the map");
@@ -126,16 +111,10 @@ public class MenuActions {
 	}
 
 	public void copySeedToClipboard() {
-		StringSelection stringSelection = new StringSelection(
-				Options.instance.seed + "");
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		clipboard.setContents(stringSelection, new ClipboardOwner() {
-			@Override
-			public void lostOwnership(Clipboard arg0, Transferable arg1) {
-				// TODO Auto-generated method stub
-
-			}
-		});
+		String seed = "" + application.getWorld().getSeed();
+		StringSelection selection = new StringSelection(seed);
+		Toolkit.getDefaultToolkit().getSystemClipboard()
+				.setContents(selection, selection);
 	}
 
 	public void checkForUpdates() {
