@@ -3,7 +3,6 @@ package amidst;
 import java.io.File;
 import java.net.MalformedURLException;
 
-import MoF.Project;
 import MoF.SeedHistoryLogger;
 import amidst.gui.LicenseWindow;
 import amidst.gui.MapWindow;
@@ -23,20 +22,10 @@ public class Application {
 	private UpdatePrompt updateManager = new UpdatePrompt();
 	private VersionSelectWindow versionSelectWindow;
 	private MapWindow mapWindow;
-	private Project project;
 	private World world;
 
 	public MapWindow getMapWindow() {
 		return mapWindow;
-	}
-
-	public Project getProject() {
-		return project;
-	}
-
-	public void setProject(Project project) {
-		this.project = project;
-		mapWindow.setProject(project);
 	}
 
 	public void displayVersionSelectWindow() {
@@ -91,7 +80,6 @@ public class Application {
 	public void dispose() {
 		setVersionSelectWindow(null);
 		setMapWindow(null);
-		project.dispose();
 	}
 
 	public void displayLicenseWindow() {
@@ -126,7 +114,7 @@ public class Application {
 		this.world = world;
 		if (world != null) {
 			seedHistoryLogger.log(world.getSeed());
-			setProject(new Project(this));
+			mapWindow.worldChanged();
 		}
 	}
 }

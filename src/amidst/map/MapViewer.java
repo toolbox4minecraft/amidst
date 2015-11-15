@@ -27,7 +27,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 
-import MoF.Project;
 import amidst.Application;
 import amidst.Options;
 import amidst.gui.menu.PlayerMenuItemFactory;
@@ -405,8 +404,7 @@ public class MapViewer {
 
 	private Widget mouseOwner;
 
-	private Project project;
-	Application application;
+	private Application application;
 
 	private JPopupMenu menu = new JPopupMenu();
 	public int strongholdCount;
@@ -422,8 +420,7 @@ public class MapViewer {
 
 	private List<Widget> widgets = new ArrayList<Widget>();
 
-	public MapViewer(Project project, Application application) {
-		this.project = project;
+	public MapViewer(Application application) {
 		this.application = application;
 		initPlayerLayer();
 		initMap();
@@ -515,7 +512,6 @@ public class MapViewer {
 		updateTimer.cancel();
 		map.dispose();
 		menu.removeAll();
-		project = null;
 		updateTimer = null;
 	}
 

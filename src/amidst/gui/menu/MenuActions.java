@@ -121,12 +121,7 @@ public class MenuActions {
 	public void capture() {
 		File file = application.getMapWindow().askForScreenshotSaveFile();
 		if (file != null) {
-			String filename = file.toString();
-			if (!filename.toLowerCase().endsWith(".png")) {
-				filename += ".png";
-			}
-			application.getProject().getMapViewer()
-					.saveToFile(new File(filename));
+			application.getMapWindow().capture(file);
 		}
 	}
 

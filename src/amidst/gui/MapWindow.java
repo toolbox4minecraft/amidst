@@ -1,6 +1,7 @@
 package amidst.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -11,8 +12,8 @@ import java.io.StringWriter;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
-import MoF.Project;
 import amidst.Amidst;
 import amidst.Application;
 import amidst.Options;
@@ -20,6 +21,7 @@ import amidst.Util;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
+import amidst.map.MapViewer;
 import amidst.minecraft.world.WorldType;
 
 public class MapWindow {
@@ -30,11 +32,12 @@ public class MapWindow {
 	}
 
 	private Application application;
+	private MapViewer mapViewer;
+	private JPanel panel;
 
 	private JFrame frame = new JFrame();
 	private AmidstMenu menuBar;
 	private Container contentPane;
-	private Project project;
 
 	private SeedPrompt seedPrompt = new SeedPrompt(frame);
 
@@ -75,32 +78,40 @@ public class MapWindow {
 		});
 	}
 
-	private void clearProject() {
-		// TODO: Release resources
-		if (project != null) {
-			frame.removeKeyListener(project.getKeyListener());
-			project.dispose();
-			contentPane.remove(project.getPanel());
-		}
-	}
-
-	public void setProject(Project project) {
-		clearProject();
-
-		this.project = project;
-		menuBar.setMapMenuEnabled(true);
-		frame.addKeyListener(project.getKeyListener());
-		contentPane.add(this.project.getPanel(), BorderLayout.CENTER);
-		frame.validate();
-	}
-
 	@Deprecated
 	public JFrame getFrame() {
 		return frame;
 	}
 
 	public void dispose() {
+		setMapViewer(null);
 		frame.dispose();
+	}
+
+	private void setMapViewer(MapViewer mapViewer) {
+		clearMapViewer();
+
+		this.mapViewer = mapViewer;
+		createPanel(mapViewer);
+		menuBar.setMapMenuEnabled(true);
+		frame.addKeyListener(mapViewer.getKeyListener());
+		contentPane.add(panel, BorderLayout.CENTER);
+		frame.validate();
+	}
+
+	private void createPanel(MapViewer mapViewer) {
+		panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		panel.add(mapViewer.getComponent(), BorderLayout.CENTER);
+		panel.setBackground(Color.BLUE);
+	}
+
+	private void clearMapViewer() {
+		if (mapViewer != null) {
+			frame.removeKeyListener(mapViewer.getKeyListener());
+			mapViewer.dispose();
+			contentPane.remove(panel);
+		}
 	}
 
 	public String askForSeed() {
@@ -166,7 +177,7 @@ public class MapWindow {
 	}
 
 	public void moveMapTo(long x, long y) {
-		application.getProject().moveMapTo(x, y);
+		mapViewer.centerAt(x, y);
 	}
 
 	public WorldType askForWorldType() {
@@ -177,5 +188,21 @@ public class MapWindow {
 		} else {
 			return WorldType.from(worldTypePreference);
 		}
+	}
+
+	public void worldChanged() {
+		setMapViewer(new MapViewer(application));
+	}
+
+	public void capture(File file) {
+		mapViewer.saveToFile(addPNGFileExtensionIfNecessary(file));
+	}
+
+	private File addPNGFileExtensionIfNecessary(File file) {
+		String filename = file.toString();
+		if (!filename.toLowerCase().endsWith(".png")) {
+			filename += ".png";
+		}
+		return new File(filename);
 	}
 }
