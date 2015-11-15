@@ -1,6 +1,6 @@
 package amidst.map;
 
-public class Layer {
+public abstract class Layer {
 	private Map map;
 
 	public void setMap(Map map) {
