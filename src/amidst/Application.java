@@ -14,7 +14,7 @@ import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.remote.RemoteMinecraft;
 import amidst.minecraft.world.FileWorld;
 import amidst.minecraft.world.World;
-import amidst.utilties.SeedHistoryLogger;
+import amidst.utilities.SeedHistoryLogger;
 import amidst.version.MinecraftProfile;
 
 public class Application {

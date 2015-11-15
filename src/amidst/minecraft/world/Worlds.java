@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Random;
 
 import amidst.Options;
-import amidst.utilties.Google;
+import amidst.utilities.Google;
 
 public enum Worlds {
 	;

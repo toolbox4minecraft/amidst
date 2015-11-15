@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 
 import amidst.Options;
 import amidst.map.MapViewer;
-import amidst.utilties.FramerateTimer;
+import amidst.utilities.FramerateTimer;
 
 public class FpsWidget extends PanelWidget {
 	private FramerateTimer fps = new FramerateTimer(2);

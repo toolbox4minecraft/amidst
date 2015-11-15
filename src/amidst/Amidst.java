@@ -17,7 +17,7 @@ import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 import amidst.preferences.BiomeColorProfile;
 import amidst.resources.ResourceLoader;
-import amidst.utilties.Google;
+import amidst.utilities.Google;
 
 public class Amidst {
 	public final static int version_major = 3;

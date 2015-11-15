@@ -1,4 +1,4 @@
-package amidst.utilties;
+package amidst.utilities;
 
 import amidst.Amidst;
 
