@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
@@ -399,6 +401,8 @@ public class MapViewer {
 	private MapZoom zoom = new MapZoom();
 	private MapMovement movement = new MapMovement();
 
+	private Timer updateTimer = new Timer();
+
 	private Widget mouseOwner;
 
 	private Project project;
@@ -425,6 +429,7 @@ public class MapViewer {
 		initMap();
 		initWidgets();
 		initComponent();
+		initTimer();
 	}
 
 	private void initPlayerLayer() {
@@ -467,6 +472,15 @@ public class MapViewer {
 		textMetrics = component.getFontMetrics(textFont);
 	}
 
+	private void initTimer() {
+		updateTimer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				component.repaint();
+			}
+		}, 20, 20);
+	}
+
 	// TODO: find another place for this
 	@Deprecated
 	public void saveToFile(File file) {
@@ -498,17 +512,15 @@ public class MapViewer {
 
 	public void dispose() {
 		Log.debug("Disposing of map viewer.");
+		updateTimer.cancel();
 		map.dispose();
 		menu.removeAll();
 		project = null;
+		updateTimer = null;
 	}
 
 	public void centerAt(long x, long y) {
 		map.centerOn(x, y);
-	}
-
-	public void repaint() {
-		component.repaint();
 	}
 
 	public MapObject getSelectedObject() {
