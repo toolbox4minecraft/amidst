@@ -25,7 +25,7 @@ public class Project {
 	private Application application;
 
 	public Project(Application application, World world) {
-		this(application, world.getSeed(), world.getGeneratorType().getName(),
+		this(application, world.getSeed(), world.getWorldType().getName(),
 				world);
 		Google.track("seed/file/" + Options.instance.seed);
 	}

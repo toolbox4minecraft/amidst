@@ -21,7 +21,7 @@ public class WorldLoader {
 	private Exception exception;
 
 	private long seed;
-	public WorldType generatorType;
+	public WorldType worldType;
 	private String generatorOptions;
 	private boolean isMultiPlayerMap;
 	private List<Player> players = new ArrayList<Player>();
@@ -63,12 +63,12 @@ public class WorldLoader {
 
 	private void loadGenerator() {
 		if (hasTagGeneratorName()) {
-			generatorType = WorldType.from(getTagGeneratorName());
-			if (generatorType == WorldType.CUSTOMIZED) {
+			worldType = WorldType.from(getTagGeneratorName());
+			if (worldType == WorldType.CUSTOMIZED) {
 				generatorOptions = getTagGeneratorOptions();
 			}
 		} else {
-			generatorType = WorldType.DEFAULT;
+			worldType = WorldType.DEFAULT;
 			generatorOptions = "";
 		}
 	}
@@ -169,8 +169,8 @@ public class WorldLoader {
 
 	public World get() {
 		if (isLoadedSuccessfully()) {
-			return new FileWorld(worldFile, seed, generatorType,
-					generatorOptions, isMultiPlayerMap, players);
+			return new FileWorld(worldFile, seed, worldType, generatorOptions,
+					isMultiPlayerMap, players);
 		} else {
 			return null;
 		}

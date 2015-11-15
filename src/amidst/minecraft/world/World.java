@@ -3,5 +3,5 @@ package amidst.minecraft.world;
 public interface World {
 	long getSeed();
 
-	WorldType getGeneratorType();
+	WorldType getWorldType();
 }

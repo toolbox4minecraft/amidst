@@ -2,11 +2,11 @@ package amidst.minecraft.world;
 
 public class SeedWorld implements World {
 	private long seed;
-	private WorldType generatorType;
+	private WorldType worldType;
 
-	public SeedWorld(long seed, WorldType generatorType) {
+	public SeedWorld(long seed, WorldType worldType) {
 		this.seed = seed;
-		this.generatorType = generatorType;
+		this.worldType = worldType;
 	}
 
 	@Override
@@ -15,7 +15,7 @@ public class SeedWorld implements World {
 	}
 
 	@Override
-	public WorldType getGeneratorType() {
-		return generatorType;
+	public WorldType getWorldType() {
+		return worldType;
 	}
 }

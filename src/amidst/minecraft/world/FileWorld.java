@@ -68,17 +68,17 @@ public class FileWorld implements World {
 	private PlayerMover mover;
 
 	private long seed;
-	private WorldType generatorType;
+	private WorldType worldType;
 	private String generatorOptions;
 	private boolean isMultiPlayerMap;
 	private List<Player> players;
 	private List<MapObjectPlayer> mapObjectPlayers;
 
-	FileWorld(File worldFile, long seed, WorldType generatorType,
+	FileWorld(File worldFile, long seed, WorldType worldType,
 			String generatorOptions, boolean isMultiPlayerMap,
 			List<Player> players) {
 		this.seed = seed;
-		this.generatorType = generatorType;
+		this.worldType = worldType;
 		this.generatorOptions = generatorOptions;
 		this.isMultiPlayerMap = isMultiPlayerMap;
 		this.players = Collections.unmodifiableList(players);
@@ -107,8 +107,8 @@ public class FileWorld implements World {
 	}
 
 	@Override
-	public WorldType getGeneratorType() {
-		return generatorType;
+	public WorldType getWorldType() {
+		return worldType;
 	}
 
 	public String getGeneratorOptions() {
