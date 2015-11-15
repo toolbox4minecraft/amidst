@@ -2,22 +2,18 @@ package amidst;
 
 import java.awt.Image;
 import java.io.File;
-import java.net.MalformedURLException;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import com.google.gson.Gson;
-
-import amidst.gui.MapWindow;
-import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
-import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 import amidst.preferences.BiomeColorProfile;
 import amidst.resources.ResourceLoader;
 import amidst.utilities.Google;
+
+import com.google.gson.Gson;
 
 public class Amidst {
 	public final static int version_major = 3;
@@ -25,16 +21,17 @@ public class Amidst {
 	public final static String versionOffset = "";
 	public static Image icon = ResourceLoader.getImage("icon.png");
 	public static final Gson gson = new Gson();
-	
-	
+
 	public static void main(String args[]) {
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread thread, Throwable e) {
-				Log.crash(e, "Amidst has encounted an uncaught exception on thread: " + thread);
+				Log.crash(e,
+						"Amidst has encounted an uncaught exception on thread: "
+								+ thread);
 			}
 		});
-		CmdLineParser parser = new CmdLineParser(Options.instance); 
+		CmdLineParser parser = new CmdLineParser(Options.instance);
 		try {
 			parser.parseArgument(args);
 		} catch (CmdLineException e) {
@@ -43,33 +40,38 @@ public class Amidst {
 		}
 		Util.setMinecraftDirectory();
 		Util.setMinecraftLibraries();
-		
+
 		if (Options.instance.logPath != null)
-			Log.addListener("file", new FileLogger(new File(Options.instance.logPath)));
-		
-		
-		if (!isOSX()) { Util.setLookAndFeel(); }
+			Log.addListener("file", new FileLogger(new File(
+					Options.instance.logPath)));
+
+		if (!isOSX()) {
+			Util.setLookAndFeel();
+		}
 		Google.track("Run");
-		System.setProperty("sun.java2d.opengl","True");
+		System.setProperty("sun.java2d.opengl", "True");
 		System.setProperty("sun.java2d.accthreshold", "0");
 		BiomeColorProfile.scan();
-		
+
 		if (Options.instance.minecraftJar != null) {
-			new Application().displayMapWindow(Options.instance.minecraftJar, Options.instance.minecraftPath);
+			new Application().displayMapWindow(Options.instance.minecraftJar,
+					Options.instance.minecraftPath);
 		} else {
 			new Application().displayVersionSelectWindow();
 		}
 	}
-	
+
 	public static boolean isOSX() {
 		String osName = System.getProperty("os.name");
 		return osName.contains("OS X");
 	}
-	
+
 	public static String version() {
 		if (MinecraftUtil.hasInterface())
-			return version_major + "." + version_minor + versionOffset + " [Using Minecraft version: " + MinecraftUtil.getVersion() + "]";
+			return version_major + "." + version_minor + versionOffset
+					+ " [Using Minecraft version: "
+					+ MinecraftUtil.getVersion() + "]";
 		return version_major + "." + version_minor + versionOffset;
 	}
-	
+
 }
