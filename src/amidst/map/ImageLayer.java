@@ -13,16 +13,16 @@ public abstract class ImageLayer extends Layer {
 
 	public ImageLayer(int size) {
 		this.size = size;
-		initScale(size);
-		initDefaultData(size);
+		initScale();
+		initDefaultData();
 	}
 
-	private void initScale(int size) {
+	private void initScale() {
 		scale = Fragment.SIZE / (double) size;
 	}
 
-	private void initDefaultData(int size) {
-		defaultData = new int[size * size];
+	private void initDefaultData() {
+		defaultData = new int[getSquaredSize()];
 		for (int i = 0; i < defaultData.length; i++) {
 			defaultData[i] = 0x00000000;
 		}
@@ -41,6 +41,10 @@ public abstract class ImageLayer extends Layer {
 		cachedScalingMatrix.setTransform(inMat);
 		cachedScalingMatrix.scale(scale, scale);
 		return cachedScalingMatrix;
+	}
+
+	protected int getSquaredSize() {
+		return size * size;
 	}
 
 	public int getSize() {

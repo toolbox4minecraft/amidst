@@ -1,22 +1,55 @@
 package amidst.map.layers;
 
-import amidst.Options;
 import amidst.Util;
 import amidst.map.Fragment;
 import amidst.map.ImageLayer;
 import amidst.minecraft.Biome;
 
 public class BiomeLayer extends ImageLayer {
+	// TODO: remove me!
 	public static BiomeLayer instance;
-	protected static int size = Fragment.SIZE >> 2;
 
-	protected boolean[] selectedBiomes = new boolean[Biome.biomes.length];
-	private boolean inHighlightMode = false;
+	private boolean[] selectedBiomes = new boolean[Biome.biomes.length];
+	private boolean isHighlightMode = false;
 
 	public BiomeLayer() {
-		super(size);
+		super(Fragment.SIZE >> 2);
 		instance = this;
-		deselectAllBiomes();
+	}
+
+	@Override
+	public void drawToCache(Fragment fragment) {
+		int[] dataCache = Fragment.getImageRGBDataCache();
+		if (isHighlightMode) {
+			drawHighlightMode(fragment, dataCache);
+		} else {
+			drawNormalMode(fragment, dataCache);
+		}
+		fragment.setImageRGB(getLayerId(), dataCache);
+	}
+
+	private void drawHighlightMode(Fragment fragment, int[] dataCache) {
+		for (int i = 0; i < getSquaredSize(); i++) {
+			if (!selectedBiomes[fragment.getBiomeData()[i]]) {
+				dataCache[i] = Util.deselectColor(getColor(fragment, i));
+			} else {
+				dataCache[i] = getColor(fragment, i);
+			}
+		}
+	}
+
+	private void drawNormalMode(Fragment fragment, int[] dataCache) {
+		for (int i = 0; i < getSquaredSize(); i++) {
+			dataCache[i] = getColor(fragment, i);
+		}
+	}
+
+	private int getColor(Fragment fragment, int index) {
+		return Biome.biomes[fragment.getBiomeData()[index]].color;
+	}
+
+	public boolean isBiomeSelected(int id) {
+		return selectedBiomes[id];
 	}
 
 	public void selectAllBiomes() {
@@ -35,58 +68,21 @@ public class BiomeLayer extends ImageLayer {
 		setSelected(id, false);
 	}
 
-	public void setHighlightMode(boolean enabled) {
-		inHighlightMode = enabled;
-	}
-
 	public void toggleBiomeSelect(int id) {
 		setSelected(id, !selectedBiomes[id]);
 	}
 
-	public void setSelected(int id, boolean value) {
+	private void setSelected(int id, boolean value) {
 		selectedBiomes[id] = value;
 	}
 
-	public void setSelectedAllBiomes(boolean value) {
-		for (int i = 0; i < selectedBiomes.length; i++)
+	private void setSelectedAllBiomes(boolean value) {
+		for (int i = 0; i < selectedBiomes.length; i++) {
 			selectedBiomes[i] = value;
-	}
-
-	@Override
-	public void drawToCache(Fragment fragment) {
-		int[] dataCache = Fragment.getImageRGBDataCache();
-		if (inHighlightMode) {
-			for (int i = 0; i < size * size; i++)
-				if (!selectedBiomes[fragment.getBiomeData()[i]])
-					dataCache[i] = Util.deselectColor(Biome.biomes[fragment
-							.getBiomeData()[i]].color);
-				else
-					dataCache[i] = Biome.biomes[fragment.getBiomeData()[i]].color;
-		} else {
-			for (int i = 0; i < size * size; i++)
-				dataCache[i] = Biome.biomes[fragment.getBiomeData()[i]].color;
 		}
-
-		fragment.setImageRGB(getLayerId(), dataCache);
 	}
 
-	public static int getBiomeForFragment(Fragment frag, int blockX, int blockY) {
-		return frag.getBiomeData()[(blockY >> 2) * Fragment.BIOME_SIZE
-				+ (blockX >> 2)];
-	}
-
-	public static String getBiomeNameForFragment(Fragment frag, int blockX,
-			int blockY) {
-		return Biome.biomes[getBiomeForFragment(frag, blockX, blockY)].name;
-	}
-
-	public static String getBiomeAliasForFragment(Fragment frag, int blockX,
-			int blockY) {
-		return Options.instance.biomeColorProfile
-				.getAliasForId(getBiomeForFragment(frag, blockX, blockY));
-	}
-
-	public boolean isBiomeSelected(int id) {
-		return selectedBiomes[id];
+	public void setHighlightMode(boolean enabled) {
+		this.isHighlightMode = enabled;
 	}
 }

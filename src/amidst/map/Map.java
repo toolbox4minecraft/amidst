@@ -6,7 +6,8 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
-import amidst.map.layers.BiomeLayer;
+import amidst.Options;
+import amidst.minecraft.Biome;
 
 public class Map {
 	public class Drawer {
@@ -392,7 +393,7 @@ public class Map {
 				int x = point.x - frag.getBlockX();
 				int y = point.y - frag.getBlockY();
 
-				return BiomeLayer.getBiomeNameForFragment(frag, x, y);
+				return getBiomeNameForFragment(frag, x, y);
 			}
 		}
 		return "Unknown";
@@ -408,10 +409,26 @@ public class Map {
 				int x = point.x - frag.getBlockX();
 				int y = point.y - frag.getBlockY();
 
-				return BiomeLayer.getBiomeAliasForFragment(frag, x, y);
+				return getBiomeAliasForFragment(frag, x, y);
 			}
 		}
 		return "Unknown";
+	}
+
+	private String getBiomeNameForFragment(Fragment fragment, int blockX,
+			int blockY) {
+		return Biome.biomes[getBiomeForFragment(fragment, blockX, blockY)].name;
+	}
+
+	private String getBiomeAliasForFragment(Fragment fragment, int blockX,
+			int blockY) {
+		return Options.instance.biomeColorProfile
+				.getAliasForId(getBiomeForFragment(fragment, blockX, blockY));
+	}
+
+	private int getBiomeForFragment(Fragment fragment, int blockX, int blockY) {
+		int index = (blockY >> 2) * Fragment.BIOME_SIZE + (blockX >> 2);
+		return fragment.getBiomeData()[index];
 	}
 
 	public void moveBy(Point2D.Double speed) {
