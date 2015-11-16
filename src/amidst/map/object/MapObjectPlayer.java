@@ -5,15 +5,15 @@ import java.awt.image.BufferedImage;
 import amidst.map.MapMarkers;
 import amidst.map.layer.IconLayer;
 import amidst.minecraft.world.FileWorld.Player;
+import amidst.utilities.CoordinateUtils;
 
 public class MapObjectPlayer extends MapObject {
 	private Player player;
 	private BufferedImage image;
 
 	public MapObjectPlayer(IconLayer iconLayer, Player player) {
-		super(iconLayer, MapMarkers.PLAYER,
-				toFragmentCoordinates(player.getX()),
-				toFragmentCoordinates(player.getZ()));
+		super(iconLayer, MapMarkers.PLAYER, CoordinateUtils.toFragment(player
+				.getX()), CoordinateUtils.toFragment(player.getZ()));
 		this.player = player;
 		this.image = MapMarkers.PLAYER.getImage();
 	}
@@ -44,12 +44,12 @@ public class MapObjectPlayer extends MapObject {
 
 	@Override
 	public int getXInFragment() {
-		return toFragmentCoordinates(player.getX());
+		return CoordinateUtils.toFragment(player.getX());
 	}
 
 	@Override
 	public int getYInFragment() {
-		return toFragmentCoordinates(player.getZ());
+		return CoordinateUtils.toFragment(player.getZ());
 	}
 
 	@Override

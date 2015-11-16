@@ -5,20 +5,9 @@ import java.awt.image.BufferedImage;
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 import amidst.map.layer.IconLayer;
+import amidst.utilities.CoordinateUtils;
 
 public abstract class MapObject {
-	public static int toFragmentCoordinates(int coordinate) {
-		return getOffset(coordinate) + coordinate % Fragment.SIZE;
-	}
-
-	private static int getOffset(int coordinate) {
-		if (coordinate < 0) {
-			return Fragment.SIZE;
-		} else {
-			return 0;
-		}
-	}
-
 	private final IconLayer iconLayer;
 	private final MapMarkers type;
 	private final int xInFragment;
@@ -106,8 +95,10 @@ public abstract class MapObject {
 
 	private void initFragment() {
 		if (fragment != null) {
-			xInWorld = getXInFragment() + fragment.getXInWorld();
-			yInWorld = getYInFragment() + fragment.getYInWorld();
+			xInWorld = CoordinateUtils.toWorld(fragment.getXInWorld(),
+					getXInFragment());
+			yInWorld = CoordinateUtils.toWorld(fragment.getYInWorld(),
+					getYInFragment());
 			fragment.addObject(this);
 		}
 	}
