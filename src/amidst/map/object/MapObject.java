@@ -3,10 +3,25 @@ package amidst.map.object;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 import amidst.map.layer.IconLayer;
 
 public abstract class MapObject {
+	// TODO: understand what happens and rename the method
+	protected static int calc(int coordinate) {
+		return calc1(coordinate) + coordinate % Fragment.SIZE;
+	}
+
+	// TODO: understand what happens and rename the method
+	protected static int calc1(int coordinate) {
+		if (coordinate < 0) {
+			return Fragment.SIZE;
+		} else {
+			return 0;
+		}
+	}
+
 	private MapMarkers type;
 	private int x;
 	private int y;

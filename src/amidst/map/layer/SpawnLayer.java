@@ -40,10 +40,10 @@ public class SpawnLayer extends IconLayer {
 	}
 
 	private boolean isInFragmentBounds(Fragment fragment) {
-		return spawnObject.globalX >= fragment.getBlockX()
-				&& spawnObject.globalX < fragment.getBlockX() + Fragment.SIZE
-				&& spawnObject.globalY >= fragment.getBlockY()
-				&& spawnObject.globalY < fragment.getBlockY() + Fragment.SIZE;
+		return spawnObject.getGlobalX() >= fragment.getBlockX()
+				&& spawnObject.getGlobalX() < fragment.getBlockX() + Fragment.SIZE
+				&& spawnObject.getGlobalY() >= fragment.getBlockY()
+				&& spawnObject.getGlobalY() < fragment.getBlockY() + Fragment.SIZE;
 	}
 
 	@Override

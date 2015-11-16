@@ -1,23 +1,27 @@
 package amidst.map.object;
 
-import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 
-/** Used mainly to be override its toString method for use in choices
- */
 public class MapObjectSpawn extends MapObject {
-	public int globalX, globalY;
+	private int globalX;
+	private int globalY;
+
 	public MapObjectSpawn(int x, int y) {
-		super(MapMarkers.SPAWN,
-				((x < 0)?Fragment.SIZE:0) + x % Fragment.SIZE,
-				((y < 0)?Fragment.SIZE:0) + y % Fragment.SIZE);
-		
-		globalX = x;
-		globalY = y;
+		super(MapMarkers.SPAWN, calc(x), calc(y));
+		this.globalX = x;
+		this.globalY = y;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Spawn point at (" + getX() + ", " + getY() + ")";
+	}
+
+	public int getGlobalX() {
+		return globalX;
+	}
+
+	public int getGlobalY() {
+		return globalY;
 	}
 }

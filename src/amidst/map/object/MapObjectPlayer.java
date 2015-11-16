@@ -7,20 +7,6 @@ import amidst.map.MapMarkers;
 import amidst.minecraft.world.FileWorld.Player;
 
 public class MapObjectPlayer extends MapObject {
-	// TODO: understand what happens and rename the method
-	private static int calc(int coordinate) {
-		return calc1(coordinate) + coordinate % Fragment.SIZE;
-	}
-
-	// TODO: understand what happens and rename the method
-	private static int calc1(int coordinate) {
-		if (coordinate < 0) {
-			return Fragment.SIZE;
-		} else {
-			return 0;
-		}
-	}
-
 	private Player player;
 	private BufferedImage marker;
 	// TODO: make this private
