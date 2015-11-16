@@ -32,18 +32,6 @@ public class PlayerLayer extends IconLayer {
 		}
 	}
 
-	@Override
-	public void clearMapObjects(Fragment fragment) {
-		for (int i = 0; i < fragment.getObjectsLength(); i++) {
-			if (fragment.getObjects()[i] instanceof MapObjectPlayer) {
-				MapObjectPlayer mapObjectPlayer = (MapObjectPlayer) fragment
-						.getObjects()[i];
-				mapObjectPlayer.setFragment(null);
-			}
-		}
-		super.clearMapObjects(fragment);
-	}
-
 	public void setWorld(World world) {
 		if (world instanceof FileWorld) {
 			this.worldFile = (FileWorld) world;

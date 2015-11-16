@@ -17,7 +17,7 @@ import amidst.minecraft.MinecraftUtil;
 public class Fragment {
 	public static final int SIZE = 512;
 	public static final int SIZE_SHIFT = 9;
-	public static final int MAX_OBJECTS_PER_FRAGMENT = 32;
+	public static final int INITIAL_NUMBER_OF_OBJECTS_PER_FRAGMENT = 32;
 	public static final int BIOME_SIZE = SIZE >> 2;
 
 	// TODO: what is this? move it to another place?
@@ -82,7 +82,7 @@ public class Fragment {
 	}
 
 	private void initObjects() {
-		this.objects = new MapObject[MAX_OBJECTS_PER_FRAGMENT];
+		this.objects = new MapObject[INITIAL_NUMBER_OF_OBJECTS_PER_FRAGMENT];
 	}
 
 	public void load() {
@@ -124,7 +124,7 @@ public class Fragment {
 			if (imageLayers[i].isVisible()) {
 				setAlphaComposite(g, alpha * imageLayers[i].getAlpha());
 
-				// TOOD: FIX THIS
+				// TODO: FIX THIS
 				g.setTransform(imageLayers[i].getScaledMatrix(mat));
 				if (g.getTransform().getScaleX() < 1.0f) {
 					g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
@@ -244,9 +244,7 @@ public class Fragment {
 	}
 
 	public void init(int x, int y) {
-		for (IconLayer layer : iconLayers) {
-			layer.clearMapObjects(this);
-		}
+		clearMapObject();
 		hasNext = false;
 		endOfLine = false;
 		xInWorld = x;
@@ -327,6 +325,9 @@ public class Fragment {
 	}
 
 	public void clearMapObject() {
+		for (int i = 0; i < objectsLength; i++) {
+			objects[i].setFragment(null);
+		}
 		this.objectsLength = 0;
 	}
 }
