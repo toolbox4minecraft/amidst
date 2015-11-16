@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import amidst.map.MapObjectPlayer;
+import amidst.map.object.MapObjectPlayer;
 import amidst.minecraft.MinecraftUtil;
 
 public class FileWorld implements World {

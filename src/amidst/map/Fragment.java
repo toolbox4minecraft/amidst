@@ -11,6 +11,8 @@ import amidst.logging.Log;
 import amidst.map.layers.IconLayer;
 import amidst.map.layers.ImageLayer;
 import amidst.map.layers.LiveLayer;
+import amidst.map.object.MapObject;
+import amidst.map.object.MapObjectPlayer;
 import amidst.minecraft.MinecraftUtil;
 
 public class Fragment {

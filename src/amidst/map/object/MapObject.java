@@ -1,4 +1,4 @@
-package amidst.map;
+package amidst.map.object;
 import amidst.Options;
 import amidst.map.MapMarkers;
 import amidst.map.layers.IconLayer;

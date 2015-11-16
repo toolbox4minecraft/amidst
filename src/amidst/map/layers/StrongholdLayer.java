@@ -8,7 +8,7 @@ import java.util.Random;
 
 import amidst.Options;
 import amidst.map.Fragment;
-import amidst.map.MapObjectStronghold;
+import amidst.map.object.MapObjectStronghold;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 import amidst.version.VersionInfo;

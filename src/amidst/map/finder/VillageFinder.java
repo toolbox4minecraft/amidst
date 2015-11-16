@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import amidst.map.Fragment;
-import amidst.map.MapObject;
-import amidst.map.MapObjectVillage;
 import amidst.map.layers.VillageLayer;
+import amidst.map.object.MapObject;
+import amidst.map.object.MapObjectVillage;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 

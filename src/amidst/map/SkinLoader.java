@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 
 import amidst.logging.Log;
+import amidst.map.object.MapObjectPlayer;
 
 public class SkinLoader {
 	private BlockingQueue<MapObjectPlayer> playerQueue = new LinkedBlockingQueue<MapObjectPlayer>();

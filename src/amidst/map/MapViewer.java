@@ -41,6 +41,8 @@ import amidst.map.layers.SpawnLayer;
 import amidst.map.layers.StrongholdLayer;
 import amidst.map.layers.TempleLayer;
 import amidst.map.layers.VillageLayer;
+import amidst.map.object.MapObject;
+import amidst.map.object.MapObjectPlayer;
 import amidst.map.widget.BiomeToggleWidget;
 import amidst.map.widget.BiomeWidget;
 import amidst.map.widget.CursorInformationWidget;

@@ -3,8 +3,8 @@ package amidst.map.widget;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import amidst.map.MapObject;
 import amidst.map.MapViewer;
+import amidst.map.object.MapObject;
 
 public class SelectedObjectWidget extends PanelWidget {
 	private String message = "";

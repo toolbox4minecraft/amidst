@@ -5,11 +5,11 @@ import java.util.List;
 
 import amidst.logging.Log;
 import amidst.map.Fragment;
-import amidst.map.MapObject;
-import amidst.map.MapObjectDesertTemple;
-import amidst.map.MapObjectJungleTemple;
-import amidst.map.MapObjectWitchHut;
 import amidst.map.layers.TempleLayer;
+import amidst.map.object.MapObject;
+import amidst.map.object.MapObjectDesertTemple;
+import amidst.map.object.MapObjectJungleTemple;
+import amidst.map.object.MapObjectWitchHut;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 import amidst.version.VersionInfo;

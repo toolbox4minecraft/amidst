@@ -1,4 +1,6 @@
-package amidst.map;
+package amidst.map.object;
+
+import amidst.map.MapMarkers;
 
 public class MapObjectOceanMonument extends MapObject {
 	public MapObjectOceanMonument(int eX, int eY) {

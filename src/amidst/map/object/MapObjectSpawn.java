@@ -1,4 +1,7 @@
-package amidst.map;
+package amidst.map.object;
+
+import amidst.map.Fragment;
+import amidst.map.MapMarkers;
 
 /** Used mainly to be override its toString method for use in choices
  */

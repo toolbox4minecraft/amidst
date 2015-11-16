@@ -1,7 +1,9 @@
-package amidst.map;
+package amidst.map.object;
 
 import java.awt.image.BufferedImage;
 
+import amidst.map.Fragment;
+import amidst.map.MapMarkers;
 import amidst.minecraft.world.FileWorld.Player;
 
 public class MapObjectPlayer extends MapObject {

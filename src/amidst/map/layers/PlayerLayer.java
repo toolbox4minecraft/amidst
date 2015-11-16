@@ -2,8 +2,8 @@ package amidst.map.layers;
 
 import amidst.Options;
 import amidst.map.Fragment;
-import amidst.map.MapObjectPlayer;
 import amidst.map.SkinLoader;
+import amidst.map.object.MapObjectPlayer;
 import amidst.minecraft.world.FileWorld;
 import amidst.minecraft.world.World;
 

@@ -7,6 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
 import amidst.Options;
+import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 
 public class Map {
