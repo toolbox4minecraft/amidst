@@ -7,7 +7,12 @@ import amidst.map.MapMarkers;
 import amidst.map.layer.IconLayer;
 import amidst.utilities.CoordinateUtils;
 
-public abstract class MapObject {
+public class MapObject {
+	public static MapObject fromFragmentCoordinates(IconLayer iconLayer,
+			MapMarkers type, int xInFragment, int yInFragment) {
+		return new MapObject(iconLayer, type, xInFragment, yInFragment);
+	}
+
 	private final IconLayer iconLayer;
 	private final MapMarkers type;
 	private final int xInFragment;
@@ -17,7 +22,7 @@ public abstract class MapObject {
 	private double scale = 1.0;
 	private Fragment fragment;
 
-	public MapObject(IconLayer iconLayer, MapMarkers type, int xInFragment,
+	protected MapObject(IconLayer iconLayer, MapMarkers type, int xInFragment,
 			int yInFragment) {
 		this.iconLayer = iconLayer;
 		this.type = type;

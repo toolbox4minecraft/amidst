@@ -10,7 +10,6 @@ import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 import amidst.map.object.MapObject;
-import amidst.map.object.SimpleMapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 import amidst.version.VersionInfo;
@@ -95,10 +94,13 @@ public class StrongholdLayer extends IconLayer {
 		if (hasStronghold(chunkX, chunkY)) {
 			// FIXME: Possible use of checkChunk causing negative icons
 			// to be misaligned!
-			MapObject mapObject = new SimpleMapObject(this,
-					MapMarkers.STRONGHOLD, x << 4, y << 4);
-			mapObject.setFragment(fragment);
+			createMapObject(x << 4, y << 4).setFragment(fragment);
 		}
+	}
+
+	private MapObject createMapObject(int x, int y) {
+		return MapObject.fromFragmentCoordinates(this, MapMarkers.STRONGHOLD,
+				x, y);
 	}
 
 	private boolean hasStronghold(int chunkX, int chunkY) {
@@ -130,8 +132,7 @@ public class StrongholdLayer extends IconLayer {
 				x = strongholdLocation.x >> 4;
 				y = strongholdLocation.y >> 4;
 			}
-			strongholds[i] = new SimpleMapObject(this, MapMarkers.STRONGHOLD,
-					x << 4, y << 4);
+			strongholds[i] = createMapObject(x << 4, y << 4);
 			angle = updateAngle(angle);
 		}
 	}

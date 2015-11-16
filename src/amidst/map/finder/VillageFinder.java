@@ -7,7 +7,6 @@ import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 import amidst.map.layer.IconLayer;
 import amidst.map.object.MapObject;
-import amidst.map.object.SimpleMapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 
@@ -34,7 +33,8 @@ public class VillageFinder extends StructureFinder {
 	}
 
 	private MapObject createMapObject(IconLayer iconLayer, int x, int y) {
-		return new SimpleMapObject(iconLayer, MapMarkers.VILLAGE, x, y);
+		return MapObject.fromFragmentCoordinates(iconLayer, MapMarkers.VILLAGE,
+				x, y);
 	}
 
 	@Override

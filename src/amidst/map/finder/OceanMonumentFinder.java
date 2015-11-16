@@ -7,7 +7,6 @@ import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 import amidst.map.layer.IconLayer;
 import amidst.map.object.MapObject;
-import amidst.map.object.SimpleMapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 
@@ -56,7 +55,8 @@ public class OceanMonumentFinder extends StructureFinder {
 	}
 
 	private MapObject createMapObject(IconLayer iconLayer, int x, int y) {
-		return new SimpleMapObject(iconLayer, MapMarkers.OCEAN_MONUMENT, x, y);
+		return MapObject.fromFragmentCoordinates(iconLayer,
+				MapMarkers.OCEAN_MONUMENT, x, y);
 	}
 
 	@Override

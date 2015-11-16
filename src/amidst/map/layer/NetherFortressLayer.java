@@ -6,7 +6,6 @@ import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 import amidst.map.object.MapObject;
-import amidst.map.object.SimpleMapObject;
 
 public class NetherFortressLayer extends IconLayer {
 	private Random random = new Random();
@@ -35,8 +34,9 @@ public class NetherFortressLayer extends IconLayer {
 		}
 	}
 
-	private SimpleMapObject createMapObject(int x2, int y2) {
-		return new SimpleMapObject(this, MapMarkers.NETHER_FORTRESS, x2, y2);
+	private MapObject createMapObject(int x, int y) {
+		return MapObject.fromFragmentCoordinates(this,
+				MapMarkers.NETHER_FORTRESS, x, y);
 	}
 
 	private boolean hasNetherFortress(int chunkX, int chunkY) {

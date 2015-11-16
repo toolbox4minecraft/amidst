@@ -8,7 +8,6 @@ import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 import amidst.map.layer.IconLayer;
 import amidst.map.object.MapObject;
-import amidst.map.object.SimpleMapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 import amidst.version.VersionInfo;
@@ -43,11 +42,14 @@ public class TempleFinder extends StructureFinder {
 	private MapObject createMapObject(IconLayer iconLayer, Biome chunkBiome,
 			int x, int y) {
 		if (chunkBiome == Biome.swampland) {
-			return new SimpleMapObject(iconLayer, MapMarkers.WITCH, x, y);
+			return MapObject.fromFragmentCoordinates(iconLayer,
+					MapMarkers.WITCH, x, y);
 		} else if (chunkBiome.name.contains("Jungle")) {
-			return new SimpleMapObject(iconLayer, MapMarkers.JUNGLE, x, y);
+			return MapObject.fromFragmentCoordinates(iconLayer,
+					MapMarkers.JUNGLE, x, y);
 		} else if (chunkBiome.name.contains("Desert")) {
-			return new SimpleMapObject(iconLayer, MapMarkers.DESERT, x, y);
+			return MapObject.fromFragmentCoordinates(iconLayer,
+					MapMarkers.DESERT, x, y);
 		} else {
 			Log.e("No known structure for this biome type. This might be an error.");
 			return null;
