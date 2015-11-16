@@ -77,19 +77,19 @@ public class SkinLoader {
 
 	private void doLoadSkin(MapObjectPlayer player)
 			throws MalformedURLException, IOException {
-		player.setMarker(createMarker(player));
+		player.setImage(createImage(player));
 	}
 
-	private BufferedImage createMarker(MapObjectPlayer player)
+	private BufferedImage createImage(MapObjectPlayer player)
 			throws MalformedURLException, IOException {
-		BufferedImage marker = new BufferedImage(20, 20,
+		BufferedImage image = new BufferedImage(20, 20,
 				BufferedImage.TYPE_INT_ARGB);
-		drawSkinToMarker(marker, getSkin(player));
-		return marker;
+		drawSkinToImage(getSkin(player), image);
+		return image;
 	}
 
-	private void drawSkinToMarker(BufferedImage pimg, BufferedImage skin) {
-		Graphics2D g2d = pimg.createGraphics();
+	private void drawSkinToImage(BufferedImage skin, BufferedImage image) {
+		Graphics2D g2d = image.createGraphics();
 		g2d.setColor(Color.black);
 		g2d.fillRect(0, 0, 20, 20);
 		g2d.drawImage(skin, 2, 2, 18, 18, 8, 8, 16, 16, null);
