@@ -47,22 +47,22 @@ public class BiomeWidget extends PanelWidget {
 		}
 		biomeListHeight = biomes.size() * 16;
 		setDimensions(250, 400);
-		y = 100;
+		setY(100);
 		forceVisibility(false);
 	}
 
 	@Override
 	public void draw(Graphics2D g2d, float time) {
-		x = mapViewer.getWidth() - width;
+		setX(mapViewer.getWidth() - getWidth());
 		super.draw(g2d, time);
 		g2d.setColor(TEXT_COLOR);
 		g2d.setFont(TEXT_FONT);
-		g2d.drawString("Highlight Biomes", x + 10, y + 20);
+		g2d.drawString("Highlight Biomes", getX() + 10, getY() + 20);
 
-		innerBox.x = x + 8;
-		innerBox.y = y + 30;
-		innerBox.width = width - 16;
-		innerBox.height = height - 58;
+		innerBox.x = getX() + 8;
+		innerBox.y = getY() + 30;
+		innerBox.width = getWidth() - 16;
+		innerBox.height = getHeight() - 58;
 
 		biomeListYOffset = Math.min(0,
 				Math.max(-biomeListHeight + innerBox.height, biomeListYOffset));
@@ -128,18 +128,18 @@ public class BiomeWidget extends PanelWidget {
 		}
 
 		g2d.setColor(Color.white);
-		g2d.drawString("Select:", x + 8, y + height - 10);
+		g2d.drawString("Select:", getX() + 8, getY() + getHeight() - 10);
 		g2d.setColor(selectButtonColor);
-		g2d.drawString("All  Special  None", x + 120, y + height - 10);
+		g2d.drawString("All  Special  None", getX() + 120, getY() + getHeight() - 10);
 
 	}
 
 	@Override
 	public boolean onMouseWheelMoved(int mouseX, int mouseY, int notches) {
-		if ((mouseX > innerBox.x - x)
-				&& (mouseX < innerBox.x - x + innerBox.width)
-				&& (mouseY > innerBox.y - y)
-				&& (mouseY < innerBox.y - y + innerBox.height)) {
+		if ((mouseX > innerBox.x - getX())
+				&& (mouseX < innerBox.x - getX() + innerBox.width)
+				&& (mouseY > innerBox.y - getY())
+				&& (mouseY < innerBox.y - getY() + innerBox.height)) {
 			biomeListYOffset = Math.min(0, Math.max(-biomeListHeight
 					+ innerBox.height, biomeListYOffset - notches * 35));
 		}
@@ -154,24 +154,24 @@ public class BiomeWidget extends PanelWidget {
 	@Override
 	public boolean onMousePressed(int mouseX, int mouseY) {
 		if (scrollbarVisible) {
-			if ((mouseX > innerBox.x - x + innerBox.width)
-					&& (mouseX < innerBox.x - x + innerBox.width
+			if ((mouseX > innerBox.x - getX() + innerBox.width)
+					&& (mouseX < innerBox.x - getX() + innerBox.width
 							+ scrollbarWidth)
-					&& (mouseY > innerBox.y - y + scrollbarY)
-					&& (mouseY < innerBox.y - y + scrollbarY + scrollbarHeight)) {
+					&& (mouseY > innerBox.y - getY() + scrollbarY)
+					&& (mouseY < innerBox.y - getY() + scrollbarY + scrollbarHeight)) {
 
-				mouseYOnGrab = mouseY + y;
+				mouseYOnGrab = mouseY + getY();
 				scrollbarYOnGrab = scrollbarY;
 				scrollbarGrabbed = true;
 			}
 		}
 
 		boolean needsRedraw = false;
-		if ((mouseX > innerBox.x - x)
-				&& (mouseX < innerBox.x - x + innerBox.width)
-				&& (mouseY > innerBox.y - y)
-				&& (mouseY < innerBox.y - y + innerBox.height)) {
-			int id = (mouseY - (innerBox.y - y) - biomeListYOffset) / 16;
+		if ((mouseX > innerBox.x - getX())
+				&& (mouseX < innerBox.x - getX() + innerBox.width)
+				&& (mouseY > innerBox.y - getY())
+				&& (mouseY < innerBox.y - getY() + innerBox.height)) {
+			int id = (mouseY - (innerBox.y - getY()) - biomeListYOffset) / 16;
 			if (id < biomes.size()) {
 				BiomeLayer.instance.toggleBiomeSelect(biomes.get(id).index);
 				needsRedraw = true;
@@ -180,7 +180,7 @@ public class BiomeWidget extends PanelWidget {
 
 		// TODO: These values are temporarly hard coded for the sake of a fast
 		// release
-		if ((mouseY > height - 25) && (mouseY < height - 9)) {
+		if ((mouseY > getHeight() - 25) && (mouseY < getHeight() - 9)) {
 			if ((mouseX > 117) && (mouseX < 139)) {
 				BiomeLayer.instance.selectAllBiomes();
 				needsRedraw = true;
@@ -207,7 +207,7 @@ public class BiomeWidget extends PanelWidget {
 
 	@Override
 	public boolean onVisibilityCheck() {
-		height = Math.max(200, mapViewer.getHeight() - 200);
-		return BiomeToggleWidget.isBiomeWidgetVisible & (height > 200);
+		setHeight(Math.max(200, mapViewer.getHeight() - 200));
+		return BiomeToggleWidget.isBiomeWidgetVisible & (getHeight() > 200);
 	}
 }

@@ -31,16 +31,16 @@ public class ScaleWidget extends PanelWidget {
 
 		g2d.setColor(TEXT_COLOR);
 		g2d.setFont(TEXT_FONT);
-		g2d.drawString(message, x + 1 + ((width - stringWidth) >> 1), y + 18);
+		g2d.drawString(message, getX() + 1 + ((getWidth() - stringWidth) >> 1), getY() + 18);
 
 		g2d.setColor(Color.white);
 
 		g2d.setStroke(LINE_STROKE_2);
-		g2d.drawLine(x + cMargin, y + 26, x + cMargin + scaleWidth_px, y + 26);
+		g2d.drawLine(getX() + cMargin, getY() + 26, getX() + cMargin + scaleWidth_px, getY() + 26);
 		g2d.setStroke(LINE_STROKE_1);
-		g2d.drawLine(x + cMargin, y + 23, x + cMargin, y + 28);
-		g2d.drawLine(x + cMargin + scaleWidth_px, y + 23, x + cMargin
-				+ scaleWidth_px, y + 28);
+		g2d.drawLine(getX() + cMargin, getY() + 23, getX() + cMargin, getY() + 28);
+		g2d.drawLine(getX() + cMargin + scaleWidth_px, getY() + 23, getX() + cMargin
+				+ scaleWidth_px, getY() + 28);
 	}
 
 	@Override

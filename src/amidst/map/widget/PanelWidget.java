@@ -86,23 +86,23 @@ public abstract class PanelWidget extends Widget {
 
 	private void updatePosition() {
 		if (anchor == CornerAnchorPoint.TOP_LEFT) {
-			x = xPadding;
-			y = yPadding;
+			setX(xPadding);
+			setY(yPadding);
 		} else if (anchor == CornerAnchorPoint.BOTTOM_LEFT) {
-			x = xPadding;
-			y = mapViewer.getHeight() - (height + yPadding);
+			setX(xPadding);
+			setY(mapViewer.getHeight() - (getHeight() + yPadding));
 		} else if (anchor == CornerAnchorPoint.BOTTOM_RIGHT) {
-			x = mapViewer.getWidth() - (width + xPadding);
-			y = mapViewer.getHeight() - (height + yPadding);
+			setX(mapViewer.getWidth() - (getWidth() + xPadding));
+			setY(mapViewer.getHeight() - (getHeight() + yPadding));
 		} else if (anchor == CornerAnchorPoint.BOTTOM_CENTER) {
-			x = (mapViewer.getWidth() >> 1) - (width >> 1);
-			y = mapViewer.getHeight() - (height + yPadding);
+			setX((mapViewer.getWidth() >> 1) - (getWidth() >> 1));
+			setY(mapViewer.getHeight() - (getHeight() + yPadding));
 		} else if (anchor == CornerAnchorPoint.TOP_RIGHT) {
-			x = mapViewer.getWidth() - (width + xPadding);
-			y = yPadding;
+			setX(mapViewer.getWidth() - (getWidth() + xPadding));
+			setY(yPadding);
 		} else if (anchor == CornerAnchorPoint.CENTER) {
-			x = (mapViewer.getWidth() >> 1) - (width >> 1);
-			y = (mapViewer.getHeight() >> 1) - (height >> 1);
+			setX((mapViewer.getWidth() >> 1) - (getWidth() >> 1));
+			setY((mapViewer.getHeight() >> 1) - (getHeight() >> 1));
 		} else if (anchor == CornerAnchorPoint.NONE) {
 			// TODO: set x and y
 		}
@@ -113,46 +113,38 @@ public abstract class PanelWidget extends Widget {
 	}
 
 	private void drawBorder(Graphics2D g2d) {
-		int x10 = x - 10;
-		int y10 = y - 10;
-		int xWidth = x + width;
-		int yHeight = y + height;
+		int x10 = getX() - 10;
+		int y10 = getY() - 10;
+		int xWidth = getX() + getWidth();
+		int yHeight = getY() + getHeight();
 		g2d.drawImage(DROP_SHADOW_TOP_LEFT, x10, y10, null);
 		g2d.drawImage(DROP_SHADOW_TOP_RIGHT, xWidth, y10, null);
 		g2d.drawImage(DROP_SHADOW_BOTTOM_LEFT, x10, yHeight, null);
 		g2d.drawImage(DROP_SHADOW_BOTTOM_RIGHT, xWidth, yHeight, null);
-		g2d.drawImage(DROP_SHADOW_TOP, x, y10, width, 10, null);
-		g2d.drawImage(DROP_SHADOW_BOTTOM, x, yHeight, width, 10, null);
-		g2d.drawImage(DROP_SHADOW_LEFT, x10, y, 10, height, null);
-		g2d.drawImage(DROP_SHADOW_RIGHT, xWidth, y, 10, height, null);
+		g2d.drawImage(DROP_SHADOW_TOP, getX(), y10, getWidth(), 10, null);
+		g2d.drawImage(DROP_SHADOW_BOTTOM, getX(), yHeight, getWidth(), 10, null);
+		g2d.drawImage(DROP_SHADOW_LEFT, x10, getY(), 10, getHeight(), null);
+		g2d.drawImage(DROP_SHADOW_RIGHT, xWidth, getY(), 10, getHeight(), null);
 	}
 
 	private void drawBackground(Graphics2D g2d) {
-		g2d.fillRect(x, y, width, height);
-	}
-
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
+		g2d.fillRect(getX(), getY(), getWidth(), getHeight());
 	}
 
 	public void setDimensions(int width, int height) {
-		this.width = width;
-		this.height = height;
+		this.setWidth(width);
+		this.setHeight(height);
 	}
 
 	@Override
 	public boolean isVisible() {
-		boolean value = (visible && isTargetVisible) || isFading;
+		boolean value = isTargetVisible || isFading;
 		isTargetVisible = onVisibilityCheck();
 		return value;
 	}
 
 	protected boolean onVisibilityCheck() {
-		return visible;
+		return true;
 	}
 
 	public void forceVisibility(boolean value) {

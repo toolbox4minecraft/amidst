@@ -17,6 +17,6 @@ public class SeedWidget extends PanelWidget {
 				Options.instance.getSeedMessage()) + 20);
 		super.draw(g2d, time);
 		g2d.setColor(TEXT_COLOR);
-		g2d.drawString(Options.instance.getSeedMessage(), x + 10, y + 20);
+		g2d.drawString(Options.instance.getSeedMessage(), getX() + 10, getY() + 20);
 	}
 }

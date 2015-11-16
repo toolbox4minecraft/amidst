@@ -34,8 +34,8 @@ public class SelectedObjectWidget extends PanelWidget {
 		double imgHeight = icon.getHeight();
 		double ratio = imgWidth / imgHeight;
 
-		g2d.drawImage(icon, x + 5, y + 5, (int) (25. * ratio), 25, null);
-		g2d.drawString(message, x + 35, y + 23);
+		g2d.drawImage(icon, getX() + 5, getY() + 5, (int) (25. * ratio), 25, null);
+		g2d.drawString(message, getX() + 35, getY() + 23);
 	}
 
 	@Override

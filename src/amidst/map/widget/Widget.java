@@ -9,12 +9,10 @@ public abstract class Widget {
 	protected final MapViewer mapViewer;
 	protected final Map map;
 
-	protected int x;
-	protected int y;
-	protected int width;
-	protected int height;
-
-	protected boolean visible = true;
+	private int x;
+	private int y;
+	private int width;
+	private int height;
 
 	public Widget(MapViewer mapViewer) {
 		this.mapViewer = mapViewer;
@@ -52,17 +50,25 @@ public abstract class Widget {
 		return height;
 	}
 
-	public boolean isVisible() {
-		return visible;
+	protected void setX(int x) {
+		this.x = x;
 	}
 
-	public void setVisibility(boolean visible) {
-		this.visible = visible;
+	protected void setY(int y) {
+		this.y = y;
 	}
 
-	public float getAlpha() {
-		return 1.0f;
+	protected void setWidth(int width) {
+		this.width = width;
 	}
+
+	protected void setHeight(int height) {
+		this.height = height;
+	}
+
+	public abstract float getAlpha();
+
+	public abstract boolean isVisible();
 
 	public abstract void draw(Graphics2D g2d, float time);
 }

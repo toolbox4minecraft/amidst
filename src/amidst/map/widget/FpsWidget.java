@@ -23,7 +23,7 @@ public class FpsWidget extends PanelWidget {
 
 		fps.tick();
 		g2d.setColor(TEXT_COLOR);
-		g2d.drawString(framerate, x + 10, y + 20);
+		g2d.drawString(framerate, getX() + 10, getY() + 20);
 	}
 
 	@Override

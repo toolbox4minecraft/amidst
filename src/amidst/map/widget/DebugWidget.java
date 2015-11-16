@@ -48,7 +48,7 @@ public class DebugWidget extends PanelWidget {
 
 		g2d.setColor(TEXT_COLOR);
 		for (int i = 0; i < panelText.size(); i++)
-			g2d.drawString(panelText.get(i), x + 10, y + 20 + i * 20);
+			g2d.drawString(panelText.get(i), getX() + 10, getY() + 20 + i * 20);
 	}
 
 	@Override

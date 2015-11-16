@@ -20,7 +20,7 @@ public class BiomeToggleWidget extends PanelWidget {
 	@Override
 	public void draw(Graphics2D g2d, float time) {
 		super.draw(g2d, time);
-		g2d.drawImage(highlighterIcon, x, y, 36, 36, null);
+		g2d.drawImage(highlighterIcon, getX(), getY(), 36, 36, null);
 	}
 
 	@Override
