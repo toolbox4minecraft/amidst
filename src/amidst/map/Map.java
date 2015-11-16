@@ -361,17 +361,13 @@ public class Map {
 		while (frag.hasNext()) {
 			frag = frag.getNext();
 			for (int i = 0; i < frag.getObjectsLength(); i++) {
-				if (frag.getObjects()[i].isIconLayerVisible()) {
-					Point objPosition = frag.getObjects()[i].getAsPoint();
-					objPosition.x *= scale;
-					objPosition.y *= scale;
-					objPosition.x += x;
-					objPosition.y += y;
-
-					double distance = objPosition.distance(position);
-					if (distance < closestDistance) {
+				MapObject mapObject = frag.getObjects()[i];
+				if (mapObject.isIconLayerVisible()) {
+					double distance = getPosition(x, y, mapObject).distance(
+							position);
+					if (closestDistance > distance) {
 						closestDistance = distance;
-						closestObject = frag.getObjects()[i];
+						closestObject = mapObject;
 					}
 				}
 			}
@@ -384,11 +380,22 @@ public class Map {
 		return closestObject;
 	}
 
+	private Point getPosition(double x, double y, MapObject mapObject) {
+		Point result = new Point(mapObject.getXInFragment(),
+				mapObject.getYInFragment());
+		result.x *= scale;
+		result.y *= scale;
+		result.x += x;
+		result.y += y;
+		return result;
+	}
+
 	public String getBiomeNameAt(Point point) {
 		Fragment frag = startNode;
 		while (frag.hasNext()) {
 			frag = frag.getNext();
-			if ((frag.getXInWorld() <= point.x) && (frag.getYInWorld() <= point.y)
+			if ((frag.getXInWorld() <= point.x)
+					&& (frag.getYInWorld() <= point.y)
 					&& (frag.getXInWorld() + Fragment.SIZE > point.x)
 					&& (frag.getYInWorld() + Fragment.SIZE > point.y)) {
 				int x = point.x - frag.getXInWorld();
@@ -404,7 +411,8 @@ public class Map {
 		Fragment frag = startNode;
 		while (frag.hasNext()) {
 			frag = frag.getNext();
-			if ((frag.getXInWorld() <= point.x) && (frag.getYInWorld() <= point.y)
+			if ((frag.getXInWorld() <= point.x)
+					&& (frag.getYInWorld() <= point.y)
 					&& (frag.getXInWorld() + Fragment.SIZE > point.x)
 					&& (frag.getYInWorld() + Fragment.SIZE > point.y)) {
 				int x = point.x - frag.getXInWorld();

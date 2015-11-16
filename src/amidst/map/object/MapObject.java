@@ -1,6 +1,5 @@
 package amidst.map.object;
 
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import amidst.map.Fragment;
@@ -57,11 +56,6 @@ public abstract class MapObject {
 
 	public BufferedImage getImage() {
 		return type.getImage();
-	}
-
-	@Deprecated
-	public Point getAsPoint() {
-		return new Point(xInFragment, yInFragment);
 	}
 
 	protected MapMarkers getType() {
