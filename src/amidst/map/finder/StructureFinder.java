@@ -8,7 +8,7 @@ import amidst.map.layer.IconLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 
-public abstract class StructureFinder<L extends IconLayer> {
+public abstract class StructureFinder {
 	protected final List<Biome> validBiomes;
 	protected final long magicNumberForSeed1;
 	protected final long magicNumberForSeed2;
@@ -20,7 +20,7 @@ public abstract class StructureFinder<L extends IconLayer> {
 	protected final Random random;
 
 	private long seed;
-	private L iconLayer;
+	private IconLayer iconLayer;
 
 	public StructureFinder() {
 		validBiomes = getValidBiomes();
@@ -39,7 +39,8 @@ public abstract class StructureFinder<L extends IconLayer> {
 				- minDistanceBetweenScatteredFeatures;
 	}
 
-	public void generateMapObjects(long seed, L iconLayer, Fragment fragment) {
+	public void generateMapObjects(long seed, IconLayer iconLayer,
+			Fragment fragment) {
 		this.seed = seed;
 		this.iconLayer = iconLayer;
 		for (int x = 0; x < size; x++) {

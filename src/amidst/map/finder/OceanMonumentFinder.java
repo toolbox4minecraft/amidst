@@ -6,13 +6,12 @@ import java.util.List;
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 import amidst.map.layer.IconLayer;
-import amidst.map.layer.OceanMonumentLayer;
 import amidst.map.object.MapObject;
 import amidst.map.object.SimpleMapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 
-public class OceanMonumentFinder extends StructureFinder<OceanMonumentLayer> {
+public class OceanMonumentFinder extends StructureFinder {
 	// @formatter:off
 	// Not sure if the extended biomes count
 	private static final List<Biome> VALID_SURROUNDING_BIOMES = Arrays.asList(

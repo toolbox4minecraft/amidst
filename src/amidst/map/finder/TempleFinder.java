@@ -7,14 +7,13 @@ import amidst.logging.Log;
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 import amidst.map.layer.IconLayer;
-import amidst.map.layer.TempleLayer;
 import amidst.map.object.MapObject;
 import amidst.map.object.SimpleMapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 import amidst.version.VersionInfo;
 
-public class TempleFinder extends StructureFinder<TempleLayer> {
+public class TempleFinder extends StructureFinder {
 	@Override
 	protected MapObject getMapObject(IconLayer iconLayer, boolean isSuccessful,
 			int middleOfChunkX, int middleOfChunkY, int x, int y) {

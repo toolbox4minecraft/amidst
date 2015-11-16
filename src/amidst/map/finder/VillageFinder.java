@@ -6,13 +6,12 @@ import java.util.List;
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 import amidst.map.layer.IconLayer;
-import amidst.map.layer.VillageLayer;
 import amidst.map.object.MapObject;
 import amidst.map.object.SimpleMapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 
-public class VillageFinder extends StructureFinder<VillageLayer> {
+public class VillageFinder extends StructureFinder {
 	private static final int STRUCTURE_SIZE = 0;
 
 	@Override
