@@ -15,11 +15,7 @@ public class MapObjectPlayer extends MapObject {
 		super(MapMarkers.PLAYER, toFragmentCoordinates(player.getX()),
 				toFragmentCoordinates(player.getZ()));
 		this.player = player;
-		initMarker();
-	}
-
-	private void initMarker() {
-		marker = getType().getImage();
+		this.marker = MapMarkers.PLAYER.getImage();
 	}
 
 	@Override
@@ -38,16 +34,6 @@ public class MapObjectPlayer extends MapObject {
 
 	public int getWorldY() {
 		return player.getZ();
-	}
-
-	@Override
-	public int getWidth() {
-		return (int) (marker.getWidth() * getLocalScale());
-	}
-
-	@Override
-	public int getHeight() {
-		return (int) (marker.getHeight() * getLocalScale());
 	}
 
 	@Override

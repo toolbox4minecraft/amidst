@@ -36,11 +36,11 @@ public abstract class MapObject {
 	}
 
 	public int getWidth() {
-		return (int) (type.getImage().getWidth() * localScale);
+		return (int) (getImage().getWidth() * localScale);
 	}
 
 	public int getHeight() {
-		return (int) (type.getImage().getHeight() * localScale);
+		return (int) (getImage().getHeight() * localScale);
 	}
 
 	public int getX() {
@@ -82,10 +82,6 @@ public abstract class MapObject {
 
 	public void setRy(int ry) {
 		this.ry = ry;
-	}
-
-	protected double getLocalScale() {
-		return localScale;
 	}
 
 	public void setLocalScale(double localScale) {
