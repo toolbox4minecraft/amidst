@@ -20,7 +20,7 @@ public abstract class StructureFinder<L extends IconLayer> {
 	protected final Random random;
 
 	private long seed;
-	private L parentLayer;
+	private L iconLayer;
 
 	public StructureFinder() {
 		validBiomes = getValidBiomes();
@@ -39,9 +39,9 @@ public abstract class StructureFinder<L extends IconLayer> {
 				- minDistanceBetweenScatteredFeatures;
 	}
 
-	public void generateMapObjects(long seed, L parentLayer, Fragment fragment) {
+	public void generateMapObjects(long seed, L iconLayer, Fragment fragment) {
 		this.seed = seed;
-		this.parentLayer = parentLayer;
+		this.iconLayer = iconLayer;
 		for (int x = 0; x < size; x++) {
 			for (int y = 0; y < size; y++) {
 				generateAt(fragment, x, y);
@@ -54,7 +54,6 @@ public abstract class StructureFinder<L extends IconLayer> {
 		int chunkY = y + fragment.getChunkYInWorld();
 		MapObject mapObject = checkChunk(x, y, chunkX, chunkY);
 		if (mapObject != null) {
-			mapObject.setIconLayer(parentLayer);
 			mapObject.setFragment(fragment);
 		}
 	}
@@ -63,7 +62,8 @@ public abstract class StructureFinder<L extends IconLayer> {
 		boolean successful = isSuccessful(chunkX, chunkY);
 		int middleOfChunkX = middleOfChunk(chunkX);
 		int middleOfChunkY = middleOfChunk(chunkY);
-		return getMapObject(successful, middleOfChunkX, middleOfChunkY, x, y);
+		return getMapObject(iconLayer, successful, middleOfChunkX,
+				middleOfChunkY, x, y);
 	}
 
 	private boolean isSuccessful(int chunkX, int chunkY) {
@@ -104,8 +104,9 @@ public abstract class StructureFinder<L extends IconLayer> {
 		return value * 16 + 8;
 	}
 
-	protected abstract MapObject getMapObject(boolean isSuccessful,
-			int middleOfChunkX, int middleOfChunkY, int x, int y);
+	protected abstract MapObject getMapObject(IconLayer iconLayer,
+			boolean isSuccessful, int middleOfChunkX, int middleOfChunkY,
+			int x, int y);
 
 	protected abstract List<Biome> getValidBiomes();
 

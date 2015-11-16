@@ -47,8 +47,7 @@ public class SpawnLayer extends IconLayer {
 	private void initSpawnObject() {
 		Point spawnCenter = getSpawnCenter();
 		if (spawnCenter != null) {
-			spawn = new MapObjectSpawn(spawnCenter.x, spawnCenter.y);
-			spawn.setIconLayer(this);
+			spawn = new MapObjectSpawn(this, spawnCenter.x, spawnCenter.y);
 		} else {
 			Log.debug("Unable to find spawn biome.");
 			spawn = null;

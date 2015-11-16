@@ -5,6 +5,7 @@ import java.util.List;
 
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
+import amidst.map.layer.IconLayer;
 import amidst.map.layer.VillageLayer;
 import amidst.map.object.MapObject;
 import amidst.map.object.SimpleMapObject;
@@ -15,11 +16,11 @@ public class VillageFinder extends StructureFinder<VillageLayer> {
 	private static final int STRUCTURE_SIZE = 0;
 
 	@Override
-	protected MapObject getMapObject(boolean isSuccessful, int middleOfChunkX,
-			int middleOfChunkY, int x, int y) {
+	protected MapObject getMapObject(IconLayer iconLayer, boolean isSuccessful,
+			int middleOfChunkX, int middleOfChunkY, int x, int y) {
 		if (isSuccessful) {
 			if (isValid(middleOfChunkX, middleOfChunkY)) {
-				return createMapObject(x << 4, y << 4);
+				return createMapObject(iconLayer, x << 4, y << 4);
 			} else {
 				return null;
 			}
@@ -33,8 +34,8 @@ public class VillageFinder extends StructureFinder<VillageLayer> {
 				STRUCTURE_SIZE, validBiomes);
 	}
 
-	private MapObject createMapObject(int x, int y) {
-		return new SimpleMapObject(MapMarkers.VILLAGE, x, y);
+	private MapObject createMapObject(IconLayer iconLayer, int x, int y) {
+		return new SimpleMapObject(iconLayer, MapMarkers.VILLAGE, x, y);
 	}
 
 	@Override

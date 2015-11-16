@@ -95,9 +95,8 @@ public class StrongholdLayer extends IconLayer {
 		if (hasStronghold(chunkX, chunkY)) {
 			// FIXME: Possible use of checkChunk causing negative icons
 			// to be misaligned!
-			MapObject mapObject = new SimpleMapObject(MapMarkers.STRONGHOLD,
-					x << 4, y << 4);
-			mapObject.setIconLayer(this);
+			MapObject mapObject = new SimpleMapObject(this,
+					MapMarkers.STRONGHOLD, x << 4, y << 4);
 			mapObject.setFragment(fragment);
 		}
 	}
@@ -131,8 +130,8 @@ public class StrongholdLayer extends IconLayer {
 				x = strongholdLocation.x >> 4;
 				y = strongholdLocation.y >> 4;
 			}
-			strongholds[i] = new SimpleMapObject(MapMarkers.STRONGHOLD, x << 4,
-					y << 4);
+			strongholds[i] = new SimpleMapObject(this, MapMarkers.STRONGHOLD,
+					x << 4, y << 4);
 			angle = updateAngle(angle);
 		}
 	}
@@ -196,7 +195,7 @@ public class StrongholdLayer extends IconLayer {
 		return biome != null && biome.type.value1 > 0;
 	}
 
-	// TODO: remove me!
+	@Deprecated
 	public MapObject[] getStrongholds() {
 		return strongholds;
 	}

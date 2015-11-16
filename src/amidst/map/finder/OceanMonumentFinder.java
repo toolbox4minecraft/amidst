@@ -5,6 +5,7 @@ import java.util.List;
 
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
+import amidst.map.layer.IconLayer;
 import amidst.map.layer.OceanMonumentLayer;
 import amidst.map.object.MapObject;
 import amidst.map.object.SimpleMapObject;
@@ -31,11 +32,11 @@ public class OceanMonumentFinder extends StructureFinder<OceanMonumentLayer> {
 	private static final int STRUCTURE_SIZE = 29;
 
 	@Override
-	protected MapObject getMapObject(boolean isSuccessful, int middleOfChunkX,
-			int middleOfChunkY, int x, int y) {
+	protected MapObject getMapObject(IconLayer iconLayer, boolean isSuccessful,
+			int middleOfChunkX, int middleOfChunkY, int x, int y) {
 		if (isSuccessful) {
 			if (isValid(middleOfChunkX, middleOfChunkY)) {
-				return createMapObject(x << 4, y << 4);
+				return createMapObject(iconLayer, x << 4, y << 4);
 			} else {
 				return null;
 			}
@@ -55,8 +56,8 @@ public class OceanMonumentFinder extends StructureFinder<OceanMonumentLayer> {
 		return validBiomes.contains(biome) && isValid;
 	}
 
-	private MapObject createMapObject(int x, int y) {
-		return new SimpleMapObject(MapMarkers.OCEAN_MONUMENT, x, y);
+	private MapObject createMapObject(IconLayer iconLayer, int x, int y) {
+		return new SimpleMapObject(iconLayer, MapMarkers.OCEAN_MONUMENT, x, y);
 	}
 
 	@Override

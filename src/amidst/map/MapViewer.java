@@ -442,6 +442,7 @@ public class MapViewer {
 	public MapViewer(World world) {
 		this.world = world;
 		initPlayerLayer();
+		initPlayerMenu();
 		initMap();
 		initWidgets();
 		initComponent();
@@ -450,11 +451,13 @@ public class MapViewer {
 
 	private void initPlayerLayer() {
 		playerLayer.setWorld(world);
+	}
+
+	private void initPlayerMenu() {
 		if (world.isFileWorld()) {
 			PlayerMenuItemFactory factory = new PlayerMenuItemFactory(this,
 					playerLayer);
-			for (MapObjectPlayer player : world.getAsFileWorld()
-					.getMapObjectPlayers()) {
+			for (MapObjectPlayer player : playerLayer.getPlayers()) {
 				menu.add(factory.create(player));
 			}
 		}

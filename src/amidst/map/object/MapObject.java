@@ -19,16 +19,18 @@ public abstract class MapObject {
 		}
 	}
 
-	private MapMarkers type;
+	private final IconLayer iconLayer;
+	private final MapMarkers type;
 	private final int xInFragment;
 	private final int yInFragment;
 	private int xInWorld;
 	private int yInWorld;
 	private double scale = 1.0;
-	private IconLayer iconLayer;
 	private Fragment fragment;
 
-	public MapObject(MapMarkers type, int xInFragment, int yInFragment) {
+	public MapObject(IconLayer iconLayer, MapMarkers type, int xInFragment,
+			int yInFragment) {
+		this.iconLayer = iconLayer;
 		this.type = type;
 		this.xInFragment = xInFragment;
 		this.yInFragment = yInFragment;
@@ -72,10 +74,6 @@ public abstract class MapObject {
 
 	public void setScale(double scale) {
 		this.scale = scale;
-	}
-
-	public void setIconLayer(IconLayer iconLayer) {
-		this.iconLayer = iconLayer;
 	}
 
 	@Deprecated

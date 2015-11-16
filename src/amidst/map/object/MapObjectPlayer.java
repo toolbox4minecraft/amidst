@@ -3,14 +3,16 @@ package amidst.map.object;
 import java.awt.image.BufferedImage;
 
 import amidst.map.MapMarkers;
+import amidst.map.layer.IconLayer;
 import amidst.minecraft.world.FileWorld.Player;
 
 public class MapObjectPlayer extends MapObject {
 	private Player player;
 	private BufferedImage image;
 
-	public MapObjectPlayer(Player player) {
-		super(MapMarkers.PLAYER, toFragmentCoordinates(player.getX()),
+	public MapObjectPlayer(IconLayer iconLayer, Player player) {
+		super(iconLayer, MapMarkers.PLAYER,
+				toFragmentCoordinates(player.getX()),
 				toFragmentCoordinates(player.getZ()));
 		this.player = player;
 		this.image = MapMarkers.PLAYER.getImage();

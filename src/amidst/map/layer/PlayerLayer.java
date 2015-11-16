@@ -1,5 +1,8 @@
 package amidst.map.layer;
 
+import java.util.Collections;
+import java.util.List;
+
 import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.SkinLoader;
@@ -9,7 +12,7 @@ import amidst.minecraft.world.World;
 
 public class PlayerLayer extends IconLayer {
 	private SkinLoader skinLoader;
-	private FileWorld worldFile;
+	private List<MapObjectPlayer> players;
 
 	public PlayerLayer(SkinLoader skinLoader) {
 		this.skinLoader = skinLoader;
@@ -22,28 +25,30 @@ public class PlayerLayer extends IconLayer {
 
 	@Override
 	public void generateMapObjects(Fragment fragment) {
-		if (worldFile != null) {
-			for (MapObjectPlayer player : worldFile.getMapObjectPlayers()) {
-				if (fragment.isInBounds(player)) {
-					player.setIconLayer(this);
-					player.setFragment(fragment);
-				}
+		for (MapObjectPlayer player : players) {
+			if (fragment.isInBounds(player)) {
+				player.setFragment(fragment);
 			}
 		}
 	}
 
 	public void setWorld(World world) {
 		if (world instanceof FileWorld) {
-			this.worldFile = (FileWorld) world;
-			updateSkinManager();
+			players = world.getAsFileWorld().getMapObjectPlayers(this);
+			loadSkins();
 		} else {
-			this.worldFile = null;
+			players = Collections.emptyList();
 		}
 	}
 
-	private void updateSkinManager() {
-		for (MapObjectPlayer player : worldFile.getMapObjectPlayers()) {
+	private void loadSkins() {
+		for (MapObjectPlayer player : players) {
 			skinLoader.loadSkin(player);
 		}
+	}
+
+	@Deprecated
+	public List<MapObjectPlayer> getPlayers() {
+		return players;
 	}
 }

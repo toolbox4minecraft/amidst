@@ -1,13 +1,14 @@
 package amidst.map.object;
 
 import amidst.map.MapMarkers;
+import amidst.map.layer.IconLayer;
 
 public class MapObjectSpawn extends MapObject {
 	private int xInWorld;
 	private int yInWorld;
 
-	public MapObjectSpawn(int xInWorld, int yInWorld) {
-		super(MapMarkers.SPAWN, toFragmentCoordinates(xInWorld),
+	public MapObjectSpawn(IconLayer iconLayer, int xInWorld, int yInWorld) {
+		super(iconLayer, MapMarkers.SPAWN, toFragmentCoordinates(xInWorld),
 				toFragmentCoordinates(yInWorld));
 		this.xInWorld = xInWorld;
 		this.yInWorld = yInWorld;

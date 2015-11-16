@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import amidst.map.layer.IconLayer;
 import amidst.map.object.MapObjectPlayer;
 import amidst.minecraft.MinecraftUtil;
 
@@ -66,7 +67,6 @@ public class FileWorld extends World {
 	private String generatorOptions;
 	private boolean isMultiPlayerMap;
 	private List<Player> players;
-	private List<MapObjectPlayer> mapObjectPlayers;
 
 	FileWorld(File worldFile, long seed, WorldType worldType,
 			String generatorOptions, boolean isMultiPlayerMap,
@@ -78,7 +78,6 @@ public class FileWorld extends World {
 		this.players = Collections.unmodifiableList(players);
 		this.mover = new PlayerMover(worldFile, isMultiPlayerMap);
 		initPlayers();
-		initMapObjectPlayers();
 		initMinecraftInterface();
 	}
 
@@ -90,14 +89,6 @@ public class FileWorld extends World {
 		for (Player player : players) {
 			player.setWorld(this);
 		}
-	}
-
-	private void initMapObjectPlayers() {
-		List<MapObjectPlayer> result = new ArrayList<MapObjectPlayer>();
-		for (Player player : players) {
-			result.add(new MapObjectPlayer(player));
-		}
-		mapObjectPlayers = Collections.unmodifiableList(result);
 	}
 
 	@Override
@@ -127,8 +118,12 @@ public class FileWorld extends World {
 		return players;
 	}
 
-	public List<MapObjectPlayer> getMapObjectPlayers() {
-		return mapObjectPlayers;
+	public List<MapObjectPlayer> getMapObjectPlayers(IconLayer iconLayer) {
+		List<MapObjectPlayer> result = new ArrayList<MapObjectPlayer>();
+		for (Player player : players) {
+			result.add(new MapObjectPlayer(iconLayer, player));
+		}
+		return Collections.unmodifiableList(result);
 	}
 
 	public void savePlayerLocations() {
