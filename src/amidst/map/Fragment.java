@@ -171,8 +171,6 @@ public class Fragment {
 	}
 
 	public void addObject(MapObject object) {
-		object.setXInWorld(object.getXInFragment() + this.xInWorld);
-		object.setYInWorld(object.getYInFragment() + this.yInWorld);
 		if (objectsLength >= objects.length) {
 			MapObject[] tempObjects = new MapObject[objects.length << 1];
 			for (int i = 0; i < objects.length; i++) {

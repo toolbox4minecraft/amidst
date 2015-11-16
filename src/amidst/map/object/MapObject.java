@@ -77,14 +77,6 @@ public abstract class MapObject {
 		return yInWorld;
 	}
 
-	public void setXInWorld(int xInWorld) {
-		this.xInWorld = xInWorld;
-	}
-
-	public void setYInWorld(int yInWorld) {
-		this.yInWorld = yInWorld;
-	}
-
 	public void setLocalScale(double localScale) {
 		this.localScale = localScale;
 	}
@@ -112,6 +104,8 @@ public abstract class MapObject {
 		clearFragment();
 		this.fragment = fragment;
 		if (fragment != null) {
+			xInWorld = getXInFragment() + fragment.getXInWorld();
+			yInWorld = getYInFragment() + fragment.getYInWorld();
 			fragment.addObject(this);
 		}
 	}
