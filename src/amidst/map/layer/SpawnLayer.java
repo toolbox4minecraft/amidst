@@ -34,13 +34,9 @@ public class SpawnLayer extends IconLayer {
 
 	@Override
 	public void generateMapObjects(Fragment fragment) {
-		if (spawn != null && isInFragmentBounds(fragment)) {
+		if (spawn != null && fragment.isInBounds(spawn)) {
 			fragment.addObject(spawn);
 		}
-	}
-
-	private boolean isInFragmentBounds(Fragment fragment) {
-		return fragment.isInBounds(spawn.getWorldX(), spawn.getWorldY());
 	}
 
 	@Override

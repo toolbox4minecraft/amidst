@@ -24,17 +24,13 @@ public class PlayerLayer extends IconLayer {
 	public void generateMapObjects(Fragment fragment) {
 		if (worldFile != null) {
 			for (MapObjectPlayer player : worldFile.getMapObjectPlayers()) {
-				if (isInFragmentBounds(fragment, player)) {
+				if (fragment.isInBounds(player)) {
 					player.setParentLayer(this);
 					player.setParentFragment(fragment);
 					fragment.addObject(player);
 				}
 			}
 		}
-	}
-
-	private boolean isInFragmentBounds(Fragment fragment, MapObjectPlayer player) {
-		return fragment.isInBounds(player.getWorldX(), player.getWorldY());
 	}
 
 	@Override

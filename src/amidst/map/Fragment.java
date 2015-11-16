@@ -232,7 +232,11 @@ public class Fragment {
 		}
 	}
 
-	public boolean isInBounds(int worldX, int worldY) {
+	public boolean isInBounds(MapObject mapObject) {
+		return isInBounds(mapObject.getWorldX(), mapObject.getWorldY());
+	}
+
+	private boolean isInBounds(int worldX, int worldY) {
 		return worldX >= blockX && worldX < blockX + Fragment.SIZE
 				&& worldY >= blockY && worldY < blockY + Fragment.SIZE;
 	}
