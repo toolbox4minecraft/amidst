@@ -12,7 +12,6 @@ import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.remote.RemoteMinecraft;
-import amidst.minecraft.world.FileWorld;
 import amidst.minecraft.world.World;
 import amidst.utilities.SeedHistoryLogger;
 import amidst.version.MinecraftProfile;
@@ -100,14 +99,6 @@ public class Application {
 
 	public World getWorld() {
 		return world;
-	}
-
-	public boolean isFileWorld() {
-		return world instanceof FileWorld;
-	}
-
-	public FileWorld getWorldAsFileWorld() {
-		return (FileWorld) world;
 	}
 
 	public void setWorld(World world) {

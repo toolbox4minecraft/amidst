@@ -55,6 +55,7 @@ import amidst.map.widget.SeedWidget;
 import amidst.map.widget.SelectedObjectWidget;
 import amidst.map.widget.Widget;
 import amidst.minecraft.MinecraftUtil;
+import amidst.minecraft.world.World;
 import amidst.resources.ResourceLoader;
 
 public class MapViewer {
@@ -132,7 +133,7 @@ public class MapViewer {
 		public void mouseReleased(MouseEvent e) {
 			if (e.isPopupTrigger() && MinecraftUtil.getVersion().saveEnabled()) {
 				lastRightClick = getMousePositionFromEvent(e);
-				if (application.isFileWorld()) {
+				if (application.getWorld().isFileWorld()) {
 					menu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			} else if (mouseOwner != null) {
@@ -435,11 +436,12 @@ public class MapViewer {
 	}
 
 	private void initPlayerLayer() {
-		if (application.isFileWorld()) {
-			playerLayer.setWorld(application.getWorldAsFileWorld());
+		World world = application.getWorld();
+		playerLayer.setWorld(world);
+		if (world.isFileWorld()) {
 			PlayerMenuItemFactory factory = new PlayerMenuItemFactory(this,
 					playerLayer);
-			for (MapObjectPlayer player : application.getWorldAsFileWorld()
+			for (MapObjectPlayer player : world.getAsFileWorld()
 					.getMapObjectPlayers()) {
 				menu.add(factory.create(player));
 			}

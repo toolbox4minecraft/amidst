@@ -2,7 +2,7 @@ package amidst.minecraft.world;
 
 import amidst.minecraft.MinecraftUtil;
 
-public class SeedWorld implements World {
+public class SeedWorld extends World {
 	private long seed;
 	private String seedText;
 	private WorldType worldType;

@@ -11,6 +11,7 @@ import amidst.logging.Log;
 import amidst.map.layer.StrongholdLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.world.FileWorld.Player;
+import amidst.minecraft.world.World;
 import amidst.minecraft.world.WorldType;
 import amidst.minecraft.world.Worlds;
 
@@ -27,8 +28,9 @@ public class MenuActions {
 	}
 
 	public void savePlayerLocations() {
-		if (application.isFileWorld()) {
-			application.getWorldAsFileWorld().savePlayerLocations();
+		World world = application.getWorld();
+		if (world.isFileWorld()) {
+			world.getAsFileWorld().savePlayerLocations();
 		}
 	}
 
@@ -89,9 +91,9 @@ public class MenuActions {
 	}
 
 	public void gotoPlayer() {
-		if (application.isFileWorld()) {
-			List<Player> playerList = application.getWorldAsFileWorld()
-					.getPlayers();
+		World world = application.getWorld();
+		if (world.isFileWorld()) {
+			List<Player> playerList = world.getAsFileWorld().getPlayers();
 			Player[] playerArray = playerList.toArray(new Player[playerList
 					.size()]);
 			Player player = mapWindow.askForOptions("Go to", "Select player:",

@@ -1,9 +1,17 @@
 package amidst.minecraft.world;
 
-public interface World {
-	long getSeed();
+public abstract class World {
+	public boolean isFileWorld() {
+		return this instanceof FileWorld;
+	}
 
-	String getSeedText();
+	public FileWorld getAsFileWorld() {
+		return (FileWorld) this;
+	}
 
-	WorldType getWorldType();
+	public abstract long getSeed();
+
+	public abstract String getSeedText();
+
+	public abstract WorldType getWorldType();
 }

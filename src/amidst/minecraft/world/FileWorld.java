@@ -8,7 +8,7 @@ import java.util.List;
 import amidst.map.object.MapObjectPlayer;
 import amidst.minecraft.MinecraftUtil;
 
-public class FileWorld implements World {
+public class FileWorld extends World {
 	public static class Player {
 		private FileWorld world;
 
