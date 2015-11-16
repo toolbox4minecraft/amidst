@@ -34,8 +34,8 @@ public class PlayerMenuItemFactory {
 
 	private void playerSelected(MapObjectPlayer player) {
 		Map map = playerLayer.getMap();
-		if (player.parentFragment != null) {
-			player.parentFragment.removeObject(player);
+		if (player.getParentFragment() != null) {
+			player.getParentFragment().removeObject(player);
 		}
 		Point lastRightClick = mapViewer.lastRightClick;
 		if (lastRightClick != null) {
@@ -43,7 +43,7 @@ public class PlayerMenuItemFactory {
 			player.setPosition(location.x, location.y);
 			Fragment fragment = map.getFragmentAt(location);
 			fragment.addObject(player);
-			player.parentFragment = fragment;
+			player.setParentFragment(fragment);
 		}
 	}
 }

@@ -26,7 +26,7 @@ public class PlayerLayer extends IconLayer {
 			for (MapObjectPlayer player : worldFile.getMapObjectPlayers()) {
 				if (isInFragmentBounds(fragment, player)) {
 					player.setParentLayer(this);
-					player.parentFragment = fragment;
+					player.setParentFragment(fragment);
 					fragment.addObject(player);
 				}
 			}
@@ -46,7 +46,7 @@ public class PlayerLayer extends IconLayer {
 			if (fragment.getObjects()[i] instanceof MapObjectPlayer) {
 				MapObjectPlayer mapObjectPlayer = (MapObjectPlayer) fragment
 						.getObjects()[i];
-				mapObjectPlayer.parentFragment = null;
+				mapObjectPlayer.setParentFragment(null);
 			}
 		}
 		super.clearMapObjects(fragment);

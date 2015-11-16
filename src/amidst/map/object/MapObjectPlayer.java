@@ -9,8 +9,7 @@ import amidst.minecraft.world.FileWorld.Player;
 public class MapObjectPlayer extends MapObject {
 	private Player player;
 	private BufferedImage marker;
-	// TODO: make this private
-	public Fragment parentFragment = null;
+	private Fragment parentFragment;
 
 	public MapObjectPlayer(Player player) {
 		super(MapMarkers.PLAYER, calc(player.getX()), calc(player.getZ()));
@@ -72,5 +71,13 @@ public class MapObjectPlayer extends MapObject {
 	@Deprecated
 	public void setPosition(int x, int z) {
 		player.moveTo(x, z);
+	}
+
+	public Fragment getParentFragment() {
+		return parentFragment;
+	}
+
+	public void setParentFragment(Fragment parentFragment) {
+		this.parentFragment = parentFragment;
 	}
 }
