@@ -1,4 +1,4 @@
-package amidst.map.layers;
+package amidst.map.finder;
 
 import java.util.List;
 import java.util.Random;

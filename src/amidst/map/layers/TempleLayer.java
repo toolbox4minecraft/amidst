@@ -3,6 +3,7 @@ package amidst.map.layers;
 import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
+import amidst.map.finder.TempleFinder;
 
 public class TempleLayer extends IconLayer {
 	private TempleFinder finder = new TempleFinder();

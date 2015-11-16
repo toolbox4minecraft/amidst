@@ -1,4 +1,4 @@
-package amidst.map.layers;
+package amidst.map.finder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +9,7 @@ import amidst.map.MapObject;
 import amidst.map.MapObjectDesertTemple;
 import amidst.map.MapObjectJungleTemple;
 import amidst.map.MapObjectWitchHut;
+import amidst.map.layers.TempleLayer;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 import amidst.version.VersionInfo;

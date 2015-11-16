@@ -1,4 +1,4 @@
-package amidst.map.layers;
+package amidst.map.finder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import amidst.map.Fragment;
 import amidst.map.MapObject;
 import amidst.map.MapObjectVillage;
+import amidst.map.layers.VillageLayer;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 

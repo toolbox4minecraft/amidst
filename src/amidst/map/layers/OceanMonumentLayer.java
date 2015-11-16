@@ -3,6 +3,7 @@ package amidst.map.layers;
 import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.IconLayer;
+import amidst.map.finder.OceanMonumentFinder;
 
 public class OceanMonumentLayer extends IconLayer {
 	private OceanMonumentFinder finder = new OceanMonumentFinder();
