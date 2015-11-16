@@ -13,6 +13,13 @@ public class MapObject {
 		return new MapObject(iconLayer, type, xInFragment, yInFragment);
 	}
 
+	public static MapObject fromWorldCoordinates(IconLayer iconLayer,
+			MapMarkers type, int xInWorld, int yInWorld) {
+		return new MapObject(iconLayer, type,
+				CoordinateUtils.toFragment(xInWorld),
+				CoordinateUtils.toFragment(yInWorld), xInWorld, yInWorld);
+	}
+
 	private final IconLayer iconLayer;
 	private final MapMarkers type;
 	private final int xInFragment;
@@ -21,6 +28,13 @@ public class MapObject {
 	private int yInWorld;
 	private double scale = 1.0;
 	private Fragment fragment;
+
+	protected MapObject(IconLayer iconLayer, MapMarkers type, int xInFragment,
+			int yInFragment, int xInWorld, int yInWorld) {
+		this(iconLayer, type, xInFragment, yInFragment);
+		this.xInWorld = xInWorld;
+		this.yInWorld = yInWorld;
+	}
 
 	protected MapObject(IconLayer iconLayer, MapMarkers type, int xInFragment,
 			int yInFragment) {

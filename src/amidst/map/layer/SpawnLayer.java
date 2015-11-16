@@ -8,7 +8,8 @@ import java.util.Random;
 import amidst.Options;
 import amidst.logging.Log;
 import amidst.map.Fragment;
-import amidst.map.object.MapObjectSpawn;
+import amidst.map.MapMarkers;
+import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 
@@ -25,7 +26,7 @@ public class SpawnLayer extends IconLayer {
 	);
 	// @formatter:on
 
-	private MapObjectSpawn spawn;
+	private MapObject spawn;
 
 	@Override
 	public boolean isVisible() {
@@ -45,16 +46,17 @@ public class SpawnLayer extends IconLayer {
 	}
 
 	private void initSpawnObject() {
-		Point spawnCenter = getSpawnCenter();
+		Point spawnCenter = getSpawnCenterInWorldCoordinates();
 		if (spawnCenter != null) {
-			spawn = new MapObjectSpawn(this, spawnCenter.x, spawnCenter.y);
+			spawn = MapObject.fromWorldCoordinates(this, MapMarkers.SPAWN,
+					spawnCenter.x, spawnCenter.y);
 		} else {
 			Log.debug("Unable to find spawn biome.");
 			spawn = null;
 		}
 	}
 
-	private Point getSpawnCenter() {
+	private Point getSpawnCenterInWorldCoordinates() {
 		Random random = new Random(Options.instance.world.getSeed());
 		return MinecraftUtil.findValidLocation(0, 0, 256, VALID_BIOMES, random);
 	}
