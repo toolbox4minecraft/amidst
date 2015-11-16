@@ -11,6 +11,6 @@ public class MapObjectStronghold extends MapObject {
 	
 	@Override
 	public String toString() {
-		return "Stronghold at (" + x + ", " + y + ")";
+		return "Stronghold at (" + getX() + ", " + getY() + ")";
 	}
 }

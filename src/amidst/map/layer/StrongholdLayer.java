@@ -102,8 +102,8 @@ public class StrongholdLayer extends IconLayer {
 
 	private boolean hasStronghold(int chunkX, int chunkY) {
 		for (int i = 0; i < 3; i++) {
-			int strongholdChunkX = strongholds[i].x >> 4;
-			int strongholdChunkY = strongholds[i].y >> 4;
+			int strongholdChunkX = strongholds[i].getX() >> 4;
+			int strongholdChunkY = strongholds[i].getY() >> 4;
 			if ((strongholdChunkX == chunkX) && (strongholdChunkY == chunkY)) {
 				return true;
 			}

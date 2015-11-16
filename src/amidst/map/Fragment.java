@@ -159,7 +159,7 @@ public class Fragment {
 			int width = mapObject.getWidth();
 			int height = mapObject.getHeight();
 			g.setTransform(mat);
-			g.translate(mapObject.x, mapObject.y);
+			g.translate(mapObject.getX(), mapObject.getY());
 			g.scale(invZoom, invZoom);
 			g.drawImage(mapObject.getImage(), -(width >> 1), -(height >> 1),
 					width, height, null);
@@ -172,8 +172,8 @@ public class Fragment {
 	}
 
 	public void addObject(MapObject object) {
-		object.rx = object.x + this.blockX;
-		object.ry = object.y + this.blockY;
+		object.rx = object.getX() + this.blockX;
+		object.ry = object.getY() + this.blockY;
 		if (objectsLength >= objects.length) {
 			MapObject[] tempObjects = new MapObject[objects.length << 1];
 			for (int i = 0; i < objects.length; i++) {

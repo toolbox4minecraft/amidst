@@ -47,8 +47,8 @@ public class MapObjectPlayer extends MapObject {
 	}
 
 	private void updatePosition() {
-		this.x = calc(player.getX());
-		this.y = calc(player.getZ());
+		this.setX(calc(player.getX()));
+		this.setY(calc(player.getZ()));
 	}
 
 	public int getGlobalX() {

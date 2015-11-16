@@ -18,6 +18,6 @@ public class MapObjectSpawn extends MapObject {
 	
 	@Override
 	public String toString() {
-		return "Spawn point at (" + x + ", " + y + ")";
+		return "Spawn point at (" + getX() + ", " + getY() + ")";
 	}
 }

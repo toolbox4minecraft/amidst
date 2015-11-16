@@ -73,7 +73,7 @@ public class MenuActions {
 				.askForOptions("Go to", "Select Stronghold:",
 						StrongholdLayer.instance.getStrongholds());
 		if (stronghold != null) {
-			mapWindow.moveMapToCoordinates(stronghold.x, stronghold.y);
+			mapWindow.moveMapToCoordinates(stronghold.getX(), stronghold.getY());
 		}
 	}
 
