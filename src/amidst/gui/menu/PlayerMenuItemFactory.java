@@ -9,7 +9,7 @@ import javax.swing.JMenuItem;
 import amidst.map.Fragment;
 import amidst.map.Map;
 import amidst.map.MapViewer;
-import amidst.map.layers.PlayerLayer;
+import amidst.map.layer.PlayerLayer;
 import amidst.map.object.MapObjectPlayer;
 
 public class PlayerMenuItemFactory {

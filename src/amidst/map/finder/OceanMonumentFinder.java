@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import amidst.map.Fragment;
-import amidst.map.layers.OceanMonumentLayer;
+import amidst.map.layer.OceanMonumentLayer;
 import amidst.map.object.MapObject;
 import amidst.map.object.MapObjectOceanMonument;
 import amidst.minecraft.Biome;

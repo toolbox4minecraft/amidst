@@ -1,4 +1,4 @@
-package amidst.map.layers;
+package amidst.map.layer;
 
 import java.awt.Point;
 import java.util.Arrays;

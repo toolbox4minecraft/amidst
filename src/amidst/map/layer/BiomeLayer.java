@@ -1,4 +1,4 @@
-package amidst.map.layers;
+package amidst.map.layer;
 
 import amidst.Util;
 import amidst.map.Fragment;

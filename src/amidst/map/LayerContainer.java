@@ -1,8 +1,8 @@
 package amidst.map;
 
-import amidst.map.layers.IconLayer;
-import amidst.map.layers.ImageLayer;
-import amidst.map.layers.LiveLayer;
+import amidst.map.layer.IconLayer;
+import amidst.map.layer.ImageLayer;
+import amidst.map.layer.LiveLayer;
 
 public class LayerContainer {
 	private ImageLayer[] imageLayers;

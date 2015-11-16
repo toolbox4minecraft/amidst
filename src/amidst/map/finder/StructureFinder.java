@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.map.Fragment;
-import amidst.map.layers.IconLayer;
+import amidst.map.layer.IconLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 

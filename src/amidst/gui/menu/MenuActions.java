@@ -8,7 +8,7 @@ import java.util.List;
 import amidst.Application;
 import amidst.gui.MapWindow;
 import amidst.logging.Log;
-import amidst.map.layers.StrongholdLayer;
+import amidst.map.layer.StrongholdLayer;
 import amidst.map.object.MapObjectStronghold;
 import amidst.minecraft.world.FileWorld.Player;
 import amidst.minecraft.world.WorldType;

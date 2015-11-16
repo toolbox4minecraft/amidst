@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import amidst.logging.Log;
 import amidst.map.MapViewer;
-import amidst.map.layers.BiomeLayer;
+import amidst.map.layer.BiomeLayer;
 import amidst.minecraft.Biome;
 
 public class BiomeWidget extends PanelWidget {

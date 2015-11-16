@@ -1,7 +1,7 @@
 package amidst.map.object;
 import amidst.Options;
 import amidst.map.MapMarkers;
-import amidst.map.layers.IconLayer;
+import amidst.map.layer.IconLayer;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;

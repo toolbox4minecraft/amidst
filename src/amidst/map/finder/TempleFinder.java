@@ -5,7 +5,7 @@ import java.util.List;
 
 import amidst.logging.Log;
 import amidst.map.Fragment;
-import amidst.map.layers.TempleLayer;
+import amidst.map.layer.TempleLayer;
 import amidst.map.object.MapObject;
 import amidst.map.object.MapObjectDesertTemple;
 import amidst.map.object.MapObjectJungleTemple;
