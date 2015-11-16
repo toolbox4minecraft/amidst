@@ -24,7 +24,6 @@ import java.util.TimerTask;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 
-import amidst.Application;
 import amidst.Options;
 import amidst.gui.menu.PlayerMenuItemFactory;
 import amidst.logging.Log;
@@ -133,7 +132,7 @@ public class MapViewer {
 		public void mouseReleased(MouseEvent e) {
 			if (e.isPopupTrigger() && MinecraftUtil.getVersion().saveEnabled()) {
 				lastRightClick = getMousePositionFromEvent(e);
-				if (application.getWorld().isFileWorld()) {
+				if (world.isFileWorld()) {
 					menu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			} else if (mouseOwner != null) {
@@ -410,7 +409,7 @@ public class MapViewer {
 
 	private Widget mouseOwner;
 
-	private Application application;
+	private World world;
 
 	private JPopupMenu menu = new JPopupMenu();
 	public int strongholdCount;
@@ -426,8 +425,8 @@ public class MapViewer {
 
 	private List<Widget> widgets = new ArrayList<Widget>();
 
-	public MapViewer(Application application) {
-		this.application = application;
+	public MapViewer(World world) {
+		this.world = world;
 		initPlayerLayer();
 		initMap();
 		initWidgets();
@@ -436,7 +435,6 @@ public class MapViewer {
 	}
 
 	private void initPlayerLayer() {
-		World world = application.getWorld();
 		playerLayer.setWorld(world);
 		if (world.isFileWorld()) {
 			PlayerMenuItemFactory factory = new PlayerMenuItemFactory(this,
