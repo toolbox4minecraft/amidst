@@ -92,11 +92,17 @@ public abstract class MapObject {
 		this.localScale = localScale;
 	}
 
-	public IconLayer getParentLayer() {
-		return parentLayer;
-	}
-
 	public void setParentLayer(IconLayer parentLayer) {
 		this.parentLayer = parentLayer;
+	}
+
+	@Deprecated
+	public boolean isParentLayerVisible() {
+		return parentLayer.isVisible();
+	}
+
+	@Deprecated
+	public double getMapZoom() {
+		return parentLayer.getMap().getZoom();
 	}
 }

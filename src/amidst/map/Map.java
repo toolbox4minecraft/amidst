@@ -361,7 +361,7 @@ public class Map {
 		while (frag.hasNext()) {
 			frag = frag.getNext();
 			for (int i = 0; i < frag.getObjectsLength(); i++) {
-				if (frag.getObjects()[i].getParentLayer().isVisible()) {
+				if (frag.getObjects()[i].isParentLayerVisible()) {
 					Point objPosition = frag.getObjects()[i].getAsPoint();
 					objPosition.x *= scale;
 					objPosition.y *= scale;
