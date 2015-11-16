@@ -8,6 +8,9 @@ import java.awt.image.BufferedImage;
 
 import amidst.Options;
 import amidst.logging.Log;
+import amidst.map.layers.IconLayer;
+import amidst.map.layers.ImageLayer;
+import amidst.map.layers.LiveLayer;
 import amidst.minecraft.MinecraftUtil;
 
 public class Fragment {

@@ -2,7 +2,6 @@ package amidst.map.layers;
 
 import amidst.Options;
 import amidst.map.Fragment;
-import amidst.map.IconLayer;
 import amidst.map.finder.VillageFinder;
 
 public class VillageLayer extends IconLayer {

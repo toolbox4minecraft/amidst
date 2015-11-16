@@ -1,4 +1,6 @@
-package amidst.map;
+package amidst.map.layers;
+
+import amidst.map.Fragment;
 
 public abstract class IconLayer extends Layer {
 	public abstract void generateMapObjects(Fragment fragment);

@@ -2,7 +2,6 @@ package amidst.map.layers;
 
 import amidst.Util;
 import amidst.map.Fragment;
-import amidst.map.ImageLayer;
 import amidst.minecraft.Biome;
 
 public class BiomeLayer extends ImageLayer {

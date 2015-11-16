@@ -8,7 +8,6 @@ import java.awt.geom.AffineTransform;
 
 import amidst.Options;
 import amidst.map.Fragment;
-import amidst.map.LiveLayer;
 
 public class GridLayer extends LiveLayer {
 	private static final Font DRAW_FONT = new Font("arial", Font.BOLD, 16);

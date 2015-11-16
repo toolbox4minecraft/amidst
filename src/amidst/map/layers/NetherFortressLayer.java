@@ -4,7 +4,6 @@ import java.util.Random;
 
 import amidst.Options;
 import amidst.map.Fragment;
-import amidst.map.IconLayer;
 import amidst.map.MapObjectNether;
 
 public class NetherFortressLayer extends IconLayer {

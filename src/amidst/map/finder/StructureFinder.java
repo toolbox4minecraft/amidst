@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.map.Fragment;
-import amidst.map.IconLayer;
 import amidst.map.MapObject;
+import amidst.map.layers.IconLayer;
 import amidst.minecraft.Biome;
 
 public abstract class StructureFinder<L extends IconLayer> {

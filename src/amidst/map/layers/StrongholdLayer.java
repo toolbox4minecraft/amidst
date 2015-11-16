@@ -8,7 +8,6 @@ import java.util.Random;
 
 import amidst.Options;
 import amidst.map.Fragment;
-import amidst.map.IconLayer;
 import amidst.map.MapObjectStronghold;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;

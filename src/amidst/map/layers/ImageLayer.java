@@ -1,6 +1,8 @@
-package amidst.map;
+package amidst.map.layers;
 
 import java.awt.geom.AffineTransform;
+
+import amidst.map.Fragment;
 
 public abstract class ImageLayer extends Layer {
 	private AffineTransform cachedScalingMatrix = new AffineTransform();
