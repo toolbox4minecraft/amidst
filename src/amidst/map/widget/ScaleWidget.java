@@ -13,7 +13,7 @@ public class ScaleWidget extends PanelWidget {
 
 	public ScaleWidget(MapViewer mapViewer) {
 		super(mapViewer);
-		setDimensions(100, 34);
+		setSize(100, 34);
 		forceVisibility(false);
 	}
 

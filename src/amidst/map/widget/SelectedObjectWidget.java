@@ -13,7 +13,7 @@ public class SelectedObjectWidget extends PanelWidget {
 	public SelectedObjectWidget(MapViewer mapViewer) {
 		super(mapViewer);
 		increaseYPadding(40);
-		setDimensions(20, 35);
+		setSize(20, 35);
 		forceVisibility(false);
 	}
 

@@ -131,11 +131,6 @@ public abstract class PanelWidget extends Widget {
 		g2d.fillRect(getX(), getY(), getWidth(), getHeight());
 	}
 
-	public void setDimensions(int width, int height) {
-		this.setWidth(width);
-		this.setHeight(height);
-	}
-
 	@Override
 	public boolean isVisible() {
 		boolean value = isTargetVisible || isFading;

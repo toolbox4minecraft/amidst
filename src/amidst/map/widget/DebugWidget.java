@@ -43,7 +43,7 @@ public class DebugWidget extends PanelWidget {
 		width += 20;
 		height = panelText.size() * 20 + 10;
 
-		setDimensions(width, height);
+		setSize(width, height);
 		super.draw(g2d, time);
 
 		g2d.setColor(TEXT_COLOR);

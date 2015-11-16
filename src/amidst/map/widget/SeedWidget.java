@@ -8,7 +8,7 @@ import amidst.map.MapViewer;
 public class SeedWidget extends PanelWidget {
 	public SeedWidget(MapViewer mapViewer) {
 		super(mapViewer);
-		setDimensions(20, 30);
+		setSize(20, 30);
 	}
 
 	@Override

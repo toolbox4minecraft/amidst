@@ -14,7 +14,7 @@ public class BiomeToggleWidget extends PanelWidget {
 
 	public BiomeToggleWidget(MapViewer mapViewer) {
 		super(mapViewer);
-		setDimensions(36, 36);
+		setSize(36, 36);
 	}
 
 	@Override

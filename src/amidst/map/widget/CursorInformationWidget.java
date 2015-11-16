@@ -10,7 +10,7 @@ public class CursorInformationWidget extends PanelWidget {
 
 	public CursorInformationWidget(MapViewer mapViewer) {
 		super(mapViewer);
-		setDimensions(20, 30);
+		setSize(20, 30);
 		forceVisibility(false);
 	}
 

@@ -11,7 +11,7 @@ public class FpsWidget extends PanelWidget {
 
 	public FpsWidget(MapViewer mapViewer) {
 		super(mapViewer);
-		setDimensions(20, 30);
+		setSize(20, 30);
 		forceVisibility(onVisibilityCheck());
 	}
 

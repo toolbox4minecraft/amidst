@@ -46,7 +46,7 @@ public class BiomeWidget extends PanelWidget {
 			}
 		}
 		biomeListHeight = biomes.size() * 16;
-		setDimensions(250, 400);
+		setSize(250, 400);
 		setY(100);
 		forceVisibility(false);
 	}
