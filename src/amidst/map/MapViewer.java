@@ -171,11 +171,11 @@ public class MapViewer {
 			MapObject object = map.getObjectAt(mouse, 50.0);
 
 			if (selectedObject != null) {
-				selectedObject.setLocalScale(1.0);
+				selectedObject.setScale(1.0);
 			}
 
 			if (object != null) {
-				object.setLocalScale(1.5);
+				object.setScale(1.5);
 			}
 			selectedObject = object;
 		}

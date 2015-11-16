@@ -23,11 +23,10 @@ public abstract class MapObject {
 	private MapMarkers type;
 	private final int xInFragment;
 	private final int yInFragment;
-
 	private int xInWorld;
 	private int yInWorld;
-	private double localScale = 1.0;
-	private IconLayer parentLayer;
+	private double scale = 1.0;
+	private IconLayer iconLayer;
 	private Fragment fragment;
 
 	public MapObject(MapMarkers type, int xInFragment, int yInFragment) {
@@ -37,11 +36,11 @@ public abstract class MapObject {
 	}
 
 	public int getWidth() {
-		return (int) (getImage().getWidth() * localScale);
+		return (int) (getImage().getWidth() * scale);
 	}
 
 	public int getHeight() {
-		return (int) (getImage().getHeight() * localScale);
+		return (int) (getImage().getHeight() * scale);
 	}
 
 	public int getXInFragment() {
@@ -77,22 +76,22 @@ public abstract class MapObject {
 		return yInWorld;
 	}
 
-	public void setLocalScale(double localScale) {
-		this.localScale = localScale;
+	public void setScale(double scale) {
+		this.scale = scale;
 	}
 
-	public void setParentLayer(IconLayer parentLayer) {
-		this.parentLayer = parentLayer;
+	public void setIconLayer(IconLayer iconLayer) {
+		this.iconLayer = iconLayer;
 	}
 
 	@Deprecated
-	public boolean isParentLayerVisible() {
-		return parentLayer.isVisible();
+	public boolean isIconLayerVisible() {
+		return iconLayer.isVisible();
 	}
 
 	@Deprecated
 	public double getMapZoom() {
-		return parentLayer.getMap().getZoom();
+		return iconLayer.getMap().getZoom();
 	}
 
 	@Override
@@ -103,17 +102,21 @@ public abstract class MapObject {
 	public void setFragment(Fragment fragment) {
 		clearFragment();
 		this.fragment = fragment;
-		if (fragment != null) {
-			xInWorld = getXInFragment() + fragment.getXInWorld();
-			yInWorld = getYInFragment() + fragment.getYInWorld();
-			fragment.addObject(this);
-		}
+		initFragment();
 	}
 
 	private void clearFragment() {
 		if (fragment != null) {
 			fragment.removeObject(this);
 			fragment = null;
+		}
+	}
+
+	private void initFragment() {
+		if (fragment != null) {
+			xInWorld = getXInFragment() + fragment.getXInWorld();
+			yInWorld = getYInFragment() + fragment.getYInWorld();
+			fragment.addObject(this);
 		}
 	}
 }

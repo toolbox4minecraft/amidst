@@ -97,7 +97,7 @@ public class StrongholdLayer extends IconLayer {
 			// to be misaligned!
 			MapObject mapObject = new SimpleMapObject(MapMarkers.STRONGHOLD,
 					x << 4, y << 4);
-			mapObject.setParentLayer(this);
+			mapObject.setIconLayer(this);
 			mapObject.setFragment(fragment);
 		}
 	}
