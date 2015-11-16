@@ -303,10 +303,9 @@ public class Fragment {
 		return mapObjects;
 	}
 
-	public void clearMapObject() {
+	private void clearMapObject() {
 		for (MapObject mapObject : mapObjects) {
 			mapObject.setFragment(null);
 		}
-		mapObjects.clear();
 	}
 }
