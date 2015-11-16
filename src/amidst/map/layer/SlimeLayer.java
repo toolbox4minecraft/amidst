@@ -38,8 +38,8 @@ public class SlimeLayer extends ImageLayer {
 	}
 
 	private void updateSeed(Fragment fragment, int x, int y) {
-		int xPosition = fragment.getChunkX() + x;
-		int yPosition = fragment.getChunkY() + y;
+		int xPosition = fragment.getChunkXInWorld() + x;
+		int yPosition = fragment.getChunkYInWorld() + y;
 		random.setSeed(getSeed(xPosition, yPosition));
 	}
 

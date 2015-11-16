@@ -21,10 +21,9 @@ public class SelectedObjectWidget extends PanelWidget {
 	public void draw(Graphics2D g2d, float time) {
 		if (isTargetVisible()) {
 			MapObject selectedObject = mapViewer.getSelectedObject();
-			message = selectedObject.getName() + " [" + selectedObject.getRx()
-					+ ", " + selectedObject.getRy() + "]" + " ["
-					+ selectedObject.getWorldX() + ", "
-					+ selectedObject.getWorldY() + "]";
+			message = selectedObject.getName() + " ["
+					+ selectedObject.getXInWorld() + ", "
+					+ selectedObject.getYInWorld() + "]";
 			icon = selectedObject.getImage();
 		}
 

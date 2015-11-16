@@ -28,8 +28,8 @@ public class Fragment {
 		return imageRGBDataCache;
 	}
 
-	private int blockX;
-	private int blockY;
+	private int xInWorld;
+	private int yInWorld;
 
 	private short[] biomeData = new short[BIOME_SIZE * BIOME_SIZE];
 
@@ -91,8 +91,8 @@ public class Fragment {
 			if (isLoaded) {
 				Log.w("This should never happen!");
 			}
-			int[] data = MinecraftUtil.getBiomeData(blockX >> 2, blockY >> 2,
-					BIOME_SIZE, BIOME_SIZE, true);
+			int[] data = MinecraftUtil.getBiomeData(xInWorld >> 2,
+					yInWorld >> 2, BIOME_SIZE, BIOME_SIZE, true);
 			for (int i = 0; i < BIOME_SIZE * BIOME_SIZE; i++) {
 				biomeData[i] = (short) data[i];
 			}
@@ -159,7 +159,7 @@ public class Fragment {
 			int width = mapObject.getWidth();
 			int height = mapObject.getHeight();
 			g.setTransform(mat);
-			g.translate(mapObject.getX(), mapObject.getY());
+			g.translate(mapObject.getXInFragment(), mapObject.getYInFragment());
 			g.scale(invZoom, invZoom);
 			g.drawImage(mapObject.getImage(), -(width >> 1), -(height >> 1),
 					width, height, null);
@@ -172,8 +172,8 @@ public class Fragment {
 	}
 
 	public void addObject(MapObject object) {
-		object.setRx(object.getX() + this.blockX);
-		object.setRy(object.getY() + this.blockY);
+		object.setXInWorld(object.getXInFragment() + this.xInWorld);
+		object.setYInWorld(object.getYInFragment() + this.yInWorld);
 		if (objectsLength >= objects.length) {
 			MapObject[] tempObjects = new MapObject[objects.length << 1];
 			for (int i = 0; i < objects.length; i++) {
@@ -233,12 +233,12 @@ public class Fragment {
 	}
 
 	public boolean isInBounds(MapObject mapObject) {
-		return isInBounds(mapObject.getWorldX(), mapObject.getWorldY());
+		return isInBounds(mapObject.getXInWorld(), mapObject.getYInWorld());
 	}
 
 	private boolean isInBounds(int worldX, int worldY) {
-		return worldX >= blockX && worldX < blockX + Fragment.SIZE
-				&& worldY >= blockY && worldY < blockY + Fragment.SIZE;
+		return worldX >= xInWorld && worldX < xInWorld + Fragment.SIZE
+				&& worldY >= yInWorld && worldY < yInWorld + Fragment.SIZE;
 	}
 
 	public void recycle() {
@@ -252,8 +252,8 @@ public class Fragment {
 		}
 		hasNext = false;
 		endOfLine = false;
-		blockX = x;
-		blockY = y;
+		xInWorld = x;
+		yInWorld = y;
 		isActive = true;
 	}
 
@@ -297,28 +297,28 @@ public class Fragment {
 		return biomeData;
 	}
 
-	public int getBlockX() {
-		return blockX;
+	public int getXInWorld() {
+		return xInWorld;
 	}
 
-	public int getBlockY() {
-		return blockY;
+	public int getYInWorld() {
+		return yInWorld;
 	}
 
-	public int getChunkX() {
-		return blockX >> 4;
+	public int getChunkXInWorld() {
+		return xInWorld >> 4;
 	}
 
-	public int getChunkY() {
-		return blockY >> 4;
+	public int getChunkYInWorld() {
+		return yInWorld >> 4;
 	}
 
-	public int getFragmentX() {
-		return blockX >> SIZE_SHIFT;
+	public int getFragmentXInWorld() {
+		return xInWorld >> SIZE_SHIFT;
 	}
 
-	public int getFragmentY() {
-		return blockY >> SIZE_SHIFT;
+	public int getFragmentYInWorld() {
+		return yInWorld >> SIZE_SHIFT;
 	}
 
 	public MapObject[] getObjects() {

@@ -52,11 +52,11 @@ public class GridLayer extends LiveLayer {
 	}
 
 	private int getGridX(Fragment fragment, int stride) {
-		return fragment.getFragmentX() % (stride + 1);
+		return fragment.getFragmentXInWorld() % (stride + 1);
 	}
 
 	private int getGridY(Fragment fragment, int stride) {
-		return fragment.getFragmentY() % (stride + 1);
+		return fragment.getFragmentYInWorld() % (stride + 1);
 	}
 
 	private void drawGridLines(Graphics2D g2d, int stride, int gridX, int gridY) {
@@ -86,9 +86,9 @@ public class GridLayer extends LiveLayer {
 
 	private void updateText(Fragment fragment) {
 		textBuffer.setLength(0);
-		textBuffer.append(fragment.getChunkX() << 4);
+		textBuffer.append(fragment.getChunkXInWorld() << 4);
 		textBuffer.append(", ");
-		textBuffer.append(fragment.getChunkY() << 4);
+		textBuffer.append(fragment.getChunkYInWorld() << 4);
 		textBuffer.getChars(0, textBuffer.length(), textCache, 0);
 	}
 

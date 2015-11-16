@@ -32,12 +32,12 @@ public class MapObjectPlayer extends MapObject {
 	}
 
 	@Override
-	public int getWorldX() {
+	public int getXInWorld() {
 		return player.getX();
 	}
 
 	@Override
-	public int getWorldY() {
+	public int getYInWorld() {
 		return player.getZ();
 	}
 
@@ -51,12 +51,12 @@ public class MapObjectPlayer extends MapObject {
 	}
 
 	@Override
-	public int getX() {
+	public int getXInFragment() {
 		return toFragmentCoordinates(player.getX());
 	}
 
 	@Override
-	public int getY() {
+	public int getYInFragment() {
 		return toFragmentCoordinates(player.getZ());
 	}
 

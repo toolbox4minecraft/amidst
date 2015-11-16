@@ -76,7 +76,7 @@ public class MenuActions {
 						StrongholdLayer.instance.getStrongholds());
 		if (stronghold != null) {
 			mapWindow
-					.moveMapToCoordinates(stronghold.getX(), stronghold.getY());
+					.moveMapToCoordinates(stronghold.getXInFragment(), stronghold.getYInFragment());
 		}
 	}
 

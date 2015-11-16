@@ -50,8 +50,8 @@ public abstract class StructureFinder<L extends IconLayer> {
 	}
 
 	private void generateAt(Fragment fragment, int x, int y) {
-		int chunkX = x + fragment.getChunkX();
-		int chunkY = y + fragment.getChunkY();
+		int chunkX = x + fragment.getChunkXInWorld();
+		int chunkY = y + fragment.getChunkYInWorld();
 		MapObject mapObject = checkChunk(x, y, chunkX, chunkY);
 		if (mapObject != null) {
 			mapObject.setParentLayer(parentLayer);

@@ -21,18 +21,18 @@ public abstract class MapObject {
 	}
 
 	private MapMarkers type;
-	private final int x;
-	private final int y;
+	private final int xInFragment;
+	private final int yInFragment;
 
-	private int rx;
-	private int ry;
+	private int xInWorld;
+	private int yInWorld;
 	private double localScale = 1.0;
 	private IconLayer parentLayer;
 
-	public MapObject(MapMarkers type, int x, int y) {
+	public MapObject(MapMarkers type, int xInFragment, int yInFragment) {
 		this.type = type;
-		this.x = x;
-		this.y = y;
+		this.xInFragment = xInFragment;
+		this.yInFragment = yInFragment;
 	}
 
 	public int getWidth() {
@@ -43,12 +43,12 @@ public abstract class MapObject {
 		return (int) (getImage().getHeight() * localScale);
 	}
 
-	public int getX() {
-		return x;
+	public int getXInFragment() {
+		return xInFragment;
 	}
 
-	public int getY() {
-		return y;
+	public int getYInFragment() {
+		return yInFragment;
 	}
 
 	public String getName() {
@@ -61,35 +61,27 @@ public abstract class MapObject {
 
 	@Deprecated
 	public Point getAsPoint() {
-		return new Point(x, y);
+		return new Point(xInFragment, yInFragment);
 	}
 
 	protected MapMarkers getType() {
 		return type;
 	}
 
-	public int getRx() {
-		return rx;
+	public int getXInWorld() {
+		return xInWorld;
 	}
 
-	public int getRy() {
-		return ry;
+	public int getYInWorld() {
+		return yInWorld;
 	}
 
-	public int getWorldX() {
-		return rx;
+	public void setXInWorld(int xInWorld) {
+		this.xInWorld = xInWorld;
 	}
 
-	public int getWorldY() {
-		return ry;
-	}
-
-	public void setRx(int rx) {
-		this.rx = rx;
-	}
-
-	public void setRy(int ry) {
-		this.ry = ry;
+	public void setYInWorld(int yInWorld) {
+		this.yInWorld = yInWorld;
 	}
 
 	public void setLocalScale(double localScale) {
@@ -112,6 +104,6 @@ public abstract class MapObject {
 
 	@Override
 	public String toString() {
-		return getName() + " at (" + x + ", " + y + ")";
+		return getName() + " at (" + getXInWorld() + ", " + getYInWorld() + ")";
 	}
 }

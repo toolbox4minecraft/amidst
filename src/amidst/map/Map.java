@@ -184,22 +184,22 @@ public class Map {
 			int y;
 			if (start) {
 				fragment = startNode.getNext();
-				y = fragment.getBlockY() - Fragment.SIZE;
+				y = fragment.getYInWorld() - Fragment.SIZE;
 			} else {
 				while (fragment.hasNext()) {
 					fragment = fragment.getNext();
 				}
-				y = fragment.getBlockY() + Fragment.SIZE;
+				y = fragment.getYInWorld() + Fragment.SIZE;
 			}
 
 			fragmentsPerColumn++;
 			Fragment newFrag = fragmentManager.requestFragment(startNode
-					.getNext().getBlockX(), y);
+					.getNext().getXInWorld(), y);
 			Fragment chainFrag = newFrag;
 			for (int i = 1; i < fragmentsPerRow; i++) {
 				Fragment tempFrag = fragmentManager.requestFragment(
-						chainFrag.getBlockX() + Fragment.SIZE,
-						chainFrag.getBlockY());
+						chainFrag.getXInWorld() + Fragment.SIZE,
+						chainFrag.getYInWorld());
 				chainFrag.setNext(tempFrag);
 				chainFrag = tempFrag;
 				if (i == (fragmentsPerRow - 1)) {
@@ -220,9 +220,9 @@ public class Map {
 			int x = 0;
 			Fragment fragment = startNode;
 			if (start) {
-				x = fragment.getNext().getBlockX() - Fragment.SIZE;
+				x = fragment.getNext().getXInWorld() - Fragment.SIZE;
 				Fragment newFrag = fragmentManager.requestFragment(x, fragment
-						.getNext().getBlockY());
+						.getNext().getYInWorld());
 				newFrag.setNext(startNode.getNext());
 				startNode.setNext(newFrag);
 			}
@@ -232,15 +232,15 @@ public class Map {
 					if (start) {
 						if (fragment.hasNext()) {
 							Fragment newFrag = fragmentManager.requestFragment(
-									x, fragment.getBlockY() + Fragment.SIZE);
+									x, fragment.getYInWorld() + Fragment.SIZE);
 							newFrag.setNext(fragment.getNext());
 							fragment.setNext(newFrag);
 							fragment = newFrag;
 						}
 					} else {
 						Fragment newFrag = fragmentManager.requestFragment(
-								fragment.getBlockX() + Fragment.SIZE,
-								fragment.getBlockY());
+								fragment.getXInWorld() + Fragment.SIZE,
+								fragment.getYInWorld());
 
 						if (fragment.hasNext()) {
 							newFrag.setNext(fragment.getNext());
@@ -343,8 +343,8 @@ public class Map {
 		Point fragmentPosition = new Point();
 		while (frag.hasNext()) {
 			frag = frag.getNext();
-			fragmentPosition.x = frag.getFragmentX();
-			fragmentPosition.y = frag.getFragmentY();
+			fragmentPosition.x = frag.getFragmentXInWorld();
+			fragmentPosition.y = frag.getFragmentYInWorld();
 			if (cornerPosition.equals(fragmentPosition))
 				return frag;
 		}
@@ -388,11 +388,11 @@ public class Map {
 		Fragment frag = startNode;
 		while (frag.hasNext()) {
 			frag = frag.getNext();
-			if ((frag.getBlockX() <= point.x) && (frag.getBlockY() <= point.y)
-					&& (frag.getBlockX() + Fragment.SIZE > point.x)
-					&& (frag.getBlockY() + Fragment.SIZE > point.y)) {
-				int x = point.x - frag.getBlockX();
-				int y = point.y - frag.getBlockY();
+			if ((frag.getXInWorld() <= point.x) && (frag.getYInWorld() <= point.y)
+					&& (frag.getXInWorld() + Fragment.SIZE > point.x)
+					&& (frag.getYInWorld() + Fragment.SIZE > point.y)) {
+				int x = point.x - frag.getXInWorld();
+				int y = point.y - frag.getYInWorld();
 
 				return getBiomeNameForFragment(frag, x, y);
 			}
@@ -404,11 +404,11 @@ public class Map {
 		Fragment frag = startNode;
 		while (frag.hasNext()) {
 			frag = frag.getNext();
-			if ((frag.getBlockX() <= point.x) && (frag.getBlockY() <= point.y)
-					&& (frag.getBlockX() + Fragment.SIZE > point.x)
-					&& (frag.getBlockY() + Fragment.SIZE > point.y)) {
-				int x = point.x - frag.getBlockX();
-				int y = point.y - frag.getBlockY();
+			if ((frag.getXInWorld() <= point.x) && (frag.getYInWorld() <= point.y)
+					&& (frag.getXInWorld() + Fragment.SIZE > point.x)
+					&& (frag.getYInWorld() + Fragment.SIZE > point.y)) {
+				int x = point.x - frag.getXInWorld();
+				int y = point.y - frag.getYInWorld();
 
 				return getBiomeAliasForFragment(frag, x, y);
 			}
@@ -451,8 +451,8 @@ public class Map {
 		point.x /= scale;
 		point.y /= scale;
 
-		point.x += startNode.getNext().getBlockX();
-		point.y += startNode.getNext().getBlockY();
+		point.x += startNode.getNext().getXInWorld();
+		point.y += startNode.getNext().getYInWorld();
 
 		return point;
 	}
