@@ -3,13 +3,14 @@ package amidst.map.object;
 import amidst.map.MapMarkers;
 
 public class MapObjectSpawn extends MapObject {
-	private int globalX;
-	private int globalY;
+	private int worldX;
+	private int worldY;
 
 	public MapObjectSpawn(int x, int y) {
-		super(MapMarkers.SPAWN, toFragmentCoordinates(x), toFragmentCoordinates(y));
-		this.globalX = x;
-		this.globalY = y;
+		super(MapMarkers.SPAWN, toFragmentCoordinates(x),
+				toFragmentCoordinates(y));
+		this.worldX = x;
+		this.worldY = y;
 	}
 
 	@Override
@@ -17,11 +18,11 @@ public class MapObjectSpawn extends MapObject {
 		return "Spawn point at (" + getX() + ", " + getY() + ")";
 	}
 
-	public int getGlobalX() {
-		return globalX;
+	public int getWorldX() {
+		return worldX;
 	}
 
-	public int getGlobalY() {
-		return globalY;
+	public int getWorldY() {
+		return worldY;
 	}
 }

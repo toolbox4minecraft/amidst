@@ -155,7 +155,8 @@ public class Fragment {
 	private void drawObject(Graphics2D g, AffineTransform mat,
 			MapObject mapObject) {
 		if (mapObject.getParentLayer().isVisible()) {
-			double invZoom = 1.0 / mapObject.getParentLayer().getMap().getZoom();
+			double invZoom = 1.0 / mapObject.getParentLayer().getMap()
+					.getZoom();
 			int width = mapObject.getWidth();
 			int height = mapObject.getHeight();
 			g.setTransform(mat);
@@ -230,6 +231,11 @@ public class Fragment {
 				imageLayers[layerId].load(this);
 			}
 		}
+	}
+
+	public boolean isInBounds(int worldX, int worldY) {
+		return worldX >= blockX && worldX < blockX + Fragment.SIZE
+				&& worldY >= blockY && worldY < blockY + Fragment.SIZE;
 	}
 
 	public void recycle() {

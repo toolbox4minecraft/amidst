@@ -34,10 +34,7 @@ public class PlayerLayer extends IconLayer {
 	}
 
 	private boolean isInFragmentBounds(Fragment fragment, MapObjectPlayer player) {
-		return player.getGlobalX() >= fragment.getBlockX()
-				&& player.getGlobalX() < fragment.getBlockX() + Fragment.SIZE
-				&& player.getGlobalY() >= fragment.getBlockY()
-				&& player.getGlobalY() < fragment.getBlockY() + Fragment.SIZE;
+		return fragment.isInBounds(player.getWorldX(), player.getWorldY());
 	}
 
 	@Override

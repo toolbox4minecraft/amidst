@@ -12,7 +12,8 @@ public class MapObjectPlayer extends MapObject {
 	private Fragment parentFragment;
 
 	public MapObjectPlayer(Player player) {
-		super(MapMarkers.PLAYER, toFragmentCoordinates(player.getX()), toFragmentCoordinates(player.getZ()));
+		super(MapMarkers.PLAYER, toFragmentCoordinates(player.getX()),
+				toFragmentCoordinates(player.getZ()));
 		this.player = player;
 		initMarker();
 	}
@@ -31,11 +32,11 @@ public class MapObjectPlayer extends MapObject {
 		return toFragmentCoordinates(player.getZ());
 	}
 
-	public int getGlobalX() {
+	public int getWorldX() {
 		return player.getX();
 	}
 
-	public int getGlobalY() {
+	public int getWorldY() {
 		return player.getZ();
 	}
 

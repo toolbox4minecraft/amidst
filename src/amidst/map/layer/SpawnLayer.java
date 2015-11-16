@@ -25,7 +25,7 @@ public class SpawnLayer extends IconLayer {
 	);
 	// @formatter:on
 
-	private MapObjectSpawn spawnObject;
+	private MapObjectSpawn spawn;
 
 	@Override
 	public boolean isVisible() {
@@ -34,18 +34,13 @@ public class SpawnLayer extends IconLayer {
 
 	@Override
 	public void generateMapObjects(Fragment fragment) {
-		if (spawnObject != null && isInFragmentBounds(fragment)) {
-			fragment.addObject(spawnObject);
+		if (spawn != null && isInFragmentBounds(fragment)) {
+			fragment.addObject(spawn);
 		}
 	}
 
 	private boolean isInFragmentBounds(Fragment fragment) {
-		return spawnObject.getGlobalX() >= fragment.getBlockX()
-				&& spawnObject.getGlobalX() < fragment.getBlockX()
-						+ Fragment.SIZE
-				&& spawnObject.getGlobalY() >= fragment.getBlockY()
-				&& spawnObject.getGlobalY() < fragment.getBlockY()
-						+ Fragment.SIZE;
+		return fragment.isInBounds(spawn.getWorldX(), spawn.getWorldY());
 	}
 
 	@Override
@@ -56,11 +51,11 @@ public class SpawnLayer extends IconLayer {
 	private void initSpawnObject() {
 		Point spawnCenter = getSpawnCenter();
 		if (spawnCenter != null) {
-			spawnObject = new MapObjectSpawn(spawnCenter.x, spawnCenter.y);
-			spawnObject.setParentLayer(this);
+			spawn = new MapObjectSpawn(spawnCenter.x, spawnCenter.y);
+			spawn.setParentLayer(this);
 		} else {
 			Log.debug("Unable to find spawn biome.");
-			spawnObject = null;
+			spawn = null;
 		}
 	}
 
