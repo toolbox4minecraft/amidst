@@ -55,7 +55,7 @@ public abstract class StructureFinder<L extends IconLayer> {
 		MapObject mapObject = checkChunk(x, y, chunkX, chunkY);
 		if (mapObject != null) {
 			mapObject.setParentLayer(parentLayer);
-			fragment.addObject(mapObject);
+			mapObject.setFragment(fragment);
 		}
 	}
 

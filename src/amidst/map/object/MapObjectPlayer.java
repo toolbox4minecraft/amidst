@@ -2,28 +2,18 @@ package amidst.map.object;
 
 import java.awt.image.BufferedImage;
 
-import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 import amidst.minecraft.world.FileWorld.Player;
 
 public class MapObjectPlayer extends MapObject {
 	private Player player;
 	private BufferedImage image;
-	private Fragment parentFragment;
 
 	public MapObjectPlayer(Player player) {
 		super(MapMarkers.PLAYER, toFragmentCoordinates(player.getX()),
 				toFragmentCoordinates(player.getZ()));
 		this.player = player;
 		this.image = MapMarkers.PLAYER.getImage();
-	}
-
-	public Fragment getParentFragment() {
-		return parentFragment;
-	}
-
-	public void setParentFragment(Fragment parentFragment) {
-		this.parentFragment = parentFragment;
 	}
 
 	@Deprecated

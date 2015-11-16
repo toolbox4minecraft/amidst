@@ -28,6 +28,7 @@ public abstract class MapObject {
 	private int yInWorld;
 	private double localScale = 1.0;
 	private IconLayer parentLayer;
+	private Fragment fragment;
 
 	public MapObject(MapMarkers type, int xInFragment, int yInFragment) {
 		this.type = type;
@@ -105,5 +106,20 @@ public abstract class MapObject {
 	@Override
 	public String toString() {
 		return getName() + " at (" + getXInWorld() + ", " + getYInWorld() + ")";
+	}
+
+	public void setFragment(Fragment fragment) {
+		clearFragment();
+		this.fragment = fragment;
+		if (fragment != null) {
+			fragment.addObject(this);
+		}
+	}
+
+	private void clearFragment() {
+		if (fragment != null) {
+			fragment.removeObject(this);
+			fragment = null;
+		}
 	}
 }

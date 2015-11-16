@@ -98,7 +98,7 @@ public class StrongholdLayer extends IconLayer {
 			MapObject mapObject = new SimpleMapObject(MapMarkers.STRONGHOLD,
 					x << 4, y << 4);
 			mapObject.setParentLayer(this);
-			fragment.addObject(mapObject);
+			mapObject.setFragment(fragment);
 		}
 	}
 

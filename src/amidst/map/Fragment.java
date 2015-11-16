@@ -12,7 +12,6 @@ import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
 import amidst.map.layer.LiveLayer;
 import amidst.map.object.MapObject;
-import amidst.map.object.MapObjectPlayer;
 import amidst.minecraft.MinecraftUtil;
 
 public class Fragment {
@@ -185,9 +184,9 @@ public class Fragment {
 		objectsLength++;
 	}
 
-	public void removeObject(MapObjectPlayer player) {
+	public void removeObject(MapObject mapObject) {
 		for (int i = 0; i < objectsLength; i++) {
-			if (objects[i] == player) {
+			if (objects[i] == mapObject) {
 				objects[i] = objects[objectsLength - 1];
 				objectsLength--;
 			}

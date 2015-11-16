@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-import amidst.map.Fragment;
 import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.map.layer.PlayerLayer;
@@ -33,17 +32,12 @@ public class PlayerMenuItemFactory {
 	}
 
 	private void playerSelected(MapObjectPlayer player) {
-		Map map = playerLayer.getMap();
-		if (player.getParentFragment() != null) {
-			player.getParentFragment().removeObject(player);
-		}
 		Point lastRightClick = mapViewer.lastRightClick;
 		if (lastRightClick != null) {
+			Map map = playerLayer.getMap();
 			Point location = map.screenToLocal(lastRightClick);
 			player.setPosition(location.x, location.y);
-			Fragment fragment = map.getFragmentAt(location);
-			fragment.addObject(player);
-			player.setParentFragment(fragment);
+			player.setFragment(map.getFragmentAt(location));
 		}
 	}
 }
