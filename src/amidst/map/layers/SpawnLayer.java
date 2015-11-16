@@ -1,8 +1,8 @@
 package amidst.map.layers;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import amidst.Options;
@@ -14,14 +14,19 @@ import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 
 public class SpawnLayer extends IconLayer {
-	private MapObjectSpawn spawnObject;
-	public static final ArrayList<Biome> validBiomes = new ArrayList<Biome>(
-			Arrays.asList(Biome.forest, Biome.plains, Biome.taiga,
-					Biome.taigaHills, Biome.forestHills, Biome.jungle,
-					Biome.jungleHills));
+	// @formatter:off
+	private static final List<Biome> VALID_BIOMES = Arrays.asList(
+			Biome.forest,
+			Biome.plains,
+			Biome.taiga,
+			Biome.taigaHills,
+			Biome.forestHills,
+			Biome.jungle,
+			Biome.jungleHills
+	);
+	// @formatter:on
 
-	public SpawnLayer() {
-	}
+	private MapObjectSpawn spawnObject;
 
 	@Override
 	public boolean isVisible() {
@@ -29,35 +34,37 @@ public class SpawnLayer extends IconLayer {
 	}
 
 	@Override
-	public void generateMapObjects(Fragment frag) {
-		if ((spawnObject.globalX >= frag.getBlockX())
-				&& (spawnObject.globalX < frag.getBlockX() + Fragment.SIZE)
-				&& (spawnObject.globalY >= frag.getBlockY())
-				&& (spawnObject.globalY < frag.getBlockY() + Fragment.SIZE)) {
-			spawnObject.parentLayer = this;
-			frag.addObject(spawnObject);
+	public void generateMapObjects(Fragment fragment) {
+		if (spawnObject != null && isInFragmentBounds(fragment)) {
+			fragment.addObject(spawnObject);
 		}
 	}
 
-	private Point getSpawnPosition() {
-		Random random = new Random(Options.instance.seed);
-		Point location = MinecraftUtil.findValidLocation(0, 0, 256,
-				validBiomes, random);
-		int x = 0;
-		int y = 0;
-		if (location != null) {
-			x = location.x;
-			y = location.y;
-		} else {
-			Log.debug("Unable to find spawn biome.");
-		}
-
-		return new Point(x, y);
+	private boolean isInFragmentBounds(Fragment fragment) {
+		return spawnObject.globalX >= fragment.getBlockX()
+				&& spawnObject.globalX < fragment.getBlockX() + Fragment.SIZE
+				&& spawnObject.globalY >= fragment.getBlockY()
+				&& spawnObject.globalY < fragment.getBlockY() + Fragment.SIZE;
 	}
 
 	@Override
 	public void reload() {
-		Point spawnCenter = getSpawnPosition();
-		spawnObject = new MapObjectSpawn(spawnCenter.x, spawnCenter.y);
+		initSpawnObject();
+	}
+
+	private void initSpawnObject() {
+		Point spawnCenter = getSpawnCenter();
+		if (spawnCenter != null) {
+			spawnObject = new MapObjectSpawn(spawnCenter.x, spawnCenter.y);
+			spawnObject.parentLayer = this;
+		} else {
+			Log.debug("Unable to find spawn biome.");
+			spawnObject = null;
+		}
+	}
+
+	private Point getSpawnCenter() {
+		Random random = new Random(Options.instance.seed);
+		return MinecraftUtil.findValidLocation(0, 0, 256, VALID_BIOMES, random);
 	}
 }

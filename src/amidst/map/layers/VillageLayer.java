@@ -12,12 +12,22 @@ import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 
 public class VillageLayer extends IconLayer {
-	public static List<Biome> validBiomes = Arrays.asList(new Biome[] {
-			Biome.plains, Biome.desert, Biome.savanna });
-	private Random random = new Random();
+	// @formatter:off
+	private static final List<Biome> VALID_BIOMES = Arrays.asList(
+			Biome.plains,
+			Biome.desert,
+			Biome.savanna
+	);
+	// @formatter:on
 
-	public VillageLayer() {
-	}
+	private static final long MAGIC_NUMBER_FOR_SEED_1 = 341873128712L;
+	private static final long MAGIC_NUMBER_FOR_SEED_2 = 132897987541L;
+	private static final long MAGIC_NUMBER_FOR_SEED_3 = 10387312L;
+
+	private static final byte MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES = 32;
+	private static final byte MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES = 8;
+
+	private Random random = new Random();
 
 	@Override
 	public boolean isVisible() {
@@ -25,48 +35,80 @@ public class VillageLayer extends IconLayer {
 	}
 
 	@Override
-	public void generateMapObjects(Fragment frag) {
+	public void generateMapObjects(Fragment fragment) {
 		int size = Fragment.SIZE >> 4;
 		for (int x = 0; x < size; x++) {
 			for (int y = 0; y < size; y++) {
-				int chunkX = x + frag.getChunkX();
-				int chunkY = y + frag.getChunkY();
-				if (checkChunk(chunkX, chunkY)) {
-					frag.addObject(new MapObjectVillage(x << 4, y << 4)
-							.setParent(this));
-				}
+				generateAt(fragment, x, y);
 			}
 		}
 	}
 
-	public boolean checkChunk(int chunkX, int chunkY) {
-		byte villageParam1 = 32;
-		byte villageParam2 = 8;
+	private void generateAt(Fragment fragment, int x, int y) {
+		int chunkX = x + fragment.getChunkX();
+		int chunkY = y + fragment.getChunkY();
+		if (checkChunk(chunkX, chunkY)) {
+			fragment.addObject(new MapObjectVillage(x << 4, y << 4)
+					.setParent(this));
+		}
+	}
 
-		int k = chunkX;
-		int m = chunkY;
-		if (chunkX < 0)
-			chunkX -= villageParam1 - 1;
-		if (chunkY < 0)
-			chunkY -= villageParam1 - 1;
+	private boolean checkChunk(int chunkX, int chunkY) {
+		int n = getInitialValue(chunkX);
+		int i1 = getInitialValue(chunkY);
+		updateSeed(n, i1);
+		int distanceRange = getDistanceRange();
+		n = updateValue(n, distanceRange);
+		i1 = updateValue(i1, distanceRange);
+		if (isSuccessful(chunkX, chunkY, n, i1)) {
+			return isValid(middleOfChunk(chunkX), middleOfChunk(chunkY));
+		} else {
+			return false;
+		}
+	}
 
-		int n = chunkX / villageParam1;
-		int i1 = chunkY / villageParam1;
+	private int getInitialValue(int value) {
+		return getModified(value) / MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES;
+	}
 
-		long positionSeed = n * 341873128712L + i1 * 132897987541L
-				+ Options.instance.seed + 10387312L;
-		random.setSeed(positionSeed);
+	private int getModified(int value) {
+		if (value < 0) {
+			return value - MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES + 1;
+		} else {
+			return value;
+		}
+	}
 
-		n *= villageParam1;
-		i1 *= villageParam1;
-		n += random.nextInt(villageParam1 - villageParam2);
-		i1 += random.nextInt(villageParam1 - villageParam2);
-		chunkX = k;
-		chunkY = m;
-		if ((chunkX == n) && (chunkY == i1))
-			return MinecraftUtil.isValidBiome(chunkX * 16 + 8, chunkY * 16 + 8,
-					0, validBiomes);
+	private void updateSeed(int n, int i1) {
+		random.setSeed(getSeed(n, i1));
+	}
 
-		return false;
+	private int getDistanceRange() {
+		return MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES
+				- MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES;
+	}
+
+	private long getSeed(int n, int i1) {
+		return n * MAGIC_NUMBER_FOR_SEED_1 + i1 * MAGIC_NUMBER_FOR_SEED_2
+				+ Options.instance.seed + MAGIC_NUMBER_FOR_SEED_3;
+	}
+
+	private int updateValue(int value, int distanceRange) {
+		value *= MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES;
+		value += random.nextInt(distanceRange);
+		return value;
+	}
+
+	private boolean isSuccessful(int chunkX, int chunkY, int n, int i1) {
+		return chunkX == n && chunkY == i1;
+	}
+
+	private int middleOfChunk(int value) {
+		return value * 16 + 8;
+	}
+
+	private boolean isValid(int middleOfChunkX, int middleOfChunkY) {
+		return MinecraftUtil.isValidBiome(middleOfChunkX, middleOfChunkY, 0,
+				VALID_BIOMES);
 	}
 }

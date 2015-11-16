@@ -10,7 +10,7 @@ import amidst.minecraft.world.World;
 
 public class PlayerLayer extends IconLayer {
 	private SkinLoader skinLoader;
-	private FileWorld world;
+	private FileWorld worldFile;
 
 	public PlayerLayer(SkinLoader skinLoader) {
 		this.skinLoader = skinLoader;
@@ -23,9 +23,9 @@ public class PlayerLayer extends IconLayer {
 
 	@Override
 	public void generateMapObjects(Fragment fragment) {
-		if (world != null) {
-			for (MapObjectPlayer player : world.getMapObjectPlayers()) {
-				if (isPlayerInFragment(fragment, player)) {
+		if (worldFile != null) {
+			for (MapObjectPlayer player : worldFile.getMapObjectPlayers()) {
+				if (isInFragmentBounds(fragment, player)) {
 					player.parentLayer = this;
 					player.parentFragment = fragment;
 					fragment.addObject(player);
@@ -34,7 +34,7 @@ public class PlayerLayer extends IconLayer {
 		}
 	}
 
-	private boolean isPlayerInFragment(Fragment frag, MapObjectPlayer player) {
+	private boolean isInFragmentBounds(Fragment frag, MapObjectPlayer player) {
 		return player.getGlobalX() >= frag.getBlockX()
 				&& player.getGlobalX() < frag.getBlockX() + Fragment.SIZE
 				&& player.getGlobalY() >= frag.getBlockY()
@@ -55,15 +55,15 @@ public class PlayerLayer extends IconLayer {
 
 	public void setWorld(World world) {
 		if (world instanceof FileWorld) {
-			this.world = (FileWorld) world;
+			this.worldFile = (FileWorld) world;
 			updateSkinManager();
 		} else {
-			this.world = null;
+			this.worldFile = null;
 		}
 	}
 
 	private void updateSkinManager() {
-		for (MapObjectPlayer player : world.getMapObjectPlayers()) {
+		for (MapObjectPlayer player : worldFile.getMapObjectPlayers()) {
 			skinLoader.loadSkin(player);
 		}
 	}
