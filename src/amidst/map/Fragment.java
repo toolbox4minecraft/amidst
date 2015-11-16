@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.HashSet;
+import java.util.Set;
 
 import amidst.Options;
 import amidst.logging.Log;
@@ -37,8 +39,7 @@ public class Fragment {
 	private IconLayer[] iconLayers;
 
 	private BufferedImage[] images;
-	private MapObject[] objects;
-	private int objectsLength = 0;
+	private Set<MapObject> mapObjects = new HashSet<MapObject>();
 
 	private Object loadLock = new Object();
 
@@ -68,7 +69,6 @@ public class Fragment {
 		this.liveLayers = liveLayers;
 		this.iconLayers = iconLayers;
 		initImages();
-		initObjects();
 	}
 
 	private void initImages() {
@@ -79,10 +79,6 @@ public class Fragment {
 			images[layerId] = new BufferedImage(layerSize, layerSize,
 					BufferedImage.TYPE_INT_ARGB);
 		}
-	}
-
-	private void initObjects() {
-		this.objects = new MapObject[INITIAL_NUMBER_OF_OBJECTS_PER_FRAGMENT];
 	}
 
 	public void load() {
@@ -143,8 +139,8 @@ public class Fragment {
 		if (alpha != 1.0f) {
 			setAlphaComposite(g, alpha);
 		}
-		for (int i = 0; i < objectsLength; i++) {
-			drawObject(g, mat, objects[i]);
+		for (MapObject mapObject : mapObjects) {
+			drawObject(g, mat, mapObject);
 		}
 		if (alpha != 1.0f) {
 			setAlphaComposite(g, 1.0f);
@@ -171,24 +167,11 @@ public class Fragment {
 	}
 
 	public void addObject(MapObject object) {
-		if (objectsLength >= objects.length) {
-			MapObject[] tempObjects = new MapObject[objects.length << 1];
-			for (int i = 0; i < objects.length; i++) {
-				tempObjects[i] = objects[i];
-			}
-			objects = tempObjects;
-		}
-		objects[objectsLength] = object;
-		objectsLength++;
+		mapObjects.add(object);
 	}
 
 	public void removeObject(MapObject mapObject) {
-		for (int i = 0; i < objectsLength; i++) {
-			if (objects[i] == mapObject) {
-				objects[i] = objects[objectsLength - 1];
-				objectsLength--;
-			}
-		}
+		mapObjects.remove(mapObject);
 	}
 
 	public void setImageRGB(int layerId, int[] rgbArray) {
@@ -253,7 +236,7 @@ public class Fragment {
 	}
 
 	public void reset() {
-		objectsLength = 0;
+		clearMapObject();
 		isActive = false;
 		isLoaded = false;
 
@@ -316,18 +299,14 @@ public class Fragment {
 		return yInWorld >> SIZE_SHIFT;
 	}
 
-	public MapObject[] getObjects() {
-		return objects;
-	}
-
-	public int getObjectsLength() {
-		return objectsLength;
+	public Set<MapObject> getMapObjects() {
+		return mapObjects;
 	}
 
 	public void clearMapObject() {
-		for (int i = 0; i < objectsLength; i++) {
-			objects[i].setFragment(null);
+		for (MapObject mapObject : mapObjects) {
+			mapObject.setFragment(null);
 		}
-		this.objectsLength = 0;
+		mapObjects.clear();
 	}
 }

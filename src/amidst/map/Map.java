@@ -360,8 +360,7 @@ public class Map {
 		int size = (int) (Fragment.SIZE * scale);
 		while (frag.hasNext()) {
 			frag = frag.getNext();
-			for (int i = 0; i < frag.getObjectsLength(); i++) {
-				MapObject mapObject = frag.getObjects()[i];
+			for (MapObject mapObject : frag.getMapObjects()) {
 				if (mapObject.isIconLayerVisible()) {
 					double distance = getPosition(x, y, mapObject).distance(
 							position);
