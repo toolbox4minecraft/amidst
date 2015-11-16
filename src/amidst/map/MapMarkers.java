@@ -11,21 +11,22 @@ import amidst.resources.ResourceLoader;
 // TODO: link to test.amidst.map object class
 public enum MapMarkers {
 	// @formatter:off
-	NETHER_FORTRESS,
-	PLAYER,
-	SLIME,
-	STRONGHOLD,
-	JUNGLE,
-	DESERT,
-	VILLAGE,
-	SPAWN,
-	WITCH,
-	OCEAN_MONUMENT;
+	NETHER_FORTRESS("Nether Fortress"),
+	PLAYER("Player"),
+	STRONGHOLD("Stronghold"),
+	JUNGLE("Jungle Temple"),
+	DESERT("Desert Temple"),
+	VILLAGE("Village"),
+	SPAWN("Default World Spawn"),
+	WITCH("Witch Hut"),
+	OCEAN_MONUMENT("Ocean Monument");
 	// @formatter:on
 
+	private final String name;
 	private final BufferedImage image;
 
-	private MapMarkers() {
+	private MapMarkers(String name) {
+		this.name = name;
 		String fileName = this.toString().toLowerCase() + ".png";
 		image = ResourceLoader.getImage(fileName);
 	}
@@ -35,6 +36,6 @@ public enum MapMarkers {
 	}
 
 	public String getName() {
-		return toString();
+		return name;
 	}
 }

@@ -105,4 +105,9 @@ public abstract class MapObject {
 	public double getMapZoom() {
 		return parentLayer.getMap().getZoom();
 	}
+
+	@Override
+	public String toString() {
+		return getName() + " at (" + x + ", " + y + ")";
+	}
 }

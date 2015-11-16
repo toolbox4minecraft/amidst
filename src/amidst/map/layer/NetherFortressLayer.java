@@ -4,7 +4,9 @@ import java.util.Random;
 
 import amidst.Options;
 import amidst.map.Fragment;
-import amidst.map.object.MapObjectNether;
+import amidst.map.MapMarkers;
+import amidst.map.object.MapObject;
+import amidst.map.object.SimpleMapObject;
 
 public class NetherFortressLayer extends IconLayer {
 	private Random random = new Random();
@@ -28,10 +30,14 @@ public class NetherFortressLayer extends IconLayer {
 		int chunkX = x + fragment.getChunkX();
 		int chunkY = y + fragment.getChunkY();
 		if (hasNetherFortress(chunkX, chunkY)) {
-			MapObjectNether mapObject = new MapObjectNether(x << 4, y << 4);
+			MapObject mapObject = createMapObject(x << 4, y << 4);
 			mapObject.setParentLayer(this);
 			fragment.addObject(mapObject);
 		}
+	}
+
+	private SimpleMapObject createMapObject(int x2, int y2) {
+		return new SimpleMapObject(MapMarkers.NETHER_FORTRESS, x2, y2);
 	}
 
 	private boolean hasNetherFortress(int chunkX, int chunkY) {

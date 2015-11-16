@@ -13,11 +13,6 @@ public class MapObjectSpawn extends MapObject {
 		this.worldY = y;
 	}
 
-	@Override
-	public String toString() {
-		return "Spawn point at (" + getX() + ", " + getY() + ")";
-	}
-
 	public int getWorldX() {
 		return worldX;
 	}

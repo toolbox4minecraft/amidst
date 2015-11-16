@@ -9,7 +9,7 @@ import amidst.Application;
 import amidst.gui.MapWindow;
 import amidst.logging.Log;
 import amidst.map.layer.StrongholdLayer;
-import amidst.map.object.MapObjectStronghold;
+import amidst.map.object.MapObject;
 import amidst.minecraft.world.FileWorld.Player;
 import amidst.minecraft.world.WorldType;
 import amidst.minecraft.world.Worlds;
@@ -69,11 +69,12 @@ public class MenuActions {
 	}
 
 	public void findStronghold() {
-		MapObjectStronghold stronghold = mapWindow
+		MapObject stronghold = mapWindow
 				.askForOptions("Go to", "Select Stronghold:",
 						StrongholdLayer.instance.getStrongholds());
 		if (stronghold != null) {
-			mapWindow.moveMapToCoordinates(stronghold.getX(), stronghold.getY());
+			mapWindow
+					.moveMapToCoordinates(stronghold.getX(), stronghold.getY());
 		}
 	}
 

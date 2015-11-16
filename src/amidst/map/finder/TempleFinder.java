@@ -5,11 +5,10 @@ import java.util.List;
 
 import amidst.logging.Log;
 import amidst.map.Fragment;
+import amidst.map.MapMarkers;
 import amidst.map.layer.TempleLayer;
 import amidst.map.object.MapObject;
-import amidst.map.object.MapObjectDesertTemple;
-import amidst.map.object.MapObjectJungleTemple;
-import amidst.map.object.MapObjectWitchHut;
+import amidst.map.object.SimpleMapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 import amidst.version.VersionInfo;
@@ -43,11 +42,11 @@ public class TempleFinder extends StructureFinder<TempleLayer> {
 
 	private MapObject createMapObject(Biome chunkBiome, int x, int y) {
 		if (chunkBiome == Biome.swampland) {
-			return new MapObjectWitchHut(x, y);
+			return new SimpleMapObject(MapMarkers.WITCH, x, y);
 		} else if (chunkBiome.name.contains("Jungle")) {
-			return new MapObjectJungleTemple(x, y);
+			return new SimpleMapObject(MapMarkers.JUNGLE, x, y);
 		} else if (chunkBiome.name.contains("Desert")) {
-			return new MapObjectDesertTemple(x, y);
+			return new SimpleMapObject(MapMarkers.DESERT, x, y);
 		} else {
 			Log.e("No known structure for this biome type. This might be an error.");
 			return null;

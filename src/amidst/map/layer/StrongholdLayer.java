@@ -8,7 +8,9 @@ import java.util.Random;
 
 import amidst.Options;
 import amidst.map.Fragment;
-import amidst.map.object.MapObjectStronghold;
+import amidst.map.MapMarkers;
+import amidst.map.object.MapObject;
+import amidst.map.object.SimpleMapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 import amidst.version.VersionInfo;
@@ -64,7 +66,7 @@ public class StrongholdLayer extends IconLayer {
 	// TODO: remove me!
 	public static StrongholdLayer instance;
 
-	private MapObjectStronghold[] strongholds = new MapObjectStronghold[3];
+	private MapObject[] strongholds = new MapObject[3];
 	private Random random = new Random();
 
 	public StrongholdLayer() {
@@ -93,8 +95,8 @@ public class StrongholdLayer extends IconLayer {
 		if (hasStronghold(chunkX, chunkY)) {
 			// FIXME: Possible use of checkChunk causing negative icons
 			// to be misaligned!
-			MapObjectStronghold mapObject = new MapObjectStronghold(x << 4,
-					y << 4);
+			MapObject mapObject = new SimpleMapObject(MapMarkers.STRONGHOLD,
+					x << 4, y << 4);
 			mapObject.setParentLayer(this);
 			fragment.addObject(mapObject);
 		}
@@ -129,7 +131,8 @@ public class StrongholdLayer extends IconLayer {
 				x = strongholdLocation.x >> 4;
 				y = strongholdLocation.y >> 4;
 			}
-			strongholds[i] = new MapObjectStronghold(x << 4, y << 4);
+			strongholds[i] = new SimpleMapObject(MapMarkers.STRONGHOLD, x << 4,
+					y << 4);
 			angle = updateAngle(angle);
 		}
 	}
@@ -194,7 +197,7 @@ public class StrongholdLayer extends IconLayer {
 	}
 
 	// TODO: remove me!
-	public MapObjectStronghold[] getStrongholds() {
+	public MapObject[] getStrongholds() {
 		return strongholds;
 	}
 }

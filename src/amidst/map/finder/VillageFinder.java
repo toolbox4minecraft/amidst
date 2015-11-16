@@ -4,9 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import amidst.map.Fragment;
+import amidst.map.MapMarkers;
 import amidst.map.layer.VillageLayer;
 import amidst.map.object.MapObject;
-import amidst.map.object.MapObjectVillage;
+import amidst.map.object.SimpleMapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 
@@ -32,8 +33,8 @@ public class VillageFinder extends StructureFinder<VillageLayer> {
 				STRUCTURE_SIZE, validBiomes);
 	}
 
-	private MapObjectVillage createMapObject(int x, int y) {
-		return new MapObjectVillage(x, y);
+	private MapObject createMapObject(int x, int y) {
+		return new SimpleMapObject(MapMarkers.VILLAGE, x, y);
 	}
 
 	@Override
