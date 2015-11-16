@@ -216,9 +216,11 @@ public class Fragment {
 		return isInBounds(mapObject.getXInWorld(), mapObject.getYInWorld());
 	}
 
-	private boolean isInBounds(int worldX, int worldY) {
-		return worldX >= xInWorld && worldX < xInWorld + Fragment.SIZE
-				&& worldY >= yInWorld && worldY < yInWorld + Fragment.SIZE;
+	private boolean isInBounds(int xInWorld, int yInWorld) {
+		return xInWorld >= this.xInWorld
+				&& xInWorld < this.xInWorld + Fragment.SIZE
+				&& yInWorld >= this.yInWorld
+				&& yInWorld < this.yInWorld + Fragment.SIZE;
 	}
 
 	public void recycle() {
@@ -226,12 +228,12 @@ public class Fragment {
 		isLoaded = false;
 	}
 
-	public void init(int x, int y) {
+	public void init(int xInWorld, int yInWorld) {
 		clearMapObject();
 		hasNext = false;
 		endOfLine = false;
-		xInWorld = x;
-		yInWorld = y;
+		this.xInWorld = xInWorld;
+		this.yInWorld = yInWorld;
 		isActive = true;
 	}
 
