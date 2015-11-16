@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.map.Fragment;
+import amidst.map.IconLayer;
 import amidst.map.MapObject;
 import amidst.minecraft.Biome;
-import amidst.minecraft.world.World;
 
-public abstract class StructureFinder {
+public abstract class StructureFinder<L extends IconLayer> {
 	protected final List<Biome> validBiomes;
 	protected final long magicNumberForSeed1;
 	protected final long magicNumberForSeed2;
@@ -16,11 +16,11 @@ public abstract class StructureFinder {
 	protected final byte maxDistanceBetweenScatteredFeatures;
 	protected final byte minDistanceBetweenScatteredFeatures;
 	protected final int distanceBetweenScatteredFeaturesRange;
-	protected final int structureSize;
 	protected final int size;
 	protected final Random random;
 
-	private World world;
+	private long seed;
+	private L parentLayer;
 
 	public StructureFinder() {
 		validBiomes = getValidBiomes();
@@ -30,7 +30,6 @@ public abstract class StructureFinder {
 		maxDistanceBetweenScatteredFeatures = getMaxDistanceBetweenScatteredFeatures();
 		minDistanceBetweenScatteredFeatures = getMinDistanceBetweenScatteredFeatures();
 		distanceBetweenScatteredFeaturesRange = getDistanceBetweenScatteredFeaturesRange();
-		structureSize = getStructureSize();
 		size = getSize();
 		random = new Random();
 	}
@@ -40,8 +39,9 @@ public abstract class StructureFinder {
 				- minDistanceBetweenScatteredFeatures;
 	}
 
-	public void generateMapObjects(World world, Fragment fragment) {
-		this.world = world;
+	public void generateMapObjects(long seed, L parentLayer, Fragment fragment) {
+		this.seed = seed;
+		this.parentLayer = parentLayer;
 		for (int x = 0; x < size; x++) {
 			for (int y = 0; y < size; y++) {
 				generateAt(fragment, x, y);
@@ -54,6 +54,7 @@ public abstract class StructureFinder {
 		int chunkY = y + fragment.getChunkY();
 		MapObject mapObject = checkChunk(x, y, chunkX, chunkY);
 		if (mapObject != null) {
+			mapObject.setParent(parentLayer);
 			fragment.addObject(mapObject);
 		}
 	}
@@ -91,8 +92,8 @@ public abstract class StructureFinder {
 	}
 
 	private long getSeed(int n, int i1) {
-		return n * magicNumberForSeed1 + i1 * magicNumberForSeed2
-				+ world.getSeed() + magicNumberForSeed3;
+		return n * magicNumberForSeed1 + i1 * magicNumberForSeed2 + seed
+				+ magicNumberForSeed3;
 	}
 
 	private boolean isSuccessful(int chunkX, int chunkY, int n, int i1) {
@@ -103,12 +104,12 @@ public abstract class StructureFinder {
 		return value * 16 + 8;
 	}
 
-	protected abstract int updateValue(int value);
-
 	protected abstract MapObject getMapObject(boolean isSuccessful,
 			int middleOfChunkX, int middleOfChunkY, int x, int y);
 
 	protected abstract List<Biome> getValidBiomes();
+
+	protected abstract int updateValue(int value);
 
 	protected abstract long getMagicNumberForSeed1();
 
@@ -119,8 +120,6 @@ public abstract class StructureFinder {
 	protected abstract byte getMaxDistanceBetweenScatteredFeatures();
 
 	protected abstract byte getMinDistanceBetweenScatteredFeatures();
-
-	protected abstract int getStructureSize();
 
 	protected abstract int getSize();
 }
