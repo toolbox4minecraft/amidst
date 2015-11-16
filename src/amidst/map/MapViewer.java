@@ -460,7 +460,7 @@ public class MapViewer {
 		initWidget(new CursorInformationWidget(this),
 				CornerAnchorPoint.TOP_RIGHT);
 		initWidget(new BiomeToggleWidget(this), CornerAnchorPoint.BOTTOM_RIGHT);
-		initWidget(BiomeWidget.get(this), CornerAnchorPoint.NONE);
+		initWidget(new BiomeWidget(this), CornerAnchorPoint.NONE);
 	}
 
 	private void initWidget(PanelWidget widget, CornerAnchorPoint anchorPoint) {

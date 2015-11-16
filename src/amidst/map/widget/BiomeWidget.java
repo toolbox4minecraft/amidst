@@ -12,7 +12,6 @@ import amidst.map.layer.BiomeLayer;
 import amidst.minecraft.Biome;
 
 public class BiomeWidget extends PanelWidget {
-	private static BiomeWidget instance;
 	private static Color innerBoxBgColor = new Color(0.3f, 0.3f, 0.3f, 0.3f);
 	private static Color biomeBgColor1 = new Color(0.8f, 0.8f, 0.8f, 0.2f);
 	private static Color biomeBgColor2 = new Color(0.6f, 0.6f, 0.6f, 0.2f);
@@ -210,19 +209,5 @@ public class BiomeWidget extends PanelWidget {
 	public boolean onVisibilityCheck() {
 		height = Math.max(200, mapViewer.getHeight() - 200);
 		return BiomeToggleWidget.isBiomeWidgetVisible & (height > 200);
-	}
-
-	private void setMapViewer(MapViewer mapViewer) {
-		this.mapViewer = mapViewer;
-		this.map = mapViewer.getMap();
-		scrollbarGrabbed = false;
-	}
-
-	public static BiomeWidget get(MapViewer mapViewer) {
-		if (instance == null)
-			instance = new BiomeWidget(mapViewer);
-		else
-			instance.setMapViewer(mapViewer);
-		return instance;
 	}
 }

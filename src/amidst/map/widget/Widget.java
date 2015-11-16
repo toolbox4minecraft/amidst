@@ -6,8 +6,8 @@ import amidst.map.Map;
 import amidst.map.MapViewer;
 
 public abstract class Widget {
-	protected MapViewer mapViewer;
-	protected Map map;
+	protected final MapViewer mapViewer;
+	protected final Map map;
 
 	protected int x;
 	protected int y;
