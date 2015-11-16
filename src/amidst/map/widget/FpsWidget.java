@@ -7,7 +7,7 @@ import amidst.map.MapViewer;
 import amidst.utilities.FramerateTimer;
 
 public class FpsWidget extends PanelWidget {
-	private FramerateTimer fps = new FramerateTimer(2);
+	private FramerateTimer fpsTimer = new FramerateTimer(2);
 
 	public FpsWidget(MapViewer mapViewer) {
 		super(mapViewer);
@@ -17,11 +17,10 @@ public class FpsWidget extends PanelWidget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time) {
-		String framerate = fps.toString();
+		String framerate = fpsTimer.toString();
+		fpsTimer.tick();
 		setWidth(mapViewer.getFontMetrics().stringWidth(framerate) + 20);
 		super.draw(g2d, time);
-
-		fps.tick();
 		g2d.setColor(TEXT_COLOR);
 		g2d.drawString(framerate, getX() + 10, getY() + 20);
 	}

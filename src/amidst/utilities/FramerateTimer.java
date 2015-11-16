@@ -2,7 +2,7 @@ package amidst.utilities;
 
 public class FramerateTimer {
 	private int tickCounter;
-	private long lastUpdate;
+	private long lastTime;
 	private long msPerUpdate;
 
 	private float currentFPS = 0.0f;
@@ -14,29 +14,24 @@ public class FramerateTimer {
 
 	public void reset() {
 		tickCounter = 0;
-		lastUpdate = System.currentTimeMillis();
+		lastTime = System.currentTimeMillis();
 	}
 
 	public void tick() {
 		tickCounter++;
-		long curTime = System.currentTimeMillis();
-
-		if (curTime - lastUpdate > msPerUpdate) {
-			float timeDifference = curTime - lastUpdate;
-
-			timeDifference /= 1000f;
-			timeDifference = tickCounter / timeDifference;
-
-			currentFPS = timeDifference;
-
+		long currentTime = System.currentTimeMillis();
+		if (currentTime - lastTime > msPerUpdate) {
+			currentFPS = calculateCurrentFPS(currentTime);
 			tickCounter = 0;
-			lastUpdate = curTime;
-
+			lastTime = currentTime;
 		}
 	}
 
-	public float getFramerate() {
-		return currentFPS;
+	private float calculateCurrentFPS(long currentTime) {
+		float timeDifference = currentTime - lastTime;
+		timeDifference /= 1000f;
+		timeDifference = tickCounter / timeDifference;
+		return timeDifference;
 	}
 
 	@Override
