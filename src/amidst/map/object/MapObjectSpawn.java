@@ -13,10 +13,12 @@ public class MapObjectSpawn extends MapObject {
 		this.worldY = y;
 	}
 
+	@Override
 	public int getWorldX() {
 		return worldX;
 	}
 
+	@Override
 	public int getWorldY() {
 		return worldY;
 	}

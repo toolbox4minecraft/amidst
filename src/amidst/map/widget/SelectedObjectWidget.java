@@ -22,7 +22,9 @@ public class SelectedObjectWidget extends PanelWidget {
 		if (isTargetVisible()) {
 			MapObject selectedObject = mapViewer.getSelectedObject();
 			message = selectedObject.getName() + " [" + selectedObject.getRx()
-					+ ", " + selectedObject.getRy() + "]";
+					+ ", " + selectedObject.getRy() + "]" + " ["
+					+ selectedObject.getWorldX() + ", "
+					+ selectedObject.getWorldY() + "]";
 			icon = selectedObject.getImage();
 		}
 
@@ -34,7 +36,8 @@ public class SelectedObjectWidget extends PanelWidget {
 		double imgHeight = icon.getHeight();
 		double ratio = imgWidth / imgHeight;
 
-		g2d.drawImage(icon, getX() + 5, getY() + 5, (int) (25. * ratio), 25, null);
+		g2d.drawImage(icon, getX() + 5, getY() + 5, (int) (25. * ratio), 25,
+				null);
 		g2d.drawString(message, getX() + 35, getY() + 23);
 	}
 

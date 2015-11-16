@@ -31,10 +31,12 @@ public class MapObjectPlayer extends MapObject {
 		player.moveTo(x, z);
 	}
 
+	@Override
 	public int getWorldX() {
 		return player.getX();
 	}
 
+	@Override
 	public int getWorldY() {
 		return player.getZ();
 	}

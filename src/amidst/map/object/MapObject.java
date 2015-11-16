@@ -72,12 +72,20 @@ public abstract class MapObject {
 		return rx;
 	}
 
-	public void setRx(int rx) {
-		this.rx = rx;
-	}
-
 	public int getRy() {
 		return ry;
+	}
+
+	public int getWorldX() {
+		return rx;
+	}
+
+	public int getWorldY() {
+		return ry;
+	}
+
+	public void setRx(int rx) {
+		this.rx = rx;
 	}
 
 	public void setRy(int ry) {
