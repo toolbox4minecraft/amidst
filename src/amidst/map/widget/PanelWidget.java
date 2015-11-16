@@ -10,24 +10,25 @@ import java.awt.image.BufferedImage;
 import amidst.map.MapViewer;
 import amidst.resources.ResourceLoader;
 
-public class PanelWidget extends Widget {
-	private static BufferedImage dropShadowBottomLeft = ResourceLoader
-			.getImage("dropshadow/outer_bottom_left.png"),
-			dropShadowBottomRight = ResourceLoader
-					.getImage("dropshadow/outer_bottom_right.png"),
-			dropShadowTopLeft = ResourceLoader
-					.getImage("dropshadow/outer_top_left.png"),
-			dropShadowTopRight = ResourceLoader
-					.getImage("dropshadow/outer_top_right.png"),
-			dropShadowBottom = ResourceLoader
-					.getImage("dropshadow/outer_bottom.png"),
-			dropShadowTop = ResourceLoader.getImage("dropshadow/outer_top.png"),
-			dropShadowLeft = ResourceLoader
-					.getImage("dropshadow/outer_left.png"),
-			dropShadowRight = ResourceLoader
-					.getImage("dropshadow/outer_right.png");
+public abstract class PanelWidget extends Widget {
+	private static final BufferedImage DROP_SHADOW_BOTTOM_LEFT = ResourceLoader
+			.getImage("dropshadow/outer_bottom_left.png");
+	private static final BufferedImage DROP_SHADOW_BOTTOM_RIGHT = ResourceLoader
+			.getImage("dropshadow/outer_bottom_right.png");
+	private static final BufferedImage DROP_SHADOW_TOP_LEFT = ResourceLoader
+			.getImage("dropshadow/outer_top_left.png");
+	private static final BufferedImage DROP_SHADOW_TOP_RIGHT = ResourceLoader
+			.getImage("dropshadow/outer_top_right.png");
+	private static final BufferedImage DROP_SHADOW_BOTTOM = ResourceLoader
+			.getImage("dropshadow/outer_bottom.png");
+	private static final BufferedImage DROP_SHADOW_TOP = ResourceLoader
+			.getImage("dropshadow/outer_top.png");
+	private static final BufferedImage DROP_SHADOW_LEFT = ResourceLoader
+			.getImage("dropshadow/outer_left.png");
+	private static final BufferedImage DROP_SHADOW_RIGHT = ResourceLoader
+			.getImage("dropshadow/outer_right.png");
 
-	public enum CornerAnchorPoint {
+	public static enum CornerAnchorPoint {
 		TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, BOTTOM_CENTER, CENTER, NONE
 	}
 
@@ -38,54 +39,49 @@ public class PanelWidget extends Widget {
 	protected Stroke lineStroke2 = new BasicStroke(2, BasicStroke.CAP_BUTT,
 			BasicStroke.JOIN_MITER);
 	protected CornerAnchorPoint anchor = CornerAnchorPoint.NONE;
-	protected int xPadding = 10, yPadding = 10;
+	protected int xPadding = 10;
+	protected int yPadding = 10;
 
 	protected float alpha = 1.0f, targetAlpha = 1.0f;
 	protected boolean isFading = false;
 	protected boolean targetVisibility = true;
 
-	public PanelWidget(MapViewer mapViewer) {
+	protected PanelWidget(MapViewer mapViewer) {
 		super(mapViewer);
 	}
 
 	@Override
 	public void draw(Graphics2D g2d, float time) {
-		targetAlpha = targetVisibility ? 1.0f : 0.0f;
-		if (alpha < targetAlpha)
-			alpha = Math.min(targetAlpha, alpha + time * 4.0f);
-		else if (alpha > targetAlpha)
-			alpha = Math.max(targetAlpha, alpha - time * 4.0f);
-		isFading = (alpha != targetAlpha);
-
+		updateTargetAlpha();
+		updateAlpha(time);
+		updateIsFading();
 		updatePosition();
-		g2d.setColor(panelColor);
-		g2d.drawImage(dropShadowTopLeft, x - 10, y - 10, null);
-		g2d.drawImage(dropShadowTopRight, x + width, y - 10, null);
-		g2d.drawImage(dropShadowBottomLeft, x - 10, y + height, null);
-		g2d.drawImage(dropShadowBottomRight, x + width, y + height, null);
-
-		g2d.drawImage(dropShadowTop, x, y - 10, width, 10, null);
-		g2d.drawImage(dropShadowBottom, x, y + height, width, 10, null);
-		g2d.drawImage(dropShadowLeft, x - 10, y, 10, height, null);
-		g2d.drawImage(dropShadowRight, x + width, y, 10, height, null);
-
-		g2d.fillRect(x, y, width, height);
+		initGraphics(g2d);
+		drawBorder(g2d);
+		drawBackground(g2d);
 	}
 
-	public void setWidth(int width) {
-		this.width = width;
+	private void updateTargetAlpha() {
+		if (targetVisibility) {
+			targetAlpha = 1.0f;
+		} else {
+			targetAlpha = 0.0f;
+		}
 	}
 
-	public void setHeight(int height) {
-		this.height = height;
+	private void updateAlpha(float time) {
+		if (alpha < targetAlpha) {
+			alpha = Math.min(targetAlpha, alpha + time * 4.0f);
+		} else if (alpha > targetAlpha) {
+			alpha = Math.max(targetAlpha, alpha - time * 4.0f);
+		}
 	}
 
-	public void setDimensions(int width, int height) {
-		this.width = width;
-		this.height = height;
+	private void updateIsFading() {
+		isFading = alpha != targetAlpha;
 	}
 
-	protected void updatePosition() {
+	private void updatePosition() {
 		switch (anchor) {
 		case TOP_LEFT:
 			x = xPadding;
@@ -114,6 +110,42 @@ public class PanelWidget extends Widget {
 		case NONE:
 			break;
 		}
+	}
+
+	private void initGraphics(Graphics2D g2d) {
+		g2d.setColor(panelColor);
+	}
+
+	private void drawBorder(Graphics2D g2d) {
+		int x10 = x - 10;
+		int y10 = y - 10;
+		int xWidth = x + width;
+		int yHeight = y + height;
+		g2d.drawImage(DROP_SHADOW_TOP_LEFT, x10, y10, null);
+		g2d.drawImage(DROP_SHADOW_TOP_RIGHT, xWidth, y10, null);
+		g2d.drawImage(DROP_SHADOW_BOTTOM_LEFT, x10, yHeight, null);
+		g2d.drawImage(DROP_SHADOW_BOTTOM_RIGHT, xWidth, yHeight, null);
+		g2d.drawImage(DROP_SHADOW_TOP, x, y10, width, 10, null);
+		g2d.drawImage(DROP_SHADOW_BOTTOM, x, yHeight, width, 10, null);
+		g2d.drawImage(DROP_SHADOW_LEFT, x10, y, 10, height, null);
+		g2d.drawImage(DROP_SHADOW_RIGHT, xWidth, y, 10, height, null);
+	}
+
+	private void drawBackground(Graphics2D g2d) {
+		g2d.fillRect(x, y, width, height);
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	public void setDimensions(int width, int height) {
+		this.width = width;
+		this.height = height;
 	}
 
 	@Override
