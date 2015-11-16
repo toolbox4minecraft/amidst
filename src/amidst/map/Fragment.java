@@ -326,7 +326,7 @@ public class Fragment {
 		return objectsLength;
 	}
 
-	public void setObjectsLength(int objectsLength) {
-		this.objectsLength = objectsLength;
+	public void clearMapObject() {
+		this.objectsLength = 0;
 	}
 }
