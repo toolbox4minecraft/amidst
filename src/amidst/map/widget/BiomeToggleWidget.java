@@ -8,13 +8,15 @@ import amidst.map.layer.BiomeLayer;
 import amidst.resources.ResourceLoader;
 
 public class BiomeToggleWidget extends PanelWidget {
-	private static BufferedImage highlighterIcon = ResourceLoader.getImage("highlighter.png");
+	private static BufferedImage highlighterIcon = ResourceLoader
+			.getImage("highlighter.png");
 	public static boolean isBiomeWidgetVisible = false;
+
 	public BiomeToggleWidget(MapViewer mapViewer) {
 		super(mapViewer);
 		setDimensions(36, 36);
 	}
-	
+
 	@Override
 	public void draw(Graphics2D g2d, float time) {
 		super.draw(g2d, time);

@@ -9,19 +9,20 @@ import amidst.map.object.MapObject;
 public class SelectedObjectWidget extends PanelWidget {
 	private String message = "";
 	private BufferedImage icon;
-	
+
 	public SelectedObjectWidget(MapViewer mapViewer) {
 		super(mapViewer);
 		yPadding += 40;
 		setDimensions(20, 35);
 		forceVisibility(false);
 	}
-	
+
 	@Override
 	public void draw(Graphics2D g2d, float time) {
 		if (targetVisibility) {
 			MapObject selectedObject = mapViewer.getSelectedObject();
-			message = selectedObject.getName() + " [" + selectedObject.getRx() + ", " + selectedObject.getRy() + "]";
+			message = selectedObject.getName() + " [" + selectedObject.getRx()
+					+ ", " + selectedObject.getRy() + "]";
 			icon = selectedObject.getImage();
 		}
 
@@ -31,12 +32,12 @@ public class SelectedObjectWidget extends PanelWidget {
 		g2d.setColor(textColor);
 		double imgWidth = icon.getWidth();
 		double imgHeight = icon.getHeight();
-		double ratio = imgWidth/imgHeight;
-		
-		g2d.drawImage(icon, x + 5, y + 5, (int)(25.*ratio), 25, null);
+		double ratio = imgWidth / imgHeight;
+
+		g2d.drawImage(icon, x + 5, y + 5, (int) (25. * ratio), 25, null);
 		g2d.drawString(message, x + 35, y + 23);
 	}
-	
+
 	@Override
 	protected boolean onVisibilityCheck() {
 		return (mapViewer.getSelectedObject() != null);

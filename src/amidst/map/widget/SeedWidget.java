@@ -10,10 +10,11 @@ public class SeedWidget extends PanelWidget {
 		super(mapViewer);
 		setDimensions(20, 30);
 	}
-	
+
 	@Override
 	public void draw(Graphics2D g2d, float time) {
-		setWidth(mapViewer.getFontMetrics().stringWidth(Options.instance.getSeedMessage()) + 20);
+		setWidth(mapViewer.getFontMetrics().stringWidth(
+				Options.instance.getSeedMessage()) + 20);
 		super.draw(g2d, time);
 		g2d.setColor(textColor);
 		g2d.drawString(Options.instance.getSeedMessage(), x + 10, y + 20);
