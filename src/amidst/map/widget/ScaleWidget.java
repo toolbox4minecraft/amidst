@@ -29,15 +29,15 @@ public class ScaleWidget extends PanelWidget {
 		setWidth(Math.max(scaleWidth_px, stringWidth) + (cMargin * 2));
 		super.draw(g2d, time);
 
-		g2d.setColor(textColor);
-		g2d.setFont(textFont);
+		g2d.setColor(TEXT_COLOR);
+		g2d.setFont(TEXT_FONT);
 		g2d.drawString(message, x + 1 + ((width - stringWidth) >> 1), y + 18);
 
 		g2d.setColor(Color.white);
 
-		g2d.setStroke(lineStroke2);
+		g2d.setStroke(LINE_STROKE_2);
 		g2d.drawLine(x + cMargin, y + 26, x + cMargin + scaleWidth_px, y + 26);
-		g2d.setStroke(lineStroke1);
+		g2d.setStroke(LINE_STROKE_1);
 		g2d.drawLine(x + cMargin, y + 23, x + cMargin, y + 28);
 		g2d.drawLine(x + cMargin + scaleWidth_px, y + 23, x + cMargin
 				+ scaleWidth_px, y + 28);

@@ -12,14 +12,14 @@ public class SelectedObjectWidget extends PanelWidget {
 
 	public SelectedObjectWidget(MapViewer mapViewer) {
 		super(mapViewer);
-		yPadding += 40;
+		increaseYPadding(40);
 		setDimensions(20, 35);
 		forceVisibility(false);
 	}
 
 	@Override
 	public void draw(Graphics2D g2d, float time) {
-		if (targetVisibility) {
+		if (isTargetVisible()) {
 			MapObject selectedObject = mapViewer.getSelectedObject();
 			message = selectedObject.getName() + " [" + selectedObject.getRx()
 					+ ", " + selectedObject.getRy() + "]";
@@ -29,7 +29,7 @@ public class SelectedObjectWidget extends PanelWidget {
 		setWidth(45 + mapViewer.getFontMetrics().stringWidth(message));
 		super.draw(g2d, time);
 
-		g2d.setColor(textColor);
+		g2d.setColor(TEXT_COLOR);
 		double imgWidth = icon.getWidth();
 		double imgHeight = icon.getHeight();
 		double ratio = imgWidth / imgHeight;

@@ -11,6 +11,10 @@ import amidst.map.MapViewer;
 import amidst.resources.ResourceLoader;
 
 public abstract class PanelWidget extends Widget {
+	public static enum CornerAnchorPoint {
+		TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, BOTTOM_CENTER, CENTER, NONE
+	}
+
 	private static final BufferedImage DROP_SHADOW_BOTTOM_LEFT = ResourceLoader
 			.getImage("dropshadow/outer_bottom_left.png");
 	private static final BufferedImage DROP_SHADOW_BOTTOM_RIGHT = ResourceLoader
@@ -28,23 +32,22 @@ public abstract class PanelWidget extends Widget {
 	private static final BufferedImage DROP_SHADOW_RIGHT = ResourceLoader
 			.getImage("dropshadow/outer_right.png");
 
-	public static enum CornerAnchorPoint {
-		TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, BOTTOM_CENTER, CENTER, NONE
-	}
+	private static final Color PANEL_COLOR = new Color(0.15f, 0.15f, 0.15f,
+			0.8f);
+	protected static final Color TEXT_COLOR = new Color(1f, 1f, 1f);
+	protected static final Font TEXT_FONT = new Font("arial", Font.BOLD, 15);
+	protected static final Stroke LINE_STROKE_1 = new BasicStroke(1);
+	protected static final Stroke LINE_STROKE_2 = new BasicStroke(2,
+			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
 
-	protected Color textColor = new Color(1f, 1f, 1f);
-	protected Color panelColor = new Color(0.15f, 0.15f, 0.15f, 0.8f);
-	protected Font textFont = new Font("arial", Font.BOLD, 15);
-	protected Stroke lineStroke1 = new BasicStroke(1);
-	protected Stroke lineStroke2 = new BasicStroke(2, BasicStroke.CAP_BUTT,
-			BasicStroke.JOIN_MITER);
-	protected CornerAnchorPoint anchor = CornerAnchorPoint.NONE;
-	protected int xPadding = 10;
-	protected int yPadding = 10;
+	private CornerAnchorPoint anchor = CornerAnchorPoint.NONE;
+	private int xPadding = 10;
+	private int yPadding = 10;
 
-	protected float alpha = 1.0f, targetAlpha = 1.0f;
-	protected boolean isFading = false;
-	protected boolean targetVisibility = true;
+	private float alpha = 1.0f;
+	private float targetAlpha = 1.0f;
+	private boolean isFading = false;
+	private boolean isTargetVisible = true;
 
 	protected PanelWidget(MapViewer mapViewer) {
 		super(mapViewer);
@@ -62,7 +65,7 @@ public abstract class PanelWidget extends Widget {
 	}
 
 	private void updateTargetAlpha() {
-		if (targetVisibility) {
+		if (isTargetVisible) {
 			targetAlpha = 1.0f;
 		} else {
 			targetAlpha = 0.0f;
@@ -82,38 +85,31 @@ public abstract class PanelWidget extends Widget {
 	}
 
 	private void updatePosition() {
-		switch (anchor) {
-		case TOP_LEFT:
+		if (anchor == CornerAnchorPoint.TOP_LEFT) {
 			x = xPadding;
 			y = yPadding;
-			break;
-		case BOTTOM_LEFT:
+		} else if (anchor == CornerAnchorPoint.BOTTOM_LEFT) {
 			x = xPadding;
 			y = mapViewer.getHeight() - (height + yPadding);
-			break;
-		case BOTTOM_RIGHT:
+		} else if (anchor == CornerAnchorPoint.BOTTOM_RIGHT) {
 			x = mapViewer.getWidth() - (width + xPadding);
 			y = mapViewer.getHeight() - (height + yPadding);
-			break;
-		case BOTTOM_CENTER:
+		} else if (anchor == CornerAnchorPoint.BOTTOM_CENTER) {
 			x = (mapViewer.getWidth() >> 1) - (width >> 1);
 			y = mapViewer.getHeight() - (height + yPadding);
-			break;
-		case TOP_RIGHT:
+		} else if (anchor == CornerAnchorPoint.TOP_RIGHT) {
 			x = mapViewer.getWidth() - (width + xPadding);
 			y = yPadding;
-			break;
-		case CENTER:
+		} else if (anchor == CornerAnchorPoint.CENTER) {
 			x = (mapViewer.getWidth() >> 1) - (width >> 1);
 			y = (mapViewer.getHeight() >> 1) - (height >> 1);
-			break;
-		case NONE:
-			break;
+		} else if (anchor == CornerAnchorPoint.NONE) {
+			// TODO: set x and y
 		}
 	}
 
 	private void initGraphics(Graphics2D g2d) {
-		g2d.setColor(panelColor);
+		g2d.setColor(PANEL_COLOR);
 	}
 
 	private void drawBorder(Graphics2D g2d) {
@@ -150,8 +146,8 @@ public abstract class PanelWidget extends Widget {
 
 	@Override
 	public boolean isVisible() {
-		boolean value = (visible && targetVisibility) || isFading;
-		targetVisibility = onVisibilityCheck();
+		boolean value = (visible && isTargetVisible) || isFading;
+		isTargetVisible = onVisibilityCheck();
 		return value;
 	}
 
@@ -160,7 +156,7 @@ public abstract class PanelWidget extends Widget {
 	}
 
 	public void forceVisibility(boolean value) {
-		targetVisibility = value;
+		isTargetVisible = value;
 		isFading = false;
 		targetAlpha = value ? 1.0f : 0.0f;
 		alpha = value ? 1.0f : 0.0f;
@@ -174,5 +170,13 @@ public abstract class PanelWidget extends Widget {
 	public PanelWidget setAnchorPoint(CornerAnchorPoint anchor) {
 		this.anchor = anchor;
 		return this;
+	}
+
+	public boolean isTargetVisible() {
+		return isTargetVisible;
+	}
+
+	protected void increaseYPadding(int delta) {
+		yPadding += delta;
 	}
 }

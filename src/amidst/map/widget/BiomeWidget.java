@@ -37,7 +37,7 @@ public class BiomeWidget extends PanelWidget {
 	public BiomeWidget(MapViewer mapViewer) {
 		super(mapViewer);
 
-		FontMetrics fontMetrics = mapViewer.getFontMetrics(textFont);
+		FontMetrics fontMetrics = mapViewer.getFontMetrics(TEXT_FONT);
 		for (int i = 0; i < Biome.biomes.length; i++) {
 			if (Biome.biomes[i] != null) {
 				biomes.add(Biome.biomes[i]);
@@ -56,8 +56,8 @@ public class BiomeWidget extends PanelWidget {
 	public void draw(Graphics2D g2d, float time) {
 		x = mapViewer.getWidth() - width;
 		super.draw(g2d, time);
-		g2d.setColor(textColor);
-		g2d.setFont(textFont);
+		g2d.setColor(TEXT_COLOR);
+		g2d.setFont(TEXT_FONT);
 		g2d.drawString("Highlight Biomes", x + 10, y + 20);
 
 		innerBox.x = x + 8;

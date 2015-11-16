@@ -27,7 +27,7 @@ public class CursorInformationWidget extends PanelWidget {
 		setWidth(stringWidth + 20);
 		super.draw(g2d, time);
 
-		g2d.setColor(textColor);
+		g2d.setColor(TEXT_COLOR);
 		g2d.drawString(message, x + 10, y + 20);
 	}
 
