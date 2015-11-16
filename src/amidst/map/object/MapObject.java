@@ -3,45 +3,38 @@ package amidst.map.object;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
-import amidst.Options;
 import amidst.map.MapMarkers;
 import amidst.map.layer.IconLayer;
 
 public class MapObject extends Point {
 	public MapMarkers type;
-	public int rx, ry;
+	public int rx;
+	public int ry;
 	public double localScale = 1.0;
-	@Deprecated
-	public double tempDist = 0;
 	public IconLayer parentLayer;
 
-	public MapObject(MapMarkers eType, int x, int y) {
+	public MapObject(MapMarkers type, int x, int y) {
 		super(x, y);
-		type = eType;
+		this.type = type;
 	}
 
-	public String getName() {
-		return type.toString();
+	public void setParent(IconLayer parentLayer) {
+		this.parentLayer = parentLayer;
 	}
 
 	public int getWidth() {
-		return (int) (type.image.getWidth() * localScale);
+		return (int) (type.getImage().getWidth() * localScale);
 	}
 
 	public int getHeight() {
-		return (int) (type.image.getHeight() * localScale);
+		return (int) (type.getImage().getHeight() * localScale);
+	}
+
+	public String getName() {
+		return type.getName();
 	}
 
 	public BufferedImage getImage() {
-		return type.image;
-	}
-
-	public boolean isSelectable() {
-		return Options.instance.showVillages.isSelected();
-	}
-
-	public MapObject setParent(IconLayer layer) {
-		parentLayer = layer;
-		return this;
+		return type.getImage();
 	}
 }

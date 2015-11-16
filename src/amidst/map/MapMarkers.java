@@ -1,14 +1,16 @@
 package amidst.map;
 
-import amidst.resources.ResourceLoader;
-
 import java.awt.image.BufferedImage;
 
-/** Contains information about all possible Map Markers.
- * Map objects use either its or their own icon
- * TODO: link to test.amidst.map object class
+import amidst.resources.ResourceLoader;
+
+/**
+ * Contains information about all possible Map Markers. Map objects use either
+ * its or their own icon
  */
+// TODO: link to test.amidst.map object class
 public enum MapMarkers {
+	// @formatter:off
 	NETHER_FORTRESS,
 	PLAYER,
 	SLIME,
@@ -19,11 +21,20 @@ public enum MapMarkers {
 	SPAWN,
 	WITCH,
 	OCEAN_MONUMENT;
-	
-	public final BufferedImage image;
-	
+	// @formatter:on
+
+	private final BufferedImage image;
+
 	private MapMarkers() {
 		String fileName = this.toString().toLowerCase() + ".png";
 		image = ResourceLoader.getImage(fileName);
+	}
+
+	public BufferedImage getImage() {
+		return image;
+	}
+
+	public String getName() {
+		return toString();
 	}
 }

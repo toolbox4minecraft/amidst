@@ -43,7 +43,7 @@ public class MapObjectPlayer extends MapObject {
 	}
 
 	private void initMarker() {
-		marker = type.image;
+		marker = type.getImage();
 	}
 
 	private void updatePosition() {

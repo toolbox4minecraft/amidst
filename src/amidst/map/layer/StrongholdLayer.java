@@ -93,8 +93,10 @@ public class StrongholdLayer extends IconLayer {
 		if (hasStronghold(chunkX, chunkY)) {
 			// FIXME: Possible use of checkChunk causing negative icons
 			// to be misaligned!
-			fragment.addObject(new MapObjectStronghold(x << 4, y << 4)
-					.setParent(this));
+			MapObjectStronghold mapObject = new MapObjectStronghold(x << 4,
+					y << 4);
+			mapObject.setParent(this);
+			fragment.addObject(mapObject);
 		}
 	}
 
