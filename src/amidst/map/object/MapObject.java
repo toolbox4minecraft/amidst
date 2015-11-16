@@ -37,10 +37,6 @@ public abstract class MapObject {
 		this.y = y;
 	}
 
-	public void setParent(IconLayer parentLayer) {
-		this.parentLayer = parentLayer;
-	}
-
 	protected void setX(int x) {
 		this.x = x;
 	}
