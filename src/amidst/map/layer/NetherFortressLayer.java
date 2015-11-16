@@ -38,7 +38,7 @@ public class NetherFortressLayer extends IconLayer {
 		int i = chunkX >> 4;
 		int j = chunkY >> 4;
 
-		random.setSeed(i ^ j << 4 ^ Options.instance.seed);
+		random.setSeed(i ^ j << 4 ^ Options.instance.world.getSeed());
 		random.nextInt();
 
 		if (random.nextInt(3) != 0) {

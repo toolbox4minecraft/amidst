@@ -113,6 +113,11 @@ public class FileWorld implements World {
 	}
 
 	@Override
+	public String getSeedText() {
+		return null;
+	}
+
+	@Override
 	public WorldType getWorldType() {
 		return worldType;
 	}

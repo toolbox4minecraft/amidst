@@ -112,6 +112,7 @@ public class Application {
 
 	public void setWorld(World world) {
 		this.world = world;
+		Options.instance.world = world;
 		if (world != null) {
 			seedHistoryLogger.log(world.getSeed());
 			mapWindow.worldChanged();

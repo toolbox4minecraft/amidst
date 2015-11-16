@@ -41,9 +41,11 @@ public class SpawnLayer extends IconLayer {
 
 	private boolean isInFragmentBounds(Fragment fragment) {
 		return spawnObject.getGlobalX() >= fragment.getBlockX()
-				&& spawnObject.getGlobalX() < fragment.getBlockX() + Fragment.SIZE
+				&& spawnObject.getGlobalX() < fragment.getBlockX()
+						+ Fragment.SIZE
 				&& spawnObject.getGlobalY() >= fragment.getBlockY()
-				&& spawnObject.getGlobalY() < fragment.getBlockY() + Fragment.SIZE;
+				&& spawnObject.getGlobalY() < fragment.getBlockY()
+						+ Fragment.SIZE;
 	}
 
 	@Override
@@ -63,7 +65,7 @@ public class SpawnLayer extends IconLayer {
 	}
 
 	private Point getSpawnCenter() {
-		Random random = new Random(Options.instance.seed);
+		Random random = new Random(Options.instance.world.getSeed());
 		return MinecraftUtil.findValidLocation(0, 0, 256, VALID_BIOMES, random);
 	}
 }

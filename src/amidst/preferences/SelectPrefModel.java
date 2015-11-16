@@ -35,7 +35,7 @@ public class SelectPrefModel implements PrefModel<String> {
 	private Preferences preferences;
 	private String key;
 	private String selected;
-	private SelectButtonModel buttonModels[];
+	private SelectButtonModel[] buttonModels;
 
 	public SelectPrefModel(Preferences pref, String key, String selected,
 			String[] names) {

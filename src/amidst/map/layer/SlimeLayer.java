@@ -44,9 +44,9 @@ public class SlimeLayer extends ImageLayer {
 	}
 
 	private long getSeed(int xPosition, int yPosition) {
-		return Options.instance.seed + xPosition * xPosition * 0x4c1906
-				+ xPosition * 0x5ac0db + yPosition * yPosition * 0x4307a7L
-				+ yPosition * 0x5f24f ^ 0x3ad8025f;
+		return Options.instance.world.getSeed() + xPosition * xPosition
+				* 0x4c1906 + xPosition * 0x5ac0db + yPosition * yPosition
+				* 0x4307a7L + yPosition * 0x5f24f ^ 0x3ad8025f;
 	}
 
 	private int getNextValue() {

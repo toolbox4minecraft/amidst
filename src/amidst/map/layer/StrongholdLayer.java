@@ -160,7 +160,7 @@ public class StrongholdLayer extends IconLayer {
 	}
 
 	private void updateSeed() {
-		random.setSeed(Options.instance.seed);
+		random.setSeed(Options.instance.world.getSeed());
 	}
 
 	// TODO: Replace this system!
