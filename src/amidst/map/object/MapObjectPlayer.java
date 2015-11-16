@@ -43,7 +43,7 @@ public class MapObjectPlayer extends MapObject {
 	}
 
 	private void initMarker() {
-		marker = type.getImage();
+		marker = getType().getImage();
 	}
 
 	private void updatePosition() {
@@ -61,12 +61,12 @@ public class MapObjectPlayer extends MapObject {
 
 	@Override
 	public int getWidth() {
-		return (int) (marker.getWidth() * localScale);
+		return (int) (marker.getWidth() * getLocalScale());
 	}
 
 	@Override
 	public int getHeight() {
-		return (int) (marker.getHeight() * localScale);
+		return (int) (marker.getHeight() * getLocalScale());
 	}
 
 	@Override

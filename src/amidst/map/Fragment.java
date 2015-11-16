@@ -154,8 +154,8 @@ public class Fragment {
 
 	private void drawObject(Graphics2D g, AffineTransform mat,
 			MapObject mapObject) {
-		if (mapObject.parentLayer.isVisible()) {
-			double invZoom = 1.0 / mapObject.parentLayer.getMap().getZoom();
+		if (mapObject.getParentLayer().isVisible()) {
+			double invZoom = 1.0 / mapObject.getParentLayer().getMap().getZoom();
 			int width = mapObject.getWidth();
 			int height = mapObject.getHeight();
 			g.setTransform(mat);
@@ -172,8 +172,8 @@ public class Fragment {
 	}
 
 	public void addObject(MapObject object) {
-		object.rx = object.getX() + this.blockX;
-		object.ry = object.getY() + this.blockY;
+		object.setRx(object.getX() + this.blockX);
+		object.setRy(object.getY() + this.blockY);
 		if (objectsLength >= objects.length) {
 			MapObject[] tempObjects = new MapObject[objects.length << 1];
 			for (int i = 0; i < objects.length; i++) {

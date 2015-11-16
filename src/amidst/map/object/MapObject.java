@@ -7,14 +7,14 @@ import amidst.map.MapMarkers;
 import amidst.map.layer.IconLayer;
 
 public abstract class MapObject {
-	public MapMarkers type;
+	private MapMarkers type;
 	private int x;
 	private int y;
 
-	public int rx;
-	public int ry;
-	public double localScale = 1.0;
-	public IconLayer parentLayer;
+	private int rx;
+	private int ry;
+	private double localScale = 1.0;
+	private IconLayer parentLayer;
 
 	public MapObject(MapMarkers type, int x, int y) {
 		this.type = type;
@@ -61,5 +61,41 @@ public abstract class MapObject {
 	@Deprecated
 	public Point getAsPoint() {
 		return new Point(x, y);
+	}
+
+	protected MapMarkers getType() {
+		return type;
+	}
+
+	public int getRx() {
+		return rx;
+	}
+
+	public void setRx(int rx) {
+		this.rx = rx;
+	}
+
+	public int getRy() {
+		return ry;
+	}
+
+	public void setRy(int ry) {
+		this.ry = ry;
+	}
+
+	protected double getLocalScale() {
+		return localScale;
+	}
+
+	public void setLocalScale(double localScale) {
+		this.localScale = localScale;
+	}
+
+	public IconLayer getParentLayer() {
+		return parentLayer;
+	}
+
+	public void setParentLayer(IconLayer parentLayer) {
+		this.parentLayer = parentLayer;
 	}
 }

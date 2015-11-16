@@ -155,11 +155,11 @@ public class MapViewer {
 			MapObject object = map.getObjectAt(mouse, 50.0);
 
 			if (selectedObject != null) {
-				selectedObject.localScale = 1.0;
+				selectedObject.setLocalScale(1.0);
 			}
 
 			if (object != null) {
-				object.localScale = 1.5;
+				object.setLocalScale(1.5);
 			}
 			selectedObject = object;
 		}
