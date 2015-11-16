@@ -7,7 +7,7 @@ public class MapObjectSpawn extends MapObject {
 	private int globalY;
 
 	public MapObjectSpawn(int x, int y) {
-		super(MapMarkers.SPAWN, calc(x), calc(y));
+		super(MapMarkers.SPAWN, toFragmentCoordinates(x), toFragmentCoordinates(y));
 		this.globalX = x;
 		this.globalY = y;
 	}

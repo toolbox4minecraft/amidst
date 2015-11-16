@@ -8,13 +8,11 @@ import amidst.map.MapMarkers;
 import amidst.map.layer.IconLayer;
 
 public abstract class MapObject {
-	// TODO: understand what happens and rename the method
-	protected static int calc(int coordinate) {
-		return calc1(coordinate) + coordinate % Fragment.SIZE;
+	public static int toFragmentCoordinates(int coordinate) {
+		return getOffset(coordinate) + coordinate % Fragment.SIZE;
 	}
 
-	// TODO: understand what happens and rename the method
-	protected static int calc1(int coordinate) {
+	private static int getOffset(int coordinate) {
 		if (coordinate < 0) {
 			return Fragment.SIZE;
 		} else {
@@ -23,8 +21,8 @@ public abstract class MapObject {
 	}
 
 	private MapMarkers type;
-	private int x;
-	private int y;
+	private final int x;
+	private final int y;
 
 	private int rx;
 	private int ry;
@@ -34,14 +32,6 @@ public abstract class MapObject {
 	public MapObject(MapMarkers type, int x, int y) {
 		this.type = type;
 		this.x = x;
-		this.y = y;
-	}
-
-	protected void setX(int x) {
-		this.x = x;
-	}
-
-	protected void setY(int y) {
 		this.y = y;
 	}
 

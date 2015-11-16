@@ -12,28 +12,23 @@ public class MapObjectPlayer extends MapObject {
 	private Fragment parentFragment;
 
 	public MapObjectPlayer(Player player) {
-		super(MapMarkers.PLAYER, calc(player.getX()), calc(player.getZ()));
+		super(MapMarkers.PLAYER, toFragmentCoordinates(player.getX()), toFragmentCoordinates(player.getZ()));
 		this.player = player;
-		initPlayerListener();
 		initMarker();
-	}
-
-	private void initPlayerListener() {
-		this.player.setPositionChangedListener(new Runnable() {
-			@Override
-			public void run() {
-				updatePosition();
-			}
-		});
 	}
 
 	private void initMarker() {
 		marker = getType().getImage();
 	}
 
-	private void updatePosition() {
-		this.setX(calc(player.getX()));
-		this.setY(calc(player.getZ()));
+	@Override
+	public int getX() {
+		return toFragmentCoordinates(player.getX());
+	}
+
+	@Override
+	public int getY() {
+		return toFragmentCoordinates(player.getZ());
 	}
 
 	public int getGlobalX() {

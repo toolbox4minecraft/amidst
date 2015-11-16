@@ -33,11 +33,11 @@ public class PlayerLayer extends IconLayer {
 		}
 	}
 
-	private boolean isInFragmentBounds(Fragment frag, MapObjectPlayer player) {
-		return player.getGlobalX() >= frag.getBlockX()
-				&& player.getGlobalX() < frag.getBlockX() + Fragment.SIZE
-				&& player.getGlobalY() >= frag.getBlockY()
-				&& player.getGlobalY() < frag.getBlockY() + Fragment.SIZE;
+	private boolean isInFragmentBounds(Fragment fragment, MapObjectPlayer player) {
+		return player.getGlobalX() >= fragment.getBlockX()
+				&& player.getGlobalX() < fragment.getBlockX() + Fragment.SIZE
+				&& player.getGlobalY() >= fragment.getBlockY()
+				&& player.getGlobalY() < fragment.getBlockY() + Fragment.SIZE;
 	}
 
 	@Override

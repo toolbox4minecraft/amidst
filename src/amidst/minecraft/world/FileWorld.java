@@ -10,8 +10,6 @@ import amidst.minecraft.MinecraftUtil;
 
 public class FileWorld implements World {
 	public static class Player {
-		private Runnable positionChangedListener;
-
 		private FileWorld world;
 
 		private String playerName;
@@ -45,7 +43,6 @@ public class FileWorld implements World {
 		public void moveTo(int x, int z) {
 			this.x = x;
 			this.z = z;
-			positionChangedListener.run();
 			moved = true;
 		}
 
@@ -54,10 +51,6 @@ public class FileWorld implements World {
 				world.mover.movePlayer(this);
 				moved = false;
 			}
-		}
-
-		public void setPositionChangedListener(Runnable listener) {
-			this.positionChangedListener = listener;
 		}
 
 		@Override
