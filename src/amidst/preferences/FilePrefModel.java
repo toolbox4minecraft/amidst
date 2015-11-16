@@ -1,14 +1,16 @@
 package amidst.preferences;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.prefs.Preferences;
 
-/** Autosaving File model
+/**
+ * Autosaving File model
  */
 public class FilePrefModel implements PrefModel<File> {
 	private final String key;
 	private final Preferences pref;
-	
+
 	public FilePrefModel(Preferences pref, String key, File init) {
 		super();
 		this.pref = pref;
@@ -21,14 +23,14 @@ public class FilePrefModel implements PrefModel<File> {
 	public String getKey() {
 		return key;
 	}
-	
+
 	@Override
 	public File get() {
 		String path = pref.get(key, null);
 		assert path != null;
 		return new File(path);
 	}
-	
+
 	@Override
 	public void set(File value) {
 		try {

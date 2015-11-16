@@ -6,18 +6,19 @@ public class StringPreference {
 	private Preferences preferences;
 	private String key;
 	private String value;
-	
-	public StringPreference(Preferences preferences, String key, String defaultValue) {
+
+	public StringPreference(Preferences preferences, String key,
+			String defaultValue) {
 		this.preferences = preferences;
 		this.key = key;
-		value = preferences.get(key,  defaultValue);
+		value = preferences.get(key, defaultValue);
 	}
-	
+
 	public String get() {
 		return value;
 	}
-	
+
 	public void set(String value) {
-		preferences.put(key,  value);
+		preferences.put(key, value);
 	}
 }
