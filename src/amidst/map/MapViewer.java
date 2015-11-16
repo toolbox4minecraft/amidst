@@ -60,6 +60,8 @@ import amidst.resources.ResourceLoader;
 public class MapViewer {
 	private class Listeners implements MouseListener, MouseWheelListener,
 			KeyListener {
+		private Widget mouseOwner;
+
 		@Override
 		public void keyTyped(KeyEvent e) {
 		}
@@ -113,28 +115,33 @@ public class MapViewer {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (e.isMetaDown()) {
-				return;
-			}
 			Point mouse = getMousePositionFromEvent(e);
+			if (e.isPopupTrigger()) {
+				showMenu(e);
+			} else if (e.isMetaDown()) {
+			} else if (mousePressedOnWidget(e, mouse)) {
+			} else {
+				lastMouse = mouse;
+			}
+		}
+
+		private boolean mousePressedOnWidget(MouseEvent e, Point mouse) {
 			Widget widget = findWidget(mouse);
 			if (widget != null
 					&& widget.onMousePressed(
 							translateMouseXCoordinateToWidget(mouse, widget),
 							translateMouseYCoordinateToWidget(mouse, widget))) {
 				mouseOwner = widget;
+				return true;
 			} else {
-				lastMouse = mouse;
+				return false;
 			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (e.isPopupTrigger() && MinecraftUtil.getVersion().saveEnabled()) {
-				lastRightClick = getMousePositionFromEvent(e);
-				if (world.isFileWorld()) {
-					menu.show(e.getComponent(), e.getX(), e.getY());
-				}
+			if (e.isPopupTrigger()) {
+				showMenu(e);
 			} else if (mouseOwner != null) {
 				mouseOwner.onMouseReleased();
 				mouseOwner = null;
@@ -149,6 +156,15 @@ public class MapViewer {
 
 		@Override
 		public void mouseExited(MouseEvent e) {
+		}
+
+		private void showMenu(MouseEvent e) {
+			if (MinecraftUtil.getVersion().saveEnabled()) {
+				lastRightClick = getMousePositionFromEvent(e);
+				if (world.isFileWorld()) {
+					menu.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
 		}
 
 		private void mouseClickedOnMap(Point mouse) {
@@ -406,8 +422,6 @@ public class MapViewer {
 	private MapMovement movement = new MapMovement();
 
 	private Timer updateTimer = new Timer();
-
-	private Widget mouseOwner;
 
 	private World world;
 
