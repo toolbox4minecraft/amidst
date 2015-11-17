@@ -230,7 +230,7 @@ public class MapViewer {
 		}
 
 		private void updateMapMovement() {
-			movement.update();
+			movement.update(map, lastMouse, component.getMousePosition());
 		}
 
 		private void setViewerDimensions() {
@@ -271,18 +271,17 @@ public class MapViewer {
 		}
 	}
 
-	private class MapMovement {
+	private static class MapMovement {
 		private Point2D.Double speed = new Point2D.Double();
 
-		public void update() {
-			updateMapMovementSpeed();
-			moveMap();
+		public void update(Map map, Point lastMouse, Point currentMouse) {
+			updateMapMovementSpeed(lastMouse, currentMouse);
+			moveMap(map);
 			throttleMapMovementSpeed();
 		}
 
-		private void updateMapMovementSpeed() {
+		private void updateMapMovementSpeed(Point lastMouse, Point currentMouse) {
 			if (lastMouse != null) {
-				Point currentMouse = component.getMousePosition();
 				if (currentMouse != null) {
 					double dX = currentMouse.x - lastMouse.x;
 					double dY = currentMouse.y - lastMouse.y;
@@ -293,7 +292,7 @@ public class MapViewer {
 			}
 		}
 
-		private void moveMap() {
+		private void moveMap(Map map) {
 			map.moveBy((int) speed.x, (int) speed.y);
 		}
 
