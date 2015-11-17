@@ -136,13 +136,11 @@ public abstract class PanelWidget extends Widget {
 		g2d.fillRect(getX(), getY(), getWidth(), getHeight());
 	}
 
-	@Override
-	public boolean isVisible() {
-		isTargetVisible = onVisibilityCheck();
-		return isTargetVisible || isFading;
+	protected void increaseYMargin(int delta) {
+		yMargin += delta;
 	}
 
-	public void forceVisibility(boolean value) {
+	protected void forceVisibility(boolean value) {
 		isTargetVisible = value;
 		isFading = false;
 		targetAlpha = getAlpha(value);
@@ -150,12 +148,14 @@ public abstract class PanelWidget extends Widget {
 	}
 
 	@Override
-	public float getAlpha() {
-		return alpha;
+	public boolean isVisible() {
+		isTargetVisible = onVisibilityCheck();
+		return isTargetVisible || isFading;
 	}
 
-	protected void increaseYMargin(int delta) {
-		yMargin += delta;
+	@Override
+	public float getAlpha() {
+		return alpha;
 	}
 
 	protected abstract boolean onVisibilityCheck();
