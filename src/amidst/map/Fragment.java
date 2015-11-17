@@ -233,7 +233,7 @@ public class Fragment {
 	}
 
 	public void init(int xInWorld, int yInWorld) {
-		clearMapObject();
+		clearMapObjects();
 		hasNext = false;
 		endOfLine = false;
 		this.xInWorld = xInWorld;
@@ -242,7 +242,7 @@ public class Fragment {
 	}
 
 	public void reset() {
-		clearMapObject();
+		clearMapObjects();
 		isActive = false;
 		isLoaded = false;
 
@@ -309,9 +309,14 @@ public class Fragment {
 		return mapObjects;
 	}
 
-	private void clearMapObject() {
-		for (MapObject mapObject : mapObjects) {
+	private void clearMapObjects() {
+		for (MapObject mapObject : copyMapObjectsToPreventConcurrentModificationException()) {
 			mapObject.setFragment(null);
 		}
+	}
+
+	@Deprecated
+	private HashSet<MapObject> copyMapObjectsToPreventConcurrentModificationException() {
+		return new HashSet<MapObject>(mapObjects);
 	}
 }

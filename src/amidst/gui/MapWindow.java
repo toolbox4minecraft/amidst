@@ -257,6 +257,8 @@ public class MapWindow {
 	}
 
 	public void repaintFragments() {
-		mapViewer.repaintFragments();
+		if (mapViewer != null) {
+			mapViewer.repaintFragments();
+		}
 	}
 }
