@@ -10,13 +10,14 @@ import amidst.gui.CrashWindow;
 import amidst.gui.MapWindow;
 
 public class Log {
+	private static final InMemoryLogger IN_MEMORY_LOGGER = new InMemoryLogger();
 	private static Object logLock = new Object();
 	private static HashMap<String, LogListener> listeners = new HashMap<String, LogListener>();
 	public static boolean isUsingAlerts = true;
 	public static boolean isShowingDebug = true;
 
 	static {
-		addListener("master", new LogRecorder());
+		addListener("master", IN_MEMORY_LOGGER);
 	}
 
 	public static void addListener(String name, LogListener listener) {
@@ -100,7 +101,7 @@ public class Log {
 				for (LogListener listener : listeners.values())
 					listener.crash(e, exceptionText, message);
 
-			new CrashWindow(message, LogRecorder.getContents());
+			new CrashWindow(message, IN_MEMORY_LOGGER.getContents());
 			if (MapWindow.getInstance() != null)
 				MapWindow.getInstance().dispose();
 			// System.exit(0);
