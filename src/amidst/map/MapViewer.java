@@ -298,12 +298,10 @@ public class MapViewer {
 	private FragmentManager fragmentManager;
 
 	private JPopupMenu menu = new JPopupMenu();
-	public int strongholdCount;
-	public int villageCount;
 
 	private Map map;
 	private Point lastMouse;
-	public Point lastRightClick = null;
+	private Point lastRightClick = null;
 
 	private Font textFont = new Font("arial", Font.BOLD, 15);
 	private FontMetrics textMetrics;
@@ -448,5 +446,9 @@ public class MapViewer {
 
 	public void repaintFragments() {
 		map.repaintFragments();
+	}
+
+	public Point getLastRightClick() {
+		return lastRightClick;
 	}
 }

@@ -32,7 +32,7 @@ public class PlayerMenuItemFactory {
 	}
 
 	private void playerSelected(MapObjectPlayer player) {
-		Point lastRightClick = mapViewer.lastRightClick;
+		Point lastRightClick = mapViewer.getLastRightClick();
 		if (lastRightClick != null) {
 			Map map = playerLayer.getMap();
 			Point location = map.screenToLocal(lastRightClick);
