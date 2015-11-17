@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import amidst.map.layer.IconLayer;
 import amidst.map.object.MapObjectPlayer;
 import amidst.minecraft.MinecraftUtil;
+import amidst.preferences.BooleanPrefModel;
 
 public class FileWorld extends World {
 	public static class Player {
@@ -118,10 +118,11 @@ public class FileWorld extends World {
 		return players;
 	}
 
-	public List<MapObjectPlayer> getMapObjectPlayers(IconLayer iconLayer) {
+	public List<MapObjectPlayer> getMapObjectPlayers(
+			BooleanPrefModel isVisiblePreference) {
 		List<MapObjectPlayer> result = new ArrayList<MapObjectPlayer>();
 		for (Player player : players) {
-			result.add(new MapObjectPlayer(iconLayer, player));
+			result.add(new MapObjectPlayer(isVisiblePreference, player));
 		}
 		return Collections.unmodifiableList(result);
 	}

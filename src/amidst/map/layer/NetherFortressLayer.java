@@ -34,7 +34,8 @@ public class NetherFortressLayer extends IconLayer {
 	}
 
 	private MapObject createMapObject(int x, int y) {
-		return MapObject.fromFragmentCoordinates(this,
+		return MapObject.fromFragmentCoordinates(
+				Options.instance.showNetherFortresses,
 				MapMarkers.NETHER_FORTRESS, x, y);
 	}
 

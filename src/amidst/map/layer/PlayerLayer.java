@@ -34,7 +34,8 @@ public class PlayerLayer extends IconLayer {
 
 	public void setWorld(World world) {
 		if (world instanceof FileWorld) {
-			players = world.getAsFileWorld().getMapObjectPlayers(this);
+			players = world.getAsFileWorld().getMapObjectPlayers(
+					Options.instance.showPlayers);
 			loadSkins();
 		} else {
 			players = Collections.emptyList();

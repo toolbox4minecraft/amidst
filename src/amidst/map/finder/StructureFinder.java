@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.map.Fragment;
-import amidst.map.layer.IconLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.World;
+import amidst.preferences.BooleanPrefModel;
 
 public abstract class StructureFinder {
 	protected final List<Biome> validBiomes;
@@ -21,7 +21,7 @@ public abstract class StructureFinder {
 	protected final Random random;
 
 	private World world;
-	private IconLayer iconLayer;
+	private BooleanPrefModel isVisiblePreference;
 
 	public StructureFinder() {
 		validBiomes = getValidBiomes();
@@ -40,10 +40,10 @@ public abstract class StructureFinder {
 				- minDistanceBetweenScatteredFeatures;
 	}
 
-	public void generateMapObjects(World world, IconLayer iconLayer,
-			Fragment fragment) {
+	public void generateMapObjects(World world,
+			BooleanPrefModel isVisiblePreference, Fragment fragment) {
 		this.world = world;
-		this.iconLayer = iconLayer;
+		this.isVisiblePreference = isVisiblePreference;
 		for (int x = 0; x < size; x++) {
 			for (int y = 0; y < size; y++) {
 				generateAt(fragment, x, y);
@@ -64,7 +64,7 @@ public abstract class StructureFinder {
 		boolean successful = isSuccessful(chunkX, chunkY);
 		int middleOfChunkX = middleOfChunk(chunkX);
 		int middleOfChunkY = middleOfChunk(chunkY);
-		return getMapObject(iconLayer, successful, middleOfChunkX,
+		return getMapObject(isVisiblePreference, successful, middleOfChunkX,
 				middleOfChunkY, x, y);
 	}
 
@@ -106,9 +106,9 @@ public abstract class StructureFinder {
 		return value * 16 + 8;
 	}
 
-	protected abstract MapObject getMapObject(IconLayer iconLayer,
-			boolean isSuccessful, int middleOfChunkX, int middleOfChunkY,
-			int x, int y);
+	protected abstract MapObject getMapObject(
+			BooleanPrefModel isVisiblePreference, boolean isSuccessful,
+			int middleOfChunkX, int middleOfChunkY, int x, int y);
 
 	protected abstract List<Biome> getValidBiomes();
 

@@ -5,20 +5,21 @@ import java.util.List;
 
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
-import amidst.map.layer.IconLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
+import amidst.preferences.BooleanPrefModel;
 
 public class VillageFinder extends StructureFinder {
 	private static final int STRUCTURE_SIZE = 0;
 
 	@Override
-	protected MapObject getMapObject(IconLayer iconLayer, boolean isSuccessful,
-			int middleOfChunkX, int middleOfChunkY, int x, int y) {
+	protected MapObject getMapObject(BooleanPrefModel isVisiblePreference,
+			boolean isSuccessful, int middleOfChunkX, int middleOfChunkY,
+			int x, int y) {
 		if (isSuccessful) {
 			if (isValid(middleOfChunkX, middleOfChunkY)) {
-				return createMapObject(iconLayer, x << 4, y << 4);
+				return createMapObject(isVisiblePreference, x << 4, y << 4);
 			} else {
 				return null;
 			}
@@ -32,9 +33,10 @@ public class VillageFinder extends StructureFinder {
 				STRUCTURE_SIZE, validBiomes);
 	}
 
-	private MapObject createMapObject(IconLayer iconLayer, int x, int y) {
-		return MapObject.fromFragmentCoordinates(iconLayer, MapMarkers.VILLAGE,
-				x, y);
+	private MapObject createMapObject(BooleanPrefModel isVisiblePreference,
+			int x, int y) {
+		return MapObject.fromFragmentCoordinates(isVisiblePreference,
+				MapMarkers.VILLAGE, x, y);
 	}
 
 	@Override

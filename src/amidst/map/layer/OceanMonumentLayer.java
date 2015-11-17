@@ -14,6 +14,7 @@ public class OceanMonumentLayer extends IconLayer {
 
 	@Override
 	public void generateMapObjects(Fragment fragment) {
-		finder.generateMapObjects(Options.instance.world, this, fragment);
+		finder.generateMapObjects(Options.instance.world,
+				Options.instance.showOceanMonuments, fragment);
 	}
 }

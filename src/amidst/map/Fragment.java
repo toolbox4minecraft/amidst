@@ -135,12 +135,12 @@ public class Fragment {
 		setAlphaComposite(g, 1.0f);
 	}
 
-	public void drawObjects(Graphics2D g, AffineTransform mat) {
+	public void drawObjects(Graphics2D g, AffineTransform mat, Map map) {
 		if (alpha != 1.0f) {
 			setAlphaComposite(g, alpha);
 		}
 		for (MapObject mapObject : mapObjects) {
-			drawObject(g, mat, mapObject);
+			drawObject(g, mat, mapObject, map);
 		}
 		if (alpha != 1.0f) {
 			setAlphaComposite(g, 1.0f);
@@ -148,12 +148,12 @@ public class Fragment {
 	}
 
 	private void drawObject(Graphics2D g, AffineTransform mat,
-			MapObject mapObject) {
-		if (mapObject.isIconLayerVisible()) {
-			double invZoom = 1.0 / mapObject.getMapZoom();
+			MapObject mapObject, Map map) {
+		if (mapObject.isVisible()) {
+			double invZoom = 1.0 / map.getZoom();
 			int width = mapObject.getWidth();
 			int height = mapObject.getHeight();
-			if (mapObject.isSelected()) {
+			if (map.getSelectedMapObject() == mapObject) {
 				width *= 1.5;
 				height *= 1.5;
 			}

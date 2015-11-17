@@ -69,7 +69,7 @@ public class Map {
 			return new Runnable() {
 				@Override
 				public void run() {
-					currentFragment.drawObjects(g, mat);
+					currentFragment.drawObjects(g, mat, Map.this);
 				}
 			};
 		}
@@ -361,7 +361,7 @@ public class Map {
 		while (frag.hasNext()) {
 			frag = frag.getNext();
 			for (MapObject mapObject : frag.getMapObjects()) {
-				if (mapObject.isIconLayerVisible()) {
+				if (mapObject.isVisible()) {
 					double distance = getPosition(x, y, mapObject).distance(
 							position);
 					if (closestDistance > distance) {

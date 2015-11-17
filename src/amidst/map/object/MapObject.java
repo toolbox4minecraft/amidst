@@ -4,23 +4,26 @@ import java.awt.image.BufferedImage;
 
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
-import amidst.map.layer.IconLayer;
+import amidst.preferences.BooleanPrefModel;
 import amidst.utilities.CoordinateUtils;
 
 public class MapObject {
-	public static MapObject fromFragmentCoordinates(IconLayer iconLayer,
-			MapMarkers type, int xInFragment, int yInFragment) {
-		return new MapObject(iconLayer, type, xInFragment, yInFragment);
+	public static MapObject fromFragmentCoordinates(
+			BooleanPrefModel isVisiblePreference, MapMarkers type,
+			int xInFragment, int yInFragment) {
+		return new MapObject(isVisiblePreference, type, xInFragment,
+				yInFragment);
 	}
 
-	public static MapObject fromWorldCoordinates(IconLayer iconLayer,
-			MapMarkers type, int xInWorld, int yInWorld) {
-		return new MapObject(iconLayer, type,
+	public static MapObject fromWorldCoordinates(
+			BooleanPrefModel isVisiblePreference, MapMarkers type,
+			int xInWorld, int yInWorld) {
+		return new MapObject(isVisiblePreference, type,
 				CoordinateUtils.toFragment(xInWorld),
 				CoordinateUtils.toFragment(yInWorld), xInWorld, yInWorld);
 	}
 
-	private final IconLayer iconLayer;
+	private final BooleanPrefModel isVisiblePreference;
 	private final MapMarkers type;
 	private final int xInFragment;
 	private final int yInFragment;
@@ -28,16 +31,16 @@ public class MapObject {
 	private int yInWorld;
 	private Fragment fragment;
 
-	protected MapObject(IconLayer iconLayer, MapMarkers type, int xInFragment,
-			int yInFragment, int xInWorld, int yInWorld) {
-		this(iconLayer, type, xInFragment, yInFragment);
+	protected MapObject(BooleanPrefModel isVisiblePreference, MapMarkers type,
+			int xInFragment, int yInFragment, int xInWorld, int yInWorld) {
+		this(isVisiblePreference, type, xInFragment, yInFragment);
 		this.xInWorld = xInWorld;
 		this.yInWorld = yInWorld;
 	}
 
-	protected MapObject(IconLayer iconLayer, MapMarkers type, int xInFragment,
-			int yInFragment) {
-		this.iconLayer = iconLayer;
+	protected MapObject(BooleanPrefModel isVisiblePreference, MapMarkers type,
+			int xInFragment, int yInFragment) {
+		this.isVisiblePreference = isVisiblePreference;
 		this.type = type;
 		this.xInFragment = xInFragment;
 		this.yInFragment = yInFragment;
@@ -80,18 +83,8 @@ public class MapObject {
 	}
 
 	@Deprecated
-	public boolean isIconLayerVisible() {
-		return iconLayer.isVisible();
-	}
-
-	@Deprecated
-	public double getMapZoom() {
-		return iconLayer.getMap().getZoom();
-	}
-
-	@Deprecated
-	public boolean isSelected() {
-		return iconLayer.getMap().getSelectedMapObject() == this;
+	public boolean isVisible() {
+		return isVisiblePreference.get();
 	}
 
 	@Override
@@ -99,6 +92,7 @@ public class MapObject {
 		return getName() + " at (" + getXInWorld() + ", " + getYInWorld() + ")";
 	}
 
+	@Deprecated
 	public void setFragment(Fragment fragment) {
 		clearFragment();
 		this.fragment = fragment;

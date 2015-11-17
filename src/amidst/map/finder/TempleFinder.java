@@ -6,20 +6,22 @@ import java.util.List;
 import amidst.logging.Log;
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
-import amidst.map.layer.IconLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
+import amidst.preferences.BooleanPrefModel;
 import amidst.version.VersionInfo;
 
 public class TempleFinder extends StructureFinder {
 	@Override
-	protected MapObject getMapObject(IconLayer iconLayer, boolean isSuccessful,
-			int middleOfChunkX, int middleOfChunkY, int x, int y) {
+	protected MapObject getMapObject(BooleanPrefModel isVisiblePreference,
+			boolean isSuccessful, int middleOfChunkX, int middleOfChunkY,
+			int x, int y) {
 		if (isSuccessful) {
 			Biome biome = getBiome(middleOfChunkX, middleOfChunkY);
 			if (validBiomes.contains(biome)) {
-				return createMapObject(iconLayer, biome, x << 4, y << 4);
+				return createMapObject(isVisiblePreference, biome, x << 4,
+						y << 4);
 			} else {
 				return null;
 			}
@@ -39,16 +41,16 @@ public class TempleFinder extends StructureFinder {
 		return MinecraftUtil.getBiomeAt(middleOfChunkX, middleOfChunkY);
 	}
 
-	private MapObject createMapObject(IconLayer iconLayer, Biome chunkBiome,
-			int x, int y) {
+	private MapObject createMapObject(BooleanPrefModel isVisiblePreference,
+			Biome chunkBiome, int x, int y) {
 		if (chunkBiome == Biome.swampland) {
-			return MapObject.fromFragmentCoordinates(iconLayer,
+			return MapObject.fromFragmentCoordinates(isVisiblePreference,
 					MapMarkers.WITCH, x, y);
 		} else if (chunkBiome.name.contains("Jungle")) {
-			return MapObject.fromFragmentCoordinates(iconLayer,
+			return MapObject.fromFragmentCoordinates(isVisiblePreference,
 					MapMarkers.JUNGLE, x, y);
 		} else if (chunkBiome.name.contains("Desert")) {
-			return MapObject.fromFragmentCoordinates(iconLayer,
+			return MapObject.fromFragmentCoordinates(isVisiblePreference,
 					MapMarkers.DESERT, x, y);
 		} else {
 			Log.e("No known structure for this biome type. This might be an error.");

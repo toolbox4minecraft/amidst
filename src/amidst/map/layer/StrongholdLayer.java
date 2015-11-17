@@ -99,8 +99,8 @@ public class StrongholdLayer extends IconLayer {
 	}
 
 	private MapObject createMapObject(int x, int y) {
-		return MapObject.fromFragmentCoordinates(this, MapMarkers.STRONGHOLD,
-				x, y);
+		return MapObject.fromFragmentCoordinates(
+				Options.instance.showStrongholds, MapMarkers.STRONGHOLD, x, y);
 	}
 
 	private boolean hasStronghold(int chunkX, int chunkY) {
