@@ -15,8 +15,9 @@ import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
@@ -278,7 +279,8 @@ public class MapViewer {
 	private Component component = new Component();
 	private MapMovement movement = new MapMovement();
 
-	private Timer updateTimer = new Timer();
+	private ScheduledExecutorService executor = Executors
+			.newSingleThreadScheduledExecutor();
 
 	private MapZoom zoom;
 	private World world;
@@ -304,7 +306,7 @@ public class MapViewer {
 		initPlayerMenu();
 		initWidgets();
 		initComponent();
-		initTimer();
+		initExecutor();
 	}
 
 	private void initPlayerMenu() {
@@ -341,13 +343,13 @@ public class MapViewer {
 		textMetrics = component.getFontMetrics(textFont);
 	}
 
-	private void initTimer() {
-		updateTimer.scheduleAtFixedRate(new TimerTask() {
+	private void initExecutor() {
+		executor.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
 				component.repaint();
 			}
-		}, 20, 20);
+		}, 20, 20, TimeUnit.MILLISECONDS);
 	}
 
 	public BufferedImage createCaptureImage() {
@@ -362,10 +364,20 @@ public class MapViewer {
 
 	public void dispose() {
 		Log.debug("Disposing of map viewer.");
-		updateTimer.cancel();
+		shutdownExecutor();
 		map.dispose();
 		menu.removeAll();
-		updateTimer = null;
+		executor = null;
+	}
+
+	private void shutdownExecutor() {
+		executor.shutdown();
+		try {
+			executor.awaitTermination(1, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			Log.w("MapViewer timer shutdown took longer than one second.");
+			e.printStackTrace();
+		}
 	}
 
 	public void centerAt(long x, long y) {
