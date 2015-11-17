@@ -304,9 +304,9 @@ public class MapWindow {
 		}
 	}
 
-	public void repaintFragments() {
+	public void repaintImageLayers() {
 		if (mapViewer != null) {
-			mapViewer.repaintFragments();
+			mapViewer.repaintImageLayers();
 		}
 	}
 }

@@ -8,7 +8,7 @@ import amidst.map.layer.BiomeLayer;
 import amidst.resources.ResourceLoader;
 
 public class BiomeToggleWidget extends PanelWidget {
-	private static BufferedImage highlighterIcon = ResourceLoader
+	private static final BufferedImage HIGHLIGHTER_ICON = ResourceLoader
 			.getImage("highlighter.png");
 	public static boolean isBiomeWidgetVisible = false;
 
@@ -20,19 +20,24 @@ public class BiomeToggleWidget extends PanelWidget {
 	@Override
 	public void draw(Graphics2D g2d, float time) {
 		super.draw(g2d, time);
-		g2d.drawImage(highlighterIcon, getX(), getY(), 36, 36, null);
+		g2d.drawImage(HIGHLIGHTER_ICON, getX(), getY(), 36, 36, null);
 	}
 
 	@Override
 	public boolean onMousePressed(int x, int y) {
 		isBiomeWidgetVisible = !isBiomeWidgetVisible;
-		BiomeLayer.instance.setHighlightMode(isBiomeWidgetVisible);
-		(new Thread(new Runnable() {
+		BiomeLayer.getInstance().setHighlightMode(isBiomeWidgetVisible);
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				map.repaintFragmentsLayer(BiomeLayer.instance.getLayerId());
+				map.repaintImageLayer(BiomeLayer.getInstance().getLayerId());
 			}
-		})).start();
+		}).start();
+		return true;
+	}
+
+	@Override
+	protected boolean onVisibilityCheck() {
 		return true;
 	}
 }

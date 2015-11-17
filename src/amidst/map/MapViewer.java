@@ -404,8 +404,8 @@ public class MapViewer {
 		return component.getHeight();
 	}
 
-	public void repaintFragments() {
-		map.repaintFragments();
+	public void repaintImageLayers() {
+		map.repaintImageLayers();
 	}
 
 	@Deprecated

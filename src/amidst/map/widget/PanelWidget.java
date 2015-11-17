@@ -138,10 +138,6 @@ public abstract class PanelWidget extends Widget {
 		return value;
 	}
 
-	protected boolean onVisibilityCheck() {
-		return true;
-	}
-
 	public void forceVisibility(boolean value) {
 		isTargetVisible = value;
 		isFading = false;
@@ -166,4 +162,6 @@ public abstract class PanelWidget extends Widget {
 	protected void increaseYPadding(int delta) {
 		yPadding += delta;
 	}
+
+	protected abstract boolean onVisibilityCheck();
 }

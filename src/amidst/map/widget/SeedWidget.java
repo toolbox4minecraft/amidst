@@ -30,4 +30,9 @@ public class SeedWidget extends PanelWidget {
 			return "Seed: \"" + seedText + "\" (" + world.getSeed() + ")";
 		}
 	}
+
+	@Override
+	protected boolean onVisibilityCheck() {
+		return true;
+	}
 }

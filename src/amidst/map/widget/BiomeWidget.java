@@ -83,7 +83,7 @@ public class BiomeWidget extends PanelWidget {
 
 		for (int i = 0; i < biomes.size(); i++) {
 			Biome biome = biomes.get(i);
-			if (BiomeLayer.instance.isBiomeSelected(biome.index))
+			if (BiomeLayer.getInstance().isBiomeSelected(biome.index))
 				g2d.setColor(((i % 2) == 1) ? biomeLitBgColor1
 						: biomeLitBgColor2);
 			else
@@ -175,7 +175,7 @@ public class BiomeWidget extends PanelWidget {
 				&& (mouseY < innerBox.y - getY() + innerBox.height)) {
 			int id = (mouseY - (innerBox.y - getY()) - biomeListYOffset) / 16;
 			if (id < biomes.size()) {
-				BiomeLayer.instance.toggleBiomeSelect(biomes.get(id).index);
+				BiomeLayer.getInstance().toggleBiomeSelect(biomes.get(id).index);
 				needsRedraw = true;
 			}
 		}
@@ -184,15 +184,15 @@ public class BiomeWidget extends PanelWidget {
 		// release
 		if ((mouseY > getHeight() - 25) && (mouseY < getHeight() - 9)) {
 			if ((mouseX > 117) && (mouseX < 139)) {
-				BiomeLayer.instance.selectAllBiomes();
+				BiomeLayer.getInstance().selectAllBiomes();
 				needsRedraw = true;
 			} else if ((mouseX > 143) && (mouseX < 197)) {
 				for (int i = 128; i < Biome.biomes.length; i++)
 					if (Biome.biomes[i] != null)
-						BiomeLayer.instance.selectBiome(i);
+						BiomeLayer.getInstance().selectBiome(i);
 				needsRedraw = true;
 			} else if ((mouseX > 203) && (mouseX < 242)) {
-				BiomeLayer.instance.deselectAllBiomes();
+				BiomeLayer.getInstance().deselectAllBiomes();
 				needsRedraw = true;
 			}
 		}
@@ -200,7 +200,7 @@ public class BiomeWidget extends PanelWidget {
 			(new Thread(new Runnable() {
 				@Override
 				public void run() {
-					map.repaintFragmentsLayer(BiomeLayer.instance.getLayerId());
+					map.repaintImageLayer(BiomeLayer.getInstance().getLayerId());
 				}
 			})).start();
 		}

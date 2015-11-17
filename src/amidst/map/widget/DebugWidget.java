@@ -1,7 +1,9 @@
 package amidst.map.widget;
 
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.List;
 
 import amidst.Options;
 import amidst.map.FragmentManager;
@@ -15,40 +17,53 @@ public class DebugWidget extends PanelWidget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time) {
-		FragmentManager fragmentManager = map.getFragmentManager();
-		ArrayList<String> panelText = new ArrayList<String>();
-		panelText.add("Fragment Manager:");
-		panelText.add("Pool Size: " + fragmentManager.getCacheSize());
-		panelText.add("Free Queue Size: "
+		List<String> panelLines = getPanelLines(map.getFragmentManager());
+		int width = getPanelWidth(panelLines, mapViewer.getFontMetrics());
+		int height = getPanelHeight(panelLines);
+		setSize(width, height);
+		super.draw(g2d, time);
+		drawPanelLines(g2d, panelLines);
+	}
+
+	private List<String> getPanelLines(FragmentManager fragmentManager) {
+		List<String> panelLines = new ArrayList<String>();
+		panelLines.add("Fragment Manager:");
+		panelLines.add("Pool Size: " + fragmentManager.getCacheSize());
+		panelLines.add("Free Queue Size: "
 				+ fragmentManager.getFreeFragmentQueueSize());
-		panelText.add("Request Queue Size: "
+		panelLines.add("Request Queue Size: "
 				+ fragmentManager.getRequestQueueSize());
-		panelText.add("Recycle Queue Size: "
+		panelLines.add("Recycle Queue Size: "
 				+ fragmentManager.getRecycleQueueSize());
-		panelText.add("");
-		panelText.add("Map Viewer:");
-		panelText.add("Map Size: " + map.getFragmentsPerRow() + "x"
+		panelLines.add("");
+		panelLines.add("Map Viewer:");
+		panelLines.add("Map Size: " + map.getFragmentsPerRow() + "x"
 				+ map.getFragmentsPerColumn() + " ["
 				+ (map.getFragmentsPerRow() * map.getFragmentsPerColumn())
 				+ "]");
+		return panelLines;
+	}
 
-		int width = 0, height;
-		for (int i = 0; i < panelText.size(); i++) {
-			int textWidth = mapViewer.getFontMetrics().stringWidth(
-					panelText.get(i));
-			if (textWidth > width)
-				width = textWidth;
+	private int getPanelWidth(List<String> panelLines, FontMetrics fontMetrics) {
+		int result = 0;
+		for (String line : panelLines) {
+			int textWidth = fontMetrics.stringWidth(line);
+			if (result < textWidth) {
+				result = textWidth;
+			}
 		}
+		return result + 20;
+	}
 
-		width += 20;
-		height = panelText.size() * 20 + 10;
+	private int getPanelHeight(List<String> panelLines) {
+		return panelLines.size() * 20 + 10;
+	}
 
-		setSize(width, height);
-		super.draw(g2d, time);
-
+	private void drawPanelLines(Graphics2D g2d, List<String> panelLines) {
 		g2d.setColor(TEXT_COLOR);
-		for (int i = 0; i < panelText.size(); i++)
-			g2d.drawString(panelText.get(i), getX() + 10, getY() + 20 + i * 20);
+		for (int i = 0; i < panelLines.size(); i++) {
+			g2d.drawString(panelLines.get(i), getX() + 10, getY() + 20 + i * 20);
+		}
 	}
 
 	@Override

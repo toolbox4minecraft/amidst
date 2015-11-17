@@ -107,13 +107,13 @@ public class FragmentManager {
 		return fragment;
 	}
 
-	public void repaintFragment(Fragment fragment) {
+	public void repaintFragmentImageLayers(Fragment fragment) {
 		synchronized (queueLock) {
 			fragment.repaintAllImageLayers();
 		}
 	}
 
-	public void repaintFragmentLayer(Fragment fragment, int layerId) {
+	public void repaintFragmentImageLayer(Fragment fragment, int layerId) {
 		synchronized (queueLock) {
 			fragment.repaintImageLayer(layerId);
 		}

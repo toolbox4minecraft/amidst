@@ -21,6 +21,10 @@ public class FpsWidget extends PanelWidget {
 		fpsTimer.tick();
 		setWidth(mapViewer.getFontMetrics().stringWidth(framerate) + 20);
 		super.draw(g2d, time);
+		drawFramerate(g2d, framerate);
+	}
+
+	private void drawFramerate(Graphics2D g2d, String framerate) {
 		g2d.setColor(TEXT_COLOR);
 		g2d.drawString(framerate, getX() + 10, getY() + 20);
 	}

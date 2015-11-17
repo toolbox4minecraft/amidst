@@ -6,7 +6,12 @@ import amidst.minecraft.Biome;
 
 public class BiomeLayer extends ImageLayer {
 	// TODO: remove me!
-	public static BiomeLayer instance;
+	private static BiomeLayer instance;
+
+	@Deprecated
+	public static BiomeLayer getInstance() {
+		return instance;
+	}
 
 	private boolean[] selectedBiomes = new boolean[Biome.biomes.length];
 	private boolean isHighlightMode = false;

@@ -477,19 +477,19 @@ public class Map {
 		return new Point2D.Double(scaledX, scaledY);
 	}
 
-	public void repaintFragmentsLayer(int id) {
+	public void repaintImageLayer(int id) {
 		Fragment fragment = startNode;
 		while (fragment.hasNext()) {
 			fragment = fragment.getNext();
-			fragmentManager.repaintFragmentLayer(fragment, id);
+			fragmentManager.repaintFragmentImageLayer(fragment, id);
 		}
 	}
 
-	public void repaintFragments() {
+	public void repaintImageLayers() {
 		Fragment fragment = startNode;
 		while (fragment.hasNext()) {
 			fragment = fragment.getNext();
-			fragmentManager.repaintFragment(fragment);
+			fragmentManager.repaintFragmentImageLayers(fragment);
 		}
 	}
 
