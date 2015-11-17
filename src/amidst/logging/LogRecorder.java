@@ -2,7 +2,7 @@ package amidst.logging;
 
 public class LogRecorder implements LogListener {
 	private static StringBuffer buffer = new StringBuffer();
-	
+
 	@Override
 	public void debug(Object... o) {
 		write("debug", o);
@@ -23,20 +23,19 @@ public class LogRecorder implements LogListener {
 		write("error", o);
 	}
 
-
 	@Override
 	public void crash(Throwable e, String exceptionText, String message) {
 		write("crash", message);
 		if (exceptionText.length() > 0)
 			write("crash", exceptionText);
 	}
-	
+
 	private static void write(String tag, Object... msgs) {
 		buffer.append("[" + tag + "] ");
 		for (int i = 0; i < msgs.length; i++)
 			buffer.append(msgs[i] + ((i < msgs.length - 1) ? " " : "\n"));
 	}
-	
+
 	public static String getContents() {
 		return buffer.toString();
 	}

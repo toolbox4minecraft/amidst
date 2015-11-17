@@ -14,21 +14,23 @@ public class Log {
 	private static HashMap<String, LogListener> listeners = new HashMap<String, LogListener>();
 	public static boolean isUsingAlerts = true;
 	public static boolean isShowingDebug = true;
-	
+
 	static {
 		addListener("master", new LogRecorder());
 	}
-	
+
 	public static void addListener(String name, LogListener listener) {
 		synchronized (logLock) {
-			listeners.put(name,  listener);
+			listeners.put(name, listener);
 		}
 	}
+
 	public static void removeListener(String name) {
 		synchronized (logLock) {
 			listeners.remove(name);
 		}
 	}
+
 	public static void printTraceStack(Throwable e) {
 		StringWriter stringWriter = new StringWriter();
 		PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -36,15 +38,16 @@ public class Log {
 		String exceptionText = stringWriter.toString();
 		w(exceptionText);
 	}
-	
+
 	public static void i(Object... s) {
 		synchronized (logLock) {
 			printWithTag("info", s);
 			if (listeners.size() != 0)
 				for (LogListener listener : listeners.values())
 					listener.info(s);
-			}
+		}
 	}
+
 	public static void debug(Object... s) {
 		if (!isShowingDebug)
 			return;
@@ -55,6 +58,7 @@ public class Log {
 					listener.debug(s);
 		}
 	}
+
 	public static void w(Object... s) {
 		synchronized (logLock) {
 			printWithTag("warning", s);
@@ -63,21 +67,23 @@ public class Log {
 					listener.warning(s);
 		}
 	}
-	
+
 	public static void e(Object... s) {
 		synchronized (logLock) {
 			printWithTag("error", s);
 			if (isUsingAlerts)
-				JOptionPane.showMessageDialog(null, s, "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, s, "Error",
+						JOptionPane.ERROR_MESSAGE);
 			if (listeners.size() != 0)
 				for (LogListener listener : listeners.values())
 					listener.error(s);
 		}
 	}
-	
+
 	public static void crash(String message) {
 		crash(null, message);
 	}
+
 	public static void crash(Throwable e, String message) {
 		synchronized (logLock) {
 			printWithTag("crash", message);
@@ -89,19 +95,18 @@ public class Log {
 				exceptionText = stringWriter.toString();
 				printWithTag("crash", exceptionText);
 			}
-			
+
 			if (listeners.size() != 0)
 				for (LogListener listener : listeners.values())
 					listener.crash(e, exceptionText, message);
-			
-			
+
 			new CrashWindow(message, LogRecorder.getContents());
 			if (MapWindow.getInstance() != null)
 				MapWindow.getInstance().dispose();
-			//System.exit(0);
+			// System.exit(0);
 		}
 	}
-	
+
 	private static void printWithTag(String tag, Object... msgs) {
 		System.out.print("[" + tag + "] ");
 		for (int i = 0; i < msgs.length; i++) {
