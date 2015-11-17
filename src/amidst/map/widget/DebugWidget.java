@@ -10,8 +10,8 @@ import amidst.map.FragmentManager;
 import amidst.map.MapViewer;
 
 public class DebugWidget extends PanelWidget {
-	public DebugWidget(MapViewer mapViewer) {
-		super(mapViewer);
+	public DebugWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
+		super(mapViewer, anchor);
 		forceVisibility(onVisibilityCheck());
 	}
 

@@ -7,8 +7,8 @@ import amidst.map.MapViewer;
 import amidst.minecraft.world.World;
 
 public class SeedWidget extends PanelWidget {
-	public SeedWidget(MapViewer mapViewer) {
-		super(mapViewer);
+	public SeedWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
+		super(mapViewer, anchor);
 		setSize(20, 30);
 	}
 

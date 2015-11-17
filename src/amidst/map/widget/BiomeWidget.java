@@ -33,8 +33,8 @@ public class BiomeWidget extends PanelWidget {
 	private int scrollbarHeight = 0, scrollbarWidth = 10, scrollbarY = 0,
 			mouseYOnGrab = 0, scrollbarYOnGrab;
 
-	public BiomeWidget(MapViewer mapViewer) {
-		super(mapViewer);
+	public BiomeWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
+		super(mapViewer, anchor);
 
 		FontMetrics fontMetrics = mapViewer.getFontMetrics(TEXT_FONT);
 		for (int i = 0; i < Biome.biomes.length; i++) {
@@ -175,7 +175,8 @@ public class BiomeWidget extends PanelWidget {
 				&& (mouseY < innerBox.y - getY() + innerBox.height)) {
 			int id = (mouseY - (innerBox.y - getY()) - biomeListYOffset) / 16;
 			if (id < biomes.size()) {
-				BiomeLayer.getInstance().toggleBiomeSelect(biomes.get(id).index);
+				BiomeLayer.getInstance()
+						.toggleBiomeSelect(biomes.get(id).index);
 				needsRedraw = true;
 			}
 		}

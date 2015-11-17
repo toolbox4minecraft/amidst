@@ -9,8 +9,8 @@ import amidst.utilities.FramerateTimer;
 public class FpsWidget extends PanelWidget {
 	private FramerateTimer fpsTimer = new FramerateTimer(2);
 
-	public FpsWidget(MapViewer mapViewer) {
-		super(mapViewer);
+	public FpsWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
+		super(mapViewer, anchor);
 		setSize(20, 30);
 		forceVisibility(onVisibilityCheck());
 	}

@@ -8,8 +8,8 @@ import amidst.map.MapViewer;
 public class CursorInformationWidget extends PanelWidget {
 	private String message = "";
 
-	public CursorInformationWidget(MapViewer mapViewer) {
-		super(mapViewer);
+	public CursorInformationWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
+		super(mapViewer, anchor);
 		setSize(20, 30);
 		forceVisibility(false);
 	}

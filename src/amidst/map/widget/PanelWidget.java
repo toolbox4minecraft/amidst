@@ -40,7 +40,7 @@ public abstract class PanelWidget extends Widget {
 	protected static final Stroke LINE_STROKE_2 = new BasicStroke(2,
 			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
 
-	private CornerAnchorPoint anchor = CornerAnchorPoint.NONE;
+	private final CornerAnchorPoint anchor;
 	private int xPadding = 10;
 	private int yPadding = 10;
 
@@ -49,8 +49,9 @@ public abstract class PanelWidget extends Widget {
 	private boolean isFading = false;
 	private boolean isTargetVisible = true;
 
-	protected PanelWidget(MapViewer mapViewer) {
+	protected PanelWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
 		super(mapViewer);
+		this.anchor = anchor;
 	}
 
 	@Override
@@ -65,10 +66,14 @@ public abstract class PanelWidget extends Widget {
 	}
 
 	private void updateTargetAlpha() {
-		if (isTargetVisible) {
-			targetAlpha = 1.0f;
+		targetAlpha = getAlpha(isTargetVisible);
+	}
+
+	private float getAlpha(boolean isVisible) {
+		if (isVisible) {
+			return 1.0f;
 		} else {
-			targetAlpha = 0.0f;
+			return 0.0f;
 		}
 	}
 
@@ -133,30 +138,20 @@ public abstract class PanelWidget extends Widget {
 
 	@Override
 	public boolean isVisible() {
-		boolean value = isTargetVisible || isFading;
 		isTargetVisible = onVisibilityCheck();
-		return value;
+		return isTargetVisible || isFading;
 	}
 
 	public void forceVisibility(boolean value) {
 		isTargetVisible = value;
 		isFading = false;
-		targetAlpha = value ? 1.0f : 0.0f;
-		alpha = value ? 1.0f : 0.0f;
+		targetAlpha = getAlpha(value);
+		alpha = getAlpha(value);
 	}
 
 	@Override
 	public float getAlpha() {
 		return alpha;
-	}
-
-	public PanelWidget setAnchorPoint(CornerAnchorPoint anchor) {
-		this.anchor = anchor;
-		return this;
-	}
-
-	public boolean isTargetVisible() {
-		return isTargetVisible;
 	}
 
 	protected void increaseYPadding(int delta) {

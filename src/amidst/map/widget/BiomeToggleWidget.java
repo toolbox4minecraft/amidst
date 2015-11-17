@@ -12,8 +12,8 @@ public class BiomeToggleWidget extends PanelWidget {
 			.getImage("highlighter.png");
 	public static boolean isBiomeWidgetVisible = false;
 
-	public BiomeToggleWidget(MapViewer mapViewer) {
-		super(mapViewer);
+	public BiomeToggleWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
+		super(mapViewer, anchor);
 		setSize(36, 36);
 	}
 

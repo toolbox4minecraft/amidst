@@ -25,14 +25,12 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import amidst.logging.Log;
-import amidst.map.object.MapObject;
 import amidst.map.object.MapObjectPlayer;
 import amidst.map.widget.BiomeToggleWidget;
 import amidst.map.widget.BiomeWidget;
 import amidst.map.widget.CursorInformationWidget;
 import amidst.map.widget.DebugWidget;
 import amidst.map.widget.FpsWidget;
-import amidst.map.widget.PanelWidget;
 import amidst.map.widget.PanelWidget.CornerAnchorPoint;
 import amidst.map.widget.ScaleWidget;
 import amidst.map.widget.SeedWidget;
@@ -324,19 +322,15 @@ public class MapViewer {
 	}
 
 	private void initWidgets() {
-		initWidget(new FpsWidget(this), CornerAnchorPoint.BOTTOM_LEFT);
-		initWidget(new ScaleWidget(this), CornerAnchorPoint.BOTTOM_CENTER);
-		initWidget(new SeedWidget(this), CornerAnchorPoint.TOP_LEFT);
-		initWidget(new DebugWidget(this), CornerAnchorPoint.BOTTOM_RIGHT);
-		initWidget(new SelectedObjectWidget(this), CornerAnchorPoint.TOP_LEFT);
-		initWidget(new CursorInformationWidget(this),
-				CornerAnchorPoint.TOP_RIGHT);
-		initWidget(new BiomeToggleWidget(this), CornerAnchorPoint.BOTTOM_RIGHT);
-		initWidget(new BiomeWidget(this), CornerAnchorPoint.NONE);
-	}
-
-	private void initWidget(PanelWidget widget, CornerAnchorPoint anchorPoint) {
-		widgets.add(widget.setAnchorPoint(anchorPoint));
+		widgets.add(new FpsWidget(this, CornerAnchorPoint.BOTTOM_LEFT));
+		widgets.add(new ScaleWidget(this, CornerAnchorPoint.BOTTOM_CENTER));
+		widgets.add(new SeedWidget(this, CornerAnchorPoint.TOP_LEFT));
+		widgets.add(new DebugWidget(this, CornerAnchorPoint.BOTTOM_RIGHT));
+		widgets.add(new SelectedObjectWidget(this, CornerAnchorPoint.TOP_LEFT));
+		widgets.add(new CursorInformationWidget(this,
+				CornerAnchorPoint.TOP_RIGHT));
+		widgets.add(new BiomeToggleWidget(this, CornerAnchorPoint.BOTTOM_RIGHT));
+		widgets.add(new BiomeWidget(this, CornerAnchorPoint.NONE));
 	}
 
 	private void initComponent() {
@@ -371,10 +365,6 @@ public class MapViewer {
 		map.centerOn(x, y);
 	}
 
-	public MapObject getSelectedObject() {
-		return map.getSelectedMapObject();
-	}
-
 	public Map getMap() {
 		return map;
 	}
@@ -404,6 +394,7 @@ public class MapViewer {
 		return component.getHeight();
 	}
 
+	@Deprecated
 	public void repaintImageLayers() {
 		map.repaintImageLayers();
 	}

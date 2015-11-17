@@ -11,8 +11,8 @@ public class ScaleWidget extends PanelWidget {
 	public static int cScaleLengthMax_px = 200;
 	public static int cMargin = 8;
 
-	public ScaleWidget(MapViewer mapViewer) {
-		super(mapViewer);
+	public ScaleWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
+		super(mapViewer, anchor);
 		setSize(100, 34);
 		forceVisibility(false);
 	}

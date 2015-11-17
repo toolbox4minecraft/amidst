@@ -10,8 +10,8 @@ public class SelectedObjectWidget extends PanelWidget {
 	private String message = "";
 	private BufferedImage icon;
 
-	public SelectedObjectWidget(MapViewer mapViewer) {
-		super(mapViewer);
+	public SelectedObjectWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
+		super(mapViewer, anchor);
 		increaseYPadding(40);
 		setSize(20, 35);
 		forceVisibility(false);
@@ -19,8 +19,8 @@ public class SelectedObjectWidget extends PanelWidget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time) {
-		if (isTargetVisible()) {
-			MapObject selectedObject = mapViewer.getSelectedObject();
+		MapObject selectedObject = map.getSelectedMapObject();
+		if (selectedObject != null) {
 			message = selectedObject.getName() + " ["
 					+ selectedObject.getXInWorld() + ", "
 					+ selectedObject.getYInWorld() + "]";
@@ -42,6 +42,6 @@ public class SelectedObjectWidget extends PanelWidget {
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		return (mapViewer.getSelectedObject() != null);
+		return map.getSelectedMapObject() != null;
 	}
 }
