@@ -90,7 +90,6 @@ public class Map {
 
 	private MapObject selectedMapObject;
 
-	public static Map instance = null;
 	private static final boolean START = true;
 	private static final boolean END = false;
 	private FragmentManager fragmentManager;
@@ -112,7 +111,6 @@ public class Map {
 		this.fragmentManager = fragmentManager;
 		this.fragmentManager.setMap(this);
 		addStart(0, 0);
-		instance = this;
 	}
 
 	public void draw(Graphics2D g, float time) {

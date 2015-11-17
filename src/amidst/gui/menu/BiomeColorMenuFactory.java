@@ -13,6 +13,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import amidst.gui.MapWindow;
 import amidst.logging.Log;
 import amidst.preferences.BiomeColorProfile;
 
@@ -31,8 +32,11 @@ public class BiomeColorMenuFactory {
 		private List<JMenu> menuStack = new ArrayList<JMenu>();
 		private ActionListener firstListener;
 		private boolean isFirstContainer = true;
+		private MapWindow mapWindow;
 
-		private BiomeColorProfileVisitorImpl(JMenu parentMenu) {
+		private BiomeColorProfileVisitorImpl(JMenu parentMenu,
+				MapWindow mapWindow) {
+			this.mapWindow = mapWindow;
 			menuStack.add(parentMenu);
 		}
 
@@ -97,6 +101,7 @@ public class BiomeColorMenuFactory {
 					}
 					selectedCheckBox.setSelected(true);
 					profile.activate();
+					mapWindow.repaintFragments();
 				}
 			};
 			if (firstListener == null) {
@@ -113,8 +118,10 @@ public class BiomeColorMenuFactory {
 	}
 
 	private JMenu parentMenu = new JMenu("Biome profile");
+	private MapWindow mapWindow;
 
-	public BiomeColorMenuFactory() {
+	public BiomeColorMenuFactory(MapWindow mapWindow) {
+		this.mapWindow = mapWindow;
 		Log.i("Checking for additional biome color profiles.");
 		initParentMenu();
 	}
@@ -126,7 +133,7 @@ public class BiomeColorMenuFactory {
 	private void initParentMenu() {
 		parentMenu.removeAll();
 		BiomeColorProfileVisitorImpl visitor = new BiomeColorProfileVisitorImpl(
-				parentMenu);
+				parentMenu, mapWindow);
 		createMenuItems(new File("./biome"), visitor);
 		parentMenu.add(createReloadMenuItem());
 		visitor.selectFirstProfile();

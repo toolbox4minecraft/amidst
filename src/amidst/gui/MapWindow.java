@@ -255,4 +255,8 @@ public class MapWindow {
 			return null;
 		}
 	}
+
+	public void repaintFragments() {
+		mapViewer.repaintFragments();
+	}
 }

@@ -103,8 +103,6 @@ public class BiomeColorProfile {
 				Biome.biomes[i].color = colorArray[i];
 			}
 		}
-		if (amidst.map.Map.instance != null)
-			amidst.map.Map.instance.repaintFragments();
 	}
 
 	public static void scan() {

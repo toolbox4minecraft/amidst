@@ -26,8 +26,10 @@ public class AmidstMenu {
 	private MenuActions actions;
 	private JMenuBar menuBar;
 	private JMenu mapMenu;
+	private MapWindow mapWindow;
 
 	public AmidstMenu(Application application, MapWindow mapWindow) {
+		this.mapWindow = mapWindow;
 		this.actions = new MenuActions(application, mapWindow);
 		this.menuBar = createMenuBar();
 	}
@@ -252,7 +254,7 @@ public class AmidstMenu {
 	}
 
 	private JMenu create_Options_BiomeColor() {
-		return new BiomeColorMenuFactory().getMenu();
+		return new BiomeColorMenuFactory(mapWindow).getMenu();
 	}
 
 	private JMenu create_Options_WorldType() {

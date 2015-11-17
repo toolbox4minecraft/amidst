@@ -535,4 +535,8 @@ public class MapViewer {
 	public int getHeight() {
 		return component.getHeight();
 	}
+
+	public void repaintFragments() {
+		map.repaintFragments();
+	}
 }
