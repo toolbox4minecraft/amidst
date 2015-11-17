@@ -40,7 +40,6 @@ public class SkinLoader {
 		}
 	}
 
-	// TODO: call me!
 	public void stop() {
 		active = false;
 	}

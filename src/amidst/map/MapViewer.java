@@ -27,19 +27,7 @@ import javax.swing.JPopupMenu;
 import amidst.Options;
 import amidst.gui.menu.PlayerMenuItemFactory;
 import amidst.logging.Log;
-import amidst.map.layer.BiomeLayer;
-import amidst.map.layer.GridLayer;
-import amidst.map.layer.IconLayer;
-import amidst.map.layer.ImageLayer;
-import amidst.map.layer.LiveLayer;
-import amidst.map.layer.NetherFortressLayer;
-import amidst.map.layer.OceanMonumentLayer;
 import amidst.map.layer.PlayerLayer;
-import amidst.map.layer.SlimeLayer;
-import amidst.map.layer.SpawnLayer;
-import amidst.map.layer.StrongholdLayer;
-import amidst.map.layer.TempleLayer;
-import amidst.map.layer.VillageLayer;
 import amidst.map.object.MapObject;
 import amidst.map.object.MapObjectPlayer;
 import amidst.map.widget.BiomeToggleWidget;
@@ -397,25 +385,6 @@ public class MapViewer {
 	private static final BufferedImage DROP_SHADOW_RIGHT = ResourceLoader
 			.getImage("dropshadow/inner_right.png");
 
-	// TODO: This should likely be moved somewhere else.
-	private static FragmentManager fragmentManager;
-	private static PlayerLayer playerLayer;
-
-	static {
-		SkinLoader skinLoader = new SkinLoader();
-		skinLoader.start();
-		playerLayer = new PlayerLayer(skinLoader);
-		ImageLayer[] imageLayers = { new BiomeLayer(), new SlimeLayer() };
-		LiveLayer[] liveLayers = { new GridLayer() };
-		IconLayer[] iconLayers = { new VillageLayer(),
-				new OceanMonumentLayer(), new StrongholdLayer(),
-				new TempleLayer(), new SpawnLayer(), new NetherFortressLayer(),
-				playerLayer };
-		LayerContainer layerContainer = new LayerContainer(imageLayers,
-				liveLayers, iconLayers);
-		fragmentManager = new FragmentManager(layerContainer);
-	}
-
 	private Listeners listeners = new Listeners();
 	private Component component = new Component();
 	private MapZoom zoom = new MapZoom();
@@ -424,6 +393,8 @@ public class MapViewer {
 	private Timer updateTimer = new Timer();
 
 	private World world;
+	private LayerContainer layerContainer;
+	private FragmentManager fragmentManager;
 
 	private JPopupMenu menu = new JPopupMenu();
 	public int strongholdCount;
@@ -439,9 +410,11 @@ public class MapViewer {
 
 	private List<Widget> widgets = new ArrayList<Widget>();
 
-	public MapViewer(World world) {
+	public MapViewer(World world, LayerContainer layerContainer,
+			FragmentManager fragmentManager) {
 		this.world = world;
-		initPlayerLayer();
+		this.layerContainer = layerContainer;
+		this.fragmentManager = fragmentManager;
 		initPlayerMenu();
 		initMap();
 		initWidgets();
@@ -449,12 +422,9 @@ public class MapViewer {
 		initTimer();
 	}
 
-	private void initPlayerLayer() {
-		playerLayer.setWorld(world);
-	}
-
 	private void initPlayerMenu() {
 		if (world.isFileWorld()) {
+			PlayerLayer playerLayer = layerContainer.getPlayerLayer();
 			PlayerMenuItemFactory factory = new PlayerMenuItemFactory(this,
 					playerLayer);
 			for (MapObjectPlayer player : playerLayer.getPlayers()) {

@@ -206,7 +206,9 @@ public class MapWindow {
 	}
 
 	public void worldChanged() {
-		setMapViewer(new MapViewer(application.getWorld()));
+		setMapViewer(new MapViewer(application.getWorld(),
+				application.getLayerContainer(),
+				application.getFragmentManager()));
 	}
 
 	public void capture(File file) {
