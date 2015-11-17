@@ -8,6 +8,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
@@ -20,11 +22,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import amidst.gui.menu.PlayerMenuItemFactory;
 import amidst.logging.Log;
-import amidst.map.layer.PlayerLayer;
 import amidst.map.object.MapObject;
 import amidst.map.object.MapObjectPlayer;
 import amidst.map.widget.BiomeToggleWidget;
@@ -125,12 +126,33 @@ public class MapViewer {
 		}
 
 		private void showMenu(MouseEvent e) {
-			if (MinecraftUtil.getVersion().saveEnabled()) {
-				lastRightClick = getMousePositionFromEvent(e);
-				if (world.isFileWorld()) {
-					menu.show(e.getComponent(), e.getX(), e.getY());
-				}
+			if (MinecraftUtil.getVersion().saveEnabled() && world.isFileWorld()) {
+				createPlayerMenu(getMousePositionFromEvent(e)).show(
+						e.getComponent(), e.getX(), e.getY());
 			}
+		}
+
+		private JPopupMenu createPlayerMenu(Point lastRightClicked) {
+			JPopupMenu result = new JPopupMenu();
+			for (MapObjectPlayer player : layerContainer.getPlayerLayer()
+					.getPlayers()) {
+				result.add(createPlayerMenuItem(player, lastRightClicked));
+			}
+			return result;
+		}
+
+		private JMenuItem createPlayerMenuItem(final MapObjectPlayer player,
+				final Point lastRightClick) {
+			JMenuItem result = new JMenuItem(player.getName());
+			result.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Point location = map.screenToLocal(lastRightClick);
+					player.setPosition(location.x, location.y);
+					player.setFragment(map.getFragmentAt(location));
+				}
+			});
+			return result;
 		}
 
 		private void mouseClickedOnMap(Point mouse) {
@@ -286,11 +308,8 @@ public class MapViewer {
 	private World world;
 	private LayerContainer layerContainer;
 
-	private JPopupMenu menu = new JPopupMenu();
-
 	private Map map;
 	private Point lastMouse;
-	private Point lastRightClick = null;
 
 	private Font textFont = new Font("arial", Font.BOLD, 15);
 	private FontMetrics textMetrics;
@@ -303,21 +322,9 @@ public class MapViewer {
 		this.world = world;
 		this.layerContainer = layerContainer;
 		this.map = map;
-		initPlayerMenu();
 		initWidgets();
 		initComponent();
 		initExecutor();
-	}
-
-	private void initPlayerMenu() {
-		if (world.isFileWorld()) {
-			PlayerLayer playerLayer = layerContainer.getPlayerLayer();
-			PlayerMenuItemFactory factory = new PlayerMenuItemFactory(this,
-					playerLayer);
-			for (MapObjectPlayer player : playerLayer.getPlayers()) {
-				menu.add(factory.create(player));
-			}
-		}
 	}
 
 	private void initWidgets() {
@@ -366,7 +373,6 @@ public class MapViewer {
 		Log.debug("Disposing of map viewer.");
 		shutdownExecutor();
 		map.dispose();
-		menu.removeAll();
 		executor = null;
 	}
 
@@ -423,10 +429,6 @@ public class MapViewer {
 
 	public void repaintFragments() {
 		map.repaintFragments();
-	}
-
-	public Point getLastRightClick() {
-		return lastRightClick;
 	}
 
 	@Deprecated
