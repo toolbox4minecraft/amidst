@@ -19,17 +19,11 @@ public class SeedPrompt {
 	private static final String LEADING_SPACE_TEXT = "Warning: There is a space at the start!";
 	private static final String TRAILING_SPACE_TEXT = "Warning: There is a space at the end!";
 
-	private JFrame frame;
 	private JLabel label;
 	private JTextField textField;
 	private JComponent[] inputs;
 
-	public SeedPrompt(JFrame frame) {
-		this.frame = frame;
-		init();
-	}
-
-	private void init() {
+	public SeedPrompt() {
 		createLabel();
 		createTextField();
 		createInputs();
@@ -114,7 +108,7 @@ public class SeedPrompt {
 		}
 	}
 
-	public String askForSeed() {
+	public String askForSeed(JFrame frame) {
 		textField.setText("");
 		textField.requestFocus();
 		if (JOptionPane.showConfirmDialog(frame, inputs, TITLE,

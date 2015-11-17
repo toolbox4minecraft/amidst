@@ -34,6 +34,10 @@ import amidst.minecraft.world.WorldType;
 
 public class MapWindow {
 	private Application application;
+
+	private SeedPrompt seedPrompt = new SeedPrompt();
+	private MapZoom mapZoom = new MapZoom();
+
 	private MapViewer mapViewer;
 	private JPanel panel;
 
@@ -41,39 +45,36 @@ public class MapWindow {
 	private AmidstMenu menuBar;
 	private Container contentPane;
 
-	private SeedPrompt seedPrompt = new SeedPrompt(frame);
-	private MapZoom mapZoom = new MapZoom();
-
 	public MapWindow(Application application) {
 		this.application = application;
-		frame.setTitle("Amidst v" + getVersionString());
-		frame.setSize(1000, 800);
-		frame.setIconImage(AmidstMetaData.ICON);
+		initFrame();
 		initContentPane();
-		initUpdateManager();
 		initMenuBar();
 		initKeyListener();
 		initCloseListener();
-		frame.setVisible(true);
+		showFrame();
+		checkForUpdates();
+	}
+
+	private void initFrame() {
+		frame.setTitle(getVersionString());
+		frame.setSize(1000, 800);
+		frame.setIconImage(AmidstMetaData.ICON);
 	}
 
 	private String getVersionString() {
 		if (MinecraftUtil.hasInterface()) {
-			return AmidstMetaData.getFullVersionString()
+			return "Amidst v" + AmidstMetaData.getFullVersionString()
 					+ " [Using Minecraft version: "
 					+ MinecraftUtil.getVersion() + "]";
 		} else {
-			return AmidstMetaData.getFullVersionString();
+			return "Amidst v" + AmidstMetaData.getFullVersionString();
 		}
 	}
 
 	private void initContentPane() {
 		contentPane = frame.getContentPane();
 		contentPane.setLayout(new BorderLayout());
-	}
-
-	private void initUpdateManager() {
-		application.checkForUpdatesSilently();
 	}
 
 	private void initMenuBar() {
@@ -107,6 +108,14 @@ public class MapWindow {
 		});
 	}
 
+	private void showFrame() {
+		frame.setVisible(true);
+	}
+
+	private void checkForUpdates() {
+		application.checkForUpdatesSilently();
+	}
+
 	public void dispose() {
 		setMapViewer(null);
 		frame.dispose();
@@ -138,7 +147,7 @@ public class MapWindow {
 	}
 
 	public String askForSeed() {
-		return seedPrompt.askForSeed();
+		return seedPrompt.askForSeed(frame);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -161,6 +170,25 @@ public class MapWindow {
 		return result;
 	}
 
+	public File askForScreenshotSaveFile() {
+		return getSelectedFileOrNull(createScreenshotSaveFileChooser());
+	}
+
+	private JFileChooser createScreenshotSaveFileChooser() {
+		JFileChooser result = new JFileChooser();
+		result.setFileFilter(new PNGFileFilter());
+		result.setAcceptAllFileFilterUsed(false);
+		return result;
+	}
+
+	private File getSelectedFileOrNull(JFileChooser fileChooser) {
+		if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+			return fileChooser.getSelectedFile();
+		} else {
+			return null;
+		}
+	}
+
 	public void displayMessage(String message) {
 		JOptionPane.showMessageDialog(frame, message);
 	}
@@ -178,25 +206,6 @@ public class MapWindow {
 	public int askToConfirm(String title, String message) {
 		return JOptionPane.showConfirmDialog(frame, message, title,
 				JOptionPane.YES_NO_OPTION);
-	}
-
-	public File askForScreenshotSaveFile() {
-		return getSelectedFileOrNull(createScreenshotSaveFileChooser());
-	}
-
-	private File getSelectedFileOrNull(JFileChooser fileChooser) {
-		if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-			return fileChooser.getSelectedFile();
-		} else {
-			return null;
-		}
-	}
-
-	private JFileChooser createScreenshotSaveFileChooser() {
-		JFileChooser result = new JFileChooser();
-		result.setFileFilter(new PNGFileFilter());
-		result.setAcceptAllFileFilterUsed(false);
-		return result;
 	}
 
 	public void moveMapToCoordinates(long x, long y) {
@@ -227,13 +236,13 @@ public class MapWindow {
 
 	private void saveToFile(BufferedImage image, File file) {
 		try {
-			ImageIO.write(image, "png", addPNGFileExtensionIfNecessary(file));
+			ImageIO.write(image, "png", appendPNGFileExtensionIfNecessary(file));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private File addPNGFileExtensionIfNecessary(File file) {
+	private File appendPNGFileExtensionIfNecessary(File file) {
 		String filename = file.toString();
 		if (!filename.toLowerCase().endsWith(".png")) {
 			filename += ".png";
