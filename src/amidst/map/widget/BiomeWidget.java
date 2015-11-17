@@ -130,7 +130,8 @@ public class BiomeWidget extends PanelWidget {
 		g2d.setColor(Color.white);
 		g2d.drawString("Select:", getX() + 8, getY() + getHeight() - 10);
 		g2d.setColor(selectButtonColor);
-		g2d.drawString("All  Special  None", getX() + 120, getY() + getHeight() - 10);
+		g2d.drawString("All  Special  None", getX() + 120, getY() + getHeight()
+				- 10);
 
 	}
 
@@ -158,7 +159,8 @@ public class BiomeWidget extends PanelWidget {
 					&& (mouseX < innerBox.x - getX() + innerBox.width
 							+ scrollbarWidth)
 					&& (mouseY > innerBox.y - getY() + scrollbarY)
-					&& (mouseY < innerBox.y - getY() + scrollbarY + scrollbarHeight)) {
+					&& (mouseY < innerBox.y - getY() + scrollbarY
+							+ scrollbarHeight)) {
 
 				mouseYOnGrab = mouseY + getY();
 				scrollbarYOnGrab = scrollbarY;
