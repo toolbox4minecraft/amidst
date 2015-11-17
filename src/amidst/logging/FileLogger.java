@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class FileLogger implements LogListener {
+public class FileLogger implements Logger {
 	private ConcurrentLinkedQueue<String> logMessageQueue = new ConcurrentLinkedQueue<String>();
 	private File file;
 	private boolean enabled;
@@ -100,17 +100,16 @@ public class FileLogger implements LogListener {
 		builder.append(" [").append(tag).append("] ");
 		for (int i = 0; i < messages.length; i++) {
 			builder.append(messages[i]);
-			appendMessageDelimiter(builder, i, messages);
+			builder.append(getMessageDelimiter(i, messages));
 		}
 		logMessageQueue.add(builder.toString());
 	}
 
-	private void appendMessageDelimiter(StringBuilder builder, int i,
-			Object... messages) {
+	private String getMessageDelimiter(int i, Object... messages) {
 		if (i < messages.length - 1) {
-			builder.append(" ");
+			return " ";
 		} else {
-			builder.append("\r\n");
+			return "\r\n";
 		}
 	}
 

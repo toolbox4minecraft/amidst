@@ -1,6 +1,6 @@
 package amidst.logging;
 
-public interface LogListener {
+public interface Logger {
 	public void debug(Object... messages);
 
 	public void info(Object... messages);

@@ -1,41 +1,39 @@
 package amidst.logging;
 
-public class InMemoryLogger implements Logger {
-	private StringBuffer buffer = new StringBuffer();
-
+public class ConsoleLogger implements Logger {
 	@Override
 	public void debug(Object... messages) {
-		write("debug", messages);
+		printWithTag("debug", messages);
 	}
 
 	@Override
 	public void info(Object... messages) {
-		write("info", messages);
+		printWithTag("info", messages);
 	}
 
 	@Override
 	public void warning(Object... messages) {
-		write("warning", messages);
+		printWithTag("warning", messages);
 	}
 
 	@Override
 	public void error(Object... messages) {
-		write("error", messages);
+		printWithTag("error", messages);
 	}
 
 	@Override
 	public void crash(Throwable e, String exceptionText, String message) {
-		write("crash", message);
+		printWithTag("crash", message);
 		if (!exceptionText.isEmpty()) {
-			write("crash", exceptionText);
+			printWithTag("crash", exceptionText);
 		}
 	}
 
-	private void write(String tag, Object... messages) {
-		buffer.append("[").append(tag).append("] ");
+	private void printWithTag(String tag, Object... messages) {
+		System.out.print("[" + tag + "] ");
 		for (int i = 0; i < messages.length; i++) {
-			buffer.append(messages[i]);
-			buffer.append(getMessageDelimiter(i, messages));
+			System.out.print(messages[i]);
+			System.out.print(getMessageDelimiter(i, messages));
 		}
 	}
 
@@ -45,9 +43,5 @@ public class InMemoryLogger implements Logger {
 		} else {
 			return "\n";
 		}
-	}
-
-	public String getContents() {
-		return buffer.toString();
 	}
 }
