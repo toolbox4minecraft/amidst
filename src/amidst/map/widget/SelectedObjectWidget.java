@@ -12,7 +12,7 @@ public class SelectedObjectWidget extends PanelWidget {
 
 	public SelectedObjectWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
 		super(mapViewer, anchor);
-		increaseYPadding(40);
+		increaseYMargin(40);
 		setSize(20, 35);
 		forceVisibility(false);
 	}

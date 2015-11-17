@@ -41,8 +41,8 @@ public abstract class PanelWidget extends Widget {
 			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
 
 	private final CornerAnchorPoint anchor;
-	private int xPadding = 10;
-	private int yPadding = 10;
+	private int xMargin = 10;
+	private int yMargin = 10;
 
 	private float alpha = 1.0f;
 	private float targetAlpha = 1.0f;
@@ -91,20 +91,20 @@ public abstract class PanelWidget extends Widget {
 
 	private void updatePosition() {
 		if (anchor == CornerAnchorPoint.TOP_LEFT) {
-			setX(xPadding);
-			setY(yPadding);
+			setX(xMargin);
+			setY(yMargin);
 		} else if (anchor == CornerAnchorPoint.BOTTOM_LEFT) {
-			setX(xPadding);
-			setY(mapViewer.getHeight() - (getHeight() + yPadding));
+			setX(xMargin);
+			setY(mapViewer.getHeight() - (getHeight() + yMargin));
 		} else if (anchor == CornerAnchorPoint.BOTTOM_RIGHT) {
-			setX(mapViewer.getWidth() - (getWidth() + xPadding));
-			setY(mapViewer.getHeight() - (getHeight() + yPadding));
+			setX(mapViewer.getWidth() - (getWidth() + xMargin));
+			setY(mapViewer.getHeight() - (getHeight() + yMargin));
 		} else if (anchor == CornerAnchorPoint.BOTTOM_CENTER) {
 			setX((mapViewer.getWidth() >> 1) - (getWidth() >> 1));
-			setY(mapViewer.getHeight() - (getHeight() + yPadding));
+			setY(mapViewer.getHeight() - (getHeight() + yMargin));
 		} else if (anchor == CornerAnchorPoint.TOP_RIGHT) {
-			setX(mapViewer.getWidth() - (getWidth() + xPadding));
-			setY(yPadding);
+			setX(mapViewer.getWidth() - (getWidth() + xMargin));
+			setY(yMargin);
 		} else if (anchor == CornerAnchorPoint.CENTER) {
 			setX((mapViewer.getWidth() >> 1) - (getWidth() >> 1));
 			setY((mapViewer.getHeight() >> 1) - (getHeight() >> 1));
@@ -154,8 +154,8 @@ public abstract class PanelWidget extends Widget {
 		return alpha;
 	}
 
-	protected void increaseYPadding(int delta) {
-		yPadding += delta;
+	protected void increaseYMargin(int delta) {
+		yMargin += delta;
 	}
 
 	protected abstract boolean onVisibilityCheck();
