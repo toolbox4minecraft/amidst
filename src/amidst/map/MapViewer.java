@@ -8,8 +8,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
@@ -44,27 +42,8 @@ import amidst.minecraft.world.World;
 import amidst.resources.ResourceLoader;
 
 public class MapViewer {
-	private class Listeners implements MouseListener, MouseWheelListener,
-			KeyListener {
+	private class Listeners implements MouseListener, MouseWheelListener {
 		private Widget mouseOwner;
-
-		@Override
-		public void keyTyped(KeyEvent e) {
-		}
-
-		@Override
-		public void keyPressed(KeyEvent e) {
-			Point mouse = getMousePositionOrCenterFromComponent();
-			if (e.getKeyCode() == KeyEvent.VK_EQUALS) {
-				zoom.adjustZoom(mouse, -1);
-			} else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
-				zoom.adjustZoom(mouse, 1);
-			}
-		}
-
-		@Override
-		public void keyReleased(KeyEvent e) {
-		}
 
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
@@ -267,6 +246,15 @@ public class MapViewer {
 				}
 			}
 		}
+
+		public Point getMousePositionOrCenter() {
+			Point result = component.getMousePosition();
+			if (result == null) {
+				result = new Point(component.getWidth() >> 1,
+						component.getHeight() >> 1);
+			}
+			return result;
+		}
 	}
 
 	private static final BufferedImage DROP_SHADOW_BOTTOM_LEFT = ResourceLoader
@@ -378,15 +366,6 @@ public class MapViewer {
 		return image;
 	}
 
-	private Point getMousePositionOrCenterFromComponent() {
-		Point mouse = component.getMousePosition();
-		if (mouse == null) {
-			mouse = new Point(component.getWidth() >> 1,
-					component.getHeight() >> 1);
-		}
-		return mouse;
-	}
-
 	public void dispose() {
 		Log.debug("Disposing of map viewer.");
 		updateTimer.cancel();
@@ -421,10 +400,6 @@ public class MapViewer {
 		return component.getFontMetrics(font);
 	}
 
-	public KeyListener getKeyListener() {
-		return listeners;
-	}
-
 	public JComponent getComponent() {
 		return component;
 	}
@@ -450,5 +425,10 @@ public class MapViewer {
 
 	public Point getLastRightClick() {
 		return lastRightClick;
+	}
+
+	@Deprecated
+	public Point getMousePositionOrCenter() {
+		return component.getMousePositionOrCenter();
 	}
 }

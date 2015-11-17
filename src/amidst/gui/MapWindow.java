@@ -3,6 +3,9 @@ package amidst.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Point;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -49,6 +52,7 @@ public class MapWindow {
 		initContentPane();
 		initUpdateManager();
 		initMenuBar();
+		initKeyListener();
 		initCloseListener();
 		frame.setVisible(true);
 	}
@@ -77,6 +81,22 @@ public class MapWindow {
 		frame.setJMenuBar(menuBar.getMenuBar());
 	}
 
+	private void initKeyListener() {
+		frame.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (mapViewer != null) {
+					Point mouse = mapViewer.getMousePositionOrCenter();
+					if (e.getKeyCode() == KeyEvent.VK_EQUALS) {
+						mapZoom.adjustZoom(mouse, -1);
+					} else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
+						mapZoom.adjustZoom(mouse, 1);
+					}
+				}
+			}
+		});
+	}
+
 	private void initCloseListener() {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
@@ -85,11 +105,6 @@ public class MapWindow {
 				System.exit(0);
 			}
 		});
-	}
-
-	@Deprecated
-	public JFrame getFrame() {
-		return frame;
 	}
 
 	public void dispose() {
@@ -103,7 +118,6 @@ public class MapWindow {
 		if (mapViewer != null) {
 			createPanel(mapViewer);
 			menuBar.setMapMenuEnabled(true);
-			frame.addKeyListener(mapViewer.getKeyListener());
 			contentPane.add(panel, BorderLayout.CENTER);
 			frame.validate();
 		}
@@ -118,7 +132,6 @@ public class MapWindow {
 
 	private void clearMapViewer() {
 		if (mapViewer != null) {
-			frame.removeKeyListener(mapViewer.getKeyListener());
 			mapViewer.dispose();
 			contentPane.remove(panel);
 		}
