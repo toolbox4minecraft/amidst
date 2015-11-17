@@ -27,6 +27,7 @@ import amidst.Util;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
+import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.map.MapZoom;
 import amidst.minecraft.MinecraftUtil;
@@ -224,8 +225,8 @@ public class MapWindow {
 
 	public void worldChanged() {
 		setMapViewer(new MapViewer(mapZoom, application.getWorld(),
-				application.getLayerContainer(),
-				application.getFragmentManager()));
+				application.getLayerContainer(), new Map(
+						application.getFragmentManager(), mapZoom)));
 	}
 
 	public void capture(File file) {

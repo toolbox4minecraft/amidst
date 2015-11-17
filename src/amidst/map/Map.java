@@ -526,4 +526,8 @@ public class Map {
 	public void setSelectedMapObject(MapObject selectedMapObject) {
 		this.selectedMapObject = selectedMapObject;
 	}
+
+	public FragmentManager getFragmentManager() {
+		return fragmentManager;
+	}
 }

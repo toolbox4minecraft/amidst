@@ -283,7 +283,6 @@ public class MapViewer {
 	private MapZoom zoom;
 	private World world;
 	private LayerContainer layerContainer;
-	private FragmentManager fragmentManager;
 
 	private JPopupMenu menu = new JPopupMenu();
 
@@ -297,13 +296,12 @@ public class MapViewer {
 	private List<Widget> widgets = new ArrayList<Widget>();
 
 	public MapViewer(MapZoom zoom, World world, LayerContainer layerContainer,
-			FragmentManager fragmentManager) {
+			Map map) {
 		this.zoom = zoom;
 		this.world = world;
 		this.layerContainer = layerContainer;
-		this.fragmentManager = fragmentManager;
+		this.map = map;
 		initPlayerMenu();
-		initMap();
 		initWidgets();
 		initComponent();
 		initTimer();
@@ -318,10 +316,6 @@ public class MapViewer {
 				menu.add(factory.create(player));
 			}
 		}
-	}
-
-	private void initMap() {
-		map = new Map(fragmentManager, zoom);
 	}
 
 	private void initWidgets() {
@@ -380,10 +374,6 @@ public class MapViewer {
 
 	public MapObject getSelectedObject() {
 		return map.getSelectedMapObject();
-	}
-
-	public FragmentManager getFragmentManager() {
-		return fragmentManager;
 	}
 
 	public Map getMap() {

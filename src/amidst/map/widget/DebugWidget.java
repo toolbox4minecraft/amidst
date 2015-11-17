@@ -15,7 +15,7 @@ public class DebugWidget extends PanelWidget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time) {
-		FragmentManager fragmentManager = mapViewer.getFragmentManager();
+		FragmentManager fragmentManager = map.getFragmentManager();
 		ArrayList<String> panelText = new ArrayList<String>();
 		panelText.add("Fragment Manager:");
 		panelText.add("Pool Size: " + fragmentManager.getCacheSize());
