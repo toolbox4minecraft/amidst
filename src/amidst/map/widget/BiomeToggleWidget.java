@@ -1,5 +1,6 @@
 package amidst.map.widget;
 
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -22,8 +23,8 @@ public class BiomeToggleWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time) {
-		super.draw(g2d, time);
+	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
+		drawBorderAndBackground(g2d, time);
 		g2d.drawImage(HIGHLIGHTER_ICON, getX(), getY(), 36, 36, null);
 	}
 

@@ -1,5 +1,6 @@
 package amidst.map.widget;
 
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
@@ -19,14 +20,13 @@ public class CursorInformationWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time) {
+	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
 		String newText = getText();
 		if (newText != null) {
 			text = newText;
 		}
-		setWidth(mapViewer.getFontMetrics().stringWidth(text) + 20);
-		super.draw(g2d, time);
-		g2d.setColor(TEXT_COLOR);
+		setWidth(g2d.getFontMetrics().stringWidth(text) + 20);
+		drawBorderAndBackground(g2d, time);
 		g2d.drawString(text, getX() + 10, getY() + 20);
 	}
 

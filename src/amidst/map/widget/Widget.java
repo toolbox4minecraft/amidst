@@ -3,6 +3,7 @@ package amidst.map.widget;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
@@ -35,10 +36,11 @@ public abstract class Widget {
 	private static final BufferedImage DROP_SHADOW_RIGHT = ResourceLoader
 			.getImage("dropshadow/outer_right.png");
 
+	public static final Font TEXT_FONT = new Font("arial", Font.BOLD, 15);
+	private static final Color TEXT_COLOR = new Color(1f, 1f, 1f);
 	private static final Color PANEL_COLOR = new Color(0.15f, 0.15f, 0.15f,
 			0.8f);
-	protected static final Color TEXT_COLOR = new Color(1f, 1f, 1f);
-	protected static final Font TEXT_FONT = new Font("arial", Font.BOLD, 15);
+
 	protected static final Stroke LINE_STROKE_1 = new BasicStroke(1);
 	protected static final Stroke LINE_STROKE_2 = new BasicStroke(2,
 			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
@@ -67,12 +69,13 @@ public abstract class Widget {
 		this.anchor = anchor;
 	}
 
-	public void draw(Graphics2D g2d, float time) {
+	public void drawBorderAndBackground(Graphics2D g2d, float time) {
 		updateAlpha(time);
 		updatePosition();
 		initGraphics(g2d);
 		drawBorder(g2d);
 		drawBackground(g2d);
+		initGraphicsForContent(g2d);
 	}
 
 	private void updateAlpha(float time) {
@@ -152,6 +155,11 @@ public abstract class Widget {
 
 	private void drawBackground(Graphics2D g2d) {
 		g2d.fillRect(getX(), getY(), getWidth(), getHeight());
+	}
+
+	private void initGraphicsForContent(Graphics2D g2d) {
+		g2d.setFont(TEXT_FONT);
+		g2d.setColor(TEXT_COLOR);
 	}
 
 	private float getAlpha(boolean isVisible) {
@@ -244,6 +252,9 @@ public abstract class Widget {
 
 	public void onMouseReleased() {
 	}
+
+	public abstract void draw(Graphics2D g2d, float time,
+			FontMetrics fontMetrics);
 
 	protected abstract boolean onVisibilityCheck();
 }

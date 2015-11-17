@@ -1,5 +1,6 @@
 package amidst.map.widget;
 
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
 import amidst.Options;
@@ -20,16 +21,15 @@ public class FpsWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time) {
+	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
 		String framerate = fpsTimer.toString();
 		fpsTimer.tick();
-		setWidth(mapViewer.getFontMetrics().stringWidth(framerate) + 20);
-		super.draw(g2d, time);
+		setWidth(fontMetrics.stringWidth(framerate) + 20);
+		drawBorderAndBackground(g2d, time);
 		drawFramerate(g2d, framerate);
 	}
 
 	private void drawFramerate(Graphics2D g2d, String framerate) {
-		g2d.setColor(TEXT_COLOR);
 		g2d.drawString(framerate, getX() + 10, getY() + 20);
 	}
 

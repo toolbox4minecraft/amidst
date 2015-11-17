@@ -19,13 +19,13 @@ public class DebugWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time) {
+	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
 		List<String> panelLines = getPanelLines(map.getFragmentManager());
-		int width = getPanelWidth(panelLines, mapViewer.getFontMetrics());
+		int width = getPanelWidth(panelLines, fontMetrics);
 		int height = getPanelHeight(panelLines);
 		setWidth(width);
 		setHeight(height);
-		super.draw(g2d, time);
+		drawBorderAndBackground(g2d, time);
 		drawPanelLines(g2d, panelLines);
 	}
 
@@ -64,7 +64,6 @@ public class DebugWidget extends Widget {
 	}
 
 	private void drawPanelLines(Graphics2D g2d, List<String> panelLines) {
-		g2d.setColor(TEXT_COLOR);
 		for (int i = 0; i < panelLines.size(); i++) {
 			g2d.drawString(panelLines.get(i), getX() + 10, getY() + 20 + i * 20);
 		}

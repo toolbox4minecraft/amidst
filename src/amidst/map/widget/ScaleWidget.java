@@ -1,6 +1,7 @@
 package amidst.map.widget;
 
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
 import amidst.Options;
@@ -22,19 +23,16 @@ public class ScaleWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time) {
+	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
 
 		int scaleBlocks = scaleLength_blocks();
 		int scaleWidth_px = (int) (scaleBlocks * map.getZoom());
 
 		String message = scaleBlocks + " blocks";
 
-		int stringWidth = mapViewer.getFontMetrics().stringWidth(message);
+		int stringWidth = fontMetrics.stringWidth(message);
 		setWidth(Math.max(scaleWidth_px, stringWidth) + (cMargin * 2));
-		super.draw(g2d, time);
-
-		g2d.setColor(TEXT_COLOR);
-		g2d.setFont(TEXT_FONT);
+		drawBorderAndBackground(g2d, time);
 		g2d.drawString(message, getX() + 1 + ((getWidth() - stringWidth) >> 1),
 				getY() + 18);
 

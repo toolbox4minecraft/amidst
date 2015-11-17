@@ -1,5 +1,6 @@
 package amidst.map.widget;
 
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -22,7 +23,7 @@ public class SelectedObjectWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time) {
+	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
 		MapObject selectedObject = map.getSelectedMapObject();
 		if (selectedObject != null) {
 			message = selectedObject.getName() + " ["
@@ -31,10 +32,8 @@ public class SelectedObjectWidget extends Widget {
 			icon = selectedObject.getImage();
 		}
 
-		setWidth(45 + mapViewer.getFontMetrics().stringWidth(message));
-		super.draw(g2d, time);
-
-		g2d.setColor(TEXT_COLOR);
+		setWidth(45 + fontMetrics.stringWidth(message));
+		drawBorderAndBackground(g2d, time);
 		double imgWidth = icon.getWidth();
 		double imgHeight = icon.getHeight();
 		double ratio = imgWidth / imgHeight;

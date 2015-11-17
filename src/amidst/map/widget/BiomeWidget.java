@@ -56,11 +56,9 @@ public class BiomeWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time) {
+	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
 		setX(mapViewer.getWidth() - getWidth());
-		super.draw(g2d, time);
-		g2d.setColor(TEXT_COLOR);
-		g2d.setFont(TEXT_FONT);
+		drawBorderAndBackground(g2d, time);
 		g2d.drawString("Highlight Biomes", getX() + 10, getY() + 20);
 
 		innerBox.x = getX() + 8;

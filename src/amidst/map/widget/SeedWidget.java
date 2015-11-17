@@ -1,5 +1,6 @@
 package amidst.map.widget;
 
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
 import amidst.map.Map;
@@ -15,15 +16,14 @@ public class SeedWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time) {
+	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
 		String text = getText();
-		setWidth(mapViewer.getFontMetrics().stringWidth(text) + 20);
-		super.draw(g2d, time);
+		setWidth(fontMetrics.stringWidth(text) + 20);
+		drawBorderAndBackground(g2d, time);
 		drawText(g2d, text);
 	}
 
 	private void drawText(Graphics2D g2d, String text) {
-		g2d.setColor(TEXT_COLOR);
 		g2d.drawString(text, getX() + 10, getY() + 20);
 	}
 

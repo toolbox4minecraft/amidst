@@ -3,7 +3,6 @@ package amidst.map;
 import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -243,12 +242,11 @@ public class MapViewer {
 		}
 
 		public void drawWidgets(Graphics2D g2d, float time) {
-			g2d.setFont(textFont);
 			for (Widget widget : widgets) {
 				if (widget.isVisible()) {
 					g2d.setComposite(AlphaComposite.getInstance(
 							AlphaComposite.SRC_OVER, widget.getAlpha()));
-					widget.draw(g2d, time);
+					widget.draw(g2d, time, widgetFontMetrics);
 				}
 			}
 		}
@@ -292,9 +290,7 @@ public class MapViewer {
 
 	private Map map;
 	private Point lastMouse;
-
-	private Font textFont = new Font("arial", Font.BOLD, 15);
-	private FontMetrics textMetrics;
+	private FontMetrics widgetFontMetrics;
 
 	public MapViewer(MapZoom zoom, World world, LayerContainer layerContainer,
 			Map map) {
@@ -305,6 +301,7 @@ public class MapViewer {
 		initWidgets();
 		initComponent();
 		initPanel();
+		initWidgetFontMetrics();
 	}
 
 	private void initWidgets() {
@@ -328,13 +325,16 @@ public class MapViewer {
 		component.addMouseListener(listeners);
 		component.addMouseWheelListener(listeners);
 		component.setFocusable(true);
-		textMetrics = component.getFontMetrics(textFont);
 	}
 
 	private void initPanel() {
 		panel.setBackground(Color.BLUE);
 		panel.setLayout(new BorderLayout());
 		panel.add(component, BorderLayout.CENTER);
+	}
+
+	private void initWidgetFontMetrics() {
+		widgetFontMetrics = component.getFontMetrics(Widget.TEXT_FONT);
 	}
 
 	public BufferedImage createCaptureImage() {
@@ -356,21 +356,6 @@ public class MapViewer {
 		map.centerOn(x, y);
 	}
 
-	public Map getMap() {
-		return map;
-	}
-
-	@Deprecated
-	public FontMetrics getFontMetrics() {
-		return textMetrics;
-	}
-
-	@Deprecated
-	public FontMetrics getFontMetrics(Font font) {
-		return component.getFontMetrics(font);
-	}
-
-	@Deprecated
 	public Point getMousePosition() {
 		return component.getMousePosition();
 	}
