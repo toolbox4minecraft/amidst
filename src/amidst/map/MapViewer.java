@@ -14,7 +14,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,6 @@ import java.util.TimerTask;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 
-import amidst.Options;
 import amidst.gui.menu.PlayerMenuItemFactory;
 import amidst.logging.Log;
 import amidst.map.layer.PlayerLayer;
@@ -267,42 +265,6 @@ public class MapViewer {
 							AlphaComposite.SRC_OVER, widget.getAlpha()));
 					widget.draw(g2d, time);
 				}
-			}
-		}
-	}
-
-	private static class MapMovement {
-		private Point2D.Double speed = new Point2D.Double();
-
-		public void update(Map map, Point lastMouse, Point currentMouse) {
-			updateMapMovementSpeed(lastMouse, currentMouse);
-			moveMap(map);
-			throttleMapMovementSpeed();
-		}
-
-		private void updateMapMovementSpeed(Point lastMouse, Point currentMouse) {
-			if (lastMouse != null) {
-				if (currentMouse != null) {
-					double dX = currentMouse.x - lastMouse.x;
-					double dY = currentMouse.y - lastMouse.y;
-					// TODO : Scale with time
-					speed.setLocation(dX * 0.2, dY * 0.2);
-				}
-				lastMouse.translate((int) speed.x, (int) speed.y);
-			}
-		}
-
-		private void moveMap(Map map) {
-			map.moveBy((int) speed.x, (int) speed.y);
-		}
-
-		private void throttleMapMovementSpeed() {
-			if (Options.instance.mapFlicking.get()) {
-				speed.x *= 0.95f;
-				speed.y *= 0.95f;
-			} else {
-				speed.x = 0;
-				speed.y = 0;
 			}
 		}
 	}
