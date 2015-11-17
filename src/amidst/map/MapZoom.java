@@ -22,7 +22,6 @@ public class MapZoom {
 			Point2D.Double targetZoom = map.getScaled(previous, current,
 					zoomMouse);
 			map.moveBy(targetZoom);
-			map.setZoom(current);
 		}
 	}
 

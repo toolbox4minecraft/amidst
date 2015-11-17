@@ -335,8 +335,7 @@ public class MapViewer {
 	}
 
 	private void initMap() {
-		map = new Map(fragmentManager);
-		map.setZoom(zoom.getCurrentValue());
+		map = new Map(fragmentManager, zoom);
 	}
 
 	private void initWidgets() {

@@ -32,7 +32,7 @@ public class Map {
 				Runnable theDrawer) {
 			currentFragment = startNode;
 			if (currentFragment.hasNext()) {
-				initMat(originalTransform);
+				initMat(originalTransform, zoom.getCurrentValue());
 				while (currentFragment.hasNext()) {
 					currentFragment = currentFragment.getNext();
 					theDrawer.run();
@@ -74,7 +74,7 @@ public class Map {
 			};
 		}
 
-		private void initMat(AffineTransform originalTransform) {
+		private void initMat(AffineTransform originalTransform, double scale) {
 			mat.setToIdentity();
 			mat.concatenate(originalTransform);
 			mat.translate(start.x, start.y);
@@ -96,7 +96,6 @@ public class Map {
 
 	private Fragment startNode = new Fragment();
 
-	private double scale = 0.25;
 	private Point2D.Double start = new Point2D.Double();
 
 	private int fragmentsPerRow;
@@ -107,9 +106,12 @@ public class Map {
 	private final Object resizeLock = new Object();
 	private final Object drawLock = new Object();
 
-	public Map(FragmentManager fragmentManager) {
+	private MapZoom zoom;
+
+	public Map(FragmentManager fragmentManager, MapZoom zoom) {
 		this.fragmentManager = fragmentManager;
 		this.fragmentManager.setMap(this);
+		this.zoom = zoom;
 		addStart(0, 0);
 	}
 
@@ -118,7 +120,8 @@ public class Map {
 			centerOn(0, 0);
 		}
 		synchronized (drawLock) {
-			int scaledFragmentSize = (int) (Fragment.SIZE * scale);
+			int scaledFragmentSize = (int) (Fragment.SIZE * zoom
+					.getCurrentValue());
 			int desiredFragmentsPerRow = viewerWidth / scaledFragmentSize + 2;
 			int desiredFragmentsPerColumn = viewerHeight / scaledFragmentSize
 					+ 2;
@@ -326,8 +329,8 @@ public class Map {
 			double offsetX = viewerWidth >> 1;
 			double offsetY = viewerHeight >> 1;
 
-			offsetX -= (fragOffsetX) * scale;
-			offsetY -= (fragOffsetY) * scale;
+			offsetX -= (fragOffsetX) * zoom.getCurrentValue();
+			offsetY -= (fragOffsetY) * zoom.getCurrentValue();
 
 			start.x = offsetX;
 			start.y = offsetY;
@@ -357,7 +360,7 @@ public class Map {
 		MapObject closestObject = null;
 		double closestDistance = maxRange;
 		Fragment frag = startNode;
-		int size = (int) (Fragment.SIZE * scale);
+		int size = (int) (Fragment.SIZE * zoom.getCurrentValue());
 		while (frag.hasNext()) {
 			frag = frag.getNext();
 			for (MapObject mapObject : frag.getMapObjects()) {
@@ -382,8 +385,8 @@ public class Map {
 	private Point getPosition(double x, double y, MapObject mapObject) {
 		Point result = new Point(mapObject.getXInFragment(),
 				mapObject.getYInFragment());
-		result.x *= scale;
-		result.y *= scale;
+		result.x *= zoom.getCurrentValue();
+		result.y *= zoom.getCurrentValue();
 		result.x += x;
 		result.y += y;
 		return result;
@@ -455,8 +458,8 @@ public class Map {
 		point.y -= start.y;
 
 		// TODO: int -> double -> int = bad?
-		point.x /= scale;
-		point.y /= scale;
+		point.x /= zoom.getCurrentValue();
+		point.y /= zoom.getCurrentValue();
 
 		point.x += startNode.getNext().getXInWorld();
 		point.y += startNode.getNext().getYInWorld();
@@ -496,12 +499,8 @@ public class Map {
 		}
 	}
 
-	public void setZoom(double scale) {
-		this.scale = scale;
-	}
-
 	public double getZoom() {
-		return scale;
+		return zoom.getCurrentValue();
 	}
 
 	public int getFragmentsPerRow() {
