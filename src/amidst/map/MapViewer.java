@@ -464,8 +464,8 @@ public class MapViewer {
 	}
 
 	public BufferedImage createCaptureImage() {
-		BufferedImage image = new BufferedImage(map.getViewerWidth(),
-				map.getViewerHeight(), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = new BufferedImage(component.getWidth(),
+				component.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = image.createGraphics();
 		component.drawMap(g2d, 0);
 		component.drawWidgets(g2d, 0);

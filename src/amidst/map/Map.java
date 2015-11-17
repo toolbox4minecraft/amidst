@@ -514,16 +514,8 @@ public class Map {
 		return fragmentsPerColumn;
 	}
 
-	public int getViewerWidth() {
-		return viewerWidth;
-	}
-
 	public void setViewerWidth(int viewerWidth) {
 		this.viewerWidth = viewerWidth;
-	}
-
-	public int getViewerHeight() {
-		return viewerHeight;
 	}
 
 	public void setViewerHeight(int viewerHeight) {
