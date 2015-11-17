@@ -25,6 +25,7 @@ import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.map.MapViewer;
+import amidst.map.MapZoom;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.WorldType;
 
@@ -38,6 +39,7 @@ public class MapWindow {
 	private Container contentPane;
 
 	private SeedPrompt seedPrompt = new SeedPrompt(frame);
+	private MapZoom mapZoom = new MapZoom();
 
 	public MapWindow(Application application) {
 		this.application = application;
@@ -199,7 +201,7 @@ public class MapWindow {
 	}
 
 	public void worldChanged() {
-		setMapViewer(new MapViewer(application.getWorld(),
+		setMapViewer(new MapViewer(mapZoom, application.getWorld(),
 				application.getLayerContainer(),
 				application.getFragmentManager()));
 	}

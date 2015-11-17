@@ -308,57 +308,6 @@ public class MapViewer {
 		}
 	}
 
-	private static class MapZoom {
-		// TODO: make these non-static! They are static to keep the zoom level
-		// after loading a new map.
-		private static int remainingTicks = 0;
-		private static int level = 0;
-		private static double target = 0.25f;
-		private static double current = 0.25f;
-
-		private Point zoomMouse = new Point();
-
-		public void update(Map map) {
-			remainingTicks--;
-			if (remainingTicks >= 0) {
-				double previous = current;
-				current = (target + current) * 0.5;
-
-				Point2D.Double targetZoom = map.getScaled(previous, current,
-						zoomMouse);
-				map.moveBy(targetZoom);
-				map.setZoom(current);
-			}
-		}
-
-		public void adjustZoom(Point position, int notches) {
-			zoomMouse = position;
-			if (notches > 0) {
-				if (level < getMaxZoomLevel()) {
-					target /= 1.1;
-					level++;
-					remainingTicks = 100;
-				}
-			} else if (level > -20) {
-				target *= 1.1;
-				level--;
-				remainingTicks = 100;
-			}
-		}
-
-		private int getMaxZoomLevel() {
-			if (Options.instance.maxZoom.get()) {
-				return 10;
-			} else {
-				return 10000;
-			}
-		}
-
-		public double getCurrentValue() {
-			return current;
-		}
-	}
-
 	private static final BufferedImage DROP_SHADOW_BOTTOM_LEFT = ResourceLoader
 			.getImage("dropshadow/inner_bottom_left.png");
 	private static final BufferedImage DROP_SHADOW_BOTTOM_RIGHT = ResourceLoader
@@ -378,11 +327,11 @@ public class MapViewer {
 
 	private Listeners listeners = new Listeners();
 	private Component component = new Component();
-	private MapZoom zoom = new MapZoom();
 	private MapMovement movement = new MapMovement();
 
 	private Timer updateTimer = new Timer();
 
+	private MapZoom zoom;
 	private World world;
 	private LayerContainer layerContainer;
 	private FragmentManager fragmentManager;
@@ -400,8 +349,9 @@ public class MapViewer {
 
 	private List<Widget> widgets = new ArrayList<Widget>();
 
-	public MapViewer(World world, LayerContainer layerContainer,
+	public MapViewer(MapZoom zoom, World world, LayerContainer layerContainer,
 			FragmentManager fragmentManager) {
+		this.zoom = zoom;
 		this.world = world;
 		this.layerContainer = layerContainer;
 		this.fragmentManager = fragmentManager;
