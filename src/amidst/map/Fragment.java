@@ -153,6 +153,10 @@ public class Fragment {
 			double invZoom = 1.0 / mapObject.getMapZoom();
 			int width = mapObject.getWidth();
 			int height = mapObject.getHeight();
+			if (mapObject.isSelected()) {
+				width *= 1.5;
+				height *= 1.5;
+			}
 			g.setTransform(mat);
 			g.translate(mapObject.getXInFragment(), mapObject.getYInFragment());
 			g.scale(invZoom, invZoom);

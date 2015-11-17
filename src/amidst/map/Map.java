@@ -88,6 +88,8 @@ public class Map {
 
 	private Drawer drawer = new Drawer();
 
+	private MapObject selectedMapObject;
+
 	public static Map instance = null;
 	private static final boolean START = true;
 	private static final boolean END = false;
@@ -526,5 +528,13 @@ public class Map {
 
 	public void setViewerHeight(int viewerHeight) {
 		this.viewerHeight = viewerHeight;
+	}
+
+	public MapObject getSelectedMapObject() {
+		return selectedMapObject;
+	}
+
+	public void setSelectedMapObject(MapObject selectedMapObject) {
+		this.selectedMapObject = selectedMapObject;
 	}
 }

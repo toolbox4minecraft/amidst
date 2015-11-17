@@ -119,8 +119,8 @@ public class FragmentManager {
 		}
 	}
 
-	public void recycleFragment(Fragment frag) {
-		recycleQueue.offer(frag);
+	public void recycleFragment(Fragment fragment) {
+		recycleQueue.offer(fragment);
 	}
 
 	public void reset() {

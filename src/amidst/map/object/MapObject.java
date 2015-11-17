@@ -26,7 +26,6 @@ public class MapObject {
 	private final int yInFragment;
 	private int xInWorld;
 	private int yInWorld;
-	private double scale = 1.0;
 	private Fragment fragment;
 
 	protected MapObject(IconLayer iconLayer, MapMarkers type, int xInFragment,
@@ -45,11 +44,11 @@ public class MapObject {
 	}
 
 	public int getWidth() {
-		return (int) (getImage().getWidth() * scale);
+		return getImage().getWidth();
 	}
 
 	public int getHeight() {
-		return (int) (getImage().getHeight() * scale);
+		return getImage().getHeight();
 	}
 
 	public int getXInFragment() {
@@ -80,10 +79,6 @@ public class MapObject {
 		return yInWorld;
 	}
 
-	public void setScale(double scale) {
-		this.scale = scale;
-	}
-
 	@Deprecated
 	public boolean isIconLayerVisible() {
 		return iconLayer.isVisible();
@@ -92,6 +87,11 @@ public class MapObject {
 	@Deprecated
 	public double getMapZoom() {
 		return iconLayer.getMap().getZoom();
+	}
+
+	@Deprecated
+	public boolean isSelected() {
+		return iconLayer.getMap().getSelectedMapObject() == this;
 	}
 
 	@Override
