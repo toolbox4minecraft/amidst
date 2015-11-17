@@ -7,11 +7,14 @@ import java.util.List;
 
 import amidst.Options;
 import amidst.map.FragmentManager;
+import amidst.map.Map;
 import amidst.map.MapViewer;
+import amidst.minecraft.world.World;
 
 public class DebugWidget extends Widget {
-	public DebugWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
-		super(mapViewer, anchor);
+	public DebugWidget(MapViewer mapViewer, Map map, World world,
+			CornerAnchorPoint anchor) {
+		super(mapViewer, map, world, anchor);
 		forceVisibility(onVisibilityCheck());
 	}
 

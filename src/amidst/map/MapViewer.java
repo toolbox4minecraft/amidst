@@ -31,11 +31,11 @@ import amidst.map.widget.BiomeWidget;
 import amidst.map.widget.CursorInformationWidget;
 import amidst.map.widget.DebugWidget;
 import amidst.map.widget.FpsWidget;
-import amidst.map.widget.Widget;
-import amidst.map.widget.Widget.CornerAnchorPoint;
 import amidst.map.widget.ScaleWidget;
 import amidst.map.widget.SeedWidget;
 import amidst.map.widget.SelectedObjectWidget;
+import amidst.map.widget.Widget;
+import amidst.map.widget.Widget.CornerAnchorPoint;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.World;
 import amidst.resources.ResourceLoader;
@@ -308,15 +308,20 @@ public class MapViewer {
 	}
 
 	private void initWidgets() {
-		widgets.add(new FpsWidget(this, CornerAnchorPoint.BOTTOM_LEFT));
-		widgets.add(new ScaleWidget(this, CornerAnchorPoint.BOTTOM_CENTER));
-		widgets.add(new SeedWidget(this, CornerAnchorPoint.TOP_LEFT));
-		widgets.add(new DebugWidget(this, CornerAnchorPoint.BOTTOM_RIGHT));
-		widgets.add(new SelectedObjectWidget(this, CornerAnchorPoint.TOP_LEFT));
-		widgets.add(new CursorInformationWidget(this,
+		widgets.add(new FpsWidget(this, map, world,
+				CornerAnchorPoint.BOTTOM_LEFT));
+		widgets.add(new ScaleWidget(this, map, world,
+				CornerAnchorPoint.BOTTOM_CENTER));
+		widgets.add(new SeedWidget(this, map, world, CornerAnchorPoint.TOP_LEFT));
+		widgets.add(new DebugWidget(this, map, world,
+				CornerAnchorPoint.BOTTOM_RIGHT));
+		widgets.add(new SelectedObjectWidget(this, map, world,
+				CornerAnchorPoint.TOP_LEFT));
+		widgets.add(new CursorInformationWidget(this, map, world,
 				CornerAnchorPoint.TOP_RIGHT));
-		widgets.add(new BiomeToggleWidget(this, CornerAnchorPoint.BOTTOM_RIGHT));
-		widgets.add(new BiomeWidget(this, CornerAnchorPoint.NONE));
+		widgets.add(new BiomeToggleWidget(this, map, world,
+				CornerAnchorPoint.BOTTOM_RIGHT));
+		widgets.add(new BiomeWidget(this, map, world, CornerAnchorPoint.NONE));
 	}
 
 	private void initComponent() {

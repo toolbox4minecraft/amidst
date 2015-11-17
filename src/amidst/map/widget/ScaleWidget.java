@@ -4,15 +4,18 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import amidst.Options;
+import amidst.map.Map;
 import amidst.map.MapViewer;
+import amidst.minecraft.world.World;
 
 public class ScaleWidget extends Widget {
 
 	public static int cScaleLengthMax_px = 200;
 	public static int cMargin = 8;
 
-	public ScaleWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
-		super(mapViewer, anchor);
+	public ScaleWidget(MapViewer mapViewer, Map map, World world,
+			CornerAnchorPoint anchor) {
+		super(mapViewer, map, world, anchor);
 		setWidth(100);
 		setHeight(34);
 		forceVisibility(false);

@@ -3,13 +3,16 @@ package amidst.map.widget;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
+import amidst.map.Map;
 import amidst.map.MapViewer;
+import amidst.minecraft.world.World;
 
 public class CursorInformationWidget extends Widget {
 	private String message = "";
 
-	public CursorInformationWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
-		super(mapViewer, anchor);
+	public CursorInformationWidget(MapViewer mapViewer, Map map, World world,
+			CornerAnchorPoint anchor) {
+		super(mapViewer, map, world, anchor);
 		setWidth(20);
 		setHeight(30);
 		forceVisibility(false);

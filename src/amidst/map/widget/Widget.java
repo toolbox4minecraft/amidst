@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 
 import amidst.map.Map;
 import amidst.map.MapViewer;
+import amidst.minecraft.world.World;
 import amidst.resources.ResourceLoader;
 
 public abstract class Widget {
@@ -44,6 +45,7 @@ public abstract class Widget {
 
 	protected final MapViewer mapViewer;
 	protected final Map map;
+	protected final World world;
 	private final CornerAnchorPoint anchor;
 
 	private int x;
@@ -57,9 +59,11 @@ public abstract class Widget {
 	private float alpha = 1.0f;
 	private float targetAlpha = 1.0f;
 
-	protected Widget(MapViewer mapViewer, CornerAnchorPoint anchor) {
+	protected Widget(MapViewer mapViewer, Map map, World world,
+			CornerAnchorPoint anchor) {
 		this.mapViewer = mapViewer;
-		this.map = mapViewer.getMap();
+		this.map = map;
+		this.world = world;
 		this.anchor = anchor;
 	}
 

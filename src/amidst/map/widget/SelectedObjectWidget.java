@@ -3,15 +3,18 @@ package amidst.map.widget;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.map.object.MapObject;
+import amidst.minecraft.world.World;
 
 public class SelectedObjectWidget extends Widget {
 	private String message = "";
 	private BufferedImage icon;
 
-	public SelectedObjectWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
-		super(mapViewer, anchor);
+	public SelectedObjectWidget(MapViewer mapViewer, Map map, World world,
+			CornerAnchorPoint anchor) {
+		super(mapViewer, map, world, anchor);
 		increaseYMargin(40);
 		setWidth(20);
 		setHeight(35);

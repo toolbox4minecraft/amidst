@@ -7,9 +7,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.map.layer.BiomeLayer;
 import amidst.minecraft.Biome;
+import amidst.minecraft.world.World;
 
 public class BiomeWidget extends Widget {
 	private static Color innerBoxBgColor = new Color(0.3f, 0.3f, 0.3f, 0.3f);
@@ -33,8 +35,9 @@ public class BiomeWidget extends Widget {
 	private int scrollbarHeight = 0, scrollbarWidth = 10, scrollbarY = 0,
 			mouseYOnGrab = 0, scrollbarYOnGrab;
 
-	public BiomeWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
-		super(mapViewer, anchor);
+	public BiomeWidget(MapViewer mapViewer, Map map, World world,
+			CornerAnchorPoint anchor) {
+		super(mapViewer, map, world, anchor);
 
 		FontMetrics fontMetrics = mapViewer.getFontMetrics(TEXT_FONT);
 		for (int i = 0; i < Biome.biomes.length; i++) {

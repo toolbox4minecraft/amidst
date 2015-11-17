@@ -3,8 +3,10 @@ package amidst.map.widget;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.map.layer.BiomeLayer;
+import amidst.minecraft.world.World;
 import amidst.resources.ResourceLoader;
 
 public class BiomeToggleWidget extends Widget {
@@ -12,8 +14,9 @@ public class BiomeToggleWidget extends Widget {
 			.getImage("highlighter.png");
 	public static boolean isBiomeWidgetVisible = false;
 
-	public BiomeToggleWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
-		super(mapViewer, anchor);
+	public BiomeToggleWidget(MapViewer mapViewer, Map map, World world,
+			CornerAnchorPoint anchor) {
+		super(mapViewer, map, world, anchor);
 		setWidth(36);
 		setHeight(36);
 	}

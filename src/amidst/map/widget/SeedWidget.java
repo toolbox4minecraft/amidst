@@ -3,12 +3,14 @@ package amidst.map.widget;
 import java.awt.Graphics2D;
 
 import amidst.Options;
+import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.minecraft.world.World;
 
 public class SeedWidget extends Widget {
-	public SeedWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
-		super(mapViewer, anchor);
+	public SeedWidget(MapViewer mapViewer, Map map, World world,
+			CornerAnchorPoint anchor) {
+		super(mapViewer, map, world, anchor);
 		setWidth(20);
 		setHeight(30);
 	}

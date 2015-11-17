@@ -3,14 +3,17 @@ package amidst.map.widget;
 import java.awt.Graphics2D;
 
 import amidst.Options;
+import amidst.map.Map;
 import amidst.map.MapViewer;
+import amidst.minecraft.world.World;
 import amidst.utilities.FramerateTimer;
 
 public class FpsWidget extends Widget {
 	private FramerateTimer fpsTimer = new FramerateTimer(2);
 
-	public FpsWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
-		super(mapViewer, anchor);
+	public FpsWidget(MapViewer mapViewer, Map map, World world,
+			CornerAnchorPoint anchor) {
+		super(mapViewer, map, world, anchor);
 		setWidth(20);
 		setHeight(30);
 		forceVisibility(onVisibilityCheck());
