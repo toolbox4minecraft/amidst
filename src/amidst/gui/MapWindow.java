@@ -13,6 +13,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -27,6 +30,7 @@ import amidst.Util;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
+import amidst.logging.Log;
 import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.map.MapZoom;
@@ -38,6 +42,8 @@ public class MapWindow {
 
 	private SeedPrompt seedPrompt = new SeedPrompt();
 	private MapZoom mapZoom = new MapZoom();
+	private ScheduledExecutorService executor = Executors
+			.newSingleThreadScheduledExecutor();
 
 	private MapViewer mapViewer;
 	private JPanel panel;
@@ -55,6 +61,7 @@ public class MapWindow {
 		initCloseListener();
 		showFrame();
 		checkForUpdates();
+		startExecutor();
 	}
 
 	private void initFrame() {
@@ -117,9 +124,31 @@ public class MapWindow {
 		application.checkForUpdatesSilently();
 	}
 
+	private void startExecutor() {
+		executor.scheduleAtFixedRate(new Runnable() {
+			@Override
+			public void run() {
+				if (mapViewer != null) {
+					mapViewer.repaint();
+				}
+			}
+		}, 20, 20, TimeUnit.MILLISECONDS);
+	}
+
 	public void dispose() {
 		setMapViewer(null);
 		frame.dispose();
+		shutdownExecutor();
+	}
+
+	private void shutdownExecutor() {
+		executor.shutdown();
+		try {
+			executor.awaitTermination(1, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			Log.w("MapWindow executor shutdown took too longer.");
+			e.printStackTrace();
+		}
 	}
 
 	private void setMapViewer(MapViewer mapViewer) {
