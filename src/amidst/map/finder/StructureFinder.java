@@ -7,6 +7,7 @@ import amidst.map.Fragment;
 import amidst.map.layer.IconLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
+import amidst.minecraft.world.World;
 
 public abstract class StructureFinder {
 	protected final List<Biome> validBiomes;
@@ -19,7 +20,7 @@ public abstract class StructureFinder {
 	protected final int size;
 	protected final Random random;
 
-	private long seed;
+	private World world;
 	private IconLayer iconLayer;
 
 	public StructureFinder() {
@@ -39,9 +40,9 @@ public abstract class StructureFinder {
 				- minDistanceBetweenScatteredFeatures;
 	}
 
-	public void generateMapObjects(long seed, IconLayer iconLayer,
+	public void generateMapObjects(World world, IconLayer iconLayer,
 			Fragment fragment) {
-		this.seed = seed;
+		this.world = world;
 		this.iconLayer = iconLayer;
 		for (int x = 0; x < size; x++) {
 			for (int y = 0; y < size; y++) {
@@ -93,8 +94,8 @@ public abstract class StructureFinder {
 	}
 
 	private long getSeed(int n, int i1) {
-		return n * magicNumberForSeed1 + i1 * magicNumberForSeed2 + seed
-				+ magicNumberForSeed3;
+		return n * magicNumberForSeed1 + i1 * magicNumberForSeed2
+				+ world.getSeed() + magicNumberForSeed3;
 	}
 
 	private boolean isSuccessful(int chunkX, int chunkY, int n, int i1) {
