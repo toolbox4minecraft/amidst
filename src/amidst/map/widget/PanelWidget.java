@@ -46,8 +46,6 @@ public abstract class PanelWidget extends Widget {
 
 	private float alpha = 1.0f;
 	private float targetAlpha = 1.0f;
-	private boolean isFading = false;
-	private boolean isTargetVisible = true;
 
 	protected PanelWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
 		super(mapViewer);
@@ -56,25 +54,11 @@ public abstract class PanelWidget extends Widget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time) {
-		updateTargetAlpha();
 		updateAlpha(time);
-		updateIsFading();
 		updatePosition();
 		initGraphics(g2d);
 		drawBorder(g2d);
 		drawBackground(g2d);
-	}
-
-	private void updateTargetAlpha() {
-		targetAlpha = getAlpha(isTargetVisible);
-	}
-
-	private float getAlpha(boolean isVisible) {
-		if (isVisible) {
-			return 1.0f;
-		} else {
-			return 0.0f;
-		}
 	}
 
 	private void updateAlpha(float time) {
@@ -83,10 +67,6 @@ public abstract class PanelWidget extends Widget {
 		} else if (alpha > targetAlpha) {
 			alpha = Math.max(targetAlpha, alpha - time * 4.0f);
 		}
-	}
-
-	private void updateIsFading() {
-		isFading = alpha != targetAlpha;
 	}
 
 	private void updatePosition() {
@@ -136,21 +116,32 @@ public abstract class PanelWidget extends Widget {
 		g2d.fillRect(getX(), getY(), getWidth(), getHeight());
 	}
 
+	private float getAlpha(boolean isVisible) {
+		if (isVisible) {
+			return 1.0f;
+		} else {
+			return 0.0f;
+		}
+	}
+
+	private boolean isFading() {
+		return targetAlpha != alpha;
+	}
+
 	protected void increaseYMargin(int delta) {
 		yMargin += delta;
 	}
 
-	protected void forceVisibility(boolean value) {
-		isTargetVisible = value;
-		isFading = false;
-		targetAlpha = getAlpha(value);
-		alpha = getAlpha(value);
+	protected void forceVisibility(boolean isVisible) {
+		targetAlpha = getAlpha(isVisible);
+		alpha = targetAlpha;
 	}
 
 	@Override
 	public boolean isVisible() {
-		isTargetVisible = onVisibilityCheck();
-		return isTargetVisible || isFading;
+		boolean isVisible = onVisibilityCheck();
+		targetAlpha = getAlpha(isVisible);
+		return isVisible || isFading();
 	}
 
 	@Override
