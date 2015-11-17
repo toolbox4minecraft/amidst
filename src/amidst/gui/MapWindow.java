@@ -29,12 +29,6 @@ import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.WorldType;
 
 public class MapWindow {
-	private static MapWindow instance;
-
-	public static MapWindow getInstance() {
-		return instance;
-	}
-
 	private Application application;
 	private MapViewer mapViewer;
 	private JPanel panel;
@@ -54,7 +48,6 @@ public class MapWindow {
 		initUpdateManager();
 		initMenuBar();
 		initCloseListener();
-		instance = this;
 		frame.setVisible(true);
 	}
 
