@@ -8,7 +8,7 @@ import amidst.map.MapViewer;
 import amidst.minecraft.world.World;
 
 public class CursorInformationWidget extends Widget {
-	private String message = "";
+	private String text = "";
 
 	public CursorInformationWidget(MapViewer mapViewer, Map map, World world,
 			CornerAnchorPoint anchor) {
@@ -20,23 +20,29 @@ public class CursorInformationWidget extends Widget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time) {
-		Point mouseLocation = null;
-		if ((mouseLocation = mapViewer.getMousePosition()) != null) {
-			mouseLocation = map.screenToLocal(mouseLocation);
-			String biomeName = map.getBiomeAliasAt(mouseLocation);
-			message = biomeName + " [ " + mouseLocation.x + ", "
-					+ mouseLocation.y + " ]";
+		String newText = getText();
+		if (newText != null) {
+			text = newText;
 		}
-		int stringWidth = mapViewer.getFontMetrics().stringWidth(message);
-		setWidth(stringWidth + 20);
+		setWidth(mapViewer.getFontMetrics().stringWidth(text) + 20);
 		super.draw(g2d, time);
-
 		g2d.setColor(TEXT_COLOR);
-		g2d.drawString(message, getX() + 10, getY() + 20);
+		g2d.drawString(text, getX() + 10, getY() + 20);
+	}
+
+	private String getText() {
+		Point mouse = mapViewer.getMousePosition();
+		if (mouse != null) {
+			Point pointInWorld = map.screenToLocal(mouse);
+			return map.getBiomeAliasAt(pointInWorld) + " [ " + pointInWorld.x
+					+ ", " + pointInWorld.y + " ]";
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		return (mapViewer.getMousePosition() != null);
+		return mapViewer.getMousePosition() != null;
 	}
 }

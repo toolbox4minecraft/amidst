@@ -2,7 +2,6 @@ package amidst.map.widget;
 
 import java.awt.Graphics2D;
 
-import amidst.Options;
 import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.minecraft.world.World;
@@ -17,15 +16,18 @@ public class SeedWidget extends Widget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time) {
-		String seedMessage = getSeedMessage();
-		setWidth(mapViewer.getFontMetrics().stringWidth(seedMessage) + 20);
+		String text = getText();
+		setWidth(mapViewer.getFontMetrics().stringWidth(text) + 20);
 		super.draw(g2d, time);
-		g2d.setColor(TEXT_COLOR);
-		g2d.drawString(seedMessage, getX() + 10, getY() + 20);
+		drawText(g2d, text);
 	}
 
-	public String getSeedMessage() {
-		World world = Options.instance.world;
+	private void drawText(Graphics2D g2d, String text) {
+		g2d.setColor(TEXT_COLOR);
+		g2d.drawString(text, getX() + 10, getY() + 20);
+	}
+
+	public String getText() {
 		String seedText = world.getSeedText();
 		if (seedText == null) {
 			return "Seed: " + world.getSeed();
