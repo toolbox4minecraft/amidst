@@ -156,8 +156,7 @@ public class MapViewer {
 		}
 
 		private void mouseClickedOnMap(Point mouse) {
-			selectedMapObject = map.getObjectAt(mouse, 50.0);
-			map.setSelectedMapObject(selectedMapObject);
+			map.setSelectedMapObject(map.getObjectAt(mouse, 50.0));
 		}
 
 		/**
@@ -393,7 +392,6 @@ public class MapViewer {
 	public int villageCount;
 
 	private Map map;
-	private MapObject selectedMapObject = null;
 	private Point lastMouse;
 	public Point lastRightClick = null;
 
@@ -428,7 +426,6 @@ public class MapViewer {
 	private void initMap() {
 		map = new Map(fragmentManager);
 		map.setZoom(zoom.getCurrentValue());
-		map.setSelectedMapObject(selectedMapObject);
 	}
 
 	private void initWidgets() {
@@ -495,7 +492,7 @@ public class MapViewer {
 	}
 
 	public MapObject getSelectedObject() {
-		return selectedMapObject;
+		return map.getSelectedMapObject();
 	}
 
 	public FragmentManager getFragmentManager() {
