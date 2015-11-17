@@ -7,14 +7,15 @@ import amidst.map.MapViewer;
 import amidst.map.layer.BiomeLayer;
 import amidst.resources.ResourceLoader;
 
-public class BiomeToggleWidget extends PanelWidget {
+public class BiomeToggleWidget extends Widget {
 	private static final BufferedImage HIGHLIGHTER_ICON = ResourceLoader
 			.getImage("highlighter.png");
 	public static boolean isBiomeWidgetVisible = false;
 
 	public BiomeToggleWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
 		super(mapViewer, anchor);
-		setSize(36, 36);
+		setWidth(36);
+		setHeight(36);
 	}
 
 	@Override

@@ -6,14 +6,15 @@ import java.awt.Graphics2D;
 import amidst.Options;
 import amidst.map.MapViewer;
 
-public class ScaleWidget extends PanelWidget {
+public class ScaleWidget extends Widget {
 
 	public static int cScaleLengthMax_px = 200;
 	public static int cMargin = 8;
 
 	public ScaleWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
 		super(mapViewer, anchor);
-		setSize(100, 34);
+		setWidth(100);
+		setHeight(34);
 		forceVisibility(false);
 	}
 

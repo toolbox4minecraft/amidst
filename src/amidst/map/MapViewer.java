@@ -31,11 +31,11 @@ import amidst.map.widget.BiomeWidget;
 import amidst.map.widget.CursorInformationWidget;
 import amidst.map.widget.DebugWidget;
 import amidst.map.widget.FpsWidget;
-import amidst.map.widget.PanelWidget.CornerAnchorPoint;
+import amidst.map.widget.Widget;
+import amidst.map.widget.Widget.CornerAnchorPoint;
 import amidst.map.widget.ScaleWidget;
 import amidst.map.widget.SeedWidget;
 import amidst.map.widget.SelectedObjectWidget;
-import amidst.map.widget.Widget;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.World;
 import amidst.resources.ResourceLoader;
@@ -51,8 +51,8 @@ public class MapViewer {
 			Widget widget = findWidget(mouse);
 			if (widget != null
 					&& widget.onMouseWheelMoved(
-							translateMouseXCoordinateToWidget(mouse, widget),
-							translateMouseYCoordinateToWidget(mouse, widget),
+							widget.translateXToWidgetCoordinates(mouse),
+							widget.translateYToWidgetCoordinates(mouse),
 							notches)) {
 				// noop
 			} else {
@@ -69,8 +69,8 @@ public class MapViewer {
 			Widget widget = findWidget(mouse);
 			if (widget != null
 					&& widget.onClick(
-							translateMouseXCoordinateToWidget(mouse, widget),
-							translateMouseYCoordinateToWidget(mouse, widget))) {
+							widget.translateXToWidgetCoordinates(mouse),
+							widget.translateYToWidgetCoordinates(mouse))) {
 				// noop
 			} else {
 				mouseClickedOnMap(mouse);
@@ -93,8 +93,8 @@ public class MapViewer {
 			Widget widget = findWidget(mouse);
 			if (widget != null
 					&& widget.onMousePressed(
-							translateMouseXCoordinateToWidget(mouse, widget),
-							translateMouseYCoordinateToWidget(mouse, widget))) {
+							widget.translateXToWidgetCoordinates(mouse),
+							widget.translateYToWidgetCoordinates(mouse))) {
 				mouseOwner = widget;
 				return true;
 			} else {
@@ -167,25 +167,11 @@ public class MapViewer {
 
 		private Widget findWidget(Point mouse) {
 			for (Widget widget : widgets) {
-				if (widget.isVisible() && isMouseInWidgetBounds(mouse, widget)) {
+				if (widget.isVisible() && widget.isInBounds(mouse)) {
 					return widget;
 				}
 			}
 			return null;
-		}
-
-		private int translateMouseXCoordinateToWidget(Point mouse, Widget widget) {
-			return mouse.x - widget.getX();
-		}
-
-		private int translateMouseYCoordinateToWidget(Point mouse, Widget widget) {
-			return mouse.y - widget.getY();
-		}
-
-		private boolean isMouseInWidgetBounds(Point mouse, Widget widget) {
-			return mouse.x > widget.getX() && mouse.y > widget.getY()
-					&& mouse.x < widget.getX() + widget.getWidth()
-					&& mouse.y < widget.getY() + widget.getHeight();
 		}
 	}
 

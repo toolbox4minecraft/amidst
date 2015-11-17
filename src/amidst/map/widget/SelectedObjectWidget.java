@@ -6,14 +6,15 @@ import java.awt.image.BufferedImage;
 import amidst.map.MapViewer;
 import amidst.map.object.MapObject;
 
-public class SelectedObjectWidget extends PanelWidget {
+public class SelectedObjectWidget extends Widget {
 	private String message = "";
 	private BufferedImage icon;
 
 	public SelectedObjectWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
 		super(mapViewer, anchor);
 		increaseYMargin(40);
-		setSize(20, 35);
+		setWidth(20);
+		setHeight(35);
 		forceVisibility(false);
 	}
 

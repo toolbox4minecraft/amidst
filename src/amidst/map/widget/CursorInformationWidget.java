@@ -5,12 +5,13 @@ import java.awt.Point;
 
 import amidst.map.MapViewer;
 
-public class CursorInformationWidget extends PanelWidget {
+public class CursorInformationWidget extends Widget {
 	private String message = "";
 
 	public CursorInformationWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
 		super(mapViewer, anchor);
-		setSize(20, 30);
+		setWidth(20);
+		setHeight(30);
 		forceVisibility(false);
 	}
 

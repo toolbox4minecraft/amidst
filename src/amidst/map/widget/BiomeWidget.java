@@ -11,7 +11,7 @@ import amidst.map.MapViewer;
 import amidst.map.layer.BiomeLayer;
 import amidst.minecraft.Biome;
 
-public class BiomeWidget extends PanelWidget {
+public class BiomeWidget extends Widget {
 	private static Color innerBoxBgColor = new Color(0.3f, 0.3f, 0.3f, 0.3f);
 	private static Color biomeBgColor1 = new Color(0.8f, 0.8f, 0.8f, 0.2f);
 	private static Color biomeBgColor2 = new Color(0.6f, 0.6f, 0.6f, 0.2f);
@@ -46,7 +46,8 @@ public class BiomeWidget extends PanelWidget {
 			}
 		}
 		biomeListHeight = biomes.size() * 16;
-		setSize(250, 400);
+		setWidth(250);
+		setHeight(400);
 		setY(100);
 		forceVisibility(false);
 	}

@@ -9,7 +9,7 @@ import amidst.Options;
 import amidst.map.FragmentManager;
 import amidst.map.MapViewer;
 
-public class DebugWidget extends PanelWidget {
+public class DebugWidget extends Widget {
 	public DebugWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
 		super(mapViewer, anchor);
 		forceVisibility(onVisibilityCheck());
@@ -20,7 +20,8 @@ public class DebugWidget extends PanelWidget {
 		List<String> panelLines = getPanelLines(map.getFragmentManager());
 		int width = getPanelWidth(panelLines, mapViewer.getFontMetrics());
 		int height = getPanelHeight(panelLines);
-		setSize(width, height);
+		setWidth(width);
+		setHeight(height);
 		super.draw(g2d, time);
 		drawPanelLines(g2d, panelLines);
 	}

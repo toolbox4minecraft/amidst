@@ -6,12 +6,13 @@ import amidst.Options;
 import amidst.map.MapViewer;
 import amidst.utilities.FramerateTimer;
 
-public class FpsWidget extends PanelWidget {
+public class FpsWidget extends Widget {
 	private FramerateTimer fpsTimer = new FramerateTimer(2);
 
 	public FpsWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
 		super(mapViewer, anchor);
-		setSize(20, 30);
+		setWidth(20);
+		setHeight(30);
 		forceVisibility(onVisibilityCheck());
 	}
 
