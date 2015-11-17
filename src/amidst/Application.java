@@ -48,8 +48,6 @@ public class Application {
 
 	public Application() {
 		initSkinLoader();
-		initLayerContainer();
-		initFragmentManager();
 	}
 
 	private void initSkinLoader() {
@@ -69,7 +67,7 @@ public class Application {
 	}
 
 	private void initFragmentManager() {
-		fragmentManager = new FragmentManager(layerContainer);
+		fragmentManager = new FragmentManager(getLayerContainer());
 	}
 
 	public void displayVersionSelectWindow() {
@@ -153,7 +151,7 @@ public class Application {
 		Options.instance.world = world;
 		if (world != null) {
 			seedHistoryLogger.log(world.getSeed());
-			layerContainer.getPlayerLayer().setWorld(world);
+			getLayerContainer().getPlayerLayer().setWorld(world);
 			mapWindow.worldChanged();
 		}
 	}
@@ -167,14 +165,20 @@ public class Application {
 	}
 
 	public FragmentManager getFragmentManager() {
+		if (fragmentManager == null) {
+			initFragmentManager();
+		}
 		return fragmentManager;
 	}
 
 	public LayerContainer getLayerContainer() {
+		if (layerContainer == null) {
+			initLayerContainer();
+		}
 		return layerContainer;
 	}
 
-	public void crash(Throwable e, String exceptionText, String message,
+	void crash(Throwable e, String exceptionText, String message,
 			String allLogMessages) {
 		new CrashWindow(message, allLogMessages, new Runnable() {
 			@Override
