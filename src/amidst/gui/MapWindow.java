@@ -1,7 +1,6 @@
 package amidst.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
@@ -21,7 +20,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import amidst.AmidstMetaData;
 import amidst.Application;
@@ -46,7 +44,6 @@ public class MapWindow {
 			.newSingleThreadScheduledExecutor();
 
 	private MapViewer mapViewer;
-	private JPanel panel;
 
 	private JFrame frame = new JFrame();
 	private AmidstMenu menuBar;
@@ -154,25 +151,22 @@ public class MapWindow {
 	private void setMapViewer(MapViewer mapViewer) {
 		clearMapViewer();
 		this.mapViewer = mapViewer;
-		if (mapViewer != null) {
-			createPanel(mapViewer);
-			menuBar.setMapMenuEnabled(true);
-			contentPane.add(panel, BorderLayout.CENTER);
-			frame.validate();
-		}
-	}
-
-	private void createPanel(MapViewer mapViewer) {
-		panel = new JPanel();
-		panel.setLayout(new BorderLayout());
-		panel.add(mapViewer.getComponent(), BorderLayout.CENTER);
-		panel.setBackground(Color.BLUE);
+		initMapViewer();
 	}
 
 	private void clearMapViewer() {
 		if (mapViewer != null) {
+			menuBar.disableMapMenu();
+			contentPane.remove(mapViewer.getPanel());
 			mapViewer.dispose();
-			contentPane.remove(panel);
+		}
+	}
+
+	private void initMapViewer() {
+		if (mapViewer != null) {
+			menuBar.enableMapMenu();
+			contentPane.add(mapViewer.getPanel(), BorderLayout.CENTER);
+			frame.validate();
 		}
 	}
 

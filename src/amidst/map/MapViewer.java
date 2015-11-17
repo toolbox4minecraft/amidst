@@ -1,6 +1,7 @@
 package amidst.map;
 
 import java.awt.AlphaComposite;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import amidst.logging.Log;
@@ -294,9 +296,11 @@ public class MapViewer {
 	private static final BufferedImage DROP_SHADOW_RIGHT = ResourceLoader
 			.getImage("dropshadow/inner_right.png");
 
+	private List<Widget> widgets = new ArrayList<Widget>();
 	private Listeners listeners = new Listeners();
 	private Component component = new Component();
 	private MapMovement movement = new MapMovement();
+	private JPanel panel = new JPanel();
 
 	private MapZoom zoom;
 	private World world;
@@ -308,8 +312,6 @@ public class MapViewer {
 	private Font textFont = new Font("arial", Font.BOLD, 15);
 	private FontMetrics textMetrics;
 
-	private List<Widget> widgets = new ArrayList<Widget>();
-
 	public MapViewer(MapZoom zoom, World world, LayerContainer layerContainer,
 			Map map) {
 		this.zoom = zoom;
@@ -318,6 +320,7 @@ public class MapViewer {
 		this.map = map;
 		initWidgets();
 		initComponent();
+		initPanel();
 	}
 
 	private void initWidgets() {
@@ -341,6 +344,12 @@ public class MapViewer {
 		component.addMouseWheelListener(listeners);
 		component.setFocusable(true);
 		textMetrics = component.getFontMetrics(textFont);
+	}
+
+	private void initPanel() {
+		panel.setBackground(Color.BLUE);
+		panel.setLayout(new BorderLayout());
+		panel.add(component, BorderLayout.CENTER);
 	}
 
 	public BufferedImage createCaptureImage() {
@@ -380,10 +389,6 @@ public class MapViewer {
 		return component.getFontMetrics(font);
 	}
 
-	public JComponent getComponent() {
-		return component;
-	}
-
 	@Deprecated
 	public Point getMousePosition() {
 		return component.getMousePosition();
@@ -410,5 +415,9 @@ public class MapViewer {
 
 	public void repaint() {
 		component.repaint();
+	}
+
+	public JPanel getPanel() {
+		return panel;
 	}
 }

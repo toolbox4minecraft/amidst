@@ -338,7 +338,11 @@ public class AmidstMenu {
 		return menuBar;
 	}
 
-	public void setMapMenuEnabled(boolean enabled) {
-		mapMenu.setEnabled(enabled);
+	public void enableMapMenu() {
+		mapMenu.setEnabled(true);
+	}
+
+	public void disableMapMenu() {
+		mapMenu.setEnabled(false);
 	}
 }
