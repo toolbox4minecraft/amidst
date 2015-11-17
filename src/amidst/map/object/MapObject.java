@@ -82,7 +82,6 @@ public class MapObject {
 		return yInWorld;
 	}
 
-	@Deprecated
 	public boolean isVisible() {
 		return isVisiblePreference.get();
 	}
