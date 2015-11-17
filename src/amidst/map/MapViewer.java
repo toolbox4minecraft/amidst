@@ -384,12 +384,10 @@ public class MapViewer {
 		return component.getMousePosition();
 	}
 
-	@Deprecated
 	public int getWidth() {
 		return component.getWidth();
 	}
 
-	@Deprecated
 	public int getHeight() {
 		return component.getHeight();
 	}

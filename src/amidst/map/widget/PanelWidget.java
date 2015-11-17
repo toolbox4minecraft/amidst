@@ -41,6 +41,7 @@ public abstract class PanelWidget extends Widget {
 			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
 
 	private final CornerAnchorPoint anchor;
+
 	private int xMargin = 10;
 	private int yMargin = 10;
 
@@ -71,26 +72,50 @@ public abstract class PanelWidget extends Widget {
 
 	private void updatePosition() {
 		if (anchor == CornerAnchorPoint.TOP_LEFT) {
-			setX(xMargin);
-			setY(yMargin);
+			setX(getLeftX());
+			setY(getTopY());
 		} else if (anchor == CornerAnchorPoint.BOTTOM_LEFT) {
-			setX(xMargin);
-			setY(mapViewer.getHeight() - (getHeight() + yMargin));
+			setX(getLeftX());
+			setY(getBottomY());
 		} else if (anchor == CornerAnchorPoint.BOTTOM_RIGHT) {
-			setX(mapViewer.getWidth() - (getWidth() + xMargin));
-			setY(mapViewer.getHeight() - (getHeight() + yMargin));
+			setX(getRightX());
+			setY(getBottomY());
 		} else if (anchor == CornerAnchorPoint.BOTTOM_CENTER) {
-			setX((mapViewer.getWidth() >> 1) - (getWidth() >> 1));
-			setY(mapViewer.getHeight() - (getHeight() + yMargin));
+			setX(getCenterX());
+			setY(getBottomY());
 		} else if (anchor == CornerAnchorPoint.TOP_RIGHT) {
-			setX(mapViewer.getWidth() - (getWidth() + xMargin));
-			setY(yMargin);
+			setX(getRightX());
+			setY(getTopY());
 		} else if (anchor == CornerAnchorPoint.CENTER) {
-			setX((mapViewer.getWidth() >> 1) - (getWidth() >> 1));
-			setY((mapViewer.getHeight() >> 1) - (getHeight() >> 1));
+			setX(getCenterX());
+			setY(getCenterY());
 		} else if (anchor == CornerAnchorPoint.NONE) {
-			// TODO: set x and y
+			// TODO: set x and y?
 		}
+	}
+
+	private int getLeftX() {
+		return xMargin;
+	}
+
+	private int getTopY() {
+		return yMargin;
+	}
+
+	private int getRightX() {
+		return mapViewer.getWidth() - (getWidth() + xMargin);
+	}
+
+	private int getBottomY() {
+		return mapViewer.getHeight() - (getHeight() + yMargin);
+	}
+
+	private int getCenterX() {
+		return (mapViewer.getWidth() >> 1) - (getWidth() >> 1);
+	}
+
+	private int getCenterY() {
+		return (mapViewer.getHeight() >> 1) - (getHeight() >> 1);
 	}
 
 	private void initGraphics(Graphics2D g2d) {
