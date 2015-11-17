@@ -7,10 +7,12 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
-import amidst.gui.CrashWindow;
-import amidst.gui.MapWindow;
-
 public class Log {
+	public static interface CrashHandler {
+		void handle(Throwable e, String exceptionText, String message,
+				String allLogMessages);
+	}
+
 	private static final ConsoleLogger CONSOLE_LOGGER = new ConsoleLogger();
 	private static final InMemoryLogger IN_MEMORY_LOGGER = new InMemoryLogger();
 
@@ -19,6 +21,8 @@ public class Log {
 	private static final boolean IS_SHOWING_DEBUG = true;
 
 	private static Map<String, Logger> logger = new HashMap<String, Logger>();
+
+	private static CrashHandler crashHandler;
 
 	static {
 		addListener("console", CONSOLE_LOGGER);
@@ -35,6 +39,10 @@ public class Log {
 		synchronized (LOG_LOCK) {
 			logger.remove(name);
 		}
+	}
+
+	public static void setCrashHandler(CrashHandler handler) {
+		crashHandler = handler;
 	}
 
 	public static void i(Object... messages) {
@@ -85,10 +93,10 @@ public class Log {
 			for (Logger listener : logger.values()) {
 				listener.crash(e, exceptionText, message);
 			}
-			new CrashWindow(message, IN_MEMORY_LOGGER.getContents());
-			if (MapWindow.getInstance() != null)
-				MapWindow.getInstance().dispose();
-			// System.exit(0);
+			if (crashHandler != null) {
+				crashHandler.handle(e, exceptionText, message,
+						IN_MEMORY_LOGGER.getContents());
+			}
 		}
 	}
 

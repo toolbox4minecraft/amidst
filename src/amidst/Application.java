@@ -3,6 +3,7 @@ package amidst;
 import java.io.File;
 import java.net.MalformedURLException;
 
+import amidst.gui.CrashWindow;
 import amidst.gui.LicenseWindow;
 import amidst.gui.MapWindow;
 import amidst.gui.UpdatePrompt;
@@ -119,7 +120,6 @@ public class Application {
 		this.mapWindow = mapWindow;
 	}
 
-	// TODO: call me!
 	public void dispose() {
 		setVersionSelectWindow(null);
 		setMapWindow(null);
@@ -139,7 +139,13 @@ public class Application {
 	}
 
 	public void exitGracefully() {
+		dispose();
 		System.exit(0);
+	}
+
+	public void exitWithErrorCode(int code) {
+		dispose();
+		System.exit(code);
 	}
 
 	public void setWorld(World world) {
@@ -166,5 +172,15 @@ public class Application {
 
 	public LayerContainer getLayerContainer() {
 		return layerContainer;
+	}
+
+	public void crash(Throwable e, String exceptionText, String message,
+			String allLogMessages) {
+		new CrashWindow(message, allLogMessages, new Runnable() {
+			@Override
+			public void run() {
+				exitWithErrorCode(4);
+			}
+		});
 	}
 }

@@ -17,7 +17,8 @@ import net.miginfocom.swing.MigLayout;
 public class CrashWindow {
 	private JFrame frame;
 
-	public CrashWindow(String message, String logMessages) {
+	public CrashWindow(String message, String logMessages,
+			final Runnable executeOnClose) {
 		frame = new JFrame("AMIDST encountered an unexpected error.");
 		frame.getContentPane().setLayout(new MigLayout());
 		frame.add(new JLabel("AMIDST has crashed with the following message:"),
@@ -30,7 +31,7 @@ public class CrashWindow {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				frame.dispose();
-				System.exit(4);
+				executeOnClose.run();
 			}
 		});
 	}

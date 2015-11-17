@@ -7,18 +7,20 @@ import org.kohsuke.args4j.CmdLineParser;
 
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
+import amidst.logging.Log.CrashHandler;
 import amidst.preferences.BiomeColorProfile;
 import amidst.utilities.Google;
 
 public class Amidst {
 	private static final String UNCAUGHT_EXCEPTION_ERROR_MESSAGE = "Amidst has encounted an uncaught exception on thread: ";
 	private static final String COMMAND_LINE_PARSING_ERROR_MESSAGE = "There was an issue parsing command line options.";
+	private static Application application;
 
 	public static void main(String args[]) {
 		initUncaughtExceptionHandler();
 		parseCommandLineArguments(args);
-		initUtil();
 		initLogger();
+		initUtil();
 		initLookAndFeel();
 		trackRunning();
 		setEnvironmentVariables();
@@ -45,16 +47,28 @@ public class Amidst {
 		}
 	}
 
-	private static void initUtil() {
-		Util.setMinecraftDirectory();
-		Util.setMinecraftLibraries();
-	}
-
 	private static void initLogger() {
 		if (Options.instance.logPath != null) {
 			Log.addListener("file", new FileLogger(new File(
 					Options.instance.logPath)));
 		}
+		Log.setCrashHandler(new CrashHandler() {
+			@Override
+			public void handle(Throwable e, String exceptionText,
+					String message, String allLogMessages) {
+				if (application != null) {
+					application
+							.crash(e, exceptionText, message, allLogMessages);
+				} else {
+					System.err.println("Amidst crashed!");
+				}
+			}
+		});
+	}
+
+	private static void initUtil() {
+		Util.setMinecraftDirectory();
+		Util.setMinecraftLibraries();
 	}
 
 	private static void initLookAndFeel() {
@@ -81,11 +95,12 @@ public class Amidst {
 	}
 
 	private static void startApplication() {
+		application = new Application();
 		if (Options.instance.minecraftJar != null) {
-			new Application().displayMapWindow(Options.instance.minecraftJar,
+			application.displayMapWindow(Options.instance.minecraftJar,
 					Options.instance.minecraftPath);
 		} else {
-			new Application().displayVersionSelectWindow();
+			application.displayVersionSelectWindow();
 		}
 	}
 }
