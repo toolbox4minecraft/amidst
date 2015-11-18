@@ -86,6 +86,12 @@ public class BiomeLayer extends ImageLayer {
 		}
 	}
 
+	public void selectOnlySpecialBiomes() {
+		for (int i = 0; i < selectedBiomes.length; i++) {
+			selectedBiomes[i] = i >= 128;
+		}
+	}
+
 	public void setHighlightMode(boolean enabled) {
 		this.isHighlightMode = enabled;
 	}

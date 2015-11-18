@@ -244,52 +244,53 @@ public class BiomeWidget extends Widget {
 		if (!isInitialized) {
 			return false;
 		}
+		updateScrollbarParameters(mouseX, mouseY);
+		if (processClick(mouseX, mouseY)) {
+			redrawBiomeLayer();
+		}
+		return true;
+	}
+
+	private void updateScrollbarParameters(int mouseX, int mouseY) {
 		if (scrollbarVisible) {
 			if (isInBoundsOfScrollbar(mouseX, mouseY)) {
-
 				mouseYOnGrab = mouseY + getY();
 				scrollbarYOnGrab = scrollbarY;
 				scrollbarGrabbed = true;
 			}
 		}
+	}
 
-		boolean needsRedraw = false;
+	private boolean processClick(int mouseX, int mouseY) {
 		if (isInBoundsOfInnerBox(mouseX, mouseY)) {
 			int id = (mouseY - (innerBox.y - getY()) - biomeListYOffset) / 16;
 			if (id < biomes.size()) {
-				BiomeLayer.getInstance()
-						.toggleBiomeSelect(biomes.get(id).index);
-				needsRedraw = true;
+				int index = biomes.get(id).index;
+				BiomeLayer.getInstance().toggleBiomeSelect(index);
+				return true;
 			}
-		}
-
-		// TODO: These values are temporarily hard coded for the sake of a fast
-		// release
-		if ((mouseY > getHeight() - 25) && (mouseY < getHeight() - 9)) {
-			if ((mouseX > 117) && (mouseX < 139)) {
+		} else if (isButton(mouseY)) {
+			if (isSelectAllButton(mouseX)) {
 				BiomeLayer.getInstance().selectAllBiomes();
-				needsRedraw = true;
-			} else if ((mouseX > 143) && (mouseX < 197)) {
-				for (int i = 128; i < Biome.biomes.length; i++) {
-					if (Biome.biomes[i] != null) {
-						BiomeLayer.getInstance().selectBiome(i);
-					}
-				}
-				needsRedraw = true;
-			} else if ((mouseX > 203) && (mouseX < 242)) {
+				return true;
+			} else if (isSelectSpecialBiomesButton(mouseX)) {
+				BiomeLayer.getInstance().selectOnlySpecialBiomes();
+				return true;
+			} else if (isDeselectAllButton(mouseX)) {
 				BiomeLayer.getInstance().deselectAllBiomes();
-				needsRedraw = true;
+				return true;
 			}
 		}
-		if (needsRedraw) {
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					map.repaintImageLayer(BiomeLayer.getInstance().getLayerId());
-				}
-			}).start();
-		}
-		return true;
+		return false;
+	}
+
+	private void redrawBiomeLayer() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				map.repaintImageLayer(BiomeLayer.getInstance().getLayerId());
+			}
+		}).start();
 	}
 
 	private boolean isInBoundsOfInnerBox(int mouseX, int mouseY) {
@@ -310,8 +311,26 @@ public class BiomeWidget extends Widget {
 				width, height);
 	}
 
+	// TODO: These values are temporarily hard coded for the sake of a fast
+	// release
+	private boolean isButton(int mouseY) {
+		return mouseY > getHeight() - 25 && mouseY < getHeight() - 9;
+	}
+
+	private boolean isSelectAllButton(int mouseX) {
+		return mouseX > 117 && mouseX < 139;
+	}
+
+	private boolean isSelectSpecialBiomesButton(int mouseX) {
+		return mouseX > 143 && mouseX < 197;
+	}
+
+	private boolean isDeselectAllButton(int mouseX) {
+		return mouseX > 203 && mouseX < 242;
+	}
+
 	@Override
 	public boolean onVisibilityCheck() {
-		return BiomeToggleWidget.isBiomeWidgetVisible && (getHeight() > 200);
+		return BiomeToggleWidget.isBiomeWidgetVisible && getHeight() > 200;
 	}
 }
