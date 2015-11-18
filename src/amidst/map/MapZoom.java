@@ -50,4 +50,9 @@ public class MapZoom {
 	public double getCurrentValue() {
 		return current;
 	}
+
+	public void skipFading() {
+		remainingTicks = 0;
+		current = target;
+	}
 }

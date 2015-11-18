@@ -158,6 +158,7 @@ public class MapWindow {
 			contentPane.remove(mapViewer.getPanel());
 			map.safeDispose();
 			mapMovement.reset();
+			mapZoom.skipFading();
 			mapViewer = null;
 			map = null;
 		}
