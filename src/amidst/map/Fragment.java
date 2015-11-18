@@ -29,29 +29,24 @@ public class Fragment {
 		return imageRGBDataCache;
 	}
 
-	private int xInWorld;
-	private int yInWorld;
-
-	private short[] biomeData = new short[BIOME_SIZE * BIOME_SIZE];
+	private Object loadLock = new Object();
 
 	private ImageLayer[] imageLayers;
 	private LiveLayer[] liveLayers;
 	private IconLayer[] iconLayers;
-
 	private BufferedImage[] images;
-	private Set<MapObject> mapObjects = new HashSet<MapObject>();
 
-	private Object loadLock = new Object();
-
-	private float alpha = 0.0f;
+	private short[] biomeData = new short[BIOME_SIZE * BIOME_SIZE];
 
 	private boolean isActive = false;
 	private boolean isLoaded = false;
-
+	private Set<MapObject> mapObjects = new HashSet<MapObject>();
+	private int xInWorld;
+	private int yInWorld;
+	private float alpha = 0.0f;
 	private Fragment nextFragment = null;
 	private Fragment previousFragment = null;
 	private boolean hasNext = false;
-
 	private boolean endOfLine = false;
 
 	public Fragment(ImageLayer... layers) {
@@ -220,11 +215,11 @@ public class Fragment {
 	}
 
 	public void init(int xInWorld, int yInWorld) {
+		isLoaded = false;
 		clearMapObjects();
 		this.xInWorld = xInWorld;
 		this.yInWorld = yInWorld;
 		alpha = 0.0f;
-		isLoaded = false;
 		nextFragment = null;
 		previousFragment = null;
 		hasNext = false;
@@ -234,11 +229,11 @@ public class Fragment {
 
 	public void reset() {
 		isActive = false;
+		isLoaded = false;
 		clearMapObjects();
 		xInWorld = 0;
-		xInWorld = 0;
+		yInWorld = 0;
 		alpha = 0.0f;
-		isLoaded = false;
 		nextFragment = null;
 		previousFragment = null;
 		hasNext = false;
