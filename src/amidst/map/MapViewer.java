@@ -278,11 +278,12 @@ public class MapViewer {
 			.getImage("dropshadow/inner_right.png");
 
 	private List<Widget> widgets = new ArrayList<Widget>();
+
 	private Listeners listeners = new Listeners();
 	private Component component = new Component();
-	private MapMovement movement = new MapMovement();
 	private JPanel panel = new JPanel();
 
+	private MapMovement movement;
 	private MapZoom zoom;
 	private World world;
 	private LayerContainer layerContainer;
@@ -290,8 +291,9 @@ public class MapViewer {
 
 	private FontMetrics widgetFontMetrics;
 
-	public MapViewer(MapZoom zoom, World world, LayerContainer layerContainer,
-			Map map) {
+	public MapViewer(MapMovement movement, MapZoom zoom, World world,
+			LayerContainer layerContainer, Map map) {
+		this.movement = movement;
 		this.zoom = zoom;
 		this.world = world;
 		this.layerContainer = layerContainer;

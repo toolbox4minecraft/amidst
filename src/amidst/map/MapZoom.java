@@ -18,7 +18,6 @@ public class MapZoom {
 		if (remainingTicks >= 0) {
 			double previous = current;
 			current = (target + current) * 0.5;
-
 			Point2D.Double targetZoom = map.getScaled(previous, current,
 					zoomMouse);
 			map.moveBy(targetZoom);

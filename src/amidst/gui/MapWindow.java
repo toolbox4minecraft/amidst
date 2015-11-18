@@ -30,6 +30,7 @@ import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.logging.Log;
 import amidst.map.Map;
+import amidst.map.MapMovement;
 import amidst.map.MapViewer;
 import amidst.map.MapZoom;
 import amidst.minecraft.MinecraftUtil;
@@ -40,6 +41,8 @@ public class MapWindow {
 
 	private SeedPrompt seedPrompt = new SeedPrompt();
 	private MapZoom mapZoom = new MapZoom();
+	private MapMovement mapMovement = new MapMovement();
+
 	private ScheduledExecutorService executor = Executors
 			.newSingleThreadScheduledExecutor();
 
@@ -154,6 +157,7 @@ public class MapWindow {
 			menuBar.disableMapMenu();
 			contentPane.remove(mapViewer.getPanel());
 			map.dispose();
+			mapMovement.reset();
 			mapViewer = null;
 			map = null;
 		}
@@ -161,7 +165,7 @@ public class MapWindow {
 
 	private void initWorld() {
 		map = new Map(application.getFragmentManager(), mapZoom);
-		mapViewer = new MapViewer(mapZoom, application.getWorld(),
+		mapViewer = new MapViewer(mapMovement, mapZoom, application.getWorld(),
 				application.getLayerContainer(), map);
 		menuBar.enableMapMenu();
 		contentPane.add(mapViewer.getPanel(), BorderLayout.CENTER);

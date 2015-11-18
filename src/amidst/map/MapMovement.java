@@ -44,4 +44,9 @@ public class MapMovement {
 	public void setLastMouse(Point lastMouse) {
 		this.lastMouse = lastMouse;
 	}
+
+	public void reset() {
+		speed = new Point2D.Double();
+		lastMouse = null;
+	}
 }
