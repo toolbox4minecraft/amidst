@@ -190,14 +190,6 @@ public class Fragment {
 		hasNext = true;
 	}
 
-	public void remove() {
-		if (hasNext) {
-			previousFragment.setNext(nextFragment);
-		} else {
-			previousFragment.hasNext = false;
-		}
-	}
-
 	public void repaintAllImageLayers() {
 		synchronized (loadLock) {
 			if (isLoaded) {
@@ -227,11 +219,6 @@ public class Fragment {
 				&& yInWorld < this.yInWorld + Fragment.SIZE;
 	}
 
-	public void recycle() {
-		isActive = false;
-		isLoaded = false;
-	}
-
 	public void init(int xInWorld, int yInWorld) {
 		clearMapObjects();
 		hasNext = false;
@@ -251,6 +238,19 @@ public class Fragment {
 		hasNext = false;
 
 		endOfLine = false;
+	}
+
+	public void recycle() {
+		isActive = false;
+		isLoaded = false;
+	}
+
+	public void remove() {
+		if (hasNext) {
+			previousFragment.setNext(nextFragment);
+		} else {
+			previousFragment.hasNext = false;
+		}
 	}
 
 	public boolean needsLoading() {
