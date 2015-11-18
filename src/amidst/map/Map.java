@@ -30,17 +30,14 @@ public class Map {
 
 		private void drawLayer(AffineTransform originalTransform,
 				Runnable theDrawer) {
-			currentFragment = startNode;
-			if (currentFragment.hasNext()) {
-				initMat(originalTransform, zoom.getCurrentValue());
-				while (currentFragment.hasNext()) {
-					currentFragment = currentFragment.getNext();
-					theDrawer.run();
-					mat.translate(Fragment.SIZE, 0);
-					if (currentFragment.isEndOfLine()) {
-						mat.translate(-Fragment.SIZE * fragmentsPerRow,
-								Fragment.SIZE);
-					}
+			initMat(originalTransform, zoom.getCurrentValue());
+			for (Fragment fragment : iterable) {
+				currentFragment = fragment;
+				theDrawer.run();
+				mat.translate(Fragment.SIZE, 0);
+				if (currentFragment.isEndOfLine()) {
+					mat.translate(-Fragment.SIZE * fragmentsPerRow,
+							Fragment.SIZE);
 				}
 			}
 		}
@@ -197,7 +194,7 @@ public class Map {
 	private void lockedAddStart(int x, int y) {
 		Fragment start = fragmentManager.requestFragment(x, y);
 		start.setEndOfLine(true);
-		startNode.setNext(start);
+		lockedSetFirstFragment(start);
 		fragmentsPerRow = 1;
 		fragmentsPerColumn = 1;
 	}
@@ -206,18 +203,16 @@ public class Map {
 		Fragment fragment = startNode;
 		int y;
 		if (start) {
-			fragment = startNode.getNext();
+			fragment = getFirstFragment();
 			y = fragment.getYInWorld() - Fragment.SIZE;
 		} else {
-			while (fragment.hasNext()) {
-				fragment = fragment.getNext();
-			}
+			fragment = lockedGetLastFragment();
 			y = fragment.getYInWorld() + Fragment.SIZE;
 		}
 
 		fragmentsPerColumn++;
-		Fragment newFragment = fragmentManager.requestFragment(startNode
-				.getNext().getXInWorld(), y);
+		Fragment newFragment = fragmentManager.requestFragment(
+				getFirstFragment().getXInWorld(), y);
 		Fragment chainFragment = newFragment;
 		for (int i = 1; i < fragmentsPerRow; i++) {
 			Fragment tempFragment = fragmentManager.requestFragment(
@@ -231,7 +226,7 @@ public class Map {
 		}
 		if (start) {
 			chainFragment.setNext(fragment);
-			startNode.setNext(newFragment);
+			lockedSetFirstFragment(newFragment);
 		} else {
 			fragment.setNext(newFragment);
 		}
@@ -239,14 +234,14 @@ public class Map {
 
 	private void lockedAddColumn(boolean start) {
 		int x = 0;
-		Fragment fragment = startNode;
 		if (start) {
-			x = fragment.getNext().getXInWorld() - Fragment.SIZE;
-			Fragment newFragment = fragmentManager.requestFragment(x, fragment
+			x = startNode.getNext().getXInWorld() - Fragment.SIZE;
+			Fragment newFragment = fragmentManager.requestFragment(x, startNode
 					.getNext().getYInWorld());
-			newFragment.setNext(startNode.getNext());
-			startNode.setNext(newFragment);
+			newFragment.setNext(getFirstFragment());
+			lockedSetFirstFragment(newFragment);
 		}
+		Fragment fragment = startNode;
 		while (fragment.hasNext()) {
 			fragment = fragment.getNext();
 			if (fragment.isEndOfLine()) {
@@ -279,15 +274,12 @@ public class Map {
 	private void lockedRemoveRow(boolean start) {
 		if (start) {
 			for (int i = 0; i < fragmentsPerRow; i++) {
-				Fragment fragment = startNode.getNext();
+				Fragment fragment = getFirstFragment();
 				fragment.remove();
 				fragmentManager.recycleFragment(fragment);
 			}
 		} else {
-			Fragment fragment = startNode;
-			while (fragment.hasNext()) {
-				fragment = fragment.getNext();
-			}
+			Fragment fragment = lockedGetLastFragment();
 			for (int i = 0; i < fragmentsPerRow; i++) {
 				fragment.remove();
 				fragmentManager.recycleFragment(fragment);
@@ -298,11 +290,11 @@ public class Map {
 	}
 
 	private void lockedRemoveColumn(boolean start) {
-		Fragment fragment = startNode;
 		if (start) {
-			fragmentManager.recycleFragment(fragment.getNext());
-			startNode.getNext().remove();
+			fragmentManager.recycleFragment(getFirstFragment());
+			getFirstFragment().remove();
 		}
+		Fragment fragment = startNode;
 		while (fragment.hasNext()) {
 			fragment = fragment.getNext();
 			if (fragment.isEndOfLine()) {
@@ -334,7 +326,7 @@ public class Map {
 		while (fragmentsPerRow > 1) {
 			lockedRemoveColumn(false);
 		}
-		Fragment fragment = startNode.getNext();
+		Fragment fragment = getFirstFragment();
 		fragment.remove();
 		fragmentManager.recycleFragment(fragment);
 		// TODO: Support longs?
@@ -348,6 +340,18 @@ public class Map {
 		start.y = offsetY;
 
 		lockedAddStart((int) startX, (int) startY);
+	}
+
+	private Fragment lockedGetLastFragment() {
+		Fragment result = null;
+		for (Fragment fragment : iterable) {
+			result = fragment;
+		}
+		return result;
+	}
+
+	private void lockedSetFirstFragment(Fragment start) {
+		startNode.setNext(start);
 	}
 
 	private void safeAddStart(int startX, int startY) {
@@ -374,17 +378,20 @@ public class Map {
 		}
 	}
 
+	private Fragment getFirstFragment() {
+		return startNode.getNext();
+	}
+
 	public Fragment getFragmentAt(Point position) {
-		Fragment fragment = startNode;
 		Point cornerPosition = new Point(position.x >> Fragment.SIZE_SHIFT,
 				position.y >> Fragment.SIZE_SHIFT);
 		Point fragmentPosition = new Point();
-		while (fragment.hasNext()) {
-			fragment = fragment.getNext();
+		for (Fragment fragment : iterable) {
 			fragmentPosition.x = fragment.getFragmentXInWorld();
 			fragmentPosition.y = fragment.getFragmentYInWorld();
-			if (cornerPosition.equals(fragmentPosition))
+			if (cornerPosition.equals(fragmentPosition)) {
 				return fragment;
+			}
 		}
 		return null;
 	}
@@ -394,10 +401,8 @@ public class Map {
 		double y = start.y;
 		MapObject closestObject = null;
 		double closestDistance = maxRange;
-		Fragment fragment = startNode;
 		int size = (int) (Fragment.SIZE * zoom.getCurrentValue());
-		while (fragment.hasNext()) {
-			fragment = fragment.getNext();
+		for (Fragment fragment : iterable) {
 			for (MapObject mapObject : fragment.getMapObjects()) {
 				if (mapObject.isVisible()) {
 					double distance = getPosition(x, y, mapObject).distance(
@@ -428,9 +433,7 @@ public class Map {
 	}
 
 	public String getBiomeNameAt(Point point) {
-		Fragment fragment = startNode;
-		while (fragment.hasNext()) {
-			fragment = fragment.getNext();
+		for (Fragment fragment : iterable) {
 			if ((fragment.getXInWorld() <= point.x)
 					&& (fragment.getYInWorld() <= point.y)
 					&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
@@ -445,9 +448,7 @@ public class Map {
 	}
 
 	public String getBiomeAliasAt(Point point) {
-		Fragment fragment = startNode;
-		while (fragment.hasNext()) {
-			fragment = fragment.getNext();
+		for (Fragment fragment : iterable) {
 			if ((fragment.getXInWorld() <= point.x)
 					&& (fragment.getYInWorld() <= point.y)
 					&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
@@ -496,8 +497,8 @@ public class Map {
 		point.x /= zoom.getCurrentValue();
 		point.y /= zoom.getCurrentValue();
 
-		point.x += startNode.getNext().getXInWorld();
-		point.y += startNode.getNext().getYInWorld();
+		point.x += getFirstFragment().getXInWorld();
+		point.y += getFirstFragment().getYInWorld();
 
 		return point;
 	}
@@ -513,9 +514,7 @@ public class Map {
 	}
 
 	private void repaintImageLayer(int id) {
-		Fragment fragment = startNode;
-		while (fragment.hasNext()) {
-			fragment = fragment.getNext();
+		for (Fragment fragment : iterable) {
 			fragmentManager.repaintFragmentImageLayer(fragment, id);
 		}
 	}
