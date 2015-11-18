@@ -320,7 +320,7 @@ public class Map {
 		start.x = offsetX;
 		start.y = offsetY;
 
-		addStart((int) startX, (int) startY);
+		drawLockedAddStart((int) startX, (int) startY);
 	}
 
 	private void addStart(int startX, int startY) {
