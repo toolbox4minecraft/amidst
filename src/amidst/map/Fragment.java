@@ -46,7 +46,6 @@ public class Fragment {
 	private float alpha = 0.0f;
 	private Fragment nextFragment = null;
 	private Fragment previousFragment = null;
-	private boolean hasNext = false;
 	private boolean endOfLine = false;
 
 	public Fragment(ImageLayer... layers) {
@@ -182,7 +181,6 @@ public class Fragment {
 	public void insertNext(Fragment fragment) {
 		nextFragment = fragment;
 		fragment.previousFragment = this;
-		hasNext = true;
 	}
 
 	public void repaintAllImageLayers() {
@@ -222,7 +220,6 @@ public class Fragment {
 		alpha = 0.0f;
 		nextFragment = null;
 		previousFragment = null;
-		hasNext = false;
 		endOfLine = false;
 		isInitialized = true;
 	}
@@ -236,7 +233,6 @@ public class Fragment {
 		alpha = 0.0f;
 		nextFragment = null;
 		previousFragment = null;
-		hasNext = false;
 		endOfLine = false;
 	}
 
@@ -246,10 +242,8 @@ public class Fragment {
 	}
 
 	public void remove() {
-		if (hasNext) {
+		if (hasNext()) {
 			previousFragment.insertNext(nextFragment);
-		} else {
-			previousFragment.hasNext = false;
 		}
 	}
 
@@ -266,7 +260,7 @@ public class Fragment {
 	}
 
 	public boolean hasNext() {
-		return hasNext;
+		return nextFragment != null;
 	}
 
 	public boolean isEndOfLine() {
