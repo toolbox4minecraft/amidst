@@ -180,24 +180,24 @@ public class Map {
 		}
 
 		fragmentsPerColumn++;
-		Fragment newFrag = fragmentManager.requestFragment(startNode.getNext()
-				.getXInWorld(), y);
-		Fragment chainFrag = newFrag;
+		Fragment newFragment = fragmentManager.requestFragment(startNode
+				.getNext().getXInWorld(), y);
+		Fragment chainFragment = newFragment;
 		for (int i = 1; i < fragmentsPerRow; i++) {
-			Fragment tempFrag = fragmentManager.requestFragment(
-					chainFrag.getXInWorld() + Fragment.SIZE,
-					chainFrag.getYInWorld());
-			chainFrag.setNext(tempFrag);
-			chainFrag = tempFrag;
+			Fragment tempFragment = fragmentManager.requestFragment(
+					chainFragment.getXInWorld() + Fragment.SIZE,
+					chainFragment.getYInWorld());
+			chainFragment.setNext(tempFragment);
+			chainFragment = tempFragment;
 			if (i == (fragmentsPerRow - 1)) {
-				chainFrag.setEndOfLine(true);
+				chainFragment.setEndOfLine(true);
 			}
 		}
 		if (start) {
-			chainFrag.setNext(fragment);
-			startNode.setNext(newFrag);
+			chainFragment.setNext(fragment);
+			startNode.setNext(newFragment);
 		} else {
-			fragment.setNext(newFrag);
+			fragment.setNext(newFragment);
 		}
 	}
 
@@ -206,34 +206,34 @@ public class Map {
 		Fragment fragment = startNode;
 		if (start) {
 			x = fragment.getNext().getXInWorld() - Fragment.SIZE;
-			Fragment newFrag = fragmentManager.requestFragment(x, fragment
+			Fragment newFragment = fragmentManager.requestFragment(x, fragment
 					.getNext().getYInWorld());
-			newFrag.setNext(startNode.getNext());
-			startNode.setNext(newFrag);
+			newFragment.setNext(startNode.getNext());
+			startNode.setNext(newFragment);
 		}
 		while (fragment.hasNext()) {
 			fragment = fragment.getNext();
 			if (fragment.isEndOfLine()) {
 				if (start) {
 					if (fragment.hasNext()) {
-						Fragment newFrag = fragmentManager.requestFragment(x,
-								fragment.getYInWorld() + Fragment.SIZE);
-						newFrag.setNext(fragment.getNext());
-						fragment.setNext(newFrag);
-						fragment = newFrag;
+						Fragment newFragment = fragmentManager.requestFragment(
+								x, fragment.getYInWorld() + Fragment.SIZE);
+						newFragment.setNext(fragment.getNext());
+						fragment.setNext(newFragment);
+						fragment = newFragment;
 					}
 				} else {
-					Fragment newFrag = fragmentManager.requestFragment(
+					Fragment newFragment = fragmentManager.requestFragment(
 							fragment.getXInWorld() + Fragment.SIZE,
 							fragment.getYInWorld());
 
 					if (fragment.hasNext()) {
-						newFrag.setNext(fragment.getNext());
+						newFragment.setNext(fragment.getNext());
 					}
-					newFrag.setEndOfLine(true);
+					newFragment.setEndOfLine(true);
 					fragment.setEndOfLine(false);
-					fragment.setNext(newFrag);
-					fragment = newFrag;
+					fragment.setNext(newFragment);
+					fragment = newFragment;
 				}
 			}
 		}
@@ -243,9 +243,9 @@ public class Map {
 	private void lockedRemoveRow(boolean start) {
 		if (start) {
 			for (int i = 0; i < fragmentsPerRow; i++) {
-				Fragment frag = startNode.getNext();
-				frag.remove();
-				fragmentManager.recycleFragment(frag);
+				Fragment fragment = startNode.getNext();
+				fragment.remove();
+				fragmentManager.recycleFragment(fragment);
 			}
 		} else {
 			Fragment fragment = startNode;
@@ -272,9 +272,9 @@ public class Map {
 			if (fragment.isEndOfLine()) {
 				if (start) {
 					if (fragment.hasNext()) {
-						Fragment tempFrag = fragment.getNext();
-						tempFrag.remove();
-						fragmentManager.recycleFragment(tempFrag);
+						Fragment tempFragment = fragment.getNext();
+						tempFragment.remove();
+						fragmentManager.recycleFragment(tempFragment);
 					}
 				} else {
 					fragment.getPrevious().setEndOfLine(true);
@@ -298,9 +298,9 @@ public class Map {
 		while (fragmentsPerRow > 1) {
 			lockedRemoveColumn(false);
 		}
-		Fragment frag = startNode.getNext();
-		frag.remove();
-		fragmentManager.recycleFragment(frag);
+		Fragment fragment = startNode.getNext();
+		fragment.remove();
+		fragmentManager.recycleFragment(fragment);
 		// TODO: Support longs?
 		double offsetX = viewerWidth >> 1;
 		double offsetY = viewerHeight >> 1;
@@ -339,16 +339,16 @@ public class Map {
 	}
 
 	public Fragment getFragmentAt(Point position) {
-		Fragment frag = startNode;
+		Fragment fragment = startNode;
 		Point cornerPosition = new Point(position.x >> Fragment.SIZE_SHIFT,
 				position.y >> Fragment.SIZE_SHIFT);
 		Point fragmentPosition = new Point();
-		while (frag.hasNext()) {
-			frag = frag.getNext();
-			fragmentPosition.x = frag.getFragmentXInWorld();
-			fragmentPosition.y = frag.getFragmentYInWorld();
+		while (fragment.hasNext()) {
+			fragment = fragment.getNext();
+			fragmentPosition.x = fragment.getFragmentXInWorld();
+			fragmentPosition.y = fragment.getFragmentYInWorld();
 			if (cornerPosition.equals(fragmentPosition))
-				return frag;
+				return fragment;
 		}
 		return null;
 	}
@@ -358,11 +358,11 @@ public class Map {
 		double y = start.y;
 		MapObject closestObject = null;
 		double closestDistance = maxRange;
-		Fragment frag = startNode;
+		Fragment fragment = startNode;
 		int size = (int) (Fragment.SIZE * zoom.getCurrentValue());
-		while (frag.hasNext()) {
-			frag = frag.getNext();
-			for (MapObject mapObject : frag.getMapObjects()) {
+		while (fragment.hasNext()) {
+			fragment = fragment.getNext();
+			for (MapObject mapObject : fragment.getMapObjects()) {
 				if (mapObject.isVisible()) {
 					double distance = getPosition(x, y, mapObject).distance(
 							position);
@@ -373,7 +373,7 @@ public class Map {
 				}
 			}
 			x += size;
-			if (frag.isEndOfLine()) {
+			if (fragment.isEndOfLine()) {
 				x = start.x;
 				y += size;
 			}
@@ -392,34 +392,34 @@ public class Map {
 	}
 
 	public String getBiomeNameAt(Point point) {
-		Fragment frag = startNode;
-		while (frag.hasNext()) {
-			frag = frag.getNext();
-			if ((frag.getXInWorld() <= point.x)
-					&& (frag.getYInWorld() <= point.y)
-					&& (frag.getXInWorld() + Fragment.SIZE > point.x)
-					&& (frag.getYInWorld() + Fragment.SIZE > point.y)) {
-				int x = point.x - frag.getXInWorld();
-				int y = point.y - frag.getYInWorld();
+		Fragment fragment = startNode;
+		while (fragment.hasNext()) {
+			fragment = fragment.getNext();
+			if ((fragment.getXInWorld() <= point.x)
+					&& (fragment.getYInWorld() <= point.y)
+					&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
+					&& (fragment.getYInWorld() + Fragment.SIZE > point.y)) {
+				int x = point.x - fragment.getXInWorld();
+				int y = point.y - fragment.getYInWorld();
 
-				return getBiomeNameForFragment(frag, x, y);
+				return getBiomeNameForFragment(fragment, x, y);
 			}
 		}
 		return "Unknown";
 	}
 
 	public String getBiomeAliasAt(Point point) {
-		Fragment frag = startNode;
-		while (frag.hasNext()) {
-			frag = frag.getNext();
-			if ((frag.getXInWorld() <= point.x)
-					&& (frag.getYInWorld() <= point.y)
-					&& (frag.getXInWorld() + Fragment.SIZE > point.x)
-					&& (frag.getYInWorld() + Fragment.SIZE > point.y)) {
-				int x = point.x - frag.getXInWorld();
-				int y = point.y - frag.getYInWorld();
+		Fragment fragment = startNode;
+		while (fragment.hasNext()) {
+			fragment = fragment.getNext();
+			if ((fragment.getXInWorld() <= point.x)
+					&& (fragment.getYInWorld() <= point.y)
+					&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
+					&& (fragment.getYInWorld() + Fragment.SIZE > point.y)) {
+				int x = point.x - fragment.getXInWorld();
+				int y = point.y - fragment.getYInWorld();
 
-				return getBiomeAliasForFragment(frag, x, y);
+				return getBiomeAliasForFragment(fragment, x, y);
 			}
 		}
 		return "Unknown";
