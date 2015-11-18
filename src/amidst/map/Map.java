@@ -115,59 +115,59 @@ public class Map {
 		safeAddStart(0, 0);
 	}
 
-	private void mapLockedDraw(Graphics2D g, float time) {
+	private void lockedDraw(Graphics2D g, float time) {
 		if (drawer.isFirstDraw()) {
-			mapLockedCenterOn(0, 0);
+			lockedCenterOn(0, 0);
 		}
 		int scaledFragmentSize = (int) (Fragment.SIZE * zoom.getCurrentValue());
 		int desiredFragmentsPerRow = viewerWidth / scaledFragmentSize + 2;
 		int desiredFragmentsPerColumn = viewerHeight / scaledFragmentSize + 2;
-		mapLockedAdjustNumberOfRowsAndColumns(desiredFragmentsPerRow,
+		lockedAdjustNumberOfRowsAndColumns(desiredFragmentsPerRow,
 				desiredFragmentsPerColumn);
-		mapLockedMoveStart(scaledFragmentSize);
+		lockedMoveStart(scaledFragmentSize);
 		drawer.draw(g, time, scaledFragmentSize);
 	}
 
-	private void mapLockedAdjustNumberOfRowsAndColumns(
-			int desiredFragmentsPerRow, int desiredFragmentsPerColumn) {
+	private void lockedAdjustNumberOfRowsAndColumns(int desiredFragmentsPerRow,
+			int desiredFragmentsPerColumn) {
 		while (fragmentsPerRow < desiredFragmentsPerRow) {
-			mapLockedAddColumn(END);
+			lockedAddColumn(END);
 		}
 		while (fragmentsPerRow > desiredFragmentsPerRow) {
-			mapLockedRemoveColumn(END);
+			lockedRemoveColumn(END);
 		}
 		while (fragmentsPerColumn < desiredFragmentsPerColumn) {
-			mapLockedAddRow(END);
+			lockedAddRow(END);
 		}
 		while (fragmentsPerColumn > desiredFragmentsPerColumn) {
-			mapLockedRemoveRow(END);
+			lockedRemoveRow(END);
 		}
 	}
 
-	private void mapLockedMoveStart(int size) {
+	private void lockedMoveStart(int size) {
 		while (start.x > 0) {
 			start.x -= size;
-			mapLockedAddColumn(START);
-			mapLockedRemoveColumn(END);
+			lockedAddColumn(START);
+			lockedRemoveColumn(END);
 		}
 		while (start.x < -size) {
 			start.x += size;
-			mapLockedAddColumn(END);
-			mapLockedRemoveColumn(START);
+			lockedAddColumn(END);
+			lockedRemoveColumn(START);
 		}
 		while (start.y > 0) {
 			start.y -= size;
-			mapLockedAddRow(START);
-			mapLockedRemoveRow(END);
+			lockedAddRow(START);
+			lockedRemoveRow(END);
 		}
 		while (start.y < -size) {
 			start.y += size;
-			mapLockedAddRow(END);
-			mapLockedRemoveRow(START);
+			lockedAddRow(END);
+			lockedRemoveRow(START);
 		}
 	}
 
-	private void mapLockedAddStart(int x, int y) {
+	private void lockedAddStart(int x, int y) {
 		Fragment start = fragmentManager.requestFragment(x, y);
 		start.setEndOfLine(true);
 		startNode.setNext(start);
@@ -175,7 +175,7 @@ public class Map {
 		fragmentsPerColumn = 1;
 	}
 
-	private void mapLockedAddRow(boolean start) {
+	private void lockedAddRow(boolean start) {
 		Fragment fragment = startNode;
 		int y;
 		if (start) {
@@ -210,7 +210,7 @@ public class Map {
 		}
 	}
 
-	private void mapLockedAddColumn(boolean start) {
+	private void lockedAddColumn(boolean start) {
 		int x = 0;
 		Fragment fragment = startNode;
 		if (start) {
@@ -249,7 +249,7 @@ public class Map {
 		fragmentsPerRow++;
 	}
 
-	private void mapLockedRemoveRow(boolean start) {
+	private void lockedRemoveRow(boolean start) {
 		if (start) {
 			for (int i = 0; i < fragmentsPerRow; i++) {
 				Fragment frag = startNode.getNext();
@@ -270,7 +270,7 @@ public class Map {
 		fragmentsPerColumn--;
 	}
 
-	private void mapLockedRemoveColumn(boolean start) {
+	private void lockedRemoveColumn(boolean start) {
 		Fragment fragment = startNode;
 		if (start) {
 			fragmentManager.recycleFragment(fragment.getNext());
@@ -296,16 +296,16 @@ public class Map {
 		fragmentsPerRow--;
 	}
 
-	private void mapLockedCenterOn(long x, long y) {
+	private void lockedCenterOn(long x, long y) {
 		long fragOffsetX = x % Fragment.SIZE;
 		long fragOffsetY = y % Fragment.SIZE;
 		long startX = x - fragOffsetX;
 		long startY = y - fragOffsetY;
 		while (fragmentsPerColumn > 1) {
-			mapLockedRemoveRow(false);
+			lockedRemoveRow(false);
 		}
 		while (fragmentsPerRow > 1) {
-			mapLockedRemoveColumn(false);
+			lockedRemoveColumn(false);
 		}
 		Fragment frag = startNode.getNext();
 		frag.remove();
@@ -320,30 +320,30 @@ public class Map {
 		start.x = offsetX;
 		start.y = offsetY;
 
-		mapLockedAddStart((int) startX, (int) startY);
+		lockedAddStart((int) startX, (int) startY);
 	}
 
 	private void safeAddStart(int startX, int startY) {
 		synchronized (mapLock) {
-			mapLockedAddStart(startX, startY);
+			lockedAddStart(startX, startY);
 		}
 	}
 
 	public void safeDraw(Graphics2D g, float time) {
 		synchronized (mapLock) {
-			mapLockedDraw(g, time);
+			lockedDraw(g, time);
 		}
 	}
 
 	public void safeCenterOn(long x, long y) {
 		synchronized (mapLock) {
-			mapLockedCenterOn(x, y);
+			lockedCenterOn(x, y);
 		}
 	}
 
 	public void safeDispose() {
 		synchronized (mapLock) {
-			mapLockedDispose();
+			lockedDispose();
 		}
 	}
 
@@ -493,7 +493,7 @@ public class Map {
 		}
 	}
 
-	private void mapLockedDispose() {
+	private void lockedDispose() {
 		fragmentManager.reset();
 	}
 
