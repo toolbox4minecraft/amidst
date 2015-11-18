@@ -106,7 +106,7 @@ public class MapDrawer {
 	private void drawMap(Graphics2D g2d, float time) {
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		map.draw((Graphics2D) g2d.create(), time);
+		map.safeDraw((Graphics2D) g2d.create(), time);
 	}
 
 	private void drawBorder() {

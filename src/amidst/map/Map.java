@@ -112,7 +112,7 @@ public class Map {
 		this.fragmentManager = fragmentManager;
 		this.fragmentManager.setMap(this);
 		this.zoom = zoom;
-		addStart(0, 0);
+		safeAddStart(0, 0);
 	}
 
 	private void mapLockedDraw(Graphics2D g, float time) {
@@ -323,25 +323,25 @@ public class Map {
 		mapLockedAddStart((int) startX, (int) startY);
 	}
 
-	private void addStart(int startX, int startY) {
+	private void safeAddStart(int startX, int startY) {
 		synchronized (mapLock) {
 			mapLockedAddStart(startX, startY);
 		}
 	}
 
-	public void draw(Graphics2D g, float time) {
+	public void safeDraw(Graphics2D g, float time) {
 		synchronized (mapLock) {
 			mapLockedDraw(g, time);
 		}
 	}
 
-	public void centerOn(long x, long y) {
+	public void safeCenterOn(long x, long y) {
 		synchronized (mapLock) {
 			mapLockedCenterOn(x, y);
 		}
 	}
 
-	public void dispose() {
+	public void safeDispose() {
 		synchronized (mapLock) {
 			mapLockedDispose();
 		}

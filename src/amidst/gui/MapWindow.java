@@ -156,7 +156,7 @@ public class MapWindow {
 		if (mapViewer != null) {
 			menuBar.disableMapMenu();
 			contentPane.remove(mapViewer.getPanel());
-			map.dispose();
+			map.safeDispose();
 			mapMovement.reset();
 			mapViewer = null;
 			map = null;
@@ -235,7 +235,7 @@ public class MapWindow {
 	}
 
 	public void moveMapToCoordinates(long x, long y) {
-		map.centerOn(x, y);
+		map.safeCenterOn(x, y);
 	}
 
 	public WorldType askForWorldType() {
