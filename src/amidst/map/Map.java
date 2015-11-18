@@ -348,9 +348,15 @@ public class Map {
 		}
 	}
 
-	private void addStart(int startX, int startY) {
+	private void drawLockedAddStart(int startX, int startY) {
 		synchronized (resizeLock) {
 			resizeLockedAddStart(startX, startY);
+		}
+	}
+
+	private void addStart(int startX, int startY) {
+		synchronized (drawLock) {
+			drawLockedAddStart(startX, startY);
 		}
 	}
 
