@@ -188,6 +188,11 @@ public class MapViewer {
 			lastTime = currentTime;
 			return result;
 		}
+
+		public void drawScreenshot(Graphics2D g2d) {
+			drawer.drawScreenshot(g2d, 0, getWidth(), getHeight(),
+					getMousePosition());
+		}
 	}
 
 	private Listeners listeners = new Listeners();
@@ -253,8 +258,7 @@ public class MapViewer {
 		BufferedImage image = new BufferedImage(component.getWidth(),
 				component.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = image.createGraphics();
-		drawer.drawMap(g2d);
-		drawer.drawWidgets(g2d);
+		component.drawScreenshot(g2d);
 		g2d.dispose();
 		return image;
 	}

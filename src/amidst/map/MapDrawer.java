@@ -31,6 +31,8 @@ public class MapDrawer {
 	private static final BufferedImage DROP_SHADOW_RIGHT = ResourceLoader
 			.getImage("dropshadow/inner_right.png");
 
+	private final Object drawLock = new Object();
+
 	private World world;
 	private Map map;
 	private MapViewer mapViewer;
@@ -57,24 +59,37 @@ public class MapDrawer {
 		this.widgetFontMetrics = widgetFontMetrics;
 	}
 
-	public void draw(Graphics2D g2d, float time, int width, int height,
-			Point mousePosition) {
-		this.g2d = g2d;
-		this.time = time;
-		this.width = width;
-		this.height = height;
-		this.mousePosition = mousePosition;
-		doDraw();
+	public void drawScreenshot(Graphics2D g2d, float time, int width,
+			int height, Point mousePosition) {
+		synchronized (drawLock) {
+			this.g2d = g2d;
+			this.time = time;
+			this.width = width;
+			this.height = height;
+			this.mousePosition = mousePosition;
+			clear();
+			setViewerDimensions();
+			drawMap();
+			drawWidgets();
+		}
 	}
 
-	private void doDraw() {
-		clear();
-		updateMapZoom();
-		updateMapMovement();
-		setViewerDimensions();
-		drawMap();
-		drawBorder();
-		drawWidgets();
+	public void draw(Graphics2D g2d, float time, int width, int height,
+			Point mousePosition) {
+		synchronized (drawLock) {
+			this.g2d = g2d;
+			this.time = time;
+			this.width = width;
+			this.height = height;
+			this.mousePosition = mousePosition;
+			clear();
+			updateMapZoom();
+			updateMapMovement();
+			setViewerDimensions();
+			drawMap();
+			drawBorder();
+			drawWidgets();
+		}
 	}
 
 	private void clear() {
@@ -95,15 +110,7 @@ public class MapDrawer {
 		map.setViewerHeight(height);
 	}
 
-	public void drawMap(Graphics2D g2d) {
-		drawMap(g2d, time);
-	}
-
 	private void drawMap() {
-		drawMap(g2d, time);
-	}
-
-	private void drawMap(Graphics2D g2d, float time) {
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		map.safeDraw((Graphics2D) g2d.create(), time);
@@ -124,15 +131,7 @@ public class MapDrawer {
 		g2d.drawImage(DROP_SHADOW_RIGHT, width10, 10, 10, height20, null);
 	}
 
-	public void drawWidgets(Graphics2D g2d) {
-		drawWidgets(g2d, time);
-	}
-
 	private void drawWidgets() {
-		drawWidgets(g2d, time);
-	}
-
-	private void drawWidgets(Graphics2D g2d, float time) {
 		for (Widget widget : widgets) {
 			if (widget.isVisible()) {
 				g2d.setComposite(AlphaComposite.getInstance(
