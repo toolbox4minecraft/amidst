@@ -32,6 +32,7 @@ public class MapDrawer {
 			.getImage("dropshadow/inner_right.png");
 
 	private final Object drawLock = new Object();
+	private boolean isFirstDraw = true;
 
 	private World world;
 	private Map map;
@@ -67,8 +68,9 @@ public class MapDrawer {
 			this.width = width;
 			this.height = height;
 			this.mousePosition = mousePosition;
-			clear();
 			setViewerDimensions();
+			centerMapIfNecessary();
+			clear();
 			drawMap();
 			drawWidgets();
 		}
@@ -82,19 +84,20 @@ public class MapDrawer {
 			this.width = width;
 			this.height = height;
 			this.mousePosition = mousePosition;
-			clear();
+			setViewerDimensions();
 			updateMapZoom();
 			updateMapMovement();
-			setViewerDimensions();
+			centerMapIfNecessary();
+			clear();
 			drawMap();
 			drawBorder();
 			drawWidgets();
 		}
 	}
 
-	private void clear() {
-		g2d.setColor(Color.black);
-		g2d.fillRect(0, 0, width, height);
+	private void setViewerDimensions() {
+		map.setViewerWidth(width);
+		map.setViewerHeight(height);
 	}
 
 	private void updateMapZoom() {
@@ -105,9 +108,16 @@ public class MapDrawer {
 		movement.update(map, mousePosition);
 	}
 
-	private void setViewerDimensions() {
-		map.setViewerWidth(width);
-		map.setViewerHeight(height);
+	private void centerMapIfNecessary() {
+		if (isFirstDraw) {
+			isFirstDraw = false;
+			map.safeCenterOn(0, 0);
+		}
+	}
+
+	private void clear() {
+		g2d.setColor(Color.black);
+		g2d.fillRect(0, 0, width, height);
 	}
 
 	private void drawMap() {

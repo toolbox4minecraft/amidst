@@ -14,11 +14,9 @@ import amidst.minecraft.Biome;
 public class Map {
 	public class Drawer {
 		private AffineTransform mat = new AffineTransform();
-		private boolean isFirstDraw = true;
 		private Fragment currentFragment;
 
 		public void draw(Graphics2D g, float time, int size) {
-			isFirstDraw = false;
 			AffineTransform originalTransform = g.getTransform();
 			drawLayer(originalTransform, createImageLayersDrawer(g, time));
 			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
@@ -81,10 +79,6 @@ public class Map {
 			mat.translate(start.x, start.y);
 			mat.scale(scale, scale);
 		}
-
-		public boolean isFirstDraw() {
-			return isFirstDraw;
-		}
 	}
 
 	private Drawer drawer = new Drawer();
@@ -116,9 +110,6 @@ public class Map {
 	}
 
 	private void lockedDraw(Graphics2D g, float time) {
-		if (drawer.isFirstDraw()) {
-			lockedCenterOn(0, 0);
-		}
 		int scaledFragmentSize = (int) (Fragment.SIZE * zoom.getCurrentValue());
 		int desiredFragmentsPerRow = viewerWidth / scaledFragmentSize + 2;
 		int desiredFragmentsPerColumn = viewerHeight / scaledFragmentSize + 2;
