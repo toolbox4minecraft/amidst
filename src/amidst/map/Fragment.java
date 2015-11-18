@@ -38,7 +38,7 @@ public class Fragment {
 
 	private short[] biomeData = new short[BIOME_SIZE * BIOME_SIZE];
 
-	private boolean isActive = false;
+	private boolean isInitialized = false;
 	private boolean isLoaded = false;
 	private Set<MapObject> mapObjects = new HashSet<MapObject>();
 	private int xInWorld;
@@ -214,7 +214,7 @@ public class Fragment {
 				&& yInWorld < this.yInWorld + Fragment.SIZE;
 	}
 
-	public void init(int xInWorld, int yInWorld) {
+	public void initialize(int xInWorld, int yInWorld) {
 		isLoaded = false;
 		clearMapObjects();
 		this.xInWorld = xInWorld;
@@ -224,11 +224,11 @@ public class Fragment {
 		previousFragment = null;
 		hasNext = false;
 		endOfLine = false;
-		isActive = true;
+		isInitialized = true;
 	}
 
 	public void reset() {
-		isActive = false;
+		isInitialized = false;
 		isLoaded = false;
 		clearMapObjects();
 		xInWorld = 0;
@@ -241,7 +241,7 @@ public class Fragment {
 	}
 
 	public void recycle() {
-		isActive = false;
+		isInitialized = false;
 		isLoaded = false;
 	}
 
@@ -254,7 +254,7 @@ public class Fragment {
 	}
 
 	public boolean needsLoading() {
-		return isActive && !isLoaded;
+		return isInitialized && !isLoaded;
 	}
 
 	public Fragment getNext() {

@@ -102,7 +102,7 @@ public class FragmentManager {
 		while ((fragment = fragmentQueue.poll()) == null) {
 			cache.doubleSize();
 		}
-		fragment.init(x, y);
+		fragment.initialize(x, y);
 		requestQueue.offer(fragment);
 		return fragment;
 	}
