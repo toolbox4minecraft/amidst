@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.util.Iterator;
 
 import amidst.Options;
 import amidst.map.layer.BiomeLayer;
@@ -80,6 +81,41 @@ public class Map {
 			mat.scale(scale, scale);
 		}
 	}
+
+	private static class MapIterable implements Iterable<Fragment> {
+		private Map map;
+
+		public MapIterable(Map map) {
+			this.map = map;
+		}
+
+		@Override
+		public Iterator<Fragment> iterator() {
+			return new MapIterator(map);
+		}
+	}
+
+	private static class MapIterator implements Iterator<Fragment> {
+		private Fragment currentNode;
+
+		public MapIterator(Map map) {
+			currentNode = map.startNode.getNext();
+		}
+
+		@Override
+		public boolean hasNext() {
+			return currentNode != null;
+		}
+
+		@Override
+		public Fragment next() {
+			Fragment result = currentNode;
+			currentNode = currentNode.getNext();
+			return result;
+		}
+	}
+
+	private MapIterable iterable = new MapIterable(this);
 
 	private Drawer drawer = new Drawer();
 
@@ -476,7 +512,7 @@ public class Map {
 		return new Point2D.Double(scaledX, scaledY);
 	}
 
-	public void repaintImageLayer(int id) {
+	private void repaintImageLayer(int id) {
 		Fragment fragment = startNode;
 		while (fragment.hasNext()) {
 			fragment = fragment.getNext();
