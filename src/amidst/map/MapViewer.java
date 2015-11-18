@@ -1,13 +1,10 @@
 package amidst.map;
 
-import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -36,7 +33,6 @@ import amidst.map.widget.Widget;
 import amidst.map.widget.Widget.CornerAnchorPoint;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.World;
-import amidst.resources.ResourceLoader;
 
 public class MapViewer {
 	private class Listeners implements MouseListener, MouseWheelListener {
@@ -79,7 +75,7 @@ public class MapViewer {
 		public void mousePressed(MouseEvent e) {
 			Point mouse = getMousePositionFromEvent(e);
 			if (e.isPopupTrigger()) {
-				showMenu(e);
+				showPlayerMenu(e);
 			} else if (e.isMetaDown()) {
 				// noop
 			} else if (mousePressedOnWidget(e, mouse)) {
@@ -105,7 +101,7 @@ public class MapViewer {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (e.isPopupTrigger()) {
-				showMenu(e);
+				showPlayerMenu(e);
 			} else if (mouseOwner != null) {
 				mouseOwner.onMouseReleased();
 				mouseOwner = null;
@@ -122,7 +118,7 @@ public class MapViewer {
 		public void mouseExited(MouseEvent e) {
 		}
 
-		private void showMenu(MouseEvent e) {
+		private void showPlayerMenu(MouseEvent e) {
 			if (MinecraftUtil.getVersion().saveEnabled() && world.isFileWorld()) {
 				createPlayerMenu(getMousePositionFromEvent(e)).show(
 						e.getComponent(), e.getX(), e.getY());
@@ -183,13 +179,7 @@ public class MapViewer {
 		public void paint(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g.create();
 			float time = calculateTimeSpanSinceLastDrawInSeconds();
-			clear(g2d);
-			updateMapZoom();
-			updateMapMovement();
-			setViewerDimensions();
-			drawMap(g2d, time);
-			drawBorder(g2d);
-			drawWidgets(g2d, time);
+			drawer.draw(g2d, time, getWidth(), getHeight(), getMousePosition());
 		}
 
 		private float calculateTimeSpanSinceLastDrawInSeconds() {
@@ -198,96 +188,19 @@ public class MapViewer {
 			lastTime = currentTime;
 			return result;
 		}
-
-		private void clear(Graphics2D g2d) {
-			g2d.setColor(Color.black);
-			g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
-		}
-
-		private void updateMapZoom() {
-			zoom.update(map);
-		}
-
-		private void updateMapMovement() {
-			movement.update(map, component.getMousePosition());
-		}
-
-		private void setViewerDimensions() {
-			map.setViewerWidth(getWidth());
-			map.setViewerHeight(getHeight());
-		}
-
-		public void drawMap(Graphics2D g2d, float time) {
-			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-			map.draw((Graphics2D) g2d.create(), time);
-		}
-
-		private void drawBorder(Graphics2D g2d) {
-			int width10 = getWidth() - 10;
-			int height10 = getHeight() - 10;
-			int width20 = getWidth() - 20;
-			int height20 = getHeight() - 20;
-			g2d.drawImage(DROP_SHADOW_TOP_LEFT, 0, 0, null);
-			g2d.drawImage(DROP_SHADOW_TOP_RIGHT, width10, 0, null);
-			g2d.drawImage(DROP_SHADOW_BOTTOM_LEFT, 0, height10, null);
-			g2d.drawImage(DROP_SHADOW_BOTTOM_RIGHT, width10, height10, null);
-			g2d.drawImage(DROP_SHADOW_TOP, 10, 0, width20, 10, null);
-			g2d.drawImage(DROP_SHADOW_BOTTOM, 10, height10, width20, 10, null);
-			g2d.drawImage(DROP_SHADOW_LEFT, 0, 10, 10, height20, null);
-			g2d.drawImage(DROP_SHADOW_RIGHT, width10, 10, 10, height20, null);
-		}
-
-		public void drawWidgets(Graphics2D g2d, float time) {
-			for (Widget widget : widgets) {
-				if (widget.isVisible()) {
-					g2d.setComposite(AlphaComposite.getInstance(
-							AlphaComposite.SRC_OVER, widget.getAlpha()));
-					widget.draw(g2d, time, widgetFontMetrics);
-				}
-			}
-		}
-
-		public Point getMousePositionOrCenter() {
-			Point result = component.getMousePosition();
-			if (result == null) {
-				result = new Point(component.getWidth() >> 1,
-						component.getHeight() >> 1);
-			}
-			return result;
-		}
 	}
 
-	private static final BufferedImage DROP_SHADOW_BOTTOM_LEFT = ResourceLoader
-			.getImage("dropshadow/inner_bottom_left.png");
-	private static final BufferedImage DROP_SHADOW_BOTTOM_RIGHT = ResourceLoader
-			.getImage("dropshadow/inner_bottom_right.png");
-	private static final BufferedImage DROP_SHADOW_TOP_LEFT = ResourceLoader
-			.getImage("dropshadow/inner_top_left.png");
-	private static final BufferedImage DROP_SHADOW_TOP_RIGHT = ResourceLoader
-			.getImage("dropshadow/inner_top_right.png");
-	private static final BufferedImage DROP_SHADOW_BOTTOM = ResourceLoader
-			.getImage("dropshadow/inner_bottom.png");
-	private static final BufferedImage DROP_SHADOW_TOP = ResourceLoader
-			.getImage("dropshadow/inner_top.png");
-	private static final BufferedImage DROP_SHADOW_LEFT = ResourceLoader
-			.getImage("dropshadow/inner_left.png");
-	private static final BufferedImage DROP_SHADOW_RIGHT = ResourceLoader
-			.getImage("dropshadow/inner_right.png");
-
-	private List<Widget> widgets = new ArrayList<Widget>();
-
 	private Listeners listeners = new Listeners();
+	private List<Widget> widgets = new ArrayList<Widget>();
 	private Component component = new Component();
 	private JPanel panel = new JPanel();
+	private MapDrawer drawer;
 
 	private MapMovement movement;
 	private MapZoom zoom;
 	private World world;
 	private LayerContainer layerContainer;
 	private Map map;
-
-	private FontMetrics widgetFontMetrics;
 
 	public MapViewer(MapMovement movement, MapZoom zoom, World world,
 			LayerContainer layerContainer, Map map) {
@@ -299,7 +212,7 @@ public class MapViewer {
 		initWidgets();
 		initComponent();
 		initPanel();
-		initWidgetFontMetrics();
+		initDrawer();
 	}
 
 	private void initWidgets() {
@@ -331,18 +244,28 @@ public class MapViewer {
 		panel.add(component, BorderLayout.CENTER);
 	}
 
-	private void initWidgetFontMetrics() {
-		widgetFontMetrics = component.getFontMetrics(Widget.TEXT_FONT);
+	private void initDrawer() {
+		drawer = new MapDrawer(world, map, this, movement, zoom, widgets,
+				component.getFontMetrics(Widget.TEXT_FONT));
 	}
 
 	public BufferedImage createCaptureImage() {
 		BufferedImage image = new BufferedImage(component.getWidth(),
 				component.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = image.createGraphics();
-		component.drawMap(g2d, 0);
-		component.drawWidgets(g2d, 0);
+		drawer.drawMap(g2d);
+		drawer.drawWidgets(g2d);
 		g2d.dispose();
 		return image;
+	}
+
+	public Point getMousePositionOrCenter() {
+		Point result = component.getMousePosition();
+		if (result == null) {
+			result = new Point(component.getWidth() >> 1,
+					component.getHeight() >> 1);
+		}
+		return result;
 	}
 
 	public Point getMousePosition() {
@@ -355,10 +278,6 @@ public class MapViewer {
 
 	public int getHeight() {
 		return component.getHeight();
-	}
-
-	public Point getMousePositionOrCenter() {
-		return component.getMousePositionOrCenter();
 	}
 
 	public void repaint() {
