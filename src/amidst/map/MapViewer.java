@@ -23,7 +23,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-import amidst.logging.Log;
 import amidst.map.object.MapObjectPlayer;
 import amidst.map.widget.BiomeToggleWidget;
 import amidst.map.widget.BiomeWidget;
@@ -347,11 +346,6 @@ public class MapViewer {
 		return image;
 	}
 
-	public void dispose() {
-		Log.debug("Disposing of map viewer.");
-		map.dispose();
-	}
-
 	public void centerAt(long x, long y) {
 		map.centerOn(x, y);
 	}
@@ -366,11 +360,6 @@ public class MapViewer {
 
 	public int getHeight() {
 		return component.getHeight();
-	}
-
-	@Deprecated
-	public void repaintBiomeLayer() {
-		map.repaintBiomeLayer();
 	}
 
 	@Deprecated

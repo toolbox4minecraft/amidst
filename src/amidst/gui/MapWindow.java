@@ -43,6 +43,7 @@ public class MapWindow {
 	private ScheduledExecutorService executor = Executors
 			.newSingleThreadScheduledExecutor();
 
+	private Map map;
 	private MapViewer mapViewer;
 
 	private JFrame frame = new JFrame();
@@ -133,7 +134,7 @@ public class MapWindow {
 	}
 
 	public void dispose() {
-		setMapViewer(null);
+		clearWorld();
 		frame.dispose();
 		shutdownExecutor();
 	}
@@ -148,26 +149,23 @@ public class MapWindow {
 		}
 	}
 
-	private void setMapViewer(MapViewer mapViewer) {
-		clearMapViewer();
-		this.mapViewer = mapViewer;
-		initMapViewer();
-	}
-
-	private void clearMapViewer() {
+	private void clearWorld() {
 		if (mapViewer != null) {
 			menuBar.disableMapMenu();
 			contentPane.remove(mapViewer.getPanel());
-			mapViewer.dispose();
+			map.dispose();
+			mapViewer = null;
+			map = null;
 		}
 	}
 
-	private void initMapViewer() {
-		if (mapViewer != null) {
-			menuBar.enableMapMenu();
-			contentPane.add(mapViewer.getPanel(), BorderLayout.CENTER);
-			frame.validate();
-		}
+	private void initWorld() {
+		map = new Map(application.getFragmentManager(), mapZoom);
+		mapViewer = new MapViewer(mapZoom, application.getWorld(),
+				application.getLayerContainer(), map);
+		menuBar.enableMapMenu();
+		contentPane.add(mapViewer.getPanel(), BorderLayout.CENTER);
+		frame.validate();
 	}
 
 	public String askForSeed() {
@@ -247,9 +245,8 @@ public class MapWindow {
 	}
 
 	public void worldChanged() {
-		setMapViewer(new MapViewer(mapZoom, application.getWorld(),
-				application.getLayerContainer(), new Map(
-						application.getFragmentManager(), mapZoom)));
+		clearWorld();
+		initWorld();
 	}
 
 	public void capture(File file) {
@@ -305,8 +302,8 @@ public class MapWindow {
 	}
 
 	public void repaintBiomeLayer() {
-		if (mapViewer != null) {
-			mapViewer.repaintBiomeLayer();
+		if (map != null) {
+			map.repaintBiomeLayer();
 		}
 	}
 }
