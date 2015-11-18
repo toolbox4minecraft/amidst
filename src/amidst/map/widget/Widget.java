@@ -13,6 +13,7 @@ import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.minecraft.world.World;
 import amidst.resources.ResourceLoader;
+import amidst.utilities.CoordinateUtils;
 
 public abstract class Widget {
 	public static enum CornerAnchorPoint {
@@ -179,16 +180,36 @@ public abstract class Widget {
 	}
 
 	public boolean isInBounds(Point mouse) {
-		return mouse.x > x && mouse.y > y && mouse.x < x + width
-				&& mouse.y < y + height;
+		return isInBounds(mouse.x, mouse.y);
+	}
+
+	public boolean isInBounds(int x, int y) {
+		return CoordinateUtils.isInBounds(x, y, this.x, this.y, this.width,
+				this.height);
 	}
 
 	public int translateXToWidgetCoordinates(Point mouse) {
-		return mouse.x - x;
+		return translateXToWidgetCoordinates(mouse.x);
 	}
 
 	public int translateYToWidgetCoordinates(Point mouse) {
-		return mouse.y - x;
+		return translateYToWidgetCoordinates(mouse.y);
+	}
+
+	public int translateXToWidgetCoordinates(int x) {
+		return x - this.x;
+	}
+
+	public int translateYToWidgetCoordinates(int y) {
+		return y - this.y;
+	}
+
+	public int translateXToScreenCoordinates(int x) {
+		return this.x + x;
+	}
+
+	public int translateYToScreenCoordinates(int y) {
+		return this.y + y;
 	}
 
 	protected void forceVisibility(boolean isVisible) {
