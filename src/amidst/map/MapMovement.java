@@ -7,14 +7,15 @@ import amidst.Options;
 
 public class MapMovement {
 	private Point2D.Double speed = new Point2D.Double();
+	private Point lastMouse;
 
-	public void update(Map map, Point lastMouse, Point currentMouse) {
-		updateMapMovementSpeed(lastMouse, currentMouse);
+	public void update(Map map, Point currentMouse) {
+		updateMapMovementSpeed(currentMouse);
 		moveMap(map);
 		throttleMapMovementSpeed();
 	}
 
-	private void updateMapMovementSpeed(Point lastMouse, Point currentMouse) {
+	private void updateMapMovementSpeed(Point currentMouse) {
 		if (lastMouse != null) {
 			if (currentMouse != null) {
 				double dX = currentMouse.x - lastMouse.x;
@@ -38,5 +39,9 @@ public class MapMovement {
 			speed.x = 0;
 			speed.y = 0;
 		}
+	}
+
+	public void setLastMouse(Point lastMouse) {
+		this.lastMouse = lastMouse;
 	}
 }

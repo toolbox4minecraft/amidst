@@ -83,7 +83,7 @@ public class MapViewer {
 			} else if (e.isMetaDown()) {
 			} else if (mousePressedOnWidget(e, mouse)) {
 			} else {
-				lastMouse = mouse;
+				movement.setLastMouse(mouse);
 			}
 		}
 
@@ -108,7 +108,7 @@ public class MapViewer {
 				mouseOwner.onMouseReleased();
 				mouseOwner = null;
 			} else {
-				lastMouse = null;
+				movement.setLastMouse(null);
 			}
 		}
 
@@ -211,7 +211,7 @@ public class MapViewer {
 		}
 
 		private void updateMapMovement() {
-			movement.update(map, lastMouse, component.getMousePosition());
+			movement.update(map, component.getMousePosition());
 		}
 
 		private void setViewerDimensions() {
@@ -286,9 +286,8 @@ public class MapViewer {
 	private MapZoom zoom;
 	private World world;
 	private LayerContainer layerContainer;
-
 	private Map map;
-	private Point lastMouse;
+
 	private FontMetrics widgetFontMetrics;
 
 	public MapViewer(MapZoom zoom, World world, LayerContainer layerContainer,
