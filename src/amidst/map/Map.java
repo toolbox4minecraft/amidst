@@ -96,7 +96,7 @@ public class Map {
 		private Fragment currentNode;
 
 		public MapIterator(Map map) {
-			currentNode = map.startNode.getNext();
+			currentNode = map.getFirstFragment();
 		}
 
 		@Override
@@ -200,7 +200,7 @@ public class Map {
 	}
 
 	private void lockedAddRow(boolean start) {
-		Fragment fragment = startNode;
+		Fragment fragment;
 		int y;
 		if (start) {
 			fragment = getFirstFragment();
@@ -235,10 +235,11 @@ public class Map {
 	private void lockedAddColumn(boolean start) {
 		int x = 0;
 		if (start) {
-			x = startNode.getNext().getXInWorld() - Fragment.SIZE;
-			Fragment newFragment = fragmentManager.requestFragment(x, startNode
-					.getNext().getYInWorld());
-			newFragment.setNext(getFirstFragment());
+			Fragment fragment = getFirstFragment();
+			x = fragment.getXInWorld() - Fragment.SIZE;
+			Fragment newFragment = fragmentManager.requestFragment(x,
+					fragment.getYInWorld());
+			newFragment.setNext(fragment);
 			lockedSetFirstFragment(newFragment);
 		}
 		Fragment fragment = startNode;
