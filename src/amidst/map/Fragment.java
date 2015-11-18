@@ -221,22 +221,27 @@ public class Fragment {
 
 	public void init(int xInWorld, int yInWorld) {
 		clearMapObjects();
-		hasNext = false;
-		endOfLine = false;
 		this.xInWorld = xInWorld;
 		this.yInWorld = yInWorld;
+		alpha = 0.0f;
+		isLoaded = false;
+		nextFragment = null;
+		previousFragment = null;
+		hasNext = false;
+		endOfLine = false;
 		isActive = true;
 	}
 
 	public void reset() {
-		clearMapObjects();
 		isActive = false;
+		clearMapObjects();
+		xInWorld = 0;
+		xInWorld = 0;
+		alpha = 0.0f;
 		isLoaded = false;
-
 		nextFragment = null;
 		previousFragment = null;
 		hasNext = false;
-
 		endOfLine = false;
 	}
 
