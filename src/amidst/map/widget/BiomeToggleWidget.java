@@ -32,12 +32,7 @@ public class BiomeToggleWidget extends Widget {
 	public boolean onMousePressed(int x, int y) {
 		isBiomeWidgetVisible = !isBiomeWidgetVisible;
 		BiomeLayer.getInstance().setHighlightMode(isBiomeWidgetVisible);
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				map.repaintImageLayer(BiomeLayer.getInstance().getLayerId());
-			}
-		}).start();
+		map.repaintBiomeLayer();
 		return true;
 	}
 

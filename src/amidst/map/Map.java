@@ -7,6 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
 import amidst.Options;
+import amidst.map.layer.BiomeLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 
@@ -485,14 +486,6 @@ public class Map {
 		}
 	}
 
-	public void repaintImageLayers() {
-		Fragment fragment = startNode;
-		while (fragment.hasNext()) {
-			fragment = fragment.getNext();
-			fragmentManager.repaintFragmentImageLayers(fragment);
-		}
-	}
-
 	public void dispose() {
 		synchronized (drawLock) {
 			fragmentManager.reset();
@@ -529,5 +522,16 @@ public class Map {
 
 	public FragmentManager getFragmentManager() {
 		return fragmentManager;
+	}
+
+	// TODO: move the thread somewhere else?
+	@Deprecated
+	public void repaintBiomeLayer() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				repaintImageLayer(BiomeLayer.getInstance().getLayerId());
+			}
+		}).start();
 	}
 }

@@ -369,8 +369,8 @@ public class MapViewer {
 	}
 
 	@Deprecated
-	public void repaintImageLayers() {
-		map.repaintImageLayers();
+	public void repaintBiomeLayer() {
+		map.repaintBiomeLayer();
 	}
 
 	@Deprecated

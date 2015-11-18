@@ -246,7 +246,7 @@ public class BiomeWidget extends Widget {
 		}
 		updateScrollbarParameters(mouseX, mouseY);
 		if (processClick(mouseX, mouseY)) {
-			redrawBiomeLayer();
+			map.repaintBiomeLayer();
 		}
 		return true;
 	}
@@ -282,15 +282,6 @@ public class BiomeWidget extends Widget {
 			}
 		}
 		return false;
-	}
-
-	private void redrawBiomeLayer() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				map.repaintImageLayer(BiomeLayer.getInstance().getLayerId());
-			}
-		}).start();
 	}
 
 	private boolean isInBoundsOfInnerBox(int mouseX, int mouseY) {

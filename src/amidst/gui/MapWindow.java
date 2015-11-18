@@ -304,9 +304,9 @@ public class MapWindow {
 		}
 	}
 
-	public void repaintImageLayers() {
+	public void repaintBiomeLayer() {
 		if (mapViewer != null) {
-			mapViewer.repaintImageLayers();
+			mapViewer.repaintBiomeLayer();
 		}
 	}
 }
