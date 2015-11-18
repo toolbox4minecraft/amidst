@@ -235,7 +235,7 @@ public class MapWindow {
 	}
 
 	public void moveMapToCoordinates(long x, long y) {
-		mapViewer.centerAt(x, y);
+		map.centerOn(x, y);
 	}
 
 	public WorldType askForWorldType() {

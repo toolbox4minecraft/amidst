@@ -81,7 +81,9 @@ public class MapViewer {
 			if (e.isPopupTrigger()) {
 				showMenu(e);
 			} else if (e.isMetaDown()) {
+				// noop
 			} else if (mousePressedOnWidget(e, mouse)) {
+				// noop
 			} else {
 				movement.setLastMouse(mouse);
 			}
@@ -181,14 +183,10 @@ public class MapViewer {
 		public void paint(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g.create();
 			float time = calculateTimeSpanSinceLastDrawInSeconds();
-
 			clear(g2d);
-
 			updateMapZoom();
 			updateMapMovement();
-
 			setViewerDimensions();
-
 			drawMap(g2d, time);
 			drawBorder(g2d);
 			drawWidgets(g2d, time);
@@ -347,10 +345,6 @@ public class MapViewer {
 		return image;
 	}
 
-	public void centerAt(long x, long y) {
-		map.centerOn(x, y);
-	}
-
 	public Point getMousePosition() {
 		return component.getMousePosition();
 	}
@@ -363,7 +357,6 @@ public class MapViewer {
 		return component.getHeight();
 	}
 
-	@Deprecated
 	public Point getMousePositionOrCenter() {
 		return component.getMousePositionOrCenter();
 	}
