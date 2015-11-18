@@ -274,15 +274,12 @@ public class Map {
 	private void lockedRemoveRow(boolean start) {
 		if (start) {
 			for (int i = 0; i < fragmentsPerRow; i++) {
-				Fragment fragment = getFirstFragment();
-				fragment.remove();
-				fragmentManager.recycleFragment(fragment);
+				lockedRemoveAndRecycleFragment(getFirstFragment());
 			}
 		} else {
 			Fragment fragment = lockedGetLastFragment();
 			for (int i = 0; i < fragmentsPerRow; i++) {
-				fragment.remove();
-				fragmentManager.recycleFragment(fragment);
+				lockedRemoveAndRecycleFragment(fragment);
 				fragment = fragment.getPrevious();
 			}
 		}
@@ -291,8 +288,7 @@ public class Map {
 
 	private void lockedRemoveColumn(boolean start) {
 		if (start) {
-			fragmentManager.recycleFragment(getFirstFragment());
-			getFirstFragment().remove();
+			lockedRemoveAndRecycleFragment(getFirstFragment());
 		}
 		Fragment fragment = startNode;
 		while (fragment.hasNext()) {
@@ -300,14 +296,11 @@ public class Map {
 			if (fragment.isEndOfLine()) {
 				if (start) {
 					if (fragment.hasNext()) {
-						Fragment tempFragment = fragment.getNext();
-						tempFragment.remove();
-						fragmentManager.recycleFragment(tempFragment);
+						lockedRemoveAndRecycleFragment(fragment.getNext());
 					}
 				} else {
 					fragment.getPrevious().setEndOfLine(true);
-					fragment.remove();
-					fragmentManager.recycleFragment(fragment);
+					lockedRemoveAndRecycleFragment(fragment);
 					fragment = fragment.getPrevious();
 				}
 			}
@@ -326,9 +319,7 @@ public class Map {
 		while (fragmentsPerRow > 1) {
 			lockedRemoveColumn(false);
 		}
-		Fragment fragment = getFirstFragment();
-		fragment.remove();
-		fragmentManager.recycleFragment(fragment);
+		lockedRemoveAndRecycleFragment(getFirstFragment());
 		// TODO: Support longs?
 		double offsetX = viewerWidth >> 1;
 		double offsetY = viewerHeight >> 1;
@@ -348,6 +339,11 @@ public class Map {
 			result = fragment;
 		}
 		return result;
+	}
+
+	private void lockedRemoveAndRecycleFragment(Fragment fragment) {
+		fragment.remove();
+		fragmentManager.recycleFragment(fragment);
 	}
 
 	private void lockedSetFirstFragment(Fragment start) {
