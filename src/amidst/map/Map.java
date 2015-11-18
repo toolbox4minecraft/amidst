@@ -16,7 +16,7 @@ public class Map {
 		private AffineTransform mat = new AffineTransform();
 		private Fragment currentFragment;
 
-		public void draw(Graphics2D g, float time, int size) {
+		public void draw(Graphics2D g, float time) {
 			AffineTransform originalTransform = g.getTransform();
 			drawLayer(originalTransform, createImageLayersDrawer(g, time));
 			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
@@ -116,7 +116,7 @@ public class Map {
 		lockedAdjustNumberOfRowsAndColumns(desiredFragmentsPerRow,
 				desiredFragmentsPerColumn);
 		lockedMoveStart(scaledFragmentSize);
-		drawer.draw(g, time, scaledFragmentSize);
+		drawer.draw(g, time);
 	}
 
 	private void lockedAdjustNumberOfRowsAndColumns(int desiredFragmentsPerRow,
