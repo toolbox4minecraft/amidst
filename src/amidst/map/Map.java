@@ -104,7 +104,6 @@ public class Map {
 	private int viewerWidth = 1;
 	private int viewerHeight = 1;
 
-	private final Object resizeLock = new Object();
 	private final Object drawLock = new Object();
 
 	private MapZoom zoom;
@@ -168,7 +167,7 @@ public class Map {
 		}
 	}
 
-	private void resizeLockedAddStart(int x, int y) {
+	private void drawLockedAddStart(int x, int y) {
 		Fragment start = fragmentManager.requestFragment(x, y);
 		start.setEndOfLine(true);
 		startNode.setNext(start);
@@ -176,7 +175,7 @@ public class Map {
 		fragmentsPerColumn = 1;
 	}
 
-	private void resizeLockedAddRow(boolean start) {
+	private void drawLockedAddRow(boolean start) {
 		Fragment fragment = startNode;
 		int y;
 		if (start) {
@@ -211,7 +210,7 @@ public class Map {
 		}
 	}
 
-	private void resizeLockedAddColumn(boolean start) {
+	private void drawLockedAddColumn(boolean start) {
 		int x = 0;
 		Fragment fragment = startNode;
 		if (start) {
@@ -250,7 +249,7 @@ public class Map {
 		fragmentsPerRow++;
 	}
 
-	private void resizeLockedRemoveRow(boolean start) {
+	private void drawLockedRemoveRow(boolean start) {
 		if (start) {
 			for (int i = 0; i < fragmentsPerRow; i++) {
 				Fragment frag = startNode.getNext();
@@ -271,7 +270,7 @@ public class Map {
 		fragmentsPerColumn--;
 	}
 
-	private void resizeLockedRemoveColumn(boolean start) {
+	private void drawLockedRemoveColumn(boolean start) {
 		Fragment fragment = startNode;
 		if (start) {
 			fragmentManager.recycleFragment(fragment.getNext());
@@ -322,36 +321,6 @@ public class Map {
 		start.y = offsetY;
 
 		addStart((int) startX, (int) startY);
-	}
-
-	private void drawLockedAddRow(boolean start) {
-		synchronized (resizeLock) {
-			resizeLockedAddRow(start);
-		}
-	}
-
-	private void drawLockedAddColumn(boolean start) {
-		synchronized (resizeLock) {
-			resizeLockedAddColumn(start);
-		}
-	}
-
-	private void drawLockedRemoveRow(boolean start) {
-		synchronized (resizeLock) {
-			resizeLockedRemoveRow(start);
-		}
-	}
-
-	private void drawLockedRemoveColumn(boolean start) {
-		synchronized (resizeLock) {
-			resizeLockedRemoveColumn(start);
-		}
-	}
-
-	private void drawLockedAddStart(int startX, int startY) {
-		synchronized (resizeLock) {
-			resizeLockedAddStart(startX, startY);
-		}
 	}
 
 	private void addStart(int startX, int startY) {
