@@ -116,227 +116,259 @@ public class Map {
 		addStart(0, 0);
 	}
 
-	public void draw(Graphics2D g, float time) {
+	private void drawLockedDraw(Graphics2D g, float time) {
 		if (drawer.isFirstDraw()) {
-			centerOn(0, 0);
+			drawLockedCenterOn(0, 0);
 		}
-		synchronized (drawLock) {
-			int scaledFragmentSize = (int) (Fragment.SIZE * zoom
-					.getCurrentValue());
-			int desiredFragmentsPerRow = viewerWidth / scaledFragmentSize + 2;
-			int desiredFragmentsPerColumn = viewerHeight / scaledFragmentSize
-					+ 2;
-			adjustNumberOfRowsAndColumns(desiredFragmentsPerRow,
-					desiredFragmentsPerColumn);
-			moveStart(scaledFragmentSize);
-			drawer.draw(g, time, scaledFragmentSize);
-		}
+		int scaledFragmentSize = (int) (Fragment.SIZE * zoom.getCurrentValue());
+		int desiredFragmentsPerRow = viewerWidth / scaledFragmentSize + 2;
+		int desiredFragmentsPerColumn = viewerHeight / scaledFragmentSize + 2;
+		drawLockedAdjustNumberOfRowsAndColumns(desiredFragmentsPerRow,
+				desiredFragmentsPerColumn);
+		drawLockedMoveStart(scaledFragmentSize);
+		drawer.draw(g, time, scaledFragmentSize);
 	}
 
-	private void adjustNumberOfRowsAndColumns(int desiredFragmentsPerRow,
-			int desiredFragmentsPerColumn) {
+	private void drawLockedAdjustNumberOfRowsAndColumns(
+			int desiredFragmentsPerRow, int desiredFragmentsPerColumn) {
 		while (fragmentsPerRow < desiredFragmentsPerRow) {
-			addColumn(END);
+			drawLockedAddColumn(END);
 		}
 		while (fragmentsPerRow > desiredFragmentsPerRow) {
-			removeColumn(END);
+			drawLockedRemoveColumn(END);
 		}
 		while (fragmentsPerColumn < desiredFragmentsPerColumn) {
-			addRow(END);
+			drawLockedAddRow(END);
 		}
 		while (fragmentsPerColumn > desiredFragmentsPerColumn) {
-			removeRow(END);
+			drawLockedRemoveRow(END);
 		}
 	}
 
-	private void moveStart(int size) {
+	private void drawLockedMoveStart(int size) {
 		while (start.x > 0) {
 			start.x -= size;
-			addColumn(START);
-			removeColumn(END);
+			drawLockedAddColumn(START);
+			drawLockedRemoveColumn(END);
 		}
 		while (start.x < -size) {
 			start.x += size;
-			addColumn(END);
-			removeColumn(START);
+			drawLockedAddColumn(END);
+			drawLockedRemoveColumn(START);
 		}
 		while (start.y > 0) {
 			start.y -= size;
-			addRow(START);
-			removeRow(END);
+			drawLockedAddRow(START);
+			drawLockedRemoveRow(END);
 		}
 		while (start.y < -size) {
 			start.y += size;
-			addRow(END);
-			removeRow(START);
+			drawLockedAddRow(END);
+			drawLockedRemoveRow(START);
 		}
 	}
 
-	public void addStart(int x, int y) {
-		synchronized (resizeLock) {
-			Fragment start = fragmentManager.requestFragment(x, y);
-			start.setEndOfLine(true);
-			startNode.setNext(start);
-			fragmentsPerRow = 1;
-			fragmentsPerColumn = 1;
-		}
+	private void resizeLockedAddStart(int x, int y) {
+		Fragment start = fragmentManager.requestFragment(x, y);
+		start.setEndOfLine(true);
+		startNode.setNext(start);
+		fragmentsPerRow = 1;
+		fragmentsPerColumn = 1;
 	}
 
-	public void addRow(boolean start) {
-		synchronized (resizeLock) {
-			Fragment fragment = startNode;
-			int y;
-			if (start) {
-				fragment = startNode.getNext();
-				y = fragment.getYInWorld() - Fragment.SIZE;
-			} else {
-				while (fragment.hasNext()) {
-					fragment = fragment.getNext();
-				}
-				y = fragment.getYInWorld() + Fragment.SIZE;
-			}
-
-			fragmentsPerColumn++;
-			Fragment newFrag = fragmentManager.requestFragment(startNode
-					.getNext().getXInWorld(), y);
-			Fragment chainFrag = newFrag;
-			for (int i = 1; i < fragmentsPerRow; i++) {
-				Fragment tempFrag = fragmentManager.requestFragment(
-						chainFrag.getXInWorld() + Fragment.SIZE,
-						chainFrag.getYInWorld());
-				chainFrag.setNext(tempFrag);
-				chainFrag = tempFrag;
-				if (i == (fragmentsPerRow - 1)) {
-					chainFrag.setEndOfLine(true);
-				}
-			}
-			if (start) {
-				chainFrag.setNext(fragment);
-				startNode.setNext(newFrag);
-			} else {
-				fragment.setNext(newFrag);
-			}
-		}
-	}
-
-	public void addColumn(boolean start) {
-		synchronized (resizeLock) {
-			int x = 0;
-			Fragment fragment = startNode;
-			if (start) {
-				x = fragment.getNext().getXInWorld() - Fragment.SIZE;
-				Fragment newFrag = fragmentManager.requestFragment(x, fragment
-						.getNext().getYInWorld());
-				newFrag.setNext(startNode.getNext());
-				startNode.setNext(newFrag);
-			}
+	private void resizeLockedAddRow(boolean start) {
+		Fragment fragment = startNode;
+		int y;
+		if (start) {
+			fragment = startNode.getNext();
+			y = fragment.getYInWorld() - Fragment.SIZE;
+		} else {
 			while (fragment.hasNext()) {
 				fragment = fragment.getNext();
-				if (fragment.isEndOfLine()) {
-					if (start) {
-						if (fragment.hasNext()) {
-							Fragment newFrag = fragmentManager.requestFragment(
-									x, fragment.getYInWorld() + Fragment.SIZE);
-							newFrag.setNext(fragment.getNext());
-							fragment.setNext(newFrag);
-							fragment = newFrag;
-						}
-					} else {
-						Fragment newFrag = fragmentManager.requestFragment(
-								fragment.getXInWorld() + Fragment.SIZE,
-								fragment.getYInWorld());
+			}
+			y = fragment.getYInWorld() + Fragment.SIZE;
+		}
 
-						if (fragment.hasNext()) {
-							newFrag.setNext(fragment.getNext());
-						}
-						newFrag.setEndOfLine(true);
-						fragment.setEndOfLine(false);
+		fragmentsPerColumn++;
+		Fragment newFrag = fragmentManager.requestFragment(startNode.getNext()
+				.getXInWorld(), y);
+		Fragment chainFrag = newFrag;
+		for (int i = 1; i < fragmentsPerRow; i++) {
+			Fragment tempFrag = fragmentManager.requestFragment(
+					chainFrag.getXInWorld() + Fragment.SIZE,
+					chainFrag.getYInWorld());
+			chainFrag.setNext(tempFrag);
+			chainFrag = tempFrag;
+			if (i == (fragmentsPerRow - 1)) {
+				chainFrag.setEndOfLine(true);
+			}
+		}
+		if (start) {
+			chainFrag.setNext(fragment);
+			startNode.setNext(newFrag);
+		} else {
+			fragment.setNext(newFrag);
+		}
+	}
+
+	private void resizeLockedAddColumn(boolean start) {
+		int x = 0;
+		Fragment fragment = startNode;
+		if (start) {
+			x = fragment.getNext().getXInWorld() - Fragment.SIZE;
+			Fragment newFrag = fragmentManager.requestFragment(x, fragment
+					.getNext().getYInWorld());
+			newFrag.setNext(startNode.getNext());
+			startNode.setNext(newFrag);
+		}
+		while (fragment.hasNext()) {
+			fragment = fragment.getNext();
+			if (fragment.isEndOfLine()) {
+				if (start) {
+					if (fragment.hasNext()) {
+						Fragment newFrag = fragmentManager.requestFragment(x,
+								fragment.getYInWorld() + Fragment.SIZE);
+						newFrag.setNext(fragment.getNext());
 						fragment.setNext(newFrag);
 						fragment = newFrag;
 					}
+				} else {
+					Fragment newFrag = fragmentManager.requestFragment(
+							fragment.getXInWorld() + Fragment.SIZE,
+							fragment.getYInWorld());
+
+					if (fragment.hasNext()) {
+						newFrag.setNext(fragment.getNext());
+					}
+					newFrag.setEndOfLine(true);
+					fragment.setEndOfLine(false);
+					fragment.setNext(newFrag);
+					fragment = newFrag;
 				}
 			}
-			fragmentsPerRow++;
 		}
+		fragmentsPerRow++;
 	}
 
-	public void removeRow(boolean start) {
-		synchronized (resizeLock) {
-			if (start) {
-				for (int i = 0; i < fragmentsPerRow; i++) {
-					Fragment frag = startNode.getNext();
-					frag.remove();
-					fragmentManager.recycleFragment(frag);
-				}
-			} else {
-				Fragment fragment = startNode;
-				while (fragment.hasNext()) {
-					fragment = fragment.getNext();
-				}
-				for (int i = 0; i < fragmentsPerRow; i++) {
+	private void resizeLockedRemoveRow(boolean start) {
+		if (start) {
+			for (int i = 0; i < fragmentsPerRow; i++) {
+				Fragment frag = startNode.getNext();
+				frag.remove();
+				fragmentManager.recycleFragment(frag);
+			}
+		} else {
+			Fragment fragment = startNode;
+			while (fragment.hasNext()) {
+				fragment = fragment.getNext();
+			}
+			for (int i = 0; i < fragmentsPerRow; i++) {
+				fragment.remove();
+				fragmentManager.recycleFragment(fragment);
+				fragment = fragment.getPrevious();
+			}
+		}
+		fragmentsPerColumn--;
+	}
+
+	private void resizeLockedRemoveColumn(boolean start) {
+		Fragment fragment = startNode;
+		if (start) {
+			fragmentManager.recycleFragment(fragment.getNext());
+			startNode.getNext().remove();
+		}
+		while (fragment.hasNext()) {
+			fragment = fragment.getNext();
+			if (fragment.isEndOfLine()) {
+				if (start) {
+					if (fragment.hasNext()) {
+						Fragment tempFrag = fragment.getNext();
+						tempFrag.remove();
+						fragmentManager.recycleFragment(tempFrag);
+					}
+				} else {
+					fragment.getPrevious().setEndOfLine(true);
 					fragment.remove();
 					fragmentManager.recycleFragment(fragment);
 					fragment = fragment.getPrevious();
 				}
 			}
-			fragmentsPerColumn--;
 		}
+		fragmentsPerRow--;
 	}
 
-	public void removeColumn(boolean start) {
-		synchronized (resizeLock) {
-			Fragment fragment = startNode;
-			if (start) {
-				fragmentManager.recycleFragment(fragment.getNext());
-				startNode.getNext().remove();
-			}
-			while (fragment.hasNext()) {
-				fragment = fragment.getNext();
-				if (fragment.isEndOfLine()) {
-					if (start) {
-						if (fragment.hasNext()) {
-							Fragment tempFrag = fragment.getNext();
-							tempFrag.remove();
-							fragmentManager.recycleFragment(tempFrag);
-						}
-					} else {
-						fragment.getPrevious().setEndOfLine(true);
-						fragment.remove();
-						fragmentManager.recycleFragment(fragment);
-						fragment = fragment.getPrevious();
-					}
-				}
-			}
-			fragmentsPerRow--;
-		}
-	}
-
-	public void centerOn(long x, long y) {
+	private void drawLockedCenterOn(long x, long y) {
 		long fragOffsetX = x % Fragment.SIZE;
 		long fragOffsetY = y % Fragment.SIZE;
 		long startX = x - fragOffsetX;
 		long startY = y - fragOffsetY;
+		while (fragmentsPerColumn > 1) {
+			drawLockedRemoveRow(false);
+		}
+		while (fragmentsPerRow > 1) {
+			drawLockedRemoveColumn(false);
+		}
+		Fragment frag = startNode.getNext();
+		frag.remove();
+		fragmentManager.recycleFragment(frag);
+		// TODO: Support longs?
+		double offsetX = viewerWidth >> 1;
+		double offsetY = viewerHeight >> 1;
+
+		offsetX -= (fragOffsetX) * zoom.getCurrentValue();
+		offsetY -= (fragOffsetY) * zoom.getCurrentValue();
+
+		start.x = offsetX;
+		start.y = offsetY;
+
+		addStart((int) startX, (int) startY);
+	}
+
+	private void drawLockedAddRow(boolean start) {
+		synchronized (resizeLock) {
+			resizeLockedAddRow(start);
+		}
+	}
+
+	private void drawLockedAddColumn(boolean start) {
+		synchronized (resizeLock) {
+			resizeLockedAddColumn(start);
+		}
+	}
+
+	private void drawLockedRemoveRow(boolean start) {
+		synchronized (resizeLock) {
+			resizeLockedRemoveRow(start);
+		}
+	}
+
+	private void drawLockedRemoveColumn(boolean start) {
+		synchronized (resizeLock) {
+			resizeLockedRemoveColumn(start);
+		}
+	}
+
+	private void addStart(int startX, int startY) {
+		synchronized (resizeLock) {
+			resizeLockedAddStart(startX, startY);
+		}
+	}
+
+	public void draw(Graphics2D g, float time) {
 		synchronized (drawLock) {
-			while (fragmentsPerColumn > 1) {
-				removeRow(false);
-			}
-			while (fragmentsPerRow > 1) {
-				removeColumn(false);
-			}
-			Fragment frag = startNode.getNext();
-			frag.remove();
-			fragmentManager.recycleFragment(frag);
-			// TODO: Support longs?
-			double offsetX = viewerWidth >> 1;
-			double offsetY = viewerHeight >> 1;
+			drawLockedDraw(g, time);
+		}
+	}
 
-			offsetX -= (fragOffsetX) * zoom.getCurrentValue();
-			offsetY -= (fragOffsetY) * zoom.getCurrentValue();
+	public void centerOn(long x, long y) {
+		synchronized (drawLock) {
+			drawLockedCenterOn(x, y);
+		}
+	}
 
-			start.x = offsetX;
-			start.y = offsetY;
-
-			addStart((int) startX, (int) startY);
+	public void dispose() {
+		synchronized (drawLock) {
+			drawLockedDispose();
 		}
 	}
 
@@ -486,10 +518,8 @@ public class Map {
 		}
 	}
 
-	public void dispose() {
-		synchronized (drawLock) {
-			fragmentManager.reset();
-		}
+	private void drawLockedDispose() {
+		fragmentManager.reset();
 	}
 
 	public double getZoom() {
