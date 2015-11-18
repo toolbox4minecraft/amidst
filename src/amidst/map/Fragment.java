@@ -179,7 +179,7 @@ public class Fragment {
 				layerSize);
 	}
 
-	public void setNext(Fragment fragment) {
+	public void insertNext(Fragment fragment) {
 		nextFragment = fragment;
 		fragment.previousFragment = this;
 		hasNext = true;
@@ -247,7 +247,7 @@ public class Fragment {
 
 	public void remove() {
 		if (hasNext) {
-			previousFragment.setNext(nextFragment);
+			previousFragment.insertNext(nextFragment);
 		} else {
 			previousFragment.hasNext = false;
 		}

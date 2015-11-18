@@ -218,17 +218,17 @@ public class Map {
 			Fragment tempFragment = fragmentManager.requestFragment(
 					chainFragment.getXInWorld() + Fragment.SIZE,
 					chainFragment.getYInWorld());
-			chainFragment.setNext(tempFragment);
+			chainFragment.insertNext(tempFragment);
 			chainFragment = tempFragment;
 			if (i == (fragmentsPerRow - 1)) {
 				chainFragment.setEndOfLine(true);
 			}
 		}
 		if (start) {
-			chainFragment.setNext(fragment);
+			chainFragment.insertNext(fragment);
 			lockedSetFirstFragment(newFragment);
 		} else {
-			fragment.setNext(newFragment);
+			fragment.insertNext(newFragment);
 		}
 	}
 
@@ -239,7 +239,7 @@ public class Map {
 			x = fragment.getXInWorld() - Fragment.SIZE;
 			Fragment newFragment = fragmentManager.requestFragment(x,
 					fragment.getYInWorld());
-			newFragment.setNext(fragment);
+			newFragment.insertNext(fragment);
 			lockedSetFirstFragment(newFragment);
 		}
 		Fragment fragment = startNode;
@@ -250,8 +250,8 @@ public class Map {
 					if (fragment.hasNext()) {
 						Fragment newFragment = fragmentManager.requestFragment(
 								x, fragment.getYInWorld() + Fragment.SIZE);
-						newFragment.setNext(fragment.getNext());
-						fragment.setNext(newFragment);
+						newFragment.insertNext(fragment.getNext());
+						fragment.insertNext(newFragment);
 						fragment = newFragment;
 					}
 				} else {
@@ -260,11 +260,11 @@ public class Map {
 							fragment.getYInWorld());
 
 					if (fragment.hasNext()) {
-						newFragment.setNext(fragment.getNext());
+						newFragment.insertNext(fragment.getNext());
 					}
 					newFragment.setEndOfLine(true);
 					fragment.setEndOfLine(false);
-					fragment.setNext(newFragment);
+					fragment.insertNext(newFragment);
 					fragment = newFragment;
 				}
 			}
@@ -348,7 +348,7 @@ public class Map {
 	}
 
 	private void lockedSetFirstFragment(Fragment start) {
-		startNode.setNext(start);
+		startNode.insertNext(start);
 	}
 
 	private void safeAddStart(int startX, int startY) {
