@@ -55,6 +55,7 @@ public class BiomeWidget extends Widget {
 
 	private void initializeIfNecessary(FontMetrics fontMetrics) {
 		if (!isInitialized) {
+			isInitialized = true;
 			for (Biome biome : Biome.biomes) {
 				if (biome != null) {
 					biomes.add(biome);
@@ -69,7 +70,8 @@ public class BiomeWidget extends Widget {
 	@Override
 	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
 		initializeIfNecessary(fontMetrics);
-		updateXPosition();
+		updateX();
+		updateHeight();
 		updateInnerBoxPositionAndSize();
 		updateBiomeListYOffset();
 		updateScrollbarVisibility();
@@ -95,8 +97,12 @@ public class BiomeWidget extends Widget {
 		drawSpecialButtons(g2d);
 	}
 
-	private void updateXPosition() {
+	private void updateX() {
 		setX(mapViewer.getWidth() - getWidth());
+	}
+
+	private void updateHeight() {
+		setHeight(Math.max(200, mapViewer.getHeight() - 200));
 	}
 
 	private void updateInnerBoxPositionAndSize() {
@@ -306,7 +312,6 @@ public class BiomeWidget extends Widget {
 
 	@Override
 	public boolean onVisibilityCheck() {
-		setHeight(Math.max(200, mapViewer.getHeight() - 200));
 		return BiomeToggleWidget.isBiomeWidgetVisible && (getHeight() > 200);
 	}
 }
