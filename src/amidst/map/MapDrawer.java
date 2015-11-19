@@ -60,6 +60,7 @@ public class MapDrawer {
 	private Fragment currentFragment;
 	private AffineTransform layerDrawMatrix = new AffineTransform();
 	private AffineTransform mapObjectDrawMatrix = new AffineTransform();
+	private AffineTransform imageLayerDrawMatrix = new AffineTransform();
 
 	private Runnable createImageLayersDrawer() {
 		return new Runnable() {
@@ -227,9 +228,8 @@ public class MapDrawer {
 
 	private void drawImageLayer(ImageLayer imageLayer, BufferedImage image) {
 		setAlphaComposite(currentFragment.getAlpha() * imageLayer.getAlpha());
-
-		// TODO: FIX THIS
-		g2d.setTransform(imageLayer.getScaledMatrix(layerDrawMatrix));
+		initImageLayerDrawMatrix(imageLayer.getScale());
+		g2d.setTransform(imageLayerDrawMatrix);
 		if (g2d.getTransform().getScaleX() < 1.0f) {
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 					RenderingHints.VALUE_INTERPOLATION_BILINEAR);
@@ -238,6 +238,12 @@ public class MapDrawer {
 					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		}
 		g2d.drawImage(image, 0, 0, null);
+	}
+
+	// TODO: is this transformation correct?
+	public void initImageLayerDrawMatrix(double scale) {
+		imageLayerDrawMatrix.setTransform(layerDrawMatrix);
+		imageLayerDrawMatrix.scale(scale, scale);
 	}
 
 	private void drawLiveLayers() {

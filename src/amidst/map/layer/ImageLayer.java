@@ -1,12 +1,8 @@
 package amidst.map.layer;
 
-import java.awt.geom.AffineTransform;
-
 import amidst.map.Fragment;
 
 public abstract class ImageLayer extends Layer {
-	private AffineTransform cachedScalingMatrix = new AffineTransform();
-
 	private final int size;
 	private final int layerId;
 	private final double scale;
@@ -19,13 +15,6 @@ public abstract class ImageLayer extends Layer {
 
 	public void load(Fragment fragment) {
 		drawToCache(fragment);
-	}
-
-	// TODO: what is this?
-	public AffineTransform getScaledMatrix(AffineTransform inMat) {
-		cachedScalingMatrix.setTransform(inMat);
-		cachedScalingMatrix.scale(scale, scale);
-		return cachedScalingMatrix;
 	}
 
 	protected int getSquaredSize() {
@@ -42,6 +31,10 @@ public abstract class ImageLayer extends Layer {
 
 	public int getLayerId() {
 		return layerId;
+	}
+
+	public double getScale() {
+		return scale;
 	}
 
 	public abstract void drawToCache(Fragment fragment);
