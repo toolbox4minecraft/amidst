@@ -30,9 +30,9 @@ public class Map {
 
 		private void drawLayer(AffineTransform originalTransform,
 				Runnable theDrawer) {
-			if (startNode != null) {
+			if (startFragment != null) {
 				initMat(originalTransform, zoom.getCurrentValue());
-				for (Fragment fragment : startNode) {
+				for (Fragment fragment : startFragment) {
 					currentFragment = fragment;
 					theDrawer.run();
 					mat.translate(Fragment.SIZE, 0);
@@ -76,7 +76,7 @@ public class Map {
 		private void initMat(AffineTransform originalTransform, double scale) {
 			mat.setToIdentity();
 			mat.concatenate(originalTransform);
-			mat.translate(start.x, start.y);
+			mat.translate(startOnScreen.x, startOnScreen.y);
 			mat.scale(scale, scale);
 		}
 	}
@@ -87,9 +87,9 @@ public class Map {
 
 	private FragmentManager fragmentManager;
 
-	private Fragment startNode;
+	private Fragment startFragment;
 
-	private Point2D.Double start = new Point2D.Double();
+	private Point2D.Double startOnScreen = new Point2D.Double();
 
 	private int fragmentsPerRow;
 	private int fragmentsPerColumn;
@@ -122,47 +122,49 @@ public class Map {
 		int newRows = desiredFragmentsPerColumn - fragmentsPerColumn;
 		int newLeft = 0;
 		int newAbove = 0;
-		while (start.x > 0) {
-			start.x -= fragmentSizeOnScreen;
+		while (startOnScreen.x > 0) {
+			startOnScreen.x -= fragmentSizeOnScreen;
 			newLeft++;
 		}
-		while (start.x < -fragmentSizeOnScreen) {
-			start.x += fragmentSizeOnScreen;
+		while (startOnScreen.x < -fragmentSizeOnScreen) {
+			startOnScreen.x += fragmentSizeOnScreen;
 			newLeft--;
 		}
-		while (start.y > 0) {
-			start.y -= fragmentSizeOnScreen;
+		while (startOnScreen.y > 0) {
+			startOnScreen.y -= fragmentSizeOnScreen;
 			newAbove++;
 		}
-		while (start.y < -fragmentSizeOnScreen) {
-			start.y += fragmentSizeOnScreen;
+		while (startOnScreen.y < -fragmentSizeOnScreen) {
+			startOnScreen.y += fragmentSizeOnScreen;
 			newAbove--;
 		}
 		int newRight = newColumns - newLeft;
 		int newBelow = newRows - newAbove;
-		startNode = startNode.adjustRowsAndColumns(newAbove, newBelow, newLeft,
-				newRight, fragmentManager);
+		startFragment = startFragment.adjustRowsAndColumns(newAbove, newBelow,
+				newLeft, newRight, fragmentManager);
 		fragmentsPerRow = fragmentsPerRow + newLeft + newRight;
 		fragmentsPerColumn = fragmentsPerColumn + newAbove + newBelow;
 	}
 
 	private void lockedAddStart(int x, int y) {
-		startNode = fragmentManager.requestFragment(x, y);
+		startFragment = fragmentManager.requestFragment(x, y);
 		fragmentsPerRow = 1;
 		fragmentsPerColumn = 1;
 	}
 
 	// TODO: Support longs?
 	private void lockedCenterOn(long xInWorld, long yInWorld) {
-		if (startNode != null) {
-			startNode = startNode.recycleAll(fragmentManager);
+		if (startFragment != null) {
+			startFragment = startFragment.recycleAll(fragmentManager);
 		}
 		int xCenterOnScreen = viewerWidth >> 1;
 		int yCenterOnScreen = viewerHeight >> 1;
 		long xFragmentRelative = CoordinateUtils.toFragmentRelative(xInWorld);
 		long yFragmentRelative = CoordinateUtils.toFragmentRelative(yInWorld);
-		start.x = xCenterOnScreen - zoom.worldToScreen(xFragmentRelative);
-		start.y = yCenterOnScreen - zoom.worldToScreen(yFragmentRelative);
+		startOnScreen.x = xCenterOnScreen
+				- zoom.worldToScreen(xFragmentRelative);
+		startOnScreen.y = yCenterOnScreen
+				- zoom.worldToScreen(yFragmentRelative);
 		long xFragmentCorner = CoordinateUtils.toFragmentCorner(xInWorld);
 		long yFragmentCorner = CoordinateUtils.toFragmentCorner(yInWorld);
 		lockedAddStart((int) xFragmentCorner, (int) yFragmentCorner);
@@ -196,8 +198,8 @@ public class Map {
 		Point cornerPosition = new Point(position.x >> Fragment.SIZE_SHIFT,
 				position.y >> Fragment.SIZE_SHIFT);
 		Point fragmentPosition = new Point();
-		if (startNode != null) {
-			for (Fragment fragment : startNode) {
+		if (startFragment != null) {
+			for (Fragment fragment : startFragment) {
 				fragmentPosition.x = fragment.getFragmentXInWorld();
 				fragmentPosition.y = fragment.getFragmentYInWorld();
 				if (cornerPosition.equals(fragmentPosition)) {
@@ -209,13 +211,13 @@ public class Map {
 	}
 
 	public MapObject getMapObjectAt(Point positionOnScreen, double maxRange) {
-		double x = start.x;
-		double y = start.y;
+		double x = startOnScreen.x;
+		double y = startOnScreen.y;
 		MapObject closestObject = null;
 		double closestDistance = maxRange;
 		int fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
-		if (startNode != null) {
-			for (Fragment fragment : startNode) {
+		if (startFragment != null) {
+			for (Fragment fragment : startFragment) {
 				for (MapObject mapObject : fragment.getMapObjects()) {
 					if (mapObject.isVisible()) {
 						double distance = getPositionOnScreen(x, y, mapObject)
@@ -228,7 +230,7 @@ public class Map {
 				}
 				x += fragmentSizeOnScreen;
 				if (fragment.isEndOfLine()) {
-					x = start.x;
+					x = startOnScreen.x;
 					y += fragmentSizeOnScreen;
 				}
 			}
@@ -247,8 +249,8 @@ public class Map {
 	}
 
 	public String getBiomeNameAt(Point point) {
-		if (startNode != null) {
-			for (Fragment fragment : startNode) {
+		if (startFragment != null) {
+			for (Fragment fragment : startFragment) {
 				if ((fragment.getXInWorld() <= point.x)
 						&& (fragment.getYInWorld() <= point.y)
 						&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
@@ -264,8 +266,8 @@ public class Map {
 	}
 
 	public String getBiomeAliasAt(Point point) {
-		if (startNode != null) {
-			for (Fragment fragment : startNode) {
+		if (startFragment != null) {
+			for (Fragment fragment : startFragment) {
 				if ((fragment.getXInWorld() <= point.x)
 						&& (fragment.getYInWorld() <= point.y)
 						&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
@@ -301,38 +303,38 @@ public class Map {
 	}
 
 	public void moveBy(double x, double y) {
-		start.x += x;
-		start.y += y;
+		startOnScreen.x += x;
+		startOnScreen.y += y;
 	}
 
 	public Point screenToWorld(Point pointOnScreen) {
 		Point result = pointOnScreen.getLocation();
 
-		result.x -= start.x;
-		result.y -= start.y;
+		result.x -= startOnScreen.x;
+		result.y -= startOnScreen.y;
 
 		result.x = zoom.screenToWorld(result.x);
 		result.y = zoom.screenToWorld(result.y);
 
-		result.x += startNode.getXInWorld();
-		result.y += startNode.getYInWorld();
+		result.x += startFragment.getXInWorld();
+		result.y += startFragment.getYInWorld();
 
 		return result;
 	}
 
 	public Point2D.Double getScaled(double oldScale, double newScale, Point p) {
-		double baseX = p.x - start.x;
+		double baseX = p.x - startOnScreen.x;
 		double scaledX = baseX - (baseX / oldScale) * newScale;
 
-		double baseY = p.y - start.y;
+		double baseY = p.y - startOnScreen.y;
 		double scaledY = baseY - (baseY / oldScale) * newScale;
 
 		return new Point2D.Double(scaledX, scaledY);
 	}
 
 	private void repaintImageLayer(int id) {
-		if (startNode != null) {
-			for (Fragment fragment : startNode) {
+		if (startFragment != null) {
+			for (Fragment fragment : startFragment) {
 				fragmentManager.repaintFragmentImageLayer(fragment, id);
 			}
 		}
