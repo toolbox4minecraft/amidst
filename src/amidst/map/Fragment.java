@@ -91,6 +91,28 @@ public class Fragment implements Iterable<Fragment> {
 		}
 	}
 
+	public void initialize(int xInWorld, int yInWorld) {
+		doReset(xInWorld, yInWorld);
+		isInitialized = true;
+	}
+
+	public void reset() {
+		isInitialized = false;
+		doReset(0, 0);
+	}
+
+	private void doReset(int xInWorld, int yInWorld) {
+		isLoaded = false;
+		mapObjects.clear();
+		this.xInWorld = xInWorld;
+		this.yInWorld = yInWorld;
+		alpha = 0.0f;
+		leftFragment = null;
+		rightFragment = null;
+		aboveFragment = null;
+		belowFragment = null;
+	}
+
 	public void load() {
 		synchronized (loadLock) {
 			if (isLoaded) {
@@ -110,14 +132,6 @@ public class Fragment implements Iterable<Fragment> {
 			alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
 			isLoaded = true;
 		}
-	}
-
-	public void addObject(MapObject mapObject) {
-		mapObjects.add(mapObject);
-	}
-
-	public void removeObject(MapObject mapObject) {
-		mapObjects.remove(mapObject);
 	}
 
 	public void repaintAllImageLayers() {
@@ -145,6 +159,47 @@ public class Fragment implements Iterable<Fragment> {
 				layerSize);
 	}
 
+	public void updateAlpha(float time) {
+		alpha = Math.min(1.0f, time * 3.0f + alpha);
+	}
+
+	public void addObject(MapObject mapObject) {
+		mapObjects.add(mapObject);
+	}
+
+	public void removeObject(MapObject mapObject) {
+		mapObjects.remove(mapObject);
+	}
+
+	public boolean needsLoading() {
+		return isInitialized && !isLoaded;
+	}
+
+	public short[] getBiomeData() {
+		return biomeData;
+	}
+
+	public float getAlpha() {
+		return alpha;
+	}
+
+	public Set<MapObject> getMapObjects() {
+		return mapObjects;
+	}
+
+	public boolean isLoaded() {
+		return isLoaded;
+	}
+
+	public BufferedImage[] getImages() {
+		return images;
+	}
+
+	@Override
+	public Iterator<Fragment> iterator() {
+		return new FragmentIterator(this);
+	}
+
 	public boolean isInBounds(MapObject mapObject) {
 		return isInBounds(mapObject.getXInWorld(), mapObject.getYInWorld());
 	}
@@ -154,6 +209,34 @@ public class Fragment implements Iterable<Fragment> {
 				&& xInWorld < this.xInWorld + Fragment.SIZE
 				&& yInWorld >= this.yInWorld
 				&& yInWorld < this.yInWorld + Fragment.SIZE;
+	}
+
+	public int getXInWorld() {
+		return xInWorld;
+	}
+
+	public int getYInWorld() {
+		return yInWorld;
+	}
+
+	public int getChunkXInWorld() {
+		return xInWorld >> 4;
+	}
+
+	public int getChunkYInWorld() {
+		return yInWorld >> 4;
+	}
+
+	public int getFragmentXInWorld() {
+		return xInWorld >> SIZE_SHIFT;
+	}
+
+	public int getFragmentYInWorld() {
+		return yInWorld >> SIZE_SHIFT;
+	}
+
+	public boolean isEndOfLine() {
+		return rightFragment == null;
 	}
 
 	public Fragment recycleAll(FragmentManager manager) {
@@ -428,88 +511,5 @@ public class Fragment implements Iterable<Fragment> {
 	private void recycle(FragmentManager manager) {
 		reset();
 		manager.recycleFragment(this);
-	}
-
-	public void initialize(int xInWorld, int yInWorld) {
-		init(xInWorld, yInWorld);
-		isInitialized = true;
-	}
-
-	public void reset() {
-		isInitialized = false;
-		init(0, 0);
-	}
-
-	private void init(int xInWorld, int yInWorld) {
-		isLoaded = false;
-		mapObjects.clear();
-		this.xInWorld = xInWorld;
-		this.yInWorld = yInWorld;
-		alpha = 0.0f;
-		leftFragment = null;
-		rightFragment = null;
-		aboveFragment = null;
-		belowFragment = null;
-	}
-
-	public boolean needsLoading() {
-		return isInitialized && !isLoaded;
-	}
-
-	public short[] getBiomeData() {
-		return biomeData;
-	}
-
-	public float getAlpha() {
-		return alpha;
-	}
-
-	public int getXInWorld() {
-		return xInWorld;
-	}
-
-	public int getYInWorld() {
-		return yInWorld;
-	}
-
-	public int getChunkXInWorld() {
-		return xInWorld >> 4;
-	}
-
-	public int getChunkYInWorld() {
-		return yInWorld >> 4;
-	}
-
-	public int getFragmentXInWorld() {
-		return xInWorld >> SIZE_SHIFT;
-	}
-
-	public int getFragmentYInWorld() {
-		return yInWorld >> SIZE_SHIFT;
-	}
-
-	public boolean isEndOfLine() {
-		return rightFragment == null;
-	}
-
-	@Override
-	public Iterator<Fragment> iterator() {
-		return new FragmentIterator(this);
-	}
-
-	public Set<MapObject> getMapObjects() {
-		return mapObjects;
-	}
-
-	public void updateAlpha(float time) {
-		alpha = Math.min(1.0f, time * 3.0f + alpha);
-	}
-
-	public boolean isLoaded() {
-		return isLoaded;
-	}
-
-	public BufferedImage[] getImages() {
-		return images;
 	}
 }
