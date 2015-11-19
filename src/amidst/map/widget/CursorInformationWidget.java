@@ -33,7 +33,7 @@ public class CursorInformationWidget extends Widget {
 	private String getText() {
 		Point mouse = mapViewer.getMousePosition();
 		if (mouse != null) {
-			Point pointInWorld = map.screenToLocal(mouse);
+			Point pointInWorld = map.screenToWorld(mouse);
 			return map.getBiomeAliasAt(pointInWorld) + " [ " + pointInWorld.x
 					+ ", " + pointInWorld.y + " ]";
 		} else {

@@ -55,4 +55,14 @@ public class MapZoom {
 		remainingTicks = 0;
 		current = target;
 	}
+
+	public int screenToWorld(int coordinate) {
+		// TODO: int -> double -> int = bad?
+		return (int) (coordinate / current);
+	}
+
+	public int worldToScreen(int coordinate) {
+		// TODO: int -> double -> int = bad?
+		return (int) (coordinate * current);
+	}
 }

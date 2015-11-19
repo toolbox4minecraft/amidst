@@ -30,14 +30,16 @@ public class Map {
 
 		private void drawLayer(AffineTransform originalTransform,
 				Runnable theDrawer) {
-			initMat(originalTransform, zoom.getCurrentValue());
-			for (Fragment fragment : startNode) {
-				currentFragment = fragment;
-				theDrawer.run();
-				mat.translate(Fragment.SIZE, 0);
-				if (currentFragment.isEndOfLine()) {
-					mat.translate(-Fragment.SIZE * fragmentsPerRow,
-							Fragment.SIZE);
+			if (startNode != null) {
+				initMat(originalTransform, zoom.getCurrentValue());
+				for (Fragment fragment : startNode) {
+					currentFragment = fragment;
+					theDrawer.run();
+					mat.translate(Fragment.SIZE, 0);
+					if (currentFragment.isEndOfLine()) {
+						mat.translate(-Fragment.SIZE * fragmentsPerRow,
+								Fragment.SIZE);
+					}
 				}
 			}
 		}
@@ -85,7 +87,7 @@ public class Map {
 
 	private FragmentManager fragmentManager;
 
-	private Fragment startNode = new Fragment();
+	private Fragment startNode;
 
 	private Point2D.Double start = new Point2D.Double();
 
@@ -160,7 +162,9 @@ public class Map {
 		long fragOffsetY = y % Fragment.SIZE;
 		long startX = x - fragOffsetX;
 		long startY = y - fragOffsetY;
-		startNode = startNode.recycleAll(fragmentManager);
+		if (startNode != null) {
+			startNode = startNode.recycleAll(fragmentManager);
+		}
 		// TODO: Support longs?
 		double offsetX = viewerWidth >> 1;
 		double offsetY = viewerHeight >> 1;
@@ -202,11 +206,13 @@ public class Map {
 		Point cornerPosition = new Point(position.x >> Fragment.SIZE_SHIFT,
 				position.y >> Fragment.SIZE_SHIFT);
 		Point fragmentPosition = new Point();
-		for (Fragment fragment : startNode) {
-			fragmentPosition.x = fragment.getFragmentXInWorld();
-			fragmentPosition.y = fragment.getFragmentYInWorld();
-			if (cornerPosition.equals(fragmentPosition)) {
-				return fragment;
+		if (startNode != null) {
+			for (Fragment fragment : startNode) {
+				fragmentPosition.x = fragment.getFragmentXInWorld();
+				fragmentPosition.y = fragment.getFragmentYInWorld();
+				if (cornerPosition.equals(fragmentPosition)) {
+					return fragment;
+				}
 			}
 		}
 		return null;
@@ -218,21 +224,23 @@ public class Map {
 		MapObject closestObject = null;
 		double closestDistance = maxRange;
 		int size = (int) (Fragment.SIZE * zoom.getCurrentValue());
-		for (Fragment fragment : startNode) {
-			for (MapObject mapObject : fragment.getMapObjects()) {
-				if (mapObject.isVisible()) {
-					double distance = getPosition(x, y, mapObject).distance(
-							position);
-					if (closestDistance > distance) {
-						closestDistance = distance;
-						closestObject = mapObject;
+		if (startNode != null) {
+			for (Fragment fragment : startNode) {
+				for (MapObject mapObject : fragment.getMapObjects()) {
+					if (mapObject.isVisible()) {
+						double distance = getPosition(x, y, mapObject)
+								.distance(position);
+						if (closestDistance > distance) {
+							closestDistance = distance;
+							closestObject = mapObject;
+						}
 					}
 				}
-			}
-			x += size;
-			if (fragment.isEndOfLine()) {
-				x = start.x;
-				y += size;
+				x += size;
+				if (fragment.isEndOfLine()) {
+					x = start.x;
+					y += size;
+				}
 			}
 		}
 		return closestObject;
@@ -249,30 +257,34 @@ public class Map {
 	}
 
 	public String getBiomeNameAt(Point point) {
-		for (Fragment fragment : startNode) {
-			if ((fragment.getXInWorld() <= point.x)
-					&& (fragment.getYInWorld() <= point.y)
-					&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
-					&& (fragment.getYInWorld() + Fragment.SIZE > point.y)) {
-				int x = point.x - fragment.getXInWorld();
-				int y = point.y - fragment.getYInWorld();
+		if (startNode != null) {
+			for (Fragment fragment : startNode) {
+				if ((fragment.getXInWorld() <= point.x)
+						&& (fragment.getYInWorld() <= point.y)
+						&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
+						&& (fragment.getYInWorld() + Fragment.SIZE > point.y)) {
+					int x = point.x - fragment.getXInWorld();
+					int y = point.y - fragment.getYInWorld();
 
-				return getBiomeNameForFragment(fragment, x, y);
+					return getBiomeNameForFragment(fragment, x, y);
+				}
 			}
 		}
 		return "Unknown";
 	}
 
 	public String getBiomeAliasAt(Point point) {
-		for (Fragment fragment : startNode) {
-			if ((fragment.getXInWorld() <= point.x)
-					&& (fragment.getYInWorld() <= point.y)
-					&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
-					&& (fragment.getYInWorld() + Fragment.SIZE > point.y)) {
-				int x = point.x - fragment.getXInWorld();
-				int y = point.y - fragment.getYInWorld();
+		if (startNode != null) {
+			for (Fragment fragment : startNode) {
+				if ((fragment.getXInWorld() <= point.x)
+						&& (fragment.getYInWorld() <= point.y)
+						&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
+						&& (fragment.getYInWorld() + Fragment.SIZE > point.y)) {
+					int x = point.x - fragment.getXInWorld();
+					int y = point.y - fragment.getYInWorld();
 
-				return getBiomeAliasForFragment(fragment, x, y);
+					return getBiomeAliasForFragment(fragment, x, y);
+				}
 			}
 		}
 		return "Unknown";
@@ -303,20 +315,19 @@ public class Map {
 		start.y += y;
 	}
 
-	public Point screenToLocal(Point inPoint) {
-		Point point = inPoint.getLocation();
+	public Point screenToWorld(Point pointOnScreen) {
+		Point result = pointOnScreen.getLocation();
 
-		point.x -= start.x;
-		point.y -= start.y;
+		result.x -= start.x;
+		result.y -= start.y;
 
-		// TODO: int -> double -> int = bad?
-		point.x /= zoom.getCurrentValue();
-		point.y /= zoom.getCurrentValue();
+		result.x = zoom.screenToWorld(result.x);
+		result.y = zoom.screenToWorld(result.y);
 
-		point.x += startNode.getXInWorld();
-		point.y += startNode.getYInWorld();
+		result.x += startNode.getXInWorld();
+		result.y += startNode.getYInWorld();
 
-		return point;
+		return result;
 	}
 
 	public Point2D.Double getScaled(double oldScale, double newScale, Point p) {
@@ -330,8 +341,10 @@ public class Map {
 	}
 
 	private void repaintImageLayer(int id) {
-		for (Fragment fragment : startNode) {
-			fragmentManager.repaintFragmentImageLayer(fragment, id);
+		if (startNode != null) {
+			for (Fragment fragment : startNode) {
+				fragmentManager.repaintFragmentImageLayer(fragment, id);
+			}
 		}
 	}
 

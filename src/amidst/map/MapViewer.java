@@ -140,7 +140,7 @@ public class MapViewer {
 			result.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Point location = map.screenToLocal(lastRightClick);
+					Point location = map.screenToWorld(lastRightClick);
 					player.setPosition(location.x, location.y);
 					player.setFragment(map.getFragmentAt(location));
 				}
