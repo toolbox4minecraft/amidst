@@ -58,6 +58,7 @@ public class MapDrawer {
 	private Point mousePosition;
 
 	private Fragment currentFragment;
+	private AffineTransform originalGraphicsTransform;
 	private AffineTransform layerDrawMatrix = new AffineTransform();
 	private AffineTransform mapObjectDrawMatrix = new AffineTransform();
 	private AffineTransform imageLayerDrawMatrix = new AffineTransform();
@@ -171,34 +172,30 @@ public class MapDrawer {
 		g2d = old;
 	}
 
-	public void doDrawMap() {
-		AffineTransform originalTransform = g2d.getTransform();
-		drawLayer(originalTransform, imageLayersDrawer);
+	public void doDrawMap(Point2D.Double startOnScreen, Fragment startFragment) {
+		originalGraphicsTransform = g2d.getTransform();
+		drawLayer(startOnScreen, startFragment, imageLayersDrawer);
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		map.updateAllLayers(time);
-		drawLayer(originalTransform, liveLayersDrawer);
-		drawLayer(originalTransform, objectsDrawer);
-		g2d.setTransform(originalTransform);
+		drawLayer(startOnScreen, startFragment, liveLayersDrawer);
+		drawLayer(startOnScreen, startFragment, objectsDrawer);
+		g2d.setTransform(originalGraphicsTransform);
 	}
 
-	private void drawLayer(AffineTransform originalTransform, Runnable drawer) {
-		Fragment startFragment = map.getStartFragment();
-		if (startFragment != null) {
-			initLayerDrawMatrix(originalTransform, zoom.getCurrentValue(),
-					map.getStartOnScreen());
-			for (Fragment fragment : startFragment) {
-				currentFragment = fragment;
-				drawer.run();
-				updateLayerDrawMatrix();
-			}
+	private void drawLayer(Point2D.Double startOnScreen,
+			Fragment startFragment, Runnable drawer) {
+		initLayerDrawMatrix(startOnScreen, zoom.getCurrentValue());
+		for (Fragment fragment : startFragment) {
+			currentFragment = fragment;
+			drawer.run();
+			updateLayerDrawMatrix();
 		}
 	}
 
-	private void initLayerDrawMatrix(AffineTransform originalTransform,
-			double scale, Point2D.Double startOnScreen) {
+	private void initLayerDrawMatrix(Point2D.Double startOnScreen, double scale) {
 		layerDrawMatrix.setToIdentity();
-		layerDrawMatrix.concatenate(originalTransform);
+		layerDrawMatrix.concatenate(originalGraphicsTransform);
 		layerDrawMatrix.translate(startOnScreen.x, startOnScreen.y);
 		layerDrawMatrix.scale(scale, scale);
 	}

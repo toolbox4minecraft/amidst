@@ -2,7 +2,6 @@ package amidst.map;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 
 import amidst.Options;
 import amidst.map.layer.ImageLayer;
@@ -46,7 +45,9 @@ public class Map {
 		int desiredFragmentsPerColumn = viewerHeight / fragmentSizeOnScreen + 2;
 		lockedAdjustNumberOfRowsAndColumns(fragmentSizeOnScreen,
 				desiredFragmentsPerRow, desiredFragmentsPerColumn);
-		drawer.doDrawMap();
+		if (startFragment != null) {
+			drawer.doDrawMap(startOnScreen, startFragment);
+		}
 	}
 
 	private void lockedAdjustNumberOfRowsAndColumns(int fragmentSizeOnScreen,
@@ -249,6 +250,7 @@ public class Map {
 		result.x = zoom.screenToWorld(result.x);
 		result.y = zoom.screenToWorld(result.y);
 
+		// TODO: what to do if startFragment == null? ... should never happen
 		result.x += startFragment.getXInWorld();
 		result.y += startFragment.getYInWorld();
 
@@ -332,14 +334,6 @@ public class Map {
 
 	public void updateAllLayers(float time) {
 		layerContainer.updateAllLayers(time);
-	}
-
-	public Double getStartOnScreen() {
-		return startOnScreen;
-	}
-
-	public Fragment getStartFragment() {
-		return startFragment;
 	}
 
 	public LiveLayer[] getLiveLayers() {
