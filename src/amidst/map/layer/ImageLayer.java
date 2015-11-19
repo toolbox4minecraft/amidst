@@ -21,6 +21,7 @@ public abstract class ImageLayer extends Layer {
 		drawToCache(fragment);
 	}
 
+	// TODO: what is this?
 	public AffineTransform getScaledMatrix(AffineTransform inMat) {
 		cachedScalingMatrix.setTransform(inMat);
 		cachedScalingMatrix.scale(scale, scale);
