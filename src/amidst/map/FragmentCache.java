@@ -1,7 +1,7 @@
 package amidst.map;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.logging.Log;
@@ -9,7 +9,7 @@ import amidst.logging.Log;
 public class FragmentCache {
 	private static final int NEW_FRAGMENTS_PER_REQUEST = 1024;
 
-	private List<Fragment> cache = new LinkedList<Fragment>();
+	private Set<Fragment> cache = new HashSet<Fragment>();
 	private LayerContainer layerContainer;
 	private ConcurrentLinkedQueue<Fragment> fragmentQueue;
 
