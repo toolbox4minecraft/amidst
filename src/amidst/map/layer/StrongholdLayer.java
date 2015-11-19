@@ -84,27 +84,23 @@ public class StrongholdLayer extends IconLayer {
 		int chunkX = x + fragment.getChunkXInWorld();
 		int chunkY = y + fragment.getChunkYInWorld();
 		// TODO: This does not need a per-chunk test!
-		if (hasStronghold(chunkX, chunkY)) {
+		MapObject mapObject = getStronghold(chunkX, chunkY);
+		if (mapObject != null) {
 			// FIXME: Possible use of checkChunk causing negative icons
 			// to be misaligned!
-			fragment.addObject(createMapObject(x << 4, y << 4));
+			fragment.addObject(mapObject);
 		}
 	}
 
-	private MapObject createMapObject(int x, int y) {
-		return MapObject.fromWorldCoordinates(Options.instance.showStrongholds,
-				MapMarkers.STRONGHOLD, x, y);
-	}
-
-	private boolean hasStronghold(int chunkX, int chunkY) {
+	private MapObject getStronghold(int chunkX, int chunkY) {
 		for (int i = 0; i < 3; i++) {
 			int strongholdChunkX = strongholds[i].getXInFragment() >> 4;
 			int strongholdChunkY = strongholds[i].getYInFragment() >> 4;
 			if ((strongholdChunkX == chunkX) && (strongholdChunkY == chunkY)) {
-				return true;
+				return strongholds[i];
 			}
 		}
-		return false;
+		return null;
 	}
 
 	@Override
@@ -129,6 +125,11 @@ public class StrongholdLayer extends IconLayer {
 			}
 			angle = updateAngle(angle);
 		}
+	}
+
+	private MapObject createMapObject(int x, int y) {
+		return MapObject.fromWorldCoordinates(Options.instance.showStrongholds,
+				MapMarkers.STRONGHOLD, x, y);
 	}
 
 	private Point findStronghold(List<Biome> validBiomes, int x, int y) {
