@@ -270,7 +270,7 @@ public class Map {
 	private void repaintImageLayer(int id) {
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
-				fragmentManager.repaintFragmentImageLayer(fragment, id);
+				fragment.repaintImageLayer(id);
 			}
 		}
 	}

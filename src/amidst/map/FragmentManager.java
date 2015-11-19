@@ -39,14 +39,6 @@ public class FragmentManager {
 		return fragment;
 	}
 
-	public void repaintFragmentImageLayers(Fragment fragment) {
-		fragment.repaintAllImageLayers();
-	}
-
-	public void repaintFragmentImageLayer(Fragment fragment, int layerId) {
-		fragment.repaintImageLayer(layerId);
-	}
-
 	/**
 	 * Make sure the passed fragment is no longer referenced by other fragments!
 	 */
