@@ -1,5 +1,6 @@
 package amidst.map;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
@@ -8,6 +9,7 @@ import java.awt.geom.Point2D;
 
 import amidst.Options;
 import amidst.map.layer.BiomeLayer;
+import amidst.map.layer.LiveLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 import amidst.utilities.CoordinateUtils;
@@ -27,27 +29,104 @@ public class Map {
 			return new Runnable() {
 				@Override
 				public void run() {
-					currentFragment.drawImageLayers(time, g2d, mat);
+					drawImageLayers(currentFragment, time, g2d, mat);
 				}
 			};
+		}
+
+		public void drawImageLayers(Fragment fragment, float time,
+				Graphics2D g2d, AffineTransform mat) {
+			if (fragment.isLoaded()) {
+				fragment.updateAlpha(time);
+				for (int i = 0; i < fragment.getImages().length; i++) {
+					if (fragment.getImageLayers()[i].isVisible()) {
+						setAlphaComposite(
+								g2d,
+								fragment.getAlpha()
+										* fragment.getImageLayers()[i]
+												.getAlpha());
+
+						// TODO: FIX THIS
+						g2d.setTransform(fragment.getImageLayers()[i]
+								.getScaledMatrix(mat));
+						if (g2d.getTransform().getScaleX() < 1.0f) {
+							g2d.setRenderingHint(
+									RenderingHints.KEY_INTERPOLATION,
+									RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+						} else {
+							g2d.setRenderingHint(
+									RenderingHints.KEY_INTERPOLATION,
+									RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+						}
+						g2d.drawImage(fragment.getImages()[i], 0, 0, null);
+					}
+				}
+				setAlphaComposite(g2d, 1.0f);
+			}
 		}
 
 		private Runnable createLiveLayersDrawer() {
 			return new Runnable() {
 				@Override
 				public void run() {
-					currentFragment.drawLiveLayers(time, g2d, mat);
+					drawLiveLayers(currentFragment, time, g2d, mat);
 				}
 			};
+		}
+
+		public void drawLiveLayers(Fragment fragment, float time,
+				Graphics2D g2d, AffineTransform mat) {
+			for (LiveLayer liveLayer : fragment.getLiveLayers()) {
+				if (liveLayer.isVisible()) {
+					liveLayer.drawLive(fragment, g2d, mat);
+				}
+			}
 		}
 
 		private Runnable createObjectsDrawer() {
 			return new Runnable() {
 				@Override
 				public void run() {
-					currentFragment.drawObjects(g2d, mat, Map.this);
+					drawObjects(currentFragment, g2d, mat, Map.this);
 				}
 			};
+		}
+
+		public void drawObjects(Fragment fragment, Graphics2D g2d,
+				AffineTransform mat, Map map) {
+			if (fragment.getAlpha() != 1.0f) {
+				setAlphaComposite(g2d, fragment.getAlpha());
+			}
+			for (MapObject mapObject : fragment.getMapObjects()) {
+				drawObject(g2d, mat, mapObject, map);
+			}
+			if (fragment.getAlpha() != 1.0f) {
+				setAlphaComposite(g2d, 1.0f);
+			}
+		}
+
+		private void drawObject(Graphics2D g2d, AffineTransform mat,
+				MapObject mapObject, Map map) {
+			if (mapObject.isVisible()) {
+				double invZoom = 1.0 / map.getZoom();
+				int width = mapObject.getWidth();
+				int height = mapObject.getHeight();
+				if (map.getSelectedMapObject() == mapObject) {
+					width *= 1.5;
+					height *= 1.5;
+				}
+				g2d.setTransform(mat);
+				g2d.translate(mapObject.getXInFragment(),
+						mapObject.getYInFragment());
+				g2d.scale(invZoom, invZoom);
+				g2d.drawImage(mapObject.getImage(), -(width >> 1),
+						-(height >> 1), width, height, null);
+			}
+		}
+
+		private void setAlphaComposite(Graphics2D g2d, float alpha) {
+			g2d.setComposite(AlphaComposite.getInstance(
+					AlphaComposite.SRC_OVER, alpha));
 		}
 
 		public void draw(Graphics2D g2d, float time) {

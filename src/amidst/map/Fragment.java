@@ -1,9 +1,5 @@
 package amidst.map;
 
-import java.awt.AlphaComposite;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -81,10 +77,6 @@ public class Fragment implements Iterable<Fragment> {
 	private Fragment aboveFragment = null;
 	private Fragment belowFragment = null;
 
-	public Fragment(ImageLayer... layers) {
-		this(layers, null, null);
-	}
-
 	public Fragment(LayerContainer layerContainer) {
 		this(layerContainer.getImageLayers(), layerContainer.getLiveLayers(),
 				layerContainer.getIconLayers());
@@ -127,74 +119,6 @@ public class Fragment implements Iterable<Fragment> {
 			alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
 			isLoaded = true;
 		}
-	}
-
-	public void drawLiveLayers(float time, Graphics2D g, AffineTransform mat) {
-		for (LiveLayer liveLayer : liveLayers) {
-			if (liveLayer.isVisible()) {
-				liveLayer.drawLive(this, g, mat);
-			}
-		}
-	}
-
-	public void drawImageLayers(float time, Graphics2D g, AffineTransform mat) {
-		if (!isLoaded) {
-			return;
-		}
-
-		alpha = Math.min(1.0f, time * 3.0f + alpha);
-		for (int i = 0; i < images.length; i++) {
-			if (imageLayers[i].isVisible()) {
-				setAlphaComposite(g, alpha * imageLayers[i].getAlpha());
-
-				// TODO: FIX THIS
-				g.setTransform(imageLayers[i].getScaledMatrix(mat));
-				if (g.getTransform().getScaleX() < 1.0f) {
-					g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-							RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-				} else {
-					g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-							RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-				}
-				g.drawImage(images[i], 0, 0, null);
-			}
-		}
-		setAlphaComposite(g, 1.0f);
-	}
-
-	public void drawObjects(Graphics2D g, AffineTransform mat, Map map) {
-		if (alpha != 1.0f) {
-			setAlphaComposite(g, alpha);
-		}
-		for (MapObject mapObject : mapObjects) {
-			drawObject(g, mat, mapObject, map);
-		}
-		if (alpha != 1.0f) {
-			setAlphaComposite(g, 1.0f);
-		}
-	}
-
-	private void drawObject(Graphics2D g, AffineTransform mat,
-			MapObject mapObject, Map map) {
-		if (mapObject.isVisible()) {
-			double invZoom = 1.0 / map.getZoom();
-			int width = mapObject.getWidth();
-			int height = mapObject.getHeight();
-			if (map.getSelectedMapObject() == mapObject) {
-				width *= 1.5;
-				height *= 1.5;
-			}
-			g.setTransform(mat);
-			g.translate(mapObject.getXInFragment(), mapObject.getYInFragment());
-			g.scale(invZoom, invZoom);
-			g.drawImage(mapObject.getImage(), -(width >> 1), -(height >> 1),
-					width, height, null);
-		}
-	}
-
-	private void setAlphaComposite(Graphics2D g, float alpha) {
-		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-				alpha));
 	}
 
 	public void addObject(MapObject object) {
@@ -553,6 +477,10 @@ public class Fragment implements Iterable<Fragment> {
 		return biomeData;
 	}
 
+	public float getAlpha() {
+		return alpha;
+	}
+
 	public int getXInWorld() {
 		return xInWorld;
 	}
@@ -599,5 +527,25 @@ public class Fragment implements Iterable<Fragment> {
 	@Deprecated
 	private HashSet<MapObject> copyMapObjectsToPreventConcurrentModificationException() {
 		return new HashSet<MapObject>(mapObjects);
+	}
+
+	public LiveLayer[] getLiveLayers() {
+		return liveLayers;
+	}
+
+	public void updateAlpha(float time) {
+		alpha = Math.min(1.0f, time * 3.0f + alpha);
+	}
+
+	public boolean isLoaded() {
+		return isLoaded;
+	}
+
+	public BufferedImage[] getImages() {
+		return images;
+	}
+
+	public ImageLayer[] getImageLayers() {
+		return imageLayers;
 	}
 }
