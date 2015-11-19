@@ -1,173 +1,16 @@
 package amidst.map;
 
-import java.awt.AlphaComposite;
-import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 
 import amidst.Options;
-import amidst.map.layer.LiveLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.FileWorld.Player;
 import amidst.utilities.CoordinateUtils;
 
 public class Map {
-	public class Drawer {
-		private final Runnable imageLayersDrawer = createImageLayersDrawer();
-		private final Runnable liveLayersDrawer = createLiveLayersDrawer();
-		private final Runnable objectsDrawer = createObjectsDrawer();
-
-		private AffineTransform mat = new AffineTransform();
-		private Fragment currentFragment;
-		private Graphics2D g2d;
-		private float time;
-
-		private Runnable createImageLayersDrawer() {
-			return new Runnable() {
-				@Override
-				public void run() {
-					drawImageLayers(currentFragment, time, g2d, mat);
-				}
-			};
-		}
-
-		public void drawImageLayers(Fragment fragment, float time,
-				Graphics2D g2d, AffineTransform mat) {
-			if (fragment.isLoaded()) {
-				fragment.updateAlpha(time);
-				for (int i = 0; i < fragment.getImages().length; i++) {
-					if (fragment.getImageLayers()[i].isVisible()) {
-						setAlphaComposite(
-								g2d,
-								fragment.getAlpha()
-										* fragment.getImageLayers()[i]
-												.getAlpha());
-
-						// TODO: FIX THIS
-						g2d.setTransform(fragment.getImageLayers()[i]
-								.getScaledMatrix(mat));
-						if (g2d.getTransform().getScaleX() < 1.0f) {
-							g2d.setRenderingHint(
-									RenderingHints.KEY_INTERPOLATION,
-									RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-						} else {
-							g2d.setRenderingHint(
-									RenderingHints.KEY_INTERPOLATION,
-									RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-						}
-						g2d.drawImage(fragment.getImages()[i], 0, 0, null);
-					}
-				}
-				setAlphaComposite(g2d, 1.0f);
-			}
-		}
-
-		private Runnable createLiveLayersDrawer() {
-			return new Runnable() {
-				@Override
-				public void run() {
-					drawLiveLayers(currentFragment, time, g2d, mat);
-				}
-			};
-		}
-
-		public void drawLiveLayers(Fragment fragment, float time,
-				Graphics2D g2d, AffineTransform mat) {
-			for (LiveLayer liveLayer : fragment.getLiveLayers()) {
-				if (liveLayer.isVisible()) {
-					liveLayer.drawLive(fragment, g2d, mat);
-				}
-			}
-		}
-
-		private Runnable createObjectsDrawer() {
-			return new Runnable() {
-				@Override
-				public void run() {
-					drawObjects(currentFragment, g2d, mat, Map.this);
-				}
-			};
-		}
-
-		public void drawObjects(Fragment fragment, Graphics2D g2d,
-				AffineTransform mat, Map map) {
-			if (fragment.getAlpha() != 1.0f) {
-				setAlphaComposite(g2d, fragment.getAlpha());
-			}
-			for (MapObject mapObject : fragment.getMapObjects()) {
-				drawObject(g2d, mat, mapObject, map);
-			}
-			if (fragment.getAlpha() != 1.0f) {
-				setAlphaComposite(g2d, 1.0f);
-			}
-		}
-
-		private void drawObject(Graphics2D g2d, AffineTransform mat,
-				MapObject mapObject, Map map) {
-			if (mapObject.isVisible()) {
-				double invZoom = 1.0 / zoom.getCurrentValue();
-				int width = mapObject.getWidth();
-				int height = mapObject.getHeight();
-				if (map.getSelectedMapObject() == mapObject) {
-					width *= 1.5;
-					height *= 1.5;
-				}
-				g2d.setTransform(mat);
-				g2d.translate(mapObject.getXInFragment(),
-						mapObject.getYInFragment());
-				g2d.scale(invZoom, invZoom);
-				g2d.drawImage(mapObject.getImage(), -(width >> 1),
-						-(height >> 1), width, height, null);
-			}
-		}
-
-		private void setAlphaComposite(Graphics2D g2d, float alpha) {
-			g2d.setComposite(AlphaComposite.getInstance(
-					AlphaComposite.SRC_OVER, alpha));
-		}
-
-		public void draw(Graphics2D g2d, float time) {
-			this.g2d = g2d;
-			this.time = time;
-			AffineTransform originalTransform = g2d.getTransform();
-			drawLayer(originalTransform, imageLayersDrawer);
-			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-			layerContainer.updateAllLayers(time);
-			drawLayer(originalTransform, liveLayersDrawer);
-			drawLayer(originalTransform, objectsDrawer);
-			g2d.setTransform(originalTransform);
-		}
-
-		private void drawLayer(AffineTransform originalTransform,
-				Runnable theDrawer) {
-			if (startFragment != null) {
-				initMat(originalTransform, zoom.getCurrentValue());
-				for (Fragment fragment : startFragment) {
-					currentFragment = fragment;
-					theDrawer.run();
-					mat.translate(Fragment.SIZE, 0);
-					if (currentFragment.isEndOfLine()) {
-						mat.translate(-Fragment.SIZE * fragmentsPerRow,
-								Fragment.SIZE);
-					}
-				}
-			}
-		}
-
-		private void initMat(AffineTransform originalTransform, double scale) {
-			mat.setToIdentity();
-			mat.concatenate(originalTransform);
-			mat.translate(startOnScreen.x, startOnScreen.y);
-			mat.scale(scale, scale);
-		}
-	}
-
-	private Drawer drawer = new Drawer();
-
 	private MapObject selectedMapObject;
 
 	private Fragment startFragment;
@@ -195,13 +38,13 @@ public class Map {
 		safeAddStart(0, 0);
 	}
 
-	private void lockedDraw(Graphics2D g2d, float time) {
+	private void lockedDraw(MapDrawer drawer) {
 		int fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		int desiredFragmentsPerRow = viewerWidth / fragmentSizeOnScreen + 2;
 		int desiredFragmentsPerColumn = viewerHeight / fragmentSizeOnScreen + 2;
 		lockedAdjustNumberOfRowsAndColumns(fragmentSizeOnScreen,
 				desiredFragmentsPerRow, desiredFragmentsPerColumn);
-		drawer.draw(g2d, time);
+		drawer.doDrawMap();
 	}
 
 	private void lockedAdjustNumberOfRowsAndColumns(int fragmentSizeOnScreen,
@@ -264,9 +107,9 @@ public class Map {
 		}
 	}
 
-	public void safeDraw(Graphics2D g2d, float time) {
+	public void safeDraw(MapDrawer drawer) {
 		synchronized (mapLock) {
-			lockedDraw(g2d, time);
+			lockedDraw(drawer);
 		}
 	}
 
@@ -483,5 +326,17 @@ public class Map {
 		player.moveTo(locationInWorld.x, locationInWorld.y);
 		layerContainer.getPlayerLayer().updatePlayerPosition(player,
 				newFragment);
+	}
+
+	public void updateAllLayers(float time) {
+		layerContainer.updateAllLayers(time);
+	}
+
+	public Double getStartOnScreen() {
+		return startOnScreen;
+	}
+
+	public Fragment getStartFragment() {
+		return startFragment;
 	}
 }
