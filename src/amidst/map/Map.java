@@ -7,7 +7,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
 import amidst.Options;
-import amidst.logging.Log;
 import amidst.map.layer.BiomeLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
@@ -118,17 +117,17 @@ public class Map {
 
 	private void lockedAdjustNumberOfRowsAndColumns(int scaledFragmentSize,
 			int desiredFragmentsPerRow, int desiredFragmentsPerColumn) {
+		int newColumns = desiredFragmentsPerRow - fragmentsPerRow;
+		int newRows = desiredFragmentsPerColumn - fragmentsPerColumn;
 		int newLeft = 0;
-		int newRight = 0;
 		int newAbove = 0;
-		int newBelow = 0;
 		while (start.x > 0) {
 			start.x -= scaledFragmentSize;
 			newLeft++;
 		}
 		while (start.x < -scaledFragmentSize) {
 			start.x += scaledFragmentSize;
-			newRight++;
+			newLeft--;
 		}
 		while (start.y > 0) {
 			start.y -= scaledFragmentSize;
@@ -136,15 +135,10 @@ public class Map {
 		}
 		while (start.y < -scaledFragmentSize) {
 			start.y += scaledFragmentSize;
-			newBelow++;
+			newAbove--;
 		}
-		if (desiredFragmentsPerRow != fragmentsPerRow + newLeft + newRight) {
-			Log.w("columns don't match");
-		}
-		if (desiredFragmentsPerColumn != fragmentsPerColumn + newAbove
-				+ newBelow) {
-			Log.w("rows don't match");
-		}
+		int newRight = newColumns - newLeft;
+		int newBelow = newRows - newAbove;
 		startNode = startNode.adjustRowsAndColumns(newAbove, newBelow, newLeft,
 				newRight, fragmentManager);
 		fragmentsPerRow = fragmentsPerRow + newLeft + newRight;
@@ -218,39 +212,39 @@ public class Map {
 		return null;
 	}
 
-	public MapObject getObjectAt(Point position, double maxRange) {
+	public MapObject getMapObjectAt(Point positionOnScreen, double maxRange) {
 		double x = start.x;
 		double y = start.y;
 		MapObject closestObject = null;
 		double closestDistance = maxRange;
-		int size = (int) (Fragment.SIZE * zoom.getCurrentValue());
+		int fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		if (startNode != null) {
 			for (Fragment fragment : startNode) {
 				for (MapObject mapObject : fragment.getMapObjects()) {
 					if (mapObject.isVisible()) {
-						double distance = getPosition(x, y, mapObject)
-								.distance(position);
+						double distance = getPositionOnScreen(x, y, mapObject)
+								.distance(positionOnScreen);
 						if (closestDistance > distance) {
 							closestDistance = distance;
 							closestObject = mapObject;
 						}
 					}
 				}
-				x += size;
+				x += fragmentSizeOnScreen;
 				if (fragment.isEndOfLine()) {
 					x = start.x;
-					y += size;
+					y += fragmentSizeOnScreen;
 				}
 			}
 		}
 		return closestObject;
 	}
 
-	private Point getPosition(double x, double y, MapObject mapObject) {
+	private Point getPositionOnScreen(double x, double y, MapObject mapObject) {
 		Point result = new Point(mapObject.getXInFragment(),
 				mapObject.getYInFragment());
-		result.x *= zoom.getCurrentValue();
-		result.y *= zoom.getCurrentValue();
+		result.x = zoom.worldToScreen(result.x);
+		result.y = zoom.worldToScreen(result.y);
 		result.x += x;
 		result.y += y;
 		return result;

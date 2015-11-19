@@ -149,7 +149,7 @@ public class MapViewer {
 		}
 
 		private void mouseClickedOnMap(Point mouse) {
-			map.setSelectedMapObject(map.getObjectAt(mouse, 50.0));
+			map.setSelectedMapObject(map.getMapObjectAt(mouse, 50.0));
 		}
 
 		/**
