@@ -71,7 +71,7 @@ public class PlayerLayer extends IconLayer {
 	private void removeOldMapObject(Player player) {
 		if (players.containsKey(player)) {
 			Tuple tuple = players.get(player);
-			if (tuple.fragment != null && tuple.fragment.isLoaded()) {
+			if (tuple.fragment != null) {
 				tuple.fragment.removeObject(tuple.mapObject);
 			}
 		}

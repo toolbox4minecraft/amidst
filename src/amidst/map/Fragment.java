@@ -173,7 +173,9 @@ public class Fragment implements Iterable<Fragment> {
 
 	public void removeObject(MapObject mapObject) {
 		synchronized (loadLock) {
-			mapObjects.remove(mapObject);
+			if (isLoaded) {
+				mapObjects.remove(mapObject);
+			}
 		}
 	}
 
