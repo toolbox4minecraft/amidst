@@ -18,14 +18,12 @@ public class SlimeLayer extends ImageLayer {
 	}
 
 	@Override
-	public void drawToCache(Fragment fragment) {
-		int[] dataCache = Fragment.getImageRGBDataCache();
+	public void drawToCache(Fragment fragment, int[] cache) {
 		for (int y = 0; y < getSize(); y++) {
 			for (int x = 0; x < getSize(); x++) {
-				dataCache[getCacheIndex(x, y)] = getColorAt(fragment, x, y);
+				cache[getCacheIndex(x, y)] = getColorAt(fragment, x, y);
 			}
 		}
-		fragment.setImageRGB(getLayerId(), dataCache);
 	}
 
 	private int getCacheIndex(int x, int y) {

@@ -13,10 +13,6 @@ public abstract class ImageLayer extends Layer {
 		this.scale = Fragment.SIZE / (double) size;
 	}
 
-	public void load(Fragment fragment) {
-		drawToCache(fragment);
-	}
-
 	protected int getSquaredSize() {
 		return size * size;
 	}
@@ -37,5 +33,5 @@ public abstract class ImageLayer extends Layer {
 		return scale;
 	}
 
-	public abstract void drawToCache(Fragment fragment);
+	public abstract void drawToCache(Fragment fragment, int[] cache);
 }

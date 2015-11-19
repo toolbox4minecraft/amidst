@@ -9,7 +9,6 @@ import amidst.Options;
 import amidst.logging.Log;
 import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
-import amidst.map.layer.LiveLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.MinecraftUtil;
 
@@ -51,20 +50,15 @@ public class Fragment implements Iterable<Fragment> {
 	public static final int BIOME_SIZE = SIZE >> 2;
 
 	// TODO: what is this? move it to another place?
-	private static int[] imageRGBDataCache = new int[SIZE * SIZE];
-
-	public static int[] getImageRGBDataCache() {
-		return imageRGBDataCache;
-	}
+	private static final int[] IMAGE_CACHE = new int[SIZE * SIZE];
 
 	private Object loadLock = new Object();
 
 	private ImageLayer[] imageLayers;
-	private LiveLayer[] liveLayers;
 	private IconLayer[] iconLayers;
 	private BufferedImage[] images;
 
-	private short[] biomeData = new short[BIOME_SIZE * BIOME_SIZE];
+	private final short[] biomeData = new short[BIOME_SIZE * BIOME_SIZE];
 
 	private boolean isInitialized = false;
 	private boolean isLoaded = false;
@@ -78,14 +72,11 @@ public class Fragment implements Iterable<Fragment> {
 	private Fragment belowFragment = null;
 
 	public Fragment(LayerContainer layerContainer) {
-		this(layerContainer.getImageLayers(), layerContainer.getLiveLayers(),
-				layerContainer.getIconLayers());
+		this(layerContainer.getImageLayers(), layerContainer.getIconLayers());
 	}
 
-	private Fragment(ImageLayer[] imageLayers, LiveLayer[] liveLayers,
-			IconLayer[] iconLayers) {
+	private Fragment(ImageLayer[] imageLayers, IconLayer[] iconLayers) {
 		this.imageLayers = imageLayers;
-		this.liveLayers = liveLayers;
 		this.iconLayers = iconLayers;
 		initImages();
 	}
@@ -111,7 +102,7 @@ public class Fragment implements Iterable<Fragment> {
 				biomeData[i] = (short) data[i];
 			}
 			for (int i = 0; i < imageLayers.length; i++) {
-				imageLayers[i].load(this);
+				lockedUpdateImage(i);
 			}
 			for (int i = 0; i < iconLayers.length; i++) {
 				iconLayers[i].generateMapObjects(this);
@@ -129,17 +120,11 @@ public class Fragment implements Iterable<Fragment> {
 		mapObjects.remove(mapObject);
 	}
 
-	public void setImageRGB(int layerId, int[] rgbArray) {
-		int layerSize = imageLayers[layerId].getSize();
-		images[layerId].setRGB(0, 0, layerSize, layerSize, rgbArray, 0,
-				layerSize);
-	}
-
 	public void repaintAllImageLayers() {
 		synchronized (loadLock) {
 			if (isLoaded) {
 				for (int i = 0; i < imageLayers.length; i++) {
-					imageLayers[i].load(this);
+					lockedUpdateImage(i);
 				}
 			}
 		}
@@ -148,9 +133,16 @@ public class Fragment implements Iterable<Fragment> {
 	public void repaintImageLayer(int layerId) {
 		synchronized (loadLock) {
 			if (isLoaded) {
-				imageLayers[layerId].load(this);
+				lockedUpdateImage(layerId);
 			}
 		}
+	}
+
+	private void lockedUpdateImage(int layerId) {
+		imageLayers[layerId].drawToCache(this, IMAGE_CACHE);
+		int layerSize = imageLayers[layerId].getSize();
+		images[layerId].setRGB(0, 0, layerSize, layerSize, IMAGE_CACHE, 0,
+				layerSize);
 	}
 
 	public boolean isInBounds(MapObject mapObject) {

@@ -22,29 +22,27 @@ public class BiomeLayer extends ImageLayer {
 	}
 
 	@Override
-	public void drawToCache(Fragment fragment) {
-		int[] dataCache = Fragment.getImageRGBDataCache();
+	public void drawToCache(Fragment fragment, int[] cache) {
 		if (isHighlightMode) {
-			drawHighlightMode(fragment, dataCache);
+			drawHighlightMode(fragment, cache);
 		} else {
-			drawNormalMode(fragment, dataCache);
+			drawNormalMode(fragment, cache);
 		}
-		fragment.setImageRGB(getLayerId(), dataCache);
 	}
 
-	private void drawHighlightMode(Fragment fragment, int[] dataCache) {
+	private void drawHighlightMode(Fragment fragment, int[] cache) {
 		for (int i = 0; i < getSquaredSize(); i++) {
 			if (!selectedBiomes[fragment.getBiomeData()[i]]) {
-				dataCache[i] = Util.deselectColor(getColor(fragment, i));
+				cache[i] = Util.deselectColor(getColor(fragment, i));
 			} else {
-				dataCache[i] = getColor(fragment, i);
+				cache[i] = getColor(fragment, i);
 			}
 		}
 	}
 
-	private void drawNormalMode(Fragment fragment, int[] dataCache) {
+	private void drawNormalMode(Fragment fragment, int[] cache) {
 		for (int i = 0; i < getSquaredSize(); i++) {
-			dataCache[i] = getColor(fragment, i);
+			cache[i] = getColor(fragment, i);
 		}
 	}
 
