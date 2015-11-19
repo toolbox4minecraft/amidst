@@ -426,11 +426,21 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	private void recycle(FragmentManager manager) {
-		recycle();
+		reset();
 		manager.recycleFragment(this);
 	}
 
 	public void initialize(int xInWorld, int yInWorld) {
+		init(xInWorld, yInWorld);
+		isInitialized = true;
+	}
+
+	public void reset() {
+		isInitialized = false;
+		init(0, 0);
+	}
+
+	private void init(int xInWorld, int yInWorld) {
 		isLoaded = false;
 		mapObjects.clear();
 		this.xInWorld = xInWorld;
@@ -440,25 +450,6 @@ public class Fragment implements Iterable<Fragment> {
 		rightFragment = null;
 		aboveFragment = null;
 		belowFragment = null;
-		isInitialized = true;
-	}
-
-	public void reset() {
-		isInitialized = false;
-		isLoaded = false;
-		mapObjects.clear();
-		xInWorld = 0;
-		yInWorld = 0;
-		alpha = 0.0f;
-		leftFragment = null;
-		rightFragment = null;
-		aboveFragment = null;
-		belowFragment = null;
-	}
-
-	public void recycle() {
-		isInitialized = false;
-		isLoaded = false;
 	}
 
 	public boolean needsLoading() {

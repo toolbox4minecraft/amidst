@@ -29,7 +29,7 @@ public class FragmentManager {
 		private void processRecycleQueueEntry() {
 			synchronized (queueLock) {
 				Fragment fragment = recycleQueue.poll();
-				fragment.recycle();
+				fragment.reset();
 				fragmentQueue.offer(fragment);
 			}
 		}
