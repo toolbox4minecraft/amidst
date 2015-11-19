@@ -58,7 +58,8 @@ public class MapDrawer {
 	private Point mousePosition;
 
 	private Fragment currentFragment;
-	private AffineTransform mat = new AffineTransform();
+	private AffineTransform layerDrawMatrix = new AffineTransform();
+	private AffineTransform mapObjectDrawMatrix = new AffineTransform();
 
 	private Runnable createImageLayersDrawer() {
 		return new Runnable() {
@@ -183,26 +184,30 @@ public class MapDrawer {
 	private void drawLayer(AffineTransform originalTransform, Runnable drawer) {
 		Fragment startFragment = map.getStartFragment();
 		if (startFragment != null) {
-			initMat(originalTransform, zoom.getCurrentValue(),
+			initLayerDrawMatrix(originalTransform, zoom.getCurrentValue(),
 					map.getStartOnScreen());
 			for (Fragment fragment : startFragment) {
 				currentFragment = fragment;
 				drawer.run();
-				mat.translate(Fragment.SIZE, 0);
-				if (currentFragment.isEndOfLine()) {
-					mat.translate(-Fragment.SIZE * map.getFragmentsPerRow(),
-							Fragment.SIZE);
-				}
+				updateLayerDrawMatrix();
 			}
 		}
 	}
 
-	private void initMat(AffineTransform originalTransform, double scale,
-			Point2D.Double startOnScreen) {
-		mat.setToIdentity();
-		mat.concatenate(originalTransform);
-		mat.translate(startOnScreen.x, startOnScreen.y);
-		mat.scale(scale, scale);
+	private void initLayerDrawMatrix(AffineTransform originalTransform,
+			double scale, Point2D.Double startOnScreen) {
+		layerDrawMatrix.setToIdentity();
+		layerDrawMatrix.concatenate(originalTransform);
+		layerDrawMatrix.translate(startOnScreen.x, startOnScreen.y);
+		layerDrawMatrix.scale(scale, scale);
+	}
+
+	private void updateLayerDrawMatrix() {
+		layerDrawMatrix.translate(Fragment.SIZE, 0);
+		if (currentFragment.isEndOfLine()) {
+			layerDrawMatrix.translate(
+					-Fragment.SIZE * map.getFragmentsPerRow(), Fragment.SIZE);
+		}
 	}
 
 	private void drawImageLayers() {
@@ -224,7 +229,7 @@ public class MapDrawer {
 		setAlphaComposite(currentFragment.getAlpha() * imageLayer.getAlpha());
 
 		// TODO: FIX THIS
-		g2d.setTransform(imageLayer.getScaledMatrix(mat));
+		g2d.setTransform(imageLayer.getScaledMatrix(layerDrawMatrix));
 		if (g2d.getTransform().getScaleX() < 1.0f) {
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 					RenderingHints.VALUE_INTERPOLATION_BILINEAR);
@@ -238,7 +243,7 @@ public class MapDrawer {
 	private void drawLiveLayers() {
 		for (LiveLayer liveLayer : map.getLiveLayers()) {
 			if (liveLayer.isVisible()) {
-				liveLayer.drawLive(currentFragment, g2d, mat);
+				liveLayer.drawLive(currentFragment, g2d, layerDrawMatrix);
 			}
 		}
 	}
@@ -264,13 +269,18 @@ public class MapDrawer {
 				width *= 1.5;
 				height *= 1.5;
 			}
-			g2d.setTransform(mat);
-			g2d.translate(mapObject.getXInFragment(),
-					mapObject.getYInFragment());
-			g2d.scale(invZoom, invZoom);
+			initMapObjectDrawMatrix(mapObject, invZoom);
+			g2d.setTransform(mapObjectDrawMatrix);
 			g2d.drawImage(mapObject.getImage(), -(width >> 1), -(height >> 1),
 					width, height, null);
 		}
+	}
+
+	private void initMapObjectDrawMatrix(MapObject mapObject, double invZoom) {
+		mapObjectDrawMatrix.setTransform(layerDrawMatrix);
+		mapObjectDrawMatrix.translate(mapObject.getXInFragment(),
+				mapObject.getYInFragment());
+		mapObjectDrawMatrix.scale(invZoom, invZoom);
 	}
 
 	private void drawBorder() {
