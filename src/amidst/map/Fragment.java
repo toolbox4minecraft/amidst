@@ -518,10 +518,6 @@ public class Fragment implements Iterable<Fragment> {
 		return mapObjects;
 	}
 
-	public LiveLayer[] getLiveLayers() {
-		return liveLayers;
-	}
-
 	public void updateAlpha(float time) {
 		alpha = Math.min(1.0f, time * 3.0f + alpha);
 	}
@@ -532,9 +528,5 @@ public class Fragment implements Iterable<Fragment> {
 
 	public BufferedImage[] getImages() {
 		return images;
-	}
-
-	public ImageLayer[] getImageLayers() {
-		return imageLayers;
 	}
 }

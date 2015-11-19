@@ -5,6 +5,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
 import amidst.Options;
+import amidst.map.layer.ImageLayer;
+import amidst.map.layer.LiveLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.FileWorld.Player;
@@ -338,5 +340,13 @@ public class Map {
 
 	public Fragment getStartFragment() {
 		return startFragment;
+	}
+
+	public LiveLayer[] getLiveLayers() {
+		return layerContainer.getLiveLayers();
+	}
+
+	public ImageLayer[] getImageLayers() {
+		return layerContainer.getImageLayers();
 	}
 }

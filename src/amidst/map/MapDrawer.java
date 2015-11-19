@@ -11,6 +11,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import amidst.map.layer.ImageLayer;
 import amidst.map.layer.LiveLayer;
 import amidst.map.object.MapObject;
 import amidst.map.widget.Widget;
@@ -207,31 +208,35 @@ public class MapDrawer {
 	private void drawImageLayers() {
 		if (currentFragment.isLoaded()) {
 			currentFragment.updateAlpha(time);
-			for (int i = 0; i < currentFragment.getImages().length; i++) {
-				if (currentFragment.getImageLayers()[i].isVisible()) {
-					setAlphaComposite(currentFragment.getAlpha()
-							* currentFragment.getImageLayers()[i].getAlpha());
-
-					// TODO: FIX THIS
-					g2d.setTransform(currentFragment.getImageLayers()[i]
-							.getScaledMatrix(mat));
-					if (g2d.getTransform().getScaleX() < 1.0f) {
-						g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-								RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-					} else {
-						g2d.setRenderingHint(
-								RenderingHints.KEY_INTERPOLATION,
-								RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-					}
-					g2d.drawImage(currentFragment.getImages()[i], 0, 0, null);
+			ImageLayer[] imageLayers = map.getImageLayers();
+			BufferedImage[] images = currentFragment.getImages();
+			for (int i = 0; i < images.length; i++) {
+				ImageLayer imageLayer = imageLayers[i];
+				if (imageLayer.isVisible()) {
+					drawImageLayer(imageLayer, images[i]);
 				}
 			}
 			setAlphaComposite(1.0f);
 		}
 	}
 
+	private void drawImageLayer(ImageLayer imageLayer, BufferedImage image) {
+		setAlphaComposite(currentFragment.getAlpha() * imageLayer.getAlpha());
+
+		// TODO: FIX THIS
+		g2d.setTransform(imageLayer.getScaledMatrix(mat));
+		if (g2d.getTransform().getScaleX() < 1.0f) {
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+					RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		} else {
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+		}
+		g2d.drawImage(image, 0, 0, null);
+	}
+
 	private void drawLiveLayers() {
-		for (LiveLayer liveLayer : currentFragment.getLiveLayers()) {
+		for (LiveLayer liveLayer : map.getLiveLayers()) {
 			if (liveLayer.isVisible()) {
 				liveLayer.drawLive(currentFragment, g2d, mat);
 			}
