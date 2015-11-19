@@ -87,14 +87,13 @@ public class StrongholdLayer extends IconLayer {
 		if (hasStronghold(chunkX, chunkY)) {
 			// FIXME: Possible use of checkChunk causing negative icons
 			// to be misaligned!
-			fragment.addObject(createMapObject(x << 4, y << 4, fragment));
+			fragment.addObject(createMapObject(x << 4, y << 4));
 		}
 	}
 
-	private MapObject createMapObject(int x, int y, Fragment fragment) {
-		return MapObject.fromFragmentCoordinatesAndFragment(
-				Options.instance.showStrongholds, MapMarkers.STRONGHOLD, x, y,
-				fragment);
+	private MapObject createMapObject(int x, int y) {
+		return MapObject.fromWorldCoordinates(Options.instance.showStrongholds,
+				MapMarkers.STRONGHOLD, x, y);
 	}
 
 	private boolean hasStronghold(int chunkX, int chunkY) {
@@ -119,21 +118,22 @@ public class StrongholdLayer extends IconLayer {
 		double angle = initAngle();
 		for (int i = 0; i < 3; i++) {
 			double distance = nextDistance();
-			int x = getX(angle, distance);
-			int y = getY(angle, distance);
+			int x = getX(angle, distance) << 4;
+			int y = getY(angle, distance) << 4;
 			Point strongholdLocation = findStronghold(validBiomes, x, y);
 			if (strongholdLocation != null) {
-				x = strongholdLocation.x >> 4;
-				y = strongholdLocation.y >> 4;
+				strongholds[i] = createMapObject(strongholdLocation.x,
+						strongholdLocation.y);
+			} else {
+				strongholds[i] = createMapObject(x, y);
 			}
-			strongholds[i] = createMapObject(x << 4, y << 4, null);
 			angle = updateAngle(angle);
 		}
 	}
 
 	private Point findStronghold(List<Biome> validBiomes, int x, int y) {
-		return MinecraftUtil.findValidLocation((x << 4) + 8, (y << 4) + 8, 112,
-				validBiomes, random);
+		return MinecraftUtil.findValidLocation(x + 8, y + 8, 112, validBiomes,
+				random);
 	}
 
 	private int getY(double angle, double distance) {
@@ -160,7 +160,6 @@ public class StrongholdLayer extends IconLayer {
 		random.setSeed(Options.instance.world.getSeed());
 	}
 
-	// TODO: Replace this system!
 	private List<Biome> getValidBiomes() {
 		if (MinecraftUtil.getVersion().isAtLeast(VersionInfo.V13w36a)) {
 			return getValidBiomesV13w36a();
