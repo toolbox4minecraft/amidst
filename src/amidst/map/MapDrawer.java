@@ -179,14 +179,14 @@ public class MapDrawer {
 		g2d.setTransform(originalTransform);
 	}
 
-	private void drawLayer(AffineTransform originalTransform, Runnable theDrawer) {
+	private void drawLayer(AffineTransform originalTransform, Runnable drawer) {
 		Fragment startFragment = map.getStartFragment();
 		if (startFragment != null) {
 			initMat(originalTransform, zoom.getCurrentValue(),
 					map.getStartOnScreen());
 			for (Fragment fragment : startFragment) {
 				currentFragment = fragment;
-				theDrawer.run();
+				drawer.run();
 				mat.translate(Fragment.SIZE, 0);
 				if (currentFragment.isEndOfLine()) {
 					mat.translate(-Fragment.SIZE * map.getFragmentsPerRow(),
@@ -204,12 +204,12 @@ public class MapDrawer {
 		mat.scale(scale, scale);
 	}
 
-	public void drawImageLayers() {
+	private void drawImageLayers() {
 		if (currentFragment.isLoaded()) {
 			currentFragment.updateAlpha(time);
 			for (int i = 0; i < currentFragment.getImages().length; i++) {
 				if (currentFragment.getImageLayers()[i].isVisible()) {
-					setAlphaComposite(g2d, currentFragment.getAlpha()
+					setAlphaComposite(currentFragment.getAlpha()
 							* currentFragment.getImageLayers()[i].getAlpha());
 
 					// TODO: FIX THIS
@@ -226,11 +226,11 @@ public class MapDrawer {
 					g2d.drawImage(currentFragment.getImages()[i], 0, 0, null);
 				}
 			}
-			setAlphaComposite(g2d, 1.0f);
+			setAlphaComposite(1.0f);
 		}
 	}
 
-	public void drawLiveLayers() {
+	private void drawLiveLayers() {
 		for (LiveLayer liveLayer : currentFragment.getLiveLayers()) {
 			if (liveLayer.isVisible()) {
 				liveLayer.drawLive(currentFragment, g2d, mat);
@@ -238,21 +238,21 @@ public class MapDrawer {
 		}
 	}
 
-	public void drawObjects() {
+	private void drawObjects() {
 		if (currentFragment.getAlpha() != 1.0f) {
-			setAlphaComposite(g2d, currentFragment.getAlpha());
+			setAlphaComposite(currentFragment.getAlpha());
 		}
+		double invZoom = 1.0 / zoom.getCurrentValue();
 		for (MapObject mapObject : currentFragment.getMapObjects()) {
-			drawObject(mapObject);
+			drawObject(mapObject, invZoom);
 		}
 		if (currentFragment.getAlpha() != 1.0f) {
-			setAlphaComposite(g2d, 1.0f);
+			setAlphaComposite(1.0f);
 		}
 	}
 
-	private void drawObject(MapObject mapObject) {
+	private void drawObject(MapObject mapObject, double invZoom) {
 		if (mapObject.isVisible()) {
-			double invZoom = 1.0 / zoom.getCurrentValue();
 			int width = mapObject.getWidth();
 			int height = mapObject.getHeight();
 			if (map.getSelectedMapObject() == mapObject) {
@@ -266,11 +266,6 @@ public class MapDrawer {
 			g2d.drawImage(mapObject.getImage(), -(width >> 1), -(height >> 1),
 					width, height, null);
 		}
-	}
-
-	private void setAlphaComposite(Graphics2D g2d, float alpha) {
-		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-				alpha));
 	}
 
 	private void drawBorder() {
@@ -291,10 +286,14 @@ public class MapDrawer {
 	private void drawWidgets() {
 		for (Widget widget : widgets) {
 			if (widget.isVisible()) {
-				g2d.setComposite(AlphaComposite.getInstance(
-						AlphaComposite.SRC_OVER, widget.getAlpha()));
+				setAlphaComposite(widget.getAlpha());
 				widget.draw(g2d, time, widgetFontMetrics);
 			}
 		}
+	}
+
+	private void setAlphaComposite(float alpha) {
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+				alpha));
 	}
 }
