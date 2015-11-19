@@ -19,8 +19,8 @@ public class MapObject {
 			BooleanPrefModel isVisiblePreference, MapMarkers type,
 			int xInWorld, int yInWorld) {
 		return new MapObject(isVisiblePreference, type,
-				CoordinateUtils.toFragment(xInWorld),
-				CoordinateUtils.toFragment(yInWorld), xInWorld, yInWorld);
+				CoordinateUtils.toFragmentRelative(xInWorld),
+				CoordinateUtils.toFragmentRelative(yInWorld), xInWorld, yInWorld);
 	}
 
 	private final BooleanPrefModel isVisiblePreference;

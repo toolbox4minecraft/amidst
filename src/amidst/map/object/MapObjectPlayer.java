@@ -13,7 +13,7 @@ public class MapObjectPlayer extends MapObject {
 
 	public MapObjectPlayer(BooleanPrefModel isVisiblePreference, Player player) {
 		super(isVisiblePreference, MapMarkers.PLAYER, CoordinateUtils
-				.toFragment(player.getX()), CoordinateUtils.toFragment(player
+				.toFragmentRelative(player.getX()), CoordinateUtils.toFragmentRelative(player
 				.getZ()));
 		this.player = player;
 		this.image = MapMarkers.PLAYER.getImage();
@@ -46,12 +46,12 @@ public class MapObjectPlayer extends MapObject {
 
 	@Override
 	public int getXInFragment() {
-		return CoordinateUtils.toFragment(player.getX());
+		return CoordinateUtils.toFragmentRelative(player.getX());
 	}
 
 	@Override
 	public int getYInFragment() {
-		return CoordinateUtils.toFragment(player.getZ());
+		return CoordinateUtils.toFragmentRelative(player.getZ());
 	}
 
 	@Override
