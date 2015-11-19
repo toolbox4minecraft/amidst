@@ -258,9 +258,11 @@ public class MapDrawer {
 		if (currentFragment.getAlpha() != 1.0f) {
 			setAlphaComposite(currentFragment.getAlpha());
 		}
-		double invZoom = 1.0 / zoom.getCurrentValue();
-		for (MapObject mapObject : currentFragment.getMapObjects()) {
-			drawObject(mapObject, invZoom);
+		if (currentFragment.isLoaded()) {
+			double invZoom = 1.0 / zoom.getCurrentValue();
+			for (MapObject mapObject : currentFragment.getMapObjects()) {
+				drawObject(mapObject, invZoom);
+			}
 		}
 		if (currentFragment.getAlpha() != 1.0f) {
 			setAlphaComposite(1.0f);
