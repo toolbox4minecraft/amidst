@@ -1,13 +1,15 @@
 package amidst.map;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.logging.Log;
 
 public class FragmentCache {
-	private static final int INITIAL_CACHE_SIZE = 1024;
+	private static final int NEW_FRAGMENTS_PER_REQUEST = 1024;
 
-	private Fragment[] cache = new Fragment[INITIAL_CACHE_SIZE];
+	private List<Fragment> cache = new LinkedList<Fragment>();
 	private LayerContainer layerContainer;
 	private ConcurrentLinkedQueue<Fragment> fragmentQueue;
 
@@ -15,40 +17,32 @@ public class FragmentCache {
 			ConcurrentLinkedQueue<Fragment> fragmentQueue) {
 		this.layerContainer = layerContainer;
 		this.fragmentQueue = fragmentQueue;
-		this.cache = initWithFragments(cache, 0, cache.length);
+		requestNewFragments();
 	}
 
-	private Fragment[] initWithFragments(Fragment[] cache, int from, int to) {
-		for (int i = from; i < to; i++) {
-			cache[i] = new Fragment(layerContainer);
-			fragmentQueue.offer(cache[i]);
+	private void requestNewFragments() {
+		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
+			Fragment fragment = new Fragment(layerContainer);
+			cache.add(fragment);
+			fragmentQueue.offer(fragment);
 		}
-		return cache;
 	}
 
-	public void doubleSize() {
-		int currentSize = cache.length;
-		int newSize = currentSize << 1;
-		Fragment[] newFragmentCache = newFromOldFragmentCache(newSize);
-		cache = initWithFragments(newFragmentCache, currentSize, newSize);
-		Log.i("FragmentCache size increased from " + currentSize + " to "
-				+ newSize);
-	}
-
-	private Fragment[] newFromOldFragmentCache(int newSize) {
-		Fragment[] newCache = new Fragment[newSize];
-		System.arraycopy(this.cache, 0, newCache, 0, this.cache.length);
-		return newCache;
+	public void increaseSize() {
+		Log.i("increasing fragment cache size from " + cache.size() + " to "
+				+ (cache.size() + NEW_FRAGMENTS_PER_REQUEST));
+		requestNewFragments();
+		Log.i("fragment cache size increased to " + cache.size());
 	}
 
 	public void resetAllFragments() {
-		for (int i = 0; i < cache.length; i++) {
-			cache[i].reset();
-			fragmentQueue.offer(cache[i]);
+		for (Fragment fragment : cache) {
+			fragment.reset();
+			fragmentQueue.offer(fragment);
 		}
 	}
 
 	public int size() {
-		return cache.length;
+		return cache.size();
 	}
 }
