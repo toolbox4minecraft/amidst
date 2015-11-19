@@ -19,14 +19,7 @@ public class FragmentManager {
 
 	public FragmentManager(LayerContainer layerContainer) {
 		this.cache = new FragmentCache(layerContainer, fragmentQueue);
-		initNumberOfThreads();
-	}
-
-	private void initNumberOfThreads() {
 		this.numberOfThreads = Runtime.getRuntime().availableProcessors() / 2;
-		if (this.numberOfThreads < 1) {
-			this.numberOfThreads = 1;
-		}
 	}
 
 	public Fragment requestFragment(int x, int y) {
@@ -49,12 +42,14 @@ public class FragmentManager {
 
 	public void start() {
 		initExecutor();
-		startQueueProcessor(executor, numberOfThreads, new Runnable() {
-			@Override
-			public void run() {
-				processRequestQueue();
-			}
-		});
+		for (int i = 0; i < numberOfThreads; i++) {
+			executor.scheduleWithFixedDelay(new Runnable() {
+				@Override
+				public void run() {
+					processRequestQueue();
+				}
+			}, 0, 10, TimeUnit.MILLISECONDS);
+		}
 	}
 
 	private void initExecutor() {
@@ -68,14 +63,6 @@ public class FragmentManager {
 						return thread;
 					}
 				});
-	}
-
-	private void startQueueProcessor(ScheduledExecutorService executor,
-			int amount, Runnable runnable) {
-		for (int i = 0; i < amount; i++) {
-			executor.scheduleWithFixedDelay(runnable, 0, 10,
-					TimeUnit.MILLISECONDS);
-		}
 	}
 
 	private void processRequestQueue() {
