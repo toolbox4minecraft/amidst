@@ -57,7 +57,7 @@ public class Application {
 	private void initLayerContainer() {
 		PlayerLayer playerLayer = new PlayerLayer();
 		StrongholdLayer strongholdLayer = new StrongholdLayer();
-		ImageLayer[] imageLayers = { new BiomeLayer(), new SlimeLayer() };
+		ImageLayer[] imageLayers = { new BiomeLayer(0), new SlimeLayer(1) };
 		LiveLayer[] liveLayers = { new GridLayer() };
 		IconLayer[] iconLayers = { new VillageLayer(),
 				new OceanMonumentLayer(), strongholdLayer, new TempleLayer(),

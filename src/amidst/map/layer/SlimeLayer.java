@@ -8,8 +8,8 @@ import amidst.map.Fragment;
 public class SlimeLayer extends ImageLayer {
 	private Random random = new Random();
 
-	public SlimeLayer() {
-		super(Fragment.SIZE >> 4);
+	public SlimeLayer(int layerId) {
+		super(Fragment.SIZE >> 4, layerId);
 	}
 
 	@Override

@@ -17,6 +17,7 @@ public class MapObjectPlayer extends MapObject {
 		this.player = player;
 	}
 
+	// TODO: remove old and add new map object after skin is loaded?
 	@Override
 	public BufferedImage getImage() {
 		return player.getSkin();

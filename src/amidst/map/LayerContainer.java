@@ -21,17 +21,14 @@ public class LayerContainer {
 		this.imageLayers = imageLayers;
 		this.liveLayers = liveLayers;
 		this.iconLayers = iconLayers;
-		initImageLayerIds();
-	}
-
-	private void initImageLayerIds() {
-		for (int i = 0; i < imageLayers.length; i++) {
-			imageLayers[i].setLayerId(i);
-		}
 	}
 
 	public PlayerLayer getPlayerLayer() {
 		return playerLayer;
+	}
+
+	public StrongholdLayer getStrongholdLayer() {
+		return strongholdLayer;
 	}
 
 	public ImageLayer[] getImageLayers() {
@@ -71,9 +68,5 @@ public class LayerContainer {
 			layer.setMap(map);
 			layer.reload();
 		}
-	}
-
-	public StrongholdLayer getStrongholdLayer() {
-		return strongholdLayer;
 	}
 }
