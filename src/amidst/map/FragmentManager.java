@@ -27,20 +27,16 @@ public class FragmentManager {
 		}
 
 		private void processRecycleQueueEntry() {
-			synchronized (queueLock) {
-				Fragment fragment = recycleQueue.poll();
-				fragment.reset();
-				fragmentQueue.offer(fragment);
-			}
+			Fragment fragment = recycleQueue.poll();
+			fragment.reset();
+			fragmentQueue.offer(fragment);
 		}
 
 		private void processRequestQueueEntry() {
-			synchronized (queueLock) {
-				Fragment fragment = requestQueue.poll();
-				if (fragment.needsLoading()) {
-					fragment.load();
-					sleepIfNecessary();
-				}
+			Fragment fragment = requestQueue.poll();
+			if (fragment.needsLoading()) {
+				fragment.load();
+				sleepIfNecessary();
 			}
 		}
 
@@ -106,15 +102,11 @@ public class FragmentManager {
 	}
 
 	public void repaintFragmentImageLayers(Fragment fragment) {
-		synchronized (queueLock) {
-			fragment.repaintAllImageLayers();
-		}
+		fragment.repaintAllImageLayers();
 	}
 
 	public void repaintFragmentImageLayer(Fragment fragment, int layerId) {
-		synchronized (queueLock) {
-			fragment.repaintImageLayer(layerId);
-		}
+		fragment.repaintImageLayer(layerId);
 	}
 
 	public void recycleFragment(Fragment fragment) {
