@@ -14,18 +14,53 @@ import amidst.utilities.CoordinateUtils;
 
 public class Map {
 	public class Drawer {
+		private final Runnable imageLayersDrawer = createImageLayersDrawer();
+		private final Runnable liveLayersDrawer = createLiveLayersDrawer();
+		private final Runnable objectsDrawer = createObjectsDrawer();
+
 		private AffineTransform mat = new AffineTransform();
 		private Fragment currentFragment;
+		private Graphics2D g2d;
+		private float time;
 
-		public void draw(Graphics2D g, float time) {
-			AffineTransform originalTransform = g.getTransform();
-			drawLayer(originalTransform, createImageLayersDrawer(g, time));
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+		private Runnable createImageLayersDrawer() {
+			return new Runnable() {
+				@Override
+				public void run() {
+					currentFragment.drawImageLayers(time, g2d, mat);
+				}
+			};
+		}
+
+		private Runnable createLiveLayersDrawer() {
+			return new Runnable() {
+				@Override
+				public void run() {
+					currentFragment.drawLiveLayers(time, g2d, mat);
+				}
+			};
+		}
+
+		private Runnable createObjectsDrawer() {
+			return new Runnable() {
+				@Override
+				public void run() {
+					currentFragment.drawObjects(g2d, mat, Map.this);
+				}
+			};
+		}
+
+		public void draw(Graphics2D g2d, float time) {
+			this.g2d = g2d;
+			this.time = time;
+			AffineTransform originalTransform = g2d.getTransform();
+			drawLayer(originalTransform, imageLayersDrawer);
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 			fragmentManager.updateAllLayers(time);
-			drawLayer(originalTransform, createLiveLayersDrawer(g, time));
-			drawLayer(originalTransform, createObjectsDrawer(g));
-			g.setTransform(originalTransform);
+			drawLayer(originalTransform, liveLayersDrawer);
+			drawLayer(originalTransform, objectsDrawer);
+			g2d.setTransform(originalTransform);
 		}
 
 		private void drawLayer(AffineTransform originalTransform,
@@ -42,35 +77,6 @@ public class Map {
 					}
 				}
 			}
-		}
-
-		private Runnable createImageLayersDrawer(final Graphics2D g,
-				final float time) {
-			return new Runnable() {
-				@Override
-				public void run() {
-					currentFragment.drawImageLayers(time, g, mat);
-				}
-			};
-		}
-
-		private Runnable createLiveLayersDrawer(final Graphics2D g,
-				final float time) {
-			return new Runnable() {
-				@Override
-				public void run() {
-					currentFragment.drawLiveLayers(time, g, mat);
-				}
-			};
-		}
-
-		private Runnable createObjectsDrawer(final Graphics2D g) {
-			return new Runnable() {
-				@Override
-				public void run() {
-					currentFragment.drawObjects(g, mat, Map.this);
-				}
-			};
 		}
 
 		private void initMat(AffineTransform originalTransform, double scale) {
@@ -107,13 +113,13 @@ public class Map {
 		safeAddStart(0, 0);
 	}
 
-	private void lockedDraw(Graphics2D g, float time) {
+	private void lockedDraw(Graphics2D g2d, float time) {
 		int fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		int desiredFragmentsPerRow = viewerWidth / fragmentSizeOnScreen + 2;
 		int desiredFragmentsPerColumn = viewerHeight / fragmentSizeOnScreen + 2;
 		lockedAdjustNumberOfRowsAndColumns(fragmentSizeOnScreen,
 				desiredFragmentsPerRow, desiredFragmentsPerColumn);
-		drawer.draw(g, time);
+		drawer.draw(g2d, time);
 	}
 
 	private void lockedAdjustNumberOfRowsAndColumns(int fragmentSizeOnScreen,
@@ -176,9 +182,9 @@ public class Map {
 		}
 	}
 
-	public void safeDraw(Graphics2D g, float time) {
+	public void safeDraw(Graphics2D g2d, float time) {
 		synchronized (mapLock) {
-			lockedDraw(g, time);
+			lockedDraw(g2d, time);
 		}
 	}
 
