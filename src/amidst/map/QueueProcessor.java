@@ -3,12 +3,12 @@ package amidst.map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class QueueProcessor implements Runnable {
-	private Thread currentThread;
-	private boolean running = true;
-	private int sleepTick = 0;
 	private ConcurrentLinkedQueue<Fragment> fragmentQueue;
 	private ConcurrentLinkedQueue<Fragment> requestQueue;
 	private ConcurrentLinkedQueue<Fragment> recycleQueue;
+
+	private Thread currentThread;
+	private boolean running = true;
 
 	public QueueProcessor(ConcurrentLinkedQueue<Fragment> fragmentQueue,
 			ConcurrentLinkedQueue<Fragment> requestQueue,
@@ -20,18 +20,17 @@ public class QueueProcessor implements Runnable {
 
 	@Override
 	public void run() {
-		currentThread.setPriority(Thread.MIN_PRIORITY);
-
+		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 		while (running) {
-			if (!requestQueue.isEmpty() || !recycleQueue.isEmpty()) {
+			if (requestQueue.isEmpty() && recycleQueue.isEmpty()) {
+				Thread.yield();
+			} else {
 				if (!requestQueue.isEmpty()) {
 					processRequestQueueEntry();
 				}
 				while (!recycleQueue.isEmpty()) {
 					processRecycleQueueEntry();
 				}
-			} else {
-				sleep(2);
 			}
 		}
 	}
@@ -46,22 +45,6 @@ public class QueueProcessor implements Runnable {
 		Fragment fragment = requestQueue.poll();
 		if (fragment.needsLoading()) {
 			fragment.load();
-			sleepIfNecessary();
-		}
-	}
-
-	private void sleepIfNecessary() {
-		sleepTick++;
-		if (sleepTick == 10) {
-			sleep(1);
-		}
-	}
-
-	private void sleep(long millis) {
-		sleepTick = 0;
-		try {
-			Thread.sleep(millis);
-		} catch (InterruptedException ignored) {
 		}
 	}
 
