@@ -16,12 +16,12 @@ public class TempleFinder extends StructureFinder {
 	@Override
 	protected MapObject getMapObject(BooleanPrefModel isVisiblePreference,
 			boolean isSuccessful, int middleOfChunkX, int middleOfChunkY,
-			int x, int y) {
+			int x, int y, Fragment fragment) {
 		if (isSuccessful) {
 			Biome biome = getBiome(middleOfChunkX, middleOfChunkY);
 			if (validBiomes.contains(biome)) {
 				return createMapObject(isVisiblePreference, biome, x << 4,
-						y << 4);
+						y << 4, fragment);
 			} else {
 				return null;
 			}
@@ -42,16 +42,16 @@ public class TempleFinder extends StructureFinder {
 	}
 
 	private MapObject createMapObject(BooleanPrefModel isVisiblePreference,
-			Biome chunkBiome, int x, int y) {
+			Biome chunkBiome, int x, int y, Fragment fragment) {
 		if (chunkBiome == Biome.swampland) {
-			return MapObject.fromFragmentCoordinates(isVisiblePreference,
-					MapMarkers.WITCH, x, y);
+			return MapObject.fromFragmentCoordinatesAndFragment(
+					isVisiblePreference, MapMarkers.WITCH, x, y, fragment);
 		} else if (chunkBiome.name.contains("Jungle")) {
-			return MapObject.fromFragmentCoordinates(isVisiblePreference,
-					MapMarkers.JUNGLE, x, y);
+			return MapObject.fromFragmentCoordinatesAndFragment(
+					isVisiblePreference, MapMarkers.JUNGLE, x, y, fragment);
 		} else if (chunkBiome.name.contains("Desert")) {
-			return MapObject.fromFragmentCoordinates(isVisiblePreference,
-					MapMarkers.DESERT, x, y);
+			return MapObject.fromFragmentCoordinatesAndFragment(
+					isVisiblePreference, MapMarkers.DESERT, x, y, fragment);
 		} else {
 			Log.e("No known structure for this biome type. This might be an error.");
 			return null;

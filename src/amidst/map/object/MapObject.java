@@ -8,43 +8,44 @@ import amidst.preferences.BooleanPrefModel;
 import amidst.utilities.CoordinateUtils;
 
 public class MapObject {
-	public static MapObject fromFragmentCoordinates(
+	public static MapObject fromFragmentCoordinatesAndFragment(
 			BooleanPrefModel isVisiblePreference, MapMarkers type,
-			int xInFragment, int yInFragment) {
-		return new MapObject(isVisiblePreference, type, xInFragment,
+			int xInFragment, int yInFragment, Fragment fragment) {
+		int xInWorld = CoordinateUtils.toWorld(fragment.getXInWorld(),
+				xInFragment);
+		int yInWorld = CoordinateUtils.toWorld(fragment.getYInWorld(),
 				yInFragment);
+		return new MapObject(isVisiblePreference, xInFragment, yInFragment,
+				xInWorld, yInWorld, type.getName(), type.getImage());
 	}
 
 	public static MapObject fromWorldCoordinates(
 			BooleanPrefModel isVisiblePreference, MapMarkers type,
 			int xInWorld, int yInWorld) {
-		return new MapObject(isVisiblePreference, type,
+		return new MapObject(isVisiblePreference,
 				CoordinateUtils.toFragmentRelative(xInWorld),
 				CoordinateUtils.toFragmentRelative(yInWorld), xInWorld,
-				yInWorld);
+				yInWorld, type.getName(), type.getImage());
 	}
 
 	private final BooleanPrefModel isVisiblePreference;
-	private final MapMarkers type;
 	private final int xInFragment;
 	private final int yInFragment;
-	private int xInWorld;
-	private int yInWorld;
-	private Fragment fragment;
+	private final int xInWorld;
+	private final int yInWorld;
+	private final String name;
+	private final BufferedImage image;
 
-	protected MapObject(BooleanPrefModel isVisiblePreference, MapMarkers type,
-			int xInFragment, int yInFragment, int xInWorld, int yInWorld) {
-		this(isVisiblePreference, type, xInFragment, yInFragment);
-		this.xInWorld = xInWorld;
-		this.yInWorld = yInWorld;
-	}
-
-	protected MapObject(BooleanPrefModel isVisiblePreference, MapMarkers type,
-			int xInFragment, int yInFragment) {
+	protected MapObject(BooleanPrefModel isVisiblePreference, int xInFragment,
+			int yInFragment, int xInWorld, int yInWorld, String name,
+			BufferedImage image) {
 		this.isVisiblePreference = isVisiblePreference;
-		this.type = type;
 		this.xInFragment = xInFragment;
 		this.yInFragment = yInFragment;
+		this.xInWorld = xInWorld;
+		this.yInWorld = yInWorld;
+		this.name = name;
+		this.image = image;
 	}
 
 	public int getWidth() {
@@ -64,15 +65,11 @@ public class MapObject {
 	}
 
 	public String getName() {
-		return type.getName();
+		return name;
 	}
 
 	public BufferedImage getImage() {
-		return type.getImage();
-	}
-
-	protected MapMarkers getType() {
-		return type;
+		return image;
 	}
 
 	public int getXInWorld() {
@@ -89,30 +86,6 @@ public class MapObject {
 
 	@Override
 	public String toString() {
-		return getName() + " at (" + getXInWorld() + ", " + getYInWorld() + ")";
-	}
-
-	@Deprecated
-	public void setFragment(Fragment fragment) {
-		clearFragment();
-		this.fragment = fragment;
-		initFragment();
-	}
-
-	private void clearFragment() {
-		if (fragment != null) {
-			fragment.removeObject(this);
-			fragment = null;
-		}
-	}
-
-	private void initFragment() {
-		if (fragment != null) {
-			xInWorld = CoordinateUtils.toWorld(fragment.getXInWorld(),
-					getXInFragment());
-			yInWorld = CoordinateUtils.toWorld(fragment.getYInWorld(),
-					getYInFragment());
-			fragment.addObject(this);
-		}
+		return name + " at (" + xInWorld + ", " + yInWorld + ")";
 	}
 }

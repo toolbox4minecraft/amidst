@@ -29,14 +29,14 @@ public class NetherFortressLayer extends IconLayer {
 		int chunkX = x + fragment.getChunkXInWorld();
 		int chunkY = y + fragment.getChunkYInWorld();
 		if (hasNetherFortress(chunkX, chunkY)) {
-			createMapObject(x << 4, y << 4).setFragment(fragment);
+			fragment.addObject(createMapObject(x << 4, y << 4, fragment));
 		}
 	}
 
-	private MapObject createMapObject(int x, int y) {
-		return MapObject.fromFragmentCoordinates(
+	private MapObject createMapObject(int x, int y, Fragment fragment) {
+		return MapObject.fromFragmentCoordinatesAndFragment(
 				Options.instance.showNetherFortresses,
-				MapMarkers.NETHER_FORTRESS, x, y);
+				MapMarkers.NETHER_FORTRESS, x, y, fragment);
 	}
 
 	private boolean hasNetherFortress(int chunkX, int chunkY) {

@@ -32,10 +32,11 @@ public class OceanMonumentFinder extends StructureFinder {
 	@Override
 	protected MapObject getMapObject(BooleanPrefModel isVisiblePreference,
 			boolean isSuccessful, int middleOfChunkX, int middleOfChunkY,
-			int x, int y) {
+			int x, int y, Fragment fragment) {
 		if (isSuccessful) {
 			if (isValid(middleOfChunkX, middleOfChunkY)) {
-				return createMapObject(isVisiblePreference, x << 4, y << 4);
+				return createMapObject(isVisiblePreference, x << 4, y << 4,
+						fragment);
 			} else {
 				return null;
 			}
@@ -56,9 +57,9 @@ public class OceanMonumentFinder extends StructureFinder {
 	}
 
 	private MapObject createMapObject(BooleanPrefModel isVisiblePreference,
-			int x, int y) {
-		return MapObject.fromFragmentCoordinates(isVisiblePreference,
-				MapMarkers.OCEAN_MONUMENT, x, y);
+			int x, int y, Fragment fragment) {
+		return MapObject.fromFragmentCoordinatesAndFragment(
+				isVisiblePreference, MapMarkers.OCEAN_MONUMENT, x, y, fragment);
 	}
 
 	@Override

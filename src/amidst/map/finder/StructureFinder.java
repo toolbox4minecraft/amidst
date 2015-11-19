@@ -54,18 +54,19 @@ public abstract class StructureFinder {
 	private void generateAt(Fragment fragment, int x, int y) {
 		int chunkX = x + fragment.getChunkXInWorld();
 		int chunkY = y + fragment.getChunkYInWorld();
-		MapObject mapObject = checkChunk(x, y, chunkX, chunkY);
+		MapObject mapObject = checkChunk(x, y, chunkX, chunkY, fragment);
 		if (mapObject != null) {
-			mapObject.setFragment(fragment);
+			fragment.addObject(mapObject);
 		}
 	}
 
-	private MapObject checkChunk(int x, int y, int chunkX, int chunkY) {
+	private MapObject checkChunk(int x, int y, int chunkX, int chunkY,
+			Fragment fragment) {
 		boolean successful = isSuccessful(chunkX, chunkY);
 		int middleOfChunkX = middleOfChunk(chunkX);
 		int middleOfChunkY = middleOfChunk(chunkY);
 		return getMapObject(isVisiblePreference, successful, middleOfChunkX,
-				middleOfChunkY, x, y);
+				middleOfChunkY, x, y, fragment);
 	}
 
 	private boolean isSuccessful(int chunkX, int chunkY) {
@@ -108,7 +109,8 @@ public abstract class StructureFinder {
 
 	protected abstract MapObject getMapObject(
 			BooleanPrefModel isVisiblePreference, boolean isSuccessful,
-			int middleOfChunkX, int middleOfChunkY, int x, int y);
+			int middleOfChunkX, int middleOfChunkY, int x, int y,
+			Fragment fragment);
 
 	protected abstract List<Biome> getValidBiomes();
 

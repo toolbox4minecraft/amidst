@@ -440,7 +440,7 @@ public class Fragment implements Iterable<Fragment> {
 
 	public void initialize(int xInWorld, int yInWorld) {
 		isLoaded = false;
-		clearMapObjects();
+		mapObjects.clear();
 		this.xInWorld = xInWorld;
 		this.yInWorld = yInWorld;
 		alpha = 0.0f;
@@ -454,7 +454,7 @@ public class Fragment implements Iterable<Fragment> {
 	public void reset() {
 		isInitialized = false;
 		isLoaded = false;
-		clearMapObjects();
+		mapObjects.clear();
 		xInWorld = 0;
 		yInWorld = 0;
 		alpha = 0.0f;
@@ -516,17 +516,6 @@ public class Fragment implements Iterable<Fragment> {
 
 	public Set<MapObject> getMapObjects() {
 		return mapObjects;
-	}
-
-	private void clearMapObjects() {
-		for (MapObject mapObject : copyMapObjectsToPreventConcurrentModificationException()) {
-			mapObject.setFragment(null);
-		}
-	}
-
-	@Deprecated
-	private HashSet<MapObject> copyMapObjectsToPreventConcurrentModificationException() {
-		return new HashSet<MapObject>(mapObjects);
 	}
 
 	public LiveLayer[] getLiveLayers() {
