@@ -8,7 +8,6 @@ import java.util.List;
 import amidst.Application;
 import amidst.gui.MapWindow;
 import amidst.logging.Log;
-import amidst.map.layer.StrongholdLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.world.FileWorld.Player;
 import amidst.minecraft.world.World;
@@ -71,12 +70,12 @@ public class MenuActions {
 	}
 
 	public void findStronghold() {
-		MapObject stronghold = mapWindow
-				.askForOptions("Go to", "Select Stronghold:",
-						StrongholdLayer.instance.getStrongholds());
+		MapObject stronghold = mapWindow.askForOptions("Go to",
+				"Select Stronghold:", application.getLayerContainer()
+						.getStrongholdLayer().getStrongholds());
 		if (stronghold != null) {
-			mapWindow
-					.moveMapToCoordinates(stronghold.getXInFragment(), stronghold.getYInFragment());
+			mapWindow.moveMapToCoordinates(stronghold.getXInFragment(),
+					stronghold.getYInFragment());
 		}
 	}
 

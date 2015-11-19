@@ -62,15 +62,8 @@ public class StrongholdLayer extends IconLayer {
 	);
 	// @formatter:on
 
-	// TODO: remove me!
-	public static StrongholdLayer instance;
-
 	private MapObject[] strongholds = new MapObject[3];
 	private Random random = new Random();
-
-	public StrongholdLayer() {
-		instance = this;
-	}
 
 	@Override
 	public boolean isVisible() {
