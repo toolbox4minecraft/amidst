@@ -1,18 +1,18 @@
 package amidst.minecraft.world;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import amidst.map.object.MapObjectPlayer;
+import amidst.map.MapMarkers;
 import amidst.minecraft.MinecraftUtil;
-import amidst.preferences.BooleanPrefModel;
 
 public class FileWorld extends World {
 	public static class Player {
 		private FileWorld world;
 
+		private BufferedImage skin = MapMarkers.PLAYER.getImage();
 		private String playerName;
 		private int x;
 		private int z;
@@ -57,6 +57,14 @@ public class FileWorld extends World {
 		@Override
 		public String toString() {
 			return "Player \"" + playerName + "\" at (" + x + ", " + z + ")";
+		}
+
+		public void setSkin(BufferedImage skin) {
+			this.skin = skin;
+		}
+
+		public BufferedImage getSkin() {
+			return skin;
 		}
 	}
 
@@ -116,15 +124,6 @@ public class FileWorld extends World {
 
 	public List<Player> getPlayers() {
 		return players;
-	}
-
-	public List<MapObjectPlayer> getMapObjectPlayers(
-			BooleanPrefModel isVisiblePreference) {
-		List<MapObjectPlayer> result = new ArrayList<MapObjectPlayer>();
-		for (Player player : players) {
-			result.add(new MapObjectPlayer(isVisiblePreference, player));
-		}
-		return Collections.unmodifiableList(result);
 	}
 
 	public void savePlayerLocations() {

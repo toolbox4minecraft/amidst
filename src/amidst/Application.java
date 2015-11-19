@@ -55,7 +55,7 @@ public class Application {
 	}
 
 	private void initLayerContainer() {
-		PlayerLayer playerLayer = new PlayerLayer(skinLoader);
+		PlayerLayer playerLayer = new PlayerLayer();
 		ImageLayer[] imageLayers = { new BiomeLayer(), new SlimeLayer() };
 		LiveLayer[] liveLayers = { new GridLayer() };
 		IconLayer[] iconLayers = { new VillageLayer(),
@@ -153,6 +153,9 @@ public class Application {
 			seedHistoryLogger.log(world.getSeed());
 			getLayerContainer().getPlayerLayer().setWorld(world);
 			mapWindow.worldChanged();
+			if (world.isFileWorld()) {
+				skinLoader.loadSkins(world.getAsFileWorld().getPlayers());
+			}
 		}
 	}
 

@@ -9,19 +9,12 @@ import amidst.utilities.CoordinateUtils;
 
 public class MapObjectPlayer extends MapObject {
 	private Player player;
-	private BufferedImage image;
 
 	public MapObjectPlayer(BooleanPrefModel isVisiblePreference, Player player) {
 		super(isVisiblePreference, MapMarkers.PLAYER, CoordinateUtils
-				.toFragmentRelative(player.getX()), CoordinateUtils.toFragmentRelative(player
-				.getZ()));
+				.toFragmentRelative(player.getX()), CoordinateUtils
+				.toFragmentRelative(player.getZ()));
 		this.player = player;
-		this.image = MapMarkers.PLAYER.getImage();
-	}
-
-	@Deprecated
-	public void setPosition(int x, int z) {
-		player.moveTo(x, z);
 	}
 
 	@Override
@@ -34,14 +27,9 @@ public class MapObjectPlayer extends MapObject {
 		return player.getZ();
 	}
 
-	@Deprecated
-	public void setImage(BufferedImage image) {
-		this.image = image;
-	}
-
 	@Override
 	public BufferedImage getImage() {
-		return image;
+		return player.getSkin();
 	}
 
 	@Override

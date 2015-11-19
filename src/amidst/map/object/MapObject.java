@@ -20,7 +20,8 @@ public class MapObject {
 			int xInWorld, int yInWorld) {
 		return new MapObject(isVisiblePreference, type,
 				CoordinateUtils.toFragmentRelative(xInWorld),
-				CoordinateUtils.toFragmentRelative(yInWorld), xInWorld, yInWorld);
+				CoordinateUtils.toFragmentRelative(yInWorld), xInWorld,
+				yInWorld);
 	}
 
 	private final BooleanPrefModel isVisiblePreference;

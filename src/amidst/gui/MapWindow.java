@@ -168,7 +168,7 @@ public class MapWindow {
 		map = new Map(application.getFragmentManager(), mapZoom,
 				application.getLayerContainer());
 		mapViewer = new MapViewer(mapMovement, mapZoom, application.getWorld(),
-				application.getLayerContainer(), map);
+				map);
 		menuBar.enableMapMenu();
 		contentPane.add(mapViewer.getPanel(), BorderLayout.CENTER);
 		frame.validate();

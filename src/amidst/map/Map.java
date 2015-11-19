@@ -12,6 +12,7 @@ import amidst.map.layer.BiomeLayer;
 import amidst.map.layer.LiveLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
+import amidst.minecraft.world.FileWorld.Player;
 import amidst.utilities.CoordinateUtils;
 
 public class Map {
@@ -473,5 +474,14 @@ public class Map {
 				repaintImageLayer(BiomeLayer.getInstance().getLayerId());
 			}
 		}).start();
+	}
+
+	@Deprecated
+	public void updatePlayerPosition(Player player, Point newLocationOnScreen) {
+		Point locationInWorld = screenToWorld(newLocationOnScreen);
+		Fragment newFragment = getFragmentAt(locationInWorld);
+		player.moveTo(locationInWorld.x, locationInWorld.y);
+		layerContainer.getPlayerLayer().updatePlayerPosition(player,
+				newFragment);
 	}
 }

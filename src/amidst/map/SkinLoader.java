@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -13,16 +14,18 @@ import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 
 import amidst.logging.Log;
-import amidst.map.object.MapObjectPlayer;
+import amidst.minecraft.world.FileWorld.Player;
 
 public class SkinLoader {
-	private BlockingQueue<MapObjectPlayer> playerQueue = new LinkedBlockingQueue<MapObjectPlayer>();
+	private BlockingQueue<Player> playerQueue = new LinkedBlockingQueue<Player>();
 	private boolean active = false;
 	private boolean running = false;
 
-	public void loadSkin(MapObjectPlayer player) {
+	public void loadSkins(List<Player> players) {
 		try {
-			playerQueue.put(player);
+			for (Player player : players) {
+				playerQueue.put(player);
+			}
 		} catch (InterruptedException e) {
 			Log.w("Cannot enqueue player");
 		}
@@ -47,7 +50,7 @@ public class SkinLoader {
 	private void doRun() {
 		running = true;
 		while (active) {
-			MapObjectPlayer player = getNextPlayer();
+			Player player = getNextPlayer();
 			if (active && player != null) {
 				try {
 					doLoadSkin(player);
@@ -61,12 +64,12 @@ public class SkinLoader {
 		running = false;
 	}
 
-	private void error(MapObjectPlayer player, Exception e) {
-		Log.w("Cannot load skin for player " + player.getName());
+	private void error(Player player, Exception e) {
+		Log.w("Cannot load skin for player " + player.getPlayerName());
 		e.printStackTrace();
 	}
 
-	private MapObjectPlayer getNextPlayer() {
+	private Player getNextPlayer() {
 		try {
 			return playerQueue.poll(1, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
@@ -74,12 +77,12 @@ public class SkinLoader {
 		}
 	}
 
-	private void doLoadSkin(MapObjectPlayer player)
-			throws MalformedURLException, IOException {
-		player.setImage(createImage(player));
+	private void doLoadSkin(Player player) throws MalformedURLException,
+			IOException {
+		player.setSkin(createImage(player));
 	}
 
-	private BufferedImage createImage(MapObjectPlayer player)
+	private BufferedImage createImage(Player player)
 			throws MalformedURLException, IOException {
 		BufferedImage image = new BufferedImage(20, 20,
 				BufferedImage.TYPE_INT_ARGB);
@@ -96,13 +99,13 @@ public class SkinLoader {
 		skin.flush();
 	}
 
-	private BufferedImage getSkin(MapObjectPlayer player)
-			throws MalformedURLException, IOException {
+	private BufferedImage getSkin(Player player) throws MalformedURLException,
+			IOException {
 		return ImageIO.read(getSkinURL(player));
 	}
 
-	private URL getSkinURL(MapObjectPlayer player) throws MalformedURLException {
+	private URL getSkinURL(Player player) throws MalformedURLException {
 		return new URL("http://s3.amazonaws.com/MinecraftSkins/"
-				+ player.getName() + ".png");
+				+ player.getPlayerName() + ".png");
 	}
 }

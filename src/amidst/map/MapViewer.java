@@ -20,7 +20,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-import amidst.map.object.MapObjectPlayer;
 import amidst.map.widget.BiomeToggleWidget;
 import amidst.map.widget.BiomeWidget;
 import amidst.map.widget.CursorInformationWidget;
@@ -32,6 +31,7 @@ import amidst.map.widget.SelectedObjectWidget;
 import amidst.map.widget.Widget;
 import amidst.map.widget.Widget.CornerAnchorPoint;
 import amidst.minecraft.MinecraftUtil;
+import amidst.minecraft.world.FileWorld.Player;
 import amidst.minecraft.world.World;
 
 public class MapViewer {
@@ -127,22 +127,22 @@ public class MapViewer {
 
 		private JPopupMenu createPlayerMenu(Point lastRightClicked) {
 			JPopupMenu result = new JPopupMenu();
-			for (MapObjectPlayer player : layerContainer.getPlayerLayer()
-					.getPlayers()) {
-				result.add(createPlayerMenuItem(player, lastRightClicked));
+			if (world.isFileWorld()) {
+
+				for (Player player : world.getAsFileWorld().getPlayers()) {
+					result.add(createPlayerMenuItem(player, lastRightClicked));
+				}
 			}
 			return result;
 		}
 
-		private JMenuItem createPlayerMenuItem(final MapObjectPlayer player,
+		private JMenuItem createPlayerMenuItem(final Player player,
 				final Point lastRightClick) {
-			JMenuItem result = new JMenuItem(player.getName());
+			JMenuItem result = new JMenuItem(player.getPlayerName());
 			result.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Point location = map.screenToWorld(lastRightClick);
-					player.setPosition(location.x, location.y);
-					player.setFragment(map.getFragmentAt(location));
+					map.updatePlayerPosition(player, lastRightClick);
 				}
 			});
 			return result;
@@ -204,15 +204,12 @@ public class MapViewer {
 	private MapMovement movement;
 	private MapZoom zoom;
 	private World world;
-	private LayerContainer layerContainer;
 	private Map map;
 
-	public MapViewer(MapMovement movement, MapZoom zoom, World world,
-			LayerContainer layerContainer, Map map) {
+	public MapViewer(MapMovement movement, MapZoom zoom, World world, Map map) {
 		this.movement = movement;
 		this.zoom = zoom;
 		this.world = world;
-		this.layerContainer = layerContainer;
 		this.map = map;
 		initWidgets();
 		initComponent();
