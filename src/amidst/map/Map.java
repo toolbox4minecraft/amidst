@@ -136,7 +136,7 @@ public class Map {
 			drawLayer(originalTransform, imageLayersDrawer);
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-			fragmentManager.updateAllLayers(time);
+			layerContainer.updateAllLayers(time);
 			drawLayer(originalTransform, liveLayersDrawer);
 			drawLayer(originalTransform, objectsDrawer);
 			g2d.setTransform(originalTransform);
@@ -170,8 +170,6 @@ public class Map {
 
 	private MapObject selectedMapObject;
 
-	private FragmentManager fragmentManager;
-
 	private Fragment startFragment;
 
 	private Point2D.Double startOnScreen = new Point2D.Double();
@@ -183,12 +181,17 @@ public class Map {
 
 	private final Object mapLock = new Object();
 
+	private FragmentManager fragmentManager;
 	private MapZoom zoom;
+	private LayerContainer layerContainer;
 
-	public Map(FragmentManager fragmentManager, MapZoom zoom) {
+	public Map(FragmentManager fragmentManager, MapZoom zoom,
+			LayerContainer layerContainer) {
 		this.fragmentManager = fragmentManager;
-		this.fragmentManager.setMap(this);
 		this.zoom = zoom;
+		this.layerContainer = layerContainer;
+		this.layerContainer.reloadAllLayers(this);
+		this.fragmentManager.start();
 		safeAddStart(0, 0);
 	}
 

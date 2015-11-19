@@ -165,7 +165,8 @@ public class MapWindow {
 	}
 
 	private void initWorld() {
-		map = new Map(application.getFragmentManager(), mapZoom);
+		map = new Map(application.getFragmentManager(), mapZoom,
+				application.getLayerContainer());
 		mapViewer = new MapViewer(mapMovement, mapZoom, application.getWorld(),
 				application.getLayerContainer(), map);
 		menuBar.enableMapMenu();

@@ -86,11 +86,9 @@ public class FragmentManager {
 	private QueueProcessor queueProcessor = new QueueProcessor();
 	private Object queueLock = new Object();
 
-	private LayerContainer layerContainer;
 	private FragmentCache cache;
 
 	public FragmentManager(LayerContainer layerContainer) {
-		this.layerContainer = layerContainer;
 		this.cache = new FragmentCache(layerContainer, fragmentQueue);
 	}
 
@@ -129,13 +127,8 @@ public class FragmentManager {
 		cache.resetAllFragments();
 	}
 
-	public void setMap(Map map) {
-		layerContainer.reloadAllLayers(map);
+	public void start() {
 		queueProcessor.startNewThread();
-	}
-
-	public void updateAllLayers(float time) {
-		layerContainer.updateAllLayers(time);
 	}
 
 	private void clearAllQueues() {
