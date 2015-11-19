@@ -69,6 +69,7 @@ public class Application {
 
 	private void initFragmentManager() {
 		fragmentManager = new FragmentManager(getLayerContainer());
+		fragmentManager.start();
 	}
 
 	public void displayVersionSelectWindow() {
@@ -123,6 +124,7 @@ public class Application {
 		setVersionSelectWindow(null);
 		setMapWindow(null);
 		skinLoader.stop();
+		fragmentManager.stop();
 	}
 
 	public void displayLicenseWindow() {

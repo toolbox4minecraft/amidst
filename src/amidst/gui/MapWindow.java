@@ -147,8 +147,8 @@ public class MapWindow {
 		try {
 			executor.awaitTermination(1, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
-			Log.w("MapWindow executor shutdown took too longer.");
-			e.printStackTrace();
+			Log.w("MapWindow executor took too long to shutdown ... forcing shutdown");
+			executor.shutdownNow();
 		}
 	}
 

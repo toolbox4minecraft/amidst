@@ -35,7 +35,6 @@ public class Map {
 		this.zoom = zoom;
 		this.layerContainer = layerContainer;
 		this.layerContainer.reloadAllLayers(this);
-		this.fragmentManager.start();
 		safeAddStart(0, 0);
 	}
 
