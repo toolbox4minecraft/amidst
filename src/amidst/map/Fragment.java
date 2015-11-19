@@ -112,8 +112,8 @@ public class Fragment implements Iterable<Fragment> {
 		}
 	}
 
-	public void addObject(MapObject object) {
-		mapObjects.add(object);
+	public void addObject(MapObject mapObject) {
+		mapObjects.add(mapObject);
 	}
 
 	public void removeObject(MapObject mapObject) {
@@ -171,9 +171,9 @@ public class Fragment implements Iterable<Fragment> {
 		Fragment firstColumn = getFirstColumn();
 		Fragment topLeft = firstColumn.getFirstRow();
 		topLeft = topLeft.createOrRemoveRowsAbove(manager, newAbove);
+		topLeft.getLastRow().createOrRemoveRowsBelow(manager, newBelow);
 		topLeft = topLeft.createOrRemoveColumnsLeft(manager, newLeft);
 		topLeft.getLastColumn().createOrRemoveColumnsRight(manager, newRight);
-		firstColumn.getLastRow().createOrRemoveRowsBelow(manager, newBelow);
 		return topLeft;
 	}
 
