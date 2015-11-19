@@ -33,9 +33,6 @@ public class FragmentCache {
 		cache = initWithFragments(newFragmentCache, currentSize, newSize);
 		Log.i("FragmentCache size increased from " + currentSize + " to "
 				+ newSize);
-
-		// TODO: do we really need to run the gc manually?
-		System.gc();
 	}
 
 	private Fragment[] newFromOldFragmentCache(int newSize) {
