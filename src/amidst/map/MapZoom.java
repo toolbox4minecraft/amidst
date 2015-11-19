@@ -1,7 +1,6 @@
 package amidst.map;
 
 import java.awt.Point;
-import java.awt.geom.Point2D;
 
 import amidst.Options;
 
@@ -16,12 +15,19 @@ public class MapZoom {
 	public void update(Map map) {
 		remainingTicks--;
 		if (remainingTicks >= 0) {
-			double previous = current;
-			current = (target + current) * 0.5;
-			Point2D.Double targetZoom = map.getScaled(previous, current,
-					zoomMouse);
-			map.moveBy(targetZoom);
+			moveMap(map, updateCurrent());
 		}
+	}
+
+	private double updateCurrent() {
+		double previous = current;
+		current = (target + current) * 0.5;
+		return previous;
+	}
+
+	private void moveMap(Map map, double previous) {
+		map.moveBy(map.getDeltaOnScreenForSamePointInWorld(previous, current,
+				zoomMouse));
 	}
 
 	public void adjustZoom(Point position, int notches) {

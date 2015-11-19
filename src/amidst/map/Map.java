@@ -108,7 +108,7 @@ public class Map {
 		private void drawObject(Graphics2D g2d, AffineTransform mat,
 				MapObject mapObject, Map map) {
 			if (mapObject.isVisible()) {
-				double invZoom = 1.0 / map.getZoom();
+				double invZoom = 1.0 / zoom.getCurrentValue();
 				int width = mapObject.getWidth();
 				int height = mapObject.getHeight();
 				if (map.getSelectedMapObject() == mapObject) {
@@ -410,11 +410,12 @@ public class Map {
 		return result;
 	}
 
-	public Point2D.Double getScaled(double oldScale, double newScale, Point p) {
-		double baseX = p.x - startOnScreen.x;
-		double scaledX = baseX - (baseX / oldScale) * newScale;
+	public Point2D.Double getDeltaOnScreenForSamePointInWorld(double oldScale,
+			double newScale, Point newPointOnScreen) {
+		double baseX = newPointOnScreen.x - startOnScreen.x;
+		double baseY = newPointOnScreen.y - startOnScreen.y;
 
-		double baseY = p.y - startOnScreen.y;
+		double scaledX = baseX - (baseX / oldScale) * newScale;
 		double scaledY = baseY - (baseY / oldScale) * newScale;
 
 		return new Point2D.Double(scaledX, scaledY);
