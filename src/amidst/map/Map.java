@@ -10,6 +10,7 @@ import amidst.Options;
 import amidst.map.layer.BiomeLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
+import amidst.utilities.CoordinateUtils;
 
 public class Map {
 	public class Drawer {
@@ -151,25 +152,20 @@ public class Map {
 		fragmentsPerColumn = 1;
 	}
 
+	// TODO: Support longs?
 	private void lockedCenterOn(long xInWorld, long yInWorld) {
-		long fragmentOffsetX = xInWorld % Fragment.SIZE;
-		long fragmentOffsetY = yInWorld % Fragment.SIZE;
-		long startX = xInWorld - fragmentOffsetX;
-		long startY = yInWorld - fragmentOffsetY;
 		if (startNode != null) {
 			startNode = startNode.recycleAll(fragmentManager);
 		}
-		// TODO: Support longs?
-		double offsetX = viewerWidth >> 1;
-		double offsetY = viewerHeight >> 1;
-
-		offsetX -= zoom.worldToScreen(fragmentOffsetX);
-		offsetY -= zoom.worldToScreen(fragmentOffsetY);
-
-		start.x = offsetX;
-		start.y = offsetY;
-
-		lockedAddStart((int) startX, (int) startY);
+		int xCenterOnScreen = viewerWidth >> 1;
+		int yCenterOnScreen = viewerHeight >> 1;
+		long xFragmentRelative = CoordinateUtils.toFragmentRelative(xInWorld);
+		long yFragmentRelative = CoordinateUtils.toFragmentRelative(yInWorld);
+		start.x = xCenterOnScreen - zoom.worldToScreen(xFragmentRelative);
+		start.y = yCenterOnScreen - zoom.worldToScreen(yFragmentRelative);
+		long xFragmentCorner = CoordinateUtils.toFragmentCorner(xInWorld);
+		long yFragmentCorner = CoordinateUtils.toFragmentCorner(yInWorld);
+		lockedAddStart((int) xFragmentCorner, (int) yFragmentCorner);
 	}
 
 	private void safeAddStart(int startX, int startY) {
