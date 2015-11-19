@@ -37,8 +37,6 @@ public class DebugWidget extends Widget {
 				+ fragmentManager.getFreeFragmentQueueSize());
 		panelLines.add("Request Queue Size: "
 				+ fragmentManager.getRequestQueueSize());
-		panelLines.add("Recycle Queue Size: "
-				+ fragmentManager.getRecycleQueueSize());
 		panelLines.add("");
 		panelLines.add("Map Viewer:");
 		panelLines.add("Map Size: " + map.getFragmentsPerRow() + "x"

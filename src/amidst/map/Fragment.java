@@ -517,7 +517,6 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	private void recycle(FragmentManager manager) {
-		reset();
 		manager.recycleFragment(this);
 	}
 }

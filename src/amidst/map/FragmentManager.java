@@ -11,7 +11,6 @@ import amidst.logging.Log;
 public class FragmentManager {
 	private ConcurrentLinkedQueue<Fragment> fragmentQueue = new ConcurrentLinkedQueue<Fragment>();
 	private ConcurrentLinkedQueue<Fragment> requestQueue = new ConcurrentLinkedQueue<Fragment>();
-	private ConcurrentLinkedQueue<Fragment> recycleQueue = new ConcurrentLinkedQueue<Fragment>();
 
 	private FragmentCache cache;
 
@@ -20,9 +19,13 @@ public class FragmentManager {
 
 	public FragmentManager(LayerContainer layerContainer) {
 		this.cache = new FragmentCache(layerContainer, fragmentQueue);
+		initNumberOfThreads();
+	}
+
+	private void initNumberOfThreads() {
 		this.numberOfThreads = Runtime.getRuntime().availableProcessors() / 2;
-		if (this.numberOfThreads < 2) {
-			this.numberOfThreads = 2;
+		if (this.numberOfThreads < 1) {
+			this.numberOfThreads = 1;
 		}
 	}
 
@@ -44,22 +47,20 @@ public class FragmentManager {
 		fragment.repaintImageLayer(layerId);
 	}
 
+	/**
+	 * Make sure the passed fragment is no longer referenced by other fragments!
+	 */
 	public void recycleFragment(Fragment fragment) {
-		recycleQueue.offer(fragment);
+		fragment.reset();
+		fragmentQueue.offer(fragment);
 	}
 
 	public void start() {
 		initExecutor();
-		startQueueProcessor(executor, numberOfThreads - 1, new Runnable() {
+		startQueueProcessor(executor, numberOfThreads, new Runnable() {
 			@Override
 			public void run() {
 				processRequestQueue();
-			}
-		});
-		startQueueProcessor(executor, 1, new Runnable() {
-			@Override
-			public void run() {
-				processRecycleQueue();
 			}
 		});
 	}
@@ -94,16 +95,7 @@ public class FragmentManager {
 		}
 	}
 
-	private void processRecycleQueue() {
-		while (!recycleQueue.isEmpty()) {
-			Fragment fragment = recycleQueue.poll();
-			fragment.reset();
-			fragmentQueue.offer(fragment);
-		}
-	}
-
 	public void reset() {
-		recycleQueue.clear();
 		requestQueue.clear();
 		fragmentQueue.clear();
 		cache.resetAllFragments();
@@ -126,10 +118,6 @@ public class FragmentManager {
 
 	public int getFreeFragmentQueueSize() {
 		return fragmentQueue.size();
-	}
-
-	public int getRecycleQueueSize() {
-		return recycleQueue.size();
 	}
 
 	public int getRequestQueueSize() {
