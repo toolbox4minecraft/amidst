@@ -63,7 +63,7 @@ public class MapDrawer {
 		return new Runnable() {
 			@Override
 			public void run() {
-				drawImageLayers(currentFragment, mat);
+				drawImageLayers();
 			}
 		};
 	}
@@ -72,7 +72,7 @@ public class MapDrawer {
 		return new Runnable() {
 			@Override
 			public void run() {
-				drawLiveLayers(currentFragment, mat);
+				drawLiveLayers();
 			}
 		};
 	}
@@ -81,7 +81,7 @@ public class MapDrawer {
 		return new Runnable() {
 			@Override
 			public void run() {
-				drawObjects(currentFragment, mat);
+				drawObjects();
 			}
 		};
 	}
@@ -204,18 +204,16 @@ public class MapDrawer {
 		mat.scale(scale, scale);
 	}
 
-	public void drawImageLayers(Fragment fragment, AffineTransform mat) {
-		if (fragment.isLoaded()) {
-			fragment.updateAlpha(time);
-			for (int i = 0; i < fragment.getImages().length; i++) {
-				if (fragment.getImageLayers()[i].isVisible()) {
-					setAlphaComposite(
-							g2d,
-							fragment.getAlpha()
-									* fragment.getImageLayers()[i].getAlpha());
+	public void drawImageLayers() {
+		if (currentFragment.isLoaded()) {
+			currentFragment.updateAlpha(time);
+			for (int i = 0; i < currentFragment.getImages().length; i++) {
+				if (currentFragment.getImageLayers()[i].isVisible()) {
+					setAlphaComposite(g2d, currentFragment.getAlpha()
+							* currentFragment.getImageLayers()[i].getAlpha());
 
 					// TODO: FIX THIS
-					g2d.setTransform(fragment.getImageLayers()[i]
+					g2d.setTransform(currentFragment.getImageLayers()[i]
 							.getScaledMatrix(mat));
 					if (g2d.getTransform().getScaleX() < 1.0f) {
 						g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
@@ -225,35 +223,34 @@ public class MapDrawer {
 								RenderingHints.KEY_INTERPOLATION,
 								RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 					}
-					g2d.drawImage(fragment.getImages()[i], 0, 0, null);
+					g2d.drawImage(currentFragment.getImages()[i], 0, 0, null);
 				}
 			}
 			setAlphaComposite(g2d, 1.0f);
 		}
 	}
 
-	public void drawLiveLayers(Fragment fragment, AffineTransform mat) {
-		for (LiveLayer liveLayer : fragment.getLiveLayers()) {
+	public void drawLiveLayers() {
+		for (LiveLayer liveLayer : currentFragment.getLiveLayers()) {
 			if (liveLayer.isVisible()) {
-				liveLayer.drawLive(fragment, g2d, mat);
+				liveLayer.drawLive(currentFragment, g2d, mat);
 			}
 		}
 	}
 
-	public void drawObjects(Fragment fragment, AffineTransform mat) {
-		if (fragment.getAlpha() != 1.0f) {
-			setAlphaComposite(g2d, fragment.getAlpha());
+	public void drawObjects() {
+		if (currentFragment.getAlpha() != 1.0f) {
+			setAlphaComposite(g2d, currentFragment.getAlpha());
 		}
-		for (MapObject mapObject : fragment.getMapObjects()) {
-			drawObject(g2d, mat, mapObject, map);
+		for (MapObject mapObject : currentFragment.getMapObjects()) {
+			drawObject(mapObject);
 		}
-		if (fragment.getAlpha() != 1.0f) {
+		if (currentFragment.getAlpha() != 1.0f) {
 			setAlphaComposite(g2d, 1.0f);
 		}
 	}
 
-	private void drawObject(Graphics2D g2d, AffineTransform mat,
-			MapObject mapObject, Map map) {
+	private void drawObject(MapObject mapObject) {
 		if (mapObject.isVisible()) {
 			double invZoom = 1.0 / zoom.getCurrentValue();
 			int width = mapObject.getWidth();
