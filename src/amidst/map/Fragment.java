@@ -103,7 +103,9 @@ public class Fragment implements Iterable<Fragment> {
 
 	private void doReset(int xInWorld, int yInWorld) {
 		isLoaded = false;
-		mapObjects.clear();
+		synchronized (loadLock) {
+			mapObjects.clear();
+		}
 		this.xInWorld = xInWorld;
 		this.yInWorld = yInWorld;
 		alpha = 0.0f;
@@ -164,11 +166,15 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	public void addObject(MapObject mapObject) {
-		mapObjects.add(mapObject);
+		synchronized (loadLock) {
+			mapObjects.add(mapObject);
+		}
 	}
 
 	public void removeObject(MapObject mapObject) {
-		mapObjects.remove(mapObject);
+		synchronized (loadLock) {
+			mapObjects.remove(mapObject);
+		}
 	}
 
 	public boolean needsLoading() {
