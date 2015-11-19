@@ -8,7 +8,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
 import amidst.Options;
-import amidst.map.layer.BiomeLayer;
 import amidst.map.layer.LiveLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
@@ -471,7 +470,7 @@ public class Map {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				repaintImageLayer(BiomeLayer.getInstance().getLayerId());
+				repaintImageLayer(layerContainer.getBiomeLayer().getLayerId());
 			}
 		}).start();
 	}
