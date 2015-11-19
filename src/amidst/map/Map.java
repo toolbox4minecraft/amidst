@@ -107,34 +107,34 @@ public class Map {
 	}
 
 	private void lockedDraw(Graphics2D g, float time) {
-		int scaledFragmentSize = (int) (Fragment.SIZE * zoom.getCurrentValue());
-		int desiredFragmentsPerRow = viewerWidth / scaledFragmentSize + 2;
-		int desiredFragmentsPerColumn = viewerHeight / scaledFragmentSize + 2;
-		lockedAdjustNumberOfRowsAndColumns(scaledFragmentSize,
+		int fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
+		int desiredFragmentsPerRow = viewerWidth / fragmentSizeOnScreen + 2;
+		int desiredFragmentsPerColumn = viewerHeight / fragmentSizeOnScreen + 2;
+		lockedAdjustNumberOfRowsAndColumns(fragmentSizeOnScreen,
 				desiredFragmentsPerRow, desiredFragmentsPerColumn);
 		drawer.draw(g, time);
 	}
 
-	private void lockedAdjustNumberOfRowsAndColumns(int scaledFragmentSize,
+	private void lockedAdjustNumberOfRowsAndColumns(int fragmentSizeOnScreen,
 			int desiredFragmentsPerRow, int desiredFragmentsPerColumn) {
 		int newColumns = desiredFragmentsPerRow - fragmentsPerRow;
 		int newRows = desiredFragmentsPerColumn - fragmentsPerColumn;
 		int newLeft = 0;
 		int newAbove = 0;
 		while (start.x > 0) {
-			start.x -= scaledFragmentSize;
+			start.x -= fragmentSizeOnScreen;
 			newLeft++;
 		}
-		while (start.x < -scaledFragmentSize) {
-			start.x += scaledFragmentSize;
+		while (start.x < -fragmentSizeOnScreen) {
+			start.x += fragmentSizeOnScreen;
 			newLeft--;
 		}
 		while (start.y > 0) {
-			start.y -= scaledFragmentSize;
+			start.y -= fragmentSizeOnScreen;
 			newAbove++;
 		}
-		while (start.y < -scaledFragmentSize) {
-			start.y += scaledFragmentSize;
+		while (start.y < -fragmentSizeOnScreen) {
+			start.y += fragmentSizeOnScreen;
 			newAbove--;
 		}
 		int newRight = newColumns - newLeft;
@@ -151,11 +151,11 @@ public class Map {
 		fragmentsPerColumn = 1;
 	}
 
-	private void lockedCenterOn(long x, long y) {
-		long fragOffsetX = x % Fragment.SIZE;
-		long fragOffsetY = y % Fragment.SIZE;
-		long startX = x - fragOffsetX;
-		long startY = y - fragOffsetY;
+	private void lockedCenterOn(long xInWorld, long yInWorld) {
+		long fragmentOffsetX = xInWorld % Fragment.SIZE;
+		long fragmentOffsetY = yInWorld % Fragment.SIZE;
+		long startX = xInWorld - fragmentOffsetX;
+		long startY = yInWorld - fragmentOffsetY;
 		if (startNode != null) {
 			startNode = startNode.recycleAll(fragmentManager);
 		}
@@ -163,8 +163,8 @@ public class Map {
 		double offsetX = viewerWidth >> 1;
 		double offsetY = viewerHeight >> 1;
 
-		offsetX -= (fragOffsetX) * zoom.getCurrentValue();
-		offsetY -= (fragOffsetY) * zoom.getCurrentValue();
+		offsetX -= zoom.worldToScreen(fragmentOffsetX);
+		offsetY -= zoom.worldToScreen(fragmentOffsetY);
 
 		start.x = offsetX;
 		start.y = offsetY;

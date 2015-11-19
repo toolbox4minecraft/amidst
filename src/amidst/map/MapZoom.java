@@ -65,4 +65,12 @@ public class MapZoom {
 		// TODO: int -> double -> int = bad?
 		return (int) (coordinate * current);
 	}
+
+	public double screenToWorld(long coordinate) {
+		return coordinate / current;
+	}
+
+	public double worldToScreen(long coordinate) {
+		return coordinate * current;
+	}
 }
