@@ -49,9 +49,8 @@ public class Fragment implements Iterable<Fragment> {
 
 	private Object loadLock = new Object();
 
-	private IconLayer[] iconLayers;
+	private LayerContainer layerContainer;
 
-	private ImageLayer[] imageLayers;
 	private BufferedImage[] images;
 	private boolean[] repaintImage;
 
@@ -69,16 +68,12 @@ public class Fragment implements Iterable<Fragment> {
 	private Fragment belowFragment = null;
 
 	public Fragment(LayerContainer layerContainer) {
-		this(layerContainer.getImageLayers(), layerContainer.getIconLayers());
-	}
-
-	private Fragment(ImageLayer[] imageLayers, IconLayer[] iconLayers) {
-		this.imageLayers = imageLayers;
-		this.iconLayers = iconLayers;
+		this.layerContainer = layerContainer;
 		initImages();
 	}
 
 	private void initImages() {
+		ImageLayer[] imageLayers = layerContainer.getImageLayers();
 		this.images = new BufferedImage[imageLayers.length];
 		this.repaintImage = new boolean[imageLayers.length];
 		for (ImageLayer imageLayer : imageLayers) {
@@ -117,11 +112,12 @@ public class Fragment implements Iterable<Fragment> {
 	public void load(int[] imageCache) {
 		synchronized (loadLock) {
 			if (isInitialized) {
+				ImageLayer[] imageLayers = layerContainer.getImageLayers();
 				if (isLoaded) {
-					repaintInvalidatedImages(imageCache);
+					repaintInvalidatedImages(imageCache, imageLayers);
 				} else {
 					initBiomeData();
-					repaintAllImages(imageCache);
+					repaintAllImages(imageCache, imageLayers);
 					generateMapObjects();
 					initAlpha();
 					isLoaded = true;
@@ -130,10 +126,11 @@ public class Fragment implements Iterable<Fragment> {
 		}
 	}
 
-	private void repaintInvalidatedImages(int[] imageCache) {
+	private void repaintInvalidatedImages(int[] imageCache,
+			ImageLayer[] imageLayers) {
 		for (int i = 0; i < imageLayers.length; i++) {
 			if (repaintImage[i]) {
-				repaintImage(i, imageCache);
+				repaintImage(i, imageCache, imageLayers);
 			}
 		}
 	}
@@ -146,13 +143,14 @@ public class Fragment implements Iterable<Fragment> {
 		}
 	}
 
-	private void repaintAllImages(int[] imageCache) {
+	private void repaintAllImages(int[] imageCache, ImageLayer[] imageLayers) {
 		for (int i = 0; i < imageLayers.length; i++) {
-			repaintImage(i, imageCache);
+			repaintImage(i, imageCache, imageLayers);
 		}
 	}
 
-	private void repaintImage(int layerId, int[] imageCache) {
+	private void repaintImage(int layerId, int[] imageCache,
+			ImageLayer[] imageLayers) {
 		imageLayers[layerId].drawToCache(this, imageCache);
 		int layerSize = imageLayers[layerId].getSize();
 		images[layerId].setRGB(0, 0, layerSize, layerSize, imageCache, 0,
@@ -161,8 +159,8 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	private void generateMapObjects() {
-		for (int i = 0; i < iconLayers.length; i++) {
-			iconLayers[i].generateMapObjects(this);
+		for (IconLayer iconLayer : layerContainer.getIconLayers()) {
+			iconLayer.generateMapObjects(this);
 		}
 	}
 
