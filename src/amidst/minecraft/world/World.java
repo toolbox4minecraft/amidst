@@ -1,9 +1,9 @@
 package amidst.minecraft.world;
 
-import amidst.map.finder.FindingConsumer;
-import amidst.map.finder.OceanMonumentFinder;
-import amidst.map.finder.TempleFinder;
-import amidst.map.finder.VillageFinder;
+import amidst.minecraft.world.finder.FindingConsumer;
+import amidst.minecraft.world.finder.OceanMonumentFinder;
+import amidst.minecraft.world.finder.TempleFinder;
+import amidst.minecraft.world.finder.VillageFinder;
 
 public abstract class World {
 	private OceanMonumentFinder oceanMonumentFinder = new OceanMonumentFinder();

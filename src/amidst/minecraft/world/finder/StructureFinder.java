@@ -1,4 +1,4 @@
-package amidst.map.finder;
+package amidst.minecraft.world.finder;
 
 import java.util.List;
 import java.util.Random;

@@ -3,9 +3,9 @@ package amidst.map.layer;
 import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
-import amidst.map.finder.FindingConsumer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.minecraft.world.finder.FindingConsumer;
 
 public class VillageLayer extends IconLayer {
 	@Override

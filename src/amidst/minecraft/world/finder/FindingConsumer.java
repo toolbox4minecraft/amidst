@@ -1,4 +1,4 @@
-package amidst.map.finder;
+package amidst.minecraft.world.finder;
 
 import amidst.map.MapMarkers;
 import amidst.minecraft.world.CoordinatesInWorld;
