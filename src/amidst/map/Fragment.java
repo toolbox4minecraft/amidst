@@ -47,9 +47,6 @@ public class Fragment implements Iterable<Fragment> {
 	public static final int SIZE_SHIFT = 9;
 	public static final int BIOME_SIZE = SIZE >> 2;
 
-	// TODO: what is this? move it to another place?
-	private static final int[] IMAGE_CACHE = new int[SIZE * SIZE];
-
 	private Object loadLock = new Object();
 
 	private IconLayer[] iconLayers;
@@ -117,14 +114,14 @@ public class Fragment implements Iterable<Fragment> {
 		belowFragment = null;
 	}
 
-	public void load() {
+	public void load(int[] imageCache) {
 		synchronized (loadLock) {
 			if (isInitialized) {
 				if (isLoaded) {
-					repaintInvalidatedImages();
+					repaintInvalidatedImages(imageCache);
 				} else {
 					initBiomeData();
-					repaintAllImages();
+					repaintAllImages(imageCache);
 					generateMapObjects();
 					initAlpha();
 					isLoaded = true;
@@ -133,11 +130,11 @@ public class Fragment implements Iterable<Fragment> {
 		}
 	}
 
-	private void repaintInvalidatedImages() {
+	private void repaintInvalidatedImages(int[] imageCache) {
 		for (int i = 0; i < imageLayers.length; i++) {
 			if (repaintImage[i]) {
 				repaintImage[i] = false;
-				repaintImage(i);
+				repaintImage(i, imageCache);
 			}
 		}
 	}
@@ -150,10 +147,18 @@ public class Fragment implements Iterable<Fragment> {
 		}
 	}
 
-	private void repaintAllImages() {
+	private void repaintAllImages(int[] imageCache) {
 		for (int i = 0; i < imageLayers.length; i++) {
-			repaintImage(i);
+			repaintImage(i, imageCache);
 		}
+	}
+
+	private void repaintImage(int layerId, int[] imageCache) {
+		imageLayers[layerId].drawToCache(this, imageCache);
+		int layerSize = imageLayers[layerId].getSize();
+		images[layerId].setRGB(0, 0, layerSize, layerSize, imageCache, 0,
+				layerSize);
+		repaintImage[layerId] = false;
 	}
 
 	private void generateMapObjects() {
@@ -164,14 +169,6 @@ public class Fragment implements Iterable<Fragment> {
 
 	private void initAlpha() {
 		alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
-	}
-
-	private void repaintImage(int layerId) {
-		imageLayers[layerId].drawToCache(this, IMAGE_CACHE);
-		int layerSize = imageLayers[layerId].getSize();
-		images[layerId].setRGB(0, 0, layerSize, layerSize, IMAGE_CACHE, 0,
-				layerSize);
-		repaintImage[layerId] = false;
 	}
 
 	public void invalidateImageLayer(int layerId) {

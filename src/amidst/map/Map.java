@@ -264,10 +264,10 @@ public class Map {
 		return new Point2D.Double(scaledX, scaledY);
 	}
 
-	private void repaintImageLayer(int id) {
+	private void repaintImageLayer(ImageLayer imageLayer) {
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
-				fragment.invalidateImageLayer(id);
+				fragment.invalidateImageLayer(imageLayer.getLayerId());
 			}
 			fragmentManager.reloadAll();
 		}
@@ -309,15 +309,9 @@ public class Map {
 		return fragmentManager;
 	}
 
-	// TODO: move the thread somewhere else?
 	@Deprecated
 	public void repaintBiomeLayer() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				repaintImageLayer(layerContainer.getBiomeLayer().getLayerId());
-			}
-		}).start();
+		repaintImageLayer(layerContainer.getBiomeLayer());
 	}
 
 	@Deprecated
