@@ -94,8 +94,8 @@ public class StrongholdLayer extends IconLayer {
 
 	private MapObject getStronghold(int chunkX, int chunkY) {
 		for (int i = 0; i < 3; i++) {
-			int strongholdChunkX = strongholds[i].getXInFragment() >> 4;
-			int strongholdChunkY = strongholds[i].getYInFragment() >> 4;
+			int strongholdChunkX = strongholds[i].getXInWorld() >> 4;
+			int strongholdChunkY = strongholds[i].getYInWorld() >> 4;
 			if ((strongholdChunkX == chunkX) && (strongholdChunkY == chunkY)) {
 				return strongholds[i];
 			}
