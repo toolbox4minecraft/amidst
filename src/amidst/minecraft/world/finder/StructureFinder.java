@@ -24,13 +24,13 @@ public abstract class StructureFinder {
 	protected final int size;
 	protected final Random random;
 
-	private World world;
+	protected World world;
 	private CoordinatesInWorld corner;
 	private FindingConsumer consumer;
 	private int xRelativeToFragmentAsChunkResolution;
 	private int yRelativeToFragmentAsChunkResolution;
-	private int chunkX;
-	private int chunkY;
+	protected int chunkX;
+	protected int chunkY;
 	private int middleOfChunkX;
 	private int middleOfChunkY;
 
