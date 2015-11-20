@@ -8,6 +8,7 @@ import amidst.map.layer.ImageLayer;
 import amidst.map.layer.LiveLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
+import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.FileWorld.Player;
 import amidst.utilities.CoordinateUtils;
 
@@ -79,7 +80,8 @@ public class Map {
 	}
 
 	private void lockedAddStart(int x, int y) {
-		startFragment = fragmentManager.requestFragment(x, y);
+		startFragment = fragmentManager.requestFragment(CoordinatesInWorld
+				.origin());
 		fragmentsPerRow = 1;
 		fragmentsPerColumn = 1;
 	}

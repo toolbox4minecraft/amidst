@@ -2,6 +2,8 @@ package amidst.map;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import amidst.minecraft.world.CoordinatesInWorld;
+
 public class FragmentManager {
 	private ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<Fragment>();
 	private ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<Fragment>();
@@ -15,12 +17,12 @@ public class FragmentManager {
 		this.loader = new FragmentLoader(loadingQueue);
 	}
 
-	public Fragment requestFragment(int x, int y) {
+	public Fragment requestFragment(CoordinatesInWorld coordinates) {
 		Fragment fragment;
 		while ((fragment = availableQueue.poll()) == null) {
 			cache.increaseSize();
 		}
-		fragment.initialize(x, y);
+		fragment.initialize(coordinates);
 		loadingQueue.offer(fragment);
 		return fragment;
 	}

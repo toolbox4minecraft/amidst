@@ -10,6 +10,7 @@ import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.MinecraftUtil;
+import amidst.minecraft.world.CoordinatesInWorld;
 
 public class Fragment implements Iterable<Fragment> {
 	private static class FragmentIterator implements Iterator<Fragment> {
@@ -59,8 +60,7 @@ public class Fragment implements Iterable<Fragment> {
 	private boolean isInitialized = false;
 	private boolean isLoaded = false;
 	private Set<MapObject> mapObjects = new HashSet<MapObject>();
-	private int xInWorld;
-	private int yInWorld;
+	private CoordinatesInWorld corner;
 	private float alpha = 0.0f;
 	private Fragment leftFragment = null;
 	private Fragment rightFragment = null;
@@ -85,23 +85,22 @@ public class Fragment implements Iterable<Fragment> {
 		}
 	}
 
-	public void initialize(int xInWorld, int yInWorld) {
-		doReset(xInWorld, yInWorld);
+	public void initialize(CoordinatesInWorld corner) {
+		doReset(corner);
 		isInitialized = true;
 	}
 
 	public void reset() {
 		isInitialized = false;
-		doReset(0, 0);
+		doReset(null);
 	}
 
-	private void doReset(int xInWorld, int yInWorld) {
+	private void doReset(CoordinatesInWorld corner) {
 		isLoaded = false;
 		synchronized (loadLock) {
 			mapObjects.clear();
 		}
-		this.xInWorld = xInWorld;
-		this.yInWorld = yInWorld;
+		this.corner = corner;
 		alpha = 0.0f;
 		leftFragment = null;
 		rightFragment = null;
@@ -138,8 +137,8 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	private void initBiomeData() {
-		int[] data = MinecraftUtil.getBiomeData(xInWorld >> 2, yInWorld >> 2,
-				BIOME_SIZE, BIOME_SIZE, true);
+		int[] data = MinecraftUtil.getBiomeData((int) corner.getX() >> 2,
+				(int) corner.getY() >> 2, BIOME_SIZE, BIOME_SIZE, true);
 		for (int i = 0; i < BIOME_SIZE * BIOME_SIZE; i++) {
 			biomeData[i] = (short) data[i];
 		}
@@ -196,6 +195,7 @@ public class Fragment implements Iterable<Fragment> {
 		}
 	}
 
+	@Deprecated
 	public short[] getBiomeData() {
 		return biomeData;
 	}
@@ -222,38 +222,52 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	public boolean isInBounds(MapObject mapObject) {
-		return isInBounds(mapObject.getXInWorld(), mapObject.getYInWorld());
+		return isInBounds(mapObject.getCoordinates());
 	}
 
-	private boolean isInBounds(int xInWorld, int yInWorld) {
-		return xInWorld >= this.xInWorld
-				&& xInWorld < this.xInWorld + Fragment.SIZE
-				&& yInWorld >= this.yInWorld
-				&& yInWorld < this.yInWorld + Fragment.SIZE;
+	public boolean isInBounds(CoordinatesInWorld coordinates) {
+		return coordinates.isInBoundsOf(corner, SIZE);
 	}
 
+	public int getBiomeAt(CoordinatesInWorld coordinates) {
+		int blockX = (int) coordinates.getXRelativeToFragment();
+		int blockY = (int) coordinates.getYRelativeToFragment();
+		int index = (blockY >> 2) * Fragment.BIOME_SIZE + (blockX >> 2);
+		return biomeData[index];
+	}
+
+	public CoordinatesInWorld getCorner() {
+		return corner;
+	}
+
+	@Deprecated
 	public int getXInWorld() {
-		return xInWorld;
+		return (int) corner.getX();
 	}
 
+	@Deprecated
 	public int getYInWorld() {
-		return yInWorld;
+		return (int) corner.getY();
 	}
 
+	@Deprecated
 	public int getChunkXInWorld() {
-		return xInWorld >> 4;
+		return (int) corner.getXAsChunkResolution();
 	}
 
+	@Deprecated
 	public int getChunkYInWorld() {
-		return yInWorld >> 4;
+		return (int) corner.getYAsChunkResolution();
 	}
 
+	@Deprecated
 	public int getFragmentXInWorld() {
-		return xInWorld >> SIZE_SHIFT;
+		return (int) corner.getXAsFragmentResolution();
 	}
 
+	@Deprecated
 	public int getFragmentYInWorld() {
-		return yInWorld >> SIZE_SHIFT;
+		return (int) corner.getYAsFragmentResolution();
 	}
 
 	public boolean isEndOfLine() {
@@ -514,19 +528,23 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	private Fragment createAbove(FragmentManager manager) {
-		return connectAbove(manager.requestFragment(xInWorld, yInWorld - SIZE));
+		return connectAbove(manager.requestFragment(corner
+				.newRelative(0, -SIZE)));
 	}
 
 	private Fragment createBelow(FragmentManager manager) {
-		return connectBelow(manager.requestFragment(xInWorld, yInWorld + SIZE));
+		return connectBelow(manager
+				.requestFragment(corner.newRelative(0, SIZE)));
 	}
 
 	private Fragment createLeft(FragmentManager manager) {
-		return connectLeft(manager.requestFragment(xInWorld - SIZE, yInWorld));
+		return connectLeft(manager
+				.requestFragment(corner.newRelative(-SIZE, 0)));
 	}
 
 	private Fragment createRight(FragmentManager manager) {
-		return connectRight(manager.requestFragment(xInWorld + SIZE, yInWorld));
+		return connectRight(manager
+				.requestFragment(corner.newRelative(SIZE, 0)));
 	}
 
 	private void recycle(FragmentManager manager) {

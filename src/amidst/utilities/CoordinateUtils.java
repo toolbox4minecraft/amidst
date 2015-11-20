@@ -7,7 +7,7 @@ public enum CoordinateUtils {
 
 	public static boolean isInBounds(int x, int y, int offsetX, int offsetY,
 			int width, int height) {
-		return x > offsetX && x < offsetX + width && y > offsetY
+		return x >= offsetX && x < offsetX + width && y >= offsetY
 				&& y < offsetY + height;
 	}
 

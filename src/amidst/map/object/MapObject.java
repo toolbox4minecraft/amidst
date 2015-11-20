@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
+import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.preferences.BooleanPrefModel;
 import amidst.utilities.CoordinateUtils;
 
@@ -82,6 +83,11 @@ public class MapObject {
 
 	public boolean isVisible() {
 		return isVisiblePreference.get();
+	}
+
+	@Deprecated
+	public CoordinatesInWorld getCoordinates() {
+		return CoordinatesInWorld.from(xInWorld, yInWorld);
 	}
 
 	@Override
