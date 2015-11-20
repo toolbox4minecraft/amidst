@@ -32,7 +32,7 @@ public class SeedWidget extends Widget {
 		if (seedText == null) {
 			return "Seed: " + world.getSeed();
 		} else {
-			return "Seed: \"" + seedText + "\" (" + world.getSeed() + ")";
+			return "Seed: " + seedText + " (" + world.getSeed() + ")";
 		}
 	}
 
