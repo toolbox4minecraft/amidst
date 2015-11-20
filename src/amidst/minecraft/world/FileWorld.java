@@ -48,6 +48,11 @@ public class FileWorld extends World {
 			moved = true;
 		}
 
+		@Deprecated
+		public CoordinatesInWorld getCoordinates() {
+			return CoordinatesInWorld.from(x, z);
+		}
+
 		public void saveLocation() {
 			if (moved) {
 				world.mover.movePlayer(this);

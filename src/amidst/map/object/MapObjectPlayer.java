@@ -4,16 +4,13 @@ import java.awt.image.BufferedImage;
 
 import amidst.minecraft.world.FileWorld.Player;
 import amidst.preferences.BooleanPrefModel;
-import amidst.utilities.CoordinateUtils;
 
 public class MapObjectPlayer extends MapObject {
 	private Player player;
 
 	public MapObjectPlayer(BooleanPrefModel isVisiblePreference, Player player) {
-		super(isVisiblePreference, CoordinateUtils.toFragmentRelative(player
-				.getX()), CoordinateUtils.toFragmentRelative(player.getZ()),
-				player.getX(), player.getZ(), player.getPlayerName(), player
-						.getSkin());
+		super(isVisiblePreference, player.getCoordinates(), player
+				.getPlayerName(), player.getSkin());
 		this.player = player;
 	}
 

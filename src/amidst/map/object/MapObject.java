@@ -6,63 +6,62 @@ import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.preferences.BooleanPrefModel;
-import amidst.utilities.CoordinateUtils;
 
 public class MapObject {
 	public static MapObject fromFragmentCoordinatesAndFragment(
 			BooleanPrefModel isVisiblePreference, MapMarkers type,
-			int xInFragment, int yInFragment, Fragment fragment) {
-		int xInWorld = CoordinateUtils.toWorld(fragment.getXInWorld(),
-				xInFragment);
-		int yInWorld = CoordinateUtils.toWorld(fragment.getYInWorld(),
-				yInFragment);
-		return new MapObject(isVisiblePreference, xInFragment, yInFragment,
-				xInWorld, yInWorld, type.getName(), type.getImage());
+			CoordinatesInWorld coordinates, Fragment fragment) {
+		return new MapObject(isVisiblePreference, coordinates, type.getName(),
+				type.getImage());
 	}
 
+	@Deprecated
+	public static MapObject fromFragmentCoordinatesAndFragment(
+			BooleanPrefModel isVisiblePreference, MapMarkers type,
+			int xInFragment, int yInFragment, Fragment fragment) {
+		return new MapObject(isVisiblePreference, fragment.getCorner().add(
+				xInFragment, yInFragment), type.getName(), type.getImage());
+	}
+
+	@Deprecated
 	public static MapObject fromWorldCoordinates(
 			BooleanPrefModel isVisiblePreference, MapMarkers type,
 			int xInWorld, int yInWorld) {
-		return new MapObject(isVisiblePreference,
-				CoordinateUtils.toFragmentRelative(xInWorld),
-				CoordinateUtils.toFragmentRelative(yInWorld), xInWorld,
-				yInWorld, type.getName(), type.getImage());
+		return new MapObject(isVisiblePreference, CoordinatesInWorld.from(
+				xInWorld, yInWorld), type.getName(), type.getImage());
 	}
 
 	private final BooleanPrefModel isVisiblePreference;
-	private final int xInFragment;
-	private final int yInFragment;
-	private final int xInWorld;
-	private final int yInWorld;
+	private final CoordinatesInWorld coordinates;
 	private final String name;
 	private final BufferedImage image;
 
-	protected MapObject(BooleanPrefModel isVisiblePreference, int xInFragment,
-			int yInFragment, int xInWorld, int yInWorld, String name,
-			BufferedImage image) {
+	protected MapObject(BooleanPrefModel isVisiblePreference,
+			CoordinatesInWorld coordinates, String name, BufferedImage image) {
 		this.isVisiblePreference = isVisiblePreference;
-		this.xInFragment = xInFragment;
-		this.yInFragment = yInFragment;
-		this.xInWorld = xInWorld;
-		this.yInWorld = yInWorld;
+		this.coordinates = coordinates;
 		this.name = name;
 		this.image = image;
 	}
 
+	@Deprecated
 	public int getWidth() {
 		return getImage().getWidth();
 	}
 
+	@Deprecated
 	public int getHeight() {
 		return getImage().getHeight();
 	}
 
+	@Deprecated
 	public int getXInFragment() {
-		return xInFragment;
+		return (int) coordinates.getXRelativeToFragment();
 	}
 
+	@Deprecated
 	public int getYInFragment() {
-		return yInFragment;
+		return (int) coordinates.getYRelativeToFragment();
 	}
 
 	public String getName() {
@@ -73,25 +72,27 @@ public class MapObject {
 		return image;
 	}
 
+	@Deprecated
 	public int getXInWorld() {
-		return xInWorld;
+		return (int) coordinates.getX();
 	}
 
+	@Deprecated
 	public int getYInWorld() {
-		return yInWorld;
+		return (int) coordinates.getY();
 	}
 
 	public boolean isVisible() {
 		return isVisiblePreference.get();
 	}
 
-	@Deprecated
 	public CoordinatesInWorld getCoordinates() {
-		return CoordinatesInWorld.from(xInWorld, yInWorld);
+		return coordinates;
 	}
 
 	@Override
 	public String toString() {
-		return name + " at (" + xInWorld + ", " + yInWorld + ")";
+		return name + " at (" + coordinates.getX() + ", " + coordinates.getY()
+				+ ")";
 	}
 }
