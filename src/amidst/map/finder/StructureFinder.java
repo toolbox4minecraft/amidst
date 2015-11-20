@@ -6,11 +6,10 @@ import java.util.Random;
 import amidst.logging.Log;
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
-import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
+import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
-import amidst.preferences.BooleanPrefModel;
 
 public abstract class StructureFinder {
 	protected final List<Biome> validBiomesForStructure;
@@ -26,8 +25,8 @@ public abstract class StructureFinder {
 	protected final Random random;
 
 	protected World world;
-	protected BooleanPrefModel isVisiblePreference;
-	protected Fragment fragment;
+	protected CoordinatesInWorld corner;
+	private FindingConsumer consumer;
 	protected int xRelativeToFragmentAsChunkResolution;
 	protected int yRelativeToFragmentAsChunkResolution;
 	protected int chunkX;
@@ -55,11 +54,11 @@ public abstract class StructureFinder {
 				- minDistanceBetweenScatteredFeatures;
 	}
 
-	public void generateMapObjects(World world,
-			BooleanPrefModel isVisiblePreference, Fragment fragment) {
+	public void generateMapObjects(World world, CoordinatesInWorld corner,
+			FindingConsumer consumer) {
 		this.world = world;
-		this.isVisiblePreference = isVisiblePreference;
-		this.fragment = fragment;
+		this.corner = corner;
+		this.consumer = consumer;
 		for (xRelativeToFragmentAsChunkResolution = 0; xRelativeToFragmentAsChunkResolution < size; xRelativeToFragmentAsChunkResolution++) {
 			for (yRelativeToFragmentAsChunkResolution = 0; yRelativeToFragmentAsChunkResolution < size; yRelativeToFragmentAsChunkResolution++) {
 				generateAt();
@@ -69,28 +68,18 @@ public abstract class StructureFinder {
 
 	private void generateAt() {
 		chunkX = xRelativeToFragmentAsChunkResolution
-				+ (int) fragment.getCorner().getXAsChunkResolution();
+				+ (int) corner.getXAsChunkResolution();
 		chunkY = yRelativeToFragmentAsChunkResolution
-				+ (int) fragment.getCorner().getYAsChunkResolution();
+				+ (int) corner.getYAsChunkResolution();
 		if (checkChunk()) {
-			MapObject mapObject = createMapObject();
-			if (mapObject != null) {
-				fragment.addObject(mapObject);
+			MapMarkers mapMarker = getMapMarker();
+			if (mapMarker == null) {
+				Log.e("No known structure for this biome type. This might be an error.");
+			} else {
+				consumer.consume(corner.add(
+						xRelativeToFragmentAsChunkResolution << 4,
+						yRelativeToFragmentAsChunkResolution << 4), mapMarker);
 			}
-		}
-	}
-
-	private MapObject createMapObject() {
-		MapMarkers mapMarker = getMapMarker();
-		if (mapMarker == null) {
-			Log.e("No known structure for this biome type. This might be an error.");
-			return null;
-		} else {
-			return MapObject.from(
-					fragment.getCorner().add(
-							xRelativeToFragmentAsChunkResolution << 4,
-							yRelativeToFragmentAsChunkResolution << 4),
-					mapMarker, isVisiblePreference);
 		}
 	}
 
