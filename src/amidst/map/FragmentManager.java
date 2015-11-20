@@ -15,11 +15,9 @@ public class FragmentManager {
 	private FragmentCache cache;
 
 	private ScheduledExecutorService executor;
-	private int numberOfThreads;
 
 	public FragmentManager(LayerContainer layerContainer) {
 		this.cache = new FragmentCache(layerContainer, fragmentQueue);
-		this.numberOfThreads = Runtime.getRuntime().availableProcessors() / 2;
 	}
 
 	public Fragment requestFragment(int x, int y) {
@@ -42,19 +40,17 @@ public class FragmentManager {
 
 	public void start() {
 		initExecutor();
-		for (int i = 0; i < numberOfThreads; i++) {
-			executor.scheduleWithFixedDelay(new Runnable() {
-				@Override
-				public void run() {
-					processRequestQueue();
-				}
-			}, 0, 10, TimeUnit.MILLISECONDS);
-		}
+		executor.scheduleWithFixedDelay(new Runnable() {
+			@Override
+			public void run() {
+				processRequestQueue();
+			}
+		}, 0, 10, TimeUnit.MILLISECONDS);
 	}
 
 	private void initExecutor() {
-		this.executor = Executors.newScheduledThreadPool(numberOfThreads,
-				new ThreadFactory() {
+		this.executor = Executors
+				.newSingleThreadScheduledExecutor(new ThreadFactory() {
 					@Override
 					public Thread newThread(Runnable r) {
 						Thread thread = new Thread(r);
