@@ -528,23 +528,19 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	private Fragment createAbove(FragmentManager manager) {
-		return connectAbove(manager.requestFragment(corner
-				.newRelative(0, -SIZE)));
+		return connectAbove(manager.requestFragment(corner.add(0, -SIZE)));
 	}
 
 	private Fragment createBelow(FragmentManager manager) {
-		return connectBelow(manager
-				.requestFragment(corner.newRelative(0, SIZE)));
+		return connectBelow(manager.requestFragment(corner.add(0, SIZE)));
 	}
 
 	private Fragment createLeft(FragmentManager manager) {
-		return connectLeft(manager
-				.requestFragment(corner.newRelative(-SIZE, 0)));
+		return connectLeft(manager.requestFragment(corner.add(-SIZE, 0)));
 	}
 
 	private Fragment createRight(FragmentManager manager) {
-		return connectRight(manager
-				.requestFragment(corner.newRelative(SIZE, 0)));
+		return connectRight(manager.requestFragment(corner.add(SIZE, 0)));
 	}
 
 	private void recycle(FragmentManager manager) {

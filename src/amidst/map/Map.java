@@ -7,7 +7,6 @@ import amidst.Options;
 import amidst.map.layer.ImageLayer;
 import amidst.map.layer.LiveLayer;
 import amidst.map.object.MapObject;
-import amidst.minecraft.Biome;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.FileWorld.Player;
 import amidst.utilities.CoordinateUtils;
@@ -122,15 +121,11 @@ public class Map {
 		}
 	}
 
-	public Fragment getFragmentAt(Point position) {
-		Point cornerPosition = new Point(position.x >> Fragment.SIZE_SHIFT,
-				position.y >> Fragment.SIZE_SHIFT);
-		Point fragmentPosition = new Point();
+	public Fragment getFragmentAt(CoordinatesInWorld coordinates) {
+		CoordinatesInWorld corner = coordinates.toFragmentCorner();
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
-				fragmentPosition.x = fragment.getFragmentXInWorld();
-				fragmentPosition.y = fragment.getFragmentYInWorld();
-				if (cornerPosition.equals(fragmentPosition)) {
+				if (corner.equals(fragment.getCorner())) {
 					return fragment;
 				}
 			}
@@ -176,18 +171,12 @@ public class Map {
 		return result;
 	}
 
-	public String getBiomeNameAt(Point point) {
+	public String getBiomeAliasAt(CoordinatesInWorld coordinates) {
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
 				if (fragment.isLoaded()) {
-					if ((fragment.getXInWorld() <= point.x)
-							&& (fragment.getYInWorld() <= point.y)
-							&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
-							&& (fragment.getYInWorld() + Fragment.SIZE > point.y)) {
-						int x = point.x - fragment.getXInWorld();
-						int y = point.y - fragment.getYInWorld();
-
-						return getBiomeNameForFragment(fragment, x, y);
+					if (fragment.isInBounds(coordinates)) {
+						return getBiomeAliasForFragment(fragment, coordinates);
 					}
 				}
 			}
@@ -195,39 +184,10 @@ public class Map {
 		return "Unknown";
 	}
 
-	public String getBiomeAliasAt(Point point) {
-		if (startFragment != null) {
-			for (Fragment fragment : startFragment) {
-				if (fragment.isLoaded()) {
-					if ((fragment.getXInWorld() <= point.x)
-							&& (fragment.getYInWorld() <= point.y)
-							&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
-							&& (fragment.getYInWorld() + Fragment.SIZE > point.y)) {
-						int x = point.x - fragment.getXInWorld();
-						int y = point.y - fragment.getYInWorld();
-
-						return getBiomeAliasForFragment(fragment, x, y);
-					}
-				}
-			}
-		}
-		return "Unknown";
-	}
-
-	private String getBiomeNameForFragment(Fragment fragment, int blockX,
-			int blockY) {
-		return Biome.biomes[getBiomeForFragment(fragment, blockX, blockY)].name;
-	}
-
-	private String getBiomeAliasForFragment(Fragment fragment, int blockX,
-			int blockY) {
-		return Options.instance.biomeColorProfile
-				.getAliasForId(getBiomeForFragment(fragment, blockX, blockY));
-	}
-
-	private int getBiomeForFragment(Fragment fragment, int blockX, int blockY) {
-		int index = (blockY >> 2) * Fragment.BIOME_SIZE + (blockX >> 2);
-		return fragment.getBiomeData()[index];
+	private String getBiomeAliasForFragment(Fragment fragment,
+			CoordinatesInWorld coordinates) {
+		return Options.instance.biomeColorProfile.getAliasForId(fragment
+				.getBiomeAt(coordinates));
 	}
 
 	public void moveBy(Point2D.Double speed) {
@@ -239,7 +199,7 @@ public class Map {
 		startOnScreen.y += y;
 	}
 
-	public Point screenToWorld(Point pointOnScreen) {
+	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
 		Point result = pointOnScreen.getLocation();
 
 		result.x -= startOnScreen.x;
@@ -249,10 +209,7 @@ public class Map {
 		result.y = zoom.screenToWorld(result.y);
 
 		// TODO: what to do if startFragment == null? ... should never happen
-		result.x += startFragment.getXInWorld();
-		result.y += startFragment.getYInWorld();
-
-		return result;
+		return startFragment.getCorner().add(result.x, result.y);
 	}
 
 	public Point2D.Double getDeltaOnScreenForSamePointInWorld(double oldScale,
@@ -318,9 +275,9 @@ public class Map {
 
 	@Deprecated
 	public void updatePlayerPosition(Player player, Point newLocationOnScreen) {
-		Point locationInWorld = screenToWorld(newLocationOnScreen);
-		Fragment newFragment = getFragmentAt(locationInWorld);
-		player.moveTo(locationInWorld.x, locationInWorld.y);
+		CoordinatesInWorld newCoordinates = screenToWorld(newLocationOnScreen);
+		Fragment newFragment = getFragmentAt(newCoordinates);
+		player.moveTo(newCoordinates);
 		layerContainer.getPlayerLayer().updatePlayerPosition(player,
 				newFragment);
 	}

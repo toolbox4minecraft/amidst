@@ -8,8 +8,8 @@ public class CoordinatesInWorld {
 		return new CoordinatesInWorld(x, y);
 	}
 
-	public static CoordinatesInWorld from(CoordinatesInWorld base, long deltaX,
-			long deltaY) {
+	private static CoordinatesInWorld from(CoordinatesInWorld base,
+			long deltaX, long deltaY) {
 		return new CoordinatesInWorld(base.x + deltaX, base.y + deltaY);
 	}
 
@@ -100,16 +100,20 @@ public class CoordinatesInWorld {
 		return CoordinateUtils.toFragmentRelative(y) >> Fragment.SIZE_SHIFT;
 	}
 
-	public CoordinatesInWorld newRelative(long deltaX, long deltaY) {
-		return from(this, deltaX, deltaY);
-	}
-
 	public CoordinatesInWorld toFragmentCorner() {
 		return from(getXCornerOfFragment(), getYCornerOfFragment());
 	}
 
+	public CoordinatesInWorld add(long x, long y) {
+		return from(this, x, y);
+	}
+
 	public CoordinatesInWorld add(CoordinatesInWorld other) {
 		return from(this, other.x, other.y);
+	}
+
+	public CoordinatesInWorld substract(long x, long y) {
+		return from(this, -x, -y);
 	}
 
 	public CoordinatesInWorld substract(CoordinatesInWorld other) {

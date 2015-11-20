@@ -41,9 +41,10 @@ public class FileWorld extends World {
 			return z;
 		}
 
-		public void moveTo(int x, int z) {
-			this.x = x;
-			this.z = z;
+		@Deprecated
+		public void moveTo(CoordinatesInWorld coordinates) {
+			x = (int) coordinates.getX();
+			z = (int) coordinates.getY();
 			moved = true;
 		}
 

@@ -6,6 +6,7 @@ import java.awt.Point;
 
 import amidst.map.Map;
 import amidst.map.MapViewer;
+import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 
 public class CursorInformationWidget extends Widget {
@@ -33,9 +34,9 @@ public class CursorInformationWidget extends Widget {
 	private String getText() {
 		Point mouse = mapViewer.getMousePosition();
 		if (mouse != null) {
-			Point pointInWorld = map.screenToWorld(mouse);
-			return map.getBiomeAliasAt(pointInWorld) + " [ " + pointInWorld.x
-					+ ", " + pointInWorld.y + " ]";
+			CoordinatesInWorld pointInWorld = map.screenToWorld(mouse);
+			return map.getBiomeAliasAt(pointInWorld) + " [ "
+					+ pointInWorld.getX() + ", " + pointInWorld.getY() + " ]";
 		} else {
 			return null;
 		}
