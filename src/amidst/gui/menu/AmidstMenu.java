@@ -112,6 +112,18 @@ public class AmidstMenu {
 		return result;
 	}
 
+	// TODO: this is currently broken
+	private JMenuItem create_File_SwitchVersion() {
+		JMenuItem result = new JMenuItem("Switch version");
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				actions.switchVersion();
+			}
+		});
+		return result;
+	}
+
 	private JMenuItem create_File_Exit() {
 		JMenuItem result = new JMenuItem("Exit");
 		result.addActionListener(new ActionListener() {

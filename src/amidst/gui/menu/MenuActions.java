@@ -33,6 +33,10 @@ public class MenuActions {
 		}
 	}
 
+	public void switchVersion() {
+		application.displayVersionSelectWindow();
+	}
+
 	public void exit() {
 		application.exitGracefully();
 	}
