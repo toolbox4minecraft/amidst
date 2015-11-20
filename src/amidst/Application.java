@@ -34,8 +34,9 @@ import amidst.utilities.SeedHistoryLogger;
 import amidst.version.MinecraftProfile;
 
 public class Application {
+	private ThreadMaster threadMaster = new ThreadMaster(this);
+	private SkinLoader skinLoader = new SkinLoader(threadMaster);
 	private SeedHistoryLogger seedHistoryLogger = new SeedHistoryLogger();
-	private SkinLoader skinLoader = new SkinLoader();
 	private UpdatePrompt updateManager = new UpdatePrompt();
 
 	private VersionSelectWindow versionSelectWindow;
@@ -45,14 +46,6 @@ public class Application {
 
 	private LayerContainer layerContainer;
 	private FragmentManager fragmentManager;
-
-	public Application() {
-		initSkinLoader();
-	}
-
-	private void initSkinLoader() {
-		skinLoader.start();
-	}
 
 	private void initLayerContainer() {
 		PlayerLayer playerLayer = new PlayerLayer();
@@ -69,7 +62,6 @@ public class Application {
 
 	private void initFragmentManager() {
 		fragmentManager = new FragmentManager(getLayerContainer());
-		fragmentManager.start();
 	}
 
 	public void displayVersionSelectWindow() {
@@ -123,8 +115,6 @@ public class Application {
 	public void dispose() {
 		setVersionSelectWindow(null);
 		setMapWindow(null);
-		skinLoader.stop();
-		fragmentManager.stop();
 	}
 
 	public void displayLicenseWindow() {
@@ -192,5 +182,17 @@ public class Application {
 				exitWithErrorCode(4);
 			}
 		});
+	}
+
+	public void tickMainLoop() {
+		if (mapWindow != null) {
+			mapWindow.tick();
+		}
+	}
+
+	public void tickFragmentLoader() {
+		if (fragmentManager != null) {
+			fragmentManager.tick();
+		}
 	}
 }

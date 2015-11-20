@@ -12,9 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -28,7 +25,6 @@ import amidst.Util;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
-import amidst.logging.Log;
 import amidst.map.Map;
 import amidst.map.MapMovement;
 import amidst.map.MapViewer;
@@ -42,9 +38,6 @@ public class MapWindow {
 	private SeedPrompt seedPrompt = new SeedPrompt();
 	private MapZoom mapZoom = new MapZoom();
 	private MapMovement mapMovement = new MapMovement();
-
-	private ScheduledExecutorService executor = Executors
-			.newSingleThreadScheduledExecutor();
 
 	private Map map;
 	private MapViewer mapViewer;
@@ -62,7 +55,6 @@ public class MapWindow {
 		initCloseListener();
 		showFrame();
 		checkForUpdates();
-		startExecutor();
 	}
 
 	private void initFrame() {
@@ -125,31 +117,9 @@ public class MapWindow {
 		application.checkForUpdatesSilently();
 	}
 
-	private void startExecutor() {
-		executor.scheduleAtFixedRate(new Runnable() {
-			@Override
-			public void run() {
-				if (mapViewer != null) {
-					mapViewer.repaint();
-				}
-			}
-		}, 20, 20, TimeUnit.MILLISECONDS);
-	}
-
 	public void dispose() {
 		clearWorld();
 		frame.dispose();
-		shutdownExecutor();
-	}
-
-	private void shutdownExecutor() {
-		executor.shutdown();
-		try {
-			executor.awaitTermination(1, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			Log.w("MapWindow executor took too long to shutdown ... forcing shutdown");
-			executor.shutdownNow();
-		}
 	}
 
 	private void clearWorld() {
@@ -321,6 +291,12 @@ public class MapWindow {
 	public void repaintBiomeLayer() {
 		if (map != null) {
 			map.repaintBiomeLayer();
+		}
+	}
+
+	public void tick() {
+		if (mapViewer != null) {
+			mapViewer.repaint();
 		}
 	}
 }
