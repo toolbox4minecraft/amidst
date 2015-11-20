@@ -35,7 +35,6 @@ public class Map {
 		this.zoom = zoom;
 		this.layerContainer = layerContainer;
 		this.layerContainer.reloadAllLayers(this);
-		safeAddStart(0, 0);
 	}
 
 	private void lockedDraw(MapDrawer drawer) {
@@ -101,12 +100,6 @@ public class Map {
 		long xFragmentCorner = CoordinateUtils.toFragmentCorner(xInWorld);
 		long yFragmentCorner = CoordinateUtils.toFragmentCorner(yInWorld);
 		lockedAddStart((int) xFragmentCorner, (int) yFragmentCorner);
-	}
-
-	private void safeAddStart(int startX, int startY) {
-		synchronized (mapLock) {
-			lockedAddStart(startX, startY);
-		}
 	}
 
 	public void safeDraw(MapDrawer drawer) {
