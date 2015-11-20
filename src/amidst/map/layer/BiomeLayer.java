@@ -31,23 +31,30 @@ public class BiomeLayer extends ImageLayer {
 	}
 
 	private void drawHighlightMode(Fragment fragment, int[] cache) {
-		for (int i = 0; i < getSquaredSize(); i++) {
-			if (!selectedBiomes[fragment.getBiomeData()[i]]) {
-				cache[i] = Util.deselectColor(getColor(fragment, i));
-			} else {
-				cache[i] = getColor(fragment, i);
+		for (int blockY = 0; blockY < getSize(); blockY++) {
+			for (int blockX = 0; blockX < getSize(); blockX++) {
+				int i = blockY * Fragment.BIOME_SIZE + blockX;
+				if (selectedBiomes[fragment.getBiomeAt(blockX, blockY)]) {
+					cache[i] = getColor(fragment, blockX, blockY);
+				} else {
+					cache[i] = Util.deselectColor(getColor(fragment, blockX,
+							blockY));
+				}
 			}
 		}
 	}
 
 	private void drawNormalMode(Fragment fragment, int[] cache) {
-		for (int i = 0; i < getSquaredSize(); i++) {
-			cache[i] = getColor(fragment, i);
+		for (int blockY = 0; blockY < getSize(); blockY++) {
+			for (int blockX = 0; blockX < getSize(); blockX++) {
+				int i = blockY * Fragment.BIOME_SIZE + blockX;
+				cache[i] = getColor(fragment, blockX, blockY);
+			}
 		}
 	}
 
-	private int getColor(Fragment fragment, int index) {
-		return Biome.biomes[fragment.getBiomeData()[index]].color;
+	private int getColor(Fragment fragment, int blockX, int blockY) {
+		return Biome.biomes[fragment.getBiomeAt(blockX, blockY)].color;
 	}
 
 	public boolean isBiomeSelected(int id) {

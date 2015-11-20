@@ -13,10 +13,6 @@ public abstract class ImageLayer extends Layer {
 		this.scale = Fragment.SIZE / (double) size;
 	}
 
-	protected int getSquaredSize() {
-		return size * size;
-	}
-
 	public float getAlpha() {
 		return 1;
 	}
