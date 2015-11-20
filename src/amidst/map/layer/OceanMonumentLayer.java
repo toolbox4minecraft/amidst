@@ -4,13 +4,10 @@ import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 import amidst.map.finder.FindingConsumer;
-import amidst.map.finder.OceanMonumentFinder;
 import amidst.map.object.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
 
 public class OceanMonumentLayer extends IconLayer {
-	private OceanMonumentFinder finder = new OceanMonumentFinder();
-
 	@Override
 	public boolean isVisible() {
 		return Options.instance.showOceanMonuments.get();
@@ -18,7 +15,7 @@ public class OceanMonumentLayer extends IconLayer {
 
 	@Override
 	public void generateMapObjects(Fragment fragment) {
-		finder.generateMapObjects(Options.instance.world, fragment.getCorner(),
+		Options.instance.world.getOceanMonuments(fragment.getCorner(),
 				createFindingConsumer(fragment));
 	}
 

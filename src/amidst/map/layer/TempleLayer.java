@@ -4,13 +4,10 @@ import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 import amidst.map.finder.FindingConsumer;
-import amidst.map.finder.TempleFinder;
 import amidst.map.object.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
 
 public class TempleLayer extends IconLayer {
-	private TempleFinder finder = new TempleFinder();
-
 	@Override
 	public boolean isVisible() {
 		return Options.instance.showTemples.get();
@@ -18,7 +15,7 @@ public class TempleLayer extends IconLayer {
 
 	@Override
 	public void generateMapObjects(Fragment fragment) {
-		finder.generateMapObjects(Options.instance.world, fragment.getCorner(),
+		Options.instance.world.getTemples(fragment.getCorner(),
 				createFindingConsumer(fragment));
 	}
 
