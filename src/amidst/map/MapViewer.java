@@ -42,16 +42,25 @@ public class MapViewer {
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			int notches = e.getWheelRotation();
 			Point mouse = getMousePositionFromEvent(e);
-			Widget widget = findWidget(mouse);
-			if (widget != null
-					&& widget.onMouseWheelMoved(
-							widget.translateXToWidgetCoordinates(mouse),
-							widget.translateYToWidgetCoordinates(mouse),
-							notches)) {
-				// noop
-			} else {
+			if (!mouseWheelMovedOnWidget(notches, mouse)) {
 				zoom.adjustZoom(mouse, notches);
 			}
+		}
+
+		private boolean mouseWheelMovedOnWidget(int notches, Point mouse) {
+			for (Widget widget : widgets) {
+				if (widget.isVisible() && widget.isInBounds(mouse)) {
+					if (widget != null
+							&& widget
+									.onMouseWheelMoved(
+											widget.translateXToWidgetCoordinates(mouse),
+											widget.translateYToWidgetCoordinates(mouse),
+											notches)) {
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		@Override
@@ -60,15 +69,24 @@ public class MapViewer {
 				return;
 			}
 			Point mouse = getMousePositionFromEvent(e);
-			Widget widget = findWidget(mouse);
-			if (widget != null
-					&& widget.onClick(
-							widget.translateXToWidgetCoordinates(mouse),
-							widget.translateYToWidgetCoordinates(mouse))) {
-				// noop
-			} else {
+			if (!mouseClickedOnWidget(mouse)) {
 				mouseClickedOnMap(mouse);
 			}
+		}
+
+		private boolean mouseClickedOnWidget(Point mouse) {
+			for (Widget widget : widgets) {
+				if (widget.isVisible() && widget.isInBounds(mouse)) {
+					if (widget != null
+							&& widget
+									.onClick(
+											widget.translateXToWidgetCoordinates(mouse),
+											widget.translateYToWidgetCoordinates(mouse))) {
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		@Override
@@ -86,16 +104,19 @@ public class MapViewer {
 		}
 
 		private boolean mousePressedOnWidget(MouseEvent e, Point mouse) {
-			Widget widget = findWidget(mouse);
-			if (widget != null
-					&& widget.onMousePressed(
-							widget.translateXToWidgetCoordinates(mouse),
-							widget.translateYToWidgetCoordinates(mouse))) {
-				mouseOwner = widget;
-				return true;
-			} else {
-				return false;
+			for (Widget widget : widgets) {
+				if (widget.isVisible() && widget.isInBounds(mouse)) {
+					if (widget != null
+							&& widget
+									.onMousePressed(
+											widget.translateXToWidgetCoordinates(mouse),
+											widget.translateYToWidgetCoordinates(mouse))) {
+						mouseOwner = widget;
+						return true;
+					}
+				}
 			}
+			return false;
 		}
 
 		@Override
@@ -159,15 +180,6 @@ public class MapViewer {
 		 */
 		private Point getMousePositionFromEvent(MouseEvent e) {
 			return e.getPoint();
-		}
-
-		private Widget findWidget(Point mouse) {
-			for (Widget widget : widgets) {
-				if (widget.isVisible() && widget.isInBounds(mouse)) {
-					return widget;
-				}
-			}
-			return null;
 		}
 	}
 

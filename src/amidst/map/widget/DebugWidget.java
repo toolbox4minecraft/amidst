@@ -68,6 +68,11 @@ public class DebugWidget extends Widget {
 	}
 
 	@Override
+	public boolean onMousePressed(int x, int y) {
+		return false;
+	}
+
+	@Override
 	protected boolean onVisibilityCheck() {
 		return Options.instance.showDebug.get();
 	}
