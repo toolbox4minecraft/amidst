@@ -3,60 +3,38 @@ package amidst.map.finder;
 import java.util.Arrays;
 import java.util.List;
 
-import amidst.logging.Log;
-import amidst.map.Fragment;
 import amidst.map.MapMarkers;
-import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 import amidst.version.VersionInfo;
 
 public class TempleFinder extends StructureFinder {
 	@Override
-	protected MapObject getMapObject() {
-		if (isSuccessful) {
-			Biome biome = getBiome();
-			if (validBiomes.contains(biome)) {
-				return createMapObject(biome,
-						xRelativeToFragmentAsChunkResolution << 4,
-						yRelativeToFragmentAsChunkResolution << 4);
-			} else {
-				return null;
-			}
-		} else {
-			return null;
-		}
+	protected boolean isValidLocation() {
+		return isSuccessful && isValidBiomeAtMiddleOfChunk();
 	}
 
-	private Biome getBiome() {
-		// This is a potential feature biome
-
-		// Since the structure-size that would be passed to
-		// MinecraftUtil.isValidBiome()
-		// is 0, we can use MinecraftUtil.getBiomeAt() here instead, which
-		// tells us what kind of
-		// structure it is.
-		return MinecraftUtil.getBiomeAt(middleOfChunkX, middleOfChunkY);
-	}
-
-	private MapObject createMapObject(Biome chunkBiome, int x, int y) {
+	@Override
+	protected MapMarkers getMapMarker() {
+		Biome chunkBiome = getBiomeAtMiddleOfChunk();
 		if (chunkBiome == Biome.swampland) {
-			return MapObject.fromFragmentCoordinatesAndFragment(
-					isVisiblePreference, MapMarkers.WITCH, x, y, fragment);
+			return MapMarkers.WITCH;
 		} else if (chunkBiome.name.contains("Jungle")) {
-			return MapObject.fromFragmentCoordinatesAndFragment(
-					isVisiblePreference, MapMarkers.JUNGLE, x, y, fragment);
+			return MapMarkers.JUNGLE;
 		} else if (chunkBiome.name.contains("Desert")) {
-			return MapObject.fromFragmentCoordinatesAndFragment(
-					isVisiblePreference, MapMarkers.DESERT, x, y, fragment);
+			return MapMarkers.DESERT;
 		} else {
-			Log.e("No known structure for this biome type. This might be an error.");
 			return null;
 		}
 	}
 
 	@Override
-	protected List<Biome> getValidBiomes() {
+	protected List<Biome> getValidBiomesForStructure() {
+		return null; // not used
+	}
+
+	@Override
+	protected List<Biome> getValidBiomesAtMiddleOfChunk() {
 		// @formatter:off
 		if (MinecraftUtil.getVersion().isAtLeast(VersionInfo.V1_4_2)) {
 			return Arrays.asList(
@@ -114,7 +92,7 @@ public class TempleFinder extends StructureFinder {
 	}
 
 	@Override
-	protected int getSize() {
-		return Fragment.SIZE >> 4;
+	protected int getStructureSize() {
+		return -1; // not used
 	}
 }

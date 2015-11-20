@@ -8,9 +8,8 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.preferences.BooleanPrefModel;
 
 public class MapObject {
-	public static MapObject fromFragmentCoordinatesAndFragment(
-			BooleanPrefModel isVisiblePreference, MapMarkers type,
-			CoordinatesInWorld coordinates, Fragment fragment) {
+	public static MapObject from(CoordinatesInWorld coordinates,
+			MapMarkers type, BooleanPrefModel isVisiblePreference) {
 		return new MapObject(isVisiblePreference, coordinates, type.getName(),
 				type.getImage());
 	}
@@ -19,16 +18,16 @@ public class MapObject {
 	public static MapObject fromFragmentCoordinatesAndFragment(
 			BooleanPrefModel isVisiblePreference, MapMarkers type,
 			int xInFragment, int yInFragment, Fragment fragment) {
-		return new MapObject(isVisiblePreference, fragment.getCorner().add(
-				xInFragment, yInFragment), type.getName(), type.getImage());
+		return from(fragment.getCorner().add(xInFragment, yInFragment), type,
+				isVisiblePreference);
 	}
 
 	@Deprecated
 	public static MapObject fromWorldCoordinates(
 			BooleanPrefModel isVisiblePreference, MapMarkers type,
 			int xInWorld, int yInWorld) {
-		return new MapObject(isVisiblePreference, CoordinatesInWorld.from(
-				xInWorld, yInWorld), type.getName(), type.getImage());
+		return from(CoordinatesInWorld.from(xInWorld, yInWorld), type,
+				isVisiblePreference);
 	}
 
 	private final BooleanPrefModel isVisiblePreference;

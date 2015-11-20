@@ -3,20 +3,25 @@ package amidst.map.finder;
 import java.util.List;
 import java.util.Random;
 
+import amidst.logging.Log;
 import amidst.map.Fragment;
+import amidst.map.MapMarkers;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
+import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.World;
 import amidst.preferences.BooleanPrefModel;
 
 public abstract class StructureFinder {
-	protected final List<Biome> validBiomes;
+	protected final List<Biome> validBiomesForStructure;
+	protected final List<Biome> validBiomesAtMiddleOfChunk;
 	protected final long magicNumberForSeed1;
 	protected final long magicNumberForSeed2;
 	protected final long magicNumberForSeed3;
 	protected final byte maxDistanceBetweenScatteredFeatures;
 	protected final byte minDistanceBetweenScatteredFeatures;
 	protected final int distanceBetweenScatteredFeaturesRange;
+	protected final int structureSize;
 	protected final int size;
 	protected final Random random;
 
@@ -32,14 +37,16 @@ public abstract class StructureFinder {
 	protected int middleOfChunkY;
 
 	public StructureFinder() {
-		validBiomes = getValidBiomes();
+		validBiomesForStructure = getValidBiomesForStructure();
+		validBiomesAtMiddleOfChunk = getValidBiomesAtMiddleOfChunk();
 		magicNumberForSeed1 = getMagicNumberForSeed1();
 		magicNumberForSeed2 = getMagicNumberForSeed2();
 		magicNumberForSeed3 = getMagicNumberForSeed3();
 		maxDistanceBetweenScatteredFeatures = getMaxDistanceBetweenScatteredFeatures();
 		minDistanceBetweenScatteredFeatures = getMinDistanceBetweenScatteredFeatures();
 		distanceBetweenScatteredFeaturesRange = getDistanceBetweenScatteredFeaturesRange();
-		size = getSize();
+		structureSize = getStructureSize();
+		size = Fragment.SIZE >> 4;
 		random = new Random();
 	}
 
@@ -62,20 +69,36 @@ public abstract class StructureFinder {
 
 	private void generateAt() {
 		chunkX = xRelativeToFragmentAsChunkResolution
-				+ fragment.getChunkXInWorld();
+				+ (int) fragment.getCorner().getXAsChunkResolution();
 		chunkY = yRelativeToFragmentAsChunkResolution
-				+ fragment.getChunkYInWorld();
-		MapObject mapObject = checkChunk();
-		if (mapObject != null) {
-			fragment.addObject(mapObject);
+				+ (int) fragment.getCorner().getYAsChunkResolution();
+		if (checkChunk()) {
+			MapObject mapObject = createMapObject();
+			if (mapObject != null) {
+				fragment.addObject(mapObject);
+			}
 		}
 	}
 
-	private MapObject checkChunk() {
+	private MapObject createMapObject() {
+		MapMarkers mapMarker = getMapMarker();
+		if (mapMarker == null) {
+			Log.e("No known structure for this biome type. This might be an error.");
+			return null;
+		} else {
+			return MapObject.from(
+					fragment.getCorner().add(
+							xRelativeToFragmentAsChunkResolution << 4,
+							yRelativeToFragmentAsChunkResolution << 4),
+					mapMarker, isVisiblePreference);
+		}
+	}
+
+	private boolean checkChunk() {
 		isSuccessful = isSuccessful();
 		middleOfChunkX = middleOfChunk(chunkX);
 		middleOfChunkY = middleOfChunk(chunkY);
-		return getMapObject();
+		return isValidLocation();
 	}
 
 	private boolean isSuccessful() {
@@ -116,9 +139,26 @@ public abstract class StructureFinder {
 		return value * 16 + 8;
 	}
 
-	protected abstract MapObject getMapObject();
+	protected boolean isValidBiomeAtMiddleOfChunk() {
+		return validBiomesAtMiddleOfChunk.contains(getBiomeAtMiddleOfChunk());
+	}
 
-	protected abstract List<Biome> getValidBiomes();
+	protected Biome getBiomeAtMiddleOfChunk() {
+		return MinecraftUtil.getBiomeAt(middleOfChunkX, middleOfChunkY);
+	}
+
+	protected boolean isValidBiomeForStructure() {
+		return MinecraftUtil.isValidBiome(middleOfChunkX, middleOfChunkY,
+				structureSize, validBiomesForStructure);
+	}
+
+	protected abstract boolean isValidLocation();
+
+	protected abstract MapMarkers getMapMarker();
+
+	protected abstract List<Biome> getValidBiomesForStructure();
+
+	protected abstract List<Biome> getValidBiomesAtMiddleOfChunk();
 
 	protected abstract int updateValue(int value);
 
@@ -132,5 +172,5 @@ public abstract class StructureFinder {
 
 	protected abstract byte getMinDistanceBetweenScatteredFeatures();
 
-	protected abstract int getSize();
+	protected abstract int getStructureSize();
 }

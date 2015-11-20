@@ -3,42 +3,22 @@ package amidst.map.finder;
 import java.util.Arrays;
 import java.util.List;
 
-import amidst.map.Fragment;
 import amidst.map.MapMarkers;
-import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
-import amidst.minecraft.MinecraftUtil;
 
 public class VillageFinder extends StructureFinder {
-	private static final int STRUCTURE_SIZE = 0;
-
 	@Override
-	protected MapObject getMapObject() {
-		if (isSuccessful) {
-			if (isValid()) {
-				return createMapObject(
-						xRelativeToFragmentAsChunkResolution << 4,
-						yRelativeToFragmentAsChunkResolution << 4);
-			} else {
-				return null;
-			}
-		} else {
-			return null;
-		}
-	}
-
-	private boolean isValid() {
-		return MinecraftUtil.isValidBiome(middleOfChunkX, middleOfChunkY,
-				STRUCTURE_SIZE, validBiomes);
-	}
-
-	private MapObject createMapObject(int x, int y) {
-		return MapObject.fromFragmentCoordinatesAndFragment(
-				isVisiblePreference, MapMarkers.VILLAGE, x, y, fragment);
+	protected boolean isValidLocation() {
+		return isSuccessful && isValidBiomeForStructure();
 	}
 
 	@Override
-	protected List<Biome> getValidBiomes() {
+	protected MapMarkers getMapMarker() {
+		return MapMarkers.VILLAGE;
+	}
+
+	@Override
+	protected List<Biome> getValidBiomesForStructure() {
 		// @formatter:off
 		return Arrays.asList(
 				Biome.plains,
@@ -46,6 +26,11 @@ public class VillageFinder extends StructureFinder {
 				Biome.savanna
 		);
 		// @formatter:on
+	}
+
+	@Override
+	protected List<Biome> getValidBiomesAtMiddleOfChunk() {
+		return null; // not used
 	}
 
 	@Override
@@ -81,7 +66,7 @@ public class VillageFinder extends StructureFinder {
 	}
 
 	@Override
-	protected int getSize() {
-		return Fragment.SIZE >> 4;
+	protected int getStructureSize() {
+		return 0;
 	}
 }

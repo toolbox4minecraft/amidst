@@ -3,64 +3,42 @@ package amidst.map.finder;
 import java.util.Arrays;
 import java.util.List;
 
-import amidst.map.Fragment;
 import amidst.map.MapMarkers;
-import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
-import amidst.minecraft.MinecraftUtil;
 
 public class OceanMonumentFinder extends StructureFinder {
-	// @formatter:off
-	// Not sure if the extended biomes count
-	private static final List<Biome> VALID_SURROUNDING_BIOMES = Arrays.asList(
-			Biome.ocean,
-			Biome.deepOcean,
-			Biome.frozenOcean,
-			Biome.river,
-			Biome.frozenRiver,
-			Biome.oceanM,
-			Biome.deepOceanM,
-			Biome.frozenOceanM,
-			Biome.riverM,
-			Biome.frozenRiverM
-	);
-	// @formatter:on
-
-	private static final int STRUCTURE_SIZE = 29;
-
 	@Override
-	protected MapObject getMapObject() {
-		if (isSuccessful) {
-			if (isValid()) {
-				return createMapObject(
-						xRelativeToFragmentAsChunkResolution << 4,
-						yRelativeToFragmentAsChunkResolution << 4);
-			} else {
-				return null;
-			}
-		} else {
-			return null;
-		}
-	}
-
-	private boolean isValid() {
-		// Note that getBiomeAt() is full-resolution biome data, while
-		// isValidBiome() is calculated using
-		// quarter-resolution biome data. This is identical to how Minecraft
-		// calculates it.
-		Biome biome = MinecraftUtil.getBiomeAt(middleOfChunkX, middleOfChunkY);
-		boolean isValid = MinecraftUtil.isValidBiome(middleOfChunkX,
-				middleOfChunkY, STRUCTURE_SIZE, VALID_SURROUNDING_BIOMES);
-		return validBiomes.contains(biome) && isValid;
-	}
-
-	private MapObject createMapObject(int x, int y) {
-		return MapObject.fromFragmentCoordinatesAndFragment(
-				isVisiblePreference, MapMarkers.OCEAN_MONUMENT, x, y, fragment);
+	protected boolean isValidLocation() {
+		return isSuccessful && isValidBiomeAtMiddleOfChunk()
+				&& isValidBiomeForStructure();
 	}
 
 	@Override
-	protected List<Biome> getValidBiomes() {
+	protected MapMarkers getMapMarker() {
+		return MapMarkers.OCEAN_MONUMENT;
+	}
+
+	@Override
+	protected List<Biome> getValidBiomesForStructure() {
+		// @formatter:off
+		// Not sure if the extended biomes count
+		return Arrays.asList(
+				Biome.ocean,
+				Biome.deepOcean,
+				Biome.frozenOcean,
+				Biome.river,
+				Biome.frozenRiver,
+				Biome.oceanM,
+				Biome.deepOceanM,
+				Biome.frozenOceanM,
+				Biome.riverM,
+				Biome.frozenRiverM
+		);
+		// @formatter:on
+	}
+
+	@Override
+	protected List<Biome> getValidBiomesAtMiddleOfChunk() {
 		// @formatter:off
 		// Not sure if the extended biomes count
 		return Arrays.asList(
@@ -104,7 +82,7 @@ public class OceanMonumentFinder extends StructureFinder {
 	}
 
 	@Override
-	protected int getSize() {
-		return Fragment.SIZE >> 4;
+	protected int getStructureSize() {
+		return 29;
 	}
 }
