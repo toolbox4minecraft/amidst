@@ -46,7 +46,6 @@ public class Fragment implements Iterable<Fragment> {
 
 	public static final int SIZE = 512;
 	public static final int SIZE_SHIFT = 9;
-	public static final int INITIAL_NUMBER_OF_OBJECTS_PER_FRAGMENT = 32;
 	public static final int BIOME_SIZE = SIZE >> 2;
 
 	// TODO: what is this? move it to another place?
@@ -133,16 +132,6 @@ public class Fragment implements Iterable<Fragment> {
 			}
 			alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
 			isLoaded = true;
-		}
-	}
-
-	public void repaintAllImageLayers() {
-		synchronized (loadLock) {
-			if (isLoaded) {
-				for (int i = 0; i < imageLayers.length; i++) {
-					lockedUpdateImage(i);
-				}
-			}
 		}
 	}
 
