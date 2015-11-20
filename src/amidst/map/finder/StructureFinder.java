@@ -20,8 +20,16 @@ public abstract class StructureFinder {
 	protected final int size;
 	protected final Random random;
 
-	private World world;
-	private BooleanPrefModel isVisiblePreference;
+	protected World world;
+	protected BooleanPrefModel isVisiblePreference;
+	protected Fragment fragment;
+	protected int xRelativeToFragmentAsChunkResolution;
+	protected int yRelativeToFragmentAsChunkResolution;
+	protected int chunkX;
+	protected int chunkY;
+	protected boolean isSuccessful;
+	protected int middleOfChunkX;
+	protected int middleOfChunkY;
 
 	public StructureFinder() {
 		validBiomes = getValidBiomes();
@@ -44,38 +52,39 @@ public abstract class StructureFinder {
 			BooleanPrefModel isVisiblePreference, Fragment fragment) {
 		this.world = world;
 		this.isVisiblePreference = isVisiblePreference;
-		for (int x = 0; x < size; x++) {
-			for (int y = 0; y < size; y++) {
-				generateAt(fragment, x, y);
+		this.fragment = fragment;
+		for (xRelativeToFragmentAsChunkResolution = 0; xRelativeToFragmentAsChunkResolution < size; xRelativeToFragmentAsChunkResolution++) {
+			for (yRelativeToFragmentAsChunkResolution = 0; yRelativeToFragmentAsChunkResolution < size; yRelativeToFragmentAsChunkResolution++) {
+				generateAt();
 			}
 		}
 	}
 
-	private void generateAt(Fragment fragment, int x, int y) {
-		int chunkX = x + fragment.getChunkXInWorld();
-		int chunkY = y + fragment.getChunkYInWorld();
-		MapObject mapObject = checkChunk(x, y, chunkX, chunkY, fragment);
+	private void generateAt() {
+		chunkX = xRelativeToFragmentAsChunkResolution
+				+ fragment.getChunkXInWorld();
+		chunkY = yRelativeToFragmentAsChunkResolution
+				+ fragment.getChunkYInWorld();
+		MapObject mapObject = checkChunk();
 		if (mapObject != null) {
 			fragment.addObject(mapObject);
 		}
 	}
 
-	private MapObject checkChunk(int x, int y, int chunkX, int chunkY,
-			Fragment fragment) {
-		boolean successful = isSuccessful(chunkX, chunkY);
-		int middleOfChunkX = middleOfChunk(chunkX);
-		int middleOfChunkY = middleOfChunk(chunkY);
-		return getMapObject(isVisiblePreference, successful, middleOfChunkX,
-				middleOfChunkY, x, y, fragment);
+	private MapObject checkChunk() {
+		isSuccessful = isSuccessful();
+		middleOfChunkX = middleOfChunk(chunkX);
+		middleOfChunkY = middleOfChunk(chunkY);
+		return getMapObject();
 	}
 
-	private boolean isSuccessful(int chunkX, int chunkY) {
+	private boolean isSuccessful() {
 		int n = getInitialValue(chunkX);
 		int i1 = getInitialValue(chunkY);
 		updateSeed(n, i1);
 		n = updateValue(n);
 		i1 = updateValue(i1);
-		return isSuccessful(chunkX, chunkY, n, i1);
+		return isSuccessful(n, i1);
 	}
 
 	private int getInitialValue(int value) {
@@ -99,7 +108,7 @@ public abstract class StructureFinder {
 				+ world.getSeed() + magicNumberForSeed3;
 	}
 
-	private boolean isSuccessful(int chunkX, int chunkY, int n, int i1) {
+	private boolean isSuccessful(int n, int i1) {
 		return chunkX == n && chunkY == i1;
 	}
 
@@ -107,10 +116,7 @@ public abstract class StructureFinder {
 		return value * 16 + 8;
 	}
 
-	protected abstract MapObject getMapObject(
-			BooleanPrefModel isVisiblePreference, boolean isSuccessful,
-			int middleOfChunkX, int middleOfChunkY, int x, int y,
-			Fragment fragment);
+	protected abstract MapObject getMapObject();
 
 	protected abstract List<Biome> getValidBiomes();
 

@@ -9,19 +9,17 @@ import amidst.map.MapMarkers;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
-import amidst.preferences.BooleanPrefModel;
 import amidst.version.VersionInfo;
 
 public class TempleFinder extends StructureFinder {
 	@Override
-	protected MapObject getMapObject(BooleanPrefModel isVisiblePreference,
-			boolean isSuccessful, int middleOfChunkX, int middleOfChunkY,
-			int x, int y, Fragment fragment) {
+	protected MapObject getMapObject() {
 		if (isSuccessful) {
-			Biome biome = getBiome(middleOfChunkX, middleOfChunkY);
+			Biome biome = getBiome();
 			if (validBiomes.contains(biome)) {
-				return createMapObject(isVisiblePreference, biome, x << 4,
-						y << 4, fragment);
+				return createMapObject(biome,
+						xRelativeToFragmentAsChunkResolution << 4,
+						yRelativeToFragmentAsChunkResolution << 4);
 			} else {
 				return null;
 			}
@@ -30,7 +28,7 @@ public class TempleFinder extends StructureFinder {
 		}
 	}
 
-	private Biome getBiome(int middleOfChunkX, int middleOfChunkY) {
+	private Biome getBiome() {
 		// This is a potential feature biome
 
 		// Since the structure-size that would be passed to
@@ -41,8 +39,7 @@ public class TempleFinder extends StructureFinder {
 		return MinecraftUtil.getBiomeAt(middleOfChunkX, middleOfChunkY);
 	}
 
-	private MapObject createMapObject(BooleanPrefModel isVisiblePreference,
-			Biome chunkBiome, int x, int y, Fragment fragment) {
+	private MapObject createMapObject(Biome chunkBiome, int x, int y) {
 		if (chunkBiome == Biome.swampland) {
 			return MapObject.fromFragmentCoordinatesAndFragment(
 					isVisiblePreference, MapMarkers.WITCH, x, y, fragment);

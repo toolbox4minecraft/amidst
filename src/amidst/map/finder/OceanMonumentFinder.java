@@ -8,7 +8,6 @@ import amidst.map.MapMarkers;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
-import amidst.preferences.BooleanPrefModel;
 
 public class OceanMonumentFinder extends StructureFinder {
 	// @formatter:off
@@ -30,13 +29,12 @@ public class OceanMonumentFinder extends StructureFinder {
 	private static final int STRUCTURE_SIZE = 29;
 
 	@Override
-	protected MapObject getMapObject(BooleanPrefModel isVisiblePreference,
-			boolean isSuccessful, int middleOfChunkX, int middleOfChunkY,
-			int x, int y, Fragment fragment) {
+	protected MapObject getMapObject() {
 		if (isSuccessful) {
-			if (isValid(middleOfChunkX, middleOfChunkY)) {
-				return createMapObject(isVisiblePreference, x << 4, y << 4,
-						fragment);
+			if (isValid()) {
+				return createMapObject(
+						xRelativeToFragmentAsChunkResolution << 4,
+						yRelativeToFragmentAsChunkResolution << 4);
 			} else {
 				return null;
 			}
@@ -45,7 +43,7 @@ public class OceanMonumentFinder extends StructureFinder {
 		}
 	}
 
-	private boolean isValid(int middleOfChunkX, int middleOfChunkY) {
+	private boolean isValid() {
 		// Note that getBiomeAt() is full-resolution biome data, while
 		// isValidBiome() is calculated using
 		// quarter-resolution biome data. This is identical to how Minecraft
@@ -56,8 +54,7 @@ public class OceanMonumentFinder extends StructureFinder {
 		return validBiomes.contains(biome) && isValid;
 	}
 
-	private MapObject createMapObject(BooleanPrefModel isVisiblePreference,
-			int x, int y, Fragment fragment) {
+	private MapObject createMapObject(int x, int y) {
 		return MapObject.fromFragmentCoordinatesAndFragment(
 				isVisiblePreference, MapMarkers.OCEAN_MONUMENT, x, y, fragment);
 	}
