@@ -52,9 +52,11 @@ public class Fragment implements Iterable<Fragment> {
 
 	private Object loadLock = new Object();
 
-	private ImageLayer[] imageLayers;
 	private IconLayer[] iconLayers;
+
+	private ImageLayer[] imageLayers;
 	private BufferedImage[] images;
+	private boolean[] repaintImage;
 
 	private final short[] biomeData = new short[BIOME_SIZE * BIOME_SIZE];
 
@@ -81,11 +83,13 @@ public class Fragment implements Iterable<Fragment> {
 
 	private void initImages() {
 		this.images = new BufferedImage[imageLayers.length];
+		this.repaintImage = new boolean[imageLayers.length];
 		for (ImageLayer imageLayer : imageLayers) {
 			int layerId = imageLayer.getLayerId();
 			int layerSize = imageLayer.getSize();
 			images[layerId] = new BufferedImage(layerSize, layerSize,
 					BufferedImage.TYPE_INT_ARGB);
+			repaintImage[layerId] = true;
 		}
 	}
 
@@ -115,33 +119,36 @@ public class Fragment implements Iterable<Fragment> {
 
 	public void load() {
 		synchronized (loadLock) {
-			if (isInitialized && !isLoaded) {
-				int[] data = MinecraftUtil.getBiomeData(xInWorld >> 2,
-						yInWorld >> 2, BIOME_SIZE, BIOME_SIZE, true);
-				for (int i = 0; i < BIOME_SIZE * BIOME_SIZE; i++) {
-					biomeData[i] = (short) data[i];
+			if (isInitialized) {
+				if (!isLoaded) {
+					int[] data = MinecraftUtil.getBiomeData(xInWorld >> 2,
+							yInWorld >> 2, BIOME_SIZE, BIOME_SIZE, true);
+					for (int i = 0; i < BIOME_SIZE * BIOME_SIZE; i++) {
+						biomeData[i] = (short) data[i];
+					}
+					for (int i = 0; i < iconLayers.length; i++) {
+						iconLayers[i].generateMapObjects(this);
+					}
+					alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
 				}
 				for (int i = 0; i < imageLayers.length; i++) {
-					lockedUpdateImage(i);
+					if (repaintImage[i]) {
+						repaintImage[i] = false;
+						updateImage(i);
+					}
 				}
-				for (int i = 0; i < iconLayers.length; i++) {
-					iconLayers[i].generateMapObjects(this);
-				}
-				alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
 				isLoaded = true;
 			}
 		}
 	}
 
-	public void repaintImageLayer(int layerId) {
-		synchronized (loadLock) {
-			if (isLoaded) {
-				lockedUpdateImage(layerId);
-			}
+	public void invalidateImageLayer(int layerId) {
+		if (isLoaded) {
+			repaintImage[layerId] = true;
 		}
 	}
 
-	private void lockedUpdateImage(int layerId) {
+	private void updateImage(int layerId) {
 		imageLayers[layerId].drawToCache(this, IMAGE_CACHE);
 		int layerSize = imageLayers[layerId].getSize();
 		images[layerId].setRGB(0, 0, layerSize, layerSize, IMAGE_CACHE, 0,

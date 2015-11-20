@@ -9,7 +9,8 @@ public class FragmentManager {
 	private FragmentCache cache;
 
 	public FragmentManager(LayerContainer layerContainer) {
-		this.cache = new FragmentCache(layerContainer, fragmentQueue);
+		this.cache = new FragmentCache(layerContainer, fragmentQueue,
+				requestQueue);
 	}
 
 	public Fragment requestFragment(int x, int y) {
@@ -43,7 +44,7 @@ public class FragmentManager {
 	public void reset() {
 		requestQueue.clear();
 		fragmentQueue.clear();
-		cache.resetAllFragments();
+		cache.resetAll();
 	}
 
 	public int getFreeFragmentQueueSize() {
@@ -56,5 +57,9 @@ public class FragmentManager {
 
 	public int getCacheSize() {
 		return cache.size();
+	}
+
+	public void reloadAll() {
+		cache.reloadAll();
 	}
 }

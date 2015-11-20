@@ -267,8 +267,9 @@ public class Map {
 	private void repaintImageLayer(int id) {
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
-				fragment.repaintImageLayer(id);
+				fragment.invalidateImageLayer(id);
 			}
+			fragmentManager.reloadAll();
 		}
 	}
 
