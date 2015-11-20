@@ -228,12 +228,13 @@ public class Fragment implements Iterable<Fragment> {
 	public int getBiomeAt(CoordinatesInWorld coordinates) {
 		int blockX = (int) coordinates.getXRelativeToFragment();
 		int blockY = (int) coordinates.getYRelativeToFragment();
-		return getBiomeAt(blockX, blockY);
+		int index = (blockY >> 2) * Fragment.BIOME_SIZE + (blockX >> 2);
+		return biomeData[index];
 	}
 
 	// TODO: use longs?
-	public int getBiomeAt(int blockX, int blockY) {
-		int index = (blockY >> 2) * Fragment.BIOME_SIZE + (blockX >> 2);
+	public int getBiomeAtUsingBlockCoordinates(int blockX, int blockY) {
+		int index = blockY * Fragment.BIOME_SIZE + blockX;
 		return biomeData[index];
 	}
 

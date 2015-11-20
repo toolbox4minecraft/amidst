@@ -34,7 +34,8 @@ public class BiomeLayer extends ImageLayer {
 		for (int blockY = 0; blockY < getSize(); blockY++) {
 			for (int blockX = 0; blockX < getSize(); blockX++) {
 				int i = blockY * Fragment.BIOME_SIZE + blockX;
-				if (selectedBiomes[fragment.getBiomeAt(blockX, blockY)]) {
+				if (selectedBiomes[fragment.getBiomeAtUsingBlockCoordinates(
+						blockX, blockY)]) {
 					cache[i] = getColor(fragment, blockX, blockY);
 				} else {
 					cache[i] = Util.deselectColor(getColor(fragment, blockX,
@@ -54,7 +55,8 @@ public class BiomeLayer extends ImageLayer {
 	}
 
 	private int getColor(Fragment fragment, int blockX, int blockY) {
-		return Biome.biomes[fragment.getBiomeAt(blockX, blockY)].color;
+		return Biome.biomes[fragment.getBiomeAtUsingBlockCoordinates(blockX,
+				blockY)].color;
 	}
 
 	public boolean isBiomeSelected(int id) {
