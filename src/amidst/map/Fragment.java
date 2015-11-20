@@ -133,7 +133,6 @@ public class Fragment implements Iterable<Fragment> {
 	private void repaintInvalidatedImages(int[] imageCache) {
 		for (int i = 0; i < imageLayers.length; i++) {
 			if (repaintImage[i]) {
-				repaintImage[i] = false;
 				repaintImage(i, imageCache);
 			}
 		}
