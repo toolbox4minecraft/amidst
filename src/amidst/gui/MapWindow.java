@@ -167,11 +167,22 @@ public class MapWindow {
 	private void initWorld() {
 		map = new Map(application.getFragmentManager(), mapZoom,
 				application.getLayerContainer());
-		mapViewer = new MapViewer(mapMovement, mapZoom, application.getWorld(),
-				map);
+		mapViewer = createMapViewer();
 		menuBar.enableMapMenu();
-		contentPane.add(mapViewer.getPanel(), BorderLayout.CENTER);
+	}
+
+	/**
+	 * This ensure that the instance variable mapViewer it assigned AFTER
+	 * frame.validate() is called. This is important, because the executor will
+	 * draw the new mapViewer as soon as it is assigned to the instance
+	 * variable.
+	 */
+	private MapViewer createMapViewer() {
+		MapViewer result = new MapViewer(mapMovement, mapZoom,
+				application.getWorld(), map);
+		contentPane.add(result.getPanel(), BorderLayout.CENTER);
 		frame.validate();
+		return result;
 	}
 
 	public String askForSeed() {
