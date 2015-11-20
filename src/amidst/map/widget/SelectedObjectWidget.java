@@ -27,8 +27,8 @@ public class SelectedObjectWidget extends Widget {
 		MapObject selectedObject = map.getSelectedMapObject();
 		if (selectedObject != null) {
 			message = selectedObject.getName() + " ["
-					+ selectedObject.getXInWorld() + ", "
-					+ selectedObject.getYInWorld() + "]";
+					+ selectedObject.getCoordinates().getX() + ", "
+					+ selectedObject.getCoordinates().getY() + "]";
 			icon = selectedObject.getImage();
 		}
 

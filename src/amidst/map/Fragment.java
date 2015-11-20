@@ -240,36 +240,6 @@ public class Fragment implements Iterable<Fragment> {
 		return corner;
 	}
 
-	@Deprecated
-	public int getXInWorld() {
-		return (int) corner.getX();
-	}
-
-	@Deprecated
-	public int getYInWorld() {
-		return (int) corner.getY();
-	}
-
-	@Deprecated
-	public int getChunkXInWorld() {
-		return (int) corner.getXAsChunkResolution();
-	}
-
-	@Deprecated
-	public int getChunkYInWorld() {
-		return (int) corner.getYAsChunkResolution();
-	}
-
-	@Deprecated
-	public int getFragmentXInWorld() {
-		return (int) corner.getXAsFragmentResolution();
-	}
-
-	@Deprecated
-	public int getFragmentYInWorld() {
-		return (int) corner.getYAsFragmentResolution();
-	}
-
 	public boolean isEndOfLine() {
 		return rightFragment == null;
 	}

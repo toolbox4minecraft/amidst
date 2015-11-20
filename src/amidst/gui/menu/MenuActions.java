@@ -78,8 +78,8 @@ public class MenuActions {
 				"Select Stronghold:", application.getLayerContainer()
 						.getStrongholdLayer().getStrongholds());
 		if (stronghold != null) {
-			mapWindow.moveMapToCoordinates(stronghold.getXInFragment(),
-					stronghold.getYInFragment());
+			mapWindow.moveMapToCoordinates(stronghold.getCoordinates().getX(),
+					stronghold.getCoordinates().getY());
 		}
 	}
 

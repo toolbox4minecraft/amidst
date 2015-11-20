@@ -12,6 +12,7 @@ import amidst.map.MapMarkers;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
+import amidst.minecraft.world.CoordinatesInWorld;
 
 public class SpawnLayer extends IconLayer {
 	// @formatter:off
@@ -48,8 +49,9 @@ public class SpawnLayer extends IconLayer {
 	private void initSpawnObject() {
 		Point spawnCenter = getSpawnCenterInWorldCoordinates();
 		if (spawnCenter != null) {
-			spawn = MapObject.fromWorldCoordinates(Options.instance.showSpawn,
-					MapMarkers.SPAWN, spawnCenter.x, spawnCenter.y);
+			spawn = MapObject.from(
+					CoordinatesInWorld.from(spawnCenter.x, spawnCenter.y),
+					MapMarkers.SPAWN, Options.instance.showSpawn);
 		} else {
 			Log.debug("Unable to find spawn biome.");
 			spawn = null;

@@ -268,23 +268,25 @@ public class MapDrawer {
 
 	private void drawObject(MapObject mapObject, double invZoom) {
 		if (mapObject.isVisible()) {
-			int width = mapObject.getWidth();
-			int height = mapObject.getHeight();
+			BufferedImage image = mapObject.getImage();
+			int width = image.getWidth();
+			int height = image.getHeight();
 			if (map.getSelectedMapObject() == mapObject) {
 				width *= 1.5;
 				height *= 1.5;
 			}
 			initMapObjectDrawMatrix(mapObject, invZoom);
 			g2d.setTransform(mapObjectDrawMatrix);
-			g2d.drawImage(mapObject.getImage(), -(width >> 1), -(height >> 1),
-					width, height, null);
+			g2d.drawImage(image, -(width >> 1), -(height >> 1), width, height,
+					null);
 		}
 	}
 
 	private void initMapObjectDrawMatrix(MapObject mapObject, double invZoom) {
 		mapObjectDrawMatrix.setTransform(layerDrawMatrix);
-		mapObjectDrawMatrix.translate(mapObject.getXInFragment(),
-				mapObject.getYInFragment());
+		mapObjectDrawMatrix.translate(mapObject.getCoordinates()
+				.getXRelativeToFragment(), mapObject.getCoordinates()
+				.getYRelativeToFragment());
 		mapObjectDrawMatrix.scale(invZoom, invZoom);
 	}
 

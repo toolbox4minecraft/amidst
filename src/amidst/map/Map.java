@@ -161,9 +161,11 @@ public class Map {
 		return closestObject;
 	}
 
+	// TODO: use longs?
 	private Point getPositionOnScreen(double x, double y, MapObject mapObject) {
-		Point result = new Point(mapObject.getXInFragment(),
-				mapObject.getYInFragment());
+		Point result = new Point((int) mapObject.getCoordinates()
+				.getXRelativeToFragment(), (int) mapObject.getCoordinates()
+				.getYRelativeToFragment());
 		result.x = zoom.worldToScreen(result.x);
 		result.y = zoom.worldToScreen(result.y);
 		result.x += x;

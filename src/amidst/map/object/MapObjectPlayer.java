@@ -9,8 +9,8 @@ public class MapObjectPlayer extends MapObject {
 	private Player player;
 
 	public MapObjectPlayer(BooleanPrefModel isVisiblePreference, Player player) {
-		super(isVisiblePreference, player.getCoordinates(), player
-				.getPlayerName(), player.getSkin());
+		super(player.getCoordinates(), player
+				.getPlayerName(), player.getSkin(), isVisiblePreference);
 		this.player = player;
 	}
 

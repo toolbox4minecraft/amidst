@@ -51,12 +51,16 @@ public class GridLayer extends LiveLayer {
 		return (int) (.25 / getMap().getZoom());
 	}
 
+	// TODO: use longs?
 	private int getGridX(Fragment fragment, int stride) {
-		return fragment.getFragmentXInWorld() % (stride + 1);
+		return (int) fragment.getCorner().getXAsFragmentResolution()
+				% (stride + 1);
 	}
 
+	// TODO: use longs?
 	private int getGridY(Fragment fragment, int stride) {
-		return fragment.getFragmentYInWorld() % (stride + 1);
+		return (int) fragment.getCorner().getYAsFragmentResolution()
+				% (stride + 1);
 	}
 
 	private void drawGridLines(Graphics2D g2d, int stride, int gridX, int gridY) {
@@ -86,9 +90,9 @@ public class GridLayer extends LiveLayer {
 
 	private void updateText(Fragment fragment) {
 		textBuffer.setLength(0);
-		textBuffer.append(fragment.getChunkXInWorld() << 4);
+		textBuffer.append(fragment.getCorner().getXAsChunkResolution() << 4);
 		textBuffer.append(", ");
-		textBuffer.append(fragment.getChunkYInWorld() << 4);
+		textBuffer.append(fragment.getCorner().getYAsChunkResolution() << 4);
 		textBuffer.getChars(0, textBuffer.length(), textCache, 0);
 	}
 

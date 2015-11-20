@@ -12,6 +12,7 @@ import amidst.map.MapMarkers;
 import amidst.map.object.MapObject;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
+import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.version.VersionInfo;
 
 public class StrongholdLayer extends IconLayer {
@@ -113,8 +114,8 @@ public class StrongholdLayer extends IconLayer {
 	}
 
 	private MapObject createMapObject(int x, int y) {
-		return MapObject.fromWorldCoordinates(Options.instance.showStrongholds,
-				MapMarkers.STRONGHOLD, x, y);
+		return MapObject.from(CoordinatesInWorld.from(x, y),
+				MapMarkers.STRONGHOLD, Options.instance.showStrongholds);
 	}
 
 	private Point findStronghold(List<Biome> validBiomes, int x, int y) {

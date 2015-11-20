@@ -35,9 +35,10 @@ public class SlimeLayer extends ImageLayer {
 		return getNextValue();
 	}
 
+	// TODO: use longs?
 	private void updateSeed(Fragment fragment, int x, int y) {
-		int xPosition = fragment.getChunkXInWorld() + x;
-		int yPosition = fragment.getChunkYInWorld() + y;
+		int xPosition = (int) fragment.getCorner().getXAsChunkResolution() + x;
+		int yPosition = (int) fragment.getCorner().getYAsChunkResolution() + y;
 		random.setSeed(getSeed(xPosition, yPosition));
 	}
 
