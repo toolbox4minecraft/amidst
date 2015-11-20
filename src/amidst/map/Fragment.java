@@ -109,6 +109,8 @@ public class Fragment implements Iterable<Fragment> {
 		belowFragment = null;
 	}
 
+	// TODO: move this to the class FragmentLoader
+	@Deprecated
 	public void load(int[] imageCache) {
 		synchronized (loadLock) {
 			if (isInitialized) {
@@ -168,6 +170,8 @@ public class Fragment implements Iterable<Fragment> {
 		alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
 	}
 
+	// TODO: move this to the class FragmentLoader
+	@Deprecated
 	public void invalidateImageLayer(int layerId) {
 		if (isLoaded) {
 			repaintImage[layerId] = true;

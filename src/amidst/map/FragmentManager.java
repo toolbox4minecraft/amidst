@@ -6,13 +6,13 @@ public class FragmentManager {
 	private ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<Fragment>();
 	private ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<Fragment>();
 
-	private int[] imageCache = new int[Fragment.SIZE * Fragment.SIZE];
-
 	private FragmentCache cache;
+	private FragmentLoader loader;
 
 	public FragmentManager(LayerContainer layerContainer) {
 		this.cache = new FragmentCache(layerContainer, availableQueue,
 				loadingQueue);
+		this.loader = new FragmentLoader(loadingQueue);
 	}
 
 	public Fragment requestFragment(int x, int y) {
@@ -34,13 +34,7 @@ public class FragmentManager {
 	}
 
 	public void tick() {
-		processRequestQueue();
-	}
-
-	private void processRequestQueue() {
-		while (!loadingQueue.isEmpty()) {
-			loadingQueue.poll().load(imageCache);
-		}
+		loader.processRequestQueue();
 	}
 
 	public void reset() {
