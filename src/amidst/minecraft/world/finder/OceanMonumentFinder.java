@@ -9,7 +9,8 @@ import amidst.minecraft.Biome;
 public class OceanMonumentFinder extends StructureFinder {
 	@Override
 	protected boolean isValidLocation() {
-		return isValidBiomeAtMiddleOfChunk() && isValidBiomeForStructure();
+		return isSuccessful() && isValidBiomeAtMiddleOfChunk()
+				&& isValidBiomeForStructure();
 	}
 
 	@Override

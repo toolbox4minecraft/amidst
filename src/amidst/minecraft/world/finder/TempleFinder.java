@@ -11,7 +11,7 @@ import amidst.version.VersionInfo;
 public class TempleFinder extends StructureFinder {
 	@Override
 	protected boolean isValidLocation() {
-		return isValidBiomeAtMiddleOfChunk();
+		return isSuccessful() && isValidBiomeAtMiddleOfChunk();
 	}
 
 	@Override

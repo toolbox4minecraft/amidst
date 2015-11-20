@@ -71,10 +71,9 @@ public abstract class StructureFinder {
 				+ (int) corner.getXAsChunkResolution();
 		chunkY = yRelativeToFragmentAsChunkResolution
 				+ (int) corner.getYAsChunkResolution();
-		boolean isSuccessful = isSuccessful();
 		middleOfChunkX = middleOfChunk(chunkX);
 		middleOfChunkY = middleOfChunk(chunkY);
-		if (isSuccessful && isValidLocation()) {
+		if (isValidLocation()) {
 			MapMarkers mapMarker = getMapMarker();
 			if (mapMarker == null) {
 				Log.e("No known structure for this biome type. This might be an error.");
@@ -86,7 +85,7 @@ public abstract class StructureFinder {
 		}
 	}
 
-	private boolean isSuccessful() {
+	protected boolean isSuccessful() {
 		int n = getInitialValue(chunkX);
 		int i1 = getInitialValue(chunkY);
 		updateSeed(n, i1);
