@@ -9,7 +9,7 @@ import amidst.minecraft.Biome;
 public class VillageFinder extends StructureFinder {
 	@Override
 	protected boolean isValidLocation() {
-		return isSuccessful && isValidBiomeForStructure();
+		return isValidBiomeForStructure();
 	}
 
 	@Override

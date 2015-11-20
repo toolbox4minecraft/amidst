@@ -24,16 +24,15 @@ public abstract class StructureFinder {
 	protected final int size;
 	protected final Random random;
 
-	protected World world;
-	protected CoordinatesInWorld corner;
+	private World world;
+	private CoordinatesInWorld corner;
 	private FindingConsumer consumer;
-	protected int xRelativeToFragmentAsChunkResolution;
-	protected int yRelativeToFragmentAsChunkResolution;
-	protected int chunkX;
-	protected int chunkY;
-	protected boolean isSuccessful;
-	protected int middleOfChunkX;
-	protected int middleOfChunkY;
+	private int xRelativeToFragmentAsChunkResolution;
+	private int yRelativeToFragmentAsChunkResolution;
+	private int chunkX;
+	private int chunkY;
+	private int middleOfChunkX;
+	private int middleOfChunkY;
 
 	public StructureFinder() {
 		validBiomesForStructure = getValidBiomesForStructure();
@@ -66,12 +65,16 @@ public abstract class StructureFinder {
 		}
 	}
 
+	// TODO: use longs?
 	private void generateAt() {
 		chunkX = xRelativeToFragmentAsChunkResolution
 				+ (int) corner.getXAsChunkResolution();
 		chunkY = yRelativeToFragmentAsChunkResolution
 				+ (int) corner.getYAsChunkResolution();
-		if (checkChunk()) {
+		boolean isSuccessful = isSuccessful();
+		middleOfChunkX = middleOfChunk(chunkX);
+		middleOfChunkY = middleOfChunk(chunkY);
+		if (isSuccessful && isValidLocation()) {
 			MapMarkers mapMarker = getMapMarker();
 			if (mapMarker == null) {
 				Log.e("No known structure for this biome type. This might be an error.");
@@ -81,13 +84,6 @@ public abstract class StructureFinder {
 						yRelativeToFragmentAsChunkResolution << 4), mapMarker);
 			}
 		}
-	}
-
-	private boolean checkChunk() {
-		isSuccessful = isSuccessful();
-		middleOfChunkX = middleOfChunk(chunkX);
-		middleOfChunkY = middleOfChunk(chunkY);
-		return isValidLocation();
 	}
 
 	private boolean isSuccessful() {
