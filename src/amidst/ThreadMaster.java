@@ -9,28 +9,26 @@ import java.util.concurrent.TimeUnit;
 public class ThreadMaster {
 	private Application application;
 
-	private ScheduledExecutorService mainLoop;
+	private ScheduledExecutorService repainter;
 	private ScheduledExecutorService fragmentLoader;
 	private ExecutorService skinLoader;
 
 	public ThreadMaster(Application application) {
 		this.application = application;
-		initMainLoop();
+		initRepainter();
 		initFragmentLoader();
 		initSkinLoader();
 		dummyGUIThread();
-		startMainLoop();
+		startRepainter();
 		startFragmentLoader();
 	}
 
 	/**
-	 * The main loop is responsible to constantly redraw the map in the
-	 * mapViewer. It is also the only thread that is allowed to alter and access
-	 * the fragment graph. Note that other thread can modify individual
-	 * fragments.
+	 * The main loop is responsible to constantly repaint the map in the
+	 * mapViewer.
 	 */
-	private void initMainLoop() {
-		mainLoop = Executors
+	private void initRepainter() {
+		repainter = Executors
 				.newSingleThreadScheduledExecutor(new ThreadFactory() {
 					@Override
 					public Thread newThread(Runnable r) {
@@ -80,16 +78,19 @@ public class ThreadMaster {
 	/**
 	 * This is only a dummy method to remind the programmer that there is still
 	 * another thread. When the application receives input from the GUI, the
-	 * action is executed in the event thread of the GUI framework.
+	 * action is executed in the event thread of the GUI framework (AWT/Swing).
+	 * Also, the actual repainting is triggered in this thread. Thus, it is the
+	 * only thread that is allowed to alter and access the fragment graph. Note
+	 * that other threads can modify individual fragments.
 	 */
 	private void dummyGUIThread() {
 	}
 
-	private void startMainLoop() {
-		mainLoop.scheduleAtFixedRate(new Runnable() {
+	private void startRepainter() {
+		repainter.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
-				application.tickMainLoop();
+				application.tickRepainter();
 			}
 		}, 0, 20, TimeUnit.MILLISECONDS);
 	}

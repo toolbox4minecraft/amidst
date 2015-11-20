@@ -184,7 +184,7 @@ public class Application {
 		});
 	}
 
-	public void tickMainLoop() {
+	public void tickRepainter() {
 		if (mapWindow != null) {
 			mapWindow.tick();
 		}
