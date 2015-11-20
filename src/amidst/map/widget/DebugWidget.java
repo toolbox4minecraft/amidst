@@ -32,11 +32,11 @@ public class DebugWidget extends Widget {
 	private List<String> getPanelLines(FragmentManager fragmentManager) {
 		List<String> panelLines = new ArrayList<String>();
 		panelLines.add("Fragment Manager:");
-		panelLines.add("Pool Size: " + fragmentManager.getCacheSize());
-		panelLines.add("Free Queue Size: "
-				+ fragmentManager.getFreeFragmentQueueSize());
-		panelLines.add("Request Queue Size: "
-				+ fragmentManager.getRequestQueueSize());
+		panelLines.add("Cache Size: " + fragmentManager.getCacheSize());
+		panelLines.add("Available Queue Size: "
+				+ fragmentManager.getAvailableQueueSize());
+		panelLines.add("Loading Queue Size: "
+				+ fragmentManager.getLoadingQueueSize());
 		panelLines.add("");
 		panelLines.add("Map Viewer:");
 		panelLines.add("Map Size: " + map.getFragmentsPerRow() + "x"

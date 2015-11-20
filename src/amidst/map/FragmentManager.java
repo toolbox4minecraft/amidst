@@ -3,25 +3,25 @@ package amidst.map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class FragmentManager {
-	private ConcurrentLinkedQueue<Fragment> fragmentQueue = new ConcurrentLinkedQueue<Fragment>();
-	private ConcurrentLinkedQueue<Fragment> requestQueue = new ConcurrentLinkedQueue<Fragment>();
+	private ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<Fragment>();
+	private ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<Fragment>();
 
 	private int[] imageCache = new int[Fragment.SIZE * Fragment.SIZE];
 
 	private FragmentCache cache;
 
 	public FragmentManager(LayerContainer layerContainer) {
-		this.cache = new FragmentCache(layerContainer, fragmentQueue,
-				requestQueue);
+		this.cache = new FragmentCache(layerContainer, availableQueue,
+				loadingQueue);
 	}
 
 	public Fragment requestFragment(int x, int y) {
 		Fragment fragment;
-		while ((fragment = fragmentQueue.poll()) == null) {
+		while ((fragment = availableQueue.poll()) == null) {
 			cache.increaseSize();
 		}
 		fragment.initialize(x, y);
-		requestQueue.offer(fragment);
+		loadingQueue.offer(fragment);
 		return fragment;
 	}
 
@@ -30,7 +30,7 @@ public class FragmentManager {
 	 */
 	public void recycleFragment(Fragment fragment) {
 		fragment.reset();
-		fragmentQueue.offer(fragment);
+		availableQueue.offer(fragment);
 	}
 
 	public void tick() {
@@ -38,23 +38,23 @@ public class FragmentManager {
 	}
 
 	private void processRequestQueue() {
-		while (!requestQueue.isEmpty()) {
-			requestQueue.poll().load(imageCache);
+		while (!loadingQueue.isEmpty()) {
+			loadingQueue.poll().load(imageCache);
 		}
 	}
 
 	public void reset() {
-		requestQueue.clear();
-		fragmentQueue.clear();
+		loadingQueue.clear();
+		availableQueue.clear();
 		cache.resetAll();
 	}
 
-	public int getFreeFragmentQueueSize() {
-		return fragmentQueue.size();
+	public int getAvailableQueueSize() {
+		return availableQueue.size();
 	}
 
-	public int getRequestQueueSize() {
-		return requestQueue.size();
+	public int getLoadingQueueSize() {
+		return loadingQueue.size();
 	}
 
 	public int getCacheSize() {
