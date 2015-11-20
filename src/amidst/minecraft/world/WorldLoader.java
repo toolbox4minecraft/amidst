@@ -107,7 +107,8 @@ public class WorldLoader {
 		List<Tag> posList = posTag.getValue();
 		double x = (Double) posList.get(0).getValue();
 		double z = (Double) posList.get(2).getValue();
-		players.add(new Player(playerName, (int) x, (int) z));
+		players.add(new Player(playerName, CoordinatesInWorld.from((long) x,
+				(long) z)));
 	}
 
 	private String getPlayerName(File playerFile) {

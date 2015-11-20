@@ -30,6 +30,7 @@ import amidst.map.MapMovement;
 import amidst.map.MapViewer;
 import amidst.map.MapZoom;
 import amidst.minecraft.MinecraftUtil;
+import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.WorldType;
 
 public class MapWindow {
@@ -217,8 +218,8 @@ public class MapWindow {
 				JOptionPane.YES_NO_OPTION);
 	}
 
-	public void moveMapToCoordinates(long x, long y) {
-		map.safeCenterOn(x, y);
+	public void moveMapToCoordinates(CoordinatesInWorld coordinates) {
+		map.safeCenterOn(coordinates);
 	}
 
 	public WorldType askForWorldType() {
@@ -258,7 +259,7 @@ public class MapWindow {
 		return new File(filename);
 	}
 
-	public long[] askForCoordinates() {
+	public CoordinatesInWorld askForCoordinates() {
 		String coordinates = askForString("Go To",
 				"Enter coordinates: (Ex. 123,456)");
 		if (coordinates != null) {
@@ -273,16 +274,15 @@ public class MapWindow {
 				JOptionPane.QUESTION_MESSAGE);
 	}
 
-	private long[] parseCoordinates(String coordinates) {
+	private CoordinatesInWorld parseCoordinates(String coordinates) {
 		String[] parsedCoordinates = coordinates.replaceAll(" ", "").split(",");
 		if (parsedCoordinates.length != 2) {
 			return null;
 		}
 		try {
-			long[] result = new long[2];
-			result[0] = Long.parseLong(parsedCoordinates[0]);
-			result[1] = Long.parseLong(parsedCoordinates[1]);
-			return result;
+			return CoordinatesInWorld.from(
+					Long.parseLong(parsedCoordinates[0]),
+					Long.parseLong(parsedCoordinates[1]));
 		} catch (NumberFormatException e) {
 			return null;
 		}

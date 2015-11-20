@@ -9,7 +9,6 @@ import amidst.map.layer.LiveLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.FileWorld.Player;
-import amidst.utilities.CoordinateUtils;
 
 public class Map {
 	private MapObject selectedMapObject;
@@ -86,20 +85,20 @@ public class Map {
 	}
 
 	// TODO: Support longs?
-	private void lockedCenterOn(long xInWorld, long yInWorld) {
+	private void lockedCenterOn(CoordinatesInWorld coordinates) {
 		if (startFragment != null) {
 			startFragment = startFragment.recycleAll(fragmentManager);
 		}
 		int xCenterOnScreen = viewerWidth >> 1;
 		int yCenterOnScreen = viewerHeight >> 1;
-		long xFragmentRelative = CoordinateUtils.toFragmentRelative(xInWorld);
-		long yFragmentRelative = CoordinateUtils.toFragmentRelative(yInWorld);
+		long xFragmentRelative = coordinates.getXRelativeToFragment();
+		long yFragmentRelative = coordinates.getYRelativeToFragment();
 		startOnScreen.x = xCenterOnScreen
 				- zoom.worldToScreen(xFragmentRelative);
 		startOnScreen.y = yCenterOnScreen
 				- zoom.worldToScreen(yFragmentRelative);
-		long xFragmentCorner = CoordinateUtils.toFragmentCorner(xInWorld);
-		long yFragmentCorner = CoordinateUtils.toFragmentCorner(yInWorld);
+		long xFragmentCorner = coordinates.getXCornerOfFragment();
+		long yFragmentCorner = coordinates.getYCornerOfFragment();
 		lockedAddStart((int) xFragmentCorner, (int) yFragmentCorner);
 	}
 
@@ -109,9 +108,9 @@ public class Map {
 		}
 	}
 
-	public void safeCenterOn(long x, long y) {
+	public void safeCenterOn(CoordinatesInWorld coordinates) {
 		synchronized (mapLock) {
-			lockedCenterOn(x, y);
+			lockedCenterOn(coordinates);
 		}
 	}
 

@@ -9,6 +9,7 @@ import amidst.Application;
 import amidst.gui.MapWindow;
 import amidst.logging.Log;
 import amidst.map.object.MapObject;
+import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.FileWorld.Player;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.WorldType;
@@ -78,15 +79,14 @@ public class MenuActions {
 				"Select Stronghold:", application.getLayerContainer()
 						.getStrongholdLayer().getStrongholds());
 		if (stronghold != null) {
-			mapWindow.moveMapToCoordinates(stronghold.getCoordinates().getX(),
-					stronghold.getCoordinates().getY());
+			mapWindow.moveMapToCoordinates(stronghold.getCoordinates());
 		}
 	}
 
 	public void gotoCoordinate() {
-		long[] coordinates = mapWindow.askForCoordinates();
+		CoordinatesInWorld coordinates = mapWindow.askForCoordinates();
 		if (coordinates != null) {
-			mapWindow.moveMapToCoordinates(coordinates[0], coordinates[1]);
+			mapWindow.moveMapToCoordinates(coordinates);
 		} else {
 			mapWindow.displayMessage("You entered an invalid location.");
 			Log.w("Invalid location entered, ignoring.");
@@ -102,7 +102,7 @@ public class MenuActions {
 			Player player = mapWindow.askForOptions("Go to", "Select player:",
 					playerArray);
 			if (player != null) {
-				mapWindow.moveMapToCoordinates(player.getX(), player.getZ());
+				mapWindow.moveMapToCoordinates(player.getCoordinates());
 			}
 		} else {
 			mapWindow.displayMessage("There are no players on the map");

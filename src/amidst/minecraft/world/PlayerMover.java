@@ -183,9 +183,9 @@ public class PlayerMover {
 
 	private List<Tag> modifyPositionInPosList(List<Tag> posList, Player player) {
 		List<Tag> result = new ArrayList<Tag>(posList);
-		result.set(0, new DoubleTag("x", player.getX()));
+		result.set(0, new DoubleTag("x", player.getCoordinates().getX()));
 		result.set(1, new DoubleTag("y", 120));
-		result.set(2, new DoubleTag("z", player.getZ()));
+		result.set(2, new DoubleTag("z", player.getCoordinates().getY()));
 		return result;
 	}
 }

@@ -15,6 +15,7 @@ import amidst.map.layer.ImageLayer;
 import amidst.map.layer.LiveLayer;
 import amidst.map.object.MapObject;
 import amidst.map.widget.Widget;
+import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 import amidst.resources.ResourceLoader;
 
@@ -153,7 +154,7 @@ public class MapDrawer {
 	private void centerMapIfNecessary() {
 		if (isFirstDraw) {
 			isFirstDraw = false;
-			map.safeCenterOn(0, 0);
+			map.safeCenterOn(CoordinatesInWorld.origin());
 		}
 	}
 

@@ -14,15 +14,13 @@ public class FileWorld extends World {
 
 		private BufferedImage skin = MapMarkers.PLAYER.getImage();
 		private String playerName;
-		private int x;
-		private int z;
+		private CoordinatesInWorld coordinates;
 
 		private boolean moved = false;
 
-		public Player(String playerName, int x, int z) {
+		public Player(String playerName, CoordinatesInWorld coordinates) {
 			this.playerName = playerName;
-			this.x = x;
-			this.z = z;
+			this.coordinates = coordinates;
 		}
 
 		private void setWorld(FileWorld world) {
@@ -33,24 +31,13 @@ public class FileWorld extends World {
 			return playerName;
 		}
 
-		public int getX() {
-			return x;
-		}
-
-		public int getZ() {
-			return z;
-		}
-
-		@Deprecated
 		public void moveTo(CoordinatesInWorld coordinates) {
-			x = (int) coordinates.getX();
-			z = (int) coordinates.getY();
+			this.coordinates = coordinates;
 			moved = true;
 		}
 
-		@Deprecated
 		public CoordinatesInWorld getCoordinates() {
-			return CoordinatesInWorld.from(x, z);
+			return coordinates;
 		}
 
 		public void saveLocation() {
@@ -62,7 +49,8 @@ public class FileWorld extends World {
 
 		@Override
 		public String toString() {
-			return "Player \"" + playerName + "\" at (" + x + ", " + z + ")";
+			return "Player \"" + playerName + "\" at (" + coordinates.getX()
+					+ ", " + coordinates.getY() + ")";
 		}
 
 		public void setSkin(BufferedImage skin) {
