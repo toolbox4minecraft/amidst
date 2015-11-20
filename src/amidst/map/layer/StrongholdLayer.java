@@ -81,26 +81,11 @@ public class StrongholdLayer extends IconLayer {
 	}
 
 	private void generateAt(Fragment fragment, int x, int y) {
-		int chunkX = x + fragment.getChunkXInWorld();
-		int chunkY = y + fragment.getChunkYInWorld();
-		// TODO: This does not need a per-chunk test!
-		MapObject mapObject = getStronghold(chunkX, chunkY);
-		if (mapObject != null) {
-			// FIXME: Possible use of checkChunk causing negative icons
-			// to be misaligned!
-			fragment.addObject(mapObject);
-		}
-	}
-
-	private MapObject getStronghold(int chunkX, int chunkY) {
 		for (int i = 0; i < 3; i++) {
-			int strongholdChunkX = strongholds[i].getXInWorld() >> 4;
-			int strongholdChunkY = strongholds[i].getYInWorld() >> 4;
-			if ((strongholdChunkX == chunkX) && (strongholdChunkY == chunkY)) {
-				return strongholds[i];
+			if (fragment.isInBounds(strongholds[i])) {
+				fragment.addObject(strongholds[i]);
 			}
 		}
-		return null;
 	}
 
 	@Override
