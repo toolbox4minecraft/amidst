@@ -36,10 +36,7 @@ public class FragmentManager {
 
 	private void processRequestQueue() {
 		while (!requestQueue.isEmpty()) {
-			Fragment fragment = requestQueue.poll();
-			if (fragment.needsLoading()) {
-				fragment.load();
-			}
+			requestQueue.poll().load();
 		}
 	}
 

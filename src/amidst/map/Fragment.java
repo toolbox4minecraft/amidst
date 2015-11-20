@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import amidst.Options;
-import amidst.logging.Log;
 import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
 import amidst.map.object.MapObject;
@@ -116,22 +115,21 @@ public class Fragment implements Iterable<Fragment> {
 
 	public void load() {
 		synchronized (loadLock) {
-			if (isLoaded) {
-				Log.w("This should never happen!");
+			if (isInitialized && !isLoaded) {
+				int[] data = MinecraftUtil.getBiomeData(xInWorld >> 2,
+						yInWorld >> 2, BIOME_SIZE, BIOME_SIZE, true);
+				for (int i = 0; i < BIOME_SIZE * BIOME_SIZE; i++) {
+					biomeData[i] = (short) data[i];
+				}
+				for (int i = 0; i < imageLayers.length; i++) {
+					lockedUpdateImage(i);
+				}
+				for (int i = 0; i < iconLayers.length; i++) {
+					iconLayers[i].generateMapObjects(this);
+				}
+				alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
+				isLoaded = true;
 			}
-			int[] data = MinecraftUtil.getBiomeData(xInWorld >> 2,
-					yInWorld >> 2, BIOME_SIZE, BIOME_SIZE, true);
-			for (int i = 0; i < BIOME_SIZE * BIOME_SIZE; i++) {
-				biomeData[i] = (short) data[i];
-			}
-			for (int i = 0; i < imageLayers.length; i++) {
-				lockedUpdateImage(i);
-			}
-			for (int i = 0; i < iconLayers.length; i++) {
-				iconLayers[i].generateMapObjects(this);
-			}
-			alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
-			isLoaded = true;
 		}
 	}
 
@@ -166,10 +164,6 @@ public class Fragment implements Iterable<Fragment> {
 				mapObjects.remove(mapObject);
 			}
 		}
-	}
-
-	public boolean needsLoading() {
-		return isInitialized && !isLoaded;
 	}
 
 	public short[] getBiomeData() {
