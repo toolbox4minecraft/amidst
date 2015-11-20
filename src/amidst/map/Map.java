@@ -184,14 +184,16 @@ public class Map {
 	public String getBiomeNameAt(Point point) {
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
-				if ((fragment.getXInWorld() <= point.x)
-						&& (fragment.getYInWorld() <= point.y)
-						&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
-						&& (fragment.getYInWorld() + Fragment.SIZE > point.y)) {
-					int x = point.x - fragment.getXInWorld();
-					int y = point.y - fragment.getYInWorld();
+				if (fragment.isLoaded()) {
+					if ((fragment.getXInWorld() <= point.x)
+							&& (fragment.getYInWorld() <= point.y)
+							&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
+							&& (fragment.getYInWorld() + Fragment.SIZE > point.y)) {
+						int x = point.x - fragment.getXInWorld();
+						int y = point.y - fragment.getYInWorld();
 
-					return getBiomeNameForFragment(fragment, x, y);
+						return getBiomeNameForFragment(fragment, x, y);
+					}
 				}
 			}
 		}
@@ -201,14 +203,16 @@ public class Map {
 	public String getBiomeAliasAt(Point point) {
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
-				if ((fragment.getXInWorld() <= point.x)
-						&& (fragment.getYInWorld() <= point.y)
-						&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
-						&& (fragment.getYInWorld() + Fragment.SIZE > point.y)) {
-					int x = point.x - fragment.getXInWorld();
-					int y = point.y - fragment.getYInWorld();
+				if (fragment.isLoaded()) {
+					if ((fragment.getXInWorld() <= point.x)
+							&& (fragment.getYInWorld() <= point.y)
+							&& (fragment.getXInWorld() + Fragment.SIZE > point.x)
+							&& (fragment.getYInWorld() + Fragment.SIZE > point.y)) {
+						int x = point.x - fragment.getXInWorld();
+						int y = point.y - fragment.getYInWorld();
 
-					return getBiomeAliasForFragment(fragment, x, y);
+						return getBiomeAliasForFragment(fragment, x, y);
+					}
 				}
 			}
 		}
