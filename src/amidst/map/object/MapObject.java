@@ -7,9 +7,14 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.preferences.BooleanPrefModel;
 
 public class MapObject {
+	public static MapObject from(CoordinatesInWorld coordinates, String name,
+			BufferedImage image, BooleanPrefModel isVisiblePreference) {
+		return new MapObject(coordinates, name, image, isVisiblePreference);
+	}
+
 	public static MapObject from(CoordinatesInWorld coordinates,
-			MapMarkers type, BooleanPrefModel isVisiblePreference) {
-		return new MapObject(coordinates, type.getName(), type.getImage(),
+			MapMarkers marker, BooleanPrefModel isVisiblePreference) {
+		return from(coordinates, marker.getName(), marker.getImage(),
 				isVisiblePreference);
 	}
 

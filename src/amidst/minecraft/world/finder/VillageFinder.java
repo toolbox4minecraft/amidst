@@ -5,8 +5,13 @@ import java.util.List;
 
 import amidst.map.MapMarkers;
 import amidst.minecraft.Biome;
+import amidst.minecraft.world.World;
 
 public class VillageFinder extends StructureFinder {
+	public VillageFinder(World world) {
+		super(world);
+	}
+
 	@Override
 	protected boolean isValidLocation() {
 		return isSuccessful() && isValidBiomeForStructure();

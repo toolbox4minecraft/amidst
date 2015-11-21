@@ -6,9 +6,14 @@ import java.util.List;
 import amidst.map.MapMarkers;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
+import amidst.minecraft.world.World;
 import amidst.version.VersionInfo;
 
 public class TempleFinder extends StructureFinder {
+	public TempleFinder(World world) {
+		super(world);
+	}
+
 	@Override
 	protected boolean isValidLocation() {
 		return isSuccessful() && isValidBiomeAtMiddleOfChunk();

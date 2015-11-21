@@ -7,10 +7,12 @@ import amidst.minecraft.world.finder.TempleFinder;
 import amidst.minecraft.world.finder.VillageFinder;
 
 public abstract class World {
-	private OceanMonumentFinder oceanMonumentFinder = new OceanMonumentFinder();
-	private TempleFinder templeFinder = new TempleFinder();
-	private VillageFinder villageFinder = new VillageFinder();
-	private NetherFortressFinder netherFortressFinder = new NetherFortressFinder();
+	private OceanMonumentFinder oceanMonumentFinder = new OceanMonumentFinder(
+			this);
+	private TempleFinder templeFinder = new TempleFinder(this);
+	private VillageFinder villageFinder = new VillageFinder(this);
+	private NetherFortressFinder netherFortressFinder = new NetherFortressFinder(
+			this);
 
 	public boolean isFileWorld() {
 		return this instanceof FileWorld;
@@ -28,19 +30,19 @@ public abstract class World {
 
 	public void getOceanMonuments(CoordinatesInWorld corner,
 			FindingConsumer consumer) {
-		oceanMonumentFinder.generateMapObjects(this, corner, consumer);
+		oceanMonumentFinder.find(corner, consumer);
 	}
 
 	public void getTemples(CoordinatesInWorld corner, FindingConsumer consumer) {
-		templeFinder.generateMapObjects(this, corner, consumer);
+		templeFinder.find(corner, consumer);
 	}
 
 	public void getVillages(CoordinatesInWorld corner, FindingConsumer consumer) {
-		villageFinder.generateMapObjects(this, corner, consumer);
+		villageFinder.find(corner, consumer);
 	}
 
 	public void getNetherFortresses(CoordinatesInWorld corner,
 			FindingConsumer consumer) {
-		netherFortressFinder.generateMapObjects(this, corner, consumer);
+		netherFortressFinder.find(corner, consumer);
 	}
 }

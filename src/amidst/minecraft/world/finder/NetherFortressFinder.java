@@ -4,8 +4,13 @@ import java.util.List;
 
 import amidst.map.MapMarkers;
 import amidst.minecraft.Biome;
+import amidst.minecraft.world.World;
 
 public class NetherFortressFinder extends StructureFinder {
+	public NetherFortressFinder(World world) {
+		super(world);
+	}
+
 	@Override
 	protected boolean isValidLocation() {
 		int i = chunkX >> 4;

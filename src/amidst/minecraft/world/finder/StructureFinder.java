@@ -12,6 +12,8 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 
 public abstract class StructureFinder {
+	protected final World world;
+
 	protected final List<Biome> validBiomesForStructure;
 	protected final List<Biome> validBiomesAtMiddleOfChunk;
 	protected final long magicNumberForSeed1;
@@ -24,7 +26,6 @@ public abstract class StructureFinder {
 	protected final int size;
 	protected final Random random;
 
-	protected World world;
 	private CoordinatesInWorld corner;
 	private FindingConsumer consumer;
 	private int xRelativeToFragmentAsChunkResolution;
@@ -34,7 +35,8 @@ public abstract class StructureFinder {
 	private int middleOfChunkX;
 	private int middleOfChunkY;
 
-	public StructureFinder() {
+	public StructureFinder(World world) {
+		this.world = world;
 		validBiomesForStructure = getValidBiomesForStructure();
 		validBiomesAtMiddleOfChunk = getValidBiomesAtMiddleOfChunk();
 		magicNumberForSeed1 = getMagicNumberForSeed1();
@@ -53,9 +55,7 @@ public abstract class StructureFinder {
 				- minDistanceBetweenScatteredFeatures;
 	}
 
-	public void generateMapObjects(World world, CoordinatesInWorld corner,
-			FindingConsumer consumer) {
-		this.world = world;
+	public void find(CoordinatesInWorld corner, FindingConsumer consumer) {
 		this.corner = corner;
 		this.consumer = consumer;
 		for (xRelativeToFragmentAsChunkResolution = 0; xRelativeToFragmentAsChunkResolution < size; xRelativeToFragmentAsChunkResolution++) {
@@ -80,7 +80,8 @@ public abstract class StructureFinder {
 			} else {
 				consumer.consume(corner.add(
 						xRelativeToFragmentAsChunkResolution << 4,
-						yRelativeToFragmentAsChunkResolution << 4), mapMarker);
+						yRelativeToFragmentAsChunkResolution << 4), mapMarker
+						.getName(), mapMarker.getImage());
 			}
 		}
 	}
