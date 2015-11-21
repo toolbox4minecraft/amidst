@@ -38,10 +38,12 @@ public abstract class CachedFinder implements Finder {
 
 	private void produceFindings(CoordinatesInWorld corner,
 			FindingConsumer consumer) {
-		for (Finding finding : cache) {
-			if (finding.coordinates.isInBoundsOf(corner, Fragment.SIZE)) {
-				consumer.consume(finding.coordinates, finding.name,
-						finding.image);
+		if (cache != null) {
+			for (Finding finding : cache) {
+				if (finding.coordinates.isInBoundsOf(corner, Fragment.SIZE)) {
+					consumer.consume(finding.coordinates, finding.name,
+							finding.image);
+				}
 			}
 		}
 	}
