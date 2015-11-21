@@ -1,8 +1,7 @@
-package amidst.map.object;
+package amidst.map.layer;
 
 import java.awt.image.BufferedImage;
 
-import amidst.map.layer.IconLayer;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.finder.WorldObject;
 

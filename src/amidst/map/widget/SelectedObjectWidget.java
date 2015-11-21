@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 import amidst.map.Map;
 import amidst.map.MapViewer;
-import amidst.map.object.MapObject;
+import amidst.map.layer.MapObject;
 import amidst.minecraft.world.World;
 
 public class SelectedObjectWidget extends Widget {

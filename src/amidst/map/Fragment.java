@@ -8,7 +8,7 @@ import java.util.List;
 import amidst.Options;
 import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
-import amidst.map.object.MapObject;
+import amidst.map.layer.MapObject;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
 

@@ -13,7 +13,7 @@ import java.util.List;
 
 import amidst.map.layer.ImageLayer;
 import amidst.map.layer.LiveLayer;
-import amidst.map.object.MapObject;
+import amidst.map.layer.MapObject;
 import amidst.map.widget.Widget;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;

@@ -7,7 +7,7 @@ import amidst.Options;
 import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
 import amidst.map.layer.LiveLayer;
-import amidst.map.object.MapObject;
+import amidst.map.layer.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
 
 public class Map {

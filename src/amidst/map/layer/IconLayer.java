@@ -1,7 +1,6 @@
 package amidst.map.layer;
 
 import amidst.map.Fragment;
-import amidst.map.object.MapObject;
 import amidst.minecraft.world.finder.WorldObject;
 import amidst.minecraft.world.finder.WorldObjectConsumer;
 
