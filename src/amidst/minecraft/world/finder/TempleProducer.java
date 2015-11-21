@@ -9,8 +9,8 @@ import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.World;
 import amidst.version.VersionInfo;
 
-public class TempleFinder extends StructureFinder {
-	public TempleFinder(World world) {
+public class TempleProducer extends StructureProducer {
+	public TempleProducer(World world) {
 		super(world);
 	}
 

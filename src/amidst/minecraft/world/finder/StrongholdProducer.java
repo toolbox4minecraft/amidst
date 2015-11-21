@@ -14,7 +14,7 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 import amidst.version.VersionInfo;
 
-public class StrongholdFinder extends CachedFinder {
+public class StrongholdProducer extends CachedWorldObjectProducer {
 	// @formatter:off
 	private static final List<Biome> VALID_BIOMES_DEFAULT = Arrays.asList(
 			Biome.desert,
@@ -66,14 +66,14 @@ public class StrongholdFinder extends CachedFinder {
 
 	private Random random = new Random();
 
-	public StrongholdFinder(World world) {
+	public StrongholdProducer(World world) {
 		super(world);
 		this.validBiomes = getValidBiomes();
 	}
 
 	@Override
-	protected List<Finding> createCache() {
-		List<Finding> result = new LinkedList<Finding>();
+	protected List<WorldObject> createCache() {
+		List<WorldObject> result = new LinkedList<WorldObject>();
 		updateSeed();
 		double angle = initAngle();
 		for (int i = 0; i < 3; i++) {
@@ -82,20 +82,19 @@ public class StrongholdFinder extends CachedFinder {
 			int y = getY(angle, distance) << 4;
 			Point strongholdLocation = findStronghold(x, y);
 			if (strongholdLocation != null) {
-				result.add(createFinding(strongholdLocation.x,
+				result.add(createWorldObject(strongholdLocation.x,
 						strongholdLocation.y));
 			} else {
-				result.add(createFinding(x, y));
+				result.add(createWorldObject(x, y));
 			}
 			angle = updateAngle(angle);
 		}
 		return result;
 	}
 
-	private Finding createFinding(int x, int y) {
-		return new Finding(CoordinatesInWorld.from(x, y),
-				MapMarkers.STRONGHOLD.getName(),
-				MapMarkers.STRONGHOLD.getImage());
+	private WorldObject createWorldObject(int x, int y) {
+		return new WorldObject(CoordinatesInWorld.from(x, y),
+				MapMarkers.STRONGHOLD);
 	}
 
 	private Point findStronghold(int x, int y) {

@@ -11,7 +11,7 @@ import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 
-public abstract class StructureFinder implements Finder {
+public abstract class StructureProducer implements WorldObjectProducer {
 	protected final World world;
 
 	protected final List<Biome> validBiomesForStructure;
@@ -27,7 +27,7 @@ public abstract class StructureFinder implements Finder {
 	protected final Random random;
 
 	private CoordinatesInWorld corner;
-	private FindingConsumer consumer;
+	private WorldObjectConsumer consumer;
 	private int xRelativeToFragmentAsChunkResolution;
 	private int yRelativeToFragmentAsChunkResolution;
 	protected int chunkX;
@@ -35,7 +35,7 @@ public abstract class StructureFinder implements Finder {
 	private int middleOfChunkX;
 	private int middleOfChunkY;
 
-	public StructureFinder(World world) {
+	public StructureProducer(World world) {
 		this.world = world;
 		validBiomesForStructure = getValidBiomesForStructure();
 		validBiomesAtMiddleOfChunk = getValidBiomesAtMiddleOfChunk();
@@ -56,7 +56,7 @@ public abstract class StructureFinder implements Finder {
 	}
 
 	@Override
-	public void find(CoordinatesInWorld corner, FindingConsumer consumer) {
+	public void produce(CoordinatesInWorld corner, WorldObjectConsumer consumer) {
 		this.corner = corner;
 		this.consumer = consumer;
 		for (xRelativeToFragmentAsChunkResolution = 0; xRelativeToFragmentAsChunkResolution < size; xRelativeToFragmentAsChunkResolution++) {

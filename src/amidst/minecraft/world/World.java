@@ -1,24 +1,30 @@
 package amidst.minecraft.world;
 
-import amidst.minecraft.world.finder.CachedFinder;
-import amidst.minecraft.world.finder.Finder;
-import amidst.minecraft.world.finder.FindingConsumer;
-import amidst.minecraft.world.finder.NetherFortressFinder;
-import amidst.minecraft.world.finder.OceanMonumentFinder;
-import amidst.minecraft.world.finder.PlayerFinder;
-import amidst.minecraft.world.finder.SpawnFinder;
-import amidst.minecraft.world.finder.StrongholdFinder;
-import amidst.minecraft.world.finder.TempleFinder;
-import amidst.minecraft.world.finder.VillageFinder;
+import amidst.minecraft.world.finder.CachedWorldObjectProducer;
+import amidst.minecraft.world.finder.NetherFortressProducer;
+import amidst.minecraft.world.finder.OceanMonumentProducer;
+import amidst.minecraft.world.finder.PlayerProducer;
+import amidst.minecraft.world.finder.SpawnProducer;
+import amidst.minecraft.world.finder.StrongholdProducer;
+import amidst.minecraft.world.finder.TempleProducer;
+import amidst.minecraft.world.finder.VillageProducer;
+import amidst.minecraft.world.finder.WorldObjectConsumer;
+import amidst.minecraft.world.finder.WorldObjectProducer;
 
 public abstract class World {
-	private final Finder oceanMonumentFinder = new OceanMonumentFinder(this);
-	private final Finder templeFinder = new TempleFinder(this);
-	private final Finder villageFinder = new VillageFinder(this);
-	private final Finder netherFortressFinder = new NetherFortressFinder(this);
-	private final CachedFinder playerFinder = new PlayerFinder(this);
-	private final CachedFinder spawnFinder = new SpawnFinder(this);
-	private final CachedFinder strongholdFinder = new StrongholdFinder(this);
+	private final WorldObjectProducer oceanMonumentProducer = new OceanMonumentProducer(
+			this);
+	private final WorldObjectProducer templeProducer = new TempleProducer(this);
+	private final WorldObjectProducer villageProducer = new VillageProducer(
+			this);
+	private final WorldObjectProducer netherFortressProducer = new NetherFortressProducer(
+			this);
+	private final CachedWorldObjectProducer playerProducer = new PlayerProducer(
+			this);
+	private final CachedWorldObjectProducer spawnProducer = new SpawnProducer(
+			this);
+	private final CachedWorldObjectProducer strongholdProducer = new StrongholdProducer(
+			this);
 
 	public boolean isFileWorld() {
 		return this instanceof FileWorld;
@@ -35,37 +41,40 @@ public abstract class World {
 	public abstract WorldType getWorldType();
 
 	public void getOceanMonuments(CoordinatesInWorld corner,
-			FindingConsumer consumer) {
-		oceanMonumentFinder.find(corner, consumer);
+			WorldObjectConsumer consumer) {
+		oceanMonumentProducer.produce(corner, consumer);
 	}
 
-	public void getTemples(CoordinatesInWorld corner, FindingConsumer consumer) {
-		templeFinder.find(corner, consumer);
+	public void getTemples(CoordinatesInWorld corner,
+			WorldObjectConsumer consumer) {
+		templeProducer.produce(corner, consumer);
 	}
 
-	public void getVillages(CoordinatesInWorld corner, FindingConsumer consumer) {
-		villageFinder.find(corner, consumer);
+	public void getVillages(CoordinatesInWorld corner,
+			WorldObjectConsumer consumer) {
+		villageProducer.produce(corner, consumer);
 	}
 
 	public void getNetherFortresses(CoordinatesInWorld corner,
-			FindingConsumer consumer) {
-		netherFortressFinder.find(corner, consumer);
+			WorldObjectConsumer consumer) {
+		netherFortressProducer.produce(corner, consumer);
 	}
 
-	public void getPlayers(CoordinatesInWorld corner, FindingConsumer consumer) {
-		playerFinder.find(corner, consumer);
+	public void getPlayers(CoordinatesInWorld corner,
+			WorldObjectConsumer consumer) {
+		playerProducer.produce(corner, consumer);
 	}
 
-	public void getSpawn(CoordinatesInWorld corner, FindingConsumer consumer) {
-		spawnFinder.find(corner, consumer);
+	public void getSpawn(CoordinatesInWorld corner, WorldObjectConsumer consumer) {
+		spawnProducer.produce(corner, consumer);
 	}
 
 	public void getStrongholds(CoordinatesInWorld corner,
-			FindingConsumer consumer) {
-		strongholdFinder.find(corner, consumer);
+			WorldObjectConsumer consumer) {
+		strongholdProducer.produce(corner, consumer);
 	}
 
 	public void reloadPlayers() {
-		playerFinder.resetCache();
+		playerProducer.resetCache();
 	}
 }

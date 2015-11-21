@@ -6,7 +6,7 @@ import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.object.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.finder.FindingConsumer;
+import amidst.minecraft.world.finder.WorldObjectConsumer;
 
 public class OceanMonumentLayer extends IconLayer {
 	@Override
@@ -20,8 +20,8 @@ public class OceanMonumentLayer extends IconLayer {
 				createFindingConsumer(fragment));
 	}
 
-	private FindingConsumer createFindingConsumer(final Fragment fragment) {
-		return new FindingConsumer() {
+	private WorldObjectConsumer createFindingConsumer(final Fragment fragment) {
+		return new WorldObjectConsumer() {
 			@Override
 			public void consume(CoordinatesInWorld coordinates, String name,
 					BufferedImage image) {

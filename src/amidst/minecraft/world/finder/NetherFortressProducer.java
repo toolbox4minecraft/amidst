@@ -6,8 +6,8 @@ import amidst.map.MapMarkers;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.World;
 
-public class NetherFortressFinder extends StructureFinder {
-	public NetherFortressFinder(World world) {
+public class NetherFortressProducer extends StructureProducer {
+	public NetherFortressProducer(World world) {
 		super(world);
 	}
 

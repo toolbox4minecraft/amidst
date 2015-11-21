@@ -7,41 +7,57 @@ import amidst.map.MapMarkers;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.World;
 
-public class VillageFinder extends StructureFinder {
-	public VillageFinder(World world) {
+public class OceanMonumentProducer extends StructureProducer {
+	public OceanMonumentProducer(World world) {
 		super(world);
 	}
 
 	@Override
 	protected boolean isValidLocation() {
-		return isSuccessful() && isValidBiomeForStructure();
+		return isSuccessful() && isValidBiomeAtMiddleOfChunk()
+				&& isValidBiomeForStructure();
 	}
 
 	@Override
 	protected MapMarkers getMapMarker() {
-		return MapMarkers.VILLAGE;
+		return MapMarkers.OCEAN_MONUMENT;
 	}
 
 	@Override
 	protected List<Biome> getValidBiomesForStructure() {
 		// @formatter:off
+		// Not sure if the extended biomes count
 		return Arrays.asList(
-				Biome.plains,
-				Biome.desert,
-				Biome.savanna
+				Biome.ocean,
+				Biome.deepOcean,
+				Biome.frozenOcean,
+				Biome.river,
+				Biome.frozenRiver,
+				Biome.oceanM,
+				Biome.deepOceanM,
+				Biome.frozenOceanM,
+				Biome.riverM,
+				Biome.frozenRiverM
 		);
 		// @formatter:on
 	}
 
 	@Override
 	protected List<Biome> getValidBiomesAtMiddleOfChunk() {
-		return null; // not used
+		// @formatter:off
+		// Not sure if the extended biomes count
+		return Arrays.asList(
+				Biome.deepOcean
+		//		Biome.deepOceanM
+		);
+		// @formatter:on
 	}
 
 	@Override
 	protected int updateValue(int value) {
 		value *= maxDistanceBetweenScatteredFeatures;
-		value += random.nextInt(distanceBetweenScatteredFeaturesRange);
+		value += (random.nextInt(distanceBetweenScatteredFeaturesRange) + random
+				.nextInt(distanceBetweenScatteredFeaturesRange)) / 2;
 		return value;
 	}
 
@@ -57,7 +73,7 @@ public class VillageFinder extends StructureFinder {
 
 	@Override
 	protected long getMagicNumberForSeed3() {
-		return 10387312L;
+		return 10387313L;
 	}
 
 	@Override
@@ -67,11 +83,11 @@ public class VillageFinder extends StructureFinder {
 
 	@Override
 	protected byte getMinDistanceBetweenScatteredFeatures() {
-		return 8;
+		return 5;
 	}
 
 	@Override
 	protected int getStructureSize() {
-		return 0;
+		return 29;
 	}
 }

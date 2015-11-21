@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 import amidst.minecraft.world.CoordinatesInWorld;
 
-public interface FindingConsumer {
+public interface WorldObjectConsumer {
 	void consume(CoordinatesInWorld coordinates, String name,
 			BufferedImage image);
 }

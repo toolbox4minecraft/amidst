@@ -7,24 +7,24 @@ import java.util.List;
 import amidst.minecraft.world.FileWorld.Player;
 import amidst.minecraft.world.World;
 
-public class PlayerFinder extends CachedFinder {
-	public PlayerFinder(World world) {
+public class PlayerProducer extends CachedWorldObjectProducer {
+	public PlayerProducer(World world) {
 		super(world);
 	}
 
 	@Override
-	protected List<Finding> createCache() {
+	protected List<WorldObject> createCache() {
 		if (world.isFileWorld()) {
-			return createPlayerFindings();
+			return createPlayerWorldObjects();
 		} else {
 			return Collections.emptyList();
 		}
 	}
 
-	private List<Finding> createPlayerFindings() {
-		LinkedList<Finding> result = new LinkedList<Finding>();
+	private List<WorldObject> createPlayerWorldObjects() {
+		LinkedList<WorldObject> result = new LinkedList<WorldObject>();
 		for (Player player : world.getAsFileWorld().getPlayers()) {
-			result.add(new Finding(player.getCoordinates(), player
+			result.add(new WorldObject(player.getCoordinates(), player
 					.getPlayerName(), player.getSkin()));
 		}
 		return result;

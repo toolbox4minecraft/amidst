@@ -12,7 +12,7 @@ import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 
-public class SpawnFinder extends CachedFinder {
+public class SpawnProducer extends CachedWorldObjectProducer {
 	// @formatter:off
 	private static final List<Biome> VALID_BIOMES = Arrays.asList(
 			Biome.forest,
@@ -25,13 +25,13 @@ public class SpawnFinder extends CachedFinder {
 	);
 	// @formatter:on
 
-	public SpawnFinder(World world) {
+	public SpawnProducer(World world) {
 		super(world);
 	}
 
 	@Override
-	protected List<Finding> createCache() {
-		Finding spawn = createSpawnFinding();
+	protected List<WorldObject> createCache() {
+		WorldObject spawn = createSpawnWorldObject();
 		if (spawn != null) {
 			return Arrays.asList(spawn);
 		} else {
@@ -40,12 +40,11 @@ public class SpawnFinder extends CachedFinder {
 		}
 	}
 
-	private Finding createSpawnFinding() {
+	private WorldObject createSpawnWorldObject() {
 		Point spawnCenter = getSpawnCenterInWorldCoordinates();
 		if (spawnCenter != null) {
-			return new Finding(CoordinatesInWorld.from(spawnCenter.x,
-					spawnCenter.y), MapMarkers.SPAWN.getName(),
-					MapMarkers.SPAWN.getImage());
+			return new WorldObject(CoordinatesInWorld.from(spawnCenter.x,
+					spawnCenter.y), MapMarkers.SPAWN);
 		} else {
 			return null;
 		}
