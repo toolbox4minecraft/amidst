@@ -4,11 +4,11 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 
 import amidst.Options;
+import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
 import amidst.map.layer.LiveLayer;
 import amidst.map.object.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.FileWorld.Player;
 
 public class Map {
 	private MapObject selectedMapObject;
@@ -233,6 +233,15 @@ public class Map {
 		}
 	}
 
+	private void reloadIconLayer(IconLayer iconLayer) {
+		if (startFragment != null) {
+			for (Fragment fragment : startFragment) {
+				fragment.invalidateIconLayer(iconLayer);
+			}
+			fragmentManager.reloadAll();
+		}
+	}
+
 	private void lockedDispose() {
 		fragmentManager.reset();
 	}
@@ -269,18 +278,12 @@ public class Map {
 		return fragmentManager;
 	}
 
-	@Deprecated
 	public void repaintBiomeLayer() {
 		repaintImageLayer(layerContainer.getBiomeLayer());
 	}
 
-	@Deprecated
-	public void updatePlayerPosition(Player player, Point newLocationOnScreen) {
-		CoordinatesInWorld newCoordinates = screenToWorld(newLocationOnScreen);
-		Fragment newFragment = getFragmentAt(newCoordinates);
-		player.moveTo(newCoordinates);
-		layerContainer.getPlayerLayer().updatePlayerPosition(player,
-				newFragment);
+	public void reloadPlayerLayer() {
+		reloadIconLayer(layerContainer.getPlayerLayer());
 	}
 
 	public void updateAllLayers(float time) {

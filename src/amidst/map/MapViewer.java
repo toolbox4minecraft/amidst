@@ -162,7 +162,9 @@ public class MapViewer {
 			result.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					map.updatePlayerPosition(player, lastRightClick);
+					player.moveTo(map.screenToWorld(lastRightClick));
+					world.reloadPlayers();
+					map.reloadPlayerLayer();
 				}
 			});
 			return result;

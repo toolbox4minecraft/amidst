@@ -1,9 +1,9 @@
 package amidst.map;
 
 import java.awt.image.BufferedImage;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 import amidst.Options;
 import amidst.map.layer.IconLayer;
@@ -54,12 +54,13 @@ public class Fragment implements Iterable<Fragment> {
 
 	private BufferedImage[] images;
 	private boolean[] repaintImage;
+	private List<IconLayer> invalidatedIconLayers = new LinkedList<IconLayer>();
 
 	private final short[] biomeData = new short[BIOME_SIZE * BIOME_SIZE];
 
 	private boolean isInitialized = false;
 	private boolean isLoaded = false;
-	private Set<MapObject> mapObjects = new HashSet<MapObject>();
+	private List<MapObject> mapObjects = new LinkedList<MapObject>();
 	private CoordinatesInWorld corner;
 	private float alpha = 0.0f;
 	private Fragment leftFragment = null;
@@ -99,6 +100,7 @@ public class Fragment implements Iterable<Fragment> {
 		isLoaded = false;
 		synchronized (loadLock) {
 			mapObjects.clear();
+			invalidatedIconLayers.clear();
 		}
 		this.corner = corner;
 		alpha = 0.0f;
@@ -116,6 +118,7 @@ public class Fragment implements Iterable<Fragment> {
 				ImageLayer[] imageLayers = layerContainer.getImageLayers();
 				if (isLoaded) {
 					repaintInvalidatedImages(imageCache, imageLayers);
+					reloadInvalidatedIconLayers();
 				} else {
 					initBiomeData();
 					repaintAllImages(imageCache, imageLayers);
@@ -134,6 +137,24 @@ public class Fragment implements Iterable<Fragment> {
 				repaintImage(i, imageCache, imageLayers);
 			}
 		}
+	}
+
+	private void reloadInvalidatedIconLayers() {
+		for (IconLayer iconLayer : invalidatedIconLayers) {
+			removeIconLayer(iconLayer);
+			iconLayer.generateMapObjects(this);
+		}
+		invalidatedIconLayers.clear();
+	}
+
+	private void removeIconLayer(IconLayer iconLayer) {
+		List<MapObject> objectsToRemove = new LinkedList<MapObject>();
+		for (MapObject mapObject : mapObjects) {
+			if (mapObject.getIconLayer() == iconLayer) {
+				objectsToRemove.add(mapObject);
+			}
+		}
+		mapObjects.removeAll(objectsToRemove);
 	}
 
 	private void initBiomeData() {
@@ -177,6 +198,16 @@ public class Fragment implements Iterable<Fragment> {
 		}
 	}
 
+	// TODO: move this to the class FragmentLoader
+	@Deprecated
+	public void invalidateIconLayer(IconLayer iconLayer) {
+		synchronized (loadLock) {
+			if (isLoaded) {
+				invalidatedIconLayers.add(iconLayer);
+			}
+		}
+	}
+
 	public void updateAlpha(float time) {
 		alpha = Math.min(1.0f, time * 3.0f + alpha);
 	}
@@ -199,7 +230,7 @@ public class Fragment implements Iterable<Fragment> {
 		return alpha;
 	}
 
-	public Set<MapObject> getMapObjects() {
+	public List<MapObject> getMapObjects() {
 		return mapObjects;
 	}
 

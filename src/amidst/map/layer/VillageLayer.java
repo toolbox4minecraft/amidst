@@ -11,9 +11,7 @@ public class VillageLayer extends IconLayer {
 
 	@Override
 	public void generateMapObjects(Fragment fragment) {
-		Options.instance.world.getNetherFortresses(
-				fragment.getCorner(),
-				createWorldObjectConsumer(fragment,
-						Options.instance.showVillages));
+		Options.instance.world.getVillages(fragment.getCorner(),
+				createWorldObjectConsumer(fragment));
 	}
 }

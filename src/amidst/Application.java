@@ -144,10 +144,10 @@ public class Application {
 		Options.instance.world = world;
 		if (world != null) {
 			seedHistoryLogger.log(world.getSeed());
-			getLayerContainer().getPlayerLayer().setWorld(world);
 			mapWindow.worldChanged();
 			if (world.isFileWorld()) {
-				skinLoader.loadSkins(world.getAsFileWorld().getMovablePlayers());
+				skinLoader
+						.loadSkins(world.getAsFileWorld().getMovablePlayers());
 			}
 		}
 	}

@@ -11,9 +11,7 @@ public class StrongholdLayer extends IconLayer {
 
 	@Override
 	public void generateMapObjects(Fragment fragment) {
-		Options.instance.world.getNetherFortresses(
-				fragment.getCorner(),
-				createWorldObjectConsumer(fragment,
-						Options.instance.showStrongholds));
+		Options.instance.world.getStrongholds(fragment.getCorner(),
+				createWorldObjectConsumer(fragment));
 	}
 }

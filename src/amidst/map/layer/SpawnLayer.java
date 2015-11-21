@@ -11,10 +11,7 @@ public class SpawnLayer extends IconLayer {
 
 	@Override
 	public void generateMapObjects(Fragment fragment) {
-		Options.instance.world
-				.getNetherFortresses(
-						fragment.getCorner(),
-						createWorldObjectConsumer(fragment,
-								Options.instance.showSpawn));
+		Options.instance.world.getSpawn(fragment.getCorner(),
+				createWorldObjectConsumer(fragment));
 	}
 }

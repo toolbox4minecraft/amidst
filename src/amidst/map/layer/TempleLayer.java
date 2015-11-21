@@ -11,9 +11,7 @@ public class TempleLayer extends IconLayer {
 
 	@Override
 	public void generateMapObjects(Fragment fragment) {
-		Options.instance.world.getNetherFortresses(
-				fragment.getCorner(),
-				createWorldObjectConsumer(fragment,
-						Options.instance.showTemples));
+		Options.instance.world.getTemples(fragment.getCorner(),
+				createWorldObjectConsumer(fragment));
 	}
 }

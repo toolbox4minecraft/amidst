@@ -11,9 +11,7 @@ public class OceanMonumentLayer extends IconLayer {
 
 	@Override
 	public void generateMapObjects(Fragment fragment) {
-		Options.instance.world.getNetherFortresses(
-				fragment.getCorner(),
-				createWorldObjectConsumer(fragment,
-						Options.instance.showOceanMonuments));
+		Options.instance.world.getOceanMonuments(fragment.getCorner(),
+				createWorldObjectConsumer(fragment));
 	}
 }

@@ -11,9 +11,7 @@ public class NetherFortressLayer extends IconLayer {
 
 	@Override
 	public void generateMapObjects(Fragment fragment) {
-		Options.instance.world.getNetherFortresses(
-				fragment.getCorner(),
-				createWorldObjectConsumer(fragment,
-						Options.instance.showNetherFortresses));
+		Options.instance.world.getNetherFortresses(fragment.getCorner(),
+				createWorldObjectConsumer(fragment));
 	}
 }
