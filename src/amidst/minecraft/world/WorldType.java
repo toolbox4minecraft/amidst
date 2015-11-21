@@ -1,5 +1,8 @@
 package amidst.minecraft.world;
 
+import java.util.Arrays;
+import java.util.List;
+
 import amidst.logging.Log;
 
 public enum WorldType {
@@ -12,15 +15,15 @@ public enum WorldType {
 	// @formatter:on
 
 	// @formatter:off
-	private static final WorldType[] SELECTABLE_WORLD_TYPES = {
+	private static final List<WorldType> SELECTABLE_WORLD_TYPES = Arrays.asList(
 			WorldType.DEFAULT,
 			WorldType.FLAT,
 			WorldType.LARGE_BIOMES,
 			WorldType.AMPLIFIED
-	};
+	);
 	// @formatter:on
 
-	public static WorldType[] getSelectable() {
+	public static List<WorldType> getSelectable() {
 		return SELECTABLE_WORLD_TYPES;
 	}
 

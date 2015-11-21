@@ -3,17 +3,15 @@ package amidst.gui.menu;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
-import java.util.List;
 
 import amidst.Application;
 import amidst.gui.MapWindow;
 import amidst.logging.Log;
-import amidst.map.object.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.FileWorld.Player;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.WorldType;
 import amidst.minecraft.world.Worlds;
+import amidst.minecraft.world.finder.WorldObject;
 
 public class MenuActions {
 	private static final String ABOUT_MESSAGE = "Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
@@ -75,9 +73,8 @@ public class MenuActions {
 	}
 
 	public void findStronghold() {
-		MapObject stronghold = mapWindow.askForOptions("Go to",
-				"Select Stronghold:", application.getLayerContainer()
-						.getStrongholdLayer().getStrongholds());
+		WorldObject stronghold = mapWindow.askForOptions("Go to",
+				"Select Stronghold:", application.getWorld().getStrongholds());
 		if (stronghold != null) {
 			mapWindow.moveMapToCoordinates(stronghold.getCoordinates());
 		}
@@ -94,13 +91,10 @@ public class MenuActions {
 	}
 
 	public void gotoPlayer() {
-		World world = application.getWorld();
-		if (world.isFileWorld()) {
-			List<Player> playerList = world.getAsFileWorld().getPlayers();
-			Player[] playerArray = playerList.toArray(new Player[playerList
-					.size()]);
-			Player player = mapWindow.askForOptions("Go to", "Select player:",
-					playerArray);
+		if (application.getWorld().hasPlayers()) {
+			WorldObject player = mapWindow.askForOptions("Go to",
+					"Select player:", application.getWorld()
+							.getPlayersObjects());
 			if (player != null) {
 				mapWindow.moveMapToCoordinates(player.getCoordinates());
 			}

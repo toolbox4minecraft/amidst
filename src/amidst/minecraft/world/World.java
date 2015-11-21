@@ -29,10 +29,17 @@ public abstract class World {
 	private final CachedWorldObjectProducer strongholdProducer = new StrongholdProducer(
 			this);
 
+	@Deprecated
+	public boolean hasPlayers() {
+		return isFileWorld();
+	}
+
+	@Deprecated
 	public boolean isFileWorld() {
 		return this instanceof FileWorld;
 	}
 
+	@Deprecated
 	public FileWorld getAsFileWorld() {
 		return (FileWorld) this;
 	}

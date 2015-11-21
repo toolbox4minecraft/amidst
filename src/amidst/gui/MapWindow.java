@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -161,9 +162,10 @@ public class MapWindow {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T askForOptions(String title, String message, T[] choices) {
+	public <T> T askForOptions(String title, String message, List<T> choices) {
+		Object[] choicesArray = choices.toArray();
 		return (T) JOptionPane.showInputDialog(frame, message, title,
-				JOptionPane.PLAIN_MESSAGE, null, choices, choices[0]);
+				JOptionPane.PLAIN_MESSAGE, null, choicesArray, choicesArray[0]);
 	}
 
 	public File askForMinecraftMapFile() {

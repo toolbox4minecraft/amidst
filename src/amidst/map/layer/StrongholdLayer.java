@@ -175,9 +175,4 @@ public class StrongholdLayer extends IconLayer {
 	private boolean isValidBiomeV13w36a(Biome biome) {
 		return biome != null && biome.type.value1 > 0;
 	}
-
-	@Deprecated
-	public MapObject[] getStrongholds() {
-		return strongholds;
-	}
 }
