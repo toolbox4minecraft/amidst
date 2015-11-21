@@ -11,7 +11,7 @@ import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 
-public abstract class StructureFinder {
+public abstract class StructureFinder implements Finder {
 	protected final World world;
 
 	protected final List<Biome> validBiomesForStructure;
@@ -55,6 +55,7 @@ public abstract class StructureFinder {
 				- minDistanceBetweenScatteredFeatures;
 	}
 
+	@Override
 	public void find(CoordinatesInWorld corner, FindingConsumer consumer) {
 		this.corner = corner;
 		this.consumer = consumer;
