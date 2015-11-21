@@ -8,6 +8,7 @@ import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.map.layer.MapObject;
 import amidst.minecraft.world.World;
+import amidst.minecraft.world.finder.WorldObject;
 
 public class SelectedObjectWidget extends Widget {
 	private String message = "";
@@ -26,10 +27,9 @@ public class SelectedObjectWidget extends Widget {
 	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
 		MapObject selectedObject = map.getSelectedMapObject();
 		if (selectedObject != null) {
-			message = selectedObject.getName() + " ["
-					+ selectedObject.getCoordinates().getX() + ", "
-					+ selectedObject.getCoordinates().getY() + "]";
-			icon = selectedObject.getImage();
+			WorldObject worldObject = selectedObject.getWorldObject();
+			message = worldObject.toString();
+			icon = worldObject.getImage();
 		}
 
 		setWidth(45 + fontMetrics.stringWidth(message));

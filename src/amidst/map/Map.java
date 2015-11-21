@@ -141,7 +141,7 @@ public class Map {
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
 				for (MapObject mapObject : fragment.getMapObjects()) {
-					if (mapObject.isVisible()) {
+					if (mapObject.getIconLayer().isVisible()) {
 						double distance = getPositionOnScreen(x, y, mapObject)
 								.distance(positionOnScreen);
 						if (closestDistance > distance) {
@@ -162,9 +162,10 @@ public class Map {
 
 	// TODO: use longs?
 	private Point getPositionOnScreen(double x, double y, MapObject mapObject) {
-		Point result = new Point((int) mapObject.getCoordinates()
-				.getXRelativeToFragment(), (int) mapObject.getCoordinates()
-				.getYRelativeToFragment());
+		CoordinatesInWorld coordinates = mapObject.getWorldObject()
+				.getCoordinates();
+		Point result = new Point((int) coordinates.getXRelativeToFragment(),
+				(int) coordinates.getYRelativeToFragment());
 		result.x = zoom.worldToScreen(result.x);
 		result.y = zoom.worldToScreen(result.y);
 		result.x += x;

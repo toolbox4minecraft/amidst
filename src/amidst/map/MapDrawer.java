@@ -17,6 +17,7 @@ import amidst.map.layer.MapObject;
 import amidst.map.widget.Widget;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
+import amidst.minecraft.world.finder.WorldObject;
 import amidst.resources.ResourceLoader;
 
 public class MapDrawer {
@@ -267,26 +268,28 @@ public class MapDrawer {
 	}
 
 	private void drawObject(MapObject mapObject, double invZoom) {
-		if (mapObject.isVisible()) {
-			BufferedImage image = mapObject.getImage();
+		if (mapObject.getIconLayer().isVisible()) {
+			WorldObject worldObject = mapObject.getWorldObject();
+			BufferedImage image = worldObject.getImage();
 			int width = image.getWidth();
 			int height = image.getHeight();
 			if (map.getSelectedMapObject() == mapObject) {
 				width *= 1.5;
 				height *= 1.5;
 			}
-			initMapObjectDrawMatrix(mapObject, invZoom);
+			initMapObjectDrawMatrix(mapObject, invZoom,
+					worldObject.getCoordinates());
 			g2d.setTransform(mapObjectDrawMatrix);
 			g2d.drawImage(image, -(width >> 1), -(height >> 1), width, height,
 					null);
 		}
 	}
 
-	private void initMapObjectDrawMatrix(MapObject mapObject, double invZoom) {
+	private void initMapObjectDrawMatrix(MapObject mapObject, double invZoom,
+			CoordinatesInWorld coordinates) {
 		mapObjectDrawMatrix.setTransform(layerDrawMatrix);
-		mapObjectDrawMatrix.translate(mapObject.getCoordinates()
-				.getXRelativeToFragment(), mapObject.getCoordinates()
-				.getYRelativeToFragment());
+		mapObjectDrawMatrix.translate(coordinates.getXRelativeToFragment(),
+				coordinates.getYRelativeToFragment());
 		mapObjectDrawMatrix.scale(invZoom, invZoom);
 	}
 

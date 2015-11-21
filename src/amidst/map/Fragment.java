@@ -247,10 +247,6 @@ public class Fragment implements Iterable<Fragment> {
 		return new FragmentIterator(this);
 	}
 
-	public boolean isInBounds(MapObject mapObject) {
-		return isInBounds(mapObject.getCoordinates());
-	}
-
 	public boolean isInBounds(CoordinatesInWorld coordinates) {
 		return coordinates.isInBoundsOf(corner, SIZE);
 	}
