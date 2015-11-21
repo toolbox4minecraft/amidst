@@ -23,7 +23,7 @@ public class PlayerProducer extends CachedWorldObjectProducer {
 
 	private List<WorldObject> createPlayerWorldObjects() {
 		LinkedList<WorldObject> result = new LinkedList<WorldObject>();
-		for (Player player : world.getAsFileWorld().getPlayers()) {
+		for (Player player : world.getAsFileWorld().getMovablePlayers()) {
 			result.add(new WorldObject(player.getCoordinates(), player
 					.getPlayerName(), player.getSkin()));
 		}

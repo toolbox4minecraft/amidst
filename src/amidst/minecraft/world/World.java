@@ -84,8 +84,7 @@ public abstract class World {
 		strongholdProducer.produce(corner, consumer);
 	}
 
-	@Deprecated
-	public List<WorldObject> getPlayersObjects() {
+	public List<WorldObject> getPlayers() {
 		return playerProducer.getWorldObjects();
 	}
 

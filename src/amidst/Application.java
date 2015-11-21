@@ -147,7 +147,7 @@ public class Application {
 			getLayerContainer().getPlayerLayer().setWorld(world);
 			mapWindow.worldChanged();
 			if (world.isFileWorld()) {
-				skinLoader.loadSkins(world.getAsFileWorld().getPlayers());
+				skinLoader.loadSkins(world.getAsFileWorld().getMovablePlayers());
 			}
 		}
 	}

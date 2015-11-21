@@ -42,7 +42,7 @@ public class PlayerLayer extends IconLayer {
 	@Deprecated
 	public void setWorld(World world) {
 		if (world.isFileWorld()) {
-			initPlayersMap(world.getAsFileWorld().getPlayers());
+			initPlayersMap(world.getAsFileWorld().getMovablePlayers());
 		} else {
 			players.clear();
 		}

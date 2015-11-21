@@ -149,8 +149,7 @@ public class MapViewer {
 		private JPopupMenu createPlayerMenu(Point lastRightClicked) {
 			JPopupMenu result = new JPopupMenu();
 			if (world.isFileWorld()) {
-
-				for (Player player : world.getAsFileWorld().getPlayers()) {
+				for (Player player : world.getAsFileWorld().getMovablePlayers()) {
 					result.add(createPlayerMenuItem(player, lastRightClicked));
 				}
 			}

@@ -117,7 +117,7 @@ public class FileWorld extends World {
 	}
 
 	@Deprecated
-	public List<Player> getPlayers() {
+	public List<Player> getMovablePlayers() {
 		return players;
 	}
 

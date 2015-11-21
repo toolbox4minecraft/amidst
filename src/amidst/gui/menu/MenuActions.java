@@ -94,7 +94,7 @@ public class MenuActions {
 		if (application.getWorld().hasPlayers()) {
 			WorldObject player = mapWindow.askForOptions("Go to",
 					"Select player:", application.getWorld()
-							.getPlayersObjects());
+							.getPlayers());
 			if (player != null) {
 				mapWindow.moveMapToCoordinates(player.getCoordinates());
 			}
