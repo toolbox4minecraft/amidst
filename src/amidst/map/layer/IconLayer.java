@@ -3,11 +3,21 @@ package amidst.map.layer;
 import amidst.map.Fragment;
 import amidst.minecraft.world.finder.WorldObject;
 import amidst.minecraft.world.finder.WorldObjectConsumer;
+import amidst.minecraft.world.finder.WorldObjectProducer;
+import amidst.preferences.BooleanPrefModel;
 
 public abstract class IconLayer extends Layer {
-	public abstract void generateMapObjects(Fragment fragment);
+	@Override
+	public boolean isVisible() {
+		return getIsVisiblePreference().get();
+	}
 
-	protected WorldObjectConsumer createWorldObjectConsumer(
+	public void generateMapObjects(Fragment fragment) {
+		getProducer().produce(fragment.getCorner(),
+				createWorldObjectConsumer(fragment));
+	}
+
+	private WorldObjectConsumer createWorldObjectConsumer(
 			final Fragment fragment) {
 		return new WorldObjectConsumer() {
 			@Override
@@ -16,4 +26,8 @@ public abstract class IconLayer extends Layer {
 			}
 		};
 	}
+
+	protected abstract BooleanPrefModel getIsVisiblePreference();
+
+	protected abstract WorldObjectProducer getProducer();
 }

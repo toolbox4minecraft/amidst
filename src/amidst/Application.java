@@ -48,8 +48,8 @@ public class Application {
 	private FragmentManager fragmentManager;
 
 	private void initLayerContainer() {
-		PlayerLayer playerLayer = new PlayerLayer();
-		BiomeLayer biomeLayer = new BiomeLayer(0);
+		IconLayer playerLayer = new PlayerLayer();
+		ImageLayer biomeLayer = new BiomeLayer(0);
 		ImageLayer[] imageLayers = { biomeLayer, new SlimeLayer(1) };
 		LiveLayer[] liveLayers = { new GridLayer() };
 		IconLayer[] iconLayers = { new VillageLayer(),

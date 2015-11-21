@@ -1,17 +1,17 @@
 package amidst.map.layer;
 
 import amidst.Options;
-import amidst.map.Fragment;
+import amidst.minecraft.world.finder.WorldObjectProducer;
+import amidst.preferences.BooleanPrefModel;
 
 public class VillageLayer extends IconLayer {
 	@Override
-	public boolean isVisible() {
-		return Options.instance.showVillages.get();
+	protected BooleanPrefModel getIsVisiblePreference() {
+		return Options.instance.showVillages;
 	}
 
 	@Override
-	public void generateMapObjects(Fragment fragment) {
-		Options.instance.world.getVillages(fragment.getCorner(),
-				createWorldObjectConsumer(fragment));
+	protected WorldObjectProducer getProducer() {
+		return Options.instance.world.getVillageProducer();
 	}
 }

@@ -1,17 +1,17 @@
 package amidst.map.layer;
 
 import amidst.Options;
-import amidst.map.Fragment;
+import amidst.minecraft.world.finder.WorldObjectProducer;
+import amidst.preferences.BooleanPrefModel;
 
 public class TempleLayer extends IconLayer {
 	@Override
-	public boolean isVisible() {
-		return Options.instance.showTemples.get();
+	protected BooleanPrefModel getIsVisiblePreference() {
+		return Options.instance.showTemples;
 	}
 
 	@Override
-	public void generateMapObjects(Fragment fragment) {
-		Options.instance.world.getTemples(fragment.getCorner(),
-				createWorldObjectConsumer(fragment));
+	protected WorldObjectProducer getProducer() {
+		return Options.instance.world.getTempleProducer();
 	}
 }

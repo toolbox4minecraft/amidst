@@ -11,7 +11,6 @@ import amidst.minecraft.world.finder.StrongholdProducer;
 import amidst.minecraft.world.finder.TempleProducer;
 import amidst.minecraft.world.finder.VillageProducer;
 import amidst.minecraft.world.finder.WorldObject;
-import amidst.minecraft.world.finder.WorldObjectConsumer;
 import amidst.minecraft.world.finder.WorldObjectProducer;
 
 public abstract class World {
@@ -50,38 +49,32 @@ public abstract class World {
 
 	public abstract WorldType getWorldType();
 
-	public void getOceanMonuments(CoordinatesInWorld corner,
-			WorldObjectConsumer consumer) {
-		oceanMonumentProducer.produce(corner, consumer);
+	public WorldObjectProducer getOceanMonumentProducer() {
+		return oceanMonumentProducer;
 	}
 
-	public void getTemples(CoordinatesInWorld corner,
-			WorldObjectConsumer consumer) {
-		templeProducer.produce(corner, consumer);
+	public WorldObjectProducer getTempleProducer() {
+		return templeProducer;
 	}
 
-	public void getVillages(CoordinatesInWorld corner,
-			WorldObjectConsumer consumer) {
-		villageProducer.produce(corner, consumer);
+	public WorldObjectProducer getVillageProducer() {
+		return villageProducer;
 	}
 
-	public void getNetherFortresses(CoordinatesInWorld corner,
-			WorldObjectConsumer consumer) {
-		netherFortressProducer.produce(corner, consumer);
+	public WorldObjectProducer getNetherFortressProducer() {
+		return netherFortressProducer;
 	}
 
-	public void getPlayers(CoordinatesInWorld corner,
-			WorldObjectConsumer consumer) {
-		playerProducer.produce(corner, consumer);
+	public CachedWorldObjectProducer getPlayerProducer() {
+		return playerProducer;
 	}
 
-	public void getSpawn(CoordinatesInWorld corner, WorldObjectConsumer consumer) {
-		spawnProducer.produce(corner, consumer);
+	public CachedWorldObjectProducer getSpawnProducer() {
+		return spawnProducer;
 	}
 
-	public void getStrongholds(CoordinatesInWorld corner,
-			WorldObjectConsumer consumer) {
-		strongholdProducer.produce(corner, consumer);
+	public CachedWorldObjectProducer getStrongholdProducer() {
+		return strongholdProducer;
 	}
 
 	public List<WorldObject> getPlayers() {

@@ -1,17 +1,17 @@
 package amidst.map.layer;
 
 import amidst.Options;
-import amidst.map.Fragment;
+import amidst.minecraft.world.finder.WorldObjectProducer;
+import amidst.preferences.BooleanPrefModel;
 
 public class NetherFortressLayer extends IconLayer {
 	@Override
-	public boolean isVisible() {
-		return Options.instance.showNetherFortresses.get();
+	protected BooleanPrefModel getIsVisiblePreference() {
+		return Options.instance.showNetherFortresses;
 	}
 
 	@Override
-	public void generateMapObjects(Fragment fragment) {
-		Options.instance.world.getNetherFortresses(fragment.getCorner(),
-				createWorldObjectConsumer(fragment));
+	protected WorldObjectProducer getProducer() {
+		return Options.instance.world.getNetherFortressProducer();
 	}
 }
