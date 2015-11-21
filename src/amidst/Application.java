@@ -49,15 +49,15 @@ public class Application {
 
 	private void initLayerContainer() {
 		PlayerLayer playerLayer = new PlayerLayer();
-		StrongholdLayer strongholdLayer = new StrongholdLayer();
 		BiomeLayer biomeLayer = new BiomeLayer(0);
 		ImageLayer[] imageLayers = { biomeLayer, new SlimeLayer(1) };
 		LiveLayer[] liveLayers = { new GridLayer() };
 		IconLayer[] iconLayers = { new VillageLayer(),
-				new OceanMonumentLayer(), strongholdLayer, new TempleLayer(),
-				new SpawnLayer(), new NetherFortressLayer(), playerLayer };
-		layerContainer = new LayerContainer(playerLayer, strongholdLayer,
-				biomeLayer, imageLayers, liveLayers, iconLayers);
+				new OceanMonumentLayer(), new StrongholdLayer(),
+				new TempleLayer(), new SpawnLayer(), new NetherFortressLayer(),
+				playerLayer };
+		layerContainer = new LayerContainer(playerLayer, biomeLayer,
+				imageLayers, liveLayers, iconLayers);
 	}
 
 	private void initFragmentManager() {
