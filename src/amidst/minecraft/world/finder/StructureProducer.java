@@ -79,10 +79,9 @@ public abstract class StructureProducer implements WorldObjectProducer {
 			if (mapMarker == null) {
 				Log.e("No known structure for this biome type. This might be an error.");
 			} else {
-				consumer.consume(corner.add(
+				consumer.consume(new WorldObject(corner.add(
 						xRelativeToFragmentAsChunkResolution << 4,
-						yRelativeToFragmentAsChunkResolution << 4), mapMarker
-						.getName(), mapMarker.getImage());
+						yRelativeToFragmentAsChunkResolution << 4), mapMarker));
 			}
 		}
 	}

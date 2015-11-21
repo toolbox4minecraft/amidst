@@ -17,7 +17,7 @@ public abstract class CachedWorldObjectProducer implements WorldObjectProducer {
 	@Override
 	public void produce(CoordinatesInWorld corner, WorldObjectConsumer consumer) {
 		initCache();
-		produceFindings(corner, consumer);
+		produceWorldObjects(corner, consumer);
 	}
 
 	public List<WorldObject> getWorldObjects() {
@@ -40,14 +40,13 @@ public abstract class CachedWorldObjectProducer implements WorldObjectProducer {
 		}
 	}
 
-	private void produceFindings(CoordinatesInWorld corner,
+	private void produceWorldObjects(CoordinatesInWorld corner,
 			WorldObjectConsumer consumer) {
 		if (cache != null) {
-			for (WorldObject finding : cache) {
-				if (finding.getCoordinates()
-						.isInBoundsOf(corner, Fragment.SIZE)) {
-					consumer.consume(finding.getCoordinates(),
-							finding.getName(), finding.getImage());
+			for (WorldObject worldObject : cache) {
+				if (worldObject.getCoordinates().isInBoundsOf(corner,
+						Fragment.SIZE)) {
+					consumer.consume(worldObject);
 				}
 			}
 		}
