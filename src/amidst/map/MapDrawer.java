@@ -178,7 +178,6 @@ public class MapDrawer {
 		drawLayer(startOnScreen, startFragment, imageLayersDrawer);
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-		map.updateAllLayers(time);
 		drawLayer(startOnScreen, startFragment, liveLayersDrawer);
 		drawLayer(startOnScreen, startFragment, objectsDrawer);
 		g2d.setTransform(originalGraphicsTransform);

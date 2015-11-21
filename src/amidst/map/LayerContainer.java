@@ -51,30 +51,15 @@ public class LayerContainer {
 		return iconLayers;
 	}
 
-	public void updateAllLayers(float time) {
-		for (ImageLayer layer : imageLayers) {
-			layer.update(time);
-		}
-		for (LiveLayer layer : liveLayers) {
-			layer.update(time);
-		}
-		for (IconLayer layer : iconLayers) {
-			layer.update(time);
-		}
-	}
-
-	public void reloadAllLayers(Map map) {
+	public void setMap(Map map) {
 		for (ImageLayer layer : imageLayers) {
 			layer.setMap(map);
-			layer.reload();
 		}
 		for (LiveLayer layer : liveLayers) {
 			layer.setMap(map);
-			layer.reload();
 		}
 		for (IconLayer layer : iconLayers) {
 			layer.setMap(map);
-			layer.reload();
 		}
 	}
 }

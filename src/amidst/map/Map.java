@@ -33,7 +33,7 @@ public class Map {
 		this.fragmentManager = fragmentManager;
 		this.zoom = zoom;
 		this.layerContainer = layerContainer;
-		this.layerContainer.reloadAllLayers(this);
+		this.layerContainer.setMap(this);
 	}
 
 	private void lockedDraw(MapDrawer drawer) {
@@ -284,10 +284,6 @@ public class Map {
 
 	public void reloadPlayerLayer() {
 		reloadIconLayer(layerContainer.getPlayerLayer());
-	}
-
-	public void updateAllLayers(float time) {
-		layerContainer.updateAllLayers(time);
 	}
 
 	public LiveLayer[] getLiveLayers() {
