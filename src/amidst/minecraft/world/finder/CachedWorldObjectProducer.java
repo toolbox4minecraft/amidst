@@ -16,10 +16,28 @@ public abstract class CachedWorldObjectProducer implements WorldObjectProducer {
 
 	@Override
 	public void produce(CoordinatesInWorld corner, WorldObjectConsumer consumer) {
+		initCache();
+		produceFindings(corner, consumer);
+	}
+
+	public List<WorldObject> getWorldObjects() {
+		initCache();
+		return cache;
+	}
+
+	public WorldObject getFirstWorldObject() {
+		initCache();
+		if (cache.isEmpty()) {
+			return null;
+		} else {
+			return cache.get(0);
+		}
+	}
+
+	private void initCache() {
 		if (cache == null) {
 			cache = createCache();
 		}
-		produceFindings(corner, consumer);
 	}
 
 	private void produceFindings(CoordinatesInWorld corner,

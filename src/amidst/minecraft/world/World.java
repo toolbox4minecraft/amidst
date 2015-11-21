@@ -1,5 +1,7 @@
 package amidst.minecraft.world;
 
+import java.util.List;
+
 import amidst.minecraft.world.finder.CachedWorldObjectProducer;
 import amidst.minecraft.world.finder.NetherFortressProducer;
 import amidst.minecraft.world.finder.OceanMonumentProducer;
@@ -8,6 +10,7 @@ import amidst.minecraft.world.finder.SpawnProducer;
 import amidst.minecraft.world.finder.StrongholdProducer;
 import amidst.minecraft.world.finder.TempleProducer;
 import amidst.minecraft.world.finder.VillageProducer;
+import amidst.minecraft.world.finder.WorldObject;
 import amidst.minecraft.world.finder.WorldObjectConsumer;
 import amidst.minecraft.world.finder.WorldObjectProducer;
 
@@ -72,6 +75,19 @@ public abstract class World {
 	public void getStrongholds(CoordinatesInWorld corner,
 			WorldObjectConsumer consumer) {
 		strongholdProducer.produce(corner, consumer);
+	}
+
+	@Deprecated
+	public List<WorldObject> getPlayersObjects() {
+		return playerProducer.getWorldObjects();
+	}
+
+	public WorldObject getSpawn() {
+		return spawnProducer.getFirstWorldObject();
+	}
+
+	public List<WorldObject> getStrongholds() {
+		return strongholdProducer.getWorldObjects();
 	}
 
 	public void reloadPlayers() {

@@ -116,6 +116,7 @@ public class FileWorld extends World {
 		return isMultiPlayerMap;
 	}
 
+	@Deprecated
 	public List<Player> getPlayers() {
 		return players;
 	}
