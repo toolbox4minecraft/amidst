@@ -5,53 +5,63 @@ import java.util.prefs.Preferences;
 
 import org.kohsuke.args4j.Option;
 
-import amidst.minecraft.world.World;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BooleanPrefModel;
 import amidst.preferences.FilePrefModel;
 import amidst.preferences.SelectPrefModel;
 import amidst.preferences.StringPreference;
 
-/** Currently selected options that change AMIDST’s behavior
+/**
+ * Currently selected options that change AMIDST’s behavior
  */
 public enum Options {
 	instance;
-	
-	//permanent preferences
+
+	// permanent preferences
 	public final FilePrefModel jar;
 	public final BooleanPrefModel showSlimeChunks;
 	public final BooleanPrefModel showGrid;
 	public final BooleanPrefModel showNetherFortresses;
-	public final BooleanPrefModel showTemples, showPlayers, showStrongholds, showVillages, showOceanMonuments, showSpawn;
-	public final BooleanPrefModel mapFlicking, mapFading, showFPS, showScale, showDebug;
+	public final BooleanPrefModel showTemples;
+	public final BooleanPrefModel showPlayers;
+	public final BooleanPrefModel showStrongholds;
+	public final BooleanPrefModel showVillages;
+	public final BooleanPrefModel showOceanMonuments;
+	public final BooleanPrefModel showSpawn;
+	public final BooleanPrefModel mapFlicking;
+	public final BooleanPrefModel mapFading;
+	public final BooleanPrefModel showFPS;
+	public final BooleanPrefModel showScale;
+	public final BooleanPrefModel showDebug;
 	public final BooleanPrefModel updateToUnstable;
 	public final BooleanPrefModel maxZoom;
-	
+
 	public final StringPreference lastProfile;
-	
+
 	public final SelectPrefModel worldType;
 	public BiomeColorProfile biomeColorProfile;
-	
-	//CLI
-	@Option (name="-history", usage="Sets the path to seed history file.", metaVar="<file>")
+
+	// CLI
+	@Option(name = "-history", usage = "Sets the path to seed history file.", metaVar = "<file>")
 	public String historyPath;
-	
-	@Option (name="-log", usage="Sets the path to logging file.", metaVar="<file>")
+
+	@Option(name = "-log", usage = "Sets the path to logging file.", metaVar = "<file>")
 	public String logPath;
-	
-	@Option (name="-mcpath", usage="Sets the path to the .minecraft directory.", metaVar="<path>")
+
+	@Option(name = "-mcpath", usage = "Sets the path to the .minecraft directory.", metaVar = "<path>")
 	public String minecraftPath;
-	
-	@Option (name="-mcjar", usage="Sets the path to the minecraft .jar", metaVar="<path>")
+
+	@Option(name = "-mcjar", usage = "Sets the path to the minecraft .jar", metaVar = "<path>")
 	public String minecraftJar;
-	
-	@Option (name="-mcjson", usage="Sets the path to the minecraft .json", metaVar="<path>")
+
+	@Option(name = "-mcjson", usage = "Sets the path to the minecraft .json", metaVar = "<path>")
 	public String minecraftJson;
 
-	@Option (name="-mclibs", usage="Sets the path to the libraries/ folder", metaVar="<path>")
+	@Option(name = "-mclibs", usage = "Sets the path to the libraries/ folder", metaVar = "<path>")
 	public String minecraftLibraries;
-	
+
 	private Options() {
+		// @formatter:off
 		Preferences pref = Preferences.userNodeForPackage(Amidst.class);
 		jar				     = new FilePrefModel(   pref, "jar", new File(Util.minecraftDirectory, "bin/minecraft.jar"));
 		showSlimeChunks	     = new BooleanPrefModel(pref, "slimeChunks",	 	 false);
@@ -73,6 +83,7 @@ public enum Options {
 		lastProfile          = new StringPreference(pref, "profile",             null);
 		biomeColorProfile	 = new BiomeColorProfile();
 		worldType			 = new SelectPrefModel( pref, "worldType",  "Prompt each time", new String[] { "Prompt each time", "Default", "Flat", "Large Biomes", "Amplified" });
+		// @formatter:on
 		biomeColorProfile.fillColorArray();
 	}
 }
