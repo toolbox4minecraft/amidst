@@ -16,9 +16,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 public class Util {
-	/** Shows an error message for an exception
-	 * @param e the exception for which the stachtrace is to be shown
-	 */
 	public static final String REMOTE_VERSION_LIST_URL = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
 	public static final Gson GSON = new Gson();
 
@@ -98,17 +95,6 @@ public class Util {
 		profileDirectory = null;
 	}
 	
-	public static int makeColor(int r, int g, int b) {
-		int color = 0xFF000000;
-		color |= 0xFF0000 & (r << 16);
-		color |= 0xFF00 & (g << 8);
-		color |= 0xFF & b;
-		return color;
-	}
-	public static int mcColor(int color) {
-		return 0xFF000000 | color;
-	}
-	
 	private static final int TEMP_DIR_ATTEMPTS = 1000;
 	
 	/** Guava's method, moved here to avoid a huge dependency
@@ -146,42 +132,6 @@ public class Util {
 	
 	public static <T> T readObject(String path, final Class<T> clazz) throws IOException {
 		return readObject(new File(path), clazz);
-	}
-	
-	public static int deselectColor(int color) {
-		int r = (color & 0x00FF0000) >> 16;
-		int g = (color & 0x0000FF00) >> 8;
-		int b = (color & 0x000000FF);
-		
-		int average = (r + g + b);
-		r = (r + average) / 30;
-		g = (g + average) / 30;
-		b = (b + average) / 30;
-		return makeColor(r, g, b);
-	}
-	
-	public static int lightenColor(int color, int brightness) {
-		int r = (color & 0x00FF0000) >> 16;
-		int g = (color & 0x0000FF00) >> 8;
-		int b = (color & 0x000000FF);
-		
-		r += brightness;
-		g += brightness;
-		b += brightness;
-		
-		if (r > 0xFF) r = 0xFF;
-		if (g > 0xFF) g = 0xFF;
-		if (b > 0xFF) b = 0xFF;
-		
-		return makeColor(r, g, b);
-	}
-
-	public static int greyScale(int color) {
-		int r = (color & 0x00FF0000) >> 16;
-		int g = (color & 0x0000FF00) >> 8;
-		int b = (color & 0x000000FF);
-		int average = (r + g + b) / 3;
-		return makeColor(average, average, average);
 	}
 
 	public static File getSavesDirectory() {

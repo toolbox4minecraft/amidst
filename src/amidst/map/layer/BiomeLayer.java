@@ -1,6 +1,6 @@
 package amidst.map.layer;
 
-import amidst.Util;
+import amidst.ColorUtils;
 import amidst.map.Fragment;
 import amidst.minecraft.Biome;
 
@@ -38,8 +38,8 @@ public class BiomeLayer extends ImageLayer {
 						blockX, blockY)]) {
 					cache[i] = getColor(fragment, blockX, blockY);
 				} else {
-					cache[i] = Util.deselectColor(getColor(fragment, blockX,
-							blockY));
+					cache[i] = ColorUtils.deselectColor(getColor(fragment,
+							blockX, blockY));
 				}
 			}
 		}

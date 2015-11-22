@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import amidst.ColorUtils;
 import amidst.Options;
 import amidst.Util;
 import amidst.logging.Log;
@@ -27,7 +28,7 @@ public class BiomeColorProfile {
 		}
 
 		public int toColorInt() {
-			return Util.makeColor(r, g, b);
+			return ColorUtils.makeColor(r, g, b);
 		}
 	}
 
