@@ -1,4 +1,4 @@
-package amidst;
+package amidst.utilities;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -11,6 +11,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import amidst.AmidstMetaData;
 
 public class UpdateInformationRetriever {
 	public static final String UPDATE_URL = "https://sites.google.com/site/mothfinder/update.xml";

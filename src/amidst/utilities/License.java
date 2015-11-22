@@ -1,4 +1,4 @@
-package amidst;
+package amidst.utilities;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

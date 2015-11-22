@@ -8,7 +8,7 @@ import java.net.URISyntaxException;
 
 import javax.swing.JOptionPane;
 
-import amidst.UpdateInformationRetriever;
+import amidst.utilities.UpdateInformationRetriever;
 
 public class UpdatePrompt {
 	private UpdateInformationRetriever retriever = new UpdateInformationRetriever();
