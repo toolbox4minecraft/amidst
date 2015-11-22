@@ -5,6 +5,7 @@ import java.util.prefs.Preferences;
 
 import org.kohsuke.args4j.Option;
 
+import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BooleanPrefModel;
 import amidst.preferences.FilePrefModel;

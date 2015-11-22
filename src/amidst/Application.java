@@ -26,6 +26,7 @@ import amidst.map.layer.StrongholdLayer;
 import amidst.map.layer.TempleLayer;
 import amidst.map.layer.VillageLayer;
 import amidst.minecraft.IMinecraftInterface;
+import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.remote.RemoteMinecraft;

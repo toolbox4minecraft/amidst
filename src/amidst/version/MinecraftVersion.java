@@ -3,8 +3,8 @@ package amidst.version;
 import java.io.File;
 import java.util.HashMap;
 
-import amidst.LocalMinecraftInstallation;
 import amidst.logging.Log;
+import amidst.minecraft.LocalMinecraftInstallation;
 
 public class MinecraftVersion {
 	private File jarFile, jsonFile;

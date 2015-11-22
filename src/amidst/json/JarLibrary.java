@@ -3,8 +3,8 @@ package amidst.json;
 import java.io.File;
 import java.util.ArrayList;
 
-import amidst.LocalMinecraftInstallation;
 import amidst.logging.Log;
+import amidst.minecraft.LocalMinecraftInstallation;
 
 public class JarLibrary {
 	public String name;

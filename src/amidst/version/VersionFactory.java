@@ -9,10 +9,10 @@ import java.util.Stack;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-import amidst.LocalMinecraftInstallation;
 import amidst.json.InstallInformation;
 import amidst.json.LauncherProfile;
 import amidst.logging.Log;
+import amidst.minecraft.LocalMinecraftInstallation;
 
 public class VersionFactory {
 	private static final Gson GSON = new Gson();

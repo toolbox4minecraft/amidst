@@ -10,6 +10,7 @@ import org.kohsuke.args4j.CmdLineParser;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
 import amidst.logging.Log.CrashHandler;
+import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.preferences.BiomeColorProfile;
 import amidst.utilities.Google;
 

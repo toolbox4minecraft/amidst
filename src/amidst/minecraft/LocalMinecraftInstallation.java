@@ -1,7 +1,8 @@
-package amidst;
+package amidst.minecraft;
 
 import java.io.File;
 
+import amidst.Options;
 import amidst.logging.Log;
 
 public class LocalMinecraftInstallation {
