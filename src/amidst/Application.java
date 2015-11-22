@@ -35,7 +35,7 @@ import amidst.version.MinecraftProfile;
 
 public class Application {
 	private ThreadMaster threadMaster = new ThreadMaster(this);
-	private SkinLoader skinLoader = new SkinLoader(threadMaster);
+	private SkinLoader skinLoader = new SkinLoader(this, threadMaster);
 	private SeedHistoryLogger seedHistoryLogger = new SeedHistoryLogger();
 	private UpdatePrompt updateManager = new UpdatePrompt();
 
@@ -193,6 +193,15 @@ public class Application {
 	public void tickFragmentLoader() {
 		if (fragmentManager != null) {
 			fragmentManager.tick();
+		}
+	}
+
+	public void finishedLoadingPlayerSkin() {
+		if (world != null) {
+			world.reloadPlayers();
+		}
+		if (mapWindow != null) {
+			mapWindow.reloadPlayerLayer();
 		}
 	}
 }

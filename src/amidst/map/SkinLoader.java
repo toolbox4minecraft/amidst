@@ -10,14 +10,17 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import amidst.Application;
 import amidst.ThreadMaster;
 import amidst.logging.Log;
 import amidst.minecraft.world.FileWorld.Player;
 
 public class SkinLoader {
+	private Application application;
 	private ThreadMaster threadMaster;
 
-	public SkinLoader(ThreadMaster threadMaster) {
+	public SkinLoader(Application application, ThreadMaster threadMaster) {
+		this.application = application;
 		this.threadMaster = threadMaster;
 	}
 
@@ -32,6 +35,7 @@ public class SkinLoader {
 			@Override
 			public void run() {
 				loadSkin(player);
+				application.finishedLoadingPlayerSkin();
 			}
 		});
 	}

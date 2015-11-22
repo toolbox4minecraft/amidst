@@ -301,4 +301,10 @@ public class MapWindow {
 			mapViewer.repaint();
 		}
 	}
+
+	public void reloadPlayerLayer() {
+		if (map != null) {
+			map.reloadPlayerLayer();
+		}
+	}
 }
