@@ -5,24 +5,6 @@ import java.util.HashMap;
 import amidst.Util;
 
 public class Biome {
-	// TODO: Rename once we figure out what this actually is!
-	public static final class BiomeType {
-		public float value1, value2;
-
-		public BiomeType(float value1, float value2) {
-			this.value1 = value1;
-			this.value2 = value2;
-		}
-
-		public BiomeType getExtreme() {
-			return new BiomeType(value1 * 0.8F, value2 * 0.6F);
-		}
-
-		public BiomeType getRare() {
-			return new BiomeType(value1 + 0.1F, value2 + 0.2F);
-		}
-	}
-
 	// @formatter:off
 	public static final HashMap<String,Biome> biomeMap = new HashMap<String,Biome>();
 	public static final BiomeType typeA = new BiomeType(0.1F, 0.2F);
