@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 import amidst.AmidstMetaData;
 import amidst.Application;
 import amidst.Options;
-import amidst.Util;
+import amidst.LocalMinecraftInstallation;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
@@ -177,7 +177,7 @@ public class MapWindow {
 		result.setFileFilter(new LevelFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
 		result.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		result.setCurrentDirectory(Util.getSavesDirectory());
+		result.setCurrentDirectory(LocalMinecraftInstallation.getSavesDirectory());
 		result.setFileHidingEnabled(false);
 		return result;
 	}

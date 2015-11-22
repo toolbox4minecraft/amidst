@@ -3,7 +3,7 @@ package amidst.json;
 import java.io.File;
 import java.util.ArrayList;
 
-import amidst.Util;
+import amidst.LocalMinecraftInstallation;
 import amidst.logging.Log;
 
 public class JarLibrary {
@@ -30,7 +30,7 @@ public class JarLibrary {
 	
 	public File getFile() {
 		if (file == null) {
-			String searchPath = Util.getMinecraftLibraries().getAbsolutePath() + "/";
+			String searchPath = LocalMinecraftInstallation.getMinecraftLibraries().getAbsolutePath() + "/";
 			String[] pathSplit = name.split(":");
 			pathSplit[0] = pathSplit[0].replace('.', '/');
 			for (int i = 0; i < pathSplit.length; i++)

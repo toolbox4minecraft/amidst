@@ -3,7 +3,7 @@ package amidst.version;
 import java.io.File;
 import java.util.HashMap;
 
-import amidst.Util;
+import amidst.LocalMinecraftInstallation;
 import amidst.logging.Log;
 
 public class MinecraftVersion {
@@ -17,7 +17,7 @@ public class MinecraftVersion {
 		this.jsonFile = jsonFile;
 	}
 	public static MinecraftVersion fromVersionId(String lastVersionId) {
-		return fromVersionPath(new File(Util.getMinecraftDirectory() + "/versions/" + lastVersionId));
+		return fromVersionPath(new File(LocalMinecraftInstallation.getMinecraftDirectory() + "/versions/" + lastVersionId));
 	}
 	public static MinecraftVersion fromVersionPath(File path) {
 		File jarFile = new File(path + "/" + path.getName() + ".jar");

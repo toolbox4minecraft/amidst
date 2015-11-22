@@ -9,7 +9,7 @@ import java.util.Stack;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-import amidst.Util;
+import amidst.LocalMinecraftInstallation;
 import amidst.json.InstallInformation;
 import amidst.json.LauncherProfile;
 import amidst.logging.Log;
@@ -24,7 +24,7 @@ public class VersionFactory {
 	}
 	
 	public void scanForLocalVersions() {
-		File versionPath = new File(Util.getMinecraftDirectory() + "/versions");
+		File versionPath = new File(LocalMinecraftInstallation.getMinecraftDirectory() + "/versions");
 		if (!versionPath.exists()) {
 			Log.e("Cannot find version directory.");
 			return;
@@ -48,7 +48,7 @@ public class VersionFactory {
 	
 	public void scanForProfiles() {
 		Log.i("Scanning for profiles.");
-		File profileJsonFile = new File(Util.getMinecraftDirectory() + "/launcher_profiles.json");
+		File profileJsonFile = new File(LocalMinecraftInstallation.getMinecraftDirectory() + "/launcher_profiles.json");
 		LauncherProfile launcherProfile = null;
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(profileJsonFile));

@@ -22,7 +22,7 @@ public class Amidst {
 		initUncaughtExceptionHandler();
 		parseCommandLineArguments(args);
 		initLogger();
-		initUtil();
+		initLocalMinecraftInstallation();
 		initLookAndFeel();
 		trackRunning();
 		setEnvironmentVariables();
@@ -68,9 +68,9 @@ public class Amidst {
 		});
 	}
 
-	private static void initUtil() {
-		Util.setMinecraftDirectory();
-		Util.setMinecraftLibraries();
+	private static void initLocalMinecraftInstallation() {
+		LocalMinecraftInstallation.setMinecraftDirectory();
+		LocalMinecraftInstallation.setMinecraftLibraries();
 	}
 
 	private static void initLookAndFeel() {

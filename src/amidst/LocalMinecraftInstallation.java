@@ -4,7 +4,7 @@ import java.io.File;
 
 import amidst.logging.Log;
 
-public class Util {
+public class LocalMinecraftInstallation {
 	private static File minecraftDirectory;
 
 	public static void setMinecraftDirectory() {

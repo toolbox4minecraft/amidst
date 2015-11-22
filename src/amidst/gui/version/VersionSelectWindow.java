@@ -13,7 +13,7 @@ import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
 import amidst.Application;
 import amidst.Options;
-import amidst.Util;
+import amidst.LocalMinecraftInstallation;
 import amidst.logging.Log;
 import amidst.version.LatestVersionList;
 import amidst.version.MinecraftProfile;
@@ -34,7 +34,7 @@ public class VersionSelectWindow {
 
 		if (!isValidMinecraftDirectory()) {
 			Log.crash("Unable to find Minecraft directory at: "
-					+ Util.getMinecraftDirectory());
+					+ LocalMinecraftInstallation.getMinecraftDirectory());
 			return;
 		}
 
@@ -43,8 +43,8 @@ public class VersionSelectWindow {
 	}
 
 	private boolean isValidMinecraftDirectory() {
-		return Util.getMinecraftDirectory().exists()
-				&& Util.getMinecraftDirectory().isDirectory();
+		return LocalMinecraftInstallation.getMinecraftDirectory().exists()
+				&& LocalMinecraftInstallation.getMinecraftDirectory().isDirectory();
 	}
 
 	private void initFrame() {

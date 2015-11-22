@@ -63,7 +63,7 @@ public enum Options {
 	private Options() {
 		// @formatter:off
 		Preferences pref = Preferences.userNodeForPackage(Amidst.class);
-		jar				     = new FilePrefModel(   pref, "jar", new File(Util.getMinecraftDirectory(), "bin/minecraft.jar"));
+		jar				     = new FilePrefModel(   pref, "jar", new File(LocalMinecraftInstallation.getMinecraftDirectory(), "bin/minecraft.jar"));
 		showSlimeChunks	     = new BooleanPrefModel(pref, "slimeChunks",	 	 false);
 		showGrid			 = new BooleanPrefModel(pref, "grid",			 	 false);
 		showNetherFortresses = new BooleanPrefModel(pref, "netherFortressIcons", false);

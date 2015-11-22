@@ -74,12 +74,12 @@ public class Application {
 	}
 
 	public void displayMapWindow(MinecraftProfile profile) {
-		Util.setProfileDirectory(profile.getGameDir());
+		LocalMinecraftInstallation.setProfileDirectory(profile.getGameDir());
 		displayMapWindow(createLocalMinecraftInterface(profile.getJarFile()));
 	}
 
 	public void displayMapWindow(String jarFile, String gameDirectory) {
-		Util.setProfileDirectory(gameDirectory);
+		LocalMinecraftInstallation.setProfileDirectory(gameDirectory);
 		displayMapWindow(createLocalMinecraftInterface(new File(jarFile)));
 	}
 
