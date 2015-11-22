@@ -47,12 +47,6 @@ public class FileWorld extends World {
 			}
 		}
 
-		@Override
-		public String toString() {
-			return "Player \"" + playerName + "\" at (" + coordinates.getX()
-					+ ", " + coordinates.getY() + ")";
-		}
-
 		public void setSkin(BufferedImage skin) {
 			this.skin = skin;
 		}

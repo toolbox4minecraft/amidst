@@ -35,7 +35,6 @@ public class WorldObject {
 
 	@Override
 	public String toString() {
-		return name + " at (" + coordinates.getX() + ", " + coordinates.getY()
-				+ ")";
+		return name + " " + coordinates.toString();
 	}
 }
