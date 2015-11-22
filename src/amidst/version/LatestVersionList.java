@@ -11,10 +11,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import amidst.Util;
 import amidst.logging.Log;
 import amidst.resources.ResourceLoader;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 public enum LatestVersionList {
@@ -27,6 +27,9 @@ public enum LatestVersionList {
 	public enum LoadState {
 		LOADED, LOADING, FAILED, IDLE
 	}
+
+	private static final String REMOTE_VERSION_LIST_URL = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
+	private static final Gson GSON = new Gson();
 
 	private LoadState loadState = LoadState.IDLE;
 
@@ -73,7 +76,7 @@ public enum LatestVersionList {
 		Log.i("Attempting to download remote version list...");
 		URL versionUrl = null;
 		try {
-			versionUrl = new URL(Util.REMOTE_VERSION_LIST_URL);
+			versionUrl = new URL(REMOTE_VERSION_LIST_URL);
 		} catch (MalformedURLException e) {
 			Log.w("MalformedURLException on remote version list. Aborting load. This should never be possible.");
 			Log.printTraceStack(e);
@@ -115,7 +118,7 @@ public enum LatestVersionList {
 		BufferedReader bufferedReader = new BufferedReader(
 				new InputStreamReader(inputStream));
 		try {
-			profile = Util.readObject(bufferedReader, VersionList.class);
+			profile = GSON.fromJson(bufferedReader, VersionList.class);
 		} catch (JsonSyntaxException e) {
 			Log.w("Unable to parse version list.");
 			Log.printTraceStack(e);

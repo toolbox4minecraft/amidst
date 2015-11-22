@@ -1,7 +1,9 @@
 package amidst.preferences;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
@@ -9,10 +11,10 @@ import java.util.Map;
 
 import amidst.ColorUtils;
 import amidst.Options;
-import amidst.Util;
 import amidst.logging.Log;
 import amidst.minecraft.Biome;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 public class BiomeColorProfile {
@@ -31,6 +33,8 @@ public class BiomeColorProfile {
 			return ColorUtils.makeColor(r, g, b);
 		}
 	}
+
+	private static final Gson GSON = new Gson();
 
 	public static void scan() {
 		Log.i("Searching for biome color profiles.");
@@ -64,7 +68,11 @@ public class BiomeColorProfile {
 		BiomeColorProfile profile = null;
 		if (file.exists() && file.isFile()) {
 			try {
-				profile = Util.readObject(file, BiomeColorProfile.class);
+				BufferedReader reader = new BufferedReader(new FileReader(file));
+				BiomeColorProfile result = GSON.fromJson(reader,
+						BiomeColorProfile.class);
+				reader.close();
+				profile = result;
 				profile.fillColorArray();
 			} catch (JsonSyntaxException e) {
 				Log.w("Unable to load file: " + file);

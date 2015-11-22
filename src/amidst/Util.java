@@ -1,20 +1,10 @@
 package amidst;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 
 import amidst.logging.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-
 public class Util {
-	public static final String REMOTE_VERSION_LIST_URL = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
-	public static final Gson GSON = new Gson();
-
 	private static File minecraftDirectory;
 
 	public static void setMinecraftDirectory() {
@@ -68,19 +58,6 @@ public class Util {
 					+ " as that location does not exist or is not a folder.");
 		}
 		return null;
-	}
-
-	public static <T> T readObject(BufferedReader reader, final Class<T> clazz)
-			throws JsonIOException, JsonSyntaxException {
-		return GSON.fromJson(reader, clazz);
-	}
-
-	public static <T> T readObject(File path, final Class<T> clazz)
-			throws IOException, JsonIOException, JsonSyntaxException {
-		final BufferedReader reader = new BufferedReader(new FileReader(path));
-		T object = GSON.fromJson(reader, clazz);
-		reader.close();
-		return object;
 	}
 
 	public static File getSavesDirectory() {

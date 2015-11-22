@@ -1,7 +1,9 @@
 package amidst.minecraft;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
@@ -16,8 +18,9 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import com.google.gson.Gson;
+
 import amidst.Options;
-import amidst.Util;
 import amidst.bytedata.ByteClass;
 import amidst.bytedata.ByteClass.AccessFlags;
 import amidst.bytedata.CCLongMatch;
@@ -34,6 +37,7 @@ import amidst.logging.Log;
 import amidst.version.VersionInfo;
 
 public class Minecraft {
+	private static final Gson GSON = new Gson();
 	private static final int MAX_CLASSES = 128;
 	private Class<?> mainClass;
 	private URLClassLoader classLoader;
@@ -292,7 +296,10 @@ public class Minecraft {
 		Stack<URL> libraries = new Stack<URL>();
 		JarProfile profile = null;
 		try {
-			profile = Util.readObject(jsonFile, JarProfile.class);
+			BufferedReader reader = new BufferedReader(new FileReader(jsonFile));
+			JarProfile result = GSON.fromJson(reader, JarProfile.class);
+			reader.close();
+			profile = result;
 		} catch (IOException e) {
 			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: " + jsonFile + ")");
 			return libraries;
