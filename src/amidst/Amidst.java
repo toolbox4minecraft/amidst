@@ -2,6 +2,7 @@ package amidst;
 
 import java.io.File;
 
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.kohsuke.args4j.CmdLineException;
@@ -95,6 +96,15 @@ public class Amidst {
 	}
 
 	private static void startApplication() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				doStartApplication();
+			}
+		});
+	}
+
+	private static void doStartApplication() {
 		application = new Application(options);
 		if (options.minecraftJar != null) {
 			application.displayMapWindow(options.minecraftJar,
