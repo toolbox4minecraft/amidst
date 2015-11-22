@@ -10,8 +10,6 @@ import org.kohsuke.args4j.CmdLineParser;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
 import amidst.logging.Log.CrashHandler;
-import amidst.minecraft.LocalMinecraftInstallation;
-import amidst.preferences.BiomeColorProfile;
 import amidst.utilities.Google;
 
 public class Amidst {
@@ -21,13 +19,12 @@ public class Amidst {
 
 	public static void main(String args[]) {
 		initUncaughtExceptionHandler();
+		initCrashHandler();
 		parseCommandLineArguments(args);
 		initLogger();
-		initLocalMinecraftInstallation();
 		initLookAndFeel();
+		setJava2DEnvironmentVariables();
 		trackRunning();
-		setEnvironmentVariables();
-		scanForBiomeColorProfiles();
 		startApplication();
 	}
 
@@ -40,10 +37,26 @@ public class Amidst {
 		});
 	}
 
+	private static void initCrashHandler() {
+		Log.setCrashHandler(new CrashHandler() {
+			@Override
+			public void handle(Throwable e, String exceptionText,
+					String message, String allLogMessages) {
+				if (application != null) {
+					application
+							.crash(e, exceptionText, message, allLogMessages);
+				} else {
+					System.err.println("Amidst crashed!");
+					System.err.println(message);
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
 	private static void parseCommandLineArguments(String[] args) {
-		CmdLineParser parser = new CmdLineParser(Options.instance);
 		try {
-			parser.parseArgument(args);
+			new CmdLineParser(Options.instance).parseArgument(args);
 		} catch (CmdLineException e) {
 			Log.w(COMMAND_LINE_PARSING_ERROR_MESSAGE);
 			e.printStackTrace();
@@ -55,23 +68,6 @@ public class Amidst {
 			Log.addListener("file", new FileLogger(new File(
 					Options.instance.logPath)));
 		}
-		Log.setCrashHandler(new CrashHandler() {
-			@Override
-			public void handle(Throwable e, String exceptionText,
-					String message, String allLogMessages) {
-				if (application != null) {
-					application
-							.crash(e, exceptionText, message, allLogMessages);
-				} else {
-					System.err.println("Amidst crashed!");
-				}
-			}
-		});
-	}
-
-	private static void initLocalMinecraftInstallation() {
-		LocalMinecraftInstallation.initMinecraftDirectory();
-		LocalMinecraftInstallation.initMinecraftLibraries();
 	}
 
 	private static void initLookAndFeel() {
@@ -89,17 +85,13 @@ public class Amidst {
 		return System.getProperty("os.name").contains("OS X");
 	}
 
-	private static void trackRunning() {
-		Google.track("Run");
-	}
-
-	private static void setEnvironmentVariables() {
+	private static void setJava2DEnvironmentVariables() {
 		System.setProperty("sun.java2d.opengl", "True");
 		System.setProperty("sun.java2d.accthreshold", "0");
 	}
 
-	private static void scanForBiomeColorProfiles() {
-		BiomeColorProfile.scan();
+	private static void trackRunning() {
+		Google.track("Run");
 	}
 
 	private static void startApplication() {

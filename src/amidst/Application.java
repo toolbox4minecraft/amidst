@@ -31,6 +31,7 @@ import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.remote.RemoteMinecraft;
 import amidst.minecraft.world.World;
+import amidst.preferences.BiomeColorProfile;
 import amidst.utilities.SeedHistoryLogger;
 import amidst.version.MinecraftProfile;
 
@@ -47,6 +48,20 @@ public class Application {
 
 	private LayerContainer layerContainer;
 	private FragmentManager fragmentManager;
+
+	public Application() {
+		initLocalMinecraftInstallation();
+		scanForBiomeColorProfiles();
+	}
+
+	private void initLocalMinecraftInstallation() {
+		LocalMinecraftInstallation.initMinecraftDirectory();
+		LocalMinecraftInstallation.initMinecraftLibraries();
+	}
+
+	private void scanForBiomeColorProfiles() {
+		BiomeColorProfile.scan();
+	}
 
 	private void initLayerContainer() {
 		IconLayer playerLayer = new PlayerLayer();
