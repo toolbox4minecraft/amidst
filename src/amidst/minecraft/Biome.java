@@ -1,10 +1,45 @@
 package amidst.minecraft;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import amidst.Util;
 
 public class Biome {
+	private static class BiomeIterable implements Iterable<Biome> {
+		@Override
+		public Iterator<Biome> iterator() {
+			return new BiomeIterator();
+		}
+	}
+
+	private static class BiomeIterator implements Iterator<Biome> {
+		private int nextBiomeIndex = 0;
+
+		private BiomeIterator() {
+			findNextValid();
+		}
+
+		@Override
+		public boolean hasNext() {
+			return nextBiomeIndex < biomes.length;
+		}
+
+		@Override
+		public Biome next() {
+			Biome result = biomes[nextBiomeIndex];
+			nextBiomeIndex++;
+			findNextValid();
+			return result;
+		}
+
+		private void findNextValid() {
+			while (biomes[nextBiomeIndex] == null) {
+				nextBiomeIndex++;
+			}
+		}
+	}
+
 	// @formatter:off
 	private static final HashMap<String, Biome> biomeMap = new HashMap<String, Biome>();
 	private static final Biome[] biomes = new Biome[256];
@@ -92,6 +127,31 @@ public class Biome {
 	public static final Biome mesaPlateauM		   = new Biome("Mesa Plateau M",		   167, Util.makeColor(202, 140, 101));
 	// @formatter:on
 
+	public static Iterable<Biome> iterator() {
+		return new BiomeIterable();
+	}
+
+	public static Biome[] getBiomes() {
+		return biomes;
+	}
+
+	public static Biome getByIndex(int index) {
+		return biomes[index];
+	}
+
+	public static int getBiomesLength() {
+		return biomes.length;
+	}
+
+	public static int indexFromName(String name) {
+		Biome biome = biomeMap.get(name);
+		if (biome != null) {
+			return biome.index;
+		} else {
+			return -1;
+		}
+	}
+
 	private final String name;
 	private final int index;
 	private final BiomeType type;
@@ -124,20 +184,6 @@ public class Biome {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return "[Biome " + name + "]";
-	}
-
-	public static int indexFromName(String name) {
-		Biome biome = biomeMap.get(name);
-		if (biome != null) {
-			return biome.index;
-		} else {
-			return -1;
-		}
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -158,15 +204,8 @@ public class Biome {
 		return type;
 	}
 
-	public static Biome[] getBiomes() {
-		return biomes;
-	}
-
-	public static Biome getByIndex(int index) {
-		return biomes[index];
-	}
-
-	public static int getBiomesLength() {
-		return biomes.length;
+	@Override
+	public String toString() {
+		return "[Biome " + name + "]";
 	}
 }
