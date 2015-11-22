@@ -22,7 +22,7 @@ public class WorldLoader {
 
 	private long seed;
 	public WorldType worldType;
-	private String generatorOptions;
+	private String generatorOptions = "";
 	private boolean isMultiPlayerMap;
 	private List<Player> players = new ArrayList<Player>();
 
@@ -69,7 +69,6 @@ public class WorldLoader {
 			}
 		} else {
 			worldType = WorldType.DEFAULT;
-			generatorOptions = "";
 		}
 	}
 
