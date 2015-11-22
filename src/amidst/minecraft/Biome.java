@@ -5,6 +5,25 @@ import java.util.HashMap;
 import amidst.Util;
 
 public class Biome {
+	// TODO: Rename once we figure out what this actually is!
+	public static final class BiomeType {
+		public float value1, value2;
+
+		public BiomeType(float value1, float value2) {
+			this.value1 = value1;
+			this.value2 = value2;
+		}
+
+		public BiomeType getExtreme() {
+			return new BiomeType(value1 * 0.8F, value2 * 0.6F);
+		}
+
+		public BiomeType getRare() {
+			return new BiomeType(value1 + 0.1F, value2 + 0.2F);
+		}
+	}
+
+	// @formatter:off
 	public static final HashMap<String,Biome> biomeMap = new HashMap<String,Biome>();
 	public static final BiomeType typeA = new BiomeType(0.1F, 0.2F);
 	public static final BiomeType typeB = new BiomeType(-0.5F, 0.0F);
@@ -103,13 +122,17 @@ public class Biome {
 	public static final Biome mesaBryce			   = new Biome("Mesa (Bryce)",			   165, Util.makeColor(217, 69, 21));
 	public static final Biome mesaPlateauFM		   = new Biome("Mesa Plateau F M",		   166, Util.makeColor(176, 151, 101));
 	public static final Biome mesaPlateauM		   = new Biome("Mesa Plateau M",		   167, Util.makeColor(202, 140, 101));
-	
-	
+	// @formatter:on
+
 	public String name;
 	public int index;
 	public int color;
 	public BiomeType type;
-	
+
+	public Biome(String name, int index, int color) {
+		this(name, index, color, biomes[index - 128].type.getRare());
+	}
+
 	public Biome(String name, int index, int color, boolean remote) {
 		biomes[index] = this;
 		this.name = name;
@@ -118,10 +141,7 @@ public class Biome {
 		this.type = typeC;
 		biomeMap.put(name, this);
 	}
-	
-	public Biome(String name, int index, int color) {
-		this(name, index, color, biomes[index - 128].type.getRare());
-	}
+
 	public Biome(String name, int index, int color, BiomeType type) {
 		biomes[index] = this;
 		this.name = name;
@@ -129,36 +149,23 @@ public class Biome {
 		this.color = color;
 		this.type = type;
 		biomeMap.put(name, this);
-		
-		if (index >= 128)
+
+		if (index >= 128) {
 			this.color = Util.lightenColor(color, 40);
+		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[Biome " + name + "]";
 	}
-	
+
 	public static int indexFromName(String name) {
 		Biome biome = biomeMap.get(name);
-		if (biome != null)
+		if (biome != null) {
 			return biome.index;
-		return -1;
-	}
-	
-	public static final class BiomeType { // TODO: Rename once we figure out what this actually is!
-		public float value1, value2;
-		public BiomeType(float value1, float value2) {
-			this.value1 = value1;
-			this.value2 = value2;
-		}
-		
-		public BiomeType getExtreme() {
-			return new BiomeType(value1 * 0.8F, value2 * 0.6F);
-		}
-		public BiomeType getRare(){ 
-			return new BiomeType(value1 + 0.1F, value2 + 0.2F);
+		} else {
+			return -1;
 		}
 	}
-
 }
