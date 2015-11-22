@@ -16,6 +16,7 @@ public class Amidst {
 	private static final String UNCAUGHT_EXCEPTION_ERROR_MESSAGE = "Amidst has encounted an uncaught exception on thread: ";
 	private static final String COMMAND_LINE_PARSING_ERROR_MESSAGE = "There was an issue parsing command line options.";
 	private static Application application;
+	private static Options options = Options.instance;
 
 	public static void main(String args[]) {
 		initUncaughtExceptionHandler();
@@ -56,7 +57,7 @@ public class Amidst {
 
 	private static void parseCommandLineArguments(String[] args) {
 		try {
-			new CmdLineParser(Options.instance).parseArgument(args);
+			new CmdLineParser(options).parseArgument(args);
 		} catch (CmdLineException e) {
 			Log.w(COMMAND_LINE_PARSING_ERROR_MESSAGE);
 			e.printStackTrace();
@@ -64,9 +65,8 @@ public class Amidst {
 	}
 
 	private static void initLogger() {
-		if (Options.instance.logPath != null) {
-			Log.addListener("file", new FileLogger(new File(
-					Options.instance.logPath)));
+		if (options.logPath != null) {
+			Log.addListener("file", new FileLogger(new File(options.logPath)));
 		}
 	}
 
@@ -95,10 +95,10 @@ public class Amidst {
 	}
 
 	private static void startApplication() {
-		application = new Application();
-		if (Options.instance.minecraftJar != null) {
-			application.displayMapWindow(Options.instance.minecraftJar,
-					Options.instance.minecraftPath);
+		application = new Application(options);
+		if (options.minecraftJar != null) {
+			application.displayMapWindow(options.minecraftJar,
+					options.minecraftPath);
 		} else {
 			application.displayVersionSelectWindow();
 		}

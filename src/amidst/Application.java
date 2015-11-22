@@ -38,8 +38,7 @@ import amidst.version.MinecraftProfile;
 public class Application {
 	private ThreadMaster threadMaster = new ThreadMaster(this);
 	private SkinLoader skinLoader = new SkinLoader(this, threadMaster);
-	private SeedHistoryLogger seedHistoryLogger = new SeedHistoryLogger(
-			Options.instance.historyPath);
+	private SeedHistoryLogger seedHistoryLogger;
 	private UpdatePrompt updateManager = new UpdatePrompt();
 
 	private VersionSelectWindow versionSelectWindow;
@@ -50,16 +49,24 @@ public class Application {
 	private LayerContainer layerContainer;
 	private FragmentManager fragmentManager;
 
-	public Application() {
+	private Options options;
+
+	public Application(Options options) {
+		this.options = options;
+		initSeedHistoryLogger();
 		initLocalMinecraftInstallation();
 		scanForBiomeColorProfiles();
 	}
 
+	private void initSeedHistoryLogger() {
+		this.seedHistoryLogger = new SeedHistoryLogger(options.historyPath);
+	}
+
 	private void initLocalMinecraftInstallation() {
 		LocalMinecraftInstallation
-				.initMinecraftDirectory(Options.instance.minecraftPath);
+				.initMinecraftDirectory(options.minecraftPath);
 		LocalMinecraftInstallation
-				.initMinecraftLibraries(Options.instance.minecraftLibraries);
+				.initMinecraftLibraries(options.minecraftLibraries);
 	}
 
 	private void scanForBiomeColorProfiles() {
@@ -110,7 +117,7 @@ public class Application {
 
 	private IMinecraftInterface createLocalMinecraftInterface(File jarFile) {
 		try {
-			return new Minecraft(jarFile, Options.instance.minecraftJson)
+			return new Minecraft(jarFile, options.minecraftJson)
 					.createInterface();
 		} catch (MalformedURLException e) {
 			Log.crash(e, "MalformedURLException on Minecraft load.");
