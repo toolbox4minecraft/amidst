@@ -49,9 +49,9 @@ public class Application {
 	private LayerContainer layerContainer;
 	private FragmentManager fragmentManager;
 
-	private Options options;
+	private CommandLineOptions options;
 
-	public Application(Options options) {
+	public Application(CommandLineOptions options) {
 		this.options = options;
 		initSeedHistoryLogger();
 		initLocalMinecraftInstallation();

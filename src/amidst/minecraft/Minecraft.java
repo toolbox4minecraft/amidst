@@ -18,9 +18,6 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import com.google.gson.Gson;
-
-import amidst.Options;
 import amidst.bytedata.ByteClass;
 import amidst.bytedata.ByteClass.AccessFlags;
 import amidst.bytedata.CCLongMatch;
@@ -35,6 +32,8 @@ import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
 import amidst.logging.Log;
 import amidst.version.VersionInfo;
+
+import com.google.gson.Gson;
 
 public class Minecraft {
 	private static final Gson GSON = new Gson();

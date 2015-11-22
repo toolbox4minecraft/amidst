@@ -16,7 +16,7 @@ public class Amidst {
 	private static final String UNCAUGHT_EXCEPTION_ERROR_MESSAGE = "Amidst has encounted an uncaught exception on thread: ";
 	private static final String COMMAND_LINE_PARSING_ERROR_MESSAGE = "There was an issue parsing command line options.";
 	private static Application application;
-	private static Options options = Options.instance;
+	private static CommandLineOptions options = new CommandLineOptions();
 
 	public static void main(String args[]) {
 		initUncaughtExceptionHandler();
