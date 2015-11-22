@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
@@ -40,17 +41,17 @@ public class SeedPrompt {
 		textField.addAncestorListener(new AncestorListener() {
 			@Override
 			public void ancestorAdded(AncestorEvent arg0) {
-				textField.requestFocus();
+				grabFocus();
 			}
 
 			@Override
 			public void ancestorMoved(AncestorEvent arg0) {
-				textField.requestFocus();
+				grabFocus();
 			}
 
 			@Override
 			public void ancestorRemoved(AncestorEvent arg0) {
-				textField.requestFocus();
+				grabFocus();
 			}
 		});
 		textField.getDocument().addDocumentListener(new DocumentListener() {
@@ -77,6 +78,17 @@ public class SeedPrompt {
 
 	private JLabel createSimpleLabel() {
 		return new JLabel("Enter your seed: ");
+	}
+
+	private void grabFocus() {
+		// The call with invokeLater seems to help resolve an issue on Linux.
+		// Without it, the textField often does not get the focus.
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				textField.requestFocus();
+			}
+		});
 	}
 
 	private void update() {
@@ -110,7 +122,7 @@ public class SeedPrompt {
 
 	public String askForSeed(JFrame frame) {
 		textField.setText("");
-		textField.requestFocus();
+		grabFocus();
 		if (JOptionPane.showConfirmDialog(frame, inputs, TITLE,
 				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 			return textField.getText();
