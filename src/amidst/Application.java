@@ -56,8 +56,10 @@ public class Application {
 	}
 
 	private void initLocalMinecraftInstallation() {
-		LocalMinecraftInstallation.initMinecraftDirectory();
-		LocalMinecraftInstallation.initMinecraftLibraries();
+		LocalMinecraftInstallation
+				.initMinecraftDirectory(Options.instance.minecraftPath);
+		LocalMinecraftInstallation
+				.initMinecraftLibraries(Options.instance.minecraftLibraries);
 	}
 
 	private void scanForBiomeColorProfiles() {

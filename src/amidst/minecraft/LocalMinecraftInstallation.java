@@ -2,7 +2,6 @@ package amidst.minecraft;
 
 import java.io.File;
 
-import amidst.Options;
 import amidst.logging.Log;
 
 public class LocalMinecraftInstallation {
@@ -10,9 +9,9 @@ public class LocalMinecraftInstallation {
 	private static File minecraftLibraries;
 	private static File profileDirectory;
 
-	public static void initMinecraftDirectory() {
-		if (Options.instance.minecraftPath != null) {
-			minecraftDirectory = new File(Options.instance.minecraftPath);
+	public static void initMinecraftDirectory(String minecraftDirectoryFileName) {
+		if (minecraftDirectoryFileName != null) {
+			minecraftDirectory = new File(minecraftDirectoryFileName);
 			if (minecraftDirectory.exists() && minecraftDirectory.isDirectory()) {
 				return;
 			}
@@ -42,11 +41,11 @@ public class LocalMinecraftInstallation {
 		return mcDir;
 	}
 
-	public static void initMinecraftLibraries() {
-		if (Options.instance.minecraftLibraries == null) {
+	public static void initMinecraftLibraries(String minecraftLibrariesFileName) {
+		if (minecraftLibrariesFileName == null) {
 			minecraftLibraries = new File(minecraftDirectory, "libraries");
 		} else {
-			minecraftLibraries = new File(Options.instance.minecraftLibraries);
+			minecraftLibraries = new File(minecraftLibrariesFileName);
 		}
 	}
 
