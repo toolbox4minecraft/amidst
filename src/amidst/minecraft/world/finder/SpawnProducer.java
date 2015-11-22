@@ -31,13 +31,7 @@ public class SpawnProducer extends CachedWorldObjectProducer {
 
 	@Override
 	protected List<WorldObject> createCache() {
-		WorldObject spawn = createSpawnWorldObject();
-		if (spawn != null) {
-			return Arrays.asList(spawn);
-		} else {
-			Log.debug("Unable to find spawn biome.");
-			return null;
-		}
+		return Arrays.asList(createSpawnWorldObject());
 	}
 
 	private WorldObject createSpawnWorldObject() {
@@ -46,7 +40,9 @@ public class SpawnProducer extends CachedWorldObjectProducer {
 			return new WorldObject(CoordinatesInWorld.from(spawnCenter.x,
 					spawnCenter.y), MapMarkers.SPAWN);
 		} else {
-			return null;
+			Log.debug("Unable to find spawn biome.");
+			return new WorldObject(CoordinatesInWorld.origin(),
+					MapMarkers.SPAWN);
 		}
 	}
 

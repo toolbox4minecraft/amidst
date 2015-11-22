@@ -1,5 +1,6 @@
 package amidst.minecraft.world.finder;
 
+import java.util.Collections;
 import java.util.List;
 
 import amidst.map.Fragment;
@@ -37,6 +38,9 @@ public abstract class CachedWorldObjectProducer implements WorldObjectProducer {
 	private void initCache() {
 		if (cache == null) {
 			cache = createCache();
+			if (cache == null) {
+				cache = Collections.emptyList();
+			}
 		}
 	}
 
