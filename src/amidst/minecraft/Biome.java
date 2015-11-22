@@ -34,7 +34,8 @@ public class Biome {
 		}
 
 		private void findNextValid() {
-			while (biomes[nextBiomeIndex] == null) {
+			while (nextBiomeIndex < biomes.length
+					&& biomes[nextBiomeIndex] == null) {
 				nextBiomeIndex++;
 			}
 		}

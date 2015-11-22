@@ -16,11 +16,13 @@ public class SeedHistoryLogger {
 	}
 
 	public void log(long seed) {
-		if (file != null && !file.exists()) {
-			tryCreateFile();
-		}
-		if (file.exists() && file.isFile()) {
-			writeLine(seed);
+		if (file != null) {
+			if (!file.exists()) {
+				tryCreateFile();
+			}
+			if (file.exists() && file.isFile()) {
+				writeLine(seed);
+			}
 		}
 	}
 
