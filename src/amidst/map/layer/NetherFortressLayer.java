@@ -12,6 +12,6 @@ public class NetherFortressLayer extends IconLayer {
 
 	@Override
 	protected WorldObjectProducer getProducer() {
-		return Options.instance.world.getNetherFortressProducer();
+		return getWorld().getNetherFortressProducer();
 	}
 }

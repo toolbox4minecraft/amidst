@@ -12,6 +12,6 @@ public class VillageLayer extends IconLayer {
 
 	@Override
 	protected WorldObjectProducer getProducer() {
-		return Options.instance.world.getVillageProducer();
+		return getWorld().getVillageProducer();
 	}
 }

@@ -17,9 +17,6 @@ import amidst.preferences.StringPreference;
 public enum Options {
 	instance;
 	
-	//per-run preferences. TODO: store elsewhere?
-	public World world;
-	
 	//permanent preferences
 	public final FilePrefModel jar;
 	public final BooleanPrefModel showSlimeChunks;

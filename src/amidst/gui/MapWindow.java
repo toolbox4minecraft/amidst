@@ -124,7 +124,7 @@ public class MapWindow {
 		frame.dispose();
 	}
 
-	private void clearWorld() {
+	public void clearWorld() {
 		if (mapViewer != null) {
 			menuBar.disableMapMenu();
 			contentPane.remove(mapViewer.getPanel());
@@ -136,7 +136,7 @@ public class MapWindow {
 		}
 	}
 
-	private void initWorld() {
+	public void initWorld() {
 		map = new Map(application.getFragmentManager(), mapZoom,
 				application.getLayerContainer());
 		mapViewer = createMapViewer();
@@ -232,11 +232,6 @@ public class MapWindow {
 		} else {
 			return WorldType.from(worldTypePreference);
 		}
-	}
-
-	public void worldChanged() {
-		clearWorld();
-		initWorld();
 	}
 
 	public void capture(File file) {

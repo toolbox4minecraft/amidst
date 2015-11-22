@@ -12,6 +12,6 @@ public class TempleLayer extends IconLayer {
 
 	@Override
 	protected WorldObjectProducer getProducer() {
-		return Options.instance.world.getTempleProducer();
+		return getWorld().getTempleProducer();
 	}
 }

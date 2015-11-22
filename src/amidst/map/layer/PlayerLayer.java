@@ -12,6 +12,6 @@ public class PlayerLayer extends IconLayer {
 
 	@Override
 	protected WorldObjectProducer getProducer() {
-		return Options.instance.world.getPlayerProducer();
+		return getWorld().getPlayerProducer();
 	}
 }

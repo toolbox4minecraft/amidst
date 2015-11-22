@@ -12,6 +12,6 @@ public class SpawnLayer extends IconLayer {
 
 	@Override
 	protected WorldObjectProducer getProducer() {
-		return Options.instance.world.getSpawnProducer();
+		return getWorld().getSpawnProducer();
 	}
 }

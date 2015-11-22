@@ -12,6 +12,6 @@ public class OceanMonumentLayer extends IconLayer {
 
 	@Override
 	protected WorldObjectProducer getProducer() {
-		return Options.instance.world.getOceanMonumentProducer();
+		return getWorld().getOceanMonumentProducer();
 	}
 }

@@ -3,6 +3,7 @@ package amidst.map;
 import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
 import amidst.map.layer.LiveLayer;
+import amidst.minecraft.world.World;
 
 public class LayerContainer {
 	private IconLayer playerLayer;
@@ -50,6 +51,18 @@ public class LayerContainer {
 		}
 		for (IconLayer layer : iconLayers) {
 			layer.setMap(map);
+		}
+	}
+
+	public void setWorld(World world) {
+		for (ImageLayer layer : imageLayers) {
+			layer.setWorld(world);
+		}
+		for (LiveLayer layer : liveLayers) {
+			layer.setWorld(world);
+		}
+		for (IconLayer layer : iconLayers) {
+			layer.setWorld(world);
 		}
 	}
 }

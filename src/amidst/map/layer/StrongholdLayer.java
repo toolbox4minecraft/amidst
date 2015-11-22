@@ -12,6 +12,6 @@ public class StrongholdLayer extends IconLayer {
 
 	@Override
 	protected WorldObjectProducer getProducer() {
-		return Options.instance.world.getStrongholdProducer();
+		return getWorld().getStrongholdProducer();
 	}
 }
