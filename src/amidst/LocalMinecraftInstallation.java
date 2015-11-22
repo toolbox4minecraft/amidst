@@ -6,8 +6,10 @@ import amidst.logging.Log;
 
 public class LocalMinecraftInstallation {
 	private static File minecraftDirectory;
+	private static File minecraftLibraries;
+	private static File profileDirectory;
 
-	public static void setMinecraftDirectory() {
+	public static void initMinecraftDirectory() {
 		if (Options.instance.minecraftPath != null) {
 			minecraftDirectory = new File(Options.instance.minecraftPath);
 			if (minecraftDirectory.exists() && minecraftDirectory.isDirectory()) {
@@ -17,10 +19,16 @@ public class LocalMinecraftInstallation {
 					+ minecraftDirectory
 					+ " as that location does not exist or is not a folder.");
 		}
-		File mcDir = null;
 		File homeDirectory = new File(System.getProperty("user.home", "."));
 		String os = System.getProperty("os.name").toLowerCase();
+		minecraftDirectory = getMinecraftDirectory(homeDirectory, os);
+		if (minecraftDirectory == null) {
+			minecraftDirectory = new File(homeDirectory, ".minecraft");
+		}
+	}
 
+	private static File getMinecraftDirectory(File homeDirectory, String os) {
+		File mcDir = null;
 		if (os.contains("win")) {
 			File appData = new File(System.getenv("APPDATA"));
 			if (appData.isDirectory()) {
@@ -30,21 +38,18 @@ public class LocalMinecraftInstallation {
 			mcDir = new File(homeDirectory,
 					"Library/Application Support/minecraft");
 		}
-		minecraftDirectory = (mcDir != null) ? mcDir : new File(homeDirectory,
-				".minecraft");
+		return mcDir;
 	}
 
-	private static File minecraftLibraries;
-
-	public static void setMinecraftLibraries() {
-		minecraftLibraries = (Options.instance.minecraftLibraries == null) ? new File(
-				minecraftDirectory, "libraries") : new File(
-				Options.instance.minecraftLibraries);
+	public static void initMinecraftLibraries() {
+		if (Options.instance.minecraftLibraries == null) {
+			minecraftLibraries = new File(minecraftDirectory, "libraries");
+		} else {
+			minecraftLibraries = new File(Options.instance.minecraftLibraries);
+		}
 	}
 
-	private static File profileDirectory;
-
-	public static void setProfileDirectory(String gameDirectory) {
+	public static void initProfileDirectory(String gameDirectory) {
 		profileDirectory = getProfileDirectory(gameDirectory);
 	}
 

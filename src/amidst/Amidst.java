@@ -69,8 +69,8 @@ public class Amidst {
 	}
 
 	private static void initLocalMinecraftInstallation() {
-		LocalMinecraftInstallation.setMinecraftDirectory();
-		LocalMinecraftInstallation.setMinecraftLibraries();
+		LocalMinecraftInstallation.initMinecraftDirectory();
+		LocalMinecraftInstallation.initMinecraftLibraries();
 	}
 
 	private static void initLookAndFeel() {
