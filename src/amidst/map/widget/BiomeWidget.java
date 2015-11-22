@@ -56,12 +56,10 @@ public class BiomeWidget extends Widget {
 	private void initializeIfNecessary(FontMetrics fontMetrics) {
 		if (!isInitialized) {
 			isInitialized = true;
-			for (Biome biome : Biome.getBiomes()) {
-				if (biome != null) {
-					biomes.add(biome);
-					int width = fontMetrics.stringWidth(biome.getName());
-					maxNameWidth = Math.max(width, maxNameWidth);
-				}
+			for (Biome biome : Biome.iterator()) {
+				biomes.add(biome);
+				int width = fontMetrics.stringWidth(biome.getName());
+				maxNameWidth = Math.max(width, maxNameWidth);
 			}
 			biomeListHeight = biomes.size() * 16;
 		}
@@ -179,8 +177,8 @@ public class BiomeWidget extends Widget {
 
 	private void drawBiomeName(Graphics2D g2d, int i, Biome biome) {
 		g2d.setColor(Color.white);
-		g2d.drawString(biome.getName(), innerBox.x + 25, innerBox.y + 13 + i * 16
-				+ biomeListYOffset);
+		g2d.drawString(biome.getName(), innerBox.x + 25, innerBox.y + 13 + i
+				* 16 + biomeListYOffset);
 	}
 
 	private void clearClip(Graphics2D g2d) {

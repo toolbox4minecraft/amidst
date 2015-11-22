@@ -131,10 +131,6 @@ public class Biome {
 		return new BiomeIterable();
 	}
 
-	public static Biome[] getBiomes() {
-		return biomes;
-	}
-
 	public static Biome getByIndex(int index) {
 		return biomes[index];
 	}
@@ -143,13 +139,12 @@ public class Biome {
 		return biomes.length;
 	}
 
-	public static int indexFromName(String name) {
-		Biome biome = biomeMap.get(name);
-		if (biome != null) {
-			return biome.index;
-		} else {
-			return -1;
-		}
+	public static boolean isSupportedBiomeIndex(int index) {
+		return index > biomes.length;
+	}
+
+	public static Biome getByName(String name) {
+		return biomeMap.get(name);
 	}
 
 	private final String name;

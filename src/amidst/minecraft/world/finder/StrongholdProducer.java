@@ -143,7 +143,7 @@ public class StrongholdProducer extends CachedWorldObjectProducer {
 
 	private List<Biome> getValidBiomesV13w36a() {
 		List<Biome> result = new ArrayList<Biome>();
-		for (Biome biome : Biome.getBiomes()) {
+		for (Biome biome : Biome.iterator()) {
 			if (isValidBiomeV13w36a(biome)) {
 				result.add(biome);
 			}
@@ -152,6 +152,6 @@ public class StrongholdProducer extends CachedWorldObjectProducer {
 	}
 
 	private boolean isValidBiomeV13w36a(Biome biome) {
-		return biome != null && biome.getType().getValue1() > 0;
+		return biome.getType().getValue1() > 0;
 	}
 }

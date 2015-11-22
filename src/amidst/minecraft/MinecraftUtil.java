@@ -31,8 +31,9 @@ public class MinecraftUtil {
 		for (int i = 0; i < width*height; i++) {
 			int x = x1 + i % width << 2;
 			int y = y1 + i / width << 2;
-			if (arrayOfInt[i] > Biome.getBiomesLength())
+			if (Biome.isSupportedBiomeIndex(arrayOfInt[i])) {
 				Log.crash("Unsupported biome type detected");
+			}
 			Biome localBiome = Biome.getByIndex(arrayOfInt[i]);
 			if ((!paramList.contains(localBiome)) || ((location != null) && (random.nextInt(numberOfValidFound + 1) != 0)))
 				continue;
