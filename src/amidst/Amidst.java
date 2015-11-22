@@ -2,6 +2,8 @@ package amidst;
 
 import java.io.File;
 
+import javax.swing.UIManager;
+
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
@@ -73,7 +75,12 @@ public class Amidst {
 
 	private static void initLookAndFeel() {
 		if (!isOSX()) {
-			Util.setLookAndFeel();
+			try {
+				UIManager.setLookAndFeel(UIManager
+						.getSystemLookAndFeelClassName());
+			} catch (Exception e) {
+				Log.printTraceStack(e);
+			}
 		}
 	}
 
