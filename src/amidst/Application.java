@@ -38,7 +38,8 @@ import amidst.version.MinecraftProfile;
 public class Application {
 	private ThreadMaster threadMaster = new ThreadMaster(this);
 	private SkinLoader skinLoader = new SkinLoader(this, threadMaster);
-	private SeedHistoryLogger seedHistoryLogger = new SeedHistoryLogger();
+	private SeedHistoryLogger seedHistoryLogger = new SeedHistoryLogger(
+			Options.instance.historyPath);
 	private UpdatePrompt updateManager = new UpdatePrompt();
 
 	private VersionSelectWindow versionSelectWindow;

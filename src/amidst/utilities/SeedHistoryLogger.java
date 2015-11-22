@@ -6,16 +6,17 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import amidst.Options;
 import amidst.logging.Log;
 
 public class SeedHistoryLogger {
-	private static final String DEFAULT_HISTORY_FILE_NAME = "./history.txt";
+	private File file;
 
-	private File file = new File(getHistoryFileName());
+	public SeedHistoryLogger(String filename) {
+		this.file = getHistoryFile(filename);
+	}
 
 	public void log(long seed) {
-		if (!file.exists()) {
+		if (file != null && !file.exists()) {
 			tryCreateFile();
 		}
 		if (file.exists() && file.isFile()) {
@@ -23,11 +24,11 @@ public class SeedHistoryLogger {
 		}
 	}
 
-	private String getHistoryFileName() {
-		if (Options.instance.historyPath != null) {
-			return Options.instance.historyPath;
+	private File getHistoryFile(String filename) {
+		if (filename != null) {
+			return new File(filename);
 		} else {
-			return DEFAULT_HISTORY_FILE_NAME;
+			return null;
 		}
 	}
 
