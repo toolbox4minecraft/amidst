@@ -117,9 +117,11 @@ public class Minecraft {
 	
 	public String versionId;
 	public VersionInfo version = VersionInfo.unknown;
+	private String minecraftJsonFileName;
 	
-	public Minecraft(File jarFile)  throws MalformedURLException {
+	public Minecraft(File jarFile, String minecraftJsonFileName)  throws MalformedURLException {
 		this.jarFile = jarFile;
+		this.minecraftJsonFileName = minecraftJsonFileName;
 		byteClassNames = new Vector<String>();
 		byteClassMap = new HashMap<String, ByteClass>(MAX_CLASSES);
 		urlToJar = jarFile.toURI().toURL();
@@ -346,9 +348,12 @@ public class Minecraft {
 	*/
 	
 	public void use() {
-		File librariesJson = Options.instance.minecraftJson == null ?
-				new File(jarFile.getPath().replace(".jar", ".json"))
-			  : new File(Options.instance.minecraftJson);
+		File librariesJson;
+		if (minecraftJsonFileName == null) {
+			librariesJson = new File(jarFile.getPath().replace(".jar", ".json"));
+		} else {
+			librariesJson = new File(minecraftJsonFileName);
+		}
 		if (librariesJson.exists()) {
 			Stack<URL> libraries = getLibraries(librariesJson);
 			URL[] libraryArray = new URL[libraries.size() + 1];

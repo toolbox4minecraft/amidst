@@ -110,7 +110,8 @@ public class Application {
 
 	private IMinecraftInterface createLocalMinecraftInterface(File jarFile) {
 		try {
-			return new Minecraft(jarFile).createInterface();
+			return new Minecraft(jarFile, Options.instance.minecraftJson)
+					.createInterface();
 		} catch (MalformedURLException e) {
 			Log.crash(e, "MalformedURLException on Minecraft load.");
 			return null;
