@@ -15,17 +15,6 @@ public class Util {
 	public static final String REMOTE_VERSION_LIST_URL = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
 	public static final Gson GSON = new Gson();
 
-	public static String getOs() {
-		String os = System.getProperty("os.name").toLowerCase();
-		if (os.contains("win")) {
-			return "windows";
-		} else if (os.contains("mac")) {
-			return "osx";
-		} else {
-			return "linux";
-		}
-	}
-
 	private static File minecraftDirectory;
 
 	public static void setMinecraftDirectory() {
@@ -65,15 +54,20 @@ public class Util {
 
 	private static File profileDirectory;
 
-	public static void setProfileDirectory(String gameDir) {
-		if (gameDir != null && !gameDir.isEmpty()) {
-			profileDirectory = new File(gameDir);
-			if (profileDirectory.exists() && profileDirectory.isDirectory())
-				return;
+	public static void setProfileDirectory(String gameDirectory) {
+		profileDirectory = getProfileDirectory(gameDirectory);
+	}
+
+	private static File getProfileDirectory(String gameDirectory) {
+		if (gameDirectory != null && !gameDirectory.isEmpty()) {
+			File profileDirectory = new File(gameDirectory);
+			if (profileDirectory.exists() && profileDirectory.isDirectory()) {
+				return profileDirectory;
+			}
 			Log.w("Unable to set Profile directory 	 to: " + profileDirectory
 					+ " as that location does not exist or is not a folder.");
 		}
-		profileDirectory = null;
+		return null;
 	}
 
 	public static <T> T readObject(BufferedReader reader, final Class<T> clazz)
