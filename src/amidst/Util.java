@@ -26,7 +26,7 @@ public class Util {
 		}
 	}
 
-	public static File minecraftDirectory;
+	private static File minecraftDirectory;
 
 	public static void setMinecraftDirectory() {
 		if (Options.instance.minecraftPath != null) {
@@ -55,7 +55,7 @@ public class Util {
 				".minecraft");
 	}
 
-	public static File minecraftLibraries;
+	private static File minecraftLibraries;
 
 	public static void setMinecraftLibraries() {
 		minecraftLibraries = (Options.instance.minecraftLibraries == null) ? new File(
@@ -63,7 +63,7 @@ public class Util {
 				Options.instance.minecraftLibraries);
 	}
 
-	public static File profileDirectory;
+	private static File profileDirectory;
 
 	public static void setProfileDirectory(String gameDir) {
 		if (gameDir != null && !gameDir.isEmpty()) {
@@ -95,5 +95,13 @@ public class Util {
 		} else {
 			return new File(minecraftDirectory, "saves");
 		}
+	}
+
+	public static File getMinecraftDirectory() {
+		return minecraftDirectory;
+	}
+
+	public static File getMinecraftLibraries() {
+		return minecraftLibraries;
 	}
 }

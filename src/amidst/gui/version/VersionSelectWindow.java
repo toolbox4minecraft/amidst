@@ -34,7 +34,7 @@ public class VersionSelectWindow {
 
 		if (!isValidMinecraftDirectory()) {
 			Log.crash("Unable to find Minecraft directory at: "
-					+ Util.minecraftDirectory);
+					+ Util.getMinecraftDirectory());
 			return;
 		}
 
@@ -43,8 +43,8 @@ public class VersionSelectWindow {
 	}
 
 	private boolean isValidMinecraftDirectory() {
-		return Util.minecraftDirectory.exists()
-				&& Util.minecraftDirectory.isDirectory();
+		return Util.getMinecraftDirectory().exists()
+				&& Util.getMinecraftDirectory().isDirectory();
 	}
 
 	private void initFrame() {

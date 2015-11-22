@@ -17,7 +17,7 @@ public class MinecraftVersion {
 		this.jsonFile = jsonFile;
 	}
 	public static MinecraftVersion fromVersionId(String lastVersionId) {
-		return fromVersionPath(new File(Util.minecraftDirectory + "/versions/" + lastVersionId));
+		return fromVersionPath(new File(Util.getMinecraftDirectory() + "/versions/" + lastVersionId));
 	}
 	public static MinecraftVersion fromVersionPath(File path) {
 		File jarFile = new File(path + "/" + path.getName() + ".jar");

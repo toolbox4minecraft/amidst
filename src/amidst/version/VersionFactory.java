@@ -19,7 +19,7 @@ public class VersionFactory {
 	}
 	
 	public void scanForLocalVersions() {
-		File versionPath = new File(Util.minecraftDirectory + "/versions");
+		File versionPath = new File(Util.getMinecraftDirectory() + "/versions");
 		if (!versionPath.exists()) {
 			Log.e("Cannot find version directory.");
 			return;
@@ -43,7 +43,7 @@ public class VersionFactory {
 	
 	public void scanForProfiles() {
 		Log.i("Scanning for profiles.");
-		File profileJsonFile = new File(Util.minecraftDirectory + "/launcher_profiles.json");
+		File profileJsonFile = new File(Util.getMinecraftDirectory() + "/launcher_profiles.json");
 		LauncherProfile launcherProfile = null;
 		try {
 			launcherProfile = Util.readObject(profileJsonFile, LauncherProfile.class);
