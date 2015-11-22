@@ -143,7 +143,7 @@ public class StrongholdProducer extends CachedWorldObjectProducer {
 
 	private List<Biome> getValidBiomesV13w36a() {
 		List<Biome> result = new ArrayList<Biome>();
-		for (Biome biome : Biome.biomes) {
+		for (Biome biome : Biome.getBiomes()) {
 			if (isValidBiomeV13w36a(biome)) {
 				result.add(biome);
 			}

@@ -13,7 +13,7 @@ public class BiomeLayer extends ImageLayer {
 		return instance;
 	}
 
-	private boolean[] selectedBiomes = new boolean[Biome.biomes.length];
+	private boolean[] selectedBiomes = new boolean[Biome.getBiomesLength()];
 	private boolean isHighlightMode = false;
 
 	public BiomeLayer(int layerId) {
@@ -55,8 +55,9 @@ public class BiomeLayer extends ImageLayer {
 	}
 
 	private int getColor(Fragment fragment, int blockX, int blockY) {
-		return Biome.biomes[fragment.getBiomeAtUsingBlockCoordinates(blockX,
-				blockY)].getColor();
+		return Biome.getByIndex(
+				fragment.getBiomeAtUsingBlockCoordinates(blockX, blockY))
+				.getColor();
 	}
 
 	public boolean isBiomeSelected(int id) {

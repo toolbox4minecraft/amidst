@@ -31,9 +31,9 @@ public class MinecraftUtil {
 		for (int i = 0; i < width*height; i++) {
 			int x = x1 + i % width << 2;
 			int y = y1 + i / width << 2;
-			if (arrayOfInt[i] > Biome.biomes.length)
+			if (arrayOfInt[i] > Biome.getBiomesLength())
 				Log.crash("Unsupported biome type detected");
-			Biome localBiome = Biome.biomes[arrayOfInt[i]];
+			Biome localBiome = Biome.getByIndex(arrayOfInt[i]);
 			if ((!paramList.contains(localBiome)) || ((location != null) && (random.nextInt(numberOfValidFound + 1) != 0)))
 				continue;
 			location = new Point(x, y);
@@ -53,7 +53,7 @@ public class MinecraftUtil {
 	public static Biome getBiomeAt(int x, int y) {
 		
 		int[] arrayOfInt = getBiomeData(x, y, 1, 1, false);
-		return Biome.biomes[arrayOfInt[0] & 0xFF];
+		return Biome.getByIndex(arrayOfInt[0] & 0xFF);
 	}
 	
 	public static boolean isValidBiome(int x, int y, int size, List<Biome> validBiomes) {
@@ -67,7 +67,7 @@ public class MinecraftUtil {
 		
 		int[] arrayOfInt = getBiomeData(x1, y1, width, height, true);
 		for (int i = 0; i < width * height; i++) {
-			Biome localBiome = Biome.biomes[arrayOfInt[i]];
+			Biome localBiome = Biome.getByIndex(arrayOfInt[i]);
 			if (!validBiomes.contains(localBiome)) return false;
 		}
 		return true;

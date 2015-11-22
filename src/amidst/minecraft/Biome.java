@@ -7,7 +7,7 @@ import amidst.Util;
 public class Biome {
 	// @formatter:off
 	private static final HashMap<String, Biome> biomeMap = new HashMap<String, Biome>();
-	public static final Biome[] biomes = new Biome[256];
+	private static final Biome[] biomes = new Biome[256];
 	
 	public static final Biome ocean				   = new Biome("Ocean",				     0, Util.makeColor(0, 0, 112),	     BiomeType.typeC);
 	public static final Biome plains			   = new Biome("Plains",				 1, Util.makeColor(141, 179, 96),	 BiomeType.typeA);
@@ -49,7 +49,6 @@ public class Biome {
 	public static final Biome mesa				   = new Biome("Mesa",				    37, Util.makeColor(217, 69, 21),	 BiomeType.typeA);
 	public static final Biome mesaPlateauF		   = new Biome("Mesa Plateau F",		38, Util.makeColor(176, 151, 101),   BiomeType.typeH);
 	public static final Biome mesaPlateau		   = new Biome("Mesa Plateau",		    39, Util.makeColor(202, 140, 101),   BiomeType.typeH);
-	
 	
 	public static final Biome oceanM			   = new Biome("Ocean M",				   128, Util.makeColor(0, 0, 112));
 	public static final Biome sunflowerPlains	   = new Biome("Sunflower Plains",		   129, Util.makeColor(141, 179, 96));
@@ -157,5 +156,17 @@ public class Biome {
 
 	public BiomeType getType() {
 		return type;
+	}
+
+	public static Biome[] getBiomes() {
+		return biomes;
+	}
+
+	public static Biome getByIndex(int index) {
+		return biomes[index];
+	}
+
+	public static int getBiomesLength() {
+		return biomes.length;
 	}
 }
