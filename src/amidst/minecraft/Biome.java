@@ -124,10 +124,10 @@ public class Biome {
 	public static final Biome mesaPlateauM		   = new Biome("Mesa Plateau M",		   167, Util.makeColor(202, 140, 101));
 	// @formatter:on
 
-	public String name;
-	public int index;
-	public int color;
-	public BiomeType type;
+	private final String name;
+	private final int index;
+	private final BiomeType type;
+	private int color;
 
 	public Biome(String name, int index, int color) {
 		this(name, index, color, biomes[index - 128].type.getRare());
@@ -146,12 +146,13 @@ public class Biome {
 		biomes[index] = this;
 		this.name = name;
 		this.index = index;
-		this.color = color;
 		this.type = type;
 		biomeMap.put(name, this);
 
 		if (index >= 128) {
 			this.color = Util.lightenColor(color, 40);
+		} else {
+			this.color = color;
 		}
 	}
 
@@ -167,5 +168,25 @@ public class Biome {
 		} else {
 			return -1;
 		}
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public int getColor() {
+		return color;
+	}
+
+	public void setColor(int color) {
+		this.color = color;
+	}
+
+	public BiomeType getType() {
+		return type;
 	}
 }

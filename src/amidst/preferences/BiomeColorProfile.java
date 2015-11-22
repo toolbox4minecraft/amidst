@@ -87,8 +87,8 @@ public class BiomeColorProfile {
 		name = "default";
 		for (int i = 0; i < Biome.biomes.length; i++) {
 			if (Biome.biomes[i] != null) {
-				colorMap.put(Biome.biomes[i].name, new BiomeColor(
-						Biome.biomes[i].color));
+				colorMap.put(Biome.biomes[i].getName(), new BiomeColor(
+						Biome.biomes[i].getColor()));
 			}
 		}
 	}
@@ -98,7 +98,7 @@ public class BiomeColorProfile {
 			int index = Biome.indexFromName(pairs.getKey());
 			if (index != -1) {
 				colorArray[index] = pairs.getValue().toColorInt();
-				nameArray[index] = Biome.biomes[index].name;
+				nameArray[index] = Biome.biomes[index].getName();
 			} else {
 				Log.i("Failed to find biome for: " + pairs.getKey()
 						+ " in profile: " + name);
@@ -142,7 +142,7 @@ public class BiomeColorProfile {
 		Log.i("Biome color profile activated.");
 		for (int i = 0; i < Biome.biomes.length; i++) {
 			if (Biome.biomes[i] != null) {
-				Biome.biomes[i].color = colorArray[i];
+				Biome.biomes[i].setColor(colorArray[i]);
 			}
 		}
 	}
@@ -150,6 +150,6 @@ public class BiomeColorProfile {
 	public String getAliasForId(int id) {
 		if (nameArray[id] != null)
 			return nameArray[id];
-		return Biome.biomes[id].name;
+		return Biome.biomes[id].getName();
 	}
 }

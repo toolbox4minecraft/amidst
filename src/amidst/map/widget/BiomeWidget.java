@@ -59,7 +59,7 @@ public class BiomeWidget extends Widget {
 			for (Biome biome : Biome.biomes) {
 				if (biome != null) {
 					biomes.add(biome);
-					int width = fontMetrics.stringWidth(biome.name);
+					int width = fontMetrics.stringWidth(biome.getName());
 					maxNameWidth = Math.max(width, maxNameWidth);
 				}
 			}
@@ -157,7 +157,7 @@ public class BiomeWidget extends Widget {
 	}
 
 	private Color getBiomeBackgroudColor(int i, Biome biome) {
-		if (BiomeLayer.getInstance().isBiomeSelected(biome.index)) {
+		if (BiomeLayer.getInstance().isBiomeSelected(biome.getIndex())) {
 			if (i % 2 == 1) {
 				return BIOME_LIT_BG_COLOR_1;
 			} else {
@@ -173,13 +173,13 @@ public class BiomeWidget extends Widget {
 	}
 
 	private void drawBiomeColor(Graphics2D g2d, int i, Biome biome) {
-		g2d.setColor(new Color(biome.color));
+		g2d.setColor(new Color(biome.getColor()));
 		g2d.fillRect(innerBox.x, innerBox.y + i * 16 + biomeListYOffset, 20, 16);
 	}
 
 	private void drawBiomeName(Graphics2D g2d, int i, Biome biome) {
 		g2d.setColor(Color.white);
-		g2d.drawString(biome.name, innerBox.x + 25, innerBox.y + 13 + i * 16
+		g2d.drawString(biome.getName(), innerBox.x + 25, innerBox.y + 13 + i * 16
 				+ biomeListYOffset);
 	}
 
@@ -265,7 +265,7 @@ public class BiomeWidget extends Widget {
 		if (isInBoundsOfInnerBox(mouseX, mouseY)) {
 			int id = (mouseY - (innerBox.y - getY()) - biomeListYOffset) / 16;
 			if (id < biomes.size()) {
-				int index = biomes.get(id).index;
+				int index = biomes.get(id).getIndex();
 				BiomeLayer.getInstance().toggleBiomeSelect(index);
 				return true;
 			}

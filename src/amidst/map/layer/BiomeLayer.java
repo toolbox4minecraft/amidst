@@ -56,7 +56,7 @@ public class BiomeLayer extends ImageLayer {
 
 	private int getColor(Fragment fragment, int blockX, int blockY) {
 		return Biome.biomes[fragment.getBiomeAtUsingBlockCoordinates(blockX,
-				blockY)].color;
+				blockY)].getColor();
 	}
 
 	public boolean isBiomeSelected(int id) {

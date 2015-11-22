@@ -24,9 +24,9 @@ public class TempleProducer extends StructureProducer {
 		Biome chunkBiome = getBiomeAtMiddleOfChunk();
 		if (chunkBiome == Biome.swampland) {
 			return MapMarkers.WITCH;
-		} else if (chunkBiome.name.contains("Jungle")) {
+		} else if (chunkBiome.getName().contains("Jungle")) {
 			return MapMarkers.JUNGLE;
-		} else if (chunkBiome.name.contains("Desert")) {
+		} else if (chunkBiome.getName().contains("Desert")) {
 			return MapMarkers.DESERT;
 		} else {
 			return null;
