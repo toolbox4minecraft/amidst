@@ -9,40 +9,36 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import com.google.gson.JsonSyntaxException;
+import java.util.List;
 
 import amidst.Util;
 import amidst.logging.Log;
 import amidst.resources.ResourceLoader;
 
-public class LatestVersionList {
-	public static LatestVersionList instance = new LatestVersionList();
+import com.google.gson.JsonSyntaxException;
+
+public enum LatestVersionList {
+	INSTANCE;
+
 	public static LatestVersionList get() {
-		return instance;
+		return INSTANCE;
 	}
+
 	public enum LoadState {
-		LOADED,
-		LOADING,
-		FAILED,
-		IDLE
+		LOADED, LOADING, FAILED, IDLE
 	}
-	
+
 	private LoadState loadState = LoadState.IDLE;
-	
+
 	private VersionList profile;
-	
-	private ArrayList<ILatestVersionListListener> loadListeners = new ArrayList<ILatestVersionListListener>();
+
+	private List<ILatestVersionListListener> loadListeners = new ArrayList<ILatestVersionListListener>();
 	private Object listenerLock = new Object();
-	
-	public LatestVersionList() {
-		
-	}
-	
+
 	public HashMap<String, String>[] getVersions() {
 		return profile.versions;
 	}
-	
+
 	public void load(boolean threaded) {
 		if (threaded) {
 			(new Thread(new Runnable() {
@@ -55,7 +51,7 @@ public class LatestVersionList {
 			doLoad();
 		}
 	}
-	
+
 	private void doLoad() {
 		Log.i("Beginning latest version list load.");
 		setLoadState(LoadState.LOADING);
@@ -63,16 +59,16 @@ public class LatestVersionList {
 			Log.w("Failed to load both remote and local version list.");
 			setLoadState(LoadState.FAILED);
 		}
-		
+
 		setLoadState(LoadState.LOADED);
 	}
-	
+
 	private boolean attemptLocalLoad() {
 		Log.i("Attempting to download local version list...");
 		URL versionUrl = ResourceLoader.getResourceURL("versions.json");
 		return attemptLoad(versionUrl);
 	}
-	
+
 	private boolean attemptRemoteLoad() {
 		Log.i("Attempting to download remote version list...");
 		URL versionUrl = null;
@@ -84,10 +80,10 @@ public class LatestVersionList {
 			Log.w("Aborting remote version list load.");
 			return false;
 		}
-		
+
 		return attemptLoad(versionUrl);
 	}
-	
+
 	private boolean attemptLoad(URL versionUrl) {
 		URLConnection urlConnection = null;
 		try {
@@ -98,14 +94,14 @@ public class LatestVersionList {
 			Log.w("Aborting version list load. URL: " + versionUrl);
 			return false;
 		}
-		
+
 		int contentLength = urlConnection.getContentLength();
 		if (contentLength == -1) {
 			Log.w("Content length of version list returned -1.");
 			Log.w("Aborting version list load. URL: " + versionUrl);
 			return false;
 		}
-		
+
 		InputStream inputStream = null;
 		try {
 			inputStream = urlConnection.getInputStream();
@@ -115,8 +111,9 @@ public class LatestVersionList {
 			Log.w("Aborting version list load. URL: " + versionUrl);
 			return false;
 		}
-		
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+		BufferedReader bufferedReader = new BufferedReader(
+				new InputStreamReader(inputStream));
 		try {
 			profile = Util.readObject(bufferedReader, VersionList.class);
 		} catch (JsonSyntaxException e) {
@@ -132,15 +129,15 @@ public class LatestVersionList {
 				Log.printTraceStack(e);
 			}
 		}
-		
+
 		Log.i("Successfully loaded version list. URL: " + versionUrl);
 		return true;
 	}
-	
+
 	public LoadState getLoadState() {
 		return loadState;
 	}
-	
+
 	private void setLoadState(LoadState state) {
 		synchronized (listenerLock) {
 			loadState = state;
@@ -148,26 +145,26 @@ public class LatestVersionList {
 				listener.onLoadStateChange(new LatestVersionListEvent(this));
 		}
 	}
-	
+
 	public void addLoadListener(ILatestVersionListListener listener) {
 		synchronized (listenerLock) {
 			loadListeners.add(listener);
 		}
 	}
-	
+
 	public void removeLoadListener(ILatestVersionListListener listener) {
 		synchronized (listenerLock) {
 			loadListeners.remove(listener);
 		}
 	}
-	
+
 	public void addAndNotifyLoadListener(ILatestVersionListListener listener) {
 		synchronized (listenerLock) {
 			loadListeners.add(listener);
 			listener.onLoadStateChange(new LatestVersionListEvent(this));
 		}
 	}
-	
+
 	private class VersionList {
 		public HashMap<String, String> latest;
 		public HashMap<String, String>[] versions;
