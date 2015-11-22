@@ -152,6 +152,6 @@ public class StrongholdProducer extends CachedWorldObjectProducer {
 	}
 
 	private boolean isValidBiomeV13w36a(Biome biome) {
-		return biome != null && biome.getType().value1 > 0;
+		return biome != null && biome.getType().getValue1() > 0;
 	}
 }
