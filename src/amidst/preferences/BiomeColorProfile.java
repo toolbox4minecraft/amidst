@@ -16,10 +16,9 @@ import com.google.gson.JsonSyntaxException;
 
 public class BiomeColorProfile {
 	private class BiomeColor {
-		public String alias;
-		public int r = 0;
-		public int g = 0;
-		public int b = 0;
+		private final int r;
+		private final int g;
+		private final int b;
 
 		public BiomeColor(int rgb) {
 			r = (rgb >> 16) & 0xFF;
@@ -30,6 +29,50 @@ public class BiomeColorProfile {
 		public int toColorInt() {
 			return Util.makeColor(r, g, b);
 		}
+	}
+
+	public static void scan() {
+		Log.i("Searching for biome color profiles.");
+		File colorProfileFolder = new File("./biome");
+
+		if (!colorProfileFolder.exists() || !colorProfileFolder.isDirectory()) {
+			Log.i("Unable to find biome color profile folder.");
+			return;
+		}
+
+		File defaultProfileFile = new File("./biome/default.json");
+		if (!defaultProfileFile.exists()) {
+			if (!Options.instance.biomeColorProfile.save(defaultProfileFile)) {
+				Log.i("Attempted to save default biome color profile, but encountered an error.");
+			}
+		}
+
+		/*
+		 * File[] colorProfiles = colorProfileFolder.listFiles(); for (int i =
+		 * 0; i < colorProfiles.length; i++) { if (colorProfiles[i].exists() &&
+		 * colorProfiles[i].isFile()) { try { BiomeColorProfile profile =
+		 * Util.readObject(colorProfiles[i], BiomeColorProfile.class);
+		 * profile.fillColorArray(); profiles.add(profile); } catch
+		 * (FileNotFoundException e) { Log.i("Unable to load file: " +
+		 * colorProfiles[i]); } } }
+		 */
+		isEnabled = true;
+	}
+
+	public static BiomeColorProfile createFromFile(File file) {
+		BiomeColorProfile profile = null;
+		if (file.exists() && file.isFile()) {
+			try {
+				profile = Util.readObject(file, BiomeColorProfile.class);
+				profile.fillColorArray();
+			} catch (JsonSyntaxException e) {
+				Log.w("Unable to load file: " + file);
+				e.printStackTrace();
+			} catch (IOException e) {
+				Log.i("Unable to load file: " + file);
+			}
+		}
+		return profile;
 	}
 
 	public static boolean isEnabled = false;
@@ -55,8 +98,7 @@ public class BiomeColorProfile {
 			int index = Biome.indexFromName(pairs.getKey());
 			if (index != -1) {
 				colorArray[index] = pairs.getValue().toColorInt();
-				nameArray[index] = (pairs.getValue().alias != null) ? pairs
-						.getValue().alias : Biome.biomes[index].name;
+				nameArray[index] = Biome.biomes[index].name;
 			} else {
 				Log.i("Failed to find biome for: " + pairs.getKey()
 						+ " in profile: " + name);
@@ -103,48 +145,6 @@ public class BiomeColorProfile {
 				Biome.biomes[i].color = colorArray[i];
 			}
 		}
-	}
-
-	public static void scan() {
-		Log.i("Searching for biome color profiles.");
-		File colorProfileFolder = new File("./biome");
-
-		if (!colorProfileFolder.exists() || !colorProfileFolder.isDirectory()) {
-			Log.i("Unable to find biome color profile folder.");
-			return;
-		}
-
-		File defaultProfileFile = new File("./biome/default.json");
-		if (!defaultProfileFile.exists())
-			if (!Options.instance.biomeColorProfile.save(defaultProfileFile))
-				Log.i("Attempted to save default biome color profile, but encountered an error.");
-
-		/*
-		 * File[] colorProfiles = colorProfileFolder.listFiles(); for (int i =
-		 * 0; i < colorProfiles.length; i++) { if (colorProfiles[i].exists() &&
-		 * colorProfiles[i].isFile()) { try { BiomeColorProfile profile =
-		 * Util.readObject(colorProfiles[i], BiomeColorProfile.class);
-		 * profile.fillColorArray(); profiles.add(profile); } catch
-		 * (FileNotFoundException e) { Log.i("Unable to load file: " +
-		 * colorProfiles[i]); } } }
-		 */
-		isEnabled = true;
-	}
-
-	public static BiomeColorProfile createFromFile(File file) {
-		BiomeColorProfile profile = null;
-		if (file.exists() && file.isFile()) {
-			try {
-				profile = Util.readObject(file, BiomeColorProfile.class);
-				profile.fillColorArray();
-			} catch (JsonSyntaxException e) {
-				Log.w("Unable to load file: " + file);
-				e.printStackTrace();
-			} catch (IOException e) {
-				Log.i("Unable to load file: " + file);
-			}
-		}
-		return profile;
 	}
 
 	public String getAliasForId(int id) {
