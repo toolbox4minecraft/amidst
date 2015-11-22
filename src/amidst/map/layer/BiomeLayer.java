@@ -1,8 +1,8 @@
 package amidst.map.layer;
 
-import amidst.ColorUtils;
 import amidst.map.Fragment;
 import amidst.minecraft.Biome;
+import amidst.utilities.ColorUtils;
 
 public class BiomeLayer extends ImageLayer {
 	// TODO: remove me!

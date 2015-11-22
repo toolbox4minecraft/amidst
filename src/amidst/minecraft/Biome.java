@@ -3,7 +3,7 @@ package amidst.minecraft;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import amidst.ColorUtils;
+import amidst.utilities.ColorUtils;
 
 public class Biome {
 	private static class BiomeIterable implements Iterable<Biome> {

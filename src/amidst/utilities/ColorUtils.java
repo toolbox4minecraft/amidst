@@ -1,4 +1,4 @@
-package amidst;
+package amidst.utilities;
 
 public enum ColorUtils {
 	;

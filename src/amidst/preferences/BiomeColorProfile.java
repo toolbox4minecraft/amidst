@@ -9,10 +9,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import amidst.ColorUtils;
 import amidst.Options;
 import amidst.logging.Log;
 import amidst.minecraft.Biome;
+import amidst.utilities.ColorUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
