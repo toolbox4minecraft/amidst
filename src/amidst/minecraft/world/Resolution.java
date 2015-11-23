@@ -3,30 +3,30 @@ package amidst.minecraft.world;
 public enum Resolution {
 	WORLD(0), QUARTER(2), CHUNK(4), FRAGMENT(9);
 
-	private final int shiftSize;
+	private final int shift;
 
-	private Resolution(int shiftSize) {
-		this.shiftSize = shiftSize;
+	private Resolution(int shift) {
+		this.shift = shift;
 	}
 
-	public int getShiftSize() {
-		return shiftSize;
+	public int getShift() {
+		return shift;
 	}
 
-	public int getSize() {
-		return 1 << shiftSize;
+	public int getStep() {
+		return 1 << shift;
 	}
 
 	public long convertFromWorldToThis(long coordinateInWorld) {
-		return coordinateInWorld >> shiftSize;
+		return coordinateInWorld >> shift;
 	}
 
 	public long convertFromThisToWorld(long coordinateInThisResolution) {
-		return coordinateInThisResolution << shiftSize;
+		return coordinateInThisResolution << shift;
 	}
 
 	public long convertToThis(Resolution oldResolution,
 			long coordinateInOldResolution) {
-		return (coordinateInOldResolution << oldResolution.shiftSize) >> shiftSize;
+		return (coordinateInOldResolution << oldResolution.shift) >> shift;
 	}
 }

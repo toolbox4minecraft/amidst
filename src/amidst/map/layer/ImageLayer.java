@@ -25,11 +25,11 @@ public abstract class ImageLayer extends Layer {
 	}
 
 	public int getSize() {
-		return Fragment.SIZE / resolution.getSize();
+		return Fragment.SIZE / resolution.getStep();
 	}
 
 	public double getScale() {
-		return resolution.getSize();
+		return resolution.getStep();
 	}
 
 	public void drawToCache(Fragment fragment, int[] cache) {
