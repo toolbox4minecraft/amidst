@@ -7,26 +7,27 @@ import amidst.map.Fragment;
 import amidst.minecraft.MinecraftUtil;
 
 public class BiomeDataProvider {
-	public static final int SIZE = Fragment.BIOME_SIZE;
+	public static final int SIZE = (int) Resolution.QUARTER
+			.convertFromWorldToThis(Fragment.SIZE);
 
 	private Map<CoordinatesInWorld, short[][]> cache = new WeakHashMap<CoordinatesInWorld, short[][]>();
 
 	/**
 	 * x and y of coordinates have to be divisible by BiomeDataProvider.SIZE
 	 */
-	public short[][] getBiomeDataAt(CoordinatesInWorld coordinates) {
-		short[][] result = cache.get(coordinates);
+	public short[][] getBiomeDataForFragment(CoordinatesInWorld corner) {
+		short[][] result = cache.get(corner);
 		if (result == null) {
-			result = create(coordinates);
-			cache.put(coordinates, result);
+			result = create(corner);
+			cache.put(corner, result);
 		}
 		return result;
 	}
 
-	private short[][] create(CoordinatesInWorld coordinates) {
+	private short[][] create(CoordinatesInWorld corner) {
 		short[][] result = new short[SIZE][SIZE];
-		int xInQuarterResolution = (int) coordinates.getXAs(Resolution.QUARTER);
-		int yInQuarterResolution = (int) coordinates.getYAs(Resolution.QUARTER);
+		int xInQuarterResolution = (int) corner.getXAs(Resolution.QUARTER);
+		int yInQuarterResolution = (int) corner.getYAs(Resolution.QUARTER);
 		int[] biomeData = MinecraftUtil.getBiomeData(xInQuarterResolution,
 				yInQuarterResolution, SIZE, SIZE, true);
 		for (int y = 0; y < SIZE; y++) {

@@ -2,6 +2,7 @@ package amidst.minecraft.world;
 
 import java.util.List;
 
+import amidst.map.Fragment;
 import amidst.minecraft.world.finder.CachedWorldObjectProducer;
 import amidst.minecraft.world.finder.NetherFortressProducer;
 import amidst.minecraft.world.finder.OceanMonumentProducer;
@@ -94,7 +95,19 @@ public abstract class World {
 		playerProducer.resetCache();
 	}
 
-	public short[][] getBiomeDataAt(CoordinatesInWorld coordinates) {
-		return biomeDataProvider.getBiomeDataAt(coordinates);
+	public short[][] getBiomeDataForFragment(Fragment fragment) {
+		return biomeDataProvider.getBiomeDataForFragment(fragment.getCorner());
+	}
+
+	/**
+	 * Use this only to quickly get the biome data of a single point, not to
+	 * render the map.
+	 */
+	public short getBiomeDataAt(CoordinatesInWorld coordinates) {
+		CoordinatesInWorld corner = coordinates.toFragmentCorner();
+		short[][] biomeData = biomeDataProvider.getBiomeDataForFragment(corner);
+		int x = (int) coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
+		int y = (int) coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
+		return biomeData[x][y];
 	}
 }

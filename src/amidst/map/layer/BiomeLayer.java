@@ -25,7 +25,7 @@ public class BiomeLayer extends ImageLayer {
 	@Override
 	protected void drawToCache(Fragment fragment, int[] cache, long cornerX,
 			long cornerY, int size) {
-		short[][] biomeData = getWorld().getBiomeDataAt(fragment.getCorner());
+		short[][] biomeData = getWorld().getBiomeDataForFragment(fragment);
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
 				int index = getCacheIndex(x, y, size);
