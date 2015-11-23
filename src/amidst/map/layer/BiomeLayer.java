@@ -2,7 +2,7 @@ package amidst.map.layer;
 
 import amidst.map.Fragment;
 import amidst.minecraft.Biome;
-import amidst.minecraft.world.CoordinatesResolution;
+import amidst.minecraft.world.Resolution;
 import amidst.utilities.ColorUtils;
 
 public class BiomeLayer extends ImageLayer {
@@ -18,7 +18,7 @@ public class BiomeLayer extends ImageLayer {
 	private boolean isHighlightMode = false;
 
 	public BiomeLayer(int layerId) {
-		super(layerId, CoordinatesResolution.QUARTER);
+		super(layerId, Resolution.QUARTER);
 		instance = this;
 	}
 

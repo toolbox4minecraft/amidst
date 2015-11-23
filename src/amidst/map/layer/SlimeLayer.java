@@ -5,7 +5,7 @@ import java.util.Random;
 import amidst.Options;
 import amidst.map.Fragment;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.CoordinatesResolution;
+import amidst.minecraft.world.Resolution;
 
 public class SlimeLayer extends ImageLayer {
 	private static final int SLIME_CHUNK_COLOR = 0xA0FF00FF;
@@ -14,7 +14,7 @@ public class SlimeLayer extends ImageLayer {
 	private Random random = new Random();
 
 	public SlimeLayer(int layerId) {
-		super(layerId, CoordinatesResolution.CHUNK);
+		super(layerId, Resolution.CHUNK);
 	}
 
 	@Override

@@ -11,7 +11,7 @@ import amidst.map.layer.ImageLayer;
 import amidst.map.layer.MapObject;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.CoordinatesResolution;
+import amidst.minecraft.world.Resolution;
 
 public class Fragment implements Iterable<Fragment> {
 	private static class FragmentIterator implements Iterator<Fragment> {
@@ -253,10 +253,8 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	public int getBiomeAt(CoordinatesInWorld coordinates) {
-		long x = coordinates
-				.getXRelativeToFragmentAs(CoordinatesResolution.QUARTER);
-		long y = coordinates
-				.getYRelativeToFragmentAs(CoordinatesResolution.QUARTER);
+		long x = coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
+		long y = coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
 		return getBiomeAtUsingQuarterResolution(x, y);
 	}
 

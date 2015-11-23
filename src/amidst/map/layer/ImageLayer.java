@@ -1,13 +1,13 @@
 package amidst.map.layer;
 
 import amidst.map.Fragment;
-import amidst.minecraft.world.CoordinatesResolution;
+import amidst.minecraft.world.Resolution;
 
 public abstract class ImageLayer extends Layer {
 	private final int layerId;
-	private final CoordinatesResolution resolution;
+	private final Resolution resolution;
 
-	public ImageLayer(int layerId, CoordinatesResolution resolution) {
+	public ImageLayer(int layerId, Resolution resolution) {
 		this.layerId = layerId;
 		this.resolution = resolution;
 	}
@@ -20,7 +20,7 @@ public abstract class ImageLayer extends Layer {
 		return layerId;
 	}
 
-	public CoordinatesResolution getResolution() {
+	public Resolution getResolution() {
 		return resolution;
 	}
 

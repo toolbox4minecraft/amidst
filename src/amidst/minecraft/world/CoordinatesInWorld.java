@@ -4,7 +4,7 @@ import amidst.utilities.CoordinateUtils;
 
 public class CoordinatesInWorld {
 	public static CoordinatesInWorld from(long xAsResolution,
-			long yAsResolution, CoordinatesResolution resolution) {
+			long yAsResolution, Resolution resolution) {
 		return new CoordinatesInWorld(
 				resolution.convertFromThisToWorld(xAsResolution),
 				resolution.convertFromThisToWorld(yAsResolution));
@@ -36,125 +36,125 @@ public class CoordinatesInWorld {
 	}
 
 	public long getX() {
-		return getXAs(CoordinatesResolution.WORLD);
+		return getXAs(Resolution.WORLD);
 	}
 
 	public long getY() {
-		return getYAs(CoordinatesResolution.WORLD);
+		return getYAs(Resolution.WORLD);
 	}
 
 	public long getXAsChunkResolution() {
-		return getXAs(CoordinatesResolution.CHUNK);
+		return getXAs(Resolution.CHUNK);
 	}
 
 	public long getYAsChunkResolution() {
-		return getYAs(CoordinatesResolution.CHUNK);
+		return getYAs(Resolution.CHUNK);
 	}
 
 	public long getXAsFragmentResolution() {
-		return getXAs(CoordinatesResolution.FRAGMENT);
+		return getXAs(Resolution.FRAGMENT);
 	}
 
 	public long getYAsFragmentResolution() {
-		return getYAs(CoordinatesResolution.FRAGMENT);
+		return getYAs(Resolution.FRAGMENT);
 	}
 
 	public long getXAsQuarterResolution() {
-		return getXAs(CoordinatesResolution.QUARTER);
+		return getXAs(Resolution.QUARTER);
 	}
 
 	public long getYAsQuarterResolution() {
-		return getYAs(CoordinatesResolution.QUARTER);
+		return getYAs(Resolution.QUARTER);
 	}
 
-	public long getXAs(CoordinatesResolution targetResolution) {
+	public long getXAs(Resolution targetResolution) {
 		return targetResolution.convertFromWorldToThis(xInWorld);
 	}
 
-	public long getYAs(CoordinatesResolution targetResolution) {
+	public long getYAs(Resolution targetResolution) {
 		return targetResolution.convertFromWorldToThis(yInWorld);
 	}
 
 	public long getXCornerOfFragment() {
-		return getXCornerOfFragmentAs(CoordinatesResolution.WORLD);
+		return getXCornerOfFragmentAs(Resolution.WORLD);
 	}
 
 	public long getYCornerOfFragment() {
-		return getYCornerOfFragmentAs(CoordinatesResolution.WORLD);
+		return getYCornerOfFragmentAs(Resolution.WORLD);
 	}
 
 	public long getXCornerOfFragmentAsChunkResolution() {
-		return getXCornerOfFragmentAs(CoordinatesResolution.CHUNK);
+		return getXCornerOfFragmentAs(Resolution.CHUNK);
 	}
 
 	public long getYCornerOfFragmentAsChunkResolution() {
-		return getYCornerOfFragmentAs(CoordinatesResolution.CHUNK);
+		return getYCornerOfFragmentAs(Resolution.CHUNK);
 	}
 
 	public long getXCornerOfFragmentAsFragmentResolution() {
-		return getXCornerOfFragmentAs(CoordinatesResolution.FRAGMENT);
+		return getXCornerOfFragmentAs(Resolution.FRAGMENT);
 	}
 
 	public long getYCornerOfFragmentAsFragmentResolution() {
-		return getYCornerOfFragmentAs(CoordinatesResolution.FRAGMENT);
+		return getYCornerOfFragmentAs(Resolution.FRAGMENT);
 	}
 
 	public long getXCornerOfFragmentAsQuarterResolution() {
-		return getXCornerOfFragmentAs(CoordinatesResolution.QUARTER);
+		return getXCornerOfFragmentAs(Resolution.QUARTER);
 	}
 
 	public long getYCornerOfFragmentAsQuarterResolution() {
-		return getYCornerOfFragmentAs(CoordinatesResolution.QUARTER);
+		return getYCornerOfFragmentAs(Resolution.QUARTER);
 	}
 
-	public long getXCornerOfFragmentAs(CoordinatesResolution targetResolution) {
+	public long getXCornerOfFragmentAs(Resolution targetResolution) {
 		return targetResolution.convertFromWorldToThis(CoordinateUtils
 				.toFragmentCorner(xInWorld));
 	}
 
-	public long getYCornerOfFragmentAs(CoordinatesResolution targetResolution) {
+	public long getYCornerOfFragmentAs(Resolution targetResolution) {
 		return targetResolution.convertFromWorldToThis(CoordinateUtils
 				.toFragmentCorner(yInWorld));
 	}
 
 	public long getXRelativeToFragment() {
-		return getXRelativeToFragmentAs(CoordinatesResolution.WORLD);
+		return getXRelativeToFragmentAs(Resolution.WORLD);
 	}
 
 	public long getYRelativeToFragment() {
-		return getYRelativeToFragmentAs(CoordinatesResolution.WORLD);
+		return getYRelativeToFragmentAs(Resolution.WORLD);
 	}
 
 	public long getXRelativeToFragmentAsChunkResolution() {
-		return getXRelativeToFragmentAs(CoordinatesResolution.CHUNK);
+		return getXRelativeToFragmentAs(Resolution.CHUNK);
 	}
 
 	public long getYRelativeToFragmentAsChunkResolution() {
-		return getYRelativeToFragmentAs(CoordinatesResolution.CHUNK);
+		return getYRelativeToFragmentAs(Resolution.CHUNK);
 	}
 
 	public long getXRelativeToFragmentAsFragmentResolution() {
-		return getXRelativeToFragmentAs(CoordinatesResolution.FRAGMENT);
+		return getXRelativeToFragmentAs(Resolution.FRAGMENT);
 	}
 
 	public long getYRelativeToFragmentAsFragmentResolution() {
-		return getYRelativeToFragmentAs(CoordinatesResolution.FRAGMENT);
+		return getYRelativeToFragmentAs(Resolution.FRAGMENT);
 	}
 
 	public long getXRelativeToFragmentAsQuarterResolution() {
-		return getXRelativeToFragmentAs(CoordinatesResolution.QUARTER);
+		return getXRelativeToFragmentAs(Resolution.QUARTER);
 	}
 
 	public long getYRelativeToFragmentAsQuarterResolution() {
-		return getYRelativeToFragmentAs(CoordinatesResolution.QUARTER);
+		return getYRelativeToFragmentAs(Resolution.QUARTER);
 	}
 
-	public long getXRelativeToFragmentAs(CoordinatesResolution targetResolution) {
+	public long getXRelativeToFragmentAs(Resolution targetResolution) {
 		return targetResolution.convertFromWorldToThis(CoordinateUtils
 				.toFragmentRelative(xInWorld));
 	}
 
-	public long getYRelativeToFragmentAs(CoordinatesResolution targetResolution) {
+	public long getYRelativeToFragmentAs(Resolution targetResolution) {
 		return targetResolution.convertFromWorldToThis(CoordinateUtils
 				.toFragmentRelative(yInWorld));
 	}
