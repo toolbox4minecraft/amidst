@@ -19,15 +19,12 @@ public class SlimeLayer extends ImageLayer {
 
 	@Override
 	public void drawToCache(Fragment fragment, int[] cache) {
-		for (int y = 0; y < getSize(); y++) {
-			for (int x = 0; x < getSize(); x++) {
-				cache[getCacheIndex(x, y)] = getColorAt(fragment, x, y);
+		for (int blockY = 0; blockY < getSize(); blockY++) {
+			for (int blockX = 0; blockX < getSize(); blockX++) {
+				int i = blockY * getSize() + blockX;
+				cache[i] = getColorAt(fragment, blockX, blockY);
 			}
 		}
-	}
-
-	private int getCacheIndex(int x, int y) {
-		return y * getSize() + x;
 	}
 
 	private int getColorAt(Fragment fragment, int x, int y) {
@@ -43,9 +40,9 @@ public class SlimeLayer extends ImageLayer {
 	}
 
 	private long getSeed(int xPosition, int yPosition) {
-		return getWorld().getSeed() + xPosition * xPosition
-				* 0x4c1906 + xPosition * 0x5ac0db + yPosition * yPosition
-				* 0x4307a7L + yPosition * 0x5f24f ^ 0x3ad8025f;
+		return getWorld().getSeed() + xPosition * xPosition * 0x4c1906
+				+ xPosition * 0x5ac0db + yPosition * yPosition * 0x4307a7L
+				+ yPosition * 0x5f24f ^ 0x3ad8025f;
 	}
 
 	private int getNextValue() {

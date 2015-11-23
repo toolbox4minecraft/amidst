@@ -23,35 +23,33 @@ public class BiomeLayer extends ImageLayer {
 
 	@Override
 	public void drawToCache(Fragment fragment, int[] cache) {
+		for (int blockY = 0; blockY < getSize(); blockY++) {
+			for (int blockX = 0; blockX < getSize(); blockX++) {
+				int i = blockY * getSize() + blockX;
+				cache[i] = getColorAt(fragment, blockX, blockY);
+			}
+		}
+	}
+
+	private int getColorAt(Fragment fragment, int blockX, int blockY) {
 		if (isHighlightMode) {
-			drawHighlightMode(fragment, cache);
+			return drawAtInHighlightMode(fragment, blockX, blockY);
 		} else {
-			drawNormalMode(fragment, cache);
+			return drawAtInNormalMode(fragment, blockX, blockY);
 		}
 	}
 
-	private void drawHighlightMode(Fragment fragment, int[] cache) {
-		for (int blockY = 0; blockY < getSize(); blockY++) {
-			for (int blockX = 0; blockX < getSize(); blockX++) {
-				int i = blockY * Fragment.BIOME_SIZE + blockX;
-				if (selectedBiomes[fragment.getBiomeAtUsingBlockCoordinates(
-						blockX, blockY)]) {
-					cache[i] = getColor(fragment, blockX, blockY);
-				} else {
-					cache[i] = ColorUtils.deselectColor(getColor(fragment,
-							blockX, blockY));
-				}
-			}
+	private int drawAtInHighlightMode(Fragment fragment, int blockX, int blockY) {
+		if (selectedBiomes[fragment.getBiomeAtUsingBlockCoordinates(blockX,
+				blockY)]) {
+			return drawAtInNormalMode(fragment, blockX, blockY);
+		} else {
+			return ColorUtils.deselectColor(getColor(fragment, blockX, blockY));
 		}
 	}
 
-	private void drawNormalMode(Fragment fragment, int[] cache) {
-		for (int blockY = 0; blockY < getSize(); blockY++) {
-			for (int blockX = 0; blockX < getSize(); blockX++) {
-				int i = blockY * Fragment.BIOME_SIZE + blockX;
-				cache[i] = getColor(fragment, blockX, blockY);
-			}
-		}
+	private int drawAtInNormalMode(Fragment fragment, int blockX, int blockY) {
+		return getColor(fragment, blockX, blockY);
 	}
 
 	private int getColor(Fragment fragment, int blockX, int blockY) {
