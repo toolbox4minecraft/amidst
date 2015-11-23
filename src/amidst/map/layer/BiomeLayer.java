@@ -23,21 +23,38 @@ public class BiomeLayer extends ImageLayer {
 	}
 
 	@Override
+	protected void drawToCache(Fragment fragment, int[] cache, long cornerX,
+			long cornerY, int size) {
+		short[][] biomeData = getWorld().getBiomeDataAt(fragment.getCorner());
+		for (int y = 0; y < size; y++) {
+			for (int x = 0; x < size; x++) {
+				int index = getCacheIndex(x, y, size);
+				cache[index] = getColor(biomeData[x][y]);
+			}
+		}
+	}
+
+	protected int getColor(int biome) {
+		if (isDeselected(biome)) {
+			return ColorUtils.deselectColor(doGetColor(biome));
+		} else {
+			return doGetColor(biome);
+		}
+	}
+
+	@Deprecated
+	@Override
 	protected int getColorAt(Fragment fragment, long xAsResolution,
 			long yAsResolution) {
-		int biome = fragment.getBiomeAt(xAsResolution, yAsResolution);
-		if (isDeselected(biome)) {
-			return ColorUtils.deselectColor(getColor(biome));
-		} else {
-			return getColor(biome);
-		}
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	private boolean isDeselected(int biome) {
 		return isHighlightMode && !selectedBiomes[biome];
 	}
 
-	private int getColor(int biome) {
+	private int doGetColor(int biome) {
 		return Biome.getByIndex(biome).getColor();
 	}
 

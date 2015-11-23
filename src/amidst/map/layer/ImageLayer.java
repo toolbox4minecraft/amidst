@@ -40,16 +40,21 @@ public abstract class ImageLayer extends Layer {
 		long cornerX = corner.getXAs(resolution);
 		long cornerY = corner.getYAs(resolution);
 		int size = getSize();
+		drawToCache(fragment, cache, cornerX, cornerY, size);
+		image.setRGB(0, 0, size, size, cache, 0, size);
+	}
+
+	protected void drawToCache(Fragment fragment, int[] cache, long cornerX,
+			long cornerY, int size) {
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
 				int index = getCacheIndex(x, y, size);
 				cache[index] = getColorAt(fragment, cornerX + x, cornerY + y);
 			}
 		}
-		image.setRGB(0, 0, size, size, cache, 0, size);
 	}
 
-	private int getCacheIndex(int x, int y, int size) {
+	protected int getCacheIndex(int x, int y, int size) {
 		return x + y * size;
 	}
 

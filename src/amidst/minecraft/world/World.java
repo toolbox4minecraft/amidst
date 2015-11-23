@@ -27,6 +27,7 @@ public abstract class World {
 			this);
 	private final CachedWorldObjectProducer strongholdProducer = new StrongholdProducer(
 			this);
+	private final BiomeDataProvider biomeDataProvider = new BiomeDataProvider();
 
 	@Deprecated
 	public boolean hasPlayers() {
@@ -91,5 +92,9 @@ public abstract class World {
 
 	public void reloadPlayers() {
 		playerProducer.resetCache();
+	}
+
+	public short[][] getBiomeDataAt(CoordinatesInWorld coordinates) {
+		return biomeDataProvider.getBiomeDataAt(coordinates);
 	}
 }
