@@ -19,124 +19,126 @@ public class CoordinatesInWorld {
 	private static final CoordinatesInWorld ORIGIN = CoordinatesInWorld.from(0,
 			0);
 
+	private final CoordinatesResolution resolution;
 	private final long x;
 	private final long y;
 
 	private CoordinatesInWorld(long x, long y) {
+		this.resolution = CoordinatesResolution.WORLD;
 		this.x = x;
 		this.y = y;
 	}
 
 	public long getX() {
-		return CoordinatesResolution.WORLD.shift(x);
+		return CoordinatesResolution.WORLD.convertToThis(resolution, x);
 	}
 
 	public long getY() {
-		return CoordinatesResolution.WORLD.shift(y);
+		return CoordinatesResolution.WORLD.convertToThis(resolution, y);
 	}
 
 	public long getXAsChunkResolution() {
-		return CoordinatesResolution.CHUNK.shift(x);
+		return CoordinatesResolution.CHUNK.convertToThis(resolution, x);
 	}
 
 	public long getYAsChunkResolution() {
-		return CoordinatesResolution.CHUNK.shift(y);
+		return CoordinatesResolution.CHUNK.convertToThis(resolution, y);
 	}
 
 	public long getXAsFragmentResolution() {
-		return CoordinatesResolution.FRAGMENT.shift(x);
+		return CoordinatesResolution.FRAGMENT.convertToThis(resolution, x);
 	}
 
 	public long getYAsFragmentResolution() {
-		return CoordinatesResolution.FRAGMENT.shift(y);
+		return CoordinatesResolution.FRAGMENT.convertToThis(resolution, y);
 	}
 
 	public long getXAsQuarterResolution() {
-		return CoordinatesResolution.QUARTER.shift(x);
+		return CoordinatesResolution.QUARTER.convertToThis(resolution, x);
 	}
 
 	public long getYAsQuarterResolution() {
-		return CoordinatesResolution.QUARTER.shift(y);
+		return CoordinatesResolution.QUARTER.convertToThis(resolution, y);
 	}
 
 	public long getXCornerOfFragment() {
-		return CoordinatesResolution.WORLD.shift(CoordinateUtils
-				.toFragmentCorner(x));
+		return CoordinatesResolution.WORLD.convertToThis(resolution,
+				CoordinateUtils.toFragmentCorner(x));
 	}
 
 	public long getYCornerOfFragment() {
-		return CoordinatesResolution.WORLD.shift(CoordinateUtils
-				.toFragmentCorner(y));
+		return CoordinatesResolution.WORLD.convertToThis(resolution,
+				CoordinateUtils.toFragmentCorner(y));
 	}
 
 	public long getXCornerOfFragmentAsChunkResolution() {
-		return CoordinatesResolution.CHUNK.shift(CoordinateUtils
-				.toFragmentCorner(x));
+		return CoordinatesResolution.CHUNK.convertToThis(resolution,
+				CoordinateUtils.toFragmentCorner(x));
 	}
 
 	public long getYCornerOfFragmentAsChunkResolution() {
-		return CoordinatesResolution.CHUNK.shift(CoordinateUtils
-				.toFragmentCorner(y));
+		return CoordinatesResolution.CHUNK.convertToThis(resolution,
+				CoordinateUtils.toFragmentCorner(y));
 	}
 
 	public long getXCornerOfFragmentAsFragmentResolution() {
-		return CoordinatesResolution.FRAGMENT.shift(CoordinateUtils
-				.toFragmentCorner(x));
+		return CoordinatesResolution.FRAGMENT.convertToThis(resolution,
+				CoordinateUtils.toFragmentCorner(x));
 	}
 
 	public long getYCornerOfFragmentAsFragmentResolution() {
-		return CoordinatesResolution.FRAGMENT.shift(CoordinateUtils
-				.toFragmentCorner(y));
+		return CoordinatesResolution.FRAGMENT.convertToThis(resolution,
+				CoordinateUtils.toFragmentCorner(y));
 	}
 
 	public long getXCornerOfFragmentAsQuarterResolution() {
-		return CoordinatesResolution.QUARTER.shift(CoordinateUtils
-				.toFragmentCorner(x));
+		return CoordinatesResolution.QUARTER.convertToThis(resolution,
+				CoordinateUtils.toFragmentCorner(x));
 	}
 
 	public long getYCornerOfFragmentAsQuarterResolution() {
-		return CoordinatesResolution.QUARTER.shift(CoordinateUtils
-				.toFragmentCorner(y));
+		return CoordinatesResolution.QUARTER.convertToThis(resolution,
+				CoordinateUtils.toFragmentCorner(y));
 	}
 
 	public long getXRelativeToFragment() {
-		return CoordinatesResolution.WORLD.shift(CoordinateUtils
-				.toFragmentRelative(x));
+		return CoordinatesResolution.WORLD.convertToThis(resolution,
+				CoordinateUtils.toFragmentRelative(x));
 	}
 
 	public long getYRelativeToFragment() {
-		return CoordinatesResolution.WORLD.shift(CoordinateUtils
-				.toFragmentRelative(y));
+		return CoordinatesResolution.WORLD.convertToThis(resolution,
+				CoordinateUtils.toFragmentRelative(y));
 	}
 
 	public long getXRelativeToFragmentAsChunkResolution() {
-		return CoordinatesResolution.CHUNK.shift(CoordinateUtils
-				.toFragmentRelative(x));
+		return CoordinatesResolution.CHUNK.convertToThis(resolution,
+				CoordinateUtils.toFragmentRelative(x));
 	}
 
 	public long getYRelativeToFragmentAsChunkResolution() {
-		return CoordinatesResolution.CHUNK.shift(CoordinateUtils
-				.toFragmentRelative(y));
+		return CoordinatesResolution.CHUNK.convertToThis(resolution,
+				CoordinateUtils.toFragmentRelative(y));
 	}
 
 	public long getXRelativeToFragmentAsFragmentResolution() {
-		return CoordinatesResolution.FRAGMENT.shift(CoordinateUtils
-				.toFragmentRelative(x));
+		return CoordinatesResolution.FRAGMENT.convertToThis(resolution,
+				CoordinateUtils.toFragmentRelative(x));
 	}
 
 	public long getYRelativeToFragmentAsFragmentResolution() {
-		return CoordinatesResolution.FRAGMENT.shift(CoordinateUtils
-				.toFragmentRelative(y));
+		return CoordinatesResolution.FRAGMENT.convertToThis(resolution,
+				CoordinateUtils.toFragmentRelative(y));
 	}
 
 	public long getXRelativeToFragmentAsQuarterResolution() {
-		return CoordinatesResolution.QUARTER.shift(CoordinateUtils
-				.toFragmentRelative(x));
+		return CoordinatesResolution.QUARTER.convertToThis(resolution,
+				CoordinateUtils.toFragmentRelative(x));
 	}
 
 	public long getYRelativeToFragmentAsQuarterResolution() {
-		return CoordinatesResolution.QUARTER.shift(CoordinateUtils
-				.toFragmentRelative(y));
+		return CoordinatesResolution.QUARTER.convertToThis(resolution,
+				CoordinateUtils.toFragmentRelative(y));
 	}
 
 	public CoordinatesInWorld toFragmentCorner() {

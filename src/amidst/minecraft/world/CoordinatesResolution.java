@@ -17,7 +17,16 @@ public enum CoordinatesResolution {
 		return 1 << shiftSize;
 	}
 
-	public long shift(long coordinateInWorld) {
+	public long convertFromWorldToThis(long coordinateInWorld) {
 		return coordinateInWorld >> shiftSize;
+	}
+
+	public long convertFromThisToWorld(long coordinateInThisResolution) {
+		return coordinateInThisResolution << shiftSize;
+	}
+
+	public long convertToThis(CoordinatesResolution oldResolution,
+			long coordinateInOldResolution) {
+		return (coordinateInOldResolution << oldResolution.shiftSize) >> shiftSize;
 	}
 }
