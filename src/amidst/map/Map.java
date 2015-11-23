@@ -3,7 +3,6 @@ package amidst.map;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
-import amidst.Options;
 import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
 import amidst.map.layer.LiveLayer;
@@ -171,25 +170,6 @@ public class Map {
 		result.x += x;
 		result.y += y;
 		return result;
-	}
-
-	public String getBiomeAliasAt(CoordinatesInWorld coordinates) {
-		if (startFragment != null) {
-			for (Fragment fragment : startFragment) {
-				if (fragment.isLoaded()) {
-					if (fragment.isInBounds(coordinates)) {
-						return getBiomeAliasForFragment(fragment, coordinates);
-					}
-				}
-			}
-		}
-		return "Unknown";
-	}
-
-	private String getBiomeAliasForFragment(Fragment fragment,
-			CoordinatesInWorld coordinates) {
-		return Options.instance.biomeColorProfile.getAliasForId(fragment
-				.getBiomeAt(coordinates));
 	}
 
 	public void moveBy(Point2D.Double speed) {

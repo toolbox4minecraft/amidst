@@ -9,9 +9,7 @@ import amidst.Options;
 import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
 import amidst.map.layer.MapObject;
-import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.Resolution;
 
 public class Fragment implements Iterable<Fragment> {
 	private static class FragmentIterator implements Iterator<Fragment> {
@@ -47,6 +45,7 @@ public class Fragment implements Iterable<Fragment> {
 
 	public static final int SIZE = 512;
 	public static final int SIZE_SHIFT = 9;
+	@Deprecated
 	public static final int BIOME_SIZE = SIZE >> 2;
 
 	private Object loadLock = new Object();
@@ -56,8 +55,6 @@ public class Fragment implements Iterable<Fragment> {
 	private BufferedImage[] images;
 	private boolean[] repaintImage;
 	private List<IconLayer> invalidatedIconLayers = new LinkedList<IconLayer>();
-
-	private final short[] biomeData = new short[BIOME_SIZE * BIOME_SIZE];
 
 	private boolean isInitialized = false;
 	private boolean isLoaded = false;
@@ -121,7 +118,6 @@ public class Fragment implements Iterable<Fragment> {
 					repaintInvalidatedImages(imageCache, imageLayers);
 					reloadInvalidatedIconLayers();
 				} else {
-					initBiomeData();
 					repaintAllImages(imageCache, imageLayers);
 					generateMapObjects();
 					initAlpha();
@@ -156,14 +152,6 @@ public class Fragment implements Iterable<Fragment> {
 			}
 		}
 		mapObjects.removeAll(objectsToRemove);
-	}
-
-	private void initBiomeData() {
-		int[] data = MinecraftUtil.getBiomeData((int) corner.getX() >> 2,
-				(int) corner.getY() >> 2, BIOME_SIZE, BIOME_SIZE, true);
-		for (int i = 0; i < BIOME_SIZE * BIOME_SIZE; i++) {
-			biomeData[i] = (short) data[i];
-		}
 	}
 
 	private void repaintAllImages(int[] imageCache, ImageLayer[] imageLayers) {
@@ -247,26 +235,6 @@ public class Fragment implements Iterable<Fragment> {
 
 	public boolean isInBounds(CoordinatesInWorld coordinates) {
 		return coordinates.isInBoundsOf(corner, SIZE);
-	}
-
-	public int getBiomeAt(CoordinatesInWorld coordinates) {
-		long x = coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
-		long y = coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
-		return getBiomeAtUsingQuarterResolution(x, y);
-	}
-
-	public int getBiomeAt(long xInQuarterResolution, long yInQuarterResolution) {
-		long x = xInQuarterResolution - corner.getXAs(Resolution.QUARTER);
-		long y = yInQuarterResolution - corner.getYAs(Resolution.QUARTER);
-		return getBiomeAtUsingQuarterResolution(x, y);
-	}
-
-	private int getBiomeAtUsingQuarterResolution(long x, long y) {
-		return biomeData[getBiomeDataIndex(x, y)];
-	}
-
-	private int getBiomeDataIndex(long x, long y) {
-		return (int) (x + y * Fragment.BIOME_SIZE);
 	}
 
 	public CoordinatesInWorld getCorner() {
