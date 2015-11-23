@@ -52,6 +52,14 @@ public class CoordinatesInWorld {
 		return y >> Fragment.SIZE_SHIFT;
 	}
 
+	public long getXAsQuarterResolution() {
+		return x >> 2;
+	}
+
+	public long getYAsQuarterResolution() {
+		return y >> 2;
+	}
+
 	public long getXCornerOfFragment() {
 		return CoordinateUtils.toFragmentCorner(x);
 	}
@@ -76,6 +84,14 @@ public class CoordinatesInWorld {
 		return CoordinateUtils.toFragmentCorner(y) >> Fragment.SIZE_SHIFT;
 	}
 
+	public long getXCornerOfFragmentAsQuarterResolution() {
+		return CoordinateUtils.toFragmentCorner(x) >> 2;
+	}
+
+	public long getYCornerOfFragmentAsQuarterResolution() {
+		return CoordinateUtils.toFragmentCorner(y) >> 2;
+	}
+
 	public long getXRelativeToFragment() {
 		return CoordinateUtils.toFragmentRelative(x);
 	}
@@ -98,6 +114,14 @@ public class CoordinatesInWorld {
 
 	public long getYRelativeToFragmentAsFragmentResolution() {
 		return CoordinateUtils.toFragmentRelative(y) >> Fragment.SIZE_SHIFT;
+	}
+
+	public long getXRelativeToFragmentAsQuarterResolution() {
+		return CoordinateUtils.toFragmentRelative(x) >> 2;
+	}
+
+	public long getYRelativeToFragmentAsQuarterResolution() {
+		return CoordinateUtils.toFragmentRelative(y) >> 2;
 	}
 
 	public CoordinatesInWorld toFragmentCorner() {
