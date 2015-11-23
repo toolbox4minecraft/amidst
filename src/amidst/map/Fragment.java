@@ -11,6 +11,7 @@ import amidst.map.layer.ImageLayer;
 import amidst.map.layer.MapObject;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.minecraft.world.CoordinatesResolution;
 
 public class Fragment implements Iterable<Fragment> {
 	private static class FragmentIterator implements Iterator<Fragment> {
@@ -251,18 +252,20 @@ public class Fragment implements Iterable<Fragment> {
 		return coordinates.isInBoundsOf(corner, SIZE);
 	}
 
-	// TODO: use longs?
 	public int getBiomeAt(CoordinatesInWorld coordinates) {
-		int blockX = (int) coordinates.getXRelativeToFragment();
-		int blockY = (int) coordinates.getYRelativeToFragment();
-		int index = (blockY >> 2) * Fragment.BIOME_SIZE + (blockX >> 2);
-		return biomeData[index];
+		long x = coordinates
+				.getXRelativeToFragmentAs(CoordinatesResolution.QUARTER);
+		long y = coordinates
+				.getYRelativeToFragmentAs(CoordinatesResolution.QUARTER);
+		return getBiomeAtUsingQuarterResolution(x, y);
 	}
 
-	// TODO: use longs?
-	public int getBiomeAtUsingBlockCoordinates(int blockX, int blockY) {
-		int index = blockY * Fragment.BIOME_SIZE + blockX;
-		return biomeData[index];
+	public int getBiomeAtUsingQuarterResolution(long x, long y) {
+		return biomeData[getBiomeDataIndex(x, y)];
+	}
+
+	private int getBiomeDataIndex(long x, long y) {
+		return (int) (x + y * Fragment.BIOME_SIZE);
 	}
 
 	public CoordinatesInWorld getCorner() {

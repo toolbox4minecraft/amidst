@@ -24,7 +24,7 @@ public class BiomeLayer extends ImageLayer {
 
 	@Override
 	protected int getColorAt(Fragment fragment, int blockX, int blockY) {
-		int biome = fragment.getBiomeAtUsingBlockCoordinates(blockX, blockY);
+		int biome = fragment.getBiomeAtUsingQuarterResolution(blockX, blockY);
 		if (isDeselected(biome)) {
 			return ColorUtils.deselectColor(getColor(biome));
 		} else {
