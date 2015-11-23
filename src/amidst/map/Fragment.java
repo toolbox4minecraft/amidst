@@ -258,7 +258,13 @@ public class Fragment implements Iterable<Fragment> {
 		return getBiomeAtUsingQuarterResolution(x, y);
 	}
 
-	public int getBiomeAtUsingQuarterResolution(long x, long y) {
+	public int getBiomeAt(long xInQuarterResolution, long yInQuarterResolution) {
+		long x = xInQuarterResolution - corner.getXAs(Resolution.QUARTER);
+		long y = yInQuarterResolution - corner.getYAs(Resolution.QUARTER);
+		return getBiomeAtUsingQuarterResolution(x, y);
+	}
+
+	private int getBiomeAtUsingQuarterResolution(long x, long y) {
 		return biomeData[getBiomeDataIndex(x, y)];
 	}
 

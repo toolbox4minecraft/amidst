@@ -1,6 +1,7 @@
 package amidst.map.layer;
 
 import amidst.map.Fragment;
+import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 
 public abstract class ImageLayer extends Layer {
@@ -33,13 +34,22 @@ public abstract class ImageLayer extends Layer {
 	}
 
 	public void drawToCache(Fragment fragment, int[] cache) {
-		for (int blockY = 0; blockY < getSize(); blockY++) {
-			for (int blockX = 0; blockX < getSize(); blockX++) {
-				int i = blockY * getSize() + blockX;
-				cache[i] = getColorAt(fragment, blockX, blockY);
+		CoordinatesInWorld corner = fragment.getCorner();
+		long cornerX = corner.getXAs(resolution);
+		long cornerY = corner.getYAs(resolution);
+		int size = getSize();
+		for (int y = 0; y < size; y++) {
+			for (int x = 0; x < size; x++) {
+				int index = getCacheIndex(x, y, size);
+				cache[index] = getColorAt(fragment, cornerX + x, cornerY + y);
 			}
 		}
 	}
 
-	protected abstract int getColorAt(Fragment fragment, int blockX, int blockY);
+	private int getCacheIndex(int x, int y, int size) {
+		return x + y * size;
+	}
+
+	protected abstract int getColorAt(Fragment fragment, long xAsResolution,
+			long yAsResolution);
 }

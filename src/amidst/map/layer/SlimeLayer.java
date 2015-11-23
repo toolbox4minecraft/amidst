@@ -4,7 +4,6 @@ import java.util.Random;
 
 import amidst.Options;
 import amidst.map.Fragment;
-import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 
 public class SlimeLayer extends ImageLayer {
@@ -23,29 +22,28 @@ public class SlimeLayer extends ImageLayer {
 	}
 
 	@Override
-	protected int getColorAt(Fragment fragment, int blockX, int blockY) {
-		CoordinatesInWorld corner = fragment.getCorner();
-		int x = (int) corner.getXAsChunkResolution() + blockX;
-		int y = (int) corner.getYAsChunkResolution() + blockY;
-		if (isSlimeChunk(x, y)) {
+	protected int getColorAt(Fragment fragment, long xAsResolution,
+			long yAsResolution) {
+		if (isSlimeChunk(xAsResolution, yAsResolution)) {
 			return SLIME_CHUNK_COLOR;
 		} else {
 			return NOT_SLIME_CHUNK_COLOR;
 		}
 	}
 
-	private boolean isSlimeChunk(int x, int y) {
-		updateSeed(x, y);
+	private boolean isSlimeChunk(long xAsResolution, long yAsResolution) {
+		updateSeed(xAsResolution, yAsResolution);
 		return isSlimeChunk();
 	}
 
-	private void updateSeed(int x, int y) {
-		random.setSeed(getSeed(x, y));
+	private void updateSeed(long xAsResolution, long yAsResolution) {
+		random.setSeed(getSeed(xAsResolution, yAsResolution));
 	}
 
-	private long getSeed(int x, int y) {
-		return getWorld().getSeed() + x * x * 0x4c1906 + x * 0x5ac0db + y * y
-				* 0x4307a7L + y * 0x5f24f ^ 0x3ad8025f;
+	private long getSeed(long xAsResolution, long yAsResolution) {
+		return getWorld().getSeed() + xAsResolution * xAsResolution * 0x4c1906
+				+ xAsResolution * 0x5ac0db + yAsResolution * yAsResolution
+				* 0x4307a7L + yAsResolution * 0x5f24f ^ 0x3ad8025f;
 	}
 
 	private boolean isSlimeChunk() {
