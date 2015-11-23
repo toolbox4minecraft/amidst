@@ -36,19 +36,11 @@ public class CoordinatesInWorld {
 	}
 
 	public long getX() {
-		return getXAs(Resolution.WORLD);
+		return xInWorld;
 	}
 
 	public long getY() {
-		return getYAs(Resolution.WORLD);
-	}
-
-	public long getXAsChunkResolution() {
-		return getXAs(Resolution.CHUNK);
-	}
-
-	public long getYAsChunkResolution() {
-		return getYAs(Resolution.CHUNK);
+		return yInWorld;
 	}
 
 	public long getXAs(Resolution targetResolution) {
@@ -60,11 +52,11 @@ public class CoordinatesInWorld {
 	}
 
 	public long getXCornerOfFragment() {
-		return getXCornerOfFragmentAs(Resolution.WORLD);
+		return CoordinateUtils.toFragmentCorner(xInWorld);
 	}
 
 	public long getYCornerOfFragment() {
-		return getYCornerOfFragmentAs(Resolution.WORLD);
+		return CoordinateUtils.toFragmentCorner(yInWorld);
 	}
 
 	public long getXCornerOfFragmentAs(Resolution targetResolution) {
@@ -78,11 +70,11 @@ public class CoordinatesInWorld {
 	}
 
 	public long getXRelativeToFragment() {
-		return getXRelativeToFragmentAs(Resolution.WORLD);
+		return CoordinateUtils.toFragmentRelative(xInWorld);
 	}
 
 	public long getYRelativeToFragment() {
-		return getYRelativeToFragmentAs(Resolution.WORLD);
+		return CoordinateUtils.toFragmentRelative(yInWorld);
 	}
 
 	public long getXRelativeToFragmentAs(Resolution targetResolution) {

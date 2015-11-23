@@ -9,6 +9,7 @@ import amidst.map.MapMarkers;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 
 public abstract class StructureProducer implements WorldObjectProducer {
@@ -69,9 +70,9 @@ public abstract class StructureProducer implements WorldObjectProducer {
 	// TODO: use longs?
 	private void generateAt() {
 		chunkX = xRelativeToFragmentAsChunkResolution
-				+ (int) corner.getXAsChunkResolution();
+				+ (int) corner.getXAs(Resolution.CHUNK);
 		chunkY = yRelativeToFragmentAsChunkResolution
-				+ (int) corner.getYAsChunkResolution();
+				+ (int) corner.getYAs(Resolution.CHUNK);
 		middleOfChunkX = middleOfChunk(chunkX);
 		middleOfChunkY = middleOfChunk(chunkY);
 		if (isValidLocation()) {

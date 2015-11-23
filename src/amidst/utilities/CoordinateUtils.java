@@ -79,7 +79,7 @@ public enum CoordinateUtils {
 
 	private static boolean ensureCoordinateConversionWorks() {
 		boolean successful = true;
-		for (int inWorld = -100; inWorld < 100; inWorld++) {
+		for (int inWorld = -1000; inWorld < 1000; inWorld++) {
 			int inFragment = toFragmentRelative(inWorld);
 			int inWorldOfFragment = toFragmentCorner(inWorld);
 			int inWorld2 = toWorld(inWorldOfFragment, inFragment);
