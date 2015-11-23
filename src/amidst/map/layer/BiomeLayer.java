@@ -23,30 +23,20 @@ public class BiomeLayer extends ImageLayer {
 
 	@Override
 	protected int getColorAt(Fragment fragment, int blockX, int blockY) {
-		if (isHighlightMode) {
-			return drawAtInHighlightMode(fragment, blockX, blockY);
+		int biome = fragment.getBiomeAtUsingBlockCoordinates(blockX, blockY);
+		if (isDeselected(biome)) {
+			return ColorUtils.deselectColor(getColor(biome));
 		} else {
-			return drawAtInNormalMode(fragment, blockX, blockY);
+			return getColor(biome);
 		}
 	}
 
-	private int drawAtInHighlightMode(Fragment fragment, int blockX, int blockY) {
-		if (selectedBiomes[fragment.getBiomeAtUsingBlockCoordinates(blockX,
-				blockY)]) {
-			return drawAtInNormalMode(fragment, blockX, blockY);
-		} else {
-			return ColorUtils.deselectColor(getColor(fragment, blockX, blockY));
-		}
+	private boolean isDeselected(int biome) {
+		return isHighlightMode && !selectedBiomes[biome];
 	}
 
-	private int drawAtInNormalMode(Fragment fragment, int blockX, int blockY) {
-		return getColor(fragment, blockX, blockY);
-	}
-
-	private int getColor(Fragment fragment, int blockX, int blockY) {
-		return Biome.getByIndex(
-				fragment.getBiomeAtUsingBlockCoordinates(blockX, blockY))
-				.getColor();
+	private int getColor(int biome) {
+		return Biome.getByIndex(biome).getColor();
 	}
 
 	public boolean isBiomeSelected(int id) {
