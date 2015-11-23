@@ -10,8 +10,8 @@ import amidst.version.VersionInfo;
 public class MinecraftUtil {
 	private static IMinecraftInterface minecraftInterface;
 	
-	/** Returns a copy of the biome data (threadsafe). */
-	public static int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolutionMap) {
+	/** Returns a copy of the biome data. This is NOT threadsafe without the synchronized keyword! */
+	public synchronized static int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolutionMap) {
 		return minecraftInterface.getBiomeData(x, y, width, height, useQuarterResolutionMap);
 	}
 	
