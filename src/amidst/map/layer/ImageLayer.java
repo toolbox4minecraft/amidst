@@ -1,5 +1,7 @@
 package amidst.map.layer;
 
+import java.awt.image.BufferedImage;
+
 import amidst.map.Fragment;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
@@ -33,7 +35,7 @@ public abstract class ImageLayer extends Layer {
 		return resolution.getStep();
 	}
 
-	public void drawToCache(Fragment fragment, int[] cache) {
+	public void drawToCache(Fragment fragment, int[] cache, BufferedImage image) {
 		CoordinatesInWorld corner = fragment.getCorner();
 		long cornerX = corner.getXAs(resolution);
 		long cornerY = corner.getYAs(resolution);
@@ -44,6 +46,7 @@ public abstract class ImageLayer extends Layer {
 				cache[index] = getColorAt(fragment, cornerX + x, cornerY + y);
 			}
 		}
+		image.setRGB(0, 0, size, size, cache, 0, size);
 	}
 
 	private int getCacheIndex(int x, int y, int size) {

@@ -174,10 +174,7 @@ public class Fragment implements Iterable<Fragment> {
 
 	private void repaintImage(int layerId, int[] imageCache,
 			ImageLayer[] imageLayers) {
-		imageLayers[layerId].drawToCache(this, imageCache);
-		int layerSize = imageLayers[layerId].getSize();
-		images[layerId].setRGB(0, 0, layerSize, layerSize, imageCache, 0,
-				layerSize);
+		imageLayers[layerId].drawToCache(this, imageCache, images[layerId]);
 		repaintImage[layerId] = false;
 	}
 
