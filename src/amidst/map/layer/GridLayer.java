@@ -8,6 +8,7 @@ import java.awt.geom.AffineTransform;
 
 import amidst.Options;
 import amidst.map.Fragment;
+import amidst.minecraft.world.Resolution;
 
 public class GridLayer extends LiveLayer {
 	private static final Font DRAW_FONT = new Font("arial", Font.BOLD, 16);
@@ -53,13 +54,13 @@ public class GridLayer extends LiveLayer {
 
 	// TODO: use longs?
 	private int getGridX(Fragment fragment, int stride) {
-		return (int) fragment.getCorner().getXAsFragmentResolution()
+		return (int) fragment.getCorner().getXAs(Resolution.FRAGMENT)
 				% (stride + 1);
 	}
 
 	// TODO: use longs?
 	private int getGridY(Fragment fragment, int stride) {
-		return (int) fragment.getCorner().getYAsFragmentResolution()
+		return (int) fragment.getCorner().getYAs(Resolution.FRAGMENT)
 				% (stride + 1);
 	}
 
@@ -90,9 +91,9 @@ public class GridLayer extends LiveLayer {
 
 	private void updateText(Fragment fragment) {
 		textBuffer.setLength(0);
-		textBuffer.append(fragment.getCorner().getXAsChunkResolution() << 4);
+		textBuffer.append(fragment.getCorner().getX());
 		textBuffer.append(", ");
-		textBuffer.append(fragment.getCorner().getYAsChunkResolution() << 4);
+		textBuffer.append(fragment.getCorner().getY());
 		textBuffer.getChars(0, textBuffer.length(), textCache, 0);
 	}
 

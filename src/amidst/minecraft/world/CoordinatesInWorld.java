@@ -51,22 +51,6 @@ public class CoordinatesInWorld {
 		return getYAs(Resolution.CHUNK);
 	}
 
-	public long getXAsFragmentResolution() {
-		return getXAs(Resolution.FRAGMENT);
-	}
-
-	public long getYAsFragmentResolution() {
-		return getYAs(Resolution.FRAGMENT);
-	}
-
-	public long getXAsQuarterResolution() {
-		return getXAs(Resolution.QUARTER);
-	}
-
-	public long getYAsQuarterResolution() {
-		return getYAs(Resolution.QUARTER);
-	}
-
 	public long getXAs(Resolution targetResolution) {
 		return targetResolution.convertFromWorldToThis(xInWorld);
 	}
@@ -81,30 +65,6 @@ public class CoordinatesInWorld {
 
 	public long getYCornerOfFragment() {
 		return getYCornerOfFragmentAs(Resolution.WORLD);
-	}
-
-	public long getXCornerOfFragmentAsChunkResolution() {
-		return getXCornerOfFragmentAs(Resolution.CHUNK);
-	}
-
-	public long getYCornerOfFragmentAsChunkResolution() {
-		return getYCornerOfFragmentAs(Resolution.CHUNK);
-	}
-
-	public long getXCornerOfFragmentAsFragmentResolution() {
-		return getXCornerOfFragmentAs(Resolution.FRAGMENT);
-	}
-
-	public long getYCornerOfFragmentAsFragmentResolution() {
-		return getYCornerOfFragmentAs(Resolution.FRAGMENT);
-	}
-
-	public long getXCornerOfFragmentAsQuarterResolution() {
-		return getXCornerOfFragmentAs(Resolution.QUARTER);
-	}
-
-	public long getYCornerOfFragmentAsQuarterResolution() {
-		return getYCornerOfFragmentAs(Resolution.QUARTER);
 	}
 
 	public long getXCornerOfFragmentAs(Resolution targetResolution) {
@@ -123,30 +83,6 @@ public class CoordinatesInWorld {
 
 	public long getYRelativeToFragment() {
 		return getYRelativeToFragmentAs(Resolution.WORLD);
-	}
-
-	public long getXRelativeToFragmentAsChunkResolution() {
-		return getXRelativeToFragmentAs(Resolution.CHUNK);
-	}
-
-	public long getYRelativeToFragmentAsChunkResolution() {
-		return getYRelativeToFragmentAs(Resolution.CHUNK);
-	}
-
-	public long getXRelativeToFragmentAsFragmentResolution() {
-		return getXRelativeToFragmentAs(Resolution.FRAGMENT);
-	}
-
-	public long getYRelativeToFragmentAsFragmentResolution() {
-		return getYRelativeToFragmentAs(Resolution.FRAGMENT);
-	}
-
-	public long getXRelativeToFragmentAsQuarterResolution() {
-		return getXRelativeToFragmentAs(Resolution.QUARTER);
-	}
-
-	public long getYRelativeToFragmentAsQuarterResolution() {
-		return getYRelativeToFragmentAs(Resolution.QUARTER);
 	}
 
 	public long getXRelativeToFragmentAs(Resolution targetResolution) {
