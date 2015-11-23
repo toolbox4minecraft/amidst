@@ -34,15 +34,7 @@ public enum CoordinateUtils {
 	}
 
 	private static int modulo(int a, int b) {
-		return getModuloCorrection(a, b) + a % b;
-	}
-
-	private static int getModuloCorrection(int a, int b) {
-		if (a < 0) {
-			return b;
-		} else {
-			return 0;
-		}
+		return ((a % b) + b) % b;
 	}
 
 	public static boolean isInBounds(long x, long y, long offsetX,
@@ -74,15 +66,7 @@ public enum CoordinateUtils {
 	}
 
 	private static long modulo(long a, long b) {
-		return getModuloCorrection(a, b) + a % b;
-	}
-
-	private static long getModuloCorrection(long a, long b) {
-		if (a < 0) {
-			return b;
-		} else {
-			return 0;
-		}
+		return ((a % b) + b) % b;
 	}
 
 	public static void main(String[] args) {
