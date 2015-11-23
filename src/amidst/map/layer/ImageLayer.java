@@ -1,32 +1,35 @@
 package amidst.map.layer;
 
 import amidst.map.Fragment;
+import amidst.minecraft.world.CoordinatesResolution;
 
 public abstract class ImageLayer extends Layer {
-	private final int size;
 	private final int layerId;
-	private final double scale;
+	private final CoordinatesResolution resolution;
 
-	public ImageLayer(int size, int layerId) {
-		this.size = size;
+	public ImageLayer(int layerId, CoordinatesResolution resolution) {
 		this.layerId = layerId;
-		this.scale = Fragment.SIZE / (double) size;
+		this.resolution = resolution;
 	}
 
 	public float getAlpha() {
 		return 1;
 	}
 
-	public int getSize() {
-		return size;
-	}
-
 	public int getLayerId() {
 		return layerId;
 	}
 
+	public CoordinatesResolution getResolution() {
+		return resolution;
+	}
+
+	public int getSize() {
+		return Fragment.SIZE / resolution.getSize();
+	}
+
 	public double getScale() {
-		return scale;
+		return resolution.getSize();
 	}
 
 	public void drawToCache(Fragment fragment, int[] cache) {
