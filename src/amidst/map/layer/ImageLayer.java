@@ -29,5 +29,14 @@ public abstract class ImageLayer extends Layer {
 		return scale;
 	}
 
-	public abstract void drawToCache(Fragment fragment, int[] cache);
+	public void drawToCache(Fragment fragment, int[] cache) {
+		for (int blockY = 0; blockY < getSize(); blockY++) {
+			for (int blockX = 0; blockX < getSize(); blockX++) {
+				int i = blockY * getSize() + blockX;
+				cache[i] = getColorAt(fragment, blockX, blockY);
+			}
+		}
+	}
+
+	protected abstract int getColorAt(Fragment fragment, int blockX, int blockY);
 }

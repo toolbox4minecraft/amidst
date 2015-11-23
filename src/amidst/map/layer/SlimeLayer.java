@@ -18,16 +18,7 @@ public class SlimeLayer extends ImageLayer {
 	}
 
 	@Override
-	public void drawToCache(Fragment fragment, int[] cache) {
-		for (int blockY = 0; blockY < getSize(); blockY++) {
-			for (int blockX = 0; blockX < getSize(); blockX++) {
-				int i = blockY * getSize() + blockX;
-				cache[i] = getColorAt(fragment, blockX, blockY);
-			}
-		}
-	}
-
-	private int getColorAt(Fragment fragment, int x, int y) {
+	protected int getColorAt(Fragment fragment, int x, int y) {
 		updateSeed(fragment, x, y);
 		return getNextValue();
 	}

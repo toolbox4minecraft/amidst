@@ -22,16 +22,7 @@ public class BiomeLayer extends ImageLayer {
 	}
 
 	@Override
-	public void drawToCache(Fragment fragment, int[] cache) {
-		for (int blockY = 0; blockY < getSize(); blockY++) {
-			for (int blockX = 0; blockX < getSize(); blockX++) {
-				int i = blockY * getSize() + blockX;
-				cache[i] = getColorAt(fragment, blockX, blockY);
-			}
-		}
-	}
-
-	private int getColorAt(Fragment fragment, int blockX, int blockY) {
+	protected int getColorAt(Fragment fragment, int blockX, int blockY) {
 		if (isHighlightMode) {
 			return drawAtInHighlightMode(fragment, blockX, blockY);
 		} else {
