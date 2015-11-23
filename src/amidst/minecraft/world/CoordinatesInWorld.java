@@ -3,13 +3,21 @@ package amidst.minecraft.world;
 import amidst.utilities.CoordinateUtils;
 
 public class CoordinatesInWorld {
-	public static CoordinatesInWorld from(long x, long y) {
-		return new CoordinatesInWorld(x, y);
+	public static CoordinatesInWorld from(long xAsResolution,
+			long yAsResolution, CoordinatesResolution resolution) {
+		return new CoordinatesInWorld(
+				resolution.convertFromThisToWorld(xAsResolution),
+				resolution.convertFromThisToWorld(yAsResolution));
+	}
+
+	public static CoordinatesInWorld from(long xInWorld, long yInWorld) {
+		return new CoordinatesInWorld(xInWorld, yInWorld);
 	}
 
 	private static CoordinatesInWorld from(CoordinatesInWorld base,
-			long deltaX, long deltaY) {
-		return new CoordinatesInWorld(base.x + deltaX, base.y + deltaY);
+			long deltaXInWorld, long deltaYInWorld) {
+		return new CoordinatesInWorld(base.xInWorld + deltaXInWorld,
+				base.yInWorld + deltaYInWorld);
 	}
 
 	public static CoordinatesInWorld origin() {
@@ -19,158 +27,169 @@ public class CoordinatesInWorld {
 	private static final CoordinatesInWorld ORIGIN = CoordinatesInWorld.from(0,
 			0);
 
-	private final CoordinatesResolution resolution;
-	private final long x;
-	private final long y;
+	private final long xInWorld;
+	private final long yInWorld;
 
-	private CoordinatesInWorld(long x, long y) {
-		this.resolution = CoordinatesResolution.WORLD;
-		this.x = x;
-		this.y = y;
+	public CoordinatesInWorld(long xInWorld, long yInWorld) {
+		this.xInWorld = xInWorld;
+		this.yInWorld = yInWorld;
 	}
 
 	public long getX() {
-		return CoordinatesResolution.WORLD.convertToThis(resolution, x);
+		return getXAs(CoordinatesResolution.WORLD);
 	}
 
 	public long getY() {
-		return CoordinatesResolution.WORLD.convertToThis(resolution, y);
+		return getYAs(CoordinatesResolution.WORLD);
 	}
 
 	public long getXAsChunkResolution() {
-		return CoordinatesResolution.CHUNK.convertToThis(resolution, x);
+		return getXAs(CoordinatesResolution.CHUNK);
 	}
 
 	public long getYAsChunkResolution() {
-		return CoordinatesResolution.CHUNK.convertToThis(resolution, y);
+		return getYAs(CoordinatesResolution.CHUNK);
 	}
 
 	public long getXAsFragmentResolution() {
-		return CoordinatesResolution.FRAGMENT.convertToThis(resolution, x);
+		return getXAs(CoordinatesResolution.FRAGMENT);
 	}
 
 	public long getYAsFragmentResolution() {
-		return CoordinatesResolution.FRAGMENT.convertToThis(resolution, y);
+		return getYAs(CoordinatesResolution.FRAGMENT);
 	}
 
 	public long getXAsQuarterResolution() {
-		return CoordinatesResolution.QUARTER.convertToThis(resolution, x);
+		return getXAs(CoordinatesResolution.QUARTER);
 	}
 
 	public long getYAsQuarterResolution() {
-		return CoordinatesResolution.QUARTER.convertToThis(resolution, y);
+		return getYAs(CoordinatesResolution.QUARTER);
+	}
+
+	public long getXAs(CoordinatesResolution targetResolution) {
+		return targetResolution.convertFromWorldToThis(xInWorld);
+	}
+
+	public long getYAs(CoordinatesResolution targetResolution) {
+		return targetResolution.convertFromWorldToThis(yInWorld);
 	}
 
 	public long getXCornerOfFragment() {
-		return CoordinatesResolution.WORLD.convertToThis(resolution,
-				CoordinateUtils.toFragmentCorner(x));
+		return getXCornerOfFragmentAs(CoordinatesResolution.WORLD);
 	}
 
 	public long getYCornerOfFragment() {
-		return CoordinatesResolution.WORLD.convertToThis(resolution,
-				CoordinateUtils.toFragmentCorner(y));
+		return getYCornerOfFragmentAs(CoordinatesResolution.WORLD);
 	}
 
 	public long getXCornerOfFragmentAsChunkResolution() {
-		return CoordinatesResolution.CHUNK.convertToThis(resolution,
-				CoordinateUtils.toFragmentCorner(x));
+		return getXCornerOfFragmentAs(CoordinatesResolution.CHUNK);
 	}
 
 	public long getYCornerOfFragmentAsChunkResolution() {
-		return CoordinatesResolution.CHUNK.convertToThis(resolution,
-				CoordinateUtils.toFragmentCorner(y));
+		return getYCornerOfFragmentAs(CoordinatesResolution.CHUNK);
 	}
 
 	public long getXCornerOfFragmentAsFragmentResolution() {
-		return CoordinatesResolution.FRAGMENT.convertToThis(resolution,
-				CoordinateUtils.toFragmentCorner(x));
+		return getXCornerOfFragmentAs(CoordinatesResolution.FRAGMENT);
 	}
 
 	public long getYCornerOfFragmentAsFragmentResolution() {
-		return CoordinatesResolution.FRAGMENT.convertToThis(resolution,
-				CoordinateUtils.toFragmentCorner(y));
+		return getYCornerOfFragmentAs(CoordinatesResolution.FRAGMENT);
 	}
 
 	public long getXCornerOfFragmentAsQuarterResolution() {
-		return CoordinatesResolution.QUARTER.convertToThis(resolution,
-				CoordinateUtils.toFragmentCorner(x));
+		return getXCornerOfFragmentAs(CoordinatesResolution.QUARTER);
 	}
 
 	public long getYCornerOfFragmentAsQuarterResolution() {
-		return CoordinatesResolution.QUARTER.convertToThis(resolution,
-				CoordinateUtils.toFragmentCorner(y));
+		return getYCornerOfFragmentAs(CoordinatesResolution.QUARTER);
+	}
+
+	public long getXCornerOfFragmentAs(CoordinatesResolution targetResolution) {
+		return targetResolution.convertFromWorldToThis(CoordinateUtils
+				.toFragmentCorner(xInWorld));
+	}
+
+	public long getYCornerOfFragmentAs(CoordinatesResolution targetResolution) {
+		return targetResolution.convertFromWorldToThis(CoordinateUtils
+				.toFragmentCorner(yInWorld));
 	}
 
 	public long getXRelativeToFragment() {
-		return CoordinatesResolution.WORLD.convertToThis(resolution,
-				CoordinateUtils.toFragmentRelative(x));
+		return getXRelativeToFragmentAs(CoordinatesResolution.WORLD);
 	}
 
 	public long getYRelativeToFragment() {
-		return CoordinatesResolution.WORLD.convertToThis(resolution,
-				CoordinateUtils.toFragmentRelative(y));
+		return getYRelativeToFragmentAs(CoordinatesResolution.WORLD);
 	}
 
 	public long getXRelativeToFragmentAsChunkResolution() {
-		return CoordinatesResolution.CHUNK.convertToThis(resolution,
-				CoordinateUtils.toFragmentRelative(x));
+		return getXRelativeToFragmentAs(CoordinatesResolution.CHUNK);
 	}
 
 	public long getYRelativeToFragmentAsChunkResolution() {
-		return CoordinatesResolution.CHUNK.convertToThis(resolution,
-				CoordinateUtils.toFragmentRelative(y));
+		return getYRelativeToFragmentAs(CoordinatesResolution.CHUNK);
 	}
 
 	public long getXRelativeToFragmentAsFragmentResolution() {
-		return CoordinatesResolution.FRAGMENT.convertToThis(resolution,
-				CoordinateUtils.toFragmentRelative(x));
+		return getXRelativeToFragmentAs(CoordinatesResolution.FRAGMENT);
 	}
 
 	public long getYRelativeToFragmentAsFragmentResolution() {
-		return CoordinatesResolution.FRAGMENT.convertToThis(resolution,
-				CoordinateUtils.toFragmentRelative(y));
+		return getYRelativeToFragmentAs(CoordinatesResolution.FRAGMENT);
 	}
 
 	public long getXRelativeToFragmentAsQuarterResolution() {
-		return CoordinatesResolution.QUARTER.convertToThis(resolution,
-				CoordinateUtils.toFragmentRelative(x));
+		return getXRelativeToFragmentAs(CoordinatesResolution.QUARTER);
 	}
 
 	public long getYRelativeToFragmentAsQuarterResolution() {
-		return CoordinatesResolution.QUARTER.convertToThis(resolution,
-				CoordinateUtils.toFragmentRelative(y));
+		return getYRelativeToFragmentAs(CoordinatesResolution.QUARTER);
+	}
+
+	public long getXRelativeToFragmentAs(CoordinatesResolution targetResolution) {
+		return targetResolution.convertFromWorldToThis(CoordinateUtils
+				.toFragmentRelative(xInWorld));
+	}
+
+	public long getYRelativeToFragmentAs(CoordinatesResolution targetResolution) {
+		return targetResolution.convertFromWorldToThis(CoordinateUtils
+				.toFragmentRelative(yInWorld));
 	}
 
 	public CoordinatesInWorld toFragmentCorner() {
 		return from(getXCornerOfFragment(), getYCornerOfFragment());
 	}
 
-	public CoordinatesInWorld add(long x, long y) {
-		return from(this, x, y);
-	}
-
 	public CoordinatesInWorld add(CoordinatesInWorld other) {
-		return from(this, other.x, other.y);
+		return add(other.xInWorld, other.yInWorld);
 	}
 
-	public CoordinatesInWorld substract(long x, long y) {
-		return from(this, -x, -y);
+	public CoordinatesInWorld add(long xInWorld, long yInWorld) {
+		return from(this, xInWorld, yInWorld);
 	}
 
 	public CoordinatesInWorld substract(CoordinatesInWorld other) {
-		return from(this, -other.x, -other.y);
+		return substract(other.xInWorld, other.yInWorld);
+	}
+
+	public CoordinatesInWorld substract(long xInWorld, long yInWorld) {
+		return from(this, -xInWorld, -yInWorld);
 	}
 
 	public boolean isInBoundsOf(CoordinatesInWorld corner, long size) {
-		return CoordinateUtils.isInBounds(x, y, corner.x, corner.y, size, size);
+		return CoordinateUtils.isInBounds(xInWorld, yInWorld, corner.xInWorld,
+				corner.yInWorld, size, size);
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (x ^ (x >>> 32));
-		result = prime * result + (int) (y ^ (y >>> 32));
+		result = prime * result + (int) (xInWorld ^ (xInWorld >>> 32));
+		result = prime * result + (int) (yInWorld ^ (yInWorld >>> 32));
 		return result;
 	}
 
@@ -186,10 +205,10 @@ public class CoordinatesInWorld {
 			return false;
 		}
 		CoordinatesInWorld other = (CoordinatesInWorld) obj;
-		if (x != other.x) {
+		if (xInWorld != other.xInWorld) {
 			return false;
 		}
-		if (y != other.y) {
+		if (yInWorld != other.yInWorld) {
 			return false;
 		}
 		return true;
@@ -197,6 +216,6 @@ public class CoordinatesInWorld {
 
 	@Override
 	public String toString() {
-		return "[" + x + ", " + y + "]";
+		return "[" + xInWorld + ", " + yInWorld + "]";
 	}
 }

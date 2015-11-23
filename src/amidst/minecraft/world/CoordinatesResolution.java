@@ -1,7 +1,7 @@
 package amidst.minecraft.world;
 
 public enum CoordinatesResolution {
-	WORLD(0), CHUNK(4), QUARTER(2), FRAGMENT(9);
+	WORLD(0), QUARTER(2), CHUNK(4), FRAGMENT(9);
 
 	private final int shiftSize;
 
