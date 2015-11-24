@@ -82,16 +82,11 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	public void initialize(CoordinatesInWorld corner) {
-		doReset();
+		unload();
 		this.corner = corner;
 	}
 
-	public void reset() {
-		this.corner = null;
-		doReset();
-	}
-
-	private void doReset() {
+	private void unload() {
 		isLoaded = false;
 		mapObjects.clear();
 		invalidatedIconLayers.clear();
@@ -100,6 +95,10 @@ public class Fragment implements Iterable<Fragment> {
 		rightFragment = null;
 		aboveFragment = null;
 		belowFragment = null;
+	}
+
+	public void reset() {
+		this.corner = null;
 	}
 
 	public boolean isInitialized() {

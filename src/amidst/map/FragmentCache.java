@@ -11,15 +11,15 @@ public class FragmentCache {
 
 	private List<Fragment> cache = new LinkedList<Fragment>();
 	private LayerContainer layerContainer;
-	private ConcurrentLinkedQueue<Fragment> fragmentQueue;
-	private ConcurrentLinkedQueue<Fragment> requestQueue;
+	private ConcurrentLinkedQueue<Fragment> availableQueue;
+	private ConcurrentLinkedQueue<Fragment> loadingQueue;
 
 	public FragmentCache(LayerContainer layerContainer,
-			ConcurrentLinkedQueue<Fragment> fragmentQueue,
-			ConcurrentLinkedQueue<Fragment> requestQueue) {
+			ConcurrentLinkedQueue<Fragment> availableQueue,
+			ConcurrentLinkedQueue<Fragment> loadingQueue) {
 		this.layerContainer = layerContainer;
-		this.fragmentQueue = fragmentQueue;
-		this.requestQueue = requestQueue;
+		this.availableQueue = availableQueue;
+		this.loadingQueue = loadingQueue;
 		requestNewFragments();
 	}
 
@@ -27,7 +27,7 @@ public class FragmentCache {
 		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
 			Fragment fragment = new Fragment(layerContainer);
 			cache.add(fragment);
-			fragmentQueue.offer(fragment);
+			availableQueue.offer(fragment);
 		}
 	}
 
@@ -41,13 +41,13 @@ public class FragmentCache {
 	public void resetAll() {
 		for (Fragment fragment : cache) {
 			fragment.reset();
-			fragmentQueue.offer(fragment);
+			availableQueue.offer(fragment);
 		}
 	}
 
 	public void reloadAll() {
 		for (Fragment fragment : cache) {
-			requestQueue.offer(fragment);
+			loadingQueue.offer(fragment);
 		}
 	}
 
