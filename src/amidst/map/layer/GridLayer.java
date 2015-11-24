@@ -11,16 +11,15 @@ import amidst.map.Fragment;
 import amidst.minecraft.world.Resolution;
 
 public class GridLayer extends LiveLayer {
+	private static final Font DRAW_FONT = new Font("arial", Font.BOLD, 16);
+
 	private final AffineTransform gridLayerMatrix = new AffineTransform();
+	private StringBuffer textBuffer = new StringBuffer(128);
+	private char[] textCache = new char[128];
 
 	public GridLayer() {
 		super(LayerType.GRID);
 	}
-
-	private static final Font DRAW_FONT = new Font("arial", Font.BOLD, 16);
-
-	private StringBuffer textBuffer = new StringBuffer(128);
-	private char[] textCache = new char[128];
 
 	@Override
 	public boolean isVisible() {
