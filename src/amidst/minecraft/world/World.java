@@ -99,17 +99,4 @@ public abstract class World {
 		biomeDataProvider.populateArray(fragment.getCorner(),
 				fragment.getBiomeData());
 	}
-
-	/**
-	 * Use this only to quickly get the biome data of a single point, not to
-	 * render the map.
-	 */
-	@Deprecated
-	public short getBiomeDataAt(CoordinatesInWorld coordinates) {
-		CoordinatesInWorld corner = coordinates.toFragmentCorner();
-		short[][] biomeData = biomeDataProvider.getBiomeDataForFragment(corner);
-		int x = (int) coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
-		int y = (int) coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
-		return biomeData[x][y];
-	}
 }

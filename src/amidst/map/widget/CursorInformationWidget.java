@@ -4,7 +4,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
-import amidst.Options;
 import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.minecraft.world.CoordinatesInWorld;
@@ -36,9 +35,7 @@ public class CursorInformationWidget extends Widget {
 		Point mouse = mapViewer.getMousePosition();
 		if (mouse != null) {
 			CoordinatesInWorld coordinates = map.screenToWorld(mouse);
-			short biomeDataAt = world.getBiomeDataAt(coordinates);
-			String biomeAlias = Options.instance.biomeColorProfile
-					.getAliasForId(biomeDataAt);
+			String biomeAlias = map.getBiomeAliasAt(coordinates);
 			return biomeAlias + " " + coordinates.toString();
 		} else {
 			return null;

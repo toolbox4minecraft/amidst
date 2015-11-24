@@ -113,6 +113,12 @@ public class Fragment implements Iterable<Fragment> {
 		return alpha;
 	}
 
+	public short getBiomeDataAt(CoordinatesInWorld coordinates) {
+		return getBiomeDataAt(
+				(int) coordinates.getXRelativeToFragmentAs(Resolution.QUARTER),
+				(int) coordinates.getYRelativeToFragmentAs(Resolution.QUARTER));
+	}
+
 	public short getBiomeDataAt(int x, int y) {
 		return biomeData[x][y];
 	}

@@ -12,19 +12,8 @@ public class BiomeDataProvider {
 	}
 
 	/**
-	 * x and y of coordinates have to be divisible by BiomeDataProvider.SIZE
+	 * x and y of corner have to be divisible by Fragment.SIZE
 	 */
-	@Deprecated
-	public short[][] getBiomeDataForFragment(CoordinatesInWorld corner) {
-		return create(corner);
-	}
-
-	private short[][] create(CoordinatesInWorld corner) {
-		short[][] result = createEmptyBiomeDataArray();
-		populateArray(corner, result);
-		return result;
-	}
-
 	public void populateArray(CoordinatesInWorld corner, short[][] result) {
 		int xInQuarterResolution = (int) corner.getXAs(Resolution.QUARTER);
 		int yInQuarterResolution = (int) corner.getYAs(Resolution.QUARTER);
