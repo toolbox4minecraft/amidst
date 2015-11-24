@@ -9,6 +9,7 @@ import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
 import amidst.map.layer.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.minecraft.world.World;
 
 public class Map {
 	private MapObject selectedMapObject;
@@ -23,18 +24,17 @@ public class Map {
 
 	private final Object mapLock = new Object();
 
-	private FragmentManager fragmentManager;
-	private MapZoom zoom;
-	private BiomeSelection biomeSelection;
-	private LayerContainer layerContainer;
+	private final MapZoom zoom;
+	private final BiomeSelection biomeSelection;
+	private final FragmentManager fragmentManager;
+	private final LayerContainer layerContainer;
 
-	public Map(FragmentManager fragmentManager, MapZoom zoom,
-			BiomeSelection biomeSelection, LayerContainer layerContainer) {
-		this.fragmentManager = fragmentManager;
+	public Map(FragmentCache fragmentCache, World world, MapZoom zoom,
+			BiomeSelection biomeSelection) {
 		this.zoom = zoom;
 		this.biomeSelection = biomeSelection;
-		this.layerContainer = layerContainer;
-		this.layerContainer.setMap(this);
+		this.fragmentManager = fragmentCache.createFragmentManager(world, this);
+		this.layerContainer = fragmentManager.getLayerContainer();
 	}
 
 	private void lockedDraw(MapDrawer drawer) {
@@ -259,5 +259,9 @@ public class Map {
 
 	public BiomeSelection getBiomeSelection() {
 		return biomeSelection;
+	}
+
+	public void tickFragmentLoader() {
+		fragmentManager.tick();
 	}
 }

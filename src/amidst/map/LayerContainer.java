@@ -5,7 +5,6 @@ import java.util.EnumMap;
 
 import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
-import amidst.minecraft.world.World;
 
 public class LayerContainer {
 	private EnumMap<LayerType, Layer> layerMap = new EnumMap<LayerType, Layer>(
@@ -20,18 +19,6 @@ public class LayerContainer {
 	private void initLayerMap(Layer[] layers) {
 		for (Layer layer : layers) {
 			layerMap.put(layer.getLayerType(), layer);
-		}
-	}
-
-	public void setMap(Map map) {
-		for (Layer layer : getAllLayers()) {
-			layer.setMap(map);
-		}
-	}
-
-	public void setWorld(World world) {
-		for (Layer layer : getAllLayers()) {
-			layer.setWorld(world);
 		}
 	}
 

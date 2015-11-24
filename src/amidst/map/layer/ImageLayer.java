@@ -6,15 +6,18 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import amidst.map.Fragment;
+import amidst.map.Map;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
+import amidst.minecraft.world.World;
 
 public abstract class ImageLayer extends Layer {
 	private final Resolution resolution;
 	private final AffineTransform imageLayerMatrix = new AffineTransform();
 
-	public ImageLayer(LayerType layerType, Resolution resolution) {
-		super(layerType);
+	public ImageLayer(World world, Map map, LayerType layerType,
+			Resolution resolution) {
+		super(world, map, layerType);
 		this.resolution = resolution;
 	}
 
@@ -46,7 +49,7 @@ public abstract class ImageLayer extends Layer {
 		long cornerY = corner.getYAs(resolution);
 		int size = getSize();
 		drawToCache(fragment, imageCache, cornerX, cornerY, size);
-		BufferedImage image = fragment.getImage(getLayerType());
+		BufferedImage image = fragment.getImage(layerType);
 		image.setRGB(0, 0, size, size, imageCache, 0, size);
 	}
 
@@ -76,7 +79,7 @@ public abstract class ImageLayer extends Layer {
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		}
-		g2d.drawImage(fragment.getImage(getLayerType()), 0, 0, null);
+		g2d.drawImage(fragment.getImage(layerType), 0, 0, null);
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 	}

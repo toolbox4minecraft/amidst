@@ -5,30 +5,28 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.logging.Log;
+import amidst.minecraft.world.World;
 
 public class FragmentCache {
 	private static final int NEW_FRAGMENTS_PER_REQUEST = 1024;
 
-	private List<Fragment> cache = new LinkedList<Fragment>();
-	private FragmentFactory factory;
-	private ConcurrentLinkedQueue<Fragment> availableQueue;
-	private ConcurrentLinkedQueue<Fragment> loadingQueue;
-	private ConcurrentLinkedQueue<Fragment> resetQueue;
+	private final ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<Fragment>();
+	private final ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<Fragment>();
+	private final ConcurrentLinkedQueue<Fragment> resetQueue = new ConcurrentLinkedQueue<Fragment>();
+	private final List<Fragment> cache = new LinkedList<Fragment>();
+	private final FragmentFactory fragmentFactory;
+	private final LayerContainerFactory layerContainerFactory;
 
 	public FragmentCache(FragmentFactory factory,
-			ConcurrentLinkedQueue<Fragment> availableQueue,
-			ConcurrentLinkedQueue<Fragment> loadingQueue,
-			ConcurrentLinkedQueue<Fragment> resetQueue) {
-		this.factory = factory;
-		this.availableQueue = availableQueue;
-		this.loadingQueue = loadingQueue;
-		this.resetQueue = resetQueue;
+			LayerContainerFactory layerContainerFactory) {
+		this.fragmentFactory = factory;
+		this.layerContainerFactory = layerContainerFactory;
 		requestNewFragments();
 	}
 
 	private void requestNewFragments() {
 		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
-			Fragment fragment = factory.create();
+			Fragment fragment = fragmentFactory.create();
 			cache.add(fragment);
 			availableQueue.offer(fragment);
 		}
@@ -56,5 +54,14 @@ public class FragmentCache {
 
 	public int size() {
 		return cache.size();
+	}
+
+	public FragmentManager createFragmentManager(World world, Map map) {
+		LayerContainer layerContainer = layerContainerFactory
+				.create(world, map);
+		FragmentLoader fragmentLoader = new FragmentLoader(availableQueue,
+				loadingQueue, resetQueue, layerContainer);
+		return new FragmentManager(availableQueue, loadingQueue, resetQueue,
+				this, fragmentLoader, layerContainer);
 	}
 }

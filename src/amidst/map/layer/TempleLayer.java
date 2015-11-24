@@ -1,12 +1,14 @@
 package amidst.map.layer;
 
 import amidst.Options;
+import amidst.map.Map;
+import amidst.minecraft.world.World;
 import amidst.minecraft.world.finder.WorldObjectProducer;
 import amidst.preferences.BooleanPrefModel;
 
 public class TempleLayer extends IconLayer {
-	public TempleLayer() {
-		super(LayerType.TEMPLE);
+	public TempleLayer(World world, Map map) {
+		super(world, map, LayerType.TEMPLE);
 	}
 
 	@Override
@@ -16,6 +18,6 @@ public class TempleLayer extends IconLayer {
 
 	@Override
 	protected WorldObjectProducer getProducer() {
-		return getWorld().getTempleProducer();
+		return world.getTempleProducer();
 	}
 }

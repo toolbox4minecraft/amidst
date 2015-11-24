@@ -8,7 +8,9 @@ import java.awt.geom.AffineTransform;
 
 import amidst.Options;
 import amidst.map.Fragment;
+import amidst.map.Map;
 import amidst.minecraft.world.Resolution;
+import amidst.minecraft.world.World;
 
 public class GridLayer extends LiveLayer {
 	private static final Font DRAW_FONT = new Font("arial", Font.BOLD, 16);
@@ -17,8 +19,8 @@ public class GridLayer extends LiveLayer {
 	private StringBuffer textBuffer = new StringBuffer(128);
 	private char[] textCache = new char[128];
 
-	public GridLayer() {
-		super(LayerType.GRID);
+	public GridLayer(World world, Map map) {
+		super(world, map, LayerType.GRID);
 	}
 
 	@Override
@@ -35,7 +37,7 @@ public class GridLayer extends LiveLayer {
 		int gridY = getGridY(fragment, stride);
 		drawGridLines(g2d, stride, gridX, gridY);
 		if (isGrid00(gridX, gridY)) {
-			initGridLayerMatrix(layerMatrix, 1.0 / getMap().getZoom());
+			initGridLayerMatrix(layerMatrix, 1.0 / map.getZoom());
 			g2d.setTransform(gridLayerMatrix);
 			updateText(fragment);
 			drawText(g2d);
@@ -54,7 +56,7 @@ public class GridLayer extends LiveLayer {
 	}
 
 	private int getStride() {
-		return (int) (.25 / getMap().getZoom());
+		return (int) (.25 / map.getZoom());
 	}
 
 	// TODO: use longs?

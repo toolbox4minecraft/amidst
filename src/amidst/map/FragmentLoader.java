@@ -5,22 +5,22 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import amidst.map.layer.Layer;
 
 public class FragmentLoader {
-	private LayerContainer layerContainer;
-	private ConcurrentLinkedQueue<Fragment> availableQueue;
-	private ConcurrentLinkedQueue<Fragment> loadingQueue;
-	private ConcurrentLinkedQueue<Fragment> resetQueue;
+	private final ConcurrentLinkedQueue<Fragment> availableQueue;
+	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
+	private final ConcurrentLinkedQueue<Fragment> resetQueue;
+	private final LayerContainer layerContainer;
+	private final int[] imageCache = new int[Fragment.SIZE * Fragment.SIZE];
 
-	private int[] imageCache = new int[Fragment.SIZE * Fragment.SIZE];
 	private Fragment currentFragment;
 
-	public FragmentLoader(LayerContainer layerContainer,
-			ConcurrentLinkedQueue<Fragment> availableQueue,
+	public FragmentLoader(ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
-			ConcurrentLinkedQueue<Fragment> resetQueue) {
-		this.layerContainer = layerContainer;
+			ConcurrentLinkedQueue<Fragment> resetQueue,
+			LayerContainer layerContainer) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
 		this.resetQueue = resetQueue;
+		this.layerContainer = layerContainer;
 	}
 
 	public void tick() {

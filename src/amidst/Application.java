@@ -9,19 +9,10 @@ import amidst.gui.MapWindow;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.Log;
-import amidst.map.FragmentManager;
-import amidst.map.LayerContainer;
+import amidst.map.FragmentCache;
+import amidst.map.FragmentFactory;
+import amidst.map.LayerContainerFactory;
 import amidst.map.SkinLoader;
-import amidst.map.layer.BiomeLayer;
-import amidst.map.layer.GridLayer;
-import amidst.map.layer.NetherFortressLayer;
-import amidst.map.layer.OceanMonumentLayer;
-import amidst.map.layer.PlayerLayer;
-import amidst.map.layer.SlimeLayer;
-import amidst.map.layer.SpawnLayer;
-import amidst.map.layer.StrongholdLayer;
-import amidst.map.layer.TempleLayer;
-import amidst.map.layer.VillageLayer;
 import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.minecraft.Minecraft;
@@ -37,14 +28,13 @@ public class Application {
 	private SkinLoader skinLoader = new SkinLoader(this, threadMaster);
 	private SeedHistoryLogger seedHistoryLogger;
 	private UpdatePrompt updateManager = new UpdatePrompt();
+	private FragmentCache fragmentCache = new FragmentCache(
+			new FragmentFactory(), new LayerContainerFactory());
 
 	private VersionSelectWindow versionSelectWindow;
 	private MapWindow mapWindow;
 
 	private World world;
-
-	private LayerContainer layerContainer;
-	private FragmentManager fragmentManager;
 
 	private CommandLineOptions options;
 
@@ -68,17 +58,6 @@ public class Application {
 
 	private void scanForBiomeColorProfiles() {
 		BiomeColorProfile.scan();
-	}
-
-	private void initLayerContainer() {
-		layerContainer = new LayerContainer(new BiomeLayer(), new SlimeLayer(),
-				new GridLayer(), new VillageLayer(), new OceanMonumentLayer(),
-				new StrongholdLayer(), new TempleLayer(), new SpawnLayer(),
-				new NetherFortressLayer(), new PlayerLayer());
-	}
-
-	private void initFragmentManager() {
-		fragmentManager = new FragmentManager(getLayerContainer());
 	}
 
 	public void displayVersionSelectWindow() {
@@ -162,7 +141,6 @@ public class Application {
 		if (world != null) {
 			seedHistoryLogger.log(world.getSeed());
 			mapWindow.clearWorld();
-			getLayerContainer().setWorld(world);
 			mapWindow.initWorld();
 			if (world.isFileWorld()) {
 				skinLoader
@@ -179,18 +157,8 @@ public class Application {
 		return world;
 	}
 
-	public FragmentManager getFragmentManager() {
-		if (fragmentManager == null) {
-			initFragmentManager();
-		}
-		return fragmentManager;
-	}
-
-	public LayerContainer getLayerContainer() {
-		if (layerContainer == null) {
-			initLayerContainer();
-		}
-		return layerContainer;
+	public FragmentCache getFragmentCache() {
+		return fragmentCache;
 	}
 
 	void crash(Throwable e, String exceptionText, String message,
@@ -205,13 +173,13 @@ public class Application {
 
 	public void tickRepainter() {
 		if (mapWindow != null) {
-			mapWindow.tick();
+			mapWindow.tickRepainter();
 		}
 	}
 
 	public void tickFragmentLoader() {
-		if (fragmentManager != null) {
-			fragmentManager.tick();
+		if (mapWindow != null) {
+			mapWindow.tickFragmentLoader();
 		}
 	}
 

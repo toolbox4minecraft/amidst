@@ -1,12 +1,14 @@
 package amidst.map.layer;
 
 import amidst.Options;
+import amidst.map.Map;
+import amidst.minecraft.world.World;
 import amidst.minecraft.world.finder.WorldObjectProducer;
 import amidst.preferences.BooleanPrefModel;
 
 public class StrongholdLayer extends IconLayer {
-	public StrongholdLayer() {
-		super(LayerType.STRONGHOLD);
+	public StrongholdLayer(World world, Map map) {
+		super(world, map, LayerType.STRONGHOLD);
 	}
 
 	@Override
@@ -16,6 +18,6 @@ public class StrongholdLayer extends IconLayer {
 
 	@Override
 	protected WorldObjectProducer getProducer() {
-		return getWorld().getStrongholdProducer();
+		return world.getStrongholdProducer();
 	}
 }

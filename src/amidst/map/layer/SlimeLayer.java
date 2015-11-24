@@ -4,7 +4,9 @@ import java.util.Random;
 
 import amidst.Options;
 import amidst.map.Fragment;
+import amidst.map.Map;
 import amidst.minecraft.world.Resolution;
+import amidst.minecraft.world.World;
 
 public class SlimeLayer extends ImageLayer {
 	public static final LayerType LAYER_TYPE = LayerType.SLIME;
@@ -15,8 +17,8 @@ public class SlimeLayer extends ImageLayer {
 
 	private Random random = new Random();
 
-	public SlimeLayer() {
-		super(LAYER_TYPE, RESOLUTION);
+	public SlimeLayer(World world, Map map) {
+		super(world, map, LAYER_TYPE, RESOLUTION);
 	}
 
 	@Override
@@ -44,7 +46,7 @@ public class SlimeLayer extends ImageLayer {
 	}
 
 	private long getSeed(long xAsResolution, long yAsResolution) {
-		return getWorld().getSeed() + xAsResolution * xAsResolution * 0x4c1906
+		return world.getSeed() + xAsResolution * xAsResolution * 0x4c1906
 				+ xAsResolution * 0x5ac0db + yAsResolution * yAsResolution
 				* 0x4307a7L + yAsResolution * 0x5f24f ^ 0x3ad8025f;
 	}

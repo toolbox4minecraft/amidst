@@ -6,7 +6,9 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 import amidst.map.Fragment;
+import amidst.map.Map;
 import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.minecraft.world.World;
 import amidst.minecraft.world.finder.WorldObject;
 import amidst.minecraft.world.finder.WorldObjectConsumer;
 import amidst.minecraft.world.finder.WorldObjectProducer;
@@ -15,8 +17,8 @@ import amidst.preferences.BooleanPrefModel;
 public abstract class IconLayer extends Layer {
 	private final AffineTransform iconLayerMatrix = new AffineTransform();
 
-	public IconLayer(LayerType layerType) {
-		super(layerType);
+	public IconLayer(World world, Map map, LayerType layerType) {
+		super(world, map, layerType);
 	}
 
 	@Override
@@ -31,7 +33,7 @@ public abstract class IconLayer extends Layer {
 
 	@Override
 	public void reload(Fragment fragment, int[] imageCache) {
-		fragment.removeMapObjects(getLayerType());
+		fragment.removeMapObjects(layerType);
 		doLoad(fragment);
 	}
 
@@ -45,8 +47,8 @@ public abstract class IconLayer extends Layer {
 		return new WorldObjectConsumer() {
 			@Override
 			public void consume(WorldObject worldObject) {
-				fragment.addMapObject(getLayerType(), new MapObject(
-						worldObject, IconLayer.this));
+				fragment.addMapObject(layerType, new MapObject(worldObject,
+						IconLayer.this));
 			}
 		};
 	}
@@ -54,8 +56,8 @@ public abstract class IconLayer extends Layer {
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d,
 			AffineTransform layerMatrix) {
-		List<MapObject> mapObjects = fragment.getMapObjects(getLayerType());
-		double invZoom = 1.0 / getMap().getZoom();
+		List<MapObject> mapObjects = fragment.getMapObjects(layerType);
+		double invZoom = 1.0 / map.getZoom();
 		for (MapObject mapObject : mapObjects) {
 			drawObject(mapObject, invZoom, g2d, layerMatrix);
 		}
@@ -67,7 +69,7 @@ public abstract class IconLayer extends Layer {
 		BufferedImage image = worldObject.getImage();
 		int width = image.getWidth();
 		int height = image.getHeight();
-		if (getMap().getSelectedMapObject() == mapObject) {
+		if (map.getSelectedMapObject() == mapObject) {
 			width *= 1.5;
 			height *= 1.5;
 		}

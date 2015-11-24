@@ -5,18 +5,23 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import amidst.minecraft.world.CoordinatesInWorld;
 
 public class FragmentManager {
-	private ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<Fragment>();
-	private ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<Fragment>();
-	private ConcurrentLinkedQueue<Fragment> resetQueue = new ConcurrentLinkedQueue<Fragment>();
+	private final ConcurrentLinkedQueue<Fragment> availableQueue;
+	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
+	private final ConcurrentLinkedQueue<Fragment> resetQueue;
+	private final FragmentCache cache;
+	private final FragmentLoader loader;
+	private LayerContainer layerContainer;
 
-	private FragmentCache cache;
-	private FragmentLoader loader;
-
-	public FragmentManager(LayerContainer layerContainer) {
-		this.cache = new FragmentCache(new FragmentFactory(), availableQueue,
-				loadingQueue, resetQueue);
-		this.loader = new FragmentLoader(layerContainer, availableQueue,
-				loadingQueue, resetQueue);
+	public FragmentManager(ConcurrentLinkedQueue<Fragment> availableQueue,
+			ConcurrentLinkedQueue<Fragment> loadingQueue,
+			ConcurrentLinkedQueue<Fragment> resetQueue, FragmentCache cache,
+			FragmentLoader loader, LayerContainer layerContainer) {
+		this.availableQueue = availableQueue;
+		this.loadingQueue = loadingQueue;
+		this.resetQueue = resetQueue;
+		this.cache = cache;
+		this.loader = loader;
+		this.layerContainer = layerContainer;
 	}
 
 	public Fragment requestFragment(CoordinatesInWorld coordinates) {
@@ -67,5 +72,9 @@ public class FragmentManager {
 
 	public int getCacheSize() {
 		return cache.size();
+	}
+
+	public LayerContainer getLayerContainer() {
+		return layerContainer;
 	}
 }

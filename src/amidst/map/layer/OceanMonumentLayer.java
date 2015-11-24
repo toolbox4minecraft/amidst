@@ -1,12 +1,14 @@
 package amidst.map.layer;
 
 import amidst.Options;
+import amidst.map.Map;
+import amidst.minecraft.world.World;
 import amidst.minecraft.world.finder.WorldObjectProducer;
 import amidst.preferences.BooleanPrefModel;
 
 public class OceanMonumentLayer extends IconLayer {
-	public OceanMonumentLayer() {
-		super(LayerType.OCEAN_MONUMENT);
+	public OceanMonumentLayer(World world, Map map) {
+		super(world, map, LayerType.OCEAN_MONUMENT);
 	}
 
 	@Override
@@ -16,6 +18,6 @@ public class OceanMonumentLayer extends IconLayer {
 
 	@Override
 	protected WorldObjectProducer getProducer() {
-		return getWorld().getOceanMonumentProducer();
+		return world.getOceanMonumentProducer();
 	}
 }

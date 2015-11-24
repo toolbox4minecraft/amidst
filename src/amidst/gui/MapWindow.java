@@ -139,8 +139,8 @@ public class MapWindow {
 	}
 
 	public void initWorld() {
-		map = new Map(application.getFragmentManager(), mapZoom,
-				biomeSelection, application.getLayerContainer());
+		map = new Map(application.getFragmentCache(), application.getWorld(),
+				mapZoom, biomeSelection);
 		mapViewer = createMapViewer();
 		menuBar.enableMapMenu();
 	}
@@ -294,7 +294,7 @@ public class MapWindow {
 		}
 	}
 
-	public void tick() {
+	public void tickRepainter() {
 		if (mapViewer != null) {
 			mapViewer.repaint();
 		}
@@ -303,6 +303,12 @@ public class MapWindow {
 	public void reloadPlayerLayer() {
 		if (map != null) {
 			map.reloadPlayerLayer();
+		}
+	}
+
+	public void tickFragmentLoader() {
+		if (map != null) {
+			map.tickFragmentLoader();
 		}
 	}
 }

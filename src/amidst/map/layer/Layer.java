@@ -8,32 +8,18 @@ import amidst.map.Map;
 import amidst.minecraft.world.World;
 
 public abstract class Layer {
-	private final LayerType layerType;
-	private World world;
-	private Map map;
+	protected final World world;
+	protected final Map map;
+	protected final LayerType layerType;
 
-	public Layer(LayerType layerType) {
+	public Layer(World world, Map map, LayerType layerType) {
+		this.world = world;
+		this.map = map;
 		this.layerType = layerType;
 	}
 
 	public LayerType getLayerType() {
 		return layerType;
-	}
-
-	public void setWorld(World world) {
-		this.world = world;
-	}
-
-	protected World getWorld() {
-		return world;
-	}
-
-	public void setMap(Map map) {
-		this.map = map;
-	}
-
-	protected Map getMap() {
-		return map;
 	}
 
 	public boolean isVisible() {
