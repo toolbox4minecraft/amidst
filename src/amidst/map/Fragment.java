@@ -50,11 +50,11 @@ public class Fragment implements Iterable<Fragment> {
 	private BufferedImage[] images;
 	private boolean[] repaintImage;
 	private List<IconLayer> invalidatedIconLayers = new LinkedList<IconLayer>();
+	private List<MapObject> mapObjects = new LinkedList<MapObject>();
+	private float alpha = 0.0f;
 
 	private boolean isLoaded = false;
-	private List<MapObject> mapObjects = new LinkedList<MapObject>();
 	private CoordinatesInWorld corner;
-	private float alpha = 0.0f;
 	private Fragment leftFragment = null;
 	private Fragment rightFragment = null;
 	private Fragment aboveFragment = null;
@@ -72,13 +72,13 @@ public class Fragment implements Iterable<Fragment> {
 
 	private void unload() {
 		isLoaded = false;
-		mapObjects.clear();
-		invalidatedIconLayers.clear();
-		alpha = 0.0f;
 		leftFragment = null;
 		rightFragment = null;
 		aboveFragment = null;
 		belowFragment = null;
+		mapObjects.clear();
+		invalidatedIconLayers.clear();
+		alpha = 0.0f;
 	}
 
 	public void reset() {
@@ -89,12 +89,24 @@ public class Fragment implements Iterable<Fragment> {
 		return corner != null;
 	}
 
+	public boolean isLoaded() {
+		return isLoaded;
+	}
+
 	public void setLoaded() {
 		isLoaded = true;
 	}
 
 	public void initAlpha() {
 		alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
+	}
+
+	public void updateAlpha(float time) {
+		alpha = Math.min(1.0f, time * 3.0f + alpha);
+	}
+
+	public void addObject(MapObject mapObject) {
+		mapObjects.add(mapObject);
 	}
 
 	// TODO: move this to the class FragmentLoader
@@ -113,24 +125,12 @@ public class Fragment implements Iterable<Fragment> {
 		}
 	}
 
-	public void updateAlpha(float time) {
-		alpha = Math.min(1.0f, time * 3.0f + alpha);
-	}
-
-	public void addObject(MapObject mapObject) {
-		mapObjects.add(mapObject);
-	}
-
 	public float getAlpha() {
 		return alpha;
 	}
 
 	public List<MapObject> getMapObjects() {
 		return mapObjects;
-	}
-
-	public boolean isLoaded() {
-		return isLoaded;
 	}
 
 	public BufferedImage[] getImages() {
