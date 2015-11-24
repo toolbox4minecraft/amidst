@@ -16,7 +16,8 @@ public abstract class IconLayer extends Layer {
 		return getIsVisiblePreference().get();
 	}
 
-	public void generateMapObjects(Fragment fragment) {
+	@Override
+	public void load(Fragment fragment, int[] imageCache) {
 		getProducer().produce(fragment.getCorner(),
 				createWorldObjectConsumer(fragment));
 	}

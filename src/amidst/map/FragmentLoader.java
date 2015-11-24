@@ -4,9 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import amidst.map.layer.IconLayer;
-import amidst.map.layer.ImageLayer;
-import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
 import amidst.map.layer.MapObject;
 import amidst.minecraft.world.World;
@@ -87,21 +84,7 @@ public class FragmentLoader {
 	}
 
 	private void loadLayer(LayerType layerType) {
-		Layer layer = layerContainer.getLayer(layerType);
-		if (layer instanceof ImageLayer) {
-			loadImageLayer((ImageLayer) layer);
-		} else if (layer instanceof IconLayer) {
-			loadIconLayer((IconLayer) layer);
-		}
-	}
-
-	private void loadImageLayer(ImageLayer imageLayer) {
-		imageLayer.drawToCache(currentFragment, imageCache,
-				currentFragment.getImage(imageLayer.getLayerType()));
-	}
-
-	private void loadIconLayer(IconLayer iconLayer) {
-		iconLayer.generateMapObjects(currentFragment);
+		layerContainer.getLayer(layerType).load(currentFragment, imageCache);
 	}
 
 	public void setWorld(World world) {

@@ -10,6 +10,11 @@ public abstract class LiveLayer extends Layer {
 		super(layerType);
 	}
 
+	@Override
+	public void load(Fragment fragment, int[] imageCache) {
+		// noop
+	}
+
 	public abstract void drawLive(Fragment fragment, Graphics2D g,
 			AffineTransform mat);
 }

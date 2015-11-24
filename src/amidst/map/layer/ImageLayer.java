@@ -30,13 +30,15 @@ public abstract class ImageLayer extends Layer {
 		return resolution.getStep();
 	}
 
-	public void drawToCache(Fragment fragment, int[] cache, BufferedImage image) {
+	@Override
+	public void load(Fragment fragment, int[] imageCache) {
 		CoordinatesInWorld corner = fragment.getCorner();
 		long cornerX = corner.getXAs(resolution);
 		long cornerY = corner.getYAs(resolution);
 		int size = getSize();
-		drawToCache(fragment, cache, cornerX, cornerY, size);
-		image.setRGB(0, 0, size, size, cache, 0, size);
+		drawToCache(fragment, imageCache, cornerX, cornerY, size);
+		BufferedImage image = fragment.getImage(getLayerType());
+		image.setRGB(0, 0, size, size, imageCache, 0, size);
 	}
 
 	protected void drawToCache(Fragment fragment, int[] cache, long cornerX,

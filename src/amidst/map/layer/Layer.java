@@ -1,5 +1,6 @@
 package amidst.map.layer;
 
+import amidst.map.Fragment;
 import amidst.map.Map;
 import amidst.minecraft.world.World;
 
@@ -35,4 +36,6 @@ public abstract class Layer {
 	public boolean isVisible() {
 		return true;
 	}
+
+	public abstract void load(Fragment fragment, int[] imageCache);
 }
