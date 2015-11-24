@@ -1,11 +1,8 @@
 package amidst.map;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.map.layer.LayerType;
-import amidst.map.layer.MapObject;
 import amidst.minecraft.world.World;
 
 public class FragmentLoader {
@@ -66,21 +63,13 @@ public class FragmentLoader {
 
 	private void reloadInvalidatedLayers() {
 		for (LayerType layerType : layerContainer.getInvalidatedLayerTypes()) {
-			if (layerContainer.isIconLayer(layerType)) {
-				removeIconLayer(layerType);
-			}
+			removeIconLayer(layerType);
 			loadLayer(layerType);
 		}
 	}
 
 	private void removeIconLayer(LayerType layerType) {
-		List<MapObject> objectsToRemove = new LinkedList<MapObject>();
-		for (MapObject mapObject : currentFragment.getMapObjects()) {
-			if (mapObject.getIconLayer().getLayerType() == layerType) {
-				objectsToRemove.add(mapObject);
-			}
-		}
-		currentFragment.getMapObjects().removeAll(objectsToRemove);
+		currentFragment.removeMapObjects(layerType);
 	}
 
 	private void loadLayer(LayerType layerType) {

@@ -261,8 +261,11 @@ public class MapDrawer {
 		}
 		if (currentFragment.isLoaded()) {
 			double invZoom = 1.0 / zoom.getCurrentValue();
-			for (MapObject mapObject : currentFragment.getMapObjects()) {
-				drawObject(mapObject, invZoom);
+			for (List<MapObject> mapObjects : currentFragment.getMapObjects()
+					.values()) {
+				for (MapObject mapObject : mapObjects) {
+					drawObject(mapObject, invZoom);
+				}
 			}
 		}
 		if (currentFragment.getAlpha() != 1.0f) {

@@ -60,7 +60,8 @@ public class Fragment implements Iterable<Fragment> {
 	private float alpha;
 	private short[][] biomeData;
 	private EnumMap<LayerType, BufferedImage> images;
-	private List<MapObject> mapObjects = new LinkedList<MapObject>();
+	private EnumMap<LayerType, List<MapObject>> mapObjects = new EnumMap<LayerType, List<MapObject>>(
+			LayerType.class);
 
 	public Fragment(short[][] biomeData,
 			EnumMap<LayerType, BufferedImage> images) {
@@ -139,11 +140,22 @@ public class Fragment implements Iterable<Fragment> {
 		mapObjects.clear();
 	}
 
-	public void addObject(MapObject mapObject) {
-		mapObjects.add(mapObject);
+	public void addMapObject(LayerType layerType, MapObject mapObject) {
+		List<MapObject> list = mapObjects.get(layerType);
+		if (list != null) {
+			list.add(mapObject);
+		} else {
+			list = new LinkedList<MapObject>();
+			list.add(mapObject);
+			mapObjects.put(layerType, list);
+		}
 	}
 
-	public List<MapObject> getMapObjects() {
+	public void removeMapObjects(LayerType layerType) {
+		mapObjects.remove(layerType);
+	}
+
+	public EnumMap<LayerType, List<MapObject>> getMapObjects() {
 		return mapObjects;
 	}
 
