@@ -42,6 +42,7 @@ public class FragmentManager {
 	}
 
 	public void reloadAll() {
+		loadingQueue.clear();
 		cache.reloadAll();
 	}
 

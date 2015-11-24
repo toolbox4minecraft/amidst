@@ -18,6 +18,8 @@ public class LayerContainer {
 	private Set<LayerType> imageLayerTypes = EnumSet.noneOf(LayerType.class);
 	private Set<LayerType> liveLayerTypes = EnumSet.noneOf(LayerType.class);
 	private Set<LayerType> iconLayerTypes = EnumSet.noneOf(LayerType.class);
+	private Set<LayerType> invalidatedLayerTypes = EnumSet
+			.noneOf(LayerType.class);
 
 	private ImageLayer[] imageLayers;
 	private LiveLayer[] liveLayers;
@@ -112,5 +114,17 @@ public class LayerContainer {
 
 	public boolean isIconLayer(LayerType layerType) {
 		return iconLayerTypes.contains(layerType);
+	}
+
+	public void clearInvalidatedLayerTypes() {
+		invalidatedLayerTypes.clear();
+	}
+
+	public Set<LayerType> getInvalidatedLayerTypes() {
+		return invalidatedLayerTypes;
+	}
+
+	public void invalidateLayer(LayerType layerType) {
+		invalidatedLayerTypes.add(layerType);
 	}
 }

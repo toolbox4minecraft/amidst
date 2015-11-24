@@ -1,14 +1,11 @@
 package amidst.map;
 
 import java.awt.image.BufferedImage;
-import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import amidst.Options;
-import amidst.map.layer.LayerType;
 import amidst.map.layer.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
 
@@ -54,7 +51,6 @@ public class Fragment implements Iterable<Fragment> {
 	public static final int BIOME_SIZE = SIZE >> 2;
 
 	private BufferedImage[] images;
-	private Set<LayerType> invalidatedLayers = EnumSet.noneOf(LayerType.class);
 	private List<MapObject> mapObjects = new LinkedList<MapObject>();
 	private float alpha;
 
@@ -107,10 +103,6 @@ public class Fragment implements Iterable<Fragment> {
 		mapObjects.clear();
 	}
 
-	public void clearInvalidatedLayers() {
-		invalidatedLayers.clear();
-	}
-
 	public void initAlpha() {
 		alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
 	}
@@ -123,14 +115,6 @@ public class Fragment implements Iterable<Fragment> {
 		mapObjects.add(mapObject);
 	}
 
-	// TODO: move this to the class FragmentLoader
-	@Deprecated
-	public void invalidateLayer(LayerType layerType) {
-		if (isLoaded()) {
-			invalidatedLayers.add(layerType);
-		}
-	}
-
 	public float getAlpha() {
 		return alpha;
 	}
@@ -141,10 +125,6 @@ public class Fragment implements Iterable<Fragment> {
 
 	public BufferedImage[] getImages() {
 		return images;
-	}
-
-	public Set<LayerType> getInvalidatedLayers() {
-		return invalidatedLayers;
 	}
 
 	public BufferedImage getImage(int layerId) {

@@ -35,6 +35,7 @@ public class FragmentLoader {
 			loadFragment();
 			processResetQueue();
 		}
+		layerContainer.clearInvalidatedLayerTypes();
 	}
 
 	private void processResetQueue() {
@@ -49,13 +50,11 @@ public class FragmentLoader {
 			availableQueue.offer(currentFragment);
 		} else if (currentFragment.isInitialized()) {
 			currentFragment.clearMapObjects();
-			currentFragment.clearInvalidatedLayers();
 			loadAllLayers();
 			currentFragment.initAlpha();
 			currentFragment.setLoaded();
 		} else if (currentFragment.isLoaded()) {
 			reloadInvalidatedLayers();
-			currentFragment.clearInvalidatedLayers();
 		}
 	}
 
@@ -66,7 +65,7 @@ public class FragmentLoader {
 	}
 
 	private void reloadInvalidatedLayers() {
-		for (LayerType layerType : currentFragment.getInvalidatedLayers()) {
+		for (LayerType layerType : layerContainer.getInvalidatedLayerTypes()) {
 			if (layerContainer.isIconLayer(layerType)) {
 				removeIconLayer(layerType);
 			}

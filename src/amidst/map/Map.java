@@ -206,12 +206,8 @@ public class Map {
 	}
 
 	private void reloadLayer(LayerType layerType) {
-		if (startFragment != null) {
-			for (Fragment fragment : startFragment) {
-				fragment.invalidateLayer(layerType);
-			}
-			fragmentManager.reloadAll();
-		}
+		layerContainer.invalidateLayer(layerType);
+		fragmentManager.reloadAll();
 	}
 
 	private void lockedDispose() {
