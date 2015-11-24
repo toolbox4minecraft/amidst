@@ -10,14 +10,17 @@ import amidst.map.layer.MapObject;
 
 public class FragmentLoader {
 	private LayerContainer layerContainer;
+	private ConcurrentLinkedQueue<Fragment> availableQueue;
 	private ConcurrentLinkedQueue<Fragment> loadingQueue;
 
 	private int[] imageCache = new int[Fragment.SIZE * Fragment.SIZE];
 	private Fragment currentFragment;
 
 	public FragmentLoader(LayerContainer layerContainer,
+			ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue) {
 		this.layerContainer = layerContainer;
+		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
 	}
 
@@ -29,19 +32,19 @@ public class FragmentLoader {
 	}
 
 	private void loadFragment() {
-		if (currentFragment.isInitialized()) {
-			ImageLayer[] imageLayers = layerContainer.getImageLayers();
-			if (currentFragment.isLoaded()) {
-				repaintInvalidatedImages(imageLayers);
-				reloadInvalidatedIconLayers();
-			} else {
-				currentFragment.clearMapObjects();
-				currentFragment.clearInvalidatedIconLayers();
-				repaintAllImages(imageLayers);
-				generateMapObjects();
-				currentFragment.initAlpha();
-				currentFragment.setLoaded();
-			}
+		if (currentFragment.needsReset()) {
+			currentFragment.setAvailable();
+			availableQueue.offer(currentFragment);
+		} else if (currentFragment.isInitialized()) {
+			currentFragment.clearMapObjects();
+			currentFragment.clearInvalidatedIconLayers();
+			repaintAllImages(layerContainer.getImageLayers());
+			generateMapObjects();
+			currentFragment.initAlpha();
+			currentFragment.setLoaded();
+		} else if (currentFragment.isLoaded()) {
+			repaintInvalidatedImages(layerContainer.getImageLayers());
+			reloadInvalidatedIconLayers();
 		}
 	}
 

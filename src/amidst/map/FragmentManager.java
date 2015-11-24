@@ -14,7 +14,8 @@ public class FragmentManager {
 	public FragmentManager(LayerContainer layerContainer) {
 		this.cache = new FragmentCache(layerContainer, availableQueue,
 				loadingQueue);
-		this.loader = new FragmentLoader(layerContainer, loadingQueue);
+		this.loader = new FragmentLoader(layerContainer, availableQueue,
+				loadingQueue);
 	}
 
 	public Fragment requestFragment(CoordinatesInWorld coordinates) {
@@ -31,8 +32,8 @@ public class FragmentManager {
 	 * Make sure the passed fragment is no longer referenced by other fragments!
 	 */
 	public void recycleFragment(Fragment fragment) {
-		fragment.setAvailable();
-		availableQueue.offer(fragment);
+		fragment.setNeedsReset();
+		loadingQueue.offer(fragment);
 	}
 
 	public void tick() {
