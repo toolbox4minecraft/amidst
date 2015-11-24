@@ -162,8 +162,8 @@ public class MapDrawer {
 	}
 
 	private void drawMap() {
-		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		// TODO: is this needed?
 		Graphics2D old = g2d;
 		g2d = (Graphics2D) old.create();
@@ -175,8 +175,6 @@ public class MapDrawer {
 		originalGraphicsTransform = g2d.getTransform();
 		prepareDraw(startFragment);
 		drawLayer(startOnScreen, startFragment, imageLayersDrawer);
-		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		drawLayer(startOnScreen, startFragment, liveLayersDrawer);
 		drawLayer(startOnScreen, startFragment, objectsDrawer);
 		g2d.setTransform(originalGraphicsTransform);

@@ -79,6 +79,8 @@ public abstract class ImageLayer extends Layer {
 			}
 			g2d.drawImage(fragment.getImage(getLayerType()), 0, 0, null);
 		}
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 	}
 
 	// TODO: is this transformation correct?
