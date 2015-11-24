@@ -167,6 +167,10 @@ public class Fragment implements Iterable<Fragment> {
 		mapObjects.remove(layerType);
 	}
 
+	public List<MapObject> getMapObjects(LayerType layerType) {
+		return mapObjects.get(layerType);
+	}
+
 	public EnumMap<LayerType, List<MapObject>> getMapObjects() {
 		return mapObjects;
 	}

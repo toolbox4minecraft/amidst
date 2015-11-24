@@ -5,6 +5,7 @@ import java.awt.geom.Point2D;
 import java.util.List;
 
 import amidst.Options;
+import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
 import amidst.map.layer.LayerType;
 import amidst.map.layer.LiveLayer;
@@ -263,8 +264,16 @@ public class Map {
 		reloadLayer(LayerType.PLAYER);
 	}
 
+	public ImageLayer[] getImageLayers() {
+		return layerContainer.getImageLayers();
+	}
+
 	public LiveLayer[] getLiveLayers() {
 		return layerContainer.getLiveLayers();
+	}
+
+	public IconLayer[] getIconLayers() {
+		return layerContainer.getIconLayers();
 	}
 
 	public ImageLayer getImageLayer(LayerType layerType) {

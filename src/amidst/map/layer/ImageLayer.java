@@ -16,10 +16,6 @@ public abstract class ImageLayer extends Layer {
 		this.resolution = resolution;
 	}
 
-	public float getAlpha() {
-		return 1;
-	}
-
 	public Resolution getResolution() {
 		return resolution;
 	}

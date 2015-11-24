@@ -9,12 +9,10 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map.Entry;
 
+import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
-import amidst.map.layer.LayerType;
 import amidst.map.layer.LiveLayer;
 import amidst.map.layer.MapObject;
 import amidst.map.widget.Widget;
@@ -220,31 +218,29 @@ public class MapDrawer {
 	}
 
 	private void drawImageLayers() {
-		if (currentFragment.isLoaded()) {
-			EnumMap<LayerType, BufferedImage> images = currentFragment
-					.getImages();
-			for (Entry<LayerType, BufferedImage> entry : images.entrySet()) {
-				ImageLayer imageLayer = map.getImageLayer(entry.getKey());
-				if (imageLayer.isVisible()) {
-					drawImageLayer(imageLayer, entry.getValue());
-				}
+		setAlphaComposite(currentFragment.getAlpha());
+		for (ImageLayer imageLayer : map.getImageLayers()) {
+			if (imageLayer.isVisible()) {
+				drawImageLayer(imageLayer);
 			}
-			setAlphaComposite(1.0f);
 		}
+		setAlphaComposite(1.0f);
 	}
 
-	private void drawImageLayer(ImageLayer imageLayer, BufferedImage image) {
-		setAlphaComposite(currentFragment.getAlpha() * imageLayer.getAlpha());
-		initImageLayerDrawMatrix(imageLayer.getScale());
-		g2d.setTransform(imageLayerMatrix);
-		if (g2d.getTransform().getScaleX() < 1.0f) {
-			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-					RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		} else {
-			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+	private void drawImageLayer(ImageLayer imageLayer) {
+		if (currentFragment.isLoaded()) {
+			initImageLayerDrawMatrix(imageLayer.getScale());
+			g2d.setTransform(imageLayerMatrix);
+			if (g2d.getTransform().getScaleX() < 1.0f) {
+				g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+						RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			} else {
+				g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+						RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+			}
+			g2d.drawImage(currentFragment.getImage(imageLayer.getLayerType()),
+					0, 0, null);
 		}
-		g2d.drawImage(image, 0, 0, null);
 	}
 
 	// TODO: is this transformation correct?
@@ -254,29 +250,28 @@ public class MapDrawer {
 	}
 
 	private void drawLiveLayers() {
+		setAlphaComposite(currentFragment.getAlpha());
 		for (LiveLayer liveLayer : map.getLiveLayers()) {
 			if (liveLayer.isVisible()) {
 				liveLayer.draw(currentFragment, g2d, layerMatrix);
 			}
 		}
+		setAlphaComposite(1.0f);
 	}
 
 	private void drawObjects() {
-		if (currentFragment.getAlpha() != 1.0f) {
-			setAlphaComposite(currentFragment.getAlpha());
-		}
-		if (currentFragment.isLoaded()) {
-			double invZoom = 1.0 / zoom.getCurrentValue();
-			for (List<MapObject> mapObjects : currentFragment.getMapObjects()
-					.values()) {
+		setAlphaComposite(currentFragment.getAlpha());
+		for (IconLayer iconLayer : map.getIconLayers()) {
+			if (currentFragment.isLoaded()) {
+				List<MapObject> mapObjects = currentFragment
+						.getMapObjects(iconLayer.getLayerType());
+				double invZoom = 1.0 / zoom.getCurrentValue();
 				for (MapObject mapObject : mapObjects) {
 					drawObject(mapObject, invZoom);
 				}
 			}
 		}
-		if (currentFragment.getAlpha() != 1.0f) {
-			setAlphaComposite(1.0f);
-		}
+		setAlphaComposite(1.0f);
 	}
 
 	private void drawObject(MapObject mapObject, double invZoom) {
