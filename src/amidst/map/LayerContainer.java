@@ -1,5 +1,6 @@
 package amidst.map;
 
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Set;
@@ -105,16 +106,8 @@ public class LayerContainer {
 		return allLayerTypes;
 	}
 
-	public boolean isImageLayer(LayerType layerType) {
-		return imageLayerTypes.contains(layerType);
-	}
-
-	public boolean isLiveLayer(LayerType layerType) {
-		return liveLayerTypes.contains(layerType);
-	}
-
-	public boolean isIconLayer(LayerType layerType) {
-		return iconLayerTypes.contains(layerType);
+	public Collection<Layer> getAllLayers() {
+		return layerMap.values();
 	}
 
 	public void clearInvalidatedLayerTypes() {

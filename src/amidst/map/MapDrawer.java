@@ -11,9 +11,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import amidst.map.layer.IconLayer;
-import amidst.map.layer.ImageLayer;
-import amidst.map.layer.LiveLayer;
+import amidst.map.layer.Layer;
 import amidst.map.widget.Widget;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
@@ -37,9 +35,6 @@ public class MapDrawer {
 	private static final BufferedImage DROP_SHADOW_RIGHT = ResourceLoader
 			.getImage("dropshadow/inner_right.png");
 
-	private final Runnable imageLayersDrawer = createImageLayersDrawer();
-	private final Runnable liveLayersDrawer = createLiveLayersDrawer();
-	private final Runnable objectsDrawer = createObjectsDrawer();
 	private final Object drawLock = new Object();
 
 	private boolean isFirstDraw = true;
@@ -58,36 +53,8 @@ public class MapDrawer {
 	private int height;
 	private Point mousePosition;
 
-	private Fragment currentFragment;
 	private AffineTransform originalGraphicsTransform;
 	private AffineTransform layerMatrix = new AffineTransform();
-
-	private Runnable createImageLayersDrawer() {
-		return new Runnable() {
-			@Override
-			public void run() {
-				drawImageLayers();
-			}
-		};
-	}
-
-	private Runnable createLiveLayersDrawer() {
-		return new Runnable() {
-			@Override
-			public void run() {
-				drawLiveLayers();
-			}
-		};
-	}
-
-	private Runnable createObjectsDrawer() {
-		return new Runnable() {
-			@Override
-			public void run() {
-				drawObjects();
-			}
-		};
-	}
 
 	public MapDrawer(World world, Map map, MapViewer mapViewer,
 			MapMovement movement, MapZoom zoom, List<Widget> widgets,
@@ -174,9 +141,7 @@ public class MapDrawer {
 	public void doDrawMap(Point2D.Double startOnScreen, Fragment startFragment) {
 		originalGraphicsTransform = g2d.getTransform();
 		prepareDraw(startFragment);
-		drawLayer(startOnScreen, startFragment, imageLayersDrawer);
-		drawLayer(startOnScreen, startFragment, liveLayersDrawer);
-		drawLayer(startOnScreen, startFragment, objectsDrawer);
+		drawLayers(startOnScreen, startFragment);
 		g2d.setTransform(originalGraphicsTransform);
 	}
 
@@ -186,14 +151,18 @@ public class MapDrawer {
 		}
 	}
 
-	private void drawLayer(Point2D.Double startOnScreen,
-			Fragment startFragment, Runnable drawer) {
-		initLayerDrawMatrix(startOnScreen, zoom.getCurrentValue());
-		for (Fragment fragment : startFragment) {
-			currentFragment = fragment;
-			drawer.run();
-			updateLayerDrawMatrix();
+	private void drawLayers(Point2D.Double startOnScreen, Fragment startFragment) {
+		for (Layer layer : map.getAllLayers()) {
+			if (layer.isVisible()) {
+				initLayerDrawMatrix(startOnScreen, zoom.getCurrentValue());
+				for (Fragment fragment : startFragment) {
+					setAlphaComposite(fragment.getAlpha());
+					layer.draw(fragment, g2d, layerMatrix);
+					updateLayerDrawMatrix(fragment);
+				}
+			}
 		}
+		setAlphaComposite(1.0f);
 	}
 
 	private void initLayerDrawMatrix(Point2D.Double startOnScreen, double scale) {
@@ -203,42 +172,12 @@ public class MapDrawer {
 		layerMatrix.scale(scale, scale);
 	}
 
-	private void updateLayerDrawMatrix() {
+	private void updateLayerDrawMatrix(Fragment fragment) {
 		layerMatrix.translate(Fragment.SIZE, 0);
-		if (currentFragment.isEndOfLine()) {
+		if (fragment.isEndOfLine()) {
 			layerMatrix.translate(-Fragment.SIZE * map.getFragmentsPerRow(),
 					Fragment.SIZE);
 		}
-	}
-
-	private void drawImageLayers() {
-		setAlphaComposite(currentFragment.getAlpha());
-		for (ImageLayer imageLayer : map.getImageLayers()) {
-			if (imageLayer.isVisible()) {
-				imageLayer.draw(currentFragment, g2d, layerMatrix);
-			}
-		}
-		setAlphaComposite(1.0f);
-	}
-
-	private void drawLiveLayers() {
-		setAlphaComposite(currentFragment.getAlpha());
-		for (LiveLayer liveLayer : map.getLiveLayers()) {
-			if (liveLayer.isVisible()) {
-				liveLayer.draw(currentFragment, g2d, layerMatrix);
-			}
-		}
-		setAlphaComposite(1.0f);
-	}
-
-	private void drawObjects() {
-		setAlphaComposite(currentFragment.getAlpha());
-		for (IconLayer iconLayer : map.getIconLayers()) {
-			if (iconLayer.isVisible()) {
-				iconLayer.draw(currentFragment, g2d, layerMatrix);
-			}
-		}
-		setAlphaComposite(1.0f);
 	}
 
 	private void drawBorder() {
