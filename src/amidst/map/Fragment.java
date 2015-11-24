@@ -56,7 +56,6 @@ public class Fragment implements Iterable<Fragment> {
 	private boolean[] repaintImage;
 	private List<IconLayer> invalidatedIconLayers = new LinkedList<IconLayer>();
 
-	private boolean isInitialized = false;
 	private boolean isLoaded = false;
 	private List<MapObject> mapObjects = new LinkedList<MapObject>();
 	private CoordinatesInWorld corner;
@@ -85,22 +84,21 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	public void initialize(CoordinatesInWorld corner) {
-		doReset(corner);
-		isInitialized = true;
+		doReset();
+		this.corner = corner;
 	}
 
 	public void reset() {
-		isInitialized = false;
-		doReset(null);
+		this.corner = null;
+		doReset();
 	}
 
-	private void doReset(CoordinatesInWorld corner) {
+	private void doReset() {
 		isLoaded = false;
 		synchronized (loadLock) {
 			mapObjects.clear();
 			invalidatedIconLayers.clear();
 		}
-		this.corner = corner;
 		alpha = 0.0f;
 		leftFragment = null;
 		rightFragment = null;
@@ -108,11 +106,15 @@ public class Fragment implements Iterable<Fragment> {
 		belowFragment = null;
 	}
 
+	private boolean isInitialized() {
+		return corner != null;
+	}
+
 	// TODO: move this to the class FragmentLoader
 	@Deprecated
 	public void load(int[] imageCache) {
 		synchronized (loadLock) {
-			if (isInitialized) {
+			if (isInitialized()) {
 				ImageLayer[] imageLayers = layerContainer.getImageLayers();
 				if (isLoaded) {
 					repaintInvalidatedImages(imageCache, imageLayers);
