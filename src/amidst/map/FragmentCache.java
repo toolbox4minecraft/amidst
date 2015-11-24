@@ -56,7 +56,7 @@ public class FragmentCache {
 
 	public void resetAll() {
 		for (Fragment fragment : cache) {
-			fragment.reset();
+			fragment.setAvailable();
 			availableQueue.offer(fragment);
 		}
 	}

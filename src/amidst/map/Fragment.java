@@ -42,6 +42,10 @@ public class Fragment implements Iterable<Fragment> {
 		}
 	}
 
+	private static enum State {
+		AVAILABLE, INITIALIZED, LOADED, NEEDS_RESET;
+	}
+
 	public static final int SIZE = 512;
 	public static final int SIZE_SHIFT = 9;
 	@Deprecated
@@ -51,9 +55,10 @@ public class Fragment implements Iterable<Fragment> {
 	private boolean[] repaintImage;
 	private List<IconLayer> invalidatedIconLayers = new LinkedList<IconLayer>();
 	private List<MapObject> mapObjects = new LinkedList<MapObject>();
-	private float alpha = 0.0f;
+	private float alpha;
 
-	private boolean isLoaded = false;
+	private State state = State.AVAILABLE;
+
 	private CoordinatesInWorld corner;
 	private Fragment leftFragment = null;
 	private Fragment rightFragment = null;
@@ -66,32 +71,36 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	public void initialize(CoordinatesInWorld corner) {
-		unload();
 		this.corner = corner;
-	}
-
-	private void unload() {
-		isLoaded = false;
 		leftFragment = null;
 		rightFragment = null;
 		aboveFragment = null;
 		belowFragment = null;
+		state = State.INITIALIZED;
 	}
 
-	public void reset() {
-		this.corner = null;
-	}
-
-	public boolean isInitialized() {
-		return corner != null;
-	}
-
-	public boolean isLoaded() {
-		return isLoaded;
+	public void setAvailable() {
+		state = State.AVAILABLE;
 	}
 
 	public void setLoaded() {
-		isLoaded = true;
+		state = State.LOADED;
+	}
+
+	public void setNeedsReset() {
+		state = State.NEEDS_RESET;
+	}
+
+	public boolean isInitialized() {
+		return state == State.INITIALIZED;
+	}
+
+	public boolean isLoaded() {
+		return state == State.LOADED;
+	}
+
+	public boolean needsReset() {
+		return state == State.NEEDS_RESET;
 	}
 
 	public void clearMapObjects() {
@@ -117,7 +126,7 @@ public class Fragment implements Iterable<Fragment> {
 	// TODO: move this to the class FragmentLoader
 	@Deprecated
 	public void invalidateImageLayer(int layerId) {
-		if (isLoaded) {
+		if (isLoaded()) {
 			repaintImage[layerId] = true;
 		}
 	}
@@ -125,7 +134,7 @@ public class Fragment implements Iterable<Fragment> {
 	// TODO: move this to the class FragmentLoader
 	@Deprecated
 	public void invalidateIconLayer(IconLayer iconLayer) {
-		if (isLoaded) {
+		if (isLoaded()) {
 			invalidatedIconLayers.add(iconLayer);
 		}
 	}
