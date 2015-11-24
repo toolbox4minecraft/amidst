@@ -258,10 +258,6 @@ public class Map {
 		return layerContainer.getLiveLayers();
 	}
 
-	public ImageLayer[] getImageLayers() {
-		return layerContainer.getImageLayers();
-	}
-
 	public ImageLayer getImageLayer(LayerType layerType) {
 		return layerContainer.getImageLayer(layerType);
 	}

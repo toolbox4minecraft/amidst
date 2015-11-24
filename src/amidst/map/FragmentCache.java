@@ -32,20 +32,20 @@ public class FragmentCache {
 
 	private void requestNewFragments() {
 		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
-			Fragment fragment = createFragment();
+			Fragment fragment = new Fragment(createImagesMap());
 			cache.add(fragment);
 			availableQueue.offer(fragment);
 		}
 	}
 
-	private Fragment createFragment() {
-		EnumMap<LayerType, BufferedImage> images = new EnumMap<LayerType, BufferedImage>(
+	private EnumMap<LayerType, BufferedImage> createImagesMap() {
+		EnumMap<LayerType, BufferedImage> result = new EnumMap<LayerType, BufferedImage>(
 				LayerType.class);
 		for (ImageLayer imageLayer : layerContainer.getImageLayers()) {
-			images.put(imageLayer.getLayerType(),
+			result.put(imageLayer.getLayerType(),
 					createBufferedImage(imageLayer.getSize()));
 		}
-		return new Fragment(images);
+		return result;
 	}
 
 	private BufferedImage createBufferedImage(int layerSize) {
