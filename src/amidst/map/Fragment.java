@@ -10,6 +10,7 @@ import amidst.Options;
 import amidst.map.layer.LayerType;
 import amidst.map.layer.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.minecraft.world.Resolution;
 
 public class Fragment implements Iterable<Fragment> {
 	private static class FragmentIterator implements Iterator<Fragment> {
@@ -47,10 +48,7 @@ public class Fragment implements Iterable<Fragment> {
 		AVAILABLE, INITIALIZED, LOADED, NEEDS_RESET;
 	}
 
-	public static final int SIZE = 512;
-	public static final int SIZE_SHIFT = 9;
-	@Deprecated
-	public static final int BIOME_SIZE = SIZE >> 2;
+	public static final int SIZE = Resolution.FRAGMENT.getStep();
 
 	private State state = State.AVAILABLE;
 	private CoordinatesInWorld corner;
