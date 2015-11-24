@@ -114,11 +114,11 @@ public class Fragment implements Iterable<Fragment> {
 		updateAlpha(time);
 	}
 
-	public void initAlpha() {
+	private void initAlpha() {
 		alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
 	}
 
-	public void updateAlpha(float time) {
+	private void updateAlpha(float time) {
 		alpha = Math.min(1.0f, time * 3.0f + alpha);
 	}
 
@@ -148,7 +148,7 @@ public class Fragment implements Iterable<Fragment> {
 		return images;
 	}
 
-	public void clearMapObjects() {
+	private void clearMapObjects() {
 		mapObjects.clear();
 	}
 

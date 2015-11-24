@@ -64,9 +64,9 @@ public class MapDrawer {
 
 	private Fragment currentFragment;
 	private AffineTransform originalGraphicsTransform;
-	private AffineTransform layerDrawMatrix = new AffineTransform();
-	private AffineTransform mapObjectDrawMatrix = new AffineTransform();
-	private AffineTransform imageLayerDrawMatrix = new AffineTransform();
+	private AffineTransform layerMatrix = new AffineTransform();
+	private AffineTransform mapObjectMatrix = new AffineTransform();
+	private AffineTransform imageLayerMatrix = new AffineTransform();
 
 	private Runnable createImageLayersDrawer() {
 		return new Runnable() {
@@ -205,17 +205,17 @@ public class MapDrawer {
 	}
 
 	private void initLayerDrawMatrix(Point2D.Double startOnScreen, double scale) {
-		layerDrawMatrix.setToIdentity();
-		layerDrawMatrix.concatenate(originalGraphicsTransform);
-		layerDrawMatrix.translate(startOnScreen.x, startOnScreen.y);
-		layerDrawMatrix.scale(scale, scale);
+		layerMatrix.setToIdentity();
+		layerMatrix.concatenate(originalGraphicsTransform);
+		layerMatrix.translate(startOnScreen.x, startOnScreen.y);
+		layerMatrix.scale(scale, scale);
 	}
 
 	private void updateLayerDrawMatrix() {
-		layerDrawMatrix.translate(Fragment.SIZE, 0);
+		layerMatrix.translate(Fragment.SIZE, 0);
 		if (currentFragment.isEndOfLine()) {
-			layerDrawMatrix.translate(
-					-Fragment.SIZE * map.getFragmentsPerRow(), Fragment.SIZE);
+			layerMatrix.translate(-Fragment.SIZE * map.getFragmentsPerRow(),
+					Fragment.SIZE);
 		}
 	}
 
@@ -236,7 +236,7 @@ public class MapDrawer {
 	private void drawImageLayer(ImageLayer imageLayer, BufferedImage image) {
 		setAlphaComposite(currentFragment.getAlpha() * imageLayer.getAlpha());
 		initImageLayerDrawMatrix(imageLayer.getScale());
-		g2d.setTransform(imageLayerDrawMatrix);
+		g2d.setTransform(imageLayerMatrix);
 		if (g2d.getTransform().getScaleX() < 1.0f) {
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 					RenderingHints.VALUE_INTERPOLATION_BILINEAR);
@@ -249,14 +249,14 @@ public class MapDrawer {
 
 	// TODO: is this transformation correct?
 	public void initImageLayerDrawMatrix(double scale) {
-		imageLayerDrawMatrix.setTransform(layerDrawMatrix);
-		imageLayerDrawMatrix.scale(scale, scale);
+		imageLayerMatrix.setTransform(layerMatrix);
+		imageLayerMatrix.scale(scale, scale);
 	}
 
 	private void drawLiveLayers() {
 		for (LiveLayer liveLayer : map.getLiveLayers()) {
 			if (liveLayer.isVisible()) {
-				liveLayer.draw(currentFragment, g2d, layerDrawMatrix);
+				liveLayer.draw(currentFragment, g2d, layerMatrix);
 			}
 		}
 	}
@@ -291,7 +291,7 @@ public class MapDrawer {
 			}
 			initMapObjectDrawMatrix(mapObject, invZoom,
 					worldObject.getCoordinates());
-			g2d.setTransform(mapObjectDrawMatrix);
+			g2d.setTransform(mapObjectMatrix);
 			g2d.drawImage(image, -(width >> 1), -(height >> 1), width, height,
 					null);
 		}
@@ -299,10 +299,10 @@ public class MapDrawer {
 
 	private void initMapObjectDrawMatrix(MapObject mapObject, double invZoom,
 			CoordinatesInWorld coordinates) {
-		mapObjectDrawMatrix.setTransform(layerDrawMatrix);
-		mapObjectDrawMatrix.translate(coordinates.getXRelativeToFragment(),
+		mapObjectMatrix.setTransform(layerMatrix);
+		mapObjectMatrix.translate(coordinates.getXRelativeToFragment(),
 				coordinates.getYRelativeToFragment());
-		mapObjectDrawMatrix.scale(invZoom, invZoom);
+		mapObjectMatrix.scale(invZoom, invZoom);
 	}
 
 	private void drawBorder() {
