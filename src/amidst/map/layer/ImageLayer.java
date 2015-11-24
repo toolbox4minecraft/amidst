@@ -1,6 +1,7 @@
 package amidst.map.layer;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
@@ -10,6 +11,7 @@ import amidst.minecraft.world.Resolution;
 
 public abstract class ImageLayer extends Layer {
 	private final Resolution resolution;
+	private final AffineTransform imageLayerMatrix = new AffineTransform();
 
 	public ImageLayer(LayerType layerType, Resolution resolution) {
 		super(layerType);
@@ -38,11 +40,6 @@ public abstract class ImageLayer extends Layer {
 		doLoad(fragment, imageCache);
 	}
 
-	@Override
-	public void draw(Fragment fragment, Graphics2D g2d,
-			AffineTransform layerMatrix) {
-	}
-
 	protected void doLoad(Fragment fragment, int[] imageCache) {
 		CoordinatesInWorld corner = fragment.getCorner();
 		long cornerX = corner.getXAs(resolution);
@@ -65,6 +62,30 @@ public abstract class ImageLayer extends Layer {
 
 	private int getCacheIndex(int x, int y, int size) {
 		return x + y * size;
+	}
+
+	@Override
+	public void draw(Fragment fragment, Graphics2D g2d,
+			AffineTransform layerMatrix) {
+		if (fragment.isLoaded()) {
+			initImageLayerDrawMatrix(getScale(), layerMatrix);
+			g2d.setTransform(imageLayerMatrix);
+			if (g2d.getTransform().getScaleX() < 1.0f) {
+				g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+						RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			} else {
+				g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+						RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+			}
+			g2d.drawImage(fragment.getImage(getLayerType()), 0, 0, null);
+		}
+	}
+
+	// TODO: is this transformation correct?
+	public void initImageLayerDrawMatrix(double scale,
+			AffineTransform layerMatrix) {
+		imageLayerMatrix.setTransform(layerMatrix);
+		imageLayerMatrix.scale(scale, scale);
 	}
 
 	protected abstract int getColorAt(Fragment fragment, long cornerX,

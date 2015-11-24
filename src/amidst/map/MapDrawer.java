@@ -14,11 +14,9 @@ import java.util.List;
 import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
 import amidst.map.layer.LiveLayer;
-import amidst.map.layer.MapObject;
 import amidst.map.widget.Widget;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
-import amidst.minecraft.world.finder.WorldObject;
 import amidst.resources.ResourceLoader;
 
 public class MapDrawer {
@@ -63,8 +61,6 @@ public class MapDrawer {
 	private Fragment currentFragment;
 	private AffineTransform originalGraphicsTransform;
 	private AffineTransform layerMatrix = new AffineTransform();
-	private AffineTransform mapObjectMatrix = new AffineTransform();
-	private AffineTransform imageLayerMatrix = new AffineTransform();
 
 	private Runnable createImageLayersDrawer() {
 		return new Runnable() {
@@ -221,32 +217,10 @@ public class MapDrawer {
 		setAlphaComposite(currentFragment.getAlpha());
 		for (ImageLayer imageLayer : map.getImageLayers()) {
 			if (imageLayer.isVisible()) {
-				drawImageLayer(imageLayer);
+				imageLayer.draw(currentFragment, g2d, layerMatrix);
 			}
 		}
 		setAlphaComposite(1.0f);
-	}
-
-	private void drawImageLayer(ImageLayer imageLayer) {
-		if (currentFragment.isLoaded()) {
-			initImageLayerDrawMatrix(imageLayer.getScale());
-			g2d.setTransform(imageLayerMatrix);
-			if (g2d.getTransform().getScaleX() < 1.0f) {
-				g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-						RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			} else {
-				g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-						RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-			}
-			g2d.drawImage(currentFragment.getImage(imageLayer.getLayerType()),
-					0, 0, null);
-		}
-	}
-
-	// TODO: is this transformation correct?
-	public void initImageLayerDrawMatrix(double scale) {
-		imageLayerMatrix.setTransform(layerMatrix);
-		imageLayerMatrix.scale(scale, scale);
 	}
 
 	private void drawLiveLayers() {
@@ -262,42 +236,11 @@ public class MapDrawer {
 	private void drawObjects() {
 		setAlphaComposite(currentFragment.getAlpha());
 		for (IconLayer iconLayer : map.getIconLayers()) {
-			if (currentFragment.isLoaded()) {
-				List<MapObject> mapObjects = currentFragment
-						.getMapObjects(iconLayer.getLayerType());
-				double invZoom = 1.0 / zoom.getCurrentValue();
-				for (MapObject mapObject : mapObjects) {
-					drawObject(mapObject, invZoom);
-				}
+			if (iconLayer.isVisible()) {
+				iconLayer.draw(currentFragment, g2d, layerMatrix);
 			}
 		}
 		setAlphaComposite(1.0f);
-	}
-
-	private void drawObject(MapObject mapObject, double invZoom) {
-		if (mapObject.getIconLayer().isVisible()) {
-			WorldObject worldObject = mapObject.getWorldObject();
-			BufferedImage image = worldObject.getImage();
-			int width = image.getWidth();
-			int height = image.getHeight();
-			if (map.getSelectedMapObject() == mapObject) {
-				width *= 1.5;
-				height *= 1.5;
-			}
-			initMapObjectDrawMatrix(mapObject, invZoom,
-					worldObject.getCoordinates());
-			g2d.setTransform(mapObjectMatrix);
-			g2d.drawImage(image, -(width >> 1), -(height >> 1), width, height,
-					null);
-		}
-	}
-
-	private void initMapObjectDrawMatrix(MapObject mapObject, double invZoom,
-			CoordinatesInWorld coordinates) {
-		mapObjectMatrix.setTransform(layerMatrix);
-		mapObjectMatrix.translate(coordinates.getXRelativeToFragment(),
-				coordinates.getYRelativeToFragment());
-		mapObjectMatrix.scale(invZoom, invZoom);
 	}
 
 	private void drawBorder() {
