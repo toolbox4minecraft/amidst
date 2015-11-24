@@ -43,11 +43,11 @@ public class FragmentLoader {
 			currentFragment.setAvailable();
 			availableQueue.offer(currentFragment);
 		} else if (currentFragment.isInitialized()) {
-			currentFragment.clearMapObjects();
+			currentFragment.prepareLoad();
 			loadAllLayers();
-			currentFragment.initAlpha();
 			currentFragment.setLoaded();
 		} else if (currentFragment.isLoaded()) {
+			currentFragment.prepareReload();
 			reloadInvalidatedLayers();
 		}
 	}

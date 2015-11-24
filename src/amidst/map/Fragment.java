@@ -102,6 +102,18 @@ public class Fragment implements Iterable<Fragment> {
 		return state == State.NEEDS_RESET;
 	}
 
+	public void prepareLoad() {
+		clearMapObjects();
+		initAlpha();
+	}
+
+	public void prepareReload() {
+	}
+
+	public void prepareDraw(float time) {
+		updateAlpha(time);
+	}
+
 	public void initAlpha() {
 		alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
 	}

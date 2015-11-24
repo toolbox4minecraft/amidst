@@ -179,12 +179,19 @@ public class MapDrawer {
 
 	public void doDrawMap(Point2D.Double startOnScreen, Fragment startFragment) {
 		originalGraphicsTransform = g2d.getTransform();
+		prepareDraw(startFragment);
 		drawLayer(startOnScreen, startFragment, imageLayersDrawer);
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		drawLayer(startOnScreen, startFragment, liveLayersDrawer);
 		drawLayer(startOnScreen, startFragment, objectsDrawer);
 		g2d.setTransform(originalGraphicsTransform);
+	}
+
+	private void prepareDraw(Fragment startFragment) {
+		for (Fragment fragment : startFragment) {
+			fragment.prepareDraw(time);
+		}
 	}
 
 	private void drawLayer(Point2D.Double startOnScreen,
@@ -214,7 +221,6 @@ public class MapDrawer {
 
 	private void drawImageLayers() {
 		if (currentFragment.isLoaded()) {
-			currentFragment.updateAlpha(time);
 			EnumMap<LayerType, BufferedImage> images = currentFragment
 					.getImages();
 			for (Entry<LayerType, BufferedImage> entry : images.entrySet()) {
