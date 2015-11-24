@@ -76,34 +76,4 @@ public class LayerContainer {
 	public Layer getLayer(LayerType layerType) {
 		return layerMap.get(layerType);
 	}
-
-	public ImageLayer getImageLayer(LayerType layerType) {
-		Layer layer = layerMap.get(layerType);
-		if (layer instanceof ImageLayer) {
-			return (ImageLayer) layer;
-		} else {
-			throw new IllegalArgumentException(
-					"wrong layer type ... this should never happen!");
-		}
-	}
-
-	public LiveLayer getLiveLayer(LayerType layerType) {
-		Layer layer = layerMap.get(layerType);
-		if (layer instanceof LiveLayer) {
-			return (LiveLayer) layer;
-		} else {
-			throw new IllegalArgumentException(
-					"wrong layer type ... this should never happen!");
-		}
-	}
-
-	public IconLayer getIconLayer(LayerType layerType) {
-		Layer layer = layerMap.get(layerType);
-		if (layer instanceof IconLayer) {
-			return (IconLayer) layer;
-		} else {
-			throw new IllegalArgumentException(
-					"wrong layer type ... this should never happen!");
-		}
-	}
 }
