@@ -28,7 +28,7 @@ public class MapMovement {
 	}
 
 	private void moveMap(Map map) {
-		map.moveBy(speed);
+		map.moveBy((int) speed.x, (int) speed.y);
 	}
 
 	private void throttleMapMovementSpeed() {

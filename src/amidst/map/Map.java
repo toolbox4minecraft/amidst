@@ -117,6 +117,11 @@ public class Map {
 		}
 	}
 
+	public void moveBy(int deltaX, int deltaY) {
+		startOnScreen.x += deltaX;
+		startOnScreen.y += deltaY;
+	}
+
 	public void moveBy(Point2D.Double delta) {
 		startOnScreen.x += delta.x;
 		startOnScreen.y += delta.y;
