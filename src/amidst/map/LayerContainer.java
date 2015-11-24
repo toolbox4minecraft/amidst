@@ -133,8 +133,7 @@ public class LayerContainer {
 		if (layer instanceof ImageLayer) {
 			return (ImageLayer) layer;
 		} else {
-			throw new IllegalArgumentException(
-					"wrong layer type ... this should never happen!");
+			throw createWrongLayerTypeException(layerType, "image");
 		}
 	}
 
@@ -143,8 +142,7 @@ public class LayerContainer {
 		if (layer instanceof LiveLayer) {
 			return (LiveLayer) layer;
 		} else {
-			throw new IllegalArgumentException(
-					"wrong layer type ... this should never happen!");
+			throw createWrongLayerTypeException(layerType, "live");
 		}
 	}
 
@@ -153,8 +151,14 @@ public class LayerContainer {
 		if (layer instanceof IconLayer) {
 			return (IconLayer) layer;
 		} else {
-			throw new IllegalArgumentException(
-					"wrong layer type ... this should never happen!");
+			throw createWrongLayerTypeException(layerType, "icon");
 		}
+	}
+
+	private IllegalArgumentException createWrongLayerTypeException(
+			LayerType layerType, String expected) {
+		return new IllegalArgumentException("Wrong layer type. " + layerType
+				+ " is not an " + expected
+				+ " layer. This should never happen!");
 	}
 }

@@ -13,7 +13,7 @@ public class SlimeLayer extends ImageLayer {
 	private Random random = new Random();
 
 	public SlimeLayer() {
-		super(LayerType.GRID, Resolution.CHUNK);
+		super(LayerType.SLIME, Resolution.CHUNK);
 	}
 
 	@Override
