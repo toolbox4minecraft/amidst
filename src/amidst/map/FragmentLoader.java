@@ -35,6 +35,8 @@ public class FragmentLoader {
 				repaintInvalidatedImages(imageLayers);
 				reloadInvalidatedIconLayers();
 			} else {
+				currentFragment.clearMapObjects();
+				currentFragment.clearInvalidatedIconLayers();
 				repaintAllImages(imageLayers);
 				generateMapObjects();
 				currentFragment.initAlpha();

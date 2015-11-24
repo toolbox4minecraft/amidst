@@ -76,9 +76,6 @@ public class Fragment implements Iterable<Fragment> {
 		rightFragment = null;
 		aboveFragment = null;
 		belowFragment = null;
-		mapObjects.clear();
-		invalidatedIconLayers.clear();
-		alpha = 0.0f;
 	}
 
 	public void reset() {
@@ -95,6 +92,14 @@ public class Fragment implements Iterable<Fragment> {
 
 	public void setLoaded() {
 		isLoaded = true;
+	}
+
+	public void clearMapObjects() {
+		mapObjects.clear();
+	}
+
+	public void clearInvalidatedIconLayers() {
+		invalidatedIconLayers.clear();
 	}
 
 	public void initAlpha() {
