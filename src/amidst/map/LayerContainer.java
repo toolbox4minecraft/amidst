@@ -10,7 +10,7 @@ import amidst.map.layer.LiveLayer;
 import amidst.minecraft.world.World;
 
 public class LayerContainer {
-	private EnumMap<LayerType, Layer> layerMap = new EnumMap<LayerType, Layer>(
+	private java.util.Map<LayerType, Layer> layerMap = new EnumMap<LayerType, Layer>(
 			LayerType.class);
 
 	private IconLayer playerLayer;

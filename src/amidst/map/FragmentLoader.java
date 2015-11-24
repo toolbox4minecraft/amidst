@@ -75,16 +75,15 @@ public class FragmentLoader {
 	}
 
 	private void reloadInvalidatedImages() {
-		for (ImageLayer imageLayer : currentFragment
-				.getInvalidatedImageLayers()) {
-			loadImage(imageLayer.getLayerType());
+		for (LayerType layerType : currentFragment.getInvalidatedImageLayers()) {
+			loadImage(layerType);
 		}
 	}
 
 	private void reloadInvalidatedIconLayers() {
-		for (IconLayer iconLayer : currentFragment.getInvalidatedIconLayers()) {
-			removeIconLayer(iconLayer.getLayerType());
-			loadIconLayer(iconLayer.getLayerType());
+		for (LayerType layerType : currentFragment.getInvalidatedIconLayers()) {
+			removeIconLayer(layerType);
+			loadIconLayer(layerType);
 		}
 	}
 

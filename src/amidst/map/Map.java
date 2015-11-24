@@ -3,8 +3,8 @@ package amidst.map;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
-import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
+import amidst.map.layer.LayerType;
 import amidst.map.layer.LiveLayer;
 import amidst.map.layer.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
@@ -205,19 +205,19 @@ public class Map {
 		return new Point2D.Double(scaledX, scaledY);
 	}
 
-	private void repaintImageLayer(ImageLayer imageLayer) {
+	private void reloadImageLayer(LayerType layerType) {
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
-				fragment.invalidateImageLayer(imageLayer);
+				fragment.invalidateImageLayer(layerType);
 			}
 			fragmentManager.reloadAll();
 		}
 	}
 
-	private void reloadIconLayer(IconLayer iconLayer) {
+	private void reloadIconLayer(LayerType layerType) {
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
-				fragment.invalidateIconLayer(iconLayer);
+				fragment.invalidateIconLayer(layerType);
 			}
 			fragmentManager.reloadAll();
 		}
@@ -260,11 +260,11 @@ public class Map {
 	}
 
 	public void repaintBiomeLayer() {
-		repaintImageLayer(layerContainer.getBiomeLayer());
+		reloadImageLayer(LayerType.BIOME);
 	}
 
 	public void reloadPlayerLayer() {
-		reloadIconLayer(layerContainer.getPlayerLayer());
+		reloadIconLayer(LayerType.PLAYER);
 	}
 
 	public LiveLayer[] getLiveLayers() {

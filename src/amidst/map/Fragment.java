@@ -1,13 +1,14 @@
 package amidst.map;
 
 import java.awt.image.BufferedImage;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import amidst.Options;
-import amidst.map.layer.IconLayer;
-import amidst.map.layer.ImageLayer;
+import amidst.map.layer.LayerType;
 import amidst.map.layer.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
 
@@ -53,8 +54,10 @@ public class Fragment implements Iterable<Fragment> {
 	public static final int BIOME_SIZE = SIZE >> 2;
 
 	private BufferedImage[] images;
-	private List<ImageLayer> invalidatedImageLayers = new LinkedList<ImageLayer>();
-	private List<IconLayer> invalidatedIconLayers = new LinkedList<IconLayer>();
+	private Set<LayerType> invalidatedImageLayers = EnumSet
+			.noneOf(LayerType.class);
+	private Set<LayerType> invalidatedIconLayers = EnumSet
+			.noneOf(LayerType.class);
 	private List<MapObject> mapObjects = new LinkedList<MapObject>();
 	private float alpha;
 
@@ -129,17 +132,17 @@ public class Fragment implements Iterable<Fragment> {
 
 	// TODO: move this to the class FragmentLoader
 	@Deprecated
-	public void invalidateImageLayer(ImageLayer imageLayer) {
+	public void invalidateImageLayer(LayerType layerType) {
 		if (isLoaded()) {
-			invalidatedImageLayers.add(imageLayer);
+			invalidatedImageLayers.add(layerType);
 		}
 	}
 
 	// TODO: move this to the class FragmentLoader
 	@Deprecated
-	public void invalidateIconLayer(IconLayer iconLayer) {
+	public void invalidateIconLayer(LayerType layerType) {
 		if (isLoaded()) {
-			invalidatedIconLayers.add(iconLayer);
+			invalidatedIconLayers.add(layerType);
 		}
 	}
 
@@ -155,11 +158,11 @@ public class Fragment implements Iterable<Fragment> {
 		return images;
 	}
 
-	public List<ImageLayer> getInvalidatedImageLayers() {
+	public Set<LayerType> getInvalidatedImageLayers() {
 		return invalidatedImageLayers;
 	}
 
-	public List<IconLayer> getInvalidatedIconLayers() {
+	public Set<LayerType> getInvalidatedIconLayers() {
 		return invalidatedIconLayers;
 	}
 
