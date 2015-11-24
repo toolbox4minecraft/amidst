@@ -3,7 +3,6 @@ package amidst.map;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Collection;
-import java.util.List;
 
 import amidst.Options;
 import amidst.map.layer.Layer;
@@ -145,10 +144,10 @@ public class Map {
 		int fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
-				for (List<MapObject> mapObjects : fragment.getMapObjects()
-						.values()) {
-					for (MapObject mapObject : mapObjects) {
-						if (mapObject.getIconLayer().isVisible()) {
+				for (Layer layer : layerContainer.getAllLayers()) {
+					if (layer.isVisible()) {
+						for (MapObject mapObject : fragment.getMapObjects(layer
+								.getLayerType())) {
 							double distance = getPositionOnScreen(x, y,
 									mapObject).distance(positionOnScreen);
 							if (closestDistance > distance) {

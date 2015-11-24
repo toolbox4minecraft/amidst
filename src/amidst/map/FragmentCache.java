@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.logging.Log;
 import amidst.map.layer.ImageLayer;
+import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
 import amidst.minecraft.world.BiomeDataProvider;
 
@@ -47,9 +48,12 @@ public class FragmentCache {
 	private EnumMap<LayerType, BufferedImage> createImagesMap() {
 		EnumMap<LayerType, BufferedImage> result = new EnumMap<LayerType, BufferedImage>(
 				LayerType.class);
-		for (ImageLayer imageLayer : layerContainer.getImageLayers()) {
-			result.put(imageLayer.getLayerType(),
-					createBufferedImage(imageLayer.getSize()));
+		for (Layer layer : layerContainer.getAllLayers()) {
+			if (layer instanceof ImageLayer) {
+				ImageLayer imageLayer = (ImageLayer) layer;
+				result.put(imageLayer.getLayerType(),
+						createBufferedImage(imageLayer.getSize()));
+			}
 		}
 		return result;
 	}

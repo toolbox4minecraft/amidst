@@ -14,9 +14,6 @@ import amidst.map.LayerContainer;
 import amidst.map.SkinLoader;
 import amidst.map.layer.BiomeLayer;
 import amidst.map.layer.GridLayer;
-import amidst.map.layer.IconLayer;
-import amidst.map.layer.ImageLayer;
-import amidst.map.layer.LiveLayer;
 import amidst.map.layer.NetherFortressLayer;
 import amidst.map.layer.OceanMonumentLayer;
 import amidst.map.layer.PlayerLayer;
@@ -74,13 +71,10 @@ public class Application {
 	}
 
 	private void initLayerContainer() {
-		ImageLayer[] imageLayers = { new BiomeLayer(), new SlimeLayer() };
-		LiveLayer[] liveLayers = { new GridLayer() };
-		IconLayer[] iconLayers = { new VillageLayer(),
-				new OceanMonumentLayer(), new StrongholdLayer(),
-				new TempleLayer(), new SpawnLayer(), new NetherFortressLayer(),
-				new PlayerLayer() };
-		layerContainer = new LayerContainer(imageLayers, liveLayers, iconLayers);
+		layerContainer = new LayerContainer(new BiomeLayer(), new SlimeLayer(),
+				new GridLayer(), new VillageLayer(), new OceanMonumentLayer(),
+				new StrongholdLayer(), new TempleLayer(), new SpawnLayer(),
+				new NetherFortressLayer(), new PlayerLayer());
 	}
 
 	private void initFragmentManager() {

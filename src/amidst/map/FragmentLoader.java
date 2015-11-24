@@ -2,7 +2,7 @@ package amidst.map;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import amidst.map.layer.LayerType;
+import amidst.map.layer.Layer;
 
 public class FragmentLoader {
 	private LayerContainer layerContainer;
@@ -29,7 +29,7 @@ public class FragmentLoader {
 			loadFragment();
 			processResetQueue();
 		}
-		layerContainer.clearInvalidatedLayerTypes();
+		layerContainer.clearInvalidatedLayers();
 	}
 
 	private void processResetQueue() {
@@ -53,22 +53,22 @@ public class FragmentLoader {
 	}
 
 	private void loadAllLayers() {
-		for (LayerType layerType : layerContainer.getAllLayerTypes()) {
-			loadLayer(layerType);
+		for (Layer layer : layerContainer.getAllLayers()) {
+			loadLayer(layer);
 		}
 	}
 
 	private void reloadInvalidatedLayers() {
-		for (LayerType layerType : layerContainer.getInvalidatedLayerTypes()) {
-			reloadLayer(layerType);
+		for (Layer layer : layerContainer.getInvalidatedLayers()) {
+			reloadLayer(layer);
 		}
 	}
 
-	private void loadLayer(LayerType layerType) {
-		layerContainer.getLayer(layerType).load(currentFragment, imageCache);
+	private void loadLayer(Layer layer) {
+		layer.load(currentFragment, imageCache);
 	}
 
-	private void reloadLayer(LayerType layerType) {
-		layerContainer.getLayer(layerType).reload(currentFragment, imageCache);
+	private void reloadLayer(Layer layer) {
+		layer.reload(currentFragment, imageCache);
 	}
 }
