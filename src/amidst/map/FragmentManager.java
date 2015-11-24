@@ -14,7 +14,7 @@ public class FragmentManager {
 	public FragmentManager(LayerContainer layerContainer) {
 		this.cache = new FragmentCache(layerContainer, availableQueue,
 				loadingQueue);
-		this.loader = new FragmentLoader(loadingQueue);
+		this.loader = new FragmentLoader(layerContainer, loadingQueue);
 	}
 
 	public Fragment requestFragment(CoordinatesInWorld coordinates) {

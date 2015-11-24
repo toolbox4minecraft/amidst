@@ -102,77 +102,15 @@ public class Fragment implements Iterable<Fragment> {
 		belowFragment = null;
 	}
 
-	private boolean isInitialized() {
+	public boolean isInitialized() {
 		return corner != null;
 	}
 
-	// TODO: move this to the class FragmentLoader
-	@Deprecated
-	public void load(int[] imageCache) {
-		if (isInitialized()) {
-			ImageLayer[] imageLayers = layerContainer.getImageLayers();
-			if (isLoaded()) {
-				repaintInvalidatedImages(imageCache, imageLayers);
-				reloadInvalidatedIconLayers();
-			} else {
-				repaintAllImages(imageCache, imageLayers);
-				generateMapObjects();
-				initAlpha();
-				setLoaded();
-			}
-		}
-	}
-
-	private void setLoaded() {
+	public void setLoaded() {
 		isLoaded = true;
 	}
 
-	private void repaintInvalidatedImages(int[] imageCache,
-			ImageLayer[] imageLayers) {
-		for (int i = 0; i < imageLayers.length; i++) {
-			if (repaintImage[i]) {
-				repaintImage(i, imageCache, imageLayers);
-			}
-		}
-	}
-
-	private void reloadInvalidatedIconLayers() {
-		for (IconLayer iconLayer : invalidatedIconLayers) {
-			removeIconLayer(iconLayer);
-			iconLayer.generateMapObjects(this);
-		}
-		invalidatedIconLayers.clear();
-	}
-
-	private void removeIconLayer(IconLayer iconLayer) {
-		List<MapObject> objectsToRemove = new LinkedList<MapObject>();
-		for (MapObject mapObject : mapObjects) {
-			if (mapObject.getIconLayer() == iconLayer) {
-				objectsToRemove.add(mapObject);
-			}
-		}
-		mapObjects.removeAll(objectsToRemove);
-	}
-
-	private void repaintAllImages(int[] imageCache, ImageLayer[] imageLayers) {
-		for (int i = 0; i < imageLayers.length; i++) {
-			repaintImage(i, imageCache, imageLayers);
-		}
-	}
-
-	private void repaintImage(int layerId, int[] imageCache,
-			ImageLayer[] imageLayers) {
-		imageLayers[layerId].drawToCache(this, imageCache, images[layerId]);
-		repaintImage[layerId] = false;
-	}
-
-	private void generateMapObjects() {
-		for (IconLayer iconLayer : layerContainer.getIconLayers()) {
-			iconLayer.generateMapObjects(this);
-		}
-	}
-
-	private void initAlpha() {
+	public void initAlpha() {
 		alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
 	}
 
@@ -200,12 +138,6 @@ public class Fragment implements Iterable<Fragment> {
 		mapObjects.add(mapObject);
 	}
 
-	public void removeObject(MapObject mapObject) {
-		if (isLoaded) {
-			mapObjects.remove(mapObject);
-		}
-	}
-
 	public float getAlpha() {
 		return alpha;
 	}
@@ -220,6 +152,22 @@ public class Fragment implements Iterable<Fragment> {
 
 	public BufferedImage[] getImages() {
 		return images;
+	}
+
+	public boolean needsImageRepaint(int layerId) {
+		return repaintImage[layerId];
+	}
+
+	public void setNeedsImageRepaint(int layerId, boolean value) {
+		repaintImage[layerId] = value;
+	}
+
+	public List<IconLayer> getInvalidatedIconLayers() {
+		return invalidatedIconLayers;
+	}
+
+	public BufferedImage getImage(int layerId) {
+		return images[layerId];
 	}
 
 	@Override
