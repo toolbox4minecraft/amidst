@@ -22,9 +22,9 @@ public class SlimeLayer extends ImageLayer {
 	}
 
 	@Override
-	protected int getColorAt(Fragment fragment, long xAsResolution,
-			long yAsResolution) {
-		if (isSlimeChunk(xAsResolution, yAsResolution)) {
+	protected int getColorAt(Fragment fragment, long cornerX, long cornerY,
+			int x, int y) {
+		if (isSlimeChunk(cornerX + x, cornerY + y)) {
 			return SLIME_CHUNK_COLOR;
 		} else {
 			return NOT_SLIME_CHUNK_COLOR;

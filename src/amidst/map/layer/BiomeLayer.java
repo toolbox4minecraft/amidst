@@ -23,14 +23,9 @@ public class BiomeLayer extends ImageLayer {
 	}
 
 	@Override
-	protected void drawToCache(Fragment fragment, int[] cache, long cornerX,
-			long cornerY, int size) {
-		for (int y = 0; y < size; y++) {
-			for (int x = 0; x < size; x++) {
-				int index = getCacheIndex(x, y, size);
-				cache[index] = getColor(fragment.getBiomeDataAt(x, y));
-			}
-		}
+	protected int getColorAt(Fragment fragment, long cornerX, long cornerY,
+			int x, int y) {
+		return getColor(fragment.getBiomeDataAt(x, y));
 	}
 
 	protected int getColor(int biome) {
@@ -39,14 +34,6 @@ public class BiomeLayer extends ImageLayer {
 		} else {
 			return doGetColor(biome);
 		}
-	}
-
-	@Deprecated
-	@Override
-	protected int getColorAt(Fragment fragment, long xAsResolution,
-			long yAsResolution) {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	private boolean isDeselected(int biome) {

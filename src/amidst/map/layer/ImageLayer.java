@@ -44,15 +44,15 @@ public abstract class ImageLayer extends Layer {
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
 				int index = getCacheIndex(x, y, size);
-				cache[index] = getColorAt(fragment, cornerX + x, cornerY + y);
+				cache[index] = getColorAt(fragment, cornerX, cornerY, x, y);
 			}
 		}
 	}
 
-	protected int getCacheIndex(int x, int y, int size) {
+	private int getCacheIndex(int x, int y, int size) {
 		return x + y * size;
 	}
 
-	protected abstract int getColorAt(Fragment fragment, long xAsResolution,
-			long yAsResolution);
+	protected abstract int getColorAt(Fragment fragment, long cornerX,
+			long cornerY, int x, int y);
 }
