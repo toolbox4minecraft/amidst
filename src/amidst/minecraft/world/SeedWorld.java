@@ -15,7 +15,7 @@ public class SeedWorld extends World {
 	}
 
 	private void initMinecraftInterface() {
-		MinecraftUtil.createWorld(seed, worldType.getName());
+		MinecraftUtil.createWorld(seed, worldType.getName(), "");
 	}
 
 	@Override

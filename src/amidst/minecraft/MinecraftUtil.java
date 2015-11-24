@@ -10,46 +10,56 @@ import amidst.version.VersionInfo;
 public class MinecraftUtil {
 	private static IMinecraftInterface minecraftInterface;
 
-	/**
-	 * Returns a copy of the biome data. This is NOT threadsafe without the
-	 * synchronized keyword!
-	 */
-	public synchronized static int[] getBiomeData(int x, int y, int width,
-			int height, boolean useQuarterResolutionMap) {
-		return minecraftInterface.getBiomeData(x, y, width, height,
-				useQuarterResolutionMap);
+	public static boolean isValidBiome(int x, int y, int size,
+			List<Biome> validBiomes) {
+		int left = x - size >> 2;
+		int top = y - size >> 2;
+		int right = x + size >> 2;
+		int bottom = y + size >> 2;
+		int width = right - left + 1;
+		int height = bottom - top + 1;
+		int[] biomeData = getBiomeData(left, top, width, height, true);
+
+		for (int i = 0; i < width * height; i++) {
+			if (!validBiomes.contains(Biome.getByIndex(biomeData[i]))) {
+				return false;
+			}
+		}
+		return true;
 	}
 
+	// TODO: Find out if we should useQuarterResolutionMap or not
 	public static Point findValidLocation(int searchX, int searchY, int size,
-			List<Biome> paramList, Random random) {
-		// TODO: Find out if we should useQuarterResolutionMap or not
-		// TODO: Clean up this code
-		int x1 = searchX - size >> 2;
-		int y1 = searchY - size >> 2;
-		int x2 = searchX + size >> 2;
-		int y2 = searchY + size >> 2;
+			List<Biome> validBiomes, Random random) {
+		int left = searchX - size >> 2;
+		int top = searchY - size >> 2;
+		int right = searchX + size >> 2;
+		int bottom = searchY + size >> 2;
+		int width = right - left + 1;
+		int height = bottom - top + 1;
+		int[] biomeData = getBiomeData(left, top, width, height, true);
 
-		int width = x2 - x1 + 1;
-		int height = y2 - y1 + 1;
-		int[] arrayOfInt = getBiomeData(x1, y1, width, height, true);
 		Point location = null;
-		int numberOfValidFound = 0;
+		int numberOfValidLocations = 0;
 		for (int i = 0; i < width * height; i++) {
-			int x = x1 + i % width << 2;
-			int y = y1 + i / width << 2;
-			if (Biome.isSupportedBiomeIndex(arrayOfInt[i])) {
-				Log.crash("Unsupported biome type detected");
+			int biomeIndex = biomeData[i];
+			ensureBiomeIsSupported(biomeIndex);
+			if (validBiomes.contains(Biome.getByIndex(biomeIndex))
+					&& (location == null || random
+							.nextInt(numberOfValidLocations + 1) == 0)) {
+				int x = left + i % width << 2;
+				int y = top + i / width << 2;
+				location = new Point(x, y);
+				numberOfValidLocations++;
 			}
-			Biome localBiome = Biome.getByIndex(arrayOfInt[i]);
-			if ((!paramList.contains(localBiome))
-					|| ((location != null) && (random
-							.nextInt(numberOfValidFound + 1) != 0)))
-				continue;
-			location = new Point(x, y);
-			numberOfValidFound++;
 		}
-
 		return location;
+	}
+
+	private static void ensureBiomeIsSupported(int biomeIndex) {
+		if (!Biome.isSupportedBiomeIndex(biomeIndex)) {
+			Log.crash("Unsupported biome type detected");
+		}
 	}
 
 	/**
@@ -60,32 +70,18 @@ public class MinecraftUtil {
 	 * @return Assume this may return null.
 	 */
 	public static Biome getBiomeAt(int x, int y) {
-
-		int[] arrayOfInt = getBiomeData(x, y, 1, 1, false);
-		return Biome.getByIndex(arrayOfInt[0] & 0xFF);
+		int[] biomeData = getBiomeData(x, y, 1, 1, false);
+		return Biome.getByIndex(biomeData[0]);
 	}
 
-	public static boolean isValidBiome(int x, int y, int size,
-			List<Biome> validBiomes) {
-		int x1 = x - size >> 2;
-		int y1 = y - size >> 2;
-		int x2 = x + size >> 2;
-		int y2 = y + size >> 2;
-
-		int width = x2 - x1 + 1;
-		int height = y2 - y1 + 1;
-
-		int[] arrayOfInt = getBiomeData(x1, y1, width, height, true);
-		for (int i = 0; i < width * height; i++) {
-			Biome localBiome = Biome.getByIndex(arrayOfInt[i]);
-			if (!validBiomes.contains(localBiome))
-				return false;
-		}
-		return true;
-	}
-
-	public static void createWorld(long seed, String type) {
-		minecraftInterface.createWorld(seed, type, "");
+	/**
+	 * Returns a copy of the biome data. This is NOT threadsafe without the
+	 * synchronized keyword!
+	 */
+	public synchronized static int[] getBiomeData(int x, int y, int width,
+			int height, boolean useQuarterResolutionMap) {
+		return minecraftInterface.getBiomeData(x, y, width, height,
+				useQuarterResolutionMap);
 	}
 
 	public static void createWorld(long seed, String type,
@@ -93,12 +89,12 @@ public class MinecraftUtil {
 		minecraftInterface.createWorld(seed, type, generatorOptions);
 	}
 
-	public static void setBiomeInterface(IMinecraftInterface biomeInterface) {
-		MinecraftUtil.minecraftInterface = biomeInterface;
-	}
-
 	public static VersionInfo getVersion() {
 		return minecraftInterface.getVersion();
+	}
+
+	public static void setInterface(IMinecraftInterface minecraftInterface) {
+		MinecraftUtil.minecraftInterface = minecraftInterface;
 	}
 
 	public static boolean hasInterface() {

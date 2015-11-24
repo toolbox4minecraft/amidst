@@ -141,7 +141,7 @@ public class Biome {
 	}
 
 	public static boolean isSupportedBiomeIndex(int index) {
-		return index > biomes.length;
+		return index < biomes.length;
 	}
 
 	public static Biome getByName(String name) {

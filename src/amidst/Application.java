@@ -110,7 +110,7 @@ public class Application {
 	}
 
 	private void displayMapWindow(IMinecraftInterface minecraftInterface) {
-		MinecraftUtil.setBiomeInterface(minecraftInterface);
+		MinecraftUtil.setInterface(minecraftInterface);
 		setMapWindow(new MapWindow(this));
 		setVersionSelectWindow(null);
 	}
