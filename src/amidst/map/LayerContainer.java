@@ -1,6 +1,8 @@
 package amidst.map;
 
 import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Set;
 
 import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
@@ -12,6 +14,7 @@ import amidst.minecraft.world.World;
 public class LayerContainer {
 	private java.util.Map<LayerType, Layer> layerMap = new EnumMap<LayerType, Layer>(
 			LayerType.class);
+	private Set<LayerType> loadableLayerTypes = EnumSet.noneOf(LayerType.class);
 
 	private ImageLayer[] imageLayers;
 	private LiveLayer[] liveLayers;
@@ -23,6 +26,7 @@ public class LayerContainer {
 		this.liveLayers = liveLayers;
 		this.iconLayers = iconLayers;
 		initLayerMap();
+		initLoadableLayerTypes();
 	}
 
 	private void initLayerMap() {
@@ -34,6 +38,15 @@ public class LayerContainer {
 		}
 		for (IconLayer layer : iconLayers) {
 			layerMap.put(layer.getLayerType(), layer);
+		}
+	}
+
+	private void initLoadableLayerTypes() {
+		for (ImageLayer layer : imageLayers) {
+			loadableLayerTypes.add(layer.getLayerType());
+		}
+		for (IconLayer layer : iconLayers) {
+			loadableLayerTypes.add(layer.getLayerType());
 		}
 	}
 
@@ -75,5 +88,9 @@ public class LayerContainer {
 
 	public Layer getLayer(LayerType layerType) {
 		return layerMap.get(layerType);
+	}
+
+	public Set<LayerType> getLoadableLayerTypes() {
+		return loadableLayerTypes;
 	}
 }

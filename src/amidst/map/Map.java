@@ -205,19 +205,10 @@ public class Map {
 		return new Point2D.Double(scaledX, scaledY);
 	}
 
-	private void reloadImageLayer(LayerType layerType) {
+	private void reloadLayer(LayerType layerType) {
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
-				fragment.invalidateImageLayer(layerType);
-			}
-			fragmentManager.reloadAll();
-		}
-	}
-
-	private void reloadIconLayer(LayerType layerType) {
-		if (startFragment != null) {
-			for (Fragment fragment : startFragment) {
-				fragment.invalidateIconLayer(layerType);
+				fragment.invalidateLayer(layerType);
 			}
 			fragmentManager.reloadAll();
 		}
@@ -260,11 +251,11 @@ public class Map {
 	}
 
 	public void repaintBiomeLayer() {
-		reloadImageLayer(LayerType.BIOME);
+		reloadLayer(LayerType.BIOME);
 	}
 
 	public void reloadPlayerLayer() {
-		reloadIconLayer(LayerType.PLAYER);
+		reloadLayer(LayerType.PLAYER);
 	}
 
 	public LiveLayer[] getLiveLayers() {

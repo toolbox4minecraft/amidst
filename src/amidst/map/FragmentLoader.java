@@ -49,46 +49,30 @@ public class FragmentLoader {
 			availableQueue.offer(currentFragment);
 		} else if (currentFragment.isInitialized()) {
 			currentFragment.clearMapObjects();
-			currentFragment.clearInvalidatedImageLayers();
-			currentFragment.clearInvalidatedIconLayers();
-			loadAllImageLayers();
-			loadAllIconLayers();
+			currentFragment.clearInvalidatedLayers();
+			loadAllLayers();
 			currentFragment.initAlpha();
 			currentFragment.setLoaded();
 		} else if (currentFragment.isLoaded()) {
-			reloadInvalidatedImageLayers();
-			reloadInvalidatedIconLayers();
-			currentFragment.clearInvalidatedImageLayers();
-			currentFragment.clearInvalidatedIconLayers();
+			reloadInvalidatedLayers();
+			currentFragment.clearInvalidatedLayers();
 		}
 	}
 
-	private void loadAllImageLayers() {
-		for (ImageLayer imageLayer : layerContainer.getImageLayers()) {
-			loadLayer(imageLayer.getLayerType());
-		}
-	}
-
-	private void loadAllIconLayers() {
-		for (IconLayer iconLayer : layerContainer.getIconLayers()) {
-			loadLayer(iconLayer.getLayerType());
-		}
-	}
-
-	private void reloadInvalidatedImageLayers() {
-		for (LayerType layerType : currentFragment.getInvalidatedImageLayers()) {
+	private void loadAllLayers() {
+		for (LayerType layerType : layerContainer.getLoadableLayerTypes()) {
 			loadLayer(layerType);
 		}
 	}
 
-	private void reloadInvalidatedIconLayers() {
-		for (LayerType layerType : currentFragment.getInvalidatedIconLayers()) {
-			removeIconLayer(layerType);
+	private void reloadInvalidatedLayers() {
+		for (LayerType layerType : currentFragment.getInvalidatedLayers()) {
+			removeLayer(layerType);
 			loadLayer(layerType);
 		}
 	}
 
-	private void removeIconLayer(LayerType layerType) {
+	private void removeLayer(LayerType layerType) {
 		List<MapObject> objectsToRemove = new LinkedList<MapObject>();
 		for (MapObject mapObject : currentFragment.getMapObjects()) {
 			if (mapObject.getIconLayer().getLayerType() == layerType) {

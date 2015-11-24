@@ -54,10 +54,7 @@ public class Fragment implements Iterable<Fragment> {
 	public static final int BIOME_SIZE = SIZE >> 2;
 
 	private BufferedImage[] images;
-	private Set<LayerType> invalidatedImageLayers = EnumSet
-			.noneOf(LayerType.class);
-	private Set<LayerType> invalidatedIconLayers = EnumSet
-			.noneOf(LayerType.class);
+	private Set<LayerType> invalidatedLayers = EnumSet.noneOf(LayerType.class);
 	private List<MapObject> mapObjects = new LinkedList<MapObject>();
 	private float alpha;
 
@@ -110,12 +107,8 @@ public class Fragment implements Iterable<Fragment> {
 		mapObjects.clear();
 	}
 
-	public void clearInvalidatedImageLayers() {
-		invalidatedImageLayers.clear();
-	}
-
-	public void clearInvalidatedIconLayers() {
-		invalidatedIconLayers.clear();
+	public void clearInvalidatedLayers() {
+		invalidatedLayers.clear();
 	}
 
 	public void initAlpha() {
@@ -132,17 +125,9 @@ public class Fragment implements Iterable<Fragment> {
 
 	// TODO: move this to the class FragmentLoader
 	@Deprecated
-	public void invalidateImageLayer(LayerType layerType) {
+	public void invalidateLayer(LayerType layerType) {
 		if (isLoaded()) {
-			invalidatedImageLayers.add(layerType);
-		}
-	}
-
-	// TODO: move this to the class FragmentLoader
-	@Deprecated
-	public void invalidateIconLayer(LayerType layerType) {
-		if (isLoaded()) {
-			invalidatedIconLayers.add(layerType);
+			invalidatedLayers.add(layerType);
 		}
 	}
 
@@ -158,12 +143,8 @@ public class Fragment implements Iterable<Fragment> {
 		return images;
 	}
 
-	public Set<LayerType> getInvalidatedImageLayers() {
-		return invalidatedImageLayers;
-	}
-
-	public Set<LayerType> getInvalidatedIconLayers() {
-		return invalidatedIconLayers;
+	public Set<LayerType> getInvalidatedLayers() {
+		return invalidatedLayers;
 	}
 
 	public BufferedImage getImage(int layerId) {
