@@ -1,11 +1,18 @@
 package amidst.map;
 
+import java.util.EnumMap;
+
 import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
+import amidst.map.layer.Layer;
+import amidst.map.layer.LayerType;
 import amidst.map.layer.LiveLayer;
 import amidst.minecraft.world.World;
 
 public class LayerContainer {
+	private EnumMap<LayerType, Layer> layerMap = new EnumMap<LayerType, Layer>(
+			LayerType.class);
+
 	private IconLayer playerLayer;
 	private ImageLayer biomeLayer;
 	private ImageLayer[] imageLayers;
@@ -20,6 +27,19 @@ public class LayerContainer {
 		this.imageLayers = imageLayers;
 		this.liveLayers = liveLayers;
 		this.iconLayers = iconLayers;
+		initLayerMap();
+	}
+
+	private void initLayerMap() {
+		for (ImageLayer layer : imageLayers) {
+			layerMap.put(layer.getLayerType(), layer);
+		}
+		for (LiveLayer layer : liveLayers) {
+			layerMap.put(layer.getLayerType(), layer);
+		}
+		for (IconLayer layer : iconLayers) {
+			layerMap.put(layer.getLayerType(), layer);
+		}
 	}
 
 	public IconLayer getPlayerLayer() {
@@ -63,6 +83,36 @@ public class LayerContainer {
 		}
 		for (IconLayer layer : iconLayers) {
 			layer.setWorld(world);
+		}
+	}
+
+	public ImageLayer getImageLayer(LayerType layerType) {
+		Layer layer = layerMap.get(layerType);
+		if (layer instanceof ImageLayer) {
+			return (ImageLayer) layer;
+		} else {
+			throw new IllegalArgumentException(
+					"wrong layer type ... this should never happen!");
+		}
+	}
+
+	public LiveLayer getLiveLayer(LayerType layerType) {
+		Layer layer = layerMap.get(layerType);
+		if (layer instanceof LiveLayer) {
+			return (LiveLayer) layer;
+		} else {
+			throw new IllegalArgumentException(
+					"wrong layer type ... this should never happen!");
+		}
+	}
+
+	public IconLayer getIconLayer(LayerType layerType) {
+		Layer layer = layerMap.get(layerType);
+		if (layer instanceof IconLayer) {
+			return (IconLayer) layer;
+		} else {
+			throw new IllegalArgumentException(
+					"wrong layer type ... this should never happen!");
 		}
 	}
 }

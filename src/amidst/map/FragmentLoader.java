@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
+import amidst.map.layer.LayerType;
 import amidst.map.layer.MapObject;
 
 public class FragmentLoader {
@@ -63,46 +64,48 @@ public class FragmentLoader {
 
 	private void loadAllImages() {
 		for (ImageLayer imageLayer : layerContainer.getImageLayers()) {
-			loadImage(imageLayer);
+			loadImage(imageLayer.getLayerType());
 		}
 	}
 
 	private void loadAllIconLayers() {
 		for (IconLayer iconLayer : layerContainer.getIconLayers()) {
-			loadIconLayer(iconLayer);
+			loadIconLayer(iconLayer.getLayerType());
 		}
 	}
 
 	private void reloadInvalidatedImages() {
 		for (ImageLayer imageLayer : currentFragment
 				.getInvalidatedImageLayers()) {
-			loadImage(imageLayer);
+			loadImage(imageLayer.getLayerType());
 		}
 	}
 
 	private void reloadInvalidatedIconLayers() {
 		for (IconLayer iconLayer : currentFragment.getInvalidatedIconLayers()) {
-			removeIconLayer(iconLayer);
-			loadIconLayer(iconLayer);
+			removeIconLayer(iconLayer.getLayerType());
+			loadIconLayer(iconLayer.getLayerType());
 		}
 	}
 
-	private void removeIconLayer(IconLayer iconLayer) {
+	private void removeIconLayer(LayerType layerType) {
 		List<MapObject> objectsToRemove = new LinkedList<MapObject>();
 		for (MapObject mapObject : currentFragment.getMapObjects()) {
-			if (mapObject.getIconLayer() == iconLayer) {
+			if (mapObject.getIconLayer().getLayerType() == layerType) {
 				objectsToRemove.add(mapObject);
 			}
 		}
 		currentFragment.getMapObjects().removeAll(objectsToRemove);
 	}
 
-	private void loadImage(ImageLayer imageLayer) {
+	private void loadImage(LayerType layerType) {
+		ImageLayer imageLayer = layerContainer.getImageLayer(layerType);
 		imageLayer.drawToCache(currentFragment, imageCache,
 				currentFragment.getImage(imageLayer.getLayerId()));
 	}
 
-	private void loadIconLayer(IconLayer iconLayer) {
+	private void loadIconLayer(LayerType layerType) {
+		IconLayer iconLayer = layerContainer.getIconLayer(layerType);
 		iconLayer.generateMapObjects(currentFragment);
 	}
 }
