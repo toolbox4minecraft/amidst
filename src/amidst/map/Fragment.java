@@ -1,6 +1,7 @@
 package amidst.map;
 
 import java.awt.image.BufferedImage;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -168,7 +169,12 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	public List<MapObject> getMapObjects(LayerType layerType) {
-		return mapObjects.get(layerType);
+		List<MapObject> result = mapObjects.get(layerType);
+		if (result != null) {
+			return result;
+		} else {
+			return Collections.emptyList();
+		}
 	}
 
 	public EnumMap<LayerType, List<MapObject>> getMapObjects() {
