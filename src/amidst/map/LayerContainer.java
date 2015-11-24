@@ -15,6 +15,9 @@ public class LayerContainer {
 	private java.util.Map<LayerType, Layer> layerMap = new EnumMap<LayerType, Layer>(
 			LayerType.class);
 	private Set<LayerType> loadableLayerTypes = EnumSet.noneOf(LayerType.class);
+	private Set<LayerType> imageLayerTypes = EnumSet.noneOf(LayerType.class);
+	private Set<LayerType> liveLayerTypes = EnumSet.noneOf(LayerType.class);
+	private Set<LayerType> iconLayerTypes = EnumSet.noneOf(LayerType.class);
 
 	private ImageLayer[] imageLayers;
 	private LiveLayer[] liveLayers;
@@ -26,7 +29,7 @@ public class LayerContainer {
 		this.liveLayers = liveLayers;
 		this.iconLayers = iconLayers;
 		initLayerMap();
-		initLoadableLayerTypes();
+		initLayerTypes();
 	}
 
 	private void initLayerMap() {
@@ -41,11 +44,16 @@ public class LayerContainer {
 		}
 	}
 
-	private void initLoadableLayerTypes() {
+	private void initLayerTypes() {
 		for (ImageLayer layer : imageLayers) {
+			imageLayerTypes.add(layer.getLayerType());
 			loadableLayerTypes.add(layer.getLayerType());
 		}
+		for (LiveLayer layer : liveLayers) {
+			liveLayerTypes.add(layer.getLayerType());
+		}
 		for (IconLayer layer : iconLayers) {
+			iconLayerTypes.add(layer.getLayerType());
 			loadableLayerTypes.add(layer.getLayerType());
 		}
 	}
@@ -92,5 +100,17 @@ public class LayerContainer {
 
 	public Set<LayerType> getLoadableLayerTypes() {
 		return loadableLayerTypes;
+	}
+
+	public boolean isImageLayer(LayerType layerType) {
+		return imageLayerTypes.contains(layerType);
+	}
+
+	public boolean isLiveLayer(LayerType layerType) {
+		return liveLayerTypes.contains(layerType);
+	}
+
+	public boolean isIconLayer(LayerType layerType) {
+		return iconLayerTypes.contains(layerType);
 	}
 }

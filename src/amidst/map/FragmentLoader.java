@@ -67,12 +67,14 @@ public class FragmentLoader {
 
 	private void reloadInvalidatedLayers() {
 		for (LayerType layerType : currentFragment.getInvalidatedLayers()) {
-			removeLayer(layerType);
+			if (layerContainer.isIconLayer(layerType)) {
+				removeIconLayer(layerType);
+			}
 			loadLayer(layerType);
 		}
 	}
 
-	private void removeLayer(LayerType layerType) {
+	private void removeIconLayer(LayerType layerType) {
 		List<MapObject> objectsToRemove = new LinkedList<MapObject>();
 		for (MapObject mapObject : currentFragment.getMapObjects()) {
 			if (mapObject.getIconLayer().getLayerType() == layerType) {
