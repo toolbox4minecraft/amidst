@@ -26,9 +26,9 @@ public class GridLayer extends LiveLayer {
 	}
 
 	@Override
-	public void drawLive(Fragment fragment, Graphics2D g2d,
-			AffineTransform inMat) {
-		AffineTransform mat = new AffineTransform(inMat);
+	public void draw(Fragment fragment, Graphics2D g2d,
+			AffineTransform layerMatrix) {
+		AffineTransform mat = new AffineTransform(layerMatrix);
 		initGraphics(g2d, mat);
 		int stride = getStride();
 		int gridX = getGridX(fragment, stride);
@@ -40,7 +40,7 @@ public class GridLayer extends LiveLayer {
 			drawText(g2d);
 			// drawThickTextOutline(g2d);
 			drawTextOutline(g2d);
-			resetTransformation(g2d, inMat);
+			resetTransformation(g2d, layerMatrix);
 		}
 	}
 

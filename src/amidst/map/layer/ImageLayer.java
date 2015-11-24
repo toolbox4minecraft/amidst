@@ -1,5 +1,7 @@
 package amidst.map.layer;
 
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import amidst.map.Fragment;
@@ -38,6 +40,11 @@ public abstract class ImageLayer extends Layer {
 	@Override
 	public void reload(Fragment fragment, int[] imageCache) {
 		doLoad(fragment, imageCache);
+	}
+
+	@Override
+	public void draw(Fragment fragment, Graphics2D g2d,
+			AffineTransform layerMatrix) {
 	}
 
 	protected void doLoad(Fragment fragment, int[] imageCache) {

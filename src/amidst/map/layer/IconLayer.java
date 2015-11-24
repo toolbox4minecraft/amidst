@@ -1,5 +1,8 @@
 package amidst.map.layer;
 
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+
 import amidst.map.Fragment;
 import amidst.minecraft.world.finder.WorldObject;
 import amidst.minecraft.world.finder.WorldObjectConsumer;
@@ -25,6 +28,11 @@ public abstract class IconLayer extends Layer {
 	public void reload(Fragment fragment, int[] imageCache) {
 		fragment.removeMapObjects(getLayerType());
 		doLoad(fragment);
+	}
+
+	@Override
+	public void draw(Fragment fragment, Graphics2D g2d,
+			AffineTransform layerMatrix) {
 	}
 
 	protected void doLoad(Fragment fragment) {

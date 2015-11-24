@@ -250,7 +250,7 @@ public class MapDrawer {
 	private void drawLiveLayers() {
 		for (LiveLayer liveLayer : map.getLiveLayers()) {
 			if (liveLayer.isVisible()) {
-				liveLayer.drawLive(currentFragment, g2d, layerDrawMatrix);
+				liveLayer.draw(currentFragment, g2d, layerDrawMatrix);
 			}
 		}
 	}
