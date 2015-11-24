@@ -1,10 +1,12 @@
 package amidst.map;
 
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.logging.Log;
+import amidst.map.layer.ImageLayer;
 
 public class FragmentCache {
 	private static final int NEW_FRAGMENTS_PER_REQUEST = 1024;
@@ -25,10 +27,24 @@ public class FragmentCache {
 
 	private void requestNewFragments() {
 		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
-			Fragment fragment = new Fragment(layerContainer);
+			Fragment fragment = createFragment();
 			cache.add(fragment);
 			availableQueue.offer(fragment);
 		}
+	}
+
+	private Fragment createFragment() {
+		ImageLayer[] imageLayers = layerContainer.getImageLayers();
+		BufferedImage[] images = new BufferedImage[imageLayers.length];
+		boolean[] repaintImage = new boolean[imageLayers.length];
+		for (ImageLayer imageLayer : imageLayers) {
+			int layerId = imageLayer.getLayerId();
+			int layerSize = imageLayer.getSize();
+			images[layerId] = new BufferedImage(layerSize, layerSize,
+					BufferedImage.TYPE_INT_ARGB);
+			repaintImage[layerId] = true;
+		}
+		return new Fragment(images, repaintImage);
 	}
 
 	public void increaseSize() {

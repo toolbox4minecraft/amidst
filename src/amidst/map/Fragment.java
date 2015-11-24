@@ -7,7 +7,6 @@ import java.util.List;
 
 import amidst.Options;
 import amidst.map.layer.IconLayer;
-import amidst.map.layer.ImageLayer;
 import amidst.map.layer.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
 
@@ -48,8 +47,6 @@ public class Fragment implements Iterable<Fragment> {
 	@Deprecated
 	public static final int BIOME_SIZE = SIZE >> 2;
 
-	private LayerContainer layerContainer;
-
 	private BufferedImage[] images;
 	private boolean[] repaintImage;
 	private List<IconLayer> invalidatedIconLayers = new LinkedList<IconLayer>();
@@ -63,22 +60,9 @@ public class Fragment implements Iterable<Fragment> {
 	private Fragment aboveFragment = null;
 	private Fragment belowFragment = null;
 
-	public Fragment(LayerContainer layerContainer) {
-		this.layerContainer = layerContainer;
-		initImages();
-	}
-
-	private void initImages() {
-		ImageLayer[] imageLayers = layerContainer.getImageLayers();
-		this.images = new BufferedImage[imageLayers.length];
-		this.repaintImage = new boolean[imageLayers.length];
-		for (ImageLayer imageLayer : imageLayers) {
-			int layerId = imageLayer.getLayerId();
-			int layerSize = imageLayer.getSize();
-			images[layerId] = new BufferedImage(layerSize, layerSize,
-					BufferedImage.TYPE_INT_ARGB);
-			repaintImage[layerId] = true;
-		}
+	public Fragment(BufferedImage[] images, boolean[] repaintImage) {
+		this.images = images;
+		this.repaintImage = repaintImage;
 	}
 
 	public void initialize(CoordinatesInWorld corner) {
