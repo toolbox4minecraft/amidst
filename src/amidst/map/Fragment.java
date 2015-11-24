@@ -48,8 +48,6 @@ public class Fragment implements Iterable<Fragment> {
 	@Deprecated
 	public static final int BIOME_SIZE = SIZE >> 2;
 
-	private Object loadLock = new Object();
-
 	private LayerContainer layerContainer;
 
 	private BufferedImage[] images;
@@ -95,10 +93,8 @@ public class Fragment implements Iterable<Fragment> {
 
 	private void doReset() {
 		isLoaded = false;
-		synchronized (loadLock) {
-			mapObjects.clear();
-			invalidatedIconLayers.clear();
-		}
+		mapObjects.clear();
+		invalidatedIconLayers.clear();
 		alpha = 0.0f;
 		leftFragment = null;
 		rightFragment = null;
@@ -113,20 +109,22 @@ public class Fragment implements Iterable<Fragment> {
 	// TODO: move this to the class FragmentLoader
 	@Deprecated
 	public void load(int[] imageCache) {
-		synchronized (loadLock) {
-			if (isInitialized()) {
-				ImageLayer[] imageLayers = layerContainer.getImageLayers();
-				if (isLoaded) {
-					repaintInvalidatedImages(imageCache, imageLayers);
-					reloadInvalidatedIconLayers();
-				} else {
-					repaintAllImages(imageCache, imageLayers);
-					generateMapObjects();
-					initAlpha();
-					isLoaded = true;
-				}
+		if (isInitialized()) {
+			ImageLayer[] imageLayers = layerContainer.getImageLayers();
+			if (isLoaded()) {
+				repaintInvalidatedImages(imageCache, imageLayers);
+				reloadInvalidatedIconLayers();
+			} else {
+				repaintAllImages(imageCache, imageLayers);
+				generateMapObjects();
+				initAlpha();
+				setLoaded();
 			}
 		}
+	}
+
+	private void setLoaded() {
+		isLoaded = true;
 	}
 
 	private void repaintInvalidatedImages(int[] imageCache,
@@ -189,10 +187,8 @@ public class Fragment implements Iterable<Fragment> {
 	// TODO: move this to the class FragmentLoader
 	@Deprecated
 	public void invalidateIconLayer(IconLayer iconLayer) {
-		synchronized (loadLock) {
-			if (isLoaded) {
-				invalidatedIconLayers.add(iconLayer);
-			}
+		if (isLoaded) {
+			invalidatedIconLayers.add(iconLayer);
 		}
 	}
 
@@ -201,16 +197,12 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	public void addObject(MapObject mapObject) {
-		synchronized (loadLock) {
-			mapObjects.add(mapObject);
-		}
+		mapObjects.add(mapObject);
 	}
 
 	public void removeObject(MapObject mapObject) {
-		synchronized (loadLock) {
-			if (isLoaded) {
-				mapObjects.remove(mapObject);
-			}
+		if (isLoaded) {
+			mapObjects.remove(mapObject);
 		}
 	}
 
