@@ -1,11 +1,13 @@
 package amidst.map;
 
 import java.awt.image.BufferedImage;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import amidst.Options;
+import amidst.map.layer.LayerType;
 import amidst.map.layer.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
 
@@ -50,7 +52,7 @@ public class Fragment implements Iterable<Fragment> {
 	@Deprecated
 	public static final int BIOME_SIZE = SIZE >> 2;
 
-	private BufferedImage[] images;
+	private EnumMap<LayerType, BufferedImage> images;
 	private List<MapObject> mapObjects = new LinkedList<MapObject>();
 	private float alpha;
 
@@ -62,7 +64,7 @@ public class Fragment implements Iterable<Fragment> {
 	private Fragment aboveFragment = null;
 	private Fragment belowFragment = null;
 
-	public Fragment(BufferedImage[] images) {
+	public Fragment(EnumMap<LayerType, BufferedImage> images) {
 		this.images = images;
 	}
 
@@ -123,12 +125,12 @@ public class Fragment implements Iterable<Fragment> {
 		return mapObjects;
 	}
 
-	public BufferedImage[] getImages() {
+	public EnumMap<LayerType, BufferedImage> getImages() {
 		return images;
 	}
 
-	public BufferedImage getImage(int layerId) {
-		return images[layerId];
+	public BufferedImage getImage(LayerType layerType) {
+		return images.get(layerType);
 	}
 
 	@Override

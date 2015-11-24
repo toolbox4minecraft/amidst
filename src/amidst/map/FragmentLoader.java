@@ -94,7 +94,7 @@ public class FragmentLoader {
 
 	private void loadImageLayer(ImageLayer imageLayer) {
 		imageLayer.drawToCache(currentFragment, imageCache,
-				currentFragment.getImage(imageLayer.getLayerId()));
+				currentFragment.getImage(imageLayer.getLayerType()));
 	}
 
 	private void loadIconLayer(IconLayer iconLayer) {

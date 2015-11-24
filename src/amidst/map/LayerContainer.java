@@ -12,7 +12,7 @@ import amidst.map.layer.LiveLayer;
 import amidst.minecraft.world.World;
 
 public class LayerContainer {
-	private java.util.Map<LayerType, Layer> layerMap = new EnumMap<LayerType, Layer>(
+	private EnumMap<LayerType, Layer> layerMap = new EnumMap<LayerType, Layer>(
 			LayerType.class);
 	private Set<LayerType> loadableLayerTypes = EnumSet.noneOf(LayerType.class);
 	private Set<LayerType> imageLayerTypes = EnumSet.noneOf(LayerType.class);
@@ -126,5 +126,10 @@ public class LayerContainer {
 
 	public void invalidateLayer(LayerType layerType) {
 		invalidatedLayerTypes.add(layerType);
+	}
+
+	public ImageLayer getImageLayer(LayerType layerType) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

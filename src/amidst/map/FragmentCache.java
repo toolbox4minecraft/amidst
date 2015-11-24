@@ -1,12 +1,14 @@
 package amidst.map;
 
 import java.awt.image.BufferedImage;
+import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.logging.Log;
 import amidst.map.layer.ImageLayer;
+import amidst.map.layer.LayerType;
 
 public class FragmentCache {
 	private static final int NEW_FRAGMENTS_PER_REQUEST = 1024;
@@ -37,15 +39,18 @@ public class FragmentCache {
 	}
 
 	private Fragment createFragment() {
-		ImageLayer[] imageLayers = layerContainer.getImageLayers();
-		BufferedImage[] images = new BufferedImage[imageLayers.length];
-		for (ImageLayer imageLayer : imageLayers) {
-			int layerId = imageLayer.getLayerId();
-			int layerSize = imageLayer.getSize();
-			images[layerId] = new BufferedImage(layerSize, layerSize,
-					BufferedImage.TYPE_INT_ARGB);
+		EnumMap<LayerType, BufferedImage> images = new EnumMap<LayerType, BufferedImage>(
+				LayerType.class);
+		for (ImageLayer imageLayer : layerContainer.getImageLayers()) {
+			images.put(imageLayer.getLayerType(),
+					createBufferedImage(imageLayer.getSize()));
 		}
 		return new Fragment(images);
+	}
+
+	private BufferedImage createBufferedImage(int layerSize) {
+		return new BufferedImage(layerSize, layerSize,
+				BufferedImage.TYPE_INT_ARGB);
 	}
 
 	public void increaseSize() {

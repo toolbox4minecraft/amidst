@@ -9,9 +9,12 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import amidst.map.layer.ImageLayer;
+import amidst.map.layer.LayerType;
 import amidst.map.layer.LiveLayer;
 import amidst.map.layer.MapObject;
 import amidst.map.widget.Widget;
@@ -213,11 +216,12 @@ public class MapDrawer {
 		if (currentFragment.isLoaded()) {
 			currentFragment.updateAlpha(time);
 			ImageLayer[] imageLayers = map.getImageLayers();
-			BufferedImage[] images = currentFragment.getImages();
-			for (int i = 0; i < images.length; i++) {
-				ImageLayer imageLayer = imageLayers[i];
+			EnumMap<LayerType, BufferedImage> images = currentFragment
+					.getImages();
+			for (Entry<LayerType, BufferedImage> entry : images.entrySet()) {
+				ImageLayer imageLayer = map.getImageLayer(entry.getKey());
 				if (imageLayer.isVisible()) {
-					drawImageLayer(imageLayer, images[i]);
+					drawImageLayer(imageLayer, entry.getValue());
 				}
 			}
 			setAlphaComposite(1.0f);

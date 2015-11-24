@@ -261,4 +261,8 @@ public class Map {
 	public ImageLayer[] getImageLayers() {
 		return layerContainer.getImageLayers();
 	}
+
+	public ImageLayer getImageLayer(LayerType layerType) {
+		return layerContainer.getImageLayer(layerType);
+	}
 }
