@@ -32,6 +32,15 @@ public abstract class ImageLayer extends Layer {
 
 	@Override
 	public void load(Fragment fragment, int[] imageCache) {
+		doLoad(fragment, imageCache);
+	}
+
+	@Override
+	public void reload(Fragment fragment, int[] imageCache) {
+		doLoad(fragment, imageCache);
+	}
+
+	protected void doLoad(Fragment fragment, int[] imageCache) {
 		CoordinatesInWorld corner = fragment.getCorner();
 		long cornerX = corner.getXAs(resolution);
 		long cornerY = corner.getYAs(resolution);

@@ -38,4 +38,6 @@ public abstract class Layer {
 	}
 
 	public abstract void load(Fragment fragment, int[] imageCache);
+
+	public abstract void reload(Fragment fragment, int[] imageCache);
 }

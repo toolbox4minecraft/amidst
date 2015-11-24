@@ -23,6 +23,12 @@ public class BiomeLayer extends ImageLayer {
 	}
 
 	@Override
+	public void load(Fragment fragment, int[] imageCache) {
+		getWorld().populateBiomeDataArray(fragment);
+		doLoad(fragment, imageCache);
+	}
+
+	@Override
 	protected int getColorAt(Fragment fragment, long cornerX, long cornerY,
 			int x, int y) {
 		return getColor(fragment.getBiomeDataAt(x, y));

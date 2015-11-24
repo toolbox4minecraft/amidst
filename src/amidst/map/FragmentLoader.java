@@ -3,7 +3,6 @@ package amidst.map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.map.layer.LayerType;
-import amidst.minecraft.world.World;
 
 public class FragmentLoader {
 	private LayerContainer layerContainer;
@@ -13,7 +12,6 @@ public class FragmentLoader {
 
 	private int[] imageCache = new int[Fragment.SIZE * Fragment.SIZE];
 	private Fragment currentFragment;
-	private World world;
 
 	public FragmentLoader(LayerContainer layerContainer,
 			ConcurrentLinkedQueue<Fragment> availableQueue,
@@ -46,7 +44,6 @@ public class FragmentLoader {
 			availableQueue.offer(currentFragment);
 		} else if (currentFragment.isInitialized()) {
 			currentFragment.clearMapObjects();
-			world.populateBiomeDataArray(currentFragment);
 			loadAllLayers();
 			currentFragment.initAlpha();
 			currentFragment.setLoaded();
@@ -63,20 +60,15 @@ public class FragmentLoader {
 
 	private void reloadInvalidatedLayers() {
 		for (LayerType layerType : layerContainer.getInvalidatedLayerTypes()) {
-			removeIconLayer(layerType);
-			loadLayer(layerType);
+			reloadLayer(layerType);
 		}
-	}
-
-	private void removeIconLayer(LayerType layerType) {
-		currentFragment.removeMapObjects(layerType);
 	}
 
 	private void loadLayer(LayerType layerType) {
 		layerContainer.getLayer(layerType).load(currentFragment, imageCache);
 	}
 
-	public void setWorld(World world) {
-		this.world = world;
+	private void reloadLayer(LayerType layerType) {
+		layerContainer.getLayer(layerType).reload(currentFragment, imageCache);
 	}
 }

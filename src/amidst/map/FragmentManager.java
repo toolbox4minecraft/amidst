@@ -3,7 +3,6 @@ package amidst.map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.World;
 
 public class FragmentManager {
 	private ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<Fragment>();
@@ -68,9 +67,5 @@ public class FragmentManager {
 
 	public int getCacheSize() {
 		return cache.size();
-	}
-
-	public void setWorld(World world) {
-		loader.setWorld(world);
 	}
 }

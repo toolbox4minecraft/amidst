@@ -18,6 +18,16 @@ public abstract class IconLayer extends Layer {
 
 	@Override
 	public void load(Fragment fragment, int[] imageCache) {
+		doLoad(fragment);
+	}
+
+	@Override
+	public void reload(Fragment fragment, int[] imageCache) {
+		fragment.removeMapObjects(getLayerType());
+		doLoad(fragment);
+	}
+
+	protected void doLoad(Fragment fragment) {
 		getProducer().produce(fragment.getCorner(),
 				createWorldObjectConsumer(fragment));
 	}
@@ -27,8 +37,8 @@ public abstract class IconLayer extends Layer {
 		return new WorldObjectConsumer() {
 			@Override
 			public void consume(WorldObject worldObject) {
-				fragment.addMapObject(getLayerType(), new MapObject(worldObject,
-						IconLayer.this));
+				fragment.addMapObject(getLayerType(), new MapObject(
+						worldObject, IconLayer.this));
 			}
 		};
 	}

@@ -15,6 +15,11 @@ public abstract class LiveLayer extends Layer {
 		// noop
 	}
 
+	@Override
+	public void reload(Fragment fragment, int[] imageCache) {
+		// noop
+	}
+
 	public abstract void drawLive(Fragment fragment, Graphics2D g,
 			AffineTransform mat);
 }
