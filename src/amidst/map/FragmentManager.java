@@ -7,15 +7,16 @@ import amidst.minecraft.world.CoordinatesInWorld;
 public class FragmentManager {
 	private ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<Fragment>();
 	private ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<Fragment>();
+	private ConcurrentLinkedQueue<Fragment> resetQueue = new ConcurrentLinkedQueue<Fragment>();
 
 	private FragmentCache cache;
 	private FragmentLoader loader;
 
 	public FragmentManager(LayerContainer layerContainer) {
 		this.cache = new FragmentCache(layerContainer, availableQueue,
-				loadingQueue);
+				loadingQueue, resetQueue);
 		this.loader = new FragmentLoader(layerContainer, availableQueue,
-				loadingQueue);
+				loadingQueue, resetQueue);
 	}
 
 	public Fragment requestFragment(CoordinatesInWorld coordinates) {
@@ -33,16 +34,21 @@ public class FragmentManager {
 	 */
 	public void recycleFragment(Fragment fragment) {
 		fragment.setNeedsReset();
-		loadingQueue.offer(fragment);
+		resetQueue.offer(fragment);
 	}
 
 	public void tick() {
-		loader.processRequestQueue();
+		loader.tick();
+	}
+
+	public void reloadAll() {
+		cache.reloadAll();
 	}
 
 	public void reset() {
-		loadingQueue.clear();
 		availableQueue.clear();
+		loadingQueue.clear();
+		resetQueue.clear();
 		cache.resetAll();
 	}
 
@@ -54,11 +60,11 @@ public class FragmentManager {
 		return loadingQueue.size();
 	}
 
-	public int getCacheSize() {
-		return cache.size();
+	public int getResetQueueSize() {
+		return resetQueue.size();
 	}
 
-	public void reloadAll() {
-		cache.reloadAll();
+	public int getCacheSize() {
+		return cache.size();
 	}
 }

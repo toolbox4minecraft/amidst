@@ -15,13 +15,16 @@ public class FragmentCache {
 	private LayerContainer layerContainer;
 	private ConcurrentLinkedQueue<Fragment> availableQueue;
 	private ConcurrentLinkedQueue<Fragment> loadingQueue;
+	private ConcurrentLinkedQueue<Fragment> resetQueue;
 
 	public FragmentCache(LayerContainer layerContainer,
 			ConcurrentLinkedQueue<Fragment> availableQueue,
-			ConcurrentLinkedQueue<Fragment> loadingQueue) {
+			ConcurrentLinkedQueue<Fragment> loadingQueue,
+			ConcurrentLinkedQueue<Fragment> resetQueue) {
 		this.layerContainer = layerContainer;
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
+		this.resetQueue = resetQueue;
 		requestNewFragments();
 	}
 
@@ -57,7 +60,7 @@ public class FragmentCache {
 	public void resetAll() {
 		for (Fragment fragment : cache) {
 			fragment.setNeedsReset();
-			loadingQueue.offer(fragment);
+			resetQueue.offer(fragment);
 		}
 	}
 

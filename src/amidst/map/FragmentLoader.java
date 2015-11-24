@@ -12,21 +12,31 @@ public class FragmentLoader {
 	private LayerContainer layerContainer;
 	private ConcurrentLinkedQueue<Fragment> availableQueue;
 	private ConcurrentLinkedQueue<Fragment> loadingQueue;
+	private ConcurrentLinkedQueue<Fragment> resetQueue;
 
 	private int[] imageCache = new int[Fragment.SIZE * Fragment.SIZE];
 	private Fragment currentFragment;
 
 	public FragmentLoader(LayerContainer layerContainer,
 			ConcurrentLinkedQueue<Fragment> availableQueue,
-			ConcurrentLinkedQueue<Fragment> loadingQueue) {
+			ConcurrentLinkedQueue<Fragment> loadingQueue,
+			ConcurrentLinkedQueue<Fragment> resetQueue) {
 		this.layerContainer = layerContainer;
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
+		this.resetQueue = resetQueue;
 	}
 
-	public void processRequestQueue() {
-		while (!loadingQueue.isEmpty()) {
-			currentFragment = loadingQueue.poll();
+	public void tick() {
+		processResetQueue();
+		while ((currentFragment = loadingQueue.poll()) != null) {
+			loadFragment();
+			processResetQueue();
+		}
+	}
+
+	private void processResetQueue() {
+		while ((currentFragment = resetQueue.poll()) != null) {
 			loadFragment();
 		}
 	}
