@@ -13,7 +13,7 @@ public class FragmentManager {
 	private FragmentLoader loader;
 
 	public FragmentManager(LayerContainer layerContainer) {
-		this.cache = new FragmentCache(layerContainer, availableQueue,
+		this.cache = new FragmentCache(new FragmentFactory(), availableQueue,
 				loadingQueue, resetQueue);
 		this.loader = new FragmentLoader(layerContainer, availableQueue,
 				loadingQueue, resetQueue);

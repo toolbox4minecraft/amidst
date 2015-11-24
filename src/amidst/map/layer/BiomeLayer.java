@@ -6,8 +6,11 @@ import amidst.minecraft.world.Resolution;
 import amidst.utilities.ColorUtils;
 
 public class BiomeLayer extends ImageLayer {
+	public static final LayerType LAYER_TYPE = LayerType.BIOME;
+	public static final Resolution RESOLUTION = Resolution.QUARTER;
+
 	public BiomeLayer() {
-		super(LayerType.BIOME, Resolution.QUARTER);
+		super(LAYER_TYPE, RESOLUTION);
 	}
 
 	@Override

@@ -7,13 +7,16 @@ import amidst.map.Fragment;
 import amidst.minecraft.world.Resolution;
 
 public class SlimeLayer extends ImageLayer {
+	public static final LayerType LAYER_TYPE = LayerType.SLIME;
+	public static final Resolution RESOLUTION = Resolution.CHUNK;
+
 	private static final int SLIME_CHUNK_COLOR = 0xA0FF00FF;
 	private static final int NOT_SLIME_CHUNK_COLOR = 0x00000000;
 
 	private Random random = new Random();
 
 	public SlimeLayer() {
-		super(LayerType.SLIME, Resolution.CHUNK);
+		super(LAYER_TYPE, RESOLUTION);
 	}
 
 	@Override
