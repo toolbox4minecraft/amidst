@@ -7,15 +7,25 @@ public class BiomeDataProvider {
 	public static final int SIZE = (int) Resolution.QUARTER
 			.convertFromWorldToThis(Fragment.SIZE);
 
+	public static short[][] createEmptyBiomeDataArray() {
+		return new short[SIZE][SIZE];
+	}
+
 	/**
 	 * x and y of coordinates have to be divisible by BiomeDataProvider.SIZE
 	 */
+	@Deprecated
 	public short[][] getBiomeDataForFragment(CoordinatesInWorld corner) {
 		return create(corner);
 	}
 
 	private short[][] create(CoordinatesInWorld corner) {
-		short[][] result = new short[SIZE][SIZE];
+		short[][] result = createEmptyBiomeDataArray();
+		populateArray(corner, result);
+		return result;
+	}
+
+	public void populateArray(CoordinatesInWorld corner, short[][] result) {
 		int xInQuarterResolution = (int) corner.getXAs(Resolution.QUARTER);
 		int yInQuarterResolution = (int) corner.getYAs(Resolution.QUARTER);
 		int[] biomeData = MinecraftUtil.getBiomeData(xInQuarterResolution,
@@ -25,7 +35,6 @@ public class BiomeDataProvider {
 				result[x][y] = (short) biomeData[getBiomeDataIndex(x, y)];
 			}
 		}
-		return result;
 	}
 
 	private int getBiomeDataIndex(int x, int y) {

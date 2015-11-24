@@ -9,6 +9,7 @@ import amidst.map.layer.ImageLayer;
 import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
 import amidst.map.layer.MapObject;
+import amidst.minecraft.world.World;
 
 public class FragmentLoader {
 	private LayerContainer layerContainer;
@@ -18,6 +19,7 @@ public class FragmentLoader {
 
 	private int[] imageCache = new int[Fragment.SIZE * Fragment.SIZE];
 	private Fragment currentFragment;
+	private World world;
 
 	public FragmentLoader(LayerContainer layerContainer,
 			ConcurrentLinkedQueue<Fragment> availableQueue,
@@ -50,6 +52,7 @@ public class FragmentLoader {
 			availableQueue.offer(currentFragment);
 		} else if (currentFragment.isInitialized()) {
 			currentFragment.clearMapObjects();
+			world.populateBiomeDataArray(currentFragment);
 			loadAllLayers();
 			currentFragment.initAlpha();
 			currentFragment.setLoaded();
@@ -99,5 +102,9 @@ public class FragmentLoader {
 
 	private void loadIconLayer(IconLayer iconLayer) {
 		iconLayer.generateMapObjects(currentFragment);
+	}
+
+	public void setWorld(World world) {
+		this.world = world;
 	}
 }

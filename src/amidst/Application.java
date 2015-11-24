@@ -169,6 +169,7 @@ public class Application {
 			seedHistoryLogger.log(world.getSeed());
 			mapWindow.clearWorld();
 			getLayerContainer().setWorld(world);
+			getFragmentManager().setWorld(world);
 			mapWindow.initWorld();
 			if (world.isFileWorld()) {
 				skinLoader

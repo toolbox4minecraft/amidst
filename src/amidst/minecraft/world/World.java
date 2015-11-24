@@ -95,14 +95,16 @@ public abstract class World {
 		playerProducer.resetCache();
 	}
 
-	public short[][] getBiomeDataForFragment(Fragment fragment) {
-		return biomeDataProvider.getBiomeDataForFragment(fragment.getCorner());
+	public void populateBiomeDataArray(Fragment fragment) {
+		biomeDataProvider.populateArray(fragment.getCorner(),
+				fragment.getBiomeData());
 	}
 
 	/**
 	 * Use this only to quickly get the biome data of a single point, not to
 	 * render the map.
 	 */
+	@Deprecated
 	public short getBiomeDataAt(CoordinatesInWorld coordinates) {
 		CoordinatesInWorld corner = coordinates.toFragmentCorner();
 		short[][] biomeData = biomeDataProvider.getBiomeDataForFragment(corner);

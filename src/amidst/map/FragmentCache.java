@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import amidst.logging.Log;
 import amidst.map.layer.ImageLayer;
 import amidst.map.layer.LayerType;
+import amidst.minecraft.world.BiomeDataProvider;
 
 public class FragmentCache {
 	private static final int NEW_FRAGMENTS_PER_REQUEST = 1024;
@@ -32,10 +33,15 @@ public class FragmentCache {
 
 	private void requestNewFragments() {
 		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
-			Fragment fragment = new Fragment(createImagesMap());
+			Fragment fragment = new Fragment(createBiomeData(),
+					createImagesMap());
 			cache.add(fragment);
 			availableQueue.offer(fragment);
 		}
+	}
+
+	private short[][] createBiomeData() {
+		return BiomeDataProvider.createEmptyBiomeDataArray();
 	}
 
 	private EnumMap<LayerType, BufferedImage> createImagesMap() {

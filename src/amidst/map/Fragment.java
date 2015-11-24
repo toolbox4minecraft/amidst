@@ -58,10 +58,13 @@ public class Fragment implements Iterable<Fragment> {
 	private Fragment belowFragment = null;
 
 	private float alpha;
+	private short[][] biomeData;
 	private EnumMap<LayerType, BufferedImage> images;
 	private List<MapObject> mapObjects = new LinkedList<MapObject>();
 
-	public Fragment(EnumMap<LayerType, BufferedImage> images) {
+	public Fragment(short[][] biomeData,
+			EnumMap<LayerType, BufferedImage> images) {
+		this.biomeData = biomeData;
 		this.images = images;
 	}
 
@@ -108,6 +111,14 @@ public class Fragment implements Iterable<Fragment> {
 
 	public float getAlpha() {
 		return alpha;
+	}
+
+	public short getBiomeDataAt(int x, int y) {
+		return biomeData[x][y];
+	}
+
+	public short[][] getBiomeData() {
+		return biomeData;
 	}
 
 	public BufferedImage getImage(LayerType layerType) {
