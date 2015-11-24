@@ -251,7 +251,7 @@ public class Map {
 		return fragmentManager;
 	}
 
-	public void repaintBiomeLayer() {
+	public void reloadBiomeLayer() {
 		reloadLayer(LayerType.BIOME);
 	}
 

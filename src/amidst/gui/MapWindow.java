@@ -285,9 +285,9 @@ public class MapWindow {
 		}
 	}
 
-	public void repaintBiomeLayer() {
+	public void reloadBiomeLayer() {
 		if (map != null) {
-			map.repaintBiomeLayer();
+			map.reloadBiomeLayer();
 		}
 	}
 

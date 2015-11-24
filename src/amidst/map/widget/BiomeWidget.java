@@ -244,7 +244,7 @@ public class BiomeWidget extends Widget {
 		}
 		updateScrollbarParameters(mouseX, mouseY);
 		if (processClick(mouseX, mouseY)) {
-			map.repaintBiomeLayer();
+			map.reloadBiomeLayer();
 		}
 		return true;
 	}

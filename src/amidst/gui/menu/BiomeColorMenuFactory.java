@@ -101,7 +101,7 @@ public class BiomeColorMenuFactory {
 					}
 					selectedCheckBox.setSelected(true);
 					profile.activate();
-					mapWindow.repaintBiomeLayer();
+					mapWindow.reloadBiomeLayer();
 				}
 			};
 			if (firstListener == null) {
