@@ -11,6 +11,8 @@ import amidst.map.Fragment;
 import amidst.minecraft.world.Resolution;
 
 public class GridLayer extends LiveLayer {
+	private final AffineTransform gridLayerMatrix = new AffineTransform();
+
 	public GridLayer() {
 		super(LayerType.GRID);
 	}
@@ -28,14 +30,14 @@ public class GridLayer extends LiveLayer {
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d,
 			AffineTransform layerMatrix) {
-		AffineTransform mat = new AffineTransform(layerMatrix);
-		initGraphics(g2d, mat);
+		initGraphics(g2d, layerMatrix);
 		int stride = getStride();
 		int gridX = getGridX(fragment, stride);
 		int gridY = getGridY(fragment, stride);
 		drawGridLines(g2d, stride, gridX, gridY);
 		if (isGrid00(gridX, gridY)) {
-			scaleGraphics(g2d, mat);
+			initGridLayerMatrix(layerMatrix, 1.0 / getMap().getZoom());
+			g2d.setTransform(gridLayerMatrix);
 			updateText(fragment);
 			drawText(g2d);
 			// drawThickTextOutline(g2d);
@@ -44,12 +46,12 @@ public class GridLayer extends LiveLayer {
 		}
 	}
 
-	private void initGraphics(Graphics2D g2d, AffineTransform mat) {
+	private void initGraphics(Graphics2D g2d, AffineTransform layerMatrix) {
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2d.setFont(DRAW_FONT);
 		g2d.setColor(Color.black);
-		g2d.setTransform(mat);
+		g2d.setTransform(layerMatrix);
 	}
 
 	private int getStride() {
@@ -87,10 +89,9 @@ public class GridLayer extends LiveLayer {
 		return gridX == 0 && gridY == 0;
 	}
 
-	private void scaleGraphics(Graphics2D g2d, AffineTransform mat) {
-		double invZoom = 1.0 / getMap().getZoom();
-		mat.scale(invZoom, invZoom);
-		g2d.setTransform(mat);
+	private void initGridLayerMatrix(AffineTransform layerMatrix, double invZoom) {
+		gridLayerMatrix.setTransform(layerMatrix);
+		gridLayerMatrix.scale(invZoom, invZoom);
 	}
 
 	private void updateText(Fragment fragment) {

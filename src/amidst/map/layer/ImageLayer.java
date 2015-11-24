@@ -67,7 +67,7 @@ public abstract class ImageLayer extends Layer {
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d,
 			AffineTransform layerMatrix) {
-		initImageLayerDrawMatrix(getScale(), layerMatrix);
+		initImageLayerMatrix(getScale(), layerMatrix);
 		g2d.setTransform(imageLayerMatrix);
 		if (g2d.getTransform().getScaleX() < 1.0f) {
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
@@ -82,8 +82,7 @@ public abstract class ImageLayer extends Layer {
 	}
 
 	// TODO: is this transformation correct?
-	public void initImageLayerDrawMatrix(double scale,
-			AffineTransform layerMatrix) {
+	public void initImageLayerMatrix(double scale, AffineTransform layerMatrix) {
 		imageLayerMatrix.setTransform(layerMatrix);
 		imageLayerMatrix.scale(scale, scale);
 	}

@@ -71,13 +71,12 @@ public abstract class IconLayer extends Layer {
 			width *= 1.5;
 			height *= 1.5;
 		}
-		initMapObjectDrawMatrix(invZoom, worldObject.getCoordinates(),
-				layerMatrix);
+		initIconLayerMatrix(invZoom, worldObject.getCoordinates(), layerMatrix);
 		g2d.setTransform(iconLayerMatrix);
 		g2d.drawImage(image, -(width >> 1), -(height >> 1), width, height, null);
 	}
 
-	private void initMapObjectDrawMatrix(double invZoom,
+	private void initIconLayerMatrix(double invZoom,
 			CoordinatesInWorld coordinates, AffineTransform layerMatrix) {
 		iconLayerMatrix.setTransform(layerMatrix);
 		iconLayerMatrix.translate(coordinates.getXRelativeToFragment(),
