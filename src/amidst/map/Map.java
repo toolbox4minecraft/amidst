@@ -116,6 +116,11 @@ public class Map {
 		}
 	}
 
+	public void moveBy(Point2D.Double delta) {
+		startOnScreen.x += delta.x;
+		startOnScreen.y += delta.y;
+	}
+
 	public String getBiomeAliasAt(CoordinatesInWorld coordinates) {
 		Fragment fragment = getFragmentAt(coordinates);
 		if (fragment != null && fragment.isLoaded()) {
@@ -141,7 +146,7 @@ public class Map {
 	public MapObject getMapObjectAt(Point positionOnScreen, double maxRange) {
 		double xCornerOnScreen = startOnScreen.x;
 		double yCornerOnScreen = startOnScreen.y;
-		MapObject closestObject = null;
+		MapObject closestMapObject = null;
 		double closestDistance = maxRange;
 		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		if (startFragment != null) {
@@ -150,12 +155,11 @@ public class Map {
 					if (layer.isVisible()) {
 						for (MapObject mapObject : fragment.getMapObjects(layer
 								.getLayerType())) {
-							double distance = getPositionOnScreen(
-									xCornerOnScreen, yCornerOnScreen, mapObject)
-									.distance(positionOnScreen);
+							double distance = getDistance(positionOnScreen,
+									xCornerOnScreen, yCornerOnScreen, mapObject);
 							if (closestDistance > distance) {
 								closestDistance = distance;
-								closestObject = mapObject;
+								closestMapObject = mapObject;
 							}
 						}
 					}
@@ -167,51 +171,35 @@ public class Map {
 				}
 			}
 		}
-		return closestObject;
+		return closestMapObject;
 	}
 
-	// TODO: use longs?
-	private Point2D.Double getPositionOnScreen(double x, double y,
-			MapObject mapObject) {
-		CoordinatesInWorld coordinates = mapObject.getWorldObject()
-				.getCoordinates();
-		Point.Double result = new Point.Double(
-				coordinates.getXRelativeToFragment(),
-				coordinates.getYRelativeToFragment());
-		result.x = zoom.worldToScreen(result.x);
-		result.y = zoom.worldToScreen(result.y);
-		result.x += x;
-		result.y += y;
-		return result;
+	private double getDistance(Point positionOnScreen, double xCornerOnScreen,
+			double yCornerOnScreen, MapObject mapObject) {
+		return worldToScreen(mapObject.getWorldObject().getCoordinates(),
+				xCornerOnScreen, yCornerOnScreen).distance(positionOnScreen);
 	}
 
-	public void moveBy(Point2D.Double speed) {
-		startOnScreen.x += speed.x;
-		startOnScreen.y += speed.y;
+	private Point2D.Double worldToScreen(CoordinatesInWorld coordinates,
+			double xCornerOnScreen, double yCornerOnScreen) {
+		double x = zoom.worldToScreen(coordinates.getXRelativeToFragment());
+		double y = zoom.worldToScreen(coordinates.getYRelativeToFragment());
+		return new Point2D.Double(xCornerOnScreen + x, yCornerOnScreen + y);
 	}
 
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
-		Point2D.Double result = new Point2D.Double(pointOnScreen.x,
-				pointOnScreen.y);
-
-		result.x -= startOnScreen.x;
-		result.y -= startOnScreen.y;
-
-		result.x = zoom.screenToWorld(result.x);
-		result.y = zoom.screenToWorld(result.y);
-
 		// TODO: what to do if startFragment == null? ... should never happen
-		return startFragment.getCorner().add((long) result.x, (long) result.y);
+		return startFragment.getCorner().add(
+				(long) zoom.screenToWorld(pointOnScreen.x - startOnScreen.x),
+				(long) zoom.screenToWorld(pointOnScreen.y - startOnScreen.y));
 	}
 
 	public Point2D.Double getDeltaOnScreenForSamePointInWorld(double oldScale,
 			double newScale, Point newPointOnScreen) {
 		double baseX = newPointOnScreen.x - startOnScreen.x;
 		double baseY = newPointOnScreen.y - startOnScreen.y;
-
 		double scaledX = baseX - (baseX / oldScale) * newScale;
 		double scaledY = baseY - (baseY / oldScale) * newScale;
-
 		return new Point2D.Double(scaledX, scaledY);
 	}
 
