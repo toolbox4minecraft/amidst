@@ -123,8 +123,6 @@ public class MapDrawer {
 	}
 
 	private void drawMap() {
-		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		// TODO: is this needed?
 		Graphics2D old = g2d;
 		g2d = (Graphics2D) old.create();
@@ -133,6 +131,8 @@ public class MapDrawer {
 	}
 
 	public void doDrawMap(Point2D.Double startOnScreen, Fragment startFragment) {
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		originalGraphicsTransform = g2d.getTransform();
 		prepareDraw(startFragment);
 		drawLayers(startOnScreen, startFragment);
@@ -192,6 +192,8 @@ public class MapDrawer {
 	}
 
 	private void drawWidgets() {
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		for (Widget widget : widgets) {
 			if (widget.isVisible()) {
 				setAlphaComposite(widget.getAlpha());
