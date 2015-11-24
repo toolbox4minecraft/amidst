@@ -74,16 +74,13 @@ public class Application {
 	}
 
 	private void initLayerContainer() {
-		IconLayer playerLayer = new PlayerLayer();
-		ImageLayer biomeLayer = new BiomeLayer(0);
-		ImageLayer[] imageLayers = { biomeLayer, new SlimeLayer(1) };
+		ImageLayer[] imageLayers = { new BiomeLayer(0), new SlimeLayer(1) };
 		LiveLayer[] liveLayers = { new GridLayer() };
 		IconLayer[] iconLayers = { new VillageLayer(),
 				new OceanMonumentLayer(), new StrongholdLayer(),
 				new TempleLayer(), new SpawnLayer(), new NetherFortressLayer(),
-				playerLayer };
-		layerContainer = new LayerContainer(playerLayer, biomeLayer,
-				imageLayers, liveLayers, iconLayers);
+				new PlayerLayer() };
+		layerContainer = new LayerContainer(imageLayers, liveLayers, iconLayers);
 	}
 
 	private void initFragmentManager() {

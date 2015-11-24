@@ -13,17 +13,12 @@ public class LayerContainer {
 	private java.util.Map<LayerType, Layer> layerMap = new EnumMap<LayerType, Layer>(
 			LayerType.class);
 
-	private IconLayer playerLayer;
-	private ImageLayer biomeLayer;
 	private ImageLayer[] imageLayers;
 	private LiveLayer[] liveLayers;
 	private IconLayer[] iconLayers;
 
-	public LayerContainer(IconLayer playerLayer, ImageLayer biomeLayer,
-			ImageLayer[] imageLayers, LiveLayer[] liveLayers,
+	public LayerContainer(ImageLayer[] imageLayers, LiveLayer[] liveLayers,
 			IconLayer[] iconLayers) {
-		this.playerLayer = playerLayer;
-		this.biomeLayer = biomeLayer;
 		this.imageLayers = imageLayers;
 		this.liveLayers = liveLayers;
 		this.iconLayers = iconLayers;
@@ -40,14 +35,6 @@ public class LayerContainer {
 		for (IconLayer layer : iconLayers) {
 			layerMap.put(layer.getLayerType(), layer);
 		}
-	}
-
-	public IconLayer getPlayerLayer() {
-		return playerLayer;
-	}
-
-	public ImageLayer getBiomeLayer() {
-		return biomeLayer;
 	}
 
 	public ImageLayer[] getImageLayers() {
@@ -84,6 +71,10 @@ public class LayerContainer {
 		for (IconLayer layer : iconLayers) {
 			layer.setWorld(world);
 		}
+	}
+
+	public Layer getLayer(LayerType layerType) {
+		return layerMap.get(layerType);
 	}
 
 	public ImageLayer getImageLayer(LayerType layerType) {
