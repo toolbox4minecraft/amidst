@@ -56,7 +56,7 @@ public class FragmentLoader {
 	}
 
 	private void loadAllLayers() {
-		for (LayerType layerType : layerContainer.getLoadableLayerTypes()) {
+		for (LayerType layerType : layerContainer.getAllLayerTypes()) {
 			loadLayer(layerType);
 		}
 	}

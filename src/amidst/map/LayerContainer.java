@@ -14,7 +14,7 @@ import amidst.minecraft.world.World;
 public class LayerContainer {
 	private EnumMap<LayerType, Layer> layerMap = new EnumMap<LayerType, Layer>(
 			LayerType.class);
-	private Set<LayerType> loadableLayerTypes = EnumSet.noneOf(LayerType.class);
+	private Set<LayerType> allLayerTypes = EnumSet.noneOf(LayerType.class);
 	private Set<LayerType> imageLayerTypes = EnumSet.noneOf(LayerType.class);
 	private Set<LayerType> liveLayerTypes = EnumSet.noneOf(LayerType.class);
 	private Set<LayerType> iconLayerTypes = EnumSet.noneOf(LayerType.class);
@@ -49,14 +49,15 @@ public class LayerContainer {
 	private void initLayerTypes() {
 		for (ImageLayer layer : imageLayers) {
 			imageLayerTypes.add(layer.getLayerType());
-			loadableLayerTypes.add(layer.getLayerType());
+			allLayerTypes.add(layer.getLayerType());
 		}
 		for (LiveLayer layer : liveLayers) {
 			liveLayerTypes.add(layer.getLayerType());
+			allLayerTypes.add(layer.getLayerType());
 		}
 		for (IconLayer layer : iconLayers) {
 			iconLayerTypes.add(layer.getLayerType());
-			loadableLayerTypes.add(layer.getLayerType());
+			allLayerTypes.add(layer.getLayerType());
 		}
 	}
 
@@ -100,8 +101,8 @@ public class LayerContainer {
 		return layerMap.get(layerType);
 	}
 
-	public Set<LayerType> getLoadableLayerTypes() {
-		return loadableLayerTypes;
+	public Set<LayerType> getAllLayerTypes() {
+		return allLayerTypes;
 	}
 
 	public boolean isImageLayer(LayerType layerType) {
