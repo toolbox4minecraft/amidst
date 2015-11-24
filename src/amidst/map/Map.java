@@ -37,9 +37,10 @@ public class Map {
 	}
 
 	private void lockedDraw(MapDrawer drawer) {
-		int fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
-		int desiredFragmentsPerRow = viewerWidth / fragmentSizeOnScreen + 2;
-		int desiredFragmentsPerColumn = viewerHeight / fragmentSizeOnScreen + 2;
+		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
+		int desiredFragmentsPerRow = (int) (viewerWidth / fragmentSizeOnScreen + 2);
+		int desiredFragmentsPerColumn = (int) (viewerHeight
+				/ fragmentSizeOnScreen + 2);
 		lockedAdjustNumberOfRowsAndColumns(fragmentSizeOnScreen,
 				desiredFragmentsPerRow, desiredFragmentsPerColumn);
 		if (startFragment != null) {
@@ -47,8 +48,9 @@ public class Map {
 		}
 	}
 
-	private void lockedAdjustNumberOfRowsAndColumns(int fragmentSizeOnScreen,
-			int desiredFragmentsPerRow, int desiredFragmentsPerColumn) {
+	private void lockedAdjustNumberOfRowsAndColumns(
+			double fragmentSizeOnScreen, int desiredFragmentsPerRow,
+			int desiredFragmentsPerColumn) {
 		int newColumns = desiredFragmentsPerRow - fragmentsPerRow;
 		int newRows = desiredFragmentsPerColumn - fragmentsPerColumn;
 		int newLeft = 0;
@@ -137,19 +139,20 @@ public class Map {
 	}
 
 	public MapObject getMapObjectAt(Point positionOnScreen, double maxRange) {
-		double x = startOnScreen.x;
-		double y = startOnScreen.y;
+		double xCornerOnScreen = startOnScreen.x;
+		double yCornerOnScreen = startOnScreen.y;
 		MapObject closestObject = null;
 		double closestDistance = maxRange;
-		int fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
+		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
 				for (Layer layer : layerContainer.getAllLayers()) {
 					if (layer.isVisible()) {
 						for (MapObject mapObject : fragment.getMapObjects(layer
 								.getLayerType())) {
-							double distance = getPositionOnScreen(x, y,
-									mapObject).distance(positionOnScreen);
+							double distance = getPositionOnScreen(
+									xCornerOnScreen, yCornerOnScreen, mapObject)
+									.distance(positionOnScreen);
 							if (closestDistance > distance) {
 								closestDistance = distance;
 								closestObject = mapObject;
@@ -157,10 +160,10 @@ public class Map {
 						}
 					}
 				}
-				x += fragmentSizeOnScreen;
+				xCornerOnScreen += fragmentSizeOnScreen;
 				if (fragment.isEndOfLine()) {
-					x = startOnScreen.x;
-					y += fragmentSizeOnScreen;
+					xCornerOnScreen = startOnScreen.x;
+					yCornerOnScreen += fragmentSizeOnScreen;
 				}
 			}
 		}
@@ -168,11 +171,13 @@ public class Map {
 	}
 
 	// TODO: use longs?
-	private Point getPositionOnScreen(double x, double y, MapObject mapObject) {
+	private Point2D.Double getPositionOnScreen(double x, double y,
+			MapObject mapObject) {
 		CoordinatesInWorld coordinates = mapObject.getWorldObject()
 				.getCoordinates();
-		Point result = new Point((int) coordinates.getXRelativeToFragment(),
-				(int) coordinates.getYRelativeToFragment());
+		Point.Double result = new Point.Double(
+				coordinates.getXRelativeToFragment(),
+				coordinates.getYRelativeToFragment());
 		result.x = zoom.worldToScreen(result.x);
 		result.y = zoom.worldToScreen(result.y);
 		result.x += x;
@@ -181,16 +186,13 @@ public class Map {
 	}
 
 	public void moveBy(Point2D.Double speed) {
-		moveBy(speed.x, speed.y);
-	}
-
-	public void moveBy(double x, double y) {
-		startOnScreen.x += x;
-		startOnScreen.y += y;
+		startOnScreen.x += speed.x;
+		startOnScreen.y += speed.y;
 	}
 
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
-		Point result = pointOnScreen.getLocation();
+		Point2D.Double result = new Point2D.Double(pointOnScreen.x,
+				pointOnScreen.y);
 
 		result.x -= startOnScreen.x;
 		result.y -= startOnScreen.y;
@@ -199,7 +201,7 @@ public class Map {
 		result.y = zoom.screenToWorld(result.y);
 
 		// TODO: what to do if startFragment == null? ... should never happen
-		return startFragment.getCorner().add(result.x, result.y);
+		return startFragment.getCorner().add((long) result.x, (long) result.y);
 	}
 
 	public Point2D.Double getDeltaOnScreenForSamePointInWorld(double oldScale,

@@ -62,21 +62,11 @@ public class MapZoom {
 		current = target;
 	}
 
-	public int screenToWorld(int coordinate) {
-		// TODO: int -> double -> int = bad?
-		return (int) (coordinate / current);
-	}
-
-	public int worldToScreen(int coordinate) {
-		// TODO: int -> double -> int = bad?
-		return (int) (coordinate * current);
-	}
-
-	public double screenToWorld(long coordinate) {
+	public double screenToWorld(double coordinate) {
 		return coordinate / current;
 	}
 
-	public double worldToScreen(long coordinate) {
+	public double worldToScreen(double coordinate) {
 		return coordinate * current;
 	}
 }
