@@ -77,13 +77,6 @@ public class Map {
 		fragmentsPerColumn = fragmentsPerColumn + newAbove + newBelow;
 	}
 
-	private void lockedAddStart(int x, int y) {
-		startFragment = fragmentManager.requestFragment(CoordinatesInWorld
-				.origin());
-		fragmentsPerRow = 1;
-		fragmentsPerColumn = 1;
-	}
-
 	// TODO: Support longs?
 	private void lockedCenterOn(CoordinatesInWorld coordinates) {
 		if (startFragment != null) {
@@ -97,9 +90,10 @@ public class Map {
 				- zoom.worldToScreen(xFragmentRelative);
 		startOnScreen.y = yCenterOnScreen
 				- zoom.worldToScreen(yFragmentRelative);
-		long xFragmentCorner = coordinates.getXCornerOfFragment();
-		long yFragmentCorner = coordinates.getYCornerOfFragment();
-		lockedAddStart((int) xFragmentCorner, (int) yFragmentCorner);
+		startFragment = fragmentManager.requestFragment(coordinates
+				.toFragmentCorner());
+		fragmentsPerRow = 1;
+		fragmentsPerColumn = 1;
 	}
 
 	public void safeDraw(MapDrawer drawer) {
