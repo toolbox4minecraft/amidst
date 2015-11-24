@@ -52,17 +52,16 @@ public class Fragment implements Iterable<Fragment> {
 	@Deprecated
 	public static final int BIOME_SIZE = SIZE >> 2;
 
-	private EnumMap<LayerType, BufferedImage> images;
-	private List<MapObject> mapObjects = new LinkedList<MapObject>();
-	private float alpha;
-
 	private State state = State.AVAILABLE;
-
 	private CoordinatesInWorld corner;
 	private Fragment leftFragment = null;
 	private Fragment rightFragment = null;
 	private Fragment aboveFragment = null;
 	private Fragment belowFragment = null;
+
+	private float alpha;
+	private EnumMap<LayerType, BufferedImage> images;
+	private List<MapObject> mapObjects = new LinkedList<MapObject>();
 
 	public Fragment(EnumMap<LayerType, BufferedImage> images) {
 		this.images = images;
@@ -101,10 +100,6 @@ public class Fragment implements Iterable<Fragment> {
 		return state == State.NEEDS_RESET;
 	}
 
-	public void clearMapObjects() {
-		mapObjects.clear();
-	}
-
 	public void initAlpha() {
 		alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
 	}
@@ -113,24 +108,28 @@ public class Fragment implements Iterable<Fragment> {
 		alpha = Math.min(1.0f, time * 3.0f + alpha);
 	}
 
-	public void addObject(MapObject mapObject) {
-		mapObjects.add(mapObject);
-	}
-
 	public float getAlpha() {
 		return alpha;
 	}
 
-	public List<MapObject> getMapObjects() {
-		return mapObjects;
+	public BufferedImage getImage(LayerType layerType) {
+		return images.get(layerType);
 	}
 
 	public EnumMap<LayerType, BufferedImage> getImages() {
 		return images;
 	}
 
-	public BufferedImage getImage(LayerType layerType) {
-		return images.get(layerType);
+	public void clearMapObjects() {
+		mapObjects.clear();
+	}
+
+	public void addObject(MapObject mapObject) {
+		mapObjects.add(mapObject);
+	}
+
+	public List<MapObject> getMapObjects() {
+		return mapObjects;
 	}
 
 	@Override
