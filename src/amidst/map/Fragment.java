@@ -7,6 +7,7 @@ import java.util.List;
 
 import amidst.Options;
 import amidst.map.layer.IconLayer;
+import amidst.map.layer.ImageLayer;
 import amidst.map.layer.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
 
@@ -52,7 +53,7 @@ public class Fragment implements Iterable<Fragment> {
 	public static final int BIOME_SIZE = SIZE >> 2;
 
 	private BufferedImage[] images;
-	private boolean[] repaintImage;
+	private List<ImageLayer> invalidatedImageLayers = new LinkedList<ImageLayer>();
 	private List<IconLayer> invalidatedIconLayers = new LinkedList<IconLayer>();
 	private List<MapObject> mapObjects = new LinkedList<MapObject>();
 	private float alpha;
@@ -65,9 +66,8 @@ public class Fragment implements Iterable<Fragment> {
 	private Fragment aboveFragment = null;
 	private Fragment belowFragment = null;
 
-	public Fragment(BufferedImage[] images, boolean[] repaintImage) {
+	public Fragment(BufferedImage[] images) {
 		this.images = images;
-		this.repaintImage = repaintImage;
 	}
 
 	public void initialize(CoordinatesInWorld corner) {
@@ -107,6 +107,10 @@ public class Fragment implements Iterable<Fragment> {
 		mapObjects.clear();
 	}
 
+	public void clearInvalidatedImageLayers() {
+		invalidatedImageLayers.clear();
+	}
+
 	public void clearInvalidatedIconLayers() {
 		invalidatedIconLayers.clear();
 	}
@@ -125,9 +129,9 @@ public class Fragment implements Iterable<Fragment> {
 
 	// TODO: move this to the class FragmentLoader
 	@Deprecated
-	public void invalidateImageLayer(int layerId) {
+	public void invalidateImageLayer(ImageLayer imageLayer) {
 		if (isLoaded()) {
-			repaintImage[layerId] = true;
+			invalidatedImageLayers.add(imageLayer);
 		}
 	}
 
@@ -151,12 +155,8 @@ public class Fragment implements Iterable<Fragment> {
 		return images;
 	}
 
-	public boolean needsImageRepaint(int layerId) {
-		return repaintImage[layerId];
-	}
-
-	public void setNeedsImageRepaint(int layerId, boolean value) {
-		repaintImage[layerId] = value;
+	public List<ImageLayer> getInvalidatedImageLayers() {
+		return invalidatedImageLayers;
 	}
 
 	public List<IconLayer> getInvalidatedIconLayers() {

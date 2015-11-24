@@ -47,22 +47,24 @@ public class FragmentLoader {
 			availableQueue.offer(currentFragment);
 		} else if (currentFragment.isInitialized()) {
 			currentFragment.clearMapObjects();
+			currentFragment.clearInvalidatedImageLayers();
 			currentFragment.clearInvalidatedIconLayers();
-			repaintAllImages(layerContainer.getImageLayers());
-			generateMapObjects();
+			reloadAllImages(layerContainer.getImageLayers());
+			reloadAllIconLayers();
 			currentFragment.initAlpha();
 			currentFragment.setLoaded();
 		} else if (currentFragment.isLoaded()) {
-			repaintInvalidatedImages(layerContainer.getImageLayers());
+			reloadInvalidatedImages(layerContainer.getImageLayers());
 			reloadInvalidatedIconLayers();
+			currentFragment.clearInvalidatedImageLayers();
+			currentFragment.clearInvalidatedIconLayers();
 		}
 	}
 
-	private void repaintInvalidatedImages(ImageLayer[] imageLayers) {
-		for (int i = 0; i < imageLayers.length; i++) {
-			if (currentFragment.needsImageRepaint(i)) {
-				repaintImage(i, imageLayers);
-			}
+	private void reloadInvalidatedImages(ImageLayer[] imageLayers) {
+		for (ImageLayer imageLayer : currentFragment
+				.getInvalidatedImageLayers()) {
+			repaintImage(imageLayer.getLayerId(), imageLayers);
 		}
 	}
 
@@ -71,7 +73,6 @@ public class FragmentLoader {
 			removeIconLayer(iconLayer);
 			iconLayer.generateMapObjects(currentFragment);
 		}
-		currentFragment.getInvalidatedIconLayers().clear();
 	}
 
 	private void removeIconLayer(IconLayer iconLayer) {
@@ -84,7 +85,7 @@ public class FragmentLoader {
 		currentFragment.getMapObjects().removeAll(objectsToRemove);
 	}
 
-	private void repaintAllImages(ImageLayer[] imageLayers) {
+	private void reloadAllImages(ImageLayer[] imageLayers) {
 		for (int i = 0; i < imageLayers.length; i++) {
 			repaintImage(i, imageLayers);
 		}
@@ -93,10 +94,9 @@ public class FragmentLoader {
 	private void repaintImage(int layerId, ImageLayer[] imageLayers) {
 		imageLayers[layerId].drawToCache(currentFragment, imageCache,
 				currentFragment.getImage(layerId));
-		currentFragment.setNeedsImageRepaint(layerId, false);
 	}
 
-	private void generateMapObjects() {
+	private void reloadAllIconLayers() {
 		for (IconLayer iconLayer : layerContainer.getIconLayers()) {
 			iconLayer.generateMapObjects(currentFragment);
 		}

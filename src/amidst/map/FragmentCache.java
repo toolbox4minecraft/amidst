@@ -39,15 +39,13 @@ public class FragmentCache {
 	private Fragment createFragment() {
 		ImageLayer[] imageLayers = layerContainer.getImageLayers();
 		BufferedImage[] images = new BufferedImage[imageLayers.length];
-		boolean[] repaintImage = new boolean[imageLayers.length];
 		for (ImageLayer imageLayer : imageLayers) {
 			int layerId = imageLayer.getLayerId();
 			int layerSize = imageLayer.getSize();
 			images[layerId] = new BufferedImage(layerSize, layerSize,
 					BufferedImage.TYPE_INT_ARGB);
-			repaintImage[layerId] = true;
 		}
-		return new Fragment(images, repaintImage);
+		return new Fragment(images);
 	}
 
 	public void increaseSize() {
