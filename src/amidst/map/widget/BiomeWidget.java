@@ -10,7 +10,6 @@ import java.util.List;
 
 import amidst.map.Map;
 import amidst.map.MapViewer;
-import amidst.map.layer.BiomeLayer;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.World;
 import amidst.utilities.CoordinateUtils;
@@ -155,7 +154,7 @@ public class BiomeWidget extends Widget {
 	}
 
 	private Color getBiomeBackgroudColor(int i, Biome biome) {
-		if (BiomeLayer.getInstance().isBiomeSelected(biome.getIndex())) {
+		if (map.getBiomeSelection().isSelected(biome.getIndex())) {
 			if (i % 2 == 1) {
 				return BIOME_LIT_BG_COLOR_1;
 			} else {
@@ -264,18 +263,18 @@ public class BiomeWidget extends Widget {
 			int id = (mouseY - (innerBox.y - getY()) - biomeListYOffset) / 16;
 			if (id < biomes.size()) {
 				int index = biomes.get(id).getIndex();
-				BiomeLayer.getInstance().toggleBiomeSelect(index);
+				map.getBiomeSelection().toggleSelect(index);
 				return true;
 			}
 		} else if (isButton(mouseY)) {
 			if (isSelectAllButton(mouseX)) {
-				BiomeLayer.getInstance().selectAllBiomes();
+				map.getBiomeSelection().selectAll();
 				return true;
 			} else if (isSelectSpecialBiomesButton(mouseX)) {
-				BiomeLayer.getInstance().selectOnlySpecialBiomes();
+				map.getBiomeSelection().selectOnlySpecial();
 				return true;
 			} else if (isDeselectAllButton(mouseX)) {
-				BiomeLayer.getInstance().deselectAllBiomes();
+				map.getBiomeSelection().deselectAll();
 				return true;
 			}
 		}
@@ -320,6 +319,6 @@ public class BiomeWidget extends Widget {
 
 	@Override
 	public boolean onVisibilityCheck() {
-		return BiomeToggleWidget.isBiomeWidgetVisible && getHeight() > 200;
+		return map.getBiomeSelection().isHighlightMode() && getHeight() > 200;
 	}
 }

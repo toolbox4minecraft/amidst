@@ -6,14 +6,12 @@ import java.awt.image.BufferedImage;
 
 import amidst.map.Map;
 import amidst.map.MapViewer;
-import amidst.map.layer.BiomeLayer;
 import amidst.minecraft.world.World;
 import amidst.resources.ResourceLoader;
 
 public class BiomeToggleWidget extends Widget {
 	private static final BufferedImage HIGHLIGHTER_ICON = ResourceLoader
 			.getImage("highlighter.png");
-	public static boolean isBiomeWidgetVisible = false;
 
 	public BiomeToggleWidget(MapViewer mapViewer, Map map, World world,
 			CornerAnchorPoint anchor) {
@@ -30,8 +28,7 @@ public class BiomeToggleWidget extends Widget {
 
 	@Override
 	public boolean onMousePressed(int x, int y) {
-		isBiomeWidgetVisible = !isBiomeWidgetVisible;
-		BiomeLayer.getInstance().setHighlightMode(isBiomeWidgetVisible);
+		map.getBiomeSelection().toggleHighlightMode();
 		map.reloadBiomeLayer();
 		return true;
 	}

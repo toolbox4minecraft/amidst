@@ -14,7 +14,6 @@ public class Map {
 	private MapObject selectedMapObject;
 
 	private Fragment startFragment;
-
 	private Point2D.Double startOnScreen = new Point2D.Double();
 
 	private int fragmentsPerRow;
@@ -26,12 +25,14 @@ public class Map {
 
 	private FragmentManager fragmentManager;
 	private MapZoom zoom;
+	private BiomeSelection biomeSelection;
 	private LayerContainer layerContainer;
 
 	public Map(FragmentManager fragmentManager, MapZoom zoom,
-			LayerContainer layerContainer) {
+			BiomeSelection biomeSelection, LayerContainer layerContainer) {
 		this.fragmentManager = fragmentManager;
 		this.zoom = zoom;
+		this.biomeSelection = biomeSelection;
 		this.layerContainer = layerContainer;
 		this.layerContainer.setMap(this);
 	}
@@ -254,5 +255,9 @@ public class Map {
 
 	public Collection<Layer> getAllLayers() {
 		return layerContainer.getAllLayers();
+	}
+
+	public BiomeSelection getBiomeSelection() {
+		return biomeSelection;
 	}
 }

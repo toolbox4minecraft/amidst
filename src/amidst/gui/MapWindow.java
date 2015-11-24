@@ -25,6 +25,7 @@ import amidst.Options;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
+import amidst.map.BiomeSelection;
 import amidst.map.Map;
 import amidst.map.MapMovement;
 import amidst.map.MapViewer;
@@ -40,6 +41,7 @@ public class MapWindow {
 	private SeedPrompt seedPrompt = new SeedPrompt();
 	private MapZoom mapZoom = new MapZoom();
 	private MapMovement mapMovement = new MapMovement();
+	private BiomeSelection biomeSelection = new BiomeSelection();
 
 	private Map map;
 	private MapViewer mapViewer;
@@ -138,7 +140,7 @@ public class MapWindow {
 
 	public void initWorld() {
 		map = new Map(application.getFragmentManager(), mapZoom,
-				application.getLayerContainer());
+				biomeSelection, application.getLayerContainer());
 		mapViewer = createMapViewer();
 		menuBar.enableMapMenu();
 	}
@@ -177,7 +179,8 @@ public class MapWindow {
 		result.setFileFilter(new LevelFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
 		result.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		result.setCurrentDirectory(LocalMinecraftInstallation.getSavesDirectory());
+		result.setCurrentDirectory(LocalMinecraftInstallation
+				.getSavesDirectory());
 		result.setFileHidingEnabled(false);
 		return result;
 	}
