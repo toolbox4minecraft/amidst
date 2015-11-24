@@ -67,18 +67,16 @@ public abstract class ImageLayer extends Layer {
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d,
 			AffineTransform layerMatrix) {
-		if (fragment.isLoaded()) {
-			initImageLayerDrawMatrix(getScale(), layerMatrix);
-			g2d.setTransform(imageLayerMatrix);
-			if (g2d.getTransform().getScaleX() < 1.0f) {
-				g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-						RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			} else {
-				g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-						RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-			}
-			g2d.drawImage(fragment.getImage(getLayerType()), 0, 0, null);
+		initImageLayerDrawMatrix(getScale(), layerMatrix);
+		g2d.setTransform(imageLayerMatrix);
+		if (g2d.getTransform().getScaleX() < 1.0f) {
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+					RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		} else {
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		}
+		g2d.drawImage(fragment.getImage(getLayerType()), 0, 0, null);
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 	}

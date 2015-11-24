@@ -54,12 +54,10 @@ public abstract class IconLayer extends Layer {
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d,
 			AffineTransform layerMatrix) {
-		if (fragment.isLoaded()) {
-			List<MapObject> mapObjects = fragment.getMapObjects(getLayerType());
-			double invZoom = 1.0 / getMap().getZoom();
-			for (MapObject mapObject : mapObjects) {
-				drawObject(mapObject, invZoom, g2d, layerMatrix);
-			}
+		List<MapObject> mapObjects = fragment.getMapObjects(getLayerType());
+		double invZoom = 1.0 / getMap().getZoom();
+		for (MapObject mapObject : mapObjects) {
+			drawObject(mapObject, invZoom, g2d, layerMatrix);
 		}
 	}
 
