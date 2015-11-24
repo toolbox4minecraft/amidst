@@ -7,6 +7,10 @@ import amidst.minecraft.world.finder.WorldObjectProducer;
 import amidst.preferences.BooleanPrefModel;
 
 public abstract class IconLayer extends Layer {
+	public IconLayer(LayerType layerType) {
+		super(layerType);
+	}
+
 	@Override
 	public boolean isVisible() {
 		return getIsVisiblePreference().get();

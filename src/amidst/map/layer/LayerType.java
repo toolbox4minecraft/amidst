@@ -1,0 +1,5 @@
+package amidst.map.layer;
+
+public enum LayerType {
+	BIOME, SLIME, GRID, TEMPLE, OCEAN_MONUMENT, VILLAGE, NETHER_FORTRESS, STRONGHOLD, PLAYER, SPAWN;
+}

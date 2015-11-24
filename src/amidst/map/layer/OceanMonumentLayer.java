@@ -5,6 +5,10 @@ import amidst.minecraft.world.finder.WorldObjectProducer;
 import amidst.preferences.BooleanPrefModel;
 
 public class OceanMonumentLayer extends IconLayer {
+	public OceanMonumentLayer() {
+		super(LayerType.OCEAN_MONUMENT);
+	}
+
 	@Override
 	protected BooleanPrefModel getIsVisiblePreference() {
 		return Options.instance.showOceanMonuments;

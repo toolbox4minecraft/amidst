@@ -10,7 +10,8 @@ public abstract class ImageLayer extends Layer {
 	private final int layerId;
 	private final Resolution resolution;
 
-	public ImageLayer(int layerId, Resolution resolution) {
+	public ImageLayer(LayerType layerType, int layerId, Resolution resolution) {
+		super(layerType);
 		this.layerId = layerId;
 		this.resolution = resolution;
 	}

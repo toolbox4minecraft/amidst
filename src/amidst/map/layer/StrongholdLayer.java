@@ -5,6 +5,10 @@ import amidst.minecraft.world.finder.WorldObjectProducer;
 import amidst.preferences.BooleanPrefModel;
 
 public class StrongholdLayer extends IconLayer {
+	public StrongholdLayer() {
+		super(LayerType.STRONGHOLD);
+	}
+
 	@Override
 	protected BooleanPrefModel getIsVisiblePreference() {
 		return Options.instance.showStrongholds;

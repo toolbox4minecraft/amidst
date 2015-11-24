@@ -11,6 +11,10 @@ import amidst.map.Fragment;
 import amidst.minecraft.world.Resolution;
 
 public class GridLayer extends LiveLayer {
+	public GridLayer() {
+		super(LayerType.GRID);
+	}
+
 	private static final Font DRAW_FONT = new Font("arial", Font.BOLD, 16);
 
 	private StringBuffer textBuffer = new StringBuffer(128);
