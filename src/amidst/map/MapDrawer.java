@@ -14,7 +14,6 @@ import java.util.List;
 import amidst.map.layer.Layer;
 import amidst.map.widget.Widget;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.World;
 import amidst.resources.ResourceLoader;
 
 public class MapDrawer {
@@ -39,9 +38,7 @@ public class MapDrawer {
 
 	private boolean isFirstDraw = true;
 
-	private World world;
 	private Map map;
-	private MapViewer mapViewer;
 	private MapMovement movement;
 	private MapZoom zoom;
 	private List<Widget> widgets;
@@ -56,12 +53,9 @@ public class MapDrawer {
 	private AffineTransform originalGraphicsTransform;
 	private AffineTransform layerMatrix = new AffineTransform();
 
-	public MapDrawer(World world, Map map, MapViewer mapViewer,
-			MapMovement movement, MapZoom zoom, List<Widget> widgets,
-			FontMetrics widgetFontMetrics) {
-		this.world = world;
+	public MapDrawer(Map map, MapMovement movement, MapZoom zoom,
+			List<Widget> widgets, FontMetrics widgetFontMetrics) {
 		this.map = map;
-		this.mapViewer = mapViewer;
 		this.movement = movement;
 		this.zoom = zoom;
 		this.widgets = widgets;

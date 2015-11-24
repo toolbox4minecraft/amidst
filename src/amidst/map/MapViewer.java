@@ -260,7 +260,7 @@ public class MapViewer {
 	}
 
 	private void initDrawer() {
-		drawer = new MapDrawer(world, map, this, movement, zoom, widgets,
+		drawer = new MapDrawer(map, movement, zoom, widgets,
 				component.getFontMetrics(Widget.TEXT_FONT));
 	}
 
