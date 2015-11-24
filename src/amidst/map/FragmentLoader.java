@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.map.layer.IconLayer;
 import amidst.map.layer.ImageLayer;
+import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
 import amidst.map.layer.MapObject;
 
@@ -50,40 +51,40 @@ public class FragmentLoader {
 			currentFragment.clearMapObjects();
 			currentFragment.clearInvalidatedImageLayers();
 			currentFragment.clearInvalidatedIconLayers();
-			loadAllImages();
+			loadAllImageLayers();
 			loadAllIconLayers();
 			currentFragment.initAlpha();
 			currentFragment.setLoaded();
 		} else if (currentFragment.isLoaded()) {
-			reloadInvalidatedImages();
+			reloadInvalidatedImageLayers();
 			reloadInvalidatedIconLayers();
 			currentFragment.clearInvalidatedImageLayers();
 			currentFragment.clearInvalidatedIconLayers();
 		}
 	}
 
-	private void loadAllImages() {
+	private void loadAllImageLayers() {
 		for (ImageLayer imageLayer : layerContainer.getImageLayers()) {
-			loadImage(imageLayer.getLayerType());
+			loadLayer(imageLayer.getLayerType());
 		}
 	}
 
 	private void loadAllIconLayers() {
 		for (IconLayer iconLayer : layerContainer.getIconLayers()) {
-			loadIconLayer(iconLayer.getLayerType());
+			loadLayer(iconLayer.getLayerType());
 		}
 	}
 
-	private void reloadInvalidatedImages() {
+	private void reloadInvalidatedImageLayers() {
 		for (LayerType layerType : currentFragment.getInvalidatedImageLayers()) {
-			loadImage(layerType);
+			loadLayer(layerType);
 		}
 	}
 
 	private void reloadInvalidatedIconLayers() {
 		for (LayerType layerType : currentFragment.getInvalidatedIconLayers()) {
 			removeIconLayer(layerType);
-			loadIconLayer(layerType);
+			loadLayer(layerType);
 		}
 	}
 
@@ -97,14 +98,21 @@ public class FragmentLoader {
 		currentFragment.getMapObjects().removeAll(objectsToRemove);
 	}
 
-	private void loadImage(LayerType layerType) {
-		ImageLayer imageLayer = layerContainer.getImageLayer(layerType);
+	private void loadLayer(LayerType layerType) {
+		Layer layer = layerContainer.getLayer(layerType);
+		if (layer instanceof ImageLayer) {
+			loadImageLayer((ImageLayer) layer);
+		} else if (layer instanceof IconLayer) {
+			loadIconLayer((IconLayer) layer);
+		}
+	}
+
+	private void loadImageLayer(ImageLayer imageLayer) {
 		imageLayer.drawToCache(currentFragment, imageCache,
 				currentFragment.getImage(imageLayer.getLayerId()));
 	}
 
-	private void loadIconLayer(LayerType layerType) {
-		IconLayer iconLayer = layerContainer.getIconLayer(layerType);
+	private void loadIconLayer(IconLayer iconLayer) {
 		iconLayer.generateMapObjects(currentFragment);
 	}
 }
