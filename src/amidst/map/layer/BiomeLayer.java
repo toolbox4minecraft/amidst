@@ -17,8 +17,8 @@ public class BiomeLayer extends ImageLayer {
 	private boolean[] selectedBiomes = new boolean[Biome.getBiomesLength()];
 	private boolean isHighlightMode = false;
 
-	public BiomeLayer(int layerId) {
-		super(LayerType.BIOME, layerId, Resolution.QUARTER);
+	public BiomeLayer() {
+		super(LayerType.BIOME, Resolution.QUARTER);
 		instance = this;
 	}
 

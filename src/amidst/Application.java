@@ -74,7 +74,7 @@ public class Application {
 	}
 
 	private void initLayerContainer() {
-		ImageLayer[] imageLayers = { new BiomeLayer(0), new SlimeLayer(1) };
+		ImageLayer[] imageLayers = { new BiomeLayer(), new SlimeLayer() };
 		LiveLayer[] liveLayers = { new GridLayer() };
 		IconLayer[] iconLayers = { new VillageLayer(),
 				new OceanMonumentLayer(), new StrongholdLayer(),

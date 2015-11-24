@@ -7,21 +7,15 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 
 public abstract class ImageLayer extends Layer {
-	private final int layerId;
 	private final Resolution resolution;
 
-	public ImageLayer(LayerType layerType, int layerId, Resolution resolution) {
+	public ImageLayer(LayerType layerType, Resolution resolution) {
 		super(layerType);
-		this.layerId = layerId;
 		this.resolution = resolution;
 	}
 
 	public float getAlpha() {
 		return 1;
-	}
-
-	public int getLayerId() {
-		return layerId;
 	}
 
 	public Resolution getResolution() {

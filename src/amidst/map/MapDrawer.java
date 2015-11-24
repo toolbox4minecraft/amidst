@@ -215,7 +215,6 @@ public class MapDrawer {
 	private void drawImageLayers() {
 		if (currentFragment.isLoaded()) {
 			currentFragment.updateAlpha(time);
-			ImageLayer[] imageLayers = map.getImageLayers();
 			EnumMap<LayerType, BufferedImage> images = currentFragment
 					.getImages();
 			for (Entry<LayerType, BufferedImage> entry : images.entrySet()) {

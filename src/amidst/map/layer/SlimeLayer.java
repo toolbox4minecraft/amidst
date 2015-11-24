@@ -12,8 +12,8 @@ public class SlimeLayer extends ImageLayer {
 
 	private Random random = new Random();
 
-	public SlimeLayer(int layerId) {
-		super(LayerType.GRID, layerId, Resolution.CHUNK);
+	public SlimeLayer() {
+		super(LayerType.GRID, Resolution.CHUNK);
 	}
 
 	@Override
