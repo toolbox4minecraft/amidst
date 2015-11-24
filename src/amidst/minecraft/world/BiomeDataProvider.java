@@ -1,8 +1,5 @@
 package amidst.minecraft.world;
 
-import java.util.Map;
-import java.util.WeakHashMap;
-
 import amidst.map.Fragment;
 import amidst.minecraft.MinecraftUtil;
 
@@ -10,18 +7,11 @@ public class BiomeDataProvider {
 	public static final int SIZE = (int) Resolution.QUARTER
 			.convertFromWorldToThis(Fragment.SIZE);
 
-	private Map<CoordinatesInWorld, short[][]> cache = new WeakHashMap<CoordinatesInWorld, short[][]>();
-
 	/**
 	 * x and y of coordinates have to be divisible by BiomeDataProvider.SIZE
 	 */
 	public short[][] getBiomeDataForFragment(CoordinatesInWorld corner) {
-		short[][] result = cache.get(corner);
-		if (result == null) {
-			result = create(corner);
-			cache.put(corner, result);
-		}
-		return result;
+		return create(corner);
 	}
 
 	private short[][] create(CoordinatesInWorld corner) {
