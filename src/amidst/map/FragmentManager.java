@@ -38,7 +38,6 @@ public class FragmentManager {
 	 * Make sure the passed fragment is no longer referenced by other fragments!
 	 */
 	public void recycleFragment(Fragment fragment) {
-		fragment.setNeedsReset();
 		resetQueue.offer(fragment);
 	}
 

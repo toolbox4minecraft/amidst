@@ -45,13 +45,9 @@ public class Fragment implements Iterable<Fragment> {
 		}
 	}
 
-	private static enum State {
-		AVAILABLE, INITIALIZED, LOADED, NEEDS_RESET;
-	}
-
 	public static final int SIZE = Resolution.FRAGMENT.getStep();
 
-	private State state = State.AVAILABLE;
+	private boolean isLoaded = false;
 	private CoordinatesInWorld corner;
 	private Fragment leftFragment = null;
 	private Fragment rightFragment = null;
@@ -76,31 +72,14 @@ public class Fragment implements Iterable<Fragment> {
 		rightFragment = null;
 		aboveFragment = null;
 		belowFragment = null;
-		state = State.INITIALIZED;
 	}
 
-	public void setAvailable() {
-		state = State.AVAILABLE;
-	}
-
-	public void setLoaded() {
-		state = State.LOADED;
-	}
-
-	public void setNeedsReset() {
-		state = State.NEEDS_RESET;
-	}
-
-	public boolean isInitialized() {
-		return state == State.INITIALIZED;
+	public void setLoaded(boolean isLoaded) {
+		this.isLoaded = isLoaded;
 	}
 
 	public boolean isLoaded() {
-		return state == State.LOADED;
-	}
-
-	public boolean needsReset() {
-		return state == State.NEEDS_RESET;
+		return isLoaded;
 	}
 
 	public void prepareLoad() {

@@ -34,22 +34,25 @@ public class FragmentLoader {
 
 	private void processResetQueue() {
 		while ((currentFragment = resetQueue.poll()) != null) {
-			loadFragment();
+			resetFragment();
 		}
 	}
 
 	private void loadFragment() {
-		if (currentFragment.needsReset()) {
-			currentFragment.setAvailable();
-			availableQueue.offer(currentFragment);
-		} else if (currentFragment.isInitialized()) {
-			currentFragment.prepareLoad();
-			loadAllLayers();
-			currentFragment.setLoaded();
-		} else if (currentFragment.isLoaded()) {
+		if (currentFragment.isLoaded()) {
 			currentFragment.prepareReload();
 			reloadInvalidatedLayers();
+		} else {
+			currentFragment.prepareLoad();
+			loadAllLayers();
+			currentFragment.setLoaded(true);
 		}
+	}
+
+	private void resetFragment() {
+		currentFragment.setLoaded(false);
+		loadingQueue.remove(currentFragment);
+		availableQueue.offer(currentFragment);
 	}
 
 	private void loadAllLayers() {

@@ -41,7 +41,6 @@ public class FragmentCache {
 
 	public void resetAll() {
 		for (Fragment fragment : cache) {
-			fragment.setNeedsReset();
 			resetQueue.offer(fragment);
 		}
 	}
