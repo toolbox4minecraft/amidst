@@ -47,6 +47,7 @@ public class Fragment implements Iterable<Fragment> {
 
 	public static final int SIZE = Resolution.FRAGMENT.getStep();
 
+	private boolean isInitialized = false;
 	private boolean isLoaded = false;
 	private CoordinatesInWorld corner;
 	private Fragment leftFragment = null;
@@ -72,6 +73,14 @@ public class Fragment implements Iterable<Fragment> {
 		rightFragment = null;
 		aboveFragment = null;
 		belowFragment = null;
+	}
+
+	public void setInitialized(boolean isInitialized) {
+		this.isInitialized = isInitialized;
+	}
+
+	public boolean isInitialized() {
+		return isInitialized;
 	}
 
 	public void setLoaded(boolean isLoaded) {

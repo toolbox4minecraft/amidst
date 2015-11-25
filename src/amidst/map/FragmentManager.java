@@ -30,6 +30,7 @@ public class FragmentManager {
 			cache.increaseSize();
 		}
 		fragment.initialize(coordinates);
+		fragment.setInitialized(true);
 		loadingQueue.offer(fragment);
 		return fragment;
 	}

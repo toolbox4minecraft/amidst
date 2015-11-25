@@ -39,19 +39,24 @@ public class FragmentLoader {
 	}
 
 	private void loadFragment() {
-		if (currentFragment.isLoaded()) {
-			currentFragment.prepareReload();
-			reloadInvalidatedLayers();
-		} else {
-			currentFragment.prepareLoad();
-			loadAllLayers();
-			currentFragment.setLoaded(true);
+		if (currentFragment.isInitialized()) {
+			if (currentFragment.isLoaded()) {
+				currentFragment.prepareReload();
+				reloadInvalidatedLayers();
+			} else {
+				currentFragment.prepareLoad();
+				loadAllLayers();
+				currentFragment.setLoaded(true);
+			}
 		}
 	}
 
 	private void resetFragment() {
 		currentFragment.setLoaded(false);
-		loadingQueue.remove(currentFragment);
+		currentFragment.setInitialized(false);
+		while (loadingQueue.remove(currentFragment)) {
+			// noop
+		}
 		availableQueue.offer(currentFragment);
 	}
 
