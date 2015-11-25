@@ -66,20 +66,20 @@ public class Application {
 	}
 
 	public void displayMapWindow(RemoteMinecraft minecraftInterface) {
-		displayMapWindow(minecraftInterface);
+		doDisplayMapWindow(minecraftInterface);
 	}
 
 	public void displayMapWindow(MinecraftProfile profile) {
 		LocalMinecraftInstallation.initProfileDirectory(profile.getGameDir());
-		displayMapWindow(createLocalMinecraftInterface(profile.getJarFile()));
+		doDisplayMapWindow(createLocalMinecraftInterface(profile.getJarFile()));
 	}
 
 	public void displayMapWindow(String jarFile, String gameDirectory) {
 		LocalMinecraftInstallation.initProfileDirectory(gameDirectory);
-		displayMapWindow(createLocalMinecraftInterface(new File(jarFile)));
+		doDisplayMapWindow(createLocalMinecraftInterface(new File(jarFile)));
 	}
 
-	private void displayMapWindow(IMinecraftInterface minecraftInterface) {
+	private void doDisplayMapWindow(IMinecraftInterface minecraftInterface) {
 		MinecraftUtil.setInterface(minecraftInterface);
 		setMapWindow(new MapWindow(this));
 		setVersionSelectWindow(null);
