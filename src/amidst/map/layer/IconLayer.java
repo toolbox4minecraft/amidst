@@ -47,8 +47,7 @@ public abstract class IconLayer extends Layer {
 		return new WorldObjectConsumer() {
 			@Override
 			public void consume(WorldObject worldObject) {
-				fragment.addMapObject(layerType, new MapObject(worldObject,
-						IconLayer.this));
+				fragment.addMapObject(layerType, new MapObject(worldObject));
 			}
 		};
 	}
