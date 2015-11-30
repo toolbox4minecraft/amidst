@@ -9,7 +9,6 @@ import java.awt.geom.AffineTransform;
 import amidst.map.Fragment;
 import amidst.map.Map;
 import amidst.minecraft.world.Resolution;
-import amidst.minecraft.world.World;
 import amidst.preferences.PrefModel;
 
 public class GridLayer extends Layer {
@@ -19,9 +18,9 @@ public class GridLayer extends Layer {
 	private StringBuffer textBuffer = new StringBuffer(128);
 	private char[] textCache = new char[128];
 
-	public GridLayer(World world, Map map, LayerType layerType,
+	public GridLayer(Map map, LayerType layerType,
 			PrefModel<Boolean> isVisiblePreference) {
-		super(world, map, layerType, isVisiblePreference);
+		super(map, layerType, isVisiblePreference);
 	}
 
 	@Override

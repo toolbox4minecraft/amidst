@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import amidst.map.Fragment;
 import amidst.map.Map;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.World;
 import amidst.minecraft.world.object.WorldObject;
 import amidst.minecraft.world.object.WorldObjectProducer;
 import amidst.preferences.PrefModel;
@@ -16,9 +15,9 @@ public class WorldObjectLayer extends Layer {
 	private final AffineTransform worldObjectLayerMatrix = new AffineTransform();
 	private final WorldObjectProducer producer;
 
-	public WorldObjectLayer(World world, Map map, LayerType layerType,
+	public WorldObjectLayer(Map map, LayerType layerType,
 			PrefModel<Boolean> isVisiblePreference, WorldObjectProducer producer) {
-		super(world, map, layerType, isVisiblePreference);
+		super(map, layerType, isVisiblePreference);
 		this.producer = producer;
 	}
 

@@ -9,7 +9,6 @@ import amidst.map.Fragment;
 import amidst.map.Map;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
-import amidst.minecraft.world.World;
 import amidst.preferences.PrefModel;
 
 public class ImageLayer extends Layer {
@@ -21,10 +20,10 @@ public class ImageLayer extends Layer {
 	private final int[] rgbArray;
 	private BufferedImage bufferedImage;
 
-	public ImageLayer(World world, Map map, LayerType layerType,
+	public ImageLayer(Map map, LayerType layerType,
 			PrefModel<Boolean> isVisiblePreference,
 			ColorProvider colorProvider, Resolution resolution) {
-		super(world, map, layerType, isVisiblePreference);
+		super(map, layerType, isVisiblePreference);
 		this.colorProvider = colorProvider;
 		this.resolution = resolution;
 		this.size = resolution.getStepsPerFragment();

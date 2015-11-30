@@ -37,53 +37,52 @@ public class LayerContainerFactory {
 	}
 
 	private Layer createBiomeLayer(World world, Map map) {
-		return new BiomeLayer(world, map, LayerType.BIOME,
+		return new BiomeLayer(map, LayerType.BIOME,
 				options.alwaysTruePreference, new BiomeColorProvider(map),
 				Resolution.QUARTER, world.getBiomeDataOracle());
 	}
 
 	private Layer createSlimeLayer(World world, Map map) {
-		return new ImageLayer(world, map, LayerType.SLIME,
-				options.showSlimeChunks, new SlimeColorProvider(world),
-				Resolution.CHUNK);
+		return new ImageLayer(map, LayerType.SLIME, options.showSlimeChunks,
+				new SlimeColorProvider(world), Resolution.CHUNK);
 	}
 
 	private Layer createGridLayer(World world, Map map) {
-		return new GridLayer(world, map, LayerType.GRID, options.showGrid);
+		return new GridLayer(map, LayerType.GRID, options.showGrid);
 	}
 
 	private Layer createVillageLayer(World world, Map map) {
-		return new WorldObjectLayer(world, map, LayerType.VILLAGE,
+		return new WorldObjectLayer(map, LayerType.VILLAGE,
 				options.showVillages, world.getVillageProducer());
 	}
 
 	private Layer createOceanMonumentLayer(World world, Map map) {
-		return new WorldObjectLayer(world, map, LayerType.OCEAN_MONUMENT,
+		return new WorldObjectLayer(map, LayerType.OCEAN_MONUMENT,
 				options.showOceanMonuments, world.getOceanMonumentProducer());
 	}
 
 	private Layer createStrongholdLayer(World world, Map map) {
-		return new WorldObjectLayer(world, map, LayerType.STRONGHOLD,
+		return new WorldObjectLayer(map, LayerType.STRONGHOLD,
 				options.showStrongholds, world.getStrongholdProducer());
 	}
 
 	private Layer createTempleLayer(World world, Map map) {
-		return new WorldObjectLayer(world, map, LayerType.TEMPLE,
-				options.showTemples, world.getTempleProducer());
+		return new WorldObjectLayer(map, LayerType.TEMPLE, options.showTemples,
+				world.getTempleProducer());
 	}
 
 	private Layer createSpawnLayer(World world, Map map) {
-		return new WorldObjectLayer(world, map, LayerType.SPAWN,
-				options.showSpawn, world.getSpawnProducer());
+		return new WorldObjectLayer(map, LayerType.SPAWN, options.showSpawn,
+				world.getSpawnProducer());
 	}
 
 	private Layer createNetherFortressLayer(World world, Map map) {
-		return new WorldObjectLayer(world, map, LayerType.NETHER_FORTRESS,
+		return new WorldObjectLayer(map, LayerType.NETHER_FORTRESS,
 				options.showNetherFortresses, world.getNetherFortressProducer());
 	}
 
 	private Layer createPlayerLayer(World world, Map map) {
-		return new WorldObjectLayer(world, map, LayerType.PLAYER,
-				options.showPlayers, world.getPlayerProducer());
+		return new WorldObjectLayer(map, LayerType.PLAYER, options.showPlayers,
+				world.getPlayerProducer());
 	}
 }
