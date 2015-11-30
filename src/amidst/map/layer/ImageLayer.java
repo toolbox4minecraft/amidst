@@ -1,7 +1,6 @@
 package amidst.map.layer;
 
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
@@ -12,8 +11,6 @@ import amidst.minecraft.world.Resolution;
 import amidst.preferences.PrefModel;
 
 public class ImageLayer extends Layer {
-	private final AffineTransform imageLayerMatrix = new AffineTransform();
-
 	private final ColorProvider colorProvider;
 	private final Resolution resolution;
 	protected final int size;
@@ -76,23 +73,6 @@ public class ImageLayer extends Layer {
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d,
 			AffineTransform layerMatrix) {
-		initImageLayerMatrix(resolution.getStep(), layerMatrix);
-		g2d.setTransform(imageLayerMatrix);
-		if (g2d.getTransform().getScaleX() < 1.0f) {
-			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-					RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		} else {
-			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-		}
-		g2d.drawImage(fragment.getImage(layerType), 0, 0, null);
-		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-	}
-
-	// TODO: is this transformation correct?
-	public void initImageLayerMatrix(double scale, AffineTransform layerMatrix) {
-		imageLayerMatrix.setTransform(layerMatrix);
-		imageLayerMatrix.scale(scale, scale);
+		new ImageDrawer(resolution, layerType).draw(fragment, g2d, layerMatrix);
 	}
 }
