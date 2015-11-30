@@ -7,7 +7,7 @@ import amidst.map.Fragment;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 
-public abstract class CachedWorldObjectProducer implements WorldObjectProducer {
+public abstract class CachedWorldObjectProducer extends WorldObjectProducer {
 	protected final World world;
 	private List<WorldObject> cache;
 

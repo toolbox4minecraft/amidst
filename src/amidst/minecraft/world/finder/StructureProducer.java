@@ -12,7 +12,7 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 
-public abstract class StructureProducer implements WorldObjectProducer {
+public abstract class StructureProducer extends WorldObjectProducer {
 	protected final World world;
 
 	protected final List<Biome> validBiomesForStructure;
