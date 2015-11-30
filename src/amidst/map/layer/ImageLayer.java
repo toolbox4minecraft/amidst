@@ -12,17 +12,20 @@ import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 import amidst.preferences.PrefModel;
 
-public abstract class ImageLayer extends Layer {
+public class ImageLayer extends Layer {
 	private final AffineTransform imageLayerMatrix = new AffineTransform();
 
-	protected final Resolution resolution;
+	private final ColorProvider colorProvider;
+	private final Resolution resolution;
 	protected final int size;
 	private final int[] rgbArray;
 	private BufferedImage bufferedImage;
 
 	public ImageLayer(World world, Map map, LayerType layerType,
-			PrefModel<Boolean> isVisiblePreference, Resolution resolution) {
+			PrefModel<Boolean> isVisiblePreference,
+			ColorProvider colorProvider, Resolution resolution) {
 		super(world, map, layerType, isVisiblePreference);
+		this.colorProvider = colorProvider;
 		this.resolution = resolution;
 		this.size = resolution.getStepsPerFragment();
 		this.rgbArray = new int[size * size];
@@ -61,7 +64,8 @@ public abstract class ImageLayer extends Layer {
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
 				int index = getCacheIndex(x, y);
-				rgbArray[index] = getColorAt(fragment, cornerX, cornerY, x, y);
+				rgbArray[index] = colorProvider.getColorAt(fragment, cornerX,
+						cornerY, x, y);
 			}
 		}
 	}
@@ -92,7 +96,4 @@ public abstract class ImageLayer extends Layer {
 		imageLayerMatrix.setTransform(layerMatrix);
 		imageLayerMatrix.scale(scale, scale);
 	}
-
-	protected abstract int getColorAt(Fragment fragment, long cornerX,
-			long cornerY, int x, int y);
 }
