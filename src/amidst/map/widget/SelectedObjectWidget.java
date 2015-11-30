@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.minecraft.world.World;
-import amidst.minecraft.world.finder.WorldObject;
+import amidst.minecraft.world.object.WorldObject;
 
 public class SelectedObjectWidget extends Widget {
 	private String message = "";

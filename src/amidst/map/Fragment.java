@@ -11,7 +11,7 @@ import amidst.map.layer.LayerType;
 import amidst.minecraft.world.BiomeDataProvider;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
-import amidst.minecraft.world.finder.WorldObject;
+import amidst.minecraft.world.object.WorldObject;
 
 public class Fragment implements Iterable<Fragment> {
 	private static class FragmentIterator implements Iterator<Fragment> {

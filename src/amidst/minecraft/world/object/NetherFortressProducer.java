@@ -1,36 +1,39 @@
-package amidst.minecraft.world.finder;
+package amidst.minecraft.world.object;
 
-import java.util.Arrays;
 import java.util.List;
 
 import amidst.map.MapMarkers;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.World;
 
-public class VillageProducer extends StructureProducer {
-	public VillageProducer(World world) {
+public class NetherFortressProducer extends StructureProducer {
+	public NetherFortressProducer(World world) {
 		super(world);
 	}
 
 	@Override
 	protected boolean isValidLocation() {
-		return isSuccessful() && isValidBiomeForStructure();
+		int i = chunkX >> 4;
+		int j = chunkY >> 4;
+		random.setSeed(i ^ j << 4 ^ world.getSeed());
+		random.nextInt();
+		if (random.nextInt(3) != 0) {
+			return false;
+		}
+		if (chunkX != (i << 4) + 4 + random.nextInt(8)) {
+			return false;
+		}
+		return chunkY == (j << 4) + 4 + random.nextInt(8);
 	}
 
 	@Override
 	protected MapMarkers getMapMarker() {
-		return MapMarkers.VILLAGE;
+		return MapMarkers.NETHER_FORTRESS;
 	}
 
 	@Override
 	protected List<Biome> getValidBiomesForStructure() {
-		// @formatter:off
-		return Arrays.asList(
-				Biome.plains,
-				Biome.desert,
-				Biome.savanna
-		);
-		// @formatter:on
+		return null; // not used
 	}
 
 	@Override
@@ -40,38 +43,36 @@ public class VillageProducer extends StructureProducer {
 
 	@Override
 	protected int updateValue(int value) {
-		value *= maxDistanceBetweenScatteredFeatures;
-		value += random.nextInt(distanceBetweenScatteredFeaturesRange);
-		return value;
+		return -1; // not used
 	}
 
 	@Override
 	protected long getMagicNumberForSeed1() {
-		return 341873128712L;
+		return -1; // not used
 	}
 
 	@Override
 	protected long getMagicNumberForSeed2() {
-		return 132897987541L;
+		return -1; // not used
 	}
 
 	@Override
 	protected long getMagicNumberForSeed3() {
-		return 10387312L;
+		return -1; // not used
 	}
 
 	@Override
 	protected byte getMaxDistanceBetweenScatteredFeatures() {
-		return 32;
+		return -1; // not used
 	}
 
 	@Override
 	protected byte getMinDistanceBetweenScatteredFeatures() {
-		return 8;
+		return -1; // not used
 	}
 
 	@Override
 	protected int getStructureSize() {
-		return 0;
+		return -1; // not used
 	}
 }

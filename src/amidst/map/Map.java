@@ -9,7 +9,7 @@ import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
-import amidst.minecraft.world.finder.WorldObject;
+import amidst.minecraft.world.object.WorldObject;
 
 public class Map {
 	private WorldObject selectedWorldObject;

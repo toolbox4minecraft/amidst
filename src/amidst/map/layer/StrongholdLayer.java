@@ -3,7 +3,7 @@ package amidst.map.layer;
 import amidst.Options;
 import amidst.map.Map;
 import amidst.minecraft.world.World;
-import amidst.minecraft.world.finder.WorldObjectProducer;
+import amidst.minecraft.world.object.WorldObjectProducer;
 import amidst.preferences.BooleanPrefModel;
 
 public class StrongholdLayer extends IconLayer {

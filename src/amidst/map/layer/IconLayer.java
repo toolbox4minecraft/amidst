@@ -8,8 +8,8 @@ import amidst.map.Fragment;
 import amidst.map.Map;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
-import amidst.minecraft.world.finder.WorldObject;
-import amidst.minecraft.world.finder.WorldObjectProducer;
+import amidst.minecraft.world.object.WorldObject;
+import amidst.minecraft.world.object.WorldObjectProducer;
 import amidst.preferences.BooleanPrefModel;
 
 public abstract class IconLayer extends Layer {

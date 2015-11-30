@@ -1,4 +1,4 @@
-package amidst.minecraft.world.finder;
+package amidst.minecraft.world.object;
 
 import java.util.Collections;
 import java.util.LinkedList;

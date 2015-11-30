@@ -3,16 +3,16 @@ package amidst.minecraft.world;
 import java.util.List;
 
 import amidst.map.Fragment;
-import amidst.minecraft.world.finder.CachedWorldObjectProducer;
-import amidst.minecraft.world.finder.NetherFortressProducer;
-import amidst.minecraft.world.finder.OceanMonumentProducer;
-import amidst.minecraft.world.finder.PlayerProducer;
-import amidst.minecraft.world.finder.SpawnProducer;
-import amidst.minecraft.world.finder.StrongholdProducer;
-import amidst.minecraft.world.finder.TempleProducer;
-import amidst.minecraft.world.finder.VillageProducer;
-import amidst.minecraft.world.finder.WorldObject;
-import amidst.minecraft.world.finder.WorldObjectProducer;
+import amidst.minecraft.world.object.CachedWorldObjectProducer;
+import amidst.minecraft.world.object.NetherFortressProducer;
+import amidst.minecraft.world.object.OceanMonumentProducer;
+import amidst.minecraft.world.object.PlayerProducer;
+import amidst.minecraft.world.object.SpawnProducer;
+import amidst.minecraft.world.object.StrongholdProducer;
+import amidst.minecraft.world.object.TempleProducer;
+import amidst.minecraft.world.object.VillageProducer;
+import amidst.minecraft.world.object.WorldObject;
+import amidst.minecraft.world.object.WorldObjectProducer;
 
 public abstract class World {
 	private final WorldObjectProducer oceanMonumentProducer = new OceanMonumentProducer(
