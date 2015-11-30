@@ -34,11 +34,11 @@ public class Fragment implements Iterable<Fragment> {
 		}
 
 		private void updateCurrentNode() {
-			if (currentNode.isEndOfLine()) {
+			if (currentNode.rightFragment != null) {
+				currentNode = currentNode.rightFragment;
+			} else {
 				rowStart = rowStart.belowFragment;
 				currentNode = rowStart;
-			} else {
-				currentNode = currentNode.rightFragment;
 			}
 		}
 	}
