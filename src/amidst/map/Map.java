@@ -149,11 +149,12 @@ public class Map {
 		return null;
 	}
 
-	public WorldObject getWorldObjectAt(Point positionOnScreen, double maxRange) {
+	public WorldObject getWorldObjectAt(Point positionOnScreen,
+			double maxDistance) {
 		double xCornerOnScreen = startOnScreen.x;
 		double yCornerOnScreen = startOnScreen.y;
 		WorldObject closestWorldObject = null;
-		double closestDistance = maxRange;
+		double closestDistance = maxDistance;
 		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
@@ -243,8 +244,8 @@ public class Map {
 		return selectedWorldObject;
 	}
 
-	public void setSelectedWorldObject(WorldObject selectedWorldObject) {
-		this.selectedWorldObject = selectedWorldObject;
+	public void selectWorldObjectAt(Point mouse, double maxDistance) {
+		this.selectedWorldObject = getWorldObjectAt(mouse, maxDistance);
 	}
 
 	public FragmentManager getFragmentManager() {
