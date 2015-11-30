@@ -112,6 +112,12 @@ public class Fragment implements Iterable<Fragment> {
 		return biomeData[x][y];
 	}
 
+	public BufferedImage getAndSetImage(LayerType layerType, BufferedImage image) {
+		BufferedImage result = images.get(layerType);
+		images.put(layerType, image);
+		return result;
+	}
+
 	public void putImage(LayerType layerType, BufferedImage image) {
 		images.put(layerType, image);
 	}
