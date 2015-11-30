@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.logging.Log;
-import amidst.map.Fragment;
 import amidst.map.MapMarkers;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
@@ -15,6 +14,7 @@ import amidst.minecraft.world.World;
 public abstract class StructureProducer extends WorldObjectProducer {
 	protected final World world;
 	protected final Resolution resolution;
+	protected final int size;
 
 	protected final List<Biome> validBiomesForStructure;
 	protected final List<Biome> validBiomesAtMiddleOfChunk;
@@ -25,7 +25,6 @@ public abstract class StructureProducer extends WorldObjectProducer {
 	protected final byte minDistanceBetweenScatteredFeatures;
 	protected final int distanceBetweenScatteredFeaturesRange;
 	protected final int structureSize;
-	protected final int size;
 	protected final Random random;
 
 	private CoordinatesInWorld corner;
@@ -40,6 +39,7 @@ public abstract class StructureProducer extends WorldObjectProducer {
 	public StructureProducer(World world, Resolution resolution) {
 		this.world = world;
 		this.resolution = resolution;
+		this.size = resolution.getStepsPerFragment();
 		validBiomesForStructure = getValidBiomesForStructure();
 		validBiomesAtMiddleOfChunk = getValidBiomesAtMiddleOfChunk();
 		magicNumberForSeed1 = getMagicNumberForSeed1();
@@ -49,7 +49,6 @@ public abstract class StructureProducer extends WorldObjectProducer {
 		minDistanceBetweenScatteredFeatures = getMinDistanceBetweenScatteredFeatures();
 		distanceBetweenScatteredFeaturesRange = getDistanceBetweenScatteredFeaturesRange();
 		structureSize = getStructureSize();
-		size = Fragment.SIZE >> 4;
 		random = new Random();
 	}
 

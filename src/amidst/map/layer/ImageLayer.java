@@ -23,17 +23,13 @@ public abstract class ImageLayer extends Layer {
 			Resolution resolution) {
 		super(world, map, layerType);
 		this.resolution = resolution;
-		this.size = Fragment.SIZE / resolution.getStep();
+		this.size = resolution.getStepsPerFragment();
 		this.rgbArray = new int[size * size];
 		this.bufferedImage = createBufferedImage();
 	}
 
 	private BufferedImage createBufferedImage() {
 		return new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-	}
-
-	public double getScale() {
-		return resolution.getStep();
 	}
 
 	@Override
@@ -76,7 +72,7 @@ public abstract class ImageLayer extends Layer {
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d,
 			AffineTransform layerMatrix) {
-		initImageLayerMatrix(getScale(), layerMatrix);
+		initImageLayerMatrix(resolution.getStep(), layerMatrix);
 		g2d.setTransform(imageLayerMatrix);
 		if (g2d.getTransform().getScaleX() < 1.0f) {
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,

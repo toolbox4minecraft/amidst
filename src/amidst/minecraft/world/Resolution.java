@@ -9,12 +9,12 @@ public enum Resolution {
 		this.shift = shift;
 	}
 
-	public int getShift() {
-		return shift;
-	}
-
 	public int getStep() {
 		return 1 << shift;
+	}
+
+	public int getStepsPerFragment() {
+		return 1 << (FRAGMENT.shift - shift);
 	}
 
 	public long convertFromWorldToThis(long coordinateInWorld) {
@@ -23,10 +23,5 @@ public enum Resolution {
 
 	public long convertFromThisToWorld(long coordinateInThisResolution) {
 		return coordinateInThisResolution << shift;
-	}
-
-	public long convertToThis(Resolution oldResolution,
-			long coordinateInOldResolution) {
-		return (coordinateInOldResolution << oldResolution.shift) >> shift;
 	}
 }
