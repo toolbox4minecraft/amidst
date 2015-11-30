@@ -15,7 +15,7 @@ public abstract class ImageLayer extends Layer {
 	private final AffineTransform imageLayerMatrix = new AffineTransform();
 
 	protected final Resolution resolution;
-	private final int size;
+	protected final int size;
 	private final int[] rgbArray;
 	private BufferedImage bufferedImage;
 

@@ -8,16 +8,13 @@ import amidst.minecraft.world.World;
 import amidst.utilities.ColorUtils;
 
 public class BiomeLayer extends ImageLayer {
-	private int biomeSize;
-
 	public BiomeLayer(World world, Map map) {
 		super(world, map, LayerType.BIOME, BiomeDataProvider.RESOLUTION);
-		this.biomeSize = (int) resolution.convertFromWorldToThis(Fragment.SIZE);
 	}
 
 	@Override
 	public void construct(Fragment fragment) {
-		fragment.initBiomeData(biomeSize, biomeSize);
+		fragment.initBiomeData(size, size);
 		super.construct(fragment);
 	}
 
