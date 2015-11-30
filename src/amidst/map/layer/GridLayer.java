@@ -12,7 +12,7 @@ import amidst.map.Map;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 
-public class GridLayer extends LiveLayer {
+public class GridLayer extends Layer {
 	private static final Font DRAW_FONT = new Font("arial", Font.BOLD, 16);
 
 	private final AffineTransform gridLayerMatrix = new AffineTransform();
@@ -26,6 +26,16 @@ public class GridLayer extends LiveLayer {
 	@Override
 	public boolean isVisible() {
 		return Options.instance.showGrid.get();
+	}
+
+	@Override
+	public void load(Fragment fragment) {
+		// noop
+	}
+
+	@Override
+	public void reload(Fragment fragment) {
+		// noop
 	}
 
 	@Override
