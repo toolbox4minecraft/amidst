@@ -9,7 +9,6 @@ import amidst.map.Map;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.finder.WorldObject;
-import amidst.minecraft.world.finder.WorldObjectConsumer;
 import amidst.minecraft.world.finder.WorldObjectProducer;
 import amidst.preferences.BooleanPrefModel;
 
@@ -32,23 +31,12 @@ public abstract class IconLayer extends Layer {
 
 	@Override
 	public void reload(Fragment fragment, int[] imageCache) {
-		fragment.removeWorldObjects(layerType);
 		doLoad(fragment);
 	}
 
 	protected void doLoad(Fragment fragment) {
-		getProducer().produce(fragment.getCorner(),
-				createWorldObjectConsumer(fragment));
-	}
-
-	private WorldObjectConsumer createWorldObjectConsumer(
-			final Fragment fragment) {
-		return new WorldObjectConsumer() {
-			@Override
-			public void consume(WorldObject worldObject) {
-				fragment.addWorldObject(layerType, worldObject);
-			}
-		};
+		fragment.putWorldObjects(layerType,
+				getProducer().getAt(fragment.getCorner()));
 	}
 
 	@Override

@@ -1,10 +1,8 @@
 package amidst.map;
 
 import java.awt.image.BufferedImage;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import amidst.Options;
@@ -87,7 +85,6 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	public void prepareLoad() {
-		clearWorldObjects();
 		initAlpha();
 	}
 
@@ -136,36 +133,13 @@ public class Fragment implements Iterable<Fragment> {
 		return images.get(layerType);
 	}
 
-	public EnumMap<LayerType, BufferedImage> getImages() {
-		return images;
-	}
-
-	private void clearWorldObjects() {
-		worldObjects.clear();
-	}
-
-	public void addWorldObject(LayerType layerType, WorldObject worldObject) {
-		List<WorldObject> list = worldObjects.get(layerType);
-		if (list != null) {
-			list.add(worldObject);
-		} else {
-			list = new LinkedList<WorldObject>();
-			list.add(worldObject);
-			worldObjects.put(layerType, list);
-		}
-	}
-
-	public void removeWorldObjects(LayerType layerType) {
-		worldObjects.remove(layerType);
+	public void putWorldObjects(LayerType layerType,
+			List<WorldObject> worldObjects) {
+		this.worldObjects.put(layerType, worldObjects);
 	}
 
 	public List<WorldObject> getWorldObjects(LayerType layerType) {
-		List<WorldObject> result = worldObjects.get(layerType);
-		if (result != null) {
-			return result;
-		} else {
-			return Collections.emptyList();
-		}
+		return worldObjects.get(layerType);
 	}
 
 	@Override
