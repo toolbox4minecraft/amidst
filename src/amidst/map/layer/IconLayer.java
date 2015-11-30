@@ -12,16 +12,21 @@ import amidst.minecraft.world.object.WorldObject;
 import amidst.minecraft.world.object.WorldObjectProducer;
 import amidst.preferences.BooleanPrefModel;
 
-public abstract class IconLayer extends Layer {
+public class IconLayer extends Layer {
 	private final AffineTransform iconLayerMatrix = new AffineTransform();
+	private final BooleanPrefModel isVisiblePreference;
+	private final WorldObjectProducer producer;
 
-	public IconLayer(World world, Map map, LayerType layerType) {
+	public IconLayer(World world, Map map, LayerType layerType,
+			BooleanPrefModel isVisiblePreference, WorldObjectProducer producer) {
 		super(world, map, layerType);
+		this.isVisiblePreference = isVisiblePreference;
+		this.producer = producer;
 	}
 
 	@Override
 	public boolean isVisible() {
-		return getIsVisiblePreference().get();
+		return isVisiblePreference.get();
 	}
 
 	@Override
@@ -36,7 +41,7 @@ public abstract class IconLayer extends Layer {
 
 	protected void doLoad(Fragment fragment) {
 		fragment.putWorldObjects(layerType,
-				getProducer().getAt(fragment.getCorner()));
+				producer.getAt(fragment.getCorner()));
 	}
 
 	@Override
@@ -69,8 +74,4 @@ public abstract class IconLayer extends Layer {
 				coordinates.getYRelativeToFragment());
 		iconLayerMatrix.scale(invZoom, invZoom);
 	}
-
-	protected abstract BooleanPrefModel getIsVisiblePreference();
-
-	protected abstract WorldObjectProducer getProducer();
 }
