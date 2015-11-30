@@ -20,7 +20,7 @@ public class BiomeLayer extends ImageLayer {
 
 	@Override
 	public void load(Fragment fragment) {
-		world.populateBiomeDataArray(fragment);
+		fragment.populateBiomeData(world.getBiomeDataProvider());
 		super.load(fragment);
 	}
 

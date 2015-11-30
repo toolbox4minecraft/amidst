@@ -2,7 +2,6 @@ package amidst.minecraft.world;
 
 import java.util.List;
 
-import amidst.map.Fragment;
 import amidst.minecraft.world.object.CachedWorldObjectProducer;
 import amidst.minecraft.world.object.NetherFortressProducer;
 import amidst.minecraft.world.object.OceanMonumentProducer;
@@ -15,6 +14,7 @@ import amidst.minecraft.world.object.WorldObject;
 import amidst.minecraft.world.object.WorldObjectProducer;
 
 public abstract class World {
+	private final BiomeDataProvider biomeDataProvider = new BiomeDataProvider();
 	private final WorldObjectProducer oceanMonumentProducer = new OceanMonumentProducer(
 			this);
 	private final WorldObjectProducer templeProducer = new TempleProducer(this);
@@ -28,7 +28,6 @@ public abstract class World {
 			this);
 	private final CachedWorldObjectProducer strongholdProducer = new StrongholdProducer(
 			this);
-	private final BiomeDataProvider biomeDataProvider = new BiomeDataProvider();
 
 	@Deprecated
 	public boolean hasPlayers() {
@@ -45,11 +44,9 @@ public abstract class World {
 		return (FileWorld) this;
 	}
 
-	public abstract long getSeed();
-
-	public abstract String getSeedText();
-
-	public abstract WorldType getWorldType();
+	public BiomeDataProvider getBiomeDataProvider() {
+		return biomeDataProvider;
+	}
 
 	public WorldObjectProducer getOceanMonumentProducer() {
 		return oceanMonumentProducer;
@@ -95,7 +92,9 @@ public abstract class World {
 		playerProducer.resetCache();
 	}
 
-	public void populateBiomeDataArray(Fragment fragment) {
-		fragment.populateBiomeData(biomeDataProvider);
-	}
+	public abstract long getSeed();
+
+	public abstract String getSeedText();
+
+	public abstract WorldType getWorldType();
 }

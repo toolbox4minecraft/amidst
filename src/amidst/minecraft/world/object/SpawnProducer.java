@@ -8,7 +8,6 @@ import java.util.Random;
 import amidst.logging.Log;
 import amidst.map.MapMarkers;
 import amidst.minecraft.Biome;
-import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 
@@ -48,6 +47,7 @@ public class SpawnProducer extends CachedWorldObjectProducer {
 
 	private Point getSpawnCenterInWorldCoordinates() {
 		Random random = new Random(world.getSeed());
-		return MinecraftUtil.findValidLocation(0, 0, 256, VALID_BIOMES, random);
+		return world.getBiomeDataProvider().findValidLocation(0, 0, 256,
+				VALID_BIOMES, random);
 	}
 }

@@ -98,8 +98,8 @@ public class StrongholdProducer extends CachedWorldObjectProducer {
 	}
 
 	private Point findStronghold(int x, int y) {
-		return MinecraftUtil.findValidLocation(x + 8, y + 8, 112, validBiomes,
-				random);
+		return world.getBiomeDataProvider().findValidLocation(x + 8, y + 8,
+				112, validBiomes, random);
 	}
 
 	private int getY(double angle, double distance) {

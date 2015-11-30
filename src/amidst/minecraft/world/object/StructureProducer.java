@@ -6,7 +6,6 @@ import java.util.Random;
 import amidst.logging.Log;
 import amidst.map.MapMarkers;
 import amidst.minecraft.Biome;
-import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
@@ -137,12 +136,13 @@ public abstract class StructureProducer extends WorldObjectProducer {
 	}
 
 	protected Biome getBiomeAtMiddleOfChunk() {
-		return MinecraftUtil.getBiomeAt(middleOfChunkX, middleOfChunkY);
+		return world.getBiomeDataProvider().getBiomeAt(middleOfChunkX,
+				middleOfChunkY);
 	}
 
 	protected boolean isValidBiomeForStructure() {
-		return MinecraftUtil.isValidBiome(middleOfChunkX, middleOfChunkY,
-				structureSize, validBiomesForStructure);
+		return world.getBiomeDataProvider().isValidBiome(middleOfChunkX,
+				middleOfChunkY, structureSize, validBiomesForStructure);
 	}
 
 	protected abstract boolean isValidLocation();
