@@ -1,18 +1,15 @@
 package amidst.map.layer;
 
 import amidst.map.Fragment;
-import amidst.map.Map;
 import amidst.preferences.PrefModel;
 
 public abstract class Layer {
-	protected final Map map;
 	protected final LayerType layerType;
 	private final PrefModel<Boolean> isVisiblePreference;
 	private final FragmentDrawer drawer;
 
-	public Layer(Map map, LayerType layerType,
-			PrefModel<Boolean> isVisiblePreference, FragmentDrawer drawer) {
-		this.map = map;
+	public Layer(LayerType layerType, PrefModel<Boolean> isVisiblePreference,
+			FragmentDrawer drawer) {
 		this.layerType = layerType;
 		this.isVisiblePreference = isVisiblePreference;
 		this.drawer = drawer;

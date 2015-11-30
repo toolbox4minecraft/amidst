@@ -3,7 +3,6 @@ package amidst.map.layer;
 import java.awt.image.BufferedImage;
 
 import amidst.map.Fragment;
-import amidst.map.Map;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 import amidst.preferences.PrefModel;
@@ -15,10 +14,10 @@ public class ImageLayer extends Layer {
 	private final int[] rgbArray;
 	private BufferedImage bufferedImage;
 
-	public ImageLayer(Map map, LayerType layerType,
+	public ImageLayer(LayerType layerType,
 			PrefModel<Boolean> isVisiblePreference,
 			ColorProvider colorProvider, Resolution resolution) {
-		super(map, layerType, isVisiblePreference, new ImageDrawer(resolution,
+		super(layerType, isVisiblePreference, new ImageDrawer(resolution,
 				layerType));
 		this.colorProvider = colorProvider;
 		this.resolution = resolution;

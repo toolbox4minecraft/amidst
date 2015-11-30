@@ -5,9 +5,9 @@ import amidst.map.Map;
 import amidst.preferences.PrefModel;
 
 public class GridLayer extends Layer {
-	public GridLayer(Map map, LayerType layerType,
-			PrefModel<Boolean> isVisiblePreference) {
-		super(map, layerType, isVisiblePreference, new GridDrawer(map));
+	public GridLayer(LayerType layerType,
+			PrefModel<Boolean> isVisiblePreference, Map map) {
+		super(layerType, isVisiblePreference, new GridDrawer(map));
 	}
 
 	@Override

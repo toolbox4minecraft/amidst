@@ -20,7 +20,7 @@ public enum Options {
 
 	// permanent preferences
 	public final FilePrefModel jar;
-	public final PrefModel<Boolean> alwaysTruePreference = new AlwaysTruePreference();
+	public final PrefModel<Boolean> showBiomes = new AlwaysTruePreference();
 	public final BooleanPrefModel showSlimeChunks;
 	public final BooleanPrefModel showGrid;
 	public final BooleanPrefModel showNetherFortresses;

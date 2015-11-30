@@ -8,9 +8,10 @@ import amidst.preferences.PrefModel;
 public class WorldObjectLayer extends Layer {
 	private final WorldObjectProducer producer;
 
-	public WorldObjectLayer(Map map, LayerType layerType,
-			PrefModel<Boolean> isVisiblePreference, WorldObjectProducer producer) {
-		super(map, layerType, isVisiblePreference, new WorldObjectDrawer(map,
+	public WorldObjectLayer(LayerType layerType,
+			PrefModel<Boolean> isVisiblePreference, Map map,
+			WorldObjectProducer producer) {
+		super(layerType, isVisiblePreference, new WorldObjectDrawer(map,
 				layerType));
 		this.producer = producer;
 	}
