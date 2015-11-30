@@ -35,9 +35,9 @@ public abstract class StructureProducer extends WorldObjectProducer {
 	private int middleOfChunkX;
 	private int middleOfChunkY;
 
-	public StructureProducer(World world, Resolution resolution) {
+	public StructureProducer(World world) {
 		this.world = world;
-		this.resolution = resolution;
+		this.resolution = Resolution.CHUNK;
 		this.size = resolution.getStepsPerFragment();
 		validBiomesForStructure = getValidBiomesForStructure();
 		validBiomesAtMiddleOfChunk = getValidBiomesAtMiddleOfChunk();

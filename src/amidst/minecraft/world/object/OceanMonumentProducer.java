@@ -5,12 +5,11 @@ import java.util.List;
 
 import amidst.map.MapMarkers;
 import amidst.minecraft.Biome;
-import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 
 public class OceanMonumentProducer extends StructureProducer {
 	public OceanMonumentProducer(World world) {
-		super(world, Resolution.CHUNK);
+		super(world);
 	}
 
 	@Override
