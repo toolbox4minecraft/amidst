@@ -1,4 +1,4 @@
-package amidst.map.layer;
+package amidst.fragment.drawer;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 
 import amidst.map.Fragment;
 import amidst.map.Map;
+import amidst.map.layer.LayerType;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.object.WorldObject;
 

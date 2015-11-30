@@ -1,5 +1,8 @@
 package amidst.map.layer;
 
+import amidst.fragment.constructor.DummyConstructor;
+import amidst.fragment.drawer.WorldObjectDrawer;
+import amidst.fragment.loader.WorldObjectLoader;
 import amidst.map.Map;
 import amidst.minecraft.world.object.WorldObjectProducer;
 import amidst.preferences.PrefModel;

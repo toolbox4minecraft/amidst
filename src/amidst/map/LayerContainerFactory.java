@@ -1,13 +1,13 @@
 package amidst.map;
 
 import amidst.Options;
-import amidst.map.layer.BiomeColorProvider;
+import amidst.fragment.colorprovider.BiomeColorProvider;
+import amidst.fragment.colorprovider.SlimeColorProvider;
 import amidst.map.layer.BiomeLayer;
 import amidst.map.layer.GridLayer;
 import amidst.map.layer.ImageLayer;
 import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
-import amidst.map.layer.SlimeColorProvider;
 import amidst.map.layer.WorldObjectLayer;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;

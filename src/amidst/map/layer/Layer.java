@@ -1,5 +1,8 @@
 package amidst.map.layer;
 
+import amidst.fragment.constructor.FragmentConstructor;
+import amidst.fragment.drawer.FragmentDrawer;
+import amidst.fragment.loader.FragmentLoader;
 import amidst.preferences.PrefModel;
 
 public class Layer {

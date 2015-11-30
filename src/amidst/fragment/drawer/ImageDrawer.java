@@ -1,10 +1,11 @@
-package amidst.map.layer;
+package amidst.fragment.drawer;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 
 import amidst.map.Fragment;
+import amidst.map.layer.LayerType;
 import amidst.minecraft.world.Resolution;
 
 public class ImageDrawer implements FragmentDrawer {

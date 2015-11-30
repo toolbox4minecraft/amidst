@@ -1,4 +1,4 @@
-package amidst.map.layer;
+package amidst.fragment.drawer;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;

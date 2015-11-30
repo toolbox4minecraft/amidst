@@ -1,4 +1,4 @@
-package amidst.map.layer;
+package amidst.fragment.drawer;
 
 import java.awt.Color;
 import java.awt.Font;

@@ -1,5 +1,8 @@
 package amidst.map.layer;
 
+import amidst.fragment.constructor.DummyConstructor;
+import amidst.fragment.drawer.GridDrawer;
+import amidst.fragment.loader.DummyLoader;
 import amidst.map.Map;
 import amidst.preferences.PrefModel;
 

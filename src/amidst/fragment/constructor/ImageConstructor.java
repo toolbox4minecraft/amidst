@@ -1,8 +1,9 @@
-package amidst.map.layer;
+package amidst.fragment.constructor;
 
 import java.awt.image.BufferedImage;
 
 import amidst.map.Fragment;
+import amidst.map.layer.LayerType;
 import amidst.minecraft.world.Resolution;
 
 public class ImageConstructor implements FragmentConstructor {

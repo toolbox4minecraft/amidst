@@ -1,4 +1,4 @@
-package amidst.map.layer;
+package amidst.fragment.colorprovider;
 
 import amidst.map.Fragment;
 

@@ -1,5 +1,9 @@
 package amidst.map.layer;
 
+import amidst.fragment.colorprovider.ColorProvider;
+import amidst.fragment.constructor.ImageConstructor;
+import amidst.fragment.drawer.ImageDrawer;
+import amidst.fragment.loader.ImageLoader;
 import amidst.minecraft.world.Resolution;
 import amidst.preferences.PrefModel;
 

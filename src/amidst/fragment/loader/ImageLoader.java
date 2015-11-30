@@ -1,8 +1,10 @@
-package amidst.map.layer;
+package amidst.fragment.loader;
 
 import java.awt.image.BufferedImage;
 
+import amidst.fragment.colorprovider.ColorProvider;
 import amidst.map.Fragment;
+import amidst.map.layer.LayerType;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 

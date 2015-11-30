@@ -1,5 +1,9 @@
 package amidst.map.layer;
 
+import amidst.fragment.colorprovider.ColorProvider;
+import amidst.fragment.constructor.BiomeDataConstructor;
+import amidst.fragment.drawer.ImageDrawer;
+import amidst.fragment.loader.BiomeDataLoader;
 import amidst.minecraft.world.BiomeDataOracle;
 import amidst.minecraft.world.Resolution;
 import amidst.preferences.PrefModel;
