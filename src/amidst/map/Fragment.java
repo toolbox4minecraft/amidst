@@ -8,6 +8,7 @@ import java.util.List;
 
 import amidst.Options;
 import amidst.map.layer.LayerType;
+import amidst.minecraft.world.BiomeDataProvider;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.finder.WorldObject;
@@ -69,22 +70,6 @@ public class Fragment implements Iterable<Fragment> {
 		belowFragment = null;
 	}
 
-	public void setInitialized(boolean isInitialized) {
-		this.isInitialized = isInitialized;
-	}
-
-	public boolean isInitialized() {
-		return isInitialized;
-	}
-
-	public void setLoaded(boolean isLoaded) {
-		this.isLoaded = isLoaded;
-	}
-
-	public boolean isLoaded() {
-		return isLoaded;
-	}
-
 	public void prepareLoad() {
 		initAlpha();
 	}
@@ -112,18 +97,19 @@ public class Fragment implements Iterable<Fragment> {
 		biomeData = new short[width][height];
 	}
 
+	public void populateBiomeData(BiomeDataProvider biomeDataProvider) {
+		biomeDataProvider.populateArray(corner, biomeData);
+	}
+
 	public short getBiomeDataAt(CoordinatesInWorld coordinates) {
+		Resolution resolution = BiomeDataProvider.RESOLUTION;
 		return getBiomeDataAt(
-				(int) coordinates.getXRelativeToFragmentAs(Resolution.QUARTER),
-				(int) coordinates.getYRelativeToFragmentAs(Resolution.QUARTER));
+				(int) coordinates.getXRelativeToFragmentAs(resolution),
+				(int) coordinates.getYRelativeToFragmentAs(resolution));
 	}
 
 	public short getBiomeDataAt(int x, int y) {
 		return biomeData[x][y];
-	}
-
-	public short[][] getBiomeData() {
-		return biomeData;
 	}
 
 	public void putImage(LayerType layerType, BufferedImage image) {
@@ -146,6 +132,22 @@ public class Fragment implements Iterable<Fragment> {
 		} else {
 			return Collections.emptyList();
 		}
+	}
+
+	public void setInitialized(boolean isInitialized) {
+		this.isInitialized = isInitialized;
+	}
+
+	public boolean isInitialized() {
+		return isInitialized;
+	}
+
+	public void setLoaded(boolean isLoaded) {
+		this.isLoaded = isLoaded;
+	}
+
+	public boolean isLoaded() {
+		return isLoaded;
 	}
 
 	@Override

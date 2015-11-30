@@ -96,7 +96,6 @@ public abstract class World {
 	}
 
 	public void populateBiomeDataArray(Fragment fragment) {
-		biomeDataProvider.populateArray(fragment.getCorner(),
-				fragment.getBiomeData());
+		fragment.populateBiomeData(biomeDataProvider);
 	}
 }
