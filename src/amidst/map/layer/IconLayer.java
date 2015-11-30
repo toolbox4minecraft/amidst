@@ -3,7 +3,6 @@ package amidst.map.layer;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 import amidst.map.Fragment;
 import amidst.map.Map;
@@ -33,7 +32,7 @@ public abstract class IconLayer extends Layer {
 
 	@Override
 	public void reload(Fragment fragment, int[] imageCache) {
-		fragment.removeMapObjects(layerType);
+		fragment.removeWorldObjects(layerType);
 		doLoad(fragment);
 	}
 
@@ -47,7 +46,7 @@ public abstract class IconLayer extends Layer {
 		return new WorldObjectConsumer() {
 			@Override
 			public void consume(WorldObject worldObject) {
-				fragment.addMapObject(layerType, worldObject);
+				fragment.addWorldObject(layerType, worldObject);
 			}
 		};
 	}
@@ -55,10 +54,9 @@ public abstract class IconLayer extends Layer {
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d,
 			AffineTransform layerMatrix) {
-		List<WorldObject> mapObjects = fragment.getMapObjects(layerType);
 		double invZoom = 1.0 / map.getZoom();
-		for (WorldObject mapObject : mapObjects) {
-			drawObject(mapObject, invZoom, g2d, layerMatrix);
+		for (WorldObject worldObject : fragment.getWorldObjects(layerType)) {
+			drawObject(worldObject, invZoom, g2d, layerMatrix);
 		}
 	}
 
@@ -67,7 +65,7 @@ public abstract class IconLayer extends Layer {
 		BufferedImage image = worldObject.getImage();
 		int width = image.getWidth();
 		int height = image.getHeight();
-		if (map.getSelectedMapObject() == worldObject) {
+		if (map.getSelectedWorldObject() == worldObject) {
 			width *= 1.5;
 			height *= 1.5;
 		}

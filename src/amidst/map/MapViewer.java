@@ -171,7 +171,7 @@ public class MapViewer {
 		}
 
 		private void mouseClickedOnMap(Point mouse) {
-			map.setSelectedMapObject(map.getMapObjectAt(mouse, 50.0));
+			map.setSelectedWorldObject(map.getWorldObjectAt(mouse, 50.0));
 		}
 
 		/**

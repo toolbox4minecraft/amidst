@@ -24,7 +24,7 @@ public class SelectedObjectWidget extends Widget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
-		WorldObject selectedObject = map.getSelectedMapObject();
+		WorldObject selectedObject = map.getSelectedWorldObject();
 		if (selectedObject != null) {
 			message = selectedObject.toString();
 			icon = selectedObject.getImage();
@@ -43,6 +43,6 @@ public class SelectedObjectWidget extends Widget {
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		return map.getSelectedMapObject() != null;
+		return map.getSelectedWorldObject() != null;
 	}
 }

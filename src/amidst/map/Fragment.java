@@ -59,7 +59,7 @@ public class Fragment implements Iterable<Fragment> {
 	private short[][] biomeData;
 	private EnumMap<LayerType, BufferedImage> images = new EnumMap<LayerType, BufferedImage>(
 			LayerType.class);
-	private EnumMap<LayerType, List<WorldObject>> mapObjects = new EnumMap<LayerType, List<WorldObject>>(
+	private EnumMap<LayerType, List<WorldObject>> worldObjects = new EnumMap<LayerType, List<WorldObject>>(
 			LayerType.class);
 
 	public void initialize(CoordinatesInWorld corner) {
@@ -87,7 +87,7 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	public void prepareLoad() {
-		clearMapObjects();
+		clearWorldObjects();
 		initAlpha();
 	}
 
@@ -140,27 +140,27 @@ public class Fragment implements Iterable<Fragment> {
 		return images;
 	}
 
-	private void clearMapObjects() {
-		mapObjects.clear();
+	private void clearWorldObjects() {
+		worldObjects.clear();
 	}
 
-	public void addMapObject(LayerType layerType, WorldObject mapObject) {
-		List<WorldObject> list = mapObjects.get(layerType);
+	public void addWorldObject(LayerType layerType, WorldObject worldObject) {
+		List<WorldObject> list = worldObjects.get(layerType);
 		if (list != null) {
-			list.add(mapObject);
+			list.add(worldObject);
 		} else {
 			list = new LinkedList<WorldObject>();
-			list.add(mapObject);
-			mapObjects.put(layerType, list);
+			list.add(worldObject);
+			worldObjects.put(layerType, list);
 		}
 	}
 
-	public void removeMapObjects(LayerType layerType) {
-		mapObjects.remove(layerType);
+	public void removeWorldObjects(LayerType layerType) {
+		worldObjects.remove(layerType);
 	}
 
-	public List<WorldObject> getMapObjects(LayerType layerType) {
-		List<WorldObject> result = mapObjects.get(layerType);
+	public List<WorldObject> getWorldObjects(LayerType layerType) {
+		List<WorldObject> result = worldObjects.get(layerType);
 		if (result != null) {
 			return result;
 		} else {

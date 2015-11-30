@@ -12,7 +12,7 @@ import amidst.minecraft.world.World;
 import amidst.minecraft.world.finder.WorldObject;
 
 public class Map {
-	private WorldObject selectedMapObject;
+	private WorldObject selectedWorldObject;
 
 	private Fragment startFragment;
 	private Point2D.Double startOnScreen = new Point2D.Double();
@@ -149,23 +149,24 @@ public class Map {
 		return null;
 	}
 
-	public WorldObject getMapObjectAt(Point positionOnScreen, double maxRange) {
+	public WorldObject getWorldObjectAt(Point positionOnScreen, double maxRange) {
 		double xCornerOnScreen = startOnScreen.x;
 		double yCornerOnScreen = startOnScreen.y;
-		WorldObject closestMapObject = null;
+		WorldObject closestWorldObject = null;
 		double closestDistance = maxRange;
 		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
 				for (Layer layer : layerContainer.getAllLayers()) {
 					if (layer.isVisible()) {
-						for (WorldObject mapObject : fragment
-								.getMapObjects(layer.getLayerType())) {
+						for (WorldObject worldObject : fragment
+								.getWorldObjects(layer.getLayerType())) {
 							double distance = getDistance(positionOnScreen,
-									xCornerOnScreen, yCornerOnScreen, mapObject);
+									xCornerOnScreen, yCornerOnScreen,
+									worldObject);
 							if (closestDistance > distance) {
 								closestDistance = distance;
-								closestMapObject = mapObject;
+								closestWorldObject = worldObject;
 							}
 						}
 					}
@@ -177,12 +178,12 @@ public class Map {
 				}
 			}
 		}
-		return closestMapObject;
+		return closestWorldObject;
 	}
 
 	private double getDistance(Point positionOnScreen, double xCornerOnScreen,
-			double yCornerOnScreen, WorldObject mapObject) {
-		return worldToScreen(mapObject.getCoordinates(), xCornerOnScreen,
+			double yCornerOnScreen, WorldObject worldObject) {
+		return worldToScreen(worldObject.getCoordinates(), xCornerOnScreen,
 				yCornerOnScreen).distance(positionOnScreen);
 	}
 
@@ -238,12 +239,12 @@ public class Map {
 		this.viewerHeight = viewerHeight;
 	}
 
-	public WorldObject getSelectedMapObject() {
-		return selectedMapObject;
+	public WorldObject getSelectedWorldObject() {
+		return selectedWorldObject;
 	}
 
-	public void setSelectedMapObject(WorldObject selectedMapObject) {
-		this.selectedMapObject = selectedMapObject;
+	public void setSelectedWorldObject(WorldObject selectedWorldObject) {
+		this.selectedWorldObject = selectedWorldObject;
 	}
 
 	public FragmentManager getFragmentManager() {
