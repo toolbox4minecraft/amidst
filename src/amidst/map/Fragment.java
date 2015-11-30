@@ -1,6 +1,7 @@
 package amidst.map;
 
 import java.awt.image.BufferedImage;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
@@ -139,7 +140,12 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	public List<WorldObject> getWorldObjects(LayerType layerType) {
-		return worldObjects.get(layerType);
+		List<WorldObject> result = worldObjects.get(layerType);
+		if (result != null) {
+			return result;
+		} else {
+			return Collections.emptyList();
+		}
 	}
 
 	@Override
