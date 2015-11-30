@@ -25,12 +25,12 @@ public abstract class IconLayer extends Layer {
 	}
 
 	@Override
-	public void load(Fragment fragment, int[] imageCache) {
+	public void load(Fragment fragment) {
 		doLoad(fragment);
 	}
 
 	@Override
-	public void reload(Fragment fragment, int[] imageCache) {
+	public void reload(Fragment fragment) {
 		doLoad(fragment);
 	}
 

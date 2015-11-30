@@ -13,20 +13,16 @@ import amidst.minecraft.world.World;
 
 public abstract class ImageLayer extends Layer {
 	protected final Resolution resolution;
+	private final int size;
+	private final int[] imageCache;
 	private final AffineTransform imageLayerMatrix = new AffineTransform();
 
 	public ImageLayer(World world, Map map, LayerType layerType,
 			Resolution resolution) {
 		super(world, map, layerType);
 		this.resolution = resolution;
-	}
-
-	public Resolution getResolution() {
-		return resolution;
-	}
-
-	public int getSize() {
-		return Fragment.SIZE / resolution.getStep();
+		this.size = Fragment.SIZE / resolution.getStep();
+		this.imageCache = new int[size * size];
 	}
 
 	public double getScale() {
@@ -35,45 +31,42 @@ public abstract class ImageLayer extends Layer {
 
 	@Override
 	public void construct(Fragment fragment) {
-		fragment.putImage(layerType, createBufferedImage(resolution));
+		fragment.putImage(layerType, createBufferedImage());
 	}
 
-	private BufferedImage createBufferedImage(Resolution resolution) {
-		int size = Fragment.SIZE / resolution.getStep();
+	private BufferedImage createBufferedImage() {
 		return new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
 	}
 
 	@Override
-	public void load(Fragment fragment, int[] imageCache) {
-		doLoad(fragment, imageCache);
+	public void load(Fragment fragment) {
+		doLoad(fragment);
 	}
 
 	@Override
-	public void reload(Fragment fragment, int[] imageCache) {
-		doLoad(fragment, imageCache);
+	public void reload(Fragment fragment) {
+		doLoad(fragment);
 	}
 
-	protected void doLoad(Fragment fragment, int[] imageCache) {
+	protected void doLoad(Fragment fragment) {
 		CoordinatesInWorld corner = fragment.getCorner();
 		long cornerX = corner.getXAs(resolution);
 		long cornerY = corner.getYAs(resolution);
-		int size = getSize();
-		drawToCache(fragment, imageCache, cornerX, cornerY, size);
+		drawToCache(fragment, cornerX, cornerY);
 		BufferedImage image = fragment.getImage(layerType);
 		image.setRGB(0, 0, size, size, imageCache, 0, size);
 	}
 
-	protected void drawToCache(Fragment fragment, int[] cache, long cornerX,
-			long cornerY, int size) {
+	protected void drawToCache(Fragment fragment, long cornerX, long cornerY) {
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
-				int index = getCacheIndex(x, y, size);
-				cache[index] = getColorAt(fragment, cornerX, cornerY, x, y);
+				int index = getCacheIndex(x, y);
+				imageCache[index] = getColorAt(fragment, cornerX, cornerY, x, y);
 			}
 		}
 	}
 
-	private int getCacheIndex(int x, int y, int size) {
+	private int getCacheIndex(int x, int y) {
 		return x + y * size;
 	}
 

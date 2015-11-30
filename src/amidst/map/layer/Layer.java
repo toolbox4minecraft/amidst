@@ -29,9 +29,9 @@ public abstract class Layer {
 	public void construct(Fragment fragment) {
 	}
 
-	public abstract void load(Fragment fragment, int[] imageCache);
+	public abstract void load(Fragment fragment);
 
-	public abstract void reload(Fragment fragment, int[] imageCache);
+	public abstract void reload(Fragment fragment);
 
 	public abstract void draw(Fragment fragment, Graphics2D g2d,
 			AffineTransform layerMatrix);

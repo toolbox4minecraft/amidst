@@ -10,12 +10,12 @@ public abstract class LiveLayer extends Layer {
 	}
 
 	@Override
-	public void load(Fragment fragment, int[] imageCache) {
+	public void load(Fragment fragment) {
 		// noop
 	}
 
 	@Override
-	public void reload(Fragment fragment, int[] imageCache) {
+	public void reload(Fragment fragment) {
 		// noop
 	}
 }

@@ -40,15 +40,15 @@ public class LayerContainer {
 		}
 	}
 
-	public void loadAll(Fragment fragment, int[] imageCache) {
+	public void loadAll(Fragment fragment) {
 		for (Layer layer : layerMap.values()) {
-			layer.load(fragment, imageCache);
+			layer.load(fragment);
 		}
 	}
 
-	public void reloadInvalidated(Fragment fragment, int[] imageCache) {
+	public void reloadInvalidated(Fragment fragment) {
 		for (Layer layer : invalidatedLayerMap.values()) {
-			layer.reload(fragment, imageCache);
+			layer.reload(fragment);
 		}
 	}
 }

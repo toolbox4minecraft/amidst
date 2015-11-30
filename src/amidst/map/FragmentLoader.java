@@ -7,7 +7,6 @@ public class FragmentLoader {
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
 	private final ConcurrentLinkedQueue<Fragment> resetQueue;
 	private final LayerContainer layerContainer;
-	private final int[] imageCache = new int[Fragment.SIZE * Fragment.SIZE];
 
 	private Fragment currentFragment;
 
@@ -40,10 +39,10 @@ public class FragmentLoader {
 		if (currentFragment.isInitialized()) {
 			if (currentFragment.isLoaded()) {
 				currentFragment.prepareReload();
-				layerContainer.reloadInvalidated(currentFragment, imageCache);
+				layerContainer.reloadInvalidated(currentFragment);
 			} else {
 				currentFragment.prepareLoad();
-				layerContainer.loadAll(currentFragment, imageCache);
+				layerContainer.loadAll(currentFragment);
 				currentFragment.setLoaded(true);
 			}
 		}
