@@ -15,13 +15,10 @@ public class FragmentCache {
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<Fragment>();
 	private final ConcurrentLinkedQueue<Fragment> resetQueue = new ConcurrentLinkedQueue<Fragment>();
 	private final List<Fragment> cache = new LinkedList<Fragment>();
-	private final FragmentFactory fragmentFactory;
 	private final LayerContainerFactory layerContainerFactory;
 	private LayerContainer layerContainer;
 
-	public FragmentCache(FragmentFactory factory,
-			LayerContainerFactory layerContainerFactory) {
-		this.fragmentFactory = factory;
+	public FragmentCache(LayerContainerFactory layerContainerFactory) {
 		this.layerContainerFactory = layerContainerFactory;
 	}
 
@@ -34,7 +31,7 @@ public class FragmentCache {
 
 	private void requestNewFragments() {
 		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
-			Fragment fragment = fragmentFactory.create();
+			Fragment fragment = new Fragment();
 			for (Layer layer : layerContainer.getAllLayers()) {
 				layer.construct(fragment);
 			}

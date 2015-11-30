@@ -7,10 +7,6 @@ public class BiomeDataProvider {
 	public static final int SIZE = (int) Resolution.QUARTER
 			.convertFromWorldToThis(Fragment.SIZE);
 
-	public static short[][] createEmptyBiomeDataArray() {
-		return new short[SIZE][SIZE];
-	}
-
 	/**
 	 * x and y of corner have to be divisible by Fragment.SIZE
 	 */

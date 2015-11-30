@@ -62,10 +62,6 @@ public class Fragment implements Iterable<Fragment> {
 	private EnumMap<LayerType, List<MapObject>> mapObjects = new EnumMap<LayerType, List<MapObject>>(
 			LayerType.class);
 
-	public Fragment(short[][] biomeData) {
-		this.biomeData = biomeData;
-	}
-
 	public void initialize(CoordinatesInWorld corner) {
 		this.corner = corner;
 		leftFragment = null;
@@ -112,6 +108,10 @@ public class Fragment implements Iterable<Fragment> {
 
 	public float getAlpha() {
 		return alpha;
+	}
+
+	public void initBiomeData(int width, int height) {
+		biomeData = new short[width][height];
 	}
 
 	public short getBiomeDataAt(CoordinatesInWorld coordinates) {
