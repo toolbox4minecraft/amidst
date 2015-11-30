@@ -7,6 +7,6 @@ public class GridLayer extends Layer {
 	public GridLayer(LayerType layerType,
 			PrefModel<Boolean> isVisiblePreference, Map map) {
 		super(layerType, isVisiblePreference, new GridDrawer(map),
-				new DummyLoader());
+				new DummyConstructor(), new DummyLoader());
 	}
 }

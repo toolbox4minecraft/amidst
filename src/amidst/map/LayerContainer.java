@@ -36,7 +36,7 @@ public class LayerContainer {
 
 	public void constructAll(Fragment fragment) {
 		for (Layer layer : layerMap.values()) {
-			layer.getFragmentLoader().construct(fragment);
+			layer.getFragmentConstructor().construct(fragment);
 		}
 	}
 

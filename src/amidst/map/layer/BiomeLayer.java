@@ -10,7 +10,8 @@ public class BiomeLayer extends Layer {
 			ColorProvider colorProvider, Resolution resolution,
 			BiomeDataOracle biomeDataOracle) {
 		super(layerType, isVisiblePreference, new ImageDrawer(resolution,
-				layerType), new BiomeDataLoader(layerType, colorProvider,
-				resolution, biomeDataOracle));
+				layerType), new BiomeDataConstructor(layerType, resolution),
+				new BiomeDataLoader(layerType, colorProvider, resolution,
+						biomeDataOracle));
 	}
 }

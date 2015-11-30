@@ -6,13 +6,16 @@ public class Layer {
 	private final LayerType layerType;
 	private final PrefModel<Boolean> isVisiblePreference;
 	private final FragmentDrawer drawer;
+	private final FragmentConstructor constructor;
 	private final FragmentLoader loader;
 
 	public Layer(LayerType layerType, PrefModel<Boolean> isVisiblePreference,
-			FragmentDrawer drawer, FragmentLoader loader) {
+			FragmentDrawer drawer, FragmentConstructor constructor,
+			FragmentLoader loader) {
 		this.layerType = layerType;
 		this.isVisiblePreference = isVisiblePreference;
 		this.drawer = drawer;
+		this.constructor = constructor;
 		this.loader = loader;
 	}
 
@@ -26,6 +29,10 @@ public class Layer {
 
 	public FragmentDrawer getFragmentDrawer() {
 		return drawer;
+	}
+
+	public FragmentConstructor getFragmentConstructor() {
+		return constructor;
 	}
 
 	public FragmentLoader getFragmentLoader() {

@@ -14,12 +14,6 @@ public class BiomeDataLoader extends ImageLoader {
 	}
 
 	@Override
-	public void construct(Fragment fragment) {
-		fragment.initBiomeData(size, size);
-		super.construct(fragment);
-	}
-
-	@Override
 	public void load(Fragment fragment) {
 		fragment.populateBiomeData(biomeDataOracle);
 		super.load(fragment);

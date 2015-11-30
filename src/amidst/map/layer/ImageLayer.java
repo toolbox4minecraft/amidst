@@ -8,7 +8,7 @@ public class ImageLayer extends Layer {
 			PrefModel<Boolean> isVisiblePreference,
 			ColorProvider colorProvider, Resolution resolution) {
 		super(layerType, isVisiblePreference, new ImageDrawer(resolution,
-				layerType), new ImageLoader(layerType, colorProvider,
-				resolution));
+				layerType), new ImageConstructor(layerType, resolution),
+				new ImageLoader(layerType, colorProvider, resolution));
 	}
 }

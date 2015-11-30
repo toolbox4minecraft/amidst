@@ -13,11 +13,6 @@ public class WorldObjectLoader implements FragmentLoader {
 	}
 
 	@Override
-	public void construct(Fragment fragment) {
-		// noop
-	}
-
-	@Override
 	public void load(Fragment fragment) {
 		doLoad(fragment);
 	}

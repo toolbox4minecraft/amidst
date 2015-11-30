@@ -10,7 +10,7 @@ public class ImageLoader implements FragmentLoader {
 	private final LayerType layerType;
 	private final ColorProvider colorProvider;
 	private final Resolution resolution;
-	protected final int size;
+	private final int size;
 	private final int[] rgbArray;
 	private BufferedImage bufferedImage;
 
@@ -26,11 +26,6 @@ public class ImageLoader implements FragmentLoader {
 
 	private BufferedImage createBufferedImage() {
 		return new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-	}
-
-	@Override
-	public void construct(Fragment fragment) {
-		fragment.putImage(layerType, createBufferedImage());
 	}
 
 	@Override

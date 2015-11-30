@@ -9,6 +9,7 @@ public class WorldObjectLayer extends Layer {
 			PrefModel<Boolean> isVisiblePreference, Map map,
 			WorldObjectProducer producer) {
 		super(layerType, isVisiblePreference, new WorldObjectDrawer(map,
-				layerType), new WorldObjectLoader(layerType, producer));
+				layerType), new DummyConstructor(), new WorldObjectLoader(
+				layerType, producer));
 	}
 }
