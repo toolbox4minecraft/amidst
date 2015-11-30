@@ -28,7 +28,7 @@ public class Application {
 	private SeedHistoryLogger seedHistoryLogger;
 	private UpdatePrompt updateManager = new UpdatePrompt();
 	private FragmentCache fragmentCache = new FragmentCache(
-			new LayerContainerFactory(Options.instance));
+			new LayerContainerFactory(getOptions()));
 
 	private VersionSelectWindow versionSelectWindow;
 	private MapWindow mapWindow;
@@ -158,6 +158,10 @@ public class Application {
 
 	public FragmentCache getFragmentCache() {
 		return fragmentCache;
+	}
+
+	public Options getOptions() {
+		return Options.instance;
 	}
 
 	void crash(Throwable e, String exceptionText, String message,
