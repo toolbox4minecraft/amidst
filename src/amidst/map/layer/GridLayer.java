@@ -6,11 +6,11 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 
-import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.Map;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
+import amidst.preferences.PrefModel;
 
 public class GridLayer extends Layer {
 	private static final Font DRAW_FONT = new Font("arial", Font.BOLD, 16);
@@ -19,13 +19,9 @@ public class GridLayer extends Layer {
 	private StringBuffer textBuffer = new StringBuffer(128);
 	private char[] textCache = new char[128];
 
-	public GridLayer(World world, Map map) {
-		super(world, map, LayerType.GRID);
-	}
-
-	@Override
-	public boolean isVisible() {
-		return Options.instance.showGrid.get();
+	public GridLayer(World world, Map map, LayerType layerType,
+			PrefModel<Boolean> isVisiblePreference) {
+		super(world, map, layerType, isVisiblePreference);
 	}
 
 	@Override

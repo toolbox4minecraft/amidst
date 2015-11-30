@@ -10,23 +10,16 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.object.WorldObject;
 import amidst.minecraft.world.object.WorldObjectProducer;
-import amidst.preferences.BooleanPrefModel;
+import amidst.preferences.PrefModel;
 
 public class WorldObjectLayer extends Layer {
 	private final AffineTransform worldObjectLayerMatrix = new AffineTransform();
-	private final BooleanPrefModel isVisiblePreference;
 	private final WorldObjectProducer producer;
 
 	public WorldObjectLayer(World world, Map map, LayerType layerType,
-			BooleanPrefModel isVisiblePreference, WorldObjectProducer producer) {
-		super(world, map, layerType);
-		this.isVisiblePreference = isVisiblePreference;
+			PrefModel<Boolean> isVisiblePreference, WorldObjectProducer producer) {
+		super(world, map, layerType, isVisiblePreference);
 		this.producer = producer;
-	}
-
-	@Override
-	public boolean isVisible() {
-		return isVisiblePreference.get();
 	}
 
 	@Override

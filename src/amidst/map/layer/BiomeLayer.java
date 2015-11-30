@@ -5,11 +5,13 @@ import amidst.map.Map;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
+import amidst.preferences.PrefModel;
 import amidst.utilities.ColorUtils;
 
 public class BiomeLayer extends ImageLayer {
-	public BiomeLayer(World world, Map map) {
-		super(world, map, LayerType.BIOME, Resolution.QUARTER);
+	public BiomeLayer(World world, Map map, LayerType layerType,
+			PrefModel<Boolean> isVisiblePreference) {
+		super(world, map, layerType, isVisiblePreference, Resolution.QUARTER);
 	}
 
 	@Override

@@ -28,7 +28,7 @@ public class Application {
 	private SeedHistoryLogger seedHistoryLogger;
 	private UpdatePrompt updateManager = new UpdatePrompt();
 	private FragmentCache fragmentCache = new FragmentCache(
-			new LayerContainerFactory());
+			new LayerContainerFactory(Options.instance));
 
 	private VersionSelectWindow versionSelectWindow;
 	private MapWindow mapWindow;

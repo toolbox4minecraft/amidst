@@ -3,72 +3,82 @@ package amidst.map;
 import amidst.Options;
 import amidst.map.layer.BiomeLayer;
 import amidst.map.layer.GridLayer;
-import amidst.map.layer.WorldObjectLayer;
 import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
 import amidst.map.layer.SlimeLayer;
+import amidst.map.layer.WorldObjectLayer;
 import amidst.minecraft.world.World;
 
 public class LayerContainerFactory {
-	private World world;
-	private Map map;
+	private Options options;
 
-	public synchronized LayerContainer create(World world, Map map) {
-		this.world = world;
-		this.map = map;
-		return new LayerContainer(createBiomeLayer(), createSlimeLayer(),
-				createGridLayer(), createVillageLayer(),
-				createOceanMonumentLayer(), createStrongholdLayer(),
-				createTempleLayer(), createSpawnLayer(),
-				createNetherFortressLayer(), createPlayerLayer());
+	public LayerContainerFactory(Options options) {
+		this.options = options;
 	}
 
-	private Layer createBiomeLayer() {
-		return new BiomeLayer(world, map);
+	public LayerContainer create(World world, Map map) {
+		// @formatter:off
+		return new LayerContainer(
+				createBiomeLayer(world, map),
+				createSlimeLayer(world, map),
+				createGridLayer(world, map),
+				createVillageLayer(world, map),
+				createOceanMonumentLayer(world, map),
+				createStrongholdLayer(world, map),
+				createTempleLayer(world, map),
+				createSpawnLayer(world, map),
+				createNetherFortressLayer(world, map),
+				createPlayerLayer(world, map)
+		);
+		// @formatter:on
 	}
 
-	private Layer createSlimeLayer() {
-		return new SlimeLayer(world, map);
+	private Layer createBiomeLayer(World world, Map map) {
+		return new BiomeLayer(world, map, LayerType.BIOME,
+				options.alwaysTruePreference);
 	}
 
-	private Layer createGridLayer() {
-		return new GridLayer(world, map);
+	private Layer createSlimeLayer(World world, Map map) {
+		return new SlimeLayer(world, map, LayerType.SLIME,
+				options.showSlimeChunks);
 	}
 
-	private Layer createVillageLayer() {
+	private Layer createGridLayer(World world, Map map) {
+		return new GridLayer(world, map, LayerType.GRID, options.showGrid);
+	}
+
+	private Layer createVillageLayer(World world, Map map) {
 		return new WorldObjectLayer(world, map, LayerType.VILLAGE,
-				Options.instance.showVillages, world.getVillageProducer());
+				options.showVillages, world.getVillageProducer());
 	}
 
-	private Layer createOceanMonumentLayer() {
+	private Layer createOceanMonumentLayer(World world, Map map) {
 		return new WorldObjectLayer(world, map, LayerType.OCEAN_MONUMENT,
-				Options.instance.showOceanMonuments,
-				world.getOceanMonumentProducer());
+				options.showOceanMonuments, world.getOceanMonumentProducer());
 	}
 
-	private Layer createStrongholdLayer() {
+	private Layer createStrongholdLayer(World world, Map map) {
 		return new WorldObjectLayer(world, map, LayerType.STRONGHOLD,
-				Options.instance.showStrongholds, world.getStrongholdProducer());
+				options.showStrongholds, world.getStrongholdProducer());
 	}
 
-	private Layer createTempleLayer() {
+	private Layer createTempleLayer(World world, Map map) {
 		return new WorldObjectLayer(world, map, LayerType.TEMPLE,
-				Options.instance.showTemples, world.getTempleProducer());
+				options.showTemples, world.getTempleProducer());
 	}
 
-	private Layer createSpawnLayer() {
+	private Layer createSpawnLayer(World world, Map map) {
 		return new WorldObjectLayer(world, map, LayerType.SPAWN,
-				Options.instance.showSpawn, world.getSpawnProducer());
+				options.showSpawn, world.getSpawnProducer());
 	}
 
-	private Layer createNetherFortressLayer() {
+	private Layer createNetherFortressLayer(World world, Map map) {
 		return new WorldObjectLayer(world, map, LayerType.NETHER_FORTRESS,
-				Options.instance.showNetherFortresses,
-				world.getNetherFortressProducer());
+				options.showNetherFortresses, world.getNetherFortressProducer());
 	}
 
-	private Layer createPlayerLayer() {
+	private Layer createPlayerLayer(World world, Map map) {
 		return new WorldObjectLayer(world, map, LayerType.PLAYER,
-				Options.instance.showPlayers, world.getPlayerProducer());
+				options.showPlayers, world.getPlayerProducer());
 	}
 }

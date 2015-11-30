@@ -4,9 +4,11 @@ import java.io.File;
 import java.util.prefs.Preferences;
 
 import amidst.minecraft.LocalMinecraftInstallation;
+import amidst.preferences.AlwaysTruePreference;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BooleanPrefModel;
 import amidst.preferences.FilePrefModel;
+import amidst.preferences.PrefModel;
 import amidst.preferences.SelectPrefModel;
 import amidst.preferences.StringPreference;
 
@@ -18,6 +20,7 @@ public enum Options {
 
 	// permanent preferences
 	public final FilePrefModel jar;
+	public final PrefModel<Boolean> alwaysTruePreference = new AlwaysTruePreference();
 	public final BooleanPrefModel showSlimeChunks;
 	public final BooleanPrefModel showGrid;
 	public final BooleanPrefModel showNetherFortresses;

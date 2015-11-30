@@ -10,6 +10,7 @@ import amidst.map.Map;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
+import amidst.preferences.PrefModel;
 
 public abstract class ImageLayer extends Layer {
 	private final AffineTransform imageLayerMatrix = new AffineTransform();
@@ -20,8 +21,8 @@ public abstract class ImageLayer extends Layer {
 	private BufferedImage bufferedImage;
 
 	public ImageLayer(World world, Map map, LayerType layerType,
-			Resolution resolution) {
-		super(world, map, layerType);
+			PrefModel<Boolean> isVisiblePreference, Resolution resolution) {
+		super(world, map, layerType, isVisiblePreference);
 		this.resolution = resolution;
 		this.size = resolution.getStepsPerFragment();
 		this.rgbArray = new int[size * size];

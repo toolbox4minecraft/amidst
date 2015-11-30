@@ -6,16 +6,20 @@ import java.awt.geom.AffineTransform;
 import amidst.map.Fragment;
 import amidst.map.Map;
 import amidst.minecraft.world.World;
+import amidst.preferences.PrefModel;
 
 public abstract class Layer {
 	protected final World world;
 	protected final Map map;
 	protected final LayerType layerType;
+	protected final PrefModel<Boolean> isVisiblePreference;
 
-	public Layer(World world, Map map, LayerType layerType) {
+	public Layer(World world, Map map, LayerType layerType,
+			PrefModel<Boolean> isVisiblePreference) {
 		this.world = world;
 		this.map = map;
 		this.layerType = layerType;
+		this.isVisiblePreference = isVisiblePreference;
 	}
 
 	public LayerType getLayerType() {
@@ -23,7 +27,7 @@ public abstract class Layer {
 	}
 
 	public boolean isVisible() {
-		return true;
+		return isVisiblePreference.get();
 	}
 
 	public void construct(Fragment fragment) {
