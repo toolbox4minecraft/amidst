@@ -14,6 +14,7 @@ import amidst.minecraft.world.World;
 
 public abstract class StructureProducer extends WorldObjectProducer {
 	protected final World world;
+	protected final Resolution resolution;
 
 	protected final List<Biome> validBiomesForStructure;
 	protected final List<Biome> validBiomesAtMiddleOfChunk;
@@ -36,8 +37,9 @@ public abstract class StructureProducer extends WorldObjectProducer {
 	private int middleOfChunkX;
 	private int middleOfChunkY;
 
-	public StructureProducer(World world) {
+	public StructureProducer(World world, Resolution resolution) {
 		this.world = world;
+		this.resolution = resolution;
 		validBiomesForStructure = getValidBiomesForStructure();
 		validBiomesAtMiddleOfChunk = getValidBiomesAtMiddleOfChunk();
 		magicNumberForSeed1 = getMagicNumberForSeed1();
@@ -70,9 +72,9 @@ public abstract class StructureProducer extends WorldObjectProducer {
 	// TODO: use longs?
 	private void generateAt() {
 		chunkX = xRelativeToFragmentAsChunkResolution
-				+ (int) corner.getXAs(Resolution.CHUNK);
+				+ (int) corner.getXAs(resolution);
 		chunkY = yRelativeToFragmentAsChunkResolution
-				+ (int) corner.getYAs(Resolution.CHUNK);
+				+ (int) corner.getYAs(resolution);
 		middleOfChunkX = middleOfChunk(chunkX);
 		middleOfChunkY = middleOfChunk(chunkY);
 		if (isValidLocation()) {
@@ -80,11 +82,17 @@ public abstract class StructureProducer extends WorldObjectProducer {
 			if (mapMarker == null) {
 				Log.e("No known structure for this biome type. This might be an error.");
 			} else {
-				consumer.consume(new WorldObject(corner.add(
-						xRelativeToFragmentAsChunkResolution << 4,
-						yRelativeToFragmentAsChunkResolution << 4), mapMarker));
+				consumer.consume(new WorldObject(createCoordinates(), mapMarker));
 			}
 		}
+	}
+
+	private CoordinatesInWorld createCoordinates() {
+		long xInWorld = resolution
+				.convertFromThisToWorld(xRelativeToFragmentAsChunkResolution);
+		long yInWorld = resolution
+				.convertFromThisToWorld(yRelativeToFragmentAsChunkResolution);
+		return corner.add(xInWorld, yInWorld);
 	}
 
 	protected boolean isSuccessful() {

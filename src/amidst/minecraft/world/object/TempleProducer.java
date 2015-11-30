@@ -6,12 +6,13 @@ import java.util.List;
 import amidst.map.MapMarkers;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
+import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 import amidst.version.VersionInfo;
 
 public class TempleProducer extends StructureProducer {
 	public TempleProducer(World world) {
-		super(world);
+		super(world, Resolution.CHUNK);
 	}
 
 	@Override
