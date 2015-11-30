@@ -98,14 +98,14 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	public void populateBiomeData(BiomeDataProvider biomeDataProvider) {
-		biomeDataProvider.populateArray(corner, biomeData);
+		biomeDataProvider
+				.populateArrayUsingQuarterResolution(corner, biomeData);
 	}
 
 	public short getBiomeDataAt(CoordinatesInWorld coordinates) {
-		Resolution resolution = BiomeDataProvider.RESOLUTION;
 		return getBiomeDataAt(
-				(int) coordinates.getXRelativeToFragmentAs(resolution),
-				(int) coordinates.getYRelativeToFragmentAs(resolution));
+				(int) coordinates.getXRelativeToFragmentAs(Resolution.QUARTER),
+				(int) coordinates.getYRelativeToFragmentAs(Resolution.QUARTER));
 	}
 
 	public short getBiomeDataAt(int x, int y) {
