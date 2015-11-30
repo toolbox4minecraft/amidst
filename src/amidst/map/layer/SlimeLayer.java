@@ -22,7 +22,7 @@ public class SlimeLayer extends ImageLayer {
 	@Override
 	protected int getColorAt(Fragment fragment, long cornerX, long cornerY,
 			int x, int y) {
-		if (world.getSlimeChunkChecker().isSlimeChunk(cornerX + x, cornerY + y)) {
+		if (world.getSlimeChunkOracle().isSlimeChunk(cornerX + x, cornerY + y)) {
 			return SLIME_CHUNK_COLOR;
 		} else {
 			return NOT_SLIME_CHUNK_COLOR;

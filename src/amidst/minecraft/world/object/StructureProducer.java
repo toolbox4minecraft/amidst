@@ -136,12 +136,12 @@ public abstract class StructureProducer extends WorldObjectProducer {
 	}
 
 	protected Biome getBiomeAtMiddleOfChunk() {
-		return world.getBiomeDataProvider().getBiomeAt(middleOfChunkX,
+		return world.getBiomeDataOracle().getBiomeAt(middleOfChunkX,
 				middleOfChunkY);
 	}
 
 	protected boolean isValidBiomeForStructure() {
-		return world.getBiomeDataProvider().isValidBiome(middleOfChunkX,
+		return world.getBiomeDataOracle().isValidBiome(middleOfChunkX,
 				middleOfChunkY, structureSize, validBiomesForStructure);
 	}
 

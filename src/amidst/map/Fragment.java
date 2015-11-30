@@ -8,7 +8,7 @@ import java.util.List;
 
 import amidst.Options;
 import amidst.map.layer.LayerType;
-import amidst.minecraft.world.BiomeDataProvider;
+import amidst.minecraft.world.BiomeDataOracle;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.object.WorldObject;
@@ -97,9 +97,8 @@ public class Fragment implements Iterable<Fragment> {
 		biomeData = new short[width][height];
 	}
 
-	public void populateBiomeData(BiomeDataProvider biomeDataProvider) {
-		biomeDataProvider
-				.populateArrayUsingQuarterResolution(corner, biomeData);
+	public void populateBiomeData(BiomeDataOracle biomeDataOracle) {
+		biomeDataOracle.populateArrayUsingQuarterResolution(corner, biomeData);
 	}
 
 	public short getBiomeDataAt(CoordinatesInWorld coordinates) {

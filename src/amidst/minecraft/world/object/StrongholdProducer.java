@@ -98,7 +98,7 @@ public class StrongholdProducer extends CachedWorldObjectProducer {
 	}
 
 	private Point findStronghold(int x, int y) {
-		return world.getBiomeDataProvider().findValidLocation(x + 8, y + 8,
+		return world.getBiomeDataOracle().findValidLocation(x + 8, y + 8,
 				112, validBiomes, random);
 	}
 

@@ -14,9 +14,8 @@ import amidst.minecraft.world.object.WorldObject;
 import amidst.minecraft.world.object.WorldObjectProducer;
 
 public abstract class World {
-	private final BiomeDataProvider biomeDataProvider = new BiomeDataProvider();
-	private final SlimeChunkChecker slimeChunkChecker = new SlimeChunkChecker(
-			this);
+	private final BiomeDataOracle biomeDataOracle = new BiomeDataOracle();
+	private final SlimeChunkOracle slimeChunkOracle = new SlimeChunkOracle(this);
 	private final WorldObjectProducer oceanMonumentProducer = new OceanMonumentProducer(
 			this);
 	private final WorldObjectProducer templeProducer = new TempleProducer(this);
@@ -31,12 +30,12 @@ public abstract class World {
 	private final CachedWorldObjectProducer strongholdProducer = new StrongholdProducer(
 			this);
 
-	public BiomeDataProvider getBiomeDataProvider() {
-		return biomeDataProvider;
+	public BiomeDataOracle getBiomeDataOracle() {
+		return biomeDataOracle;
 	}
 
-	public SlimeChunkChecker getSlimeChunkChecker() {
-		return slimeChunkChecker;
+	public SlimeChunkOracle getSlimeChunkOracle() {
+		return slimeChunkOracle;
 	}
 
 	public WorldObjectProducer getOceanMonumentProducer() {

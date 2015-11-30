@@ -47,7 +47,7 @@ public class SpawnProducer extends CachedWorldObjectProducer {
 
 	private Point getSpawnCenterInWorldCoordinates() {
 		Random random = new Random(world.getSeed());
-		return world.getBiomeDataProvider().findValidLocation(0, 0, 256,
+		return world.getBiomeDataOracle().findValidLocation(0, 0, 256,
 				VALID_BIOMES, random);
 	}
 }

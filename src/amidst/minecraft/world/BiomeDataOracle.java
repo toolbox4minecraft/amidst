@@ -8,7 +8,7 @@ import amidst.logging.Log;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 
-public class BiomeDataProvider {
+public class BiomeDataOracle {
 	public void populateArrayUsingQuarterResolution(CoordinatesInWorld corner,
 			short[][] result) {
 		int width = result.length;

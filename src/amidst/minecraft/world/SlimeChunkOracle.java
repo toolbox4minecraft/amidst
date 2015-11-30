@@ -2,11 +2,11 @@ package amidst.minecraft.world;
 
 import java.util.Random;
 
-public class SlimeChunkChecker {
+public class SlimeChunkOracle {
 	private final World world;
 	private final Random random = new Random();
 
-	public SlimeChunkChecker(World world) {
+	public SlimeChunkOracle(World world) {
 		this.world = world;
 	}
 
