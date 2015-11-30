@@ -47,7 +47,7 @@ public abstract class IconLayer extends Layer {
 		return new WorldObjectConsumer() {
 			@Override
 			public void consume(WorldObject worldObject) {
-				fragment.addMapObject(layerType, new MapObject(worldObject));
+				fragment.addMapObject(layerType, worldObject);
 			}
 		};
 	}
@@ -55,20 +55,19 @@ public abstract class IconLayer extends Layer {
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d,
 			AffineTransform layerMatrix) {
-		List<MapObject> mapObjects = fragment.getMapObjects(layerType);
+		List<WorldObject> mapObjects = fragment.getMapObjects(layerType);
 		double invZoom = 1.0 / map.getZoom();
-		for (MapObject mapObject : mapObjects) {
+		for (WorldObject mapObject : mapObjects) {
 			drawObject(mapObject, invZoom, g2d, layerMatrix);
 		}
 	}
 
-	private void drawObject(MapObject mapObject, double invZoom,
+	private void drawObject(WorldObject worldObject, double invZoom,
 			Graphics2D g2d, AffineTransform layerMatrix) {
-		WorldObject worldObject = mapObject.getWorldObject();
 		BufferedImage image = worldObject.getImage();
 		int width = image.getWidth();
 		int height = image.getHeight();
-		if (map.getSelectedMapObject() == mapObject) {
+		if (map.getSelectedMapObject() == worldObject) {
 			width *= 1.5;
 			height *= 1.5;
 		}

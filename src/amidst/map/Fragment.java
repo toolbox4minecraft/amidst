@@ -9,9 +9,9 @@ import java.util.List;
 
 import amidst.Options;
 import amidst.map.layer.LayerType;
-import amidst.map.layer.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
+import amidst.minecraft.world.finder.WorldObject;
 
 public class Fragment implements Iterable<Fragment> {
 	private static class FragmentIterator implements Iterator<Fragment> {
@@ -59,7 +59,7 @@ public class Fragment implements Iterable<Fragment> {
 	private short[][] biomeData;
 	private EnumMap<LayerType, BufferedImage> images = new EnumMap<LayerType, BufferedImage>(
 			LayerType.class);
-	private EnumMap<LayerType, List<MapObject>> mapObjects = new EnumMap<LayerType, List<MapObject>>(
+	private EnumMap<LayerType, List<WorldObject>> mapObjects = new EnumMap<LayerType, List<WorldObject>>(
 			LayerType.class);
 
 	public void initialize(CoordinatesInWorld corner) {
@@ -144,12 +144,12 @@ public class Fragment implements Iterable<Fragment> {
 		mapObjects.clear();
 	}
 
-	public void addMapObject(LayerType layerType, MapObject mapObject) {
-		List<MapObject> list = mapObjects.get(layerType);
+	public void addMapObject(LayerType layerType, WorldObject mapObject) {
+		List<WorldObject> list = mapObjects.get(layerType);
 		if (list != null) {
 			list.add(mapObject);
 		} else {
-			list = new LinkedList<MapObject>();
+			list = new LinkedList<WorldObject>();
 			list.add(mapObject);
 			mapObjects.put(layerType, list);
 		}
@@ -159,17 +159,13 @@ public class Fragment implements Iterable<Fragment> {
 		mapObjects.remove(layerType);
 	}
 
-	public List<MapObject> getMapObjects(LayerType layerType) {
-		List<MapObject> result = mapObjects.get(layerType);
+	public List<WorldObject> getMapObjects(LayerType layerType) {
+		List<WorldObject> result = mapObjects.get(layerType);
 		if (result != null) {
 			return result;
 		} else {
 			return Collections.emptyList();
 		}
-	}
-
-	public EnumMap<LayerType, List<MapObject>> getMapObjects() {
-		return mapObjects;
 	}
 
 	@Override

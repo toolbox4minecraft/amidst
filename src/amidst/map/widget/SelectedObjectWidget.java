@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 
 import amidst.map.Map;
 import amidst.map.MapViewer;
-import amidst.map.layer.MapObject;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.finder.WorldObject;
 
@@ -25,11 +24,10 @@ public class SelectedObjectWidget extends Widget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
-		MapObject selectedObject = map.getSelectedMapObject();
+		WorldObject selectedObject = map.getSelectedMapObject();
 		if (selectedObject != null) {
-			WorldObject worldObject = selectedObject.getWorldObject();
-			message = worldObject.toString();
-			icon = worldObject.getImage();
+			message = selectedObject.toString();
+			icon = selectedObject.getImage();
 		}
 
 		setWidth(45 + fontMetrics.stringWidth(message));

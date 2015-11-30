@@ -7,12 +7,12 @@ import java.util.Collection;
 import amidst.Options;
 import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
-import amidst.map.layer.MapObject;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
+import amidst.minecraft.world.finder.WorldObject;
 
 public class Map {
-	private MapObject selectedMapObject;
+	private WorldObject selectedMapObject;
 
 	private Fragment startFragment;
 	private Point2D.Double startOnScreen = new Point2D.Double();
@@ -149,18 +149,18 @@ public class Map {
 		return null;
 	}
 
-	public MapObject getMapObjectAt(Point positionOnScreen, double maxRange) {
+	public WorldObject getMapObjectAt(Point positionOnScreen, double maxRange) {
 		double xCornerOnScreen = startOnScreen.x;
 		double yCornerOnScreen = startOnScreen.y;
-		MapObject closestMapObject = null;
+		WorldObject closestMapObject = null;
 		double closestDistance = maxRange;
 		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
 				for (Layer layer : layerContainer.getAllLayers()) {
 					if (layer.isVisible()) {
-						for (MapObject mapObject : fragment.getMapObjects(layer
-								.getLayerType())) {
+						for (WorldObject mapObject : fragment
+								.getMapObjects(layer.getLayerType())) {
 							double distance = getDistance(positionOnScreen,
 									xCornerOnScreen, yCornerOnScreen, mapObject);
 							if (closestDistance > distance) {
@@ -181,9 +181,9 @@ public class Map {
 	}
 
 	private double getDistance(Point positionOnScreen, double xCornerOnScreen,
-			double yCornerOnScreen, MapObject mapObject) {
-		return worldToScreen(mapObject.getWorldObject().getCoordinates(),
-				xCornerOnScreen, yCornerOnScreen).distance(positionOnScreen);
+			double yCornerOnScreen, WorldObject mapObject) {
+		return worldToScreen(mapObject.getCoordinates(), xCornerOnScreen,
+				yCornerOnScreen).distance(positionOnScreen);
 	}
 
 	private Point2D.Double worldToScreen(CoordinatesInWorld coordinates,
@@ -238,11 +238,11 @@ public class Map {
 		this.viewerHeight = viewerHeight;
 	}
 
-	public MapObject getSelectedMapObject() {
+	public WorldObject getSelectedMapObject() {
 		return selectedMapObject;
 	}
 
-	public void setSelectedMapObject(MapObject selectedMapObject) {
+	public void setSelectedMapObject(WorldObject selectedMapObject) {
 		this.selectedMapObject = selectedMapObject;
 	}
 
