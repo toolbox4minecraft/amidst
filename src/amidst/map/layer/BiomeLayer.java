@@ -30,7 +30,7 @@ public class BiomeLayer extends ImageLayer {
 		return getColor(fragment.getBiomeDataAt(x, y));
 	}
 
-	protected int getColor(int biome) {
+	private int getColor(int biome) {
 		if (!map.getBiomeSelection().isSelected(biome)) {
 			return ColorUtils.deselectColor(doGetColor(biome));
 		} else {

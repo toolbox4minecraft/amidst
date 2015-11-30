@@ -15,6 +15,8 @@ import amidst.minecraft.world.object.WorldObjectProducer;
 
 public abstract class World {
 	private final BiomeDataProvider biomeDataProvider = new BiomeDataProvider();
+	private final SlimeChunkChecker slimeChunkChecker = new SlimeChunkChecker(
+			this);
 	private final WorldObjectProducer oceanMonumentProducer = new OceanMonumentProducer(
 			this);
 	private final WorldObjectProducer templeProducer = new TempleProducer(this);
@@ -29,23 +31,12 @@ public abstract class World {
 	private final CachedWorldObjectProducer strongholdProducer = new StrongholdProducer(
 			this);
 
-	@Deprecated
-	public boolean hasPlayers() {
-		return isFileWorld();
-	}
-
-	@Deprecated
-	public boolean isFileWorld() {
-		return this instanceof FileWorld;
-	}
-
-	@Deprecated
-	public FileWorld getAsFileWorld() {
-		return (FileWorld) this;
-	}
-
 	public BiomeDataProvider getBiomeDataProvider() {
 		return biomeDataProvider;
+	}
+
+	public SlimeChunkChecker getSlimeChunkChecker() {
+		return slimeChunkChecker;
 	}
 
 	public WorldObjectProducer getOceanMonumentProducer() {
@@ -90,6 +81,21 @@ public abstract class World {
 
 	public void reloadPlayers() {
 		playerProducer.resetCache();
+	}
+
+	@Deprecated
+	public boolean hasPlayers() {
+		return isFileWorld();
+	}
+
+	@Deprecated
+	public boolean isFileWorld() {
+		return this instanceof FileWorld;
+	}
+
+	@Deprecated
+	public FileWorld getAsFileWorld() {
+		return (FileWorld) this;
 	}
 
 	public abstract long getSeed();
