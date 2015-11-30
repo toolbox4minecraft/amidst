@@ -52,9 +52,16 @@ public class FragmentLoader {
 	private void resetFragment() {
 		currentFragment.setLoaded(false);
 		currentFragment.setInitialized(false);
+		removeFromLoadingQueue();
+		availableQueue.offer(currentFragment);
+	}
+
+	// TODO: Check performance with and without this. It is not needed, since
+	// loadFragment checks for isInitialized(). It helps to keep the
+	// loadingQueue small, but it costs time to remove fragments from the queue.
+	private void removeFromLoadingQueue() {
 		while (loadingQueue.remove(currentFragment)) {
 			// noop
 		}
-		availableQueue.offer(currentFragment);
 	}
 }
