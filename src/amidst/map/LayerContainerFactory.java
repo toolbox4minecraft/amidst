@@ -1,12 +1,15 @@
 package amidst.map;
 
 import amidst.Options;
+import amidst.map.layer.BiomeColorProvider;
 import amidst.map.layer.BiomeLayer;
 import amidst.map.layer.GridLayer;
+import amidst.map.layer.ImageLayer;
 import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
-import amidst.map.layer.SlimeLayer;
+import amidst.map.layer.SlimeColorProvider;
 import amidst.map.layer.WorldObjectLayer;
+import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 
 public class LayerContainerFactory {
@@ -35,12 +38,14 @@ public class LayerContainerFactory {
 
 	private Layer createBiomeLayer(World world, Map map) {
 		return new BiomeLayer(world, map, LayerType.BIOME,
-				options.alwaysTruePreference);
+				options.alwaysTruePreference, new BiomeColorProvider(map),
+				Resolution.QUARTER, world.getBiomeDataOracle());
 	}
 
 	private Layer createSlimeLayer(World world, Map map) {
-		return new SlimeLayer(world, map, LayerType.SLIME,
-				options.showSlimeChunks);
+		return new ImageLayer(world, map, LayerType.SLIME,
+				options.showSlimeChunks, new SlimeColorProvider(world),
+				Resolution.CHUNK);
 	}
 
 	private Layer createGridLayer(World world, Map map) {
