@@ -12,12 +12,12 @@ import amidst.minecraft.world.object.WorldObject;
 import amidst.minecraft.world.object.WorldObjectProducer;
 import amidst.preferences.BooleanPrefModel;
 
-public class IconLayer extends Layer {
-	private final AffineTransform iconLayerMatrix = new AffineTransform();
+public class WorldObjectLayer extends Layer {
+	private final AffineTransform worldObjectLayerMatrix = new AffineTransform();
 	private final BooleanPrefModel isVisiblePreference;
 	private final WorldObjectProducer producer;
 
-	public IconLayer(World world, Map map, LayerType layerType,
+	public WorldObjectLayer(World world, Map map, LayerType layerType,
 			BooleanPrefModel isVisiblePreference, WorldObjectProducer producer) {
 		super(world, map, layerType);
 		this.isVisiblePreference = isVisiblePreference;
@@ -63,15 +63,15 @@ public class IconLayer extends Layer {
 			height *= 1.5;
 		}
 		initIconLayerMatrix(invZoom, worldObject.getCoordinates(), layerMatrix);
-		g2d.setTransform(iconLayerMatrix);
+		g2d.setTransform(worldObjectLayerMatrix);
 		g2d.drawImage(image, -(width >> 1), -(height >> 1), width, height, null);
 	}
 
 	private void initIconLayerMatrix(double invZoom,
 			CoordinatesInWorld coordinates, AffineTransform layerMatrix) {
-		iconLayerMatrix.setTransform(layerMatrix);
-		iconLayerMatrix.translate(coordinates.getXRelativeToFragment(),
+		worldObjectLayerMatrix.setTransform(layerMatrix);
+		worldObjectLayerMatrix.translate(coordinates.getXRelativeToFragment(),
 				coordinates.getYRelativeToFragment());
-		iconLayerMatrix.scale(invZoom, invZoom);
+		worldObjectLayerMatrix.scale(invZoom, invZoom);
 	}
 }

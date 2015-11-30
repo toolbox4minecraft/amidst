@@ -3,7 +3,7 @@ package amidst.map;
 import amidst.Options;
 import amidst.map.layer.BiomeLayer;
 import amidst.map.layer.GridLayer;
-import amidst.map.layer.IconLayer;
+import amidst.map.layer.WorldObjectLayer;
 import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
 import amidst.map.layer.SlimeLayer;
@@ -36,39 +36,39 @@ public class LayerContainerFactory {
 	}
 
 	private Layer createVillageLayer() {
-		return new IconLayer(world, map, LayerType.VILLAGE,
+		return new WorldObjectLayer(world, map, LayerType.VILLAGE,
 				Options.instance.showVillages, world.getVillageProducer());
 	}
 
 	private Layer createOceanMonumentLayer() {
-		return new IconLayer(world, map, LayerType.OCEAN_MONUMENT,
+		return new WorldObjectLayer(world, map, LayerType.OCEAN_MONUMENT,
 				Options.instance.showOceanMonuments,
 				world.getOceanMonumentProducer());
 	}
 
 	private Layer createStrongholdLayer() {
-		return new IconLayer(world, map, LayerType.STRONGHOLD,
+		return new WorldObjectLayer(world, map, LayerType.STRONGHOLD,
 				Options.instance.showStrongholds, world.getStrongholdProducer());
 	}
 
 	private Layer createTempleLayer() {
-		return new IconLayer(world, map, LayerType.TEMPLE,
+		return new WorldObjectLayer(world, map, LayerType.TEMPLE,
 				Options.instance.showTemples, world.getTempleProducer());
 	}
 
 	private Layer createSpawnLayer() {
-		return new IconLayer(world, map, LayerType.SPAWN,
+		return new WorldObjectLayer(world, map, LayerType.SPAWN,
 				Options.instance.showSpawn, world.getSpawnProducer());
 	}
 
 	private Layer createNetherFortressLayer() {
-		return new IconLayer(world, map, LayerType.NETHER_FORTRESS,
+		return new WorldObjectLayer(world, map, LayerType.NETHER_FORTRESS,
 				Options.instance.showNetherFortresses,
 				world.getNetherFortressProducer());
 	}
 
 	private Layer createPlayerLayer() {
-		return new IconLayer(world, map, LayerType.PLAYER,
+		return new WorldObjectLayer(world, map, LayerType.PLAYER,
 				Options.instance.showPlayers, world.getPlayerProducer());
 	}
 }
