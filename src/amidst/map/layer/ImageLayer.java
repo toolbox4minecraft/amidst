@@ -12,7 +12,7 @@ import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 
 public abstract class ImageLayer extends Layer {
-	private final Resolution resolution;
+	protected final Resolution resolution;
 	private final AffineTransform imageLayerMatrix = new AffineTransform();
 
 	public ImageLayer(World world, Map map, LayerType layerType,

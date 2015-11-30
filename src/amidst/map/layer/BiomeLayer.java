@@ -4,21 +4,20 @@ import amidst.map.Fragment;
 import amidst.map.Map;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.BiomeDataProvider;
-import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 import amidst.utilities.ColorUtils;
 
 public class BiomeLayer extends ImageLayer {
-	public static final LayerType LAYER_TYPE = LayerType.BIOME;
-	public static final Resolution RESOLUTION = Resolution.QUARTER;
+	private int biomeSize;
 
 	public BiomeLayer(World world, Map map) {
-		super(world, map, LAYER_TYPE, RESOLUTION);
+		super(world, map, LayerType.BIOME, BiomeDataProvider.RESOLUTION);
+		this.biomeSize = (int) resolution.convertFromWorldToThis(Fragment.SIZE);
 	}
 
 	@Override
 	public void construct(Fragment fragment) {
-		fragment.initBiomeData(BiomeDataProvider.SIZE, BiomeDataProvider.SIZE);
+		fragment.initBiomeData(biomeSize, biomeSize);
 		super.construct(fragment);
 	}
 
