@@ -1,6 +1,5 @@
 package amidst.map.layer;
 
-import amidst.map.Fragment;
 import amidst.preferences.PrefModel;
 
 public class Layer {
@@ -31,17 +30,5 @@ public class Layer {
 
 	public FragmentLoader getFragmentLoader() {
 		return loader;
-	}
-
-	public void construct(Fragment fragment) {
-		getFragmentLoader().construct(fragment);
-	}
-
-	public void load(Fragment fragment) {
-		getFragmentLoader().load(fragment);
-	}
-
-	public void reload(Fragment fragment) {
-		getFragmentLoader().reload(fragment);
 	}
 }

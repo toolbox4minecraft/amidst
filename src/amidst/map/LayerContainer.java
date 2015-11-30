@@ -36,19 +36,19 @@ public class LayerContainer {
 
 	public void constructAll(Fragment fragment) {
 		for (Layer layer : layerMap.values()) {
-			layer.construct(fragment);
+			layer.getFragmentLoader().construct(fragment);
 		}
 	}
 
 	public void loadAll(Fragment fragment) {
 		for (Layer layer : layerMap.values()) {
-			layer.load(fragment);
+			layer.getFragmentLoader().load(fragment);
 		}
 	}
 
 	public void reloadInvalidated(Fragment fragment) {
 		for (Layer layer : invalidatedLayerMap.values()) {
-			layer.reload(fragment);
+			layer.getFragmentLoader().reload(fragment);
 		}
 	}
 }
