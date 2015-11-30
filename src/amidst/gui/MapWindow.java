@@ -27,6 +27,7 @@ import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.map.BiomeSelection;
 import amidst.map.Map;
+import amidst.map.MapBuilder;
 import amidst.map.MapMovement;
 import amidst.map.MapViewer;
 import amidst.map.MapZoom;
@@ -42,6 +43,7 @@ public class MapWindow {
 	private MapZoom mapZoom = new MapZoom();
 	private MapMovement mapMovement = new MapMovement();
 	private BiomeSelection biomeSelection = new BiomeSelection();
+	private MapBuilder mapBuilder;
 
 	private Map map;
 	private MapViewer mapViewer;
@@ -52,6 +54,7 @@ public class MapWindow {
 
 	public MapWindow(Application application) {
 		this.application = application;
+		initMapFactory();
 		initFrame();
 		initContentPane();
 		initMenuBar();
@@ -59,6 +62,11 @@ public class MapWindow {
 		initCloseListener();
 		showFrame();
 		checkForUpdates();
+	}
+
+	private void initMapFactory() {
+		mapBuilder = new MapBuilder(application.getFragmentCache(), mapZoom,
+				biomeSelection);
 	}
 
 	private void initFrame() {
@@ -139,14 +147,13 @@ public class MapWindow {
 	}
 
 	public void initWorld() {
-		map = new Map(application.getFragmentCache(), application.getWorld(),
-				mapZoom, biomeSelection);
+		map = mapBuilder.construct(application.getWorld());
 		mapViewer = createMapViewer();
 		menuBar.enableMapMenu();
 	}
 
 	/**
-	 * This ensure that the instance variable mapViewer it assigned AFTER
+	 * This ensures that the instance variable mapViewer is assigned AFTER
 	 * frame.validate() is called. This is important, because the executor will
 	 * draw the new mapViewer as soon as it is assigned to the instance
 	 * variable.

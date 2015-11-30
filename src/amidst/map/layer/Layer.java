@@ -3,7 +3,7 @@ package amidst.map.layer;
 import amidst.preferences.PrefModel;
 
 public class Layer {
-	protected final LayerType layerType;
+	private final LayerType layerType;
 	private final PrefModel<Boolean> isVisiblePreference;
 	private final FragmentDrawer drawer;
 	private final FragmentLoader loader;
