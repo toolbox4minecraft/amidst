@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.logging.Log;
-import amidst.map.layer.Layer;
 import amidst.minecraft.world.World;
 
 public class FragmentCache {
@@ -32,9 +31,7 @@ public class FragmentCache {
 	private void requestNewFragments() {
 		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
 			Fragment fragment = new Fragment();
-			for (Layer layer : layerContainer.getAllLayers()) {
-				layer.construct(fragment);
-			}
+			layerContainer.constructAll(fragment);
 			cache.add(fragment);
 			availableQueue.offer(fragment);
 		}

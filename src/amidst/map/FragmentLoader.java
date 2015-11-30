@@ -2,8 +2,6 @@ package amidst.map;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import amidst.map.layer.Layer;
-
 public class FragmentLoader {
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
@@ -42,10 +40,10 @@ public class FragmentLoader {
 		if (currentFragment.isInitialized()) {
 			if (currentFragment.isLoaded()) {
 				currentFragment.prepareReload();
-				reloadInvalidatedLayers();
+				layerContainer.reloadInvalidated(currentFragment, imageCache);
 			} else {
 				currentFragment.prepareLoad();
-				loadAllLayers();
+				layerContainer.loadAll(currentFragment, imageCache);
 				currentFragment.setLoaded(true);
 			}
 		}
@@ -58,25 +56,5 @@ public class FragmentLoader {
 			// noop
 		}
 		availableQueue.offer(currentFragment);
-	}
-
-	private void loadAllLayers() {
-		for (Layer layer : layerContainer.getAllLayers()) {
-			loadLayer(layer);
-		}
-	}
-
-	private void reloadInvalidatedLayers() {
-		for (Layer layer : layerContainer.getInvalidatedLayers()) {
-			reloadLayer(layer);
-		}
-	}
-
-	private void loadLayer(Layer layer) {
-		layer.load(currentFragment, imageCache);
-	}
-
-	private void reloadLayer(Layer layer) {
-		layer.reload(currentFragment, imageCache);
 	}
 }

@@ -30,11 +30,25 @@ public class LayerContainer {
 		invalidatedLayerMap.clear();
 	}
 
-	public Collection<Layer> getInvalidatedLayers() {
-		return invalidatedLayerMap.values();
-	}
-
 	public void invalidateLayer(LayerType layerType) {
 		invalidatedLayerMap.put(layerType, layerMap.get(layerType));
+	}
+
+	public void constructAll(Fragment fragment) {
+		for (Layer layer : layerMap.values()) {
+			layer.construct(fragment);
+		}
+	}
+
+	public void loadAll(Fragment fragment, int[] imageCache) {
+		for (Layer layer : layerMap.values()) {
+			layer.load(fragment, imageCache);
+		}
+	}
+
+	public void reloadInvalidated(Fragment fragment, int[] imageCache) {
+		for (Layer layer : invalidatedLayerMap.values()) {
+			layer.reload(fragment, imageCache);
+		}
 	}
 }
