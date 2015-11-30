@@ -1,7 +1,5 @@
 package amidst.map.layer;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import amidst.map.Fragment;
@@ -20,7 +18,8 @@ public class ImageLayer extends Layer {
 	public ImageLayer(Map map, LayerType layerType,
 			PrefModel<Boolean> isVisiblePreference,
 			ColorProvider colorProvider, Resolution resolution) {
-		super(map, layerType, isVisiblePreference);
+		super(map, layerType, isVisiblePreference, new ImageDrawer(resolution,
+				layerType));
 		this.colorProvider = colorProvider;
 		this.resolution = resolution;
 		this.size = resolution.getStepsPerFragment();
@@ -68,11 +67,5 @@ public class ImageLayer extends Layer {
 
 	private int getCacheIndex(int x, int y) {
 		return x + y * size;
-	}
-
-	@Override
-	public void draw(Fragment fragment, Graphics2D g2d,
-			AffineTransform layerMatrix) {
-		new ImageDrawer(resolution, layerType).draw(fragment, g2d, layerMatrix);
 	}
 }

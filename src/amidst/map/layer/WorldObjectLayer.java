@@ -1,8 +1,5 @@
 package amidst.map.layer;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-
 import amidst.map.Fragment;
 import amidst.map.Map;
 import amidst.minecraft.world.object.WorldObjectProducer;
@@ -13,7 +10,8 @@ public class WorldObjectLayer extends Layer {
 
 	public WorldObjectLayer(Map map, LayerType layerType,
 			PrefModel<Boolean> isVisiblePreference, WorldObjectProducer producer) {
-		super(map, layerType, isVisiblePreference);
+		super(map, layerType, isVisiblePreference, new WorldObjectDrawer(map,
+				layerType));
 		this.producer = producer;
 	}
 
@@ -30,11 +28,5 @@ public class WorldObjectLayer extends Layer {
 	protected void doLoad(Fragment fragment) {
 		fragment.putWorldObjects(layerType,
 				producer.getAt(fragment.getCorner()));
-	}
-
-	@Override
-	public void draw(Fragment fragment, Graphics2D g2d,
-			AffineTransform layerMatrix) {
-		new WorldObjectDrawer(map, layerType).draw(fragment, g2d, layerMatrix);
 	}
 }
