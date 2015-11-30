@@ -2,7 +2,7 @@ package amidst.map;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class FragmentLoader {
+public class FragmentQueueProcessor {
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
 	private final ConcurrentLinkedQueue<Fragment> resetQueue;
@@ -10,7 +10,8 @@ public class FragmentLoader {
 
 	private Fragment currentFragment;
 
-	public FragmentLoader(ConcurrentLinkedQueue<Fragment> availableQueue,
+	public FragmentQueueProcessor(
+			ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
 			ConcurrentLinkedQueue<Fragment> resetQueue,
 			LayerContainer layerContainer) {

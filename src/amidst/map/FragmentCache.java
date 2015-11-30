@@ -55,7 +55,7 @@ public class FragmentCache {
 
 	public FragmentManager createFragmentManager(World world, Map map) {
 		layerContainer = layerContainerFactory.create(world, map);
-		FragmentLoader fragmentLoader = new FragmentLoader(availableQueue,
+		FragmentQueueProcessor fragmentLoader = new FragmentQueueProcessor(availableQueue,
 				loadingQueue, resetQueue, layerContainer);
 		return new FragmentManager(availableQueue, loadingQueue, resetQueue,
 				this, fragmentLoader, layerContainer);

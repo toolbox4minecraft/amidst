@@ -9,13 +9,13 @@ public class FragmentManager {
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
 	private final ConcurrentLinkedQueue<Fragment> resetQueue;
 	private final FragmentCache cache;
-	private final FragmentLoader loader;
+	private final FragmentQueueProcessor loader;
 	private LayerContainer layerContainer;
 
 	public FragmentManager(ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
 			ConcurrentLinkedQueue<Fragment> resetQueue, FragmentCache cache,
-			FragmentLoader loader, LayerContainer layerContainer) {
+			FragmentQueueProcessor loader, LayerContainer layerContainer) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
 		this.resetQueue = resetQueue;
