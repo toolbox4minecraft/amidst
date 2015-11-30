@@ -26,6 +26,9 @@ public abstract class Layer {
 		return true;
 	}
 
+	public void construct(Fragment fragment) {
+	}
+
 	public abstract void load(Fragment fragment, int[] imageCache);
 
 	public abstract void reload(Fragment fragment, int[] imageCache);

@@ -34,6 +34,16 @@ public abstract class ImageLayer extends Layer {
 	}
 
 	@Override
+	public void construct(Fragment fragment) {
+		fragment.putImage(layerType, createBufferedImage(resolution));
+	}
+
+	private BufferedImage createBufferedImage(Resolution resolution) {
+		int size = Fragment.SIZE / resolution.getStep();
+		return new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+	}
+
+	@Override
 	public void load(Fragment fragment, int[] imageCache) {
 		doLoad(fragment, imageCache);
 	}

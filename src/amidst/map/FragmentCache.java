@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.logging.Log;
+import amidst.map.layer.Layer;
 import amidst.minecraft.world.World;
 
 public class FragmentCache {
@@ -16,20 +17,12 @@ public class FragmentCache {
 	private final List<Fragment> cache = new LinkedList<Fragment>();
 	private final FragmentFactory fragmentFactory;
 	private final LayerContainerFactory layerContainerFactory;
+	private LayerContainer layerContainer;
 
 	public FragmentCache(FragmentFactory factory,
 			LayerContainerFactory layerContainerFactory) {
 		this.fragmentFactory = factory;
 		this.layerContainerFactory = layerContainerFactory;
-		requestNewFragments();
-	}
-
-	private void requestNewFragments() {
-		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
-			Fragment fragment = fragmentFactory.create();
-			cache.add(fragment);
-			availableQueue.offer(fragment);
-		}
 	}
 
 	public void increaseSize() {
@@ -37,6 +30,17 @@ public class FragmentCache {
 				+ (cache.size() + NEW_FRAGMENTS_PER_REQUEST));
 		requestNewFragments();
 		Log.i("fragment cache size increased to " + cache.size());
+	}
+
+	private void requestNewFragments() {
+		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
+			Fragment fragment = fragmentFactory.create();
+			for (Layer layer : layerContainer.getAllLayers()) {
+				layer.construct(fragment);
+			}
+			cache.add(fragment);
+			availableQueue.offer(fragment);
+		}
 	}
 
 	public void resetAll() {
@@ -56,8 +60,7 @@ public class FragmentCache {
 	}
 
 	public FragmentManager createFragmentManager(World world, Map map) {
-		LayerContainer layerContainer = layerContainerFactory
-				.create(world, map);
+		layerContainer = layerContainerFactory.create(world, map);
 		FragmentLoader fragmentLoader = new FragmentLoader(availableQueue,
 				loadingQueue, resetQueue, layerContainer);
 		return new FragmentManager(availableQueue, loadingQueue, resetQueue,

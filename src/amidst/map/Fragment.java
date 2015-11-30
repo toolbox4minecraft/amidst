@@ -57,14 +57,13 @@ public class Fragment implements Iterable<Fragment> {
 
 	private float alpha;
 	private short[][] biomeData;
-	private EnumMap<LayerType, BufferedImage> images;
+	private EnumMap<LayerType, BufferedImage> images = new EnumMap<LayerType, BufferedImage>(
+			LayerType.class);
 	private EnumMap<LayerType, List<MapObject>> mapObjects = new EnumMap<LayerType, List<MapObject>>(
 			LayerType.class);
 
-	public Fragment(short[][] biomeData,
-			EnumMap<LayerType, BufferedImage> images) {
+	public Fragment(short[][] biomeData) {
 		this.biomeData = biomeData;
-		this.images = images;
 	}
 
 	public void initialize(CoordinatesInWorld corner) {
@@ -127,6 +126,10 @@ public class Fragment implements Iterable<Fragment> {
 
 	public short[][] getBiomeData() {
 		return biomeData;
+	}
+
+	public void putImage(LayerType layerType, BufferedImage image) {
+		images.put(layerType, image);
 	}
 
 	public BufferedImage getImage(LayerType layerType) {
