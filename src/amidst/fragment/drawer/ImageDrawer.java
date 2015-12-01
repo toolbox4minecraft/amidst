@@ -17,16 +17,20 @@ public class ImageDrawer extends FragmentDrawer {
 
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d) {
-		g2d.scale(resolution.getStep(), resolution.getStep());
-		if (g2d.getTransform().getScaleX() < 1.0f) {
-			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-					RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		} else {
-			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-		}
+		int scale = resolution.getStep();
+		g2d.scale(scale, scale);
+		Object oldHint = g2d.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
+		Object newHint = getRenderingHint(g2d);
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, newHint);
 		g2d.drawImage(fragment.getImage(declaration.getLayerId()), 0, 0, null);
-		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, oldHint);
+	}
+
+	private Object getRenderingHint(Graphics2D g2d) {
+		if (g2d.getTransform().getScaleX() < 1.0f) {
+			return RenderingHints.VALUE_INTERPOLATION_BILINEAR;
+		} else {
+			return RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;
+		}
 	}
 }

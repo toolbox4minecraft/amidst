@@ -121,6 +121,8 @@ public class MapDrawer {
 			Fragment startFragment) {
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		AffineTransform originalGraphicsTransform = g2d.getTransform();
 		initOriginalLayerMatrix(originalGraphicsTransform, startXOnScreen,
 				startYOnScreen, zoom.getCurrentValue());

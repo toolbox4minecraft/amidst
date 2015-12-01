@@ -3,7 +3,6 @@ package amidst.fragment.drawer;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
@@ -40,8 +39,6 @@ public class GridDrawer extends FragmentDrawer {
 	}
 
 	private void initGraphics(Graphics2D g2d) {
-		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2d.setFont(DRAW_FONT);
 		g2d.setColor(Color.black);
 	}
