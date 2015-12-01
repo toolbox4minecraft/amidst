@@ -1,7 +1,6 @@
 package amidst.fragment.drawer;
 
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
@@ -17,6 +16,5 @@ public abstract class FragmentDrawer {
 		return declaration;
 	}
 
-	public abstract void draw(Fragment fragment, Graphics2D g2d,
-			AffineTransform layerMatrix);
+	public abstract void draw(Fragment fragment, Graphics2D g2d);
 }

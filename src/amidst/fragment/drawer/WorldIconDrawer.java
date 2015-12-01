@@ -11,7 +11,6 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.icon.WorldIcon;
 
 public class WorldIconDrawer extends FragmentDrawer {
-	private final AffineTransform worldIconLayerMatrix = new AffineTransform();
 	private final Map map;
 
 	public WorldIconDrawer(LayerDeclaration declaration, Map map) {
@@ -20,16 +19,16 @@ public class WorldIconDrawer extends FragmentDrawer {
 	}
 
 	@Override
-	public void draw(Fragment fragment, Graphics2D g2d,
-			AffineTransform layerMatrix) {
+	public void draw(Fragment fragment, Graphics2D g2d) {
 		double invZoom = 1.0 / map.getZoom();
+		AffineTransform originalTransform = g2d.getTransform();
 		for (WorldIcon icon : fragment.getWorldIcons(declaration.getLayerId())) {
-			drawIcon(icon, invZoom, g2d, layerMatrix);
+			drawIcon(icon, invZoom, g2d);
+			g2d.setTransform(originalTransform);
 		}
 	}
 
-	private void drawIcon(WorldIcon icon, double invZoom, Graphics2D g2d,
-			AffineTransform layerMatrix) {
+	private void drawIcon(WorldIcon icon, double invZoom, Graphics2D g2d) {
 		BufferedImage image = icon.getImage();
 		int width = image.getWidth();
 		int height = image.getHeight();
@@ -37,16 +36,10 @@ public class WorldIconDrawer extends FragmentDrawer {
 			width *= 1.5;
 			height *= 1.5;
 		}
-		initIconLayerMatrix(invZoom, icon.getCoordinates(), layerMatrix);
-		g2d.setTransform(worldIconLayerMatrix);
-		g2d.drawImage(image, -(width >> 1), -(height >> 1), width, height, null);
-	}
-
-	private void initIconLayerMatrix(double invZoom,
-			CoordinatesInWorld coordinates, AffineTransform layerMatrix) {
-		worldIconLayerMatrix.setTransform(layerMatrix);
-		worldIconLayerMatrix.translate(coordinates.getXRelativeToFragment(),
+		CoordinatesInWorld coordinates = icon.getCoordinates();
+		g2d.translate(coordinates.getXRelativeToFragment(),
 				coordinates.getYRelativeToFragment());
-		worldIconLayerMatrix.scale(invZoom, invZoom);
+		g2d.scale(invZoom, invZoom);
+		g2d.drawImage(image, -(width >> 1), -(height >> 1), width, height, null);
 	}
 }

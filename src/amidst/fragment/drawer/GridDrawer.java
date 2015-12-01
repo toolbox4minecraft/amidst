@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
 
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
@@ -14,7 +13,6 @@ import amidst.minecraft.world.Resolution;
 public class GridDrawer extends FragmentDrawer {
 	private static final Font DRAW_FONT = new Font("arial", Font.BOLD, 16);
 
-	private final AffineTransform gridLayerMatrix = new AffineTransform();
 	private final StringBuffer textBuffer = new StringBuffer(128);
 	private final char[] textCache = new char[128];
 	private final Map map;
@@ -25,30 +23,27 @@ public class GridDrawer extends FragmentDrawer {
 	}
 
 	@Override
-	public void draw(Fragment fragment, Graphics2D g2d,
-			AffineTransform layerMatrix) {
-		initGraphics(g2d, layerMatrix);
+	public void draw(Fragment fragment, Graphics2D g2d) {
+		initGraphics(g2d);
 		int stride = getStride();
 		int gridX = getGridX(fragment, stride);
 		int gridY = getGridY(fragment, stride);
 		drawGridLines(g2d, stride, gridX, gridY);
 		if (isGrid00(gridX, gridY)) {
-			initGridLayerMatrix(layerMatrix, 1.0 / map.getZoom());
-			g2d.setTransform(gridLayerMatrix);
+			double invZoom = 1.0 / map.getZoom();
+			g2d.scale(invZoom, invZoom);
 			updateText(fragment);
 			drawText(g2d);
 			// drawThickTextOutline(g2d);
 			drawTextOutline(g2d);
-			resetTransformation(g2d, layerMatrix);
 		}
 	}
 
-	private void initGraphics(Graphics2D g2d, AffineTransform layerMatrix) {
+	private void initGraphics(Graphics2D g2d) {
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2d.setFont(DRAW_FONT);
 		g2d.setColor(Color.black);
-		g2d.setTransform(layerMatrix);
 	}
 
 	private int getStride() {
@@ -86,11 +81,6 @@ public class GridDrawer extends FragmentDrawer {
 		return gridX == 0 && gridY == 0;
 	}
 
-	private void initGridLayerMatrix(AffineTransform layerMatrix, double invZoom) {
-		gridLayerMatrix.setTransform(layerMatrix);
-		gridLayerMatrix.scale(invZoom, invZoom);
-	}
-
 	private void updateText(Fragment fragment) {
 		textBuffer.setLength(0);
 		textBuffer.append(fragment.getCorner().getX());
@@ -118,9 +108,5 @@ public class GridDrawer extends FragmentDrawer {
 	private void drawTextOutline(Graphics2D g2d) {
 		g2d.setColor(Color.white);
 		g2d.drawChars(textCache, 0, textBuffer.length(), 10, 17);
-	}
-
-	private void resetTransformation(Graphics2D g2d, AffineTransform inMat) {
-		g2d.setTransform(inMat);
 	}
 }

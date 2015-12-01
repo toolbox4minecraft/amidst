@@ -150,7 +150,8 @@ public class MapDrawer {
 				for (Fragment fragment : startFragment) {
 					if (fragment.isLoaded()) {
 						setAlphaComposite(fragment.getAlpha());
-						drawer.draw(fragment, g2d, layerMatrix);
+						g2d.setTransform(layerMatrix);
+						drawer.draw(fragment, g2d);
 					}
 					updateLayerMatrix(fragment);
 				}
