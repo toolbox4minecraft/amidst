@@ -1,10 +1,8 @@
 package amidst.map;
 
 import java.awt.Point;
-import java.awt.geom.Point2D;
 
 import amidst.fragment.drawer.FragmentDrawer;
-import amidst.fragment.layer.LayerDeclaration;
 import amidst.fragment.layer.LayerIds;
 import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerManagerFactory;
@@ -147,42 +145,9 @@ public class Map {
 	}
 
 	private WorldIcon getWorldIconAt(Point positionOnScreen, double maxDistance) {
-		double xCornerOnScreen = startXOnScreen;
-		double yCornerOnScreen = startYOnScreen;
-		WorldIcon closestIcon = null;
-		double closestDistanceSq = maxDistance * maxDistance;
-		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
-		for (Fragment fragment : getStartFragment()) {
-			for (LayerDeclaration declaration : layerManager
-					.getLayerDeclarations()) {
-				if (declaration.isVisible()) {
-					for (WorldIcon icon : fragment.getWorldIcons(declaration
-							.getLayerId())) {
-						double distanceSq = getDistanceSq(positionOnScreen,
-								xCornerOnScreen, yCornerOnScreen, icon);
-						if (closestDistanceSq > distanceSq) {
-							closestDistanceSq = distanceSq;
-							closestIcon = icon;
-						}
-					}
-				}
-			}
-			xCornerOnScreen += fragmentSizeOnScreen;
-			if (fragment.isEndOfLine()) {
-				xCornerOnScreen = startXOnScreen;
-				yCornerOnScreen += fragmentSizeOnScreen;
-			}
-		}
-		return closestIcon;
-	}
-
-	private double getDistanceSq(Point positionOnScreen,
-			double xCornerOnScreen, double yCornerOnScreen, WorldIcon icon) {
-		CoordinatesInWorld coordinates = icon.getCoordinates();
-		double x = zoom.worldToScreen(coordinates.getXRelativeToFragment());
-		double y = zoom.worldToScreen(coordinates.getYRelativeToFragment());
-		return Point2D.distanceSq(xCornerOnScreen + x, yCornerOnScreen + y,
-				positionOnScreen.x, positionOnScreen.y);
+		return new ClosestWorldIconFinder(getStartFragment(), startXOnScreen,
+				startYOnScreen, zoom, layerManager.getLayerDeclarations())
+				.getWorldIconAt(positionOnScreen, maxDistance);
 	}
 
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
