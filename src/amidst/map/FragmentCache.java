@@ -16,15 +16,17 @@ public class FragmentCache {
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
 	private final ConcurrentLinkedQueue<Fragment> resetQueue;
 	private final List<FragmentConstructor> constructors;
+	private final int numberOfLayers;
 
 	public FragmentCache(ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
 			ConcurrentLinkedQueue<Fragment> resetQueue,
-			List<FragmentConstructor> constructors) {
+			List<FragmentConstructor> constructors, int numberOfLayers) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
 		this.resetQueue = resetQueue;
 		this.constructors = constructors;
+		this.numberOfLayers = numberOfLayers;
 	}
 
 	public void increaseSize() {
@@ -36,7 +38,7 @@ public class FragmentCache {
 
 	private void requestNewFragments() {
 		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
-			Fragment fragment = new Fragment(constructors.size());
+			Fragment fragment = new Fragment(numberOfLayers);
 			construct(fragment);
 			cache.add(fragment);
 			availableQueue.offer(fragment);

@@ -15,9 +15,10 @@ public class FragmentManager {
 
 	private volatile FragmentQueueProcessor queueProcessor;
 
-	public FragmentManager(List<FragmentConstructor> constructors) {
+	public FragmentManager(List<FragmentConstructor> constructors,
+			int numberOfLayers) {
 		this.cache = new FragmentCache(availableQueue, loadingQueue,
-				resetQueue, constructors);
+				resetQueue, constructors, numberOfLayers);
 	}
 
 	public Fragment requestFragment(CoordinatesInWorld coordinates) {

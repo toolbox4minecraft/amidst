@@ -10,7 +10,8 @@ public class MapFactory {
 	public MapFactory(LayerManagerFactory layerManagerFactory) {
 		this.layerManagerFactory = layerManagerFactory;
 		this.fragmentManager = new FragmentManager(
-				layerManagerFactory.getConstructors());
+				layerManagerFactory.getConstructors(),
+				layerManagerFactory.getNumberOfLayers());
 	}
 
 	public Map create(World world, MapZoom mapZoom,

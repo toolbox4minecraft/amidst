@@ -87,6 +87,10 @@ public class LayerManagerFactory {
 		return constructors;
 	}
 
+	public int getNumberOfLayers() {
+		return LayerIds.NUMBER_OF_LAYERS;
+	}
+
 	public LayerManager createLayerManager(World world, Map map) {
 		List<FragmentLoader> loaders = createLoaders(declarations, world, map);
 		List<FragmentDrawer> drawers = createDrawers(declarations, map);
