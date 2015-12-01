@@ -2,7 +2,7 @@ package amidst.map;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.util.Collection;
+import java.util.List;
 
 import amidst.Options;
 import amidst.map.layer.Layer;
@@ -260,7 +260,7 @@ public class Map {
 		reloadLayer(LayerType.PLAYER);
 	}
 
-	public Collection<Layer> getAllLayers() {
+	public List<Layer> getAllLayers() {
 		return layerContainer.getAllLayers();
 	}
 
