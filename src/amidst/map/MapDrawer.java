@@ -138,8 +138,10 @@ public class MapDrawer {
 			if (drawer.getLayerDeclaration().isVisible()) {
 				initLayerDrawMatrix(startOnScreen, zoom.getCurrentValue());
 				for (Fragment fragment : startFragment) {
-					setAlphaComposite(fragment.getAlpha());
-					drawer.draw(fragment, g2d, layerMatrix);
+					if (fragment.isLoaded()) {
+						setAlphaComposite(fragment.getAlpha());
+						drawer.draw(fragment, g2d, layerMatrix);
+					}
 					updateLayerDrawMatrix(fragment);
 				}
 			}
