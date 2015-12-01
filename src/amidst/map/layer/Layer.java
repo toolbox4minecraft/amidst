@@ -4,7 +4,6 @@ import amidst.fragment.constructor.FragmentConstructor;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.loader.FragmentLoader;
 import amidst.map.LayerDeclaration;
-import amidst.preferences.PrefModel;
 
 public class Layer {
 	private final LayerDeclaration declaration;
@@ -21,15 +20,15 @@ public class Layer {
 	}
 
 	public LayerType getLayerType() {
-		return declaration.getLayerType();
+		return getLayerDeclaration().getLayerType();
 	}
 
 	public boolean isVisible() {
-		return declaration.getIsVisiblePreference().get();
+		return getLayerDeclaration().getIsVisiblePreference().get();
 	}
 
-	public PrefModel<Boolean> getIsVisiblePreference() {
-		return declaration.getIsVisiblePreference();
+	public LayerDeclaration getLayerDeclaration() {
+		return declaration;
 	}
 
 	public FragmentConstructor getFragmentConstructor() {

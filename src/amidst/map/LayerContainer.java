@@ -11,20 +11,19 @@ import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.loader.FragmentLoader;
 import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
-import amidst.preferences.PrefModel;
 
 public class LayerContainer {
 	private final List<Layer> layers;
 	private final List<AtomicBoolean> invalidatedLayers;
-	private final List<PrefModel<Boolean>> isVisiblePreferences;
+	private final List<LayerDeclaration> declarations;
 	private final List<FragmentConstructor> constructors;
 	private final List<FragmentLoader> loaders;
 	private final List<FragmentDrawer> drawers;
 
 	public LayerContainer(Layer... layers) {
-		List<PrefModel<Boolean>> isVisiblePreferences = new ArrayList<PrefModel<Boolean>>(
-				layers.length);
 		List<AtomicBoolean> invalidatedLayers = new ArrayList<AtomicBoolean>(
+				layers.length);
+		List<LayerDeclaration> declarations = new ArrayList<LayerDeclaration>(
 				layers.length);
 		List<FragmentConstructor> constructor = new ArrayList<FragmentConstructor>(
 				layers.length);
@@ -34,7 +33,7 @@ public class LayerContainer {
 				layers.length);
 		for (Layer layer : layers) {
 			invalidatedLayers.add(new AtomicBoolean(false));
-			isVisiblePreferences.add(layer.getIsVisiblePreference());
+			declarations.add(layer.getLayerDeclaration());
 			constructor.add(layer.getFragmentConstructor());
 			loader.add(layer.getFragmentLoader());
 			drawer.add(layer.getFragmentDrawer());
@@ -42,8 +41,7 @@ public class LayerContainer {
 		this.layers = Collections.unmodifiableList(Arrays.asList(layers));
 		this.invalidatedLayers = Collections
 				.unmodifiableList(invalidatedLayers);
-		this.isVisiblePreferences = Collections
-				.unmodifiableList(isVisiblePreferences);
+		this.declarations = Collections.unmodifiableList(declarations);
 		this.constructors = Collections.unmodifiableList(constructor);
 		this.loaders = Collections.unmodifiableList(loader);
 		this.drawers = Collections.unmodifiableList(drawer);
