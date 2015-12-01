@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import amidst.fragment.constructor.FragmentConstructor;
+import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.loader.FragmentLoader;
 import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
@@ -15,6 +16,7 @@ public class LayerContainer {
 	private final boolean[] invalidatedLayers;
 	private final List<FragmentConstructor> constructors;
 	private final List<FragmentLoader> loaders;
+	private final List<FragmentDrawer> drawers;
 
 	public LayerContainer(Layer... layers) {
 		this.layers = Collections.unmodifiableList(Arrays.asList(layers));
@@ -23,12 +25,16 @@ public class LayerContainer {
 				layers.length);
 		List<FragmentLoader> loader = new ArrayList<FragmentLoader>(
 				layers.length);
+		List<FragmentDrawer> drawer = new ArrayList<FragmentDrawer>(
+				layers.length);
 		for (Layer layer : layers) {
 			constructor.add(layer.getFragmentConstructor());
 			loader.add(layer.getFragmentLoader());
+			drawer.add(layer.getFragmentDrawer());
 		}
 		this.constructors = Collections.unmodifiableList(constructor);
 		this.loaders = Collections.unmodifiableList(loader);
+		this.drawers = Collections.unmodifiableList(drawer);
 	}
 
 	public List<Layer> getAllLayers() {
