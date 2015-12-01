@@ -3,7 +3,6 @@ package amidst.map;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
-import amidst.Options;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.fragment.layer.LayerIds;
@@ -14,6 +13,8 @@ import amidst.minecraft.world.World;
 import amidst.minecraft.world.icon.WorldIcon;
 
 public class Map {
+	private static final String UNKNOWN_BIOME_ALIAS = "Unknown";
+
 	private WorldIcon selectedWorldIcon;
 
 	private Fragment startFragment;
@@ -133,11 +134,10 @@ public class Map {
 
 	public String getBiomeAliasAt(CoordinatesInWorld coordinates) {
 		Fragment fragment = getFragmentAt(coordinates);
-		if (fragment != null && fragment.isLoaded()) {
-			short biome = fragment.getBiomeDataAt(coordinates);
-			return Options.instance.biomeColorProfile.getAliasForId(biome);
+		if (fragment != null) {
+			return fragment.getBiomeAliasAt(coordinates, UNKNOWN_BIOME_ALIAS);
 		} else {
-			return "Unknown";
+			return UNKNOWN_BIOME_ALIAS;
 		}
 	}
 

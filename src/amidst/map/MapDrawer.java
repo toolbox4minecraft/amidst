@@ -150,10 +150,8 @@ public class MapDrawer {
 			if (drawer.getLayerDeclaration().isVisible()) {
 				initLayerDrawMatrix(startOnScreen, zoom.getCurrentValue());
 				for (Fragment fragment : startFragment) {
-					if (fragment.isLoaded()) {
-						setAlphaComposite(fragment.getAlpha());
-						drawer.draw(fragment, g2d, layerMatrix);
-					}
+					setAlphaComposite(fragment.getAlpha());
+					drawer.draw(fragment, g2d, layerMatrix);
 					updateLayerDrawMatrix(fragment);
 				}
 			}

@@ -104,10 +104,15 @@ public class Fragment implements Iterable<Fragment> {
 		biomeDataOracle.populateArrayUsingQuarterResolution(corner, biomeData);
 	}
 
-	public short getBiomeDataAt(CoordinatesInWorld coordinates) {
-		return getBiomeDataAt(
-				(int) coordinates.getXRelativeToFragmentAs(Resolution.QUARTER),
-				(int) coordinates.getYRelativeToFragmentAs(Resolution.QUARTER));
+	public String getBiomeAliasAt(CoordinatesInWorld coordinates,
+			String defaultAlias) {
+		if (!isLoaded) {
+			return defaultAlias;
+		}
+		long x = coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
+		long y = coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
+		short biome = getBiomeDataAt((int) x, (int) y);
+		return Options.instance.biomeColorProfile.getAliasForId(biome);
 	}
 
 	public short getBiomeDataAt(int x, int y) {
@@ -131,12 +136,13 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	public List<WorldIcon> getWorldIcons(int layerId) {
-		List<WorldIcon> result = worldIcons.get(layerId);
-		if (result != null) {
-			return result;
-		} else {
-			return Collections.emptyList();
+		if (isLoaded) {
+			List<WorldIcon> result = worldIcons.get(layerId);
+			if (result != null) {
+				return result;
+			}
 		}
+		return Collections.emptyList();
 	}
 
 	public void setInitialized(boolean isInitialized) {
