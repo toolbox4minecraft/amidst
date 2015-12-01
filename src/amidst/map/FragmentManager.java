@@ -1,27 +1,22 @@
 package amidst.map;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import amidst.fragment.constructor.FragmentConstructor;
 import amidst.minecraft.world.CoordinatesInWorld;
 
 public class FragmentManager {
-	private final ConcurrentLinkedQueue<Fragment> availableQueue;
-	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
-	private final ConcurrentLinkedQueue<Fragment> resetQueue;
+	private final ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<Fragment>();
+	private final ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<Fragment>();
+	private final ConcurrentLinkedQueue<Fragment> resetQueue = new ConcurrentLinkedQueue<Fragment>();
 	private final FragmentCache cache;
-	private final FragmentQueueProcessor loader;
-	private LayerContainer layerContainer;
 
-	public FragmentManager(ConcurrentLinkedQueue<Fragment> availableQueue,
-			ConcurrentLinkedQueue<Fragment> loadingQueue,
-			ConcurrentLinkedQueue<Fragment> resetQueue, FragmentCache cache,
-			FragmentQueueProcessor loader, LayerContainer layerContainer) {
-		this.availableQueue = availableQueue;
-		this.loadingQueue = loadingQueue;
-		this.resetQueue = resetQueue;
-		this.cache = cache;
-		this.loader = loader;
-		this.layerContainer = layerContainer;
+	private volatile FragmentQueueProcessor queueProcessor;
+
+	public FragmentManager(List<FragmentConstructor> constructors) {
+		this.cache = new FragmentCache(availableQueue, loadingQueue,
+				resetQueue, constructors);
 	}
 
 	public Fragment requestFragment(CoordinatesInWorld coordinates) {
@@ -40,10 +35,6 @@ public class FragmentManager {
 	 */
 	public void recycleFragment(Fragment fragment) {
 		resetQueue.offer(fragment);
-	}
-
-	public void tick() {
-		loader.tick();
 	}
 
 	public void reloadAll() {
@@ -74,7 +65,17 @@ public class FragmentManager {
 		return cache.size();
 	}
 
-	public LayerContainer getLayerContainer() {
-		return layerContainer;
+	public void tick() {
+		// Do not inline this variable to ensure there is only one read
+		// operation.
+		FragmentQueueProcessor queueProcessor = this.queueProcessor;
+		if (queueProcessor != null) {
+			queueProcessor.tick();
+		}
+	}
+
+	public void setLayerContainer(LayerContainer layerContainer) {
+		this.queueProcessor = new FragmentQueueProcessor(availableQueue,
+				loadingQueue, resetQueue, layerContainer);
 	}
 }

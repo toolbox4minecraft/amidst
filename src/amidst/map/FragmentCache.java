@@ -4,21 +4,27 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import amidst.fragment.constructor.FragmentConstructor;
 import amidst.logging.Log;
-import amidst.minecraft.world.World;
 
 public class FragmentCache {
 	private static final int NEW_FRAGMENTS_PER_REQUEST = 1024;
 
-	private final ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<Fragment>();
-	private final ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<Fragment>();
-	private final ConcurrentLinkedQueue<Fragment> resetQueue = new ConcurrentLinkedQueue<Fragment>();
 	private final List<Fragment> cache = new LinkedList<Fragment>();
-	private final LayerContainerFactory layerContainerFactory;
-	private LayerContainer layerContainer;
 
-	public FragmentCache(LayerContainerFactory layerContainerFactory) {
-		this.layerContainerFactory = layerContainerFactory;
+	private final ConcurrentLinkedQueue<Fragment> availableQueue;
+	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
+	private final ConcurrentLinkedQueue<Fragment> resetQueue;
+	private final List<FragmentConstructor> constructors;
+
+	public FragmentCache(ConcurrentLinkedQueue<Fragment> availableQueue,
+			ConcurrentLinkedQueue<Fragment> loadingQueue,
+			ConcurrentLinkedQueue<Fragment> resetQueue,
+			List<FragmentConstructor> constructors) {
+		this.availableQueue = availableQueue;
+		this.loadingQueue = loadingQueue;
+		this.resetQueue = resetQueue;
+		this.constructors = constructors;
 	}
 
 	public void increaseSize() {
@@ -31,9 +37,15 @@ public class FragmentCache {
 	private void requestNewFragments() {
 		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
 			Fragment fragment = new Fragment();
-			layerContainer.constructAll(fragment);
+			construct(fragment);
 			cache.add(fragment);
 			availableQueue.offer(fragment);
+		}
+	}
+
+	private void construct(Fragment fragment) {
+		for (FragmentConstructor constructor : constructors) {
+			constructor.construct(fragment);
 		}
 	}
 
@@ -51,13 +63,5 @@ public class FragmentCache {
 
 	public int size() {
 		return cache.size();
-	}
-
-	public FragmentManager createFragmentManager(World world, Map map) {
-		layerContainer = layerContainerFactory.createLayerContainer(world, map);
-		FragmentQueueProcessor fragmentLoader = new FragmentQueueProcessor(
-				availableQueue, loadingQueue, resetQueue, layerContainer);
-		return new FragmentManager(availableQueue, loadingQueue, resetQueue,
-				this, fragmentLoader, layerContainer);
 	}
 }

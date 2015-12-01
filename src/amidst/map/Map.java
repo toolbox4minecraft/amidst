@@ -29,12 +29,15 @@ public class Map {
 	private final FragmentManager fragmentManager;
 	private final LayerContainer layerContainer;
 
-	public Map(FragmentCache fragmentCache, World world, MapZoom zoom,
-			BiomeSelection biomeSelection) {
+	public Map(MapZoom zoom, BiomeSelection biomeSelection,
+			FragmentManager fragmentManager,
+			LayerContainerFactory layerContainerFactory, World world) {
 		this.zoom = zoom;
 		this.biomeSelection = biomeSelection;
-		this.fragmentManager = fragmentCache.createFragmentManager(world, this);
-		this.layerContainer = fragmentManager.getLayerContainer();
+		this.fragmentManager = fragmentManager;
+		this.layerContainer = layerContainerFactory.createLayerContainer(world,
+				this);
+		fragmentManager.setLayerContainer(layerContainer);
 	}
 
 	private void lockedDraw(MapDrawer drawer) {

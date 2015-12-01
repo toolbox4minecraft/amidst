@@ -9,7 +9,6 @@ import amidst.gui.MapWindow;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.Log;
-import amidst.map.FragmentCache;
 import amidst.map.LayerContainerFactory;
 import amidst.map.MapBuilder;
 import amidst.map.SkinLoader;
@@ -48,8 +47,7 @@ public class Application {
 	}
 
 	private MapBuilder createMapBuilder() {
-		return new MapBuilder(new FragmentCache(new LayerContainerFactory(
-				getPreferences())));
+		return new MapBuilder(new LayerContainerFactory(getPreferences()));
 	}
 
 	private SeedHistoryLogger createSeedHistoryLogger() {
