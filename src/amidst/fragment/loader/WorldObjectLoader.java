@@ -25,7 +25,7 @@ public class WorldObjectLoader implements FragmentLoader {
 	}
 
 	protected void doLoad(Fragment fragment) {
-		fragment.putWorldObjects(declaration.getLayerType(),
+		fragment.putWorldObjects(declaration.getLayerId(),
 				producer.getAt(fragment.getCorner()));
 	}
 }

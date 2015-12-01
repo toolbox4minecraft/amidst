@@ -47,16 +47,16 @@ public class LayerManagerFactory {
 	private List<LayerDeclaration> createDeclarations(Options options) {
 		LayerDeclaration[] declarations = new LayerDeclaration[LayerIds.NUMBER_OF_LAYERS];
 		// @formatter:off
-		declarations[LayerIds.BIOME]            = new LayerDeclaration(LayerType.BIOME,           options.showBiomes);
-		declarations[LayerIds.SLIME]            = new LayerDeclaration(LayerType.SLIME,           options.showSlimeChunks);
-		declarations[LayerIds.GRID]             = new LayerDeclaration(LayerType.GRID,            options.showGrid);
-		declarations[LayerIds.VILLAGE]          = new LayerDeclaration(LayerType.VILLAGE,         options.showVillages);
-		declarations[LayerIds.OCEAN_MONUMENT]   = new LayerDeclaration(LayerType.OCEAN_MONUMENT,  options.showOceanMonuments);
-		declarations[LayerIds.STRONGHOLD]       = new LayerDeclaration(LayerType.STRONGHOLD,      options.showStrongholds);
-		declarations[LayerIds.TEMPLE]           = new LayerDeclaration(LayerType.TEMPLE,          options.showTemples);
-		declarations[LayerIds.SPAWN]            = new LayerDeclaration(LayerType.SPAWN,           options.showSpawn);
-		declarations[LayerIds.NETHER_FORTRESS]  = new LayerDeclaration(LayerType.NETHER_FORTRESS, options.showNetherFortresses);
-		declarations[LayerIds.PLAYER]           = new LayerDeclaration(LayerType.PLAYER,          options.showPlayers);
+		declarations[LayerIds.BIOME]            = new LayerDeclaration(LayerIds.BIOME,           options.showBiomes);
+		declarations[LayerIds.SLIME]            = new LayerDeclaration(LayerIds.SLIME,           options.showSlimeChunks);
+		declarations[LayerIds.GRID]             = new LayerDeclaration(LayerIds.GRID,            options.showGrid);
+		declarations[LayerIds.VILLAGE]          = new LayerDeclaration(LayerIds.VILLAGE,         options.showVillages);
+		declarations[LayerIds.OCEAN_MONUMENT]   = new LayerDeclaration(LayerIds.OCEAN_MONUMENT,  options.showOceanMonuments);
+		declarations[LayerIds.STRONGHOLD]       = new LayerDeclaration(LayerIds.STRONGHOLD,      options.showStrongholds);
+		declarations[LayerIds.TEMPLE]           = new LayerDeclaration(LayerIds.TEMPLE,          options.showTemples);
+		declarations[LayerIds.SPAWN]            = new LayerDeclaration(LayerIds.SPAWN,           options.showSpawn);
+		declarations[LayerIds.NETHER_FORTRESS]  = new LayerDeclaration(LayerIds.NETHER_FORTRESS, options.showNetherFortresses);
+		declarations[LayerIds.PLAYER]           = new LayerDeclaration(LayerIds.PLAYER,          options.showPlayers);
 		// @formatter:on
 		return Collections.unmodifiableList(Arrays.asList(declarations));
 	}

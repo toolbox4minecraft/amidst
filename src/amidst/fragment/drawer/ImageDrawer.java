@@ -29,7 +29,7 @@ public class ImageDrawer extends FragmentDrawer {
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		}
-		g2d.drawImage(fragment.getImage(declaration.getLayerType()), 0, 0, null);
+		g2d.drawImage(fragment.getImage(declaration.getLayerId()), 0, 0, null);
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 	}

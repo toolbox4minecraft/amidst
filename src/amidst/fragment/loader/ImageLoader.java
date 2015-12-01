@@ -46,7 +46,7 @@ public class ImageLoader implements FragmentLoader {
 		long cornerY = corner.getYAs(resolution);
 		drawToCache(fragment, cornerX, cornerY);
 		bufferedImage.setRGB(0, 0, size, size, rgbArray, 0, size);
-		bufferedImage = fragment.getAndSetImage(declaration.getLayerType(),
+		bufferedImage = fragment.getAndSetImage(declaration.getLayerId(),
 				bufferedImage);
 	}
 

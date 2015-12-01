@@ -17,7 +17,7 @@ public class ImageConstructor implements FragmentConstructor {
 
 	@Override
 	public void construct(Fragment fragment) {
-		fragment.putImage(declaration.getLayerType(), createBufferedImage());
+		fragment.putImage(declaration.getLayerId(), createBufferedImage());
 	}
 
 	private BufferedImage createBufferedImage() {

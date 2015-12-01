@@ -1,5 +1,8 @@
 package amidst.fragment.layer;
 
+/**
+ * This defines the rendering order of the layers.
+ */
 public class LayerIds {
 	public static final int BIOME = 0;
 	public static final int SLIME = 1;

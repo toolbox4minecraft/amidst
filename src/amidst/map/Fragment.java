@@ -2,12 +2,11 @@ package amidst.map;
 
 import java.awt.image.BufferedImage;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import amidst.Options;
-import amidst.fragment.layer.LayerType;
 import amidst.minecraft.world.BiomeDataOracle;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
@@ -57,10 +56,15 @@ public class Fragment implements Iterable<Fragment> {
 
 	private float alpha;
 	private short[][] biomeData;
-	private EnumMap<LayerType, BufferedImage> images = new EnumMap<LayerType, BufferedImage>(
-			LayerType.class);
-	private EnumMap<LayerType, List<WorldObject>> worldObjects = new EnumMap<LayerType, List<WorldObject>>(
-			LayerType.class);
+
+	private final AtomicReferenceArray<BufferedImage> images;
+	private final AtomicReferenceArray<List<WorldObject>> worldObjects;
+
+	public Fragment(int numberOfLayers) {
+		this.images = new AtomicReferenceArray<BufferedImage>(numberOfLayers);
+		this.worldObjects = new AtomicReferenceArray<List<WorldObject>>(
+				numberOfLayers);
+	}
 
 	public void initialize(CoordinatesInWorld corner) {
 		this.corner = corner;
@@ -111,27 +115,24 @@ public class Fragment implements Iterable<Fragment> {
 		return biomeData[x][y];
 	}
 
-	public BufferedImage getAndSetImage(LayerType layerType, BufferedImage image) {
-		BufferedImage result = images.get(layerType);
-		images.put(layerType, image);
-		return result;
+	public BufferedImage getAndSetImage(int layerId, BufferedImage image) {
+		return images.getAndSet(layerId, image);
 	}
 
-	public void putImage(LayerType layerType, BufferedImage image) {
-		images.put(layerType, image);
+	public void putImage(int layerId, BufferedImage image) {
+		images.set(layerId, image);
 	}
 
-	public BufferedImage getImage(LayerType layerType) {
-		return images.get(layerType);
+	public BufferedImage getImage(int layerId) {
+		return images.get(layerId);
 	}
 
-	public void putWorldObjects(LayerType layerType,
-			List<WorldObject> worldObjects) {
-		this.worldObjects.put(layerType, worldObjects);
+	public void putWorldObjects(int layerId, List<WorldObject> worldObjects) {
+		this.worldObjects.set(layerId, worldObjects);
 	}
 
-	public List<WorldObject> getWorldObjects(LayerType layerType) {
-		List<WorldObject> result = worldObjects.get(layerType);
+	public List<WorldObject> getWorldObjects(int layerId) {
+		List<WorldObject> result = worldObjects.get(layerId);
 		if (result != null) {
 			return result;
 		} else {

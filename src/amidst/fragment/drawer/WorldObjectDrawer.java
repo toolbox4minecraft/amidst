@@ -24,7 +24,7 @@ public class WorldObjectDrawer extends FragmentDrawer {
 			AffineTransform layerMatrix) {
 		double invZoom = 1.0 / map.getZoom();
 		for (WorldObject worldObject : fragment.getWorldObjects(declaration
-				.getLayerType())) {
+				.getLayerId())) {
 			drawObject(worldObject, invZoom, g2d, layerMatrix);
 		}
 	}

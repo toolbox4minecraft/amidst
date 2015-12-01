@@ -36,7 +36,7 @@ public class FragmentCache {
 
 	private void requestNewFragments() {
 		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
-			Fragment fragment = new Fragment();
+			Fragment fragment = new Fragment(constructors.size());
 			construct(fragment);
 			cache.add(fragment);
 			availableQueue.offer(fragment);

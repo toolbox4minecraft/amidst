@@ -7,9 +7,9 @@ import java.util.List;
 import amidst.Options;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.layer.LayerDeclaration;
+import amidst.fragment.layer.LayerIds;
 import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerManagerFactory;
-import amidst.fragment.layer.LayerType;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.object.WorldObject;
@@ -167,7 +167,7 @@ public class Map {
 						.getLayerDeclarations()) {
 					if (declaration.isVisible()) {
 						for (WorldObject worldObject : fragment
-								.getWorldObjects(declaration.getLayerType())) {
+								.getWorldObjects(declaration.getLayerId())) {
 							double distance = getDistance(positionOnScreen,
 									xCornerOnScreen, yCornerOnScreen,
 									worldObject);
@@ -217,8 +217,8 @@ public class Map {
 		return new Point2D.Double(scaledX, scaledY);
 	}
 
-	private void reloadLayer(LayerType layerType) {
-		layerManager.invalidateLayer(layerType);
+	private void reloadLayer(int layerId) {
+		layerManager.invalidateLayer(layerId);
 		fragmentManager.reloadAll();
 	}
 
@@ -259,11 +259,11 @@ public class Map {
 	}
 
 	public void reloadBiomeLayer() {
-		reloadLayer(LayerType.BIOME);
+		reloadLayer(LayerIds.BIOME);
 	}
 
 	public void reloadPlayerLayer() {
-		reloadLayer(LayerType.PLAYER);
+		reloadLayer(LayerIds.PLAYER);
 	}
 
 	public List<FragmentDrawer> getFragmentDrawers() {

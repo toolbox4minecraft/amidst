@@ -36,8 +36,8 @@ public class LayerManager {
 		}
 	}
 
-	public void invalidateLayer(LayerType layerType) {
-		invalidatedLayers.get(layerType.ordinal()).set(true);
+	public void invalidateLayer(int layerId) {
+		invalidatedLayers.get(layerId).set(true);
 	}
 
 	public void loadAll(Fragment fragment) {
