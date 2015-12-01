@@ -9,10 +9,6 @@ public class WorldIcon {
 	private final String name;
 	private final BufferedImage image;
 
-	public WorldIcon(CoordinatesInWorld coordinates, DefaultWorldIconTypes marker) {
-		this(coordinates, marker.getName(), marker.getImage());
-	}
-
 	public WorldIcon(CoordinatesInWorld coordinates, String name,
 			BufferedImage image) {
 		this.coordinates = coordinates;

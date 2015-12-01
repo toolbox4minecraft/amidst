@@ -93,7 +93,8 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 
 	private WorldIcon createWorldIcon(int x, int y) {
 		return new WorldIcon(CoordinatesInWorld.from(x, y),
-				DefaultWorldIconTypes.STRONGHOLD);
+				DefaultWorldIconTypes.STRONGHOLD.getName(),
+				DefaultWorldIconTypes.STRONGHOLD.getImage());
 	}
 
 	private Point findStronghold(int x, int y) {

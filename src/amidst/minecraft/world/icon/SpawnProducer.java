@@ -35,12 +35,18 @@ public class SpawnProducer extends CachedWorldIconProducer {
 	private WorldIcon createSpawnWorldIcon() {
 		Point spawnCenter = getSpawnCenterInWorldCoordinates();
 		if (spawnCenter != null) {
-			return new WorldIcon(CoordinatesInWorld.from(spawnCenter.x,
-					spawnCenter.y), DefaultWorldIconTypes.SPAWN);
+			return createSpawnWorldIconAt(CoordinatesInWorld.from(
+					spawnCenter.x, spawnCenter.y));
 		} else {
 			Log.debug("Unable to find spawn biome.");
-			return new WorldIcon(CoordinatesInWorld.origin(), DefaultWorldIconTypes.SPAWN);
+			return createSpawnWorldIconAt(CoordinatesInWorld.origin());
 		}
+	}
+
+	private WorldIcon createSpawnWorldIconAt(CoordinatesInWorld coordinates) {
+		return new WorldIcon(coordinates,
+				DefaultWorldIconTypes.SPAWN.getName(),
+				DefaultWorldIconTypes.SPAWN.getImage());
 	}
 
 	private Point getSpawnCenterInWorldCoordinates() {

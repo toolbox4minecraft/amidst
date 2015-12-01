@@ -4,6 +4,10 @@ import java.awt.image.BufferedImage;
 
 import amidst.resources.ResourceLoader;
 
+/**
+ * This is only a helper enum to have a central place where these constants can
+ * be collected. However, it should not be used as a type.
+ */
 public enum DefaultWorldIconTypes {
 	// @formatter:off
 	NETHER_FORTRESS("Nether Fortress"),
