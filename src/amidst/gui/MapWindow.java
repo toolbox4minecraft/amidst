@@ -65,8 +65,7 @@ public class MapWindow {
 	}
 
 	private void initMapFactory() {
-		mapBuilder = new MapBuilder(application.getFragmentCache(), mapZoom,
-				biomeSelection);
+		mapBuilder = new MapBuilder(application.getFragmentCache());
 	}
 
 	private void initFrame() {
@@ -147,7 +146,8 @@ public class MapWindow {
 	}
 
 	public void initWorld() {
-		map = mapBuilder.construct(application.getWorld());
+		map = mapBuilder.construct(application.getWorld(), mapZoom,
+				biomeSelection);
 		mapViewer = createMapViewer();
 		menuBar.enableMapMenu();
 	}
