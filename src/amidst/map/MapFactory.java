@@ -3,18 +3,18 @@ package amidst.map;
 import amidst.minecraft.world.World;
 
 public class MapFactory {
-	private final LayerContainerFactory layerContainerFactory;
+	private final LayerManagerFactory layerManagerFactory;
 	private final FragmentManager fragmentManager;
 
-	public MapFactory(LayerContainerFactory layerContainerFactory) {
-		this.layerContainerFactory = layerContainerFactory;
+	public MapFactory(LayerManagerFactory layerManagerFactory) {
+		this.layerManagerFactory = layerManagerFactory;
 		this.fragmentManager = new FragmentManager(
-				layerContainerFactory.getConstructors());
+				layerManagerFactory.getConstructors());
 	}
 
 	public Map create(World world, MapZoom mapZoom,
 			BiomeSelection biomeSelection) {
 		return new Map(mapZoom, biomeSelection, fragmentManager,
-				layerContainerFactory, world);
+				layerManagerFactory, world);
 	}
 }

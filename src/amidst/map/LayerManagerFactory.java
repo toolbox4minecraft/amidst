@@ -26,12 +26,12 @@ import amidst.map.layer.LayerType;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 
-public class LayerContainerFactory {
+public class LayerManagerFactory {
 	private final List<AtomicBoolean> invalidatedLayers;
 	private final List<LayerDeclaration> declarations;
 	private final List<FragmentConstructor> constructors;
 
-	public LayerContainerFactory(Options options) {
+	public LayerManagerFactory(Options options) {
 		this.invalidatedLayers = createInvalidatedLayers();
 		this.declarations = createDeclarations(options);
 		this.constructors = createConstructors(declarations);
@@ -88,10 +88,10 @@ public class LayerContainerFactory {
 		return constructors;
 	}
 
-	public LayerContainer createLayerContainer(World world, Map map) {
+	public LayerManager createLayerManager(World world, Map map) {
 		List<FragmentLoader> loaders = createLoaders(declarations, world, map);
 		List<FragmentDrawer> drawers = createDrawers(declarations, map);
-		return new LayerContainer(invalidatedLayers, declarations, loaders,
+		return new LayerManager(invalidatedLayers, declarations, loaders,
 				drawers);
 	}
 

@@ -7,13 +7,13 @@ import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.loader.FragmentLoader;
 import amidst.map.layer.LayerType;
 
-public class LayerContainer {
+public class LayerManager {
 	private final List<AtomicBoolean> invalidatedLayers;
 	private final List<LayerDeclaration> declarations;
 	private final List<FragmentLoader> loaders;
 	private final List<FragmentDrawer> drawers;
 
-	public LayerContainer(List<AtomicBoolean> invalidatedLayers,
+	public LayerManager(List<AtomicBoolean> invalidatedLayers,
 			List<LayerDeclaration> declarations, List<FragmentLoader> loaders,
 			List<FragmentDrawer> drawers) {
 		this.invalidatedLayers = invalidatedLayers;

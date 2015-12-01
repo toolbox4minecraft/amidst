@@ -27,17 +27,16 @@ public class Map {
 	private final MapZoom zoom;
 	private final BiomeSelection biomeSelection;
 	private final FragmentManager fragmentManager;
-	private final LayerContainer layerContainer;
+	private final LayerManager layerManager;
 
 	public Map(MapZoom zoom, BiomeSelection biomeSelection,
 			FragmentManager fragmentManager,
-			LayerContainerFactory layerContainerFactory, World world) {
+			LayerManagerFactory layerManagerFactory, World world) {
 		this.zoom = zoom;
 		this.biomeSelection = biomeSelection;
 		this.fragmentManager = fragmentManager;
-		this.layerContainer = layerContainerFactory.createLayerContainer(world,
-				this);
-		fragmentManager.setLayerContainer(layerContainer);
+		this.layerManager = layerManagerFactory.createLayerManager(world, this);
+		fragmentManager.setLayerManager(layerManager);
 	}
 
 	private void lockedDraw(MapDrawer drawer) {
@@ -161,7 +160,7 @@ public class Map {
 		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
-				for (LayerDeclaration declaration : layerContainer
+				for (LayerDeclaration declaration : layerManager
 						.getLayerDeclarations()) {
 					if (declaration.isVisible()) {
 						for (WorldObject worldObject : fragment
@@ -216,7 +215,7 @@ public class Map {
 	}
 
 	private void reloadLayer(LayerType layerType) {
-		layerContainer.invalidateLayer(layerType);
+		layerManager.invalidateLayer(layerType);
 		fragmentManager.reloadAll();
 	}
 
@@ -265,7 +264,7 @@ public class Map {
 	}
 
 	public List<FragmentDrawer> getFragmentDrawers() {
-		return layerContainer.getFragmentDrawers();
+		return layerManager.getFragmentDrawers();
 	}
 
 	public BiomeSelection getBiomeSelection() {

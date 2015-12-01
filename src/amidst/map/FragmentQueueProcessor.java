@@ -6,7 +6,7 @@ public class FragmentQueueProcessor {
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
 	private final ConcurrentLinkedQueue<Fragment> resetQueue;
-	private final LayerContainer layerContainer;
+	private final LayerManager layerManager;
 
 	private Fragment currentFragment;
 
@@ -14,11 +14,11 @@ public class FragmentQueueProcessor {
 			ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
 			ConcurrentLinkedQueue<Fragment> resetQueue,
-			LayerContainer layerContainer) {
+			LayerManager layerManager) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
 		this.resetQueue = resetQueue;
-		this.layerContainer = layerContainer;
+		this.layerManager = layerManager;
 	}
 
 	public void tick() {
@@ -27,7 +27,7 @@ public class FragmentQueueProcessor {
 			loadFragment();
 			processResetQueue();
 		}
-		layerContainer.clearInvalidatedLayers();
+		layerManager.clearInvalidatedLayers();
 	}
 
 	private void processResetQueue() {
@@ -40,10 +40,10 @@ public class FragmentQueueProcessor {
 		if (currentFragment.isInitialized()) {
 			if (currentFragment.isLoaded()) {
 				currentFragment.prepareReload();
-				layerContainer.reloadInvalidated(currentFragment);
+				layerManager.reloadInvalidated(currentFragment);
 			} else {
 				currentFragment.prepareLoad();
-				layerContainer.loadAll(currentFragment);
+				layerManager.loadAll(currentFragment);
 				currentFragment.setLoaded(true);
 			}
 		}

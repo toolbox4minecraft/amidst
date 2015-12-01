@@ -9,7 +9,7 @@ import amidst.gui.MapWindow;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.Log;
-import amidst.map.LayerContainerFactory;
+import amidst.map.LayerManagerFactory;
 import amidst.map.MapFactory;
 import amidst.map.SkinLoader;
 import amidst.minecraft.IMinecraftInterface;
@@ -47,7 +47,7 @@ public class Application {
 	}
 
 	private MapFactory createMapFactory() {
-		return new MapFactory(new LayerContainerFactory(getPreferences()));
+		return new MapFactory(new LayerManagerFactory(getPreferences()));
 	}
 
 	private SeedHistoryLogger createSeedHistoryLogger() {
