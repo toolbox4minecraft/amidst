@@ -19,15 +19,13 @@ import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 
 public class LayerContainerFactory {
-	private Options options;
-
-	public LayerContainerFactory(Options options) {
-		this.options = options;
-	}
+	private final Options options;
+	private final LayerContainer layerContainer;
 
 	// @formatter:off
-	public LayerContainer create(World world, Map map) {
-		return new LayerContainer(
+	public LayerContainerFactory(Options options, World world, Map map) {
+		this.options = options;
+		this.layerContainer = new LayerContainer(
 				createBiomeLayer(world, map),
 				createSlimeLayer(world),
 				createGridLayer(map),
@@ -41,22 +39,22 @@ public class LayerContainerFactory {
 		);
 	}
 
+	public LayerContainer createLayerContainer() {
+		return layerContainer;
+	}
+
 	private Layer createBiomeLayer(World world, Map map) {
-		LayerType layerType = LayerType.BIOME;
-		Resolution resolution = Resolution.QUARTER;
-		return new Layer(layerType, options.showBiomes,
-				new BiomeDataConstructor(layerType, resolution),
-				new BiomeDataLoader(layerType, new BiomeColorProvider(map), resolution, world.getBiomeDataOracle()),
-				new ImageDrawer(layerType, resolution));
+		return new Layer(LayerType.BIOME, options.showBiomes,
+				new BiomeDataConstructor(LayerType.BIOME, Resolution.QUARTER),
+				new BiomeDataLoader(LayerType.BIOME, new BiomeColorProvider(map), Resolution.QUARTER, world.getBiomeDataOracle()),
+				new ImageDrawer(LayerType.BIOME, Resolution.QUARTER));
 	}
 
 	private Layer createSlimeLayer(World world) {
-		LayerType layerType = LayerType.SLIME;
-		Resolution resolution = Resolution.CHUNK;
-		return new Layer(layerType, options.showSlimeChunks,
-				new ImageConstructor(layerType, resolution),
-				new ImageLoader(layerType, new SlimeColorProvider(world), resolution),
-				new ImageDrawer(layerType, resolution));
+		return new Layer(LayerType.SLIME, options.showSlimeChunks,
+				new ImageConstructor(LayerType.SLIME, Resolution.CHUNK),
+				new ImageLoader(LayerType.SLIME, new SlimeColorProvider(world), Resolution.CHUNK),
+				new ImageDrawer(LayerType.SLIME, Resolution.CHUNK));
 	}
 
 	private Layer createGridLayer(Map map) {
@@ -67,59 +65,52 @@ public class LayerContainerFactory {
 	}
 
 	private Layer createVillageLayer(World world, Map map) {
-		LayerType layerType = LayerType.VILLAGE;
-		return new Layer(layerType, options.showVillages,
+		return new Layer(LayerType.VILLAGE, options.showVillages,
 				new DummyConstructor(),
-				new WorldObjectLoader(layerType, world.getVillageProducer()),
-				new WorldObjectDrawer(layerType, map));
+				new WorldObjectLoader(LayerType.VILLAGE, world.getVillageProducer()),
+				new WorldObjectDrawer(LayerType.VILLAGE, map));
 	}
 
 	private Layer createOceanMonumentLayer(World world, Map map) {
-		LayerType layerType = LayerType.OCEAN_MONUMENT;
-		return new Layer(layerType, options.showOceanMonuments,
+		return new Layer(LayerType.OCEAN_MONUMENT, options.showOceanMonuments,
 				new DummyConstructor(),
-				new WorldObjectLoader(layerType, world.getOceanMonumentProducer()),
-				new WorldObjectDrawer(layerType, map));
+				new WorldObjectLoader(LayerType.OCEAN_MONUMENT, world.getOceanMonumentProducer()),
+				new WorldObjectDrawer(LayerType.OCEAN_MONUMENT, map));
 	}
 
 	private Layer createStrongholdLayer(World world, Map map) {
-		LayerType layerType = LayerType.STRONGHOLD;
-		return new Layer(layerType, options.showStrongholds,
+		return new Layer(LayerType.STRONGHOLD, options.showStrongholds,
 				new DummyConstructor(),
-				new WorldObjectLoader(layerType, world.getStrongholdProducer()),
-				new WorldObjectDrawer(layerType, map));
+				new WorldObjectLoader(LayerType.STRONGHOLD, world.getStrongholdProducer()),
+				new WorldObjectDrawer(LayerType.STRONGHOLD, map));
 	}
 
 	private Layer createTempleLayer(World world, Map map) {
-		LayerType layerType = LayerType.TEMPLE;
-		return new Layer(layerType, options.showTemples,
+		return new Layer(LayerType.TEMPLE, options.showTemples,
 				new DummyConstructor(),
-				new WorldObjectLoader(layerType, world.getTempleProducer()),
-				new WorldObjectDrawer(layerType, map));
+				new WorldObjectLoader(LayerType.TEMPLE, world.getTempleProducer()),
+				new WorldObjectDrawer(LayerType.TEMPLE, map));
 	}
 
 	private Layer createSpawnLayer(World world, Map map) {
-		LayerType layerType = LayerType.SPAWN;
-		return new Layer(layerType, options.showSpawn,
+		return new Layer(LayerType.SPAWN, options.showSpawn,
 				new DummyConstructor(),
-				new WorldObjectLoader(layerType, world.getSpawnProducer()),
-				new WorldObjectDrawer(layerType, map));
+				new WorldObjectLoader(LayerType.SPAWN, world.getSpawnProducer()),
+				new WorldObjectDrawer(LayerType.SPAWN, map));
 	}
 
 	private Layer createNetherFortressLayer(World world, Map map) {
-		LayerType layerType = LayerType.NETHER_FORTRESS;
-		return new Layer(layerType, options.showNetherFortresses,
+		return new Layer(LayerType.NETHER_FORTRESS, options.showNetherFortresses,
 				new DummyConstructor(),
-				new WorldObjectLoader(layerType, world.getNetherFortressProducer()),
-				new WorldObjectDrawer(layerType, map));
+				new WorldObjectLoader(LayerType.NETHER_FORTRESS, world.getNetherFortressProducer()),
+				new WorldObjectDrawer(LayerType.NETHER_FORTRESS, map));
 	}
 
 	private Layer createPlayerLayer(World world, Map map) {
-		LayerType layerType = LayerType.PLAYER;
-		return new Layer(layerType, options.showPlayers,
+		return new Layer(LayerType.PLAYER, options.showPlayers,
 				new DummyConstructor(),
-				new WorldObjectLoader(layerType, world.getPlayerProducer()),
-				new WorldObjectDrawer(layerType, map));
+				new WorldObjectLoader(LayerType.PLAYER, world.getPlayerProducer()),
+				new WorldObjectDrawer(LayerType.PLAYER, map));
 	}
 	// @formatter:on
 }
