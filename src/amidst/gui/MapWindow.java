@@ -101,7 +101,7 @@ public class MapWindow {
 			public void keyPressed(KeyEvent e) {
 				if (mapViewer != null) {
 					Point mouse = mapViewer.getMousePositionOrCenter();
-					if (e.getKeyCode() == KeyEvent.VK_EQUALS) {
+					if (e.getKeyCode() == KeyEvent.VK_PLUS) {
 						mapZoom.adjustZoom(mouse, -1);
 					} else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
 						mapZoom.adjustZoom(mouse, 1);
