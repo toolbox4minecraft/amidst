@@ -37,41 +37,40 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.WorldType;
 
 public class MapWindow {
-	private Application application;
+	private final SeedPrompt seedPrompt = new SeedPrompt();
+	private final MapZoom mapZoom = new MapZoom();
+	private final MapMovement mapMovement = new MapMovement();
+	private final BiomeSelection biomeSelection = new BiomeSelection();
 
-	private SeedPrompt seedPrompt = new SeedPrompt();
-	private MapZoom mapZoom = new MapZoom();
-	private MapMovement mapMovement = new MapMovement();
-	private BiomeSelection biomeSelection = new BiomeSelection();
-	private MapBuilder mapBuilder;
+	private final Application application;
+	private final MapBuilder mapBuilder;
 
-	private Map map;
+	private final JFrame frame;
+	private final Container contentPane;
+	private final AmidstMenu menuBar;
+
 	private MapViewer mapViewer;
+	private Map map;
 
-	private JFrame frame = new JFrame();
-	private AmidstMenu menuBar;
-	private Container contentPane;
-
-	public MapWindow(Application application) {
+	public MapWindow(Application application, MapBuilder mapBuilder,
+			Options preferences) {
 		this.application = application;
-		initMapFactory();
-		initFrame();
-		initContentPane();
-		initMenuBar();
+		this.mapBuilder = mapBuilder;
+		this.frame = createFrame();
+		this.contentPane = createContentPane();
+		this.menuBar = createMenuBar(preferences);
 		initKeyListener();
 		initCloseListener();
 		showFrame();
 		checkForUpdates();
 	}
 
-	private void initMapFactory() {
-		mapBuilder = new MapBuilder(application.getFragmentCache());
-	}
-
-	private void initFrame() {
+	private JFrame createFrame() {
+		JFrame frame = new JFrame();
 		frame.setTitle(getVersionString());
 		frame.setSize(1000, 800);
 		frame.setIconImage(AmidstMetaData.ICON);
+		return frame;
 	}
 
 	private String getVersionString() {
@@ -84,14 +83,16 @@ public class MapWindow {
 		}
 	}
 
-	private void initContentPane() {
-		contentPane = frame.getContentPane();
+	private Container createContentPane() {
+		Container contentPane = frame.getContentPane();
 		contentPane.setLayout(new BorderLayout());
+		return contentPane;
 	}
 
-	private void initMenuBar() {
-		menuBar = new AmidstMenu(application, this);
+	private AmidstMenu createMenuBar(Options preferences) {
+		AmidstMenu menuBar = new AmidstMenu(application, preferences, this);
 		frame.setJMenuBar(menuBar.getMenuBar());
+		return menuBar;
 	}
 
 	private void initKeyListener() {

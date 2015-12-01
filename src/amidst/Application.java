@@ -11,6 +11,7 @@ import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.Log;
 import amidst.map.FragmentCache;
 import amidst.map.LayerContainerFactory;
+import amidst.map.MapBuilder;
 import amidst.map.SkinLoader;
 import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.LocalMinecraftInstallation;
@@ -23,29 +24,48 @@ import amidst.utilities.SeedHistoryLogger;
 import amidst.version.MinecraftProfile;
 
 public class Application {
-	private ThreadMaster threadMaster = new ThreadMaster(this);
-	private SkinLoader skinLoader = new SkinLoader(this, threadMaster);
-	private SeedHistoryLogger seedHistoryLogger;
-	private UpdatePrompt updateManager = new UpdatePrompt();
-	private FragmentCache fragmentCache = new FragmentCache(
-			new LayerContainerFactory(getOptions()));
+	private final CommandLineOptions options;
+	private final MapBuilder mapBuilder;
+	private final SeedHistoryLogger seedHistoryLogger;
+	private final ThreadMaster threadMaster;
+	private final SkinLoader skinLoader;
+	private final UpdatePrompt updateManager;
 
 	private VersionSelectWindow versionSelectWindow;
 	private MapWindow mapWindow;
 
 	private World world;
 
-	private CommandLineOptions options;
-
 	public Application(CommandLineOptions options) {
 		this.options = options;
-		initSeedHistoryLogger();
+		this.mapBuilder = createMapBuilder();
+		this.seedHistoryLogger = createSeedHistoryLogger();
+		this.threadMaster = createThreadMaster();
+		this.skinLoader = createSkinLoader();
+		this.updateManager = createUpdateManager();
 		initLocalMinecraftInstallation();
 		scanForBiomeColorProfiles();
 	}
 
-	private void initSeedHistoryLogger() {
-		this.seedHistoryLogger = new SeedHistoryLogger(options.historyPath);
+	private MapBuilder createMapBuilder() {
+		return new MapBuilder(new FragmentCache(new LayerContainerFactory(
+				getPreferences())));
+	}
+
+	private SeedHistoryLogger createSeedHistoryLogger() {
+		return new SeedHistoryLogger(options.historyPath);
+	}
+
+	private ThreadMaster createThreadMaster() {
+		return new ThreadMaster(this);
+	}
+
+	private SkinLoader createSkinLoader() {
+		return new SkinLoader(this, threadMaster);
+	}
+
+	private UpdatePrompt createUpdateManager() {
+		return new UpdatePrompt();
 	}
 
 	private void initLocalMinecraftInstallation() {
@@ -80,7 +100,7 @@ public class Application {
 
 	private void doDisplayMapWindow(IMinecraftInterface minecraftInterface) {
 		MinecraftUtil.setInterface(minecraftInterface);
-		setMapWindow(new MapWindow(this));
+		setMapWindow(new MapWindow(this, mapBuilder, getPreferences()));
 		setVersionSelectWindow(null);
 	}
 
@@ -156,11 +176,7 @@ public class Application {
 		return world;
 	}
 
-	public FragmentCache getFragmentCache() {
-		return fragmentCache;
-	}
-
-	public Options getOptions() {
+	private Options getPreferences() {
 		return Options.instance;
 	}
 
