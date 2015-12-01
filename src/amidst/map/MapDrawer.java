@@ -147,7 +147,7 @@ public class MapDrawer {
 
 	private void drawLayers(Point2D.Double startOnScreen, Fragment startFragment) {
 		for (Layer layer : map.getAllLayers()) {
-			if (layer.isVisible()) {
+			if (layer.getLayerDeclaration().isVisible()) {
 				initLayerDrawMatrix(startOnScreen, zoom.getCurrentValue());
 				for (Fragment fragment : startFragment) {
 					if (fragment.isLoaded()) {

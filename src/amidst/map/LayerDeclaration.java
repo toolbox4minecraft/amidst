@@ -23,7 +23,7 @@ public class LayerDeclaration {
 		return layerType;
 	}
 
-	public PrefModel<Boolean> getIsVisiblePreference() {
-		return isVisiblePreference;
+	public boolean isVisible() {
+		return isVisiblePreference.get();
 	}
 }

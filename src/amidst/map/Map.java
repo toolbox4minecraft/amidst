@@ -159,9 +159,10 @@ public class Map {
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
 				for (Layer layer : layerContainer.getAllLayers()) {
-					if (layer.isVisible()) {
+					if (layer.getLayerDeclaration().isVisible()) {
 						for (WorldObject worldObject : fragment
-								.getWorldObjects(layer.getLayerType())) {
+								.getWorldObjects(layer.getLayerDeclaration()
+										.getLayerType())) {
 							double distance = getDistance(positionOnScreen,
 									xCornerOnScreen, yCornerOnScreen,
 									worldObject);

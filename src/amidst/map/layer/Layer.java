@@ -19,14 +19,6 @@ public class Layer {
 		this.drawer = drawer;
 	}
 
-	public LayerType getLayerType() {
-		return getLayerDeclaration().getLayerType();
-	}
-
-	public boolean isVisible() {
-		return getLayerDeclaration().getIsVisiblePreference().get();
-	}
-
 	public LayerDeclaration getLayerDeclaration() {
 		return declaration;
 	}
