@@ -96,8 +96,8 @@ public class LayerManagerFactory {
 	private Iterable<FragmentLoader> createLoaders(World world, Map map) {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
-				new BiomeDataLoader(  declarations.get(LayerIds.BIOME), Resolution.QUARTER, new BiomeColorProvider(map), world.getBiomeDataOracle()),
-				new ImageLoader(      declarations.get(LayerIds.SLIME), Resolution.CHUNK, new SlimeColorProvider(world.getSlimeChunkOracle())),
+				new BiomeDataLoader(declarations.get(LayerIds.BIOME), Resolution.QUARTER, new BiomeColorProvider(map), world.getBiomeDataOracle()),
+				new ImageLoader(    declarations.get(LayerIds.SLIME), Resolution.CHUNK,   new SlimeColorProvider(world.getSlimeChunkOracle())),
 				new WorldIconLoader(declarations.get(LayerIds.VILLAGE),         world.getVillageProducer()),
 				new WorldIconLoader(declarations.get(LayerIds.OCEAN_MONUMENT),  world.getOceanMonumentProducer()),
 				new WorldIconLoader(declarations.get(LayerIds.STRONGHOLD),      world.getStrongholdProducer()),
@@ -115,9 +115,9 @@ public class LayerManagerFactory {
 	private Iterable<FragmentDrawer> createDrawers(Map map) {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
-				new ImageDrawer(      declarations.get(LayerIds.BIOME),           Resolution.QUARTER),
-				new ImageDrawer(      declarations.get(LayerIds.SLIME),           Resolution.CHUNK),
-				new GridDrawer(       declarations.get(LayerIds.GRID),            map),
+				new ImageDrawer(    declarations.get(LayerIds.BIOME),           Resolution.QUARTER),
+				new ImageDrawer(    declarations.get(LayerIds.SLIME),           Resolution.CHUNK),
+				new GridDrawer(     declarations.get(LayerIds.GRID),            map),
 				new WorldIconDrawer(declarations.get(LayerIds.VILLAGE),         map),
 				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),  map),
 				new WorldIconDrawer(declarations.get(LayerIds.STRONGHOLD),      map),
