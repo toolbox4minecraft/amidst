@@ -1,7 +1,7 @@
 package amidst.fragment.loader;
 
+import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
-import amidst.map.LayerDeclaration;
 import amidst.minecraft.world.object.WorldObjectProducer;
 
 public class WorldObjectLoader implements FragmentLoader {

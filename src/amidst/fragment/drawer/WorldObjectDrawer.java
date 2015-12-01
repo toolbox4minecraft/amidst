@@ -4,8 +4,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
-import amidst.map.LayerDeclaration;
 import amidst.map.Map;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.object.WorldObject;

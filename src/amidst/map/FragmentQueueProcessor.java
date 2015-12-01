@@ -2,6 +2,8 @@ package amidst.map;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import amidst.fragment.layer.LayerManager;
+
 public class FragmentQueueProcessor {
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;

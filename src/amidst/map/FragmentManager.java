@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.fragment.constructor.FragmentConstructor;
+import amidst.fragment.layer.LayerManager;
 import amidst.minecraft.world.CoordinatesInWorld;
 
 public class FragmentManager {

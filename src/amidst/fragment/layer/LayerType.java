@@ -1,4 +1,4 @@
-package amidst.map.layer;
+package amidst.fragment.layer;
 
 /**
  * The order of declaration defines the rendering order of the layers.

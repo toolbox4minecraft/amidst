@@ -1,5 +1,6 @@
 package amidst.map;
 
+import amidst.fragment.layer.LayerManagerFactory;
 import amidst.minecraft.world.World;
 
 public class MapFactory {

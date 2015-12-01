@@ -1,11 +1,11 @@
-package amidst.map;
+package amidst.fragment.layer;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.loader.FragmentLoader;
-import amidst.map.layer.LayerType;
+import amidst.map.Fragment;
 
 public class LayerManager {
 	private final List<AtomicBoolean> invalidatedLayers;

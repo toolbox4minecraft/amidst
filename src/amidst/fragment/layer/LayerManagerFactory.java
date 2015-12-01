@@ -1,4 +1,4 @@
-package amidst.map;
+package amidst.fragment.layer;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,8 +21,7 @@ import amidst.fragment.loader.DummyLoader;
 import amidst.fragment.loader.FragmentLoader;
 import amidst.fragment.loader.ImageLoader;
 import amidst.fragment.loader.WorldObjectLoader;
-import amidst.map.layer.LayerId;
-import amidst.map.layer.LayerType;
+import amidst.map.Map;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 

@@ -1,7 +1,7 @@
 package amidst.fragment.constructor;
 
+import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
-import amidst.map.LayerDeclaration;
 import amidst.minecraft.world.Resolution;
 
 public class BiomeDataConstructor extends ImageConstructor {

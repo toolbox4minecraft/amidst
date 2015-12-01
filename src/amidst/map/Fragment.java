@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import amidst.Options;
-import amidst.map.layer.LayerType;
+import amidst.fragment.layer.LayerType;
 import amidst.minecraft.world.BiomeDataOracle;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;

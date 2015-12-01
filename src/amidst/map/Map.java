@@ -6,7 +6,10 @@ import java.util.List;
 
 import amidst.Options;
 import amidst.fragment.drawer.FragmentDrawer;
-import amidst.map.layer.LayerType;
+import amidst.fragment.layer.LayerDeclaration;
+import amidst.fragment.layer.LayerManager;
+import amidst.fragment.layer.LayerManagerFactory;
+import amidst.fragment.layer.LayerType;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.object.WorldObject;

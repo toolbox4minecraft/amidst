@@ -1,8 +1,8 @@
 package amidst.fragment.loader;
 
 import amidst.fragment.colorprovider.ColorProvider;
+import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
-import amidst.map.LayerDeclaration;
 import amidst.minecraft.world.BiomeDataOracle;
 import amidst.minecraft.world.Resolution;
 

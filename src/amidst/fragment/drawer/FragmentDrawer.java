@@ -3,8 +3,8 @@ package amidst.fragment.drawer;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
+import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
-import amidst.map.LayerDeclaration;
 
 public abstract class FragmentDrawer {
 	protected final LayerDeclaration declaration;

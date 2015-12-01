@@ -4,8 +4,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 
+import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
-import amidst.map.LayerDeclaration;
 import amidst.minecraft.world.Resolution;
 
 public class ImageDrawer extends FragmentDrawer {

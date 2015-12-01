@@ -1,6 +1,5 @@
-package amidst.map;
+package amidst.fragment.layer;
 
-import amidst.map.layer.LayerType;
 import amidst.preferences.PrefModel;
 
 public class LayerDeclaration {

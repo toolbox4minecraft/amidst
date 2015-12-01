@@ -1,4 +1,4 @@
-package amidst.map.layer;
+package amidst.fragment.layer;
 
 public class LayerId {
 	public static final int BIOME = 0;

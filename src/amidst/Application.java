@@ -3,13 +3,13 @@ package amidst;
 import java.io.File;
 import java.net.MalformedURLException;
 
+import amidst.fragment.layer.LayerManagerFactory;
 import amidst.gui.CrashWindow;
 import amidst.gui.LicenseWindow;
 import amidst.gui.MapWindow;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.Log;
-import amidst.map.LayerManagerFactory;
 import amidst.map.MapFactory;
 import amidst.map.SkinLoader;
 import amidst.minecraft.IMinecraftInterface;
