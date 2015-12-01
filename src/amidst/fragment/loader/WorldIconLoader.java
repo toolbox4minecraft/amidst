@@ -2,13 +2,13 @@ package amidst.fragment.loader;
 
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
-import amidst.minecraft.world.object.WorldObjectProducer;
+import amidst.minecraft.world.object.WorldIconProducer;
 
-public class WorldObjectLoader extends FragmentLoader {
-	private final WorldObjectProducer producer;
+public class WorldIconLoader extends FragmentLoader {
+	private final WorldIconProducer producer;
 
-	public WorldObjectLoader(LayerDeclaration declaration,
-			WorldObjectProducer producer) {
+	public WorldIconLoader(LayerDeclaration declaration,
+			WorldIconProducer producer) {
 		super(declaration);
 		this.producer = producer;
 	}

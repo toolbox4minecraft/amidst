@@ -14,11 +14,11 @@ import amidst.fragment.constructor.ImageConstructor;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.drawer.GridDrawer;
 import amidst.fragment.drawer.ImageDrawer;
-import amidst.fragment.drawer.WorldObjectDrawer;
+import amidst.fragment.drawer.WorldIconDrawer;
 import amidst.fragment.loader.BiomeDataLoader;
 import amidst.fragment.loader.FragmentLoader;
 import amidst.fragment.loader.ImageLoader;
-import amidst.fragment.loader.WorldObjectLoader;
+import amidst.fragment.loader.WorldIconLoader;
 import amidst.map.Map;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
@@ -98,13 +98,13 @@ public class LayerManagerFactory {
 		return Collections.unmodifiableList(Arrays.asList(
 				new BiomeDataLoader(  declarations.get(LayerIds.BIOME), Resolution.QUARTER, new BiomeColorProvider(map), world.getBiomeDataOracle()),
 				new ImageLoader(      declarations.get(LayerIds.SLIME), Resolution.CHUNK, new SlimeColorProvider(world.getSlimeChunkOracle())),
-				new WorldObjectLoader(declarations.get(LayerIds.VILLAGE),         world.getVillageProducer()),
-				new WorldObjectLoader(declarations.get(LayerIds.OCEAN_MONUMENT),  world.getOceanMonumentProducer()),
-				new WorldObjectLoader(declarations.get(LayerIds.STRONGHOLD),      world.getStrongholdProducer()),
-				new WorldObjectLoader(declarations.get(LayerIds.TEMPLE),          world.getTempleProducer()),
-				new WorldObjectLoader(declarations.get(LayerIds.SPAWN),           world.getSpawnProducer()),
-				new WorldObjectLoader(declarations.get(LayerIds.NETHER_FORTRESS), world.getNetherFortressProducer()),
-				new WorldObjectLoader(declarations.get(LayerIds.PLAYER),          world.getPlayerProducer())
+				new WorldIconLoader(declarations.get(LayerIds.VILLAGE),         world.getVillageProducer()),
+				new WorldIconLoader(declarations.get(LayerIds.OCEAN_MONUMENT),  world.getOceanMonumentProducer()),
+				new WorldIconLoader(declarations.get(LayerIds.STRONGHOLD),      world.getStrongholdProducer()),
+				new WorldIconLoader(declarations.get(LayerIds.TEMPLE),          world.getTempleProducer()),
+				new WorldIconLoader(declarations.get(LayerIds.SPAWN),           world.getSpawnProducer()),
+				new WorldIconLoader(declarations.get(LayerIds.NETHER_FORTRESS), world.getNetherFortressProducer()),
+				new WorldIconLoader(declarations.get(LayerIds.PLAYER),          world.getPlayerProducer())
 		));
 		// @formatter:on
 	}
@@ -118,13 +118,13 @@ public class LayerManagerFactory {
 				new ImageDrawer(      declarations.get(LayerIds.BIOME),           Resolution.QUARTER),
 				new ImageDrawer(      declarations.get(LayerIds.SLIME),           Resolution.CHUNK),
 				new GridDrawer(       declarations.get(LayerIds.GRID),            map),
-				new WorldObjectDrawer(declarations.get(LayerIds.VILLAGE),         map),
-				new WorldObjectDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),  map),
-				new WorldObjectDrawer(declarations.get(LayerIds.STRONGHOLD),      map),
-				new WorldObjectDrawer(declarations.get(LayerIds.TEMPLE),          map),
-				new WorldObjectDrawer(declarations.get(LayerIds.SPAWN),           map),
-				new WorldObjectDrawer(declarations.get(LayerIds.NETHER_FORTRESS), map),
-				new WorldObjectDrawer(declarations.get(LayerIds.PLAYER),          map)
+				new WorldIconDrawer(declarations.get(LayerIds.VILLAGE),         map),
+				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),  map),
+				new WorldIconDrawer(declarations.get(LayerIds.STRONGHOLD),      map),
+				new WorldIconDrawer(declarations.get(LayerIds.TEMPLE),          map),
+				new WorldIconDrawer(declarations.get(LayerIds.SPAWN),           map),
+				new WorldIconDrawer(declarations.get(LayerIds.NETHER_FORTRESS), map),
+				new WorldIconDrawer(declarations.get(LayerIds.PLAYER),          map)
 		));
 		// @formatter:on
 	}

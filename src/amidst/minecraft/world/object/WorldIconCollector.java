@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class WorldObjectCollector implements WorldObjectConsumer {
+public class WorldIconCollector implements WorldIconConsumer {
 	private List<WorldIcon> worldObjects;
 
 	@Override

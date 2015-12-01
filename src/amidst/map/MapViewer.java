@@ -27,7 +27,7 @@ import amidst.map.widget.DebugWidget;
 import amidst.map.widget.FpsWidget;
 import amidst.map.widget.ScaleWidget;
 import amidst.map.widget.SeedWidget;
-import amidst.map.widget.SelectedObjectWidget;
+import amidst.map.widget.SelectedIconWidget;
 import amidst.map.widget.Widget;
 import amidst.map.widget.Widget.CornerAnchorPoint;
 import amidst.minecraft.MinecraftUtil;
@@ -238,7 +238,7 @@ public class MapViewer {
 		widgets.add(new SeedWidget(this, map, world, CornerAnchorPoint.TOP_LEFT));
 		widgets.add(new DebugWidget(this, map, world,
 				CornerAnchorPoint.BOTTOM_RIGHT));
-		widgets.add(new SelectedObjectWidget(this, map, world,
+		widgets.add(new SelectedIconWidget(this, map, world,
 				CornerAnchorPoint.TOP_LEFT));
 		widgets.add(new CursorInformationWidget(this, map, world,
 				CornerAnchorPoint.TOP_RIGHT));

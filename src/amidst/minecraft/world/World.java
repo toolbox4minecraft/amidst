@@ -11,17 +11,17 @@ import amidst.minecraft.world.object.StrongholdProducer;
 import amidst.minecraft.world.object.TempleProducer;
 import amidst.minecraft.world.object.VillageProducer;
 import amidst.minecraft.world.object.WorldIcon;
-import amidst.minecraft.world.object.WorldObjectProducer;
+import amidst.minecraft.world.object.WorldIconProducer;
 
 public abstract class World {
 	private final BiomeDataOracle biomeDataOracle = new BiomeDataOracle();
 	private final SlimeChunkOracle slimeChunkOracle = new SlimeChunkOracle(this);
-	private final WorldObjectProducer oceanMonumentProducer = new OceanMonumentProducer(
+	private final WorldIconProducer oceanMonumentProducer = new OceanMonumentProducer(
 			this);
-	private final WorldObjectProducer templeProducer = new TempleProducer(this);
-	private final WorldObjectProducer villageProducer = new VillageProducer(
+	private final WorldIconProducer templeProducer = new TempleProducer(this);
+	private final WorldIconProducer villageProducer = new VillageProducer(
 			this);
-	private final WorldObjectProducer netherFortressProducer = new NetherFortressProducer(
+	private final WorldIconProducer netherFortressProducer = new NetherFortressProducer(
 			this);
 	private final CachedWorldObjectProducer playerProducer = new PlayerProducer(
 			this);
@@ -38,19 +38,19 @@ public abstract class World {
 		return slimeChunkOracle;
 	}
 
-	public WorldObjectProducer getOceanMonumentProducer() {
+	public WorldIconProducer getOceanMonumentProducer() {
 		return oceanMonumentProducer;
 	}
 
-	public WorldObjectProducer getTempleProducer() {
+	public WorldIconProducer getTempleProducer() {
 		return templeProducer;
 	}
 
-	public WorldObjectProducer getVillageProducer() {
+	public WorldIconProducer getVillageProducer() {
 		return villageProducer;
 	}
 
-	public WorldObjectProducer getNetherFortressProducer() {
+	public WorldIconProducer getNetherFortressProducer() {
 		return netherFortressProducer;
 	}
 

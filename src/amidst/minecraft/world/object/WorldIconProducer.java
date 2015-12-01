@@ -4,12 +4,12 @@ import java.util.List;
 
 import amidst.minecraft.world.CoordinatesInWorld;
 
-public abstract class WorldObjectProducer {
+public abstract class WorldIconProducer {
 	public abstract void produce(CoordinatesInWorld corner,
-			WorldObjectConsumer consumer);
+			WorldIconConsumer consumer);
 
 	public List<WorldIcon> getAt(CoordinatesInWorld corner) {
-		WorldObjectCollector collector = new WorldObjectCollector();
+		WorldIconCollector collector = new WorldIconCollector();
 		produce(corner, collector);
 		return collector.get();
 	}

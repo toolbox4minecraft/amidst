@@ -10,7 +10,7 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 
-public abstract class StructureProducer extends WorldObjectProducer {
+public abstract class StructureProducer extends WorldIconProducer {
 	protected final World world;
 	protected final Resolution resolution;
 	protected final int size;
@@ -27,7 +27,7 @@ public abstract class StructureProducer extends WorldObjectProducer {
 	protected final Random random;
 
 	private CoordinatesInWorld corner;
-	private WorldObjectConsumer consumer;
+	private WorldIconConsumer consumer;
 	private int xRelativeToFragmentAsChunkResolution;
 	private int yRelativeToFragmentAsChunkResolution;
 	protected int chunkX;
@@ -57,7 +57,7 @@ public abstract class StructureProducer extends WorldObjectProducer {
 	}
 
 	@Override
-	public void produce(CoordinatesInWorld corner, WorldObjectConsumer consumer) {
+	public void produce(CoordinatesInWorld corner, WorldIconConsumer consumer) {
 		this.corner = corner;
 		this.consumer = consumer;
 		for (xRelativeToFragmentAsChunkResolution = 0; xRelativeToFragmentAsChunkResolution < size; xRelativeToFragmentAsChunkResolution++) {

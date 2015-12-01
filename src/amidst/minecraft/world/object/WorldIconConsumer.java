@@ -1,5 +1,5 @@
 package amidst.minecraft.world.object;
 
-public interface WorldObjectConsumer {
+public interface WorldIconConsumer {
 	void consume(WorldIcon worldObject);
 }

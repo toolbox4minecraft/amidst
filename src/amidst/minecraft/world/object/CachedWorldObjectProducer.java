@@ -7,7 +7,7 @@ import amidst.map.Fragment;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 
-public abstract class CachedWorldObjectProducer extends WorldObjectProducer {
+public abstract class CachedWorldObjectProducer extends WorldIconProducer {
 	protected final World world;
 	private List<WorldIcon> cache;
 
@@ -16,7 +16,7 @@ public abstract class CachedWorldObjectProducer extends WorldObjectProducer {
 	}
 
 	@Override
-	public void produce(CoordinatesInWorld corner, WorldObjectConsumer consumer) {
+	public void produce(CoordinatesInWorld corner, WorldIconConsumer consumer) {
 		initCache();
 		produceWorldObjects(corner, consumer);
 	}
@@ -45,7 +45,7 @@ public abstract class CachedWorldObjectProducer extends WorldObjectProducer {
 	}
 
 	private void produceWorldObjects(CoordinatesInWorld corner,
-			WorldObjectConsumer consumer) {
+			WorldIconConsumer consumer) {
 		if (cache != null) {
 			for (WorldIcon worldObject : cache) {
 				if (worldObject.getCoordinates().isInBoundsOf(corner,

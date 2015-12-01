@@ -9,11 +9,11 @@ import amidst.map.MapViewer;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.object.WorldIcon;
 
-public class SelectedObjectWidget extends Widget {
+public class SelectedIconWidget extends Widget {
 	private String message = "";
 	private BufferedImage icon;
 
-	public SelectedObjectWidget(MapViewer mapViewer, Map map, World world,
+	public SelectedIconWidget(MapViewer mapViewer, Map map, World world,
 			CornerAnchorPoint anchor) {
 		super(mapViewer, map, world, anchor);
 		increaseYMargin(40);
