@@ -146,8 +146,8 @@ public class Map {
 
 	private WorldIcon getWorldIconAt(Point positionOnScreen, double maxDistance) {
 		return new ClosestWorldIconFinder(getStartFragment(), startXOnScreen,
-				startYOnScreen, zoom, layerManager.getLayerDeclarations())
-				.getWorldIconAt(positionOnScreen, maxDistance);
+				startYOnScreen, zoom, layerManager.getLayerDeclarations(),
+				maxDistance, positionOnScreen).getWorldIcon();
 	}
 
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
