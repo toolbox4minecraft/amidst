@@ -10,12 +10,13 @@ public class MapZoom {
 	private double target = 0.25f;
 	private double current = 0.25f;
 
-	private Point zoomMouse = new Point();
+	private Point mousePosition = new Point();
 
 	public void update(Map map) {
 		remainingTicks--;
 		if (remainingTicks >= 0) {
-			moveMap(map, updateCurrent());
+			double previous = updateCurrent();
+			map.adjustStartOnScreenToZoom(previous, current, mousePosition);
 		}
 	}
 
@@ -25,13 +26,8 @@ public class MapZoom {
 		return previous;
 	}
 
-	private void moveMap(Map map, double previous) {
-		map.moveBy(map.getDeltaOnScreenForSamePointInWorld(previous, current,
-				zoomMouse));
-	}
-
-	public void adjustZoom(Point position, int notches) {
-		zoomMouse = position;
+	public void adjustZoom(Point mousePosition, int notches) {
+		this.mousePosition = mousePosition;
 		if (notches > 0) {
 			if (level < getMaxZoomLevel()) {
 				target /= 1.1;

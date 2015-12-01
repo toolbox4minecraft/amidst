@@ -112,14 +112,19 @@ public class Map {
 		}
 	}
 
-	public void moveBy(int deltaX, int deltaY) {
+	public void adjustStartOnScreenToMovement(int deltaX, int deltaY) {
 		startXOnScreen += deltaX;
 		startYOnScreen += deltaY;
 	}
 
-	public void moveBy(Point2D.Double delta) {
-		startXOnScreen += delta.x;
-		startYOnScreen += delta.y;
+	public void adjustStartOnScreenToZoom(double previous, double current,
+			Point mousePosition) {
+		double baseX = mousePosition.x - startXOnScreen;
+		double baseY = mousePosition.y - startYOnScreen;
+		double deltaX = baseX - (baseX / previous) * current;
+		double deltaY = baseY - (baseY / previous) * current;
+		startXOnScreen += deltaX;
+		startYOnScreen += deltaY;
 	}
 
 	public String getBiomeAliasAt(CoordinatesInWorld coordinates) {
@@ -131,7 +136,7 @@ public class Map {
 		}
 	}
 
-	public Fragment getFragmentAt(CoordinatesInWorld coordinates) {
+	private Fragment getFragmentAt(CoordinatesInWorld coordinates) {
 		CoordinatesInWorld corner = coordinates.toFragmentCorner();
 		for (Fragment fragment : getStartFragment()) {
 			if (corner.equals(fragment.getCorner())) {
@@ -141,7 +146,7 @@ public class Map {
 		return null;
 	}
 
-	public WorldIcon getWorldIconAt(Point positionOnScreen, double maxDistance) {
+	private WorldIcon getWorldIconAt(Point positionOnScreen, double maxDistance) {
 		double xCornerOnScreen = startXOnScreen;
 		double yCornerOnScreen = startYOnScreen;
 		WorldIcon closestIcon = null;
@@ -188,15 +193,6 @@ public class Map {
 		return getStartFragment().getCorner().add(
 				(long) zoom.screenToWorld(pointOnScreen.x - startXOnScreen),
 				(long) zoom.screenToWorld(pointOnScreen.y - startYOnScreen));
-	}
-
-	public Point2D.Double getDeltaOnScreenForSamePointInWorld(double oldScale,
-			double newScale, Point newPointOnScreen) {
-		double baseX = newPointOnScreen.x - startXOnScreen;
-		double baseY = newPointOnScreen.y - startYOnScreen;
-		double scaledX = baseX - (baseX / oldScale) * newScale;
-		double scaledY = baseY - (baseY / oldScale) * newScale;
-		return new Point2D.Double(scaledX, scaledY);
 	}
 
 	private Fragment getStartFragment() {
