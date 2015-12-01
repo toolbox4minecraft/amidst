@@ -3,35 +3,33 @@ package amidst.map.layer;
 import amidst.fragment.constructor.FragmentConstructor;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.loader.FragmentLoader;
+import amidst.map.LayerDeclaration;
 import amidst.preferences.PrefModel;
 
 public class Layer {
-	private final LayerType layerType;
-	private final PrefModel<Boolean> isVisiblePreference;
+	private final LayerDeclaration declaration;
 	private final FragmentConstructor constructor;
 	private final FragmentLoader loader;
 	private final FragmentDrawer drawer;
 
-	public Layer(LayerType layerType, PrefModel<Boolean> isVisiblePreference,
-			FragmentConstructor constructor, FragmentLoader loader,
-			FragmentDrawer drawer) {
-		this.layerType = layerType;
-		this.isVisiblePreference = isVisiblePreference;
+	public Layer(LayerDeclaration declaration, FragmentConstructor constructor,
+			FragmentLoader loader, FragmentDrawer drawer) {
+		this.declaration = declaration;
 		this.constructor = constructor;
 		this.loader = loader;
 		this.drawer = drawer;
 	}
 
 	public LayerType getLayerType() {
-		return layerType;
+		return declaration.getLayerType();
 	}
 
 	public boolean isVisible() {
-		return isVisiblePreference.get();
+		return declaration.getIsVisiblePreference().get();
 	}
 
 	public PrefModel<Boolean> getIsVisiblePreference() {
-		return isVisiblePreference;
+		return declaration.getIsVisiblePreference();
 	}
 
 	public FragmentConstructor getFragmentConstructor() {
