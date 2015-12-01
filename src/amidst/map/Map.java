@@ -2,7 +2,6 @@ package amidst.map;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.util.List;
 
 import amidst.Options;
 import amidst.fragment.drawer.FragmentDrawer;
@@ -266,7 +265,7 @@ public class Map {
 		reloadLayer(LayerIds.PLAYER);
 	}
 
-	public List<FragmentDrawer> getFragmentDrawers() {
+	public Iterable<FragmentDrawer> getFragmentDrawers() {
 		return layerManager.getFragmentDrawers();
 	}
 

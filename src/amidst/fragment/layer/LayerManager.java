@@ -10,12 +10,12 @@ import amidst.map.Fragment;
 public class LayerManager {
 	private final List<AtomicBoolean> invalidatedLayers;
 	private final List<LayerDeclaration> declarations;
-	private final List<FragmentLoader> loaders;
-	private final List<FragmentDrawer> drawers;
+	private final Iterable<FragmentLoader> loaders;
+	private final Iterable<FragmentDrawer> drawers;
 
 	public LayerManager(List<AtomicBoolean> invalidatedLayers,
-			List<LayerDeclaration> declarations, List<FragmentLoader> loaders,
-			List<FragmentDrawer> drawers) {
+			List<LayerDeclaration> declarations,
+			Iterable<FragmentLoader> loaders, Iterable<FragmentDrawer> drawers) {
 		this.invalidatedLayers = invalidatedLayers;
 		this.declarations = declarations;
 		this.loaders = loaders;
@@ -26,7 +26,7 @@ public class LayerManager {
 		return declarations;
 	}
 
-	public List<FragmentDrawer> getFragmentDrawers() {
+	public Iterable<FragmentDrawer> getFragmentDrawers() {
 		return drawers;
 	}
 

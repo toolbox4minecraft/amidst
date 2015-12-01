@@ -1,7 +1,8 @@
 package amidst.fragment.layer;
 
 /**
- * This defines the rendering order of the layers.
+ * The Ids are used as array indices but they do not influence the loading or
+ * drawing order.
  */
 public class LayerIds {
 	public static final int BIOME = 0;

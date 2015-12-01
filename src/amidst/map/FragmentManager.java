@@ -1,6 +1,5 @@
 package amidst.map;
 
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.fragment.constructor.FragmentConstructor;
@@ -15,7 +14,7 @@ public class FragmentManager {
 
 	private volatile FragmentQueueProcessor queueProcessor;
 
-	public FragmentManager(List<FragmentConstructor> constructors,
+	public FragmentManager(Iterable<FragmentConstructor> constructors,
 			int numberOfLayers) {
 		this.cache = new FragmentCache(availableQueue, loadingQueue,
 				resetQueue, constructors, numberOfLayers);

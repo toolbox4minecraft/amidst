@@ -15,13 +15,13 @@ public class FragmentCache {
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
 	private final ConcurrentLinkedQueue<Fragment> resetQueue;
-	private final List<FragmentConstructor> constructors;
+	private final Iterable<FragmentConstructor> constructors;
 	private final int numberOfLayers;
 
 	public FragmentCache(ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
 			ConcurrentLinkedQueue<Fragment> resetQueue,
-			List<FragmentConstructor> constructors, int numberOfLayers) {
+			Iterable<FragmentConstructor> constructors, int numberOfLayers) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
 		this.resetQueue = resetQueue;
