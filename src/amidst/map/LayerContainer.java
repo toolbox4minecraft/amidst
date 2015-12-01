@@ -27,10 +27,10 @@ public class LayerContainer {
 		}
 		this.invalidatedLayers = Collections
 				.unmodifiableList(invalidatedLayers);
-		this.declarations = Collections.unmodifiableList(declarations);
-		this.constructors = Collections.unmodifiableList(constructors);
-		this.loaders = Collections.unmodifiableList(loaders);
-		this.drawers = Collections.unmodifiableList(drawers);
+		this.declarations = declarations;
+		this.constructors = constructors;
+		this.loaders = loaders;
+		this.drawers = drawers;
 	}
 
 	public List<LayerDeclaration> getLayerDeclarations() {

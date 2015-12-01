@@ -1,6 +1,8 @@
 package amidst.map;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import amidst.Options;
 import amidst.fragment.colorprovider.BiomeColorProvider;
@@ -27,11 +29,16 @@ public class LayerContainerFactory {
 	private final LayerContainer layerContainer;
 
 	public LayerContainerFactory(Options options, World world, Map map) {
-		LayerDeclaration[] declarations = new LayerDeclaration[LayerId.NUMBER_OF_LAYERS];
-		FragmentConstructor[] constructors = new FragmentConstructor[LayerId.NUMBER_OF_LAYERS];
-		FragmentLoader[] loaders = new FragmentLoader[LayerId.NUMBER_OF_LAYERS];
-		FragmentDrawer[] drawers = new FragmentDrawer[LayerId.NUMBER_OF_LAYERS];
+		List<LayerDeclaration> declarations = createDeclarations(options);
+		List<FragmentConstructor> constructors = createConstructors(declarations);
+		List<FragmentLoader> loaders = createLoaders(declarations, world, map);
+		List<FragmentDrawer> drawers = createDrawers(declarations, map);
+		this.layerContainer = new LayerContainer(declarations, constructors,
+				loaders, drawers);
+	}
 
+	private List<LayerDeclaration> createDeclarations(Options options) {
+		LayerDeclaration[] declarations = new LayerDeclaration[LayerId.NUMBER_OF_LAYERS];
 		// @formatter:off
 		declarations[LayerId.BIOME]            = new LayerDeclaration(LayerType.BIOME,           options.showBiomes);
 		declarations[LayerId.SLIME]            = new LayerDeclaration(LayerType.SLIME,           options.showSlimeChunks);
@@ -43,9 +50,16 @@ public class LayerContainerFactory {
 		declarations[LayerId.SPAWN]            = new LayerDeclaration(LayerType.SPAWN,           options.showSpawn);
 		declarations[LayerId.NETHER_FORTRESS]  = new LayerDeclaration(LayerType.NETHER_FORTRESS, options.showNetherFortresses);
 		declarations[LayerId.PLAYER]           = new LayerDeclaration(LayerType.PLAYER,          options.showPlayers);
+		// @formatter:on
+		return Collections.unmodifiableList(Arrays.asList(declarations));
+	}
 
-		constructors[LayerId.BIOME]            = new BiomeDataConstructor(declarations[LayerId.BIOME], Resolution.QUARTER);
-		constructors[LayerId.SLIME]            = new ImageConstructor(    declarations[LayerId.SLIME], Resolution.CHUNK);
+	private List<FragmentConstructor> createConstructors(
+			List<LayerDeclaration> declarations) {
+		FragmentConstructor[] constructors = new FragmentConstructor[LayerId.NUMBER_OF_LAYERS];
+		// @formatter:off
+		constructors[LayerId.BIOME]            = new BiomeDataConstructor(declarations.get(LayerId.BIOME), Resolution.QUARTER);
+		constructors[LayerId.SLIME]            = new ImageConstructor(    declarations.get(LayerId.SLIME), Resolution.CHUNK);
 		constructors[LayerId.GRID]             = new DummyConstructor();
 		constructors[LayerId.VILLAGE]          = new DummyConstructor();
 		constructors[LayerId.OCEAN_MONUMENT]   = new DummyConstructor();
@@ -54,32 +68,44 @@ public class LayerContainerFactory {
 		constructors[LayerId.SPAWN]            = new DummyConstructor();
 		constructors[LayerId.NETHER_FORTRESS]  = new DummyConstructor();
 		constructors[LayerId.PLAYER]           = new DummyConstructor();
-
-		loaders[LayerId.BIOME]                 = new BiomeDataLoader(  declarations[LayerId.BIOME], Resolution.QUARTER, new BiomeColorProvider(map), world.getBiomeDataOracle());
-		loaders[LayerId.SLIME]                 = new ImageLoader(      declarations[LayerId.SLIME], Resolution.CHUNK, new SlimeColorProvider(world.getSlimeChunkOracle()));
-		loaders[LayerId.GRID]                  = new DummyLoader();
-		loaders[LayerId.VILLAGE]               = new WorldObjectLoader(declarations[LayerId.VILLAGE], world.getVillageProducer());
-		loaders[LayerId.OCEAN_MONUMENT]        = new WorldObjectLoader(declarations[LayerId.OCEAN_MONUMENT], world.getOceanMonumentProducer());
-		loaders[LayerId.STRONGHOLD]            = new WorldObjectLoader(declarations[LayerId.STRONGHOLD], world.getStrongholdProducer());
-		loaders[LayerId.TEMPLE]                = new WorldObjectLoader(declarations[LayerId.TEMPLE], world.getTempleProducer());
-		loaders[LayerId.SPAWN]                 = new WorldObjectLoader(declarations[LayerId.SPAWN], world.getSpawnProducer());
-		loaders[LayerId.NETHER_FORTRESS]       = new WorldObjectLoader(declarations[LayerId.NETHER_FORTRESS], world.getNetherFortressProducer());
-		loaders[LayerId.PLAYER]                = new WorldObjectLoader(declarations[LayerId.PLAYER], world.getPlayerProducer());
-
-		drawers[LayerId.BIOME]                 = new ImageDrawer(      declarations[LayerId.BIOME], Resolution.QUARTER);
-		drawers[LayerId.SLIME]                 = new ImageDrawer(      declarations[LayerId.SLIME], Resolution.CHUNK);
-		drawers[LayerId.GRID]                  = new GridDrawer(       declarations[LayerId.GRID], map);
-		drawers[LayerId.VILLAGE]               = new WorldObjectDrawer(declarations[LayerId.VILLAGE], map);
-		drawers[LayerId.OCEAN_MONUMENT]        = new WorldObjectDrawer(declarations[LayerId.OCEAN_MONUMENT], map);
-		drawers[LayerId.STRONGHOLD]            = new WorldObjectDrawer(declarations[LayerId.STRONGHOLD], map);
-		drawers[LayerId.TEMPLE]                = new WorldObjectDrawer(declarations[LayerId.TEMPLE], map);
-		drawers[LayerId.SPAWN]                 = new WorldObjectDrawer(declarations[LayerId.SPAWN], map);
-		drawers[LayerId.NETHER_FORTRESS]       = new WorldObjectDrawer(declarations[LayerId.NETHER_FORTRESS], map);
-		drawers[LayerId.PLAYER]                = new WorldObjectDrawer(declarations[LayerId.PLAYER], map);
 		// @formatter:on
-		this.layerContainer = new LayerContainer(Arrays.asList(declarations),
-				Arrays.asList(constructors), Arrays.asList(loaders),
-				Arrays.asList(drawers));
+		return Collections.unmodifiableList(Arrays.asList(constructors));
+	}
+
+	private List<FragmentLoader> createLoaders(
+			List<LayerDeclaration> declarations, World world, Map map) {
+		FragmentLoader[] loaders = new FragmentLoader[LayerId.NUMBER_OF_LAYERS];
+		// @formatter:off
+		loaders[LayerId.BIOME]                 = new BiomeDataLoader(  declarations.get(LayerId.BIOME), Resolution.QUARTER, new BiomeColorProvider(map), world.getBiomeDataOracle());
+		loaders[LayerId.SLIME]                 = new ImageLoader(      declarations.get(LayerId.SLIME), Resolution.CHUNK, new SlimeColorProvider(world.getSlimeChunkOracle()));
+		loaders[LayerId.GRID]                  = new DummyLoader();
+		loaders[LayerId.VILLAGE]               = new WorldObjectLoader(declarations.get(LayerId.VILLAGE), world.getVillageProducer());
+		loaders[LayerId.OCEAN_MONUMENT]        = new WorldObjectLoader(declarations.get(LayerId.OCEAN_MONUMENT), world.getOceanMonumentProducer());
+		loaders[LayerId.STRONGHOLD]            = new WorldObjectLoader(declarations.get(LayerId.STRONGHOLD), world.getStrongholdProducer());
+		loaders[LayerId.TEMPLE]                = new WorldObjectLoader(declarations.get(LayerId.TEMPLE), world.getTempleProducer());
+		loaders[LayerId.SPAWN]                 = new WorldObjectLoader(declarations.get(LayerId.SPAWN), world.getSpawnProducer());
+		loaders[LayerId.NETHER_FORTRESS]       = new WorldObjectLoader(declarations.get(LayerId.NETHER_FORTRESS), world.getNetherFortressProducer());
+		loaders[LayerId.PLAYER]                = new WorldObjectLoader(declarations.get(LayerId.PLAYER), world.getPlayerProducer());
+		// @formatter:on
+		return Collections.unmodifiableList(Arrays.asList(loaders));
+	}
+
+	private List<FragmentDrawer> createDrawers(
+			List<LayerDeclaration> declarations, Map map) {
+		FragmentDrawer[] drawers = new FragmentDrawer[LayerId.NUMBER_OF_LAYERS];
+		// @formatter:off
+		drawers[LayerId.BIOME]                 = new ImageDrawer(      declarations.get(LayerId.BIOME), Resolution.QUARTER);
+		drawers[LayerId.SLIME]                 = new ImageDrawer(      declarations.get(LayerId.SLIME), Resolution.CHUNK);
+		drawers[LayerId.GRID]                  = new GridDrawer(       declarations.get(LayerId.GRID), map);
+		drawers[LayerId.VILLAGE]               = new WorldObjectDrawer(declarations.get(LayerId.VILLAGE), map);
+		drawers[LayerId.OCEAN_MONUMENT]        = new WorldObjectDrawer(declarations.get(LayerId.OCEAN_MONUMENT), map);
+		drawers[LayerId.STRONGHOLD]            = new WorldObjectDrawer(declarations.get(LayerId.STRONGHOLD), map);
+		drawers[LayerId.TEMPLE]                = new WorldObjectDrawer(declarations.get(LayerId.TEMPLE), map);
+		drawers[LayerId.SPAWN]                 = new WorldObjectDrawer(declarations.get(LayerId.SPAWN), map);
+		drawers[LayerId.NETHER_FORTRESS]       = new WorldObjectDrawer(declarations.get(LayerId.NETHER_FORTRESS), map);
+		drawers[LayerId.PLAYER]                = new WorldObjectDrawer(declarations.get(LayerId.PLAYER), map);
+		// @formatter:on
+		return Collections.unmodifiableList(Arrays.asList(drawers));
 	}
 
 	public LayerContainer createLayerContainer() {
