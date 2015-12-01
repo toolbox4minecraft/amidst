@@ -73,7 +73,7 @@ public class LayerContainerFactory {
 		return new Layer(declaration,
 				new DummyConstructor(),
 				new DummyLoader(),
-				new GridDrawer(map));
+				new GridDrawer(declaration, map));
 	}
 
 	private Layer createVillageLayer(LayerDeclaration declaration, World world, Map map) {

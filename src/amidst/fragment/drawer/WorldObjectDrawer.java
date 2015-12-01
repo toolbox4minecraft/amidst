@@ -10,13 +10,12 @@ import amidst.map.Map;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.object.WorldObject;
 
-public class WorldObjectDrawer implements FragmentDrawer {
+public class WorldObjectDrawer extends FragmentDrawer {
 	private final AffineTransform worldObjectLayerMatrix = new AffineTransform();
-	private final LayerDeclaration declaration;
 	private final Map map;
 
 	public WorldObjectDrawer(LayerDeclaration declaration, Map map) {
-		this.declaration = declaration;
+		super(declaration);
 		this.map = map;
 	}
 

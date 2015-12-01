@@ -7,10 +7,11 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 
 import amidst.map.Fragment;
+import amidst.map.LayerDeclaration;
 import amidst.map.Map;
 import amidst.minecraft.world.Resolution;
 
-public class GridDrawer implements FragmentDrawer {
+public class GridDrawer extends FragmentDrawer {
 	private static final Font DRAW_FONT = new Font("arial", Font.BOLD, 16);
 
 	private final AffineTransform gridLayerMatrix = new AffineTransform();
@@ -18,7 +19,8 @@ public class GridDrawer implements FragmentDrawer {
 	private final char[] textCache = new char[128];
 	private final Map map;
 
-	public GridDrawer(Map map) {
+	public GridDrawer(LayerDeclaration declaration, Map map) {
+		super(declaration);
 		this.map = map;
 	}
 

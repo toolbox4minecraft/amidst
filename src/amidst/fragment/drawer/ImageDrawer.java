@@ -8,13 +8,12 @@ import amidst.map.Fragment;
 import amidst.map.LayerDeclaration;
 import amidst.minecraft.world.Resolution;
 
-public class ImageDrawer implements FragmentDrawer {
+public class ImageDrawer extends FragmentDrawer {
 	private final AffineTransform imageLayerMatrix = new AffineTransform();
-	private final LayerDeclaration declaration;
 	private final Resolution resolution;
 
 	public ImageDrawer(LayerDeclaration declaration, Resolution resolution) {
-		this.declaration = declaration;
+		super(declaration);
 		this.resolution = resolution;
 	}
 

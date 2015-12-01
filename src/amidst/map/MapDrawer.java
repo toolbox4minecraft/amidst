@@ -11,7 +11,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import amidst.map.layer.Layer;
+import amidst.fragment.drawer.FragmentDrawer;
 import amidst.map.widget.Widget;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.resources.ResourceLoader;
@@ -146,14 +146,13 @@ public class MapDrawer {
 	}
 
 	private void drawLayers(Point2D.Double startOnScreen, Fragment startFragment) {
-		for (Layer layer : map.getAllLayers()) {
-			if (layer.getLayerDeclaration().isVisible()) {
+		for (FragmentDrawer drawer : map.getFragmentDrawers()) {
+			if (drawer.getLayerDeclaration().isVisible()) {
 				initLayerDrawMatrix(startOnScreen, zoom.getCurrentValue());
 				for (Fragment fragment : startFragment) {
 					if (fragment.isLoaded()) {
 						setAlphaComposite(fragment.getAlpha());
-						layer.getFragmentDrawer().draw(fragment, g2d,
-								layerMatrix);
+						drawer.draw(fragment, g2d, layerMatrix);
 					}
 					updateLayerDrawMatrix(fragment);
 				}

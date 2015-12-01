@@ -1,7 +1,6 @@
 package amidst.map;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -13,7 +12,6 @@ import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
 
 public class LayerContainer {
-	private final List<Layer> layers;
 	private final List<AtomicBoolean> invalidatedLayers;
 	private final List<LayerDeclaration> declarations;
 	private final List<FragmentConstructor> constructors;
@@ -38,7 +36,6 @@ public class LayerContainer {
 			loader.add(layer.getFragmentLoader());
 			drawer.add(layer.getFragmentDrawer());
 		}
-		this.layers = Collections.unmodifiableList(Arrays.asList(layers));
 		this.invalidatedLayers = Collections
 				.unmodifiableList(invalidatedLayers);
 		this.declarations = Collections.unmodifiableList(declarations);
@@ -47,8 +44,12 @@ public class LayerContainer {
 		this.drawers = Collections.unmodifiableList(drawer);
 	}
 
-	public List<Layer> getAllLayers() {
-		return layers;
+	public List<LayerDeclaration> getLayerDeclarations() {
+		return declarations;
+	}
+
+	public List<FragmentDrawer> getFragmentDrawers() {
+		return drawers;
 	}
 
 	public void clearInvalidatedLayers() {

@@ -5,7 +5,7 @@ import java.awt.geom.Point2D;
 import java.util.List;
 
 import amidst.Options;
-import amidst.map.layer.Layer;
+import amidst.fragment.drawer.FragmentDrawer;
 import amidst.map.layer.LayerType;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
@@ -158,11 +158,11 @@ public class Map {
 		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		if (startFragment != null) {
 			for (Fragment fragment : startFragment) {
-				for (Layer layer : layerContainer.getAllLayers()) {
-					if (layer.getLayerDeclaration().isVisible()) {
+				for (LayerDeclaration declaration : layerContainer
+						.getLayerDeclarations()) {
+					if (declaration.isVisible()) {
 						for (WorldObject worldObject : fragment
-								.getWorldObjects(layer.getLayerDeclaration()
-										.getLayerType())) {
+								.getWorldObjects(declaration.getLayerType())) {
 							double distance = getDistance(positionOnScreen,
 									xCornerOnScreen, yCornerOnScreen,
 									worldObject);
@@ -261,8 +261,8 @@ public class Map {
 		reloadLayer(LayerType.PLAYER);
 	}
 
-	public List<Layer> getAllLayers() {
-		return layerContainer.getAllLayers();
+	public List<FragmentDrawer> getFragmentDrawers() {
+		return layerContainer.getFragmentDrawers();
 	}
 
 	public BiomeSelection getBiomeSelection() {
