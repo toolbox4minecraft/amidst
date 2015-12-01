@@ -150,7 +150,7 @@ public class Map {
 		double xCornerOnScreen = startXOnScreen;
 		double yCornerOnScreen = startYOnScreen;
 		WorldIcon closestIcon = null;
-		double closestDistance = maxDistance;
+		double closestDistanceSq = maxDistance * maxDistance;
 		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		for (Fragment fragment : getStartFragment()) {
 			for (LayerDeclaration declaration : layerManager
@@ -158,10 +158,10 @@ public class Map {
 				if (declaration.isVisible()) {
 					for (WorldIcon icon : fragment.getWorldIcons(declaration
 							.getLayerId())) {
-						double distance = getDistance(positionOnScreen,
+						double distanceSq = getDistanceSq(positionOnScreen,
 								xCornerOnScreen, yCornerOnScreen, icon);
-						if (closestDistance > distance) {
-							closestDistance = distance;
+						if (closestDistanceSq > distanceSq) {
+							closestDistanceSq = distanceSq;
 							closestIcon = icon;
 						}
 					}
@@ -176,17 +176,13 @@ public class Map {
 		return closestIcon;
 	}
 
-	private double getDistance(Point positionOnScreen, double xCornerOnScreen,
-			double yCornerOnScreen, WorldIcon icon) {
-		return worldToScreen(icon.getCoordinates(), xCornerOnScreen,
-				yCornerOnScreen).distance(positionOnScreen);
-	}
-
-	private Point2D.Double worldToScreen(CoordinatesInWorld coordinates,
-			double xCornerOnScreen, double yCornerOnScreen) {
+	private double getDistanceSq(Point positionOnScreen,
+			double xCornerOnScreen, double yCornerOnScreen, WorldIcon icon) {
+		CoordinatesInWorld coordinates = icon.getCoordinates();
 		double x = zoom.worldToScreen(coordinates.getXRelativeToFragment());
 		double y = zoom.worldToScreen(coordinates.getYRelativeToFragment());
-		return new Point2D.Double(xCornerOnScreen + x, yCornerOnScreen + y);
+		return Point2D.distanceSq(xCornerOnScreen + x, yCornerOnScreen + y,
+				positionOnScreen.x, positionOnScreen.y);
 	}
 
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
