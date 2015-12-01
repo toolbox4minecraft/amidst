@@ -10,7 +10,7 @@ import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.Log;
 import amidst.map.LayerContainerFactory;
-import amidst.map.MapBuilder;
+import amidst.map.MapFactory;
 import amidst.map.SkinLoader;
 import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.LocalMinecraftInstallation;
@@ -24,7 +24,7 @@ import amidst.version.MinecraftProfile;
 
 public class Application {
 	private final CommandLineOptions options;
-	private final MapBuilder mapBuilder;
+	private final MapFactory mapFactory;
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final ThreadMaster threadMaster;
 	private final SkinLoader skinLoader;
@@ -37,7 +37,7 @@ public class Application {
 
 	public Application(CommandLineOptions options) {
 		this.options = options;
-		this.mapBuilder = createMapBuilder();
+		this.mapFactory = createMapFactory();
 		this.seedHistoryLogger = createSeedHistoryLogger();
 		this.threadMaster = createThreadMaster();
 		this.skinLoader = createSkinLoader();
@@ -46,8 +46,8 @@ public class Application {
 		scanForBiomeColorProfiles();
 	}
 
-	private MapBuilder createMapBuilder() {
-		return new MapBuilder(new LayerContainerFactory(getPreferences()));
+	private MapFactory createMapFactory() {
+		return new MapFactory(new LayerContainerFactory(getPreferences()));
 	}
 
 	private SeedHistoryLogger createSeedHistoryLogger() {
@@ -98,7 +98,7 @@ public class Application {
 
 	private void doDisplayMapWindow(IMinecraftInterface minecraftInterface) {
 		MinecraftUtil.setInterface(minecraftInterface);
-		setMapWindow(new MapWindow(this, mapBuilder, getPreferences()));
+		setMapWindow(new MapWindow(this, mapFactory, getPreferences()));
 		setVersionSelectWindow(null);
 	}
 
