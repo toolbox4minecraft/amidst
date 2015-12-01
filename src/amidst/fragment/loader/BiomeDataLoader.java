@@ -2,16 +2,16 @@ package amidst.fragment.loader;
 
 import amidst.fragment.colorprovider.ColorProvider;
 import amidst.map.Fragment;
-import amidst.map.layer.LayerType;
+import amidst.map.LayerDeclaration;
 import amidst.minecraft.world.BiomeDataOracle;
 import amidst.minecraft.world.Resolution;
 
 public class BiomeDataLoader extends ImageLoader {
 	private final BiomeDataOracle biomeDataOracle;
 
-	public BiomeDataLoader(LayerType layerType, Resolution resolution,
+	public BiomeDataLoader(LayerDeclaration declaration, Resolution resolution,
 			ColorProvider colorProvider, BiomeDataOracle biomeDataOracle) {
-		super(layerType, resolution, colorProvider);
+		super(declaration, resolution, colorProvider);
 		this.biomeDataOracle = biomeDataOracle;
 	}
 

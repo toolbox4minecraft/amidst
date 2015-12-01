@@ -5,16 +5,16 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 
 import amidst.map.Fragment;
-import amidst.map.layer.LayerType;
+import amidst.map.LayerDeclaration;
 import amidst.minecraft.world.Resolution;
 
 public class ImageDrawer implements FragmentDrawer {
 	private final AffineTransform imageLayerMatrix = new AffineTransform();
-	private final LayerType layerType;
+	private final LayerDeclaration declaration;
 	private final Resolution resolution;
 
-	public ImageDrawer(LayerType layerType, Resolution resolution) {
-		this.layerType = layerType;
+	public ImageDrawer(LayerDeclaration declaration, Resolution resolution) {
+		this.declaration = declaration;
 		this.resolution = resolution;
 	}
 
@@ -30,7 +30,7 @@ public class ImageDrawer implements FragmentDrawer {
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 					RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		}
-		g2d.drawImage(fragment.getImage(layerType), 0, 0, null);
+		g2d.drawImage(fragment.getImage(declaration.getLayerType()), 0, 0, null);
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 	}

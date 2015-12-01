@@ -5,18 +5,18 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import amidst.map.Fragment;
+import amidst.map.LayerDeclaration;
 import amidst.map.Map;
-import amidst.map.layer.LayerType;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.object.WorldObject;
 
 public class WorldObjectDrawer implements FragmentDrawer {
 	private final AffineTransform worldObjectLayerMatrix = new AffineTransform();
-	private final LayerType layerType;
+	private final LayerDeclaration declaration;
 	private final Map map;
 
-	public WorldObjectDrawer(LayerType layerType, Map map) {
-		this.layerType = layerType;
+	public WorldObjectDrawer(LayerDeclaration declaration, Map map) {
+		this.declaration = declaration;
 		this.map = map;
 	}
 
@@ -24,7 +24,8 @@ public class WorldObjectDrawer implements FragmentDrawer {
 	public void draw(Fragment fragment, Graphics2D g2d,
 			AffineTransform layerMatrix) {
 		double invZoom = 1.0 / map.getZoom();
-		for (WorldObject worldObject : fragment.getWorldObjects(layerType)) {
+		for (WorldObject worldObject : fragment.getWorldObjects(declaration
+				.getLayerType())) {
 			drawObject(worldObject, invZoom, g2d, layerMatrix);
 		}
 	}

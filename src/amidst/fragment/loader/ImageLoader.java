@@ -4,21 +4,21 @@ import java.awt.image.BufferedImage;
 
 import amidst.fragment.colorprovider.ColorProvider;
 import amidst.map.Fragment;
-import amidst.map.layer.LayerType;
+import amidst.map.LayerDeclaration;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 
 public class ImageLoader implements FragmentLoader {
-	private final LayerType layerType;
+	private final LayerDeclaration declaration;
 	private final Resolution resolution;
 	private final ColorProvider colorProvider;
 	private final int size;
 	private final int[] rgbArray;
 	private BufferedImage bufferedImage;
 
-	public ImageLoader(LayerType layerType, Resolution resolution,
+	public ImageLoader(LayerDeclaration declaration, Resolution resolution,
 			ColorProvider colorProvider) {
-		this.layerType = layerType;
+		this.declaration = declaration;
 		this.resolution = resolution;
 		this.colorProvider = colorProvider;
 		this.size = resolution.getStepsPerFragment();
@@ -46,7 +46,8 @@ public class ImageLoader implements FragmentLoader {
 		long cornerY = corner.getYAs(resolution);
 		drawToCache(fragment, cornerX, cornerY);
 		bufferedImage.setRGB(0, 0, size, size, rgbArray, 0, size);
-		bufferedImage = fragment.getAndSetImage(layerType, bufferedImage);
+		bufferedImage = fragment.getAndSetImage(declaration.getLayerType(),
+				bufferedImage);
 	}
 
 	protected void drawToCache(Fragment fragment, long cornerX, long cornerY) {

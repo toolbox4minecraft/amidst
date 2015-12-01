@@ -1,15 +1,16 @@
 package amidst.fragment.loader;
 
 import amidst.map.Fragment;
-import amidst.map.layer.LayerType;
+import amidst.map.LayerDeclaration;
 import amidst.minecraft.world.object.WorldObjectProducer;
 
 public class WorldObjectLoader implements FragmentLoader {
-	private final LayerType layerType;
+	private final LayerDeclaration declaration;
 	private final WorldObjectProducer producer;
 
-	public WorldObjectLoader(LayerType layerType, WorldObjectProducer producer) {
-		this.layerType = layerType;
+	public WorldObjectLoader(LayerDeclaration declaration,
+			WorldObjectProducer producer) {
+		this.declaration = declaration;
 		this.producer = producer;
 	}
 
@@ -24,7 +25,7 @@ public class WorldObjectLoader implements FragmentLoader {
 	}
 
 	protected void doLoad(Fragment fragment) {
-		fragment.putWorldObjects(layerType,
+		fragment.putWorldObjects(declaration.getLayerType(),
 				producer.getAt(fragment.getCorner()));
 	}
 }
