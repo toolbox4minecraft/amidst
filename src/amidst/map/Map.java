@@ -56,27 +56,29 @@ public class Map {
 			int desiredFragmentsPerColumn) {
 		int newColumns = desiredFragmentsPerRow - fragmentsPerRow;
 		int newRows = desiredFragmentsPerColumn - fragmentsPerColumn;
-		int newLeft = 0;
-		int newAbove = 0;
-		while (startXOnScreen > 0) {
-			startXOnScreen -= fragmentSizeOnScreen;
-			newLeft++;
-		}
-		while (startXOnScreen < -fragmentSizeOnScreen) {
-			startXOnScreen += fragmentSizeOnScreen;
-			newLeft--;
-		}
-		while (startYOnScreen > 0) {
-			startYOnScreen -= fragmentSizeOnScreen;
-			newAbove++;
-		}
-		while (startYOnScreen < -fragmentSizeOnScreen) {
-			startYOnScreen += fragmentSizeOnScreen;
-			newAbove--;
-		}
+		int newLeft = getNewLeft(fragmentSizeOnScreen);
+		int newAbove = getNewAbove(fragmentSizeOnScreen);
 		int newRight = newColumns - newLeft;
 		int newBelow = newRows - newAbove;
 		initStartFragment(newLeft, newAbove, newRight, newBelow);
+		startXOnScreen -= fragmentSizeOnScreen * newLeft;
+		startYOnScreen -= fragmentSizeOnScreen * newAbove;
+	}
+
+	private int getNewLeft(double fragmentSizeOnScreen) {
+		if (startXOnScreen > 0) {
+			return (int) (startXOnScreen / fragmentSizeOnScreen) + 1;
+		} else {
+			return (int) (startXOnScreen / fragmentSizeOnScreen);
+		}
+	}
+
+	private int getNewAbove(double fragmentSizeOnScreen) {
+		if (startYOnScreen > 0) {
+			return (int) (startYOnScreen / fragmentSizeOnScreen) + 1;
+		} else {
+			return (int) (startYOnScreen / fragmentSizeOnScreen);
+		}
 	}
 
 	// TODO: Support longs?
