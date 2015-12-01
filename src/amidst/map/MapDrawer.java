@@ -46,7 +46,7 @@ public class MapDrawer {
 	private int height;
 	private Point mousePosition;
 
-	private AffineTransform originalGraphicsTransform;
+	private AffineTransform originalLayerMatrix = new AffineTransform();
 	private AffineTransform layerMatrix = new AffineTransform();
 
 	public MapDrawer(Map map, MapMovement movement, MapZoom zoom,
@@ -121,10 +121,20 @@ public class MapDrawer {
 			Fragment startFragment) {
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-		originalGraphicsTransform = g2d.getTransform();
+		AffineTransform originalGraphicsTransform = g2d.getTransform();
+		initOriginalLayerMatrix(originalGraphicsTransform, startXOnScreen,
+				startYOnScreen, zoom.getCurrentValue());
 		prepareDraw(startFragment);
-		drawLayers(startXOnScreen, startYOnScreen, startFragment);
+		drawLayers(startFragment);
 		g2d.setTransform(originalGraphicsTransform);
+	}
+
+	private void initOriginalLayerMatrix(
+			AffineTransform originalGraphicsTransform, double startXOnScreen,
+			double startYOnScreen, double scale) {
+		originalLayerMatrix.setTransform(originalGraphicsTransform);
+		originalLayerMatrix.translate(startXOnScreen, startYOnScreen);
+		originalLayerMatrix.scale(scale, scale);
 	}
 
 	private void prepareDraw(Fragment startFragment) {
@@ -133,33 +143,27 @@ public class MapDrawer {
 		}
 	}
 
-	private void drawLayers(double startXOnScreen, double startYOnScreen,
-			Fragment startFragment) {
+	private void drawLayers(Fragment startFragment) {
 		for (FragmentDrawer drawer : map.getFragmentDrawers()) {
 			if (drawer.getLayerDeclaration().isVisible()) {
-				initLayerDrawMatrix(startXOnScreen, startYOnScreen,
-						zoom.getCurrentValue());
+				initLayerMatrix();
 				for (Fragment fragment : startFragment) {
 					if (fragment.isLoaded()) {
 						setAlphaComposite(fragment.getAlpha());
 						drawer.draw(fragment, g2d, layerMatrix);
 					}
-					updateLayerDrawMatrix(fragment);
+					updateLayerMatrix(fragment);
 				}
 			}
 		}
 		setAlphaComposite(1.0f);
 	}
 
-	private void initLayerDrawMatrix(double startXOnScreen,
-			double startYOnScreen, double scale) {
-		layerMatrix.setToIdentity();
-		layerMatrix.concatenate(originalGraphicsTransform);
-		layerMatrix.translate(startXOnScreen, startYOnScreen);
-		layerMatrix.scale(scale, scale);
+	private void initLayerMatrix() {
+		layerMatrix.setTransform(originalLayerMatrix);
 	}
 
-	private void updateLayerDrawMatrix(Fragment fragment) {
+	private void updateLayerMatrix(Fragment fragment) {
 		layerMatrix.translate(Fragment.SIZE, 0);
 		if (fragment.isEndOfLine()) {
 			layerMatrix.translate(-Fragment.SIZE * map.getFragmentsPerRow(),
