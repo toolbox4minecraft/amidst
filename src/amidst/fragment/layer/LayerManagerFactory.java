@@ -97,7 +97,7 @@ public class LayerManagerFactory {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
 				new BiomeDataLoader(declarations.get(LayerIds.BIOME), world.getBiomeDataOracle()),
-				new ImageLoader(	declarations.get(LayerIds.BIOME), Resolution.QUARTER, new BiomeColorProvider(map)),
+				new ImageLoader(	declarations.get(LayerIds.BIOME), Resolution.QUARTER, new BiomeColorProvider(map.getBiomeSelection())),
 				new ImageLoader(    declarations.get(LayerIds.SLIME), Resolution.CHUNK,   new SlimeColorProvider(world.getSlimeChunkOracle())),
 				new WorldIconLoader(declarations.get(LayerIds.VILLAGE),         world.getVillageProducer()),
 				new WorldIconLoader(declarations.get(LayerIds.OCEAN_MONUMENT),  world.getOceanMonumentProducer()),
