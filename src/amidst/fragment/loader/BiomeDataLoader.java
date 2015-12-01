@@ -20,9 +20,4 @@ public class BiomeDataLoader extends ImageLoader {
 		fragment.populateBiomeData(biomeDataOracle);
 		super.load(fragment);
 	}
-
-	@Override
-	public void reload(Fragment fragment) {
-		// noop
-	}
 }
