@@ -9,9 +9,9 @@ import amidst.minecraft.world.Resolution;
 public class BiomeDataLoader extends ImageLoader {
 	private final BiomeDataOracle biomeDataOracle;
 
-	public BiomeDataLoader(LayerType layerType, ColorProvider colorProvider,
-			Resolution resolution, BiomeDataOracle biomeDataOracle) {
-		super(layerType, colorProvider, resolution);
+	public BiomeDataLoader(LayerType layerType, Resolution resolution,
+			ColorProvider colorProvider, BiomeDataOracle biomeDataOracle) {
+		super(layerType, resolution, colorProvider);
 		this.biomeDataOracle = biomeDataOracle;
 	}
 

@@ -46,14 +46,14 @@ public class LayerContainerFactory {
 	private Layer createBiomeLayer(World world, Map map) {
 		return new Layer(LayerType.BIOME, options.showBiomes,
 				new BiomeDataConstructor(LayerType.BIOME, Resolution.QUARTER),
-				new BiomeDataLoader(LayerType.BIOME, new BiomeColorProvider(map), Resolution.QUARTER, world.getBiomeDataOracle()),
+				new BiomeDataLoader(LayerType.BIOME, Resolution.QUARTER, new BiomeColorProvider(map), world.getBiomeDataOracle()),
 				new ImageDrawer(LayerType.BIOME, Resolution.QUARTER));
 	}
 
 	private Layer createSlimeLayer(World world) {
 		return new Layer(LayerType.SLIME, options.showSlimeChunks,
 				new ImageConstructor(LayerType.SLIME, Resolution.CHUNK),
-				new ImageLoader(LayerType.SLIME, new SlimeColorProvider(world), Resolution.CHUNK),
+				new ImageLoader(LayerType.SLIME, Resolution.CHUNK, new SlimeColorProvider(world)),
 				new ImageDrawer(LayerType.SLIME, Resolution.CHUNK));
 	}
 

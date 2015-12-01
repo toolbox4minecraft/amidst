@@ -10,17 +10,17 @@ import amidst.minecraft.world.Resolution;
 
 public class ImageLoader implements FragmentLoader {
 	private final LayerType layerType;
-	private final ColorProvider colorProvider;
 	private final Resolution resolution;
+	private final ColorProvider colorProvider;
 	private final int size;
 	private final int[] rgbArray;
 	private BufferedImage bufferedImage;
 
-	public ImageLoader(LayerType layerType, ColorProvider colorProvider,
-			Resolution resolution) {
+	public ImageLoader(LayerType layerType, Resolution resolution,
+			ColorProvider colorProvider) {
 		this.layerType = layerType;
-		this.colorProvider = colorProvider;
 		this.resolution = resolution;
+		this.colorProvider = colorProvider;
 		this.size = resolution.getStepsPerFragment();
 		this.rgbArray = new int[size * size];
 		this.bufferedImage = createBufferedImage();
