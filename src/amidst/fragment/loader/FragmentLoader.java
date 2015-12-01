@@ -1,9 +1,20 @@
 package amidst.fragment.loader;
 
+import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
 
-public interface FragmentLoader {
-	void load(Fragment fragment);
+public abstract class FragmentLoader {
+	protected final LayerDeclaration declaration;
 
-	void reload(Fragment fragment);
+	public FragmentLoader(LayerDeclaration declaration) {
+		this.declaration = declaration;
+	}
+
+	public LayerDeclaration getLayerDeclaration() {
+		return declaration;
+	}
+
+	public abstract void load(Fragment fragment);
+
+	public abstract void reload(Fragment fragment);
 }

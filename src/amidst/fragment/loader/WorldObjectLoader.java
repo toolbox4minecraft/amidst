@@ -4,13 +4,12 @@ import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
 import amidst.minecraft.world.object.WorldObjectProducer;
 
-public class WorldObjectLoader implements FragmentLoader {
-	private final LayerDeclaration declaration;
+public class WorldObjectLoader extends FragmentLoader {
 	private final WorldObjectProducer producer;
 
 	public WorldObjectLoader(LayerDeclaration declaration,
 			WorldObjectProducer producer) {
-		this.declaration = declaration;
+		super(declaration);
 		this.producer = producer;
 	}
 

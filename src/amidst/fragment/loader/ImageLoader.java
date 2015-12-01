@@ -8,8 +8,7 @@ import amidst.map.Fragment;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 
-public class ImageLoader implements FragmentLoader {
-	private final LayerDeclaration declaration;
+public class ImageLoader extends FragmentLoader {
 	private final Resolution resolution;
 	private final ColorProvider colorProvider;
 	private final int size;
@@ -18,7 +17,7 @@ public class ImageLoader implements FragmentLoader {
 
 	public ImageLoader(LayerDeclaration declaration, Resolution resolution,
 			ColorProvider colorProvider) {
-		this.declaration = declaration;
+		super(declaration);
 		this.resolution = resolution;
 		this.colorProvider = colorProvider;
 		this.size = resolution.getStepsPerFragment();

@@ -47,10 +47,14 @@ public class LayerManager {
 	}
 
 	public void reloadInvalidated(Fragment fragment) {
-		for (int i = 0; i < loaders.size(); i++) {
-			if (invalidatedLayers.get(i).get()) {
-				loaders.get(i).reload(fragment);
+		for (FragmentLoader loader : loaders) {
+			if (isInvalidated(loader.getLayerDeclaration())) {
+				loader.reload(fragment);
 			}
 		}
+	}
+
+	private boolean isInvalidated(LayerDeclaration layerDeclaration) {
+		return invalidatedLayers.get(layerDeclaration.getLayerId()).get();
 	}
 }
