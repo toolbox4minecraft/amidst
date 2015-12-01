@@ -23,10 +23,10 @@ public class GridDrawer extends FragmentDrawer {
 
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d) {
-		initGraphics(g2d);
 		int stride = getStride();
 		int gridX = getGridX(fragment, stride);
 		int gridY = getGridY(fragment, stride);
+		initGraphics(g2d);
 		drawGridLines(g2d, stride, gridX, gridY);
 		if (isGrid00(gridX, gridY)) {
 			double invZoom = 1.0 / map.getZoom();
@@ -36,11 +36,6 @@ public class GridDrawer extends FragmentDrawer {
 			// drawThickTextOutline(g2d);
 			drawTextOutline(g2d);
 		}
-	}
-
-	private void initGraphics(Graphics2D g2d) {
-		g2d.setFont(DRAW_FONT);
-		g2d.setColor(Color.black);
 	}
 
 	private int getStride() {
@@ -57,6 +52,11 @@ public class GridDrawer extends FragmentDrawer {
 	private int getGridY(Fragment fragment, int stride) {
 		return (int) fragment.getCorner().getYAs(Resolution.FRAGMENT)
 				% (stride + 1);
+	}
+
+	private void initGraphics(Graphics2D g2d) {
+		g2d.setFont(DRAW_FONT);
+		g2d.setColor(Color.black);
 	}
 
 	private void drawGridLines(Graphics2D g2d, int stride, int gridX, int gridY) {
