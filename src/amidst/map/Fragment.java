@@ -155,6 +155,13 @@ public class Fragment implements Iterable<Fragment> {
 		return isLoaded;
 	}
 
+	/**
+	 * Creates an Iterator that is fail safe in the sense that it will never
+	 * throw a NullPointerException or ConcurrentModificationException when the
+	 * fragment graph is altered while the iterator is used. However, the
+	 * elements returned by this iterator will be the old state or the new state
+	 * or something in between. This should be good enough for our use cases.
+	 */
 	@Override
 	public Iterator<Fragment> iterator() {
 		return new FragmentIterator(this);
