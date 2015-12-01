@@ -56,7 +56,7 @@ public class LayerContainerFactory {
 		constructors[LayerId.PLAYER]           = new DummyConstructor();
 
 		loaders[LayerId.BIOME]                 = new BiomeDataLoader(  declarations[LayerId.BIOME], Resolution.QUARTER, new BiomeColorProvider(map), world.getBiomeDataOracle());
-		loaders[LayerId.SLIME]                 = new ImageLoader(      declarations[LayerId.SLIME], Resolution.CHUNK, new SlimeColorProvider(world));
+		loaders[LayerId.SLIME]                 = new ImageLoader(      declarations[LayerId.SLIME], Resolution.CHUNK, new SlimeColorProvider(world.getSlimeChunkOracle()));
 		loaders[LayerId.GRID]                  = new DummyLoader();
 		loaders[LayerId.VILLAGE]               = new WorldObjectLoader(declarations[LayerId.VILLAGE], world.getVillageProducer());
 		loaders[LayerId.OCEAN_MONUMENT]        = new WorldObjectLoader(declarations[LayerId.OCEAN_MONUMENT], world.getOceanMonumentProducer());
