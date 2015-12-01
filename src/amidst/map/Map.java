@@ -18,7 +18,8 @@ public class Map {
 	private WorldIcon selectedWorldIcon;
 
 	private volatile Fragment startFragment;
-	private volatile Point2D.Double startOnScreen = new Point2D.Double();
+	private volatile double startXOnScreen;
+	private volatile double startYOnScreen;
 
 	private int fragmentsPerRow;
 	private int fragmentsPerColumn;
@@ -49,7 +50,7 @@ public class Map {
 				/ fragmentSizeOnScreen + 2);
 		lockedAdjustNumberOfRowsAndColumns(fragmentSizeOnScreen,
 				desiredFragmentsPerRow, desiredFragmentsPerColumn);
-		drawer.doDrawMap(startOnScreen, getStartFragment());
+		drawer.doDrawMap(startXOnScreen, startYOnScreen, getStartFragment());
 	}
 
 	private void lockedAdjustNumberOfRowsAndColumns(
@@ -59,20 +60,20 @@ public class Map {
 		int newRows = desiredFragmentsPerColumn - fragmentsPerColumn;
 		int newLeft = 0;
 		int newAbove = 0;
-		while (startOnScreen.x > 0) {
-			startOnScreen.x -= fragmentSizeOnScreen;
+		while (startXOnScreen > 0) {
+			startXOnScreen -= fragmentSizeOnScreen;
 			newLeft++;
 		}
-		while (startOnScreen.x < -fragmentSizeOnScreen) {
-			startOnScreen.x += fragmentSizeOnScreen;
+		while (startXOnScreen < -fragmentSizeOnScreen) {
+			startXOnScreen += fragmentSizeOnScreen;
 			newLeft--;
 		}
-		while (startOnScreen.y > 0) {
-			startOnScreen.y -= fragmentSizeOnScreen;
+		while (startYOnScreen > 0) {
+			startYOnScreen -= fragmentSizeOnScreen;
 			newAbove++;
 		}
-		while (startOnScreen.y < -fragmentSizeOnScreen) {
-			startOnScreen.y += fragmentSizeOnScreen;
+		while (startYOnScreen < -fragmentSizeOnScreen) {
+			startYOnScreen += fragmentSizeOnScreen;
 			newAbove--;
 		}
 		int newRight = newColumns - newLeft;
@@ -87,9 +88,9 @@ public class Map {
 		int yCenterOnScreen = viewerHeight >> 1;
 		long xFragmentRelative = coordinates.getXRelativeToFragment();
 		long yFragmentRelative = coordinates.getYRelativeToFragment();
-		startOnScreen.x = xCenterOnScreen
+		startXOnScreen = xCenterOnScreen
 				- zoom.worldToScreen(xFragmentRelative);
-		startOnScreen.y = yCenterOnScreen
+		startYOnScreen = yCenterOnScreen
 				- zoom.worldToScreen(yFragmentRelative);
 	}
 
@@ -112,13 +113,13 @@ public class Map {
 	}
 
 	public void moveBy(int deltaX, int deltaY) {
-		startOnScreen.x += deltaX;
-		startOnScreen.y += deltaY;
+		startXOnScreen += deltaX;
+		startYOnScreen += deltaY;
 	}
 
 	public void moveBy(Point2D.Double delta) {
-		startOnScreen.x += delta.x;
-		startOnScreen.y += delta.y;
+		startXOnScreen += delta.x;
+		startYOnScreen += delta.y;
 	}
 
 	public String getBiomeAliasAt(CoordinatesInWorld coordinates) {
@@ -141,8 +142,8 @@ public class Map {
 	}
 
 	public WorldIcon getWorldIconAt(Point positionOnScreen, double maxDistance) {
-		double xCornerOnScreen = startOnScreen.x;
-		double yCornerOnScreen = startOnScreen.y;
+		double xCornerOnScreen = startXOnScreen;
+		double yCornerOnScreen = startYOnScreen;
 		WorldIcon closestIcon = null;
 		double closestDistance = maxDistance;
 		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
@@ -163,7 +164,7 @@ public class Map {
 			}
 			xCornerOnScreen += fragmentSizeOnScreen;
 			if (fragment.isEndOfLine()) {
-				xCornerOnScreen = startOnScreen.x;
+				xCornerOnScreen = startXOnScreen;
 				yCornerOnScreen += fragmentSizeOnScreen;
 			}
 		}
@@ -185,14 +186,14 @@ public class Map {
 
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
 		return getStartFragment().getCorner().add(
-				(long) zoom.screenToWorld(pointOnScreen.x - startOnScreen.x),
-				(long) zoom.screenToWorld(pointOnScreen.y - startOnScreen.y));
+				(long) zoom.screenToWorld(pointOnScreen.x - startXOnScreen),
+				(long) zoom.screenToWorld(pointOnScreen.y - startYOnScreen));
 	}
 
 	public Point2D.Double getDeltaOnScreenForSamePointInWorld(double oldScale,
 			double newScale, Point newPointOnScreen) {
-		double baseX = newPointOnScreen.x - startOnScreen.x;
-		double baseY = newPointOnScreen.y - startOnScreen.y;
+		double baseX = newPointOnScreen.x - startXOnScreen;
+		double baseY = newPointOnScreen.y - startYOnScreen;
 		double scaledX = baseX - (baseX / oldScale) * newScale;
 		double scaledY = baseY - (baseY / oldScale) * newScale;
 		return new Point2D.Double(scaledX, scaledY);

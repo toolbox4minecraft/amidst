@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -118,12 +117,13 @@ public class MapDrawer {
 		g2d = old;
 	}
 
-	public void doDrawMap(Point2D.Double startOnScreen, Fragment startFragment) {
+	public void doDrawMap(double startXOnScreen, double startYOnScreen,
+			Fragment startFragment) {
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		originalGraphicsTransform = g2d.getTransform();
 		prepareDraw(startFragment);
-		drawLayers(startOnScreen, startFragment);
+		drawLayers(startXOnScreen, startYOnScreen, startFragment);
 		g2d.setTransform(originalGraphicsTransform);
 	}
 
@@ -133,10 +133,12 @@ public class MapDrawer {
 		}
 	}
 
-	private void drawLayers(Point2D.Double startOnScreen, Fragment startFragment) {
+	private void drawLayers(double startXOnScreen, double startYOnScreen,
+			Fragment startFragment) {
 		for (FragmentDrawer drawer : map.getFragmentDrawers()) {
 			if (drawer.getLayerDeclaration().isVisible()) {
-				initLayerDrawMatrix(startOnScreen, zoom.getCurrentValue());
+				initLayerDrawMatrix(startXOnScreen, startYOnScreen,
+						zoom.getCurrentValue());
 				for (Fragment fragment : startFragment) {
 					if (fragment.isLoaded()) {
 						setAlphaComposite(fragment.getAlpha());
@@ -149,10 +151,11 @@ public class MapDrawer {
 		setAlphaComposite(1.0f);
 	}
 
-	private void initLayerDrawMatrix(Point2D.Double startOnScreen, double scale) {
+	private void initLayerDrawMatrix(double startXOnScreen,
+			double startYOnScreen, double scale) {
 		layerMatrix.setToIdentity();
 		layerMatrix.concatenate(originalGraphicsTransform);
-		layerMatrix.translate(startOnScreen.x, startOnScreen.y);
+		layerMatrix.translate(startXOnScreen, startYOnScreen);
 		layerMatrix.scale(scale, scale);
 	}
 
