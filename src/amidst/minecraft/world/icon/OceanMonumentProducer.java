@@ -3,7 +3,7 @@ package amidst.minecraft.world.icon;
 import java.util.Arrays;
 import java.util.List;
 
-import amidst.map.MapMarkers;
+import amidst.map.DefaultWorldIconTypes;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.World;
 
@@ -19,8 +19,8 @@ public class OceanMonumentProducer extends StructureProducer {
 	}
 
 	@Override
-	protected MapMarkers getMapMarker() {
-		return MapMarkers.OCEAN_MONUMENT;
+	protected DefaultWorldIconTypes getMapMarker() {
+		return DefaultWorldIconTypes.OCEAN_MONUMENT;
 	}
 
 	@Override

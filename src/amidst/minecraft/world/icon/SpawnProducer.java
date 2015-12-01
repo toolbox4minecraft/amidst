@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.logging.Log;
-import amidst.map.MapMarkers;
+import amidst.map.DefaultWorldIconTypes;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
@@ -37,10 +37,10 @@ public class SpawnProducer extends CachedWorldIconProducer {
 		Point spawnCenter = getSpawnCenterInWorldCoordinates();
 		if (spawnCenter != null) {
 			return new WorldIcon(CoordinatesInWorld.from(spawnCenter.x,
-					spawnCenter.y), MapMarkers.SPAWN);
+					spawnCenter.y), DefaultWorldIconTypes.SPAWN);
 		} else {
 			Log.debug("Unable to find spawn biome.");
-			return new WorldIcon(CoordinatesInWorld.origin(), MapMarkers.SPAWN);
+			return new WorldIcon(CoordinatesInWorld.origin(), DefaultWorldIconTypes.SPAWN);
 		}
 	}
 

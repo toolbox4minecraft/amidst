@@ -4,12 +4,7 @@ import java.awt.image.BufferedImage;
 
 import amidst.resources.ResourceLoader;
 
-/**
- * Contains information about all possible Map Markers. Map objects use either
- * its or their own icon
- */
-// TODO: link to test.amidst.map object class
-public enum MapMarkers {
+public enum DefaultWorldIconTypes {
 	// @formatter:off
 	NETHER_FORTRESS("Nether Fortress"),
 	PLAYER("Player"),
@@ -25,17 +20,20 @@ public enum MapMarkers {
 	private final String name;
 	private final BufferedImage image;
 
-	private MapMarkers(String name) {
+	private DefaultWorldIconTypes(String name) {
 		this.name = name;
-		String fileName = this.toString().toLowerCase() + ".png";
-		image = ResourceLoader.getImage(fileName);
+		this.image = ResourceLoader.getImage(getFilename());
 	}
 
-	public BufferedImage getImage() {
-		return image;
+	private String getFilename() {
+		return this.toString().toLowerCase() + ".png";
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public BufferedImage getImage() {
+		return image;
 	}
 }

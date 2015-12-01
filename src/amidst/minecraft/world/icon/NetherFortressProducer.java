@@ -2,7 +2,7 @@ package amidst.minecraft.world.icon;
 
 import java.util.List;
 
-import amidst.map.MapMarkers;
+import amidst.map.DefaultWorldIconTypes;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.World;
 
@@ -27,8 +27,8 @@ public class NetherFortressProducer extends StructureProducer {
 	}
 
 	@Override
-	protected MapMarkers getMapMarker() {
-		return MapMarkers.NETHER_FORTRESS;
+	protected DefaultWorldIconTypes getMapMarker() {
+		return DefaultWorldIconTypes.NETHER_FORTRESS;
 	}
 
 	@Override

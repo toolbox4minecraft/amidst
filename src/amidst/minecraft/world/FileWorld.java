@@ -5,14 +5,14 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-import amidst.map.MapMarkers;
+import amidst.map.DefaultWorldIconTypes;
 import amidst.minecraft.MinecraftUtil;
 
 public class FileWorld extends World {
 	public static class Player {
 		private FileWorld world;
 
-		private BufferedImage skin = MapMarkers.PLAYER.getImage();
+		private BufferedImage skin = DefaultWorldIconTypes.PLAYER.getImage();
 		private String playerName;
 		private CoordinatesInWorld coordinates;
 

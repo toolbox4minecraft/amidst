@@ -3,7 +3,7 @@ package amidst.minecraft.world.icon;
 import java.util.Arrays;
 import java.util.List;
 
-import amidst.map.MapMarkers;
+import amidst.map.DefaultWorldIconTypes;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.World;
@@ -20,14 +20,14 @@ public class TempleProducer extends StructureProducer {
 	}
 
 	@Override
-	protected MapMarkers getMapMarker() {
+	protected DefaultWorldIconTypes getMapMarker() {
 		Biome chunkBiome = getBiomeAtMiddleOfChunk();
 		if (chunkBiome == Biome.swampland) {
-			return MapMarkers.WITCH;
+			return DefaultWorldIconTypes.WITCH;
 		} else if (chunkBiome.getName().contains("Jungle")) {
-			return MapMarkers.JUNGLE;
+			return DefaultWorldIconTypes.JUNGLE;
 		} else if (chunkBiome.getName().contains("Desert")) {
-			return MapMarkers.DESERT;
+			return DefaultWorldIconTypes.DESERT;
 		} else {
 			return null;
 		}

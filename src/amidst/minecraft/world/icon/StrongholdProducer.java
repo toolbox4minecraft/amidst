@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import amidst.map.MapMarkers;
+import amidst.map.DefaultWorldIconTypes;
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
@@ -94,7 +94,7 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 
 	private WorldIcon createWorldIcon(int x, int y) {
 		return new WorldIcon(CoordinatesInWorld.from(x, y),
-				MapMarkers.STRONGHOLD);
+				DefaultWorldIconTypes.STRONGHOLD);
 	}
 
 	private Point findStronghold(int x, int y) {

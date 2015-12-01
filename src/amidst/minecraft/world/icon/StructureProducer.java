@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.logging.Log;
-import amidst.map.MapMarkers;
+import amidst.map.DefaultWorldIconTypes;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
@@ -76,7 +76,7 @@ public abstract class StructureProducer extends WorldIconProducer {
 		middleOfChunkX = middleOfChunk(chunkX);
 		middleOfChunkY = middleOfChunk(chunkY);
 		if (isValidLocation()) {
-			MapMarkers mapMarker = getMapMarker();
+			DefaultWorldIconTypes mapMarker = getMapMarker();
 			if (mapMarker == null) {
 				Log.e("No known structure for this biome type. This might be an error.");
 			} else {
@@ -147,7 +147,7 @@ public abstract class StructureProducer extends WorldIconProducer {
 
 	protected abstract boolean isValidLocation();
 
-	protected abstract MapMarkers getMapMarker();
+	protected abstract DefaultWorldIconTypes getMapMarker();
 
 	protected abstract List<Biome> getValidBiomesForStructure();
 

@@ -2,7 +2,7 @@ package amidst.minecraft.world.icon;
 
 import java.awt.image.BufferedImage;
 
-import amidst.map.MapMarkers;
+import amidst.map.DefaultWorldIconTypes;
 import amidst.minecraft.world.CoordinatesInWorld;
 
 public class WorldIcon {
@@ -10,7 +10,7 @@ public class WorldIcon {
 	private final String name;
 	private final BufferedImage image;
 
-	public WorldIcon(CoordinatesInWorld coordinates, MapMarkers marker) {
+	public WorldIcon(CoordinatesInWorld coordinates, DefaultWorldIconTypes marker) {
 		this(coordinates, marker.getName(), marker.getImage());
 	}
 
