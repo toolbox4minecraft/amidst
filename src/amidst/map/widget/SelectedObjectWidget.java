@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.minecraft.world.World;
-import amidst.minecraft.world.object.WorldObject;
+import amidst.minecraft.world.object.WorldIcon;
 
 public class SelectedObjectWidget extends Widget {
 	private String message = "";
@@ -24,7 +24,7 @@ public class SelectedObjectWidget extends Widget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
-		WorldObject selectedObject = map.getSelectedWorldObject();
+		WorldIcon selectedObject = map.getSelectedWorldObject();
 		if (selectedObject != null) {
 			message = selectedObject.toString();
 			icon = selectedObject.getImage();

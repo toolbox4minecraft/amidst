@@ -11,7 +11,7 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.WorldType;
 import amidst.minecraft.world.Worlds;
-import amidst.minecraft.world.object.WorldObject;
+import amidst.minecraft.world.object.WorldIcon;
 
 public class MenuActions {
 	private static final String ABOUT_MESSAGE = "Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
@@ -73,7 +73,7 @@ public class MenuActions {
 	}
 
 	public void findStronghold() {
-		WorldObject stronghold = mapWindow.askForOptions("Go to",
+		WorldIcon stronghold = mapWindow.askForOptions("Go to",
 				"Select Stronghold:", application.getWorld().getStrongholds());
 		if (stronghold != null) {
 			mapWindow.moveMapToCoordinates(stronghold.getCoordinates());
@@ -92,7 +92,7 @@ public class MenuActions {
 
 	public void gotoPlayer() {
 		if (application.getWorld().hasPlayers()) {
-			WorldObject player = mapWindow.askForOptions("Go to",
+			WorldIcon player = mapWindow.askForOptions("Go to",
 					"Select player:", application.getWorld()
 							.getPlayers());
 			if (player != null) {

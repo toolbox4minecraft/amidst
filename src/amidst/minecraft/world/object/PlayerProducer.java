@@ -13,7 +13,7 @@ public class PlayerProducer extends CachedWorldObjectProducer {
 	}
 
 	@Override
-	protected List<WorldObject> createCache() {
+	protected List<WorldIcon> createCache() {
 		if (world.isFileWorld()) {
 			return createPlayerWorldObjects();
 		} else {
@@ -21,10 +21,10 @@ public class PlayerProducer extends CachedWorldObjectProducer {
 		}
 	}
 
-	private List<WorldObject> createPlayerWorldObjects() {
-		LinkedList<WorldObject> result = new LinkedList<WorldObject>();
+	private List<WorldIcon> createPlayerWorldObjects() {
+		LinkedList<WorldIcon> result = new LinkedList<WorldIcon>();
 		for (Player player : world.getAsFileWorld().getMovablePlayers()) {
-			result.add(new WorldObject(player.getCoordinates(), player
+			result.add(new WorldIcon(player.getCoordinates(), player
 					.getPlayerName(), player.getSkin()));
 		}
 		return result;

@@ -9,7 +9,7 @@ import amidst.minecraft.world.World;
 
 public abstract class CachedWorldObjectProducer extends WorldObjectProducer {
 	protected final World world;
-	private List<WorldObject> cache;
+	private List<WorldIcon> cache;
 
 	public CachedWorldObjectProducer(World world) {
 		this.world = world;
@@ -21,12 +21,12 @@ public abstract class CachedWorldObjectProducer extends WorldObjectProducer {
 		produceWorldObjects(corner, consumer);
 	}
 
-	public List<WorldObject> getWorldObjects() {
+	public List<WorldIcon> getWorldObjects() {
 		initCache();
 		return cache;
 	}
 
-	public WorldObject getFirstWorldObject() {
+	public WorldIcon getFirstWorldObject() {
 		initCache();
 		if (cache.isEmpty()) {
 			return null;
@@ -47,7 +47,7 @@ public abstract class CachedWorldObjectProducer extends WorldObjectProducer {
 	private void produceWorldObjects(CoordinatesInWorld corner,
 			WorldObjectConsumer consumer) {
 		if (cache != null) {
-			for (WorldObject worldObject : cache) {
+			for (WorldIcon worldObject : cache) {
 				if (worldObject.getCoordinates().isInBoundsOf(corner,
 						Fragment.SIZE)) {
 					consumer.consume(worldObject);
@@ -60,5 +60,5 @@ public abstract class CachedWorldObjectProducer extends WorldObjectProducer {
 		cache = null;
 	}
 
-	protected abstract List<WorldObject> createCache();
+	protected abstract List<WorldIcon> createCache();
 }

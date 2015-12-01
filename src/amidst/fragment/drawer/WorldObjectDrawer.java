@@ -8,7 +8,7 @@ import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
 import amidst.map.Map;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.object.WorldObject;
+import amidst.minecraft.world.object.WorldIcon;
 
 public class WorldObjectDrawer extends FragmentDrawer {
 	private final AffineTransform worldObjectLayerMatrix = new AffineTransform();
@@ -23,13 +23,13 @@ public class WorldObjectDrawer extends FragmentDrawer {
 	public void draw(Fragment fragment, Graphics2D g2d,
 			AffineTransform layerMatrix) {
 		double invZoom = 1.0 / map.getZoom();
-		for (WorldObject worldObject : fragment.getWorldObjects(declaration
+		for (WorldIcon worldObject : fragment.getWorldObjects(declaration
 				.getLayerId())) {
 			drawObject(worldObject, invZoom, g2d, layerMatrix);
 		}
 	}
 
-	private void drawObject(WorldObject worldObject, double invZoom,
+	private void drawObject(WorldIcon worldObject, double invZoom,
 			Graphics2D g2d, AffineTransform layerMatrix) {
 		BufferedImage image = worldObject.getImage();
 		int width = image.getWidth();

@@ -11,10 +11,10 @@ import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerManagerFactory;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
-import amidst.minecraft.world.object.WorldObject;
+import amidst.minecraft.world.object.WorldIcon;
 
 public class Map {
-	private WorldObject selectedWorldObject;
+	private WorldIcon selectedWorldObject;
 
 	private Fragment startFragment;
 	private Point2D.Double startOnScreen = new Point2D.Double();
@@ -153,11 +153,11 @@ public class Map {
 		return null;
 	}
 
-	public WorldObject getWorldObjectAt(Point positionOnScreen,
+	public WorldIcon getWorldObjectAt(Point positionOnScreen,
 			double maxDistance) {
 		double xCornerOnScreen = startOnScreen.x;
 		double yCornerOnScreen = startOnScreen.y;
-		WorldObject closestWorldObject = null;
+		WorldIcon closestWorldObject = null;
 		double closestDistance = maxDistance;
 		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		if (startFragment != null) {
@@ -165,7 +165,7 @@ public class Map {
 				for (LayerDeclaration declaration : layerManager
 						.getLayerDeclarations()) {
 					if (declaration.isVisible()) {
-						for (WorldObject worldObject : fragment
+						for (WorldIcon worldObject : fragment
 								.getWorldObjects(declaration.getLayerId())) {
 							double distance = getDistance(positionOnScreen,
 									xCornerOnScreen, yCornerOnScreen,
@@ -188,7 +188,7 @@ public class Map {
 	}
 
 	private double getDistance(Point positionOnScreen, double xCornerOnScreen,
-			double yCornerOnScreen, WorldObject worldObject) {
+			double yCornerOnScreen, WorldIcon worldObject) {
 		return worldToScreen(worldObject.getCoordinates(), xCornerOnScreen,
 				yCornerOnScreen).distance(positionOnScreen);
 	}
@@ -245,7 +245,7 @@ public class Map {
 		this.viewerHeight = viewerHeight;
 	}
 
-	public WorldObject getSelectedWorldObject() {
+	public WorldIcon getSelectedWorldObject() {
 		return selectedWorldObject;
 	}
 

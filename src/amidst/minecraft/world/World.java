@@ -10,7 +10,7 @@ import amidst.minecraft.world.object.SpawnProducer;
 import amidst.minecraft.world.object.StrongholdProducer;
 import amidst.minecraft.world.object.TempleProducer;
 import amidst.minecraft.world.object.VillageProducer;
-import amidst.minecraft.world.object.WorldObject;
+import amidst.minecraft.world.object.WorldIcon;
 import amidst.minecraft.world.object.WorldObjectProducer;
 
 public abstract class World {
@@ -66,15 +66,15 @@ public abstract class World {
 		return strongholdProducer;
 	}
 
-	public List<WorldObject> getPlayers() {
+	public List<WorldIcon> getPlayers() {
 		return playerProducer.getWorldObjects();
 	}
 
-	public WorldObject getSpawn() {
+	public WorldIcon getSpawn() {
 		return spawnProducer.getFirstWorldObject();
 	}
 
-	public List<WorldObject> getStrongholds() {
+	public List<WorldIcon> getStrongholds() {
 		return strongholdProducer.getWorldObjects();
 	}
 

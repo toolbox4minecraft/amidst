@@ -10,7 +10,7 @@ import amidst.Options;
 import amidst.minecraft.world.BiomeDataOracle;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
-import amidst.minecraft.world.object.WorldObject;
+import amidst.minecraft.world.object.WorldIcon;
 
 public class Fragment implements Iterable<Fragment> {
 	private static class FragmentIterator implements Iterator<Fragment> {
@@ -58,11 +58,11 @@ public class Fragment implements Iterable<Fragment> {
 	private short[][] biomeData;
 
 	private final AtomicReferenceArray<BufferedImage> images;
-	private final AtomicReferenceArray<List<WorldObject>> worldObjects;
+	private final AtomicReferenceArray<List<WorldIcon>> worldObjects;
 
 	public Fragment(int numberOfLayers) {
 		this.images = new AtomicReferenceArray<BufferedImage>(numberOfLayers);
-		this.worldObjects = new AtomicReferenceArray<List<WorldObject>>(
+		this.worldObjects = new AtomicReferenceArray<List<WorldIcon>>(
 				numberOfLayers);
 	}
 
@@ -127,12 +127,12 @@ public class Fragment implements Iterable<Fragment> {
 		return images.get(layerId);
 	}
 
-	public void putWorldObjects(int layerId, List<WorldObject> worldObjects) {
+	public void putWorldObjects(int layerId, List<WorldIcon> worldObjects) {
 		this.worldObjects.set(layerId, worldObjects);
 	}
 
-	public List<WorldObject> getWorldObjects(int layerId) {
-		List<WorldObject> result = worldObjects.get(layerId);
+	public List<WorldIcon> getWorldObjects(int layerId) {
+		List<WorldIcon> result = worldObjects.get(layerId);
 		if (result != null) {
 			return result;
 		} else {

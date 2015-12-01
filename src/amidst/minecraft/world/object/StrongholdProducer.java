@@ -72,8 +72,8 @@ public class StrongholdProducer extends CachedWorldObjectProducer {
 	}
 
 	@Override
-	protected List<WorldObject> createCache() {
-		List<WorldObject> result = new LinkedList<WorldObject>();
+	protected List<WorldIcon> createCache() {
+		List<WorldIcon> result = new LinkedList<WorldIcon>();
 		updateSeed();
 		double angle = initAngle();
 		for (int i = 0; i < 3; i++) {
@@ -92,8 +92,8 @@ public class StrongholdProducer extends CachedWorldObjectProducer {
 		return result;
 	}
 
-	private WorldObject createWorldObject(int x, int y) {
-		return new WorldObject(CoordinatesInWorld.from(x, y),
+	private WorldIcon createWorldObject(int x, int y) {
+		return new WorldIcon(CoordinatesInWorld.from(x, y),
 				MapMarkers.STRONGHOLD);
 	}
 

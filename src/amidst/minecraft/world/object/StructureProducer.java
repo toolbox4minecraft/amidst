@@ -80,7 +80,7 @@ public abstract class StructureProducer extends WorldObjectProducer {
 			if (mapMarker == null) {
 				Log.e("No known structure for this biome type. This might be an error.");
 			} else {
-				consumer.consume(new WorldObject(createCoordinates(), mapMarker));
+				consumer.consume(new WorldIcon(createCoordinates(), mapMarker));
 			}
 		}
 	}

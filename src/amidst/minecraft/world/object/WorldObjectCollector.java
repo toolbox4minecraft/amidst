@@ -5,21 +5,21 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class WorldObjectCollector implements WorldObjectConsumer {
-	private List<WorldObject> worldObjects;
+	private List<WorldIcon> worldObjects;
 
 	@Override
-	public void consume(WorldObject worldObject) {
+	public void consume(WorldIcon worldObject) {
 		initListIfNecessary();
 		worldObjects.add(worldObject);
 	}
 
 	private void initListIfNecessary() {
 		if (worldObjects == null) {
-			worldObjects = new LinkedList<WorldObject>();
+			worldObjects = new LinkedList<WorldIcon>();
 		}
 	}
 
-	public List<WorldObject> get() {
+	public List<WorldIcon> get() {
 		if (worldObjects == null) {
 			return Collections.emptyList();
 		} else {

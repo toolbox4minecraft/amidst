@@ -8,7 +8,7 @@ public abstract class WorldObjectProducer {
 	public abstract void produce(CoordinatesInWorld corner,
 			WorldObjectConsumer consumer);
 
-	public List<WorldObject> getAt(CoordinatesInWorld corner) {
+	public List<WorldIcon> getAt(CoordinatesInWorld corner) {
 		WorldObjectCollector collector = new WorldObjectCollector();
 		produce(corner, collector);
 		return collector.get();

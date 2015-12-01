@@ -29,18 +29,18 @@ public class SpawnProducer extends CachedWorldObjectProducer {
 	}
 
 	@Override
-	protected List<WorldObject> createCache() {
+	protected List<WorldIcon> createCache() {
 		return Arrays.asList(createSpawnWorldObject());
 	}
 
-	private WorldObject createSpawnWorldObject() {
+	private WorldIcon createSpawnWorldObject() {
 		Point spawnCenter = getSpawnCenterInWorldCoordinates();
 		if (spawnCenter != null) {
-			return new WorldObject(CoordinatesInWorld.from(spawnCenter.x,
+			return new WorldIcon(CoordinatesInWorld.from(spawnCenter.x,
 					spawnCenter.y), MapMarkers.SPAWN);
 		} else {
 			Log.debug("Unable to find spawn biome.");
-			return new WorldObject(CoordinatesInWorld.origin(),
+			return new WorldIcon(CoordinatesInWorld.origin(),
 					MapMarkers.SPAWN);
 		}
 	}
