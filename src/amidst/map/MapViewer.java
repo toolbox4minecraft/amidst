@@ -171,7 +171,7 @@ public class MapViewer {
 		}
 
 		private void mouseClickedOnMap(Point mouse) {
-			map.selectWorldObjectAt(mouse, 50.0);
+			map.selectWorldIconAt(mouse, 50.0);
 		}
 
 		/**

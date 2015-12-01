@@ -2,7 +2,7 @@ package amidst.minecraft.world;
 
 import java.util.List;
 
-import amidst.minecraft.world.icon.CachedWorldObjectProducer;
+import amidst.minecraft.world.icon.CachedWorldIconProducer;
 import amidst.minecraft.world.icon.NetherFortressProducer;
 import amidst.minecraft.world.icon.OceanMonumentProducer;
 import amidst.minecraft.world.icon.PlayerProducer;
@@ -23,11 +23,11 @@ public abstract class World {
 			this);
 	private final WorldIconProducer netherFortressProducer = new NetherFortressProducer(
 			this);
-	private final CachedWorldObjectProducer playerProducer = new PlayerProducer(
+	private final CachedWorldIconProducer playerProducer = new PlayerProducer(
 			this);
-	private final CachedWorldObjectProducer spawnProducer = new SpawnProducer(
+	private final CachedWorldIconProducer spawnProducer = new SpawnProducer(
 			this);
-	private final CachedWorldObjectProducer strongholdProducer = new StrongholdProducer(
+	private final CachedWorldIconProducer strongholdProducer = new StrongholdProducer(
 			this);
 
 	public BiomeDataOracle getBiomeDataOracle() {
@@ -54,28 +54,28 @@ public abstract class World {
 		return netherFortressProducer;
 	}
 
-	public CachedWorldObjectProducer getPlayerProducer() {
+	public CachedWorldIconProducer getPlayerProducer() {
 		return playerProducer;
 	}
 
-	public CachedWorldObjectProducer getSpawnProducer() {
+	public CachedWorldIconProducer getSpawnProducer() {
 		return spawnProducer;
 	}
 
-	public CachedWorldObjectProducer getStrongholdProducer() {
+	public CachedWorldIconProducer getStrongholdProducer() {
 		return strongholdProducer;
 	}
 
 	public List<WorldIcon> getPlayers() {
-		return playerProducer.getWorldObjects();
+		return playerProducer.getWorldIcons();
 	}
 
 	public WorldIcon getSpawn() {
-		return spawnProducer.getFirstWorldObject();
+		return spawnProducer.getFirstWorldIcon();
 	}
 
 	public List<WorldIcon> getStrongholds() {
-		return strongholdProducer.getWorldObjects();
+		return strongholdProducer.getWorldIcons();
 	}
 
 	public void reloadPlayers() {

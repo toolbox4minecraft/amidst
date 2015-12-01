@@ -24,7 +24,7 @@ public class WorldIconLoader extends FragmentLoader {
 	}
 
 	protected void doLoad(Fragment fragment) {
-		fragment.putWorldObjects(declaration.getLayerId(),
+		fragment.putWorldIcons(declaration.getLayerId(),
 				producer.getAt(fragment.getCorner()));
 	}
 }

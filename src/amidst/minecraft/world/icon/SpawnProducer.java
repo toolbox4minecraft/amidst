@@ -11,7 +11,7 @@ import amidst.minecraft.Biome;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 
-public class SpawnProducer extends CachedWorldObjectProducer {
+public class SpawnProducer extends CachedWorldIconProducer {
 	// @formatter:off
 	private static final List<Biome> VALID_BIOMES = Arrays.asList(
 			Biome.forest,
@@ -30,18 +30,17 @@ public class SpawnProducer extends CachedWorldObjectProducer {
 
 	@Override
 	protected List<WorldIcon> createCache() {
-		return Arrays.asList(createSpawnWorldObject());
+		return Arrays.asList(createSpawnWorldIcon());
 	}
 
-	private WorldIcon createSpawnWorldObject() {
+	private WorldIcon createSpawnWorldIcon() {
 		Point spawnCenter = getSpawnCenterInWorldCoordinates();
 		if (spawnCenter != null) {
 			return new WorldIcon(CoordinatesInWorld.from(spawnCenter.x,
 					spawnCenter.y), MapMarkers.SPAWN);
 		} else {
 			Log.debug("Unable to find spawn biome.");
-			return new WorldIcon(CoordinatesInWorld.origin(),
-					MapMarkers.SPAWN);
+			return new WorldIcon(CoordinatesInWorld.origin(), MapMarkers.SPAWN);
 		}
 	}
 

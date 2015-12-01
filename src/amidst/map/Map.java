@@ -14,7 +14,7 @@ import amidst.minecraft.world.World;
 import amidst.minecraft.world.icon.WorldIcon;
 
 public class Map {
-	private WorldIcon selectedWorldObject;
+	private WorldIcon selectedWorldIcon;
 
 	private Fragment startFragment;
 	private Point2D.Double startOnScreen = new Point2D.Double();
@@ -153,11 +153,10 @@ public class Map {
 		return null;
 	}
 
-	public WorldIcon getWorldObjectAt(Point positionOnScreen,
-			double maxDistance) {
+	public WorldIcon getWorldIconAt(Point positionOnScreen, double maxDistance) {
 		double xCornerOnScreen = startOnScreen.x;
 		double yCornerOnScreen = startOnScreen.y;
-		WorldIcon closestWorldObject = null;
+		WorldIcon closestIcon = null;
 		double closestDistance = maxDistance;
 		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		if (startFragment != null) {
@@ -165,14 +164,13 @@ public class Map {
 				for (LayerDeclaration declaration : layerManager
 						.getLayerDeclarations()) {
 					if (declaration.isVisible()) {
-						for (WorldIcon worldObject : fragment
-								.getWorldObjects(declaration.getLayerId())) {
+						for (WorldIcon icon : fragment
+								.getWorldIcons(declaration.getLayerId())) {
 							double distance = getDistance(positionOnScreen,
-									xCornerOnScreen, yCornerOnScreen,
-									worldObject);
+									xCornerOnScreen, yCornerOnScreen, icon);
 							if (closestDistance > distance) {
 								closestDistance = distance;
-								closestWorldObject = worldObject;
+								closestIcon = icon;
 							}
 						}
 					}
@@ -184,12 +182,12 @@ public class Map {
 				}
 			}
 		}
-		return closestWorldObject;
+		return closestIcon;
 	}
 
 	private double getDistance(Point positionOnScreen, double xCornerOnScreen,
-			double yCornerOnScreen, WorldIcon worldObject) {
-		return worldToScreen(worldObject.getCoordinates(), xCornerOnScreen,
+			double yCornerOnScreen, WorldIcon icon) {
+		return worldToScreen(icon.getCoordinates(), xCornerOnScreen,
 				yCornerOnScreen).distance(positionOnScreen);
 	}
 
@@ -245,12 +243,12 @@ public class Map {
 		this.viewerHeight = viewerHeight;
 	}
 
-	public WorldIcon getSelectedWorldObject() {
-		return selectedWorldObject;
+	public WorldIcon getSelectedWorldIcon() {
+		return selectedWorldIcon;
 	}
 
-	public void selectWorldObjectAt(Point mouse, double maxDistance) {
-		this.selectedWorldObject = getWorldObjectAt(mouse, maxDistance);
+	public void selectWorldIconAt(Point mouse, double maxDistance) {
+		this.selectedWorldIcon = getWorldIconAt(mouse, maxDistance);
 	}
 
 	public FragmentManager getFragmentManager() {

@@ -7,26 +7,26 @@ import amidst.map.Fragment;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 
-public abstract class CachedWorldObjectProducer extends WorldIconProducer {
+public abstract class CachedWorldIconProducer extends WorldIconProducer {
 	protected final World world;
 	private List<WorldIcon> cache;
 
-	public CachedWorldObjectProducer(World world) {
+	public CachedWorldIconProducer(World world) {
 		this.world = world;
 	}
 
 	@Override
 	public void produce(CoordinatesInWorld corner, WorldIconConsumer consumer) {
 		initCache();
-		produceWorldObjects(corner, consumer);
+		produceWorldIcons(corner, consumer);
 	}
 
-	public List<WorldIcon> getWorldObjects() {
+	public List<WorldIcon> getWorldIcons() {
 		initCache();
 		return cache;
 	}
 
-	public WorldIcon getFirstWorldObject() {
+	public WorldIcon getFirstWorldIcon() {
 		initCache();
 		if (cache.isEmpty()) {
 			return null;
@@ -44,13 +44,12 @@ public abstract class CachedWorldObjectProducer extends WorldIconProducer {
 		}
 	}
 
-	private void produceWorldObjects(CoordinatesInWorld corner,
+	private void produceWorldIcons(CoordinatesInWorld corner,
 			WorldIconConsumer consumer) {
 		if (cache != null) {
-			for (WorldIcon worldObject : cache) {
-				if (worldObject.getCoordinates().isInBoundsOf(corner,
-						Fragment.SIZE)) {
-					consumer.consume(worldObject);
+			for (WorldIcon icon : cache) {
+				if (icon.getCoordinates().isInBoundsOf(corner, Fragment.SIZE)) {
+					consumer.consume(icon);
 				}
 			}
 		}

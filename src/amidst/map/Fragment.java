@@ -58,11 +58,11 @@ public class Fragment implements Iterable<Fragment> {
 	private short[][] biomeData;
 
 	private final AtomicReferenceArray<BufferedImage> images;
-	private final AtomicReferenceArray<List<WorldIcon>> worldObjects;
+	private final AtomicReferenceArray<List<WorldIcon>> worldIcons;
 
 	public Fragment(int numberOfLayers) {
 		this.images = new AtomicReferenceArray<BufferedImage>(numberOfLayers);
-		this.worldObjects = new AtomicReferenceArray<List<WorldIcon>>(
+		this.worldIcons = new AtomicReferenceArray<List<WorldIcon>>(
 				numberOfLayers);
 	}
 
@@ -127,12 +127,12 @@ public class Fragment implements Iterable<Fragment> {
 		return images.get(layerId);
 	}
 
-	public void putWorldObjects(int layerId, List<WorldIcon> worldObjects) {
-		this.worldObjects.set(layerId, worldObjects);
+	public void putWorldIcons(int layerId, List<WorldIcon> icons) {
+		worldIcons.set(layerId, icons);
 	}
 
-	public List<WorldIcon> getWorldObjects(int layerId) {
-		List<WorldIcon> result = worldObjects.get(layerId);
+	public List<WorldIcon> getWorldIcons(int layerId) {
+		List<WorldIcon> result = worldIcons.get(layerId);
 		if (result != null) {
 			return result;
 		} else {

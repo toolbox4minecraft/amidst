@@ -5,25 +5,25 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class WorldIconCollector implements WorldIconConsumer {
-	private List<WorldIcon> worldObjects;
+	private List<WorldIcon> worldIcons;
 
 	@Override
-	public void consume(WorldIcon worldObject) {
+	public void consume(WorldIcon worldIcon) {
 		initListIfNecessary();
-		worldObjects.add(worldObject);
+		worldIcons.add(worldIcon);
 	}
 
 	private void initListIfNecessary() {
-		if (worldObjects == null) {
-			worldObjects = new LinkedList<WorldIcon>();
+		if (worldIcons == null) {
+			worldIcons = new LinkedList<WorldIcon>();
 		}
 	}
 
 	public List<WorldIcon> get() {
-		if (worldObjects == null) {
+		if (worldIcons == null) {
 			return Collections.emptyList();
 		} else {
-			return worldObjects;
+			return worldIcons;
 		}
 	}
 }

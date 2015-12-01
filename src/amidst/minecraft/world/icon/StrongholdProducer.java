@@ -14,7 +14,7 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 import amidst.version.VersionInfo;
 
-public class StrongholdProducer extends CachedWorldObjectProducer {
+public class StrongholdProducer extends CachedWorldIconProducer {
 	// @formatter:off
 	private static final List<Biome> VALID_BIOMES_DEFAULT = Arrays.asList(
 			Biome.desert,
@@ -82,24 +82,24 @@ public class StrongholdProducer extends CachedWorldObjectProducer {
 			int y = getY(angle, distance) << 4;
 			Point strongholdLocation = findStronghold(x, y);
 			if (strongholdLocation != null) {
-				result.add(createWorldObject(strongholdLocation.x,
+				result.add(createWorldIcon(strongholdLocation.x,
 						strongholdLocation.y));
 			} else {
-				result.add(createWorldObject(x, y));
+				result.add(createWorldIcon(x, y));
 			}
 			angle = updateAngle(angle);
 		}
 		return result;
 	}
 
-	private WorldIcon createWorldObject(int x, int y) {
+	private WorldIcon createWorldIcon(int x, int y) {
 		return new WorldIcon(CoordinatesInWorld.from(x, y),
 				MapMarkers.STRONGHOLD);
 	}
 
 	private Point findStronghold(int x, int y) {
-		return world.getBiomeDataOracle().findValidLocation(x + 8, y + 8,
-				112, validBiomes, random);
+		return world.getBiomeDataOracle().findValidLocation(x + 8, y + 8, 112,
+				validBiomes, random);
 	}
 
 	private int getY(double angle, double distance) {

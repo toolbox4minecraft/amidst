@@ -24,10 +24,10 @@ public class SelectedIconWidget extends Widget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
-		WorldIcon selectedObject = map.getSelectedWorldObject();
-		if (selectedObject != null) {
-			message = selectedObject.toString();
-			icon = selectedObject.getImage();
+		WorldIcon selectedIcon = map.getSelectedWorldIcon();
+		if (selectedIcon != null) {
+			message = selectedIcon.toString();
+			icon = selectedIcon.getImage();
 		}
 
 		setWidth(45 + fontMetrics.stringWidth(message));
@@ -43,6 +43,6 @@ public class SelectedIconWidget extends Widget {
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		return map.getSelectedWorldObject() != null;
+		return map.getSelectedWorldIcon() != null;
 	}
 }
