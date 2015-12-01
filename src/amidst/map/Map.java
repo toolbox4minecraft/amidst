@@ -17,8 +17,8 @@ public class Map {
 
 	private WorldIcon selectedWorldIcon;
 
-	private Fragment startFragment;
-	private Point2D.Double startOnScreen = new Point2D.Double();
+	private volatile Fragment startFragment;
+	private volatile Point2D.Double startOnScreen = new Point2D.Double();
 
 	private int fragmentsPerRow;
 	private int fragmentsPerColumn;
@@ -49,9 +49,7 @@ public class Map {
 				/ fragmentSizeOnScreen + 2);
 		lockedAdjustNumberOfRowsAndColumns(fragmentSizeOnScreen,
 				desiredFragmentsPerRow, desiredFragmentsPerColumn);
-		if (startFragment != null) {
-			drawer.doDrawMap(startOnScreen, startFragment);
-		}
+		drawer.doDrawMap(startOnScreen, getStartFragment());
 	}
 
 	private void lockedAdjustNumberOfRowsAndColumns(
@@ -79,17 +77,12 @@ public class Map {
 		}
 		int newRight = newColumns - newLeft;
 		int newBelow = newRows - newAbove;
-		startFragment = startFragment.adjustRowsAndColumns(newAbove, newBelow,
-				newLeft, newRight, fragmentManager);
-		fragmentsPerRow = fragmentsPerRow + newLeft + newRight;
-		fragmentsPerColumn = fragmentsPerColumn + newAbove + newBelow;
+		initStartFragment(newLeft, newAbove, newRight, newBelow);
 	}
 
 	// TODO: Support longs?
 	private void lockedCenterOn(CoordinatesInWorld coordinates) {
-		if (startFragment != null) {
-			startFragment = startFragment.recycleAll(fragmentManager);
-		}
+		initStartFragment(coordinates);
 		int xCenterOnScreen = viewerWidth >> 1;
 		int yCenterOnScreen = viewerHeight >> 1;
 		long xFragmentRelative = coordinates.getXRelativeToFragment();
@@ -98,10 +91,6 @@ public class Map {
 				- zoom.worldToScreen(xFragmentRelative);
 		startOnScreen.y = yCenterOnScreen
 				- zoom.worldToScreen(yFragmentRelative);
-		startFragment = fragmentManager.requestFragment(coordinates
-				.toFragmentCorner());
-		fragmentsPerRow = 1;
-		fragmentsPerColumn = 1;
 	}
 
 	public void safeDraw(MapDrawer drawer) {
@@ -143,11 +132,9 @@ public class Map {
 
 	public Fragment getFragmentAt(CoordinatesInWorld coordinates) {
 		CoordinatesInWorld corner = coordinates.toFragmentCorner();
-		if (startFragment != null) {
-			for (Fragment fragment : startFragment) {
-				if (corner.equals(fragment.getCorner())) {
-					return fragment;
-				}
+		for (Fragment fragment : getStartFragment()) {
+			if (corner.equals(fragment.getCorner())) {
+				return fragment;
 			}
 		}
 		return null;
@@ -159,27 +146,25 @@ public class Map {
 		WorldIcon closestIcon = null;
 		double closestDistance = maxDistance;
 		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
-		if (startFragment != null) {
-			for (Fragment fragment : startFragment) {
-				for (LayerDeclaration declaration : layerManager
-						.getLayerDeclarations()) {
-					if (declaration.isVisible()) {
-						for (WorldIcon icon : fragment
-								.getWorldIcons(declaration.getLayerId())) {
-							double distance = getDistance(positionOnScreen,
-									xCornerOnScreen, yCornerOnScreen, icon);
-							if (closestDistance > distance) {
-								closestDistance = distance;
-								closestIcon = icon;
-							}
+		for (Fragment fragment : getStartFragment()) {
+			for (LayerDeclaration declaration : layerManager
+					.getLayerDeclarations()) {
+				if (declaration.isVisible()) {
+					for (WorldIcon icon : fragment.getWorldIcons(declaration
+							.getLayerId())) {
+						double distance = getDistance(positionOnScreen,
+								xCornerOnScreen, yCornerOnScreen, icon);
+						if (closestDistance > distance) {
+							closestDistance = distance;
+							closestIcon = icon;
 						}
 					}
 				}
-				xCornerOnScreen += fragmentSizeOnScreen;
-				if (fragment.isEndOfLine()) {
-					xCornerOnScreen = startOnScreen.x;
-					yCornerOnScreen += fragmentSizeOnScreen;
-				}
+			}
+			xCornerOnScreen += fragmentSizeOnScreen;
+			if (fragment.isEndOfLine()) {
+				xCornerOnScreen = startOnScreen.x;
+				yCornerOnScreen += fragmentSizeOnScreen;
 			}
 		}
 		return closestIcon;
@@ -199,8 +184,7 @@ public class Map {
 	}
 
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
-		// TODO: what to do if startFragment == null? ... should never happen
-		return startFragment.getCorner().add(
+		return getStartFragment().getCorner().add(
 				(long) zoom.screenToWorld(pointOnScreen.x - startOnScreen.x),
 				(long) zoom.screenToWorld(pointOnScreen.y - startOnScreen.y));
 	}
@@ -212,6 +196,31 @@ public class Map {
 		double scaledX = baseX - (baseX / oldScale) * newScale;
 		double scaledY = baseY - (baseY / oldScale) * newScale;
 		return new Point2D.Double(scaledX, scaledY);
+	}
+
+	private Fragment getStartFragment() {
+		if (startFragment == null) {
+			safeCenterOn(CoordinatesInWorld.origin());
+		}
+		return startFragment;
+	}
+
+	private void initStartFragment(int newLeft, int newAbove, int newRight,
+			int newBelow) {
+		startFragment = getStartFragment().adjustRowsAndColumns(newAbove,
+				newBelow, newLeft, newRight, fragmentManager);
+		fragmentsPerRow = fragmentsPerRow + newLeft + newRight;
+		fragmentsPerColumn = fragmentsPerColumn + newAbove + newBelow;
+	}
+
+	private void initStartFragment(CoordinatesInWorld coordinates) {
+		if (startFragment != null) {
+			startFragment.recycleAll(fragmentManager);
+		}
+		startFragment = fragmentManager.requestFragment(coordinates
+				.toFragmentCorner());
+		fragmentsPerRow = 1;
+		fragmentsPerColumn = 1;
 	}
 
 	private void reloadLayer(int layerId) {

@@ -13,7 +13,6 @@ import java.util.List;
 
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.map.widget.Widget;
-import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.resources.ResourceLoader;
 
 public class MapDrawer {
@@ -35,8 +34,6 @@ public class MapDrawer {
 			.getImage("dropshadow/inner_right.png");
 
 	private final Object drawLock = new Object();
-
-	private boolean isFirstDraw = true;
 
 	private Map map;
 	private MapMovement movement;
@@ -71,7 +68,6 @@ public class MapDrawer {
 			this.height = height;
 			this.mousePosition = mousePosition;
 			setViewerDimensions();
-			centerMapIfNecessary();
 			clear();
 			drawMap();
 			drawWidgets();
@@ -89,7 +85,6 @@ public class MapDrawer {
 			setViewerDimensions();
 			updateMapZoom();
 			updateMapMovement();
-			centerMapIfNecessary();
 			clear();
 			drawMap();
 			drawBorder();
@@ -108,13 +103,6 @@ public class MapDrawer {
 
 	private void updateMapMovement() {
 		movement.update(map, mousePosition);
-	}
-
-	private void centerMapIfNecessary() {
-		if (isFirstDraw) {
-			isFirstDraw = false;
-			map.safeCenterOn(CoordinatesInWorld.origin());
-		}
 	}
 
 	private void clear() {

@@ -185,16 +185,18 @@ public class Fragment implements Iterable<Fragment> {
 		return rightFragment == null;
 	}
 
-	public Fragment recycleAll(FragmentManager manager) {
+	public void recycleAll(FragmentManager manager) {
 		Fragment topLeft = getFirstColumn().getFirstRow();
 		while (topLeft != null) {
 			Fragment next = topLeft.belowFragment;
 			topLeft.deleteFirstRow(manager);
 			topLeft = next;
 		}
-		return topLeft;
 	}
 
+	/**
+	 * Returns the new fragment in the top left corner, but never null.
+	 */
 	public Fragment adjustRowsAndColumns(int newAbove, int newBelow,
 			int newLeft, int newRight, FragmentManager manager) {
 		Fragment firstColumn = getFirstColumn();
