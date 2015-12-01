@@ -1,4 +1,4 @@
-package amidst.map;
+package amidst.minecraft.world.icon;
 
 import java.awt.image.BufferedImage;
 

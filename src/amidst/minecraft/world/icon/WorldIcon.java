@@ -2,7 +2,6 @@ package amidst.minecraft.world.icon;
 
 import java.awt.image.BufferedImage;
 
-import amidst.map.DefaultWorldIconTypes;
 import amidst.minecraft.world.CoordinatesInWorld;
 
 public class WorldIcon {

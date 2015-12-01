@@ -2,7 +2,6 @@ package amidst.minecraft.world.icon;
 
 import java.util.List;
 
-import amidst.map.DefaultWorldIconTypes;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.World;
 

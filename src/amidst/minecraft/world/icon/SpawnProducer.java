@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.logging.Log;
-import amidst.map.DefaultWorldIconTypes;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;

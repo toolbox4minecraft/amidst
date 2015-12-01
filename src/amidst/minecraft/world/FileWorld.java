@@ -5,8 +5,8 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-import amidst.map.DefaultWorldIconTypes;
 import amidst.minecraft.MinecraftUtil;
+import amidst.minecraft.world.icon.DefaultWorldIconTypes;
 
 public class FileWorld extends World {
 	public static class Player {
