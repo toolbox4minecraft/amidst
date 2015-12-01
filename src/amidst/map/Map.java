@@ -144,10 +144,15 @@ public class Map {
 		return null;
 	}
 
-	private WorldIcon getWorldIconAt(Point positionOnScreen, double maxDistance) {
-		return new ClosestWorldIconFinder(getStartFragment(), startXOnScreen,
-				startYOnScreen, zoom, layerManager.getLayerDeclarations(),
-				maxDistance, positionOnScreen).getWorldIcon();
+	public void selectWorldIconAt(Point mouse, double maxDistance) {
+		this.selectedWorldIcon = getWorldIconAt(mouse, maxDistance);
+	}
+
+	private WorldIcon getWorldIconAt(Point positionOnScreen,
+			double maxDistanceOnScreen) {
+		return new ClosestWorldIconFinder(layerManager.getLayerDeclarations(),
+				screenToWorld(positionOnScreen), getStartFragment(),
+				zoom.screenToWorld(maxDistanceOnScreen)).getWorldIcon();
 	}
 
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
@@ -212,10 +217,6 @@ public class Map {
 
 	public WorldIcon getSelectedWorldIcon() {
 		return selectedWorldIcon;
-	}
-
-	public void selectWorldIconAt(Point mouse, double maxDistance) {
-		this.selectedWorldIcon = getWorldIconAt(mouse, maxDistance);
 	}
 
 	public FragmentManager getFragmentManager() {

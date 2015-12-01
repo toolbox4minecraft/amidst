@@ -1,15 +1,10 @@
 package amidst.minecraft.world;
 
+import java.awt.Point;
+
 import amidst.utilities.CoordinateUtils;
 
 public class CoordinatesInWorld {
-	public static CoordinatesInWorld from(long xAsResolution,
-			long yAsResolution, Resolution resolution) {
-		return new CoordinatesInWorld(
-				resolution.convertFromThisToWorld(xAsResolution),
-				resolution.convertFromThisToWorld(yAsResolution));
-	}
-
 	public static CoordinatesInWorld from(long xInWorld, long yInWorld) {
 		return new CoordinatesInWorld(xInWorld, yInWorld);
 	}
@@ -89,6 +84,25 @@ public class CoordinatesInWorld {
 
 	public CoordinatesInWorld toFragmentCorner() {
 		return from(getXCornerOfFragment(), getYCornerOfFragment());
+	}
+
+	public double getDistance(CoordinatesInWorld other) {
+		return Point.distance(xInWorld, yInWorld, other.xInWorld,
+				other.yInWorld);
+	}
+
+	public double getDistance(long xInWorld, long yInWorld) {
+		return Point.distance(this.xInWorld, this.yInWorld, xInWorld, yInWorld);
+	}
+
+	public double getDistanceSq(CoordinatesInWorld other) {
+		return Point.distanceSq(xInWorld, yInWorld, other.xInWorld,
+				other.yInWorld);
+	}
+
+	public double getDistanceSq(long xInWorld, long yInWorld) {
+		return Point.distanceSq(this.xInWorld, this.yInWorld, xInWorld,
+				yInWorld);
 	}
 
 	public CoordinatesInWorld add(CoordinatesInWorld other) {

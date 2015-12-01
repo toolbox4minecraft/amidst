@@ -1,7 +1,5 @@
 package amidst.map;
 
-import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.List;
 
 import amidst.fragment.layer.LayerDeclaration;
@@ -9,70 +7,47 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.icon.WorldIcon;
 
 public class ClosestWorldIconFinder {
-	private final Fragment startFragment;
-	private final double startXOnScreen;
-	private final MapZoom zoom;
 	private final List<LayerDeclaration> layerDeclarations;
-	private double xCornerOnScreen;
-	private double yCornerOnScreen;
-	private final double fragmentSizeOnScreen;
+	private final CoordinatesInWorld positionInWorld;
+	private final Fragment startFragment;
 	private WorldIcon closestIcon;
 	private double closestDistanceSq;
-	private Point positionOnScreen;
 
-	public ClosestWorldIconFinder(Fragment startFragment,
-			double startXOnScreen, double startYOnScreen, MapZoom zoom,
-			List<LayerDeclaration> layerDeclarations, double maxDistance,
-			Point positionOnScreen) {
-		this.startFragment = startFragment;
-		this.startXOnScreen = startXOnScreen;
-		this.xCornerOnScreen = startXOnScreen;
-		this.yCornerOnScreen = startYOnScreen;
-		this.zoom = zoom;
+	public ClosestWorldIconFinder(List<LayerDeclaration> layerDeclarations,
+			CoordinatesInWorld positionInWorld, Fragment startFragment,
+			double maxDistanceInWorld) {
 		this.layerDeclarations = layerDeclarations;
-		this.positionOnScreen = positionOnScreen;
-		this.fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
+		this.positionInWorld = positionInWorld;
+		this.startFragment = startFragment;
 		this.closestIcon = null;
-		this.closestDistanceSq = maxDistance * maxDistance;
-		findClosest();
+		this.closestDistanceSq = maxDistanceInWorld * maxDistanceInWorld;
+		find();
 	}
 
-	private void findClosest() {
+	private void find() {
 		for (Fragment fragment : startFragment) {
 			for (LayerDeclaration declaration : layerDeclarations) {
 				if (declaration.isVisible()) {
-					for (WorldIcon icon : fragment.getWorldIcons(declaration
-							.getLayerId())) {
-						updateClosestDistance(icon);
+					int layerId = declaration.getLayerId();
+					for (WorldIcon icon : fragment.getWorldIcons(layerId)) {
+						updateClosest(icon);
 					}
 				}
 			}
-			fragmentFinished(fragment);
 		}
 	}
 
-	private void updateClosestDistance(WorldIcon icon) {
-		double distanceSq = getDistanceSq(icon);
+	private void updateClosest(WorldIcon icon) {
+		double distanceSq = icon.getCoordinates()
+				.getDistanceSq(positionInWorld);
 		if (closestDistanceSq > distanceSq) {
 			closestDistanceSq = distanceSq;
 			closestIcon = icon;
 		}
 	}
 
-	private void fragmentFinished(Fragment fragment) {
-		xCornerOnScreen += fragmentSizeOnScreen;
-		if (fragment.isEndOfLine()) {
-			xCornerOnScreen = startXOnScreen;
-			yCornerOnScreen += fragmentSizeOnScreen;
-		}
-	}
-
-	private double getDistanceSq(WorldIcon icon) {
-		CoordinatesInWorld coordinates = icon.getCoordinates();
-		double x = zoom.worldToScreen(coordinates.getXRelativeToFragment());
-		double y = zoom.worldToScreen(coordinates.getYRelativeToFragment());
-		return Point2D.distanceSq(xCornerOnScreen + x, yCornerOnScreen + y,
-				positionOnScreen.x, positionOnScreen.y);
+	public boolean hasResult() {
+		return closestIcon != null;
 	}
 
 	public WorldIcon getWorldIcon() {
