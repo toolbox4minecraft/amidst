@@ -3,6 +3,7 @@ package amidst.map;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import amidst.Options;
 import amidst.fragment.colorprovider.BiomeColorProvider;
@@ -29,12 +30,21 @@ public class LayerContainerFactory {
 	private final LayerContainer layerContainer;
 
 	public LayerContainerFactory(Options options, World world, Map map) {
+		List<AtomicBoolean> invalidatedLayers = createInvalidatedLayers();
 		List<LayerDeclaration> declarations = createDeclarations(options);
 		List<FragmentConstructor> constructors = createConstructors(declarations);
 		List<FragmentLoader> loaders = createLoaders(declarations, world, map);
 		List<FragmentDrawer> drawers = createDrawers(declarations, map);
-		this.layerContainer = new LayerContainer(declarations, constructors,
-				loaders, drawers);
+		this.layerContainer = new LayerContainer(invalidatedLayers,
+				declarations, constructors, loaders, drawers);
+	}
+
+	private List<AtomicBoolean> createInvalidatedLayers() {
+		AtomicBoolean[] invalidatedLayers = new AtomicBoolean[LayerId.NUMBER_OF_LAYERS];
+		for (int i = 0; i < LayerId.NUMBER_OF_LAYERS; i++) {
+			invalidatedLayers[i] = new AtomicBoolean(false);
+		}
+		return Collections.unmodifiableList(Arrays.asList(invalidatedLayers));
 	}
 
 	private List<LayerDeclaration> createDeclarations(Options options) {

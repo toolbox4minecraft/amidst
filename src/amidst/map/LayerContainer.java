@@ -1,7 +1,5 @@
 package amidst.map;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -17,16 +15,11 @@ public class LayerContainer {
 	private final List<FragmentLoader> loaders;
 	private final List<FragmentDrawer> drawers;
 
-	public LayerContainer(List<LayerDeclaration> declarations,
+	public LayerContainer(List<AtomicBoolean> invalidatedLayers,
+			List<LayerDeclaration> declarations,
 			List<FragmentConstructor> constructors,
 			List<FragmentLoader> loaders, List<FragmentDrawer> drawers) {
-		List<AtomicBoolean> invalidatedLayers = new ArrayList<AtomicBoolean>(
-				declarations.size());
-		for (int i = 0; i < declarations.size(); i++) {
-			invalidatedLayers.add(new AtomicBoolean(false));
-		}
-		this.invalidatedLayers = Collections
-				.unmodifiableList(invalidatedLayers);
+		this.invalidatedLayers = invalidatedLayers;
 		this.declarations = declarations;
 		this.constructors = constructors;
 		this.loaders = loaders;
