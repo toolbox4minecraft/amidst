@@ -30,6 +30,10 @@ public class Layer {
 		return isVisiblePreference.get();
 	}
 
+	public PrefModel<Boolean> getIsVisiblePreference() {
+		return isVisiblePreference;
+	}
+
 	public FragmentConstructor getFragmentConstructor() {
 		return constructor;
 	}

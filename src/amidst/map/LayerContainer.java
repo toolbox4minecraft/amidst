@@ -4,23 +4,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import amidst.fragment.constructor.FragmentConstructor;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.loader.FragmentLoader;
 import amidst.map.layer.Layer;
 import amidst.map.layer.LayerType;
+import amidst.preferences.PrefModel;
 
 public class LayerContainer {
 	private final List<Layer> layers;
-	private final boolean[] invalidatedLayers;
+	private final List<AtomicBoolean> invalidatedLayers;
+	private final List<PrefModel<Boolean>> isVisiblePreferences;
 	private final List<FragmentConstructor> constructors;
 	private final List<FragmentLoader> loaders;
 	private final List<FragmentDrawer> drawers;
 
 	public LayerContainer(Layer... layers) {
-		this.layers = Collections.unmodifiableList(Arrays.asList(layers));
-		invalidatedLayers = new boolean[layers.length];
+		List<PrefModel<Boolean>> isVisiblePreferences = new ArrayList<PrefModel<Boolean>>(
+				layers.length);
+		List<AtomicBoolean> invalidatedLayers = new ArrayList<AtomicBoolean>(
+				layers.length);
 		List<FragmentConstructor> constructor = new ArrayList<FragmentConstructor>(
 				layers.length);
 		List<FragmentLoader> loader = new ArrayList<FragmentLoader>(
@@ -28,10 +33,17 @@ public class LayerContainer {
 		List<FragmentDrawer> drawer = new ArrayList<FragmentDrawer>(
 				layers.length);
 		for (Layer layer : layers) {
+			invalidatedLayers.add(new AtomicBoolean(false));
+			isVisiblePreferences.add(layer.getIsVisiblePreference());
 			constructor.add(layer.getFragmentConstructor());
 			loader.add(layer.getFragmentLoader());
 			drawer.add(layer.getFragmentDrawer());
 		}
+		this.layers = Collections.unmodifiableList(Arrays.asList(layers));
+		this.invalidatedLayers = Collections
+				.unmodifiableList(invalidatedLayers);
+		this.isVisiblePreferences = Collections
+				.unmodifiableList(isVisiblePreferences);
 		this.constructors = Collections.unmodifiableList(constructor);
 		this.loaders = Collections.unmodifiableList(loader);
 		this.drawers = Collections.unmodifiableList(drawer);
@@ -42,13 +54,13 @@ public class LayerContainer {
 	}
 
 	public void clearInvalidatedLayers() {
-		for (int i = 0; i < invalidatedLayers.length; i++) {
-			invalidatedLayers[i] = false;
+		for (AtomicBoolean invalidatedLayer : invalidatedLayers) {
+			invalidatedLayer.set(false);
 		}
 	}
 
 	public void invalidateLayer(LayerType layerType) {
-		invalidatedLayers[layerType.ordinal()] = true;
+		invalidatedLayers.get(layerType.ordinal()).set(true);
 	}
 
 	public void constructAll(Fragment fragment) {
@@ -65,7 +77,7 @@ public class LayerContainer {
 
 	public void reloadInvalidated(Fragment fragment) {
 		for (int i = 0; i < loaders.size(); i++) {
-			if (invalidatedLayers[i]) {
+			if (invalidatedLayers.get(i).get()) {
 				loaders.get(i).reload(fragment);
 			}
 		}
