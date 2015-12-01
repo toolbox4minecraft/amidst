@@ -38,7 +38,7 @@ public class Map {
 		this.biomeSelection = biomeSelection;
 		this.fragmentManager = fragmentManager;
 		this.layerManager = layerManagerFactory.createLayerManager(world, this);
-		fragmentManager.setLayerManager(layerManager);
+		this.fragmentManager.setLayerManager(layerManager);
 	}
 
 	private void lockedDraw(MapDrawer drawer) {

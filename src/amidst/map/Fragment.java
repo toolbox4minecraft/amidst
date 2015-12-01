@@ -35,9 +35,8 @@ public class Fragment implements Iterable<Fragment> {
 		}
 
 		private void updateCurrentNode() {
-			if (currentNode.rightFragment != null) {
-				currentNode = currentNode.rightFragment;
-			} else {
+			currentNode = currentNode.rightFragment;
+			if (currentNode == null) {
 				rowStart = rowStart.belowFragment;
 				currentNode = rowStart;
 			}
@@ -46,16 +45,16 @@ public class Fragment implements Iterable<Fragment> {
 
 	public static final int SIZE = Resolution.FRAGMENT.getStep();
 
-	private boolean isInitialized = false;
-	private boolean isLoaded = false;
-	private CoordinatesInWorld corner;
-	private Fragment leftFragment = null;
-	private Fragment rightFragment = null;
-	private Fragment aboveFragment = null;
-	private Fragment belowFragment = null;
+	private volatile boolean isInitialized = false;
+	private volatile boolean isLoaded = false;
+	private volatile CoordinatesInWorld corner;
+	private volatile Fragment leftFragment = null;
+	private volatile Fragment rightFragment = null;
+	private volatile Fragment aboveFragment = null;
+	private volatile Fragment belowFragment = null;
 
-	private float alpha;
-	private short[][] biomeData;
+	private volatile float alpha;
+	private volatile short[][] biomeData;
 
 	private final AtomicReferenceArray<BufferedImage> images;
 	private final AtomicReferenceArray<List<WorldIcon>> worldIcons;
