@@ -91,8 +91,8 @@ public class LayerContainerFactory {
 	public LayerContainer createLayerContainer(World world, Map map) {
 		List<FragmentLoader> loaders = createLoaders(declarations, world, map);
 		List<FragmentDrawer> drawers = createDrawers(declarations, map);
-		return new LayerContainer(invalidatedLayers, declarations,
-				constructors, loaders, drawers);
+		return new LayerContainer(invalidatedLayers, declarations, loaders,
+				drawers);
 	}
 
 	private List<FragmentLoader> createLoaders(
