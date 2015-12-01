@@ -14,12 +14,11 @@ public class FragmentCache {
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<Fragment>();
 	private final ConcurrentLinkedQueue<Fragment> resetQueue = new ConcurrentLinkedQueue<Fragment>();
 	private final List<Fragment> cache = new LinkedList<Fragment>();
-	private final LayerContainerFactoryFactory layerContainerFactoryFactory;
+	private final LayerContainerFactory layerContainerFactory;
 	private LayerContainer layerContainer;
 
-	public FragmentCache(
-			LayerContainerFactoryFactory layerContainerFactoryFactory) {
-		this.layerContainerFactoryFactory = layerContainerFactoryFactory;
+	public FragmentCache(LayerContainerFactory layerContainerFactory) {
+		this.layerContainerFactory = layerContainerFactory;
 	}
 
 	public void increaseSize() {
@@ -55,8 +54,7 @@ public class FragmentCache {
 	}
 
 	public FragmentManager createFragmentManager(World world, Map map) {
-		layerContainer = layerContainerFactoryFactory.create(world, map)
-				.createLayerContainer();
+		layerContainer = layerContainerFactory.createLayerContainer(world, map);
 		FragmentQueueProcessor fragmentLoader = new FragmentQueueProcessor(
 				availableQueue, loadingQueue, resetQueue, layerContainer);
 		return new FragmentManager(availableQueue, loadingQueue, resetQueue,

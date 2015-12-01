@@ -10,7 +10,7 @@ import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.Log;
 import amidst.map.FragmentCache;
-import amidst.map.LayerContainerFactoryFactory;
+import amidst.map.LayerContainerFactory;
 import amidst.map.SkinLoader;
 import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.LocalMinecraftInstallation;
@@ -28,7 +28,7 @@ public class Application {
 	private SeedHistoryLogger seedHistoryLogger;
 	private UpdatePrompt updateManager = new UpdatePrompt();
 	private FragmentCache fragmentCache = new FragmentCache(
-			new LayerContainerFactoryFactory(getOptions()));
+			new LayerContainerFactory(getOptions()));
 
 	private VersionSelectWindow versionSelectWindow;
 	private MapWindow mapWindow;

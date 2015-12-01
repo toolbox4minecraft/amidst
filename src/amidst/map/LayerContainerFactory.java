@@ -27,16 +27,14 @@ import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 
 public class LayerContainerFactory {
-	private final LayerContainer layerContainer;
+	private final List<AtomicBoolean> invalidatedLayers;
+	private final List<LayerDeclaration> declarations;
+	private final List<FragmentConstructor> constructors;
 
-	public LayerContainerFactory(Options options, World world, Map map) {
-		List<AtomicBoolean> invalidatedLayers = createInvalidatedLayers();
-		List<LayerDeclaration> declarations = createDeclarations(options);
-		List<FragmentConstructor> constructors = createConstructors(declarations);
-		List<FragmentLoader> loaders = createLoaders(declarations, world, map);
-		List<FragmentDrawer> drawers = createDrawers(declarations, map);
-		this.layerContainer = new LayerContainer(invalidatedLayers,
-				declarations, constructors, loaders, drawers);
+	public LayerContainerFactory(Options options) {
+		this.invalidatedLayers = createInvalidatedLayers();
+		this.declarations = createDeclarations(options);
+		this.constructors = createConstructors(declarations);
 	}
 
 	private List<AtomicBoolean> createInvalidatedLayers() {
@@ -82,6 +80,21 @@ public class LayerContainerFactory {
 		return Collections.unmodifiableList(Arrays.asList(constructors));
 	}
 
+	public List<LayerDeclaration> getDeclarations() {
+		return declarations;
+	}
+
+	public List<FragmentConstructor> getConstructors() {
+		return constructors;
+	}
+
+	public LayerContainer createLayerContainer(World world, Map map) {
+		List<FragmentLoader> loaders = createLoaders(declarations, world, map);
+		List<FragmentDrawer> drawers = createDrawers(declarations, map);
+		return new LayerContainer(invalidatedLayers, declarations,
+				constructors, loaders, drawers);
+	}
+
 	private List<FragmentLoader> createLoaders(
 			List<LayerDeclaration> declarations, World world, Map map) {
 		FragmentLoader[] loaders = new FragmentLoader[LayerId.NUMBER_OF_LAYERS];
@@ -116,9 +129,5 @@ public class LayerContainerFactory {
 		drawers[LayerId.PLAYER]                = new WorldObjectDrawer(declarations.get(LayerId.PLAYER), map);
 		// @formatter:on
 		return Collections.unmodifiableList(Arrays.asList(drawers));
-	}
-
-	public LayerContainer createLayerContainer() {
-		return layerContainer;
 	}
 }
