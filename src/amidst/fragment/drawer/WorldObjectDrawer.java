@@ -12,12 +12,12 @@ import amidst.minecraft.world.object.WorldObject;
 
 public class WorldObjectDrawer implements FragmentDrawer {
 	private final AffineTransform worldObjectLayerMatrix = new AffineTransform();
-	private final Map map;
 	private final LayerType layerType;
+	private final Map map;
 
-	public WorldObjectDrawer(Map map, LayerType layerType) {
-		this.map = map;
+	public WorldObjectDrawer(LayerType layerType, Map map) {
 		this.layerType = layerType;
+		this.map = map;
 	}
 
 	@Override

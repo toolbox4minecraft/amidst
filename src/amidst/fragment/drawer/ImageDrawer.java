@@ -10,12 +10,12 @@ import amidst.minecraft.world.Resolution;
 
 public class ImageDrawer implements FragmentDrawer {
 	private final AffineTransform imageLayerMatrix = new AffineTransform();
-	private final Resolution resolution;
 	private final LayerType layerType;
+	private final Resolution resolution;
 
-	public ImageDrawer(Resolution resolution, LayerType layerType) {
-		this.resolution = resolution;
+	public ImageDrawer(LayerType layerType, Resolution resolution) {
 		this.layerType = layerType;
+		this.resolution = resolution;
 	}
 
 	@Override

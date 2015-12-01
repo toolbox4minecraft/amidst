@@ -47,7 +47,7 @@ public class LayerContainerFactory {
 		return new Layer(layerType, options.showBiomes,
 				new BiomeDataConstructor(layerType, resolution),
 				new BiomeDataLoader(layerType, new BiomeColorProvider(map), resolution, world.getBiomeDataOracle()),
-				new ImageDrawer(resolution, layerType));
+				new ImageDrawer(layerType, resolution));
 	}
 
 	private Layer createSlimeLayer(World world) {
@@ -56,7 +56,7 @@ public class LayerContainerFactory {
 		return new Layer(layerType, options.showSlimeChunks,
 				new ImageConstructor(layerType, resolution),
 				new ImageLoader(layerType, new SlimeColorProvider(world), resolution),
-				new ImageDrawer(resolution, layerType));
+				new ImageDrawer(layerType, resolution));
 	}
 
 	private Layer createGridLayer(Map map) {
@@ -71,7 +71,7 @@ public class LayerContainerFactory {
 		return new Layer(layerType, options.showVillages,
 				new DummyConstructor(),
 				new WorldObjectLoader(layerType, world.getVillageProducer()),
-				new WorldObjectDrawer(map, layerType));
+				new WorldObjectDrawer(layerType, map));
 	}
 
 	private Layer createOceanMonumentLayer(World world, Map map) {
@@ -79,7 +79,7 @@ public class LayerContainerFactory {
 		return new Layer(layerType, options.showOceanMonuments,
 				new DummyConstructor(),
 				new WorldObjectLoader(layerType, world.getOceanMonumentProducer()),
-				new WorldObjectDrawer(map, layerType));
+				new WorldObjectDrawer(layerType, map));
 	}
 
 	private Layer createStrongholdLayer(World world, Map map) {
@@ -87,7 +87,7 @@ public class LayerContainerFactory {
 		return new Layer(layerType, options.showStrongholds,
 				new DummyConstructor(),
 				new WorldObjectLoader(layerType, world.getStrongholdProducer()),
-				new WorldObjectDrawer(map, layerType));
+				new WorldObjectDrawer(layerType, map));
 	}
 
 	private Layer createTempleLayer(World world, Map map) {
@@ -95,7 +95,7 @@ public class LayerContainerFactory {
 		return new Layer(layerType, options.showTemples,
 				new DummyConstructor(),
 				new WorldObjectLoader(layerType, world.getTempleProducer()),
-				new WorldObjectDrawer(map, layerType));
+				new WorldObjectDrawer(layerType, map));
 	}
 
 	private Layer createSpawnLayer(World world, Map map) {
@@ -103,7 +103,7 @@ public class LayerContainerFactory {
 		return new Layer(layerType, options.showSpawn,
 				new DummyConstructor(),
 				new WorldObjectLoader(layerType, world.getSpawnProducer()),
-				new WorldObjectDrawer(map, layerType));
+				new WorldObjectDrawer(layerType, map));
 	}
 
 	private Layer createNetherFortressLayer(World world, Map map) {
@@ -111,7 +111,7 @@ public class LayerContainerFactory {
 		return new Layer(layerType, options.showNetherFortresses,
 				new DummyConstructor(),
 				new WorldObjectLoader(layerType, world.getNetherFortressProducer()),
-				new WorldObjectDrawer(map, layerType));
+				new WorldObjectDrawer(layerType, map));
 	}
 
 	private Layer createPlayerLayer(World world, Map map) {
@@ -119,7 +119,7 @@ public class LayerContainerFactory {
 		return new Layer(layerType, options.showPlayers,
 				new DummyConstructor(),
 				new WorldObjectLoader(layerType, world.getPlayerProducer()),
-				new WorldObjectDrawer(map, layerType));
+				new WorldObjectDrawer(layerType, map));
 	}
 	// @formatter:on
 }
