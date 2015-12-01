@@ -56,10 +56,11 @@ public class LayerContainerFactory {
 			PrefModel<Boolean> isVisiblePreference,
 			BiomeColorProvider colorProvider, Resolution resolution,
 			BiomeDataOracle biomeDataOracle) {
-		return new Layer(layerType, isVisiblePreference, new ImageDrawer(
-				resolution, layerType), new BiomeDataConstructor(layerType,
-				resolution), new BiomeDataLoader(layerType, colorProvider,
-				resolution, biomeDataOracle));
+		return new Layer(layerType, isVisiblePreference,
+				new BiomeDataConstructor(layerType, resolution),
+				new BiomeDataLoader(layerType, colorProvider, resolution,
+						biomeDataOracle),
+				new ImageDrawer(resolution, layerType));
 	}
 
 	private Layer createSlimeLayer(World world) {
@@ -70,10 +71,10 @@ public class LayerContainerFactory {
 	private Layer doCreateImageLayer(LayerType layerType,
 			BooleanPrefModel isVisiblePreference,
 			SlimeColorProvider colorProvider, Resolution resolution) {
-		return new Layer(layerType, isVisiblePreference, new ImageDrawer(
-				resolution, layerType), new ImageConstructor(layerType,
-				resolution), new ImageLoader(layerType, colorProvider,
-				resolution));
+		return new Layer(layerType, isVisiblePreference, new ImageConstructor(
+				layerType, resolution), new ImageLoader(layerType,
+				colorProvider, resolution), new ImageDrawer(resolution,
+				layerType));
 	}
 
 	private Layer createGridLayer(Map map) {
@@ -82,8 +83,8 @@ public class LayerContainerFactory {
 
 	private Layer doCreateGridLayer(LayerType layerType,
 			BooleanPrefModel isVisiblePreference, Map map) {
-		return new Layer(layerType, isVisiblePreference, new GridDrawer(map),
-				new DummyConstructor(), new DummyLoader());
+		return new Layer(layerType, isVisiblePreference,
+				new DummyConstructor(), new DummyLoader(), new GridDrawer(map));
 	}
 
 	private Layer createVillageLayer(World world, Map map) {
@@ -126,8 +127,8 @@ public class LayerContainerFactory {
 	private Layer doCreateWorldObjectLayer(LayerType layerType,
 			BooleanPrefModel isVisiblePreference, Map map,
 			WorldObjectProducer producer) {
-		return new Layer(layerType, isVisiblePreference, new WorldObjectDrawer(
-				map, layerType), new DummyConstructor(), new WorldObjectLoader(
-				layerType, producer));
+		return new Layer(layerType, isVisiblePreference,
+				new DummyConstructor(), new WorldObjectLoader(layerType,
+						producer), new WorldObjectDrawer(map, layerType));
 	}
 }

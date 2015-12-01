@@ -8,18 +8,18 @@ import amidst.preferences.PrefModel;
 public class Layer {
 	private final LayerType layerType;
 	private final PrefModel<Boolean> isVisiblePreference;
-	private final FragmentDrawer drawer;
 	private final FragmentConstructor constructor;
 	private final FragmentLoader loader;
+	private final FragmentDrawer drawer;
 
 	public Layer(LayerType layerType, PrefModel<Boolean> isVisiblePreference,
-			FragmentDrawer drawer, FragmentConstructor constructor,
-			FragmentLoader loader) {
+			FragmentConstructor constructor, FragmentLoader loader,
+			FragmentDrawer drawer) {
 		this.layerType = layerType;
 		this.isVisiblePreference = isVisiblePreference;
-		this.drawer = drawer;
 		this.constructor = constructor;
 		this.loader = loader;
+		this.drawer = drawer;
 	}
 
 	public LayerType getLayerType() {
@@ -30,15 +30,15 @@ public class Layer {
 		return isVisiblePreference.get();
 	}
 
-	public FragmentDrawer getFragmentDrawer() {
-		return drawer;
-	}
-
 	public FragmentConstructor getFragmentConstructor() {
 		return constructor;
 	}
 
 	public FragmentLoader getFragmentLoader() {
 		return loader;
+	}
+
+	public FragmentDrawer getFragmentDrawer() {
+		return drawer;
 	}
 }
