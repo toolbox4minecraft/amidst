@@ -1,6 +1,6 @@
 package amidst.fragment.layer;
 
-public class LayerId {
+public class LayerIds {
 	public static final int BIOME = 0;
 	public static final int SLIME = 1;
 	public static final int GRID = 2;
