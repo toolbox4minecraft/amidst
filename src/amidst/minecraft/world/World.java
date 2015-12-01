@@ -2,16 +2,16 @@ package amidst.minecraft.world;
 
 import java.util.List;
 
-import amidst.minecraft.world.object.CachedWorldObjectProducer;
-import amidst.minecraft.world.object.NetherFortressProducer;
-import amidst.minecraft.world.object.OceanMonumentProducer;
-import amidst.minecraft.world.object.PlayerProducer;
-import amidst.minecraft.world.object.SpawnProducer;
-import amidst.minecraft.world.object.StrongholdProducer;
-import amidst.minecraft.world.object.TempleProducer;
-import amidst.minecraft.world.object.VillageProducer;
-import amidst.minecraft.world.object.WorldIcon;
-import amidst.minecraft.world.object.WorldIconProducer;
+import amidst.minecraft.world.icon.CachedWorldObjectProducer;
+import amidst.minecraft.world.icon.NetherFortressProducer;
+import amidst.minecraft.world.icon.OceanMonumentProducer;
+import amidst.minecraft.world.icon.PlayerProducer;
+import amidst.minecraft.world.icon.SpawnProducer;
+import amidst.minecraft.world.icon.StrongholdProducer;
+import amidst.minecraft.world.icon.TempleProducer;
+import amidst.minecraft.world.icon.VillageProducer;
+import amidst.minecraft.world.icon.WorldIcon;
+import amidst.minecraft.world.icon.WorldIconProducer;
 
 public abstract class World {
 	private final BiomeDataOracle biomeDataOracle = new BiomeDataOracle();

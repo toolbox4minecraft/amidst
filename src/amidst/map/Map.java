@@ -11,7 +11,7 @@ import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerManagerFactory;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
-import amidst.minecraft.world.object.WorldIcon;
+import amidst.minecraft.world.icon.WorldIcon;
 
 public class Map {
 	private WorldIcon selectedWorldObject;

@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.minecraft.world.World;
-import amidst.minecraft.world.object.WorldIcon;
+import amidst.minecraft.world.icon.WorldIcon;
 
 public class SelectedIconWidget extends Widget {
 	private String message = "";

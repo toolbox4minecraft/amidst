@@ -10,7 +10,7 @@ import amidst.Options;
 import amidst.minecraft.world.BiomeDataOracle;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
-import amidst.minecraft.world.object.WorldIcon;
+import amidst.minecraft.world.icon.WorldIcon;
 
 public class Fragment implements Iterable<Fragment> {
 	private static class FragmentIterator implements Iterator<Fragment> {

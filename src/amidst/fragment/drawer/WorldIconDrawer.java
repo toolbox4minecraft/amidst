@@ -8,7 +8,7 @@ import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
 import amidst.map.Map;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.object.WorldIcon;
+import amidst.minecraft.world.icon.WorldIcon;
 
 public class WorldIconDrawer extends FragmentDrawer {
 	private final AffineTransform worldObjectLayerMatrix = new AffineTransform();

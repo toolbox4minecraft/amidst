@@ -11,7 +11,7 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.WorldType;
 import amidst.minecraft.world.Worlds;
-import amidst.minecraft.world.object.WorldIcon;
+import amidst.minecraft.world.icon.WorldIcon;
 
 public class MenuActions {
 	private static final String ABOUT_MESSAGE = "Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"

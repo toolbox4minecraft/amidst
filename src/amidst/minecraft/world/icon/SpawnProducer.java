@@ -1,4 +1,4 @@
-package amidst.minecraft.world.object;
+package amidst.minecraft.world.icon;
 
 import java.awt.Point;
 import java.util.Arrays;
