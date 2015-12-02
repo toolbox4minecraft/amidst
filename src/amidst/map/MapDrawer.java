@@ -114,7 +114,7 @@ public class MapDrawer {
 	}
 
 	public void doDrawMap(double startXOnScreen, double startYOnScreen,
-			Fragment startFragment) {
+			FragmentGraph graph) {
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -122,8 +122,8 @@ public class MapDrawer {
 		AffineTransform originalGraphicsTransform = g2d.getTransform();
 		initOriginalLayerMatrix(originalGraphicsTransform, startXOnScreen,
 				startYOnScreen, zoom.getCurrentValue());
-		prepareDraw(startFragment);
-		drawLayers(startFragment);
+		prepareDraw(graph);
+		drawLayers(graph);
 		g2d.setTransform(originalGraphicsTransform);
 	}
 
@@ -135,23 +135,23 @@ public class MapDrawer {
 		originalLayerMatrix.scale(scale, scale);
 	}
 
-	private void prepareDraw(Fragment startFragment) {
-		for (Fragment fragment : startFragment) {
+	private void prepareDraw(FragmentGraph graph) {
+		for (Fragment fragment : graph.getStartFragment()) {
 			fragment.prepareDraw(time);
 		}
 	}
 
-	private void drawLayers(Fragment startFragment) {
+	private void drawLayers(FragmentGraph graph) {
 		for (FragmentDrawer drawer : drawers) {
 			if (drawer.getLayerDeclaration().isVisible()) {
 				initLayerMatrix();
-				for (Fragment fragment : startFragment) {
+				for (Fragment fragment : graph.getStartFragment()) {
 					if (fragment.isLoaded()) {
 						setAlphaComposite(fragment.getAlpha());
 						g2d.setTransform(layerMatrix);
 						drawer.draw(fragment, g2d);
 					}
-					updateLayerMatrix(fragment);
+					updateLayerMatrix(fragment, graph.getFragmentsPerRow());
 				}
 			}
 		}
@@ -162,10 +162,10 @@ public class MapDrawer {
 		layerMatrix.setTransform(originalLayerMatrix);
 	}
 
-	private void updateLayerMatrix(Fragment fragment) {
+	private void updateLayerMatrix(Fragment fragment, int fragmentsPerRow) {
 		layerMatrix.translate(Fragment.SIZE, 0);
 		if (fragment.isEndOfLine()) {
-			layerMatrix.translate(-Fragment.SIZE * map.getFragmentsPerRow(),
+			layerMatrix.translate(-Fragment.SIZE * fragmentsPerRow,
 					Fragment.SIZE);
 		}
 	}

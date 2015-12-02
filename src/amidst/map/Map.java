@@ -45,8 +45,7 @@ public class Map {
 				/ fragmentSizeOnScreen + 2);
 		lockedAdjustNumberOfRowsAndColumns(fragmentSizeOnScreen,
 				desiredFragmentsPerRow, desiredFragmentsPerColumn);
-		drawer.doDrawMap(startXOnScreen, startYOnScreen,
-				graph.getStartFragment());
+		drawer.doDrawMap(startXOnScreen, startYOnScreen, graph);
 	}
 
 	private void lockedAdjustNumberOfRowsAndColumns(
