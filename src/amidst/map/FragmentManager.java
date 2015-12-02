@@ -17,7 +17,7 @@ public class FragmentManager {
 	public FragmentManager(Iterable<FragmentConstructor> constructors,
 			int numberOfLayers) {
 		this.cache = new FragmentCache(availableQueue, loadingQueue,
-				resetQueue, constructors, numberOfLayers);
+				constructors, numberOfLayers);
 	}
 
 	public Fragment requestFragment(CoordinatesInWorld coordinates) {
@@ -41,13 +41,6 @@ public class FragmentManager {
 	public void reloadAll() {
 		loadingQueue.clear();
 		cache.reloadAll();
-	}
-
-	public void reset() {
-		availableQueue.clear();
-		loadingQueue.clear();
-		resetQueue.clear();
-		cache.resetAll();
 	}
 
 	public int getAvailableQueueSize() {

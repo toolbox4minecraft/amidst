@@ -179,9 +179,7 @@ public class Map {
 	}
 
 	private void initStartFragment(CoordinatesInWorld coordinates) {
-		if (startFragment != null) {
-			startFragment.recycleAll(fragmentManager);
-		}
+		recycleAll();
 		startFragment = fragmentManager.requestFragment(coordinates
 				.toFragmentCorner());
 		fragmentsPerRow = 1;
@@ -194,7 +192,13 @@ public class Map {
 	}
 
 	private void lockedDispose() {
-		fragmentManager.reset();
+		recycleAll();
+	}
+
+	private void recycleAll() {
+		if (startFragment != null) {
+			startFragment.recycleAll(fragmentManager);
+		}
 	}
 
 	public double getZoom() {
