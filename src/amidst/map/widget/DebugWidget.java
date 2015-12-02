@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amidst.Options;
+import amidst.map.FragmentGraph;
 import amidst.map.FragmentManager;
 import amidst.map.Map;
 import amidst.map.MapViewer;
@@ -20,7 +21,9 @@ public class DebugWidget extends Widget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
-		List<String> panelLines = getPanelLines(map.getFragmentManager());
+		FragmentGraph graph = map.getGraph();
+		List<String> panelLines = getPanelLines(graph,
+				graph.getFragmentManager());
 		int width = getPanelWidth(panelLines, fontMetrics);
 		int height = getPanelHeight(panelLines);
 		setWidth(width);
@@ -29,7 +32,8 @@ public class DebugWidget extends Widget {
 		drawPanelLines(g2d, panelLines);
 	}
 
-	private List<String> getPanelLines(FragmentManager fragmentManager) {
+	private List<String> getPanelLines(FragmentGraph graph,
+			FragmentManager fragmentManager) {
 		List<String> panelLines = new ArrayList<String>();
 		panelLines.add("Fragment Manager:");
 		panelLines.add("Cache Size: " + fragmentManager.getCacheSize());
@@ -41,9 +45,9 @@ public class DebugWidget extends Widget {
 				+ fragmentManager.getResetQueueSize());
 		panelLines.add("");
 		panelLines.add("Map Viewer:");
-		panelLines.add("Map Size: " + map.getFragmentsPerRow() + "x"
-				+ map.getFragmentsPerColumn() + " ["
-				+ (map.getFragmentsPerRow() * map.getFragmentsPerColumn())
+		panelLines.add("Map Size: " + graph.getFragmentsPerRow() + "x"
+				+ graph.getFragmentsPerColumn() + " ["
+				+ (graph.getFragmentsPerRow() * graph.getFragmentsPerColumn())
 				+ "]");
 		return panelLines;
 	}

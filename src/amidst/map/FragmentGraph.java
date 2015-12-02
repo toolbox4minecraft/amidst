@@ -51,4 +51,8 @@ public class FragmentGraph {
 	public int getFragmentsPerColumn() {
 		return fragmentsPerColumn;
 	}
+
+	public FragmentManager getFragmentManager() {
+		return fragmentManager;
+	}
 }

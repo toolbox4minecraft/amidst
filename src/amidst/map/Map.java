@@ -25,7 +25,6 @@ public class Map {
 	private final List<LayerDeclaration> declarations;
 	private final MapZoom zoom;
 	private final BiomeSelection biomeSelection;
-	private final FragmentManager fragmentManager;
 	private final FragmentGraph graph;
 
 	public Map(List<LayerDeclaration> declarations, MapZoom zoom,
@@ -34,7 +33,6 @@ public class Map {
 		this.declarations = declarations;
 		this.zoom = zoom;
 		this.biomeSelection = biomeSelection;
-		this.fragmentManager = fragmentManager;
 		this.graph = new FragmentGraph(fragmentManager, this);
 	}
 
@@ -171,35 +169,30 @@ public class Map {
 		return zoom.getCurrentValue();
 	}
 
-	public int getFragmentsPerRow() {
-		return graph.getFragmentsPerRow();
-	}
-
-	public int getFragmentsPerColumn() {
-		return graph.getFragmentsPerColumn();
-	}
-
 	public WorldIcon getSelectedWorldIcon() {
 		return selectedWorldIcon;
-	}
-
-	public FragmentManager getFragmentManager() {
-		return fragmentManager;
-	}
-
-	public void reloadBiomeLayer() {
-		fragmentManager.reloadLayer(LayerIds.BIOME);
-	}
-
-	public void reloadPlayerLayer() {
-		fragmentManager.reloadLayer(LayerIds.PLAYER);
 	}
 
 	public BiomeSelection getBiomeSelection() {
 		return biomeSelection;
 	}
 
+	/**
+	 * This method is only used for debugging purposes.
+	 */
+	public FragmentGraph getGraph() {
+		return graph;
+	}
+
+	public void reloadBiomeLayer() {
+		graph.getFragmentManager().reloadLayer(LayerIds.BIOME);
+	}
+
+	public void reloadPlayerLayer() {
+		graph.getFragmentManager().reloadLayer(LayerIds.PLAYER);
+	}
+
 	public void tickFragmentLoader() {
-		fragmentManager.tick();
+		graph.getFragmentManager().tick();
 	}
 }
