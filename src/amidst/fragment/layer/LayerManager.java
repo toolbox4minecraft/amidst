@@ -8,19 +8,12 @@ import amidst.map.Fragment;
 
 public class LayerManager {
 	private final List<AtomicBoolean> invalidatedLayers;
-	private final List<LayerDeclaration> declarations;
 	private final Iterable<FragmentLoader> loaders;
 
 	public LayerManager(List<AtomicBoolean> invalidatedLayers,
-			List<LayerDeclaration> declarations,
 			Iterable<FragmentLoader> loaders) {
 		this.invalidatedLayers = invalidatedLayers;
-		this.declarations = declarations;
 		this.loaders = loaders;
-	}
-
-	public List<LayerDeclaration> getLayerDeclarations() {
-		return declarations;
 	}
 
 	public void clearInvalidatedLayers() {

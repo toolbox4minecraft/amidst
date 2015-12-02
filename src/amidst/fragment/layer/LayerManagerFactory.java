@@ -84,8 +84,7 @@ public class LayerManagerFactory {
 	}
 
 	public LayerManager createLayerManager(World world, Map map) {
-		return new LayerManager(invalidatedLayers, declarations, createLoaders(
-				world, map));
+		return new LayerManager(invalidatedLayers, createLoaders(world, map));
 	}
 
 	/**
