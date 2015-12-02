@@ -1,7 +1,6 @@
 package amidst.map;
 
 import amidst.fragment.layer.LayerBuilder;
-import amidst.fragment.layer.LayerManager;
 import amidst.minecraft.world.World;
 
 public class MapBuilder {
@@ -16,14 +15,13 @@ public class MapBuilder {
 	}
 
 	public MapFactory create(World world, MapZoom mapZoom,
-			BiomeSelection biomeSelection, MapMovement mapMovement) {
+			MapMovement mapMovement, BiomeSelection biomeSelection) {
 		Map map = new Map(layerBuilder.getDeclarations(), mapZoom,
 				biomeSelection, fragmentManager, world);
-		LayerManager layerManager = layerBuilder.createLayerManager(world, map);
-		fragmentManager.setLayerManager(layerManager);
+		fragmentManager.setLayerManager(layerBuilder.createLayerManager(world,
+				map));
 		MapViewer mapViewer = new MapViewer(mapMovement, mapZoom, world, map,
 				layerBuilder.createDrawers(map));
-		return new MapFactory(map, mapViewer, mapZoom, mapMovement,
-				biomeSelection);
+		return new MapFactory(map, mapViewer);
 	}
 }

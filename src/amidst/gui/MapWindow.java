@@ -149,7 +149,7 @@ public class MapWindow {
 
 	public void initWorld() {
 		MapFactory mapFactory = mapBuilder.create(application.getWorld(),
-				mapZoom, biomeSelection, mapMovement);
+				mapZoom, mapMovement, biomeSelection);
 		map = mapFactory.getMap();
 		addMapViewer(mapFactory.getMapViewer());
 		menuBar.enableMapMenu();
