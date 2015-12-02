@@ -23,9 +23,8 @@ public class MapBuilder {
 				world, map);
 		fragmentManager.setLayerManager(layerManager);
 		MapViewer mapViewer = new MapViewer(mapMovement, mapZoom, world, map,
-				layerManager.getFragmentDrawers());
+				layerManagerFactory.createDrawers(map));
 		return new MapFactory(map, mapViewer, mapZoom, mapMovement,
-				biomeSelection, layerManagerFactory.getDeclarations(),
-				layerManager.getFragmentDrawers());
+				biomeSelection);
 	}
 }

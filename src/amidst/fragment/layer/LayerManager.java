@@ -3,7 +3,6 @@ package amidst.fragment.layer;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.loader.FragmentLoader;
 import amidst.map.Fragment;
 
@@ -11,23 +10,17 @@ public class LayerManager {
 	private final List<AtomicBoolean> invalidatedLayers;
 	private final List<LayerDeclaration> declarations;
 	private final Iterable<FragmentLoader> loaders;
-	private final Iterable<FragmentDrawer> drawers;
 
 	public LayerManager(List<AtomicBoolean> invalidatedLayers,
 			List<LayerDeclaration> declarations,
-			Iterable<FragmentLoader> loaders, Iterable<FragmentDrawer> drawers) {
+			Iterable<FragmentLoader> loaders) {
 		this.invalidatedLayers = invalidatedLayers;
 		this.declarations = declarations;
 		this.loaders = loaders;
-		this.drawers = drawers;
 	}
 
 	public List<LayerDeclaration> getLayerDeclarations() {
 		return declarations;
-	}
-
-	public Iterable<FragmentDrawer> getFragmentDrawers() {
-		return drawers;
 	}
 
 	public void clearInvalidatedLayers() {

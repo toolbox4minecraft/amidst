@@ -84,10 +84,8 @@ public class LayerManagerFactory {
 	}
 
 	public LayerManager createLayerManager(World world, Map map) {
-		Iterable<FragmentLoader> loaders = createLoaders(world, map);
-		Iterable<FragmentDrawer> drawers = createDrawers(map);
-		return new LayerManager(invalidatedLayers, declarations, loaders,
-				drawers);
+		return new LayerManager(invalidatedLayers, declarations, createLoaders(
+				world, map));
 	}
 
 	/**
@@ -113,7 +111,7 @@ public class LayerManagerFactory {
 	/**
 	 * This also defines the rendering order.
 	 */
-	private Iterable<FragmentDrawer> createDrawers(Map map) {
+	public Iterable<FragmentDrawer> createDrawers(Map map) {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
 				new ImageDrawer(    declarations.get(LayerIds.BIOME),           Resolution.QUARTER),
