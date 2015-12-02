@@ -166,11 +166,6 @@ public class Map {
 				(long) zoom.screenToWorld(pointOnScreen.y - startYOnScreen));
 	}
 
-	private void reloadLayer(int layerId) {
-		layerManager.invalidateLayer(layerId);
-		fragmentManager.reloadAll();
-	}
-
 	private void lockedDispose() {
 		graph.recycleAll();
 	}
@@ -196,11 +191,11 @@ public class Map {
 	}
 
 	public void reloadBiomeLayer() {
-		reloadLayer(LayerIds.BIOME);
+		fragmentManager.reloadLayer(LayerIds.BIOME);
 	}
 
 	public void reloadPlayerLayer() {
-		reloadLayer(LayerIds.PLAYER);
+		fragmentManager.reloadLayer(LayerIds.PLAYER);
 	}
 
 	public Iterable<FragmentDrawer> getFragmentDrawers() {

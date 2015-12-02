@@ -38,9 +38,29 @@ public class FragmentManager {
 		resetQueue.offer(fragment);
 	}
 
-	public void reloadAll() {
-		loadingQueue.clear();
-		cache.reloadAll();
+	public void tick() {
+		// Do not inline this variable to ensure there is only one read
+		// operation.
+		FragmentQueueProcessor queueProcessor = this.queueProcessor;
+		if (queueProcessor != null) {
+			queueProcessor.tick();
+		}
+	}
+
+	public void reloadLayer(int layerId) {
+		// Do not inline this variable to ensure there is only one read
+		// operation.
+		FragmentQueueProcessor queueProcessor = this.queueProcessor;
+		if (queueProcessor != null) {
+			queueProcessor.invalidateLayer(layerId);
+			loadingQueue.clear();
+			cache.reloadAll();
+		}
+	}
+
+	public void setLayerManager(LayerManager layerManager) {
+		this.queueProcessor = new FragmentQueueProcessor(availableQueue,
+				loadingQueue, resetQueue, layerManager);
 	}
 
 	public int getAvailableQueueSize() {
@@ -57,19 +77,5 @@ public class FragmentManager {
 
 	public int getCacheSize() {
 		return cache.size();
-	}
-
-	public void tick() {
-		// Do not inline this variable to ensure there is only one read
-		// operation.
-		FragmentQueueProcessor queueProcessor = this.queueProcessor;
-		if (queueProcessor != null) {
-			queueProcessor.tick();
-		}
-	}
-
-	public void setLayerManager(LayerManager layerManager) {
-		this.queueProcessor = new FragmentQueueProcessor(availableQueue,
-				loadingQueue, resetQueue, layerManager);
 	}
 }

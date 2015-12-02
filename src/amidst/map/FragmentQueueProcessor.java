@@ -23,6 +23,16 @@ public class FragmentQueueProcessor {
 		this.layerManager = layerManager;
 	}
 
+	/**
+	 * This method might be called from any thread.
+	 */
+	public void invalidateLayer(int layerId) {
+		layerManager.invalidateLayer(layerId);
+	}
+
+	/**
+	 * This method is only called from the fragment loading thread.
+	 */
 	public void tick() {
 		processResetQueue();
 		while ((currentFragment = loadingQueue.poll()) != null) {
