@@ -5,7 +5,6 @@ import java.util.List;
 
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.fragment.layer.LayerIds;
-import amidst.fragment.layer.LayerManagerFactory;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.icon.WorldIcon;
@@ -31,7 +30,7 @@ public class Map {
 
 	public Map(List<LayerDeclaration> declarations, MapZoom zoom,
 			BiomeSelection biomeSelection, FragmentManager fragmentManager,
-			LayerManagerFactory layerManagerFactory, World world) {
+			World world) {
 		this.declarations = declarations;
 		this.zoom = zoom;
 		this.biomeSelection = biomeSelection;

@@ -3,7 +3,7 @@ package amidst;
 import java.io.File;
 import java.net.MalformedURLException;
 
-import amidst.fragment.layer.LayerManagerFactory;
+import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.CrashWindow;
 import amidst.gui.LicenseWindow;
 import amidst.gui.MapWindow;
@@ -47,7 +47,7 @@ public class Application {
 	}
 
 	private MapBuilder createMapBuilder() {
-		return new MapBuilder(new LayerManagerFactory(getPreferences()));
+		return new MapBuilder(new LayerBuilder(getPreferences()));
 	}
 
 	private SeedHistoryLogger createSeedHistoryLogger() {

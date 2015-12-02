@@ -23,12 +23,12 @@ import amidst.map.Map;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 
-public class LayerManagerFactory {
+public class LayerBuilder {
 	private final List<AtomicBoolean> invalidatedLayers;
 	private final List<LayerDeclaration> declarations;
 	private final Iterable<FragmentConstructor> constructors;
 
-	public LayerManagerFactory(Options options) {
+	public LayerBuilder(Options options) {
 		this.invalidatedLayers = createInvalidatedLayers();
 		this.declarations = createDeclarations(options);
 		this.constructors = createConstructors();
