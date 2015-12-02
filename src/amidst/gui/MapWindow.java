@@ -28,6 +28,7 @@ import amidst.gui.menu.PNGFileFilter;
 import amidst.map.BiomeSelection;
 import amidst.map.Map;
 import amidst.map.MapBuilder;
+import amidst.map.MapFactory;
 import amidst.map.MapMovement;
 import amidst.map.MapViewer;
 import amidst.map.MapZoom;
@@ -147,9 +148,10 @@ public class MapWindow {
 	}
 
 	public void initWorld() {
-		map = mapBuilder
-				.create(application.getWorld(), mapZoom, biomeSelection);
-		mapViewer = createMapViewer();
+		MapFactory mapFactory = mapBuilder.create(application.getWorld(),
+				mapZoom, biomeSelection, mapMovement);
+		map = mapFactory.getMap();
+		addMapViewer(mapFactory.getMapViewer());
 		menuBar.enableMapMenu();
 	}
 
@@ -159,12 +161,10 @@ public class MapWindow {
 	 * draw the new mapViewer as soon as it is assigned to the instance
 	 * variable.
 	 */
-	private MapViewer createMapViewer() {
-		MapViewer result = new MapViewer(mapMovement, mapZoom,
-				application.getWorld(), map);
-		contentPane.add(result.getPanel(), BorderLayout.CENTER);
+	private void addMapViewer(MapViewer mapViewer) {
+		contentPane.add(mapViewer.getPanel(), BorderLayout.CENTER);
 		frame.validate();
-		return result;
+		this.mapViewer = mapViewer;
 	}
 
 	public String askForSeed() {

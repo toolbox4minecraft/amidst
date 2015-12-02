@@ -1,10 +1,10 @@
 package amidst.map;
 
 import java.awt.Point;
+import java.util.List;
 
-import amidst.fragment.drawer.FragmentDrawer;
+import amidst.fragment.layer.LayerDeclaration;
 import amidst.fragment.layer.LayerIds;
-import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerManagerFactory;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
@@ -23,20 +23,19 @@ public class Map {
 
 	private final Object mapLock = new Object();
 
+	private final List<LayerDeclaration> declarations;
 	private final MapZoom zoom;
 	private final BiomeSelection biomeSelection;
 	private final FragmentManager fragmentManager;
-	private final LayerManager layerManager;
 	private final FragmentGraph graph;
 
-	public Map(MapZoom zoom, BiomeSelection biomeSelection,
-			FragmentManager fragmentManager,
+	public Map(List<LayerDeclaration> declarations, MapZoom zoom,
+			BiomeSelection biomeSelection, FragmentManager fragmentManager,
 			LayerManagerFactory layerManagerFactory, World world) {
+		this.declarations = declarations;
 		this.zoom = zoom;
 		this.biomeSelection = biomeSelection;
 		this.fragmentManager = fragmentManager;
-		this.layerManager = layerManagerFactory.createLayerManager(world, this);
-		this.fragmentManager.setLayerManager(layerManager);
 		this.graph = new FragmentGraph(fragmentManager, this);
 	}
 
@@ -154,7 +153,7 @@ public class Map {
 
 	private WorldIcon getWorldIconAt(Point positionOnScreen,
 			double maxDistanceOnScreen) {
-		return new ClosestWorldIconFinder(layerManager.getLayerDeclarations(),
+		return new ClosestWorldIconFinder(declarations,
 				screenToWorld(positionOnScreen), graph.getStartFragment(),
 				zoom.screenToWorld(maxDistanceOnScreen)).getWorldIcon();
 	}
@@ -196,10 +195,6 @@ public class Map {
 
 	public void reloadPlayerLayer() {
 		fragmentManager.reloadLayer(LayerIds.PLAYER);
-	}
-
-	public Iterable<FragmentDrawer> getFragmentDrawers() {
-		return layerManager.getFragmentDrawers();
 	}
 
 	public BiomeSelection getBiomeSelection() {

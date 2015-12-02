@@ -39,6 +39,7 @@ public class MapDrawer {
 	private MapZoom zoom;
 	private List<Widget> widgets;
 	private FontMetrics widgetFontMetrics;
+	private Iterable<FragmentDrawer> drawers;
 
 	private Graphics2D g2d;
 	private float time;
@@ -50,12 +51,14 @@ public class MapDrawer {
 	private AffineTransform layerMatrix = new AffineTransform();
 
 	public MapDrawer(Map map, MapMovement movement, MapZoom zoom,
-			List<Widget> widgets, FontMetrics widgetFontMetrics) {
+			List<Widget> widgets, FontMetrics widgetFontMetrics,
+			Iterable<FragmentDrawer> drawers) {
 		this.map = map;
 		this.movement = movement;
 		this.zoom = zoom;
 		this.widgets = widgets;
 		this.widgetFontMetrics = widgetFontMetrics;
+		this.drawers = drawers;
 	}
 
 	public void drawScreenshot(Graphics2D g2d, float time, int width,
@@ -139,7 +142,7 @@ public class MapDrawer {
 	}
 
 	private void drawLayers(Fragment startFragment) {
-		for (FragmentDrawer drawer : map.getFragmentDrawers()) {
+		for (FragmentDrawer drawer : drawers) {
 			if (drawer.getLayerDeclaration().isVisible()) {
 				initLayerMatrix();
 				for (Fragment fragment : startFragment) {

@@ -20,6 +20,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+import amidst.fragment.drawer.FragmentDrawer;
 import amidst.map.widget.BiomeToggleWidget;
 import amidst.map.widget.BiomeWidget;
 import amidst.map.widget.CursorInformationWidget;
@@ -208,18 +209,19 @@ public class MapViewer {
 		}
 	}
 
-	private Listeners listeners = new Listeners();
-	private List<Widget> widgets = new ArrayList<Widget>();
-	private Component component = new Component();
-	private JPanel panel = new JPanel();
-	private MapDrawer drawer;
+	private final Listeners listeners = new Listeners();
+	private final List<Widget> widgets = new ArrayList<Widget>();
+	private final Component component = new Component();
+	private final JPanel panel = new JPanel();
+	private final MapDrawer drawer;
 
-	private MapMovement movement;
-	private MapZoom zoom;
-	private World world;
-	private Map map;
+	private final MapMovement movement;
+	private final MapZoom zoom;
+	private final World world;
+	private final Map map;
 
-	public MapViewer(MapMovement movement, MapZoom zoom, World world, Map map) {
+	public MapViewer(MapMovement movement, MapZoom zoom, World world, Map map,
+			Iterable<FragmentDrawer> fragmentDrawers) {
 		this.movement = movement;
 		this.zoom = zoom;
 		this.world = world;
@@ -227,7 +229,7 @@ public class MapViewer {
 		initWidgets();
 		initComponent();
 		initPanel();
-		initDrawer();
+		this.drawer = createDrawer(fragmentDrawers);
 	}
 
 	private void initWidgets() {
@@ -259,9 +261,9 @@ public class MapViewer {
 		panel.add(component, BorderLayout.CENTER);
 	}
 
-	private void initDrawer() {
-		drawer = new MapDrawer(map, movement, zoom, widgets,
-				component.getFontMetrics(Widget.TEXT_FONT));
+	private MapDrawer createDrawer(Iterable<FragmentDrawer> fragmentDrawers) {
+		return new MapDrawer(map, movement, zoom, widgets,
+				component.getFontMetrics(Widget.TEXT_FONT), fragmentDrawers);
 	}
 
 	public BufferedImage createCaptureImage() {
