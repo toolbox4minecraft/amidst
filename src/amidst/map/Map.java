@@ -15,12 +15,9 @@ public class Map {
 
 	private WorldIcon selectedWorldIcon;
 
-	private volatile Fragment startFragment;
 	private volatile double startXOnScreen;
 	private volatile double startYOnScreen;
 
-	private int fragmentsPerRow;
-	private int fragmentsPerColumn;
 	private int viewerWidth = 1;
 	private int viewerHeight = 1;
 
@@ -30,6 +27,7 @@ public class Map {
 	private final BiomeSelection biomeSelection;
 	private final FragmentManager fragmentManager;
 	private final LayerManager layerManager;
+	private final FragmentGraph graph;
 
 	public Map(MapZoom zoom, BiomeSelection biomeSelection,
 			FragmentManager fragmentManager,
@@ -39,6 +37,7 @@ public class Map {
 		this.fragmentManager = fragmentManager;
 		this.layerManager = layerManagerFactory.createLayerManager(world, this);
 		this.fragmentManager.setLayerManager(layerManager);
+		this.graph = new FragmentGraph(fragmentManager, this);
 	}
 
 	private void lockedDraw(MapDrawer drawer) {
@@ -48,19 +47,20 @@ public class Map {
 				/ fragmentSizeOnScreen + 2);
 		lockedAdjustNumberOfRowsAndColumns(fragmentSizeOnScreen,
 				desiredFragmentsPerRow, desiredFragmentsPerColumn);
-		drawer.doDrawMap(startXOnScreen, startYOnScreen, getStartFragment());
+		drawer.doDrawMap(startXOnScreen, startYOnScreen,
+				graph.getStartFragment());
 	}
 
 	private void lockedAdjustNumberOfRowsAndColumns(
 			double fragmentSizeOnScreen, int desiredFragmentsPerRow,
 			int desiredFragmentsPerColumn) {
-		int newColumns = desiredFragmentsPerRow - fragmentsPerRow;
-		int newRows = desiredFragmentsPerColumn - fragmentsPerColumn;
+		int newColumns = desiredFragmentsPerRow - graph.getFragmentsPerRow();
+		int newRows = desiredFragmentsPerColumn - graph.getFragmentsPerColumn();
 		int newLeft = getNewLeft(fragmentSizeOnScreen);
 		int newAbove = getNewAbove(fragmentSizeOnScreen);
 		int newRight = newColumns - newLeft;
 		int newBelow = newRows - newAbove;
-		initStartFragment(newLeft, newAbove, newRight, newBelow);
+		graph.initStartFragment(newLeft, newAbove, newRight, newBelow);
 		startXOnScreen -= fragmentSizeOnScreen * newLeft;
 		startYOnScreen -= fragmentSizeOnScreen * newAbove;
 	}
@@ -83,7 +83,7 @@ public class Map {
 
 	// TODO: Support longs?
 	private void lockedCenterOn(CoordinatesInWorld coordinates) {
-		initStartFragment(coordinates);
+		graph.initStartFragment(coordinates);
 		int xCenterOnScreen = viewerWidth >> 1;
 		int yCenterOnScreen = viewerHeight >> 1;
 		long xFragmentRelative = coordinates.getXRelativeToFragment();
@@ -94,8 +94,10 @@ public class Map {
 				- zoom.worldToScreen(yFragmentRelative);
 	}
 
-	public void safeDraw(MapDrawer drawer) {
+	public void safeDraw(MapDrawer drawer, int width, int height) {
 		synchronized (mapLock) {
+			this.viewerWidth = width;
+			this.viewerHeight = height;
 			lockedDraw(drawer);
 		}
 	}
@@ -138,7 +140,7 @@ public class Map {
 
 	private Fragment getFragmentAt(CoordinatesInWorld coordinates) {
 		CoordinatesInWorld corner = coordinates.toFragmentCorner();
-		for (Fragment fragment : getStartFragment()) {
+		for (Fragment fragment : graph.getStartFragment()) {
 			if (corner.equals(fragment.getCorner())) {
 				return fragment;
 			}
@@ -153,37 +155,15 @@ public class Map {
 	private WorldIcon getWorldIconAt(Point positionOnScreen,
 			double maxDistanceOnScreen) {
 		return new ClosestWorldIconFinder(layerManager.getLayerDeclarations(),
-				screenToWorld(positionOnScreen), getStartFragment(),
+				screenToWorld(positionOnScreen), graph.getStartFragment(),
 				zoom.screenToWorld(maxDistanceOnScreen)).getWorldIcon();
 	}
 
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
-		return getStartFragment().getCorner().add(
+		CoordinatesInWorld corner = graph.getStartFragment().getCorner();
+		return corner.add(
 				(long) zoom.screenToWorld(pointOnScreen.x - startXOnScreen),
 				(long) zoom.screenToWorld(pointOnScreen.y - startYOnScreen));
-	}
-
-	private Fragment getStartFragment() {
-		if (startFragment == null) {
-			safeCenterOn(CoordinatesInWorld.origin());
-		}
-		return startFragment;
-	}
-
-	private void initStartFragment(int newLeft, int newAbove, int newRight,
-			int newBelow) {
-		startFragment = getStartFragment().adjustRowsAndColumns(newAbove,
-				newBelow, newLeft, newRight, fragmentManager);
-		fragmentsPerRow = fragmentsPerRow + newLeft + newRight;
-		fragmentsPerColumn = fragmentsPerColumn + newAbove + newBelow;
-	}
-
-	private void initStartFragment(CoordinatesInWorld coordinates) {
-		recycleAll();
-		startFragment = fragmentManager.requestFragment(coordinates
-				.toFragmentCorner());
-		fragmentsPerRow = 1;
-		fragmentsPerColumn = 1;
 	}
 
 	private void reloadLayer(int layerId) {
@@ -192,13 +172,7 @@ public class Map {
 	}
 
 	private void lockedDispose() {
-		recycleAll();
-	}
-
-	private void recycleAll() {
-		if (startFragment != null) {
-			startFragment.recycleAll(fragmentManager);
-		}
+		graph.recycleAll();
 	}
 
 	public double getZoom() {
@@ -206,19 +180,11 @@ public class Map {
 	}
 
 	public int getFragmentsPerRow() {
-		return fragmentsPerRow;
+		return graph.getFragmentsPerRow();
 	}
 
 	public int getFragmentsPerColumn() {
-		return fragmentsPerColumn;
-	}
-
-	public void setViewerWidth(int viewerWidth) {
-		this.viewerWidth = viewerWidth;
-	}
-
-	public void setViewerHeight(int viewerHeight) {
-		this.viewerHeight = viewerHeight;
+		return graph.getFragmentsPerColumn();
 	}
 
 	public WorldIcon getSelectedWorldIcon() {

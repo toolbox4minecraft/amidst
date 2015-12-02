@@ -66,7 +66,6 @@ public class MapDrawer {
 			this.width = width;
 			this.height = height;
 			this.mousePosition = mousePosition;
-			setViewerDimensions();
 			clear();
 			drawMap();
 			drawWidgets();
@@ -81,7 +80,6 @@ public class MapDrawer {
 			this.width = width;
 			this.height = height;
 			this.mousePosition = mousePosition;
-			setViewerDimensions();
 			updateMapZoom();
 			updateMapMovement();
 			clear();
@@ -89,11 +87,6 @@ public class MapDrawer {
 			drawBorder();
 			drawWidgets();
 		}
-	}
-
-	private void setViewerDimensions() {
-		map.setViewerWidth(width);
-		map.setViewerHeight(height);
 	}
 
 	private void updateMapZoom() {
@@ -113,7 +106,7 @@ public class MapDrawer {
 		// TODO: is this needed?
 		Graphics2D old = g2d;
 		g2d = (Graphics2D) old.create();
-		map.safeDraw(this);
+		map.safeDraw(this, width, height);
 		g2d = old;
 	}
 
