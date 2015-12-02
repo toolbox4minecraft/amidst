@@ -3,11 +3,11 @@ package amidst.map;
 import amidst.fragment.layer.LayerManagerFactory;
 import amidst.minecraft.world.World;
 
-public class MapFactory {
+public class MapBuilder {
 	private final LayerManagerFactory layerManagerFactory;
 	private final FragmentManager fragmentManager;
 
-	public MapFactory(LayerManagerFactory layerManagerFactory) {
+	public MapBuilder(LayerManagerFactory layerManagerFactory) {
 		this.layerManagerFactory = layerManagerFactory;
 		this.fragmentManager = new FragmentManager(
 				layerManagerFactory.getConstructors(),

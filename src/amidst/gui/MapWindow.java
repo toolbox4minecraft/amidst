@@ -27,7 +27,7 @@ import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.map.BiomeSelection;
 import amidst.map.Map;
-import amidst.map.MapFactory;
+import amidst.map.MapBuilder;
 import amidst.map.MapMovement;
 import amidst.map.MapViewer;
 import amidst.map.MapZoom;
@@ -43,7 +43,7 @@ public class MapWindow {
 	private final BiomeSelection biomeSelection = new BiomeSelection();
 
 	private final Application application;
-	private final MapFactory mapFactory;
+	private final MapBuilder mapBuilder;
 
 	private final JFrame frame;
 	private final Container contentPane;
@@ -52,10 +52,10 @@ public class MapWindow {
 	private MapViewer mapViewer;
 	private Map map;
 
-	public MapWindow(Application application, MapFactory mapFactory,
+	public MapWindow(Application application, MapBuilder mapBuilder,
 			Options preferences) {
 		this.application = application;
-		this.mapFactory = mapFactory;
+		this.mapBuilder = mapBuilder;
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
 		this.menuBar = createMenuBar(preferences);
@@ -147,7 +147,7 @@ public class MapWindow {
 	}
 
 	public void initWorld() {
-		map = mapFactory
+		map = mapBuilder
 				.create(application.getWorld(), mapZoom, biomeSelection);
 		mapViewer = createMapViewer();
 		menuBar.enableMapMenu();
