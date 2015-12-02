@@ -1,10 +1,14 @@
 package amidst.map;
 
 import java.util.Iterator;
+import java.util.List;
 
+import amidst.fragment.layer.LayerDeclaration;
 import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.minecraft.world.icon.WorldIcon;
 
 public class FragmentGraph implements Iterable<Fragment> {
+	private final List<LayerDeclaration> declarations;
 	private final FragmentManager fragmentManager;
 	private final Map map;
 
@@ -12,7 +16,9 @@ public class FragmentGraph implements Iterable<Fragment> {
 	private volatile int fragmentsPerRow;
 	private volatile int fragmentsPerColumn;
 
-	public FragmentGraph(FragmentManager fragmentManager, Map map) {
+	public FragmentGraph(List<LayerDeclaration> declarations,
+			FragmentManager fragmentManager, Map map) {
+		this.declarations = declarations;
 		this.fragmentManager = fragmentManager;
 		this.map = map;
 	}
@@ -64,5 +70,11 @@ public class FragmentGraph implements Iterable<Fragment> {
 	@Override
 	public Iterator<Fragment> iterator() {
 		return getStartFragment().iterator();
+	}
+
+	public WorldIcon getClosestWorldIcon(CoordinatesInWorld coordinates,
+			double maxDistanceInWorld) {
+		return new ClosestWorldIconFinder(this, declarations, coordinates,
+				maxDistanceInWorld).getWorldIcon();
 	}
 }

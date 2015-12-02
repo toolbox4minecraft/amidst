@@ -22,7 +22,6 @@ public class Map {
 
 	private final Object mapLock = new Object();
 
-	private final List<LayerDeclaration> declarations;
 	private final MapZoom zoom;
 	private final BiomeSelection biomeSelection;
 	private final FragmentGraph graph;
@@ -30,10 +29,9 @@ public class Map {
 	public Map(List<LayerDeclaration> declarations, MapZoom zoom,
 			BiomeSelection biomeSelection, FragmentManager fragmentManager,
 			World world) {
-		this.declarations = declarations;
 		this.zoom = zoom;
 		this.biomeSelection = biomeSelection;
-		this.graph = new FragmentGraph(fragmentManager, this);
+		this.graph = new FragmentGraph(declarations, fragmentManager, this);
 	}
 
 	private void lockedDraw(MapDrawer drawer) {
@@ -144,14 +142,8 @@ public class Map {
 	}
 
 	public void selectWorldIconAt(Point mouse, double maxDistance) {
-		this.selectedWorldIcon = getWorldIconAt(mouse, maxDistance);
-	}
-
-	private WorldIcon getWorldIconAt(Point positionOnScreen,
-			double maxDistanceOnScreen) {
-		return new ClosestWorldIconFinder(declarations,
-				screenToWorld(positionOnScreen), graph,
-				zoom.screenToWorld(maxDistanceOnScreen)).getWorldIcon();
+		this.selectedWorldIcon = graph.getClosestWorldIcon(
+				screenToWorld(mouse), zoom.screenToWorld(maxDistance));
 	}
 
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {

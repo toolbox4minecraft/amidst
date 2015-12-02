@@ -7,18 +7,18 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.icon.WorldIcon;
 
 public class ClosestWorldIconFinder {
+	private final FragmentGraph graph;
 	private final List<LayerDeclaration> layerDeclarations;
 	private final CoordinatesInWorld positionInWorld;
-	private final FragmentGraph graph;
 	private WorldIcon closestIcon;
 	private double closestDistanceSq;
 
-	public ClosestWorldIconFinder(List<LayerDeclaration> layerDeclarations,
-			CoordinatesInWorld positionInWorld, FragmentGraph graph,
-			double maxDistanceInWorld) {
+	public ClosestWorldIconFinder(FragmentGraph graph,
+			List<LayerDeclaration> layerDeclarations,
+			CoordinatesInWorld positionInWorld, double maxDistanceInWorld) {
+		this.graph = graph;
 		this.layerDeclarations = layerDeclarations;
 		this.positionInWorld = positionInWorld;
-		this.graph = graph;
 		this.closestIcon = null;
 		this.closestDistanceSq = maxDistanceInWorld * maxDistanceInWorld;
 		find();
