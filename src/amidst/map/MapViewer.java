@@ -2,6 +2,7 @@ package amidst.map;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -187,13 +188,16 @@ public class MapViewer {
 
 	@SuppressWarnings("serial")
 	private class Component extends JComponent {
+		private final FontMetrics widgetFontMetrics = getFontMetrics(Widget.TEXT_FONT);
+
 		private long lastTime = System.currentTimeMillis();
 
 		@Override
 		public void paint(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g.create();
 			float time = calculateTimeSpanSinceLastDrawInSeconds();
-			drawer.draw(g2d, time, getWidth(), getHeight(), getMousePosition());
+			drawer.draw(g2d, time, getWidth(), getHeight(), getMousePosition(),
+					widgetFontMetrics);
 		}
 
 		private float calculateTimeSpanSinceLastDrawInSeconds() {
@@ -205,7 +209,7 @@ public class MapViewer {
 
 		public void drawScreenshot(Graphics2D g2d) {
 			drawer.drawScreenshot(g2d, 0, getWidth(), getHeight(),
-					getMousePosition());
+					getMousePosition(), widgetFontMetrics);
 		}
 	}
 
@@ -213,12 +217,12 @@ public class MapViewer {
 	private final List<Widget> widgets = new ArrayList<Widget>();
 	private final Component component = new Component();
 	private final JPanel panel = new JPanel();
-	private final MapDrawer drawer;
 
 	private final MapMovement movement;
 	private final MapZoom zoom;
 	private final World world;
 	private final Map map;
+	private final MapDrawer drawer;
 
 	public MapViewer(MapMovement movement, MapZoom zoom, World world, Map map,
 			Iterable<FragmentDrawer> fragmentDrawers) {
@@ -226,10 +230,14 @@ public class MapViewer {
 		this.zoom = zoom;
 		this.world = world;
 		this.map = map;
+		this.drawer = createDrawer(fragmentDrawers);
 		initWidgets();
 		initComponent();
 		initPanel();
-		this.drawer = createDrawer(fragmentDrawers);
+	}
+
+	private MapDrawer createDrawer(Iterable<FragmentDrawer> fragmentDrawers) {
+		return new MapDrawer(map, movement, zoom, widgets, fragmentDrawers);
 	}
 
 	private void initWidgets() {
@@ -259,11 +267,6 @@ public class MapViewer {
 		panel.setBackground(Color.BLUE);
 		panel.setLayout(new BorderLayout());
 		panel.add(component, BorderLayout.CENTER);
-	}
-
-	private MapDrawer createDrawer(Iterable<FragmentDrawer> fragmentDrawers) {
-		return new MapDrawer(map, movement, zoom, widgets,
-				component.getFontMetrics(Widget.TEXT_FONT), fragmentDrawers);
 	}
 
 	public BufferedImage createCaptureImage() {
