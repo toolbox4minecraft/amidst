@@ -136,7 +136,7 @@ public class MapDrawer {
 	}
 
 	private void prepareDraw(FragmentGraph graph) {
-		for (Fragment fragment : graph.getStartFragment()) {
+		for (Fragment fragment : graph) {
 			fragment.prepareDraw(time);
 		}
 	}
@@ -145,7 +145,7 @@ public class MapDrawer {
 		for (FragmentDrawer drawer : drawers) {
 			if (drawer.getLayerDeclaration().isVisible()) {
 				initLayerMatrix();
-				for (Fragment fragment : graph.getStartFragment()) {
+				for (Fragment fragment : graph) {
 					if (fragment.isLoaded()) {
 						setAlphaComposite(fragment.getAlpha());
 						g2d.setTransform(layerMatrix);

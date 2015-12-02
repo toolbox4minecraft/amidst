@@ -55,7 +55,7 @@ public class Map {
 		int newAbove = getNewAbove(fragmentSizeOnScreen);
 		int newRight = newColumns - newLeft;
 		int newBelow = newRows - newAbove;
-		graph.initStartFragment(newLeft, newAbove, newRight, newBelow);
+		graph.adjust(newLeft, newAbove, newRight, newBelow);
 		startXOnScreen -= fragmentSizeOnScreen * newLeft;
 		startYOnScreen -= fragmentSizeOnScreen * newAbove;
 	}
@@ -78,7 +78,7 @@ public class Map {
 
 	// TODO: Support longs?
 	private void lockedCenterOn(CoordinatesInWorld coordinates) {
-		graph.initStartFragment(coordinates);
+		graph.init(coordinates);
 		int xCenterOnScreen = viewerWidth >> 1;
 		int yCenterOnScreen = viewerHeight >> 1;
 		long xFragmentRelative = coordinates.getXRelativeToFragment();
@@ -135,7 +135,7 @@ public class Map {
 
 	private Fragment getFragmentAt(CoordinatesInWorld coordinates) {
 		CoordinatesInWorld corner = coordinates.toFragmentCorner();
-		for (Fragment fragment : graph.getStartFragment()) {
+		for (Fragment fragment : graph) {
 			if (corner.equals(fragment.getCorner())) {
 				return fragment;
 			}
@@ -150,12 +150,12 @@ public class Map {
 	private WorldIcon getWorldIconAt(Point positionOnScreen,
 			double maxDistanceOnScreen) {
 		return new ClosestWorldIconFinder(declarations,
-				screenToWorld(positionOnScreen), graph.getStartFragment(),
+				screenToWorld(positionOnScreen), graph,
 				zoom.screenToWorld(maxDistanceOnScreen)).getWorldIcon();
 	}
 
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
-		CoordinatesInWorld corner = graph.getStartFragment().getCorner();
+		CoordinatesInWorld corner = graph.getCorner();
 		return corner.add(
 				(long) zoom.screenToWorld(pointOnScreen.x - startXOnScreen),
 				(long) zoom.screenToWorld(pointOnScreen.y - startYOnScreen));

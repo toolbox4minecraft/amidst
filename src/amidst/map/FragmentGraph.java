@@ -1,8 +1,10 @@
 package amidst.map;
 
+import java.util.Iterator;
+
 import amidst.minecraft.world.CoordinatesInWorld;
 
-public class FragmentGraph {
+public class FragmentGraph implements Iterable<Fragment> {
 	private final FragmentManager fragmentManager;
 	private final Map map;
 
@@ -15,22 +17,21 @@ public class FragmentGraph {
 		this.map = map;
 	}
 
-	public Fragment getStartFragment() {
+	private Fragment getStartFragment() {
 		if (startFragment == null) {
 			map.safeCenterOn(CoordinatesInWorld.origin());
 		}
 		return startFragment;
 	}
 
-	public void initStartFragment(int newLeft, int newAbove, int newRight,
-			int newBelow) {
+	public void adjust(int newLeft, int newAbove, int newRight, int newBelow) {
 		startFragment = getStartFragment().adjustRowsAndColumns(newAbove,
 				newBelow, newLeft, newRight, fragmentManager);
 		fragmentsPerRow = fragmentsPerRow + newLeft + newRight;
 		fragmentsPerColumn = fragmentsPerColumn + newAbove + newBelow;
 	}
 
-	public void initStartFragment(CoordinatesInWorld coordinates) {
+	public void init(CoordinatesInWorld coordinates) {
 		recycleAll();
 		startFragment = fragmentManager.requestFragment(coordinates
 				.toFragmentCorner());
@@ -54,5 +55,14 @@ public class FragmentGraph {
 
 	public FragmentManager getFragmentManager() {
 		return fragmentManager;
+	}
+
+	public CoordinatesInWorld getCorner() {
+		return startFragment.getCorner();
+	}
+
+	@Override
+	public Iterator<Fragment> iterator() {
+		return getStartFragment().iterator();
 	}
 }

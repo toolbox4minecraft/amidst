@@ -9,23 +9,23 @@ import amidst.minecraft.world.icon.WorldIcon;
 public class ClosestWorldIconFinder {
 	private final List<LayerDeclaration> layerDeclarations;
 	private final CoordinatesInWorld positionInWorld;
-	private final Fragment startFragment;
+	private final FragmentGraph graph;
 	private WorldIcon closestIcon;
 	private double closestDistanceSq;
 
 	public ClosestWorldIconFinder(List<LayerDeclaration> layerDeclarations,
-			CoordinatesInWorld positionInWorld, Fragment startFragment,
+			CoordinatesInWorld positionInWorld, FragmentGraph graph,
 			double maxDistanceInWorld) {
 		this.layerDeclarations = layerDeclarations;
 		this.positionInWorld = positionInWorld;
-		this.startFragment = startFragment;
+		this.graph = graph;
 		this.closestIcon = null;
 		this.closestDistanceSq = maxDistanceInWorld * maxDistanceInWorld;
 		find();
 	}
 
 	private void find() {
-		for (Fragment fragment : startFragment) {
+		for (Fragment fragment : graph) {
 			for (LayerDeclaration declaration : layerDeclarations) {
 				if (declaration.isVisible()) {
 					int layerId = declaration.getLayerId();
