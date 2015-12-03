@@ -5,17 +5,17 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import amidst.fragment.layer.LayerManager;
 
 public class FragmentQueueProcessor {
-	private final ConcurrentLinkedQueue<FragmentGraphItem> availableQueue;
-	private final ConcurrentLinkedQueue<FragmentGraphItem> loadingQueue;
-	private final ConcurrentLinkedQueue<FragmentGraphItem> resetQueue;
+	private final ConcurrentLinkedQueue<Fragment> availableQueue;
+	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
+	private final ConcurrentLinkedQueue<Fragment> resetQueue;
 	private final LayerManager layerManager;
 
-	private FragmentGraphItem currentFragment;
+	private Fragment currentFragment;
 
 	public FragmentQueueProcessor(
-			ConcurrentLinkedQueue<FragmentGraphItem> availableQueue,
-			ConcurrentLinkedQueue<FragmentGraphItem> loadingQueue,
-			ConcurrentLinkedQueue<FragmentGraphItem> resetQueue,
+			ConcurrentLinkedQueue<Fragment> availableQueue,
+			ConcurrentLinkedQueue<Fragment> loadingQueue,
+			ConcurrentLinkedQueue<Fragment> resetQueue,
 			LayerManager layerManager) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
@@ -52,10 +52,10 @@ public class FragmentQueueProcessor {
 		if (currentFragment.isInitialized()) {
 			if (currentFragment.isLoaded()) {
 				currentFragment.prepareReload();
-				layerManager.reloadInvalidated(currentFragment.getFragment());
+				layerManager.reloadInvalidated(currentFragment);
 			} else {
 				currentFragment.prepareLoad();
-				layerManager.loadAll(currentFragment.getFragment());
+				layerManager.loadAll(currentFragment);
 				currentFragment.setLoaded(true);
 			}
 		}

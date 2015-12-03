@@ -2,8 +2,6 @@ package amidst.map;
 
 import java.util.Iterator;
 
-import amidst.minecraft.world.CoordinatesInWorld;
-
 public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	/**
 	 * This is an Iterator that is fail safe in the sense that it will never
@@ -54,40 +52,8 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		this.fragment = fragment;
 	}
 
-	public void initialize(CoordinatesInWorld corner) {
-		fragment.initialize(corner);
-		leftFragment = null;
-		rightFragment = null;
-		aboveFragment = null;
-		belowFragment = null;
-	}
-
 	public Fragment getFragment() {
 		return fragment;
-	}
-
-	public boolean isInitialized() {
-		return fragment.isInitialized();
-	}
-
-	public boolean isLoaded() {
-		return fragment.isLoaded();
-	}
-
-	public void prepareReload() {
-		fragment.prepareReload();
-	}
-
-	public void prepareLoad() {
-		fragment.prepareLoad();
-	}
-
-	public void setLoaded(boolean isLoaded) {
-		fragment.setLoaded(isLoaded);
-	}
-
-	public void setInitialized(boolean isInitialized) {
-		fragment.setInitialized(isInitialized);
 	}
 
 	@Override
@@ -355,26 +321,28 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	}
 
 	private FragmentGraphItem createAbove(FragmentManager manager) {
-		return connectAbove(manager.requestFragment(fragment.getCorner().add(0,
-				-Fragment.SIZE)));
+		return connectAbove(createFragmentGraphItem(manager, 0, -Fragment.SIZE));
 	}
 
 	private FragmentGraphItem createBelow(FragmentManager manager) {
-		return connectBelow(manager.requestFragment(fragment.getCorner().add(0,
-				Fragment.SIZE)));
+		return connectBelow(createFragmentGraphItem(manager, 0, Fragment.SIZE));
 	}
 
 	private FragmentGraphItem createLeft(FragmentManager manager) {
-		return connectLeft(manager.requestFragment(fragment.getCorner().add(
-				-Fragment.SIZE, 0)));
+		return connectLeft(createFragmentGraphItem(manager, -Fragment.SIZE, 0));
 	}
 
 	private FragmentGraphItem createRight(FragmentManager manager) {
-		return connectRight(manager.requestFragment(fragment.getCorner().add(
-				Fragment.SIZE, 0)));
+		return connectRight(createFragmentGraphItem(manager, Fragment.SIZE, 0));
+	}
+
+	private FragmentGraphItem createFragmentGraphItem(FragmentManager manager,
+			int xInWorld, int yInWorld) {
+		return new FragmentGraphItem(manager.requestFragment(fragment
+				.getCorner().add(xInWorld, yInWorld)));
 	}
 
 	private void recycle(FragmentManager manager) {
-		manager.recycleFragment(this);
+		manager.recycleFragment(fragment);
 	}
 }

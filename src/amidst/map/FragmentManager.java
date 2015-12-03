@@ -7,9 +7,9 @@ import amidst.fragment.layer.LayerManager;
 import amidst.minecraft.world.CoordinatesInWorld;
 
 public class FragmentManager {
-	private final ConcurrentLinkedQueue<FragmentGraphItem> availableQueue = new ConcurrentLinkedQueue<FragmentGraphItem>();
-	private final ConcurrentLinkedQueue<FragmentGraphItem> loadingQueue = new ConcurrentLinkedQueue<FragmentGraphItem>();
-	private final ConcurrentLinkedQueue<FragmentGraphItem> resetQueue = new ConcurrentLinkedQueue<FragmentGraphItem>();
+	private final ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<Fragment>();
+	private final ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<Fragment>();
+	private final ConcurrentLinkedQueue<Fragment> resetQueue = new ConcurrentLinkedQueue<Fragment>();
 	private final FragmentCache cache;
 
 	private volatile FragmentQueueProcessor queueProcessor;
@@ -20,8 +20,8 @@ public class FragmentManager {
 				constructors, numberOfLayers);
 	}
 
-	public FragmentGraphItem requestFragment(CoordinatesInWorld coordinates) {
-		FragmentGraphItem fragment;
+	public Fragment requestFragment(CoordinatesInWorld coordinates) {
+		Fragment fragment;
 		while ((fragment = availableQueue.poll()) == null) {
 			cache.increaseSize();
 		}
@@ -31,10 +31,7 @@ public class FragmentManager {
 		return fragment;
 	}
 
-	/**
-	 * Make sure the passed fragment is no longer referenced by other fragments!
-	 */
-	public void recycleFragment(FragmentGraphItem fragment) {
+	public void recycleFragment(Fragment fragment) {
 		resetQueue.offer(fragment);
 	}
 

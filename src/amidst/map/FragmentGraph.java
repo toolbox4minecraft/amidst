@@ -37,8 +37,8 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 
 	public void init(CoordinatesInWorld coordinates) {
 		recycleAll();
-		startFragment = fragmentManager.requestFragment(coordinates
-				.toFragmentCorner());
+		startFragment = new FragmentGraphItem(
+				fragmentManager.requestFragment(coordinates.toFragmentCorner()));
 		fragmentsPerRow = 1;
 		fragmentsPerColumn = 1;
 	}

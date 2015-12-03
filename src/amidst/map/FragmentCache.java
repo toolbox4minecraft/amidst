@@ -10,16 +10,15 @@ import amidst.logging.Log;
 public class FragmentCache {
 	private static final int NEW_FRAGMENTS_PER_REQUEST = 1024;
 
-	private final List<FragmentGraphItem> cache = new LinkedList<FragmentGraphItem>();
+	private final List<Fragment> cache = new LinkedList<Fragment>();
 
-	private final ConcurrentLinkedQueue<FragmentGraphItem> availableQueue;
-	private final ConcurrentLinkedQueue<FragmentGraphItem> loadingQueue;
+	private final ConcurrentLinkedQueue<Fragment> availableQueue;
+	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
 	private final Iterable<FragmentConstructor> constructors;
 	private final int numberOfLayers;
 
-	public FragmentCache(
-			ConcurrentLinkedQueue<FragmentGraphItem> availableQueue,
-			ConcurrentLinkedQueue<FragmentGraphItem> loadingQueue,
+	public FragmentCache(ConcurrentLinkedQueue<Fragment> availableQueue,
+			ConcurrentLinkedQueue<Fragment> loadingQueue,
 			Iterable<FragmentConstructor> constructors, int numberOfLayers) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
@@ -36,9 +35,8 @@ public class FragmentCache {
 
 	private void requestNewFragments() {
 		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
-			FragmentGraphItem fragment = new FragmentGraphItem(new Fragment(
-					numberOfLayers));
-			construct(fragment.getFragment());
+			Fragment fragment = new Fragment(numberOfLayers);
+			construct(fragment);
 			cache.add(fragment);
 			availableQueue.offer(fragment);
 		}
@@ -51,7 +49,7 @@ public class FragmentCache {
 	}
 
 	public void reloadAll() {
-		for (FragmentGraphItem fragment : cache) {
+		for (Fragment fragment : cache) {
 			loadingQueue.offer(fragment);
 		}
 	}
