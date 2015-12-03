@@ -7,14 +7,16 @@ import java.awt.Point;
 import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.World;
 
 public class CursorInformationWidget extends Widget {
+	private final Map map;
+
 	private String text = "";
 
-	public CursorInformationWidget(MapViewer mapViewer, Map map, World world,
-			CornerAnchorPoint anchor) {
-		super(mapViewer, map, world, anchor);
+	public CursorInformationWidget(MapViewer mapViewer,
+			CornerAnchorPoint anchor, Map map) {
+		super(mapViewer, anchor);
+		this.map = map;
 		setWidth(20);
 		setHeight(30);
 		forceVisibility(false);

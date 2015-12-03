@@ -4,17 +4,14 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
 import amidst.Options;
-import amidst.map.Map;
 import amidst.map.MapViewer;
-import amidst.minecraft.world.World;
 import amidst.utilities.FramerateTimer;
 
 public class FpsWidget extends Widget {
 	private FramerateTimer fpsTimer = new FramerateTimer(2);
 
-	public FpsWidget(MapViewer mapViewer, Map map, World world,
-			CornerAnchorPoint anchor) {
-		super(mapViewer, map, world, anchor);
+	public FpsWidget(MapViewer mapViewer, CornerAnchorPoint anchor) {
+		super(mapViewer, anchor);
 		setWidth(20);
 		setHeight(30);
 		forceVisibility(onVisibilityCheck());

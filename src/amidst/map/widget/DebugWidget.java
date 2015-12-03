@@ -8,16 +8,14 @@ import java.util.List;
 import amidst.Options;
 import amidst.map.FragmentGraph;
 import amidst.map.FragmentManager;
-import amidst.map.Map;
 import amidst.map.MapViewer;
-import amidst.minecraft.world.World;
 
 public class DebugWidget extends Widget {
 	private final FragmentGraph graph;
 
-	public DebugWidget(MapViewer mapViewer, Map map, World world,
-			CornerAnchorPoint anchor, FragmentGraph graph) {
-		super(mapViewer, map, world, anchor);
+	public DebugWidget(MapViewer mapViewer, CornerAnchorPoint anchor,
+			FragmentGraph graph) {
+		super(mapViewer, anchor);
 		this.graph = graph;
 		forceVisibility(onVisibilityCheck());
 	}

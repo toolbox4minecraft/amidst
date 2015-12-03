@@ -6,9 +6,7 @@ import java.awt.image.BufferedImage;
 
 import amidst.fragment.layer.LayerReloader;
 import amidst.map.BiomeSelection;
-import amidst.map.Map;
 import amidst.map.MapViewer;
-import amidst.minecraft.world.World;
 import amidst.resources.ResourceLoader;
 
 public class BiomeToggleWidget extends Widget {
@@ -18,10 +16,9 @@ public class BiomeToggleWidget extends Widget {
 	private final BiomeSelection biomeSelection;
 	private final LayerReloader layerReloader;
 
-	public BiomeToggleWidget(MapViewer mapViewer, Map map, World world,
-			CornerAnchorPoint anchor, BiomeSelection biomeSelection,
-			LayerReloader layerReloader) {
-		super(mapViewer, map, world, anchor);
+	public BiomeToggleWidget(MapViewer mapViewer, CornerAnchorPoint anchor,
+			BiomeSelection biomeSelection, LayerReloader layerReloader) {
+		super(mapViewer, anchor);
 		this.biomeSelection = biomeSelection;
 		this.layerReloader = layerReloader;
 		setWidth(36);

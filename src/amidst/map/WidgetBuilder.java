@@ -40,14 +40,14 @@ public class WidgetBuilder {
 	public List<Widget> create(MapViewer mapViewer) {
 		// @formatter:off
 		return Arrays.asList(
-				new FpsWidget(              mapViewer, map, world, CornerAnchorPoint.BOTTOM_LEFT),
-				new ScaleWidget(            mapViewer, map, world, CornerAnchorPoint.BOTTOM_CENTER, zoom),
-				new SeedWidget(             mapViewer, map, world, CornerAnchorPoint.TOP_LEFT),
-				new DebugWidget(            mapViewer, map, world, CornerAnchorPoint.BOTTOM_RIGHT,  graph),
-				new SelectedIconWidget(     mapViewer, map, world, CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
-				new CursorInformationWidget(mapViewer, map, world, CornerAnchorPoint.TOP_RIGHT),
-				new BiomeToggleWidget(      mapViewer, map, world, CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection, layerReloader),
-				new BiomeWidget(            mapViewer, map, world, CornerAnchorPoint.NONE,          biomeSelection, layerReloader)
+				new FpsWidget(              mapViewer, CornerAnchorPoint.BOTTOM_LEFT),
+				new ScaleWidget(            mapViewer, CornerAnchorPoint.BOTTOM_CENTER, zoom),
+				new SeedWidget(             mapViewer, CornerAnchorPoint.TOP_LEFT,      world),
+				new DebugWidget(            mapViewer, CornerAnchorPoint.BOTTOM_RIGHT,  graph),
+				new SelectedIconWidget(     mapViewer, CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
+				new CursorInformationWidget(mapViewer, CornerAnchorPoint.TOP_RIGHT,     map),
+				new BiomeToggleWidget(      mapViewer, CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection, layerReloader),
+				new BiomeWidget(            mapViewer, CornerAnchorPoint.NONE,          biomeSelection, layerReloader)
 		);
 		// @formatter:on
 	}

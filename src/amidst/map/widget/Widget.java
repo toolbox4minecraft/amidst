@@ -9,9 +9,7 @@ import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 
-import amidst.map.Map;
 import amidst.map.MapViewer;
-import amidst.minecraft.world.World;
 import amidst.resources.ResourceLoader;
 import amidst.utilities.CoordinateUtils;
 
@@ -47,8 +45,6 @@ public abstract class Widget {
 			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
 
 	protected final MapViewer mapViewer;
-	protected final Map map;
-	protected final World world;
 	private final CornerAnchorPoint anchor;
 
 	private int x;
@@ -62,11 +58,8 @@ public abstract class Widget {
 	private float alpha = 1.0f;
 	private float targetAlpha = 1.0f;
 
-	protected Widget(MapViewer mapViewer, Map map, World world,
-			CornerAnchorPoint anchor) {
+	protected Widget(MapViewer mapViewer, CornerAnchorPoint anchor) {
 		this.mapViewer = mapViewer;
-		this.map = map;
-		this.world = world;
 		this.anchor = anchor;
 	}
 

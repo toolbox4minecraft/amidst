@@ -4,10 +4,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.map.WorldIconSelection;
-import amidst.minecraft.world.World;
 import amidst.minecraft.world.icon.WorldIcon;
 
 public class SelectedIconWidget extends Widget {
@@ -16,9 +14,9 @@ public class SelectedIconWidget extends Widget {
 	private String message = "";
 	private BufferedImage icon;
 
-	public SelectedIconWidget(MapViewer mapViewer, Map map, World world,
-			CornerAnchorPoint anchor, WorldIconSelection worldIconSelection) {
-		super(mapViewer, map, world, anchor);
+	public SelectedIconWidget(MapViewer mapViewer, CornerAnchorPoint anchor,
+			WorldIconSelection worldIconSelection) {
+		super(mapViewer, anchor);
 		this.worldIconSelection = worldIconSelection;
 		increaseYMargin(40);
 		setWidth(20);

@@ -5,10 +5,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
 import amidst.Options;
-import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.map.Zoom;
-import amidst.minecraft.world.World;
 
 public class ScaleWidget extends Widget {
 	@Deprecated
@@ -18,9 +16,8 @@ public class ScaleWidget extends Widget {
 
 	private final Zoom zoom;
 
-	public ScaleWidget(MapViewer mapViewer, Map map, World world,
-			CornerAnchorPoint anchor, Zoom zoom) {
-		super(mapViewer, map, world, anchor);
+	public ScaleWidget(MapViewer mapViewer, CornerAnchorPoint anchor, Zoom zoom) {
+		super(mapViewer, anchor);
 		this.zoom = zoom;
 		setWidth(100);
 		setHeight(34);

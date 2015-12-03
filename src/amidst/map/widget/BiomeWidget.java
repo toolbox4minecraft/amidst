@@ -10,10 +10,8 @@ import java.util.List;
 
 import amidst.fragment.layer.LayerReloader;
 import amidst.map.BiomeSelection;
-import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.minecraft.Biome;
-import amidst.minecraft.world.World;
 import amidst.utilities.CoordinateUtils;
 
 public class BiomeWidget extends Widget {
@@ -48,10 +46,9 @@ public class BiomeWidget extends Widget {
 	private int mouseYOnGrab = 0;
 	private int scrollbarYOnGrab;
 
-	public BiomeWidget(MapViewer mapViewer, Map map, World world,
-			CornerAnchorPoint anchor, BiomeSelection biomeSelection,
-			LayerReloader layerReloader) {
-		super(mapViewer, map, world, anchor);
+	public BiomeWidget(MapViewer mapViewer, CornerAnchorPoint anchor,
+			BiomeSelection biomeSelection, LayerReloader layerReloader) {
+		super(mapViewer, anchor);
 		this.biomeSelection = biomeSelection;
 		this.layerReloader = layerReloader;
 		setWidth(250);
