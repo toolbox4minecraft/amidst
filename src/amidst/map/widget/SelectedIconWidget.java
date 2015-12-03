@@ -11,12 +11,15 @@ import amidst.minecraft.world.World;
 import amidst.minecraft.world.icon.WorldIcon;
 
 public class SelectedIconWidget extends Widget {
+	private final WorldIconSelection worldIconSelection;
+
 	private String message = "";
 	private BufferedImage icon;
 
 	public SelectedIconWidget(MapViewer mapViewer, Map map, World world,
-			CornerAnchorPoint anchor) {
+			CornerAnchorPoint anchor, WorldIconSelection worldIconSelection) {
 		super(mapViewer, map, world, anchor);
+		this.worldIconSelection = worldIconSelection;
 		increaseYMargin(40);
 		setWidth(20);
 		setHeight(35);
@@ -25,11 +28,10 @@ public class SelectedIconWidget extends Widget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
-		WorldIconSelection selection = map.getWorldIconSelection();
-		if (selection.hasSelection()) {
-			WorldIcon selectedIcon = selection.getSelection();
-			message = selectedIcon.toString();
-			icon = selectedIcon.getImage();
+		if (worldIconSelection.hasSelection()) {
+			WorldIcon selection = worldIconSelection.get();
+			message = selection.toString();
+			icon = selection.getImage();
 		}
 
 		setWidth(45 + fontMetrics.stringWidth(message));
@@ -45,6 +47,6 @@ public class SelectedIconWidget extends Widget {
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		return map.getWorldIconSelection().hasSelection();
+		return worldIconSelection.hasSelection();
 	}
 }

@@ -19,7 +19,9 @@ import amidst.fragment.loader.BiomeDataLoader;
 import amidst.fragment.loader.FragmentLoader;
 import amidst.fragment.loader.ImageLoader;
 import amidst.fragment.loader.WorldIconLoader;
+import amidst.map.BiomeSelection;
 import amidst.map.Map;
+import amidst.map.WorldIconSelection;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 
@@ -83,18 +85,21 @@ public class LayerBuilder {
 		return LayerIds.NUMBER_OF_LAYERS;
 	}
 
-	public LayerManager createLayerManager(World world, Map map) {
-		return new LayerManager(invalidatedLayers, createLoaders(world, map));
+	public LayerManager createLayerManager(World world, Map map,
+			BiomeSelection biomeSelection) {
+		return new LayerManager(invalidatedLayers, createLoaders(world,
+				biomeSelection));
 	}
 
 	/**
 	 * This also defines the loading and reloading order.
 	 */
-	private Iterable<FragmentLoader> createLoaders(World world, Map map) {
+	private Iterable<FragmentLoader> createLoaders(World world,
+			BiomeSelection biomeSelection) {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
 				new BiomeDataLoader(declarations.get(LayerIds.BIOME), world.getBiomeDataOracle()),
-				new ImageLoader(	declarations.get(LayerIds.BIOME), Resolution.QUARTER, new BiomeColorProvider(map.getBiomeSelection())),
+				new ImageLoader(	declarations.get(LayerIds.BIOME), Resolution.QUARTER, new BiomeColorProvider(biomeSelection)),
 				new ImageLoader(    declarations.get(LayerIds.SLIME), Resolution.CHUNK,   new SlimeColorProvider(world.getSlimeChunkOracle())),
 				new WorldIconLoader(declarations.get(LayerIds.VILLAGE),         world.getVillageProducer()),
 				new WorldIconLoader(declarations.get(LayerIds.OCEAN_MONUMENT),  world.getOceanMonumentProducer()),
@@ -110,19 +115,20 @@ public class LayerBuilder {
 	/**
 	 * This also defines the rendering order.
 	 */
-	public Iterable<FragmentDrawer> createDrawers(Map map) {
+	public Iterable<FragmentDrawer> createDrawers(Map map,
+			WorldIconSelection worldIconSelection) {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
 				new ImageDrawer(    declarations.get(LayerIds.BIOME),           Resolution.QUARTER),
 				new ImageDrawer(    declarations.get(LayerIds.SLIME),           Resolution.CHUNK),
 				new GridDrawer(     declarations.get(LayerIds.GRID),            map),
-				new WorldIconDrawer(declarations.get(LayerIds.VILLAGE),         map),
-				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),  map),
-				new WorldIconDrawer(declarations.get(LayerIds.STRONGHOLD),      map),
-				new WorldIconDrawer(declarations.get(LayerIds.TEMPLE),          map),
-				new WorldIconDrawer(declarations.get(LayerIds.SPAWN),           map),
-				new WorldIconDrawer(declarations.get(LayerIds.NETHER_FORTRESS), map),
-				new WorldIconDrawer(declarations.get(LayerIds.PLAYER),          map)
+				new WorldIconDrawer(declarations.get(LayerIds.VILLAGE),         map, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),  map, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.STRONGHOLD),      map, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.TEMPLE),          map, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.SPAWN),           map, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.NETHER_FORTRESS), map, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.PLAYER),          map, worldIconSelection)
 		));
 		// @formatter:on
 	}

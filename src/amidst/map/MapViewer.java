@@ -161,8 +161,9 @@ public class MapViewer {
 			return result;
 		}
 
-		private void mouseClickedOnMap(Point mouse) {
-			map.selectWorldIconAt(mouse, 50.0);
+		private void mouseClickedOnMap(Point mousePosition) {
+			worldIconSelection.select(map.getClosestWorldIcon(mousePosition,
+					50.0));
 		}
 
 		/**
@@ -211,15 +212,18 @@ public class MapViewer {
 	private final World world;
 	private final Map map;
 	private final MapDrawer drawer;
+	private final WorldIconSelection worldIconSelection;
 	private final List<Widget> widgets;
 
 	public MapViewer(MapMovement movement, MapZoom zoom, World world, Map map,
-			MapDrawer drawer, WidgetBuilder widgetBuilder) {
+			MapDrawer drawer, WorldIconSelection worldIconSelection,
+			WidgetBuilder widgetBuilder) {
 		this.movement = movement;
 		this.zoom = zoom;
 		this.world = world;
 		this.map = map;
 		this.drawer = drawer;
+		this.worldIconSelection = worldIconSelection;
 		this.widgets = widgetBuilder.create(this);
 		initComponent();
 		initPanel();

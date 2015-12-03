@@ -7,15 +7,19 @@ import java.awt.image.BufferedImage;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
 import amidst.map.Map;
+import amidst.map.WorldIconSelection;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.icon.WorldIcon;
 
 public class WorldIconDrawer extends FragmentDrawer {
 	private final Map map;
+	private final WorldIconSelection worldIconSelection;
 
-	public WorldIconDrawer(LayerDeclaration declaration, Map map) {
+	public WorldIconDrawer(LayerDeclaration declaration, Map map,
+			WorldIconSelection worldIconSelection) {
 		super(declaration);
 		this.map = map;
+		this.worldIconSelection = worldIconSelection;
 	}
 
 	@Override
@@ -32,7 +36,7 @@ public class WorldIconDrawer extends FragmentDrawer {
 		BufferedImage image = icon.getImage();
 		int width = image.getWidth();
 		int height = image.getHeight();
-		if (map.getWorldIconSelection().isSelected(icon)) {
+		if (worldIconSelection.isSelected(icon)) {
 			width *= 1.5;
 			height *= 1.5;
 		}

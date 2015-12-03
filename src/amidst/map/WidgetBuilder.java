@@ -18,10 +18,15 @@ import amidst.minecraft.world.World;
 public class WidgetBuilder {
 	private final World world;
 	private final Map map;
+	private final BiomeSelection biomeSelection;
+	private final WorldIconSelection worldIconSelection;
 
-	public WidgetBuilder(World world, Map map) {
+	public WidgetBuilder(World world, Map map, BiomeSelection biomeSelection,
+			WorldIconSelection worldIconSelection) {
 		this.world = world;
 		this.map = map;
+		this.biomeSelection = biomeSelection;
+		this.worldIconSelection = worldIconSelection;
 	}
 
 	public List<Widget> create(MapViewer mapViewer) {
@@ -31,10 +36,10 @@ public class WidgetBuilder {
 				new ScaleWidget(            mapViewer, map, world, CornerAnchorPoint.BOTTOM_CENTER),
 				new SeedWidget(             mapViewer, map, world, CornerAnchorPoint.TOP_LEFT),
 				new DebugWidget(            mapViewer, map, world, CornerAnchorPoint.BOTTOM_RIGHT),
-				new SelectedIconWidget(     mapViewer, map, world, CornerAnchorPoint.TOP_LEFT),
+				new SelectedIconWidget(     mapViewer, map, world, CornerAnchorPoint.TOP_LEFT, worldIconSelection),
 				new CursorInformationWidget(mapViewer, map, world, CornerAnchorPoint.TOP_RIGHT),
-				new BiomeToggleWidget(      mapViewer, map, world, CornerAnchorPoint.BOTTOM_RIGHT),
-				new BiomeWidget(            mapViewer, map, world, CornerAnchorPoint.NONE)
+				new BiomeToggleWidget(      mapViewer, map, world, CornerAnchorPoint.BOTTOM_RIGHT, biomeSelection),
+				new BiomeWidget(            mapViewer, map, world, CornerAnchorPoint.NONE, biomeSelection)
 		);
 		// @formatter:on
 	}

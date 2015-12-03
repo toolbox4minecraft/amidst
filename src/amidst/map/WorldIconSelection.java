@@ -5,11 +5,11 @@ import amidst.minecraft.world.icon.WorldIcon;
 public class WorldIconSelection {
 	private WorldIcon selection;
 
-	public WorldIcon getSelection() {
+	public WorldIcon get() {
 		return selection;
 	}
 
-	public void setSelection(WorldIcon selection) {
+	public void select(WorldIcon selection) {
 		this.selection = selection;
 	}
 

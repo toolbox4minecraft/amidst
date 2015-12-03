@@ -6,7 +6,7 @@ import java.util.List;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.fragment.layer.LayerIds;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.World;
+import amidst.minecraft.world.icon.WorldIcon;
 
 public class Map {
 	private static final String UNKNOWN_BIOME_ALIAS = "Unknown";
@@ -20,17 +20,11 @@ public class Map {
 	private final Object mapLock = new Object();
 
 	private final MapZoom zoom;
-	private final BiomeSelection biomeSelection;
-	private final WorldIconSelection worldIconSelection;
 	private final FragmentGraph graph;
 
 	public Map(List<LayerDeclaration> declarations, MapZoom zoom,
-			BiomeSelection biomeSelection,
-			WorldIconSelection worldIconSelection,
-			FragmentManager fragmentManager, World world) {
+			FragmentManager fragmentManager) {
 		this.zoom = zoom;
-		this.biomeSelection = biomeSelection;
-		this.worldIconSelection = worldIconSelection;
 		this.graph = new FragmentGraph(declarations, fragmentManager, this);
 	}
 
@@ -141,9 +135,9 @@ public class Map {
 		return null;
 	}
 
-	public void selectWorldIconAt(Point mouse, double maxDistance) {
-		this.worldIconSelection.setSelection(graph.getClosestWorldIcon(
-				screenToWorld(mouse), zoom.screenToWorld(maxDistance)));
+	public WorldIcon getClosestWorldIcon(Point mousePosition, double maxDistance) {
+		return graph.getClosestWorldIcon(screenToWorld(mousePosition),
+				zoom.screenToWorld(maxDistance));
 	}
 
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
@@ -159,14 +153,6 @@ public class Map {
 
 	public double getZoom() {
 		return zoom.getCurrentValue();
-	}
-
-	public WorldIconSelection getWorldIconSelection() {
-		return worldIconSelection;
-	}
-
-	public BiomeSelection getBiomeSelection() {
-		return biomeSelection;
 	}
 
 	/**

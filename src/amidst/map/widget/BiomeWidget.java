@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
+import amidst.map.BiomeSelection;
 import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.minecraft.Biome;
@@ -27,6 +28,8 @@ public class BiomeWidget extends Widget {
 	private static final Color SELECT_BUTTON_COLOR = 	new Color(0.6f, 0.6f, 0.8f, 1.0f);
 	// @formatter:on
 
+	private final BiomeSelection biomeSelection;
+
 	private List<Biome> biomes = new ArrayList<Biome>();
 	private int maxNameWidth = 0;
 	private int biomeListHeight;
@@ -44,8 +47,9 @@ public class BiomeWidget extends Widget {
 	private int scrollbarYOnGrab;
 
 	public BiomeWidget(MapViewer mapViewer, Map map, World world,
-			CornerAnchorPoint anchor) {
+			CornerAnchorPoint anchor, BiomeSelection biomeSelection) {
 		super(mapViewer, map, world, anchor);
+		this.biomeSelection = biomeSelection;
 		setWidth(250);
 		setHeight(400);
 		setY(100);
@@ -154,7 +158,7 @@ public class BiomeWidget extends Widget {
 	}
 
 	private Color getBiomeBackgroudColor(int i, Biome biome) {
-		if (map.getBiomeSelection().isSelected(biome.getIndex())) {
+		if (biomeSelection.isSelected(biome.getIndex())) {
 			if (i % 2 == 1) {
 				return BIOME_LIT_BG_COLOR_1;
 			} else {
@@ -263,18 +267,18 @@ public class BiomeWidget extends Widget {
 			int id = (mouseY - (innerBox.y - getY()) - biomeListYOffset) / 16;
 			if (id < biomes.size()) {
 				int index = biomes.get(id).getIndex();
-				map.getBiomeSelection().toggleSelect(index);
+				biomeSelection.toggleSelect(index);
 				return true;
 			}
 		} else if (isButton(mouseY)) {
 			if (isSelectAllButton(mouseX)) {
-				map.getBiomeSelection().selectAll();
+				biomeSelection.selectAll();
 				return true;
 			} else if (isSelectSpecialBiomesButton(mouseX)) {
-				map.getBiomeSelection().selectOnlySpecial();
+				biomeSelection.selectOnlySpecial();
 				return true;
 			} else if (isDeselectAllButton(mouseX)) {
-				map.getBiomeSelection().deselectAll();
+				biomeSelection.deselectAll();
 				return true;
 			}
 		}
@@ -319,6 +323,6 @@ public class BiomeWidget extends Widget {
 
 	@Override
 	public boolean onVisibilityCheck() {
-		return map.getBiomeSelection().isHighlightMode() && getHeight() > 200;
+		return biomeSelection.isHighlightMode() && getHeight() > 200;
 	}
 }
