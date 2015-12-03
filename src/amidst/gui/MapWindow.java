@@ -25,18 +25,15 @@ import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.map.WorldSurroundings;
-import amidst.map.WorldSurroundingsBuilder;
 import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.World;
 import amidst.minecraft.world.WorldType;
 
 public class MapWindow {
 	private final SeedPrompt seedPrompt = new SeedPrompt();
 
 	private final Application application;
-	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 
 	private final JFrame frame;
 	private final Container contentPane;
@@ -44,11 +41,8 @@ public class MapWindow {
 
 	private volatile WorldSurroundings worldSurroundings;
 
-	public MapWindow(Application application,
-			WorldSurroundingsBuilder worldSurroundingsBuilder,
-			Options preferences) {
+	public MapWindow(Application application, Options preferences) {
 		this.application = application;
-		this.worldSurroundingsBuilder = worldSurroundingsBuilder;
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
 		this.menuBar = createMenuBar(preferences);
@@ -223,22 +217,18 @@ public class MapWindow {
 	}
 
 	public void dispose() {
-		clearWorld();
+		clearWorldSurroundings();
 		frame.dispose();
 	}
 
-	public void clearWorld() {
+	public void clearWorldSurroundings() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		this.worldSurroundings = null;
 		if (worldSurroundings != null) {
-			this.worldSurroundings = null;
 			menuBar.disableMapMenu();
 			contentPane.remove(worldSurroundings.getMapViewer().getPanel());
 			worldSurroundings.dispose();
 		}
-	}
-
-	public void initWorld(World world) {
-		setWorldSurroundings(worldSurroundingsBuilder.create(world));
 	}
 
 	/**
@@ -247,7 +237,7 @@ public class MapWindow {
 	 * repainter thread will draw the new worldSurroundings as soon as it is
 	 * assigned to the instance variable.
 	 */
-	private void setWorldSurroundings(WorldSurroundings worldSurroundings) {
+	public void setWorldSurroundings(WorldSurroundings worldSurroundings) {
 		contentPane.add(worldSurroundings.getMapViewer().getPanel(),
 				BorderLayout.CENTER);
 		frame.validate();

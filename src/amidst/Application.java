@@ -98,8 +98,7 @@ public class Application {
 
 	private void doDisplayMapWindow(IMinecraftInterface minecraftInterface) {
 		MinecraftUtil.setInterface(minecraftInterface);
-		setMapWindow(new MapWindow(this, worldSurroundingsBuilder,
-				getPreferences()));
+		setMapWindow(new MapWindow(this, getPreferences()));
 		setVersionSelectWindow(null);
 	}
 
@@ -159,8 +158,9 @@ public class Application {
 		this.world = world;
 		if (world != null) {
 			seedHistoryLogger.log(world.getSeed());
-			mapWindow.clearWorld();
-			mapWindow.initWorld(world);
+			mapWindow.clearWorldSurroundings();
+			mapWindow.setWorldSurroundings(worldSurroundingsBuilder
+					.create(world));
 			if (world.isFileWorld()) {
 				skinLoader
 						.loadSkins(world.getAsFileWorld().getMovablePlayers());
