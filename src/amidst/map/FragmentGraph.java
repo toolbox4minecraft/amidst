@@ -43,7 +43,11 @@ public class FragmentGraph implements Iterable<Fragment> {
 		fragmentsPerColumn = 1;
 	}
 
-	public void recycleAll() {
+	public void dispose() {
+		recycleAll();
+	}
+
+	private void recycleAll() {
 		if (startFragment != null) {
 			startFragment.recycleAll(fragmentManager);
 		}

@@ -10,6 +10,10 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.minecraft.world.World;
 
 public class WorldSurroundingsBuilder {
+	private final MapZoom zoom = new MapZoom();
+	private final MapMovement movement = new MapMovement();
+	private final BiomeSelection biomeSelection = new BiomeSelection();
+
 	private final LayerBuilder layerBuilder;
 	private final FragmentManager fragmentManager;
 
@@ -20,8 +24,7 @@ public class WorldSurroundingsBuilder {
 				layerBuilder.getNumberOfLayers());
 	}
 
-	public WorldSurroundings create(World world, MapZoom zoom,
-			MapMovement movement, BiomeSelection biomeSelection) {
+	public WorldSurroundings create(World world) {
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
 		List<LayerDeclaration> declarations = layerBuilder.getDeclarations();
 		final FragmentGraph graph = new FragmentGraph(declarations,

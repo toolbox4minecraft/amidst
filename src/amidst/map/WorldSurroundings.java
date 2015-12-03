@@ -33,8 +33,9 @@ public class WorldSurroundings {
 	}
 
 	public void dispose() {
-		graph.recycleAll();
+		graph.dispose();
 		zoom.skipFading();
+		zoom.reset();
 		movement.reset();
 	}
 

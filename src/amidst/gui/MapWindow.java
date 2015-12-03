@@ -24,9 +24,6 @@ import amidst.Options;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
-import amidst.map.BiomeSelection;
-import amidst.map.MapMovement;
-import amidst.map.MapZoom;
 import amidst.map.WorldSurroundings;
 import amidst.map.WorldSurroundingsBuilder;
 import amidst.minecraft.LocalMinecraftInstallation;
@@ -37,9 +34,6 @@ import amidst.minecraft.world.WorldType;
 
 public class MapWindow {
 	private final SeedPrompt seedPrompt = new SeedPrompt();
-	private final MapZoom mapZoom = new MapZoom();
-	private final MapMovement mapMovement = new MapMovement();
-	private final BiomeSelection biomeSelection = new BiomeSelection();
 
 	private final Application application;
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
@@ -244,8 +238,7 @@ public class MapWindow {
 	}
 
 	public void initWorld(World world) {
-		setWorldSurroundings(worldSurroundingsBuilder.create(world, mapZoom,
-				mapMovement, biomeSelection));
+		setWorldSurroundings(worldSurroundingsBuilder.create(world));
 	}
 
 	/**

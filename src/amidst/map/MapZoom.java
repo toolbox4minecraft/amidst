@@ -58,6 +58,10 @@ public class MapZoom {
 		current = target;
 	}
 
+	public void reset() {
+		mousePosition = new Point();
+	}
+
 	public double screenToWorld(double coordinate) {
 		return coordinate / current;
 	}
