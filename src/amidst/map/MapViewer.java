@@ -212,13 +212,13 @@ public class MapViewer {
 	private final Zoom zoom;
 	private final World world;
 	private final Map map;
-	private final MapDrawer drawer;
+	private final Drawer drawer;
 	private final WorldIconSelection worldIconSelection;
 	private final LayerReloader layerReloader;
 	private final List<Widget> widgets;
 
 	public MapViewer(Movement movement, Zoom zoom, World world, Map map,
-			MapDrawer drawer, WorldIconSelection worldIconSelection,
+			Drawer drawer, WorldIconSelection worldIconSelection,
 			LayerReloader layerReloader, WidgetBuilder widgetBuilder) {
 		this.movement = movement;
 		this.zoom = zoom;

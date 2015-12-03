@@ -35,7 +35,7 @@ public class WorldSurroundingsBuilder {
 		fragmentManager.setLayerManager(layerManager);
 		Iterable<FragmentDrawer> drawers = layerBuilder.createDrawers(zoom,
 				worldIconSelection);
-		MapDrawer drawer = new MapDrawer(map, movement, zoom, graph, drawers);
+		Drawer drawer = new Drawer(map, movement, zoom, graph, drawers);
 		LayerReloader layerReloader = layerBuilder
 				.createLayerReloader(fragmentManager);
 		WidgetBuilder widgetBuilder = new WidgetBuilder(world, map,

@@ -14,7 +14,7 @@ import amidst.fragment.drawer.FragmentDrawer;
 import amidst.map.widget.Widget;
 import amidst.resources.ResourceLoader;
 
-public class MapDrawer {
+public class Drawer {
 	private static final BufferedImage DROP_SHADOW_BOTTOM_LEFT = ResourceLoader
 			.getImage("dropshadow/inner_bottom_left.png");
 	private static final BufferedImage DROP_SHADOW_BOTTOM_RIGHT = ResourceLoader
@@ -51,7 +51,7 @@ public class MapDrawer {
 	private List<Widget> widgets;
 	private FontMetrics widgetFontMetrics;
 
-	public MapDrawer(Map map, Movement movement, Zoom zoom,
+	public Drawer(Map map, Movement movement, Zoom zoom,
 			FragmentGraph graph, Iterable<FragmentDrawer> drawers) {
 		this.map = map;
 		this.movement = movement;
