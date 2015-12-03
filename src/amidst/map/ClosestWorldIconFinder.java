@@ -25,7 +25,7 @@ public class ClosestWorldIconFinder {
 	}
 
 	private void find() {
-		for (Fragment fragment : graph) {
+		for (FragmentGraphItem fragment : graph) {
 			for (LayerDeclaration declaration : layerDeclarations) {
 				if (declaration.isVisible()) {
 					int layerId = declaration.getLayerId();

@@ -5,17 +5,17 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import amidst.fragment.layer.LayerManager;
 
 public class FragmentQueueProcessor {
-	private final ConcurrentLinkedQueue<Fragment> availableQueue;
-	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
-	private final ConcurrentLinkedQueue<Fragment> resetQueue;
+	private final ConcurrentLinkedQueue<FragmentGraphItem> availableQueue;
+	private final ConcurrentLinkedQueue<FragmentGraphItem> loadingQueue;
+	private final ConcurrentLinkedQueue<FragmentGraphItem> resetQueue;
 	private final LayerManager layerManager;
 
-	private Fragment currentFragment;
+	private FragmentGraphItem currentFragment;
 
 	public FragmentQueueProcessor(
-			ConcurrentLinkedQueue<Fragment> availableQueue,
-			ConcurrentLinkedQueue<Fragment> loadingQueue,
-			ConcurrentLinkedQueue<Fragment> resetQueue,
+			ConcurrentLinkedQueue<FragmentGraphItem> availableQueue,
+			ConcurrentLinkedQueue<FragmentGraphItem> loadingQueue,
+			ConcurrentLinkedQueue<FragmentGraphItem> resetQueue,
 			LayerManager layerManager) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;

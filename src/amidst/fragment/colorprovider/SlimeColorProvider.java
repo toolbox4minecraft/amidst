@@ -1,6 +1,6 @@
 package amidst.fragment.colorprovider;
 
-import amidst.map.Fragment;
+import amidst.map.FragmentGraphItem;
 import amidst.minecraft.world.SlimeChunkOracle;
 
 public class SlimeColorProvider implements ColorProvider {
@@ -14,7 +14,7 @@ public class SlimeColorProvider implements ColorProvider {
 	}
 
 	@Override
-	public int getColorAt(Fragment fragment, long cornerX, long cornerY, int x,
+	public int getColorAt(FragmentGraphItem fragment, long cornerX, long cornerY, int x,
 			int y) {
 		if (slimeChunkOracle.isSlimeChunk(cornerX + x, cornerY + y)) {
 			return SLIME_CHUNK_COLOR;

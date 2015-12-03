@@ -1,7 +1,7 @@
 package amidst.fragment.colorprovider;
 
 import amidst.map.BiomeSelection;
-import amidst.map.Fragment;
+import amidst.map.FragmentGraphItem;
 import amidst.minecraft.Biome;
 import amidst.utilities.ColorUtils;
 
@@ -13,7 +13,7 @@ public class BiomeColorProvider implements ColorProvider {
 	}
 
 	@Override
-	public int getColorAt(Fragment fragment, long cornerX, long cornerY, int x,
+	public int getColorAt(FragmentGraphItem fragment, long cornerX, long cornerY, int x,
 			int y) {
 		return getColor(fragment.getBiomeDataAt(x, y));
 	}

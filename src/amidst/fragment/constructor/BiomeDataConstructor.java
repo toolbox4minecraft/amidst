@@ -1,7 +1,7 @@
 package amidst.fragment.constructor;
 
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.map.Fragment;
+import amidst.map.FragmentGraphItem;
 import amidst.minecraft.world.Resolution;
 
 public class BiomeDataConstructor extends ImageConstructor {
@@ -11,7 +11,7 @@ public class BiomeDataConstructor extends ImageConstructor {
 	}
 
 	@Override
-	public void construct(Fragment fragment) {
+	public void construct(FragmentGraphItem fragment) {
 		fragment.initBiomeData(size, size);
 		super.construct(fragment);
 	}

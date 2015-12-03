@@ -12,12 +12,13 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.icon.WorldIcon;
 
-public class Fragment implements Iterable<Fragment> {
-	private static class FragmentIterator implements Iterator<Fragment> {
-		private Fragment rowStart;
-		private Fragment currentNode;
+public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
+	private static class FragmentIterator implements
+			Iterator<FragmentGraphItem> {
+		private FragmentGraphItem rowStart;
+		private FragmentGraphItem currentNode;
 
-		public FragmentIterator(Fragment fragment) {
+		public FragmentIterator(FragmentGraphItem fragment) {
 			rowStart = fragment.getFirstColumn().getFirstRow();
 			currentNode = rowStart;
 		}
@@ -28,8 +29,8 @@ public class Fragment implements Iterable<Fragment> {
 		}
 
 		@Override
-		public Fragment next() {
-			Fragment result = currentNode;
+		public FragmentGraphItem next() {
+			FragmentGraphItem result = currentNode;
 			updateCurrentNode();
 			return result;
 		}
@@ -48,10 +49,10 @@ public class Fragment implements Iterable<Fragment> {
 	private volatile boolean isInitialized = false;
 	private volatile boolean isLoaded = false;
 	private volatile CoordinatesInWorld corner;
-	private volatile Fragment leftFragment = null;
-	private volatile Fragment rightFragment = null;
-	private volatile Fragment aboveFragment = null;
-	private volatile Fragment belowFragment = null;
+	private volatile FragmentGraphItem leftFragment = null;
+	private volatile FragmentGraphItem rightFragment = null;
+	private volatile FragmentGraphItem aboveFragment = null;
+	private volatile FragmentGraphItem belowFragment = null;
 
 	private volatile float alpha;
 	private volatile short[][] biomeData;
@@ -59,7 +60,7 @@ public class Fragment implements Iterable<Fragment> {
 	private final AtomicReferenceArray<BufferedImage> images;
 	private final AtomicReferenceArray<List<WorldIcon>> worldIcons;
 
-	public Fragment(int numberOfLayers) {
+	public FragmentGraphItem(int numberOfLayers) {
 		this.images = new AtomicReferenceArray<BufferedImage>(numberOfLayers);
 		this.worldIcons = new AtomicReferenceArray<List<WorldIcon>>(
 				numberOfLayers);
@@ -169,7 +170,7 @@ public class Fragment implements Iterable<Fragment> {
 	 * or something in between. This should be good enough for our use cases.
 	 */
 	@Override
-	public Iterator<Fragment> iterator() {
+	public Iterator<FragmentGraphItem> iterator() {
 		return new FragmentIterator(this);
 	}
 
@@ -186,9 +187,9 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	public void recycleAll(FragmentManager manager) {
-		Fragment topLeft = getFirstColumn().getFirstRow();
+		FragmentGraphItem topLeft = getFirstColumn().getFirstRow();
 		while (topLeft != null) {
-			Fragment next = topLeft.belowFragment;
+			FragmentGraphItem next = topLeft.belowFragment;
 			topLeft.deleteFirstRow(manager);
 			topLeft = next;
 		}
@@ -197,10 +198,10 @@ public class Fragment implements Iterable<Fragment> {
 	/**
 	 * Returns the new fragment in the top left corner, but never null.
 	 */
-	public Fragment adjustRowsAndColumns(int newAbove, int newBelow,
+	public FragmentGraphItem adjustRowsAndColumns(int newAbove, int newBelow,
 			int newLeft, int newRight, FragmentManager manager) {
-		Fragment firstColumn = getFirstColumn();
-		Fragment topLeft = firstColumn.getFirstRow();
+		FragmentGraphItem firstColumn = getFirstColumn();
+		FragmentGraphItem topLeft = firstColumn.getFirstRow();
 		topLeft = topLeft.createOrRemoveRowsAbove(manager, newAbove);
 		topLeft.getLastRow().createOrRemoveRowsBelow(manager, newBelow);
 		topLeft = topLeft.createOrRemoveColumnsLeft(manager, newLeft);
@@ -208,60 +209,60 @@ public class Fragment implements Iterable<Fragment> {
 		return topLeft;
 	}
 
-	private Fragment createOrRemoveRowsAbove(FragmentManager manager,
+	private FragmentGraphItem createOrRemoveRowsAbove(FragmentManager manager,
 			int newAbove) {
-		Fragment topLeft = this;
+		FragmentGraphItem topLeft = this;
 		for (int i = 0; i < newAbove; i++) {
 			topLeft.createFirstRow(manager);
 			topLeft = topLeft.aboveFragment;
 		}
 		for (int i = 0; i < -newAbove; i++) {
-			Fragment next = topLeft.belowFragment;
+			FragmentGraphItem next = topLeft.belowFragment;
 			topLeft.deleteFirstRow(manager);
 			topLeft = next;
 		}
 		return topLeft;
 	}
 
-	private Fragment createOrRemoveRowsBelow(FragmentManager manager,
+	private FragmentGraphItem createOrRemoveRowsBelow(FragmentManager manager,
 			int newBelow) {
-		Fragment bottomLeft = this;
+		FragmentGraphItem bottomLeft = this;
 		for (int i = 0; i < newBelow; i++) {
 			bottomLeft.createLastRow(manager);
 			bottomLeft = bottomLeft.belowFragment;
 		}
 		for (int i = 0; i < -newBelow; i++) {
-			Fragment next = bottomLeft.aboveFragment;
+			FragmentGraphItem next = bottomLeft.aboveFragment;
 			bottomLeft.deleteLastRow(manager);
 			bottomLeft = next;
 		}
 		return bottomLeft;
 	}
 
-	private Fragment createOrRemoveColumnsLeft(FragmentManager manager,
-			int newLeft) {
-		Fragment topLeft = this;
+	private FragmentGraphItem createOrRemoveColumnsLeft(
+			FragmentManager manager, int newLeft) {
+		FragmentGraphItem topLeft = this;
 		for (int i = 0; i < newLeft; i++) {
 			topLeft.createFirstColumn(manager);
 			topLeft = topLeft.leftFragment;
 		}
 		for (int i = 0; i < -newLeft; i++) {
-			Fragment next = topLeft.rightFragment;
+			FragmentGraphItem next = topLeft.rightFragment;
 			topLeft.deleteFirstColumn(manager);
 			topLeft = next;
 		}
 		return topLeft;
 	}
 
-	private Fragment createOrRemoveColumnsRight(FragmentManager manager,
-			int newRight) {
-		Fragment topRight = this;
+	private FragmentGraphItem createOrRemoveColumnsRight(
+			FragmentManager manager, int newRight) {
+		FragmentGraphItem topRight = this;
 		for (int i = 0; i < newRight; i++) {
 			topRight.createLastColumn(manager);
 			topRight = topRight.rightFragment;
 		}
 		for (int i = 0; i < -newRight; i++) {
-			Fragment next = topRight.leftFragment;
+			FragmentGraphItem next = topRight.leftFragment;
 			topRight.deleteLastColumn(manager);
 			topRight = next;
 		}
@@ -269,8 +270,8 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	private void createFirstRow(FragmentManager manager) {
-		Fragment above = createAbove(manager);
-		Fragment below = rightFragment;
+		FragmentGraphItem above = createAbove(manager);
+		FragmentGraphItem below = rightFragment;
 		while (below != null) {
 			above = above.createRight(manager);
 			above.connectBelow(below);
@@ -279,8 +280,8 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	private void createLastRow(FragmentManager manager) {
-		Fragment below = createBelow(manager);
-		Fragment above = rightFragment;
+		FragmentGraphItem below = createBelow(manager);
+		FragmentGraphItem above = rightFragment;
 		while (above != null) {
 			below = below.createRight(manager);
 			below.connectAbove(above);
@@ -289,8 +290,8 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	private void createFirstColumn(FragmentManager manager) {
-		Fragment left = createLeft(manager);
-		Fragment right = belowFragment;
+		FragmentGraphItem left = createLeft(manager);
+		FragmentGraphItem right = belowFragment;
 		while (right != null) {
 			left = left.createBelow(manager);
 			left.connectRight(right);
@@ -299,8 +300,8 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	private void createLastColumn(FragmentManager manager) {
-		Fragment right = createRight(manager);
-		Fragment left = belowFragment;
+		FragmentGraphItem right = createRight(manager);
+		FragmentGraphItem left = belowFragment;
 		while (left != null) {
 			right = right.createBelow(manager);
 			right.connectLeft(left);
@@ -309,150 +310,150 @@ public class Fragment implements Iterable<Fragment> {
 	}
 
 	private void deleteFirstRow(FragmentManager manager) {
-		Fragment current = this;
+		FragmentGraphItem current = this;
 		while (current != null) {
 			current.disconnectBelow();
-			Fragment right = current.disconnectRight();
+			FragmentGraphItem right = current.disconnectRight();
 			current.recycle(manager);
 			current = right;
 		}
 	}
 
 	private void deleteLastRow(FragmentManager manager) {
-		Fragment current = this;
+		FragmentGraphItem current = this;
 		while (current != null) {
 			current.disconnectAbove();
-			Fragment right = current.disconnectRight();
+			FragmentGraphItem right = current.disconnectRight();
 			current.recycle(manager);
 			current = right;
 		}
 	}
 
 	private void deleteFirstColumn(FragmentManager manager) {
-		Fragment current = this;
+		FragmentGraphItem current = this;
 		while (current != null) {
 			current.disconnectRight();
-			Fragment below = current.disconnectBelow();
+			FragmentGraphItem below = current.disconnectBelow();
 			current.recycle(manager);
 			current = below;
 		}
 	}
 
 	private void deleteLastColumn(FragmentManager manager) {
-		Fragment current = this;
+		FragmentGraphItem current = this;
 		while (current != null) {
 			current.disconnectLeft();
-			Fragment below = current.disconnectBelow();
+			FragmentGraphItem below = current.disconnectBelow();
 			current.recycle(manager);
 			current = below;
 		}
 	}
 
-	private Fragment getFirstRow() {
-		Fragment result = this;
+	private FragmentGraphItem getFirstRow() {
+		FragmentGraphItem result = this;
 		while (result.aboveFragment != null) {
 			result = result.aboveFragment;
 		}
 		return result;
 	}
 
-	private Fragment getLastRow() {
-		Fragment result = this;
+	private FragmentGraphItem getLastRow() {
+		FragmentGraphItem result = this;
 		while (result.belowFragment != null) {
 			result = result.belowFragment;
 		}
 		return result;
 	}
 
-	private Fragment getFirstColumn() {
-		Fragment result = this;
+	private FragmentGraphItem getFirstColumn() {
+		FragmentGraphItem result = this;
 		while (result.leftFragment != null) {
 			result = result.leftFragment;
 		}
 		return result;
 	}
 
-	private Fragment getLastColumn() {
-		Fragment result = this;
+	private FragmentGraphItem getLastColumn() {
+		FragmentGraphItem result = this;
 		while (result.rightFragment != null) {
 			result = result.rightFragment;
 		}
 		return result;
 	}
 
-	private Fragment connectAbove(Fragment above) {
+	private FragmentGraphItem connectAbove(FragmentGraphItem above) {
 		above.belowFragment = this;
 		aboveFragment = above;
 		return above;
 	}
 
-	private Fragment connectBelow(Fragment below) {
+	private FragmentGraphItem connectBelow(FragmentGraphItem below) {
 		below.aboveFragment = this;
 		belowFragment = below;
 		return below;
 	}
 
-	private Fragment connectLeft(Fragment left) {
+	private FragmentGraphItem connectLeft(FragmentGraphItem left) {
 		left.rightFragment = this;
 		leftFragment = left;
 		return left;
 	}
 
-	private Fragment connectRight(Fragment right) {
+	private FragmentGraphItem connectRight(FragmentGraphItem right) {
 		right.leftFragment = this;
 		rightFragment = right;
 		return right;
 	}
 
-	private Fragment disconnectAbove() {
+	private FragmentGraphItem disconnectAbove() {
 		if (aboveFragment != null) {
 			aboveFragment.belowFragment = null;
 		}
-		Fragment result = aboveFragment;
+		FragmentGraphItem result = aboveFragment;
 		aboveFragment = null;
 		return result;
 	}
 
-	private Fragment disconnectBelow() {
+	private FragmentGraphItem disconnectBelow() {
 		if (belowFragment != null) {
 			belowFragment.aboveFragment = null;
 		}
-		Fragment result = belowFragment;
+		FragmentGraphItem result = belowFragment;
 		belowFragment = null;
 		return result;
 	}
 
-	private Fragment disconnectLeft() {
+	private FragmentGraphItem disconnectLeft() {
 		if (leftFragment != null) {
 			leftFragment.rightFragment = null;
 		}
-		Fragment result = leftFragment;
+		FragmentGraphItem result = leftFragment;
 		leftFragment = null;
 		return result;
 	}
 
-	private Fragment disconnectRight() {
+	private FragmentGraphItem disconnectRight() {
 		if (rightFragment != null) {
 			rightFragment.leftFragment = null;
 		}
-		Fragment result = rightFragment;
+		FragmentGraphItem result = rightFragment;
 		rightFragment = null;
 		return result;
 	}
 
-	private Fragment createAbove(FragmentManager manager) {
+	private FragmentGraphItem createAbove(FragmentManager manager) {
 		return connectAbove(manager.requestFragment(corner.add(0, -SIZE)));
 	}
 
-	private Fragment createBelow(FragmentManager manager) {
+	private FragmentGraphItem createBelow(FragmentManager manager) {
 		return connectBelow(manager.requestFragment(corner.add(0, SIZE)));
 	}
 
-	private Fragment createLeft(FragmentManager manager) {
+	private FragmentGraphItem createLeft(FragmentManager manager) {
 		return connectLeft(manager.requestFragment(corner.add(-SIZE, 0)));
 	}
 
-	private Fragment createRight(FragmentManager manager) {
+	private FragmentGraphItem createRight(FragmentManager manager) {
 		return connectRight(manager.requestFragment(corner.add(SIZE, 0)));
 	}
 

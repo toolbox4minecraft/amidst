@@ -1,7 +1,7 @@
 package amidst.fragment.colorprovider;
 
-import amidst.map.Fragment;
+import amidst.map.FragmentGraphItem;
 
 public interface ColorProvider {
-	int getColorAt(Fragment fragment, long cornerX, long cornerY, int x, int y);
+	int getColorAt(FragmentGraphItem fragment, long cornerX, long cornerY, int x, int y);
 }

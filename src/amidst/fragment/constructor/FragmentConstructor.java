@@ -1,7 +1,7 @@
 package amidst.fragment.constructor;
 
-import amidst.map.Fragment;
+import amidst.map.FragmentGraphItem;
 
 public interface FragmentConstructor {
-	void construct(Fragment fragment);
+	void construct(FragmentGraphItem fragment);
 }

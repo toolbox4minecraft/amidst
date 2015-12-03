@@ -45,7 +45,7 @@ public class Map {
 	}
 
 	public void adjustNumberOfRowsAndColumns() {
-		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
+		double fragmentSizeOnScreen = zoom.worldToScreen(FragmentGraphItem.SIZE);
 		int desiredFragmentsPerRow = (int) (viewerWidth / fragmentSizeOnScreen + 2);
 		int desiredFragmentsPerColumn = (int) (viewerHeight
 				/ fragmentSizeOnScreen + 2);
@@ -114,7 +114,7 @@ public class Map {
 	}
 
 	public String getBiomeAliasAt(CoordinatesInWorld coordinates) {
-		Fragment fragment = getFragmentAt(coordinates);
+		FragmentGraphItem fragment = getFragmentAt(coordinates);
 		if (fragment != null) {
 			return fragment.getBiomeAliasAt(coordinates, UNKNOWN_BIOME_ALIAS);
 		} else {
@@ -122,9 +122,9 @@ public class Map {
 		}
 	}
 
-	private Fragment getFragmentAt(CoordinatesInWorld coordinates) {
+	private FragmentGraphItem getFragmentAt(CoordinatesInWorld coordinates) {
 		CoordinatesInWorld corner = coordinates.toFragmentCorner();
-		for (Fragment fragment : graph) {
+		for (FragmentGraphItem fragment : graph) {
 			if (corner.equals(fragment.getCorner())) {
 				return fragment;
 			}

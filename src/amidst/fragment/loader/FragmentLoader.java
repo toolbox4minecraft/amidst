@@ -1,7 +1,7 @@
 package amidst.fragment.loader;
 
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.map.Fragment;
+import amidst.map.FragmentGraphItem;
 
 public abstract class FragmentLoader {
 	protected final LayerDeclaration declaration;
@@ -14,7 +14,7 @@ public abstract class FragmentLoader {
 		return declaration;
 	}
 
-	public abstract void load(Fragment fragment);
+	public abstract void load(FragmentGraphItem fragment);
 
-	public abstract void reload(Fragment fragment);
+	public abstract void reload(FragmentGraphItem fragment);
 }

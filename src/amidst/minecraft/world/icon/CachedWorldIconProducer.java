@@ -3,7 +3,7 @@ package amidst.minecraft.world.icon;
 import java.util.Collections;
 import java.util.List;
 
-import amidst.map.Fragment;
+import amidst.map.FragmentGraphItem;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 
@@ -48,7 +48,7 @@ public abstract class CachedWorldIconProducer extends WorldIconProducer {
 			WorldIconConsumer consumer) {
 		if (cache != null) {
 			for (WorldIcon icon : cache) {
-				if (icon.getCoordinates().isInBoundsOf(corner, Fragment.SIZE)) {
+				if (icon.getCoordinates().isInBoundsOf(corner, FragmentGraphItem.SIZE)) {
 					consumer.consume(icon);
 				}
 			}

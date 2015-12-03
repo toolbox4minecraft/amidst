@@ -1,6 +1,6 @@
 package amidst.utilities;
 
-import amidst.map.Fragment;
+import amidst.map.FragmentGraphItem;
 
 public enum CoordinateUtils {
 	;
@@ -16,7 +16,7 @@ public enum CoordinateUtils {
 	 *         modulo)
 	 */
 	public static int toFragmentRelative(int inWorld) {
-		return modulo(inWorld, Fragment.SIZE);
+		return modulo(inWorld, FragmentGraphItem.SIZE);
 	}
 
 	/**
@@ -30,7 +30,7 @@ public enum CoordinateUtils {
 	 * @return world coordinates of the corner of the given coordinates fragment
 	 */
 	public static int toFragmentCorner(int inWorld) {
-		return inWorld - modulo(inWorld, Fragment.SIZE);
+		return inWorld - modulo(inWorld, FragmentGraphItem.SIZE);
 	}
 
 	private static int modulo(int a, int b) {
@@ -48,7 +48,7 @@ public enum CoordinateUtils {
 	 *         modulo)
 	 */
 	public static long toFragmentRelative(long inWorld) {
-		return modulo(inWorld, Fragment.SIZE);
+		return modulo(inWorld, FragmentGraphItem.SIZE);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public enum CoordinateUtils {
 	 * @return world coordinates of the corner of the given coordinates fragment
 	 */
 	public static long toFragmentCorner(long inWorld) {
-		return inWorld - modulo(inWorld, Fragment.SIZE);
+		return inWorld - modulo(inWorld, FragmentGraphItem.SIZE);
 	}
 
 	private static long modulo(long a, long b) {
