@@ -34,7 +34,17 @@ public class Map {
 		});
 	}
 
-	public void lockedProcessTasks() {
+	public void safeDraw(MapDrawer drawer, int width, int height) {
+		synchronized (mapLock) {
+			this.viewerWidth = width;
+			this.viewerHeight = height;
+			lockedProcessTasks();
+			lockedAdjustNumberOfRowsAndColumns();
+			drawer.doDrawMap(startXOnScreen, startYOnScreen);
+		}
+	}
+
+	private void lockedProcessTasks() {
 		Runnable task;
 		while ((task = tasks.poll()) != null) {
 			task.run();
@@ -80,9 +90,15 @@ public class Map {
 		}
 	}
 
+	public void safeCenterOn(CoordinatesInWorld coordinates) {
+		synchronized (mapLock) {
+			graph.init(coordinates);
+			lockedCenterOn(coordinates);
+		}
+	}
+
 	// TODO: Support longs?
 	private void lockedCenterOn(CoordinatesInWorld coordinates) {
-		graph.init(coordinates);
 		int xCenterOnScreen = viewerWidth >> 1;
 		int yCenterOnScreen = viewerHeight >> 1;
 		long xFragmentRelative = coordinates.getXRelativeToFragment();
@@ -93,25 +109,9 @@ public class Map {
 				- zoom.worldToScreen(yFragmentRelative);
 	}
 
-	public void safeDraw(MapDrawer drawer, int width, int height) {
-		synchronized (mapLock) {
-			this.viewerWidth = width;
-			this.viewerHeight = height;
-			lockedProcessTasks();
-			lockedAdjustNumberOfRowsAndColumns();
-			drawer.doDrawMap(startXOnScreen, startYOnScreen);
-		}
-	}
-
-	public void safeCenterOn(CoordinatesInWorld coordinates) {
-		synchronized (mapLock) {
-			lockedCenterOn(coordinates);
-		}
-	}
-
 	public void safeDispose() {
 		synchronized (mapLock) {
-			lockedDispose();
+			graph.recycleAll();
 		}
 	}
 
@@ -159,10 +159,6 @@ public class Map {
 		return corner.add(
 				(long) zoom.screenToWorld(pointOnScreen.x - startXOnScreen),
 				(long) zoom.screenToWorld(pointOnScreen.y - startYOnScreen));
-	}
-
-	private void lockedDispose() {
-		graph.recycleAll();
 	}
 
 	public double getZoom() {
