@@ -17,15 +17,13 @@ public class Map {
 	private int viewerWidth = 1;
 	private int viewerHeight = 1;
 
-	private final Object mapLock = new Object();
-
 	private final MapZoom zoom;
 	private final FragmentGraph graph;
 
 	public Map(MapZoom zoom, FragmentGraph graph) {
 		this.zoom = zoom;
 		this.graph = graph;
-		this.tasks.offer(new Runnable() {
+		invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				startXOnScreen = viewerWidth >> 1;
@@ -35,13 +33,11 @@ public class Map {
 	}
 
 	public void safeDraw(MapDrawer drawer, int width, int height) {
-		synchronized (mapLock) {
-			this.viewerWidth = width;
-			this.viewerHeight = height;
-			lockedProcessTasks();
-			lockedAdjustNumberOfRowsAndColumns();
-			drawer.doDrawMap(startXOnScreen, startYOnScreen);
-		}
+		this.viewerWidth = width;
+		this.viewerHeight = height;
+		lockedProcessTasks();
+		lockedAdjustNumberOfRowsAndColumns();
+		drawer.doDrawMap(startXOnScreen, startYOnScreen);
 	}
 
 	private void lockedProcessTasks() {
@@ -90,11 +86,14 @@ public class Map {
 		}
 	}
 
-	public void safeCenterOn(CoordinatesInWorld coordinates) {
-		synchronized (mapLock) {
-			graph.init(coordinates);
-			lockedCenterOn(coordinates);
-		}
+	public void safeCenterOn(final CoordinatesInWorld coordinates) {
+		invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				graph.init(coordinates);
+				lockedCenterOn(coordinates);
+			}
+		});
 	}
 
 	// TODO: Support longs?
@@ -110,9 +109,12 @@ public class Map {
 	}
 
 	public void safeDispose() {
-		synchronized (mapLock) {
-			graph.recycleAll();
-		}
+		invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				graph.recycleAll();
+			}
+		});
 	}
 
 	public void adjustStartOnScreenToMovement(int deltaX, int deltaY) {
@@ -159,6 +161,10 @@ public class Map {
 		return corner.add(
 				(long) zoom.screenToWorld(pointOnScreen.x - startXOnScreen),
 				(long) zoom.screenToWorld(pointOnScreen.y - startYOnScreen));
+	}
+
+	private void invokeLater(Runnable task) {
+		tasks.offer(task);
 	}
 
 	public double getZoom() {
