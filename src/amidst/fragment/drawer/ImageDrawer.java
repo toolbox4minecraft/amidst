@@ -16,7 +16,7 @@ public class ImageDrawer extends FragmentDrawer {
 	}
 
 	@Override
-	public void draw(Fragment fragment, Graphics2D g2d) {
+	public void draw(Fragment fragment, Graphics2D g2d, float time) {
 		int scale = resolution.getStep();
 		g2d.scale(scale, scale);
 		Object oldHint = g2d.getRenderingHint(RenderingHints.KEY_INTERPOLATION);

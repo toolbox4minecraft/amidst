@@ -22,7 +22,7 @@ public class GridDrawer extends FragmentDrawer {
 	}
 
 	@Override
-	public void draw(Fragment fragment, Graphics2D g2d) {
+	public void draw(Fragment fragment, Graphics2D g2d, float time) {
 		int stride = getStride();
 		int gridX = getGridX(fragment, stride);
 		int gridY = getGridY(fragment, stride);

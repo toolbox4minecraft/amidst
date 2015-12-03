@@ -12,9 +12,9 @@ public abstract class FragmentDrawer {
 		this.declaration = declaration;
 	}
 
-	public LayerDeclaration getLayerDeclaration() {
-		return declaration;
+	public boolean isEnabled() {
+		return declaration.isVisible();
 	}
 
-	public abstract void draw(Fragment fragment, Graphics2D g2d);
+	public abstract void draw(Fragment fragment, Graphics2D g2d, float time);
 }

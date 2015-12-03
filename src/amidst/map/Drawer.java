@@ -164,14 +164,14 @@ public class Drawer {
 
 	private void drawLayers() {
 		for (FragmentDrawer drawer : drawers) {
-			if (drawer.getLayerDeclaration().isVisible()) {
+			if (drawer.isEnabled()) {
 				initLayerMatrix();
 				for (FragmentGraphItem fragmentGraphItem : graph) {
 					Fragment fragment = fragmentGraphItem.getFragment();
 					if (fragment.isLoaded()) {
 						setAlphaComposite(fragment.getAlpha());
 						g2d.setTransform(layerMatrix);
-						drawer.draw(fragment, g2d);
+						drawer.draw(fragment, g2d, time);
 					}
 					updateLayerMatrix(fragmentGraphItem,
 							graph.getFragmentsPerRow());
