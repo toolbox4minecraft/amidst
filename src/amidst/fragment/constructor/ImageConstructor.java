@@ -2,22 +2,21 @@ package amidst.fragment.constructor;
 
 import java.awt.image.BufferedImage;
 
-import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
 import amidst.minecraft.world.Resolution;
 
 public class ImageConstructor implements FragmentConstructor {
-	private final LayerDeclaration declaration;
-	protected final int size;
+	private final int size;
+	private final int layerId;
 
-	public ImageConstructor(LayerDeclaration declaration, Resolution resolution) {
-		this.declaration = declaration;
+	public ImageConstructor(Resolution resolution, int layerId) {
 		this.size = resolution.getStepsPerFragment();
+		this.layerId = layerId;
 	}
 
 	@Override
 	public void construct(Fragment fragment) {
-		fragment.putImage(declaration.getLayerId(), createBufferedImage());
+		fragment.putImage(layerId, createBufferedImage());
 	}
 
 	private BufferedImage createBufferedImage() {

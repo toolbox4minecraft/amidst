@@ -68,8 +68,9 @@ public class LayerBuilder {
 	private Iterable<FragmentConstructor> createConstructors() {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList((FragmentConstructor)
-				new BiomeDataConstructor(declarations.get(LayerIds.BIOME), Resolution.QUARTER),
-				new ImageConstructor(    declarations.get(LayerIds.SLIME), Resolution.CHUNK)
+				new BiomeDataConstructor(Resolution.QUARTER),
+				new ImageConstructor(    Resolution.QUARTER,  LayerIds.BIOME),
+				new ImageConstructor(    Resolution.CHUNK,    LayerIds.SLIME)
 		));
 		// @formatter:on
 	}
