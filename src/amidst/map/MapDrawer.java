@@ -51,22 +51,23 @@ public class MapDrawer {
 	private AffineTransform layerMatrix = new AffineTransform();
 
 	public MapDrawer(Map map, MapMovement movement, MapZoom zoom,
-			List<Widget> widgets, Iterable<FragmentDrawer> drawers) {
+			Iterable<FragmentDrawer> drawers) {
 		this.map = map;
 		this.movement = movement;
 		this.zoom = zoom;
-		this.widgets = widgets;
 		this.drawers = drawers;
 	}
 
 	public void drawScreenshot(Graphics2D g2d, float time, int width,
-			int height, Point mousePosition, FontMetrics widgetFontMetrics) {
+			int height, Point mousePosition, List<Widget> widgets,
+			FontMetrics widgetFontMetrics) {
 		synchronized (drawLock) {
 			this.g2d = g2d;
 			this.time = time;
 			this.width = width;
 			this.height = height;
 			this.mousePosition = mousePosition;
+			this.widgets = widgets;
 			this.widgetFontMetrics = widgetFontMetrics;
 			clear();
 			drawMap();
@@ -75,13 +76,15 @@ public class MapDrawer {
 	}
 
 	public void draw(Graphics2D g2d, float time, int width, int height,
-			Point mousePosition, FontMetrics widgetFontMetrics) {
+			Point mousePosition, List<Widget> widgets,
+			FontMetrics widgetFontMetrics) {
 		synchronized (drawLock) {
 			this.g2d = g2d;
 			this.time = time;
 			this.width = width;
 			this.height = height;
 			this.mousePosition = mousePosition;
+			this.widgets = widgets;
 			this.widgetFontMetrics = widgetFontMetrics;
 			updateMapZoom();
 			updateMapMovement();

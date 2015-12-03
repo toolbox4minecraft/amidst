@@ -21,7 +21,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-import amidst.fragment.drawer.FragmentDrawer;
 import amidst.map.widget.BiomeToggleWidget;
 import amidst.map.widget.BiomeWidget;
 import amidst.map.widget.CursorInformationWidget;
@@ -197,7 +196,7 @@ public class MapViewer {
 			Graphics2D g2d = (Graphics2D) g.create();
 			float time = calculateTimeSpanSinceLastDrawInSeconds();
 			drawer.draw(g2d, time, getWidth(), getHeight(), getMousePosition(),
-					widgetFontMetrics);
+					widgets, widgetFontMetrics);
 		}
 
 		private float calculateTimeSpanSinceLastDrawInSeconds() {
@@ -209,7 +208,7 @@ public class MapViewer {
 
 		public void drawScreenshot(Graphics2D g2d) {
 			drawer.drawScreenshot(g2d, 0, getWidth(), getHeight(),
-					getMousePosition(), widgetFontMetrics);
+					getMousePosition(), widgets, widgetFontMetrics);
 		}
 	}
 
@@ -225,19 +224,15 @@ public class MapViewer {
 	private final MapDrawer drawer;
 
 	public MapViewer(MapMovement movement, MapZoom zoom, World world, Map map,
-			Iterable<FragmentDrawer> fragmentDrawers) {
+			MapDrawer drawer) {
 		this.movement = movement;
 		this.zoom = zoom;
 		this.world = world;
 		this.map = map;
-		this.drawer = createDrawer(fragmentDrawers);
+		this.drawer = drawer;
 		initWidgets();
 		initComponent();
 		initPanel();
-	}
-
-	private MapDrawer createDrawer(Iterable<FragmentDrawer> fragmentDrawers) {
-		return new MapDrawer(map, movement, zoom, widgets, fragmentDrawers);
 	}
 
 	private void initWidgets() {

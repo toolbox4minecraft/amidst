@@ -20,8 +20,10 @@ public class MapBuilder {
 				biomeSelection, fragmentManager, world);
 		fragmentManager.setLayerManager(layerBuilder.createLayerManager(world,
 				map));
-		MapViewer mapViewer = new MapViewer(mapMovement, mapZoom, world, map,
+		MapDrawer drawer = new MapDrawer(map, mapMovement, mapZoom,
 				layerBuilder.createDrawers(map));
+		MapViewer mapViewer = new MapViewer(mapMovement, mapZoom, world, map,
+				drawer);
 		return new MapFactory(map, mapViewer);
 	}
 }
