@@ -1,20 +1,19 @@
 package amidst.map;
 
-import java.awt.image.BufferedImage;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReferenceArray;
 
-import amidst.Options;
-import amidst.minecraft.world.BiomeDataOracle;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
-import amidst.minecraft.world.icon.WorldIcon;
 
-public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
-	private static class FragmentIterator implements
-			Iterator<FragmentGraphItem> {
+public class FragmentGraphItem implements Iterable<Fragment> {
+	/**
+	 * This is an Iterator that is fail safe in the sense that it will never
+	 * throw a NullPointerException or ConcurrentModificationException when the
+	 * fragment graph is altered while the iterator is used. However, the
+	 * elements returned by this iterator will be the old state or the new state
+	 * or something in between. This should be good enough for our use cases.
+	 */
+	private static class FragmentIterator implements Iterator<Fragment> {
 		private FragmentGraphItem rowStart;
 		private FragmentGraphItem currentNode;
 
@@ -29,10 +28,10 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		}
 
 		@Override
-		public FragmentGraphItem next() {
+		public Fragment next() {
 			FragmentGraphItem result = currentNode;
 			updateCurrentNode();
-			return result;
+			return result.getFragment();
 		}
 
 		private void updateCurrentNode() {
@@ -46,140 +45,61 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 
 	public static final int SIZE = Resolution.FRAGMENT.getStep();
 
-	private volatile boolean isInitialized = false;
-	private volatile boolean isLoaded = false;
-	private volatile CoordinatesInWorld corner;
+	private final Fragment fragment;
+
 	private volatile FragmentGraphItem leftFragment = null;
 	private volatile FragmentGraphItem rightFragment = null;
 	private volatile FragmentGraphItem aboveFragment = null;
 	private volatile FragmentGraphItem belowFragment = null;
 
-	private volatile float alpha;
-	private volatile short[][] biomeData;
-
-	private final AtomicReferenceArray<BufferedImage> images;
-	private final AtomicReferenceArray<List<WorldIcon>> worldIcons;
-
-	public FragmentGraphItem(int numberOfLayers) {
-		this.images = new AtomicReferenceArray<BufferedImage>(numberOfLayers);
-		this.worldIcons = new AtomicReferenceArray<List<WorldIcon>>(
-				numberOfLayers);
+	public FragmentGraphItem(Fragment fragment) {
+		this.fragment = fragment;
+		this.fragment.setFragmentItem(this);
 	}
 
 	public void initialize(CoordinatesInWorld corner) {
-		this.corner = corner;
+		fragment.initialize(corner);
 		leftFragment = null;
 		rightFragment = null;
 		aboveFragment = null;
 		belowFragment = null;
 	}
 
-	public void prepareLoad() {
-		initAlpha();
-	}
-
-	public void prepareReload() {
-	}
-
-	public void prepareDraw(float time) {
-		updateAlpha(time);
-	}
-
-	private void initAlpha() {
-		alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
-	}
-
-	private void updateAlpha(float time) {
-		alpha = Math.min(1.0f, time * 3.0f + alpha);
-	}
-
-	public float getAlpha() {
-		return alpha;
-	}
-
-	public void initBiomeData(int width, int height) {
-		biomeData = new short[width][height];
-	}
-
-	public void populateBiomeData(BiomeDataOracle biomeDataOracle) {
-		biomeDataOracle.populateArrayUsingQuarterResolution(corner, biomeData);
-	}
-
-	public String getBiomeAliasAt(CoordinatesInWorld coordinates,
-			String defaultAlias) {
-		if (!isLoaded) {
-			return defaultAlias;
-		}
-		long x = coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
-		long y = coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
-		short biome = getBiomeDataAt((int) x, (int) y);
-		return Options.instance.biomeColorProfile.getAliasForId(biome);
-	}
-
-	public short getBiomeDataAt(int x, int y) {
-		return biomeData[x][y];
-	}
-
-	public BufferedImage getAndSetImage(int layerId, BufferedImage image) {
-		return images.getAndSet(layerId, image);
-	}
-
-	public void putImage(int layerId, BufferedImage image) {
-		images.set(layerId, image);
-	}
-
-	public BufferedImage getImage(int layerId) {
-		return images.get(layerId);
-	}
-
-	public void putWorldIcons(int layerId, List<WorldIcon> icons) {
-		worldIcons.set(layerId, icons);
-	}
-
-	public List<WorldIcon> getWorldIcons(int layerId) {
-		if (isLoaded) {
-			List<WorldIcon> result = worldIcons.get(layerId);
-			if (result != null) {
-				return result;
-			}
-		}
-		return Collections.emptyList();
-	}
-
-	public void setInitialized(boolean isInitialized) {
-		this.isInitialized = isInitialized;
-	}
-
-	public boolean isInitialized() {
-		return isInitialized;
-	}
-
-	public void setLoaded(boolean isLoaded) {
-		this.isLoaded = isLoaded;
-	}
-
-	public boolean isLoaded() {
-		return isLoaded;
-	}
-
-	/**
-	 * Creates an Iterator that is fail safe in the sense that it will never
-	 * throw a NullPointerException or ConcurrentModificationException when the
-	 * fragment graph is altered while the iterator is used. However, the
-	 * elements returned by this iterator will be the old state or the new state
-	 * or something in between. This should be good enough for our use cases.
-	 */
-	@Override
-	public Iterator<FragmentGraphItem> iterator() {
-		return new FragmentIterator(this);
-	}
-
-	public boolean isInBounds(CoordinatesInWorld coordinates) {
-		return coordinates.isInBoundsOf(corner, SIZE);
+	public Fragment getFragment() {
+		return fragment;
 	}
 
 	public CoordinatesInWorld getCorner() {
-		return corner;
+		return fragment.getCorner();
+	}
+
+	public boolean isInitialized() {
+		return fragment.isInitialized();
+	}
+
+	public boolean isLoaded() {
+		return fragment.isLoaded();
+	}
+
+	public void prepareReload() {
+		fragment.prepareReload();
+	}
+
+	public void prepareLoad() {
+		fragment.prepareLoad();
+	}
+
+	public void setLoaded(boolean isLoaded) {
+		fragment.setLoaded(isLoaded);
+	}
+
+	public void setInitialized(boolean isInitialized) {
+		fragment.setInitialized(isInitialized);
+	}
+
+	@Override
+	public Iterator<Fragment> iterator() {
+		return new FragmentIterator(this);
 	}
 
 	public boolean isEndOfLine() {
@@ -442,19 +362,19 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	}
 
 	private FragmentGraphItem createAbove(FragmentManager manager) {
-		return connectAbove(manager.requestFragment(corner.add(0, -SIZE)));
+		return connectAbove(manager.requestFragment(getCorner().add(0, -SIZE)));
 	}
 
 	private FragmentGraphItem createBelow(FragmentManager manager) {
-		return connectBelow(manager.requestFragment(corner.add(0, SIZE)));
+		return connectBelow(manager.requestFragment(getCorner().add(0, SIZE)));
 	}
 
 	private FragmentGraphItem createLeft(FragmentManager manager) {
-		return connectLeft(manager.requestFragment(corner.add(-SIZE, 0)));
+		return connectLeft(manager.requestFragment(getCorner().add(-SIZE, 0)));
 	}
 
 	private FragmentGraphItem createRight(FragmentManager manager) {
-		return connectRight(manager.requestFragment(corner.add(SIZE, 0)));
+		return connectRight(manager.requestFragment(getCorner().add(SIZE, 0)));
 	}
 
 	private void recycle(FragmentManager manager) {

@@ -51,8 +51,8 @@ public class Drawer {
 	private List<Widget> widgets;
 	private FontMetrics widgetFontMetrics;
 
-	public Drawer(Map map, Movement movement, Zoom zoom,
-			FragmentGraph graph, Iterable<FragmentDrawer> drawers) {
+	public Drawer(Map map, Movement movement, Zoom zoom, FragmentGraph graph,
+			Iterable<FragmentDrawer> drawers) {
 		this.map = map;
 		this.movement = movement;
 		this.zoom = zoom;
@@ -148,7 +148,7 @@ public class Drawer {
 	}
 
 	private void prepareDraw() {
-		for (FragmentGraphItem fragment : graph) {
+		for (Fragment fragment : graph) {
 			fragment.prepareDraw(time);
 		}
 	}
@@ -157,7 +157,7 @@ public class Drawer {
 		for (FragmentDrawer drawer : drawers) {
 			if (drawer.getLayerDeclaration().isVisible()) {
 				initLayerMatrix();
-				for (FragmentGraphItem fragment : graph) {
+				for (Fragment fragment : graph) {
 					if (fragment.isLoaded()) {
 						setAlphaComposite(fragment.getAlpha());
 						g2d.setTransform(layerMatrix);
@@ -174,7 +174,7 @@ public class Drawer {
 		layerMatrix.setTransform(originalLayerMatrix);
 	}
 
-	private void updateLayerMatrix(FragmentGraphItem fragment, int fragmentsPerRow) {
+	private void updateLayerMatrix(Fragment fragment, int fragmentsPerRow) {
 		layerMatrix.translate(FragmentGraphItem.SIZE, 0);
 		if (fragment.isEndOfLine()) {
 			layerMatrix.translate(-FragmentGraphItem.SIZE * fragmentsPerRow,

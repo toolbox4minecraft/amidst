@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 import amidst.fragment.layer.LayerDeclaration;
+import amidst.map.Fragment;
 import amidst.map.FragmentGraphItem;
 import amidst.map.Zoom;
 import amidst.minecraft.world.Resolution;
@@ -22,7 +23,7 @@ public class GridDrawer extends FragmentDrawer {
 	}
 
 	@Override
-	public void draw(FragmentGraphItem fragment, Graphics2D g2d) {
+	public void draw(Fragment fragment, Graphics2D g2d) {
 		int stride = getStride();
 		int gridX = getGridX(fragment, stride);
 		int gridY = getGridY(fragment, stride);
@@ -43,13 +44,13 @@ public class GridDrawer extends FragmentDrawer {
 	}
 
 	// TODO: use longs?
-	private int getGridX(FragmentGraphItem fragment, int stride) {
+	private int getGridX(Fragment fragment, int stride) {
 		return (int) fragment.getCorner().getXAs(Resolution.FRAGMENT)
 				% (stride + 1);
 	}
 
 	// TODO: use longs?
-	private int getGridY(FragmentGraphItem fragment, int stride) {
+	private int getGridY(Fragment fragment, int stride) {
 		return (int) fragment.getCorner().getYAs(Resolution.FRAGMENT)
 				% (stride + 1);
 	}
@@ -64,13 +65,15 @@ public class GridDrawer extends FragmentDrawer {
 			g2d.drawLine(0, 0, FragmentGraphItem.SIZE, 0);
 		}
 		if (gridY == stride) {
-			g2d.drawLine(0, FragmentGraphItem.SIZE, FragmentGraphItem.SIZE, FragmentGraphItem.SIZE);
+			g2d.drawLine(0, FragmentGraphItem.SIZE, FragmentGraphItem.SIZE,
+					FragmentGraphItem.SIZE);
 		}
 		if (gridX == 0) {
 			g2d.drawLine(0, 0, 0, FragmentGraphItem.SIZE);
 		}
 		if (gridX == stride) {
-			g2d.drawLine(FragmentGraphItem.SIZE, 0, FragmentGraphItem.SIZE, FragmentGraphItem.SIZE);
+			g2d.drawLine(FragmentGraphItem.SIZE, 0, FragmentGraphItem.SIZE,
+					FragmentGraphItem.SIZE);
 		}
 	}
 
@@ -78,7 +81,7 @@ public class GridDrawer extends FragmentDrawer {
 		return gridX == 0 && gridY == 0;
 	}
 
-	private void updateText(FragmentGraphItem fragment) {
+	private void updateText(Fragment fragment) {
 		textBuffer.setLength(0);
 		textBuffer.append(fragment.getCorner().getX());
 		textBuffer.append(", ");

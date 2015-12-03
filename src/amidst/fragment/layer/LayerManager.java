@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import amidst.fragment.loader.FragmentLoader;
-import amidst.map.FragmentGraphItem;
+import amidst.map.Fragment;
 
 public class LayerManager {
 	private final List<AtomicBoolean> invalidatedLayers;
@@ -26,13 +26,13 @@ public class LayerManager {
 		invalidatedLayers.get(layerId).set(true);
 	}
 
-	public void loadAll(FragmentGraphItem fragment) {
+	public void loadAll(Fragment fragment) {
 		for (FragmentLoader loader : loaders) {
 			loader.load(fragment);
 		}
 	}
 
-	public void reloadInvalidated(FragmentGraphItem fragment) {
+	public void reloadInvalidated(Fragment fragment) {
 		for (FragmentLoader loader : loaders) {
 			if (isInvalidated(loader.getLayerDeclaration())) {
 				loader.reload(fragment);

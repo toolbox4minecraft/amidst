@@ -3,7 +3,7 @@ package amidst.fragment.constructor;
 import java.awt.image.BufferedImage;
 
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.map.FragmentGraphItem;
+import amidst.map.Fragment;
 import amidst.minecraft.world.Resolution;
 
 public class ImageConstructor implements FragmentConstructor {
@@ -16,7 +16,7 @@ public class ImageConstructor implements FragmentConstructor {
 	}
 
 	@Override
-	public void construct(FragmentGraphItem fragment) {
+	public void construct(Fragment fragment) {
 		fragment.putImage(declaration.getLayerId(), createBufferedImage());
 	}
 

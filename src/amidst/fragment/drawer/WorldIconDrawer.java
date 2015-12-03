@@ -5,7 +5,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.map.FragmentGraphItem;
+import amidst.map.Fragment;
 import amidst.map.WorldIconSelection;
 import amidst.map.Zoom;
 import amidst.minecraft.world.CoordinatesInWorld;
@@ -23,7 +23,7 @@ public class WorldIconDrawer extends FragmentDrawer {
 	}
 
 	@Override
-	public void draw(FragmentGraphItem fragment, Graphics2D g2d) {
+	public void draw(Fragment fragment, Graphics2D g2d) {
 		double invZoom = 1.0 / zoom.getCurrentValue();
 		AffineTransform originalTransform = g2d.getTransform();
 		for (WorldIcon icon : fragment.getWorldIcons(declaration.getLayerId())) {

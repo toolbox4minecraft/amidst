@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.map.FragmentGraphItem;
+import amidst.map.Fragment;
 import amidst.minecraft.world.Resolution;
 
 public class ImageDrawer extends FragmentDrawer {
@@ -16,7 +16,7 @@ public class ImageDrawer extends FragmentDrawer {
 	}
 
 	@Override
-	public void draw(FragmentGraphItem fragment, Graphics2D g2d) {
+	public void draw(Fragment fragment, Graphics2D g2d) {
 		int scale = resolution.getStep();
 		g2d.scale(scale, scale);
 		Object oldHint = g2d.getRenderingHint(RenderingHints.KEY_INTERPOLATION);

@@ -1,7 +1,7 @@
 package amidst.fragment.loader;
 
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.map.FragmentGraphItem;
+import amidst.map.Fragment;
 import amidst.minecraft.world.BiomeDataOracle;
 
 public class BiomeDataLoader extends FragmentLoader {
@@ -14,12 +14,12 @@ public class BiomeDataLoader extends FragmentLoader {
 	}
 
 	@Override
-	public void load(FragmentGraphItem fragment) {
+	public void load(Fragment fragment) {
 		fragment.populateBiomeData(biomeDataOracle);
 	}
 
 	@Override
-	public void reload(FragmentGraphItem fragment) {
+	public void reload(Fragment fragment) {
 		// noop
 	}
 }

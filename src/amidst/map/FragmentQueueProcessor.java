@@ -52,10 +52,10 @@ public class FragmentQueueProcessor {
 		if (currentFragment.isInitialized()) {
 			if (currentFragment.isLoaded()) {
 				currentFragment.prepareReload();
-				layerManager.reloadInvalidated(currentFragment);
+				layerManager.reloadInvalidated(currentFragment.getFragment());
 			} else {
 				currentFragment.prepareLoad();
-				layerManager.loadAll(currentFragment);
+				layerManager.loadAll(currentFragment.getFragment());
 				currentFragment.setLoaded(true);
 			}
 		}

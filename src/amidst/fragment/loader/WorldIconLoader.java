@@ -1,7 +1,7 @@
 package amidst.fragment.loader;
 
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.map.FragmentGraphItem;
+import amidst.map.Fragment;
 import amidst.minecraft.world.icon.WorldIconProducer;
 
 public class WorldIconLoader extends FragmentLoader {
@@ -14,16 +14,16 @@ public class WorldIconLoader extends FragmentLoader {
 	}
 
 	@Override
-	public void load(FragmentGraphItem fragment) {
+	public void load(Fragment fragment) {
 		doLoad(fragment);
 	}
 
 	@Override
-	public void reload(FragmentGraphItem fragment) {
+	public void reload(Fragment fragment) {
 		doLoad(fragment);
 	}
 
-	protected void doLoad(FragmentGraphItem fragment) {
+	protected void doLoad(Fragment fragment) {
 		fragment.putWorldIcons(declaration.getLayerId(),
 				producer.getAt(fragment.getCorner()));
 	}

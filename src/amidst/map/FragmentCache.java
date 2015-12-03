@@ -17,7 +17,8 @@ public class FragmentCache {
 	private final Iterable<FragmentConstructor> constructors;
 	private final int numberOfLayers;
 
-	public FragmentCache(ConcurrentLinkedQueue<FragmentGraphItem> availableQueue,
+	public FragmentCache(
+			ConcurrentLinkedQueue<FragmentGraphItem> availableQueue,
 			ConcurrentLinkedQueue<FragmentGraphItem> loadingQueue,
 			Iterable<FragmentConstructor> constructors, int numberOfLayers) {
 		this.availableQueue = availableQueue;
@@ -35,14 +36,15 @@ public class FragmentCache {
 
 	private void requestNewFragments() {
 		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
-			FragmentGraphItem fragment = new FragmentGraphItem(numberOfLayers);
-			construct(fragment);
+			FragmentGraphItem fragment = new FragmentGraphItem(new Fragment(
+					numberOfLayers));
+			construct(fragment.getFragment());
 			cache.add(fragment);
 			availableQueue.offer(fragment);
 		}
 	}
 
-	private void construct(FragmentGraphItem fragment) {
+	private void construct(Fragment fragment) {
 		for (FragmentConstructor constructor : constructors) {
 			constructor.construct(fragment);
 		}
