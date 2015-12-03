@@ -7,8 +7,6 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.icon.WorldIcon;
 
 public class Map {
-	private static final String UNKNOWN_BIOME_ALIAS = "Unknown";
-
 	private final ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
 
 	private final Zoom zoom;
@@ -111,15 +109,6 @@ public class Map {
 		double deltaY = baseY - (baseY / previous) * current;
 		startXOnScreen += deltaX;
 		startYOnScreen += deltaY;
-	}
-
-	public String getBiomeAliasAt(CoordinatesInWorld coordinates) {
-		Fragment fragment = graph.getFragmentAt(coordinates);
-		if (fragment != null) {
-			return fragment.getBiomeAliasAt(coordinates, UNKNOWN_BIOME_ALIAS);
-		} else {
-			return UNKNOWN_BIOME_ALIAS;
-		}
 	}
 
 	public WorldIcon getClosestWorldIcon(Point mousePosition, double maxDistance) {
