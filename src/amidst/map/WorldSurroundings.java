@@ -10,12 +10,12 @@ public class WorldSurroundings {
 	private final MapViewer mapViewer;
 	private final LayerReloader layerReloader;
 	private final FragmentGraph graph;
-	private final MapZoom zoom;
-	private final MapMovement movement;
+	private final Zoom zoom;
+	private final Movement movement;
 
 	public WorldSurroundings(Map map, MapViewer mapViewer,
-			LayerReloader layerReloader, FragmentGraph graph, MapZoom zoom,
-			MapMovement movement) {
+			LayerReloader layerReloader, FragmentGraph graph, Zoom zoom,
+			Movement movement) {
 		this.map = map;
 		this.mapViewer = mapViewer;
 		this.layerReloader = layerReloader;

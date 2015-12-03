@@ -38,8 +38,8 @@ public class MapDrawer {
 	private final AffineTransform layerMatrix = new AffineTransform();
 
 	private final Map map;
-	private final MapMovement movement;
-	private final MapZoom zoom;
+	private final Movement movement;
+	private final Zoom zoom;
 	private final FragmentGraph graph;
 	private final Iterable<FragmentDrawer> drawers;
 
@@ -51,7 +51,7 @@ public class MapDrawer {
 	private List<Widget> widgets;
 	private FontMetrics widgetFontMetrics;
 
-	public MapDrawer(Map map, MapMovement movement, MapZoom zoom,
+	public MapDrawer(Map map, Movement movement, Zoom zoom,
 			FragmentGraph graph, Iterable<FragmentDrawer> drawers) {
 		this.map = map;
 		this.movement = movement;
@@ -88,8 +88,8 @@ public class MapDrawer {
 			this.mousePosition = mousePosition;
 			this.widgets = widgets;
 			this.widgetFontMetrics = widgetFontMetrics;
-			updateMapZoom();
-			updateMapMovement();
+			updateZoom();
+			updateMovement();
 			clear();
 			drawMap();
 			drawBorder();
@@ -97,11 +97,11 @@ public class MapDrawer {
 		}
 	}
 
-	private void updateMapZoom() {
+	private void updateZoom() {
 		zoom.update(map);
 	}
 
-	private void updateMapMovement() {
+	private void updateMovement() {
 		movement.update(map, mousePosition);
 	}
 

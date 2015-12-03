@@ -4,7 +4,7 @@ import java.awt.Point;
 
 import amidst.Options;
 
-public class MapZoom {
+public class Zoom {
 	private int remainingTicks = 0;
 	private int level = 0;
 	private double target = 0.25f;

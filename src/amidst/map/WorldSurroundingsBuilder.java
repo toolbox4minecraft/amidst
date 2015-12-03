@@ -10,8 +10,8 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.minecraft.world.World;
 
 public class WorldSurroundingsBuilder {
-	private final MapZoom zoom = new MapZoom();
-	private final MapMovement movement = new MapMovement();
+	private final Zoom zoom = new Zoom();
+	private final Movement movement = new Movement();
 	private final BiomeSelection biomeSelection = new BiomeSelection();
 
 	private final LayerBuilder layerBuilder;

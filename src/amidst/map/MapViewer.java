@@ -208,8 +208,8 @@ public class MapViewer {
 	private final Component component = new Component();
 	private final JPanel panel = new JPanel();
 
-	private final MapMovement movement;
-	private final MapZoom zoom;
+	private final Movement movement;
+	private final Zoom zoom;
 	private final World world;
 	private final Map map;
 	private final MapDrawer drawer;
@@ -217,7 +217,7 @@ public class MapViewer {
 	private final LayerReloader layerReloader;
 	private final List<Widget> widgets;
 
-	public MapViewer(MapMovement movement, MapZoom zoom, World world, Map map,
+	public MapViewer(Movement movement, Zoom zoom, World world, Map map,
 			MapDrawer drawer, WorldIconSelection worldIconSelection,
 			LayerReloader layerReloader, WidgetBuilder widgetBuilder) {
 		this.movement = movement;

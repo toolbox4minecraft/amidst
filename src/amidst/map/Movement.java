@@ -4,18 +4,18 @@ import java.awt.Point;
 
 import amidst.Options;
 
-public class MapMovement {
+public class Movement {
 	private double speedX = 0;
 	private double speedY = 0;
 	private Point lastMouse;
 
 	public void update(Map map, Point currentMouse) {
-		updateMapMovementSpeed(currentMouse);
+		updateMovementSpeed(currentMouse);
 		moveMap(map);
-		throttleMapMovementSpeed();
+		throttleMovementSpeed();
 	}
 
-	private void updateMapMovementSpeed(Point currentMouse) {
+	private void updateMovementSpeed(Point currentMouse) {
 		if (lastMouse != null) {
 			if (currentMouse != null) {
 				double dX = currentMouse.x - lastMouse.x;
@@ -32,7 +32,7 @@ public class MapMovement {
 		map.adjustStartOnScreenToMovement((int) speedX, (int) speedY);
 	}
 
-	private void throttleMapMovementSpeed() {
+	private void throttleMovementSpeed() {
 		if (Options.instance.mapFlicking.get()) {
 			speedX *= 0.95f;
 			speedY *= 0.95f;

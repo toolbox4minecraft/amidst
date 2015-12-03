@@ -17,10 +17,10 @@ public class Map {
 	private int viewerWidth = 1;
 	private int viewerHeight = 1;
 
-	private final MapZoom zoom;
+	private final Zoom zoom;
 	private final FragmentGraph graph;
 
-	public Map(MapZoom zoom, FragmentGraph graph) {
+	public Map(Zoom zoom, FragmentGraph graph) {
 		this.zoom = zoom;
 		this.graph = graph;
 		invokeLater(new Runnable() {
