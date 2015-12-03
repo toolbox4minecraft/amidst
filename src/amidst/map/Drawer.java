@@ -142,7 +142,6 @@ public class Drawer {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		AffineTransform originalGraphicsTransform = g2d.getTransform();
 		initOriginalLayerMatrix(originalGraphicsTransform);
-		prepareDraw();
 		drawLayers();
 		g2d.setTransform(originalGraphicsTransform);
 	}
@@ -154,12 +153,6 @@ public class Drawer {
 		originalLayerMatrix.translate(map.getStartXOnScreen(),
 				map.getStartYOnScreen());
 		originalLayerMatrix.scale(scale, scale);
-	}
-
-	private void prepareDraw() {
-		for (FragmentGraphItem fragmentGraphItem : graph) {
-			fragmentGraphItem.getFragment().prepareDraw(time);
-		}
 	}
 
 	private void drawLayers() {

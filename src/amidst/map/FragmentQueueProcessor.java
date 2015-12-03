@@ -51,10 +51,8 @@ public class FragmentQueueProcessor {
 	private void loadFragment() {
 		if (currentFragment.isInitialized()) {
 			if (currentFragment.isLoaded()) {
-				currentFragment.prepareReload();
 				layerManager.reloadInvalidated(currentFragment);
 			} else {
-				currentFragment.prepareLoad();
 				layerManager.loadAll(currentFragment);
 				currentFragment.setLoaded(true);
 			}

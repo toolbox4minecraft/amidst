@@ -33,17 +33,6 @@ public class Fragment {
 		return coordinates.isInBoundsOf(corner, SIZE);
 	}
 
-	public void prepareLoad() {
-		initAlpha();
-	}
-
-	public void prepareReload() {
-	}
-
-	public void prepareDraw(float time) {
-		updateAlpha(time);
-	}
-
 	public void initAlpha() {
 		alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
 	}
