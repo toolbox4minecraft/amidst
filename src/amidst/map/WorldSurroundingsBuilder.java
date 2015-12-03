@@ -11,7 +11,6 @@ import amidst.minecraft.world.World;
 
 public class WorldSurroundingsBuilder {
 	private final Zoom zoom = new Zoom();
-	private final Movement movement = new Movement();
 	private final BiomeSelection biomeSelection = new BiomeSelection();
 
 	private final LayerBuilder layerBuilder;
@@ -25,6 +24,7 @@ public class WorldSurroundingsBuilder {
 	}
 
 	public WorldSurroundings create(World world) {
+		Movement movement = new Movement();
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
 		List<LayerDeclaration> declarations = layerBuilder.getDeclarations();
 		final FragmentGraph graph = new FragmentGraph(declarations,
@@ -42,7 +42,6 @@ public class WorldSurroundingsBuilder {
 				biomeSelection, worldIconSelection, layerReloader, graph);
 		MapViewer mapViewer = new MapViewer(movement, zoom, world, map, drawer,
 				worldIconSelection, layerReloader, widgetBuilder);
-		return new WorldSurroundings(map, mapViewer, layerReloader, graph,
-				zoom, movement);
+		return new WorldSurroundings(map, mapViewer, layerReloader, graph, zoom);
 	}
 }

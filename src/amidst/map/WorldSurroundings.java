@@ -11,17 +11,14 @@ public class WorldSurroundings {
 	private final LayerReloader layerReloader;
 	private final FragmentGraph graph;
 	private final Zoom zoom;
-	private final Movement movement;
 
 	public WorldSurroundings(Map map, MapViewer mapViewer,
-			LayerReloader layerReloader, FragmentGraph graph, Zoom zoom,
-			Movement movement) {
+			LayerReloader layerReloader, FragmentGraph graph, Zoom zoom) {
 		this.map = map;
 		this.mapViewer = mapViewer;
 		this.layerReloader = layerReloader;
 		this.graph = graph;
 		this.zoom = zoom;
-		this.movement = movement;
 	}
 
 	public MapViewer getMapViewer() {
@@ -36,7 +33,6 @@ public class WorldSurroundings {
 		graph.dispose();
 		zoom.skipFading();
 		zoom.reset();
-		movement.reset();
 	}
 
 	public void tickFragmentLoader() {

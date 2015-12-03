@@ -45,10 +45,4 @@ public class Movement {
 	public void setLastMouse(Point lastMouse) {
 		this.lastMouse = lastMouse;
 	}
-
-	public void reset() {
-		speedX = 0;
-		speedY = 0;
-		lastMouse = null;
-	}
 }
