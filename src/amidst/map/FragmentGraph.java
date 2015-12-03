@@ -62,7 +62,7 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 	}
 
 	public CoordinatesInWorld getCorner() {
-		return startFragment.getCorner();
+		return startFragment.getFragment().getCorner();
 	}
 
 	@Override

@@ -66,10 +66,6 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		return fragment;
 	}
 
-	public CoordinatesInWorld getCorner() {
-		return fragment.getCorner();
-	}
-
 	public boolean isInitialized() {
 		return fragment.isInitialized();
 	}
@@ -359,22 +355,22 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	}
 
 	private FragmentGraphItem createAbove(FragmentManager manager) {
-		return connectAbove(manager.requestFragment(getCorner().add(0,
+		return connectAbove(manager.requestFragment(fragment.getCorner().add(0,
 				-Fragment.SIZE)));
 	}
 
 	private FragmentGraphItem createBelow(FragmentManager manager) {
-		return connectBelow(manager.requestFragment(getCorner().add(0,
+		return connectBelow(manager.requestFragment(fragment.getCorner().add(0,
 				Fragment.SIZE)));
 	}
 
 	private FragmentGraphItem createLeft(FragmentManager manager) {
-		return connectLeft(manager.requestFragment(getCorner().add(
+		return connectLeft(manager.requestFragment(fragment.getCorner().add(
 				-Fragment.SIZE, 0)));
 	}
 
 	private FragmentGraphItem createRight(FragmentManager manager) {
-		return connectRight(manager.requestFragment(getCorner().add(
+		return connectRight(manager.requestFragment(fragment.getCorner().add(
 				Fragment.SIZE, 0)));
 	}
 
