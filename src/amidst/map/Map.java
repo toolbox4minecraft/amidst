@@ -148,10 +148,6 @@ public class Map {
 		tasks.offer(task);
 	}
 
-	public void tickFragmentLoader() {
-		graph.getFragmentManager().tick();
-	}
-
 	public double getStartXOnScreen() {
 		return startXOnScreen;
 	}

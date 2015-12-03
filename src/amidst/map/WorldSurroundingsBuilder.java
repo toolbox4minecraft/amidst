@@ -39,9 +39,11 @@ public class WorldSurroundingsBuilder {
 		LayerReloader layerReloader = layerBuilder
 				.createLayerReloader(fragmentManager);
 		WidgetBuilder widgetBuilder = new WidgetBuilder(world, map,
-				biomeSelection, worldIconSelection, layerReloader, graph, zoom);
+				biomeSelection, worldIconSelection, layerReloader, graph, zoom,
+				fragmentManager);
 		MapViewer mapViewer = new MapViewer(movement, zoom, world, map, drawer,
 				worldIconSelection, layerReloader, widgetBuilder);
-		return new WorldSurroundings(map, mapViewer, layerReloader, graph, zoom);
+		return new WorldSurroundings(map, mapViewer, layerReloader, graph,
+				zoom, fragmentManager);
 	}
 }

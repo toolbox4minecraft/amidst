@@ -61,10 +61,6 @@ public class FragmentGraph implements Iterable<Fragment> {
 		return fragmentsPerColumn;
 	}
 
-	public FragmentManager getFragmentManager() {
-		return fragmentManager;
-	}
-
 	public CoordinatesInWorld getCorner() {
 		return startFragment.getCorner();
 	}

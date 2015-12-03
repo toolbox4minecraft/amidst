@@ -24,10 +24,11 @@ public class WidgetBuilder {
 	private final LayerReloader layerReloader;
 	private final FragmentGraph graph;
 	private final Zoom zoom;
+	private final FragmentManager fragmentManager;
 
 	public WidgetBuilder(World world, Map map, BiomeSelection biomeSelection,
 			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
-			FragmentGraph graph, Zoom zoom) {
+			FragmentGraph graph, Zoom zoom, FragmentManager fragmentManager) {
 		this.world = world;
 		this.map = map;
 		this.biomeSelection = biomeSelection;
@@ -35,6 +36,7 @@ public class WidgetBuilder {
 		this.layerReloader = layerReloader;
 		this.graph = graph;
 		this.zoom = zoom;
+		this.fragmentManager = fragmentManager;
 	}
 
 	public List<Widget> create(MapViewer mapViewer) {
@@ -43,11 +45,11 @@ public class WidgetBuilder {
 				new FpsWidget(              mapViewer, CornerAnchorPoint.BOTTOM_LEFT),
 				new ScaleWidget(            mapViewer, CornerAnchorPoint.BOTTOM_CENTER, zoom),
 				new SeedWidget(             mapViewer, CornerAnchorPoint.TOP_LEFT,      world),
-				new DebugWidget(            mapViewer, CornerAnchorPoint.BOTTOM_RIGHT,  graph),
+				new DebugWidget(            mapViewer, CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager),
 				new SelectedIconWidget(     mapViewer, CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
 				new CursorInformationWidget(mapViewer, CornerAnchorPoint.TOP_RIGHT,     map),
-				new BiomeToggleWidget(      mapViewer, CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection, layerReloader),
-				new BiomeWidget(            mapViewer, CornerAnchorPoint.NONE,          biomeSelection, layerReloader)
+				new BiomeToggleWidget(      mapViewer, CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection,    layerReloader),
+				new BiomeWidget(            mapViewer, CornerAnchorPoint.NONE,          biomeSelection,    layerReloader)
 		);
 		// @formatter:on
 	}

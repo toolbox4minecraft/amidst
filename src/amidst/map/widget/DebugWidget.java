@@ -12,18 +12,19 @@ import amidst.map.MapViewer;
 
 public class DebugWidget extends Widget {
 	private final FragmentGraph graph;
+	private final FragmentManager fragmentManager;
 
 	public DebugWidget(MapViewer mapViewer, CornerAnchorPoint anchor,
-			FragmentGraph graph) {
+			FragmentGraph graph, FragmentManager fragmentManager) {
 		super(mapViewer, anchor);
 		this.graph = graph;
+		this.fragmentManager = fragmentManager;
 		forceVisibility(onVisibilityCheck());
 	}
 
 	@Override
 	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
-		List<String> panelLines = getPanelLines(graph,
-				graph.getFragmentManager());
+		List<String> panelLines = getPanelLines();
 		int width = getPanelWidth(panelLines, fontMetrics);
 		int height = getPanelHeight(panelLines);
 		setWidth(width);
@@ -32,8 +33,7 @@ public class DebugWidget extends Widget {
 		drawPanelLines(g2d, panelLines);
 	}
 
-	private List<String> getPanelLines(FragmentGraph graph,
-			FragmentManager fragmentManager) {
+	private List<String> getPanelLines() {
 		List<String> panelLines = new ArrayList<String>();
 		panelLines.add("Fragment Manager:");
 		panelLines.add("Cache Size: " + fragmentManager.getCacheSize());
