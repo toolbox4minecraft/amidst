@@ -234,8 +234,8 @@ public class MapWindow {
 	}
 
 	public void clearWorld() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings;
 		if (worldSurroundings != null) {
-			WorldSurroundings worldSurroundings = this.worldSurroundings;
 			this.worldSurroundings = null;
 			menuBar.disableMapMenu();
 			contentPane.remove(worldSurroundings.getMapViewer().getPanel());
@@ -263,6 +263,7 @@ public class MapWindow {
 	}
 
 	public void capture(File file) {
+		WorldSurroundings worldSurroundings = this.worldSurroundings;
 		if (worldSurroundings != null) {
 			BufferedImage image = worldSurroundings.createCaptureImage();
 			saveToFile(image, file);
@@ -287,36 +288,42 @@ public class MapWindow {
 	}
 
 	private void adjustZoom(int notches) {
+		WorldSurroundings worldSurroundings = this.worldSurroundings;
 		if (worldSurroundings != null) {
 			worldSurroundings.adjustZoom(notches);
 		}
 	}
 
 	public void moveMapToCoordinates(CoordinatesInWorld coordinates) {
+		WorldSurroundings worldSurroundings = this.worldSurroundings;
 		if (worldSurroundings != null) {
 			worldSurroundings.centerOn(coordinates);
 		}
 	}
 
 	public void reloadBiomeLayer() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings;
 		if (worldSurroundings != null) {
 			worldSurroundings.getLayerReloader().reloadBiomeLayer();
 		}
 	}
 
 	public void reloadPlayerLayer() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings;
 		if (worldSurroundings != null) {
 			worldSurroundings.getLayerReloader().reloadPlayerLayer();
 		}
 	}
 
 	public void tickRepainter() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings;
 		if (worldSurroundings != null) {
 			worldSurroundings.tickRepainter();
 		}
 	}
 
 	public void tickFragmentLoader() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings;
 		if (worldSurroundings != null) {
 			worldSurroundings.tickFragmentLoader();
 		}
