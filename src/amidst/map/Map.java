@@ -1,10 +1,8 @@
 package amidst.map;
 
 import java.awt.Point;
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import amidst.fragment.layer.LayerDeclaration;
 import amidst.fragment.layer.LayerIds;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.icon.WorldIcon;
@@ -25,10 +23,9 @@ public class Map {
 	private final MapZoom zoom;
 	private final FragmentGraph graph;
 
-	public Map(List<LayerDeclaration> declarations, MapZoom zoom,
-			FragmentManager fragmentManager) {
+	public Map(MapZoom zoom, FragmentGraph graph) {
 		this.zoom = zoom;
-		this.graph = new FragmentGraph(declarations, fragmentManager);
+		this.graph = graph;
 		this.tasks.offer(new Runnable() {
 			@Override
 			public void run() {
@@ -103,7 +100,7 @@ public class Map {
 			this.viewerHeight = height;
 			lockedProcessTasks();
 			lockedAdjustNumberOfRowsAndColumns();
-			drawer.doDrawMap(startXOnScreen, startYOnScreen, graph);
+			drawer.doDrawMap(startXOnScreen, startYOnScreen);
 		}
 	}
 

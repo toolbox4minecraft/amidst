@@ -1,6 +1,11 @@
 package amidst.map;
 
+import java.util.List;
+
+import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.layer.LayerBuilder;
+import amidst.fragment.layer.LayerDeclaration;
+import amidst.fragment.layer.LayerManager;
 import amidst.minecraft.world.World;
 
 public class MapBuilder {
@@ -17,11 +22,15 @@ public class MapBuilder {
 	public MapFactory create(World world, MapZoom zoom, MapMovement movement,
 			BiomeSelection biomeSelection) {
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
-		Map map = new Map(layerBuilder.getDeclarations(), zoom, fragmentManager);
-		fragmentManager.setLayerManager(layerBuilder.createLayerManager(world,
-				map, biomeSelection));
-		MapDrawer drawer = new MapDrawer(map, movement, zoom,
-				layerBuilder.createDrawers(map, worldIconSelection));
+		List<LayerDeclaration> declarations = layerBuilder.getDeclarations();
+		FragmentGraph graph = new FragmentGraph(declarations, fragmentManager);
+		Map map = new Map(zoom, graph);
+		LayerManager layerManager = layerBuilder.createLayerManager(world, map,
+				biomeSelection);
+		fragmentManager.setLayerManager(layerManager);
+		Iterable<FragmentDrawer> drawers = layerBuilder.createDrawers(map,
+				worldIconSelection);
+		MapDrawer drawer = new MapDrawer(map, movement, zoom, graph, drawers);
 		WidgetBuilder widgetBuilder = new WidgetBuilder(world, map,
 				biomeSelection, worldIconSelection);
 		MapViewer mapViewer = new MapViewer(movement, zoom, world, map, drawer,

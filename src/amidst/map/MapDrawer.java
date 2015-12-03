@@ -34,27 +34,29 @@ public class MapDrawer {
 
 	private final Object drawLock = new Object();
 
-	private Map map;
-	private MapMovement movement;
-	private MapZoom zoom;
-	private List<Widget> widgets;
-	private FontMetrics widgetFontMetrics;
-	private Iterable<FragmentDrawer> drawers;
+	private final AffineTransform originalLayerMatrix = new AffineTransform();
+	private final AffineTransform layerMatrix = new AffineTransform();
+
+	private final Map map;
+	private final MapMovement movement;
+	private final MapZoom zoom;
+	private final FragmentGraph graph;
+	private final Iterable<FragmentDrawer> drawers;
 
 	private Graphics2D g2d;
 	private float time;
 	private int width;
 	private int height;
 	private Point mousePosition;
-
-	private AffineTransform originalLayerMatrix = new AffineTransform();
-	private AffineTransform layerMatrix = new AffineTransform();
+	private List<Widget> widgets;
+	private FontMetrics widgetFontMetrics;
 
 	public MapDrawer(Map map, MapMovement movement, MapZoom zoom,
-			Iterable<FragmentDrawer> drawers) {
+			FragmentGraph graph, Iterable<FragmentDrawer> drawers) {
 		this.map = map;
 		this.movement = movement;
 		this.zoom = zoom;
+		this.graph = graph;
 		this.drawers = drawers;
 	}
 
@@ -116,8 +118,7 @@ public class MapDrawer {
 		g2d = old;
 	}
 
-	public void doDrawMap(double startXOnScreen, double startYOnScreen,
-			FragmentGraph graph) {
+	public void doDrawMap(double startXOnScreen, double startYOnScreen) {
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -125,8 +126,8 @@ public class MapDrawer {
 		AffineTransform originalGraphicsTransform = g2d.getTransform();
 		initOriginalLayerMatrix(originalGraphicsTransform, startXOnScreen,
 				startYOnScreen, zoom.getCurrentValue());
-		prepareDraw(graph);
-		drawLayers(graph);
+		prepareDraw();
+		drawLayers();
 		g2d.setTransform(originalGraphicsTransform);
 	}
 
@@ -138,13 +139,13 @@ public class MapDrawer {
 		originalLayerMatrix.scale(scale, scale);
 	}
 
-	private void prepareDraw(FragmentGraph graph) {
+	private void prepareDraw() {
 		for (Fragment fragment : graph) {
 			fragment.prepareDraw(time);
 		}
 	}
 
-	private void drawLayers(FragmentGraph graph) {
+	private void drawLayers() {
 		for (FragmentDrawer drawer : drawers) {
 			if (drawer.getLayerDeclaration().isVisible()) {
 				initLayerMatrix();
