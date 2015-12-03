@@ -43,8 +43,10 @@ public class Drawer {
 	private final FragmentGraph graph;
 	private final Iterable<FragmentDrawer> drawers;
 
-	private Graphics2D g2d;
+	private long lastTime = System.currentTimeMillis();
 	private float time;
+
+	private Graphics2D g2d;
 	private int width;
 	private int height;
 	private Point mousePosition;
@@ -60,12 +62,12 @@ public class Drawer {
 		this.drawers = drawers;
 	}
 
-	public void drawScreenshot(Graphics2D g2d, float time, int width,
-			int height, Point mousePosition, List<Widget> widgets,
+	public void drawScreenshot(Graphics2D g2d, int width, int height,
+			Point mousePosition, List<Widget> widgets,
 			FontMetrics widgetFontMetrics) {
 		synchronized (drawLock) {
+			this.time = 0;
 			this.g2d = g2d;
-			this.time = time;
 			this.width = width;
 			this.height = height;
 			this.mousePosition = mousePosition;
@@ -78,12 +80,12 @@ public class Drawer {
 		}
 	}
 
-	public void draw(Graphics2D g2d, float time, int width, int height,
+	public void draw(Graphics2D g2d, int width, int height,
 			Point mousePosition, List<Widget> widgets,
 			FontMetrics widgetFontMetrics) {
 		synchronized (drawLock) {
+			this.time = calculateTimeSpanSinceLastDrawInSeconds();
 			this.g2d = g2d;
-			this.time = time;
 			this.width = width;
 			this.height = height;
 			this.mousePosition = mousePosition;
@@ -97,6 +99,13 @@ public class Drawer {
 			drawBorder();
 			drawWidgets();
 		}
+	}
+
+	private float calculateTimeSpanSinceLastDrawInSeconds() {
+		long currentTime = System.currentTimeMillis();
+		float result = Math.min(Math.max(0, currentTime - lastTime), 100) / 1000.0f;
+		lastTime = currentTime;
+		return result;
 	}
 
 	private void updateZoom() {

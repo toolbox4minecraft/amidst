@@ -181,25 +181,15 @@ public class MapViewer {
 	private class Component extends JComponent {
 		private final FontMetrics widgetFontMetrics = getFontMetrics(Widget.TEXT_FONT);
 
-		private long lastTime = System.currentTimeMillis();
-
 		@Override
 		public void paint(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g.create();
-			float time = calculateTimeSpanSinceLastDrawInSeconds();
-			drawer.draw(g2d, time, getWidth(), getHeight(), getMousePosition(),
+			drawer.draw(g2d, getWidth(), getHeight(), getMousePosition(),
 					widgets, widgetFontMetrics);
 		}
 
-		private float calculateTimeSpanSinceLastDrawInSeconds() {
-			long currentTime = System.currentTimeMillis();
-			float result = Math.min(Math.max(0, currentTime - lastTime), 100) / 1000.0f;
-			lastTime = currentTime;
-			return result;
-		}
-
 		public void drawScreenshot(Graphics2D g2d) {
-			drawer.drawScreenshot(g2d, 0, getWidth(), getHeight(),
+			drawer.drawScreenshot(g2d, getWidth(), getHeight(),
 					getMousePosition(), widgets, widgetFontMetrics);
 		}
 	}
