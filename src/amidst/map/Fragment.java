@@ -12,6 +12,8 @@ import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.icon.WorldIcon;
 
 public class Fragment {
+	public static final int SIZE = Resolution.FRAGMENT.getStep();
+
 	private volatile FragmentGraphItem fragmentGraphItem;
 
 	private volatile boolean isInitialized = false;
@@ -126,7 +128,7 @@ public class Fragment {
 	}
 
 	public boolean isInBounds(CoordinatesInWorld coordinates) {
-		return coordinates.isInBoundsOf(corner, FragmentGraphItem.SIZE);
+		return coordinates.isInBoundsOf(corner, SIZE);
 	}
 
 	@Deprecated

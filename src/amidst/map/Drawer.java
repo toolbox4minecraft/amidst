@@ -175,10 +175,10 @@ public class Drawer {
 	}
 
 	private void updateLayerMatrix(Fragment fragment, int fragmentsPerRow) {
-		layerMatrix.translate(FragmentGraphItem.SIZE, 0);
+		layerMatrix.translate(Fragment.SIZE, 0);
 		if (fragment.isEndOfLine()) {
-			layerMatrix.translate(-FragmentGraphItem.SIZE * fragmentsPerRow,
-					FragmentGraphItem.SIZE);
+			layerMatrix.translate(-Fragment.SIZE * fragmentsPerRow,
+					Fragment.SIZE);
 		}
 	}
 

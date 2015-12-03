@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
-import amidst.map.FragmentGraphItem;
 import amidst.map.Zoom;
 import amidst.minecraft.world.Resolution;
 
@@ -62,18 +61,18 @@ public class GridDrawer extends FragmentDrawer {
 
 	private void drawGridLines(Graphics2D g2d, int stride, int gridX, int gridY) {
 		if (gridY == 0) {
-			g2d.drawLine(0, 0, FragmentGraphItem.SIZE, 0);
+			g2d.drawLine(0, 0, Fragment.SIZE, 0);
 		}
 		if (gridY == stride) {
-			g2d.drawLine(0, FragmentGraphItem.SIZE, FragmentGraphItem.SIZE,
-					FragmentGraphItem.SIZE);
+			g2d.drawLine(0, Fragment.SIZE, Fragment.SIZE,
+					Fragment.SIZE);
 		}
 		if (gridX == 0) {
-			g2d.drawLine(0, 0, 0, FragmentGraphItem.SIZE);
+			g2d.drawLine(0, 0, 0, Fragment.SIZE);
 		}
 		if (gridX == stride) {
-			g2d.drawLine(FragmentGraphItem.SIZE, 0, FragmentGraphItem.SIZE,
-					FragmentGraphItem.SIZE);
+			g2d.drawLine(Fragment.SIZE, 0, Fragment.SIZE,
+					Fragment.SIZE);
 		}
 	}
 

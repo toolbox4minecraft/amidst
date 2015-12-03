@@ -46,7 +46,7 @@ public class Map {
 
 	public void adjustNumberOfRowsAndColumns() {
 		double fragmentSizeOnScreen = zoom
-				.worldToScreen(FragmentGraphItem.SIZE);
+				.worldToScreen(Fragment.SIZE);
 		int desiredFragmentsPerRow = (int) (viewerWidth / fragmentSizeOnScreen + 2);
 		int desiredFragmentsPerColumn = (int) (viewerHeight
 				/ fragmentSizeOnScreen + 2);

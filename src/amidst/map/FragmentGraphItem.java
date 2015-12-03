@@ -3,7 +3,6 @@ package amidst.map;
 import java.util.Iterator;
 
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.Resolution;
 
 public class FragmentGraphItem implements Iterable<Fragment> {
 	/**
@@ -42,8 +41,6 @@ public class FragmentGraphItem implements Iterable<Fragment> {
 			}
 		}
 	}
-
-	public static final int SIZE = Resolution.FRAGMENT.getStep();
 
 	private final Fragment fragment;
 
@@ -362,19 +359,19 @@ public class FragmentGraphItem implements Iterable<Fragment> {
 	}
 
 	private FragmentGraphItem createAbove(FragmentManager manager) {
-		return connectAbove(manager.requestFragment(getCorner().add(0, -SIZE)));
+		return connectAbove(manager.requestFragment(getCorner().add(0, -Fragment.SIZE)));
 	}
 
 	private FragmentGraphItem createBelow(FragmentManager manager) {
-		return connectBelow(manager.requestFragment(getCorner().add(0, SIZE)));
+		return connectBelow(manager.requestFragment(getCorner().add(0, Fragment.SIZE)));
 	}
 
 	private FragmentGraphItem createLeft(FragmentManager manager) {
-		return connectLeft(manager.requestFragment(getCorner().add(-SIZE, 0)));
+		return connectLeft(manager.requestFragment(getCorner().add(-Fragment.SIZE, 0)));
 	}
 
 	private FragmentGraphItem createRight(FragmentManager manager) {
-		return connectRight(manager.requestFragment(getCorner().add(SIZE, 0)));
+		return connectRight(manager.requestFragment(getCorner().add(Fragment.SIZE, 0)));
 	}
 
 	private void recycle(FragmentManager manager) {
