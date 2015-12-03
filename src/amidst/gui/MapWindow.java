@@ -2,7 +2,6 @@ package amidst.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -22,20 +21,18 @@ import javax.swing.JOptionPane;
 import amidst.AmidstMetaData;
 import amidst.Application;
 import amidst.Options;
-import amidst.fragment.layer.LayerReloader;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.map.BiomeSelection;
-import amidst.map.Map;
-import amidst.map.MapBuilder;
-import amidst.map.MapFactory;
 import amidst.map.MapMovement;
-import amidst.map.MapViewer;
 import amidst.map.MapZoom;
+import amidst.map.WorldSurroundings;
+import amidst.map.WorldSurroundingsBuilder;
 import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.minecraft.world.World;
 import amidst.minecraft.world.WorldType;
 
 public class MapWindow {
@@ -45,20 +42,19 @@ public class MapWindow {
 	private final BiomeSelection biomeSelection = new BiomeSelection();
 
 	private final Application application;
-	private final MapBuilder mapBuilder;
+	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 
 	private final JFrame frame;
 	private final Container contentPane;
 	private final AmidstMenu menuBar;
 
-	private MapViewer mapViewer;
-	private Map map;
-	private volatile LayerReloader layerReloader;
+	private volatile WorldSurroundings worldSurroundings;
 
-	public MapWindow(Application application, MapBuilder mapBuilder,
+	public MapWindow(Application application,
+			WorldSurroundingsBuilder worldSurroundingsBuilder,
 			Options preferences) {
 		this.application = application;
-		this.mapBuilder = mapBuilder;
+		this.worldSurroundingsBuilder = worldSurroundingsBuilder;
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
 		this.menuBar = createMenuBar(preferences);
@@ -102,13 +98,10 @@ public class MapWindow {
 		frame.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (mapViewer != null) {
-					Point mouse = mapViewer.getMousePositionOrCenter();
-					if (e.getKeyCode() == KeyEvent.VK_PLUS) {
-						mapZoom.adjustZoom(mouse, -1);
-					} else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
-						mapZoom.adjustZoom(mouse, 1);
-					}
+				if (e.getKeyCode() == KeyEvent.VK_PLUS) {
+					adjustZoom(-1);
+				} else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
+					adjustZoom(1);
 				}
 			}
 		});
@@ -130,44 +123,6 @@ public class MapWindow {
 
 	private void checkForUpdates() {
 		application.checkForUpdatesSilently();
-	}
-
-	public void dispose() {
-		clearWorld();
-		frame.dispose();
-	}
-
-	public void clearWorld() {
-		if (mapViewer != null) {
-			menuBar.disableMapMenu();
-			contentPane.remove(mapViewer.getPanel());
-			map.safeDispose();
-			mapMovement.reset();
-			mapZoom.skipFading();
-			mapViewer = null;
-			map = null;
-		}
-	}
-
-	public void initWorld() {
-		MapFactory mapFactory = mapBuilder.create(application.getWorld(),
-				mapZoom, mapMovement, biomeSelection);
-		layerReloader = mapFactory.getLayerReloader();
-		map = mapFactory.getMap();
-		addMapViewer(mapFactory.getMapViewer());
-		menuBar.enableMapMenu();
-	}
-
-	/**
-	 * This ensures that the instance variable mapViewer is assigned AFTER
-	 * frame.validate() is called. This is important, because the executor will
-	 * draw the new mapViewer as soon as it is assigned to the instance
-	 * variable.
-	 */
-	private void addMapViewer(MapViewer mapViewer) {
-		contentPane.add(mapViewer.getPanel(), BorderLayout.CENTER);
-		frame.validate();
-		this.mapViewer = mapViewer;
 	}
 
 	public String askForSeed() {
@@ -234,10 +189,6 @@ public class MapWindow {
 				JOptionPane.YES_NO_OPTION);
 	}
 
-	public void moveMapToCoordinates(CoordinatesInWorld coordinates) {
-		map.safeCenterOn(coordinates);
-	}
-
 	public WorldType askForWorldType() {
 		String worldTypePreference = Options.instance.worldType.get();
 		if (worldTypePreference.equals("Prompt each time")) {
@@ -246,28 +197,6 @@ public class MapWindow {
 		} else {
 			return WorldType.from(worldTypePreference);
 		}
-	}
-
-	public void capture(File file) {
-		BufferedImage image = mapViewer.createCaptureImage();
-		saveToFile(image, file);
-		image.flush();
-	}
-
-	private void saveToFile(BufferedImage image, File file) {
-		try {
-			ImageIO.write(image, "png", appendPNGFileExtensionIfNecessary(file));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private File appendPNGFileExtensionIfNecessary(File file) {
-		String filename = file.toString();
-		if (!filename.toLowerCase().endsWith(".png")) {
-			filename += ".png";
-		}
-		return new File(filename);
 	}
 
 	public CoordinatesInWorld askForCoordinates() {
@@ -299,27 +228,97 @@ public class MapWindow {
 		}
 	}
 
+	public void dispose() {
+		clearWorld();
+		frame.dispose();
+	}
+
+	public void clearWorld() {
+		if (worldSurroundings != null) {
+			WorldSurroundings worldSurroundings = this.worldSurroundings;
+			this.worldSurroundings = null;
+			menuBar.disableMapMenu();
+			contentPane.remove(worldSurroundings.getMapViewer().getPanel());
+			worldSurroundings.dispose();
+		}
+	}
+
+	public void initWorld(World world) {
+		setWorldSurroundings(worldSurroundingsBuilder.create(world, mapZoom,
+				mapMovement, biomeSelection));
+	}
+
+	/**
+	 * This ensures that the instance variable worldSurroundings is assigned
+	 * AFTER frame.validate() is called. This is important, because the
+	 * repainter thread will draw the new worldSurroundings as soon as it is
+	 * assigned to the instance variable.
+	 */
+	private void setWorldSurroundings(WorldSurroundings worldSurroundings) {
+		contentPane.add(worldSurroundings.getMapViewer().getPanel(),
+				BorderLayout.CENTER);
+		frame.validate();
+		menuBar.enableMapMenu();
+		this.worldSurroundings = worldSurroundings;
+	}
+
+	public void capture(File file) {
+		if (worldSurroundings != null) {
+			BufferedImage image = worldSurroundings.createCaptureImage();
+			saveToFile(image, file);
+			image.flush();
+		}
+	}
+
+	private void saveToFile(BufferedImage image, File file) {
+		try {
+			ImageIO.write(image, "png", appendPNGFileExtensionIfNecessary(file));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private File appendPNGFileExtensionIfNecessary(File file) {
+		String filename = file.toString();
+		if (!filename.toLowerCase().endsWith(".png")) {
+			filename += ".png";
+		}
+		return new File(filename);
+	}
+
+	private void adjustZoom(int notches) {
+		if (worldSurroundings != null) {
+			worldSurroundings.adjustZoom(notches);
+		}
+	}
+
+	public void moveMapToCoordinates(CoordinatesInWorld coordinates) {
+		if (worldSurroundings != null) {
+			worldSurroundings.centerOn(coordinates);
+		}
+	}
+
 	public void reloadBiomeLayer() {
-		if (layerReloader != null) {
-			layerReloader.reloadBiomeLayer();
+		if (worldSurroundings != null) {
+			worldSurroundings.getLayerReloader().reloadBiomeLayer();
 		}
 	}
 
 	public void reloadPlayerLayer() {
-		if (layerReloader != null) {
-			layerReloader.reloadPlayerLayer();
+		if (worldSurroundings != null) {
+			worldSurroundings.getLayerReloader().reloadPlayerLayer();
 		}
 	}
 
 	public void tickRepainter() {
-		if (mapViewer != null) {
-			mapViewer.repaint();
+		if (worldSurroundings != null) {
+			worldSurroundings.tickRepainter();
 		}
 	}
 
 	public void tickFragmentLoader() {
-		if (map != null) {
-			map.tickFragmentLoader();
+		if (worldSurroundings != null) {
+			worldSurroundings.tickFragmentLoader();
 		}
 	}
 }

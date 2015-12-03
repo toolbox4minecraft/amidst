@@ -9,22 +9,23 @@ import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.minecraft.world.World;
 
-public class MapBuilder {
+public class WorldSurroundingsBuilder {
 	private final LayerBuilder layerBuilder;
 	private final FragmentManager fragmentManager;
 
-	public MapBuilder(LayerBuilder layerBuilder) {
+	public WorldSurroundingsBuilder(LayerBuilder layerBuilder) {
 		this.layerBuilder = layerBuilder;
 		this.fragmentManager = new FragmentManager(
 				layerBuilder.getConstructors(),
 				layerBuilder.getNumberOfLayers());
 	}
 
-	public MapFactory create(World world, MapZoom zoom, MapMovement movement,
-			BiomeSelection biomeSelection) {
+	public WorldSurroundings create(World world, MapZoom zoom,
+			MapMovement movement, BiomeSelection biomeSelection) {
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
 		List<LayerDeclaration> declarations = layerBuilder.getDeclarations();
-		FragmentGraph graph = new FragmentGraph(declarations, fragmentManager);
+		final FragmentGraph graph = new FragmentGraph(declarations,
+				fragmentManager);
 		Map map = new Map(zoom, graph);
 		LayerManager layerManager = layerBuilder.createLayerManager(world, map,
 				biomeSelection);
@@ -38,6 +39,7 @@ public class MapBuilder {
 				biomeSelection, worldIconSelection, layerReloader, graph);
 		MapViewer mapViewer = new MapViewer(movement, zoom, world, map, drawer,
 				worldIconSelection, layerReloader, widgetBuilder);
-		return new MapFactory(map, mapViewer, layerReloader);
+		return new WorldSurroundings(map, mapViewer, layerReloader, graph,
+				zoom, movement);
 	}
 }

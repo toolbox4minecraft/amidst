@@ -108,15 +108,6 @@ public class Map {
 				- zoom.worldToScreen(yFragmentRelative);
 	}
 
-	public void safeDispose() {
-		invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				graph.recycleAll();
-			}
-		});
-	}
-
 	public void adjustStartOnScreenToMovement(int deltaX, int deltaY) {
 		startXOnScreen += deltaX;
 		startYOnScreen += deltaY;

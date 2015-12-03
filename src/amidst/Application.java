@@ -10,8 +10,8 @@ import amidst.gui.MapWindow;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.Log;
-import amidst.map.MapBuilder;
 import amidst.map.SkinLoader;
+import amidst.map.WorldSurroundingsBuilder;
 import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.minecraft.Minecraft;
@@ -24,7 +24,7 @@ import amidst.version.MinecraftProfile;
 
 public class Application {
 	private final CommandLineOptions options;
-	private final MapBuilder mapBuilder;
+	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final ThreadMaster threadMaster;
 	private final SkinLoader skinLoader;
@@ -37,7 +37,7 @@ public class Application {
 
 	public Application(CommandLineOptions options) {
 		this.options = options;
-		this.mapBuilder = createMapBuilder();
+		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
 		this.seedHistoryLogger = createSeedHistoryLogger();
 		this.threadMaster = createThreadMaster();
 		this.skinLoader = createSkinLoader();
@@ -46,8 +46,8 @@ public class Application {
 		scanForBiomeColorProfiles();
 	}
 
-	private MapBuilder createMapBuilder() {
-		return new MapBuilder(new LayerBuilder(getPreferences()));
+	private WorldSurroundingsBuilder createWorldSurroundingsBuilder() {
+		return new WorldSurroundingsBuilder(new LayerBuilder(getPreferences()));
 	}
 
 	private SeedHistoryLogger createSeedHistoryLogger() {
@@ -98,7 +98,8 @@ public class Application {
 
 	private void doDisplayMapWindow(IMinecraftInterface minecraftInterface) {
 		MinecraftUtil.setInterface(minecraftInterface);
-		setMapWindow(new MapWindow(this, mapBuilder, getPreferences()));
+		setMapWindow(new MapWindow(this, worldSurroundingsBuilder,
+				getPreferences()));
 		setVersionSelectWindow(null);
 	}
 
@@ -143,6 +144,7 @@ public class Application {
 		updateManager.checkSilently(mapWindow);
 	}
 
+	// TODO: use find all occurrences of System.exit();
 	public void exitGracefully() {
 		dispose();
 		System.exit(0);
@@ -158,7 +160,7 @@ public class Application {
 		if (world != null) {
 			seedHistoryLogger.log(world.getSeed());
 			mapWindow.clearWorld();
-			mapWindow.initWorld();
+			mapWindow.initWorld(world);
 			if (world.isFileWorld()) {
 				skinLoader
 						.loadSkins(world.getAsFileWorld().getMovablePlayers());
