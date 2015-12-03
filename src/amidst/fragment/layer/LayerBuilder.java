@@ -21,7 +21,6 @@ import amidst.fragment.loader.ImageLoader;
 import amidst.fragment.loader.WorldIconLoader;
 import amidst.map.BiomeSelection;
 import amidst.map.FragmentManager;
-import amidst.map.Map;
 import amidst.map.WorldIconSelection;
 import amidst.map.Zoom;
 import amidst.minecraft.world.Resolution;
@@ -87,7 +86,7 @@ public class LayerBuilder {
 		return LayerIds.NUMBER_OF_LAYERS;
 	}
 
-	public LayerManager createLayerManager(World world, Map map,
+	public LayerManager createLayerManager(World world,
 			BiomeSelection biomeSelection) {
 		return new LayerManager(invalidatedLayers, createLoaders(world,
 				biomeSelection));

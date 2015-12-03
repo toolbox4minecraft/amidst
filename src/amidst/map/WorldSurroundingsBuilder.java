@@ -30,7 +30,7 @@ public class WorldSurroundingsBuilder {
 		final FragmentGraph graph = new FragmentGraph(declarations,
 				fragmentManager);
 		Map map = new Map(zoom, graph);
-		LayerManager layerManager = layerBuilder.createLayerManager(world, map,
+		LayerManager layerManager = layerBuilder.createLayerManager(world,
 				biomeSelection);
 		fragmentManager.setLayerManager(layerManager);
 		Iterable<FragmentDrawer> drawers = layerBuilder.createDrawers(zoom,

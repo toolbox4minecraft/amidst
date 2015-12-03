@@ -11,14 +11,14 @@ public class Map {
 
 	private final ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
 
+	private final Zoom zoom;
+	private final FragmentGraph graph;
+
 	private volatile double startXOnScreen;
 	private volatile double startYOnScreen;
 
-	private int viewerWidth = 1;
-	private int viewerHeight = 1;
-
-	private final Zoom zoom;
-	private final FragmentGraph graph;
+	private volatile int viewerWidth = 1;
+	private volatile int viewerHeight = 1;
 
 	public Map(Zoom zoom, FragmentGraph graph) {
 		this.zoom = zoom;
@@ -32,33 +32,23 @@ public class Map {
 		});
 	}
 
-	public void safeDraw(MapDrawer drawer, int width, int height) {
-		this.viewerWidth = width;
-		this.viewerHeight = height;
-		lockedProcessTasks();
-		lockedAdjustNumberOfRowsAndColumns();
-		drawer.doDrawMap(startXOnScreen, startYOnScreen);
+	public void setViewerDimensions(int viewerWidth, int viewerHeight) {
+		this.viewerWidth = viewerWidth;
+		this.viewerHeight = viewerHeight;
 	}
 
-	private void lockedProcessTasks() {
+	public void processTasks() {
 		Runnable task;
 		while ((task = tasks.poll()) != null) {
 			task.run();
 		}
 	}
 
-	private void lockedAdjustNumberOfRowsAndColumns() {
+	public void adjustNumberOfRowsAndColumns() {
 		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		int desiredFragmentsPerRow = (int) (viewerWidth / fragmentSizeOnScreen + 2);
 		int desiredFragmentsPerColumn = (int) (viewerHeight
 				/ fragmentSizeOnScreen + 2);
-		lockedAdjustNumberOfRowsAndColumns(fragmentSizeOnScreen,
-				desiredFragmentsPerRow, desiredFragmentsPerColumn);
-	}
-
-	private void lockedAdjustNumberOfRowsAndColumns(
-			double fragmentSizeOnScreen, int desiredFragmentsPerRow,
-			int desiredFragmentsPerColumn) {
 		int newColumns = desiredFragmentsPerRow - graph.getFragmentsPerRow();
 		int newRows = desiredFragmentsPerColumn - graph.getFragmentsPerColumn();
 		int newLeft = getNewLeft(fragmentSizeOnScreen);
@@ -86,18 +76,18 @@ public class Map {
 		}
 	}
 
-	public void safeCenterOn(final CoordinatesInWorld coordinates) {
+	public void centerOn(final CoordinatesInWorld coordinates) {
 		invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				graph.init(coordinates);
-				lockedCenterOn(coordinates);
+				doCenterOn(coordinates);
 			}
 		});
 	}
 
 	// TODO: Support longs?
-	private void lockedCenterOn(CoordinatesInWorld coordinates) {
+	private void doCenterOn(CoordinatesInWorld coordinates) {
 		int xCenterOnScreen = viewerWidth >> 1;
 		int yCenterOnScreen = viewerHeight >> 1;
 		long xFragmentRelative = coordinates.getXRelativeToFragment();
@@ -160,5 +150,13 @@ public class Map {
 
 	public void tickFragmentLoader() {
 		graph.getFragmentManager().tick();
+	}
+
+	public double getStartXOnScreen() {
+		return startXOnScreen;
+	}
+
+	public double getStartYOnScreen() {
+		return startYOnScreen;
 	}
 }

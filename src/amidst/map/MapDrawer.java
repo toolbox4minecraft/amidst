@@ -71,6 +71,7 @@ public class MapDrawer {
 			this.mousePosition = mousePosition;
 			this.widgets = widgets;
 			this.widgetFontMetrics = widgetFontMetrics;
+			updateMap();
 			clear();
 			drawMap();
 			drawWidgets();
@@ -90,6 +91,7 @@ public class MapDrawer {
 			this.widgetFontMetrics = widgetFontMetrics;
 			updateZoom();
 			updateMovement();
+			updateMap();
 			clear();
 			drawMap();
 			drawBorder();
@@ -105,6 +107,12 @@ public class MapDrawer {
 		movement.update(map, mousePosition);
 	}
 
+	private void updateMap() {
+		map.setViewerDimensions(width, height);
+		map.processTasks();
+		map.adjustNumberOfRowsAndColumns();
+	}
+
 	private void clear() {
 		g2d.setColor(Color.black);
 		g2d.fillRect(0, 0, width, height);
@@ -114,28 +122,28 @@ public class MapDrawer {
 		// TODO: is this needed?
 		Graphics2D old = g2d;
 		g2d = (Graphics2D) old.create();
-		map.safeDraw(this, width, height);
+		doDrawMap();
 		g2d = old;
 	}
 
-	public void doDrawMap(double startXOnScreen, double startYOnScreen) {
+	private void doDrawMap() {
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		AffineTransform originalGraphicsTransform = g2d.getTransform();
-		initOriginalLayerMatrix(originalGraphicsTransform, startXOnScreen,
-				startYOnScreen, zoom.getCurrentValue());
+		initOriginalLayerMatrix(originalGraphicsTransform);
 		prepareDraw();
 		drawLayers();
 		g2d.setTransform(originalGraphicsTransform);
 	}
 
 	private void initOriginalLayerMatrix(
-			AffineTransform originalGraphicsTransform, double startXOnScreen,
-			double startYOnScreen, double scale) {
+			AffineTransform originalGraphicsTransform) {
+		double scale = zoom.getCurrentValue();
 		originalLayerMatrix.setTransform(originalGraphicsTransform);
-		originalLayerMatrix.translate(startXOnScreen, startYOnScreen);
+		originalLayerMatrix.translate(map.getStartXOnScreen(),
+				map.getStartYOnScreen());
 		originalLayerMatrix.scale(scale, scale);
 	}
 

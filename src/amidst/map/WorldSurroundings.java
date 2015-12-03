@@ -44,7 +44,7 @@ public class WorldSurroundings {
 	}
 
 	public void centerOn(CoordinatesInWorld coordinates) {
-		map.safeCenterOn(coordinates);
+		map.centerOn(coordinates);
 	}
 
 	public BufferedImage createCaptureImage() {
