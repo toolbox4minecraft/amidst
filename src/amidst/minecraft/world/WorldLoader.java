@@ -16,6 +16,8 @@ import amidst.logging.Log;
 public class WorldLoader {
 	private static final String DEFAULT_SINGLE_PLAYER_PLAYER_NAME = "Player";
 
+	private PlayerMover playerMover;
+
 	private File worldFile;
 	private CompoundTag rootDataTag;
 	private Exception exception;
@@ -50,6 +52,7 @@ public class WorldLoader {
 		File playersFolder = getPlayersFolder();
 		File[] playerFiles = getPlayerFiles(playersFolder);
 		loadIsMultiPlayerMap(playersFolder, playerFiles);
+		createPlayerMover();
 		loadPlayers(playerFiles);
 	}
 
@@ -74,6 +77,10 @@ public class WorldLoader {
 
 	private void loadIsMultiPlayerMap(File playersFolder, File[] playerFiles) {
 		isMultiPlayerMap = playersFolder.exists() && playerFiles.length > 0;
+	}
+
+	private void createPlayerMover() {
+		this.playerMover = new PlayerMover(worldFile, isMultiPlayerMap);
 	}
 
 	private void loadPlayers(File[] playerFiles) throws IOException,
@@ -106,8 +113,8 @@ public class WorldLoader {
 		List<Tag> posList = posTag.getValue();
 		double x = (Double) posList.get(0).getValue();
 		double z = (Double) posList.get(2).getValue();
-		players.add(new Player(playerName, CoordinatesInWorld.from((long) x,
-				(long) z)));
+		players.add(new Player(playerMover, playerName, CoordinatesInWorld
+				.from((long) x, (long) z)));
 	}
 
 	private String getPlayerName(File playerFile) {
@@ -169,19 +176,10 @@ public class WorldLoader {
 
 	public World get() {
 		if (isLoadedSuccessfully()) {
-			PlayerMover playerMover = new PlayerMover(worldFile,
-					isMultiPlayerMap);
-			initPlayers(playerMover);
 			return new World(seed, worldType, generatorOptions,
 					isMultiPlayerMap, Collections.unmodifiableList(players));
 		} else {
 			return null;
-		}
-	}
-
-	private void initPlayers(PlayerMover playerMover) {
-		for (Player player : players) {
-			player.setMover(playerMover);
 		}
 	}
 }

@@ -5,14 +5,16 @@ import java.awt.image.BufferedImage;
 import amidst.minecraft.world.icon.DefaultWorldIconTypes;
 
 public class Player {
-	private PlayerMover playerMover;
+	private final PlayerMover playerMover;
 	private boolean isMoved = false;
 
 	private BufferedImage skin = DefaultWorldIconTypes.PLAYER.getImage();
-	private String playerName;
+	private final String playerName;
 	private CoordinatesInWorld coordinates;
 
-	public Player(String playerName, CoordinatesInWorld coordinates) {
+	public Player(PlayerMover playerMover, String playerName,
+			CoordinatesInWorld coordinates) {
+		this.playerMover = playerMover;
 		this.playerName = playerName;
 		this.coordinates = coordinates;
 	}
@@ -31,11 +33,6 @@ public class Player {
 
 	public void setSkin(BufferedImage skin) {
 		this.skin = skin;
-	}
-
-	@Deprecated
-	public void setMover(PlayerMover mover) {
-		this.playerMover = mover;
 	}
 
 	public void moveTo(CoordinatesInWorld coordinates) {

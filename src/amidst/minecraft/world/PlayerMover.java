@@ -18,11 +18,11 @@ import amidst.logging.Log;
 
 public class PlayerMover {
 	private File file;
-	private boolean isMultiPlayerMap;
+	private boolean isMultiplayerWorld;
 
-	public PlayerMover(File file, boolean isMultiPlayerMap) {
+	public PlayerMover(File file, boolean isMultiplayerWorld) {
 		this.file = file;
-		this.isMultiPlayerMap = isMultiPlayerMap;
+		this.isMultiplayerWorld = isMultiplayerWorld;
 	}
 
 	public void movePlayer(Player player) {
@@ -67,7 +67,7 @@ public class PlayerMover {
 	}
 
 	private void doMovePlayer(Player player, File file) {
-		if (isMultiPlayerMap) {
+		if (isMultiplayerWorld) {
 			try {
 				movePlayerOnMultiPlayerMap(player, file);
 			} catch (Exception e) {
@@ -83,7 +83,7 @@ public class PlayerMover {
 	}
 
 	private File getPlayerFile(Player player) {
-		if (isMultiPlayerMap) {
+		if (isMultiplayerWorld) {
 			return getMultiPlayerPlayerFile(player.getPlayerName());
 		} else {
 			return file;
