@@ -15,6 +15,7 @@ import amidst.map.widget.SelectedIconWidget;
 import amidst.map.widget.Widget;
 import amidst.map.widget.Widget.CornerAnchorPoint;
 import amidst.minecraft.world.World;
+import amidst.utilities.FramerateTimer;
 
 public class WidgetBuilder {
 	private final World world;
@@ -42,7 +43,7 @@ public class WidgetBuilder {
 	public List<Widget> create(MapViewer mapViewer) {
 		// @formatter:off
 		return Arrays.asList(
-				new FpsWidget(              mapViewer, CornerAnchorPoint.BOTTOM_LEFT),
+				new FpsWidget(              mapViewer, CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2)),
 				new ScaleWidget(            mapViewer, CornerAnchorPoint.BOTTOM_CENTER, zoom),
 				new SeedWidget(             mapViewer, CornerAnchorPoint.TOP_LEFT,      world),
 				new DebugWidget(            mapViewer, CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager),
