@@ -25,7 +25,7 @@ public class FragmentManager {
 		while ((fragment = availableQueue.poll()) == null) {
 			cache.increaseSize();
 		}
-		fragment.initialize(coordinates);
+		fragment.setCorner(coordinates);
 		fragment.setInitialized(true);
 		loadingQueue.offer(fragment);
 		return fragment;

@@ -29,8 +29,8 @@ public class Fragment {
 				numberOfLayers);
 	}
 
-	public void initialize(CoordinatesInWorld corner) {
-		this.corner = corner;
+	public boolean isInBounds(CoordinatesInWorld coordinates) {
+		return coordinates.isInBoundsOf(corner, SIZE);
 	}
 
 	public void prepareLoad() {
@@ -121,11 +121,11 @@ public class Fragment {
 		return isLoaded;
 	}
 
-	public CoordinatesInWorld getCorner() {
-		return corner;
+	public void setCorner(CoordinatesInWorld corner) {
+		this.corner = corner;
 	}
 
-	public boolean isInBounds(CoordinatesInWorld coordinates) {
-		return coordinates.isInBoundsOf(corner, SIZE);
+	public CoordinatesInWorld getCorner() {
+		return corner;
 	}
 }
