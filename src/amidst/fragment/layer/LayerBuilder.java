@@ -20,6 +20,7 @@ import amidst.fragment.loader.FragmentLoader;
 import amidst.fragment.loader.ImageLoader;
 import amidst.fragment.loader.WorldIconLoader;
 import amidst.map.BiomeSelection;
+import amidst.map.FragmentManager;
 import amidst.map.Map;
 import amidst.map.WorldIconSelection;
 import amidst.minecraft.world.Resolution;
@@ -131,5 +132,9 @@ public class LayerBuilder {
 				new WorldIconDrawer(declarations.get(LayerIds.PLAYER),          map, worldIconSelection)
 		));
 		// @formatter:on
+	}
+
+	public LayerReloader createLayerReloader(FragmentManager fragmentManager) {
+		return new LayerReloader(fragmentManager);
 	}
 }

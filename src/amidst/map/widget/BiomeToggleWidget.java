@@ -4,6 +4,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import amidst.fragment.layer.LayerReloader;
 import amidst.map.BiomeSelection;
 import amidst.map.Map;
 import amidst.map.MapViewer;
@@ -15,11 +16,14 @@ public class BiomeToggleWidget extends Widget {
 			.getImage("highlighter.png");
 
 	private final BiomeSelection biomeSelection;
+	private final LayerReloader layerReloader;
 
 	public BiomeToggleWidget(MapViewer mapViewer, Map map, World world,
-			CornerAnchorPoint anchor, BiomeSelection biomeSelection) {
+			CornerAnchorPoint anchor, BiomeSelection biomeSelection,
+			LayerReloader layerReloader) {
 		super(mapViewer, map, world, anchor);
 		this.biomeSelection = biomeSelection;
+		this.layerReloader = layerReloader;
 		setWidth(36);
 		setHeight(36);
 	}
@@ -33,7 +37,7 @@ public class BiomeToggleWidget extends Widget {
 	@Override
 	public boolean onMousePressed(int x, int y) {
 		biomeSelection.toggleHighlightMode();
-		map.reloadBiomeLayer();
+		layerReloader.reloadBiomeLayer();
 		return true;
 	}
 

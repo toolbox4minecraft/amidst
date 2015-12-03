@@ -3,7 +3,6 @@ package amidst.map;
 import java.awt.Point;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import amidst.fragment.layer.LayerIds;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.icon.WorldIcon;
 
@@ -175,14 +174,6 @@ public class Map {
 	 */
 	public FragmentGraph getGraph() {
 		return graph;
-	}
-
-	public void reloadBiomeLayer() {
-		graph.getFragmentManager().reloadLayer(LayerIds.BIOME);
-	}
-
-	public void reloadPlayerLayer() {
-		graph.getFragmentManager().reloadLayer(LayerIds.PLAYER);
 	}
 
 	public void tickFragmentLoader() {

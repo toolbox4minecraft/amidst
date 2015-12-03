@@ -3,6 +3,7 @@ package amidst.map;
 import java.util.Arrays;
 import java.util.List;
 
+import amidst.fragment.layer.LayerReloader;
 import amidst.map.widget.BiomeToggleWidget;
 import amidst.map.widget.BiomeWidget;
 import amidst.map.widget.CursorInformationWidget;
@@ -20,13 +21,15 @@ public class WidgetBuilder {
 	private final Map map;
 	private final BiomeSelection biomeSelection;
 	private final WorldIconSelection worldIconSelection;
+	private final LayerReloader layerReloader;
 
 	public WidgetBuilder(World world, Map map, BiomeSelection biomeSelection,
-			WorldIconSelection worldIconSelection) {
+			WorldIconSelection worldIconSelection, LayerReloader layerReloader) {
 		this.world = world;
 		this.map = map;
 		this.biomeSelection = biomeSelection;
 		this.worldIconSelection = worldIconSelection;
+		this.layerReloader = layerReloader;
 	}
 
 	public List<Widget> create(MapViewer mapViewer) {
@@ -36,10 +39,10 @@ public class WidgetBuilder {
 				new ScaleWidget(            mapViewer, map, world, CornerAnchorPoint.BOTTOM_CENTER),
 				new SeedWidget(             mapViewer, map, world, CornerAnchorPoint.TOP_LEFT),
 				new DebugWidget(            mapViewer, map, world, CornerAnchorPoint.BOTTOM_RIGHT),
-				new SelectedIconWidget(     mapViewer, map, world, CornerAnchorPoint.TOP_LEFT, worldIconSelection),
+				new SelectedIconWidget(     mapViewer, map, world, CornerAnchorPoint.TOP_LEFT,     worldIconSelection),
 				new CursorInformationWidget(mapViewer, map, world, CornerAnchorPoint.TOP_RIGHT),
-				new BiomeToggleWidget(      mapViewer, map, world, CornerAnchorPoint.BOTTOM_RIGHT, biomeSelection),
-				new BiomeWidget(            mapViewer, map, world, CornerAnchorPoint.NONE, biomeSelection)
+				new BiomeToggleWidget(      mapViewer, map, world, CornerAnchorPoint.BOTTOM_RIGHT, biomeSelection, layerReloader),
+				new BiomeWidget(            mapViewer, map, world, CornerAnchorPoint.NONE,         biomeSelection, layerReloader)
 		);
 		// @formatter:on
 	}

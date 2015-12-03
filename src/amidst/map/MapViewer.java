@@ -20,6 +20,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+import amidst.fragment.layer.LayerReloader;
 import amidst.map.widget.Widget;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.FileWorld.Player;
@@ -155,7 +156,7 @@ public class MapViewer {
 				public void actionPerformed(ActionEvent e) {
 					player.moveTo(map.screenToWorld(lastRightClick));
 					world.reloadPlayers();
-					map.reloadPlayerLayer();
+					layerReloader.reloadPlayerLayer();
 				}
 			});
 			return result;
@@ -213,17 +214,19 @@ public class MapViewer {
 	private final Map map;
 	private final MapDrawer drawer;
 	private final WorldIconSelection worldIconSelection;
+	private final LayerReloader layerReloader;
 	private final List<Widget> widgets;
 
 	public MapViewer(MapMovement movement, MapZoom zoom, World world, Map map,
 			MapDrawer drawer, WorldIconSelection worldIconSelection,
-			WidgetBuilder widgetBuilder) {
+			LayerReloader layerReloader, WidgetBuilder widgetBuilder) {
 		this.movement = movement;
 		this.zoom = zoom;
 		this.world = world;
 		this.map = map;
 		this.drawer = drawer;
 		this.worldIconSelection = worldIconSelection;
+		this.layerReloader = layerReloader;
 		this.widgets = widgetBuilder.create(this);
 		initComponent();
 		initPanel();

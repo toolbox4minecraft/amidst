@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
+import amidst.fragment.layer.LayerReloader;
 import amidst.map.BiomeSelection;
 import amidst.map.Map;
 import amidst.map.MapViewer;
@@ -29,6 +30,7 @@ public class BiomeWidget extends Widget {
 	// @formatter:on
 
 	private final BiomeSelection biomeSelection;
+	private final LayerReloader layerReloader;
 
 	private List<Biome> biomes = new ArrayList<Biome>();
 	private int maxNameWidth = 0;
@@ -47,9 +49,11 @@ public class BiomeWidget extends Widget {
 	private int scrollbarYOnGrab;
 
 	public BiomeWidget(MapViewer mapViewer, Map map, World world,
-			CornerAnchorPoint anchor, BiomeSelection biomeSelection) {
+			CornerAnchorPoint anchor, BiomeSelection biomeSelection,
+			LayerReloader layerReloader) {
 		super(mapViewer, map, world, anchor);
 		this.biomeSelection = biomeSelection;
+		this.layerReloader = layerReloader;
 		setWidth(250);
 		setHeight(400);
 		setY(100);
@@ -247,7 +251,7 @@ public class BiomeWidget extends Widget {
 		}
 		updateScrollbarParameters(mouseX, mouseY);
 		if (processClick(mouseX, mouseY)) {
-			map.reloadBiomeLayer();
+			layerReloader.reloadBiomeLayer();
 		}
 		return true;
 	}

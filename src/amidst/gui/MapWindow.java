@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 import amidst.AmidstMetaData;
 import amidst.Application;
 import amidst.Options;
+import amidst.fragment.layer.LayerReloader;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
@@ -52,6 +53,7 @@ public class MapWindow {
 
 	private MapViewer mapViewer;
 	private Map map;
+	private volatile LayerReloader layerReloader;
 
 	public MapWindow(Application application, MapBuilder mapBuilder,
 			Options preferences) {
@@ -150,6 +152,7 @@ public class MapWindow {
 	public void initWorld() {
 		MapFactory mapFactory = mapBuilder.create(application.getWorld(),
 				mapZoom, mapMovement, biomeSelection);
+		layerReloader = mapFactory.getLayerReloader();
 		map = mapFactory.getMap();
 		addMapViewer(mapFactory.getMapViewer());
 		menuBar.enableMapMenu();
@@ -297,20 +300,20 @@ public class MapWindow {
 	}
 
 	public void reloadBiomeLayer() {
-		if (map != null) {
-			map.reloadBiomeLayer();
+		if (layerReloader != null) {
+			layerReloader.reloadBiomeLayer();
+		}
+	}
+
+	public void reloadPlayerLayer() {
+		if (layerReloader != null) {
+			layerReloader.reloadPlayerLayer();
 		}
 	}
 
 	public void tickRepainter() {
 		if (mapViewer != null) {
 			mapViewer.repaint();
-		}
-	}
-
-	public void reloadPlayerLayer() {
-		if (map != null) {
-			map.reloadPlayerLayer();
 		}
 	}
 

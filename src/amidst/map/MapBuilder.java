@@ -6,6 +6,7 @@ import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.layer.LayerBuilder;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.fragment.layer.LayerManager;
+import amidst.fragment.layer.LayerReloader;
 import amidst.minecraft.world.World;
 
 public class MapBuilder {
@@ -31,10 +32,12 @@ public class MapBuilder {
 		Iterable<FragmentDrawer> drawers = layerBuilder.createDrawers(map,
 				worldIconSelection);
 		MapDrawer drawer = new MapDrawer(map, movement, zoom, graph, drawers);
+		LayerReloader layerReloader = layerBuilder
+				.createLayerReloader(fragmentManager);
 		WidgetBuilder widgetBuilder = new WidgetBuilder(world, map,
-				biomeSelection, worldIconSelection);
+				biomeSelection, worldIconSelection, layerReloader);
 		MapViewer mapViewer = new MapViewer(movement, zoom, world, map, drawer,
-				worldIconSelection, widgetBuilder);
-		return new MapFactory(map, mapViewer);
+				worldIconSelection, layerReloader, widgetBuilder);
+		return new MapFactory(map, mapViewer, layerReloader);
 	}
 }
