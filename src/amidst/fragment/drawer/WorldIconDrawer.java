@@ -32,7 +32,7 @@ public class WorldIconDrawer extends FragmentDrawer {
 		BufferedImage image = icon.getImage();
 		int width = image.getWidth();
 		int height = image.getHeight();
-		if (map.getSelectedWorldIcon() == icon) {
+		if (map.getWorldIconSelection().isSelected(icon)) {
 			width *= 1.5;
 			height *= 1.5;
 		}

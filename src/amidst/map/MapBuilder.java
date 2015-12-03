@@ -14,16 +14,15 @@ public class MapBuilder {
 				layerBuilder.getNumberOfLayers());
 	}
 
-	public MapFactory create(World world, MapZoom mapZoom,
-			MapMovement mapMovement, BiomeSelection biomeSelection) {
-		Map map = new Map(layerBuilder.getDeclarations(), mapZoom,
-				biomeSelection, fragmentManager, world);
+	public MapFactory create(World world, MapZoom zoom, MapMovement movement,
+			BiomeSelection biomeSelection) {
+		Map map = new Map(layerBuilder.getDeclarations(), zoom, biomeSelection,
+				new WorldIconSelection(), fragmentManager, world);
 		fragmentManager.setLayerManager(layerBuilder.createLayerManager(world,
 				map));
-		MapDrawer drawer = new MapDrawer(map, mapMovement, mapZoom,
+		MapDrawer drawer = new MapDrawer(map, movement, zoom,
 				layerBuilder.createDrawers(map));
-		MapViewer mapViewer = new MapViewer(mapMovement, mapZoom, world, map,
-				drawer);
+		MapViewer mapViewer = new MapViewer(movement, zoom, world, map, drawer);
 		return new MapFactory(map, mapViewer);
 	}
 }

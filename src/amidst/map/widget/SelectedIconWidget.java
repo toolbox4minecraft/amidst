@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 
 import amidst.map.Map;
 import amidst.map.MapViewer;
+import amidst.map.WorldIconSelection;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.icon.WorldIcon;
 
@@ -24,8 +25,9 @@ public class SelectedIconWidget extends Widget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
-		WorldIcon selectedIcon = map.getSelectedWorldIcon();
-		if (selectedIcon != null) {
+		WorldIconSelection selection = map.getWorldIconSelection();
+		if (selection.hasSelection()) {
+			WorldIcon selectedIcon = selection.getSelection();
 			message = selectedIcon.toString();
 			icon = selectedIcon.getImage();
 		}
@@ -43,6 +45,6 @@ public class SelectedIconWidget extends Widget {
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		return map.getSelectedWorldIcon() != null;
+		return map.getWorldIconSelection().hasSelection();
 	}
 }
