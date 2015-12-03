@@ -22,14 +22,17 @@ public class WidgetBuilder {
 	private final BiomeSelection biomeSelection;
 	private final WorldIconSelection worldIconSelection;
 	private final LayerReloader layerReloader;
+	private final FragmentGraph graph;
 
 	public WidgetBuilder(World world, Map map, BiomeSelection biomeSelection,
-			WorldIconSelection worldIconSelection, LayerReloader layerReloader) {
+			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
+			FragmentGraph graph) {
 		this.world = world;
 		this.map = map;
 		this.biomeSelection = biomeSelection;
 		this.worldIconSelection = worldIconSelection;
 		this.layerReloader = layerReloader;
+		this.graph = graph;
 	}
 
 	public List<Widget> create(MapViewer mapViewer) {
@@ -38,7 +41,7 @@ public class WidgetBuilder {
 				new FpsWidget(              mapViewer, map, world, CornerAnchorPoint.BOTTOM_LEFT),
 				new ScaleWidget(            mapViewer, map, world, CornerAnchorPoint.BOTTOM_CENTER),
 				new SeedWidget(             mapViewer, map, world, CornerAnchorPoint.TOP_LEFT),
-				new DebugWidget(            mapViewer, map, world, CornerAnchorPoint.BOTTOM_RIGHT),
+				new DebugWidget(            mapViewer, map, world, CornerAnchorPoint.BOTTOM_RIGHT, graph),
 				new SelectedIconWidget(     mapViewer, map, world, CornerAnchorPoint.TOP_LEFT,     worldIconSelection),
 				new CursorInformationWidget(mapViewer, map, world, CornerAnchorPoint.TOP_RIGHT),
 				new BiomeToggleWidget(      mapViewer, map, world, CornerAnchorPoint.BOTTOM_RIGHT, biomeSelection, layerReloader),

@@ -13,15 +13,17 @@ import amidst.map.MapViewer;
 import amidst.minecraft.world.World;
 
 public class DebugWidget extends Widget {
+	private final FragmentGraph graph;
+
 	public DebugWidget(MapViewer mapViewer, Map map, World world,
-			CornerAnchorPoint anchor) {
+			CornerAnchorPoint anchor, FragmentGraph graph) {
 		super(mapViewer, map, world, anchor);
+		this.graph = graph;
 		forceVisibility(onVisibilityCheck());
 	}
 
 	@Override
 	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
-		FragmentGraph graph = map.getGraph();
 		List<String> panelLines = getPanelLines(graph,
 				graph.getFragmentManager());
 		int width = getPanelWidth(panelLines, fontMetrics);

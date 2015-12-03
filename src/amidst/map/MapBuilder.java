@@ -35,7 +35,7 @@ public class MapBuilder {
 		LayerReloader layerReloader = layerBuilder
 				.createLayerReloader(fragmentManager);
 		WidgetBuilder widgetBuilder = new WidgetBuilder(world, map,
-				biomeSelection, worldIconSelection, layerReloader);
+				biomeSelection, worldIconSelection, layerReloader, graph);
 		MapViewer mapViewer = new MapViewer(movement, zoom, world, map, drawer,
 				worldIconSelection, layerReloader, widgetBuilder);
 		return new MapFactory(map, mapViewer, layerReloader);

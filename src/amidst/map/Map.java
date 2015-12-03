@@ -165,13 +165,6 @@ public class Map {
 		return zoom.getCurrentValue();
 	}
 
-	/**
-	 * This method is only used for debugging purposes.
-	 */
-	public FragmentGraph getGraph() {
-		return graph;
-	}
-
 	public void tickFragmentLoader() {
 		graph.getFragmentManager().tick();
 	}
