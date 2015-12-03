@@ -45,8 +45,7 @@ public class Map {
 	}
 
 	public void adjustNumberOfRowsAndColumns() {
-		double fragmentSizeOnScreen = zoom
-				.worldToScreen(Fragment.SIZE);
+		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		int desiredFragmentsPerRow = (int) (viewerWidth / fragmentSizeOnScreen + 2);
 		int desiredFragmentsPerColumn = (int) (viewerHeight
 				/ fragmentSizeOnScreen + 2);
@@ -125,7 +124,8 @@ public class Map {
 
 	private Fragment getFragmentAt(CoordinatesInWorld coordinates) {
 		CoordinatesInWorld corner = coordinates.toFragmentCorner();
-		for (Fragment fragment : graph) {
+		for (FragmentGraphItem fragmentGraphItem : graph) {
+			Fragment fragment = fragmentGraphItem.getFragment();
 			if (corner.equals(fragment.getCorner())) {
 				return fragment;
 			}

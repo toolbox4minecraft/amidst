@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import amidst.minecraft.world.CoordinatesInWorld;
 
-public class FragmentGraphItem implements Iterable<Fragment> {
+public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	/**
 	 * This is an Iterator that is fail safe in the sense that it will never
 	 * throw a NullPointerException or ConcurrentModificationException when the
@@ -12,11 +12,12 @@ public class FragmentGraphItem implements Iterable<Fragment> {
 	 * elements returned by this iterator will be the old state or the new state
 	 * or something in between. This should be good enough for our use cases.
 	 */
-	private static class FragmentIterator implements Iterator<Fragment> {
+	private static class FragmentGraphItemIterator implements
+			Iterator<FragmentGraphItem> {
 		private FragmentGraphItem rowStart;
 		private FragmentGraphItem currentNode;
 
-		public FragmentIterator(FragmentGraphItem fragment) {
+		public FragmentGraphItemIterator(FragmentGraphItem fragment) {
 			rowStart = fragment.getFirstColumn().getFirstRow();
 			currentNode = rowStart;
 		}
@@ -27,10 +28,10 @@ public class FragmentGraphItem implements Iterable<Fragment> {
 		}
 
 		@Override
-		public Fragment next() {
+		public FragmentGraphItem next() {
 			FragmentGraphItem result = currentNode;
 			updateCurrentNode();
-			return result.getFragment();
+			return result;
 		}
 
 		private void updateCurrentNode() {
@@ -51,7 +52,6 @@ public class FragmentGraphItem implements Iterable<Fragment> {
 
 	public FragmentGraphItem(Fragment fragment) {
 		this.fragment = fragment;
-		this.fragment.setFragmentItem(this);
 	}
 
 	public void initialize(CoordinatesInWorld corner) {
@@ -95,8 +95,8 @@ public class FragmentGraphItem implements Iterable<Fragment> {
 	}
 
 	@Override
-	public Iterator<Fragment> iterator() {
-		return new FragmentIterator(this);
+	public Iterator<FragmentGraphItem> iterator() {
+		return new FragmentGraphItemIterator(this);
 	}
 
 	public boolean isEndOfLine() {
@@ -359,19 +359,23 @@ public class FragmentGraphItem implements Iterable<Fragment> {
 	}
 
 	private FragmentGraphItem createAbove(FragmentManager manager) {
-		return connectAbove(manager.requestFragment(getCorner().add(0, -Fragment.SIZE)));
+		return connectAbove(manager.requestFragment(getCorner().add(0,
+				-Fragment.SIZE)));
 	}
 
 	private FragmentGraphItem createBelow(FragmentManager manager) {
-		return connectBelow(manager.requestFragment(getCorner().add(0, Fragment.SIZE)));
+		return connectBelow(manager.requestFragment(getCorner().add(0,
+				Fragment.SIZE)));
 	}
 
 	private FragmentGraphItem createLeft(FragmentManager manager) {
-		return connectLeft(manager.requestFragment(getCorner().add(-Fragment.SIZE, 0)));
+		return connectLeft(manager.requestFragment(getCorner().add(
+				-Fragment.SIZE, 0)));
 	}
 
 	private FragmentGraphItem createRight(FragmentManager manager) {
-		return connectRight(manager.requestFragment(getCorner().add(Fragment.SIZE, 0)));
+		return connectRight(manager.requestFragment(getCorner().add(
+				Fragment.SIZE, 0)));
 	}
 
 	private void recycle(FragmentManager manager) {

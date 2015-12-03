@@ -14,8 +14,6 @@ import amidst.minecraft.world.icon.WorldIcon;
 public class Fragment {
 	public static final int SIZE = Resolution.FRAGMENT.getStep();
 
-	private volatile FragmentGraphItem fragmentGraphItem;
-
 	private volatile boolean isInitialized = false;
 	private volatile boolean isLoaded = false;
 	private volatile CoordinatesInWorld corner;
@@ -129,15 +127,5 @@ public class Fragment {
 
 	public boolean isInBounds(CoordinatesInWorld coordinates) {
 		return coordinates.isInBoundsOf(corner, SIZE);
-	}
-
-	@Deprecated
-	public void setFragmentItem(FragmentGraphItem fragmentGraphItem) {
-		this.fragmentGraphItem = fragmentGraphItem;
-	}
-
-	@Deprecated
-	public boolean isEndOfLine() {
-		return fragmentGraphItem.isEndOfLine();
 	}
 }

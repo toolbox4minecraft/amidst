@@ -148,8 +148,8 @@ public class Drawer {
 	}
 
 	private void prepareDraw() {
-		for (Fragment fragment : graph) {
-			fragment.prepareDraw(time);
+		for (FragmentGraphItem fragmentGraphItem : graph) {
+			fragmentGraphItem.getFragment().prepareDraw(time);
 		}
 	}
 
@@ -157,13 +157,15 @@ public class Drawer {
 		for (FragmentDrawer drawer : drawers) {
 			if (drawer.getLayerDeclaration().isVisible()) {
 				initLayerMatrix();
-				for (Fragment fragment : graph) {
+				for (FragmentGraphItem fragmentGraphItem : graph) {
+					Fragment fragment = fragmentGraphItem.getFragment();
 					if (fragment.isLoaded()) {
 						setAlphaComposite(fragment.getAlpha());
 						g2d.setTransform(layerMatrix);
 						drawer.draw(fragment, g2d);
 					}
-					updateLayerMatrix(fragment, graph.getFragmentsPerRow());
+					updateLayerMatrix(fragmentGraphItem,
+							graph.getFragmentsPerRow());
 				}
 			}
 		}
@@ -174,9 +176,10 @@ public class Drawer {
 		layerMatrix.setTransform(originalLayerMatrix);
 	}
 
-	private void updateLayerMatrix(Fragment fragment, int fragmentsPerRow) {
+	private void updateLayerMatrix(FragmentGraphItem fragmentGraphItem,
+			int fragmentsPerRow) {
 		layerMatrix.translate(Fragment.SIZE, 0);
-		if (fragment.isEndOfLine()) {
+		if (fragmentGraphItem.isEndOfLine()) {
 			layerMatrix.translate(-Fragment.SIZE * fragmentsPerRow,
 					Fragment.SIZE);
 		}

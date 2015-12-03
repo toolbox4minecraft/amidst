@@ -7,7 +7,7 @@ import amidst.fragment.layer.LayerDeclaration;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.icon.WorldIcon;
 
-public class FragmentGraph implements Iterable<Fragment> {
+public class FragmentGraph implements Iterable<FragmentGraphItem> {
 	private final List<LayerDeclaration> declarations;
 	private final FragmentManager fragmentManager;
 
@@ -66,7 +66,7 @@ public class FragmentGraph implements Iterable<Fragment> {
 	}
 
 	@Override
-	public Iterator<Fragment> iterator() {
+	public Iterator<FragmentGraphItem> iterator() {
 		return getStartFragment().iterator();
 	}
 
