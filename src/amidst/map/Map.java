@@ -2,6 +2,7 @@ package amidst.map;
 
 import java.awt.Point;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.fragment.layer.LayerIds;
@@ -10,6 +11,8 @@ import amidst.minecraft.world.icon.WorldIcon;
 
 public class Map {
 	private static final String UNKNOWN_BIOME_ALIAS = "Unknown";
+
+	private final ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
 
 	private volatile double startXOnScreen;
 	private volatile double startYOnScreen;
@@ -25,17 +28,30 @@ public class Map {
 	public Map(List<LayerDeclaration> declarations, MapZoom zoom,
 			FragmentManager fragmentManager) {
 		this.zoom = zoom;
-		this.graph = new FragmentGraph(declarations, fragmentManager, this);
+		this.graph = new FragmentGraph(declarations, fragmentManager);
+		this.tasks.offer(new Runnable() {
+			@Override
+			public void run() {
+				startXOnScreen = viewerWidth >> 1;
+				startYOnScreen = viewerHeight >> 1;
+			}
+		});
 	}
 
-	private void lockedDraw(MapDrawer drawer) {
+	public void lockedProcessTasks() {
+		Runnable task;
+		while ((task = tasks.poll()) != null) {
+			task.run();
+		}
+	}
+
+	private void lockedAdjustNumberOfRowsAndColumns() {
 		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		int desiredFragmentsPerRow = (int) (viewerWidth / fragmentSizeOnScreen + 2);
 		int desiredFragmentsPerColumn = (int) (viewerHeight
 				/ fragmentSizeOnScreen + 2);
 		lockedAdjustNumberOfRowsAndColumns(fragmentSizeOnScreen,
 				desiredFragmentsPerRow, desiredFragmentsPerColumn);
-		drawer.doDrawMap(startXOnScreen, startYOnScreen, graph);
 	}
 
 	private void lockedAdjustNumberOfRowsAndColumns(
@@ -85,7 +101,9 @@ public class Map {
 		synchronized (mapLock) {
 			this.viewerWidth = width;
 			this.viewerHeight = height;
-			lockedDraw(drawer);
+			lockedProcessTasks();
+			lockedAdjustNumberOfRowsAndColumns();
+			drawer.doDrawMap(startXOnScreen, startYOnScreen, graph);
 		}
 	}
 

@@ -10,22 +10,20 @@ import amidst.minecraft.world.icon.WorldIcon;
 public class FragmentGraph implements Iterable<Fragment> {
 	private final List<LayerDeclaration> declarations;
 	private final FragmentManager fragmentManager;
-	private final Map map;
 
 	private volatile Fragment startFragment;
 	private volatile int fragmentsPerRow;
 	private volatile int fragmentsPerColumn;
 
 	public FragmentGraph(List<LayerDeclaration> declarations,
-			FragmentManager fragmentManager, Map map) {
+			FragmentManager fragmentManager) {
 		this.declarations = declarations;
 		this.fragmentManager = fragmentManager;
-		this.map = map;
 	}
 
 	private Fragment getStartFragment() {
 		if (startFragment == null) {
-			map.safeCenterOn(CoordinatesInWorld.origin());
+			init(CoordinatesInWorld.origin());
 		}
 		return startFragment;
 	}
