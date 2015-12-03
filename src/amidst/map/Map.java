@@ -114,23 +114,12 @@ public class Map {
 	}
 
 	public String getBiomeAliasAt(CoordinatesInWorld coordinates) {
-		Fragment fragment = getFragmentAt(coordinates);
+		Fragment fragment = graph.getFragmentAt(coordinates);
 		if (fragment != null) {
 			return fragment.getBiomeAliasAt(coordinates, UNKNOWN_BIOME_ALIAS);
 		} else {
 			return UNKNOWN_BIOME_ALIAS;
 		}
-	}
-
-	private Fragment getFragmentAt(CoordinatesInWorld coordinates) {
-		CoordinatesInWorld corner = coordinates.toFragmentCorner();
-		for (FragmentGraphItem fragmentGraphItem : graph) {
-			Fragment fragment = fragmentGraphItem.getFragment();
-			if (corner.equals(fragment.getCorner())) {
-				return fragment;
-			}
-		}
-		return null;
 	}
 
 	public WorldIcon getClosestWorldIcon(Point mousePosition, double maxDistance) {

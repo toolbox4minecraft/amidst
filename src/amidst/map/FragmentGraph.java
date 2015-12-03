@@ -75,4 +75,15 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 		return new ClosestWorldIconFinder(this, declarations, coordinates,
 				maxDistanceInWorld).getWorldIcon();
 	}
+
+	public Fragment getFragmentAt(CoordinatesInWorld coordinates) {
+		CoordinatesInWorld corner = coordinates.toFragmentCorner();
+		for (FragmentGraphItem fragmentGraphItem : getStartFragment()) {
+			Fragment fragment = fragmentGraphItem.getFragment();
+			if (corner.equals(fragment.getCorner())) {
+				return fragment;
+			}
+		}
+		return null;
+	}
 }
