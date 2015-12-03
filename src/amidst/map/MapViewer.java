@@ -13,7 +13,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -21,16 +20,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-import amidst.map.widget.BiomeToggleWidget;
-import amidst.map.widget.BiomeWidget;
-import amidst.map.widget.CursorInformationWidget;
-import amidst.map.widget.DebugWidget;
-import amidst.map.widget.FpsWidget;
-import amidst.map.widget.ScaleWidget;
-import amidst.map.widget.SeedWidget;
-import amidst.map.widget.SelectedIconWidget;
 import amidst.map.widget.Widget;
-import amidst.map.widget.Widget.CornerAnchorPoint;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.FileWorld.Player;
 import amidst.minecraft.world.World;
@@ -213,7 +203,6 @@ public class MapViewer {
 	}
 
 	private final Listeners listeners = new Listeners();
-	private final List<Widget> widgets = new ArrayList<Widget>();
 	private final Component component = new Component();
 	private final JPanel panel = new JPanel();
 
@@ -222,34 +211,18 @@ public class MapViewer {
 	private final World world;
 	private final Map map;
 	private final MapDrawer drawer;
+	private final List<Widget> widgets;
 
 	public MapViewer(MapMovement movement, MapZoom zoom, World world, Map map,
-			MapDrawer drawer) {
+			MapDrawer drawer, WidgetBuilder widgetBuilder) {
 		this.movement = movement;
 		this.zoom = zoom;
 		this.world = world;
 		this.map = map;
 		this.drawer = drawer;
-		initWidgets();
+		this.widgets = widgetBuilder.create(this);
 		initComponent();
 		initPanel();
-	}
-
-	private void initWidgets() {
-		widgets.add(new FpsWidget(this, map, world,
-				CornerAnchorPoint.BOTTOM_LEFT));
-		widgets.add(new ScaleWidget(this, map, world,
-				CornerAnchorPoint.BOTTOM_CENTER));
-		widgets.add(new SeedWidget(this, map, world, CornerAnchorPoint.TOP_LEFT));
-		widgets.add(new DebugWidget(this, map, world,
-				CornerAnchorPoint.BOTTOM_RIGHT));
-		widgets.add(new SelectedIconWidget(this, map, world,
-				CornerAnchorPoint.TOP_LEFT));
-		widgets.add(new CursorInformationWidget(this, map, world,
-				CornerAnchorPoint.TOP_RIGHT));
-		widgets.add(new BiomeToggleWidget(this, map, world,
-				CornerAnchorPoint.BOTTOM_RIGHT));
-		widgets.add(new BiomeWidget(this, map, world, CornerAnchorPoint.NONE));
 	}
 
 	private void initComponent() {

@@ -22,7 +22,9 @@ public class MapBuilder {
 				map));
 		MapDrawer drawer = new MapDrawer(map, movement, zoom,
 				layerBuilder.createDrawers(map));
-		MapViewer mapViewer = new MapViewer(movement, zoom, world, map, drawer);
+		WidgetBuilder widgetBuilder = new WidgetBuilder(world, map);
+		MapViewer mapViewer = new MapViewer(movement, zoom, world, map, drawer,
+				widgetBuilder);
 		return new MapFactory(map, mapViewer);
 	}
 }
