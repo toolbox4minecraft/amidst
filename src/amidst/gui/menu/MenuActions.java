@@ -8,7 +8,6 @@ import amidst.Application;
 import amidst.gui.MapWindow;
 import amidst.logging.Log;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.World;
 import amidst.minecraft.world.WorldType;
 import amidst.minecraft.world.Worlds;
 import amidst.minecraft.world.icon.WorldIcon;
@@ -26,10 +25,7 @@ public class MenuActions {
 	}
 
 	public void savePlayerLocations() {
-		World world = application.getWorld();
-		if (world.isFileWorld()) {
-			world.getAsFileWorld().savePlayerLocations();
-		}
+		application.getWorld().savePlayerLocations();
 	}
 
 	public void switchVersion() {
@@ -74,7 +70,8 @@ public class MenuActions {
 
 	public void findStronghold() {
 		WorldIcon stronghold = mapWindow.askForOptions("Go to",
-				"Select Stronghold:", application.getWorld().getStrongholds());
+				"Select Stronghold:", application.getWorld()
+						.getStrongholdWorldIcons());
 		if (stronghold != null) {
 			mapWindow.moveMapToCoordinates(stronghold.getCoordinates());
 		}
@@ -94,7 +91,7 @@ public class MenuActions {
 		if (application.getWorld().hasPlayers()) {
 			WorldIcon player = mapWindow.askForOptions("Go to",
 					"Select player:", application.getWorld()
-							.getPlayers());
+							.getPlayerWorldIcons());
 			if (player != null) {
 				mapWindow.moveMapToCoordinates(player.getCoordinates());
 			}

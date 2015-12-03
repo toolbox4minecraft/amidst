@@ -13,7 +13,7 @@ import javax.imageio.ImageIO;
 import amidst.Application;
 import amidst.ThreadMaster;
 import amidst.logging.Log;
-import amidst.minecraft.world.FileWorld.Player;
+import amidst.minecraft.world.Player;
 
 public class SkinLoader {
 	private Application application;

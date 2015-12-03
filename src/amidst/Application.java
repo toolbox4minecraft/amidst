@@ -161,10 +161,7 @@ public class Application {
 			mapWindow.clearWorldSurroundings();
 			mapWindow.setWorldSurroundings(worldSurroundingsBuilder
 					.create(world));
-			if (world.isFileWorld()) {
-				skinLoader
-						.loadSkins(world.getAsFileWorld().getMovablePlayers());
-			}
+			skinLoader.loadSkins(world.getMovablePlayers());
 		}
 	}
 

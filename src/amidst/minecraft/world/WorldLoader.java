@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jnbt.CompoundTag;
@@ -11,7 +12,6 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.logging.Log;
-import amidst.minecraft.world.FileWorld.Player;
 
 public class WorldLoader {
 	private static final String DEFAULT_SINGLE_PLAYER_PLAYER_NAME = "Player";
@@ -169,10 +169,19 @@ public class WorldLoader {
 
 	public World get() {
 		if (isLoadedSuccessfully()) {
-			return new FileWorld(worldFile, seed, worldType, generatorOptions,
-					isMultiPlayerMap, players);
+			PlayerMover playerMover = new PlayerMover(worldFile,
+					isMultiPlayerMap);
+			initPlayers(playerMover);
+			return new World(seed, worldType, generatorOptions,
+					isMultiPlayerMap, Collections.unmodifiableList(players));
 		} else {
 			return null;
+		}
+	}
+
+	private void initPlayers(PlayerMover playerMover) {
+		for (Player player : players) {
+			player.setMover(playerMover);
 		}
 	}
 }

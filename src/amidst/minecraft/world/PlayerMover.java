@@ -15,7 +15,6 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.logging.Log;
-import amidst.minecraft.world.FileWorld.Player;
 
 public class PlayerMover {
 	private File file;

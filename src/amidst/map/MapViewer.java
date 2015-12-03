@@ -23,7 +23,7 @@ import javax.swing.JPopupMenu;
 import amidst.fragment.layer.LayerReloader;
 import amidst.map.widget.Widget;
 import amidst.minecraft.MinecraftUtil;
-import amidst.minecraft.world.FileWorld.Player;
+import amidst.minecraft.world.Player;
 import amidst.minecraft.world.World;
 
 public class MapViewer {
@@ -132,7 +132,7 @@ public class MapViewer {
 		}
 
 		private void showPlayerMenu(MouseEvent e) {
-			if (MinecraftUtil.getVersion().saveEnabled() && world.isFileWorld()) {
+			if (MinecraftUtil.getVersion().saveEnabled() && world.hasPlayers()) {
 				createPlayerMenu(getMousePositionFromEvent(e)).show(
 						e.getComponent(), e.getX(), e.getY());
 			}
@@ -140,10 +140,8 @@ public class MapViewer {
 
 		private JPopupMenu createPlayerMenu(Point lastRightClicked) {
 			JPopupMenu result = new JPopupMenu();
-			if (world.isFileWorld()) {
-				for (Player player : world.getAsFileWorld().getMovablePlayers()) {
-					result.add(createPlayerMenuItem(player, lastRightClicked));
-				}
+			for (Player player : world.getMovablePlayers()) {
+				result.add(createPlayerMenuItem(player, lastRightClicked));
 			}
 			return result;
 		}

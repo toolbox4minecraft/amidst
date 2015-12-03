@@ -12,16 +12,16 @@ public enum Worlds {
 		// TODO: no Google.track(), because this is only called with a random
 		// seed?
 		long seed = new Random().nextLong();
-		return new SeedWorld(seed, null, worldType);
+		return new World(seed, null, worldType);
 	}
 
 	public static World fromSeed(String seedText, WorldType worldType) {
 		long seed = getSeedFromString(seedText);
 		Google.track("seed/" + seedText + "/" + seed);
 		if (isNumericSeed(seedText, seed)) {
-			return new SeedWorld(seed, null, worldType);
+			return new World(seed, null, worldType);
 		} else {
-			return new SeedWorld(seed, seedText, worldType);
+			return new World(seed, seedText, worldType);
 		}
 	}
 
