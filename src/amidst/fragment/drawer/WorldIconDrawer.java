@@ -6,25 +6,25 @@ import java.awt.image.BufferedImage;
 
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
-import amidst.map.Map;
 import amidst.map.WorldIconSelection;
+import amidst.map.Zoom;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.icon.WorldIcon;
 
 public class WorldIconDrawer extends FragmentDrawer {
-	private final Map map;
+	private final Zoom zoom;
 	private final WorldIconSelection worldIconSelection;
 
-	public WorldIconDrawer(LayerDeclaration declaration, Map map,
+	public WorldIconDrawer(LayerDeclaration declaration, Zoom zoom,
 			WorldIconSelection worldIconSelection) {
 		super(declaration);
-		this.map = map;
+		this.zoom = zoom;
 		this.worldIconSelection = worldIconSelection;
 	}
 
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d) {
-		double invZoom = 1.0 / map.getZoom();
+		double invZoom = 1.0 / zoom.getCurrentValue();
 		AffineTransform originalTransform = g2d.getTransform();
 		for (WorldIcon icon : fragment.getWorldIcons(declaration.getLayerId())) {
 			drawIcon(icon, invZoom, g2d);

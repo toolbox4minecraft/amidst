@@ -7,16 +7,21 @@ import java.awt.Graphics2D;
 import amidst.Options;
 import amidst.map.Map;
 import amidst.map.MapViewer;
+import amidst.map.Zoom;
 import amidst.minecraft.world.World;
 
 public class ScaleWidget extends Widget {
-
+	@Deprecated
 	public static int cScaleLengthMax_px = 200;
+	@Deprecated
 	public static int cMargin = 8;
 
+	private final Zoom zoom;
+
 	public ScaleWidget(MapViewer mapViewer, Map map, World world,
-			CornerAnchorPoint anchor) {
+			CornerAnchorPoint anchor, Zoom zoom) {
 		super(mapViewer, map, world, anchor);
+		this.zoom = zoom;
 		setWidth(100);
 		setHeight(34);
 		forceVisibility(false);
@@ -24,9 +29,8 @@ public class ScaleWidget extends Widget {
 
 	@Override
 	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
-
 		int scaleBlocks = scaleLength_blocks();
-		int scaleWidth_px = (int) (scaleBlocks * map.getZoom());
+		int scaleWidth_px = (int) (scaleBlocks * zoom.getCurrentValue());
 
 		String message = scaleBlocks + " blocks";
 
@@ -54,8 +58,7 @@ public class ScaleWidget extends Widget {
 	}
 
 	private int scaleLength_blocks() {
-
-		double scale = map.getZoom();
+		double scale = zoom.getCurrentValue();
 
 		int result = 1000;
 		if (result * scale > cScaleLengthMax_px) {

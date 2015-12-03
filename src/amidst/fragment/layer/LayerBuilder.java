@@ -23,6 +23,7 @@ import amidst.map.BiomeSelection;
 import amidst.map.FragmentManager;
 import amidst.map.Map;
 import amidst.map.WorldIconSelection;
+import amidst.map.Zoom;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 
@@ -115,21 +116,23 @@ public class LayerBuilder {
 
 	/**
 	 * This also defines the rendering order.
+	 * 
+	 * @param zoom
 	 */
-	public Iterable<FragmentDrawer> createDrawers(Map map,
+	public Iterable<FragmentDrawer> createDrawers(Zoom zoom,
 			WorldIconSelection worldIconSelection) {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
 				new ImageDrawer(    declarations.get(LayerIds.BIOME),           Resolution.QUARTER),
 				new ImageDrawer(    declarations.get(LayerIds.SLIME),           Resolution.CHUNK),
-				new GridDrawer(     declarations.get(LayerIds.GRID),            map),
-				new WorldIconDrawer(declarations.get(LayerIds.VILLAGE),         map, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),  map, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.STRONGHOLD),      map, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.TEMPLE),          map, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.SPAWN),           map, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.NETHER_FORTRESS), map, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.PLAYER),          map, worldIconSelection)
+				new GridDrawer(     declarations.get(LayerIds.GRID),            zoom),
+				new WorldIconDrawer(declarations.get(LayerIds.VILLAGE),         zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),  zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.STRONGHOLD),      zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.TEMPLE),          zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.SPAWN),           zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.NETHER_FORTRESS), zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.PLAYER),          zoom, worldIconSelection)
 		));
 		// @formatter:on
 	}

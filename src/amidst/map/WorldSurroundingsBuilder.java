@@ -33,13 +33,13 @@ public class WorldSurroundingsBuilder {
 		LayerManager layerManager = layerBuilder.createLayerManager(world, map,
 				biomeSelection);
 		fragmentManager.setLayerManager(layerManager);
-		Iterable<FragmentDrawer> drawers = layerBuilder.createDrawers(map,
+		Iterable<FragmentDrawer> drawers = layerBuilder.createDrawers(zoom,
 				worldIconSelection);
 		MapDrawer drawer = new MapDrawer(map, movement, zoom, graph, drawers);
 		LayerReloader layerReloader = layerBuilder
 				.createLayerReloader(fragmentManager);
 		WidgetBuilder widgetBuilder = new WidgetBuilder(world, map,
-				biomeSelection, worldIconSelection, layerReloader, graph);
+				biomeSelection, worldIconSelection, layerReloader, graph, zoom);
 		MapViewer mapViewer = new MapViewer(movement, zoom, world, map, drawer,
 				worldIconSelection, layerReloader, widgetBuilder);
 		return new WorldSurroundings(map, mapViewer, layerReloader, graph, zoom);

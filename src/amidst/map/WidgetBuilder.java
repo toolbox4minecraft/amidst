@@ -23,29 +23,31 @@ public class WidgetBuilder {
 	private final WorldIconSelection worldIconSelection;
 	private final LayerReloader layerReloader;
 	private final FragmentGraph graph;
+	private final Zoom zoom;
 
 	public WidgetBuilder(World world, Map map, BiomeSelection biomeSelection,
 			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
-			FragmentGraph graph) {
+			FragmentGraph graph, Zoom zoom) {
 		this.world = world;
 		this.map = map;
 		this.biomeSelection = biomeSelection;
 		this.worldIconSelection = worldIconSelection;
 		this.layerReloader = layerReloader;
 		this.graph = graph;
+		this.zoom = zoom;
 	}
 
 	public List<Widget> create(MapViewer mapViewer) {
 		// @formatter:off
 		return Arrays.asList(
 				new FpsWidget(              mapViewer, map, world, CornerAnchorPoint.BOTTOM_LEFT),
-				new ScaleWidget(            mapViewer, map, world, CornerAnchorPoint.BOTTOM_CENTER),
+				new ScaleWidget(            mapViewer, map, world, CornerAnchorPoint.BOTTOM_CENTER, zoom),
 				new SeedWidget(             mapViewer, map, world, CornerAnchorPoint.TOP_LEFT),
-				new DebugWidget(            mapViewer, map, world, CornerAnchorPoint.BOTTOM_RIGHT, graph),
-				new SelectedIconWidget(     mapViewer, map, world, CornerAnchorPoint.TOP_LEFT,     worldIconSelection),
+				new DebugWidget(            mapViewer, map, world, CornerAnchorPoint.BOTTOM_RIGHT,  graph),
+				new SelectedIconWidget(     mapViewer, map, world, CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
 				new CursorInformationWidget(mapViewer, map, world, CornerAnchorPoint.TOP_RIGHT),
-				new BiomeToggleWidget(      mapViewer, map, world, CornerAnchorPoint.BOTTOM_RIGHT, biomeSelection, layerReloader),
-				new BiomeWidget(            mapViewer, map, world, CornerAnchorPoint.NONE,         biomeSelection, layerReloader)
+				new BiomeToggleWidget(      mapViewer, map, world, CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection, layerReloader),
+				new BiomeWidget(            mapViewer, map, world, CornerAnchorPoint.NONE,          biomeSelection, layerReloader)
 		);
 		// @formatter:on
 	}

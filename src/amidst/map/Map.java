@@ -158,10 +158,6 @@ public class Map {
 		tasks.offer(task);
 	}
 
-	public double getZoom() {
-		return zoom.getCurrentValue();
-	}
-
 	public void tickFragmentLoader() {
 		graph.getFragmentManager().tick();
 	}

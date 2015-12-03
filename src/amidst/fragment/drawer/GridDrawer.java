@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
-import amidst.map.Map;
+import amidst.map.Zoom;
 import amidst.minecraft.world.Resolution;
 
 public class GridDrawer extends FragmentDrawer {
@@ -14,11 +14,11 @@ public class GridDrawer extends FragmentDrawer {
 
 	private final StringBuffer textBuffer = new StringBuffer(128);
 	private final char[] textCache = new char[128];
-	private final Map map;
+	private final Zoom zoom;
 
-	public GridDrawer(LayerDeclaration declaration, Map map) {
+	public GridDrawer(LayerDeclaration declaration, Zoom zoom) {
 		super(declaration);
-		this.map = map;
+		this.zoom = zoom;
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class GridDrawer extends FragmentDrawer {
 		initGraphics(g2d);
 		drawGridLines(g2d, stride, gridX, gridY);
 		if (isGrid00(gridX, gridY)) {
-			double invZoom = 1.0 / map.getZoom();
+			double invZoom = 1.0 / zoom.getCurrentValue();
 			g2d.scale(invZoom, invZoom);
 			updateText(fragment);
 			drawText(g2d);
@@ -39,7 +39,7 @@ public class GridDrawer extends FragmentDrawer {
 	}
 
 	private int getStride() {
-		return (int) (.25 / map.getZoom());
+		return (int) (.25 / zoom.getCurrentValue());
 	}
 
 	// TODO: use longs?
