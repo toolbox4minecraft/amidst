@@ -248,7 +248,7 @@ public class AmidstMenu {
 		JMenu result = new JMenu("Options");
 		result.setMnemonic(KeyEvent.VK_M);
 		result.add(create_Options_Map());
-		if (BiomeColorProfile.isEnabled) {
+		if (BiomeColorProfile.isEnabled()) {
 			result.add(create_Options_BiomeColor());
 		}
 		result.add(create_Options_WorldType());

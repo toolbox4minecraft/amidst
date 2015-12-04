@@ -3,6 +3,7 @@ package amidst.preferences;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,8 +35,6 @@ public class BiomeColorProfile {
 		}
 	}
 
-	private static final Gson GSON = new Gson();
-
 	public static void scan() {
 		Log.i("Searching for biome color profiles.");
 		File colorProfileFolder = new File("./biome");
@@ -52,15 +51,6 @@ public class BiomeColorProfile {
 			}
 		}
 
-		/*
-		 * File[] colorProfiles = colorProfileFolder.listFiles(); for (int i =
-		 * 0; i < colorProfiles.length; i++) { if (colorProfiles[i].exists() &&
-		 * colorProfiles[i].isFile()) { try { BiomeColorProfile profile =
-		 * Util.readObject(colorProfiles[i], BiomeColorProfile.class);
-		 * profile.fillColorArray(); profiles.add(profile); } catch
-		 * (FileNotFoundException e) { Log.i("Unable to load file: " +
-		 * colorProfiles[i]); } } }
-		 */
 		isEnabled = true;
 	}
 
@@ -68,11 +58,7 @@ public class BiomeColorProfile {
 		BiomeColorProfile profile = null;
 		if (file.exists() && file.isFile()) {
 			try {
-				BufferedReader reader = new BufferedReader(new FileReader(file));
-				BiomeColorProfile result = GSON.fromJson(reader,
-						BiomeColorProfile.class);
-				reader.close();
-				profile = result;
+				profile = readProfile(file);
 				profile.fillColorArray();
 			} catch (JsonSyntaxException e) {
 				Log.w("Unable to load file: " + file);
@@ -84,9 +70,24 @@ public class BiomeColorProfile {
 		return profile;
 	}
 
-	public static boolean isEnabled = false;
+	private static BiomeColorProfile readProfile(File file)
+			throws FileNotFoundException, IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		BiomeColorProfile result = GSON.fromJson(reader,
+				BiomeColorProfile.class);
+		reader.close();
+		return result;
+	}
 
-	public HashMap<String, BiomeColor> colorMap = new HashMap<String, BiomeColor>();
+	public static boolean isEnabled() {
+		return isEnabled;
+	}
+
+	private static final Gson GSON = new Gson();
+
+	private static boolean isEnabled = false;
+
+	public Map<String, BiomeColor> colorMap = new HashMap<String, BiomeColor>();
 	public int colorArray[] = new int[Biome.getBiomesLength()];
 	public String[] nameArray = new String[Biome.getBiomesLength()];
 	public String name;
