@@ -4,7 +4,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
-import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.FragmentGraph;
 import amidst.map.Map;
@@ -18,17 +17,14 @@ public class CursorInformationWidget extends Widget {
 
 	private final FragmentGraph graph;
 	private final Map map;
-	private final Options options;
 
 	private String text = "";
 
 	public CursorInformationWidget(MapViewer mapViewer,
-			CornerAnchorPoint anchor, FragmentGraph graph, Map map,
-			Options options) {
+			CornerAnchorPoint anchor, FragmentGraph graph, Map map) {
 		super(mapViewer, anchor);
 		this.graph = graph;
 		this.map = map;
-		this.options = options;
 		setWidth(20);
 		setHeight(30);
 		forceVisibility(false);
