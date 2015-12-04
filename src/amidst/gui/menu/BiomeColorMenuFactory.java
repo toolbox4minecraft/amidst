@@ -16,6 +16,7 @@ import amidst.gui.MapWindow;
 import amidst.logging.Log;
 import amidst.map.BiomeColorProfileSelection;
 import amidst.preferences.BiomeColorProfile;
+import amidst.preferences.BiomeColorProfileLoader;
 import amidst.preferences.BiomeColorProfileVisitor;
 
 public class BiomeColorMenuFactory {
@@ -116,6 +117,7 @@ public class BiomeColorMenuFactory {
 	private final JMenu parentMenu = new JMenu("Biome profile");
 	private final MapWindow mapWindow;
 	private final BiomeColorProfileSelection biomeColorProfileSelection;
+	private final BiomeColorProfileLoader biomeColorProfileLoader = new BiomeColorProfileLoader();
 
 	public BiomeColorMenuFactory(MapWindow mapWindow,
 			BiomeColorProfileSelection biomeColorProfileSelection) {
@@ -131,9 +133,10 @@ public class BiomeColorMenuFactory {
 
 	private void initParentMenu() {
 		parentMenu.removeAll();
+		BiomeColorProfile.saveDefaultProfileIfNecessary();
 		BiomeColorProfileVisitorImpl visitor = new BiomeColorProfileVisitorImpl(
 				parentMenu, mapWindow, biomeColorProfileSelection);
-		BiomeColorProfile.visitProfiles(visitor);
+		biomeColorProfileLoader.visitProfiles(visitor);
 		parentMenu.add(createReloadMenuItem());
 		visitor.selectFirstProfile();
 	}

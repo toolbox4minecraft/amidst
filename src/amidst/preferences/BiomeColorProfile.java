@@ -1,10 +1,7 @@
 package amidst.preferences;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
@@ -12,33 +9,8 @@ import java.util.Map;
 
 import amidst.logging.Log;
 import amidst.minecraft.Biome;
-import amidst.utilities.ColorUtils;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 
 public class BiomeColorProfile {
-	private static class BiomeColor {
-		private final int r;
-		private final int g;
-		private final int b;
-
-		public BiomeColor(int rgb) {
-			r = (rgb >> 16) & 0xFF;
-			g = (rgb >> 8) & 0xFF;
-			b = (rgb) & 0xFF;
-		}
-
-		public int toColorInt() {
-			return ColorUtils.makeColor(r, g, b);
-		}
-	}
-
-	public static void visitProfiles(BiomeColorProfileVisitor visitor) {
-		saveDefaultProfileIfNecessary();
-		visitProfiles(PROFILE_DIRECTORY, visitor);
-	}
-
 	public static void saveDefaultProfileIfNecessary() {
 		if (isEnabled()) {
 			Log.i("Found biome color profile directory.");
@@ -60,61 +32,6 @@ public class BiomeColorProfile {
 		}
 	}
 
-	private static void visitProfiles(File directory,
-			BiomeColorProfileVisitor visitor) {
-		boolean entered = false;
-		for (File file : directory.listFiles()) {
-			if (file.isFile()) {
-				BiomeColorProfile profile = createFromFile(file);
-				if (profile != null) {
-					if (!entered) {
-						entered = true;
-						visitor.enterDirectory(directory.getName());
-					}
-					visitor.visitProfile(profile);
-				}
-			} else {
-				visitProfiles(file, visitor);
-			}
-		}
-		if (entered) {
-			visitor.leaveDirectory();
-		}
-	}
-
-	private static BiomeColorProfile createFromFile(File file) {
-		BiomeColorProfile profile = null;
-		if (file.exists() && file.isFile()) {
-			try {
-				profile = readProfile(file);
-				profile.validate();
-			} catch (JsonSyntaxException e) {
-				Log.w("Unable to load file: " + file);
-				e.printStackTrace();
-			} catch (IOException e) {
-				Log.i("Unable to load file: " + file);
-			}
-		}
-		return profile;
-	}
-
-	private static BiomeColorProfile readProfile(File file)
-			throws FileNotFoundException, IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-		BiomeColorProfile result = GSON.fromJson(reader,
-				BiomeColorProfile.class);
-		reader.close();
-		return result;
-	}
-
-	public static boolean isEnabled() {
-		return PROFILE_DIRECTORY.isDirectory();
-	}
-
-	public static BiomeColorProfile getDefaultProfile() {
-		return DEFAULT_PROFILE;
-	}
-
 	private static Map<String, BiomeColor> createDefaultColorMap() {
 		Map<String, BiomeColor> result = new HashMap<String, BiomeColor>();
 		for (Biome biome : Biome.iterator()) {
@@ -123,12 +40,19 @@ public class BiomeColorProfile {
 		return result;
 	}
 
+	public static BiomeColorProfile getDefaultProfile() {
+		return DEFAULT_PROFILE;
+	}
+
+	public static boolean isEnabled() {
+		return PROFILE_DIRECTORY.isDirectory();
+	}
+
 	private static final BiomeColorProfile DEFAULT_PROFILE = new BiomeColorProfile(
 			"default", null, createDefaultColorMap());
-	private static final File PROFILE_DIRECTORY = new File("./biome");
-	private static final File DEFAULT_PROFILE_FILE = new File(
-			PROFILE_DIRECTORY, "default.json");
-	private static final Gson GSON = new Gson();
+	public static final File PROFILE_DIRECTORY = new File("./biome");
+	public static final File DEFAULT_PROFILE_FILE = new File(PROFILE_DIRECTORY,
+			"default.json");
 
 	private String name;
 	private String shortcut;
@@ -193,9 +117,9 @@ public class BiomeColorProfile {
 		String output = "";
 		for (Map.Entry<String, BiomeColor> pairs : colorMap.entrySet()) {
 			output += "[ \"" + pairs.getKey() + "\", { ";
-			output += "\"r\":" + pairs.getValue().r + ", ";
-			output += "\"g\":" + pairs.getValue().g + ", ";
-			output += "\"b\":" + pairs.getValue().b + " } ],\r\n";
+			output += "\"r\":" + pairs.getValue().getR() + ", ";
+			output += "\"g\":" + pairs.getValue().getG() + ", ";
+			output += "\"b\":" + pairs.getValue().getB() + " } ],\r\n";
 		}
 		return output.substring(0, output.length() - 3);
 	}
