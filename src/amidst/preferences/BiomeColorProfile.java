@@ -113,15 +113,28 @@ public class BiomeColorProfile {
 
 	private static boolean isEnabled = false;
 
-	private String name;
-	private String shortcut;
-	private Map<String, BiomeColor> colorMap = new HashMap<String, BiomeColor>();
+	private final String name;
+	private final String shortcut;
+	private final Map<String, BiomeColor> colorMap = new HashMap<String, BiomeColor>();
 
+	/**
+	 * Do not initialize the instance variables directly to allow gson to set
+	 * them.
+	 */
 	public BiomeColorProfile() {
-		name = "default";
+		this.name = "default";
+		this.shortcut = null;
 		for (Biome biome : Biome.iterator()) {
 			colorMap.put(biome.getName(), new BiomeColor(biome.getColor()));
 		}
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getShortcut() {
+		return shortcut;
 	}
 
 	public void validate() {
@@ -133,37 +146,6 @@ public class BiomeColorProfile {
 		}
 	}
 
-	public boolean save(File path) {
-		String output = "";
-		output += "{ \"name\":\"" + name + "\", \"colorMap\":[\r\n";
-
-		for (Map.Entry<String, BiomeColor> pairs : colorMap.entrySet()) {
-			output += "[ \"" + pairs.getKey() + "\", { ";
-			output += "\"r\":" + pairs.getValue().r + ", ";
-			output += "\"g\":" + pairs.getValue().g + ", ";
-			output += "\"b\":" + pairs.getValue().b + " } ],\r\n";
-		}
-		output = output.substring(0, output.length() - 3);
-
-		output += " ] }\r\n";
-		BufferedWriter writer = null;
-		try {
-			writer = new BufferedWriter(new FileWriter(path));
-			writer.write(output);
-			writer.close();
-			return true;
-		} catch (IOException e) {
-			try {
-				if (writer != null)
-					writer.close();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-		return false;
-	}
-
 	public void activate() {
 		Options.instance.biomeColorProfile = this;
 		Log.i("Biome color profile activated.");
@@ -172,11 +154,47 @@ public class BiomeColorProfile {
 		}
 	}
 
-	public String getName() {
-		return name;
+	public boolean save(File file) {
+		return writeToFile(file, serialize());
 	}
 
-	public String getShortcut() {
-		return shortcut;
+	private String serialize() {
+		String output = "{ \"name\":\"" + name + "\", \"colorMap\":[\r\n";
+		output += serializeColorMap();
+		return output + " ] }\r\n";
+	}
+
+	private String serializeColorMap() {
+		String output = "";
+		for (Map.Entry<String, BiomeColor> pairs : colorMap.entrySet()) {
+			output += "[ \"" + pairs.getKey() + "\", { ";
+			output += "\"r\":" + pairs.getValue().r + ", ";
+			output += "\"g\":" + pairs.getValue().g + ", ";
+			output += "\"b\":" + pairs.getValue().b + " } ],\r\n";
+		}
+		return output.substring(0, output.length() - 3);
+	}
+
+	private boolean writeToFile(File file, String output) {
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter(new FileWriter(file));
+			writer.write(output);
+			writer.close();
+			return true;
+		} catch (IOException e) {
+			closeWriter(writer);
+		}
+		return false;
+	}
+
+	private void closeWriter(BufferedWriter writer) {
+		try {
+			if (writer != null) {
+				writer.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
