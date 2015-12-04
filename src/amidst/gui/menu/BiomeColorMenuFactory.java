@@ -33,7 +33,7 @@ public class BiomeColorMenuFactory {
 		}
 
 		@Override
-		public void enterFolder(String name) {
+		public void enterDirectory(String name) {
 			if (isFirstContainer) {
 				isFirstContainer = false;
 			} else {
@@ -51,7 +51,7 @@ public class BiomeColorMenuFactory {
 		}
 
 		@Override
-		public void leaveFolder() {
+		public void leaveDirectory() {
 			removeLastMenu();
 		}
 

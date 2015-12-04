@@ -35,21 +35,22 @@ public class BiomeColorProfile {
 		}
 	}
 
-	public static void scan() {
-		Log.i("Searching for biome color profiles.");
-		if (!PROFILE_DIRECTORY.exists() || !PROFILE_DIRECTORY.isDirectory()) {
-			Log.i("Unable to find biome color profile folder.");
-			isEnabled = false;
+	public static void saveDefaultProfileIfNecessary() {
+		if (isEnabled()) {
+			Log.i("Found biome color profile directory.");
+			doSaveDefaultProfileIfNecessary();
 		} else {
-			saveDefaultProfileIfNecessary();
-			isEnabled = true;
+			Log.i("Unable to find biome color profile directory.");
 		}
 	}
 
-	private static void saveDefaultProfileIfNecessary() {
-		File defaultProfileFile = new File(PROFILE_DIRECTORY, "default.json");
-		if (!defaultProfileFile.exists()) {
-			if (!Options.instance.biomeColorProfile.save(defaultProfileFile)) {
+	private static void doSaveDefaultProfileIfNecessary() {
+		if (DEFAULT_PROFILE_FILE.exists()) {
+			Log.i("Found default biome color profile.");
+		} else {
+			if (Options.instance.biomeColorProfile.save(DEFAULT_PROFILE_FILE)) {
+				Log.i("Saved default biome color profile.");
+			} else {
 				Log.i("Attempted to save default biome color profile, but encountered an error.");
 			}
 		}
@@ -68,7 +69,7 @@ public class BiomeColorProfile {
 				if (profile != null) {
 					if (!entered) {
 						entered = true;
-						visitor.enterFolder(directory.getName());
+						visitor.enterDirectory(directory.getName());
 					}
 					visitor.visitProfile(profile);
 				}
@@ -77,7 +78,7 @@ public class BiomeColorProfile {
 			}
 		}
 		if (entered) {
-			visitor.leaveFolder();
+			visitor.leaveDirectory();
 		}
 	}
 
@@ -107,13 +108,13 @@ public class BiomeColorProfile {
 	}
 
 	public static boolean isEnabled() {
-		return isEnabled;
+		return PROFILE_DIRECTORY.isDirectory();
 	}
 
 	private static final File PROFILE_DIRECTORY = new File("./biome");
+	private static final File DEFAULT_PROFILE_FILE = new File(
+			PROFILE_DIRECTORY, "default.json");
 	private static final Gson GSON = new Gson();
-
-	private static boolean isEnabled = false;
 
 	private final String name;
 	private final String shortcut;

@@ -44,7 +44,7 @@ public class Application {
 		this.skinLoader = createSkinLoader();
 		this.updateManager = createUpdateManager();
 		initLocalMinecraftInstallation();
-		scanForBiomeColorProfiles();
+		saveDefaultBiomeColorProfileIfNecessary();
 	}
 
 	private WorldSurroundingsBuilder createWorldSurroundingsBuilder() {
@@ -74,8 +74,8 @@ public class Application {
 				.initMinecraftLibraries(parameters.minecraftLibraries);
 	}
 
-	private void scanForBiomeColorProfiles() {
-		BiomeColorProfile.scan();
+	private void saveDefaultBiomeColorProfileIfNecessary() {
+		BiomeColorProfile.saveDefaultProfileIfNecessary();
 	}
 
 	public void displayVersionSelectWindow() {
