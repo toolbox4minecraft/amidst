@@ -37,37 +37,38 @@ public class BiomeColorProfile {
 
 	public static void scan() {
 		Log.i("Searching for biome color profiles.");
-		File colorProfileFolder = new File("./biome");
-
-		if (!colorProfileFolder.exists() || !colorProfileFolder.isDirectory()) {
+		if (!PROFILE_DIRECTORY.exists() || !PROFILE_DIRECTORY.isDirectory()) {
 			Log.i("Unable to find biome color profile folder.");
-			return;
+			isEnabled = false;
+		} else {
+			saveDefaultProfileIfNecessary();
+			isEnabled = true;
 		}
+	}
 
-		File defaultProfileFile = new File("./biome/default.json");
+	private static void saveDefaultProfileIfNecessary() {
+		File defaultProfileFile = new File(PROFILE_DIRECTORY, "default.json");
 		if (!defaultProfileFile.exists()) {
 			if (!Options.instance.biomeColorProfile.save(defaultProfileFile)) {
 				Log.i("Attempted to save default biome color profile, but encountered an error.");
 			}
 		}
-
-		isEnabled = true;
 	}
 
 	public static void visitProfiles(BiomeColorProfileVisitor visitor) {
-		visitProfiles(new File("./biome"), visitor);
+		visitProfiles(PROFILE_DIRECTORY, visitor);
 	}
 
-	private static void visitProfiles(File folder,
+	private static void visitProfiles(File directory,
 			BiomeColorProfileVisitor visitor) {
 		boolean entered = false;
-		for (File file : folder.listFiles()) {
+		for (File file : directory.listFiles()) {
 			if (file.isFile()) {
 				BiomeColorProfile profile = createFromFile(file);
 				if (profile != null) {
 					if (!entered) {
 						entered = true;
-						visitor.enterFolder(folder.getName());
+						visitor.enterFolder(directory.getName());
 					}
 					visitor.visitProfile(profile);
 				}
@@ -109,6 +110,7 @@ public class BiomeColorProfile {
 		return isEnabled;
 	}
 
+	private static final File PROFILE_DIRECTORY = new File("./biome");
 	private static final Gson GSON = new Gson();
 
 	private static boolean isEnabled = false;
