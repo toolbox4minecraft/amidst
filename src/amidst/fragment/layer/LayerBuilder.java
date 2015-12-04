@@ -91,9 +91,9 @@ public class LayerBuilder {
 		return LayerIds.NUMBER_OF_LAYERS;
 	}
 
-	public LayerManager createLayerManager(World world,
+	public LayerLoader createLayerManager(World world,
 			BiomeSelection biomeSelection) {
-		return new LayerManager(invalidatedLayers, createLoaders(world,
+		return new LayerLoader(invalidatedLayers, createLoaders(world,
 				biomeSelection));
 	}
 

@@ -5,7 +5,7 @@ import java.util.List;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.layer.LayerBuilder;
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.fragment.layer.LayerManager;
+import amidst.fragment.layer.LayerLoader;
 import amidst.fragment.layer.LayerReloader;
 import amidst.minecraft.world.World;
 
@@ -30,7 +30,7 @@ public class WorldSurroundingsBuilder {
 		final FragmentGraph graph = new FragmentGraph(declarations,
 				fragmentManager);
 		Map map = new Map(zoom, graph);
-		LayerManager layerManager = layerBuilder.createLayerManager(world,
+		LayerLoader layerManager = layerBuilder.createLayerManager(world,
 				biomeSelection);
 		fragmentManager.setLayerManager(layerManager);
 		Iterable<FragmentDrawer> drawers = layerBuilder.createDrawers(zoom,

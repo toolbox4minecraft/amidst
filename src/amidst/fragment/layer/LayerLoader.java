@@ -6,11 +6,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import amidst.fragment.loader.FragmentLoader;
 import amidst.map.Fragment;
 
-public class LayerManager {
+public class LayerLoader {
 	private final List<AtomicBoolean> invalidatedLayers;
 	private final Iterable<FragmentLoader> loaders;
 
-	public LayerManager(List<AtomicBoolean> invalidatedLayers,
+	public LayerLoader(List<AtomicBoolean> invalidatedLayers,
 			Iterable<FragmentLoader> loaders) {
 		this.invalidatedLayers = invalidatedLayers;
 		this.loaders = loaders;

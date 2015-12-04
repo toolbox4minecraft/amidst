@@ -3,7 +3,7 @@ package amidst.map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.fragment.constructor.FragmentConstructor;
-import amidst.fragment.layer.LayerManager;
+import amidst.fragment.layer.LayerLoader;
 import amidst.minecraft.world.CoordinatesInWorld;
 
 public class FragmentManager {
@@ -53,7 +53,7 @@ public class FragmentManager {
 		}
 	}
 
-	public void setLayerManager(LayerManager layerManager) {
+	public void setLayerManager(LayerLoader layerManager) {
 		this.queueProcessor = new FragmentQueueProcessor(availableQueue,
 				loadingQueue, resetQueue, cache, layerManager);
 	}

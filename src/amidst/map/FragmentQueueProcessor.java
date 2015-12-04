@@ -2,7 +2,7 @@ package amidst.map;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import amidst.fragment.layer.LayerManager;
+import amidst.fragment.layer.LayerLoader;
 
 public class FragmentQueueProcessor {
 	private final TaskQueue taskQueue = new TaskQueue();
@@ -11,13 +11,13 @@ public class FragmentQueueProcessor {
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
 	private final ConcurrentLinkedQueue<Fragment> resetQueue;
 	private final FragmentCache cache;
-	private final LayerManager layerManager;
+	private final LayerLoader layerManager;
 
 	public FragmentQueueProcessor(
 			ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
 			ConcurrentLinkedQueue<Fragment> resetQueue, FragmentCache cache,
-			LayerManager layerManager) {
+			LayerLoader layerManager) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
 		this.resetQueue = resetQueue;
