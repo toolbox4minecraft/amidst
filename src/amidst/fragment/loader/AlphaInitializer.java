@@ -2,15 +2,24 @@ package amidst.fragment.loader;
 
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.map.Fragment;
+import amidst.preferences.PrefModel;
 
 public class AlphaInitializer extends FragmentLoader {
-	public AlphaInitializer(LayerDeclaration declaration) {
+	private final PrefModel<Boolean> mapFadingPreference;
+
+	public AlphaInitializer(LayerDeclaration declaration,
+			PrefModel<Boolean> mapFadingPreference) {
 		super(declaration);
+		this.mapFadingPreference = mapFadingPreference;
 	}
 
 	@Override
 	public void load(Fragment fragment) {
-		fragment.initAlpha();
+		if (mapFadingPreference.get()) {
+			fragment.setAlpha(0.0f);
+		} else {
+			fragment.setAlpha(1.0f);
+		}
 	}
 
 	@Override

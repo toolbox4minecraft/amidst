@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
-import amidst.Options;
 import amidst.minecraft.world.BiomeDataOracle;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
@@ -30,9 +29,8 @@ import amidst.minecraft.world.icon.WorldIcon;
  * use them after isLoaded is set to false. However, all write operations are
  * only called from the fragment loading thread or during the construction of
  * the fragment. While the fragment is constructed it will only be accessible by
- * one thread. An exception to that rule is the method updateAlpha(). It is
- * called from the drawing thread and alters the alpha value, however this
- * should not cause any issues.
+ * one thread. An exception to that rule is the instance variable alpha. It is
+ * altered from the drawing thread, however this should not cause any issues.
  */
 public class Fragment {
 	public static final int SIZE = Resolution.FRAGMENT.getStep();
@@ -52,12 +50,8 @@ public class Fragment {
 				numberOfLayers);
 	}
 
-	public void initAlpha() {
-		alpha = Options.instance.mapFading.get() ? 0.0f : 1.0f;
-	}
-
-	public void updateAlpha(float time) {
-		alpha = Math.min(1.0f, time * 3.0f + alpha);
+	public void setAlpha(float alpha) {
+		this.alpha = alpha;
 	}
 
 	public float getAlpha() {

@@ -12,6 +12,6 @@ public class AlphaUpdater extends FragmentDrawer {
 
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d, float time) {
-		fragment.updateAlpha(time);
+		fragment.setAlpha(Math.min(1.0f, time * 3.0f + fragment.getAlpha()));
 	}
 }

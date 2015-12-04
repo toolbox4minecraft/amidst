@@ -81,8 +81,8 @@ public class LayerBuilder {
 	}
 
 	public LayerLoader createLayerLoader(World world,
-			BiomeSelection biomeSelection) {
-		return new LayerLoader(createLoaders(world, biomeSelection),
+			BiomeSelection biomeSelection, Options options) {
+		return new LayerLoader(createLoaders(world, biomeSelection, options),
 				LayerIds.NUMBER_OF_LAYERS);
 	}
 
@@ -90,10 +90,10 @@ public class LayerBuilder {
 	 * This also defines the loading and reloading order.
 	 */
 	private Iterable<FragmentLoader> createLoaders(World world,
-			BiomeSelection biomeSelection) {
+			BiomeSelection biomeSelection, Options options) {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
-				new AlphaInitializer(declarations.get(LayerIds.ALPHA)),
+				new AlphaInitializer(declarations.get(LayerIds.ALPHA),           options.mapFading),
 				new BiomeDataLoader( declarations.get(LayerIds.BIOME),           world.getBiomeDataOracle()),
 				new ImageLoader(	 declarations.get(LayerIds.BIOME),           Resolution.QUARTER, new BiomeColorProvider(biomeSelection)),
 				new ImageLoader(     declarations.get(LayerIds.SLIME),           Resolution.CHUNK,   new SlimeColorProvider(world.getSlimeChunkOracle())),

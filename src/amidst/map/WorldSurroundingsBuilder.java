@@ -34,7 +34,7 @@ public class WorldSurroundingsBuilder {
 		FragmentGraph graph = new FragmentGraph(declarations, fragmentManager);
 		Map map = new Map(zoom, graph);
 		LayerLoader layerLoader = layerBuilder.createLayerLoader(world,
-				biomeSelection);
+				biomeSelection, options);
 		fragmentManager.setLayerLoader(layerLoader);
 		Iterable<FragmentDrawer> drawers = layerBuilder.createDrawers(zoom,
 				worldIconSelection);
