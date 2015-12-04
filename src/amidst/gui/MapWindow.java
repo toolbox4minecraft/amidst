@@ -41,11 +41,11 @@ public class MapWindow {
 
 	private volatile WorldSurroundings worldSurroundings;
 
-	public MapWindow(Application application, Options preferences) {
+	public MapWindow(Application application, Options options) {
 		this.application = application;
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
-		this.menuBar = createMenuBar(preferences);
+		this.menuBar = createMenuBar(options);
 		initKeyListener();
 		initCloseListener();
 		showFrame();
@@ -76,8 +76,8 @@ public class MapWindow {
 		return contentPane;
 	}
 
-	private AmidstMenu createMenuBar(Options preferences) {
-		AmidstMenu menuBar = new AmidstMenu(application, preferences, this);
+	private AmidstMenu createMenuBar(Options options) {
+		AmidstMenu menuBar = new AmidstMenu(application, options, this);
 		frame.setJMenuBar(menuBar.getMenuBar());
 		return menuBar;
 	}

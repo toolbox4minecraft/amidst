@@ -23,15 +23,15 @@ import amidst.preferences.SelectPrefModel.SelectButtonModel;
 import amidst.resources.ResourceLoader;
 
 public class AmidstMenu {
-	private final Options preferences;
+	private final Options options;
 	private final MapWindow mapWindow;
 	private final MenuActions actions;
 	private final JMenuBar menuBar;
 	private JMenu mapMenu;
 
-	public AmidstMenu(Application application, Options preferences,
+	public AmidstMenu(Application application, Options options,
 			MapWindow mapWindow) {
-		this.preferences = preferences;
+		this.options = options;
 		this.mapWindow = mapWindow;
 		this.actions = new MenuActions(application, mapWindow);
 		this.menuBar = createMenuBar();
@@ -205,15 +205,15 @@ public class AmidstMenu {
 	private JMenuItem create_Map_Layers() {
 		JMenu result = new JMenu("Layers");
 		// @formatter:off
-		result.add(createJCheckBoxItem("Grid",						"grid.png",				KeyEvent.VK_1, preferences.showGrid));
-		result.add(createJCheckBoxItem("Slime chunks",				"slime.png",			KeyEvent.VK_2, preferences.showSlimeChunks));
-		result.add(createJCheckBoxItem("Village Icons",				"village.png",			KeyEvent.VK_3, preferences.showVillages));
-		result.add(createJCheckBoxItem("Ocean Monument Icons",		"ocean_monument.png",	KeyEvent.VK_4, preferences.showOceanMonuments));
-		result.add(createJCheckBoxItem("Temple/Witch Hut Icons",	"desert.png",			KeyEvent.VK_5, preferences.showTemples));
-		result.add(createJCheckBoxItem("Stronghold Icons",			"stronghold.png",		KeyEvent.VK_6, preferences.showStrongholds));
-		result.add(createJCheckBoxItem("Player Icons",				"player.png",			KeyEvent.VK_7, preferences.showPlayers));
-		result.add(createJCheckBoxItem("Nether Fortress Icons",		"nether_fortress.png",	KeyEvent.VK_8, preferences.showNetherFortresses));
-		result.add(createJCheckBoxItem("Spawn Location Icon",		"spawn.png",			KeyEvent.VK_9, preferences.showSpawn));
+		result.add(createJCheckBoxItem("Grid",						"grid.png",				KeyEvent.VK_1, options.showGrid));
+		result.add(createJCheckBoxItem("Slime chunks",				"slime.png",			KeyEvent.VK_2, options.showSlimeChunks));
+		result.add(createJCheckBoxItem("Village Icons",				"village.png",			KeyEvent.VK_3, options.showVillages));
+		result.add(createJCheckBoxItem("Ocean Monument Icons",		"ocean_monument.png",	KeyEvent.VK_4, options.showOceanMonuments));
+		result.add(createJCheckBoxItem("Temple/Witch Hut Icons",	"desert.png",			KeyEvent.VK_5, options.showTemples));
+		result.add(createJCheckBoxItem("Stronghold Icons",			"stronghold.png",		KeyEvent.VK_6, options.showStrongholds));
+		result.add(createJCheckBoxItem("Player Icons",				"player.png",			KeyEvent.VK_7, options.showPlayers));
+		result.add(createJCheckBoxItem("Nether Fortress Icons",		"nether_fortress.png",	KeyEvent.VK_8, options.showNetherFortresses));
+		result.add(createJCheckBoxItem("Spawn Location Icon",		"spawn.png",			KeyEvent.VK_9, options.showSpawn));
 		// @formatter:on
 		return result;
 	}
@@ -258,12 +258,12 @@ public class AmidstMenu {
 	private JMenu create_Options_Map() {
 		JMenu result = new JMenu("Map");
 		// @formatter:off
-		result.add(createJCheckBoxItem("Map Flicking (Smooth Scrolling)",	null, KeyEvent.VK_I,	preferences.mapFlicking));
-		result.add(createJCheckBoxItem("Restrict Maximum Zoom",				null, KeyEvent.VK_Z,	preferences.maxZoom));
-		result.add(createJCheckBoxItem("Show Framerate",					null, KeyEvent.VK_L,	preferences.showFPS));
-		result.add(createJCheckBoxItem("Show Scale",						null, KeyEvent.VK_K,	preferences.showScale));
-		result.add(createJCheckBoxItem("Use Fragment Fading",				null, -1,				preferences.mapFading));
-		result.add(createJCheckBoxItem("Show Debug Info",					null, -1,				preferences.showDebug));
+		result.add(createJCheckBoxItem("Map Flicking (Smooth Scrolling)",	null, KeyEvent.VK_I,	options.mapFlicking));
+		result.add(createJCheckBoxItem("Restrict Maximum Zoom",				null, KeyEvent.VK_Z,	options.maxZoom));
+		result.add(createJCheckBoxItem("Show Framerate",					null, KeyEvent.VK_L,	options.showFPS));
+		result.add(createJCheckBoxItem("Show Scale",						null, KeyEvent.VK_K,	options.showScale));
+		result.add(createJCheckBoxItem("Use Fragment Fading",				null, -1,				options.mapFading));
+		result.add(createJCheckBoxItem("Show Debug Info",					null, -1,				options.showDebug));
 		// @formatter:on
 		return result;
 	}
@@ -274,8 +274,7 @@ public class AmidstMenu {
 
 	private JMenu create_Options_WorldType() {
 		JMenu result = new JMenu("World type");
-		SelectButtonModel[] buttonModels = preferences.worldType
-				.getButtonModels();
+		SelectButtonModel[] buttonModels = options.worldType.getButtonModels();
 		for (SelectButtonModel buttonModel : buttonModels) {
 			result.add(createJCheckBoxItem(buttonModel.getName(), null, -1,
 					buttonModel));

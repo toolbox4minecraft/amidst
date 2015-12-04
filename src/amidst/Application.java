@@ -23,7 +23,7 @@ import amidst.utilities.SeedHistoryLogger;
 import amidst.version.MinecraftProfile;
 
 public class Application {
-	private final CommandLineOptions options;
+	private final CommandLineParameters parameters;
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final ThreadMaster threadMaster;
@@ -35,8 +35,8 @@ public class Application {
 
 	private World world;
 
-	public Application(CommandLineOptions options) {
-		this.options = options;
+	public Application(CommandLineParameters parameters) {
+		this.parameters = parameters;
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
 		this.seedHistoryLogger = createSeedHistoryLogger();
 		this.threadMaster = createThreadMaster();
@@ -47,11 +47,11 @@ public class Application {
 	}
 
 	private WorldSurroundingsBuilder createWorldSurroundingsBuilder() {
-		return new WorldSurroundingsBuilder(new LayerBuilder(getPreferences()));
+		return new WorldSurroundingsBuilder(new LayerBuilder(getOptions()));
 	}
 
 	private SeedHistoryLogger createSeedHistoryLogger() {
-		return new SeedHistoryLogger(options.historyPath);
+		return new SeedHistoryLogger(parameters.historyPath);
 	}
 
 	private ThreadMaster createThreadMaster() {
@@ -68,9 +68,9 @@ public class Application {
 
 	private void initLocalMinecraftInstallation() {
 		LocalMinecraftInstallation
-				.initMinecraftDirectory(options.minecraftPath);
+				.initMinecraftDirectory(parameters.minecraftPath);
 		LocalMinecraftInstallation
-				.initMinecraftLibraries(options.minecraftLibraries);
+				.initMinecraftLibraries(parameters.minecraftLibraries);
 	}
 
 	private void scanForBiomeColorProfiles() {
@@ -98,13 +98,13 @@ public class Application {
 
 	private void doDisplayMapWindow(IMinecraftInterface minecraftInterface) {
 		MinecraftUtil.setInterface(minecraftInterface);
-		setMapWindow(new MapWindow(this, getPreferences()));
+		setMapWindow(new MapWindow(this, getOptions()));
 		setVersionSelectWindow(null);
 	}
 
 	private IMinecraftInterface createLocalMinecraftInterface(File jarFile) {
 		try {
-			return new Minecraft(jarFile, options.minecraftJson)
+			return new Minecraft(jarFile, parameters.minecraftJson)
 					.createInterface();
 		} catch (MalformedURLException e) {
 			Log.crash(e, "MalformedURLException on Minecraft load.");
@@ -173,7 +173,7 @@ public class Application {
 		return world;
 	}
 
-	private Options getPreferences() {
+	private Options getOptions() {
 		return Options.instance;
 	}
 

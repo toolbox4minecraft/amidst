@@ -2,7 +2,7 @@ package amidst;
 
 import org.kohsuke.args4j.Option;
 
-public class CommandLineOptions {
+public class CommandLineParameters {
 	@Option(name = "-history", usage = "Sets the path to seed history file.", metaVar = "<file>")
 	public String historyPath;
 
