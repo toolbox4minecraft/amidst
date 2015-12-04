@@ -3,6 +3,7 @@ package amidst.map;
 import java.util.Arrays;
 import java.util.List;
 
+import amidst.Options;
 import amidst.fragment.layer.LayerReloader;
 import amidst.map.widget.BiomeToggleWidget;
 import amidst.map.widget.BiomeWidget;
@@ -26,10 +27,12 @@ public class WidgetBuilder {
 	private final FragmentGraph graph;
 	private final Zoom zoom;
 	private final FragmentManager fragmentManager;
+	private final Options options;
 
 	public WidgetBuilder(World world, Map map, BiomeSelection biomeSelection,
 			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
-			FragmentGraph graph, Zoom zoom, FragmentManager fragmentManager) {
+			FragmentGraph graph, Zoom zoom, FragmentManager fragmentManager,
+			Options options) {
 		this.world = world;
 		this.map = map;
 		this.biomeSelection = biomeSelection;
@@ -38,15 +41,16 @@ public class WidgetBuilder {
 		this.graph = graph;
 		this.zoom = zoom;
 		this.fragmentManager = fragmentManager;
+		this.options = options;
 	}
 
 	public List<Widget> create(MapViewer mapViewer) {
 		// @formatter:off
 		return Arrays.asList(
-				new FpsWidget(              mapViewer, CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2)),
-				new ScaleWidget(            mapViewer, CornerAnchorPoint.BOTTOM_CENTER, zoom),
+				new FpsWidget(              mapViewer, CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              options.showFPS),
+				new ScaleWidget(            mapViewer, CornerAnchorPoint.BOTTOM_CENTER, zoom,                               options.showScale),
 				new SeedWidget(             mapViewer, CornerAnchorPoint.TOP_LEFT,      world),
-				new DebugWidget(            mapViewer, CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager),
+				new DebugWidget(            mapViewer, CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, options.showDebug),
 				new SelectedIconWidget(     mapViewer, CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
 				new CursorInformationWidget(mapViewer, CornerAnchorPoint.TOP_RIGHT,     graph,             map),
 				new BiomeToggleWidget(      mapViewer, CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection,    layerReloader),

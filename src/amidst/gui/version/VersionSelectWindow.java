@@ -12,23 +12,28 @@ import javax.swing.SwingConstants;
 import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
 import amidst.Application;
-import amidst.Options;
 import amidst.logging.Log;
 import amidst.minecraft.LocalMinecraftInstallation;
+import amidst.preferences.StringPreference;
 import amidst.version.LatestVersionList;
 import amidst.version.MinecraftProfile;
 import amidst.version.VersionFactory;
 
 public class VersionSelectWindow {
-	private Application application;
-	private VersionFactory versionFactory = new VersionFactory();
+	private final Application application;
+	private final StringPreference lastProfilePreference;
 
-	private JFrame frame = new JFrame();
-	private VersionSelectPanel versionSelectPanel = new VersionSelectPanel(
-			"Scanning...");
+	private final VersionFactory versionFactory = new VersionFactory();
 
-	public VersionSelectWindow(Application application) {
+	private final JFrame frame = new JFrame("Profile Selector");
+	private final VersionSelectPanel versionSelectPanel;
+
+	public VersionSelectWindow(Application application,
+			StringPreference lastProfilePreference) {
 		this.application = application;
+		this.lastProfilePreference = lastProfilePreference;
+		this.versionSelectPanel = new VersionSelectPanel(lastProfilePreference,
+				"Scanning...");
 
 		LatestVersionList.get().load(true);
 
@@ -44,11 +49,11 @@ public class VersionSelectWindow {
 
 	private boolean isValidMinecraftDirectory() {
 		return LocalMinecraftInstallation.getMinecraftDirectory().exists()
-				&& LocalMinecraftInstallation.getMinecraftDirectory().isDirectory();
+				&& LocalMinecraftInstallation.getMinecraftDirectory()
+						.isDirectory();
 	}
 
 	private void initFrame() {
-		frame = new JFrame("Profile Selector");
 		frame.setIconImage(AmidstMetaData.ICON);
 		frame.getContentPane().setLayout(new MigLayout());
 		frame.add(createTitleLabel(), "h 20!,w :400:, growx, pushx, wrap");
@@ -106,7 +111,7 @@ public class VersionSelectWindow {
 	}
 
 	private void restoreSelection(VersionSelectPanel versionSelector) {
-		String selectedProfile = Options.instance.lastProfile.get();
+		String selectedProfile = lastProfilePreference.get();
 		if (selectedProfile != null) {
 			versionSelector.select(selectedProfile);
 		}

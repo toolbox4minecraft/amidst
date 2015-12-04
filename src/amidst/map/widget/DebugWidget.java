@@ -5,20 +5,23 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import amidst.Options;
 import amidst.map.FragmentGraph;
 import amidst.map.FragmentManager;
 import amidst.map.MapViewer;
+import amidst.preferences.PrefModel;
 
 public class DebugWidget extends Widget {
 	private final FragmentGraph graph;
 	private final FragmentManager fragmentManager;
+	private final PrefModel<Boolean> isVisiblePreference;
 
 	public DebugWidget(MapViewer mapViewer, CornerAnchorPoint anchor,
-			FragmentGraph graph, FragmentManager fragmentManager) {
+			FragmentGraph graph, FragmentManager fragmentManager,
+			PrefModel<Boolean> isVisiblePreference) {
 		super(mapViewer, anchor);
 		this.graph = graph;
 		this.fragmentManager = fragmentManager;
+		this.isVisiblePreference = isVisiblePreference;
 		forceVisibility(onVisibilityCheck());
 	}
 
@@ -80,6 +83,6 @@ public class DebugWidget extends Widget {
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		return Options.instance.showDebug.get();
+		return isVisiblePreference.get();
 	}
 }

@@ -2,12 +2,18 @@ package amidst.map;
 
 import java.awt.Point;
 
-import amidst.Options;
+import amidst.preferences.PrefModel;
 
 public class Movement {
 	private double speedX = 0;
 	private double speedY = 0;
 	private Point lastMouse;
+
+	private final PrefModel<Boolean> mapFlickingPreference;
+
+	public Movement(PrefModel<Boolean> mapFlickingPreference) {
+		this.mapFlickingPreference = mapFlickingPreference;
+	}
 
 	public void update(Map map, Point currentMouse) {
 		updateMovementSpeed(currentMouse);
@@ -33,7 +39,7 @@ public class Movement {
 	}
 
 	private void throttleMovementSpeed() {
-		if (Options.instance.mapFlicking.get()) {
+		if (mapFlickingPreference.get()) {
 			speedX *= 0.95f;
 			speedY *= 0.95f;
 		} else {

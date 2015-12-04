@@ -34,6 +34,7 @@ public class MapWindow {
 	private final SeedPrompt seedPrompt = new SeedPrompt();
 
 	private final Application application;
+	private final Options options;
 
 	private final JFrame frame;
 	private final Container contentPane;
@@ -43,6 +44,7 @@ public class MapWindow {
 
 	public MapWindow(Application application, Options options) {
 		this.application = application;
+		this.options = options;
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
 		this.menuBar = createMenuBar(options);
@@ -178,7 +180,7 @@ public class MapWindow {
 	}
 
 	public WorldType askForWorldType() {
-		String worldTypePreference = Options.instance.worldType.get();
+		String worldTypePreference = options.worldType.get();
 		if (worldTypePreference.equals("Prompt each time")) {
 			return askForOptions("New Project", "Enter world type\n",
 					WorldType.getSelectable());

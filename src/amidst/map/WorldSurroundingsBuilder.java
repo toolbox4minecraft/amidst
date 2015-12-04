@@ -2,6 +2,7 @@ package amidst.map;
 
 import java.util.List;
 
+import amidst.Options;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.layer.LayerBuilder;
 import amidst.fragment.layer.LayerDeclaration;
@@ -10,13 +11,16 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.minecraft.world.World;
 
 public class WorldSurroundingsBuilder {
-	private final Zoom zoom = new Zoom();
+	private final Zoom zoom;
 	private final BiomeSelection biomeSelection = new BiomeSelection();
 
+	private final Options options;
 	private final LayerBuilder layerBuilder;
 	private final FragmentManager fragmentManager;
 
-	public WorldSurroundingsBuilder(LayerBuilder layerBuilder) {
+	public WorldSurroundingsBuilder(Options options, LayerBuilder layerBuilder) {
+		this.options = options;
+		this.zoom = new Zoom(options.maxZoom);
 		this.layerBuilder = layerBuilder;
 		this.fragmentManager = new FragmentManager(
 				layerBuilder.getConstructors(),
@@ -24,7 +28,7 @@ public class WorldSurroundingsBuilder {
 	}
 
 	public WorldSurroundings create(World world) {
-		Movement movement = new Movement();
+		Movement movement = new Movement(options.mapFlicking);
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
 		List<LayerDeclaration> declarations = layerBuilder.getDeclarations();
 		FragmentGraph graph = new FragmentGraph(declarations, fragmentManager);
@@ -39,7 +43,7 @@ public class WorldSurroundingsBuilder {
 				.createLayerReloader(fragmentManager);
 		WidgetBuilder widgetBuilder = new WidgetBuilder(world, map,
 				biomeSelection, worldIconSelection, layerReloader, graph, zoom,
-				fragmentManager);
+				fragmentManager, options);
 		MapViewer mapViewer = new MapViewer(movement, zoom, world, map, drawer,
 				worldIconSelection, layerReloader, widgetBuilder);
 		return new WorldSurroundings(map, mapViewer, layerReloader, graph,

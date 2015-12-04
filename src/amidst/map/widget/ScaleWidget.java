@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
-import amidst.Options;
 import amidst.map.MapViewer;
 import amidst.map.Zoom;
+import amidst.preferences.PrefModel;
 
 public class ScaleWidget extends Widget {
 	@Deprecated
@@ -15,10 +15,13 @@ public class ScaleWidget extends Widget {
 	public static int cMargin = 8;
 
 	private final Zoom zoom;
+	private final PrefModel<Boolean> isVisiblePreference;
 
-	public ScaleWidget(MapViewer mapViewer, CornerAnchorPoint anchor, Zoom zoom) {
+	public ScaleWidget(MapViewer mapViewer, CornerAnchorPoint anchor,
+			Zoom zoom, PrefModel<Boolean> isVisiblePreference) {
 		super(mapViewer, anchor);
 		this.zoom = zoom;
+		this.isVisiblePreference = isVisiblePreference;
 		setWidth(100);
 		setHeight(34);
 		forceVisibility(false);
@@ -51,7 +54,7 @@ public class ScaleWidget extends Widget {
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		return Options.instance.showScale.get();
+		return isVisiblePreference.get();
 	}
 
 	private int scaleLength_blocks() {

@@ -11,11 +11,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 
 import net.miginfocom.swing.MigLayout;
-import amidst.Options;
+import amidst.preferences.StringPreference;
 
 public class VersionSelectPanel {
 	private class Listeners implements MouseListener, KeyListener {
@@ -144,18 +145,18 @@ public class VersionSelectPanel {
 
 	private Listeners listeners = new Listeners();
 	private Component component;
-	private ArrayList<VersionComponent> versionComponents = new ArrayList<VersionComponent>();
+	private List<VersionComponent> versionComponents = new ArrayList<VersionComponent>();
 
 	private VersionComponent selected = null;
 	private int selectedIndex = INVALID_INDEX;
 	private String emptyMessage;
 	private boolean isLoading = false;
 
-	public VersionSelectPanel() {
-		this("Empty");
-	}
+	private final StringPreference lastProfilePreference;
 
-	public VersionSelectPanel(String emptyMessage) {
+	public VersionSelectPanel(StringPreference lastProfilePreference,
+			String emptyMessage) {
+		this.lastProfilePreference = lastProfilePreference;
 		this.emptyMessage = emptyMessage;
 		initComponent();
 	}
@@ -224,7 +225,7 @@ public class VersionSelectPanel {
 		}
 		isLoading = true;
 		selected.load();
-		Options.instance.lastProfile.set(selected.getFullVersionName());
+		lastProfilePreference.set(selected.getFullVersionName());
 	}
 
 	public void setEmptyMessage(String emptyMessage) {

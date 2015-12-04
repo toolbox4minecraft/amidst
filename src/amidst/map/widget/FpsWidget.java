@@ -3,17 +3,19 @@ package amidst.map.widget;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
-import amidst.Options;
 import amidst.map.MapViewer;
+import amidst.preferences.PrefModel;
 import amidst.utilities.FramerateTimer;
 
 public class FpsWidget extends Widget {
 	private final FramerateTimer fpsTimer;
+	private final PrefModel<Boolean> isVisiblePreference;
 
 	public FpsWidget(MapViewer mapViewer, CornerAnchorPoint anchor,
-			FramerateTimer fpsTimer) {
+			FramerateTimer fpsTimer, PrefModel<Boolean> isVisiblePreference) {
 		super(mapViewer, anchor);
 		this.fpsTimer = fpsTimer;
+		this.isVisiblePreference = isVisiblePreference;
 		setWidth(20);
 		setHeight(30);
 		forceVisibility(onVisibilityCheck());
@@ -34,6 +36,6 @@ public class FpsWidget extends Widget {
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		return Options.instance.showFPS.get();
+		return isVisiblePreference.get();
 	}
 }

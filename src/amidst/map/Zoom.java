@@ -2,7 +2,7 @@ package amidst.map;
 
 import java.awt.Point;
 
-import amidst.Options;
+import amidst.preferences.PrefModel;
 
 public class Zoom {
 	private int remainingTicks = 0;
@@ -11,6 +11,12 @@ public class Zoom {
 	private double current = 0.25f;
 
 	private Point mousePosition = new Point();
+
+	private final PrefModel<Boolean> maxZoomPreference;
+
+	public Zoom(PrefModel<Boolean> maxZoomPreference) {
+		this.maxZoomPreference = maxZoomPreference;
+	}
 
 	public void update(Map map) {
 		remainingTicks--;
@@ -42,7 +48,7 @@ public class Zoom {
 	}
 
 	private int getMaxZoomLevel() {
-		if (Options.instance.maxZoom.get()) {
+		if (maxZoomPreference.get()) {
 			return 10;
 		} else {
 			return 10000;

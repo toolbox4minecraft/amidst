@@ -23,6 +23,7 @@ import amidst.utilities.SeedHistoryLogger;
 import amidst.version.MinecraftProfile;
 
 public class Application {
+	private final Options options = Options.instance;
 	private final CommandLineParameters parameters;
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
@@ -47,7 +48,7 @@ public class Application {
 	}
 
 	private WorldSurroundingsBuilder createWorldSurroundingsBuilder() {
-		return new WorldSurroundingsBuilder(new LayerBuilder(getOptions()));
+		return new WorldSurroundingsBuilder(options, new LayerBuilder(options));
 	}
 
 	private SeedHistoryLogger createSeedHistoryLogger() {
@@ -78,7 +79,8 @@ public class Application {
 	}
 
 	public void displayVersionSelectWindow() {
-		setVersionSelectWindow(new VersionSelectWindow(this));
+		setVersionSelectWindow(new VersionSelectWindow(this,
+				options.lastProfile));
 		setMapWindow(null);
 	}
 
@@ -98,7 +100,7 @@ public class Application {
 
 	private void doDisplayMapWindow(IMinecraftInterface minecraftInterface) {
 		MinecraftUtil.setInterface(minecraftInterface);
-		setMapWindow(new MapWindow(this, getOptions()));
+		setMapWindow(new MapWindow(this, options));
 		setVersionSelectWindow(null);
 	}
 
@@ -171,10 +173,6 @@ public class Application {
 
 	public World getWorld() {
 		return world;
-	}
-
-	private Options getOptions() {
-		return Options.instance;
 	}
 
 	void crash(Throwable e, String exceptionText, String message,
