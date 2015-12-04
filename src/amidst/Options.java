@@ -5,6 +5,7 @@ import java.util.prefs.Preferences;
 
 import amidst.map.BiomeColorProfileSelection;
 import amidst.minecraft.LocalMinecraftInstallation;
+import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BooleanPrefModel;
 import amidst.preferences.FilePrefModel;
 import amidst.preferences.SelectPrefModel;
@@ -59,7 +60,7 @@ public enum Options {
 		showDebug			 = new BooleanPrefModel(pref, "showDebug",		     false);
 		updateToUnstable     = new BooleanPrefModel(pref, "updateToUnstable",    false);
 		lastProfile          = new StringPreference(pref, "profile",             null);
-		biomeColorProfileSelection = new BiomeColorProfileSelection();
+		biomeColorProfileSelection = new BiomeColorProfileSelection(BiomeColorProfile.getDefaultProfile());
 		worldType			 = new SelectPrefModel( pref, "worldType",  "Prompt each time", new String[] { "Prompt each time", "Default", "Flat", "Large Biomes", "Amplified" });
 		// @formatter:on
 	}

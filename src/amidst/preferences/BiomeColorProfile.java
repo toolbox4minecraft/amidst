@@ -18,7 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 public class BiomeColorProfile {
-	private class BiomeColor {
+	private static class BiomeColor {
 		private final int r;
 		private final int g;
 		private final int b;
@@ -48,13 +48,11 @@ public class BiomeColorProfile {
 		}
 	}
 
-	// TODO: create an extract class for the default profile?
-	@Deprecated
 	private static void doSaveDefaultProfileIfNecessary() {
 		if (DEFAULT_PROFILE_FILE.exists()) {
 			Log.i("Found default biome color profile.");
 		} else {
-			if (new BiomeColorProfile().save(DEFAULT_PROFILE_FILE)) {
+			if (DEFAULT_PROFILE.save(DEFAULT_PROFILE_FILE)) {
 				Log.i("Saved default biome color profile.");
 			} else {
 				Log.i("Attempted to save default biome color profile, but encountered an error.");
@@ -113,26 +111,38 @@ public class BiomeColorProfile {
 		return PROFILE_DIRECTORY.isDirectory();
 	}
 
+	public static BiomeColorProfile getDefaultProfile() {
+		return DEFAULT_PROFILE;
+	}
+
+	private static Map<String, BiomeColor> createDefaultColorMap() {
+		Map<String, BiomeColor> result = new HashMap<String, BiomeColor>();
+		for (Biome biome : Biome.iterator()) {
+			result.put(biome.getName(), new BiomeColor(biome.getDefaultColor()));
+		}
+		return result;
+	}
+
+	private static final BiomeColorProfile DEFAULT_PROFILE = new BiomeColorProfile(
+			"default", null, createDefaultColorMap());
 	private static final File PROFILE_DIRECTORY = new File("./biome");
 	private static final File DEFAULT_PROFILE_FILE = new File(
 			PROFILE_DIRECTORY, "default.json");
 	private static final Gson GSON = new Gson();
 
-	private final String name;
-	private final String shortcut;
-	private final Map<String, BiomeColor> colorMap = new HashMap<String, BiomeColor>();
+	private String name;
+	private String shortcut;
+	private Map<String, BiomeColor> colorMap;
 
-	/**
-	 * Do not initialize the instance variables directly to allow gson to set
-	 * them.
-	 */
 	public BiomeColorProfile() {
-		this.name = "default";
-		this.shortcut = null;
-		for (Biome biome : Biome.iterator()) {
-			colorMap.put(biome.getName(),
-					new BiomeColor(biome.getDefaultColor()));
-		}
+		// no-arguments constructor for gson
+	}
+
+	private BiomeColorProfile(String name, String shortcut,
+			Map<String, BiomeColor> colorMap) {
+		this.name = name;
+		this.shortcut = shortcut;
+		this.colorMap = colorMap;
 	}
 
 	public String getName() {
@@ -172,6 +182,7 @@ public class BiomeColorProfile {
 		return writeToFile(file, serialize());
 	}
 
+	// TODO: use gson for serialization?
 	private String serialize() {
 		String output = "{ \"name\":\"" + name + "\", \"colorMap\":[\r\n";
 		output += serializeColorMap();
