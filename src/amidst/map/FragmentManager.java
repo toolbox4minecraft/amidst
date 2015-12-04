@@ -53,9 +53,9 @@ public class FragmentManager {
 		}
 	}
 
-	public void setLayerManager(LayerLoader layerManager) {
+	public void setLayerLoader(LayerLoader layerLoader) {
 		this.queueProcessor = new FragmentQueueProcessor(availableQueue,
-				loadingQueue, resetQueue, cache, layerManager);
+				loadingQueue, resetQueue, cache, layerLoader);
 	}
 
 	public int getAvailableQueueSize() {

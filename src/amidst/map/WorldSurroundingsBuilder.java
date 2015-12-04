@@ -30,9 +30,9 @@ public class WorldSurroundingsBuilder {
 		final FragmentGraph graph = new FragmentGraph(declarations,
 				fragmentManager);
 		Map map = new Map(zoom, graph);
-		LayerLoader layerManager = layerBuilder.createLayerManager(world,
+		LayerLoader layerLoader = layerBuilder.createLayerLoader(world,
 				biomeSelection);
-		fragmentManager.setLayerManager(layerManager);
+		fragmentManager.setLayerLoader(layerLoader);
 		Iterable<FragmentDrawer> drawers = layerBuilder.createDrawers(zoom,
 				worldIconSelection);
 		Drawer drawer = new Drawer(map, movement, zoom, graph, drawers);

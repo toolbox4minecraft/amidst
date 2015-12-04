@@ -80,10 +80,10 @@ public class LayerBuilder {
 		return LayerIds.NUMBER_OF_LAYERS;
 	}
 
-	public LayerLoader createLayerManager(World world,
+	public LayerLoader createLayerLoader(World world,
 			BiomeSelection biomeSelection) {
 		return new LayerLoader(createLoaders(world, biomeSelection),
-				getNumberOfLayers());
+				LayerIds.NUMBER_OF_LAYERS);
 	}
 
 	/**
