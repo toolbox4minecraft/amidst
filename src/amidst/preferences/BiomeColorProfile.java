@@ -54,7 +54,33 @@ public class BiomeColorProfile {
 		isEnabled = true;
 	}
 
-	public static BiomeColorProfile createFromFile(File file) {
+	public static void visitProfiles(BiomeColorProfileVisitor visitor) {
+		visitProfiles(new File("./biome"), visitor);
+	}
+
+	private static void visitProfiles(File folder,
+			BiomeColorProfileVisitor visitor) {
+		boolean entered = false;
+		for (File file : folder.listFiles()) {
+			if (file.isFile()) {
+				BiomeColorProfile profile = createFromFile(file);
+				if (profile != null) {
+					if (!entered) {
+						entered = true;
+						visitor.enterFolder(folder.getName());
+					}
+					visitor.visitProfile(profile);
+				}
+			} else {
+				visitProfiles(file, visitor);
+			}
+		}
+		if (entered) {
+			visitor.leaveFolder();
+		}
+	}
+
+	private static BiomeColorProfile createFromFile(File file) {
 		BiomeColorProfile profile = null;
 		if (file.exists() && file.isFile()) {
 			try {
