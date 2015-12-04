@@ -38,13 +38,20 @@ public class Application {
 
 	public Application(CommandLineParameters parameters) {
 		this.parameters = parameters;
+		initLocalMinecraftInstallation();
 		this.options = createOptions();
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
 		this.seedHistoryLogger = createSeedHistoryLogger();
 		this.threadMaster = createThreadMaster();
 		this.skinLoader = createSkinLoader();
 		this.updateManager = createUpdateManager();
-		initLocalMinecraftInstallation();
+	}
+
+	private void initLocalMinecraftInstallation() {
+		LocalMinecraftInstallation
+				.initMinecraftDirectory(parameters.minecraftPath);
+		LocalMinecraftInstallation
+				.initMinecraftLibraries(parameters.minecraftLibraries);
 	}
 
 	private Options createOptions() {
@@ -71,13 +78,6 @@ public class Application {
 
 	private UpdatePrompt createUpdateManager() {
 		return new UpdatePrompt();
-	}
-
-	private void initLocalMinecraftInstallation() {
-		LocalMinecraftInstallation
-				.initMinecraftDirectory(parameters.minecraftPath);
-		LocalMinecraftInstallation
-				.initMinecraftLibraries(parameters.minecraftLibraries);
 	}
 
 	public void displayVersionSelectWindow() {

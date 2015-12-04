@@ -4,6 +4,8 @@ import java.io.File;
 
 import amidst.logging.Log;
 
+// TODO: make this non-static
+@Deprecated
 public class LocalMinecraftInstallation {
 	private static File minecraftDirectory;
 	private static File minecraftLibraries;
