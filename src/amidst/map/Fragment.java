@@ -11,6 +11,29 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.icon.WorldIcon;
 
+/**
+ * This class is thread-safe. It contains nearly no logic but only simple and
+ * atomic getters and setters.
+ * 
+ * The life-cycle of a Fragment is quite complex to prevent the garbage
+ * collection from running too often. When a fragment is no longer needed it
+ * will be kept available in a queue, so it can be reused later on. The
+ * life-cycle consists of the two flags isInitialized and isLoaded.
+ * setInitialized(true) can be called from any thread, however
+ * setInitialized(false), setLoaded(true) and setLoaded(false) will always be
+ * called from the fragment loading thread, to ensure consistent state. Also,
+ * setInitialized(true) will only be called again after setInitialized(false)
+ * was called. It is not possible that isLoaded is true while isInitialized is
+ * false.
+ * 
+ * It is possible that a thread that uses the data in the fragment continues to
+ * use them after isLoaded is set to false. However, all write operations are
+ * only called from the fragment loading thread or during the construction of
+ * the fragment. While the fragment is constructed it will only be accessible by
+ * one thread. An exception to that rule is the method updateAlpha(). It is
+ * called from the drawing thread and alters the alpha value, however this
+ * should not cause any issues.
+ */
 public class Fragment {
 	public static final int SIZE = Resolution.FRAGMENT.getStep();
 
@@ -27,10 +50,6 @@ public class Fragment {
 		this.images = new AtomicReferenceArray<BufferedImage>(numberOfLayers);
 		this.worldIcons = new AtomicReferenceArray<List<WorldIcon>>(
 				numberOfLayers);
-	}
-
-	public boolean isInBounds(CoordinatesInWorld coordinates) {
-		return coordinates.isInBoundsOf(corner, SIZE);
 	}
 
 	public void initAlpha() {
