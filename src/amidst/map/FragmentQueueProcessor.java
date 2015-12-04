@@ -13,8 +13,6 @@ public class FragmentQueueProcessor {
 	private final FragmentCache cache;
 	private final LayerManager layerManager;
 
-	private Fragment currentFragment;
-
 	public FragmentQueueProcessor(
 			ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
@@ -50,8 +48,9 @@ public class FragmentQueueProcessor {
 	public void tick() {
 		taskQueue.processTasks();
 		processResetQueue();
-		while ((currentFragment = loadingQueue.poll()) != null) {
-			loadFragment();
+		Fragment fragment;
+		while ((fragment = loadingQueue.poll()) != null) {
+			loadFragment(fragment);
 			taskQueue.processTasks();
 			processResetQueue();
 		}
@@ -59,34 +58,35 @@ public class FragmentQueueProcessor {
 	}
 
 	private void processResetQueue() {
-		while ((currentFragment = resetQueue.poll()) != null) {
-			resetFragment();
+		Fragment fragment;
+		while ((fragment = resetQueue.poll()) != null) {
+			resetFragment(fragment);
 		}
 	}
 
-	private void loadFragment() {
-		if (currentFragment.isInitialized()) {
-			if (currentFragment.isLoaded()) {
-				layerManager.reloadInvalidated(currentFragment);
+	private void loadFragment(Fragment fragment) {
+		if (fragment.isInitialized()) {
+			if (fragment.isLoaded()) {
+				layerManager.reloadInvalidated(fragment);
 			} else {
-				layerManager.loadAll(currentFragment);
-				currentFragment.setLoaded(true);
+				layerManager.loadAll(fragment);
+				fragment.setLoaded(true);
 			}
 		}
 	}
 
-	private void resetFragment() {
-		currentFragment.setLoaded(false);
-		currentFragment.setInitialized(false);
-		removeFromLoadingQueue();
-		availableQueue.offer(currentFragment);
+	private void resetFragment(Fragment fragment) {
+		fragment.setLoaded(false);
+		fragment.setInitialized(false);
+		removeFromLoadingQueue(fragment);
+		availableQueue.offer(fragment);
 	}
 
 	// TODO: Check performance with and without this. It is not needed, since
 	// loadFragment checks for isInitialized(). It helps to keep the
 	// loadingQueue small, but it costs time to remove fragments from the queue.
-	private void removeFromLoadingQueue() {
-		while (loadingQueue.remove(currentFragment)) {
+	private void removeFromLoadingQueue(Object fragment) {
+		while (loadingQueue.remove(fragment)) {
 			// noop
 		}
 	}
