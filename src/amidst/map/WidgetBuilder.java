@@ -52,7 +52,7 @@ public class WidgetBuilder {
 				new SeedWidget(             mapViewer, CornerAnchorPoint.TOP_LEFT,      world),
 				new DebugWidget(            mapViewer, CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, options.showDebug),
 				new SelectedIconWidget(     mapViewer, CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
-				new CursorInformationWidget(mapViewer, CornerAnchorPoint.TOP_RIGHT,     graph,             map),
+				new CursorInformationWidget(mapViewer, CornerAnchorPoint.TOP_RIGHT,     graph,             map,             options),
 				new BiomeToggleWidget(      mapViewer, CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection,    layerReloader),
 				new BiomeWidget(            mapViewer, CornerAnchorPoint.NONE,          biomeSelection,    layerReloader)
 		);

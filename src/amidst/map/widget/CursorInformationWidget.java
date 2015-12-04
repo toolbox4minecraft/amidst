@@ -4,25 +4,30 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
+import amidst.Options;
 import amidst.map.Fragment;
 import amidst.map.FragmentGraph;
 import amidst.map.Map;
 import amidst.map.MapViewer;
 import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.minecraft.world.Resolution;
 
 public class CursorInformationWidget extends Widget {
 	private static final String UNKNOWN_BIOME_ALIAS = "Unknown";
 
 	private final FragmentGraph graph;
 	private final Map map;
+	private final Options options;
 
 	private String text = "";
 
 	public CursorInformationWidget(MapViewer mapViewer,
-			CornerAnchorPoint anchor, FragmentGraph graph, Map map) {
+			CornerAnchorPoint anchor, FragmentGraph graph, Map map,
+			Options options) {
 		super(mapViewer, anchor);
 		this.graph = graph;
 		this.map = map;
+		this.options = options;
 		setWidth(20);
 		setHeight(30);
 		forceVisibility(false);
@@ -52,8 +57,11 @@ public class CursorInformationWidget extends Widget {
 
 	private String getBiomeAliasAt(CoordinatesInWorld coordinates) {
 		Fragment fragment = graph.getFragmentAt(coordinates);
-		if (fragment != null) {
-			return fragment.getBiomeAliasAt(coordinates, UNKNOWN_BIOME_ALIAS);
+		if (fragment != null && fragment.isLoaded()) {
+			long x = coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
+			long y = coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
+			short biome = fragment.getBiomeDataAt((int) x, (int) y);
+			return options.biomeColorProfile.getAliasForId(biome);
 		} else {
 			return UNKNOWN_BIOME_ALIAS;
 		}

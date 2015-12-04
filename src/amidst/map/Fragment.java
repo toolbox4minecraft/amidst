@@ -72,17 +72,6 @@ public class Fragment {
 		biomeDataOracle.populateArrayUsingQuarterResolution(corner, biomeData);
 	}
 
-	public String getBiomeAliasAt(CoordinatesInWorld coordinates,
-			String defaultAlias) {
-		if (!isLoaded) {
-			return defaultAlias;
-		}
-		long x = coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
-		long y = coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
-		short biome = getBiomeDataAt((int) x, (int) y);
-		return Options.instance.biomeColorProfile.getAliasForId(biome);
-	}
-
 	public short getBiomeDataAt(int x, int y) {
 		return biomeData[x][y];
 	}
