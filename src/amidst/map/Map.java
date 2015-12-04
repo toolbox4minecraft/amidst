@@ -1,13 +1,12 @@
 package amidst.map;
 
 import java.awt.Point;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.icon.WorldIcon;
 
 public class Map {
-	private final ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+	private final TaskQueue taskQueue = new TaskQueue();
 
 	private final Zoom zoom;
 	private final FragmentGraph graph;
@@ -21,7 +20,7 @@ public class Map {
 	public Map(Zoom zoom, FragmentGraph graph) {
 		this.zoom = zoom;
 		this.graph = graph;
-		invokeLater(new Runnable() {
+		taskQueue.invoke(new Runnable() {
 			@Override
 			public void run() {
 				startXOnScreen = viewerWidth >> 1;
@@ -36,10 +35,7 @@ public class Map {
 	}
 
 	public void processTasks() {
-		Runnable task;
-		while ((task = tasks.poll()) != null) {
-			task.run();
-		}
+		taskQueue.processTasks();
 	}
 
 	public void adjustNumberOfRowsAndColumns() {
@@ -75,7 +71,7 @@ public class Map {
 	}
 
 	public void centerOn(final CoordinatesInWorld coordinates) {
-		invokeLater(new Runnable() {
+		taskQueue.invoke(new Runnable() {
 			@Override
 			public void run() {
 				graph.init(coordinates);
@@ -121,10 +117,6 @@ public class Map {
 		return corner.add(
 				(long) zoom.screenToWorld(pointOnScreen.x - startXOnScreen),
 				(long) zoom.screenToWorld(pointOnScreen.y - startYOnScreen));
-	}
-
-	private void invokeLater(Runnable task) {
-		tasks.offer(task);
 	}
 
 	public double getStartXOnScreen() {
