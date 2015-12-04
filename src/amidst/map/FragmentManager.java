@@ -50,14 +50,12 @@ public class FragmentManager {
 		FragmentQueueProcessor queueProcessor = this.queueProcessor;
 		if (queueProcessor != null) {
 			queueProcessor.invalidateLayer(layerId);
-			loadingQueue.clear();
-			cache.reloadAll();
 		}
 	}
 
 	public void setLayerManager(LayerManager layerManager) {
 		this.queueProcessor = new FragmentQueueProcessor(availableQueue,
-				loadingQueue, resetQueue, layerManager);
+				loadingQueue, resetQueue, cache, layerManager);
 	}
 
 	public int getAvailableQueueSize() {

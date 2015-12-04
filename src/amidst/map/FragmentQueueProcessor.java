@@ -5,9 +5,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import amidst.fragment.layer.LayerManager;
 
 public class FragmentQueueProcessor {
+	private final ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
 	private final ConcurrentLinkedQueue<Fragment> resetQueue;
+	private final FragmentCache cache;
 	private final LayerManager layerManager;
 
 	private Fragment currentFragment;
@@ -15,31 +18,51 @@ public class FragmentQueueProcessor {
 	public FragmentQueueProcessor(
 			ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
-			ConcurrentLinkedQueue<Fragment> resetQueue,
+			ConcurrentLinkedQueue<Fragment> resetQueue, FragmentCache cache,
 			LayerManager layerManager) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
 		this.resetQueue = resetQueue;
+		this.cache = cache;
 		this.layerManager = layerManager;
 	}
 
 	/**
 	 * This method might be called from any thread.
 	 */
-	public void invalidateLayer(int layerId) {
+	public void invalidateLayer(final int layerId) {
+		tasks.offer(new Runnable() {
+			@Override
+			public void run() {
+				doInvalidateLayer(layerId);
+			}
+		});
+	}
+
+	private void doInvalidateLayer(final int layerId) {
 		layerManager.invalidateLayer(layerId);
+		cache.reloadAll();
 	}
 
 	/**
 	 * This method is only called from the fragment loading thread.
 	 */
 	public void tick() {
+		processTasks();
 		processResetQueue();
 		while ((currentFragment = loadingQueue.poll()) != null) {
 			loadFragment();
+			processTasks();
 			processResetQueue();
 		}
 		layerManager.clearInvalidatedLayers();
+	}
+
+	private void processTasks() {
+		Runnable task;
+		while ((task = tasks.poll()) != null) {
+			task.run();
+		}
 	}
 
 	private void processResetQueue() {

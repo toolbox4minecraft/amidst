@@ -11,6 +11,7 @@ public class FragmentCache {
 	private static final int NEW_FRAGMENTS_PER_REQUEST = 1024;
 
 	private final List<Fragment> cache = new LinkedList<Fragment>();
+	private volatile int cacheSize = 0;
 
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
@@ -26,7 +27,7 @@ public class FragmentCache {
 		this.numberOfLayers = numberOfLayers;
 	}
 
-	public void increaseSize() {
+	public synchronized void increaseSize() {
 		Log.i("increasing fragment cache size from " + cache.size() + " to "
 				+ (cache.size() + NEW_FRAGMENTS_PER_REQUEST));
 		requestNewFragments();
@@ -40,6 +41,7 @@ public class FragmentCache {
 			cache.add(fragment);
 			availableQueue.offer(fragment);
 		}
+		cacheSize = cache.size();
 	}
 
 	private void construct(Fragment fragment) {
@@ -48,13 +50,14 @@ public class FragmentCache {
 		}
 	}
 
-	public void reloadAll() {
+	public synchronized void reloadAll() {
+		loadingQueue.clear();
 		for (Fragment fragment : cache) {
 			loadingQueue.offer(fragment);
 		}
 	}
 
 	public int size() {
-		return cache.size();
+		return cacheSize;
 	}
 }
