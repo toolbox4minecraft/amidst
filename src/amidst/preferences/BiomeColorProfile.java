@@ -113,11 +113,10 @@ public class BiomeColorProfile {
 
 	private static boolean isEnabled = false;
 
-	public Map<String, BiomeColor> colorMap = new HashMap<String, BiomeColor>();
-	public int colorArray[] = new int[Biome.getBiomesLength()];
-	public String[] nameArray = new String[Biome.getBiomesLength()];
-	public String name;
-	public String shortcut;
+	private String name;
+	private String shortcut;
+	private Map<String, BiomeColor> colorMap = new HashMap<String, BiomeColor>();
+	private int[] colorArray = new int[Biome.getBiomesLength()];
 
 	public BiomeColorProfile() {
 		name = "default";
@@ -132,7 +131,6 @@ public class BiomeColorProfile {
 			if (biome != null) {
 				int index = biome.getIndex();
 				colorArray[index] = pairs.getValue().toColorInt();
-				nameArray[index] = biome.getName();
 			} else {
 				Log.i("Failed to find biome for: " + pairs.getKey()
 						+ " in profile: " + name);
@@ -179,11 +177,11 @@ public class BiomeColorProfile {
 		}
 	}
 
-	public String getAliasForId(int id) {
-		if (nameArray[id] != null) {
-			return nameArray[id];
-		} else {
-			return Biome.getByIndex(id).getName();
-		}
+	public String getName() {
+		return name;
+	}
+
+	public String getShortcut() {
+		return shortcut;
 	}
 }

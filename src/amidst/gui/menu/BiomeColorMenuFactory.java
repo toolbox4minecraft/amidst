@@ -64,8 +64,8 @@ public class BiomeColorMenuFactory {
 		}
 
 		private JCheckBoxMenuItem createCheckBox(BiomeColorProfile profile) {
-			JCheckBoxMenuItem result = new JCheckBoxMenuItem(profile.name);
-			tryCreateKeyboardShortcut(profile.shortcut, result);
+			JCheckBoxMenuItem result = new JCheckBoxMenuItem(profile.getName());
+			tryCreateKeyboardShortcut(profile.getShortcut(), result);
 			result.addActionListener(createListener(profile, result));
 			return result;
 		}

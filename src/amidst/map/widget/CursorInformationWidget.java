@@ -9,11 +9,12 @@ import amidst.map.Fragment;
 import amidst.map.FragmentGraph;
 import amidst.map.Map;
 import amidst.map.MapViewer;
+import amidst.minecraft.Biome;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 
 public class CursorInformationWidget extends Widget {
-	private static final String UNKNOWN_BIOME_ALIAS = "Unknown";
+	private static final String UNKNOWN_BIOME_NAME = "Unknown";
 
 	private final FragmentGraph graph;
 	private final Map map;
@@ -48,22 +49,22 @@ public class CursorInformationWidget extends Widget {
 		Point mouse = mapViewer.getMousePosition();
 		if (mouse != null) {
 			CoordinatesInWorld coordinates = map.screenToWorld(mouse);
-			String biomeAlias = getBiomeAliasAt(coordinates);
-			return biomeAlias + " " + coordinates.toString();
+			String biomeName = getBiomeNameAt(coordinates);
+			return biomeName + " " + coordinates.toString();
 		} else {
 			return null;
 		}
 	}
 
-	private String getBiomeAliasAt(CoordinatesInWorld coordinates) {
+	private String getBiomeNameAt(CoordinatesInWorld coordinates) {
 		Fragment fragment = graph.getFragmentAt(coordinates);
 		if (fragment != null && fragment.isLoaded()) {
 			long x = coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
 			long y = coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
 			short biome = fragment.getBiomeDataAt((int) x, (int) y);
-			return options.biomeColorProfile.getAliasForId(biome);
+			return Biome.getByIndex(biome).getName();
 		} else {
-			return UNKNOWN_BIOME_ALIAS;
+			return UNKNOWN_BIOME_NAME;
 		}
 	}
 
