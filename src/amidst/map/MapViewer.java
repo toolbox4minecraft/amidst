@@ -153,7 +153,7 @@ public class MapViewer {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					player.moveTo(map.screenToWorld(lastRightClick));
-					world.reloadPlayers();
+					world.reloadPlayerWorldIcons();
 					layerReloader.reloadPlayerLayer();
 				}
 			});

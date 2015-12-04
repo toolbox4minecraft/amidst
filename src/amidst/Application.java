@@ -201,7 +201,7 @@ public class Application {
 
 	public void finishedLoadingPlayerSkin() {
 		if (world != null) {
-			world.reloadPlayers();
+			world.reloadPlayerWorldIcons();
 		}
 		if (mapWindow != null) {
 			mapWindow.reloadPlayerLayer();

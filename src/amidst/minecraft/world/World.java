@@ -144,7 +144,7 @@ public class World {
 		return strongholdProducer.getWorldIcons();
 	}
 
-	public void reloadPlayers() {
+	public void reloadPlayerWorldIcons() {
 		playerProducer.resetCache();
 	}
 }
