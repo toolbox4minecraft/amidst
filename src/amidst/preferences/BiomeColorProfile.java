@@ -85,7 +85,7 @@ public class BiomeColorProfile {
 		if (file.exists() && file.isFile()) {
 			try {
 				profile = readProfile(file);
-				profile.fillColorArray();
+				profile.validate();
 			} catch (JsonSyntaxException e) {
 				Log.w("Unable to load file: " + file);
 				e.printStackTrace();
@@ -116,7 +116,6 @@ public class BiomeColorProfile {
 	private String name;
 	private String shortcut;
 	private Map<String, BiomeColor> colorMap = new HashMap<String, BiomeColor>();
-	private int[] colorArray = new int[Biome.getBiomesLength()];
 
 	public BiomeColorProfile() {
 		name = "default";
@@ -125,14 +124,10 @@ public class BiomeColorProfile {
 		}
 	}
 
-	public void fillColorArray() {
-		for (Map.Entry<String, BiomeColor> pairs : colorMap.entrySet()) {
-			Biome biome = Biome.getByName(pairs.getKey());
-			if (biome != null) {
-				int index = biome.getIndex();
-				colorArray[index] = pairs.getValue().toColorInt();
-			} else {
-				Log.i("Failed to find biome for: " + pairs.getKey()
+	public void validate() {
+		for (String biomeName : colorMap.keySet()) {
+			if (!Biome.exists(biomeName)) {
+				Log.i("Failed to find biome for: " + biomeName
 						+ " in profile: " + name);
 			}
 		}
@@ -173,7 +168,7 @@ public class BiomeColorProfile {
 		Options.instance.biomeColorProfile = this;
 		Log.i("Biome color profile activated.");
 		for (Biome biome : Biome.iterator()) {
-			biome.setColor(colorArray[biome.getIndex()]);
+			biome.setColor(colorMap.get(biome.getName()).toColorInt());
 		}
 	}
 

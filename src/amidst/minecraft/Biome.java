@@ -148,6 +148,10 @@ public class Biome {
 		return biomeMap.get(name);
 	}
 
+	public static boolean exists(String name) {
+		return biomeMap.containsKey(name);
+	}
+
 	private final String name;
 	private final int index;
 	private int color;

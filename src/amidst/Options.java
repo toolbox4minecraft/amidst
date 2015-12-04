@@ -64,6 +64,6 @@ public enum Options {
 		biomeColorProfile	 = new BiomeColorProfile();
 		worldType			 = new SelectPrefModel( pref, "worldType",  "Prompt each time", new String[] { "Prompt each time", "Default", "Flat", "Large Biomes", "Amplified" });
 		// @formatter:on
-		biomeColorProfile.fillColorArray();
+		biomeColorProfile.validate();
 	}
 }
