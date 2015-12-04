@@ -34,7 +34,7 @@ public class BiomeColorProfile {
 
 	private static Map<String, BiomeColor> createDefaultColorMap() {
 		Map<String, BiomeColor> result = new HashMap<String, BiomeColor>();
-		for (Biome biome : Biome.iterator()) {
+		for (Biome biome : Biome.allBiomes()) {
 			result.put(biome.getName(), new BiomeColor(biome.getDefaultColor()));
 		}
 		return result;
@@ -88,7 +88,7 @@ public class BiomeColorProfile {
 
 	public int[] createColorArray() {
 		int[] result = new int[Biome.getBiomesLength()];
-		for (Biome biome : Biome.iterator()) {
+		for (Biome biome : Biome.allBiomes()) {
 			result[biome.getIndex()] = getColor(biome);
 		}
 		return result;

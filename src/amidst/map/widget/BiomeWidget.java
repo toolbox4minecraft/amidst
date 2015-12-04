@@ -64,7 +64,7 @@ public class BiomeWidget extends Widget {
 	private void initializeIfNecessary(FontMetrics fontMetrics) {
 		if (!isInitialized) {
 			isInitialized = true;
-			for (Biome biome : Biome.iterator()) {
+			for (Biome biome : Biome.allBiomes()) {
 				biomes.add(biome);
 				int width = fontMetrics.stringWidth(biome.getName());
 				maxNameWidth = Math.max(width, maxNameWidth);

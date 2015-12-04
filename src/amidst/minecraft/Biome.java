@@ -128,8 +128,10 @@ public class Biome {
 	public static final Biome mesaPlateauM		   = new Biome("Mesa Plateau M",		   167, ColorUtils.makeColor(202, 140, 101));
 	// @formatter:on
 
-	public static Iterable<Biome> iterator() {
-		return new BiomeIterable();
+	private static final BiomeIterable ITERABLE = new BiomeIterable();
+
+	public static Iterable<Biome> allBiomes() {
+		return ITERABLE;
 	}
 
 	public static Biome getByIndex(int index) {
