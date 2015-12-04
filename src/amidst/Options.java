@@ -4,20 +4,16 @@ import java.io.File;
 import java.util.prefs.Preferences;
 
 import amidst.map.BiomeColorProfileSelection;
-import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BooleanPrefModel;
 import amidst.preferences.FilePrefModel;
 import amidst.preferences.SelectPrefModel;
 import amidst.preferences.StringPreference;
 
-/**
- * Currently selected options that change AMIDST’s behavior
- */
-public enum Options {
-	instance;
+public class Options {
+	private static final String[] WORLD_TYPE_OPTIONS = new String[] {
+			"Prompt each time", "Default", "Flat", "Large Biomes", "Amplified" };
 
-	// permanent preferences
 	public final FilePrefModel jar;
 	public final BooleanPrefModel showSlimeChunks;
 	public final BooleanPrefModel showGrid;
@@ -36,13 +32,12 @@ public enum Options {
 	public final BooleanPrefModel updateToUnstable;
 	public final BooleanPrefModel maxZoom;
 	public final StringPreference lastProfile;
-	public final BiomeColorProfileSelection biomeColorProfileSelection;
 	public final SelectPrefModel worldType;
+	public final BiomeColorProfileSelection biomeColorProfileSelection;
 
-	private Options() {
+	public Options(Preferences pref, File defaultJarFile) {
 		// @formatter:off
-		Preferences pref = Preferences.userNodeForPackage(Amidst.class);
-		jar				     = new FilePrefModel(   pref, "jar", new File(LocalMinecraftInstallation.getMinecraftDirectory(), "bin/minecraft.jar"));
+		jar				     = new FilePrefModel(   pref, "jar",                 defaultJarFile);
 		showSlimeChunks	     = new BooleanPrefModel(pref, "slimeChunks",	 	 false);
 		showGrid			 = new BooleanPrefModel(pref, "grid",			 	 false);
 		showNetherFortresses = new BooleanPrefModel(pref, "netherFortressIcons", false);
@@ -60,8 +55,8 @@ public enum Options {
 		showDebug			 = new BooleanPrefModel(pref, "showDebug",		     false);
 		updateToUnstable     = new BooleanPrefModel(pref, "updateToUnstable",    false);
 		lastProfile          = new StringPreference(pref, "profile",             null);
+		worldType			 = new SelectPrefModel( pref, "worldType",           "Prompt each time", WORLD_TYPE_OPTIONS);
 		biomeColorProfileSelection = new BiomeColorProfileSelection(BiomeColorProfile.getDefaultProfile());
-		worldType			 = new SelectPrefModel( pref, "worldType",  "Prompt each time", new String[] { "Prompt each time", "Default", "Flat", "Large Biomes", "Amplified" });
 		// @formatter:on
 	}
 }
