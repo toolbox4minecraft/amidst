@@ -7,6 +7,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import amidst.fragment.constructor.FragmentConstructor;
 import amidst.logging.Log;
 
+/**
+ * This class is thread-safe, since it uses the synchronized keyword on all
+ * relevant public methods. It is okay to use synchronized, since the methods of
+ * this class are called rarely.
+ * 
+ * The method size() is an exception. It does not need and should not use the
+ * synchronized keyword, since it only reads a single variable and is called for
+ * every rendered frame.
+ */
 public class FragmentCache {
 	private static final int NEW_FRAGMENTS_PER_REQUEST = 1024;
 

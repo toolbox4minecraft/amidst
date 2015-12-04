@@ -3,6 +3,10 @@ package amidst.fragment.layer;
 import amidst.fragment.loader.FragmentLoader;
 import amidst.map.Fragment;
 
+/**
+ * This class is not thread-safe. This is good enough, since it is only used in
+ * the class FragmentQueueProcessor from the fragment loader thread.
+ */
 public class LayerLoader {
 	private final Iterable<FragmentLoader> loaders;
 	private final boolean[] invalidatedLayers;

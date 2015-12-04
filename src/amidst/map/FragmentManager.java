@@ -6,6 +6,9 @@ import amidst.fragment.constructor.FragmentConstructor;
 import amidst.fragment.layer.LayerLoader;
 import amidst.minecraft.world.CoordinatesInWorld;
 
+/**
+ * This class is thread-safe as long as only one thread calls the method tick().
+ */
 public class FragmentManager {
 	private final ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<Fragment>();
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<Fragment>();

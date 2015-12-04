@@ -4,6 +4,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.fragment.layer.LayerLoader;
 
+/**
+ * This class is thread-safe, as long as only one thread calls the method
+ * tick(). It executes everything in the thread that calls the method tick().
+ */
 public class FragmentQueueProcessor {
 	private final TaskQueue taskQueue = new TaskQueue();
 
@@ -37,6 +41,10 @@ public class FragmentQueueProcessor {
 		});
 	}
 
+	/**
+	 * This method is only called from the method tick(). This ensures, that the
+	 * layerManager is only used by a single thread.
+	 */
 	private void doInvalidateLayer(int layerId) {
 		layerManager.invalidateLayer(layerId);
 		cache.reloadAll();
