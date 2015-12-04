@@ -3,7 +3,6 @@ package amidst.fragment.layer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import amidst.Options;
 import amidst.fragment.colorprovider.BiomeColorProvider;
@@ -30,22 +29,12 @@ import amidst.minecraft.world.World;
 import amidst.preferences.AlwaysTruePreference;
 
 public class LayerBuilder {
-	private final List<AtomicBoolean> invalidatedLayers;
 	private final List<LayerDeclaration> declarations;
 	private final Iterable<FragmentConstructor> constructors;
 
 	public LayerBuilder(Options options) {
-		this.invalidatedLayers = createInvalidatedLayers();
 		this.declarations = createDeclarations(options);
 		this.constructors = createConstructors();
-	}
-
-	private List<AtomicBoolean> createInvalidatedLayers() {
-		AtomicBoolean[] invalidatedLayers = new AtomicBoolean[LayerIds.NUMBER_OF_LAYERS];
-		for (int i = 0; i < LayerIds.NUMBER_OF_LAYERS; i++) {
-			invalidatedLayers[i] = new AtomicBoolean(false);
-		}
-		return Collections.unmodifiableList(Arrays.asList(invalidatedLayers));
 	}
 
 	private List<LayerDeclaration> createDeclarations(Options options) {
@@ -93,8 +82,8 @@ public class LayerBuilder {
 
 	public LayerLoader createLayerManager(World world,
 			BiomeSelection biomeSelection) {
-		return new LayerLoader(invalidatedLayers, createLoaders(world,
-				biomeSelection));
+		return new LayerLoader(createLoaders(world, biomeSelection),
+				getNumberOfLayers());
 	}
 
 	/**
