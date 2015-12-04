@@ -27,8 +27,7 @@ public class WorldSurroundingsBuilder {
 		Movement movement = new Movement();
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
 		List<LayerDeclaration> declarations = layerBuilder.getDeclarations();
-		final FragmentGraph graph = new FragmentGraph(declarations,
-				fragmentManager);
+		FragmentGraph graph = new FragmentGraph(declarations, fragmentManager);
 		Map map = new Map(zoom, graph);
 		LayerLoader layerLoader = layerBuilder.createLayerLoader(world,
 				biomeSelection);

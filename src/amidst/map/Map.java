@@ -20,13 +20,7 @@ public class Map {
 	public Map(Zoom zoom, FragmentGraph graph) {
 		this.zoom = zoom;
 		this.graph = graph;
-		taskQueue.invoke(new Runnable() {
-			@Override
-			public void run() {
-				startXOnScreen = viewerWidth >> 1;
-				startYOnScreen = viewerHeight >> 1;
-			}
-		});
+		centerOn(CoordinatesInWorld.origin());
 	}
 
 	public void setViewerDimensions(int viewerWidth, int viewerHeight) {
@@ -74,7 +68,6 @@ public class Map {
 		taskQueue.invoke(new Runnable() {
 			@Override
 			public void run() {
-				graph.init(coordinates);
 				doCenterOn(coordinates);
 			}
 		});
@@ -82,6 +75,7 @@ public class Map {
 
 	// TODO: Support longs?
 	private void doCenterOn(CoordinatesInWorld coordinates) {
+		graph.init(coordinates);
 		int xCenterOnScreen = viewerWidth >> 1;
 		int yCenterOnScreen = viewerHeight >> 1;
 		long xFragmentRelative = coordinates.getXRelativeToFragment();
