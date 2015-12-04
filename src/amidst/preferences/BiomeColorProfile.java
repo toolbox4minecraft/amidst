@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import amidst.Options;
 import amidst.logging.Log;
 import amidst.minecraft.Biome;
 import amidst.utilities.ColorUtils;
@@ -35,6 +34,11 @@ public class BiomeColorProfile {
 		}
 	}
 
+	public static void visitProfiles(BiomeColorProfileVisitor visitor) {
+		saveDefaultProfileIfNecessary();
+		visitProfiles(PROFILE_DIRECTORY, visitor);
+	}
+
 	public static void saveDefaultProfileIfNecessary() {
 		if (isEnabled()) {
 			Log.i("Found biome color profile directory.");
@@ -44,20 +48,18 @@ public class BiomeColorProfile {
 		}
 	}
 
+	// TODO: create an extract class for the default profile?
+	@Deprecated
 	private static void doSaveDefaultProfileIfNecessary() {
 		if (DEFAULT_PROFILE_FILE.exists()) {
 			Log.i("Found default biome color profile.");
 		} else {
-			if (Options.instance.biomeColorProfile.save(DEFAULT_PROFILE_FILE)) {
+			if (new BiomeColorProfile().save(DEFAULT_PROFILE_FILE)) {
 				Log.i("Saved default biome color profile.");
 			} else {
 				Log.i("Attempted to save default biome color profile, but encountered an error.");
 			}
 		}
-	}
-
-	public static void visitProfiles(BiomeColorProfileVisitor visitor) {
-		visitProfiles(PROFILE_DIRECTORY, visitor);
 	}
 
 	private static void visitProfiles(File directory,
@@ -128,7 +130,8 @@ public class BiomeColorProfile {
 		this.name = "default";
 		this.shortcut = null;
 		for (Biome biome : Biome.iterator()) {
-			colorMap.put(biome.getName(), new BiomeColor(biome.getColor()));
+			colorMap.put(biome.getName(),
+					new BiomeColor(biome.getDefaultColor()));
 		}
 	}
 
@@ -149,11 +152,19 @@ public class BiomeColorProfile {
 		}
 	}
 
-	public void activate() {
-		Options.instance.biomeColorProfile = this;
-		Log.i("Biome color profile activated.");
+	public int[] createColorArray() {
+		int[] result = new int[Biome.getBiomesLength()];
 		for (Biome biome : Biome.iterator()) {
-			biome.setColor(colorMap.get(biome.getName()).toColorInt());
+			result[biome.getIndex()] = getColor(biome);
+		}
+		return result;
+	}
+
+	private int getColor(Biome biome) {
+		if (colorMap.containsKey(biome.getName())) {
+			return colorMap.get(biome.getName()).toColorInt();
+		} else {
+			return biome.getDefaultColor();
 		}
 	}
 

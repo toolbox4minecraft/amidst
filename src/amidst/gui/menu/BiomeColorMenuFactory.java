@@ -14,21 +14,25 @@ import javax.swing.KeyStroke;
 
 import amidst.gui.MapWindow;
 import amidst.logging.Log;
+import amidst.map.BiomeColorProfileSelection;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BiomeColorProfileVisitor;
 
 public class BiomeColorMenuFactory {
 	private static class BiomeColorProfileVisitorImpl implements
 			BiomeColorProfileVisitor {
-		private List<JCheckBoxMenuItem> allCheckBoxes = new ArrayList<JCheckBoxMenuItem>();
-		private List<JMenu> menuStack = new ArrayList<JMenu>();
+		private final List<JCheckBoxMenuItem> allCheckBoxes = new ArrayList<JCheckBoxMenuItem>();
+		private final List<JMenu> menuStack = new ArrayList<JMenu>();
 		private ActionListener firstListener;
 		private boolean isFirstContainer = true;
-		private MapWindow mapWindow;
+		private final MapWindow mapWindow;
+		private final BiomeColorProfileSelection biomeColorProfileSelection;
 
 		private BiomeColorProfileVisitorImpl(JMenu parentMenu,
-				MapWindow mapWindow) {
+				MapWindow mapWindow,
+				BiomeColorProfileSelection biomeColorProfileSelection) {
 			this.mapWindow = mapWindow;
+			this.biomeColorProfileSelection = biomeColorProfileSelection;
 			menuStack.add(parentMenu);
 		}
 
@@ -92,7 +96,7 @@ public class BiomeColorMenuFactory {
 						checkBox.setSelected(false);
 					}
 					selectedCheckBox.setSelected(true);
-					profile.activate();
+					biomeColorProfileSelection.setProfile(profile);
 					mapWindow.reloadBiomeLayer();
 				}
 			};
@@ -109,11 +113,14 @@ public class BiomeColorMenuFactory {
 		}
 	}
 
-	private JMenu parentMenu = new JMenu("Biome profile");
-	private MapWindow mapWindow;
+	private final JMenu parentMenu = new JMenu("Biome profile");
+	private final MapWindow mapWindow;
+	private final BiomeColorProfileSelection biomeColorProfileSelection;
 
-	public BiomeColorMenuFactory(MapWindow mapWindow) {
+	public BiomeColorMenuFactory(MapWindow mapWindow,
+			BiomeColorProfileSelection biomeColorProfileSelection) {
 		this.mapWindow = mapWindow;
+		this.biomeColorProfileSelection = biomeColorProfileSelection;
 		Log.i("Checking for additional biome color profiles.");
 		initParentMenu();
 	}
@@ -125,7 +132,7 @@ public class BiomeColorMenuFactory {
 	private void initParentMenu() {
 		parentMenu.removeAll();
 		BiomeColorProfileVisitorImpl visitor = new BiomeColorProfileVisitorImpl(
-				parentMenu, mapWindow);
+				parentMenu, mapWindow, biomeColorProfileSelection);
 		BiomeColorProfile.visitProfiles(visitor);
 		parentMenu.add(createReloadMenuItem());
 		visitor.selectFirstProfile();

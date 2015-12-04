@@ -13,6 +13,7 @@ import amidst.minecraft.world.World;
 public class WorldSurroundingsBuilder {
 	private final Zoom zoom;
 	private final BiomeSelection biomeSelection = new BiomeSelection();
+	private final BiomeColorProfileSelection biomeColorProfileSelection = new BiomeColorProfileSelection();
 
 	private final Options options;
 	private final LayerBuilder layerBuilder;
@@ -25,6 +26,10 @@ public class WorldSurroundingsBuilder {
 		this.fragmentManager = new FragmentManager(
 				layerBuilder.getConstructors(),
 				layerBuilder.getNumberOfLayers());
+	}
+
+	public BiomeColorProfileSelection getBiomeColorProfileSelection() {
+		return biomeColorProfileSelection;
 	}
 
 	public WorldSurroundings create(World world) {

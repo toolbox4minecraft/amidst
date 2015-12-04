@@ -269,7 +269,8 @@ public class AmidstMenu {
 	}
 
 	private JMenu create_Options_BiomeColor() {
-		return new BiomeColorMenuFactory(mapWindow).getMenu();
+		return new BiomeColorMenuFactory(mapWindow,
+				options.biomeColorProfileSelection).getMenu();
 	}
 
 	private JMenu create_Options_WorldType() {

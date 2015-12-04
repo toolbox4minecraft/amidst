@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amidst.fragment.layer.LayerReloader;
+import amidst.map.BiomeColorProfileSelection;
 import amidst.map.BiomeSelection;
 import amidst.map.MapViewer;
 import amidst.minecraft.Biome;
@@ -29,6 +30,7 @@ public class BiomeWidget extends Widget {
 
 	private final BiomeSelection biomeSelection;
 	private final LayerReloader layerReloader;
+	private final BiomeColorProfileSelection biomeColorProfileSelection;
 
 	private List<Biome> biomes = new ArrayList<Biome>();
 	private int maxNameWidth = 0;
@@ -47,10 +49,12 @@ public class BiomeWidget extends Widget {
 	private int scrollbarYOnGrab;
 
 	public BiomeWidget(MapViewer mapViewer, CornerAnchorPoint anchor,
-			BiomeSelection biomeSelection, LayerReloader layerReloader) {
+			BiomeSelection biomeSelection, LayerReloader layerReloader,
+			BiomeColorProfileSelection biomeColorProfileSelection) {
 		super(mapViewer, anchor);
 		this.biomeSelection = biomeSelection;
 		this.layerReloader = layerReloader;
+		this.biomeColorProfileSelection = biomeColorProfileSelection;
 		setWidth(250);
 		setHeight(400);
 		setY(100);
@@ -175,7 +179,7 @@ public class BiomeWidget extends Widget {
 	}
 
 	private void drawBiomeColor(Graphics2D g2d, int i, Biome biome) {
-		g2d.setColor(new Color(biome.getColor()));
+		g2d.setColor(biomeColorProfileSelection.getColorByBiome(biome));
 		g2d.fillRect(innerBox.x, innerBox.y + i * 16 + biomeListYOffset, 20, 16);
 	}
 

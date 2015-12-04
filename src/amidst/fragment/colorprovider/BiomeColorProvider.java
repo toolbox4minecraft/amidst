@@ -1,15 +1,18 @@
 package amidst.fragment.colorprovider;
 
+import amidst.map.BiomeColorProfileSelection;
 import amidst.map.BiomeSelection;
 import amidst.map.Fragment;
-import amidst.minecraft.Biome;
 import amidst.utilities.ColorUtils;
 
 public class BiomeColorProvider implements ColorProvider {
 	private final BiomeSelection biomeSelection;
+	private final BiomeColorProfileSelection biomeColorProfileSelection;
 
-	public BiomeColorProvider(BiomeSelection biomeSelection) {
+	public BiomeColorProvider(BiomeSelection biomeSelection,
+			BiomeColorProfileSelection biomeColorProfileSelection) {
 		this.biomeSelection = biomeSelection;
+		this.biomeColorProfileSelection = biomeColorProfileSelection;
 	}
 
 	@Override
@@ -27,6 +30,6 @@ public class BiomeColorProvider implements ColorProvider {
 	}
 
 	private int doGetColor(int biome) {
-		return Biome.getByIndex(biome).getColor();
+		return biomeColorProfileSelection.getColorIntByBiomeIndex(biome);
 	}
 }

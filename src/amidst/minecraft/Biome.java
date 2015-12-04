@@ -154,27 +154,27 @@ public class Biome {
 
 	private final String name;
 	private final int index;
-	private int color;
+	private final int defaultColor;
 	private final BiomeType type;
 
-	public Biome(String name, int index, int color) {
-		this(name, index, color, biomes[index - 128].type.getRare());
+	public Biome(String name, int index, int defaultColor) {
+		this(name, index, defaultColor, biomes[index - 128].type.getRare());
 	}
 
-	public Biome(String name, int index, int color, BiomeType type) {
+	public Biome(String name, int index, int defaultColor, BiomeType type) {
 		this.name = name;
 		this.index = index;
-		this.color = lightenColorIfNecessary(index, color);
+		this.defaultColor = lightenColorIfNecessary(index, defaultColor);
 		this.type = type;
 		biomes[index] = this;
 		biomeMap.put(name, this);
 	}
 
 	@Deprecated
-	public Biome(String name, int index, int color, boolean remote) {
+	public Biome(String name, int index, int defaultColor, boolean remote) {
 		this.name = name;
 		this.index = index;
-		this.color = color;
+		this.defaultColor = defaultColor;
 		this.type = BiomeType.typeC;
 		biomes[index] = this;
 		biomeMap.put(name, this);
@@ -196,12 +196,8 @@ public class Biome {
 		return index;
 	}
 
-	public int getColor() {
-		return color;
-	}
-
-	public void setColor(int color) {
-		this.color = color;
+	public int getDefaultColor() {
+		return defaultColor;
 	}
 
 	public BiomeType getType() {
