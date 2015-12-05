@@ -27,7 +27,7 @@ public class Application {
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final ThreadMaster threadMaster;
-	private final LongRunningIOExecutor longRunningIOExecutor;
+	private final WorkerExecutor workerExecutor;
 	private final SkinLoader skinLoader;
 	private final UpdatePrompt updateManager;
 
@@ -43,7 +43,7 @@ public class Application {
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
 		this.seedHistoryLogger = createSeedHistoryLogger();
 		this.threadMaster = createThreadMaster();
-		this.longRunningIOExecutor = createLongRunningIOExecutor();
+		this.workerExecutor = createWorkerExecutor();
 		this.skinLoader = createSkinLoader();
 		this.updateManager = createUpdateManager();
 	}
@@ -73,12 +73,12 @@ public class Application {
 		return new ThreadMaster(this);
 	}
 
-	private LongRunningIOExecutor createLongRunningIOExecutor() {
-		return new LongRunningIOExecutor(threadMaster);
+	private WorkerExecutor createWorkerExecutor() {
+		return new WorkerExecutor(threadMaster);
 	}
 
 	private SkinLoader createSkinLoader() {
-		return new SkinLoader(this, longRunningIOExecutor);
+		return new SkinLoader(this, workerExecutor);
 	}
 
 	private UpdatePrompt createUpdateManager() {
@@ -86,8 +86,8 @@ public class Application {
 	}
 
 	public void displayVersionSelectWindow() {
-		setVersionSelectWindow(new VersionSelectWindow(this,
-				longRunningIOExecutor, options.lastProfile));
+		setVersionSelectWindow(new VersionSelectWindow(this, workerExecutor,
+				options.lastProfile));
 		setMainWindow(null);
 	}
 
@@ -103,19 +103,18 @@ public class Application {
 
 	private void createLocalMinecraftInterfaceAndDisplayMainWindowLater(
 			final String gameDirectory, final File jarFile) {
-		longRunningIOExecutor
-				.invokeLater(new LongRunningIOOperation<IMinecraftInterface>() {
-					@Override
-					public IMinecraftInterface execute() {
-						return createLocalMinecraftInterfaceAndDisplayMainWindow(
-								gameDirectory, jarFile);
-					}
+		workerExecutor.invokeLater(new Worker<IMinecraftInterface>() {
+			@Override
+			public IMinecraftInterface execute() {
+				return createLocalMinecraftInterfaceAndDisplayMainWindow(
+						gameDirectory, jarFile);
+			}
 
-					@Override
-					public void finished(IMinecraftInterface minecraftInterface) {
-						doDisplayMainWindow(minecraftInterface);
-					}
-				});
+			@Override
+			public void finished(IMinecraftInterface minecraftInterface) {
+				doDisplayMainWindow(minecraftInterface);
+			}
+		});
 	}
 
 	private IMinecraftInterface createLocalMinecraftInterfaceAndDisplayMainWindow(

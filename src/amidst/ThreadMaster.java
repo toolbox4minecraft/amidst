@@ -6,18 +6,20 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.SwingUtilities;
+
 public class ThreadMaster {
 	private Application application;
 
-	private ScheduledExecutorService repainter;
-	private ScheduledExecutorService fragmentLoader;
-	private ExecutorService longRunningIOLoader;
+	private ScheduledExecutorService repaintExecutor;
+	private ScheduledExecutorService fragmentLoaderExecutor;
+	private ExecutorService workerExecutor;
 
 	public ThreadMaster(Application application) {
 		this.application = application;
-		initRepainter();
-		initFragmentLoader();
-		initLongRunningIOLoader();
+		initRepaintExecutor();
+		initFragmentLoaderExecutor();
+		initWorkerExecutor();
 		dummyGUIThread();
 		startRepainter();
 		startFragmentLoader();
@@ -26,8 +28,8 @@ public class ThreadMaster {
 	/**
 	 * The repainter is responsible to constantly repaint the gui.
 	 */
-	private void initRepainter() {
-		repainter = Executors
+	private void initRepaintExecutor() {
+		repaintExecutor = Executors
 				.newSingleThreadScheduledExecutor(new ThreadFactory() {
 					@Override
 					public Thread newThread(Runnable r) {
@@ -43,8 +45,8 @@ public class ThreadMaster {
 	 * of biome data, the rendering of image layers and the creation of world
 	 * icons. Note that this thread is not allowed to alter the fragment graph.
 	 */
-	private void initFragmentLoader() {
-		fragmentLoader = Executors
+	private void initFragmentLoaderExecutor() {
+		fragmentLoaderExecutor = Executors
 				.newSingleThreadScheduledExecutor(new ThreadFactory() {
 					@Override
 					public Thread newThread(Runnable r) {
@@ -57,22 +59,21 @@ public class ThreadMaster {
 	}
 
 	/**
-	 * The long-running IO loader does not run constantly and is not a single
-	 * thread. New threads will be spawned as needed. This is not an issue,
-	 * since it is only used for IO operations that wait for IO most of the
-	 * time. For example, it is used for the skin loading.
+	 * The worker executor does not run constantly and is not a single thread.
+	 * New threads will be spawned as needed. This is not an issue, since it is
+	 * only used for operations that wait for IO most of the time. For example,
+	 * it is used for the skin loading.
 	 */
-	private void initLongRunningIOLoader() {
-		longRunningIOLoader = Executors
-				.newCachedThreadPool(new ThreadFactory() {
-					@Override
-					public Thread newThread(Runnable r) {
-						Thread thread = new Thread(r);
-						thread.setDaemon(true);
-						thread.setPriority(Thread.MIN_PRIORITY);
-						return thread;
-					}
-				});
+	private void initWorkerExecutor() {
+		workerExecutor = Executors.newCachedThreadPool(new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread thread = new Thread(r);
+				thread.setDaemon(true);
+				thread.setPriority(Thread.MIN_PRIORITY);
+				return thread;
+			}
+		});
 	}
 
 	/**
@@ -87,7 +88,7 @@ public class ThreadMaster {
 	}
 
 	private void startRepainter() {
-		repainter.scheduleAtFixedRate(new Runnable() {
+		repaintExecutor.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
 				application.tickRepainter();
@@ -96,7 +97,7 @@ public class ThreadMaster {
 	}
 
 	private void startFragmentLoader() {
-		fragmentLoader.scheduleWithFixedDelay(new Runnable() {
+		fragmentLoaderExecutor.scheduleWithFixedDelay(new Runnable() {
 			@Override
 			public void run() {
 				application.tickFragmentLoader();
@@ -104,7 +105,25 @@ public class ThreadMaster {
 		}, 0, 20, TimeUnit.MILLISECONDS);
 	}
 
-	public void invokeLongRunningIOOperation(Runnable runnable) {
-		longRunningIOLoader.execute(runnable);
+	public void executeWorker(Runnable runnable) {
+		workerExecutor.execute(runnable);
+	}
+
+	public <T> void executeWorker(final Worker<T> worker) {
+		workerExecutor.execute(new Runnable() {
+			@Override
+			public void run() {
+				callFinishedLater(worker, worker.execute());
+			}
+		});
+	}
+
+	private <T> void callFinishedLater(final Worker<T> worker, final T result) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				worker.finished(result);
+			}
+		});
 	}
 }

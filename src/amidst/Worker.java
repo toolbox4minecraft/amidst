@@ -1,6 +1,6 @@
 package amidst;
 
-public interface LongRunningIOOperation<T> {
+public interface Worker<T> {
 	T execute();
 
 	void finished(T result);

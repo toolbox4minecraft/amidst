@@ -11,19 +11,18 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import amidst.Application;
-import amidst.LongRunningIOExecutor;
-import amidst.LongRunningIOOperation;
+import amidst.Worker;
+import amidst.WorkerExecutor;
 import amidst.logging.Log;
 import amidst.minecraft.world.Player;
 
 public class SkinLoader {
 	private final Application application;
-	private final LongRunningIOExecutor longRunningIOExecutor;
+	private final WorkerExecutor workerExecutor;
 
-	public SkinLoader(Application application,
-			LongRunningIOExecutor longRunningIOExecutor) {
+	public SkinLoader(Application application, WorkerExecutor workerExecutor) {
 		this.application = application;
-		this.longRunningIOExecutor = longRunningIOExecutor;
+		this.workerExecutor = workerExecutor;
 	}
 
 	public void loadSkins(List<Player> players) {
@@ -33,18 +32,17 @@ public class SkinLoader {
 	}
 
 	private void loadSkinLater(final Player player) {
-		longRunningIOExecutor
-				.invokeLater(new LongRunningIOOperation<BufferedImage>() {
-					@Override
-					public BufferedImage execute() {
-						return loadSkin(player);
-					}
+		workerExecutor.invokeLater(new Worker<BufferedImage>() {
+			@Override
+			public BufferedImage execute() {
+				return loadSkin(player);
+			}
 
-					@Override
-					public void finished(BufferedImage image) {
-						finishedLoadingPlayerSkin(player, image);
-					}
-				});
+			@Override
+			public void finished(BufferedImage image) {
+				finishedLoadingPlayerSkin(player, image);
+			}
+		});
 	}
 
 	private void finishedLoadingPlayerSkin(Player player, BufferedImage image) {

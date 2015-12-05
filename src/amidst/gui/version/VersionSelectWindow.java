@@ -12,8 +12,8 @@ import javax.swing.SwingConstants;
 import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
 import amidst.Application;
-import amidst.LongRunningIOExecutor;
-import amidst.LongRunningIOOperation;
+import amidst.Worker;
+import amidst.WorkerExecutor;
 import amidst.logging.Log;
 import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.preferences.StringPreference;
@@ -23,7 +23,7 @@ import amidst.version.VersionFactory;
 
 public class VersionSelectWindow {
 	private final Application application;
-	private final LongRunningIOExecutor longRunningIOExecutor;
+	private final WorkerExecutor workerExecutor;
 	private final StringPreference lastProfilePreference;
 
 	private final VersionFactory versionFactory = new VersionFactory();
@@ -32,10 +32,10 @@ public class VersionSelectWindow {
 	private final VersionSelectPanel versionSelectPanel;
 
 	public VersionSelectWindow(Application application,
-			LongRunningIOExecutor longRunningIOExecutor,
+			WorkerExecutor workerExecutor,
 			StringPreference lastProfilePreference) {
 		this.application = application;
-		this.longRunningIOExecutor = longRunningIOExecutor;
+		this.workerExecutor = workerExecutor;
 		this.lastProfilePreference = lastProfilePreference;
 		this.versionSelectPanel = new VersionSelectPanel(lastProfilePreference,
 				"Scanning...");
@@ -50,7 +50,7 @@ public class VersionSelectWindow {
 	}
 
 	private void loadLatestVersionListLater() {
-		longRunningIOExecutor.invokeLater(new Runnable() {
+		workerExecutor.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				loadLatestVersionListImmediately();
@@ -89,18 +89,17 @@ public class VersionSelectWindow {
 	}
 
 	private void scanAndLoadVersionsLater() {
-		longRunningIOExecutor
-				.invokeLater(new LongRunningIOOperation<MinecraftProfile[]>() {
-					@Override
-					public MinecraftProfile[] execute() {
-						return scanAndLoadVersions();
-					}
+		workerExecutor.invokeLater(new Worker<MinecraftProfile[]>() {
+			@Override
+			public MinecraftProfile[] execute() {
+				return scanAndLoadVersions();
+			}
 
-					@Override
-					public void finished(MinecraftProfile[] profiles) {
-						loadVersions(profiles);
-					}
-				});
+			@Override
+			public void finished(MinecraftProfile[] profiles) {
+				loadVersions(profiles);
+			}
+		});
 	}
 
 	private MinecraftProfile[] scanAndLoadVersions() {
