@@ -9,28 +9,29 @@ import amidst.minecraft.LocalMinecraftInstallation;
 public class JarLibrary {
 	public String name;
 	public ArrayList<JarRule> rules;
-	
+
 	private File file;
-	
+
 	public JarLibrary() {
 		rules = new ArrayList<JarRule>();
 	}
-	
+
 	public boolean isActive() {
 		if (rules.size() == 0)
 			return true;
-		
+
 		boolean isAllowed = false;
 		for (JarRule rule : rules)
 			if (rule.isApplicable())
 				isAllowed = rule.isAllowed();
-		
+
 		return isAllowed;
 	}
-	
+
 	public File getFile() {
 		if (file == null) {
-			String searchPath = LocalMinecraftInstallation.getMinecraftLibraries().getAbsolutePath() + "/";
+			String searchPath = LocalMinecraftInstallation
+					.getMinecraftLibraries().getAbsolutePath() + "/";
 			String[] pathSplit = name.split(":");
 			pathSplit[0] = pathSplit[0].replace('.', '/');
 			for (int i = 0; i < pathSplit.length; i++)
@@ -40,19 +41,20 @@ public class JarLibrary {
 				Log.w("Failed attempt to load library at: " + searchPathFile);
 				return null;
 			}
-			
+
 			File[] libraryFiles = searchPathFile.listFiles();
 			for (int i = 0; i < libraryFiles.length; i++) {
 				String extension = "";
 				String fileName = libraryFiles[i].getName();
 				int q = fileName.lastIndexOf('.');
 				if (q > 0)
-					extension = fileName.substring(q+1);
+					extension = fileName.substring(q + 1);
 				if (extension.equals("jar"))
 					file = libraryFiles[i];
 			}
 			if (file == null)
-				Log.w("Attempted to search for file at path: " + searchPath + " but found nothing. Skipping.");
+				Log.w("Attempted to search for file at path: " + searchPath
+						+ " but found nothing. Skipping.");
 		}
 		return file;
 	}
