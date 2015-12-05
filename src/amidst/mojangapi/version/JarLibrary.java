@@ -1,4 +1,4 @@
-package amidst.mojangapi.versiondeclaration;
+package amidst.mojangapi.version;
 
 import java.util.List;
 
