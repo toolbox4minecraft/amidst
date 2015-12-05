@@ -2,9 +2,9 @@ package amidst.gui.widget;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
-import amidst.gui.worldsurroundings.MapViewer;
 import amidst.gui.worldsurroundings.WorldIconSelection;
 import amidst.minecraft.world.icon.WorldIcon;
 
@@ -14,9 +14,9 @@ public class SelectedIconWidget extends Widget {
 	private String message = "";
 	private BufferedImage icon;
 
-	public SelectedIconWidget(MapViewer mapViewer, CornerAnchorPoint anchor,
+	public SelectedIconWidget(CornerAnchorPoint anchor,
 			WorldIconSelection worldIconSelection) {
-		super(mapViewer, anchor);
+		super(anchor);
 		this.worldIconSelection = worldIconSelection;
 		increaseYMargin(40);
 		setWidth(20);
@@ -25,7 +25,8 @@ public class SelectedIconWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
+	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics,
+			int viewerWidth, int viewerHeight, Point mousePosition) {
 		if (worldIconSelection.hasSelection()) {
 			WorldIcon selection = worldIconSelection.get();
 			message = selection.toString();
@@ -33,7 +34,7 @@ public class SelectedIconWidget extends Widget {
 		}
 
 		setWidth(45 + fontMetrics.stringWidth(message));
-		drawBorderAndBackground(g2d, time);
+		drawBorderAndBackground(g2d, time, viewerWidth, viewerHeight);
 		double imgWidth = icon.getWidth();
 		double imgHeight = icon.getHeight();
 		double ratio = imgWidth / imgHeight;

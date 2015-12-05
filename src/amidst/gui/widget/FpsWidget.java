@@ -2,8 +2,8 @@ package amidst.gui.widget;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 
-import amidst.gui.worldsurroundings.MapViewer;
 import amidst.preferences.PrefModel;
 import amidst.utilities.FramerateTimer;
 
@@ -11,9 +11,9 @@ public class FpsWidget extends Widget {
 	private final FramerateTimer fpsTimer;
 	private final PrefModel<Boolean> isVisiblePreference;
 
-	public FpsWidget(MapViewer mapViewer, CornerAnchorPoint anchor,
-			FramerateTimer fpsTimer, PrefModel<Boolean> isVisiblePreference) {
-		super(mapViewer, anchor);
+	public FpsWidget(CornerAnchorPoint anchor, FramerateTimer fpsTimer,
+			PrefModel<Boolean> isVisiblePreference) {
+		super(anchor);
 		this.fpsTimer = fpsTimer;
 		this.isVisiblePreference = isVisiblePreference;
 		setWidth(20);
@@ -22,11 +22,12 @@ public class FpsWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
+	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics,
+			int viewerWidth, int viewerHeight, Point mousePosition) {
 		String framerate = fpsTimer.toString();
 		fpsTimer.tick();
 		setWidth(fontMetrics.stringWidth(framerate) + 20);
-		drawBorderAndBackground(g2d, time);
+		drawBorderAndBackground(g2d, time, viewerWidth, viewerHeight);
 		drawFramerate(g2d, framerate);
 	}
 

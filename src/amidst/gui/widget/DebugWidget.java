@@ -2,12 +2,12 @@ package amidst.gui.widget;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
-import amidst.gui.worldsurroundings.MapViewer;
 import amidst.preferences.PrefModel;
 
 public class DebugWidget extends Widget {
@@ -15,10 +15,10 @@ public class DebugWidget extends Widget {
 	private final FragmentManager fragmentManager;
 	private final PrefModel<Boolean> isVisiblePreference;
 
-	public DebugWidget(MapViewer mapViewer, CornerAnchorPoint anchor,
-			FragmentGraph graph, FragmentManager fragmentManager,
+	public DebugWidget(CornerAnchorPoint anchor, FragmentGraph graph,
+			FragmentManager fragmentManager,
 			PrefModel<Boolean> isVisiblePreference) {
-		super(mapViewer, anchor);
+		super(anchor);
 		this.graph = graph;
 		this.fragmentManager = fragmentManager;
 		this.isVisiblePreference = isVisiblePreference;
@@ -26,13 +26,14 @@ public class DebugWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
+	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics,
+			int viewerWidth, int viewerHeight, Point mousePosition) {
 		List<String> panelLines = getPanelLines();
 		int width = getPanelWidth(panelLines, fontMetrics);
 		int height = getPanelHeight(panelLines);
 		setWidth(width);
 		setHeight(height);
-		drawBorderAndBackground(g2d, time);
+		drawBorderAndBackground(g2d, time, viewerWidth, viewerHeight);
 		drawPanelLines(g2d, panelLines);
 	}
 

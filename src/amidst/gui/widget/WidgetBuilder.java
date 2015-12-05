@@ -10,7 +10,6 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.gui.widget.Widget.CornerAnchorPoint;
 import amidst.gui.worldsurroundings.BiomeSelection;
 import amidst.gui.worldsurroundings.Map;
-import amidst.gui.worldsurroundings.MapViewer;
 import amidst.gui.worldsurroundings.WorldIconSelection;
 import amidst.gui.worldsurroundings.Zoom;
 import amidst.minecraft.world.World;
@@ -42,17 +41,17 @@ public class WidgetBuilder {
 		this.options = options;
 	}
 
-	public List<Widget> create(MapViewer mapViewer) {
+	public List<Widget> create() {
 		// @formatter:off
 		return Arrays.asList(
-				new FpsWidget(              mapViewer, CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              options.showFPS),
-				new ScaleWidget(            mapViewer, CornerAnchorPoint.BOTTOM_CENTER, zoom,                               options.showScale),
-				new SeedWidget(             mapViewer, CornerAnchorPoint.TOP_LEFT,      world),
-				new DebugWidget(            mapViewer, CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, options.showDebug),
-				new SelectedIconWidget(     mapViewer, CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
-				new CursorInformationWidget(mapViewer, CornerAnchorPoint.TOP_RIGHT,     graph,             map),
-				new BiomeToggleWidget(      mapViewer, CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection,    layerReloader),
-				new BiomeWidget(            mapViewer, CornerAnchorPoint.NONE,          biomeSelection,    layerReloader,   options.biomeColorProfileSelection)
+				new FpsWidget(              CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              options.showFPS),
+				new ScaleWidget(            CornerAnchorPoint.BOTTOM_CENTER, zoom,                               options.showScale),
+				new SeedWidget(             CornerAnchorPoint.TOP_LEFT,      world),
+				new DebugWidget(            CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, options.showDebug),
+				new SelectedIconWidget(     CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
+				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             map),
+				new BiomeToggleWidget(      CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection,    layerReloader),
+				new BiomeWidget(            CornerAnchorPoint.NONE,          biomeSelection,    layerReloader,   options.biomeColorProfileSelection)
 		);
 		// @formatter:on
 	}

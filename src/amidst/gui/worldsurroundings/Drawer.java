@@ -211,7 +211,8 @@ public class Drawer {
 		for (Widget widget : widgets) {
 			if (widget.isVisible()) {
 				setAlphaComposite(widget.getAlpha());
-				widget.draw(g2d, time, widgetFontMetrics);
+				widget.draw(g2d, time, widgetFontMetrics, width, height,
+						mousePosition);
 			}
 		}
 	}

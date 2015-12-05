@@ -48,7 +48,7 @@ public class WorldSurroundingsBuilder {
 				biomeSelection, worldIconSelection, layerReloader, graph, zoom,
 				fragmentManager, options);
 		MapViewer mapViewer = new MapViewer(movement, zoom, world, map, drawer,
-				worldIconSelection, layerReloader, widgetBuilder);
+				worldIconSelection, layerReloader, widgetBuilder.create());
 		return new WorldSurroundings(map, mapViewer, layerReloader, graph,
 				zoom, fragmentManager);
 	}

@@ -3,8 +3,8 @@ package amidst.gui.widget;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 
-import amidst.gui.worldsurroundings.MapViewer;
 import amidst.gui.worldsurroundings.Zoom;
 import amidst.preferences.PrefModel;
 
@@ -17,9 +17,9 @@ public class ScaleWidget extends Widget {
 	private final Zoom zoom;
 	private final PrefModel<Boolean> isVisiblePreference;
 
-	public ScaleWidget(MapViewer mapViewer, CornerAnchorPoint anchor,
-			Zoom zoom, PrefModel<Boolean> isVisiblePreference) {
-		super(mapViewer, anchor);
+	public ScaleWidget(CornerAnchorPoint anchor, Zoom zoom,
+			PrefModel<Boolean> isVisiblePreference) {
+		super(anchor);
 		this.zoom = zoom;
 		this.isVisiblePreference = isVisiblePreference;
 		setWidth(100);
@@ -28,7 +28,8 @@ public class ScaleWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
+	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics,
+			int viewerWidth, int viewerHeight, Point mousePosition) {
 		int scaleBlocks = scaleLength_blocks();
 		int scaleWidth_px = (int) (scaleBlocks * zoom.getCurrentValue());
 
@@ -36,7 +37,7 @@ public class ScaleWidget extends Widget {
 
 		int stringWidth = fontMetrics.stringWidth(message);
 		setWidth(Math.max(scaleWidth_px, stringWidth) + (cMargin * 2));
-		drawBorderAndBackground(g2d, time);
+		drawBorderAndBackground(g2d, time, viewerWidth, viewerHeight);
 		g2d.drawString(message, getX() + 1 + ((getWidth() - stringWidth) >> 1),
 				getY() + 18);
 

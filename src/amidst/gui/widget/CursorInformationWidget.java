@@ -7,7 +7,6 @@ import java.awt.Point;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.gui.worldsurroundings.Map;
-import amidst.gui.worldsurroundings.MapViewer;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
@@ -18,11 +17,12 @@ public class CursorInformationWidget extends Widget {
 	private final FragmentGraph graph;
 	private final Map map;
 
+	private Point mousePosition;
 	private String text = "";
 
-	public CursorInformationWidget(MapViewer mapViewer,
-			CornerAnchorPoint anchor, FragmentGraph graph, Map map) {
-		super(mapViewer, anchor);
+	public CursorInformationWidget(CornerAnchorPoint anchor,
+			FragmentGraph graph, Map map) {
+		super(anchor);
 		this.graph = graph;
 		this.map = map;
 		setWidth(20);
@@ -31,20 +31,21 @@ public class CursorInformationWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
+	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics,
+			int viewerWidth, int viewerHeight, Point mousePosition) {
+		this.mousePosition = mousePosition;
 		String newText = getText();
 		if (newText != null) {
 			text = newText;
 		}
 		setWidth(g2d.getFontMetrics().stringWidth(text) + 20);
-		drawBorderAndBackground(g2d, time);
+		drawBorderAndBackground(g2d, time, viewerWidth, viewerHeight);
 		g2d.drawString(text, getX() + 10, getY() + 20);
 	}
 
 	private String getText() {
-		Point mouse = mapViewer.getMousePosition();
-		if (mouse != null) {
-			CoordinatesInWorld coordinates = map.screenToWorld(mouse);
+		if (mousePosition != null) {
+			CoordinatesInWorld coordinates = map.screenToWorld(mousePosition);
 			String biomeName = getBiomeNameAt(coordinates);
 			return biomeName + " " + coordinates.toString();
 		} else {
@@ -66,6 +67,6 @@ public class CursorInformationWidget extends Widget {
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		return mapViewer.getMousePosition() != null;
+		return mousePosition != null;
 	}
 }

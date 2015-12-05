@@ -22,7 +22,6 @@ import javax.swing.JPopupMenu;
 
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.widget.Widget;
-import amidst.gui.widget.WidgetBuilder;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.Player;
 import amidst.minecraft.world.World;
@@ -208,7 +207,7 @@ public class MapViewer {
 
 	public MapViewer(Movement movement, Zoom zoom, World world, Map map,
 			Drawer drawer, WorldIconSelection worldIconSelection,
-			LayerReloader layerReloader, WidgetBuilder widgetBuilder) {
+			LayerReloader layerReloader, List<Widget> widgets) {
 		this.movement = movement;
 		this.zoom = zoom;
 		this.world = world;
@@ -216,7 +215,7 @@ public class MapViewer {
 		this.drawer = drawer;
 		this.worldIconSelection = worldIconSelection;
 		this.layerReloader = layerReloader;
-		this.widgets = widgetBuilder.create(this);
+		this.widgets = widgets;
 		initComponent();
 		initPanel();
 	}

@@ -10,7 +10,6 @@ import java.util.List;
 
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.worldsurroundings.BiomeSelection;
-import amidst.gui.worldsurroundings.MapViewer;
 import amidst.minecraft.Biome;
 import amidst.preferences.BiomeColorProfileSelection;
 import amidst.utilities.CoordinateUtils;
@@ -48,10 +47,10 @@ public class BiomeWidget extends Widget {
 	private int mouseYOnGrab = 0;
 	private int scrollbarYOnGrab;
 
-	public BiomeWidget(MapViewer mapViewer, CornerAnchorPoint anchor,
-			BiomeSelection biomeSelection, LayerReloader layerReloader,
+	public BiomeWidget(CornerAnchorPoint anchor, BiomeSelection biomeSelection,
+			LayerReloader layerReloader,
 			BiomeColorProfileSelection biomeColorProfileSelection) {
-		super(mapViewer, anchor);
+		super(anchor);
 		this.biomeSelection = biomeSelection;
 		this.layerReloader = layerReloader;
 		this.biomeColorProfileSelection = biomeColorProfileSelection;
@@ -74,15 +73,16 @@ public class BiomeWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics) {
+	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics,
+			int viewerWidth, int viewerHeight, Point mousePosition) {
 		initializeIfNecessary(fontMetrics);
-		updateX();
-		updateHeight();
+		updateX(viewerWidth);
+		updateHeight(viewerHeight);
 		updateInnerBoxPositionAndSize();
 		updateBiomeListYOffset();
 		updateScrollbarVisibility();
 		updateInnerBoxWidth();
-		drawBorderAndBackground(g2d, time);
+		drawBorderAndBackground(g2d, time, viewerWidth, viewerHeight);
 		drawTextHighlightBiomes(g2d);
 		drawInnerBoxBackground(g2d);
 		drawInnerBoxBorder(g2d);
@@ -95,7 +95,7 @@ public class BiomeWidget extends Widget {
 		}
 		clearClip(g2d);
 		if (scrollbarVisible) {
-			updateScrollbarParameter();
+			updateScrollbarParameter(mousePosition);
 			drawScrollbar(g2d);
 		}
 
@@ -103,12 +103,12 @@ public class BiomeWidget extends Widget {
 		drawSpecialButtons(g2d);
 	}
 
-	private void updateX() {
-		setX(mapViewer.getWidth() - getWidth());
+	private void updateX(int viewerWidth) {
+		setX(viewerWidth - getWidth());
 	}
 
-	private void updateHeight() {
-		setHeight(Math.max(200, mapViewer.getHeight() - 200));
+	private void updateHeight(int viewerHeight) {
+		setHeight(Math.max(200, viewerHeight - 200));
 	}
 
 	private void updateInnerBoxPositionAndSize() {
@@ -193,13 +193,12 @@ public class BiomeWidget extends Widget {
 		g2d.setClip(null);
 	}
 
-	private void updateScrollbarParameter() {
+	private void updateScrollbarParameter(Point mousePosition) {
 		float boxHeight = innerBox.height;
 		float listHeight = biomeListHeight;
 		if (scrollbarGrabbed) {
-			Point mouse = mapViewer.getMousePosition();
-			if (mouse != null) {
-				biomeListYOffset = (int) ((listHeight / boxHeight) * (-scrollbarYOnGrab - (mouse.y - mouseYOnGrab)));
+			if (mousePosition != null) {
+				biomeListYOffset = (int) ((listHeight / boxHeight) * (-scrollbarYOnGrab - (mousePosition.y - mouseYOnGrab)));
 				updateBiomeListYOffset();
 			} else {
 				scrollbarGrabbed = false;

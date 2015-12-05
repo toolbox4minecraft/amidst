@@ -9,7 +9,6 @@ import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 
-import amidst.gui.worldsurroundings.MapViewer;
 import amidst.resources.ResourceLoader;
 import amidst.utilities.CoordinateUtils;
 
@@ -44,7 +43,6 @@ public abstract class Widget {
 	protected static final Stroke LINE_STROKE_2 = new BasicStroke(2,
 			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
 
-	protected final MapViewer mapViewer;
 	private final CornerAnchorPoint anchor;
 
 	private int x;
@@ -58,14 +56,14 @@ public abstract class Widget {
 	private float alpha = 1.0f;
 	private float targetAlpha = 1.0f;
 
-	protected Widget(MapViewer mapViewer, CornerAnchorPoint anchor) {
-		this.mapViewer = mapViewer;
+	protected Widget(CornerAnchorPoint anchor) {
 		this.anchor = anchor;
 	}
 
-	public void drawBorderAndBackground(Graphics2D g2d, float time) {
+	public void drawBorderAndBackground(Graphics2D g2d, float time,
+			int viewerWidth, int viewerHeight) {
 		updateAlpha(time);
-		updatePosition();
+		updatePosition(viewerWidth, viewerHeight);
 		initGraphics(g2d);
 		drawBorder(g2d);
 		drawBackground(g2d);
@@ -80,25 +78,25 @@ public abstract class Widget {
 		}
 	}
 
-	private void updatePosition() {
+	private void updatePosition(int viewerWidth, int viewerHeight) {
 		if (anchor == CornerAnchorPoint.TOP_LEFT) {
 			setX(getLeftX());
 			setY(getTopY());
 		} else if (anchor == CornerAnchorPoint.BOTTOM_LEFT) {
 			setX(getLeftX());
-			setY(getBottomY());
+			setY(getBottomY(viewerHeight));
 		} else if (anchor == CornerAnchorPoint.BOTTOM_RIGHT) {
-			setX(getRightX());
-			setY(getBottomY());
+			setX(getRightX(viewerWidth));
+			setY(getBottomY(viewerHeight));
 		} else if (anchor == CornerAnchorPoint.BOTTOM_CENTER) {
-			setX(getCenterX());
-			setY(getBottomY());
+			setX(getCenterX(viewerWidth));
+			setY(getBottomY(viewerHeight));
 		} else if (anchor == CornerAnchorPoint.TOP_RIGHT) {
-			setX(getRightX());
+			setX(getRightX(viewerWidth));
 			setY(getTopY());
 		} else if (anchor == CornerAnchorPoint.CENTER) {
-			setX(getCenterX());
-			setY(getCenterY());
+			setX(getCenterX(viewerWidth));
+			setY(getCenterY(viewerHeight));
 		} else if (anchor == CornerAnchorPoint.NONE) {
 			// TODO: set x and y?
 		}
@@ -112,20 +110,20 @@ public abstract class Widget {
 		return yMargin;
 	}
 
-	private int getRightX() {
-		return mapViewer.getWidth() - (getWidth() + xMargin);
+	private int getRightX(int viewerWidth) {
+		return viewerWidth - (getWidth() + xMargin);
 	}
 
-	private int getBottomY() {
-		return mapViewer.getHeight() - (getHeight() + yMargin);
+	private int getBottomY(int viewerHeight) {
+		return viewerHeight - (getHeight() + yMargin);
 	}
 
-	private int getCenterX() {
-		return (mapViewer.getWidth() >> 1) - (getWidth() >> 1);
+	private int getCenterX(int viewerWidth) {
+		return (viewerWidth >> 1) - (getWidth() >> 1);
 	}
 
-	private int getCenterY() {
-		return (mapViewer.getHeight() >> 1) - (getHeight() >> 1);
+	private int getCenterY(int viewerHeight) {
+		return (viewerHeight >> 1) - (getHeight() >> 1);
 	}
 
 	private void initGraphics(Graphics2D g2d) {
@@ -268,7 +266,8 @@ public abstract class Widget {
 	}
 
 	public abstract void draw(Graphics2D g2d, float time,
-			FontMetrics fontMetrics);
+			FontMetrics fontMetrics, int viewerWidth, int viewerHeight,
+			Point mousePosition);
 
 	protected abstract boolean onVisibilityCheck();
 }
