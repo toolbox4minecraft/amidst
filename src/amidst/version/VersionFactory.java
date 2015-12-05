@@ -23,6 +23,7 @@ public class VersionFactory {
 		
 	}
 	
+	// TODO: call me?
 	public void scanForLocalVersions() {
 		File versionPath = new File(LocalMinecraftInstallation.getMinecraftDirectory() + "/versions");
 		if (!versionPath.exists()) {

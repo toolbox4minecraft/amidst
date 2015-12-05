@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
@@ -38,32 +39,27 @@ public class VersionSelectWindow {
 		this.lastProfilePreference = lastProfilePreference;
 		this.versionSelectPanel = new VersionSelectPanel(lastProfilePreference,
 				"Scanning...");
-
-		this.longRunningIOExecutor.invoke(new Runnable() {
-			@Override
-			public void run() {
-				LatestVersionList.get().load();
-			}
-		});
-
-		if (!isValidMinecraftDirectory()) {
+		loadLatestVersionListLater();
+		if (!LocalMinecraftInstallation.getMinecraftDirectory().isDirectory()) {
 			Log.crash("Unable to find Minecraft directory at: "
 					+ LocalMinecraftInstallation.getMinecraftDirectory());
-			return;
+		} else {
+			initFrame();
+			scanAndLoadVersionsLater();
 		}
+	}
 
-		initFrame();
-
-		this.longRunningIOExecutor.invoke(new Runnable() {
+	private void loadLatestVersionListLater() {
+		longRunningIOExecutor.invoke(new Runnable() {
 			@Override
 			public void run() {
-				loadVersions(versionSelectPanel);
+				loadLatestVersionListImmediately();
 			}
 		});
 	}
 
-	private boolean isValidMinecraftDirectory() {
-		return LocalMinecraftInstallation.getMinecraftDirectory().isDirectory();
+	private void loadLatestVersionListImmediately() {
+		LatestVersionList.get().load();
 	}
 
 	private void initFrame() {
@@ -92,41 +88,51 @@ public class VersionSelectWindow {
 		return result;
 	}
 
-	private void loadVersions(VersionSelectPanel versionSelector) {
+	private void scanAndLoadVersionsLater() {
+		longRunningIOExecutor.invoke(new Runnable() {
+			@Override
+			public void run() {
+				scanAndLoadVersionsImmediately();
+			}
+		});
+	}
+
+	private void scanAndLoadVersionsImmediately() {
 		versionFactory.scanForProfiles();
-		MinecraftProfile[] localVersions = versionFactory.getProfiles();
-		if (localVersions == null) {
-			versionSelector.setEmptyMessage("Empty");
+		loadVersionsLater(versionFactory.getProfiles());
+	}
+
+	private void loadVersionsLater(final MinecraftProfile[] profiles) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				loadVersionsImmediately(profiles);
+			}
+		});
+	}
+
+	private void loadVersionsImmediately(MinecraftProfile[] profiles) {
+		if (profiles == null) {
+			versionSelectPanel.setEmptyMessage("Empty");
 		} else {
-			addVersions(versionSelector, localVersions);
-			restoreSelection(versionSelector);
-			packFrameTwice();
+			addVersions(profiles);
+			restoreSelection();
+			frame.pack();
 		}
 	}
 
-	private void addVersions(VersionSelectPanel versionSelector,
-			MinecraftProfile[] localVersions) {
-		for (MinecraftProfile localVersion : localVersions) {
-			versionSelector.addVersion(new LocalVersionComponent(application,
-					localVersion));
+	private void addVersions(MinecraftProfile[] profiles) {
+		for (MinecraftProfile localVersion : profiles) {
+			versionSelectPanel.addVersion(new LocalVersionComponent(
+					application, localVersion));
 		}
 	}
 
-	private void restoreSelection(VersionSelectPanel versionSelector) {
+	private void restoreSelection() {
 		String selectedProfile = lastProfilePreference.get();
 		if (selectedProfile != null) {
-			versionSelector.select(selectedProfile);
+			versionSelectPanel.select(selectedProfile);
 		}
-	}
-
-	private void packFrameTwice() {
-		// TODO: why do we call this twice?
-		frame.pack();
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException ignored) {
-		}
-		frame.pack();
 	}
 
 	public void dispose() {
