@@ -52,7 +52,7 @@ public class BiomeDataOracle {
 		return true;
 	}
 
-	// TODO: Find out if we should useQuarterResolutionMap or not
+	// TODO: Find out if we should useQuarterResolution or not
 	public Point findValidLocation(int x, int y, int size,
 			List<Biome> validBiomes, Random random) {
 		int left = x - size >> 2;

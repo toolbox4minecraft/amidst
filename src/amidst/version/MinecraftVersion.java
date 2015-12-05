@@ -1,7 +1,7 @@
 package amidst.version;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.Map;
 
 import amidst.logging.Log;
 import amidst.minecraft.LocalMinecraftInstallation;
@@ -37,7 +37,7 @@ public class MinecraftVersion {
 	}
 	public static MinecraftVersion fromLatestRelease() {
 		MinecraftVersion version = null;
-		HashMap<String, String>[] versions = LatestVersionList.get().getVersions();
+		Map<String, String>[] versions = LatestVersionList.get().getVersions();
 		
 		for (int i = 0; i < versions.length; i++) {
 			if (versions[i].get("type").equals("release") && (version = fromVersionId(versions[i].get("id"))) != null)
@@ -48,7 +48,7 @@ public class MinecraftVersion {
 	
 	public static MinecraftVersion fromLatestSnapshot() {
 		MinecraftVersion version = null;
-		HashMap<String, String>[] versions = LatestVersionList.get().getVersions();
+		Map<String, String>[] versions = LatestVersionList.get().getVersions();
 		
 		for (int i = 0; i < versions.length; i++) {
 			if ((version = fromVersionId(versions[i].get("id"))) != null)

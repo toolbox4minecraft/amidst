@@ -25,7 +25,7 @@ public class WorldLoader {
 	private long seed;
 	public WorldType worldType;
 	private String generatorOptions = "";
-	private boolean isMultiPlayerMap;
+	private boolean isMultiPlayer;
 	private List<Player> players = new ArrayList<Player>();
 
 	public WorldLoader(File file) {
@@ -51,7 +51,7 @@ public class WorldLoader {
 		loadGenerator();
 		File playersFolder = getPlayersFolder();
 		File[] playerFiles = getPlayerFiles(playersFolder);
-		loadIsMultiPlayerMap(playersFolder, playerFiles);
+		loadIsMultiPlayer(playersFolder, playerFiles);
 		createPlayerMover();
 		loadPlayers(playerFiles);
 	}
@@ -75,21 +75,21 @@ public class WorldLoader {
 		}
 	}
 
-	private void loadIsMultiPlayerMap(File playersFolder, File[] playerFiles) {
-		isMultiPlayerMap = playersFolder.exists() && playerFiles.length > 0;
+	private void loadIsMultiPlayer(File playersFolder, File[] playerFiles) {
+		isMultiPlayer = playersFolder.exists() && playerFiles.length > 0;
 	}
 
 	private void createPlayerMover() {
-		this.playerMover = new PlayerMover(worldFile, isMultiPlayerMap);
+		this.playerMover = new PlayerMover(worldFile, isMultiPlayer);
 	}
 
 	private void loadPlayers(File[] playerFiles) throws IOException,
 			FileNotFoundException {
-		if (isMultiPlayerMap) {
-			Log.i("Multiplayer map detected.");
+		if (isMultiPlayer) {
+			Log.i("Multiplayer world detected.");
 			loadPlayersMultiPlayer(playerFiles);
 		} else {
-			Log.i("Singleplayer map detected.");
+			Log.i("Singleplayer world detected.");
 			loadPlayerSinglePlayer();
 		}
 	}
@@ -176,8 +176,8 @@ public class WorldLoader {
 
 	public World get() {
 		if (isLoadedSuccessfully()) {
-			return new World(seed, worldType, generatorOptions,
-					isMultiPlayerMap, Collections.unmodifiableList(players));
+			return new World(seed, worldType, generatorOptions, isMultiPlayer,
+					Collections.unmodifiableList(players));
 		} else {
 			return null;
 		}

@@ -21,7 +21,7 @@ public class RemoteVersionComponent extends VersionComponent {
 
 	@Override
 	public void doLoad() {
-		application.displayMapWindow(new RemoteMinecraft(address));
+		application.displayMainWindow(new RemoteMinecraft(address));
 	}
 
 	@Override

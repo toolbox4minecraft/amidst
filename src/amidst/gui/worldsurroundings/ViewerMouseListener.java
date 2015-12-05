@@ -24,20 +24,20 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	private final Movement movement;
 	private final Zoom zoom;
 	private final World world;
-	private final FragmentGraphToScreenTranslator map;
+	private final FragmentGraphToScreenTranslator translator;
 	private final WorldIconSelection worldIconSelection;
 	private final LayerReloader layerReloader;
 	private final FragmentGraph graph;
 
 	public ViewerMouseListener(WidgetManager widgetManager, Movement movement,
-			Zoom zoom, World world, FragmentGraphToScreenTranslator map,
+			Zoom zoom, World world, FragmentGraphToScreenTranslator translator,
 			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
 			FragmentGraph graph) {
 		this.widgetManager = widgetManager;
 		this.movement = movement;
 		this.zoom = zoom;
 		this.world = world;
-		this.map = map;
+		this.translator = translator;
 		this.worldIconSelection = worldIconSelection;
 		this.layerReloader = layerReloader;
 		this.graph = graph;
@@ -123,7 +123,7 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 		result.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				player.moveTo(map.screenToWorld(mousePosition));
+				player.moveTo(translator.screenToWorld(mousePosition));
 				world.reloadPlayerWorldIcons();
 				layerReloader.reloadPlayerLayer();
 			}
@@ -136,8 +136,10 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	}
 
 	private void doMouseClicked(Point mousePosition) {
-		worldIconSelection.select(graph.getClosestWorldIcon(
-				map.screenToWorld(mousePosition), zoom.screenToWorld(50)));
+		worldIconSelection
+				.select(graph.getClosestWorldIcon(
+						translator.screenToWorld(mousePosition),
+						zoom.screenToWorld(50)));
 	}
 
 	private void doMousePressed(Point mousePosition) {

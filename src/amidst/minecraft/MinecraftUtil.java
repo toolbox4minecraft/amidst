@@ -10,9 +10,9 @@ public class MinecraftUtil {
 	 * synchronized keyword!
 	 */
 	public synchronized static int[] getBiomeData(int x, int y, int width,
-			int height, boolean useQuarterResolutionMap) {
+			int height, boolean useQuarterResolution) {
 		return minecraftInterface.getBiomeData(x, y, width, height,
-				useQuarterResolutionMap);
+				useQuarterResolution);
 	}
 
 	public static void createWorld(long seed, String type,

@@ -24,23 +24,23 @@ import amidst.resources.ResourceLoader;
 
 public class AmidstMenu {
 	private final Options options;
-	private final MainWindow mapWindow;
+	private final MainWindow mainWindow;
 	private final MenuActions actions;
 	private final JMenuBar menuBar;
-	private JMenu mapMenu;
+	private JMenu worldMenu;
 
 	public AmidstMenu(Application application, Options options,
-			MainWindow mapWindow) {
+			MainWindow mainWindow) {
 		this.options = options;
-		this.mapWindow = mapWindow;
-		this.actions = new MenuActions(application, mapWindow);
+		this.mainWindow = mainWindow;
+		this.actions = new MenuActions(application, mainWindow);
 		this.menuBar = createMenuBar();
 	}
 
 	private JMenuBar createMenuBar() {
 		JMenuBar result = new JMenuBar();
 		result.add(create_File());
-		mapMenu = result.add(create_Map());
+		worldMenu = result.add(create_World());
 		result.add(create_Options());
 		result.add(create_Help());
 		return result;
@@ -138,25 +138,25 @@ public class AmidstMenu {
 		return result;
 	}
 
-	private JMenu create_Map() {
-		JMenu result = new JMenu("Map");
+	private JMenu create_World() {
+		JMenu result = new JMenu("World");
 		result.setEnabled(false);
 		result.setMnemonic(KeyEvent.VK_M);
-		result.add(create_Map_Find());
-		result.add(create_Map_GoTo());
-		result.add(create_Map_Layers());
-		result.add(create_Map_CopySeed());
-		result.add(create_Map_Capture());
+		result.add(create_World_Find());
+		result.add(create_World_GoTo());
+		result.add(create_World_Layers());
+		result.add(create_World_CopySeed());
+		result.add(create_World_Capture());
 		return result;
 	}
 
-	private JMenuItem create_Map_Find() {
+	private JMenuItem create_World_Find() {
 		JMenu result = new JMenu("Find");
-		result.add(create_Map_Find_Stronghold());
+		result.add(create_World_Find_Stronghold());
 		return result;
 	}
 
-	private JMenuItem create_Map_Find_Stronghold() {
+	private JMenuItem create_World_Find_Stronghold() {
 		JMenuItem result = new JMenuItem("Stronghold");
 		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
 				InputEvent.CTRL_DOWN_MASK));
@@ -169,14 +169,14 @@ public class AmidstMenu {
 		return result;
 	}
 
-	private JMenuItem create_Map_GoTo() {
+	private JMenuItem create_World_GoTo() {
 		JMenu result = new JMenu("Go to");
-		result.add(create_Map_GoTo_Coordinate());
-		result.add(create_Map_GoTo_Player());
+		result.add(create_World_GoTo_Coordinate());
+		result.add(create_World_GoTo_Player());
 		return result;
 	}
 
-	private JMenuItem create_Map_GoTo_Coordinate() {
+	private JMenuItem create_World_GoTo_Coordinate() {
 		JMenuItem result = new JMenuItem("Coordinate");
 		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
 				InputEvent.CTRL_DOWN_MASK));
@@ -189,7 +189,7 @@ public class AmidstMenu {
 		return result;
 	}
 
-	private JMenuItem create_Map_GoTo_Player() {
+	private JMenuItem create_World_GoTo_Player() {
 		JMenuItem result = new JMenuItem("Player");
 		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
 				InputEvent.CTRL_DOWN_MASK));
@@ -202,7 +202,7 @@ public class AmidstMenu {
 		return result;
 	}
 
-	private JMenuItem create_Map_Layers() {
+	private JMenuItem create_World_Layers() {
 		JMenu result = new JMenu("Layers");
 		// @formatter:off
 		result.add(createJCheckBoxItem("Grid",						"grid.png",				KeyEvent.VK_1, options.showGrid));
@@ -218,7 +218,7 @@ public class AmidstMenu {
 		return result;
 	}
 
-	private JMenuItem create_Map_CopySeed() {
+	private JMenuItem create_World_CopySeed() {
 		JMenuItem result = new JMenuItem("Copy Seed to Clipboard");
 		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
 				InputEvent.CTRL_DOWN_MASK));
@@ -231,7 +231,7 @@ public class AmidstMenu {
 		return result;
 	}
 
-	private JMenuItem create_Map_Capture() {
+	private JMenuItem create_World_Capture() {
 		JMenuItem result = new JMenuItem("Capture");
 		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,
 				InputEvent.CTRL_DOWN_MASK));
@@ -258,18 +258,18 @@ public class AmidstMenu {
 	private JMenu create_Options_Map() {
 		JMenu result = new JMenu("Map");
 		// @formatter:off
-		result.add(createJCheckBoxItem("Map Flicking (Smooth Scrolling)",	null, KeyEvent.VK_I,	options.mapFlicking));
+		result.add(createJCheckBoxItem("Smooth Scrolling",					null, KeyEvent.VK_I,	options.smoothScrolling));
 		result.add(createJCheckBoxItem("Restrict Maximum Zoom",				null, KeyEvent.VK_Z,	options.maxZoom));
 		result.add(createJCheckBoxItem("Show Framerate",					null, KeyEvent.VK_L,	options.showFPS));
 		result.add(createJCheckBoxItem("Show Scale",						null, KeyEvent.VK_K,	options.showScale));
-		result.add(createJCheckBoxItem("Use Fragment Fading",				null, -1,				options.mapFading));
+		result.add(createJCheckBoxItem("Fragment Fading",					null, -1,				options.fragmentFading));
 		result.add(createJCheckBoxItem("Show Debug Info",					null, -1,				options.showDebug));
 		// @formatter:on
 		return result;
 	}
 
 	private JMenu create_Options_BiomeColor() {
-		return new BiomeColorMenuFactory(mapWindow,
+		return new BiomeColorMenuFactory(mainWindow,
 				options.biomeColorProfileSelection).getMenu();
 	}
 
@@ -353,11 +353,11 @@ public class AmidstMenu {
 		return menuBar;
 	}
 
-	public void enableMapMenu() {
-		mapMenu.setEnabled(true);
+	public void enableWorldMenu() {
+		worldMenu.setEnabled(true);
 	}
 
-	public void disableMapMenu() {
-		mapMenu.setEnabled(false);
+	public void disableWorldMenu() {
+		worldMenu.setEnabled(false);
 	}
 }

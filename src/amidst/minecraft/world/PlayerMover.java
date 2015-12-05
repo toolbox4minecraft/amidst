@@ -69,13 +69,13 @@ public class PlayerMover {
 	private void doMovePlayer(Player player, File file) {
 		if (isMultiplayerWorld) {
 			try {
-				movePlayerOnMultiPlayerMap(player, file);
+				movePlayerOnMultiPlayerWorld(player, file);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else {
 			try {
-				movePlayerOnSinglePlayerMap(player, file);
+				movePlayerOnSinglePlayerWorld(player, file);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -94,7 +94,7 @@ public class PlayerMover {
 		return new File(file.getParent() + "/players/" + playerName + ".dat");
 	}
 
-	private void movePlayerOnMultiPlayerMap(Player player, File file)
+	private void movePlayerOnMultiPlayerWorld(Player player, File file)
 			throws IOException, FileNotFoundException {
 		CompoundTag dataTag = NBTUtils.readTagFromFile(file);
 		CompoundTag modifiedDataTag = modifyPositionInDataTagMultiPlayer(
@@ -102,7 +102,7 @@ public class PlayerMover {
 		NBTUtils.writeTagToFile(file, modifiedDataTag);
 	}
 
-	private void movePlayerOnSinglePlayerMap(Player player, File file)
+	private void movePlayerOnSinglePlayerWorld(Player player, File file)
 			throws IOException, FileNotFoundException {
 		CompoundTag baseTag = NBTUtils.readTagFromFile(file);
 		CompoundTag modifiedBaseTag = modifyPositionInBaseTagSinglePlayer(

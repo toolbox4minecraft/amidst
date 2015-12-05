@@ -9,17 +9,17 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.minecraft.world.CoordinatesInWorld;
 
 public class WorldSurroundings {
-	private final FragmentGraphToScreenTranslator map;
+	private final FragmentGraphToScreenTranslator translator;
 	private final Viewer viewer;
 	private final LayerReloader layerReloader;
 	private final FragmentGraph graph;
 	private final Zoom zoom;
 	private final FragmentManager fragmentManager;
 
-	public WorldSurroundings(FragmentGraphToScreenTranslator map, Viewer viewer,
-			LayerReloader layerReloader, FragmentGraph graph, Zoom zoom,
-			FragmentManager fragmentManager) {
-		this.map = map;
+	public WorldSurroundings(FragmentGraphToScreenTranslator translator,
+			Viewer viewer, LayerReloader layerReloader, FragmentGraph graph,
+			Zoom zoom, FragmentManager fragmentManager) {
+		this.translator = translator;
 		this.viewer = viewer;
 		this.layerReloader = layerReloader;
 		this.graph = graph;
@@ -50,7 +50,7 @@ public class WorldSurroundings {
 	}
 
 	public void centerOn(CoordinatesInWorld coordinates) {
-		map.centerOn(coordinates);
+		translator.centerOn(coordinates);
 	}
 
 	public BufferedImage createCaptureImage() {

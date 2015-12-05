@@ -8,8 +8,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import amidst.logging.Log;
 import amidst.resources.ResourceLoader;
@@ -38,7 +38,7 @@ public enum LatestVersionList {
 	private List<ILatestVersionListListener> loadListeners = new ArrayList<ILatestVersionListListener>();
 	private Object listenerLock = new Object();
 
-	public HashMap<String, String>[] getVersions() {
+	public Map<String, String>[] getVersions() {
 		return profile.versions;
 	}
 
@@ -169,7 +169,7 @@ public enum LatestVersionList {
 	}
 
 	private class VersionList {
-		public HashMap<String, String> latest;
-		public HashMap<String, String>[] versions;
+		public Map<String, String> latest;
+		public Map<String, String>[] versions;
 	}
 }

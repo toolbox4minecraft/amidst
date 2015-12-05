@@ -40,7 +40,7 @@ public class Drawer {
 	private final AffineTransform originalLayerMatrix = new AffineTransform();
 	private final AffineTransform layerMatrix = new AffineTransform();
 
-	private final FragmentGraphToScreenTranslator map;
+	private final FragmentGraphToScreenTranslator translator;
 	private final Movement movement;
 	private final Zoom zoom;
 	private final FragmentGraph graph;
@@ -56,9 +56,10 @@ public class Drawer {
 	private long lastTime = System.currentTimeMillis();
 	private float time;
 
-	public Drawer(FragmentGraphToScreenTranslator map, Movement movement, Zoom zoom, FragmentGraph graph,
+	public Drawer(FragmentGraphToScreenTranslator translator,
+			Movement movement, Zoom zoom, FragmentGraph graph,
 			List<Widget> widgets, Iterable<FragmentDrawer> drawers) {
-		this.map = map;
+		this.translator = translator;
 		this.movement = movement;
 		this.zoom = zoom;
 		this.graph = graph;
@@ -75,9 +76,9 @@ public class Drawer {
 			this.mousePosition = mousePosition;
 			this.widgetFontMetrics = widgetFontMetrics;
 			this.time = 0;
-			updateMap();
+			updateTranslator();
 			clear();
-			drawMap();
+			drawFragments();
 			drawWidgets();
 		}
 	}
@@ -93,9 +94,9 @@ public class Drawer {
 			this.time = calculateTimeSpanSinceLastDrawInSeconds();
 			updateZoom();
 			updateMovement();
-			updateMap();
+			updateTranslator();
 			clear();
-			drawMap();
+			drawFragments();
 			drawBorder();
 			drawWidgets();
 		}
@@ -109,17 +110,17 @@ public class Drawer {
 	}
 
 	private void updateZoom() {
-		zoom.update(map);
+		zoom.update(translator);
 	}
 
 	private void updateMovement() {
-		movement.update(map, mousePosition);
+		movement.update(translator, mousePosition);
 	}
 
-	private void updateMap() {
-		map.setViewerDimensions(viewerWidth, viewerHeight);
-		map.processTasks();
-		map.adjustNumberOfRowsAndColumns();
+	private void updateTranslator() {
+		translator.setViewerDimensions(viewerWidth, viewerHeight);
+		translator.processTasks();
+		translator.adjustNumberOfRowsAndColumns();
 	}
 
 	private void clear() {
@@ -127,15 +128,15 @@ public class Drawer {
 		g2d.fillRect(0, 0, viewerWidth, viewerHeight);
 	}
 
-	private void drawMap() {
+	private void drawFragments() {
 		// TODO: is this needed?
 		Graphics2D old = g2d;
 		g2d = (Graphics2D) old.create();
-		doDrawMap();
+		doDrawFragments();
 		g2d = old;
 	}
 
-	private void doDrawMap() {
+	private void doDrawFragments() {
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -150,8 +151,8 @@ public class Drawer {
 			AffineTransform originalGraphicsTransform) {
 		double scale = zoom.getCurrentValue();
 		originalLayerMatrix.setTransform(originalGraphicsTransform);
-		originalLayerMatrix.translate(map.getLeftOnScreen(),
-				map.getTopOnScreen());
+		originalLayerMatrix.translate(translator.getLeftOnScreen(),
+				translator.getTopOnScreen());
 		originalLayerMatrix.scale(scale, scale);
 	}
 

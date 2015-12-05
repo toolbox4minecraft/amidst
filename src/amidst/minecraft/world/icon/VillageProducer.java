@@ -17,7 +17,7 @@ public class VillageProducer extends StructureProducer {
 	}
 
 	@Override
-	protected DefaultWorldIconTypes getMapMarker() {
+	protected DefaultWorldIconTypes getWorldIconType() {
 		return DefaultWorldIconTypes.VILLAGE;
 	}
 

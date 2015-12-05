@@ -18,7 +18,7 @@ public class OceanMonumentProducer extends StructureProducer {
 	}
 
 	@Override
-	protected DefaultWorldIconTypes getMapMarker() {
+	protected DefaultWorldIconTypes getWorldIconType() {
 		return DefaultWorldIconTypes.OCEAN_MONUMENT;
 	}
 

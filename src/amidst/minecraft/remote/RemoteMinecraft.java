@@ -2,14 +2,14 @@ package amidst.minecraft.remote;
 
 import java.io.IOException;
 
+import amidst.minecraft.Biome;
+import amidst.minecraft.IMinecraftInterface;
+import amidst.version.VersionInfo;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-
-import amidst.minecraft.Biome;
-import amidst.minecraft.IMinecraftInterface;
-import amidst.version.VersionInfo;
 
 public class RemoteMinecraft implements IMinecraftInterface {
 	Client client;
@@ -55,9 +55,9 @@ public class RemoteMinecraft implements IMinecraftInterface {
 	}
 	
 	@Override
-	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolutionMap) {
+	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution) {
 		//Log.i("Send NetGetBiomeDataRequest");
-		client.sendTCP(new NetGetBiomeDataRequest(x, y, width, height, useQuarterResolutionMap));
+		client.sendTCP(new NetGetBiomeDataRequest(x, y, width, height, useQuarterResolution));
 		while (currentResults == null) {
 			try {
 				Thread.sleep(1);

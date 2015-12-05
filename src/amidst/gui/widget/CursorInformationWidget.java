@@ -15,16 +15,16 @@ public class CursorInformationWidget extends Widget {
 	private static final String UNKNOWN_BIOME_NAME = "Unknown";
 
 	private final FragmentGraph graph;
-	private final FragmentGraphToScreenTranslator map;
+	private final FragmentGraphToScreenTranslator translator;
 
 	private Point mousePosition;
 	private String text = "";
 
 	public CursorInformationWidget(CornerAnchorPoint anchor,
-			FragmentGraph graph, FragmentGraphToScreenTranslator map) {
+			FragmentGraph graph, FragmentGraphToScreenTranslator translator) {
 		super(anchor);
 		this.graph = graph;
-		this.map = map;
+		this.translator = translator;
 		setWidth(20);
 		setHeight(30);
 		forceVisibility(false);
@@ -45,7 +45,8 @@ public class CursorInformationWidget extends Widget {
 
 	private String getText() {
 		if (mousePosition != null) {
-			CoordinatesInWorld coordinates = map.screenToWorld(mousePosition);
+			CoordinatesInWorld coordinates = translator
+					.screenToWorld(mousePosition);
 			String biomeName = getBiomeNameAt(coordinates);
 			return biomeName + " " + coordinates.toString();
 		} else {

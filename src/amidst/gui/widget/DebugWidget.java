@@ -48,8 +48,8 @@ public class DebugWidget extends Widget {
 		panelLines.add("Reset Queue Size: "
 				+ fragmentManager.getResetQueueSize());
 		panelLines.add("");
-		panelLines.add("Map Viewer:");
-		panelLines.add("Map Size: " + graph.getFragmentsPerRow() + "x"
+		panelLines.add("Viewer:");
+		panelLines.add("Size: " + graph.getFragmentsPerRow() + "x"
 				+ graph.getFragmentsPerColumn() + " ["
 				+ (graph.getFragmentsPerRow() * graph.getFragmentsPerColumn())
 				+ "]");

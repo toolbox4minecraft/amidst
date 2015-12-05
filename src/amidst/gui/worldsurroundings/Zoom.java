@@ -18,11 +18,11 @@ public class Zoom {
 		this.maxZoomPreference = maxZoomPreference;
 	}
 
-	public void update(FragmentGraphToScreenTranslator map) {
+	public void update(FragmentGraphToScreenTranslator translator) {
 		remainingTicks--;
 		if (remainingTicks >= 0) {
 			double previous = updateCurrent();
-			map.adjustToZoom(previous, current, mousePosition);
+			translator.adjustToZoom(previous, current, mousePosition);
 		}
 	}
 

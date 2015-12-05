@@ -26,7 +26,7 @@ public class NetherFortressProducer extends StructureProducer {
 	}
 
 	@Override
-	protected DefaultWorldIconTypes getMapMarker() {
+	protected DefaultWorldIconTypes getWorldIconType() {
 		return DefaultWorldIconTypes.NETHER_FORTRESS;
 	}
 

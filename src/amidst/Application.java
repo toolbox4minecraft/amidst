@@ -32,7 +32,7 @@ public class Application {
 	private final UpdatePrompt updateManager;
 
 	private VersionSelectWindow versionSelectWindow;
-	private MainWindow mapWindow;
+	private MainWindow mainWindow;
 
 	private World world;
 
@@ -83,26 +83,26 @@ public class Application {
 	public void displayVersionSelectWindow() {
 		setVersionSelectWindow(new VersionSelectWindow(this,
 				options.lastProfile));
-		setMapWindow(null);
+		setMainWindow(null);
 	}
 
-	public void displayMapWindow(RemoteMinecraft minecraftInterface) {
-		doDisplayMapWindow(minecraftInterface);
+	public void displayMainWindow(RemoteMinecraft minecraftInterface) {
+		doDisplayMainWindow(minecraftInterface);
 	}
 
-	public void displayMapWindow(MinecraftProfile profile) {
+	public void displayMainWindow(MinecraftProfile profile) {
 		LocalMinecraftInstallation.initProfileDirectory(profile.getGameDir());
-		doDisplayMapWindow(createLocalMinecraftInterface(profile.getJarFile()));
+		doDisplayMainWindow(createLocalMinecraftInterface(profile.getJarFile()));
 	}
 
-	public void displayMapWindow(String jarFile, String gameDirectory) {
+	public void displayMainWindow(String jarFile, String gameDirectory) {
 		LocalMinecraftInstallation.initProfileDirectory(gameDirectory);
-		doDisplayMapWindow(createLocalMinecraftInterface(new File(jarFile)));
+		doDisplayMainWindow(createLocalMinecraftInterface(new File(jarFile)));
 	}
 
-	private void doDisplayMapWindow(IMinecraftInterface minecraftInterface) {
+	private void doDisplayMainWindow(IMinecraftInterface minecraftInterface) {
 		MinecraftUtil.setInterface(minecraftInterface);
-		setMapWindow(new MainWindow(this, options));
+		setMainWindow(new MainWindow(this, options));
 		setVersionSelectWindow(null);
 	}
 
@@ -123,16 +123,16 @@ public class Application {
 		this.versionSelectWindow = versionSelectWindow;
 	}
 
-	private void setMapWindow(MainWindow mapWindow) {
-		if (this.mapWindow != null) {
-			this.mapWindow.dispose();
+	private void setMainWindow(MainWindow mainWindow) {
+		if (this.mainWindow != null) {
+			this.mainWindow.dispose();
 		}
-		this.mapWindow = mapWindow;
+		this.mainWindow = mainWindow;
 	}
 
 	public void dispose() {
 		setVersionSelectWindow(null);
-		setMapWindow(null);
+		setMainWindow(null);
 	}
 
 	public void displayLicenseWindow() {
@@ -140,11 +140,11 @@ public class Application {
 	}
 
 	public void checkForUpdates() {
-		updateManager.check(mapWindow);
+		updateManager.check(mainWindow);
 	}
 
 	public void checkForUpdatesSilently() {
-		updateManager.checkSilently(mapWindow);
+		updateManager.checkSilently(mainWindow);
 	}
 
 	// TODO: use find all occurrences of System.exit();
@@ -162,15 +162,11 @@ public class Application {
 		this.world = world;
 		if (world != null) {
 			seedHistoryLogger.log(world.getSeed());
-			mapWindow.clearWorldSurroundings();
-			mapWindow.setWorldSurroundings(worldSurroundingsBuilder
+			mainWindow.clearWorldSurroundings();
+			mainWindow.setWorldSurroundings(worldSurroundingsBuilder
 					.create(world));
 			skinLoader.loadSkins(world.getMovablePlayers());
 		}
-	}
-
-	public MainWindow getMapWindow() {
-		return mapWindow;
 	}
 
 	public World getWorld() {
@@ -188,14 +184,14 @@ public class Application {
 	}
 
 	public void tickRepainter() {
-		if (mapWindow != null) {
-			mapWindow.tickRepainter();
+		if (mainWindow != null) {
+			mainWindow.tickRepainter();
 		}
 	}
 
 	public void tickFragmentLoader() {
-		if (mapWindow != null) {
-			mapWindow.tickFragmentLoader();
+		if (mainWindow != null) {
+			mainWindow.tickFragmentLoader();
 		}
 	}
 
@@ -203,8 +199,8 @@ public class Application {
 		if (world != null) {
 			world.reloadPlayerWorldIcons();
 		}
-		if (mapWindow != null) {
-			mapWindow.reloadPlayerLayer();
+		if (mainWindow != null) {
+			mainWindow.reloadPlayerLayer();
 		}
 	}
 }

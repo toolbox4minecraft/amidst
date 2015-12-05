@@ -9,15 +9,16 @@ public class Movement {
 	private double speedY = 0;
 	private Point lastMouse;
 
-	private final PrefModel<Boolean> mapFlickingPreference;
+	private final PrefModel<Boolean> smoothScrollingPreference;
 
-	public Movement(PrefModel<Boolean> mapFlickingPreference) {
-		this.mapFlickingPreference = mapFlickingPreference;
+	public Movement(PrefModel<Boolean> smoothScrollingPreference) {
+		this.smoothScrollingPreference = smoothScrollingPreference;
 	}
 
-	public void update(FragmentGraphToScreenTranslator map, Point currentMouse) {
+	public void update(FragmentGraphToScreenTranslator translator,
+			Point currentMouse) {
 		updateMovementSpeed(currentMouse);
-		moveMap(map);
+		adjustTranslator(translator);
 		throttleMovementSpeed();
 	}
 
@@ -34,12 +35,12 @@ public class Movement {
 		}
 	}
 
-	private void moveMap(FragmentGraphToScreenTranslator map) {
-		map.adjustToMovement((int) speedX, (int) speedY);
+	private void adjustTranslator(FragmentGraphToScreenTranslator translator) {
+		translator.adjustToMovement((int) speedX, (int) speedY);
 	}
 
 	private void throttleMovementSpeed() {
-		if (mapFlickingPreference.get()) {
+		if (smoothScrollingPreference.get()) {
 			speedX *= 0.95f;
 			speedY *= 0.95f;
 		} else {

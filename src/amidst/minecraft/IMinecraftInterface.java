@@ -8,12 +8,12 @@ import amidst.version.VersionInfo;
  */
 public interface IMinecraftInterface {
 	/**
-	 * @param useQuarterResolutionMap
+	 * @param useQuarterResolution
 	 * Minecraft calculates biomes at quarter-resolution, then noisily interpolates the biome-map up to
 	 * 1:1 resolution when needed, set useQuarterResolutionMap to true to read from the quarter-resolution
 	 * map, or false to read values that have been interpolated up to full resolution.
 	 * 
-	 * When useQuarterResolutionMap is true, the x, y, width, and height paramaters must all 
+	 * When useQuarterResolution is true, the x, y, width, and height paramaters must all 
 	 * correspond to a quarter of the Minecraft block coordinates/sizes you wish to obtain the 
 	 * biome data for.
 	 *  
@@ -21,7 +21,7 @@ public interface IMinecraftInterface {
 	 * determine the position and nature of structures, as the noisy interpolation can change
 	 * which biome a structure is located in (if the structure is located on a biome boundary).
 	 */
-	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolutionMap);
+	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution);
 	public void createWorld(long seed, String type, String generatorOptions);
 	public VersionInfo getVersion();
 }

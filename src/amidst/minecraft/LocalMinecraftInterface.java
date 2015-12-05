@@ -27,9 +27,9 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 	}
 	
 	@Override
-	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolutionMap) {
+	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution) {
 		minecraft.getClassByName("IntCache").callFunction("resetIntCache");
-		return (int[])(useQuarterResolutionMap ? biomeGen : biomeGen_fullResolution).callFunction("getInts", x, y, width, height);
+		return (int[])(useQuarterResolution ? biomeGen : biomeGen_fullResolution).callFunction("getInts", x, y, width, height);
 	}
 
 	@Override

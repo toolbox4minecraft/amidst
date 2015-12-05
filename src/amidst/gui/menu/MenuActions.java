@@ -17,11 +17,11 @@ public class MenuActions {
 			+ "By Skidoodle (amidst.project@gmail.com)";
 
 	private Application application;
-	private MainWindow mapWindow;
+	private MainWindow mainWindow;
 
-	public MenuActions(Application application, MainWindow mapWindow) {
+	public MenuActions(Application application, MainWindow mainWindow) {
 		this.application = application;
-		this.mapWindow = mapWindow;
+		this.mainWindow = mainWindow;
 	}
 
 	public void savePlayerLocations() {
@@ -37,12 +37,12 @@ public class MenuActions {
 	}
 
 	public void newFromSeed() {
-		String seed = mapWindow.askForSeed();
+		String seed = mainWindow.askForSeed();
 		if (seed != null) {
 			if (seed.isEmpty()) {
 				newFromRandom();
 			} else {
-				WorldType worldType = mapWindow.askForWorldType();
+				WorldType worldType = mainWindow.askForWorldType();
 				if (worldType != null) {
 					application.setWorld(Worlds.fromSeed(seed, worldType));
 				}
@@ -51,59 +51,59 @@ public class MenuActions {
 	}
 
 	public void newFromRandom() {
-		WorldType worldType = mapWindow.askForWorldType();
+		WorldType worldType = mainWindow.askForWorldType();
 		if (worldType != null) {
 			application.setWorld(Worlds.random(worldType));
 		}
 	}
 
 	public void newFromFileOrFolder() {
-		File worldFile = mapWindow.askForMinecraftMapFile();
+		File worldFile = mainWindow.askForMinecraftWorldFile();
 		if (worldFile != null) {
 			try {
 				application.setWorld(Worlds.fromFile(worldFile));
 			} catch (Exception e) {
-				mapWindow.displayException(e);
+				mainWindow.displayException(e);
 			}
 		}
 	}
 
 	public void findStronghold() {
-		WorldIcon stronghold = mapWindow.askForOptions("Go to",
+		WorldIcon stronghold = mainWindow.askForOptions("Go to",
 				"Select Stronghold:", application.getWorld()
 						.getStrongholdWorldIcons());
 		if (stronghold != null) {
-			mapWindow.moveMapToCoordinates(stronghold.getCoordinates());
+			mainWindow.centerWorldOn(stronghold.getCoordinates());
 		}
 	}
 
 	public void gotoCoordinate() {
-		CoordinatesInWorld coordinates = mapWindow.askForCoordinates();
+		CoordinatesInWorld coordinates = mainWindow.askForCoordinates();
 		if (coordinates != null) {
-			mapWindow.moveMapToCoordinates(coordinates);
+			mainWindow.centerWorldOn(coordinates);
 		} else {
-			mapWindow.displayMessage("You entered an invalid location.");
+			mainWindow.displayMessage("You entered an invalid location.");
 			Log.w("Invalid location entered, ignoring.");
 		}
 	}
 
 	public void gotoPlayer() {
 		if (application.getWorld().hasPlayers()) {
-			WorldIcon player = mapWindow.askForOptions("Go to",
+			WorldIcon player = mainWindow.askForOptions("Go to",
 					"Select player:", application.getWorld()
 							.getPlayerWorldIcons());
 			if (player != null) {
-				mapWindow.moveMapToCoordinates(player.getCoordinates());
+				mainWindow.centerWorldOn(player.getCoordinates());
 			}
 		} else {
-			mapWindow.displayMessage("There are no players on the map");
+			mainWindow.displayMessage("There are no players in this world.");
 		}
 	}
 
 	public void capture() {
-		File file = mapWindow.askForScreenshotSaveFile();
+		File file = mainWindow.askForScreenshotSaveFile();
 		if (file != null) {
-			mapWindow.capture(file);
+			mainWindow.capture(file);
 		}
 	}
 
@@ -123,6 +123,6 @@ public class MenuActions {
 	}
 
 	public void about() {
-		mapWindow.displayMessage(ABOUT_MESSAGE);
+		mainWindow.displayMessage(ABOUT_MESSAGE);
 	}
 }

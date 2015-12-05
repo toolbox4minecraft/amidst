@@ -33,11 +33,12 @@ public class WorldSurroundingsBuilder {
 	}
 
 	public WorldSurroundings create(World world) {
-		Movement movement = new Movement(options.mapFlicking);
+		Movement movement = new Movement(options.smoothScrolling);
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
 		List<LayerDeclaration> declarations = layerBuilder.getDeclarations();
 		FragmentGraph graph = new FragmentGraph(declarations, fragmentManager);
-		FragmentGraphToScreenTranslator map = new FragmentGraphToScreenTranslator(zoom, graph);
+		FragmentGraphToScreenTranslator translator = new FragmentGraphToScreenTranslator(
+				zoom, graph);
 		LayerLoader layerLoader = layerBuilder.createLayerLoader(world,
 				biomeSelection, options);
 		fragmentManager.setLayerLoader(layerLoader);
@@ -45,15 +46,16 @@ public class WorldSurroundingsBuilder {
 				worldIconSelection);
 		LayerReloader layerReloader = layerBuilder
 				.createLayerReloader(fragmentManager);
-		WidgetBuilder widgetBuilder = new WidgetBuilder(world, map,
+		WidgetBuilder widgetBuilder = new WidgetBuilder(world, translator,
 				biomeSelection, worldIconSelection, layerReloader, graph, zoom,
 				fragmentManager, options);
 		List<Widget> widgets = widgetBuilder.create();
-		Drawer drawer = new Drawer(map, movement, zoom, graph, widgets, drawers);
+		Drawer drawer = new Drawer(translator, movement, zoom, graph, widgets,
+				drawers);
 		Viewer viewer = new Viewer(new ViewerMouseListener(new WidgetManager(
-				widgets), movement, zoom, world, map, worldIconSelection,
-				layerReloader, graph), drawer);
-		return new WorldSurroundings(map, viewer, layerReloader, graph, zoom,
-				fragmentManager);
+				widgets), movement, zoom, world, translator,
+				worldIconSelection, layerReloader, graph), drawer);
+		return new WorldSurroundings(translator, viewer, layerReloader, graph,
+				zoom, fragmentManager);
 	}
 }

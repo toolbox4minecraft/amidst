@@ -2,6 +2,7 @@ package amidst.minecraft;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import amidst.utilities.ColorUtils;
 
@@ -42,7 +43,7 @@ public class Biome {
 	}
 
 	// @formatter:off
-	private static final HashMap<String, Biome> biomeMap = new HashMap<String, Biome>();
+	private static final Map<String, Biome> biomeMap = new HashMap<String, Biome>();
 	private static final Biome[] biomes = new Biome[256];
 	
 	public static final Biome ocean				   = new Biome("Ocean",				     0, ColorUtils.makeColor(0, 0, 112),	     BiomeType.typeC);

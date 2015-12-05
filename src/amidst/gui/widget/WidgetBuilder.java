@@ -17,7 +17,7 @@ import amidst.utilities.FramerateTimer;
 
 public class WidgetBuilder {
 	private final World world;
-	private final FragmentGraphToScreenTranslator map;
+	private final FragmentGraphToScreenTranslator translator;
 	private final BiomeSelection biomeSelection;
 	private final WorldIconSelection worldIconSelection;
 	private final LayerReloader layerReloader;
@@ -26,12 +26,14 @@ public class WidgetBuilder {
 	private final FragmentManager fragmentManager;
 	private final Options options;
 
-	public WidgetBuilder(World world, FragmentGraphToScreenTranslator map, BiomeSelection biomeSelection,
+	public WidgetBuilder(World world,
+			FragmentGraphToScreenTranslator translator,
+			BiomeSelection biomeSelection,
 			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
 			FragmentGraph graph, Zoom zoom, FragmentManager fragmentManager,
 			Options options) {
 		this.world = world;
-		this.map = map;
+		this.translator = translator;
 		this.biomeSelection = biomeSelection;
 		this.worldIconSelection = worldIconSelection;
 		this.layerReloader = layerReloader;
@@ -49,7 +51,7 @@ public class WidgetBuilder {
 				new SeedWidget(             CornerAnchorPoint.TOP_LEFT,      world),
 				new DebugWidget(            CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, options.showDebug),
 				new SelectedIconWidget(     CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
-				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             map),
+				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator),
 				new BiomeToggleWidget(      CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection,    layerReloader),
 				new BiomeWidget(            CornerAnchorPoint.NONE,          biomeSelection,    layerReloader,   options.biomeColorProfileSelection)
 		);

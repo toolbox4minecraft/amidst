@@ -126,11 +126,11 @@ public class MainWindow {
 				JOptionPane.PLAIN_MESSAGE, null, choicesArray, choicesArray[0]);
 	}
 
-	public File askForMinecraftMapFile() {
-		return getSelectedFileOrNull(createMinecraftMapFileChooser());
+	public File askForMinecraftWorldFile() {
+		return getSelectedFileOrNull(createMinecraftWorldFileChooser());
 	}
 
-	private JFileChooser createMinecraftMapFileChooser() {
+	private JFileChooser createMinecraftWorldFileChooser() {
 		JFileChooser result = new JFileChooser();
 		result.setFileFilter(new LevelFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
@@ -227,7 +227,7 @@ public class MainWindow {
 		WorldSurroundings worldSurroundings = this.worldSurroundings;
 		this.worldSurroundings = null;
 		if (worldSurroundings != null) {
-			menuBar.disableMapMenu();
+			menuBar.disableWorldMenu();
 			contentPane.remove(worldSurroundings.getComponent());
 			worldSurroundings.dispose();
 		}
@@ -242,7 +242,7 @@ public class MainWindow {
 	public void setWorldSurroundings(WorldSurroundings worldSurroundings) {
 		contentPane.add(worldSurroundings.getComponent(), BorderLayout.CENTER);
 		frame.validate();
-		menuBar.enableMapMenu();
+		menuBar.enableWorldMenu();
 		this.worldSurroundings = worldSurroundings;
 	}
 
@@ -278,7 +278,7 @@ public class MainWindow {
 		}
 	}
 
-	public void moveMapToCoordinates(CoordinatesInWorld coordinates) {
+	public void centerWorldOn(CoordinatesInWorld coordinates) {
 		WorldSurroundings worldSurroundings = this.worldSurroundings;
 		if (worldSurroundings != null) {
 			worldSurroundings.centerOn(coordinates);

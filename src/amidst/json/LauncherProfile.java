@@ -1,9 +1,9 @@
 package amidst.json;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class LauncherProfile {
-	public HashMap<String, InstallInformation> profiles;
+	public Map<String, InstallInformation> profiles;
 	public String selectedProfile;
 	public String clientToken;
 }

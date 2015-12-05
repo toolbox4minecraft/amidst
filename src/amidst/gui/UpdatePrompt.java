@@ -12,19 +12,19 @@ import amidst.utilities.UpdateInformationRetriever;
 
 public class UpdatePrompt {
 	private UpdateInformationRetriever retriever = new UpdateInformationRetriever();
-	private MainWindow mapWindow;
+	private MainWindow mainWindow;
 	private boolean silent;
 
-	public void checkSilently(MainWindow mapWindow) {
-		check(mapWindow, true);
+	public void checkSilently(MainWindow mainWindow) {
+		check(mainWindow, true);
 	}
 
-	public void check(MainWindow mapWindow) {
-		check(mapWindow, false);
+	public void check(MainWindow mainWindow) {
+		check(mainWindow, false);
 	}
 
-	private void check(MainWindow mapWindow, boolean silent) {
-		this.mapWindow = mapWindow;
+	private void check(MainWindow mainWindow, boolean silent) {
+		this.mainWindow = mainWindow;
 		this.silent = silent;
 		try {
 			doCheck();
@@ -41,7 +41,7 @@ public class UpdatePrompt {
 
 	private void error(String message) {
 		if (!silent) {
-			mapWindow.displayMessage(message);
+			mainWindow.displayMessage(message);
 		}
 	}
 
@@ -56,24 +56,24 @@ public class UpdatePrompt {
 
 	private int getUserChoice() {
 		if (retriever.isNewMajorVersionAvailable()) {
-			return mapWindow.askToConfirm("Update Found",
+			return mainWindow.askToConfirm("Update Found",
 					"A new version was found. Would you like to update?");
 		} else if (retriever.isNewMinorVersionAvailable()) {
-			return mapWindow.askToConfirm("Update Found",
+			return mainWindow.askToConfirm("Update Found",
 					"A minor revision was found. Update?");
 		} else if (!silent) {
-			mapWindow.displayMessage("There are no new updates.");
+			mainWindow.displayMessage("There are no new updates.");
 		}
 		return JOptionPane.NO_OPTION;
 	}
 
 	private void openUpdateURL() throws IOException, URISyntaxException {
 		if (!Desktop.isDesktopSupported()) {
-			mapWindow.displayMessage("Error unable to open browser.");
+			mainWindow.displayMessage("Error unable to open browser.");
 		} else {
 			Desktop desktop = Desktop.getDesktop();
 			if (!desktop.isSupported(Desktop.Action.BROWSE)) {
-				mapWindow.displayMessage("Error unable to open browser page.");
+				mainWindow.displayMessage("Error unable to open browser page.");
 			} else {
 				desktop.browse(new URI(retriever.getUpdateURL()));
 			}

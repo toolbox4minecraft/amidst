@@ -75,12 +75,12 @@ public abstract class StructureProducer extends WorldIconProducer {
 		middleOfChunkX = middleOfChunk(chunkX);
 		middleOfChunkY = middleOfChunk(chunkY);
 		if (isValidLocation()) {
-			DefaultWorldIconTypes mapMarker = getMapMarker();
-			if (mapMarker == null) {
+			DefaultWorldIconTypes worldIconType = getWorldIconType();
+			if (worldIconType == null) {
 				Log.e("No known structure for this biome type. This might be an error.");
 			} else {
-				consumer.consume(new WorldIcon(createCoordinates(), mapMarker
-						.getName(), mapMarker.getImage()));
+				consumer.consume(new WorldIcon(createCoordinates(),
+						worldIconType.getName(), worldIconType.getImage()));
 			}
 		}
 	}
@@ -147,7 +147,7 @@ public abstract class StructureProducer extends WorldIconProducer {
 
 	protected abstract boolean isValidLocation();
 
-	protected abstract DefaultWorldIconTypes getMapMarker();
+	protected abstract DefaultWorldIconTypes getWorldIconType();
 
 	protected abstract List<Biome> getValidBiomesForStructure();
 

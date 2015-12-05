@@ -24,8 +24,8 @@ public class Options {
 	public final BooleanPrefModel showVillages;
 	public final BooleanPrefModel showOceanMonuments;
 	public final BooleanPrefModel showSpawn;
-	public final BooleanPrefModel mapFlicking;
-	public final BooleanPrefModel mapFading;
+	public final BooleanPrefModel smoothScrolling;
+	public final BooleanPrefModel fragmentFading;
 	public final BooleanPrefModel showFPS;
 	public final BooleanPrefModel showScale;
 	public final BooleanPrefModel showDebug;
@@ -41,8 +41,8 @@ public class Options {
 		showSlimeChunks	     = new BooleanPrefModel(pref, "slimeChunks",	 	 false);
 		showGrid			 = new BooleanPrefModel(pref, "grid",			 	 false);
 		showNetherFortresses = new BooleanPrefModel(pref, "netherFortressIcons", false);
-		mapFlicking		     = new BooleanPrefModel(pref, "mapFlicking",		 true);
-		mapFading		  	 = new BooleanPrefModel(pref, "mapFading",		     true);
+		smoothScrolling		 = new BooleanPrefModel(pref, "mapFlicking",		 true);
+		fragmentFading		 = new BooleanPrefModel(pref, "mapFading",		     true);
 		maxZoom			     = new BooleanPrefModel(pref, "maxZoom",			 true);
 		showStrongholds	     = new BooleanPrefModel(pref, "strongholdIcons",	 true);
 		showPlayers		     = new BooleanPrefModel(pref, "playerIcons",		 true);

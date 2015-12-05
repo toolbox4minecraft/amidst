@@ -40,9 +40,8 @@ public class ThreadMaster {
 
 	/**
 	 * The fragment loader constantly loads fragments. This includes the loading
-	 * of biome data, the rendering of image layer and the creation of map
-	 * objects. Note that this thread is not allowed to alter the fragment
-	 * graph.
+	 * of biome data, the rendering of image layers and the creation of world
+	 * icons. Note that this thread is not allowed to alter the fragment graph.
 	 */
 	private void initFragmentLoader() {
 		fragmentLoader = Executors

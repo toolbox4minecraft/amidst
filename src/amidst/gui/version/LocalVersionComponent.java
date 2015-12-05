@@ -38,7 +38,7 @@ public class LocalVersionComponent extends VersionComponent {
 
 	@Override
 	public void doLoad() {
-		application.displayMapWindow(profile);
+		application.displayMainWindow(profile);
 	}
 
 	@Override

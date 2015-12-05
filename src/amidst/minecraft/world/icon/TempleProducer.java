@@ -19,7 +19,7 @@ public class TempleProducer extends StructureProducer {
 	}
 
 	@Override
-	protected DefaultWorldIconTypes getMapMarker() {
+	protected DefaultWorldIconTypes getWorldIconType() {
 		Biome chunkBiome = getBiomeAtMiddleOfChunk();
 		if (chunkBiome == Biome.swampland) {
 			return DefaultWorldIconTypes.WITCH;
