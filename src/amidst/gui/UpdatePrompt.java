@@ -12,18 +12,18 @@ import amidst.utilities.UpdateInformationRetriever;
 
 public class UpdatePrompt {
 	private UpdateInformationRetriever retriever = new UpdateInformationRetriever();
-	private MapWindow mapWindow;
+	private MainWindow mapWindow;
 	private boolean silent;
 
-	public void checkSilently(MapWindow mapWindow) {
+	public void checkSilently(MainWindow mapWindow) {
 		check(mapWindow, true);
 	}
 
-	public void check(MapWindow mapWindow) {
+	public void check(MainWindow mapWindow) {
 		check(mapWindow, false);
 	}
 
-	private void check(MapWindow mapWindow, boolean silent) {
+	private void check(MainWindow mapWindow, boolean silent) {
 		this.mapWindow = mapWindow;
 		this.silent = silent;
 		try {

@@ -12,7 +12,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-import amidst.gui.MapWindow;
+import amidst.gui.MainWindow;
 import amidst.logging.Log;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BiomeColorProfileLoader;
@@ -26,11 +26,11 @@ public class BiomeColorMenuFactory {
 		private final List<JMenu> menuStack = new ArrayList<JMenu>();
 		private ActionListener firstListener;
 		private boolean isFirstContainer = true;
-		private final MapWindow mapWindow;
+		private final MainWindow mapWindow;
 		private final BiomeColorProfileSelection biomeColorProfileSelection;
 
 		private BiomeColorProfileVisitorImpl(JMenu parentMenu,
-				MapWindow mapWindow,
+				MainWindow mapWindow,
 				BiomeColorProfileSelection biomeColorProfileSelection) {
 			this.mapWindow = mapWindow;
 			this.biomeColorProfileSelection = biomeColorProfileSelection;
@@ -115,11 +115,11 @@ public class BiomeColorMenuFactory {
 	}
 
 	private final JMenu parentMenu = new JMenu("Biome profile");
-	private final MapWindow mapWindow;
+	private final MainWindow mapWindow;
 	private final BiomeColorProfileSelection biomeColorProfileSelection;
 	private final BiomeColorProfileLoader biomeColorProfileLoader = new BiomeColorProfileLoader();
 
-	public BiomeColorMenuFactory(MapWindow mapWindow,
+	public BiomeColorMenuFactory(MainWindow mapWindow,
 			BiomeColorProfileSelection biomeColorProfileSelection) {
 		this.mapWindow = mapWindow;
 		this.biomeColorProfileSelection = biomeColorProfileSelection;

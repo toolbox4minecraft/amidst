@@ -7,7 +7,7 @@ import java.util.prefs.Preferences;
 import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.CrashWindow;
 import amidst.gui.LicenseWindow;
-import amidst.gui.MapWindow;
+import amidst.gui.MainWindow;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
@@ -32,7 +32,7 @@ public class Application {
 	private final UpdatePrompt updateManager;
 
 	private VersionSelectWindow versionSelectWindow;
-	private MapWindow mapWindow;
+	private MainWindow mapWindow;
 
 	private World world;
 
@@ -102,7 +102,7 @@ public class Application {
 
 	private void doDisplayMapWindow(IMinecraftInterface minecraftInterface) {
 		MinecraftUtil.setInterface(minecraftInterface);
-		setMapWindow(new MapWindow(this, options));
+		setMapWindow(new MainWindow(this, options));
 		setVersionSelectWindow(null);
 	}
 
@@ -123,7 +123,7 @@ public class Application {
 		this.versionSelectWindow = versionSelectWindow;
 	}
 
-	private void setMapWindow(MapWindow mapWindow) {
+	private void setMapWindow(MainWindow mapWindow) {
 		if (this.mapWindow != null) {
 			this.mapWindow.dispose();
 		}
@@ -169,7 +169,7 @@ public class Application {
 		}
 	}
 
-	public MapWindow getMapWindow() {
+	public MainWindow getMapWindow() {
 		return mapWindow;
 	}
 

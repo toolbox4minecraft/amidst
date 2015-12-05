@@ -5,7 +5,7 @@ import java.awt.datatransfer.StringSelection;
 import java.io.File;
 
 import amidst.Application;
-import amidst.gui.MapWindow;
+import amidst.gui.MainWindow;
 import amidst.logging.Log;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.WorldType;
@@ -17,9 +17,9 @@ public class MenuActions {
 			+ "By Skidoodle (amidst.project@gmail.com)";
 
 	private Application application;
-	private MapWindow mapWindow;
+	private MainWindow mapWindow;
 
-	public MenuActions(Application application, MapWindow mapWindow) {
+	public MenuActions(Application application, MainWindow mapWindow) {
 		this.application = application;
 		this.mapWindow = mapWindow;
 	}

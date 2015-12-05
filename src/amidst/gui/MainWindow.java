@@ -30,7 +30,7 @@ import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.WorldType;
 
-public class MapWindow {
+public class MainWindow {
 	private final SeedPrompt seedPrompt = new SeedPrompt();
 
 	private final Application application;
@@ -42,7 +42,7 @@ public class MapWindow {
 
 	private volatile WorldSurroundings worldSurroundings;
 
-	public MapWindow(Application application, Options options) {
+	public MainWindow(Application application, Options options) {
 		this.application = application;
 		this.options = options;
 		this.frame = createFrame();
