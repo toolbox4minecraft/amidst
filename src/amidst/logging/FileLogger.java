@@ -6,17 +6,35 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 public class FileLogger implements Logger {
-	private ConcurrentLinkedQueue<String> logMessageQueue = new ConcurrentLinkedQueue<String>();
-	private File file;
-	private boolean enabled;
+	private final ConcurrentLinkedQueue<String> logMessageQueue = new ConcurrentLinkedQueue<String>();
+	private final File file;
+	private final ScheduledExecutorService executor;
 
 	public FileLogger(File file) {
 		this.file = file;
-		this.enabled = ensureFileExists();
-		writeWelcomeMessageToFile();
-		startThread();
+		this.executor = createExecutor();
+		if (ensureFileExists()) {
+			writeWelcomeMessageToFile();
+			start();
+		}
+	}
+
+	private ScheduledExecutorService createExecutor() {
+		return Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread thread = new Thread(r);
+				thread.setDaemon(true);
+				thread.setPriority(Thread.MIN_PRIORITY);
+				return thread;
+			}
+		});
 	}
 
 	private boolean ensureFileExists() {
@@ -57,13 +75,51 @@ public class FileLogger implements Logger {
 		write("log", "New FileLogger started.");
 	}
 
-	private void startThread() {
-		new Thread(new Runnable() {
+	private void start() {
+		executor.scheduleWithFixedDelay(new Runnable() {
 			@Override
 			public void run() {
-				doRun();
+				processQueue();
 			}
-		}).start();
+		}, 0, 100, TimeUnit.MILLISECONDS);
+	}
+
+	private void processQueue() {
+		if (!logMessageQueue.isEmpty() && file.isFile()) {
+			writeLogMessage(getLogMessage());
+		}
+	}
+
+	private String getLogMessage() {
+		StringBuilder builder = new StringBuilder();
+		while (!logMessageQueue.isEmpty()) {
+			builder.append(logMessageQueue.poll());
+		}
+		return builder.toString();
+	}
+
+	private void writeLogMessage(String logMessage) {
+		FileWriter writer = null;
+		try {
+			writer = new FileWriter(file, true);
+			writer.append(logMessage);
+		} catch (IOException e) {
+			Log.w("Unable to write to log file.");
+			e.printStackTrace();
+		} finally {
+			closeWriter(writer);
+		}
+	}
+
+	private void closeWriter(FileWriter writer) {
+		if (writer != null) {
+			try {
+				writer.close();
+			} catch (IOException e) {
+				Log.w("Unable to close writer for log file.");
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -110,52 +166,6 @@ public class FileLogger implements Logger {
 			return " ";
 		} else {
 			return "\r\n";
-		}
-	}
-
-	private void doRun() {
-		while (enabled) {
-			if (logMessageQueue.size() != 0 && file.exists() && file.isFile()) {
-				writeLogMessage(getLogMessage());
-			}
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-
-		}
-	}
-
-	private String getLogMessage() {
-		StringBuilder builder = new StringBuilder();
-		while (logMessageQueue.size() != 0) {
-			builder.append(logMessageQueue.poll());
-		}
-		return builder.toString();
-	}
-
-	private void writeLogMessage(String logMessage) {
-		FileWriter writer = null;
-		try {
-			writer = new FileWriter(file, true);
-			writer.append(logMessage);
-		} catch (IOException e) {
-			Log.w("Unable to write to log file.");
-			e.printStackTrace();
-		} finally {
-			closeWriter(writer);
-		}
-	}
-
-	private void closeWriter(FileWriter writer) {
-		if (writer != null) {
-			try {
-				writer.close();
-			} catch (IOException e) {
-				Log.w("Unable to close writer for log file.");
-				e.printStackTrace();
-			}
 		}
 	}
 }
