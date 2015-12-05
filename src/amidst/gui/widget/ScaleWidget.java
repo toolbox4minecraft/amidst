@@ -28,8 +28,8 @@ public class ScaleWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics,
-			int viewerWidth, int viewerHeight, Point mousePosition) {
+	public void draw(Graphics2D g2d, int viewerWidth, int viewerHeight,
+			Point mousePosition, FontMetrics fontMetrics, float time) {
 		int scaleBlocks = scaleLength_blocks();
 		int scaleWidth_px = (int) (scaleBlocks * zoom.getCurrentValue());
 

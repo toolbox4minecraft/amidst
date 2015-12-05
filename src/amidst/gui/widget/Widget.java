@@ -265,9 +265,9 @@ public abstract class Widget {
 	public void onMouseReleased() {
 	}
 
-	public abstract void draw(Graphics2D g2d, float time,
-			FontMetrics fontMetrics, int viewerWidth, int viewerHeight,
-			Point mousePosition);
+	public abstract void draw(Graphics2D g2d, int viewerWidth,
+			int viewerHeight, Point mousePosition, FontMetrics fontMetrics,
+			float time);
 
 	protected abstract boolean onVisibilityCheck();
 }

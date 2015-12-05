@@ -25,8 +25,8 @@ public class SelectedIconWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics,
-			int viewerWidth, int viewerHeight, Point mousePosition) {
+	public void draw(Graphics2D g2d, int viewerWidth, int viewerHeight,
+			Point mousePosition, FontMetrics fontMetrics, float time) {
 		if (worldIconSelection.hasSelection()) {
 			WorldIcon selection = worldIconSelection.get();
 			message = selection.toString();

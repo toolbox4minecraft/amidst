@@ -47,14 +47,14 @@ public class Drawer {
 	private final List<Widget> widgets;
 	private final Iterable<FragmentDrawer> drawers;
 
-	private long lastTime = System.currentTimeMillis();
-	private float time;
-
 	private Graphics2D g2d;
-	private int width;
-	private int height;
+	private int viewerWidth;
+	private int viewerHeight;
 	private Point mousePosition;
 	private FontMetrics widgetFontMetrics;
+
+	private long lastTime = System.currentTimeMillis();
+	private float time;
 
 	public Drawer(Map map, Movement movement, Zoom zoom, FragmentGraph graph,
 			List<Widget> widgets, Iterable<FragmentDrawer> drawers) {
@@ -66,15 +66,15 @@ public class Drawer {
 		this.drawers = drawers;
 	}
 
-	public void drawScreenshot(Graphics2D g2d, int width, int height,
-			Point mousePosition, FontMetrics widgetFontMetrics) {
+	public void drawScreenshot(Graphics2D g2d, int viewerWidth,
+			int viewerHeight, Point mousePosition, FontMetrics widgetFontMetrics) {
 		synchronized (drawLock) {
-			this.time = 0;
 			this.g2d = g2d;
-			this.width = width;
-			this.height = height;
+			this.viewerWidth = viewerWidth;
+			this.viewerHeight = viewerHeight;
 			this.mousePosition = mousePosition;
 			this.widgetFontMetrics = widgetFontMetrics;
+			this.time = 0;
 			updateMap();
 			clear();
 			drawMap();
@@ -82,15 +82,15 @@ public class Drawer {
 		}
 	}
 
-	public void draw(Graphics2D g2d, int width, int height,
+	public void draw(Graphics2D g2d, int viewerWidth, int viewerHeight,
 			Point mousePosition, FontMetrics widgetFontMetrics) {
 		synchronized (drawLock) {
-			this.time = calculateTimeSpanSinceLastDrawInSeconds();
 			this.g2d = g2d;
-			this.width = width;
-			this.height = height;
+			this.viewerWidth = viewerWidth;
+			this.viewerHeight = viewerHeight;
 			this.mousePosition = mousePosition;
 			this.widgetFontMetrics = widgetFontMetrics;
+			this.time = calculateTimeSpanSinceLastDrawInSeconds();
 			updateZoom();
 			updateMovement();
 			updateMap();
@@ -117,14 +117,14 @@ public class Drawer {
 	}
 
 	private void updateMap() {
-		map.setViewerDimensions(width, height);
+		map.setViewerDimensions(viewerWidth, viewerHeight);
 		map.processTasks();
 		map.adjustNumberOfRowsAndColumns();
 	}
 
 	private void clear() {
 		g2d.setColor(Color.black);
-		g2d.fillRect(0, 0, width, height);
+		g2d.fillRect(0, 0, viewerWidth, viewerHeight);
 	}
 
 	private void drawMap() {
@@ -188,10 +188,10 @@ public class Drawer {
 	}
 
 	private void drawBorder() {
-		int width10 = width - 10;
-		int height10 = height - 10;
-		int width20 = width - 20;
-		int height20 = height - 20;
+		int width10 = viewerWidth - 10;
+		int height10 = viewerHeight - 10;
+		int width20 = viewerWidth - 20;
+		int height20 = viewerHeight - 20;
 		g2d.drawImage(DROP_SHADOW_TOP_LEFT, 0, 0, null);
 		g2d.drawImage(DROP_SHADOW_TOP_RIGHT, width10, 0, null);
 		g2d.drawImage(DROP_SHADOW_BOTTOM_LEFT, 0, height10, null);
@@ -208,8 +208,8 @@ public class Drawer {
 		for (Widget widget : widgets) {
 			if (widget.isVisible()) {
 				setAlphaComposite(widget.getAlpha());
-				widget.draw(g2d, time, widgetFontMetrics, width, height,
-						mousePosition);
+				widget.draw(g2d, viewerWidth, viewerHeight, mousePosition,
+						widgetFontMetrics, time);
 			}
 		}
 	}

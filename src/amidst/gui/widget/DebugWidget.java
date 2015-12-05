@@ -26,8 +26,8 @@ public class DebugWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, float time, FontMetrics fontMetrics,
-			int viewerWidth, int viewerHeight, Point mousePosition) {
+	public void draw(Graphics2D g2d, int viewerWidth, int viewerHeight,
+			Point mousePosition, FontMetrics fontMetrics, float time) {
 		List<String> panelLines = getPanelLines();
 		int width = getPanelWidth(panelLines, fontMetrics);
 		int height = getPanelHeight(panelLines);

@@ -64,15 +64,13 @@ public class GridDrawer extends FragmentDrawer {
 			g2d.drawLine(0, 0, Fragment.SIZE, 0);
 		}
 		if (gridY == stride) {
-			g2d.drawLine(0, Fragment.SIZE, Fragment.SIZE,
-					Fragment.SIZE);
+			g2d.drawLine(0, Fragment.SIZE, Fragment.SIZE, Fragment.SIZE);
 		}
 		if (gridX == 0) {
 			g2d.drawLine(0, 0, 0, Fragment.SIZE);
 		}
 		if (gridX == stride) {
-			g2d.drawLine(Fragment.SIZE, 0, Fragment.SIZE,
-					Fragment.SIZE);
+			g2d.drawLine(Fragment.SIZE, 0, Fragment.SIZE, Fragment.SIZE);
 		}
 	}
 
