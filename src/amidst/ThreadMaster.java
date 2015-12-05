@@ -11,13 +11,13 @@ public class ThreadMaster {
 
 	private ScheduledExecutorService repainter;
 	private ScheduledExecutorService fragmentLoader;
-	private ExecutorService skinLoader;
+	private ExecutorService longRunningIOLoader;
 
 	public ThreadMaster(Application application) {
 		this.application = application;
 		initRepainter();
 		initFragmentLoader();
-		initSkinLoader();
+		initLongRunningIOLoader();
 		dummyGUIThread();
 		startRepainter();
 		startFragmentLoader();
@@ -57,20 +57,22 @@ public class ThreadMaster {
 	}
 
 	/**
-	 * The skin loader does not run constantly and is not a single thread. When
-	 * skins are loaded, new threads will be spawned as needed. This is not an
-	 * issue, since all of these threads are waiting for IO most of the time.
+	 * The long-running IO loader does not run constantly and is not a single
+	 * thread. New threads will be spawned as needed. This is not an issue,
+	 * since it is only used for IO operations that wait for IO most of the
+	 * time. For example, it is used for the skin loading.
 	 */
-	private void initSkinLoader() {
-		skinLoader = Executors.newCachedThreadPool(new ThreadFactory() {
-			@Override
-			public Thread newThread(Runnable r) {
-				Thread thread = new Thread(r);
-				thread.setDaemon(true);
-				thread.setPriority(Thread.MIN_PRIORITY);
-				return thread;
-			}
-		});
+	private void initLongRunningIOLoader() {
+		longRunningIOLoader = Executors
+				.newCachedThreadPool(new ThreadFactory() {
+					@Override
+					public Thread newThread(Runnable r) {
+						Thread thread = new Thread(r);
+						thread.setDaemon(true);
+						thread.setPriority(Thread.MIN_PRIORITY);
+						return thread;
+					}
+				});
 	}
 
 	/**
@@ -102,7 +104,7 @@ public class ThreadMaster {
 		}, 0, 20, TimeUnit.MILLISECONDS);
 	}
 
-	public void invokeSkinLoader(Runnable runnable) {
-		skinLoader.execute(runnable);
+	public void invokeLongRunningIOOperation(Runnable runnable) {
+		longRunningIOLoader.execute(runnable);
 	}
 }

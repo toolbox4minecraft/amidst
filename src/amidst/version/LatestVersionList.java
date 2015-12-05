@@ -42,27 +42,13 @@ public enum LatestVersionList {
 		return profile.versions;
 	}
 
-	public void load(boolean threaded) {
-		if (threaded) {
-			(new Thread(new Runnable() {
-				@Override
-				public void run() {
-					doLoad();
-				}
-			})).start();
-		} else {
-			doLoad();
-		}
-	}
-
-	private void doLoad() {
+	public void load() {
 		Log.i("Beginning latest version list load.");
 		setLoadState(LoadState.LOADING);
 		if (!attemptRemoteLoad() && !attemptLocalLoad()) {
 			Log.w("Failed to load both remote and local version list.");
 			setLoadState(LoadState.FAILED);
 		}
-
 		setLoadState(LoadState.LOADED);
 	}
 

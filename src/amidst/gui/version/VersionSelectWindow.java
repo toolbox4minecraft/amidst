@@ -35,7 +35,12 @@ public class VersionSelectWindow {
 		this.versionSelectPanel = new VersionSelectPanel(lastProfilePreference,
 				"Scanning...");
 
-		LatestVersionList.get().load(true);
+		application.invokeLongRunningIOOperation(new Runnable() {
+			@Override
+			public void run() {
+				LatestVersionList.get().load();
+			}
+		});
 
 		if (!isValidMinecraftDirectory()) {
 			Log.crash("Unable to find Minecraft directory at: "
@@ -48,9 +53,7 @@ public class VersionSelectWindow {
 	}
 
 	private boolean isValidMinecraftDirectory() {
-		return LocalMinecraftInstallation.getMinecraftDirectory().exists()
-				&& LocalMinecraftInstallation.getMinecraftDirectory()
-						.isDirectory();
+		return LocalMinecraftInstallation.getMinecraftDirectory().isDirectory();
 	}
 
 	private void initFrame() {

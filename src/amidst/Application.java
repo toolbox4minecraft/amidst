@@ -72,7 +72,7 @@ public class Application {
 	}
 
 	private SkinLoader createSkinLoader() {
-		return new SkinLoader(this, threadMaster);
+		return new SkinLoader(this);
 	}
 
 	private UpdatePrompt createUpdateManager() {
@@ -197,5 +197,9 @@ public class Application {
 		if (mainWindow != null) {
 			mainWindow.reloadPlayerLayer();
 		}
+	}
+
+	public void invokeLongRunningIOOperation(Runnable runnable) {
+		threadMaster.invokeLongRunningIOOperation(runnable);
 	}
 }
