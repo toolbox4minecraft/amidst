@@ -1,7 +1,6 @@
 package amidst.gui.worldsurroundings;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.Component;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -17,7 +16,6 @@ import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import amidst.fragment.layer.LayerReloader;
@@ -176,7 +174,7 @@ public class MapViewer {
 	}
 
 	@SuppressWarnings("serial")
-	private class Component extends JComponent {
+	private class ViewerComponent extends JComponent {
 		private final FontMetrics widgetFontMetrics = getFontMetrics(Widget.TEXT_FONT);
 
 		@Override
@@ -193,8 +191,7 @@ public class MapViewer {
 	}
 
 	private final Listeners listeners = new Listeners();
-	private final Component component = new Component();
-	private final JPanel panel = new JPanel();
+	private final ViewerComponent component = new ViewerComponent();
 
 	private final Movement movement;
 	private final Zoom zoom;
@@ -217,19 +214,12 @@ public class MapViewer {
 		this.layerReloader = layerReloader;
 		this.widgets = widgets;
 		initComponent();
-		initPanel();
 	}
 
 	private void initComponent() {
 		component.addMouseListener(listeners);
 		component.addMouseWheelListener(listeners);
 		component.setFocusable(true);
-	}
-
-	private void initPanel() {
-		panel.setBackground(Color.BLUE);
-		panel.setLayout(new BorderLayout());
-		panel.add(component, BorderLayout.CENTER);
 	}
 
 	public BufferedImage createCaptureImage() {
@@ -254,7 +244,7 @@ public class MapViewer {
 		component.repaint();
 	}
 
-	public JPanel getPanel() {
-		return panel;
+	public Component getComponent() {
+		return component;
 	}
 }

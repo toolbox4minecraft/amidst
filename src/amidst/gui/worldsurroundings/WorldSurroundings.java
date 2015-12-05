@@ -28,7 +28,7 @@ public class WorldSurroundings {
 	}
 
 	public Component getComponent() {
-		return mapViewer.getPanel();
+		return mapViewer.getComponent();
 	}
 
 	public LayerReloader getLayerReloader() {
