@@ -8,12 +8,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 
 import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
 import amidst.Application;
 import amidst.LongRunningIOExecutor;
+import amidst.LongRunningIOOperation;
 import amidst.logging.Log;
 import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.preferences.StringPreference;
@@ -89,29 +89,26 @@ public class VersionSelectWindow {
 	}
 
 	private void scanAndLoadVersionsLater() {
-		longRunningIOExecutor.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				scanAndLoadVersionsImmediately();
-			}
-		});
+		longRunningIOExecutor
+				.invokeLater(new LongRunningIOOperation<MinecraftProfile[]>() {
+					@Override
+					public MinecraftProfile[] execute() {
+						return scanAndLoadVersions();
+					}
+
+					@Override
+					public void finished(MinecraftProfile[] profiles) {
+						loadVersions(profiles);
+					}
+				});
 	}
 
-	private void scanAndLoadVersionsImmediately() {
+	private MinecraftProfile[] scanAndLoadVersions() {
 		versionFactory.scanForProfiles();
-		loadVersionsLater(versionFactory.getProfiles());
+		return versionFactory.getProfiles();
 	}
 
-	private void loadVersionsLater(final MinecraftProfile[] profiles) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				loadVersionsImmediately(profiles);
-			}
-		});
-	}
-
-	private void loadVersionsImmediately(MinecraftProfile[] profiles) {
+	private void loadVersions(MinecraftProfile[] profiles) {
 		if (profiles == null) {
 			versionSelectPanel.setEmptyMessage("Empty");
 		} else {

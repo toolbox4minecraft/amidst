@@ -4,8 +4,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.prefs.Preferences;
 
-import javax.swing.SwingUtilities;
-
 import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.CrashWindow;
 import amidst.gui.LicenseWindow;
@@ -105,33 +103,28 @@ public class Application {
 
 	private void createLocalMinecraftInterfaceAndDisplayMainWindowLater(
 			final String gameDirectory, final File jarFile) {
-		longRunningIOExecutor.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				createLocalMinecraftInterfaceAndDisplayMainWindowImmediately(
-						gameDirectory, jarFile);
-			}
-		});
+		longRunningIOExecutor
+				.invokeLater(new LongRunningIOOperation<IMinecraftInterface>() {
+					@Override
+					public IMinecraftInterface execute() {
+						return createLocalMinecraftInterfaceAndDisplayMainWindow(
+								gameDirectory, jarFile);
+					}
+
+					@Override
+					public void finished(IMinecraftInterface minecraftInterface) {
+						doDisplayMainWindow(minecraftInterface);
+					}
+				});
 	}
 
-	private void createLocalMinecraftInterfaceAndDisplayMainWindowImmediately(
-			String gameDirectory, File jarFile) {
+	private IMinecraftInterface createLocalMinecraftInterfaceAndDisplayMainWindow(
+			final String gameDirectory, final File jarFile) {
 		LocalMinecraftInstallation.initProfileDirectory(gameDirectory);
-		displayMainWindowLater(createLocalMinecraftInterface(jarFile));
+		return createLocalMinecraftInterface(jarFile);
 	}
 
-	private void displayMainWindowLater(
-			final IMinecraftInterface minecraftInterface) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				displayMainWindowImmediately(minecraftInterface);
-			}
-		});
-	}
-
-	private void displayMainWindowImmediately(
-			IMinecraftInterface minecraftInterface) {
+	private void doDisplayMainWindow(IMinecraftInterface minecraftInterface) {
 		MinecraftUtil.setInterface(minecraftInterface);
 		setMainWindow(new MainWindow(this, options));
 		setVersionSelectWindow(null);

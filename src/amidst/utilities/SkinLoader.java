@@ -9,10 +9,10 @@ import java.net.URL;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.SwingUtilities;
 
 import amidst.Application;
 import amidst.LongRunningIOExecutor;
+import amidst.LongRunningIOOperation;
 import amidst.logging.Log;
 import amidst.minecraft.world.Player;
 
@@ -33,29 +33,21 @@ public class SkinLoader {
 	}
 
 	private void loadSkinLater(final Player player) {
-		longRunningIOExecutor.invokeLater(new Runnable() {
+		longRunningIOExecutor.invokeLater(new LongRunningIOOperation<Void>() {
 			@Override
-			public void run() {
-				loadSkinImmediately(player);
+			public Void execute() {
+				loadSkin(player);
+				return null;
+			}
+
+			@Override
+			public void finished(Void result) {
+				finishedLoadingPlayerSkin();
 			}
 		});
 	}
 
-	private void loadSkinImmediately(Player player) {
-		loadSkin(player);
-		finishedLoadingPlayerSkinLater();
-	}
-
-	private void finishedLoadingPlayerSkinLater() {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				finishedLoadingPlayerSkinImmediately();
-			}
-		});
-	}
-
-	private void finishedLoadingPlayerSkinImmediately() {
+	private void finishedLoadingPlayerSkin() {
 		application.finishedLoadingPlayerSkin();
 	}
 
