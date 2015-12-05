@@ -1,4 +1,4 @@
-package amidst.json;
+package amidst.mojangapi.versiondeclaration;
 
 public class Resolution {
 	private String width;

@@ -1,4 +1,4 @@
-package amidst.mojangapi.version;
+package amidst.mojangapi.versionlist;
 
 import java.io.BufferedReader;
 import java.io.IOException;

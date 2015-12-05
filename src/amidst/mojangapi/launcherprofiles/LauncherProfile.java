@@ -1,4 +1,4 @@
-package amidst.json;
+package amidst.mojangapi.launcherprofiles;
 
 import java.util.Map;
 

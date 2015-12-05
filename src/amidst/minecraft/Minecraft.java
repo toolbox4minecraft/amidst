@@ -30,9 +30,9 @@ import amidst.bytedata.CCRequire;
 import amidst.bytedata.CCStringMatch;
 import amidst.bytedata.CCWildcardByteSearch;
 import amidst.bytedata.ClassChecker;
-import amidst.json.JarLibrary;
-import amidst.json.JarProfile;
 import amidst.logging.Log;
+import amidst.mojangapi.versiondeclaration.JarLibrary;
+import amidst.mojangapi.versiondeclaration.JarProfile;
 import amidst.utilities.FileSystemUtils;
 import amidst.version.VersionInfo;
 

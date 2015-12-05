@@ -1,4 +1,6 @@
-package amidst.json;
+package amidst.mojangapi.launcherprofiles;
+
+import amidst.mojangapi.versiondeclaration.Resolution;
 
 public class InstallInformation {
 	private String name;

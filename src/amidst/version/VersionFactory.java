@@ -6,10 +6,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Stack;
 
-import amidst.json.InstallInformation;
-import amidst.json.LauncherProfile;
 import amidst.logging.Log;
 import amidst.minecraft.LocalMinecraftInstallation;
+import amidst.mojangapi.launcherprofiles.InstallInformation;
+import amidst.mojangapi.launcherprofiles.LauncherProfile;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;

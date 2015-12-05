@@ -1,4 +1,4 @@
-package amidst.mojangapi.version;
+package amidst.mojangapi.versionlist;
 
 public class VersionDeclaration {
 	private static final String REMOTE_PREFIX = "https://s3.amazonaws.com/Minecraft.Download/versions/";

@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import amidst.json.InstallInformation;
+import amidst.mojangapi.launcherprofiles.InstallInformation;
 
 public class MinecraftProfile implements ILatestVersionListListener {
 	public enum Status {

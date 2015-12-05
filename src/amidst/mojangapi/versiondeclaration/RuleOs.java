@@ -1,4 +1,4 @@
-package amidst.json;
+package amidst.mojangapi.versiondeclaration;
 
 import amidst.utilities.PlatformUtils;
 
