@@ -27,6 +27,7 @@ public class Application {
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final ThreadMaster threadMaster;
+	private final LongRunningIOExecutor longRunningIOExecutor;
 	private final SkinLoader skinLoader;
 	private final UpdatePrompt updateManager;
 
@@ -42,6 +43,7 @@ public class Application {
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
 		this.seedHistoryLogger = createSeedHistoryLogger();
 		this.threadMaster = createThreadMaster();
+		this.longRunningIOExecutor = createLongRunningIOExecutor();
 		this.skinLoader = createSkinLoader();
 		this.updateManager = createUpdateManager();
 	}
@@ -71,8 +73,12 @@ public class Application {
 		return new ThreadMaster(this);
 	}
 
+	private LongRunningIOExecutor createLongRunningIOExecutor() {
+		return new LongRunningIOExecutor(threadMaster);
+	}
+
 	private SkinLoader createSkinLoader() {
-		return new SkinLoader(this);
+		return new SkinLoader(this, longRunningIOExecutor);
 	}
 
 	private UpdatePrompt createUpdateManager() {
@@ -81,7 +87,7 @@ public class Application {
 
 	public void displayVersionSelectWindow() {
 		setVersionSelectWindow(new VersionSelectWindow(this,
-				options.lastProfile));
+				longRunningIOExecutor, options.lastProfile));
 		setMainWindow(null);
 	}
 
@@ -197,9 +203,5 @@ public class Application {
 		if (mainWindow != null) {
 			mainWindow.reloadPlayerLayer();
 		}
-	}
-
-	public void invokeLongRunningIOOperation(Runnable runnable) {
-		threadMaster.invokeLongRunningIOOperation(runnable);
 	}
 }

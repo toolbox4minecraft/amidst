@@ -12,6 +12,7 @@ import javax.swing.SwingConstants;
 import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
 import amidst.Application;
+import amidst.LongRunningIOExecutor;
 import amidst.logging.Log;
 import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.preferences.StringPreference;
@@ -21,6 +22,7 @@ import amidst.version.VersionFactory;
 
 public class VersionSelectWindow {
 	private final Application application;
+	private final LongRunningIOExecutor longRunningIOExecutor;
 	private final StringPreference lastProfilePreference;
 
 	private final VersionFactory versionFactory = new VersionFactory();
@@ -29,13 +31,15 @@ public class VersionSelectWindow {
 	private final VersionSelectPanel versionSelectPanel;
 
 	public VersionSelectWindow(Application application,
+			LongRunningIOExecutor longRunningIOExecutor,
 			StringPreference lastProfilePreference) {
 		this.application = application;
+		this.longRunningIOExecutor = longRunningIOExecutor;
 		this.lastProfilePreference = lastProfilePreference;
 		this.versionSelectPanel = new VersionSelectPanel(lastProfilePreference,
 				"Scanning...");
 
-		application.invokeLongRunningIOOperation(new Runnable() {
+		this.longRunningIOExecutor.invoke(new Runnable() {
 			@Override
 			public void run() {
 				LatestVersionList.get().load();
