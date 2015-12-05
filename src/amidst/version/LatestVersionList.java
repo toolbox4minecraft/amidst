@@ -20,6 +20,7 @@ import com.google.gson.JsonSyntaxException;
 public enum LatestVersionList {
 	INSTANCE;
 
+	@Deprecated
 	public static LatestVersionList get() {
 		return INSTANCE;
 	}

@@ -26,14 +26,17 @@ public class MinecraftProfile implements ILatestVersionListListener {
 
 	private MinecraftVersion version;
 	private final InstallInformation profile;
+	private final LatestVersionList latestVersionList;
 
 	private Status status = Status.IDLE;
 	private String versionName = "unknown";
 
-	public MinecraftProfile(InstallInformation profile) {
+	public MinecraftProfile(InstallInformation profile,
+			LatestVersionList latestVersionList) {
 		this.profile = profile;
+		this.latestVersionList = latestVersionList;
 		if (profile.lastVersionId.equals("latest")) {
-			LatestVersionList.get().addAndNotifyLoadListener(this);
+			latestVersionList.addAndNotifyLoadListener(this);
 		} else {
 			version = MinecraftVersion.fromVersionId(profile.lastVersionId);
 			if (version == null) {
@@ -87,9 +90,11 @@ public class MinecraftProfile implements ILatestVersionListListener {
 				}
 			}
 			if (usingSnapshots) {
-				version = MinecraftVersion.fromLatestSnapshot();
+				version = MinecraftVersion.fromLatestSnapshot(latestVersionList
+						.getVersions());
 			} else {
-				version = MinecraftVersion.fromLatestRelease();
+				version = MinecraftVersion.fromLatestRelease(latestVersionList
+						.getVersions());
 			}
 			if (version == null) {
 				status = Status.FAILED;

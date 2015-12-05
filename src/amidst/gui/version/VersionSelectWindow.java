@@ -23,6 +23,7 @@ import amidst.version.VersionFactory;
 
 public class VersionSelectWindow {
 	private final Application application;
+	private final LatestVersionList latestVersionList;
 	private final WorkerExecutor workerExecutor;
 	private final StringPreference lastProfilePreference;
 
@@ -32,9 +33,10 @@ public class VersionSelectWindow {
 	private final VersionSelectPanel versionSelectPanel;
 
 	public VersionSelectWindow(Application application,
-			WorkerExecutor workerExecutor,
+			LatestVersionList latestVersionList, WorkerExecutor workerExecutor,
 			StringPreference lastProfilePreference) {
 		this.application = application;
+		this.latestVersionList = latestVersionList;
 		this.workerExecutor = workerExecutor;
 		this.lastProfilePreference = lastProfilePreference;
 		this.versionSelectPanel = new VersionSelectPanel(lastProfilePreference,
@@ -59,7 +61,7 @@ public class VersionSelectWindow {
 	}
 
 	private void loadLatestVersionListImmediately() {
-		LatestVersionList.get().load();
+		latestVersionList.load();
 	}
 
 	private void initFrame() {
@@ -103,7 +105,7 @@ public class VersionSelectWindow {
 	}
 
 	private MinecraftProfile[] scanAndLoadVersions() {
-		versionFactory.scanForProfiles();
+		versionFactory.scanForProfiles(latestVersionList);
 		return versionFactory.getProfiles();
 	}
 

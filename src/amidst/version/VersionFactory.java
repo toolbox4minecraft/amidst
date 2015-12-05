@@ -48,7 +48,7 @@ public class VersionFactory {
 		versionStack.toArray(localVersions);
 	}
 
-	public void scanForProfiles() {
+	public void scanForProfiles(LatestVersionList latestVersionList) {
 		Log.i("Scanning for profiles.");
 		File profileJsonFile = new File(
 				LocalMinecraftInstallation.getMinecraftDirectory()
@@ -71,7 +71,8 @@ public class VersionFactory {
 		int i = 0;
 		for (InstallInformation installInformation : launcherProfile.profiles
 				.values()) {
-			profiles[i++] = new MinecraftProfile(installInformation);
+			profiles[i++] = new MinecraftProfile(installInformation,
+					latestVersionList);
 		}
 	}
 

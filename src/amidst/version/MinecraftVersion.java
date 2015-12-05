@@ -43,9 +43,9 @@ public class MinecraftVersion {
 		return version;
 	}
 
-	public static MinecraftVersion fromLatestRelease() {
+	public static MinecraftVersion fromLatestRelease(
+			Map<String, String>[] versions) {
 		MinecraftVersion version = null;
-		Map<String, String>[] versions = LatestVersionList.get().getVersions();
 		for (int i = 0; i < versions.length; i++) {
 			if (versions[i].get("type").equals("release")
 					&& (version = fromVersionId(versions[i].get("id"))) != null) {
@@ -55,9 +55,9 @@ public class MinecraftVersion {
 		return null;
 	}
 
-	public static MinecraftVersion fromLatestSnapshot() {
+	public static MinecraftVersion fromLatestSnapshot(
+			Map<String, String>[] versions) {
 		MinecraftVersion version = null;
-		Map<String, String>[] versions = LatestVersionList.get().getVersions();
 		for (int i = 0; i < versions.length; i++) {
 			if ((version = fromVersionId(versions[i].get("id"))) != null) {
 				return version;
