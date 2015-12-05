@@ -4,10 +4,10 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.map.Fragment;
-import amidst.map.WorldIconSelection;
-import amidst.map.Zoom;
+import amidst.gui.worldsurroundings.WorldIconSelection;
+import amidst.gui.worldsurroundings.Zoom;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.icon.WorldIcon;
 

@@ -1,13 +1,13 @@
-package amidst.map.widget;
+package amidst.gui.widget;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import amidst.map.FragmentGraph;
-import amidst.map.FragmentManager;
-import amidst.map.MapViewer;
+import amidst.fragment.FragmentGraph;
+import amidst.fragment.FragmentManager;
+import amidst.gui.worldsurroundings.MapViewer;
 import amidst.preferences.PrefModel;
 
 public class DebugWidget extends Widget {

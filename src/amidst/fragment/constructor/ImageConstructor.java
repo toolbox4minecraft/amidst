@@ -2,7 +2,7 @@ package amidst.fragment.constructor;
 
 import java.awt.image.BufferedImage;
 
-import amidst.map.Fragment;
+import amidst.fragment.Fragment;
 import amidst.minecraft.world.Resolution;
 
 public class ImageConstructor implements FragmentConstructor {

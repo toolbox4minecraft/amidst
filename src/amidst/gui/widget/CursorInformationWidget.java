@@ -1,13 +1,13 @@
-package amidst.map.widget;
+package amidst.gui.widget;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
-import amidst.map.Fragment;
-import amidst.map.FragmentGraph;
-import amidst.map.Map;
-import amidst.map.MapViewer;
+import amidst.fragment.Fragment;
+import amidst.fragment.FragmentGraph;
+import amidst.gui.worldsurroundings.Map;
+import amidst.gui.worldsurroundings.MapViewer;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;

@@ -1,4 +1,4 @@
-package amidst.map;
+package amidst.gui.worldsurroundings;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -10,8 +10,11 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import amidst.fragment.Fragment;
+import amidst.fragment.FragmentGraph;
+import amidst.fragment.FragmentGraphItem;
 import amidst.fragment.drawer.FragmentDrawer;
-import amidst.map.widget.Widget;
+import amidst.gui.widget.Widget;
 import amidst.resources.ResourceLoader;
 
 public class Drawer {

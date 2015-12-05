@@ -1,4 +1,4 @@
-package amidst.map;
+package amidst.fragment;
 
 import java.util.Iterator;
 import java.util.List;

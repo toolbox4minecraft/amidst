@@ -1,9 +1,12 @@
-package amidst.map;
+package amidst.gui.worldsurroundings;
 
 import java.awt.Point;
 
+import amidst.fragment.Fragment;
+import amidst.fragment.FragmentGraph;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.icon.WorldIcon;
+import amidst.utilities.TaskQueue;
 
 public class Map {
 	private final TaskQueue taskQueue = new TaskQueue();

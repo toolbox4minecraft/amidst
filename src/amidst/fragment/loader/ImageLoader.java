@@ -2,9 +2,9 @@ package amidst.fragment.loader;
 
 import java.awt.image.BufferedImage;
 
+import amidst.fragment.Fragment;
 import amidst.fragment.colorprovider.ColorProvider;
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.map.Fragment;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 

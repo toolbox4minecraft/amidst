@@ -1,13 +1,16 @@
-package amidst.map;
+package amidst.gui.worldsurroundings;
 
 import java.util.List;
 
 import amidst.Options;
+import amidst.fragment.FragmentGraph;
+import amidst.fragment.FragmentManager;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.layer.LayerBuilder;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.fragment.layer.LayerLoader;
 import amidst.fragment.layer.LayerReloader;
+import amidst.gui.widget.WidgetBuilder;
 import amidst.minecraft.world.World;
 
 public class WorldSurroundingsBuilder {

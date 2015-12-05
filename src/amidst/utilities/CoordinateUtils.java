@@ -1,6 +1,6 @@
 package amidst.utilities;
 
-import amidst.map.Fragment;
+import amidst.fragment.Fragment;
 
 public enum CoordinateUtils {
 	;

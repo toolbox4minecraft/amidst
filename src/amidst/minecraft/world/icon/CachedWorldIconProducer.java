@@ -3,7 +3,7 @@ package amidst.minecraft.world.icon;
 import java.util.Collections;
 import java.util.List;
 
-import amidst.map.Fragment;
+import amidst.fragment.Fragment;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 

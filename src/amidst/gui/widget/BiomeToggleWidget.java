@@ -1,12 +1,12 @@
-package amidst.map.widget;
+package amidst.gui.widget;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import amidst.fragment.layer.LayerReloader;
-import amidst.map.BiomeSelection;
-import amidst.map.MapViewer;
+import amidst.gui.worldsurroundings.BiomeSelection;
+import amidst.gui.worldsurroundings.MapViewer;
 import amidst.resources.ResourceLoader;
 
 public class BiomeToggleWidget extends Widget {

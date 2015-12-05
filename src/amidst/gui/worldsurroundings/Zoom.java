@@ -1,4 +1,4 @@
-package amidst.map;
+package amidst.gui.worldsurroundings;
 
 import java.awt.Point;
 

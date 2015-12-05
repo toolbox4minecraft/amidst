@@ -1,4 +1,4 @@
-package amidst.map;
+package amidst.gui.worldsurroundings;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -21,7 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import amidst.fragment.layer.LayerReloader;
-import amidst.map.widget.Widget;
+import amidst.gui.widget.Widget;
+import amidst.gui.widget.WidgetBuilder;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.Player;
 import amidst.minecraft.world.World;

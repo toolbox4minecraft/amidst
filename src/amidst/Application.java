@@ -10,9 +10,8 @@ import amidst.gui.LicenseWindow;
 import amidst.gui.MapWindow;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
+import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.logging.Log;
-import amidst.map.SkinLoader;
-import amidst.map.WorldSurroundingsBuilder;
 import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.minecraft.Minecraft;
@@ -20,6 +19,7 @@ import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.remote.RemoteMinecraft;
 import amidst.minecraft.world.World;
 import amidst.utilities.SeedHistoryLogger;
+import amidst.utilities.SkinLoader;
 import amidst.version.MinecraftProfile;
 
 public class Application {

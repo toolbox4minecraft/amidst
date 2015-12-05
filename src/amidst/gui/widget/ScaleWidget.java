@@ -1,11 +1,11 @@
-package amidst.map.widget;
+package amidst.gui.widget;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
-import amidst.map.MapViewer;
-import amidst.map.Zoom;
+import amidst.gui.worldsurroundings.MapViewer;
+import amidst.gui.worldsurroundings.Zoom;
 import amidst.preferences.PrefModel;
 
 public class ScaleWidget extends Widget {

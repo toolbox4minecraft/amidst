@@ -1,4 +1,4 @@
-package amidst.map.widget;
+package amidst.gui.widget;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amidst.fragment.layer.LayerReloader;
-import amidst.map.BiomeColorProfileSelection;
-import amidst.map.BiomeSelection;
-import amidst.map.MapViewer;
+import amidst.gui.worldsurroundings.BiomeSelection;
+import amidst.gui.worldsurroundings.MapViewer;
 import amidst.minecraft.Biome;
+import amidst.preferences.BiomeColorProfileSelection;
 import amidst.utilities.CoordinateUtils;
 
 public class BiomeWidget extends Widget {

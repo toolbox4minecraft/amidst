@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
+import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.map.Fragment;
-import amidst.map.Zoom;
+import amidst.gui.worldsurroundings.Zoom;
 import amidst.minecraft.world.Resolution;
 
 public class GridDrawer extends FragmentDrawer {

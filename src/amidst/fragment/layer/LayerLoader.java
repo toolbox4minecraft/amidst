@@ -1,7 +1,7 @@
 package amidst.fragment.layer;
 
+import amidst.fragment.Fragment;
 import amidst.fragment.loader.FragmentLoader;
-import amidst.map.Fragment;
 
 /**
  * This class is not thread-safe. This is good enough, since it is only used in

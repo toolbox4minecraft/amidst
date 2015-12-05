@@ -1,6 +1,6 @@
 package amidst.fragment.colorprovider;
 
-import amidst.map.Fragment;
+import amidst.fragment.Fragment;
 import amidst.minecraft.world.SlimeChunkOracle;
 
 public class SlimeColorProvider implements ColorProvider {

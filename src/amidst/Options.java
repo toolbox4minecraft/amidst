@@ -3,8 +3,8 @@ package amidst;
 import java.io.File;
 import java.util.prefs.Preferences;
 
-import amidst.map.BiomeColorProfileSelection;
 import amidst.preferences.BiomeColorProfile;
+import amidst.preferences.BiomeColorProfileSelection;
 import amidst.preferences.BooleanPrefModel;
 import amidst.preferences.FilePrefModel;
 import amidst.preferences.SelectPrefModel;

@@ -1,10 +1,9 @@
-package amidst.map;
+package amidst.preferences;
 
 import java.awt.Color;
 
 import amidst.logging.Log;
 import amidst.minecraft.Biome;
-import amidst.preferences.BiomeColorProfile;
 
 public class BiomeColorProfileSelection {
 	private volatile int[] colorInts;

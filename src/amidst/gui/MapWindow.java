@@ -24,7 +24,7 @@ import amidst.Options;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
-import amidst.map.WorldSurroundings;
+import amidst.gui.worldsurroundings.WorldSurroundings;
 import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;

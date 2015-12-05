@@ -1,20 +1,18 @@
-package amidst.map;
+package amidst.gui.widget;
 
 import java.util.Arrays;
 import java.util.List;
 
 import amidst.Options;
+import amidst.fragment.FragmentGraph;
+import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerReloader;
-import amidst.map.widget.BiomeToggleWidget;
-import amidst.map.widget.BiomeWidget;
-import amidst.map.widget.CursorInformationWidget;
-import amidst.map.widget.DebugWidget;
-import amidst.map.widget.FpsWidget;
-import amidst.map.widget.ScaleWidget;
-import amidst.map.widget.SeedWidget;
-import amidst.map.widget.SelectedIconWidget;
-import amidst.map.widget.Widget;
-import amidst.map.widget.Widget.CornerAnchorPoint;
+import amidst.gui.widget.Widget.CornerAnchorPoint;
+import amidst.gui.worldsurroundings.BiomeSelection;
+import amidst.gui.worldsurroundings.Map;
+import amidst.gui.worldsurroundings.MapViewer;
+import amidst.gui.worldsurroundings.WorldIconSelection;
+import amidst.gui.worldsurroundings.Zoom;
 import amidst.minecraft.world.World;
 import amidst.utilities.FramerateTimer;
 

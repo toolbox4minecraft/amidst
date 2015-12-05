@@ -1,7 +1,7 @@
 package amidst.fragment.loader;
 
+import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.map.Fragment;
 
 public abstract class FragmentLoader {
 	protected final LayerDeclaration declaration;

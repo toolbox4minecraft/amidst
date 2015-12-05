@@ -3,8 +3,8 @@ package amidst.fragment.drawer;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
+import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.map.Fragment;
 import amidst.minecraft.world.Resolution;
 
 public class ImageDrawer extends FragmentDrawer {

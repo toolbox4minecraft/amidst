@@ -1,4 +1,4 @@
-package amidst.map;
+package amidst.utilities;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

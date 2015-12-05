@@ -1,7 +1,9 @@
-package amidst.map;
+package amidst.gui.worldsurroundings;
 
 import java.awt.image.BufferedImage;
 
+import amidst.fragment.FragmentGraph;
+import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.minecraft.world.CoordinatesInWorld;
 

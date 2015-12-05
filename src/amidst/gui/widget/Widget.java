@@ -1,4 +1,4 @@
-package amidst.map.widget;
+package amidst.gui.widget;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -9,7 +9,7 @@ import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 
-import amidst.map.MapViewer;
+import amidst.gui.worldsurroundings.MapViewer;
 import amidst.resources.ResourceLoader;
 import amidst.utilities.CoordinateUtils;
 

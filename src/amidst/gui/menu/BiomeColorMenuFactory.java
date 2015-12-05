@@ -14,9 +14,9 @@ import javax.swing.KeyStroke;
 
 import amidst.gui.MapWindow;
 import amidst.logging.Log;
-import amidst.map.BiomeColorProfileSelection;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BiomeColorProfileLoader;
+import amidst.preferences.BiomeColorProfileSelection;
 import amidst.preferences.BiomeColorProfileVisitor;
 
 public class BiomeColorMenuFactory {

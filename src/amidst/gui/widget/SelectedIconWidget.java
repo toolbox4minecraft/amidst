@@ -1,11 +1,11 @@
-package amidst.map.widget;
+package amidst.gui.widget;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import amidst.map.MapViewer;
-import amidst.map.WorldIconSelection;
+import amidst.gui.worldsurroundings.MapViewer;
+import amidst.gui.worldsurroundings.WorldIconSelection;
 import amidst.minecraft.world.icon.WorldIcon;
 
 public class SelectedIconWidget extends Widget {

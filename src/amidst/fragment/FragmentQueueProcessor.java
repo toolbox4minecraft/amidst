@@ -1,8 +1,9 @@
-package amidst.map;
+package amidst.fragment;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.fragment.layer.LayerLoader;
+import amidst.utilities.TaskQueue;
 
 /**
  * This class is thread-safe, as long as only one thread calls the method

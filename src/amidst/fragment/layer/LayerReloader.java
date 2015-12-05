@@ -1,6 +1,6 @@
 package amidst.fragment.layer;
 
-import amidst.map.FragmentManager;
+import amidst.fragment.FragmentManager;
 
 public class LayerReloader {
 	private final FragmentManager fragmentManager;
