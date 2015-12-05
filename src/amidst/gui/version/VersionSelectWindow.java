@@ -107,7 +107,6 @@ public class VersionSelectWindow {
 			versionSelector.addVersion(new LocalVersionComponent(application,
 					localVersion));
 		}
-		versionSelector.addVersion(new RemoteVersionComponent(application));
 	}
 
 	private void restoreSelection(VersionSelectPanel versionSelector) {

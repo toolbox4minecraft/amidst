@@ -16,7 +16,6 @@ import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
-import amidst.minecraft.remote.RemoteMinecraft;
 import amidst.minecraft.world.World;
 import amidst.utilities.SeedHistoryLogger;
 import amidst.utilities.SkinLoader;
@@ -84,10 +83,6 @@ public class Application {
 		setVersionSelectWindow(new VersionSelectWindow(this,
 				options.lastProfile));
 		setMainWindow(null);
-	}
-
-	public void displayMainWindow(RemoteMinecraft minecraftInterface) {
-		doDisplayMainWindow(minecraftInterface);
 	}
 
 	public void displayMainWindow(MinecraftProfile profile) {

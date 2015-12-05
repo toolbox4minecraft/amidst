@@ -173,16 +173,6 @@ public class Biome {
 		biomeMap.put(name, this);
 	}
 
-	@Deprecated
-	public Biome(String name, int index, int defaultColor, boolean remote) {
-		this.name = name;
-		this.index = index;
-		this.defaultColor = defaultColor;
-		this.type = BiomeType.typeC;
-		biomes[index] = this;
-		biomeMap.put(name, this);
-	}
-
 	private int lightenColorIfNecessary(int index, int color) {
 		if (index >= 128) {
 			return ColorUtils.lightenColor(color, 40);
