@@ -50,7 +50,7 @@ public class VersionSelectWindow {
 	}
 
 	private void loadLatestVersionListLater() {
-		longRunningIOExecutor.invoke(new Runnable() {
+		longRunningIOExecutor.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				loadLatestVersionListImmediately();
@@ -89,7 +89,7 @@ public class VersionSelectWindow {
 	}
 
 	private void scanAndLoadVersionsLater() {
-		longRunningIOExecutor.invoke(new Runnable() {
+		longRunningIOExecutor.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				scanAndLoadVersionsImmediately();

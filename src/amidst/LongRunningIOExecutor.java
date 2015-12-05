@@ -7,7 +7,7 @@ public class LongRunningIOExecutor {
 		this.threadMaster = threadMaster;
 	}
 
-	public void invoke(Runnable runnable) {
+	public void invokeLater(Runnable runnable) {
 		threadMaster.invokeLongRunningIOOperation(runnable);
 	}
 }

@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.SwingUtilities;
 
 import amidst.Application;
 import amidst.LongRunningIOExecutor;
@@ -27,19 +28,35 @@ public class SkinLoader {
 
 	public void loadSkins(List<Player> players) {
 		for (Player player : players) {
-			invokeLoadSkin(player);
+			loadSkinLater(player);
 		}
 	}
 
-	private void invokeLoadSkin(final Player player) {
-		longRunningIOExecutor.invoke(new Runnable() {
-
+	private void loadSkinLater(final Player player) {
+		longRunningIOExecutor.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				loadSkin(player);
-				application.finishedLoadingPlayerSkin();
+				loadSkinImmediately(player);
 			}
 		});
+	}
+
+	private void loadSkinImmediately(Player player) {
+		loadSkin(player);
+		finishedLoadingPlayerSkinLater();
+	}
+
+	private void finishedLoadingPlayerSkinLater() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				finishedLoadingPlayerSkinImmediately();
+			}
+		});
+	}
+
+	private void finishedLoadingPlayerSkinImmediately() {
+		application.finishedLoadingPlayerSkin();
 	}
 
 	private void loadSkin(Player player) {

@@ -105,7 +105,7 @@ public class Application {
 
 	private void createLocalMinecraftInterfaceAndDisplayMainWindowLater(
 			final String gameDirectory, final File jarFile) {
-		longRunningIOExecutor.invoke(new Runnable() {
+		longRunningIOExecutor.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				createLocalMinecraftInterfaceAndDisplayMainWindowImmediately(

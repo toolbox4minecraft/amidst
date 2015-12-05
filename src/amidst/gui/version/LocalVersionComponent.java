@@ -1,5 +1,7 @@
 package amidst.gui.version;
 
+import javax.swing.SwingUtilities;
+
 import amidst.Application;
 import amidst.version.IProfileUpdateListener;
 import amidst.version.MinecraftProfile;
@@ -22,6 +24,15 @@ public class LocalVersionComponent extends VersionComponent {
 		profile.addUpdateListener(new IProfileUpdateListener() {
 			@Override
 			public void onProfileUpdate(ProfileUpdateEvent event) {
+				repaintComponentLater();
+			}
+		});
+	}
+
+	private void repaintComponentLater() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
 				repaintComponent();
 			}
 		});
