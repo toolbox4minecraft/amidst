@@ -13,8 +13,13 @@ import amidst.gui.widget.Widget;
 
 public class MapViewer {
 	@SuppressWarnings("serial")
-	private class ViewerComponent extends JComponent {
+	private static class ViewerComponent extends JComponent {
 		private final FontMetrics widgetFontMetrics = getFontMetrics(Widget.TEXT_FONT);
+		private final Drawer drawer;
+
+		public ViewerComponent(Drawer drawer) {
+			this.drawer = drawer;
+		}
 
 		@Override
 		public void paint(Graphics g) {
@@ -23,24 +28,30 @@ public class MapViewer {
 					widgetFontMetrics);
 		}
 
-		public void drawScreenshot(Graphics2D g2d) {
-			drawer.drawScreenshot(g2d, getWidth(), getHeight(),
-					getMousePosition(), widgetFontMetrics);
+		public BufferedImage createCaptureImage() {
+			int width = getWidth();
+			int height = getHeight();
+			Point mousePosition = getMousePosition();
+			BufferedImage result = new BufferedImage(width, height,
+					BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g2d = result.createGraphics();
+			drawer.drawCaptureImage(g2d, width, height, mousePosition,
+					widgetFontMetrics);
+			g2d.dispose();
+			return result;
 		}
 	}
 
 	private final ViewerMouseListener mouseListener;
-	private final Drawer drawer;
 	private final ViewerComponent component;
 
 	public MapViewer(ViewerMouseListener mouseListener, Drawer drawer) {
 		this.mouseListener = mouseListener;
-		this.drawer = drawer;
-		this.component = createComponent();
+		this.component = createComponent(drawer);
 	}
 
-	private ViewerComponent createComponent() {
-		ViewerComponent result = new ViewerComponent();
+	private ViewerComponent createComponent(Drawer drawer) {
+		ViewerComponent result = new ViewerComponent(drawer);
 		result.addMouseListener(mouseListener);
 		result.addMouseWheelListener(mouseListener);
 		result.setFocusable(true);
@@ -48,12 +59,7 @@ public class MapViewer {
 	}
 
 	public BufferedImage createCaptureImage() {
-		BufferedImage image = new BufferedImage(component.getWidth(),
-				component.getHeight(), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2d = image.createGraphics();
-		component.drawScreenshot(g2d);
-		g2d.dispose();
-		return image;
+		return component.createCaptureImage();
 	}
 
 	public Point getMousePositionOrCenter() {

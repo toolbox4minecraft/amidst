@@ -66,7 +66,7 @@ public class Drawer {
 		this.drawers = drawers;
 	}
 
-	public void drawScreenshot(Graphics2D g2d, int viewerWidth,
+	public void drawCaptureImage(Graphics2D g2d, int viewerWidth,
 			int viewerHeight, Point mousePosition, FontMetrics widgetFontMetrics) {
 		synchronized (drawLock) {
 			this.g2d = g2d;
