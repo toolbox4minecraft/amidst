@@ -11,7 +11,7 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 	private final List<LayerDeclaration> declarations;
 	private final FragmentManager fragmentManager;
 
-	private volatile FragmentGraphItem startFragment;
+	private volatile FragmentGraphItem topLeftFragment;
 	private volatile int fragmentsPerRow;
 	private volatile int fragmentsPerColumn;
 
@@ -21,15 +21,15 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 		this.fragmentManager = fragmentManager;
 	}
 
-	private FragmentGraphItem getStartFragment() {
-		if (startFragment == null) {
+	private FragmentGraphItem getTopLeftFragment() {
+		if (topLeftFragment == null) {
 			init(CoordinatesInWorld.origin());
 		}
-		return startFragment;
+		return topLeftFragment;
 	}
 
 	public void adjust(int newLeft, int newAbove, int newRight, int newBelow) {
-		startFragment = getStartFragment().adjustRowsAndColumns(newAbove,
+		topLeftFragment = getTopLeftFragment().adjustRowsAndColumns(newAbove,
 				newBelow, newLeft, newRight, fragmentManager);
 		fragmentsPerRow = fragmentsPerRow + newLeft + newRight;
 		fragmentsPerColumn = fragmentsPerColumn + newAbove + newBelow;
@@ -37,7 +37,7 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 
 	public void init(CoordinatesInWorld coordinates) {
 		recycleAll();
-		startFragment = new FragmentGraphItem(
+		topLeftFragment = new FragmentGraphItem(
 				fragmentManager.requestFragment(coordinates.toFragmentCorner()));
 		fragmentsPerRow = 1;
 		fragmentsPerColumn = 1;
@@ -48,8 +48,8 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 	}
 
 	private void recycleAll() {
-		if (startFragment != null) {
-			startFragment.recycleAll(fragmentManager);
+		if (topLeftFragment != null) {
+			topLeftFragment.recycleAll(fragmentManager);
 		}
 	}
 
@@ -62,12 +62,12 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 	}
 
 	public CoordinatesInWorld getCorner() {
-		return startFragment.getFragment().getCorner();
+		return topLeftFragment.getFragment().getCorner();
 	}
 
 	@Override
 	public Iterator<FragmentGraphItem> iterator() {
-		return getStartFragment().iterator();
+		return getTopLeftFragment().iterator();
 	}
 
 	public WorldIcon getClosestWorldIcon(CoordinatesInWorld coordinates,
@@ -78,7 +78,7 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 
 	public Fragment getFragmentAt(CoordinatesInWorld coordinates) {
 		CoordinatesInWorld corner = coordinates.toFragmentCorner();
-		for (FragmentGraphItem fragmentGraphItem : getStartFragment()) {
+		for (FragmentGraphItem fragmentGraphItem : getTopLeftFragment()) {
 			Fragment fragment = fragmentGraphItem.getFragment();
 			if (corner.equals(fragment.getCorner())) {
 				return fragment;
