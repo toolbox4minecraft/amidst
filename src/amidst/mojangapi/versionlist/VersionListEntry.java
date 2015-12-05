@@ -1,5 +1,7 @@
 package amidst.mojangapi.versionlist;
 
+import amidst.mojangapi.ReleaseType;
+
 public class VersionListEntry {
 	private static final String REMOTE_PREFIX = "https://s3.amazonaws.com/Minecraft.Download/versions/";
 	private static final String MIDDLE_SERVER = "/minecraft_server.";
@@ -8,7 +10,7 @@ public class VersionListEntry {
 	private static final String JSON_FILE_EXTENSION = ".json";
 
 	private String id;
-	private String type;
+	private ReleaseType type;
 
 	public VersionListEntry() {
 		// no-argument constructor for gson
@@ -18,7 +20,7 @@ public class VersionListEntry {
 		return id;
 	}
 
-	public String getType() {
+	public ReleaseType getType() {
 		return type;
 	}
 

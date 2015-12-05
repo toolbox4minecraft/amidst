@@ -14,10 +14,6 @@ public class Library {
 		return name;
 	}
 
-	public List<LibraryRule> getRules() {
-		return rules;
-	}
-
 	public boolean isActive() {
 		if (rules.isEmpty()) {
 			return true;

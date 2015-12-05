@@ -69,8 +69,7 @@ public class VersionFactory {
 		Log.i("Successfully loaded profile list.");
 		profiles = new MinecraftProfile[launcherProfile.getProfiles().size()];
 		int i = 0;
-		for (LaucherProfile installInformation : launcherProfile.getProfiles()
-				.values()) {
+		for (LaucherProfile installInformation : launcherProfile.getProfiles()) {
 			profiles[i++] = new MinecraftProfile(installInformation,
 					latestVersionList);
 		}

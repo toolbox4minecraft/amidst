@@ -15,13 +15,13 @@ public class VersionList {
 	private static final Gson GSON = new Gson();
 	private static final String REMOTE_VERSIONS_URL = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
 
-	public static VersionList retrieveRemote()
-			throws JsonSyntaxException, JsonIOException, IOException {
+	public static VersionList retrieveRemote() throws JsonSyntaxException,
+			JsonIOException, IOException {
 		return doRetrieve(URIUtils.newReader(REMOTE_VERSIONS_URL));
 	}
 
-	public static VersionList retrieve(URL url)
-			throws JsonSyntaxException, JsonIOException, IOException {
+	public static VersionList retrieve(URL url) throws JsonSyntaxException,
+			JsonIOException, IOException {
 		return doRetrieve(URIUtils.newReader(url));
 	}
 
@@ -30,15 +30,10 @@ public class VersionList {
 		return GSON.fromJson(reader, VersionList.class);
 	}
 
-	private LatestVersion latest;
 	private List<VersionListEntry> versions;
 
 	public VersionList() {
 		// no-argument constructor for gson
-	}
-
-	public LatestVersion getLatest() {
-		return latest;
 	}
 
 	public List<VersionListEntry> getVersions() {

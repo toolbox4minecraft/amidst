@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import amidst.mojangapi.ReleaseType;
 import amidst.mojangapi.launcherprofiles.LaucherProfile;
 
 public class MinecraftProfile implements ILatestVersionListListener {
@@ -83,13 +84,7 @@ public class MinecraftProfile implements ILatestVersionListListener {
 			break;
 		case LOADED:
 			status = Status.FOUND;
-			boolean usingSnapshots = false;
-			for (int i = 0; i < profile.getAllowedReleaseTypes().length; i++) {
-				if (profile.getAllowedReleaseTypes()[i].equals("snapshot")) {
-					usingSnapshots = true;
-				}
-			}
-			if (usingSnapshots) {
+			if (profile.isAllowed(ReleaseType.SNAPSHOT)) {
 				version = MinecraftVersion.fromLatestSnapshot(latestVersionList
 						.getVersions());
 			} else {

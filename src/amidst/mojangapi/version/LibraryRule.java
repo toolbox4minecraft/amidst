@@ -1,8 +1,9 @@
 package amidst.mojangapi.version;
 
 public class LibraryRule {
+	private static final String ACTION_ALLOW = "allow";
 	private String action;
-	private LibraryRuleOs os = new LibraryRuleOs("any");
+	private LibraryRuleOs os = LibraryRuleOs.any();
 
 	public LibraryRule() {
 		// no-argument constructor for gson
@@ -13,14 +14,6 @@ public class LibraryRule {
 	}
 
 	public boolean isAllowed() {
-		return action.equals("allow");
-	}
-
-	public String getAction() {
-		return action;
-	}
-
-	public LibraryRuleOs getOs() {
-		return os;
+		return action.equals(ACTION_ALLOW);
 	}
 }
