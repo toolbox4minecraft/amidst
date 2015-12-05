@@ -9,8 +9,10 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Stack;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -31,6 +33,7 @@ import amidst.bytedata.ClassChecker;
 import amidst.json.JarLibrary;
 import amidst.json.JarProfile;
 import amidst.logging.Log;
+import amidst.utilities.FileSystemUtils;
 import amidst.version.VersionInfo;
 
 import com.google.gson.Gson;
@@ -292,38 +295,74 @@ public class Minecraft {
 		return urlToJar;
 	}
 	
-	private Stack<URL> getLibraries(File jsonFile) {
-		Log.i("Loading libraries.");
-		Stack<URL> libraries = new Stack<URL>();
+	private List<URL> getAllLibraryUrls(File jsonFile) {
+		List<URL> libraries = new ArrayList<URL>();
 		JarProfile profile = null;
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(jsonFile));
-			JarProfile result = GSON.fromJson(reader, JarProfile.class);
+			profile = GSON.fromJson(reader, JarProfile.class);
 			reader.close();
-			profile = result;
 		} catch (IOException e) {
-			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: " + jsonFile + ")");
+			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: "
+					+ jsonFile + ")");
 			return libraries;
 		}
-		
-		for (int i = 0; i < profile.libraries.size(); i++) {
-			JarLibrary library = profile.libraries.get(i);
-			if (library.isActive() && library.getFile() != null && library.getFile().exists()) {
+
+		for (JarLibrary library : profile.getLibraries()) {
+			File libraryFile = getLibraryFile(library);
+			if (libraryFile != null) {
 				try {
-					libraries.add(library.getFile().toURI().toURL());
-					Log.i("Found library: " + library.getFile());
+					libraries.add(libraryFile.toURI().toURL());
+					Log.i("Found library: " + libraryFile);
 				} catch (MalformedURLException e) {
-					Log.w("Unable to convert library file to URL with path: " + library.getFile());
+					Log.w("Unable to convert library file to URL with path: "
+							+ libraryFile);
 					e.printStackTrace();
 				}
 			} else {
-				Log.i("Skipping library: " + library.name);
+				Log.i("Skipping library: " + library.getName());
 			}
 		}
-		
+
 		return libraries;
 	}
-	
+
+	private File getLibraryFile(JarLibrary library) {
+		if (library.isActive()) {
+			File result = getLibraryFile(library.getName());
+			if (result != null && result.exists()) {
+				return result;
+			}
+		}
+		return null;
+	}
+
+	private File getLibraryFile(String libraryName) {
+		String searchPath = getLibrarySearchPath(libraryName);
+		File searchPathFile = new File(searchPath);
+		if (!searchPathFile.exists()) {
+			Log.w("Failed attempt to load library at: " + searchPathFile);
+			return null;
+		}
+		File result = FileSystemUtils.getFirstFileWithExtension(
+				searchPathFile.listFiles(), "jar");
+		if (result == null) {
+			Log.w("Attempted to search for file at path: " + searchPath
+					+ " but found nothing. Skipping.");
+		}
+		return result;
+	}
+
+	private String getLibrarySearchPath(String libraryName) {
+		String result = LocalMinecraftInstallation.getMinecraftLibraries().getAbsolutePath() + "/";
+		String[] split = libraryName.split(":");
+		split[0] = split[0].replace('.', '/');
+		for (int i = 0; i < split.length; i++) {
+			result += split[i] + "/";
+		}
+		return result;
+	}
+
 	/* 
 	 * This was the old search-and-add-all libraries method. This may still be useful
 	 * if the user doesn't have a json file, or mojang changes the format.
@@ -354,9 +393,8 @@ public class Minecraft {
 			librariesJson = new File(minecraftJsonFileName);
 		}
 		if (librariesJson.exists()) {
-			Stack<URL> libraries = getLibraries(librariesJson);
-			URL[] libraryArray = new URL[libraries.size() + 1];
-			libraries.toArray(libraryArray);
+			List<URL> libraries = getAllLibraryUrls(librariesJson);
+			URL[] libraryArray = libraries.toArray(new URL[libraries.size() + 1]);
 			libraryArray[libraries.size()] = urlToJar;
 			classLoader = new URLClassLoader(libraryArray);
 		} else {

@@ -1,11 +1,8 @@
 package amidst.json;
 
 public class JarRule {
-	public String action;
-	public RuleOs os = new RuleOs("any");
-
-	public JarRule() {
-	}
+	private String action;
+	private RuleOs os = new RuleOs("any");
 
 	public boolean isApplicable() {
 		return os.check();
@@ -13,5 +10,13 @@ public class JarRule {
 
 	public boolean isAllowed() {
 		return action.equals("allow");
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public RuleOs getOs() {
+		return os;
 	}
 }

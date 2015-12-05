@@ -1,5 +1,14 @@
 package amidst.json;
 
 public class Resolution {
-	public String width, height;
+	private String width;
+	private String height;
+
+	public String getWidth() {
+		return width;
+	}
+
+	public String getHeight() {
+		return height;
+	}
 }
