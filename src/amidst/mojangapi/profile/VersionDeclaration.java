@@ -11,7 +11,7 @@ import java.util.Map;
 
 import amidst.utilities.URIUtils;
 
-public class Version {
+public class VersionDeclaration {
 	private static enum StatelessResources {
 		INSTANCE;
 
@@ -45,7 +45,7 @@ public class Version {
 	private String id;
 	private String type;
 
-	public Version() {
+	public VersionDeclaration() {
 		// no-argument constructor for gson
 	}
 
