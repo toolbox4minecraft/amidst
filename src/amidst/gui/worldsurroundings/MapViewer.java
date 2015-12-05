@@ -12,7 +12,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -20,6 +19,7 @@ import javax.swing.JPopupMenu;
 
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.widget.Widget;
+import amidst.gui.widget.WidgetManager;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.Player;
 import amidst.minecraft.world.World;
@@ -30,18 +30,17 @@ public class MapViewer {
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			int notches = e.getWheelRotation();
 			Point mousePosition = getMousePositionFromEvent(e);
-			if (!mouseWheelMovedOnWidget(mousePosition, notches)) {
-				zoom.adjustZoom(mousePosition, notches);
+			if (!widgetManager.mouseWheelMoved(mousePosition, notches)) {
+				mouseWheelMovedOnMap(mousePosition, notches);
 			}
 		}
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (e.isMetaDown()) {
-				return;
-			}
 			Point mousePosition = getMousePositionFromEvent(e);
-			if (!mouseClickedOnWidget(mousePosition)) {
+			if (isRightClick(e)) {
+				// noop
+			} else if (!widgetManager.mouseClicked(mousePosition)) {
 				mouseClickedOnMap(mousePosition);
 			}
 		}
@@ -49,42 +48,43 @@ public class MapViewer {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			Point mousePosition = getMousePositionFromEvent(e);
-			if (e.isPopupTrigger()) {
-				showPlayerMenu(e);
-			} else if (e.isMetaDown()) {
+			if (isPopup(e)) {
+				showPlayerMenu(mousePosition, e.getComponent(), e.getX(),
+						e.getY());
+			} else if (isRightClick(e)) {
 				// noop
-			} else if (mousePressedOnWidget(mousePosition)) {
-				// noop
-			} else {
-				movement.setLastMouse(mousePosition);
+			} else if (!widgetManager.mousePressed(mousePosition)) {
+				mousePressedOnMap(mousePosition);
 			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (e.isPopupTrigger()) {
-				showPlayerMenu(e);
-			} else if (mouseOwner != null) {
-				mouseOwner.onMouseReleased();
-				mouseOwner = null;
-			} else {
-				movement.setLastMouse(null);
+			Point mousePosition = getMousePositionFromEvent(e);
+			if (isPopup(e)) {
+				showPlayerMenu(mousePosition, e.getComponent(), e.getX(),
+						e.getY());
+			} else if (!widgetManager.mouseReleased()) {
+				mouseReleasedOnMap();
 			}
 		}
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
+			// noop
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
+			// noop
 		}
 
-		private void showPlayerMenu(MouseEvent e) {
-			if (MinecraftUtil.getVersion().saveEnabled() && world.hasPlayers()) {
-				createPlayerMenu(getMousePositionFromEvent(e)).show(
-						e.getComponent(), e.getX(), e.getY());
-			}
+		private boolean isPopup(MouseEvent e) {
+			return e.isPopupTrigger();
+		}
+
+		private boolean isRightClick(MouseEvent e) {
+			return e.isMetaDown();
 		}
 
 		/**
@@ -124,13 +124,11 @@ public class MapViewer {
 	private final Drawer drawer;
 	private final WorldIconSelection worldIconSelection;
 	private final LayerReloader layerReloader;
-	private final List<Widget> widgets;
-
-	private Widget mouseOwner;
+	private final WidgetManager widgetManager;
 
 	public MapViewer(Movement movement, Zoom zoom, World world, Map map,
 			Drawer drawer, WorldIconSelection worldIconSelection,
-			LayerReloader layerReloader, List<Widget> widgets) {
+			LayerReloader layerReloader, WidgetManager widgetManager) {
 		this.movement = movement;
 		this.zoom = zoom;
 		this.world = world;
@@ -138,7 +136,7 @@ public class MapViewer {
 		this.drawer = drawer;
 		this.worldIconSelection = worldIconSelection;
 		this.layerReloader = layerReloader;
-		this.widgets = widgets;
+		this.widgetManager = widgetManager;
 		initComponent();
 	}
 
@@ -174,48 +172,11 @@ public class MapViewer {
 		return component;
 	}
 
-	private boolean mouseWheelMovedOnWidget(Point mousePosition, int notches) {
-		for (Widget widget : widgets) {
-			if (widget.isVisible()
-					&& widget.isInBounds(mousePosition)
-					&& widget
-							.onMouseWheelMoved(
-									widget.translateXToWidgetCoordinates(mousePosition),
-									widget.translateYToWidgetCoordinates(mousePosition),
-									notches)) {
-				return true;
-			}
+	private void showPlayerMenu(Point mousePosition, Component component,
+			int x, int y) {
+		if (MinecraftUtil.getVersion().saveEnabled() && world.hasPlayers()) {
+			createPlayerMenu(mousePosition).show(component, x, y);
 		}
-		return false;
-	}
-
-	private boolean mouseClickedOnWidget(Point mousePosition) {
-		for (Widget widget : widgets) {
-			if (widget.isVisible()
-					&& widget.isInBounds(mousePosition)
-					&& widget
-							.onClick(
-									widget.translateXToWidgetCoordinates(mousePosition),
-									widget.translateYToWidgetCoordinates(mousePosition))) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean mousePressedOnWidget(Point mousePosition) {
-		for (Widget widget : widgets) {
-			if (widget.isVisible()
-					&& widget.isInBounds(mousePosition)
-					&& widget
-							.onMousePressed(
-									widget.translateXToWidgetCoordinates(mousePosition),
-									widget.translateYToWidgetCoordinates(mousePosition))) {
-				mouseOwner = widget;
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private JPopupMenu createPlayerMenu(Point mousePosition) {
@@ -240,7 +201,19 @@ public class MapViewer {
 		return result;
 	}
 
+	private void mouseWheelMovedOnMap(Point mousePosition, int notches) {
+		zoom.adjustZoom(mousePosition, notches);
+	}
+
 	private void mouseClickedOnMap(Point mousePosition) {
 		worldIconSelection.select(map.getClosestWorldIcon(mousePosition, 50.0));
+	}
+
+	private void mousePressedOnMap(Point mousePosition) {
+		movement.setLastMouse(mousePosition);
+	}
+
+	private void mouseReleasedOnMap() {
+		movement.setLastMouse(null);
 	}
 }
