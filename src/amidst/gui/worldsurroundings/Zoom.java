@@ -22,7 +22,7 @@ public class Zoom {
 		remainingTicks--;
 		if (remainingTicks >= 0) {
 			double previous = updateCurrent();
-			map.adjustStartOnScreenToZoom(previous, current, mousePosition);
+			map.adjustToZoom(previous, current, mousePosition);
 		}
 	}
 

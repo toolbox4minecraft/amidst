@@ -150,8 +150,8 @@ public class Drawer {
 			AffineTransform originalGraphicsTransform) {
 		double scale = zoom.getCurrentValue();
 		originalLayerMatrix.setTransform(originalGraphicsTransform);
-		originalLayerMatrix.translate(map.getStartXOnScreen(),
-				map.getStartYOnScreen());
+		originalLayerMatrix.translate(map.getLeftOnScreen(),
+				map.getTopOnScreen());
 		originalLayerMatrix.scale(scale, scale);
 	}
 

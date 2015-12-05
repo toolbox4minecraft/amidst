@@ -35,7 +35,7 @@ public class Movement {
 	}
 
 	private void moveMap(Map map) {
-		map.adjustStartOnScreenToMovement((int) speedX, (int) speedY);
+		map.adjustToMovement((int) speedX, (int) speedY);
 	}
 
 	private void throttleMovementSpeed() {

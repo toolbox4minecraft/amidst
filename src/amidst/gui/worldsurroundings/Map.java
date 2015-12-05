@@ -14,8 +14,8 @@ public class Map {
 	private final Zoom zoom;
 	private final FragmentGraph graph;
 
-	private volatile double startXOnScreen;
-	private volatile double startYOnScreen;
+	private volatile double leftOnScreen;
+	private volatile double topOnScreen;
 
 	private volatile int viewerWidth = 1;
 	private volatile int viewerHeight = 1;
@@ -47,23 +47,23 @@ public class Map {
 		int newRight = newColumns - newLeft;
 		int newBelow = newRows - newAbove;
 		graph.adjust(newLeft, newAbove, newRight, newBelow);
-		startXOnScreen -= fragmentSizeOnScreen * newLeft;
-		startYOnScreen -= fragmentSizeOnScreen * newAbove;
+		adjustTopLeftOnScreen(fragmentSizeOnScreen * -newLeft,
+				fragmentSizeOnScreen * -newAbove);
 	}
 
 	private int getNewLeft(double fragmentSizeOnScreen) {
-		if (startXOnScreen > 0) {
-			return (int) (startXOnScreen / fragmentSizeOnScreen) + 1;
+		if (leftOnScreen > 0) {
+			return (int) (leftOnScreen / fragmentSizeOnScreen) + 1;
 		} else {
-			return (int) (startXOnScreen / fragmentSizeOnScreen);
+			return (int) (leftOnScreen / fragmentSizeOnScreen);
 		}
 	}
 
 	private int getNewAbove(double fragmentSizeOnScreen) {
-		if (startYOnScreen > 0) {
-			return (int) (startYOnScreen / fragmentSizeOnScreen) + 1;
+		if (topOnScreen > 0) {
+			return (int) (topOnScreen / fragmentSizeOnScreen) + 1;
 		} else {
-			return (int) (startYOnScreen / fragmentSizeOnScreen);
+			return (int) (topOnScreen / fragmentSizeOnScreen);
 		}
 	}
 
@@ -76,32 +76,28 @@ public class Map {
 		});
 	}
 
-	// TODO: Support longs?
 	private void doCenterOn(CoordinatesInWorld coordinates) {
 		graph.init(coordinates);
 		int xCenterOnScreen = viewerWidth >> 1;
 		int yCenterOnScreen = viewerHeight >> 1;
 		long xFragmentRelative = coordinates.getXRelativeToFragment();
 		long yFragmentRelative = coordinates.getYRelativeToFragment();
-		startXOnScreen = xCenterOnScreen
-				- zoom.worldToScreen(xFragmentRelative);
-		startYOnScreen = yCenterOnScreen
-				- zoom.worldToScreen(yFragmentRelative);
+		setTopLeftOnScreen(
+				xCenterOnScreen - zoom.worldToScreen(xFragmentRelative),
+				yCenterOnScreen - zoom.worldToScreen(yFragmentRelative));
 	}
 
-	public void adjustStartOnScreenToMovement(int deltaX, int deltaY) {
-		startXOnScreen += deltaX;
-		startYOnScreen += deltaY;
+	public void adjustToMovement(int deltaX, int deltaY) {
+		adjustTopLeftOnScreen(deltaX, deltaY);
 	}
 
-	public void adjustStartOnScreenToZoom(double previous, double current,
+	public void adjustToZoom(double previous, double current,
 			Point mousePosition) {
-		double baseX = mousePosition.x - startXOnScreen;
-		double baseY = mousePosition.y - startYOnScreen;
+		double baseX = mousePosition.x - leftOnScreen;
+		double baseY = mousePosition.y - topOnScreen;
 		double deltaX = baseX - (baseX / previous) * current;
 		double deltaY = baseY - (baseY / previous) * current;
-		startXOnScreen += deltaX;
-		startYOnScreen += deltaY;
+		adjustTopLeftOnScreen(deltaX, deltaY);
 	}
 
 	public WorldIcon getClosestWorldIcon(Point mousePosition, double maxDistance) {
@@ -112,15 +108,25 @@ public class Map {
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
 		CoordinatesInWorld corner = graph.getCorner();
 		return corner.add(
-				(long) zoom.screenToWorld(pointOnScreen.x - startXOnScreen),
-				(long) zoom.screenToWorld(pointOnScreen.y - startYOnScreen));
+				(long) zoom.screenToWorld(pointOnScreen.x - leftOnScreen),
+				(long) zoom.screenToWorld(pointOnScreen.y - topOnScreen));
 	}
 
-	public double getStartXOnScreen() {
-		return startXOnScreen;
+	private void setTopLeftOnScreen(double leftOnScreen, double topOnScreen) {
+		this.leftOnScreen = leftOnScreen;
+		this.topOnScreen = topOnScreen;
 	}
 
-	public double getStartYOnScreen() {
-		return startYOnScreen;
+	private void adjustTopLeftOnScreen(double deltaX, double deltaY) {
+		this.leftOnScreen += deltaX;
+		this.topOnScreen += deltaY;
+	}
+
+	public double getLeftOnScreen() {
+		return leftOnScreen;
+	}
+
+	public double getTopOnScreen() {
+		return topOnScreen;
 	}
 }
