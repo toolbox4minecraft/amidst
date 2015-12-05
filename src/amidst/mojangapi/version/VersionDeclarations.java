@@ -25,7 +25,8 @@ public class VersionDeclarations {
 		return doRetrieve(URIUtils.newReader(url));
 	}
 
-	private static VersionDeclarations doRetrieve(BufferedReader reader) {
+	private static VersionDeclarations doRetrieve(BufferedReader reader)
+			throws JsonSyntaxException, JsonIOException {
 		return GSON.fromJson(reader, VersionDeclarations.class);
 	}
 
