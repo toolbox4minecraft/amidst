@@ -33,49 +33,48 @@ public class SkinLoader {
 	}
 
 	private void loadSkinLater(final Player player) {
-		longRunningIOExecutor.invokeLater(new LongRunningIOOperation<Void>() {
-			@Override
-			public Void execute() {
-				loadSkin(player);
-				return null;
-			}
+		longRunningIOExecutor
+				.invokeLater(new LongRunningIOOperation<BufferedImage>() {
+					@Override
+					public BufferedImage execute() {
+						return loadSkin(player);
+					}
 
-			@Override
-			public void finished(Void result) {
-				finishedLoadingPlayerSkin();
-			}
-		});
+					@Override
+					public void finished(BufferedImage image) {
+						finishedLoadingPlayerSkin(player, image);
+					}
+				});
 	}
 
-	private void finishedLoadingPlayerSkin() {
-		application.finishedLoadingPlayerSkin();
-	}
-
-	private void loadSkin(Player player) {
-		try {
-			doLoadSkin(player);
-		} catch (MalformedURLException e) {
-			error(player, e);
-		} catch (IOException e) {
-			error(player, e);
+	private void finishedLoadingPlayerSkin(Player player, BufferedImage image) {
+		if (image != null) {
+			player.setSkin(image);
+			application.finishedLoadingPlayerSkin();
 		}
 	}
 
-	private void error(Player player, Exception e) {
-		Log.w("Cannot load skin for player " + player.getPlayerName());
+	private BufferedImage loadSkin(Player player) {
+		try {
+			return createImage(player.getPlayerName());
+		} catch (MalformedURLException e) {
+			error(player.getPlayerName(), e);
+		} catch (IOException e) {
+			error(player.getPlayerName(), e);
+		}
+		return null;
+	}
+
+	private void error(String playerName, Exception e) {
+		Log.w("Cannot load skin for player " + playerName);
 		e.printStackTrace();
 	}
 
-	private void doLoadSkin(Player player) throws MalformedURLException,
-			IOException {
-		player.setSkin(createImage(player));
-	}
-
-	private BufferedImage createImage(Player player)
+	private BufferedImage createImage(String playerName)
 			throws MalformedURLException, IOException {
 		BufferedImage image = new BufferedImage(20, 20,
 				BufferedImage.TYPE_INT_ARGB);
-		drawSkinToImage(getSkin(player), image);
+		drawSkinToImage(getSkin(playerName), image);
 		return image;
 	}
 
@@ -88,13 +87,13 @@ public class SkinLoader {
 		skin.flush();
 	}
 
-	private BufferedImage getSkin(Player player) throws MalformedURLException,
-			IOException {
-		return ImageIO.read(getSkinURL(player));
+	private BufferedImage getSkin(String playerName)
+			throws MalformedURLException, IOException {
+		return ImageIO.read(getSkinURL(playerName));
 	}
 
-	private URL getSkinURL(Player player) throws MalformedURLException {
-		return new URL("http://s3.amazonaws.com/MinecraftSkins/"
-				+ player.getPlayerName() + ".png");
+	private URL getSkinURL(String playerName) throws MalformedURLException {
+		return new URL("http://s3.amazonaws.com/MinecraftSkins/" + playerName
+				+ ".png");
 	}
 }
