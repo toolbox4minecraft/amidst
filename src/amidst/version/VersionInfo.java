@@ -60,9 +60,9 @@ public enum VersionInfo {
 	Vbeta_1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"); // Had to rename from V1_8_1 - should it just be removed?
 	// @formatter:on
 
-	public final String versionId;
+	private final String versionId;
 
-	VersionInfo(String versionId) {
+	private VersionInfo(String versionId) {
 		this.versionId = versionId;
 	}
 
@@ -77,5 +77,9 @@ public enum VersionInfo {
 
 	public boolean isAtLeast(VersionInfo other) {
 		return this.ordinal() <= other.ordinal();
+	}
+
+	public String getVersionId() {
+		return versionId;
 	}
 }

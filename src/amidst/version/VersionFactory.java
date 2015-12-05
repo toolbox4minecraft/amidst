@@ -20,10 +20,6 @@ public class VersionFactory {
 	private MinecraftVersion[] localVersions;
 	private MinecraftProfile[] profiles;
 
-	public VersionFactory() {
-
-	}
-
 	// TODO: call me?
 	public void scanForLocalVersions() {
 		File versionPath = new File(
@@ -41,12 +37,13 @@ public class VersionFactory {
 		for (int i = 0; i < versionDirectories.length; i++) {
 			MinecraftVersion version = MinecraftVersion
 					.fromVersionPath(versionDirectories[i]);
-			if (version != null)
+			if (version != null) {
 				versionStack.add(version);
+			}
 		}
-		if (versionStack.size() == 0)
+		if (versionStack.size() == 0) {
 			return;
-
+		}
 		localVersions = new MinecraftVersion[versionStack.size()];
 		versionStack.toArray(localVersions);
 	}
@@ -60,10 +57,8 @@ public class VersionFactory {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(
 					profileJsonFile));
-			LauncherProfile result = GSON.fromJson(reader,
-					LauncherProfile.class);
+			launcherProfile = GSON.fromJson(reader, LauncherProfile.class);
 			reader.close();
-			launcherProfile = result;
 		} catch (JsonSyntaxException e) {
 			Log.crash(e, "Syntax exception thrown from launch_profiles.json");
 			return;
@@ -72,14 +67,12 @@ public class VersionFactory {
 			return;
 		}
 		Log.i("Successfully loaded profile list.");
-
 		profiles = new MinecraftProfile[launcherProfile.profiles.size()];
-
 		int i = 0;
 		for (InstallInformation installInformation : launcherProfile.profiles
-				.values())
+				.values()) {
 			profiles[i++] = new MinecraftProfile(installInformation);
-
+		}
 	}
 
 	public MinecraftProfile[] getProfiles() {

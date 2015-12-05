@@ -35,8 +35,8 @@ public enum LatestVersionList {
 
 	private VersionList profile;
 
-	private List<ILatestVersionListListener> loadListeners = new ArrayList<ILatestVersionListListener>();
-	private Object listenerLock = new Object();
+	private final List<ILatestVersionListListener> loadListeners = new ArrayList<ILatestVersionListListener>();
+	private final Object listenerLock = new Object();
 
 	public Map<String, String>[] getVersions() {
 		return profile.versions;

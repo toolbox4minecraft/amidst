@@ -215,7 +215,7 @@ public class Minecraft {
 		}
 		versionId = typeDump;
 		for (VersionInfo v : VersionInfo.values()) {
-			if (versionId.equals(v.versionId)) {
+			if (versionId.equals(v.getVersionId())) {
 				version = v;
 				break;
 			}

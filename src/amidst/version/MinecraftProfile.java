@@ -2,6 +2,7 @@ package amidst.version;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import amidst.json.InstallInformation;
 
@@ -9,7 +10,7 @@ public class MinecraftProfile implements ILatestVersionListListener {
 	public enum Status {
 		IDLE("scanning"), MISSING("missing"), FAILED("failed"), FOUND("found");
 
-		private String name;
+		private final String name;
 
 		private Status(String name) {
 			this.name = name;
@@ -21,10 +22,10 @@ public class MinecraftProfile implements ILatestVersionListListener {
 		}
 	}
 
-	private ArrayList<IProfileUpdateListener> listeners = new ArrayList<IProfileUpdateListener>();
+	private final List<IProfileUpdateListener> listeners = new ArrayList<IProfileUpdateListener>();
 
 	private MinecraftVersion version;
-	private InstallInformation profile;
+	private final InstallInformation profile;
 
 	private Status status = Status.IDLE;
 	private String versionName = "unknown";
@@ -80,17 +81,21 @@ public class MinecraftProfile implements ILatestVersionListListener {
 		case LOADED:
 			status = Status.FOUND;
 			boolean usingSnapshots = false;
-			for (int i = 0; i < profile.allowedReleaseTypes.length; i++)
-				if (profile.allowedReleaseTypes[i].equals("snapshot"))
+			for (int i = 0; i < profile.allowedReleaseTypes.length; i++) {
+				if (profile.allowedReleaseTypes[i].equals("snapshot")) {
 					usingSnapshots = true;
-			if (usingSnapshots)
+				}
+			}
+			if (usingSnapshots) {
 				version = MinecraftVersion.fromLatestSnapshot();
-			else
+			} else {
 				version = MinecraftVersion.fromLatestRelease();
-			if (version == null)
+			}
+			if (version == null) {
 				status = Status.FAILED;
-			else
+			} else {
 				versionName = version.getName();
+			}
 			break;
 		case LOADING:
 			status = Status.IDLE;

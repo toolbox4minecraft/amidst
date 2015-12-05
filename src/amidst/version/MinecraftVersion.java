@@ -7,12 +7,12 @@ import amidst.logging.Log;
 import amidst.minecraft.LocalMinecraftInstallation;
 
 public class MinecraftVersion {
-	private File jarFile, jsonFile;
-	private String name;
+	private final String name;
+	private final File jarFile;
+	private final File jsonFile;
 
 	private MinecraftVersion(String name, File jarFile, File jsonFile) {
 		this.name = name;
-
 		this.jarFile = jarFile;
 		this.jsonFile = jsonFile;
 	}
@@ -26,7 +26,6 @@ public class MinecraftVersion {
 	public static MinecraftVersion fromVersionPath(File path) {
 		File jarFile = new File(path + "/" + path.getName() + ".jar");
 		File jsonFile = new File(path + "/" + path.getName() + ".json");
-
 		if (!jarFile.exists() || jarFile.isDirectory()) {
 			Log.w("Unable to load MinecraftVersion at path: " + path
 					+ " because jarFile: " + jarFile
@@ -39,7 +38,6 @@ public class MinecraftVersion {
 					+ " is missing or a directory.");
 			return null;
 		}
-
 		MinecraftVersion version = new MinecraftVersion(path.getName(),
 				jarFile, jsonFile);
 		return version;
@@ -48,11 +46,11 @@ public class MinecraftVersion {
 	public static MinecraftVersion fromLatestRelease() {
 		MinecraftVersion version = null;
 		Map<String, String>[] versions = LatestVersionList.get().getVersions();
-
 		for (int i = 0; i < versions.length; i++) {
 			if (versions[i].get("type").equals("release")
-					&& (version = fromVersionId(versions[i].get("id"))) != null)
+					&& (version = fromVersionId(versions[i].get("id"))) != null) {
 				return version;
+			}
 		}
 		return null;
 	}
@@ -60,10 +58,10 @@ public class MinecraftVersion {
 	public static MinecraftVersion fromLatestSnapshot() {
 		MinecraftVersion version = null;
 		Map<String, String>[] versions = LatestVersionList.get().getVersions();
-
 		for (int i = 0; i < versions.length; i++) {
-			if ((version = fromVersionId(versions[i].get("id"))) != null)
+			if ((version = fromVersionId(versions[i].get("id"))) != null) {
 				return version;
+			}
 		}
 		return null;
 	}

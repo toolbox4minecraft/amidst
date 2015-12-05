@@ -1,7 +1,7 @@
 package amidst.version;
 
 public class LatestVersionListEvent {
-	private LatestVersionList source;
+	private final LatestVersionList source;
 
 	public LatestVersionListEvent(LatestVersionList source) {
 		this.source = source;

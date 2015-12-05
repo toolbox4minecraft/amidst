@@ -1,7 +1,7 @@
 package amidst.version;
 
 public class ProfileUpdateEvent {
-	private MinecraftProfile profile;
+	private final MinecraftProfile profile;
 
 	public ProfileUpdateEvent(MinecraftProfile profile) {
 		this.profile = profile;
