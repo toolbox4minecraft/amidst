@@ -1,4 +1,4 @@
-package amidst.mojangapi.profile;
+package amidst.mojangapi.version;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

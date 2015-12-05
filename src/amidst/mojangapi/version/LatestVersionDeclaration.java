@@ -1,4 +1,4 @@
-package amidst.mojangapi.profile;
+package amidst.mojangapi.version;
 
 public class LatestVersionDeclaration {
 	private String snapshot;
