@@ -6,6 +6,10 @@ public class JarLibrary {
 	private String name;
 	private List<JarRule> rules;
 
+	public JarLibrary() {
+		// no-argument constructor for gson
+	}
+
 	public String getName() {
 		return name;
 	}

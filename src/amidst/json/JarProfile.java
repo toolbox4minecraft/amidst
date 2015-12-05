@@ -11,6 +11,10 @@ public class JarProfile {
 	private String minecraftArguments;
 	private List<JarLibrary> libraries = new ArrayList<JarLibrary>();
 
+	public JarProfile() {
+		// no-argument constructor for gson
+	}
+
 	public String getId() {
 		return id;
 	}

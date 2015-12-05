@@ -5,6 +5,10 @@ import amidst.utilities.PlatformUtils;
 public class RuleOs {
 	private String name;
 
+	public RuleOs() {
+		// no-argument constructor for gson
+	}
+
 	public RuleOs(String name) {
 		this.name = name;
 	}

@@ -10,6 +10,10 @@ public class InstallInformation {
 	private Resolution resolution;
 	private String[] allowedReleaseTypes = new String[] { "release" };
 
+	public InstallInformation() {
+		// no-argument constructor for gson
+	}
+
 	public String getName() {
 		return name;
 	}

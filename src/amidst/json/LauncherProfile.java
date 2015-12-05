@@ -7,6 +7,10 @@ public class LauncherProfile {
 	private String selectedProfile;
 	private String clientToken;
 
+	public LauncherProfile() {
+		// no-argument constructor for gson
+	}
+
 	public HashMap<String, InstallInformation> getProfiles() {
 		return profiles;
 	}

@@ -4,6 +4,10 @@ public class JarRule {
 	private String action;
 	private RuleOs os = new RuleOs("any");
 
+	public JarRule() {
+		// no-argument constructor for gson
+	}
+
 	public boolean isApplicable() {
 		return os.check();
 	}
