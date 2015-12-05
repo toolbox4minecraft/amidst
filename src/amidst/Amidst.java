@@ -108,8 +108,8 @@ public class Amidst {
 	private static void doStartApplication() {
 		application = new Application(parameters);
 		if (parameters.minecraftJar != null) {
-			application.displayMainWindow(parameters.minecraftJar,
-					parameters.minecraftPath);
+			application.displayMainWindow(parameters.minecraftPath,
+					parameters.minecraftJar);
 		} else {
 			application.displayVersionSelectWindow();
 		}

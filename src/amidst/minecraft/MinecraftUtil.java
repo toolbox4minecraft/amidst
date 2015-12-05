@@ -6,7 +6,7 @@ public class MinecraftUtil {
 	private static IMinecraftInterface minecraftInterface;
 
 	/**
-	 * Returns a copy of the biome data. This is NOT threadsafe without the
+	 * Returns a copy of the biome data. This is NOT thread-safe without the
 	 * synchronized keyword!
 	 */
 	public synchronized static int[] getBiomeData(int x, int y, int width,

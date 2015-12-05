@@ -149,12 +149,7 @@ public abstract class VersionComponent {
 	public void load() {
 		isLoading = true;
 		component.repaint();
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				doLoad();
-			}
-		}).start();
+		doLoad();
 	}
 
 	public String getFullVersionName() {

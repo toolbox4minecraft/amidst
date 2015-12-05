@@ -4,6 +4,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.prefs.Preferences;
 
+import javax.swing.SwingUtilities;
+
 import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.CrashWindow;
 import amidst.gui.LicenseWindow;
@@ -92,16 +94,44 @@ public class Application {
 	}
 
 	public void displayMainWindow(MinecraftProfile profile) {
-		LocalMinecraftInstallation.initProfileDirectory(profile.getGameDir());
-		doDisplayMainWindow(createLocalMinecraftInterface(profile.getJarFile()));
+		createLocalMinecraftInterfaceAndDisplayMainWindowLater(
+				profile.getGameDir(), profile.getJarFile());
 	}
 
-	public void displayMainWindow(String jarFile, String gameDirectory) {
+	public void displayMainWindow(String gameDirectory, String jarFileName) {
+		createLocalMinecraftInterfaceAndDisplayMainWindowLater(gameDirectory,
+				new File(jarFileName));
+	}
+
+	private void createLocalMinecraftInterfaceAndDisplayMainWindowLater(
+			final String gameDirectory, final File jarFile) {
+		longRunningIOExecutor.invoke(new Runnable() {
+			@Override
+			public void run() {
+				createLocalMinecraftInterfaceAndDisplayMainWindowImmediately(
+						gameDirectory, jarFile);
+			}
+		});
+	}
+
+	private void createLocalMinecraftInterfaceAndDisplayMainWindowImmediately(
+			String gameDirectory, File jarFile) {
 		LocalMinecraftInstallation.initProfileDirectory(gameDirectory);
-		doDisplayMainWindow(createLocalMinecraftInterface(new File(jarFile)));
+		displayMainWindowLater(createLocalMinecraftInterface(jarFile));
 	}
 
-	private void doDisplayMainWindow(IMinecraftInterface minecraftInterface) {
+	private void displayMainWindowLater(
+			final IMinecraftInterface minecraftInterface) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				displayMainWindowImmediately(minecraftInterface);
+			}
+		});
+	}
+
+	private void displayMainWindowImmediately(
+			IMinecraftInterface minecraftInterface) {
 		MinecraftUtil.setInterface(minecraftInterface);
 		setMainWindow(new MainWindow(this, options));
 		setVersionSelectWindow(null);
