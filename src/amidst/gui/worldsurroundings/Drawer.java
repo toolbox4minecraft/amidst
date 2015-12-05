@@ -44,6 +44,7 @@ public class Drawer {
 	private final Movement movement;
 	private final Zoom zoom;
 	private final FragmentGraph graph;
+	private final List<Widget> widgets;
 	private final Iterable<FragmentDrawer> drawers;
 
 	private long lastTime = System.currentTimeMillis();
@@ -53,28 +54,26 @@ public class Drawer {
 	private int width;
 	private int height;
 	private Point mousePosition;
-	private List<Widget> widgets;
 	private FontMetrics widgetFontMetrics;
 
 	public Drawer(Map map, Movement movement, Zoom zoom, FragmentGraph graph,
-			Iterable<FragmentDrawer> drawers) {
+			List<Widget> widgets, Iterable<FragmentDrawer> drawers) {
 		this.map = map;
 		this.movement = movement;
 		this.zoom = zoom;
 		this.graph = graph;
+		this.widgets = widgets;
 		this.drawers = drawers;
 	}
 
 	public void drawScreenshot(Graphics2D g2d, int width, int height,
-			Point mousePosition, List<Widget> widgets,
-			FontMetrics widgetFontMetrics) {
+			Point mousePosition, FontMetrics widgetFontMetrics) {
 		synchronized (drawLock) {
 			this.time = 0;
 			this.g2d = g2d;
 			this.width = width;
 			this.height = height;
 			this.mousePosition = mousePosition;
-			this.widgets = widgets;
 			this.widgetFontMetrics = widgetFontMetrics;
 			updateMap();
 			clear();
@@ -84,15 +83,13 @@ public class Drawer {
 	}
 
 	public void draw(Graphics2D g2d, int width, int height,
-			Point mousePosition, List<Widget> widgets,
-			FontMetrics widgetFontMetrics) {
+			Point mousePosition, FontMetrics widgetFontMetrics) {
 		synchronized (drawLock) {
 			this.time = calculateTimeSpanSinceLastDrawInSeconds();
 			this.g2d = g2d;
 			this.width = width;
 			this.height = height;
 			this.mousePosition = mousePosition;
-			this.widgets = widgets;
 			this.widgetFontMetrics = widgetFontMetrics;
 			updateZoom();
 			updateMovement();

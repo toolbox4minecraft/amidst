@@ -183,12 +183,12 @@ public class MapViewer {
 		public void paint(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g.create();
 			drawer.draw(g2d, getWidth(), getHeight(), getMousePosition(),
-					widgets, widgetFontMetrics);
+					widgetFontMetrics);
 		}
 
 		public void drawScreenshot(Graphics2D g2d) {
 			drawer.drawScreenshot(g2d, getWidth(), getHeight(),
-					getMousePosition(), widgets, widgetFontMetrics);
+					getMousePosition(), widgetFontMetrics);
 		}
 	}
 

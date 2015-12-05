@@ -10,6 +10,7 @@ import amidst.fragment.layer.LayerBuilder;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.fragment.layer.LayerLoader;
 import amidst.fragment.layer.LayerReloader;
+import amidst.gui.widget.Widget;
 import amidst.gui.widget.WidgetBuilder;
 import amidst.minecraft.world.World;
 
@@ -41,14 +42,15 @@ public class WorldSurroundingsBuilder {
 		fragmentManager.setLayerLoader(layerLoader);
 		Iterable<FragmentDrawer> drawers = layerBuilder.createDrawers(zoom,
 				worldIconSelection);
-		Drawer drawer = new Drawer(map, movement, zoom, graph, drawers);
 		LayerReloader layerReloader = layerBuilder
 				.createLayerReloader(fragmentManager);
 		WidgetBuilder widgetBuilder = new WidgetBuilder(world, map,
 				biomeSelection, worldIconSelection, layerReloader, graph, zoom,
 				fragmentManager, options);
+		List<Widget> widgets = widgetBuilder.create();
+		Drawer drawer = new Drawer(map, movement, zoom, graph, widgets, drawers);
 		MapViewer mapViewer = new MapViewer(movement, zoom, world, map, drawer,
-				worldIconSelection, layerReloader, widgetBuilder.create());
+				worldIconSelection, layerReloader, widgets);
 		return new WorldSurroundings(map, mapViewer, layerReloader, graph,
 				zoom, fragmentManager);
 	}
