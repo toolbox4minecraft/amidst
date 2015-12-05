@@ -250,18 +250,6 @@ public class MapViewer {
 		return result;
 	}
 
-	public Point getMousePosition() {
-		return component.getMousePosition();
-	}
-
-	public int getWidth() {
-		return component.getWidth();
-	}
-
-	public int getHeight() {
-		return component.getHeight();
-	}
-
 	public void repaint() {
 		component.repaint();
 	}
