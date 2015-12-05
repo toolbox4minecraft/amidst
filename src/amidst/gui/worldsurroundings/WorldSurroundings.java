@@ -1,5 +1,6 @@
 package amidst.gui.worldsurroundings;
 
+import java.awt.Component;
 import java.awt.image.BufferedImage;
 
 import amidst.fragment.FragmentGraph;
@@ -26,8 +27,8 @@ public class WorldSurroundings {
 		this.fragmentManager = fragmentManager;
 	}
 
-	public MapViewer getMapViewer() {
-		return mapViewer;
+	public Component getComponent() {
+		return mapViewer.getPanel();
 	}
 
 	public LayerReloader getLayerReloader() {

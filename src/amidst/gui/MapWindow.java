@@ -228,7 +228,7 @@ public class MapWindow {
 		this.worldSurroundings = null;
 		if (worldSurroundings != null) {
 			menuBar.disableMapMenu();
-			contentPane.remove(worldSurroundings.getMapViewer().getPanel());
+			contentPane.remove(worldSurroundings.getComponent());
 			worldSurroundings.dispose();
 		}
 	}
@@ -240,8 +240,7 @@ public class MapWindow {
 	 * assigned to the instance variable.
 	 */
 	public void setWorldSurroundings(WorldSurroundings worldSurroundings) {
-		contentPane.add(worldSurroundings.getMapViewer().getPanel(),
-				BorderLayout.CENTER);
+		contentPane.add(worldSurroundings.getComponent(), BorderLayout.CENTER);
 		frame.validate();
 		menuBar.enableMapMenu();
 		this.worldSurroundings = worldSurroundings;
