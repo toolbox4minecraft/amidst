@@ -5,7 +5,6 @@ import java.awt.Point;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.icon.WorldIcon;
 import amidst.utilities.TaskQueue;
 
 public class Map {
@@ -98,11 +97,6 @@ public class Map {
 		double deltaX = baseX - (baseX / previous) * current;
 		double deltaY = baseY - (baseY / previous) * current;
 		adjustTopLeftOnScreen(deltaX, deltaY);
-	}
-
-	public WorldIcon getClosestWorldIcon(Point mousePosition, double maxDistance) {
-		return graph.getClosestWorldIcon(screenToWorld(mousePosition),
-				zoom.screenToWorld(maxDistance));
 	}
 
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {

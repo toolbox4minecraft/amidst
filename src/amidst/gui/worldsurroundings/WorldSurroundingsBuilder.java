@@ -52,7 +52,7 @@ public class WorldSurroundingsBuilder {
 		Drawer drawer = new Drawer(map, movement, zoom, graph, widgets, drawers);
 		Viewer viewer = new Viewer(new ViewerMouseListener(new WidgetManager(
 				widgets), movement, zoom, world, map, worldIconSelection,
-				layerReloader), drawer);
+				layerReloader, graph), drawer);
 		return new WorldSurroundings(map, viewer, layerReloader, graph, zoom,
 				fragmentManager);
 	}

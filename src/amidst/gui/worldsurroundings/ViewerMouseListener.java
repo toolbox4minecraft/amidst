@@ -12,6 +12,7 @@ import java.awt.event.MouseWheelListener;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import amidst.fragment.FragmentGraph;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.widget.WidgetManager;
 import amidst.minecraft.MinecraftUtil;
@@ -26,10 +27,12 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	private final Map map;
 	private final WorldIconSelection worldIconSelection;
 	private final LayerReloader layerReloader;
+	private final FragmentGraph graph;
 
 	public ViewerMouseListener(WidgetManager widgetManager, Movement movement,
 			Zoom zoom, World world, Map map,
-			WorldIconSelection worldIconSelection, LayerReloader layerReloader) {
+			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
+			FragmentGraph graph) {
 		this.widgetManager = widgetManager;
 		this.movement = movement;
 		this.zoom = zoom;
@@ -37,6 +40,7 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 		this.map = map;
 		this.worldIconSelection = worldIconSelection;
 		this.layerReloader = layerReloader;
+		this.graph = graph;
 	}
 
 	@Override
@@ -132,7 +136,8 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	}
 
 	private void doMouseClicked(Point mousePosition) {
-		worldIconSelection.select(map.getClosestWorldIcon(mousePosition, 50.0));
+		worldIconSelection.select(graph.getClosestWorldIcon(
+				map.screenToWorld(mousePosition), zoom.screenToWorld(50)));
 	}
 
 	private void doMousePressed(Point mousePosition) {
