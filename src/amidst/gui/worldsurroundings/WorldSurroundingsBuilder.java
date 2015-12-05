@@ -38,7 +38,7 @@ public class WorldSurroundingsBuilder {
 		List<LayerDeclaration> declarations = layerBuilder.getDeclarations();
 		FragmentGraph graph = new FragmentGraph(declarations, fragmentManager);
 		FragmentGraphToScreenTranslator translator = new FragmentGraphToScreenTranslator(
-				zoom, graph);
+				graph, zoom);
 		LayerLoader layerLoader = layerBuilder.createLayerLoader(world,
 				biomeSelection, options);
 		fragmentManager.setLayerLoader(layerLoader);
@@ -46,16 +46,16 @@ public class WorldSurroundingsBuilder {
 				worldIconSelection);
 		LayerReloader layerReloader = layerBuilder
 				.createLayerReloader(fragmentManager);
-		WidgetBuilder widgetBuilder = new WidgetBuilder(world, translator,
-				biomeSelection, worldIconSelection, layerReloader, graph, zoom,
-				fragmentManager, options);
+		WidgetBuilder widgetBuilder = new WidgetBuilder(world, graph,
+				translator, zoom, biomeSelection, worldIconSelection,
+				layerReloader, fragmentManager, options);
 		List<Widget> widgets = widgetBuilder.create();
-		Drawer drawer = new Drawer(translator, movement, zoom, graph, widgets,
+		Drawer drawer = new Drawer(graph, translator, zoom, movement, widgets,
 				drawers);
 		Viewer viewer = new Viewer(new ViewerMouseListener(new WidgetManager(
-				widgets), movement, zoom, world, translator,
-				worldIconSelection, layerReloader, graph), drawer);
-		return new WorldSurroundings(translator, viewer, layerReloader, graph,
-				zoom, fragmentManager);
+				widgets), world, graph, translator, zoom, movement,
+				worldIconSelection, layerReloader), drawer);
+		return new WorldSurroundings(graph, translator, zoom, viewer,
+				layerReloader, fragmentManager);
 	}
 }

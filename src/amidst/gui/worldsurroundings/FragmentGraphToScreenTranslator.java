@@ -10,8 +10,8 @@ import amidst.utilities.TaskQueue;
 public class FragmentGraphToScreenTranslator {
 	private final TaskQueue taskQueue = new TaskQueue();
 
-	private final Zoom zoom;
 	private final FragmentGraph graph;
+	private final Zoom zoom;
 
 	private volatile double leftOnScreen;
 	private volatile double topOnScreen;
@@ -19,9 +19,9 @@ public class FragmentGraphToScreenTranslator {
 	private volatile int viewerWidth;
 	private volatile int viewerHeight;
 
-	public FragmentGraphToScreenTranslator(Zoom zoom, FragmentGraph graph) {
-		this.zoom = zoom;
+	public FragmentGraphToScreenTranslator(FragmentGraph graph, Zoom zoom) {
 		this.graph = graph;
+		this.zoom = zoom;
 		centerOn(CoordinatesInWorld.origin());
 	}
 

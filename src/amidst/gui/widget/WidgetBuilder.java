@@ -17,28 +17,27 @@ import amidst.utilities.FramerateTimer;
 
 public class WidgetBuilder {
 	private final World world;
+	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
+	private final Zoom zoom;
 	private final BiomeSelection biomeSelection;
 	private final WorldIconSelection worldIconSelection;
 	private final LayerReloader layerReloader;
-	private final FragmentGraph graph;
-	private final Zoom zoom;
 	private final FragmentManager fragmentManager;
 	private final Options options;
 
-	public WidgetBuilder(World world,
-			FragmentGraphToScreenTranslator translator,
+	public WidgetBuilder(World world, FragmentGraph graph,
+			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			BiomeSelection biomeSelection,
 			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
-			FragmentGraph graph, Zoom zoom, FragmentManager fragmentManager,
-			Options options) {
+			FragmentManager fragmentManager, Options options) {
 		this.world = world;
+		this.graph = graph;
 		this.translator = translator;
+		this.zoom = zoom;
 		this.biomeSelection = biomeSelection;
 		this.worldIconSelection = worldIconSelection;
 		this.layerReloader = layerReloader;
-		this.graph = graph;
-		this.zoom = zoom;
 		this.fragmentManager = fragmentManager;
 		this.options = options;
 	}

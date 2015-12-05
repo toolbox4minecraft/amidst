@@ -21,26 +21,26 @@ import amidst.minecraft.world.World;
 
 public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	private final WidgetManager widgetManager;
-	private final Movement movement;
-	private final Zoom zoom;
 	private final World world;
+	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
+	private final Zoom zoom;
+	private final Movement movement;
 	private final WorldIconSelection worldIconSelection;
 	private final LayerReloader layerReloader;
-	private final FragmentGraph graph;
 
-	public ViewerMouseListener(WidgetManager widgetManager, Movement movement,
-			Zoom zoom, World world, FragmentGraphToScreenTranslator translator,
-			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
-			FragmentGraph graph) {
+	public ViewerMouseListener(WidgetManager widgetManager, World world,
+			FragmentGraph graph, FragmentGraphToScreenTranslator translator,
+			Zoom zoom, Movement movement,
+			WorldIconSelection worldIconSelection, LayerReloader layerReloader) {
 		this.widgetManager = widgetManager;
-		this.movement = movement;
-		this.zoom = zoom;
 		this.world = world;
+		this.graph = graph;
 		this.translator = translator;
+		this.zoom = zoom;
+		this.movement = movement;
 		this.worldIconSelection = worldIconSelection;
 		this.layerReloader = layerReloader;
-		this.graph = graph;
 	}
 
 	@Override

@@ -9,21 +9,22 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.minecraft.world.CoordinatesInWorld;
 
 public class WorldSurroundings {
+	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
+	private final Zoom zoom;
 	private final Viewer viewer;
 	private final LayerReloader layerReloader;
-	private final FragmentGraph graph;
-	private final Zoom zoom;
 	private final FragmentManager fragmentManager;
 
-	public WorldSurroundings(FragmentGraphToScreenTranslator translator,
-			Viewer viewer, LayerReloader layerReloader, FragmentGraph graph,
-			Zoom zoom, FragmentManager fragmentManager) {
+	public WorldSurroundings(FragmentGraph graph,
+			FragmentGraphToScreenTranslator translator, Zoom zoom,
+			Viewer viewer, LayerReloader layerReloader,
+			FragmentManager fragmentManager) {
+		this.graph = graph;
 		this.translator = translator;
+		this.zoom = zoom;
 		this.viewer = viewer;
 		this.layerReloader = layerReloader;
-		this.graph = graph;
-		this.zoom = zoom;
 		this.fragmentManager = fragmentManager;
 	}
 
