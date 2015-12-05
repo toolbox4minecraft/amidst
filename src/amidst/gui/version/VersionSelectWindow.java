@@ -53,7 +53,13 @@ public class VersionSelectWindow {
 		}
 
 		initFrame();
-		startLoadVersionsThread(versionSelectPanel);
+
+		this.longRunningIOExecutor.invoke(new Runnable() {
+			@Override
+			public void run() {
+				loadVersions(versionSelectPanel);
+			}
+		});
 	}
 
 	private boolean isValidMinecraftDirectory() {
@@ -84,16 +90,6 @@ public class VersionSelectWindow {
 				SwingConstants.CENTER);
 		result.setFont(new Font("arial", Font.BOLD, 16));
 		return result;
-	}
-
-	private void startLoadVersionsThread(
-			final VersionSelectPanel versionSelector) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				loadVersions(versionSelector);
-			}
-		}).start();
 	}
 
 	private void loadVersions(VersionSelectPanel versionSelector) {
