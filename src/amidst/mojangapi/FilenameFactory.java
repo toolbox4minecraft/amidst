@@ -1,5 +1,7 @@
 package amidst.mojangapi;
 
+import java.io.File;
+
 public enum FilenameFactory {
 	;
 
@@ -8,6 +10,19 @@ public enum FilenameFactory {
 	private static final String MIDDLE_CLIENT = "/";
 	private static final String JAR_FILE_EXTENSION = ".jar";
 	private static final String JSON_FILE_EXTENSION = ".json";
+
+	public static File getClientJsonFile(File prefix, String id) {
+		return getClientFile(prefix, id, JSON_FILE_EXTENSION);
+	}
+
+	public static File getClientJarFile(File prefix, String id) {
+		return getClientFile(prefix, id, JAR_FILE_EXTENSION);
+	}
+
+	private static File getClientFile(File prefix, String id,
+			String fileExtension) {
+		return new File(prefix, getClientLocation("", id, fileExtension));
+	}
 
 	public static String getRemoteClientJson(String id) {
 		return getClientJson(REMOTE_PREFIX, id);

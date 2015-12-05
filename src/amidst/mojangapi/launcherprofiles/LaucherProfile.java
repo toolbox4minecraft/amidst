@@ -6,7 +6,7 @@ import amidst.mojangapi.ReleaseType;
 
 public class LaucherProfile {
 	private String name;
-	private String lastVersionId = "latest";
+	private String lastVersionId;
 	private String gameDir;
 	private List<ReleaseType> allowedReleaseTypes;
 
