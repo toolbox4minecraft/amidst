@@ -1,6 +1,5 @@
 package amidst.json;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class JarProfile {
@@ -9,7 +8,7 @@ public class JarProfile {
 	private String releaseTime;
 	private String type;
 	private String minecraftArguments;
-	private List<JarLibrary> libraries = new ArrayList<JarLibrary>();
+	private List<JarLibrary> libraries;
 
 	public JarProfile() {
 		// no-argument constructor for gson

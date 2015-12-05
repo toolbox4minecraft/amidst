@@ -1,9 +1,9 @@
 package amidst.json;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class LauncherProfile {
-	private HashMap<String, InstallInformation> profiles;
+	private Map<String, InstallInformation> profiles;
 	private String selectedProfile;
 	private String clientToken;
 
@@ -11,7 +11,7 @@ public class LauncherProfile {
 		// no-argument constructor for gson
 	}
 
-	public HashMap<String, InstallInformation> getProfiles() {
+	public Map<String, InstallInformation> getProfiles() {
 		return profiles;
 	}
 
