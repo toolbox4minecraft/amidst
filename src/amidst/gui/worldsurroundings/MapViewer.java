@@ -26,31 +26,13 @@ import amidst.minecraft.world.World;
 
 public class MapViewer {
 	private class Listeners implements MouseListener, MouseWheelListener {
-		private Widget mouseOwner;
-
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			int notches = e.getWheelRotation();
-			Point mouse = getMousePositionFromEvent(e);
-			if (!mouseWheelMovedOnWidget(notches, mouse)) {
-				zoom.adjustZoom(mouse, notches);
+			Point mousePosition = getMousePositionFromEvent(e);
+			if (!mouseWheelMovedOnWidget(mousePosition, notches)) {
+				zoom.adjustZoom(mousePosition, notches);
 			}
-		}
-
-		private boolean mouseWheelMovedOnWidget(int notches, Point mouse) {
-			for (Widget widget : widgets) {
-				if (widget.isVisible() && widget.isInBounds(mouse)) {
-					if (widget != null
-							&& widget
-									.onMouseWheelMoved(
-											widget.translateXToWidgetCoordinates(mouse),
-											widget.translateYToWidgetCoordinates(mouse),
-											notches)) {
-						return true;
-					}
-				}
-			}
-			return false;
 		}
 
 		@Override
@@ -58,55 +40,24 @@ public class MapViewer {
 			if (e.isMetaDown()) {
 				return;
 			}
-			Point mouse = getMousePositionFromEvent(e);
-			if (!mouseClickedOnWidget(mouse)) {
-				mouseClickedOnMap(mouse);
+			Point mousePosition = getMousePositionFromEvent(e);
+			if (!mouseClickedOnWidget(mousePosition)) {
+				mouseClickedOnMap(mousePosition);
 			}
-		}
-
-		private boolean mouseClickedOnWidget(Point mouse) {
-			for (Widget widget : widgets) {
-				if (widget.isVisible() && widget.isInBounds(mouse)) {
-					if (widget != null
-							&& widget
-									.onClick(
-											widget.translateXToWidgetCoordinates(mouse),
-											widget.translateYToWidgetCoordinates(mouse))) {
-						return true;
-					}
-				}
-			}
-			return false;
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			Point mouse = getMousePositionFromEvent(e);
+			Point mousePosition = getMousePositionFromEvent(e);
 			if (e.isPopupTrigger()) {
 				showPlayerMenu(e);
 			} else if (e.isMetaDown()) {
 				// noop
-			} else if (mousePressedOnWidget(e, mouse)) {
+			} else if (mousePressedOnWidget(mousePosition)) {
 				// noop
 			} else {
-				movement.setLastMouse(mouse);
+				movement.setLastMouse(mousePosition);
 			}
-		}
-
-		private boolean mousePressedOnWidget(MouseEvent e, Point mouse) {
-			for (Widget widget : widgets) {
-				if (widget.isVisible() && widget.isInBounds(mouse)) {
-					if (widget != null
-							&& widget
-									.onMousePressed(
-											widget.translateXToWidgetCoordinates(mouse),
-											widget.translateYToWidgetCoordinates(mouse))) {
-						mouseOwner = widget;
-						return true;
-					}
-				}
-			}
-			return false;
 		}
 
 		@Override
@@ -134,33 +85,6 @@ public class MapViewer {
 				createPlayerMenu(getMousePositionFromEvent(e)).show(
 						e.getComponent(), e.getX(), e.getY());
 			}
-		}
-
-		private JPopupMenu createPlayerMenu(Point lastRightClicked) {
-			JPopupMenu result = new JPopupMenu();
-			for (Player player : world.getMovablePlayers()) {
-				result.add(createPlayerMenuItem(player, lastRightClicked));
-			}
-			return result;
-		}
-
-		private JMenuItem createPlayerMenuItem(final Player player,
-				final Point lastRightClick) {
-			JMenuItem result = new JMenuItem(player.getPlayerName());
-			result.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					player.moveTo(map.screenToWorld(lastRightClick));
-					world.reloadPlayerWorldIcons();
-					layerReloader.reloadPlayerLayer();
-				}
-			});
-			return result;
-		}
-
-		private void mouseClickedOnMap(Point mousePosition) {
-			worldIconSelection.select(map.getClosestWorldIcon(mousePosition,
-					50.0));
 		}
 
 		/**
@@ -201,6 +125,8 @@ public class MapViewer {
 	private final WorldIconSelection worldIconSelection;
 	private final LayerReloader layerReloader;
 	private final List<Widget> widgets;
+
+	private Widget mouseOwner;
 
 	public MapViewer(Movement movement, Zoom zoom, World world, Map map,
 			Drawer drawer, WorldIconSelection worldIconSelection,
@@ -246,5 +172,75 @@ public class MapViewer {
 
 	public Component getComponent() {
 		return component;
+	}
+
+	private boolean mouseWheelMovedOnWidget(Point mousePosition, int notches) {
+		for (Widget widget : widgets) {
+			if (widget.isVisible()
+					&& widget.isInBounds(mousePosition)
+					&& widget
+							.onMouseWheelMoved(
+									widget.translateXToWidgetCoordinates(mousePosition),
+									widget.translateYToWidgetCoordinates(mousePosition),
+									notches)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean mouseClickedOnWidget(Point mousePosition) {
+		for (Widget widget : widgets) {
+			if (widget.isVisible()
+					&& widget.isInBounds(mousePosition)
+					&& widget
+							.onClick(
+									widget.translateXToWidgetCoordinates(mousePosition),
+									widget.translateYToWidgetCoordinates(mousePosition))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean mousePressedOnWidget(Point mousePosition) {
+		for (Widget widget : widgets) {
+			if (widget.isVisible()
+					&& widget.isInBounds(mousePosition)
+					&& widget
+							.onMousePressed(
+									widget.translateXToWidgetCoordinates(mousePosition),
+									widget.translateYToWidgetCoordinates(mousePosition))) {
+				mouseOwner = widget;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private JPopupMenu createPlayerMenu(Point mousePosition) {
+		JPopupMenu result = new JPopupMenu();
+		for (Player player : world.getMovablePlayers()) {
+			result.add(createPlayerMenuItem(player, mousePosition));
+		}
+		return result;
+	}
+
+	private JMenuItem createPlayerMenuItem(final Player player,
+			final Point mousePosition) {
+		JMenuItem result = new JMenuItem(player.getPlayerName());
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				player.moveTo(map.screenToWorld(mousePosition));
+				world.reloadPlayerWorldIcons();
+				layerReloader.reloadPlayerLayer();
+			}
+		});
+		return result;
+	}
+
+	private void mouseClickedOnMap(Point mousePosition) {
+		worldIconSelection.select(map.getClosestWorldIcon(mousePosition, 50.0));
 	}
 }
