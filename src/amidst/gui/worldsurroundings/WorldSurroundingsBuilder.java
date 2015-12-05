@@ -12,6 +12,7 @@ import amidst.fragment.layer.LayerLoader;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.widget.Widget;
 import amidst.gui.widget.WidgetBuilder;
+import amidst.gui.widget.WidgetManager;
 import amidst.minecraft.world.World;
 
 public class WorldSurroundingsBuilder {
@@ -49,8 +50,9 @@ public class WorldSurroundingsBuilder {
 				fragmentManager, options);
 		List<Widget> widgets = widgetBuilder.create();
 		Drawer drawer = new Drawer(map, movement, zoom, graph, widgets, drawers);
-		MapViewer mapViewer = new MapViewer(movement, zoom, world, map, drawer,
-				worldIconSelection, layerReloader, widgets);
+		MapViewer mapViewer = new MapViewer(new ViewerMouseListener(
+				new WidgetManager(widgets), movement, zoom, world, map,
+				worldIconSelection, layerReloader), drawer);
 		return new WorldSurroundings(map, mapViewer, layerReloader, graph,
 				zoom, fragmentManager);
 	}
