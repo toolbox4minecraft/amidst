@@ -51,14 +51,15 @@ public enum URIUtils {
 		}
 	}
 
-	public static void download(URL from, Path to) throws IOException {
-		to.getParent().toFile().mkdirs();
-		if (to.toFile().exists()) {
+	public static void download(URL from, URI to) throws IOException {
+		Path toPath = Paths.get(to);
+		toPath.getParent().toFile().mkdirs();
+		if (toPath.toFile().exists()) {
 			return;
 		}
-		Path part = Paths.get(to.toString() + ".part");
+		Path part = Paths.get(toPath.toString() + ".part");
 		InputStream in = from.openStream();
 		Files.copy(in, part, StandardCopyOption.REPLACE_EXISTING);
-		Files.move(part, to, StandardCopyOption.REPLACE_EXISTING);
+		Files.move(part, toPath, StandardCopyOption.REPLACE_EXISTING);
 	}
 }

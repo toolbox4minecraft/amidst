@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,9 +34,9 @@ public class VersionDeclaration {
 		}
 	}
 
-	private static final String DOWNLOAD_URL_PREFIX = "https://s3.amazonaws.com/Minecraft.Download/versions/";
-	private static final String DOWNLOAD_URL_MIDDLE_SERVER = "/minecraft_server.";
-	private static final String DOWNLOAD_URL_MIDDLE_CLIENT = "/";
+	private static final String REMOTE_PREFIX = "https://s3.amazonaws.com/Minecraft.Download/versions/";
+	private static final String MIDDLE_SERVER = "/minecraft_server.";
+	private static final String MIDDLE_CLIENT = "/";
 	private static final String JAR_FILE_EXTENSION = ".jar";
 	private static final String JSON_FILE_EXTENSION = ".json";
 
@@ -61,74 +59,75 @@ public class VersionDeclaration {
 		return StatelessResources.INSTANCE.getTypeChar(type);
 	}
 
-	private String getServerLocation(String fileExtension) {
-		return DOWNLOAD_URL_PREFIX + id + DOWNLOAD_URL_MIDDLE_SERVER + id
-				+ fileExtension;
+	private String getServerLocation(String prefix, String fileExtension) {
+		return prefix + id + MIDDLE_SERVER + id + fileExtension;
 	}
 
-	private String getClientLocation(String fileExtension) {
-		return DOWNLOAD_URL_PREFIX + id + DOWNLOAD_URL_MIDDLE_CLIENT + id
-				+ fileExtension;
+	private String getClientLocation(String prefix, String fileExtension) {
+		return prefix + id + MIDDLE_CLIENT + id + fileExtension;
 	}
 
-	public String getServerJarLocation() {
-		return getServerLocation(JAR_FILE_EXTENSION);
+	public String getServerJarLocation(String prefix) {
+		return getServerLocation(prefix, JAR_FILE_EXTENSION);
 	}
 
-	public String getClientJarLocation() {
-		return getClientLocation(JAR_FILE_EXTENSION);
+	public String getClientJarLocation(String prefix) {
+		return getClientLocation(prefix, JAR_FILE_EXTENSION);
 	}
 
-	public URI getServerJarURI() {
-		return URIUtils.newURI(getServerJarLocation());
+	public URI getServerJarURI(String prefix) {
+		return URIUtils.newURI(getServerJarLocation(prefix));
 	}
 
-	public URI getClientJarURI() {
-		return URIUtils.newURI(getClientJarLocation());
+	public URI getClientJarURI(String prefix) {
+		return URIUtils.newURI(getClientJarLocation(prefix));
 	}
 
-	public URL getServerJarURL() throws MalformedURLException {
-		return URIUtils.newURL(getServerJarLocation());
+	public URL getServerJarURL(String prefix) throws MalformedURLException {
+		return URIUtils.newURL(getServerJarLocation(prefix));
 	}
 
-	public URL getClientJarURL() throws MalformedURLException {
-		return URIUtils.newURL(getClientJarLocation());
+	public URL getClientJarURL(String prefix) throws MalformedURLException {
+		return URIUtils.newURL(getClientJarLocation(prefix));
 	}
 
-	public String getClientJsonLocation() {
-		return getClientLocation(JSON_FILE_EXTENSION);
+	public String getClientJsonLocation(String prefix) {
+		return getClientLocation(prefix, JSON_FILE_EXTENSION);
 	}
 
-	public URI getClientJsonURI() {
-		return URIUtils.newURI(getClientJsonLocation());
+	public URI getClientJsonURI(String prefix) {
+		return URIUtils.newURI(getClientJsonLocation(prefix));
 	}
 
-	public URL getClientJsonURL() throws MalformedURLException {
-		return URIUtils.newURL(getClientJsonLocation());
+	public URL getClientJsonURL(String prefix) throws MalformedURLException {
+		return URIUtils.newURL(getClientJsonLocation(prefix));
 	}
 
-	public boolean hasServer() {
-		return URIUtils.exists(getServerJarLocation());
+	public boolean hasServer(String prefix) {
+		return URIUtils.exists(getServerJarLocation(prefix));
 	}
 
-	public boolean hasClient() {
-		return URIUtils.exists(getClientJarLocation());
+	public boolean hasClient(String prefix) {
+		return URIUtils.exists(getClientJarLocation(prefix));
 	}
 
-	public void downloadServer(String basePath) throws MalformedURLException,
-			IOException {
-		URIUtils.download(getServerJarURL(), getLocalServerJarPath(basePath));
+	public void downloadServer(String prefix, String targetPrefix)
+			throws MalformedURLException, IOException {
+		URIUtils.download(getServerJarURL(prefix),
+				getServerJarURI(targetPrefix));
 	}
 
-	public void downloadClient(String basePath) throws MalformedURLException,
-			IOException {
-		URIUtils.download(getClientJarURL(), getLocalClientJarPath(basePath));
-		URIUtils.download(getClientJsonURL(), getLocalClientJsonPath(basePath));
+	public void downloadClient(String prefix, String targetPrefix)
+			throws MalformedURLException, IOException {
+		URIUtils.download(getClientJarURL(prefix),
+				getClientJarURI(targetPrefix));
+		URIUtils.download(getClientJsonURL(prefix),
+				getClientJsonURI(targetPrefix));
 	}
 
-	public boolean tryDownloadServer(String basePath) {
+	public boolean tryDownloadServer(String prefix, String targetPrefix) {
 		try {
-			downloadServer(basePath);
+			downloadServer(prefix, targetPrefix);
 			return true;
 		} catch (MalformedURLException e) {
 		} catch (IOException e) {
@@ -136,25 +135,13 @@ public class VersionDeclaration {
 		return false;
 	}
 
-	public boolean tryDownloadClient(String basePath) {
+	public boolean tryDownloadClient(String prefix, String targetPrefix) {
 		try {
-			downloadClient(basePath);
+			downloadClient(prefix, targetPrefix);
 			return true;
 		} catch (MalformedURLException e) {
 		} catch (IOException e) {
 		}
 		return false;
-	}
-
-	public Path getLocalServerJarPath(String basePath) {
-		return Paths.get(basePath, "server", id + JAR_FILE_EXTENSION);
-	}
-
-	public Path getLocalClientJarPath(String basePath) {
-		return Paths.get(basePath, "client", id + JAR_FILE_EXTENSION);
-	}
-
-	public Path getLocalClientJsonPath(String basePath) {
-		return Paths.get(basePath, "client", id + JSON_FILE_EXTENSION);
 	}
 }
