@@ -16,8 +16,8 @@ public class Map {
 	private volatile double leftOnScreen;
 	private volatile double topOnScreen;
 
-	private volatile int viewerWidth = 1;
-	private volatile int viewerHeight = 1;
+	private volatile int viewerWidth;
+	private volatile int viewerHeight;
 
 	public Map(Zoom zoom, FragmentGraph graph) {
 		this.zoom = zoom;
@@ -99,13 +99,6 @@ public class Map {
 		adjustTopLeftOnScreen(deltaX, deltaY);
 	}
 
-	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
-		CoordinatesInWorld corner = graph.getCorner();
-		return corner.add(
-				(long) zoom.screenToWorld(pointOnScreen.x - leftOnScreen),
-				(long) zoom.screenToWorld(pointOnScreen.y - topOnScreen));
-	}
-
 	private void setTopLeftOnScreen(double leftOnScreen, double topOnScreen) {
 		this.leftOnScreen = leftOnScreen;
 		this.topOnScreen = topOnScreen;
@@ -122,5 +115,12 @@ public class Map {
 
 	public double getTopOnScreen() {
 		return topOnScreen;
+	}
+
+	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
+		CoordinatesInWorld corner = graph.getCorner();
+		return corner.add(
+				(long) zoom.screenToWorld(pointOnScreen.x - leftOnScreen),
+				(long) zoom.screenToWorld(pointOnScreen.y - topOnScreen));
 	}
 }
