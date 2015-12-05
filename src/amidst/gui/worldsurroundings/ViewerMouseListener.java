@@ -24,13 +24,13 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	private final Movement movement;
 	private final Zoom zoom;
 	private final World world;
-	private final Map map;
+	private final FragmentGraphToScreenTranslator map;
 	private final WorldIconSelection worldIconSelection;
 	private final LayerReloader layerReloader;
 	private final FragmentGraph graph;
 
 	public ViewerMouseListener(WidgetManager widgetManager, Movement movement,
-			Zoom zoom, World world, Map map,
+			Zoom zoom, World world, FragmentGraphToScreenTranslator map,
 			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
 			FragmentGraph graph) {
 		this.widgetManager = widgetManager;

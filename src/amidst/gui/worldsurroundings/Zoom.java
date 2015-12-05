@@ -18,7 +18,7 @@ public class Zoom {
 		this.maxZoomPreference = maxZoomPreference;
 	}
 
-	public void update(Map map) {
+	public void update(FragmentGraphToScreenTranslator map) {
 		remainingTicks--;
 		if (remainingTicks >= 0) {
 			double previous = updateCurrent();

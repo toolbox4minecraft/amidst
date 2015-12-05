@@ -9,7 +9,7 @@ import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.widget.Widget.CornerAnchorPoint;
 import amidst.gui.worldsurroundings.BiomeSelection;
-import amidst.gui.worldsurroundings.Map;
+import amidst.gui.worldsurroundings.FragmentGraphToScreenTranslator;
 import amidst.gui.worldsurroundings.WorldIconSelection;
 import amidst.gui.worldsurroundings.Zoom;
 import amidst.minecraft.world.World;
@@ -17,7 +17,7 @@ import amidst.utilities.FramerateTimer;
 
 public class WidgetBuilder {
 	private final World world;
-	private final Map map;
+	private final FragmentGraphToScreenTranslator map;
 	private final BiomeSelection biomeSelection;
 	private final WorldIconSelection worldIconSelection;
 	private final LayerReloader layerReloader;
@@ -26,7 +26,7 @@ public class WidgetBuilder {
 	private final FragmentManager fragmentManager;
 	private final Options options;
 
-	public WidgetBuilder(World world, Map map, BiomeSelection biomeSelection,
+	public WidgetBuilder(World world, FragmentGraphToScreenTranslator map, BiomeSelection biomeSelection,
 			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
 			FragmentGraph graph, Zoom zoom, FragmentManager fragmentManager,
 			Options options) {

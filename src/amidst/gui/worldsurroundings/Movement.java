@@ -15,7 +15,7 @@ public class Movement {
 		this.mapFlickingPreference = mapFlickingPreference;
 	}
 
-	public void update(Map map, Point currentMouse) {
+	public void update(FragmentGraphToScreenTranslator map, Point currentMouse) {
 		updateMovementSpeed(currentMouse);
 		moveMap(map);
 		throttleMovementSpeed();
@@ -34,7 +34,7 @@ public class Movement {
 		}
 	}
 
-	private void moveMap(Map map) {
+	private void moveMap(FragmentGraphToScreenTranslator map) {
 		map.adjustToMovement((int) speedX, (int) speedY);
 	}
 

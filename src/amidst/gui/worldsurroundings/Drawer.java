@@ -40,7 +40,7 @@ public class Drawer {
 	private final AffineTransform originalLayerMatrix = new AffineTransform();
 	private final AffineTransform layerMatrix = new AffineTransform();
 
-	private final Map map;
+	private final FragmentGraphToScreenTranslator map;
 	private final Movement movement;
 	private final Zoom zoom;
 	private final FragmentGraph graph;
@@ -56,7 +56,7 @@ public class Drawer {
 	private long lastTime = System.currentTimeMillis();
 	private float time;
 
-	public Drawer(Map map, Movement movement, Zoom zoom, FragmentGraph graph,
+	public Drawer(FragmentGraphToScreenTranslator map, Movement movement, Zoom zoom, FragmentGraph graph,
 			List<Widget> widgets, Iterable<FragmentDrawer> drawers) {
 		this.map = map;
 		this.movement = movement;

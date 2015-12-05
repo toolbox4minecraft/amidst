@@ -9,14 +9,14 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.minecraft.world.CoordinatesInWorld;
 
 public class WorldSurroundings {
-	private final Map map;
+	private final FragmentGraphToScreenTranslator map;
 	private final Viewer viewer;
 	private final LayerReloader layerReloader;
 	private final FragmentGraph graph;
 	private final Zoom zoom;
 	private final FragmentManager fragmentManager;
 
-	public WorldSurroundings(Map map, Viewer viewer,
+	public WorldSurroundings(FragmentGraphToScreenTranslator map, Viewer viewer,
 			LayerReloader layerReloader, FragmentGraph graph, Zoom zoom,
 			FragmentManager fragmentManager) {
 		this.map = map;

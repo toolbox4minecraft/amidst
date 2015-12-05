@@ -7,7 +7,7 @@ import amidst.fragment.FragmentGraph;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.utilities.TaskQueue;
 
-public class Map {
+public class FragmentGraphToScreenTranslator {
 	private final TaskQueue taskQueue = new TaskQueue();
 
 	private final Zoom zoom;
@@ -19,7 +19,7 @@ public class Map {
 	private volatile int viewerWidth;
 	private volatile int viewerHeight;
 
-	public Map(Zoom zoom, FragmentGraph graph) {
+	public FragmentGraphToScreenTranslator(Zoom zoom, FragmentGraph graph) {
 		this.zoom = zoom;
 		this.graph = graph;
 		centerOn(CoordinatesInWorld.origin());

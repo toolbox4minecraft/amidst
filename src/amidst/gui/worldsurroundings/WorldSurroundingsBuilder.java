@@ -37,7 +37,7 @@ public class WorldSurroundingsBuilder {
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
 		List<LayerDeclaration> declarations = layerBuilder.getDeclarations();
 		FragmentGraph graph = new FragmentGraph(declarations, fragmentManager);
-		Map map = new Map(zoom, graph);
+		FragmentGraphToScreenTranslator map = new FragmentGraphToScreenTranslator(zoom, graph);
 		LayerLoader layerLoader = layerBuilder.createLayerLoader(world,
 				biomeSelection, options);
 		fragmentManager.setLayerLoader(layerLoader);

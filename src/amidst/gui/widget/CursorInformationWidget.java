@@ -6,7 +6,7 @@ import java.awt.Point;
 
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
-import amidst.gui.worldsurroundings.Map;
+import amidst.gui.worldsurroundings.FragmentGraphToScreenTranslator;
 import amidst.minecraft.Biome;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
@@ -15,13 +15,13 @@ public class CursorInformationWidget extends Widget {
 	private static final String UNKNOWN_BIOME_NAME = "Unknown";
 
 	private final FragmentGraph graph;
-	private final Map map;
+	private final FragmentGraphToScreenTranslator map;
 
 	private Point mousePosition;
 	private String text = "";
 
 	public CursorInformationWidget(CornerAnchorPoint anchor,
-			FragmentGraph graph, Map map) {
+			FragmentGraph graph, FragmentGraphToScreenTranslator map) {
 		super(anchor);
 		this.graph = graph;
 		this.map = map;
