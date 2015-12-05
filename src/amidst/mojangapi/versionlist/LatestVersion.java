@@ -1,10 +1,10 @@
 package amidst.mojangapi.versionlist;
 
-public class LatestVersionDeclaration {
+public class LatestVersion {
 	private String snapshot;
 	private String release;
 
-	public LatestVersionDeclaration() {
+	public LatestVersion() {
 		// no-argument constructor for gson
 	}
 

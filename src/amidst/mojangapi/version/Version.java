@@ -2,15 +2,15 @@ package amidst.mojangapi.version;
 
 import java.util.List;
 
-public class JarProfile {
+public class Version {
 	private String id;
 	private String time;
 	private String releaseTime;
 	private String type;
 	private String minecraftArguments;
-	private List<JarLibrary> libraries;
+	private List<Library> libraries;
 
-	public JarProfile() {
+	public Version() {
 		// no-argument constructor for gson
 	}
 
@@ -34,7 +34,7 @@ public class JarProfile {
 		return minecraftArguments;
 	}
 
-	public List<JarLibrary> getLibraries() {
+	public List<Library> getLibraries() {
 		return libraries;
 	}
 }

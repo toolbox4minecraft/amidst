@@ -11,37 +11,37 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
-public class VersionDeclarations {
+public class VersionList {
 	private static final Gson GSON = new Gson();
 	private static final String REMOTE_VERSIONS_URL = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
 
-	public static VersionDeclarations retrieveRemote()
+	public static VersionList retrieveRemote()
 			throws JsonSyntaxException, JsonIOException, IOException {
 		return doRetrieve(URIUtils.newReader(REMOTE_VERSIONS_URL));
 	}
 
-	public static VersionDeclarations retrieve(URL url)
+	public static VersionList retrieve(URL url)
 			throws JsonSyntaxException, JsonIOException, IOException {
 		return doRetrieve(URIUtils.newReader(url));
 	}
 
-	private static VersionDeclarations doRetrieve(BufferedReader reader)
+	private static VersionList doRetrieve(BufferedReader reader)
 			throws JsonSyntaxException, JsonIOException {
-		return GSON.fromJson(reader, VersionDeclarations.class);
+		return GSON.fromJson(reader, VersionList.class);
 	}
 
-	private LatestVersionDeclaration latest;
-	private List<VersionDeclaration> versions;
+	private LatestVersion latest;
+	private List<VersionListEntry> versions;
 
-	public VersionDeclarations() {
+	public VersionList() {
 		// no-argument constructor for gson
 	}
 
-	public LatestVersionDeclaration getLatest() {
+	public LatestVersion getLatest() {
 		return latest;
 	}
 
-	public List<VersionDeclaration> getVersions() {
+	public List<VersionListEntry> getVersions() {
 		return versions;
 	}
 }

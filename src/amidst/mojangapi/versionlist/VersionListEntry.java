@@ -1,6 +1,6 @@
 package amidst.mojangapi.versionlist;
 
-public class VersionDeclaration {
+public class VersionListEntry {
 	private static final String REMOTE_PREFIX = "https://s3.amazonaws.com/Minecraft.Download/versions/";
 	private static final String MIDDLE_SERVER = "/minecraft_server.";
 	private static final String MIDDLE_CLIENT = "/";
@@ -10,7 +10,7 @@ public class VersionDeclaration {
 	private String id;
 	private String type;
 
-	public VersionDeclaration() {
+	public VersionListEntry() {
 		// no-argument constructor for gson
 	}
 

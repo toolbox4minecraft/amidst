@@ -2,16 +2,16 @@ package amidst.mojangapi.launcherprofiles;
 
 import java.util.Map;
 
-public class LauncherProfile {
-	private Map<String, InstallInformation> profiles;
+public class LauncherProfiles {
+	private Map<String, LaucherProfile> profiles;
 	private String selectedProfile;
 	private String clientToken;
 
-	public LauncherProfile() {
+	public LauncherProfiles() {
 		// no-argument constructor for gson
 	}
 
-	public Map<String, InstallInformation> getProfiles() {
+	public Map<String, LaucherProfile> getProfiles() {
 		return profiles;
 	}
 

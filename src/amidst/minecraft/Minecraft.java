@@ -31,8 +31,8 @@ import amidst.bytedata.CCStringMatch;
 import amidst.bytedata.CCWildcardByteSearch;
 import amidst.bytedata.ClassChecker;
 import amidst.logging.Log;
-import amidst.mojangapi.version.JarLibrary;
-import amidst.mojangapi.version.JarProfile;
+import amidst.mojangapi.version.Library;
+import amidst.mojangapi.version.Version;
 import amidst.utilities.FileSystemUtils;
 import amidst.version.VersionInfo;
 
@@ -297,10 +297,10 @@ public class Minecraft {
 	
 	private List<URL> getAllLibraryUrls(File jsonFile) {
 		List<URL> libraries = new ArrayList<URL>();
-		JarProfile profile = null;
+		Version profile = null;
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(jsonFile));
-			profile = GSON.fromJson(reader, JarProfile.class);
+			profile = GSON.fromJson(reader, Version.class);
 			reader.close();
 		} catch (IOException e) {
 			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: "
@@ -308,7 +308,7 @@ public class Minecraft {
 			return libraries;
 		}
 
-		for (JarLibrary library : profile.getLibraries()) {
+		for (Library library : profile.getLibraries()) {
 			File libraryFile = getLibraryFile(library);
 			if (libraryFile != null) {
 				try {
@@ -327,7 +327,7 @@ public class Minecraft {
 		return libraries;
 	}
 
-	private File getLibraryFile(JarLibrary library) {
+	private File getLibraryFile(Library library) {
 		if (library.isActive()) {
 			File result = getLibraryFile(library.getName());
 			if (result != null && result.exists()) {

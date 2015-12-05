@@ -2,7 +2,7 @@ package amidst.mojangapi.launcherprofiles;
 
 import amidst.mojangapi.version.Resolution;
 
-public class InstallInformation {
+public class LaucherProfile {
 	private String name;
 	private String lastVersionId = "latest";
 	private String gameDir;
@@ -12,7 +12,7 @@ public class InstallInformation {
 	private Resolution resolution;
 	private String[] allowedReleaseTypes = new String[] { "release" };
 
-	public InstallInformation() {
+	public LaucherProfile() {
 		// no-argument constructor for gson
 	}
 

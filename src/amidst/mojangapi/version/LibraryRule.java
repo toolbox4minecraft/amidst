@@ -1,10 +1,10 @@
 package amidst.mojangapi.version;
 
-public class JarRule {
+public class LibraryRule {
 	private String action;
-	private RuleOs os = new RuleOs("any");
+	private LibraryRuleOs os = new LibraryRuleOs("any");
 
-	public JarRule() {
+	public LibraryRule() {
 		// no-argument constructor for gson
 	}
 
@@ -20,7 +20,7 @@ public class JarRule {
 		return action;
 	}
 
-	public RuleOs getOs() {
+	public LibraryRuleOs getOs() {
 		return os;
 	}
 }
