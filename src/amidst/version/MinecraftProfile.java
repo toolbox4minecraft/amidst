@@ -7,29 +7,28 @@ import amidst.json.InstallInformation;
 
 public class MinecraftProfile implements ILatestVersionListListener {
 	public enum Status {
-		IDLE("scanning"),
-		MISSING("missing"),
-		FAILED("failed"),
-		FOUND("found");
-		
+		IDLE("scanning"), MISSING("missing"), FAILED("failed"), FOUND("found");
+
 		private String name;
+
 		private Status(String name) {
 			this.name = name;
 		}
-		
+
 		@Override
 		public String toString() {
 			return name;
 		}
 	}
+
 	private ArrayList<IProfileUpdateListener> listeners = new ArrayList<IProfileUpdateListener>();
-	
+
 	private MinecraftVersion version;
 	private InstallInformation profile;
-	
+
 	private Status status = Status.IDLE;
 	private String versionName = "unknown";
-	
+
 	public MinecraftProfile(InstallInformation profile) {
 		this.profile = profile;
 		if (profile.lastVersionId.equals("latest")) {
@@ -44,11 +43,11 @@ public class MinecraftProfile implements ILatestVersionListListener {
 			versionName = version.getName();
 		}
 	}
-	
+
 	public String getProfileName() {
 		return profile.name;
 	}
-	
+
 	public String getGameDir() {
 		return profile.gameDir;
 	}
@@ -56,10 +55,11 @@ public class MinecraftProfile implements ILatestVersionListListener {
 	public String getVersionName() {
 		return versionName;
 	}
-	
+
 	public void addUpdateListener(IProfileUpdateListener listener) {
 		listeners.add(listener);
 	}
+
 	public void removeUpdateListener(IProfileUpdateListener listener) {
 		listeners.remove(listener);
 	}
@@ -67,7 +67,7 @@ public class MinecraftProfile implements ILatestVersionListListener {
 	public Status getStatus() {
 		return status;
 	}
-	
+
 	@Override
 	public void onLoadStateChange(LatestVersionListEvent event) {
 		switch (event.getSource().getLoadState()) {
@@ -96,7 +96,7 @@ public class MinecraftProfile implements ILatestVersionListListener {
 			status = Status.IDLE;
 			break;
 		}
-		for (IProfileUpdateListener listener: listeners)
+		for (IProfileUpdateListener listener : listeners)
 			listener.onProfileUpdate(new ProfileUpdateEvent(this));
 	}
 

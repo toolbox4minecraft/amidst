@@ -6,26 +6,29 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Stack;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-
 import amidst.json.InstallInformation;
 import amidst.json.LauncherProfile;
 import amidst.logging.Log;
 import amidst.minecraft.LocalMinecraftInstallation;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 public class VersionFactory {
 	private static final Gson GSON = new Gson();
-	
+
 	private MinecraftVersion[] localVersions;
 	private MinecraftProfile[] profiles;
+
 	public VersionFactory() {
-		
+
 	}
-	
+
 	// TODO: call me?
 	public void scanForLocalVersions() {
-		File versionPath = new File(LocalMinecraftInstallation.getMinecraftDirectory() + "/versions");
+		File versionPath = new File(
+				LocalMinecraftInstallation.getMinecraftDirectory()
+						+ "/versions");
 		if (!versionPath.exists()) {
 			Log.e("Cannot find version directory.");
 			return;
@@ -36,24 +39,29 @@ public class VersionFactory {
 		File[] versionDirectories = versionPath.listFiles();
 		Stack<MinecraftVersion> versionStack = new Stack<MinecraftVersion>();
 		for (int i = 0; i < versionDirectories.length; i++) {
-			MinecraftVersion version = MinecraftVersion.fromVersionPath(versionDirectories[i]);
+			MinecraftVersion version = MinecraftVersion
+					.fromVersionPath(versionDirectories[i]);
 			if (version != null)
 				versionStack.add(version);
 		}
 		if (versionStack.size() == 0)
 			return;
-		
+
 		localVersions = new MinecraftVersion[versionStack.size()];
 		versionStack.toArray(localVersions);
 	}
-	
+
 	public void scanForProfiles() {
 		Log.i("Scanning for profiles.");
-		File profileJsonFile = new File(LocalMinecraftInstallation.getMinecraftDirectory() + "/launcher_profiles.json");
+		File profileJsonFile = new File(
+				LocalMinecraftInstallation.getMinecraftDirectory()
+						+ "/launcher_profiles.json");
 		LauncherProfile launcherProfile = null;
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(profileJsonFile));
-			LauncherProfile result = GSON.fromJson(reader, LauncherProfile.class);
+			BufferedReader reader = new BufferedReader(new FileReader(
+					profileJsonFile));
+			LauncherProfile result = GSON.fromJson(reader,
+					LauncherProfile.class);
 			reader.close();
 			launcherProfile = result;
 		} catch (JsonSyntaxException e) {
@@ -64,18 +72,20 @@ public class VersionFactory {
 			return;
 		}
 		Log.i("Successfully loaded profile list.");
-	
+
 		profiles = new MinecraftProfile[launcherProfile.profiles.size()];
-		
+
 		int i = 0;
-		for (InstallInformation installInformation : launcherProfile.profiles.values())
+		for (InstallInformation installInformation : launcherProfile.profiles
+				.values())
 			profiles[i++] = new MinecraftProfile(installInformation);
-	
-		
+
 	}
+
 	public MinecraftProfile[] getProfiles() {
 		return profiles;
 	}
+
 	public MinecraftVersion[] getLocalVersions() {
 		return localVersions;
 	}
