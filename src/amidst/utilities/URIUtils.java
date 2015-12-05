@@ -1,9 +1,14 @@
 package amidst.utilities;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -24,12 +29,16 @@ public enum URIUtils {
 		return URI.create(location).toURL();
 	}
 
-	public static BufferedReader newReader(String location) throws IOException {
+	public static Reader newReader(String location) throws IOException {
 		return newReader(newURL(location));
 	}
 
-	public static BufferedReader newReader(URL url) throws IOException {
-		return new BufferedReader(new InputStreamReader(url.openStream()));
+	public static Reader newReader(URL url) throws IOException {
+		return new InputStreamReader(newInputStream(url));
+	}
+
+	public static Reader newReader(File file) throws FileNotFoundException {
+		return new BufferedReader(new FileReader(file));
 	}
 
 	public static boolean exists(String location) {
@@ -58,8 +67,13 @@ public enum URIUtils {
 			return;
 		}
 		Path part = Paths.get(toPath.toString() + ".part");
-		InputStream in = from.openStream();
+		InputStream in = newInputStream(from);
 		Files.copy(in, part, StandardCopyOption.REPLACE_EXISTING);
 		Files.move(part, toPath, StandardCopyOption.REPLACE_EXISTING);
+	}
+
+	private static BufferedInputStream newInputStream(URL url)
+			throws IOException {
+		return new BufferedInputStream(url.openStream());
 	}
 }

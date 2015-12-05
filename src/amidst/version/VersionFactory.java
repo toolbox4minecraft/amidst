@@ -1,22 +1,18 @@
 package amidst.version;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Stack;
 
 import amidst.logging.Log;
 import amidst.minecraft.LocalMinecraftInstallation;
+import amidst.mojangapi.MojangAPI;
 import amidst.mojangapi.launcherprofiles.LaucherProfile;
 import amidst.mojangapi.launcherprofiles.LauncherProfiles;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 public class VersionFactory {
-	private static final Gson GSON = new Gson();
-
 	private MinecraftVersion[] localVersions;
 	private MinecraftProfile[] profiles;
 
@@ -55,10 +51,7 @@ public class VersionFactory {
 						+ "/launcher_profiles.json");
 		LauncherProfiles launcherProfile = null;
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(
-					profileJsonFile));
-			launcherProfile = GSON.fromJson(reader, LauncherProfiles.class);
-			reader.close();
+			launcherProfile = MojangAPI.launcherProfilesFrom(profileJsonFile);
 		} catch (JsonSyntaxException e) {
 			Log.crash(e, "Syntax exception thrown from launch_profiles.json");
 			return;
