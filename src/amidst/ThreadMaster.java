@@ -24,8 +24,7 @@ public class ThreadMaster {
 	}
 
 	/**
-	 * The main loop is responsible to constantly repaint the map in the
-	 * mapViewer.
+	 * The repainter is responsible to constantly repaint the gui.
 	 */
 	private void initRepainter() {
 		repainter = Executors

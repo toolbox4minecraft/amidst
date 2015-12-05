@@ -10,17 +10,17 @@ import amidst.minecraft.world.CoordinatesInWorld;
 
 public class WorldSurroundings {
 	private final Map map;
-	private final MapViewer mapViewer;
+	private final Viewer viewer;
 	private final LayerReloader layerReloader;
 	private final FragmentGraph graph;
 	private final Zoom zoom;
 	private final FragmentManager fragmentManager;
 
-	public WorldSurroundings(Map map, MapViewer mapViewer,
+	public WorldSurroundings(Map map, Viewer viewer,
 			LayerReloader layerReloader, FragmentGraph graph, Zoom zoom,
 			FragmentManager fragmentManager) {
 		this.map = map;
-		this.mapViewer = mapViewer;
+		this.viewer = viewer;
 		this.layerReloader = layerReloader;
 		this.graph = graph;
 		this.zoom = zoom;
@@ -28,7 +28,7 @@ public class WorldSurroundings {
 	}
 
 	public Component getComponent() {
-		return mapViewer.getComponent();
+		return viewer.getComponent();
 	}
 
 	public LayerReloader getLayerReloader() {
@@ -46,7 +46,7 @@ public class WorldSurroundings {
 	}
 
 	public void tickRepainter() {
-		mapViewer.repaint();
+		viewer.repaint();
 	}
 
 	public void centerOn(CoordinatesInWorld coordinates) {
@@ -54,10 +54,10 @@ public class WorldSurroundings {
 	}
 
 	public BufferedImage createCaptureImage() {
-		return mapViewer.createCaptureImage();
+		return viewer.createCaptureImage();
 	}
 
 	public void adjustZoom(int notches) {
-		zoom.adjustZoom(mapViewer.getMousePositionOrCenter(), notches);
+		zoom.adjustZoom(viewer.getMousePositionOrCenter(), notches);
 	}
 }

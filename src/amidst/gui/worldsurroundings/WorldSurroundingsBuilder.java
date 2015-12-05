@@ -50,10 +50,10 @@ public class WorldSurroundingsBuilder {
 				fragmentManager, options);
 		List<Widget> widgets = widgetBuilder.create();
 		Drawer drawer = new Drawer(map, movement, zoom, graph, widgets, drawers);
-		MapViewer mapViewer = new MapViewer(new ViewerMouseListener(
-				new WidgetManager(widgets), movement, zoom, world, map,
-				worldIconSelection, layerReloader), drawer);
-		return new WorldSurroundings(map, mapViewer, layerReloader, graph,
-				zoom, fragmentManager);
+		Viewer viewer = new Viewer(new ViewerMouseListener(new WidgetManager(
+				widgets), movement, zoom, world, map, worldIconSelection,
+				layerReloader), drawer);
+		return new WorldSurroundings(map, viewer, layerReloader, graph, zoom,
+				fragmentManager);
 	}
 }

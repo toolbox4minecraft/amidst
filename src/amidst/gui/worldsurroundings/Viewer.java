@@ -11,7 +11,7 @@ import javax.swing.JComponent;
 
 import amidst.gui.widget.Widget;
 
-public class MapViewer {
+public class Viewer {
 	@SuppressWarnings("serial")
 	private static class ViewerComponent extends JComponent {
 		private final FontMetrics widgetFontMetrics = getFontMetrics(Widget.TEXT_FONT);
@@ -45,7 +45,7 @@ public class MapViewer {
 	private final ViewerMouseListener mouseListener;
 	private final ViewerComponent component;
 
-	public MapViewer(ViewerMouseListener mouseListener, Drawer drawer) {
+	public Viewer(ViewerMouseListener mouseListener, Drawer drawer) {
 		this.mouseListener = mouseListener;
 		this.component = createComponent(drawer);
 	}
