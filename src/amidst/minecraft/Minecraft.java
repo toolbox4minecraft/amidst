@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -30,9 +30,6 @@ import amidst.bytedata.CCWildcardByteSearch;
 import amidst.bytedata.ClassChecker;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangAPI;
-import amidst.mojangapi.version.LibraryJson;
-import amidst.mojangapi.version.VersionJson;
-import amidst.utilities.FileSystemUtils;
 import amidst.version.VersionInfo;
 
 public class Minecraft {
@@ -305,70 +302,13 @@ public class Minecraft {
 	}
 
 	private List<URL> getAllLibraryUrls(File jsonFile) {
-		List<URL> libraries = new ArrayList<URL>();
-		VersionJson profile = null;
 		try {
-			profile = MojangAPI.versionFrom(jsonFile);
+			return MojangAPI.versionFrom(jsonFile).getLibraryUrls();
 		} catch (IOException e) {
 			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: "
 					+ jsonFile + ")");
-			return libraries;
 		}
-
-		for (LibraryJson library : profile.getLibraries()) {
-			File libraryFile = getLibraryFile(library);
-			if (libraryFile != null) {
-				try {
-					libraries.add(libraryFile.toURI().toURL());
-					Log.i("Found library: " + libraryFile);
-				} catch (MalformedURLException e) {
-					Log.w("Unable to convert library file to URL with path: "
-							+ libraryFile);
-					e.printStackTrace();
-				}
-			} else {
-				Log.i("Skipping library: " + library.getName());
-			}
-		}
-
-		return libraries;
-	}
-
-	private File getLibraryFile(LibraryJson library) {
-		if (library.isActive()) {
-			File result = getLibraryFile(library.getName());
-			if (result != null && result.exists()) {
-				return result;
-			}
-		}
-		return null;
-	}
-
-	private File getLibraryFile(String libraryName) {
-		String searchPath = getLibrarySearchPath(libraryName);
-		File searchPathFile = new File(searchPath);
-		if (!searchPathFile.exists()) {
-			Log.w("Failed attempt to load library at: " + searchPathFile);
-			return null;
-		}
-		File result = FileSystemUtils.getFirstFileWithExtension(
-				searchPathFile.listFiles(), "jar");
-		if (result == null) {
-			Log.w("Attempted to search for file at path: " + searchPath
-					+ " but found nothing. Skipping.");
-		}
-		return result;
-	}
-
-	private String getLibrarySearchPath(String libraryName) {
-		String result = LocalMinecraftInstallation.getMinecraftLibraries()
-				.getAbsolutePath() + "/";
-		String[] split = libraryName.split(":");
-		split[0] = split[0].replace('.', '/');
-		for (int i = 0; i < split.length; i++) {
-			result += split[i] + "/";
-		}
-		return result;
+		return Collections.emptyList();
 	}
 
 	/*
