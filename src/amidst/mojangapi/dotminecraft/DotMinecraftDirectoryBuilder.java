@@ -3,14 +3,11 @@ package amidst.mojangapi.dotminecraft;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
-import amidst.logging.Log;
-import amidst.mojangapi.FilenameFactory;
 import amidst.mojangapi.MojangAPI;
-import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 
 public class DotMinecraftDirectoryBuilder {
@@ -19,8 +16,7 @@ public class DotMinecraftDirectoryBuilder {
 	private File saves;
 	private File versions;
 	private File launcherProfilesDotJson;
-	private List<SaveDirectory> saveDirectories;
-	private List<VersionDirectory> versionDirectories;
+	private Map<String, VersionDirectory> versionDirectories;
 	private List<ProfileDirectory> profileDirectories;
 	private LauncherProfilesJson launcherProfilesJson;
 
@@ -31,7 +27,7 @@ public class DotMinecraftDirectoryBuilder {
 		this.versions = new File(dotMinecraft, "versions");
 		this.launcherProfilesDotJson = new File(dotMinecraft,
 				"launcher_profiles.json");
-		this.versionDirectories = Collections.emptyList();
+		this.versionDirectories = Collections.emptyMap();
 		this.profileDirectories = Collections.emptyList();
 	}
 
@@ -56,45 +52,9 @@ public class DotMinecraftDirectoryBuilder {
 		return this;
 	}
 
-	public DotMinecraftDirectoryBuilder loadSaveDirectories() {
-		this.saveDirectories = createSaveDirectories(saves);
-		return this;
-	}
-
-	private List<SaveDirectory> createSaveDirectories(File saves) {
-		List<SaveDirectory> result = new ArrayList<SaveDirectory>();
-		for (File file : saves.listFiles()) {
-			result.add(new SaveDirectory(file));
-		}
-		return result;
-	}
-
 	public DotMinecraftDirectoryBuilder loadVersionDirectories() {
-		this.versionDirectories = createVersionDirectories(versions);
+		this.versionDirectories = MojangAPI.createVersionDirectories(versions);
 		return this;
-	}
-
-	private List<VersionDirectory> createVersionDirectories(File versions) {
-		List<VersionDirectory> result = new ArrayList<VersionDirectory>();
-		for (File file : versions.listFiles()) {
-			try {
-				result.add(tryCreateVersionDirectory(versions, file.getName()));
-			} catch (RuntimeException e) {
-				Log.w("Unable to load minecraft version.");
-				e.printStackTrace();
-			}
-		}
-		return result;
-	}
-
-	private VersionDirectory tryCreateVersionDirectory(File versions, String id) {
-		File jar = FilenameFactory.getClientJarFile(versions, id);
-		File json = FilenameFactory.getClientJsonFile(versions, id);
-		try {
-			return new VersionDirectory(jar, MojangAPI.versionFrom(json));
-		} catch (Exception e) {
-			throw new RuntimeException("Unable to load minecraft version.", e);
-		}
 	}
 
 	public DotMinecraftDirectoryBuilder loadProfileDirectories() {
@@ -102,26 +62,9 @@ public class DotMinecraftDirectoryBuilder {
 			throw new IllegalStateException(
 					"You need to call the method loadLauncherProfilesJson() first.");
 		}
-		this.profileDirectories = createProfileDirectories(launcherProfilesJson);
+		this.profileDirectories = MojangAPI
+				.createProfileDirectories(launcherProfilesJson);
 		return this;
-	}
-
-	private List<ProfileDirectory> createProfileDirectories(
-			LauncherProfilesJson launcherProfilesJson) {
-		ArrayList<ProfileDirectory> result = new ArrayList<ProfileDirectory>();
-		for (LaucherProfileJson profile : launcherProfilesJson.getProfiles()) {
-			result.add(createProfileDirectory(profile));
-		}
-		return result;
-	}
-
-	private ProfileDirectory createProfileDirectory(
-			LaucherProfileJson profileJson) {
-		File profile = new File(profileJson.getGameDir());
-		File saves = new File(profile, "saves");
-		List<SaveDirectory> saveDirectories = createSaveDirectories(saves);
-		return new ProfileDirectory(profile, saves, profileJson,
-				saveDirectories);
 	}
 
 	public DotMinecraftDirectoryBuilder loadLauncherProfilesJson()
@@ -133,7 +76,7 @@ public class DotMinecraftDirectoryBuilder {
 
 	public DotMinecraftDirectory construct() {
 		return new DotMinecraftDirectory(dotMinecraft, libraries, saves,
-				versions, launcherProfilesDotJson, saveDirectories,
-				versionDirectories, profileDirectories, launcherProfilesJson);
+				versions, launcherProfilesDotJson, versionDirectories,
+				profileDirectories, launcherProfilesJson);
 	}
 }

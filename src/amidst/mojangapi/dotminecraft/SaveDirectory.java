@@ -8,11 +8,12 @@ public class SaveDirectory {
 	private final File playerdata;
 	private final File levelDat;
 
-	public SaveDirectory(File worldSave) {
+	public SaveDirectory(File worldSave, File players, File playerdata,
+			File levelDat) {
 		this.worldSave = worldSave;
-		this.players = new File(worldSave, "players");
-		this.playerdata = new File(worldSave, "playerdata");
-		this.levelDat = new File(worldSave, "level.dat");
+		this.players = players;
+		this.playerdata = playerdata;
+		this.levelDat = levelDat;
 	}
 
 	public File getWorldSave() {

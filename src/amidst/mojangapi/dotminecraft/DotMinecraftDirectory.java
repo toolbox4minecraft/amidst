@@ -2,6 +2,7 @@ package amidst.mojangapi.dotminecraft;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 
@@ -11,15 +12,13 @@ public class DotMinecraftDirectory {
 	private final File saves;
 	private final File versions;
 	private final File launcherProfilesDotJson;
-	private final List<SaveDirectory> saveDirectories;
-	private final List<VersionDirectory> versionDirectories;
+	private final Map<String, VersionDirectory> versionDirectories;
 	private final List<ProfileDirectory> profileDirectories;
 	private final LauncherProfilesJson launcherProfilesJson;
 
 	DotMinecraftDirectory(File dotMinecraft, File libraries, File saves,
 			File versions, File launcherProfilesDotJson,
-			List<SaveDirectory> saveDirectories,
-			List<VersionDirectory> versionDirectories,
+			Map<String, VersionDirectory> versionDirectories,
 			List<ProfileDirectory> profileDirectories,
 			LauncherProfilesJson launcherProfilesJson) {
 		this.dotMinecraft = dotMinecraft;
@@ -27,7 +26,6 @@ public class DotMinecraftDirectory {
 		this.saves = saves;
 		this.versions = versions;
 		this.launcherProfilesDotJson = launcherProfilesDotJson;
-		this.saveDirectories = saveDirectories;
 		this.versionDirectories = versionDirectories;
 		this.profileDirectories = profileDirectories;
 		this.launcherProfilesJson = launcherProfilesJson;
@@ -53,12 +51,8 @@ public class DotMinecraftDirectory {
 		return launcherProfilesDotJson;
 	}
 
-	public List<SaveDirectory> getSaveDirectories() {
-		return saveDirectories;
-	}
-
-	public List<VersionDirectory> getVersionDirectories() {
-		return versionDirectories;
+	public VersionDirectory getVersionDirectory(String id) {
+		return versionDirectories.get(id);
 	}
 
 	public List<ProfileDirectory> getProfileDirectories() {
