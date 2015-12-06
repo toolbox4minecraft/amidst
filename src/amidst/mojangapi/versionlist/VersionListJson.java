@@ -1,12 +1,13 @@
 package amidst.mojangapi.versionlist;
 
+import java.util.Collections;
 import java.util.List;
 
 import amidst.mojangapi.ReleaseType;
 
 public class VersionListJson {
 	private LatestJson latest;
-	private List<VersionListEntryJson> versions;
+	private List<VersionListEntryJson> versions = Collections.emptyList();
 
 	public VersionListJson() {
 		// no-argument constructor for gson

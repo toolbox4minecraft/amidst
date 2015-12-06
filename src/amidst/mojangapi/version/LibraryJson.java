@@ -1,10 +1,11 @@
 package amidst.mojangapi.version;
 
+import java.util.Collections;
 import java.util.List;
 
 public class LibraryJson {
 	private String name;
-	private List<LibraryRuleJson> rules;
+	private List<LibraryRuleJson> rules = Collections.emptyList();
 
 	public LibraryJson() {
 		// no-argument constructor for gson

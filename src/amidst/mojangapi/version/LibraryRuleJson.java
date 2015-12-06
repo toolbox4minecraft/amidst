@@ -2,6 +2,7 @@ package amidst.mojangapi.version;
 
 public class LibraryRuleJson {
 	private static final String ACTION_ALLOW = "allow";
+
 	private String action;
 	private LibraryRuleOsJson os;
 
