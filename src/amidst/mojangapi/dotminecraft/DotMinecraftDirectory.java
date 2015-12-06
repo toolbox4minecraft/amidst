@@ -1,66 +1,36 @@
 package amidst.mojangapi.dotminecraft;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import amidst.logging.Log;
-import amidst.mojangapi.FilenameFactory;
-import amidst.mojangapi.MojangAPI;
-import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 
 public class DotMinecraftDirectory {
 	private final File dotMinecraft;
 	private final File libraries;
-	private final SavesDirectory saves;
+	private final File saves;
+	private final File versions;
+	private final File launcherProfilesDotJson;
+	private final List<SaveDirectory> saveDirectories;
 	private final List<VersionDirectory> versionDirectories;
-	private final LauncherProfilesJson launcherProfilesJson;
 	private final List<ProfileDirectory> profileDirectories;
+	private final LauncherProfilesJson launcherProfilesJson;
 
-	public DotMinecraftDirectory(File dotMinecraft)
-			throws FileNotFoundException, IOException {
+	DotMinecraftDirectory(File dotMinecraft, File libraries, File saves,
+			File versions, File launcherProfilesDotJson,
+			List<SaveDirectory> saveDirectories,
+			List<VersionDirectory> versionDirectories,
+			List<ProfileDirectory> profileDirectories,
+			LauncherProfilesJson launcherProfilesJson) {
 		this.dotMinecraft = dotMinecraft;
-		this.libraries = new File(dotMinecraft, "libraries");
-		this.saves = new SavesDirectory(new File(dotMinecraft, "saves"));
-		this.versionDirectories = createVersionDirectories(new File(
-				dotMinecraft, "versions"));
-		this.launcherProfilesJson = MojangAPI.launcherProfilesFrom(new File(
-				dotMinecraft, "launcher_profiles.json"));
-		this.profileDirectories = createProfileDirectories();
-	}
-
-	private List<VersionDirectory> createVersionDirectories(File versions) {
-		List<VersionDirectory> result = new ArrayList<VersionDirectory>();
-		for (File file : versions.listFiles()) {
-			try {
-				result.add(tryCreateVersionDirectory(versions, file.getName()));
-			} catch (RuntimeException e) {
-				Log.w("Unable to load minecraft version.");
-				e.printStackTrace();
-			}
-		}
-		return result;
-	}
-
-	private VersionDirectory tryCreateVersionDirectory(File versions, String id) {
-		File jar = FilenameFactory.getClientJarFile(versions, id);
-		File json = FilenameFactory.getClientJsonFile(versions, id);
-		try {
-			return new VersionDirectory(jar, json);
-		} catch (Exception e) {
-			throw new RuntimeException("Unable to load minecraft version.", e);
-		}
-	}
-
-	private List<ProfileDirectory> createProfileDirectories() {
-		ArrayList<ProfileDirectory> result = new ArrayList<ProfileDirectory>();
-		for (LaucherProfileJson profile : launcherProfilesJson.getProfiles()) {
-			result.add(new ProfileDirectory(profile));
-		}
-		return result;
+		this.libraries = libraries;
+		this.saves = saves;
+		this.versions = versions;
+		this.launcherProfilesDotJson = launcherProfilesDotJson;
+		this.saveDirectories = saveDirectories;
+		this.versionDirectories = versionDirectories;
+		this.profileDirectories = profileDirectories;
+		this.launcherProfilesJson = launcherProfilesJson;
 	}
 
 	public File getDotMinecraft() {
@@ -71,19 +41,31 @@ public class DotMinecraftDirectory {
 		return libraries;
 	}
 
-	public SavesDirectory getSavesDirectory() {
+	public File getSaves() {
 		return saves;
+	}
+
+	public File getVersions() {
+		return versions;
+	}
+
+	public File getLauncherProfilesDotJson() {
+		return launcherProfilesDotJson;
+	}
+
+	public List<SaveDirectory> getSaveDirectories() {
+		return saveDirectories;
 	}
 
 	public List<VersionDirectory> getVersionDirectories() {
 		return versionDirectories;
 	}
 
-	public LauncherProfilesJson getLauncherProfilesJson() {
-		return launcherProfilesJson;
-	}
-
 	public List<ProfileDirectory> getProfileDirectories() {
 		return profileDirectories;
+	}
+
+	public LauncherProfilesJson getLauncherProfilesJson() {
+		return launcherProfilesJson;
 	}
 }
