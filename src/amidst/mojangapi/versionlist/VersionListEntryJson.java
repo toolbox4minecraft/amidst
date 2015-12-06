@@ -19,6 +19,10 @@ public class VersionListEntryJson {
 		return type;
 	}
 
+	public boolean isType(ReleaseType type) {
+		return this.type.equals(type);
+	}
+
 	public String getRemoteClientJson() {
 		return FilenameFactory.getRemoteClientJson(id);
 	}

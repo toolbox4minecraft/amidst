@@ -2,20 +2,22 @@ package amidst.mojangapi.dotminecraft;
 
 import java.io.File;
 
+import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
+
 public class ProfileDirectory {
-	private final File profile;
+	private final LaucherProfileJson profile;
 	private final SavesDirectory saves;
 
-	public ProfileDirectory(File profile) {
+	public ProfileDirectory(LaucherProfileJson profile) {
 		this.profile = profile;
-		this.saves = new SavesDirectory(new File(profile, "saves"));
+		this.saves = new SavesDirectory(new File(profile.getGameDir(), "saves"));
 	}
 
-	public File getProfile() {
+	public LaucherProfileJson getProfileJson() {
 		return profile;
 	}
 
-	public SavesDirectory getSaves() {
+	public SavesDirectory getSavesDirectory() {
 		return saves;
 	}
 }

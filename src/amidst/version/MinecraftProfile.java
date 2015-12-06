@@ -36,10 +36,11 @@ public class MinecraftProfile implements ILatestVersionListListener {
 			LatestVersionList latestVersionList) {
 		this.profile = profile;
 		this.latestVersionList = latestVersionList;
-		if (profile.getLastVersionId().equals("latest")) {
+		if (!profile.hasLastVersionId()) {
 			latestVersionList.addAndNotifyLoadListener(this);
 		} else {
-			version = MinecraftVersion.fromVersionId(profile.getLastVersionId());
+			version = MinecraftVersion
+					.fromVersionId(profile.getLastVersionId());
 			if (version == null) {
 				status = Status.MISSING;
 				return;

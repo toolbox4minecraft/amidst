@@ -9,26 +9,30 @@ import java.util.List;
 import amidst.logging.Log;
 import amidst.mojangapi.FilenameFactory;
 import amidst.mojangapi.MojangAPI;
+import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 
 public class DotMinecraftDirectory {
 	private final File dotMinecraft;
 	private final File libraries;
 	private final SavesDirectory saves;
-	private final List<VersionDirectory> versions;
+	private final List<VersionDirectory> versionDirectories;
 	private final LauncherProfilesJson launcherProfilesJson;
+	private final List<ProfileDirectory> profileDirectories;
 
 	public DotMinecraftDirectory(File dotMinecraft)
 			throws FileNotFoundException, IOException {
 		this.dotMinecraft = dotMinecraft;
 		this.libraries = new File(dotMinecraft, "libraries");
 		this.saves = new SavesDirectory(new File(dotMinecraft, "saves"));
-		this.versions = loadVersions(new File(dotMinecraft, "versions"));
+		this.versionDirectories = createVersionDirectories(new File(
+				dotMinecraft, "versions"));
 		this.launcherProfilesJson = MojangAPI.launcherProfilesFrom(new File(
 				dotMinecraft, "launcher_profiles.json"));
+		this.profileDirectories = createProfileDirectories();
 	}
 
-	private List<VersionDirectory> loadVersions(File versions) {
+	private List<VersionDirectory> createVersionDirectories(File versions) {
 		List<VersionDirectory> result = new ArrayList<VersionDirectory>();
 		for (File file : versions.listFiles()) {
 			try {
@@ -51,6 +55,14 @@ public class DotMinecraftDirectory {
 		}
 	}
 
+	private List<ProfileDirectory> createProfileDirectories() {
+		ArrayList<ProfileDirectory> result = new ArrayList<ProfileDirectory>();
+		for (LaucherProfileJson profile : launcherProfilesJson.getProfiles()) {
+			result.add(new ProfileDirectory(profile));
+		}
+		return result;
+	}
+
 	public File getDotMinecraft() {
 		return dotMinecraft;
 	}
@@ -59,15 +71,19 @@ public class DotMinecraftDirectory {
 		return libraries;
 	}
 
-	public SavesDirectory getSaves() {
+	public SavesDirectory getSavesDirectory() {
 		return saves;
 	}
 
-	public List<VersionDirectory> getVersions() {
-		return versions;
+	public List<VersionDirectory> getVersionDirectories() {
+		return versionDirectories;
 	}
 
 	public LauncherProfilesJson getLauncherProfilesJson() {
 		return launcherProfilesJson;
+	}
+
+	public List<ProfileDirectory> getProfileDirectories() {
+		return profileDirectories;
 	}
 }

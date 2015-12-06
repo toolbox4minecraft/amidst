@@ -22,6 +22,10 @@ public class LaucherProfileJson {
 		return lastVersionId;
 	}
 
+	public boolean hasLastVersionId() {
+		return lastVersionId != null;
+	}
+
 	public String getGameDir() {
 		return gameDir;
 	}
