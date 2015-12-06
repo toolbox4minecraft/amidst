@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import amidst.logging.Log;
 import amidst.mojangapi.FilenameFactory;
 import amidst.mojangapi.MojangAPI;
 import amidst.mojangapi.launcherprofiles.LauncherProfiles;
@@ -30,14 +31,24 @@ public class DotMinecraftDirectory {
 	private List<VersionDirectory> loadVersions(File versions) {
 		List<VersionDirectory> result = new ArrayList<VersionDirectory>();
 		for (File file : versions.listFiles()) {
-			result.add(createVersionDirectory(versions, file.getName()));
+			try {
+				result.add(tryCreateVersionDirectory(versions, file.getName()));
+			} catch (RuntimeException e) {
+				Log.w("Unable to load minecraft version.");
+				e.printStackTrace();
+			}
 		}
 		return result;
 	}
 
-	private VersionDirectory createVersionDirectory(File versions, String id) {
-		return new VersionDirectory(FilenameFactory.getClientJarFile(versions,
-				id), FilenameFactory.getClientJsonFile(versions, id));
+	private VersionDirectory tryCreateVersionDirectory(File versions, String id) {
+		File jar = FilenameFactory.getClientJarFile(versions, id);
+		File json = FilenameFactory.getClientJsonFile(versions, id);
+		try {
+			return new VersionDirectory(jar, json);
+		} catch (Exception e) {
+			throw new RuntimeException("Unable to load minecraft version.", e);
+		}
 	}
 
 	public File getDotMinecraft() {
