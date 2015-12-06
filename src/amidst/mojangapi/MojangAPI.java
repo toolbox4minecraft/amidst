@@ -62,19 +62,23 @@ public enum MojangAPI {
 	public static List<SaveDirectory> createSaveDirectories(File saves) {
 		List<SaveDirectory> result = new ArrayList<SaveDirectory>();
 		for (File save : saves.listFiles()) {
-			tryAddSaveDirectory(result, save);
+			SaveDirectory saveDirectory = tryCreateSaveDirectory(result, save);
+			if (saveDirectory != null) {
+				result.add(saveDirectory);
+			}
 		}
 		return result;
 	}
 
-	private static void tryAddSaveDirectory(List<SaveDirectory> result,
-			File save) {
+	public static SaveDirectory tryCreateSaveDirectory(
+			List<SaveDirectory> result, File save) {
 		try {
-			result.add(createSaveDirectory(save));
+			return createSaveDirectory(save);
 		} catch (FileNotFoundException e) {
 			Log.w("Unable to load world save.");
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	public static SaveDirectory createSaveDirectory(File save)
@@ -82,8 +86,9 @@ public enum MojangAPI {
 		File players = new File(save, "players");
 		File playerdata = new File(save, "playerdata");
 		File levelDat = new File(save, "level.dat");
-		ensureFileExists("Unable to load world save", save);
-		ensureAnyFileExists("Unable to load world save", players, playerdata);
+		ensureDirectoryExists("Unable to load world save", save);
+		ensureAnyDirectoryExists("Unable to load world save", players,
+				playerdata);
 		ensureFileExists("Unable to load world save", levelDat);
 		return new SaveDirectory(save, players, playerdata, levelDat);
 	}
@@ -92,21 +97,27 @@ public enum MojangAPI {
 			File versions) {
 		Map<String, VersionDirectory> result = new HashMap<String, VersionDirectory>();
 		for (File file : versions.listFiles()) {
-			tryAddVersionDirectory(result, versions, file.getName());
+			String id = file.getName();
+			VersionDirectory versionDirectory = tryCreateVersionDirectory(
+					versions, id);
+			if (versionDirectory != null) {
+				result.put(id, versionDirectory);
+			}
 		}
 		return result;
 	}
 
-	private static void tryAddVersionDirectory(
-			Map<String, VersionDirectory> result, File versions, String id) {
+	public static VersionDirectory tryCreateVersionDirectory(File versions,
+			String id) {
 		File jar = FilenameFactory.getClientJarFile(versions, id);
 		File json = FilenameFactory.getClientJsonFile(versions, id);
 		try {
-			result.put(id, createVersionDirectory(jar, json));
+			return createVersionDirectory(jar, json);
 		} catch (Exception e) {
 			Log.w("Unable to load version directory.");
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	public static VersionDirectory createVersionDirectory(File jar, File json)
@@ -121,28 +132,50 @@ public enum MojangAPI {
 			LauncherProfilesJson launcherProfilesJson) {
 		ArrayList<ProfileDirectory> result = new ArrayList<ProfileDirectory>();
 		for (LaucherProfileJson profile : launcherProfilesJson.getProfiles()) {
-			tryAddProfileDirectory(result, profile);
+			ProfileDirectory profileDirectory = tryCreateProfileDirectory(profile);
+			if (profileDirectory != null) {
+				result.add(profileDirectory);
+			}
 		}
 		return result;
 	}
 
-	private static void tryAddProfileDirectory(
-			ArrayList<ProfileDirectory> result, LaucherProfileJson profile) {
+	public static ProfileDirectory tryCreateProfileDirectory(
+			LaucherProfileJson profile) {
 		try {
-			result.add(createProfileDirectory(profile));
-		} catch (Exception e) {
+			return createProfileDirectory(profile);
+		} catch (FileNotFoundException e) {
 			Log.w("Unable to load profile directory.");
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	public static ProfileDirectory createProfileDirectory(
 			LaucherProfileJson profileJson) throws FileNotFoundException {
 		File profile = new File(profileJson.getGameDir());
 		File saves = new File(profile, "saves");
-		ensureFileExists("Unable to load profile directory", profile);
-		ensureFileExists("Unable to load profile directory", saves);
+		ensureDirectoryExists("Unable to load profile directory", profile);
+		ensureDirectoryExists("Unable to load profile directory", saves);
 		return new ProfileDirectory(profile, saves, profileJson);
+	}
+
+	private static void ensureDirectoryExists(String message, File directory)
+			throws FileNotFoundException {
+		if (!directory.isDirectory()) {
+			throw new FileNotFoundException(message + ": " + directory
+					+ " is not a directory");
+		}
+	}
+
+	private static void ensureAnyDirectoryExists(String message,
+			File... directories) throws FileNotFoundException {
+		for (File directory : directories) {
+			if (directory.isDirectory()) {
+				return;
+			}
+		}
+		throw new FileNotFoundException(message);
 	}
 
 	private static void ensureFileExists(String message, File file)
@@ -153,6 +186,7 @@ public enum MojangAPI {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private static void ensureAnyFileExists(String message, File... files)
 			throws FileNotFoundException {
 		for (File file : files) {
