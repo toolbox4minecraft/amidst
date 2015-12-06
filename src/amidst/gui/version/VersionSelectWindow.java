@@ -17,13 +17,11 @@ import amidst.WorkerExecutor;
 import amidst.logging.Log;
 import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.preferences.StringPreference;
-import amidst.version.LatestVersionList;
 import amidst.version.MinecraftProfile;
 import amidst.version.VersionFactory;
 
 public class VersionSelectWindow {
 	private final Application application;
-	private final LatestVersionList latestVersionList;
 	private final WorkerExecutor workerExecutor;
 	private final StringPreference lastProfilePreference;
 
@@ -33,15 +31,13 @@ public class VersionSelectWindow {
 	private final VersionSelectPanel versionSelectPanel;
 
 	public VersionSelectWindow(Application application,
-			LatestVersionList latestVersionList, WorkerExecutor workerExecutor,
+			WorkerExecutor workerExecutor,
 			StringPreference lastProfilePreference) {
 		this.application = application;
-		this.latestVersionList = latestVersionList;
 		this.workerExecutor = workerExecutor;
 		this.lastProfilePreference = lastProfilePreference;
 		this.versionSelectPanel = new VersionSelectPanel(lastProfilePreference,
 				"Scanning...");
-		loadLatestVersionListLater();
 		if (!LocalMinecraftInstallation.getDotMinecraftDirectory().isValid()) {
 			Log.crash("Unable to find minecraft directory at: "
 					+ LocalMinecraftInstallation.getDotMinecraftDirectory()
@@ -50,19 +46,6 @@ public class VersionSelectWindow {
 			initFrame();
 			scanAndLoadVersionsLater();
 		}
-	}
-
-	private void loadLatestVersionListLater() {
-		workerExecutor.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				loadLatestVersionListImmediately();
-			}
-		});
-	}
-
-	private void loadLatestVersionListImmediately() {
-		latestVersionList.load();
 	}
 
 	private void initFrame() {
@@ -106,7 +89,7 @@ public class VersionSelectWindow {
 	}
 
 	private MinecraftProfile[] scanAndLoadVersions() {
-		versionFactory.scanForProfiles(latestVersionList);
+		versionFactory.scanForProfiles();
 		return versionFactory.getProfiles();
 	}
 

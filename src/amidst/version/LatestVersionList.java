@@ -7,8 +7,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import amidst.logging.Log;
@@ -17,14 +15,7 @@ import amidst.resources.ResourceLoader;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-public enum LatestVersionList {
-	INSTANCE;
-
-	@Deprecated
-	public static LatestVersionList get() {
-		return INSTANCE;
-	}
-
+public class LatestVersionList {
 	public enum LoadState {
 		LOADED, LOADING, FAILED, IDLE
 	}
@@ -36,21 +27,18 @@ public enum LatestVersionList {
 
 	private VersionList profile;
 
-	private final List<ILatestVersionListListener> loadListeners = new ArrayList<ILatestVersionListListener>();
-	private final Object listenerLock = new Object();
-
 	public Map<String, String>[] getVersions() {
 		return profile.versions;
 	}
 
 	public void load() {
 		Log.i("Beginning latest version list load.");
-		setLoadState(LoadState.LOADING);
+		loadState = LoadState.LOADING;
 		if (!attemptRemoteLoad() && !attemptLocalLoad()) {
 			Log.w("Failed to load both remote and local version list.");
-			setLoadState(LoadState.FAILED);
+			loadState = LoadState.FAILED;
 		}
-		setLoadState(LoadState.LOADED);
+		loadState = LoadState.LOADED;
 	}
 
 	private boolean attemptLocalLoad() {
@@ -128,35 +116,7 @@ public enum LatestVersionList {
 		return loadState;
 	}
 
-	private void setLoadState(LoadState state) {
-		synchronized (listenerLock) {
-			loadState = state;
-			for (ILatestVersionListListener listener : loadListeners)
-				listener.onLoadStateChange(new LatestVersionListEvent(this));
-		}
-	}
-
-	public void addLoadListener(ILatestVersionListListener listener) {
-		synchronized (listenerLock) {
-			loadListeners.add(listener);
-		}
-	}
-
-	public void removeLoadListener(ILatestVersionListListener listener) {
-		synchronized (listenerLock) {
-			loadListeners.remove(listener);
-		}
-	}
-
-	public void addAndNotifyLoadListener(ILatestVersionListListener listener) {
-		synchronized (listenerLock) {
-			loadListeners.add(listener);
-			listener.onLoadStateChange(new LatestVersionListEvent(this));
-		}
-	}
-
 	private class VersionList {
-		public Map<String, String> latest;
 		public Map<String, String>[] versions;
 	}
 }

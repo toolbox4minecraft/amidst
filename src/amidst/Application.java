@@ -19,7 +19,6 @@ import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.World;
 import amidst.utilities.SeedHistoryLogger;
 import amidst.utilities.SkinLoader;
-import amidst.version.LatestVersionList;
 import amidst.version.MinecraftProfile;
 
 public class Application {
@@ -83,8 +82,8 @@ public class Application {
 	}
 
 	public void displayVersionSelectWindow() {
-		setVersionSelectWindow(new VersionSelectWindow(this,
-				LatestVersionList.get(), workerExecutor, options.lastProfile));
+		setVersionSelectWindow(new VersionSelectWindow(this, workerExecutor,
+				options.lastProfile));
 		setMainWindow(null);
 	}
 

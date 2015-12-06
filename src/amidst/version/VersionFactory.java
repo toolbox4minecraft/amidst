@@ -8,7 +8,7 @@ import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 public class VersionFactory {
 	private MinecraftProfile[] profiles;
 
-	public void scanForProfiles(LatestVersionList latestVersionList) {
+	public void scanForProfiles() {
 		Log.i("Scanning for profiles.");
 		LauncherProfilesJson launcherProfile = null;
 		try {
@@ -21,6 +21,8 @@ public class VersionFactory {
 		Log.i("Successfully loaded profile list.");
 		profiles = new MinecraftProfile[launcherProfile.getProfiles().size()];
 		int i = 0;
+		LatestVersionList latestVersionList = new LatestVersionList();
+		latestVersionList.load();
 		for (LaucherProfileJson installInformation : launcherProfile
 				.getProfiles()) {
 			profiles[i++] = new MinecraftProfile(installInformation,

@@ -7,7 +7,7 @@ import java.util.List;
 import amidst.mojangapi.ReleaseType;
 import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
 
-public class MinecraftProfile implements ILatestVersionListListener {
+public class MinecraftProfile {
 	public enum Status {
 		IDLE("scanning"), MISSING("missing"), FAILED("failed"), FOUND("found");
 
@@ -37,7 +37,7 @@ public class MinecraftProfile implements ILatestVersionListListener {
 		this.profile = profile;
 		this.latestVersionList = latestVersionList;
 		if (!profile.hasLastVersionId()) {
-			latestVersionList.addAndNotifyLoadListener(this);
+			onLoadStateChange();
 		} else {
 			version = MinecraftVersion
 					.fromVersionId(profile.getLastVersionId());
@@ -66,17 +66,12 @@ public class MinecraftProfile implements ILatestVersionListListener {
 		listeners.add(listener);
 	}
 
-	public void removeUpdateListener(IProfileUpdateListener listener) {
-		listeners.remove(listener);
-	}
-
 	public Status getStatus() {
 		return status;
 	}
 
-	@Override
-	public void onLoadStateChange(LatestVersionListEvent event) {
-		switch (event.getSource().getLoadState()) {
+	public void onLoadStateChange() {
+		switch (latestVersionList.getLoadState()) {
 		case FAILED:
 			status = Status.FAILED;
 			break;
@@ -102,8 +97,9 @@ public class MinecraftProfile implements ILatestVersionListListener {
 			status = Status.IDLE;
 			break;
 		}
-		for (IProfileUpdateListener listener : listeners)
+		for (IProfileUpdateListener listener : listeners) {
 			listener.onProfileUpdate(new ProfileUpdateEvent(this));
+		}
 	}
 
 	public File getJarFile() {
