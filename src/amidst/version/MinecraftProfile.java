@@ -1,8 +1,6 @@
 package amidst.version;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import amidst.mojangapi.ReleaseType;
 import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
@@ -23,8 +21,6 @@ public class MinecraftProfile {
 		}
 	}
 
-	private final List<IProfileUpdateListener> listeners = new ArrayList<IProfileUpdateListener>();
-
 	private MinecraftVersion version;
 	private final LaucherProfileJson profile;
 	private final LatestVersionList latestVersionList;
@@ -36,9 +32,7 @@ public class MinecraftProfile {
 			LatestVersionList latestVersionList) {
 		this.profile = profile;
 		this.latestVersionList = latestVersionList;
-		if (!profile.hasLastVersionId()) {
-			onLoadStateChange();
-		} else {
+		if (profile.hasLastVersionId()) {
 			version = MinecraftVersion
 					.fromVersionId(profile.getLastVersionId());
 			if (version == null) {
@@ -47,27 +41,9 @@ public class MinecraftProfile {
 			}
 			status = Status.FOUND;
 			versionName = version.getName();
+		} else {
+			onLoadStateChange();
 		}
-	}
-
-	public String getProfileName() {
-		return profile.getName();
-	}
-
-	public String getGameDir() {
-		return profile.getGameDir();
-	}
-
-	public String getVersionName() {
-		return versionName;
-	}
-
-	public void addUpdateListener(IProfileUpdateListener listener) {
-		listeners.add(listener);
-	}
-
-	public Status getStatus() {
-		return status;
 	}
 
 	public void onLoadStateChange() {
@@ -97,9 +73,22 @@ public class MinecraftProfile {
 			status = Status.IDLE;
 			break;
 		}
-		for (IProfileUpdateListener listener : listeners) {
-			listener.onProfileUpdate(new ProfileUpdateEvent(this));
-		}
+	}
+
+	public String getProfileName() {
+		return profile.getName();
+	}
+
+	public String getGameDir() {
+		return profile.getGameDir();
+	}
+
+	public String getVersionName() {
+		return versionName;
+	}
+
+	public Status getStatus() {
+		return status;
 	}
 
 	public File getJarFile() {

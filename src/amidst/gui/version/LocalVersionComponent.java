@@ -1,12 +1,8 @@
 package amidst.gui.version;
 
-import javax.swing.SwingUtilities;
-
 import amidst.Application;
-import amidst.version.IProfileUpdateListener;
 import amidst.version.MinecraftProfile;
 import amidst.version.MinecraftProfile.Status;
-import amidst.version.ProfileUpdateEvent;
 
 public class LocalVersionComponent extends VersionComponent {
 	private Application application;
@@ -16,26 +12,7 @@ public class LocalVersionComponent extends VersionComponent {
 			MinecraftProfile profile) {
 		this.application = application;
 		this.profile = profile;
-		initProfile();
 		initComponent();
-	}
-
-	private void initProfile() {
-		profile.addUpdateListener(new IProfileUpdateListener() {
-			@Override
-			public void onProfileUpdate(ProfileUpdateEvent event) {
-				repaintComponentLater();
-			}
-		});
-	}
-
-	private void repaintComponentLater() {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				repaintComponent();
-			}
-		});
 	}
 
 	public String getProfileName() {

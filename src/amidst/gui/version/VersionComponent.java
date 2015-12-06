@@ -160,10 +160,6 @@ public abstract class VersionComponent {
 		this.component = new Component();
 	}
 
-	protected void repaintComponent() {
-		component.repaint();
-	}
-
 	protected abstract void doLoad();
 
 	protected abstract String getLoadingStatus();
