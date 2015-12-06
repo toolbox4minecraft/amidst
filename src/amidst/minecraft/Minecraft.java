@@ -303,7 +303,8 @@ public class Minecraft {
 
 	private List<URL> getAllLibraryUrls(File jsonFile) {
 		try {
-			return MojangAPI.versionFrom(jsonFile).getLibraryUrls();
+			return MojangAPI.versionFrom(jsonFile).getLibraryUrls(
+					LocalMinecraftInstallation.getMinecraftLibraries());
 		} catch (IOException e) {
 			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: "
 					+ jsonFile + ")");

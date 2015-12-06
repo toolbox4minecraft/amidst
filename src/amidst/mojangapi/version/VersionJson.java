@@ -1,5 +1,6 @@
 package amidst.mojangapi.version;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +18,7 @@ public class VersionJson {
 		return libraries;
 	}
 
-	public List<URL> getLibraryUrls() {
-		return LibraryFinder.getLibraryUrls(libraries);
+	public List<URL> getLibraryUrls(File librariesFile) {
+		return LibraryFinder.getLibraryUrls(librariesFile, libraries);
 	}
 }
