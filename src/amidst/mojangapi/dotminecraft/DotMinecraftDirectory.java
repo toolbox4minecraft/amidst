@@ -1,38 +1,43 @@
 package amidst.mojangapi.dotminecraft;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
+import amidst.mojangapi.MojangAPI;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 
 public class DotMinecraftDirectory {
-	private final File dotMinecraft;
+	private final File root;
 	private final File libraries;
 	private final File saves;
 	private final File versions;
-	private final File launcherProfilesDotJson;
-	private final Map<String, VersionDirectory> versionDirectories;
-	private final List<ProfileDirectory> profileDirectories;
-	private final LauncherProfilesJson launcherProfilesJson;
+	private final File launcherProfilesJson;
 
-	DotMinecraftDirectory(File dotMinecraft, File libraries, File saves,
-			File versions, File launcherProfilesDotJson,
-			Map<String, VersionDirectory> versionDirectories,
-			List<ProfileDirectory> profileDirectories,
-			LauncherProfilesJson launcherProfilesJson) {
-		this.dotMinecraft = dotMinecraft;
-		this.libraries = libraries;
-		this.saves = saves;
-		this.versions = versions;
-		this.launcherProfilesDotJson = launcherProfilesDotJson;
-		this.versionDirectories = versionDirectories;
-		this.profileDirectories = profileDirectories;
-		this.launcherProfilesJson = launcherProfilesJson;
+	public DotMinecraftDirectory(File root) {
+		this.root = root;
+		this.libraries = new File(root, "libraries");
+		this.saves = new File(root, "saves");
+		this.versions = new File(root, "versions");
+		this.launcherProfilesJson = new File(root, "launcher_profiles.json");
 	}
 
-	public File getDotMinecraft() {
-		return dotMinecraft;
+	public DotMinecraftDirectory(File root, File libraries) {
+		this.root = root;
+		this.libraries = libraries;
+		this.saves = new File(root, "saves");
+		this.versions = new File(root, "versions");
+		this.launcherProfilesJson = new File(root, "launcher_profiles.json");
+	}
+
+	public boolean isValid() {
+		return root.isDirectory() && libraries.isDirectory()
+				&& saves.isDirectory() && versions.isDirectory()
+				&& launcherProfilesJson.isFile();
+	}
+
+	public File getRoot() {
+		return root;
 	}
 
 	public File getLibraries() {
@@ -47,19 +52,16 @@ public class DotMinecraftDirectory {
 		return versions;
 	}
 
-	public File getLauncherProfilesDotJson() {
-		return launcherProfilesDotJson;
-	}
-
-	public VersionDirectory getVersionDirectory(String id) {
-		return versionDirectories.get(id);
-	}
-
-	public List<ProfileDirectory> getProfileDirectories() {
-		return profileDirectories;
-	}
-
-	public LauncherProfilesJson getLauncherProfilesJson() {
+	public File getLauncherProfilesJson() {
 		return launcherProfilesJson;
+	}
+
+	public LauncherProfilesJson readLauncherProfilesJson()
+			throws FileNotFoundException, IOException {
+		return MojangAPI.launcherProfilesFrom(launcherProfilesJson);
+	}
+
+	public VersionDirectory createVersionDirectory(String versionId) {
+		return new VersionDirectory(versions, versionId);
 	}
 }

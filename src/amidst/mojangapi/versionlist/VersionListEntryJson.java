@@ -1,7 +1,8 @@
 package amidst.mojangapi.versionlist;
 
-import amidst.mojangapi.FilenameFactory;
 import amidst.mojangapi.ReleaseType;
+import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
+import amidst.mojangapi.dotminecraft.VersionDirectory;
 
 public class VersionListEntryJson {
 	private String id;
@@ -20,30 +21,15 @@ public class VersionListEntryJson {
 	}
 
 	public boolean isType(ReleaseType type) {
-		return this.type.equals(type);
+		if (this.type == null) {
+			return type == null;
+		} else {
+			return this.type.equals(type);
+		}
 	}
 
-	public String getRemoteClientJson() {
-		return FilenameFactory.getRemoteClientJson(id);
-	}
-
-	public String getClientJson(String prefix) {
-		return FilenameFactory.getClientJson(prefix, id);
-	}
-
-	public String getRemoteClientJar() {
-		return FilenameFactory.getRemoteClientJar(id);
-	}
-
-	public String getClientJar(String prefix) {
-		return FilenameFactory.getClientJar(prefix, id);
-	}
-
-	public String getRemoteServerJar() {
-		return FilenameFactory.getRemoteServerJar(id);
-	}
-
-	public String getServerJar(String prefix) {
-		return FilenameFactory.getServerJar(prefix, id);
+	public VersionDirectory createVersionDirectory(
+			DotMinecraftDirectory dotMinecraftDirectory) {
+		return dotMinecraftDirectory.createVersionDirectory(id);
 	}
 }

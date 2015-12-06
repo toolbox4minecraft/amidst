@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import amidst.logging.Log;
 import amidst.mojangapi.dotminecraft.ProfileDirectory;
 import amidst.mojangapi.dotminecraft.SaveDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
@@ -18,6 +17,7 @@ import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 import amidst.mojangapi.version.VersionJson;
 import amidst.mojangapi.versionlist.VersionListJson;
+import amidst.resources.ResourceLoader;
 import amidst.utilities.URIUtils;
 
 import com.google.gson.Gson;
@@ -29,6 +29,8 @@ public enum MojangAPI {
 
 	private static final Gson GSON = new Gson();
 	private static final String REMOTE_VERSION_LIST_URL = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
+	private static final URL LOCAL_VERSION_LIST = ResourceLoader
+			.getResourceURL("versions.json");
 
 	public static VersionListJson remoteVersionList()
 			throws JsonSyntaxException, JsonIOException, IOException {
@@ -36,9 +38,10 @@ public enum MojangAPI {
 				VersionListJson.class);
 	}
 
-	public static VersionListJson versionListFrom(URL url)
+	public static VersionListJson localVersionListFromResource()
 			throws JsonSyntaxException, JsonIOException, IOException {
-		return read(URIUtils.newReader(url), VersionListJson.class);
+		return read(URIUtils.newReader(LOCAL_VERSION_LIST),
+				VersionListJson.class);
 	}
 
 	public static VersionJson versionFrom(File file)
@@ -62,138 +65,27 @@ public enum MojangAPI {
 	public static List<SaveDirectory> createSaveDirectories(File saves) {
 		List<SaveDirectory> result = new ArrayList<SaveDirectory>();
 		for (File save : saves.listFiles()) {
-			SaveDirectory saveDirectory = tryCreateSaveDirectory(result, save);
-			if (saveDirectory != null) {
-				result.add(saveDirectory);
-			}
+			result.add(new SaveDirectory(save));
 		}
 		return result;
-	}
-
-	public static SaveDirectory tryCreateSaveDirectory(
-			List<SaveDirectory> result, File save) {
-		try {
-			return createSaveDirectory(save);
-		} catch (FileNotFoundException e) {
-			Log.w("Unable to load world save.");
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public static SaveDirectory createSaveDirectory(File save)
-			throws FileNotFoundException {
-		File players = new File(save, "players");
-		File playerdata = new File(save, "playerdata");
-		File levelDat = new File(save, "level.dat");
-		ensureDirectoryExists("Unable to load world save", save);
-		ensureAnyDirectoryExists("Unable to load world save", players,
-				playerdata);
-		ensureFileExists("Unable to load world save", levelDat);
-		return new SaveDirectory(save, players, playerdata, levelDat);
 	}
 
 	public static Map<String, VersionDirectory> createVersionDirectories(
 			File versions) {
 		Map<String, VersionDirectory> result = new HashMap<String, VersionDirectory>();
-		for (File file : versions.listFiles()) {
-			String id = file.getName();
-			VersionDirectory versionDirectory = tryCreateVersionDirectory(
-					versions, id);
-			if (versionDirectory != null) {
-				result.put(id, versionDirectory);
-			}
+		for (File version : versions.listFiles()) {
+			String id = version.getName();
+			result.put(id, new VersionDirectory(versions, id));
 		}
 		return result;
-	}
-
-	public static VersionDirectory tryCreateVersionDirectory(File versions,
-			String id) {
-		File jar = FilenameFactory.getClientJarFile(versions, id);
-		File json = FilenameFactory.getClientJsonFile(versions, id);
-		try {
-			return createVersionDirectory(jar, json);
-		} catch (Exception e) {
-			Log.w("Unable to load version directory.");
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public static VersionDirectory createVersionDirectory(File jar, File json)
-			throws JsonSyntaxException, JsonIOException, FileNotFoundException,
-			IOException {
-		ensureFileExists("Unable to load version directory", jar);
-		ensureFileExists("Unable to load version directory", json);
-		return new VersionDirectory(jar, MojangAPI.versionFrom(json));
 	}
 
 	public static List<ProfileDirectory> createProfileDirectories(
 			LauncherProfilesJson launcherProfilesJson) {
-		ArrayList<ProfileDirectory> result = new ArrayList<ProfileDirectory>();
+		List<ProfileDirectory> result = new ArrayList<ProfileDirectory>();
 		for (LaucherProfileJson profile : launcherProfilesJson.getProfiles()) {
-			ProfileDirectory profileDirectory = tryCreateProfileDirectory(profile);
-			if (profileDirectory != null) {
-				result.add(profileDirectory);
-			}
+			result.add(new ProfileDirectory(new File(profile.getGameDir())));
 		}
 		return result;
-	}
-
-	public static ProfileDirectory tryCreateProfileDirectory(
-			LaucherProfileJson profile) {
-		try {
-			return createProfileDirectory(profile);
-		} catch (FileNotFoundException e) {
-			Log.w("Unable to load profile directory.");
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public static ProfileDirectory createProfileDirectory(
-			LaucherProfileJson profileJson) throws FileNotFoundException {
-		File profile = new File(profileJson.getGameDir());
-		File saves = new File(profile, "saves");
-		ensureDirectoryExists("Unable to load profile directory", profile);
-		ensureDirectoryExists("Unable to load profile directory", saves);
-		return new ProfileDirectory(profile, saves, profileJson);
-	}
-
-	private static void ensureDirectoryExists(String message, File directory)
-			throws FileNotFoundException {
-		if (!directory.isDirectory()) {
-			throw new FileNotFoundException(message + ": " + directory
-					+ " is not a directory");
-		}
-	}
-
-	private static void ensureAnyDirectoryExists(String message,
-			File... directories) throws FileNotFoundException {
-		for (File directory : directories) {
-			if (directory.isDirectory()) {
-				return;
-			}
-		}
-		throw new FileNotFoundException(message);
-	}
-
-	private static void ensureFileExists(String message, File file)
-			throws FileNotFoundException {
-		if (!file.isFile()) {
-			throw new FileNotFoundException(message + ": " + file
-					+ " is not a file");
-		}
-	}
-
-	@SuppressWarnings("unused")
-	private static void ensureAnyFileExists(String message, File... files)
-			throws FileNotFoundException {
-		for (File file : files) {
-			if (file.isFile()) {
-				return;
-			}
-		}
-		throw new FileNotFoundException(message);
 	}
 }

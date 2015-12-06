@@ -11,50 +11,50 @@ public enum FilenameFactory {
 	private static final String JAR_FILE_EXTENSION = ".jar";
 	private static final String JSON_FILE_EXTENSION = ".json";
 
-	public static File getClientJsonFile(File prefix, String id) {
-		return getClientFile(prefix, id, JSON_FILE_EXTENSION);
+	public static File getClientJsonFile(File prefix, String versionId) {
+		return getClientFile(prefix, versionId, JSON_FILE_EXTENSION);
 	}
 
-	public static File getClientJarFile(File prefix, String id) {
-		return getClientFile(prefix, id, JAR_FILE_EXTENSION);
+	public static File getClientJarFile(File prefix, String versionId) {
+		return getClientFile(prefix, versionId, JAR_FILE_EXTENSION);
 	}
 
-	private static File getClientFile(File prefix, String id,
+	private static File getClientFile(File prefix, String versionId,
 			String fileExtension) {
-		return new File(prefix, getClientLocation("", id, fileExtension));
+		return new File(prefix, getClientLocation("", versionId, fileExtension));
 	}
 
-	public static String getRemoteClientJson(String id) {
-		return getClientJson(REMOTE_PREFIX, id);
+	public static String getRemoteClientJson(String versionId) {
+		return getClientJson(REMOTE_PREFIX, versionId);
 	}
 
-	public static String getClientJson(String prefix, String id) {
-		return getClientLocation(prefix, id, JSON_FILE_EXTENSION);
+	public static String getClientJson(String prefix, String versionId) {
+		return getClientLocation(prefix, versionId, JSON_FILE_EXTENSION);
 	}
 
-	public static String getRemoteClientJar(String id) {
-		return getClientJar(REMOTE_PREFIX, id);
+	public static String getRemoteClientJar(String versionId) {
+		return getClientJar(REMOTE_PREFIX, versionId);
 	}
 
-	public static String getClientJar(String prefix, String id) {
-		return getClientLocation(prefix, id, JAR_FILE_EXTENSION);
+	public static String getClientJar(String prefix, String versionId) {
+		return getClientLocation(prefix, versionId, JAR_FILE_EXTENSION);
 	}
 
-	private static String getClientLocation(String prefix, String id,
+	private static String getClientLocation(String prefix, String versionId,
 			String fileExtension) {
-		return prefix + id + MIDDLE_CLIENT + id + fileExtension;
+		return prefix + versionId + MIDDLE_CLIENT + versionId + fileExtension;
 	}
 
-	public static String getRemoteServerJar(String id) {
-		return getServerJar(REMOTE_PREFIX, id);
+	public static String getRemoteServerJar(String versionId) {
+		return getServerJar(REMOTE_PREFIX, versionId);
 	}
 
-	public static String getServerJar(String prefix, String id) {
-		return getServerLocation(prefix, id, JAR_FILE_EXTENSION);
+	public static String getServerJar(String prefix, String versionId) {
+		return getServerLocation(prefix, versionId, JAR_FILE_EXTENSION);
 	}
 
-	private static String getServerLocation(String prefix, String id,
+	private static String getServerLocation(String prefix, String versionId,
 			String fileExtension) {
-		return prefix + id + MIDDLE_SERVER + id + fileExtension;
+		return prefix + versionId + MIDDLE_SERVER + versionId + fileExtension;
 	}
 }

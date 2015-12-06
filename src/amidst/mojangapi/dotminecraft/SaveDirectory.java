@@ -3,21 +3,25 @@ package amidst.mojangapi.dotminecraft;
 import java.io.File;
 
 public class SaveDirectory {
-	private final File worldSave;
+	private final File root;
 	private final File players;
 	private final File playerdata;
 	private final File levelDat;
 
-	public SaveDirectory(File worldSave, File players, File playerdata,
-			File levelDat) {
-		this.worldSave = worldSave;
-		this.players = players;
-		this.playerdata = playerdata;
-		this.levelDat = levelDat;
+	public SaveDirectory(File root) {
+		this.root = root;
+		this.players = new File(root, "players");
+		this.playerdata = new File(root, "playerdata");
+		this.levelDat = new File(root, "level.dat");
 	}
 
-	public File getWorldSave() {
-		return worldSave;
+	public boolean isValid() {
+		return root.isDirectory() && levelDat.isFile()
+				&& (players.isDirectory() || playerdata.isDirectory());
+	}
+
+	public File getRoot() {
+		return root;
 	}
 
 	public File getPlayers() {
