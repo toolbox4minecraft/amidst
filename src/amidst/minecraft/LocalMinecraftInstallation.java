@@ -3,6 +3,7 @@ package amidst.minecraft;
 import java.io.File;
 
 import amidst.logging.Log;
+import amidst.mojangapi.DotMinecraftDirectoryFinder;
 
 // TODO: make this non-static
 @Deprecated
@@ -11,39 +12,10 @@ public class LocalMinecraftInstallation {
 	private static File minecraftLibraries;
 	private static File profileDirectory;
 
-	public static void initMinecraftDirectory(String minecraftDirectoryFileName) {
-		if (minecraftDirectoryFileName != null) {
-			minecraftDirectory = new File(minecraftDirectoryFileName);
-			if (minecraftDirectory.exists() && minecraftDirectory.isDirectory()) {
-				return;
-			}
-			Log.w("Unable to set Minecraft directory 	 to: "
-					+ minecraftDirectory
-					+ " as that location does not exist or is not a folder.");
-		}
-		File homeDirectory = new File(System.getProperty("user.home", "."));
-		String os = System.getProperty("os.name").toLowerCase();
-		minecraftDirectory = getMinecraftDirectory(homeDirectory, os);
-		if (minecraftDirectory == null) {
-			minecraftDirectory = new File(homeDirectory, ".minecraft");
-		}
-	}
-
-	private static File getMinecraftDirectory(File homeDirectory, String os) {
-		File mcDir = null;
-		if (os.contains("win")) {
-			File appData = new File(System.getenv("APPDATA"));
-			if (appData.isDirectory()) {
-				mcDir = new File(appData, ".minecraft");
-			}
-		} else if (os.contains("mac")) {
-			mcDir = new File(homeDirectory,
-					"Library/Application Support/minecraft");
-		}
-		return mcDir;
-	}
-
-	public static void initMinecraftLibraries(String minecraftLibrariesFileName) {
+	public static void init(String minecraftDirectoryFileName,
+			String minecraftLibrariesFileName) {
+		minecraftDirectory = DotMinecraftDirectoryFinder
+				.find(minecraftDirectoryFileName);
 		if (minecraftLibrariesFileName == null) {
 			minecraftLibraries = new File(minecraftDirectory, "libraries");
 		} else {
@@ -56,12 +28,12 @@ public class LocalMinecraftInstallation {
 	}
 
 	private static File getProfileDirectory(String gameDirectory) {
-		if (gameDirectory != null && !gameDirectory.isEmpty()) {
-			File profileDirectory = new File(gameDirectory);
-			if (profileDirectory.exists() && profileDirectory.isDirectory()) {
-				return profileDirectory;
+		if (gameDirectory != null) {
+			File result = new File(gameDirectory);
+			if (result.isDirectory()) {
+				return result;
 			}
-			Log.w("Unable to set Profile directory 	 to: " + profileDirectory
+			Log.w("Unable to set Profile directory to: " + result
 					+ " as that location does not exist or is not a folder.");
 		}
 		return null;

@@ -50,10 +50,8 @@ public class Application {
 	}
 
 	private void initLocalMinecraftInstallation() {
-		LocalMinecraftInstallation
-				.initMinecraftDirectory(parameters.minecraftPath);
-		LocalMinecraftInstallation
-				.initMinecraftLibraries(parameters.minecraftLibraries);
+		LocalMinecraftInstallation.init(parameters.minecraftPath,
+				parameters.minecraftLibraries);
 	}
 
 	private Options createOptions() {
@@ -119,7 +117,7 @@ public class Application {
 	}
 
 	private IMinecraftInterface createLocalMinecraftInterfaceAndDisplayMainWindow(
-			final String gameDirectory, final File jarFile) {
+			String gameDirectory, File jarFile) {
 		LocalMinecraftInstallation.initProfileDirectory(gameDirectory);
 		return createLocalMinecraftInterface(jarFile);
 	}
