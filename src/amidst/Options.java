@@ -1,12 +1,10 @@
 package amidst;
 
-import java.io.File;
 import java.util.prefs.Preferences;
 
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BiomeColorProfileSelection;
 import amidst.preferences.BooleanPrefModel;
-import amidst.preferences.FilePrefModel;
 import amidst.preferences.SelectPrefModel;
 import amidst.preferences.StringPreference;
 
@@ -14,7 +12,6 @@ public class Options {
 	private static final String[] WORLD_TYPE_OPTIONS = new String[] {
 			"Prompt each time", "Default", "Flat", "Large Biomes", "Amplified" };
 
-	public final FilePrefModel jar;
 	public final BooleanPrefModel showSlimeChunks;
 	public final BooleanPrefModel showGrid;
 	public final BooleanPrefModel showNetherFortresses;
@@ -35,9 +32,8 @@ public class Options {
 	public final SelectPrefModel worldType;
 	public final BiomeColorProfileSelection biomeColorProfileSelection;
 
-	public Options(Preferences pref, File defaultJarFile) {
+	public Options(Preferences pref) {
 		// @formatter:off
-		jar				     = new FilePrefModel(   pref, "jar",                 defaultJarFile);
 		showSlimeChunks	     = new BooleanPrefModel(pref, "slimeChunks",	 	 false);
 		showGrid			 = new BooleanPrefModel(pref, "grid",			 	 false);
 		showNetherFortresses = new BooleanPrefModel(pref, "netherFortressIcons", false);

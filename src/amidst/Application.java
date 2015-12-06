@@ -55,9 +55,7 @@ public class Application {
 	}
 
 	private Options createOptions() {
-		return new Options(Preferences.userNodeForPackage(Amidst.class),
-				new File(LocalMinecraftInstallation.getMinecraftDirectory(),
-						"bin/minecraft.jar"));
+		return new Options(Preferences.userNodeForPackage(Amidst.class));
 	}
 
 	private WorldSurroundingsBuilder createWorldSurroundingsBuilder() {
