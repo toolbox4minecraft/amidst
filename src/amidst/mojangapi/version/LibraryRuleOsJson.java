@@ -2,14 +2,14 @@ package amidst.mojangapi.version;
 
 import amidst.utilities.PlatformUtils;
 
-public class LibraryRuleOs {
+public class LibraryRuleOsJson {
 	private String name;
 
-	public LibraryRuleOs() {
+	public LibraryRuleOsJson() {
 		// no-argument constructor for gson
 	}
 
-	public LibraryRuleOs(String name) {
+	public LibraryRuleOsJson(String name) {
 		this.name = name;
 	}
 

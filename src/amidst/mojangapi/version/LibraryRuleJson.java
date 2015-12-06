@@ -1,11 +1,11 @@
 package amidst.mojangapi.version;
 
-public class LibraryRule {
+public class LibraryRuleJson {
 	private static final String ACTION_ALLOW = "allow";
 	private String action;
-	private LibraryRuleOs os;
+	private LibraryRuleOsJson os;
 
-	public LibraryRule() {
+	public LibraryRuleJson() {
 		// no-argument constructor for gson
 	}
 

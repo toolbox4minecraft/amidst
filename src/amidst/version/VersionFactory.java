@@ -7,8 +7,8 @@ import java.util.Stack;
 import amidst.logging.Log;
 import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.mojangapi.MojangAPI;
-import amidst.mojangapi.launcherprofiles.LaucherProfile;
-import amidst.mojangapi.launcherprofiles.LauncherProfiles;
+import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
+import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 
 import com.google.gson.JsonSyntaxException;
 
@@ -49,7 +49,7 @@ public class VersionFactory {
 		File profileJsonFile = new File(
 				LocalMinecraftInstallation.getMinecraftDirectory()
 						+ "/launcher_profiles.json");
-		LauncherProfiles launcherProfile = null;
+		LauncherProfilesJson launcherProfile = null;
 		try {
 			launcherProfile = MojangAPI.launcherProfilesFrom(profileJsonFile);
 		} catch (JsonSyntaxException e) {
@@ -62,7 +62,7 @@ public class VersionFactory {
 		Log.i("Successfully loaded profile list.");
 		profiles = new MinecraftProfile[launcherProfile.getProfiles().size()];
 		int i = 0;
-		for (LaucherProfile installInformation : launcherProfile.getProfiles()) {
+		for (LaucherProfileJson installInformation : launcherProfile.getProfiles()) {
 			profiles[i++] = new MinecraftProfile(installInformation,
 					latestVersionList);
 		}

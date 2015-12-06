@@ -2,11 +2,11 @@ package amidst.mojangapi.version;
 
 import java.util.List;
 
-public class Library {
+public class LibraryJson {
 	private String name;
-	private List<LibraryRule> rules;
+	private List<LibraryRuleJson> rules;
 
-	public Library() {
+	public LibraryJson() {
 		// no-argument constructor for gson
 	}
 
@@ -18,7 +18,7 @@ public class Library {
 		if (rules.isEmpty()) {
 			return true;
 		}
-		for (LibraryRule rule : rules) {
+		for (LibraryRuleJson rule : rules) {
 			if (rule.isApplicable() && rule.isAllowed()) {
 				return true;
 			}

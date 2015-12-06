@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amidst.mojangapi.ReleaseType;
-import amidst.mojangapi.launcherprofiles.LaucherProfile;
+import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
 
 public class MinecraftProfile implements ILatestVersionListListener {
 	public enum Status {
@@ -26,13 +26,13 @@ public class MinecraftProfile implements ILatestVersionListListener {
 	private final List<IProfileUpdateListener> listeners = new ArrayList<IProfileUpdateListener>();
 
 	private MinecraftVersion version;
-	private final LaucherProfile profile;
+	private final LaucherProfileJson profile;
 	private final LatestVersionList latestVersionList;
 
 	private Status status = Status.IDLE;
 	private String versionName = "unknown";
 
-	public MinecraftProfile(LaucherProfile profile,
+	public MinecraftProfile(LaucherProfileJson profile,
 			LatestVersionList latestVersionList) {
 		this.profile = profile;
 		this.latestVersionList = latestVersionList;

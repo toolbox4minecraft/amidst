@@ -3,11 +3,11 @@ package amidst.mojangapi.versionlist;
 import amidst.mojangapi.FilenameFactory;
 import amidst.mojangapi.ReleaseType;
 
-public class VersionListEntry {
+public class VersionListEntryJson {
 	private String id;
 	private ReleaseType type;
 
-	public VersionListEntry() {
+	public VersionListEntryJson() {
 		// no-argument constructor for gson
 	}
 

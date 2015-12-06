@@ -9,14 +9,14 @@ import java.util.List;
 import amidst.logging.Log;
 import amidst.mojangapi.FilenameFactory;
 import amidst.mojangapi.MojangAPI;
-import amidst.mojangapi.launcherprofiles.LauncherProfiles;
+import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 
 public class DotMinecraftDirectory {
 	private final File dotMinecraft;
 	private final File libraries;
 	private final SavesDirectory saves;
 	private final List<VersionDirectory> versions;
-	private final LauncherProfiles launcherProfilesJson;
+	private final LauncherProfilesJson launcherProfilesJson;
 
 	public DotMinecraftDirectory(File dotMinecraft)
 			throws FileNotFoundException, IOException {
@@ -67,7 +67,7 @@ public class DotMinecraftDirectory {
 		return versions;
 	}
 
-	public LauncherProfiles getLauncherProfilesJson() {
+	public LauncherProfilesJson getLauncherProfilesJson() {
 		return launcherProfilesJson;
 	}
 }
