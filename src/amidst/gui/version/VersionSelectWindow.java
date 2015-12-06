@@ -42,9 +42,10 @@ public class VersionSelectWindow {
 		this.versionSelectPanel = new VersionSelectPanel(lastProfilePreference,
 				"Scanning...");
 		loadLatestVersionListLater();
-		if (!LocalMinecraftInstallation.getMinecraftDirectory().isDirectory()) {
-			Log.crash("Unable to find Minecraft directory at: "
-					+ LocalMinecraftInstallation.getMinecraftDirectory());
+		if (!LocalMinecraftInstallation.getDotMinecraftDirectory().isValid()) {
+			Log.crash("Unable to find minecraft directory at: "
+					+ LocalMinecraftInstallation.getDotMinecraftDirectory()
+							.getRoot());
 		} else {
 			initFrame();
 			scanAndLoadVersionsLater();

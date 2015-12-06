@@ -4,6 +4,7 @@ import java.io.File;
 
 import amidst.logging.Log;
 import amidst.mojangapi.DotMinecraftDirectoryFinder;
+import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 
 // TODO: make this non-static
 @Deprecated
@@ -11,6 +12,7 @@ public class LocalMinecraftInstallation {
 	private static File minecraftDirectory;
 	private static File minecraftLibraries;
 	private static File profileDirectory;
+	private static DotMinecraftDirectory dotMinecraftDirectory;
 
 	public static void init(String minecraftDirectoryFileName,
 			String minecraftLibrariesFileName) {
@@ -18,8 +20,12 @@ public class LocalMinecraftInstallation {
 				.find(minecraftDirectoryFileName);
 		if (minecraftLibrariesFileName == null) {
 			minecraftLibraries = new File(minecraftDirectory, "libraries");
+			dotMinecraftDirectory = new DotMinecraftDirectory(
+					minecraftDirectory);
 		} else {
 			minecraftLibraries = new File(minecraftLibrariesFileName);
+			dotMinecraftDirectory = new DotMinecraftDirectory(
+					minecraftDirectory, minecraftLibraries);
 		}
 	}
 
@@ -53,5 +59,9 @@ public class LocalMinecraftInstallation {
 
 	public static File getMinecraftLibraries() {
 		return minecraftLibraries;
+	}
+
+	public static DotMinecraftDirectory getDotMinecraftDirectory() {
+		return dotMinecraftDirectory;
 	}
 }

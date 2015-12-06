@@ -21,8 +21,6 @@ import amidst.resources.ResourceLoader;
 import amidst.utilities.URIUtils;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 
 public enum MojangAPI {
 	;
@@ -32,21 +30,19 @@ public enum MojangAPI {
 	private static final URL LOCAL_VERSION_LIST = ResourceLoader
 			.getResourceURL("versions.json");
 
-	public static VersionListJson remoteVersionList()
-			throws JsonSyntaxException, JsonIOException, IOException {
+	public static VersionListJson remoteVersionList() throws IOException {
 		return read(URIUtils.newReader(REMOTE_VERSION_LIST_URL),
 				VersionListJson.class);
 	}
 
 	public static VersionListJson localVersionListFromResource()
-			throws JsonSyntaxException, JsonIOException, IOException {
+			throws IOException {
 		return read(URIUtils.newReader(LOCAL_VERSION_LIST),
 				VersionListJson.class);
 	}
 
 	public static VersionJson versionFrom(File file)
-			throws JsonSyntaxException, JsonIOException, FileNotFoundException,
-			IOException {
+			throws FileNotFoundException, IOException {
 		return read(URIUtils.newReader(file), VersionJson.class);
 	}
 
@@ -55,8 +51,7 @@ public enum MojangAPI {
 		return read(URIUtils.newReader(file), LauncherProfilesJson.class);
 	}
 
-	private static <T> T read(Reader reader, Class<T> clazz)
-			throws JsonSyntaxException, JsonIOException, IOException {
+	private static <T> T read(Reader reader, Class<T> clazz) throws IOException {
 		T result = GSON.fromJson(reader, clazz);
 		reader.close();
 		return result;

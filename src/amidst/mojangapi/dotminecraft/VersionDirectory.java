@@ -8,25 +8,29 @@ import amidst.mojangapi.FilenameFactory;
 import amidst.mojangapi.MojangAPI;
 import amidst.mojangapi.version.VersionJson;
 
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-
 public class VersionDirectory {
+	private final String versionId;
 	private final File jar;
 	private final File json;
 
-	public VersionDirectory(File jar, File json) {
+	public VersionDirectory(String versionId, File jar, File json) {
+		this.versionId = versionId;
 		this.jar = jar;
 		this.json = json;
 	}
 
 	public VersionDirectory(File versions, String versionId) {
+		this.versionId = versionId;
 		this.jar = FilenameFactory.getClientJarFile(versions, versionId);
 		this.json = FilenameFactory.getClientJsonFile(versions, versionId);
 	}
 
 	public boolean isValid() {
 		return jar.isFile() && json.isFile();
+	}
+
+	public String getVersionId() {
+		return versionId;
 	}
 
 	public File getJar() {
@@ -37,8 +41,8 @@ public class VersionDirectory {
 		return json;
 	}
 
-	public VersionJson readVersionJson() throws JsonSyntaxException,
-			JsonIOException, FileNotFoundException, IOException {
+	public VersionJson readVersionJson() throws FileNotFoundException,
+			IOException {
 		return MojangAPI.versionFrom(json);
 	}
 }

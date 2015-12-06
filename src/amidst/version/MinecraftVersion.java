@@ -5,42 +5,29 @@ import java.util.Map;
 
 import amidst.logging.Log;
 import amidst.minecraft.LocalMinecraftInstallation;
+import amidst.mojangapi.dotminecraft.VersionDirectory;
 
 public class MinecraftVersion {
-	private final String name;
-	private final File jarFile;
-	private final File jsonFile;
+	private final VersionDirectory versionDirectory;
 
-	private MinecraftVersion(String name, File jarFile, File jsonFile) {
-		this.name = name;
-		this.jarFile = jarFile;
-		this.jsonFile = jsonFile;
+	private MinecraftVersion(VersionDirectory versionDirectory) {
+		this.versionDirectory = versionDirectory;
 	}
 
 	public static MinecraftVersion fromVersionId(String lastVersionId) {
-		return fromVersionPath(new File(
-				LocalMinecraftInstallation.getMinecraftDirectory()
-						+ "/versions/" + lastVersionId));
+		return fromVersionPath(lastVersionId);
 	}
 
-	public static MinecraftVersion fromVersionPath(File path) {
-		File jarFile = new File(path + "/" + path.getName() + ".jar");
-		File jsonFile = new File(path + "/" + path.getName() + ".json");
-		if (!jarFile.exists() || jarFile.isDirectory()) {
-			Log.w("Unable to load MinecraftVersion at path: " + path
-					+ " because jarFile: " + jarFile
-					+ " is missing or a directory.");
+	private static MinecraftVersion fromVersionPath(String versionId) {
+		VersionDirectory versionDirectory = LocalMinecraftInstallation
+				.getDotMinecraftDirectory().createVersionDirectory(versionId);
+		if (versionDirectory.isValid()) {
+			return new MinecraftVersion(versionDirectory);
+		} else {
+			Log.w("Unable to load version directory: "
+					+ versionDirectory.getJar());
 			return null;
 		}
-		if (!jsonFile.exists() || jsonFile.isDirectory()) {
-			Log.w("Unable to load MinecraftVersion at path: " + path
-					+ " because jsonFile: " + jsonFile
-					+ " is missing or a directory.");
-			return null;
-		}
-		MinecraftVersion version = new MinecraftVersion(path.getName(),
-				jarFile, jsonFile);
-		return version;
 	}
 
 	public static MinecraftVersion fromLatestRelease(
@@ -67,10 +54,10 @@ public class MinecraftVersion {
 	}
 
 	public String getName() {
-		return name;
+		return versionDirectory.getVersionId();
 	}
 
 	public File getJarFile() {
-		return jarFile;
+		return versionDirectory.getJar();
 	}
 }
