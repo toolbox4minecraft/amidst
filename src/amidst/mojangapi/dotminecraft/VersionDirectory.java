@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import amidst.mojangapi.FilenameFactory;
-import amidst.mojangapi.MojangAPI;
+import amidst.mojangapi.JsonReader;
 import amidst.mojangapi.version.VersionJson;
 
 public class VersionDirectory {
@@ -34,6 +34,6 @@ public class VersionDirectory {
 	}
 
 	public VersionJson readVersionJson() throws FileNotFoundException {
-		return MojangAPI.versionFrom(json);
+		return JsonReader.readVersionFrom(json);
 	}
 }

@@ -3,7 +3,7 @@ package amidst.mojangapi.dotminecraft;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import amidst.mojangapi.MojangAPI;
+import amidst.mojangapi.JsonReader;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 
 public class DotMinecraftDirectory {
@@ -57,7 +57,7 @@ public class DotMinecraftDirectory {
 
 	public LauncherProfilesJson readLauncherProfilesJson()
 			throws FileNotFoundException {
-		return MojangAPI.launcherProfilesFrom(launcherProfilesJson);
+		return JsonReader.readLauncherProfilesFrom(launcherProfilesJson);
 	}
 
 	public VersionDirectory createVersionDirectory(String versionId) {
