@@ -14,26 +14,21 @@ import javax.swing.JMenuItem;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 
-import amidst.Application;
 import amidst.Options;
-import amidst.gui.MainWindow;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.SelectPrefModel.SelectButtonModel;
 import amidst.resources.ResourceLoader;
 
 public class AmidstMenu {
 	private final Options options;
-	private final MainWindow mainWindow;
 	private final MenuActions actions;
 	private final JMenuBar menuBar;
-	private JMenu worldMenu;
-	private JMenuItem savePlayerLocationsMenu;
+	private volatile JMenu worldMenu;
+	private volatile JMenuItem savePlayerLocationsMenu;
 
-	public AmidstMenu(Application application, Options options,
-			MainWindow mainWindow) {
+	public AmidstMenu(Options options, MenuActions actions) {
 		this.options = options;
-		this.mainWindow = mainWindow;
-		this.actions = new MenuActions(application, mainWindow);
+		this.actions = actions;
 		this.menuBar = createMenuBar();
 	}
 
@@ -269,8 +264,7 @@ public class AmidstMenu {
 	}
 
 	private JMenu create_Options_BiomeColor() {
-		return new BiomeColorMenuFactory(mainWindow,
-				options.biomeColorProfileSelection).getMenu();
+		return new BiomeColorMenuFactory(actions).getMenu();
 	}
 
 	private JMenu create_Options_WorldType() {

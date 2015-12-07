@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -25,6 +26,7 @@ import amidst.Application;
 import amidst.Options;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
+import amidst.gui.menu.MenuActions;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.gui.worldsurroundings.WorldSurroundings;
 import amidst.logging.Log;
@@ -47,7 +49,7 @@ public class MainWindow {
 	private final Container contentPane;
 	private final AmidstMenu menuBar;
 
-	private volatile WorldSurroundings worldSurroundings;
+	private volatile AtomicReference<WorldSurroundings> worldSurroundings;
 
 	public MainWindow(Application application, Options options,
 			MojangApi mojangApi) {
@@ -90,7 +92,9 @@ public class MainWindow {
 	}
 
 	private AmidstMenu createMenuBar(Options options) {
-		AmidstMenu menuBar = new AmidstMenu(application, options, this);
+		AmidstMenu menuBar = new AmidstMenu(options, new MenuActions(
+				application, this, worldSurroundings,
+				options.biomeColorProfileSelection));
 		frame.setJMenuBar(menuBar.getMenuBar());
 		return menuBar;
 	}
@@ -235,8 +239,8 @@ public class MainWindow {
 
 	// TODO: call from constructor?
 	public void clearWorldSurroundings() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings;
-		this.worldSurroundings = null;
+		WorldSurroundings worldSurroundings = this.worldSurroundings
+				.getAndSet(null);
 		if (worldSurroundings != null) {
 			menuBar.disableWorldMenu();
 			menuBar.disableSavePlayerLocationsMenu();
@@ -260,11 +264,11 @@ public class MainWindow {
 				.canSavePlayerLocations());
 		frame.setTitle(getLongVersionString(worldSurroundings
 				.getRecognisedVersionName()));
-		this.worldSurroundings = worldSurroundings;
+		this.worldSurroundings.set(worldSurroundings);
 	}
 
 	public void capture(File file) {
-		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
 			BufferedImage image = worldSurroundings.createCaptureImage();
 			saveToFile(image, file);
@@ -289,49 +293,49 @@ public class MainWindow {
 	}
 
 	private void adjustZoom(int notches) {
-		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
 			worldSurroundings.adjustZoom(notches);
 		}
 	}
 
 	public void reloadBiomeLayer() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
 			worldSurroundings.getLayerReloader().reloadBiomeLayer();
 		}
 	}
 
 	public void reloadPlayerLayer() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
 			worldSurroundings.getLayerReloader().reloadPlayerLayer();
 		}
 	}
 
 	public void tickRepainter() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
 			worldSurroundings.tickRepainter();
 		}
 	}
 
 	public void tickFragmentLoader() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
 			worldSurroundings.tickFragmentLoader();
 		}
 	}
 
 	public void savePlayerLocations() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
 			worldSurroundings.savePlayerLocations();
 		}
 	}
 
 	public void findStronghold() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
 			WorldIcon stronghold = askForOptions("Go to", "Select Stronghold:",
 					worldSurroundings.getStrongholdWorldIcons());
@@ -342,7 +346,7 @@ public class MainWindow {
 	}
 
 	public void gotoCoordinate() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
 			CoordinatesInWorld coordinates = askForCoordinates();
 			if (coordinates != null) {
@@ -355,7 +359,7 @@ public class MainWindow {
 	}
 
 	public void gotoPlayer() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
 			List<WorldIcon> playerWorldIcons = worldSurroundings
 					.getPlayerWorldIcons();
@@ -372,7 +376,7 @@ public class MainWindow {
 	}
 
 	public void copySeedToClipboard() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
 			String seed = "" + worldSurroundings.getSeed();
 			StringSelection selection = new StringSelection(seed);
