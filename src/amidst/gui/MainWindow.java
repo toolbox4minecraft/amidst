@@ -25,6 +25,7 @@ import amidst.AmidstMetaData;
 import amidst.Application;
 import amidst.Options;
 import amidst.gui.menu.AmidstMenu;
+import amidst.gui.menu.AmidstMenuBuilder;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.MenuActions;
 import amidst.gui.menu.PNGFileFilter;
@@ -92,9 +93,9 @@ public class MainWindow {
 	}
 
 	private AmidstMenu createMenuBar(Options options) {
-		AmidstMenu menuBar = new AmidstMenu(options, new MenuActions(
+		AmidstMenu menuBar = new AmidstMenuBuilder(options, new MenuActions(
 				application, this, worldSurroundings,
-				options.biomeColorProfileSelection));
+				options.biomeColorProfileSelection)).construct();
 		frame.setJMenuBar(menuBar.getMenuBar());
 		return menuBar;
 	}
@@ -242,8 +243,8 @@ public class MainWindow {
 		WorldSurroundings worldSurroundings = this.worldSurroundings
 				.getAndSet(null);
 		if (worldSurroundings != null) {
-			menuBar.disableWorldMenu();
-			menuBar.disableSavePlayerLocationsMenu();
+			menuBar.setWorldMenuEnabled(false);
+			menuBar.setSavePlayerLocationsMenuEnabled(false);
 			frame.setTitle(getSimpleVersionString());
 			contentPane.remove(worldSurroundings.getComponent());
 			worldSurroundings.dispose();
@@ -259,8 +260,8 @@ public class MainWindow {
 	public void setWorldSurroundings(WorldSurroundings worldSurroundings) {
 		contentPane.add(worldSurroundings.getComponent(), BorderLayout.CENTER);
 		frame.validate();
-		menuBar.enableWorldMenu();
-		menuBar.setEnabledForSavePlayerLocationsMenu(worldSurroundings
+		menuBar.setWorldMenuEnabled(true);
+		menuBar.setSavePlayerLocationsMenuEnabled(worldSurroundings
 				.canSavePlayerLocations());
 		frame.setTitle(getLongVersionString(worldSurroundings
 				.getRecognisedVersionName()));

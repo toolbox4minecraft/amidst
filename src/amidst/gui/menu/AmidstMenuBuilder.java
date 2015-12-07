@@ -19,17 +19,21 @@ import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.SelectPrefModel.SelectButtonModel;
 import amidst.resources.ResourceLoader;
 
-public class AmidstMenu {
+public class AmidstMenuBuilder {
 	private final Options options;
 	private final MenuActions actions;
 	private final JMenuBar menuBar;
-	private volatile JMenu worldMenu;
-	private volatile JMenuItem savePlayerLocationsMenu;
+	private JMenu worldMenu;
+	private JMenuItem savePlayerLocationsMenu;
 
-	public AmidstMenu(Options options, MenuActions actions) {
+	public AmidstMenuBuilder(Options options, MenuActions actions) {
 		this.options = options;
 		this.actions = actions;
 		this.menuBar = createMenuBar();
+	}
+
+	public AmidstMenu construct() {
+		return new AmidstMenu(menuBar, worldMenu, savePlayerLocationsMenu);
 	}
 
 	private JMenuBar createMenuBar() {
@@ -341,29 +345,5 @@ public class AmidstMenu {
 				return new ImageIcon(icon);
 			}
 		}
-	}
-
-	public JMenuBar getMenuBar() {
-		return menuBar;
-	}
-
-	public void enableWorldMenu() {
-		worldMenu.setEnabled(true);
-	}
-
-	public void disableWorldMenu() {
-		worldMenu.setEnabled(false);
-	}
-
-	public void enableSavePlayerLocationsMenu() {
-		savePlayerLocationsMenu.setEnabled(true);
-	}
-
-	public void disableSavePlayerLocationsMenu() {
-		savePlayerLocationsMenu.setEnabled(false);
-	}
-
-	public void setEnabledForSavePlayerLocationsMenu(boolean isEnabled) {
-		savePlayerLocationsMenu.setEnabled(isEnabled);
 	}
 }
