@@ -11,6 +11,7 @@ import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.version.LibraryJson;
 import amidst.utilities.FileSystemUtils;
 
+// TODO: create class LibrariesDirectory?
 public enum LibraryFinder {
 	;
 

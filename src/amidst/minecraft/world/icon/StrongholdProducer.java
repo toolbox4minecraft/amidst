@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.minecraft.Biome;
-import amidst.minecraft.VersionInfo;
+import amidst.minecraft.RecognisedVersion;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 
@@ -126,15 +126,15 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 	}
 
 	private List<Biome> getValidBiomes() {
-		VersionInfo versionInfo = world.getMinecraftInterface().getVersion();
-		if (versionInfo.isAtLeast(VersionInfo.V13w36a)) {
+		RecognisedVersion versionInfo = world.getMinecraftInterface().getVersion();
+		if (versionInfo.isAtLeast(RecognisedVersion.V13w36a)) {
 			return getValidBiomesV13w36a();
-		} else if (versionInfo.isAtLeast(VersionInfo.V12w03a)) {
+		} else if (versionInfo.isAtLeast(RecognisedVersion.V12w03a)) {
 			return VALID_BIOMES_12w03a;
-		} else if (versionInfo == VersionInfo.V1_1) {
+		} else if (versionInfo == RecognisedVersion.V1_1) {
 			return VALID_BIOMES_1_1;
-		} else if (versionInfo == VersionInfo.V1_9pre6
-				|| versionInfo == VersionInfo.V1_0) {
+		} else if (versionInfo == RecognisedVersion.V1_9pre6
+				|| versionInfo == RecognisedVersion.V1_0) {
 			return VALID_BIOMES_1_0;
 		} else {
 			return VALID_BIOMES_DEFAULT;

@@ -3,7 +3,7 @@ package amidst.minecraft;
 /**
  * Information about what each supported version is
  */
-public enum VersionInfo {
+public enum RecognisedVersion {
 	// @formatter:off
 	V1_8_4("orntlljs[Lle;lx[J[[Jlt"),
 	V1_8_3("osnulmjt[Llf;ly[J[[Jlu"), // 1.8.3 and 1.8.2 have the same typeDump version ID - probably because 1.8.2 -> 1.8.3 was a fix for a server-side bug (https://mojang.com/2015/02/minecraft-1-8-2-is-now-available/)
@@ -62,7 +62,7 @@ public enum VersionInfo {
 
 	private final String versionId;
 
-	private VersionInfo(String versionId) {
+	private RecognisedVersion(String versionId) {
 		this.versionId = versionId;
 	}
 
@@ -77,10 +77,11 @@ public enum VersionInfo {
 		return super.toString().replace("_", ".");
 	}
 
-	public boolean isAtLeast(VersionInfo other) {
+	public boolean isAtLeast(RecognisedVersion other) {
 		return this.ordinal() <= other.ordinal();
 	}
 
+	// TODO: rename to clarify difference to official minecraft versionIds
 	public String getVersionId() {
 		return versionId;
 	}

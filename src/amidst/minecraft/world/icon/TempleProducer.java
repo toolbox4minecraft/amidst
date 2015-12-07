@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import amidst.minecraft.Biome;
-import amidst.minecraft.VersionInfo;
+import amidst.minecraft.RecognisedVersion;
 import amidst.minecraft.world.World;
 
 public class TempleProducer extends StructureProducer {
@@ -39,8 +39,8 @@ public class TempleProducer extends StructureProducer {
 	@Override
 	protected List<Biome> getValidBiomesAtMiddleOfChunk() {
 		// @formatter:off
-		VersionInfo versionInfo = world.getMinecraftInterface().getVersion();
-		if (versionInfo.isAtLeast(VersionInfo.V1_4_2)) {
+		RecognisedVersion versionInfo = world.getMinecraftInterface().getVersion();
+		if (versionInfo.isAtLeast(RecognisedVersion.V1_4_2)) {
 			return Arrays.asList(
 					Biome.desert,
 					Biome.desertHills,
@@ -48,7 +48,7 @@ public class TempleProducer extends StructureProducer {
 					Biome.jungleHills,
 					Biome.swampland
 			);
-		} else if (versionInfo.isAtLeast(VersionInfo.V12w22a)) {
+		} else if (versionInfo.isAtLeast(RecognisedVersion.V12w22a)) {
 			return Arrays.asList(
 					Biome.desert,
 					Biome.desertHills,
