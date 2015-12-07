@@ -5,30 +5,38 @@ import java.util.Iterator;
 import java.util.List;
 
 public class MovablePlayerList implements Iterable<Player> {
-	private static final MovablePlayerList EMPTY_INSTANCE = new MovablePlayerList(
-			Collections.<Player> emptyList(), false);
+	private static final MovablePlayerList EMPTY_INSTANCE = new MovablePlayerList();
 
 	public static MovablePlayerList empty() {
 		return EMPTY_INSTANCE;
 	}
 
 	private final List<Player> players;
-	private final boolean canSavePlayerLocations;
+	private final PlayerMover playerMover;
 
-	public MovablePlayerList(List<Player> players,
-			boolean canSavePlayerLocations) {
+	private MovablePlayerList() {
+		this(Collections.<Player> emptyList(), null);
+	}
+
+	public MovablePlayerList(List<Player> players) {
+		this(players, null);
+	}
+
+	public MovablePlayerList(List<Player> players, PlayerMover playerMover) {
 		this.players = Collections.unmodifiableList(players);
-		this.canSavePlayerLocations = canSavePlayerLocations;
+		this.playerMover = playerMover;
 	}
 
 	public boolean canSavePlayerLocations() {
-		return canSavePlayerLocations && !players.isEmpty();
+		return playerMover != null && !players.isEmpty();
 	}
 
 	public void savePlayerLocations() {
-		if (canSavePlayerLocations) {
+		if (canSavePlayerLocations()) {
 			for (Player player : players) {
-				player.saveLocation();
+				if (player.getAndResetIsMoved()) {
+					playerMover.movePlayer(player);
+				}
 			}
 		}
 	}

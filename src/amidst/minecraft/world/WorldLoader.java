@@ -80,7 +80,7 @@ public class WorldLoader {
 	}
 
 	private void createPlayerMover() {
-		this.playerMover = new PlayerMover(worldFile, isMultiPlayer);
+		playerMover = new PlayerMover(worldFile, isMultiPlayer);
 	}
 
 	private void loadPlayers(File[] playerFiles) throws IOException,
@@ -113,8 +113,8 @@ public class WorldLoader {
 		List<Tag> posList = posTag.getValue();
 		double x = (Double) posList.get(0).getValue();
 		double z = (Double) posList.get(2).getValue();
-		players.add(new Player(playerMover, playerName, CoordinatesInWorld
-				.from((long) x, (long) z)));
+		players.add(new Player(playerName, CoordinatesInWorld.from((long) x,
+				(long) z)));
 	}
 
 	private String getPlayerName(File playerFile) {
@@ -177,10 +177,19 @@ public class WorldLoader {
 	public World get(IMinecraftInterface minecraftInterface) {
 		if (isLoadedSuccessfully()) {
 			return new World(seed, worldType, generatorOptions, isMultiPlayer,
-					new MovablePlayerList(players, minecraftInterface
-							.getVersion().isSaveEnabled()), minecraftInterface);
+					createMovablePlayerList(minecraftInterface),
+					minecraftInterface);
 		} else {
 			return null;
+		}
+	}
+
+	private MovablePlayerList createMovablePlayerList(
+			IMinecraftInterface minecraftInterface) {
+		if (minecraftInterface.getVersion().isSaveEnabled()) {
+			return new MovablePlayerList(players, playerMover);
+		} else {
+			return new MovablePlayerList(players);
 		}
 	}
 }
