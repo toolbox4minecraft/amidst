@@ -1,6 +1,5 @@
 package amidst.minecraft.world;
 
-import java.util.Collections;
 import java.util.List;
 
 import amidst.minecraft.IMinecraftInterface;
@@ -36,7 +35,7 @@ public class World {
 	private final WorldType worldType;
 	private final String generatorOptions;
 	private final boolean isMultiplayerWorld;
-	private final List<Player> players;
+	private final MovablePlayerList movablePlayerList;
 	private final IMinecraftInterface minecraftInterface;
 
 	World(long seed, String seedText, WorldType worldType,
@@ -46,20 +45,20 @@ public class World {
 		this.worldType = worldType;
 		this.generatorOptions = "";
 		this.isMultiplayerWorld = false;
-		this.players = Collections.emptyList();
+		this.movablePlayerList = MovablePlayerList.empty();
 		this.minecraftInterface = minecraftInterface;
 		initMinecraftInterface();
 	}
 
 	World(long seed, WorldType worldType, String generatorOptions,
-			boolean isMultiplayerWorld, List<Player> players,
+			boolean isMultiplayerWorld, MovablePlayerList movablePlayerList,
 			IMinecraftInterface minecraftInterface) {
 		this.seed = seed;
 		this.seedText = null;
 		this.worldType = worldType;
 		this.generatorOptions = generatorOptions;
 		this.isMultiplayerWorld = isMultiplayerWorld;
-		this.players = Collections.unmodifiableList(players);
+		this.movablePlayerList = movablePlayerList;
 		this.minecraftInterface = minecraftInterface;
 		initMinecraftInterface();
 	}
@@ -89,18 +88,8 @@ public class World {
 		return isMultiplayerWorld;
 	}
 
-	public List<Player> getMovablePlayers() {
-		return players;
-	}
-
-	public boolean hasPlayers() {
-		return !players.isEmpty();
-	}
-
-	public void savePlayerLocations() {
-		for (Player player : players) {
-			player.saveLocation();
-		}
+	public MovablePlayerList getMovablePlayerList() {
+		return movablePlayerList;
 	}
 
 	public BiomeDataOracle getBiomeDataOracle() {
@@ -127,15 +116,15 @@ public class World {
 		return netherFortressProducer;
 	}
 
-	public CachedWorldIconProducer getPlayerProducer() {
+	public WorldIconProducer getPlayerProducer() {
 		return playerProducer;
 	}
 
-	public CachedWorldIconProducer getSpawnProducer() {
+	public WorldIconProducer getSpawnProducer() {
 		return spawnProducer;
 	}
 
-	public CachedWorldIconProducer getStrongholdProducer() {
+	public WorldIconProducer getStrongholdProducer() {
 		return strongholdProducer;
 	}
 

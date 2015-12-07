@@ -165,7 +165,7 @@ public class Application {
 			mainWindow.clearWorldSurroundings();
 			mainWindow.setWorldSurroundings(worldSurroundingsBuilder
 					.create(world));
-			skinLoader.loadSkins(world.getMovablePlayers());
+			skinLoader.loadSkins(world.getMovablePlayerList());
 		}
 	}
 

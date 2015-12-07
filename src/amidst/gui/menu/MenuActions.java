@@ -24,7 +24,7 @@ public class MenuActions {
 	}
 
 	public void savePlayerLocations() {
-		application.getWorld().savePlayerLocations();
+		application.getWorld().getMovablePlayerList().savePlayerLocations();
 	}
 
 	public void switchVersion() {
@@ -90,7 +90,7 @@ public class MenuActions {
 	}
 
 	public void gotoPlayer() {
-		if (application.getWorld().hasPlayers()) {
+		if (!application.getWorld().getMovablePlayerList().isEmpty()) {
 			WorldIcon player = mainWindow.askForOptions("Go to",
 					"Select player:", application.getWorld()
 							.getPlayerWorldIcons());

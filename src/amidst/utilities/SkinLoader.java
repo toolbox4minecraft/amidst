@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -14,6 +13,7 @@ import amidst.Application;
 import amidst.Worker;
 import amidst.WorkerExecutor;
 import amidst.logging.Log;
+import amidst.minecraft.world.MovablePlayerList;
 import amidst.minecraft.world.Player;
 
 public class SkinLoader {
@@ -25,8 +25,8 @@ public class SkinLoader {
 		this.workerExecutor = workerExecutor;
 	}
 
-	public void loadSkins(List<Player> players) {
-		for (Player player : players) {
+	public void loadSkins(MovablePlayerList movablePlayerList) {
+		for (Player player : movablePlayerList) {
 			loadSkinLater(player);
 		}
 	}
