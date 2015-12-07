@@ -3,9 +3,9 @@ package amidst.mojangapi.versionlist;
 import java.util.Collections;
 import java.util.List;
 
-import amidst.mojangapi.ReleaseType;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
+import amidst.mojangapi.internal.ReleaseType;
 
 public class VersionListJson {
 	private List<VersionListEntryJson> versions = Collections.emptyList();

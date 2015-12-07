@@ -1,4 +1,4 @@
-package amidst.mojangapi;
+package amidst.mojangapi.internal;
 
 import java.io.File;
 import java.net.MalformedURLException;

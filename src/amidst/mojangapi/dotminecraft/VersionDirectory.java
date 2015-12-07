@@ -3,8 +3,8 @@ package amidst.mojangapi.dotminecraft;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import amidst.mojangapi.FilenameFactory;
-import amidst.mojangapi.JsonReader;
+import amidst.mojangapi.internal.FilenameFactory;
+import amidst.mojangapi.internal.JsonReader;
 import amidst.mojangapi.version.VersionJson;
 
 public class VersionDirectory {

@@ -3,6 +3,8 @@ package amidst.mojangapi;
 import java.io.File;
 
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
+import amidst.mojangapi.internal.DotMinecraftDirectoryFinder;
+import amidst.mojangapi.internal.JsonReader;
 import amidst.mojangapi.versionlist.VersionListJson;
 
 public enum MojangApi {

@@ -4,10 +4,10 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import amidst.mojangapi.ReleaseType;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.dotminecraft.ProfileDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
+import amidst.mojangapi.internal.ReleaseType;
 import amidst.mojangapi.versionlist.VersionListJson;
 
 public class LauncherProfileJson {

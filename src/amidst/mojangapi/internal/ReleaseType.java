@@ -1,4 +1,4 @@
-package amidst.mojangapi;
+package amidst.mojangapi.internal;
 
 import com.google.gson.annotations.SerializedName;
 

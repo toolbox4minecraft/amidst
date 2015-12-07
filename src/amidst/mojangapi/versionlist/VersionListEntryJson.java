@@ -1,8 +1,8 @@
 package amidst.mojangapi.versionlist;
 
-import amidst.mojangapi.ReleaseType;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
+import amidst.mojangapi.internal.ReleaseType;
 
 public class VersionListEntryJson {
 	private String id;
