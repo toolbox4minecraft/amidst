@@ -16,29 +16,24 @@ import amidst.Options;
 import amidst.Worker;
 import amidst.WorkerExecutor;
 import amidst.logging.Log;
-import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
+import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
-import amidst.mojangapi.versionlist.VersionListJson;
 
 public class VersionSelectWindow {
 	private final Application application;
 	private final WorkerExecutor workerExecutor;
-	private final DotMinecraftDirectory dotMinecraftDirectory;
-	private final VersionListJson versionList;
+	private final MojangApi mojangApi;
 	private final Options options;
 
 	private final JFrame frame = new JFrame("Profile Selector");
 	private final VersionSelectPanel versionSelectPanel;
 
 	public VersionSelectWindow(Application application,
-			WorkerExecutor workerExecutor,
-			DotMinecraftDirectory dotMinecraftDirectory,
-			VersionListJson versionList, Options options) {
+			WorkerExecutor workerExecutor, MojangApi mojangApi, Options options) {
 		this.application = application;
-		this.dotMinecraftDirectory = dotMinecraftDirectory;
-		this.versionList = versionList;
 		this.workerExecutor = workerExecutor;
+		this.mojangApi = mojangApi;
 		this.options = options;
 		this.versionSelectPanel = new VersionSelectPanel(options.lastProfile,
 				"Scanning...");
@@ -90,7 +85,8 @@ public class VersionSelectWindow {
 		Log.i("Scanning for profiles.");
 		LauncherProfilesJson launcherProfile = null;
 		try {
-			launcherProfile = dotMinecraftDirectory.readLauncherProfilesJson();
+			launcherProfile = mojangApi.getDotMinecraftDirectory()
+					.readLauncherProfilesJson();
 		} catch (Exception e) {
 			Log.crash(e, "Error reading launcher_profiles.json");
 		}
@@ -101,8 +97,7 @@ public class VersionSelectWindow {
 	private void loadVersions(LauncherProfilesJson launcherProfile) {
 		for (LauncherProfileJson profile : launcherProfile.getProfiles()) {
 			versionSelectPanel.addVersion(new LocalVersionComponent(
-					application, workerExecutor, dotMinecraftDirectory,
-					versionList, options.profileSelection, profile));
+					application, workerExecutor, mojangApi, profile));
 		}
 		restoreSelection();
 		frame.pack();

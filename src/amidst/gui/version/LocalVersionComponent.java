@@ -4,34 +4,26 @@ import amidst.Application;
 import amidst.Worker;
 import amidst.WorkerExecutor;
 import amidst.logging.Log;
-import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
+import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.dotminecraft.ProfileDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
 import amidst.mojangapi.launcherprofiles.LauncherProfileJson;
-import amidst.mojangapi.versionlist.VersionListJson;
-import amidst.preferences.ProfileSelection;
 
 public class LocalVersionComponent extends VersionComponent {
 	private final Application application;
 	private final WorkerExecutor workerExecutor;
-	private final DotMinecraftDirectory dotMinecraftDirectory;
-	private final VersionListJson versionList;
-	private final ProfileSelection profileSelection;
+	private final MojangApi mojangApi;
 	private final LauncherProfileJson profile;
 
 	private volatile VersionDirectory versionDirectory;
 	private volatile ProfileDirectory profileDirectory;
 
 	public LocalVersionComponent(Application application,
-			WorkerExecutor workerExecutor,
-			DotMinecraftDirectory dotMinecraftDirectory,
-			VersionListJson versionList, ProfileSelection profileSelection,
+			WorkerExecutor workerExecutor, MojangApi mojangApi,
 			LauncherProfileJson profile) {
 		this.application = application;
-		this.dotMinecraftDirectory = dotMinecraftDirectory;
-		this.versionList = versionList;
+		this.mojangApi = mojangApi;
 		this.workerExecutor = workerExecutor;
-		this.profileSelection = profileSelection;
 		this.profile = profile;
 		initComponent();
 		initDirectoriesLater();
@@ -69,8 +61,7 @@ public class LocalVersionComponent extends VersionComponent {
 	}
 
 	private VersionDirectory createVersionDirectory() {
-		VersionDirectory result = profile.createVersionDirectory(
-				dotMinecraftDirectory, versionList);
+		VersionDirectory result = profile.createVersionDirectory(mojangApi);
 		if (result != null) {
 			return result;
 		} else {
@@ -88,7 +79,7 @@ public class LocalVersionComponent extends VersionComponent {
 	@Override
 	public void doLoad() {
 		if (isReadyToLoad()) {
-			profileSelection.set(profileDirectory, versionDirectory);
+			mojangApi.set(profileDirectory, versionDirectory);
 			application.displayMainWindow();
 		}
 	}

@@ -1,6 +1,5 @@
 package amidst;
 
-import java.io.File;
 import java.util.prefs.Preferences;
 
 import amidst.fragment.layer.LayerBuilder;
@@ -10,23 +9,17 @@ import amidst.gui.MainWindow;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
-import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.world.World;
 import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
-import amidst.mojangapi.dotminecraft.ProfileDirectory;
-import amidst.mojangapi.dotminecraft.VersionDirectory;
-import amidst.mojangapi.versionlist.VersionListJson;
-import amidst.preferences.ProfileSelection;
+import amidst.mojangapi.MojangApiBuilder;
 import amidst.utilities.SeedHistoryLogger;
 import amidst.utilities.SkinLoader;
 
 public class Application {
 	private final CommandLineParameters parameters;
-	private final DotMinecraftDirectory dotMinecraftDirectory;
-	private final VersionListJson versionList;
 	private final Options options;
+	private final MojangApi mojangApi;
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final ThreadMaster threadMaster;
@@ -41,13 +34,8 @@ public class Application {
 
 	public Application(CommandLineParameters parameters) {
 		this.parameters = parameters;
-		this.dotMinecraftDirectory = createDotMinecraftDirectory();
-		if (!dotMinecraftDirectory.isValid()) {
-			Log.crash("Unable to find minecraft directory at: "
-					+ dotMinecraftDirectory.getRoot());
-		}
-		this.versionList = createVersionList();
 		this.options = createOptions();
+		this.mojangApi = createMojangApi();
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
 		this.seedHistoryLogger = createSeedHistoryLogger();
 		this.threadMaster = createThreadMaster();
@@ -56,55 +44,14 @@ public class Application {
 		this.updateManager = createUpdateManager();
 	}
 
-	private DotMinecraftDirectory createDotMinecraftDirectory() {
-		return MojangApi.createDotMinecraftDirectory(parameters.minecraftPath,
-				parameters.minecraftLibraries);
-	}
-
-	private VersionListJson createVersionList() {
-		return MojangApi.readRemoteOrLocalVersionList();
-	}
-
 	private Options createOptions() {
-		return new Options(Preferences.userNodeForPackage(Amidst.class),
-				new ProfileSelection(dotMinecraftDirectory,
-						createPreferedJson(), createProfileDirectory(),
-						createVersionDirectory()));
+		return new Options(Preferences.userNodeForPackage(Amidst.class));
 	}
 
-	private File createPreferedJson() {
-		if (parameters.minecraftJson != null) {
-			File result = new File(parameters.minecraftJson);
-			if (result.isFile()) {
-				return result;
-			}
-		}
-		return null;
-	}
-
-	// TODO: check for correctness
-	private ProfileDirectory createProfileDirectory() {
-		if (parameters.minecraftPath != null) {
-			ProfileDirectory result = new ProfileDirectory(new File(
-					parameters.minecraftPath));
-			if (result.isValid()) {
-				return result;
-			}
-		}
-		return null;
-	}
-
-	// TODO: check for correctness
-	private VersionDirectory createVersionDirectory() {
-		if (parameters.minecraftJar != null) {
-			File jar = new File(parameters.minecraftJar);
-			File json = new File(jar.getPath().replace(".jar", ".json"));
-			VersionDirectory result = new VersionDirectory(jar, json);
-			if (result.isValid()) {
-				return result;
-			}
-		}
-		return null;
+	private MojangApi createMojangApi() {
+		return new MojangApiBuilder(parameters.minecraftPath,
+				parameters.minecraftLibraries, parameters.minecraftJar,
+				parameters.minecraftJson).construct();
 	}
 
 	private WorldSurroundingsBuilder createWorldSurroundingsBuilder() {
@@ -132,7 +79,7 @@ public class Application {
 	}
 
 	public void run() {
-		if (options.profileSelection.hasVersionDirectory()) {
+		if (mojangApi.hasVersionDirectory()) {
 			displayMainWindow();
 		} else {
 			displayVersionSelectWindow();
@@ -156,17 +103,17 @@ public class Application {
 	}
 
 	private void createAndSetLocalMinecraftInterface() {
-		options.profileSelection.createAndSetLocalMinecraftInterface();
+		mojangApi.createAndSetLocalMinecraftInterface();
 	}
 
 	private void doDisplayMainWindow() {
-		setMainWindow(new MainWindow(this, options));
+		setMainWindow(new MainWindow(this, options, mojangApi));
 		setVersionSelectWindow(null);
 	}
 
 	public void displayVersionSelectWindow() {
 		setVersionSelectWindow(new VersionSelectWindow(this, workerExecutor,
-				dotMinecraftDirectory, versionList, options));
+				mojangApi, options));
 		setMainWindow(null);
 	}
 
@@ -260,6 +207,6 @@ public class Application {
 
 	@Deprecated
 	public IMinecraftInterface getMinecraftInterface() {
-		return options.profileSelection.getMinecraftInterface();
+		return mojangApi.getMinecraftInterface();
 	}
 }

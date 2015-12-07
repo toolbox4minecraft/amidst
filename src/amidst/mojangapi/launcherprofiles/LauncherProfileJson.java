@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.dotminecraft.ProfileDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
@@ -45,9 +46,10 @@ public class LauncherProfileJson {
 		return new ProfileDirectory(new File(gameDir));
 	}
 
-	public VersionDirectory createVersionDirectory(
-			DotMinecraftDirectory dotMinecraftDirectory,
-			VersionListJson versionList) {
+	public VersionDirectory createVersionDirectory(MojangApi mojangApi) {
+		DotMinecraftDirectory dotMinecraftDirectory = mojangApi
+				.getDotMinecraftDirectory();
+		VersionListJson versionList = mojangApi.getVersionList();
 		if (hasLastVersionId()) {
 			VersionDirectory result = dotMinecraftDirectory
 					.createVersionDirectory(lastVersionId);

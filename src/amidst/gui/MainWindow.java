@@ -27,12 +27,14 @@ import amidst.gui.menu.PNGFileFilter;
 import amidst.gui.worldsurroundings.WorldSurroundings;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.WorldType;
+import amidst.mojangapi.MojangApi;
 
 public class MainWindow {
 	private final SeedPrompt seedPrompt = new SeedPrompt();
 
 	private final Application application;
 	private final Options options;
+	private final MojangApi mojangApi;
 
 	private final JFrame frame;
 	private final Container contentPane;
@@ -40,9 +42,11 @@ public class MainWindow {
 
 	private volatile WorldSurroundings worldSurroundings;
 
-	public MainWindow(Application application, Options options) {
+	public MainWindow(Application application, Options options,
+			MojangApi mojangApi) {
 		this.application = application;
 		this.options = options;
+		this.mojangApi = mojangApi;
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
 		this.menuBar = createMenuBar(options);
@@ -135,7 +139,7 @@ public class MainWindow {
 		result.setFileFilter(new LevelFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
 		result.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		result.setCurrentDirectory(options.profileSelection.getSaves());
+		result.setCurrentDirectory(mojangApi.getSaves());
 		result.setFileHidingEnabled(false);
 		return result;
 	}
