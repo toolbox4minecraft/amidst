@@ -17,9 +17,9 @@ import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.World;
+import amidst.mojangapi.MojangAPI;
 import amidst.utilities.SeedHistoryLogger;
 import amidst.utilities.SkinLoader;
-import amidst.version.MinecraftProfile;
 
 public class Application {
 	private final CommandLineParameters parameters;
@@ -83,18 +83,20 @@ public class Application {
 
 	public void displayVersionSelectWindow() {
 		setVersionSelectWindow(new VersionSelectWindow(this, workerExecutor,
-				options.lastProfile));
+				options.lastProfile,
+				LocalMinecraftInstallation.getDotMinecraftDirectory(),
+				MojangAPI.readRemoteOrLocalVersionList()));
 		setMainWindow(null);
-	}
-
-	public void displayMainWindow(MinecraftProfile profile) {
-		createLocalMinecraftInterfaceAndDisplayMainWindowLater(
-				profile.getGameDir(), profile.getJarFile());
 	}
 
 	public void displayMainWindow(String gameDirectory, String jarFileName) {
 		createLocalMinecraftInterfaceAndDisplayMainWindowLater(gameDirectory,
 				new File(jarFileName));
+	}
+
+	public void displayMainWindow(String gameDirectory, File jarFile) {
+		createLocalMinecraftInterfaceAndDisplayMainWindowLater(gameDirectory,
+				jarFile);
 	}
 
 	private void createLocalMinecraftInterfaceAndDisplayMainWindowLater(

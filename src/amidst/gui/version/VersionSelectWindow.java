@@ -15,35 +15,37 @@ import amidst.Application;
 import amidst.Worker;
 import amidst.WorkerExecutor;
 import amidst.logging.Log;
-import amidst.minecraft.LocalMinecraftInstallation;
-import amidst.mojangapi.MojangAPI;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 import amidst.mojangapi.versionlist.VersionListJson;
 import amidst.preferences.StringPreference;
-import amidst.version.MinecraftProfile;
 
 public class VersionSelectWindow {
 	private final Application application;
 	private final WorkerExecutor workerExecutor;
 	private final StringPreference lastProfilePreference;
+	private final DotMinecraftDirectory dotMinecraftDirectory;
+	private final VersionListJson versionList;
 
 	private final JFrame frame = new JFrame("Profile Selector");
 	private final VersionSelectPanel versionSelectPanel;
 
 	public VersionSelectWindow(Application application,
 			WorkerExecutor workerExecutor,
-			StringPreference lastProfilePreference) {
+			StringPreference lastProfilePreference,
+			DotMinecraftDirectory dotMinecraftDirectory,
+			VersionListJson versionList) {
 		this.application = application;
 		this.workerExecutor = workerExecutor;
 		this.lastProfilePreference = lastProfilePreference;
+		this.dotMinecraftDirectory = dotMinecraftDirectory;
+		this.versionList = versionList;
 		this.versionSelectPanel = new VersionSelectPanel(lastProfilePreference,
 				"Scanning...");
-		if (!LocalMinecraftInstallation.getDotMinecraftDirectory().isValid()) {
+		if (!dotMinecraftDirectory.isValid()) {
 			Log.crash("Unable to find minecraft directory at: "
-					+ LocalMinecraftInstallation.getDotMinecraftDirectory()
-							.getRoot());
+					+ dotMinecraftDirectory.getRoot());
 		} else {
 			initFrame();
 			scanAndLoadVersionsLater();
@@ -77,61 +79,38 @@ public class VersionSelectWindow {
 	}
 
 	private void scanAndLoadVersionsLater() {
-		workerExecutor.invokeLater(new Worker<MinecraftProfile[]>() {
+		workerExecutor.invokeLater(new Worker<LauncherProfilesJson>() {
 			@Override
-			public MinecraftProfile[] execute() {
+			public LauncherProfilesJson execute() {
 				return scanAndLoadVersions();
 			}
 
 			@Override
-			public void finished(MinecraftProfile[] profiles) {
-				loadVersions(profiles);
+			public void finished(LauncherProfilesJson launcherProfile) {
+				loadVersions(launcherProfile);
 			}
 		});
 	}
 
-	private MinecraftProfile[] scanAndLoadVersions() {
-		return scanForProfiles();
-	}
-
-	public MinecraftProfile[] scanForProfiles() {
+	private LauncherProfilesJson scanAndLoadVersions() {
 		Log.i("Scanning for profiles.");
-		DotMinecraftDirectory dotMinecraftDirectory = LocalMinecraftInstallation
-				.getDotMinecraftDirectory();
 		LauncherProfilesJson launcherProfile = null;
 		try {
 			launcherProfile = dotMinecraftDirectory.readLauncherProfilesJson();
 		} catch (Exception e) {
 			Log.crash(e, "Error reading launcher_profiles.json");
-			return new MinecraftProfile[0];
 		}
 		Log.i("Successfully loaded profile list.");
-		MinecraftProfile[] profiles = new MinecraftProfile[launcherProfile
-				.getProfiles().size()];
-		int i = 0;
-		VersionListJson versionList = MojangAPI.readRemoteOrLocalVersionList();
+		return launcherProfile;
+	}
+
+	private void loadVersions(LauncherProfilesJson launcherProfile) {
 		for (LaucherProfileJson profile : launcherProfile.getProfiles()) {
-			profiles[i++] = new MinecraftProfile(profile,
-					dotMinecraftDirectory, versionList);
-		}
-		return profiles;
-	}
-
-	private void loadVersions(MinecraftProfile[] profiles) {
-		if (profiles == null) {
-			versionSelectPanel.setEmptyMessage("Empty");
-		} else {
-			addVersions(profiles);
-			restoreSelection();
-			frame.pack();
-		}
-	}
-
-	private void addVersions(MinecraftProfile[] profiles) {
-		for (MinecraftProfile localVersion : profiles) {
 			versionSelectPanel.addVersion(new LocalVersionComponent(
-					application, localVersion));
+					application, profile, dotMinecraftDirectory, versionList));
 		}
+		restoreSelection();
+		frame.pack();
 	}
 
 	private void restoreSelection() {
