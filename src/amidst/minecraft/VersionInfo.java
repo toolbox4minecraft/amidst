@@ -1,4 +1,4 @@
-package amidst.version;
+package amidst.minecraft;
 
 /**
  * Information about what each supported version is

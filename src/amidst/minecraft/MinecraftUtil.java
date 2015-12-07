@@ -1,6 +1,5 @@
 package amidst.minecraft;
 
-import amidst.version.VersionInfo;
 
 public class MinecraftUtil {
 	private static IMinecraftInterface minecraftInterface;

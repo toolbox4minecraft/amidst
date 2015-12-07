@@ -30,7 +30,6 @@ import amidst.bytedata.CCWildcardByteSearch;
 import amidst.bytedata.ClassChecker;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangAPI;
-import amidst.version.VersionInfo;
 
 public class Minecraft {
 	private static final int MAX_CLASSES = 128;

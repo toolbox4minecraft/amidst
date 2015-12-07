@@ -2,7 +2,6 @@ package amidst.minecraft;
 
 import amidst.logging.Log;
 import amidst.minecraft.world.WorldType;
-import amidst.version.VersionInfo;
 
 public class LocalMinecraftInterface implements IMinecraftInterface {
 	private Minecraft minecraft;

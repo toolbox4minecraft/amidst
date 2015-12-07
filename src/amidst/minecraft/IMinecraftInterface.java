@@ -1,6 +1,5 @@
 package amidst.minecraft;
 
-import amidst.version.VersionInfo;
 
 /**
  * Acts as an additional layer of abstraction for interfacing with Minecraft.<br>

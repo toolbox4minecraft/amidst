@@ -5,8 +5,8 @@ import java.util.List;
 
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
+import amidst.minecraft.VersionInfo;
 import amidst.minecraft.world.World;
-import amidst.version.VersionInfo;
 
 public class TempleProducer extends StructureProducer {
 	public TempleProducer(World world) {

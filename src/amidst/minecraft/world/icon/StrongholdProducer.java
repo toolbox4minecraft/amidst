@@ -9,9 +9,9 @@ import java.util.Random;
 
 import amidst.minecraft.Biome;
 import amidst.minecraft.MinecraftUtil;
+import amidst.minecraft.VersionInfo;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
-import amidst.version.VersionInfo;
 
 public class StrongholdProducer extends CachedWorldIconProducer {
 	// @formatter:off
