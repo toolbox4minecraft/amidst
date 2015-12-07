@@ -1,8 +1,7 @@
 package amidst.minecraft;
 
-
 public class MinecraftUtil {
-	private static IMinecraftInterface minecraftInterface;
+	private static volatile IMinecraftInterface minecraftInterface;
 
 	/**
 	 * Returns a copy of the biome data. This is NOT thread-safe without the

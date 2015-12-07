@@ -1,7 +1,6 @@
 package amidst;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.prefs.Preferences;
 
 import amidst.fragment.layer.LayerBuilder;
@@ -12,10 +11,7 @@ import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.logging.Log;
-import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.LocalMinecraftInstallation;
-import amidst.minecraft.Minecraft;
-import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.World;
 import amidst.mojangapi.MojangAPI;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
@@ -73,7 +69,18 @@ public class Application {
 	private Options createOptions() {
 		return new Options(Preferences.userNodeForPackage(Amidst.class),
 				new ProfileSelection(dotMinecraftDirectory,
-						createProfileDirectory(), createVersionDirectory()));
+						createPreferedJson(), createProfileDirectory(),
+						createVersionDirectory()));
+	}
+
+	private File createPreferedJson() {
+		if (parameters.minecraftJson != null) {
+			File result = new File(parameters.minecraftJson);
+			if (result.isFile()) {
+				return result;
+			}
+		}
+		return null;
 	}
 
 	// TODO: check for correctness
@@ -91,9 +98,9 @@ public class Application {
 	// TODO: check for correctness
 	private VersionDirectory createVersionDirectory() {
 		if (parameters.minecraftJar != null) {
-			VersionDirectory result = new VersionDirectory(new File(
-					parameters.minecraftJar),
-					new File(parameters.minecraftJson));
+			File jar = new File(parameters.minecraftJar);
+			String json = jar.getPath().replace(".jar", ".json");
+			VersionDirectory result = new VersionDirectory(jar, json);
 			if (result.isValid()) {
 				return result;
 			}
@@ -133,48 +140,35 @@ public class Application {
 		}
 	}
 
-	public void displayVersionSelectWindow() {
-		setVersionSelectWindow(new VersionSelectWindow(this, workerExecutor,
-				dotMinecraftDirectory, versionList, options));
-		setMainWindow(null);
-	}
-
+	@Deprecated
 	public void displayMainWindow() {
-		createLocalMinecraftInterfaceAndDisplayMainWindowLater();
-	}
-
-	private void createLocalMinecraftInterfaceAndDisplayMainWindowLater() {
-		workerExecutor.invokeLater(new Worker<IMinecraftInterface>() {
+		workerExecutor.invokeLater(new Worker<Void>() {
 			@Override
-			public IMinecraftInterface execute() {
-				return createLocalMinecraftInterfaceAndDisplayMainWindow();
+			public Void execute() {
+				createLocalMinecraftInterfaceAndDisplayMainWindow();
+				return null;
 			}
 
 			@Override
-			public void finished(IMinecraftInterface minecraftInterface) {
-				doDisplayMainWindow(minecraftInterface);
+			public void finished(Void result) {
+				doDisplayMainWindow();
 			}
 		});
 	}
 
-	private IMinecraftInterface createLocalMinecraftInterfaceAndDisplayMainWindow() {
-		return createLocalMinecraftInterface();
+	private void createLocalMinecraftInterfaceAndDisplayMainWindow() {
+		options.profileSelection.createAndSetLocalMinecraftInterface();
 	}
 
-	private void doDisplayMainWindow(IMinecraftInterface minecraftInterface) {
-		MinecraftUtil.setInterface(minecraftInterface);
+	private void doDisplayMainWindow() {
 		setMainWindow(new MainWindow(this, options));
 		setVersionSelectWindow(null);
 	}
 
-	private IMinecraftInterface createLocalMinecraftInterface() {
-		try {
-			return new Minecraft(options.profileSelection.getVersionDirectory()
-					.getJar(), parameters.minecraftJson).createInterface();
-		} catch (MalformedURLException e) {
-			Log.crash(e, "MalformedURLException on Minecraft load.");
-			return null;
-		}
+	public void displayVersionSelectWindow() {
+		setVersionSelectWindow(new VersionSelectWindow(this, workerExecutor,
+				dotMinecraftDirectory, versionList, options));
+		setMainWindow(null);
 	}
 
 	private void setVersionSelectWindow(VersionSelectWindow versionSelectWindow) {

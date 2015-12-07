@@ -88,12 +88,11 @@ public class Minecraft {
 
 	public String versionId;
 	public VersionInfo version = VersionInfo.unknown;
-	private String minecraftJsonFileName;
+	private File jsonFile;
 
-	public Minecraft(File jarFile, String minecraftJsonFileName)
-			throws MalformedURLException {
+	public Minecraft(File jarFile, File jsonFile) throws MalformedURLException {
 		this.jarFile = jarFile;
-		this.minecraftJsonFileName = minecraftJsonFileName;
+		this.jsonFile = jsonFile;
 		byteClassNames = new Vector<String>();
 		byteClassMap = new HashMap<String, ByteClass>(MAX_CLASSES);
 		urlToJar = jarFile.toURI().toURL();
@@ -325,20 +324,14 @@ public class Minecraft {
 	 */
 
 	public void use() {
-		File librariesJson;
-		if (minecraftJsonFileName == null) {
-			librariesJson = new File(jarFile.getPath().replace(".jar", ".json"));
-		} else {
-			librariesJson = new File(minecraftJsonFileName);
-		}
-		if (librariesJson.exists()) {
-			List<URL> libraries = getAllLibraryUrls(librariesJson);
+		if (jsonFile.isFile()) {
+			List<URL> libraries = getAllLibraryUrls(jsonFile);
 			URL[] libraryArray = libraries
 					.toArray(new URL[libraries.size() + 1]);
 			libraryArray[libraries.size()] = urlToJar;
 			classLoader = new URLClassLoader(libraryArray);
 		} else {
-			Log.i("Unable to find Minecraft library JSON at: " + librariesJson
+			Log.i("Unable to find Minecraft library JSON at: " + jsonFile
 					+ ". Skipping.");
 			classLoader = new URLClassLoader(new URL[] { urlToJar });
 		}
