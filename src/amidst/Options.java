@@ -5,6 +5,7 @@ import java.util.prefs.Preferences;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BiomeColorProfileSelection;
 import amidst.preferences.BooleanPrefModel;
+import amidst.preferences.ProfileSelection;
 import amidst.preferences.SelectPrefModel;
 import amidst.preferences.StringPreference;
 
@@ -31,6 +32,7 @@ public class Options {
 	public final StringPreference lastProfile;
 	public final SelectPrefModel worldType;
 	public final BiomeColorProfileSelection biomeColorProfileSelection;
+	public final ProfileSelection profileSelection;
 
 	public Options(Preferences pref) {
 		// @formatter:off
@@ -53,6 +55,7 @@ public class Options {
 		lastProfile          = new StringPreference(pref, "profile",             null);
 		worldType			 = new SelectPrefModel( pref, "worldType",           "Prompt each time", WORLD_TYPE_OPTIONS);
 		biomeColorProfileSelection = new BiomeColorProfileSelection(BiomeColorProfile.getDefaultProfile());
+		profileSelection     = new ProfileSelection();
 		// @formatter:on
 	}
 }

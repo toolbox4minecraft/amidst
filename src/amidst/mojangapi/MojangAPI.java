@@ -31,6 +31,8 @@ public enum MojangAPI {
 	private static final URL LOCAL_VERSION_LIST = ResourceLoader
 			.getResourceURL("versions.json");
 
+	// TODO: move somewhere else and in worker
+	@Deprecated
 	public static VersionListJson readRemoteOrLocalVersionList() {
 		Log.i("Beginning latest version list load.");
 		Log.i("Attempting to download remote version list...");

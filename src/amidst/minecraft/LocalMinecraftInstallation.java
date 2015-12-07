@@ -53,10 +53,6 @@ public class LocalMinecraftInstallation {
 		}
 	}
 
-	public static File getMinecraftDirectory() {
-		return minecraftDirectory;
-	}
-
 	public static File getMinecraftLibraries() {
 		return minecraftLibraries;
 	}
