@@ -33,16 +33,13 @@ public class ProfileSelection {
 		this.versionDirectory = versionDirectory;
 	}
 
-	public ProfileDirectory getProfileDirectory() {
-		return profileDirectory;
-	}
-
+	@Deprecated
 	public VersionDirectory getVersionDirectory() {
-		return versionDirectory;
-	}
-
-	public boolean hasProfileDirectory() {
-		return profileDirectory != null;
+		if (preferedJson != null) {
+			return new VersionDirectory(versionDirectory.getJar(), preferedJson);
+		} else {
+			return versionDirectory;
+		}
 	}
 
 	public boolean hasVersionDirectory() {
@@ -64,13 +61,7 @@ public class ProfileSelection {
 
 	public IMinecraftInterface createLocalMinecraftInterface() {
 		try {
-			if (preferedJson != null) {
-				return new Minecraft(versionDirectory.getJar(), preferedJson)
-						.createInterface();
-			} else {
-				return new Minecraft(versionDirectory.getJar(),
-						versionDirectory.getJson()).createInterface();
-			}
+			return new Minecraft(getVersionDirectory()).createInterface();
 		} catch (MalformedURLException e) {
 			Log.crash(e, "MalformedURLException on Minecraft load.");
 			return null;

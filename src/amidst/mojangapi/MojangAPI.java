@@ -5,17 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import amidst.logging.Log;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
-import amidst.mojangapi.dotminecraft.ProfileDirectory;
-import amidst.mojangapi.dotminecraft.SaveDirectory;
-import amidst.mojangapi.dotminecraft.VersionDirectory;
-import amidst.mojangapi.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 import amidst.mojangapi.version.VersionJson;
 import amidst.mojangapi.versionlist.VersionListJson;
@@ -65,33 +57,6 @@ public enum MojangAPI {
 		} catch (IOException e) {
 			Log.w("error closing reader");
 			e.printStackTrace();
-		}
-		return result;
-	}
-
-	public static List<SaveDirectory> createSaveDirectories(File saves) {
-		List<SaveDirectory> result = new ArrayList<SaveDirectory>();
-		for (File save : saves.listFiles()) {
-			result.add(new SaveDirectory(save));
-		}
-		return result;
-	}
-
-	public static Map<String, VersionDirectory> createVersionDirectories(
-			File versions) {
-		Map<String, VersionDirectory> result = new HashMap<String, VersionDirectory>();
-		for (File version : versions.listFiles()) {
-			String id = version.getName();
-			result.put(id, new VersionDirectory(versions, id));
-		}
-		return result;
-	}
-
-	public static List<ProfileDirectory> createProfileDirectories(
-			LauncherProfilesJson launcherProfilesJson) {
-		List<ProfileDirectory> result = new ArrayList<ProfileDirectory>();
-		for (LauncherProfileJson profile : launcherProfilesJson.getProfiles()) {
-			result.add(profile.createProfileDirectory());
 		}
 		return result;
 	}

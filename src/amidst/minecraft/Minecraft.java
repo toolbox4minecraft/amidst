@@ -1,7 +1,6 @@
 package amidst.minecraft;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
@@ -29,7 +28,7 @@ import amidst.bytedata.CCStringMatch;
 import amidst.bytedata.CCWildcardByteSearch;
 import amidst.bytedata.ClassChecker;
 import amidst.logging.Log;
-import amidst.mojangapi.MojangAPI;
+import amidst.mojangapi.dotminecraft.VersionDirectory;
 
 public class Minecraft {
 	private static final int MAX_CLASSES = 128;
@@ -37,7 +36,6 @@ public class Minecraft {
 	private URLClassLoader classLoader;
 	private String versionID;
 	private URL urlToJar;
-	private File jarFile;
 
 	private static ClassChecker[] classChecks = new ClassChecker[] {
 			new CCWildcardByteSearch("IntCache", DeobfuscationData.intCache),
@@ -88,22 +86,23 @@ public class Minecraft {
 
 	public String versionId;
 	public VersionInfo version = VersionInfo.unknown;
-	private File jsonFile;
 
-	public Minecraft(File jarFile, File jsonFile) throws MalformedURLException {
-		this.jarFile = jarFile;
-		this.jsonFile = jsonFile;
+	private final VersionDirectory versionDirectory;
+
+	public Minecraft(VersionDirectory versionDirectory)
+			throws MalformedURLException {
+		this.versionDirectory = versionDirectory;
 		byteClassNames = new Vector<String>();
 		byteClassMap = new HashMap<String, ByteClass>(MAX_CLASSES);
-		urlToJar = jarFile.toURI().toURL();
+		urlToJar = versionDirectory.getJar().toURI().toURL();
 
 		Log.i("Reading minecraft.jar...");
-		if (!jarFile.exists())
-			Log.crash("Attempted to load jar file at: " + jarFile
-					+ " but it does not exist.");
+		if (!versionDirectory.getJar().isFile())
+			Log.crash("Attempted to load jar file at: "
+					+ versionDirectory.getJar() + " but it does not exist.");
 		Stack<ByteClass> byteClassStack = new Stack<ByteClass>();
 		try {
-			ZipFile jar = new ZipFile(jarFile);
+			ZipFile jar = new ZipFile(versionDirectory.getJar());
 			Enumeration<? extends ZipEntry> enu = jar.entries();
 
 			while (enu.hasMoreElements()) {
@@ -299,13 +298,13 @@ public class Minecraft {
 		return urlToJar;
 	}
 
-	private List<URL> getAllLibraryUrls(File jsonFile) {
+	private List<URL> getAllLibraryUrls() {
 		try {
-			return MojangAPI.versionFrom(jsonFile).getLibraryUrls(
+			return versionDirectory.readVersionJson().getLibraryUrls(
 					LocalMinecraftInstallation.getMinecraftLibraries());
 		} catch (IOException e) {
 			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: "
-					+ jsonFile + ")");
+					+ versionDirectory.getJson() + ")");
 		}
 		return Collections.emptyList();
 	}
@@ -324,15 +323,15 @@ public class Minecraft {
 	 */
 
 	public void use() {
-		if (jsonFile.isFile()) {
-			List<URL> libraries = getAllLibraryUrls(jsonFile);
+		if (versionDirectory.getJson().isFile()) {
+			List<URL> libraries = getAllLibraryUrls();
 			URL[] libraryArray = libraries
 					.toArray(new URL[libraries.size() + 1]);
 			libraryArray[libraries.size()] = urlToJar;
 			classLoader = new URLClassLoader(libraryArray);
 		} else {
-			Log.i("Unable to find Minecraft library JSON at: " + jsonFile
-					+ ". Skipping.");
+			Log.i("Unable to find Minecraft library JSON at: "
+					+ versionDirectory.getJson() + ". Skipping.");
 			classLoader = new URLClassLoader(new URL[] { urlToJar });
 		}
 		Thread.currentThread().setContextClassLoader(classLoader);

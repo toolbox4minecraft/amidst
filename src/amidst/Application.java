@@ -99,7 +99,7 @@ public class Application {
 	private VersionDirectory createVersionDirectory() {
 		if (parameters.minecraftJar != null) {
 			File jar = new File(parameters.minecraftJar);
-			String json = jar.getPath().replace(".jar", ".json");
+			File json = new File(jar.getPath().replace(".jar", ".json"));
 			VersionDirectory result = new VersionDirectory(jar, json);
 			if (result.isValid()) {
 				return result;
@@ -145,7 +145,7 @@ public class Application {
 		workerExecutor.invokeLater(new Worker<Void>() {
 			@Override
 			public Void execute() {
-				createLocalMinecraftInterfaceAndDisplayMainWindow();
+				createAndSetLocalMinecraftInterface();
 				return null;
 			}
 
@@ -156,7 +156,7 @@ public class Application {
 		});
 	}
 
-	private void createLocalMinecraftInterfaceAndDisplayMainWindow() {
+	private void createAndSetLocalMinecraftInterface() {
 		options.profileSelection.createAndSetLocalMinecraftInterface();
 	}
 
