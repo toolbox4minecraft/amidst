@@ -28,6 +28,7 @@ import amidst.bytedata.CCStringMatch;
 import amidst.bytedata.CCWildcardByteSearch;
 import amidst.bytedata.ClassChecker;
 import amidst.logging.Log;
+import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
 
 public class Minecraft {
@@ -87,10 +88,12 @@ public class Minecraft {
 	public String versionId;
 	public VersionInfo version = VersionInfo.unknown;
 
+	private final DotMinecraftDirectory dotMinecraftDirectory;
 	private final VersionDirectory versionDirectory;
 
-	public Minecraft(VersionDirectory versionDirectory)
-			throws MalformedURLException {
+	public Minecraft(DotMinecraftDirectory dotMinecraftDirectory,
+			VersionDirectory versionDirectory) throws MalformedURLException {
+		this.dotMinecraftDirectory = dotMinecraftDirectory;
 		this.versionDirectory = versionDirectory;
 		byteClassNames = new Vector<String>();
 		byteClassMap = new HashMap<String, ByteClass>(MAX_CLASSES);
@@ -301,7 +304,7 @@ public class Minecraft {
 	private List<URL> getAllLibraryUrls() {
 		try {
 			return versionDirectory.readVersionJson().getLibraryUrls(
-					LocalMinecraftInstallation.getMinecraftLibraries());
+					dotMinecraftDirectory);
 		} catch (IOException e) {
 			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: "
 					+ versionDirectory.getJson() + ")");

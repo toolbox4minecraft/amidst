@@ -11,7 +11,6 @@ import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.logging.Log;
-import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.minecraft.world.World;
 import amidst.mojangapi.MojangAPI;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
@@ -46,7 +45,6 @@ public class Application {
 			Log.crash("Unable to find minecraft directory at: "
 					+ dotMinecraftDirectory.getRoot());
 		}
-		LocalMinecraftInstallation.set(dotMinecraftDirectory);
 		this.versionList = createVersionList();
 		this.options = createOptions();
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();

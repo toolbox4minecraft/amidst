@@ -61,7 +61,8 @@ public class ProfileSelection {
 
 	public IMinecraftInterface createLocalMinecraftInterface() {
 		try {
-			return new Minecraft(getVersionDirectory()).createInterface();
+			return new Minecraft(dotMinecraftDirectory, getVersionDirectory())
+					.createInterface();
 		} catch (MalformedURLException e) {
 			Log.crash(e, "MalformedURLException on Minecraft load.");
 			return null;

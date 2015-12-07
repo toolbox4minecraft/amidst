@@ -7,17 +7,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amidst.logging.Log;
+import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.version.LibraryJson;
 import amidst.utilities.FileSystemUtils;
 
 public enum LibraryFinder {
 	;
 
-	public static List<URL> getLibraryUrls(File librariesFile,
+	public static List<URL> getLibraryUrls(
+			DotMinecraftDirectory dotMinecraftDirectory,
 			List<LibraryJson> libraries) {
+		File librariesDirectory = dotMinecraftDirectory.getLibraries();
 		List<URL> result = new ArrayList<URL>();
 		for (LibraryJson library : libraries) {
-			File libraryFile = getLibraryFile(librariesFile, library);
+			File libraryFile = getLibraryFile(librariesDirectory, library);
 			if (libraryFile != null) {
 				try {
 					result.add(libraryFile.toURI().toURL());
