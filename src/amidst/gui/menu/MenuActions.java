@@ -9,7 +9,6 @@ import amidst.gui.MainWindow;
 import amidst.logging.Log;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.WorldType;
-import amidst.minecraft.world.Worlds;
 import amidst.minecraft.world.icon.WorldIcon;
 
 public class MenuActions {
@@ -44,8 +43,8 @@ public class MenuActions {
 			} else {
 				WorldType worldType = mainWindow.askForWorldType();
 				if (worldType != null) {
-					application.setWorld(Worlds.fromSeed(seed, worldType,
-							application.getMinecraftInterface()));
+					application.setWorld(application.getMojangApi()
+							.createWorldFromSeed(seed, worldType));
 				}
 			}
 		}
@@ -54,8 +53,8 @@ public class MenuActions {
 	public void newFromRandom() {
 		WorldType worldType = mainWindow.askForWorldType();
 		if (worldType != null) {
-			application.setWorld(Worlds.random(worldType,
-					application.getMinecraftInterface()));
+			application.setWorld(application.getMojangApi().createRandomWorld(
+					worldType));
 		}
 	}
 
@@ -63,8 +62,8 @@ public class MenuActions {
 		File worldFile = mainWindow.askForMinecraftWorldFile();
 		if (worldFile != null) {
 			try {
-				application.setWorld(Worlds.fromFile(worldFile,
-						application.getMinecraftInterface()));
+				application.setWorld(application.getMojangApi()
+						.createWorldFromFile(worldFile));
 			} catch (Exception e) {
 				mainWindow.displayException(e);
 			}

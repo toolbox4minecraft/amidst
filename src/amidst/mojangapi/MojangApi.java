@@ -6,6 +6,9 @@ import java.net.MalformedURLException;
 import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.Minecraft;
+import amidst.minecraft.world.World;
+import amidst.minecraft.world.WorldType;
+import amidst.minecraft.world.Worlds;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.dotminecraft.ProfileDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
@@ -69,16 +72,23 @@ public class MojangApi {
 		}
 	}
 
-	@Deprecated
-	public IMinecraftInterface getMinecraftInterface() {
-		return minecraftInterface;
-	}
-
 	public DotMinecraftDirectory getDotMinecraftDirectory() {
 		return dotMinecraftDirectory;
 	}
 
 	public VersionListJson getVersionList() {
 		return versionList;
+	}
+
+	public World createRandomWorld(WorldType worldType) {
+		return Worlds.random(worldType, minecraftInterface);
+	}
+
+	public World createWorldFromSeed(String seedText, WorldType worldType) {
+		return Worlds.fromSeed(seedText, worldType, minecraftInterface);
+	}
+
+	public World createWorldFromFile(File worldFile) throws Exception {
+		return Worlds.fromFile(worldFile, minecraftInterface);
 	}
 }

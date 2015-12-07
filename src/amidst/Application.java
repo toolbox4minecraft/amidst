@@ -9,7 +9,6 @@ import amidst.gui.MainWindow;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
-import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.world.World;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.MojangApiBuilder;
@@ -206,7 +205,7 @@ public class Application {
 	}
 
 	@Deprecated
-	public IMinecraftInterface getMinecraftInterface() {
-		return mojangApi.getMinecraftInterface();
+	public MojangApi getMojangApi() {
+		return mojangApi;
 	}
 }
