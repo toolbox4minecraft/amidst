@@ -5,7 +5,7 @@ import java.io.File;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.versionlist.VersionListJson;
 
-public enum MojangAPI {
+public enum MojangApi {
 	;
 
 	public static VersionListJson readRemoteOrLocalVersionList() {

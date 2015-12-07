@@ -13,7 +13,7 @@ import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.world.World;
-import amidst.mojangapi.MojangAPI;
+import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.dotminecraft.ProfileDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
@@ -57,12 +57,12 @@ public class Application {
 	}
 
 	private DotMinecraftDirectory createDotMinecraftDirectory() {
-		return MojangAPI.createDotMinecraftDirectory(parameters.minecraftPath,
+		return MojangApi.createDotMinecraftDirectory(parameters.minecraftPath,
 				parameters.minecraftLibraries);
 	}
 
 	private VersionListJson createVersionList() {
-		return MojangAPI.readRemoteOrLocalVersionList();
+		return MojangApi.readRemoteOrLocalVersionList();
 	}
 
 	private Options createOptions() {
