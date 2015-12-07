@@ -18,6 +18,17 @@ public class VersionListJson {
 		return versions;
 	}
 
+	public VersionDirectory findFirstValidSnapshot(
+			DotMinecraftDirectory dotMinecraftDirectory) {
+		return findFirstValidVersionDirectory(dotMinecraftDirectory);
+	}
+
+	public VersionDirectory findFirstValidRelease(
+			DotMinecraftDirectory dotMinecraftDirectory) {
+		return findFirstValidVersionDirectory(dotMinecraftDirectory,
+				ReleaseType.RELEASE);
+	}
+
 	public VersionDirectory findFirstValidVersionDirectory(
 			DotMinecraftDirectory dotMinecraftDirectory) {
 		for (VersionListEntryJson version : versions) {

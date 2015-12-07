@@ -2,7 +2,6 @@ package amidst.mojangapi.dotminecraft;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import amidst.mojangapi.MojangAPI;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
@@ -57,7 +56,7 @@ public class DotMinecraftDirectory {
 	}
 
 	public LauncherProfilesJson readLauncherProfilesJson()
-			throws FileNotFoundException, IOException {
+			throws FileNotFoundException {
 		return MojangAPI.launcherProfilesFrom(launcherProfilesJson);
 	}
 

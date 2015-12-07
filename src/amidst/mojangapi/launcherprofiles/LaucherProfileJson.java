@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import amidst.mojangapi.ReleaseType;
+import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
+import amidst.mojangapi.dotminecraft.VersionDirectory;
+import amidst.mojangapi.versionlist.VersionListJson;
 
 public class LaucherProfileJson {
 	private String name;
@@ -34,5 +37,25 @@ public class LaucherProfileJson {
 
 	public boolean isAllowed(ReleaseType releaseType) {
 		return allowedReleaseTypes.contains(releaseType);
+	}
+
+	public VersionDirectory createVersionDirectory(
+			DotMinecraftDirectory dotMinecraftDirectory,
+			VersionListJson versionList) {
+		if (hasLastVersionId()) {
+			VersionDirectory result = dotMinecraftDirectory
+					.createVersionDirectory(lastVersionId);
+			if (result.isValid()) {
+				return result;
+			} else {
+				return null;
+			}
+		} else if (versionList == null) {
+			return null;
+		} else if (isAllowed(ReleaseType.SNAPSHOT)) {
+			return versionList.findFirstValidSnapshot(dotMinecraftDirectory);
+		} else {
+			return versionList.findFirstValidRelease(dotMinecraftDirectory);
+		}
 	}
 }

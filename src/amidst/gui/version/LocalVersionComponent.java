@@ -2,7 +2,6 @@ package amidst.gui.version;
 
 import amidst.Application;
 import amidst.version.MinecraftProfile;
-import amidst.version.MinecraftProfile.Status;
 
 public class LocalVersionComponent extends VersionComponent {
 	private Application application;
@@ -21,7 +20,7 @@ public class LocalVersionComponent extends VersionComponent {
 
 	@Override
 	public boolean isReadyToLoad() {
-		return profile.getStatus() == Status.FOUND;
+		return profile.getStatus();
 	}
 
 	@Override
@@ -31,7 +30,11 @@ public class LocalVersionComponent extends VersionComponent {
 
 	@Override
 	protected String getLoadingStatus() {
-		return profile.getStatus().toString();
+		if (profile.getStatus()) {
+			return "found";
+		} else {
+			return "failed";
+		}
 	}
 
 	@Override

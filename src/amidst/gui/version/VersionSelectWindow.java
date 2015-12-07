@@ -16,11 +16,12 @@ import amidst.Worker;
 import amidst.WorkerExecutor;
 import amidst.logging.Log;
 import amidst.minecraft.LocalMinecraftInstallation;
+import amidst.mojangapi.MojangAPI;
+import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
+import amidst.mojangapi.versionlist.VersionListJson;
 import amidst.preferences.StringPreference;
-import amidst.version.LatestVersionList;
-import amidst.version.LatestVersionList.VersionList;
 import amidst.version.MinecraftProfile;
 
 public class VersionSelectWindow {
@@ -95,10 +96,11 @@ public class VersionSelectWindow {
 
 	public MinecraftProfile[] scanForProfiles() {
 		Log.i("Scanning for profiles.");
+		DotMinecraftDirectory dotMinecraftDirectory = LocalMinecraftInstallation
+				.getDotMinecraftDirectory();
 		LauncherProfilesJson launcherProfile = null;
 		try {
-			launcherProfile = LocalMinecraftInstallation
-					.getDotMinecraftDirectory().readLauncherProfilesJson();
+			launcherProfile = dotMinecraftDirectory.readLauncherProfilesJson();
 		} catch (Exception e) {
 			Log.crash(e, "Error reading launcher_profiles.json");
 			return new MinecraftProfile[0];
@@ -107,12 +109,10 @@ public class VersionSelectWindow {
 		MinecraftProfile[] profiles = new MinecraftProfile[launcherProfile
 				.getProfiles().size()];
 		int i = 0;
-		LatestVersionList latestVersionList = new LatestVersionList();
-		VersionList versionList = latestVersionList.load();
-		for (LaucherProfileJson installInformation : launcherProfile
-				.getProfiles()) {
-			profiles[i++] = new MinecraftProfile(installInformation,
-					versionList);
+		VersionListJson versionList = MojangAPI.readRemoteOrLocalVersionList();
+		for (LaucherProfileJson profile : launcherProfile.getProfiles()) {
+			profiles[i++] = new MinecraftProfile(profile,
+					dotMinecraftDirectory, versionList);
 		}
 		return profiles;
 	}

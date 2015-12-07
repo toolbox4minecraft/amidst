@@ -2,7 +2,6 @@ package amidst.mojangapi.dotminecraft;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import amidst.mojangapi.FilenameFactory;
 import amidst.mojangapi.MojangAPI;
@@ -41,8 +40,7 @@ public class VersionDirectory {
 		return json;
 	}
 
-	public VersionJson readVersionJson() throws FileNotFoundException,
-			IOException {
+	public VersionJson readVersionJson() throws FileNotFoundException {
 		return MojangAPI.versionFrom(json);
 	}
 }
