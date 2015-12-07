@@ -20,6 +20,7 @@ import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 import amidst.preferences.StringPreference;
 import amidst.version.LatestVersionList;
+import amidst.version.LatestVersionList.VersionList;
 import amidst.version.MinecraftProfile;
 
 public class VersionSelectWindow {
@@ -107,11 +108,11 @@ public class VersionSelectWindow {
 				.getProfiles().size()];
 		int i = 0;
 		LatestVersionList latestVersionList = new LatestVersionList();
-		latestVersionList.load();
+		VersionList versionList = latestVersionList.load();
 		for (LaucherProfileJson installInformation : launcherProfile
 				.getProfiles()) {
 			profiles[i++] = new MinecraftProfile(installInformation,
-					latestVersionList);
+					versionList);
 		}
 		return profiles;
 	}

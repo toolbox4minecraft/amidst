@@ -16,38 +16,30 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 public class LatestVersionList {
-	public enum LoadState {
-		LOADED, LOADING, FAILED, IDLE
-	}
-
 	private static final String REMOTE_VERSION_LIST_URL = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
 	private static final Gson GSON = new Gson();
 
-	private LoadState loadState = LoadState.IDLE;
-
-	private VersionList profile;
-
-	public Map<String, String>[] getVersions() {
-		return profile.versions;
-	}
-
-	public void load() {
+	public VersionList load() {
 		Log.i("Beginning latest version list load.");
-		loadState = LoadState.LOADING;
-		if (!attemptRemoteLoad() && !attemptLocalLoad()) {
-			Log.w("Failed to load both remote and local version list.");
-			loadState = LoadState.FAILED;
+		VersionList remote = attemptRemoteLoad();
+		if (remote != null) {
+			return remote;
 		}
-		loadState = LoadState.LOADED;
+		VersionList local = attemptLocalLoad();
+		if (local != null) {
+			return local;
+		}
+		Log.w("Failed to load both remote and local version list.");
+		return null;
 	}
 
-	private boolean attemptLocalLoad() {
+	private VersionList attemptLocalLoad() {
 		Log.i("Attempting to download local version list...");
 		URL versionUrl = ResourceLoader.getResourceURL("versions.json");
 		return attemptLoad(versionUrl);
 	}
 
-	private boolean attemptRemoteLoad() {
+	private VersionList attemptRemoteLoad() {
 		Log.i("Attempting to download remote version list...");
 		URL versionUrl = null;
 		try {
@@ -56,13 +48,12 @@ public class LatestVersionList {
 			Log.w("MalformedURLException on remote version list. Aborting load. This should never be possible.");
 			Log.printTraceStack(e);
 			Log.w("Aborting remote version list load.");
-			return false;
+			return null;
 		}
-
 		return attemptLoad(versionUrl);
 	}
 
-	private boolean attemptLoad(URL versionUrl) {
+	private VersionList attemptLoad(URL versionUrl) {
 		URLConnection urlConnection = null;
 		try {
 			urlConnection = versionUrl.openConnection();
@@ -70,14 +61,14 @@ public class LatestVersionList {
 			Log.w("IOException when attempting to open connection to version list.");
 			Log.printTraceStack(e);
 			Log.w("Aborting version list load. URL: " + versionUrl);
-			return false;
+			return null;
 		}
 
 		int contentLength = urlConnection.getContentLength();
 		if (contentLength == -1) {
 			Log.w("Content length of version list returned -1.");
 			Log.w("Aborting version list load. URL: " + versionUrl);
-			return false;
+			return null;
 		}
 
 		InputStream inputStream = null;
@@ -87,18 +78,19 @@ public class LatestVersionList {
 			Log.w("IOException on opening input stream to version list.");
 			Log.printTraceStack(e);
 			Log.w("Aborting version list load. URL: " + versionUrl);
-			return false;
+			return null;
 		}
 
 		BufferedReader bufferedReader = new BufferedReader(
 				new InputStreamReader(inputStream));
+		VersionList result;
 		try {
-			profile = GSON.fromJson(bufferedReader, VersionList.class);
+			result = GSON.fromJson(bufferedReader, VersionList.class);
 		} catch (JsonSyntaxException e) {
 			Log.w("Unable to parse version list.");
 			Log.printTraceStack(e);
 			Log.w("Aborting version list load. URL: " + versionUrl);
-			return false;
+			return null;
 		} finally {
 			try {
 				bufferedReader.close();
@@ -109,14 +101,10 @@ public class LatestVersionList {
 		}
 
 		Log.i("Successfully loaded version list. URL: " + versionUrl);
-		return true;
+		return result;
 	}
 
-	public LoadState getLoadState() {
-		return loadState;
-	}
-
-	private class VersionList {
+	public static class VersionList {
 		public Map<String, String>[] versions;
 	}
 }
