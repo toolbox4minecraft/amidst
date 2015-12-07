@@ -11,6 +11,7 @@ import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.logging.Log;
+import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.world.World;
 import amidst.mojangapi.MojangAPI;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
@@ -255,5 +256,10 @@ public class Application {
 		if (mainWindow != null) {
 			mainWindow.reloadPlayerLayer();
 		}
+	}
+
+	@Deprecated
+	public IMinecraftInterface getMinecraftInterface() {
+		return options.profileSelection.getMinecraftInterface();
 	}
 }

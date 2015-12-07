@@ -6,9 +6,14 @@ import java.util.Random;
 
 import amidst.logging.Log;
 import amidst.minecraft.Biome;
-import amidst.minecraft.MinecraftUtil;
 
 public class BiomeDataOracle {
+	private final World world;
+
+	public BiomeDataOracle(World world) {
+		this.world = world;
+	}
+
 	public void populateArrayUsingQuarterResolution(CoordinatesInWorld corner,
 			short[][] result) {
 		int width = result.length;
@@ -105,10 +110,18 @@ public class BiomeDataOracle {
 
 	private int[] getQuarterResolutionBiomeData(int x, int y, int width,
 			int height) {
-		return MinecraftUtil.getBiomeData(x, y, width, height, true);
+		return getBiomeData(x, y, width, height, true);
 	}
 
 	private int[] getFullResolutionBiomeData(int x, int y, int width, int height) {
-		return MinecraftUtil.getBiomeData(x, y, width, height, false);
+		return getBiomeData(x, y, width, height, false);
+	}
+
+	// TODO: revisit synchronized
+	@Deprecated
+	private synchronized int[] getBiomeData(int x, int y, int width,
+			int height, boolean useQuarterResolution) {
+		return world.getMinecraftInterface().getBiomeData(x, y, width, height,
+				useQuarterResolution);
 	}
 }

@@ -17,7 +17,6 @@ import javax.swing.KeyStroke;
 import amidst.Application;
 import amidst.Options;
 import amidst.gui.MainWindow;
-import amidst.minecraft.MinecraftUtil;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.SelectPrefModel.SelectButtonModel;
 import amidst.resources.ResourceLoader;
@@ -28,6 +27,7 @@ public class AmidstMenu {
 	private final MenuActions actions;
 	private final JMenuBar menuBar;
 	private JMenu worldMenu;
+	private JMenuItem savePlayerLocationsMenu;
 
 	public AmidstMenu(Application application, Options options,
 			MainWindow mainWindow) {
@@ -50,7 +50,7 @@ public class AmidstMenu {
 		JMenu result = new JMenu("File");
 		result.setMnemonic(KeyEvent.VK_F);
 		result.add(create_File_New());
-		result.add(create_File_SavePlayerLocations());
+		savePlayerLocationsMenu = result.add(create_File_SavePlayerLocations());
 		result.add(create_File_Exit());
 		return result;
 	}
@@ -103,7 +103,7 @@ public class AmidstMenu {
 
 	private JMenuItem create_File_SavePlayerLocations() {
 		JMenuItem result = new JMenuItem("Save player locations");
-		result.setEnabled(MinecraftUtil.getVersion().saveEnabled());
+		result.setEnabled(false);
 		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
 				InputEvent.CTRL_DOWN_MASK));
 		result.addActionListener(new ActionListener() {
@@ -359,5 +359,17 @@ public class AmidstMenu {
 
 	public void disableWorldMenu() {
 		worldMenu.setEnabled(false);
+	}
+
+	public void enableSavePlayerLocationsMenu() {
+		savePlayerLocationsMenu.setEnabled(true);
+	}
+
+	public void disableSavePlayerLocationsMenu() {
+		savePlayerLocationsMenu.setEnabled(false);
+	}
+
+	public void setEnabledForSavePlayerLocationsMenu(boolean isEnabled) {
+		savePlayerLocationsMenu.setEnabled(isEnabled);
 	}
 }

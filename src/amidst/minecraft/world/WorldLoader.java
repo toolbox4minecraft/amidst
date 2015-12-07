@@ -12,6 +12,7 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.logging.Log;
+import amidst.minecraft.IMinecraftInterface;
 
 public class WorldLoader {
 	private static final String DEFAULT_SINGLE_PLAYER_PLAYER_NAME = "Player";
@@ -174,10 +175,10 @@ public class WorldLoader {
 		return exception;
 	}
 
-	public World get() {
+	public World get(IMinecraftInterface minecraftInterface) {
 		if (isLoadedSuccessfully()) {
 			return new World(seed, worldType, generatorOptions, isMultiPlayer,
-					Collections.unmodifiableList(players));
+					Collections.unmodifiableList(players), minecraftInterface);
 		} else {
 			return null;
 		}

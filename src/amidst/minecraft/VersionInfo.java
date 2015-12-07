@@ -66,6 +66,7 @@ public enum VersionInfo {
 		this.versionId = versionId;
 	}
 
+	@Deprecated
 	public boolean saveEnabled() {
 		return this != V12w21a && this != V12w21b && this != V12w22a;
 	}

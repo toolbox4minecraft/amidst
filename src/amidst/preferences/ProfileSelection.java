@@ -6,7 +6,6 @@ import java.net.MalformedURLException;
 import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.Minecraft;
-import amidst.minecraft.MinecraftUtil;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.dotminecraft.ProfileDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
@@ -17,6 +16,7 @@ public class ProfileSelection {
 
 	private volatile ProfileDirectory profileDirectory;
 	private volatile VersionDirectory versionDirectory;
+	private volatile IMinecraftInterface minecraftInterface;
 
 	public ProfileSelection(DotMinecraftDirectory dotMinecraftDirectory,
 			File preferedJson, ProfileDirectory profileDirectory,
@@ -56,7 +56,7 @@ public class ProfileSelection {
 
 	@Deprecated
 	public void createAndSetLocalMinecraftInterface() {
-		MinecraftUtil.setInterface(createLocalMinecraftInterface());
+		this.minecraftInterface = createLocalMinecraftInterface();
 	}
 
 	public IMinecraftInterface createLocalMinecraftInterface() {
@@ -67,5 +67,9 @@ public class ProfileSelection {
 			Log.crash(e, "MalformedURLException on Minecraft load.");
 			return null;
 		}
+	}
+
+	public IMinecraftInterface getMinecraftInterface() {
+		return minecraftInterface;
 	}
 }

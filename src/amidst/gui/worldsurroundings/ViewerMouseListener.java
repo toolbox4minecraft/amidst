@@ -15,7 +15,6 @@ import javax.swing.JPopupMenu;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.widget.WidgetManager;
-import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.Player;
 import amidst.minecraft.world.World;
 
@@ -104,7 +103,7 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 
 	private void showPlayerMenu(Point mousePosition, Component component,
 			int x, int y) {
-		if (MinecraftUtil.getVersion().saveEnabled() && world.hasPlayers()) {
+		if (world.canSavePlayerLocations() && world.hasPlayers()) {
 			createPlayerMenu(mousePosition).show(component, x, y);
 		}
 	}

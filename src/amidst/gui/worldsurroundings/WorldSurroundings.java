@@ -7,8 +7,10 @@ import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.minecraft.world.World;
 
 public class WorldSurroundings {
+	private final World world;
 	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
 	private final Zoom zoom;
@@ -16,10 +18,11 @@ public class WorldSurroundings {
 	private final LayerReloader layerReloader;
 	private final FragmentManager fragmentManager;
 
-	public WorldSurroundings(FragmentGraph graph,
+	public WorldSurroundings(World world, FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			Viewer viewer, LayerReloader layerReloader,
 			FragmentManager fragmentManager) {
+		this.world = world;
 		this.graph = graph;
 		this.translator = translator;
 		this.zoom = zoom;
@@ -60,5 +63,10 @@ public class WorldSurroundings {
 
 	public void adjustZoom(int notches) {
 		zoom.adjustZoom(viewer.getMousePositionOrCenter(), notches);
+	}
+
+	@Deprecated
+	public boolean canSavePlayerLocations() {
+		return world.canSavePlayerLocations();
 	}
 }

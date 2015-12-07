@@ -55,7 +55,7 @@ public class WorldSurroundingsBuilder {
 		Viewer viewer = new Viewer(new ViewerMouseListener(new WidgetManager(
 				widgets), world, graph, translator, zoom, movement,
 				worldIconSelection, layerReloader), drawer);
-		return new WorldSurroundings(graph, translator, zoom, viewer,
+		return new WorldSurroundings(world, graph, translator, zoom, viewer,
 				layerReloader, fragmentManager);
 	}
 }

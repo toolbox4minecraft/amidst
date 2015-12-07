@@ -44,7 +44,8 @@ public class MenuActions {
 			} else {
 				WorldType worldType = mainWindow.askForWorldType();
 				if (worldType != null) {
-					application.setWorld(Worlds.fromSeed(seed, worldType));
+					application.setWorld(Worlds.fromSeed(seed, worldType,
+							application.getMinecraftInterface()));
 				}
 			}
 		}
@@ -53,7 +54,8 @@ public class MenuActions {
 	public void newFromRandom() {
 		WorldType worldType = mainWindow.askForWorldType();
 		if (worldType != null) {
-			application.setWorld(Worlds.random(worldType));
+			application.setWorld(Worlds.random(worldType,
+					application.getMinecraftInterface()));
 		}
 	}
 
@@ -61,7 +63,8 @@ public class MenuActions {
 		File worldFile = mainWindow.askForMinecraftWorldFile();
 		if (worldFile != null) {
 			try {
-				application.setWorld(Worlds.fromFile(worldFile));
+				application.setWorld(Worlds.fromFile(worldFile,
+						application.getMinecraftInterface()));
 			} catch (Exception e) {
 				mainWindow.displayException(e);
 			}

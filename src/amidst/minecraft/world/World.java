@@ -3,7 +3,7 @@ package amidst.minecraft.world;
 import java.util.Collections;
 import java.util.List;
 
-import amidst.minecraft.MinecraftUtil;
+import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.world.icon.CachedWorldIconProducer;
 import amidst.minecraft.world.icon.NetherFortressProducer;
 import amidst.minecraft.world.icon.OceanMonumentProducer;
@@ -16,7 +16,7 @@ import amidst.minecraft.world.icon.WorldIcon;
 import amidst.minecraft.world.icon.WorldIconProducer;
 
 public class World {
-	private final BiomeDataOracle biomeDataOracle = new BiomeDataOracle();
+	private final BiomeDataOracle biomeDataOracle = new BiomeDataOracle(this);
 	private final SlimeChunkOracle slimeChunkOracle = new SlimeChunkOracle(this);
 	private final WorldIconProducer oceanMonumentProducer = new OceanMonumentProducer(
 			this);
@@ -37,29 +37,36 @@ public class World {
 	private final String generatorOptions;
 	private final boolean isMultiplayerWorld;
 	private final List<Player> players;
+	private final IMinecraftInterface minecraftInterface;
 
-	World(long seed, String seedText, WorldType worldType) {
+	World(long seed, String seedText, WorldType worldType,
+			IMinecraftInterface minecraftInterface) {
 		this.seed = seed;
 		this.seedText = seedText;
 		this.worldType = worldType;
 		this.generatorOptions = "";
 		this.isMultiplayerWorld = false;
 		this.players = Collections.emptyList();
+		this.minecraftInterface = minecraftInterface;
 		initMinecraftInterface();
 	}
 
 	World(long seed, WorldType worldType, String generatorOptions,
-			boolean isMultiplayerWorld, List<Player> players) {
+			boolean isMultiplayerWorld, List<Player> players,
+			IMinecraftInterface minecraftInterface) {
 		this.seed = seed;
 		this.seedText = null;
 		this.worldType = worldType;
 		this.generatorOptions = generatorOptions;
 		this.isMultiplayerWorld = isMultiplayerWorld;
 		this.players = players;
+		this.minecraftInterface = minecraftInterface;
+		initMinecraftInterface();
 	}
 
 	private void initMinecraftInterface() {
-		MinecraftUtil.createWorld(seed, worldType.getName(), generatorOptions);
+		minecraftInterface.createWorld(seed, worldType.getName(),
+				generatorOptions);
 	}
 
 	public long getSeed() {
@@ -146,5 +153,15 @@ public class World {
 
 	public void reloadPlayerWorldIcons() {
 		playerProducer.resetCache();
+	}
+
+	@Deprecated
+	public boolean canSavePlayerLocations() {
+		return minecraftInterface.getVersion().saveEnabled();
+	}
+
+	@Deprecated
+	public IMinecraftInterface getMinecraftInterface() {
+		return minecraftInterface;
 	}
 }

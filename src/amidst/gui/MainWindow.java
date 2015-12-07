@@ -25,8 +25,8 @@ import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.gui.worldsurroundings.WorldSurroundings;
-import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.minecraft.world.World;
 import amidst.minecraft.world.WorldType;
 
 public class MainWindow {
@@ -55,20 +55,25 @@ public class MainWindow {
 
 	private JFrame createFrame() {
 		JFrame frame = new JFrame();
-		frame.setTitle(getVersionString());
+		frame.setTitle(getVersionString(""));
 		frame.setSize(1000, 800);
 		frame.setIconImage(AmidstMetaData.ICON);
 		return frame;
 	}
 
+	@Deprecated
 	private String getVersionString() {
-		if (MinecraftUtil.hasInterface()) {
-			return "Amidst v" + AmidstMetaData.getFullVersionString()
-					+ " [Using Minecraft version: "
-					+ MinecraftUtil.getVersion() + "]";
+		World world = application.getWorld();
+		if (world != null) {
+			return getVersionString(" [Using Minecraft version: "
+					+ world.getMinecraftInterface().getVersion() + "]");
 		} else {
-			return "Amidst v" + AmidstMetaData.getFullVersionString();
+			return getVersionString("");
 		}
+	}
+
+	private String getVersionString(String string) {
+		return "Amidst v" + AmidstMetaData.getFullVersionString() + string;
 	}
 
 	private Container createContentPane() {
@@ -226,6 +231,8 @@ public class MainWindow {
 		this.worldSurroundings = null;
 		if (worldSurroundings != null) {
 			menuBar.disableWorldMenu();
+			menuBar.disableSavePlayerLocationsMenu();
+			frame.setTitle(getVersionString(""));
 			contentPane.remove(worldSurroundings.getComponent());
 			worldSurroundings.dispose();
 		}
@@ -241,6 +248,9 @@ public class MainWindow {
 		contentPane.add(worldSurroundings.getComponent(), BorderLayout.CENTER);
 		frame.validate();
 		menuBar.enableWorldMenu();
+		menuBar.setEnabledForSavePlayerLocationsMenu(worldSurroundings
+				.canSavePlayerLocations());
+		frame.setTitle(getVersionString());
 		this.worldSurroundings = worldSurroundings;
 	}
 
