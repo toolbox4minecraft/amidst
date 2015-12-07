@@ -77,6 +77,7 @@ public class WorldSurroundings {
 		return world.getSeed();
 	}
 
+	// TODO: use this
 	@Deprecated
 	public WorldIcon getSpawnWorldIcon() {
 		return world.getSpawnWorldIcon();

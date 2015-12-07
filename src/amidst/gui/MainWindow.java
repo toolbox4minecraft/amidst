@@ -34,6 +34,9 @@ import amidst.minecraft.world.icon.WorldIcon;
 import amidst.mojangapi.MojangApi;
 
 public class MainWindow {
+	private static final String ABOUT_MESSAGE = "Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
+			+ "By Skidoodle (amidst.project@gmail.com)";
+
 	private final SeedPrompt seedPrompt = new SeedPrompt();
 
 	private final Application application;
@@ -376,5 +379,49 @@ public class MainWindow {
 			Toolkit.getDefaultToolkit().getSystemClipboard()
 					.setContents(selection, selection);
 		}
+	}
+
+	public void newFromSeed() {
+		String seed = askForSeed();
+		if (seed != null) {
+			if (seed.isEmpty()) {
+				newFromRandom();
+			} else {
+				WorldType worldType = askForWorldType();
+				if (worldType != null) {
+					application.setWorld(mojangApi.createWorldFromSeed(seed,
+							worldType));
+				}
+			}
+		}
+	}
+
+	public void newFromRandom() {
+		WorldType worldType = askForWorldType();
+		if (worldType != null) {
+			application.setWorld(mojangApi.createRandomWorld(worldType));
+		}
+	}
+
+	public void newFromFileOrFolder() {
+		File worldFile = askForMinecraftWorldFile();
+		if (worldFile != null) {
+			try {
+				application.setWorld(mojangApi.createWorldFromFile(worldFile));
+			} catch (Exception e) {
+				displayException(e);
+			}
+		}
+	}
+
+	public void capture() {
+		File file = askForScreenshotSaveFile();
+		if (file != null) {
+			capture(file);
+		}
+	}
+
+	public void displayAboutMessage() {
+		displayMessage(ABOUT_MESSAGE);
 	}
 }

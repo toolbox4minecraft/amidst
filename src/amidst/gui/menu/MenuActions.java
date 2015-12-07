@@ -1,15 +1,9 @@
 package amidst.gui.menu;
 
-import java.io.File;
-
 import amidst.Application;
 import amidst.gui.MainWindow;
-import amidst.minecraft.world.WorldType;
 
 public class MenuActions {
-	private static final String ABOUT_MESSAGE = "Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
-			+ "By Skidoodle (amidst.project@gmail.com)";
-
 	private Application application;
 	private MainWindow mainWindow;
 
@@ -31,38 +25,15 @@ public class MenuActions {
 	}
 
 	public void newFromSeed() {
-		String seed = mainWindow.askForSeed();
-		if (seed != null) {
-			if (seed.isEmpty()) {
-				newFromRandom();
-			} else {
-				WorldType worldType = mainWindow.askForWorldType();
-				if (worldType != null) {
-					application.setWorld(application.getMojangApi()
-							.createWorldFromSeed(seed, worldType));
-				}
-			}
-		}
+		mainWindow.newFromSeed();
 	}
 
 	public void newFromRandom() {
-		WorldType worldType = mainWindow.askForWorldType();
-		if (worldType != null) {
-			application.setWorld(application.getMojangApi().createRandomWorld(
-					worldType));
-		}
+		mainWindow.newFromRandom();
 	}
 
 	public void newFromFileOrFolder() {
-		File worldFile = mainWindow.askForMinecraftWorldFile();
-		if (worldFile != null) {
-			try {
-				application.setWorld(application.getMojangApi()
-						.createWorldFromFile(worldFile));
-			} catch (Exception e) {
-				mainWindow.displayException(e);
-			}
-		}
+		mainWindow.newFromFileOrFolder();
 	}
 
 	public void findStronghold() {
@@ -78,10 +49,7 @@ public class MenuActions {
 	}
 
 	public void capture() {
-		File file = mainWindow.askForScreenshotSaveFile();
-		if (file != null) {
-			mainWindow.capture(file);
-		}
+		mainWindow.capture();
 	}
 
 	public void copySeedToClipboard() {
@@ -97,6 +65,6 @@ public class MenuActions {
 	}
 
 	public void about() {
-		mainWindow.displayMessage(ABOUT_MESSAGE);
+		mainWindow.displayAboutMessage();
 	}
 }

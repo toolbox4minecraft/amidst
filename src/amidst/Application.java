@@ -199,9 +199,4 @@ public class Application {
 			mainWindow.reloadPlayerLayer();
 		}
 	}
-
-	@Deprecated
-	public MojangApi getMojangApi() {
-		return mojangApi;
-	}
 }
