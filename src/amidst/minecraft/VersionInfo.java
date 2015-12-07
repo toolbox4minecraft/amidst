@@ -5,7 +5,6 @@ package amidst.minecraft;
  */
 public enum VersionInfo {
 	// @formatter:off
-	unknown(null),
 	V1_8_4("orntlljs[Lle;lx[J[[Jlt"),
 	V1_8_3("osnulmjt[Llf;ly[J[[Jlu"), // 1.8.3 and 1.8.2 have the same typeDump version ID - probably because 1.8.2 -> 1.8.3 was a fix for a server-side bug (https://mojang.com/2015/02/minecraft-1-8-2-is-now-available/)
 	V1_8_1("wduyrdnq[Lqu;sp[J[[Jsa"),
@@ -57,7 +56,8 @@ public enum VersionInfo {
 	V1_9pre3("to"),
 	V1_9pre2("sv"),
 	V1_9pre1("sq"),
-	Vbeta_1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"); // Had to rename from V1_8_1 - should it just be removed?
+	Vbeta_1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"), // Had to rename from V1_8_1 - should it just be removed?
+	unknown(null); // Make sure this is the last entry, so unknown.isAtLeast(...) returns always false.
 	// @formatter:on
 
 	private final String versionId;
@@ -67,8 +67,9 @@ public enum VersionInfo {
 	}
 
 	@Deprecated
-	public boolean saveEnabled() {
-		return this != V12w21a && this != V12w21b && this != V12w22a;
+	public boolean isSaveEnabled() {
+		return this != V12w21a && this != V12w21b && this != V12w22a
+				&& this != unknown;
 	}
 
 	@Override

@@ -157,7 +157,7 @@ public class World {
 
 	@Deprecated
 	public boolean canSavePlayerLocations() {
-		return minecraftInterface.getVersion().saveEnabled();
+		return minecraftInterface.getVersion().isSaveEnabled();
 	}
 
 	@Deprecated
