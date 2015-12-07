@@ -67,38 +67,31 @@ public class WorldSurroundings {
 		zoom.adjustZoom(viewer.getMousePositionOrCenter(), notches);
 	}
 
-	@Deprecated
 	public String getRecognisedVersionName() {
 		return world.getRecognisedVersionName();
 	}
 
-	@Deprecated
 	public long getSeed() {
 		return world.getSeed();
 	}
 
 	// TODO: use this
-	@Deprecated
 	public WorldIcon getSpawnWorldIcon() {
 		return world.getSpawnWorldIcon();
 	}
 
-	@Deprecated
 	public List<WorldIcon> getStrongholdWorldIcons() {
 		return world.getStrongholdWorldIcons();
 	}
 
-	@Deprecated
 	public List<WorldIcon> getPlayerWorldIcons() {
 		return world.getPlayerWorldIcons();
 	}
 
-	@Deprecated
 	public boolean canSavePlayerLocations() {
 		return world.getMovablePlayerList().canSavePlayerLocations();
 	}
 
-	@Deprecated
 	public void savePlayerLocations() {
 		world.getMovablePlayerList().savePlayerLocations();
 	}

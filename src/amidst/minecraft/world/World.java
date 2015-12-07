@@ -149,7 +149,6 @@ public class World {
 		return minecraftInterface;
 	}
 
-	@Deprecated
 	public String getRecognisedVersionName() {
 		return minecraftInterface.getVersion().getName();
 	}
