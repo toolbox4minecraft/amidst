@@ -72,8 +72,13 @@ public enum RecognisedVersion {
 				&& this != unknown;
 	}
 
+	// TODO: switch to getName()
 	@Override
 	public String toString() {
+		return getName();
+	}
+
+	public String getName() {
 		return super.toString().replace("_", ".");
 	}
 

@@ -153,4 +153,9 @@ public class World {
 	public IMinecraftInterface getMinecraftInterface() {
 		return minecraftInterface;
 	}
+
+	@Deprecated
+	public String getRecognisedVersionName() {
+		return minecraftInterface.getVersion().getName();
+	}
 }

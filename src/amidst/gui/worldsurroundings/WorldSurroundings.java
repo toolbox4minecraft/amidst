@@ -2,12 +2,15 @@ package amidst.gui.worldsurroundings;
 
 import java.awt.Component;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.minecraft.world.MovablePlayerList;
 import amidst.minecraft.world.World;
+import amidst.minecraft.world.icon.WorldIcon;
 
 public class WorldSurroundings {
 	private final World world;
@@ -72,6 +75,31 @@ public class WorldSurroundings {
 
 	@Deprecated
 	public String getRecognisedVersionName() {
-		return world.getMinecraftInterface().getVersion().toString();
+		return world.getRecognisedVersionName();
+	}
+
+	@Deprecated
+	public WorldIcon getSpawnWorldIcon() {
+		return world.getSpawnWorldIcon();
+	}
+
+	@Deprecated
+	public List<WorldIcon> getStrongholdWorldIcons() {
+		return world.getStrongholdWorldIcons();
+	}
+
+	@Deprecated
+	public List<WorldIcon> getPlayerWorldIcons() {
+		return world.getPlayerWorldIcons();
+	}
+
+	@Deprecated
+	public MovablePlayerList getMovablePlayerList() {
+		return world.getMovablePlayerList();
+	}
+
+	@Deprecated
+	public long getSeed() {
+		return world.getSeed();
 	}
 }

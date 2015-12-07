@@ -2,6 +2,8 @@ package amidst.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -25,8 +27,10 @@ import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.gui.worldsurroundings.WorldSurroundings;
+import amidst.logging.Log;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.WorldType;
+import amidst.minecraft.world.icon.WorldIcon;
 import amidst.mojangapi.MojangApi;
 
 public class MainWindow {
@@ -288,13 +292,6 @@ public class MainWindow {
 		}
 	}
 
-	public void centerWorldOn(CoordinatesInWorld coordinates) {
-		WorldSurroundings worldSurroundings = this.worldSurroundings;
-		if (worldSurroundings != null) {
-			worldSurroundings.centerOn(coordinates);
-		}
-	}
-
 	public void reloadBiomeLayer() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings;
 		if (worldSurroundings != null) {
@@ -320,6 +317,62 @@ public class MainWindow {
 		WorldSurroundings worldSurroundings = this.worldSurroundings;
 		if (worldSurroundings != null) {
 			worldSurroundings.tickFragmentLoader();
+		}
+	}
+
+	public void savePlayerLocations() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		if (worldSurroundings != null) {
+			worldSurroundings.getMovablePlayerList().savePlayerLocations();
+		}
+	}
+
+	public void findStronghold() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		if (worldSurroundings != null) {
+			WorldIcon stronghold = askForOptions("Go to", "Select Stronghold:",
+					worldSurroundings.getStrongholdWorldIcons());
+			if (stronghold != null) {
+				worldSurroundings.centerOn(stronghold.getCoordinates());
+			}
+		}
+	}
+
+	public void gotoCoordinate() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		if (worldSurroundings != null) {
+			CoordinatesInWorld coordinates = askForCoordinates();
+			if (coordinates != null) {
+				worldSurroundings.centerOn(coordinates);
+			} else {
+				displayMessage("You entered an invalid location.");
+				Log.w("Invalid location entered, ignoring.");
+			}
+		}
+	}
+
+	public void gotoPlayer() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		if (worldSurroundings != null) {
+			if (!worldSurroundings.getMovablePlayerList().isEmpty()) {
+				WorldIcon player = askForOptions("Go to", "Select player:",
+						worldSurroundings.getPlayerWorldIcons());
+				if (player != null) {
+					worldSurroundings.centerOn(player.getCoordinates());
+				}
+			} else {
+				displayMessage("There are no players in this world.");
+			}
+		}
+	}
+
+	public void copySeedToClipboard() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings;
+		if (worldSurroundings != null) {
+			String seed = "" + worldSurroundings.getSeed();
+			StringSelection selection = new StringSelection(seed);
+			Toolkit.getDefaultToolkit().getSystemClipboard()
+					.setContents(selection, selection);
 		}
 	}
 }

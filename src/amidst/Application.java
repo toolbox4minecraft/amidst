@@ -169,11 +169,6 @@ public class Application {
 		}
 	}
 
-	@Deprecated
-	public World getWorld() {
-		return world;
-	}
-
 	void crash(Throwable e, String exceptionText, String message,
 			String allLogMessages) {
 		new CrashWindow(message, allLogMessages, new Runnable() {
