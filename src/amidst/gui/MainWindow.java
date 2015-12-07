@@ -26,7 +26,6 @@ import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.gui.worldsurroundings.WorldSurroundings;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.World;
 import amidst.minecraft.world.WorldType;
 
 public class MainWindow {
@@ -55,21 +54,18 @@ public class MainWindow {
 
 	private JFrame createFrame() {
 		JFrame frame = new JFrame();
-		frame.setTitle(getVersionString(""));
+		frame.setTitle(getSimpleVersionString());
 		frame.setSize(1000, 800);
 		frame.setIconImage(AmidstMetaData.ICON);
 		return frame;
 	}
 
-	@Deprecated
-	private String getVersionString() {
-		World world = application.getWorld();
-		if (world != null) {
-			return getVersionString(" [Using Minecraft version: "
-					+ world.getMinecraftInterface().getVersion() + "]");
-		} else {
-			return getVersionString("");
-		}
+	private String getLongVersionString(String version) {
+		return getVersionString(" [Using Minecraft version: " + version + "]");
+	}
+
+	private String getSimpleVersionString() {
+		return getVersionString("");
 	}
 
 	private String getVersionString(String string) {
@@ -226,13 +222,14 @@ public class MainWindow {
 		frame.dispose();
 	}
 
+	// TODO: call from constructor?
 	public void clearWorldSurroundings() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings;
 		this.worldSurroundings = null;
 		if (worldSurroundings != null) {
 			menuBar.disableWorldMenu();
 			menuBar.disableSavePlayerLocationsMenu();
-			frame.setTitle(getVersionString(""));
+			frame.setTitle(getSimpleVersionString());
 			contentPane.remove(worldSurroundings.getComponent());
 			worldSurroundings.dispose();
 		}
@@ -250,7 +247,8 @@ public class MainWindow {
 		menuBar.enableWorldMenu();
 		menuBar.setEnabledForSavePlayerLocationsMenu(worldSurroundings
 				.canSavePlayerLocations());
-		frame.setTitle(getVersionString());
+		frame.setTitle(getLongVersionString(application.getWorld()
+				.getMinecraftInterface().getVersion().toString()));
 		this.worldSurroundings = worldSurroundings;
 	}
 
