@@ -8,14 +8,14 @@ import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
 import amidst.mojangapi.versionlist.VersionListJson;
 
-public class LaucherProfileJson {
+public class LauncherProfileJson {
 	private String name;
 	private String lastVersionId;
 	private String gameDir;
 	private List<ReleaseType> allowedReleaseTypes = Arrays
 			.asList(ReleaseType.RELEASE);
 
-	public LaucherProfileJson() {
+	public LauncherProfileJson() {
 		// no-argument constructor for gson
 	}
 

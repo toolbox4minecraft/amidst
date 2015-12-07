@@ -4,16 +4,16 @@ import amidst.Application;
 import amidst.logging.Log;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
-import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
+import amidst.mojangapi.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.versionlist.VersionListJson;
 
 public class LocalVersionComponent extends VersionComponent {
 	private final Application application;
-	private final LaucherProfileJson profile;
+	private final LauncherProfileJson profile;
 	private final VersionDirectory version;
 
 	public LocalVersionComponent(Application application,
-			LaucherProfileJson profile,
+			LauncherProfileJson profile,
 			DotMinecraftDirectory dotMinecraftDirectory,
 			VersionListJson versionList) {
 		this.application = application;

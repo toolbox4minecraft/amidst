@@ -16,7 +16,7 @@ import amidst.Worker;
 import amidst.WorkerExecutor;
 import amidst.logging.Log;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
-import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
+import amidst.mojangapi.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 import amidst.mojangapi.versionlist.VersionListJson;
 import amidst.preferences.StringPreference;
@@ -105,7 +105,7 @@ public class VersionSelectWindow {
 	}
 
 	private void loadVersions(LauncherProfilesJson launcherProfile) {
-		for (LaucherProfileJson profile : launcherProfile.getProfiles()) {
+		for (LauncherProfileJson profile : launcherProfile.getProfiles()) {
 			versionSelectPanel.addVersion(new LocalVersionComponent(
 					application, profile, dotMinecraftDirectory, versionList));
 		}

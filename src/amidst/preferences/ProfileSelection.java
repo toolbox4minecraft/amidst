@@ -1,13 +1,13 @@
 package amidst.preferences;
 
 import amidst.mojangapi.dotminecraft.VersionDirectory;
-import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
+import amidst.mojangapi.launcherprofiles.LauncherProfileJson;
 
 public class ProfileSelection {
-	private volatile LaucherProfileJson profile;
+	private volatile LauncherProfileJson profile;
 	private volatile VersionDirectory versionDirectory;
 
-	public void setLaucherProfileJson(LaucherProfileJson profile) {
+	public void setLaucherProfileJson(LauncherProfileJson profile) {
 		this.profile = profile;
 	}
 
@@ -15,7 +15,7 @@ public class ProfileSelection {
 		this.versionDirectory = versionDirectory;
 	}
 
-	public LaucherProfileJson getLaucherProfileJson() {
+	public LauncherProfileJson getLaucherProfileJson() {
 		return profile;
 	}
 

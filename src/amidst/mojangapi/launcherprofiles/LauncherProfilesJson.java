@@ -9,17 +9,17 @@ import amidst.mojangapi.MojangAPI;
 import amidst.mojangapi.dotminecraft.ProfileDirectory;
 
 public class LauncherProfilesJson {
-	private Map<String, LaucherProfileJson> profiles = Collections.emptyMap();
+	private Map<String, LauncherProfileJson> profiles = Collections.emptyMap();
 
 	public LauncherProfilesJson() {
 		// no-argument constructor for gson
 	}
 
-	public LaucherProfileJson getProfile(String name) {
+	public LauncherProfileJson getProfile(String name) {
 		return profiles.get(name);
 	}
 
-	public Collection<LaucherProfileJson> getProfiles() {
+	public Collection<LauncherProfileJson> getProfiles() {
 		return profiles.values();
 	}
 

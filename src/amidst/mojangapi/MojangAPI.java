@@ -14,7 +14,7 @@ import amidst.logging.Log;
 import amidst.mojangapi.dotminecraft.ProfileDirectory;
 import amidst.mojangapi.dotminecraft.SaveDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
-import amidst.mojangapi.launcherprofiles.LaucherProfileJson;
+import amidst.mojangapi.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 import amidst.mojangapi.version.VersionJson;
 import amidst.mojangapi.versionlist.VersionListJson;
@@ -120,7 +120,7 @@ public enum MojangAPI {
 	public static List<ProfileDirectory> createProfileDirectories(
 			LauncherProfilesJson launcherProfilesJson) {
 		List<ProfileDirectory> result = new ArrayList<ProfileDirectory>();
-		for (LaucherProfileJson profile : launcherProfilesJson.getProfiles()) {
+		for (LauncherProfileJson profile : launcherProfilesJson.getProfiles()) {
 			result.add(new ProfileDirectory(new File(profile.getGameDir())));
 		}
 		return result;
