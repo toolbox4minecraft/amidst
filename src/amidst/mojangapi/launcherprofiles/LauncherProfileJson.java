@@ -1,10 +1,12 @@
 package amidst.mojangapi.launcherprofiles;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 import amidst.mojangapi.ReleaseType;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
+import amidst.mojangapi.dotminecraft.ProfileDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
 import amidst.mojangapi.versionlist.VersionListJson;
 
@@ -37,6 +39,10 @@ public class LauncherProfileJson {
 
 	public boolean isAllowed(ReleaseType releaseType) {
 		return allowedReleaseTypes.contains(releaseType);
+	}
+
+	public ProfileDirectory createProfileDirectory() {
+		return new ProfileDirectory(new File(gameDir));
 	}
 
 	public VersionDirectory createVersionDirectory(

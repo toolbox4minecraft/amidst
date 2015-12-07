@@ -12,6 +12,7 @@ import javax.swing.SwingConstants;
 import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
 import amidst.Application;
+import amidst.Options;
 import amidst.Worker;
 import amidst.WorkerExecutor;
 import amidst.logging.Log;
@@ -19,37 +20,30 @@ import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
 import amidst.mojangapi.versionlist.VersionListJson;
-import amidst.preferences.StringPreference;
 
 public class VersionSelectWindow {
 	private final Application application;
 	private final WorkerExecutor workerExecutor;
-	private final StringPreference lastProfilePreference;
 	private final DotMinecraftDirectory dotMinecraftDirectory;
 	private final VersionListJson versionList;
+	private final Options options;
 
 	private final JFrame frame = new JFrame("Profile Selector");
 	private final VersionSelectPanel versionSelectPanel;
 
 	public VersionSelectWindow(Application application,
 			WorkerExecutor workerExecutor,
-			StringPreference lastProfilePreference,
 			DotMinecraftDirectory dotMinecraftDirectory,
-			VersionListJson versionList) {
+			VersionListJson versionList, Options options) {
 		this.application = application;
-		this.workerExecutor = workerExecutor;
-		this.lastProfilePreference = lastProfilePreference;
 		this.dotMinecraftDirectory = dotMinecraftDirectory;
 		this.versionList = versionList;
-		this.versionSelectPanel = new VersionSelectPanel(lastProfilePreference,
+		this.workerExecutor = workerExecutor;
+		this.options = options;
+		this.versionSelectPanel = new VersionSelectPanel(options.lastProfile,
 				"Scanning...");
-		if (!dotMinecraftDirectory.isValid()) {
-			Log.crash("Unable to find minecraft directory at: "
-					+ dotMinecraftDirectory.getRoot());
-		} else {
-			initFrame();
-			scanAndLoadVersionsLater();
-		}
+		initFrame();
+		scanAndLoadVersionsLater();
 	}
 
 	private void initFrame() {
@@ -107,14 +101,15 @@ public class VersionSelectWindow {
 	private void loadVersions(LauncherProfilesJson launcherProfile) {
 		for (LauncherProfileJson profile : launcherProfile.getProfiles()) {
 			versionSelectPanel.addVersion(new LocalVersionComponent(
-					application, profile, dotMinecraftDirectory, versionList));
+					application, workerExecutor, dotMinecraftDirectory,
+					versionList, options.profileSelection, profile));
 		}
 		restoreSelection();
 		frame.pack();
 	}
 
 	private void restoreSelection() {
-		String selectedProfile = lastProfilePreference.get();
+		String selectedProfile = options.lastProfile.get();
 		if (selectedProfile != null) {
 			versionSelectPanel.select(selectedProfile);
 		}

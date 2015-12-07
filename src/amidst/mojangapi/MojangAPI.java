@@ -91,7 +91,7 @@ public enum MojangAPI {
 			LauncherProfilesJson launcherProfilesJson) {
 		List<ProfileDirectory> result = new ArrayList<ProfileDirectory>();
 		for (LauncherProfileJson profile : launcherProfilesJson.getProfiles()) {
-			result.add(new ProfileDirectory(new File(profile.getGameDir())));
+			result.add(profile.createProfileDirectory());
 		}
 		return result;
 	}

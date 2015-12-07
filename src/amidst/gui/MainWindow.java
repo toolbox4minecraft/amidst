@@ -25,7 +25,6 @@ import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.gui.worldsurroundings.WorldSurroundings;
-import amidst.minecraft.LocalMinecraftInstallation;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.WorldType;
@@ -135,8 +134,7 @@ public class MainWindow {
 		result.setFileFilter(new LevelFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
 		result.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		result.setCurrentDirectory(LocalMinecraftInstallation
-				.getSavesDirectory());
+		result.setCurrentDirectory(options.profileSelection.getSaves());
 		result.setFileHidingEnabled(false);
 		return result;
 	}

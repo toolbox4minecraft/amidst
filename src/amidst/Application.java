@@ -19,7 +19,10 @@ import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.World;
 import amidst.mojangapi.MojangAPI;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
+import amidst.mojangapi.dotminecraft.ProfileDirectory;
+import amidst.mojangapi.dotminecraft.VersionDirectory;
 import amidst.mojangapi.versionlist.VersionListJson;
+import amidst.preferences.ProfileSelection;
 import amidst.utilities.SeedHistoryLogger;
 import amidst.utilities.SkinLoader;
 
@@ -43,6 +46,10 @@ public class Application {
 	public Application(CommandLineParameters parameters) {
 		this.parameters = parameters;
 		this.dotMinecraftDirectory = createDotMinecraftDirectory();
+		if (!dotMinecraftDirectory.isValid()) {
+			Log.crash("Unable to find minecraft directory at: "
+					+ dotMinecraftDirectory.getRoot());
+		}
 		LocalMinecraftInstallation.set(dotMinecraftDirectory);
 		this.versionList = createVersionList();
 		this.options = createOptions();
@@ -64,7 +71,34 @@ public class Application {
 	}
 
 	private Options createOptions() {
-		return new Options(Preferences.userNodeForPackage(Amidst.class));
+		return new Options(Preferences.userNodeForPackage(Amidst.class),
+				new ProfileSelection(dotMinecraftDirectory,
+						createProfileDirectory(), createVersionDirectory()));
+	}
+
+	// TODO: check for correctness
+	private ProfileDirectory createProfileDirectory() {
+		if (parameters.minecraftPath != null) {
+			ProfileDirectory result = new ProfileDirectory(new File(
+					parameters.minecraftPath));
+			if (result.isValid()) {
+				return result;
+			}
+		}
+		return null;
+	}
+
+	// TODO: check for correctness
+	private VersionDirectory createVersionDirectory() {
+		if (parameters.minecraftJar != null) {
+			VersionDirectory result = new VersionDirectory(new File(
+					parameters.minecraftJar),
+					new File(parameters.minecraftJson));
+			if (result.isValid()) {
+				return result;
+			}
+		}
+		return null;
 	}
 
 	private WorldSurroundingsBuilder createWorldSurroundingsBuilder() {
@@ -92,8 +126,8 @@ public class Application {
 	}
 
 	public void run() {
-		if (parameters.minecraftJar != null) {
-			displayMainWindow(parameters.minecraftPath, parameters.minecraftJar);
+		if (options.profileSelection.hasVersionDirectory()) {
+			displayMainWindow();
 		} else {
 			displayVersionSelectWindow();
 		}
@@ -101,27 +135,19 @@ public class Application {
 
 	public void displayVersionSelectWindow() {
 		setVersionSelectWindow(new VersionSelectWindow(this, workerExecutor,
-				options.lastProfile, dotMinecraftDirectory, versionList));
+				dotMinecraftDirectory, versionList, options));
 		setMainWindow(null);
 	}
 
-	public void displayMainWindow(String gameDirectory, String jarFileName) {
-		createLocalMinecraftInterfaceAndDisplayMainWindowLater(gameDirectory,
-				new File(jarFileName));
+	public void displayMainWindow() {
+		createLocalMinecraftInterfaceAndDisplayMainWindowLater();
 	}
 
-	public void displayMainWindow(String gameDirectory, File jarFile) {
-		createLocalMinecraftInterfaceAndDisplayMainWindowLater(gameDirectory,
-				jarFile);
-	}
-
-	private void createLocalMinecraftInterfaceAndDisplayMainWindowLater(
-			final String gameDirectory, final File jarFile) {
+	private void createLocalMinecraftInterfaceAndDisplayMainWindowLater() {
 		workerExecutor.invokeLater(new Worker<IMinecraftInterface>() {
 			@Override
 			public IMinecraftInterface execute() {
-				return createLocalMinecraftInterfaceAndDisplayMainWindow(
-						gameDirectory, jarFile);
+				return createLocalMinecraftInterfaceAndDisplayMainWindow();
 			}
 
 			@Override
@@ -131,10 +157,8 @@ public class Application {
 		});
 	}
 
-	private IMinecraftInterface createLocalMinecraftInterfaceAndDisplayMainWindow(
-			String gameDirectory, File jarFile) {
-		LocalMinecraftInstallation.initProfileDirectory(gameDirectory);
-		return createLocalMinecraftInterface(jarFile);
+	private IMinecraftInterface createLocalMinecraftInterfaceAndDisplayMainWindow() {
+		return createLocalMinecraftInterface();
 	}
 
 	private void doDisplayMainWindow(IMinecraftInterface minecraftInterface) {
@@ -143,10 +167,10 @@ public class Application {
 		setVersionSelectWindow(null);
 	}
 
-	private IMinecraftInterface createLocalMinecraftInterface(File jarFile) {
+	private IMinecraftInterface createLocalMinecraftInterface() {
 		try {
-			return new Minecraft(jarFile, parameters.minecraftJson)
-					.createInterface();
+			return new Minecraft(options.profileSelection.getVersionDirectory()
+					.getJar(), parameters.minecraftJson).createInterface();
 		} catch (MalformedURLException e) {
 			Log.crash(e, "MalformedURLException on Minecraft load.");
 			return null;
