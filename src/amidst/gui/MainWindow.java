@@ -251,8 +251,8 @@ public class MainWindow {
 		menuBar.enableWorldMenu();
 		menuBar.setEnabledForSavePlayerLocationsMenu(worldSurroundings
 				.canSavePlayerLocations());
-		frame.setTitle(getLongVersionString(application.getWorld()
-				.getMinecraftInterface().getVersion().toString()));
+		frame.setTitle(getLongVersionString(worldSurroundings
+				.getRecognisedVersionName()));
 		this.worldSurroundings = worldSurroundings;
 	}
 

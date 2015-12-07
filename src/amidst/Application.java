@@ -169,6 +169,7 @@ public class Application {
 		}
 	}
 
+	@Deprecated
 	public World getWorld() {
 		return world;
 	}

@@ -59,7 +59,7 @@ public class World {
 		this.worldType = worldType;
 		this.generatorOptions = generatorOptions;
 		this.isMultiplayerWorld = isMultiplayerWorld;
-		this.players = players;
+		this.players = Collections.unmodifiableList(players);
 		this.minecraftInterface = minecraftInterface;
 		initMinecraftInterface();
 	}

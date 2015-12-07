@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.jnbt.CompoundTag;
@@ -178,7 +177,7 @@ public class WorldLoader {
 	public World get(IMinecraftInterface minecraftInterface) {
 		if (isLoadedSuccessfully()) {
 			return new World(seed, worldType, generatorOptions, isMultiPlayer,
-					Collections.unmodifiableList(players), minecraftInterface);
+					players, minecraftInterface);
 		} else {
 			return null;
 		}

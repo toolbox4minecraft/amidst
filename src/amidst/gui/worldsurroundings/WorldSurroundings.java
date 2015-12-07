@@ -69,4 +69,9 @@ public class WorldSurroundings {
 	public boolean canSavePlayerLocations() {
 		return world.canSavePlayerLocations();
 	}
+
+	@Deprecated
+	public String getRecognisedVersionName() {
+		return world.getMinecraftInterface().getVersion().toString();
+	}
 }
