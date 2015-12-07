@@ -18,11 +18,15 @@ import amidst.minecraft.Minecraft;
 import amidst.minecraft.MinecraftUtil;
 import amidst.minecraft.world.World;
 import amidst.mojangapi.MojangAPI;
+import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
+import amidst.mojangapi.versionlist.VersionListJson;
 import amidst.utilities.SeedHistoryLogger;
 import amidst.utilities.SkinLoader;
 
 public class Application {
 	private final CommandLineParameters parameters;
+	private final DotMinecraftDirectory dotMinecraftDirectory;
+	private final VersionListJson versionList;
 	private final Options options;
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
@@ -38,7 +42,9 @@ public class Application {
 
 	public Application(CommandLineParameters parameters) {
 		this.parameters = parameters;
-		initLocalMinecraftInstallation();
+		this.dotMinecraftDirectory = createDotMinecraftDirectory();
+		LocalMinecraftInstallation.set(dotMinecraftDirectory);
+		this.versionList = createVersionList();
 		this.options = createOptions();
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
 		this.seedHistoryLogger = createSeedHistoryLogger();
@@ -48,9 +54,13 @@ public class Application {
 		this.updateManager = createUpdateManager();
 	}
 
-	private void initLocalMinecraftInstallation() {
-		LocalMinecraftInstallation.init(parameters.minecraftPath,
+	private DotMinecraftDirectory createDotMinecraftDirectory() {
+		return MojangAPI.createDotMinecraftDirectory(parameters.minecraftPath,
 				parameters.minecraftLibraries);
+	}
+
+	private VersionListJson createVersionList() {
+		return MojangAPI.readRemoteOrLocalVersionList();
 	}
 
 	private Options createOptions() {
@@ -81,11 +91,17 @@ public class Application {
 		return new UpdatePrompt();
 	}
 
+	public void run() {
+		if (parameters.minecraftJar != null) {
+			displayMainWindow(parameters.minecraftPath, parameters.minecraftJar);
+		} else {
+			displayVersionSelectWindow();
+		}
+	}
+
 	public void displayVersionSelectWindow() {
 		setVersionSelectWindow(new VersionSelectWindow(this, workerExecutor,
-				options.lastProfile,
-				LocalMinecraftInstallation.getDotMinecraftDirectory(),
-				MojangAPI.readRemoteOrLocalVersionList()));
+				options.lastProfile, dotMinecraftDirectory, versionList));
 		setMainWindow(null);
 	}
 

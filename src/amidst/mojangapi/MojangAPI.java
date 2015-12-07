@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import amidst.logging.Log;
+import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.dotminecraft.ProfileDirectory;
 import amidst.mojangapi.dotminecraft.SaveDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
@@ -27,48 +28,17 @@ public enum MojangAPI {
 	;
 
 	private static final Gson GSON = new Gson();
-	private static final String REMOTE_VERSION_LIST_URL = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
+	private static final String REMOTE_VERSION_LIST = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
 	private static final URL LOCAL_VERSION_LIST = ResourceLoader
 			.getResourceURL("versions.json");
 
-	// TODO: move somewhere else and in worker
-	@Deprecated
 	public static VersionListJson readRemoteOrLocalVersionList() {
-		Log.i("Beginning latest version list load.");
-		Log.i("Attempting to download remote version list...");
-		VersionListJson remote = null;
-		try {
-			remote = remoteVersionList();
-		} catch (IOException e) {
-			Log.w("Unable to read remote version list.");
-			Log.printTraceStack(e);
-			Log.w("Aborting version list load. URL: " + REMOTE_VERSION_LIST_URL);
-		}
-		if (remote != null) {
-			Log.i("Successfully loaded version list. URL: "
-					+ REMOTE_VERSION_LIST_URL);
-			return remote;
-		}
-		Log.i("Attempting to download local version list...");
-		VersionListJson local = null;
-		try {
-			local = localVersionListFromResource();
-		} catch (IOException e) {
-			Log.w("Unable to read local version list.");
-			Log.printTraceStack(e);
-			Log.w("Aborting version list load. URL: " + LOCAL_VERSION_LIST);
-		}
-		if (local != null) {
-			Log.i("Successfully loaded version list. URL: "
-					+ LOCAL_VERSION_LIST);
-			return local;
-		}
-		Log.w("Failed to load both remote and local version list.");
-		return null;
+		return VersionListReader.readRemoteOrLocalVersionList(
+				REMOTE_VERSION_LIST, LOCAL_VERSION_LIST);
 	}
 
 	public static VersionListJson remoteVersionList() throws IOException {
-		return read(URIUtils.newReader(REMOTE_VERSION_LIST_URL),
+		return read(URIUtils.newReader(REMOTE_VERSION_LIST),
 				VersionListJson.class);
 	}
 
@@ -124,5 +94,20 @@ public enum MojangAPI {
 			result.add(new ProfileDirectory(new File(profile.getGameDir())));
 		}
 		return result;
+	}
+
+	public static DotMinecraftDirectory createDotMinecraftDirectory(
+			String preferedDotMinecraftDirectory,
+			String preferedMinecraftLibraries) {
+		if (preferedMinecraftLibraries != null) {
+			return new DotMinecraftDirectory(
+					DotMinecraftDirectoryFinder
+							.find(preferedDotMinecraftDirectory),
+					new File(preferedMinecraftLibraries));
+		} else {
+			return new DotMinecraftDirectory(
+					DotMinecraftDirectoryFinder
+							.find(preferedDotMinecraftDirectory));
+		}
 	}
 }
