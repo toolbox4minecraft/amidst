@@ -37,9 +37,11 @@ public abstract class CachedWorldIconProducer extends WorldIconProducer {
 
 	private void initCache() {
 		if (cache == null) {
-			cache = createCache();
-			if (cache == null) {
+			List<WorldIcon> result = createCache();
+			if (result == null) {
 				cache = Collections.emptyList();
+			} else {
+				cache = Collections.unmodifiableList(result);
 			}
 		}
 	}

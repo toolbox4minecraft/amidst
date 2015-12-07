@@ -13,7 +13,7 @@ public class PlayerProducer extends CachedWorldIconProducer {
 
 	@Override
 	protected List<WorldIcon> createCache() {
-		LinkedList<WorldIcon> result = new LinkedList<WorldIcon>();
+		List<WorldIcon> result = new LinkedList<WorldIcon>();
 		for (Player player : world.getMovablePlayers()) {
 			result.add(new WorldIcon(player.getCoordinates(), player
 					.getPlayerName(), player.getSkin()));
