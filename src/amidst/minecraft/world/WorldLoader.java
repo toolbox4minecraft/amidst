@@ -177,7 +177,8 @@ public class WorldLoader {
 	public World get(IMinecraftInterface minecraftInterface) {
 		if (isLoadedSuccessfully()) {
 			return new World(seed, worldType, generatorOptions, isMultiPlayer,
-					new MovablePlayerList(players), minecraftInterface);
+					new MovablePlayerList(players, minecraftInterface
+							.getVersion().isSaveEnabled()), minecraftInterface);
 		} else {
 			return null;
 		}

@@ -40,6 +40,7 @@ public class Player {
 		isMoved = true;
 	}
 
+	@Deprecated
 	public void saveLocation() {
 		if (isMoved) {
 			playerMover.movePlayer(this);

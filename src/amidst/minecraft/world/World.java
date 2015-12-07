@@ -145,11 +145,6 @@ public class World {
 	}
 
 	@Deprecated
-	public boolean canSavePlayerLocations() {
-		return minecraftInterface.getVersion().isSaveEnabled();
-	}
-
-	@Deprecated
 	public IMinecraftInterface getMinecraftInterface() {
 		return minecraftInterface;
 	}

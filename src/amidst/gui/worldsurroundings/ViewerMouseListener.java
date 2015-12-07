@@ -103,8 +103,7 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 
 	private void showPlayerMenu(Point mousePosition, Component component,
 			int x, int y) {
-		if (world.canSavePlayerLocations()
-				&& !world.getMovablePlayerList().isEmpty()) {
+		if (world.getMovablePlayerList().canSavePlayerLocations()) {
 			createPlayerMenu(mousePosition).show(component, x, y);
 		}
 	}

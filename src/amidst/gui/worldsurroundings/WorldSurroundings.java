@@ -8,7 +8,6 @@ import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.MovablePlayerList;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.icon.WorldIcon;
 
@@ -69,13 +68,13 @@ public class WorldSurroundings {
 	}
 
 	@Deprecated
-	public boolean canSavePlayerLocations() {
-		return world.canSavePlayerLocations();
+	public String getRecognisedVersionName() {
+		return world.getRecognisedVersionName();
 	}
 
 	@Deprecated
-	public String getRecognisedVersionName() {
-		return world.getRecognisedVersionName();
+	public long getSeed() {
+		return world.getSeed();
 	}
 
 	@Deprecated
@@ -94,12 +93,12 @@ public class WorldSurroundings {
 	}
 
 	@Deprecated
-	public MovablePlayerList getMovablePlayerList() {
-		return world.getMovablePlayerList();
+	public boolean canSavePlayerLocations() {
+		return world.getMovablePlayerList().canSavePlayerLocations();
 	}
 
 	@Deprecated
-	public long getSeed() {
-		return world.getSeed();
+	public void savePlayerLocations() {
+		world.getMovablePlayerList().savePlayerLocations();
 	}
 }

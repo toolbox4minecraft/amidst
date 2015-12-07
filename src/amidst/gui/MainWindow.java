@@ -323,7 +323,7 @@ public class MainWindow {
 	public void savePlayerLocations() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings;
 		if (worldSurroundings != null) {
-			worldSurroundings.getMovablePlayerList().savePlayerLocations();
+			worldSurroundings.savePlayerLocations();
 		}
 	}
 
@@ -354,9 +354,11 @@ public class MainWindow {
 	public void gotoPlayer() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings;
 		if (worldSurroundings != null) {
-			if (!worldSurroundings.getMovablePlayerList().isEmpty()) {
+			List<WorldIcon> playerWorldIcons = worldSurroundings
+					.getPlayerWorldIcons();
+			if (!playerWorldIcons.isEmpty()) {
 				WorldIcon player = askForOptions("Go to", "Select player:",
-						worldSurroundings.getPlayerWorldIcons());
+						playerWorldIcons);
 				if (player != null) {
 					worldSurroundings.centerOn(player.getCoordinates());
 				}
