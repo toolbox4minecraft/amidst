@@ -8,12 +8,15 @@ public class AmidstMenu {
 	private final JMenuBar menuBar;
 	private final JMenu worldMenu;
 	private final JMenuItem savePlayerLocationsMenu;
+	private final JMenuItem reloadPlayerLocationsMenu;
 
 	public AmidstMenu(JMenuBar menuBar, JMenu worldMenu,
-			JMenuItem savePlayerLocationsMenu) {
+			JMenuItem savePlayerLocationsMenu,
+			JMenuItem reloadPlayerLocationsMenu) {
 		this.menuBar = menuBar;
 		this.worldMenu = worldMenu;
 		this.savePlayerLocationsMenu = savePlayerLocationsMenu;
+		this.reloadPlayerLocationsMenu = reloadPlayerLocationsMenu;
 	}
 
 	public JMenuBar getMenuBar() {
@@ -24,7 +27,8 @@ public class AmidstMenu {
 		worldMenu.setEnabled(isEnabled);
 	}
 
-	public void setSavePlayerLocationsMenuEnabled(boolean isEnabled) {
+	public void setPlayerLocationMenusEnabled(boolean isEnabled) {
 		savePlayerLocationsMenu.setEnabled(isEnabled);
+		reloadPlayerLocationsMenu.setEnabled(isEnabled);
 	}
 }

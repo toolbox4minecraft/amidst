@@ -25,6 +25,7 @@ public class AmidstMenuBuilder {
 	private final JMenuBar menuBar;
 	private JMenu worldMenu;
 	private JMenuItem savePlayerLocationsMenu;
+	private JMenuItem reloadPlayerLocationsMenu;
 
 	public AmidstMenuBuilder(Options options, MenuActions actions) {
 		this.options = options;
@@ -33,7 +34,8 @@ public class AmidstMenuBuilder {
 	}
 
 	public AmidstMenu construct() {
-		return new AmidstMenu(menuBar, worldMenu, savePlayerLocationsMenu);
+		return new AmidstMenu(menuBar, worldMenu, savePlayerLocationsMenu,
+				reloadPlayerLocationsMenu);
 	}
 
 	private JMenuBar createMenuBar() {
@@ -50,6 +52,8 @@ public class AmidstMenuBuilder {
 		result.setMnemonic(KeyEvent.VK_F);
 		result.add(create_File_New());
 		savePlayerLocationsMenu = result.add(create_File_SavePlayerLocations());
+		reloadPlayerLocationsMenu = result
+				.add(create_File_ReloadPlayerLocations());
 		result.add(create_File_SwitchProfile());
 		result.add(create_File_Exit());
 		return result;
@@ -110,6 +114,18 @@ public class AmidstMenuBuilder {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				actions.savePlayerLocations();
+			}
+		});
+		return result;
+	}
+
+	private JMenuItem create_File_ReloadPlayerLocations() {
+		JMenuItem result = new JMenuItem("Reload player locations");
+		result.setEnabled(false);
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				actions.reloadPlayerLocations();
 			}
 		});
 		return result;

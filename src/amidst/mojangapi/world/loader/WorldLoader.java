@@ -3,24 +3,18 @@ package amidst.mojangapi.world.loader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.jnbt.CompoundTag;
-import org.jnbt.ListTag;
-import org.jnbt.Tag;
 
 import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.world.MovablePlayerList;
-import amidst.mojangapi.world.Player;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldType;
 
 public class WorldLoader {
-	private static final String DEFAULT_SINGLE_PLAYER_PLAYER_NAME = "Player";
-
 	private PlayerMover playerMover;
+	private PlayerLoader playerLoader;
 
 	private File worldFile;
 	private CompoundTag rootDataTag;
@@ -30,7 +24,6 @@ public class WorldLoader {
 	public WorldType worldType;
 	private String generatorOptions = "";
 	private boolean isMultiPlayer;
-	private List<Player> players = new ArrayList<Player>();
 
 	public WorldLoader(File file) {
 		this.worldFile = getWorldFile(file);
@@ -57,7 +50,7 @@ public class WorldLoader {
 		File[] playerFiles = getPlayerFiles(playersFolder);
 		loadIsMultiPlayer(playersFolder, playerFiles);
 		createPlayerMover();
-		loadPlayers(playerFiles);
+		createPlayerLoader();
 	}
 
 	private void loadRootDataTag() throws IOException, FileNotFoundException {
@@ -80,49 +73,24 @@ public class WorldLoader {
 	}
 
 	private void loadIsMultiPlayer(File playersFolder, File[] playerFiles) {
-		isMultiPlayer = playersFolder.exists() && playerFiles.length > 0;
+		isMultiPlayer = playersFolder.isDirectory() && playerFiles.length > 0;
+		if (isMultiPlayer) {
+			Log.i("Multiplayer world detected.");
+		} else {
+			Log.i("Singleplayer world detected.");
+		}
 	}
 
 	private void createPlayerMover() {
 		playerMover = new PlayerMover(worldFile, isMultiPlayer);
 	}
 
-	private void loadPlayers(File[] playerFiles) throws IOException,
-			FileNotFoundException {
+	private void createPlayerLoader() {
 		if (isMultiPlayer) {
-			Log.i("Multiplayer world detected.");
-			loadPlayersMultiPlayer(playerFiles);
+			playerLoader = new MultiPlayerPlayerLoader(worldFile);
 		} else {
-			Log.i("Singleplayer world detected.");
-			loadPlayerSinglePlayer();
+			playerLoader = new SinglePlayerPlayerLoader(worldFile);
 		}
-	}
-
-	private void loadPlayersMultiPlayer(File[] playerFiles) throws IOException,
-			FileNotFoundException {
-		for (File playerFile : playerFiles) {
-			if (playerFile.isFile()) {
-				addPlayer(getPlayerName(playerFile),
-						NBTUtils.readTagFromFile(playerFile));
-			}
-		}
-	}
-
-	private void loadPlayerSinglePlayer() {
-		addPlayer(DEFAULT_SINGLE_PLAYER_PLAYER_NAME, getSinglePlayerPlayerTag());
-	}
-
-	private void addPlayer(String playerName, CompoundTag tag) {
-		ListTag posTag = (ListTag) getTagPos(tag);
-		List<Tag> posList = posTag.getValue();
-		double x = (Double) posList.get(0).getValue();
-		double y = (Double) posList.get(1).getValue();
-		double z = (Double) posList.get(2).getValue();
-		players.add(new Player(playerName, x, y, z));
-	}
-
-	private String getPlayerName(File playerFile) {
-		return playerFile.getName().split("\\.")[0];
 	}
 
 	private File getPlayersFolder() {
@@ -161,15 +129,6 @@ public class WorldLoader {
 				.get(NBTTagKeys.TAG_KEY_GENERATOR_OPTIONS).getValue();
 	}
 
-	private CompoundTag getSinglePlayerPlayerTag() {
-		return (CompoundTag) rootDataTag.getValue().get(
-				NBTTagKeys.TAG_KEY_PLAYER);
-	}
-
-	private Tag getTagPos(CompoundTag tag) {
-		return tag.getValue().get(NBTTagKeys.TAG_KEY_POS);
-	}
-
 	public boolean isLoadedSuccessfully() {
 		return exception == null;
 	}
@@ -191,9 +150,9 @@ public class WorldLoader {
 	private MovablePlayerList createMovablePlayerList(
 			MinecraftInterface minecraftInterface) {
 		if (minecraftInterface.getRecognisedVersion().isSaveEnabled()) {
-			return new MovablePlayerList(players, playerMover);
+			return new MovablePlayerList(playerLoader, playerMover);
 		} else {
-			return new MovablePlayerList(players);
+			return new MovablePlayerList(playerLoader);
 		}
 	}
 }

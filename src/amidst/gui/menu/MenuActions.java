@@ -53,6 +53,13 @@ public class MenuActions {
 		}
 	}
 
+	public void reloadPlayerLocations() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
+		if (worldSurroundings != null) {
+			worldSurroundings.reloadPlayerLocations();
+		}
+	}
+
 	public void switchProfile() {
 		application.displayVersionSelectWindow();
 	}

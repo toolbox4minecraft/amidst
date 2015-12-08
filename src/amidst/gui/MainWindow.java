@@ -151,7 +151,7 @@ public class MainWindow {
 		seedHistoryLogger.log(worldSurroundings.getSeed());
 		contentPane.add(worldSurroundings.getComponent(), BorderLayout.CENTER);
 		menuBar.setWorldMenuEnabled(true);
-		menuBar.setSavePlayerLocationsMenuEnabled(worldSurroundings
+		menuBar.setPlayerLocationMenusEnabled(worldSurroundings
 				.canSavePlayerLocations());
 		frame.validate();
 		worldSurroundings.loadPlayerSkins(skinLoader);
@@ -170,7 +170,7 @@ public class MainWindow {
 
 	private void clearWorldSurroundingsFromGui() {
 		menuBar.setWorldMenuEnabled(false);
-		menuBar.setSavePlayerLocationsMenuEnabled(false);
+		menuBar.setPlayerLocationMenusEnabled(false);
 	}
 
 	public void dispose() {
