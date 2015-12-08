@@ -5,6 +5,20 @@ import java.awt.Point;
 import amidst.utilities.CoordinateUtils;
 
 public class CoordinatesInWorld {
+	public static CoordinatesInWorld fromString(String coordinates) {
+		String[] parsedCoordinates = coordinates.replaceAll(" ", "").split(",");
+		if (parsedCoordinates.length != 2) {
+			return null;
+		}
+		try {
+			return CoordinatesInWorld.from(
+					Long.parseLong(parsedCoordinates[0]),
+					Long.parseLong(parsedCoordinates[1]));
+		} catch (NumberFormatException e) {
+			return null;
+		}
+	}
+
 	public static CoordinatesInWorld from(long xInWorld, long yInWorld) {
 		return new CoordinatesInWorld(xInWorld, yInWorld);
 	}

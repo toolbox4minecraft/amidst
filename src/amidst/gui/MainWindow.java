@@ -170,13 +170,6 @@ public class MainWindow {
 		return seedPrompt.askForSeed(frame);
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T> T askForOptions(String title, String message, List<T> choices) {
-		Object[] choicesArray = choices.toArray();
-		return (T) JOptionPane.showInputDialog(frame, message, title,
-				JOptionPane.PLAIN_MESSAGE, null, choicesArray, choicesArray[0]);
-	}
-
 	public File askForMinecraftWorldFile() {
 		return getSelectedFileOrNull(createMinecraftWorldFileChooser());
 	}
@@ -239,11 +232,18 @@ public class MainWindow {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T> T askForOptions(String title, String message, List<T> choices) {
+		Object[] choicesArray = choices.toArray();
+		return (T) JOptionPane.showInputDialog(frame, message, title,
+				JOptionPane.PLAIN_MESSAGE, null, choicesArray, choicesArray[0]);
+	}
+
 	public CoordinatesInWorld askForCoordinates() {
 		String coordinates = askForString("Go To",
 				"Enter coordinates: (Ex. 123,456)");
 		if (coordinates != null) {
-			return parseCoordinates(coordinates);
+			return CoordinatesInWorld.fromString(coordinates);
 		} else {
 			return null;
 		}
@@ -252,20 +252,6 @@ public class MainWindow {
 	private String askForString(String title, String message) {
 		return JOptionPane.showInputDialog(frame, message, title,
 				JOptionPane.QUESTION_MESSAGE);
-	}
-
-	private CoordinatesInWorld parseCoordinates(String coordinates) {
-		String[] parsedCoordinates = coordinates.replaceAll(" ", "").split(",");
-		if (parsedCoordinates.length != 2) {
-			return null;
-		}
-		try {
-			return CoordinatesInWorld.from(
-					Long.parseLong(parsedCoordinates[0]),
-					Long.parseLong(parsedCoordinates[1]));
-		} catch (NumberFormatException e) {
-			return null;
-		}
 	}
 
 	public void reloadPlayerLayer() {
