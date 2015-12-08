@@ -81,14 +81,14 @@ public class MojangApi {
 	}
 
 	public World createRandomWorld(WorldType worldType) {
-		return Worlds.random(worldType, minecraftInterface);
+		return Worlds.random(minecraftInterface, worldType);
 	}
 
 	public World createWorldFromSeed(String seedText, WorldType worldType) {
-		return Worlds.fromSeed(seedText, worldType, minecraftInterface);
+		return Worlds.fromSeed(minecraftInterface, seedText, worldType);
 	}
 
 	public World createWorldFromFile(File worldFile) throws Exception {
-		return Worlds.fromFile(worldFile, minecraftInterface);
+		return Worlds.fromFile(minecraftInterface, worldFile);
 	}
 }

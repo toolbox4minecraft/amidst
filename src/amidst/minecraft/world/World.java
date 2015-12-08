@@ -18,20 +18,18 @@ import amidst.minecraft.world.oracle.BiomeDataOracle;
 import amidst.minecraft.world.oracle.SlimeChunkOracle;
 
 public class World {
-	private final BiomeDataOracle biomeDataOracle;
-	private final SlimeChunkOracle slimeChunkOracle = new SlimeChunkOracle(this);
-	private final WorldIconProducer oceanMonumentProducer = new OceanMonumentProducer(
-			this);
-	private final WorldIconProducer templeProducer = new TempleProducer(this);
-	private final WorldIconProducer villageProducer = new VillageProducer(this);
-	private final WorldIconProducer netherFortressProducer = new NetherFortressProducer(
-			this);
-	private final CachedWorldIconProducer playerProducer = new PlayerProducer(
-			this);
-	private final CachedWorldIconProducer spawnProducer = new SpawnProducer(
-			this);
-	private final CachedWorldIconProducer strongholdProducer = new StrongholdProducer(
-			this);
+	public static World simple(IMinecraftInterface minecraftInterface,
+			long seed, String seedText, WorldType worldType) {
+		return new World(minecraftInterface, seed, seedText, worldType, "",
+				false, MovablePlayerList.empty());
+	}
+
+	public static World file(IMinecraftInterface minecraftInterface, long seed,
+			WorldType worldType, String generatorOptions,
+			boolean isMultiplayerWorld, MovablePlayerList movablePlayerList) {
+		return new World(minecraftInterface, seed, null, worldType,
+				generatorOptions, isMultiplayerWorld, movablePlayerList);
+	}
 
 	private final long seed;
 	private final String seedText;
@@ -41,24 +39,21 @@ public class World {
 	private final MovablePlayerList movablePlayerList;
 	private final IMinecraftInterface minecraftInterface;
 
-	public World(long seed, String seedText, WorldType worldType,
-			IMinecraftInterface minecraftInterface) {
+	private final BiomeDataOracle biomeDataOracle;
+	private final SlimeChunkOracle slimeChunkOracle;
+	private final WorldIconProducer oceanMonumentProducer;
+	private final WorldIconProducer templeProducer;
+	private final WorldIconProducer villageProducer;
+	private final WorldIconProducer netherFortressProducer;
+	private final CachedWorldIconProducer playerProducer;
+	private final CachedWorldIconProducer spawnProducer;
+	private final CachedWorldIconProducer strongholdProducer;
+
+	private World(IMinecraftInterface minecraftInterface, long seed,
+			String seedText, WorldType worldType, String generatorOptions,
+			boolean isMultiplayerWorld, MovablePlayerList movablePlayerList) {
 		this.seed = seed;
 		this.seedText = seedText;
-		this.worldType = worldType;
-		this.generatorOptions = "";
-		this.isMultiplayerWorld = false;
-		this.movablePlayerList = MovablePlayerList.empty();
-		this.minecraftInterface = minecraftInterface;
-		initMinecraftInterface();
-		this.biomeDataOracle = new BiomeDataOracle(minecraftInterface);
-	}
-
-	public World(long seed, WorldType worldType, String generatorOptions,
-			boolean isMultiplayerWorld, MovablePlayerList movablePlayerList,
-			IMinecraftInterface minecraftInterface) {
-		this.seed = seed;
-		this.seedText = null;
 		this.worldType = worldType;
 		this.generatorOptions = generatorOptions;
 		this.isMultiplayerWorld = isMultiplayerWorld;
@@ -66,6 +61,14 @@ public class World {
 		this.minecraftInterface = minecraftInterface;
 		initMinecraftInterface();
 		this.biomeDataOracle = new BiomeDataOracle(minecraftInterface);
+		this.slimeChunkOracle = new SlimeChunkOracle(this);
+		this.oceanMonumentProducer = new OceanMonumentProducer(this);
+		this.templeProducer = new TempleProducer(this);
+		this.villageProducer = new VillageProducer(this);
+		this.netherFortressProducer = new NetherFortressProducer(this);
+		this.playerProducer = new PlayerProducer(this);
+		this.spawnProducer = new SpawnProducer(this);
+		this.strongholdProducer = new StrongholdProducer(this);
 	}
 
 	private void initMinecraftInterface() {

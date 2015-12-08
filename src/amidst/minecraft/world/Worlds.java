@@ -10,27 +10,27 @@ import amidst.utilities.Google;
 public enum Worlds {
 	;
 
-	public static World random(WorldType worldType,
-			IMinecraftInterface minecraftInterface) {
+	public static World random(IMinecraftInterface minecraftInterface,
+			WorldType worldType) {
 		// TODO: no Google.track(), because this is only called with a random
 		// seed?
 		long seed = new Random().nextLong();
-		return new World(seed, null, worldType, minecraftInterface);
+		return World.simple(minecraftInterface, seed, null, worldType);
 	}
 
-	public static World fromSeed(String seedText, WorldType worldType,
-			IMinecraftInterface minecraftInterface) {
+	public static World fromSeed(IMinecraftInterface minecraftInterface,
+			String seedText, WorldType worldType) {
 		long seed = getSeedFromString(seedText);
 		Google.track("seed/" + seedText + "/" + seed);
 		if (isNumericSeed(seedText, seed)) {
-			return new World(seed, null, worldType, minecraftInterface);
+			return World.simple(minecraftInterface, seed, null, worldType);
 		} else {
-			return new World(seed, seedText, worldType, minecraftInterface);
+			return World.simple(minecraftInterface, seed, seedText, worldType);
 		}
 	}
 
-	public static World fromFile(File worldFile,
-			IMinecraftInterface minecraftInterface) throws Exception {
+	public static World fromFile(IMinecraftInterface minecraftInterface,
+			File worldFile) throws Exception {
 		WorldLoader worldLoader = new WorldLoader(worldFile);
 		if (worldLoader.isLoadedSuccessfully()) {
 			World world = worldLoader.get(minecraftInterface);

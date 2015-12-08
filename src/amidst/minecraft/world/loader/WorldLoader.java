@@ -181,9 +181,9 @@ public class WorldLoader {
 
 	public World get(IMinecraftInterface minecraftInterface) {
 		if (isLoadedSuccessfully()) {
-			return new World(seed, worldType, generatorOptions, isMultiPlayer,
-					createMovablePlayerList(minecraftInterface),
-					minecraftInterface);
+			return World.file(minecraftInterface, seed, worldType,
+					generatorOptions, isMultiPlayer,
+					createMovablePlayerList(minecraftInterface));
 		} else {
 			return null;
 		}
