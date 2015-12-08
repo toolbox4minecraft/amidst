@@ -6,8 +6,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -19,67 +21,6 @@ import net.miginfocom.swing.MigLayout;
 import amidst.preferences.StringPreference;
 
 public class VersionSelectPanel {
-	private class Listeners implements MouseListener, KeyListener {
-		@Override
-		public void keyTyped(KeyEvent e) {
-		}
-
-		@Override
-		public void keyPressed(KeyEvent e) {
-			if (isLoading) {
-				return;
-			}
-			int key = e.getKeyCode();
-			if (key == KeyEvent.VK_DOWN) {
-				select(selectedIndex + 1);
-			} else if (key == KeyEvent.VK_UP) {
-				select(selectedIndex - 1);
-			} else if (key == KeyEvent.VK_ENTER) {
-				loadSelectedProfile();
-			}
-		}
-
-		@Override
-		public void keyReleased(KeyEvent e) {
-		}
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			if (isLoading) {
-				return;
-			}
-			Point mouse = e.getPoint();
-			select(getSelectedIndexFromYCoordinate(mouse));
-			if (isLoadButtonClicked(mouse)) {
-				loadSelectedProfile();
-			}
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-		}
-
-		private int getSelectedIndexFromYCoordinate(Point mouse) {
-			return mouse.y / 40;
-		}
-
-		private boolean isLoadButtonClicked(Point mouse) {
-			return mouse.x > component.getWidth() - 40;
-		}
-	}
-
 	@SuppressWarnings("serial")
 	private class Component extends JPanel {
 		private static final int INVALID_EMPTY_MESSAGE_WIDTH = -1;
@@ -143,33 +84,76 @@ public class VersionSelectPanel {
 			30);
 	private static final int INVALID_INDEX = -1;
 
-	private Listeners listeners = new Listeners();
-	private Component component;
-	private List<VersionComponent> versionComponents = new ArrayList<VersionComponent>();
+	private final StringPreference lastProfilePreference;
+	private final Component component;
+	private final List<VersionComponent> versionComponents = new ArrayList<VersionComponent>();
 
 	private VersionComponent selected = null;
 	private int selectedIndex = INVALID_INDEX;
 	private String emptyMessage;
 	private boolean isLoading = false;
 
-	private final StringPreference lastProfilePreference;
-
 	public VersionSelectPanel(StringPreference lastProfilePreference,
 			String emptyMessage) {
 		this.lastProfilePreference = lastProfilePreference;
 		this.emptyMessage = emptyMessage;
-		initComponent();
+		this.component = createComponent();
 	}
 
-	private void initComponent() {
-		component = new Component();
+	private Component createComponent() {
+		Component component = new Component();
 		component.setLayout(new MigLayout("ins 0", "", "[]0[]"));
-		component.addMouseListener(listeners);
+		component.addMouseListener(createMouseListener());
+		return component;
 	}
 
-	public void addVersion(VersionComponent version) {
-		component.add(version.getComponent(), "growx, pushx, wrap");
-		versionComponents.add(version);
+	private MouseListener createMouseListener() {
+		return new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (isLoading) {
+					return;
+				}
+				doMousePressed(e.getPoint());
+			}
+		};
+	}
+
+	public KeyListener createKeyListener() {
+		return new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (isLoading) {
+					return;
+				}
+				doKeyPressed(e.getKeyCode());
+			}
+		};
+	}
+
+	private void doKeyPressed(int key) {
+		if (key == KeyEvent.VK_DOWN) {
+			select(selectedIndex + 1);
+		} else if (key == KeyEvent.VK_UP) {
+			select(selectedIndex - 1);
+		} else if (key == KeyEvent.VK_ENTER) {
+			loadSelectedProfile();
+		}
+	}
+
+	private void doMousePressed(Point mousePosition) {
+		select(getSelectedIndexFromYCoordinate(mousePosition));
+		if (isLoadButtonClicked(mousePosition)) {
+			loadSelectedProfile();
+		}
+	}
+
+	private int getSelectedIndexFromYCoordinate(Point mousePosition) {
+		return mousePosition.y / 40;
+	}
+
+	private boolean isLoadButtonClicked(Point mousePosition) {
+		return mousePosition.x > component.getWidth() - 40;
 	}
 
 	public void select(String fullVersionName) {
@@ -228,13 +212,13 @@ public class VersionSelectPanel {
 		lastProfilePreference.set(selected.getFullVersionName());
 	}
 
-	public void setEmptyMessage(String emptyMessage) {
-		this.emptyMessage = emptyMessage;
+	public void addVersion(VersionComponent version) {
+		component.add(version.getComponent(), "growx, pushx, wrap");
+		versionComponents.add(version);
 	}
 
-	@Deprecated
-	public KeyListener getKeyListener() {
-		return listeners;
+	public void setEmptyMessage(String emptyMessage) {
+		this.emptyMessage = emptyMessage;
 	}
 
 	public JPanel getComponent() {

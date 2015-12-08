@@ -48,12 +48,11 @@ public class VersionSelectWindow {
 		frame.add(new JScrollPane(versionSelectPanel.getComponent()),
 				"grow, push, h 80::");
 		frame.pack();
-		frame.addKeyListener(versionSelectPanel.getKeyListener());
+		frame.addKeyListener(versionSelectPanel.createKeyListener());
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				frame.dispose();
-				System.exit(0);
+				application.exitGracefully();
 			}
 		});
 		frame.setLocation(200, 200);
