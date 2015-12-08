@@ -109,10 +109,10 @@ public class WorldSurroundings {
 		world.getMovablePlayerList().save();
 	}
 
-	public void reloadPlayerLocations() {
+	public void reloadPlayerLocations(SkinLoader skinLoader) {
 		world.getMovablePlayerList().reload();
-		world.reloadPlayerWorldIcons();
-		layerReloader.reloadPlayerLayer();
+		reloadPlayerLayer();
+		loadPlayerSkins(skinLoader);
 	}
 
 	public void loadPlayerSkins(SkinLoader skinLoader) {

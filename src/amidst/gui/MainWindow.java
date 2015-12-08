@@ -96,7 +96,7 @@ public class MainWindow {
 
 	private MenuActions createMenuActions() {
 		return new MenuActions(application, mojangApi, this, worldSurroundings,
-				updatePrompt, options.biomeColorProfileSelection);
+				skinLoader, updatePrompt, options.biomeColorProfileSelection);
 	}
 
 	private AmidstMenu createMenuBar() {

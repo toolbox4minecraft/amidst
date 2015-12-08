@@ -21,6 +21,7 @@ import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BiomeColorProfileSelection;
+import amidst.threading.SkinLoader;
 
 public class MenuActions {
 	private static final String ABOUT_MESSAGE = "Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
@@ -30,18 +31,20 @@ public class MenuActions {
 	private final MojangApi mojangApi;
 	private final MainWindow mainWindow;
 	private final AtomicReference<WorldSurroundings> worldSurroundings;
+	private final SkinLoader skinLoader;
 	private final UpdatePrompt updatePrompt;
 	private final BiomeColorProfileSelection biomeColorProfileSelection;
 
 	public MenuActions(Application application, MojangApi mojangApi,
 			MainWindow mainWindow,
 			AtomicReference<WorldSurroundings> worldSurroundings,
-			UpdatePrompt updatePrompt,
+			SkinLoader skinLoader, UpdatePrompt updatePrompt,
 			BiomeColorProfileSelection biomeColorProfileSelection) {
 		this.application = application;
 		this.mojangApi = mojangApi;
 		this.mainWindow = mainWindow;
 		this.worldSurroundings = worldSurroundings;
+		this.skinLoader = skinLoader;
 		this.updatePrompt = updatePrompt;
 		this.biomeColorProfileSelection = biomeColorProfileSelection;
 	}
@@ -56,7 +59,7 @@ public class MenuActions {
 	public void reloadPlayerLocations() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
-			worldSurroundings.reloadPlayerLocations();
+			worldSurroundings.reloadPlayerLocations(skinLoader);
 		}
 	}
 
