@@ -3,19 +3,19 @@ package amidst.preferences;
 import java.util.prefs.Preferences;
 
 public class StringPreference {
-	private Preferences preferences;
-	private String key;
-	private String value;
+	private final Preferences preferences;
+	private final String key;
+	private final String defaultValue;
 
 	public StringPreference(Preferences preferences, String key,
 			String defaultValue) {
 		this.preferences = preferences;
 		this.key = key;
-		value = preferences.get(key, defaultValue);
+		this.defaultValue = defaultValue;
 	}
 
 	public String get() {
-		return value;
+		return preferences.get(key, defaultValue);
 	}
 
 	public void set(String value) {

@@ -204,12 +204,11 @@ public class VersionSelectPanel {
 	}
 
 	private void loadSelectedProfile() {
-		if (selected == null || !selected.isReadyToLoad()) {
-			return;
+		if (selected != null && selected.isReadyToLoad()) {
+			lastProfilePreference.set(selected.getFullVersionName());
+			isLoading = true;
+			selected.load();
 		}
-		isLoading = true;
-		selected.load();
-		lastProfilePreference.set(selected.getFullVersionName());
 	}
 
 	public void addVersion(VersionComponent version) {

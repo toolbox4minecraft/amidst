@@ -50,6 +50,7 @@ public class AmidstMenuBuilder {
 		result.setMnemonic(KeyEvent.VK_F);
 		result.add(create_File_New());
 		savePlayerLocationsMenu = result.add(create_File_SavePlayerLocations());
+		result.add(create_File_SwitchProfile());
 		result.add(create_File_Exit());
 		return result;
 	}
@@ -114,13 +115,12 @@ public class AmidstMenuBuilder {
 		return result;
 	}
 
-	// TODO: this is currently broken
-	private JMenuItem create_File_SwitchVersion() {
-		JMenuItem result = new JMenuItem("Switch version");
+	private JMenuItem create_File_SwitchProfile() {
+		JMenuItem result = new JMenuItem("Switch profile");
 		result.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				actions.switchVersion();
+				actions.switchProfile();
 			}
 		});
 		return result;

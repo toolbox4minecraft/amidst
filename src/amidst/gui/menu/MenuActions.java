@@ -53,7 +53,7 @@ public class MenuActions {
 		}
 	}
 
-	public void switchVersion() {
+	public void switchProfile() {
 		application.displayVersionSelectWindow();
 	}
 

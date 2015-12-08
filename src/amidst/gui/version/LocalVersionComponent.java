@@ -79,20 +79,18 @@ public class LocalVersionComponent extends VersionComponent {
 
 	@Override
 	public void doLoad() {
-		if (isReadyToLoad()) {
-			workerExecutor.invokeLater(new Worker<Void>() {
-				@Override
-				public Void execute() {
-					mojangApi.set(profileDirectory, versionDirectory);
-					return null;
-				}
+		workerExecutor.invokeLater(new Worker<Void>() {
+			@Override
+			public Void execute() {
+				mojangApi.set(profileDirectory, versionDirectory);
+				return null;
+			}
 
-				@Override
-				public void finished(Void result) {
-					application.displayMainWindow();
-				}
-			});
-		}
+			@Override
+			public void finished(Void result) {
+				application.displayMainWindow();
+			}
+		});
 	}
 
 	@Override

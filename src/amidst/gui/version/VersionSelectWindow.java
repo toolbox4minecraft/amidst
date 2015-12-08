@@ -94,12 +94,16 @@ public class VersionSelectWindow {
 	}
 
 	private void loadVersions(LauncherProfilesJson launcherProfile) {
+		createVersionComponents(launcherProfile);
+		restoreSelection();
+		frame.pack();
+	}
+
+	private void createVersionComponents(LauncherProfilesJson launcherProfile) {
 		for (LauncherProfileJson profile : launcherProfile.getProfiles()) {
 			versionSelectPanel.addVersion(new LocalVersionComponent(
 					application, workerExecutor, mojangApi, profile));
 		}
-		restoreSelection();
-		frame.pack();
 	}
 
 	private void restoreSelection() {
