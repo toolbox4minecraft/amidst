@@ -37,8 +37,13 @@ public class WorldSurroundings {
 		return viewer.getComponent();
 	}
 
-	public LayerReloader getLayerReloader() {
-		return layerReloader;
+	public void reloadBiomeLayer() {
+		layerReloader.reloadBiomeLayer();
+	}
+
+	public void reloadPlayerLayer() {
+		world.reloadPlayerWorldIcons();
+		layerReloader.reloadPlayerLayer();
 	}
 
 	public void dispose() {

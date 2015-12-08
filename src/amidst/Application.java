@@ -29,8 +29,6 @@ public class Application {
 	private VersionSelectWindow versionSelectWindow;
 	private MainWindow mainWindow;
 
-	private World world;
-
 	public Application(CommandLineParameters parameters) {
 		this.parameters = parameters;
 		this.options = createOptions();
@@ -159,7 +157,6 @@ public class Application {
 	}
 
 	public void setWorld(World world) {
-		this.world = world;
 		if (world != null) {
 			seedHistoryLogger.log(world.getSeed());
 			mainWindow.setWorldSurroundings(worldSurroundingsBuilder
@@ -191,9 +188,6 @@ public class Application {
 	}
 
 	public void finishedLoadingPlayerSkin() {
-		if (world != null) {
-			world.reloadPlayerWorldIcons();
-		}
 		if (mainWindow != null) {
 			mainWindow.reloadPlayerLayer();
 		}

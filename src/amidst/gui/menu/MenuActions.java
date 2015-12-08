@@ -159,7 +159,7 @@ public class MenuActions {
 		biomeColorProfileSelection.setProfile(profile);
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
-			worldSurroundings.getLayerReloader().reloadBiomeLayer();
+			worldSurroundings.reloadBiomeLayer();
 		}
 	}
 

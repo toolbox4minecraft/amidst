@@ -257,7 +257,7 @@ public class MainWindow {
 	public void reloadPlayerLayer() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
-			worldSurroundings.getLayerReloader().reloadPlayerLayer();
+			worldSurroundings.reloadPlayerLayer();
 		}
 	}
 
