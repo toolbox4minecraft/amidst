@@ -39,7 +39,7 @@ public class TempleProducer extends StructureProducer {
 	@Override
 	protected List<Biome> getValidBiomesAtMiddleOfChunk() {
 		// @formatter:off
-		RecognisedVersion versionInfo = world.getMinecraftInterface().getVersion();
+		RecognisedVersion versionInfo = world.getRecognisedVersion();
 		if (versionInfo.isAtLeast(RecognisedVersion.V1_4_2)) {
 			return Arrays.asList(
 					Biome.desert,

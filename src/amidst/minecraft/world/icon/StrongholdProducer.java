@@ -126,7 +126,7 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 	}
 
 	private List<Biome> getValidBiomes() {
-		RecognisedVersion versionInfo = world.getMinecraftInterface().getVersion();
+		RecognisedVersion versionInfo = world.getRecognisedVersion();
 		if (versionInfo.isAtLeast(RecognisedVersion.V13w36a)) {
 			return getValidBiomesV13w36a();
 		} else if (versionInfo.isAtLeast(RecognisedVersion.V12w03a)) {

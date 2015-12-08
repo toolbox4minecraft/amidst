@@ -3,6 +3,7 @@ package amidst.minecraft.world;
 import java.util.List;
 
 import amidst.minecraft.IMinecraftInterface;
+import amidst.minecraft.RecognisedVersion;
 import amidst.minecraft.world.icon.CachedWorldIconProducer;
 import amidst.minecraft.world.icon.NetherFortressProducer;
 import amidst.minecraft.world.icon.OceanMonumentProducer;
@@ -17,7 +18,7 @@ import amidst.minecraft.world.oracle.BiomeDataOracle;
 import amidst.minecraft.world.oracle.SlimeChunkOracle;
 
 public class World {
-	private final BiomeDataOracle biomeDataOracle = new BiomeDataOracle(this);
+	private final BiomeDataOracle biomeDataOracle;
 	private final SlimeChunkOracle slimeChunkOracle = new SlimeChunkOracle(this);
 	private final WorldIconProducer oceanMonumentProducer = new OceanMonumentProducer(
 			this);
@@ -50,6 +51,7 @@ public class World {
 		this.movablePlayerList = MovablePlayerList.empty();
 		this.minecraftInterface = minecraftInterface;
 		initMinecraftInterface();
+		this.biomeDataOracle = new BiomeDataOracle(minecraftInterface);
 	}
 
 	public World(long seed, WorldType worldType, String generatorOptions,
@@ -63,6 +65,7 @@ public class World {
 		this.movablePlayerList = movablePlayerList;
 		this.minecraftInterface = minecraftInterface;
 		initMinecraftInterface();
+		this.biomeDataOracle = new BiomeDataOracle(minecraftInterface);
 	}
 
 	private void initMinecraftInterface() {
@@ -146,12 +149,7 @@ public class World {
 		playerProducer.resetCache();
 	}
 
-	@Deprecated
-	public IMinecraftInterface getMinecraftInterface() {
-		return minecraftInterface;
-	}
-
-	public String getRecognisedVersionName() {
-		return minecraftInterface.getVersion().getName();
+	public RecognisedVersion getRecognisedVersion() {
+		return minecraftInterface.getVersion();
 	}
 }

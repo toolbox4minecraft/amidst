@@ -85,7 +85,7 @@ public class WorldSurroundings {
 	}
 
 	public String getRecognisedVersionName() {
-		return world.getRecognisedVersionName();
+		return world.getRecognisedVersion().getName();
 	}
 
 	public long getSeed() {

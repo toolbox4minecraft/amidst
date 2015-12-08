@@ -6,15 +6,15 @@ import java.util.Random;
 
 import amidst.logging.Log;
 import amidst.minecraft.Biome;
+import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
-import amidst.minecraft.world.World;
 
 public class BiomeDataOracle {
-	private final World world;
+	private final IMinecraftInterface minecraftInterface;
 
-	public BiomeDataOracle(World world) {
-		this.world = world;
+	public BiomeDataOracle(IMinecraftInterface minecraftInterface) {
+		this.minecraftInterface = minecraftInterface;
 	}
 
 	public void populateArrayUsingQuarterResolution(CoordinatesInWorld corner,
@@ -124,7 +124,7 @@ public class BiomeDataOracle {
 	@Deprecated
 	private synchronized int[] getBiomeData(int x, int y, int width,
 			int height, boolean useQuarterResolution) {
-		return world.getMinecraftInterface().getBiomeData(x, y, width, height,
+		return minecraftInterface.getBiomeData(x, y, width, height,
 				useQuarterResolution);
 	}
 }
