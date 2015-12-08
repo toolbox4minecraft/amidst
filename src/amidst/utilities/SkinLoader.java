@@ -9,7 +9,6 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
-import amidst.Application;
 import amidst.Worker;
 import amidst.WorkerExecutor;
 import amidst.logging.Log;
@@ -17,21 +16,20 @@ import amidst.minecraft.world.MovablePlayerList;
 import amidst.minecraft.world.Player;
 
 public class SkinLoader {
-	private final Application application;
 	private final WorkerExecutor workerExecutor;
 
-	public SkinLoader(Application application, WorkerExecutor workerExecutor) {
-		this.application = application;
+	public SkinLoader(WorkerExecutor workerExecutor) {
 		this.workerExecutor = workerExecutor;
 	}
 
-	public void loadSkins(MovablePlayerList movablePlayerList) {
+	public void loadSkins(MovablePlayerList movablePlayerList,
+			Runnable onFinished) {
 		for (Player player : movablePlayerList) {
-			loadSkinLater(player);
+			loadSkinLater(player, onFinished);
 		}
 	}
 
-	private void loadSkinLater(final Player player) {
+	private void loadSkinLater(final Player player, final Runnable onFinished) {
 		workerExecutor.invokeLater(new Worker<BufferedImage>() {
 			@Override
 			public BufferedImage execute() {
@@ -40,15 +38,16 @@ public class SkinLoader {
 
 			@Override
 			public void finished(BufferedImage image) {
-				finishedLoadingPlayerSkin(player, image);
+				finishedLoading(player, image, onFinished);
 			}
 		});
 	}
 
-	private void finishedLoadingPlayerSkin(Player player, BufferedImage image) {
+	private void finishedLoading(Player player, BufferedImage image,
+			Runnable onFinished) {
 		if (image != null) {
 			player.setSkin(image);
-			application.finishedLoadingPlayerSkin();
+			onFinished.run();
 		}
 	}
 

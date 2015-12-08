@@ -10,6 +10,7 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.icon.WorldIcon;
+import amidst.utilities.SkinLoader;
 
 public class WorldSurroundings {
 	private final World world;
@@ -19,6 +20,7 @@ public class WorldSurroundings {
 	private final Viewer viewer;
 	private final LayerReloader layerReloader;
 	private final FragmentManager fragmentManager;
+	private final Runnable onFinished;
 
 	public WorldSurroundings(World world, FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
@@ -31,6 +33,16 @@ public class WorldSurroundings {
 		this.viewer = viewer;
 		this.layerReloader = layerReloader;
 		this.fragmentManager = fragmentManager;
+		this.onFinished = createOnFinished();
+	}
+
+	private Runnable createOnFinished() {
+		return new Runnable() {
+			@Override
+			public void run() {
+				reloadPlayerLayer();
+			}
+		};
 	}
 
 	public Component getComponent() {
@@ -99,5 +111,9 @@ public class WorldSurroundings {
 
 	public void savePlayerLocations() {
 		world.getMovablePlayerList().savePlayerLocations();
+	}
+
+	public void loadPlayerSkins(SkinLoader skinLoader) {
+		skinLoader.loadSkins(world.getMovablePlayerList(), onFinished);
 	}
 }

@@ -25,9 +25,13 @@ import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.MenuActions;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.gui.worldsurroundings.WorldSurroundings;
+import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.minecraft.world.World;
 import amidst.minecraft.world.WorldType;
 import amidst.mojangapi.MojangApi;
+import amidst.utilities.SeedHistoryLogger;
+import amidst.utilities.SkinLoader;
 
 public class MainWindow {
 	private final SeedPrompt seedPrompt = new SeedPrompt();
@@ -35,6 +39,9 @@ public class MainWindow {
 	private final Application application;
 	private final Options options;
 	private final MojangApi mojangApi;
+	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
+	private final SeedHistoryLogger seedHistoryLogger;
+	private final SkinLoader skinLoader;
 
 	private final JFrame frame;
 	private final Container contentPane;
@@ -44,10 +51,15 @@ public class MainWindow {
 	private final AtomicReference<WorldSurroundings> worldSurroundings = new AtomicReference<WorldSurroundings>();
 
 	public MainWindow(Application application, Options options,
-			MojangApi mojangApi) {
+			MojangApi mojangApi,
+			WorldSurroundingsBuilder worldSurroundingsBuilder,
+			SeedHistoryLogger seedHistoryLogger, SkinLoader skinLoader) {
 		this.application = application;
 		this.options = options;
 		this.mojangApi = mojangApi;
+		this.worldSurroundingsBuilder = worldSurroundingsBuilder;
+		this.seedHistoryLogger = seedHistoryLogger;
+		this.skinLoader = skinLoader;
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
 		this.actions = createMenuActions();
@@ -115,6 +127,10 @@ public class MainWindow {
 		application.checkForUpdatesSilently();
 	}
 
+	public void setWorld(World world) {
+		setWorldSurroundings(worldSurroundingsBuilder.create(world));
+	}
+
 	/**
 	 * This ensures that the instance variable worldSurroundings is assigned
 	 * AFTER frame.validate() is called. This is important, because the
@@ -123,6 +139,7 @@ public class MainWindow {
 	 */
 	public void setWorldSurroundings(WorldSurroundings worldSurroundings) {
 		clearWorldSurroundings();
+		seedHistoryLogger.log(worldSurroundings.getSeed());
 		contentPane.add(worldSurroundings.getComponent(), BorderLayout.CENTER);
 		menuBar.setWorldMenuEnabled(true);
 		menuBar.setSavePlayerLocationsMenuEnabled(worldSurroundings
@@ -130,6 +147,7 @@ public class MainWindow {
 		frame.setTitle(getLongVersionString(worldSurroundings
 				.getRecognisedVersionName()));
 		frame.validate();
+		worldSurroundings.loadPlayerSkins(skinLoader);
 		this.worldSurroundings.set(worldSurroundings);
 	}
 
@@ -252,13 +270,6 @@ public class MainWindow {
 	private String askForString(String title, String message) {
 		return JOptionPane.showInputDialog(frame, message, title,
 				JOptionPane.QUESTION_MESSAGE);
-	}
-
-	public void reloadPlayerLayer() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			worldSurroundings.reloadPlayerLayer();
-		}
 	}
 
 	public void tickRepainter() {

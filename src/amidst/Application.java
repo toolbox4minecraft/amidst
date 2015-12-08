@@ -68,7 +68,7 @@ public class Application {
 	}
 
 	private SkinLoader createSkinLoader() {
-		return new SkinLoader(this, workerExecutor);
+		return new SkinLoader(workerExecutor);
 	}
 
 	private UpdatePrompt createUpdateManager() {
@@ -104,7 +104,8 @@ public class Application {
 	}
 
 	private void doDisplayMainWindow() {
-		setMainWindow(new MainWindow(this, options, mojangApi));
+		setMainWindow(new MainWindow(this, options, mojangApi,
+				worldSurroundingsBuilder, seedHistoryLogger, skinLoader));
 		setVersionSelectWindow(null);
 	}
 
@@ -157,12 +158,6 @@ public class Application {
 	}
 
 	public void setWorld(World world) {
-		if (world != null) {
-			seedHistoryLogger.log(world.getSeed());
-			mainWindow.setWorldSurroundings(worldSurroundingsBuilder
-					.create(world));
-			skinLoader.loadSkins(world.getMovablePlayerList());
-		}
 	}
 
 	void crash(Throwable e, String exceptionText, String message,
@@ -184,12 +179,6 @@ public class Application {
 	public void tickFragmentLoader() {
 		if (mainWindow != null) {
 			mainWindow.tickFragmentLoader();
-		}
-	}
-
-	public void finishedLoadingPlayerSkin() {
-		if (mainWindow != null) {
-			mainWindow.reloadPlayerLayer();
 		}
 	}
 }
