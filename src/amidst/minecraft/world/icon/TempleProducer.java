@@ -8,11 +8,8 @@ import amidst.minecraft.RecognisedVersion;
 import amidst.minecraft.world.World;
 
 public class TempleProducer extends StructureProducer {
-	private final RecognisedVersion recognisedVersion;
-
 	public TempleProducer(World world, RecognisedVersion recognisedVersion) {
-		super(world);
-		this.recognisedVersion = recognisedVersion;
+		super(world, recognisedVersion);
 	}
 
 	@Override

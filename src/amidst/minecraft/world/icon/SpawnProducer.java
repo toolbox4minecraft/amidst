@@ -7,6 +7,7 @@ import java.util.Random;
 
 import amidst.logging.Log;
 import amidst.minecraft.Biome;
+import amidst.minecraft.RecognisedVersion;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 
@@ -23,8 +24,8 @@ public class SpawnProducer extends CachedWorldIconProducer {
 	);
 	// @formatter:on
 
-	public SpawnProducer(World world) {
-		super(world);
+	public SpawnProducer(World world, RecognisedVersion recognisedVersion) {
+		super(world, recognisedVersion);
 	}
 
 	@Override

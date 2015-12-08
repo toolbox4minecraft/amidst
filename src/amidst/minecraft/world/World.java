@@ -3,6 +3,7 @@ package amidst.minecraft.world;
 import java.util.List;
 
 import amidst.minecraft.IMinecraftInterface;
+import amidst.minecraft.RecognisedVersion;
 import amidst.minecraft.world.icon.CachedWorldIconProducer;
 import amidst.minecraft.world.icon.NetherFortressProducer;
 import amidst.minecraft.world.icon.OceanMonumentProducer;
@@ -57,17 +58,20 @@ public class World {
 		this.isMultiplayerWorld = isMultiplayerWorld;
 		this.movablePlayerList = movablePlayerList;
 		initMinecraftInterface(minecraftInterface);
+		RecognisedVersion recognisedVersion = minecraftInterface
+				.getRecognisedVersion();
 		this.biomeDataOracle = new BiomeDataOracle(minecraftInterface);
 		this.slimeChunkOracle = new SlimeChunkOracle(this);
-		this.oceanMonumentProducer = new OceanMonumentProducer(this);
-		this.templeProducer = new TempleProducer(this,
-				minecraftInterface.getRecognisedVersion());
-		this.villageProducer = new VillageProducer(this);
-		this.netherFortressProducer = new NetherFortressProducer(this);
-		this.playerProducer = new PlayerProducer(this);
-		this.spawnProducer = new SpawnProducer(this);
+		this.oceanMonumentProducer = new OceanMonumentProducer(this,
+				recognisedVersion);
+		this.templeProducer = new TempleProducer(this, recognisedVersion);
+		this.villageProducer = new VillageProducer(this, recognisedVersion);
+		this.netherFortressProducer = new NetherFortressProducer(this,
+				recognisedVersion);
+		this.playerProducer = new PlayerProducer(this, recognisedVersion);
+		this.spawnProducer = new SpawnProducer(this, recognisedVersion);
 		this.strongholdProducer = new StrongholdProducer(this,
-				minecraftInterface.getRecognisedVersion());
+				recognisedVersion);
 	}
 
 	private void initMinecraftInterface(IMinecraftInterface minecraftInterface) {

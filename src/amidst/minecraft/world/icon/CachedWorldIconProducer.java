@@ -4,15 +4,20 @@ import java.util.Collections;
 import java.util.List;
 
 import amidst.fragment.Fragment;
+import amidst.minecraft.RecognisedVersion;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 
 public abstract class CachedWorldIconProducer extends WorldIconProducer {
 	protected final World world;
+	protected final RecognisedVersion recognisedVersion;
+
 	private List<WorldIcon> cache;
 
-	public CachedWorldIconProducer(World world) {
+	public CachedWorldIconProducer(World world,
+			RecognisedVersion recognisedVersion) {
 		this.world = world;
+		this.recognisedVersion = recognisedVersion;
 	}
 
 	@Override

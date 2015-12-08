@@ -5,12 +5,14 @@ import java.util.Random;
 
 import amidst.logging.Log;
 import amidst.minecraft.Biome;
+import amidst.minecraft.RecognisedVersion;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.Resolution;
 import amidst.minecraft.world.World;
 
 public abstract class StructureProducer extends WorldIconProducer {
 	protected final World world;
+	protected final RecognisedVersion recognisedVersion;
 	protected final Resolution resolution;
 	protected final int size;
 
@@ -34,8 +36,9 @@ public abstract class StructureProducer extends WorldIconProducer {
 	private int middleOfChunkX;
 	private int middleOfChunkY;
 
-	public StructureProducer(World world) {
+	public StructureProducer(World world, RecognisedVersion recognisedVersion) {
 		this.world = world;
+		this.recognisedVersion = recognisedVersion;
 		this.resolution = Resolution.CHUNK;
 		this.size = resolution.getStepsPerFragment();
 		validBiomesForStructure = getValidBiomesForStructure();

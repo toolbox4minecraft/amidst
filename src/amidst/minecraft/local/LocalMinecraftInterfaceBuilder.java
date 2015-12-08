@@ -146,7 +146,7 @@ public class LocalMinecraftInterfaceBuilder {
 		Log.i("Generating version ID...");
 		String magicString = generateMagicString(getMainClassFields(loadMainClass(classLoader)));
 		RecognisedVersion result = RecognisedVersion.from(magicString);
-		Log.i("Identified Minecraft [" + result.name() + "] with versionID of "
+		Log.i("Identified Minecraft [" + result.getName() + "] with magic string of "
 				+ magicString);
 		return result;
 	}

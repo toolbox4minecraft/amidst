@@ -60,13 +60,11 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 	);
 	// @formatter:on
 
-	private final RecognisedVersion recognisedVersion;
 	private final List<Biome> validBiomes;
 	private final Random random = new Random();
 
 	public StrongholdProducer(World world, RecognisedVersion recognisedVersion) {
-		super(world);
-		this.recognisedVersion = recognisedVersion;
+		super(world, recognisedVersion);
 		this.validBiomes = getValidBiomes();
 	}
 

@@ -3,12 +3,13 @@ package amidst.minecraft.world.icon;
 import java.util.LinkedList;
 import java.util.List;
 
+import amidst.minecraft.RecognisedVersion;
 import amidst.minecraft.world.Player;
 import amidst.minecraft.world.World;
 
 public class PlayerProducer extends CachedWorldIconProducer {
-	public PlayerProducer(World world) {
-		super(world);
+	public PlayerProducer(World world, RecognisedVersion recognisedVersion) {
+		super(world, recognisedVersion);
 	}
 
 	@Override

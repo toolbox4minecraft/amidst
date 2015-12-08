@@ -4,11 +4,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import amidst.minecraft.Biome;
+import amidst.minecraft.RecognisedVersion;
 import amidst.minecraft.world.World;
 
 public class VillageProducer extends StructureProducer {
-	public VillageProducer(World world) {
-		super(world);
+	public VillageProducer(World world, RecognisedVersion recognisedVersion) {
+		super(world, recognisedVersion);
 	}
 
 	@Override

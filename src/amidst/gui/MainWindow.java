@@ -74,6 +74,7 @@ public class MainWindow {
 		clearWorldSurroundings();
 	}
 
+	// TODO: use official minecraft version id instead of recognised one?
 	private JFrame createFrame() {
 		JFrame frame = new JFrame();
 		frame.setTitle(createVersionString(mojangApi.getRecognisedVersionName()));

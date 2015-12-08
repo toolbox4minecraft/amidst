@@ -3,11 +3,13 @@ package amidst.minecraft.world.icon;
 import java.util.List;
 
 import amidst.minecraft.Biome;
+import amidst.minecraft.RecognisedVersion;
 import amidst.minecraft.world.World;
 
 public class NetherFortressProducer extends StructureProducer {
-	public NetherFortressProducer(World world) {
-		super(world);
+	public NetherFortressProducer(World world,
+			RecognisedVersion recognisedVersion) {
+		super(world, recognisedVersion);
 	}
 
 	@Override

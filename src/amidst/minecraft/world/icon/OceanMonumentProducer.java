@@ -4,11 +4,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import amidst.minecraft.Biome;
+import amidst.minecraft.RecognisedVersion;
 import amidst.minecraft.world.World;
 
 public class OceanMonumentProducer extends StructureProducer {
-	public OceanMonumentProducer(World world) {
-		super(world);
+	public OceanMonumentProducer(World world,
+			RecognisedVersion recognisedVersion) {
+		super(world, recognisedVersion);
 	}
 
 	@Override
