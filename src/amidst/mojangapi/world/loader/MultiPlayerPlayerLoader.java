@@ -19,7 +19,7 @@ public class MultiPlayerPlayerLoader extends PlayerLoader {
 	@Override
 	protected List<Player> doLoad() throws FileNotFoundException, IOException {
 		List<Player> result = new ArrayList<Player>();
-		for (File playerFile : saveDirectory.getPlayerFiles()) {
+		for (File playerFile : saveDirectory.getPlayersFiles()) {
 			if (playerFile.isFile()) {
 				result.add(createPlayer(getPlayerName(playerFile),
 						NBTUtils.readTagFromFile(playerFile)));

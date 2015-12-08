@@ -20,7 +20,6 @@ public class WorldLoader {
 			throws FileNotFoundException, IOException {
 		boolean isMultiPlayer = saveDirectory.isMultiPlayer();
 		LevelDat levelDat = saveDirectory.createLevelDat();
-		PlayerMover playerMover = createPlayerMover(isMultiPlayer);
 		if (isMultiPlayer) {
 			Log.i("Multiplayer world detected.");
 			return World.file(
@@ -31,7 +30,7 @@ public class WorldLoader {
 					isMultiPlayer,
 					createMovablePlayerList(minecraftInterface,
 							new MultiPlayerPlayerLoader(saveDirectory),
-							playerMover));
+							new MultiPlayerPlayerMover(saveDirectory)));
 		} else {
 			Log.i("Singleplayer world detected.");
 			return World.file(
@@ -42,12 +41,8 @@ public class WorldLoader {
 					isMultiPlayer,
 					createMovablePlayerList(minecraftInterface,
 							new SinglePlayerPlayerLoader(saveDirectory),
-							playerMover));
+							new SinglePlayerPlayerMover(saveDirectory)));
 		}
-	}
-
-	private PlayerMover createPlayerMover(boolean isMultiPlayer) {
-		return new PlayerMover(saveDirectory, isMultiPlayer);
 	}
 
 	private MovablePlayerList createMovablePlayerList(

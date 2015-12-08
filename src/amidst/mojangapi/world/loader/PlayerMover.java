@@ -3,7 +3,6 @@ package amidst.mojangapi.world.loader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,84 +14,31 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.logging.Log;
-import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.world.Player;
 
-public class PlayerMover {
-	private SaveDirectory saveDirectory;
-	private boolean isMultiplayerWorld;
-
-	public PlayerMover(SaveDirectory saveDirectory, boolean isMultiplayerWorld) {
-		this.saveDirectory = saveDirectory;
-		this.isMultiplayerWorld = isMultiplayerWorld;
-	}
-
+public abstract class PlayerMover {
+	// TODO: gui feedback
 	public void movePlayer(Player player) {
-		File file = getPlayerFile(player);
-		if (createBackup(file)) {
-			doMovePlayer(player, file);
-		} else {
-			// TODO: gui feedback
-			Log.w("Creation of backup file failed. Skipping player movement.");
-		}
-	}
-
-	private boolean createBackup(File inputFile) {
-		File backupFolder = getBackupFolder(inputFile);
-		createIfNecessary(backupFolder);
-		File outputFile = getOutputFile(backupFolder, inputFile);
-		return doBackupFile(inputFile, outputFile);
-	}
-
-	private File getBackupFolder(File inputFile) {
-		return new File(inputFile.getParentFile(), "amidst_backup");
-	}
-
-	private void createIfNecessary(File backupFolder) {
-		if (!backupFolder.exists()) {
-			backupFolder.mkdir();
-		}
-	}
-
-	private File getOutputFile(File backupFolder, File inputFile) {
-		return new File(backupFolder, inputFile.getName() + "_"
-				+ System.currentTimeMillis());
-	}
-
-	private boolean doBackupFile(File inputFile, File outputFile) {
-		try {
-			Files.copy(inputFile.toPath(), outputFile.toPath());
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	private void doMovePlayer(Player player, File file) {
-		if (isMultiplayerWorld) {
+		if (tryBackup(player)) {
 			try {
-				movePlayerOnMultiPlayerWorld(player, file);
+				doMovePlayer(player);
 			} catch (Exception e) {
+				Log.w("Creation of backup file failed. Skipping player movement for player: "
+						+ player.getPlayerName());
 				e.printStackTrace();
 			}
 		} else {
-			try {
-				movePlayerOnSinglePlayerWorld(player, file);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			Log.w("Creation of backup file failed. Skipping player movement for player: "
+					+ player.getPlayerName());
 		}
 	}
 
-	private File getPlayerFile(Player player) {
-		if (isMultiplayerWorld) {
-			return saveDirectory.getPlayerFile(player.getPlayerName());
-		} else {
-			return saveDirectory.getLevelDat();
-		}
-	}
+	protected abstract boolean tryBackup(Player player);
 
-	private void movePlayerOnMultiPlayerWorld(Player player, File file)
+	protected abstract void doMovePlayer(Player player)
+			throws FileNotFoundException, IOException;
+
+	protected void movePlayerOnMultiPlayerWorld(Player player, File file)
 			throws IOException, FileNotFoundException {
 		CompoundTag dataTag = NBTUtils.readTagFromFile(file);
 		CompoundTag modifiedDataTag = modifyPositionInDataTagMultiPlayer(
@@ -100,7 +46,7 @@ public class PlayerMover {
 		NBTUtils.writeTagToFile(file, modifiedDataTag);
 	}
 
-	private void movePlayerOnSinglePlayerWorld(Player player, File file)
+	protected void movePlayerOnSinglePlayerWorld(Player player, File file)
 			throws IOException, FileNotFoundException {
 		CompoundTag baseTag = NBTUtils.readTagFromFile(file);
 		CompoundTag modifiedBaseTag = modifyPositionInBaseTagSinglePlayer(

@@ -3,6 +3,7 @@ package amidst.mojangapi.file.directory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.jnbt.CompoundTag;
 
@@ -57,12 +58,18 @@ public class SaveDirectory {
 	private final File players;
 	private final File playerdata;
 	private final File levelDat;
+	private final File backupRoot;
+	private final File backupPlayers;
+	private final File backupPlayerdata;
 
 	public SaveDirectory(File root) {
 		this.root = root;
 		this.players = new File(root, "players");
 		this.playerdata = new File(root, "playerdata");
 		this.levelDat = new File(root, "level.dat");
+		this.backupRoot = new File(root, "amidst_backup");
+		this.backupPlayers = new File(backupRoot, "players");
+		this.backupPlayerdata = new File(backupRoot, "playerdata");
 	}
 
 	public boolean isValid() {
@@ -86,11 +93,32 @@ public class SaveDirectory {
 		return levelDat;
 	}
 
-	public File getPlayerFile(String playerName) {
+	public File getPlayersFile(String playerName) {
 		return new File(players, playerName + ".dat");
 	}
 
-	public File[] getPlayerFiles() {
+	public File getPlayerdataFile(String playerUUID) {
+		return new File(playerdata, playerUUID + ".dat");
+	}
+
+	public File getBackupLevelDat() {
+		return new File(backupRoot, "level.dat" + millis());
+	}
+
+	public File getBackupPlayersFile(String playerName) {
+		return new File(backupPlayers, playerName + ".dat" + millis());
+	}
+
+	public File getBackupPlayerdataFile(String playerUUID) {
+		return new File(backupPlayerdata, playerUUID + ".dat" + millis());
+	}
+
+	// TODO: switch to more readable timestamp
+	private String millis() {
+		return "_" + System.currentTimeMillis();
+	}
+
+	public File[] getPlayersFiles() {
 		File[] files = players.listFiles();
 		if (files == null) {
 			return new File[0];
@@ -99,8 +127,18 @@ public class SaveDirectory {
 		}
 	}
 
+	public File[] getPlayerdataFiles() {
+		File[] files = playerdata.listFiles();
+		if (files == null) {
+			return new File[0];
+		} else {
+			return files;
+		}
+	}
+
+	// TODO: adjust to playerdata
 	public boolean isMultiPlayer() {
-		return players.isDirectory() && getPlayerFiles().length > 0;
+		return players.isDirectory() && getPlayersFiles().length > 0;
 	}
 
 	public CompoundTag readLevelDat() throws FileNotFoundException, IOException {
@@ -109,5 +147,38 @@ public class SaveDirectory {
 
 	public LevelDat createLevelDat() throws FileNotFoundException, IOException {
 		return new LevelDat(readLevelDat());
+	}
+
+	public boolean tryBackupLevelDat() {
+		return ensureDirectoryExists(backupRoot)
+				&& tryCopy(getLevelDat(), getBackupLevelDat());
+	}
+
+	public boolean tryBackupPlayersFile(String playerName) {
+		return ensureDirectoryExists(backupPlayers)
+				&& tryCopy(getPlayersFile(playerName),
+						getBackupPlayersFile(playerName));
+	}
+
+	public boolean tryBackupPlayerdataFile(String playerUUID) {
+		return ensureDirectoryExists(backupPlayerdata)
+				&& tryCopy(getPlayerdataFile(playerUUID),
+						getBackupPlayerdataFile(playerUUID));
+	}
+
+	private boolean ensureDirectoryExists(File directory) {
+		if (!directory.exists()) {
+			directory.mkdir();
+		}
+		return directory.isDirectory();
+	}
+
+	private boolean tryCopy(File from, File to) {
+		try {
+			Files.copy(from.toPath(), to.toPath());
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }
