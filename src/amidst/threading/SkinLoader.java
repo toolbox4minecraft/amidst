@@ -10,8 +10,8 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 
 import amidst.logging.Log;
-import amidst.minecraft.world.MovablePlayerList;
-import amidst.minecraft.world.Player;
+import amidst.mojangapi.world.MovablePlayerList;
+import amidst.mojangapi.world.Player;
 
 public class SkinLoader {
 	private final WorkerExecutor workerExecutor;

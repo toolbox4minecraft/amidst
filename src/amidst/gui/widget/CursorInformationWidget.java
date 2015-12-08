@@ -7,9 +7,9 @@ import java.awt.Point;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.gui.worldsurroundings.FragmentGraphToScreenTranslator;
-import amidst.minecraft.Biome;
-import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.Resolution;
+import amidst.mojangapi.world.Biome;
+import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.Resolution;
 
 public class CursorInformationWidget extends Widget {
 	private static final String UNKNOWN_BIOME_NAME = "Unknown";

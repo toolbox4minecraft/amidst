@@ -7,7 +7,7 @@ import java.awt.Graphics2D;
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.gui.worldsurroundings.Zoom;
-import amidst.minecraft.world.Resolution;
+import amidst.mojangapi.world.Resolution;
 
 public class GridDrawer extends FragmentDrawer {
 	private static final Font DRAW_FONT = new Font("arial", Font.BOLD, 16);

@@ -13,7 +13,7 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.gui.widget.Widget;
 import amidst.gui.widget.WidgetBuilder;
 import amidst.gui.widget.WidgetManager;
-import amidst.minecraft.world.World;
+import amidst.mojangapi.world.World;
 
 public class WorldSurroundingsBuilder {
 	private final Zoom zoom;

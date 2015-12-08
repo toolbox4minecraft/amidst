@@ -15,8 +15,8 @@ import amidst.Application;
 import amidst.Options;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.launcherprofiles.LauncherProfileJson;
-import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
+import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
+import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 import amidst.threading.Worker;
 import amidst.threading.WorkerExecutor;
 

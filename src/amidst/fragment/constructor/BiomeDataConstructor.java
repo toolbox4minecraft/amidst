@@ -1,7 +1,7 @@
 package amidst.fragment.constructor;
 
 import amidst.fragment.Fragment;
-import amidst.minecraft.world.Resolution;
+import amidst.mojangapi.world.Resolution;
 
 public class BiomeDataConstructor implements FragmentConstructor {
 	private final int size;

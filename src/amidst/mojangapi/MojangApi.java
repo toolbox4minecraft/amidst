@@ -2,17 +2,17 @@ package amidst.mojangapi;
 
 import java.io.File;
 
-import amidst.minecraft.IMinecraftInterface;
-import amidst.minecraft.RecognisedVersion;
-import amidst.minecraft.local.LocalMinecraftInterfaceBuilder;
-import amidst.minecraft.world.World;
-import amidst.minecraft.world.WorldType;
-import amidst.minecraft.world.Worlds;
-import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
-import amidst.mojangapi.dotminecraft.ProfileDirectory;
-import amidst.mojangapi.dotminecraft.VersionDirectory;
-import amidst.mojangapi.internal.FilenameFactory;
-import amidst.mojangapi.versionlist.VersionListJson;
+import amidst.mojangapi.file.FilenameFactory;
+import amidst.mojangapi.file.directory.DotMinecraftDirectory;
+import amidst.mojangapi.file.directory.ProfileDirectory;
+import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.json.versionlist.VersionListJson;
+import amidst.mojangapi.minecraftinterface.IMinecraftInterface;
+import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder;
+import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.Worlds;
 
 public class MojangApi {
 	private static final String UNKNOWN_VERSION_ID = "unknown";

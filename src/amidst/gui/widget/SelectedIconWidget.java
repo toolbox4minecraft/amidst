@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import amidst.gui.worldsurroundings.WorldIconSelection;
-import amidst.minecraft.world.icon.WorldIcon;
+import amidst.mojangapi.world.icon.WorldIcon;
 
 public class SelectedIconWidget extends Widget {
 	private final WorldIconSelection worldIconSelection;

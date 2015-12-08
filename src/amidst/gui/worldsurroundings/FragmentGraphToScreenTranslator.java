@@ -4,7 +4,7 @@ import java.awt.Point;
 
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
-import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.threading.TaskQueue;
 
 public class FragmentGraphToScreenTranslator {

@@ -26,10 +26,10 @@ import amidst.gui.menu.MenuActions;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.gui.worldsurroundings.WorldSurroundings;
 import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
-import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.World;
-import amidst.minecraft.world.WorldType;
 import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.WorldType;
 import amidst.threading.SkinLoader;
 import amidst.utilities.SeedHistoryLogger;
 

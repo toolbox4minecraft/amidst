@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import amidst.devtools.settings.DevToolsSettings;
 import amidst.devtools.utils.VersionStateRenderer;
-import amidst.mojangapi.internal.JsonReader;
-import amidst.mojangapi.versionlist.VersionListEntryJson;
-import amidst.mojangapi.versionlist.VersionListJson;
+import amidst.mojangapi.file.JsonReader;
+import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
+import amidst.mojangapi.file.json.versionlist.VersionListJson;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;

@@ -2,7 +2,7 @@ package amidst.fragment.loader;
 
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.minecraft.world.icon.WorldIconProducer;
+import amidst.mojangapi.world.icon.WorldIconProducer;
 
 public class WorldIconLoader extends FragmentLoader {
 	private final WorldIconProducer producer;

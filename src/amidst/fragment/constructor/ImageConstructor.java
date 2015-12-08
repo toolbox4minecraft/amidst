@@ -3,7 +3,7 @@ package amidst.fragment.constructor;
 import java.awt.image.BufferedImage;
 
 import amidst.fragment.Fragment;
-import amidst.minecraft.world.Resolution;
+import amidst.mojangapi.world.Resolution;
 
 public class ImageConstructor implements FragmentConstructor {
 	private final int size;

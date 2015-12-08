@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import amidst.logging.Log;
-import amidst.minecraft.Biome;
+import amidst.mojangapi.world.Biome;
 
 public class BiomeColorProfile {
 	public static void saveDefaultProfileIfNecessary() {

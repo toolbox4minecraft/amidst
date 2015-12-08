@@ -5,7 +5,7 @@ import java.awt.RenderingHints;
 
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.minecraft.world.Resolution;
+import amidst.mojangapi.world.Resolution;
 
 public class ImageDrawer extends FragmentDrawer {
 	private final Resolution resolution;

@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.icon.WorldIcon;
+import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.icon.WorldIcon;
 
 public class FragmentGraph implements Iterable<FragmentGraphItem> {
 	private final List<LayerDeclaration> declarations;

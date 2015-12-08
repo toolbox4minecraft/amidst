@@ -12,7 +12,7 @@ import amidst.gui.worldsurroundings.BiomeSelection;
 import amidst.gui.worldsurroundings.FragmentGraphToScreenTranslator;
 import amidst.gui.worldsurroundings.WorldIconSelection;
 import amidst.gui.worldsurroundings.Zoom;
-import amidst.minecraft.world.World;
+import amidst.mojangapi.world.World;
 import amidst.utilities.FramerateTimer;
 
 public class WidgetBuilder {

@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage;
 import amidst.fragment.Fragment;
 import amidst.fragment.colorprovider.ColorProvider;
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.Resolution;
+import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.Resolution;
 
 public class ImageLoader extends FragmentLoader {
 	private final Resolution resolution;

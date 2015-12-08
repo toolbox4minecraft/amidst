@@ -15,8 +15,8 @@ import javax.swing.JPopupMenu;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.widget.WidgetManager;
-import amidst.minecraft.world.Player;
-import amidst.minecraft.world.World;
+import amidst.mojangapi.world.Player;
+import amidst.mojangapi.world.World;
 
 public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	private final WidgetManager widgetManager;

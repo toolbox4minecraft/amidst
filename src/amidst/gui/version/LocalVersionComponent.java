@@ -3,9 +3,9 @@ package amidst.gui.version;
 import amidst.Application;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.dotminecraft.ProfileDirectory;
-import amidst.mojangapi.dotminecraft.VersionDirectory;
-import amidst.mojangapi.launcherprofiles.LauncherProfileJson;
+import amidst.mojangapi.file.directory.ProfileDirectory;
+import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.threading.Worker;
 import amidst.threading.WorkerExecutor;
 

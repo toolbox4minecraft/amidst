@@ -24,8 +24,8 @@ import amidst.fragment.loader.WorldIconLoader;
 import amidst.gui.worldsurroundings.BiomeSelection;
 import amidst.gui.worldsurroundings.WorldIconSelection;
 import amidst.gui.worldsurroundings.Zoom;
-import amidst.minecraft.world.Resolution;
-import amidst.minecraft.world.World;
+import amidst.mojangapi.world.Resolution;
+import amidst.mojangapi.world.World;
 import amidst.preferences.AlwaysTruePreference;
 
 public class LayerBuilder {

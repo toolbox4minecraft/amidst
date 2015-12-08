@@ -8,8 +8,8 @@ import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.gui.worldsurroundings.WorldIconSelection;
 import amidst.gui.worldsurroundings.Zoom;
-import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.icon.WorldIcon;
+import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.icon.WorldIcon;
 
 public class WorldIconDrawer extends FragmentDrawer {
 	private final Zoom zoom;

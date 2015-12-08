@@ -1,6 +1,6 @@
 package amidst.gui.worldsurroundings;
 
-import amidst.minecraft.Biome;
+import amidst.mojangapi.world.Biome;
 
 public class BiomeSelection {
 	private boolean[] selectedBiomes = new boolean[Biome.getBiomesLength()];

@@ -15,10 +15,10 @@ import amidst.gui.MainWindow;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.worldsurroundings.WorldSurroundings;
 import amidst.logging.Log;
-import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.WorldType;
-import amidst.minecraft.world.icon.WorldIcon;
 import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BiomeColorProfileSelection;
 

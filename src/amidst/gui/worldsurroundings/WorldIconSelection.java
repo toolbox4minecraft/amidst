@@ -1,6 +1,6 @@
 package amidst.gui.worldsurroundings;
 
-import amidst.minecraft.world.icon.WorldIcon;
+import amidst.mojangapi.world.icon.WorldIcon;
 
 public class WorldIconSelection {
 	private WorldIcon selection;

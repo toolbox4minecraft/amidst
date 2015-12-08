@@ -1,7 +1,7 @@
 package amidst.fragment.colorprovider;
 
 import amidst.fragment.Fragment;
-import amidst.minecraft.world.oracle.SlimeChunkOracle;
+import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 
 public class SlimeColorProvider implements ColorProvider {
 	private static final int SLIME_CHUNK_COLOR = 0xA0FF00FF;

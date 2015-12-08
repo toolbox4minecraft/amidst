@@ -5,10 +5,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
-import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.minecraft.world.Resolution;
-import amidst.minecraft.world.icon.WorldIcon;
-import amidst.minecraft.world.oracle.BiomeDataOracle;
+import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.Resolution;
+import amidst.mojangapi.world.icon.WorldIcon;
+import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 /**
  * This class is thread-safe. It contains nearly no logic but only simple and

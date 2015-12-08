@@ -1,6 +1,6 @@
 package amidst.devtools.utils;
 
-import amidst.mojangapi.versionlist.VersionListEntryJson;
+import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 
 public class VersionStateRenderer {
 	public String render(VersionListEntryJson version, boolean hasServer,

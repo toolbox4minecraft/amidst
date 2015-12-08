@@ -3,7 +3,7 @@ package amidst.gui.widget;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
-import amidst.minecraft.world.World;
+import amidst.mojangapi.world.World;
 
 public class SeedWidget extends Widget {
 	private final World world;

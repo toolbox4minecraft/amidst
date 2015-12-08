@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.fragment.constructor.FragmentConstructor;
 import amidst.fragment.layer.LayerLoader;
-import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.mojangapi.world.CoordinatesInWorld;
 
 /**
  * This class is thread-safe as long as only one thread calls the method tick().

@@ -10,7 +10,7 @@ import java.util.List;
 
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.worldsurroundings.BiomeSelection;
-import amidst.minecraft.Biome;
+import amidst.mojangapi.world.Biome;
 import amidst.preferences.BiomeColorProfileSelection;
 import amidst.utilities.CoordinateUtils;
 

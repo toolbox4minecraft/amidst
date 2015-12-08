@@ -2,7 +2,7 @@ package amidst.fragment.loader;
 
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.minecraft.world.oracle.BiomeDataOracle;
+import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 public class BiomeDataLoader extends FragmentLoader {
 	private final BiomeDataOracle biomeDataOracle;
