@@ -111,11 +111,6 @@ public class Application {
 		this.mainWindow = mainWindow;
 	}
 
-	public void dispose() {
-		setVersionSelectWindow(null);
-		setMainWindow(null);
-	}
-
 	public void displayLicenseWindow() {
 		new LicenseWindow();
 	}
@@ -129,6 +124,11 @@ public class Application {
 	public void exitWithErrorCode(int code) {
 		dispose();
 		System.exit(code);
+	}
+
+	public void dispose() {
+		setVersionSelectWindow(null);
+		setMainWindow(null);
 	}
 
 	void crash(Throwable e, String exceptionText, String message,

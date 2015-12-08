@@ -38,7 +38,6 @@ public class Classes {
 		List<RealClass> realClasses = RealClasses.fromJarFile(jarFile);
 		Map<SymbolicClassDeclaration, List<RealClass>> map = translator
 				.translateToAllMatching(realClasses);
-
 		Map<SymbolicClassDeclaration, Integer> result = new HashMap<SymbolicClassDeclaration, Integer>();
 		for (Entry<SymbolicClassDeclaration, List<RealClass>> entry : map
 				.entrySet()) {

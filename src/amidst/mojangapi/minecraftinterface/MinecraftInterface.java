@@ -1,6 +1,5 @@
 package amidst.mojangapi.minecraftinterface;
 
-
 /**
  * Acts as an additional layer of abstraction for interfacing with Minecraft.
  * This allows for other sources of data other than direct reflection against a
