@@ -57,25 +57,22 @@ public enum RecognisedVersion {
 	V1_9pre2("sv"),
 	V1_9pre1("sq"),
 	Vbeta_1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"), // Had to rename from V1_8_1 - should it just be removed?
-	unknown(null); // Make sure this is the last entry, so unknown.isAtLeast(...) returns always false.
+	UNKNOWN(null); // Make sure this is the last entry, so UNKNOWN.isAtLeast(...) returns always false.
 	// @formatter:on
 
-	private final String versionId;
+	private final String magicString;
 
-	private RecognisedVersion(String versionId) {
-		this.versionId = versionId;
+	private RecognisedVersion(String magicString) {
+		this.magicString = magicString;
 	}
 
-	@Deprecated
+	public String getMagicString() {
+		return magicString;
+	}
+
 	public boolean isSaveEnabled() {
 		return this != V12w21a && this != V12w21b && this != V12w22a
-				&& this != unknown;
-	}
-
-	// TODO: switch to getName()
-	@Override
-	public String toString() {
-		return getName();
+				&& this != UNKNOWN;
 	}
 
 	public String getName() {
@@ -84,10 +81,5 @@ public enum RecognisedVersion {
 
 	public boolean isAtLeast(RecognisedVersion other) {
 		return this.ordinal() <= other.ordinal();
-	}
-
-	// TODO: rename to clarify difference to official minecraft versionIds
-	public String getVersionId() {
-		return versionId;
 	}
 }

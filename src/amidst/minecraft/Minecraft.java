@@ -86,7 +86,7 @@ public class Minecraft {
 	private Vector<String> byteClassNames;
 
 	public String versionId;
-	public RecognisedVersion version = RecognisedVersion.unknown;
+	public RecognisedVersion version = RecognisedVersion.UNKNOWN;
 
 	private final DotMinecraftDirectory dotMinecraftDirectory;
 	private final VersionDirectory versionDirectory;
@@ -205,7 +205,7 @@ public class Minecraft {
 		}
 		versionId = typeDump;
 		for (RecognisedVersion v : RecognisedVersion.values()) {
-			if (versionId.equals(v.getVersionId())) {
+			if (versionId.equals(v.getMagicString())) {
 				version = v;
 				break;
 			}
