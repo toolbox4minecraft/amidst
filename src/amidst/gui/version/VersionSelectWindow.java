@@ -1,6 +1,5 @@
 package amidst.gui.version;
 
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -11,85 +10,106 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import net.miginfocom.swing.MigLayout;
-import amidst.Amidst;
+import amidst.AmidstMetaData;
+import amidst.Application;
 import amidst.Options;
-import amidst.Util;
 import amidst.logging.Log;
-import amidst.version.LatestVersionList;
-import amidst.version.MinecraftProfile;
-import amidst.version.VersionFactory;
+import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.launcherprofiles.LauncherProfileJson;
+import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
+import amidst.threading.Worker;
+import amidst.threading.WorkerExecutor;
 
-public class VersionSelectWindow extends JFrame {
-	private static VersionSelectWindow instance;
-	private VersionFactory versionFactory = new VersionFactory();
-	
-	public VersionSelectWindow() {
-		super("Profile Selector");
-		instance = this;
-		setIconImage(Amidst.icon);
-		Container contentPane = getContentPane();
-		contentPane.setLayout(new MigLayout());
-		
-		LatestVersionList.get().load(true);
-		
-		if (!Util.minecraftDirectory.exists() || !Util.minecraftDirectory.isDirectory()) {
-			Log.crash("Unable to find Minecraft directory at: " + Util.minecraftDirectory);
-			return;
-		}
-		
-		final JLabel titleLabel = new JLabel("Please select a Minecraft version:", SwingConstants.CENTER);
-		titleLabel.setFont(new Font("arial", Font.BOLD, 16));
-		
-		add(titleLabel, "h 20!,w :400:, growx, pushx, wrap");
+public class VersionSelectWindow {
+	private final Application application;
+	private final WorkerExecutor workerExecutor;
+	private final MojangApi mojangApi;
+	private final Options options;
 
-		final VersionSelectPanel versionSelector = new VersionSelectPanel();
-		
-		(new Thread(new Runnable() {
-			@Override
-			public void run() {
-				versionFactory.scanForProfiles();
-				MinecraftProfile[] localVersions = versionFactory.getProfiles();
-				String selectedProfile = Options.instance.lastProfile.get();
-				
-				if (localVersions == null) {
-					versionSelector.setEmptyMessage("Empty");
-					return;
-				}
-				for (int i = 0; i < localVersions.length; i++)
-					versionSelector.addVersion(new LocalVersionComponent(localVersions[i]));
-				versionSelector.addVersion(new RemoteVersionComponent());
-				
-				if (selectedProfile != null)
-					versionSelector.select(selectedProfile);
-				
-				pack();
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException ignored) { }
-				pack();
-			}
-		})).start();
-		
-		versionSelector.setEmptyMessage("Scanning...");
-		
-		JScrollPane scrollPane = new JScrollPane(versionSelector);
-		add(scrollPane, "grow, push, h 80::");
-		pack();
-		setLocation(200, 200);
-		setVisible(true);
-		
-		addKeyListener(versionSelector);
-		
-		addWindowListener(new WindowAdapter() {
+	private final JFrame frame = new JFrame("Profile Selector");
+	private final VersionSelectPanel versionSelectPanel;
+
+	public VersionSelectWindow(Application application,
+			WorkerExecutor workerExecutor, MojangApi mojangApi, Options options) {
+		this.application = application;
+		this.workerExecutor = workerExecutor;
+		this.mojangApi = mojangApi;
+		this.options = options;
+		this.versionSelectPanel = new VersionSelectPanel(options.lastProfile,
+				"Scanning...");
+		initFrame();
+		scanAndLoadVersionsLater();
+	}
+
+	private void initFrame() {
+		frame.setIconImage(AmidstMetaData.ICON);
+		frame.getContentPane().setLayout(new MigLayout());
+		frame.add(createTitleLabel(), "h 20!,w :400:, growx, pushx, wrap");
+		frame.add(new JScrollPane(versionSelectPanel.getComponent()),
+				"grow, push, h 80::");
+		frame.pack();
+		frame.addKeyListener(versionSelectPanel.createKeyListener());
+		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				dispose();
-				System.exit(0);
+				application.exitGracefully();
+			}
+		});
+		frame.setLocation(200, 200);
+		frame.setVisible(true);
+	}
+
+	private JLabel createTitleLabel() {
+		final JLabel result = new JLabel("Please select a Minecraft version:",
+				SwingConstants.CENTER);
+		result.setFont(new Font("arial", Font.BOLD, 16));
+		return result;
+	}
+
+	private void scanAndLoadVersionsLater() {
+		workerExecutor.invokeLater(new Worker<LauncherProfilesJson>() {
+			@Override
+			public LauncherProfilesJson execute() {
+				return scanAndLoadVersions();
+			}
+
+			@Override
+			public void finished(LauncherProfilesJson launcherProfile) {
+				loadVersions(launcherProfile);
 			}
 		});
 	}
-	
-	public static VersionSelectWindow get() {
-		return instance;
+
+	private LauncherProfilesJson scanAndLoadVersions() {
+		Log.i("Scanning for profiles.");
+		LauncherProfilesJson launcherProfile = null;
+		try {
+			launcherProfile = mojangApi.getDotMinecraftDirectory()
+					.readLauncherProfilesJson();
+		} catch (Exception e) {
+			Log.crash(e, "Error reading launcher_profiles.json");
+		}
+		Log.i("Successfully loaded profile list.");
+		return launcherProfile;
+	}
+
+	private void loadVersions(LauncherProfilesJson launcherProfile) {
+		for (LauncherProfileJson profile : launcherProfile.getProfiles()) {
+			versionSelectPanel.addVersion(new LocalVersionComponent(
+					application, workerExecutor, mojangApi, profile));
+		}
+		restoreSelection();
+		frame.pack();
+	}
+
+	private void restoreSelection() {
+		String selectedProfile = options.lastProfile.get();
+		if (selectedProfile != null) {
+			versionSelectPanel.select(selectedProfile);
+		}
+	}
+
+	public void dispose() {
+		frame.dispose();
 	}
 }

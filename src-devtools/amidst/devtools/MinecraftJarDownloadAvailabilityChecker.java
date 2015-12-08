@@ -2,9 +2,10 @@ package amidst.devtools;
 
 import java.io.IOException;
 
-import amidst.devtools.mojangapi.Version;
-import amidst.devtools.mojangapi.Versions;
 import amidst.devtools.utils.VersionStateRenderer;
+import amidst.mojangapi.internal.JsonReader;
+import amidst.mojangapi.versionlist.VersionListEntryJson;
+import amidst.mojangapi.versionlist.VersionListJson;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -12,19 +13,20 @@ import com.google.gson.JsonSyntaxException;
 public class MinecraftJarDownloadAvailabilityChecker {
 	public static void main(String[] args) throws JsonSyntaxException,
 			JsonIOException, IOException {
-		new MinecraftJarDownloadAvailabilityChecker(Versions.retrieve())
+		new MinecraftJarDownloadAvailabilityChecker(
+				JsonReader.readRemoteVersionList())
 				.displayDownloadAvailability();
 	}
 
 	private VersionStateRenderer renderer = new VersionStateRenderer();
-	private Versions versions;
+	private VersionListJson versionList;
 
-	public MinecraftJarDownloadAvailabilityChecker(Versions versions) {
-		this.versions = versions;
+	public MinecraftJarDownloadAvailabilityChecker(VersionListJson versionList) {
+		this.versionList = versionList;
 	}
 
 	public void displayDownloadAvailability() {
-		for (Version version : versions.getVersions()) {
+		for (VersionListEntryJson version : versionList.getVersions()) {
 			boolean hasServer = version.hasServer();
 			boolean hasClient = version.hasClient();
 			System.out.println(renderer.render(version, hasServer, hasClient));

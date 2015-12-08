@@ -2,10 +2,11 @@ package amidst.devtools;
 
 import java.io.IOException;
 
-import amidst.devtools.mojangapi.Version;
-import amidst.devtools.mojangapi.Versions;
 import amidst.devtools.settings.DevToolsSettings;
 import amidst.devtools.utils.VersionStateRenderer;
+import amidst.mojangapi.internal.JsonReader;
+import amidst.mojangapi.versionlist.VersionListEntryJson;
+import amidst.mojangapi.versionlist.VersionListJson;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -15,22 +16,22 @@ public class MinecraftJarDownloader {
 			JsonIOException, IOException {
 		new MinecraftJarDownloader(
 				DevToolsSettings.INSTANCE.getMinecraftVersionsDirectory(),
-				Versions.retrieve()).downloadAll();
+				JsonReader.readRemoteVersionList()).downloadAll();
 	}
 
 	private VersionStateRenderer renderer = new VersionStateRenderer();
-	private String basePath;
-	private Versions versions;
+	private String prefix;
+	private VersionListJson versionList;
 
-	public MinecraftJarDownloader(String basePath, Versions versions) {
-		this.basePath = basePath;
-		this.versions = versions;
+	public MinecraftJarDownloader(String prefix, VersionListJson versionList) {
+		this.prefix = prefix;
+		this.versionList = versionList;
 	}
 
 	public void downloadAll() {
-		for (Version version : versions.getVersions()) {
-			boolean hasServer = version.tryDownloadServer(basePath);
-			boolean hasClient = version.tryDownloadClient(basePath);
+		for (VersionListEntryJson version : versionList.getVersions()) {
+			boolean hasServer = version.tryDownloadServer(prefix);
+			boolean hasClient = version.tryDownloadClient(prefix);
 			System.out.println(renderer.render(version, hasServer, hasClient));
 		}
 	}

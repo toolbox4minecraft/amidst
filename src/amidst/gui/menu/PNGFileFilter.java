@@ -1,17 +1,19 @@
 package amidst.gui.menu;
 
-import javax.swing.filechooser.FileFilter;
 import java.io.File;
+
+import javax.swing.filechooser.FileFilter;
 
 public class PNGFileFilter extends FileFilter {
 	@Override
 	public boolean accept(File file) {
-		if (file.isDirectory())
+		if (file.isDirectory()) {
 			return true;
-		String[] st = file.getName().split("/.");
-		return st[st.length - 1].equalsIgnoreCase("png");
+		} else {
+			return file.getName().toLowerCase().endsWith(".png");
+		}
 	}
-	
+
 	@Override
 	public String getDescription() {
 		return "Portable Network Graphic (*.PNG)";

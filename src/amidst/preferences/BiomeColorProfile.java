@@ -6,150 +6,144 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import com.google.gson.JsonSyntaxException;
 
-import amidst.Options;
-import amidst.Util;
 import amidst.logging.Log;
 import amidst.minecraft.Biome;
 
 public class BiomeColorProfile {
-	private class BiomeColor {
-		public String alias;
-		public int r = 0;
-		public int g = 0;
-		public int b = 0;
-		public BiomeColor(int rgb) {
-			r = (rgb >> 16) & 0xFF;
-			g = (rgb >> 8) & 0xFF;
-			b = (rgb) & 0xFF;
-		}
-		public int toColorInt() {
-			return Util.makeColor(r, g, b);
+	public static void saveDefaultProfileIfNecessary() {
+		if (isEnabled()) {
+			Log.i("Found biome color profile directory.");
+			doSaveDefaultProfileIfNecessary();
+		} else {
+			Log.i("Unable to find biome color profile directory.");
 		}
 	}
-	public static boolean isEnabled = false;
-	
-	public HashMap<String, BiomeColor> colorMap = new HashMap<String, BiomeColor>(); 
-	public int colorArray[] = new int[Biome.biomes.length];
-	public String[] nameArray = new String[Biome.biomes.length];
-	public String name;
-	public String shortcut;
-	
-	public BiomeColorProfile() {
-		name = "default";
-		for (int i = 0; i < Biome.biomes.length; i++) {
-			if (Biome.biomes[i] != null) {
-				colorMap.put(Biome.biomes[i].name, new BiomeColor(Biome.biomes[i].color));
-			}
-		}
-	}
-	
-	public void fillColorArray() {
-		for (Map.Entry<String, BiomeColor> pairs : colorMap.entrySet()) {
-			int index = Biome.indexFromName(pairs.getKey());
-			if (index != -1) {
-				colorArray[index] = pairs.getValue().toColorInt();
-				nameArray[index] = (pairs.getValue().alias != null)?pairs.getValue().alias:Biome.biomes[index].name;
+
+	private static void doSaveDefaultProfileIfNecessary() {
+		if (DEFAULT_PROFILE_FILE.exists()) {
+			Log.i("Found default biome color profile.");
+		} else {
+			if (DEFAULT_PROFILE.save(DEFAULT_PROFILE_FILE)) {
+				Log.i("Saved default biome color profile.");
 			} else {
-				Log.i("Failed to find biome for: " + pairs.getKey() + " in profile: " + name);
+				Log.i("Attempted to save default biome color profile, but encountered an error.");
 			}
 		}
 	}
-	
-	public boolean save(File path) {
+
+	private static Map<String, BiomeColor> createDefaultColorMap() {
+		Map<String, BiomeColor> result = new HashMap<String, BiomeColor>();
+		for (Biome biome : Biome.allBiomes()) {
+			result.put(biome.getName(), new BiomeColor(biome.getDefaultColor()));
+		}
+		return result;
+	}
+
+	public static BiomeColorProfile getDefaultProfile() {
+		return DEFAULT_PROFILE;
+	}
+
+	public static boolean isEnabled() {
+		return PROFILE_DIRECTORY.isDirectory();
+	}
+
+	private static final BiomeColorProfile DEFAULT_PROFILE = new BiomeColorProfile(
+			"default", null, createDefaultColorMap());
+	public static final File PROFILE_DIRECTORY = new File("./biome");
+	public static final File DEFAULT_PROFILE_FILE = new File(PROFILE_DIRECTORY,
+			"default.json");
+
+	private String name;
+	private String shortcut;
+	private Map<String, BiomeColor> colorMap;
+
+	public BiomeColorProfile() {
+		// no-arguments constructor for gson
+	}
+
+	private BiomeColorProfile(String name, String shortcut,
+			Map<String, BiomeColor> colorMap) {
+		this.name = name;
+		this.shortcut = shortcut;
+		this.colorMap = colorMap;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getShortcut() {
+		return shortcut;
+	}
+
+	public void validate() {
+		for (String biomeName : colorMap.keySet()) {
+			if (!Biome.exists(biomeName)) {
+				Log.i("Failed to find biome for: " + biomeName
+						+ " in profile: " + name);
+			}
+		}
+	}
+
+	public int[] createColorArray() {
+		int[] result = new int[Biome.getBiomesLength()];
+		for (Biome biome : Biome.allBiomes()) {
+			result[biome.getIndex()] = getColor(biome);
+		}
+		return result;
+	}
+
+	private int getColor(Biome biome) {
+		if (colorMap.containsKey(biome.getName())) {
+			return colorMap.get(biome.getName()).toColorInt();
+		} else {
+			return biome.getDefaultColor();
+		}
+	}
+
+	public boolean save(File file) {
+		return writeToFile(file, serialize());
+	}
+
+	// TODO: use gson for serialization?
+	private String serialize() {
+		String output = "{ \"name\":\"" + name + "\", \"colorMap\":[\r\n";
+		output += serializeColorMap();
+		return output + " ] }\r\n";
+	}
+
+	private String serializeColorMap() {
 		String output = "";
-		output += "{ \"name\":\"" + name + "\", \"colorMap\":[\r\n";
-		
 		for (Map.Entry<String, BiomeColor> pairs : colorMap.entrySet()) {
 			output += "[ \"" + pairs.getKey() + "\", { ";
-			output += "\"r\":" + pairs.getValue().r + ", "; 
-			output += "\"g\":" + pairs.getValue().g + ", ";
-			output += "\"b\":" + pairs.getValue().b + " } ],\r\n"; 
+			output += "\"r\":" + pairs.getValue().getR() + ", ";
+			output += "\"g\":" + pairs.getValue().getG() + ", ";
+			output += "\"b\":" + pairs.getValue().getB() + " } ],\r\n";
 		}
-		output = output.substring(0, output.length() - 3);
-		
-		output += " ] }\r\n";
+		return output.substring(0, output.length() - 3);
+	}
+
+	private boolean writeToFile(File file, String output) {
 		BufferedWriter writer = null;
 		try {
-			writer = new BufferedWriter(new FileWriter(path));
+			writer = new BufferedWriter(new FileWriter(file));
 			writer.write(output);
 			writer.close();
 			return true;
-		} catch ( IOException e) {
-			try {
-				if (writer != null)
-					writer.close();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+		} catch (IOException e) {
+			closeWriter(writer);
 		}
 		return false;
 	}
-	
-	public void activate() {
-		Options.instance.biomeColorProfile = this;
-		Log.i("Biome color profile activated.");
-		for (int i = 0; i < Biome.biomes.length; i++) {
-			if (Biome.biomes[i] != null) {
-				Biome.biomes[i].color = colorArray[i];
-			}
-		}
-		if (amidst.map.Map.instance != null)
-			amidst.map.Map.instance.resetFragments();
-	}
-	
-	
-	public static void scan() {
-		Log.i("Searching for biome color profiles.");
-		File colorProfileFolder = new File("./biome");
-		
-		if (!colorProfileFolder.exists() || !colorProfileFolder.isDirectory()) {
-			Log.i("Unable to find biome color profile folder.");
-			return;
-		}
-		
-		File defaultProfileFile = new File("./biome/default.json");
-		if (!defaultProfileFile.exists())
-			if (!Options.instance.biomeColorProfile.save(defaultProfileFile))
-				Log.i("Attempted to save default biome color profile, but encountered an error.");
-		
-		/*
-		File[] colorProfiles = colorProfileFolder.listFiles();
-		for (int i = 0; i < colorProfiles.length; i++) {
-			if (colorProfiles[i].exists() && colorProfiles[i].isFile()) {
-				try {
-					BiomeColorProfile profile = Util.readObject(colorProfiles[i], BiomeColorProfile.class);
-					profile.fillColorArray();
-					profiles.add(profile);
-				} catch (FileNotFoundException e) {
-					Log.i("Unable to load file: " + colorProfiles[i]);
-				}
-			}
-		}*/
-		isEnabled = true;
-	}
-	
-	public static BiomeColorProfile createFromFile(File file) {
-		BiomeColorProfile profile = null;
-		if (file.exists() && file.isFile()) {
-			try {
-				profile = Util.readObject(file, BiomeColorProfile.class);
-				profile.fillColorArray();
-			} catch (JsonSyntaxException e) {
-				Log.w("Unable to load file: " + file);
-				e.printStackTrace();
-			} catch (IOException e) {
-				Log.i("Unable to load file: " + file);
-			}
-		}
-		return profile;
-	}
 
-	public String getAliasForId(int id) {
-		if (nameArray[id] != null)
-			return nameArray[id];
-		return Biome.biomes[id].name;
+	private void closeWriter(BufferedWriter writer) {
+		try {
+			if (writer != null) {
+				writer.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

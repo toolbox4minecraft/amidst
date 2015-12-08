@@ -6,19 +6,20 @@ import javax.swing.JToggleButton.ToggleButtonModel;
 
 public class SelectPrefModel implements PrefModel<String> {
 	public class SelectButtonModel extends ToggleButtonModel {
-		private SelectPrefModel model; 
+		private SelectPrefModel model;
 		public String name;
+
 		public SelectButtonModel(SelectPrefModel model, String name) {
 			this.model = model;
 			this.name = name;
 			super.setSelected(false);
 		}
-		
+
 		@Override
 		public boolean isSelected() {
 			return model.get().equals(name);
 		}
-		
+
 		@Override
 		public void setSelected(boolean value) {
 			super.setSelected(value);
@@ -30,11 +31,14 @@ public class SelectPrefModel implements PrefModel<String> {
 			return name;
 		}
 	}
+
 	private Preferences preferences;
 	private String key;
 	private String selected;
-	private SelectButtonModel buttonModels[];
-	public SelectPrefModel(Preferences pref, String key, String selected, String[] names) {
+	private SelectButtonModel[] buttonModels;
+
+	public SelectPrefModel(Preferences pref, String key, String selected,
+			String[] names) {
 		this.key = key;
 		this.preferences = pref;
 		this.selected = selected;
@@ -42,7 +46,7 @@ public class SelectPrefModel implements PrefModel<String> {
 		for (int i = 0; i < buttonModels.length; i++)
 			buttonModels[i] = new SelectButtonModel(this, names[i]);
 		set(pref.get(key, selected));
-		
+
 	}
 
 	@Override
@@ -51,10 +55,10 @@ public class SelectPrefModel implements PrefModel<String> {
 	}
 
 	@Override
-	public String get() { 
+	public String get() {
 		return selected;
 	}
-	
+
 	public SelectButtonModel[] getButtonModels() {
 		return buttonModels;
 	}

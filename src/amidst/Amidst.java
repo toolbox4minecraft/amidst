@@ -1,80 +1,112 @@
 package amidst;
 
-import java.awt.Image;
 import java.io.File;
+
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import MoF.FinderWindow;
-import MoF.Google;
-import amidst.gui.version.VersionSelectWindow;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
-import amidst.minecraft.MinecraftUtil;
-import amidst.minecraft.local.LocalMinecraftInterface;
-import amidst.preferences.BiomeColorProfile;
-import amidst.resources.ResourceLoader;
-
-import com.google.gson.Gson;
+import amidst.logging.Log.CrashHandler;
+import amidst.utilities.Google;
 
 public class Amidst {
-	public final static int version_major = 3;
-	public final static int version_minor = 7;
-	public final static String versionOffset = "";
-	public static Image icon = ResourceLoader.getImage("icon.png");
-	public static final Gson gson = new Gson();
-	
-	
+	private static final String UNCAUGHT_EXCEPTION_ERROR_MESSAGE = "Amidst has encounted an uncaught exception on thread: ";
+	private static final String COMMAND_LINE_PARSING_ERROR_MESSAGE = "There was an issue parsing command line options.";
+	private static Application application;
+	private static CommandLineParameters parameters = new CommandLineParameters();
+
 	public static void main(String args[]) {
+		initUncaughtExceptionHandler();
+		initCrashHandler();
+		parseCommandLineArguments(args);
+		initLogger();
+		initLookAndFeel();
+		setJava2DEnvironmentVariables();
+		trackRunning();
+		startApplication();
+	}
+
+	private static void initUncaughtExceptionHandler() {
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread thread, Throwable e) {
-				Log.crash(e, "Amidst has encounted an uncaught exception on thread: " + thread);
+				Log.crash(e, UNCAUGHT_EXCEPTION_ERROR_MESSAGE + thread);
 			}
 		});
-		CmdLineParser parser = new CmdLineParser(Options.instance); 
+	}
+
+	private static void initCrashHandler() {
+		Log.setCrashHandler(new CrashHandler() {
+			@Override
+			public void handle(Throwable e, String exceptionText,
+					String message, String allLogMessages) {
+				if (application != null) {
+					application
+							.crash(e, exceptionText, message, allLogMessages);
+				} else {
+					System.err.println("Amidst crashed!");
+					System.err.println(message);
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	private static void parseCommandLineArguments(String[] args) {
 		try {
-			parser.parseArgument(args);
+			new CmdLineParser(parameters).parseArgument(args);
 		} catch (CmdLineException e) {
-			Log.w("There was an issue parsing command line options.");
+			Log.w(COMMAND_LINE_PARSING_ERROR_MESSAGE);
 			e.printStackTrace();
 		}
-		Util.setMinecraftDirectory();
-		Util.setMinecraftLibraries();
-		
-		if (Options.instance.logPath != null)
-			Log.addListener("file", new FileLogger(new File(Options.instance.logPath)));
-		
-		
-		if (!isOSX()) { Util.setLookAndFeel(); }
-		Google.startTracking();
-		Google.track("Run");
-		System.setProperty("sun.java2d.opengl","True");
+	}
+
+	private static void initLogger() {
+		if (parameters.logPath != null) {
+			Log.addListener("file",
+					new FileLogger(new File(parameters.logPath)));
+		}
+	}
+
+	private static void initLookAndFeel() {
+		if (!isOSX()) {
+			try {
+				UIManager.setLookAndFeel(UIManager
+						.getSystemLookAndFeelClassName());
+			} catch (Exception e) {
+				Log.printTraceStack(e);
+			}
+		}
+	}
+
+	private static boolean isOSX() {
+		return System.getProperty("os.name").contains("OS X");
+	}
+
+	private static void setJava2DEnvironmentVariables() {
+		System.setProperty("sun.java2d.opengl", "True");
 		System.setProperty("sun.java2d.accthreshold", "0");
-		BiomeColorProfile.scan();
-		
-		if (Options.instance.minecraftJar != null)
-		{
-			Util.setProfileDirectory(Options.instance.minecraftPath);
-			MinecraftUtil.setBiomeInterface(LocalMinecraftInterface.newInstance(Options.instance.minecraftJar));
-			new FinderWindow();
-		}
-		else
-		{
-			new VersionSelectWindow();
-		}
 	}
-	
-	public static boolean isOSX() {
-		String osName = System.getProperty("os.name");
-		return osName.contains("OS X");
+
+	private static void trackRunning() {
+		Google.track("Run");
 	}
-	
-	public static String version() {
-		if (MinecraftUtil.hasInterface())
-			return version_major + "." + version_minor + versionOffset + " [Using Minecraft version: " + MinecraftUtil.getVersion() + "]";
-		return version_major + "." + version_minor + versionOffset;
+
+	private static void startApplication() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				doStartApplication();
+			}
+		});
 	}
-	
+
+	private static void doStartApplication() {
+		application = new Application(parameters);
+		application.run();
+	}
 }

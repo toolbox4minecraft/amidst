@@ -3,109 +3,118 @@ package amidst.logging;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.JOptionPane;
 
-import MoF.FinderWindow;
-import amidst.gui.CrashDialog;
-
 public class Log {
-	private static Object logLock = new Object();
-	private static HashMap<String, LogListener> listeners = new HashMap<String, LogListener>();
-	public static boolean isUsingAlerts = true;
-	public static boolean isShowingDebug = true;
-	
+	public static interface CrashHandler {
+		void handle(Throwable e, String exceptionText, String message,
+				String allLogMessages);
+	}
+
+	private static final ConsoleLogger CONSOLE_LOGGER = new ConsoleLogger();
+	private static final InMemoryLogger IN_MEMORY_LOGGER = new InMemoryLogger();
+
+	private static final Object LOG_LOCK = new Object();
+	private static final boolean IS_USING_ALERTS = true;
+	private static final boolean IS_SHOWING_DEBUG = true;
+
+	private static Map<String, Logger> logger = new HashMap<String, Logger>();
+
+	private static CrashHandler crashHandler;
+
 	static {
-		addListener("master", new LogRecorder());
+		addListener("console", CONSOLE_LOGGER);
+		addListener("master", IN_MEMORY_LOGGER);
 	}
-	
-	public static void addListener(String name, LogListener listener) {
-		synchronized (logLock) {
-			listeners.put(name,  listener);
+
+	public static void addListener(String name, Logger l) {
+		synchronized (LOG_LOCK) {
+			logger.put(name, l);
 		}
 	}
+
 	public static void removeListener(String name) {
-		synchronized (logLock) {
-			listeners.remove(name);
+		synchronized (LOG_LOCK) {
+			logger.remove(name);
 		}
 	}
-	public static void printTraceStack(Throwable e) {
-		StringWriter stringWriter = new StringWriter();
-		PrintWriter printWriter = new PrintWriter(stringWriter);
-		e.printStackTrace(printWriter);
-		String exceptionText = stringWriter.toString();
-		w(exceptionText);
+
+	public static void setCrashHandler(CrashHandler handler) {
+		crashHandler = handler;
 	}
-	
-	public static void i(Object... s) {
-		synchronized (logLock) {
-			printWithTag("info", s);
-			if (listeners.size() != 0)
-				for (LogListener listener : listeners.values())
-					listener.info(s);
+
+	public static void i(Object... messages) {
+		synchronized (LOG_LOCK) {
+			for (Logger listener : logger.values()) {
+				listener.info(messages);
 			}
-	}
-	public static void debug(Object... s) {
-		if (!isShowingDebug)
-			return;
-		synchronized (logLock) {
-			printWithTag("debug", s);
-			if (listeners.size() != 0)
-				for (LogListener listener : listeners.values())
-					listener.debug(s);
 		}
 	}
-	public static void w(Object... s) {
-		synchronized (logLock) {
-			printWithTag("warning", s);
-			if (listeners.size() != 0)
-				for (LogListener listener : listeners.values())
-					listener.warning(s);
+
+	public static void debug(Object... messages) {
+		if (IS_SHOWING_DEBUG) {
+			synchronized (LOG_LOCK) {
+				for (Logger listener : logger.values()) {
+					listener.debug(messages);
+				}
+			}
 		}
 	}
-	
-	public static void e(Object... s) {
-		synchronized (logLock) {
-			printWithTag("error", s);
-			if (isUsingAlerts)
-				JOptionPane.showMessageDialog(null, s, "Error", JOptionPane.ERROR_MESSAGE);
-			if (listeners.size() != 0)
-				for (LogListener listener : listeners.values())
-					listener.error(s);
+
+	public static void w(Object... messages) {
+		synchronized (LOG_LOCK) {
+			for (Logger listener : logger.values()) {
+				listener.warning(messages);
+			}
 		}
 	}
-	
+
+	public static void e(Object... messages) {
+		synchronized (LOG_LOCK) {
+			if (IS_USING_ALERTS) {
+				JOptionPane.showMessageDialog(null, messages, "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			for (Logger listener : logger.values()) {
+				listener.error(messages);
+			}
+		}
+	}
+
 	public static void crash(String message) {
 		crash(null, message);
 	}
+
 	public static void crash(Throwable e, String message) {
-		synchronized (logLock) {
-			printWithTag("crash", message);
-			String exceptionText = "";
-			if (e != null) {
-				StringWriter stringWriter = new StringWriter();
-				PrintWriter printWriter = new PrintWriter(stringWriter);
-				e.printStackTrace(printWriter);
-				exceptionText = stringWriter.toString();
-				printWithTag("crash", exceptionText);
+		synchronized (LOG_LOCK) {
+			String exceptionText = getExceptionText(e);
+			for (Logger listener : logger.values()) {
+				listener.crash(e, exceptionText, message);
 			}
-			
-			if (listeners.size() != 0)
-				for (LogListener listener : listeners.values())
-					listener.crash(e, exceptionText, message);
-			
-			
-			new CrashDialog(message);
-			if (FinderWindow.instance != null)
-				FinderWindow.instance.dispose();
-			//System.exit(0);
+			if (crashHandler != null) {
+				crashHandler.handle(e, exceptionText, message,
+						IN_MEMORY_LOGGER.getContents());
+			}
 		}
 	}
-	
-	private static void printWithTag(String tag, Object... msgs) {
-		System.out.print("[" + tag + "] ");
-		for (int i = 0; i < msgs.length; i++) {
-			System.out.print(msgs[i]);
-			System.out.print((i < msgs.length - 1) ? " " : "\n");
+
+	private static String getExceptionText(Throwable e) {
+		if (e != null) {
+			return getStackTraceAsString(e);
+		} else {
+			return "";
 		}
+	}
+
+	public static void printTraceStack(Throwable e) {
+		w(getStackTraceAsString(e));
+	}
+
+	private static String getStackTraceAsString(Throwable e) {
+		StringWriter writer = new StringWriter();
+		e.printStackTrace(new PrintWriter(writer));
+		return writer.toString();
 	}
 }

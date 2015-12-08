@@ -1,126 +1,105 @@
 package amidst.gui.version;
 
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
-import MoF.FinderWindow;
-import amidst.Options;
-import amidst.Util;
-import amidst.minecraft.MinecraftUtil;
-import amidst.minecraft.local.LocalMinecraftInterface;
-import amidst.version.IProfileUpdateListener;
-import amidst.version.MinecraftProfile;
-import amidst.version.MinecraftProfile.Status;
-import amidst.version.ProfileUpdateEvent;
+import amidst.Application;
+import amidst.logging.Log;
+import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.dotminecraft.ProfileDirectory;
+import amidst.mojangapi.dotminecraft.VersionDirectory;
+import amidst.mojangapi.launcherprofiles.LauncherProfileJson;
+import amidst.threading.Worker;
+import amidst.threading.WorkerExecutor;
 
 public class LocalVersionComponent extends VersionComponent {
-	protected MinecraftProfile profile;
-	protected int oldWidth = 0;
-	protected String drawName;
-	private String name;
-	
-	
-	public LocalVersionComponent(MinecraftProfile profile) {
+	private final Application application;
+	private final WorkerExecutor workerExecutor;
+	private final MojangApi mojangApi;
+	private final LauncherProfileJson profile;
+
+	private volatile VersionDirectory versionDirectory;
+	private volatile ProfileDirectory profileDirectory;
+
+	public LocalVersionComponent(Application application,
+			WorkerExecutor workerExecutor, MojangApi mojangApi,
+			LauncherProfileJson profile) {
+		this.application = application;
+		this.mojangApi = mojangApi;
+		this.workerExecutor = workerExecutor;
 		this.profile = profile;
-		drawName = profile.getProfileName();
-		name = "local:" + profile.getProfileName();
-		
-		profile.addUpdateListener(new IProfileUpdateListener() {
+		initComponent();
+		initDirectoriesLater();
+	}
+
+	private void initDirectoriesLater() {
+		workerExecutor.invokeLater(new Worker<Void>() {
 			@Override
-			public void onProfileUpdate(ProfileUpdateEvent event) {
-				repaint();
+			public Void execute() {
+				doInitDirectories();
+				return null;
+			}
+
+			@Override
+			public void finished(Void result) {
+				repaintComponent();
 			}
 		});
 	}
-	
-	@Override
-	public void paintComponent(Graphics g) {
-		Graphics2D g2d = (Graphics2D)g;
-		FontMetrics fontMetrics = null;
-		
-		if (isLoading)
-			g2d.setColor(loadingBgColor);
-		else if (isSelected())
-			g2d.setColor(selectedBgColor);
-		else
-			g2d.setColor(Color.white);
-		g2d.fillRect(0, 0, getWidth(), getHeight());
-		
-		g2d.setColor(Color.black);
-		g2d.setFont(versionFont);
-		fontMetrics = g2d.getFontMetrics();
-		int versionNameX = getWidth() - 40 - fontMetrics.stringWidth(profile.getVersionName());
-		g2d.drawString(profile.getVersionName(), versionNameX, 20);
-		
-		g2d.setColor(Color.black);
-		g2d.setFont(nameFont);
-		if (oldWidth != getWidth()) {
-			fontMetrics = g2d.getFontMetrics();
-			String name = profile.getProfileName();
-			if (fontMetrics.stringWidth(name) > versionNameX - 25) {
-				int widthSum = 0;
-				for (int i = 0; i < name.length(); i++) {
-					widthSum += fontMetrics.charWidth(name.charAt(i));
-					if (widthSum > versionNameX - 25) {
-						name = name.substring(0, i) + "...";
-						break;
-					}
-				}
-			}
-			drawName = name;
-			oldWidth = getWidth();
+
+	private void doInitDirectories() {
+		this.profileDirectory = createProfileDirectory();
+		this.versionDirectory = createVersionDirectory();
+	}
+
+	private ProfileDirectory createProfileDirectory() {
+		ProfileDirectory result = profile.createProfileDirectory();
+		if (result.isValid()) {
+			return result;
+		} else {
+			Log.w("Unable to load profile directory for profile: "
+					+ profile.getName());
+			return null;
 		}
-		g2d.drawString(drawName, 5, 30);
-		
-		g2d.setColor(Color.gray);
-		g2d.setFont(statusFont);
-		fontMetrics = g2d.getFontMetrics();
-		String statusString = profile.getStatus().toString();
-		g2d.drawString(statusString, getWidth() - 40 - fontMetrics.stringWidth(statusString), 32);
-		
-		BufferedImage image = inactiveIcon;
-		if (isLoading)
-			image = loadingIcon;
-		else if (profile.getStatus() == Status.FOUND)
-			image = activeIcon;
-		g2d.drawImage(image, getWidth() - image.getWidth() - 5, 4, null);
 	}
-	
-	
-	public String getProfileName() {
-		return profile.getProfileName();
+
+	private VersionDirectory createVersionDirectory() {
+		VersionDirectory result = profile.createVersionDirectory(mojangApi);
+		if (result != null) {
+			return result;
+		} else {
+			Log.w("Unable to load version directory for profile: "
+					+ profile.getName());
+			return null;
+		}
 	}
-	
-	public MinecraftProfile getProfile() {
-		return profile;
-	}
-	
+
 	@Override
 	public boolean isReadyToLoad() {
-		return profile.getStatus() == Status.FOUND;
+		return profileDirectory != null && versionDirectory != null;
 	}
-	
+
 	@Override
-	public void load() {
-		isLoading = true;
-		repaint();
-		Options.instance.lastProfile.set(name);
-		(new Thread(new Runnable() {
-			@Override
-			public void run() {
-				Util.setProfileDirectory(profile.getGameDir());
-				MinecraftUtil.setBiomeInterface(LocalMinecraftInterface.newInstance(profile.getJarFile()));
-				new FinderWindow();
-				VersionSelectWindow.get().dispose();
-			}
-		})).start();
+	public void doLoad() {
+		if (isReadyToLoad()) {
+			mojangApi.set(profileDirectory, versionDirectory);
+			application.displayMainWindow();
+		}
+	}
+
+	@Override
+	protected String getLoadingStatus() {
+		if (isReadyToLoad()) {
+			return "found";
+		} else {
+			return "failed";
+		}
 	}
 
 	@Override
 	public String getVersionName() {
-		return name;
+		return profile.getName();
+	}
+
+	@Override
+	public String getVersionPrefix() {
+		return "local";
 	}
 }

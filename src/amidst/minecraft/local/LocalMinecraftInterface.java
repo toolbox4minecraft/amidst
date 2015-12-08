@@ -1,24 +1,15 @@
 package amidst.minecraft.local;
 
-import java.io.File;
 import java.util.Map;
 
-import MoF.SaveLoader.Type;
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
 import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;
-import amidst.version.VersionInfo;
+import amidst.minecraft.RecognisedVersion;
+import amidst.minecraft.world.WorldType;
 
 public class LocalMinecraftInterface implements IMinecraftInterface {
-	public static IMinecraftInterface newInstance(String jarFileName) {
-		return newInstance(new File(jarFileName));
-	}
-
-	public static IMinecraftInterface newInstance(File jarFile) {
-		return new LocalMinecraftInterfaceBuilder(jarFile).create();
-	}
-
 	/**
 	 * A GenLayer instance, at quarter scale to the final biome layer (i.e. both
 	 * axis are divided by 4). Minecraft calculates biomes at
@@ -39,15 +30,15 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 	private SymbolicClass blockInitClass;
 	private SymbolicClass genLayerClass;
 	private SymbolicClass worldTypeClass;
-	private VersionInfo version;
+	private RecognisedVersion recognisedVersion;
 
 	LocalMinecraftInterface(Map<String, SymbolicClass> minecraftClassMap,
-			VersionInfo version) {
+			RecognisedVersion recognisedVersion) {
 		this.intCacheClass = minecraftClassMap.get("IntCache");
 		this.blockInitClass = minecraftClassMap.get("BlockInit");
 		this.genLayerClass = minecraftClassMap.get("GenLayer");
 		this.worldTypeClass = minecraftClassMap.get("WorldType");
-		this.version = version;
+		this.recognisedVersion = recognisedVersion;
 	}
 
 	@Override
@@ -99,7 +90,7 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 	}
 
 	private Object getWorldType(String typeName) {
-		String type = Type.fromMixedCase(typeName).getValue();
+		String type = WorldType.from(typeName).getValue();
 		SymbolicObject object = (SymbolicObject) worldTypeClass
 				.getStaticFieldValue(type);
 		return object.getObject();
@@ -128,7 +119,7 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 	}
 
 	@Override
-	public VersionInfo getVersion() {
-		return version;
+	public RecognisedVersion getRecognisedVersion() {
+		return recognisedVersion;
 	}
 }

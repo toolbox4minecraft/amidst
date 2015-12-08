@@ -1,11 +1,12 @@
 package amidst.devtools.utils;
 
-import amidst.devtools.mojangapi.Version;
+import amidst.mojangapi.versionlist.VersionListEntryJson;
 
 public class VersionStateRenderer {
-	public String render(Version version, boolean hasServer, boolean hasClient) {
+	public String render(VersionListEntryJson version, boolean hasServer,
+			boolean hasClient) {
 		return toBox(hasServer, 'S') + " " + toBox(hasClient, 'C') + " "
-				+ version.getTypeChar() + " " + version.getId();
+				+ version.getType().getTypeChar() + " " + version.getId();
 	}
 
 	private String toBox(boolean value, char c) {

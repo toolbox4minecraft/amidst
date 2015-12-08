@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import amidst.utilties.FileSystemUtils;
+import amidst.utilities.FileSystemUtils;
 
 public class RealClasses {
 	private RealClasses() {

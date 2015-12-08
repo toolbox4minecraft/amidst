@@ -6,23 +6,20 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import amidst.Options;
-import amidst.Util;
 import amidst.clazz.Classes;
 import amidst.clazz.real.RealClass.AccessFlags;
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.translator.ClassTranslator;
-import amidst.json.JarLibrary;
-import amidst.json.JarProfile;
 import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;
-import amidst.utilties.FileSystemUtils;
-import amidst.utilties.JavaUtils;
-import amidst.version.VersionInfo;
+import amidst.minecraft.RecognisedVersion;
+import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
+import amidst.mojangapi.dotminecraft.VersionDirectory;
+import amidst.utilities.JavaUtils;
 
 public class LocalMinecraftInterfaceBuilder {
 	public static enum StatelessResources {
@@ -104,14 +101,22 @@ public class LocalMinecraftInterfaceBuilder {
 	private static final String SERVER_CLASS = "net.minecraft.server.MinecraftServer";
 
 	private Map<String, SymbolicClass> symbolicClassMap;
-	private VersionInfo version;
+	private RecognisedVersion recognisedVersion;
 
-	public LocalMinecraftInterfaceBuilder(File jarFile) {
+	private final DotMinecraftDirectory dotMinecraftDirectory;
+	private final VersionDirectory versionDirectory;
+
+	public LocalMinecraftInterfaceBuilder(
+			DotMinecraftDirectory dotMinecraftDirectory,
+			VersionDirectory versionDirectory) {
+		this.dotMinecraftDirectory = dotMinecraftDirectory;
+		this.versionDirectory = versionDirectory;
 		try {
-			URLClassLoader classLoader = getClassLoader(jarFile);
-			version = getVersion(classLoader);
-			symbolicClassMap = Classes.createSymbolicClassMap(jarFile,
-					classLoader, StatelessResources.INSTANCE.classTranslator);
+			URLClassLoader classLoader = getClassLoader();
+			recognisedVersion = getRecognisedVersion(classLoader);
+			symbolicClassMap = Classes.createSymbolicClassMap(
+					versionDirectory.getJar(), classLoader,
+					StatelessResources.INSTANCE.classTranslator);
 			Log.i("Minecraft load complete.");
 		} catch (RuntimeException e) {
 			Log.crash(
@@ -122,27 +127,27 @@ public class LocalMinecraftInterfaceBuilder {
 		}
 	}
 
-	private URLClassLoader getClassLoader(File jarFile) {
-		File librariesJson = getLibrariesJsonFile(jarFile);
+	private URLClassLoader getClassLoader() {
+		File librariesJson = versionDirectory.getJson();
 		URLClassLoader classLoader;
-		if (librariesJson.exists()) {
+		if (librariesJson.isFile()) {
 			Log.i("Loading libraries.");
-			classLoader = createClassLoader(getJarFileUrl(jarFile),
-					getAllLibraryUrls(librariesJson));
+			classLoader = createClassLoader(getJarFileUrl(),
+					getAllLibraryUrls());
 		} else {
 			Log.i("Unable to find Minecraft library JSON at: " + librariesJson
 					+ ". Skipping.");
-			classLoader = createClassLoader(getJarFileUrl(jarFile));
+			classLoader = createClassLoader(getJarFileUrl());
 		}
 		return classLoader;
 	}
 
-	private VersionInfo getVersion(URLClassLoader classLoader) {
+	private RecognisedVersion getRecognisedVersion(URLClassLoader classLoader) {
 		Log.i("Generating version ID...");
-		String versionID = generateVersionID(getMainClassFields(loadMainClass(classLoader)));
-		VersionInfo result = VersionInfo.from(versionID);
+		String magicString = generateMagicString(getMainClassFields(loadMainClass(classLoader)));
+		RecognisedVersion result = RecognisedVersion.from(magicString);
 		Log.i("Identified Minecraft [" + result.name() + "] with versionID of "
-				+ versionID);
+				+ magicString);
 		return result;
 	}
 
@@ -156,7 +161,7 @@ public class LocalMinecraftInterfaceBuilder {
 		}
 	}
 
-	private String generateVersionID(Field[] fields) {
+	private String generateMagicString(Field[] fields) {
 		String result = "";
 		for (Field field : fields) {
 			String typeString = field.getType().toString();
@@ -183,17 +188,9 @@ public class LocalMinecraftInterfaceBuilder {
 		}
 	}
 
-	private File getLibrariesJsonFile(File jarFile) {
-		if (Options.instance.minecraftJson != null) {
-			return new File(Options.instance.minecraftJson);
-		} else {
-			return new File(jarFile.getPath().replace(".jar", ".json"));
-		}
-	}
-
-	private URL getJarFileUrl(File jarFile) {
+	private URL getJarFileUrl() {
 		try {
-			return jarFile.toURI().toURL();
+			return versionDirectory.getJar().toURI().toURL();
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("minecraft jar file has malformed url",
 					e);
@@ -209,73 +206,18 @@ public class LocalMinecraftInterfaceBuilder {
 		return new URLClassLoader(new URL[] { jarFileUrl });
 	}
 
-	private List<URL> getAllLibraryUrls(File jsonFile) {
-		List<URL> libraries = new ArrayList<URL>();
-		JarProfile profile = null;
+	private List<URL> getAllLibraryUrls() {
 		try {
-			profile = Util.readObject(jsonFile, JarProfile.class);
+			return versionDirectory.readVersionJson().getLibraryUrls(
+					dotMinecraftDirectory);
 		} catch (IOException e) {
 			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: "
-					+ jsonFile + ")");
-			return libraries;
+					+ versionDirectory.getJson() + ")");
 		}
-
-		for (JarLibrary library : profile.getLibraries()) {
-			File libraryFile = getLibraryFile(library);
-			if (libraryFile != null) {
-				try {
-					libraries.add(libraryFile.toURI().toURL());
-					Log.i("Found library: " + libraryFile);
-				} catch (MalformedURLException e) {
-					Log.w("Unable to convert library file to URL with path: "
-							+ libraryFile);
-					e.printStackTrace();
-				}
-			} else {
-				Log.i("Skipping library: " + library.getName());
-			}
-		}
-
-		return libraries;
-	}
-
-	private File getLibraryFile(JarLibrary library) {
-		if (library.isActive()) {
-			File result = getLibraryFile(library.getName());
-			if (result != null && result.exists()) {
-				return result;
-			}
-		}
-		return null;
-	}
-
-	private File getLibraryFile(String libraryName) {
-		String searchPath = getLibrarySearchPath(libraryName);
-		File searchPathFile = new File(searchPath);
-		if (!searchPathFile.exists()) {
-			Log.w("Failed attempt to load library at: " + searchPathFile);
-			return null;
-		}
-		File result = FileSystemUtils.getFirstFileWithExtension(
-				searchPathFile.listFiles(), "jar");
-		if (result == null) {
-			Log.w("Attempted to search for file at path: " + searchPath
-					+ " but found nothing. Skipping.");
-		}
-		return result;
-	}
-
-	private String getLibrarySearchPath(String libraryName) {
-		String result = Util.minecraftLibraries.getAbsolutePath() + "/";
-		String[] split = libraryName.split(":");
-		split[0] = split[0].replace('.', '/');
-		for (int i = 0; i < split.length; i++) {
-			result += split[i] + "/";
-		}
-		return result;
+		return Collections.emptyList();
 	}
 
 	public IMinecraftInterface create() {
-		return new LocalMinecraftInterface(symbolicClassMap, version);
+		return new LocalMinecraftInterface(symbolicClassMap, recognisedVersion);
 	}
 }

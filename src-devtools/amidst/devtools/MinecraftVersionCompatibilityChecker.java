@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import amidst.Util;
 import amidst.clazz.Classes;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.translator.ClassTranslator;
-import amidst.devtools.mojangapi.Version;
-import amidst.devtools.mojangapi.Versions;
 import amidst.devtools.settings.DevToolsSettings;
 import amidst.minecraft.local.LocalMinecraftInterfaceBuilder;
+import amidst.mojangapi.internal.JsonReader;
+import amidst.mojangapi.versionlist.VersionListEntryJson;
+import amidst.mojangapi.versionlist.VersionListJson;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -25,26 +25,25 @@ public class MinecraftVersionCompatibilityChecker {
 			JsonIOException, IOException {
 		new MinecraftVersionCompatibilityChecker(
 				DevToolsSettings.INSTANCE.getMinecraftVersionsDirectory(),
-				Versions.retrieve()).checkAll();
+				JsonReader.readRemoteVersionList()).checkAll();
 	}
 
 	private static final List<String> OPTIONAL_CLASSES = Arrays
 			.asList("BlockInit");
 
-	private String basePath;
-	private Versions versions;
+	private String prefix;
+	private VersionListJson versionList;
 
-	public MinecraftVersionCompatibilityChecker(String basePath,
-			Versions versions) {
-		this.basePath = basePath;
-		this.versions = versions;
+	public MinecraftVersionCompatibilityChecker(String prefix,
+			VersionListJson versionList) {
+		this.prefix = prefix;
+		this.versionList = versionList;
 	}
 
 	public void checkAll() {
-		initCreepyStuff();
-		List<Version> supported = new ArrayList<Version>();
-		List<Version> unsupported = new ArrayList<Version>();
-		for (Version version : versions.getVersions()) {
+		List<VersionListEntryJson> supported = new ArrayList<VersionListEntryJson>();
+		List<VersionListEntryJson> unsupported = new ArrayList<VersionListEntryJson>();
+		for (VersionListEntryJson version : versionList.getVersions()) {
 			if (checkOne(version)) {
 				supported.add(version);
 			} else {
@@ -57,15 +56,10 @@ public class MinecraftVersionCompatibilityChecker {
 				"================ UNSUPPORTED VERSIONS ================");
 	}
 
-	private void initCreepyStuff() {
-		Util.setMinecraftDirectory();
-		Util.setMinecraftLibraries();
-	}
-
-	private boolean checkOne(Version version) {
-		if (version.tryDownloadClient(basePath)) {
+	private boolean checkOne(VersionListEntryJson version) {
+		if (version.tryDownloadClient(prefix)) {
 			try {
-				File jarFile = version.getLocalClientJarPath(basePath).toFile();
+				File jarFile = new File(version.getClientJar(prefix));
 				ClassTranslator translator = LocalMinecraftInterfaceBuilder.StatelessResources.INSTANCE.classTranslator;
 				return isSupported(Classes.countMatches(jarFile, translator));
 			} catch (Exception e) {
@@ -88,10 +82,11 @@ public class MinecraftVersionCompatibilityChecker {
 		return true;
 	}
 
-	private void displayVersionList(List<Version> versionList, String message) {
+	private void displayVersionList(List<VersionListEntryJson> supported,
+			String message) {
 		System.out.println();
 		System.out.println(message);
-		for (Version version : versionList) {
+		for (VersionListEntryJson version : supported) {
 			System.out.println(version.getId());
 		}
 	}
