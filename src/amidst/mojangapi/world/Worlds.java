@@ -6,7 +6,6 @@ import java.util.Random;
 
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
-import amidst.mojangapi.world.loader.WorldLoader;
 import amidst.utilities.Google;
 
 public enum Worlds {
@@ -34,7 +33,7 @@ public enum Worlds {
 	public static World fromFile(MinecraftInterface minecraftInterface,
 			SaveDirectory saveDirectory) throws FileNotFoundException,
 			IOException {
-		World world = new WorldLoader(saveDirectory).create(minecraftInterface);
+		World world = saveDirectory.createWorld(minecraftInterface);
 		Google.track("seed/file/" + world.getSeed());
 		return world;
 	}

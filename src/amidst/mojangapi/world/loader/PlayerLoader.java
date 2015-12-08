@@ -40,7 +40,7 @@ public abstract class PlayerLoader {
 		try {
 			return doLoad();
 		} catch (Exception e) {
-			Log.w("exception while loading players");
+			Log.w("unable to load players");
 			e.printStackTrace();
 			return Collections.emptyList();
 		}
