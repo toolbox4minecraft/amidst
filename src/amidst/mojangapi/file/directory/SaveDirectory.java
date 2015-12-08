@@ -181,7 +181,7 @@ public class SaveDirectory {
 
 	private boolean ensureDirectoryExists(File directory) {
 		if (!directory.exists()) {
-			directory.mkdir();
+			directory.mkdirs();
 		}
 		return directory.isDirectory();
 	}
