@@ -35,6 +35,7 @@ public abstract class PlayerLoader {
 		return tag.getValue().get(NBTTagKeys.TAG_KEY_POS);
 	}
 
+	// TODO: gui feedback
 	public List<Player> load() {
 		try {
 			return doLoad();

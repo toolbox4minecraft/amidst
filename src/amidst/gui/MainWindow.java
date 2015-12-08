@@ -219,6 +219,7 @@ public class MainWindow {
 		JOptionPane.showMessageDialog(frame, message);
 	}
 
+	// TODO: revisit error handling and feedback on gui
 	public void displayException(Exception exception) {
 		displayMessage(getStackTraceAsString(exception));
 	}

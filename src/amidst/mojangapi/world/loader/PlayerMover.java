@@ -15,14 +15,15 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.logging.Log;
+import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.world.Player;
 
 public class PlayerMover {
-	private File file;
+	private SaveDirectory saveDirectory;
 	private boolean isMultiplayerWorld;
 
-	public PlayerMover(File file, boolean isMultiplayerWorld) {
-		this.file = file;
+	public PlayerMover(SaveDirectory saveDirectory, boolean isMultiplayerWorld) {
+		this.saveDirectory = saveDirectory;
 		this.isMultiplayerWorld = isMultiplayerWorld;
 	}
 
@@ -85,14 +86,10 @@ public class PlayerMover {
 
 	private File getPlayerFile(Player player) {
 		if (isMultiplayerWorld) {
-			return getMultiPlayerPlayerFile(player.getPlayerName());
+			return saveDirectory.getPlayerFile(player.getPlayerName());
 		} else {
-			return file;
+			return saveDirectory.getLevelDat();
 		}
-	}
-
-	private File getMultiPlayerPlayerFile(String playerName) {
-		return new File(file.getParent() + "/players/" + playerName + ".dat");
 	}
 
 	private void movePlayerOnMultiPlayerWorld(Player player, File file)

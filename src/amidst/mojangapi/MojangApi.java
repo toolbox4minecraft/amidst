@@ -1,10 +1,13 @@
 package amidst.mojangapi;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import amidst.mojangapi.file.FilenameFactory;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
+import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
@@ -83,7 +86,8 @@ public class MojangApi {
 		return minecraftInterface != null;
 	}
 
-	public World createRandomWorld(WorldType worldType) {
+	public World createRandomWorld(WorldType worldType)
+			throws IllegalStateException {
 		if (canCreateWorld()) {
 			return Worlds.random(minecraftInterface, worldType);
 		} else {
@@ -92,7 +96,8 @@ public class MojangApi {
 		}
 	}
 
-	public World createWorldFromSeed(String seedText, WorldType worldType) {
+	public World createWorldFromSeed(String seedText, WorldType worldType)
+			throws IllegalStateException {
 		if (canCreateWorld()) {
 			return Worlds.fromSeed(minecraftInterface, seedText, worldType);
 		} else {
@@ -101,9 +106,11 @@ public class MojangApi {
 		}
 	}
 
-	public World createWorldFromFile(File worldFile) throws Exception {
+	public World createWorldFromFile(File file) throws FileNotFoundException,
+			IOException, IllegalStateException {
 		if (canCreateWorld()) {
-			return Worlds.fromFile(minecraftInterface, worldFile);
+			return Worlds
+					.fromFile(minecraftInterface, SaveDirectory.from(file));
 		} else {
 			throw new IllegalStateException(
 					"cannot create a world without a minecraft interface");

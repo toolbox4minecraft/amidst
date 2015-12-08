@@ -1,8 +1,10 @@
 package amidst.mojangapi.world;
 
-import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Random;
 
+import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.world.loader.WorldLoader;
 import amidst.utilities.Google;
@@ -30,15 +32,11 @@ public enum Worlds {
 	}
 
 	public static World fromFile(MinecraftInterface minecraftInterface,
-			File worldFile) throws Exception {
-		WorldLoader worldLoader = new WorldLoader(worldFile);
-		if (worldLoader.isLoadedSuccessfully()) {
-			World world = worldLoader.get(minecraftInterface);
-			Google.track("seed/file/" + world.getSeed());
-			return world;
-		} else {
-			throw worldLoader.getException();
-		}
+			SaveDirectory saveDirectory) throws FileNotFoundException,
+			IOException {
+		World world = new WorldLoader(saveDirectory).create(minecraftInterface);
+		Google.track("seed/file/" + world.getSeed());
+		return world;
 	}
 
 	private static long getSeedFromString(String seed) {

@@ -6,38 +6,26 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.world.Player;
 
 public class MultiPlayerPlayerLoader extends PlayerLoader {
-	private final File worldFile;
+	private final SaveDirectory saveDirectory;
 
-	public MultiPlayerPlayerLoader(File worldFile) {
-		this.worldFile = worldFile;
+	public MultiPlayerPlayerLoader(SaveDirectory saveDirectory) {
+		this.saveDirectory = saveDirectory;
 	}
 
 	@Override
 	protected List<Player> doLoad() throws FileNotFoundException, IOException {
 		List<Player> result = new ArrayList<Player>();
-		for (File playerFile : getPlayerFiles(getPlayersFolder())) {
+		for (File playerFile : saveDirectory.getPlayerFiles()) {
 			if (playerFile.isFile()) {
 				result.add(createPlayer(getPlayerName(playerFile),
 						NBTUtils.readTagFromFile(playerFile)));
 			}
 		}
 		return result;
-	}
-
-	private File[] getPlayerFiles(File playersFolder) {
-		File[] files = playersFolder.listFiles();
-		if (files == null) {
-			return new File[0];
-		} else {
-			return files;
-		}
-	}
-
-	private File getPlayersFolder() {
-		return new File(worldFile.getParent(), "players");
 	}
 
 	private String getPlayerName(File playerFile) {

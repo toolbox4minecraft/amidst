@@ -76,8 +76,12 @@ public class MenuActions {
 			} else {
 				WorldType worldType = mainWindow.askForWorldType();
 				if (worldType != null) {
-					mainWindow.setWorld(mojangApi.createWorldFromSeed(seed,
-							worldType));
+					try {
+						mainWindow.setWorld(mojangApi.createWorldFromSeed(seed,
+								worldType));
+					} catch (IllegalStateException e) {
+						mainWindow.displayException(e);
+					}
 				}
 			}
 		}
@@ -86,15 +90,19 @@ public class MenuActions {
 	public void newFromRandom() {
 		WorldType worldType = mainWindow.askForWorldType();
 		if (worldType != null) {
-			mainWindow.setWorld(mojangApi.createRandomWorld(worldType));
+			try {
+				mainWindow.setWorld(mojangApi.createRandomWorld(worldType));
+			} catch (IllegalStateException e) {
+				mainWindow.displayException(e);
+			}
 		}
 	}
 
 	public void newFromFileOrFolder() {
-		File worldFile = mainWindow.askForMinecraftWorldFile();
-		if (worldFile != null) {
+		File file = mainWindow.askForMinecraftWorldFile();
+		if (file != null) {
 			try {
-				mainWindow.setWorld(mojangApi.createWorldFromFile(worldFile));
+				mainWindow.setWorld(mojangApi.createWorldFromFile(file));
 			} catch (Exception e) {
 				mainWindow.displayException(e);
 			}
