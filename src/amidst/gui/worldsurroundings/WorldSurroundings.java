@@ -84,10 +84,6 @@ public class WorldSurroundings {
 		zoom.adjustZoom(viewer.getMousePositionOrCenter(), notches);
 	}
 
-	public String getRecognisedVersionName() {
-		return world.getRecognisedVersion().getName();
-	}
-
 	public long getSeed() {
 		return world.getSeed();
 	}

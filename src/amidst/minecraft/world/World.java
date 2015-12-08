@@ -3,7 +3,6 @@ package amidst.minecraft.world;
 import java.util.List;
 
 import amidst.minecraft.IMinecraftInterface;
-import amidst.minecraft.RecognisedVersion;
 import amidst.minecraft.world.icon.CachedWorldIconProducer;
 import amidst.minecraft.world.icon.NetherFortressProducer;
 import amidst.minecraft.world.icon.OceanMonumentProducer;
@@ -37,7 +36,6 @@ public class World {
 	private final String generatorOptions;
 	private final boolean isMultiplayerWorld;
 	private final MovablePlayerList movablePlayerList;
-	private final IMinecraftInterface minecraftInterface;
 
 	private final BiomeDataOracle biomeDataOracle;
 	private final SlimeChunkOracle slimeChunkOracle;
@@ -58,20 +56,21 @@ public class World {
 		this.generatorOptions = generatorOptions;
 		this.isMultiplayerWorld = isMultiplayerWorld;
 		this.movablePlayerList = movablePlayerList;
-		this.minecraftInterface = minecraftInterface;
-		initMinecraftInterface();
+		initMinecraftInterface(minecraftInterface);
 		this.biomeDataOracle = new BiomeDataOracle(minecraftInterface);
 		this.slimeChunkOracle = new SlimeChunkOracle(this);
 		this.oceanMonumentProducer = new OceanMonumentProducer(this);
-		this.templeProducer = new TempleProducer(this);
+		this.templeProducer = new TempleProducer(this,
+				minecraftInterface.getRecognisedVersion());
 		this.villageProducer = new VillageProducer(this);
 		this.netherFortressProducer = new NetherFortressProducer(this);
 		this.playerProducer = new PlayerProducer(this);
 		this.spawnProducer = new SpawnProducer(this);
-		this.strongholdProducer = new StrongholdProducer(this);
+		this.strongholdProducer = new StrongholdProducer(this,
+				minecraftInterface.getRecognisedVersion());
 	}
 
-	private void initMinecraftInterface() {
+	private void initMinecraftInterface(IMinecraftInterface minecraftInterface) {
 		minecraftInterface.createWorld(seed, worldType.getName(),
 				generatorOptions);
 	}
@@ -150,9 +149,5 @@ public class World {
 
 	public void reloadPlayerWorldIcons() {
 		playerProducer.resetCache();
-	}
-
-	public RecognisedVersion getRecognisedVersion() {
-		return minecraftInterface.getVersion();
 	}
 }

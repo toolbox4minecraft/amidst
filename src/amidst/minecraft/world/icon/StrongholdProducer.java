@@ -60,12 +60,13 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 	);
 	// @formatter:on
 
+	private final RecognisedVersion recognisedVersion;
 	private final List<Biome> validBiomes;
+	private final Random random = new Random();
 
-	private Random random = new Random();
-
-	public StrongholdProducer(World world) {
+	public StrongholdProducer(World world, RecognisedVersion recognisedVersion) {
 		super(world);
+		this.recognisedVersion = recognisedVersion;
 		this.validBiomes = getValidBiomes();
 	}
 
@@ -126,15 +127,14 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 	}
 
 	private List<Biome> getValidBiomes() {
-		RecognisedVersion versionInfo = world.getRecognisedVersion();
-		if (versionInfo.isAtLeast(RecognisedVersion.V13w36a)) {
+		if (recognisedVersion.isAtLeast(RecognisedVersion.V13w36a)) {
 			return getValidBiomesV13w36a();
-		} else if (versionInfo.isAtLeast(RecognisedVersion.V12w03a)) {
+		} else if (recognisedVersion.isAtLeast(RecognisedVersion.V12w03a)) {
 			return VALID_BIOMES_12w03a;
-		} else if (versionInfo == RecognisedVersion.V1_1) {
+		} else if (recognisedVersion == RecognisedVersion.V1_1) {
 			return VALID_BIOMES_1_1;
-		} else if (versionInfo == RecognisedVersion.V1_9pre6
-				|| versionInfo == RecognisedVersion.V1_0) {
+		} else if (recognisedVersion == RecognisedVersion.V1_9pre6
+				|| recognisedVersion == RecognisedVersion.V1_0) {
 			return VALID_BIOMES_1_0;
 		} else {
 			return VALID_BIOMES_DEFAULT;

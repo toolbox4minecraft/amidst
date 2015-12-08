@@ -22,5 +22,5 @@ public interface IMinecraftInterface {
 	 */
 	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution);
 	public void createWorld(long seed, String type, String generatorOptions);
-	public RecognisedVersion getVersion();
+	public RecognisedVersion getRecognisedVersion();
 }

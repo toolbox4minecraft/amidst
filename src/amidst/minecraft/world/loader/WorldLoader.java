@@ -191,7 +191,7 @@ public class WorldLoader {
 
 	private MovablePlayerList createMovablePlayerList(
 			IMinecraftInterface minecraftInterface) {
-		if (minecraftInterface.getVersion().isSaveEnabled()) {
+		if (minecraftInterface.getRecognisedVersion().isSaveEnabled()) {
 			return new MovablePlayerList(players, playerMover);
 		} else {
 			return new MovablePlayerList(players);

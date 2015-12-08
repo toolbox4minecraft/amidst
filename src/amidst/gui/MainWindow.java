@@ -76,10 +76,15 @@ public class MainWindow {
 
 	private JFrame createFrame() {
 		JFrame frame = new JFrame();
-		frame.setTitle(getSimpleVersionString());
+		frame.setTitle(createVersionString(mojangApi.getRecognisedVersionName()));
 		frame.setSize(1000, 800);
 		frame.setIconImage(AmidstMetaData.ICON);
 		return frame;
+	}
+
+	private String createVersionString(String version) {
+		return "Amidst v" + AmidstMetaData.getFullVersionString()
+				+ " [Using Minecraft version: " + version + "]";
 	}
 
 	private Container createContentPane() {
@@ -147,8 +152,6 @@ public class MainWindow {
 		menuBar.setWorldMenuEnabled(true);
 		menuBar.setSavePlayerLocationsMenuEnabled(worldSurroundings
 				.canSavePlayerLocations());
-		frame.setTitle(getLongVersionString(worldSurroundings
-				.getRecognisedVersionName()));
 		frame.validate();
 		worldSurroundings.loadPlayerSkins(skinLoader);
 		this.worldSurroundings.set(worldSurroundings);
@@ -167,19 +170,6 @@ public class MainWindow {
 	private void clearWorldSurroundingsFromGui() {
 		menuBar.setWorldMenuEnabled(false);
 		menuBar.setSavePlayerLocationsMenuEnabled(false);
-		frame.setTitle(getSimpleVersionString());
-	}
-
-	private String getLongVersionString(String version) {
-		return getVersionString(" [Using Minecraft version: " + version + "]");
-	}
-
-	private String getSimpleVersionString() {
-		return getVersionString("");
-	}
-
-	private String getVersionString(String string) {
-		return "Amidst v" + AmidstMetaData.getFullVersionString() + string;
 	}
 
 	public void dispose() {

@@ -91,4 +91,8 @@ public class MojangApi {
 	public World createWorldFromFile(File worldFile) throws Exception {
 		return Worlds.fromFile(minecraftInterface, worldFile);
 	}
+
+	public String getRecognisedVersionName() {
+		return minecraftInterface.getRecognisedVersion().getName();
+	}
 }

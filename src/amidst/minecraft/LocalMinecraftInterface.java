@@ -62,7 +62,7 @@ public class LocalMinecraftInterface implements IMinecraftInterface {
 	}
 
 	@Override
-	public RecognisedVersion getVersion() {
+	public RecognisedVersion getRecognisedVersion() {
 		return minecraft.version;
 	}
 

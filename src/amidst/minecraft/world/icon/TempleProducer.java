@@ -8,8 +8,11 @@ import amidst.minecraft.RecognisedVersion;
 import amidst.minecraft.world.World;
 
 public class TempleProducer extends StructureProducer {
-	public TempleProducer(World world) {
+	private final RecognisedVersion recognisedVersion;
+
+	public TempleProducer(World world, RecognisedVersion recognisedVersion) {
 		super(world);
+		this.recognisedVersion = recognisedVersion;
 	}
 
 	@Override
@@ -39,8 +42,7 @@ public class TempleProducer extends StructureProducer {
 	@Override
 	protected List<Biome> getValidBiomesAtMiddleOfChunk() {
 		// @formatter:off
-		RecognisedVersion versionInfo = world.getRecognisedVersion();
-		if (versionInfo.isAtLeast(RecognisedVersion.V1_4_2)) {
+		if (recognisedVersion.isAtLeast(RecognisedVersion.V1_4_2)) {
 			return Arrays.asList(
 					Biome.desert,
 					Biome.desertHills,
@@ -48,7 +50,7 @@ public class TempleProducer extends StructureProducer {
 					Biome.jungleHills,
 					Biome.swampland
 			);
-		} else if (versionInfo.isAtLeast(RecognisedVersion.V12w22a)) {
+		} else if (recognisedVersion.isAtLeast(RecognisedVersion.V12w22a)) {
 			return Arrays.asList(
 					Biome.desert,
 					Biome.desertHills,
