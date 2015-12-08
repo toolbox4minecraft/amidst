@@ -12,7 +12,6 @@ import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.MojangApiBuilder;
 import amidst.threading.ThreadMaster;
-import amidst.threading.Worker;
 import amidst.utilities.SeedHistoryLogger;
 
 public class Application {
@@ -78,34 +77,14 @@ public class Application {
 	}
 
 	public void run() {
-		if (mojangApi.hasVersionDirectory()) {
+		if (mojangApi.canCreateWorld()) {
 			displayMainWindow();
 		} else {
 			displayVersionSelectWindow();
 		}
 	}
 
-	@Deprecated
 	public void displayMainWindow() {
-		threadMaster.getWorkerExecutor().invokeLater(new Worker<Void>() {
-			@Override
-			public Void execute() {
-				createAndSetLocalMinecraftInterface();
-				return null;
-			}
-
-			@Override
-			public void finished(Void result) {
-				doDisplayMainWindow();
-			}
-		});
-	}
-
-	private void createAndSetLocalMinecraftInterface() {
-		mojangApi.createAndSetLocalMinecraftInterface();
-	}
-
-	private void doDisplayMainWindow() {
 		setMainWindow(new MainWindow(this, options, mojangApi,
 				worldSurroundingsBuilder, seedHistoryLogger,
 				threadMaster.getSkinLoader(), updatePrompt));

@@ -11,6 +11,8 @@ import amidst.mojangapi.internal.JsonReader;
 import amidst.mojangapi.versionlist.VersionListJson;
 
 public class MojangApiBuilder {
+	public static final String UNKNOWN_VERSION_ID = "unknown";
+
 	private final String preferedDotMinecraftDirectory;
 	private final String preferedLibraries;
 	private final String preferedVersionJar;
@@ -33,7 +35,8 @@ public class MojangApiBuilder {
 		}
 		MojangApi result = new MojangApi(dotMinecraftDirectory,
 				readRemoteOrLocalVersionList(), createPreferedJson());
-		result.set(createProfileDirectory(), createVersionDirectory());
+		result.set(createProfileDirectory(),
+				createVersionDirectory(dotMinecraftDirectory));
 		return result;
 	}
 
@@ -77,11 +80,13 @@ public class MojangApiBuilder {
 	}
 
 	// TODO: check for correctness
-	private VersionDirectory createVersionDirectory() {
+	private VersionDirectory createVersionDirectory(
+			DotMinecraftDirectory dotMinecraftDirectory) {
 		if (preferedVersionJar != null) {
 			File jar = new File(preferedVersionJar);
 			File json = new File(jar.getPath().replace(".jar", ".json"));
-			VersionDirectory result = new VersionDirectory(jar, json);
+			VersionDirectory result = new VersionDirectory(
+					dotMinecraftDirectory, UNKNOWN_VERSION_ID, jar, json);
 			if (result.isValid()) {
 				return result;
 			}

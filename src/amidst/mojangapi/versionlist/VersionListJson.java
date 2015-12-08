@@ -3,7 +3,7 @@ package amidst.mojangapi.versionlist;
 import java.util.Collections;
 import java.util.List;
 
-import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
+import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
 import amidst.mojangapi.internal.ReleaseType;
 
@@ -18,22 +18,18 @@ public class VersionListJson {
 		return versions;
 	}
 
-	public VersionDirectory findFirstValidSnapshot(
-			DotMinecraftDirectory dotMinecraftDirectory) {
-		return findFirstValidVersionDirectory(dotMinecraftDirectory);
+	public VersionDirectory findFirstValidSnapshot(MojangApi mojangApi) {
+		return findFirstValidVersionDirectory(mojangApi);
 	}
 
-	public VersionDirectory findFirstValidRelease(
-			DotMinecraftDirectory dotMinecraftDirectory) {
-		return findFirstValidVersionDirectory(dotMinecraftDirectory,
-				ReleaseType.RELEASE);
+	public VersionDirectory findFirstValidRelease(MojangApi mojangApi) {
+		return findFirstValidVersionDirectory(mojangApi, ReleaseType.RELEASE);
 	}
 
-	public VersionDirectory findFirstValidVersionDirectory(
-			DotMinecraftDirectory dotMinecraftDirectory) {
+	public VersionDirectory findFirstValidVersionDirectory(MojangApi mojangApi) {
 		for (VersionListEntryJson version : versions) {
 			VersionDirectory versionDirectory = version
-					.createVersionDirectory(dotMinecraftDirectory);
+					.createVersionDirectory(mojangApi);
 			if (versionDirectory.isValid()) {
 				return versionDirectory;
 			}
@@ -41,12 +37,12 @@ public class VersionListJson {
 		return null;
 	}
 
-	public VersionDirectory findFirstValidVersionDirectory(
-			DotMinecraftDirectory dotMinecraftDirectory, ReleaseType releaseType) {
+	public VersionDirectory findFirstValidVersionDirectory(MojangApi mojangApi,
+			ReleaseType releaseType) {
 		for (VersionListEntryJson version : versions) {
 			if (version.isType(releaseType)) {
 				VersionDirectory versionDirectory = version
-						.createVersionDirectory(dotMinecraftDirectory);
+						.createVersionDirectory(mojangApi);
 				if (versionDirectory.isValid()) {
 					return versionDirectory;
 				}

@@ -3,6 +3,7 @@ package amidst.mojangapi;
 import java.io.File;
 
 import amidst.minecraft.IMinecraftInterface;
+import amidst.minecraft.RecognisedVersion;
 import amidst.minecraft.local.LocalMinecraftInterfaceBuilder;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.WorldType;
@@ -10,6 +11,7 @@ import amidst.minecraft.world.Worlds;
 import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.dotminecraft.ProfileDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
+import amidst.mojangapi.internal.FilenameFactory;
 import amidst.mojangapi.versionlist.VersionListJson;
 
 public class MojangApi {
@@ -28,23 +30,45 @@ public class MojangApi {
 		this.preferedJson = preferedJson;
 	}
 
+	public DotMinecraftDirectory getDotMinecraftDirectory() {
+		return dotMinecraftDirectory;
+	}
+
+	public VersionListJson getVersionList() {
+		return versionList;
+	}
+
 	public void set(ProfileDirectory profileDirectory,
 			VersionDirectory versionDirectory) {
 		this.profileDirectory = profileDirectory;
 		this.versionDirectory = versionDirectory;
-	}
-
-	@Deprecated
-	public VersionDirectory getVersionDirectory() {
-		if (preferedJson != null) {
-			return new VersionDirectory(versionDirectory.getJar(), preferedJson);
+		if (versionDirectory != null) {
+			this.minecraftInterface = createLocalMinecraftInterface();
 		} else {
-			return versionDirectory;
+			this.minecraftInterface = null;
 		}
 	}
 
-	public boolean hasVersionDirectory() {
-		return versionDirectory != null;
+	private IMinecraftInterface createLocalMinecraftInterface() {
+		return new LocalMinecraftInterfaceBuilder(versionDirectory).create();
+	}
+
+	public VersionDirectory createVersionDirectory(String versionId) {
+		File versions = dotMinecraftDirectory.getVersions();
+		File jar = FilenameFactory.getClientJarFile(versions, versionId);
+		File json = FilenameFactory.getClientJsonFile(versions, versionId);
+		return doCreateVersionDirectory(versionId, jar, json);
+	}
+
+	private VersionDirectory doCreateVersionDirectory(String versionId,
+			File jar, File json) {
+		if (preferedJson != null) {
+			return new VersionDirectory(dotMinecraftDirectory, versionId, jar,
+					preferedJson);
+		} else {
+			return new VersionDirectory(dotMinecraftDirectory, versionId, jar,
+					json);
+		}
 	}
 
 	public File getSaves() {
@@ -55,37 +79,42 @@ public class MojangApi {
 		}
 	}
 
-	@Deprecated
-	public void createAndSetLocalMinecraftInterface() {
-		this.minecraftInterface = createLocalMinecraftInterface();
-	}
-
-	private IMinecraftInterface createLocalMinecraftInterface() {
-		return new LocalMinecraftInterfaceBuilder(dotMinecraftDirectory,
-				getVersionDirectory()).create();
-	}
-
-	public DotMinecraftDirectory getDotMinecraftDirectory() {
-		return dotMinecraftDirectory;
-	}
-
-	public VersionListJson getVersionList() {
-		return versionList;
+	public boolean canCreateWorld() {
+		return minecraftInterface != null;
 	}
 
 	public World createRandomWorld(WorldType worldType) {
-		return Worlds.random(minecraftInterface, worldType);
+		if (canCreateWorld()) {
+			return Worlds.random(minecraftInterface, worldType);
+		} else {
+			throw new IllegalStateException(
+					"cannot create a world without a minecraft interface");
+		}
 	}
 
 	public World createWorldFromSeed(String seedText, WorldType worldType) {
-		return Worlds.fromSeed(minecraftInterface, seedText, worldType);
+		if (canCreateWorld()) {
+			return Worlds.fromSeed(minecraftInterface, seedText, worldType);
+		} else {
+			throw new IllegalStateException(
+					"cannot create a world without a minecraft interface");
+		}
 	}
 
 	public World createWorldFromFile(File worldFile) throws Exception {
-		return Worlds.fromFile(minecraftInterface, worldFile);
+		if (canCreateWorld()) {
+			return Worlds.fromFile(minecraftInterface, worldFile);
+		} else {
+			throw new IllegalStateException(
+					"cannot create a world without a minecraft interface");
+		}
 	}
 
 	public String getRecognisedVersionName() {
-		return minecraftInterface.getRecognisedVersion().getName();
+		if (canCreateWorld()) {
+			return minecraftInterface.getRecognisedVersion().getName();
+		} else {
+			return RecognisedVersion.UNKNOWN.getName();
+		}
 	}
 }

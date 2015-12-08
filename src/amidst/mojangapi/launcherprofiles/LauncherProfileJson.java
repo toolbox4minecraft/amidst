@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.dotminecraft.ProfileDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
 import amidst.mojangapi.internal.ReleaseType;
@@ -42,16 +41,19 @@ public class LauncherProfileJson {
 		return allowedReleaseTypes.contains(releaseType);
 	}
 
-	public ProfileDirectory createProfileDirectory() {
-		return new ProfileDirectory(new File(gameDir));
+	public ProfileDirectory createValidProfileDirectory() {
+		ProfileDirectory result = new ProfileDirectory(new File(gameDir));
+		if (result.isValid()) {
+			return result;
+		} else {
+			return null;
+		}
 	}
 
-	public VersionDirectory createVersionDirectory(MojangApi mojangApi) {
-		DotMinecraftDirectory dotMinecraftDirectory = mojangApi
-				.getDotMinecraftDirectory();
+	public VersionDirectory createValidVersionDirectory(MojangApi mojangApi) {
 		VersionListJson versionList = mojangApi.getVersionList();
 		if (hasLastVersionId()) {
-			VersionDirectory result = dotMinecraftDirectory
+			VersionDirectory result = mojangApi
 					.createVersionDirectory(lastVersionId);
 			if (result.isValid()) {
 				return result;
@@ -61,9 +63,9 @@ public class LauncherProfileJson {
 		} else if (versionList == null) {
 			return null;
 		} else if (isAllowed(ReleaseType.SNAPSHOT)) {
-			return versionList.findFirstValidSnapshot(dotMinecraftDirectory);
+			return versionList.findFirstValidSnapshot(mojangApi);
 		} else {
-			return versionList.findFirstValidRelease(dotMinecraftDirectory);
+			return versionList.findFirstValidRelease(mojangApi);
 		}
 	}
 }

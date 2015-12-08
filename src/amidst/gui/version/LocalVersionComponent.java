@@ -50,8 +50,8 @@ public class LocalVersionComponent extends VersionComponent {
 	}
 
 	private ProfileDirectory createProfileDirectory() {
-		ProfileDirectory result = profile.createProfileDirectory();
-		if (result.isValid()) {
+		ProfileDirectory result = profile.createValidProfileDirectory();
+		if (result != null) {
 			return result;
 		} else {
 			Log.w("Unable to load profile directory for profile: "
@@ -61,7 +61,8 @@ public class LocalVersionComponent extends VersionComponent {
 	}
 
 	private VersionDirectory createVersionDirectory() {
-		VersionDirectory result = profile.createVersionDirectory(mojangApi);
+		VersionDirectory result = profile
+				.createValidVersionDirectory(mojangApi);
 		if (result != null) {
 			return result;
 		} else {
@@ -79,8 +80,18 @@ public class LocalVersionComponent extends VersionComponent {
 	@Override
 	public void doLoad() {
 		if (isReadyToLoad()) {
-			mojangApi.set(profileDirectory, versionDirectory);
-			application.displayMainWindow();
+			workerExecutor.invokeLater(new Worker<Void>() {
+				@Override
+				public Void execute() {
+					mojangApi.set(profileDirectory, versionDirectory);
+					return null;
+				}
+
+				@Override
+				public void finished(Void result) {
+					application.displayMainWindow();
+				}
+			});
 		}
 	}
 

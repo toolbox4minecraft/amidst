@@ -1,13 +1,8 @@
 package amidst.minecraft.local;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import amidst.clazz.Classes;
@@ -17,9 +12,7 @@ import amidst.clazz.translator.ClassTranslator;
 import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;
 import amidst.minecraft.RecognisedVersion;
-import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
-import amidst.utilities.JavaUtils;
 
 public class LocalMinecraftInterfaceBuilder {
 	public static enum StatelessResources {
@@ -103,16 +96,9 @@ public class LocalMinecraftInterfaceBuilder {
 	private Map<String, SymbolicClass> symbolicClassMap;
 	private RecognisedVersion recognisedVersion;
 
-	private final DotMinecraftDirectory dotMinecraftDirectory;
-	private final VersionDirectory versionDirectory;
-
-	public LocalMinecraftInterfaceBuilder(
-			DotMinecraftDirectory dotMinecraftDirectory,
-			VersionDirectory versionDirectory) {
-		this.dotMinecraftDirectory = dotMinecraftDirectory;
-		this.versionDirectory = versionDirectory;
+	public LocalMinecraftInterfaceBuilder(VersionDirectory versionDirectory) {
 		try {
-			URLClassLoader classLoader = getClassLoader();
+			URLClassLoader classLoader = versionDirectory.createClassLoader();
 			recognisedVersion = getRecognisedVersion(classLoader);
 			symbolicClassMap = Classes.createSymbolicClassMap(
 					versionDirectory.getJar(), classLoader,
@@ -124,30 +110,20 @@ public class LocalMinecraftInterfaceBuilder {
 					"error while building local minecraft interface: "
 							+ e.getMessage());
 			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			Log.crash(
+					e,
+					"error while building local minecraft interface: minecraft jar file has malformed url");
+			e.printStackTrace();
 		}
-	}
-
-	private URLClassLoader getClassLoader() {
-		File librariesJson = versionDirectory.getJson();
-		URLClassLoader classLoader;
-		if (librariesJson.isFile()) {
-			Log.i("Loading libraries.");
-			classLoader = createClassLoader(getJarFileUrl(),
-					getAllLibraryUrls());
-		} else {
-			Log.i("Unable to find Minecraft library JSON at: " + librariesJson
-					+ ". Skipping.");
-			classLoader = createClassLoader(getJarFileUrl());
-		}
-		return classLoader;
 	}
 
 	private RecognisedVersion getRecognisedVersion(URLClassLoader classLoader) {
 		Log.i("Generating version ID...");
 		String magicString = generateMagicString(getMainClassFields(loadMainClass(classLoader)));
 		RecognisedVersion result = RecognisedVersion.from(magicString);
-		Log.i("Identified Minecraft [" + result.getName() + "] with magic string of "
-				+ magicString);
+		Log.i("Identified Minecraft [" + result.getName()
+				+ "] with magic string of " + magicString);
 		return result;
 	}
 
@@ -186,35 +162,6 @@ public class LocalMinecraftInterfaceBuilder {
 					"Attempted to load non-minecraft jar, or unable to locate starting point.",
 					e);
 		}
-	}
-
-	private URL getJarFileUrl() {
-		try {
-			return versionDirectory.getJar().toURI().toURL();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("minecraft jar file has malformed url",
-					e);
-		}
-	}
-
-	private URLClassLoader createClassLoader(URL jarFileUrl, List<URL> libraries) {
-		libraries.add(jarFileUrl);
-		return new URLClassLoader(JavaUtils.toArray(libraries, URL.class));
-	}
-
-	private URLClassLoader createClassLoader(URL jarFileUrl) {
-		return new URLClassLoader(new URL[] { jarFileUrl });
-	}
-
-	private List<URL> getAllLibraryUrls() {
-		try {
-			return versionDirectory.readVersionJson().getLibraryUrls(
-					dotMinecraftDirectory);
-		} catch (IOException e) {
-			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: "
-					+ versionDirectory.getJson() + ")");
-		}
-		return Collections.emptyList();
 	}
 
 	public IMinecraftInterface create() {

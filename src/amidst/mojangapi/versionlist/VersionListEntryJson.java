@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import amidst.logging.Log;
-import amidst.mojangapi.dotminecraft.DotMinecraftDirectory;
+import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
 import amidst.mojangapi.internal.FilenameFactory;
 import amidst.mojangapi.internal.ReleaseType;
@@ -34,9 +34,8 @@ public class VersionListEntryJson {
 		}
 	}
 
-	public VersionDirectory createVersionDirectory(
-			DotMinecraftDirectory dotMinecraftDirectory) {
-		return dotMinecraftDirectory.createVersionDirectory(id);
+	public VersionDirectory createVersionDirectory(MojangApi mojangApi) {
+		return mojangApi.createVersionDirectory(id);
 	}
 
 	public String getClientJar(String prefix) {

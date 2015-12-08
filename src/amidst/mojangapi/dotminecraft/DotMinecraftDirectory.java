@@ -59,8 +59,4 @@ public class DotMinecraftDirectory {
 			throws FileNotFoundException {
 		return JsonReader.readLauncherProfilesFrom(launcherProfilesJson);
 	}
-
-	public VersionDirectory createVersionDirectory(String versionId) {
-		return new VersionDirectory(versions, versionId);
-	}
 }
