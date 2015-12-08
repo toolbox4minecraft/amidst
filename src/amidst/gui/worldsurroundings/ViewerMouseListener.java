@@ -10,6 +10,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import amidst.fragment.FragmentGraph;
@@ -116,18 +117,39 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 		return result;
 	}
 
+	// TODO: put current height in text field?
 	private JMenuItem createPlayerMenuItem(final Player player,
 			final Point mousePosition) {
 		JMenuItem result = new JMenuItem(player.getPlayerName());
 		result.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				player.moveTo(translator.screenToWorld(mousePosition));
-				world.reloadPlayerWorldIcons();
-				layerReloader.reloadPlayerLayer();
+				doMovePlayer(player, mousePosition);
 			}
 		});
 		return result;
+	}
+
+	private void doMovePlayer(Player player, Point mousePosition) {
+		long playerHeight = askForPlayerHeight(player);
+		player.moveTo(translator.screenToWorld(mousePosition), playerHeight);
+		world.reloadPlayerWorldIcons();
+		layerReloader.reloadPlayerLayer();
+	}
+
+	private long askForPlayerHeight(final Player player) {
+		String input = askForString("Move Player",
+				"Enter new height (current: " + player.getY() + "):");
+		try {
+			return Long.parseLong(input);
+		} catch (NumberFormatException e) {
+			return player.getY();
+		}
+	}
+
+	private String askForString(String title, String message) {
+		return JOptionPane.showInputDialog(null, message, title,
+				JOptionPane.QUESTION_MESSAGE);
 	}
 
 	private void doMouseWheelMoved(Point mousePosition, int notches) {

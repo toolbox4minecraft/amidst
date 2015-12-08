@@ -16,7 +16,7 @@ public class PlayerProducer extends CachedWorldIconProducer {
 	protected List<WorldIcon> createCache() {
 		List<WorldIcon> result = new LinkedList<WorldIcon>();
 		for (Player player : world.getMovablePlayerList()) {
-			result.add(new WorldIcon(player.getCoordinates(), player
+			result.add(new WorldIcon(player.createCoordinates(), player
 					.getPlayerName(), player.getSkin()));
 		}
 		return result;
