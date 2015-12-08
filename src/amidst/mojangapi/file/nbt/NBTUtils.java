@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.loader;
+package amidst.mojangapi.file.nbt;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

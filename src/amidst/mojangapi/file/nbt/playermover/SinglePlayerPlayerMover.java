@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.loader;
+package amidst.mojangapi.file.nbt.playermover;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -6,22 +6,21 @@ import java.io.IOException;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.world.Player;
 
-public class MultiPlayerPlayerMover extends PlayerMover {
+public class SinglePlayerPlayerMover extends PlayerMover {
 	private final SaveDirectory saveDirectory;
 
-	public MultiPlayerPlayerMover(SaveDirectory saveDirectory) {
+	public SinglePlayerPlayerMover(SaveDirectory saveDirectory) {
 		this.saveDirectory = saveDirectory;
 	}
 
 	@Override
 	protected boolean tryBackup(Player player) {
-		return saveDirectory.tryBackupPlayersFile(player.getPlayerName());
+		return saveDirectory.tryBackupLevelDat();
 	}
 
 	@Override
 	protected void doMovePlayer(Player player) throws FileNotFoundException,
 			IOException {
-		movePlayerOnMultiPlayerWorld(player,
-				saveDirectory.getPlayersFile(player.getPlayerName()));
+		movePlayerOnSinglePlayerWorld(player, saveDirectory.getLevelDat());
 	}
 }

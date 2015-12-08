@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import amidst.mojangapi.world.loader.PlayerLoader;
-import amidst.mojangapi.world.loader.PlayerMover;
+import amidst.mojangapi.file.nbt.playerloader.PlayerLoader;
+import amidst.mojangapi.file.nbt.playermover.PlayerMover;
 
 public class MovablePlayerList implements Iterable<Player> {
 	private static final MovablePlayerList EMPTY_INSTANCE = new MovablePlayerList();

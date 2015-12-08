@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.loader;
+package amidst.mojangapi.file.nbt;
 
 public class NBTTagKeys {
 	public static final String TAG_KEY_BASE = "Base";

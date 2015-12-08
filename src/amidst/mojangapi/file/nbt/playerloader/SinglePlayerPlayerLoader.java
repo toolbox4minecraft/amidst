@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.loader;
+package amidst.mojangapi.file.nbt.playerloader;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,6 +8,7 @@ import java.util.List;
 import org.jnbt.CompoundTag;
 
 import amidst.mojangapi.file.directory.SaveDirectory;
+import amidst.mojangapi.file.nbt.NBTTagKeys;
 import amidst.mojangapi.world.Player;
 
 public class SinglePlayerPlayerLoader extends PlayerLoader {

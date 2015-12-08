@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.loader;
+package amidst.mojangapi.file.nbt.playerloader;
 
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +8,7 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.logging.Log;
+import amidst.mojangapi.file.nbt.NBTTagKeys;
 import amidst.mojangapi.world.Player;
 
 public abstract class PlayerLoader {

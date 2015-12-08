@@ -8,17 +8,17 @@ import java.nio.file.Files;
 import org.jnbt.CompoundTag;
 
 import amidst.logging.Log;
+import amidst.mojangapi.file.nbt.LevelDat;
+import amidst.mojangapi.file.nbt.NBTUtils;
+import amidst.mojangapi.file.nbt.playerloader.MultiPlayerPlayerLoader;
+import amidst.mojangapi.file.nbt.playerloader.PlayerLoader;
+import amidst.mojangapi.file.nbt.playerloader.SinglePlayerPlayerLoader;
+import amidst.mojangapi.file.nbt.playermover.MultiPlayerPlayerMover;
+import amidst.mojangapi.file.nbt.playermover.PlayerMover;
+import amidst.mojangapi.file.nbt.playermover.SinglePlayerPlayerMover;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.world.MovablePlayerList;
 import amidst.mojangapi.world.World;
-import amidst.mojangapi.world.loader.LevelDat;
-import amidst.mojangapi.world.loader.MultiPlayerPlayerLoader;
-import amidst.mojangapi.world.loader.MultiPlayerPlayerMover;
-import amidst.mojangapi.world.loader.NBTUtils;
-import amidst.mojangapi.world.loader.PlayerLoader;
-import amidst.mojangapi.world.loader.PlayerMover;
-import amidst.mojangapi.world.loader.SinglePlayerPlayerLoader;
-import amidst.mojangapi.world.loader.SinglePlayerPlayerMover;
 
 public class SaveDirectory {
 	/**

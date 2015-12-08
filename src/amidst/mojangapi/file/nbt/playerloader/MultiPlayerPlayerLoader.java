@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.loader;
+package amidst.mojangapi.file.nbt.playerloader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amidst.mojangapi.file.directory.SaveDirectory;
+import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.world.Player;
 
 public class MultiPlayerPlayerLoader extends PlayerLoader {

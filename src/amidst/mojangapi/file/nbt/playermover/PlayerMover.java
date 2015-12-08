@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.loader;
+package amidst.mojangapi.file.nbt.playermover;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,6 +14,8 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.logging.Log;
+import amidst.mojangapi.file.nbt.NBTTagKeys;
+import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.world.Player;
 
 public abstract class PlayerMover {

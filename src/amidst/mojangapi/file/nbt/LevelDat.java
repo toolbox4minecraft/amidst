@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.loader;
+package amidst.mojangapi.file.nbt;
 
 import org.jnbt.CompoundTag;
 
