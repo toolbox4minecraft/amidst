@@ -1,13 +1,13 @@
 package amidst.gui.version;
 
 import amidst.Application;
-import amidst.Worker;
-import amidst.WorkerExecutor;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.dotminecraft.ProfileDirectory;
 import amidst.mojangapi.dotminecraft.VersionDirectory;
 import amidst.mojangapi.launcherprofiles.LauncherProfileJson;
+import amidst.threading.Worker;
+import amidst.threading.WorkerExecutor;
 
 public class LocalVersionComponent extends VersionComponent {
 	private final Application application;

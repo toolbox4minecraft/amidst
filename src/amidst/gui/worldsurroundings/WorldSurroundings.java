@@ -10,7 +10,7 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.icon.WorldIcon;
-import amidst.utilities.SkinLoader;
+import amidst.threading.SkinLoader;
 
 public class WorldSurroundings {
 	private final World world;

@@ -1,4 +1,4 @@
-package amidst.utilities;
+package amidst.threading;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 

@@ -30,8 +30,8 @@ import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.World;
 import amidst.minecraft.world.WorldType;
 import amidst.mojangapi.MojangApi;
+import amidst.threading.SkinLoader;
 import amidst.utilities.SeedHistoryLogger;
-import amidst.utilities.SkinLoader;
 
 public class MainWindow {
 	private final SeedPrompt seedPrompt = new SeedPrompt();

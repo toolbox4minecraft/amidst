@@ -3,7 +3,7 @@ package amidst.fragment;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.fragment.layer.LayerLoader;
-import amidst.utilities.TaskQueue;
+import amidst.threading.TaskQueue;
 
 /**
  * This class is thread-safe, as long as only one thread calls the method

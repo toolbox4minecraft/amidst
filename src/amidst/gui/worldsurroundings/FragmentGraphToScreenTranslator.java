@@ -5,7 +5,7 @@ import java.awt.Point;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.minecraft.world.CoordinatesInWorld;
-import amidst.utilities.TaskQueue;
+import amidst.threading.TaskQueue;
 
 public class FragmentGraphToScreenTranslator {
 	private final TaskQueue taskQueue = new TaskQueue();

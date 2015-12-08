@@ -13,12 +13,12 @@ import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
 import amidst.Application;
 import amidst.Options;
-import amidst.Worker;
-import amidst.WorkerExecutor;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.launcherprofiles.LauncherProfilesJson;
+import amidst.threading.Worker;
+import amidst.threading.WorkerExecutor;
 
 public class VersionSelectWindow {
 	private final Application application;

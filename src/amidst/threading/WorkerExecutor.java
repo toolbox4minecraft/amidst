@@ -1,4 +1,4 @@
-package amidst;
+package amidst.threading;
 
 public class WorkerExecutor {
 	private final ThreadMaster threadMaster;

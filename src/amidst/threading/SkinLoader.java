@@ -1,4 +1,4 @@
-package amidst.utilities;
+package amidst.threading;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -9,8 +9,6 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
-import amidst.Worker;
-import amidst.WorkerExecutor;
 import amidst.logging.Log;
 import amidst.minecraft.world.MovablePlayerList;
 import amidst.minecraft.world.Player;

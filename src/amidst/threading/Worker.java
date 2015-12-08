@@ -1,4 +1,4 @@
-package amidst;
+package amidst.threading;
 
 public interface Worker<T> {
 	T execute();
