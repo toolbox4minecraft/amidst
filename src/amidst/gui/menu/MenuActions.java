@@ -216,4 +216,18 @@ public class MenuActions {
 		}
 		return new File(filename);
 	}
+
+	public void howCanIMoveAPlayer() {
+		mainWindow
+				.displayMessage("If you load the world from a minecraft save folder, you can change the player locations.\n"
+						+ "1. Scroll the map to and right-click on the new player location.\n"
+						+ "2. Select the player you want to move to the new location.\n"
+						+ "3. Enter the new player height (y-coordinate).\n"
+						+ "4. Save player locations.\n\n"
+						+ "WARNING: This will change the contents of the save folder, so there is a chance that the world gets corrupted.\n"
+						+ "We try to minimize the risk by creating a backup of the changed file, before it is changed.\n"
+						+ "If the backup fails, we will not write the changes.\n"
+						+ "You can find the backup files in a sub folder of the world, named 'amidst_backup'.\n"
+						+ "Especially, make sure to not have the world loaded in minecraft during this process.");
+	}
 }

@@ -42,6 +42,7 @@ public class AmidstMenuBuilder {
 		JMenuBar result = new JMenuBar();
 		result.add(create_File());
 		worldMenu = result.add(create_World());
+		result.add(create_Players());
 		result.add(create_Options());
 		result.add(create_Help());
 		return result;
@@ -51,9 +52,6 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("File");
 		result.setMnemonic(KeyEvent.VK_F);
 		result.add(create_File_New());
-		savePlayerLocationsMenu = result.add(create_File_SavePlayerLocations());
-		reloadPlayerLocationsMenu = result
-				.add(create_File_ReloadPlayerLocations());
 		result.add(create_File_SwitchProfile());
 		result.add(create_File_Exit());
 		return result;
@@ -74,7 +72,7 @@ public class AmidstMenuBuilder {
 				InputEvent.CTRL_DOWN_MASK));
 		result.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				actions.newFromSeed();
 			}
 		});
@@ -85,7 +83,7 @@ public class AmidstMenuBuilder {
 		JMenuItem result = new JMenuItem("From file or folder");
 		result.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				actions.newFromFileOrFolder();
 			}
 		});
@@ -98,34 +96,8 @@ public class AmidstMenuBuilder {
 				InputEvent.CTRL_DOWN_MASK));
 		result.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				actions.newFromRandom();
-			}
-		});
-		return result;
-	}
-
-	private JMenuItem create_File_SavePlayerLocations() {
-		JMenuItem result = new JMenuItem("Save player locations");
-		result.setEnabled(false);
-		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-				InputEvent.CTRL_DOWN_MASK));
-		result.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				actions.savePlayerLocations();
-			}
-		});
-		return result;
-	}
-
-	private JMenuItem create_File_ReloadPlayerLocations() {
-		JMenuItem result = new JMenuItem("Reload player locations");
-		result.setEnabled(false);
-		result.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				actions.reloadPlayerLocations();
 			}
 		});
 		return result;
@@ -135,7 +107,7 @@ public class AmidstMenuBuilder {
 		JMenuItem result = new JMenuItem("Switch profile");
 		result.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				actions.switchProfile();
 			}
 		});
@@ -146,7 +118,7 @@ public class AmidstMenuBuilder {
 		JMenuItem result = new JMenuItem("Exit");
 		result.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				actions.exit();
 			}
 		});
@@ -177,7 +149,7 @@ public class AmidstMenuBuilder {
 				InputEvent.CTRL_DOWN_MASK));
 		result.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				actions.findStronghold();
 			}
 		});
@@ -197,7 +169,7 @@ public class AmidstMenuBuilder {
 				InputEvent.CTRL_DOWN_MASK));
 		result.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				actions.gotoCoordinate();
 			}
 		});
@@ -210,7 +182,7 @@ public class AmidstMenuBuilder {
 				InputEvent.CTRL_DOWN_MASK));
 		result.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				actions.gotoPlayer();
 			}
 		});
@@ -254,6 +226,53 @@ public class AmidstMenuBuilder {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				actions.capture();
+			}
+		});
+		return result;
+	}
+
+	private JMenu create_Players() {
+		JMenu result = new JMenu("Players");
+		savePlayerLocationsMenu = result
+				.add(create_Players_SavePlayerLocations());
+		reloadPlayerLocationsMenu = result
+				.add(create_Players_ReloadPlayerLocations());
+		result.add(create_Players_HowCanIMoveAPlayer());
+		return result;
+	}
+
+	private JMenuItem create_Players_SavePlayerLocations() {
+		JMenuItem result = new JMenuItem("Save player locations");
+		result.setEnabled(false);
+		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+				InputEvent.CTRL_DOWN_MASK));
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actions.savePlayerLocations();
+			}
+		});
+		return result;
+	}
+
+	private JMenuItem create_Players_ReloadPlayerLocations() {
+		JMenuItem result = new JMenuItem("Reload player locations");
+		result.setEnabled(false);
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actions.reloadPlayerLocations();
+			}
+		});
+		return result;
+	}
+
+	private JMenuItem create_Players_HowCanIMoveAPlayer() {
+		JMenuItem result = new JMenuItem("How can I move a player?");
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actions.howCanIMoveAPlayer();
 			}
 		});
 		return result;

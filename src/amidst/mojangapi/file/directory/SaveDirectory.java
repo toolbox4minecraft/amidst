@@ -160,20 +160,23 @@ public class SaveDirectory {
 	}
 
 	public boolean tryBackupLevelDat() {
+		File backupFile = getBackupLevelDat();
 		return ensureDirectoryExists(backupRoot)
-				&& tryCopy(getLevelDat(), getBackupLevelDat());
+				&& tryCopy(getLevelDat(), backupFile) && backupFile.isFile();
 	}
 
 	public boolean tryBackupPlayersFile(String playerName) {
+		File backupFile = getBackupPlayersFile(playerName);
 		return ensureDirectoryExists(backupPlayers)
-				&& tryCopy(getPlayersFile(playerName),
-						getBackupPlayersFile(playerName));
+				&& tryCopy(getPlayersFile(playerName), backupFile)
+				&& backupFile.isFile();
 	}
 
 	public boolean tryBackupPlayerdataFile(String playerUUID) {
+		File backupFile = getBackupPlayerdataFile(playerUUID);
 		return ensureDirectoryExists(backupPlayerdata)
-				&& tryCopy(getPlayerdataFile(playerUUID),
-						getBackupPlayerdataFile(playerUUID));
+				&& tryCopy(getPlayerdataFile(playerUUID), backupFile)
+				&& backupFile.isFile();
 	}
 
 	private boolean ensureDirectoryExists(File directory) {
