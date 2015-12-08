@@ -12,6 +12,9 @@ import java.util.List;
 import amidst.logging.Log;
 import amidst.mojangapi.file.JsonReader;
 import amidst.mojangapi.file.json.version.VersionJson;
+import amidst.mojangapi.minecraftinterface.IMinecraftInterface;
+import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
+import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder;
 import amidst.utilities.JavaUtils;
 
 public class VersionDirectory {
@@ -82,5 +85,10 @@ public class VersionDirectory {
 
 	private URL getJarFileUrl() throws MalformedURLException {
 		return jar.toURI().toURL();
+	}
+
+	public IMinecraftInterface createLocalMinecraftInterface() {
+		return new LocalMinecraftInterfaceBuilder(this,
+				DefaultClassTranslator.INSTANCE.get()).create();
 	}
 }

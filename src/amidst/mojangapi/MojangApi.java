@@ -9,7 +9,6 @@ import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.IMinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.Worlds;
@@ -22,7 +21,6 @@ public class MojangApi {
 	private final File preferedJson;
 
 	private volatile ProfileDirectory profileDirectory;
-	private volatile VersionDirectory versionDirectory;
 	private volatile IMinecraftInterface minecraftInterface;
 
 	public MojangApi(DotMinecraftDirectory dotMinecraftDirectory,
@@ -43,16 +41,12 @@ public class MojangApi {
 	public void set(ProfileDirectory profileDirectory,
 			VersionDirectory versionDirectory) {
 		this.profileDirectory = profileDirectory;
-		this.versionDirectory = versionDirectory;
 		if (versionDirectory != null) {
-			this.minecraftInterface = createLocalMinecraftInterface();
+			this.minecraftInterface = versionDirectory
+					.createLocalMinecraftInterface();
 		} else {
 			this.minecraftInterface = null;
 		}
-	}
-
-	private IMinecraftInterface createLocalMinecraftInterface() {
-		return new LocalMinecraftInterfaceBuilder(versionDirectory).create();
 	}
 
 	public VersionDirectory createVersionDirectory(String versionId) {

@@ -15,7 +15,7 @@ import amidst.devtools.settings.DevToolsSettings;
 import amidst.mojangapi.file.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder;
+import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -60,7 +60,8 @@ public class MinecraftVersionCompatibilityChecker {
 		if (version.tryDownloadClient(prefix)) {
 			try {
 				File jarFile = new File(version.getClientJar(prefix));
-				ClassTranslator translator = LocalMinecraftInterfaceBuilder.StatelessResources.INSTANCE.classTranslator;
+				ClassTranslator translator = DefaultClassTranslator.INSTANCE
+						.get();
 				return isSupported(Classes.countMatches(jarFile, translator));
 			} catch (Exception e) {
 				e.printStackTrace();
