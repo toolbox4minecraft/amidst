@@ -1,4 +1,4 @@
-package amidst.minecraft.world;
+package amidst.minecraft.world.loader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,6 +15,7 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.logging.Log;
+import amidst.minecraft.world.Player;
 
 public class PlayerMover {
 	private File file;

@@ -13,6 +13,8 @@ import amidst.minecraft.world.icon.TempleProducer;
 import amidst.minecraft.world.icon.VillageProducer;
 import amidst.minecraft.world.icon.WorldIcon;
 import amidst.minecraft.world.icon.WorldIconProducer;
+import amidst.minecraft.world.oracle.BiomeDataOracle;
+import amidst.minecraft.world.oracle.SlimeChunkOracle;
 
 public class World {
 	private final BiomeDataOracle biomeDataOracle = new BiomeDataOracle(this);
@@ -38,7 +40,7 @@ public class World {
 	private final MovablePlayerList movablePlayerList;
 	private final IMinecraftInterface minecraftInterface;
 
-	World(long seed, String seedText, WorldType worldType,
+	public World(long seed, String seedText, WorldType worldType,
 			IMinecraftInterface minecraftInterface) {
 		this.seed = seed;
 		this.seedText = seedText;
@@ -50,7 +52,7 @@ public class World {
 		initMinecraftInterface();
 	}
 
-	World(long seed, WorldType worldType, String generatorOptions,
+	public World(long seed, WorldType worldType, String generatorOptions,
 			boolean isMultiplayerWorld, MovablePlayerList movablePlayerList,
 			IMinecraftInterface minecraftInterface) {
 		this.seed = seed;

@@ -1,4 +1,4 @@
-package amidst.minecraft.world;
+package amidst.minecraft.world.loader;
 
 public class NBTTagKeys {
 	public static final String TAG_KEY_BASE = "Base";

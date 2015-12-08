@@ -1,4 +1,4 @@
-package amidst.minecraft.world;
+package amidst.minecraft.world.loader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,6 +12,11 @@ import org.jnbt.Tag;
 
 import amidst.logging.Log;
 import amidst.minecraft.IMinecraftInterface;
+import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.minecraft.world.MovablePlayerList;
+import amidst.minecraft.world.Player;
+import amidst.minecraft.world.World;
+import amidst.minecraft.world.WorldType;
 
 public class WorldLoader {
 	private static final String DEFAULT_SINGLE_PLAYER_PLAYER_NAME = "Player";

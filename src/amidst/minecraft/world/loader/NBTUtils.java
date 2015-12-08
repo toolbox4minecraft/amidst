@@ -1,4 +1,4 @@
-package amidst.minecraft.world;
+package amidst.minecraft.world.loader;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

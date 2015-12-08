@@ -1,6 +1,8 @@
-package amidst.minecraft.world;
+package amidst.minecraft.world.oracle;
 
 import java.util.Random;
+
+import amidst.minecraft.world.World;
 
 public class SlimeChunkOracle {
 	private final World world;

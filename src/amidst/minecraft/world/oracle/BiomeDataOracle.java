@@ -1,4 +1,4 @@
-package amidst.minecraft.world;
+package amidst.minecraft.world.oracle;
 
 import java.awt.Point;
 import java.util.List;
@@ -6,6 +6,9 @@ import java.util.Random;
 
 import amidst.logging.Log;
 import amidst.minecraft.Biome;
+import amidst.minecraft.world.CoordinatesInWorld;
+import amidst.minecraft.world.Resolution;
+import amidst.minecraft.world.World;
 
 public class BiomeDataOracle {
 	private final World world;

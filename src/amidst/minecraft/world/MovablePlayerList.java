@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import amidst.minecraft.world.loader.PlayerMover;
+
 public class MovablePlayerList implements Iterable<Player> {
 	private static final MovablePlayerList EMPTY_INSTANCE = new MovablePlayerList();
 

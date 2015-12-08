@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Random;
 
 import amidst.minecraft.IMinecraftInterface;
+import amidst.minecraft.world.loader.WorldLoader;
 import amidst.utilities.Google;
 
 public enum Worlds {
