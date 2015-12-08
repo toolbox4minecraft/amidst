@@ -67,18 +67,6 @@ public class MainWindow {
 		return frame;
 	}
 
-	private String getLongVersionString(String version) {
-		return getVersionString(" [Using Minecraft version: " + version + "]");
-	}
-
-	private String getSimpleVersionString() {
-		return getVersionString("");
-	}
-
-	private String getVersionString(String string) {
-		return "Amidst v" + AmidstMetaData.getFullVersionString() + string;
-	}
-
 	private Container createContentPane() {
 		Container contentPane = frame.getContentPane();
 		contentPane.setLayout(new BorderLayout());
@@ -125,6 +113,57 @@ public class MainWindow {
 
 	private void checkForUpdates() {
 		application.checkForUpdatesSilently();
+	}
+
+	/**
+	 * This ensures that the instance variable worldSurroundings is assigned
+	 * AFTER frame.validate() is called. This is important, because the
+	 * repainter thread will draw the new worldSurroundings as soon as it is
+	 * assigned to the instance variable.
+	 */
+	public void setWorldSurroundings(WorldSurroundings worldSurroundings) {
+		clearWorldSurroundings();
+		contentPane.add(worldSurroundings.getComponent(), BorderLayout.CENTER);
+		menuBar.setWorldMenuEnabled(true);
+		menuBar.setSavePlayerLocationsMenuEnabled(worldSurroundings
+				.canSavePlayerLocations());
+		frame.setTitle(getLongVersionString(worldSurroundings
+				.getRecognisedVersionName()));
+		frame.validate();
+		this.worldSurroundings.set(worldSurroundings);
+	}
+
+	private void clearWorldSurroundings() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings
+				.getAndSet(null);
+		if (worldSurroundings != null) {
+			contentPane.remove(worldSurroundings.getComponent());
+			worldSurroundings.dispose();
+		}
+		clearWorldSurroundingsFromGui();
+	}
+
+	private void clearWorldSurroundingsFromGui() {
+		menuBar.setWorldMenuEnabled(false);
+		menuBar.setSavePlayerLocationsMenuEnabled(false);
+		frame.setTitle(getSimpleVersionString());
+	}
+
+	private String getLongVersionString(String version) {
+		return getVersionString(" [Using Minecraft version: " + version + "]");
+	}
+
+	private String getSimpleVersionString() {
+		return getVersionString("");
+	}
+
+	private String getVersionString(String string) {
+		return "Amidst v" + AmidstMetaData.getFullVersionString() + string;
+	}
+
+	public void dispose() {
+		clearWorldSurroundings();
+		frame.dispose();
 	}
 
 	public String askForSeed() {
@@ -227,45 +266,6 @@ public class MainWindow {
 		} catch (NumberFormatException e) {
 			return null;
 		}
-	}
-
-	public void dispose() {
-		clearWorldSurroundings();
-		frame.dispose();
-	}
-
-	/**
-	 * This ensures that the instance variable worldSurroundings is assigned
-	 * AFTER frame.validate() is called. This is important, because the
-	 * repainter thread will draw the new worldSurroundings as soon as it is
-	 * assigned to the instance variable.
-	 */
-	public void setWorldSurroundings(WorldSurroundings worldSurroundings) {
-		clearWorldSurroundings();
-		contentPane.add(worldSurroundings.getComponent(), BorderLayout.CENTER);
-		menuBar.setWorldMenuEnabled(true);
-		menuBar.setSavePlayerLocationsMenuEnabled(worldSurroundings
-				.canSavePlayerLocations());
-		frame.setTitle(getLongVersionString(worldSurroundings
-				.getRecognisedVersionName()));
-		frame.validate();
-		this.worldSurroundings.set(worldSurroundings);
-	}
-
-	private void clearWorldSurroundings() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings
-				.getAndSet(null);
-		if (worldSurroundings != null) {
-			contentPane.remove(worldSurroundings.getComponent());
-			worldSurroundings.dispose();
-		}
-		clearWorldSurroundingsFromGui();
-	}
-
-	private void clearWorldSurroundingsFromGui() {
-		menuBar.setWorldMenuEnabled(false);
-		menuBar.setSavePlayerLocationsMenuEnabled(false);
-		frame.setTitle(getSimpleVersionString());
 	}
 
 	public void reloadPlayerLayer() {
