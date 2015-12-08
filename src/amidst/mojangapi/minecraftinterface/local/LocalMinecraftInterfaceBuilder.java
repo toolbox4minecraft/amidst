@@ -10,7 +10,7 @@ import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.logging.Log;
 import amidst.mojangapi.file.directory.VersionDirectory;
-import amidst.mojangapi.minecraftinterface.IMinecraftInterface;
+import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 public class LocalMinecraftInterfaceBuilder {
@@ -90,7 +90,7 @@ public class LocalMinecraftInterfaceBuilder {
 		}
 	}
 
-	public IMinecraftInterface create() {
+	public MinecraftInterface create() {
 		return new LocalMinecraftInterface(symbolicClassMap, recognisedVersion);
 	}
 }

@@ -5,11 +5,11 @@ import java.util.Map;
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
 import amidst.logging.Log;
-import amidst.mojangapi.minecraftinterface.IMinecraftInterface;
+import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
 
-public class LocalMinecraftInterface implements IMinecraftInterface {
+public class LocalMinecraftInterface implements MinecraftInterface {
 	/**
 	 * A GenLayer instance, at quarter scale to the final biome layer (i.e. both
 	 * axis are divided by 4). Minecraft calculates biomes at

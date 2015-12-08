@@ -11,7 +11,7 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.logging.Log;
-import amidst.mojangapi.minecraftinterface.IMinecraftInterface;
+import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.MovablePlayerList;
 import amidst.mojangapi.world.Player;
@@ -179,7 +179,7 @@ public class WorldLoader {
 		return exception;
 	}
 
-	public World get(IMinecraftInterface minecraftInterface) {
+	public World get(MinecraftInterface minecraftInterface) {
 		if (isLoadedSuccessfully()) {
 			return World.file(minecraftInterface, seed, worldType,
 					generatorOptions, isMultiPlayer,
@@ -190,7 +190,7 @@ public class WorldLoader {
 	}
 
 	private MovablePlayerList createMovablePlayerList(
-			IMinecraftInterface minecraftInterface) {
+			MinecraftInterface minecraftInterface) {
 		if (minecraftInterface.getRecognisedVersion().isSaveEnabled()) {
 			return new MovablePlayerList(players, playerMover);
 		} else {

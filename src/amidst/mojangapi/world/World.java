@@ -2,7 +2,7 @@ package amidst.mojangapi.world;
 
 import java.util.List;
 
-import amidst.mojangapi.minecraftinterface.IMinecraftInterface;
+import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.icon.CachedWorldIconProducer;
 import amidst.mojangapi.world.icon.NetherFortressProducer;
@@ -18,13 +18,13 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 
 public class World {
-	public static World simple(IMinecraftInterface minecraftInterface,
+	public static World simple(MinecraftInterface minecraftInterface,
 			long seed, String seedText, WorldType worldType) {
 		return new World(minecraftInterface, seed, seedText, worldType, "",
 				false, MovablePlayerList.empty());
 	}
 
-	public static World file(IMinecraftInterface minecraftInterface, long seed,
+	public static World file(MinecraftInterface minecraftInterface, long seed,
 			WorldType worldType, String generatorOptions,
 			boolean isMultiplayerWorld, MovablePlayerList movablePlayerList) {
 		return new World(minecraftInterface, seed, null, worldType,
@@ -48,7 +48,7 @@ public class World {
 	private final CachedWorldIconProducer spawnProducer;
 	private final CachedWorldIconProducer strongholdProducer;
 
-	private World(IMinecraftInterface minecraftInterface, long seed,
+	private World(MinecraftInterface minecraftInterface, long seed,
 			String seedText, WorldType worldType, String generatorOptions,
 			boolean isMultiplayerWorld, MovablePlayerList movablePlayerList) {
 		this.seed = seed;
@@ -74,7 +74,7 @@ public class World {
 				recognisedVersion);
 	}
 
-	private void initMinecraftInterface(IMinecraftInterface minecraftInterface) {
+	private void initMinecraftInterface(MinecraftInterface minecraftInterface) {
 		minecraftInterface.createWorld(seed, worldType.getName(),
 				generatorOptions);
 	}

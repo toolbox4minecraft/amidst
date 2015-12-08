@@ -3,14 +3,14 @@ package amidst.mojangapi.world;
 import java.io.File;
 import java.util.Random;
 
-import amidst.mojangapi.minecraftinterface.IMinecraftInterface;
+import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.world.loader.WorldLoader;
 import amidst.utilities.Google;
 
 public enum Worlds {
 	;
 
-	public static World random(IMinecraftInterface minecraftInterface,
+	public static World random(MinecraftInterface minecraftInterface,
 			WorldType worldType) {
 		// TODO: no Google.track(), because this is only called with a random
 		// seed?
@@ -18,7 +18,7 @@ public enum Worlds {
 		return World.simple(minecraftInterface, seed, null, worldType);
 	}
 
-	public static World fromSeed(IMinecraftInterface minecraftInterface,
+	public static World fromSeed(MinecraftInterface minecraftInterface,
 			String seedText, WorldType worldType) {
 		long seed = getSeedFromString(seedText);
 		Google.track("seed/" + seedText + "/" + seed);
@@ -29,7 +29,7 @@ public enum Worlds {
 		}
 	}
 
-	public static World fromFile(IMinecraftInterface minecraftInterface,
+	public static World fromFile(MinecraftInterface minecraftInterface,
 			File worldFile) throws Exception {
 		WorldLoader worldLoader = new WorldLoader(worldFile);
 		if (worldLoader.isLoadedSuccessfully()) {

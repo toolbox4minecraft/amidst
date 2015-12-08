@@ -5,15 +5,15 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.logging.Log;
-import amidst.mojangapi.minecraftinterface.IMinecraftInterface;
+import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.world.Biome;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.Resolution;
 
 public class BiomeDataOracle {
-	private final IMinecraftInterface minecraftInterface;
+	private final MinecraftInterface minecraftInterface;
 
-	public BiomeDataOracle(IMinecraftInterface minecraftInterface) {
+	public BiomeDataOracle(MinecraftInterface minecraftInterface) {
 		this.minecraftInterface = minecraftInterface;
 	}
 

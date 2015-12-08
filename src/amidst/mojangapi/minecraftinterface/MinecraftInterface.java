@@ -6,7 +6,7 @@ package amidst.mojangapi.minecraftinterface;
  * This allows for other sources of data other than direct reflection against a
  * loaded jar of Minecraft.
  */
-public interface IMinecraftInterface {
+public interface MinecraftInterface {
 	/**
 	 * @param useQuarterResolution
 	 *            Minecraft calculates biomes at quarter-resolution, then
