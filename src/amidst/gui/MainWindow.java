@@ -42,6 +42,7 @@ public class MainWindow {
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final SkinLoader skinLoader;
+	private final UpdatePrompt updatePrompt;
 
 	private final JFrame frame;
 	private final Container contentPane;
@@ -53,13 +54,15 @@ public class MainWindow {
 	public MainWindow(Application application, Options options,
 			MojangApi mojangApi,
 			WorldSurroundingsBuilder worldSurroundingsBuilder,
-			SeedHistoryLogger seedHistoryLogger, SkinLoader skinLoader) {
+			SeedHistoryLogger seedHistoryLogger, SkinLoader skinLoader,
+			UpdatePrompt updatePrompt) {
 		this.application = application;
 		this.options = options;
 		this.mojangApi = mojangApi;
 		this.worldSurroundingsBuilder = worldSurroundingsBuilder;
 		this.seedHistoryLogger = seedHistoryLogger;
 		this.skinLoader = skinLoader;
+		this.updatePrompt = updatePrompt;
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
 		this.actions = createMenuActions();
@@ -87,7 +90,7 @@ public class MainWindow {
 
 	private MenuActions createMenuActions() {
 		return new MenuActions(application, mojangApi, this, worldSurroundings,
-				options.biomeColorProfileSelection);
+				updatePrompt, options.biomeColorProfileSelection);
 	}
 
 	private AmidstMenu createMenuBar() {
@@ -124,7 +127,7 @@ public class MainWindow {
 	}
 
 	private void checkForUpdates() {
-		application.checkForUpdatesSilently();
+		updatePrompt.checkSilently(this);
 	}
 
 	public void setWorld(World world) {

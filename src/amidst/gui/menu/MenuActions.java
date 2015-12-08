@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 
 import amidst.Application;
 import amidst.gui.MainWindow;
+import amidst.gui.UpdatePrompt;
 import amidst.gui.worldsurroundings.WorldSurroundings;
 import amidst.logging.Log;
 import amidst.minecraft.world.CoordinatesInWorld;
@@ -29,16 +30,19 @@ public class MenuActions {
 	private final MojangApi mojangApi;
 	private final MainWindow mainWindow;
 	private final AtomicReference<WorldSurroundings> worldSurroundings;
+	private final UpdatePrompt updatePrompt;
 	private final BiomeColorProfileSelection biomeColorProfileSelection;
 
 	public MenuActions(Application application, MojangApi mojangApi,
 			MainWindow mainWindow,
 			AtomicReference<WorldSurroundings> worldSurroundings,
+			UpdatePrompt updatePrompt,
 			BiomeColorProfileSelection biomeColorProfileSelection) {
 		this.application = application;
 		this.mojangApi = mojangApi;
 		this.mainWindow = mainWindow;
 		this.worldSurroundings = worldSurroundings;
+		this.updatePrompt = updatePrompt;
 		this.biomeColorProfileSelection = biomeColorProfileSelection;
 	}
 
@@ -164,7 +168,7 @@ public class MenuActions {
 	}
 
 	public void checkForUpdates() {
-		application.checkForUpdates();
+		updatePrompt.check(mainWindow);
 	}
 
 	public void viewLicense() {

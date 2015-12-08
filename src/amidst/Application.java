@@ -22,7 +22,7 @@ public class Application {
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final ThreadMaster threadMaster;
-	private final UpdatePrompt updateManager;
+	private final UpdatePrompt updatePrompt;
 
 	private VersionSelectWindow versionSelectWindow;
 	private MainWindow mainWindow;
@@ -34,7 +34,7 @@ public class Application {
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
 		this.seedHistoryLogger = createSeedHistoryLogger();
 		this.threadMaster = createThreadMaster();
-		this.updateManager = createUpdateManager();
+		this.updatePrompt = createUpdatePrompt();
 	}
 
 	private Options createOptions() {
@@ -73,7 +73,7 @@ public class Application {
 		});
 	}
 
-	private UpdatePrompt createUpdateManager() {
+	private UpdatePrompt createUpdatePrompt() {
 		return new UpdatePrompt();
 	}
 
@@ -108,7 +108,7 @@ public class Application {
 	private void doDisplayMainWindow() {
 		setMainWindow(new MainWindow(this, options, mojangApi,
 				worldSurroundingsBuilder, seedHistoryLogger,
-				threadMaster.getSkinLoader()));
+				threadMaster.getSkinLoader(), updatePrompt));
 		setVersionSelectWindow(null);
 	}
 
@@ -139,14 +139,6 @@ public class Application {
 
 	public void displayLicenseWindow() {
 		new LicenseWindow();
-	}
-
-	public void checkForUpdates() {
-		updateManager.check(mainWindow);
-	}
-
-	public void checkForUpdatesSilently() {
-		updateManager.checkSilently(mainWindow);
 	}
 
 	// TODO: use find all occurrences of System.exit();
