@@ -5,18 +5,31 @@ import java.awt.image.BufferedImage;
 import amidst.mojangapi.world.icon.DefaultWorldIconTypes;
 
 public class Player {
+	private static final String NAMELESS_PLAYER_NAME = "Player";
+
+	public static Player named(String playerName, double x, double y, double z) {
+		return new Player(playerName, true, x, y, z);
+	}
+
+	public static Player nameless(double x, double y, double z) {
+		return new Player(NAMELESS_PLAYER_NAME, false, x, y, z);
+	}
+
 	private volatile BufferedImage skin = DefaultWorldIconTypes.PLAYER
 			.getImage();
 
 	private final String playerName;
+	private final boolean isSkinLoadable;
 	private volatile long x;
 	private volatile long y;
 	private volatile long z;
 
 	private volatile boolean isMoved = false;
 
-	public Player(String playerName, double x, double y, double z) {
+	private Player(String playerName, boolean isSkinLoadable, double x,
+			double y, double z) {
 		this.playerName = playerName;
+		this.isSkinLoadable = isSkinLoadable;
 		this.x = (long) x;
 		this.y = (long) y;
 		this.z = (long) z;
@@ -24,6 +37,10 @@ public class Player {
 
 	public String getPlayerName() {
 		return playerName;
+	}
+
+	public boolean isSkinLoadable() {
+		return isSkinLoadable;
 	}
 
 	public long getX() {

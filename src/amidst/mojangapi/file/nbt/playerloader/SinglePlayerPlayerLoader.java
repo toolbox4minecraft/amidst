@@ -12,8 +12,6 @@ import amidst.mojangapi.file.nbt.NBTTagKeys;
 import amidst.mojangapi.world.Player;
 
 public class SinglePlayerPlayerLoader extends PlayerLoader {
-	private static final String DEFAULT_SINGLE_PLAYER_PLAYER_NAME = "Player";
-
 	private final SaveDirectory saveDirectory;
 
 	public SinglePlayerPlayerLoader(SaveDirectory saveDirectory) {
@@ -22,8 +20,8 @@ public class SinglePlayerPlayerLoader extends PlayerLoader {
 
 	@Override
 	protected List<Player> doLoad() throws FileNotFoundException, IOException {
-		return Arrays.asList(createPlayer(DEFAULT_SINGLE_PLAYER_PLAYER_NAME,
-				getSinglePlayerPlayerTag(getTagRootTag(saveDirectory
+		return Arrays
+				.asList(createNamelessPlayer(getSinglePlayerPlayerTag(getTagRootTag(saveDirectory
 						.readLevelDat()))));
 	}
 

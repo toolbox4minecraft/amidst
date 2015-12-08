@@ -23,7 +23,9 @@ public class SkinLoader {
 	public void loadSkins(MovablePlayerList movablePlayerList,
 			Runnable onFinished) {
 		for (Player player : movablePlayerList) {
-			loadSkinLater(player, onFinished);
+			if (player.isSkinLoadable()) {
+				loadSkinLater(player, onFinished);
+			}
 		}
 	}
 

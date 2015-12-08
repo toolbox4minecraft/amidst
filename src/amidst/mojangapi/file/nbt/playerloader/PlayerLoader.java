@@ -23,13 +23,22 @@ public abstract class PlayerLoader {
 		return DUMMY;
 	}
 
-	protected Player createPlayer(String playerName, CompoundTag tag) {
+	protected Player createNamedPlayer(String playerName, CompoundTag tag) {
 		ListTag posTag = (ListTag) getTagPos(tag);
 		List<Tag> posList = posTag.getValue();
 		double x = (Double) posList.get(0).getValue();
 		double y = (Double) posList.get(1).getValue();
 		double z = (Double) posList.get(2).getValue();
-		return new Player(playerName, x, y, z);
+		return Player.named(playerName, x, y, z);
+	}
+
+	protected Player createNamelessPlayer(CompoundTag tag) {
+		ListTag posTag = (ListTag) getTagPos(tag);
+		List<Tag> posList = posTag.getValue();
+		double x = (Double) posList.get(0).getValue();
+		double y = (Double) posList.get(1).getValue();
+		double z = (Double) posList.get(2).getValue();
+		return Player.nameless(x, y, z);
 	}
 
 	private Tag getTagPos(CompoundTag tag) {

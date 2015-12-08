@@ -22,7 +22,7 @@ public class MultiPlayerPlayerLoader extends PlayerLoader {
 		List<Player> result = new ArrayList<Player>();
 		for (File playerFile : saveDirectory.getPlayersFiles()) {
 			if (playerFile.isFile()) {
-				result.add(createPlayer(getPlayerName(playerFile),
+				result.add(createNamedPlayer(getPlayerName(playerFile),
 						NBTUtils.readTagFromFile(playerFile)));
 			}
 		}

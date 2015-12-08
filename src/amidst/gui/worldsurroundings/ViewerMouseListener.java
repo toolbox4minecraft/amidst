@@ -140,7 +140,7 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 		}
 	}
 
-	private long askForPlayerHeight(final Player player) {
+	private long askForPlayerHeight(Player player) {
 		String input = askForString("Move Player",
 				"Enter new height (current: " + player.getY() + "):");
 		try {
