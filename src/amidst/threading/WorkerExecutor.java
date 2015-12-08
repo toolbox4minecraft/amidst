@@ -7,10 +7,6 @@ public class WorkerExecutor {
 		this.threadMaster = threadMaster;
 	}
 
-	public void invokeLater(Runnable runnable) {
-		threadMaster.executeWorker(runnable);
-	}
-
 	public <T> void invokeLater(Worker<T> worker) {
 		threadMaster.executeWorker(worker);
 	}

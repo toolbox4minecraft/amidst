@@ -8,21 +8,25 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.SwingUtilities;
 
-import amidst.Application;
-
 public class ThreadMaster {
-	private Application application;
+	private final Runnable onRepaintTick;
+	private final Runnable onFragmentLoadTick;
 
-	private ScheduledExecutorService repaintExecutor;
-	private ScheduledExecutorService fragmentLoaderExecutor;
-	private ExecutorService workerExecutor;
+	private final ScheduledExecutorService repaintExecutorService;
+	private final ScheduledExecutorService fragmentLoaderExecutorService;
+	private final ExecutorService workerExecutorService;
+	private final WorkerExecutor workerExecutor;
+	private final SkinLoader skinLoader;
 
-	public ThreadMaster(Application application) {
-		this.application = application;
-		initRepaintExecutor();
-		initFragmentLoaderExecutor();
-		initWorkerExecutor();
+	public ThreadMaster(Runnable onRepaintTick, Runnable onFragmentLoadTick) {
+		this.onRepaintTick = onRepaintTick;
+		this.onFragmentLoadTick = onFragmentLoadTick;
+		this.repaintExecutorService = createRepaintExecutorService();
+		this.fragmentLoaderExecutorService = createFragmentLoaderExecutorService();
+		this.workerExecutorService = createWorkerExecutorService();
 		dummyGUIThread();
+		this.workerExecutor = createWorkerExecutor();
+		this.skinLoader = createSkinLoader();
 		startRepainter();
 		startFragmentLoader();
 	}
@@ -30,16 +34,15 @@ public class ThreadMaster {
 	/**
 	 * The repainter is responsible to constantly repaint the gui.
 	 */
-	private void initRepaintExecutor() {
-		repaintExecutor = Executors
-				.newSingleThreadScheduledExecutor(new ThreadFactory() {
-					@Override
-					public Thread newThread(Runnable r) {
-						Thread thread = new Thread(r);
-						thread.setDaemon(true);
-						return thread;
-					}
-				});
+	private ScheduledExecutorService createRepaintExecutorService() {
+		return Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread thread = new Thread(r);
+				thread.setDaemon(true);
+				return thread;
+			}
+		});
 	}
 
 	/**
@@ -47,17 +50,16 @@ public class ThreadMaster {
 	 * of biome data, the rendering of image layers and the creation of world
 	 * icons. Note that this thread is not allowed to alter the fragment graph.
 	 */
-	private void initFragmentLoaderExecutor() {
-		fragmentLoaderExecutor = Executors
-				.newSingleThreadScheduledExecutor(new ThreadFactory() {
-					@Override
-					public Thread newThread(Runnable r) {
-						Thread thread = new Thread(r);
-						thread.setDaemon(true);
-						thread.setPriority(Thread.MIN_PRIORITY);
-						return thread;
-					}
-				});
+	private ScheduledExecutorService createFragmentLoaderExecutorService() {
+		return Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread thread = new Thread(r);
+				thread.setDaemon(true);
+				thread.setPriority(Thread.MIN_PRIORITY);
+				return thread;
+			}
+		});
 	}
 
 	/**
@@ -66,8 +68,8 @@ public class ThreadMaster {
 	 * only used for operations that wait for IO most of the time. For example,
 	 * it is used for the skin loading.
 	 */
-	private void initWorkerExecutor() {
-		workerExecutor = Executors.newCachedThreadPool(new ThreadFactory() {
+	private ExecutorService createWorkerExecutorService() {
+		return Executors.newCachedThreadPool(new ThreadFactory() {
 			@Override
 			public Thread newThread(Runnable r) {
 				Thread thread = new Thread(r);
@@ -89,30 +91,34 @@ public class ThreadMaster {
 	private void dummyGUIThread() {
 	}
 
+	private WorkerExecutor createWorkerExecutor() {
+		return new WorkerExecutor(this);
+	}
+
+	private SkinLoader createSkinLoader() {
+		return new SkinLoader(workerExecutor);
+	}
+
 	private void startRepainter() {
-		repaintExecutor.scheduleAtFixedRate(new Runnable() {
+		repaintExecutorService.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
-				application.tickRepainter();
+				onRepaintTick.run();
 			}
 		}, 0, 20, TimeUnit.MILLISECONDS);
 	}
 
 	private void startFragmentLoader() {
-		fragmentLoaderExecutor.scheduleWithFixedDelay(new Runnable() {
+		fragmentLoaderExecutorService.scheduleWithFixedDelay(new Runnable() {
 			@Override
 			public void run() {
-				application.tickFragmentLoader();
+				onFragmentLoadTick.run();
 			}
 		}, 0, 20, TimeUnit.MILLISECONDS);
 	}
 
-	public void executeWorker(Runnable runnable) {
-		workerExecutor.execute(runnable);
-	}
-
 	public <T> void executeWorker(final Worker<T> worker) {
-		workerExecutor.execute(new Runnable() {
+		workerExecutorService.execute(new Runnable() {
 			@Override
 			public void run() {
 				callFinishedLater(worker, worker.execute());
@@ -127,5 +133,13 @@ public class ThreadMaster {
 				worker.finished(result);
 			}
 		});
+	}
+
+	public WorkerExecutor getWorkerExecutor() {
+		return workerExecutor;
+	}
+
+	public SkinLoader getSkinLoader() {
+		return skinLoader;
 	}
 }

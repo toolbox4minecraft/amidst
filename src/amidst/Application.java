@@ -9,13 +9,10 @@ import amidst.gui.MainWindow;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
-import amidst.minecraft.world.World;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.MojangApiBuilder;
-import amidst.threading.SkinLoader;
 import amidst.threading.ThreadMaster;
 import amidst.threading.Worker;
-import amidst.threading.WorkerExecutor;
 import amidst.utilities.SeedHistoryLogger;
 
 public class Application {
@@ -25,8 +22,6 @@ public class Application {
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final ThreadMaster threadMaster;
-	private final WorkerExecutor workerExecutor;
-	private final SkinLoader skinLoader;
 	private final UpdatePrompt updateManager;
 
 	private VersionSelectWindow versionSelectWindow;
@@ -39,8 +34,6 @@ public class Application {
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
 		this.seedHistoryLogger = createSeedHistoryLogger();
 		this.threadMaster = createThreadMaster();
-		this.workerExecutor = createWorkerExecutor();
-		this.skinLoader = createSkinLoader();
 		this.updateManager = createUpdateManager();
 	}
 
@@ -63,15 +56,21 @@ public class Application {
 	}
 
 	private ThreadMaster createThreadMaster() {
-		return new ThreadMaster(this);
-	}
-
-	private WorkerExecutor createWorkerExecutor() {
-		return new WorkerExecutor(threadMaster);
-	}
-
-	private SkinLoader createSkinLoader() {
-		return new SkinLoader(workerExecutor);
+		return new ThreadMaster(new Runnable() {
+			@Override
+			public void run() {
+				if (mainWindow != null) {
+					mainWindow.tickRepainter();
+				}
+			}
+		}, new Runnable() {
+			@Override
+			public void run() {
+				if (mainWindow != null) {
+					mainWindow.tickFragmentLoader();
+				}
+			}
+		});
 	}
 
 	private UpdatePrompt createUpdateManager() {
@@ -88,7 +87,7 @@ public class Application {
 
 	@Deprecated
 	public void displayMainWindow() {
-		workerExecutor.invokeLater(new Worker<Void>() {
+		threadMaster.getWorkerExecutor().invokeLater(new Worker<Void>() {
 			@Override
 			public Void execute() {
 				createAndSetLocalMinecraftInterface();
@@ -108,13 +107,14 @@ public class Application {
 
 	private void doDisplayMainWindow() {
 		setMainWindow(new MainWindow(this, options, mojangApi,
-				worldSurroundingsBuilder, seedHistoryLogger, skinLoader));
+				worldSurroundingsBuilder, seedHistoryLogger,
+				threadMaster.getSkinLoader()));
 		setVersionSelectWindow(null);
 	}
 
 	public void displayVersionSelectWindow() {
-		setVersionSelectWindow(new VersionSelectWindow(this, workerExecutor,
-				mojangApi, options));
+		setVersionSelectWindow(new VersionSelectWindow(this,
+				threadMaster.getWorkerExecutor(), mojangApi, options));
 		setMainWindow(null);
 	}
 
@@ -160,9 +160,6 @@ public class Application {
 		System.exit(code);
 	}
 
-	public void setWorld(World world) {
-	}
-
 	void crash(Throwable e, String exceptionText, String message,
 			String allLogMessages) {
 		new CrashWindow(message, allLogMessages, new Runnable() {
@@ -171,17 +168,5 @@ public class Application {
 				exitWithErrorCode(4);
 			}
 		});
-	}
-
-	public void tickRepainter() {
-		if (mainWindow != null) {
-			mainWindow.tickRepainter();
-		}
-	}
-
-	public void tickFragmentLoader() {
-		if (mainWindow != null) {
-			mainWindow.tickFragmentLoader();
-		}
 	}
 }
