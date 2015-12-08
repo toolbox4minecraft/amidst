@@ -5,6 +5,7 @@ import java.util.prefs.Preferences;
 import javax.swing.JToggleButton.ToggleButtonModel;
 
 public class SelectPrefModel implements PrefModel<String> {
+	@SuppressWarnings("serial")
 	public class SelectButtonModel extends ToggleButtonModel {
 		private SelectPrefModel model;
 		public String name;
