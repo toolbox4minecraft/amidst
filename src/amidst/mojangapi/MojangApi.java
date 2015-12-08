@@ -15,6 +15,8 @@ import amidst.mojangapi.internal.FilenameFactory;
 import amidst.mojangapi.versionlist.VersionListJson;
 
 public class MojangApi {
+	private static final String UNKNOWN_VERSION_ID = "unknown";
+
 	private final DotMinecraftDirectory dotMinecraftDirectory;
 	private final VersionListJson versionList;
 	private final File preferedJson;
@@ -58,6 +60,10 @@ public class MojangApi {
 		File jar = FilenameFactory.getClientJarFile(versions, versionId);
 		File json = FilenameFactory.getClientJsonFile(versions, versionId);
 		return doCreateVersionDirectory(versionId, jar, json);
+	}
+
+	public VersionDirectory createVersionDirectory(File jar, File json) {
+		return doCreateVersionDirectory(UNKNOWN_VERSION_ID, jar, json);
 	}
 
 	private VersionDirectory doCreateVersionDirectory(String versionId,

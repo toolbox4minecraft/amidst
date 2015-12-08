@@ -11,8 +11,6 @@ import amidst.mojangapi.internal.JsonReader;
 import amidst.mojangapi.versionlist.VersionListJson;
 
 public class MojangApiBuilder {
-	public static final String UNKNOWN_VERSION_ID = "unknown";
-
 	private final String preferedDotMinecraftDirectory;
 	private final String preferedLibraries;
 	private final String preferedVersionJar;
@@ -35,8 +33,7 @@ public class MojangApiBuilder {
 		}
 		MojangApi result = new MojangApi(dotMinecraftDirectory,
 				readRemoteOrLocalVersionList(), createPreferedJson());
-		result.set(createProfileDirectory(),
-				createVersionDirectory(dotMinecraftDirectory));
+		result.set(createProfileDirectory(), createVersionDirectory(result));
 		return result;
 	}
 
@@ -67,7 +64,6 @@ public class MojangApiBuilder {
 		return null;
 	}
 
-	// TODO: check for correctness
 	private ProfileDirectory createProfileDirectory() {
 		if (preferedDotMinecraftDirectory != null) {
 			ProfileDirectory result = new ProfileDirectory(new File(
@@ -79,18 +75,21 @@ public class MojangApiBuilder {
 		return null;
 	}
 
-	// TODO: check for correctness
-	private VersionDirectory createVersionDirectory(
-			DotMinecraftDirectory dotMinecraftDirectory) {
+	private VersionDirectory createVersionDirectory(MojangApi mojangApi) {
 		if (preferedVersionJar != null) {
 			File jar = new File(preferedVersionJar);
-			File json = new File(jar.getPath().replace(".jar", ".json"));
-			VersionDirectory result = new VersionDirectory(
-					dotMinecraftDirectory, UNKNOWN_VERSION_ID, jar, json);
+			File json = new File(getJsonFileName());
+			VersionDirectory result = mojangApi.createVersionDirectory(jar,
+					json);
 			if (result.isValid()) {
 				return result;
 			}
 		}
 		return null;
+	}
+
+	private String getJsonFileName() {
+		return preferedVersionJar.substring(0, preferedVersionJar.length() - 4)
+				+ ".json";
 	}
 }
