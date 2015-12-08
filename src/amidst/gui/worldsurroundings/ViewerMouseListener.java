@@ -135,6 +135,9 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 		player.moveTo(translator.screenToWorld(mousePosition), playerHeight);
 		world.reloadPlayerWorldIcons();
 		layerReloader.reloadPlayerLayer();
+		if (askToConfirmSavePlayerLocationsNow()) {
+			world.getMovablePlayerList().save();
+		}
 	}
 
 	private long askForPlayerHeight(final Player player) {
@@ -150,6 +153,17 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	private String askForString(String title, String message) {
 		return JOptionPane.showInputDialog(null, message, title,
 				JOptionPane.QUESTION_MESSAGE);
+	}
+
+	private boolean askToConfirmSavePlayerLocationsNow() {
+		return askToConfirm(
+				"Save Player Location",
+				"Do you want to save the player locations NOW? Make sure to not have the world opened in minecraft at the same time!");
+	}
+
+	private boolean askToConfirm(String title, String message) {
+		return JOptionPane.showConfirmDialog(null, message, title,
+				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 	}
 
 	private void doMouseWheelMoved(Point mousePosition, int notches) {
