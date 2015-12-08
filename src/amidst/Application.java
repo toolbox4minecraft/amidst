@@ -162,7 +162,6 @@ public class Application {
 		this.world = world;
 		if (world != null) {
 			seedHistoryLogger.log(world.getSeed());
-			mainWindow.clearWorldSurroundings();
 			mainWindow.setWorldSurroundings(worldSurroundingsBuilder
 					.create(world));
 			skinLoader.loadSkins(world.getMovablePlayerList());

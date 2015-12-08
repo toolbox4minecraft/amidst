@@ -2,21 +2,16 @@ package amidst.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -30,16 +25,11 @@ import amidst.gui.menu.LevelFileFilter;
 import amidst.gui.menu.MenuActions;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.gui.worldsurroundings.WorldSurroundings;
-import amidst.logging.Log;
 import amidst.minecraft.world.CoordinatesInWorld;
 import amidst.minecraft.world.WorldType;
-import amidst.minecraft.world.icon.WorldIcon;
 import amidst.mojangapi.MojangApi;
 
 public class MainWindow {
-	private static final String ABOUT_MESSAGE = "Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
-			+ "By Skidoodle (amidst.project@gmail.com)";
-
 	private final SeedPrompt seedPrompt = new SeedPrompt();
 
 	private final Application application;
@@ -48,9 +38,10 @@ public class MainWindow {
 
 	private final JFrame frame;
 	private final Container contentPane;
+	private final MenuActions actions;
 	private final AmidstMenu menuBar;
 
-	private volatile AtomicReference<WorldSurroundings> worldSurroundings;
+	private final AtomicReference<WorldSurroundings> worldSurroundings = new AtomicReference<WorldSurroundings>();
 
 	public MainWindow(Application application, Options options,
 			MojangApi mojangApi) {
@@ -59,11 +50,13 @@ public class MainWindow {
 		this.mojangApi = mojangApi;
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
-		this.menuBar = createMenuBar(options);
+		this.actions = createMenuActions();
+		this.menuBar = createMenuBar();
 		initKeyListener();
 		initCloseListener();
 		showFrame();
 		checkForUpdates();
+		clearWorldSurroundings();
 	}
 
 	private JFrame createFrame() {
@@ -92,10 +85,14 @@ public class MainWindow {
 		return contentPane;
 	}
 
-	private AmidstMenu createMenuBar(Options options) {
-		AmidstMenu menuBar = new AmidstMenuBuilder(options, new MenuActions(
-				application, this, worldSurroundings,
-				options.biomeColorProfileSelection)).construct();
+	private MenuActions createMenuActions() {
+		return new MenuActions(application, mojangApi, this, worldSurroundings,
+				options.biomeColorProfileSelection);
+	}
+
+	private AmidstMenu createMenuBar() {
+		AmidstMenu menuBar = new AmidstMenuBuilder(options, actions)
+				.construct();
 		frame.setJMenuBar(menuBar.getMenuBar());
 		return menuBar;
 	}
@@ -105,9 +102,9 @@ public class MainWindow {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_PLUS) {
-					adjustZoom(-1);
+					actions.adjustZoom(-1);
 				} else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
-					adjustZoom(1);
+					actions.adjustZoom(1);
 				}
 			}
 		});
@@ -117,8 +114,7 @@ public class MainWindow {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				frame.dispose();
-				System.exit(0);
+				actions.exit();
 			}
 		});
 	}
@@ -238,19 +234,6 @@ public class MainWindow {
 		frame.dispose();
 	}
 
-	// TODO: call from constructor?
-	public void clearWorldSurroundings() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings
-				.getAndSet(null);
-		if (worldSurroundings != null) {
-			menuBar.setWorldMenuEnabled(false);
-			menuBar.setSavePlayerLocationsMenuEnabled(false);
-			frame.setTitle(getSimpleVersionString());
-			contentPane.remove(worldSurroundings.getComponent());
-			worldSurroundings.dispose();
-		}
-	}
-
 	/**
 	 * This ensures that the instance variable worldSurroundings is assigned
 	 * AFTER frame.validate() is called. This is important, because the
@@ -258,53 +241,31 @@ public class MainWindow {
 	 * assigned to the instance variable.
 	 */
 	public void setWorldSurroundings(WorldSurroundings worldSurroundings) {
+		clearWorldSurroundings();
 		contentPane.add(worldSurroundings.getComponent(), BorderLayout.CENTER);
-		frame.validate();
 		menuBar.setWorldMenuEnabled(true);
 		menuBar.setSavePlayerLocationsMenuEnabled(worldSurroundings
 				.canSavePlayerLocations());
 		frame.setTitle(getLongVersionString(worldSurroundings
 				.getRecognisedVersionName()));
+		frame.validate();
 		this.worldSurroundings.set(worldSurroundings);
 	}
 
-	public void capture(File file) {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
+	private void clearWorldSurroundings() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings
+				.getAndSet(null);
 		if (worldSurroundings != null) {
-			BufferedImage image = worldSurroundings.createCaptureImage();
-			saveToFile(image, file);
-			image.flush();
+			contentPane.remove(worldSurroundings.getComponent());
+			worldSurroundings.dispose();
 		}
+		clearWorldSurroundingsFromGui();
 	}
 
-	private void saveToFile(BufferedImage image, File file) {
-		try {
-			ImageIO.write(image, "png", appendPNGFileExtensionIfNecessary(file));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private File appendPNGFileExtensionIfNecessary(File file) {
-		String filename = file.toString();
-		if (!filename.toLowerCase().endsWith(".png")) {
-			filename += ".png";
-		}
-		return new File(filename);
-	}
-
-	private void adjustZoom(int notches) {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			worldSurroundings.adjustZoom(notches);
-		}
-	}
-
-	public void reloadBiomeLayer() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			worldSurroundings.getLayerReloader().reloadBiomeLayer();
-		}
+	private void clearWorldSurroundingsFromGui() {
+		menuBar.setWorldMenuEnabled(false);
+		menuBar.setSavePlayerLocationsMenuEnabled(false);
+		frame.setTitle(getSimpleVersionString());
 	}
 
 	public void reloadPlayerLayer() {
@@ -326,107 +287,5 @@ public class MainWindow {
 		if (worldSurroundings != null) {
 			worldSurroundings.tickFragmentLoader();
 		}
-	}
-
-	public void savePlayerLocations() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			worldSurroundings.savePlayerLocations();
-		}
-	}
-
-	public void findStronghold() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			WorldIcon stronghold = askForOptions("Go to", "Select Stronghold:",
-					worldSurroundings.getStrongholdWorldIcons());
-			if (stronghold != null) {
-				worldSurroundings.centerOn(stronghold.getCoordinates());
-			}
-		}
-	}
-
-	public void gotoCoordinate() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			CoordinatesInWorld coordinates = askForCoordinates();
-			if (coordinates != null) {
-				worldSurroundings.centerOn(coordinates);
-			} else {
-				displayMessage("You entered an invalid location.");
-				Log.w("Invalid location entered, ignoring.");
-			}
-		}
-	}
-
-	public void gotoPlayer() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			List<WorldIcon> playerWorldIcons = worldSurroundings
-					.getPlayerWorldIcons();
-			if (!playerWorldIcons.isEmpty()) {
-				WorldIcon player = askForOptions("Go to", "Select player:",
-						playerWorldIcons);
-				if (player != null) {
-					worldSurroundings.centerOn(player.getCoordinates());
-				}
-			} else {
-				displayMessage("There are no players in this world.");
-			}
-		}
-	}
-
-	public void copySeedToClipboard() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			String seed = "" + worldSurroundings.getSeed();
-			StringSelection selection = new StringSelection(seed);
-			Toolkit.getDefaultToolkit().getSystemClipboard()
-					.setContents(selection, selection);
-		}
-	}
-
-	public void newFromSeed() {
-		String seed = askForSeed();
-		if (seed != null) {
-			if (seed.isEmpty()) {
-				newFromRandom();
-			} else {
-				WorldType worldType = askForWorldType();
-				if (worldType != null) {
-					application.setWorld(mojangApi.createWorldFromSeed(seed,
-							worldType));
-				}
-			}
-		}
-	}
-
-	public void newFromRandom() {
-		WorldType worldType = askForWorldType();
-		if (worldType != null) {
-			application.setWorld(mojangApi.createRandomWorld(worldType));
-		}
-	}
-
-	public void newFromFileOrFolder() {
-		File worldFile = askForMinecraftWorldFile();
-		if (worldFile != null) {
-			try {
-				application.setWorld(mojangApi.createWorldFromFile(worldFile));
-			} catch (Exception e) {
-				displayException(e);
-			}
-		}
-	}
-
-	public void capture() {
-		File file = askForScreenshotSaveFile();
-		if (file != null) {
-			capture(file);
-		}
-	}
-
-	public void displayAboutMessage() {
-		displayMessage(ABOUT_MESSAGE);
 	}
 }
