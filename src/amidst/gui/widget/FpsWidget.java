@@ -2,7 +2,6 @@ package amidst.gui.widget;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 
 import amidst.preferences.PrefModel;
 import amidst.utilities.FramerateTimer;
@@ -22,12 +21,11 @@ public class FpsWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, int viewerWidth, int viewerHeight,
-			Point mousePosition, FontMetrics fontMetrics, float time) {
+	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
 		String framerate = fpsTimer.toString();
 		fpsTimer.tick();
 		setWidth(fontMetrics.stringWidth(framerate) + 20);
-		drawBorderAndBackground(g2d, time, viewerWidth, viewerHeight);
+		drawBorderAndBackground(g2d, time);
 		drawFramerate(g2d, framerate);
 	}
 

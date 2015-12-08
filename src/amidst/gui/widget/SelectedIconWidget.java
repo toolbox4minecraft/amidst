@@ -2,7 +2,6 @@ package amidst.gui.widget;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import amidst.gui.worldsurroundings.WorldIconSelection;
@@ -25,8 +24,7 @@ public class SelectedIconWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, int viewerWidth, int viewerHeight,
-			Point mousePosition, FontMetrics fontMetrics, float time) {
+	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
 		if (worldIconSelection.hasSelection()) {
 			WorldIcon selection = worldIconSelection.get();
 			message = selection.toString();
@@ -34,7 +32,7 @@ public class SelectedIconWidget extends Widget {
 		}
 
 		setWidth(45 + fontMetrics.stringWidth(message));
-		drawBorderAndBackground(g2d, time, viewerWidth, viewerHeight);
+		drawBorderAndBackground(g2d, time);
 		double imgWidth = icon.getWidth();
 		double imgHeight = icon.getHeight();
 		double ratio = imgWidth / imgHeight;

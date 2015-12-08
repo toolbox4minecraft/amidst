@@ -17,7 +17,6 @@ public class CursorInformationWidget extends Widget {
 	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
 
-	private Point mousePosition;
 	private String text = "";
 
 	public CursorInformationWidget(CornerAnchorPoint anchor,
@@ -31,19 +30,18 @@ public class CursorInformationWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, int viewerWidth, int viewerHeight,
-			Point mousePosition, FontMetrics fontMetrics, float time) {
-		this.mousePosition = mousePosition;
+	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
 		String newText = getText();
 		if (newText != null) {
 			text = newText;
 		}
 		setWidth(g2d.getFontMetrics().stringWidth(text) + 20);
-		drawBorderAndBackground(g2d, time, viewerWidth, viewerHeight);
+		drawBorderAndBackground(g2d, time);
 		g2d.drawString(text, getX() + 10, getY() + 20);
 	}
 
 	private String getText() {
+		Point mousePosition = getMousePosition();
 		if (mousePosition != null) {
 			CoordinatesInWorld coordinates = translator
 					.screenToWorld(mousePosition);
@@ -68,6 +66,6 @@ public class CursorInformationWidget extends Widget {
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		return mousePosition != null;
+		return getMousePosition() != null;
 	}
 }

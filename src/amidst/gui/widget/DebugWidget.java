@@ -2,7 +2,6 @@ package amidst.gui.widget;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,14 +25,13 @@ public class DebugWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, int viewerWidth, int viewerHeight,
-			Point mousePosition, FontMetrics fontMetrics, float time) {
+	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
 		List<String> panelLines = getPanelLines();
 		int width = getPanelWidth(panelLines, fontMetrics);
 		int height = getPanelHeight(panelLines);
 		setWidth(width);
 		setHeight(height);
-		drawBorderAndBackground(g2d, time, viewerWidth, viewerHeight);
+		drawBorderAndBackground(g2d, time);
 		drawPanelLines(g2d, panelLines);
 	}
 

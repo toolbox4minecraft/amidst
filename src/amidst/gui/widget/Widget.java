@@ -56,14 +56,16 @@ public abstract class Widget {
 	private float alpha = 1.0f;
 	private float targetAlpha = 1.0f;
 
+	private int viewerWidth;
+	private int viewerHeight;
+	private Point mousePosition;
+
 	protected Widget(CornerAnchorPoint anchor) {
 		this.anchor = anchor;
 	}
 
-	public void drawBorderAndBackground(Graphics2D g2d, float time,
-			int viewerWidth, int viewerHeight) {
+	public void drawBorderAndBackground(Graphics2D g2d, float time) {
 		updateAlpha(time);
-		updatePosition(viewerWidth, viewerHeight);
 		initGraphics(g2d);
 		drawBorder(g2d);
 		drawBackground(g2d);
@@ -78,7 +80,7 @@ public abstract class Widget {
 		}
 	}
 
-	private void updatePosition(int viewerWidth, int viewerHeight) {
+	private void updatePosition() {
 		if (anchor == CornerAnchorPoint.TOP_LEFT) {
 			setX(getLeftX());
 			setY(getTopY());
@@ -265,8 +267,26 @@ public abstract class Widget {
 	public void onMouseReleased() {
 	}
 
-	public abstract void draw(Graphics2D g2d, int viewerWidth,
-			int viewerHeight, Point mousePosition, FontMetrics fontMetrics,
+	protected int getViewerWidth() {
+		return viewerWidth;
+	}
+
+	protected int getViewerHeight() {
+		return viewerHeight;
+	}
+
+	protected Point getMousePosition() {
+		return mousePosition;
+	}
+
+	public void update(int viewerWidth, int viewerHeight, Point mousePosition) {
+		this.viewerWidth = viewerWidth;
+		this.viewerHeight = viewerHeight;
+		this.mousePosition = mousePosition;
+		updatePosition();
+	}
+
+	public abstract void draw(Graphics2D g2d, FontMetrics fontMetrics,
 			float time);
 
 	protected abstract boolean onVisibilityCheck();

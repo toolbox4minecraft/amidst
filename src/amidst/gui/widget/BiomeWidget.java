@@ -73,16 +73,9 @@ public class BiomeWidget extends Widget {
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, int viewerWidth, int viewerHeight,
-			Point mousePosition, FontMetrics fontMetrics, float time) {
+	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
 		initializeIfNecessary(fontMetrics);
-		updateX(viewerWidth);
-		updateHeight(viewerHeight);
-		updateInnerBoxPositionAndSize();
-		updateBiomeListYOffset();
-		updateScrollbarVisibility();
-		updateInnerBoxWidth();
-		drawBorderAndBackground(g2d, time, viewerWidth, viewerHeight);
+		drawBorderAndBackground(g2d, time);
 		drawTextHighlightBiomes(g2d);
 		drawInnerBoxBackground(g2d);
 		drawInnerBoxBorder(g2d);
@@ -95,7 +88,7 @@ public class BiomeWidget extends Widget {
 		}
 		clearClip(g2d);
 		if (scrollbarVisible) {
-			updateScrollbarParameter(mousePosition);
+			updateScrollbarParameter(getMousePosition());
 			drawScrollbar(g2d);
 		}
 
@@ -103,12 +96,23 @@ public class BiomeWidget extends Widget {
 		drawSpecialButtons(g2d);
 	}
 
-	private void updateX(int viewerWidth) {
-		setX(viewerWidth - getWidth());
+	@Override
+	public void update(int viewerWidth, int viewerHeight, Point mousePosition) {
+		super.update(viewerWidth, viewerHeight, mousePosition);
+		updateX();
+		updateHeight();
+		updateInnerBoxPositionAndSize();
+		updateBiomeListYOffset();
+		updateScrollbarVisibility();
+		updateInnerBoxWidth();
 	}
 
-	private void updateHeight(int viewerHeight) {
-		setHeight(Math.max(200, viewerHeight - 200));
+	private void updateX() {
+		setX(getViewerWidth() - getWidth());
+	}
+
+	private void updateHeight() {
+		setHeight(Math.max(200, getViewerHeight() - 200));
 	}
 
 	private void updateInnerBoxPositionAndSize() {
