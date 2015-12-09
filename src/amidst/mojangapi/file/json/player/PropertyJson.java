@@ -3,7 +3,7 @@ package amidst.mojangapi.file.json.player;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-import amidst.mojangapi.file.JsonReader;
+import amidst.mojangapi.file.json.JsonReader;
 
 public class PropertyJson {
 	private String name;

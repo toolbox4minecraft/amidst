@@ -3,7 +3,7 @@ package amidst.mojangapi.file.directory;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import amidst.mojangapi.file.JsonReader;
+import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 
 public class DotMinecraftDirectory {

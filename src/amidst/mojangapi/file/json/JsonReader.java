@@ -1,4 +1,4 @@
-package amidst.mojangapi.file;
+package amidst.mojangapi.file.json;
 
 import java.io.File;
 import java.io.FileNotFoundException;

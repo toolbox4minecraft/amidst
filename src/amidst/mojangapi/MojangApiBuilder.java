@@ -4,10 +4,10 @@ import java.io.File;
 
 import amidst.logging.Log;
 import amidst.mojangapi.file.DotMinecraftDirectoryFinder;
-import amidst.mojangapi.file.JsonReader;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 
 public class MojangApiBuilder {

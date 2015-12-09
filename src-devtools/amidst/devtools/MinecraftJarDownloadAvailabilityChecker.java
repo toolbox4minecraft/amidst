@@ -3,7 +3,7 @@ package amidst.devtools;
 import java.io.IOException;
 
 import amidst.devtools.utils.VersionStateRenderer;
-import amidst.mojangapi.file.JsonReader;
+import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 

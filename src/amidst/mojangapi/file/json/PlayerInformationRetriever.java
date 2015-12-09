@@ -10,7 +10,6 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 
 import amidst.logging.Log;
-import amidst.mojangapi.file.JsonReader;
 
 public enum PlayerInformationRetriever {
 	;

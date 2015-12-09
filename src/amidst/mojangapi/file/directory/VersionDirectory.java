@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import amidst.logging.Log;
-import amidst.mojangapi.file.JsonReader;
+import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.version.VersionJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;

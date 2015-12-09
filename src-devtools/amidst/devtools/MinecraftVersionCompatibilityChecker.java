@@ -12,7 +12,7 @@ import amidst.clazz.Classes;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.devtools.settings.DevToolsSettings;
-import amidst.mojangapi.file.JsonReader;
+import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
