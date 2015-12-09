@@ -3,13 +3,16 @@ package amidst.mojangapi.world.icon;
 import java.util.Arrays;
 import java.util.List;
 
+import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Biome;
-import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
+@NotThreadSafe
 public class VillageProducer extends StructureProducer {
-	public VillageProducer(World world, RecognisedVersion recognisedVersion) {
-		super(world, recognisedVersion);
+	public VillageProducer(RecognisedVersion recognisedVersion, long seed,
+			BiomeDataOracle biomeDataOracle) {
+		super(seed, biomeDataOracle, recognisedVersion);
 	}
 
 	@Override

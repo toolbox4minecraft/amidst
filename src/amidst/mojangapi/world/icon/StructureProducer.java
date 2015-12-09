@@ -3,15 +3,18 @@ package amidst.mojangapi.world.icon;
 import java.util.List;
 import java.util.Random;
 
+import amidst.documentation.NotThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Biome;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.Resolution;
-import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
+@NotThreadSafe
 public abstract class StructureProducer extends WorldIconProducer {
-	protected final World world;
+	protected final long seed;
+	protected final BiomeDataOracle biomeDataOracle;
 	protected final RecognisedVersion recognisedVersion;
 	protected final Resolution resolution;
 	protected final int size;
@@ -36,8 +39,10 @@ public abstract class StructureProducer extends WorldIconProducer {
 	private int middleOfChunkX;
 	private int middleOfChunkY;
 
-	public StructureProducer(World world, RecognisedVersion recognisedVersion) {
-		this.world = world;
+	public StructureProducer(long seed, BiomeDataOracle biomeDataOracle,
+			RecognisedVersion recognisedVersion) {
+		this.seed = seed;
+		this.biomeDataOracle = biomeDataOracle;
 		this.recognisedVersion = recognisedVersion;
 		this.resolution = Resolution.CHUNK;
 		this.size = resolution.getStepsPerFragment();
@@ -122,8 +127,8 @@ public abstract class StructureProducer extends WorldIconProducer {
 	}
 
 	private long getSeed(int n, int i1) {
-		return n * magicNumberForSeed1 + i1 * magicNumberForSeed2
-				+ world.getSeed() + magicNumberForSeed3;
+		return n * magicNumberForSeed1 + i1 * magicNumberForSeed2 + seed
+				+ magicNumberForSeed3;
 	}
 
 	private boolean isSuccessful(int n, int i1) {
@@ -139,13 +144,12 @@ public abstract class StructureProducer extends WorldIconProducer {
 	}
 
 	protected Biome getBiomeAtMiddleOfChunk() {
-		return world.getBiomeDataOracle().getBiomeAt(middleOfChunkX,
-				middleOfChunkY);
+		return biomeDataOracle.getBiomeAt(middleOfChunkX, middleOfChunkY);
 	}
 
 	protected boolean isValidBiomeForStructure() {
-		return world.getBiomeDataOracle().isValidBiome(middleOfChunkX,
-				middleOfChunkY, structureSize, validBiomesForStructure);
+		return biomeDataOracle.isValidBiome(middleOfChunkX, middleOfChunkY,
+				structureSize, validBiomesForStructure);
 	}
 
 	protected abstract boolean isValidLocation();

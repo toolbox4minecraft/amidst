@@ -2,21 +2,23 @@ package amidst.mojangapi.world.icon;
 
 import java.util.List;
 
+import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Biome;
-import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
+@NotThreadSafe
 public class NetherFortressProducer extends StructureProducer {
-	public NetherFortressProducer(World world,
-			RecognisedVersion recognisedVersion) {
-		super(world, recognisedVersion);
+	public NetherFortressProducer(RecognisedVersion recognisedVersion, long seed,
+			BiomeDataOracle biomeDataOracle) {
+		super(seed, biomeDataOracle, recognisedVersion);
 	}
 
 	@Override
 	protected boolean isValidLocation() {
 		int i = chunkX >> 4;
 		int j = chunkY >> 4;
-		random.setSeed(i ^ j << 4 ^ world.getSeed());
+		random.setSeed(i ^ j << 4 ^ seed);
 		random.nextInt();
 		if (random.nextInt(3) != 0) {
 			return false;

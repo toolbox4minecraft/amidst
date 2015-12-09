@@ -9,7 +9,7 @@ import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Biome;
 import amidst.mojangapi.world.CoordinatesInWorld;
-import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 public class SpawnProducer extends CachedWorldIconProducer {
 	// @formatter:off
@@ -24,8 +24,14 @@ public class SpawnProducer extends CachedWorldIconProducer {
 	);
 	// @formatter:on
 
-	public SpawnProducer(World world, RecognisedVersion recognisedVersion) {
-		super(world, recognisedVersion);
+	private final long seed;
+	private final BiomeDataOracle biomeDataOracle;
+
+	public SpawnProducer(RecognisedVersion recognisedVersion, long seed,
+			BiomeDataOracle biomeDataOracle) {
+		super(recognisedVersion);
+		this.seed = seed;
+		this.biomeDataOracle = biomeDataOracle;
 	}
 
 	@Override
@@ -51,8 +57,8 @@ public class SpawnProducer extends CachedWorldIconProducer {
 	}
 
 	private Point getSpawnCenterInWorldCoordinates() {
-		Random random = new Random(world.getSeed());
-		return world.getBiomeDataOracle().findValidLocation(0, 0, 256,
-				VALID_BIOMES, random);
+		Random random = new Random(seed);
+		return biomeDataOracle.findValidLocation(0, 0, 256, VALID_BIOMES,
+				random);
 	}
 }

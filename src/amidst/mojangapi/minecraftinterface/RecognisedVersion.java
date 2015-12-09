@@ -1,8 +1,11 @@
 package amidst.mojangapi.minecraftinterface;
 
+import amidst.documentation.Immutable;
+
 /**
  * Information about what each supported version is
  */
+@Immutable
 public enum RecognisedVersion {
 	// @formatter:off
 	v15w44b("qtoombkapb[Llq;mn[J[[Jmj"),
@@ -71,10 +74,16 @@ public enum RecognisedVersion {
 		return RecognisedVersion.UNKNOWN;
 	}
 
+	private final String name;
 	private final String magicString;
 
 	private RecognisedVersion(String magicString) {
+		this.name = super.toString().replace("_", ".");
 		this.magicString = magicString;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public String getMagicString() {
@@ -84,10 +93,6 @@ public enum RecognisedVersion {
 	public boolean isSaveEnabled() {
 		return this != V12w21a && this != V12w21b && this != V12w22a
 				&& this != UNKNOWN;
-	}
-
-	public String getName() {
-		return super.toString().replace("_", ".");
 	}
 
 	public boolean isAtLeast(RecognisedVersion other) {

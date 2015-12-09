@@ -6,17 +6,13 @@ import java.util.List;
 import amidst.fragment.Fragment;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.CoordinatesInWorld;
-import amidst.mojangapi.world.World;
 
 public abstract class CachedWorldIconProducer extends WorldIconProducer {
-	protected final World world;
 	protected final RecognisedVersion recognisedVersion;
 
 	private List<WorldIcon> cache;
 
-	public CachedWorldIconProducer(World world,
-			RecognisedVersion recognisedVersion) {
-		this.world = world;
+	public CachedWorldIconProducer(RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;
 	}
 

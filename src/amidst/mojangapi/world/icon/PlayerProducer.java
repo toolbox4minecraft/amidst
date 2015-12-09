@@ -4,18 +4,22 @@ import java.util.LinkedList;
 import java.util.List;
 
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.MovablePlayerList;
 import amidst.mojangapi.world.Player;
-import amidst.mojangapi.world.World;
 
 public class PlayerProducer extends CachedWorldIconProducer {
-	public PlayerProducer(World world, RecognisedVersion recognisedVersion) {
-		super(world, recognisedVersion);
+	private final MovablePlayerList movablePlayerList;
+
+	public PlayerProducer(RecognisedVersion recognisedVersion,
+			MovablePlayerList movablePlayerList) {
+		super(recognisedVersion);
+		this.movablePlayerList = movablePlayerList;
 	}
 
 	@Override
 	protected List<WorldIcon> createCache() {
 		List<WorldIcon> result = new LinkedList<WorldIcon>();
-		for (Player player : world.getMovablePlayerList()) {
+		for (Player player : movablePlayerList) {
 			result.add(new WorldIcon(player.createCoordinates(), player
 					.getPlayerName(), player.getSkin()));
 		}

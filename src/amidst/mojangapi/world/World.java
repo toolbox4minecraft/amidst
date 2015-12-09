@@ -51,26 +51,24 @@ public class World {
 	private World(MinecraftInterface minecraftInterface, long seed,
 			String seedText, WorldType worldType, String generatorOptions,
 			MovablePlayerList movablePlayerList) {
+		// @formatter:off
 		this.seed = seed;
 		this.seedText = seedText;
 		this.worldType = worldType;
 		this.generatorOptions = generatorOptions;
 		this.movablePlayerList = movablePlayerList;
 		initMinecraftInterface(minecraftInterface);
-		RecognisedVersion recognisedVersion = minecraftInterface
-				.getRecognisedVersion();
-		this.biomeDataOracle = new BiomeDataOracle(minecraftInterface);
-		this.slimeChunkOracle = new SlimeChunkOracle(this);
-		this.oceanMonumentProducer = new OceanMonumentProducer(this,
-				recognisedVersion);
-		this.templeProducer = new TempleProducer(this, recognisedVersion);
-		this.villageProducer = new VillageProducer(this, recognisedVersion);
-		this.netherFortressProducer = new NetherFortressProducer(this,
-				recognisedVersion);
-		this.playerProducer = new PlayerProducer(this, recognisedVersion);
-		this.spawnProducer = new SpawnProducer(this, recognisedVersion);
-		this.strongholdProducer = new StrongholdProducer(this,
-				recognisedVersion);
+		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
+		this.biomeDataOracle =           new BiomeDataOracle(minecraftInterface);
+		this.slimeChunkOracle =          new SlimeChunkOracle(seed);
+		this.oceanMonumentProducer =     new OceanMonumentProducer(    recognisedVersion, seed, biomeDataOracle);
+		this.templeProducer =            new TempleProducer(           recognisedVersion, seed, biomeDataOracle);
+		this.villageProducer =           new VillageProducer(          recognisedVersion, seed, biomeDataOracle);
+		this.netherFortressProducer =    new NetherFortressProducer(   recognisedVersion, seed, biomeDataOracle);
+		this.playerProducer =            new PlayerProducer(           recognisedVersion, movablePlayerList);
+		this.spawnProducer =             new SpawnProducer(            recognisedVersion, seed, biomeDataOracle);
+		this.strongholdProducer =        new StrongholdProducer(       recognisedVersion, seed, biomeDataOracle);
+		// @formatter:on
 	}
 
 	private void initMinecraftInterface(MinecraftInterface minecraftInterface) {

@@ -2,8 +2,10 @@ package amidst.mojangapi.world.icon;
 
 import java.awt.image.BufferedImage;
 
+import amidst.documentation.Immutable;
 import amidst.mojangapi.world.CoordinatesInWorld;
 
+@Immutable
 public class WorldIcon {
 	private final CoordinatesInWorld coordinates;
 	private final String name;

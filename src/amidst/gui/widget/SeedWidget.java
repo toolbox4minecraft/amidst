@@ -3,21 +3,26 @@ package amidst.gui.widget;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
-import amidst.mojangapi.world.World;
-
 public class SeedWidget extends Widget {
-	private final World world;
+	private final String text;
 
-	public SeedWidget(CornerAnchorPoint anchor, World world) {
+	public SeedWidget(CornerAnchorPoint anchor, long seed, String seedText) {
 		super(anchor);
-		this.world = world;
+		this.text = createText(seed, seedText);
 		setWidth(20);
 		setHeight(30);
 	}
 
+	private String createText(long seed, String seedText) {
+		if (seedText == null) {
+			return "Seed: " + seed;
+		} else {
+			return "Seed: " + seedText + " (" + seed + ")";
+		}
+	}
+
 	@Override
 	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
-		String text = getText();
 		setWidth(fontMetrics.stringWidth(text) + 20);
 		drawBorderAndBackground(g2d, time);
 		drawText(g2d, text);
@@ -25,15 +30,6 @@ public class SeedWidget extends Widget {
 
 	private void drawText(Graphics2D g2d, String text) {
 		g2d.drawString(text, getX() + 10, getY() + 20);
-	}
-
-	public String getText() {
-		String seedText = world.getSeedText();
-		if (seedText == null) {
-			return "Seed: " + world.getSeed();
-		} else {
-			return "Seed: " + seedText + " (" + world.getSeed() + ")";
-		}
 	}
 
 	@Override
