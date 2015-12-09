@@ -9,6 +9,8 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.gui.widget.Widget;
 
 public class Viewer {
@@ -71,6 +73,7 @@ public class Viewer {
 		return result;
 	}
 
+	@CalledOnlyBy(AmidstThread.REPAINTER)
 	public void repaint() {
 		component.repaint();
 	}

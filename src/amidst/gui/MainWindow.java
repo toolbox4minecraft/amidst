@@ -268,6 +268,7 @@ public class MainWindow {
 				JOptionPane.QUESTION_MESSAGE);
 	}
 
+	@CalledOnlyBy(AmidstThread.REPAINTER)
 	public void tickRepainter() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {

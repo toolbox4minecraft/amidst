@@ -71,6 +71,7 @@ public class WorldSurroundings {
 		fragmentManager.tick();
 	}
 
+	@CalledOnlyBy(AmidstThread.REPAINTER)
 	public void tickRepainter() {
 		viewer.repaint();
 	}
