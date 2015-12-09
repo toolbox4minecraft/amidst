@@ -13,12 +13,13 @@ import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.WorldType;
-import amidst.mojangapi.world.Worlds;
 
 public class MojangApi {
 	private static final String UNKNOWN_VERSION_ID = "unknown";
 
+	private final WorldBuilder worldBuilder;
 	private final DotMinecraftDirectory dotMinecraftDirectory;
 	private final VersionListJson versionList;
 	private final File preferedJson;
@@ -26,8 +27,10 @@ public class MojangApi {
 	private volatile ProfileDirectory profileDirectory;
 	private volatile MinecraftInterface minecraftInterface;
 
-	public MojangApi(DotMinecraftDirectory dotMinecraftDirectory,
+	public MojangApi(WorldBuilder worldBuilder,
+			DotMinecraftDirectory dotMinecraftDirectory,
 			VersionListJson versionList, File preferedJson) {
+		this.worldBuilder = worldBuilder;
 		this.dotMinecraftDirectory = dotMinecraftDirectory;
 		this.versionList = versionList;
 		this.preferedJson = preferedJson;
@@ -94,7 +97,7 @@ public class MojangApi {
 	public World createRandomWorld(WorldType worldType)
 			throws IllegalStateException {
 		if (canCreateWorld()) {
-			return Worlds.random(minecraftInterface, worldType);
+			return worldBuilder.random(minecraftInterface, worldType);
 		} else {
 			throw new IllegalStateException(
 					"cannot create a world without a minecraft interface");
@@ -109,7 +112,8 @@ public class MojangApi {
 	public World createWorldFromSeed(String seedText, WorldType worldType)
 			throws IllegalStateException {
 		if (canCreateWorld()) {
-			return Worlds.fromSeed(minecraftInterface, seedText, worldType);
+			return worldBuilder.fromSeed(minecraftInterface, seedText,
+					worldType);
 		} else {
 			throw new IllegalStateException(
 					"cannot create a world without a minecraft interface");
@@ -124,8 +128,8 @@ public class MojangApi {
 	public World createWorldFromFile(File file) throws FileNotFoundException,
 			IOException, IllegalStateException {
 		if (canCreateWorld()) {
-			return Worlds
-					.fromFile(minecraftInterface, SaveDirectory.from(file));
+			return worldBuilder.fromFile(minecraftInterface,
+					SaveDirectory.from(file));
 		} else {
 			throw new IllegalStateException(
 					"cannot create a world without a minecraft interface");
@@ -133,7 +137,7 @@ public class MojangApi {
 	}
 
 	public String getRecognisedVersionName() {
-		if (canCreateWorld()) {
+		if (minecraftInterface != null) {
 			return minecraftInterface.getRecognisedVersion().getName();
 		} else {
 			return RecognisedVersion.UNKNOWN.getName();

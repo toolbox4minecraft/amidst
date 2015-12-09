@@ -9,6 +9,7 @@ import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
+import amidst.mojangapi.world.WorldBuilder;
 
 public class MojangApiBuilder {
 	private final String preferedDotMinecraftDirectory;
@@ -31,8 +32,9 @@ public class MojangApiBuilder {
 			Log.crash("Unable to find minecraft directory at: "
 					+ dotMinecraftDirectory.getRoot());
 		}
-		MojangApi result = new MojangApi(dotMinecraftDirectory,
-				readRemoteOrLocalVersionList(), createPreferedJson());
+		MojangApi result = new MojangApi(new WorldBuilder(),
+				dotMinecraftDirectory, readRemoteOrLocalVersionList(),
+				createPreferedJson());
 		result.set(createProfileDirectory(), createVersionDirectory(result));
 		return result;
 	}

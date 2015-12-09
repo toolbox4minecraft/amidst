@@ -7,18 +7,8 @@ import java.nio.file.Files;
 
 import org.jnbt.CompoundTag;
 
-import amidst.logging.Log;
 import amidst.mojangapi.file.nbt.LevelDat;
 import amidst.mojangapi.file.nbt.NBTUtils;
-import amidst.mojangapi.file.nbt.playerloader.MultiPlayerPlayerLoader;
-import amidst.mojangapi.file.nbt.playerloader.PlayerLoader;
-import amidst.mojangapi.file.nbt.playerloader.SinglePlayerPlayerLoader;
-import amidst.mojangapi.file.nbt.playermover.MultiPlayerPlayerMover;
-import amidst.mojangapi.file.nbt.playermover.PlayerMover;
-import amidst.mojangapi.file.nbt.playermover.SinglePlayerPlayerMover;
-import amidst.mojangapi.minecraftinterface.MinecraftInterface;
-import amidst.mojangapi.world.MovablePlayerList;
-import amidst.mojangapi.world.World;
 
 public class SaveDirectory {
 	/**
@@ -192,42 +182,6 @@ public class SaveDirectory {
 			return true;
 		} catch (Exception e) {
 			return false;
-		}
-	}
-
-	public World createWorld(MinecraftInterface minecraftInterface)
-			throws FileNotFoundException, IOException {
-		LevelDat levelDat = createLevelDat();
-		if (isMultiPlayer()) {
-			Log.i("Multiplayer world detected.");
-			return World.file(
-					minecraftInterface,
-					levelDat.getSeed(),
-					levelDat.getWorldType(),
-					levelDat.getGeneratorOptions(),
-					createMovablePlayerList(minecraftInterface,
-							new MultiPlayerPlayerLoader(this),
-							new MultiPlayerPlayerMover(this)));
-		} else {
-			Log.i("Singleplayer world detected.");
-			return World.file(
-					minecraftInterface,
-					levelDat.getSeed(),
-					levelDat.getWorldType(),
-					levelDat.getGeneratorOptions(),
-					createMovablePlayerList(minecraftInterface,
-							new SinglePlayerPlayerLoader(this),
-							new SinglePlayerPlayerMover(this)));
-		}
-	}
-
-	private MovablePlayerList createMovablePlayerList(
-			MinecraftInterface minecraftInterface, PlayerLoader playerLoader,
-			PlayerMover playerMover) {
-		if (minecraftInterface.getRecognisedVersion().isSaveEnabled()) {
-			return new MovablePlayerList(playerLoader, playerMover);
-		} else {
-			return new MovablePlayerList(playerLoader);
 		}
 	}
 }
