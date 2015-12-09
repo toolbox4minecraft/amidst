@@ -11,6 +11,7 @@ import amidst.gui.version.VersionSelectWindow;
 import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.MojangApiBuilder;
+import amidst.threading.SkinLoader;
 import amidst.threading.ThreadMaster;
 import amidst.utilities.SeedHistoryLogger;
 
@@ -21,6 +22,7 @@ public class Application {
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final ThreadMaster threadMaster;
+	private final SkinLoader skinLoader;
 	private final UpdatePrompt updatePrompt;
 
 	private VersionSelectWindow versionSelectWindow;
@@ -33,6 +35,7 @@ public class Application {
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
 		this.seedHistoryLogger = createSeedHistoryLogger();
 		this.threadMaster = createThreadMaster();
+		this.skinLoader = createSkinLoader();
 		this.updatePrompt = createUpdatePrompt();
 	}
 
@@ -72,6 +75,10 @@ public class Application {
 		});
 	}
 
+	private SkinLoader createSkinLoader() {
+		return new SkinLoader(threadMaster.getWorkerExecutor());
+	}
+
 	private UpdatePrompt createUpdatePrompt() {
 		return new UpdatePrompt();
 	}
@@ -86,8 +93,8 @@ public class Application {
 
 	public void displayMainWindow() {
 		setMainWindow(new MainWindow(this, options, mojangApi,
-				worldSurroundingsBuilder, seedHistoryLogger,
-				threadMaster.getSkinLoader(), updatePrompt));
+				worldSurroundingsBuilder, seedHistoryLogger, skinLoader,
+				updatePrompt));
 		setVersionSelectWindow(null);
 	}
 

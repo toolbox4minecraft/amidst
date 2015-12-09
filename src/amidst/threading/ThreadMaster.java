@@ -16,7 +16,6 @@ public class ThreadMaster {
 	private final ScheduledExecutorService fragmentLoaderExecutorService;
 	private final ExecutorService workerExecutorService;
 	private final WorkerExecutor workerExecutor;
-	private final SkinLoader skinLoader;
 
 	public ThreadMaster(Runnable onRepaintTick, Runnable onFragmentLoadTick) {
 		this.onRepaintTick = onRepaintTick;
@@ -26,7 +25,6 @@ public class ThreadMaster {
 		this.workerExecutorService = createWorkerExecutorService();
 		dummyGUIThread();
 		this.workerExecutor = createWorkerExecutor();
-		this.skinLoader = createSkinLoader();
 		startRepainter();
 		startFragmentLoader();
 	}
@@ -95,10 +93,6 @@ public class ThreadMaster {
 		return new WorkerExecutor(this);
 	}
 
-	private SkinLoader createSkinLoader() {
-		return new SkinLoader(workerExecutor);
-	}
-
 	private void startRepainter() {
 		repaintExecutorService.scheduleAtFixedRate(new Runnable() {
 			@Override
@@ -137,9 +131,5 @@ public class ThreadMaster {
 
 	public WorkerExecutor getWorkerExecutor() {
 		return workerExecutor;
-	}
-
-	public SkinLoader getSkinLoader() {
-		return skinLoader;
 	}
 }
