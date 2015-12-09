@@ -2,37 +2,37 @@ package amidst.mojangapi.world;
 
 import java.awt.image.BufferedImage;
 
+import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.icon.DefaultWorldIconTypes;
 
+@ThreadSafe
 public class Player {
 	private static final String NAMELESS_PLAYER_NAME = "Player";
 
-	public static Player named(String playerName, double x, double y, double z) {
-		return new Player(playerName, true, x, y, z);
+	public static Player named(String playerName,
+			PlayerCoordinates playerCoordinates) {
+		return new Player(playerName, true, playerCoordinates);
 	}
 
-	public static Player nameless(double x, double y, double z) {
-		return new Player(NAMELESS_PLAYER_NAME, false, x, y, z);
+	public static Player nameless(PlayerCoordinates playerCoordinates) {
+		return new Player(NAMELESS_PLAYER_NAME, false, playerCoordinates);
 	}
 
+	private final String playerName;
+
+	private final boolean isSkinLoadable;
 	private volatile BufferedImage skin = DefaultWorldIconTypes.PLAYER
 			.getImage();
 
-	private final String playerName;
-	private final boolean isSkinLoadable;
-	private volatile long x;
-	private volatile long y;
-	private volatile long z;
+	private volatile PlayerCoordinates savedCoordinates;
+	private volatile PlayerCoordinates currentCoordinates;
 
-	private volatile boolean isMoved = false;
-
-	private Player(String playerName, boolean isSkinLoadable, double x,
-			double y, double z) {
+	private Player(String playerName, boolean isSkinLoadable,
+			PlayerCoordinates playerCoordinates) {
 		this.playerName = playerName;
 		this.isSkinLoadable = isSkinLoadable;
-		this.x = (long) x;
-		this.y = (long) y;
-		this.z = (long) z;
+		this.savedCoordinates = playerCoordinates;
+		this.currentCoordinates = playerCoordinates;
 	}
 
 	public String getPlayerName() {
@@ -43,22 +43,6 @@ public class Player {
 		return isSkinLoadable;
 	}
 
-	public long getX() {
-		return x;
-	}
-
-	public long getY() {
-		return y;
-	}
-
-	public long getZ() {
-		return z;
-	}
-
-	public CoordinatesInWorld createCoordinates() {
-		return CoordinatesInWorld.from(x, z);
-	}
-
 	public BufferedImage getSkin() {
 		return skin;
 	}
@@ -67,16 +51,20 @@ public class Player {
 		this.skin = skin;
 	}
 
-	public void moveTo(CoordinatesInWorld coordinates, long height) {
-		this.x = coordinates.getX();
-		this.y = height;
-		this.z = coordinates.getY();
-		isMoved = true;
+	public PlayerCoordinates getPlayerCoordinates() {
+		return currentCoordinates;
 	}
 
-	public boolean getAndResetIsMoved() {
-		boolean result = isMoved;
-		isMoved = false;
-		return result;
+	public void moveTo(CoordinatesInWorld coordinates, long height) {
+		this.currentCoordinates = new PlayerCoordinates(coordinates, height);
+	}
+
+	public PlayerCoordinates getAndSetCurrentCoordinatesIfMoved() {
+		if (savedCoordinates != currentCoordinates) {
+			savedCoordinates = currentCoordinates;
+			return savedCoordinates;
+		} else {
+			return null;
+		}
 	}
 }

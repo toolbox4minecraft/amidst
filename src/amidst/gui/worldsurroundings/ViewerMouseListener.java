@@ -141,12 +141,13 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	}
 
 	private long askForPlayerHeight(Player player) {
+		long currentHeight = player.getPlayerCoordinates().getY();
 		String input = askForString("Move Player",
-				"Enter new height (current: " + player.getY() + "):");
+				"Enter new height (current: " + currentHeight + "):");
 		try {
 			return Long.parseLong(input);
 		} catch (NumberFormatException e) {
-			return player.getY();
+			return currentHeight;
 		}
 	}
 

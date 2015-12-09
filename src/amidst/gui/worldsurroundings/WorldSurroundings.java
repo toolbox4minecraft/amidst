@@ -55,7 +55,7 @@ public class WorldSurroundings {
 		layerReloader.reloadBiomeLayer();
 	}
 
-	public void reloadPlayerLayer() {
+	private void reloadPlayerLayer() {
 		world.reloadPlayerWorldIcons();
 		layerReloader.reloadPlayerLayer();
 	}

@@ -44,9 +44,7 @@ public class MovablePlayerList implements Iterable<Player> {
 	public void save() {
 		if (canSave()) {
 			for (Player player : players) {
-				if (player.getAndResetIsMoved()) {
-					playerMover.movePlayer(player);
-				}
+				playerMover.movePlayer(player);
 			}
 		}
 	}

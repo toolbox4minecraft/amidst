@@ -17,13 +17,18 @@ import amidst.logging.Log;
 import amidst.mojangapi.file.nbt.NBTTagKeys;
 import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.world.Player;
+import amidst.mojangapi.world.PlayerCoordinates;
 
 public abstract class PlayerMover {
 	// TODO: gui feedback
 	public void movePlayer(Player player) {
-		if (tryBackup(player)) {
+		PlayerCoordinates coordinates = player
+				.getAndSetCurrentCoordinatesIfMoved();
+		if (coordinates == null) {
+			// noop
+		} else if (tryBackup(player)) {
 			try {
-				doMovePlayer(player);
+				doMovePlayer(player, coordinates);
 			} catch (Exception e) {
 				Log.w("Creation of backup file failed. Skipping player movement for player: "
 						+ player.getPlayerName());
@@ -37,100 +42,104 @@ public abstract class PlayerMover {
 
 	protected abstract boolean tryBackup(Player player);
 
-	protected abstract void doMovePlayer(Player player)
-			throws FileNotFoundException, IOException;
+	protected abstract void doMovePlayer(Player player,
+			PlayerCoordinates coordinates) throws FileNotFoundException,
+			IOException;
 
-	protected void movePlayerOnMultiPlayerWorld(Player player, File file)
-			throws IOException, FileNotFoundException {
+	protected void movePlayerOnMultiPlayerWorld(PlayerCoordinates coordinates,
+			File file) throws IOException, FileNotFoundException {
 		CompoundTag dataTag = NBTUtils.readTagFromFile(file);
 		CompoundTag modifiedDataTag = modifyPositionInDataTagMultiPlayer(
-				dataTag, player);
+				dataTag, coordinates);
 		NBTUtils.writeTagToFile(file, modifiedDataTag);
 	}
 
-	protected void movePlayerOnSinglePlayerWorld(Player player, File file)
-			throws IOException, FileNotFoundException {
+	protected void movePlayerOnSinglePlayerWorld(PlayerCoordinates coordinates,
+			File file) throws IOException, FileNotFoundException {
 		CompoundTag baseTag = NBTUtils.readTagFromFile(file);
 		CompoundTag modifiedBaseTag = modifyPositionInBaseTagSinglePlayer(
-				baseTag, player);
+				baseTag, coordinates);
 		NBTUtils.writeTagToFile(file, modifiedBaseTag);
 	}
 
 	private CompoundTag modifyPositionInBaseTagSinglePlayer(
-			CompoundTag baseTag, Player player) {
+			CompoundTag baseTag, PlayerCoordinates coordinates) {
 		Map<String, Tag> baseMap = baseTag.getValue();
 		Map<String, Tag> modifiedBaseMap = modifyPositionInBaseMapSinglePlayer(
-				baseMap, player);
+				baseMap, coordinates);
 		return new CompoundTag(NBTTagKeys.TAG_KEY_BASE, modifiedBaseMap);
 	}
 
 	private Map<String, Tag> modifyPositionInBaseMapSinglePlayer(
-			Map<String, Tag> baseMap, Player player) {
+			Map<String, Tag> baseMap, PlayerCoordinates coordinates) {
 		Map<String, Tag> result = new HashMap<String, Tag>();
 		CompoundTag dataTag = (CompoundTag) baseMap
 				.get(NBTTagKeys.TAG_KEY_DATA);
 		CompoundTag modifiedDataTag = modifyPositionInDataTagSinglePlayer(
-				dataTag, player);
+				dataTag, coordinates);
 		result.put(NBTTagKeys.TAG_KEY_DATA, modifiedDataTag);
 		return result;
 	}
 
 	private CompoundTag modifyPositionInDataTagSinglePlayer(
-			CompoundTag dataTag, Player player) {
+			CompoundTag dataTag, PlayerCoordinates coordinates) {
 		Map<String, Tag> dataMap = dataTag.getValue();
 		Map<String, Tag> modifiedDataMap = modifyPositionInDataMapSinglePlayer(
-				dataMap, player);
+				dataMap, coordinates);
 		return new CompoundTag(NBTTagKeys.TAG_KEY_DATA, modifiedDataMap);
 	}
 
 	private Map<String, Tag> modifyPositionInDataMapSinglePlayer(
-			Map<String, Tag> dataMap, Player player) {
+			Map<String, Tag> dataMap, PlayerCoordinates coordinates) {
 		Map<String, Tag> result = new HashMap<String, Tag>(dataMap);
 		CompoundTag playerTag = (CompoundTag) dataMap
 				.get(NBTTagKeys.TAG_KEY_PLAYER);
 		CompoundTag modifiedPlayerTag = modifyPositionInPlayerTagSinglePlayer(
-				playerTag, player);
+				playerTag, coordinates);
 		result.put(NBTTagKeys.TAG_KEY_PLAYER, modifiedPlayerTag);
 		return result;
 	}
 
 	private CompoundTag modifyPositionInPlayerTagSinglePlayer(
-			CompoundTag playerTag, Player player) {
+			CompoundTag playerTag, PlayerCoordinates coordinates) {
 		Map<String, Tag> playerMap = playerTag.getValue();
 		Map<String, Tag> modifiedPlayerMap = modifyPositionInPlayerMap(
-				playerMap, player);
+				playerMap, coordinates);
 		return new CompoundTag(NBTTagKeys.TAG_KEY_PLAYER, modifiedPlayerMap);
 	}
 
 	private CompoundTag modifyPositionInDataTagMultiPlayer(CompoundTag dataTag,
-			Player player) {
+			PlayerCoordinates coordinates) {
 		Map<String, Tag> playerMap = dataTag.getValue();
 		Map<String, Tag> modifiedPlayerMap = modifyPositionInPlayerMap(
-				playerMap, player);
+				playerMap, coordinates);
 		return new CompoundTag(NBTTagKeys.TAG_KEY_DATA, modifiedPlayerMap);
 	}
 
 	private Map<String, Tag> modifyPositionInPlayerMap(
-			Map<String, Tag> playerMap, Player player) {
+			Map<String, Tag> playerMap, PlayerCoordinates coordinates) {
 		Map<String, Tag> result = new HashMap<String, Tag>(playerMap);
 		ListTag posTag = (ListTag) playerMap.get(NBTTagKeys.TAG_KEY_POS);
-		ListTag modifiedPosTag = modifyPositionInPosTag(posTag, player);
+		ListTag modifiedPosTag = modifyPositionInPosTag(posTag, coordinates);
 		result.put(NBTTagKeys.TAG_KEY_POS, modifiedPosTag);
 		return result;
 	}
 
-	private ListTag modifyPositionInPosTag(ListTag posTag, Player player) {
+	private ListTag modifyPositionInPosTag(ListTag posTag,
+			PlayerCoordinates coordinates) {
 		List<Tag> posList = posTag.getValue();
-		List<Tag> modifiedPosList = modifyPositionInPosList(posList, player);
+		List<Tag> modifiedPosList = modifyPositionInPosList(posList,
+				coordinates);
 		return new ListTag(NBTTagKeys.TAG_KEY_POS, DoubleTag.class,
 				modifiedPosList);
 	}
 
-	private List<Tag> modifyPositionInPosList(List<Tag> posList, Player player) {
+	private List<Tag> modifyPositionInPosList(List<Tag> posList,
+			PlayerCoordinates coordinates) {
 		List<Tag> result = new ArrayList<Tag>(posList);
-		result.set(0, new DoubleTag("x", player.getX()));
-		result.set(1, new DoubleTag("y", player.getY()));
-		result.set(2, new DoubleTag("z", player.getZ()));
+		result.set(0, new DoubleTag("x", coordinates.getX()));
+		result.set(1, new DoubleTag("y", coordinates.getY()));
+		result.set(2, new DoubleTag("z", coordinates.getZ()));
 		return result;
 	}
 }

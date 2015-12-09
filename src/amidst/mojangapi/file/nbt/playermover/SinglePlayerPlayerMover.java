@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.world.Player;
+import amidst.mojangapi.world.PlayerCoordinates;
 
 public class SinglePlayerPlayerMover extends PlayerMover {
 	private final SaveDirectory saveDirectory;
@@ -19,8 +20,8 @@ public class SinglePlayerPlayerMover extends PlayerMover {
 	}
 
 	@Override
-	protected void doMovePlayer(Player player) throws FileNotFoundException,
-			IOException {
-		movePlayerOnSinglePlayerWorld(player, saveDirectory.getLevelDat());
+	protected void doMovePlayer(Player player, PlayerCoordinates coordinates)
+			throws FileNotFoundException, IOException {
+		movePlayerOnSinglePlayerWorld(coordinates, saveDirectory.getLevelDat());
 	}
 }

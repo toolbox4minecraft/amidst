@@ -10,6 +10,7 @@ import org.jnbt.Tag;
 import amidst.logging.Log;
 import amidst.mojangapi.file.nbt.NBTTagKeys;
 import amidst.mojangapi.world.Player;
+import amidst.mojangapi.world.PlayerCoordinates;
 
 public abstract class PlayerLoader {
 	private static final PlayerLoader DUMMY = new PlayerLoader() {
@@ -26,19 +27,19 @@ public abstract class PlayerLoader {
 	protected Player createNamedPlayer(String playerName, CompoundTag tag) {
 		ListTag posTag = (ListTag) getTagPos(tag);
 		List<Tag> posList = posTag.getValue();
-		double x = (Double) posList.get(0).getValue();
-		double y = (Double) posList.get(1).getValue();
-		double z = (Double) posList.get(2).getValue();
-		return Player.named(playerName, x, y, z);
+		return Player.named(playerName, new PlayerCoordinates(
+				(long) (double) (Double) posList.get(0).getValue(),
+				(long) (double) (Double) posList.get(1).getValue(),
+				(long) (double) (Double) posList.get(2).getValue()));
 	}
 
 	protected Player createNamelessPlayer(CompoundTag tag) {
 		ListTag posTag = (ListTag) getTagPos(tag);
 		List<Tag> posList = posTag.getValue();
-		double x = (Double) posList.get(0).getValue();
-		double y = (Double) posList.get(1).getValue();
-		double z = (Double) posList.get(2).getValue();
-		return Player.nameless(x, y, z);
+		return Player.nameless(new PlayerCoordinates(
+				(long) (double) (Double) posList.get(0).getValue(),
+				(long) (double) (Double) posList.get(1).getValue(),
+				(long) (double) (Double) posList.get(2).getValue()));
 	}
 
 	private Tag getTagPos(CompoundTag tag) {

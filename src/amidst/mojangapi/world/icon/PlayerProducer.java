@@ -22,8 +22,9 @@ public class PlayerProducer extends CachedWorldIconProducer {
 	protected List<WorldIcon> doCreateCache() {
 		List<WorldIcon> result = new LinkedList<WorldIcon>();
 		for (Player player : movablePlayerList) {
-			result.add(new WorldIcon(player.createCoordinates(), player
-					.getPlayerName(), player.getSkin()));
+			result.add(new WorldIcon(player.getPlayerCoordinates()
+					.getCoordinatesInWorld(), player.getPlayerName(), player
+					.getSkin()));
 		}
 		return result;
 	}

@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.world.Player;
+import amidst.mojangapi.world.PlayerCoordinates;
 
 public class MultiPlayerPlayerMover extends PlayerMover {
 	private final SaveDirectory saveDirectory;
@@ -19,9 +20,9 @@ public class MultiPlayerPlayerMover extends PlayerMover {
 	}
 
 	@Override
-	protected void doMovePlayer(Player player) throws FileNotFoundException,
-			IOException {
-		movePlayerOnMultiPlayerWorld(player,
+	protected void doMovePlayer(Player player, PlayerCoordinates coordinates)
+			throws FileNotFoundException, IOException {
+		movePlayerOnMultiPlayerWorld(coordinates,
 				saveDirectory.getPlayersFile(player.getPlayerName()));
 	}
 }
