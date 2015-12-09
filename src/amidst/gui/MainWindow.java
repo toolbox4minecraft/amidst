@@ -30,7 +30,6 @@ import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldType;
-import amidst.threading.SkinLoader;
 import amidst.utilities.SeedHistoryLogger;
 
 public class MainWindow {

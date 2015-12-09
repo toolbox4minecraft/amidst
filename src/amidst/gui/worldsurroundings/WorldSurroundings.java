@@ -7,10 +7,10 @@ import java.util.List;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerReloader;
+import amidst.gui.SkinLoader;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.icon.WorldIcon;
-import amidst.threading.SkinLoader;
 
 public class WorldSurroundings {
 	private final World world;

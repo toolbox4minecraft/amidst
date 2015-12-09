@@ -6,12 +6,12 @@ import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.CrashWindow;
 import amidst.gui.LicenseWindow;
 import amidst.gui.MainWindow;
+import amidst.gui.SkinLoader;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.MojangApiBuilder;
-import amidst.threading.SkinLoader;
 import amidst.threading.ThreadMaster;
 import amidst.utilities.SeedHistoryLogger;
 

@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 
 import amidst.Application;
 import amidst.gui.MainWindow;
+import amidst.gui.SkinLoader;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.worldsurroundings.WorldSurroundings;
 import amidst.logging.Log;
@@ -21,7 +22,6 @@ import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BiomeColorProfileSelection;
-import amidst.threading.SkinLoader;
 
 public class MenuActions {
 	private static final String ABOUT_MESSAGE = "Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
