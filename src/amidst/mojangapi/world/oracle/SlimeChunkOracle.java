@@ -4,8 +4,10 @@ import java.util.Random;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.world.World;
 
+@NotThreadSafe
 public class SlimeChunkOracle {
 	private final World world;
 	private final Random random = new Random();

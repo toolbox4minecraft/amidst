@@ -2,6 +2,7 @@ package amidst.mojangapi.world;
 
 import java.util.List;
 
+import amidst.documentation.CalledByAny;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.icon.CachedWorldIconProducer;
@@ -77,18 +78,22 @@ public class World {
 				generatorOptions);
 	}
 
+	@CalledByAny
 	public long getSeed() {
 		return seed;
 	}
 
+	@CalledByAny
 	public String getSeedText() {
 		return seedText;
 	}
 
+	@CalledByAny
 	public WorldType getWorldType() {
 		return worldType;
 	}
 
+	@CalledByAny
 	public String getGeneratorOptions() {
 		return generatorOptions;
 	}

@@ -1,5 +1,7 @@
 package amidst.mojangapi.minecraftinterface;
 
+import amidst.documentation.ThreadSafe;
+
 /**
  * Acts as an additional layer of abstraction for interfacing with Minecraft.
  * This allows for other sources of data other than direct reflection against a
@@ -9,6 +11,7 @@ package amidst.mojangapi.minecraftinterface;
  * 
  * One minecraft interface can only handle one world at a time.
  */
+@ThreadSafe
 public interface MinecraftInterface {
 	/**
 	 * @param useQuarterResolution

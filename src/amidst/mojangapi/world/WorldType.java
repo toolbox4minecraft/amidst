@@ -3,8 +3,10 @@ package amidst.mojangapi.world;
 import java.util.Arrays;
 import java.util.List;
 
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 
+@Immutable
 public enum WorldType {
 	// @formatter:off
 	DEFAULT			("Default",			"default"),
@@ -45,8 +47,8 @@ public enum WorldType {
 		return null;
 	}
 
-	private String name;
-	private String value;
+	private final String name;
+	private final String value;
 
 	private WorldType(String name, String value) {
 		this.name = name;

@@ -70,6 +70,7 @@ public class Fragment {
 		biomeDataOracle.populateArrayUsingQuarterResolution(corner, biomeData);
 	}
 
+	@CalledByAny
 	public short getBiomeDataAt(int x, int y) {
 		return biomeData[x][y];
 	}
