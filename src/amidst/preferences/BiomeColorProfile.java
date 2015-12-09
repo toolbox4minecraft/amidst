@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import amidst.documentation.GsonConstructor;
 import amidst.logging.Log;
 import amidst.mojangapi.world.Biome;
 
@@ -58,8 +59,8 @@ public class BiomeColorProfile {
 	private String shortcut;
 	private Map<String, BiomeColor> colorMap;
 
+	@GsonConstructor
 	public BiomeColorProfile() {
-		// no-arguments constructor for gson
 	}
 
 	private BiomeColorProfile(String name, String shortcut,

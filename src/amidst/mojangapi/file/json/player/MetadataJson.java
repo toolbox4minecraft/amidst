@@ -1,10 +1,12 @@
 package amidst.mojangapi.file.json.player;
 
+import amidst.documentation.GsonConstructor;
+
 public class MetadataJson {
 	private String model;
 
+	@GsonConstructor
 	public MetadataJson() {
-		// no-argument constructor for gson
 	}
 
 	public String getModel() {

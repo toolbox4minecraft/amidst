@@ -3,12 +3,14 @@ package amidst.mojangapi.file.json.version;
 import java.util.Collections;
 import java.util.List;
 
+import amidst.documentation.GsonConstructor;
+
 public class LibraryJson {
 	private String name;
 	private List<LibraryRuleJson> rules = Collections.emptyList();
 
+	@GsonConstructor
 	public LibraryJson() {
-		// no-argument constructor for gson
 	}
 
 	public String getName() {

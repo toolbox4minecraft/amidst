@@ -1,13 +1,15 @@
 package amidst.mojangapi.file.json.version;
 
+import amidst.documentation.GsonConstructor;
+
 public class LibraryRuleJson {
 	private static final String ACTION_ALLOW = "allow";
 
 	private String action;
 	private LibraryRuleOsJson os;
 
+	@GsonConstructor
 	public LibraryRuleJson() {
-		// no-argument constructor for gson
 	}
 
 	public boolean isApplicable() {

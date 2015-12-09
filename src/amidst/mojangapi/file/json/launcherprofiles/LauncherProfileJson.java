@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import amidst.documentation.GsonConstructor;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
@@ -17,8 +18,8 @@ public class LauncherProfileJson {
 	private List<ReleaseType> allowedReleaseTypes = Arrays
 			.asList(ReleaseType.RELEASE);
 
+	@GsonConstructor
 	public LauncherProfileJson() {
-		// no-argument constructor for gson
 	}
 
 	public String getName() {

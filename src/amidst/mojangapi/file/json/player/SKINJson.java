@@ -1,11 +1,13 @@
 package amidst.mojangapi.file.json.player;
 
+import amidst.documentation.GsonConstructor;
+
 public class SKINJson {
 	private String url;
 	private MetadataJson metadata;
 
+	@GsonConstructor
 	public SKINJson() {
-		// no-argument constructor for gson
 	}
 
 	public String getUrl() {

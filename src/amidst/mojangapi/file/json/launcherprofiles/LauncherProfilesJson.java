@@ -4,11 +4,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import amidst.documentation.GsonConstructor;
+
 public class LauncherProfilesJson {
 	private Map<String, LauncherProfileJson> profiles = Collections.emptyMap();
 
+	@GsonConstructor
 	public LauncherProfilesJson() {
-		// no-argument constructor for gson
 	}
 
 	public LauncherProfileJson getProfile(String name) {

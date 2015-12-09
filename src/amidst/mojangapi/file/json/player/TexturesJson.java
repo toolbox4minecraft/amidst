@@ -1,10 +1,12 @@
 package amidst.mojangapi.file.json.player;
 
+import amidst.documentation.GsonConstructor;
+
 public class TexturesJson {
 	private SKINJson SKIN;
 
+	@GsonConstructor
 	public TexturesJson() {
-		// no-argument constructor for gson
 	}
 
 	public SKINJson getSKIN() {

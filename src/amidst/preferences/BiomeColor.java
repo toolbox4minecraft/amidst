@@ -1,5 +1,6 @@
 package amidst.preferences;
 
+import amidst.documentation.GsonConstructor;
 import amidst.utilities.ColorUtils;
 
 public class BiomeColor {
@@ -7,8 +8,8 @@ public class BiomeColor {
 	private int g;
 	private int b;
 
+	@GsonConstructor
 	public BiomeColor() {
-		// no-arguments constructor for gson
 	}
 
 	public BiomeColor(int rgb) {

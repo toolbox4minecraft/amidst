@@ -3,6 +3,7 @@ package amidst.mojangapi.file.json.versionlist;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import amidst.documentation.GsonConstructor;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.FilenameFactory;
@@ -14,8 +15,8 @@ public class VersionListEntryJson {
 	private String id;
 	private ReleaseType type;
 
+	@GsonConstructor
 	public VersionListEntryJson() {
-		// no-argument constructor for gson
 	}
 
 	public String getId() {

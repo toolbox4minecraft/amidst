@@ -3,13 +3,15 @@ package amidst.mojangapi.file.json.player;
 import java.util.Collections;
 import java.util.List;
 
+import amidst.documentation.GsonConstructor;
+
 public class PlayerJson {
 	private String id;
 	private String name;
 	private List<PropertyJson> properties = Collections.emptyList();
 
+	@GsonConstructor
 	public PlayerJson() {
-		// no-argument constructor for gson
 	}
 
 	public String getId() {

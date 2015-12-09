@@ -3,14 +3,15 @@ package amidst.mojangapi.file.json.player;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+import amidst.documentation.GsonConstructor;
 import amidst.mojangapi.file.json.JsonReader;
 
 public class PropertyJson {
 	private String name;
 	private String value;
 
+	@GsonConstructor
 	public PropertyJson() {
-		// no-argument constructor for gson
 	}
 
 	public String getName() {

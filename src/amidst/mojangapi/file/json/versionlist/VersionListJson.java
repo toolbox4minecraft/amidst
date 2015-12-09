@@ -3,6 +3,7 @@ package amidst.mojangapi.file.json.versionlist;
 import java.util.Collections;
 import java.util.List;
 
+import amidst.documentation.GsonConstructor;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.ReleaseType;
@@ -10,8 +11,8 @@ import amidst.mojangapi.file.json.ReleaseType;
 public class VersionListJson {
 	private List<VersionListEntryJson> versions = Collections.emptyList();
 
+	@GsonConstructor
 	public VersionListJson() {
-		// no-argument constructor for gson
 	}
 
 	public List<VersionListEntryJson> getVersions() {
