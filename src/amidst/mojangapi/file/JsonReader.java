@@ -8,6 +8,7 @@ import java.net.URL;
 
 import amidst.logging.Log;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
+import amidst.mojangapi.file.json.player.PlayerJson;
 import amidst.mojangapi.file.json.version.VersionJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.resources.ResourceLoader;
@@ -23,6 +24,9 @@ public enum JsonReader {
 	private static final String REMOTE_VERSION_LIST = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
 	private static final URL LOCAL_VERSION_LIST = ResourceLoader
 			.getResourceURL("versions.json");
+
+	private static final String UUID_TO_PROFILE = "https://sessionserver.mojang.com/session/minecraft/profile/";
+	private static final String PLAYERNAME_TO_UUID = "https://api.mojang.com/users/profiles/minecraft/";
 
 	public static VersionListJson readRemoteOrLocalVersionList() {
 		Log.i("Beginning latest version list load.");
@@ -59,13 +63,13 @@ public enum JsonReader {
 	}
 
 	public static VersionListJson readRemoteVersionList() throws IOException {
-		return JsonReader.read(URIUtils.newReader(REMOTE_VERSION_LIST),
+		return read(URIUtils.newReader(REMOTE_VERSION_LIST),
 				VersionListJson.class);
 	}
 
 	public static VersionListJson readLocalVersionListFromResource()
 			throws IOException {
-		return JsonReader.read(URIUtils.newReader(LOCAL_VERSION_LIST),
+		return read(URIUtils.newReader(LOCAL_VERSION_LIST),
 				VersionListJson.class);
 	}
 
@@ -88,5 +92,21 @@ public enum JsonReader {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	public static PlayerJson readPlayerFromUUID(String uuid)
+			throws IOException {
+		return read(URIUtils.newReader(UUID_TO_PROFILE + uuid),
+				PlayerJson.class);
+	}
+
+	public static PlayerJson readUUIDFromPlayerName(String playerName)
+			throws IOException {
+		return read(URIUtils.newReader(PLAYERNAME_TO_UUID + playerName),
+				PlayerJson.class);
+	}
+
+	public static <T> T read(String string, Class<T> clazz) {
+		return GSON.fromJson(string, clazz);
 	}
 }

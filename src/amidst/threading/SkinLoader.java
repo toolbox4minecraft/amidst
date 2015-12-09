@@ -1,19 +1,15 @@
 package amidst.threading;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import javax.imageio.ImageIO;
-
-import amidst.logging.Log;
+import amidst.mojangapi.file.json.PlayerInformationRetriever;
 import amidst.mojangapi.world.MovablePlayerList;
 import amidst.mojangapi.world.Player;
 
 public class SkinLoader {
+	private final Map<String, BufferedImage> cache = new ConcurrentHashMap<String, BufferedImage>();
 	private final WorkerExecutor workerExecutor;
 
 	public SkinLoader(WorkerExecutor workerExecutor) {
@@ -52,45 +48,23 @@ public class SkinLoader {
 	}
 
 	private BufferedImage loadSkin(Player player) {
-		try {
-			return createImage(player.getPlayerName());
-		} catch (MalformedURLException e) {
-			error(player.getPlayerName(), e);
-		} catch (IOException e) {
-			error(player.getPlayerName(), e);
+		String playerName = player.getPlayerName();
+		if (cache.containsKey(playerName)) {
+			return cache.get(playerName);
+		}
+		BufferedImage skin;
+		skin = PlayerInformationRetriever
+				.getPlayerHeadFromPlayerNameSimple(playerName);
+		if (skin != null) {
+			cache.put(playerName, skin);
+			return skin;
+		}
+		skin = PlayerInformationRetriever
+				.getPlayerHeadFromPlayerName(playerName);
+		if (skin != null) {
+			cache.put(playerName, skin);
+			return skin;
 		}
 		return null;
-	}
-
-	private void error(String playerName, Exception e) {
-		Log.w("Cannot load skin for player " + playerName);
-		e.printStackTrace();
-	}
-
-	private BufferedImage createImage(String playerName)
-			throws MalformedURLException, IOException {
-		BufferedImage image = new BufferedImage(20, 20,
-				BufferedImage.TYPE_INT_ARGB);
-		drawSkinToImage(getSkin(playerName), image);
-		return image;
-	}
-
-	private void drawSkinToImage(BufferedImage skin, BufferedImage image) {
-		Graphics2D g2d = image.createGraphics();
-		g2d.setColor(Color.black);
-		g2d.fillRect(0, 0, 20, 20);
-		g2d.drawImage(skin, 2, 2, 18, 18, 8, 8, 16, 16, null);
-		g2d.dispose();
-		skin.flush();
-	}
-
-	private BufferedImage getSkin(String playerName)
-			throws MalformedURLException, IOException {
-		return ImageIO.read(getSkinURL(playerName));
-	}
-
-	private URL getSkinURL(String playerName) throws MalformedURLException {
-		return new URL("http://s3.amazonaws.com/MinecraftSkins/" + playerName
-				+ ".png");
 	}
 }
