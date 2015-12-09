@@ -7,11 +7,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Biome;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
+@ThreadSafe
 public class StrongholdProducer extends CachedWorldIconProducer {
 	// @formatter:off
 	private static final List<Biome> VALID_BIOMES_DEFAULT = Arrays.asList(
@@ -102,7 +104,7 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 	}
 
 	@Override
-	protected List<WorldIcon> createCache() {
+	protected List<WorldIcon> doCreateCache() {
 		List<WorldIcon> result = new LinkedList<WorldIcon>();
 		Random random = new Random(seed);
 		double angle = createAngle(random);

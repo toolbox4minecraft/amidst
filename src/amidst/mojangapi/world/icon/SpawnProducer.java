@@ -5,12 +5,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Biome;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
+@ThreadSafe
 public class SpawnProducer extends CachedWorldIconProducer {
 	// @formatter:off
 	private static final List<Biome> VALID_BIOMES = Arrays.asList(
@@ -35,7 +37,7 @@ public class SpawnProducer extends CachedWorldIconProducer {
 	}
 
 	@Override
-	protected List<WorldIcon> createCache() {
+	protected List<WorldIcon> doCreateCache() {
 		return Arrays.asList(createSpawnWorldIcon());
 	}
 

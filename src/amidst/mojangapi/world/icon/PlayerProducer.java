@@ -3,10 +3,12 @@ package amidst.mojangapi.world.icon;
 import java.util.LinkedList;
 import java.util.List;
 
+import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.MovablePlayerList;
 import amidst.mojangapi.world.Player;
 
+@ThreadSafe
 public class PlayerProducer extends CachedWorldIconProducer {
 	private final MovablePlayerList movablePlayerList;
 
@@ -17,7 +19,7 @@ public class PlayerProducer extends CachedWorldIconProducer {
 	}
 
 	@Override
-	protected List<WorldIcon> createCache() {
+	protected List<WorldIcon> doCreateCache() {
 		List<WorldIcon> result = new LinkedList<WorldIcon>();
 		for (Player player : movablePlayerList) {
 			result.add(new WorldIcon(player.createCoordinates(), player
