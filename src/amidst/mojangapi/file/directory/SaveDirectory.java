@@ -205,7 +205,6 @@ public class SaveDirectory {
 					levelDat.getSeed(),
 					levelDat.getWorldType(),
 					levelDat.getGeneratorOptions(),
-					true,
 					createMovablePlayerList(minecraftInterface,
 							new MultiPlayerPlayerLoader(this),
 							new MultiPlayerPlayerMover(this)));
@@ -216,7 +215,6 @@ public class SaveDirectory {
 					levelDat.getSeed(),
 					levelDat.getWorldType(),
 					levelDat.getGeneratorOptions(),
-					false,
 					createMovablePlayerList(minecraftInterface,
 							new SinglePlayerPlayerLoader(this),
 							new SinglePlayerPlayerMover(this)));

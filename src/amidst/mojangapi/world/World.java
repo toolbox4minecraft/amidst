@@ -21,21 +21,20 @@ public class World {
 	public static World simple(MinecraftInterface minecraftInterface,
 			long seed, String seedText, WorldType worldType) {
 		return new World(minecraftInterface, seed, seedText, worldType, "",
-				false, MovablePlayerList.empty());
+				MovablePlayerList.empty());
 	}
 
 	public static World file(MinecraftInterface minecraftInterface, long seed,
 			WorldType worldType, String generatorOptions,
-			boolean isMultiplayerWorld, MovablePlayerList movablePlayerList) {
+			MovablePlayerList movablePlayerList) {
 		return new World(minecraftInterface, seed, null, worldType,
-				generatorOptions, isMultiplayerWorld, movablePlayerList);
+				generatorOptions, movablePlayerList);
 	}
 
 	private final long seed;
 	private final String seedText;
 	private final WorldType worldType;
 	private final String generatorOptions;
-	private final boolean isMultiplayerWorld;
 	private final MovablePlayerList movablePlayerList;
 
 	private final BiomeDataOracle biomeDataOracle;
@@ -50,12 +49,11 @@ public class World {
 
 	private World(MinecraftInterface minecraftInterface, long seed,
 			String seedText, WorldType worldType, String generatorOptions,
-			boolean isMultiplayerWorld, MovablePlayerList movablePlayerList) {
+			MovablePlayerList movablePlayerList) {
 		this.seed = seed;
 		this.seedText = seedText;
 		this.worldType = worldType;
 		this.generatorOptions = generatorOptions;
-		this.isMultiplayerWorld = isMultiplayerWorld;
 		this.movablePlayerList = movablePlayerList;
 		initMinecraftInterface(minecraftInterface);
 		RecognisedVersion recognisedVersion = minecraftInterface
@@ -93,10 +91,6 @@ public class World {
 
 	public String getGeneratorOptions() {
 		return generatorOptions;
-	}
-
-	public boolean isMultiplayerWorld() {
-		return isMultiplayerWorld;
 	}
 
 	public MovablePlayerList getMovablePlayerList() {
