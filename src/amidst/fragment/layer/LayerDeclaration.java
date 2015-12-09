@@ -1,7 +1,9 @@
 package amidst.fragment.layer;
 
+import amidst.documentation.Immutable;
 import amidst.preferences.PrefModel;
 
+@Immutable
 public class LayerDeclaration {
 	private final int layerId;
 	private final PrefModel<Boolean> isVisiblePreference;

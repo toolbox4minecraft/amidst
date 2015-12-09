@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledByAny;
+import amidst.documentation.CalledOnlyBy;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.Resolution;
 import amidst.mojangapi.world.icon.WorldIcon;
@@ -62,6 +65,7 @@ public class Fragment {
 		biomeData = new short[width][height];
 	}
 
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void populateBiomeData(BiomeDataOracle biomeDataOracle) {
 		biomeDataOracle.populateArrayUsingQuarterResolution(corner, biomeData);
 	}
@@ -96,16 +100,24 @@ public class Fragment {
 		return Collections.emptyList();
 	}
 
-	public void setInitialized(boolean isInitialized) {
-		this.isInitialized = isInitialized;
+	@CalledByAny
+	public void setInitialized() {
+		this.isInitialized = true;
+	}
+
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	public void setLoaded() {
+		this.isLoaded = true;
+	}
+
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	public void recycle() {
+		this.isLoaded = false;
+		this.isInitialized = false;
 	}
 
 	public boolean isInitialized() {
 		return isInitialized;
-	}
-
-	public void setLoaded(boolean isLoaded) {
-		this.isLoaded = isLoaded;
 	}
 
 	public boolean isLoaded() {

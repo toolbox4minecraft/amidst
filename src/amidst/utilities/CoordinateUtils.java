@@ -1,7 +1,9 @@
 package amidst.utilities;
 
+import amidst.documentation.Immutable;
 import amidst.fragment.Fragment;
 
+@Immutable
 public enum CoordinateUtils {
 	;
 
@@ -69,6 +71,7 @@ public enum CoordinateUtils {
 		return ((a % b) + b) % b;
 	}
 
+	// TODO: convert to unit test
 	public static void main(String[] args) {
 		if (ensureCoordinateConversionWorks()) {
 			System.out.println("Coordinate conversion is working!");

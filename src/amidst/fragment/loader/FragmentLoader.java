@@ -1,5 +1,7 @@
 package amidst.fragment.loader;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
 
@@ -14,7 +16,9 @@ public abstract class FragmentLoader {
 		return declaration;
 	}
 
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public abstract void load(Fragment fragment);
 
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public abstract void reload(Fragment fragment);
 }

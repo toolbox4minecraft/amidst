@@ -1,5 +1,7 @@
 package amidst.fragment.colorprovider;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.fragment.Fragment;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 
@@ -13,6 +15,7 @@ public class SlimeColorProvider implements ColorProvider {
 		this.slimeChunkOracle = slimeChunkOracle;
 	}
 
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	@Override
 	public int getColorAt(Fragment fragment, long cornerX, long cornerY, int x,
 			int y) {

@@ -275,7 +275,7 @@ public class BiomeWidget extends Widget {
 			int id = (mouseY - (innerBox.y - getY()) - biomeListYOffset) / 16;
 			if (id < biomes.size()) {
 				int index = biomes.get(id).getIndex();
-				biomeSelection.toggleSelect(index);
+				biomeSelection.toggle(index);
 				return true;
 			}
 		} else if (isButton(mouseY)) {

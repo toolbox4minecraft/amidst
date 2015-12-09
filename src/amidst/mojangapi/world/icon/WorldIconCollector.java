@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import amidst.documentation.NotThreadSafe;
+
+@NotThreadSafe
 public class WorldIconCollector implements WorldIconConsumer {
 	private List<WorldIcon> worldIcons;
 

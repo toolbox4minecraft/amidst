@@ -1,5 +1,8 @@
 package amidst.utilities;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public enum ColorUtils {
 	;
 

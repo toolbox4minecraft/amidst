@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.util.List;
 import java.util.Random;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.world.Biome;
@@ -17,6 +19,7 @@ public class BiomeDataOracle {
 		this.minecraftInterface = minecraftInterface;
 	}
 
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void populateArrayUsingQuarterResolution(CoordinatesInWorld corner,
 			short[][] result) {
 		int width = result.length;
@@ -29,6 +32,7 @@ public class BiomeDataOracle {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void copyToResult(short[][] result, int width, int height,
 			int[] biomeData) {
 		for (int y = 0; y < height; y++) {
@@ -38,6 +42,7 @@ public class BiomeDataOracle {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private int getBiomeDataIndex(int x, int y, int width) {
 		return x + y * width;
 	}
@@ -120,10 +125,8 @@ public class BiomeDataOracle {
 		return getBiomeData(x, y, width, height, false);
 	}
 
-	// TODO: revisit synchronized
-	@Deprecated
-	private synchronized int[] getBiomeData(int x, int y, int width,
-			int height, boolean useQuarterResolution) {
+	private int[] getBiomeData(int x, int y, int width, int height,
+			boolean useQuarterResolution) {
 		return minecraftInterface.getBiomeData(x, y, width, height,
 				useQuarterResolution);
 	}

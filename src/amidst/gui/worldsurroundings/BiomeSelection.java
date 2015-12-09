@@ -1,56 +1,67 @@
 package amidst.gui.worldsurroundings;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.Biome;
 
+@ThreadSafe
 public class BiomeSelection {
-	private boolean[] selectedBiomes = new boolean[Biome.getBiomesLength()];
-	private boolean isHighlightMode = false;
+	private final AtomicBoolean[] selectedBiomes;
+	private volatile AtomicBoolean isHighlightMode = new AtomicBoolean(false);
+
+	public BiomeSelection() {
+		this.selectedBiomes = createSelectedBiomes();
+	}
+
+	private AtomicBoolean[] createSelectedBiomes() {
+		AtomicBoolean[] result = new AtomicBoolean[Biome.getBiomesLength()];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = new AtomicBoolean(false);
+		}
+		return result;
+	}
 
 	public boolean isSelected(int id) {
-		return !isHighlightMode || selectedBiomes[id];
+		return !isHighlightMode.get() || selectedBiomes[id].get();
 	}
 
 	public void selectAll() {
-		setSelectedAll(true);
+		setAll(true);
 	}
 
 	public void deselectAll() {
-		setSelectedAll(false);
+		setAll(false);
 	}
 
-	public void select(int id) {
-		setSelected(id, true);
+	public void toggle(int id) {
+		toggle(selectedBiomes[id]);
 	}
 
-	public void deselect(int id) {
-		setSelected(id, false);
-	}
-
-	public void toggleSelect(int id) {
-		setSelected(id, !selectedBiomes[id]);
-	}
-
-	private void setSelected(int id, boolean value) {
-		selectedBiomes[id] = value;
-	}
-
-	private void setSelectedAll(boolean value) {
+	private void setAll(boolean value) {
 		for (int i = 0; i < selectedBiomes.length; i++) {
-			selectedBiomes[i] = value;
+			selectedBiomes[i].set(value);
 		}
 	}
 
 	public void selectOnlySpecial() {
 		for (int i = 0; i < selectedBiomes.length; i++) {
-			selectedBiomes[i] = i >= 128;
+			selectedBiomes[i].set(Biome.isSpecialBiomeIndex(i));
 		}
 	}
 
 	public void toggleHighlightMode() {
-		isHighlightMode = !isHighlightMode;
+		toggle(isHighlightMode);
 	}
 
 	public boolean isHighlightMode() {
-		return isHighlightMode;
+		return isHighlightMode.get();
+	}
+
+	private void toggle(AtomicBoolean atomicBoolean) {
+		boolean value;
+		do {
+			value = atomicBoolean.get();
+		} while (!atomicBoolean.compareAndSet(value, !value));
 	}
 }

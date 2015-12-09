@@ -2,6 +2,10 @@ package amidst.fragment;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledBy;
+import amidst.documentation.CalledByAny;
+import amidst.documentation.CalledOnlyBy;
 import amidst.fragment.constructor.FragmentConstructor;
 import amidst.fragment.layer.LayerLoader;
 import amidst.mojangapi.world.CoordinatesInWorld;
@@ -12,7 +16,7 @@ import amidst.mojangapi.world.CoordinatesInWorld;
 public class FragmentManager {
 	private final ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<Fragment>();
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<Fragment>();
-	private final ConcurrentLinkedQueue<Fragment> resetQueue = new ConcurrentLinkedQueue<Fragment>();
+	private final ConcurrentLinkedQueue<Fragment> recycleQueue = new ConcurrentLinkedQueue<Fragment>();
 	private final FragmentCache cache;
 
 	private volatile FragmentQueueProcessor queueProcessor;
@@ -23,24 +27,27 @@ public class FragmentManager {
 				constructors, numberOfLayers);
 	}
 
+	@CalledBy(AmidstThread.EDT)
+	@CalledByAny
 	public Fragment requestFragment(CoordinatesInWorld coordinates) {
 		Fragment fragment;
 		while ((fragment = availableQueue.poll()) == null) {
 			cache.increaseSize();
 		}
 		fragment.setCorner(coordinates);
-		fragment.setInitialized(true);
+		fragment.setInitialized();
 		loadingQueue.offer(fragment);
 		return fragment;
 	}
 
+	@CalledBy(AmidstThread.EDT)
+	@CalledByAny
 	public void recycleFragment(Fragment fragment) {
-		resetQueue.offer(fragment);
+		recycleQueue.offer(fragment);
 	}
 
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void tick() {
-		// Do not inline this variable to ensure there is only one read
-		// operation.
 		FragmentQueueProcessor queueProcessor = this.queueProcessor;
 		if (queueProcessor != null) {
 			queueProcessor.tick();
@@ -48,8 +55,6 @@ public class FragmentManager {
 	}
 
 	public void reloadLayer(int layerId) {
-		// Do not inline this variable to ensure there is only one read
-		// operation.
 		FragmentQueueProcessor queueProcessor = this.queueProcessor;
 		if (queueProcessor != null) {
 			queueProcessor.invalidateLayer(layerId);
@@ -58,7 +63,7 @@ public class FragmentManager {
 
 	public void setLayerLoader(LayerLoader layerLoader) {
 		this.queueProcessor = new FragmentQueueProcessor(availableQueue,
-				loadingQueue, resetQueue, cache, layerLoader);
+				loadingQueue, recycleQueue, cache, layerLoader);
 	}
 
 	public int getAvailableQueueSize() {
@@ -69,8 +74,8 @@ public class FragmentManager {
 		return loadingQueue.size();
 	}
 
-	public int getResetQueueSize() {
-		return resetQueue.size();
+	public int getRecycleQueueSize() {
+		return recycleQueue.size();
 	}
 
 	public int getCacheSize() {

@@ -2,9 +2,11 @@ package amidst.preferences;
 
 import java.awt.Color;
 
+import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.world.Biome;
 
+@ThreadSafe
 public class BiomeColorProfileSelection {
 	private volatile int[] colorInts;
 	private volatile Color[] colors;

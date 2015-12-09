@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import amidst.documentation.Immutable;
 import amidst.utilities.ColorUtils;
 
+@Immutable
 public class Biome {
 	private static class BiomeIterable implements Iterable<Biome> {
 		@Override
@@ -144,7 +146,7 @@ public class Biome {
 	}
 
 	public static boolean isSupportedBiomeIndex(int index) {
-		return index < biomes.length;
+		return index >= 0 && index < biomes.length;
 	}
 
 	public static Biome getByName(String name) {
@@ -153,6 +155,10 @@ public class Biome {
 
 	public static boolean exists(String name) {
 		return biomeMap.containsKey(name);
+	}
+
+	public static boolean isSpecialBiomeIndex(int index) {
+		return index >= 128;
 	}
 
 	private final String name;

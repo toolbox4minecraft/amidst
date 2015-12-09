@@ -86,6 +86,11 @@ public class MojangApi {
 		return minecraftInterface != null;
 	}
 
+	/**
+	 * Due to the limitation of the minecraft interface, you can only world with
+	 * one world at a time. Creating a new world will make all previous world
+	 * object unusable.
+	 */
 	public World createRandomWorld(WorldType worldType)
 			throws IllegalStateException {
 		if (canCreateWorld()) {
@@ -96,6 +101,11 @@ public class MojangApi {
 		}
 	}
 
+	/**
+	 * Due to the limitation of the minecraft interface, you can only world with
+	 * one world at a time. Creating a new world will make all previous world
+	 * object unusable.
+	 */
 	public World createWorldFromSeed(String seedText, WorldType worldType)
 			throws IllegalStateException {
 		if (canCreateWorld()) {
@@ -106,6 +116,11 @@ public class MojangApi {
 		}
 	}
 
+	/**
+	 * Due to the limitation of the minecraft interface, you can only world with
+	 * one world at a time. Creating a new world will make all previous world
+	 * object unusable.
+	 */
 	public World createWorldFromFile(File file) throws FileNotFoundException,
 			IOException, IllegalStateException {
 		if (canCreateWorld()) {

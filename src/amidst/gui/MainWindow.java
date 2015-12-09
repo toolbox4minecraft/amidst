@@ -19,6 +19,8 @@ import javax.swing.JOptionPane;
 import amidst.AmidstMetaData;
 import amidst.Application;
 import amidst.Options;
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.AmidstMenuBuilder;
 import amidst.gui.menu.LevelFileFilter;
@@ -273,6 +275,7 @@ public class MainWindow {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void tickFragmentLoader() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {

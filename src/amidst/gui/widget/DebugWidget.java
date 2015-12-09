@@ -43,8 +43,8 @@ public class DebugWidget extends Widget {
 				+ fragmentManager.getAvailableQueueSize());
 		panelLines.add("Loading Queue Size: "
 				+ fragmentManager.getLoadingQueueSize());
-		panelLines.add("Reset Queue Size: "
-				+ fragmentManager.getResetQueueSize());
+		panelLines.add("Recycle Queue Size: "
+				+ fragmentManager.getRecycleQueueSize());
 		panelLines.add("");
 		panelLines.add("Viewer:");
 		panelLines.add("Size: " + graph.getFragmentsPerRow() + "x"

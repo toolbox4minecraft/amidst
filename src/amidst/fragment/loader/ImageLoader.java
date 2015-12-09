@@ -2,6 +2,9 @@ package amidst.fragment.loader;
 
 import java.awt.image.BufferedImage;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledByAny;
+import amidst.documentation.CalledOnlyBy;
 import amidst.fragment.Fragment;
 import amidst.fragment.colorprovider.ColorProvider;
 import amidst.fragment.layer.LayerDeclaration;
@@ -13,8 +16,9 @@ public class ImageLoader extends FragmentLoader {
 	private final ColorProvider colorProvider;
 	private final int size;
 	private final int[] rgbArray;
-	private BufferedImage bufferedImage;
+	private volatile BufferedImage bufferedImage;
 
+	@CalledByAny
 	public ImageLoader(LayerDeclaration declaration, Resolution resolution,
 			ColorProvider colorProvider) {
 		super(declaration);
@@ -25,21 +29,25 @@ public class ImageLoader extends FragmentLoader {
 		this.bufferedImage = createBufferedImage();
 	}
 
+	@CalledByAny
 	private BufferedImage createBufferedImage() {
 		return new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
 	}
 
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	@Override
 	public void load(Fragment fragment) {
 		doLoad(fragment);
 	}
 
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	@Override
 	public void reload(Fragment fragment) {
 		doLoad(fragment);
 	}
 
-	protected void doLoad(Fragment fragment) {
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	private void doLoad(Fragment fragment) {
 		CoordinatesInWorld corner = fragment.getCorner();
 		long cornerX = corner.getXAs(resolution);
 		long cornerY = corner.getYAs(resolution);
@@ -49,7 +57,8 @@ public class ImageLoader extends FragmentLoader {
 				bufferedImage);
 	}
 
-	protected void drawToCache(Fragment fragment, long cornerX, long cornerY) {
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	private void drawToCache(Fragment fragment, long cornerX, long cornerY) {
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
 				int index = getCacheIndex(x, y);
@@ -59,6 +68,7 @@ public class ImageLoader extends FragmentLoader {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private int getCacheIndex(int x, int y) {
 		return x + y * size;
 	}

@@ -2,6 +2,8 @@ package amidst;
 
 import java.util.prefs.Preferences;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.CrashWindow;
 import amidst.gui.LicenseWindow;
@@ -25,8 +27,8 @@ public class Application {
 	private final SkinLoader skinLoader;
 	private final UpdatePrompt updatePrompt;
 
-	private VersionSelectWindow versionSelectWindow;
-	private MainWindow mainWindow;
+	private volatile VersionSelectWindow versionSelectWindow;
+	private volatile MainWindow mainWindow;
 
 	public Application(CommandLineParameters parameters) {
 		this.parameters = parameters;
@@ -59,17 +61,21 @@ public class Application {
 
 	private ThreadMaster createThreadMaster() {
 		return new ThreadMaster(new Runnable() {
+			@CalledOnlyBy(AmidstThread.REPAINTER)
 			@Override
 			public void run() {
-				if (mainWindow != null) {
-					mainWindow.tickRepainter();
+				MainWindow window = mainWindow;
+				if (window != null) {
+					window.tickRepainter();
 				}
 			}
 		}, new Runnable() {
+			@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 			@Override
 			public void run() {
-				if (mainWindow != null) {
-					mainWindow.tickFragmentLoader();
+				MainWindow window = mainWindow;
+				if (window != null) {
+					window.tickFragmentLoader();
 				}
 			}
 		});
@@ -105,17 +111,27 @@ public class Application {
 	}
 
 	private void setVersionSelectWindow(VersionSelectWindow versionSelectWindow) {
-		if (this.versionSelectWindow != null) {
-			this.versionSelectWindow.dispose();
-		}
+		disposeVersionSelectWindow();
 		this.versionSelectWindow = versionSelectWindow;
 	}
 
 	private void setMainWindow(MainWindow mainWindow) {
-		if (this.mainWindow != null) {
-			this.mainWindow.dispose();
-		}
+		disposeMainWindow();
 		this.mainWindow = mainWindow;
+	}
+
+	private void disposeVersionSelectWindow() {
+		VersionSelectWindow versionSelectWindow = this.versionSelectWindow;
+		if (versionSelectWindow != null) {
+			versionSelectWindow.dispose();
+		}
+	}
+
+	private void disposeMainWindow() {
+		MainWindow mainWindow = this.mainWindow;
+		if (mainWindow != null) {
+			mainWindow.dispose();
+		}
 	}
 
 	public void displayLicenseWindow() {

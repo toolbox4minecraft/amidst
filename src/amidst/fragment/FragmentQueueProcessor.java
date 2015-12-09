@@ -2,6 +2,9 @@ package amidst.fragment;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledByAny;
+import amidst.documentation.CalledOnlyBy;
 import amidst.fragment.layer.LayerLoader;
 import amidst.threading.TaskQueue;
 
@@ -14,25 +17,24 @@ public class FragmentQueueProcessor {
 
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
-	private final ConcurrentLinkedQueue<Fragment> resetQueue;
+	private final ConcurrentLinkedQueue<Fragment> recycleQueue;
 	private final FragmentCache cache;
-	private final LayerLoader layerManager;
+	private final LayerLoader layerLoader;
 
+	@CalledByAny
 	public FragmentQueueProcessor(
 			ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
-			ConcurrentLinkedQueue<Fragment> resetQueue, FragmentCache cache,
-			LayerLoader layerManager) {
+			ConcurrentLinkedQueue<Fragment> recycleQueue, FragmentCache cache,
+			LayerLoader layerLoader) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
-		this.resetQueue = resetQueue;
+		this.recycleQueue = recycleQueue;
 		this.cache = cache;
-		this.layerManager = layerManager;
+		this.layerLoader = layerLoader;
 	}
 
-	/**
-	 * This method might be called from any thread.
-	 */
+	@CalledByAny
 	public void invalidateLayer(final int layerId) {
 		taskQueue.invoke(new Runnable() {
 			@Override
@@ -42,51 +44,48 @@ public class FragmentQueueProcessor {
 		});
 	}
 
-	/**
-	 * This method is only called from the method tick(). This ensures, that the
-	 * layerManager is only used by a single thread.
-	 */
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void doInvalidateLayer(int layerId) {
-		layerManager.invalidateLayer(layerId);
+		layerLoader.invalidateLayer(layerId);
 		cache.reloadAll();
 	}
 
-	/**
-	 * This method is only called from the fragment loading thread.
-	 */
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void tick() {
 		taskQueue.processTasks();
-		processResetQueue();
+		processRecycleQueue();
 		Fragment fragment;
 		while ((fragment = loadingQueue.poll()) != null) {
 			loadFragment(fragment);
 			taskQueue.processTasks();
-			processResetQueue();
+			processRecycleQueue();
 		}
-		layerManager.clearInvalidatedLayers();
+		layerLoader.clearInvalidatedLayers();
 	}
 
-	private void processResetQueue() {
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	private void processRecycleQueue() {
 		Fragment fragment;
-		while ((fragment = resetQueue.poll()) != null) {
-			resetFragment(fragment);
+		while ((fragment = recycleQueue.poll()) != null) {
+			recycleFragment(fragment);
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void loadFragment(Fragment fragment) {
 		if (fragment.isInitialized()) {
 			if (fragment.isLoaded()) {
-				layerManager.reloadInvalidated(fragment);
+				layerLoader.reloadInvalidated(fragment);
 			} else {
-				layerManager.loadAll(fragment);
-				fragment.setLoaded(true);
+				layerLoader.loadAll(fragment);
+				fragment.setLoaded();
 			}
 		}
 	}
 
-	private void resetFragment(Fragment fragment) {
-		fragment.setLoaded(false);
-		fragment.setInitialized(false);
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	private void recycleFragment(Fragment fragment) {
+		fragment.recycle();
 		removeFromLoadingQueue(fragment);
 		availableQueue.offer(fragment);
 	}
@@ -94,6 +93,7 @@ public class FragmentQueueProcessor {
 	// TODO: Check performance with and without this. It is not needed, since
 	// loadFragment checks for isInitialized(). It helps to keep the
 	// loadingQueue small, but it costs time to remove fragments from the queue.
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void removeFromLoadingQueue(Object fragment) {
 		while (loadingQueue.remove(fragment)) {
 			// noop

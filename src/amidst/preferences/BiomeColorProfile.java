@@ -8,9 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import amidst.documentation.GsonConstructor;
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.world.Biome;
 
+@Immutable
 public class BiomeColorProfile {
 	public static void saveDefaultProfileIfNecessary() {
 		if (isEnabled()) {

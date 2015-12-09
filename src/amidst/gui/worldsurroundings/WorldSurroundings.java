@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerReloader;
@@ -64,6 +66,7 @@ public class WorldSurroundings {
 		zoom.reset();
 	}
 
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void tickFragmentLoader() {
 		fragmentManager.tick();
 	}

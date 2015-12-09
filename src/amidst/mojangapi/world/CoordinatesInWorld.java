@@ -2,8 +2,10 @@ package amidst.mojangapi.world;
 
 import java.awt.Point;
 
+import amidst.documentation.Immutable;
 import amidst.utilities.CoordinateUtils;
 
+@Immutable
 public class CoordinatesInWorld {
 	public static CoordinatesInWorld fromString(String coordinates) {
 		String[] parsedCoordinates = coordinates.replaceAll(" ", "").split(",");

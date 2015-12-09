@@ -4,6 +4,10 @@ package amidst.mojangapi.minecraftinterface;
  * Acts as an additional layer of abstraction for interfacing with Minecraft.
  * This allows for other sources of data other than direct reflection against a
  * loaded jar of Minecraft.
+ * 
+ * Implementing classes need to be thread-safe!
+ * 
+ * One minecraft interface can only handle one world at a time.
  */
 public interface MinecraftInterface {
 	/**

@@ -17,14 +17,14 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	 * resolution when needed, this is the biome GenLayer before it is
 	 * interpolated.
 	 */
-	private SymbolicObject quarterResolutionBiomeGenerator;
+	private volatile SymbolicObject quarterResolutionBiomeGenerator;
 
 	/**
 	 * A GenLayer instance, the biome layer. (1:1 scale) Minecraft calculates
 	 * biomes at quarter-resolution, then noisily interpolates the biome-map up
 	 * to 1:1 resolution when needed, this is the interpolated biome GenLayer.
 	 */
-	private SymbolicObject fullResolutionBiomeGenerator;
+	private volatile SymbolicObject fullResolutionBiomeGenerator;
 
 	private final SymbolicClass intCacheClass;
 	private final SymbolicClass blockInitClass;
@@ -42,7 +42,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public int[] getBiomeData(int x, int y, int width, int height,
+	public synchronized int[] getBiomeData(int x, int y, int width, int height,
 			boolean useQuarterResolution) {
 		intCacheClass.callStaticMethod("resetIntCache");
 		return (int[]) getBiomeGenerator(useQuarterResolution).callMethod(
@@ -58,7 +58,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public void createWorld(long seed, String typeName, String generatorOptions) {
+	public synchronized void createWorld(long seed, String typeName,
+			String generatorOptions) {
 		Log.debug("Attempting to create world with seed: " + seed + ", type: "
 				+ typeName + ", and the following generator options:");
 		Log.debug(generatorOptions);
@@ -70,9 +71,11 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 				genLayers[1]);
 	}
 
+	/**
+	 * Minecraft 1.8 and higher require block initialization to be called before
+	 * creating a biome generator.
+	 */
 	private void initializeBlock() {
-		// Minecraft 1.8 and higher require block initialization to be called
-		// before creating a biome generator.
 		if (blockInitClass != null) {
 			blockInitClass.callStaticMethod("initialize");
 		}
