@@ -58,13 +58,14 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public synchronized void createWorld(long seed, String typeName,
+	public synchronized void createWorld(long seed, WorldType worldType,
 			String generatorOptions) {
 		Log.debug("Attempting to create world with seed: " + seed + ", type: "
-				+ typeName + ", and the following generator options:");
+				+ worldType.getName()
+				+ ", and the following generator options:");
 		Log.debug(generatorOptions);
 		initializeBlock();
-		Object[] genLayers = getGenLayers(seed, typeName, generatorOptions);
+		Object[] genLayers = getGenLayers(seed, worldType, generatorOptions);
 		quarterResolutionBiomeGenerator = new SymbolicObject(genLayerClass,
 				genLayers[0]);
 		fullResolutionBiomeGenerator = new SymbolicObject(genLayerClass,
@@ -81,22 +82,22 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		}
 	}
 
-	private Object[] getGenLayers(long seed, String typeName,
+	private Object[] getGenLayers(long seed, WorldType worldType,
 			String generatorOptions) {
 		if (worldTypeClass == null) {
 			return initializeAllBiomeGenerators(seed);
 		} else if (initializeAllBiomeGeneratorsWithParamsExists()) {
 			return initializeAllBiomeGeneratorsWithParams(seed,
-					generatorOptions, getWorldType(typeName));
+					generatorOptions, getWorldType(worldType));
 		} else {
-			return initializeAllBiomeGenerators(seed, getWorldType(typeName));
+			return initializeAllBiomeGenerators(seed, getWorldType(worldType));
 		}
 	}
 
-	private Object getWorldType(String typeName) {
-		String type = WorldType.from(typeName).getValue();
+	private Object getWorldType(WorldType worldType) {
+		String value = worldType.getValue();
 		SymbolicObject object = (SymbolicObject) worldTypeClass
-				.getStaticFieldValue(type);
+				.getStaticFieldValue(value);
 		return object.getObject();
 	}
 

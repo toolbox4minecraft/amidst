@@ -1,6 +1,7 @@
 package amidst.mojangapi.minecraftinterface;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.WorldType;
 
 /**
  * Acts as an additional layer of abstraction for interfacing with Minecraft.
@@ -34,7 +35,8 @@ public interface MinecraftInterface {
 	public int[] getBiomeData(int x, int y, int width, int height,
 			boolean useQuarterResolution);
 
-	public void createWorld(long seed, String type, String generatorOptions);
+	public void createWorld(long seed, WorldType worldType,
+			String generatorOptions);
 
 	public RecognisedVersion getRecognisedVersion();
 }

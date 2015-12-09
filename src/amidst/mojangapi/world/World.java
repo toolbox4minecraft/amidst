@@ -57,10 +57,10 @@ public class World {
 		this.worldType = worldType;
 		this.generatorOptions = generatorOptions;
 		this.movablePlayerList = movablePlayerList;
-		initMinecraftInterface(minecraftInterface);
+		minecraftInterface.createWorld(seed, worldType, generatorOptions);
 		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
-		this.biomeDataOracle =           new BiomeDataOracle(minecraftInterface);
-		this.slimeChunkOracle =          new SlimeChunkOracle(seed);
+		this.biomeDataOracle =           new BiomeDataOracle(          minecraftInterface);
+		this.slimeChunkOracle =          new SlimeChunkOracle(         seed);
 		this.oceanMonumentProducer =     new OceanMonumentProducer(    recognisedVersion, seed, biomeDataOracle);
 		this.templeProducer =            new TempleProducer(           recognisedVersion, seed, biomeDataOracle);
 		this.villageProducer =           new VillageProducer(          recognisedVersion, seed, biomeDataOracle);
@@ -69,11 +69,6 @@ public class World {
 		this.spawnProducer =             new SpawnProducer(            recognisedVersion, seed, biomeDataOracle);
 		this.strongholdProducer =        new StrongholdProducer(       recognisedVersion, seed, biomeDataOracle);
 		// @formatter:on
-	}
-
-	private void initMinecraftInterface(MinecraftInterface minecraftInterface) {
-		minecraftInterface.createWorld(seed, worldType.getName(),
-				generatorOptions);
 	}
 
 	@CalledByAny
