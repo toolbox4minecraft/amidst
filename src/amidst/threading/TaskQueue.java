@@ -2,10 +2,13 @@ package amidst.threading;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import amidst.documentation.ThreadSafe;
+
 /**
- * This class is thread-safe. It executes all invoked runnables in the thread
- * that calls processTasks.
+ * This class executes all invoked runnables in the thread that calls
+ * processTasks.
  */
+@ThreadSafe
 public class TaskQueue {
 	private final ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
 

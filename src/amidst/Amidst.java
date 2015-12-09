@@ -8,6 +8,8 @@ import javax.swing.UIManager;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledBy;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
 import amidst.logging.Log.CrashHandler;
@@ -16,9 +18,10 @@ import amidst.utilities.Google;
 public class Amidst {
 	private static final String UNCAUGHT_EXCEPTION_ERROR_MESSAGE = "Amidst has encounted an uncaught exception on thread: ";
 	private static final String COMMAND_LINE_PARSING_ERROR_MESSAGE = "There was an issue parsing command line options.";
-	private static Application application;
-	private static CommandLineParameters parameters = new CommandLineParameters();
+	private static volatile Application application;
+	private static volatile CommandLineParameters parameters = new CommandLineParameters();
 
+	@CalledBy(AmidstThread.STARTUP)
 	public static void main(String args[]) {
 		initUncaughtExceptionHandler();
 		initCrashHandler();
@@ -105,6 +108,7 @@ public class Amidst {
 		});
 	}
 
+	@CalledBy(AmidstThread.EDT)
 	private static void doStartApplication() {
 		application = new Application(parameters);
 		application.run();

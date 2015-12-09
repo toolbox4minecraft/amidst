@@ -2,8 +2,10 @@ package amidst;
 
 import java.awt.Image;
 
+import amidst.documentation.Immutable;
 import amidst.resources.ResourceLoader;
 
+@Immutable
 public enum AmidstMetaData {
 	;
 

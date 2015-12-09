@@ -1,5 +1,8 @@
 package amidst.threading;
 
+import amidst.documentation.ThreadSafe;
+
+@ThreadSafe
 public class WorkerExecutor {
 	private final ThreadMaster threadMaster;
 
