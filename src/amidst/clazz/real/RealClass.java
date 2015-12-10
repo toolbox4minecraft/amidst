@@ -55,7 +55,6 @@ public class RealClass {
 		private final DataInputStream stream;
 
 		private RealClass product;
-		private long offset;
 
 		private Builder(String realClassName, byte[] classData) {
 			this.realClassName = realClassName;
@@ -115,7 +114,6 @@ public class RealClass {
 			int cpSize = stream.readUnsignedShort() - 1;
 			product.constants = new ClassConstant<?>[cpSize];
 			product.constantTypes = new int[cpSize];
-			offset = 10;
 			for (int q = 0; q < cpSize; q++) {
 				q = readConstant(q);
 			}
@@ -123,7 +121,6 @@ public class RealClass {
 
 		private int readConstant(int q) throws IOException {
 			byte tag = stream.readByte();
-			offset++;
 			product.constantTypes[q] = tag;
 			switch (tag) {
 			case 1:
@@ -168,10 +165,8 @@ public class RealClass {
 		private void readString(int q, byte tag) throws IOException {
 			int len = stream.readUnsignedShort();
 			String stringValue = readStringValue(len);
-			product.constants[q] = new ClassConstant<String>(tag, offset,
-					stringValue);
+			product.constants[q] = new ClassConstant<String>(tag, stringValue);
 			product.utfConstants.add(stringValue);
-			offset += 2 + len;
 		}
 
 		private String readStringValue(int len) throws IOException {
@@ -183,51 +178,44 @@ public class RealClass {
 		}
 
 		private void readInteger(int q, byte tag) throws IOException {
-			product.constants[q] = new ClassConstant<Integer>(tag, offset,
+			product.constants[q] = new ClassConstant<Integer>(tag,
 					stream.readInt());
-			offset += 4;
 		}
 
 		private void readFloat(int q, byte tag) throws IOException {
 			float cFloat = stream.readFloat();
-			product.constants[q] = new ClassConstant<Float>(tag, offset, cFloat);
+			product.constants[q] = new ClassConstant<Float>(tag, cFloat);
 			product.floatConstants.add(cFloat);
-			offset += 4;
 		}
 
 		private void readLong(int q, byte tag) throws IOException {
 			long cLong = stream.readLong();
-			product.constants[q] = new ClassConstant<Long>(tag, offset, cLong);
+			product.constants[q] = new ClassConstant<Long>(tag, cLong);
 			product.longConstants.add(cLong);
-			offset += 8;
 		}
 
 		private void readDouble(int q, byte tag) throws IOException {
-			product.constants[q] = new ClassConstant<Double>(tag, offset,
+			product.constants[q] = new ClassConstant<Double>(tag,
 					stream.readDouble());
-			offset += 8;
 		}
 
 		private void readClassReference(int q, byte tag) throws IOException {
-			product.constants[q] = new ClassConstant<Integer>(tag, offset,
+			product.constants[q] = new ClassConstant<Integer>(tag,
 					stream.readUnsignedShort());
-			offset += 2;
 		}
 
 		private void readStringReference(int q, byte tag) throws IOException {
 			ClassConstant<Integer> strRef = new ClassConstant<Integer>(tag,
-					offset, stream.readUnsignedShort());
+					stream.readUnsignedShort());
 			product.constants[q] = strRef;
 			product.stringIndices.add(strRef);
-			offset += 2;
 		}
 
 		private void readAnotherReference(int q, byte tag) throws IOException {
 			ReferenceIndex referenceIndex = new ReferenceIndex(
 					stream.readUnsignedShort(), stream.readUnsignedShort());
 			product.constants[q] = new ClassConstant<ReferenceIndex>(tag,
-					offset, referenceIndex);
-			offset += 4;
+					referenceIndex);
 		}
 
 		private int readAccessFlag() throws IOException {
