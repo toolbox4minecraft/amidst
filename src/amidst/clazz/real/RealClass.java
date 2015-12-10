@@ -52,28 +52,30 @@ public class RealClass {
 	private static class Builder {
 		private final String realClassName;
 		private final byte[] classData;
+		private final DataInputStream stream;
 
-		private DataInputStream stream;
 		private RealClass product;
 		private long offset;
 
 		private Builder(String realClassName, byte[] classData) {
 			this.realClassName = realClassName;
 			this.classData = classData;
+			this.stream = new DataInputStream(new ByteArrayInputStream(
+					classData));
 		}
 
 		public RealClass construct() {
-			product = new RealClass(realClassName, classData);
-			stream = createStream();
 			try {
 				if (isValidClass()) {
-					readVersion();
+					product = new RealClass(realClassName, classData);
+					product.minorVersion = readMinorVersion();
+					product.majorVersion = readMajorVersion();
 					readConstants();
-					readAccessFlag();
+					product.accessFlags = readAccessFlag();
 					skipThisClass();
 					skipSuperClass();
 					skipInterfaces();
-					readFields();
+					product.fields = readFields();
 					readMethods();
 				}
 				stream.close();
@@ -84,18 +86,16 @@ public class RealClass {
 			return product;
 		}
 
-		private DataInputStream createStream() {
-			return new DataInputStream(new ByteArrayInputStream(
-					product.classData));
-		}
-
 		private boolean isValidClass() throws IOException {
 			return stream.readInt() == 0xCAFEBABE;
 		}
 
-		private void readVersion() throws IOException {
-			product.minorVersion = stream.readUnsignedShort();
-			product.majorVersion = stream.readUnsignedShort();
+		private int readMinorVersion() throws IOException {
+			return stream.readUnsignedShort();
+		}
+
+		private int readMajorVersion() throws IOException {
+			return stream.readUnsignedShort();
 		}
 
 		private void readConstants() throws IOException {
@@ -217,8 +217,8 @@ public class RealClass {
 			offset += 4;
 		}
 
-		private void readAccessFlag() throws IOException {
-			product.accessFlags = stream.readUnsignedShort();
+		private int readAccessFlag() throws IOException {
+			return stream.readUnsignedShort();
 		}
 
 		private void skipThisClass() throws IOException {
@@ -233,10 +233,10 @@ public class RealClass {
 			stream.skip(2 * stream.readUnsignedShort());
 		}
 
-		private void readFields() throws IOException {
-			product.fields = new Field[stream.readUnsignedShort()];
-			for (int i = 0; i < product.fields.length; i++) {
-				product.fields[i] = new Field(stream.readUnsignedShort());
+		private Field[] readFields() throws IOException {
+			Field[] fields = new Field[stream.readUnsignedShort()];
+			for (int i = 0; i < fields.length; i++) {
+				fields[i] = new Field(stream.readUnsignedShort());
 				stream.skip(4);
 				int attributeInfoCount = stream.readUnsignedShort();
 				for (int q = 0; q < attributeInfoCount; q++) {
@@ -246,6 +246,7 @@ public class RealClass {
 						stream.skip(1);
 				}
 			}
+			return fields;
 		}
 
 		private void readMethods() throws IOException {
@@ -301,12 +302,13 @@ public class RealClass {
 	private static final Pattern OBJECT_PATTERN = Pattern
 			.compile("^([\\[]+)?[LBCDFIJSZ]");
 
-	private byte[] classData;
+	private final String realClassName;
+	private final byte[] classData;
+
 	private int[] constantTypes;
 	private int minorVersion;
 	private int majorVersion;
 	private ClassConstant<?>[] constants;
-	private String realClassName;
 	private int accessFlags;
 
 	private List<ClassConstant<Integer>> stringIndices = new ArrayList<ClassConstant<Integer>>();
