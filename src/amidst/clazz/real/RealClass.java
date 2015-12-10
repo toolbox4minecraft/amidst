@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,12 +54,8 @@ public class RealClass {
 		private RealClass product;
 		private long offset;
 
-		private Builder(RealClassFactory factory, String realClassName,
-				byte[] classData) {
+		private Builder(String realClassName, byte[] classData) {
 			product = new RealClass(realClassName, classData);
-			product.primitiveTypeConversionMap = factory.primitiveTypeConversionMap;
-			product.argRegex = factory.argRegex;
-			product.objectRegex = factory.objectRegex;
 			try {
 				stream = createStream();
 				if (isValidClass()) {
@@ -277,37 +274,32 @@ public class RealClass {
 		}
 	}
 
-	public static enum RealClassFactory {
-		INSTANCE;
-
-		private Map<Character, String> primitiveTypeConversionMap = new HashMap<Character, String>();
-		private Pattern argRegex = Pattern
-				.compile("([\\[]+)?([BCDFIJSZ]|L[^;]+)");
-		private Pattern objectRegex = Pattern.compile("^([\\[]+)?[LBCDFIJSZ]");
-
-		private RealClassFactory() {
-			primitiveTypeConversionMap.put('B', "byte");
-			primitiveTypeConversionMap.put('C', "char");
-			primitiveTypeConversionMap.put('D', "double");
-			primitiveTypeConversionMap.put('F', "float");
-			primitiveTypeConversionMap.put('I', "int");
-			primitiveTypeConversionMap.put('J', "long");
-			primitiveTypeConversionMap.put('S', "short");
-			primitiveTypeConversionMap.put('Z', "boolean");
-		}
-
-		public RealClass create(String realClassName, byte[] classData) {
-			return new Builder(this, realClassName, classData).get();
-		}
-	}
-
 	public static RealClass newInstance(String realClassName, byte[] classData) {
-		return RealClassFactory.INSTANCE.create(realClassName, classData);
+		return new Builder(realClassName, classData).get();
 	}
 
 	private static boolean hasFlags(int accessFlags, int flags) {
 		return (accessFlags & flags) == flags;
 	}
+
+	private static Map<Character, String> createPrimitiveTypeConversionMap() {
+		Map<Character, String> result = new HashMap<Character, String>();
+		result.put('B', "byte");
+		result.put('C', "char");
+		result.put('D', "double");
+		result.put('F', "float");
+		result.put('I', "int");
+		result.put('J', "long");
+		result.put('S', "short");
+		result.put('Z', "boolean");
+		return Collections.unmodifiableMap(result);
+	}
+
+	private static final Map<Character, String> PRIMITIV_TYPE_CONVERSION_MAP = createPrimitiveTypeConversionMap();
+	private static final Pattern ARG_PATTERN = Pattern
+			.compile("([\\[]+)?([BCDFIJSZ]|L[^;]+)");
+	private static final Pattern OBJECT_PATTERN = Pattern
+			.compile("^([\\[]+)?[LBCDFIJSZ]");
 
 	private byte[] classData;
 	private int cpSize;
@@ -327,10 +319,6 @@ public class RealClass {
 	private int numberOfConstructors;
 	private int numberOfMethods;
 	private Field[] fields;
-
-	private Map<Character, String> primitiveTypeConversionMap;
-	private Pattern argRegex;
-	private Pattern objectRegex;
 
 	private RealClass(String realClassName, byte[] classData) {
 		this.realClassName = realClassName;
@@ -397,7 +385,7 @@ public class RealClass {
 		return hasFlags(accessFlags, AccessFlags.FINAL);
 	}
 
-	public String getArguementsForConstructor(int ID) {
+	public String getArgumentsForConstructor(int ID) {
 		int i = 0;
 		for (ReferenceIndex ref : methodIndices) {
 			String name = (String) constants[ref.getVal1() - 1].getValue();
@@ -429,10 +417,10 @@ public class RealClass {
 	private String[] readArguments(String eArgs) {
 		List<String> result = new ArrayList<String>();
 		String args = eArgs.substring(1).split("\\)")[0];
-		Matcher matcher = argRegex.matcher(args);
+		Matcher matcher = ARG_PATTERN.matcher(args);
 		while (matcher.find()) {
 			String arg = args.substring(matcher.start(), matcher.end());
-			Matcher objectMatcher = objectRegex.matcher(arg);
+			Matcher objectMatcher = OBJECT_PATTERN.matcher(arg);
 			if (objectMatcher.find()) {
 				arg = getObjectArg(arg, objectMatcher.end());
 			}
@@ -448,8 +436,8 @@ public class RealClass {
 	}
 
 	private String getPrimitiveType(char typeChar) {
-		if (primitiveTypeConversionMap.containsKey(typeChar)) {
-			return primitiveTypeConversionMap.get(typeChar);
+		if (PRIMITIV_TYPE_CONVERSION_MAP.containsKey(typeChar)) {
+			return PRIMITIV_TYPE_CONVERSION_MAP.get(typeChar);
 		} else {
 			return "";
 		}
