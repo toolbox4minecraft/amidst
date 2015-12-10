@@ -75,8 +75,12 @@ public class RealClass {
 		this.numberOfMethods = numberOfMethods;
 	}
 
-	public int[] getConstantTypes() {
-		return constantTypes;
+	public String getRealClassName() {
+		return realClassName;
+	}
+
+	public byte[] getClassData() {
+		return classData;
 	}
 
 	public int getMinorVersion() {
@@ -87,8 +91,60 @@ public class RealClass {
 		return majorVersion;
 	}
 
+	public int getCpSize() {
+		return cpSize;
+	}
+
+	public int[] getConstantTypes() {
+		return constantTypes;
+	}
+
 	public RealClassConstant<?>[] getConstants() {
 		return constants;
+	}
+
+	public boolean searchForUtf(String str) {
+		for (String text : utfConstants) {
+			if (text.equals(str))
+				return true;
+		}
+		return false;
+	}
+
+	public boolean searchForFloat(float f) {
+		for (Float cFloat : floatConstants) {
+			if (cFloat.floatValue() == f) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean searchForLong(long l) {
+		for (Long cLong : longConstants) {
+			if (cLong.longValue() == l) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean searchForString(String str) {
+		for (Integer i : stringIndices) {
+			if (((String) constants[i - 1].getValue()).contains(str))
+				return true;
+		}
+		return false;
+	}
+
+	public String searchByReturnType(String type) {
+		for (ReferenceIndex ref : methodIndices) {
+			String refType = (String) constants[ref.getValue2() - 1].getValue();
+			if (("L" + type + ";").equals(refType.substring(refType
+					.indexOf(')') + 1)))
+				return (String) constants[ref.getValue1() - 1].getValue();
+		}
+		return null;
 	}
 
 	public int getAccessFlags() {
@@ -109,14 +165,6 @@ public class RealClass {
 
 	public int getNumberOfFields() {
 		return fields.length;
-	}
-
-	public byte[] getClassData() {
-		return classData;
-	}
-
-	public String getRealClassName() {
-		return realClassName;
 	}
 
 	public RealClassField getField(int index) {
@@ -187,50 +235,6 @@ public class RealClass {
 		} else {
 			return "";
 		}
-	}
-
-	public boolean searchForFloat(float f) {
-		for (Float cFloat : floatConstants) {
-			if (cFloat.floatValue() == f) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean searchForLong(long l) {
-		for (Long cLong : longConstants) {
-			if (cLong.longValue() == l) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean searchForString(String str) {
-		for (Integer i : stringIndices) {
-			if (((String) constants[i - 1].getValue()).contains(str))
-				return true;
-		}
-		return false;
-	}
-
-	public boolean searchForUtf(String str) {
-		for (String text : utfConstants) {
-			if (text.equals(str))
-				return true;
-		}
-		return false;
-	}
-
-	public String searchByReturnType(String type) {
-		for (ReferenceIndex ref : methodIndices) {
-			String refType = (String) constants[ref.getValue2() - 1].getValue();
-			if (("L" + type + ";").equals(refType.substring(refType
-					.indexOf(')') + 1)))
-				return (String) constants[ref.getValue1() - 1].getValue();
-		}
-		return null;
 	}
 
 	@Override
