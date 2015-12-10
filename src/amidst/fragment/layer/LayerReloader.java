@@ -1,19 +1,24 @@
 package amidst.fragment.layer;
 
-import amidst.fragment.FragmentManager;
+import amidst.fragment.FragmentQueueProcessor;
+import amidst.mojangapi.world.World;
 
 public class LayerReloader {
-	private final FragmentManager fragmentManager;
+	private final World world;
+	private final FragmentQueueProcessor fragmentQueueProcessor;
 
-	public LayerReloader(FragmentManager fragmentManager) {
-		this.fragmentManager = fragmentManager;
+	public LayerReloader(World world,
+			FragmentQueueProcessor fragmentQueueProcessor) {
+		this.world = world;
+		this.fragmentQueueProcessor = fragmentQueueProcessor;
 	}
 
 	public void reloadBiomeLayer() {
-		fragmentManager.reloadLayer(LayerIds.BIOME);
+		fragmentQueueProcessor.invalidateLayer(LayerIds.BIOME);
 	}
 
 	public void reloadPlayerLayer() {
-		fragmentManager.reloadLayer(LayerIds.PLAYER);
+		world.reloadPlayerWorldIcons();
+		fragmentQueueProcessor.invalidateLayer(LayerIds.PLAYER);
 	}
 }

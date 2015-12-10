@@ -51,7 +51,7 @@ public class FragmentQueueProcessor {
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	public void tick() {
+	public void processQueues() {
 		taskQueue.processTasks();
 		processRecycleQueue();
 		Fragment fragment;

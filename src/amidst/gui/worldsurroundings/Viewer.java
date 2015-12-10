@@ -74,7 +74,7 @@ public class Viewer {
 	}
 
 	@CalledOnlyBy(AmidstThread.REPAINTER)
-	public void repaint() {
+	public void repaintComponent() {
 		component.repaint();
 	}
 

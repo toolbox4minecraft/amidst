@@ -19,8 +19,6 @@ import javax.swing.JOptionPane;
 import amidst.AmidstMetaData;
 import amidst.Application;
 import amidst.Options;
-import amidst.documentation.AmidstThread;
-import amidst.documentation.CalledOnlyBy;
 import amidst.gui.menu.Actions;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.AmidstMenuBuilder;
@@ -33,6 +31,7 @@ import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
+import amidst.threading.ThreadMaster;
 import amidst.utilities.SeedHistoryLogger;
 
 public class MainWindow {
@@ -43,6 +42,7 @@ public class MainWindow {
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final SkinLoader skinLoader;
 	private final UpdatePrompt updatePrompt;
+	private final ThreadMaster threadMaster;
 
 	private final JFrame frame;
 	private final Container contentPane;
@@ -55,7 +55,7 @@ public class MainWindow {
 			MojangApi mojangApi,
 			WorldSurroundingsBuilder worldSurroundingsBuilder,
 			SeedHistoryLogger seedHistoryLogger, SkinLoader skinLoader,
-			UpdatePrompt updatePrompt) {
+			UpdatePrompt updatePrompt, ThreadMaster threadMaster) {
 		this.application = application;
 		this.options = options;
 		this.mojangApi = mojangApi;
@@ -63,6 +63,7 @@ public class MainWindow {
 		this.seedHistoryLogger = seedHistoryLogger;
 		this.skinLoader = skinLoader;
 		this.updatePrompt = updatePrompt;
+		this.threadMaster = threadMaster;
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
 		this.actions = createMenuActions();
@@ -146,7 +147,7 @@ public class MainWindow {
 	 * repainter thread will draw the new worldSurroundings as soon as it is
 	 * assigned to the instance variable.
 	 */
-	public void setWorldSurroundings(WorldSurroundings worldSurroundings) {
+	public void setWorldSurroundings(final WorldSurroundings worldSurroundings) {
 		clearWorldSurroundings();
 		seedHistoryLogger.log(worldSurroundings.getWorldSeed());
 		contentPane.add(worldSurroundings.getComponent(), BorderLayout.CENTER);
@@ -157,10 +158,15 @@ public class MainWindow {
 				.canReloadPlayerLocations());
 		frame.validate();
 		worldSurroundings.loadPlayerSkins(skinLoader);
+		threadMaster.setOnRepaintTick(worldSurroundings.getOnRepainterTick());
+		threadMaster.setOnFragmentLoadTick(worldSurroundings
+				.getOnFragmentLoaderTick());
 		this.worldSurroundings.set(worldSurroundings);
 	}
 
 	private void clearWorldSurroundings() {
+		threadMaster.clearOnRepaintTick();
+		threadMaster.clearOnFragmentLoadTick();
 		WorldSurroundings worldSurroundings = this.worldSurroundings
 				.getAndSet(null);
 		if (worldSurroundings != null) {
@@ -279,21 +285,5 @@ public class MainWindow {
 	private String askForString(String title, String message) {
 		return JOptionPane.showInputDialog(frame, message, title,
 				JOptionPane.QUESTION_MESSAGE);
-	}
-
-	@CalledOnlyBy(AmidstThread.REPAINTER)
-	public void tickRepainter() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			worldSurroundings.tickRepainter();
-		}
-	}
-
-	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	public void tickFragmentLoader() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			worldSurroundings.tickFragmentLoader();
-		}
 	}
 }

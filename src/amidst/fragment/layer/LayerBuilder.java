@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import amidst.Options;
-import amidst.fragment.FragmentManager;
+import amidst.fragment.FragmentQueueProcessor;
 import amidst.fragment.colorprovider.BiomeColorProvider;
 import amidst.fragment.colorprovider.SlimeColorProvider;
 import amidst.fragment.constructor.BiomeDataConstructor;
@@ -130,7 +130,8 @@ public class LayerBuilder {
 		// @formatter:on
 	}
 
-	public LayerReloader createLayerReloader(FragmentManager fragmentManager) {
-		return new LayerReloader(fragmentManager);
+	public LayerReloader createLayerReloader(World world,
+			FragmentQueueProcessor fragmentQueueProcessor) {
+		return new LayerReloader(world, fragmentQueueProcessor);
 	}
 }

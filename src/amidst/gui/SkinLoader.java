@@ -19,15 +19,16 @@ public class SkinLoader {
 	}
 
 	public void loadSkins(MovablePlayerList movablePlayerList,
-			Runnable onFinished) {
+			Runnable onSkinFinishedLoading) {
 		for (Player player : movablePlayerList) {
 			if (player.isSkinLoadable()) {
-				loadSkinLater(player, onFinished);
+				loadSkinLater(player, onSkinFinishedLoading);
 			}
 		}
 	}
 
-	private void loadSkinLater(final Player player, final Runnable onFinished) {
+	private void loadSkinLater(final Player player,
+			final Runnable onSkinFinishedLoading) {
 		workerExecutor.invokeLater(new Worker<BufferedImage>() {
 			@Override
 			public BufferedImage execute() {
@@ -36,16 +37,16 @@ public class SkinLoader {
 
 			@Override
 			public void finished(BufferedImage image) {
-				finishedLoading(player, image, onFinished);
+				finishedLoading(player, image, onSkinFinishedLoading);
 			}
 		});
 	}
 
 	private void finishedLoading(Player player, BufferedImage image,
-			Runnable onFinished) {
+			Runnable onSkinFinishedLoading) {
 		if (image != null) {
 			player.setSkin(image);
-			onFinished.run();
+			onSkinFinishedLoading.run();
 		}
 	}
 

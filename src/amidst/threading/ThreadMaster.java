@@ -14,21 +14,27 @@ import amidst.documentation.ThreadSafe;
 
 @ThreadSafe
 public class ThreadMaster {
-	private final Runnable onRepaintTick;
-	private final Runnable onFragmentLoadTick;
+	private static final Runnable NOOP = new Runnable() {
+		public void run() {
+			// noop
+		}
+	};
 
 	private final ScheduledExecutorService repaintExecutorService;
 	private final ScheduledExecutorService fragmentLoaderExecutorService;
 	private final ExecutorService workerExecutorService;
 	private final WorkerExecutor workerExecutor;
 
-	public ThreadMaster(Runnable onRepaintTick, Runnable onFragmentLoadTick) {
-		this.onRepaintTick = onRepaintTick;
-		this.onFragmentLoadTick = onFragmentLoadTick;
+	private volatile Runnable onRepaintTick;
+	private volatile Runnable onFragmentLoadTick;
+
+	public ThreadMaster() {
 		this.repaintExecutorService = createRepaintExecutorService();
 		this.fragmentLoaderExecutorService = createFragmentLoaderExecutorService();
 		this.workerExecutorService = createWorkerExecutorService();
 		this.workerExecutor = createWorkerExecutor();
+		this.onRepaintTick = NOOP;
+		this.onFragmentLoadTick = NOOP;
 		startRepainter();
 		startFragmentLoader();
 	}
@@ -115,5 +121,21 @@ public class ThreadMaster {
 
 	public WorkerExecutor getWorkerExecutor() {
 		return workerExecutor;
+	}
+
+	public void setOnRepaintTick(Runnable onRepaintTick) {
+		this.onRepaintTick = onRepaintTick;
+	}
+
+	public void setOnFragmentLoadTick(Runnable onFragmentLoadTick) {
+		this.onFragmentLoadTick = onFragmentLoadTick;
+	}
+
+	public void clearOnRepaintTick() {
+		this.onRepaintTick = NOOP;
+	}
+
+	public void clearOnFragmentLoadTick() {
+		this.onFragmentLoadTick = NOOP;
 	}
 }

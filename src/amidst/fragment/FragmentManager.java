@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledBy;
 import amidst.documentation.CalledByAny;
-import amidst.documentation.CalledOnlyBy;
 import amidst.fragment.constructor.FragmentConstructor;
 import amidst.fragment.layer.LayerLoader;
 import amidst.mojangapi.world.CoordinatesInWorld;
@@ -18,8 +17,6 @@ public class FragmentManager {
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<Fragment>();
 	private final ConcurrentLinkedQueue<Fragment> recycleQueue = new ConcurrentLinkedQueue<Fragment>();
 	private final FragmentCache cache;
-
-	private volatile FragmentQueueProcessor queueProcessor;
 
 	public FragmentManager(Iterable<FragmentConstructor> constructors,
 			int numberOfLayers) {
@@ -46,24 +43,9 @@ public class FragmentManager {
 		recycleQueue.offer(fragment);
 	}
 
-	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	public void tick() {
-		FragmentQueueProcessor queueProcessor = this.queueProcessor;
-		if (queueProcessor != null) {
-			queueProcessor.tick();
-		}
-	}
-
-	public void reloadLayer(int layerId) {
-		FragmentQueueProcessor queueProcessor = this.queueProcessor;
-		if (queueProcessor != null) {
-			queueProcessor.invalidateLayer(layerId);
-		}
-	}
-
-	public void setLayerLoader(LayerLoader layerLoader) {
-		this.queueProcessor = new FragmentQueueProcessor(availableQueue,
-				loadingQueue, recycleQueue, cache, layerLoader);
+	public FragmentQueueProcessor createLayerLoader(LayerLoader layerLoader) {
+		return new FragmentQueueProcessor(availableQueue, loadingQueue,
+				recycleQueue, cache, layerLoader);
 	}
 
 	public int getAvailableQueueSize() {

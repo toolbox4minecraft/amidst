@@ -2,8 +2,6 @@ package amidst;
 
 import java.util.prefs.Preferences;
 
-import amidst.documentation.AmidstThread;
-import amidst.documentation.CalledOnlyBy;
 import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.CrashWindow;
 import amidst.gui.LicenseWindow;
@@ -68,25 +66,7 @@ public class Application {
 	}
 
 	private ThreadMaster createThreadMaster() {
-		return new ThreadMaster(new Runnable() {
-			@CalledOnlyBy(AmidstThread.REPAINTER)
-			@Override
-			public void run() {
-				MainWindow window = mainWindow;
-				if (window != null) {
-					window.tickRepainter();
-				}
-			}
-		}, new Runnable() {
-			@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-			@Override
-			public void run() {
-				MainWindow window = mainWindow;
-				if (window != null) {
-					window.tickFragmentLoader();
-				}
-			}
-		});
+		return new ThreadMaster();
 	}
 
 	private SkinLoader createSkinLoader() {
@@ -109,7 +89,7 @@ public class Application {
 	public void displayMainWindow() {
 		setMainWindow(new MainWindow(this, options, mojangApi,
 				worldSurroundingsBuilder, seedHistoryLogger, skinLoader,
-				updatePrompt));
+				updatePrompt, threadMaster));
 		setVersionSelectWindow(null);
 	}
 

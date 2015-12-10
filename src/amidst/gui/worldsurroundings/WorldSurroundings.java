@@ -5,10 +5,7 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import amidst.documentation.AmidstThread;
-import amidst.documentation.CalledOnlyBy;
 import amidst.fragment.FragmentGraph;
-import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.SkinLoader;
 import amidst.mojangapi.world.CoordinatesInWorld;
@@ -24,33 +21,26 @@ public class WorldSurroundings {
 	private final Zoom zoom;
 	private final Viewer viewer;
 	private final LayerReloader layerReloader;
-	private final FragmentManager fragmentManager;
-	private final Runnable onFinished;
 	private final WorldIconSelection worldIconSelection;
+	private final Runnable onRepainterTick;
+	private final Runnable onFragmentLoaderTick;
+	private final Runnable onSkinFinishedLoading;
 
 	public WorldSurroundings(World world, FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			Viewer viewer, LayerReloader layerReloader,
-			FragmentManager fragmentManager,
-			WorldIconSelection worldIconSelection) {
+			WorldIconSelection worldIconSelection, Runnable onRepainterTick,
+			Runnable onFragmentLoaderTick, Runnable onSkinFinishedLoading) {
 		this.world = world;
 		this.graph = graph;
 		this.translator = translator;
 		this.zoom = zoom;
 		this.viewer = viewer;
 		this.layerReloader = layerReloader;
-		this.fragmentManager = fragmentManager;
 		this.worldIconSelection = worldIconSelection;
-		this.onFinished = createOnFinished();
-	}
-
-	private Runnable createOnFinished() {
-		return new Runnable() {
-			@Override
-			public void run() {
-				reloadPlayerLayer();
-			}
-		};
+		this.onRepainterTick = onRepainterTick;
+		this.onFragmentLoaderTick = onFragmentLoaderTick;
+		this.onSkinFinishedLoading = onSkinFinishedLoading;
 	}
 
 	public Component getComponent() {
@@ -62,7 +52,6 @@ public class WorldSurroundings {
 	}
 
 	public void reloadPlayerLayer() {
-		world.reloadPlayerWorldIcons();
 		layerReloader.reloadPlayerLayer();
 	}
 
@@ -72,14 +61,12 @@ public class WorldSurroundings {
 		zoom.reset();
 	}
 
-	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	public void tickFragmentLoader() {
-		fragmentManager.tick();
+	public Runnable getOnRepainterTick() {
+		return onRepainterTick;
 	}
 
-	@CalledOnlyBy(AmidstThread.REPAINTER)
-	public void tickRepainter() {
-		viewer.repaint();
+	public Runnable getOnFragmentLoaderTick() {
+		return onFragmentLoaderTick;
 	}
 
 	public void centerOn(CoordinatesInWorld coordinates) {
@@ -129,7 +116,7 @@ public class WorldSurroundings {
 
 	public void reloadPlayerLocations(SkinLoader skinLoader) {
 		world.getMovablePlayerList().reload();
-		reloadPlayerLayer();
+		layerReloader.reloadPlayerLayer();
 		loadPlayerSkins(skinLoader);
 	}
 
@@ -142,6 +129,7 @@ public class WorldSurroundings {
 	}
 
 	public void loadPlayerSkins(SkinLoader skinLoader) {
-		skinLoader.loadSkins(world.getMovablePlayerList(), onFinished);
+		skinLoader.loadSkins(world.getMovablePlayerList(),
+				onSkinFinishedLoading);
 	}
 }

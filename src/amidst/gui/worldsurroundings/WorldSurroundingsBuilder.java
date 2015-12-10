@@ -3,8 +3,11 @@ package amidst.gui.worldsurroundings;
 import java.util.List;
 
 import amidst.Options;
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
+import amidst.fragment.FragmentQueueProcessor;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.layer.LayerBuilder;
 import amidst.fragment.layer.LayerDeclaration;
@@ -42,11 +45,12 @@ public class WorldSurroundingsBuilder {
 				graph, zoom);
 		LayerLoader layerLoader = layerBuilder.createLayerLoader(world,
 				biomeSelection, options);
-		fragmentManager.setLayerLoader(layerLoader);
+		FragmentQueueProcessor fragmentQueueProcessor = fragmentManager
+				.createLayerLoader(layerLoader);
 		Iterable<FragmentDrawer> drawers = layerBuilder.createDrawers(zoom,
 				worldIconSelection);
-		LayerReloader layerReloader = layerBuilder
-				.createLayerReloader(fragmentManager);
+		LayerReloader layerReloader = layerBuilder.createLayerReloader(world,
+				fragmentQueueProcessor);
 		WidgetBuilder widgetBuilder = new WidgetBuilder(world, graph,
 				translator, zoom, biomeSelection, worldIconSelection,
 				layerReloader, fragmentManager, options);
@@ -56,6 +60,41 @@ public class WorldSurroundingsBuilder {
 		Viewer viewer = new Viewer(new ViewerMouseListener(new WidgetManager(
 				widgets), graph, translator, zoom, movement, actions), drawer);
 		return new WorldSurroundings(world, graph, translator, zoom, viewer,
-				layerReloader, fragmentManager, worldIconSelection);
+				layerReloader, worldIconSelection,
+				createOnRepainterTick(viewer),
+				createOnFragmentLoaderTick(fragmentQueueProcessor),
+				createOnSkinFinishedLoading(layerReloader));
+	}
+
+	private Runnable createOnRepainterTick(final Viewer viewer) {
+		return new Runnable() {
+			@CalledOnlyBy(AmidstThread.REPAINTER)
+			@Override
+			public void run() {
+				viewer.repaintComponent();
+			}
+		};
+	}
+
+	private Runnable createOnFragmentLoaderTick(
+			final FragmentQueueProcessor fragmentQueueProcessor) {
+		return new Runnable() {
+			@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+			@Override
+			public void run() {
+				fragmentQueueProcessor.processQueues();
+			}
+		};
+	}
+
+	private Runnable createOnSkinFinishedLoading(
+			final LayerReloader layerReloader) {
+		return new Runnable() {
+			@CalledOnlyBy(AmidstThread.EDT)
+			@Override
+			public void run() {
+				layerReloader.reloadPlayerLayer();
+			}
+		};
 	}
 }
