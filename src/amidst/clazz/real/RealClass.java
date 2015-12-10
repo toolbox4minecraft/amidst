@@ -120,52 +120,52 @@ public class RealClass {
 		}
 
 		private int readConstant(int q) throws IOException {
-			byte tag = stream.readByte();
-			product.constantTypes[q] = tag;
-			switch (tag) {
+			byte type = stream.readByte();
+			product.constantTypes[q] = type;
+			switch (type) {
 			case 1:
-				readString(q, tag);
+				readString(q, type);
 				break;
 			case 3:
-				readInteger(q, tag);
+				readInteger(q, type);
 				break;
 			case 4:
-				readFloat(q, tag);
+				readFloat(q, type);
 				break;
 			case 5:
-				readLong(q, tag);
+				readLong(q, type);
 				q++;
 				break;
 			case 6:
-				readDouble(q, tag);
+				readDouble(q, type);
 				q++;
 				break;
 			case 7:
-				readClassReference(q, tag);
+				readClassReference(q, type);
 				break;
 			case 8:
-				readStringReference(q, tag);
+				readStringReference(q, type);
 				break;
 			case 9: // Field reference
-				readAnotherReference(q, tag);
+				readAnotherReference(q, type);
 				break;
 			case 10: // Method reference
-				readAnotherReference(q, tag);
+				readAnotherReference(q, type);
 				break;
 			case 11: // Interface method reference
-				readAnotherReference(q, tag);
+				readAnotherReference(q, type);
 				break;
 			case 12: // Name and type descriptor
-				readAnotherReference(q, tag);
+				readAnotherReference(q, type);
 				break;
 			}
 			return q;
 		}
 
-		private void readString(int q, byte tag) throws IOException {
+		private void readString(int q, byte type) throws IOException {
 			int len = stream.readUnsignedShort();
 			String stringValue = readStringValue(len);
-			product.constants[q] = new ClassConstant<String>(tag, stringValue);
+			product.constants[q] = new ClassConstant<String>(type, stringValue);
 			product.utfConstants.add(stringValue);
 		}
 
@@ -177,44 +177,44 @@ public class RealClass {
 			return stringBuilder.toString();
 		}
 
-		private void readInteger(int q, byte tag) throws IOException {
-			product.constants[q] = new ClassConstant<Integer>(tag,
+		private void readInteger(int q, byte type) throws IOException {
+			product.constants[q] = new ClassConstant<Integer>(type,
 					stream.readInt());
 		}
 
-		private void readFloat(int q, byte tag) throws IOException {
+		private void readFloat(int q, byte type) throws IOException {
 			float cFloat = stream.readFloat();
-			product.constants[q] = new ClassConstant<Float>(tag, cFloat);
+			product.constants[q] = new ClassConstant<Float>(type, cFloat);
 			product.floatConstants.add(cFloat);
 		}
 
-		private void readLong(int q, byte tag) throws IOException {
+		private void readLong(int q, byte type) throws IOException {
 			long cLong = stream.readLong();
-			product.constants[q] = new ClassConstant<Long>(tag, cLong);
+			product.constants[q] = new ClassConstant<Long>(type, cLong);
 			product.longConstants.add(cLong);
 		}
 
-		private void readDouble(int q, byte tag) throws IOException {
-			product.constants[q] = new ClassConstant<Double>(tag,
+		private void readDouble(int q, byte type) throws IOException {
+			product.constants[q] = new ClassConstant<Double>(type,
 					stream.readDouble());
 		}
 
-		private void readClassReference(int q, byte tag) throws IOException {
-			product.constants[q] = new ClassConstant<Integer>(tag,
+		private void readClassReference(int q, byte type) throws IOException {
+			product.constants[q] = new ClassConstant<Integer>(type,
 					stream.readUnsignedShort());
 		}
 
-		private void readStringReference(int q, byte tag) throws IOException {
-			ClassConstant<Integer> strRef = new ClassConstant<Integer>(tag,
+		private void readStringReference(int q, byte type) throws IOException {
+			ClassConstant<Integer> strRef = new ClassConstant<Integer>(type,
 					stream.readUnsignedShort());
 			product.constants[q] = strRef;
 			product.stringIndices.add(strRef);
 		}
 
-		private void readAnotherReference(int q, byte tag) throws IOException {
+		private void readAnotherReference(int q, byte type) throws IOException {
 			ReferenceIndex referenceIndex = new ReferenceIndex(
 					stream.readUnsignedShort(), stream.readUnsignedShort());
-			product.constants[q] = new ClassConstant<ReferenceIndex>(tag,
+			product.constants[q] = new ClassConstant<ReferenceIndex>(type,
 					referenceIndex);
 		}
 
