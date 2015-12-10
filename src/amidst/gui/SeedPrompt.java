@@ -1,13 +1,12 @@
 package amidst.gui;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
@@ -15,19 +14,20 @@ import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import net.miginfocom.swing.MigLayout;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldSeed.WorldSeedType;
 
 public class SeedPrompt {
 	private static final String TITLE = "Enter Seed";
-	private static final String LEADING_SPACE_TEXT = "WARNING: There is a space at the start!";
-	private static final String TRAILING_SPACE_TEXT = "WARNING: There is a space at the end!";
+	private static final String STARTS_WITH_SPACE_TEXT = "WARNING: There is a space at the start!";
+	private static final String ENDS_WITH_SPACE_TEXT = "WARNING: There is a space at the end!";
 
 	private final JFrame frame;
 	private final JTextField textField;
 	private final JLabel seedLabel;
 	private final JLabel warningLabel;
-	private final JComponent[] inputs;
+	private final JPanel panel;
 	private WorldSeed seed;
 
 	public SeedPrompt(JFrame frame) {
@@ -35,7 +35,7 @@ public class SeedPrompt {
 		this.textField = createTextField();
 		this.seedLabel = createSeedLabel();
 		this.warningLabel = createWarningLabel();
-		this.inputs = createInputs();
+		this.panel = createPanel();
 	}
 
 	private JTextField createTextField() {
@@ -84,14 +84,17 @@ public class SeedPrompt {
 	private JLabel createWarningLabel() {
 		JLabel result = new JLabel();
 		result.setFont(new Font("arial", Font.BOLD, 12));
-		result.setPreferredSize(new Dimension(400, 30));
 		result.setForeground(Color.RED);
 		return result;
 	}
 
-	private JComponent[] createInputs() {
-		return new JComponent[] { new JLabel("Enter your seed:"), textField,
-				seedLabel, warningLabel };
+	private JPanel createPanel() {
+		JPanel result = new JPanel(new MigLayout());
+		result.add(new JLabel("Enter your seed:"), "w 400!, wrap");
+		result.add(textField, "w 400!, wrap");
+		result.add(seedLabel, "w 400!, wrap");
+		result.add(warningLabel, "w 400!, h 30!");
+		return result;
 	}
 
 	private void grabFocus() {
@@ -109,10 +112,10 @@ public class SeedPrompt {
 		seed = WorldSeed.fromUserInput(textField.getText());
 		if (WorldSeedType.TEXT == seed.getType()
 				&& seed.getText().startsWith(" ")) {
-			warningLabel.setText(LEADING_SPACE_TEXT);
+			warningLabel.setText(STARTS_WITH_SPACE_TEXT);
 		} else if (WorldSeedType.TEXT == seed.getType()
 				&& seed.getText().endsWith(" ")) {
-			warningLabel.setText(TRAILING_SPACE_TEXT);
+			warningLabel.setText(ENDS_WITH_SPACE_TEXT);
 		} else {
 			warningLabel.setText("");
 		}
@@ -123,7 +126,7 @@ public class SeedPrompt {
 	public WorldSeed askForSeed() {
 		update();
 		grabFocus();
-		if (JOptionPane.showConfirmDialog(frame, inputs, TITLE,
+		if (JOptionPane.showConfirmDialog(frame, panel, TITLE,
 				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 			return seed;
 		} else {
