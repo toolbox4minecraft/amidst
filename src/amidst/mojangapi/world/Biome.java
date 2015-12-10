@@ -145,6 +145,7 @@ public class Biome {
 		return biomes.length;
 	}
 
+	// TODO: check there is actually a biome with this index?
 	public static boolean isSupportedBiomeIndex(int index) {
 		return index >= 0 && index < biomes.length;
 	}
