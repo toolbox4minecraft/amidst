@@ -19,4 +19,12 @@ public class ReferenceIndex {
 	public int getValue2() {
 		return value2;
 	}
+
+	public String getValueOfValue1(RealClassConstant<?>[] constants) {
+		return (String) constants[value1 - 1].getValue();
+	}
+
+	public String getValueOfValue2(RealClassConstant<?>[] constants) {
+		return (String) constants[value2 - 1].getValue();
+	}
 }

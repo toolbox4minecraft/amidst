@@ -14,7 +14,7 @@ public class StringRCD extends RealClassDetector {
 	@Override
 	public boolean detect(RealClass realClass) {
 		for (String element : strings) {
-			if (!realClass.searchForString(element)) {
+			if (!realClass.searchForStringContaining(element)) {
 				return false;
 			}
 		}

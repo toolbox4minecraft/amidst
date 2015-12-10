@@ -103,46 +103,51 @@ public class RealClass {
 		return constants;
 	}
 
-	public boolean searchForUtf(String str) {
-		for (String text : utfConstants) {
-			if (text.equals(str))
-				return true;
-		}
-		return false;
-	}
-
-	public boolean searchForFloat(float f) {
-		for (Float cFloat : floatConstants) {
-			if (cFloat.floatValue() == f) {
+	public boolean searchForUtfEqualTo(String required) {
+		for (String entry : utfConstants) {
+			if (entry.equals(required)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public boolean searchForLong(long l) {
-		for (Long cLong : longConstants) {
-			if (cLong.longValue() == l) {
+	public boolean searchForFloat(float required) {
+		for (Float entry : floatConstants) {
+			if (entry.floatValue() == required) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public boolean searchForString(String str) {
-		for (Integer i : stringIndices) {
-			if (((String) constants[i - 1].getValue()).contains(str))
+	public boolean searchForLong(long required) {
+		for (Long entry : longConstants) {
+			if (entry.longValue() == required) {
 				return true;
+			}
 		}
 		return false;
 	}
 
-	public String searchByReturnType(String type) {
-		for (ReferenceIndex ref : methodIndices) {
-			String refType = (String) constants[ref.getValue2() - 1].getValue();
-			if (("L" + type + ";").equals(refType.substring(refType
-					.indexOf(')') + 1)))
-				return (String) constants[ref.getValue1() - 1].getValue();
+	public boolean searchForStringContaining(String requiredValue) {
+		for (Integer entry : stringIndices) {
+			String entryValue = (String) constants[entry - 1].getValue();
+			if (entryValue.contains(requiredValue)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public String searchByReturnType(String required) {
+		String requiredType = "L" + required + ";";
+		for (ReferenceIndex entry : methodIndices) {
+			String value = entry.getValueOfValue2(constants);
+			String entryType = value.substring(value.indexOf(')') + 1);
+			if (entryType.equals(requiredType)) {
+				return entry.getValueOfValue1(constants);
+			}
 		}
 		return null;
 	}
@@ -182,11 +187,10 @@ public class RealClass {
 	public String getArgumentsForConstructor(int ID) {
 		int i = 0;
 		for (ReferenceIndex ref : methodIndices) {
-			String name = (String) constants[ref.getValue1() - 1].getValue();
+			String name = ref.getValueOfValue1(constants);
 			if (name.equals("<init>")) {
 				if (i == ID) {
-					String args = (String) constants[ref.getValue2() - 1]
-							.getValue();
+					String args = ref.getValueOfValue2(constants);
 					return toArgumentString(readArguments(args));
 				}
 				i++;

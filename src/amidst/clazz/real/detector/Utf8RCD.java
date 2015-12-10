@@ -14,7 +14,7 @@ public class Utf8RCD extends RealClassDetector {
 	@Override
 	public boolean detect(RealClass realClass) {
 		for (String element : utf8s) {
-			if (!realClass.searchForUtf(element)) {
+			if (!realClass.searchForUtfEqualTo(element)) {
 				return false;
 			}
 		}
