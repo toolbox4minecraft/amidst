@@ -73,8 +73,6 @@ public class RealClass {
 		private final byte[] classData;
 		private final DataInputStream stream;
 
-		private RealClass product;
-
 		private Builder(String realClassName, byte[] classData) {
 			this.realClassName = realClassName;
 			this.classData = classData;
@@ -83,6 +81,7 @@ public class RealClass {
 		}
 
 		public RealClass construct() {
+			RealClass product = null;
 			try {
 				if (isValidClass()) {
 					int minorVersion = readMinorVersion();
@@ -98,7 +97,7 @@ public class RealClass {
 					readConstants(cpSize, constantTypes, constants,
 							utfConstants, floatConstants, longConstants,
 							stringIndices);
-					int accessFlag = readAccessFlag();
+					int accessFlags = readAccessFlags();
 					skipThisClass();
 					skipSuperClass();
 					skipInterfaces();
@@ -107,22 +106,14 @@ public class RealClass {
 					int numberOfConstructors = readMethodsAndConstructors(
 							numberOfMethodsAndConstructors, constants,
 							methodIndices);
-					product = new RealClass(realClassName, classData);
-					product.minorVersion = minorVersion;
-					product.majorVersion = majorVersion;
-					product.cpSize = cpSize;
-					product.constantTypes = constantTypes;
-					product.constants = constants;
-					product.utfConstants = utfConstants;
-					product.floatConstants = floatConstants;
-					product.longConstants = longConstants;
-					product.stringIndices = stringIndices;
-					product.methodIndices = methodIndices;
-					product.accessFlags = accessFlag;
-					product.fields = fields;
-					product.numberOfConstructors = numberOfConstructors;
-					product.numberOfMethods = numberOfMethodsAndConstructors
+					int numberOfMethods = numberOfMethodsAndConstructors
 							- numberOfConstructors;
+					product = new RealClass(realClassName, classData,
+							minorVersion, majorVersion, cpSize, constantTypes,
+							constants, utfConstants, floatConstants,
+							longConstants, stringIndices, methodIndices,
+							accessFlags, fields, numberOfConstructors,
+							numberOfMethods);
 				}
 				stream.close();
 			} catch (IOException e) {
@@ -254,7 +245,7 @@ public class RealClass {
 			return new ClassConstant<ReferenceIndex>(type, value);
 		}
 
-		private int readAccessFlag() throws IOException {
+		private int readAccessFlags() throws IOException {
 			return stream.readUnsignedShort();
 		}
 
@@ -351,26 +342,48 @@ public class RealClass {
 	private final String realClassName;
 	private final byte[] classData;
 
-	private int[] constantTypes;
-	private int minorVersion;
-	private int majorVersion;
-	private ClassConstant<?>[] constants;
-	private int accessFlags;
-	private int cpSize;
+	private final int minorVersion;
+	private final int majorVersion;
 
-	private List<String> utfConstants;
-	private List<Float> floatConstants;
-	private List<Long> longConstants;
-	private List<Integer> stringIndices;
-	private List<ReferenceIndex> methodIndices;
+	private final int cpSize;
+	private final int[] constantTypes;
+	private final ClassConstant<?>[] constants;
 
-	private int numberOfConstructors;
-	private int numberOfMethods;
-	private Field[] fields;
+	private final List<String> utfConstants;
+	private final List<Float> floatConstants;
+	private final List<Long> longConstants;
+	private final List<Integer> stringIndices;
+	private final List<ReferenceIndex> methodIndices;
 
-	private RealClass(String realClassName, byte[] classData) {
+	private final int accessFlags;
+	private final Field[] fields;
+
+	private final int numberOfConstructors;
+	private final int numberOfMethods;
+
+	private RealClass(String realClassName, byte[] classData, int minorVersion,
+			int majorVersion, int cpSize, int[] constantTypes,
+			ClassConstant<?>[] constants, List<String> utfConstants,
+			List<Float> floatConstants, List<Long> longConstants,
+			List<Integer> stringIndices, List<ReferenceIndex> methodIndices,
+			int accessFlags, Field[] fields, int numberOfConstructors,
+			int numberOfMethods) {
 		this.realClassName = realClassName;
 		this.classData = classData;
+		this.minorVersion = minorVersion;
+		this.majorVersion = majorVersion;
+		this.cpSize = cpSize;
+		this.constantTypes = constantTypes;
+		this.constants = constants;
+		this.utfConstants = utfConstants;
+		this.floatConstants = floatConstants;
+		this.longConstants = longConstants;
+		this.stringIndices = stringIndices;
+		this.methodIndices = methodIndices;
+		this.accessFlags = accessFlags;
+		this.fields = fields;
+		this.numberOfConstructors = numberOfConstructors;
+		this.numberOfMethods = numberOfMethods;
 	}
 
 	public int[] getConstantTypes() {
