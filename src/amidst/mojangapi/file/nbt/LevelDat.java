@@ -2,21 +2,22 @@ package amidst.mojangapi.file.nbt;
 
 import org.jnbt.CompoundTag;
 
+import amidst.documentation.Immutable;
 import amidst.mojangapi.world.WorldType;
 
+@Immutable
 public class LevelDat {
-	private final CompoundTag dataTag;
 	private final long seed;
 	private final WorldType worldType;
 	private final String generatorOptions;
 
 	public LevelDat(CompoundTag root) {
-		this.dataTag = readDataTag(root);
-		this.seed = readRandomSeed();
-		if (hasGeneratorName()) {
-			this.worldType = WorldType.from(readGeneratorName());
+		CompoundTag dataTag = readDataTag(root);
+		this.seed = readRandomSeed(dataTag);
+		if (hasGeneratorName(dataTag)) {
+			this.worldType = WorldType.from(readGeneratorName(dataTag));
 			if (worldType == WorldType.CUSTOMIZED) {
-				this.generatorOptions = readGeneratorOptions();
+				this.generatorOptions = readGeneratorOptions(dataTag);
 			} else {
 				this.generatorOptions = "";
 			}
@@ -30,21 +31,21 @@ public class LevelDat {
 		return (CompoundTag) root.getValue().get(NBTTagKeys.TAG_KEY_DATA);
 	}
 
-	private Long readRandomSeed() {
+	private long readRandomSeed(CompoundTag dataTag) {
 		return (Long) dataTag.getValue().get(NBTTagKeys.TAG_KEY_RANDOM_SEED)
 				.getValue();
 	}
 
-	private boolean hasGeneratorName() {
+	private boolean hasGeneratorName(CompoundTag dataTag) {
 		return dataTag.getValue().get(NBTTagKeys.TAG_KEY_GENERATOR_NAME) != null;
 	}
 
-	private String readGeneratorName() {
+	private String readGeneratorName(CompoundTag dataTag) {
 		return (String) dataTag.getValue()
 				.get(NBTTagKeys.TAG_KEY_GENERATOR_NAME).getValue();
 	}
 
-	private String readGeneratorOptions() {
+	private String readGeneratorOptions(CompoundTag dataTag) {
 		return (String) dataTag.getValue()
 				.get(NBTTagKeys.TAG_KEY_GENERATOR_OPTIONS).getValue();
 	}

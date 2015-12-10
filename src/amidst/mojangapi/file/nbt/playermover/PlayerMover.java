@@ -13,12 +13,14 @@ import org.jnbt.DoubleTag;
 import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.file.nbt.NBTTagKeys;
 import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.world.Player;
 import amidst.mojangapi.world.PlayerCoordinates;
 
+@Immutable
 public abstract class PlayerMover {
 	// TODO: gui feedback
 	public void movePlayer(Player player) {

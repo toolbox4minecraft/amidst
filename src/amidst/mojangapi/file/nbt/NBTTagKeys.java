@@ -1,5 +1,8 @@
 package amidst.mojangapi.file.nbt;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public class NBTTagKeys {
 	public static final String TAG_KEY_BASE = "Base";
 	public static final String TAG_KEY_DATA = "Data";

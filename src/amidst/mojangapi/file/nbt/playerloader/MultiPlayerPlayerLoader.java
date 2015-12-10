@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import amidst.documentation.Immutable;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.world.Player;
 
+@Immutable
 public class MultiPlayerPlayerLoader extends PlayerLoader {
 	private final SaveDirectory saveDirectory;
 

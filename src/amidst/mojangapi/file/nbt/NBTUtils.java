@@ -12,6 +12,9 @@ import org.jnbt.CompoundTag;
 import org.jnbt.NBTInputStream;
 import org.jnbt.NBTOutputStream;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public enum NBTUtils {
 	;
 
