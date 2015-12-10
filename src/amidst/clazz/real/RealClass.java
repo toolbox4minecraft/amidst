@@ -76,7 +76,20 @@ public class RealClass {
 					skipSuperClass();
 					skipInterfaces();
 					product.fields = readFields();
-					readMethods();
+
+					int numberOfMethodsAndConstructors = stream
+							.readUnsignedShort();
+					ClassConstant<?>[] constants = product.constants;
+					List<ReferenceIndex> methodIndices = new ArrayList<ReferenceIndex>();
+
+					int numberOfConstructors = readMethodsAndConstructors(
+							numberOfMethodsAndConstructors, constants,
+							methodIndices);
+
+					product.methodIndices = methodIndices;
+					product.numberOfConstructors = numberOfConstructors;
+					product.numberOfMethods = numberOfMethodsAndConstructors
+							- numberOfConstructors;
 				}
 				stream.close();
 			} catch (IOException e) {
@@ -242,36 +255,40 @@ public class RealClass {
 				for (int q = 0; q < attributeInfoCount; q++) {
 					stream.skip(2);
 					int attributeCount = stream.readInt();
-					for (int z = 0; z < attributeCount; z++)
+					for (int z = 0; z < attributeCount; z++) {
 						stream.skip(1);
+					}
 				}
 			}
 			return fields;
 		}
 
-		private void readMethods() throws IOException {
-			int numberOfMethodsAndConstructors = stream.readUnsignedShort();
-			product.numberOfMethods = numberOfMethodsAndConstructors;
+		private int readMethodsAndConstructors(
+				int numberOfMethodsAndConstructors,
+				ClassConstant<?>[] constants, List<ReferenceIndex> methodIndices)
+				throws IOException {
+			int numberOfConstructors = 0;
 			for (int i = 0; i < numberOfMethodsAndConstructors; i++) {
 				stream.skip(2);
 				int nameIndex = stream.readUnsignedShort();
-				product.methodIndices.add(new ReferenceIndex(nameIndex, stream
+				methodIndices.add(new ReferenceIndex(nameIndex, stream
 						.readUnsignedShort()));
 
-				if (((String) product.constants[nameIndex - 1].getValue())
+				if (((String) constants[nameIndex - 1].getValue())
 						.contains("<init>")) {
-					product.numberOfConstructors++;
-					product.numberOfMethods--;
+					numberOfConstructors++;
 				}
 
 				int attributeInfoCount = stream.readUnsignedShort();
 				for (int q = 0; q < attributeInfoCount; q++) {
 					stream.skip(2);
 					int attributeCount = stream.readInt();
-					for (int z = 0; z < attributeCount; z++)
+					for (int z = 0; z < attributeCount; z++) {
 						stream.skip(1);
+					}
 				}
 			}
+			return numberOfConstructors;
 		}
 	}
 
@@ -312,7 +329,7 @@ public class RealClass {
 	private int accessFlags;
 
 	private List<ClassConstant<Integer>> stringIndices = new ArrayList<ClassConstant<Integer>>();
-	private List<ReferenceIndex> methodIndices = new ArrayList<ReferenceIndex>();
+	private List<ReferenceIndex> methodIndices;
 	private List<Float> floatConstants = new ArrayList<Float>();
 	private List<Long> longConstants = new ArrayList<Long>();
 	private List<String> utfConstants = new ArrayList<String>();
