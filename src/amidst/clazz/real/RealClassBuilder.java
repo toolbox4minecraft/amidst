@@ -7,25 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amidst.clazz.real.RealClassConstant.RealClassConstantType;
+import amidst.documentation.Immutable;
 
+@Immutable
 public class RealClassBuilder {
-	private final String realClassName;
-	private final byte[] classData;
-	private final DataInputStream stream;
-
-	public RealClassBuilder(String realClassName, byte[] classData) {
-		this.realClassName = realClassName;
-		this.classData = classData;
-		this.stream = new DataInputStream(new ByteArrayInputStream(classData));
-	}
-
-	public RealClass construct() {
+	public RealClass construct(String realClassName, byte[] classData) {
+		DataInputStream stream = new DataInputStream(new ByteArrayInputStream(
+				classData));
 		RealClass product = null;
 		try {
-			if (isValidClass()) {
-				int minorVersion = readMinorVersion();
-				int majorVersion = readMajorVersion();
-				int cpSize = readCpSize();
+			if (isValidClass(stream)) {
+				int minorVersion = readMinorVersion(stream);
+				int majorVersion = readMajorVersion(stream);
+				int cpSize = readCpSize(stream);
 				int[] constantTypes = new int[cpSize];
 				RealClassConstant<?>[] constants = new RealClassConstant<?>[cpSize];
 				List<String> utfConstants = new ArrayList<String>();
@@ -33,15 +27,16 @@ public class RealClassBuilder {
 				List<Long> longConstants = new ArrayList<Long>();
 				List<Integer> stringIndices = new ArrayList<Integer>();
 				List<ReferenceIndex> methodIndices = new ArrayList<ReferenceIndex>();
-				readConstants(cpSize, constantTypes, constants, utfConstants,
-						floatConstants, longConstants, stringIndices);
-				int accessFlags = readAccessFlags();
-				skipThisClass();
-				skipSuperClass();
-				skipInterfaces();
-				RealClassField[] fields = readFields();
-				int numberOfMethodsAndConstructors = readNumberOfMethodsAndConstructors();
-				int numberOfConstructors = readMethodsAndConstructors(
+				readConstants(stream, cpSize, constantTypes, constants,
+						utfConstants, floatConstants, longConstants,
+						stringIndices);
+				int accessFlags = readAccessFlags(stream);
+				skipThisClass(stream);
+				skipSuperClass(stream);
+				skipInterfaces(stream);
+				RealClassField[] fields = readFields(stream);
+				int numberOfMethodsAndConstructors = readNumberOfMethodsAndConstructors(stream);
+				int numberOfConstructors = readMethodsAndConstructors(stream,
 						numberOfMethodsAndConstructors, constants,
 						methodIndices);
 				int numberOfMethods = numberOfMethodsAndConstructors
@@ -60,77 +55,78 @@ public class RealClassBuilder {
 		return product;
 	}
 
-	private boolean isValidClass() throws IOException {
+	private boolean isValidClass(DataInputStream stream) throws IOException {
 		return stream.readInt() == 0xCAFEBABE;
 	}
 
-	private int readMinorVersion() throws IOException {
+	private int readMinorVersion(DataInputStream stream) throws IOException {
 		return stream.readUnsignedShort();
 	}
 
-	private int readMajorVersion() throws IOException {
+	private int readMajorVersion(DataInputStream stream) throws IOException {
 		return stream.readUnsignedShort();
 	}
 
-	private int readCpSize() throws IOException {
+	private int readCpSize(DataInputStream stream) throws IOException {
 		return stream.readUnsignedShort() - 1;
 	}
 
-	private void readConstants(int cpSize, int[] constantTypes,
-			RealClassConstant<?>[] constants, List<String> utfConstants,
-			List<Float> floatConstants, List<Long> longConstants,
-			List<Integer> stringIndices) throws IOException {
+	private void readConstants(DataInputStream stream, int cpSize,
+			int[] constantTypes, RealClassConstant<?>[] constants,
+			List<String> utfConstants, List<Float> floatConstants,
+			List<Long> longConstants, List<Integer> stringIndices)
+			throws IOException {
 		for (int q = 0; q < cpSize; q++) {
 			byte type = stream.readByte();
 			constantTypes[q] = type;
-			constants[q] = readConstant(type, utfConstants, floatConstants,
-					longConstants, stringIndices);
+			constants[q] = readConstant(stream, type, utfConstants,
+					floatConstants, longConstants, stringIndices);
 			if (RealClassConstantType.Q_INCREASING_TYPES.contains(type)) {
 				q++;
 			}
 		}
 	}
 
-	private RealClassConstant<?> readConstant(byte type,
-			List<String> utfConstants, List<Float> floatConstants,
+	private RealClassConstant<?> readConstant(DataInputStream stream,
+			byte type, List<String> utfConstants, List<Float> floatConstants,
 			List<Long> longConstants, List<Integer> stringIndices)
 			throws IOException {
 		switch (type) {
 		case RealClassConstantType.STRING:
-			return readString(type, utfConstants);
+			return readString(stream, type, utfConstants);
 		case RealClassConstantType.INTEGER:
-			return readInteger(type);
+			return readInteger(stream, type);
 		case RealClassConstantType.FLOAT:
-			return readFloat(type, floatConstants);
+			return readFloat(stream, type, floatConstants);
 		case RealClassConstantType.LONG:
-			return readLong(type, longConstants);
+			return readLong(stream, type, longConstants);
 		case RealClassConstantType.DOUBLE:
-			return readDouble(type);
+			return readDouble(stream, type);
 		case RealClassConstantType.CLASS_REFERENCE:
-			return readClassReference(type);
+			return readClassReference(stream, type);
 		case RealClassConstantType.STRING_REFERENCE:
-			return readStringReference(type, stringIndices);
+			return readStringReference(stream, type, stringIndices);
 		case RealClassConstantType.FIELD_REFERENCE:
-			return readAnotherReference(type);
+			return readAnotherReference(stream, type);
 		case RealClassConstantType.METHOD_REFERENCE:
-			return readAnotherReference(type);
+			return readAnotherReference(stream, type);
 		case RealClassConstantType.INTERFACE_METHOD_REFERENCE:
-			return readAnotherReference(type);
+			return readAnotherReference(stream, type);
 		case RealClassConstantType.NAME_AND_TYPE_DESCRIPTOR:
-			return readAnotherReference(type);
+			return readAnotherReference(stream, type);
 		default:
 			return null;
 		}
 	}
 
-	private RealClassConstant<String> readString(byte type,
-			List<String> utfConstants) throws IOException {
-		String value = readStringValue();
+	private RealClassConstant<String> readString(DataInputStream stream,
+			byte type, List<String> utfConstants) throws IOException {
+		String value = readStringValue(stream);
 		utfConstants.add(value);
 		return new RealClassConstant<String>(type, value);
 	}
 
-	private String readStringValue() throws IOException {
+	private String readStringValue(DataInputStream stream) throws IOException {
 		char[] result = new char[stream.readUnsignedShort()];
 		for (int i = 0; i < result.length; i++) {
 			result[i] = (char) stream.readByte();
@@ -138,105 +134,111 @@ public class RealClassBuilder {
 		return new String(result);
 	}
 
-	private RealClassConstant<Integer> readInteger(byte type)
-			throws IOException {
+	private RealClassConstant<Integer> readInteger(DataInputStream stream,
+			byte type) throws IOException {
 		int value = stream.readInt();
 		return new RealClassConstant<Integer>(type, value);
 	}
 
-	private RealClassConstant<Float> readFloat(byte type,
-			List<Float> floatConstants) throws IOException {
+	private RealClassConstant<Float> readFloat(DataInputStream stream,
+			byte type, List<Float> floatConstants) throws IOException {
 		float value = stream.readFloat();
 		floatConstants.add(value);
 		return new RealClassConstant<Float>(type, value);
 	}
 
-	private RealClassConstant<Long> readLong(byte type, List<Long> longConstants)
-			throws IOException {
+	private RealClassConstant<Long> readLong(DataInputStream stream, byte type,
+			List<Long> longConstants) throws IOException {
 		long value = stream.readLong();
 		longConstants.add(value);
 		return new RealClassConstant<Long>(type, value);
 	}
 
-	private RealClassConstant<Double> readDouble(byte type) throws IOException {
+	private RealClassConstant<Double> readDouble(DataInputStream stream,
+			byte type) throws IOException {
 		double value = stream.readDouble();
 		return new RealClassConstant<Double>(type, value);
 	}
 
-	private RealClassConstant<Integer> readClassReference(byte type)
-			throws IOException {
+	private RealClassConstant<Integer> readClassReference(
+			DataInputStream stream, byte type) throws IOException {
 		int value = stream.readUnsignedShort();
 		return new RealClassConstant<Integer>(type, value);
 	}
 
-	private RealClassConstant<Integer> readStringReference(byte type,
-			List<Integer> stringIndices) throws IOException {
+	private RealClassConstant<Integer> readStringReference(
+			DataInputStream stream, byte type, List<Integer> stringIndices)
+			throws IOException {
 		int value = stream.readUnsignedShort();
 		stringIndices.add(value);
 		return new RealClassConstant<Integer>(type, value);
 	}
 
-	private RealClassConstant<ReferenceIndex> readAnotherReference(byte type)
-			throws IOException {
-		ReferenceIndex value = readReferenceIndex();
+	private RealClassConstant<ReferenceIndex> readAnotherReference(
+			DataInputStream stream, byte type) throws IOException {
+		ReferenceIndex value = readReferenceIndex(stream);
 		return new RealClassConstant<ReferenceIndex>(type, value);
 	}
 
-	private int readAccessFlags() throws IOException {
+	private int readAccessFlags(DataInputStream stream) throws IOException {
 		return stream.readUnsignedShort();
 	}
 
-	private void skipThisClass() throws IOException {
+	private void skipThisClass(DataInputStream stream) throws IOException {
 		stream.skip(2);
 	}
 
-	private void skipSuperClass() throws IOException {
+	private void skipSuperClass(DataInputStream stream) throws IOException {
 		stream.skip(2);
 	}
 
-	private void skipInterfaces() throws IOException {
+	private void skipInterfaces(DataInputStream stream) throws IOException {
 		stream.skip(2 * stream.readUnsignedShort());
 	}
 
-	private RealClassField[] readFields() throws IOException {
+	private RealClassField[] readFields(DataInputStream stream)
+			throws IOException {
 		RealClassField[] fields = new RealClassField[stream.readUnsignedShort()];
 		for (int i = 0; i < fields.length; i++) {
 			fields[i] = new RealClassField(stream.readUnsignedShort());
 			stream.skip(4);
-			skipAttributes();
+			skipAttributes(stream);
 		}
 		return fields;
 	}
 
-	private int readNumberOfMethodsAndConstructors() throws IOException {
+	private int readNumberOfMethodsAndConstructors(DataInputStream stream)
+			throws IOException {
 		return stream.readUnsignedShort();
 	}
 
-	private int readMethodsAndConstructors(int numberOfMethodsAndConstructors,
+	private int readMethodsAndConstructors(DataInputStream stream,
+			int numberOfMethodsAndConstructors,
 			RealClassConstant<?>[] constants, List<ReferenceIndex> methodIndices)
 			throws IOException {
 		int numberOfConstructors = 0;
 		for (int i = 0; i < numberOfMethodsAndConstructors; i++) {
 			stream.skip(2);
-			ReferenceIndex referenceIndex = readReferenceIndex();
+			ReferenceIndex referenceIndex = readReferenceIndex(stream);
 			methodIndices.add(referenceIndex);
 			String constant = (String) constants[referenceIndex.getValue1() - 1]
 					.getValue();
 			if (constant.contains("<init>")) {
 				numberOfConstructors++;
 			}
-			skipAttributes();
+			skipAttributes(stream);
 		}
 		return numberOfConstructors;
 	}
 
-	private ReferenceIndex readReferenceIndex() throws IOException {
+	private ReferenceIndex readReferenceIndex(DataInputStream stream)
+			throws IOException {
 		int value1 = stream.readUnsignedShort();
 		int value2 = stream.readUnsignedShort();
 		return new ReferenceIndex(value1, value2);
 	}
 
-	private void skipAttributes() throws IOException {
+	private void skipAttributes(DataInputStream stream) throws IOException {
 		int attributeInfoCount = stream.readUnsignedShort();
 		for (int q = 0; q < attributeInfoCount; q++) {
 			stream.skip(2);

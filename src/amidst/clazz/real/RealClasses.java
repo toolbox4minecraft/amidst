@@ -16,6 +16,8 @@ import amidst.utilities.FileSystemUtils;
 public enum RealClasses {
 	;
 
+	private static final RealClassBuilder REAL_CLASS_BUILDER = new RealClassBuilder();
+
 	public static List<RealClass> fromJarFile(File jarFile) {
 		return readRealClassesFromJarFile(jarFile);
 	}
@@ -60,8 +62,7 @@ public enum RealClasses {
 				byte[] classData = new byte[stream.available()];
 				stream.read(classData);
 				stream.close();
-				return new RealClassBuilder(realClassName, classData)
-						.construct();
+				return REAL_CLASS_BUILDER.construct(realClassName, classData);
 			}
 		}
 		return null;
