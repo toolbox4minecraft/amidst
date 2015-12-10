@@ -93,62 +93,6 @@ public class RealClass {
 			return stream.readInt() == 0xCAFEBABE;
 		}
 
-		private void readMethods() throws IOException {
-			int numberOfMethodsAndConstructors = stream.readUnsignedShort();
-			product.numberOfMethods = numberOfMethodsAndConstructors;
-			for (int i = 0; i < numberOfMethodsAndConstructors; i++) {
-				stream.skip(2);
-				int nameIndex = stream.readUnsignedShort();
-				product.methodIndices.add(new ReferenceIndex(nameIndex, stream
-						.readUnsignedShort()));
-
-				if (((String) product.constants[nameIndex - 1].getValue())
-						.contains("<init>")) {
-					product.numberOfConstructors++;
-					product.numberOfMethods--;
-				}
-
-				int attributeInfoCount = stream.readUnsignedShort();
-				for (int q = 0; q < attributeInfoCount; q++) {
-					stream.skip(2);
-					int attributeCount = stream.readInt();
-					for (int z = 0; z < attributeCount; z++)
-						stream.skip(1);
-				}
-			}
-		}
-
-		private void readFields() throws IOException {
-			product.fields = new Field[stream.readUnsignedShort()];
-			for (int i = 0; i < product.fields.length; i++) {
-				product.fields[i] = new Field(stream.readUnsignedShort());
-				stream.skip(4);
-				int attributeInfoCount = stream.readUnsignedShort();
-				for (int q = 0; q < attributeInfoCount; q++) {
-					stream.skip(2);
-					int attributeCount = stream.readInt();
-					for (int z = 0; z < attributeCount; z++)
-						stream.skip(1);
-				}
-			}
-		}
-
-		private void skipInterfaces() throws IOException {
-			stream.skip(2 * stream.readUnsignedShort());
-		}
-
-		private void skipSuperClass() throws IOException {
-			stream.skip(2);
-		}
-
-		private void skipThisClass() throws IOException {
-			stream.skip(2);
-		}
-
-		private void readAccessFlag() throws IOException {
-			product.accessFlags = stream.readUnsignedShort();
-		}
-
 		private void readVersion() throws IOException {
 			product.minorVersion = stream.readUnsignedShort();
 			product.majorVersion = stream.readUnsignedShort();
@@ -208,54 +152,6 @@ public class RealClass {
 			return q;
 		}
 
-		private void readAnotherReference(int q, byte tag) throws IOException {
-			ReferenceIndex referenceIndex = new ReferenceIndex(
-					stream.readUnsignedShort(), stream.readUnsignedShort());
-			product.constants[q] = new ClassConstant<ReferenceIndex>(tag,
-					offset, referenceIndex);
-			offset += 4;
-		}
-
-		private void readStringReference(int q, byte tag) throws IOException {
-			ClassConstant<Integer> strRef = new ClassConstant<Integer>(tag,
-					offset, stream.readUnsignedShort());
-			product.constants[q] = strRef;
-			product.stringIndices.add(strRef);
-			offset += 2;
-		}
-
-		private void readClassReference(int q, byte tag) throws IOException {
-			product.constants[q] = new ClassConstant<Integer>(tag, offset,
-					stream.readUnsignedShort());
-			offset += 2;
-		}
-
-		private void readDouble(int q, byte tag) throws IOException {
-			product.constants[q] = new ClassConstant<Double>(tag, offset,
-					stream.readDouble());
-			offset += 8;
-		}
-
-		private void readLong(int q, byte tag) throws IOException {
-			long cLong = stream.readLong();
-			product.constants[q] = new ClassConstant<Long>(tag, offset, cLong);
-			product.longConstants.add(cLong);
-			offset += 8;
-		}
-
-		private void readFloat(int q, byte tag) throws IOException {
-			float cFloat = stream.readFloat();
-			product.constants[q] = new ClassConstant<Float>(tag, offset, cFloat);
-			product.floatConstants.add(cFloat);
-			offset += 4;
-		}
-
-		private void readInteger(int q, byte tag) throws IOException {
-			product.constants[q] = new ClassConstant<Integer>(tag, offset,
-					stream.readInt());
-			offset += 4;
-		}
-
 		private void readString(int q, byte tag) throws IOException {
 			int len = stream.readUnsignedShort();
 			String stringValue = readStringValue(len);
@@ -271,6 +167,110 @@ public class RealClass {
 				stringBuilder.append((char) stream.readByte());
 			}
 			return stringBuilder.toString();
+		}
+
+		private void readInteger(int q, byte tag) throws IOException {
+			product.constants[q] = new ClassConstant<Integer>(tag, offset,
+					stream.readInt());
+			offset += 4;
+		}
+
+		private void readFloat(int q, byte tag) throws IOException {
+			float cFloat = stream.readFloat();
+			product.constants[q] = new ClassConstant<Float>(tag, offset, cFloat);
+			product.floatConstants.add(cFloat);
+			offset += 4;
+		}
+
+		private void readLong(int q, byte tag) throws IOException {
+			long cLong = stream.readLong();
+			product.constants[q] = new ClassConstant<Long>(tag, offset, cLong);
+			product.longConstants.add(cLong);
+			offset += 8;
+		}
+
+		private void readDouble(int q, byte tag) throws IOException {
+			product.constants[q] = new ClassConstant<Double>(tag, offset,
+					stream.readDouble());
+			offset += 8;
+		}
+
+		private void readClassReference(int q, byte tag) throws IOException {
+			product.constants[q] = new ClassConstant<Integer>(tag, offset,
+					stream.readUnsignedShort());
+			offset += 2;
+		}
+
+		private void readStringReference(int q, byte tag) throws IOException {
+			ClassConstant<Integer> strRef = new ClassConstant<Integer>(tag,
+					offset, stream.readUnsignedShort());
+			product.constants[q] = strRef;
+			product.stringIndices.add(strRef);
+			offset += 2;
+		}
+
+		private void readAnotherReference(int q, byte tag) throws IOException {
+			ReferenceIndex referenceIndex = new ReferenceIndex(
+					stream.readUnsignedShort(), stream.readUnsignedShort());
+			product.constants[q] = new ClassConstant<ReferenceIndex>(tag,
+					offset, referenceIndex);
+			offset += 4;
+		}
+
+		private void readAccessFlag() throws IOException {
+			product.accessFlags = stream.readUnsignedShort();
+		}
+
+		private void skipThisClass() throws IOException {
+			stream.skip(2);
+		}
+
+		private void skipSuperClass() throws IOException {
+			stream.skip(2);
+		}
+
+		private void skipInterfaces() throws IOException {
+			stream.skip(2 * stream.readUnsignedShort());
+		}
+
+		private void readFields() throws IOException {
+			product.fields = new Field[stream.readUnsignedShort()];
+			for (int i = 0; i < product.fields.length; i++) {
+				product.fields[i] = new Field(stream.readUnsignedShort());
+				stream.skip(4);
+				int attributeInfoCount = stream.readUnsignedShort();
+				for (int q = 0; q < attributeInfoCount; q++) {
+					stream.skip(2);
+					int attributeCount = stream.readInt();
+					for (int z = 0; z < attributeCount; z++)
+						stream.skip(1);
+				}
+			}
+		}
+
+		private void readMethods() throws IOException {
+			int numberOfMethodsAndConstructors = stream.readUnsignedShort();
+			product.numberOfMethods = numberOfMethodsAndConstructors;
+			for (int i = 0; i < numberOfMethodsAndConstructors; i++) {
+				stream.skip(2);
+				int nameIndex = stream.readUnsignedShort();
+				product.methodIndices.add(new ReferenceIndex(nameIndex, stream
+						.readUnsignedShort()));
+
+				if (((String) product.constants[nameIndex - 1].getValue())
+						.contains("<init>")) {
+					product.numberOfConstructors++;
+					product.numberOfMethods--;
+				}
+
+				int attributeInfoCount = stream.readUnsignedShort();
+				for (int q = 0; q < attributeInfoCount; q++) {
+					stream.skip(2);
+					int attributeCount = stream.readInt();
+					for (int z = 0; z < attributeCount; z++)
+						stream.skip(1);
+				}
+			}
 		}
 	}
 
