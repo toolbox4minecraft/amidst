@@ -76,7 +76,7 @@ public class Actions {
 		}
 	}
 
-	public void newFromFileOrFolder() {
+	public void openWorldFile() {
 		File file = mainWindow.askForMinecraftWorldFile();
 		if (file != null) {
 			try {
@@ -95,32 +95,44 @@ public class Actions {
 		application.exitGracefully();
 	}
 
-	public void findStronghold() {
+	public void goToCoordinate() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
+		if (worldSurroundings != null) {
+			String input = mainWindow.askForCoordinates();
+			if (input != null) {
+				CoordinatesInWorld coordinates = CoordinatesInWorld
+						.tryParse(input);
+				if (coordinates != null) {
+					worldSurroundings.centerOn(coordinates);
+				} else {
+					Log.w("Invalid location entered, ignoring.");
+					mainWindow
+							.displayMessage("You entered an invalid location.");
+				}
+			}
+		}
+	}
+
+	public void goToSpawn() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
+		if (worldSurroundings != null) {
+			worldSurroundings.centerOn(worldSurroundings.getSpawnWorldIcon());
+		}
+	}
+
+	public void goToStronghold() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
 			WorldIcon stronghold = mainWindow.askForOptions("Go to",
 					"Select Stronghold:",
 					worldSurroundings.getStrongholdWorldIcons());
 			if (stronghold != null) {
-				worldSurroundings.centerOn(stronghold.getCoordinates());
+				worldSurroundings.centerOn(stronghold);
 			}
 		}
 	}
 
-	public void gotoCoordinate() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			CoordinatesInWorld coordinates = mainWindow.askForCoordinates();
-			if (coordinates != null) {
-				worldSurroundings.centerOn(coordinates);
-			} else {
-				mainWindow.displayMessage("You entered an invalid location.");
-				Log.w("Invalid location entered, ignoring.");
-			}
-		}
-	}
-
-	public void gotoPlayer() {
+	public void goToPlayer() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
 			List<WorldIcon> playerWorldIcons = worldSurroundings
@@ -129,34 +141,12 @@ public class Actions {
 				WorldIcon player = mainWindow.askForOptions("Go to",
 						"Select player:", playerWorldIcons);
 				if (player != null) {
-					worldSurroundings.centerOn(player.getCoordinates());
+					worldSurroundings.centerOn(player);
 				}
 			} else {
 				mainWindow
 						.displayMessage("There are no players in this world.");
 			}
-		}
-	}
-
-	public void capture() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			BufferedImage image = worldSurroundings.createCaptureImage();
-			File file = mainWindow.askForScreenshotSaveFile();
-			if (file != null) {
-				saveImageToFile(image, file);
-			}
-			image.flush();
-		}
-	}
-
-	public void copySeedToClipboard() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			String seed = "" + worldSurroundings.getWorldSeed().getLong();
-			StringSelection selection = new StringSelection(seed);
-			Toolkit.getDefaultToolkit().getSystemClipboard()
-					.setContents(selection, selection);
 		}
 	}
 
@@ -186,6 +176,28 @@ public class Actions {
 						+ "If the backup fails, we will not write the changes.\n"
 						+ "You can find the backup files in a sub folder of the world, named 'amidst_backup'.\n"
 						+ "Especially, make sure to not have the world loaded in minecraft during this process.");
+	}
+
+	public void copySeedToClipboard() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
+		if (worldSurroundings != null) {
+			String seed = "" + worldSurroundings.getWorldSeed().getLong();
+			StringSelection selection = new StringSelection(seed);
+			Toolkit.getDefaultToolkit().getSystemClipboard()
+					.setContents(selection, selection);
+		}
+	}
+
+	public void saveCaptureImage() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
+		if (worldSurroundings != null) {
+			BufferedImage image = worldSurroundings.createCaptureImage();
+			File file = mainWindow.askForCaptureImageSaveFile();
+			if (file != null) {
+				saveImageToFile(image, file);
+			}
+			image.flush();
+		}
 	}
 
 	public void selectBiomeColorProfile(BiomeColorProfile profile) {

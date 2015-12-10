@@ -17,9 +17,9 @@ public class World {
 
 	private final BiomeDataOracle biomeDataOracle;
 	private final SlimeChunkOracle slimeChunkOracle;
-	private final CachedWorldIconProducer playerProducer;
-	private final CachedWorldIconProducer strongholdProducer;
 	private final CachedWorldIconProducer spawnProducer;
+	private final CachedWorldIconProducer strongholdProducer;
+	private final CachedWorldIconProducer playerProducer;
 	private final WorldIconProducer templeProducer;
 	private final WorldIconProducer villageProducer;
 	private final WorldIconProducer oceanMonumentProducer;
@@ -28,9 +28,9 @@ public class World {
 	World(WorldSeed seed, WorldType worldType, String generatorOptions,
 			MovablePlayerList movablePlayerList,
 			BiomeDataOracle biomeDataOracle, SlimeChunkOracle slimeChunkOracle,
-			CachedWorldIconProducer playerProducer,
-			CachedWorldIconProducer strongholdProducer,
 			CachedWorldIconProducer spawnProducer,
+			CachedWorldIconProducer strongholdProducer,
+			CachedWorldIconProducer playerProducer,
 			WorldIconProducer templeProducer,
 			WorldIconProducer villageProducer,
 			WorldIconProducer oceanMonumentProducer,
@@ -41,9 +41,9 @@ public class World {
 		this.movablePlayerList = movablePlayerList;
 		this.biomeDataOracle = biomeDataOracle;
 		this.slimeChunkOracle = slimeChunkOracle;
-		this.playerProducer = playerProducer;
-		this.strongholdProducer = strongholdProducer;
 		this.spawnProducer = spawnProducer;
+		this.strongholdProducer = strongholdProducer;
+		this.playerProducer = playerProducer;
 		this.templeProducer = templeProducer;
 		this.villageProducer = villageProducer;
 		this.oceanMonumentProducer = oceanMonumentProducer;
@@ -77,16 +77,16 @@ public class World {
 		return slimeChunkOracle;
 	}
 
-	public CachedWorldIconProducer getPlayerProducer() {
-		return playerProducer;
+	public CachedWorldIconProducer getSpawnProducer() {
+		return spawnProducer;
 	}
 
 	public CachedWorldIconProducer getStrongholdProducer() {
 		return strongholdProducer;
 	}
 
-	public CachedWorldIconProducer getSpawnProducer() {
-		return spawnProducer;
+	public CachedWorldIconProducer getPlayerProducer() {
+		return playerProducer;
 	}
 
 	public WorldIconProducer getTempleProducer() {
@@ -105,16 +105,16 @@ public class World {
 		return netherFortressProducer;
 	}
 
-	public List<WorldIcon> getPlayerWorldIcons() {
-		return playerProducer.getWorldIcons();
+	public WorldIcon getSpawnWorldIcon() {
+		return spawnProducer.getFirstWorldIcon();
 	}
 
 	public List<WorldIcon> getStrongholdWorldIcons() {
 		return strongholdProducer.getWorldIcons();
 	}
 
-	public WorldIcon getSpawnWorldIcon() {
-		return spawnProducer.getFirstWorldIcon();
+	public List<WorldIcon> getPlayerWorldIcons() {
+		return playerProducer.getWorldIcons();
 	}
 
 	public void reloadPlayerWorldIcons() {

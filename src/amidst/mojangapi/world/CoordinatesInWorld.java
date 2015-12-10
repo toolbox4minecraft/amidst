@@ -7,7 +7,7 @@ import amidst.utilities.CoordinateUtils;
 
 @Immutable
 public class CoordinatesInWorld {
-	public static CoordinatesInWorld fromString(String coordinates) {
+	public static CoordinatesInWorld tryParse(String coordinates) {
 		String[] parsedCoordinates = coordinates.replaceAll(" ", "").split(",");
 		if (parsedCoordinates.length != 2) {
 			return null;

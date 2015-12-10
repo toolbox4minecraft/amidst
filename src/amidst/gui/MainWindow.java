@@ -27,7 +27,6 @@ import amidst.gui.menu.PNGFileFilter;
 import amidst.gui.worldsurroundings.WorldSurroundings;
 import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
@@ -205,11 +204,11 @@ public class MainWindow {
 		return result;
 	}
 
-	public File askForScreenshotSaveFile() {
-		return getSelectedFileOrNull(createScreenshotSaveFileChooser());
+	public File askForCaptureImageSaveFile() {
+		return getSelectedFileOrNull(createCaptureImageSaveFileChooser());
 	}
 
-	private JFileChooser createScreenshotSaveFileChooser() {
+	private JFileChooser createCaptureImageSaveFileChooser() {
 		JFileChooser result = new JFileChooser();
 		result.setFileFilter(new PNGFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
@@ -261,14 +260,8 @@ public class MainWindow {
 				JOptionPane.PLAIN_MESSAGE, null, choicesArray, choicesArray[0]);
 	}
 
-	public CoordinatesInWorld askForCoordinates() {
-		String coordinates = askForString("Go To",
-				"Enter coordinates: (Ex. 123,456)");
-		if (coordinates != null) {
-			return CoordinatesInWorld.fromString(coordinates);
-		} else {
-			return null;
-		}
+	public String askForCoordinates() {
+		return askForString("Go To", "Enter coordinates: (Ex. 123,456)");
 	}
 
 	public String askForPlayerHeight(long currentHeight) {

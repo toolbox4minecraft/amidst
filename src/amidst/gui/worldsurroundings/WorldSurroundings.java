@@ -73,6 +73,11 @@ public class WorldSurroundings {
 		translator.centerOn(coordinates);
 	}
 
+	public void centerOn(WorldIcon worldIcon) {
+		translator.centerOn(worldIcon.getCoordinates());
+		worldIconSelection.select(worldIcon);
+	}
+
 	public BufferedImage createCaptureImage() {
 		return viewer.createCaptureImage();
 	}

@@ -27,8 +27,7 @@ public class BiomeColorMenuFactory {
 
 		private final Actions actions;
 
-		private BiomeColorProfileVisitorImpl(JMenu parentMenu,
-				Actions actions) {
+		private BiomeColorProfileVisitorImpl(JMenu parentMenu, Actions actions) {
 			this.actions = actions;
 			menuStack.add(parentMenu);
 		}
@@ -109,7 +108,7 @@ public class BiomeColorMenuFactory {
 		}
 	}
 
-	private final JMenu parentMenu = new JMenu("Biome profile");
+	private final JMenu parentMenu = new JMenu("Biome color profile");
 	private final Actions actions;
 	private final BiomeColorProfileLoader biomeColorProfileLoader = new BiomeColorProfileLoader();
 
@@ -134,7 +133,7 @@ public class BiomeColorMenuFactory {
 	}
 
 	private JMenuItem createReloadMenuItem() {
-		final JMenuItem result = new JMenuItem("Reload Menu");
+		final JMenuItem result = new JMenuItem("Reload biome color profiles");
 		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B,
 				InputEvent.CTRL_DOWN_MASK));
 		result.addActionListener(new ActionListener() {

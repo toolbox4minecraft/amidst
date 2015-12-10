@@ -42,7 +42,7 @@ public class AmidstMenuBuilder {
 		JMenuBar result = new JMenuBar();
 		result.add(create_File());
 		worldMenu = result.add(create_World());
-		result.add(create_Players());
+		result.add(create_Layers());
 		result.add(create_Options());
 		result.add(create_Help());
 		return result;
@@ -51,23 +51,17 @@ public class AmidstMenuBuilder {
 	private JMenu create_File() {
 		JMenu result = new JMenu("File");
 		result.setMnemonic(KeyEvent.VK_F);
-		result.add(create_File_New());
+		result.add(create_File_NewFromSeed());
+		result.add(create_File_NewFromRandom());
+		result.add(create_File_OpenWorldFile());
+		result.addSeparator();
 		result.add(create_File_SwitchProfile());
 		result.add(create_File_Exit());
 		return result;
 	}
 
-	private JMenuItem create_File_New() {
-		JMenu result = new JMenu("New");
-		result.setMnemonic(KeyEvent.VK_N);
-		result.add(create_File_New_Seed());
-		result.add(create_File_New_File());
-		result.add(create_File_New_Random());
-		return result;
-	}
-
-	private JMenuItem create_File_New_Seed() {
-		JMenuItem result = new JMenuItem("From seed");
+	private JMenuItem create_File_NewFromSeed() {
+		JMenuItem result = new JMenuItem("New from seed");
 		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
 				InputEvent.CTRL_DOWN_MASK));
 		result.addActionListener(new ActionListener() {
@@ -79,19 +73,8 @@ public class AmidstMenuBuilder {
 		return result;
 	}
 
-	private JMenuItem create_File_New_File() {
-		JMenuItem result = new JMenuItem("From file or folder");
-		result.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				actions.newFromFileOrFolder();
-			}
-		});
-		return result;
-	}
-
-	private JMenuItem create_File_New_Random() {
-		JMenuItem result = new JMenuItem("From random seed");
+	private JMenuItem create_File_NewFromRandom() {
+		JMenuItem result = new JMenuItem("New from random seed");
 		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
 				InputEvent.CTRL_DOWN_MASK));
 		result.addActionListener(new ActionListener() {
@@ -103,8 +86,19 @@ public class AmidstMenuBuilder {
 		return result;
 	}
 
+	private JMenuItem create_File_OpenWorldFile() {
+		JMenuItem result = new JMenuItem("Open world file ...");
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actions.openWorldFile();
+			}
+		});
+		return result;
+	}
+
 	private JMenuItem create_File_SwitchProfile() {
-		JMenuItem result = new JMenuItem("Switch profile");
+		JMenuItem result = new JMenuItem("Switch profile ...");
 		result.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -129,119 +123,75 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("World");
 		result.setEnabled(false);
 		result.setMnemonic(KeyEvent.VK_M);
-		result.add(create_World_Find());
-		result.add(create_World_GoTo());
-		result.add(create_World_Layers());
+		result.add(create_World_GoToCoordinate());
+		result.add(create_World_GoToSpawn());
+		result.add(create_World_GoToStronghold());
+		result.add(create_World_GoToPlayer());
+		result.addSeparator();
+		savePlayerLocationsMenu = result
+				.add(create_World_SavePlayerLocations());
+		reloadPlayerLocationsMenu = result
+				.add(create_Players_ReloadPlayerLocations());
+		result.add(create_World_HowCanIMoveAPlayer());
+		result.addSeparator();
 		result.add(create_World_CopySeed());
-		result.add(create_World_Capture());
+		result.add(create_World_SaveCaptureImage());
 		return result;
 	}
 
-	private JMenuItem create_World_Find() {
-		JMenu result = new JMenu("Find");
-		result.add(create_World_Find_Stronghold());
+	private JMenuItem create_World_GoToCoordinate() {
+		JMenuItem result = new JMenuItem("Go to coordinate");
+		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
+				InputEvent.CTRL_DOWN_MASK));
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actions.goToCoordinate();
+			}
+		});
 		return result;
 	}
 
-	private JMenuItem create_World_Find_Stronghold() {
-		JMenuItem result = new JMenuItem("Stronghold");
+	private JMenuItem create_World_GoToSpawn() {
+		JMenuItem result = new JMenuItem("Go to spawn");
 		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
 				InputEvent.CTRL_DOWN_MASK));
 		result.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				actions.findStronghold();
+				actions.goToSpawn();
 			}
 		});
 		return result;
 	}
 
-	private JMenuItem create_World_GoTo() {
-		JMenu result = new JMenu("Go to");
-		result.add(create_World_GoTo_Coordinate());
-		result.add(create_World_GoTo_Player());
+	private JMenuItem create_World_GoToStronghold() {
+		JMenuItem result = new JMenuItem("Go to stronghold");
+		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
+				InputEvent.CTRL_DOWN_MASK));
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actions.goToStronghold();
+			}
+		});
 		return result;
 	}
 
-	private JMenuItem create_World_GoTo_Coordinate() {
-		JMenuItem result = new JMenuItem("Coordinate");
+	private JMenuItem create_World_GoToPlayer() {
+		JMenuItem result = new JMenuItem("Go to player");
 		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
 				InputEvent.CTRL_DOWN_MASK));
 		result.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				actions.gotoCoordinate();
+				actions.goToPlayer();
 			}
 		});
 		return result;
 	}
 
-	private JMenuItem create_World_GoTo_Player() {
-		JMenuItem result = new JMenuItem("Player");
-		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
-				InputEvent.CTRL_DOWN_MASK));
-		result.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				actions.gotoPlayer();
-			}
-		});
-		return result;
-	}
-
-	private JMenuItem create_World_Layers() {
-		JMenu result = new JMenu("Layers");
-		// @formatter:off
-		result.add(createJCheckBoxItem("Grid",						"grid.png",				KeyEvent.VK_1, options.showGrid));
-		result.add(createJCheckBoxItem("Slime chunks",				"slime.png",			KeyEvent.VK_2, options.showSlimeChunks));
-		result.add(createJCheckBoxItem("Village Icons",				"village.png",			KeyEvent.VK_3, options.showVillages));
-		result.add(createJCheckBoxItem("Ocean Monument Icons",		"ocean_monument.png",	KeyEvent.VK_4, options.showOceanMonuments));
-		result.add(createJCheckBoxItem("Temple/Witch Hut Icons",	"desert.png",			KeyEvent.VK_5, options.showTemples));
-		result.add(createJCheckBoxItem("Stronghold Icons",			"stronghold.png",		KeyEvent.VK_6, options.showStrongholds));
-		result.add(createJCheckBoxItem("Player Icons",				"player.png",			KeyEvent.VK_7, options.showPlayers));
-		result.add(createJCheckBoxItem("Nether Fortress Icons",		"nether_fortress.png",	KeyEvent.VK_8, options.showNetherFortresses));
-		result.add(createJCheckBoxItem("Spawn Location Icon",		"spawn.png",			KeyEvent.VK_9, options.showSpawn));
-		// @formatter:on
-		return result;
-	}
-
-	private JMenuItem create_World_CopySeed() {
-		JMenuItem result = new JMenuItem("Copy Seed to Clipboard");
-		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
-				InputEvent.CTRL_DOWN_MASK));
-		result.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				actions.copySeedToClipboard();
-			}
-		});
-		return result;
-	}
-
-	private JMenuItem create_World_Capture() {
-		JMenuItem result = new JMenuItem("Capture");
-		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,
-				InputEvent.CTRL_DOWN_MASK));
-		result.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				actions.capture();
-			}
-		});
-		return result;
-	}
-
-	private JMenu create_Players() {
-		JMenu result = new JMenu("Players");
-		savePlayerLocationsMenu = result
-				.add(create_Players_SavePlayerLocations());
-		reloadPlayerLocationsMenu = result
-				.add(create_Players_ReloadPlayerLocations());
-		result.add(create_Players_HowCanIMoveAPlayer());
-		return result;
-	}
-
-	private JMenuItem create_Players_SavePlayerLocations() {
+	private JMenuItem create_World_SavePlayerLocations() {
 		JMenuItem result = new JMenuItem("Save player locations");
 		result.setEnabled(false);
 		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
@@ -267,7 +217,7 @@ public class AmidstMenuBuilder {
 		return result;
 	}
 
-	private JMenuItem create_Players_HowCanIMoveAPlayer() {
+	private JMenuItem create_World_HowCanIMoveAPlayer() {
 		JMenuItem result = new JMenuItem("How can I move a player?");
 		result.addActionListener(new ActionListener() {
 			@Override
@@ -278,19 +228,56 @@ public class AmidstMenuBuilder {
 		return result;
 	}
 
-	private JMenu create_Options() {
-		JMenu result = new JMenu("Options");
-		result.setMnemonic(KeyEvent.VK_M);
-		result.add(create_Options_Map());
-		if (BiomeColorProfile.isEnabled()) {
-			result.add(create_Options_BiomeColor());
-		}
-		result.add(create_Options_WorldType());
+	private JMenuItem create_World_CopySeed() {
+		JMenuItem result = new JMenuItem("Copy Seed to Clipboard");
+		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
+				InputEvent.CTRL_DOWN_MASK));
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actions.copySeedToClipboard();
+			}
+		});
 		return result;
 	}
 
-	private JMenu create_Options_Map() {
-		JMenu result = new JMenu("Map");
+	private JMenuItem create_World_SaveCaptureImage() {
+		JMenuItem result = new JMenuItem("Save capture image ...");
+		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,
+				InputEvent.CTRL_DOWN_MASK));
+		result.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actions.saveCaptureImage();
+			}
+		});
+		return result;
+	}
+
+	private JMenuItem create_Layers() {
+		JMenu result = new JMenu("Layers");
+		// @formatter:off
+		result.add(createJCheckBoxItem("Grid",						"grid.png",				KeyEvent.VK_1, options.showGrid));
+		result.add(createJCheckBoxItem("Slime chunks",				"slime.png",			KeyEvent.VK_2, options.showSlimeChunks));
+		result.add(createJCheckBoxItem("Village Icons",				"village.png",			KeyEvent.VK_3, options.showVillages));
+		result.add(createJCheckBoxItem("Ocean Monument Icons",		"ocean_monument.png",	KeyEvent.VK_4, options.showOceanMonuments));
+		result.add(createJCheckBoxItem("Temple/Witch Hut Icons",	"desert.png",			KeyEvent.VK_5, options.showTemples));
+		result.add(createJCheckBoxItem("Stronghold Icons",			"stronghold.png",		KeyEvent.VK_6, options.showStrongholds));
+		result.add(createJCheckBoxItem("Player Icons",				"player.png",			KeyEvent.VK_7, options.showPlayers));
+		result.add(createJCheckBoxItem("Nether Fortress Icons",		"nether_fortress.png",	KeyEvent.VK_8, options.showNetherFortresses));
+		result.add(createJCheckBoxItem("Spawn Location Icon",		"spawn.png",			KeyEvent.VK_9, options.showSpawn));
+		// @formatter:on
+		return result;
+	}
+
+	private JMenu create_Options() {
+		JMenu result = new JMenu("Options");
+		result.setMnemonic(KeyEvent.VK_M);
+		result.add(create_Options_DefaultWorldType());
+		if (BiomeColorProfile.isEnabled()) {
+			result.add(create_Options_BiomeColor());
+		}
+		result.addSeparator();
 		// @formatter:off
 		result.add(createJCheckBoxItem("Smooth Scrolling",					null, KeyEvent.VK_I,	options.smoothScrolling));
 		result.add(createJCheckBoxItem("Restrict Maximum Zoom",				null, KeyEvent.VK_Z,	options.maxZoom));
@@ -302,18 +289,18 @@ public class AmidstMenuBuilder {
 		return result;
 	}
 
-	private JMenu create_Options_BiomeColor() {
-		return new BiomeColorMenuFactory(actions).getMenu();
-	}
-
-	private JMenu create_Options_WorldType() {
-		JMenu result = new JMenu("World type");
+	private JMenu create_Options_DefaultWorldType() {
+		JMenu result = new JMenu("Default world type");
 		SelectButtonModel[] buttonModels = options.worldType.getButtonModels();
 		for (SelectButtonModel buttonModel : buttonModels) {
 			result.add(createJCheckBoxItem(buttonModel.getName(), null, -1,
 					buttonModel));
 		}
 		return result;
+	}
+
+	private JMenu create_Options_BiomeColor() {
+		return new BiomeColorMenuFactory(actions).getMenu();
 	}
 
 	private JMenu create_Help() {
