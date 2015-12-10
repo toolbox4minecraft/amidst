@@ -67,7 +67,6 @@ public class RealClass {
 					skipInterfaces();
 					readFields();
 					readMethods();
-					readAttributes();
 				}
 				stream.close();
 			} catch (IOException e) {
@@ -87,9 +86,6 @@ public class RealClass {
 
 		private boolean isValidClass() throws IOException {
 			return stream.readInt() == 0xCAFEBABE;
-		}
-
-		private void readAttributes() {
 		}
 
 		private void readMethods() throws IOException {
