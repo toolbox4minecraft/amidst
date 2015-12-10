@@ -87,7 +87,7 @@ public class LicenseWindow {
 	private void initContentPane() {
 		Container contentPane = frame.getContentPane();
 		contentPane.setLayout(new MigLayout());
-		contentPane.add(licenseList, "w 100!, h 0:2400:2400");
+		contentPane.add(licenseList, "w 150!, h 0:2400:2400");
 		contentPane.add(createScrollPane(), "w 0:4800:4800, h 0:2400:2400");
 	}
 
