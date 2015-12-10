@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,24 @@ public class RealClass {
 		public static final int VOLATILE = 0x40;
 		public static final int TRANSIENT = 0x80;
 		public static final int INTERFACE = 0x0200;
+	}
+
+	@Immutable
+	private static class ConstantType {
+		private static final int STRING = 1;
+		private static final int INTEGER = 3;
+		private static final int FLOAT = 4;
+		private static final int LONG = 5;
+		private static final int DOUBLE = 6;
+		private static final int CLASS_REFERENCE = 7;
+		private static final int STRING_REFERENCE = 8;
+		private static final int FIELD_REFERENCE = 9;
+		private static final int METHOD_REFERENCE = 10;
+		private static final int INTERFACE_METHOD_REFERENCE = 11;
+		private static final int NAME_AND_TYPE_DESCRIPTOR = 12;
+
+		private static final List<Integer> Q_INCREASING_TYPES = Arrays.asList(
+				LONG, DOUBLE);
 	}
 
 	@Immutable
@@ -69,22 +88,27 @@ public class RealClass {
 					product = new RealClass(realClassName, classData);
 					product.minorVersion = readMinorVersion();
 					product.majorVersion = readMajorVersion();
-					readConstants();
+
+					int cpSize = readCpSize();
+					int[] constantTypes = new int[cpSize];
+					ClassConstant<?>[] constants = new ClassConstant<?>[cpSize];
+					readConstants(cpSize, constantTypes, constants);
+
 					product.accessFlags = readAccessFlag();
 					skipThisClass();
 					skipSuperClass();
 					skipInterfaces();
 					product.fields = readFields();
 
-					int numberOfMethodsAndConstructors = stream
-							.readUnsignedShort();
-					ClassConstant<?>[] constants = product.constants;
+					int numberOfMethodsAndConstructors = readNumberOfMethodsAndConstructors();
 					List<ReferenceIndex> methodIndices = new ArrayList<ReferenceIndex>();
 
 					int numberOfConstructors = readMethodsAndConstructors(
 							numberOfMethodsAndConstructors, constants,
 							methodIndices);
 
+					product.constantTypes = constantTypes;
+					product.constants = constants;
 					product.methodIndices = methodIndices;
 					product.numberOfConstructors = numberOfConstructors;
 					product.numberOfMethods = numberOfMethodsAndConstructors
@@ -110,56 +134,49 @@ public class RealClass {
 			return stream.readUnsignedShort();
 		}
 
-		private void readConstants() throws IOException {
-			int cpSize = stream.readUnsignedShort() - 1;
-			product.constants = new ClassConstant<?>[cpSize];
-			product.constantTypes = new int[cpSize];
+		private int readCpSize() throws IOException {
+			return stream.readUnsignedShort() - 1;
+		}
+
+		private void readConstants(int cpSize, int[] constantTypes,
+				ClassConstant<?>[] constants) throws IOException {
 			for (int q = 0; q < cpSize; q++) {
 				byte type = stream.readByte();
-				product.constantTypes[q] = type;
-				q = readConstant(q, type);
+				constantTypes[q] = type;
+				constants[q] = readConstant(type);
+				if (ConstantType.Q_INCREASING_TYPES.contains(type)) {
+					q++;
+				}
 			}
 		}
 
-		private int readConstant(int q, byte type) throws IOException {
+		private ClassConstant<?> readConstant(byte type) throws IOException {
 			switch (type) {
-			case 1:
-				product.constants[q] = readString(type);
-				break;
-			case 3:
-				product.constants[q] = readInteger(type);
-				break;
-			case 4:
-				product.constants[q] = readFloat(type);
-				break;
-			case 5:
-				product.constants[q] = readLong(type);
-				q++;
-				break;
-			case 6:
-				product.constants[q] = readDouble(type);
-				q++;
-				break;
-			case 7:
-				product.constants[q] = readClassReference(type);
-				break;
-			case 8:
-				product.constants[q] = readStringReference(type);
-				break;
-			case 9: // Field reference
-				product.constants[q] = readAnotherReference(type);
-				break;
-			case 10: // Method reference
-				product.constants[q] = readAnotherReference(type);
-				break;
-			case 11: // Interface method reference
-				product.constants[q] = readAnotherReference(type);
-				break;
-			case 12: // Name and type descriptor
-				product.constants[q] = readAnotherReference(type);
-				break;
+			case ConstantType.STRING:
+				return readString(type);
+			case ConstantType.INTEGER:
+				return readInteger(type);
+			case ConstantType.FLOAT:
+				return readFloat(type);
+			case ConstantType.LONG:
+				return readLong(type);
+			case ConstantType.DOUBLE:
+				return readDouble(type);
+			case ConstantType.CLASS_REFERENCE:
+				return readClassReference(type);
+			case ConstantType.STRING_REFERENCE:
+				return readStringReference(type);
+			case ConstantType.FIELD_REFERENCE:
+				return readAnotherReference(type);
+			case ConstantType.METHOD_REFERENCE:
+				return readAnotherReference(type);
+			case ConstantType.INTERFACE_METHOD_REFERENCE:
+				return readAnotherReference(type);
+			case ConstantType.NAME_AND_TYPE_DESCRIPTOR:
+				return readAnotherReference(type);
+			default:
+				return null;
 			}
-			return q;
 		}
 
 		private ClassConstant<String> readString(byte type) throws IOException {
@@ -242,6 +259,10 @@ public class RealClass {
 				skipAttributes();
 			}
 			return fields;
+		}
+
+		private int readNumberOfMethodsAndConstructors() throws IOException {
+			return stream.readUnsignedShort();
 		}
 
 		private int readMethodsAndConstructors(
