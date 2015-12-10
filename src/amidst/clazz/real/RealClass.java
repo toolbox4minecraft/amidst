@@ -115,107 +115,110 @@ public class RealClass {
 			product.constants = new ClassConstant<?>[cpSize];
 			product.constantTypes = new int[cpSize];
 			for (int q = 0; q < cpSize; q++) {
-				q = readConstant(q);
+				byte type = stream.readByte();
+				product.constantTypes[q] = type;
+				q = readConstant(q, type);
 			}
 		}
 
-		private int readConstant(int q) throws IOException {
-			byte type = stream.readByte();
-			product.constantTypes[q] = type;
+		private int readConstant(int q, byte type) throws IOException {
 			switch (type) {
 			case 1:
-				readString(q, type);
+				product.constants[q] = readString(type);
 				break;
 			case 3:
-				readInteger(q, type);
+				product.constants[q] = readInteger(type);
 				break;
 			case 4:
-				readFloat(q, type);
+				product.constants[q] = readFloat(type);
 				break;
 			case 5:
-				readLong(q, type);
+				product.constants[q] = readLong(type);
 				q++;
 				break;
 			case 6:
-				readDouble(q, type);
+				product.constants[q] = readDouble(type);
 				q++;
 				break;
 			case 7:
-				readClassReference(q, type);
+				product.constants[q] = readClassReference(type);
 				break;
 			case 8:
-				readStringReference(q, type);
+				product.constants[q] = readStringReference(type);
 				break;
 			case 9: // Field reference
-				readAnotherReference(q, type);
+				product.constants[q] = readAnotherReference(type);
 				break;
 			case 10: // Method reference
-				readAnotherReference(q, type);
+				product.constants[q] = readAnotherReference(type);
 				break;
 			case 11: // Interface method reference
-				readAnotherReference(q, type);
+				product.constants[q] = readAnotherReference(type);
 				break;
 			case 12: // Name and type descriptor
-				readAnotherReference(q, type);
+				product.constants[q] = readAnotherReference(type);
 				break;
 			}
 			return q;
 		}
 
-		private void readString(int q, byte type) throws IOException {
-			int len = stream.readUnsignedShort();
-			String stringValue = readStringValue(len);
-			product.constants[q] = new ClassConstant<String>(type, stringValue);
-			product.utfConstants.add(stringValue);
+		private ClassConstant<String> readString(byte type) throws IOException {
+			String value = readStringValue();
+			product.utfConstants.add(value);
+			return new ClassConstant<String>(type, value);
 		}
 
-		private String readStringValue(int len) throws IOException {
-			StringBuilder stringBuilder = new StringBuilder();
-			for (int i = 0; i < len; i++) {
-				stringBuilder.append((char) stream.readByte());
+		private String readStringValue() throws IOException {
+			char[] result = new char[stream.readUnsignedShort()];
+			for (int i = 0; i < result.length; i++) {
+				result[i] = (char) stream.readByte();
 			}
-			return stringBuilder.toString();
+			return new String(result);
 		}
 
-		private void readInteger(int q, byte type) throws IOException {
-			product.constants[q] = new ClassConstant<Integer>(type,
-					stream.readInt());
+		private ClassConstant<Integer> readInteger(byte type)
+				throws IOException {
+			int value = stream.readInt();
+			return new ClassConstant<Integer>(type, value);
 		}
 
-		private void readFloat(int q, byte type) throws IOException {
-			float cFloat = stream.readFloat();
-			product.constants[q] = new ClassConstant<Float>(type, cFloat);
-			product.floatConstants.add(cFloat);
+		private ClassConstant<Float> readFloat(byte type) throws IOException {
+			float value = stream.readFloat();
+			product.floatConstants.add(value);
+			return new ClassConstant<Float>(type, value);
 		}
 
-		private void readLong(int q, byte type) throws IOException {
-			long cLong = stream.readLong();
-			product.constants[q] = new ClassConstant<Long>(type, cLong);
-			product.longConstants.add(cLong);
+		private ClassConstant<Long> readLong(byte type) throws IOException {
+			long value = stream.readLong();
+			product.longConstants.add(value);
+			return new ClassConstant<Long>(type, value);
 		}
 
-		private void readDouble(int q, byte type) throws IOException {
-			product.constants[q] = new ClassConstant<Double>(type,
-					stream.readDouble());
+		private ClassConstant<Double> readDouble(byte type) throws IOException {
+			double value = stream.readDouble();
+			return new ClassConstant<Double>(type, value);
 		}
 
-		private void readClassReference(int q, byte type) throws IOException {
-			product.constants[q] = new ClassConstant<Integer>(type,
-					stream.readUnsignedShort());
+		private ClassConstant<Integer> readClassReference(byte type)
+				throws IOException {
+			int value = stream.readUnsignedShort();
+			return new ClassConstant<Integer>(type, value);
 		}
 
-		private void readStringReference(int q, byte type) throws IOException {
-			ClassConstant<Integer> strRef = new ClassConstant<Integer>(type,
-					stream.readUnsignedShort());
-			product.constants[q] = strRef;
-			product.stringIndices.add(strRef);
+		private ClassConstant<Integer> readStringReference(byte type)
+				throws IOException {
+			int value = stream.readUnsignedShort();
+			ClassConstant<Integer> result = new ClassConstant<Integer>(type,
+					value);
+			product.stringIndices.add(result);
+			return result;
 		}
 
-		private void readAnotherReference(int q, byte type) throws IOException {
-			ReferenceIndex referenceIndex = new ReferenceIndex(
+		private ClassConstant<ReferenceIndex> readAnotherReference(byte type)
+				throws IOException {
+			ReferenceIndex value = new ReferenceIndex(
 					stream.readUnsignedShort(), stream.readUnsignedShort());
-			product.constants[q] = new ClassConstant<ReferenceIndex>(type,
-					referenceIndex);
+			return new ClassConstant<ReferenceIndex>(type, value);
 		}
 
 		private int readAccessFlag() throws IOException {
