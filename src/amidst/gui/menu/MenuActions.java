@@ -18,6 +18,7 @@ import amidst.gui.worldsurroundings.WorldSurroundings;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.preferences.BiomeColorProfile;
@@ -72,29 +73,26 @@ public class MenuActions {
 	}
 
 	public void newFromSeed() {
-		String seed = mainWindow.askForSeed();
-		if (seed != null) {
-			if (seed.isEmpty()) {
-				newFromRandom();
+		String input = mainWindow.askForSeed();
+		if (input != null) {
+			if (input.isEmpty()) {
+				newFromSeed(WorldSeed.random());
 			} else {
-				WorldType worldType = mainWindow.askForWorldType();
-				if (worldType != null) {
-					try {
-						mainWindow.setWorld(mojangApi.createWorldFromSeed(seed,
-								worldType));
-					} catch (IllegalStateException e) {
-						mainWindow.displayException(e);
-					}
-				}
+				newFromSeed(WorldSeed.fromUserInput(input));
 			}
 		}
 	}
 
 	public void newFromRandom() {
+		newFromSeed(WorldSeed.random());
+	}
+
+	private void newFromSeed(WorldSeed seed) {
 		WorldType worldType = mainWindow.askForWorldType();
 		if (worldType != null) {
 			try {
-				mainWindow.setWorld(mojangApi.createRandomWorld(worldType));
+				mainWindow.setWorld(mojangApi.createWorldFromSeed(seed,
+						worldType));
 			} catch (IllegalStateException e) {
 				mainWindow.displayException(e);
 			}
@@ -170,7 +168,7 @@ public class MenuActions {
 	public void copySeedToClipboard() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
-			String seed = "" + worldSurroundings.getSeed();
+			String seed = "" + worldSurroundings.getWorldSeed().getLong();
 			StringSelection selection = new StringSelection(seed);
 			Toolkit.getDefaultToolkit().getSystemClipboard()
 					.setContents(selection, selection);

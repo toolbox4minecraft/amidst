@@ -149,7 +149,7 @@ public class MainWindow {
 	 */
 	public void setWorldSurroundings(WorldSurroundings worldSurroundings) {
 		clearWorldSurroundings();
-		seedHistoryLogger.log(worldSurroundings.getSeed());
+		seedHistoryLogger.log(worldSurroundings.getWorldSeed());
 		contentPane.add(worldSurroundings.getComponent(), BorderLayout.CENTER);
 		menuBar.setWorldMenuEnabled(true);
 		menuBar.setPlayerLocationMenusEnabled(worldSurroundings

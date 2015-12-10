@@ -3,22 +3,16 @@ package amidst.gui.widget;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
+import amidst.mojangapi.world.WorldSeed;
+
 public class SeedWidget extends Widget {
 	private final String text;
 
-	public SeedWidget(CornerAnchorPoint anchor, long seed, String seedText) {
+	public SeedWidget(CornerAnchorPoint anchor, WorldSeed seed) {
 		super(anchor);
-		this.text = createText(seed, seedText);
+		this.text = "Seed: " + seed.getLabel();
 		setWidth(20);
 		setHeight(30);
-	}
-
-	private String createText(long seed, String seedText) {
-		if (seedText == null) {
-			return "Seed: " + seed;
-		} else {
-			return "Seed: " + seedText + " (" + seed + ")";
-		}
 	}
 
 	@Override

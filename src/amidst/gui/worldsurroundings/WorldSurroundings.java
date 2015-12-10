@@ -12,6 +12,7 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.gui.SkinLoader;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.icon.WorldIcon;
 
 public class WorldSurroundings {
@@ -88,8 +89,8 @@ public class WorldSurroundings {
 		zoom.adjustZoom(viewer.getMousePositionOrCenter(), notches);
 	}
 
-	public long getSeed() {
-		return world.getSeed();
+	public WorldSeed getWorldSeed() {
+		return world.getWorldSeed();
 	}
 
 	// TODO: use this

@@ -12,6 +12,7 @@ import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.WorldType;
@@ -94,26 +95,9 @@ public class MojangApi {
 	 * one world at a time. Creating a new world will make all previous world
 	 * object unusable.
 	 */
-	public World createRandomWorld(WorldType worldType)
-			throws IllegalStateException {
+	public World createWorldFromSeed(WorldSeed seed, WorldType worldType) {
 		if (canCreateWorld()) {
-			return worldBuilder.random(minecraftInterface, worldType);
-		} else {
-			throw new IllegalStateException(
-					"cannot create a world without a minecraft interface");
-		}
-	}
-
-	/**
-	 * Due to the limitation of the minecraft interface, you can only world with
-	 * one world at a time. Creating a new world will make all previous world
-	 * object unusable.
-	 */
-	public World createWorldFromSeed(String seedText, WorldType worldType)
-			throws IllegalStateException {
-		if (canCreateWorld()) {
-			return worldBuilder.fromSeed(minecraftInterface, seedText,
-					worldType);
+			return worldBuilder.fromSeed(minecraftInterface, seed, worldType);
 		} else {
 			throw new IllegalStateException(
 					"cannot create a world without a minecraft interface");

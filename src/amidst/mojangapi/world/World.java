@@ -10,8 +10,7 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 
 public class World {
-	private final long seed;
-	private final String seedText;
+	private final WorldSeed seed;
 	private final WorldType worldType;
 	private final String generatorOptions;
 	private final MovablePlayerList movablePlayerList;
@@ -26,8 +25,8 @@ public class World {
 	private final WorldIconProducer oceanMonumentProducer;
 	private final WorldIconProducer netherFortressProducer;
 
-	World(long seed, String seedText, WorldType worldType,
-			String generatorOptions, MovablePlayerList movablePlayerList,
+	World(WorldSeed seed, WorldType worldType, String generatorOptions,
+			MovablePlayerList movablePlayerList,
 			BiomeDataOracle biomeDataOracle, SlimeChunkOracle slimeChunkOracle,
 			CachedWorldIconProducer playerProducer,
 			CachedWorldIconProducer strongholdProducer,
@@ -37,7 +36,6 @@ public class World {
 			WorldIconProducer oceanMonumentProducer,
 			WorldIconProducer netherFortressProducer) {
 		this.seed = seed;
-		this.seedText = seedText;
 		this.worldType = worldType;
 		this.generatorOptions = generatorOptions;
 		this.movablePlayerList = movablePlayerList;
@@ -53,13 +51,8 @@ public class World {
 	}
 
 	@CalledByAny
-	public long getSeed() {
+	public WorldSeed getWorldSeed() {
 		return seed;
-	}
-
-	@CalledByAny
-	public String getSeedText() {
-		return seedText;
 	}
 
 	@CalledByAny

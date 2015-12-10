@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import amidst.logging.Log;
+import amidst.mojangapi.world.WorldSeed;
 
 public class SeedHistoryLogger {
 	private File file;
@@ -15,7 +16,7 @@ public class SeedHistoryLogger {
 		this.file = getHistoryFile(filename);
 	}
 
-	public void log(long seed) {
+	public void log(WorldSeed seed) {
 		if (file != null) {
 			if (!file.exists()) {
 				tryCreateFile();
@@ -43,7 +44,7 @@ public class SeedHistoryLogger {
 		}
 	}
 
-	private void writeLine(long seed) {
+	private void writeLine(WorldSeed seed) {
 		FileWriter writer = null;
 		try {
 			writer = new FileWriter(file, true);
@@ -56,8 +57,9 @@ public class SeedHistoryLogger {
 		}
 	}
 
-	private String createLine(long seed) {
-		return new Timestamp(new Date().getTime()) + " " + seed + "\r\n";
+	private String createLine(WorldSeed seed) {
+		return new Timestamp(new Date().getTime()) + " " + seed.getLong()
+				+ "\r\n";
 	}
 
 	private void closeWriter(FileWriter writer) {
