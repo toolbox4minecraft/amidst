@@ -50,14 +50,22 @@ public class RealClass {
 	}
 
 	private static class Builder {
+		private final String realClassName;
+		private final byte[] classData;
+
 		private DataInputStream stream;
 		private RealClass product;
 		private long offset;
 
 		private Builder(String realClassName, byte[] classData) {
+			this.realClassName = realClassName;
+			this.classData = classData;
+		}
+
+		public RealClass construct() {
 			product = new RealClass(realClassName, classData);
+			stream = createStream();
 			try {
-				stream = createStream();
 				if (isValidClass()) {
 					readVersion();
 					readConstants();
@@ -73,9 +81,6 @@ public class RealClass {
 				e.printStackTrace();
 				System.exit(0);
 			}
-		}
-
-		public RealClass get() {
 			return product;
 		}
 
@@ -129,8 +134,7 @@ public class RealClass {
 		}
 
 		private void skipInterfaces() throws IOException {
-			int iCount = stream.readUnsignedShort();
-			stream.skip(iCount * 2);
+			stream.skip(2 * stream.readUnsignedShort());
 		}
 
 		private void skipSuperClass() throws IOException {
@@ -151,11 +155,11 @@ public class RealClass {
 		}
 
 		private void readConstants() throws IOException {
-			product.cpSize = stream.readUnsignedShort() - 1;
-			product.constants = new ClassConstant<?>[product.cpSize];
-			product.constantTypes = new int[product.cpSize];
+			int cpSize = stream.readUnsignedShort() - 1;
+			product.constants = new ClassConstant<?>[cpSize];
+			product.constantTypes = new int[cpSize];
 			offset = 10;
-			for (int q = 0; q < product.cpSize; q++) {
+			for (int q = 0; q < cpSize; q++) {
 				q = readConstant(q);
 			}
 		}
@@ -271,7 +275,7 @@ public class RealClass {
 	}
 
 	public static RealClass newInstance(String realClassName, byte[] classData) {
-		return new Builder(realClassName, classData).get();
+		return new Builder(realClassName, classData).construct();
 	}
 
 	private static boolean hasFlags(int accessFlags, int flags) {
@@ -298,7 +302,6 @@ public class RealClass {
 			.compile("^([\\[]+)?[LBCDFIJSZ]");
 
 	private byte[] classData;
-	private int cpSize;
 	private int[] constantTypes;
 	private int minorVersion;
 	private int majorVersion;
@@ -319,10 +322,6 @@ public class RealClass {
 	private RealClass(String realClassName, byte[] classData) {
 		this.realClassName = realClassName;
 		this.classData = classData;
-	}
-
-	public int getCpSize() {
-		return cpSize;
 	}
 
 	public int[] getConstantTypes() {
