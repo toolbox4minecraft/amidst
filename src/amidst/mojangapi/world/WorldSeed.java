@@ -93,6 +93,10 @@ public class WorldSeed {
 		return label;
 	}
 
+	public boolean hasTrackingMessage() {
+		return trackingMessage != null;
+	}
+
 	public String getTrackingMessage() {
 		return trackingMessage;
 	}

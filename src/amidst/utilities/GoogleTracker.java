@@ -24,7 +24,9 @@ public class GoogleTracker {
 	}
 
 	public void trackSeed(WorldSeed seed) {
-		track(seed.getTrackingMessage());
+		if (seed.hasTrackingMessage()) {
+			track(seed.getTrackingMessage());
+		}
 	}
 
 	private synchronized void track(String name) {
