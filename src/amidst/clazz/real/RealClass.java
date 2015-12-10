@@ -184,14 +184,13 @@ public class RealClass {
 		return AccessFlags.hasFlags(accessFlags, AccessFlags.FINAL);
 	}
 
-	public String getArgumentsForConstructor(int ID) {
+	public String getArgumentsForConstructor(int constructorId) {
 		int i = 0;
-		for (ReferenceIndex ref : methodIndices) {
-			String name = ref.getValueOfValue1(constants);
-			if (name.equals("<init>")) {
-				if (i == ID) {
-					String args = ref.getValueOfValue2(constants);
-					return toArgumentString(readArguments(args));
+		for (ReferenceIndex entry : methodIndices) {
+			if (entry.getValueOfValue1(constants).equals("<init>")) {
+				if (i == constructorId) {
+					String arguments = entry.getValueOfValue2(constants);
+					return toArgumentString(readArguments(arguments));
 				}
 				i++;
 			}
@@ -199,22 +198,9 @@ public class RealClass {
 		return "";
 	}
 
-	private String toArgumentString(String[] args) {
-		StringBuilder result = new StringBuilder();
-		result.append("(");
-		if (args.length > 0) {
-			result.append(args[0]);
-			for (int i = 1; i < args.length; i++) {
-				result.append(",").append(args[i]);
-			}
-		}
-		result.append(")");
-		return result.toString();
-	}
-
-	private String[] readArguments(String eArgs) {
+	private String[] readArguments(String arguments) {
 		List<String> result = new ArrayList<String>();
-		String args = eArgs.substring(1).split("\\)")[0];
+		String args = arguments.substring(1).split("\\)")[0];
 		Matcher matcher = ARG_PATTERN.matcher(args);
 		while (matcher.find()) {
 			String arg = args.substring(matcher.start(), matcher.end());
@@ -239,6 +225,19 @@ public class RealClass {
 		} else {
 			return "";
 		}
+	}
+
+	private String toArgumentString(String[] arguments) {
+		StringBuilder result = new StringBuilder();
+		result.append("(");
+		if (arguments.length > 0) {
+			result.append(arguments[0]);
+			for (int i = 1; i < arguments.length; i++) {
+				result.append(",").append(arguments[i]);
+			}
+		}
+		result.append(")");
+		return result.toString();
 	}
 
 	@Override
