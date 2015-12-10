@@ -3,9 +3,11 @@ package amidst.mojangapi.file.directory;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import amidst.documentation.Immutable;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 
+@Immutable
 public class DotMinecraftDirectory {
 	private final File root;
 	private final File libraries;

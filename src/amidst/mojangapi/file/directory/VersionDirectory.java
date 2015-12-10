@@ -9,6 +9,7 @@ import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.List;
 
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.version.VersionJson;
@@ -17,6 +18,7 @@ import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder;
 import amidst.utilities.JavaUtils;
 
+@Immutable
 public class VersionDirectory {
 	private final DotMinecraftDirectory dotMinecraftDirectory;
 	private final String versionId;
@@ -53,7 +55,8 @@ public class VersionDirectory {
 
 	public List<URL> getAllLibraryUrls() {
 		try {
-			return readVersionJson().getLibraryUrls(dotMinecraftDirectory);
+			return readVersionJson().getLibraryUrls(
+					dotMinecraftDirectory.getLibraries());
 		} catch (IOException e) {
 			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: "
 					+ json + ")");

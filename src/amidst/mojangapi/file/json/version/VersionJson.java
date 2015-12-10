@@ -1,5 +1,6 @@
 package amidst.mojangapi.file.json.version;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -7,7 +8,6 @@ import java.util.List;
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.LibraryFinder;
-import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 
 @Immutable
 public class VersionJson {
@@ -21,7 +21,7 @@ public class VersionJson {
 		return libraries;
 	}
 
-	public List<URL> getLibraryUrls(DotMinecraftDirectory dotMinecraftDirectory) {
-		return LibraryFinder.getLibraryUrls(dotMinecraftDirectory, libraries);
+	public List<URL> getLibraryUrls(File librariesDirectory) {
+		return LibraryFinder.getLibraryUrls(librariesDirectory, libraries);
 	}
 }

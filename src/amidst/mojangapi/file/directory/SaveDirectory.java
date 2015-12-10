@@ -7,9 +7,11 @@ import java.nio.file.Files;
 
 import org.jnbt.CompoundTag;
 
+import amidst.documentation.Immutable;
 import amidst.mojangapi.file.nbt.LevelDat;
 import amidst.mojangapi.file.nbt.NBTUtils;
 
+@Immutable
 public class SaveDirectory {
 	/**
 	 * Returns a new valid instance of the class SaveDirectory. It tries to use

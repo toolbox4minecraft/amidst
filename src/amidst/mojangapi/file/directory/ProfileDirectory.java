@@ -2,6 +2,9 @@ package amidst.mojangapi.file.directory;
 
 import java.io.File;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public class ProfileDirectory {
 	private final File root;
 	private final File saves;

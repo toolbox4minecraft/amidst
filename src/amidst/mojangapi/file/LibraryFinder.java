@@ -8,7 +8,6 @@ import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
-import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.json.version.LibraryJson;
 import amidst.utilities.FileSystemUtils;
 
@@ -16,10 +15,8 @@ import amidst.utilities.FileSystemUtils;
 public enum LibraryFinder {
 	;
 
-	public static List<URL> getLibraryUrls(
-			DotMinecraftDirectory dotMinecraftDirectory,
+	public static List<URL> getLibraryUrls(File librariesDirectory,
 			List<LibraryJson> libraries) {
-		File librariesDirectory = dotMinecraftDirectory.getLibraries();
 		List<URL> result = new ArrayList<URL>();
 		for (LibraryJson library : libraries) {
 			File libraryFile = getLibraryFile(librariesDirectory, library);
@@ -39,40 +36,41 @@ public enum LibraryFinder {
 		return result;
 	}
 
-	private static File getLibraryFile(File librariesFile, LibraryJson library) {
+	private static File getLibraryFile(File librariesDirectory,
+			LibraryJson library) {
 		if (library.isActive()) {
-			return getLibraryFile(librariesFile, library.getName());
+			return getLibraryFile(getLibrarySearchPath(librariesDirectory,
+					library.getName()));
 		} else {
 			return null;
 		}
 	}
 
-	private static File getLibraryFile(File librariesFile, String libraryName) {
-		File searchPath = getLibrarySearchPath(librariesFile, libraryName);
-		if (searchPath.exists()) {
-			File result = FileSystemUtils.getFirstFileWithExtension(
-					searchPath.listFiles(), "jar");
-			if (result != null && result.exists()) {
-				return result;
-			} else {
-				Log.w("Attempted to search for file at path: " + searchPath
-						+ " but found nothing. Skipping.");
-				return null;
-			}
-		} else {
-			Log.w("Failed attempt to load library at: " + searchPath);
-			return null;
-		}
-	}
-
-	private static File getLibrarySearchPath(File librariesFile,
+	private static File getLibrarySearchPath(File librariesDirectory,
 			String libraryName) {
-		String result = librariesFile.getAbsolutePath() + "/";
+		String result = librariesDirectory.getAbsolutePath() + "/";
 		String[] split = libraryName.split(":");
 		split[0] = split[0].replace('.', '/');
 		for (int i = 0; i < split.length; i++) {
 			result += split[i] + "/";
 		}
 		return new File(result);
+	}
+
+	private static File getLibraryFile(File librarySearchPath) {
+		if (librarySearchPath.exists()) {
+			File result = FileSystemUtils.getFirstFileWithExtension(
+					librarySearchPath.listFiles(), "jar");
+			if (result != null && result.exists()) {
+				return result;
+			} else {
+				Log.w("Attempted to search for file at path: "
+						+ librarySearchPath + " but found nothing. Skipping.");
+				return null;
+			}
+		} else {
+			Log.w("Failed attempt to load library at: " + librarySearchPath);
+			return null;
+		}
 	}
 }
