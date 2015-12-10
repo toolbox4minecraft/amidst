@@ -9,8 +9,10 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 
+@Immutable
 public enum PlayerInformationRetriever {
 	;
 

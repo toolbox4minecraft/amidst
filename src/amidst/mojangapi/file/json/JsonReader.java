@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
 
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 import amidst.mojangapi.file.json.player.PlayerJson;
@@ -16,6 +17,7 @@ import amidst.utilities.URIUtils;
 
 import com.google.gson.Gson;
 
+@Immutable
 public enum JsonReader {
 	;
 
@@ -94,8 +96,7 @@ public enum JsonReader {
 		return result;
 	}
 
-	public static PlayerJson readPlayerFromUUID(String uuid)
-			throws IOException {
+	public static PlayerJson readPlayerFromUUID(String uuid) throws IOException {
 		return read(URIUtils.newReader(UUID_TO_PROFILE + uuid),
 				PlayerJson.class);
 	}

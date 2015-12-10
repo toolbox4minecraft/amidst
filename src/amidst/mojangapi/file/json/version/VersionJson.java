@@ -5,11 +5,13 @@ import java.util.Collections;
 import java.util.List;
 
 import amidst.documentation.GsonConstructor;
+import amidst.documentation.Immutable;
 import amidst.mojangapi.file.LibraryFinder;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 
+@Immutable
 public class VersionJson {
-	private List<LibraryJson> libraries = Collections.emptyList();
+	private volatile List<LibraryJson> libraries = Collections.emptyList();
 
 	@GsonConstructor
 	public VersionJson() {

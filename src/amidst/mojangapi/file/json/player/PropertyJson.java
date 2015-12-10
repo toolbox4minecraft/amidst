@@ -4,11 +4,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import amidst.documentation.GsonConstructor;
+import amidst.documentation.Immutable;
 import amidst.mojangapi.file.json.JsonReader;
 
+@Immutable
 public class PropertyJson {
-	private String name;
-	private String value;
+	private volatile String name;
+	private volatile String value;
 
 	@GsonConstructor
 	public PropertyJson() {

@@ -6,12 +6,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.json.version.LibraryJson;
 import amidst.utilities.FileSystemUtils;
 
-// TODO: create class LibrariesDirectory?
+@Immutable
 public enum LibraryFinder {
 	;
 

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import amidst.documentation.GsonConstructor;
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.FilenameFactory;
@@ -11,9 +12,10 @@ import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.ReleaseType;
 import amidst.utilities.URIUtils;
 
+@Immutable
 public class VersionListEntryJson {
-	private String id;
-	private ReleaseType type;
+	private volatile String id;
+	private volatile ReleaseType type;
 
 	@GsonConstructor
 	public VersionListEntryJson() {

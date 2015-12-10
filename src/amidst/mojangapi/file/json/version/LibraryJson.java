@@ -4,10 +4,12 @@ import java.util.Collections;
 import java.util.List;
 
 import amidst.documentation.GsonConstructor;
+import amidst.documentation.Immutable;
 
+@Immutable
 public class LibraryJson {
-	private String name;
-	private List<LibraryRuleJson> rules = Collections.emptyList();
+	private volatile String name;
+	private volatile List<LibraryRuleJson> rules = Collections.emptyList();
 
 	@GsonConstructor
 	public LibraryJson() {

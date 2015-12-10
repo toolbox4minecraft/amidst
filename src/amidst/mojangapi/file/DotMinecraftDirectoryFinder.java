@@ -2,8 +2,10 @@ package amidst.mojangapi.file;
 
 import java.io.File;
 
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 
+@Immutable
 public enum DotMinecraftDirectoryFinder {
 	;
 

@@ -1,7 +1,10 @@
 package amidst.mojangapi.file.json;
 
+import amidst.documentation.Immutable;
+
 import com.google.gson.annotations.SerializedName;
 
+@Immutable
 public enum ReleaseType {
 	// @formatter:off
 	@SerializedName("snapshot")

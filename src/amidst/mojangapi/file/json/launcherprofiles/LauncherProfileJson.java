@@ -5,17 +5,19 @@ import java.util.Arrays;
 import java.util.List;
 
 import amidst.documentation.GsonConstructor;
+import amidst.documentation.Immutable;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.ReleaseType;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 
+@Immutable
 public class LauncherProfileJson {
-	private String name;
-	private String lastVersionId;
-	private String gameDir;
-	private List<ReleaseType> allowedReleaseTypes = Arrays
+	private volatile String name;
+	private volatile String lastVersionId;
+	private volatile String gameDir;
+	private volatile List<ReleaseType> allowedReleaseTypes = Arrays
 			.asList(ReleaseType.RELEASE);
 
 	@GsonConstructor

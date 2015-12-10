@@ -2,6 +2,9 @@ package amidst.mojangapi.file;
 
 import java.io.File;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public enum FilenameFactory {
 	;
 

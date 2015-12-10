@@ -1,9 +1,11 @@
 package amidst.mojangapi.file.json.player;
 
 import amidst.documentation.GsonConstructor;
+import amidst.documentation.Immutable;
 
+@Immutable
 public class TexturesJson {
-	private SKINJson SKIN;
+	private volatile SKINJson SKIN;
 
 	@GsonConstructor
 	public TexturesJson() {

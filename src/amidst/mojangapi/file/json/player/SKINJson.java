@@ -1,10 +1,12 @@
 package amidst.mojangapi.file.json.player;
 
 import amidst.documentation.GsonConstructor;
+import amidst.documentation.Immutable;
 
+@Immutable
 public class SKINJson {
-	private String url;
-	private MetadataJson metadata;
+	private volatile String url;
+	private volatile MetadataJson metadata;
 
 	@GsonConstructor
 	public SKINJson() {

@@ -4,11 +4,13 @@ import java.util.Collections;
 import java.util.List;
 
 import amidst.documentation.GsonConstructor;
+import amidst.documentation.Immutable;
 
+@Immutable
 public class PlayerJson {
-	private String id;
-	private String name;
-	private List<PropertyJson> properties = Collections.emptyList();
+	private volatile String id;
+	private volatile String name;
+	private volatile List<PropertyJson> properties = Collections.emptyList();
 
 	@GsonConstructor
 	public PlayerJson() {

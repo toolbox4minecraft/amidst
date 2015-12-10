@@ -4,12 +4,15 @@ import java.util.Collections;
 import java.util.List;
 
 import amidst.documentation.GsonConstructor;
+import amidst.documentation.Immutable;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.ReleaseType;
 
+@Immutable
 public class VersionListJson {
-	private List<VersionListEntryJson> versions = Collections.emptyList();
+	private volatile List<VersionListEntryJson> versions = Collections
+			.emptyList();
 
 	@GsonConstructor
 	public VersionListJson() {

@@ -18,6 +18,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public enum URIUtils {
 	;
 
