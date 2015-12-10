@@ -1,11 +1,13 @@
 package amidst.utilities;
 
 import amidst.AmidstMetaData;
+import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.WorldSeed;
 
 import com.boxysystems.jgoogleanalytics.FocusPoint;
 import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
 
+@ThreadSafe
 public class GoogleTracker {
 	private static final String APP_NAME = "AMIDST";
 	private static final String TRACKING_CODE = "UA-27092717-1";
@@ -25,7 +27,7 @@ public class GoogleTracker {
 		track(seed.getTrackingMessage());
 	}
 
-	private void track(String name) {
+	private synchronized void track(String name) {
 		tracker.trackAsynchronously(new FocusPoint(name));
 	}
 }
