@@ -4,19 +4,19 @@ import amidst.documentation.Immutable;
 
 @Immutable
 public class ReferenceIndex {
-	private final int val1;
-	private final int val2;
+	private final int value1;
+	private final int value2;
 
-	public ReferenceIndex(int val1, int val2) {
-		this.val1 = val1;
-		this.val2 = val2;
+	public ReferenceIndex(int value1, int value2) {
+		this.value1 = value1;
+		this.value2 = value2;
 	}
 
-	public int getVal1() {
-		return val1;
+	public int getValue1() {
+		return value1;
 	}
 
-	public int getVal2() {
-		return val2;
+	public int getValue2() {
+		return value2;
 	}
 }

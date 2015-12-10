@@ -214,8 +214,7 @@ public class RealClass {
 
 		private ClassConstant<ReferenceIndex> readAnotherReference(byte type)
 				throws IOException {
-			ReferenceIndex value = new ReferenceIndex(
-					stream.readUnsignedShort(), stream.readUnsignedShort());
+			ReferenceIndex value = readReferenceIndex();
 			return new ClassConstant<ReferenceIndex>(type, value);
 		}
 
@@ -240,14 +239,7 @@ public class RealClass {
 			for (int i = 0; i < fields.length; i++) {
 				fields[i] = new Field(stream.readUnsignedShort());
 				stream.skip(4);
-				int attributeInfoCount = stream.readUnsignedShort();
-				for (int q = 0; q < attributeInfoCount; q++) {
-					stream.skip(2);
-					int attributeCount = stream.readInt();
-					for (int z = 0; z < attributeCount; z++) {
-						stream.skip(1);
-					}
-				}
+				skipAttributes();
 			}
 			return fields;
 		}
@@ -259,25 +251,33 @@ public class RealClass {
 			int numberOfConstructors = 0;
 			for (int i = 0; i < numberOfMethodsAndConstructors; i++) {
 				stream.skip(2);
-				int nameIndex = stream.readUnsignedShort();
-				methodIndices.add(new ReferenceIndex(nameIndex, stream
-						.readUnsignedShort()));
-
-				if (((String) constants[nameIndex - 1].getValue())
-						.contains("<init>")) {
+				ReferenceIndex referenceIndex = readReferenceIndex();
+				methodIndices.add(referenceIndex);
+				String constant = (String) constants[referenceIndex.getValue1() - 1]
+						.getValue();
+				if (constant.contains("<init>")) {
 					numberOfConstructors++;
 				}
-
-				int attributeInfoCount = stream.readUnsignedShort();
-				for (int q = 0; q < attributeInfoCount; q++) {
-					stream.skip(2);
-					int attributeCount = stream.readInt();
-					for (int z = 0; z < attributeCount; z++) {
-						stream.skip(1);
-					}
-				}
+				skipAttributes();
 			}
 			return numberOfConstructors;
+		}
+
+		private ReferenceIndex readReferenceIndex() throws IOException {
+			int value1 = stream.readUnsignedShort();
+			int value2 = stream.readUnsignedShort();
+			return new ReferenceIndex(value1, value2);
+		}
+
+		private void skipAttributes() throws IOException {
+			int attributeInfoCount = stream.readUnsignedShort();
+			for (int q = 0; q < attributeInfoCount; q++) {
+				stream.skip(2);
+				int attributeCount = stream.readInt();
+				for (int z = 0; z < attributeCount; z++) {
+					stream.skip(1);
+				}
+			}
 		}
 	}
 
@@ -391,10 +391,10 @@ public class RealClass {
 	public String getArgumentsForConstructor(int ID) {
 		int i = 0;
 		for (ReferenceIndex ref : methodIndices) {
-			String name = (String) constants[ref.getVal1() - 1].getValue();
+			String name = (String) constants[ref.getValue1() - 1].getValue();
 			if (name.equals("<init>")) {
 				if (i == ID) {
-					String args = (String) constants[ref.getVal2() - 1]
+					String args = (String) constants[ref.getValue2() - 1]
 							.getValue();
 					return toArgumentString(readArguments(args));
 				}
@@ -482,10 +482,10 @@ public class RealClass {
 
 	public String searchByReturnType(String type) {
 		for (ReferenceIndex ref : methodIndices) {
-			String refType = (String) constants[ref.getVal2() - 1].getValue();
+			String refType = (String) constants[ref.getValue2() - 1].getValue();
 			if (("L" + type + ";").equals(refType.substring(refType
 					.indexOf(')') + 1)))
-				return (String) constants[ref.getVal1() - 1].getValue();
+				return (String) constants[ref.getValue1() - 1].getValue();
 		}
 		return null;
 	}
