@@ -85,31 +85,41 @@ public class RealClass {
 		public RealClass construct() {
 			try {
 				if (isValidClass()) {
-					product = new RealClass(realClassName, classData);
-					product.minorVersion = readMinorVersion();
-					product.majorVersion = readMajorVersion();
-
+					int minorVersion = readMinorVersion();
+					int majorVersion = readMajorVersion();
 					int cpSize = readCpSize();
 					int[] constantTypes = new int[cpSize];
 					ClassConstant<?>[] constants = new ClassConstant<?>[cpSize];
-					readConstants(cpSize, constantTypes, constants);
-
-					product.accessFlags = readAccessFlag();
+					List<String> utfConstants = new ArrayList<String>();
+					List<Float> floatConstants = new ArrayList<Float>();
+					List<Long> longConstants = new ArrayList<Long>();
+					List<Integer> stringIndices = new ArrayList<Integer>();
+					List<ReferenceIndex> methodIndices = new ArrayList<ReferenceIndex>();
+					readConstants(cpSize, constantTypes, constants,
+							utfConstants, floatConstants, longConstants,
+							stringIndices);
+					int accessFlag = readAccessFlag();
 					skipThisClass();
 					skipSuperClass();
 					skipInterfaces();
-					product.fields = readFields();
-
+					Field[] fields = readFields();
 					int numberOfMethodsAndConstructors = readNumberOfMethodsAndConstructors();
-					List<ReferenceIndex> methodIndices = new ArrayList<ReferenceIndex>();
-
 					int numberOfConstructors = readMethodsAndConstructors(
 							numberOfMethodsAndConstructors, constants,
 							methodIndices);
-
+					product = new RealClass(realClassName, classData);
+					product.minorVersion = minorVersion;
+					product.majorVersion = majorVersion;
+					product.cpSize = cpSize;
 					product.constantTypes = constantTypes;
 					product.constants = constants;
+					product.utfConstants = utfConstants;
+					product.floatConstants = floatConstants;
+					product.longConstants = longConstants;
+					product.stringIndices = stringIndices;
 					product.methodIndices = methodIndices;
+					product.accessFlags = accessFlag;
+					product.fields = fields;
 					product.numberOfConstructors = numberOfConstructors;
 					product.numberOfMethods = numberOfMethodsAndConstructors
 							- numberOfConstructors;
@@ -139,33 +149,39 @@ public class RealClass {
 		}
 
 		private void readConstants(int cpSize, int[] constantTypes,
-				ClassConstant<?>[] constants) throws IOException {
+				ClassConstant<?>[] constants, List<String> utfConstants,
+				List<Float> floatConstants, List<Long> longConstants,
+				List<Integer> stringIndices) throws IOException {
 			for (int q = 0; q < cpSize; q++) {
 				byte type = stream.readByte();
 				constantTypes[q] = type;
-				constants[q] = readConstant(type);
+				constants[q] = readConstant(type, utfConstants, floatConstants,
+						longConstants, stringIndices);
 				if (ConstantType.Q_INCREASING_TYPES.contains(type)) {
 					q++;
 				}
 			}
 		}
 
-		private ClassConstant<?> readConstant(byte type) throws IOException {
+		private ClassConstant<?> readConstant(byte type,
+				List<String> utfConstants, List<Float> floatConstants,
+				List<Long> longConstants, List<Integer> stringIndices)
+				throws IOException {
 			switch (type) {
 			case ConstantType.STRING:
-				return readString(type);
+				return readString(type, utfConstants);
 			case ConstantType.INTEGER:
 				return readInteger(type);
 			case ConstantType.FLOAT:
-				return readFloat(type);
+				return readFloat(type, floatConstants);
 			case ConstantType.LONG:
-				return readLong(type);
+				return readLong(type, longConstants);
 			case ConstantType.DOUBLE:
 				return readDouble(type);
 			case ConstantType.CLASS_REFERENCE:
 				return readClassReference(type);
 			case ConstantType.STRING_REFERENCE:
-				return readStringReference(type);
+				return readStringReference(type, stringIndices);
 			case ConstantType.FIELD_REFERENCE:
 				return readAnotherReference(type);
 			case ConstantType.METHOD_REFERENCE:
@@ -179,9 +195,10 @@ public class RealClass {
 			}
 		}
 
-		private ClassConstant<String> readString(byte type) throws IOException {
+		private ClassConstant<String> readString(byte type,
+				List<String> utfConstants) throws IOException {
 			String value = readStringValue();
-			product.utfConstants.add(value);
+			utfConstants.add(value);
 			return new ClassConstant<String>(type, value);
 		}
 
@@ -199,15 +216,17 @@ public class RealClass {
 			return new ClassConstant<Integer>(type, value);
 		}
 
-		private ClassConstant<Float> readFloat(byte type) throws IOException {
+		private ClassConstant<Float> readFloat(byte type,
+				List<Float> floatConstants) throws IOException {
 			float value = stream.readFloat();
-			product.floatConstants.add(value);
+			floatConstants.add(value);
 			return new ClassConstant<Float>(type, value);
 		}
 
-		private ClassConstant<Long> readLong(byte type) throws IOException {
+		private ClassConstant<Long> readLong(byte type, List<Long> longConstants)
+				throws IOException {
 			long value = stream.readLong();
-			product.longConstants.add(value);
+			longConstants.add(value);
 			return new ClassConstant<Long>(type, value);
 		}
 
@@ -222,10 +241,10 @@ public class RealClass {
 			return new ClassConstant<Integer>(type, value);
 		}
 
-		private ClassConstant<Integer> readStringReference(byte type)
-				throws IOException {
+		private ClassConstant<Integer> readStringReference(byte type,
+				List<Integer> stringIndices) throws IOException {
 			int value = stream.readUnsignedShort();
-			product.stringIndices.add(value);
+			stringIndices.add(value);
 			return new ClassConstant<Integer>(type, value);
 		}
 
@@ -337,12 +356,13 @@ public class RealClass {
 	private int majorVersion;
 	private ClassConstant<?>[] constants;
 	private int accessFlags;
+	private int cpSize;
 
-	private List<Integer> stringIndices = new ArrayList<Integer>();
+	private List<String> utfConstants;
+	private List<Float> floatConstants;
+	private List<Long> longConstants;
+	private List<Integer> stringIndices;
 	private List<ReferenceIndex> methodIndices;
-	private List<Float> floatConstants = new ArrayList<Float>();
-	private List<Long> longConstants = new ArrayList<Long>();
-	private List<String> utfConstants = new ArrayList<String>();
 
 	private int numberOfConstructors;
 	private int numberOfMethods;
