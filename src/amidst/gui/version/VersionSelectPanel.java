@@ -156,14 +156,13 @@ public class VersionSelectPanel {
 		return mousePosition.x > component.getWidth() - 40;
 	}
 
-	public void select(String fullVersionName) {
-		select(getIndex(fullVersionName));
+	public void select(String profileName) {
+		select(getIndex(profileName));
 	}
 
-	private int getIndex(String fullVersionName) {
+	private int getIndex(String profileName) {
 		for (int i = 0; i < versionComponents.size(); i++) {
-			if (versionComponents.get(i).getFullVersionName()
-					.equals(fullVersionName)) {
+			if (versionComponents.get(i).getProfileName().equals(profileName)) {
 				return i;
 			}
 		}
@@ -205,7 +204,7 @@ public class VersionSelectPanel {
 
 	private void loadSelectedProfile() {
 		if (selected != null && selected.isReadyToLoad()) {
-			lastProfilePreference.set(selected.getFullVersionName());
+			lastProfilePreference.set(selected.getProfileName());
 			isLoading = true;
 			selected.load();
 		}

@@ -15,13 +15,15 @@ import amidst.resources.ResourceLoader;
 public abstract class VersionComponent {
 	@SuppressWarnings("serial")
 	private class Component extends JComponent {
-		private String shortenedVersionName;
+		private final FontMetrics versionFontMetrics = getFontMetrics(VERSION_NAME_FONT);
+		private final FontMetrics profileFontMetrics = getFontMetrics(PROFILE_NAME_FONT);
+
+		private int versionNameX;
+		private int oldWidth;
 		private String oldVersionName;
-		private int oldWidth = 0;
+		private String oldProfileName;
 
 		public Component() {
-			this.shortenedVersionName = getVersionName();
-			this.oldVersionName = getVersionName();
 			this.setMinimumSize(new Dimension(300, 40));
 			this.setPreferredSize(new Dimension(500, 40));
 		}
@@ -30,8 +32,9 @@ public abstract class VersionComponent {
 		public void paintComponent(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g;
 			drawBackground(g2d);
-			int versionNameX = drawFullVersionName(g2d);
-			drawVersionName(g2d, versionNameX);
+			updateIfNecessary();
+			drawVersionName(g2d);
+			drawProfileName(g2d);
 			drawStatus(g2d);
 			drawIcon(g2d);
 		}
@@ -47,47 +50,45 @@ public abstract class VersionComponent {
 			g2d.fillRect(0, 0, getWidth(), getHeight());
 		}
 
-		private int drawFullVersionName(Graphics2D g2d) {
-			g2d.setColor(Color.black);
-			g2d.setFont(VERSION_FONT);
-			String fullVersionName = getFullVersionName();
-			int versionNameX = getWidth() - 40
-					- g2d.getFontMetrics().stringWidth(fullVersionName);
-			g2d.drawString(fullVersionName, versionNameX, 20);
-			return versionNameX;
-		}
-
-		private void drawVersionName(Graphics2D g2d, int versionNameX) {
-			g2d.setColor(Color.black);
-			g2d.setFont(NAME_FONT);
-			updateShortenedVersionName(g2d, versionNameX);
-			g2d.drawString(shortenedVersionName, 5, 30);
-		}
-
-		private void updateShortenedVersionName(Graphics2D g2d, int versionNameX) {
+		private void updateIfNecessary() {
+			int width = getWidth();
 			String versionName = getVersionName();
-			if (oldWidth != getWidth() || !oldVersionName.equals(versionName)) {
-				shortenedVersionName = createShortenedVersionName(g2d,
-						versionName, versionNameX);
-				oldWidth = getWidth();
+			String profileName = getProfileName();
+			if (oldVersionName == null || oldWidth != width
+					|| !oldVersionName.equals(versionName)) {
+				versionNameX = width - 40
+						- versionFontMetrics.stringWidth(versionName);
+				oldWidth = width;
+				oldVersionName = versionName;
+				oldProfileName = createProfileName(profileName,
+						versionNameX - 25);
 			}
 		}
 
-		private String createShortenedVersionName(Graphics2D g2d,
-				String versionName, int versionNameX) {
-			FontMetrics fontMetrics = g2d.getFontMetrics();
-			String result = versionName;
-			if (fontMetrics.stringWidth(result) > versionNameX - 25) {
+		private String createProfileName(String profileName, int maxWidth) {
+			String result = profileName;
+			if (profileFontMetrics.stringWidth(result) > maxWidth) {
 				int widthSum = 0;
 				for (int i = 0; i < result.length(); i++) {
-					widthSum += fontMetrics.charWidth(result.charAt(i));
-					if (widthSum > versionNameX - 25) {
-						result = result.substring(0, i) + "...";
-						break;
+					widthSum += profileFontMetrics.charWidth(result.charAt(i));
+					if (widthSum > maxWidth) {
+						return result.substring(0, i) + "...";
 					}
 				}
 			}
 			return result;
+		}
+
+		private void drawVersionName(Graphics2D g2d) {
+			g2d.setColor(Color.black);
+			g2d.setFont(VERSION_NAME_FONT);
+			g2d.drawString(oldVersionName, versionNameX, 20);
+		}
+
+		private void drawProfileName(Graphics2D g2d) {
+			g2d.setColor(Color.black);
+			g2d.setFont(PROFILE_NAME_FONT);
+			g2d.drawString(oldProfileName, 5, 30);
 		}
 
 		private void drawStatus(Graphics2D g2d) {
@@ -114,9 +115,11 @@ public abstract class VersionComponent {
 		}
 	}
 
-	private static final Font NAME_FONT = new Font("arial", Font.BOLD, 30);
 	private static final Font STATUS_FONT = new Font("arial", Font.BOLD, 10);
-	private static final Font VERSION_FONT = new Font("arial", Font.BOLD, 16);
+	private static final Font VERSION_NAME_FONT = new Font("arial", Font.BOLD,
+			16);
+	private static final Font PROFILE_NAME_FONT = new Font("arial", Font.BOLD,
+			30);
 	private static final BufferedImage ACTIVE_ICON = ResourceLoader
 			.getImage("active_profile.png");
 	private static final BufferedImage INACTIVE_ICON = ResourceLoader
@@ -130,6 +133,15 @@ public abstract class VersionComponent {
 	private Component component;
 	private boolean isLoading = false;
 	private boolean isSelected = false;
+
+	/**
+	 * This cannot be put in the constructor, because that would cause a call to
+	 * e.g. getProfileName by the drawing function before the derived class is
+	 * constructed.
+	 */
+	protected void initComponent() {
+		this.component = new Component();
+	}
 
 	public boolean isSelected() {
 		return isSelected;
@@ -152,14 +164,6 @@ public abstract class VersionComponent {
 		doLoad();
 	}
 
-	public String getFullVersionName() {
-		return getVersionPrefix() + ":" + getVersionName();
-	}
-
-	protected void initComponent() {
-		this.component = new Component();
-	}
-
 	protected void repaintComponent() {
 		component.repaint();
 	}
@@ -170,7 +174,7 @@ public abstract class VersionComponent {
 
 	public abstract boolean isReadyToLoad();
 
-	public abstract String getVersionName();
+	public abstract String getProfileName();
 
-	public abstract String getVersionPrefix();
+	public abstract String getVersionName();
 }

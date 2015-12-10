@@ -107,9 +107,9 @@ public class VersionSelectWindow {
 	}
 
 	private void restoreSelection() {
-		String selectedProfile = options.lastProfile.get();
-		if (selectedProfile != null) {
-			versionSelectPanel.select(selectedProfile);
+		String profileName = options.lastProfile.get();
+		if (profileName != null) {
+			versionSelectPanel.select(profileName);
 		}
 	}
 

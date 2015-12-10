@@ -103,12 +103,16 @@ public class LocalVersionComponent extends VersionComponent {
 	}
 
 	@Override
-	public String getVersionName() {
+	public String getProfileName() {
 		return profile.getName();
 	}
 
 	@Override
-	public String getVersionPrefix() {
-		return "local";
+	public String getVersionName() {
+		if (isReadyToLoad()) {
+			return versionDirectory.getVersionId();
+		} else {
+			return "";
+		}
 	}
 }
