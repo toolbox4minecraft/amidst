@@ -1,9 +1,11 @@
 package amidst.clazz.real.detector;
 
 import amidst.clazz.real.RealClass;
+import amidst.documentation.Immutable;
 
+@Immutable
 public class StringRCD extends RealClassDetector {
-	private String[] strings;
+	private final String[] strings;
 
 	public StringRCD(String... strings) {
 		this.strings = strings;

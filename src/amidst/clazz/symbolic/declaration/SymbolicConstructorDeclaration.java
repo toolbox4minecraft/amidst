@@ -1,8 +1,11 @@
 package amidst.clazz.symbolic.declaration;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public class SymbolicConstructorDeclaration {
-	private String symbolicName;
-	private SymbolicParameterDeclarationList parameters;
+	private final String symbolicName;
+	private final SymbolicParameterDeclarationList parameters;
 
 	public SymbolicConstructorDeclaration(String symbolicName,
 			SymbolicParameterDeclarationList parameters) {

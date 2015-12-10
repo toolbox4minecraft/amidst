@@ -3,11 +3,14 @@ package amidst.clazz.symbolic.declaration;
 import java.util.Collections;
 import java.util.List;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public class SymbolicClassDeclaration {
-	private String symbolicClassName;
-	private List<SymbolicConstructorDeclaration> constructors;
-	private List<SymbolicMethodDeclaration> methods;
-	private List<SymbolicFieldDeclaration> fields;
+	private final String symbolicClassName;
+	private final List<SymbolicConstructorDeclaration> constructors;
+	private final List<SymbolicMethodDeclaration> methods;
+	private final List<SymbolicFieldDeclaration> fields;
 
 	public SymbolicClassDeclaration(String symbolicClassName,
 			List<SymbolicConstructorDeclaration> constructors,

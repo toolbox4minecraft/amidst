@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import amidst.documentation.Immutable;
+
 public class RealClass {
 	/*-
 	 * 	ACC_PUBLIC	 	0x0001	 Declared public; may be accessed from outside its package.
@@ -21,6 +23,7 @@ public class RealClass {
 	 *	ACC_TRANSIENT	0x0080	 Declared transient; not written or read by a persistent object manager.
 	 *	ACC_INTERFACE	0x0200	 Is an interface, not a class.
 	 **/
+	@Immutable
 	public static class AccessFlags {
 		public static final int PUBLIC = 0x01;
 		public static final int PRIVATE = 0x02;
@@ -32,8 +35,13 @@ public class RealClass {
 		public static final int INTERFACE = 0x0200;
 	}
 
+	@Immutable
 	public static class Field {
-		private int accessFlags;
+		private final int accessFlags;
+
+		public Field(int accessFlags) {
+			this.accessFlags = accessFlags;
+		}
 
 		public boolean hasFlags(int flags) {
 			return RealClass.hasFlags(accessFlags, flags);
@@ -115,8 +123,7 @@ public class RealClass {
 		private void readFields() throws IOException {
 			product.fields = new Field[stream.readUnsignedShort()];
 			for (int i = 0; i < product.fields.length; i++) {
-				product.fields[i] = new Field();
-				product.fields[i].accessFlags = stream.readUnsignedShort();
+				product.fields[i] = new Field(stream.readUnsignedShort());
 				stream.skip(4);
 				int attributeInfoCount = stream.readUnsignedShort();
 				for (int q = 0; q < attributeInfoCount; q++) {

@@ -1,8 +1,11 @@
 package amidst.clazz.real;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public class ReferenceIndex {
-	private int val1;
-	private int val2;
+	private final int val1;
+	private final int val2;
 
 	public ReferenceIndex(int val1, int val2) {
 		this.val1 = val1;

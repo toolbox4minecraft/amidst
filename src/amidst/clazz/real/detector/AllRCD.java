@@ -3,9 +3,11 @@ package amidst.clazz.real.detector;
 import java.util.List;
 
 import amidst.clazz.real.RealClass;
+import amidst.documentation.Immutable;
 
+@Immutable
 public class AllRCD extends RealClassDetector {
-	private List<RealClassDetector> detectors;
+	private final List<RealClassDetector> detectors;
 
 	public AllRCD(List<RealClassDetector> detectors) {
 		this.detectors = detectors;

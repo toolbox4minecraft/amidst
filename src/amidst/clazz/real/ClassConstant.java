@@ -1,9 +1,12 @@
 package amidst.clazz.real;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public class ClassConstant<T> {
-	private byte type;
-	private long offset;
-	private T value;
+	private final byte type;
+	private final long offset;
+	private final T value;
 
 	public ClassConstant(byte type, long offset, T value) {
 		this.type = type;

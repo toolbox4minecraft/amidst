@@ -3,12 +3,15 @@ package amidst.clazz.symbolic;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public class SymbolicMethod {
-	private SymbolicClass parent;
-	private String symbolicName;
-	private String realName;
-	private Method method;
-	private SymbolicClass returnType;
+	private final SymbolicClass parent;
+	private final String symbolicName;
+	private final String realName;
+	private final Method method;
+	private final SymbolicClass returnType;
 
 	public SymbolicMethod(SymbolicClass parent, String symbolicName,
 			String realName, Method method, SymbolicClass returnType) {

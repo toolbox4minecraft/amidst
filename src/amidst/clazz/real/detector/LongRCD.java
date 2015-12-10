@@ -1,9 +1,11 @@
 package amidst.clazz.real.detector;
 
 import amidst.clazz.real.RealClass;
+import amidst.documentation.Immutable;
 
+@Immutable
 public class LongRCD extends RealClassDetector {
-	private long[] longs;
+	private final long[] longs;
 
 	public LongRCD(long... longs) {
 		this.longs = longs;

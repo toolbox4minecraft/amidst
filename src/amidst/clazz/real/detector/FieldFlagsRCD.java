@@ -2,10 +2,12 @@ package amidst.clazz.real.detector;
 
 import amidst.clazz.real.RealClass;
 import amidst.clazz.real.RealClass.Field;
+import amidst.documentation.Immutable;
 
+@Immutable
 public class FieldFlagsRCD extends RealClassDetector {
-	private int flags;
-	private int[] fieldIndices;
+	private final int flags;
+	private final int[] fieldIndices;
 
 	public FieldFlagsRCD(int flags, int... fieldIndices) {
 		this.flags = flags;

@@ -11,13 +11,15 @@ import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicFieldDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.ParameterDeclaration;
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 
 public class SymbolicClassBuilder {
+	@Immutable
 	private static enum StatelessResources {
 		INSTANCE;
 
-		private Map<String, Class<?>> primitivesMap = createPrimitivesMap();
+		private final Map<String, Class<?>> primitivesMap = createPrimitivesMap();
 
 		private Map<String, Class<?>> createPrimitivesMap() {
 			Map<String, Class<?>> result = new HashMap<String, Class<?>>();

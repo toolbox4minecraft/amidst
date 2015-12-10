@@ -13,9 +13,13 @@ import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicClasses;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.translator.ClassTranslator;
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 
-public class Classes {
+@Immutable
+public enum Classes {
+	;
+
 	public static Map<String, SymbolicClass> createSymbolicClassMap(
 			File jarFile, URLClassLoader classLoader, ClassTranslator translator) {
 		Log.i("Reading " + jarFile.getName());

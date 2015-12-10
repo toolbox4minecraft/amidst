@@ -2,13 +2,16 @@ package amidst.clazz.symbolic;
 
 import java.util.Map;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public class SymbolicClass {
-	private String symbolicClassName;
-	private String realClassName;
-	private Class<?> clazz;
-	private Map<String, SymbolicConstructor> constructorsBySymbolicName;
-	private Map<String, SymbolicMethod> methodsBySymbolicName;
-	private Map<String, SymbolicField> fieldsBySymbolicName;
+	private final String symbolicClassName;
+	private final String realClassName;
+	private final Class<?> clazz;
+	private final Map<String, SymbolicConstructor> constructorsBySymbolicName;
+	private final Map<String, SymbolicMethod> methodsBySymbolicName;
+	private final Map<String, SymbolicField> fieldsBySymbolicName;
 
 	public SymbolicClass(String symbolicClassName, String realClassName,
 			Class<?> clazz,

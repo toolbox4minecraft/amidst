@@ -1,8 +1,11 @@
 package amidst.clazz.symbolic;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public class SymbolicObject {
-	private SymbolicClass type;
-	private Object object;
+	private final SymbolicClass type;
+	private final Object object;
 
 	public SymbolicObject(SymbolicClass type, Object object) {
 		this.type = type;

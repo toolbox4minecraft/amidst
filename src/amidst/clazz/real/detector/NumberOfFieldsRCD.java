@@ -1,9 +1,11 @@
 package amidst.clazz.real.detector;
 
 import amidst.clazz.real.RealClass;
+import amidst.documentation.Immutable;
 
+@Immutable
 public class NumberOfFieldsRCD extends RealClassDetector {
-	private int count;
+	private final int count;
 
 	public NumberOfFieldsRCD(int count) {
 		this.count = count;

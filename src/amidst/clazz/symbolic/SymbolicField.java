@@ -2,14 +2,16 @@ package amidst.clazz.symbolic;
 
 import java.lang.reflect.Field;
 
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 
+@Immutable
 public class SymbolicField {
-	private SymbolicClass parent;
-	private String symbolicName;
-	private String realName;
-	private Field field;
-	private SymbolicClass type;
+	private final SymbolicClass parent;
+	private final String symbolicName;
+	private final String realName;
+	private final Field field;
+	private final SymbolicClass type;
 
 	public SymbolicField(SymbolicClass parent, String symbolicName,
 			String realName, Field field, SymbolicClass type) {
@@ -55,21 +57,6 @@ public class SymbolicField {
 
 	private boolean isTypeSymbolicClass() {
 		return type != null;
-	}
-
-	public void setValue(Object object, Object value) {
-		try {
-			field.set(object, value);
-		} catch (IllegalArgumentException e) {
-			Log.crash(e,
-					"Error [IllegalArgumentException] setting field value ("
-							+ toString() + ")");
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			Log.crash(e, "Error [IllegalAccessException] setting field value ("
-					+ toString() + ")");
-			e.printStackTrace();
-		}
 	}
 
 	@Override

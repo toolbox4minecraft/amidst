@@ -1,9 +1,11 @@
 package amidst.clazz.real.detector;
 
 import amidst.clazz.real.RealClass;
+import amidst.documentation.Immutable;
 
+@Immutable
 public class WildcardByteRCD extends RealClassDetector {
-	private int[] bytes;
+	private final int[] bytes;
 
 	public WildcardByteRCD(int[] bytes) {
 		this.bytes = bytes;

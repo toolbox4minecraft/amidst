@@ -3,10 +3,11 @@ package amidst.clazz.symbolic;
 import java.util.Map;
 
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
+import amidst.documentation.Immutable;
 
-public class SymbolicClasses {
-	private SymbolicClasses() {
-	}
+@Immutable
+public enum SymbolicClasses {
+	;
 
 	public static Map<String, SymbolicClass> from(
 			Map<SymbolicClassDeclaration, String> realClassNamesBySymbolicClassDeclaration,

@@ -1,9 +1,11 @@
 package amidst.clazz.real.detector;
 
 import amidst.clazz.real.RealClass;
+import amidst.documentation.Immutable;
 
+@Immutable
 public class Utf8RCD extends RealClassDetector {
-	private String[] utf8s;
+	private final String[] utf8s;
 
 	public Utf8RCD(String... utf8s) {
 		this.utf8s = utf8s;

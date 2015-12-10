@@ -1,9 +1,12 @@
 package amidst.clazz.symbolic.declaration;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public class SymbolicMethodDeclaration {
-	private String symbolicName;
-	private String realName;
-	private SymbolicParameterDeclarationList parameters;
+	private final String symbolicName;
+	private final String realName;
+	private final SymbolicParameterDeclarationList parameters;
 
 	public SymbolicMethodDeclaration(String symbolicName, String realName,
 			SymbolicParameterDeclarationList parameters) {

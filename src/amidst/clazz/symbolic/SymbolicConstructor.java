@@ -3,10 +3,13 @@ package amidst.clazz.symbolic;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public class SymbolicConstructor {
-	private SymbolicClass parent;
-	private String symbolicName;
-	private Constructor<?> constructor;
+	private final SymbolicClass parent;
+	private final String symbolicName;
+	private final Constructor<?> constructor;
 
 	public SymbolicConstructor(SymbolicClass parent, String symbolicName,
 			Constructor<?> constructor) {

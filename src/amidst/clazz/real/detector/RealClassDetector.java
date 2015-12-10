@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amidst.clazz.real.RealClass;
+import amidst.documentation.Immutable;
 
+@Immutable
 public abstract class RealClassDetector {
 	public RealClass firstMatching(List<RealClass> realClasses) {
 		for (RealClass realClass : realClasses) {

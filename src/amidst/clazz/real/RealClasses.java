@@ -9,11 +9,12 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import amidst.documentation.Immutable;
 import amidst.utilities.FileSystemUtils;
 
-public class RealClasses {
-	private RealClasses() {
-	}
+@Immutable
+public enum RealClasses {
+	;
 
 	public static RealClass fromByteArray(String realClassName, byte[] classData) {
 		return RealClass.newInstance(realClassName, classData);
