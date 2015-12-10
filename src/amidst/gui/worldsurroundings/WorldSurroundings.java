@@ -120,6 +120,7 @@ public class WorldSurroundings {
 	}
 
 	public void reloadPlayerLocations(SkinLoader skinLoader) {
+		worldIconSelection.clear();
 		world.getMovablePlayerList().reload();
 		layerReloader.reloadPlayerLayer();
 		loadPlayerSkins(skinLoader);

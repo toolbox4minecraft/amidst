@@ -28,9 +28,6 @@ import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BiomeColorProfileSelection;
 
 public class Actions {
-	private static final String ABOUT_MESSAGE = "Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
-			+ "By Skidoodle (amidst.project@gmail.com)";
-
 	private final Application application;
 	private final MojangApi mojangApi;
 	private final MainWindow mainWindow;
@@ -106,8 +103,7 @@ public class Actions {
 					worldSurroundings.centerOn(coordinates);
 				} else {
 					Log.w("Invalid location entered, ignoring.");
-					mainWindow
-							.displayMessage("You entered an invalid location.");
+					mainWindow.displayError("You entered an invalid location.");
 				}
 			}
 		}
@@ -144,8 +140,7 @@ public class Actions {
 					worldSurroundings.centerOn(player);
 				}
 			} else {
-				mainWindow
-						.displayMessage("There are no players in this world.");
+				mainWindow.displayError("There are no players in this world.");
 			}
 		}
 	}
@@ -166,16 +161,18 @@ public class Actions {
 
 	public void howCanIMoveAPlayer() {
 		mainWindow
-				.displayMessage("If you load the world from a minecraft save folder, you can change the player locations.\n"
-						+ "1. Scroll the map to and right-click on the new player location.\n"
-						+ "2. Select the player you want to move to the new location.\n"
-						+ "3. Enter the new player height (y-coordinate).\n"
-						+ "4. Save player locations.\n\n"
-						+ "WARNING: This will change the contents of the save folder, so there is a chance that the world gets corrupted.\n"
-						+ "We try to minimize the risk by creating a backup of the changed file, before it is changed.\n"
-						+ "If the backup fails, we will not write the changes.\n"
-						+ "You can find the backup files in a sub folder of the world, named 'amidst_backup'.\n"
-						+ "Especially, make sure to not have the world loaded in minecraft during this process.");
+				.displayMessage(
+						"How can I move a player?",
+						"If you load the world from a minecraft save folder, you can change the player locations.\n"
+								+ "1. Scroll the map to and right-click on the new player location.\n"
+								+ "2. Select the player you want to move to the new location.\n"
+								+ "3. Enter the new player height (y-coordinate).\n"
+								+ "4. Save player locations.\n\n"
+								+ "WARNING: This will change the contents of the save folder, so there is a chance that the world gets corrupted.\n"
+								+ "We try to minimize the risk by creating a backup of the changed file, before it is changed.\n"
+								+ "If the backup fails, we will not write the changes.\n"
+								+ "You can find the backup files in a sub folder of the world, named 'amidst_backup'.\n"
+								+ "Especially, make sure to not have the world loaded in minecraft during this process.");
 	}
 
 	public void copySeedToClipboard() {
@@ -217,7 +214,9 @@ public class Actions {
 	}
 
 	public void about() {
-		mainWindow.displayMessage(ABOUT_MESSAGE);
+		mainWindow.displayMessage("About",
+				"Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
+						+ "By Skidoodle (amidst.project@gmail.com)");
 	}
 
 	public void adjustZoom(int notches) {

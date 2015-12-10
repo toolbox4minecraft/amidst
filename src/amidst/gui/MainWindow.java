@@ -223,13 +223,20 @@ public class MainWindow {
 		}
 	}
 
-	public void displayMessage(String message) {
-		JOptionPane.showMessageDialog(frame, message);
+	public void displayMessage(String title, String message) {
+		JOptionPane.showMessageDialog(frame, message, title,
+				JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	public void displayError(String message) {
+		JOptionPane.showMessageDialog(frame, message, "Error",
+				JOptionPane.ERROR_MESSAGE);
 	}
 
 	// TODO: revisit error handling and feedback on gui
 	public void displayException(Exception exception) {
-		displayMessage(getStackTraceAsString(exception));
+		JOptionPane.showMessageDialog(frame, getStackTraceAsString(exception),
+				"Error", JOptionPane.ERROR_MESSAGE);
 	}
 
 	private String getStackTraceAsString(Exception exception) {

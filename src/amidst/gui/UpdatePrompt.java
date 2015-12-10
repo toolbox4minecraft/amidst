@@ -39,7 +39,7 @@ public class UpdatePrompt {
 
 	private void error(String message) {
 		if (!silent) {
-			mainWindow.displayMessage(message);
+			mainWindow.displayError(message);
 		}
 	}
 
@@ -60,21 +60,21 @@ public class UpdatePrompt {
 			return mainWindow.askToConfirm("Update Found",
 					"A minor revision was found. Update?");
 		} else if (!silent) {
-			mainWindow.displayMessage("There are no new updates.");
+			mainWindow.displayMessage("Updater", "There are no new updates.");
 		}
 		return false;
 	}
 
 	private void openUpdateURL() throws IOException, URISyntaxException {
-		if (!Desktop.isDesktopSupported()) {
-			mainWindow.displayMessage("Error unable to open browser.");
-		} else {
+		if (Desktop.isDesktopSupported()) {
 			Desktop desktop = Desktop.getDesktop();
-			if (!desktop.isSupported(Desktop.Action.BROWSE)) {
-				mainWindow.displayMessage("Error unable to open browser page.");
-			} else {
+			if (desktop.isSupported(Desktop.Action.BROWSE)) {
 				desktop.browse(new URI(retriever.getUpdateURL()));
+			} else {
+				mainWindow.displayError("Unable to open browser page.");
 			}
+		} else {
+			mainWindow.displayError("Unable to open browser.");
 		}
 	}
 }

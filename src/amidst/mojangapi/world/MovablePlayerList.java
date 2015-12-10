@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import amidst.logging.Log;
 import amidst.mojangapi.file.nbt.playerloader.PlayerLoader;
 import amidst.mojangapi.file.nbt.playermover.PlayerMover;
 
@@ -39,6 +40,7 @@ public class MovablePlayerList implements Iterable<Player> {
 	}
 
 	public void reload() {
+		Log.i("reloading player locations");
 		this.players = Collections.unmodifiableList(playerLoader.load());
 	}
 
@@ -48,9 +50,12 @@ public class MovablePlayerList implements Iterable<Player> {
 
 	public void save() {
 		if (canSave()) {
+			Log.i("saving player locations");
 			for (Player player : players) {
 				playerMover.movePlayer(player);
 			}
+		} else {
+			Log.i("cannot save player locations");
 		}
 	}
 

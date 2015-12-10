@@ -13,6 +13,10 @@ public class WorldIconSelection {
 		this.selection = selection;
 	}
 
+	public void clear() {
+		this.selection = null;
+	}
+
 	public boolean isSelected(WorldIcon worldIcon) {
 		return selection == worldIcon;
 	}
