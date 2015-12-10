@@ -14,12 +14,15 @@ import amidst.gui.version.VersionSelectWindow;
 import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.MojangApiBuilder;
+import amidst.mojangapi.world.WorldBuilder;
 import amidst.threading.ThreadMaster;
+import amidst.utilities.GoogleTracker;
 import amidst.utilities.SeedHistoryLogger;
 
 public class Application {
 	private final CommandLineParameters parameters;
 	private final Options options;
+	private final GoogleTracker googleTracker;
 	private final MojangApi mojangApi;
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
@@ -33,6 +36,7 @@ public class Application {
 	public Application(CommandLineParameters parameters) {
 		this.parameters = parameters;
 		this.options = createOptions();
+		this.googleTracker = createGoogleTracker();
 		this.mojangApi = createMojangApi();
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
 		this.seedHistoryLogger = createSeedHistoryLogger();
@@ -45,10 +49,14 @@ public class Application {
 		return new Options(Preferences.userNodeForPackage(Amidst.class));
 	}
 
+	private GoogleTracker createGoogleTracker() {
+		return new GoogleTracker();
+	}
+
 	private MojangApi createMojangApi() {
-		return new MojangApiBuilder(parameters.minecraftPath,
-				parameters.minecraftLibraries, parameters.minecraftJar,
-				parameters.minecraftJson).construct();
+		return new MojangApiBuilder(new WorldBuilder(googleTracker),
+				parameters.minecraftPath, parameters.minecraftLibraries,
+				parameters.minecraftJar, parameters.minecraftJson).construct();
 	}
 
 	private WorldSurroundingsBuilder createWorldSurroundingsBuilder() {
@@ -90,6 +98,7 @@ public class Application {
 	}
 
 	public void run() {
+		googleTracker.trackApplicationRunning();
 		if (mojangApi.canCreateWorld()) {
 			displayMainWindow();
 		} else {

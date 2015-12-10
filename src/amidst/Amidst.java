@@ -13,7 +13,6 @@ import amidst.documentation.CalledBy;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
 import amidst.logging.Log.CrashHandler;
-import amidst.utilities.Google;
 
 public class Amidst {
 	private static final String UNCAUGHT_EXCEPTION_ERROR_MESSAGE = "Amidst has encounted an uncaught exception on thread: ";
@@ -29,7 +28,6 @@ public class Amidst {
 		initLogger();
 		initLookAndFeel();
 		setJava2DEnvironmentVariables();
-		trackRunning();
 		startApplication();
 	}
 
@@ -93,10 +91,6 @@ public class Amidst {
 	private static void setJava2DEnvironmentVariables() {
 		System.setProperty("sun.java2d.opengl", "True");
 		System.setProperty("sun.java2d.accthreshold", "0");
-	}
-
-	private static void trackRunning() {
-		Google.track("Run");
 	}
 
 	private static void startApplication() {

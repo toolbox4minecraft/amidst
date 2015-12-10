@@ -12,14 +12,16 @@ import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.world.WorldBuilder;
 
 public class MojangApiBuilder {
+	private final WorldBuilder worldBuilder;
 	private final String preferedDotMinecraftDirectory;
 	private final String preferedLibraries;
 	private final String preferedVersionJar;
 	private final String preferedVersionJson;
 
-	public MojangApiBuilder(String preferedDotMinecraftDirectory,
-			String preferedLibraries, String preferedVersionJar,
-			String preferedVersionJson) {
+	public MojangApiBuilder(WorldBuilder worldBuilder,
+			String preferedDotMinecraftDirectory, String preferedLibraries,
+			String preferedVersionJar, String preferedVersionJson) {
+		this.worldBuilder = worldBuilder;
 		this.preferedDotMinecraftDirectory = preferedDotMinecraftDirectory;
 		this.preferedLibraries = preferedLibraries;
 		this.preferedVersionJar = preferedVersionJar;
@@ -32,9 +34,8 @@ public class MojangApiBuilder {
 			Log.crash("Unable to find minecraft directory at: "
 					+ dotMinecraftDirectory.getRoot());
 		}
-		MojangApi result = new MojangApi(new WorldBuilder(),
-				dotMinecraftDirectory, readRemoteOrLocalVersionList(),
-				createPreferedJson());
+		MojangApi result = new MojangApi(worldBuilder, dotMinecraftDirectory,
+				readRemoteOrLocalVersionList(), createPreferedJson());
 		result.set(createProfileDirectory(), createVersionDirectory(result));
 		return result;
 	}

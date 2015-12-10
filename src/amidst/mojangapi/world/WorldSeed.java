@@ -3,7 +3,6 @@ package amidst.mojangapi.world;
 import java.util.Random;
 
 import amidst.documentation.Immutable;
-import amidst.utilities.Google;
 
 @Immutable
 public class WorldSeed {
@@ -29,7 +28,7 @@ public class WorldSeed {
 			}
 		}
 
-		private String getTrackingString(long seed, String text) {
+		private String getTrackingMessage(long seed, String text) {
 			if (this == TEXT) {
 				return "seed/" + text + "/" + seed;
 			} else if (this == NUMERIC) {
@@ -68,14 +67,14 @@ public class WorldSeed {
 	private final String text;
 	private final WorldSeedType type;
 	private final String label;
-	private final String trackingString;
+	private final String trackingMessage;
 
 	private WorldSeed(long seed, String text, WorldSeedType type) {
 		this.seed = seed;
 		this.text = text;
 		this.type = type;
 		this.label = type.getLabel(seed, text);
-		this.trackingString = type.getTrackingString(seed, text);
+		this.trackingMessage = type.getTrackingMessage(seed, text);
 	}
 
 	public long getLong() {
@@ -94,11 +93,7 @@ public class WorldSeed {
 		return label;
 	}
 
-	// TODO: make google tracking non-static
-	@Deprecated
-	public void trackIfNecessary() {
-		if (trackingString != null) {
-			Google.track(trackingString);
-		}
+	public String getTrackingMessage() {
+		return trackingMessage;
 	}
 }

@@ -24,9 +24,16 @@ import amidst.mojangapi.world.icon.TempleProducer;
 import amidst.mojangapi.world.icon.VillageProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
+import amidst.utilities.GoogleTracker;
 
 @ThreadSafe
 public class WorldBuilder {
+	private final GoogleTracker googleTracker;
+
+	public WorldBuilder(GoogleTracker googleTracker) {
+		this.googleTracker = googleTracker;
+	}
+
 	public World fromSeed(MinecraftInterface minecraftInterface,
 			WorldSeed seed, WorldType worldType) {
 		return create(minecraftInterface, seed, worldType, "",
@@ -74,7 +81,7 @@ public class WorldBuilder {
 			WorldType worldType, String generatorOptions,
 			MovablePlayerList movablePlayerList) {
 		// @formatter:off
-		seed.trackIfNecessary();
+		googleTracker.trackSeed(seed);
 		minecraftInterface.createWorld(seed.getLong(), worldType, generatorOptions);
 		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
 		BiomeDataOracle biomeDataOracle = new BiomeDataOracle(minecraftInterface);
