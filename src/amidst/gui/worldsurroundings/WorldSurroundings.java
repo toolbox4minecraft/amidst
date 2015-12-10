@@ -123,18 +123,22 @@ public class WorldSurroundings {
 		return world.getMovablePlayerList();
 	}
 
-	public boolean canSavePlayerLocations() {
-		return world.getMovablePlayerList().canSave();
-	}
-
-	public void savePlayerLocations() {
-		world.getMovablePlayerList().save();
+	public boolean canReloadPlayerLocations() {
+		return world.getMovablePlayerList().canReload();
 	}
 
 	public void reloadPlayerLocations(SkinLoader skinLoader) {
 		world.getMovablePlayerList().reload();
 		reloadPlayerLayer();
 		loadPlayerSkins(skinLoader);
+	}
+
+	public boolean canSavePlayerLocations() {
+		return world.getMovablePlayerList().canSave();
+	}
+
+	public void savePlayerLocations() {
+		world.getMovablePlayerList().save();
 	}
 
 	public void loadPlayerSkins(SkinLoader skinLoader) {

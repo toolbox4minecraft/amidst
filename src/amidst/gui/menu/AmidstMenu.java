@@ -27,8 +27,11 @@ public class AmidstMenu {
 		worldMenu.setEnabled(isEnabled);
 	}
 
-	public void setPlayerLocationMenusEnabled(boolean isEnabled) {
+	public void setSavePlayerLocationsMenuEnabled(boolean isEnabled) {
 		savePlayerLocationsMenu.setEnabled(isEnabled);
+	}
+
+	public void setReloadPlayerLocationsMenuEnabled(boolean isEnabled) {
 		reloadPlayerLocationsMenu.setEnabled(isEnabled);
 	}
 }

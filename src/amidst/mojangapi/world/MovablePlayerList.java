@@ -8,10 +8,10 @@ import amidst.mojangapi.file.nbt.playerloader.PlayerLoader;
 import amidst.mojangapi.file.nbt.playermover.PlayerMover;
 
 public class MovablePlayerList implements Iterable<Player> {
-	private static final MovablePlayerList EMPTY_INSTANCE = new MovablePlayerList();
+	private static final MovablePlayerList DUMMY_INSTANCE = new MovablePlayerList();
 
 	public static MovablePlayerList empty() {
-		return EMPTY_INSTANCE;
+		return DUMMY_INSTANCE;
 	}
 
 	private final PlayerLoader playerLoader;
@@ -33,12 +33,17 @@ public class MovablePlayerList implements Iterable<Player> {
 		reload();
 	}
 
+	@Deprecated
+	public boolean canReload() {
+		return this != DUMMY_INSTANCE;
+	}
+
 	public void reload() {
 		this.players = Collections.unmodifiableList(playerLoader.load());
 	}
 
 	public boolean canSave() {
-		return playerMover != null && !players.isEmpty();
+		return playerMover != null;
 	}
 
 	public void save() {
