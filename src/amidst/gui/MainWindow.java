@@ -31,12 +31,11 @@ import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.utilities.SeedHistoryLogger;
 
 public class MainWindow {
-	private final SeedPrompt seedPrompt = new SeedPrompt();
-
 	private final Application application;
 	private final Options options;
 	private final MojangApi mojangApi;
@@ -179,8 +178,8 @@ public class MainWindow {
 		frame.dispose();
 	}
 
-	public String askForSeed() {
-		return seedPrompt.askForSeed(frame);
+	public WorldSeed askForSeed() {
+		return new SeedPrompt(frame).askForSeed();
 	}
 
 	public File askForMinecraftWorldFile() {
@@ -239,7 +238,7 @@ public class MainWindow {
 	public WorldType askForWorldType() {
 		String worldTypePreference = options.worldType.get();
 		if (worldTypePreference.equals("Prompt each time")) {
-			return askForOptions("New Project", "Enter world type\n",
+			return askForOptions("World Type", "Enter world type\n",
 					WorldType.getSelectable());
 		} else {
 			return WorldType.from(worldTypePreference);

@@ -73,13 +73,9 @@ public class MenuActions {
 	}
 
 	public void newFromSeed() {
-		String input = mainWindow.askForSeed();
-		if (input != null) {
-			if (input.isEmpty()) {
-				newFromSeed(WorldSeed.random());
-			} else {
-				newFromSeed(WorldSeed.fromUserInput(input));
-			}
+		WorldSeed seed = mainWindow.askForSeed();
+		if (seed != null) {
+			newFromSeed(seed);
 		}
 	}
 

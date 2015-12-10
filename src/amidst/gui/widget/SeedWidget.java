@@ -10,7 +10,7 @@ public class SeedWidget extends Widget {
 
 	public SeedWidget(CornerAnchorPoint anchor, WorldSeed seed) {
 		super(anchor);
-		this.text = "Seed: " + seed.getLabel();
+		this.text = seed.getLabel();
 		setWidth(20);
 		setHeight(30);
 	}
