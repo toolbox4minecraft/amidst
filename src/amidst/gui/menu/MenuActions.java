@@ -1,5 +1,7 @@
 package amidst.gui.menu;
 
+import java.awt.Component;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
@@ -12,12 +14,14 @@ import javax.imageio.ImageIO;
 
 import amidst.Application;
 import amidst.gui.MainWindow;
+import amidst.gui.MovePlayerPopupMenu;
 import amidst.gui.SkinLoader;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.worldsurroundings.WorldSurroundings;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.Player;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.icon.WorldIcon;
@@ -48,28 +52,6 @@ public class MenuActions {
 		this.skinLoader = skinLoader;
 		this.updatePrompt = updatePrompt;
 		this.biomeColorProfileSelection = biomeColorProfileSelection;
-	}
-
-	public void savePlayerLocations() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			worldSurroundings.savePlayerLocations();
-		}
-	}
-
-	public void reloadPlayerLocations() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			worldSurroundings.reloadPlayerLocations(skinLoader);
-		}
-	}
-
-	public void switchProfile() {
-		application.displayVersionSelectWindow();
-	}
-
-	public void exit() {
-		application.exitGracefully();
 	}
 
 	public void newFromSeed() {
@@ -104,6 +86,14 @@ public class MenuActions {
 				mainWindow.displayException(e);
 			}
 		}
+	}
+
+	public void switchProfile() {
+		application.displayVersionSelectWindow();
+	}
+
+	public void exit() {
+		application.exitGracefully();
 	}
 
 	public void findStronghold() {
@@ -171,6 +161,34 @@ public class MenuActions {
 		}
 	}
 
+	public void savePlayerLocations() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
+		if (worldSurroundings != null) {
+			worldSurroundings.savePlayerLocations();
+		}
+	}
+
+	public void reloadPlayerLocations() {
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
+		if (worldSurroundings != null) {
+			worldSurroundings.reloadPlayerLocations(skinLoader);
+		}
+	}
+
+	public void howCanIMoveAPlayer() {
+		mainWindow
+				.displayMessage("If you load the world from a minecraft save folder, you can change the player locations.\n"
+						+ "1. Scroll the map to and right-click on the new player location.\n"
+						+ "2. Select the player you want to move to the new location.\n"
+						+ "3. Enter the new player height (y-coordinate).\n"
+						+ "4. Save player locations.\n\n"
+						+ "WARNING: This will change the contents of the save folder, so there is a chance that the world gets corrupted.\n"
+						+ "We try to minimize the risk by creating a backup of the changed file, before it is changed.\n"
+						+ "If the backup fails, we will not write the changes.\n"
+						+ "You can find the backup files in a sub folder of the world, named 'amidst_backup'.\n"
+						+ "Especially, make sure to not have the world loaded in minecraft during this process.");
+	}
+
 	public void selectBiomeColorProfile(BiomeColorProfile profile) {
 		biomeColorProfileSelection.setProfile(profile);
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
@@ -198,6 +216,48 @@ public class MenuActions {
 		}
 	}
 
+	public void adjustZoom(Point mousePosition, int notches) {
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
+		if (worldSurroundings != null) {
+			worldSurroundings.adjustZoom(mousePosition, notches);
+		}
+	}
+
+	public void selectWorldIcon(WorldIcon worldIcon) {
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
+		if (worldSurroundings != null) {
+			worldSurroundings.selectWorldIcon(worldIcon);
+		}
+	}
+
+	public void showPlayerPopupMenu(CoordinatesInWorld targetCoordinates,
+			Component component, int x, int y) {
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
+		if (worldSurroundings != null) {
+			if (worldSurroundings.canSavePlayerLocations()) {
+				new MovePlayerPopupMenu(this,
+						worldSurroundings.getMovablePlayerList(),
+						targetCoordinates).show(component, x, y);
+			}
+		}
+	}
+
+	public void movePlayer(Player player, CoordinatesInWorld targetCoordinates) {
+		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
+		if (worldSurroundings != null) {
+			long playerHeight = mainWindow.askForPlayerHeight(player
+					.getPlayerCoordinates().getY());
+			player.moveTo(targetCoordinates, playerHeight);
+			worldSurroundings.reloadPlayerLayer();
+			if (mainWindow
+					.askToConfirm(
+							"Save Player Location",
+							"Do you want to save the player locations NOW? Make sure to not have the world opened in minecraft at the same time!")) {
+				worldSurroundings.savePlayerLocations();
+			}
+		}
+	}
+
 	private void saveImageToFile(BufferedImage image, File file) {
 		try {
 			ImageIO.write(image, "png", appendPNGFileExtensionIfNecessary(file));
@@ -212,19 +272,5 @@ public class MenuActions {
 			filename += ".png";
 		}
 		return new File(filename);
-	}
-
-	public void howCanIMoveAPlayer() {
-		mainWindow
-				.displayMessage("If you load the world from a minecraft save folder, you can change the player locations.\n"
-						+ "1. Scroll the map to and right-click on the new player location.\n"
-						+ "2. Select the player you want to move to the new location.\n"
-						+ "3. Enter the new player height (y-coordinate).\n"
-						+ "4. Save player locations.\n\n"
-						+ "WARNING: This will change the contents of the save folder, so there is a chance that the world gets corrupted.\n"
-						+ "We try to minimize the risk by creating a backup of the changed file, before it is changed.\n"
-						+ "If the backup fails, we will not write the changes.\n"
-						+ "You can find the backup files in a sub folder of the world, named 'amidst_backup'.\n"
-						+ "Especially, make sure to not have the world loaded in minecraft during this process.");
 	}
 }

@@ -1,6 +1,7 @@
 package amidst.gui.worldsurroundings;
 
 import java.awt.Component;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.SkinLoader;
 import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.MovablePlayerList;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.icon.WorldIcon;
@@ -24,11 +26,13 @@ public class WorldSurroundings {
 	private final LayerReloader layerReloader;
 	private final FragmentManager fragmentManager;
 	private final Runnable onFinished;
+	private final WorldIconSelection worldIconSelection;
 
 	public WorldSurroundings(World world, FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			Viewer viewer, LayerReloader layerReloader,
-			FragmentManager fragmentManager) {
+			FragmentManager fragmentManager,
+			WorldIconSelection worldIconSelection) {
 		this.world = world;
 		this.graph = graph;
 		this.translator = translator;
@@ -36,6 +40,7 @@ public class WorldSurroundings {
 		this.viewer = viewer;
 		this.layerReloader = layerReloader;
 		this.fragmentManager = fragmentManager;
+		this.worldIconSelection = worldIconSelection;
 		this.onFinished = createOnFinished();
 	}
 
@@ -56,7 +61,7 @@ public class WorldSurroundings {
 		layerReloader.reloadBiomeLayer();
 	}
 
-	private void reloadPlayerLayer() {
+	public void reloadPlayerLayer() {
 		world.reloadPlayerWorldIcons();
 		layerReloader.reloadPlayerLayer();
 	}
@@ -89,6 +94,14 @@ public class WorldSurroundings {
 		zoom.adjustZoom(viewer.getMousePositionOrCenter(), notches);
 	}
 
+	public void adjustZoom(Point mousePosition, int notches) {
+		zoom.adjustZoom(mousePosition, notches);
+	}
+
+	public void selectWorldIcon(WorldIcon worldIcon) {
+		worldIconSelection.select(worldIcon);
+	}
+
 	public WorldSeed getWorldSeed() {
 		return world.getWorldSeed();
 	}
@@ -104,6 +117,10 @@ public class WorldSurroundings {
 
 	public List<WorldIcon> getPlayerWorldIcons() {
 		return world.getPlayerWorldIcons();
+	}
+
+	public MovablePlayerList getMovablePlayerList() {
+		return world.getMovablePlayerList();
 	}
 
 	public boolean canSavePlayerLocations() {

@@ -137,7 +137,7 @@ public class MainWindow {
 	}
 
 	public void setWorld(World world) {
-		setWorldSurroundings(worldSurroundingsBuilder.create(world));
+		setWorldSurroundings(worldSurroundingsBuilder.create(world, actions));
 	}
 
 	/**
@@ -230,9 +230,9 @@ public class MainWindow {
 		return writer.toString();
 	}
 
-	public int askToConfirm(String title, String message) {
+	public boolean askToConfirm(String title, String message) {
 		return JOptionPane.showConfirmDialog(frame, message, title,
-				JOptionPane.YES_NO_OPTION);
+				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 	}
 
 	public WorldType askForWorldType() {
@@ -259,6 +259,16 @@ public class MainWindow {
 			return CoordinatesInWorld.fromString(coordinates);
 		} else {
 			return null;
+		}
+	}
+
+	public long askForPlayerHeight(long currentHeight) {
+		String input = askForString("Move Player",
+				"Enter new height (current: " + currentHeight + "):");
+		try {
+			return Long.parseLong(input);
+		} catch (NumberFormatException e) {
+			return currentHeight;
 		}
 	}
 

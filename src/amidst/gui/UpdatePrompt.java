@@ -6,8 +6,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.swing.JOptionPane;
-
 import amidst.utilities.UpdateInformationRetriever;
 
 public class UpdatePrompt {
@@ -49,12 +47,12 @@ public class UpdatePrompt {
 		retriever.check();
 		if (!retriever.isSuccessful()) {
 			error(retriever.getErrorMessage());
-		} else if (getUserChoice() == JOptionPane.YES_OPTION) {
+		} else if (getUserChoice()) {
 			openUpdateURL();
 		}
 	}
 
-	private int getUserChoice() {
+	private boolean getUserChoice() {
 		if (retriever.isNewMajorVersionAvailable()) {
 			return mainWindow.askToConfirm("Update Found",
 					"A new version was found. Would you like to update?");
@@ -64,7 +62,7 @@ public class UpdatePrompt {
 		} else if (!silent) {
 			mainWindow.displayMessage("There are no new updates.");
 		}
-		return JOptionPane.NO_OPTION;
+		return false;
 	}
 
 	private void openUpdateURL() throws IOException, URISyntaxException {
