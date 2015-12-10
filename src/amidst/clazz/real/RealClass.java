@@ -208,10 +208,8 @@ public class RealClass {
 		private ClassConstant<Integer> readStringReference(byte type)
 				throws IOException {
 			int value = stream.readUnsignedShort();
-			ClassConstant<Integer> result = new ClassConstant<Integer>(type,
-					value);
-			product.stringIndices.add(result);
-			return result;
+			product.stringIndices.add(value);
+			return new ClassConstant<Integer>(type, value);
 		}
 
 		private ClassConstant<ReferenceIndex> readAnotherReference(byte type)
@@ -319,7 +317,7 @@ public class RealClass {
 	private ClassConstant<?>[] constants;
 	private int accessFlags;
 
-	private List<ClassConstant<Integer>> stringIndices = new ArrayList<ClassConstant<Integer>>();
+	private List<Integer> stringIndices = new ArrayList<Integer>();
 	private List<ReferenceIndex> methodIndices;
 	private List<Float> floatConstants = new ArrayList<Float>();
 	private List<Long> longConstants = new ArrayList<Long>();
@@ -467,8 +465,8 @@ public class RealClass {
 	}
 
 	public boolean searchForString(String str) {
-		for (ClassConstant<Integer> i : stringIndices) {
-			if (((String) constants[i.getValue() - 1].getValue()).contains(str))
+		for (Integer i : stringIndices) {
+			if (((String) constants[i - 1].getValue()).contains(str))
 				return true;
 		}
 		return false;
