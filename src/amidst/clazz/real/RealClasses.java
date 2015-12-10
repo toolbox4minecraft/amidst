@@ -16,10 +16,6 @@ import amidst.utilities.FileSystemUtils;
 public enum RealClasses {
 	;
 
-	public static RealClass fromByteArray(String realClassName, byte[] classData) {
-		return RealClass.newInstance(realClassName, classData);
-	}
-
 	public static List<RealClass> fromJarFile(File jarFile) {
 		return readRealClassesFromJarFile(jarFile);
 	}
@@ -64,7 +60,8 @@ public enum RealClasses {
 				byte[] classData = new byte[stream.available()];
 				stream.read(classData);
 				stream.close();
-				return RealClass.newInstance(realClassName, classData);
+				return new RealClassBuilder(realClassName, classData)
+						.construct();
 			}
 		}
 		return null;

@@ -1,7 +1,7 @@
 package amidst.clazz.real.detector;
 
 import amidst.clazz.real.RealClass;
-import amidst.clazz.real.RealClass.Field;
+import amidst.clazz.real.RealClassField;
 import amidst.documentation.Immutable;
 
 @Immutable
@@ -17,7 +17,7 @@ public class FieldFlagsRCD extends RealClassDetector {
 	@Override
 	public boolean detect(RealClass realClass) {
 		for (int fieldIndex : fieldIndices) {
-			Field field = realClass.getField(fieldIndex);
+			RealClassField field = realClass.getField(fieldIndex);
 			if (!field.hasFlags(flags)) {
 				return false;
 			}

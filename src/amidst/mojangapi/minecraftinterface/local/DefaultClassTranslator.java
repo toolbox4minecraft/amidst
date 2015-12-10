@@ -1,6 +1,6 @@
 package amidst.mojangapi.minecraftinterface.local;
 
-import amidst.clazz.real.RealClass.AccessFlags;
+import amidst.clazz.real.AccessFlags;
 import amidst.clazz.translator.ClassTranslator;
 
 public enum DefaultClassTranslator {
