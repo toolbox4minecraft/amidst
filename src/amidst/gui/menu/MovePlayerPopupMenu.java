@@ -37,7 +37,6 @@ public class MovePlayerPopupMenu {
 		return result;
 	}
 
-	// TODO: put current height in text field?
 	private JMenuItem createPlayerMenuItem(final Player player,
 			final CoordinatesInWorld targetCoordinates) {
 		JMenuItem result = new JMenuItem(player.getPlayerName());
@@ -49,5 +48,4 @@ public class MovePlayerPopupMenu {
 		});
 		return result;
 	}
-
 }

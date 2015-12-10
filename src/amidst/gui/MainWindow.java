@@ -262,13 +262,14 @@ public class MainWindow {
 		}
 	}
 
-	public long askForPlayerHeight(long currentHeight) {
-		String input = askForString("Move Player",
-				"Enter new height (current: " + currentHeight + "):");
-		try {
-			return Long.parseLong(input);
-		} catch (NumberFormatException e) {
-			return currentHeight;
+	public String askForPlayerHeight(long currentHeight) {
+		Object input = JOptionPane.showInputDialog(frame,
+				"Enter new player height:", "Move Player",
+				JOptionPane.QUESTION_MESSAGE, null, null, currentHeight);
+		if (input != null) {
+			return input.toString();
+		} else {
+			return null;
 		}
 	}
 

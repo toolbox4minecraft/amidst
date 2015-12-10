@@ -244,16 +244,27 @@ public class Actions {
 	public void movePlayer(Player player, CoordinatesInWorld targetCoordinates) {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
-			long playerHeight = mainWindow.askForPlayerHeight(player
-					.getPlayerCoordinates().getY());
-			player.moveTo(targetCoordinates, playerHeight);
-			worldSurroundings.reloadPlayerLayer();
-			if (mainWindow
-					.askToConfirm(
-							"Save Player Location",
-							"Do you want to save the player locations NOW? Make sure to not have the world opened in minecraft at the same time!")) {
-				worldSurroundings.savePlayerLocations();
+			long currentHeight = player.getPlayerCoordinates().getY();
+			String input = mainWindow.askForPlayerHeight(currentHeight);
+			if (input != null) {
+				player.moveTo(targetCoordinates,
+						tryParseLong(input, currentHeight));
+				worldSurroundings.reloadPlayerLayer();
+				if (mainWindow
+						.askToConfirm(
+								"Save Player Location",
+								"Do you want to save the player locations NOW? Make sure to not have the world opened in minecraft at the same time!")) {
+					worldSurroundings.savePlayerLocations();
+				}
 			}
+		}
+	}
+
+	private long tryParseLong(String text, long defaultValue) {
+		try {
+			return Long.parseLong(text);
+		} catch (NumberFormatException e) {
+			return defaultValue;
 		}
 	}
 
