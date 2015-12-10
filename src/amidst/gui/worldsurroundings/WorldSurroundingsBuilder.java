@@ -10,7 +10,7 @@ import amidst.fragment.layer.LayerBuilder;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.fragment.layer.LayerLoader;
 import amidst.fragment.layer.LayerReloader;
-import amidst.gui.menu.MenuActions;
+import amidst.gui.menu.Actions;
 import amidst.gui.widget.Widget;
 import amidst.gui.widget.WidgetBuilder;
 import amidst.gui.widget.WidgetManager;
@@ -33,7 +33,7 @@ public class WorldSurroundingsBuilder {
 				layerBuilder.getNumberOfLayers());
 	}
 
-	public WorldSurroundings create(World world, MenuActions actions) {
+	public WorldSurroundings create(World world, Actions actions) {
 		Movement movement = new Movement(options.smoothScrolling);
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
 		List<LayerDeclaration> declarations = layerBuilder.getDeclarations();

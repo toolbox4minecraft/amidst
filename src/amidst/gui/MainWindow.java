@@ -21,10 +21,10 @@ import amidst.Application;
 import amidst.Options;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
+import amidst.gui.menu.Actions;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.AmidstMenuBuilder;
 import amidst.gui.menu.LevelFileFilter;
-import amidst.gui.menu.MenuActions;
 import amidst.gui.menu.PNGFileFilter;
 import amidst.gui.worldsurroundings.WorldSurroundings;
 import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
@@ -46,7 +46,7 @@ public class MainWindow {
 
 	private final JFrame frame;
 	private final Container contentPane;
-	private final MenuActions actions;
+	private final Actions actions;
 	private final AmidstMenu menuBar;
 
 	private final AtomicReference<WorldSurroundings> worldSurroundings = new AtomicReference<WorldSurroundings>();
@@ -94,8 +94,8 @@ public class MainWindow {
 		return contentPane;
 	}
 
-	private MenuActions createMenuActions() {
-		return new MenuActions(application, mojangApi, this, worldSurroundings,
+	private Actions createMenuActions() {
+		return new Actions(application, mojangApi, this, worldSurroundings,
 				skinLoader, updatePrompt, options.biomeColorProfileSelection);
 	}
 

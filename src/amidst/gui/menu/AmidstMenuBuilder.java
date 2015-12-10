@@ -21,13 +21,13 @@ import amidst.resources.ResourceLoader;
 
 public class AmidstMenuBuilder {
 	private final Options options;
-	private final MenuActions actions;
+	private final Actions actions;
 	private final JMenuBar menuBar;
 	private JMenu worldMenu;
 	private JMenuItem savePlayerLocationsMenu;
 	private JMenuItem reloadPlayerLocationsMenu;
 
-	public AmidstMenuBuilder(Options options, MenuActions actions) {
+	public AmidstMenuBuilder(Options options, Actions actions) {
 		this.options = options;
 		this.actions = actions;
 		this.menuBar = createMenuBar();

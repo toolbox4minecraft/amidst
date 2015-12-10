@@ -25,10 +25,10 @@ public class BiomeColorMenuFactory {
 		private ActionListener firstListener;
 		private boolean isFirstContainer = true;
 
-		private final MenuActions actions;
+		private final Actions actions;
 
 		private BiomeColorProfileVisitorImpl(JMenu parentMenu,
-				MenuActions actions) {
+				Actions actions) {
 			this.actions = actions;
 			menuStack.add(parentMenu);
 		}
@@ -110,10 +110,10 @@ public class BiomeColorMenuFactory {
 	}
 
 	private final JMenu parentMenu = new JMenu("Biome profile");
-	private final MenuActions actions;
+	private final Actions actions;
 	private final BiomeColorProfileLoader biomeColorProfileLoader = new BiomeColorProfileLoader();
 
-	public BiomeColorMenuFactory(MenuActions actions) {
+	public BiomeColorMenuFactory(Actions actions) {
 		this.actions = actions;
 		Log.i("Checking for additional biome color profiles.");
 		initParentMenu();

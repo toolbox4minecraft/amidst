@@ -8,7 +8,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import amidst.fragment.FragmentGraph;
-import amidst.gui.menu.MenuActions;
+import amidst.gui.menu.Actions;
 import amidst.gui.widget.WidgetManager;
 
 public class ViewerMouseListener implements MouseListener, MouseWheelListener {
@@ -17,11 +17,11 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	private final FragmentGraphToScreenTranslator translator;
 	private final Zoom zoom;
 	private final Movement movement;
-	private final MenuActions actions;
+	private final Actions actions;
 
 	public ViewerMouseListener(WidgetManager widgetManager,
 			FragmentGraph graph, FragmentGraphToScreenTranslator translator,
-			Zoom zoom, Movement movement, MenuActions actions) {
+			Zoom zoom, Movement movement, Actions actions) {
 		this.widgetManager = widgetManager;
 		this.graph = graph;
 		this.translator = translator;

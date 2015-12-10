@@ -1,4 +1,4 @@
-package amidst.gui;
+package amidst.gui.menu;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -7,17 +7,16 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import amidst.gui.menu.MenuActions;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.MovablePlayerList;
 import amidst.mojangapi.world.Player;
 
 public class MovePlayerPopupMenu {
-	private final MenuActions actions;
+	private final Actions actions;
 	private final MovablePlayerList movablePlayerList;
 	private final CoordinatesInWorld targetCoordinates;
 
-	public MovePlayerPopupMenu(MenuActions actions,
+	public MovePlayerPopupMenu(Actions actions,
 			MovablePlayerList movablePlayerList,
 			CoordinatesInWorld targetCoordinates) {
 		this.actions = actions;

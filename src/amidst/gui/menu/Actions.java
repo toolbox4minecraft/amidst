@@ -14,7 +14,6 @@ import javax.imageio.ImageIO;
 
 import amidst.Application;
 import amidst.gui.MainWindow;
-import amidst.gui.MovePlayerPopupMenu;
 import amidst.gui.SkinLoader;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.worldsurroundings.WorldSurroundings;
@@ -28,7 +27,7 @@ import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BiomeColorProfileSelection;
 
-public class MenuActions {
+public class Actions {
 	private static final String ABOUT_MESSAGE = "Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
 			+ "By Skidoodle (amidst.project@gmail.com)";
 
@@ -40,7 +39,7 @@ public class MenuActions {
 	private final UpdatePrompt updatePrompt;
 	private final BiomeColorProfileSelection biomeColorProfileSelection;
 
-	public MenuActions(Application application, MojangApi mojangApi,
+	public Actions(Application application, MojangApi mojangApi,
 			MainWindow mainWindow,
 			AtomicReference<WorldSurroundings> worldSurroundings,
 			SkinLoader skinLoader, UpdatePrompt updatePrompt,
