@@ -13,6 +13,6 @@ public enum SymbolicClasses {
 			Map<SymbolicClassDeclaration, String> realClassNamesBySymbolicClassDeclaration,
 			ClassLoader classLoader) {
 		return new SymbolicClassGraphBuilder(classLoader,
-				realClassNamesBySymbolicClassDeclaration).create();
+				realClassNamesBySymbolicClassDeclaration).construct();
 	}
 }

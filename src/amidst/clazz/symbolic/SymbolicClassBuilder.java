@@ -11,8 +11,10 @@ import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicFieldDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.ParameterDeclaration;
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 
+@Immutable
 public class SymbolicClassBuilder {
 	private static Map<String, Class<?>> createPrimitivesMap() {
 		Map<String, Class<?>> result = new HashMap<String, Class<?>>();
@@ -37,7 +39,7 @@ public class SymbolicClassBuilder {
 	private final ClassLoader classLoader;
 	private final Map<String, String> realClassNamesBySymbolicClassName;
 	private final Map<String, SymbolicClass> symbolicClassesByRealClassName;
-	private SymbolicClass product;
+	private final SymbolicClass product;
 
 	public SymbolicClassBuilder(ClassLoader classLoader,
 			Map<String, String> realClassNamesBySymbolicClassName,
@@ -51,7 +53,7 @@ public class SymbolicClassBuilder {
 				methodsBySymbolicName, fieldsBySymbolicName);
 	}
 
-	public SymbolicClass create() {
+	public SymbolicClass getProduct() {
 		return product;
 	}
 

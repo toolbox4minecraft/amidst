@@ -4,6 +4,12 @@ import java.util.Map;
 
 import amidst.documentation.Immutable;
 
+/**
+ * The contents of the maps will be altered by the {@link SymbolicClassBuilder}
+ * after this instance is constructed. However, these maps will not be altered
+ * after the method {@link SymbolicClassGraphBuilder#construct()} finished
+ * execution.
+ */
 @Immutable
 public class SymbolicClass {
 	private final String symbolicClassName;

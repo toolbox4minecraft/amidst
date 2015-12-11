@@ -9,13 +9,15 @@ import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicFieldDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
+import amidst.documentation.Immutable;
 
+@Immutable
 public class SymbolicClassGraphBuilder {
-	private ClassLoader classLoader;
-	private Map<SymbolicClassDeclaration, String> realClassNamesBySymbolicClassDeclaration;
-	private Map<String, String> realClassNamesBySymbolicClassName = new HashMap<String, String>();
-	private Map<String, SymbolicClass> symbolicClassesByRealClassName = new HashMap<String, SymbolicClass>();
-	private Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration = new HashMap<SymbolicClassDeclaration, SymbolicClassBuilder>();
+	private final ClassLoader classLoader;
+	private final Map<SymbolicClassDeclaration, String> realClassNamesBySymbolicClassDeclaration;
+	private final Map<String, String> realClassNamesBySymbolicClassName = new HashMap<String, String>();
+	private final Map<String, SymbolicClass> symbolicClassesByRealClassName = new HashMap<String, SymbolicClass>();
+	private final Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration = new HashMap<SymbolicClassDeclaration, SymbolicClassBuilder>();
 
 	public SymbolicClassGraphBuilder(
 			ClassLoader classLoader,
@@ -24,7 +26,7 @@ public class SymbolicClassGraphBuilder {
 		this.realClassNamesBySymbolicClassDeclaration = realClassNamesBySymbolicClassDeclaration;
 	}
 
-	public Map<String, SymbolicClass> create() {
+	public Map<String, SymbolicClass> construct() {
 		createSymbolicClasses();
 		addConstructorsMethodsAndFields();
 		return createProduct();
@@ -40,7 +42,7 @@ public class SymbolicClassGraphBuilder {
 					classLoader, realClassNamesBySymbolicClassName,
 					symbolicClassesByRealClassName,
 					declaration.getSymbolicClassName(), realClassName);
-			SymbolicClass symbolicClass = builder.create();
+			SymbolicClass symbolicClass = builder.getProduct();
 			realClassNamesBySymbolicClassName.put(symbolicClassName,
 					realClassName);
 			symbolicClassesByRealClassName.put(realClassName, symbolicClass);
@@ -86,7 +88,7 @@ public class SymbolicClassGraphBuilder {
 		for (Entry<SymbolicClassDeclaration, SymbolicClassBuilder> entry : symbolicClassBuildersBySymbolicClassDeclaration
 				.entrySet()) {
 			result.put(entry.getKey().getSymbolicClassName(), entry.getValue()
-					.create());
+					.getProduct());
 		}
 		return result;
 	}
