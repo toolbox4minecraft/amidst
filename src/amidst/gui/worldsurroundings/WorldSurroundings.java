@@ -13,6 +13,7 @@ import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.WorldPlayerType;
+import amidst.threading.WorkerExecutor;
 
 public class WorldSurroundings {
 	private final World world;
@@ -24,12 +25,13 @@ public class WorldSurroundings {
 	private final WorldIconSelection worldIconSelection;
 	private final Runnable onRepainterTick;
 	private final Runnable onFragmentLoaderTick;
+	private final Runnable onPlayerFinishedLoading;
 
 	public WorldSurroundings(World world, FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			Viewer viewer, LayerReloader layerReloader,
 			WorldIconSelection worldIconSelection, Runnable onRepainterTick,
-			Runnable onFragmentLoaderTick) {
+			Runnable onFragmentLoaderTick, Runnable onPlayerFinishedLoading) {
 		this.world = world;
 		this.graph = graph;
 		this.translator = translator;
@@ -39,6 +41,7 @@ public class WorldSurroundings {
 		this.worldIconSelection = worldIconSelection;
 		this.onRepainterTick = onRepainterTick;
 		this.onFragmentLoaderTick = onFragmentLoaderTick;
+		this.onPlayerFinishedLoading = onPlayerFinishedLoading;
 	}
 
 	public Component getComponent() {
@@ -116,10 +119,10 @@ public class WorldSurroundings {
 		return world.getMovablePlayerList().canLoad();
 	}
 
-	public void loadPlayers() {
+	public void loadPlayers(WorkerExecutor workerExecutor) {
 		worldIconSelection.clear();
-		world.getMovablePlayerList().load();
-		layerReloader.reloadPlayerLayer();
+		world.getMovablePlayerList().load(workerExecutor,
+				onPlayerFinishedLoading);
 	}
 
 	public boolean canSavePlayerLocations() {

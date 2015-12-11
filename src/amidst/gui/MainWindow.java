@@ -65,7 +65,7 @@ public class MainWindow {
 		this.threadMaster = threadMaster;
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
-		this.actions = createMenuActions();
+		this.actions = createActions();
 		this.menuBar = createMenuBar();
 		initKeyListener();
 		initCloseListener();
@@ -94,9 +94,10 @@ public class MainWindow {
 		return contentPane;
 	}
 
-	private Actions createMenuActions() {
+	private Actions createActions() {
 		return new Actions(application, mojangApi, this, worldSurroundings,
-				updatePrompt, options.biomeColorProfileSelection);
+				updatePrompt, options.biomeColorProfileSelection,
+				threadMaster.getWorkerExecutor());
 	}
 
 	private AmidstMenu createMenuBar() {
@@ -170,7 +171,7 @@ public class MainWindow {
 		menuBar.setReloadPlayerLocationsMenuEnabled(worldSurroundings
 				.canLoadPlayerLocations());
 		frame.validate();
-		worldSurroundings.loadPlayers();
+		worldSurroundings.loadPlayers(threadMaster.getWorkerExecutor());
 		threadMaster.setOnRepaintTick(worldSurroundings.getOnRepainterTick());
 		threadMaster.setOnFragmentLoadTick(worldSurroundings
 				.getOnFragmentLoaderTick());

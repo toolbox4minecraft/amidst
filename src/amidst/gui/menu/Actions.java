@@ -25,6 +25,7 @@ import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BiomeColorProfileSelection;
+import amidst.threading.WorkerExecutor;
 
 public class Actions {
 	private final Application application;
@@ -33,18 +34,21 @@ public class Actions {
 	private final AtomicReference<WorldSurroundings> worldSurroundings;
 	private final UpdatePrompt updatePrompt;
 	private final BiomeColorProfileSelection biomeColorProfileSelection;
+	private final WorkerExecutor workerExecutor;
 
 	public Actions(Application application, MojangApi mojangApi,
 			MainWindow mainWindow,
 			AtomicReference<WorldSurroundings> worldSurroundings,
 			UpdatePrompt updatePrompt,
-			BiomeColorProfileSelection biomeColorProfileSelection) {
+			BiomeColorProfileSelection biomeColorProfileSelection,
+			WorkerExecutor workerExecutor) {
 		this.application = application;
 		this.mojangApi = mojangApi;
 		this.mainWindow = mainWindow;
 		this.worldSurroundings = worldSurroundings;
 		this.updatePrompt = updatePrompt;
 		this.biomeColorProfileSelection = biomeColorProfileSelection;
+		this.workerExecutor = workerExecutor;
 	}
 
 	public void newFromSeed() {
@@ -152,7 +156,7 @@ public class Actions {
 	public void reloadPlayerLocations() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
-			worldSurroundings.loadPlayers();
+			worldSurroundings.loadPlayers(workerExecutor);
 		}
 	}
 

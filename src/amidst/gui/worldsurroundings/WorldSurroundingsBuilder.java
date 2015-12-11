@@ -62,7 +62,8 @@ public class WorldSurroundingsBuilder {
 		return new WorldSurroundings(world, graph, translator, zoom, viewer,
 				layerReloader, worldIconSelection,
 				createOnRepainterTick(viewer),
-				createOnFragmentLoaderTick(fragmentQueueProcessor));
+				createOnFragmentLoaderTick(fragmentQueueProcessor),
+				createOnPlayerFinishedLoading(layerReloader));
 	}
 
 	private Runnable createOnRepainterTick(final Viewer viewer) {
@@ -82,6 +83,17 @@ public class WorldSurroundingsBuilder {
 			@Override
 			public void run() {
 				fragmentQueueProcessor.processQueues();
+			}
+		};
+	}
+
+	private Runnable createOnPlayerFinishedLoading(
+			final LayerReloader layerReloader) {
+		return new Runnable() {
+			@CalledOnlyBy(AmidstThread.EDT)
+			@Override
+			public void run() {
+				layerReloader.reloadPlayerLayer();
 			}
 		};
 	}

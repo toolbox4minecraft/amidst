@@ -1,14 +1,15 @@
 package amidst.mojangapi.world.player;
 
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.playerfile.PlayerFile;
+import amidst.threading.Worker;
+import amidst.threading.WorkerExecutor;
 
 @ThreadSafe
 public class MovablePlayerList implements Iterable<Player> {
@@ -24,7 +25,7 @@ public class MovablePlayerList implements Iterable<Player> {
 	private final boolean isSaveEnabled;
 
 	private volatile WorldPlayerType worldPlayerType;
-	private volatile List<Player> players = Collections.emptyList();
+	private volatile ConcurrentLinkedQueue<Player> players = new ConcurrentLinkedQueue<Player>();
 
 	public MovablePlayerList(PlayerInformationCache playerInformationCache,
 			SaveDirectory saveDirectory, boolean isSaveEnabled,
@@ -47,20 +48,56 @@ public class MovablePlayerList implements Iterable<Player> {
 		return saveDirectory != null;
 	}
 
-	public void load() {
+	public void load(WorkerExecutor workerExecutor,
+			Runnable onPlayerFinishedLoading) {
 		if (saveDirectory != null) {
 			Log.i("loading player locations");
-			List<Player> loadedPlayers = new LinkedList<Player>();
-			List<PlayerFile> playerFiles = worldPlayerType
-					.createPlayerFiles(saveDirectory);
-			for (PlayerFile playerFile : playerFiles) {
+			ConcurrentLinkedQueue<Player> players = new ConcurrentLinkedQueue<Player>();
+			this.players = players;
+			loadPlayersLater(players, workerExecutor, onPlayerFinishedLoading);
+		}
+	}
+
+	private void loadPlayersLater(final ConcurrentLinkedQueue<Player> players,
+			final WorkerExecutor workerExecutor,
+			final Runnable onPlayerFinishedLoading) {
+		workerExecutor.invokeLater(new Worker<Void>() {
+			@Override
+			public Void execute() {
+				List<PlayerFile> playerFiles = worldPlayerType
+						.createPlayerFiles(saveDirectory);
+				for (PlayerFile playerFile : playerFiles) {
+					loadPlayerLater(players, playerFile, workerExecutor,
+							onPlayerFinishedLoading);
+				}
+				return null;
+			}
+
+			@Override
+			public void finished(Void result) {
+				// noop
+			}
+		});
+	}
+
+	private void loadPlayerLater(final ConcurrentLinkedQueue<Player> players,
+			final PlayerFile playerFile, WorkerExecutor workerExecutor,
+			final Runnable onPlayerFinishedLoading) {
+		workerExecutor.invokeLater(new Worker<Void>() {
+			@Override
+			public Void execute() {
 				Player player = playerFile.createPlayer(playerInformationCache);
 				if (player.tryLoadLocation()) {
-					loadedPlayers.add(player);
+					players.offer(player);
 				}
+				return null;
 			}
-			this.players = Collections.unmodifiableList(loadedPlayers);
-		}
+
+			@Override
+			public void finished(Void result) {
+				onPlayerFinishedLoading.run();
+			}
+		});
 	}
 
 	public boolean canSave() {

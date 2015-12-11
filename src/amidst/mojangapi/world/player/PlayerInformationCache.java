@@ -24,7 +24,7 @@ public class PlayerInformationCache {
 		if (result != null) {
 			return result;
 		} else {
-			Log.w("requesting player information for uuid: " + uuid);
+			Log.i("requesting player information for uuid: " + uuid);
 			result = PlayerInformation.fromUUID(uuid);
 			put(result);
 			return result;
@@ -36,7 +36,7 @@ public class PlayerInformationCache {
 		if (result != null) {
 			return result;
 		} else {
-			Log.w("requesting player information for name: " + name);
+			Log.i("requesting player information for name: " + name);
 			result = PlayerInformation.fromName(name);
 			put(result);
 			return result;
