@@ -97,8 +97,15 @@ public enum JsonReader {
 	}
 
 	public static PlayerJson readPlayerFromUUID(String uuid) throws IOException {
-		return read(URIUtils.newReader(UUID_TO_PROFILE + uuid),
+		return read(URIUtils.newReader(UUID_TO_PROFILE + getPlayerUUID(uuid)),
 				PlayerJson.class);
+	}
+
+	/**
+	 * The uuid in the filename contains dashes that are not allowed in the url.
+	 */
+	private static String getPlayerUUID(String uuid) {
+		return uuid.replace("-", "");
 	}
 
 	public static PlayerJson readUUIDFromPlayerName(String playerName)
