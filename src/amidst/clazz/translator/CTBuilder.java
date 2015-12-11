@@ -23,10 +23,16 @@ import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.ExecuteOnEnd;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.SymbolicParameterDeclarationListBuilder;
+import amidst.documentation.NotThreadSafe;
 
+/**
+ * While this class is not thread-safe by itself, its product is thread-safe.
+ */
+@NotThreadSafe
 public class CTBuilder {
+	@NotThreadSafe
 	public class RCDBuilder {
-		private List<List<RealClassDetector>> allDetectors = new ArrayList<List<RealClassDetector>>();
+		private final List<List<RealClassDetector>> allDetectors = new ArrayList<List<RealClassDetector>>();
 		private List<RealClassDetector> detectors = new ArrayList<RealClassDetector>();
 
 		private RealClassDetector constructThis() {
@@ -95,11 +101,12 @@ public class CTBuilder {
 		}
 	}
 
+	@NotThreadSafe
 	public class SCDBuilder {
 		private String symbolicClassName;
-		private List<SymbolicConstructorDeclaration> constructors = new ArrayList<SymbolicConstructorDeclaration>();
-		private List<SymbolicMethodDeclaration> methods = new ArrayList<SymbolicMethodDeclaration>();
-		private List<SymbolicFieldDeclaration> fields = new ArrayList<SymbolicFieldDeclaration>();
+		private final List<SymbolicConstructorDeclaration> constructors = new ArrayList<SymbolicConstructorDeclaration>();
+		private final List<SymbolicMethodDeclaration> methods = new ArrayList<SymbolicMethodDeclaration>();
+		private final List<SymbolicFieldDeclaration> fields = new ArrayList<SymbolicFieldDeclaration>();
 
 		private void setSymbolicClassName(String symbolicClassName) {
 			this.symbolicClassName = symbolicClassName;
@@ -155,17 +162,13 @@ public class CTBuilder {
 		return new CTBuilder(null);
 	}
 
-	private CTBuilder previous;
+	private final CTBuilder previous;
 
-	private RCDBuilder detectorBuilder = new RCDBuilder();
-	private SCDBuilder declarationBuilder = new SCDBuilder();
+	private final RCDBuilder detectorBuilder = new RCDBuilder();
+	private final SCDBuilder declarationBuilder = new SCDBuilder();
 
 	private CTBuilder(CTBuilder previous) {
 		this.previous = previous;
-	}
-
-	public CTBuilder name() {
-		return this;
 	}
 
 	public RCDBuilder ifDetect() {

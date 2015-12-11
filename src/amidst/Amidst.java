@@ -10,15 +10,17 @@ import org.kohsuke.args4j.CmdLineParser;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledBy;
+import amidst.documentation.ThreadSafe;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
 import amidst.logging.Log.CrashHandler;
 
+@ThreadSafe
 public class Amidst {
 	private static final String UNCAUGHT_EXCEPTION_ERROR_MESSAGE = "Amidst has encounted an uncaught exception on thread: ";
 	private static final String COMMAND_LINE_PARSING_ERROR_MESSAGE = "There was an issue parsing command line options.";
 	private static volatile Application application;
-	private static volatile CommandLineParameters parameters = new CommandLineParameters();
+	private static final CommandLineParameters PARAMETERS = new CommandLineParameters();
 
 	@CalledBy(AmidstThread.STARTUP)
 	public static void main(String args[]) {
@@ -59,7 +61,7 @@ public class Amidst {
 
 	private static void parseCommandLineArguments(String[] args) {
 		try {
-			new CmdLineParser(parameters).parseArgument(args);
+			new CmdLineParser(PARAMETERS).parseArgument(args);
 		} catch (CmdLineException e) {
 			Log.w(COMMAND_LINE_PARSING_ERROR_MESSAGE);
 			e.printStackTrace();
@@ -67,9 +69,9 @@ public class Amidst {
 	}
 
 	private static void initLogger() {
-		if (parameters.logPath != null) {
+		if (PARAMETERS.logPath != null) {
 			Log.addListener("file",
-					new FileLogger(new File(parameters.logPath)));
+					new FileLogger(new File(PARAMETERS.logPath)));
 		}
 	}
 
@@ -104,7 +106,7 @@ public class Amidst {
 
 	@CalledBy(AmidstThread.EDT)
 	private static void doStartApplication() {
-		application = new Application(parameters);
+		application = new Application(PARAMETERS);
 		application.run();
 	}
 }

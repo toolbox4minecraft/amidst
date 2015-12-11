@@ -2,6 +2,10 @@ package amidst.clazz.symbolic;
 
 import amidst.documentation.Immutable;
 
+/**
+ * While the state that is directly contained in instances of this class cannot
+ * be altered, it is still possible to alter the object that is contained in it.
+ */
 @Immutable
 public class SymbolicObject {
 	private final SymbolicClass type;
