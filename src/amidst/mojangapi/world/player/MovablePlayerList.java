@@ -8,24 +8,28 @@ import java.util.List;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.file.directory.SaveDirectory;
+import amidst.mojangapi.file.nbt.playerfile.PlayerFile;
 
 @ThreadSafe
 public class MovablePlayerList implements Iterable<Player> {
 	private static final MovablePlayerList DUMMY = new MovablePlayerList(null,
-			false, WorldPlayerType.NONE);
+			null, false, WorldPlayerType.NONE);
 
 	public static MovablePlayerList dummy() {
 		return DUMMY;
 	}
 
+	private final PlayerInformationCache playerInformationCache;
 	private final SaveDirectory saveDirectory;
 	private final boolean isSaveEnabled;
 
 	private volatile WorldPlayerType worldPlayerType;
 	private volatile List<Player> players = Collections.emptyList();
 
-	public MovablePlayerList(SaveDirectory saveDirectory,
-			boolean isSaveEnabled, WorldPlayerType worldPlayerType) {
+	public MovablePlayerList(PlayerInformationCache playerInformationCache,
+			SaveDirectory saveDirectory, boolean isSaveEnabled,
+			WorldPlayerType worldPlayerType) {
+		this.playerInformationCache = playerInformationCache;
 		this.saveDirectory = saveDirectory;
 		this.isSaveEnabled = isSaveEnabled;
 		this.worldPlayerType = worldPlayerType;
@@ -47,9 +51,10 @@ public class MovablePlayerList implements Iterable<Player> {
 		if (saveDirectory != null) {
 			Log.i("loading player locations");
 			List<Player> loadedPlayers = new LinkedList<Player>();
-			List<Player> unloadedPlayers = worldPlayerType
-					.createPlayers(saveDirectory);
-			for (Player player : unloadedPlayers) {
+			List<PlayerFile> playerFiles = worldPlayerType
+					.createPlayerFiles(saveDirectory);
+			for (PlayerFile playerFile : playerFiles) {
+				Player player = playerFile.createPlayer(playerInformationCache);
 				if (player.tryLoadLocation()) {
 					loadedPlayers.add(player);
 				}

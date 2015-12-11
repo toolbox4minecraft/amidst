@@ -6,6 +6,7 @@ import java.util.List;
 
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.LevelDat;
+import amidst.mojangapi.file.nbt.playerfile.PlayerFile;
 
 public enum WorldPlayerType {
 	/**
@@ -48,16 +49,17 @@ public enum WorldPlayerType {
 		return name;
 	}
 
-	public List<Player> createPlayers(SaveDirectory saveDirectory) {
+	public List<PlayerFile> createPlayerFiles(SaveDirectory saveDirectory) {
 		if (this == NONE) {
 			return Collections.emptyList();
 		} else if (this == SINGLEPLAYER) {
-			return saveDirectory.createSingleplayerPlayers();
+			return saveDirectory.createSingleplayerPlayerFiles();
 		} else if (this == MULTIPLAYER) {
-			return saveDirectory.createMultiplayerPlayers();
+			return saveDirectory.createMultiplayerPlayerFiles();
 		} else {
-			List<Player> result = saveDirectory.createMultiplayerPlayers();
-			result.addAll(saveDirectory.createSingleplayerPlayers());
+			List<PlayerFile> result = saveDirectory
+					.createMultiplayerPlayerFiles();
+			result.addAll(saveDirectory.createSingleplayerPlayerFiles());
 			return result;
 		}
 	}

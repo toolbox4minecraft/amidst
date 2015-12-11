@@ -6,13 +6,13 @@ import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.CrashWindow;
 import amidst.gui.LicenseWindow;
 import amidst.gui.MainWindow;
-import amidst.gui.SkinLoader;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.version.VersionSelectWindow;
 import amidst.gui.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.MojangApiBuilder;
 import amidst.mojangapi.world.WorldBuilder;
+import amidst.mojangapi.world.player.PlayerInformationCache;
 import amidst.threading.ThreadMaster;
 import amidst.utilities.GoogleTracker;
 import amidst.utilities.SeedHistoryLogger;
@@ -21,11 +21,11 @@ public class Application {
 	private final CommandLineParameters parameters;
 	private final Options options;
 	private final GoogleTracker googleTracker;
+	private final PlayerInformationCache playerInformationCache;
 	private final MojangApi mojangApi;
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final ThreadMaster threadMaster;
-	private final SkinLoader skinLoader;
 	private final UpdatePrompt updatePrompt;
 
 	private volatile VersionSelectWindow versionSelectWindow;
@@ -35,11 +35,11 @@ public class Application {
 		this.parameters = parameters;
 		this.options = createOptions();
 		this.googleTracker = createGoogleTracker();
+		this.playerInformationCache = createPlayerInformationCache();
 		this.mojangApi = createMojangApi();
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
 		this.seedHistoryLogger = createSeedHistoryLogger();
 		this.threadMaster = createThreadMaster();
-		this.skinLoader = createSkinLoader();
 		this.updatePrompt = createUpdatePrompt();
 	}
 
@@ -51,10 +51,15 @@ public class Application {
 		return new GoogleTracker();
 	}
 
+	private PlayerInformationCache createPlayerInformationCache() {
+		return new PlayerInformationCache();
+	}
+
 	private MojangApi createMojangApi() {
-		return new MojangApiBuilder(new WorldBuilder(googleTracker),
-				parameters.minecraftPath, parameters.minecraftLibraries,
-				parameters.minecraftJar, parameters.minecraftJson).construct();
+		return new MojangApiBuilder(new WorldBuilder(googleTracker,
+				playerInformationCache), parameters.minecraftPath,
+				parameters.minecraftLibraries, parameters.minecraftJar,
+				parameters.minecraftJson).construct();
 	}
 
 	private WorldSurroundingsBuilder createWorldSurroundingsBuilder() {
@@ -67,10 +72,6 @@ public class Application {
 
 	private ThreadMaster createThreadMaster() {
 		return new ThreadMaster();
-	}
-
-	private SkinLoader createSkinLoader() {
-		return new SkinLoader(threadMaster.getWorkerExecutor());
 	}
 
 	private UpdatePrompt createUpdatePrompt() {
@@ -88,8 +89,8 @@ public class Application {
 
 	public void displayMainWindow() {
 		setMainWindow(new MainWindow(this, options, mojangApi,
-				worldSurroundingsBuilder, seedHistoryLogger, skinLoader,
-				updatePrompt, threadMaster));
+				worldSurroundingsBuilder, seedHistoryLogger, updatePrompt,
+				threadMaster));
 		setVersionSelectWindow(null);
 	}
 

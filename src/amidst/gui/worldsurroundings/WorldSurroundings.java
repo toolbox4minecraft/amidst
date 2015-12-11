@@ -7,7 +7,6 @@ import java.util.List;
 
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.layer.LayerReloader;
-import amidst.gui.SkinLoader;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
@@ -25,13 +24,12 @@ public class WorldSurroundings {
 	private final WorldIconSelection worldIconSelection;
 	private final Runnable onRepainterTick;
 	private final Runnable onFragmentLoaderTick;
-	private final Runnable onSkinFinishedLoading;
 
 	public WorldSurroundings(World world, FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			Viewer viewer, LayerReloader layerReloader,
 			WorldIconSelection worldIconSelection, Runnable onRepainterTick,
-			Runnable onFragmentLoaderTick, Runnable onSkinFinishedLoading) {
+			Runnable onFragmentLoaderTick) {
 		this.world = world;
 		this.graph = graph;
 		this.translator = translator;
@@ -41,7 +39,6 @@ public class WorldSurroundings {
 		this.worldIconSelection = worldIconSelection;
 		this.onRepainterTick = onRepainterTick;
 		this.onFragmentLoaderTick = onFragmentLoaderTick;
-		this.onSkinFinishedLoading = onSkinFinishedLoading;
 	}
 
 	public Component getComponent() {
@@ -119,12 +116,10 @@ public class WorldSurroundings {
 		return world.getMovablePlayerList().canLoad();
 	}
 
-	public void loadPlayers(SkinLoader skinLoader) {
+	public void loadPlayers() {
 		worldIconSelection.clear();
 		world.getMovablePlayerList().load();
 		layerReloader.reloadPlayerLayer();
-		skinLoader.loadSkins(world.getMovablePlayerList(),
-				onSkinFinishedLoading);
 	}
 
 	public boolean canSavePlayerLocations() {

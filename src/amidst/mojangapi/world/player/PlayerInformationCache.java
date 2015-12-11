@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import amidst.documentation.ThreadSafe;
+import amidst.logging.Log;
 
 /**
  * Even though this class is thread-safe, it is possible that the same player
@@ -23,6 +24,7 @@ public class PlayerInformationCache {
 		if (result != null) {
 			return result;
 		} else {
+			Log.w("requesting player information for uuid: " + uuid);
 			result = PlayerInformation.fromUUID(uuid);
 			put(result);
 			return result;
@@ -34,6 +36,7 @@ public class PlayerInformationCache {
 		if (result != null) {
 			return result;
 		} else {
+			Log.w("requesting player information for name: " + name);
 			result = PlayerInformation.fromName(name);
 			put(result);
 			return result;

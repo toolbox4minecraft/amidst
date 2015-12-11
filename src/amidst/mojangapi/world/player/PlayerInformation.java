@@ -11,6 +11,8 @@ import amidst.mojangapi.world.icon.DefaultWorldIconTypes;
 public class PlayerInformation {
 	private static final BufferedImage DEFAULT_HEAD = DefaultWorldIconTypes.PLAYER
 			.getImage();
+	private static final PlayerInformation THE_SINGLEPLAYER_PLAYER = new PlayerInformation(
+			null, "The Singleplayer Player", DEFAULT_HEAD);
 
 	public static PlayerInformation fromUUID(String uuid) {
 		PlayerJson player = PlayerInformationRetriever
@@ -59,6 +61,10 @@ public class PlayerInformation {
 				return new PlayerInformation(null, name, DEFAULT_HEAD);
 			}
 		}
+	}
+
+	public static PlayerInformation theSingleplayerPlayer() {
+		return THE_SINGLEPLAYER_PLAYER;
 	}
 
 	private final String uuid;

@@ -8,51 +8,25 @@ import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.file.nbt.playerfile.PlayerFile;
 import amidst.mojangapi.world.CoordinatesInWorld;
-import amidst.mojangapi.world.icon.DefaultWorldIconTypes;
 
 @ThreadSafe
 public class Player {
-	private static final String NAMELESS_PLAYER_NAME = "The Singleplayer Player";
-
-	public static Player nameless(PlayerFile playerFile) {
-		return new Player(NAMELESS_PLAYER_NAME, false, playerFile);
-	}
-
-	public static Player named(String playerName, PlayerFile playerFile) {
-		return new Player(playerName, true, playerFile);
-	}
-
-	private final String playerName;
-
-	private final boolean isSkinLoadable;
-	private volatile BufferedImage skin = DefaultWorldIconTypes.PLAYER
-			.getImage();
-
+	private final PlayerInformation playerInformation;
 	private final PlayerFile playerFile;
 	private volatile PlayerCoordinates savedCoordinates;
 	private volatile PlayerCoordinates currentCoordinates;
 
-	private Player(String playerName, boolean isSkinLoadable,
-			PlayerFile playerFile) {
-		this.playerName = playerName;
-		this.isSkinLoadable = isSkinLoadable;
+	public Player(PlayerInformation playerInformation, PlayerFile playerFile) {
+		this.playerInformation = playerInformation;
 		this.playerFile = playerFile;
 	}
 
 	public String getPlayerName() {
-		return playerName;
+		return playerInformation.getNameOrUUID();
 	}
 
-	public boolean isSkinLoadable() {
-		return isSkinLoadable;
-	}
-
-	public BufferedImage getSkin() {
-		return skin;
-	}
-
-	public void setSkin(BufferedImage skin) {
-		this.skin = skin;
+	public BufferedImage getHead() {
+		return playerInformation.getHead();
 	}
 
 	public PlayerCoordinates getPlayerCoordinates() {
@@ -69,12 +43,12 @@ public class Player {
 				return true;
 			} else {
 				Log.w("skipping to save player location, because the backup file cannot be created for player: "
-						+ playerName);
+						+ getPlayerName());
 				return false;
 			}
 		} catch (IOException e) {
 			Log.w("error while writing player location for player: "
-					+ playerName);
+					+ getPlayerName());
 			e.printStackTrace();
 			return false;
 		}
@@ -105,7 +79,7 @@ public class Player {
 			return true;
 		} catch (IOException e) {
 			Log.w("error while reading player location for player: "
-					+ playerName);
+					+ getPlayerName());
 			e.printStackTrace();
 			return false;
 		}

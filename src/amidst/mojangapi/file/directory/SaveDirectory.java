@@ -12,13 +12,12 @@ import org.jnbt.CompoundTag;
 
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
-import amidst.mojangapi.file.json.PlayerInformationRetriever;
 import amidst.mojangapi.file.nbt.LevelDat;
 import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.file.nbt.playerfile.LevelDatPlayerFile;
+import amidst.mojangapi.file.nbt.playerfile.PlayerFile;
 import amidst.mojangapi.file.nbt.playerfile.PlayerdataPlayerFile;
 import amidst.mojangapi.file.nbt.playerfile.PlayersPlayerFile;
-import amidst.mojangapi.world.player.Player;
 
 @Immutable
 public class SaveDirectory {
@@ -195,31 +194,15 @@ public class SaveDirectory {
 		}
 	}
 
-	public Player createLevelDatPlayer() {
-		return Player.nameless(new LevelDatPlayerFile(this));
-	}
-
-	public Player createPlayerdataPlayer(String playerName, String playerUUID) {
-		return Player.named(playerName, new PlayerdataPlayerFile(this,
-				playerUUID));
-	}
-
-	public Player createPlayersPlayer(String playerName) {
-		return Player
-				.named(playerName, new PlayersPlayerFile(this, playerName));
-	}
-
 	/**
 	 * Since version 1.7.6, minecraft stores players in the playerdata directory
 	 * and uses the player uuid as filename.
 	 */
-	public List<Player> createMultiplayerPlayers() {
-		List<Player> result = new ArrayList<Player>();
+	public List<PlayerFile> createMultiplayerPlayerFiles() {
+		List<PlayerFile> result = new ArrayList<PlayerFile>();
 		for (File playerdataFile : getPlayerdataFiles()) {
 			if (playerdataFile.isFile()) {
-				String playerUUID = getPlayerUUIDFromPlayerdataFile(playerdataFile);
-				result.add(createPlayerdataPlayer(
-						getPlayerNameFromPlayerdataFile(playerUUID), playerUUID));
+				result.add(createPlayerdataPlayerFile(getPlayerUUIDFromPlayerdataFile(playerdataFile)));
 			}
 		}
 		if (!result.isEmpty()) {
@@ -228,7 +211,7 @@ public class SaveDirectory {
 		}
 		for (File playersFile : getPlayersFiles()) {
 			if (playersFile.isFile()) {
-				result.add(createPlayersPlayer(getPlayerNameFromPlayersFile(playersFile)));
+				result.add(createPlayersPlayerFile(getPlayerNameFromPlayersFile(playersFile)));
 			}
 		}
 		if (!result.isEmpty()) {
@@ -251,13 +234,21 @@ public class SaveDirectory {
 	 * player location in the playerdata directory it will just be ignored if
 	 * the map is used as singleplayer map.
 	 */
-	public List<Player> createSingleplayerPlayers() {
+	public List<PlayerFile> createSingleplayerPlayerFiles() {
 		Log.i("using player from level.dat");
-		return Arrays.asList(createLevelDatPlayer());
+		return Arrays.asList(createLevelDatPlayerFile());
 	}
 
-	private String getPlayerNameFromPlayerdataFile(String playerUUID) {
-		return PlayerInformationRetriever.getPlayerName(playerUUID);
+	private PlayerFile createLevelDatPlayerFile() {
+		return new LevelDatPlayerFile(this);
+	}
+
+	private PlayerFile createPlayerdataPlayerFile(String playerUUID) {
+		return new PlayerdataPlayerFile(this, playerUUID);
+	}
+
+	private PlayerFile createPlayersPlayerFile(String playerName) {
+		return new PlayersPlayerFile(this, playerName);
 	}
 
 	private String getPlayerUUIDFromPlayerdataFile(File playerdataFile) {

@@ -41,7 +41,6 @@ public class MainWindow {
 	private final MojangApi mojangApi;
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
-	private final SkinLoader skinLoader;
 	private final UpdatePrompt updatePrompt;
 	private final ThreadMaster threadMaster;
 
@@ -55,14 +54,13 @@ public class MainWindow {
 	public MainWindow(Application application, Options options,
 			MojangApi mojangApi,
 			WorldSurroundingsBuilder worldSurroundingsBuilder,
-			SeedHistoryLogger seedHistoryLogger, SkinLoader skinLoader,
-			UpdatePrompt updatePrompt, ThreadMaster threadMaster) {
+			SeedHistoryLogger seedHistoryLogger, UpdatePrompt updatePrompt,
+			ThreadMaster threadMaster) {
 		this.application = application;
 		this.options = options;
 		this.mojangApi = mojangApi;
 		this.worldSurroundingsBuilder = worldSurroundingsBuilder;
 		this.seedHistoryLogger = seedHistoryLogger;
-		this.skinLoader = skinLoader;
 		this.updatePrompt = updatePrompt;
 		this.threadMaster = threadMaster;
 		this.frame = createFrame();
@@ -98,7 +96,7 @@ public class MainWindow {
 
 	private Actions createMenuActions() {
 		return new Actions(application, mojangApi, this, worldSurroundings,
-				skinLoader, updatePrompt, options.biomeColorProfileSelection);
+				updatePrompt, options.biomeColorProfileSelection);
 	}
 
 	private AmidstMenu createMenuBar() {
@@ -172,7 +170,7 @@ public class MainWindow {
 		menuBar.setReloadPlayerLocationsMenuEnabled(worldSurroundings
 				.canLoadPlayerLocations());
 		frame.validate();
-		worldSurroundings.loadPlayers(skinLoader);
+		worldSurroundings.loadPlayers();
 		threadMaster.setOnRepaintTick(worldSurroundings.getOnRepainterTick());
 		threadMaster.setOnFragmentLoadTick(worldSurroundings
 				.getOnFragmentLoaderTick());

@@ -8,7 +8,9 @@ import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.file.nbt.PlayerLocationLoader;
 import amidst.mojangapi.file.nbt.PlayerLocationSaver;
+import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
+import amidst.mojangapi.world.player.PlayerInformationCache;
 
 @Immutable
 public class PlayersPlayerFile extends PlayerFile {
@@ -37,5 +39,10 @@ public class PlayersPlayerFile extends PlayerFile {
 			IOException {
 		return PlayerLocationLoader.readFromPlayerFile(NBTUtils
 				.readTagFromFile(saveDirectory.getPlayersFile(playerName)));
+	}
+
+	@Override
+	public Player createPlayer(PlayerInformationCache cache) {
+		return new Player(cache.getByName(playerName), this);
 	}
 }

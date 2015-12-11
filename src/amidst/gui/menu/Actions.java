@@ -14,7 +14,6 @@ import javax.imageio.ImageIO;
 
 import amidst.Application;
 import amidst.gui.MainWindow;
-import amidst.gui.SkinLoader;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.worldsurroundings.WorldSurroundings;
 import amidst.logging.Log;
@@ -32,20 +31,18 @@ public class Actions {
 	private final MojangApi mojangApi;
 	private final MainWindow mainWindow;
 	private final AtomicReference<WorldSurroundings> worldSurroundings;
-	private final SkinLoader skinLoader;
 	private final UpdatePrompt updatePrompt;
 	private final BiomeColorProfileSelection biomeColorProfileSelection;
 
 	public Actions(Application application, MojangApi mojangApi,
 			MainWindow mainWindow,
 			AtomicReference<WorldSurroundings> worldSurroundings,
-			SkinLoader skinLoader, UpdatePrompt updatePrompt,
+			UpdatePrompt updatePrompt,
 			BiomeColorProfileSelection biomeColorProfileSelection) {
 		this.application = application;
 		this.mojangApi = mojangApi;
 		this.mainWindow = mainWindow;
 		this.worldSurroundings = worldSurroundings;
-		this.skinLoader = skinLoader;
 		this.updatePrompt = updatePrompt;
 		this.biomeColorProfileSelection = biomeColorProfileSelection;
 	}
@@ -155,7 +152,7 @@ public class Actions {
 	public void reloadPlayerLocations() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
-			worldSurroundings.loadPlayers(skinLoader);
+			worldSurroundings.loadPlayers();
 		}
 	}
 

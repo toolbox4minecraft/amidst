@@ -24,7 +24,7 @@ public class PlayerProducer extends CachedWorldIconProducer {
 		for (Player player : movablePlayerList) {
 			result.add(new WorldIcon(player.getPlayerCoordinates()
 					.getCoordinatesInWorld(), player.getPlayerName(), player
-					.getSkin()));
+					.getHead()));
 		}
 		return result;
 	}

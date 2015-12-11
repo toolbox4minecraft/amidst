@@ -7,7 +7,10 @@ import amidst.documentation.Immutable;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.PlayerLocationLoader;
 import amidst.mojangapi.file.nbt.PlayerLocationSaver;
+import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
+import amidst.mojangapi.world.player.PlayerInformation;
+import amidst.mojangapi.world.player.PlayerInformationCache;
 
 @Immutable
 public class LevelDatPlayerFile extends PlayerFile {
@@ -34,5 +37,10 @@ public class LevelDatPlayerFile extends PlayerFile {
 			IOException {
 		return PlayerLocationLoader.readFromLevelDat(saveDirectory
 				.readLevelDat());
+	}
+
+	@Override
+	public Player createPlayer(PlayerInformationCache cache) {
+		return new Player(PlayerInformation.theSingleplayerPlayer(), this);
 	}
 }
