@@ -13,8 +13,8 @@ import amidst.clazz.real.detector.NumberOfConstructorsRCD;
 import amidst.clazz.real.detector.NumberOfFieldsRCD;
 import amidst.clazz.real.detector.NumberOfMethodsRCD;
 import amidst.clazz.real.detector.RealClassDetector;
-import amidst.clazz.real.detector.StringRCD;
-import amidst.clazz.real.detector.Utf8RCD;
+import amidst.clazz.real.detector.StringContainingRCD;
+import amidst.clazz.real.detector.Utf8EqualToRCD;
 import amidst.clazz.real.detector.WildcardByteRCD;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
@@ -79,13 +79,13 @@ public class CTBuilder {
 			return this;
 		}
 
-		public RCDBuilder strings(String... strings) {
-			detectors.add(new StringRCD(strings));
+		public RCDBuilder stringContaining(String string) {
+			detectors.add(new StringContainingRCD(string));
 			return this;
 		}
 
-		public RCDBuilder utf8s(String... utf8s) {
-			detectors.add(new Utf8RCD(utf8s));
+		public RCDBuilder utf8EqualTo(String utf8) {
+			detectors.add(new Utf8EqualToRCD(utf8));
 			return this;
 		}
 

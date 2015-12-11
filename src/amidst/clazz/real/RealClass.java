@@ -43,7 +43,7 @@ public class RealClass {
 	private final int[] constantTypes;
 	private final RealClassConstant<?>[] constants;
 
-	private final List<String> utfConstants;
+	private final List<String> utf8Constants;
 	private final List<Float> floatConstants;
 	private final List<Long> longConstants;
 	private final List<Integer> stringIndices;
@@ -57,7 +57,7 @@ public class RealClass {
 
 	RealClass(String realClassName, byte[] classData, int minorVersion,
 			int majorVersion, int cpSize, int[] constantTypes,
-			RealClassConstant<?>[] constants, List<String> utfConstants,
+			RealClassConstant<?>[] constants, List<String> utf8Constants,
 			List<Float> floatConstants, List<Long> longConstants,
 			List<Integer> stringIndices, List<ReferenceIndex> methodIndices,
 			int accessFlags, RealClassField[] fields, int numberOfConstructors,
@@ -69,7 +69,7 @@ public class RealClass {
 		this.cpSize = cpSize;
 		this.constantTypes = constantTypes;
 		this.constants = constants;
-		this.utfConstants = utfConstants;
+		this.utf8Constants = utf8Constants;
 		this.floatConstants = floatConstants;
 		this.longConstants = longConstants;
 		this.stringIndices = stringIndices;
@@ -116,8 +116,8 @@ public class RealClass {
 		return cpSize;
 	}
 
-	public boolean searchForUtfEqualTo(String required) {
-		for (String entry : utfConstants) {
+	public boolean searchForUtf8EqualTo(String required) {
+		for (String entry : utf8Constants) {
 			if (entry.equals(required)) {
 				return true;
 			}
