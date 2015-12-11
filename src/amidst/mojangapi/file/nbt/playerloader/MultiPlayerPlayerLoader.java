@@ -9,6 +9,7 @@ import java.util.List;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.NBTUtils;
+import amidst.mojangapi.file.nbt.PlayerLocationLoader;
 import amidst.mojangapi.world.Player;
 
 @Immutable
@@ -24,8 +25,10 @@ public class MultiPlayerPlayerLoader extends PlayerLoader {
 		List<Player> result = new ArrayList<Player>();
 		for (File playerFile : saveDirectory.getPlayersFiles()) {
 			if (playerFile.isFile()) {
-				result.add(createNamedPlayer(getPlayerName(playerFile),
-						NBTUtils.readTagFromFile(playerFile)));
+				String playerName = getPlayerName(playerFile);
+				result.add(Player.named(playerName, PlayerLocationLoader
+						.readFromPlayerFile(NBTUtils
+								.readTagFromFile(playerFile))));
 			}
 		}
 		return result;
