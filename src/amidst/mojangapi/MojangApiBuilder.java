@@ -2,6 +2,7 @@ package amidst.mojangapi;
 
 import java.io.File;
 
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.file.DotMinecraftDirectoryFinder;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
@@ -11,6 +12,7 @@ import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.world.WorldBuilder;
 
+@Immutable
 public class MojangApiBuilder {
 	private final WorldBuilder worldBuilder;
 	private final String preferedDotMinecraftDirectory;

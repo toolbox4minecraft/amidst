@@ -8,28 +8,38 @@ import java.util.Map;
 import amidst.clazz.Classes;
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.translator.ClassTranslator;
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
+@Immutable
 public class LocalMinecraftInterfaceBuilder {
 	private static final String CLIENT_CLASS_RESOURCE = "net/minecraft/client/Minecraft.class";
 	private static final String CLIENT_CLASS = "net.minecraft.client.Minecraft";
 	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
 	private static final String SERVER_CLASS = "net.minecraft.server.MinecraftServer";
 
-	private Map<String, SymbolicClass> symbolicClassMap;
-	private RecognisedVersion recognisedVersion;
+	private final ClassTranslator translator;
 
-	public LocalMinecraftInterfaceBuilder(VersionDirectory versionDirectory,
-			ClassTranslator translator) {
+	public LocalMinecraftInterfaceBuilder(ClassTranslator translator) {
+		this.translator = translator;
+	}
+
+	public MinecraftInterface create(VersionDirectory versionDirectory) {
 		try {
 			URLClassLoader classLoader = versionDirectory.createClassLoader();
-			recognisedVersion = getRecognisedVersion(classLoader);
-			symbolicClassMap = Classes.createSymbolicClassMap(
-					versionDirectory.getJar(), classLoader, translator);
+			RecognisedVersion recognisedVersion = getRecognisedVersion(classLoader);
+			Map<String, SymbolicClass> symbolicClassMap = Classes
+					.createSymbolicClassMap(versionDirectory.getJar(),
+							classLoader, translator);
 			Log.i("Minecraft load complete.");
+			return new LocalMinecraftInterface(
+					symbolicClassMap.get("IntCache"),
+					symbolicClassMap.get("BlockInit"),
+					symbolicClassMap.get("GenLayer"),
+					symbolicClassMap.get("WorldType"), recognisedVersion);
 		} catch (RuntimeException e) {
 			Log.crash(
 					e.getCause(),
@@ -42,6 +52,7 @@ public class LocalMinecraftInterfaceBuilder {
 					"error while building local minecraft interface: minecraft jar file has malformed url");
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	private RecognisedVersion getRecognisedVersion(URLClassLoader classLoader) {
@@ -88,9 +99,5 @@ public class LocalMinecraftInterfaceBuilder {
 					"Attempted to load non-minecraft jar, or unable to locate starting point.",
 					e);
 		}
-	}
-
-	public MinecraftInterface create() {
-		return new LocalMinecraftInterface(symbolicClassMap, recognisedVersion);
 	}
 }

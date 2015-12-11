@@ -3,7 +3,9 @@ package amidst.mojangapi.minecraftinterface.local;
 import amidst.clazz.real.AccessFlags;
 import amidst.clazz.real.RealClass;
 import amidst.clazz.translator.ClassTranslator;
+import amidst.documentation.Immutable;
 
+@Immutable
 public enum DefaultClassTranslator {
 	INSTANCE;
 

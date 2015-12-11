@@ -20,6 +20,9 @@ import amidst.utilities.JavaUtils;
 
 @Immutable
 public class VersionDirectory {
+	private static final LocalMinecraftInterfaceBuilder LOCAL_MINECRAFT_INTERFACE_BUILDER = new LocalMinecraftInterfaceBuilder(
+			DefaultClassTranslator.INSTANCE.get());
+
 	private final DotMinecraftDirectory dotMinecraftDirectory;
 	private final String versionId;
 	private final File jar;
@@ -91,7 +94,6 @@ public class VersionDirectory {
 	}
 
 	public MinecraftInterface createLocalMinecraftInterface() {
-		return new LocalMinecraftInterfaceBuilder(this,
-				DefaultClassTranslator.INSTANCE.get()).create();
+		return LOCAL_MINECRAFT_INTERFACE_BUILDER.create(this);
 	}
 }

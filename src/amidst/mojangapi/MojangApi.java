@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.file.FilenameFactory;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
@@ -12,11 +13,12 @@ import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
+import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 
+@ThreadSafe
 public class MojangApi {
 	private static final String UNKNOWN_VERSION_ID = "unknown";
 
@@ -79,6 +81,7 @@ public class MojangApi {
 	}
 
 	public File getSaves() {
+		ProfileDirectory profileDirectory = this.profileDirectory;
 		if (profileDirectory != null) {
 			return profileDirectory.getSaves();
 		} else {
@@ -91,12 +94,13 @@ public class MojangApi {
 	}
 
 	/**
-	 * Due to the limitation of the minecraft interface, you can only world with
-	 * one world at a time. Creating a new world will make all previous world
-	 * object unusable.
+	 * Due to the limitation of the minecraft interface, you can only work with
+	 * one world at a time. Creating a new world will break all previously
+	 * created world objects.
 	 */
 	public World createWorldFromSeed(WorldSeed seed, WorldType worldType) {
-		if (canCreateWorld()) {
+		MinecraftInterface minecraftInterface = this.minecraftInterface;
+		if (minecraftInterface != null) {
 			return worldBuilder.fromSeed(minecraftInterface, seed, worldType);
 		} else {
 			throw new IllegalStateException(
@@ -105,13 +109,14 @@ public class MojangApi {
 	}
 
 	/**
-	 * Due to the limitation of the minecraft interface, you can only world with
-	 * one world at a time. Creating a new world will make all previous world
-	 * object unusable.
+	 * Due to the limitation of the minecraft interface, you can only work with
+	 * one world at a time. Creating a new world will break all previously
+	 * created world objects.
 	 */
 	public World createWorldFromFile(File file) throws FileNotFoundException,
 			IOException, IllegalStateException {
-		if (canCreateWorld()) {
+		MinecraftInterface minecraftInterface = this.minecraftInterface;
+		if (minecraftInterface != null) {
 			return worldBuilder.fromFile(minecraftInterface,
 					SaveDirectory.from(file));
 		} else {
@@ -121,6 +126,7 @@ public class MojangApi {
 	}
 
 	public String getRecognisedVersionName() {
+		MinecraftInterface minecraftInterface = this.minecraftInterface;
 		if (minecraftInterface != null) {
 			return minecraftInterface.getRecognisedVersion().getName();
 		} else {

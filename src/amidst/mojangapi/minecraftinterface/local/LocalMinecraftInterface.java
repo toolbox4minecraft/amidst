@@ -1,14 +1,14 @@
 package amidst.mojangapi.minecraftinterface.local;
 
-import java.util.Map;
-
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
+import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
 
+@ThreadSafe
 public class LocalMinecraftInterface implements MinecraftInterface {
 	/**
 	 * A GenLayer instance, at quarter scale to the final biome layer (i.e. both
@@ -32,12 +32,13 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass worldTypeClass;
 	private final RecognisedVersion recognisedVersion;
 
-	LocalMinecraftInterface(Map<String, SymbolicClass> minecraftClassMap,
-			RecognisedVersion recognisedVersion) {
-		this.intCacheClass = minecraftClassMap.get("IntCache");
-		this.blockInitClass = minecraftClassMap.get("BlockInit");
-		this.genLayerClass = minecraftClassMap.get("GenLayer");
-		this.worldTypeClass = minecraftClassMap.get("WorldType");
+	LocalMinecraftInterface(SymbolicClass intCacheClass,
+			SymbolicClass blockInitClass, SymbolicClass genLayerClass,
+			SymbolicClass worldTypeClass, RecognisedVersion recognisedVersion) {
+		this.intCacheClass = intCacheClass;
+		this.blockInitClass = blockInitClass;
+		this.genLayerClass = genLayerClass;
+		this.worldTypeClass = worldTypeClass;
 		this.recognisedVersion = recognisedVersion;
 	}
 

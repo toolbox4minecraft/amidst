@@ -3,7 +3,7 @@ package amidst.mojangapi.world;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import amidst.documentation.ThreadSafe;
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.LevelDat;
@@ -26,7 +26,7 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.utilities.GoogleTracker;
 
-@ThreadSafe
+@Immutable
 public class WorldBuilder {
 	private final GoogleTracker googleTracker;
 
