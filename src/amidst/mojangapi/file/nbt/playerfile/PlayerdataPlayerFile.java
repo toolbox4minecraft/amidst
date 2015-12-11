@@ -15,9 +15,9 @@ public class PlayerdataPlayerFile extends PlayerFile {
 	private final SaveDirectory saveDirectory;
 	private final String playerUUID;
 
-	public PlayerdataPlayerFile(SaveDirectory saveDirectory, String playerName) {
+	public PlayerdataPlayerFile(SaveDirectory saveDirectory, String playerUUID) {
 		this.saveDirectory = saveDirectory;
-		this.playerUUID = playerName;
+		this.playerUUID = playerUUID;
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 import amidst.mojangapi.file.json.player.PlayerJson;
+import amidst.mojangapi.file.json.player.SimplePlayerJson;
 import amidst.mojangapi.file.json.version.VersionJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.resources.ResourceLoader;
@@ -97,21 +98,14 @@ public enum JsonReader {
 	}
 
 	public static PlayerJson readPlayerFromUUID(String uuid) throws IOException {
-		return read(URIUtils.newReader(UUID_TO_PROFILE + getPlayerUUID(uuid)),
+		return read(URIUtils.newReader(UUID_TO_PROFILE + uuid),
 				PlayerJson.class);
 	}
 
-	/**
-	 * The uuid in the filename contains dashes that are not allowed in the url.
-	 */
-	private static String getPlayerUUID(String uuid) {
-		return uuid.replace("-", "");
-	}
-
-	public static PlayerJson readUUIDFromPlayerName(String playerName)
-			throws IOException {
+	public static SimplePlayerJson readSimplePlayerFromPlayerName(
+			String playerName) throws IOException {
 		return read(URIUtils.newReader(PLAYERNAME_TO_UUID + playerName),
-				PlayerJson.class);
+				SimplePlayerJson.class);
 	}
 
 	public static <T> T read(String string, Class<T> clazz) {

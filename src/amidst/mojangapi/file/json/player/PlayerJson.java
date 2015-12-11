@@ -38,4 +38,8 @@ public class PlayerJson {
 		}
 		return null;
 	}
+
+	public String getSkinUrl() {
+		return readTexturesProperty().getTextures().getSKIN().getUrl();
+	}
 }
