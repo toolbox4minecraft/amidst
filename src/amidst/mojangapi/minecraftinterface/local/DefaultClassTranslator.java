@@ -1,16 +1,19 @@
 package amidst.mojangapi.minecraftinterface.local;
 
 import amidst.clazz.real.AccessFlags;
+import amidst.clazz.real.RealClass;
 import amidst.clazz.translator.ClassTranslator;
 
 public enum DefaultClassTranslator {
 	INSTANCE;
 
+	private static final int WILDCARD = RealClass.CLASS_DATA_WILDCARD;
+
+	private final ClassTranslator classTranslator = createClassTranslator();
+
 	public ClassTranslator get() {
 		return classTranslator;
 	}
-
-	private final ClassTranslator classTranslator = createClassTranslator();
 
 	// @formatter:off
 	private ClassTranslator createClassTranslator() {
@@ -68,10 +71,11 @@ public enum DefaultClassTranslator {
 	// @formatter:on
 
 	private int[] createIntCacheWildcardBytes() {
-		return new int[] { 0x11, 0x01, 0x00, 0xB3, 0x00, -1, 0xBB, 0x00, -1,
-				0x59, 0xB7, 0x00, -1, 0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59,
-				0xB7, 0x00, -1, 0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59, 0xB7,
-				0x00, -1, 0xB3, 0x00, -1, 0xBB, 0x00, -1, 0x59, 0xB7, 0x00, -1,
-				0xB3, 0x00, -1, 0xB1 };
+		return new int[] { 0x11, 0x01, 0x00, 0xB3, 0x00, WILDCARD, 0xBB, 0x00,
+				WILDCARD, 0x59, 0xB7, 0x00, WILDCARD, 0xB3, 0x00, WILDCARD,
+				0xBB, 0x00, WILDCARD, 0x59, 0xB7, 0x00, WILDCARD, 0xB3, 0x00,
+				WILDCARD, 0xBB, 0x00, WILDCARD, 0x59, 0xB7, 0x00, WILDCARD,
+				0xB3, 0x00, WILDCARD, 0xBB, 0x00, WILDCARD, 0x59, 0xB7, 0x00,
+				WILDCARD, 0xB3, 0x00, WILDCARD, 0xB1 };
 	}
 }

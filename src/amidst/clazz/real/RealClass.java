@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public class RealClass {
 	private static Map<Character, String> createPrimitiveTypeConversionMap() {
 		Map<Character, String> result = new HashMap<Character, String>();
@@ -27,6 +30,7 @@ public class RealClass {
 			.compile("([\\[]+)?([BCDFIJSZ]|L[^;]+)");
 	private static final Pattern OBJECT_PATTERN = Pattern
 			.compile("^([\\[]+)?[LBCDFIJSZ]");
+	public static final int CLASS_DATA_WILDCARD = -1;
 
 	private final String realClassName;
 	private final byte[] classData;
@@ -35,6 +39,7 @@ public class RealClass {
 	private final int majorVersion;
 
 	private final int cpSize;
+	@SuppressWarnings("unused")
 	private final int[] constantTypes;
 	private final RealClassConstant<?>[] constants;
 
@@ -79,8 +84,24 @@ public class RealClass {
 		return realClassName;
 	}
 
-	public byte[] getClassData() {
-		return classData;
+	public boolean isClassDataWildcardMatching(int[] bytes) {
+		int loopLimit = classData.length + 1 - bytes.length;
+		for (int startIndex = 0; startIndex < loopLimit; startIndex++) {
+			if (isClassDataWildcardMatchingAt(startIndex, bytes)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isClassDataWildcardMatchingAt(int startIndex, int[] bytes) {
+		for (int offset = 0; offset < bytes.length; offset++) {
+			if (bytes[offset] != CLASS_DATA_WILDCARD
+					&& classData[startIndex + offset] != (byte) bytes[offset]) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public int getMinorVersion() {
@@ -93,14 +114,6 @@ public class RealClass {
 
 	public int getCpSize() {
 		return cpSize;
-	}
-
-	public int[] getConstantTypes() {
-		return constantTypes;
-	}
-
-	public RealClassConstant<?>[] getConstants() {
-		return constants;
 	}
 
 	public boolean searchForUtfEqualTo(String required) {
@@ -132,7 +145,7 @@ public class RealClass {
 
 	public boolean searchForStringContaining(String requiredValue) {
 		for (Integer entry : stringIndices) {
-			String entryValue = (String) constants[entry - 1].getValue();
+			String entryValue = getStringValueOfConstant(entry);
 			if (entryValue.contains(requiredValue)) {
 				return true;
 			}
@@ -143,21 +156,21 @@ public class RealClass {
 	public String searchByReturnType(String required) {
 		String requiredType = "L" + required + ";";
 		for (ReferenceIndex entry : methodIndices) {
-			String value = entry.getValueOfValue2(constants);
+			String value = getStringValueOfConstant(entry.getValue2());
 			String entryType = value.substring(value.indexOf(')') + 1);
 			if (entryType.equals(requiredType)) {
-				return entry.getValueOfValue1(constants);
+				return getStringValueOfConstant(entry.getValue1());
 			}
 		}
 		return null;
 	}
 
-	public int getAccessFlags() {
-		return accessFlags;
+	public RealClassField getField(int index) {
+		return fields[index];
 	}
 
-	public RealClassField[] getFields() {
-		return fields;
+	public int getAccessFlags() {
+		return accessFlags;
 	}
 
 	public int getNumberOfConstructors() {
@@ -172,10 +185,6 @@ public class RealClass {
 		return fields.length;
 	}
 
-	public RealClassField getField(int index) {
-		return fields[index];
-	}
-
 	public boolean isInterface() {
 		return AccessFlags.hasFlags(accessFlags, AccessFlags.INTERFACE);
 	}
@@ -187,15 +196,20 @@ public class RealClass {
 	public String getArgumentsForConstructor(int constructorId) {
 		int i = 0;
 		for (ReferenceIndex entry : methodIndices) {
-			if (entry.getValueOfValue1(constants).equals("<init>")) {
+			if (getStringValueOfConstant(entry.getValue1()).equals("<init>")) {
 				if (i == constructorId) {
-					String arguments = entry.getValueOfValue2(constants);
+					String arguments = getStringValueOfConstant(entry
+							.getValue2());
 					return toArgumentString(readArguments(arguments));
 				}
 				i++;
 			}
 		}
 		return "";
+	}
+
+	private String getStringValueOfConstant(int value) {
+		return (String) constants[value - 1].getValue();
 	}
 
 	private String[] readArguments(String arguments) {
