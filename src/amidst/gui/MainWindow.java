@@ -30,6 +30,8 @@ import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.player.MovablePlayerList;
+import amidst.mojangapi.world.player.WorldPlayerType;
 import amidst.threading.ThreadMaster;
 import amidst.utilities.SeedHistoryLogger;
 
@@ -137,26 +139,40 @@ public class MainWindow {
 	}
 
 	public void setWorld(World world) {
-		setWorldSurroundings(worldSurroundingsBuilder.create(world, actions));
+		clearWorldSurroundings();
+		if (decideWorldPlayerType(world.getMovablePlayerList())) {
+			setWorldSurroundings(worldSurroundingsBuilder
+					.create(world, actions));
+		} else {
+			frame.revalidate();
+			frame.repaint();
+		}
 	}
 
-	/**
-	 * This ensures that the instance variable worldSurroundings is assigned
-	 * AFTER frame.validate() is called. This is important, because the
-	 * repainter thread will draw the new worldSurroundings as soon as it is
-	 * assigned to the instance variable.
-	 */
-	public void setWorldSurroundings(final WorldSurroundings worldSurroundings) {
-		clearWorldSurroundings();
+	private boolean decideWorldPlayerType(MovablePlayerList movablePlayerList) {
+		if (movablePlayerList.getWorldPlayerType().equals(WorldPlayerType.BOTH)) {
+			WorldPlayerType worldPlayerType = askForWorldPlayerType();
+			if (worldPlayerType != null) {
+				movablePlayerList.setWorldPlayerType(worldPlayerType);
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
+	}
+
+	private void setWorldSurroundings(WorldSurroundings worldSurroundings) {
 		seedHistoryLogger.log(worldSurroundings.getWorldSeed());
 		contentPane.add(worldSurroundings.getComponent(), BorderLayout.CENTER);
 		menuBar.setWorldMenuEnabled(true);
 		menuBar.setSavePlayerLocationsMenuEnabled(worldSurroundings
 				.canSavePlayerLocations());
 		menuBar.setReloadPlayerLocationsMenuEnabled(worldSurroundings
-				.canReloadPlayerLocations());
+				.canLoadPlayerLocations());
 		frame.validate();
-		worldSurroundings.loadPlayerSkins(skinLoader);
+		worldSurroundings.loadPlayers(skinLoader);
 		threadMaster.setOnRepaintTick(worldSurroundings.getOnRepainterTick());
 		threadMaster.setOnFragmentLoadTick(worldSurroundings
 				.getOnFragmentLoaderTick());
@@ -184,6 +200,13 @@ public class MainWindow {
 	public void dispose() {
 		clearWorldSurroundings();
 		frame.dispose();
+	}
+
+	private WorldPlayerType askForWorldPlayerType() {
+		return askForOptions("Loading World",
+				"This world contains Multiplayer and Singleplayer data.\n"
+						+ "What do you want to load?",
+				WorldPlayerType.getSelectable());
 	}
 
 	public WorldSeed askForSeed() {

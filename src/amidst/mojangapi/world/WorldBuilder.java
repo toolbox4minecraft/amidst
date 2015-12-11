@@ -18,6 +18,7 @@ import amidst.mojangapi.world.icon.VillageProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;
+import amidst.mojangapi.world.player.WorldPlayerType;
 import amidst.utilities.GoogleTracker;
 
 @Immutable
@@ -39,7 +40,8 @@ public class WorldBuilder {
 			IOException {
 		LevelDat levelDat = saveDirectory.createLevelDat();
 		MovablePlayerList movablePlayerList = new MovablePlayerList(
-				saveDirectory, isSaveEnabled(minecraftInterface));
+				saveDirectory, isSaveEnabled(minecraftInterface),
+				WorldPlayerType.from(saveDirectory, levelDat));
 		return create(minecraftInterface,
 				WorldSeed.fromFile(levelDat.getSeed()),
 				levelDat.getWorldType(), levelDat.getGeneratorOptions(),
@@ -56,9 +58,6 @@ public class WorldBuilder {
 	private World create(MinecraftInterface minecraftInterface, WorldSeed seed,
 			WorldType worldType, String generatorOptions,
 			MovablePlayerList movablePlayerList) {
-		if (movablePlayerList.canLoad()) {
-			movablePlayerList.load();
-		}
 		googleTracker.trackSeed(seed);
 		// @formatter:off
 		minecraftInterface.createWorld(seed.getLong(), worldType, generatorOptions);

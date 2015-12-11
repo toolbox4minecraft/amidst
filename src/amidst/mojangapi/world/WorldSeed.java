@@ -10,7 +10,7 @@ public class WorldSeed {
 		// @formatter:off
 		TEXT      ("Text Seed"),
 		NUMERIC("Numeric Seed"),
-		FILE   ("Numeric Seed"),
+		FILE      ("File Seed"),
 		RANDOM  ("Random Seed");
 		// @formatter:on
 

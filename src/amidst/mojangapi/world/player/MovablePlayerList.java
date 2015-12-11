@@ -12,7 +12,7 @@ import amidst.mojangapi.file.directory.SaveDirectory;
 @ThreadSafe
 public class MovablePlayerList implements Iterable<Player> {
 	private static final MovablePlayerList DUMMY = new MovablePlayerList(null,
-			false);
+			false, WorldPlayerType.NONE);
 
 	public static MovablePlayerList dummy() {
 		return DUMMY;
@@ -21,11 +21,22 @@ public class MovablePlayerList implements Iterable<Player> {
 	private final SaveDirectory saveDirectory;
 	private final boolean isSaveEnabled;
 
+	private volatile WorldPlayerType worldPlayerType;
 	private volatile List<Player> players = Collections.emptyList();
 
-	public MovablePlayerList(SaveDirectory saveDirectory, boolean isSaveEnabled) {
+	public MovablePlayerList(SaveDirectory saveDirectory,
+			boolean isSaveEnabled, WorldPlayerType worldPlayerType) {
 		this.saveDirectory = saveDirectory;
 		this.isSaveEnabled = isSaveEnabled;
+		this.worldPlayerType = worldPlayerType;
+	}
+
+	public WorldPlayerType getWorldPlayerType() {
+		return worldPlayerType;
+	}
+
+	public void setWorldPlayerType(WorldPlayerType worldPlayerType) {
+		this.worldPlayerType = worldPlayerType;
 	}
 
 	public boolean canLoad() {
@@ -36,16 +47,14 @@ public class MovablePlayerList implements Iterable<Player> {
 		if (saveDirectory != null) {
 			Log.i("loading player locations");
 			List<Player> loadedPlayers = new LinkedList<Player>();
-			List<Player> unloadedPlayers = saveDirectory
-					.createMultiplayerPlayers();
+			List<Player> unloadedPlayers = worldPlayerType
+					.createPlayers(saveDirectory);
 			for (Player player : unloadedPlayers) {
 				if (player.tryLoadLocation()) {
 					loadedPlayers.add(player);
 				}
 			}
 			this.players = Collections.unmodifiableList(loadedPlayers);
-		} else {
-			Log.i("cannot reload player locations");
 		}
 	}
 

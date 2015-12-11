@@ -10,6 +10,7 @@ public class LevelDat {
 	private final long seed;
 	private final WorldType worldType;
 	private final String generatorOptions;
+	private final boolean hasPlayer;
 
 	public LevelDat(CompoundTag root) {
 		CompoundTag dataTag = readDataTag(root);
@@ -25,6 +26,7 @@ public class LevelDat {
 			this.worldType = WorldType.DEFAULT;
 			this.generatorOptions = "";
 		}
+		this.hasPlayer = hasPlayerTag(dataTag);
 	}
 
 	private CompoundTag readDataTag(CompoundTag root) {
@@ -50,6 +52,10 @@ public class LevelDat {
 				.get(NBTTagKeys.TAG_KEY_GENERATOR_OPTIONS).getValue();
 	}
 
+	private boolean hasPlayerTag(CompoundTag dataTag) {
+		return dataTag.getValue().containsKey(NBTTagKeys.TAG_KEY_PLAYER);
+	}
+
 	public long getSeed() {
 		return seed;
 	}
@@ -60,5 +66,9 @@ public class LevelDat {
 
 	public String getGeneratorOptions() {
 		return generatorOptions;
+	}
+
+	public boolean hasPlayer() {
+		return hasPlayer;
 	}
 }

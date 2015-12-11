@@ -13,6 +13,7 @@ import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.MovablePlayerList;
+import amidst.mojangapi.world.player.WorldPlayerType;
 
 public class WorldSurroundings {
 	private final World world;
@@ -114,15 +115,16 @@ public class WorldSurroundings {
 		return world.getMovablePlayerList();
 	}
 
-	public boolean canReloadPlayerLocations() {
+	public boolean canLoadPlayerLocations() {
 		return world.getMovablePlayerList().canLoad();
 	}
 
-	public void reloadPlayerLocations(SkinLoader skinLoader) {
+	public void loadPlayers(SkinLoader skinLoader) {
 		worldIconSelection.clear();
 		world.getMovablePlayerList().load();
 		layerReloader.reloadPlayerLayer();
-		loadPlayerSkins(skinLoader);
+		skinLoader.loadSkins(world.getMovablePlayerList(),
+				onSkinFinishedLoading);
 	}
 
 	public boolean canSavePlayerLocations() {
@@ -133,8 +135,11 @@ public class WorldSurroundings {
 		world.getMovablePlayerList().save();
 	}
 
-	public void loadPlayerSkins(SkinLoader skinLoader) {
-		skinLoader.loadSkins(world.getMovablePlayerList(),
-				onSkinFinishedLoading);
+	public WorldPlayerType getWorldPlayerType() {
+		return world.getMovablePlayerList().getWorldPlayerType();
+	}
+
+	public void setWorldPlayerType(WorldPlayerType worldPlayerType) {
+		world.getMovablePlayerList().setWorldPlayerType(worldPlayerType);
 	}
 }

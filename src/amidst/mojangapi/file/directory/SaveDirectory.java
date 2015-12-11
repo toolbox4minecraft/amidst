@@ -87,6 +87,10 @@ public class SaveDirectory {
 		return root.isDirectory() && levelDat.isFile();
 	}
 
+	public boolean hasMultiplayerPlayers() {
+		return playerdata.isDirectory() || players.isDirectory();
+	}
+
 	public File getRoot() {
 		return root;
 	}

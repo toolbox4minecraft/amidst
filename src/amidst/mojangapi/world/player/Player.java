@@ -12,7 +12,7 @@ import amidst.mojangapi.world.icon.DefaultWorldIconTypes;
 
 @ThreadSafe
 public class Player {
-	private static final String NAMELESS_PLAYER_NAME = "Player";
+	private static final String NAMELESS_PLAYER_NAME = "The Singleplayer Player";
 
 	public static Player nameless(PlayerFile playerFile) {
 		return new Player(NAMELESS_PLAYER_NAME, false, playerFile);

@@ -155,7 +155,7 @@ public class Actions {
 	public void reloadPlayerLocations() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
-			worldSurroundings.reloadPlayerLocations(skinLoader);
+			worldSurroundings.loadPlayers(skinLoader);
 		}
 	}
 
