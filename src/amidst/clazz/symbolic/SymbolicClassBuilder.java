@@ -11,38 +11,32 @@ import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicFieldDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.ParameterDeclaration;
-import amidst.documentation.Immutable;
 import amidst.logging.Log;
 
 public class SymbolicClassBuilder {
-	@Immutable
-	private static enum StatelessResources {
-		INSTANCE;
-
-		private final Map<String, Class<?>> primitivesMap = createPrimitivesMap();
-
-		private Map<String, Class<?>> createPrimitivesMap() {
-			Map<String, Class<?>> result = new HashMap<String, Class<?>>();
-			result.put("byte", byte.class);
-			result.put("int", int.class);
-			result.put("float", float.class);
-			result.put("short", short.class);
-			result.put("long", long.class);
-			result.put("double", double.class);
-			result.put("boolean", boolean.class);
-			result.put("char", char.class);
-			result.put("String", String.class);
-			return result;
-		}
+	private static Map<String, Class<?>> createPrimitivesMap() {
+		Map<String, Class<?>> result = new HashMap<String, Class<?>>();
+		result.put("byte", byte.class);
+		result.put("int", int.class);
+		result.put("float", float.class);
+		result.put("short", short.class);
+		result.put("long", long.class);
+		result.put("double", double.class);
+		result.put("boolean", boolean.class);
+		result.put("char", char.class);
+		result.put("String", String.class);
+		return result;
 	}
 
-	private Map<String, SymbolicConstructor> constructorsBySymbolicName = new HashMap<String, SymbolicConstructor>();
-	private Map<String, SymbolicMethod> methodsBySymbolicName = new HashMap<String, SymbolicMethod>();
-	private Map<String, SymbolicField> fieldsBySymbolicName = new HashMap<String, SymbolicField>();
+	private static final Map<String, Class<?>> PRIMITIVES_MAP = createPrimitivesMap();
 
-	private ClassLoader classLoader;
-	private Map<String, String> realClassNamesBySymbolicClassName;
-	private Map<String, SymbolicClass> symbolicClassesByRealClassName;
+	private final Map<String, SymbolicConstructor> constructorsBySymbolicName = new HashMap<String, SymbolicConstructor>();
+	private final Map<String, SymbolicMethod> methodsBySymbolicName = new HashMap<String, SymbolicMethod>();
+	private final Map<String, SymbolicField> fieldsBySymbolicName = new HashMap<String, SymbolicField>();
+
+	private final ClassLoader classLoader;
+	private final Map<String, String> realClassNamesBySymbolicClassName;
+	private final Map<String, SymbolicClass> symbolicClassesByRealClassName;
 	private SymbolicClass product;
 
 	public SymbolicClassBuilder(ClassLoader classLoader,
@@ -174,8 +168,7 @@ public class SymbolicClassBuilder {
 
 	private Class<?> getParameterClass(ParameterDeclaration declaration)
 			throws ClassNotFoundException {
-		Class<?> result = StatelessResources.INSTANCE.primitivesMap
-				.get(declaration.getType());
+		Class<?> result = PRIMITIVES_MAP.get(declaration.getType());
 		if (result != null) {
 			return result;
 		} else if (declaration.isSymbolic()) {

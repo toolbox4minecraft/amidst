@@ -4,45 +4,48 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public class SymbolicParameterDeclarationList {
 	public static interface ExecuteOnEnd {
 		public void run(SymbolicParameterDeclarationList parameters);
 	}
 
-	public static <T> Builder<T> builder(T nextBuilder,
-			ExecuteOnEnd executeOnEnd) {
-		return new Builder<T>(nextBuilder, executeOnEnd);
-	}
+	@Immutable
+	public static class SymbolicParameterDeclarationListBuilder<T> {
+		private final T nextBuilder;
+		private final List<ParameterDeclaration> declarations = new ArrayList<ParameterDeclaration>();
+		private final ExecuteOnEnd executeOnEnd;
 
-	public static class Builder<T> {
-		private T nextBuilder;
-		private SymbolicParameterDeclarationList product = new SymbolicParameterDeclarationList();
-		private ExecuteOnEnd executeOnEnd;
-
-		private Builder(T nextBuilder, ExecuteOnEnd executeOnEnd) {
+		public SymbolicParameterDeclarationListBuilder(T nextBuilder,
+				ExecuteOnEnd executeOnEnd) {
 			this.nextBuilder = nextBuilder;
 			this.executeOnEnd = executeOnEnd;
 		}
 
-		public Builder<T> real(String realType) {
-			product.add(realType, false);
+		public SymbolicParameterDeclarationListBuilder<T> real(String realType) {
+			declarations.add(new ParameterDeclaration(realType, false));
 			return this;
 		}
 
-		public Builder<T> symbolic(String symbolicType) {
-			product.add(symbolicType, true);
+		public SymbolicParameterDeclarationListBuilder<T> symbolic(
+				String symbolicType) {
+			declarations.add(new ParameterDeclaration(symbolicType, true));
 			return this;
 		}
 
 		public T end() {
-			executeOnEnd.run(product);
+			executeOnEnd
+					.run(new SymbolicParameterDeclarationList(declarations));
 			return nextBuilder;
 		}
 	}
 
-	public class ParameterDeclaration {
-		private String type;
-		private boolean isSymbolic;
+	@Immutable
+	public static class ParameterDeclaration {
+		private final String type;
+		private final boolean isSymbolic;
 
 		private ParameterDeclaration(String type, boolean isSymbolic) {
 			this.type = type;
@@ -58,18 +61,14 @@ public class SymbolicParameterDeclarationList {
 		}
 	}
 
-	private List<ParameterDeclaration> declarations = new ArrayList<ParameterDeclaration>();
-	private List<ParameterDeclaration> declarationsView;
+	private final List<ParameterDeclaration> declarations;
 
-	public SymbolicParameterDeclarationList() {
-		this.declarationsView = Collections.unmodifiableList(declarations);
-	}
-
-	private void add(String type, boolean isSymbolic) {
-		declarations.add(new ParameterDeclaration(type, isSymbolic));
+	public SymbolicParameterDeclarationList(
+			List<ParameterDeclaration> declarations) {
+		this.declarations = Collections.unmodifiableList(declarations);
 	}
 
 	public List<ParameterDeclaration> getDeclarations() {
-		return declarationsView;
+		return declarations;
 	}
 }

@@ -21,8 +21,8 @@ import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicFieldDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList;
-import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.Builder;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.ExecuteOnEnd;
+import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.SymbolicParameterDeclarationListBuilder;
 
 public class CTBuilder {
 	public class RCDBuilder {
@@ -118,9 +118,10 @@ public class CTBuilder {
 			return CTBuilder.this.construct();
 		}
 
-		public Builder<SCDBuilder> constructor(final String symbolicName) {
-			return SymbolicParameterDeclarationList.builder(this,
-					new ExecuteOnEnd() {
+		public SymbolicParameterDeclarationListBuilder<SCDBuilder> constructor(
+				final String symbolicName) {
+			return new SymbolicParameterDeclarationListBuilder<SCDBuilder>(
+					this, new ExecuteOnEnd() {
 						@Override
 						public void run(
 								SymbolicParameterDeclarationList parameters) {
@@ -131,10 +132,10 @@ public class CTBuilder {
 					});
 		}
 
-		public Builder<SCDBuilder> method(final String symbolicName,
-				final String realName) {
-			return SymbolicParameterDeclarationList.builder(this,
-					new ExecuteOnEnd() {
+		public SymbolicParameterDeclarationListBuilder<SCDBuilder> method(
+				final String symbolicName, final String realName) {
+			return new SymbolicParameterDeclarationListBuilder<SCDBuilder>(
+					this, new ExecuteOnEnd() {
 						@Override
 						public void run(
 								SymbolicParameterDeclarationList parameters) {
