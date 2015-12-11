@@ -115,12 +115,12 @@ public class WorldSurroundings {
 	}
 
 	public boolean canReloadPlayerLocations() {
-		return world.getMovablePlayerList().canReload();
+		return world.getMovablePlayerList().canLoad();
 	}
 
 	public void reloadPlayerLocations(SkinLoader skinLoader) {
 		worldIconSelection.clear();
-		world.getMovablePlayerList().reload();
+		world.getMovablePlayerList().load();
 		layerReloader.reloadPlayerLayer();
 		loadPlayerSkins(skinLoader);
 	}

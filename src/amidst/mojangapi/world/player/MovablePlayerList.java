@@ -28,15 +28,16 @@ public class MovablePlayerList implements Iterable<Player> {
 		this.isSaveEnabled = isSaveEnabled;
 	}
 
-	public boolean canReload() {
+	public boolean canLoad() {
 		return saveDirectory != null;
 	}
 
-	public void reload() {
+	public void load() {
 		if (saveDirectory != null) {
-			Log.i("reloading player locations");
+			Log.i("loading player locations");
 			List<Player> loadedPlayers = new LinkedList<Player>();
-			List<Player> unloadedPlayers = saveDirectory.createPlayers();
+			List<Player> unloadedPlayers = saveDirectory
+					.createMultiplayerPlayers();
 			for (Player player : unloadedPlayers) {
 				if (player.tryLoadLocation()) {
 					loadedPlayers.add(player);

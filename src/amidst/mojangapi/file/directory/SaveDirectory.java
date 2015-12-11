@@ -5,11 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jnbt.CompoundTag;
 
 import amidst.documentation.Immutable;
+import amidst.logging.Log;
 import amidst.mojangapi.file.json.PlayerInformationRetriever;
 import amidst.mojangapi.file.nbt.LevelDat;
 import amidst.mojangapi.file.nbt.NBTUtils;
@@ -203,17 +205,21 @@ public class SaveDirectory {
 				.named(playerName, new PlayersPlayerFile(this, playerName));
 	}
 
-	// TODO: figure out a good algorithm
-	public List<Player> createPlayers() {
+	/**
+	 * Since version 1.7.6, minecraft stores players in the playerdata directory
+	 * and uses the player uuid as filename.
+	 */
+	public List<Player> createMultiplayerPlayers() {
 		List<Player> result = new ArrayList<Player>();
 		for (File playerdataFile : getPlayerdataFiles()) {
 			if (playerdataFile.isFile()) {
+				String playerUUID = getPlayerUUIDFromPlayerdataFile(playerdataFile);
 				result.add(createPlayerdataPlayer(
-						getPlayerNameFromPlayerdataFile(playerdataFile),
-						getPlayerUUIDFromPlayerdataFile(playerdataFile)));
+						getPlayerNameFromPlayerdataFile(playerUUID), playerUUID));
 			}
 		}
 		if (!result.isEmpty()) {
+			Log.i("using players from the playerdata directory");
 			return result;
 		}
 		for (File playersFile : getPlayersFiles()) {
@@ -222,15 +228,32 @@ public class SaveDirectory {
 			}
 		}
 		if (!result.isEmpty()) {
+			Log.i("using players from the players directory");
 			return result;
 		}
-		result.add(createLevelDatPlayer());
+		Log.i("no multiplayer players found");
 		return result;
 	}
 
-	private String getPlayerNameFromPlayerdataFile(File playerdataFile) {
-		return PlayerInformationRetriever
-				.getPlayerName(getPlayerUUIDFromPlayerdataFile(playerdataFile));
+	/**
+	 * We need to let the user decide if he wants to load the singleplayer
+	 * player from the level.dat file or if he wants to load the multiplayer
+	 * players. That is, because a singleplayer map will have the playerdata
+	 * directory. It contains information about each player that ever played on
+	 * the map. However, if the map is loaded as singleplayer map, minecraft
+	 * will use the information that is stored in the level.dat file. It will
+	 * also overwrite the file in the playerdata directory that belongs to the
+	 * player that loaded the map in singleplayer mode. So, if we change the
+	 * player location in the playerdata directory it will just be ignored if
+	 * the map is used as singleplayer map.
+	 */
+	public List<Player> createSingleplayerPlayers() {
+		Log.i("using player from level.dat");
+		return Arrays.asList(createLevelDatPlayer());
+	}
+
+	private String getPlayerNameFromPlayerdataFile(String playerUUID) {
+		return PlayerInformationRetriever.getPlayerName(playerUUID);
 	}
 
 	private String getPlayerUUIDFromPlayerdataFile(File playerdataFile) {

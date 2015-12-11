@@ -56,8 +56,8 @@ public class WorldBuilder {
 	private World create(MinecraftInterface minecraftInterface, WorldSeed seed,
 			WorldType worldType, String generatorOptions,
 			MovablePlayerList movablePlayerList) {
-		if (movablePlayerList.canReload()) {
-			movablePlayerList.reload();
+		if (movablePlayerList.canLoad()) {
+			movablePlayerList.load();
 		}
 		googleTracker.trackSeed(seed);
 		// @formatter:off
