@@ -20,18 +20,16 @@ import amidst.mojangapi.world.PlayerCoordinates;
 public enum PlayerLocationSaver {
 	;
 
-	public static void movePlayerOnMultiPlayerWorld(
-			PlayerCoordinates coordinates, File file) throws IOException,
-			FileNotFoundException {
+	public static void writeToPlayerFile(PlayerCoordinates coordinates,
+			File file) throws IOException, FileNotFoundException {
 		CompoundTag dataTag = NBTUtils.readTagFromFile(file);
 		CompoundTag modifiedDataTag = modifyPositionInDataTagMultiPlayer(
 				dataTag, coordinates);
 		NBTUtils.writeTagToFile(file, modifiedDataTag);
 	}
 
-	public static void movePlayerOnSinglePlayerWorld(
-			PlayerCoordinates coordinates, File file) throws IOException,
-			FileNotFoundException {
+	public static void writeToLevelDat(PlayerCoordinates coordinates, File file)
+			throws IOException, FileNotFoundException {
 		CompoundTag baseTag = NBTUtils.readTagFromFile(file);
 		CompoundTag modifiedBaseTag = modifyPositionInBaseTagSinglePlayer(
 				baseTag, coordinates);

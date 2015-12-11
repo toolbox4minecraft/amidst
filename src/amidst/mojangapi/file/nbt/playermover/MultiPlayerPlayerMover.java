@@ -25,7 +25,7 @@ public class MultiPlayerPlayerMover extends PlayerMover {
 	@Override
 	protected void doMovePlayer(Player player, PlayerCoordinates coordinates)
 			throws FileNotFoundException, IOException {
-		PlayerLocationSaver.movePlayerOnMultiPlayerWorld(coordinates,
+		PlayerLocationSaver.writeToPlayerFile(coordinates,
 				saveDirectory.getPlayersFile(player.getPlayerName()));
 	}
 }
