@@ -8,14 +8,16 @@ import java.util.Map.Entry;
 import amidst.clazz.real.RealClass;
 import amidst.clazz.real.detector.RealClassDetector;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 
+@Immutable
 public class ClassTranslator {
 	public static CTBuilder builder() {
 		return CTBuilder.newInstance();
 	}
 
-	private Map<RealClassDetector, SymbolicClassDeclaration> translations;
+	private final Map<RealClassDetector, SymbolicClassDeclaration> translations;
 
 	public ClassTranslator(
 			Map<RealClassDetector, SymbolicClassDeclaration> translations) {

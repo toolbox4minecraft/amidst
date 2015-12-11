@@ -11,10 +11,13 @@ import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicFieldDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.ParameterDeclaration;
-import amidst.documentation.Immutable;
+import amidst.documentation.NotThreadSafe;
 import amidst.logging.Log;
 
-@Immutable
+/**
+ * This class should only be used by the class {@link SymbolicClassGraphBuilder}
+ */
+@NotThreadSafe
 public class SymbolicClassBuilder {
 	private static Map<String, Class<?>> createPrimitivesMap() {
 		Map<String, Class<?>> result = new HashMap<String, Class<?>>();

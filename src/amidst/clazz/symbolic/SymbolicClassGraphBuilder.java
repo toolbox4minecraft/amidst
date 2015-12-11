@@ -15,9 +15,6 @@ import amidst.documentation.Immutable;
 public class SymbolicClassGraphBuilder {
 	private final ClassLoader classLoader;
 	private final Map<SymbolicClassDeclaration, String> realClassNamesBySymbolicClassDeclaration;
-	private final Map<String, String> realClassNamesBySymbolicClassName = new HashMap<String, String>();
-	private final Map<String, SymbolicClass> symbolicClassesByRealClassName = new HashMap<String, SymbolicClass>();
-	private final Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration = new HashMap<SymbolicClassDeclaration, SymbolicClassBuilder>();
 
 	public SymbolicClassGraphBuilder(
 			ClassLoader classLoader,
@@ -27,12 +24,20 @@ public class SymbolicClassGraphBuilder {
 	}
 
 	public Map<String, SymbolicClass> construct() {
-		createSymbolicClasses();
-		addConstructorsMethodsAndFields();
-		return createProduct();
+		Map<String, String> realClassNamesBySymbolicClassName = new HashMap<String, String>();
+		Map<String, SymbolicClass> symbolicClassesByRealClassName = new HashMap<String, SymbolicClass>();
+		Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration = new HashMap<SymbolicClassDeclaration, SymbolicClassBuilder>();
+		createSymbolicClasses(realClassNamesBySymbolicClassName,
+				symbolicClassesByRealClassName,
+				symbolicClassBuildersBySymbolicClassDeclaration);
+		addConstructorsMethodsAndFields(symbolicClassBuildersBySymbolicClassDeclaration);
+		return createProduct(symbolicClassBuildersBySymbolicClassDeclaration);
 	}
 
-	private void createSymbolicClasses() {
+	private void createSymbolicClasses(
+			Map<String, String> realClassNamesBySymbolicClassName,
+			Map<String, SymbolicClass> symbolicClassesByRealClassName,
+			Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration) {
 		for (Entry<SymbolicClassDeclaration, String> entry : realClassNamesBySymbolicClassDeclaration
 				.entrySet()) {
 			SymbolicClassDeclaration declaration = entry.getKey();
@@ -51,7 +56,8 @@ public class SymbolicClassGraphBuilder {
 		}
 	}
 
-	private void addConstructorsMethodsAndFields() {
+	private void addConstructorsMethodsAndFields(
+			Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration) {
 		for (Entry<SymbolicClassDeclaration, SymbolicClassBuilder> entry : symbolicClassBuildersBySymbolicClassDeclaration
 				.entrySet()) {
 			SymbolicClassDeclaration declaration = entry.getKey();
@@ -83,7 +89,8 @@ public class SymbolicClassGraphBuilder {
 		}
 	}
 
-	private Map<String, SymbolicClass> createProduct() {
+	private Map<String, SymbolicClass> createProduct(
+			Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration) {
 		Map<String, SymbolicClass> result = new HashMap<String, SymbolicClass>();
 		for (Entry<SymbolicClassDeclaration, SymbolicClassBuilder> entry : symbolicClassBuildersBySymbolicClassDeclaration
 				.entrySet()) {
