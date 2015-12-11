@@ -1,8 +1,5 @@
 package amidst.clazz.real;
 
-import java.util.Arrays;
-import java.util.List;
-
 import amidst.documentation.Immutable;
 
 @Immutable
@@ -23,8 +20,9 @@ public class RealClassConstant<T> {
 		public static final int INTERFACE_METHOD_REFERENCE = 11;
 		public static final int NAME_AND_TYPE_DESCRIPTOR = 12;
 
-		public static final List<Integer> Q_INCREASING_TYPES = Arrays.asList(
-				LONG, DOUBLE);
+		public static boolean isQIncreasing(byte type) {
+			return type == LONG || type == DOUBLE;
+		}
 	}
 
 	private final byte type;

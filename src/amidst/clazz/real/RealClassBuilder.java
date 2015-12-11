@@ -81,7 +81,7 @@ public class RealClassBuilder {
 			constantTypes[q] = type;
 			constants[q] = readConstant(stream, type, utf8Constants,
 					floatConstants, longConstants, stringIndices);
-			if (RealClassConstantType.Q_INCREASING_TYPES.contains(type)) {
+			if (RealClassConstantType.isQIncreasing(type)) {
 				q++;
 			}
 		}
