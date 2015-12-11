@@ -22,18 +22,26 @@ public enum PlayerLocationSaver {
 
 	public static void writeToPlayerFile(PlayerCoordinates coordinates,
 			File file) throws IOException, FileNotFoundException {
-		CompoundTag dataTag = NBTUtils.readTagFromFile(file);
-		CompoundTag modifiedDataTag = modifyPositionInDataTagMultiPlayer(
-				dataTag, coordinates);
-		NBTUtils.writeTagToFile(file, modifiedDataTag);
+		try {
+			CompoundTag dataTag = NBTUtils.readTagFromFile(file);
+			CompoundTag modifiedDataTag = modifyPositionInDataTagMultiPlayer(
+					dataTag, coordinates);
+			NBTUtils.writeTagToFile(file, modifiedDataTag);
+		} catch (Exception e) {
+			throw new IOException("cannot write player coordinates", e);
+		}
 	}
 
 	public static void writeToLevelDat(PlayerCoordinates coordinates, File file)
 			throws IOException, FileNotFoundException {
-		CompoundTag baseTag = NBTUtils.readTagFromFile(file);
-		CompoundTag modifiedBaseTag = modifyPositionInBaseTagSinglePlayer(
-				baseTag, coordinates);
-		NBTUtils.writeTagToFile(file, modifiedBaseTag);
+		try {
+			CompoundTag baseTag = NBTUtils.readTagFromFile(file);
+			CompoundTag modifiedBaseTag = modifyPositionInBaseTagSinglePlayer(
+					baseTag, coordinates);
+			NBTUtils.writeTagToFile(file, modifiedBaseTag);
+		} catch (Exception e) {
+			throw new IOException("cannot write player coordinates", e);
+		}
 	}
 
 	private static CompoundTag modifyPositionInBaseTagSinglePlayer(

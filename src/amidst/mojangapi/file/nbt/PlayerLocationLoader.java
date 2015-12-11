@@ -1,5 +1,6 @@
 package amidst.mojangapi.file.nbt;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.jnbt.CompoundTag;
@@ -13,12 +14,22 @@ import amidst.mojangapi.world.player.PlayerCoordinates;
 public enum PlayerLocationLoader {
 	;
 
-	public static PlayerCoordinates readFromPlayerFile(CompoundTag file) {
-		return readPlayerCoordinates(file);
+	public static PlayerCoordinates readFromPlayerFile(CompoundTag file)
+			throws IOException {
+		try {
+			return readPlayerCoordinates(file);
+		} catch (Exception e) {
+			throw new IOException("cannot read player coordinates", e);
+		}
 	}
 
-	public static PlayerCoordinates readFromLevelDat(CompoundTag file) {
-		return readPlayerCoordinates(getSinglePlayerPlayerTag(getTagRootTag(file)));
+	public static PlayerCoordinates readFromLevelDat(CompoundTag file)
+			throws IOException {
+		try {
+			return readPlayerCoordinates(getSinglePlayerPlayerTag(getTagRootTag(file)));
+		} catch (Exception e) {
+			throw new IOException("cannot read player coordinates", e);
+		}
 	}
 
 	private static CompoundTag getTagRootTag(CompoundTag rootTag) {

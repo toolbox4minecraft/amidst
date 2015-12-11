@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
+import amidst.mojangapi.file.json.player.PlayerJson;
 
 @Immutable
 public enum PlayerInformationRetriever {
@@ -31,9 +32,30 @@ public enum PlayerInformationRetriever {
 		return readPlayerHead(getPlayerSkinUrl(uuid));
 	}
 
+	public static String getPlayerName(String playerUUID) {
+		try {
+			PlayerJson playerJson = JsonReader.readPlayerFromUUID(playerUUID);
+			if (playerJson != null) {
+				return playerJson.getName();
+			} else {
+				return null;
+			}
+		} catch (IOException e) {
+			Log.w("unable to retrieve player name: " + playerUUID);
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public static String getPlayerUUID(String playerName) {
 		try {
-			return JsonReader.readUUIDFromPlayerName(playerName).getId();
+			PlayerJson playerJson = JsonReader
+					.readUUIDFromPlayerName(playerName);
+			if (playerJson != null) {
+				return playerJson.getId();
+			} else {
+				return null;
+			}
 		} catch (IOException e) {
 			Log.w("unable to retrieve player uuid: " + playerName);
 			e.printStackTrace();

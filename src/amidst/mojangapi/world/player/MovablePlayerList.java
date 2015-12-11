@@ -2,60 +2,64 @@ package amidst.mojangapi.world.player;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
+import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
-import amidst.mojangapi.file.nbt.playerloader.PlayerLoader;
-import amidst.mojangapi.file.nbt.playermover.PlayerMover;
+import amidst.mojangapi.file.directory.SaveDirectory;
 
+@ThreadSafe
 public class MovablePlayerList implements Iterable<Player> {
-	private static final MovablePlayerList DUMMY_INSTANCE = new MovablePlayerList();
+	private static final MovablePlayerList DUMMY = new MovablePlayerList(null,
+			false);
 
-	public static MovablePlayerList empty() {
-		return DUMMY_INSTANCE;
+	public static MovablePlayerList dummy() {
+		return DUMMY;
 	}
 
-	private final PlayerLoader playerLoader;
-	private final PlayerMover playerMover;
+	private final SaveDirectory saveDirectory;
+	private final boolean isSaveEnabled;
 
-	private volatile List<Player> players;
+	private volatile List<Player> players = Collections.emptyList();
 
-	private MovablePlayerList() {
-		this(PlayerLoader.dummy(), null);
+	public MovablePlayerList(SaveDirectory saveDirectory, boolean isSaveEnabled) {
+		this.saveDirectory = saveDirectory;
+		this.isSaveEnabled = isSaveEnabled;
 	}
 
-	public MovablePlayerList(PlayerLoader playerLoader) {
-		this(playerLoader, null);
-	}
-
-	public MovablePlayerList(PlayerLoader playerLoader, PlayerMover playerMover) {
-		this.playerLoader = playerLoader;
-		this.playerMover = playerMover;
-		reload();
-	}
-
-	@Deprecated
 	public boolean canReload() {
-		return this != DUMMY_INSTANCE;
+		return saveDirectory != null;
 	}
 
 	public void reload() {
-		Log.i("reloading player locations");
-		this.players = Collections.unmodifiableList(playerLoader.load());
+		if (saveDirectory != null) {
+			Log.i("reloading player locations");
+			List<Player> loadedPlayers = new LinkedList<Player>();
+			List<Player> unloadedPlayers = saveDirectory.createPlayers();
+			for (Player player : unloadedPlayers) {
+				if (player.tryLoadLocation()) {
+					loadedPlayers.add(player);
+				}
+			}
+			this.players = Collections.unmodifiableList(loadedPlayers);
+		} else {
+			Log.i("cannot reload player locations");
+		}
 	}
 
 	public boolean canSave() {
-		return playerMover != null;
+		return isSaveEnabled;
 	}
 
 	public void save() {
-		if (canSave()) {
+		if (isSaveEnabled) {
 			Log.i("saving player locations");
 			for (Player player : players) {
-				playerMover.movePlayer(player);
+				player.trySaveLocation();
 			}
 		} else {
-			Log.i("cannot save player locations");
+			Log.i("not saving player locations, because it is disabled for this version");
 		}
 	}
 

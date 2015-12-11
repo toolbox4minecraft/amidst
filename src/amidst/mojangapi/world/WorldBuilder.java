@@ -4,15 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.LevelDat;
-import amidst.mojangapi.file.nbt.playerloader.MultiPlayerPlayerLoader;
-import amidst.mojangapi.file.nbt.playerloader.PlayerLoader;
-import amidst.mojangapi.file.nbt.playerloader.SinglePlayerPlayerLoader;
-import amidst.mojangapi.file.nbt.playermover.MultiPlayerPlayerMover;
-import amidst.mojangapi.file.nbt.playermover.PlayerMover;
-import amidst.mojangapi.file.nbt.playermover.SinglePlayerPlayerMover;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.icon.NetherFortressProducer;
@@ -38,51 +31,36 @@ public class WorldBuilder {
 	public World fromSeed(MinecraftInterface minecraftInterface,
 			WorldSeed seed, WorldType worldType) {
 		return create(minecraftInterface, seed, worldType, "",
-				MovablePlayerList.empty());
+				MovablePlayerList.dummy());
 	}
 
 	public World fromFile(MinecraftInterface minecraftInterface,
 			SaveDirectory saveDirectory) throws FileNotFoundException,
 			IOException {
 		LevelDat levelDat = saveDirectory.createLevelDat();
-		if (saveDirectory.isMultiPlayer()) {
-			Log.i("Multiplayer world detected.");
-			return create(
-					minecraftInterface,
-					WorldSeed.fromFile(levelDat.getSeed()),
-					levelDat.getWorldType(),
-					levelDat.getGeneratorOptions(),
-					createMovablePlayerList(minecraftInterface,
-							new MultiPlayerPlayerLoader(saveDirectory),
-							new MultiPlayerPlayerMover(saveDirectory)));
-		} else {
-			Log.i("Singleplayer world detected.");
-			return create(
-					minecraftInterface,
-					WorldSeed.fromFile(levelDat.getSeed()),
-					levelDat.getWorldType(),
-					levelDat.getGeneratorOptions(),
-					createMovablePlayerList(minecraftInterface,
-							new SinglePlayerPlayerLoader(saveDirectory),
-							new SinglePlayerPlayerMover(saveDirectory)));
-		}
+		MovablePlayerList movablePlayerList = new MovablePlayerList(
+				saveDirectory, isSaveEnabled(minecraftInterface));
+		return create(minecraftInterface,
+				WorldSeed.fromFile(levelDat.getSeed()),
+				levelDat.getWorldType(), levelDat.getGeneratorOptions(),
+				movablePlayerList);
 	}
 
-	private MovablePlayerList createMovablePlayerList(
-			MinecraftInterface minecraftInterface, PlayerLoader playerLoader,
-			PlayerMover playerMover) {
-		if (minecraftInterface.getRecognisedVersion().isSaveEnabled()) {
-			return new MovablePlayerList(playerLoader, playerMover);
-		} else {
-			return new MovablePlayerList(playerLoader);
-		}
+	// TODO: why does it depend on the loaded minecraft version whether we can
+	// save player locations or not?
+	@Deprecated
+	private boolean isSaveEnabled(MinecraftInterface minecraftInterface) {
+		return minecraftInterface.getRecognisedVersion().isSaveEnabled();
 	}
 
 	private World create(MinecraftInterface minecraftInterface, WorldSeed seed,
 			WorldType worldType, String generatorOptions,
 			MovablePlayerList movablePlayerList) {
-		// @formatter:off
+		if (movablePlayerList.canReload()) {
+			movablePlayerList.reload();
+		}
 		googleTracker.trackSeed(seed);
+		// @formatter:off
 		minecraftInterface.createWorld(seed.getLong(), worldType, generatorOptions);
 		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
 		BiomeDataOracle biomeDataOracle = new BiomeDataOracle(minecraftInterface);

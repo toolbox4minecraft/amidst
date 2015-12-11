@@ -4,12 +4,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jnbt.CompoundTag;
 
 import amidst.documentation.Immutable;
+import amidst.mojangapi.file.json.PlayerInformationRetriever;
 import amidst.mojangapi.file.nbt.LevelDat;
 import amidst.mojangapi.file.nbt.NBTUtils;
+import amidst.mojangapi.file.nbt.playerfile.LevelDatPlayerFile;
+import amidst.mojangapi.file.nbt.playerfile.PlayerdataPlayerFile;
+import amidst.mojangapi.file.nbt.playerfile.PlayersPlayerFile;
+import amidst.mojangapi.world.player.Player;
 
 @Immutable
 public class SaveDirectory {
@@ -138,11 +145,6 @@ public class SaveDirectory {
 		}
 	}
 
-	// TODO: adjust to playerdata
-	public boolean isMultiPlayer() {
-		return players.isDirectory() && getPlayersFiles().length > 0;
-	}
-
 	public CompoundTag readLevelDat() throws FileNotFoundException, IOException {
 		return NBTUtils.readTagFromFile(levelDat);
 	}
@@ -185,5 +187,57 @@ public class SaveDirectory {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	public Player createLevelDatPlayer() {
+		return Player.nameless(new LevelDatPlayerFile(this));
+	}
+
+	public Player createPlayerdataPlayer(String playerName, String playerUUID) {
+		return Player.named(playerName, new PlayerdataPlayerFile(this,
+				playerUUID));
+	}
+
+	public Player createPlayersPlayer(String playerName) {
+		return Player
+				.named(playerName, new PlayersPlayerFile(this, playerName));
+	}
+
+	// TODO: figure out a good algorithm
+	public List<Player> createPlayers() {
+		List<Player> result = new ArrayList<Player>();
+		for (File playerdataFile : getPlayerdataFiles()) {
+			if (playerdataFile.isFile()) {
+				result.add(createPlayerdataPlayer(
+						getPlayerNameFromPlayerdataFile(playerdataFile),
+						getPlayerUUIDFromPlayerdataFile(playerdataFile)));
+			}
+		}
+		if (!result.isEmpty()) {
+			return result;
+		}
+		for (File playersFile : getPlayersFiles()) {
+			if (playersFile.isFile()) {
+				result.add(createPlayersPlayer(getPlayerNameFromPlayersFile(playersFile)));
+			}
+		}
+		if (!result.isEmpty()) {
+			return result;
+		}
+		result.add(createLevelDatPlayer());
+		return result;
+	}
+
+	private String getPlayerNameFromPlayerdataFile(File playerdataFile) {
+		return PlayerInformationRetriever
+				.getPlayerName(getPlayerUUIDFromPlayerdataFile(playerdataFile));
+	}
+
+	private String getPlayerUUIDFromPlayerdataFile(File playerdataFile) {
+		return playerdataFile.getName().split("\\.")[0];
+	}
+
+	private String getPlayerNameFromPlayersFile(File playersFile) {
+		return playersFile.getName().split("\\.")[0];
 	}
 }

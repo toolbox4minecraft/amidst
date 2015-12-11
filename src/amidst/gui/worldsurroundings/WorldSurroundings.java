@@ -98,7 +98,6 @@ public class WorldSurroundings {
 		return world.getWorldSeed();
 	}
 
-	// TODO: use this
 	public WorldIcon getSpawnWorldIcon() {
 		return world.getSpawnWorldIcon();
 	}
