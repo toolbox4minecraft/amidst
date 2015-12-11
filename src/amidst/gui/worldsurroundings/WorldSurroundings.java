@@ -9,10 +9,10 @@ import amidst.fragment.FragmentGraph;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.SkinLoader;
 import amidst.mojangapi.world.CoordinatesInWorld;
-import amidst.mojangapi.world.MovablePlayerList;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.icon.WorldIcon;
+import amidst.mojangapi.world.player.MovablePlayerList;
 
 public class WorldSurroundings {
 	private final World world;

@@ -8,7 +8,7 @@ import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.file.nbt.PlayerLocationLoader;
 import amidst.mojangapi.file.nbt.PlayerLocationSaver;
-import amidst.mojangapi.world.PlayerCoordinates;
+import amidst.mojangapi.world.player.PlayerCoordinates;
 
 @Immutable
 public class PlayersPlayerFile extends PlayerFile {

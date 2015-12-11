@@ -7,7 +7,7 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.documentation.Immutable;
-import amidst.mojangapi.world.PlayerCoordinates;
+import amidst.mojangapi.world.player.PlayerCoordinates;
 
 @Immutable
 public enum PlayerLocationLoader {

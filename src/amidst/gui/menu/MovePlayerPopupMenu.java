@@ -8,8 +8,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import amidst.mojangapi.world.CoordinatesInWorld;
-import amidst.mojangapi.world.MovablePlayerList;
-import amidst.mojangapi.world.Player;
+import amidst.mojangapi.world.player.MovablePlayerList;
+import amidst.mojangapi.world.player.Player;
 
 public class MovePlayerPopupMenu {
 	private final Actions actions;

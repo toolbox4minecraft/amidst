@@ -5,8 +5,8 @@ import java.io.IOException;
 
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
-import amidst.mojangapi.world.Player;
-import amidst.mojangapi.world.PlayerCoordinates;
+import amidst.mojangapi.world.player.Player;
+import amidst.mojangapi.world.player.PlayerCoordinates;
 
 @Immutable
 public abstract class PlayerMover {

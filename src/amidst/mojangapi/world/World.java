@@ -8,6 +8,7 @@ import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.WorldIconProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
+import amidst.mojangapi.world.player.MovablePlayerList;
 
 public class World {
 	private final WorldSeed seed;

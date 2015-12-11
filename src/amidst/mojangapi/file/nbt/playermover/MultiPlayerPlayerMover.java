@@ -6,8 +6,8 @@ import java.io.IOException;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.PlayerLocationSaver;
-import amidst.mojangapi.world.Player;
-import amidst.mojangapi.world.PlayerCoordinates;
+import amidst.mojangapi.world.player.Player;
+import amidst.mojangapi.world.player.PlayerCoordinates;
 
 @Immutable
 public class MultiPlayerPlayerMover extends PlayerMover {

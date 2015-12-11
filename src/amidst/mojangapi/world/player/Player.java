@@ -1,8 +1,9 @@
-package amidst.mojangapi.world;
+package amidst.mojangapi.world.player;
 
 import java.awt.image.BufferedImage;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.DefaultWorldIconTypes;
 
 @ThreadSafe

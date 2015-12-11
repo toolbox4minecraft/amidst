@@ -7,7 +7,7 @@ import amidst.documentation.Immutable;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.PlayerLocationLoader;
 import amidst.mojangapi.file.nbt.PlayerLocationSaver;
-import amidst.mojangapi.world.PlayerCoordinates;
+import amidst.mojangapi.world.player.PlayerCoordinates;
 
 @Immutable
 public class LevelDatPlayerFile extends PlayerFile {

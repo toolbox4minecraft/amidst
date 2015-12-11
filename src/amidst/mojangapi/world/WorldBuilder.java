@@ -24,6 +24,7 @@ import amidst.mojangapi.world.icon.TempleProducer;
 import amidst.mojangapi.world.icon.VillageProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
+import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.utilities.GoogleTracker;
 
 @Immutable

@@ -5,8 +5,8 @@ import java.util.List;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.mojangapi.world.MovablePlayerList;
-import amidst.mojangapi.world.Player;
+import amidst.mojangapi.world.player.MovablePlayerList;
+import amidst.mojangapi.world.player.Player;
 
 @ThreadSafe
 public class PlayerProducer extends CachedWorldIconProducer {

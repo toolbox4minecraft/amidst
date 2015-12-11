@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import amidst.mojangapi.file.json.PlayerInformationRetriever;
-import amidst.mojangapi.world.MovablePlayerList;
-import amidst.mojangapi.world.Player;
+import amidst.mojangapi.world.player.MovablePlayerList;
+import amidst.mojangapi.world.player.Player;
 import amidst.threading.Worker;
 import amidst.threading.WorkerExecutor;
 

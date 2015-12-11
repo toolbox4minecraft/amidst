@@ -20,10 +20,10 @@ import amidst.gui.worldsurroundings.WorldSurroundings;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.world.CoordinatesInWorld;
-import amidst.mojangapi.world.Player;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.icon.WorldIcon;
+import amidst.mojangapi.world.player.Player;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BiomeColorProfileSelection;
 

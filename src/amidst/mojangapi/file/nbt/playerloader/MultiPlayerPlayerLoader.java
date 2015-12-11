@@ -10,7 +10,7 @@ import amidst.documentation.Immutable;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.file.nbt.PlayerLocationLoader;
-import amidst.mojangapi.world.Player;
+import amidst.mojangapi.world.player.Player;
 
 @Immutable
 public class MultiPlayerPlayerLoader extends PlayerLoader {

@@ -8,7 +8,7 @@ import java.util.List;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.PlayerLocationLoader;
-import amidst.mojangapi.world.Player;
+import amidst.mojangapi.world.player.Player;
 
 @Immutable
 public class SinglePlayerPlayerLoader extends PlayerLoader {

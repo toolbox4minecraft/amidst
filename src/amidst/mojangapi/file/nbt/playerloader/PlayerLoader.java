@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import amidst.logging.Log;
-import amidst.mojangapi.world.Player;
+import amidst.mojangapi.world.player.Player;
 
 public abstract class PlayerLoader {
 	private static final PlayerLoader DUMMY = new PlayerLoader() {

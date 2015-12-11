@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import amidst.documentation.Immutable;
-import amidst.mojangapi.world.PlayerCoordinates;
+import amidst.mojangapi.world.player.PlayerCoordinates;
 
 @Immutable
 public abstract class PlayerFile {

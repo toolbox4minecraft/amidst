@@ -1,4 +1,4 @@
-package amidst.mojangapi.world;
+package amidst.mojangapi.world.player;
 
 import java.util.Collections;
 import java.util.Iterator;

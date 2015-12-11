@@ -1,6 +1,7 @@
-package amidst.mojangapi.world;
+package amidst.mojangapi.world.player;
 
 import amidst.documentation.Immutable;
+import amidst.mojangapi.world.CoordinatesInWorld;
 
 @Immutable
 public class PlayerCoordinates {
