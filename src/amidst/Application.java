@@ -12,7 +12,6 @@ import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.crash.CrashWindow;
 import amidst.gui.license.LicenseWindow;
 import amidst.gui.main.MainWindow;
-import amidst.gui.main.UpdatePrompt;
 import amidst.gui.main.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.gui.versionselect.VersionSelectWindow;
 import amidst.mojangapi.MojangApi;
@@ -33,7 +32,6 @@ public class Application {
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final ThreadMaster threadMaster;
-	private final UpdatePrompt updatePrompt;
 
 	private volatile VersionSelectWindow versionSelectWindow;
 	private volatile MainWindow mainWindow;
@@ -48,7 +46,6 @@ public class Application {
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
 		this.seedHistoryLogger = createSeedHistoryLogger();
 		this.threadMaster = createThreadMaster();
-		this.updatePrompt = createUpdatePrompt();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -91,11 +88,6 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private UpdatePrompt createUpdatePrompt() {
-		return new UpdatePrompt();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
 	public void run() {
 		googleTracker.trackApplicationRunning();
 		if (mojangApi.canCreateWorld()) {
@@ -108,8 +100,7 @@ public class Application {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayMainWindow() {
 		setMainWindow(new MainWindow(this, settings, mojangApi,
-				worldSurroundingsBuilder, seedHistoryLogger, updatePrompt,
-				threadMaster));
+				worldSurroundingsBuilder, seedHistoryLogger, threadMaster));
 		setVersionSelectWindow(null);
 	}
 

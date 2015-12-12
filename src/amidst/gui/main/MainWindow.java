@@ -42,8 +42,8 @@ public class MainWindow {
 	private final MojangApi mojangApi;
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
-	private final UpdatePrompt updatePrompt;
 	private final ThreadMaster threadMaster;
+	private final UpdatePrompt updatePrompt;
 
 	private final JFrame frame;
 	private final Container contentPane;
@@ -56,15 +56,14 @@ public class MainWindow {
 	public MainWindow(Application application, Settings settings,
 			MojangApi mojangApi,
 			WorldSurroundingsBuilder worldSurroundingsBuilder,
-			SeedHistoryLogger seedHistoryLogger, UpdatePrompt updatePrompt,
-			ThreadMaster threadMaster) {
+			SeedHistoryLogger seedHistoryLogger, ThreadMaster threadMaster) {
 		this.application = application;
 		this.settings = settings;
 		this.mojangApi = mojangApi;
 		this.worldSurroundingsBuilder = worldSurroundingsBuilder;
 		this.seedHistoryLogger = seedHistoryLogger;
-		this.updatePrompt = updatePrompt;
 		this.threadMaster = threadMaster;
+		this.updatePrompt = createUpdatePrompt();
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
 		this.actions = createActions();
@@ -74,6 +73,11 @@ public class MainWindow {
 		showFrame();
 		checkForUpdates();
 		clearWorldSurroundings();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private UpdatePrompt createUpdatePrompt() {
+		return new UpdatePrompt(this);
 	}
 
 	// TODO: use official minecraft version id instead of recognised one?
@@ -145,7 +149,7 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void checkForUpdates() {
-		updatePrompt.checkSilently(this);
+		updatePrompt.checkSilently();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

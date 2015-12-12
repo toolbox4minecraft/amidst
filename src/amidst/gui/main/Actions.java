@@ -228,7 +228,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void checkForUpdates() {
-		updatePrompt.check(mainWindow);
+		updatePrompt.check();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

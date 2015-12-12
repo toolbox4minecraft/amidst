@@ -13,45 +13,26 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import amidst.AmidstMetaData;
+import amidst.documentation.Immutable;
 
+@Immutable
 public class UpdateInformationRetriever {
 	public static final String UPDATE_URL = "https://sites.google.com/site/mothfinder/update.xml";
 	public static final String UPDATE_UNSTABLE_URL = "https://sites.google.com/site/mothfinder/update_unstable.xml";
 
-	private String updateURL;
-	private int major;
-	private int minor;
+	private static final int MAJOR_INDEX = 0;
+	private static final int MINOR_INDEX = 1;
 
-	private boolean successful = false;
-	private String errorMessage;
+	private final String updateURL;
+	private final int major;
+	private final int minor;
 
-	public void check() {
-		resetErrorState();
-		try {
-			updateVersionInformation(getDocument());
-		} catch (MalformedURLException e) {
-			error("Error connecting to update server: Malformed URL.");
-		} catch (SAXException e) {
-			error("Error parsing update file.");
-		} catch (IOException e) {
-			error("Error reading update data.");
-		} catch (ParserConfigurationException e) {
-			error("Error with XML parser configuration.");
-		} catch (NumberFormatException e) {
-			error("Error parsing version numbers.");
-		} catch (NullPointerException e) {
-			error("Error \"NullPointerException\" in update.");
-		}
-	}
-
-	private void resetErrorState() {
-		successful = true;
-		errorMessage = null;
-	}
-
-	private void error(String errorMessage) {
-		this.errorMessage = errorMessage;
-		this.successful = false;
+	public UpdateInformationRetriever() throws Exception {
+		Document document = getDocument();
+		updateURL = getUpdateURL(document);
+		int[] versionNumbers = getVersionNumbers(document);
+		major = versionNumbers[MAJOR_INDEX];
+		minor = versionNumbers[MINOR_INDEX];
 	}
 
 	private Document getDocument() throws MalformedURLException, SAXException,
@@ -63,34 +44,28 @@ public class UpdateInformationRetriever {
 		return document;
 	}
 
-	private void updateVersionInformation(Document document) {
-		updateUpdateURL(document);
-		updateVersionNumber(document);
+	private String getUpdateURL(Document document) {
+		return document.getFirstChild().getAttributes().item(0).getNodeValue();
 	}
 
-	private void updateUpdateURL(Document document) {
-		updateURL = document.getFirstChild().getAttributes().item(0)
-				.getNodeValue();
-	}
-
-	private void updateVersionNumber(Document document) {
+	private int[] getVersionNumbers(Document document) {
 		NodeList version = document.getDocumentElement()
 				.getElementsByTagName("version").item(0).getChildNodes();
-		major = -1;
-		minor = -1;
+		int[] result = new int[] { -1, -1 };
 		for (int i = 0; i < version.getLength(); i++) {
 			Node node = version.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				if (node.getNodeName().equalsIgnoreCase("major")) {
-					major = getVersionNumber(node);
+					result[MAJOR_INDEX] = getVersionNumber(node);
 				} else if (node.getNodeName().equalsIgnoreCase("minor")) {
-					minor = getVersionNumber(node);
+					result[MINOR_INDEX] = getVersionNumber(node);
 				}
 			}
 		}
-		if (major == -1 || minor == -1) {
-			error("Error parsing version numbers.");
+		if (result[MAJOR_INDEX] == -1 || result[MINOR_INDEX] == -1) {
+			throw new RuntimeException("Error parsing version numbers.");
 		}
+		return result;
 	}
 
 	private int getVersionNumber(Node node) {
@@ -104,14 +79,6 @@ public class UpdateInformationRetriever {
 	public boolean isNewMinorVersionAvailable() {
 		return major == AmidstMetaData.MAJOR_VERSION
 				&& minor > AmidstMetaData.MINOR_VERSION;
-	}
-
-	public boolean isSuccessful() {
-		return successful;
-	}
-
-	public String getErrorMessage() {
-		return errorMessage;
 	}
 
 	public String getUpdateURL() {

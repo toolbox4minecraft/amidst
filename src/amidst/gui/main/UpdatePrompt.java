@@ -2,87 +2,81 @@ package amidst.gui.main;
 
 import java.awt.Desktop;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.Immutable;
+import amidst.logging.Log;
 
+@Immutable
 public class UpdatePrompt {
-	private UpdateInformationRetriever retriever = new UpdateInformationRetriever();
-	private MainWindow mainWindow;
-	private boolean silent;
+	private final MainWindow mainWindow;
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	public void checkSilently(MainWindow mainWindow) {
-		check(mainWindow, true);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public void check(MainWindow mainWindow) {
-		check(mainWindow, false);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void check(MainWindow mainWindow, boolean silent) {
+	public UpdatePrompt(MainWindow mainWindow) {
 		this.mainWindow = mainWindow;
-		this.silent = silent;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void checkSilently() {
+		check(true);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void check() {
+		check(false);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void check(boolean silent) {
 		try {
-			doCheck();
-		} catch (MalformedURLException e) {
-			error("Error connecting to update server: Malformed URL.");
-		} catch (IOException e) {
-			error("Error reading update data.");
-		} catch (URISyntaxException e) {
-			error("Error parsing update URL.");
-		} catch (NullPointerException e) {
-			error("Error \"NullPointerException\" in update.");
+			doCheck(silent);
+		} catch (Exception e) {
+			Log.w("unable to check for updates");
+			e.printStackTrace();
+			if (!silent) {
+				mainWindow.displayError(e.getMessage());
+			}
+		}
+	}
+
+	private void doCheck(boolean silent) throws Exception, IOException,
+			URISyntaxException {
+		UpdateInformationRetriever retriever = new UpdateInformationRetriever();
+		if (getUserChoice(retriever, silent)) {
+			openURL(new URI(retriever.getUpdateURL()));
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void error(String message) {
-		if (!silent) {
-			mainWindow.displayError(message);
-		}
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void doCheck() throws IOException, URISyntaxException {
-		retriever.check();
-		if (!retriever.isSuccessful()) {
-			error(retriever.getErrorMessage());
-		} else if (getUserChoice()) {
-			openUpdateURL();
-		}
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private boolean getUserChoice() {
+	private boolean getUserChoice(UpdateInformationRetriever retriever,
+			boolean silent) {
 		if (retriever.isNewMajorVersionAvailable()) {
 			return mainWindow.askToConfirm("Update Found",
 					"A new version was found. Would you like to update?");
 		} else if (retriever.isNewMinorVersionAvailable()) {
 			return mainWindow.askToConfirm("Update Found",
 					"A minor revision was found. Update?");
-		} else if (!silent) {
+		} else if (silent) {
+			return false;
+		} else {
 			mainWindow.displayMessage("Updater", "There are no new updates.");
+			return false;
 		}
-		return false;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void openUpdateURL() throws IOException, URISyntaxException {
+	private void openURL(URI uri) throws IOException {
 		if (Desktop.isDesktopSupported()) {
 			Desktop desktop = Desktop.getDesktop();
 			if (desktop.isSupported(Desktop.Action.BROWSE)) {
-				desktop.browse(new URI(retriever.getUpdateURL()));
+				desktop.browse(uri);
 			} else {
-				mainWindow.displayError("Unable to open browser page.");
+				throw new RuntimeException("Unable to open browser page.");
 			}
 		} else {
-			mainWindow.displayError("Unable to open browser.");
+			throw new RuntimeException("Unable to open browser.");
 		}
 	}
 }
