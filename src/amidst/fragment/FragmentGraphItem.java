@@ -2,14 +2,19 @@ package amidst.fragment;
 
 import java.util.Iterator;
 
+import amidst.documentation.NotThreadSafe;
+
+@NotThreadSafe
 public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	/**
 	 * This is an Iterator that is fail safe in the sense that it will never
 	 * throw a NullPointerException or ConcurrentModificationException when the
 	 * fragment graph is altered while the iterator is used. However, the
-	 * elements returned by this iterator will be the old state or the new state
-	 * or something in between. This should be good enough for our use cases.
+	 * elements returned by this iterator will fit the old state or the new
+	 * state or something in between. This should be good enough for our use
+	 * cases.
 	 */
+	@NotThreadSafe
 	private static class FragmentGraphItemIterator implements
 			Iterator<FragmentGraphItem> {
 		private FragmentGraphItem rowStart;

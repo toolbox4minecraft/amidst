@@ -13,6 +13,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.imageio.ImageIO;
 
 import amidst.Application;
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.gui.MainWindow;
 import amidst.gui.UpdatePrompt;
 import amidst.gui.worldsurroundings.WorldSurroundings;
@@ -27,6 +30,7 @@ import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BiomeColorProfileSelection;
 import amidst.threading.WorkerExecutor;
 
+@NotThreadSafe
 public class Actions {
 	private final Application application;
 	private final MojangApi mojangApi;
@@ -36,6 +40,7 @@ public class Actions {
 	private final BiomeColorProfileSelection biomeColorProfileSelection;
 	private final WorkerExecutor workerExecutor;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public Actions(Application application, MojangApi mojangApi,
 			MainWindow mainWindow,
 			AtomicReference<WorldSurroundings> worldSurroundings,
@@ -51,6 +56,7 @@ public class Actions {
 		this.workerExecutor = workerExecutor;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromSeed() {
 		WorldSeed seed = mainWindow.askForSeed();
 		if (seed != null) {
@@ -58,10 +64,12 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromRandom() {
 		newFromSeed(WorldSeed.random());
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void newFromSeed(WorldSeed seed) {
 		WorldType worldType = mainWindow.askForWorldType();
 		if (worldType != null) {
@@ -74,6 +82,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void openWorldFile() {
 		File file = mainWindow.askForMinecraftWorldFile();
 		if (file != null) {
@@ -85,14 +94,17 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void switchProfile() {
 		application.displayVersionSelectWindow();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void exit() {
 		application.exitGracefully();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void goToCoordinate() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
@@ -110,6 +122,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void goToSpawn() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
@@ -117,6 +130,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void goToStronghold() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
@@ -129,6 +143,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void goToPlayer() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
@@ -146,6 +161,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void savePlayerLocations() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
@@ -153,6 +169,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void reloadPlayerLocations() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
@@ -160,6 +177,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void howCanIMoveAPlayer() {
 		mainWindow
 				.displayMessage(
@@ -176,6 +194,7 @@ public class Actions {
 								+ "Especially, make sure to not have the world loaded in minecraft during this process.");
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void copySeedToClipboard() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
@@ -186,6 +205,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void saveCaptureImage() {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
@@ -198,6 +218,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void selectBiomeColorProfile(BiomeColorProfile profile) {
 		biomeColorProfileSelection.setProfile(profile);
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
@@ -206,20 +227,24 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void checkForUpdates() {
 		updatePrompt.check(mainWindow);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void viewLicense() {
 		application.displayLicenseWindow();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void about() {
 		mainWindow.displayMessage("About",
 				"Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
 						+ "By Skidoodle (amidst.project@gmail.com)");
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void adjustZoom(int notches) {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
@@ -227,6 +252,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void adjustZoom(Point mousePosition, int notches) {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
@@ -234,6 +260,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void selectWorldIcon(WorldIcon worldIcon) {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
@@ -241,6 +268,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void showPlayerPopupMenu(CoordinatesInWorld targetCoordinates,
 			Component component, int x, int y) {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
@@ -253,6 +281,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void movePlayer(Player player, CoordinatesInWorld targetCoordinates) {
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
@@ -272,6 +301,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private long tryParseLong(String text, long defaultValue) {
 		try {
 			return Long.parseLong(text);
@@ -280,6 +310,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void saveImageToFile(BufferedImage image, File file) {
 		try {
 			ImageIO.write(image, "png", appendPNGFileExtensionIfNecessary(file));
@@ -288,6 +319,7 @@ public class Actions {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private File appendPNGFileExtensionIfNecessary(File file) {
 		String filename = file.toString();
 		if (!filename.toLowerCase().endsWith(".png")) {

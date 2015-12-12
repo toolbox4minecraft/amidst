@@ -13,6 +13,8 @@ import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
 import amidst.Application;
 import amidst.Options;
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
@@ -113,6 +115,7 @@ public class VersionSelectWindow {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void dispose() {
 		frame.dispose();
 	}

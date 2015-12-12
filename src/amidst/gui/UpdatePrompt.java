@@ -6,6 +6,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.utilities.UpdateInformationRetriever;
 
 public class UpdatePrompt {
@@ -13,14 +15,17 @@ public class UpdatePrompt {
 	private MainWindow mainWindow;
 	private boolean silent;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void checkSilently(MainWindow mainWindow) {
 		check(mainWindow, true);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void check(MainWindow mainWindow) {
 		check(mainWindow, false);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void check(MainWindow mainWindow, boolean silent) {
 		this.mainWindow = mainWindow;
 		this.silent = silent;
@@ -37,12 +42,14 @@ public class UpdatePrompt {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void error(String message) {
 		if (!silent) {
 			mainWindow.displayError(message);
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void doCheck() throws IOException, URISyntaxException {
 		retriever.check();
 		if (!retriever.isSuccessful()) {
@@ -52,6 +59,7 @@ public class UpdatePrompt {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean getUserChoice() {
 		if (retriever.isNewMajorVersionAvailable()) {
 			return mainWindow.askToConfirm("Update Found",
@@ -65,6 +73,7 @@ public class UpdatePrompt {
 		return false;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void openUpdateURL() throws IOException, URISyntaxException {
 		if (Desktop.isDesktopSupported()) {
 			Desktop desktop = Desktop.getDesktop();

@@ -107,7 +107,6 @@ public class GridDrawer extends FragmentDrawer {
 	}
 
 	// This makes the text outline a bit thicker, but seems unneeded.
-	@CalledOnlyBy(AmidstThread.EDT)
 	@SuppressWarnings("unused")
 	private void drawThickTextOutline(Graphics2D g2d) {
 		g2d.drawChars(textCache, 0, textBuffer.length(), 12, 15);

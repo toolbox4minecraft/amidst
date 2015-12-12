@@ -21,6 +21,7 @@ import amidst.Application;
 import amidst.Options;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.gui.menu.Actions;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.AmidstMenuBuilder;
@@ -37,6 +38,7 @@ import amidst.mojangapi.world.player.WorldPlayerType;
 import amidst.threading.ThreadMaster;
 import amidst.utilities.SeedHistoryLogger;
 
+@NotThreadSafe
 public class MainWindow {
 	private final Application application;
 	private final Options options;
@@ -53,6 +55,7 @@ public class MainWindow {
 
 	private final AtomicReference<WorldSurroundings> worldSurroundings = new AtomicReference<WorldSurroundings>();
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public MainWindow(Application application, Options options,
 			MojangApi mojangApi,
 			WorldSurroundingsBuilder worldSurroundingsBuilder,
@@ -77,6 +80,7 @@ public class MainWindow {
 	}
 
 	// TODO: use official minecraft version id instead of recognised one?
+	@CalledOnlyBy(AmidstThread.EDT)
 	private JFrame createFrame() {
 		JFrame frame = new JFrame();
 		frame.setTitle(createVersionString(mojangApi.getRecognisedVersionName()));
@@ -85,23 +89,27 @@ public class MainWindow {
 		return frame;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private String createVersionString(String version) {
 		return "Amidst v" + AmidstMetaData.getFullVersionString()
 				+ " [Using Minecraft version: " + version + "]";
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private Container createContentPane() {
 		Container contentPane = frame.getContentPane();
 		contentPane.setLayout(new BorderLayout());
 		return contentPane;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private Actions createActions() {
 		return new Actions(application, mojangApi, this, worldSurroundings,
 				updatePrompt, options.biomeColorProfileSelection,
 				threadMaster.getWorkerExecutor());
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private AmidstMenu createMenuBar() {
 		AmidstMenu menuBar = new AmidstMenuBuilder(options, actions)
 				.construct();
@@ -109,6 +117,7 @@ public class MainWindow {
 		return menuBar;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void initKeyListener() {
 		frame.addKeyListener(new KeyAdapter() {
 			@Override
@@ -122,6 +131,7 @@ public class MainWindow {
 		});
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void initCloseListener() {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
@@ -131,10 +141,12 @@ public class MainWindow {
 		});
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void showFrame() {
 		frame.setVisible(true);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void checkForUpdates() {
 		updatePrompt.checkSilently(this);
 	}
@@ -151,6 +163,7 @@ public class MainWindow {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean decideWorldPlayerType(MovablePlayerList movablePlayerList) {
 		if (movablePlayerList.getWorldPlayerType().equals(WorldPlayerType.BOTH)) {
 			WorldPlayerType worldPlayerType = askForWorldPlayerType();
@@ -165,6 +178,7 @@ public class MainWindow {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void setWorldSurroundings(WorldSurroundings worldSurroundings) {
 		seedHistoryLogger.log(worldSurroundings.getWorldSeed());
 		contentPane.add(worldSurroundings.getComponent(), BorderLayout.CENTER);
@@ -181,6 +195,7 @@ public class MainWindow {
 		this.worldSurroundings.set(worldSurroundings);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void clearWorldSurroundings() {
 		threadMaster.clearOnRepaintTick();
 		threadMaster.clearOnFragmentLoadTick();
@@ -193,17 +208,20 @@ public class MainWindow {
 		clearWorldSurroundingsFromGui();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void clearWorldSurroundingsFromGui() {
 		menuBar.setWorldMenuEnabled(false);
 		menuBar.setSavePlayerLocationsMenuEnabled(false);
 		menuBar.setReloadPlayerLocationsMenuEnabled(false);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void dispose() {
 		clearWorldSurroundings();
 		frame.dispose();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private WorldPlayerType askForWorldPlayerType() {
 		return askForOptions("Loading World",
 				"This world contains Multiplayer and Singleplayer data.\n"
@@ -211,14 +229,17 @@ public class MainWindow {
 				WorldPlayerType.getSelectable());
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldSeed askForSeed() {
 		return new SeedPrompt(frame).askForSeed();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public File askForMinecraftWorldFile() {
 		return getSelectedFileOrNull(createMinecraftWorldFileChooser());
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private JFileChooser createMinecraftWorldFileChooser() {
 		JFileChooser result = new JFileChooser();
 		result.setFileFilter(new LevelFileFilter());
@@ -229,10 +250,12 @@ public class MainWindow {
 		return result;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public File askForCaptureImageSaveFile() {
 		return getSelectedFileOrNull(createCaptureImageSaveFileChooser());
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private JFileChooser createCaptureImageSaveFileChooser() {
 		JFileChooser result = new JFileChooser();
 		result.setFileFilter(new PNGFileFilter());
@@ -240,6 +263,7 @@ public class MainWindow {
 		return result;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private File getSelectedFileOrNull(JFileChooser fileChooser) {
 		if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 			return fileChooser.getSelectedFile();
@@ -248,33 +272,39 @@ public class MainWindow {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayMessage(String title, String message) {
 		JOptionPane.showMessageDialog(frame, message, title,
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayError(String message) {
 		JOptionPane.showMessageDialog(frame, message, "Error",
 				JOptionPane.ERROR_MESSAGE);
 	}
 
 	// TODO: revisit error handling and feedback on gui
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayException(Exception exception) {
 		JOptionPane.showMessageDialog(frame, getStackTraceAsString(exception),
 				"Error", JOptionPane.ERROR_MESSAGE);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private String getStackTraceAsString(Exception exception) {
 		StringWriter writer = new StringWriter();
 		exception.printStackTrace(new PrintWriter(writer));
 		return writer.toString();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean askToConfirm(String title, String message) {
 		return JOptionPane.showConfirmDialog(frame, message, title,
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldType askForWorldType() {
 		String worldTypePreference = options.worldType.get();
 		if (worldTypePreference.equals("Prompt each time")) {
@@ -285,6 +315,7 @@ public class MainWindow {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	@SuppressWarnings("unchecked")
 	public <T> T askForOptions(String title, String message, List<T> choices) {
 		Object[] choicesArray = choices.toArray();
@@ -292,10 +323,12 @@ public class MainWindow {
 				JOptionPane.PLAIN_MESSAGE, null, choicesArray, choicesArray[0]);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public String askForCoordinates() {
 		return askForString("Go To", "Enter coordinates: (Ex. 123,456)");
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public String askForPlayerHeight(long currentHeight) {
 		Object input = JOptionPane.showInputDialog(frame,
 				"Enter new player height:", "Move Player",
@@ -307,6 +340,7 @@ public class MainWindow {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private String askForString(String title, String message) {
 		return JOptionPane.showInputDialog(frame, message, title,
 				JOptionPane.QUESTION_MESSAGE);

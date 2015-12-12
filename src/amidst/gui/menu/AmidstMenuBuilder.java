@@ -15,10 +15,12 @@ import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 
 import amidst.Options;
+import amidst.documentation.NotThreadSafe;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.SelectPrefModel.SelectButtonModel;
 import amidst.resources.ResourceLoader;
 
+@NotThreadSafe
 public class AmidstMenuBuilder {
 	private final Options options;
 	private final Actions actions;
