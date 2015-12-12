@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
 
 import amidst.AmidstMetaData;
 import amidst.Application;
-import amidst.Options;
+import amidst.Settings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -41,7 +41,7 @@ import amidst.utilities.SeedHistoryLogger;
 @NotThreadSafe
 public class MainWindow {
 	private final Application application;
-	private final Options options;
+	private final Settings settings;
 	private final MojangApi mojangApi;
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final SeedHistoryLogger seedHistoryLogger;
@@ -56,13 +56,13 @@ public class MainWindow {
 	private final AtomicReference<WorldSurroundings> worldSurroundings = new AtomicReference<WorldSurroundings>();
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public MainWindow(Application application, Options options,
+	public MainWindow(Application application, Settings settings,
 			MojangApi mojangApi,
 			WorldSurroundingsBuilder worldSurroundingsBuilder,
 			SeedHistoryLogger seedHistoryLogger, UpdatePrompt updatePrompt,
 			ThreadMaster threadMaster) {
 		this.application = application;
-		this.options = options;
+		this.settings = settings;
 		this.mojangApi = mojangApi;
 		this.worldSurroundingsBuilder = worldSurroundingsBuilder;
 		this.seedHistoryLogger = seedHistoryLogger;
@@ -105,13 +105,13 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Actions createActions() {
 		return new Actions(application, mojangApi, this, worldSurroundings,
-				updatePrompt, options.biomeColorProfileSelection,
+				updatePrompt, settings.biomeColorProfileSelection,
 				threadMaster.getWorkerExecutor());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private AmidstMenu createMenuBar() {
-		AmidstMenu menuBar = new AmidstMenuBuilder(options, actions)
+		AmidstMenu menuBar = new AmidstMenuBuilder(settings, actions)
 				.construct();
 		frame.setJMenuBar(menuBar.getMenuBar());
 		return menuBar;
@@ -306,12 +306,12 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldType askForWorldType() {
-		String worldTypePreference = options.worldType.get();
-		if (worldTypePreference.equals("Prompt each time")) {
+		String worldTypeSetting = settings.worldType.get();
+		if (worldTypeSetting.equals("Prompt each time")) {
 			return askForOptions("World Type", "Enter world type\n",
 					WorldType.getSelectable());
 		} else {
-			return WorldType.from(worldTypePreference);
+			return WorldType.from(worldTypeSetting);
 		}
 	}
 

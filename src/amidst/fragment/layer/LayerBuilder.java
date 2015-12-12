@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import amidst.Options;
+import amidst.Settings;
 import amidst.fragment.FragmentQueueProcessor;
 import amidst.fragment.colorprovider.BiomeColorProvider;
 import amidst.fragment.colorprovider.SlimeColorProvider;
@@ -32,25 +32,25 @@ public class LayerBuilder {
 	private final List<LayerDeclaration> declarations;
 	private final Iterable<FragmentConstructor> constructors;
 
-	public LayerBuilder(Options options) {
-		this.declarations = createDeclarations(options);
+	public LayerBuilder(Settings settings) {
+		this.declarations = createDeclarations(settings);
 		this.constructors = createConstructors();
 	}
 
-	private List<LayerDeclaration> createDeclarations(Options options) {
+	private List<LayerDeclaration> createDeclarations(Settings settings) {
 		LayerDeclaration[] declarations = new LayerDeclaration[LayerIds.NUMBER_OF_LAYERS];
 		// @formatter:off
 		declarations[LayerIds.ALPHA]            = new LayerDeclaration(LayerIds.ALPHA,           new ImmutableSetting<Boolean>(true));
 		declarations[LayerIds.BIOME]            = new LayerDeclaration(LayerIds.BIOME,           new ImmutableSetting<Boolean>(true));
-		declarations[LayerIds.SLIME]            = new LayerDeclaration(LayerIds.SLIME,           options.showSlimeChunks);
-		declarations[LayerIds.GRID]             = new LayerDeclaration(LayerIds.GRID,            options.showGrid);
-		declarations[LayerIds.VILLAGE]          = new LayerDeclaration(LayerIds.VILLAGE,         options.showVillages);
-		declarations[LayerIds.OCEAN_MONUMENT]   = new LayerDeclaration(LayerIds.OCEAN_MONUMENT,  options.showOceanMonuments);
-		declarations[LayerIds.STRONGHOLD]       = new LayerDeclaration(LayerIds.STRONGHOLD,      options.showStrongholds);
-		declarations[LayerIds.TEMPLE]           = new LayerDeclaration(LayerIds.TEMPLE,          options.showTemples);
-		declarations[LayerIds.SPAWN]            = new LayerDeclaration(LayerIds.SPAWN,           options.showSpawn);
-		declarations[LayerIds.NETHER_FORTRESS]  = new LayerDeclaration(LayerIds.NETHER_FORTRESS, options.showNetherFortresses);
-		declarations[LayerIds.PLAYER]           = new LayerDeclaration(LayerIds.PLAYER,          options.showPlayers);
+		declarations[LayerIds.SLIME]            = new LayerDeclaration(LayerIds.SLIME,           settings.showSlimeChunks);
+		declarations[LayerIds.GRID]             = new LayerDeclaration(LayerIds.GRID,            settings.showGrid);
+		declarations[LayerIds.VILLAGE]          = new LayerDeclaration(LayerIds.VILLAGE,         settings.showVillages);
+		declarations[LayerIds.OCEAN_MONUMENT]   = new LayerDeclaration(LayerIds.OCEAN_MONUMENT,  settings.showOceanMonuments);
+		declarations[LayerIds.STRONGHOLD]       = new LayerDeclaration(LayerIds.STRONGHOLD,      settings.showStrongholds);
+		declarations[LayerIds.TEMPLE]           = new LayerDeclaration(LayerIds.TEMPLE,          settings.showTemples);
+		declarations[LayerIds.SPAWN]            = new LayerDeclaration(LayerIds.SPAWN,           settings.showSpawn);
+		declarations[LayerIds.NETHER_FORTRESS]  = new LayerDeclaration(LayerIds.NETHER_FORTRESS, settings.showNetherFortresses);
+		declarations[LayerIds.PLAYER]           = new LayerDeclaration(LayerIds.PLAYER,          settings.showPlayers);
 		// @formatter:on
 		return Collections.unmodifiableList(Arrays.asList(declarations));
 	}
@@ -81,8 +81,8 @@ public class LayerBuilder {
 	}
 
 	public LayerLoader createLayerLoader(World world,
-			BiomeSelection biomeSelection, Options options) {
-		return new LayerLoader(createLoaders(world, biomeSelection, options),
+			BiomeSelection biomeSelection, Settings settings) {
+		return new LayerLoader(createLoaders(world, biomeSelection, settings),
 				LayerIds.NUMBER_OF_LAYERS);
 	}
 
@@ -90,12 +90,12 @@ public class LayerBuilder {
 	 * This also defines the loading and reloading order.
 	 */
 	private Iterable<FragmentLoader> createLoaders(World world,
-			BiomeSelection biomeSelection, Options options) {
+			BiomeSelection biomeSelection, Settings settings) {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
-				new AlphaInitializer(declarations.get(LayerIds.ALPHA),           options.fragmentFading),
+				new AlphaInitializer(declarations.get(LayerIds.ALPHA),           settings.fragmentFading),
 				new BiomeDataLoader( declarations.get(LayerIds.BIOME),           world.getBiomeDataOracle()),
-				new ImageLoader(	 declarations.get(LayerIds.BIOME),           Resolution.QUARTER, new BiomeColorProvider(biomeSelection, options.biomeColorProfileSelection)),
+				new ImageLoader(	 declarations.get(LayerIds.BIOME),           Resolution.QUARTER, new BiomeColorProvider(biomeSelection, settings.biomeColorProfileSelection)),
 				new ImageLoader(     declarations.get(LayerIds.SLIME),           Resolution.CHUNK,   new SlimeColorProvider(world.getSlimeChunkOracle())),
 				new WorldIconLoader( declarations.get(LayerIds.VILLAGE),         world.getVillageProducer()),
 				new WorldIconLoader( declarations.get(LayerIds.OCEAN_MONUMENT),  world.getOceanMonumentProducer()),

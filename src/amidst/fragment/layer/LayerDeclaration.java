@@ -6,11 +6,11 @@ import amidst.settings.Setting;
 @Immutable
 public class LayerDeclaration {
 	private final int layerId;
-	private final Setting<Boolean> isVisiblePreference;
+	private final Setting<Boolean> isVisibleSetting;
 
-	public LayerDeclaration(int layerId, Setting<Boolean> isVisiblePreference) {
+	public LayerDeclaration(int layerId, Setting<Boolean> isVisibleSetting) {
 		this.layerId = layerId;
-		this.isVisiblePreference = isVisiblePreference;
+		this.isVisibleSetting = isVisibleSetting;
 	}
 
 	public int getLayerId() {
@@ -18,6 +18,6 @@ public class LayerDeclaration {
 	}
 
 	public boolean isVisible() {
-		return isVisiblePreference.get();
+		return isVisibleSetting.get();
 	}
 }

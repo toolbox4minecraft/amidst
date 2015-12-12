@@ -9,18 +9,18 @@ import amidst.settings.Setting;
 
 @NotThreadSafe
 public class AlphaInitializer extends FragmentLoader {
-	private final Setting<Boolean> fragmentFadingPreference;
+	private final Setting<Boolean> fragmentFadingSetting;
 
 	public AlphaInitializer(LayerDeclaration declaration,
-			Setting<Boolean> fragmentFadingPreference) {
+			Setting<Boolean> fragmentFadingSetting) {
 		super(declaration);
-		this.fragmentFadingPreference = fragmentFadingPreference;
+		this.fragmentFadingSetting = fragmentFadingSetting;
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	@Override
 	public void load(Fragment fragment) {
-		if (fragmentFadingPreference.get()) {
+		if (fragmentFadingSetting.get()) {
 			fragment.setAlpha(0.0f);
 		} else {
 			fragment.setAlpha(1.0f);

@@ -12,8 +12,7 @@ public class ImmutableSetting<T> implements Setting<T> {
 
 	@Override
 	public String getKey() {
-		throw new UnsupportedOperationException(
-				"AlwaysTruePreference has no key!");
+		throw new UnsupportedOperationException("ImmutableSetting has no key!");
 	}
 
 	@Override
@@ -24,6 +23,6 @@ public class ImmutableSetting<T> implements Setting<T> {
 	@Override
 	public void set(T value) {
 		throw new UnsupportedOperationException(
-				"AlwaysTruePreference cannot be set!");
+				"ImmutableSetting cannot be modified!");
 	}
 }

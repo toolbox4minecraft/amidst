@@ -12,10 +12,10 @@ public class Zoom {
 
 	private Point mousePosition = new Point();
 
-	private final Setting<Boolean> maxZoomPreference;
+	private final Setting<Boolean> maxZoomSetting;
 
-	public Zoom(Setting<Boolean> maxZoomPreference) {
-		this.maxZoomPreference = maxZoomPreference;
+	public Zoom(Setting<Boolean> maxZoomSetting) {
+		this.maxZoomSetting = maxZoomSetting;
 	}
 
 	public void update(FragmentGraphToScreenTranslator translator) {
@@ -48,7 +48,7 @@ public class Zoom {
 	}
 
 	private int getMaxZoomLevel() {
-		if (maxZoomPreference.get()) {
+		if (maxZoomSetting.get()) {
 			return 10;
 		} else {
 			return 10000;

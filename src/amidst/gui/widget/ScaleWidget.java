@@ -14,13 +14,13 @@ public class ScaleWidget extends Widget {
 	public static int cMargin = 8;
 
 	private final Zoom zoom;
-	private final Setting<Boolean> isVisiblePreference;
+	private final Setting<Boolean> isVisibleSetting;
 
 	public ScaleWidget(CornerAnchorPoint anchor, Zoom zoom,
-			Setting<Boolean> isVisiblePreference) {
+			Setting<Boolean> isVisibleSetting) {
 		super(anchor);
 		this.zoom = zoom;
-		this.isVisiblePreference = isVisiblePreference;
+		this.isVisibleSetting = isVisibleSetting;
 		setWidth(100);
 		setHeight(34);
 		forceVisibility(false);
@@ -53,7 +53,7 @@ public class ScaleWidget extends Widget {
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		return isVisiblePreference.get();
+		return isVisibleSetting.get();
 	}
 
 	private int scaleLength_blocks() {

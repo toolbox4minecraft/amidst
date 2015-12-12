@@ -26,7 +26,7 @@ import amidst.utilities.SeedHistoryLogger;
 @NotThreadSafe
 public class Application {
 	private final CommandLineParameters parameters;
-	private final Options options;
+	private final Settings settings;
 	private final GoogleTracker googleTracker;
 	private final PlayerInformationCache playerInformationCache;
 	private final MojangApi mojangApi;
@@ -41,7 +41,7 @@ public class Application {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Application(CommandLineParameters parameters) {
 		this.parameters = parameters;
-		this.options = createOptions();
+		this.settings = createSettings();
 		this.googleTracker = createGoogleTracker();
 		this.playerInformationCache = createPlayerInformationCache();
 		this.mojangApi = createMojangApi();
@@ -52,8 +52,8 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private Options createOptions() {
-		return new Options(Preferences.userNodeForPackage(Amidst.class));
+	private Settings createSettings() {
+		return new Settings(Preferences.userNodeForPackage(Amidst.class));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -76,7 +76,8 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private WorldSurroundingsBuilder createWorldSurroundingsBuilder() {
-		return new WorldSurroundingsBuilder(options, new LayerBuilder(options));
+		return new WorldSurroundingsBuilder(settings,
+				new LayerBuilder(settings));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -106,7 +107,7 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayMainWindow() {
-		setMainWindow(new MainWindow(this, options, mojangApi,
+		setMainWindow(new MainWindow(this, settings, mojangApi,
 				worldSurroundingsBuilder, seedHistoryLogger, updatePrompt,
 				threadMaster));
 		setVersionSelectWindow(null);
@@ -115,7 +116,7 @@ public class Application {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayVersionSelectWindow() {
 		setVersionSelectWindow(new VersionSelectWindow(this,
-				threadMaster.getWorkerExecutor(), mojangApi, options));
+				threadMaster.getWorkerExecutor(), mojangApi, settings));
 		setMainWindow(null);
 	}
 

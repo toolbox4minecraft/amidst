@@ -12,7 +12,7 @@ import javax.swing.SwingConstants;
 import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
 import amidst.Application;
-import amidst.Options;
+import amidst.Settings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.logging.Log;
@@ -26,18 +26,19 @@ public class VersionSelectWindow {
 	private final Application application;
 	private final WorkerExecutor workerExecutor;
 	private final MojangApi mojangApi;
-	private final Options options;
+	private final Settings settings;
 
 	private final JFrame frame = new JFrame("Profile Selector");
 	private final VersionSelectPanel versionSelectPanel;
 
 	public VersionSelectWindow(Application application,
-			WorkerExecutor workerExecutor, MojangApi mojangApi, Options options) {
+			WorkerExecutor workerExecutor, MojangApi mojangApi,
+			Settings settings) {
 		this.application = application;
 		this.workerExecutor = workerExecutor;
 		this.mojangApi = mojangApi;
-		this.options = options;
-		this.versionSelectPanel = new VersionSelectPanel(options.lastProfile,
+		this.settings = settings;
+		this.versionSelectPanel = new VersionSelectPanel(settings.lastProfile,
 				"Scanning...");
 		initFrame();
 		scanAndLoadVersionsLater();
@@ -109,7 +110,7 @@ public class VersionSelectWindow {
 	}
 
 	private void restoreSelection() {
-		String profileName = options.lastProfile.get();
+		String profileName = settings.lastProfile.get();
 		if (profileName != null) {
 			versionSelectPanel.select(profileName);
 		}

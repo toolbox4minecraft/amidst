@@ -7,13 +7,13 @@ import amidst.settings.Setting;
 
 public class FpsWidget extends Widget {
 	private final FramerateTimer fpsTimer;
-	private final Setting<Boolean> isVisiblePreference;
+	private final Setting<Boolean> isVisibleSetting;
 
 	public FpsWidget(CornerAnchorPoint anchor, FramerateTimer fpsTimer,
-			Setting<Boolean> isVisiblePreference) {
+			Setting<Boolean> isVisibleSetting) {
 		super(anchor);
 		this.fpsTimer = fpsTimer;
-		this.isVisiblePreference = isVisiblePreference;
+		this.isVisibleSetting = isVisibleSetting;
 		setWidth(20);
 		setHeight(30);
 		forceVisibility(onVisibilityCheck());
@@ -34,6 +34,6 @@ public class FpsWidget extends Widget {
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		return isVisiblePreference.get();
+		return isVisibleSetting.get();
 	}
 }

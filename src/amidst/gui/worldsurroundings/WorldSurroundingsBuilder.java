@@ -2,7 +2,7 @@ package amidst.gui.worldsurroundings;
 
 import java.util.List;
 
-import amidst.Options;
+import amidst.Settings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -25,14 +25,14 @@ public class WorldSurroundingsBuilder {
 	private final Zoom zoom;
 	private final BiomeSelection biomeSelection = new BiomeSelection();
 
-	private final Options options;
+	private final Settings settings;
 	private final LayerBuilder layerBuilder;
 	private final FragmentManager fragmentManager;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public WorldSurroundingsBuilder(Options options, LayerBuilder layerBuilder) {
-		this.options = options;
-		this.zoom = new Zoom(options.maxZoom);
+	public WorldSurroundingsBuilder(Settings settings, LayerBuilder layerBuilder) {
+		this.settings = settings;
+		this.zoom = new Zoom(settings.maxZoom);
 		this.layerBuilder = layerBuilder;
 		this.fragmentManager = new FragmentManager(
 				layerBuilder.getConstructors(),
@@ -41,14 +41,14 @@ public class WorldSurroundingsBuilder {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldSurroundings create(World world, Actions actions) {
-		Movement movement = new Movement(options.smoothScrolling);
+		Movement movement = new Movement(settings.smoothScrolling);
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
 		List<LayerDeclaration> declarations = layerBuilder.getDeclarations();
 		FragmentGraph graph = new FragmentGraph(declarations, fragmentManager);
 		FragmentGraphToScreenTranslator translator = new FragmentGraphToScreenTranslator(
 				graph, zoom);
 		LayerLoader layerLoader = layerBuilder.createLayerLoader(world,
-				biomeSelection, options);
+				biomeSelection, settings);
 		FragmentQueueProcessor fragmentQueueProcessor = fragmentManager
 				.createLayerLoader(layerLoader);
 		Iterable<FragmentDrawer> drawers = layerBuilder.createDrawers(zoom,
@@ -57,7 +57,7 @@ public class WorldSurroundingsBuilder {
 				fragmentQueueProcessor);
 		WidgetBuilder widgetBuilder = new WidgetBuilder(world, graph,
 				translator, zoom, biomeSelection, worldIconSelection,
-				layerReloader, fragmentManager, options);
+				layerReloader, fragmentManager, settings);
 		List<Widget> widgets = widgetBuilder.create();
 		Drawer drawer = new Drawer(graph, translator, zoom, movement, widgets,
 				drawers);

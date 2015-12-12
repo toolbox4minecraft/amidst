@@ -43,17 +43,16 @@ public class MultipleStringsSetting extends SettingBase<String> {
 	private final Iterable<SelectButtonModel> buttonModels;
 
 	public MultipleStringsSetting(Preferences preferences, String key,
-			String defaultValue, String[] availableOptions) {
+			String defaultValue, String[] values) {
 		super(preferences, key, defaultValue);
-		this.buttonModels = createButtonModels(availableOptions);
+		this.buttonModels = createButtonModels(values);
 	}
 
-	private Iterable<SelectButtonModel> createButtonModels(
-			String[] availableOptions) {
+	private Iterable<SelectButtonModel> createButtonModels(String[] values) {
 		List<SelectButtonModel> result = new ArrayList<SelectButtonModel>(
-				availableOptions.length);
-		for (String option : availableOptions) {
-			result.add(new SelectButtonModel(option));
+				values.length);
+		for (String value : values) {
+			result.add(new SelectButtonModel(value));
 		}
 		return Collections.unmodifiableList(result);
 	}

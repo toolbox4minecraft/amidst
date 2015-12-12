@@ -12,15 +12,14 @@ import amidst.settings.Setting;
 public class DebugWidget extends Widget {
 	private final FragmentGraph graph;
 	private final FragmentManager fragmentManager;
-	private final Setting<Boolean> isVisiblePreference;
+	private final Setting<Boolean> isVisibleSetting;
 
 	public DebugWidget(CornerAnchorPoint anchor, FragmentGraph graph,
-			FragmentManager fragmentManager,
-			Setting<Boolean> isVisiblePreference) {
+			FragmentManager fragmentManager, Setting<Boolean> isVisibleSetting) {
 		super(anchor);
 		this.graph = graph;
 		this.fragmentManager = fragmentManager;
-		this.isVisiblePreference = isVisiblePreference;
+		this.isVisibleSetting = isVisibleSetting;
 		forceVisibility(onVisibilityCheck());
 	}
 
@@ -82,6 +81,6 @@ public class DebugWidget extends Widget {
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		return isVisiblePreference.get();
+		return isVisibleSetting.get();
 	}
 }

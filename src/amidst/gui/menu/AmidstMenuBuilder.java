@@ -14,7 +14,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 
-import amidst.Options;
+import amidst.Settings;
 import amidst.documentation.NotThreadSafe;
 import amidst.resources.ResourceLoader;
 import amidst.settings.MultipleStringsSetting.SelectButtonModel;
@@ -22,15 +22,15 @@ import amidst.settings.biomecolorprofile.BiomeColorProfile;
 
 @NotThreadSafe
 public class AmidstMenuBuilder {
-	private final Options options;
+	private final Settings settings;
 	private final Actions actions;
 	private final JMenuBar menuBar;
 	private JMenu worldMenu;
 	private JMenuItem savePlayerLocationsMenu;
 	private JMenuItem reloadPlayerLocationsMenu;
 
-	public AmidstMenuBuilder(Options options, Actions actions) {
-		this.options = options;
+	public AmidstMenuBuilder(Settings settings, Actions actions) {
+		this.settings = settings;
 		this.actions = actions;
 		this.menuBar = createMenuBar();
 	}
@@ -45,7 +45,7 @@ public class AmidstMenuBuilder {
 		result.add(create_File());
 		worldMenu = result.add(create_World());
 		result.add(create_Layers());
-		result.add(create_Options());
+		result.add(create_Settings());
 		result.add(create_Help());
 		return result;
 	}
@@ -281,41 +281,41 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("Layers");
 		result.setMnemonic(KeyEvent.VK_L);
 		// @formatter:off
-		result.add(createJCheckBoxItem("Grid",						"grid.png",				KeyEvent.VK_1, options.showGrid.getButtonModel()));
-		result.add(createJCheckBoxItem("Slime chunks",				"slime.png",			KeyEvent.VK_2, options.showSlimeChunks.getButtonModel()));
-		result.add(createJCheckBoxItem("Village Icons",				"village.png",			KeyEvent.VK_3, options.showVillages.getButtonModel()));
-		result.add(createJCheckBoxItem("Ocean Monument Icons",		"ocean_monument.png",	KeyEvent.VK_4, options.showOceanMonuments.getButtonModel()));
-		result.add(createJCheckBoxItem("Temple/Witch Hut Icons",	"desert.png",			KeyEvent.VK_5, options.showTemples.getButtonModel()));
-		result.add(createJCheckBoxItem("Stronghold Icons",			"stronghold.png",		KeyEvent.VK_6, options.showStrongholds.getButtonModel()));
-		result.add(createJCheckBoxItem("Player Icons",				"player.png",			KeyEvent.VK_7, options.showPlayers.getButtonModel()));
-		result.add(createJCheckBoxItem("Nether Fortress Icons",		"nether_fortress.png",	KeyEvent.VK_8, options.showNetherFortresses.getButtonModel()));
-		result.add(createJCheckBoxItem("Spawn Location Icon",		"spawn.png",			KeyEvent.VK_9, options.showSpawn.getButtonModel()));
+		result.add(createJCheckBoxItem("Grid",						"grid.png",				KeyEvent.VK_1, settings.showGrid.getButtonModel()));
+		result.add(createJCheckBoxItem("Slime chunks",				"slime.png",			KeyEvent.VK_2, settings.showSlimeChunks.getButtonModel()));
+		result.add(createJCheckBoxItem("Village Icons",				"village.png",			KeyEvent.VK_3, settings.showVillages.getButtonModel()));
+		result.add(createJCheckBoxItem("Ocean Monument Icons",		"ocean_monument.png",	KeyEvent.VK_4, settings.showOceanMonuments.getButtonModel()));
+		result.add(createJCheckBoxItem("Temple/Witch Hut Icons",	"desert.png",			KeyEvent.VK_5, settings.showTemples.getButtonModel()));
+		result.add(createJCheckBoxItem("Stronghold Icons",			"stronghold.png",		KeyEvent.VK_6, settings.showStrongholds.getButtonModel()));
+		result.add(createJCheckBoxItem("Player Icons",				"player.png",			KeyEvent.VK_7, settings.showPlayers.getButtonModel()));
+		result.add(createJCheckBoxItem("Nether Fortress Icons",		"nether_fortress.png",	KeyEvent.VK_8, settings.showNetherFortresses.getButtonModel()));
+		result.add(createJCheckBoxItem("Spawn Location Icon",		"spawn.png",			KeyEvent.VK_9, settings.showSpawn.getButtonModel()));
 		// @formatter:on
 		return result;
 	}
 
-	private JMenu create_Options() {
-		JMenu result = new JMenu("Options");
-		result.setMnemonic(KeyEvent.VK_O);
-		result.add(create_Options_DefaultWorldType());
+	private JMenu create_Settings() {
+		JMenu result = new JMenu("Settings");
+		result.setMnemonic(KeyEvent.VK_S);
+		result.add(create_Settings_DefaultWorldType());
 		if (BiomeColorProfile.isEnabled()) {
-			result.add(create_Options_BiomeColor());
+			result.add(create_Settings_BiomeColor());
 		}
 		result.addSeparator();
 		// @formatter:off
-		result.add(createJCheckBoxItem("Smooth Scrolling",					null, KeyEvent.VK_I,	options.smoothScrolling.getButtonModel()));
-		result.add(createJCheckBoxItem("Restrict Maximum Zoom",				null, KeyEvent.VK_Z,	options.maxZoom.getButtonModel()));
-		result.add(createJCheckBoxItem("Show Framerate",					null, KeyEvent.VK_L,	options.showFPS.getButtonModel()));
-		result.add(createJCheckBoxItem("Show Scale",						null, KeyEvent.VK_K,	options.showScale.getButtonModel()));
-		result.add(createJCheckBoxItem("Fragment Fading",					null, -1,				options.fragmentFading.getButtonModel()));
-		result.add(createJCheckBoxItem("Show Debug Info",					null, -1,				options.showDebug.getButtonModel()));
+		result.add(createJCheckBoxItem("Smooth Scrolling",					null, KeyEvent.VK_I,	settings.smoothScrolling.getButtonModel()));
+		result.add(createJCheckBoxItem("Restrict Maximum Zoom",				null, KeyEvent.VK_Z,	settings.maxZoom.getButtonModel()));
+		result.add(createJCheckBoxItem("Show Framerate",					null, KeyEvent.VK_L,	settings.showFPS.getButtonModel()));
+		result.add(createJCheckBoxItem("Show Scale",						null, KeyEvent.VK_K,	settings.showScale.getButtonModel()));
+		result.add(createJCheckBoxItem("Fragment Fading",					null, -1,				settings.fragmentFading.getButtonModel()));
+		result.add(createJCheckBoxItem("Show Debug Info",					null, -1,				settings.showDebug.getButtonModel()));
 		// @formatter:on
 		return result;
 	}
 
-	private JMenu create_Options_DefaultWorldType() {
+	private JMenu create_Settings_DefaultWorldType() {
 		JMenu result = new JMenu("Default world type");
-		for (SelectButtonModel buttonModel : options.worldType
+		for (SelectButtonModel buttonModel : settings.worldType
 				.getButtonModels()) {
 			result.add(createJCheckBoxItem(buttonModel.getName(), null, -1,
 					buttonModel));
@@ -323,7 +323,7 @@ public class AmidstMenuBuilder {
 		return result;
 	}
 
-	private JMenu create_Options_BiomeColor() {
+	private JMenu create_Settings_BiomeColor() {
 		return new BiomeColorMenuFactory(actions).getMenu();
 	}
 
@@ -373,14 +373,14 @@ public class AmidstMenuBuilder {
 	}
 
 	private JCheckBoxMenuItem createJCheckBoxItem(String text, String image,
-			int key, JToggleButton.ToggleButtonModel preference) {
+			int key, JToggleButton.ToggleButtonModel buttonModel) {
 		JCheckBoxMenuItem result = new JCheckBoxMenuItem(text);
 		result.setIcon(getIcon(image));
 		if (key != -1) {
 			result.setAccelerator(KeyStroke.getKeyStroke(key,
 					InputEvent.CTRL_DOWN_MASK));
 		}
-		result.setModel(preference);
+		result.setModel(buttonModel);
 		return result;
 	}
 

@@ -19,7 +19,7 @@ import amidst.logging.Log.CrashHandler;
 @ThreadSafe
 public class Amidst {
 	private static final String UNCAUGHT_EXCEPTION_ERROR_MESSAGE = "Amidst has encounted an uncaught exception on thread: ";
-	private static final String COMMAND_LINE_PARSING_ERROR_MESSAGE = "There was an issue parsing command line options.";
+	private static final String COMMAND_LINE_PARSING_ERROR_MESSAGE = "There was an issue parsing command line parameters.";
 	private static volatile Application application;
 	private static final CommandLineParameters PARAMETERS = new CommandLineParameters();
 

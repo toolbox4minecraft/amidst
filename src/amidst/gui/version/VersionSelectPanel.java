@@ -84,7 +84,7 @@ public class VersionSelectPanel {
 			30);
 	private static final int INVALID_INDEX = -1;
 
-	private final Setting<String> lastProfilePreference;
+	private final Setting<String> lastProfileSetting;
 	private final Component component;
 	private final List<VersionComponent> versionComponents = new ArrayList<VersionComponent>();
 
@@ -93,9 +93,9 @@ public class VersionSelectPanel {
 	private String emptyMessage;
 	private boolean isLoading = false;
 
-	public VersionSelectPanel(Setting<String> lastProfilePreference,
+	public VersionSelectPanel(Setting<String> lastProfileSetting,
 			String emptyMessage) {
-		this.lastProfilePreference = lastProfilePreference;
+		this.lastProfileSetting = lastProfileSetting;
 		this.emptyMessage = emptyMessage;
 		this.component = createComponent();
 	}
@@ -204,7 +204,7 @@ public class VersionSelectPanel {
 
 	private void loadSelectedProfile() {
 		if (selected != null && selected.isReadyToLoad()) {
-			lastProfilePreference.set(selected.getProfileName());
+			lastProfileSetting.set(selected.getProfileName());
 			isLoading = true;
 			selected.load();
 		}

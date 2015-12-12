@@ -9,10 +9,10 @@ public class Movement {
 	private double speedY = 0;
 	private Point lastMouse;
 
-	private final Setting<Boolean> smoothScrollingPreference;
+	private final Setting<Boolean> smoothScrollingSetting;
 
-	public Movement(Setting<Boolean> smoothScrollingPreference) {
-		this.smoothScrollingPreference = smoothScrollingPreference;
+	public Movement(Setting<Boolean> smoothScrollingSetting) {
+		this.smoothScrollingSetting = smoothScrollingSetting;
 	}
 
 	public void update(FragmentGraphToScreenTranslator translator,
@@ -40,7 +40,7 @@ public class Movement {
 	}
 
 	private void throttleMovementSpeed() {
-		if (smoothScrollingPreference.get()) {
+		if (smoothScrollingSetting.get()) {
 			speedX *= 0.95f;
 			speedY *= 0.95f;
 		} else {

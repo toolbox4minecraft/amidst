@@ -3,7 +3,7 @@ package amidst.gui.widget;
 import java.util.Arrays;
 import java.util.List;
 
-import amidst.Options;
+import amidst.Settings;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerReloader;
@@ -23,13 +23,13 @@ public class WidgetBuilder {
 	private final WorldIconSelection worldIconSelection;
 	private final LayerReloader layerReloader;
 	private final FragmentManager fragmentManager;
-	private final Options options;
+	private final Settings settings;
 
 	public WidgetBuilder(World world, FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			BiomeSelection biomeSelection,
 			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
-			FragmentManager fragmentManager, Options options) {
+			FragmentManager fragmentManager, Settings settings) {
 		this.world = world;
 		this.graph = graph;
 		this.translator = translator;
@@ -38,20 +38,20 @@ public class WidgetBuilder {
 		this.worldIconSelection = worldIconSelection;
 		this.layerReloader = layerReloader;
 		this.fragmentManager = fragmentManager;
-		this.options = options;
+		this.settings = settings;
 	}
 
 	public List<Widget> create() {
 		// @formatter:off
 		return Arrays.asList(
-				new FpsWidget(              CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              options.showFPS),
-				new ScaleWidget(            CornerAnchorPoint.BOTTOM_CENTER, zoom,                               options.showScale),
+				new FpsWidget(              CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              settings.showFPS),
+				new ScaleWidget(            CornerAnchorPoint.BOTTOM_CENTER, zoom,                               settings.showScale),
 				new SeedWidget(             CornerAnchorPoint.TOP_LEFT,      world.getWorldSeed()),
-				new DebugWidget(            CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, options.showDebug),
+				new DebugWidget(            CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, settings.showDebug),
 				new SelectedIconWidget(     CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
 				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator),
 				new BiomeToggleWidget(      CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection,    layerReloader),
-				new BiomeWidget(            CornerAnchorPoint.NONE,          biomeSelection,    layerReloader,   options.biomeColorProfileSelection)
+				new BiomeWidget(            CornerAnchorPoint.NONE,          biomeSelection,    layerReloader,   settings.biomeColorProfileSelection)
 		);
 		// @formatter:on
 	}
