@@ -1,19 +1,27 @@
 package amidst.gui.license;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.resources.ResourceLoader;
 
+@Immutable
 public class License {
-	private String name;
-	private String path;
-	private String licenseText;
+	private final String name;
+	private final String licenseText;
 
 	public License(String name, String path) {
 		this.name = name;
-		this.path = path;
+		this.licenseText = readLicenseText(path);
+	}
+
+	public String readLicenseText(String path) {
+		try {
+			return ResourceLoader.getResourceAsString(path);
+		} catch (Exception e) {
+			Log.w("Unable to read license file: " + name + ".");
+			e.printStackTrace();
+			return "License text is missing.";
+		}
 	}
 
 	public String getName() {
@@ -21,26 +29,7 @@ public class License {
 	}
 
 	public String getLicenseText() {
-		if (licenseText == null) {
-			loadLicenseText();
-		}
-		if (licenseText == null) {
-			return "cannot read license text";
-		} else {
-			return licenseText;
-		}
-	}
-
-	private void loadLicenseText() {
-		try {
-			licenseText = ResourceLoader.getResourceAsString(path);
-		} catch (IOException e) {
-			Log.w("Unable to read file: " + name + ".");
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			Log.w("Unable to read file: " + name + ".");
-			e.printStackTrace();
-		}
+		return licenseText;
 	}
 
 	@Override

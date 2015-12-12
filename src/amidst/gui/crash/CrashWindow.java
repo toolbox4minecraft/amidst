@@ -13,9 +13,11 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.border.LineBorder;
 
 import net.miginfocom.swing.MigLayout;
+import amidst.documentation.Immutable;
 
+@Immutable
 public class CrashWindow {
-	private JFrame frame;
+	private final JFrame frame;
 
 	public CrashWindow(String message, String logMessages,
 			final Runnable executeOnClose) {

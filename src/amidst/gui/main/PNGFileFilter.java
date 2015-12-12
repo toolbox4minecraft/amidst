@@ -4,6 +4,9 @@ import java.io.File;
 
 import javax.swing.filechooser.FileFilter;
 
+import amidst.documentation.NotThreadSafe;
+
+@NotThreadSafe
 public class PNGFileFilter extends FileFilter {
 	@Override
 	public boolean accept(File file) {

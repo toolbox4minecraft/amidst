@@ -4,6 +4,9 @@ import java.io.File;
 
 import javax.swing.filechooser.FileFilter;
 
+import amidst.documentation.NotThreadSafe;
+
+@NotThreadSafe
 public class LevelFileFilter extends FileFilter {
 	private static final String LEVEL_DAT = "level.dat";
 

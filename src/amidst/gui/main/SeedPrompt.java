@@ -15,9 +15,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import net.miginfocom.swing.MigLayout;
+import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldSeed.WorldSeedType;
 
+@NotThreadSafe
 public class SeedPrompt {
 	private static final String TITLE = "Enter Seed";
 	private static final String STARTS_WITH_SPACE_TEXT = "WARNING: There is a space at the start!";
