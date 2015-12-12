@@ -7,12 +7,12 @@ import javax.swing.JToggleButton.ToggleButtonModel;
 import amidst.documentation.ThreadSafe;
 
 @ThreadSafe
-public class BooleanPrefModel implements PrefModel<Boolean> {
+public class BooleanPrefModel extends PrefModelBase<Boolean> {
 	@SuppressWarnings("serial")
 	private class BooleanButtonModel extends ToggleButtonModel {
 		@Override
 		public boolean isSelected() {
-			return value;
+			return get();
 		}
 
 		@Override
@@ -21,47 +21,27 @@ public class BooleanPrefModel implements PrefModel<Boolean> {
 		}
 
 		private void update() {
-			super.setSelected(value);
+			super.setSelected(isSelected());
 		}
 	}
-
-	private final Preferences preferences;
-	private final String key;
-	private volatile boolean value;
 
 	private final BooleanButtonModel buttonModel;
 
 	public BooleanPrefModel(Preferences preferences, String key,
 			boolean defaultValue) {
-		this.preferences = preferences;
-		this.key = key;
+		super(preferences, key, defaultValue);
 		this.buttonModel = new BooleanButtonModel();
-		restore(defaultValue);
-	}
-
-	private void restore(boolean defaultValue) {
-		set(preferences.getBoolean(key, defaultValue));
 	}
 
 	@Override
-	public String getKey() {
-		return key;
+	protected Boolean getInitialValue(Boolean defaultValue) {
+		return preferences.getBoolean(key, defaultValue);
 	}
 
 	@Override
-	public Boolean get() {
-		return value;
-	}
-
-	@Override
-	public synchronized void set(Boolean value) {
-		this.value = value;
+	protected void update(Boolean value) {
 		this.preferences.putBoolean(key, value);
-		updateButtonModel();
-	}
-
-	private void updateButtonModel() {
-		buttonModel.update();
+		this.buttonModel.update();
 	}
 
 	public BooleanButtonModel getButtonModel() {

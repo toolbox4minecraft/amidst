@@ -10,7 +10,7 @@ import javax.swing.JToggleButton.ToggleButtonModel;
 import amidst.documentation.ThreadSafe;
 
 @ThreadSafe
-public class SelectPrefModel implements PrefModel<String> {
+public class SelectPrefModel extends PrefModelBase<String> {
 	@SuppressWarnings("serial")
 	public class SelectButtonModel extends ToggleButtonModel {
 		private final String name;
@@ -25,7 +25,7 @@ public class SelectPrefModel implements PrefModel<String> {
 
 		@Override
 		public boolean isSelected() {
-			return name.equals(value);
+			return name.equals(get());
 		}
 
 		@Override
@@ -40,22 +40,12 @@ public class SelectPrefModel implements PrefModel<String> {
 		}
 	}
 
-	private final Preferences preferences;
-	private final String key;
-	private volatile String value;
-
 	private final Iterable<SelectButtonModel> buttonModels;
 
 	public SelectPrefModel(Preferences preferences, String key,
 			String defaultValue, String[] availableOptions) {
-		this.key = key;
-		this.preferences = preferences;
+		super(preferences, key, defaultValue);
 		this.buttonModels = createButtonModels(availableOptions);
-		restore(defaultValue);
-	}
-
-	private void restore(String defaultValue) {
-		set(preferences.get(key, defaultValue));
 	}
 
 	private Iterable<SelectButtonModel> createButtonModels(
@@ -69,18 +59,12 @@ public class SelectPrefModel implements PrefModel<String> {
 	}
 
 	@Override
-	public String getKey() {
-		return key;
+	protected String getInitialValue(String defaultValue) {
+		return preferences.get(key, defaultValue);
 	}
 
 	@Override
-	public String get() {
-		return value;
-	}
-
-	@Override
-	public synchronized void set(String value) {
-		this.value = value;
+	protected void update(String value) {
 		this.preferences.put(key, value);
 		updateButtonModels();
 	}

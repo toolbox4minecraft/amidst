@@ -1,13 +1,9 @@
 package amidst.preferences;
 
-/**
- * Backed by a Preferences instance, saves and loads its value from and to it.
- * TODO: test the fuck out of this
- */
 public interface PrefModel<T> {
 	String getKey();
 
-	public T get();
+	T get();
 
-	public void set(T value);
+	void set(T value);
 }
