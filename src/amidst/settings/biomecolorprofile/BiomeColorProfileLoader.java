@@ -6,11 +6,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import amidst.documentation.Immutable;
 import amidst.logging.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+@Immutable
 public class BiomeColorProfileLoader {
 	private static final Gson GSON = new Gson();
 
@@ -18,7 +20,7 @@ public class BiomeColorProfileLoader {
 		visitProfiles(BiomeColorProfile.PROFILE_DIRECTORY, visitor);
 	}
 
-	public void visitProfiles(File directory, BiomeColorProfileVisitor visitor) {
+	private void visitProfiles(File directory, BiomeColorProfileVisitor visitor) {
 		boolean entered = false;
 		for (File file : directory.listFiles()) {
 			if (file.isFile()) {

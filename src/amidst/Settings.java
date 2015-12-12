@@ -4,6 +4,7 @@ import java.util.prefs.Preferences;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.ThreadSafe;
 import amidst.settings.BooleanSetting;
 import amidst.settings.MultipleStringsSetting;
 import amidst.settings.Setting;
@@ -11,6 +12,7 @@ import amidst.settings.StringSetting;
 import amidst.settings.biomecolorprofile.BiomeColorProfile;
 import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
 
+@ThreadSafe
 public class Settings {
 	private static final String[] WORLD_TYPE_VALUES = new String[] {
 			"Prompt each time", "Default", "Flat", "Large Biomes", "Amplified" };
