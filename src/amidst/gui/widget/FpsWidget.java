@@ -4,7 +4,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
 import amidst.preferences.PrefModel;
-import amidst.utilities.FramerateTimer;
 
 public class FpsWidget extends Widget {
 	private final FramerateTimer fpsTimer;

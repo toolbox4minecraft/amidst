@@ -2,6 +2,9 @@ package amidst.utilities;
 
 import java.io.File;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public enum FileSystemUtils {
 	;
 

@@ -1,8 +1,10 @@
 package amidst.preferences;
 
 import amidst.documentation.GsonConstructor;
+import amidst.documentation.Immutable;
 import amidst.utilities.ColorUtils;
 
+@Immutable
 public class BiomeColor {
 	private int r;
 	private int g;

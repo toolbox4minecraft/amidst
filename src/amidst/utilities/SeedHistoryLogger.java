@@ -6,17 +6,19 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.world.WorldSeed;
 
+@ThreadSafe
 public class SeedHistoryLogger {
-	private File file;
+	private final File file;
 
 	public SeedHistoryLogger(String filename) {
 		this.file = getHistoryFile(filename);
 	}
 
-	public void log(WorldSeed seed) {
+	public synchronized void log(WorldSeed seed) {
 		if (file != null) {
 			if (!file.exists()) {
 				tryCreateFile();

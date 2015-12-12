@@ -12,6 +12,9 @@ import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public enum ResourceLoader {
 	;
 

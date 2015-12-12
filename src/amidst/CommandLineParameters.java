@@ -2,12 +2,13 @@ package amidst;
 
 import org.kohsuke.args4j.Option;
 
+import amidst.documentation.ThreadSafe;
+
 /**
  * An instance of this class will be created to hold the command line
  * parameters. Afterwards, the assigned values should not be modified.
- * 
- * TODO: can we use final here?
  */
+@ThreadSafe
 public class CommandLineParameters {
 	@Option(name = "-history", usage = "Sets the path to seed history file.", metaVar = "<file>")
 	public volatile String historyPath;

@@ -2,6 +2,9 @@ package amidst.preferences;
 
 import java.util.prefs.Preferences;
 
+import amidst.documentation.ThreadSafe;
+
+@ThreadSafe
 public class StringPreference {
 	private final Preferences preferences;
 	private final String key;

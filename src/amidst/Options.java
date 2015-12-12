@@ -2,6 +2,8 @@ package amidst;
 
 import java.util.prefs.Preferences;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BiomeColorProfileSelection;
 import amidst.preferences.BooleanPrefModel;
@@ -32,6 +34,7 @@ public class Options {
 	public final SelectPrefModel worldType;
 	public final BiomeColorProfileSelection biomeColorProfileSelection;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public Options(Preferences pref) {
 		// @formatter:off
 		showSlimeChunks	           = new BooleanPrefModel(pref, "slimeChunks",	 	 false);

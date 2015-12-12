@@ -1,4 +1,4 @@
-package amidst.utilities;
+package amidst.gui.widget;
 
 public class FramerateTimer {
 	private int tickCounter;

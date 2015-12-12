@@ -8,7 +8,6 @@ import java.net.URISyntaxException;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
-import amidst.utilities.UpdateInformationRetriever;
 
 public class UpdatePrompt {
 	private UpdateInformationRetriever retriever = new UpdateInformationRetriever();

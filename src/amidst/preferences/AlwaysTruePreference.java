@@ -2,6 +2,9 @@ package amidst.preferences;
 
 import java.io.IOException;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public class AlwaysTruePreference implements PrefModel<Boolean> {
 	@Override
 	public String getKey() {

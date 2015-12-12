@@ -4,6 +4,9 @@ import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Set;
 
+import amidst.documentation.Immutable;
+
+@Immutable
 public class JavaUtils {
 	@SuppressWarnings("unchecked")
 	public static <T> T[] toArray(List<? extends T> list,

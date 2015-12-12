@@ -10,6 +10,7 @@ import org.kohsuke.args4j.CmdLineParser;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledBy;
+import amidst.documentation.CalledByAny;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
@@ -44,6 +45,7 @@ public class Amidst {
 
 	private static void initCrashHandler() {
 		Log.setCrashHandler(new CrashHandler() {
+			@CalledByAny
 			@Override
 			public void handle(Throwable e, String exceptionText,
 					String message, String allLogMessages) {

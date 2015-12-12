@@ -13,7 +13,6 @@ import amidst.gui.worldsurroundings.FragmentGraphToScreenTranslator;
 import amidst.gui.worldsurroundings.WorldIconSelection;
 import amidst.gui.worldsurroundings.Zoom;
 import amidst.mojangapi.world.World;
-import amidst.utilities.FramerateTimer;
 
 public class WidgetBuilder {
 	private final World world;
