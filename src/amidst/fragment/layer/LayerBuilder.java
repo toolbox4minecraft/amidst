@@ -26,7 +26,7 @@ import amidst.gui.worldsurroundings.WorldIconSelection;
 import amidst.gui.worldsurroundings.Zoom;
 import amidst.mojangapi.world.Resolution;
 import amidst.mojangapi.world.World;
-import amidst.preferences.AlwaysTruePreference;
+import amidst.preferences.ImmutablePreference;
 
 public class LayerBuilder {
 	private final List<LayerDeclaration> declarations;
@@ -40,8 +40,8 @@ public class LayerBuilder {
 	private List<LayerDeclaration> createDeclarations(Options options) {
 		LayerDeclaration[] declarations = new LayerDeclaration[LayerIds.NUMBER_OF_LAYERS];
 		// @formatter:off
-		declarations[LayerIds.ALPHA]            = new LayerDeclaration(LayerIds.ALPHA,           new AlwaysTruePreference());
-		declarations[LayerIds.BIOME]            = new LayerDeclaration(LayerIds.BIOME,           new AlwaysTruePreference());
+		declarations[LayerIds.ALPHA]            = new LayerDeclaration(LayerIds.ALPHA,           new ImmutablePreference<Boolean>(true));
+		declarations[LayerIds.BIOME]            = new LayerDeclaration(LayerIds.BIOME,           new ImmutablePreference<Boolean>(true));
 		declarations[LayerIds.SLIME]            = new LayerDeclaration(LayerIds.SLIME,           options.showSlimeChunks);
 		declarations[LayerIds.GRID]             = new LayerDeclaration(LayerIds.GRID,            options.showGrid);
 		declarations[LayerIds.VILLAGE]          = new LayerDeclaration(LayerIds.VILLAGE,         options.showVillages);

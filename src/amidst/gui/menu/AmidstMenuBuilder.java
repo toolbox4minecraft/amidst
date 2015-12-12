@@ -281,15 +281,15 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("Layers");
 		result.setMnemonic(KeyEvent.VK_L);
 		// @formatter:off
-		result.add(createJCheckBoxItem("Grid",						"grid.png",				KeyEvent.VK_1, options.showGrid));
-		result.add(createJCheckBoxItem("Slime chunks",				"slime.png",			KeyEvent.VK_2, options.showSlimeChunks));
-		result.add(createJCheckBoxItem("Village Icons",				"village.png",			KeyEvent.VK_3, options.showVillages));
-		result.add(createJCheckBoxItem("Ocean Monument Icons",		"ocean_monument.png",	KeyEvent.VK_4, options.showOceanMonuments));
-		result.add(createJCheckBoxItem("Temple/Witch Hut Icons",	"desert.png",			KeyEvent.VK_5, options.showTemples));
-		result.add(createJCheckBoxItem("Stronghold Icons",			"stronghold.png",		KeyEvent.VK_6, options.showStrongholds));
-		result.add(createJCheckBoxItem("Player Icons",				"player.png",			KeyEvent.VK_7, options.showPlayers));
-		result.add(createJCheckBoxItem("Nether Fortress Icons",		"nether_fortress.png",	KeyEvent.VK_8, options.showNetherFortresses));
-		result.add(createJCheckBoxItem("Spawn Location Icon",		"spawn.png",			KeyEvent.VK_9, options.showSpawn));
+		result.add(createJCheckBoxItem("Grid",						"grid.png",				KeyEvent.VK_1, options.showGrid.getButtonModel()));
+		result.add(createJCheckBoxItem("Slime chunks",				"slime.png",			KeyEvent.VK_2, options.showSlimeChunks.getButtonModel()));
+		result.add(createJCheckBoxItem("Village Icons",				"village.png",			KeyEvent.VK_3, options.showVillages.getButtonModel()));
+		result.add(createJCheckBoxItem("Ocean Monument Icons",		"ocean_monument.png",	KeyEvent.VK_4, options.showOceanMonuments.getButtonModel()));
+		result.add(createJCheckBoxItem("Temple/Witch Hut Icons",	"desert.png",			KeyEvent.VK_5, options.showTemples.getButtonModel()));
+		result.add(createJCheckBoxItem("Stronghold Icons",			"stronghold.png",		KeyEvent.VK_6, options.showStrongholds.getButtonModel()));
+		result.add(createJCheckBoxItem("Player Icons",				"player.png",			KeyEvent.VK_7, options.showPlayers.getButtonModel()));
+		result.add(createJCheckBoxItem("Nether Fortress Icons",		"nether_fortress.png",	KeyEvent.VK_8, options.showNetherFortresses.getButtonModel()));
+		result.add(createJCheckBoxItem("Spawn Location Icon",		"spawn.png",			KeyEvent.VK_9, options.showSpawn.getButtonModel()));
 		// @formatter:on
 		return result;
 	}
@@ -303,20 +303,20 @@ public class AmidstMenuBuilder {
 		}
 		result.addSeparator();
 		// @formatter:off
-		result.add(createJCheckBoxItem("Smooth Scrolling",					null, KeyEvent.VK_I,	options.smoothScrolling));
-		result.add(createJCheckBoxItem("Restrict Maximum Zoom",				null, KeyEvent.VK_Z,	options.maxZoom));
-		result.add(createJCheckBoxItem("Show Framerate",					null, KeyEvent.VK_L,	options.showFPS));
-		result.add(createJCheckBoxItem("Show Scale",						null, KeyEvent.VK_K,	options.showScale));
-		result.add(createJCheckBoxItem("Fragment Fading",					null, -1,				options.fragmentFading));
-		result.add(createJCheckBoxItem("Show Debug Info",					null, -1,				options.showDebug));
+		result.add(createJCheckBoxItem("Smooth Scrolling",					null, KeyEvent.VK_I,	options.smoothScrolling.getButtonModel()));
+		result.add(createJCheckBoxItem("Restrict Maximum Zoom",				null, KeyEvent.VK_Z,	options.maxZoom.getButtonModel()));
+		result.add(createJCheckBoxItem("Show Framerate",					null, KeyEvent.VK_L,	options.showFPS.getButtonModel()));
+		result.add(createJCheckBoxItem("Show Scale",						null, KeyEvent.VK_K,	options.showScale.getButtonModel()));
+		result.add(createJCheckBoxItem("Fragment Fading",					null, -1,				options.fragmentFading.getButtonModel()));
+		result.add(createJCheckBoxItem("Show Debug Info",					null, -1,				options.showDebug.getButtonModel()));
 		// @formatter:on
 		return result;
 	}
 
 	private JMenu create_Options_DefaultWorldType() {
 		JMenu result = new JMenu("Default world type");
-		SelectButtonModel[] buttonModels = options.worldType.getButtonModels();
-		for (SelectButtonModel buttonModel : buttonModels) {
+		for (SelectButtonModel buttonModel : options.worldType
+				.getButtonModels()) {
 			result.add(createJCheckBoxItem(buttonModel.getName(), null, -1,
 					buttonModel));
 		}

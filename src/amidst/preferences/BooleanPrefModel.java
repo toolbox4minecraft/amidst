@@ -4,18 +4,43 @@ import java.util.prefs.Preferences;
 
 import javax.swing.JToggleButton.ToggleButtonModel;
 
-public class BooleanPrefModel extends ToggleButtonModel implements
-		PrefModel<Boolean> {
-	private static final long serialVersionUID = -2291122955784916836L;
+import amidst.documentation.ThreadSafe;
 
+@ThreadSafe
+public class BooleanPrefModel implements PrefModel<Boolean> {
+	@SuppressWarnings("serial")
+	private class BooleanButtonModel extends ToggleButtonModel {
+		@Override
+		public boolean isSelected() {
+			return value;
+		}
+
+		@Override
+		public void setSelected(boolean isSelected) {
+			set(isSelected);
+		}
+
+		private void update() {
+			super.setSelected(value);
+		}
+	}
+
+	private final Preferences preferences;
 	private final String key;
-	private final Preferences pref;
+	private volatile boolean value;
 
-	public BooleanPrefModel(Preferences pref, String key, boolean selected) {
-		super();
-		this.pref = pref;
+	private final BooleanButtonModel buttonModel;
+
+	public BooleanPrefModel(Preferences preferences, String key,
+			boolean defaultValue) {
+		this.preferences = preferences;
 		this.key = key;
-		set(pref.getBoolean(key, selected));
+		this.buttonModel = new BooleanButtonModel();
+		restore(defaultValue);
+	}
+
+	private void restore(boolean defaultValue) {
+		set(preferences.getBoolean(key, defaultValue));
 	}
 
 	@Override
@@ -25,24 +50,21 @@ public class BooleanPrefModel extends ToggleButtonModel implements
 
 	@Override
 	public Boolean get() {
-		assert pref.get(key, null) != null
-				&& pref.getBoolean(key, false) == super.isSelected();
-		return super.isSelected();
+		return value;
 	}
 
 	@Override
-	public boolean isSelected() {
-		return get();
+	public synchronized void set(Boolean value) {
+		this.value = value;
+		this.preferences.putBoolean(key, value);
+		updateButtonModel();
 	}
 
-	@Override
-	public void set(Boolean value) {
-		super.setSelected(value);
-		pref.putBoolean(key, value);
+	private void updateButtonModel() {
+		buttonModel.update();
 	}
 
-	@Override
-	public void setSelected(boolean value) {
-		set(value);
+	public BooleanButtonModel getButtonModel() {
+		return buttonModel;
 	}
 }

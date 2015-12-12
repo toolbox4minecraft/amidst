@@ -1,53 +1,71 @@
 package amidst.preferences;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.JToggleButton.ToggleButtonModel;
 
+import amidst.documentation.ThreadSafe;
+
+@ThreadSafe
 public class SelectPrefModel implements PrefModel<String> {
 	@SuppressWarnings("serial")
 	public class SelectButtonModel extends ToggleButtonModel {
-		private SelectPrefModel model;
-		public String name;
+		private final String name;
 
-		public SelectButtonModel(SelectPrefModel model, String name) {
-			this.model = model;
+		public SelectButtonModel(String name) {
 			this.name = name;
-			super.setSelected(false);
-		}
-
-		@Override
-		public boolean isSelected() {
-			return model.get().equals(name);
-		}
-
-		@Override
-		public void setSelected(boolean value) {
-			super.setSelected(value);
-			if (value)
-				model.set(name);
 		}
 
 		public String getName() {
 			return name;
 		}
+
+		@Override
+		public boolean isSelected() {
+			return name.equals(value);
+		}
+
+		@Override
+		public void setSelected(boolean isSelected) {
+			if (isSelected) {
+				set(name);
+			}
+		}
+
+		private void update() {
+			super.setSelected(isSelected());
+		}
 	}
 
-	private Preferences preferences;
-	private String key;
-	private String selected;
-	private SelectButtonModel[] buttonModels;
+	private final Preferences preferences;
+	private final String key;
+	private volatile String value;
 
-	public SelectPrefModel(Preferences pref, String key, String selected,
-			String[] names) {
+	private final Iterable<SelectButtonModel> buttonModels;
+
+	public SelectPrefModel(Preferences preferences, String key,
+			String defaultValue, String[] availableOptions) {
 		this.key = key;
-		this.preferences = pref;
-		this.selected = selected;
-		buttonModels = new SelectButtonModel[names.length];
-		for (int i = 0; i < buttonModels.length; i++)
-			buttonModels[i] = new SelectButtonModel(this, names[i]);
-		set(pref.get(key, selected));
+		this.preferences = preferences;
+		this.buttonModels = createButtonModels(availableOptions);
+		restore(defaultValue);
+	}
 
+	private void restore(String defaultValue) {
+		set(preferences.get(key, defaultValue));
+	}
+
+	private Iterable<SelectButtonModel> createButtonModels(
+			String[] availableOptions) {
+		List<SelectButtonModel> result = new ArrayList<SelectButtonModel>(
+				availableOptions.length);
+		for (String option : availableOptions) {
+			result.add(new SelectButtonModel(option));
+		}
+		return Collections.unmodifiableList(result);
 	}
 
 	@Override
@@ -57,19 +75,23 @@ public class SelectPrefModel implements PrefModel<String> {
 
 	@Override
 	public String get() {
-		return selected;
-	}
-
-	public SelectButtonModel[] getButtonModels() {
-		return buttonModels;
+		return value;
 	}
 
 	@Override
-	public void set(String value) {
-		preferences.put(key, value);
-		selected = value;
-		for (int i = 0; i < buttonModels.length; i++)
-			if (!value.equals(buttonModels[i].name))
-				buttonModels[i].setSelected(false);
+	public synchronized void set(String value) {
+		this.value = value;
+		this.preferences.put(key, value);
+		updateButtonModels();
+	}
+
+	private void updateButtonModels() {
+		for (SelectButtonModel buttonModel : buttonModels) {
+			buttonModel.update();
+		}
+	}
+
+	public Iterable<SelectButtonModel> getButtonModels() {
+		return buttonModels;
 	}
 }

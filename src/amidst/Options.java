@@ -7,6 +7,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.preferences.BiomeColorProfile;
 import amidst.preferences.BiomeColorProfileSelection;
 import amidst.preferences.BooleanPrefModel;
+import amidst.preferences.PrefModel;
 import amidst.preferences.SelectPrefModel;
 import amidst.preferences.StringPreference;
 
@@ -30,31 +31,31 @@ public class Options {
 	public final BooleanPrefModel showDebug;
 	public final BooleanPrefModel updateToUnstable;
 	public final BooleanPrefModel maxZoom;
-	public final StringPreference lastProfile;
+	public final PrefModel<String> lastProfile;
 	public final SelectPrefModel worldType;
 	public final BiomeColorProfileSelection biomeColorProfileSelection;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Options(Preferences pref) {
 		// @formatter:off
-		showSlimeChunks	           = new BooleanPrefModel(pref, "slimeChunks",	 	 false);
-		showGrid			       = new BooleanPrefModel(pref, "grid",			 	 false);
+		showSlimeChunks            = new BooleanPrefModel(pref, "slimeChunks",         false);
+		showGrid                   = new BooleanPrefModel(pref, "grid",                false);
 		showNetherFortresses       = new BooleanPrefModel(pref, "netherFortressIcons", false);
-		smoothScrolling		       = new BooleanPrefModel(pref, "mapFlicking",		 true);
-		fragmentFading		       = new BooleanPrefModel(pref, "mapFading",		     true);
-		maxZoom			           = new BooleanPrefModel(pref, "maxZoom",			 true);
-		showStrongholds	           = new BooleanPrefModel(pref, "strongholdIcons",	 true);
-		showPlayers		           = new BooleanPrefModel(pref, "playerIcons",		 true);
-		showTemples		           = new BooleanPrefModel(pref, "templeIcons",		 true);
-		showVillages		       = new BooleanPrefModel(pref, "villageIcons",		 true);
-		showOceanMonuments	       = new BooleanPrefModel(pref, "oceanMonumentIcons",	 true);
-		showSpawn			       = new BooleanPrefModel(pref, "spawnIcon",		     true);
-		showFPS			           = new BooleanPrefModel(pref, "showFPS",			 true);
-		showScale		           = new BooleanPrefModel(pref, "showScale",			 true);
-		showDebug			       = new BooleanPrefModel(pref, "showDebug",		     false);
+		smoothScrolling            = new BooleanPrefModel(pref, "mapFlicking",         true);
+		fragmentFading             = new BooleanPrefModel(pref, "mapFading",           true);
+		maxZoom                    = new BooleanPrefModel(pref, "maxZoom",             true);
+		showStrongholds            = new BooleanPrefModel(pref, "strongholdIcons",     true);
+		showPlayers                = new BooleanPrefModel(pref, "playerIcons",         true);
+		showTemples                = new BooleanPrefModel(pref, "templeIcons",         true);
+		showVillages               = new BooleanPrefModel(pref, "villageIcons",        true);
+		showOceanMonuments         = new BooleanPrefModel(pref, "oceanMonumentIcons",  true);
+		showSpawn                  = new BooleanPrefModel(pref, "spawnIcon",           true);
+		showFPS                    = new BooleanPrefModel(pref, "showFPS",             true);
+		showScale                  = new BooleanPrefModel(pref, "showScale",           true);
+		showDebug                  = new BooleanPrefModel(pref, "showDebug",           false);
 		updateToUnstable           = new BooleanPrefModel(pref, "updateToUnstable",    false);
 		lastProfile                = new StringPreference(pref, "profile",             null);
-		worldType			       = new SelectPrefModel( pref, "worldType",           "Prompt each time", WORLD_TYPE_OPTIONS);
+		worldType                  = new SelectPrefModel( pref, "worldType",           "Prompt each time", WORLD_TYPE_OPTIONS);
 		biomeColorProfileSelection = new BiomeColorProfileSelection(BiomeColorProfile.getDefaultProfile());
 		// @formatter:on
 	}

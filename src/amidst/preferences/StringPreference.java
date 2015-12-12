@@ -5,23 +5,35 @@ import java.util.prefs.Preferences;
 import amidst.documentation.ThreadSafe;
 
 @ThreadSafe
-public class StringPreference {
+public class StringPreference implements PrefModel<String> {
 	private final Preferences preferences;
 	private final String key;
-	private final String defaultValue;
+	private volatile String value;
 
 	public StringPreference(Preferences preferences, String key,
 			String defaultValue) {
 		this.preferences = preferences;
 		this.key = key;
-		this.defaultValue = defaultValue;
+		restore(defaultValue);
 	}
 
+	private void restore(String defaultValue) {
+		set(preferences.get(key, defaultValue));
+	}
+
+	@Override
+	public String getKey() {
+		return key;
+	}
+
+	@Override
 	public String get() {
-		return preferences.get(key, defaultValue);
+		return value;
 	}
 
-	public void set(String value) {
-		preferences.put(key, value);
+	@Override
+	public synchronized void set(String value) {
+		this.value = value;
+		this.preferences.put(key, value);
 	}
 }
