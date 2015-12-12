@@ -1,5 +1,7 @@
 package amidst.documentation;
 
+import amidst.logging.FileLogger;
+
 /**
  * Each entry of this enum describes one type of thread that will ever exist in
  * the project. It is only used for documentation purposes.
@@ -41,5 +43,12 @@ public enum AmidstThread {
 	 * finished the background task, it should pass its result to the EDT to
 	 * display the result to the user.
 	 */
-	WORKER;
+	WORKER,
+
+	/**
+	 * The file logger also uses a single threaded scheduled executor service to
+	 * actually write the logging messages to the file. However, this thread
+	 * should never leave the class {@link FileLogger}.
+	 */
+	FILE_LOGGER;
 }

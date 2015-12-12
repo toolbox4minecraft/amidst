@@ -1,5 +1,8 @@
 package amidst.logging;
 
+import amidst.documentation.NotThreadSafe;
+
+@NotThreadSafe
 public class InMemoryLogger implements Logger {
 	private StringBuffer buffer = new StringBuffer();
 

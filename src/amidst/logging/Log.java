@@ -7,6 +7,9 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+import amidst.documentation.ThreadSafe;
+
+@ThreadSafe
 public class Log {
 	public static interface CrashHandler {
 		void handle(Throwable e, String exceptionText, String message,
@@ -20,9 +23,9 @@ public class Log {
 	private static final boolean IS_USING_ALERTS = true;
 	private static final boolean IS_SHOWING_DEBUG = true;
 
-	private static Map<String, Logger> logger = new HashMap<String, Logger>();
+	private static final Map<String, Logger> LOGGER = new HashMap<String, Logger>();
 
-	private static CrashHandler crashHandler;
+	private static volatile CrashHandler crashHandler;
 
 	static {
 		addListener("console", CONSOLE_LOGGER);
@@ -31,13 +34,13 @@ public class Log {
 
 	public static void addListener(String name, Logger l) {
 		synchronized (LOG_LOCK) {
-			logger.put(name, l);
+			LOGGER.put(name, l);
 		}
 	}
 
 	public static void removeListener(String name) {
 		synchronized (LOG_LOCK) {
-			logger.remove(name);
+			LOGGER.remove(name);
 		}
 	}
 
@@ -47,7 +50,7 @@ public class Log {
 
 	public static void i(Object... messages) {
 		synchronized (LOG_LOCK) {
-			for (Logger listener : logger.values()) {
+			for (Logger listener : LOGGER.values()) {
 				listener.info(messages);
 			}
 		}
@@ -56,7 +59,7 @@ public class Log {
 	public static void debug(Object... messages) {
 		if (IS_SHOWING_DEBUG) {
 			synchronized (LOG_LOCK) {
-				for (Logger listener : logger.values()) {
+				for (Logger listener : LOGGER.values()) {
 					listener.debug(messages);
 				}
 			}
@@ -65,7 +68,7 @@ public class Log {
 
 	public static void w(Object... messages) {
 		synchronized (LOG_LOCK) {
-			for (Logger listener : logger.values()) {
+			for (Logger listener : LOGGER.values()) {
 				listener.warning(messages);
 			}
 		}
@@ -77,7 +80,7 @@ public class Log {
 				JOptionPane.showMessageDialog(null, messages, "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
-			for (Logger listener : logger.values()) {
+			for (Logger listener : LOGGER.values()) {
 				listener.error(messages);
 			}
 		}
@@ -90,7 +93,7 @@ public class Log {
 	public static void crash(Throwable e, String message) {
 		synchronized (LOG_LOCK) {
 			String exceptionText = getExceptionText(e);
-			for (Logger listener : logger.values()) {
+			for (Logger listener : LOGGER.values()) {
 				listener.crash(e, exceptionText, message);
 			}
 			if (crashHandler != null) {
