@@ -19,6 +19,8 @@ import javax.swing.JOptionPane;
 import amidst.AmidstMetaData;
 import amidst.Application;
 import amidst.Options;
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.gui.menu.Actions;
 import amidst.gui.menu.AmidstMenu;
 import amidst.gui.menu.AmidstMenuBuilder;
@@ -137,6 +139,7 @@ public class MainWindow {
 		updatePrompt.checkSilently(this);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void setWorld(World world) {
 		clearWorldSurroundings();
 		if (decideWorldPlayerType(world.getMovablePlayerList())) {

@@ -4,14 +4,14 @@ import java.awt.Point;
 import java.util.List;
 import java.util.Random;
 
-import amidst.documentation.Immutable;
+import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.world.Biome;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.Resolution;
 
-@Immutable
+@ThreadSafe
 public class BiomeDataOracle {
 	private final MinecraftInterface minecraftInterface;
 

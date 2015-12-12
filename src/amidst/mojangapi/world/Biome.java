@@ -5,10 +5,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import amidst.documentation.Immutable;
+import amidst.documentation.NotThreadSafe;
 import amidst.utilities.ColorUtils;
 
 @Immutable
 public class Biome {
+	@Immutable
 	private static class BiomeIterable implements Iterable<Biome> {
 		@Override
 		public Iterator<Biome> iterator() {
@@ -16,6 +18,7 @@ public class Biome {
 		}
 	}
 
+	@NotThreadSafe
 	private static class BiomeIterator implements Iterator<Biome> {
 		private int nextBiomeIndex = 0;
 

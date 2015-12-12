@@ -2,10 +2,12 @@ package amidst.fragment.loader;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.preferences.PrefModel;
 
+@NotThreadSafe
 public class AlphaInitializer extends FragmentLoader {
 	private final PrefModel<Boolean> fragmentFadingPreference;
 

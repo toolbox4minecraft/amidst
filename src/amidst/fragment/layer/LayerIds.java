@@ -1,9 +1,12 @@
 package amidst.fragment.layer;
 
+import amidst.documentation.Immutable;
+
 /**
  * The Ids are used as array indices but they do not influence the loading or
  * drawing order.
  */
+@Immutable
 public class LayerIds {
 	public static final int ALPHA = 0;
 	public static final int BIOME = 1;

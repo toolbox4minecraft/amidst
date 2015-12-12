@@ -5,6 +5,7 @@ import java.util.List;
 import amidst.Options;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.FragmentQueueProcessor;
@@ -19,6 +20,7 @@ import amidst.gui.widget.WidgetBuilder;
 import amidst.gui.widget.WidgetManager;
 import amidst.mojangapi.world.World;
 
+@NotThreadSafe
 public class WorldSurroundingsBuilder {
 	private final Zoom zoom;
 	private final BiomeSelection biomeSelection = new BiomeSelection();
@@ -27,6 +29,7 @@ public class WorldSurroundingsBuilder {
 	private final LayerBuilder layerBuilder;
 	private final FragmentManager fragmentManager;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldSurroundingsBuilder(Options options, LayerBuilder layerBuilder) {
 		this.options = options;
 		this.zoom = new Zoom(options.maxZoom);
@@ -36,6 +39,7 @@ public class WorldSurroundingsBuilder {
 				layerBuilder.getNumberOfLayers());
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldSurroundings create(World world, Actions actions) {
 		Movement movement = new Movement(options.smoothScrolling);
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
@@ -66,6 +70,7 @@ public class WorldSurroundingsBuilder {
 				createOnPlayerFinishedLoading(layerReloader));
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private Runnable createOnRepainterTick(final Viewer viewer) {
 		return new Runnable() {
 			@CalledOnlyBy(AmidstThread.REPAINTER)
@@ -76,6 +81,7 @@ public class WorldSurroundingsBuilder {
 		};
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private Runnable createOnFragmentLoaderTick(
 			final FragmentQueueProcessor fragmentQueueProcessor) {
 		return new Runnable() {
@@ -87,6 +93,7 @@ public class WorldSurroundingsBuilder {
 		};
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private Runnable createOnPlayerFinishedLoading(
 			final LayerReloader layerReloader) {
 		return new Runnable() {

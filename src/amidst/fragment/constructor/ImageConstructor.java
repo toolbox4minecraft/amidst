@@ -2,9 +2,11 @@ package amidst.fragment.constructor;
 
 import java.awt.image.BufferedImage;
 
+import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.mojangapi.world.Resolution;
 
+@NotThreadSafe
 public class ImageConstructor implements FragmentConstructor {
 	private final int size;
 	private final int layerId;

@@ -1,8 +1,10 @@
 package amidst.fragment.layer;
 
+import amidst.documentation.ThreadSafe;
 import amidst.fragment.FragmentQueueProcessor;
 import amidst.mojangapi.world.World;
 
+@ThreadSafe
 public class LayerReloader {
 	private final World world;
 	private final FragmentQueueProcessor fragmentQueueProcessor;

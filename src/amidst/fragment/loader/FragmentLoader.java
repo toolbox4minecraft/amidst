@@ -2,9 +2,11 @@ package amidst.fragment.loader;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
 
+@NotThreadSafe
 public abstract class FragmentLoader {
 	protected final LayerDeclaration declaration;
 

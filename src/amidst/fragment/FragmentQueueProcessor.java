@@ -5,13 +5,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerLoader;
 import amidst.threading.TaskQueue;
 
-/**
- * This class is thread-safe, as long as only one thread calls the method
- * tick(). It executes everything in the thread that calls the method tick().
- */
+@NotThreadSafe
 public class FragmentQueueProcessor {
 	private final TaskQueue taskQueue = new TaskQueue();
 

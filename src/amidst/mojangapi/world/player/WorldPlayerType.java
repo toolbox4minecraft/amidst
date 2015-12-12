@@ -4,14 +4,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import amidst.documentation.Immutable;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.LevelDat;
 import amidst.mojangapi.file.nbt.playerfile.PlayerFile;
 
+@Immutable
 public enum WorldPlayerType {
-	/**
-	 * Only the selectable options need a name.
-	 */
+	// Only the selectable options need a name.
 	// @formatter:off
 	NONE(null),
 	SINGLEPLAYER("Singleplayer"),

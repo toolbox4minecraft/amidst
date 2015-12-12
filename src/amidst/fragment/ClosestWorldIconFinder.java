@@ -2,10 +2,12 @@ package amidst.fragment;
 
 import java.util.List;
 
+import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 
+@NotThreadSafe
 public class ClosestWorldIconFinder {
 	private final FragmentGraph graph;
 	private final List<LayerDeclaration> layerDeclarations;

@@ -3,6 +3,7 @@ package amidst.mojangapi.world;
 import java.util.List;
 
 import amidst.documentation.CalledByAny;
+import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.world.icon.CachedWorldIconProducer;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.WorldIconProducer;
@@ -10,6 +11,12 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;
 
+/**
+ * The SlimeChunkOracle as well as the WorldIconProducers that are no
+ * CacheWorldIconProducers cannot be used by multiple threads. The other parts
+ * of this class can be used multi-threaded.
+ */
+@NotThreadSafe
 public class World {
 	private final WorldSeed seed;
 	private final WorldType worldType;
@@ -78,15 +85,15 @@ public class World {
 		return slimeChunkOracle;
 	}
 
-	public CachedWorldIconProducer getSpawnProducer() {
+	public WorldIconProducer getSpawnProducer() {
 		return spawnProducer;
 	}
 
-	public CachedWorldIconProducer getStrongholdProducer() {
+	public WorldIconProducer getStrongholdProducer() {
 		return strongholdProducer;
 	}
 
-	public CachedWorldIconProducer getPlayerProducer() {
+	public WorldIconProducer getPlayerProducer() {
 		return playerProducer;
 	}
 

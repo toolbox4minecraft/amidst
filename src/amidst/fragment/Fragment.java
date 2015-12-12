@@ -8,14 +8,15 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.Resolution;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 /**
- * This class is thread-safe. It contains nearly no logic but only simple and
- * atomic getters and setters.
+ * This class contains nearly no logic but only simple and atomic getters and
+ * setters.
  * 
  * The life-cycle of a Fragment is quite complex to prevent the garbage
  * collection from running too often. When a fragment is no longer needed it
@@ -34,7 +35,12 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
  * the fragment. While the fragment is constructed it will only be accessible by
  * one thread. An exception to that rule is the instance variable alpha. It is
  * altered from the drawing thread, however this should not cause any issues.
+ * 
+ * Immediately after a new instance of this class is created, it is passed to
+ * all FragmentConstructors. At that point in time, no other thread can access
+ * the fragment, so the whole construction process is single-threaded.
  */
+@NotThreadSafe
 public class Fragment {
 	public static final int SIZE = Resolution.FRAGMENT.getStep();
 
@@ -70,7 +76,6 @@ public class Fragment {
 		biomeDataOracle.populateArrayUsingQuarterResolution(corner, biomeData);
 	}
 
-	@CalledByAny
 	public short getBiomeDataAt(int x, int y) {
 		return biomeData[x][y];
 	}

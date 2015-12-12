@@ -1,6 +1,9 @@
 package amidst.mojangapi.world;
 
+import amidst.documentation.Immutable;
+
 // TODO: Rename once we figure out what this actually is!
+@Immutable
 public class BiomeType {
 	public static final BiomeType typeA = new BiomeType(0.1F, 0.2F);
 	public static final BiomeType typeB = new BiomeType(-0.5F, 0.0F);

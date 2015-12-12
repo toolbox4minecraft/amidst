@@ -4,11 +4,15 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.gui.worldsurroundings.Zoom;
 import amidst.mojangapi.world.Resolution;
 
+@NotThreadSafe
 public class GridDrawer extends FragmentDrawer {
 	private static final Font DRAW_FONT = new Font("arial", Font.BOLD, 16);
 
@@ -21,6 +25,7 @@ public class GridDrawer extends FragmentDrawer {
 		this.zoom = zoom;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d, float time) {
 		int stride = getStride();
@@ -38,27 +43,32 @@ public class GridDrawer extends FragmentDrawer {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private int getStride() {
 		return (int) (.25 / zoom.getCurrentValue());
 	}
 
 	// TODO: use longs?
+	@CalledOnlyBy(AmidstThread.EDT)
 	private int getGridX(Fragment fragment, int stride) {
 		return (int) fragment.getCorner().getXAs(Resolution.FRAGMENT)
 				% (stride + 1);
 	}
 
 	// TODO: use longs?
+	@CalledOnlyBy(AmidstThread.EDT)
 	private int getGridY(Fragment fragment, int stride) {
 		return (int) fragment.getCorner().getYAs(Resolution.FRAGMENT)
 				% (stride + 1);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void initGraphics(Graphics2D g2d) {
 		g2d.setFont(DRAW_FONT);
 		g2d.setColor(Color.black);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawGridLines(Graphics2D g2d, int stride, int gridX, int gridY) {
 		if (gridY == 0) {
 			g2d.drawLine(0, 0, Fragment.SIZE, 0);
@@ -74,10 +84,12 @@ public class GridDrawer extends FragmentDrawer {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean isGrid00(int gridX, int gridY) {
 		return gridX == 0 && gridY == 0;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateText(Fragment fragment) {
 		textBuffer.setLength(0);
 		textBuffer.append(fragment.getCorner().getX());
@@ -86,6 +98,7 @@ public class GridDrawer extends FragmentDrawer {
 		textBuffer.getChars(0, textBuffer.length(), textCache, 0);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawText(Graphics2D g2d) {
 		g2d.drawChars(textCache, 0, textBuffer.length(), 12, 17);
 		g2d.drawChars(textCache, 0, textBuffer.length(), 8, 17);
@@ -94,6 +107,7 @@ public class GridDrawer extends FragmentDrawer {
 	}
 
 	// This makes the text outline a bit thicker, but seems unneeded.
+	@CalledOnlyBy(AmidstThread.EDT)
 	@SuppressWarnings("unused")
 	private void drawThickTextOutline(Graphics2D g2d) {
 		g2d.drawChars(textCache, 0, textBuffer.length(), 12, 15);
@@ -102,6 +116,7 @@ public class GridDrawer extends FragmentDrawer {
 		g2d.drawChars(textCache, 0, textBuffer.length(), 8, 19);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawTextOutline(Graphics2D g2d) {
 		g2d.setColor(Color.white);
 		g2d.drawChars(textCache, 0, textBuffer.length(), 10, 17);

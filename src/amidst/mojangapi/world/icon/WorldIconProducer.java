@@ -4,8 +4,10 @@ import java.util.List;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.world.CoordinatesInWorld;
 
+@NotThreadSafe
 public abstract class WorldIconProducer {
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public abstract void produce(CoordinatesInWorld corner,
