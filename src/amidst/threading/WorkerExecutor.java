@@ -13,4 +13,8 @@ public class WorkerExecutor {
 	public <T> void invokeLater(Worker<T> worker) {
 		threadMaster.executeWorker(worker);
 	}
+
+	public <T> void invokeLater(ExceptionalWorker<T> worker) {
+		threadMaster.executeWorker(worker);
+	}
 }

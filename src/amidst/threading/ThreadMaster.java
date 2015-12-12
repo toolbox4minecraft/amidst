@@ -98,6 +98,44 @@ public class ThreadMaster {
 		}, 0, 20, TimeUnit.MILLISECONDS);
 	}
 
+	public <T> void executeWorker(final ExceptionalWorker<T> worker) {
+		workerExecutorService.execute(new Runnable() {
+			@CalledOnlyBy(AmidstThread.WORKER)
+			@Override
+			public void run() {
+				try {
+					callFinishedLater(worker, worker.execute());
+				} catch (Exception e) {
+					callErrorLater(worker, e);
+				}
+			}
+		});
+	}
+
+	@CalledOnlyBy(AmidstThread.WORKER)
+	private <T> void callErrorLater(final ExceptionalWorker<T> worker,
+			final Exception e) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@CalledOnlyBy(AmidstThread.EDT)
+			@Override
+			public void run() {
+				worker.error(e);
+			}
+		});
+	}
+
+	@CalledOnlyBy(AmidstThread.WORKER)
+	private <T> void callFinishedLater(final ExceptionalWorker<T> worker,
+			final T result) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@CalledOnlyBy(AmidstThread.EDT)
+			@Override
+			public void run() {
+				worker.finished(result);
+			}
+		});
+	}
+
 	public <T> void executeWorker(final Worker<T> worker) {
 		workerExecutorService.execute(new Runnable() {
 			@CalledOnlyBy(AmidstThread.WORKER)
