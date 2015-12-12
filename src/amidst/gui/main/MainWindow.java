@@ -77,7 +77,7 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private UpdatePrompt createUpdatePrompt() {
-		return new UpdatePrompt(this);
+		return new UpdatePrompt(this, threadMaster.getWorkerExecutor());
 	}
 
 	// TODO: use official minecraft version id instead of recognised one?

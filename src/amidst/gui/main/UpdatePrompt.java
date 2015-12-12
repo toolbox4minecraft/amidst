@@ -3,19 +3,22 @@ package amidst.gui.main;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
+import amidst.threading.ExceptionalWorker;
+import amidst.threading.WorkerExecutor;
 
 @Immutable
 public class UpdatePrompt {
 	private final MainWindow mainWindow;
+	private final WorkerExecutor workerExecutor;
 
-	public UpdatePrompt(MainWindow mainWindow) {
+	public UpdatePrompt(MainWindow mainWindow, WorkerExecutor workerExecutor) {
 		this.mainWindow = mainWindow;
+		this.workerExecutor = workerExecutor;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -29,23 +32,43 @@ public class UpdatePrompt {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void check(boolean silent) {
-		try {
-			doCheck(silent);
-		} catch (Exception e) {
-			Log.w("unable to check for updates");
-			e.printStackTrace();
-			if (!silent) {
-				mainWindow.displayError(e.getMessage());
-			}
+	private void check(final boolean silent) {
+		workerExecutor
+				.invokeLater(new ExceptionalWorker<UpdateInformationRetriever>() {
+					@Override
+					public UpdateInformationRetriever execute()
+							throws Exception {
+						return new UpdateInformationRetriever();
+					}
+
+					@Override
+					public void error(Exception e) {
+						Log.w("unable to check for updates");
+						displayError(silent, e);
+					}
+
+					@Override
+					public void finished(UpdateInformationRetriever retriever) {
+						displayResult(silent, retriever);
+					}
+				});
+	}
+
+	private void displayError(boolean silent, Exception e) {
+		e.printStackTrace();
+		if (!silent) {
+			mainWindow.displayError(e.getMessage());
 		}
 	}
 
-	private void doCheck(boolean silent) throws Exception, IOException,
-			URISyntaxException {
-		UpdateInformationRetriever retriever = new UpdateInformationRetriever();
+	private void displayResult(boolean silent,
+			UpdateInformationRetriever retriever) {
 		if (getUserChoice(retriever, silent)) {
-			openURL(new URI(retriever.getUpdateURL()));
+			try {
+				openURL(new URI(retriever.getUpdateURL()));
+			} catch (Exception e) {
+				displayError(silent, e);
+			}
 		}
 	}
 
