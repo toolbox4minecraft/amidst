@@ -9,7 +9,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.gui.worldsurroundings.Drawer;
+import amidst.gui.main.worldsurroundings.Drawer;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.Resolution;
 import amidst.mojangapi.world.icon.WorldIcon;

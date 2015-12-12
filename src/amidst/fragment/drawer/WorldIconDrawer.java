@@ -9,8 +9,8 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.gui.worldsurroundings.WorldIconSelection;
-import amidst.gui.worldsurroundings.Zoom;
+import amidst.gui.main.worldsurroundings.WorldIconSelection;
+import amidst.gui.main.worldsurroundings.Zoom;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 
