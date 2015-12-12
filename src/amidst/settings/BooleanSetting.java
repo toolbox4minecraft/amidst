@@ -29,8 +29,9 @@ public class BooleanSetting extends SettingBase<Boolean> {
 
 	public BooleanSetting(Preferences preferences, String key,
 			boolean defaultValue) {
-		super(preferences, key, defaultValue);
+		super(preferences, key);
 		this.buttonModel = new BooleanButtonModel();
+		restore(defaultValue);
 	}
 
 	@Override

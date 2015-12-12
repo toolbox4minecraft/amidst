@@ -10,13 +10,12 @@ public abstract class SettingBase<T> implements Setting<T> {
 	protected final String key;
 	private volatile T value;
 
-	public SettingBase(Preferences preferences, String key, T defaultValue) {
+	public SettingBase(Preferences preferences, String key) {
 		this.preferences = preferences;
 		this.key = key;
-		restore(defaultValue);
 	}
 
-	private void restore(T defaultValue) {
+	protected void restore(T defaultValue) {
 		set(getInitialValue(defaultValue));
 	}
 

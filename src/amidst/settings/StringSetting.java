@@ -8,7 +8,8 @@ import amidst.documentation.ThreadSafe;
 public class StringSetting extends SettingBase<String> {
 	public StringSetting(Preferences preferences, String key,
 			String defaultValue) {
-		super(preferences, key, defaultValue);
+		super(preferences, key);
+		restore(defaultValue);
 	}
 
 	@Override

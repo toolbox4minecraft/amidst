@@ -44,8 +44,9 @@ public class MultipleStringsSetting extends SettingBase<String> {
 
 	public MultipleStringsSetting(Preferences preferences, String key,
 			String defaultValue, String[] values) {
-		super(preferences, key, defaultValue);
+		super(preferences, key);
 		this.buttonModels = createButtonModels(values);
+		restore(defaultValue);
 	}
 
 	private Iterable<SelectButtonModel> createButtonModels(String[] values) {
