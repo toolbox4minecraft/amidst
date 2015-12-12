@@ -1,4 +1,4 @@
-package amidst.preferences;
+package amidst.settings;
 
 import java.util.prefs.Preferences;
 
@@ -7,7 +7,7 @@ import javax.swing.JToggleButton.ToggleButtonModel;
 import amidst.documentation.ThreadSafe;
 
 @ThreadSafe
-public class BooleanPrefModel extends PrefModelBase<Boolean> {
+public class BooleanSetting extends SettingBase<Boolean> {
 	@SuppressWarnings("serial")
 	private class BooleanButtonModel extends ToggleButtonModel {
 		@Override
@@ -27,7 +27,7 @@ public class BooleanPrefModel extends PrefModelBase<Boolean> {
 
 	private final BooleanButtonModel buttonModel;
 
-	public BooleanPrefModel(Preferences preferences, String key,
+	public BooleanSetting(Preferences preferences, String key,
 			boolean defaultValue) {
 		super(preferences, key, defaultValue);
 		this.buttonModel = new BooleanButtonModel();

@@ -1,4 +1,4 @@
-package amidst.preferences;
+package amidst.settings;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,7 +10,7 @@ import javax.swing.JToggleButton.ToggleButtonModel;
 import amidst.documentation.ThreadSafe;
 
 @ThreadSafe
-public class SelectPrefModel extends PrefModelBase<String> {
+public class MultipleStringsSetting extends SettingBase<String> {
 	@SuppressWarnings("serial")
 	public class SelectButtonModel extends ToggleButtonModel {
 		private final String name;
@@ -42,7 +42,7 @@ public class SelectPrefModel extends PrefModelBase<String> {
 
 	private final Iterable<SelectButtonModel> buttonModels;
 
-	public SelectPrefModel(Preferences preferences, String key,
+	public MultipleStringsSetting(Preferences preferences, String key,
 			String defaultValue, String[] availableOptions) {
 		super(preferences, key, defaultValue);
 		this.buttonModels = createButtonModels(availableOptions);

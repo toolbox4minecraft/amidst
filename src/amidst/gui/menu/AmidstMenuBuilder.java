@@ -16,9 +16,9 @@ import javax.swing.KeyStroke;
 
 import amidst.Options;
 import amidst.documentation.NotThreadSafe;
-import amidst.preferences.SelectPrefModel.SelectButtonModel;
-import amidst.preferences.biomecolorprofile.BiomeColorProfile;
 import amidst.resources.ResourceLoader;
+import amidst.settings.MultipleStringsSetting.SelectButtonModel;
+import amidst.settings.biomecolorprofile.BiomeColorProfile;
 
 @NotThreadSafe
 public class AmidstMenuBuilder {

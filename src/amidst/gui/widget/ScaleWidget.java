@@ -5,7 +5,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
 import amidst.gui.worldsurroundings.Zoom;
-import amidst.preferences.PrefModel;
+import amidst.settings.Setting;
 
 public class ScaleWidget extends Widget {
 	@Deprecated
@@ -14,10 +14,10 @@ public class ScaleWidget extends Widget {
 	public static int cMargin = 8;
 
 	private final Zoom zoom;
-	private final PrefModel<Boolean> isVisiblePreference;
+	private final Setting<Boolean> isVisiblePreference;
 
 	public ScaleWidget(CornerAnchorPoint anchor, Zoom zoom,
-			PrefModel<Boolean> isVisiblePreference) {
+			Setting<Boolean> isVisiblePreference) {
 		super(anchor);
 		this.zoom = zoom;
 		this.isVisiblePreference = isVisiblePreference;

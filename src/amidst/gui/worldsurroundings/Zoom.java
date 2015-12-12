@@ -2,7 +2,7 @@ package amidst.gui.worldsurroundings;
 
 import java.awt.Point;
 
-import amidst.preferences.PrefModel;
+import amidst.settings.Setting;
 
 public class Zoom {
 	private int remainingTicks = 0;
@@ -12,9 +12,9 @@ public class Zoom {
 
 	private Point mousePosition = new Point();
 
-	private final PrefModel<Boolean> maxZoomPreference;
+	private final Setting<Boolean> maxZoomPreference;
 
-	public Zoom(PrefModel<Boolean> maxZoomPreference) {
+	public Zoom(Setting<Boolean> maxZoomPreference) {
 		this.maxZoomPreference = maxZoomPreference;
 	}
 

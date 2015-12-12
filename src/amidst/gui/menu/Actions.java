@@ -26,8 +26,8 @@ import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
-import amidst.preferences.biomecolorprofile.BiomeColorProfile;
-import amidst.preferences.biomecolorprofile.BiomeColorProfileSelection;
+import amidst.settings.biomecolorprofile.BiomeColorProfile;
+import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe

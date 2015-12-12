@@ -18,7 +18,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import net.miginfocom.swing.MigLayout;
-import amidst.preferences.PrefModel;
+import amidst.settings.Setting;
 
 public class VersionSelectPanel {
 	@SuppressWarnings("serial")
@@ -84,7 +84,7 @@ public class VersionSelectPanel {
 			30);
 	private static final int INVALID_INDEX = -1;
 
-	private final PrefModel<String> lastProfilePreference;
+	private final Setting<String> lastProfilePreference;
 	private final Component component;
 	private final List<VersionComponent> versionComponents = new ArrayList<VersionComponent>();
 
@@ -93,7 +93,7 @@ public class VersionSelectPanel {
 	private String emptyMessage;
 	private boolean isLoading = false;
 
-	public VersionSelectPanel(PrefModel<String> lastProfilePreference,
+	public VersionSelectPanel(Setting<String> lastProfilePreference,
 			String emptyMessage) {
 		this.lastProfilePreference = lastProfilePreference;
 		this.emptyMessage = emptyMessage;

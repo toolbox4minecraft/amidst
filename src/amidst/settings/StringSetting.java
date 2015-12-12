@@ -1,12 +1,12 @@
-package amidst.preferences;
+package amidst.settings;
 
 import java.util.prefs.Preferences;
 
 import amidst.documentation.ThreadSafe;
 
 @ThreadSafe
-public class StringPreference extends PrefModelBase<String> {
-	public StringPreference(Preferences preferences, String key,
+public class StringSetting extends SettingBase<String> {
+	public StringSetting(Preferences preferences, String key,
 			String defaultValue) {
 		super(preferences, key, defaultValue);
 	}

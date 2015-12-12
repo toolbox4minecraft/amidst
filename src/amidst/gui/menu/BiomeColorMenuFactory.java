@@ -13,9 +13,9 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 import amidst.logging.Log;
-import amidst.preferences.biomecolorprofile.BiomeColorProfile;
-import amidst.preferences.biomecolorprofile.BiomeColorProfileLoader;
-import amidst.preferences.biomecolorprofile.BiomeColorProfileVisitor;
+import amidst.settings.biomecolorprofile.BiomeColorProfile;
+import amidst.settings.biomecolorprofile.BiomeColorProfileLoader;
+import amidst.settings.biomecolorprofile.BiomeColorProfileVisitor;
 
 public class BiomeColorMenuFactory {
 	private static class BiomeColorProfileVisitorImpl implements

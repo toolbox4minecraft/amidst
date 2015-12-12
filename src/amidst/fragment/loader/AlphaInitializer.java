@@ -5,14 +5,14 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.preferences.PrefModel;
+import amidst.settings.Setting;
 
 @NotThreadSafe
 public class AlphaInitializer extends FragmentLoader {
-	private final PrefModel<Boolean> fragmentFadingPreference;
+	private final Setting<Boolean> fragmentFadingPreference;
 
 	public AlphaInitializer(LayerDeclaration declaration,
-			PrefModel<Boolean> fragmentFadingPreference) {
+			Setting<Boolean> fragmentFadingPreference) {
 		super(declaration);
 		this.fragmentFadingPreference = fragmentFadingPreference;
 	}

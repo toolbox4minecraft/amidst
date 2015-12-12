@@ -7,16 +7,16 @@ import java.util.List;
 
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
-import amidst.preferences.PrefModel;
+import amidst.settings.Setting;
 
 public class DebugWidget extends Widget {
 	private final FragmentGraph graph;
 	private final FragmentManager fragmentManager;
-	private final PrefModel<Boolean> isVisiblePreference;
+	private final Setting<Boolean> isVisiblePreference;
 
 	public DebugWidget(CornerAnchorPoint anchor, FragmentGraph graph,
 			FragmentManager fragmentManager,
-			PrefModel<Boolean> isVisiblePreference) {
+			Setting<Boolean> isVisiblePreference) {
 		super(anchor);
 		this.graph = graph;
 		this.fragmentManager = fragmentManager;

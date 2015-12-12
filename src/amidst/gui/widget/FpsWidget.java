@@ -3,14 +3,14 @@ package amidst.gui.widget;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
-import amidst.preferences.PrefModel;
+import amidst.settings.Setting;
 
 public class FpsWidget extends Widget {
 	private final FramerateTimer fpsTimer;
-	private final PrefModel<Boolean> isVisiblePreference;
+	private final Setting<Boolean> isVisiblePreference;
 
 	public FpsWidget(CornerAnchorPoint anchor, FramerateTimer fpsTimer,
-			PrefModel<Boolean> isVisiblePreference) {
+			Setting<Boolean> isVisiblePreference) {
 		super(anchor);
 		this.fpsTimer = fpsTimer;
 		this.isVisiblePreference = isVisiblePreference;

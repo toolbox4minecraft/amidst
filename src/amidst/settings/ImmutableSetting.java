@@ -1,12 +1,12 @@
-package amidst.preferences;
+package amidst.settings;
 
 import amidst.documentation.Immutable;
 
 @Immutable
-public class ImmutablePreference<T> implements PrefModel<T> {
+public class ImmutableSetting<T> implements Setting<T> {
 	private final T value;
 
-	public ImmutablePreference(T value) {
+	public ImmutableSetting(T value) {
 		this.value = value;
 	}
 

@@ -2,16 +2,16 @@ package amidst.gui.worldsurroundings;
 
 import java.awt.Point;
 
-import amidst.preferences.PrefModel;
+import amidst.settings.Setting;
 
 public class Movement {
 	private double speedX = 0;
 	private double speedY = 0;
 	private Point lastMouse;
 
-	private final PrefModel<Boolean> smoothScrollingPreference;
+	private final Setting<Boolean> smoothScrollingPreference;
 
-	public Movement(PrefModel<Boolean> smoothScrollingPreference) {
+	public Movement(Setting<Boolean> smoothScrollingPreference) {
 		this.smoothScrollingPreference = smoothScrollingPreference;
 	}
 

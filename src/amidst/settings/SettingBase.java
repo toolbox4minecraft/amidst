@@ -1,16 +1,16 @@
-package amidst.preferences;
+package amidst.settings;
 
 import java.util.prefs.Preferences;
 
 import amidst.documentation.ThreadSafe;
 
 @ThreadSafe
-public abstract class PrefModelBase<T> implements PrefModel<T> {
+public abstract class SettingBase<T> implements Setting<T> {
 	protected final Preferences preferences;
 	protected final String key;
 	private volatile T value;
 
-	public PrefModelBase(Preferences preferences, String key, T defaultValue) {
+	public SettingBase(Preferences preferences, String key, T defaultValue) {
 		this.preferences = preferences;
 		this.key = key;
 		restore(defaultValue);
