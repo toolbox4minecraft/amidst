@@ -9,6 +9,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gui.worldsurroundings.Drawer;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.Resolution;
 import amidst.mojangapi.world.icon.WorldIcon;
@@ -38,7 +39,39 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
  * 
  * Immediately after a new instance of this class is created, it is passed to
  * all FragmentConstructors. At that point in time, no other thread can access
- * the fragment, so the whole construction process is single-threaded.
+ * the fragment, so the whole construction process is single-threaded. After the
+ * fragment is constructed it will be available to use in the fragment graph. As
+ * soon as it is requested, its isInitialized variable will be set to true by
+ * the requesting thread. Also, it is enqueued to the loading queue. Note, that
+ * the fragment is still not loaded, but used in the fragment graph and thus
+ * used by the {@link Drawer}. Sometime after the fragment was requested, it
+ * will be loaded by the fragment loading thread, because it was enqueued to the
+ * loading queue. The complete loading process is executed in the fragment
+ * loading thread. When this is done, the isLoaded variable will be set to true.
+ * This allows the drawer to actually draw the fragment. The complete drawing
+ * process is executed in the event dispatch thread. When the fragment is no
+ * longer visible on the screen it will be removed from the fragment graph.
+ * However, since it holds a data-structure that is quite heavy to allocate and
+ * garbage-collect, the fragment will be recycled so it can be reused later.
+ * This recycling is done by enqueuing the fragment to the recycle queue. The
+ * recycle queue is processed by the fragment loading thread with a very high
+ * priority. Even tough the fragment loading thread only calls the method
+ * {@link Fragment#recycle()} and enqueues the fragment to the available queue,
+ * it is important that this is done by the fragment loading queue. This is,
+ * because if any other thread sets the isLoaded variable to false, it might be
+ * set to true by the fragment loading thread afterwards, because the fragment
+ * was not yet loaded. This problem is solved by modifying the isLoaded variable
+ * only in the fragment loading thread. This issue only arises, since the
+ * fragment is already used in the fragment graph, before it is loaded. As soon
+ * as it is used in the fragment graph it, can be recycled. This often leads to
+ * a situation where a not yet loaded fragment gets recycled. The isInitialized
+ * variable is altered by the thread that requests the new fragment, which is
+ * different from the fragment loading thread. This is not an issue, since all
+ * fragments in the available queue have both variables isInitialized and
+ * isLoaded set to false. They are also not used in the fragment graph or
+ * enqueued in the recycle queue. Therefore, there cannot be a race condition
+ * because the isInitialized variable will only be set to false when it is
+ * recycled.
  */
 @NotThreadSafe
 public class Fragment {
