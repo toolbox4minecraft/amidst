@@ -4,12 +4,12 @@ import java.util.prefs.Preferences;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
-import amidst.preferences.BiomeColorProfile;
-import amidst.preferences.BiomeColorProfileSelection;
 import amidst.preferences.BooleanPrefModel;
 import amidst.preferences.PrefModel;
 import amidst.preferences.SelectPrefModel;
 import amidst.preferences.StringPreference;
+import amidst.preferences.biomecolorprofile.BiomeColorProfile;
+import amidst.preferences.biomecolorprofile.BiomeColorProfileSelection;
 
 public class Options {
 	private static final String[] WORLD_TYPE_OPTIONS = new String[] {

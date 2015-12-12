@@ -1,4 +1,4 @@
-package amidst.preferences;
+package amidst.preferences.biomecolorprofile;
 
 import java.io.BufferedReader;
 import java.io.File;

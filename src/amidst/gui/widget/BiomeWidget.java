@@ -11,7 +11,7 @@ import java.util.List;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.worldsurroundings.BiomeSelection;
 import amidst.mojangapi.world.Biome;
-import amidst.preferences.BiomeColorProfileSelection;
+import amidst.preferences.biomecolorprofile.BiomeColorProfileSelection;
 import amidst.utilities.CoordinateUtils;
 
 public class BiomeWidget extends Widget {

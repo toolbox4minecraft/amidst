@@ -1,4 +1,4 @@
-package amidst.preferences;
+package amidst.preferences.biomecolorprofile;
 
 public interface BiomeColorProfileVisitor {
 	void enterDirectory(String name);
