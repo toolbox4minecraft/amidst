@@ -7,11 +7,13 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.Player;
 
+@NotThreadSafe
 public class MovePlayerPopupMenu {
 	private final Actions actions;
 	private final MovablePlayerList movablePlayerList;
@@ -27,7 +29,6 @@ public class MovePlayerPopupMenu {
 
 	public void show(Component component, int x, int y) {
 		createPlayerMenu().show(component, x, y);
-
 	}
 
 	private JPopupMenu createPlayerMenu() {

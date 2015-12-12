@@ -10,8 +10,12 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.resources.ResourceLoader;
 
+@NotThreadSafe
 public abstract class VersionComponent {
 	@SuppressWarnings("serial")
 	private class Component extends JComponent {
@@ -23,11 +27,13 @@ public abstract class VersionComponent {
 		private String oldVersionName;
 		private String oldProfileName;
 
+		@CalledOnlyBy(AmidstThread.EDT)
 		public Component() {
 			this.setMinimumSize(new Dimension(300, 40));
 			this.setPreferredSize(new Dimension(500, 40));
 		}
 
+		@CalledOnlyBy(AmidstThread.EDT)
 		@Override
 		public void paintComponent(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g;
@@ -39,6 +45,7 @@ public abstract class VersionComponent {
 			drawIcon(g2d);
 		}
 
+		@CalledOnlyBy(AmidstThread.EDT)
 		private void drawBackground(Graphics2D g2d) {
 			if (isLoading) {
 				g2d.setColor(LOADING_BG_COLOR);
@@ -50,6 +57,7 @@ public abstract class VersionComponent {
 			g2d.fillRect(0, 0, getWidth(), getHeight());
 		}
 
+		@CalledOnlyBy(AmidstThread.EDT)
 		private void updateIfNecessary() {
 			int width = getWidth();
 			String versionName = getVersionName();
@@ -65,6 +73,7 @@ public abstract class VersionComponent {
 			}
 		}
 
+		@CalledOnlyBy(AmidstThread.EDT)
 		private String createProfileName(String profileName, int maxWidth) {
 			String result = profileName;
 			if (profileFontMetrics.stringWidth(result) > maxWidth) {
@@ -79,18 +88,21 @@ public abstract class VersionComponent {
 			return result;
 		}
 
+		@CalledOnlyBy(AmidstThread.EDT)
 		private void drawVersionName(Graphics2D g2d) {
 			g2d.setColor(Color.black);
 			g2d.setFont(VERSION_NAME_FONT);
 			g2d.drawString(oldVersionName, versionNameX, 20);
 		}
 
+		@CalledOnlyBy(AmidstThread.EDT)
 		private void drawProfileName(Graphics2D g2d) {
 			g2d.setColor(Color.black);
 			g2d.setFont(PROFILE_NAME_FONT);
 			g2d.drawString(oldProfileName, 5, 30);
 		}
 
+		@CalledOnlyBy(AmidstThread.EDT)
 		private void drawStatus(Graphics2D g2d) {
 			g2d.setColor(Color.gray);
 			g2d.setFont(STATUS_FONT);
@@ -99,11 +111,13 @@ public abstract class VersionComponent {
 			g2d.drawString(statusString, getWidth() - 40 - stringWidth, 32);
 		}
 
+		@CalledOnlyBy(AmidstThread.EDT)
 		private void drawIcon(Graphics2D g2d) {
 			BufferedImage icon = getIcon();
 			g2d.drawImage(icon, getWidth() - icon.getWidth() - 5, 4, null);
 		}
 
+		@CalledOnlyBy(AmidstThread.EDT)
 		private BufferedImage getIcon() {
 			if (isLoading) {
 				return LOADING_ICON;
@@ -139,14 +153,17 @@ public abstract class VersionComponent {
 	 * e.g. getProfileName by the drawing function before the derived class is
 	 * constructed.
 	 */
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected void initComponent() {
 		this.component = new Component();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean isSelected() {
 		return isSelected;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void setSelected(boolean isSelected) {
 		if (this.isSelected != isSelected) {
 			this.isSelected = isSelected;
@@ -154,27 +171,35 @@ public abstract class VersionComponent {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public Component getComponent() {
 		return component;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void load() {
 		isLoading = true;
 		component.repaint();
 		doLoad();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected void repaintComponent() {
 		component.repaint();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected abstract void doLoad();
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected abstract String getLoadingStatus();
 
-	public abstract boolean isReadyToLoad();
+	@CalledOnlyBy(AmidstThread.EDT)
+	protected abstract boolean isReadyToLoad();
 
-	public abstract String getProfileName();
+	@CalledOnlyBy(AmidstThread.EDT)
+	protected abstract String getProfileName();
 
-	public abstract String getVersionName();
+	@CalledOnlyBy(AmidstThread.EDT)
+	protected abstract String getVersionName();
 }

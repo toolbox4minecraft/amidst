@@ -6,16 +6,17 @@ import java.net.URI;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
-import amidst.documentation.Immutable;
+import amidst.documentation.NotThreadSafe;
 import amidst.logging.Log;
 import amidst.threading.ExceptionalWorker;
 import amidst.threading.WorkerExecutor;
 
-@Immutable
+@NotThreadSafe
 public class UpdatePrompt {
 	private final MainWindow mainWindow;
 	private final WorkerExecutor workerExecutor;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public UpdatePrompt(MainWindow mainWindow, WorkerExecutor workerExecutor) {
 		this.mainWindow = mainWindow;
 		this.workerExecutor = workerExecutor;
@@ -54,6 +55,7 @@ public class UpdatePrompt {
 				});
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void displayError(boolean silent, Exception e) {
 		e.printStackTrace();
 		if (!silent) {
@@ -61,6 +63,7 @@ public class UpdatePrompt {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void displayResult(boolean silent,
 			UpdateInformationRetriever retriever) {
 		if (getUserChoice(retriever, silent)) {

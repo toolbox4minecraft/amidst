@@ -12,13 +12,16 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
 import amidst.logging.Log;
 import amidst.settings.biomecolorprofile.BiomeColorProfile;
 import amidst.settings.biomecolorprofile.BiomeColorProfileLoader;
 import amidst.settings.biomecolorprofile.BiomeColorProfileVisitor;
 
+@NotThreadSafe
 public class BiomeColorMenuFactory {
+	@NotThreadSafe
 	private static class BiomeColorProfileVisitorImpl implements
 			BiomeColorProfileVisitor {
 		private final List<JCheckBoxMenuItem> allCheckBoxes = new ArrayList<JCheckBoxMenuItem>();

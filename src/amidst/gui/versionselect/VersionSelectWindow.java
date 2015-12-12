@@ -15,6 +15,7 @@ import amidst.Application;
 import amidst.Settings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
@@ -22,15 +23,17 @@ import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 import amidst.threading.Worker;
 import amidst.threading.WorkerExecutor;
 
+@NotThreadSafe
 public class VersionSelectWindow {
 	private final Application application;
 	private final WorkerExecutor workerExecutor;
 	private final MojangApi mojangApi;
 	private final Settings settings;
 
-	private final JFrame frame = new JFrame("Profile Selector");
+	private final JFrame frame;
 	private final VersionSelectPanel versionSelectPanel;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public VersionSelectWindow(Application application,
 			WorkerExecutor workerExecutor, MojangApi mojangApi,
 			Settings settings) {
@@ -40,11 +43,13 @@ public class VersionSelectWindow {
 		this.settings = settings;
 		this.versionSelectPanel = new VersionSelectPanel(settings.lastProfile,
 				"Scanning...");
-		initFrame();
+		this.frame = createFrame();
 		scanAndLoadVersionsLater();
 	}
 
-	private void initFrame() {
+	@CalledOnlyBy(AmidstThread.EDT)
+	private JFrame createFrame() {
+		JFrame frame = new JFrame("Profile Selector");
 		frame.setIconImage(AmidstMetaData.ICON);
 		frame.getContentPane().setLayout(new MigLayout());
 		frame.add(createTitleLabel(), "h 20!,w :400:, growx, pushx, wrap");
@@ -60,15 +65,18 @@ public class VersionSelectWindow {
 		});
 		frame.setLocation(200, 200);
 		frame.setVisible(true);
+		return frame;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private JLabel createTitleLabel() {
-		final JLabel result = new JLabel("Please select a Minecraft version:",
+		JLabel result = new JLabel("Please select a Minecraft version:",
 				SwingConstants.CENTER);
 		result.setFont(new Font("arial", Font.BOLD, 16));
 		return result;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void scanAndLoadVersionsLater() {
 		workerExecutor.invokeLater(new Worker<LauncherProfilesJson>() {
 			@Override
@@ -83,6 +91,7 @@ public class VersionSelectWindow {
 		});
 	}
 
+	@CalledOnlyBy(AmidstThread.WORKER)
 	private LauncherProfilesJson scanAndLoadVersions() {
 		Log.i("Scanning for profiles.");
 		LauncherProfilesJson launcherProfile = null;
@@ -96,12 +105,14 @@ public class VersionSelectWindow {
 		return launcherProfile;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void loadVersions(LauncherProfilesJson launcherProfile) {
 		createVersionComponents(launcherProfile);
 		restoreSelection();
 		frame.pack();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void createVersionComponents(LauncherProfilesJson launcherProfile) {
 		for (LauncherProfileJson profile : launcherProfile.getProfiles()) {
 			versionSelectPanel.addVersion(new LocalVersionComponent(
@@ -109,6 +120,7 @@ public class VersionSelectWindow {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void restoreSelection() {
 		String profileName = settings.lastProfile.get();
 		if (profileName != null) {
