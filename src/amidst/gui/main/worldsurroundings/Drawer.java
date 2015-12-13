@@ -220,10 +220,11 @@ public class Drawer {
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		for (Widget widget : widgets) {
-			widget.update(viewerWidth, viewerHeight, mousePosition);
+			widget.update(viewerWidth, viewerHeight, mousePosition,
+					widgetFontMetrics, time);
 			if (widget.isVisible()) {
 				setAlphaComposite(widget.getAlpha());
-				widget.draw(g2d, widgetFontMetrics, time);
+				widget.draw(g2d);
 			}
 		}
 	}

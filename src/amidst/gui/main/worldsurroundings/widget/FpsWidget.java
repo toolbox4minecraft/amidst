@@ -13,6 +13,8 @@ public class FpsWidget extends Widget {
 	private final FramerateTimer fpsTimer;
 	private final Setting<Boolean> isVisibleSetting;
 
+	private String framerate;
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	public FpsWidget(CornerAnchorPoint anchor, FramerateTimer fpsTimer,
 			Setting<Boolean> isVisibleSetting) {
@@ -26,17 +28,20 @@ public class FpsWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
-		String framerate = "FPS: "
-				+ String.format("%.1f", fpsTimer.getCurrentFPS());
+	protected void doUpdate(FontMetrics fontMetrics, float time) {
+		framerate = "FPS: " + String.format("%.1f", fpsTimer.getCurrentFPS());
 		fpsTimer.tick();
 		setWidth(fontMetrics.stringWidth(framerate) + 20);
-		drawBorderAndBackground(g2d, time);
-		drawFramerate(g2d, framerate);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void drawFramerate(Graphics2D g2d, String framerate) {
+	@Override
+	protected void doDraw(Graphics2D g2d) {
+		drawFramerate(g2d);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void drawFramerate(Graphics2D g2d) {
 		g2d.drawString(framerate, getX() + 10, getY() + 20);
 	}
 

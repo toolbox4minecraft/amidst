@@ -31,8 +31,13 @@ public class BiomeToggleWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
-		drawBorderAndBackground(g2d, time);
+	protected void doUpdate(FontMetrics fontMetrics, float time) {
+		// noop
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	@Override
+	protected void doDraw(Graphics2D g2d) {
 		g2d.drawImage(HIGHLIGHTER_ICON, getX(), getY(), 36, 36, null);
 	}
 

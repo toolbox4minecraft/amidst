@@ -16,6 +16,7 @@ public class SelectedIconWidget extends Widget {
 
 	private String message = "";
 	private BufferedImage icon;
+	private int iconWidth;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public SelectedIconWidget(CornerAnchorPoint anchor,
@@ -30,21 +31,21 @@ public class SelectedIconWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
+	protected void doUpdate(FontMetrics fontMetrics, float time) {
 		WorldIcon selection = worldIconSelection.get();
 		if (selection != null) {
 			message = selection.toString();
 			icon = selection.getImage();
+			double ratio = (double) icon.getWidth() / (double) icon.getHeight();
+			iconWidth = (int) (25. * ratio);
 		}
-
 		setWidth(45 + fontMetrics.stringWidth(message));
-		drawBorderAndBackground(g2d, time);
-		double imgWidth = icon.getWidth();
-		double imgHeight = icon.getHeight();
-		double ratio = imgWidth / imgHeight;
+	}
 
-		g2d.drawImage(icon, getX() + 5, getY() + 5, (int) (25. * ratio), 25,
-				null);
+	@CalledOnlyBy(AmidstThread.EDT)
+	@Override
+	protected void doDraw(Graphics2D g2d) {
+		g2d.drawImage(icon, getX() + 5, getY() + 5, iconWidth, 25, null);
 		g2d.drawString(message, getX() + 35, getY() + 23);
 	}
 

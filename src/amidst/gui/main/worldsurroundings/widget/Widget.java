@@ -70,12 +70,14 @@ public abstract class Widget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void drawBorderAndBackground(Graphics2D g2d, float time) {
+	public void update(int viewerWidth, int viewerHeight, Point mousePosition,
+			FontMetrics fontMetrics, float time) {
+		this.viewerWidth = viewerWidth;
+		this.viewerHeight = viewerHeight;
+		this.mousePosition = mousePosition;
 		updateAlpha(time);
-		initGraphics(g2d);
-		drawBorder(g2d);
-		drawBackground(g2d);
-		initGraphicsForContent(g2d);
+		doUpdate(fontMetrics, time);
+		updatePosition();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -140,6 +142,15 @@ public abstract class Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private int getCenterY(int viewerHeight) {
 		return (viewerHeight >> 1) - (height >> 1);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void draw(Graphics2D g2d) {
+		initGraphics(g2d);
+		drawBorder(g2d);
+		drawBackground(g2d);
+		initGraphicsForContent(g2d);
+		doDraw(g2d);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -318,16 +329,10 @@ public abstract class Widget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void update(int viewerWidth, int viewerHeight, Point mousePosition) {
-		this.viewerWidth = viewerWidth;
-		this.viewerHeight = viewerHeight;
-		this.mousePosition = mousePosition;
-		updatePosition();
-	}
+	protected abstract void doUpdate(FontMetrics fontMetrics, float time);
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public abstract void draw(Graphics2D g2d, FontMetrics fontMetrics,
-			float time);
+	protected abstract void doDraw(Graphics2D g2d);
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected abstract boolean onVisibilityCheck();

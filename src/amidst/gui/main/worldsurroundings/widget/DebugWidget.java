@@ -18,6 +18,8 @@ public class DebugWidget extends Widget {
 	private final FragmentManager fragmentManager;
 	private final Setting<Boolean> isVisibleSetting;
 
+	private List<String> panelLines;
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	public DebugWidget(CornerAnchorPoint anchor, FragmentGraph graph,
 			FragmentManager fragmentManager, Setting<Boolean> isVisibleSetting) {
@@ -30,14 +32,12 @@ public class DebugWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
-		List<String> panelLines = getPanelLines();
-		int width = getPanelWidth(panelLines, fontMetrics);
-		int height = getPanelHeight(panelLines);
+	protected void doUpdate(FontMetrics fontMetrics, float time) {
+		panelLines = getPanelLines();
+		int width = getPanelWidth(fontMetrics);
+		int height = getPanelHeight();
 		setWidth(width);
 		setHeight(height);
-		drawBorderAndBackground(g2d, time);
-		drawPanelLines(g2d, panelLines);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -61,7 +61,7 @@ public class DebugWidget extends Widget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private int getPanelWidth(List<String> panelLines, FontMetrics fontMetrics) {
+	private int getPanelWidth(FontMetrics fontMetrics) {
 		int result = 0;
 		for (String line : panelLines) {
 			int textWidth = fontMetrics.stringWidth(line);
@@ -73,12 +73,18 @@ public class DebugWidget extends Widget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private int getPanelHeight(List<String> panelLines) {
+	private int getPanelHeight() {
 		return panelLines.size() * 20 + 10;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void drawPanelLines(Graphics2D g2d, List<String> panelLines) {
+	@Override
+	protected void doDraw(Graphics2D g2d) {
+		drawPanelLines(g2d);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void drawPanelLines(Graphics2D g2d) {
 		for (int i = 0; i < panelLines.size(); i++) {
 			g2d.drawString(panelLines.get(i), getX() + 10, getY() + 20 + i * 20);
 		}

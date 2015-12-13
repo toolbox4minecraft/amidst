@@ -12,11 +12,15 @@ import amidst.settings.Setting;
 
 @NotThreadSafe
 public class ScaleWidget extends Widget {
-	public static final int MAX_SCALE_LENGTH_ON_SCREEN = 250;
+	public static final int MAX_SCALE_LENGTH_ON_SCREEN = 200;
 	public static final int MARGIN = 8;
 
 	private final Zoom zoom;
 	private final Setting<Boolean> isVisibleSetting;
+
+	private int scaleLengthOnScreen;
+	private String text;
+	private int textWidth;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public ScaleWidget(CornerAnchorPoint anchor, Zoom zoom,
@@ -31,15 +35,12 @@ public class ScaleWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
+	protected void doUpdate(FontMetrics fontMetrics, float time) {
 		int scaleLengthInWorld = getScaleLengthInWorld();
-		int scaleLengthOnScreen = (int) zoom.worldToScreen(scaleLengthInWorld);
-		String text = scaleLengthInWorld + " blocks";
-		int textWidth = fontMetrics.stringWidth(text);
+		scaleLengthOnScreen = (int) zoom.worldToScreen(scaleLengthInWorld);
+		text = scaleLengthInWorld + " blocks";
+		textWidth = fontMetrics.stringWidth(text);
 		setWidth(Math.max(scaleLengthOnScreen, textWidth) + (MARGIN * 2));
-		drawBorderAndBackground(g2d, time);
-		drawText(g2d, text, textWidth);
-		drawLines(g2d, scaleLengthOnScreen);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -78,15 +79,22 @@ public class ScaleWidget extends Widget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void drawText(Graphics2D g2d, String text, int textWidth) {
+	@Override
+	protected void doDraw(Graphics2D g2d) {
+		drawText(g2d);
+		drawLines(g2d);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void drawText(Graphics2D g2d) {
 		int x = getX() + 1 + ((getWidth() - textWidth) >> 1);
 		int y = getY() + 18;
 		g2d.drawString(text, x, y);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void drawLines(Graphics2D g2d, int scaleLengthOnScreen) {
-		int x1 = getX() + MARGIN;
+	private void drawLines(Graphics2D g2d) {
+		int x1 = getX() + 1 + ((getWidth() - scaleLengthOnScreen) >> 1);
 		int x2 = x1 + scaleLengthOnScreen;
 		int y1 = getY() + 23;
 		int y2 = getY() + 26;

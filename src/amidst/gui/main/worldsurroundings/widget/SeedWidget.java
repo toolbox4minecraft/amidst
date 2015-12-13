@@ -22,9 +22,13 @@ public class SeedWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
+	protected void doUpdate(FontMetrics fontMetrics, float time) {
 		setWidth(fontMetrics.stringWidth(text) + 20);
-		drawBorderAndBackground(g2d, time);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	@Override
+	protected void doDraw(Graphics2D g2d) {
 		drawText(g2d, text);
 	}
 

@@ -66,6 +66,21 @@ public class BiomeWidget extends Widget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	@Override
+	protected void doUpdate(FontMetrics fontMetrics, float time) {
+		initializeIfNecessary(fontMetrics);
+		updateX();
+		updateHeight();
+		updateInnerBoxPositionAndSize();
+		updateBiomeListYOffset();
+		updateScrollbarVisibility();
+		if (scrollbarVisible) {
+			updateInnerBoxWidth();
+			updateScrollbarParameter(getMousePosition());
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void initializeIfNecessary(FontMetrics fontMetrics) {
 		if (!isInitialized) {
 			isInitialized = true;
@@ -76,43 +91,6 @@ public class BiomeWidget extends Widget {
 			}
 			biomeListHeight = biomes.size() * 16;
 		}
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	@Override
-	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
-		initializeIfNecessary(fontMetrics);
-		drawBorderAndBackground(g2d, time);
-		drawTextHighlightBiomes(g2d);
-		drawInnerBoxBackground(g2d);
-		drawInnerBoxBorder(g2d);
-		setClipToInnerBox(g2d);
-		for (int i = 0; i < biomes.size(); i++) {
-			Biome biome = biomes.get(i);
-			drawBiomeBackgroundColor(g2d, i, getBiomeBackgroudColor(i, biome));
-			drawBiomeColor(g2d, i, biome);
-			drawBiomeName(g2d, i, biome);
-		}
-		clearClip(g2d);
-		if (scrollbarVisible) {
-			updateScrollbarParameter(getMousePosition());
-			drawScrollbar(g2d);
-		}
-
-		drawTextSelect(g2d);
-		drawSpecialButtons(g2d);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	@Override
-	public void update(int viewerWidth, int viewerHeight, Point mousePosition) {
-		super.update(viewerWidth, viewerHeight, mousePosition);
-		updateX();
-		updateHeight();
-		updateInnerBoxPositionAndSize();
-		updateBiomeListYOffset();
-		updateScrollbarVisibility();
-		updateInnerBoxWidth();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -150,9 +128,45 @@ public class BiomeWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateInnerBoxWidth() {
-		if (scrollbarVisible) {
-			innerBox.width -= scrollbarWidth;
+		innerBox.width -= scrollbarWidth;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void updateScrollbarParameter(Point mousePosition) {
+		float boxHeight = innerBox.height;
+		float listHeight = biomeListHeight;
+		if (scrollbarGrabbed) {
+			if (mousePosition != null) {
+				biomeListYOffset = (int) ((listHeight / boxHeight) * (-scrollbarYOnGrab - (mousePosition.y - mouseYOnGrab)));
+				updateBiomeListYOffset();
+			} else {
+				scrollbarGrabbed = false;
+			}
 		}
+		scrollbarY = (int) (((float) -biomeListYOffset / listHeight) * boxHeight);
+		scrollbarHeight = (int) (Math
+				.ceil(boxHeight * (boxHeight / listHeight)));
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	@Override
+	protected void doDraw(Graphics2D g2d) {
+		drawTextHighlightBiomes(g2d);
+		drawInnerBoxBackground(g2d);
+		drawInnerBoxBorder(g2d);
+		setClipToInnerBox(g2d);
+		for (int i = 0; i < biomes.size(); i++) {
+			Biome biome = biomes.get(i);
+			drawBiomeBackgroundColor(g2d, i, getBiomeBackgroudColor(i, biome));
+			drawBiomeColor(g2d, i, biome);
+			drawBiomeName(g2d, i, biome);
+		}
+		clearClip(g2d);
+		if (scrollbarVisible) {
+			drawScrollbar(g2d);
+		}
+		drawTextSelect(g2d);
+		drawSpecialButtons(g2d);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -179,13 +193,6 @@ public class BiomeWidget extends Widget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void drawBiomeBackgroundColor(Graphics2D g2d, int i, Color color) {
-		g2d.setColor(color);
-		g2d.fillRect(innerBox.x, innerBox.y + i * 16 + biomeListYOffset,
-				innerBox.width, 16);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
 	private Color getBiomeBackgroudColor(int i, Biome biome) {
 		if (biomeSelection.isSelected(biome.getIndex())) {
 			if (i % 2 == 1) {
@@ -200,6 +207,13 @@ public class BiomeWidget extends Widget {
 				return BIOME_BG_COLOR_2;
 			}
 		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void drawBiomeBackgroundColor(Graphics2D g2d, int i, Color color) {
+		g2d.setColor(color);
+		g2d.fillRect(innerBox.x, innerBox.y + i * 16 + biomeListYOffset,
+				innerBox.width, 16);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -218,24 +232,6 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void clearClip(Graphics2D g2d) {
 		g2d.setClip(null);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void updateScrollbarParameter(Point mousePosition) {
-		float boxHeight = innerBox.height;
-		float listHeight = biomeListHeight;
-		if (scrollbarGrabbed) {
-			if (mousePosition != null) {
-				biomeListYOffset = (int) ((listHeight / boxHeight) * (-scrollbarYOnGrab - (mousePosition.y - mouseYOnGrab)));
-				updateBiomeListYOffset();
-			} else {
-				scrollbarGrabbed = false;
-			}
-		}
-		float yOffset = -biomeListYOffset;
-		scrollbarY = (int) ((yOffset / listHeight) * boxHeight);
-		scrollbarHeight = (int) (Math
-				.ceil(boxHeight * (boxHeight / listHeight)));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

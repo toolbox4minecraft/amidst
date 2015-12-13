@@ -36,14 +36,12 @@ public class CursorInformationWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
+	protected void doUpdate(FontMetrics fontMetrics, float time) {
 		String newText = getText();
 		if (newText != null) {
 			text = newText;
 		}
-		setWidth(g2d.getFontMetrics().stringWidth(text) + 20);
-		drawBorderAndBackground(g2d, time);
-		g2d.drawString(text, getX() + 10, getY() + 20);
+		setWidth(fontMetrics.stringWidth(text) + 20);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -70,6 +68,12 @@ public class CursorInformationWidget extends Widget {
 		} else {
 			return UNKNOWN_BIOME_NAME;
 		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	@Override
+	protected void doDraw(Graphics2D g2d) {
+		g2d.drawString(text, getX() + 10, getY() + 20);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
