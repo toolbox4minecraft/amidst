@@ -25,7 +25,7 @@ public abstract class TextWidget extends Widget {
 		String newText = updateText();
 		if (newText != null) {
 			if (!newText.equals(text)) {
-				setWidth(fontMetrics.stringWidth(text) + 20);
+				setWidth(fontMetrics.stringWidth(newText) + 20);
 			}
 			text = newText;
 			isVisible = true;
