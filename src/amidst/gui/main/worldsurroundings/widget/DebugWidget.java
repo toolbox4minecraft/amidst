@@ -27,7 +27,6 @@ public class DebugWidget extends Widget {
 		this.graph = graph;
 		this.fragmentManager = fragmentManager;
 		this.isVisibleSetting = isVisibleSetting;
-		forceVisibility(onVisibilityCheck());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

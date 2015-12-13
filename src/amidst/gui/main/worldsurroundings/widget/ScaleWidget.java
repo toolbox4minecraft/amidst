@@ -30,7 +30,6 @@ public class ScaleWidget extends Widget {
 		this.isVisibleSetting = isVisibleSetting;
 		setWidth(100);
 		setHeight(34);
-		forceVisibility(false);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

@@ -57,6 +57,7 @@ public abstract class Widget {
 	private int xMargin = 10;
 	private int yMargin = 10;
 
+	private boolean isFirstVisibilityCheck = true;
 	private float alpha = 1.0f;
 	private float targetAlpha = 1.0f;
 
@@ -186,20 +187,6 @@ public abstract class Widget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private float getAlpha(boolean isVisible) {
-		if (isVisible) {
-			return 1.0f;
-		} else {
-			return 0.0f;
-		}
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private boolean isFading() {
-		return targetAlpha != alpha;
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
 	protected void increaseYMargin(int delta) {
 		yMargin += delta;
 	}
@@ -236,16 +223,33 @@ public abstract class Widget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	protected void forceVisibility(boolean isVisible) {
-		targetAlpha = getAlpha(isVisible);
+	public boolean isVisible() {
+		boolean isVisible = onVisibilityCheck();
+		targetAlpha = getTargetAlpha(isVisible);
+		if (isFirstVisibilityCheck) {
+			isFirstVisibilityCheck = false;
+			skipFading();
+		}
+		return isVisible || isFading();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private float getTargetAlpha(boolean isVisible) {
+		if (isVisible) {
+			return 1.0f;
+		} else {
+			return 0.0f;
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void skipFading() {
 		alpha = targetAlpha;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public boolean isVisible() {
-		boolean isVisible = onVisibilityCheck();
-		targetAlpha = getAlpha(isVisible);
-		return isVisible || isFading();
+	private boolean isFading() {
+		return targetAlpha != alpha;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

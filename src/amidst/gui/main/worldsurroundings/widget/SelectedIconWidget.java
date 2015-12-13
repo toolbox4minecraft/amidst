@@ -26,7 +26,6 @@ public class SelectedIconWidget extends Widget {
 		increaseYMargin(40);
 		setWidth(20);
 		setHeight(35);
-		forceVisibility(false);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

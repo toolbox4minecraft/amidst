@@ -16,7 +16,6 @@ public class FpsWidget extends TextWidget {
 		super(anchor);
 		this.fpsTimer = fpsTimer;
 		this.isVisibleSetting = isVisibleSetting;
-		forceVisibility(onVisibilityCheck());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

@@ -62,7 +62,6 @@ public class BiomeWidget extends Widget {
 		setWidth(250);
 		setHeight(400);
 		setY(100);
-		forceVisibility(false);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

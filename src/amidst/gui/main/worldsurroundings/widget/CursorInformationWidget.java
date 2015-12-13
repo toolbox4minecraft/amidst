@@ -25,7 +25,6 @@ public class CursorInformationWidget extends TextWidget {
 		super(anchor);
 		this.graph = graph;
 		this.translator = translator;
-		forceVisibility(false);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
