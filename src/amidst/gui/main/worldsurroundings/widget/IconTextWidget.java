@@ -30,14 +30,14 @@ public abstract class IconTextWidget extends Widget {
 	protected void doUpdate(FontMetrics fontMetrics, float time) {
 		updated = false;
 		BufferedImage newIcon = updateIcon();
-		if (newIcon != null && icon != newIcon) {
+		if (newIcon != null && newIcon != icon) {
 			icon = newIcon;
 			iconWidth = (int) (((double) ICON_HEIGHT) * icon.getWidth() / icon
 					.getHeight());
 			updated = true;
 		}
 		String newText = updateText();
-		if (newText != null && !text.equals(newText)) {
+		if (newText != null && !newText.equals(text)) {
 			text = newText;
 			updated = true;
 		}

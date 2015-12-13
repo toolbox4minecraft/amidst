@@ -23,7 +23,7 @@ public abstract class TextWidget extends Widget {
 	@Override
 	protected void doUpdate(FontMetrics fontMetrics, float time) {
 		String newText = updateText();
-		if (newText != null && !text.equals(newText)) {
+		if (newText != null && !newText.equals(text)) {
 			text = newText;
 			setWidth(fontMetrics.stringWidth(text) + 20);
 		}
