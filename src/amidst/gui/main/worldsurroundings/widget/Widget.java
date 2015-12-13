@@ -124,22 +124,22 @@ public abstract class Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private int getRightX(int viewerWidth) {
-		return viewerWidth - (getWidth() + xMargin);
+		return viewerWidth - (width + xMargin);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private int getBottomY(int viewerHeight) {
-		return viewerHeight - (getHeight() + yMargin);
+		return viewerHeight - (height + yMargin);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private int getCenterX(int viewerWidth) {
-		return (viewerWidth >> 1) - (getWidth() >> 1);
+		return (viewerWidth >> 1) - (width >> 1);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private int getCenterY(int viewerHeight) {
-		return (viewerHeight >> 1) - (getHeight() >> 1);
+		return (viewerHeight >> 1) - (height >> 1);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -149,23 +149,23 @@ public abstract class Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawBorder(Graphics2D g2d) {
-		int x10 = getX() - 10;
-		int y10 = getY() - 10;
-		int xWidth = getX() + getWidth();
-		int yHeight = getY() + getHeight();
+		int x10 = x - 10;
+		int y10 = y - 10;
+		int xWidth = x + width;
+		int yHeight = y + height;
 		g2d.drawImage(DROP_SHADOW_TOP_LEFT, x10, y10, null);
 		g2d.drawImage(DROP_SHADOW_TOP_RIGHT, xWidth, y10, null);
 		g2d.drawImage(DROP_SHADOW_BOTTOM_LEFT, x10, yHeight, null);
 		g2d.drawImage(DROP_SHADOW_BOTTOM_RIGHT, xWidth, yHeight, null);
-		g2d.drawImage(DROP_SHADOW_TOP, getX(), y10, getWidth(), 10, null);
-		g2d.drawImage(DROP_SHADOW_BOTTOM, getX(), yHeight, getWidth(), 10, null);
-		g2d.drawImage(DROP_SHADOW_LEFT, x10, getY(), 10, getHeight(), null);
-		g2d.drawImage(DROP_SHADOW_RIGHT, xWidth, getY(), 10, getHeight(), null);
+		g2d.drawImage(DROP_SHADOW_TOP, x, y10, width, 10, null);
+		g2d.drawImage(DROP_SHADOW_BOTTOM, x, yHeight, width, 10, null);
+		g2d.drawImage(DROP_SHADOW_LEFT, x10, y, 10, height, null);
+		g2d.drawImage(DROP_SHADOW_RIGHT, xWidth, y, 10, height, null);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawBackground(Graphics2D g2d) {
-		g2d.fillRect(getX(), getY(), getWidth(), getHeight());
+		g2d.fillRect(x, y, width, height);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
