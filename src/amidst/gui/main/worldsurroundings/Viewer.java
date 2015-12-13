@@ -11,18 +11,22 @@ import javax.swing.JComponent;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.worldsurroundings.widget.Widget;
 
+@NotThreadSafe
 public class Viewer {
 	@SuppressWarnings("serial")
 	private static class ViewerComponent extends JComponent {
 		private final FontMetrics widgetFontMetrics = getFontMetrics(Widget.TEXT_FONT);
 		private final Drawer drawer;
 
+		@CalledOnlyBy(AmidstThread.EDT)
 		public ViewerComponent(Drawer drawer) {
 			this.drawer = drawer;
 		}
 
+		@CalledOnlyBy(AmidstThread.EDT)
 		@Override
 		public void paint(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g.create();
@@ -30,6 +34,7 @@ public class Viewer {
 					widgetFontMetrics);
 		}
 
+		@CalledOnlyBy(AmidstThread.EDT)
 		public BufferedImage createCaptureImage() {
 			int width = getWidth();
 			int height = getHeight();
@@ -47,11 +52,13 @@ public class Viewer {
 	private final ViewerMouseListener mouseListener;
 	private final ViewerComponent component;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public Viewer(ViewerMouseListener mouseListener, Drawer drawer) {
 		this.mouseListener = mouseListener;
 		this.component = createComponent(drawer);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private ViewerComponent createComponent(Drawer drawer) {
 		ViewerComponent result = new ViewerComponent(drawer);
 		result.addMouseListener(mouseListener);
@@ -60,10 +67,12 @@ public class Viewer {
 		return result;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public BufferedImage createCaptureImage() {
 		return component.createCaptureImage();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public Point getMousePositionOrCenter() {
 		Point result = component.getMousePosition();
 		if (result == null) {
@@ -78,6 +87,7 @@ public class Viewer {
 		component.repaint();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public Component getComponent() {
 		return component;
 	}

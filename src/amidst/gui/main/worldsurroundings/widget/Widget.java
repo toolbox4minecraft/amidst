@@ -9,9 +9,13 @@ import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.resources.ResourceLoader;
 import amidst.utilities.CoordinateUtils;
 
+@NotThreadSafe
 public abstract class Widget {
 	public static enum CornerAnchorPoint {
 		TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, BOTTOM_CENTER, CENTER, NONE
@@ -60,10 +64,12 @@ public abstract class Widget {
 	private int viewerHeight;
 	private Point mousePosition;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected Widget(CornerAnchorPoint anchor) {
 		this.anchor = anchor;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void drawBorderAndBackground(Graphics2D g2d, float time) {
 		updateAlpha(time);
 		initGraphics(g2d);
@@ -72,6 +78,7 @@ public abstract class Widget {
 		initGraphicsForContent(g2d);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateAlpha(float time) {
 		if (alpha < targetAlpha) {
 			alpha = Math.min(targetAlpha, alpha + time * 4.0f);
@@ -80,6 +87,7 @@ public abstract class Widget {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updatePosition() {
 		if (anchor == CornerAnchorPoint.TOP_LEFT) {
 			setX(getLeftX());
@@ -104,34 +112,42 @@ public abstract class Widget {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private int getLeftX() {
 		return xMargin;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private int getTopY() {
 		return yMargin;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private int getRightX(int viewerWidth) {
 		return viewerWidth - (getWidth() + xMargin);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private int getBottomY(int viewerHeight) {
 		return viewerHeight - (getHeight() + yMargin);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private int getCenterX(int viewerWidth) {
 		return (viewerWidth >> 1) - (getWidth() >> 1);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private int getCenterY(int viewerHeight) {
 		return (viewerHeight >> 1) - (getHeight() >> 1);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void initGraphics(Graphics2D g2d) {
 		g2d.setColor(PANEL_COLOR);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawBorder(Graphics2D g2d) {
 		int x10 = getX() - 10;
 		int y10 = getY() - 10;
@@ -147,15 +163,18 @@ public abstract class Widget {
 		g2d.drawImage(DROP_SHADOW_RIGHT, xWidth, getY(), 10, getHeight(), null);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawBackground(Graphics2D g2d) {
 		g2d.fillRect(getX(), getY(), getWidth(), getHeight());
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void initGraphicsForContent(Graphics2D g2d) {
 		g2d.setFont(TEXT_FONT);
 		g2d.setColor(TEXT_COLOR);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private float getAlpha(boolean isVisible) {
 		if (isVisible) {
 			return 1.0f;
@@ -164,121 +183,141 @@ public abstract class Widget {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean isFading() {
 		return targetAlpha != alpha;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected void increaseYMargin(int delta) {
 		yMargin += delta;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean isInBounds(Point mouse) {
 		return isInBounds(mouse.x, mouse.y);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean isInBounds(int x, int y) {
 		return CoordinateUtils.isInBounds(x, y, this.x, this.y, this.width,
 				this.height);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public int translateXToWidgetCoordinates(Point mouse) {
 		return translateXToWidgetCoordinates(mouse.x);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public int translateYToWidgetCoordinates(Point mouse) {
 		return translateYToWidgetCoordinates(mouse.y);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public int translateXToWidgetCoordinates(int x) {
 		return x - this.x;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public int translateYToWidgetCoordinates(int y) {
 		return y - this.y;
 	}
 
-	public int translateXToScreenCoordinates(int x) {
-		return this.x + x;
-	}
-
-	public int translateYToScreenCoordinates(int y) {
-		return this.y + y;
-	}
-
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected void forceVisibility(boolean isVisible) {
 		targetAlpha = getAlpha(isVisible);
 		alpha = targetAlpha;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean isVisible() {
 		boolean isVisible = onVisibilityCheck();
 		targetAlpha = getAlpha(isVisible);
 		return isVisible || isFading();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public float getAlpha() {
 		return alpha;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public int getX() {
 		return x;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public int getY() {
 		return y;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public int getWidth() {
 		return width;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public int getHeight() {
 		return height;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected void setX(int x) {
 		this.x = x;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected void setY(int y) {
 		this.y = y;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected void setWidth(int width) {
 		this.width = width;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected void setHeight(int height) {
 		this.height = height;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean onClick(int x, int y) {
 		return true;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean onMouseWheelMoved(int x, int y, int rotation) {
 		return false;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean onMousePressed(int x, int y) {
 		return true;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void onMouseReleased() {
+		// noop
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected int getViewerWidth() {
 		return viewerWidth;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected int getViewerHeight() {
 		return viewerHeight;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected Point getMousePosition() {
 		return mousePosition;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void update(int viewerWidth, int viewerHeight, Point mousePosition) {
 		this.viewerWidth = viewerWidth;
 		this.viewerHeight = viewerHeight;
@@ -286,8 +325,10 @@ public abstract class Widget {
 		updatePosition();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public abstract void draw(Graphics2D g2d, FontMetrics fontMetrics,
 			float time);
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected abstract boolean onVisibilityCheck();
 }

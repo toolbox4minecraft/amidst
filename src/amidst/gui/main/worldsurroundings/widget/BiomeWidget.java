@@ -8,12 +8,16 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.main.worldsurroundings.BiomeSelection;
 import amidst.mojangapi.world.Biome;
 import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
 import amidst.utilities.CoordinateUtils;
 
+@NotThreadSafe
 public class BiomeWidget extends Widget {
 	// @formatter:off
 	private static final Color INNER_BOX_BG_COLOR = 	new Color(0.3f, 0.3f, 0.3f, 0.3f);
@@ -47,6 +51,7 @@ public class BiomeWidget extends Widget {
 	private int mouseYOnGrab = 0;
 	private int scrollbarYOnGrab;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public BiomeWidget(CornerAnchorPoint anchor, BiomeSelection biomeSelection,
 			LayerReloader layerReloader,
 			BiomeColorProfileSelection biomeColorProfileSelection) {
@@ -60,6 +65,7 @@ public class BiomeWidget extends Widget {
 		forceVisibility(false);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void initializeIfNecessary(FontMetrics fontMetrics) {
 		if (!isInitialized) {
 			isInitialized = true;
@@ -72,6 +78,7 @@ public class BiomeWidget extends Widget {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
 		initializeIfNecessary(fontMetrics);
@@ -96,6 +103,7 @@ public class BiomeWidget extends Widget {
 		drawSpecialButtons(g2d);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public void update(int viewerWidth, int viewerHeight, Point mousePosition) {
 		super.update(viewerWidth, viewerHeight, mousePosition);
@@ -107,14 +115,17 @@ public class BiomeWidget extends Widget {
 		updateInnerBoxWidth();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateX() {
 		setX(getViewerWidth() - getWidth());
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateHeight() {
 		setHeight(Math.max(200, getViewerHeight() - 200));
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateInnerBoxPositionAndSize() {
 		innerBox.x = getX() + 8;
 		innerBox.y = getY() + 30;
@@ -122,11 +133,13 @@ public class BiomeWidget extends Widget {
 		innerBox.height = getHeight() - 58;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateBiomeListYOffset() {
 		biomeListYOffset = Math.min(0,
 				Math.max(-biomeListHeight + innerBox.height, biomeListYOffset));
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateScrollbarVisibility() {
 		if (biomeListHeight > innerBox.height) {
 			scrollbarVisible = true;
@@ -135,37 +148,44 @@ public class BiomeWidget extends Widget {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateInnerBoxWidth() {
 		if (scrollbarVisible) {
 			innerBox.width -= scrollbarWidth;
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawTextHighlightBiomes(Graphics2D g2d) {
 		g2d.drawString("Highlight Biomes", getX() + 10, getY() + 20);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawInnerBoxBackground(Graphics2D g2d) {
 		g2d.setColor(INNER_BOX_BG_COLOR);
 		g2d.fillRect(innerBox.x, innerBox.y, innerBox.width, innerBox.height);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawInnerBoxBorder(Graphics2D g2d) {
 		g2d.setColor(INNER_BOX_BORDER_COLOR);
 		g2d.drawRect(innerBox.x - 1, innerBox.y - 1, innerBox.width + 1
 				+ (scrollbarVisible ? scrollbarWidth : 0), innerBox.height + 1);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void setClipToInnerBox(Graphics2D g2d) {
 		g2d.setClip(innerBox);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawBiomeBackgroundColor(Graphics2D g2d, int i, Color color) {
 		g2d.setColor(color);
 		g2d.fillRect(innerBox.x, innerBox.y + i * 16 + biomeListYOffset,
 				innerBox.width, 16);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private Color getBiomeBackgroudColor(int i, Biome biome) {
 		if (biomeSelection.isSelected(biome.getIndex())) {
 			if (i % 2 == 1) {
@@ -182,21 +202,25 @@ public class BiomeWidget extends Widget {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawBiomeColor(Graphics2D g2d, int i, Biome biome) {
 		g2d.setColor(biomeColorProfileSelection.getColorByBiome(biome));
 		g2d.fillRect(innerBox.x, innerBox.y + i * 16 + biomeListYOffset, 20, 16);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawBiomeName(Graphics2D g2d, int i, Biome biome) {
 		g2d.setColor(Color.white);
 		g2d.drawString(biome.getName(), innerBox.x + 25, innerBox.y + 13 + i
 				* 16 + biomeListYOffset);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void clearClip(Graphics2D g2d) {
 		g2d.setClip(null);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateScrollbarParameter(Point mousePosition) {
 		float boxHeight = innerBox.height;
 		float listHeight = biomeListHeight;
@@ -214,23 +238,27 @@ public class BiomeWidget extends Widget {
 				.ceil(boxHeight * (boxHeight / listHeight)));
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawScrollbar(Graphics2D g2d) {
 		g2d.setColor(scrollbarGrabbed ? SCROLLBAR_LIT_COLOR : SCROLLBAR_COLOR);
 		g2d.fillRect(innerBox.x + innerBox.width, innerBox.y + scrollbarY,
 				scrollbarWidth, scrollbarHeight);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawTextSelect(Graphics2D g2d) {
 		g2d.setColor(Color.white);
 		g2d.drawString("Select:", getX() + 8, getY() + getHeight() - 10);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawSpecialButtons(Graphics2D g2d) {
 		g2d.setColor(SELECT_BUTTON_COLOR);
 		g2d.drawString("All  Special  None", getX() + 120, getY() + getHeight()
 				- 10);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public boolean onMouseWheelMoved(int mouseX, int mouseY, int notches) {
 		if (!isInitialized) {
@@ -243,11 +271,13 @@ public class BiomeWidget extends Widget {
 		return true;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public void onMouseReleased() {
 		scrollbarGrabbed = false;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public boolean onMousePressed(int mouseX, int mouseY) {
 		if (!isInitialized) {
@@ -260,6 +290,7 @@ public class BiomeWidget extends Widget {
 		return true;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateScrollbarParameters(int mouseX, int mouseY) {
 		if (scrollbarVisible) {
 			if (isInBoundsOfScrollbar(mouseX, mouseY)) {
@@ -270,6 +301,7 @@ public class BiomeWidget extends Widget {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean processClick(int mouseX, int mouseY) {
 		if (isInBoundsOfInnerBox(mouseX, mouseY)) {
 			int id = (mouseY - (innerBox.y - getY()) - biomeListYOffset) / 16;
@@ -293,6 +325,7 @@ public class BiomeWidget extends Widget {
 		return false;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean isInBoundsOfInnerBox(int mouseX, int mouseY) {
 		int offsetX = translateXToWidgetCoordinates(innerBox.x);
 		int offsetY = translateYToWidgetCoordinates(innerBox.y);
@@ -302,6 +335,7 @@ public class BiomeWidget extends Widget {
 				width, height);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean isInBoundsOfScrollbar(int mouseX, int mouseY) {
 		int offsetX = translateXToWidgetCoordinates(innerBox.x + innerBox.width);
 		int offsetY = translateYToWidgetCoordinates(innerBox.y + scrollbarY);
@@ -313,22 +347,27 @@ public class BiomeWidget extends Widget {
 
 	// TODO: These values are temporarily hard coded for the sake of a fast
 	// release
+	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean isButton(int mouseY) {
 		return mouseY > getHeight() - 25 && mouseY < getHeight() - 9;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean isSelectAllButton(int mouseX) {
 		return mouseX > 117 && mouseX < 139;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean isSelectSpecialBiomesButton(int mouseX) {
 		return mouseX > 143 && mouseX < 197;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean isDeselectAllButton(int mouseX) {
 		return mouseX > 203 && mouseX < 242;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public boolean onVisibilityCheck() {
 		return biomeSelection.isHighlightMode() && getHeight() > 200;

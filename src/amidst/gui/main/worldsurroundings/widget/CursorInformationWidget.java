@@ -4,6 +4,9 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.gui.main.worldsurroundings.FragmentGraphToScreenTranslator;
@@ -11,6 +14,7 @@ import amidst.mojangapi.world.Biome;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.Resolution;
 
+@NotThreadSafe
 public class CursorInformationWidget extends Widget {
 	private static final String UNKNOWN_BIOME_NAME = "Unknown";
 
@@ -19,6 +23,7 @@ public class CursorInformationWidget extends Widget {
 
 	private String text = "";
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public CursorInformationWidget(CornerAnchorPoint anchor,
 			FragmentGraph graph, FragmentGraphToScreenTranslator translator) {
 		super(anchor);
@@ -29,6 +34,7 @@ public class CursorInformationWidget extends Widget {
 		forceVisibility(false);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
 		String newText = getText();
@@ -40,6 +46,7 @@ public class CursorInformationWidget extends Widget {
 		g2d.drawString(text, getX() + 10, getY() + 20);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private String getText() {
 		Point mousePosition = getMousePosition();
 		if (mousePosition != null) {
@@ -52,6 +59,7 @@ public class CursorInformationWidget extends Widget {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private String getBiomeNameAt(CoordinatesInWorld coordinates) {
 		Fragment fragment = graph.getFragmentAt(coordinates);
 		if (fragment != null && fragment.isLoaded()) {
@@ -64,6 +72,7 @@ public class CursorInformationWidget extends Widget {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected boolean onVisibilityCheck() {
 		return getMousePosition() != null;

@@ -2,39 +2,40 @@ package amidst.gui.main.worldsurroundings;
 
 import java.awt.Point;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.mojangapi.world.CoordinatesInWorld;
-import amidst.threading.TaskQueue;
 
+@NotThreadSafe
 public class FragmentGraphToScreenTranslator {
-	private final TaskQueue taskQueue = new TaskQueue();
-
 	private final FragmentGraph graph;
 	private final Zoom zoom;
 
-	private volatile double leftOnScreen;
-	private volatile double topOnScreen;
+	private double leftOnScreen;
+	private double topOnScreen;
 
-	private volatile int viewerWidth;
-	private volatile int viewerHeight;
+	private int viewerWidth;
+	private int viewerHeight;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public FragmentGraphToScreenTranslator(FragmentGraph graph, Zoom zoom) {
 		this.graph = graph;
 		this.zoom = zoom;
 		centerOn(CoordinatesInWorld.origin());
 	}
 
-	public void setViewerDimensions(int viewerWidth, int viewerHeight) {
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void update(int viewerWidth, int viewerHeight) {
 		this.viewerWidth = viewerWidth;
 		this.viewerHeight = viewerHeight;
+		adjustNumberOfRowsAndColumns();
 	}
 
-	public void processTasks() {
-		taskQueue.processTasks();
-	}
-
-	public void adjustNumberOfRowsAndColumns() {
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void adjustNumberOfRowsAndColumns() {
 		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		int desiredFragmentsPerRow = (int) (viewerWidth / fragmentSizeOnScreen + 2);
 		int desiredFragmentsPerColumn = (int) (viewerHeight
@@ -50,6 +51,7 @@ public class FragmentGraphToScreenTranslator {
 				fragmentSizeOnScreen * -newAbove);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private int getNewLeft(double fragmentSizeOnScreen) {
 		if (leftOnScreen > 0) {
 			return (int) (leftOnScreen / fragmentSizeOnScreen) + 1;
@@ -58,6 +60,7 @@ public class FragmentGraphToScreenTranslator {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private int getNewAbove(double fragmentSizeOnScreen) {
 		if (topOnScreen > 0) {
 			return (int) (topOnScreen / fragmentSizeOnScreen) + 1;
@@ -66,16 +69,8 @@ public class FragmentGraphToScreenTranslator {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void centerOn(final CoordinatesInWorld coordinates) {
-		taskQueue.invoke(new Runnable() {
-			@Override
-			public void run() {
-				doCenterOn(coordinates);
-			}
-		});
-	}
-
-	private void doCenterOn(CoordinatesInWorld coordinates) {
 		graph.init(coordinates);
 		int xCenterOnScreen = viewerWidth >> 1;
 		int yCenterOnScreen = viewerHeight >> 1;
@@ -86,10 +81,12 @@ public class FragmentGraphToScreenTranslator {
 				yCenterOnScreen - zoom.worldToScreen(yFragmentRelative));
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void adjustToMovement(int deltaX, int deltaY) {
 		adjustTopLeftOnScreen(deltaX, deltaY);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void adjustToZoom(double previous, double current,
 			Point mousePosition) {
 		double baseX = mousePosition.x - leftOnScreen;
@@ -99,24 +96,29 @@ public class FragmentGraphToScreenTranslator {
 		adjustTopLeftOnScreen(deltaX, deltaY);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void setTopLeftOnScreen(double leftOnScreen, double topOnScreen) {
 		this.leftOnScreen = leftOnScreen;
 		this.topOnScreen = topOnScreen;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void adjustTopLeftOnScreen(double deltaX, double deltaY) {
 		this.leftOnScreen += deltaX;
 		this.topOnScreen += deltaY;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public double getLeftOnScreen() {
 		return leftOnScreen;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public double getTopOnScreen() {
 		return topOnScreen;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
 		CoordinatesInWorld corner = graph.getCorner();
 		return corner.add(

@@ -1,5 +1,10 @@
 package amidst.gui.main.worldsurroundings.widget;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
+
+@NotThreadSafe
 public class FramerateTimer {
 	private int tickCounter;
 	private long lastTime;
@@ -7,16 +12,19 @@ public class FramerateTimer {
 
 	private float currentFPS = 0.0f;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public FramerateTimer(int updatesPerSecond) {
 		msPerUpdate = (long) (1000f * (1f / updatesPerSecond));
 		reset();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void reset() {
 		tickCounter = 0;
 		lastTime = System.currentTimeMillis();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void tick() {
 		tickCounter++;
 		long currentTime = System.currentTimeMillis();
@@ -27,6 +35,7 @@ public class FramerateTimer {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private float calculateCurrentFPS(long currentTime) {
 		float timeDifference = currentTime - lastTime;
 		timeDifference /= 1000f;
@@ -34,8 +43,8 @@ public class FramerateTimer {
 		return timeDifference;
 	}
 
-	@Override
-	public String toString() {
-		return "FPS: " + String.format("%.1f", currentFPS);
+	@CalledOnlyBy(AmidstThread.EDT)
+	public float getCurrentFPS() {
+		return currentFPS;
 	}
 }

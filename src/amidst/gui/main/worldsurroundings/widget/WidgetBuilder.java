@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import amidst.Settings;
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerReloader;
@@ -14,6 +17,7 @@ import amidst.gui.main.worldsurroundings.Zoom;
 import amidst.gui.main.worldsurroundings.widget.Widget.CornerAnchorPoint;
 import amidst.mojangapi.world.World;
 
+@NotThreadSafe
 public class WidgetBuilder {
 	private final World world;
 	private final FragmentGraph graph;
@@ -25,6 +29,7 @@ public class WidgetBuilder {
 	private final FragmentManager fragmentManager;
 	private final Settings settings;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public WidgetBuilder(World world, FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			BiomeSelection biomeSelection,
@@ -41,6 +46,7 @@ public class WidgetBuilder {
 		this.settings = settings;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public List<Widget> create() {
 		// @formatter:off
 		return Arrays.asList(

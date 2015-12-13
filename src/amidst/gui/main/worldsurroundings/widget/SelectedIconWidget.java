@@ -4,15 +4,20 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.worldsurroundings.WorldIconSelection;
 import amidst.mojangapi.world.icon.WorldIcon;
 
+@NotThreadSafe
 public class SelectedIconWidget extends Widget {
 	private final WorldIconSelection worldIconSelection;
 
 	private String message = "";
 	private BufferedImage icon;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public SelectedIconWidget(CornerAnchorPoint anchor,
 			WorldIconSelection worldIconSelection) {
 		super(anchor);
@@ -23,10 +28,11 @@ public class SelectedIconWidget extends Widget {
 		forceVisibility(false);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
-		if (worldIconSelection.hasSelection()) {
-			WorldIcon selection = worldIconSelection.get();
+		WorldIcon selection = worldIconSelection.get();
+		if (selection != null) {
 			message = selection.toString();
 			icon = selection.getImage();
 		}
@@ -42,6 +48,7 @@ public class SelectedIconWidget extends Widget {
 		g2d.drawString(message, getX() + 35, getY() + 23);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected boolean onVisibilityCheck() {
 		return worldIconSelection.hasSelection();

@@ -3,15 +3,22 @@ package amidst.gui.main.worldsurroundings.widget;
 import java.awt.Point;
 import java.util.List;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
+
+@NotThreadSafe
 public class WidgetManager {
 	private final List<Widget> widgets;
 
 	private Widget mouseOwner;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public WidgetManager(List<Widget> widgets) {
 		this.widgets = widgets;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean mouseWheelMoved(Point mousePosition, int notches) {
 		for (Widget widget : widgets) {
 			if (widget.isVisible()
@@ -27,6 +34,7 @@ public class WidgetManager {
 		return false;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean mouseClicked(Point mousePosition) {
 		for (Widget widget : widgets) {
 			if (widget.isVisible()
@@ -41,6 +49,7 @@ public class WidgetManager {
 		return false;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean mousePressed(Point mousePosition) {
 		for (Widget widget : widgets) {
 			if (widget.isVisible()
@@ -56,6 +65,7 @@ public class WidgetManager {
 		return false;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean mouseReleased() {
 		if (mouseOwner != null) {
 			mouseOwner.onMouseReleased();

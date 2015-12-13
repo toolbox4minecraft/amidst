@@ -2,8 +2,12 @@ package amidst.gui.main.worldsurroundings;
 
 import java.awt.Point;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.settings.Setting;
 
+@NotThreadSafe
 public class Movement {
 	private double speedX = 0;
 	private double speedY = 0;
@@ -11,10 +15,12 @@ public class Movement {
 
 	private final Setting<Boolean> smoothScrollingSetting;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public Movement(Setting<Boolean> smoothScrollingSetting) {
 		this.smoothScrollingSetting = smoothScrollingSetting;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void update(FragmentGraphToScreenTranslator translator,
 			Point currentMouse) {
 		updateMovementSpeed(currentMouse);
@@ -22,6 +28,7 @@ public class Movement {
 		throttleMovementSpeed();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateMovementSpeed(Point currentMouse) {
 		if (lastMouse != null) {
 			if (currentMouse != null) {
@@ -35,10 +42,12 @@ public class Movement {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void adjustTranslator(FragmentGraphToScreenTranslator translator) {
 		translator.adjustToMovement((int) speedX, (int) speedY);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void throttleMovementSpeed() {
 		if (smoothScrollingSetting.get()) {
 			speedX *= 0.95f;
@@ -49,6 +58,7 @@ public class Movement {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void setLastMouse(Point lastMouse) {
 		this.lastMouse = lastMouse;
 	}

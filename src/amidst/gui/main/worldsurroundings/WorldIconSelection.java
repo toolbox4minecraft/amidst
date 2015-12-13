@@ -1,9 +1,11 @@
 package amidst.gui.main.worldsurroundings;
 
+import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.icon.WorldIcon;
 
+@ThreadSafe
 public class WorldIconSelection {
-	private WorldIcon selection;
+	private volatile WorldIcon selection;
 
 	public WorldIcon get() {
 		return selection;

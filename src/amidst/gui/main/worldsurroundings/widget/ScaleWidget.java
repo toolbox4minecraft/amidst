@@ -4,9 +4,13 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.worldsurroundings.Zoom;
 import amidst.settings.Setting;
 
+@NotThreadSafe
 public class ScaleWidget extends Widget {
 	@Deprecated
 	public static int cScaleLengthMax_px = 200;
@@ -16,6 +20,7 @@ public class ScaleWidget extends Widget {
 	private final Zoom zoom;
 	private final Setting<Boolean> isVisibleSetting;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public ScaleWidget(CornerAnchorPoint anchor, Zoom zoom,
 			Setting<Boolean> isVisibleSetting) {
 		super(anchor);
@@ -26,6 +31,7 @@ public class ScaleWidget extends Widget {
 		forceVisibility(false);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public void draw(Graphics2D g2d, FontMetrics fontMetrics, float time) {
 		int scaleBlocks = scaleLength_blocks();
@@ -51,11 +57,7 @@ public class ScaleWidget extends Widget {
 				+ cMargin + scaleWidth_px, getY() + 28);
 	}
 
-	@Override
-	protected boolean onVisibilityCheck() {
-		return isVisibleSetting.get();
-	}
-
+	@CalledOnlyBy(AmidstThread.EDT)
 	private int scaleLength_blocks() {
 		double scale = zoom.getCurrentValue();
 
@@ -71,5 +73,11 @@ public class ScaleWidget extends Widget {
 		}
 
 		return result;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	@Override
+	protected boolean onVisibilityCheck() {
+		return isVisibleSetting.get();
 	}
 }

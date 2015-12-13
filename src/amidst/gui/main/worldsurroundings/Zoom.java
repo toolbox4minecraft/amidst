@@ -2,8 +2,12 @@ package amidst.gui.main.worldsurroundings;
 
 import java.awt.Point;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.settings.Setting;
 
+@NotThreadSafe
 public class Zoom {
 	private int remainingTicks = 0;
 	private int level = 0;
@@ -14,10 +18,12 @@ public class Zoom {
 
 	private final Setting<Boolean> maxZoomSetting;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public Zoom(Setting<Boolean> maxZoomSetting) {
 		this.maxZoomSetting = maxZoomSetting;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void update(FragmentGraphToScreenTranslator translator) {
 		remainingTicks--;
 		if (remainingTicks >= 0) {
@@ -26,12 +32,14 @@ public class Zoom {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private double updateCurrent() {
 		double previous = current;
 		current = (target + current) * 0.5;
 		return previous;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void adjustZoom(Point mousePosition, int notches) {
 		this.mousePosition = mousePosition;
 		if (notches > 0) {
@@ -47,6 +55,7 @@ public class Zoom {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private int getMaxZoomLevel() {
 		if (maxZoomSetting.get()) {
 			return 10;
@@ -55,23 +64,28 @@ public class Zoom {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public double getCurrentValue() {
 		return current;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void skipFading() {
 		remainingTicks = 0;
 		current = target;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void reset() {
 		mousePosition = new Point();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public double screenToWorld(double coordinate) {
 		return coordinate / current;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public double worldToScreen(double coordinate) {
 		return coordinate * current;
 	}

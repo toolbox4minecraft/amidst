@@ -10,6 +10,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentGraphItem;
@@ -17,6 +20,7 @@ import amidst.fragment.drawer.FragmentDrawer;
 import amidst.gui.main.worldsurroundings.widget.Widget;
 import amidst.resources.ResourceLoader;
 
+@NotThreadSafe
 public class Drawer {
 	private static final BufferedImage DROP_SHADOW_BOTTOM_LEFT = ResourceLoader
 			.getImage("dropshadow/inner_bottom_left.png");
@@ -34,8 +38,6 @@ public class Drawer {
 			.getImage("dropshadow/inner_left.png");
 	private static final BufferedImage DROP_SHADOW_RIGHT = ResourceLoader
 			.getImage("dropshadow/inner_right.png");
-
-	private final Object drawLock = new Object();
 
 	private final AffineTransform originalLayerMatrix = new AffineTransform();
 	private final AffineTransform layerMatrix = new AffineTransform();
@@ -56,6 +58,7 @@ public class Drawer {
 	private long lastTime = System.currentTimeMillis();
 	private float time;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public Drawer(FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			Movement movement, List<Widget> widgets,
@@ -68,41 +71,40 @@ public class Drawer {
 		this.drawers = drawers;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void drawCaptureImage(Graphics2D g2d, int viewerWidth,
 			int viewerHeight, Point mousePosition, FontMetrics widgetFontMetrics) {
-		synchronized (drawLock) {
-			this.g2d = g2d;
-			this.viewerWidth = viewerWidth;
-			this.viewerHeight = viewerHeight;
-			this.mousePosition = mousePosition;
-			this.widgetFontMetrics = widgetFontMetrics;
-			this.time = 0;
-			updateTranslator();
-			clear();
-			drawFragments();
-			drawWidgets();
-		}
+		this.g2d = g2d;
+		this.viewerWidth = viewerWidth;
+		this.viewerHeight = viewerHeight;
+		this.mousePosition = mousePosition;
+		this.widgetFontMetrics = widgetFontMetrics;
+		this.time = 0;
+		updateTranslator();
+		clear();
+		drawFragments();
+		drawWidgets();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void draw(Graphics2D g2d, int viewerWidth, int viewerHeight,
 			Point mousePosition, FontMetrics widgetFontMetrics) {
-		synchronized (drawLock) {
-			this.g2d = g2d;
-			this.viewerWidth = viewerWidth;
-			this.viewerHeight = viewerHeight;
-			this.mousePosition = mousePosition;
-			this.widgetFontMetrics = widgetFontMetrics;
-			this.time = calculateTimeSpanSinceLastDrawInSeconds();
-			updateZoom();
-			updateMovement();
-			updateTranslator();
-			clear();
-			drawFragments();
-			drawBorder();
-			drawWidgets();
-		}
+		this.g2d = g2d;
+		this.viewerWidth = viewerWidth;
+		this.viewerHeight = viewerHeight;
+		this.mousePosition = mousePosition;
+		this.widgetFontMetrics = widgetFontMetrics;
+		this.time = calculateTimeSpanSinceLastDrawInSeconds();
+		updateZoom();
+		updateMovement();
+		updateTranslator();
+		clear();
+		drawFragments();
+		drawBorder();
+		drawWidgets();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private float calculateTimeSpanSinceLastDrawInSeconds() {
 		long currentTime = System.currentTimeMillis();
 		float result = Math.min(Math.max(0, currentTime - lastTime), 100) / 1000.0f;
@@ -110,25 +112,28 @@ public class Drawer {
 		return result;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateZoom() {
 		zoom.update(translator);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateMovement() {
 		movement.update(translator, mousePosition);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateTranslator() {
-		translator.setViewerDimensions(viewerWidth, viewerHeight);
-		translator.processTasks();
-		translator.adjustNumberOfRowsAndColumns();
+		translator.update(viewerWidth, viewerHeight);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void clear() {
 		g2d.setColor(Color.black);
 		g2d.fillRect(0, 0, viewerWidth, viewerHeight);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawFragments() {
 		// TODO: is this needed?
 		Graphics2D old = g2d;
@@ -137,6 +142,7 @@ public class Drawer {
 		g2d = old;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void doDrawFragments() {
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
@@ -148,6 +154,7 @@ public class Drawer {
 		g2d.setTransform(originalGraphicsTransform);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void initOriginalLayerMatrix(
 			AffineTransform originalGraphicsTransform) {
 		double scale = zoom.getCurrentValue();
@@ -157,6 +164,7 @@ public class Drawer {
 		originalLayerMatrix.scale(scale, scale);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawLayers() {
 		for (FragmentDrawer drawer : drawers) {
 			if (drawer.isEnabled()) {
@@ -176,10 +184,12 @@ public class Drawer {
 		setAlphaComposite(1.0f);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void initLayerMatrix() {
 		layerMatrix.setTransform(originalLayerMatrix);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateLayerMatrix(FragmentGraphItem fragmentGraphItem,
 			int fragmentsPerRow) {
 		layerMatrix.translate(Fragment.SIZE, 0);
@@ -189,6 +199,7 @@ public class Drawer {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawBorder() {
 		int width10 = viewerWidth - 10;
 		int height10 = viewerHeight - 10;
@@ -204,6 +215,7 @@ public class Drawer {
 		g2d.drawImage(DROP_SHADOW_RIGHT, width10, 10, 10, height20, null);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawWidgets() {
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -216,6 +228,7 @@ public class Drawer {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void setAlphaComposite(float alpha) {
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
 				alpha));
