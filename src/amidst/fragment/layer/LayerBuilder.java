@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import amidst.Settings;
+import amidst.documentation.Immutable;
 import amidst.fragment.FragmentQueueProcessor;
 import amidst.fragment.colorprovider.BiomeColorProvider;
 import amidst.fragment.colorprovider.SlimeColorProvider;
@@ -28,6 +29,7 @@ import amidst.mojangapi.world.Resolution;
 import amidst.mojangapi.world.World;
 import amidst.settings.ImmutableSetting;
 
+@Immutable
 public class LayerBuilder {
 	private final List<LayerDeclaration> declarations;
 	private final Iterable<FragmentConstructor> constructors;

@@ -2,6 +2,8 @@ package amidst.fragment;
 
 import java.util.Iterator;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 
 @NotThreadSafe
@@ -53,23 +55,28 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	private volatile FragmentGraphItem aboveFragment = null;
 	private volatile FragmentGraphItem belowFragment = null;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public FragmentGraphItem(Fragment fragment) {
 		this.fragment = fragment;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public Fragment getFragment() {
 		return fragment;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public Iterator<FragmentGraphItem> iterator() {
 		return new FragmentGraphItemIterator(this);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean isEndOfLine() {
 		return rightFragment == null;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void recycleAll(FragmentManager manager) {
 		FragmentGraphItem topLeft = getFirstColumn().getFirstRow();
 		while (topLeft != null) {
@@ -82,6 +89,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	/**
 	 * Returns the new fragment in the top left corner, but never null.
 	 */
+	@CalledOnlyBy(AmidstThread.EDT)
 	public FragmentGraphItem adjustRowsAndColumns(int newAbove, int newBelow,
 			int newLeft, int newRight, FragmentManager manager) {
 		FragmentGraphItem firstColumn = getFirstColumn();
@@ -93,6 +101,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		return topLeft;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem createOrRemoveRowsAbove(FragmentManager manager,
 			int newAbove) {
 		FragmentGraphItem topLeft = this;
@@ -108,6 +117,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		return topLeft;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem createOrRemoveRowsBelow(FragmentManager manager,
 			int newBelow) {
 		FragmentGraphItem bottomLeft = this;
@@ -123,6 +133,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		return bottomLeft;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem createOrRemoveColumnsLeft(
 			FragmentManager manager, int newLeft) {
 		FragmentGraphItem topLeft = this;
@@ -138,6 +149,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		return topLeft;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem createOrRemoveColumnsRight(
 			FragmentManager manager, int newRight) {
 		FragmentGraphItem topRight = this;
@@ -153,6 +165,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		return topRight;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void createFirstRow(FragmentManager manager) {
 		FragmentGraphItem above = createAbove(manager);
 		FragmentGraphItem below = rightFragment;
@@ -163,6 +176,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void createLastRow(FragmentManager manager) {
 		FragmentGraphItem below = createBelow(manager);
 		FragmentGraphItem above = rightFragment;
@@ -173,6 +187,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void createFirstColumn(FragmentManager manager) {
 		FragmentGraphItem left = createLeft(manager);
 		FragmentGraphItem right = belowFragment;
@@ -183,6 +198,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void createLastColumn(FragmentManager manager) {
 		FragmentGraphItem right = createRight(manager);
 		FragmentGraphItem left = belowFragment;
@@ -193,6 +209,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void deleteFirstRow(FragmentManager manager) {
 		FragmentGraphItem current = this;
 		while (current != null) {
@@ -203,6 +220,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void deleteLastRow(FragmentManager manager) {
 		FragmentGraphItem current = this;
 		while (current != null) {
@@ -213,6 +231,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void deleteFirstColumn(FragmentManager manager) {
 		FragmentGraphItem current = this;
 		while (current != null) {
@@ -223,6 +242,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void deleteLastColumn(FragmentManager manager) {
 		FragmentGraphItem current = this;
 		while (current != null) {
@@ -233,6 +253,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem getFirstRow() {
 		FragmentGraphItem result = this;
 		while (result.aboveFragment != null) {
@@ -241,6 +262,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		return result;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem getLastRow() {
 		FragmentGraphItem result = this;
 		while (result.belowFragment != null) {
@@ -249,6 +271,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		return result;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem getFirstColumn() {
 		FragmentGraphItem result = this;
 		while (result.leftFragment != null) {
@@ -257,6 +280,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		return result;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem getLastColumn() {
 		FragmentGraphItem result = this;
 		while (result.rightFragment != null) {
@@ -265,30 +289,35 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		return result;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem connectAbove(FragmentGraphItem above) {
 		above.belowFragment = this;
 		aboveFragment = above;
 		return above;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem connectBelow(FragmentGraphItem below) {
 		below.aboveFragment = this;
 		belowFragment = below;
 		return below;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem connectLeft(FragmentGraphItem left) {
 		left.rightFragment = this;
 		leftFragment = left;
 		return left;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem connectRight(FragmentGraphItem right) {
 		right.leftFragment = this;
 		rightFragment = right;
 		return right;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem disconnectAbove() {
 		if (aboveFragment != null) {
 			aboveFragment.belowFragment = null;
@@ -298,6 +327,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		return result;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem disconnectBelow() {
 		if (belowFragment != null) {
 			belowFragment.aboveFragment = null;
@@ -307,6 +337,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		return result;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem disconnectLeft() {
 		if (leftFragment != null) {
 			leftFragment.rightFragment = null;
@@ -316,6 +347,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		return result;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem disconnectRight() {
 		if (rightFragment != null) {
 			rightFragment.leftFragment = null;
@@ -325,28 +357,34 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 		return result;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem createAbove(FragmentManager manager) {
 		return connectAbove(createFragmentGraphItem(manager, 0, -Fragment.SIZE));
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem createBelow(FragmentManager manager) {
 		return connectBelow(createFragmentGraphItem(manager, 0, Fragment.SIZE));
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem createLeft(FragmentManager manager) {
 		return connectLeft(createFragmentGraphItem(manager, -Fragment.SIZE, 0));
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem createRight(FragmentManager manager) {
 		return connectRight(createFragmentGraphItem(manager, Fragment.SIZE, 0));
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem createFragmentGraphItem(FragmentManager manager,
 			int xInWorld, int yInWorld) {
 		return new FragmentGraphItem(manager.requestFragment(fragment
 				.getCorner().add(xInWorld, yInWorld)));
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void recycle(FragmentManager manager) {
 		manager.recycleFragment(fragment);
 	}

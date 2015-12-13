@@ -9,8 +9,8 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 import amidst.documentation.AmidstThread;
-import amidst.documentation.CalledBy;
 import amidst.documentation.CalledByAny;
+import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
@@ -23,7 +23,7 @@ public class Amidst {
 	private static volatile Application application;
 	private static final CommandLineParameters PARAMETERS = new CommandLineParameters();
 
-	@CalledBy(AmidstThread.STARTUP)
+	@CalledOnlyBy(AmidstThread.STARTUP)
 	public static void main(String args[]) {
 		initUncaughtExceptionHandler();
 		initCrashHandler();
@@ -106,7 +106,7 @@ public class Amidst {
 		});
 	}
 
-	@CalledBy(AmidstThread.EDT)
+	@CalledOnlyBy(AmidstThread.EDT)
 	private static void doStartApplication() {
 		application = new Application(PARAMETERS);
 		application.run();

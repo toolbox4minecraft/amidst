@@ -2,6 +2,8 @@ package amidst.fragment;
 
 import java.util.List;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.mojangapi.world.CoordinatesInWorld;
@@ -15,6 +17,7 @@ public class ClosestWorldIconFinder {
 	private WorldIcon closestIcon;
 	private double closestDistanceSq;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public ClosestWorldIconFinder(FragmentGraph graph,
 			List<LayerDeclaration> layerDeclarations,
 			CoordinatesInWorld positionInWorld, double maxDistanceInWorld) {
@@ -26,6 +29,7 @@ public class ClosestWorldIconFinder {
 		find();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void find() {
 		for (FragmentGraphItem fragmentGraphItem : graph) {
 			Fragment fragment = fragmentGraphItem.getFragment();
@@ -40,6 +44,7 @@ public class ClosestWorldIconFinder {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateClosest(WorldIcon icon) {
 		double distanceSq = icon.getCoordinates()
 				.getDistanceSq(positionInWorld);
@@ -49,14 +54,17 @@ public class ClosestWorldIconFinder {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean hasResult() {
 		return closestIcon != null;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldIcon getWorldIcon() {
 		return closestIcon;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public double getDistance() {
 		return Math.sqrt(closestDistanceSq);
 	}

@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.constructor.FragmentConstructor;
 import amidst.logging.Log;
@@ -20,6 +22,7 @@ public class FragmentCache {
 	private final Iterable<FragmentConstructor> constructors;
 	private final int numberOfLayers;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public FragmentCache(ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
 			Iterable<FragmentConstructor> constructors, int numberOfLayers) {
@@ -29,6 +32,7 @@ public class FragmentCache {
 		this.numberOfLayers = numberOfLayers;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public synchronized void increaseSize() {
 		Log.i("increasing fragment cache size from " + cache.size() + " to "
 				+ (cache.size() + NEW_FRAGMENTS_PER_REQUEST));
@@ -36,6 +40,7 @@ public class FragmentCache {
 		Log.i("fragment cache size increased to " + cache.size());
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void requestNewFragments() {
 		for (int i = 0; i < NEW_FRAGMENTS_PER_REQUEST; i++) {
 			Fragment fragment = new Fragment(numberOfLayers);
@@ -46,12 +51,14 @@ public class FragmentCache {
 		cacheSize = cache.size();
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void construct(Fragment fragment) {
 		for (FragmentConstructor constructor : constructors) {
 			constructor.construct(fragment);
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public synchronized void reloadAll() {
 		loadingQueue.clear();
 		for (Fragment fragment : cache) {
@@ -59,6 +66,7 @@ public class FragmentCache {
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public int size() {
 		return cacheSize;
 	}

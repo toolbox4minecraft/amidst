@@ -3,8 +3,6 @@ package amidst.fragment;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.documentation.AmidstThread;
-import amidst.documentation.CalledBy;
-import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.constructor.FragmentConstructor;
@@ -25,8 +23,7 @@ public class FragmentManager {
 				constructors, numberOfLayers);
 	}
 
-	@CalledBy(AmidstThread.EDT)
-	@CalledByAny
+	@CalledOnlyBy(AmidstThread.EDT)
 	public Fragment requestFragment(CoordinatesInWorld coordinates) {
 		Fragment fragment;
 		while ((fragment = availableQueue.poll()) == null) {
@@ -38,8 +35,7 @@ public class FragmentManager {
 		return fragment;
 	}
 
-	@CalledBy(AmidstThread.EDT)
-	@CalledByAny
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void recycleFragment(Fragment fragment) {
 		recycleQueue.offer(fragment);
 	}
@@ -50,22 +46,22 @@ public class FragmentManager {
 				recycleQueue, cache, layerLoader);
 	}
 
-	@CalledByAny
+	@CalledOnlyBy(AmidstThread.EDT)
 	public int getAvailableQueueSize() {
 		return availableQueue.size();
 	}
 
-	@CalledByAny
+	@CalledOnlyBy(AmidstThread.EDT)
 	public int getLoadingQueueSize() {
 		return loadingQueue.size();
 	}
 
-	@CalledByAny
+	@CalledOnlyBy(AmidstThread.EDT)
 	public int getRecycleQueueSize() {
 		return recycleQueue.size();
 	}
 
-	@CalledByAny
+	@CalledOnlyBy(AmidstThread.EDT)
 	public int getCacheSize() {
 		return cache.size();
 	}

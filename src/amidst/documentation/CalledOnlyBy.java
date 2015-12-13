@@ -7,9 +7,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is similar to the annotation {@link CalledBy}, but it also
- * states that the given thread is the only thread that will ever call this
- * constructor of method.
+ * This annotation indicates that the constructor or method it is attached to
+ * can ONLY be called by the given thread.
  */
 @Retention(RetentionPolicy.SOURCE)
 @Documented
