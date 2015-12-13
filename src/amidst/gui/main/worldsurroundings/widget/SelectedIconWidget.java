@@ -1,7 +1,5 @@
 package amidst.gui.main.worldsurroundings.widget;
 
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import amidst.documentation.AmidstThread;
@@ -11,12 +9,8 @@ import amidst.gui.main.worldsurroundings.WorldIconSelection;
 import amidst.mojangapi.world.icon.WorldIcon;
 
 @NotThreadSafe
-public class SelectedIconWidget extends Widget {
+public class SelectedIconWidget extends IconTextWidget {
 	private final WorldIconSelection worldIconSelection;
-
-	private String message = "";
-	private BufferedImage icon;
-	private int iconWidth;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public SelectedIconWidget(CornerAnchorPoint anchor,
@@ -24,33 +18,27 @@ public class SelectedIconWidget extends Widget {
 		super(anchor);
 		this.worldIconSelection = worldIconSelection;
 		increaseYMargin(40);
-		setWidth(20);
-		setHeight(35);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected void doUpdate(FontMetrics fontMetrics, float time) {
+	protected BufferedImage updateIcon() {
 		WorldIcon selection = worldIconSelection.get();
 		if (selection != null) {
-			message = selection.toString();
-			icon = selection.getImage();
-			double ratio = (double) icon.getWidth() / (double) icon.getHeight();
-			iconWidth = (int) (25. * ratio);
+			return selection.getImage();
+		} else {
+			return null;
 		}
-		setWidth(45 + fontMetrics.stringWidth(message));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected void doDraw(Graphics2D g2d) {
-		g2d.drawImage(icon, getX() + 5, getY() + 5, iconWidth, 25, null);
-		g2d.drawString(message, getX() + 35, getY() + 23);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	@Override
-	protected boolean onVisibilityCheck() {
-		return worldIconSelection.hasSelection();
+	protected String updateText() {
+		WorldIcon selection = worldIconSelection.get();
+		if (selection != null) {
+			return selection.toString();
+		} else {
+			return null;
+		}
 	}
 }

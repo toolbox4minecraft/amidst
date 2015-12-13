@@ -23,15 +23,11 @@ public abstract class TextWidget extends Widget {
 	@Override
 	protected void doUpdate(FontMetrics fontMetrics, float time) {
 		String newText = updateText();
-		if (newText != null) {
-			if (!newText.equals(text)) {
-				setWidth(fontMetrics.stringWidth(newText) + 20);
-			}
+		if (newText != null && !text.equals(newText)) {
 			text = newText;
-			isVisible = true;
-		} else {
-			isVisible = false;
+			setWidth(fontMetrics.stringWidth(text) + 20);
 		}
+		isVisible = newText != null;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
