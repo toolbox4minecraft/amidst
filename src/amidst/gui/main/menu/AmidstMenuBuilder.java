@@ -386,15 +386,15 @@ public class AmidstMenuBuilder {
 	}
 
 	private ImageIcon getIcon(String image) {
-		if (image == null) {
-			return null;
-		} else {
+		if (image != null) {
 			BufferedImage icon = ResourceLoader.getImage(image);
 			if (icon != null) {
-				return null;
-			} else {
 				return new ImageIcon(icon);
+			} else {
+				return null;
 			}
+		} else {
+			return null;
 		}
 	}
 }
