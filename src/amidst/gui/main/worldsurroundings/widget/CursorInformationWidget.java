@@ -1,7 +1,5 @@
 package amidst.gui.main.worldsurroundings.widget;
 
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 
 import amidst.documentation.AmidstThread;
@@ -15,13 +13,11 @@ import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.Resolution;
 
 @NotThreadSafe
-public class CursorInformationWidget extends Widget {
+public class CursorInformationWidget extends TextWidget {
 	private static final String UNKNOWN_BIOME_NAME = "Unknown";
 
 	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
-
-	private String text = "";
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public CursorInformationWidget(CornerAnchorPoint anchor,
@@ -29,23 +25,12 @@ public class CursorInformationWidget extends Widget {
 		super(anchor);
 		this.graph = graph;
 		this.translator = translator;
-		setWidth(20);
-		setHeight(30);
 		forceVisibility(false);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected void doUpdate(FontMetrics fontMetrics, float time) {
-		String newText = getText();
-		if (newText != null) {
-			text = newText;
-		}
-		setWidth(fontMetrics.stringWidth(text) + 20);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private String getText() {
+	protected String updateText() {
 		Point mousePosition = getMousePosition();
 		if (mousePosition != null) {
 			CoordinatesInWorld coordinates = translator
@@ -68,17 +53,5 @@ public class CursorInformationWidget extends Widget {
 		} else {
 			return UNKNOWN_BIOME_NAME;
 		}
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	@Override
-	protected void doDraw(Graphics2D g2d) {
-		g2d.drawString(text, getX() + 10, getY() + 20);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	@Override
-	protected boolean onVisibilityCheck() {
-		return getMousePosition() != null;
 	}
 }
