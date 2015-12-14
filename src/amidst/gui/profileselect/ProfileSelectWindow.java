@@ -1,4 +1,4 @@
-package amidst.gui.versionselect;
+package amidst.gui.profileselect;
 
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
@@ -25,24 +25,24 @@ import amidst.threading.SimpleWorker;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
-public class VersionSelectWindow {
+public class ProfileSelectWindow {
 	private final Application application;
 	private final WorkerExecutor workerExecutor;
 	private final MojangApi mojangApi;
 	private final Settings settings;
 
 	private final JFrame frame;
-	private final VersionSelectPanel versionSelectPanel;
+	private final ProfileSelectPanel profileSelectPanel;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public VersionSelectWindow(Application application,
+	public ProfileSelectWindow(Application application,
 			WorkerExecutor workerExecutor, MojangApi mojangApi,
 			Settings settings) {
 		this.application = application;
 		this.workerExecutor = workerExecutor;
 		this.mojangApi = mojangApi;
 		this.settings = settings;
-		this.versionSelectPanel = new VersionSelectPanel(settings.lastProfile,
+		this.profileSelectPanel = new ProfileSelectPanel(settings.lastProfile,
 				"Scanning...");
 		this.frame = createFrame();
 		scanAndLoadVersionsLater();
@@ -54,10 +54,10 @@ public class VersionSelectWindow {
 		frame.setIconImage(AmidstMetaData.ICON);
 		frame.getContentPane().setLayout(new MigLayout());
 		frame.add(createTitleLabel(), "h 20!,w :400:, growx, pushx, wrap");
-		frame.add(new JScrollPane(versionSelectPanel.getComponent()),
+		frame.add(new JScrollPane(profileSelectPanel.getComponent()),
 				"grow, push, h 80::");
 		frame.pack();
-		frame.addKeyListener(versionSelectPanel.createKeyListener());
+		frame.addKeyListener(profileSelectPanel.createKeyListener());
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -94,7 +94,7 @@ public class VersionSelectWindow {
 			protected void onMainFinishedWithException(Exception e) {
 				Log.e("Error reading launcher_profiles.json");
 				e.printStackTrace();
-				versionSelectPanel.setEmptyMessage("Failed loading");
+				profileSelectPanel.setEmptyMessage("Failed loading");
 			}
 		});
 	}
@@ -119,7 +119,7 @@ public class VersionSelectWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createVersionComponents(LauncherProfilesJson launcherProfile) {
 		for (LauncherProfileJson profile : launcherProfile.getProfiles()) {
-			versionSelectPanel.addVersion(new LocalVersionComponent(
+			profileSelectPanel.addVersion(new LocalProfileComponent(
 					application, workerExecutor, mojangApi, profile));
 		}
 	}
@@ -128,7 +128,7 @@ public class VersionSelectWindow {
 	private void restoreSelection() {
 		String profileName = settings.lastProfile.get();
 		if (profileName != null) {
-			versionSelectPanel.select(profileName);
+			profileSelectPanel.select(profileName);
 		}
 	}
 

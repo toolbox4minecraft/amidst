@@ -1,4 +1,4 @@
-package amidst.gui.versionselect;
+package amidst.gui.profileselect;
 
 import amidst.Application;
 import amidst.documentation.AmidstThread;
@@ -15,7 +15,7 @@ import amidst.threading.SimpleWorkerWithoutResult;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
-public class LocalVersionComponent extends VersionComponent {
+public class LocalProfileComponent extends ProfileComponent {
 	private final Application application;
 	private final WorkerExecutor workerExecutor;
 	private final MojangApi mojangApi;
@@ -28,7 +28,7 @@ public class LocalVersionComponent extends VersionComponent {
 	private volatile ProfileDirectory profileDirectory;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public LocalVersionComponent(Application application,
+	public LocalProfileComponent(Application application,
 			WorkerExecutor workerExecutor, MojangApi mojangApi,
 			LauncherProfileJson profile) {
 		this.application = application;

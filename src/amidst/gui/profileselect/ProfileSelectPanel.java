@@ -1,4 +1,4 @@
-package amidst.gui.versionselect;
+package amidst.gui.profileselect;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -24,7 +24,8 @@ import amidst.documentation.NotThreadSafe;
 import amidst.settings.Setting;
 
 @NotThreadSafe
-public class VersionSelectPanel {
+public class ProfileSelectPanel {
+	@NotThreadSafe
 	@SuppressWarnings("serial")
 	private class Component extends JPanel {
 		private static final int INVALID_EMPTY_MESSAGE_WIDTH = -1;
@@ -97,14 +98,14 @@ public class VersionSelectPanel {
 
 	private final Setting<String> lastProfileSetting;
 	private final Component component;
-	private final List<VersionComponent> versionComponents = new ArrayList<VersionComponent>();
+	private final List<ProfileComponent> versionComponents = new ArrayList<ProfileComponent>();
 
-	private VersionComponent selected = null;
+	private ProfileComponent selected = null;
 	private int selectedIndex = INVALID_INDEX;
 	private String emptyMessage;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public VersionSelectPanel(Setting<String> lastProfileSetting,
+	public ProfileSelectPanel(Setting<String> lastProfileSetting,
 			String emptyMessage) {
 		this.lastProfileSetting = lastProfileSetting;
 		this.emptyMessage = emptyMessage;
@@ -235,7 +236,7 @@ public class VersionSelectPanel {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void addVersion(VersionComponent version) {
+	public void addVersion(ProfileComponent version) {
 		component.add(version.getComponent(), "growx, pushx, wrap");
 		versionComponents.add(version);
 	}
@@ -253,7 +254,7 @@ public class VersionSelectPanel {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean isLoading() {
-		for (VersionComponent versionComponent : versionComponents) {
+		for (ProfileComponent versionComponent : versionComponents) {
 			if (versionComponent.isLoading()) {
 				return true;
 			}

@@ -10,7 +10,7 @@ import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.license.LicenseWindow;
 import amidst.gui.main.MainWindow;
 import amidst.gui.main.worldsurroundings.WorldSurroundingsBuilder;
-import amidst.gui.versionselect.VersionSelectWindow;
+import amidst.gui.profileselect.ProfileSelectWindow;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.MojangApiBuilder;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder.LocalMinecraftInterfaceCreationException;
@@ -31,7 +31,7 @@ public class Application {
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final ThreadMaster threadMaster;
 
-	private volatile VersionSelectWindow versionSelectWindow;
+	private volatile ProfileSelectWindow profileSelectWindow;
 	private volatile MainWindow mainWindow;
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -94,7 +94,7 @@ public class Application {
 		if (mojangApi.canCreateWorld()) {
 			displayMainWindow();
 		} else {
-			displayVersionSelectWindow();
+			displayProfileSelectWindow();
 		}
 	}
 
@@ -102,20 +102,20 @@ public class Application {
 	public void displayMainWindow() {
 		setMainWindow(new MainWindow(this, settings, mojangApi,
 				worldSurroundingsBuilder, seedHistoryLogger, threadMaster));
-		setVersionSelectWindow(null);
+		setProfileSelectWindow(null);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayVersionSelectWindow() {
-		setVersionSelectWindow(new VersionSelectWindow(this,
+	public void displayProfileSelectWindow() {
+		setProfileSelectWindow(new ProfileSelectWindow(this,
 				threadMaster.getWorkerExecutor(), mojangApi, settings));
 		setMainWindow(null);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void setVersionSelectWindow(VersionSelectWindow versionSelectWindow) {
-		disposeVersionSelectWindow();
-		this.versionSelectWindow = versionSelectWindow;
+	private void setProfileSelectWindow(ProfileSelectWindow profileSelectWindow) {
+		disposeProfileSelectWindow();
+		this.profileSelectWindow = profileSelectWindow;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -125,10 +125,10 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void disposeVersionSelectWindow() {
-		VersionSelectWindow versionSelectWindow = this.versionSelectWindow;
-		if (versionSelectWindow != null) {
-			versionSelectWindow.dispose();
+	private void disposeProfileSelectWindow() {
+		ProfileSelectWindow profileSelectWindow = this.profileSelectWindow;
+		if (profileSelectWindow != null) {
+			profileSelectWindow.dispose();
 		}
 	}
 
@@ -154,7 +154,7 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void dispose() {
-		setVersionSelectWindow(null);
+		setProfileSelectWindow(null);
 		setMainWindow(null);
 	}
 }

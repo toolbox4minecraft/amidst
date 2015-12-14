@@ -95,7 +95,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void switchProfile() {
-		application.displayVersionSelectWindow();
+		application.displayProfileSelectWindow();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

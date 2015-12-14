@@ -1,4 +1,4 @@
-package amidst.gui.versionselect;
+package amidst.gui.profileselect;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,7 +16,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.resources.ResourceLoader;
 
 @NotThreadSafe
-public abstract class VersionComponent {
+public abstract class ProfileComponent {
 	@SuppressWarnings("serial")
 	private class Component extends JComponent {
 		private final FontMetrics statusFontMetrics = getFontMetrics(STATUS_FONT);
