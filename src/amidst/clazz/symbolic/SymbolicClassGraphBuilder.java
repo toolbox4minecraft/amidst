@@ -23,7 +23,8 @@ public class SymbolicClassGraphBuilder {
 		this.realClassNamesBySymbolicClassDeclaration = realClassNamesBySymbolicClassDeclaration;
 	}
 
-	public Map<String, SymbolicClass> construct() throws ClassNotFoundException {
+	public Map<String, SymbolicClass> construct()
+			throws SymbolicClassGraphCreationException {
 		Map<String, String> realClassNamesBySymbolicClassName = new HashMap<String, String>();
 		Map<String, SymbolicClass> symbolicClassesByRealClassName = new HashMap<String, SymbolicClass>();
 		Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration = new HashMap<SymbolicClassDeclaration, SymbolicClassBuilder>();
@@ -38,27 +39,33 @@ public class SymbolicClassGraphBuilder {
 			Map<String, String> realClassNamesBySymbolicClassName,
 			Map<String, SymbolicClass> symbolicClassesByRealClassName,
 			Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration)
-			throws ClassNotFoundException {
+			throws SymbolicClassGraphCreationException {
 		for (Entry<SymbolicClassDeclaration, String> entry : realClassNamesBySymbolicClassDeclaration
 				.entrySet()) {
 			SymbolicClassDeclaration declaration = entry.getKey();
 			String symbolicClassName = declaration.getSymbolicClassName();
 			String realClassName = entry.getValue();
-			SymbolicClassBuilder builder = new SymbolicClassBuilder(
-					classLoader, realClassNamesBySymbolicClassName,
-					symbolicClassesByRealClassName,
-					declaration.getSymbolicClassName(), realClassName);
-			SymbolicClass symbolicClass = builder.getProduct();
-			realClassNamesBySymbolicClassName.put(symbolicClassName,
-					realClassName);
-			symbolicClassesByRealClassName.put(realClassName, symbolicClass);
-			symbolicClassBuildersBySymbolicClassDeclaration.put(declaration,
-					builder);
+			try {
+				SymbolicClassBuilder builder = new SymbolicClassBuilder(
+						classLoader, realClassNamesBySymbolicClassName,
+						symbolicClassesByRealClassName,
+						declaration.getSymbolicClassName(), realClassName);
+				SymbolicClass symbolicClass = builder.getProduct();
+				realClassNamesBySymbolicClassName.put(symbolicClassName,
+						realClassName);
+				symbolicClassesByRealClassName
+						.put(realClassName, symbolicClass);
+				symbolicClassBuildersBySymbolicClassDeclaration.put(
+						declaration, builder);
+			} catch (ClassNotFoundException e) {
+				declaration.handleMissing(e, symbolicClassName, realClassName);
+			}
 		}
 	}
 
 	private void addConstructorsMethodsAndFields(
-			Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration) {
+			Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration)
+			throws SymbolicClassGraphCreationException {
 		for (Entry<SymbolicClassDeclaration, SymbolicClassBuilder> entry : symbolicClassBuildersBySymbolicClassDeclaration
 				.entrySet()) {
 			SymbolicClassDeclaration declaration = entry.getKey();
@@ -70,21 +77,24 @@ public class SymbolicClassGraphBuilder {
 	}
 
 	private void addConstructors(SymbolicClassBuilder builder,
-			List<SymbolicConstructorDeclaration> constructors) {
+			List<SymbolicConstructorDeclaration> constructors)
+			throws SymbolicClassGraphCreationException {
 		for (SymbolicConstructorDeclaration constructor : constructors) {
 			builder.addConstructor(constructor);
 		}
 	}
 
 	private void addMethods(SymbolicClassBuilder builder,
-			List<SymbolicMethodDeclaration> methods) {
+			List<SymbolicMethodDeclaration> methods)
+			throws SymbolicClassGraphCreationException {
 		for (SymbolicMethodDeclaration method : methods) {
 			builder.addMethod(method);
 		}
 	}
 
 	private void addFields(SymbolicClassBuilder builder,
-			List<SymbolicFieldDeclaration> fields) {
+			List<SymbolicFieldDeclaration> fields)
+			throws SymbolicClassGraphCreationException {
 		for (SymbolicFieldDeclaration field : fields) {
 			builder.addField(field);
 		}

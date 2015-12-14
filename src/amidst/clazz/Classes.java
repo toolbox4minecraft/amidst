@@ -12,6 +12,7 @@ import amidst.clazz.real.RealClass;
 import amidst.clazz.real.RealClasses;
 import amidst.clazz.real.RealClasses.JarFileParsingException;
 import amidst.clazz.symbolic.SymbolicClass;
+import amidst.clazz.symbolic.SymbolicClassGraphCreationException;
 import amidst.clazz.symbolic.SymbolicClasses;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.translator.ClassTranslator;
@@ -25,7 +26,7 @@ public enum Classes {
 	public static Map<String, SymbolicClass> createSymbolicClassMap(
 			File jarFile, URLClassLoader classLoader, ClassTranslator translator)
 			throws FileNotFoundException, JarFileParsingException,
-			ClassNotFoundException {
+			SymbolicClassGraphCreationException {
 		Log.i("Reading " + jarFile.getName());
 		List<RealClass> realClasses = RealClasses.fromJarFile(jarFile);
 		Log.i("Jar load complete.");

@@ -1,5 +1,6 @@
 package amidst.clazz.symbolic.declaration;
 
+import amidst.clazz.symbolic.SymbolicClassGraphCreationException;
 import amidst.documentation.Immutable;
 
 @Immutable
@@ -19,5 +20,13 @@ public class SymbolicConstructorDeclaration {
 
 	public SymbolicParameterDeclarationList getParameters() {
 		return parameters;
+	}
+
+	public void handleMissing(Exception e, String symbolicClassName,
+			String realClassName) throws SymbolicClassGraphCreationException {
+		throw new SymbolicClassGraphCreationException(
+				"unable to find the real class constructor " + realClassName
+						+ ".<init>" + parameters.toString() + " -> ("
+						+ symbolicClassName + "." + symbolicName + ")", e);
 	}
 }

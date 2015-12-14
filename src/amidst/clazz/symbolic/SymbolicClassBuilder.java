@@ -12,7 +12,6 @@ import amidst.clazz.symbolic.declaration.SymbolicFieldDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclaration;
 import amidst.documentation.NotThreadSafe;
-import amidst.logging.Log;
 
 /**
  * This class should only be used by the class {@link SymbolicClassGraphBuilder}
@@ -66,75 +65,70 @@ public class SymbolicClassBuilder {
 		return classLoader.loadClass(realClassName);
 	}
 
-	public void addConstructor(SymbolicConstructorDeclaration declaration) {
-		constructorsBySymbolicName.put(declaration.getSymbolicName(),
-				createConstructor(declaration));
+	public void addConstructor(SymbolicConstructorDeclaration declaration)
+			throws SymbolicClassGraphCreationException {
+		try {
+			constructorsBySymbolicName.put(declaration.getSymbolicName(),
+					createConstructor(declaration));
+		} catch (Exception e) {
+			declaration.handleMissing(e, product.getSymbolicName(),
+					product.getRealName());
+		}
 	}
 
-	public void addMethod(SymbolicMethodDeclaration declaration) {
-		methodsBySymbolicName.put(declaration.getSymbolicName(),
-				createMethod(declaration));
+	public void addMethod(SymbolicMethodDeclaration declaration)
+			throws SymbolicClassGraphCreationException {
+		try {
+			methodsBySymbolicName.put(declaration.getSymbolicName(),
+					createMethod(declaration));
+		} catch (Exception e) {
+			declaration.handleMissing(e, product.getSymbolicName(),
+					product.getRealName());
+		}
 	}
 
-	public void addField(SymbolicFieldDeclaration declaration) {
-		fieldsBySymbolicName.put(declaration.getSymbolicName(),
-				createField(declaration));
+	public void addField(SymbolicFieldDeclaration declaration)
+			throws SymbolicClassGraphCreationException {
+		try {
+			fieldsBySymbolicName.put(declaration.getSymbolicName(),
+					createField(declaration));
+		} catch (Exception e) {
+			declaration.handleMissing(e, product.getSymbolicName(),
+					product.getRealName());
+		}
 	}
 
 	private SymbolicConstructor createConstructor(
-			SymbolicConstructorDeclaration declaration) {
+			SymbolicConstructorDeclaration declaration)
+			throws ClassNotFoundException, NoSuchMethodException {
 		String symbolicName = declaration.getSymbolicName();
-		try {
-			Class<?>[] parameterClasses = getParameterClasses(declaration
-					.getParameters().getDeclarations());
-			Constructor<?> constructor = getConstructor(product.getClazz(),
-					parameterClasses);
-			return new SymbolicConstructor(product, symbolicName, constructor);
-		} catch (SecurityException e) {
-			throwRuntimeException(symbolicName, e, "constructor");
-		} catch (NoSuchMethodException e) {
-			throwRuntimeException(symbolicName, e, "constructor");
-		} catch (ClassNotFoundException e) {
-			throwRuntimeException(symbolicName, e, "constructor");
-		}
-		return null;
+		Class<?>[] parameterClasses = getParameterClasses(declaration
+				.getParameters().getDeclarations());
+		Constructor<?> constructor = getConstructor(product.getClazz(),
+				parameterClasses);
+		return new SymbolicConstructor(product, symbolicName, constructor);
 	}
 
-	private SymbolicMethod createMethod(SymbolicMethodDeclaration declaration) {
+	private SymbolicMethod createMethod(SymbolicMethodDeclaration declaration)
+			throws ClassNotFoundException, NoSuchMethodException {
 		String symbolicName = declaration.getSymbolicName();
 		String realName = declaration.getRealName();
-		try {
-			Class<?>[] parameterClasses = getParameterClasses(declaration
-					.getParameters().getDeclarations());
-			Method method = getMethod(product.getClazz(), realName,
-					parameterClasses);
-			SymbolicClass returnType = getType(method.getReturnType());
-			return new SymbolicMethod(product, symbolicName, realName, method,
-					returnType);
-		} catch (SecurityException e) {
-			warn(symbolicName, e, "method");
-		} catch (NoSuchMethodException e) {
-			warn(symbolicName, e, "method");
-		} catch (ClassNotFoundException e) {
-			throwRuntimeException(symbolicName, e, "method");
-		}
-		return null;
+		Class<?>[] parameterClasses = getParameterClasses(declaration
+				.getParameters().getDeclarations());
+		Method method = getMethod(product.getClazz(), realName,
+				parameterClasses);
+		SymbolicClass returnType = getType(method.getReturnType());
+		return new SymbolicMethod(product, symbolicName, realName, method,
+				returnType);
 	}
 
-	private SymbolicField createField(SymbolicFieldDeclaration declaration) {
+	private SymbolicField createField(SymbolicFieldDeclaration declaration)
+			throws NoSuchFieldException {
 		String symbolicName = declaration.getSymbolicName();
 		String realName = declaration.getRealName();
-		try {
-			Field field = getField(product.getClazz(), realName);
-			SymbolicClass type = getType(field.getType());
-			return new SymbolicField(product, symbolicName, realName, field,
-					type);
-		} catch (SecurityException e) {
-			throwRuntimeException(symbolicName, e, "field");
-		} catch (NoSuchFieldException e) {
-			throwRuntimeException(symbolicName, e, "field");
-		}
-		return null;
+		Field field = getField(product.getClazz(), realName);
+		SymbolicClass type = getType(field.getType());
+		return new SymbolicField(product, symbolicName, realName, field, type);
 	}
 
 	private Constructor<?> getConstructor(Class<?> clazz,
@@ -195,30 +189,5 @@ public class SymbolicClassBuilder {
 			result = typeSplit[typeSplit.length - 1];
 		}
 		return symbolicClassesByRealClassName.get(result);
-	}
-
-	private void throwRuntimeException(String symbolicName, Exception e,
-			String featureType) {
-		throw new RuntimeException(errorMessage(symbolicName, e, featureType),
-				e);
-	}
-
-	private void warn(String symbolicName, Exception e, String featureType) {
-		Log.w(errorMessage(symbolicName, e, featureType));
-	}
-
-	private String errorMessage(String symbolicName, Exception e,
-			String featureType) {
-
-		// TODO: find a way to remove this ugly workaround
-		String initializeAllBiomeGeneratorsWorkaroundText = "";
-		if (symbolicName.equals("initializeAllBiomeGenerators")) {
-			initializeAllBiomeGeneratorsWorkaroundText = ". Don't worry about this warning. It is normal in current Minecraft versions.";
-		}
-
-		return e.getClass().getSimpleName() + " on ("
-				+ product.getSymbolicName() + " / " + product.getRealName()
-				+ ") " + featureType + " (" + symbolicName + ")"
-				+ initializeAllBiomeGeneratorsWorkaroundText;
 	}
 }

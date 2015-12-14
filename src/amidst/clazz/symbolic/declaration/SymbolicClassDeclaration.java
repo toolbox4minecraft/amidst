@@ -3,7 +3,9 @@ package amidst.clazz.symbolic.declaration;
 import java.util.Collections;
 import java.util.List;
 
+import amidst.clazz.symbolic.SymbolicClassGraphCreationException;
 import amidst.documentation.Immutable;
+import amidst.logging.Log;
 
 @Immutable
 public class SymbolicClassDeclaration {
@@ -36,5 +38,27 @@ public class SymbolicClassDeclaration {
 
 	public List<SymbolicFieldDeclaration> getFields() {
 		return fields;
+	}
+
+	public void handleMultipleMatches(String firstRealClassName,
+			String otherRealClassName) {
+		Log.w("Found class " + symbolicClassName + " again: "
+				+ firstRealClassName + ", " + otherRealClassName);
+	}
+
+	public void handleMatch(String realClassName) {
+		Log.i("Found class " + symbolicClassName + ": " + realClassName);
+	}
+
+	public void handleNoMatch() {
+		Log.i("Missing class " + symbolicClassName);
+	}
+
+	public void handleMissing(ClassNotFoundException e,
+			String symbolicClassName, String realClassName)
+			throws SymbolicClassGraphCreationException {
+		throw new SymbolicClassGraphCreationException(
+				"unable to find the real class " + realClassName + " -> ("
+						+ symbolicClassName + ")", e);
 	}
 }

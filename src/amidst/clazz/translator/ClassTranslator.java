@@ -9,7 +9,6 @@ import amidst.clazz.real.RealClass;
 import amidst.clazz.real.detector.RealClassDetector;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
 
 @Immutable
 public class ClassTranslator {
@@ -58,14 +57,14 @@ public class ClassTranslator {
 
 	private void addResult(Map<SymbolicClassDeclaration, String> result,
 			SymbolicClassDeclaration declaration, String realClassName) {
-		if (realClassName != null) {
-			if (!result.containsKey(declaration)) {
-				result.put(declaration, realClassName);
-			}
-			Log.debug("Found: " + realClassName + " as "
-					+ declaration.getSymbolicClassName());
+		if (realClassName == null) {
+			declaration.handleNoMatch();
+		} else if (result.containsKey(declaration)) {
+			declaration.handleMultipleMatches(result.get(declaration),
+					realClassName);
 		} else {
-			Log.debug("Missing: " + declaration.getSymbolicClassName());
+			declaration.handleMatch(realClassName);
+			result.put(declaration, realClassName);
 		}
 	}
 }
