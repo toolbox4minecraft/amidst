@@ -9,6 +9,8 @@ import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
+import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder.LocalMinecraftInterfaceCreationException;
+import amidst.threading.ExceptionalWorker;
 import amidst.threading.Worker;
 import amidst.threading.WorkerExecutor;
 
@@ -19,6 +21,9 @@ public class LocalVersionComponent extends VersionComponent {
 	private final MojangApi mojangApi;
 	private final LauncherProfileJson profile;
 
+	private volatile boolean isReadyToLoad = false;
+	private volatile boolean isLoading = false;
+	private volatile boolean failedLoading = false;
 	private volatile VersionDirectory versionDirectory;
 	private volatile ProfileDirectory profileDirectory;
 
@@ -36,26 +41,22 @@ public class LocalVersionComponent extends VersionComponent {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void initDirectoriesLater() {
-		workerExecutor.invokeLater(new Worker<Void>() {
+		workerExecutor.invokeLater(new Worker<Boolean>() {
 			@CalledOnlyBy(AmidstThread.WORKER)
 			@Override
-			public Void execute() {
-				doInitDirectories();
-				return null;
+			public Boolean execute() {
+				profileDirectory = createProfileDirectory();
+				versionDirectory = createVersionDirectory();
+				return profileDirectory != null && versionDirectory != null;
 			}
 
 			@CalledOnlyBy(AmidstThread.EDT)
 			@Override
-			public void finished(Void result) {
+			public void finished(Boolean result) {
+				isReadyToLoad = result;
 				repaintComponent();
 			}
 		});
-	}
-
-	@CalledOnlyBy(AmidstThread.WORKER)
-	private void doInitDirectories() {
-		this.profileDirectory = createProfileDirectory();
-		this.versionDirectory = createVersionDirectory();
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
@@ -81,24 +82,31 @@ public class LocalVersionComponent extends VersionComponent {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	public boolean isReadyToLoad() {
-		return profileDirectory != null && versionDirectory != null;
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	@Override
-	public void doLoad() {
-		workerExecutor.invokeLater(new Worker<Void>() {
+	public void load() {
+		isLoading = true;
+		repaintComponent();
+		workerExecutor.invokeLater(new ExceptionalWorker<Void>() {
 			@CalledOnlyBy(AmidstThread.WORKER)
 			@Override
-			public Void execute() {
+			public Void execute()
+					throws LocalMinecraftInterfaceCreationException {
 				mojangApi.set(profileDirectory, versionDirectory);
 				return null;
 			}
 
 			@CalledOnlyBy(AmidstThread.EDT)
 			@Override
+			public void error(Exception e) {
+				isLoading = false;
+				failedLoading = true;
+				repaintComponent();
+			}
+
+			@CalledOnlyBy(AmidstThread.EDT)
+			@Override
 			public void finished(Void result) {
+				isLoading = false;
+				repaintComponent();
 				application.displayMainWindow();
 			}
 		});
@@ -106,12 +114,20 @@ public class LocalVersionComponent extends VersionComponent {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected String getLoadingStatus() {
-		if (isReadyToLoad()) {
-			return "found";
-		} else {
-			return "failed";
-		}
+	public boolean isReadyToLoad() {
+		return isReadyToLoad;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	@Override
+	public boolean isLoading() {
+		return isLoading;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	@Override
+	public boolean failedLoading() {
+		return failedLoading;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -123,7 +139,7 @@ public class LocalVersionComponent extends VersionComponent {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public String getVersionName() {
-		if (isReadyToLoad()) {
+		if (isReadyToLoad) {
 			return versionDirectory.getVersionId();
 		} else {
 			return "";

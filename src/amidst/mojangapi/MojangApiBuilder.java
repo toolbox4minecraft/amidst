@@ -10,6 +10,7 @@ import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
+import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.WorldBuilder;
 
 @Immutable
@@ -30,11 +31,12 @@ public class MojangApiBuilder {
 		this.preferedVersionJson = preferedVersionJson;
 	}
 
-	public MojangApi construct() throws FileNotFoundException {
+	public MojangApi construct() throws FileNotFoundException,
+			LocalMinecraftInterfaceCreationException {
 		DotMinecraftDirectory dotMinecraftDirectory = createDotMinecraftDirectory();
 		if (!dotMinecraftDirectory.isValid()) {
 			throw new FileNotFoundException(
-					"Unable to find minecraft directory at: "
+					"Unable to find valid minecraft directory at: "
 							+ dotMinecraftDirectory.getRoot());
 		}
 		MojangApi result = new MojangApi(worldBuilder, dotMinecraftDirectory,

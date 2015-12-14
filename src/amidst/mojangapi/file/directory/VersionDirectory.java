@@ -16,6 +16,7 @@ import amidst.mojangapi.file.json.version.VersionJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder;
+import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder.LocalMinecraftInterfaceCreationException;
 import amidst.utilities.JavaUtils;
 
 @Immutable
@@ -92,7 +93,8 @@ public class VersionDirectory {
 		return new URLClassLoader(new URL[] { jarFileUrl });
 	}
 
-	public MinecraftInterface createLocalMinecraftInterface() throws Exception {
+	public MinecraftInterface createLocalMinecraftInterface()
+			throws LocalMinecraftInterfaceCreationException {
 		return LOCAL_MINECRAFT_INTERFACE_BUILDER.create(this);
 	}
 }

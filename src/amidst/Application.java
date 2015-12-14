@@ -17,6 +17,7 @@ import amidst.gui.main.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.gui.versionselect.VersionSelectWindow;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.MojangApiBuilder;
+import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.player.PlayerInformationCache;
 import amidst.threading.ThreadMaster;
@@ -39,7 +40,8 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Application(CommandLineParameters parameters)
-			throws FileNotFoundException {
+			throws FileNotFoundException,
+			LocalMinecraftInterfaceCreationException {
 		this.parameters = parameters;
 		this.settings = createSettings();
 		this.googleTracker = createGoogleTracker();
@@ -66,7 +68,8 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private MojangApi createMojangApi() throws FileNotFoundException {
+	private MojangApi createMojangApi() throws FileNotFoundException,
+			LocalMinecraftInterfaceCreationException {
 		return new MojangApiBuilder(new WorldBuilder(googleTracker,
 				playerInformationCache), parameters.minecraftPath,
 				parameters.minecraftLibraries, parameters.minecraftJar,

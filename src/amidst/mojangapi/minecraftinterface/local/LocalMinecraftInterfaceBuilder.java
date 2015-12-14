@@ -15,6 +15,16 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 @Immutable
 public class LocalMinecraftInterfaceBuilder {
+	@SuppressWarnings("serial")
+	@Immutable
+	public static class LocalMinecraftInterfaceCreationException extends
+			Exception {
+		public LocalMinecraftInterfaceCreationException(String message,
+				Throwable cause) {
+			super(message, cause);
+		}
+	}
+
 	private static final String CLIENT_CLASS_RESOURCE = "net/minecraft/client/Minecraft.class";
 	private static final String CLIENT_CLASS = "net.minecraft.client.Minecraft";
 	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
@@ -27,17 +37,23 @@ public class LocalMinecraftInterfaceBuilder {
 	}
 
 	public MinecraftInterface create(VersionDirectory versionDirectory)
-			throws Exception {
-		URLClassLoader classLoader = versionDirectory.createClassLoader();
-		RecognisedVersion recognisedVersion = getRecognisedVersion(classLoader);
-		Map<String, SymbolicClass> symbolicClassMap = Classes
-				.createSymbolicClassMap(versionDirectory.getJar(), classLoader,
-						translator);
-		Log.i("Minecraft load complete.");
-		return new LocalMinecraftInterface(symbolicClassMap.get("IntCache"),
-				symbolicClassMap.get("BlockInit"),
-				symbolicClassMap.get("GenLayer"),
-				symbolicClassMap.get("WorldType"), recognisedVersion);
+			throws LocalMinecraftInterfaceCreationException {
+		try {
+			URLClassLoader classLoader = versionDirectory.createClassLoader();
+			RecognisedVersion recognisedVersion = getRecognisedVersion(classLoader);
+			Map<String, SymbolicClass> symbolicClassMap = Classes
+					.createSymbolicClassMap(versionDirectory.getJar(),
+							classLoader, translator);
+			Log.i("Minecraft load complete.");
+			return new LocalMinecraftInterface(
+					symbolicClassMap.get("IntCache"),
+					symbolicClassMap.get("BlockInit"),
+					symbolicClassMap.get("GenLayer"),
+					symbolicClassMap.get("WorldType"), recognisedVersion);
+		} catch (Exception e) {
+			throw new LocalMinecraftInterfaceCreationException(
+					"unable to create local minecraft interface", e);
+		}
 	}
 
 	private RecognisedVersion getRecognisedVersion(URLClassLoader classLoader) {

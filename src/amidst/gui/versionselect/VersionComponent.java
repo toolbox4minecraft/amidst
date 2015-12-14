@@ -19,6 +19,7 @@ import amidst.resources.ResourceLoader;
 public abstract class VersionComponent {
 	@SuppressWarnings("serial")
 	private class Component extends JComponent {
+		private final FontMetrics statusFontMetrics = getFontMetrics(STATUS_FONT);
 		private final FontMetrics versionFontMetrics = getFontMetrics(VERSION_NAME_FONT);
 		private final FontMetrics profileFontMetrics = getFontMetrics(PROFILE_NAME_FONT);
 
@@ -47,13 +48,7 @@ public abstract class VersionComponent {
 
 		@CalledOnlyBy(AmidstThread.EDT)
 		private void drawBackground(Graphics2D g2d) {
-			if (isLoading) {
-				g2d.setColor(LOADING_BG_COLOR);
-			} else if (isSelected()) {
-				g2d.setColor(SELECTED_BG_COLOR);
-			} else {
-				g2d.setColor(DEFAULT_BG_COLOR);
-			}
+			g2d.setColor(getBackgroundColor());
 			g2d.fillRect(0, 0, getWidth(), getHeight());
 		}
 
@@ -106,26 +101,15 @@ public abstract class VersionComponent {
 		private void drawStatus(Graphics2D g2d) {
 			g2d.setColor(Color.gray);
 			g2d.setFont(STATUS_FONT);
-			String statusString = getLoadingStatus();
-			int stringWidth = g2d.getFontMetrics().stringWidth(statusString);
-			g2d.drawString(statusString, getWidth() - 40 - stringWidth, 32);
+			String loadingStatus = getLoadingStatus();
+			int stringWidth = statusFontMetrics.stringWidth(loadingStatus);
+			g2d.drawString(loadingStatus, getWidth() - 40 - stringWidth, 32);
 		}
 
 		@CalledOnlyBy(AmidstThread.EDT)
 		private void drawIcon(Graphics2D g2d) {
 			BufferedImage icon = getIcon();
 			g2d.drawImage(icon, getWidth() - icon.getWidth() - 5, 4, null);
-		}
-
-		@CalledOnlyBy(AmidstThread.EDT)
-		private BufferedImage getIcon() {
-			if (isLoading) {
-				return LOADING_ICON;
-			} else if (isReadyToLoad()) {
-				return ACTIVE_ICON;
-			} else {
-				return INACTIVE_ICON;
-			}
 		}
 	}
 
@@ -143,9 +127,9 @@ public abstract class VersionComponent {
 	private static final Color SELECTED_BG_COLOR = new Color(160, 190, 255);
 	private static final Color LOADING_BG_COLOR = new Color(112, 203, 91);
 	private static final Color DEFAULT_BG_COLOR = Color.white;
+	private static final Color FAILED_BG_COLOR = new Color(250, 160, 160);
 
 	private Component component;
-	private boolean isLoading = false;
 	private boolean isSelected = false;
 
 	/**
@@ -177,25 +161,60 @@ public abstract class VersionComponent {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void load() {
-		isLoading = true;
-		component.repaint();
-		doLoad();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
 	protected void repaintComponent() {
 		component.repaint();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	protected abstract void doLoad();
+	private String getLoadingStatus() {
+		if (failedLoading()) {
+			return "failed loading";
+		} else if (isLoading()) {
+			return "loading";
+		} else if (isReadyToLoad()) {
+			return "found";
+		} else {
+			return "searching";
+		}
+	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	protected abstract String getLoadingStatus();
+	private BufferedImage getIcon() {
+		if (failedLoading()) {
+			return INACTIVE_ICON;
+		} else if (isLoading()) {
+			return LOADING_ICON;
+		} else if (isReadyToLoad()) {
+			return ACTIVE_ICON;
+		} else {
+			return INACTIVE_ICON;
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private Color getBackgroundColor() {
+		if (failedLoading()) {
+			return FAILED_BG_COLOR;
+		} else if (isLoading()) {
+			return LOADING_BG_COLOR;
+		} else if (isSelected) {
+			return SELECTED_BG_COLOR;
+		} else {
+			return DEFAULT_BG_COLOR;
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	protected abstract void load();
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected abstract boolean isReadyToLoad();
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	protected abstract boolean isLoading();
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	protected abstract boolean failedLoading();
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected abstract String getProfileName();
