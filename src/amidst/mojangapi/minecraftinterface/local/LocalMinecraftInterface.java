@@ -59,9 +59,10 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private int[] doGetBiomeData(int x, int y, int width, int height,
 			boolean useQuarterResolution) throws IllegalAccessException,
 			InvocationTargetException {
-		intCacheClass.callStaticMethod("resetIntCache");
+		intCacheClass
+				.callStaticMethod(SymbolicNames.METHOD_INT_CACHE_RESET_INT_CACHE);
 		return (int[]) getBiomeGenerator(useQuarterResolution).callMethod(
-				"getInts", x, y, width, height);
+				SymbolicNames.METHOD_GEN_LAYER_GET_INTS, x, y, width, height);
 	}
 
 	private SymbolicObject getBiomeGenerator(boolean useQuarterResolution) {
@@ -105,7 +106,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private void initializeBlock() throws IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
 		if (blockInitClass != null) {
-			blockInitClass.callStaticMethod("initialize");
+			blockInitClass
+					.callStaticMethod(SymbolicNames.METHOD_BLOCK_INIT_INITIALIZE);
 		}
 	}
 
@@ -131,30 +133,36 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	}
 
 	private boolean initializeAllBiomeGenerators3Exists() {
-		return genLayerClass.hasMethod("initializeAllBiomeGenerators3");
+		return genLayerClass
+				.hasMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3);
 	}
 
 	private Object[] initializeAllBiomeGenerators(long seed, Object worldType)
 			throws IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException {
-		return (Object[]) genLayerClass.callStaticMethod(
-				"initializeAllBiomeGenerators2", seed, worldType);
+		return (Object[]) genLayerClass
+				.callStaticMethod(
+						SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_2,
+						seed, worldType);
 	}
 
 	private Object[] initializeAllBiomeGenerators(long seed)
 			throws IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException {
-		return (Object[]) genLayerClass.callStaticMethod(
-				"initializeAllBiomeGenerators1", seed);
+		return (Object[]) genLayerClass
+				.callStaticMethod(
+						SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_1,
+						seed);
 	}
 
 	private Object[] initializeAllBiomeGenerators(long seed,
 			String generatorOptions, Object worldType)
 			throws IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException {
-		return (Object[]) genLayerClass.callStaticMethod(
-				"initializeAllBiomeGenerators3", seed, worldType,
-				generatorOptions);
+		return (Object[]) genLayerClass
+				.callStaticMethod(
+						SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3,
+						seed, worldType, generatorOptions);
 	}
 
 	@Override

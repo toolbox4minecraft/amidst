@@ -5,15 +5,16 @@ import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
+import amidst.mojangapi.minecraftinterface.local.SymbolicNames;
 
 @Immutable
 public enum WorldType {
 	// @formatter:off
-	DEFAULT			("Default",			"default"),
-	FLAT			("Flat",			"flat"),
-	LARGE_BIOMES	("Large Biomes",	"largeBiomes"),
-	AMPLIFIED		("Amplified",		"amplified"),
-	CUSTOMIZED		("Customized",		"customized");
+	DEFAULT			("Default",			SymbolicNames.FIELD_WORLD_TYPE_DEFAULT),
+	FLAT			("Flat",			SymbolicNames.FIELD_WORLD_TYPE_FLAT),
+	LARGE_BIOMES	("Large Biomes",	SymbolicNames.FIELD_WORLD_TYPE_LARGE_BIOMES),
+	AMPLIFIED		("Amplified",		SymbolicNames.FIELD_WORLD_TYPE_AMPLIFIED),
+	CUSTOMIZED		("Customized",		SymbolicNames.FIELD_WORLD_TYPE_CUSTOMIZED);
 	// @formatter:on
 
 	// @formatter:off
