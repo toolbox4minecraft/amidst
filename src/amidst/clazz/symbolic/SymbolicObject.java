@@ -1,5 +1,7 @@
 package amidst.clazz.symbolic;
 
+import java.lang.reflect.InvocationTargetException;
+
 import amidst.documentation.Immutable;
 
 /**
@@ -32,11 +34,14 @@ public class SymbolicObject {
 		return type.hasField(symbolicName);
 	}
 
-	public Object callMethod(String symbolicName, Object... parameters) {
+	public Object callMethod(String symbolicName, Object... parameters)
+			throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
 		return type.callMethod(symbolicName, this, parameters);
 	}
 
-	public Object getFieldValue(String symbolicName) {
+	public Object getFieldValue(String symbolicName)
+			throws IllegalArgumentException, IllegalAccessException {
 		return type.getFieldValue(symbolicName, this);
 	}
 }

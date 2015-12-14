@@ -3,7 +3,6 @@ package amidst.clazz.symbolic;
 import java.lang.reflect.Field;
 
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
 
 @Immutable
 public class SymbolicField {
@@ -22,15 +21,18 @@ public class SymbolicField {
 		this.type = type;
 	}
 
-	public Object getValue(SymbolicObject symbolicObject) {
+	public Object getValue(SymbolicObject symbolicObject)
+			throws IllegalArgumentException, IllegalAccessException {
 		return getValueFromObject(symbolicObject.getObject());
 	}
 
-	public Object getStaticValue() {
+	public Object getStaticValue() throws IllegalArgumentException,
+			IllegalAccessException {
 		return getValueFromObject(null);
 	}
 
-	private Object getValueFromObject(Object object) {
+	private Object getValueFromObject(Object object)
+			throws IllegalArgumentException, IllegalAccessException {
 		Object value = get(object);
 		if (isTypeSymbolicClass()) {
 			return new SymbolicObject(type, value);
@@ -39,20 +41,9 @@ public class SymbolicField {
 		}
 	}
 
-	private Object get(Object object) {
-		try {
-			return field.get(object);
-		} catch (IllegalArgumentException e) {
-			Log.crash(e,
-					"Error [IllegalArgumentException] getting field value ("
-							+ toString() + ")");
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			Log.crash(e, "Error [IllegalAccessException] getting field value ("
-					+ toString() + ")");
-			e.printStackTrace();
-		}
-		return null;
+	private Object get(Object object) throws IllegalArgumentException,
+			IllegalAccessException {
+		return field.get(object);
 	}
 
 	private boolean isTypeSymbolicClass() {

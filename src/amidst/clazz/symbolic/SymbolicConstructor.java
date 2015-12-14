@@ -18,23 +18,16 @@ public class SymbolicConstructor {
 		this.constructor = constructor;
 	}
 
-	public SymbolicObject call(Object... parameters) {
+	public SymbolicObject call(Object... parameters)
+			throws InstantiationException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
 		return new SymbolicObject(parent, newInstance(parameters));
 	}
 
-	private Object newInstance(Object... parameters) {
-		try {
-			return constructor.newInstance(parameters);
-		} catch (IllegalArgumentException e) { // TODO : Add error text
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		}
-		return null;
+	private Object newInstance(Object... parameters)
+			throws InstantiationException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		return constructor.newInstance(parameters);
 	}
 
 	@Override

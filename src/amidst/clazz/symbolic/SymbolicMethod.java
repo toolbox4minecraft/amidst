@@ -30,15 +30,21 @@ public class SymbolicMethod {
 		return realName;
 	}
 
-	public Object call(SymbolicObject symbolicObject, Object... parameters) {
+	public Object call(SymbolicObject symbolicObject, Object... parameters)
+			throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
 		return callFromObject(symbolicObject.getObject(), parameters);
 	}
 
-	public Object callStatic(Object... parameters) {
+	public Object callStatic(Object... parameters)
+			throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
 		return callFromObject(null, parameters);
 	}
 
-	private Object callFromObject(Object object, Object... parameters) {
+	private Object callFromObject(Object object, Object... parameters)
+			throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
 		Object value = invoke(object, parameters);
 		if (isReturnTypeSymbolicClass()) {
 			return new SymbolicObject(returnType, value);
@@ -46,17 +52,10 @@ public class SymbolicMethod {
 		return value;
 	}
 
-	private Object invoke(Object object, Object... parameters) {
-		try {
-			return method.invoke(object, parameters);
-		} catch (IllegalArgumentException e) { // TODO : Add error text
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		return null;
+	private Object invoke(Object object, Object... parameters)
+			throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
+		return method.invoke(object, parameters);
 	}
 
 	private boolean isReturnTypeSymbolicClass() {

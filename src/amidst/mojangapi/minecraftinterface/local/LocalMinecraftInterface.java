@@ -1,5 +1,7 @@
 package amidst.mojangapi.minecraftinterface.local;
 
+import java.lang.reflect.InvocationTargetException;
+
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
 import amidst.documentation.ThreadSafe;
@@ -45,6 +47,18 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	@Override
 	public synchronized int[] getBiomeData(int x, int y, int width, int height,
 			boolean useQuarterResolution) {
+		try {
+			return doGetBiomeData(x, y, width, height, useQuarterResolution);
+		} catch (Exception e) {
+			Log.w("unable to get biome data");
+			e.printStackTrace();
+			return new int[width * height];
+		}
+	}
+
+	private int[] doGetBiomeData(int x, int y, int width, int height,
+			boolean useQuarterResolution) throws IllegalAccessException,
+			InvocationTargetException {
 		intCacheClass.callStaticMethod("resetIntCache");
 		return (int[]) getBiomeGenerator(useQuarterResolution).callMethod(
 				"getInts", x, y, width, height);
@@ -61,6 +75,17 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	@Override
 	public synchronized void createWorld(long seed, WorldType worldType,
 			String generatorOptions) {
+		try {
+			doCreateWorld(seed, worldType, generatorOptions);
+		} catch (Exception e) {
+			Log.w("unable to create world");
+			e.printStackTrace();
+		}
+	}
+
+	private void doCreateWorld(long seed, WorldType worldType,
+			String generatorOptions) throws IllegalAccessException,
+			InvocationTargetException {
 		Log.debug("Attempting to create world with seed: " + seed + ", type: "
 				+ worldType.getName()
 				+ ", and the following generator options:");
@@ -77,14 +102,16 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	 * Minecraft 1.8 and higher require block initialization to be called before
 	 * creating a biome generator.
 	 */
-	private void initializeBlock() {
+	private void initializeBlock() throws IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
 		if (blockInitClass != null) {
 			blockInitClass.callStaticMethod("initialize");
 		}
 	}
 
 	private Object[] getGenLayers(long seed, WorldType worldType,
-			String generatorOptions) {
+			String generatorOptions) throws IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
 		if (worldTypeClass == null) {
 			return initializeAllBiomeGenerators(seed);
 		} else if (initializeAllBiomeGeneratorsWithParamsExists()) {
@@ -95,7 +122,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		}
 	}
 
-	private Object getWorldType(WorldType worldType) {
+	private Object getWorldType(WorldType worldType)
+			throws IllegalArgumentException, IllegalAccessException {
 		String value = worldType.getValue();
 		SymbolicObject object = (SymbolicObject) worldTypeClass
 				.getStaticFieldValue(value);
@@ -107,18 +135,24 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 				.hasMethod("initializeAllBiomeGeneratorsWithParams");
 	}
 
-	private Object[] initializeAllBiomeGenerators(long seed, Object worldType) {
+	private Object[] initializeAllBiomeGenerators(long seed, Object worldType)
+			throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
 		return (Object[]) genLayerClass.callStaticMethod(
 				"initializeAllBiomeGenerators", seed, worldType);
 	}
 
-	private Object[] initializeAllBiomeGenerators(long seed) {
+	private Object[] initializeAllBiomeGenerators(long seed)
+			throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
 		return (Object[]) genLayerClass.callStaticMethod(
 				"initializeAllBiomeGenerators", seed);
 	}
 
 	private Object[] initializeAllBiomeGeneratorsWithParams(long seed,
-			String generatorOptions, Object worldType) {
+			String generatorOptions, Object worldType)
+			throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
 		return (Object[]) genLayerClass.callStaticMethod(
 				"initializeAllBiomeGeneratorsWithParams", seed, worldType,
 				generatorOptions);

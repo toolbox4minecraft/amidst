@@ -1,5 +1,6 @@
 package amidst.clazz.symbolic;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import amidst.documentation.Immutable;
@@ -57,26 +58,34 @@ public class SymbolicClass {
 	}
 
 	public SymbolicObject callConstructor(String symbolicName,
-			Object... parameters) {
+			Object... parameters) throws InstantiationException,
+			IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
 		return constructorsBySymbolicName.get(symbolicName).call(parameters);
 	}
 
 	public Object callMethod(String symbolicName,
-			SymbolicObject symbolicObject, Object... parameters) {
+			SymbolicObject symbolicObject, Object... parameters)
+			throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
 		return methodsBySymbolicName.get(symbolicName).call(symbolicObject,
 				parameters);
 	}
 
-	public Object callStaticMethod(String symbolicName, Object... parameters) {
+	public Object callStaticMethod(String symbolicName, Object... parameters)
+			throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
 		return methodsBySymbolicName.get(symbolicName).callStatic(parameters);
 	}
 
 	public Object getFieldValue(String symbolicName,
-			SymbolicObject symbolicObject) {
+			SymbolicObject symbolicObject) throws IllegalArgumentException,
+			IllegalAccessException {
 		return fieldsBySymbolicName.get(symbolicName).getValue(symbolicObject);
 	}
 
-	public Object getStaticFieldValue(String symbolicName) {
+	public Object getStaticFieldValue(String symbolicName)
+			throws IllegalArgumentException, IllegalAccessException {
 		return fieldsBySymbolicName.get(symbolicName).getStaticValue();
 	}
 
