@@ -25,8 +25,6 @@ public class Log {
 
 	private static final Map<String, Logger> LOGGER = new HashMap<String, Logger>();
 
-	private static volatile CrashHandler crashHandler;
-
 	static {
 		addListener("console", CONSOLE_LOGGER);
 		addListener("master", IN_MEMORY_LOGGER);
@@ -42,10 +40,6 @@ public class Log {
 		synchronized (LOG_LOCK) {
 			LOGGER.remove(name);
 		}
-	}
-
-	public static void setCrashHandler(CrashHandler handler) {
-		crashHandler = handler;
 	}
 
 	public static void i(Object... messages) {
@@ -92,10 +86,12 @@ public class Log {
 			for (Logger listener : LOGGER.values()) {
 				listener.crash(e, exceptionText, message);
 			}
-			if (crashHandler != null) {
-				crashHandler.handle(e, exceptionText, message,
-						IN_MEMORY_LOGGER.getContents());
-			}
+		}
+	}
+
+	public static String getAllMessages() {
+		synchronized (LOG_LOCK) {
+			return IN_MEMORY_LOGGER.getContents();
 		}
 	}
 

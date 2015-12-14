@@ -3,14 +3,10 @@ package amidst;
 import java.io.FileNotFoundException;
 import java.util.prefs.Preferences;
 
-import javax.swing.SwingUtilities;
-
 import amidst.documentation.AmidstThread;
-import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerBuilder;
-import amidst.gui.crash.CrashWindow;
 import amidst.gui.license.LicenseWindow;
 import amidst.gui.main.MainWindow;
 import amidst.gui.main.worldsurroundings.WorldSurroundingsBuilder;
@@ -157,35 +153,8 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void exitWithErrorCode(int code) {
-		dispose();
-		System.exit(code);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
 	public void dispose() {
 		setVersionSelectWindow(null);
 		setMainWindow(null);
-	}
-
-	@CalledByAny
-	void crash(Throwable e, String exceptionText, final String message,
-			final String allLogMessages) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				doCrash(message, allLogMessages);
-			}
-		});
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void doCrash(String message, String allLogMessages) {
-		new CrashWindow(message, allLogMessages, new Runnable() {
-			@Override
-			public void run() {
-				exitWithErrorCode(4);
-			}
-		});
 	}
 }

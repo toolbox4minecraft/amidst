@@ -12,9 +12,9 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
+import amidst.gui.crash.CrashWindow;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
-import amidst.logging.Log.CrashHandler;
 
 @ThreadSafe
 public class Amidst {
@@ -26,7 +26,6 @@ public class Amidst {
 	@CalledOnlyBy(AmidstThread.STARTUP)
 	public static void main(String args[]) {
 		initUncaughtExceptionHandler();
-		initCrashHandler();
 		parseCommandLineArguments(args);
 		initLogger();
 		initLookAndFeel();
@@ -38,25 +37,7 @@ public class Amidst {
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread thread, Throwable e) {
-				Log.crash(e, UNCAUGHT_EXCEPTION_ERROR_MESSAGE + thread);
-			}
-		});
-	}
-
-	private static void initCrashHandler() {
-		Log.setCrashHandler(new CrashHandler() {
-			@CalledByAny
-			@Override
-			public void handle(Throwable e, String exceptionText,
-					String message, String allLogMessages) {
-				if (application != null) {
-					application
-							.crash(e, exceptionText, message, allLogMessages);
-				} else {
-					System.err.println("Amidst crashed!");
-					System.err.println(message);
-					e.printStackTrace();
-				}
+				handleCrash(e, UNCAUGHT_EXCEPTION_ERROR_MESSAGE + thread);
 			}
 		});
 	}
@@ -112,8 +93,34 @@ public class Amidst {
 			application = new Application(PARAMETERS);
 			application.run();
 		} catch (Exception e) {
-			Log.crash(e, "Amidst crashed!");
+			handleCrash(e, "Amidst crashed!");
+		}
+	}
+
+	@CalledByAny
+	private static void handleCrash(Throwable e, String message) {
+		try {
+			Log.crash(e, message);
+			displayCrashWindow(message, Log.getAllMessages());
+		} catch (Throwable t) {
+			System.err.println("Amidst crashed!");
+			System.err.println(message);
 			e.printStackTrace();
 		}
+	}
+
+	private static void displayCrashWindow(final String message,
+			final String allMessages) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				new CrashWindow(message, allMessages, new Runnable() {
+					@Override
+					public void run() {
+						System.exit(4);
+					}
+				});
+			}
+		});
 	}
 }
