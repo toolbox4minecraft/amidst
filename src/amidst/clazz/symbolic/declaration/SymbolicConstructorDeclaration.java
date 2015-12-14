@@ -29,7 +29,7 @@ public class SymbolicConstructorDeclaration {
 			String realClassName) throws SymbolicClassGraphCreationException {
 		String message = "unable to find the real class constructor "
 				+ realClassName + ".<init>" + parameters.getParameterString()
-				+ " -> (" + symbolicClassName + "." + symbolicName + ")";
+				+ " -> " + symbolicClassName + "." + symbolicName;
 		if (isOptional) {
 			Log.i(message);
 		} else {

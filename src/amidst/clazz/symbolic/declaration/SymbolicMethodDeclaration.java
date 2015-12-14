@@ -35,8 +35,8 @@ public class SymbolicMethodDeclaration {
 			String realClassName) throws SymbolicClassGraphCreationException {
 		String message = "unable to find the real class method "
 				+ realClassName + "." + realName
-				+ parameters.getParameterString() + " -> (" + symbolicClassName
-				+ "." + symbolicName + ")";
+				+ parameters.getParameterString() + " -> " + symbolicClassName
+				+ "." + symbolicName;
 		if (isOptional) {
 			Log.i(message);
 		} else {

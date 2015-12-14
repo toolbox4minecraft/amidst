@@ -50,7 +50,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		try {
 			return doGetBiomeData(x, y, width, height, useQuarterResolution);
 		} catch (Exception e) {
-			Log.w("unable to get biome data");
+			Log.e("unable to get biome data");
 			e.printStackTrace();
 			return new int[width * height];
 		}
@@ -78,7 +78,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		try {
 			doCreateWorld(seed, worldType, generatorOptions);
 		} catch (Exception e) {
-			Log.w("unable to create world");
+			Log.e("unable to create world");
 			e.printStackTrace();
 		}
 	}

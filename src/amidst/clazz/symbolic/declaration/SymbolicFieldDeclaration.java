@@ -28,8 +28,8 @@ public class SymbolicFieldDeclaration {
 	public void handleMissing(Exception e, String symbolicClassName,
 			String realClassName) throws SymbolicClassGraphCreationException {
 		String message = "unable to find the real class field " + realClassName
-				+ "." + realName + " -> (" + symbolicClassName + "."
-				+ symbolicName + ")";
+				+ "." + realName + " -> " + symbolicClassName + "."
+				+ symbolicName;
 		if (isOptional) {
 			Log.i(message);
 		} else {
