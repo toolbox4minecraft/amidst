@@ -86,10 +86,6 @@ public class Log {
 		}
 	}
 
-	public static void crash(String message) {
-		crash(null, message);
-	}
-
 	public static void crash(Throwable e, String message) {
 		synchronized (LOG_LOCK) {
 			String exceptionText = getExceptionText(e);

@@ -10,6 +10,14 @@ import amidst.utilities.ColorUtils;
 
 @Immutable
 public class Biome {
+	@SuppressWarnings("serial")
+	@Immutable
+	public static class UnknownBiomeIndexException extends Exception {
+		public UnknownBiomeIndexException(String message) {
+			super(message);
+		}
+	}
+
 	@Immutable
 	private static class BiomeIterable implements Iterable<Biome> {
 		@Override
@@ -140,17 +148,17 @@ public class Biome {
 		return ITERABLE;
 	}
 
-	public static Biome getByIndex(int index) {
-		return biomes[index];
+	public static Biome getByIndex(int index) throws UnknownBiomeIndexException {
+		if (index < 0 || index >= biomes.length || biomes[index] == null) {
+			throw new UnknownBiomeIndexException(
+					"unsupported biome index detected: " + index);
+		} else {
+			return biomes[index];
+		}
 	}
 
 	public static int getBiomesLength() {
 		return biomes.length;
-	}
-
-	// TODO: check there is actually a biome with this index?
-	public static boolean isSupportedBiomeIndex(int index) {
-		return index >= 0 && index < biomes.length;
 	}
 
 	public static Biome getByName(String name) {

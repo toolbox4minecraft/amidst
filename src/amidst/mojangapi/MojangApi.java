@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import amidst.documentation.ThreadSafe;
+import amidst.logging.Log;
 import amidst.mojangapi.file.FilenameFactory;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
@@ -51,8 +52,13 @@ public class MojangApi {
 			VersionDirectory versionDirectory) {
 		this.profileDirectory = profileDirectory;
 		if (versionDirectory != null) {
-			this.minecraftInterface = versionDirectory
-					.createLocalMinecraftInterface();
+			try {
+				this.minecraftInterface = versionDirectory
+						.createLocalMinecraftInterface();
+			} catch (Exception e) {
+				Log.crash(e, "unable to create local minecraft interface");
+				e.printStackTrace();
+			}
 		} else {
 			this.minecraftInterface = null;
 		}

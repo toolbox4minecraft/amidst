@@ -1,7 +1,6 @@
 package amidst.mojangapi.minecraftinterface.local;
 
 import java.lang.reflect.Field;
-import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 import java.util.Map;
 
@@ -27,32 +26,18 @@ public class LocalMinecraftInterfaceBuilder {
 		this.translator = translator;
 	}
 
-	public MinecraftInterface create(VersionDirectory versionDirectory) {
-		try {
-			URLClassLoader classLoader = versionDirectory.createClassLoader();
-			RecognisedVersion recognisedVersion = getRecognisedVersion(classLoader);
-			Map<String, SymbolicClass> symbolicClassMap = Classes
-					.createSymbolicClassMap(versionDirectory.getJar(),
-							classLoader, translator);
-			Log.i("Minecraft load complete.");
-			return new LocalMinecraftInterface(
-					symbolicClassMap.get("IntCache"),
-					symbolicClassMap.get("BlockInit"),
-					symbolicClassMap.get("GenLayer"),
-					symbolicClassMap.get("WorldType"), recognisedVersion);
-		} catch (RuntimeException e) {
-			Log.crash(
-					e.getCause(),
-					"error while building local minecraft interface: "
-							+ e.getMessage());
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			Log.crash(
-					e,
-					"error while building local minecraft interface: minecraft jar file has malformed url");
-			e.printStackTrace();
-		}
-		return null;
+	public MinecraftInterface create(VersionDirectory versionDirectory)
+			throws Exception {
+		URLClassLoader classLoader = versionDirectory.createClassLoader();
+		RecognisedVersion recognisedVersion = getRecognisedVersion(classLoader);
+		Map<String, SymbolicClass> symbolicClassMap = Classes
+				.createSymbolicClassMap(versionDirectory.getJar(), classLoader,
+						translator);
+		Log.i("Minecraft load complete.");
+		return new LocalMinecraftInterface(symbolicClassMap.get("IntCache"),
+				symbolicClassMap.get("BlockInit"),
+				symbolicClassMap.get("GenLayer"),
+				symbolicClassMap.get("WorldType"), recognisedVersion);
 	}
 
 	private RecognisedVersion getRecognisedVersion(URLClassLoader classLoader) {

@@ -56,44 +56,43 @@ public class VersionDirectory {
 		return JsonReader.readVersionFrom(json);
 	}
 
-	public List<URL> getAllLibraryUrls() {
-		try {
-			return readVersionJson().getLibraryUrls(
-					dotMinecraftDirectory.getLibraries());
-		} catch (IOException e) {
-			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: "
-					+ json + ")");
-		}
-
-		return Collections.emptyList();
-	}
-
 	public URLClassLoader createClassLoader() throws MalformedURLException {
 		if (json.isFile()) {
 			Log.i("Loading libraries.");
-			return doCreateClassLoader(getAllLibraryUrls());
+			return doCreateClassLoader(getJarFileUrl(), getAllLibraryUrls());
 		} else {
 			Log.i("Unable to find Minecraft library JSON at: " + json
 					+ ". Skipping.");
-			return doCreateClassLoader();
+			return doCreateClassLoader(getJarFileUrl());
 		}
-	}
-
-	private URLClassLoader doCreateClassLoader(List<URL> libraries)
-			throws MalformedURLException {
-		libraries.add(getJarFileUrl());
-		return new URLClassLoader(JavaUtils.toArray(libraries, URL.class));
-	}
-
-	private URLClassLoader doCreateClassLoader() throws MalformedURLException {
-		return new URLClassLoader(new URL[] { getJarFileUrl() });
 	}
 
 	private URL getJarFileUrl() throws MalformedURLException {
 		return jar.toURI().toURL();
 	}
 
-	public MinecraftInterface createLocalMinecraftInterface() {
+	private List<URL> getAllLibraryUrls() {
+		try {
+			return readVersionJson().getLibraryUrls(
+					dotMinecraftDirectory.getLibraries());
+		} catch (IOException e) {
+			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: "
+					+ json + ")");
+			return Collections.emptyList();
+		}
+	}
+
+	private URLClassLoader doCreateClassLoader(URL jarFileUrl,
+			List<URL> libraries) {
+		libraries.add(jarFileUrl);
+		return new URLClassLoader(JavaUtils.toArray(libraries, URL.class));
+	}
+
+	private URLClassLoader doCreateClassLoader(URL jarFileUrl) {
+		return new URLClassLoader(new URL[] { jarFileUrl });
+	}
+
+	public MinecraftInterface createLocalMinecraftInterface() throws Exception {
 		return LOCAL_MINECRAFT_INTERFACE_BUILDER.create(this);
 	}
 }

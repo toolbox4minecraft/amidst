@@ -3,6 +3,7 @@ package amidst.gui.versionselect;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.FileNotFoundException;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,7 +21,7 @@ import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
-import amidst.threading.Worker;
+import amidst.threading.ExceptionalWorker;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -78,29 +79,32 @@ public class VersionSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void scanAndLoadVersionsLater() {
-		workerExecutor.invokeLater(new Worker<LauncherProfilesJson>() {
-			@Override
-			public LauncherProfilesJson execute() {
-				return scanAndLoadVersions();
-			}
+		workerExecutor
+				.invokeLater(new ExceptionalWorker<LauncherProfilesJson>() {
+					@Override
+					public LauncherProfilesJson execute()
+							throws FileNotFoundException {
+						return scanAndLoadVersions();
+					}
 
-			@Override
-			public void finished(LauncherProfilesJson launcherProfile) {
-				loadVersions(launcherProfile);
-			}
-		});
+					@Override
+					public void error(Exception e) {
+						Log.crash(e, "Error reading launcher_profiles.json");
+					}
+
+					@Override
+					public void finished(LauncherProfilesJson launcherProfile) {
+						loadVersions(launcherProfile);
+					}
+				});
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private LauncherProfilesJson scanAndLoadVersions() {
+	private LauncherProfilesJson scanAndLoadVersions()
+			throws FileNotFoundException {
 		Log.i("Scanning for profiles.");
-		LauncherProfilesJson launcherProfile = null;
-		try {
-			launcherProfile = mojangApi.getDotMinecraftDirectory()
-					.readLauncherProfilesJson();
-		} catch (Exception e) {
-			Log.crash(e, "Error reading launcher_profiles.json");
-		}
+		LauncherProfilesJson launcherProfile = mojangApi
+				.getDotMinecraftDirectory().readLauncherProfilesJson();
 		Log.i("Successfully loaded profile list.");
 		return launcherProfile;
 	}

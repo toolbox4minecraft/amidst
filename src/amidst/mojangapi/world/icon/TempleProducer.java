@@ -4,8 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import amidst.documentation.NotThreadSafe;
+import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Biome;
+import amidst.mojangapi.world.Biome.UnknownBiomeIndexException;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @NotThreadSafe
@@ -22,14 +24,22 @@ public class TempleProducer extends StructureProducer {
 
 	@Override
 	protected DefaultWorldIconTypes getWorldIconType() {
-		Biome chunkBiome = getBiomeAtMiddleOfChunk();
-		if (chunkBiome == Biome.swampland) {
-			return DefaultWorldIconTypes.WITCH;
-		} else if (chunkBiome.getName().contains("Jungle")) {
-			return DefaultWorldIconTypes.JUNGLE;
-		} else if (chunkBiome.getName().contains("Desert")) {
-			return DefaultWorldIconTypes.DESERT;
-		} else {
+		try {
+			Biome chunkBiome = getBiomeAtMiddleOfChunk();
+			if (chunkBiome == Biome.swampland) {
+				return DefaultWorldIconTypes.WITCH;
+			} else if (chunkBiome.getName().contains("Jungle")) {
+				return DefaultWorldIconTypes.JUNGLE;
+			} else if (chunkBiome.getName().contains("Desert")) {
+				return DefaultWorldIconTypes.DESERT;
+			} else {
+				Log.e("No known structure for this biome type: "
+						+ chunkBiome.getName());
+				return null;
+			}
+		} catch (UnknownBiomeIndexException e) {
+			Log.e(e.getMessage());
+			e.printStackTrace();
 			return null;
 		}
 	}

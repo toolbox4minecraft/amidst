@@ -1,9 +1,9 @@
 package amidst.mojangapi;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
 import amidst.mojangapi.file.DotMinecraftDirectoryFinder;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
@@ -30,11 +30,12 @@ public class MojangApiBuilder {
 		this.preferedVersionJson = preferedVersionJson;
 	}
 
-	public MojangApi construct() {
+	public MojangApi construct() throws FileNotFoundException {
 		DotMinecraftDirectory dotMinecraftDirectory = createDotMinecraftDirectory();
 		if (!dotMinecraftDirectory.isValid()) {
-			Log.crash("Unable to find minecraft directory at: "
-					+ dotMinecraftDirectory.getRoot());
+			throw new FileNotFoundException(
+					"Unable to find minecraft directory at: "
+							+ dotMinecraftDirectory.getRoot());
 		}
 		MojangApi result = new MojangApi(worldBuilder, dotMinecraftDirectory,
 				readRemoteOrLocalVersionList(), createPreferedJson());

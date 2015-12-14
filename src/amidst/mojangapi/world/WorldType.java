@@ -31,10 +31,13 @@ public enum WorldType {
 
 	public static WorldType from(String nameOrValue) {
 		WorldType result = findInstance(nameOrValue);
-		if (result == null) {
-			Log.crash("Unable to find World Type: " + nameOrValue);
+		if (result != null) {
+			return result;
+		} else {
+			Log.e("Unable to find World Type: " + nameOrValue
+					+ ". Falling back to default world type.");
+			return DEFAULT;
 		}
-		return result;
 	}
 
 	private static WorldType findInstance(String nameOrValue) {

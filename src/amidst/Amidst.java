@@ -1,6 +1,7 @@
 package amidst;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -108,7 +109,12 @@ public class Amidst {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private static void doStartApplication() {
-		application = new Application(PARAMETERS);
-		application.run();
+		try {
+			application = new Application(PARAMETERS);
+			application.run();
+		} catch (FileNotFoundException e) {
+			Log.crash(e, "Amidst crashed!");
+			e.printStackTrace();
+		}
 	}
 }

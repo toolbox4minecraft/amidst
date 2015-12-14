@@ -61,26 +61,22 @@ public class LocalVersionComponent extends VersionComponent {
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private ProfileDirectory createProfileDirectory() {
 		ProfileDirectory result = profile.createValidProfileDirectory();
-		if (result != null) {
-			return result;
-		} else {
+		if (result == null) {
 			Log.w("Unable to load profile directory for profile: "
 					+ profile.getName());
-			return null;
 		}
+		return result;
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private VersionDirectory createVersionDirectory() {
 		VersionDirectory result = profile
 				.createValidVersionDirectory(mojangApi);
-		if (result != null) {
-			return result;
-		} else {
+		if (result == null) {
 			Log.w("Unable to load version directory for profile: "
 					+ profile.getName());
-			return null;
 		}
+		return result;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

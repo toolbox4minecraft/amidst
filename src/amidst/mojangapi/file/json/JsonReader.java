@@ -91,7 +91,7 @@ public enum JsonReader {
 		try {
 			reader.close();
 		} catch (IOException e) {
-			Log.w("error closing reader");
+			Log.w("unable to close reader");
 			e.printStackTrace();
 		}
 		return result;

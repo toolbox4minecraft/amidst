@@ -8,6 +8,7 @@ import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.world.Biome;
+import amidst.mojangapi.world.Biome.UnknownBiomeIndexException;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.Resolution;
 
@@ -53,13 +54,18 @@ public class BiomeDataOracle {
 		int height = bottom - top + 1;
 		int[] biomeData = getQuarterResolutionBiomeData(left, top, width,
 				height);
-
-		for (int i = 0; i < width * height; i++) {
-			if (!validBiomes.contains(Biome.getByIndex(biomeData[i]))) {
-				return false;
+		try {
+			for (int i = 0; i < width * height; i++) {
+				if (!validBiomes.contains(Biome.getByIndex(biomeData[i]))) {
+					return false;
+				}
 			}
+			return true;
+		} catch (UnknownBiomeIndexException e) {
+			Log.e(e.getMessage());
+			e.printStackTrace();
+			return false;
 		}
-		return true;
 	}
 
 	// TODO: Find out if we should useQuarterResolution or not
@@ -73,20 +79,23 @@ public class BiomeDataOracle {
 		int height = bottom - top + 1;
 		int[] biomeData = getQuarterResolutionBiomeData(left, top, width,
 				height);
-
-		Point location = null;
-		int numberOfValidLocations = 0;
-		for (int i = 0; i < width * height; i++) {
-			int biomeIndex = biomeData[i];
-			ensureBiomeIsSupported(biomeIndex);
-			if (validBiomes.contains(Biome.getByIndex(biomeIndex))
-					&& (location == null || random
-							.nextInt(numberOfValidLocations + 1) == 0)) {
-				location = createLocation(left, top, width, i);
-				numberOfValidLocations++;
+		try {
+			Point location = null;
+			int numberOfValidLocations = 0;
+			for (int i = 0; i < width * height; i++) {
+				if (validBiomes.contains(Biome.getByIndex(biomeData[i]))
+						&& (location == null || random
+								.nextInt(numberOfValidLocations + 1) == 0)) {
+					location = createLocation(left, top, width, i);
+					numberOfValidLocations++;
+				}
 			}
+			return location;
+		} catch (UnknownBiomeIndexException e) {
+			Log.e(e.getMessage());
+			e.printStackTrace();
+			return null;
 		}
-		return location;
 	}
 
 	private Point createLocation(int left, int top, int width, int i) {
@@ -95,20 +104,14 @@ public class BiomeDataOracle {
 		return new Point(x, y);
 	}
 
-	private static void ensureBiomeIsSupported(int biomeIndex) {
-		if (!Biome.isSupportedBiomeIndex(biomeIndex)) {
-			Log.crash("Unsupported biome type detected");
-		}
-	}
-
 	/**
 	 * Gets the biome located at the block-coordinates. This is not a fast
 	 * routine, it was added for rare things like accurately testing structures.
 	 * (uses the 1:1 scale biome-map)
 	 * 
-	 * @return Assume this may return null.
+	 * @throws UnknownBiomeIndexException
 	 */
-	public Biome getBiomeAt(int x, int y) {
+	public Biome getBiomeAt(int x, int y) throws UnknownBiomeIndexException {
 		int[] biomeData = getFullResolutionBiomeData(x, y, 1, 1);
 		return Biome.getByIndex(biomeData[0]);
 	}

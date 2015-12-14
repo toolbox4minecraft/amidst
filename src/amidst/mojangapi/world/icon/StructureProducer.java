@@ -7,6 +7,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Biome;
+import amidst.mojangapi.world.Biome.UnknownBiomeIndexException;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.Resolution;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
@@ -84,9 +85,7 @@ public abstract class StructureProducer extends WorldIconProducer {
 		middleOfChunkY = middleOfChunk(chunkY);
 		if (isValidLocation()) {
 			DefaultWorldIconTypes worldIconType = getWorldIconType();
-			if (worldIconType == null) {
-				Log.e("No known structure for this biome type. This might be an error.");
-			} else {
+			if (worldIconType != null) {
 				consumer.consume(new WorldIcon(createCoordinates(),
 						worldIconType.getName(), worldIconType.getImage()));
 			}
@@ -140,10 +139,17 @@ public abstract class StructureProducer extends WorldIconProducer {
 	}
 
 	protected boolean isValidBiomeAtMiddleOfChunk() {
-		return validBiomesAtMiddleOfChunk.contains(getBiomeAtMiddleOfChunk());
+		try {
+			return validBiomesAtMiddleOfChunk
+					.contains(getBiomeAtMiddleOfChunk());
+		} catch (UnknownBiomeIndexException e) {
+			Log.e(e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
 	}
 
-	protected Biome getBiomeAtMiddleOfChunk() {
+	protected Biome getBiomeAtMiddleOfChunk() throws UnknownBiomeIndexException {
 		return biomeDataOracle.getBiomeAt(middleOfChunkX, middleOfChunkY);
 	}
 

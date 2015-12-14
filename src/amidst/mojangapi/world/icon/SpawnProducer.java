@@ -47,8 +47,10 @@ public class SpawnProducer extends CachedWorldIconProducer {
 			return createSpawnWorldIconAt(CoordinatesInWorld.from(
 					spawnCenter.x, spawnCenter.y));
 		} else {
-			Log.debug("Unable to find spawn biome.");
-			return createSpawnWorldIconAt(CoordinatesInWorld.origin());
+			CoordinatesInWorld origin = CoordinatesInWorld.origin();
+			Log.debug("Unable to find spawn biome. Falling back to "
+					+ origin.toString() + ".");
+			return createSpawnWorldIconAt(origin);
 		}
 	}
 

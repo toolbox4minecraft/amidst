@@ -89,7 +89,7 @@ public class VersionListEntryJson {
 			downloadServer(prefix);
 			return true;
 		} catch (Exception e) {
-			Log.w("error downloading server: " + id);
+			Log.w("unable to download server: " + id);
 			e.printStackTrace();
 		}
 		return false;
@@ -100,7 +100,7 @@ public class VersionListEntryJson {
 			downloadClient(prefix);
 			return true;
 		} catch (Exception e) {
-			Log.w("error downloading client: " + id);
+			Log.w("unable to download client: " + id);
 			e.printStackTrace();
 		}
 		return false;

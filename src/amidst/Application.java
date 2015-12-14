@@ -1,5 +1,6 @@
 package amidst;
 
+import java.io.FileNotFoundException;
 import java.util.prefs.Preferences;
 
 import javax.swing.SwingUtilities;
@@ -37,7 +38,8 @@ public class Application {
 	private volatile MainWindow mainWindow;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Application(CommandLineParameters parameters) {
+	public Application(CommandLineParameters parameters)
+			throws FileNotFoundException {
 		this.parameters = parameters;
 		this.settings = createSettings();
 		this.googleTracker = createGoogleTracker();
@@ -64,7 +66,7 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private MojangApi createMojangApi() {
+	private MojangApi createMojangApi() throws FileNotFoundException {
 		return new MojangApiBuilder(new WorldBuilder(googleTracker,
 				playerInformationCache), parameters.minecraftPath,
 				parameters.minecraftLibraries, parameters.minecraftJar,

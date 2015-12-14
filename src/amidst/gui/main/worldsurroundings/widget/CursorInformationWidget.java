@@ -8,7 +8,9 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.gui.main.worldsurroundings.FragmentGraphToScreenTranslator;
+import amidst.logging.Log;
 import amidst.mojangapi.world.Biome;
+import amidst.mojangapi.world.Biome.UnknownBiomeIndexException;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.Resolution;
 
@@ -48,7 +50,13 @@ public class CursorInformationWidget extends TextWidget {
 			long x = coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
 			long y = coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
 			short biome = fragment.getBiomeDataAt((int) x, (int) y);
-			return Biome.getByIndex(biome).getName();
+			try {
+				return Biome.getByIndex(biome).getName();
+			} catch (UnknownBiomeIndexException e) {
+				Log.e(e.getMessage());
+				e.printStackTrace();
+				return UNKNOWN_BIOME_NAME;
+			}
 		} else {
 			return UNKNOWN_BIOME_NAME;
 		}
