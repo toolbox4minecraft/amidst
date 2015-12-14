@@ -16,7 +16,7 @@ public enum SymbolicNames {
 	public static final String FIELD_WORLD_TYPE_AMPLIFIED = "amplified";
 	public static final String FIELD_WORLD_TYPE_CUSTOMIZED = "customized";
 
-	public static final String CLASS_GEN_LAYER = "IntGenLayer";
+	public static final String CLASS_GEN_LAYER = "GenLayer";
 	public static final String METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_1 = "initializeAllBiomeGenerators1";
 	public static final String METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_2 = "initializeAllBiomeGenerators2";
 	public static final String METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3 = "initializeAllBiomeGenerators3";

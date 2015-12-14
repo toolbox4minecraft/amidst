@@ -46,10 +46,11 @@ public class LocalMinecraftInterfaceBuilder {
 							classLoader, translator);
 			Log.i("Minecraft load complete.");
 			return new LocalMinecraftInterface(
-					symbolicClassMap.get("IntCache"),
-					symbolicClassMap.get("BlockInit"),
-					symbolicClassMap.get("GenLayer"),
-					symbolicClassMap.get("WorldType"), recognisedVersion);
+					symbolicClassMap.get(SymbolicNames.CLASS_INT_CACHE),
+					symbolicClassMap.get(SymbolicNames.CLASS_BLOCK_INIT),
+					symbolicClassMap.get(SymbolicNames.CLASS_GEN_LAYER),
+					symbolicClassMap.get(SymbolicNames.CLASS_WORLD_TYPE),
+					recognisedVersion);
 		} catch (Exception e) {
 			throw new LocalMinecraftInterfaceCreationException(
 					"unable to create local minecraft interface", e);
