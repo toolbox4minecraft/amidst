@@ -114,9 +114,9 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			IllegalArgumentException, InvocationTargetException {
 		if (worldTypeClass == null) {
 			return initializeAllBiomeGenerators(seed);
-		} else if (initializeAllBiomeGeneratorsWithParamsExists()) {
-			return initializeAllBiomeGeneratorsWithParams(seed,
-					generatorOptions, getWorldType(worldType));
+		} else if (initializeAllBiomeGenerators3Exists()) {
+			return initializeAllBiomeGenerators(seed, generatorOptions,
+					getWorldType(worldType));
 		} else {
 			return initializeAllBiomeGenerators(seed, getWorldType(worldType));
 		}
@@ -130,31 +130,30 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		return object.getObject();
 	}
 
-	private boolean initializeAllBiomeGeneratorsWithParamsExists() {
-		return genLayerClass
-				.hasMethod("initializeAllBiomeGeneratorsWithParams");
+	private boolean initializeAllBiomeGenerators3Exists() {
+		return genLayerClass.hasMethod("initializeAllBiomeGenerators3");
 	}
 
 	private Object[] initializeAllBiomeGenerators(long seed, Object worldType)
 			throws IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException {
 		return (Object[]) genLayerClass.callStaticMethod(
-				"initializeAllBiomeGenerators", seed, worldType);
+				"initializeAllBiomeGenerators2", seed, worldType);
 	}
 
 	private Object[] initializeAllBiomeGenerators(long seed)
 			throws IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException {
 		return (Object[]) genLayerClass.callStaticMethod(
-				"initializeAllBiomeGenerators", seed);
+				"initializeAllBiomeGenerators1", seed);
 	}
 
-	private Object[] initializeAllBiomeGeneratorsWithParams(long seed,
+	private Object[] initializeAllBiomeGenerators(long seed,
 			String generatorOptions, Object worldType)
 			throws IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException {
 		return (Object[]) genLayerClass.callStaticMethod(
-				"initializeAllBiomeGeneratorsWithParams", seed, worldType,
+				"initializeAllBiomeGenerators3", seed, worldType,
 				generatorOptions);
 	}
 
