@@ -10,7 +10,6 @@ import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder.LocalMinecraftInterfaceCreationException;
-import amidst.threading.ExceptionalWorker;
 import amidst.threading.Worker;
 import amidst.threading.WorkerExecutor;
 
@@ -56,6 +55,12 @@ public class LocalVersionComponent extends VersionComponent {
 				isReadyToLoad = result;
 				repaintComponent();
 			}
+
+			@CalledOnlyBy(AmidstThread.EDT)
+			@Override
+			public void error(Exception e) {
+				// noop
+			}
 		});
 	}
 
@@ -85,7 +90,7 @@ public class LocalVersionComponent extends VersionComponent {
 	public void load() {
 		isLoading = true;
 		repaintComponent();
-		workerExecutor.invokeLater(new ExceptionalWorker<Void>() {
+		workerExecutor.invokeLater(new Worker<Void>() {
 			@CalledOnlyBy(AmidstThread.WORKER)
 			@Override
 			public Void execute()

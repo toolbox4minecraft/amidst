@@ -8,7 +8,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.Log;
-import amidst.threading.ExceptionalWorker;
+import amidst.threading.Worker;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -35,7 +35,7 @@ public class UpdatePrompt {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void check(final boolean silent) {
 		workerExecutor
-				.invokeLater(new ExceptionalWorker<UpdateInformationRetriever>() {
+				.invokeLater(new Worker<UpdateInformationRetriever>() {
 					@Override
 					public UpdateInformationRetriever execute()
 							throws Exception {

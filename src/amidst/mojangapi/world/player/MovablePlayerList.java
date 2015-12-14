@@ -77,6 +77,11 @@ public class MovablePlayerList implements Iterable<Player> {
 			public void finished(Void result) {
 				// noop
 			}
+
+			@Override
+			public void error(Exception e) {
+				// noop
+			}
 		});
 	}
 
@@ -96,6 +101,11 @@ public class MovablePlayerList implements Iterable<Player> {
 			@Override
 			public void finished(Void result) {
 				onPlayerFinishedLoading.run();
+			}
+
+			@Override
+			public void error(Exception e) {
+				// noop
 			}
 		});
 	}

@@ -5,7 +5,10 @@ import amidst.documentation.CalledOnlyBy;
 
 public interface Worker<T> {
 	@CalledOnlyBy(AmidstThread.WORKER)
-	T execute();
+	T execute() throws Exception;
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	void error(Exception e);
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	void finished(T result);

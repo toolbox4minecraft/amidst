@@ -21,7 +21,7 @@ import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
-import amidst.threading.ExceptionalWorker;
+import amidst.threading.Worker;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -80,7 +80,7 @@ public class VersionSelectWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void scanAndLoadVersionsLater() {
 		workerExecutor
-				.invokeLater(new ExceptionalWorker<LauncherProfilesJson>() {
+				.invokeLater(new Worker<LauncherProfilesJson>() {
 					@Override
 					public LauncherProfilesJson execute()
 							throws FileNotFoundException {
