@@ -11,48 +11,62 @@ import amidst.documentation.Immutable;
 
 @Immutable
 public class RealClassBuilder {
-	public RealClass construct(String realClassName, byte[] classData) {
-		DataInputStream stream = new DataInputStream(new ByteArrayInputStream(
-				classData));
-		RealClass product = null;
-		try {
-			if (isValidClass(stream)) {
-				int minorVersion = readMinorVersion(stream);
-				int majorVersion = readMajorVersion(stream);
-				int cpSize = readCpSize(stream);
-				int[] constantTypes = new int[cpSize];
-				RealClassConstant<?>[] constants = new RealClassConstant<?>[cpSize];
-				List<String> utf8Constants = new ArrayList<String>();
-				List<Float> floatConstants = new ArrayList<Float>();
-				List<Long> longConstants = new ArrayList<Long>();
-				List<Integer> stringIndices = new ArrayList<Integer>();
-				List<ReferenceIndex> methodIndices = new ArrayList<ReferenceIndex>();
-				readConstants(stream, cpSize, constantTypes, constants,
-						utf8Constants, floatConstants, longConstants,
-						stringIndices);
-				int accessFlags = readAccessFlags(stream);
-				skipThisClass(stream);
-				skipSuperClass(stream);
-				skipInterfaces(stream);
-				RealClassField[] fields = readFields(stream);
-				int numberOfMethodsAndConstructors = readNumberOfMethodsAndConstructors(stream);
-				int numberOfConstructors = readMethodsAndConstructors(stream,
-						numberOfMethodsAndConstructors, constants,
-						methodIndices);
-				int numberOfMethods = numberOfMethodsAndConstructors
-						- numberOfConstructors;
-				product = new RealClass(realClassName, classData, minorVersion,
-						majorVersion, cpSize, constantTypes, constants,
-						utf8Constants, floatConstants, longConstants,
-						stringIndices, methodIndices, accessFlags, fields,
-						numberOfConstructors, numberOfMethods);
-			}
-			stream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(0);
+	@SuppressWarnings("serial")
+	@Immutable
+	public static class RealClassCreationException extends Exception {
+		public RealClassCreationException(String message, Throwable cause) {
+			super(message, cause);
 		}
-		return product;
+	}
+
+	public RealClass construct(String realClassName, byte[] classData)
+			throws RealClassCreationException {
+		try {
+			DataInputStream stream = new DataInputStream(
+					new ByteArrayInputStream(classData));
+			RealClass product = doConstruct(realClassName, classData, stream);
+			stream.close();
+			return product;
+		} catch (IOException e) {
+			throw new RealClassCreationException(
+					"unable to create real class for the class: "
+							+ realClassName, e);
+		}
+	}
+
+	private RealClass doConstruct(String realClassName, byte[] classData,
+			DataInputStream stream) throws IOException {
+		if (isValidClass(stream)) {
+			int minorVersion = readMinorVersion(stream);
+			int majorVersion = readMajorVersion(stream);
+			int cpSize = readCpSize(stream);
+			int[] constantTypes = new int[cpSize];
+			RealClassConstant<?>[] constants = new RealClassConstant<?>[cpSize];
+			List<String> utf8Constants = new ArrayList<String>();
+			List<Float> floatConstants = new ArrayList<Float>();
+			List<Long> longConstants = new ArrayList<Long>();
+			List<Integer> stringIndices = new ArrayList<Integer>();
+			List<ReferenceIndex> methodIndices = new ArrayList<ReferenceIndex>();
+			readConstants(stream, cpSize, constantTypes, constants,
+					utf8Constants, floatConstants, longConstants, stringIndices);
+			int accessFlags = readAccessFlags(stream);
+			skipThisClass(stream);
+			skipSuperClass(stream);
+			skipInterfaces(stream);
+			RealClassField[] fields = readFields(stream);
+			int numberOfMethodsAndConstructors = readNumberOfMethodsAndConstructors(stream);
+			int numberOfConstructors = readMethodsAndConstructors(stream,
+					numberOfMethodsAndConstructors, constants, methodIndices);
+			int numberOfMethods = numberOfMethodsAndConstructors
+					- numberOfConstructors;
+			return new RealClass(realClassName, classData, minorVersion,
+					majorVersion, cpSize, constantTypes, constants,
+					utf8Constants, floatConstants, longConstants,
+					stringIndices, methodIndices, accessFlags, fields,
+					numberOfConstructors, numberOfMethods);
+		} else {
+			return null;
+		}
 	}
 
 	private boolean isValidClass(DataInputStream stream) throws IOException {

@@ -2,6 +2,7 @@ package amidst.clazz.real;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -9,22 +10,32 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import amidst.clazz.real.RealClassBuilder.RealClassCreationException;
 import amidst.documentation.Immutable;
 import amidst.utilities.FileSystemUtils;
 
 @Immutable
 public enum RealClasses {
 	;
+	@SuppressWarnings("serial")
+	@Immutable
+	public static class JarFileParsingException extends Exception {
+		public JarFileParsingException(String message, Throwable cause) {
+			super(message, cause);
+		}
+	}
 
 	private static final RealClassBuilder REAL_CLASS_BUILDER = new RealClassBuilder();
 
-	public static List<RealClass> fromJarFile(File jarFile) {
+	public static List<RealClass> fromJarFile(File jarFile)
+			throws FileNotFoundException, JarFileParsingException {
 		return readRealClassesFromJarFile(jarFile);
 	}
 
-	private static List<RealClass> readRealClassesFromJarFile(File jarFile) {
+	private static List<RealClass> readRealClassesFromJarFile(File jarFile)
+			throws JarFileParsingException, FileNotFoundException {
 		if (!jarFile.exists()) {
-			throw new RuntimeException("Attempted to load jar file at: "
+			throw new FileNotFoundException("Attempted to load jar file at: "
 					+ jarFile + " but it does not exist.");
 		}
 		try {
@@ -33,12 +44,14 @@ public enum RealClasses {
 			zipFile.close();
 			return realClasses;
 		} catch (IOException e) {
-			throw new RuntimeException("Error extracting jar data.", e);
+			throw new JarFileParsingException("Error extracting jar data.", e);
+		} catch (RealClassCreationException e) {
+			throw new JarFileParsingException("Error extracting jar data.", e);
 		}
 	}
 
 	private static List<RealClass> readJarFile(ZipFile zipFile)
-			throws IOException {
+			throws IOException, RealClassCreationException {
 		Enumeration<? extends ZipEntry> enu = zipFile.entries();
 		List<RealClass> result = new ArrayList<RealClass>();
 		while (enu.hasMoreElements()) {
@@ -51,7 +64,7 @@ public enum RealClasses {
 	}
 
 	private static RealClass readJarFileEntry(ZipFile zipFile, ZipEntry entry)
-			throws IOException {
+			throws IOException, RealClassCreationException {
 		String realClassName = FileSystemUtils.getFileNameWithoutExtension(
 				entry.getName(), "class");
 		if (!entry.isDirectory() && realClassName != null) {
