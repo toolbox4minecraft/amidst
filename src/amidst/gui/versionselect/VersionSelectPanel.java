@@ -243,6 +243,7 @@ public class VersionSelectPanel {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void setEmptyMessage(String emptyMessage) {
 		this.emptyMessage = emptyMessage;
+		component.repaint();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

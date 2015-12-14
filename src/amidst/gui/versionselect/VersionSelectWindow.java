@@ -71,7 +71,7 @@ public class VersionSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JLabel createTitleLabel() {
-		JLabel result = new JLabel("Please select a Minecraft version:",
+		JLabel result = new JLabel("Please select a Minecraft profile:",
 				SwingConstants.CENTER);
 		result.setFont(new Font("arial", Font.BOLD, 16));
 		return result;
@@ -89,7 +89,9 @@ public class VersionSelectWindow {
 
 					@Override
 					public void error(Exception e) {
-						Log.crash(e, "Error reading launcher_profiles.json");
+						Log.e("Error reading launcher_profiles.json");
+						e.printStackTrace();
+						versionSelectPanel.setEmptyMessage("Failed loading");
 					}
 
 					@Override
