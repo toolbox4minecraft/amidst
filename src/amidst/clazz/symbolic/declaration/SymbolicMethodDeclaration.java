@@ -2,17 +2,20 @@ package amidst.clazz.symbolic.declaration;
 
 import amidst.clazz.symbolic.SymbolicClassGraphCreationException;
 import amidst.documentation.Immutable;
+import amidst.logging.Log;
 
 @Immutable
 public class SymbolicMethodDeclaration {
 	private final String symbolicName;
 	private final String realName;
+	private final boolean isOptional;
 	private final SymbolicParameterDeclarationList parameters;
 
 	public SymbolicMethodDeclaration(String symbolicName, String realName,
-			SymbolicParameterDeclarationList parameters) {
+			boolean isOptional, SymbolicParameterDeclarationList parameters) {
 		this.symbolicName = symbolicName;
 		this.realName = realName;
+		this.isOptional = isOptional;
 		this.parameters = parameters;
 	}
 
@@ -30,9 +33,14 @@ public class SymbolicMethodDeclaration {
 
 	public void handleMissing(Exception e, String symbolicClassName,
 			String realClassName) throws SymbolicClassGraphCreationException {
-		throw new SymbolicClassGraphCreationException(
-				"unable to find the real class method " + realClassName + "."
-						+ realName + parameters.toString() + " -> ("
-						+ symbolicClassName + "." + symbolicName + ")", e);
+		String message = "unable to find the real class method "
+				+ realClassName + "." + realName
+				+ parameters.getParameterString() + " -> (" + symbolicClassName
+				+ "." + symbolicName + ")";
+		if (isOptional) {
+			Log.i(message);
+		} else {
+			throw new SymbolicClassGraphCreationException(message, e);
+		}
 	}
 }

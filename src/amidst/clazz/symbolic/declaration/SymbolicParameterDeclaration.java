@@ -19,4 +19,12 @@ public class SymbolicParameterDeclaration {
 	public boolean isSymbolic() {
 		return isSymbolic;
 	}
+
+	public String getParameterString() {
+		if (isSymbolic) {
+			return "@" + type;
+		} else {
+			return type;
+		}
+	}
 }

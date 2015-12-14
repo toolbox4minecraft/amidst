@@ -58,7 +58,7 @@ public class SymbolicClassGraphBuilder {
 				symbolicClassBuildersBySymbolicClassDeclaration.put(
 						declaration, builder);
 			} catch (ClassNotFoundException e) {
-				declaration.handleMissing(e, symbolicClassName, realClassName);
+				declaration.handleMissing(e, realClassName);
 			}
 		}
 	}

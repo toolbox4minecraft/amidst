@@ -53,4 +53,16 @@ public class SymbolicParameterDeclarationList {
 	public List<SymbolicParameterDeclaration> getDeclarations() {
 		return declarations;
 	}
+
+	public String getParameterString() {
+		String separator = "";
+		StringBuilder stringBuilder = new StringBuilder("(");
+		for (SymbolicParameterDeclaration declaration : declarations) {
+			stringBuilder.append(separator).append(
+					declaration.getParameterString());
+			separator = ", ";
+		}
+		stringBuilder.append(")");
+		return stringBuilder.toString();
+	}
 }

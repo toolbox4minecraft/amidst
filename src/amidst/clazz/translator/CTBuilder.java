@@ -54,9 +54,18 @@ public class CTBuilder {
 		}
 
 		public SCDBuilder thenDeclare(String symbolicClassName) {
+			return thenDeclare(symbolicClassName, false);
+		}
+
+		public SCDBuilder thenDeclareOptional(String symbolicClassName) {
+			return thenDeclare(symbolicClassName, true);
+		}
+
+		private SCDBuilder thenDeclare(String symbolicClassName,
+				boolean isOptional) {
 			allDetectors.add(detectors);
-			CTBuilder.this.declarationBuilder
-					.setSymbolicClassName(symbolicClassName);
+			CTBuilder.this.declarationBuilder.init(symbolicClassName,
+					isOptional);
 			return CTBuilder.this.declarationBuilder;
 		}
 
@@ -104,16 +113,18 @@ public class CTBuilder {
 	@NotThreadSafe
 	public class SCDBuilder {
 		private String symbolicClassName;
+		private boolean isOptional;
 		private final List<SymbolicConstructorDeclaration> constructors = new ArrayList<SymbolicConstructorDeclaration>();
 		private final List<SymbolicMethodDeclaration> methods = new ArrayList<SymbolicMethodDeclaration>();
 		private final List<SymbolicFieldDeclaration> fields = new ArrayList<SymbolicFieldDeclaration>();
 
-		private void setSymbolicClassName(String symbolicClassName) {
+		private void init(String symbolicClassName, boolean isOptional) {
 			this.symbolicClassName = symbolicClassName;
+			this.isOptional = isOptional;
 		}
 
 		private SymbolicClassDeclaration constructThis() {
-			return new SymbolicClassDeclaration(symbolicClassName,
+			return new SymbolicClassDeclaration(symbolicClassName, isOptional,
 					constructors, methods, fields);
 		}
 
@@ -127,6 +138,16 @@ public class CTBuilder {
 
 		public SymbolicParameterDeclarationListBuilder<SCDBuilder> constructor(
 				final String symbolicName) {
+			return constructor(symbolicName, false);
+		}
+
+		public SymbolicParameterDeclarationListBuilder<SCDBuilder> optionalConstructor(
+				final String symbolicName) {
+			return constructor(symbolicName, true);
+		}
+
+		private SymbolicParameterDeclarationListBuilder<SCDBuilder> constructor(
+				final String symbolicName, final boolean isOptional) {
 			return new SymbolicParameterDeclarationListBuilder<SCDBuilder>(
 					this, new ExecuteOnEnd() {
 						@Override
@@ -134,26 +155,49 @@ public class CTBuilder {
 								SymbolicParameterDeclarationList parameters) {
 							constructors
 									.add(new SymbolicConstructorDeclaration(
-											symbolicName, parameters));
+											symbolicName, isOptional,
+											parameters));
 						}
 					});
 		}
 
 		public SymbolicParameterDeclarationListBuilder<SCDBuilder> method(
-				final String symbolicName, final String realName) {
+				String symbolicName, String realName) {
+			return method(symbolicName, realName, false);
+		}
+
+		public SymbolicParameterDeclarationListBuilder<SCDBuilder> optionalMethod(
+				String symbolicName, String realName) {
+			return method(symbolicName, realName, true);
+		}
+
+		private SymbolicParameterDeclarationListBuilder<SCDBuilder> method(
+				final String symbolicName, final String realName,
+				final boolean isOptional) {
 			return new SymbolicParameterDeclarationListBuilder<SCDBuilder>(
 					this, new ExecuteOnEnd() {
 						@Override
 						public void run(
 								SymbolicParameterDeclarationList parameters) {
 							methods.add(new SymbolicMethodDeclaration(
-									symbolicName, realName, parameters));
+									symbolicName, realName, isOptional,
+									parameters));
 						}
 					});
 		}
 
 		public SCDBuilder field(String symbolicName, String realName) {
-			fields.add(new SymbolicFieldDeclaration(symbolicName, realName));
+			return field(symbolicName, realName, false);
+		}
+
+		public SCDBuilder optionalField(String symbolicName, String realName) {
+			return field(symbolicName, realName, true);
+		}
+
+		private SCDBuilder field(String symbolicName, String realName,
+				boolean isOptional) {
+			fields.add(new SymbolicFieldDeclaration(symbolicName, realName,
+					isOptional));
 			return this;
 		}
 	}

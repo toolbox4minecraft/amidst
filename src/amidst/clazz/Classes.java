@@ -26,7 +26,7 @@ public enum Classes {
 	public static Map<String, SymbolicClass> createSymbolicClassMap(
 			File jarFile, URLClassLoader classLoader, ClassTranslator translator)
 			throws FileNotFoundException, JarFileParsingException,
-			SymbolicClassGraphCreationException {
+			SymbolicClassGraphCreationException, ClassNotFoundException {
 		Log.i("Reading " + jarFile.getName());
 		List<RealClass> realClasses = RealClasses.fromJarFile(jarFile);
 		Log.i("Jar load complete.");

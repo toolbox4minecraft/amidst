@@ -41,7 +41,7 @@ public class ClassTranslator {
 	}
 
 	public Map<SymbolicClassDeclaration, String> translate(
-			List<RealClass> realClasses) {
+			List<RealClass> realClasses) throws ClassNotFoundException {
 		Map<SymbolicClassDeclaration, String> result = new HashMap<SymbolicClassDeclaration, String>();
 		for (Entry<RealClassDetector, SymbolicClassDeclaration> entry : translations
 				.entrySet()) {
@@ -56,7 +56,8 @@ public class ClassTranslator {
 	}
 
 	private void addResult(Map<SymbolicClassDeclaration, String> result,
-			SymbolicClassDeclaration declaration, String realClassName) {
+			SymbolicClassDeclaration declaration, String realClassName)
+			throws ClassNotFoundException {
 		if (realClassName == null) {
 			declaration.handleNoMatch();
 		} else if (result.containsKey(declaration)) {

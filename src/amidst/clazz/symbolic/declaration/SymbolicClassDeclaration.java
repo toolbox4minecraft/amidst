@@ -10,15 +10,18 @@ import amidst.logging.Log;
 @Immutable
 public class SymbolicClassDeclaration {
 	private final String symbolicClassName;
+	private final boolean isOptional;
 	private final List<SymbolicConstructorDeclaration> constructors;
 	private final List<SymbolicMethodDeclaration> methods;
 	private final List<SymbolicFieldDeclaration> fields;
 
 	public SymbolicClassDeclaration(String symbolicClassName,
+			boolean isOptional,
 			List<SymbolicConstructorDeclaration> constructors,
 			List<SymbolicMethodDeclaration> methods,
 			List<SymbolicFieldDeclaration> fields) {
 		this.symbolicClassName = symbolicClassName;
+		this.isOptional = isOptional;
 		this.constructors = Collections.unmodifiableList(constructors);
 		this.methods = Collections.unmodifiableList(methods);
 		this.fields = Collections.unmodifiableList(fields);
@@ -50,15 +53,24 @@ public class SymbolicClassDeclaration {
 		Log.i("Found class " + symbolicClassName + ": " + realClassName);
 	}
 
-	public void handleNoMatch() {
-		Log.i("Missing class " + symbolicClassName);
+	public void handleNoMatch() throws ClassNotFoundException {
+		if (isOptional) {
+			Log.i("Missing class " + symbolicClassName);
+		} else {
+			throw new ClassNotFoundException(
+					"cannot find a real class matching the symbolic class "
+							+ symbolicClassName);
+		}
 	}
 
-	public void handleMissing(ClassNotFoundException e,
-			String symbolicClassName, String realClassName)
+	public void handleMissing(ClassNotFoundException e, String realClassName)
 			throws SymbolicClassGraphCreationException {
-		throw new SymbolicClassGraphCreationException(
-				"unable to find the real class " + realClassName + " -> ("
-						+ symbolicClassName + ")", e);
+		String message = "unable to find the real class " + realClassName
+				+ " -> (" + symbolicClassName + ")";
+		if (isOptional) {
+			Log.i(message);
+		} else {
+			throw new SymbolicClassGraphCreationException(message, e);
+		}
 	}
 }
