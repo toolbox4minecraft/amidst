@@ -97,6 +97,8 @@ public class LocalVersionComponent extends VersionComponent {
 			@CalledOnlyBy(AmidstThread.EDT)
 			@Override
 			public void error(Exception e) {
+				Log.e(e.getMessage());
+				e.printStackTrace();
 				isLoading = false;
 				failedLoading = true;
 				repaintComponent();

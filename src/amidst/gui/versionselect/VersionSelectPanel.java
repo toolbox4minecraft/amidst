@@ -102,7 +102,6 @@ public class VersionSelectPanel {
 	private VersionComponent selected = null;
 	private int selectedIndex = INVALID_INDEX;
 	private String emptyMessage;
-	private boolean isLoading = false;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public VersionSelectPanel(Setting<String> lastProfileSetting,
@@ -126,10 +125,9 @@ public class VersionSelectPanel {
 			@CalledOnlyBy(AmidstThread.EDT)
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (isLoading) {
-					return;
+				if (!isLoading()) {
+					doMousePressed(e.getPoint());
 				}
-				doMousePressed(e.getPoint());
 			}
 		};
 	}
@@ -140,10 +138,9 @@ public class VersionSelectPanel {
 			@CalledOnlyBy(AmidstThread.EDT)
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (isLoading) {
-					return;
+				if (!isLoading()) {
+					doKeyPressed(e.getKeyCode());
 				}
-				doKeyPressed(e.getKeyCode());
 			}
 		};
 	}
@@ -233,7 +230,6 @@ public class VersionSelectPanel {
 	private void loadSelectedProfile() {
 		if (selected != null && selected.isReadyToLoad()) {
 			lastProfileSetting.set(selected.getProfileName());
-			isLoading = true;
 			selected.load();
 		}
 	}
@@ -252,5 +248,15 @@ public class VersionSelectPanel {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public JPanel getComponent() {
 		return component;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private boolean isLoading() {
+		for (VersionComponent versionComponent : versionComponents) {
+			if (versionComponent.isLoading()) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
