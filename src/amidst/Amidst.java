@@ -11,16 +11,15 @@ import org.kohsuke.args4j.CmdLineParser;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
-import amidst.documentation.ThreadSafe;
+import amidst.documentation.NotThreadSafe;
 import amidst.gui.crash.CrashWindow;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
 
-@ThreadSafe
+@NotThreadSafe
 public class Amidst {
 	private static final String UNCAUGHT_EXCEPTION_ERROR_MESSAGE = "Amidst has encounted an uncaught exception on thread: ";
 	private static final String COMMAND_LINE_PARSING_ERROR_MESSAGE = "There was an issue parsing command line parameters.";
-	private static volatile Application application;
 	private static final CommandLineParameters PARAMETERS = new CommandLineParameters();
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
@@ -90,8 +89,7 @@ public class Amidst {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private static void doStartApplication() {
 		try {
-			application = new Application(PARAMETERS);
-			application.run();
+			new Application(PARAMETERS).run();
 		} catch (Exception e) {
 			handleCrash(e, "Amidst crashed!");
 		}
