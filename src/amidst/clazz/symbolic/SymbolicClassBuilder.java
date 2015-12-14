@@ -47,7 +47,8 @@ public class SymbolicClassBuilder {
 	public SymbolicClassBuilder(ClassLoader classLoader,
 			Map<String, String> realClassNamesBySymbolicClassName,
 			Map<String, SymbolicClass> symbolicClassesByRealClassName,
-			String symbolicClassName, String realClassName) {
+			String symbolicClassName, String realClassName)
+			throws ClassNotFoundException {
 		this.classLoader = classLoader;
 		this.realClassNamesBySymbolicClassName = realClassNamesBySymbolicClassName;
 		this.symbolicClassesByRealClassName = symbolicClassesByRealClassName;
@@ -60,13 +61,9 @@ public class SymbolicClassBuilder {
 		return product;
 	}
 
-	private Class<?> loadClass(String realClassName) {
-		try {
-			return classLoader.loadClass(realClassName);
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException("Error loading a class ("
-					+ realClassName + ")", e);
-		}
+	private Class<?> loadClass(String realClassName)
+			throws ClassNotFoundException {
+		return classLoader.loadClass(realClassName);
 	}
 
 	public void addConstructor(SymbolicConstructorDeclaration declaration) {

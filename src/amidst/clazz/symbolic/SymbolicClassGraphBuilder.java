@@ -23,7 +23,7 @@ public class SymbolicClassGraphBuilder {
 		this.realClassNamesBySymbolicClassDeclaration = realClassNamesBySymbolicClassDeclaration;
 	}
 
-	public Map<String, SymbolicClass> construct() {
+	public Map<String, SymbolicClass> construct() throws ClassNotFoundException {
 		Map<String, String> realClassNamesBySymbolicClassName = new HashMap<String, String>();
 		Map<String, SymbolicClass> symbolicClassesByRealClassName = new HashMap<String, SymbolicClass>();
 		Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration = new HashMap<SymbolicClassDeclaration, SymbolicClassBuilder>();
@@ -37,7 +37,8 @@ public class SymbolicClassGraphBuilder {
 	private void createSymbolicClasses(
 			Map<String, String> realClassNamesBySymbolicClassName,
 			Map<String, SymbolicClass> symbolicClassesByRealClassName,
-			Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration) {
+			Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration)
+			throws ClassNotFoundException {
 		for (Entry<SymbolicClassDeclaration, String> entry : realClassNamesBySymbolicClassDeclaration
 				.entrySet()) {
 			SymbolicClassDeclaration declaration = entry.getKey();

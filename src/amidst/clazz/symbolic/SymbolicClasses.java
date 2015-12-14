@@ -11,7 +11,7 @@ public enum SymbolicClasses {
 
 	public static Map<String, SymbolicClass> from(
 			Map<SymbolicClassDeclaration, String> realClassNamesBySymbolicClassDeclaration,
-			ClassLoader classLoader) {
+			ClassLoader classLoader) throws ClassNotFoundException {
 		return new SymbolicClassGraphBuilder(classLoader,
 				realClassNamesBySymbolicClassDeclaration).construct();
 	}
