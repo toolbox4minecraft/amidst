@@ -10,7 +10,7 @@ import java.util.Map;
 import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicFieldDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
-import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.ParameterDeclaration;
+import amidst.clazz.symbolic.declaration.SymbolicParameterDeclaration;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.Log;
 
@@ -159,7 +159,7 @@ public class SymbolicClassBuilder {
 	}
 
 	private Class<?>[] getParameterClasses(
-			List<ParameterDeclaration> declarations)
+			List<SymbolicParameterDeclaration> declarations)
 			throws ClassNotFoundException {
 		Class<?>[] result = new Class<?>[declarations.size()];
 		for (int i = 0; i < declarations.size(); i++) {
@@ -168,7 +168,7 @@ public class SymbolicClassBuilder {
 		return result;
 	}
 
-	private Class<?> getParameterClass(ParameterDeclaration declaration)
+	private Class<?> getParameterClass(SymbolicParameterDeclaration declaration)
 			throws ClassNotFoundException {
 		Class<?> result = PRIMITIVES_MAP.get(declaration.getType());
 		if (result != null) {

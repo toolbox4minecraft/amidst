@@ -15,7 +15,7 @@ public class SymbolicParameterDeclarationList {
 	@Immutable
 	public static class SymbolicParameterDeclarationListBuilder<T> {
 		private final T nextBuilder;
-		private final List<ParameterDeclaration> declarations = new ArrayList<ParameterDeclaration>();
+		private final List<SymbolicParameterDeclaration> declarations = new ArrayList<SymbolicParameterDeclaration>();
 		private final ExecuteOnEnd executeOnEnd;
 
 		public SymbolicParameterDeclarationListBuilder(T nextBuilder,
@@ -25,13 +25,14 @@ public class SymbolicParameterDeclarationList {
 		}
 
 		public SymbolicParameterDeclarationListBuilder<T> real(String realType) {
-			declarations.add(new ParameterDeclaration(realType, false));
+			declarations.add(new SymbolicParameterDeclaration(realType, false));
 			return this;
 		}
 
 		public SymbolicParameterDeclarationListBuilder<T> symbolic(
 				String symbolicType) {
-			declarations.add(new ParameterDeclaration(symbolicType, true));
+			declarations.add(new SymbolicParameterDeclaration(symbolicType,
+					true));
 			return this;
 		}
 
@@ -42,33 +43,14 @@ public class SymbolicParameterDeclarationList {
 		}
 	}
 
-	@Immutable
-	public static class ParameterDeclaration {
-		private final String type;
-		private final boolean isSymbolic;
-
-		private ParameterDeclaration(String type, boolean isSymbolic) {
-			this.type = type;
-			this.isSymbolic = isSymbolic;
-		}
-
-		public String getType() {
-			return type;
-		}
-
-		public boolean isSymbolic() {
-			return isSymbolic;
-		}
-	}
-
-	private final List<ParameterDeclaration> declarations;
+	private final List<SymbolicParameterDeclaration> declarations;
 
 	public SymbolicParameterDeclarationList(
-			List<ParameterDeclaration> declarations) {
+			List<SymbolicParameterDeclaration> declarations) {
 		this.declarations = Collections.unmodifiableList(declarations);
 	}
 
-	public List<ParameterDeclaration> getDeclarations() {
+	public List<SymbolicParameterDeclaration> getDeclarations() {
 		return declarations;
 	}
 }
