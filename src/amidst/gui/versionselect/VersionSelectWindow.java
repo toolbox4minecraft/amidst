@@ -21,7 +21,7 @@ import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
-import amidst.threading.Worker;
+import amidst.threading.SimpleWorker;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -79,26 +79,24 @@ public class VersionSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void scanAndLoadVersionsLater() {
-		workerExecutor
-				.invokeLater(new Worker<LauncherProfilesJson>() {
-					@Override
-					public LauncherProfilesJson execute()
-							throws FileNotFoundException {
-						return scanAndLoadVersions();
-					}
+		workerExecutor.invokeLater(new SimpleWorker<LauncherProfilesJson>() {
+			@Override
+			protected LauncherProfilesJson main() throws FileNotFoundException {
+				return scanAndLoadVersions();
+			}
 
-					@Override
-					public void error(Exception e) {
-						Log.e("Error reading launcher_profiles.json");
-						e.printStackTrace();
-						versionSelectPanel.setEmptyMessage("Failed loading");
-					}
+			@Override
+			protected void onMainFinished(LauncherProfilesJson launcherProfile) {
+				loadVersions(launcherProfile);
+			}
 
-					@Override
-					public void finished(LauncherProfilesJson launcherProfile) {
-						loadVersions(launcherProfile);
-					}
-				});
+			@Override
+			protected void onMainFinishedWithException(Exception e) {
+				Log.e("Error reading launcher_profiles.json");
+				e.printStackTrace();
+				versionSelectPanel.setEmptyMessage("Failed loading");
+			}
+		});
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)

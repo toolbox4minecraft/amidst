@@ -6,8 +6,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.SwingUtilities;
-
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
@@ -75,7 +73,7 @@ public class ThreadMaster {
 	}
 
 	private WorkerExecutor createWorkerExecutor() {
-		return new WorkerExecutor(this);
+		return new WorkerExecutor(workerExecutorService);
 	}
 
 	private void startRepainter() {
@@ -96,42 +94,6 @@ public class ThreadMaster {
 				onFragmentLoadTick.run();
 			}
 		}, 0, 20, TimeUnit.MILLISECONDS);
-	}
-
-	public <T> void executeWorker(final Worker<T> worker) {
-		workerExecutorService.execute(new Runnable() {
-			@CalledOnlyBy(AmidstThread.WORKER)
-			@Override
-			public void run() {
-				try {
-					callFinishedLater(worker, worker.execute());
-				} catch (Exception e) {
-					callErrorLater(worker, e);
-				}
-			}
-		});
-	}
-
-	@CalledOnlyBy(AmidstThread.WORKER)
-	private <T> void callErrorLater(final Worker<T> worker, final Exception e) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@CalledOnlyBy(AmidstThread.EDT)
-			@Override
-			public void run() {
-				worker.error(e);
-			}
-		});
-	}
-
-	@CalledOnlyBy(AmidstThread.WORKER)
-	private <T> void callFinishedLater(final Worker<T> worker, final T result) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@CalledOnlyBy(AmidstThread.EDT)
-			@Override
-			public void run() {
-				worker.finished(result);
-			}
-		});
 	}
 
 	public WorkerExecutor getWorkerExecutor() {

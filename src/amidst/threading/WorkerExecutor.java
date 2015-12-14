@@ -1,16 +1,30 @@
 package amidst.threading;
 
+import java.util.concurrent.ExecutorService;
+
 import amidst.documentation.ThreadSafe;
 
 @ThreadSafe
 public class WorkerExecutor {
-	private final ThreadMaster threadMaster;
+	private final ExecutorService executorService;
 
-	public WorkerExecutor(ThreadMaster threadMaster) {
-		this.threadMaster = threadMaster;
+	public WorkerExecutor(ExecutorService executorService) {
+		this.executorService = executorService;
 	}
 
-	public <T> void invokeLater(Worker<T> worker) {
-		threadMaster.executeWorker(worker);
+	public <M, I, F> void invokeLater(Worker<M, I, F> worker) {
+		worker.executeMain(executorService);
+	}
+
+	public <I> void invokeLater(WorkerWithoutResult<I> worker) {
+		worker.executeMain(executorService);
+	}
+
+	public <M> void invokeLater(SimpleWorker<M> worker) {
+		worker.executeMain(executorService);
+	}
+
+	public void invokeLater(SimpleWorkerWithoutResult worker) {
+		worker.executeMain(executorService);
 	}
 }

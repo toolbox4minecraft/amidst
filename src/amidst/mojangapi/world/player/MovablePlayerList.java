@@ -1,15 +1,14 @@
 package amidst.mojangapi.world.player;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.playerfile.PlayerFile;
-import amidst.threading.Worker;
 import amidst.threading.WorkerExecutor;
+import amidst.threading.WorkerWithoutResult;
 
 @ThreadSafe
 public class MovablePlayerList implements Iterable<Player> {
@@ -61,51 +60,26 @@ public class MovablePlayerList implements Iterable<Player> {
 	private void loadPlayersLater(final ConcurrentLinkedQueue<Player> players,
 			final WorkerExecutor workerExecutor,
 			final Runnable onPlayerFinishedLoading) {
-		workerExecutor.invokeLater(new Worker<Void>() {
+		workerExecutor.invokeLater(new WorkerWithoutResult<PlayerFile>() {
 			@Override
-			public Void execute() {
-				List<PlayerFile> playerFiles = worldPlayerType
-						.createPlayerFiles(saveDirectory);
-				for (PlayerFile playerFile : playerFiles) {
-					loadPlayerLater(players, playerFile, workerExecutor,
-							onPlayerFinishedLoading);
+			protected void main() {
+				for (PlayerFile playerFile : worldPlayerType
+						.createPlayerFiles(saveDirectory)) {
+					executeFork(playerFile);
 				}
-				return null;
 			}
 
 			@Override
-			public void finished(Void result) {
-				// noop
-			}
-
-			@Override
-			public void error(Exception e) {
-				// noop
-			}
-		});
-	}
-
-	private void loadPlayerLater(final ConcurrentLinkedQueue<Player> players,
-			final PlayerFile playerFile, WorkerExecutor workerExecutor,
-			final Runnable onPlayerFinishedLoading) {
-		workerExecutor.invokeLater(new Worker<Void>() {
-			@Override
-			public Void execute() {
+			protected void fork(PlayerFile playerFile) throws Exception {
 				Player player = playerFile.createPlayer(playerInformationCache);
 				if (player.tryLoadLocation()) {
 					players.offer(player);
 				}
-				return null;
 			}
 
 			@Override
-			public void finished(Void result) {
+			protected void onForkFinished() {
 				onPlayerFinishedLoading.run();
-			}
-
-			@Override
-			public void error(Exception e) {
-				// noop
 			}
 		});
 	}

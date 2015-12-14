@@ -10,7 +10,8 @@ import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder.LocalMinecraftInterfaceCreationException;
-import amidst.threading.Worker;
+import amidst.threading.SimpleWorker;
+import amidst.threading.SimpleWorkerWithoutResult;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -40,26 +41,18 @@ public class LocalVersionComponent extends VersionComponent {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void initDirectoriesLater() {
-		workerExecutor.invokeLater(new Worker<Boolean>() {
-			@CalledOnlyBy(AmidstThread.WORKER)
+		workerExecutor.invokeLater(new SimpleWorker<Boolean>() {
 			@Override
-			public Boolean execute() {
+			protected Boolean main() {
 				profileDirectory = createProfileDirectory();
 				versionDirectory = createVersionDirectory();
 				return profileDirectory != null && versionDirectory != null;
 			}
 
-			@CalledOnlyBy(AmidstThread.EDT)
 			@Override
-			public void finished(Boolean result) {
+			protected void onMainFinished(Boolean result) {
 				isReadyToLoad = result;
 				repaintComponent();
-			}
-
-			@CalledOnlyBy(AmidstThread.EDT)
-			@Override
-			public void error(Exception e) {
-				// noop
 			}
 		});
 	}
@@ -90,31 +83,27 @@ public class LocalVersionComponent extends VersionComponent {
 	public void load() {
 		isLoading = true;
 		repaintComponent();
-		workerExecutor.invokeLater(new Worker<Void>() {
-			@CalledOnlyBy(AmidstThread.WORKER)
+		workerExecutor.invokeLater(new SimpleWorkerWithoutResult() {
 			@Override
-			public Void execute()
+			protected void main()
 					throws LocalMinecraftInterfaceCreationException {
 				mojangApi.set(profileDirectory, versionDirectory);
-				return null;
 			}
 
-			@CalledOnlyBy(AmidstThread.EDT)
 			@Override
-			public void error(Exception e) {
+			protected void onMainFinished() {
+				isLoading = false;
+				repaintComponent();
+				application.displayMainWindow();
+			}
+
+			@Override
+			protected void onMainFinishedWithException(Exception e) {
 				Log.e(e.getMessage());
 				e.printStackTrace();
 				isLoading = false;
 				failedLoading = true;
 				repaintComponent();
-			}
-
-			@CalledOnlyBy(AmidstThread.EDT)
-			@Override
-			public void finished(Void result) {
-				isLoading = false;
-				repaintComponent();
-				application.displayMainWindow();
 			}
 		});
 	}

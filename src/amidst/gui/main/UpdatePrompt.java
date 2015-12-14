@@ -8,7 +8,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.Log;
-import amidst.threading.Worker;
+import amidst.threading.SimpleWorker;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -35,22 +35,23 @@ public class UpdatePrompt {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void check(final boolean silent) {
 		workerExecutor
-				.invokeLater(new Worker<UpdateInformationRetriever>() {
+				.invokeLater(new SimpleWorker<UpdateInformationRetriever>() {
 					@Override
-					public UpdateInformationRetriever execute()
+					protected UpdateInformationRetriever main()
 							throws Exception {
 						return new UpdateInformationRetriever();
 					}
 
 					@Override
-					public void error(Exception e) {
-						Log.w("unable to check for updates");
-						displayError(silent, e);
+					protected void onMainFinished(
+							UpdateInformationRetriever retriever) {
+						displayResult(silent, retriever);
 					}
 
 					@Override
-					public void finished(UpdateInformationRetriever retriever) {
-						displayResult(silent, retriever);
+					protected void onMainFinishedWithException(Exception e) {
+						Log.w("unable to check for updates");
+						displayError(silent, e);
 					}
 				});
 	}
