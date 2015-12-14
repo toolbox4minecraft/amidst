@@ -21,6 +21,10 @@ public class SymbolicConstructorDeclaration {
 		return symbolicName;
 	}
 
+	public boolean isOptional() {
+		return isOptional;
+	}
+
 	public SymbolicParameterDeclarationList getParameters() {
 		return parameters;
 	}

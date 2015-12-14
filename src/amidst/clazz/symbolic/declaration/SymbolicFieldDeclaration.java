@@ -25,6 +25,10 @@ public class SymbolicFieldDeclaration {
 		return realName;
 	}
 
+	public boolean isOptional() {
+		return isOptional;
+	}
+
 	public void handleMissing(Exception e, String symbolicClassName,
 			String realClassName) throws SymbolicClassGraphCreationException {
 		String message = "unable to find the real class field " + realClassName

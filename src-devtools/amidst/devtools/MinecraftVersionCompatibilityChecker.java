@@ -3,7 +3,6 @@ package amidst.devtools;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,6 +19,12 @@ import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+/**
+ * This only checks if there is exactly one class in the jar file for each
+ * class, defined by the class translator. Optional classes can be missing.
+ * However, it does not check if the class has all the required constructors,
+ * methods and fields. It also does not try to use the found classes.
+ */
 public class MinecraftVersionCompatibilityChecker {
 	public static void main(String[] args) throws JsonSyntaxException,
 			JsonIOException, IOException {
@@ -27,9 +32,6 @@ public class MinecraftVersionCompatibilityChecker {
 				DevToolsSettings.INSTANCE.getMinecraftVersionsDirectory(),
 				JsonReader.readRemoteVersionList()).checkAll();
 	}
-
-	private static final List<String> OPTIONAL_CLASSES = Arrays
-			.asList("BlockInit");
 
 	private String prefix;
 	private VersionListJson versionList;
@@ -74,9 +76,9 @@ public class MinecraftVersionCompatibilityChecker {
 			Map<SymbolicClassDeclaration, Integer> matchesMap) {
 		for (Entry<SymbolicClassDeclaration, Integer> entry : matchesMap
 				.entrySet()) {
-			String symbolicClassName = entry.getKey().getSymbolicClassName();
-			if ((entry.getValue() == 0 && !OPTIONAL_CLASSES
-					.contains(symbolicClassName)) || entry.getValue() > 1) {
+			if (entry.getValue() > 1) {
+				return false;
+			} else if (entry.getValue() == 0 && !entry.getKey().isOptional()) {
 				return false;
 			}
 		}

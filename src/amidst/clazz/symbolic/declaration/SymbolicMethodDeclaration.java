@@ -27,6 +27,10 @@ public class SymbolicMethodDeclaration {
 		return realName;
 	}
 
+	public boolean isOptional() {
+		return isOptional;
+	}
+
 	public SymbolicParameterDeclarationList getParameters() {
 		return parameters;
 	}

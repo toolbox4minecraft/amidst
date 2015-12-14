@@ -31,6 +31,10 @@ public class SymbolicClassDeclaration {
 		return symbolicClassName;
 	}
 
+	public boolean isOptional() {
+		return isOptional;
+	}
+
 	public List<SymbolicConstructorDeclaration> getConstructors() {
 		return constructors;
 	}
