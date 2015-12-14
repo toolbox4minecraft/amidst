@@ -44,25 +44,18 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		this.recognisedVersion = recognisedVersion;
 	}
 
+	// @formatter:off
 	@Override
 	public synchronized int[] getBiomeData(int x, int y, int width, int height,
 			boolean useQuarterResolution) {
 		try {
-			return doGetBiomeData(x, y, width, height, useQuarterResolution);
+			intCacheClass.callStaticMethod(SymbolicNames.METHOD_INT_CACHE_RESET_INT_CACHE);
+			return (int[]) getBiomeGenerator(useQuarterResolution).callMethod(SymbolicNames.METHOD_GEN_LAYER_GET_INTS, x, y, width, height);
 		} catch (Exception e) {
 			Log.e("unable to get biome data");
 			e.printStackTrace();
 			return new int[width * height];
 		}
-	}
-
-	private int[] doGetBiomeData(int x, int y, int width, int height,
-			boolean useQuarterResolution) throws IllegalAccessException,
-			InvocationTargetException {
-		intCacheClass
-				.callStaticMethod(SymbolicNames.METHOD_INT_CACHE_RESET_INT_CACHE);
-		return (int[]) getBiomeGenerator(useQuarterResolution).callMethod(
-				SymbolicNames.METHOD_GEN_LAYER_GET_INTS, x, y, width, height);
 	}
 
 	private SymbolicObject getBiomeGenerator(boolean useQuarterResolution) {
@@ -77,26 +70,16 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	public synchronized void createWorld(long seed, WorldType worldType,
 			String generatorOptions) {
 		try {
-			doCreateWorld(seed, worldType, generatorOptions);
+			Log.debug("Attempting to create world with seed: " + seed + ", type: " + worldType.getName() + ", and the following generator options:");
+			Log.debug(generatorOptions);
+			initializeBlock();
+			Object[] genLayers = getGenLayers(seed, worldType, generatorOptions);
+			quarterResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[0]);
+			fullResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[1]);
 		} catch (Exception e) {
 			Log.e("unable to create world");
 			e.printStackTrace();
 		}
-	}
-
-	private void doCreateWorld(long seed, WorldType worldType,
-			String generatorOptions) throws IllegalAccessException,
-			InvocationTargetException {
-		Log.debug("Attempting to create world with seed: " + seed + ", type: "
-				+ worldType.getName()
-				+ ", and the following generator options:");
-		Log.debug(generatorOptions);
-		initializeBlock();
-		Object[] genLayers = getGenLayers(seed, worldType, generatorOptions);
-		quarterResolutionBiomeGenerator = new SymbolicObject(genLayerClass,
-				genLayers[0]);
-		fullResolutionBiomeGenerator = new SymbolicObject(genLayerClass,
-				genLayers[1]);
 	}
 
 	/**
@@ -106,64 +89,26 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private void initializeBlock() throws IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
 		if (blockInitClass != null) {
-			blockInitClass
-					.callStaticMethod(SymbolicNames.METHOD_BLOCK_INIT_INITIALIZE);
+			blockInitClass.callStaticMethod(SymbolicNames.METHOD_BLOCK_INIT_INITIALIZE);
 		}
 	}
 
-	private Object[] getGenLayers(long seed, WorldType worldType,
-			String generatorOptions) throws IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
+	private Object[] getGenLayers(long seed, WorldType worldType, String generatorOptions)
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		if (worldTypeClass == null) {
-			return initializeAllBiomeGenerators(seed);
-		} else if (initializeAllBiomeGenerators3Exists()) {
-			return initializeAllBiomeGenerators(seed, generatorOptions,
-					getWorldType(worldType));
+			return (Object[]) genLayerClass.callStaticMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_1, seed);
+		} else if (genLayerClass.hasMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3)) {
+			return (Object[]) genLayerClass.callStaticMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3, seed, getWorldType(worldType).getObject(), generatorOptions);
 		} else {
-			return initializeAllBiomeGenerators(seed, getWorldType(worldType));
+			return (Object[]) genLayerClass.callStaticMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_2, seed, getWorldType(worldType).getObject());
 		}
 	}
 
-	private Object getWorldType(WorldType worldType)
+	private SymbolicObject getWorldType(WorldType worldType)
 			throws IllegalArgumentException, IllegalAccessException {
-		String value = worldType.getValue();
-		SymbolicObject object = (SymbolicObject) worldTypeClass
-				.getStaticFieldValue(value);
-		return object.getObject();
+		return (SymbolicObject) worldTypeClass.getStaticFieldValue(worldType.getValue());
 	}
-
-	private boolean initializeAllBiomeGenerators3Exists() {
-		return genLayerClass
-				.hasMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3);
-	}
-
-	private Object[] initializeAllBiomeGenerators(long seed, Object worldType)
-			throws IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException {
-		return (Object[]) genLayerClass
-				.callStaticMethod(
-						SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_2,
-						seed, worldType);
-	}
-
-	private Object[] initializeAllBiomeGenerators(long seed)
-			throws IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException {
-		return (Object[]) genLayerClass
-				.callStaticMethod(
-						SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_1,
-						seed);
-	}
-
-	private Object[] initializeAllBiomeGenerators(long seed,
-			String generatorOptions, Object worldType)
-			throws IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException {
-		return (Object[]) genLayerClass
-				.callStaticMethod(
-						SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3,
-						seed, worldType, generatorOptions);
-	}
+	// @formatter:on
 
 	@Override
 	public RecognisedVersion getRecognisedVersion() {
