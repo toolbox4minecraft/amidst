@@ -49,7 +49,7 @@ public class ProfileSelectPanel {
 		@CalledOnlyBy(AmidstThread.EDT)
 		private void drawSeparatorLines(Graphics2D g2d) {
 			g2d.setColor(Color.gray);
-			for (int i = 1; i <= versionComponents.size(); i++) {
+			for (int i = 1; i <= profileComponents.size(); i++) {
 				g2d.drawLine(0, i * 40, getWidth(), i * 40);
 			}
 		}
@@ -60,7 +60,7 @@ public class ProfileSelectPanel {
 			super.paintComponent(g);
 			Graphics2D g2d = (Graphics2D) g;
 			drawBackground(g2d);
-			if (versionComponents.isEmpty()) {
+			if (profileComponents.isEmpty()) {
 				drawEmptyMessage(g2d);
 			}
 		}
@@ -98,7 +98,7 @@ public class ProfileSelectPanel {
 
 	private final Setting<String> lastProfileSetting;
 	private final Component component;
-	private final List<ProfileComponent> versionComponents = new ArrayList<ProfileComponent>();
+	private final List<ProfileComponent> profileComponents = new ArrayList<ProfileComponent>();
 
 	private ProfileComponent selected = null;
 	private int selectedIndex = INVALID_INDEX;
@@ -182,8 +182,8 @@ public class ProfileSelectPanel {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private int getIndex(String profileName) {
-		for (int i = 0; i < versionComponents.size(); i++) {
-			if (versionComponents.get(i).getProfileName().equals(profileName)) {
+		for (int i = 0; i < profileComponents.size(); i++) {
+			if (profileComponents.get(i).getProfileName().equals(profileName)) {
 				return i;
 			}
 		}
@@ -207,12 +207,12 @@ public class ProfileSelectPanel {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private int getBoundedIndex(int index) {
-		if (versionComponents.isEmpty()) {
+		if (profileComponents.isEmpty()) {
 			return INVALID_INDEX;
 		} else if (index < 0) {
 			return 0;
-		} else if (index >= versionComponents.size()) {
-			return versionComponents.size() - 1;
+		} else if (index >= profileComponents.size()) {
+			return profileComponents.size() - 1;
 		} else {
 			return index;
 		}
@@ -221,7 +221,7 @@ public class ProfileSelectPanel {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void doSelect(int index) {
 		if (index != INVALID_INDEX) {
-			selected = versionComponents.get(index);
+			selected = profileComponents.get(index);
 			selected.setSelected(true);
 			selectedIndex = index;
 		}
@@ -236,9 +236,9 @@ public class ProfileSelectPanel {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void addVersion(ProfileComponent version) {
-		component.add(version.getComponent(), "growx, pushx, wrap");
-		versionComponents.add(version);
+	public void addProfile(ProfileComponent profile) {
+		component.add(profile.getComponent(), "growx, pushx, wrap");
+		profileComponents.add(profile);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -254,8 +254,8 @@ public class ProfileSelectPanel {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean isLoading() {
-		for (ProfileComponent versionComponent : versionComponents) {
-			if (versionComponent.isLoading()) {
+		for (ProfileComponent profileComponent : profileComponents) {
+			if (profileComponent.isLoading()) {
 				return true;
 			}
 		}

@@ -45,7 +45,7 @@ public class ProfileSelectWindow {
 		this.profileSelectPanel = new ProfileSelectPanel(settings.lastProfile,
 				"Scanning...");
 		this.frame = createFrame();
-		scanAndLoadVersionsLater();
+		scanAndLoadProfilesLater();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -78,16 +78,16 @@ public class ProfileSelectWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void scanAndLoadVersionsLater() {
+	private void scanAndLoadProfilesLater() {
 		workerExecutor.invokeLater(new SimpleWorker<LauncherProfilesJson>() {
 			@Override
 			protected LauncherProfilesJson main() throws FileNotFoundException {
-				return scanAndLoadVersions();
+				return scanAndLoadProfiles();
 			}
 
 			@Override
 			protected void onMainFinished(LauncherProfilesJson launcherProfile) {
-				loadVersions(launcherProfile);
+				displayProfiles(launcherProfile);
 			}
 
 			@Override
@@ -100,7 +100,7 @@ public class ProfileSelectWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private LauncherProfilesJson scanAndLoadVersions()
+	private LauncherProfilesJson scanAndLoadProfiles()
 			throws FileNotFoundException {
 		Log.i("Scanning for profiles.");
 		LauncherProfilesJson launcherProfile = mojangApi
@@ -110,16 +110,16 @@ public class ProfileSelectWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void loadVersions(LauncherProfilesJson launcherProfile) {
-		createVersionComponents(launcherProfile);
+	private void displayProfiles(LauncherProfilesJson launcherProfile) {
+		createProfileComponents(launcherProfile);
 		restoreSelection();
 		frame.pack();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void createVersionComponents(LauncherProfilesJson launcherProfile) {
+	private void createProfileComponents(LauncherProfilesJson launcherProfile) {
 		for (LauncherProfileJson profile : launcherProfile.getProfiles()) {
-			profileSelectPanel.addVersion(new LocalProfileComponent(
+			profileSelectPanel.addProfile(new LocalProfileComponent(
 					application, workerExecutor, mojangApi, profile));
 		}
 	}
