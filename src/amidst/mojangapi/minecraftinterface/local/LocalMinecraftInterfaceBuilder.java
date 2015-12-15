@@ -61,8 +61,8 @@ public class LocalMinecraftInterfaceBuilder {
 		Log.i("Generating version ID...");
 		String magicString = generateMagicString(getMainClassFields(loadMainClass(classLoader)));
 		RecognisedVersion result = RecognisedVersion.from(magicString);
-		Log.i("Identified Minecraft [" + result.getName()
-				+ "] with magic string of " + magicString);
+		Log.i("Recognised Minecraft Version " + result.getName()
+				+ " with magic string of \"" + magicString + "\"");
 		return result;
 	}
 
@@ -71,7 +71,8 @@ public class LocalMinecraftInterfaceBuilder {
 			return mainClass.getDeclaredFields();
 		} catch (NoClassDefFoundError e) {
 			throw new RuntimeException(
-					"Unable to find critical external class while loading.\nPlease ensure you have the correct Minecraft libraries installed.",
+					"Unable to find critical external class while loading.\n"
+							+ "Please ensure you have the correct Minecraft libraries installed.",
 					e);
 		}
 	}
