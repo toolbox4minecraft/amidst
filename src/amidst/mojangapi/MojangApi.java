@@ -30,6 +30,7 @@ public class MojangApi {
 	private final File preferedJson;
 
 	private volatile ProfileDirectory profileDirectory;
+	private volatile VersionDirectory versionDirectory;
 	private volatile MinecraftInterface minecraftInterface;
 
 	public MojangApi(WorldBuilder worldBuilder,
@@ -53,6 +54,7 @@ public class MojangApi {
 			VersionDirectory versionDirectory)
 			throws LocalMinecraftInterfaceCreationException {
 		this.profileDirectory = profileDirectory;
+		this.versionDirectory = versionDirectory;
 		if (versionDirectory != null) {
 			try {
 				this.minecraftInterface = versionDirectory
@@ -131,6 +133,15 @@ public class MojangApi {
 		} else {
 			throw new IllegalStateException(
 					"cannot create a world without a minecraft interface");
+		}
+	}
+
+	public String getVersionId() {
+		VersionDirectory versionDirectory = this.versionDirectory;
+		if (versionDirectory != null) {
+			return versionDirectory.getVersionId();
+		} else {
+			return UNKNOWN_VERSION_ID;
 		}
 	}
 

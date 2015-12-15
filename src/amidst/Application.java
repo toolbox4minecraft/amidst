@@ -145,7 +145,6 @@ public class Application {
 		new LicenseWindow();
 	}
 
-	// TODO: use find all occurrences of System.exit();
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void exitGracefully() {
 		dispose();

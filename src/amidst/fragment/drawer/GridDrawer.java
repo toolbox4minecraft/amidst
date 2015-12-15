@@ -48,14 +48,12 @@ public class GridDrawer extends FragmentDrawer {
 		return (int) (.25 / zoom.getCurrentValue());
 	}
 
-	// TODO: use longs?
 	@CalledOnlyBy(AmidstThread.EDT)
 	private int getGridX(Fragment fragment, int stride) {
 		return (int) fragment.getCorner().getXAs(Resolution.FRAGMENT)
 				% (stride + 1);
 	}
 
-	// TODO: use longs?
 	@CalledOnlyBy(AmidstThread.EDT)
 	private int getGridY(Fragment fragment, int stride) {
 		return (int) fragment.getCorner().getYAs(Resolution.FRAGMENT)

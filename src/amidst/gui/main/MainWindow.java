@@ -80,20 +80,22 @@ public class MainWindow {
 		return new UpdatePrompt(this, threadMaster.getWorkerExecutor());
 	}
 
-	// TODO: use official minecraft version id instead of recognised one?
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JFrame createFrame() {
 		JFrame frame = new JFrame();
-		frame.setTitle(createVersionString(mojangApi.getRecognisedVersionName()));
+		frame.setTitle(createVersionString(mojangApi.getVersionId(),
+				mojangApi.getRecognisedVersionName()));
 		frame.setSize(1000, 800);
 		frame.setIconImage(AmidstMetaData.ICON);
 		return frame;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private String createVersionString(String version) {
+	private String createVersionString(String versionId,
+			String recognisedVersionName) {
 		return "Amidst v" + AmidstMetaData.getFullVersionString()
-				+ " [Using Minecraft version: " + version + "]";
+				+ " - Minecraft Version " + versionId + " ("
+				+ recognisedVersionName + ")";
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

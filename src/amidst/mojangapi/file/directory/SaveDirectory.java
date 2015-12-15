@@ -98,7 +98,6 @@ public class SaveDirectory {
 		return players;
 	}
 
-	// TODO: use me!
 	public File getPlayerdata() {
 		return playerdata;
 	}
