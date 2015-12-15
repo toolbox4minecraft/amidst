@@ -287,7 +287,6 @@ public class MainWindow {
 				JOptionPane.ERROR_MESSAGE);
 	}
 
-	// TODO: @stefan revisit error handling and feedback on gui
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayException(Exception exception) {
 		JOptionPane.showMessageDialog(frame, getStackTraceAsString(exception),

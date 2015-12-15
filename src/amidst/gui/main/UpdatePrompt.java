@@ -60,7 +60,7 @@ public class UpdatePrompt {
 	private void displayError(boolean silent, Exception e) {
 		e.printStackTrace();
 		if (!silent) {
-			mainWindow.displayError(e.getMessage());
+			mainWindow.displayException(e);
 		}
 	}
 
