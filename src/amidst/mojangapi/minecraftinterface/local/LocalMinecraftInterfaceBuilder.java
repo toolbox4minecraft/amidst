@@ -30,7 +30,8 @@ public class LocalMinecraftInterfaceBuilder {
 			throws LocalMinecraftInterfaceCreationException {
 		try {
 			URLClassLoader classLoader = versionDirectory.createClassLoader();
-			RecognisedVersion recognisedVersion = getRecognisedVersion(classLoader);
+			RecognisedVersion recognisedVersion = RecognisedVersion
+					.from(getMainClassFields(classLoader));
 			Map<String, SymbolicClass> symbolicClassMap = Classes
 					.createSymbolicClassMap(versionDirectory.getJar(),
 							classLoader, translator);
@@ -47,54 +48,15 @@ public class LocalMinecraftInterfaceBuilder {
 		}
 	}
 
-	private RecognisedVersion getRecognisedVersion(URLClassLoader classLoader)
-			throws LocalMinecraftInterfaceCreationException {
-		Log.i("Generating version ID...");
-		String magicString = generateMagicString(getMainClassFields(loadMainClass(classLoader)));
-		RecognisedVersion result = RecognisedVersion.from(magicString);
-		Log.i("Recognised Minecraft Version " + result.getName()
-				+ " with magic string of \"" + magicString + "\"");
-		return result;
-	}
-
-	private Field[] getMainClassFields(Class<?> mainClass)
-			throws LocalMinecraftInterfaceCreationException {
-		try {
-			return mainClass.getDeclaredFields();
-		} catch (NoClassDefFoundError e) {
-			throw new LocalMinecraftInterfaceCreationException(
-					"Unable to find critical external class while loading.\n"
-							+ "Please ensure you have the correct Minecraft libraries installed.",
-					e);
-		}
-	}
-
-	private String generateMagicString(Field[] fields) {
-		String result = "";
-		for (Field field : fields) {
-			String typeString = field.getType().toString();
-			if (typeString.startsWith("class ") && !typeString.contains(".")) {
-				result += typeString.substring(6);
-			}
-		}
-		return result;
-	}
-
-	private Class<?> loadMainClass(URLClassLoader classLoader)
-			throws LocalMinecraftInterfaceCreationException {
-		try {
-			if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
-				return classLoader.loadClass(CLIENT_CLASS);
-			} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {
-				return classLoader.loadClass(SERVER_CLASS);
-			} else {
-				throw new LocalMinecraftInterfaceCreationException(
-						"Attempted to load non-minecraft jar, or unable to locate main class.");
-			}
-		} catch (ClassNotFoundException e) {
-			throw new LocalMinecraftInterfaceCreationException(
-					"Attempted to load non-minecraft jar, or unable to locate main class.",
-					e);
+	private Field[] getMainClassFields(URLClassLoader classLoader)
+			throws SecurityException, ClassNotFoundException {
+		if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
+			return classLoader.loadClass(CLIENT_CLASS).getDeclaredFields();
+		} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {
+			return classLoader.loadClass(SERVER_CLASS).getDeclaredFields();
+		} else {
+			throw new ClassNotFoundException(
+					"unable to find the main class in the given jar file");
 		}
 	}
 }

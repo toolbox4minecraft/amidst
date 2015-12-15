@@ -1,6 +1,9 @@
 package amidst.mojangapi.minecraftinterface;
 
+import java.lang.reflect.Field;
+
 import amidst.documentation.Immutable;
+import amidst.logging.Log;
 
 /**
  * Information about what each supported version is
@@ -66,12 +69,32 @@ public enum RecognisedVersion {
 	UNKNOWN(null); // Make sure this is the last entry, so UNKNOWN.isAtLeast(...) returns always false.
 	// @formatter:on
 
+	public static RecognisedVersion from(Field[] fields) {
+		return from(generateMagicString(fields));
+	}
+
+	private static String generateMagicString(Field[] fields) {
+		String result = "";
+		for (Field field : fields) {
+			String typeString = field.getType().toString();
+			if (typeString.startsWith("class ") && !typeString.contains(".")) {
+				result += typeString.substring(6);
+			}
+		}
+		return result;
+	}
+
 	public static RecognisedVersion from(String magicString) {
 		for (RecognisedVersion recognisedVersion : RecognisedVersion.values()) {
 			if (magicString.equals(recognisedVersion.magicString)) {
+				Log.i("Recognised Minecraft Version "
+						+ recognisedVersion.getName()
+						+ " with the magic string \"" + magicString + "\".");
 				return recognisedVersion;
 			}
 		}
+		Log.i("Unable to recognise Minecraft Version with the magic string \""
+				+ magicString + "\".");
 		return RecognisedVersion.UNKNOWN;
 	}
 
