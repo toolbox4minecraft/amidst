@@ -171,10 +171,12 @@ public abstract class ProfileComponent {
 			return "failed loading";
 		} else if (isLoading()) {
 			return "loading";
-		} else if (isReadyToLoad()) {
-			return "found";
-		} else {
+		} else if (failedSearching()) {
+			return "not found";
+		} else if (isSearching()) {
 			return "searching";
+		} else {
+			return "found";
 		}
 	}
 
@@ -184,10 +186,12 @@ public abstract class ProfileComponent {
 			return INACTIVE_ICON;
 		} else if (isLoading()) {
 			return LOADING_ICON;
-		} else if (isReadyToLoad()) {
-			return ACTIVE_ICON;
-		} else {
+		} else if (failedSearching()) {
 			return INACTIVE_ICON;
+		} else if (isSearching()) {
+			return INACTIVE_ICON;
+		} else {
+			return ACTIVE_ICON;
 		}
 	}
 
@@ -197,6 +201,8 @@ public abstract class ProfileComponent {
 			return FAILED_BG_COLOR;
 		} else if (isLoading()) {
 			return LOADING_BG_COLOR;
+		} else if (failedSearching()) {
+			return FAILED_BG_COLOR;
 		} else if (isSelected) {
 			return SELECTED_BG_COLOR;
 		} else {
@@ -208,13 +214,19 @@ public abstract class ProfileComponent {
 	protected abstract void load();
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	protected abstract boolean isReadyToLoad();
+	protected abstract boolean isSearching();
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	protected abstract boolean failedSearching();
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected abstract boolean isLoading();
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected abstract boolean failedLoading();
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	protected abstract boolean isReadyToLoad();
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected abstract String getProfileName();

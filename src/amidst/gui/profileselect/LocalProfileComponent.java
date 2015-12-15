@@ -21,7 +21,8 @@ public class LocalProfileComponent extends ProfileComponent {
 	private final MojangApi mojangApi;
 	private final LauncherProfileJson profile;
 
-	private volatile boolean isReadyToLoad = false;
+	private volatile boolean isSearching = false;
+	private volatile boolean failedSearching = false;
 	private volatile boolean isLoading = false;
 	private volatile boolean failedLoading = false;
 	private volatile VersionDirectory versionDirectory;
@@ -41,6 +42,8 @@ public class LocalProfileComponent extends ProfileComponent {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void initDirectoriesLater() {
+		isSearching = true;
+		repaintComponent();
 		workerExecutor.invokeLater(new SimpleWorker<Boolean>() {
 			@Override
 			protected Boolean main() {
@@ -51,7 +54,8 @@ public class LocalProfileComponent extends ProfileComponent {
 
 			@Override
 			protected void onMainFinished(Boolean result) {
-				isReadyToLoad = result;
+				isSearching = false;
+				failedSearching = !result;
 				repaintComponent();
 			}
 		});
@@ -110,32 +114,44 @@ public class LocalProfileComponent extends ProfileComponent {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	public boolean isReadyToLoad() {
-		return isReadyToLoad;
+	protected boolean isSearching() {
+		return isSearching;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	public boolean isLoading() {
+	protected boolean failedSearching() {
+		return failedSearching;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	@Override
+	protected boolean isLoading() {
 		return isLoading;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	public boolean failedLoading() {
+	protected boolean failedLoading() {
 		return failedLoading;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	public String getProfileName() {
+	protected boolean isReadyToLoad() {
+		return !isSearching && !failedSearching;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	@Override
+	protected String getProfileName() {
 		return profile.getName();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	public String getVersionName() {
-		if (isReadyToLoad) {
+	protected String getVersionName() {
+		if (isReadyToLoad()) {
 			return versionDirectory.getVersionId();
 		} else {
 			return "";
