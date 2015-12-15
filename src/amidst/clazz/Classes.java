@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import amidst.clazz.real.JarFileParsingException;
 import amidst.clazz.real.RealClass;
 import amidst.clazz.real.RealClasses;
-import amidst.clazz.real.RealClasses.JarFileParsingException;
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicClassGraphCreationException;
 import amidst.clazz.symbolic.SymbolicClasses;

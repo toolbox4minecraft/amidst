@@ -10,14 +10,6 @@ import amidst.utilities.ColorUtils;
 
 @Immutable
 public class Biome {
-	@SuppressWarnings("serial")
-	@Immutable
-	public static class UnknownBiomeIndexException extends Exception {
-		public UnknownBiomeIndexException(String message) {
-			super(message);
-		}
-	}
-
 	@Immutable
 	private static class BiomeIterable implements Iterable<Biome> {
 		@Override

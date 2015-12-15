@@ -7,7 +7,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Biome;
-import amidst.mojangapi.world.Biome.UnknownBiomeIndexException;
+import amidst.mojangapi.world.UnknownBiomeIndexException;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @NotThreadSafe

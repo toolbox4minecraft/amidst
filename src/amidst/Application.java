@@ -13,7 +13,7 @@ import amidst.gui.main.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.gui.profileselect.ProfileSelectWindow;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.MojangApiBuilder;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder.LocalMinecraftInterfaceCreationException;
+import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.player.PlayerInformationCache;
 import amidst.threading.ThreadMaster;

@@ -13,7 +13,7 @@ import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder.LocalMinecraftInterfaceCreationException;
+import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.WorldSeed;

@@ -9,7 +9,7 @@ import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder.LocalMinecraftInterfaceCreationException;
+import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.threading.SimpleWorker;
 import amidst.threading.SimpleWorkerWithoutResult;
 import amidst.threading.WorkerExecutor;

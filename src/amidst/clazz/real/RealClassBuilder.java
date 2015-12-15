@@ -11,14 +11,6 @@ import amidst.documentation.Immutable;
 
 @Immutable
 public class RealClassBuilder {
-	@SuppressWarnings("serial")
-	@Immutable
-	public static class RealClassCreationException extends Exception {
-		public RealClassCreationException(String message, Throwable cause) {
-			super(message, cause);
-		}
-	}
-
 	public RealClass construct(String realClassName, byte[] classData)
 			throws RealClassCreationException {
 		try {

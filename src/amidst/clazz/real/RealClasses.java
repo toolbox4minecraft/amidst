@@ -10,20 +10,12 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import amidst.clazz.real.RealClassBuilder.RealClassCreationException;
 import amidst.documentation.Immutable;
 import amidst.utilities.FileSystemUtils;
 
 @Immutable
 public enum RealClasses {
 	;
-	@SuppressWarnings("serial")
-	@Immutable
-	public static class JarFileParsingException extends Exception {
-		public JarFileParsingException(String message, Throwable cause) {
-			super(message, cause);
-		}
-	}
 
 	private static final RealClassBuilder REAL_CLASS_BUILDER = new RealClassBuilder();
 

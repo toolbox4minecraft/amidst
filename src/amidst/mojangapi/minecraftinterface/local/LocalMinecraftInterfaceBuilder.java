@@ -15,16 +15,6 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 @Immutable
 public class LocalMinecraftInterfaceBuilder {
-	@SuppressWarnings("serial")
-	@Immutable
-	public static class LocalMinecraftInterfaceCreationException extends
-			Exception {
-		public LocalMinecraftInterfaceCreationException(String message,
-				Throwable cause) {
-			super(message, cause);
-		}
-	}
-
 	private static final String CLIENT_CLASS_RESOURCE = "net/minecraft/client/Minecraft.class";
 	private static final String CLIENT_CLASS = "net.minecraft.client.Minecraft";
 	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
@@ -57,7 +47,8 @@ public class LocalMinecraftInterfaceBuilder {
 		}
 	}
 
-	private RecognisedVersion getRecognisedVersion(URLClassLoader classLoader) {
+	private RecognisedVersion getRecognisedVersion(URLClassLoader classLoader)
+			throws LocalMinecraftInterfaceCreationException {
 		Log.i("Generating version ID...");
 		String magicString = generateMagicString(getMainClassFields(loadMainClass(classLoader)));
 		RecognisedVersion result = RecognisedVersion.from(magicString);
@@ -66,11 +57,12 @@ public class LocalMinecraftInterfaceBuilder {
 		return result;
 	}
 
-	private Field[] getMainClassFields(Class<?> mainClass) {
+	private Field[] getMainClassFields(Class<?> mainClass)
+			throws LocalMinecraftInterfaceCreationException {
 		try {
 			return mainClass.getDeclaredFields();
 		} catch (NoClassDefFoundError e) {
-			throw new RuntimeException(
+			throw new LocalMinecraftInterfaceCreationException(
 					"Unable to find critical external class while loading.\n"
 							+ "Please ensure you have the correct Minecraft libraries installed.",
 					e);
@@ -88,18 +80,20 @@ public class LocalMinecraftInterfaceBuilder {
 		return result;
 	}
 
-	private Class<?> loadMainClass(URLClassLoader classLoader) {
+	private Class<?> loadMainClass(URLClassLoader classLoader)
+			throws LocalMinecraftInterfaceCreationException {
 		try {
 			if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
 				return classLoader.loadClass(CLIENT_CLASS);
 			} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {
 				return classLoader.loadClass(SERVER_CLASS);
 			} else {
-				throw new RuntimeException("cannot find minecraft jar file");
+				throw new LocalMinecraftInterfaceCreationException(
+						"Attempted to load non-minecraft jar, or unable to locate main class.");
 			}
 		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(
-					"Attempted to load non-minecraft jar, or unable to locate starting point.",
+			throw new LocalMinecraftInterfaceCreationException(
+					"Attempted to load non-minecraft jar, or unable to locate main class.",
 					e);
 		}
 	}

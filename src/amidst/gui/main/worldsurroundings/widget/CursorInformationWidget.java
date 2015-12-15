@@ -10,9 +10,9 @@ import amidst.fragment.FragmentGraph;
 import amidst.gui.main.worldsurroundings.FragmentGraphToScreenTranslator;
 import amidst.logging.Log;
 import amidst.mojangapi.world.Biome;
-import amidst.mojangapi.world.Biome.UnknownBiomeIndexException;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.Resolution;
+import amidst.mojangapi.world.UnknownBiomeIndexException;
 
 @NotThreadSafe
 public class CursorInformationWidget extends TextWidget {
