@@ -30,7 +30,9 @@ public enum ResourceLoader {
 		try {
 			return ImageIO.read(getResourceURL(name));
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			// This is always a developer error, because a resource was not
+			// included in the jar file.
+			throw new IllegalArgumentException(e);
 		}
 	}
 

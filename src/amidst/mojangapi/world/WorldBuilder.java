@@ -7,6 +7,7 @@ import amidst.documentation.Immutable;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.LevelDat;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.icon.NetherFortressProducer;
 import amidst.mojangapi.world.icon.OceanMonumentProducer;
@@ -34,14 +35,15 @@ public class WorldBuilder {
 	}
 
 	public World fromSeed(MinecraftInterface minecraftInterface,
-			WorldSeed seed, WorldType worldType) {
+			WorldSeed seed, WorldType worldType)
+			throws MinecraftInterfaceException {
 		return create(minecraftInterface, seed, worldType, "",
 				MovablePlayerList.dummy());
 	}
 
 	public World fromFile(MinecraftInterface minecraftInterface,
 			SaveDirectory saveDirectory) throws FileNotFoundException,
-			IOException {
+			IOException, MinecraftInterfaceException {
 		LevelDat levelDat = saveDirectory.createLevelDat();
 		MovablePlayerList movablePlayerList = new MovablePlayerList(
 				playerInformationCache, saveDirectory,
@@ -62,7 +64,8 @@ public class WorldBuilder {
 
 	private World create(MinecraftInterface minecraftInterface, WorldSeed seed,
 			WorldType worldType, String generatorOptions,
-			MovablePlayerList movablePlayerList) {
+			MovablePlayerList movablePlayerList)
+			throws MinecraftInterfaceException {
 		googleTracker.trackSeed(seed);
 		// @formatter:off
 		minecraftInterface.createWorld(seed.getLong(), worldType, generatorOptions);

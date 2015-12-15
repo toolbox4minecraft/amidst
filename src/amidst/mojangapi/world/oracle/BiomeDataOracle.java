@@ -7,6 +7,7 @@ import java.util.Random;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.Biome;
 import amidst.mojangapi.world.CoordinatesInWorld;
 import amidst.mojangapi.world.Resolution;
@@ -27,8 +28,13 @@ public class BiomeDataOracle {
 			int height = result[0].length;
 			int left = (int) corner.getXAs(Resolution.QUARTER);
 			int top = (int) corner.getYAs(Resolution.QUARTER);
-			copyToResult(result, width, height,
-					getQuarterResolutionBiomeData(left, top, width, height));
+			try {
+				copyToResult(result, width, height,
+						getQuarterResolutionBiomeData(left, top, width, height));
+			} catch (MinecraftInterfaceException e) {
+				Log.e(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -52,9 +58,9 @@ public class BiomeDataOracle {
 		int bottom = y + size >> 2;
 		int width = right - left + 1;
 		int height = bottom - top + 1;
-		int[] biomeData = getQuarterResolutionBiomeData(left, top, width,
-				height);
 		try {
+			int[] biomeData = getQuarterResolutionBiomeData(left, top, width,
+					height);
 			for (int i = 0; i < width * height; i++) {
 				if (!validBiomes.contains(Biome.getByIndex(biomeData[i]))) {
 					return false;
@@ -62,6 +68,10 @@ public class BiomeDataOracle {
 			}
 			return true;
 		} catch (UnknownBiomeIndexException e) {
+			Log.e(e.getMessage());
+			e.printStackTrace();
+			return false;
+		} catch (MinecraftInterfaceException e) {
 			Log.e(e.getMessage());
 			e.printStackTrace();
 			return false;
@@ -77,9 +87,9 @@ public class BiomeDataOracle {
 		int bottom = y + size >> 2;
 		int width = right - left + 1;
 		int height = bottom - top + 1;
-		int[] biomeData = getQuarterResolutionBiomeData(left, top, width,
-				height);
 		try {
+			int[] biomeData = getQuarterResolutionBiomeData(left, top, width,
+					height);
 			Point location = null;
 			int numberOfValidLocations = 0;
 			for (int i = 0; i < width * height; i++) {
@@ -92,6 +102,10 @@ public class BiomeDataOracle {
 			}
 			return location;
 		} catch (UnknownBiomeIndexException e) {
+			Log.e(e.getMessage());
+			e.printStackTrace();
+			return null;
+		} catch (MinecraftInterfaceException e) {
 			Log.e(e.getMessage());
 			e.printStackTrace();
 			return null;
@@ -108,25 +122,25 @@ public class BiomeDataOracle {
 	 * Gets the biome located at the block-coordinates. This is not a fast
 	 * routine, it was added for rare things like accurately testing structures.
 	 * (uses the 1:1 scale biome-map)
-	 * 
-	 * @throws UnknownBiomeIndexException
 	 */
-	public Biome getBiomeAt(int x, int y) throws UnknownBiomeIndexException {
+	public Biome getBiomeAt(int x, int y) throws UnknownBiomeIndexException,
+			MinecraftInterfaceException {
 		int[] biomeData = getFullResolutionBiomeData(x, y, 1, 1);
 		return Biome.getByIndex(biomeData[0]);
 	}
 
 	private int[] getQuarterResolutionBiomeData(int x, int y, int width,
-			int height) {
+			int height) throws MinecraftInterfaceException {
 		return getBiomeData(x, y, width, height, true);
 	}
 
-	private int[] getFullResolutionBiomeData(int x, int y, int width, int height) {
+	private int[] getFullResolutionBiomeData(int x, int y, int width, int height)
+			throws MinecraftInterfaceException {
 		return getBiomeData(x, y, width, height, false);
 	}
 
 	private int[] getBiomeData(int x, int y, int width, int height,
-			boolean useQuarterResolution) {
+			boolean useQuarterResolution) throws MinecraftInterfaceException {
 		return minecraftInterface.getBiomeData(x, y, width, height,
 				useQuarterResolution);
 	}

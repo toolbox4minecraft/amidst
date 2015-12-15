@@ -33,10 +33,10 @@ public interface MinecraftInterface {
 	 *            biome boundary).
 	 */
 	public int[] getBiomeData(int x, int y, int width, int height,
-			boolean useQuarterResolution);
+			boolean useQuarterResolution) throws MinecraftInterfaceException;
 
 	public void createWorld(long seed, WorldType worldType,
-			String generatorOptions);
+			String generatorOptions) throws MinecraftInterfaceException;
 
 	public RecognisedVersion getRecognisedVersion();
 }

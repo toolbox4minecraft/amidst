@@ -75,7 +75,7 @@ public class Actions {
 			try {
 				mainWindow.setWorld(mojangApi.createWorldFromSeed(seed,
 						worldType));
-			} catch (IllegalStateException e) {
+			} catch (Exception e) {
 				mainWindow.displayException(e);
 			}
 		}

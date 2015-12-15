@@ -94,16 +94,18 @@ public class UpdatePrompt {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void openURL(URI uri) throws IOException {
+	private void openURL(URI uri) throws IOException,
+			UnsupportedOperationException {
 		if (Desktop.isDesktopSupported()) {
 			Desktop desktop = Desktop.getDesktop();
 			if (desktop.isSupported(Desktop.Action.BROWSE)) {
 				desktop.browse(uri);
 			} else {
-				throw new RuntimeException("Unable to open browser page.");
+				throw new UnsupportedOperationException(
+						"Unable to open browser page.");
 			}
 		} else {
-			throw new RuntimeException("Unable to open browser.");
+			throw new UnsupportedOperationException("Unable to open browser.");
 		}
 	}
 }

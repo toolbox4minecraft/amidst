@@ -5,6 +5,7 @@ import java.util.Random;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.Log;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Biome;
 import amidst.mojangapi.world.CoordinatesInWorld;
@@ -146,10 +147,15 @@ public abstract class StructureProducer extends WorldIconProducer {
 			Log.e(e.getMessage());
 			e.printStackTrace();
 			return false;
+		} catch (MinecraftInterfaceException e) {
+			Log.e(e.getMessage());
+			e.printStackTrace();
+			return false;
 		}
 	}
 
-	protected Biome getBiomeAtMiddleOfChunk() throws UnknownBiomeIndexException {
+	protected Biome getBiomeAtMiddleOfChunk()
+			throws UnknownBiomeIndexException, MinecraftInterfaceException {
 		return biomeDataOracle.getBiomeAt(middleOfChunkX, middleOfChunkY);
 	}
 

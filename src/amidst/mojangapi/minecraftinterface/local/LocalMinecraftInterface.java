@@ -7,6 +7,7 @@ import amidst.clazz.symbolic.SymbolicObject;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
 
@@ -46,15 +47,13 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
 	// @formatter:off
 	@Override
-	public synchronized int[] getBiomeData(int x, int y, int width, int height,
-			boolean useQuarterResolution) {
+	public synchronized int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+			throws MinecraftInterfaceException {
 		try {
 			intCacheClass.callStaticMethod(SymbolicNames.METHOD_INT_CACHE_RESET_INT_CACHE);
 			return (int[]) getBiomeGenerator(useQuarterResolution).callMethod(SymbolicNames.METHOD_GEN_LAYER_GET_INTS, x, y, width, height);
 		} catch (Exception e) {
-			Log.e("unable to get biome data");
-			e.printStackTrace();
-			return new int[width * height];
+			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
 	}
 
@@ -67,8 +66,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public synchronized void createWorld(long seed, WorldType worldType,
-			String generatorOptions) {
+	public synchronized void createWorld(long seed, WorldType worldType, String generatorOptions)
+			throws MinecraftInterfaceException {
 		try {
 			Log.debug("Attempting to create world with seed: " + seed + ", type: " + worldType.getName() + ", and the following generator options:");
 			Log.debug(generatorOptions);
@@ -77,8 +76,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			quarterResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[0]);
 			fullResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[1]);
 		} catch (Exception e) {
-			Log.e("unable to create world");
-			e.printStackTrace();
+			throw new MinecraftInterfaceException("unable to create world", e);
 		}
 	}
 
@@ -86,8 +84,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	 * Minecraft 1.8 and higher require block initialization to be called before
 	 * creating a biome generator.
 	 */
-	private void initializeBlock() throws IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
+	private void initializeBlock()
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		if (blockInitClass != null) {
 			blockInitClass.callStaticMethod(SymbolicNames.METHOD_BLOCK_INIT_INITIALIZE);
 		}

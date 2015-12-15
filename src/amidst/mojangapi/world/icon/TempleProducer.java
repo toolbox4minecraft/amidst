@@ -5,6 +5,7 @@ import java.util.List;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.Log;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Biome;
 import amidst.mojangapi.world.UnknownBiomeIndexException;
@@ -38,6 +39,10 @@ public class TempleProducer extends StructureProducer {
 				return null;
 			}
 		} catch (UnknownBiomeIndexException e) {
+			Log.e(e.getMessage());
+			e.printStackTrace();
+			return null;
+		} catch (MinecraftInterfaceException e) {
 			Log.e(e.getMessage());
 			e.printStackTrace();
 			return null;

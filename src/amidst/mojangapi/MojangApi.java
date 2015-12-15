@@ -12,6 +12,7 @@ import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.World;
@@ -105,7 +106,8 @@ public class MojangApi {
 	 * one world at a time. Creating a new world will break all previously
 	 * created world objects.
 	 */
-	public World createWorldFromSeed(WorldSeed seed, WorldType worldType) {
+	public World createWorldFromSeed(WorldSeed seed, WorldType worldType)
+			throws IllegalStateException, MinecraftInterfaceException {
 		MinecraftInterface minecraftInterface = this.minecraftInterface;
 		if (minecraftInterface != null) {
 			return worldBuilder.fromSeed(minecraftInterface, seed, worldType);
@@ -121,7 +123,7 @@ public class MojangApi {
 	 * created world objects.
 	 */
 	public World createWorldFromFile(File file) throws FileNotFoundException,
-			IOException, IllegalStateException {
+			IOException, IllegalStateException, MinecraftInterfaceException {
 		MinecraftInterface minecraftInterface = this.minecraftInterface;
 		if (minecraftInterface != null) {
 			return worldBuilder.fromFile(minecraftInterface,
