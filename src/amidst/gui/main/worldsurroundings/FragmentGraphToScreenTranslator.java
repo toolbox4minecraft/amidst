@@ -20,18 +20,27 @@ public class FragmentGraphToScreenTranslator {
 	private int viewerWidth;
 	private int viewerHeight;
 
+	private boolean isFirstUpdate = true;
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	public FragmentGraphToScreenTranslator(FragmentGraph graph, Zoom zoom) {
 		this.graph = graph;
 		this.zoom = zoom;
-		centerOn(CoordinatesInWorld.origin());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void update(int viewerWidth, int viewerHeight) {
 		this.viewerWidth = viewerWidth;
 		this.viewerHeight = viewerHeight;
+		centerOnOriginIfNecessary();
 		adjustNumberOfRowsAndColumns();
+	}
+
+	private void centerOnOriginIfNecessary() {
+		if (isFirstUpdate) {
+			isFirstUpdate = false;
+			centerOn(CoordinatesInWorld.origin());
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

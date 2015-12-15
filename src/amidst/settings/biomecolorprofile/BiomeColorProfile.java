@@ -15,19 +15,13 @@ import amidst.mojangapi.world.Biome;
 @Immutable
 public class BiomeColorProfile {
 	public static void saveDefaultProfileIfNecessary() {
-		if (isEnabled()) {
-			Log.i("Found biome color profile directory.");
-			doSaveDefaultProfileIfNecessary();
-		} else {
+		if (!isEnabled()) {
 			Log.i("Unable to find biome color profile directory.");
-		}
-	}
-
-	private static void doSaveDefaultProfileIfNecessary() {
-		if (DEFAULT_PROFILE_FILE.exists()) {
-			Log.i("Found default biome color profile.");
 		} else {
-			if (DEFAULT_PROFILE.save(DEFAULT_PROFILE_FILE)) {
+			Log.i("Found biome color profile directory.");
+			if (DEFAULT_PROFILE_FILE.isFile()) {
+				Log.i("Found default biome color profile.");
+			} else if (DEFAULT_PROFILE.save(DEFAULT_PROFILE_FILE)) {
 				Log.i("Saved default biome color profile.");
 			} else {
 				Log.i("Attempted to save default biome color profile, but encountered an error.");

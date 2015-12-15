@@ -114,6 +114,7 @@ public enum RecognisedVersion {
 		return magicString;
 	}
 
+	@Deprecated
 	public boolean isSaveEnabled() {
 		return this != V12w21a && this != V12w21b && this != V12w22a
 				&& this != UNKNOWN;
