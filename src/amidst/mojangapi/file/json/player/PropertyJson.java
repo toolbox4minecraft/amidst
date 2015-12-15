@@ -24,7 +24,8 @@ public class PropertyJson {
 		return value;
 	}
 
-	// TODO: this uses java8 classes ... find another base64 decoder?
+	// TODO: @skiphs we need a base64 decoder to read this api, but it comes
+	// only with java8. should we use java8 or another base64 decoder?
 	public String getDecodedValue() {
 		return new String(Base64.getDecoder().decode(
 				value.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);

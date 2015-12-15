@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -115,20 +116,20 @@ public class SaveDirectory {
 	}
 
 	public File getBackupLevelDat() {
-		return new File(backupRoot, "level.dat" + millis());
+		return new File(backupRoot, "level.dat" + "_" + millis());
 	}
 
 	public File getBackupPlayersFile(String playerName) {
-		return new File(backupPlayers, playerName + ".dat" + millis());
+		return new File(backupPlayers, playerName + ".dat" + "_" + millis());
 	}
 
 	public File getBackupPlayerdataFile(String playerUUID) {
-		return new File(backupPlayerdata, playerUUID + ".dat" + millis());
+		return new File(backupPlayerdata, playerUUID + ".dat" + "_" + millis());
 	}
 
-	// TODO: switch to more readable timestamp
 	private String millis() {
-		return "_" + System.currentTimeMillis();
+		return new Timestamp(System.currentTimeMillis()).toString()
+				.replace(" ", "_").replace(":", "-").replace(".", "_");
 	}
 
 	public File[] getPlayersFiles() {

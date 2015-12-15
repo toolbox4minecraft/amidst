@@ -137,7 +137,7 @@ public class Drawer {
 	private void drawFragments() {
 		// TODO: is this needed?
 		Graphics2D old = g2d;
-		g2d = (Graphics2D) old.create();
+		g2d = (Graphics2D) g2d.create();
 		doDrawFragments();
 		g2d = old;
 	}

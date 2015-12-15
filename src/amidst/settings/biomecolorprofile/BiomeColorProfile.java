@@ -12,6 +12,8 @@ import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.world.Biome;
 
+import com.google.gson.GsonBuilder;
+
 @Immutable
 public class BiomeColorProfile {
 	public static void saveDefaultProfileIfNecessary() {
@@ -103,7 +105,11 @@ public class BiomeColorProfile {
 		return writeToFile(file, serialize());
 	}
 
-	// TODO: use gson for serialization?
+	private String serializeWithGson() {
+		return new GsonBuilder().setPrettyPrinting().create().toJson(this);
+	}
+
+	// TODO: @skiphs use serializeWithGson() instead?
 	private String serialize() {
 		String output = "{ \"name\":\"" + name + "\", \"colorMap\":[\r\n";
 		output += serializeColorMap();

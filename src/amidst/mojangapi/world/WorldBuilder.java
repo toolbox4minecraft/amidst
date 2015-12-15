@@ -55,8 +55,10 @@ public class WorldBuilder {
 				movablePlayerList);
 	}
 
-	// TODO: why does it depend on the loaded minecraft version whether we can
-	// save player locations or not?
+	// TODO: @skiphs why does it depend on the loaded minecraft version whether
+	// we can save player locations or not? we do not use the minecraft jar file
+	// to save player locations and it does not depend on the jar file which
+	// worlds can be loaded.
 	@Deprecated
 	private boolean isSaveEnabled(MinecraftInterface minecraftInterface) {
 		return minecraftInterface.getRecognisedVersion().isSaveEnabled();
