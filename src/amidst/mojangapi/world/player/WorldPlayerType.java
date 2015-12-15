@@ -20,7 +20,7 @@ public enum WorldPlayerType {
 	// @formatter:on
 
 	private static final List<WorldPlayerType> SELECTABLE = Arrays.asList(
-			MULTIPLAYER, SINGLEPLAYER, BOTH);
+			SINGLEPLAYER, MULTIPLAYER, BOTH);
 
 	public static List<WorldPlayerType> getSelectable() {
 		return SELECTABLE;
