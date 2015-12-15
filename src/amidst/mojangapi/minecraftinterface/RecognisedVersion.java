@@ -28,6 +28,7 @@ public enum RecognisedVersion {
 	V1_6_4("mvlv[Ljs;hn[J[J[J[J[J[[J"),
 	V1_6_2("mulu[Ljr;hm[J[J[J[J[J[[J"),
 	V1_6_1("msls[Ljp;hk[J[J[J[J[J[[J"),
+	V1_5_2("[Bbdzbdrbawemabdsbfybdvngngbeuawfbgeawvawvaxrawbbfqausbjgaycawwaraavybkcavwbjubkila"),
 	V1_5_1("[Bbeabdsbawemabdtbfzbdwngngbevawfbgfawvawvaxrawbbfrausbjhaycawwaraavybkdavwbjvbkila"),
 	V1_5_0("Invalid"), // TODO: This makes no sense? 1.5.0 is not on the version list!
 	V1_4_6("[Baywayoaaszleaypbavaysmdazratabbaatqatqaulaswbanarnbdzauwatraohastbevasrbenbezbdmbdjkh"), // Includes 1.4.7
