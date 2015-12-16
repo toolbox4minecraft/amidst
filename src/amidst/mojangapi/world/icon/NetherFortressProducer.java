@@ -9,8 +9,8 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @NotThreadSafe
 public class NetherFortressProducer extends StructureProducer {
-	public NetherFortressProducer(RecognisedVersion recognisedVersion, long seed,
-			BiomeDataOracle biomeDataOracle) {
+	public NetherFortressProducer(RecognisedVersion recognisedVersion,
+			long seed, BiomeDataOracle biomeDataOracle) {
 		super(seed, biomeDataOracle, recognisedVersion);
 	}
 

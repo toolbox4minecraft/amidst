@@ -10,8 +10,8 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @NotThreadSafe
 public class OceanMonumentProducer extends StructureProducer {
-	public OceanMonumentProducer(RecognisedVersion recognisedVersion, long seed,
-			BiomeDataOracle biomeDataOracle) {
+	public OceanMonumentProducer(RecognisedVersion recognisedVersion,
+			long seed, BiomeDataOracle biomeDataOracle) {
 		super(seed, biomeDataOracle, recognisedVersion);
 	}
 
