@@ -3,6 +3,7 @@ package amidst.mojangapi.world;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import amidst.GoogleTracker;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.LevelDat;
@@ -21,7 +22,6 @@ import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.PlayerInformationCache;
 import amidst.mojangapi.world.player.WorldPlayerType;
-import amidst.utilities.GoogleTracker;
 
 @Immutable
 public class WorldBuilder {

@@ -1,6 +1,5 @@
-package amidst.utilities;
+package amidst;
 
-import amidst.AmidstMetaData;
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.WorldSeed;
 

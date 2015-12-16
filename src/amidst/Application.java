@@ -18,7 +18,6 @@ import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.player.PlayerInformationCache;
 import amidst.threading.ThreadMaster;
-import amidst.utilities.GoogleTracker;
 
 @NotThreadSafe
 public class Application {
