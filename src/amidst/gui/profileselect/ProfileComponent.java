@@ -10,10 +10,10 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 
+import amidst.ResourceLoader;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.resources.ResourceLoader;
 
 @NotThreadSafe
 public abstract class ProfileComponent {
@@ -119,11 +119,11 @@ public abstract class ProfileComponent {
 	private static final Font PROFILE_NAME_FONT = new Font("arial", Font.BOLD,
 			30);
 	private static final BufferedImage ACTIVE_ICON = ResourceLoader
-			.getImage("active_profile.png");
+			.getImage("/amidst/gui/profileselect/active.png");
 	private static final BufferedImage INACTIVE_ICON = ResourceLoader
-			.getImage("inactive_profile.png");
+			.getImage("/amidst/gui/profileselect/inactive.png");
 	private static final BufferedImage LOADING_ICON = ResourceLoader
-			.getImage("loading_profile.png");
+			.getImage("/amidst/gui/profileselect/loading.png");
 	private static final Color SELECTED_BG_COLOR = new Color(160, 190, 255);
 	private static final Color LOADING_BG_COLOR = new Color(112, 203, 91);
 	private static final Color DEFAULT_BG_COLOR = Color.white;

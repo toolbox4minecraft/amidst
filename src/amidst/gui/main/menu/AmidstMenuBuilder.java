@@ -14,10 +14,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 
+import amidst.ResourceLoader;
 import amidst.Settings;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
-import amidst.resources.ResourceLoader;
 import amidst.settings.MultipleStringsSetting.SelectButtonModel;
 import amidst.settings.biomecolorprofile.BiomeColorProfile;
 
@@ -387,7 +387,8 @@ public class AmidstMenuBuilder {
 
 	private ImageIcon getIcon(String image) {
 		if (image != null) {
-			BufferedImage icon = ResourceLoader.getImage(image);
+			BufferedImage icon = ResourceLoader
+					.getImage("/amidst/gui/main/icon/" + image);
 			if (icon != null) {
 				return new ImageIcon(icon);
 			} else {

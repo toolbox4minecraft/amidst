@@ -21,7 +21,7 @@ import amidst.documentation.Immutable;
 
 @Immutable
 public class LicenseWindow {
-	private static final String LICENSES_DIRECTORY = "licenses";
+	private static final String LICENSES_DIRECTORY = "/amidst/gui/license/";
 
 	public LicenseWindow() {
 		License[] licenses = createLicenses();
@@ -45,7 +45,7 @@ public class LicenseWindow {
 	}
 
 	private License createLicense(String name, String path) {
-		return new License(name, LICENSES_DIRECTORY + "/" + path);
+		return new License(name, LICENSES_DIRECTORY + path);
 	}
 
 	private JTextArea createLicenseTextArea() {

@@ -3,7 +3,6 @@ package amidst;
 import java.awt.Image;
 
 import amidst.documentation.Immutable;
-import amidst.resources.ResourceLoader;
 
 @Immutable
 public enum AmidstMetaData {
@@ -13,7 +12,8 @@ public enum AmidstMetaData {
 	public static final int MINOR_VERSION = 7;
 	public static final String VERSION_OFFSET = "";
 
-	public static final Image ICON = ResourceLoader.getImage("icon.png");
+	public static final Image ICON = ResourceLoader
+			.getImage("/amidst/icon.png");
 
 	public static String getFullVersionString() {
 		return MAJOR_VERSION + "." + MINOR_VERSION + VERSION_OFFSET;

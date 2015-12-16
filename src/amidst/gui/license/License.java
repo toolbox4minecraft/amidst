@@ -1,8 +1,8 @@
 package amidst.gui.license;
 
+import amidst.ResourceLoader;
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
-import amidst.resources.ResourceLoader;
 
 @Immutable
 public class License {

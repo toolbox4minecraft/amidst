@@ -2,12 +2,13 @@ package amidst.mojangapi.world.icon;
 
 import java.awt.image.BufferedImage;
 
+import amidst.ResourceLoader;
 import amidst.documentation.Immutable;
-import amidst.resources.ResourceLoader;
 
 /**
  * This is only a helper enum to have a central place where these constants can
- * be collected. However, it should not be used as a type.
+ * be collected. However, it should not be used as a type. Note, that the name
+ * of the enum elements represent the icon filename at the same time!
  */
 @Immutable
 public enum DefaultWorldIconTypes {
@@ -32,7 +33,7 @@ public enum DefaultWorldIconTypes {
 	}
 
 	private String getFilename() {
-		return this.toString().toLowerCase() + ".png";
+		return "/amidst/gui/main/icon/" + toString().toLowerCase() + ".png";
 	}
 
 	public String getName() {

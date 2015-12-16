@@ -1,11 +1,11 @@
 package amidst.gui.main.worldsurroundings.widget;
 
+import amidst.ResourceLoader;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.main.worldsurroundings.BiomeSelection;
-import amidst.resources.ResourceLoader;
 
 @NotThreadSafe
 public class BiomeToggleWidget extends ImmutableIconWidget {
@@ -15,7 +15,8 @@ public class BiomeToggleWidget extends ImmutableIconWidget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public BiomeToggleWidget(CornerAnchorPoint anchor,
 			BiomeSelection biomeSelection, LayerReloader layerReloader) {
-		super(anchor, ResourceLoader.getImage("highlighter.png"));
+		super(anchor, ResourceLoader
+				.getImage("/amidst/gui/main/highlighter.png"));
 		this.biomeSelection = biomeSelection;
 		this.layerReloader = layerReloader;
 	}

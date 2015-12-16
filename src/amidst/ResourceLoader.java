@@ -1,9 +1,8 @@
-package amidst.resources;
+package amidst;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -22,10 +21,6 @@ public enum ResourceLoader {
 		return ResourceLoader.class.getResource(name);
 	}
 
-	public static InputStream getResourceStream(String name) {
-		return ResourceLoader.class.getResourceAsStream(name);
-	}
-
 	public static BufferedImage getImage(String name) {
 		try {
 			return ImageIO.read(getResourceURL(name));
@@ -42,7 +37,8 @@ public enum ResourceLoader {
 				StandardCharsets.UTF_8);
 	}
 
-	public static Path getResourceAsPath(String name) throws URISyntaxException {
+	private static Path getResourceAsPath(String name)
+			throws URISyntaxException {
 		return new File(getResourceURL(name).toURI()).toPath();
 	}
 }

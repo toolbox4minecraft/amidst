@@ -10,6 +10,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import amidst.ResourceLoader;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -18,26 +19,25 @@ import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentGraphItem;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.gui.main.worldsurroundings.widget.Widget;
-import amidst.resources.ResourceLoader;
 
 @NotThreadSafe
 public class Drawer {
 	private static final BufferedImage DROP_SHADOW_BOTTOM_LEFT = ResourceLoader
-			.getImage("dropshadow/inner_bottom_left.png");
+			.getImage("/amidst/gui/main/dropshadow/inner_bottom_left.png");
 	private static final BufferedImage DROP_SHADOW_BOTTOM_RIGHT = ResourceLoader
-			.getImage("dropshadow/inner_bottom_right.png");
+			.getImage("/amidst/gui/main/dropshadow/inner_bottom_right.png");
 	private static final BufferedImage DROP_SHADOW_TOP_LEFT = ResourceLoader
-			.getImage("dropshadow/inner_top_left.png");
+			.getImage("/amidst/gui/main/dropshadow/inner_top_left.png");
 	private static final BufferedImage DROP_SHADOW_TOP_RIGHT = ResourceLoader
-			.getImage("dropshadow/inner_top_right.png");
+			.getImage("/amidst/gui/main/dropshadow/inner_top_right.png");
 	private static final BufferedImage DROP_SHADOW_BOTTOM = ResourceLoader
-			.getImage("dropshadow/inner_bottom.png");
+			.getImage("/amidst/gui/main/dropshadow/inner_bottom.png");
 	private static final BufferedImage DROP_SHADOW_TOP = ResourceLoader
-			.getImage("dropshadow/inner_top.png");
+			.getImage("/amidst/gui/main/dropshadow/inner_top.png");
 	private static final BufferedImage DROP_SHADOW_LEFT = ResourceLoader
-			.getImage("dropshadow/inner_left.png");
+			.getImage("/amidst/gui/main/dropshadow/inner_left.png");
 	private static final BufferedImage DROP_SHADOW_RIGHT = ResourceLoader
-			.getImage("dropshadow/inner_right.png");
+			.getImage("/amidst/gui/main/dropshadow/inner_right.png");
 
 	private final AffineTransform originalLayerMatrix = new AffineTransform();
 	private final AffineTransform layerMatrix = new AffineTransform();

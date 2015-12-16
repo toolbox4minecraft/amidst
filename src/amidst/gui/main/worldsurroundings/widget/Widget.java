@@ -9,10 +9,10 @@ import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 
+import amidst.ResourceLoader;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.resources.ResourceLoader;
 
 @NotThreadSafe
 public abstract class Widget {
@@ -27,21 +27,21 @@ public abstract class Widget {
 	}
 
 	private static final BufferedImage DROP_SHADOW_BOTTOM_LEFT = ResourceLoader
-			.getImage("dropshadow/outer_bottom_left.png");
+			.getImage("/amidst/gui/main/dropshadow/outer_bottom_left.png");
 	private static final BufferedImage DROP_SHADOW_BOTTOM_RIGHT = ResourceLoader
-			.getImage("dropshadow/outer_bottom_right.png");
+			.getImage("/amidst/gui/main/dropshadow/outer_bottom_right.png");
 	private static final BufferedImage DROP_SHADOW_TOP_LEFT = ResourceLoader
-			.getImage("dropshadow/outer_top_left.png");
+			.getImage("/amidst/gui/main/dropshadow/outer_top_left.png");
 	private static final BufferedImage DROP_SHADOW_TOP_RIGHT = ResourceLoader
-			.getImage("dropshadow/outer_top_right.png");
+			.getImage("/amidst/gui/main/dropshadow/outer_top_right.png");
 	private static final BufferedImage DROP_SHADOW_BOTTOM = ResourceLoader
-			.getImage("dropshadow/outer_bottom.png");
+			.getImage("/amidst/gui/main/dropshadow/outer_bottom.png");
 	private static final BufferedImage DROP_SHADOW_TOP = ResourceLoader
-			.getImage("dropshadow/outer_top.png");
+			.getImage("/amidst/gui/main/dropshadow/outer_top.png");
 	private static final BufferedImage DROP_SHADOW_LEFT = ResourceLoader
-			.getImage("dropshadow/outer_left.png");
+			.getImage("/amidst/gui/main/dropshadow/outer_left.png");
 	private static final BufferedImage DROP_SHADOW_RIGHT = ResourceLoader
-			.getImage("dropshadow/outer_right.png");
+			.getImage("/amidst/gui/main/dropshadow/outer_right.png");
 
 	public static final Font TEXT_FONT = new Font("arial", Font.BOLD, 15);
 	private static final Color TEXT_COLOR = new Color(1f, 1f, 1f);

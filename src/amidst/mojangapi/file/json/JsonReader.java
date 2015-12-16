@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
 
+import amidst.ResourceLoader;
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.file.URIUtils;
@@ -14,7 +15,6 @@ import amidst.mojangapi.file.json.player.PlayerJson;
 import amidst.mojangapi.file.json.player.SimplePlayerJson;
 import amidst.mojangapi.file.json.version.VersionJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
-import amidst.resources.ResourceLoader;
 
 import com.google.gson.Gson;
 
@@ -26,7 +26,7 @@ public enum JsonReader {
 
 	private static final String REMOTE_VERSION_LIST = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
 	private static final URL LOCAL_VERSION_LIST = ResourceLoader
-			.getResourceURL("versions.json");
+			.getResourceURL("/amidst/mojangapi/versions.json");
 
 	private static final String UUID_TO_PROFILE = "https://sessionserver.mojang.com/session/minecraft/profile/";
 	private static final String PLAYERNAME_TO_UUID = "https://api.mojang.com/users/profiles/minecraft/";
