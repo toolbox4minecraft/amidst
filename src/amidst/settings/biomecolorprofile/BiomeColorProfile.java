@@ -11,6 +11,7 @@ import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.world.Biome;
+import amidst.mojangapi.world.BiomeColor;
 
 import com.google.gson.GsonBuilder;
 
@@ -31,10 +32,11 @@ public class BiomeColorProfile {
 		}
 	}
 
-	private static Map<String, BiomeColor> createDefaultColorMap() {
-		Map<String, BiomeColor> result = new HashMap<String, BiomeColor>();
+	private static Map<String, BiomeColorJson> createDefaultColorMap() {
+		Map<String, BiomeColorJson> result = new HashMap<String, BiomeColorJson>();
 		for (Biome biome : Biome.allBiomes()) {
-			result.put(biome.getName(), new BiomeColor(biome.getDefaultColor()));
+			result.put(biome.getName(), biome.getDefaultColor()
+					.createBiomeColorJson());
 		}
 		return result;
 	}
@@ -55,14 +57,14 @@ public class BiomeColorProfile {
 
 	private String name;
 	private String shortcut;
-	private Map<String, BiomeColor> colorMap;
+	private Map<String, BiomeColorJson> colorMap;
 
 	@GsonConstructor
 	public BiomeColorProfile() {
 	}
 
 	private BiomeColorProfile(String name, String shortcut,
-			Map<String, BiomeColor> colorMap) {
+			Map<String, BiomeColorJson> colorMap) {
 		this.name = name;
 		this.shortcut = shortcut;
 		this.colorMap = colorMap;
@@ -85,17 +87,17 @@ public class BiomeColorProfile {
 		}
 	}
 
-	public int[] createColorArray() {
-		int[] result = new int[Biome.getBiomesLength()];
+	public BiomeColor[] createBiomeColorArray() {
+		BiomeColor[] result = new BiomeColor[Biome.getBiomesLength()];
 		for (Biome biome : Biome.allBiomes()) {
-			result[biome.getIndex()] = getColor(biome);
+			result[biome.getIndex()] = getBiomeColor(biome);
 		}
 		return result;
 	}
 
-	private int getColor(Biome biome) {
+	private BiomeColor getBiomeColor(Biome biome) {
 		if (colorMap.containsKey(biome.getName())) {
-			return colorMap.get(biome.getName()).toColorInt();
+			return colorMap.get(biome.getName()).createBiomeColor();
 		} else {
 			return biome.getDefaultColor();
 		}
@@ -118,7 +120,7 @@ public class BiomeColorProfile {
 
 	private String serializeColorMap() {
 		String output = "";
-		for (Map.Entry<String, BiomeColor> pairs : colorMap.entrySet()) {
+		for (Map.Entry<String, BiomeColorJson> pairs : colorMap.entrySet()) {
 			output += "[ \"" + pairs.getKey() + "\", { ";
 			output += "\"r\":" + pairs.getValue().getR() + ", ";
 			output += "\"g\":" + pairs.getValue().getG() + ", ";

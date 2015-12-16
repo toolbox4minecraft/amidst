@@ -219,7 +219,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void selectBiomeColorProfile(BiomeColorProfile profile) {
-		biomeColorProfileSelection.setProfile(profile);
+		biomeColorProfileSelection.set(profile);
 		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
 		if (worldSurroundings != null) {
 			worldSurroundings.reloadBiomeLayer();

@@ -2,26 +2,22 @@ package amidst.settings.biomecolorprofile;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
-import amidst.utilities.ColorUtils;
+import amidst.mojangapi.world.BiomeColor;
 
 @Immutable
-public class BiomeColor {
+public class BiomeColorJson {
 	private int r;
 	private int g;
 	private int b;
 
 	@GsonConstructor
-	public BiomeColor() {
+	public BiomeColorJson() {
 	}
 
-	public BiomeColor(int rgb) {
-		r = (rgb >> 16) & 0xFF;
-		g = (rgb >> 8) & 0xFF;
-		b = (rgb) & 0xFF;
-	}
-
-	public int toColorInt() {
-		return ColorUtils.makeColor(r, g, b);
+	public BiomeColorJson(int r, int g, int b) {
+		this.r = r;
+		this.g = g;
+		this.b = b;
 	}
 
 	public int getR() {
@@ -34,5 +30,9 @@ public class BiomeColor {
 
 	public int getB() {
 		return b;
+	}
+
+	public BiomeColor createBiomeColor() {
+		return BiomeColor.from(r, g, b);
 	}
 }

@@ -3,8 +3,8 @@ package amidst.fragment.colorprovider;
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.gui.main.worldsurroundings.BiomeSelection;
+import amidst.mojangapi.world.BiomeColor;
 import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
-import amidst.utilities.ColorUtils;
 
 @ThreadSafe
 public class BiomeColorProvider implements ColorProvider {
@@ -23,15 +23,15 @@ public class BiomeColorProvider implements ColorProvider {
 		return getColor(fragment.getBiomeDataAt(x, y));
 	}
 
-	private int getColor(int biome) {
-		if (!biomeSelection.isSelected(biome)) {
-			return ColorUtils.deselectColor(doGetColor(biome));
+	private int getColor(int biomeIndex) {
+		if (biomeSelection.isSelected(biomeIndex)) {
+			return getBiomeColor(biomeIndex).getRGB();
 		} else {
-			return doGetColor(biome);
+			return getBiomeColor(biomeIndex).getDeselectRGB();
 		}
 	}
 
-	private int doGetColor(int biome) {
-		return biomeColorProfileSelection.getColorIntByBiomeIndex(biome);
+	private BiomeColor getBiomeColor(int biomeIndex) {
+		return biomeColorProfileSelection.getBiomeColor(biomeIndex);
 	}
 }

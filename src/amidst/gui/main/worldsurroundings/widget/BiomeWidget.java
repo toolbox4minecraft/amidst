@@ -216,7 +216,8 @@ public class BiomeWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawBiomeColor(Graphics2D g2d, int i, Biome biome) {
-		g2d.setColor(biomeColorProfileSelection.getColorByBiome(biome));
+		g2d.setColor(biomeColorProfileSelection.getBiomeColor(biome.getIndex())
+				.getColor());
 		g2d.fillRect(innerBox.x, innerBox.y + i * 16 + biomeListYOffset, 20, 16);
 	}
 
