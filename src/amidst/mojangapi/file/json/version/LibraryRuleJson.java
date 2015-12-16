@@ -14,8 +14,8 @@ public class LibraryRuleJson {
 	public LibraryRuleJson() {
 	}
 
-	public boolean isApplicable() {
-		return os == null || os.matches();
+	public boolean isApplicable(String os) {
+		return this.os == null || this.os.getName().equals(os);
 	}
 
 	public boolean isAllowed() {

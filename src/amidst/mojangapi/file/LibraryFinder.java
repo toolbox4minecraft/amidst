@@ -38,11 +38,22 @@ public enum LibraryFinder {
 
 	private static File getLibraryFile(File librariesDirectory,
 			LibraryJson library) {
-		if (library.isActive()) {
+		if (library.isActive(getOs())) {
 			return getLibraryFile(getLibrarySearchPath(librariesDirectory,
 					library.getName()));
 		} else {
 			return null;
+		}
+	}
+
+	private static String getOs() {
+		String osName = System.getProperty("os.name").toLowerCase();
+		if (osName.contains("win")) {
+			return "windows";
+		} else if (osName.contains("mac")) {
+			return "osx";
+		} else {
+			return "linux";
 		}
 	}
 

@@ -1,4 +1,4 @@
-package amidst.utilities;
+package amidst.mojangapi.world;
 
 import amidst.documentation.Immutable;
 import amidst.fragment.Fragment;

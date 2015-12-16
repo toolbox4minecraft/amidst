@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import amidst.documentation.Immutable;
@@ -17,7 +17,6 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
-import amidst.utilities.JavaUtils;
 
 @Immutable
 public class VersionDirectory {
@@ -79,14 +78,14 @@ public class VersionDirectory {
 		} catch (IOException e) {
 			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: "
 					+ json + ")");
-			return Collections.emptyList();
+			return new ArrayList<URL>();
 		}
 	}
 
 	private URLClassLoader doCreateClassLoader(URL jarFileUrl,
 			List<URL> libraries) {
 		libraries.add(jarFileUrl);
-		return new URLClassLoader(JavaUtils.toArray(libraries, URL.class));
+		return new URLClassLoader(libraries.toArray(new URL[libraries.size()]));
 	}
 
 	private URLClassLoader doCreateClassLoader(URL jarFileUrl) {

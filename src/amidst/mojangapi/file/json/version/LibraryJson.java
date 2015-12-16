@@ -19,12 +19,12 @@ public class LibraryJson {
 		return name;
 	}
 
-	public boolean isActive() {
+	public boolean isActive(String os) {
 		if (rules.isEmpty()) {
 			return true;
 		}
 		for (LibraryRuleJson rule : rules) {
-			if (rule.isApplicable() && rule.isAllowed()) {
+			if (rule.isApplicable(os) && rule.isAllowed()) {
 				return true;
 			}
 		}

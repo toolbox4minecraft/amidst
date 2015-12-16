@@ -3,7 +3,6 @@ package amidst.mojangapi.world;
 import java.awt.Point;
 
 import amidst.documentation.Immutable;
-import amidst.utilities.CoordinateUtils;
 
 @Immutable
 public class CoordinatesInWorld {
