@@ -8,7 +8,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.mojangapi.world.Resolution;
+import amidst.mojangapi.world.coordinates.Resolution;
 
 @NotThreadSafe
 public class ImageDrawer extends FragmentDrawer {

@@ -2,7 +2,7 @@ package amidst.settings.biomecolorprofile;
 
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
-import amidst.mojangapi.world.BiomeColor;
+import amidst.mojangapi.world.biome.BiomeColor;
 
 @ThreadSafe
 public class BiomeColorProfileSelection {

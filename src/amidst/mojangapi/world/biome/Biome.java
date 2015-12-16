@@ -1,4 +1,4 @@
-package amidst.mojangapi.world;
+package amidst.mojangapi.world.biome;
 
 import java.util.HashMap;
 import java.util.Iterator;

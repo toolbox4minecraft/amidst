@@ -1,4 +1,4 @@
-package amidst.mojangapi.file.nbt;
+package amidst.mojangapi.file.nbt.playerfile;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,6 +8,7 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.documentation.Immutable;
+import amidst.mojangapi.file.nbt.NBTTagKeys;
 import amidst.mojangapi.world.player.PlayerCoordinates;
 
 @Immutable

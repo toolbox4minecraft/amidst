@@ -10,7 +10,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.gui.main.worldsurroundings.Zoom;
-import amidst.mojangapi.world.Resolution;
+import amidst.mojangapi.world.coordinates.Resolution;
 
 @NotThreadSafe
 public class GridDrawer extends FragmentDrawer {

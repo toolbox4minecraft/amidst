@@ -5,7 +5,7 @@ import java.util.List;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
 @NotThreadSafe
 public abstract class WorldIconProducer {

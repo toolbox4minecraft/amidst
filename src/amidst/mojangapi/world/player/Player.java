@@ -7,7 +7,7 @@ import java.io.IOException;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.file.nbt.playerfile.PlayerFile;
-import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
 @ThreadSafe
 public class Player {

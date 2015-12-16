@@ -8,6 +8,7 @@ import java.net.URL;
 
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
+import amidst.mojangapi.file.URIUtils;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 import amidst.mojangapi.file.json.player.PlayerJson;
 import amidst.mojangapi.file.json.player.SimplePlayerJson;

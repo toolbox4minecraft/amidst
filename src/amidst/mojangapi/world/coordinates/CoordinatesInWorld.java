@@ -1,4 +1,4 @@
-package amidst.mojangapi.world;
+package amidst.mojangapi.world.coordinates;
 
 import java.awt.Point;
 

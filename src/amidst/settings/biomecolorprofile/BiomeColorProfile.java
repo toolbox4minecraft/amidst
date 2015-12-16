@@ -10,8 +10,8 @@ import java.util.Map;
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
-import amidst.mojangapi.world.Biome;
-import amidst.mojangapi.world.BiomeColor;
+import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.world.biome.BiomeColor;
 
 import com.google.gson.GsonBuilder;
 

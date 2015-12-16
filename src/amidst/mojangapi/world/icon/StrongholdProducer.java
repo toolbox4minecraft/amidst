@@ -9,8 +9,8 @@ import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.mojangapi.world.Biome;
-import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @ThreadSafe

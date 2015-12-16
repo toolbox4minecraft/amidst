@@ -25,8 +25,8 @@ import amidst.fragment.loader.WorldIconLoader;
 import amidst.gui.main.worldsurroundings.BiomeSelection;
 import amidst.gui.main.worldsurroundings.WorldIconSelection;
 import amidst.gui.main.worldsurroundings.Zoom;
-import amidst.mojangapi.world.Resolution;
 import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.settings.ImmutableSetting;
 
 @Immutable

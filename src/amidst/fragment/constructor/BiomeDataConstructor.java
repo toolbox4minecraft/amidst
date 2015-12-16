@@ -4,7 +4,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.Immutable;
 import amidst.fragment.Fragment;
-import amidst.mojangapi.world.Resolution;
+import amidst.mojangapi.world.coordinates.Resolution;
 
 @Immutable
 public class BiomeDataConstructor implements FragmentConstructor {

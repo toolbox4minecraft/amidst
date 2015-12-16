@@ -8,9 +8,9 @@ import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.FilenameFactory;
+import amidst.mojangapi.file.URIUtils;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.ReleaseType;
-import amidst.mojangapi.file.json.URIUtils;
 
 @Immutable
 public class VersionListEntryJson {

@@ -8,10 +8,10 @@ import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
-import amidst.mojangapi.world.Biome;
-import amidst.mojangapi.world.CoordinatesInWorld;
-import amidst.mojangapi.world.Resolution;
-import amidst.mojangapi.world.UnknownBiomeIndexException;
+import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
+import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Resolution;
 
 @ThreadSafe
 public class BiomeDataOracle {

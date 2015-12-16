@@ -7,7 +7,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
-import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
 @NotThreadSafe
 public class FragmentGraphToScreenTranslator {

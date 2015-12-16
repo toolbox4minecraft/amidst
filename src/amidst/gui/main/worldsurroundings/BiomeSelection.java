@@ -3,7 +3,7 @@ package amidst.gui.main.worldsurroundings;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import amidst.documentation.ThreadSafe;
-import amidst.mojangapi.world.Biome;
+import amidst.mojangapi.world.biome.Biome;
 
 @ThreadSafe
 public class BiomeSelection {

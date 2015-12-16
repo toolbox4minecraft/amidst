@@ -9,7 +9,7 @@ import javax.swing.JPopupMenu;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
-import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.Player;
 

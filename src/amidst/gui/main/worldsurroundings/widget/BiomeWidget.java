@@ -13,7 +13,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.main.worldsurroundings.BiomeSelection;
-import amidst.mojangapi.world.Biome;
+import amidst.mojangapi.world.biome.Biome;
 import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
 
 @NotThreadSafe

@@ -2,7 +2,7 @@ package amidst.settings.biomecolorprofile;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
-import amidst.mojangapi.world.BiomeColor;
+import amidst.mojangapi.world.biome.BiomeColor;
 
 @Immutable
 public class BiomeColorJson {

@@ -6,7 +6,7 @@ import java.util.List;
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
 @ThreadSafe
 public abstract class CachedWorldIconProducer extends WorldIconProducer {

@@ -11,7 +11,7 @@ import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.gui.main.worldsurroundings.WorldIconSelection;
 import amidst.gui.main.worldsurroundings.Zoom;
-import amidst.mojangapi.world.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 
 @NotThreadSafe
