@@ -30,12 +30,12 @@ public enum WorldType {
 		return SELECTABLE_WORLD_TYPES;
 	}
 
-	public static WorldType from(String nameOrValue) {
-		WorldType result = findInstance(nameOrValue);
+	public static WorldType from(String nameOrSymbolicFieldName) {
+		WorldType result = findInstance(nameOrSymbolicFieldName);
 		if (result != null) {
 			return result;
 		} else {
-			Log.e("Unable to find World Type: " + nameOrValue
+			Log.e("Unable to find World Type: " + nameOrSymbolicFieldName
 					+ ". Falling back to default world type.");
 			return DEFAULT;
 		}
@@ -44,7 +44,8 @@ public enum WorldType {
 	private static WorldType findInstance(String nameOrValue) {
 		for (WorldType worldType : values()) {
 			if (worldType.name.equalsIgnoreCase(nameOrValue)
-					|| worldType.value.equalsIgnoreCase(nameOrValue)) {
+					|| worldType.symbolicFieldName
+							.equalsIgnoreCase(nameOrValue)) {
 				return worldType;
 			}
 		}
@@ -52,19 +53,19 @@ public enum WorldType {
 	}
 
 	private final String name;
-	private final String value;
+	private final String symbolicFieldName;
 
-	private WorldType(String name, String value) {
+	private WorldType(String name, String symbolicFieldName) {
 		this.name = name;
-		this.value = value;
+		this.symbolicFieldName = symbolicFieldName;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public String getValue() {
-		return value;
+	public String getSymbolicFieldName() {
+		return symbolicFieldName;
 	}
 
 	@Override

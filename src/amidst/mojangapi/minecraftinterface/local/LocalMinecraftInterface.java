@@ -104,7 +104,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
 	private SymbolicObject getWorldType(WorldType worldType)
 			throws IllegalArgumentException, IllegalAccessException {
-		return (SymbolicObject) worldTypeClass.getStaticFieldValue(worldType.getValue());
+		return (SymbolicObject) worldTypeClass.getStaticFieldValue(worldType.getSymbolicFieldName());
 	}
 	// @formatter:on
 
