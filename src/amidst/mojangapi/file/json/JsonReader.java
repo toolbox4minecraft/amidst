@@ -14,7 +14,6 @@ import amidst.mojangapi.file.json.player.SimplePlayerJson;
 import amidst.mojangapi.file.json.version.VersionJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.resources.ResourceLoader;
-import amidst.utilities.URIUtils;
 
 import com.google.gson.Gson;
 

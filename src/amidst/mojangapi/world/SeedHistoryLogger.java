@@ -1,4 +1,4 @@
-package amidst.utilities;
+package amidst.mojangapi.world;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -8,7 +8,6 @@ import java.util.Date;
 
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
-import amidst.mojangapi.world.WorldSeed;
 
 @ThreadSafe
 public class SeedHistoryLogger {
@@ -18,6 +17,14 @@ public class SeedHistoryLogger {
 		this.file = getHistoryFile(filename);
 	}
 
+	private File getHistoryFile(String filename) {
+		if (filename != null) {
+			return new File(filename);
+		} else {
+			return null;
+		}
+	}
+
 	public synchronized void log(WorldSeed seed) {
 		if (file != null) {
 			if (!file.exists()) {
@@ -25,15 +32,9 @@ public class SeedHistoryLogger {
 			}
 			if (file.exists() && file.isFile()) {
 				writeLine(seed);
+			} else {
+				Log.w("unable to write seed to seed log file");
 			}
-		}
-	}
-
-	private File getHistoryFile(String filename) {
-		if (filename != null) {
-			return new File(filename);
-		} else {
-			return null;
 		}
 	}
 

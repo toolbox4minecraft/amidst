@@ -27,11 +27,14 @@ import amidst.utilities.GoogleTracker;
 public class WorldBuilder {
 	private final GoogleTracker googleTracker;
 	private final PlayerInformationCache playerInformationCache;
+	private final SeedHistoryLogger seedHistoryLogger;
 
 	public WorldBuilder(GoogleTracker googleTracker,
-			PlayerInformationCache playerInformationCache) {
+			PlayerInformationCache playerInformationCache,
+			SeedHistoryLogger seedHistoryLogger) {
 		this.googleTracker = googleTracker;
 		this.playerInformationCache = playerInformationCache;
+		this.seedHistoryLogger = seedHistoryLogger;
 	}
 
 	public World fromSeed(MinecraftInterface minecraftInterface,
@@ -69,6 +72,7 @@ public class WorldBuilder {
 			MovablePlayerList movablePlayerList)
 			throws MinecraftInterfaceException {
 		googleTracker.trackSeed(seed);
+		seedHistoryLogger.log(seed);
 		// @formatter:off
 		minecraftInterface.createWorld(seed.getLong(), worldType, generatorOptions);
 		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();

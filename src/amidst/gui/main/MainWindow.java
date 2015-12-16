@@ -33,7 +33,6 @@ import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.WorldPlayerType;
 import amidst.threading.ThreadMaster;
-import amidst.utilities.SeedHistoryLogger;
 
 @NotThreadSafe
 public class MainWindow {
@@ -41,7 +40,6 @@ public class MainWindow {
 	private final Settings settings;
 	private final MojangApi mojangApi;
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
-	private final SeedHistoryLogger seedHistoryLogger;
 	private final ThreadMaster threadMaster;
 	private final UpdatePrompt updatePrompt;
 
@@ -56,12 +54,11 @@ public class MainWindow {
 	public MainWindow(Application application, Settings settings,
 			MojangApi mojangApi,
 			WorldSurroundingsBuilder worldSurroundingsBuilder,
-			SeedHistoryLogger seedHistoryLogger, ThreadMaster threadMaster) {
+			ThreadMaster threadMaster) {
 		this.application = application;
 		this.settings = settings;
 		this.mojangApi = mojangApi;
 		this.worldSurroundingsBuilder = worldSurroundingsBuilder;
-		this.seedHistoryLogger = seedHistoryLogger;
 		this.threadMaster = threadMaster;
 		this.updatePrompt = createUpdatePrompt();
 		this.frame = createFrame();
@@ -183,7 +180,6 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void setWorldSurroundings(WorldSurroundings worldSurroundings) {
-		seedHistoryLogger.log(worldSurroundings.getWorldSeed());
 		contentPane.add(worldSurroundings.getComponent(), BorderLayout.CENTER);
 		menuBar.setWorldMenuEnabled(true);
 		menuBar.setSavePlayerLocationsMenuEnabled(worldSurroundings

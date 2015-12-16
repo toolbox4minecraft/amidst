@@ -14,21 +14,19 @@ import amidst.gui.profileselect.ProfileSelectWindow;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.MojangApiBuilder;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
+import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.player.PlayerInformationCache;
 import amidst.threading.ThreadMaster;
 import amidst.utilities.GoogleTracker;
-import amidst.utilities.SeedHistoryLogger;
 
 @NotThreadSafe
 public class Application {
 	private final CommandLineParameters parameters;
 	private final Settings settings;
 	private final GoogleTracker googleTracker;
-	private final PlayerInformationCache playerInformationCache;
 	private final MojangApi mojangApi;
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
-	private final SeedHistoryLogger seedHistoryLogger;
 	private final ThreadMaster threadMaster;
 
 	private volatile ProfileSelectWindow profileSelectWindow;
@@ -41,10 +39,8 @@ public class Application {
 		this.parameters = parameters;
 		this.settings = createSettings();
 		this.googleTracker = createGoogleTracker();
-		this.playerInformationCache = createPlayerInformationCache();
 		this.mojangApi = createMojangApi();
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
-		this.seedHistoryLogger = createSeedHistoryLogger();
 		this.threadMaster = createThreadMaster();
 	}
 
@@ -59,15 +55,11 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private PlayerInformationCache createPlayerInformationCache() {
-		return new PlayerInformationCache();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
 	private MojangApi createMojangApi() throws FileNotFoundException,
 			LocalMinecraftInterfaceCreationException {
 		return new MojangApiBuilder(new WorldBuilder(googleTracker,
-				playerInformationCache), parameters.minecraftPath,
+				new PlayerInformationCache(), new SeedHistoryLogger(
+						parameters.historyPath)), parameters.minecraftPath,
 				parameters.minecraftLibraries, parameters.minecraftJar,
 				parameters.minecraftJson).construct();
 	}
@@ -76,11 +68,6 @@ public class Application {
 	private WorldSurroundingsBuilder createWorldSurroundingsBuilder() {
 		return new WorldSurroundingsBuilder(settings,
 				new LayerBuilder(settings));
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private SeedHistoryLogger createSeedHistoryLogger() {
-		return new SeedHistoryLogger(parameters.historyPath);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -101,7 +88,7 @@ public class Application {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayMainWindow() {
 		setMainWindow(new MainWindow(this, settings, mojangApi,
-				worldSurroundingsBuilder, seedHistoryLogger, threadMaster));
+				worldSurroundingsBuilder, threadMaster));
 		setProfileSelectWindow(null);
 	}
 

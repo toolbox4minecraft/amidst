@@ -1,4 +1,4 @@
-package amidst.utilities;
+package amidst.mojangapi.file.json;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
