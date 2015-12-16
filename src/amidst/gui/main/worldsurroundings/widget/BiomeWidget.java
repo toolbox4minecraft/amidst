@@ -15,7 +15,6 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.gui.main.worldsurroundings.BiomeSelection;
 import amidst.mojangapi.world.Biome;
 import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
-import amidst.utilities.CoordinateUtils;
 
 @NotThreadSafe
 public class BiomeWidget extends Widget {
@@ -326,8 +325,8 @@ public class BiomeWidget extends Widget {
 		int offsetY = translateYToWidgetCoordinates(innerBox.y);
 		int width = innerBox.width;
 		int height = innerBox.height;
-		return CoordinateUtils.isInBounds(mouseX, mouseY, offsetX, offsetY,
-				width, height);
+		return Widget.isInBounds(mouseX, mouseY, offsetX, offsetY, width,
+				height);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -336,8 +335,8 @@ public class BiomeWidget extends Widget {
 		int offsetY = translateYToWidgetCoordinates(innerBox.y + scrollbarY);
 		int width = scrollbarWidth;
 		int height = scrollbarHeight;
-		return CoordinateUtils.isInBounds(mouseX, mouseY, offsetX, offsetY,
-				width, height);
+		return Widget.isInBounds(mouseX, mouseY, offsetX, offsetY, width,
+				height);
 	}
 
 	// TODO: These values are temporarily hard coded for the sake of a fast

@@ -13,12 +13,17 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.resources.ResourceLoader;
-import amidst.utilities.CoordinateUtils;
 
 @NotThreadSafe
 public abstract class Widget {
 	public static enum CornerAnchorPoint {
 		TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, BOTTOM_CENTER, CENTER, NONE
+	}
+
+	protected static boolean isInBounds(int x, int y, int offsetX, int offsetY,
+			int width, int height) {
+		return x >= offsetX && x < offsetX + width && y >= offsetY
+				&& y < offsetY + height;
 	}
 
 	private static final BufferedImage DROP_SHADOW_BOTTOM_LEFT = ResourceLoader
@@ -198,8 +203,7 @@ public abstract class Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean isInBounds(int x, int y) {
-		return CoordinateUtils.isInBounds(x, y, this.x, this.y, this.width,
-				this.height);
+		return isInBounds(x, y, this.x, this.y, this.width, this.height);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
