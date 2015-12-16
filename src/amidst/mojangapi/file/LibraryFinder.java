@@ -9,7 +9,6 @@ import java.util.List;
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.file.json.version.LibraryJson;
-import amidst.utilities.FileSystemUtils;
 
 @Immutable
 public enum LibraryFinder {
@@ -70,7 +69,7 @@ public enum LibraryFinder {
 
 	private static File getLibraryFile(File librarySearchPath) {
 		if (librarySearchPath.exists()) {
-			File result = FileSystemUtils.getFirstFileWithExtension(
+			File result = getFirstFileWithExtension(
 					librarySearchPath.listFiles(), "jar");
 			if (result != null && result.exists()) {
 				return result;
@@ -83,5 +82,23 @@ public enum LibraryFinder {
 			Log.w("Failed attempt to load library at: " + librarySearchPath);
 			return null;
 		}
+	}
+
+	private static File getFirstFileWithExtension(File[] files, String extension) {
+		for (File libraryFile : files) {
+			if (getFileExtension(libraryFile.getName()).equals(extension)) {
+				return libraryFile;
+			}
+		}
+		return null;
+	}
+
+	private static String getFileExtension(String fileName) {
+		String extension = "";
+		int q = fileName.lastIndexOf('.');
+		if (q > 0) {
+			extension = fileName.substring(q + 1);
+		}
+		return extension;
 	}
 }

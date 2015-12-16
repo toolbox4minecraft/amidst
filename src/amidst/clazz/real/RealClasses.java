@@ -11,7 +11,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import amidst.documentation.Immutable;
-import amidst.utilities.FileSystemUtils;
 
 @Immutable
 public enum RealClasses {
@@ -57,8 +56,8 @@ public enum RealClasses {
 
 	private static RealClass readJarFileEntry(ZipFile zipFile, ZipEntry entry)
 			throws IOException, RealClassCreationException {
-		String realClassName = FileSystemUtils.getFileNameWithoutExtension(
-				entry.getName(), "class");
+		String realClassName = getFileNameWithoutExtension(entry.getName(),
+				"class");
 		if (!entry.isDirectory() && realClassName != null) {
 			BufferedInputStream stream = new BufferedInputStream(
 					zipFile.getInputStream(entry));
@@ -71,5 +70,16 @@ public enum RealClasses {
 			}
 		}
 		return null;
+	}
+
+	private static String getFileNameWithoutExtension(String fileName,
+			String extension) {
+		String[] split = fileName.split("\\.");
+		if (split.length == 2 && split[0].indexOf('/') == -1
+				&& split[1].equals(extension)) {
+			return split[0];
+		} else {
+			return null;
+		}
 	}
 }
