@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 
 import amidst.documentation.ThreadSafe;
 
+// TODO: switch to standard logging framework like slf4j + log4j?
 @ThreadSafe
 public class Log {
 	public static interface CrashHandler {
