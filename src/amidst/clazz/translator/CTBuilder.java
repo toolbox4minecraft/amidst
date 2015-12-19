@@ -53,7 +53,7 @@ public class CTBuilder {
 			return this;
 		}
 
-		public SCDBuilder thenDeclare(String symbolicClassName) {
+		public SCDBuilder thenDeclareRequired(String symbolicClassName) {
 			return thenDeclare(symbolicClassName, false);
 		}
 
@@ -136,7 +136,7 @@ public class CTBuilder {
 			return CTBuilder.this.construct();
 		}
 
-		public SymbolicParameterDeclarationListBuilder<SCDBuilder> constructor(
+		public SymbolicParameterDeclarationListBuilder<SCDBuilder> requiredConstructor(
 				final String symbolicName) {
 			return constructor(symbolicName, false);
 		}
@@ -161,7 +161,7 @@ public class CTBuilder {
 					});
 		}
 
-		public SymbolicParameterDeclarationListBuilder<SCDBuilder> method(
+		public SymbolicParameterDeclarationListBuilder<SCDBuilder> requiredMethod(
 				String symbolicName, String realName) {
 			return method(symbolicName, realName, false);
 		}
@@ -186,7 +186,7 @@ public class CTBuilder {
 					});
 		}
 
-		public SCDBuilder field(String symbolicName, String realName) {
+		public SCDBuilder requiredField(String symbolicName, String realName) {
 			return field(symbolicName, realName, false);
 		}
 
