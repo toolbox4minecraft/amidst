@@ -39,8 +39,7 @@ public class LicenseWindow {
 				createLicense("JGoogleAnalytics", "jgoogleanalytics.txt"),
 				createLicense("JNBT", "jnbt.txt"),
 				createLicense("Kryonet", "kryonet.txt"),
-				createLicense("MiG Layout", "miglayout.txt"),
-				createLicense("Rhino", "rhino.txt"));
+				createLicense("MiG Layout", "miglayout.txt"));
 		return result.toArray(new License[result.size()]);
 	}
 
