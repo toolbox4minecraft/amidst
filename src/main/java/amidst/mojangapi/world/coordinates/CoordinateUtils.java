@@ -38,28 +38,4 @@ public enum CoordinateUtils {
 	private static long modulo(long a, long b) {
 		return ((a % b) + b) % b;
 	}
-
-	// TODO: convert to unit test
-	public static void main(String[] args) {
-		if (ensureCoordinateConversionWorks()) {
-			System.out.println("Coordinate conversion is working!");
-		} else {
-			System.out.println("Coordinate conversion is faulty!");
-		}
-	}
-
-	private static boolean ensureCoordinateConversionWorks() {
-		boolean successful = true;
-		for (long inWorld = -1000; inWorld < 1000; inWorld++) {
-			long inFragment = toFragmentRelative(inWorld);
-			long inWorldOfFragment = toFragmentCorner(inWorld);
-			long inWorld2 = toWorld(inWorldOfFragment, inFragment);
-			if (inWorld != inWorld2) {
-				successful = false;
-				System.out.println(inWorld + " != " + inWorld2 + " ("
-						+ inWorldOfFragment + " + " + inFragment + ")");
-			}
-		}
-		return successful;
-	}
 }
