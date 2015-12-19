@@ -44,7 +44,7 @@ public enum DefaultClassTranslator {
 					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_1, "a").real("long").end()
 					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_2, "a").real("long").symbolic("WorldType").end()
 					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3, "a").real("long").symbolic("WorldType").real("String").end()
-					.requiredMethod(        SymbolicNames.METHOD_GEN_LAYER_GET_INTS,                          "a").real("int") .real("int")          .real("int")   .real("int").end()
+					.requiredMethod(SymbolicNames.METHOD_GEN_LAYER_GET_INTS,                          "a").real("int") .real("int")          .real("int")   .real("int").end()
 			.next()
 				.ifDetect()
 					.numberOfConstructors(0)
