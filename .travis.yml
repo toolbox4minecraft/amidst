@@ -2,7 +2,8 @@ language: java
 jdk:
 - oraclejdk8
 install:
-- mvn clean package -DskipTests=true
+- mvn clean
+- mvn package -DskipTests=true
 before_deploy:
 - bash scripts/create-windows-icon.sh
 - bash scripts/create-mac-icon.sh
