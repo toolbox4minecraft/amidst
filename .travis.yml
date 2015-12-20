@@ -2,15 +2,14 @@ sudo: required
 language: java
 jdk:
 - oraclejdk8
-before_install:
-- sudo apt-get update
-- sudo apt-get install libc6:i386 libstdc++6:i386 # this is needed by the launch4j maven plugin to work
 install:
 - mvn clean
 - mvn package -DskipTests=true
 before_deploy:
 - bash scripts/create-windows-icon.sh
 - bash scripts/create-mac-icon.sh
+- sudo apt-get update
+- sudo apt-get install libc6:i386 libstdc++6:i386 # this is needed by the launch4j maven plugin to work
 - mvn install -DskipTests=true
 - bash scripts/rename-jar-file.sh
 - bash scripts/zip-mac-app.sh
