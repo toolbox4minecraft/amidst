@@ -1,6 +1,8 @@
 AMIDST
 ======
 
+![travis-ci build status](https://travis-ci.org/stefandollase/AMIDST.svg)
+
 Advanced Minecraft Interface and Data/Structure Tracking
 
 License and warranty
