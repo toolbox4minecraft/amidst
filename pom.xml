@@ -6,13 +6,30 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
-		<final.name>${project.artifactId}-${project.version}-${maven.build.timestamp}</final.name>
+		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
 		<jdk.version>1.8</jdk.version>
 	</properties>
 	<build>
-		<finalName>${final.name}</finalName>
+		<finalName>${amidst.filename}</finalName>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>read-project-properties</goal>
+						</goals>
+						<configuration>
+							<files>
+								<file>${basedir}/src/main/resources/amidst/metadata.properties</file>
+							</files>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-install-plugin</artifactId>
@@ -87,7 +104,8 @@
 									<mainClass>amidst.Amidst</mainClass>
 								</manifest>
 								<manifestEntries>
-									<Amidst-Version>${final.name}</Amidst-Version>
+									<Amidst-Version>${amidst.filename}</Amidst-Version>
+									<Built-On>${maven.build.timestamp}</Built-On>
 								</manifestEntries>
 							</archive>
 							<descriptorRefs>
@@ -130,6 +148,12 @@
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>properties-maven-plugin</artifactId>
+			<version>1.0.0</version>
+			<type>maven-plugin</type>
 		</dependency>
 	</dependencies>
 </project>
