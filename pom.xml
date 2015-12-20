@@ -115,6 +115,55 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>sh.tak.appbundler</groupId>
+				<artifactId>appbundle-maven-plugin</artifactId>
+				<version>1.0.4</version>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>bundle</goal>
+						</goals>
+						<configuration>
+							<mainClass>amidst.Amidst</mainClass>
+							<iconFile>${project.build.directory}/icon.icns</iconFile>
+							<jvmVersion>${jdk.version}+</jvmVersion>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.akathist.maven.plugins.launch4j</groupId>
+				<artifactId>launch4j-maven-plugin</artifactId>
+				<version>1.7.8</version>
+				<executions>
+					<execution>
+						<id>launch4j</id>
+						<phase>install</phase>
+						<goals>
+							<goal>launch4j</goal>
+						</goals>
+						<configuration>
+							<headerType>gui</headerType>
+							<outfile>${project.build.directory}/${amidst.filename}.exe</outfile>
+							<jar>${project.build.directory}/${amidst.filename}-jar-with-dependencies.jar</jar>
+							<dontWrapJar>false</dontWrapJar>
+							<errTitle>Error in Launcher</errTitle>
+							<classPath>
+								<mainClass>amidst.Amidst</mainClass>
+								<addDependencies>false</addDependencies>
+							</classPath>
+							<icon>${project.build.directory}/icon.ico</icon>
+							<jre>
+								<minVersion>${jdk.version}.0</minVersion>
+								<initialHeapSize>512</initialHeapSize>
+								<maxHeapSize>1024</maxHeapSize>
+							</jre>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -154,6 +203,21 @@
 			<artifactId>properties-maven-plugin</artifactId>
 			<version>1.0.0</version>
 			<type>maven-plugin</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>sh.tak.appbundler</groupId>
+			<artifactId>appbundle-maven-plugin</artifactId>
+			<version>1.0.4</version>
+			<type>maven-plugin</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.akathist.maven.plugins.launch4j</groupId>
+			<artifactId>launch4j-maven-plugin</artifactId>
+			<version>1.7.8</version>
+			<type>maven-plugin</type>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
