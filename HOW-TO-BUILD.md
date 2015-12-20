@@ -1,0 +1,4 @@
+Building Amidst
+=====
+
+Amidst uses maven for its build process. However, not all dependencies are available from public maven repositories, so they need to be installed in the local maven repository. To do so, you just need to run `mvn clean`. This will take the configured libraries from the `lib` directory and install them in the local repository. Afterwards, you just need to run `mvn package` to create the jar file with all dependencies and resources in it. It will be placed under `target/AMIDST-<version>-<timestamp>-jar-with-dependencies.jar`. Note, that there is also a file called `target/AMIDST-<version>-<timestamp>.jar`, however this file does not contain the dependencies. Just ignore it.
