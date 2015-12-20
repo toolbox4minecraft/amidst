@@ -19,9 +19,12 @@ import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.player.PlayerInformationCache;
 import amidst.threading.ThreadMaster;
 
+import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
+
 @NotThreadSafe
 public class Application {
 	private final CommandLineParameters parameters;
+	private final AmidstMetaData metadata;
 	private final Settings settings;
 	private final GoogleTracker googleTracker;
 	private final MojangApi mojangApi;
@@ -36,11 +39,19 @@ public class Application {
 			throws FileNotFoundException,
 			LocalMinecraftInterfaceCreationException {
 		this.parameters = parameters;
+		this.metadata = createMetadata();
 		this.settings = createSettings();
 		this.googleTracker = createGoogleTracker();
 		this.mojangApi = createMojangApi();
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
 		this.threadMaster = createThreadMaster();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private AmidstMetaData createMetadata() {
+		return AmidstMetaData.from(
+				ResourceLoader.getProperties("/amidst/metadata.properties"),
+				ResourceLoader.getImage("/amidst/icon.png"));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -50,7 +61,10 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private GoogleTracker createGoogleTracker() {
-		return new GoogleTracker();
+		return new GoogleTracker(new JGoogleAnalyticsTracker(
+				metadata.getGoogleAnalyticsAppName(),
+				metadata.getGoogleAnalyticsAppVersion(),
+				metadata.getGoogleAnalyticsTrackingCode()));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -86,14 +100,14 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayMainWindow() {
-		setMainWindow(new MainWindow(this, settings, mojangApi,
+		setMainWindow(new MainWindow(this, metadata, settings, mojangApi,
 				worldSurroundingsBuilder, threadMaster));
 		setProfileSelectWindow(null);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayProfileSelectWindow() {
-		setProfileSelectWindow(new ProfileSelectWindow(this,
+		setProfileSelectWindow(new ProfileSelectWindow(this, metadata,
 				threadMaster.getWorkerExecutor(), mojangApi, settings));
 		setMainWindow(null);
 	}
@@ -128,7 +142,7 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayLicenseWindow() {
-		new LicenseWindow();
+		new LicenseWindow(metadata);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

@@ -8,6 +8,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Properties;
 
 import javax.imageio.ImageIO;
 
@@ -29,6 +30,18 @@ public enum ResourceLoader {
 			// included in the jar file.
 			throw new IllegalArgumentException(e);
 		}
+	}
+
+	public static Properties getProperties(String filename) {
+		Properties properties = new Properties();
+		try {
+			properties.load(ResourceLoader.class.getResourceAsStream(filename));
+		} catch (IOException e) {
+			// This is always a developer error, because a resource was not
+			// included in the jar file.
+			throw new IllegalArgumentException(e);
+		}
+		return properties;
 	}
 
 	public static String getResourceAsString(String name) throws IOException,

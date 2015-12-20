@@ -23,7 +23,10 @@ import amidst.documentation.Immutable;
 public class LicenseWindow {
 	private static final String LICENSES_DIRECTORY = "/amidst/gui/license/";
 
-	public LicenseWindow() {
+	private final AmidstMetaData metadata;
+
+	public LicenseWindow(AmidstMetaData metadata) {
+		this.metadata = metadata;
 		License[] licenses = createLicenses();
 		JTextArea textArea = createLicenseTextArea();
 		JScrollPane scrollPane = createScrollPane(textArea);
@@ -81,7 +84,7 @@ public class LicenseWindow {
 		JFrame frame = new JFrame("Licenses");
 		initContentPane(frame.getContentPane(), licenseList, scrollPane);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.setIconImage(AmidstMetaData.ICON);
+		frame.setIconImage(metadata.getIcon());
 		frame.setSize(870, 550);
 		frame.setVisible(true);
 		return frame;

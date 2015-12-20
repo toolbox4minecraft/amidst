@@ -27,6 +27,7 @@ import amidst.threading.WorkerExecutor;
 @NotThreadSafe
 public class ProfileSelectWindow {
 	private final Application application;
+	private final AmidstMetaData metadata;
 	private final WorkerExecutor workerExecutor;
 	private final MojangApi mojangApi;
 	private final Settings settings;
@@ -36,9 +37,10 @@ public class ProfileSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public ProfileSelectWindow(Application application,
-			WorkerExecutor workerExecutor, MojangApi mojangApi,
-			Settings settings) {
+			AmidstMetaData metadata, WorkerExecutor workerExecutor,
+			MojangApi mojangApi, Settings settings) {
 		this.application = application;
+		this.metadata = metadata;
 		this.workerExecutor = workerExecutor;
 		this.mojangApi = mojangApi;
 		this.settings = settings;
@@ -51,7 +53,7 @@ public class ProfileSelectWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JFrame createFrame() {
 		JFrame frame = new JFrame("Profile Selector");
-		frame.setIconImage(AmidstMetaData.ICON);
+		frame.setIconImage(metadata.getIcon());
 		frame.getContentPane().setLayout(new MigLayout());
 		frame.add(createTitleLabel(), "h 20!,w :400:, growx, pushx, wrap");
 		frame.add(new JScrollPane(profileSelectPanel.getComponent()),

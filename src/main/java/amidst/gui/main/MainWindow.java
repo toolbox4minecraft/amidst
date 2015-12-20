@@ -37,6 +37,7 @@ import amidst.threading.ThreadMaster;
 @NotThreadSafe
 public class MainWindow {
 	private final Application application;
+	private final AmidstMetaData metadata;
 	private final Settings settings;
 	private final MojangApi mojangApi;
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
@@ -51,11 +52,12 @@ public class MainWindow {
 	private final AtomicReference<WorldSurroundings> worldSurroundings = new AtomicReference<WorldSurroundings>();
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public MainWindow(Application application, Settings settings,
-			MojangApi mojangApi,
+	public MainWindow(Application application, AmidstMetaData metadata,
+			Settings settings, MojangApi mojangApi,
 			WorldSurroundingsBuilder worldSurroundingsBuilder,
 			ThreadMaster threadMaster) {
 		this.application = application;
+		this.metadata = metadata;
 		this.settings = settings;
 		this.mojangApi = mojangApi;
 		this.worldSurroundingsBuilder = worldSurroundingsBuilder;
@@ -74,7 +76,8 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private UpdatePrompt createUpdatePrompt() {
-		return new UpdatePrompt(this, threadMaster.getWorkerExecutor());
+		return new UpdatePrompt(metadata, this,
+				threadMaster.getWorkerExecutor());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -83,16 +86,15 @@ public class MainWindow {
 		frame.setTitle(createVersionString(mojangApi.getVersionId(),
 				mojangApi.getRecognisedVersionName()));
 		frame.setSize(1000, 800);
-		frame.setIconImage(AmidstMetaData.ICON);
+		frame.setIconImage(metadata.getIcon());
 		return frame;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private String createVersionString(String versionId,
 			String recognisedVersionName) {
-		return "Amidst v" + AmidstMetaData.getFullVersionString()
-				+ " - Minecraft Version " + versionId + " ("
-				+ recognisedVersionName + ")";
+		return metadata.getMainWindowTitle() + " - Minecraft Version "
+				+ versionId + " (" + recognisedVersionName + ")";
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

@@ -23,11 +23,13 @@ public class UpdateInformationRetriever {
 	private static final int MAJOR_INDEX = 0;
 	private static final int MINOR_INDEX = 1;
 
+	private final AmidstMetaData metadata;
 	private final String updateURL;
 	private final int major;
 	private final int minor;
 
-	public UpdateInformationRetriever() throws Exception {
+	public UpdateInformationRetriever(AmidstMetaData metadata) throws Exception {
+		this.metadata = metadata;
 		Document document = getDocument();
 		updateURL = getUpdateURL(document);
 		int[] versionNumbers = getVersionNumbers(document);
@@ -73,12 +75,12 @@ public class UpdateInformationRetriever {
 	}
 
 	public boolean isNewMajorVersionAvailable() {
-		return major > AmidstMetaData.MAJOR_VERSION;
+		return major > metadata.getMajorVersion();
 	}
 
 	public boolean isNewMinorVersionAvailable() {
-		return major == AmidstMetaData.MAJOR_VERSION
-				&& minor > AmidstMetaData.MINOR_VERSION;
+		return major == metadata.getMajorVersion()
+				&& minor > metadata.getMinorVersion();
 	}
 
 	public String getUpdateURL() {

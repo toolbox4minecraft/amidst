@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 
+import amidst.AmidstMetaData;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -13,11 +14,14 @@ import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
 public class UpdatePrompt {
+	private final AmidstMetaData metadata;
 	private final MainWindow mainWindow;
 	private final WorkerExecutor workerExecutor;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public UpdatePrompt(MainWindow mainWindow, WorkerExecutor workerExecutor) {
+	public UpdatePrompt(AmidstMetaData metadata, MainWindow mainWindow,
+			WorkerExecutor workerExecutor) {
+		this.metadata = metadata;
 		this.mainWindow = mainWindow;
 		this.workerExecutor = workerExecutor;
 	}
@@ -39,7 +43,7 @@ public class UpdatePrompt {
 					@Override
 					protected UpdateInformationRetriever main()
 							throws Exception {
-						return new UpdateInformationRetriever();
+						return new UpdateInformationRetriever(metadata);
 					}
 
 					@Override

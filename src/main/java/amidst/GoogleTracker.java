@@ -8,14 +8,10 @@ import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
 
 @ThreadSafe
 public class GoogleTracker {
-	private static final String APP_NAME = "AMIDST";
-	private static final String TRACKING_CODE = "UA-27092717-1";
+	private final JGoogleAnalyticsTracker tracker;
 
-	private final JGoogleAnalyticsTracker tracker = createTracker();
-
-	private JGoogleAnalyticsTracker createTracker() {
-		return new JGoogleAnalyticsTracker(APP_NAME,
-				AmidstMetaData.getFullVersionString(), TRACKING_CODE);
+	public GoogleTracker(JGoogleAnalyticsTracker tracker) {
+		this.tracker = tracker;
 	}
 
 	public void trackApplicationRunning() {
