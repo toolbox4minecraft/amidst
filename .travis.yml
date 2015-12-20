@@ -5,7 +5,7 @@ install:
 - mvn clean
 - mvn install -DskipTests=true
 before_deploy:
-- scripts/before-deploy.sh
+- bash scripts/before-deploy.sh
 - export filename=$(bash scripts/get-amidst-filename.sh)
 deploy:
   provider: releases
