@@ -84,7 +84,7 @@
 						<configuration>
 							<archive>
 								<manifest>
-									<mainClass>admist.Amidst</mainClass>
+									<mainClass>amidst.Amidst</mainClass>
 								</manifest>
 								<manifestEntries>
 									<Amidst-Version>${final.name}</Amidst-Version>
