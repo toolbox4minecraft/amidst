@@ -1,6 +1,10 @@
+sudo: required
 language: java
 jdk:
 - oraclejdk8
+before_install:
+- sudo apt-get update
+- sudo apt-get install libc6:i386 libstdc++6:i386 # this is needed by the launch4j maven plugin to work
 install:
 - mvn clean
 - mvn package -DskipTests=true
