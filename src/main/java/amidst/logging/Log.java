@@ -12,11 +12,6 @@ import amidst.documentation.ThreadSafe;
 // TODO: switch to standard logging framework like slf4j + log4j?
 @ThreadSafe
 public class Log {
-	public static interface CrashHandler {
-		void handle(Throwable e, String exceptionText, String message,
-				String allLogMessages);
-	}
-
 	private static final ConsoleLogger CONSOLE_LOGGER = new ConsoleLogger();
 	private static final InMemoryLogger IN_MEMORY_LOGGER = new InMemoryLogger();
 
