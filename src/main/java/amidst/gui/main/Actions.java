@@ -76,6 +76,7 @@ public class Actions {
 				mainWindow.setWorld(mojangApi.createWorldFromSeed(seed,
 						worldType));
 			} catch (Exception e) {
+				e.printStackTrace();
 				mainWindow.displayException(e);
 			}
 		}
@@ -88,6 +89,7 @@ public class Actions {
 			try {
 				mainWindow.setWorld(mojangApi.createWorldFromFile(file));
 			} catch (Exception e) {
+				e.printStackTrace();
 				mainWindow.displayException(e);
 			}
 		}

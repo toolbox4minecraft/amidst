@@ -40,6 +40,10 @@ public class LauncherProfileJson {
 		return gameDir;
 	}
 
+	public boolean hasGameDir() {
+		return gameDir != null;
+	}
+
 	public boolean isAllowed(ReleaseType releaseType) {
 		return allowedReleaseTypes.contains(releaseType);
 	}

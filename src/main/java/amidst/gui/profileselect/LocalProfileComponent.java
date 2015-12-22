@@ -1,5 +1,7 @@
 package amidst.gui.profileselect;
 
+import java.io.FileNotFoundException;
+
 import amidst.Application;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -47,9 +49,14 @@ public class LocalProfileComponent extends ProfileComponent {
 		workerExecutor.invokeLater(new SimpleWorker<Boolean>() {
 			@Override
 			protected Boolean main() {
-				profileDirectory = createProfileDirectory();
-				versionDirectory = createVersionDirectory();
-				return profileDirectory != null && versionDirectory != null;
+				try {
+					profileDirectory = createProfileDirectory();
+					versionDirectory = createVersionDirectory();
+					return true;
+				} catch (FileNotFoundException e) {
+					Log.w(e.getMessage());
+					return false;
+				}
 			}
 
 			@Override
@@ -62,24 +69,34 @@ public class LocalProfileComponent extends ProfileComponent {
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private ProfileDirectory createProfileDirectory() {
-		ProfileDirectory result = profile.createValidProfileDirectory();
-		if (result == null) {
-			Log.w("Unable to load profile directory for profile: "
-					+ profile.getName());
+	private ProfileDirectory createProfileDirectory()
+			throws FileNotFoundException {
+		if (profile.hasGameDir()) {
+			ProfileDirectory result = profile.createValidProfileDirectory();
+			if (result != null) {
+				return result;
+			} else {
+				throw new FileNotFoundException(
+						"Unable to load profile directory for profile: "
+								+ profile.getName());
+			}
+		} else {
+			return null;
 		}
-		return result;
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private VersionDirectory createVersionDirectory() {
+	private VersionDirectory createVersionDirectory()
+			throws FileNotFoundException {
 		VersionDirectory result = profile
 				.createValidVersionDirectory(mojangApi);
-		if (result == null) {
-			Log.w("Unable to load version directory for profile: "
-					+ profile.getName());
+		if (result != null) {
+			return result;
+		} else {
+			throw new FileNotFoundException(
+					"Unable to load version directory for profile: "
+							+ profile.getName());
 		}
-		return result;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
