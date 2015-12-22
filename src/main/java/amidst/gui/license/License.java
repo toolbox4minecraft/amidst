@@ -18,7 +18,8 @@ public class License {
 		try {
 			return ResourceLoader.getResourceAsString(path);
 		} catch (Exception e) {
-			Log.w("Unable to read license file: " + name + ".");
+			Log.w("Unable to read license for '" + name + "' at '" + path
+					+ "'.");
 			e.printStackTrace();
 			return "License text is missing.";
 		}
