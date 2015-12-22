@@ -12,7 +12,6 @@ before_deploy:
 - sudo apt-get install libc6:i386 libstdc++6:i386 # this is needed by the launch4j maven plugin to work
 - mvn install -DskipTests=true
 - bash scripts/rename-jar-file.sh
-- bash scripts/zip-mac-app.sh
 - export filename=$(bash scripts/get-amidst-filename.sh)
 deploy:
   provider: releases
@@ -20,7 +19,6 @@ deploy:
     secure: QMXa1QpW+mlTLlxCbKOAWIRUi2cR+Y2vMQDlwiV8BoUyZchvTBR+stDYuEdxd2fK8/aSRUWEgfUhKMJ4cIZEOOwz/UA/1RQmzumbFLexwTwDXfkTfCcDQFLtzywVoep2P3s1lpheo4f1G3z2sZTCxO5yRnpd/sBtWnaq3j5uifYZB+mv84eH+EsrQL7f+0KjycOPrAdiJ8xh/2twUtGMhaStrnhcH+RCi6qm6D5Dv4mwYM4wRxG3H9i2NceGa6lHIE4bU+kKY9lc3V6EzmTnnShwEcrf+4/ZfCe4A9aU3jzFhKCHKpJ4PlqLEtMeQ08ijaMrF4LaBqwRZ5il5nqKkFdfKOtx7EHqjxrQ1dT7JUXU/3lTfEX/DLbhPa3z5Tl9LgCu9flCS+ltQoPvx7MR1leaQeHNoFCfzWJQ8ytW2CEhnOqx3nr4AIW8q5akJxQB7USfHV5F8kw2T6QmzuniQRZex+15j9SLedaDXZCvno6C0+j59sABpiF9lRVww8jW6BxqklxDcjEtkMxyHiBCG0EgGlKJvVSyGGzDsjb8FweC1KQKBHuG+5UYNE1rJesj6rwfIIrbInjJRTPndb4GpuzzbqbTGxwHd2zqzkQhnxSjCoKIzyhpBzfyCJaqTv/DfimSc95sXH1w1d6zfcO01MkopXYUSlHvr/Rjxh8vE8U=
   file:
   - "target/${filename}.jar"
-  - "target/${filename}.zip"
   - "target/${filename}.exe"
   skip_cleanup: true
   on:
