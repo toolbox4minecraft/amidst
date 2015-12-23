@@ -19,15 +19,21 @@ public class LibraryJson {
 		return name;
 	}
 
+	/**
+	 * Note, that multiple rules might be applicable. We take the last
+	 * applicable rule. However, this might be wrong so we need to take the most
+	 * specific rule? For now this works fine.
+	 */
 	public boolean isActive(String os) {
 		if (rules.isEmpty()) {
 			return true;
 		}
+		boolean result = false;
 		for (LibraryRuleJson rule : rules) {
-			if (rule.isApplicable(os) && rule.isAllowed()) {
-				return true;
+			if (rule.isApplicable(os)) {
+				result = rule.isAllowed();
 			}
 		}
-		return false;
+		return result;
 	}
 }
