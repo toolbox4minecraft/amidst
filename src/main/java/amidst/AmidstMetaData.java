@@ -13,11 +13,7 @@ public class AmidstMetaData {
 				icon,
 				Integer.parseInt(properties.getProperty("amidst.version.major")),
 				Integer.parseInt(properties.getProperty("amidst.version.minor")),
-				properties.getProperty("amidst.gui.mainWindow.title"),
-				Boolean.parseBoolean(properties.getProperty("amidst.googleanalytics.enabled")),
-				properties.getProperty("amidst.googleanalytics.appName"),
-				properties.getProperty("amidst.googleanalytics.appVersion"),
-				properties.getProperty("amidst.googleanalytics.trackingCode"));
+				properties.getProperty("amidst.gui.mainWindow.title"));
 		// @formatter:on
 	}
 
@@ -25,23 +21,13 @@ public class AmidstMetaData {
 	private final int majorVersion;
 	private final int minorVersion;
 	private final String mainWindowTitle;
-	private final boolean googleAnalyticsEnabled;
-	private final String googleAnalyticsAppName;
-	private final String googleAnalyticsAppVersion;
-	private final String googleAnalyticsTrackingCode;
 
 	private AmidstMetaData(BufferedImage icon, int majorVersion,
-			int minorVersion, String mainWindowTitle,
-			boolean googleAnalyticsEnabled, String googleAnalyticsAppName,
-			String googleAnalyticsAppVersion, String googleAnalyticsTrackingCode) {
+			int minorVersion, String mainWindowTitle) {
 		this.icon = icon;
 		this.majorVersion = majorVersion;
 		this.minorVersion = minorVersion;
 		this.mainWindowTitle = mainWindowTitle;
-		this.googleAnalyticsEnabled = googleAnalyticsEnabled;
-		this.googleAnalyticsAppName = googleAnalyticsAppName;
-		this.googleAnalyticsAppVersion = googleAnalyticsAppVersion;
-		this.googleAnalyticsTrackingCode = googleAnalyticsTrackingCode;
 	}
 
 	public BufferedImage getIcon() {
@@ -58,21 +44,5 @@ public class AmidstMetaData {
 
 	public String getMainWindowTitle() {
 		return mainWindowTitle;
-	}
-
-	public boolean isGoogleAnalyticsEnabled() {
-		return googleAnalyticsEnabled;
-	}
-
-	public String getGoogleAnalyticsAppName() {
-		return googleAnalyticsAppName;
-	}
-
-	public String getGoogleAnalyticsAppVersion() {
-		return googleAnalyticsAppVersion;
-	}
-
-	public String getGoogleAnalyticsTrackingCode() {
-		return googleAnalyticsTrackingCode;
 	}
 }

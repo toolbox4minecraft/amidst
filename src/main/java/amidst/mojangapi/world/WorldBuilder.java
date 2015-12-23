@@ -2,7 +2,6 @@ package amidst.mojangapi.world;
 
 import java.io.IOException;
 
-import amidst.GoogleTracker;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.SaveDirectory;
@@ -25,14 +24,11 @@ import amidst.mojangapi.world.player.WorldPlayerType;
 
 @Immutable
 public class WorldBuilder {
-	private final GoogleTracker googleTracker;
 	private final PlayerInformationCache playerInformationCache;
 	private final SeedHistoryLogger seedHistoryLogger;
 
-	public WorldBuilder(GoogleTracker googleTracker,
-			PlayerInformationCache playerInformationCache,
+	public WorldBuilder(PlayerInformationCache playerInformationCache,
 			SeedHistoryLogger seedHistoryLogger) {
-		this.googleTracker = googleTracker;
 		this.playerInformationCache = playerInformationCache;
 		this.seedHistoryLogger = seedHistoryLogger;
 	}
@@ -71,7 +67,6 @@ public class WorldBuilder {
 			WorldType worldType, String generatorOptions,
 			MovablePlayerList movablePlayerList)
 			throws MinecraftInterfaceException {
-		googleTracker.trackSeed(seed);
 		seedHistoryLogger.log(seed);
 		// @formatter:off
 		minecraftInterface.createWorld(seed.getLong(), worldType, generatorOptions);

@@ -51,22 +51,6 @@
 							<generatePom>true</generatePom>
 						</configuration>
 					</execution>
-					<execution>
-						<id>install-jgoogleanalytics</id>
-						<phase>clean</phase>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-						<configuration>
-							<file>${basedir}/lib/JGoogleAnalytics_0.4.jar</file>
-							<repositoryLayout>default</repositoryLayout>
-							<groupId>com.boxysystems</groupId>
-							<artifactId>jgoogleanalytics</artifactId>
-							<version>0.4</version>
-							<packaging>jar</packaging>
-							<generatePom>true</generatePom>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -168,11 +152,6 @@
 			<groupId>jnbt</groupId>
 			<artifactId>jnbt</artifactId>
 			<version>1.3</version>
-		</dependency>
-		<dependency>
-			<groupId>com.boxysystems</groupId>
-			<artifactId>jgoogleanalytics</artifactId>
-			<version>0.4</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

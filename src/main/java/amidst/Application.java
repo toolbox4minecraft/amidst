@@ -19,14 +19,11 @@ import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.player.PlayerInformationCache;
 import amidst.threading.ThreadMaster;
 
-import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
-
 @NotThreadSafe
 public class Application {
 	private final CommandLineParameters parameters;
 	private final AmidstMetaData metadata;
 	private final Settings settings;
-	private final GoogleTracker googleTracker;
 	private final MojangApi mojangApi;
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final ThreadMaster threadMaster;
@@ -41,7 +38,6 @@ public class Application {
 		this.parameters = parameters;
 		this.metadata = createMetadata();
 		this.settings = createSettings();
-		this.googleTracker = createGoogleTracker();
 		this.mojangApi = createMojangApi();
 		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
 		this.threadMaster = createThreadMaster();
@@ -60,21 +56,9 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private GoogleTracker createGoogleTracker() {
-		if (metadata.isGoogleAnalyticsEnabled()) {
-			return new GoogleTracker();
-		} else {
-			return new GoogleTracker(new JGoogleAnalyticsTracker(
-					metadata.getGoogleAnalyticsAppName(),
-					metadata.getGoogleAnalyticsAppVersion(),
-					metadata.getGoogleAnalyticsTrackingCode()));
-		}
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
 	private MojangApi createMojangApi() throws FileNotFoundException,
 			LocalMinecraftInterfaceCreationException {
-		return new MojangApiBuilder(new WorldBuilder(googleTracker,
+		return new MojangApiBuilder(new WorldBuilder(
 				new PlayerInformationCache(), new SeedHistoryLogger(
 						parameters.historyPath)), parameters.minecraftPath,
 				parameters.minecraftLibraries, parameters.minecraftJar,
@@ -94,7 +78,6 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void run() {
-		googleTracker.trackApplicationRunning();
 		if (mojangApi.canCreateWorld()) {
 			displayMainWindow();
 		} else {
