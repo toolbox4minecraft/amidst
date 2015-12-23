@@ -3,6 +3,7 @@ package amidst.mojangapi.world.player;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 
@@ -18,6 +19,7 @@ public class PlayerInformationCache {
 	private final Map<String, PlayerInformation> byUUID = new ConcurrentHashMap<String, PlayerInformation>();
 	private final Map<String, PlayerInformation> byName = new ConcurrentHashMap<String, PlayerInformation>();
 
+	@NotNull
 	public PlayerInformation getByUUID(String uuid) {
 		uuid = getCleanUUID(uuid);
 		PlayerInformation result = byUUID.get(uuid);
@@ -31,6 +33,7 @@ public class PlayerInformationCache {
 		}
 	}
 
+	@NotNull
 	public PlayerInformation getByName(String name) {
 		PlayerInformation result = byName.get(name);
 		if (result != null) {

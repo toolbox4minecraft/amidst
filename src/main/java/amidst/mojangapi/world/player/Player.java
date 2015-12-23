@@ -1,11 +1,11 @@
 package amidst.mojangapi.world.player;
 
 import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.nbt.playerfile.PlayerFile;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
@@ -46,7 +46,7 @@ public class Player {
 						+ getPlayerName());
 				return false;
 			}
-		} catch (IOException e) {
+		} catch (MojangApiParsingException e) {
 			Log.w("error while writing player location for player: "
 					+ getPlayerName());
 			e.printStackTrace();
@@ -58,8 +58,7 @@ public class Player {
 	 * Returns true if the player was not moved or the new location was
 	 * successfully saved.
 	 */
-	public synchronized boolean saveLocation() throws FileNotFoundException,
-			IOException {
+	public synchronized boolean saveLocation() throws MojangApiParsingException {
 		PlayerCoordinates currentCoordinates = this.currentCoordinates;
 		if (savedCoordinates != currentCoordinates) {
 			if (playerFile.tryWriteCoordinates(currentCoordinates)) {
@@ -77,7 +76,7 @@ public class Player {
 		try {
 			loadLocation();
 			return true;
-		} catch (IOException e) {
+		} catch (IOException | MojangApiParsingException e) {
 			Log.w("error while reading player location for player: "
 					+ getPlayerName());
 			e.printStackTrace();
@@ -85,8 +84,8 @@ public class Player {
 		}
 	}
 
-	public synchronized void loadLocation() throws FileNotFoundException,
-			IOException {
+	public synchronized void loadLocation() throws IOException,
+			MojangApiParsingException {
 		this.savedCoordinates = playerFile.readCoordinates();
 		this.currentCoordinates = savedCoordinates;
 	}

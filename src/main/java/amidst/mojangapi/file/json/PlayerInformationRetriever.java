@@ -4,13 +4,13 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
 
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.player.PlayerJson;
 
 @Immutable
@@ -22,7 +22,7 @@ public enum PlayerInformationRetriever {
 	public static PlayerJson tryGetPlayerJsonByName(String name) {
 		try {
 			return getPlayerJsonByName(name);
-		} catch (Exception e) {
+		} catch (IOException | MojangApiParsingException | NullPointerException e) {
 			Log.w("unable to load player information by name: " + name);
 			return null;
 		}
@@ -31,7 +31,7 @@ public enum PlayerInformationRetriever {
 	public static PlayerJson tryGetPlayerJsonByUUID(String uuid) {
 		try {
 			return getPlayerJsonByUUID(uuid);
-		} catch (Exception e) {
+		} catch (IOException | MojangApiParsingException | NullPointerException e) {
 			Log.w("unable to load player information by uuid: " + uuid);
 			return null;
 		}
@@ -40,7 +40,7 @@ public enum PlayerInformationRetriever {
 	public static BufferedImage tryGetPlayerHeadByName(String name) {
 		try {
 			return getPlayerHeadByName(name);
-		} catch (Exception e) {
+		} catch (IOException | NullPointerException e) {
 			Log.w("unable to load player head by name: " + name);
 			return null;
 		}
@@ -49,25 +49,25 @@ public enum PlayerInformationRetriever {
 	public static BufferedImage tryGetPlayerHeadBySkinUrl(String skinUrl) {
 		try {
 			return getPlayerHeadBySkinUrl(skinUrl);
-		} catch (Exception e) {
+		} catch (IOException | NullPointerException e) {
 			Log.w("unable to load player head by skin url: " + skinUrl);
 			return null;
 		}
 	}
 
 	private static PlayerJson getPlayerJsonByName(String name)
-			throws IOException {
+			throws IOException, MojangApiParsingException {
 		return JsonReader.readPlayerFromUUID(JsonReader
 				.readSimplePlayerFromPlayerName(name).getId());
 	}
 
 	private static PlayerJson getPlayerJsonByUUID(String uuid)
-			throws IOException {
+			throws IOException, MojangApiParsingException {
 		return JsonReader.readPlayerFromUUID(uuid);
 	}
 
 	private static BufferedImage getPlayerHeadByName(String name)
-			throws MalformedURLException, IOException {
+			throws IOException {
 		return extractPlayerHead(new URL(SIMPLE_PLAYER_SKIN_URL + name + ".png"));
 	}
 

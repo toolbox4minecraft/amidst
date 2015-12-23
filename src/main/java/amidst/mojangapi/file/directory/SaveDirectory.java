@@ -12,7 +12,9 @@ import java.util.List;
 import org.jnbt.CompoundTag;
 
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
 import amidst.logging.Log;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.nbt.LevelDat;
 import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.file.nbt.playerfile.LevelDatPlayerFile;
@@ -26,10 +28,8 @@ public class SaveDirectory {
 	 * Returns a new valid instance of the class SaveDirectory. It tries to use
 	 * the given file. If that is not valid it tires to use its parent file. If
 	 * that is also not valid it will throw a FileNotFoundException.
-	 * 
-	 * @return The SaveDirectory, but never null.
-	 * @throws FileNotFoundException
 	 */
+	@NotNull
 	public static SaveDirectory from(File file) throws FileNotFoundException {
 		File currentFile = file;
 		SaveDirectory result = null;
@@ -150,11 +150,12 @@ public class SaveDirectory {
 		}
 	}
 
-	public CompoundTag readLevelDat() throws FileNotFoundException, IOException {
+	public CompoundTag readLevelDat() throws IOException {
 		return NBTUtils.readTagFromFile(levelDat);
 	}
 
-	public LevelDat createLevelDat() throws FileNotFoundException, IOException {
+	public LevelDat createLevelDat() throws IOException,
+			MojangApiParsingException {
 		return new LevelDat(readLevelDat());
 	}
 
@@ -189,7 +190,7 @@ public class SaveDirectory {
 		try {
 			Files.copy(from.toPath(), to.toPath());
 			return true;
-		} catch (Exception e) {
+		} catch (IOException e) {
 			return false;
 		}
 	}
@@ -198,6 +199,7 @@ public class SaveDirectory {
 	 * Since version 1.7.6, minecraft stores players in the playerdata directory
 	 * and uses the player uuid as filename.
 	 */
+	@NotNull
 	public List<PlayerFile> createMultiplayerPlayerFiles() {
 		List<PlayerFile> result = new ArrayList<PlayerFile>();
 		for (File playerdataFile : getPlayerdataFiles()) {
@@ -234,6 +236,7 @@ public class SaveDirectory {
 	 * player location in the playerdata directory it will just be ignored if
 	 * the map is used as singleplayer map.
 	 */
+	@NotNull
 	public List<PlayerFile> createSingleplayerPlayerFiles() {
 		Log.i("using player from level.dat");
 		return Arrays.asList(createLevelDatPlayerFile());

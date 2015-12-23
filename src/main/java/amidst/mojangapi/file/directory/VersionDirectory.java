@@ -1,7 +1,6 @@
 package amidst.mojangapi.file.directory;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -10,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
 import amidst.logging.Log;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.version.VersionJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
@@ -52,10 +53,13 @@ public class VersionDirectory {
 		return json;
 	}
 
-	public VersionJson readVersionJson() throws FileNotFoundException {
+	@NotNull
+	public VersionJson readVersionJson() throws MojangApiParsingException,
+			IOException {
 		return JsonReader.readVersionFrom(json);
 	}
 
+	@NotNull
 	public URLClassLoader createClassLoader() throws MalformedURLException {
 		if (json.isFile()) {
 			Log.i("Loading libraries.");
@@ -67,31 +71,36 @@ public class VersionDirectory {
 		}
 	}
 
+	@NotNull
 	private URL getJarFileUrl() throws MalformedURLException {
 		return jar.toURI().toURL();
 	}
 
+	@NotNull
 	private List<URL> getAllLibraryUrls() {
 		try {
 			return readVersionJson().getLibraryUrls(
 					dotMinecraftDirectory.getLibraries());
-		} catch (IOException e) {
+		} catch (IOException | MojangApiParsingException e) {
 			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: "
 					+ json + ")");
 			return new ArrayList<URL>();
 		}
 	}
 
+	@NotNull
 	private URLClassLoader doCreateClassLoader(URL jarFileUrl,
 			List<URL> libraries) {
 		libraries.add(jarFileUrl);
 		return new URLClassLoader(libraries.toArray(new URL[libraries.size()]));
 	}
 
+	@NotNull
 	private URLClassLoader doCreateClassLoader(URL jarFileUrl) {
 		return new URLClassLoader(new URL[] { jarFileUrl });
 	}
 
+	@NotNull
 	public MinecraftInterface createLocalMinecraftInterface()
 			throws LocalMinecraftInterfaceCreationException {
 		return LOCAL_MINECRAFT_INTERFACE_BUILDER.create(this);

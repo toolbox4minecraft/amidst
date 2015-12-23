@@ -1,10 +1,10 @@
 package amidst.mojangapi.world;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import amidst.GoogleTracker;
 import amidst.documentation.Immutable;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.LevelDat;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
@@ -45,8 +45,8 @@ public class WorldBuilder {
 	}
 
 	public World fromFile(MinecraftInterface minecraftInterface,
-			SaveDirectory saveDirectory) throws FileNotFoundException,
-			IOException, MinecraftInterfaceException {
+			SaveDirectory saveDirectory) throws IOException,
+			MinecraftInterfaceException, MojangApiParsingException {
 		LevelDat levelDat = saveDirectory.createLevelDat();
 		MovablePlayerList movablePlayerList = new MovablePlayerList(
 				playerInformationCache, saveDirectory,

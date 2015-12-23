@@ -1,9 +1,11 @@
 package amidst.mojangapi.file.directory;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 
@@ -57,8 +59,9 @@ public class DotMinecraftDirectory {
 		return launcherProfilesJson;
 	}
 
+	@NotNull
 	public LauncherProfilesJson readLauncherProfilesJson()
-			throws FileNotFoundException {
+			throws MojangApiParsingException, IOException {
 		return JsonReader.readLauncherProfilesFrom(launcherProfilesJson);
 	}
 }

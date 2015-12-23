@@ -1,6 +1,5 @@
 package amidst.mojangapi.file.nbt.playerfile;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.jnbt.CompoundTag;
@@ -8,6 +7,7 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.documentation.Immutable;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.nbt.NBTTagKeys;
 import amidst.mojangapi.world.player.PlayerCoordinates;
 
@@ -16,20 +16,22 @@ public enum PlayerLocationLoader {
 	;
 
 	public static PlayerCoordinates readFromPlayerFile(CompoundTag file)
-			throws IOException {
+			throws MojangApiParsingException {
 		try {
 			return readPlayerCoordinates(file);
-		} catch (Exception e) {
-			throw new IOException("cannot read player coordinates", e);
+		} catch (NullPointerException e) {
+			throw new MojangApiParsingException(
+					"cannot read player coordinates", e);
 		}
 	}
 
 	public static PlayerCoordinates readFromLevelDat(CompoundTag file)
-			throws IOException {
+			throws MojangApiParsingException {
 		try {
 			return readPlayerCoordinates(getSinglePlayerPlayerTag(getTagRootTag(file)));
-		} catch (Exception e) {
-			throw new IOException("cannot read player coordinates", e);
+		} catch (NullPointerException e) {
+			throw new MojangApiParsingException(
+					"cannot read player coordinates", e);
 		}
 	}
 

@@ -11,10 +11,6 @@ public class LibraryRuleOsJson {
 	public LibraryRuleOsJson() {
 	}
 
-	public LibraryRuleOsJson(String name) {
-		this.name = name;
-	}
-
 	public String getName() {
 		return name;
 	}

@@ -11,13 +11,11 @@ import amidst.clazz.Classes;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.devtools.settings.DevToolsSettings;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
-
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 
 /**
  * This only checks if there is exactly one class in the jar file for each
@@ -26,8 +24,8 @@ import com.google.gson.JsonSyntaxException;
  * methods and fields. It also does not try to use the found classes.
  */
 public class MinecraftVersionCompatibilityChecker {
-	public static void main(String[] args) throws JsonSyntaxException,
-			JsonIOException, IOException {
+	public static void main(String[] args) throws IOException,
+			MojangApiParsingException {
 		new MinecraftVersionCompatibilityChecker(
 				DevToolsSettings.INSTANCE.getMinecraftVersionsDirectory(),
 				JsonReader.readRemoteVersionList()).checkAll();

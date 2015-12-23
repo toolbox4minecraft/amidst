@@ -16,10 +16,6 @@ public class LauncherProfilesJson {
 	public LauncherProfilesJson() {
 	}
 
-	public LauncherProfileJson getProfile(String name) {
-		return profiles.get(name);
-	}
-
 	public Collection<LauncherProfileJson> getProfiles() {
 		return profiles.values();
 	}

@@ -5,7 +5,8 @@ import java.util.Base64;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
-import amidst.mojangapi.file.json.JsonReader;
+import amidst.documentation.NotNull;
+import amidst.mojangapi.file.MojangApiParsingException;
 
 @Immutable
 public class PropertyJson {
@@ -26,17 +27,23 @@ public class PropertyJson {
 
 	// TODO: @skiphs we need a base64 decoder to read this api, but it comes
 	// only with java8. should we use java8 or another base64 decoder?
-	public String getDecodedValue() {
-		return new String(Base64.getDecoder().decode(
-				value.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+	@NotNull
+	public String getDecodedValue() throws MojangApiParsingException {
+		if (value == null) {
+			throw new MojangApiParsingException(
+					"unable to decode property value");
+		} else {
+			return new String(Base64.getDecoder().decode(
+					value.getBytes(StandardCharsets.UTF_8)),
+					StandardCharsets.UTF_8);
+		}
 	}
 
-	public TexturesPropertyJson tryDecodeTexturesProperty() {
-		if (name.equals("textures")) {
-			return JsonReader.read(getDecodedValue(),
-					TexturesPropertyJson.class);
+	public boolean isTexturesProperty() throws MojangApiParsingException {
+		if (name == null) {
+			throw new MojangApiParsingException("property has no name");
 		} else {
-			return null;
+			return name.equals("textures");
 		}
 	}
 }

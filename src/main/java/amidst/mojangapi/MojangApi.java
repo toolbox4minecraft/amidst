@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.file.FilenameFactory;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.SaveDirectory;
@@ -125,7 +126,8 @@ public class MojangApi {
 	 * created world objects.
 	 */
 	public World createWorldFromFile(File file) throws FileNotFoundException,
-			IOException, IllegalStateException, MinecraftInterfaceException {
+			IOException, IllegalStateException, MinecraftInterfaceException,
+			MojangApiParsingException {
 		MinecraftInterface minecraftInterface = this.minecraftInterface;
 		if (minecraftInterface != null) {
 			return worldBuilder.fromFile(minecraftInterface,

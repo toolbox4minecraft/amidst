@@ -7,6 +7,7 @@ import java.util.List;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
 import amidst.mojangapi.file.LibraryFinder;
 
 @Immutable
@@ -21,6 +22,7 @@ public class VersionJson {
 		return libraries;
 	}
 
+	@NotNull
 	public List<URL> getLibraryUrls(File librariesDirectory) {
 		return LibraryFinder.getLibraryUrls(librariesDirectory, libraries);
 	}

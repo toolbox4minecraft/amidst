@@ -2,7 +2,6 @@ package amidst.settings.biomecolorprofile;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -10,6 +9,7 @@ import amidst.documentation.Immutable;
 import amidst.logging.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 @Immutable
@@ -47,18 +47,16 @@ public class BiomeColorProfileLoader {
 			try {
 				profile = readProfile(file);
 				profile.validate();
-			} catch (JsonSyntaxException e) {
+			} catch (JsonSyntaxException | JsonIOException | IOException e) {
 				Log.w("Unable to load file: " + file);
 				e.printStackTrace();
-			} catch (IOException e) {
-				Log.i("Unable to load file: " + file);
 			}
 		}
 		return profile;
 	}
 
-	private BiomeColorProfile readProfile(File file)
-			throws FileNotFoundException, IOException {
+	private BiomeColorProfile readProfile(File file) throws IOException,
+			JsonSyntaxException, JsonIOException {
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		BiomeColorProfile result = GSON.fromJson(reader,
 				BiomeColorProfile.class);

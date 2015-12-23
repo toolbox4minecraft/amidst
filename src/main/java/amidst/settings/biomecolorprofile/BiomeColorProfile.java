@@ -107,6 +107,7 @@ public class BiomeColorProfile {
 		return writeToFile(file, serialize());
 	}
 
+	@SuppressWarnings("unused")
 	private String serializeWithGson() {
 		return new GsonBuilder().setPrettyPrinting().create().toJson(this);
 	}

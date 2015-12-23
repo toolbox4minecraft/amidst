@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
 import amidst.mojangapi.file.DotMinecraftDirectoryFinder;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
@@ -31,6 +32,7 @@ public class MojangApiBuilder {
 		this.preferedVersionJson = preferedVersionJson;
 	}
 
+	@NotNull
 	public MojangApi construct() throws FileNotFoundException,
 			LocalMinecraftInterfaceCreationException {
 		DotMinecraftDirectory dotMinecraftDirectory = createDotMinecraftDirectory();
@@ -45,6 +47,7 @@ public class MojangApiBuilder {
 		return result;
 	}
 
+	@NotNull
 	private DotMinecraftDirectory createDotMinecraftDirectory() {
 		if (preferedLibraries != null) {
 			return new DotMinecraftDirectory(
@@ -58,7 +61,8 @@ public class MojangApiBuilder {
 		}
 	}
 
-	private VersionListJson readRemoteOrLocalVersionList() {
+	private VersionListJson readRemoteOrLocalVersionList()
+			throws FileNotFoundException {
 		return JsonReader.readRemoteOrLocalVersionList();
 	}
 

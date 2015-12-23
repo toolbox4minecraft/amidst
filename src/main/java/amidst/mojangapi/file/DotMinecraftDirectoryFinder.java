@@ -3,16 +3,18 @@ package amidst.mojangapi.file;
 import java.io.File;
 
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
 import amidst.logging.Log;
 
 @Immutable
 public enum DotMinecraftDirectoryFinder {
 	;
 
+	@NotNull
 	public static File find(String dotMinecraftCMDParameter) {
 		if (dotMinecraftCMDParameter != null) {
 			File result = new File(dotMinecraftCMDParameter);
-			if (result.exists() && result.isDirectory()) {
+			if (result.isDirectory()) {
 				return result;
 			} else {
 				Log.w("Unable to set Minecraft directory to: "
@@ -23,6 +25,7 @@ public enum DotMinecraftDirectoryFinder {
 		return getMinecraftDirectory();
 	}
 
+	@NotNull
 	private static File getMinecraftDirectory() {
 		File home = new File(System.getProperty("user.home", "."));
 		String os = System.getProperty("os.name").toLowerCase();

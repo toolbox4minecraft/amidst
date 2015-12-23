@@ -5,6 +5,9 @@ import java.util.List;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
+import amidst.mojangapi.file.MojangApiParsingException;
+import amidst.mojangapi.file.json.JsonReader;
 
 @Immutable
 public class PlayerJson {
@@ -28,18 +31,31 @@ public class PlayerJson {
 		return properties;
 	}
 
-	public TexturesPropertyJson readTexturesProperty() {
+	@NotNull
+	public TexturesPropertyJson readTexturesProperty()
+			throws MojangApiParsingException {
 		for (PropertyJson property : properties) {
-			TexturesPropertyJson texturesProperty = property
-					.tryDecodeTexturesProperty();
-			if (texturesProperty != null) {
-				return texturesProperty;
+			if (property.isTexturesProperty()) {
+				return JsonReader.read(property.getDecodedValue(),
+						TexturesPropertyJson.class);
 			}
 		}
-		return null;
+		throw new MojangApiParsingException(
+				"player json does not contain the textures property");
 	}
 
-	public String getSkinUrl() {
-		return readTexturesProperty().getTextures().getSKIN().getUrl();
+	@NotNull
+	public String getSkinUrl() throws MojangApiParsingException {
+		try {
+			String result = readTexturesProperty().getTextures().getSKIN()
+					.getUrl();
+			if (result != null) {
+				return result;
+			} else {
+				throw new MojangApiParsingException("unable to get skin url");
+			}
+		} catch (NullPointerException e) {
+			throw new MojangApiParsingException("unable to get skin url", e);
+		}
 	}
 }

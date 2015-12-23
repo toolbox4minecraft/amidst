@@ -8,6 +8,7 @@ import amidst.clazz.Classes;
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
 import amidst.logging.Log;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
@@ -26,6 +27,7 @@ public class LocalMinecraftInterfaceBuilder {
 		this.translator = translator;
 	}
 
+	@NotNull
 	public MinecraftInterface create(VersionDirectory versionDirectory)
 			throws LocalMinecraftInterfaceCreationException {
 		try {
@@ -48,6 +50,7 @@ public class LocalMinecraftInterfaceBuilder {
 		}
 	}
 
+	@NotNull
 	private Field[] getMainClassFields(URLClassLoader classLoader)
 			throws SecurityException, ClassNotFoundException {
 		if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {

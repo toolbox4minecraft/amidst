@@ -3,7 +3,7 @@ package amidst.gui.profileselect;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,6 +19,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 import amidst.threading.SimpleWorker;
@@ -83,7 +84,8 @@ public class ProfileSelectWindow {
 	private void scanAndLoadProfilesLater() {
 		workerExecutor.invokeLater(new SimpleWorker<LauncherProfilesJson>() {
 			@Override
-			protected LauncherProfilesJson main() throws FileNotFoundException {
+			protected LauncherProfilesJson main()
+					throws MojangApiParsingException, IOException {
 				return scanAndLoadProfiles();
 			}
 
@@ -103,7 +105,7 @@ public class ProfileSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private LauncherProfilesJson scanAndLoadProfiles()
-			throws FileNotFoundException {
+			throws MojangApiParsingException, IOException {
 		Log.i("Scanning for profiles.");
 		LauncherProfilesJson launcherProfile = mojangApi
 				.getDotMinecraftDirectory().readLauncherProfilesJson();

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
 import amidst.logging.Log;
 import amidst.mojangapi.file.json.version.LibraryJson;
 
@@ -14,6 +15,7 @@ import amidst.mojangapi.file.json.version.LibraryJson;
 public enum LibraryFinder {
 	;
 
+	@NotNull
 	public static List<URL> getLibraryUrls(File librariesDirectory,
 			List<LibraryJson> libraries) {
 		List<URL> result = new ArrayList<URL>();
@@ -37,10 +39,14 @@ public enum LibraryFinder {
 
 	private static File getLibraryFile(File librariesDirectory,
 			LibraryJson library) {
-		if (library.isActive(getOs())) {
-			return getLibraryFile(getLibrarySearchPath(librariesDirectory,
-					library.getName()));
-		} else {
+		try {
+			if (library.isActive(getOs())) {
+				return getLibraryFile(getLibrarySearchPath(librariesDirectory,
+						library.getName()));
+			} else {
+				return null;
+			}
+		} catch (NullPointerException e) {
 			return null;
 		}
 	}

@@ -3,6 +3,7 @@ package amidst.mojangapi.file.nbt;
 import org.jnbt.CompoundTag;
 
 import amidst.documentation.Immutable;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.world.WorldType;
 
 @Immutable
@@ -12,21 +13,25 @@ public class LevelDat {
 	private final String generatorOptions;
 	private final boolean hasPlayer;
 
-	public LevelDat(CompoundTag root) {
-		CompoundTag dataTag = readDataTag(root);
-		this.seed = readRandomSeed(dataTag);
-		if (hasGeneratorName(dataTag)) {
-			this.worldType = WorldType.from(readGeneratorName(dataTag));
-			if (worldType == WorldType.CUSTOMIZED) {
-				this.generatorOptions = readGeneratorOptions(dataTag);
+	public LevelDat(CompoundTag root) throws MojangApiParsingException {
+		try {
+			CompoundTag dataTag = readDataTag(root);
+			this.seed = readRandomSeed(dataTag);
+			if (hasGeneratorName(dataTag)) {
+				this.worldType = WorldType.from(readGeneratorName(dataTag));
+				if (worldType == WorldType.CUSTOMIZED) {
+					this.generatorOptions = readGeneratorOptions(dataTag);
+				} else {
+					this.generatorOptions = "";
+				}
 			} else {
+				this.worldType = WorldType.DEFAULT;
 				this.generatorOptions = "";
 			}
-		} else {
-			this.worldType = WorldType.DEFAULT;
-			this.generatorOptions = "";
+			this.hasPlayer = hasPlayerTag(dataTag);
+		} catch (NullPointerException e) {
+			throw new MojangApiParsingException("cannot read leve.dat", e);
 		}
-		this.hasPlayer = hasPlayerTag(dataTag);
 	}
 
 	private CompoundTag readDataTag(CompoundTag root) {

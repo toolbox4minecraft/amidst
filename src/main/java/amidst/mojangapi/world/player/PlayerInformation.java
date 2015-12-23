@@ -3,6 +3,8 @@ package amidst.mojangapi.world.player;
 import java.awt.image.BufferedImage;
 
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.PlayerInformationRetriever;
 import amidst.mojangapi.file.json.player.PlayerJson;
 import amidst.mojangapi.world.icon.DefaultWorldIconTypes;
@@ -14,13 +16,13 @@ public class PlayerInformation {
 	private static final PlayerInformation THE_SINGLEPLAYER_PLAYER = new PlayerInformation(
 			null, "The Singleplayer Player", DEFAULT_HEAD);
 
+	@NotNull
 	public static PlayerInformation fromUUID(String uuid) {
 		PlayerJson player = PlayerInformationRetriever
 				.tryGetPlayerJsonByUUID(uuid);
 		BufferedImage head;
 		if (player != null) {
-			head = PlayerInformationRetriever.tryGetPlayerHeadBySkinUrl(player
-					.getSkinUrl());
+			head = tryGetPlayerHeadBySkinUrl(player);
 			if (head != null) {
 				return new PlayerInformation(player.getId(), player.getName(),
 						head);
@@ -33,13 +35,13 @@ public class PlayerInformation {
 		}
 	}
 
+	@NotNull
 	public static PlayerInformation fromName(String name) {
 		PlayerJson player = PlayerInformationRetriever
 				.tryGetPlayerJsonByName(name);
 		BufferedImage head;
 		if (player != null) {
-			head = PlayerInformationRetriever.tryGetPlayerHeadBySkinUrl(player
-					.getSkinUrl());
+			head = tryGetPlayerHeadBySkinUrl(player);
 			if (head != null) {
 				return new PlayerInformation(player.getId(), player.getName(),
 						head);
@@ -63,6 +65,16 @@ public class PlayerInformation {
 		}
 	}
 
+	private static BufferedImage tryGetPlayerHeadBySkinUrl(PlayerJson player) {
+		try {
+			return PlayerInformationRetriever.tryGetPlayerHeadBySkinUrl(player
+					.getSkinUrl());
+		} catch (MojangApiParsingException e) {
+			return null;
+		}
+	}
+
+	@NotNull
 	public static PlayerInformation theSingleplayerPlayer() {
 		return THE_SINGLEPLAYER_PLAYER;
 	}

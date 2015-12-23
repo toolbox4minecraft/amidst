@@ -1,9 +1,9 @@
 package amidst.mojangapi.file.nbt.playerfile;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import amidst.documentation.Immutable;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.world.player.Player;
@@ -27,14 +27,14 @@ public class PlayerdataPlayerFile extends PlayerFile {
 
 	@Override
 	protected void doWriteCoordinates(PlayerCoordinates coordinates)
-			throws FileNotFoundException, IOException {
+			throws MojangApiParsingException {
 		PlayerLocationSaver.writeToPlayerFile(coordinates,
 				saveDirectory.getPlayerdataFile(playerUUID));
 	}
 
 	@Override
-	public PlayerCoordinates readCoordinates() throws FileNotFoundException,
-			IOException {
+	public PlayerCoordinates readCoordinates() throws IOException,
+			MojangApiParsingException {
 		return PlayerLocationLoader.readFromPlayerFile(NBTUtils
 				.readTagFromFile(saveDirectory.getPlayerdataFile(playerUUID)));
 	}

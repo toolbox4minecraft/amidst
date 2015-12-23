@@ -29,14 +29,6 @@ public class VersionListEntryJson {
 		return type;
 	}
 
-	public boolean isType(ReleaseType type) {
-		if (this.type == null) {
-			return type == null;
-		} else {
-			return this.type.equals(type);
-		}
-	}
-
 	public VersionDirectory createVersionDirectory(MojangApi mojangApi) {
 		return mojangApi.createVersionDirectory(id);
 	}

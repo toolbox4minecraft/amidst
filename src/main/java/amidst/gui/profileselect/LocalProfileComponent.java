@@ -50,8 +50,10 @@ public class LocalProfileComponent extends ProfileComponent {
 			@Override
 			protected Boolean main() {
 				try {
-					profileDirectory = createProfileDirectory();
-					versionDirectory = createVersionDirectory();
+					profileDirectory = profile
+							.createValidProfileDirectory(mojangApi);
+					versionDirectory = profile
+							.createValidVersionDirectory(mojangApi);
 					return true;
 				} catch (FileNotFoundException e) {
 					Log.w(e.getMessage());
@@ -66,37 +68,6 @@ public class LocalProfileComponent extends ProfileComponent {
 				repaintComponent();
 			}
 		});
-	}
-
-	@CalledOnlyBy(AmidstThread.WORKER)
-	private ProfileDirectory createProfileDirectory()
-			throws FileNotFoundException {
-		if (profile.hasGameDir()) {
-			ProfileDirectory result = profile.createValidProfileDirectory();
-			if (result != null) {
-				return result;
-			} else {
-				throw new FileNotFoundException(
-						"Unable to load profile directory for profile: "
-								+ profile.getName());
-			}
-		} else {
-			return null;
-		}
-	}
-
-	@CalledOnlyBy(AmidstThread.WORKER)
-	private VersionDirectory createVersionDirectory()
-			throws FileNotFoundException {
-		VersionDirectory result = profile
-				.createValidVersionDirectory(mojangApi);
-		if (result != null) {
-			return result;
-		} else {
-			throw new FileNotFoundException(
-					"Unable to load version directory for profile: "
-							+ profile.getName());
-		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

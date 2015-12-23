@@ -4,16 +4,14 @@ import java.io.IOException;
 
 import amidst.devtools.settings.DevToolsSettings;
 import amidst.devtools.utils.VersionStateRenderer;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-
 public class MinecraftJarDownloader {
-	public static void main(String[] args) throws JsonSyntaxException,
-			JsonIOException, IOException {
+	public static void main(String[] args) throws IOException,
+			MojangApiParsingException {
 		new MinecraftJarDownloader(
 				DevToolsSettings.INSTANCE.getMinecraftVersionsDirectory(),
 				JsonReader.readRemoteVersionList()).downloadAll();
