@@ -14,6 +14,10 @@ public class GoogleTracker {
 		this.tracker = tracker;
 	}
 
+	public GoogleTracker() {
+		this.tracker = null;
+	}
+
 	public void trackApplicationRunning() {
 		track("Run");
 	}
@@ -24,7 +28,13 @@ public class GoogleTracker {
 		}
 	}
 
-	private synchronized void track(String name) {
+	private void track(String name) {
+		if (tracker != null) {
+			doTrack(name);
+		}
+	}
+
+	private synchronized void doTrack(String name) {
 		tracker.trackAsynchronously(new FocusPoint(name));
 	}
 }

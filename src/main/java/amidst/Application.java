@@ -61,10 +61,14 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private GoogleTracker createGoogleTracker() {
-		return new GoogleTracker(new JGoogleAnalyticsTracker(
-				metadata.getGoogleAnalyticsAppName(),
-				metadata.getGoogleAnalyticsAppVersion(),
-				metadata.getGoogleAnalyticsTrackingCode()));
+		if (metadata.isGoogleAnalyticsEnabled()) {
+			return new GoogleTracker();
+		} else {
+			return new GoogleTracker(new JGoogleAnalyticsTracker(
+					metadata.getGoogleAnalyticsAppName(),
+					metadata.getGoogleAnalyticsAppVersion(),
+					metadata.getGoogleAnalyticsTrackingCode()));
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
