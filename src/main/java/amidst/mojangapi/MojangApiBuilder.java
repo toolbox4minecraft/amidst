@@ -61,6 +61,7 @@ public class MojangApiBuilder {
 		}
 	}
 
+	@NotNull
 	private VersionListJson readRemoteOrLocalVersionList()
 			throws FileNotFoundException {
 		return JsonReader.readRemoteOrLocalVersionList();

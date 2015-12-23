@@ -53,7 +53,7 @@ public enum JsonReader {
 					+ REMOTE_VERSION_LIST);
 			return remote;
 		}
-		Log.i("Attempting to download local version list...");
+		Log.i("Attempting to load local version list...");
 		VersionListJson local = null;
 		try {
 			local = readLocalVersionListFromResource();

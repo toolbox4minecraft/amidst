@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.file.FilenameFactory;
 import amidst.mojangapi.file.MojangApiParsingException;
@@ -47,6 +48,7 @@ public class MojangApi {
 		return dotMinecraftDirectory;
 	}
 
+	@NotNull
 	public VersionListJson getVersionList() {
 		return versionList;
 	}

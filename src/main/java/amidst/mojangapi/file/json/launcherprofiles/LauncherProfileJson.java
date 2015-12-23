@@ -66,8 +66,6 @@ public class LauncherProfileJson {
 			if (result.isValid()) {
 				return result;
 			}
-		} else if (versionList == null) {
-			// noop
 		} else {
 			VersionDirectory result = versionList
 					.tryFindFirstValidVersionDirectory(allowedReleaseTypes,
