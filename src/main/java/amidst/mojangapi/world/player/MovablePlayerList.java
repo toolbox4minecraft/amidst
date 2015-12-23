@@ -70,7 +70,7 @@ public class MovablePlayerList implements Iterable<Player> {
 			}
 
 			@Override
-			protected void fork(PlayerFile playerFile) throws Exception {
+			protected void fork(PlayerFile playerFile) {
 				Player player = playerFile.createPlayer(playerInformationCache);
 				if (player.tryLoadLocation()) {
 					players.offer(player);

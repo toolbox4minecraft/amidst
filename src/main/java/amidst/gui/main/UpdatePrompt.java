@@ -2,7 +2,13 @@ package amidst.gui.main;
 
 import java.awt.Desktop;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import amidst.AmidstMetaData;
 import amidst.documentation.AmidstThread;
@@ -42,7 +48,9 @@ public class UpdatePrompt {
 				.invokeLater(new SimpleWorker<UpdateInformationRetriever>() {
 					@Override
 					protected UpdateInformationRetriever main()
-							throws Exception {
+							throws MalformedURLException, SAXException,
+							IOException, ParserConfigurationException,
+							RuntimeException {
 						return new UpdateInformationRetriever(metadata);
 					}
 
@@ -74,7 +82,8 @@ public class UpdatePrompt {
 		if (getUserChoice(retriever, silent)) {
 			try {
 				openURL(new URI(retriever.getUpdateURL()));
-			} catch (Exception e) {
+			} catch (IOException | UnsupportedOperationException
+					| URISyntaxException e) {
 				displayError(silent, e);
 			}
 		}

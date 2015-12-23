@@ -20,6 +20,8 @@ import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.worldsurroundings.WorldSurroundings;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.file.MojangApiParsingException;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
@@ -75,7 +77,7 @@ public class Actions {
 			try {
 				mainWindow.setWorld(mojangApi.createWorldFromSeed(seed,
 						worldType));
-			} catch (Exception e) {
+			} catch (IllegalStateException | MinecraftInterfaceException e) {
 				e.printStackTrace();
 				mainWindow.displayException(e);
 			}
@@ -88,7 +90,8 @@ public class Actions {
 		if (file != null) {
 			try {
 				mainWindow.setWorld(mojangApi.createWorldFromFile(file));
-			} catch (Exception e) {
+			} catch (IllegalStateException | MinecraftInterfaceException
+					| IOException | MojangApiParsingException e) {
 				e.printStackTrace();
 				mainWindow.displayException(e);
 			}

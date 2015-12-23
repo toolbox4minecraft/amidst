@@ -70,7 +70,7 @@ public class SymbolicClassBuilder {
 		try {
 			constructorsBySymbolicName.put(declaration.getSymbolicName(),
 					createConstructor(declaration));
-		} catch (Exception e) {
+		} catch (NoSuchMethodException | ClassNotFoundException e) {
 			declaration.handleMissing(e, product.getSymbolicName(),
 					product.getRealName());
 		}
@@ -81,7 +81,7 @@ public class SymbolicClassBuilder {
 		try {
 			methodsBySymbolicName.put(declaration.getSymbolicName(),
 					createMethod(declaration));
-		} catch (Exception e) {
+		} catch (NoSuchMethodException | ClassNotFoundException e) {
 			declaration.handleMissing(e, product.getSymbolicName(),
 					product.getRealName());
 		}
@@ -92,7 +92,7 @@ public class SymbolicClassBuilder {
 		try {
 			fieldsBySymbolicName.put(declaration.getSymbolicName(),
 					createField(declaration));
-		} catch (Exception e) {
+		} catch (NoSuchFieldException e) {
 			declaration.handleMissing(e, product.getSymbolicName(),
 					product.getRealName());
 		}

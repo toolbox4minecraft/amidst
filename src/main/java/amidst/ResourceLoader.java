@@ -5,7 +5,6 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
@@ -44,8 +43,7 @@ public enum ResourceLoader {
 		return properties;
 	}
 
-	public static String getResourceAsString(String name) throws IOException,
-			URISyntaxException {
+	public static String getResourceAsString(String name) throws IOException {
 		InputStreamReader reader = new InputStreamReader(
 				getResourceAsStream(name), StandardCharsets.UTF_8);
 		char[] buffer = new char[1024];

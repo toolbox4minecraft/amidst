@@ -1,11 +1,15 @@
 package amidst.mojangapi.minecraftinterface.local;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 import java.util.Map;
 
 import amidst.clazz.Classes;
+import amidst.clazz.real.JarFileParsingException;
 import amidst.clazz.symbolic.SymbolicClass;
+import amidst.clazz.symbolic.SymbolicClassGraphCreationException;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
@@ -44,7 +48,9 @@ public class LocalMinecraftInterfaceBuilder {
 					symbolicClassMap.get(SymbolicNames.CLASS_GEN_LAYER),
 					symbolicClassMap.get(SymbolicNames.CLASS_WORLD_TYPE),
 					recognisedVersion);
-		} catch (Exception e) {
+		} catch (MalformedURLException | ClassNotFoundException
+				| FileNotFoundException | JarFileParsingException
+				| SymbolicClassGraphCreationException e) {
 			throw new LocalMinecraftInterfaceCreationException(
 					"unable to create local minecraft interface", e);
 		}
@@ -52,7 +58,7 @@ public class LocalMinecraftInterfaceBuilder {
 
 	@NotNull
 	private Field[] getMainClassFields(URLClassLoader classLoader)
-			throws SecurityException, ClassNotFoundException {
+			throws ClassNotFoundException {
 		if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
 			return classLoader.loadClass(CLIENT_CLASS).getDeclaredFields();
 		} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {

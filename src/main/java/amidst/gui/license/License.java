@@ -1,5 +1,7 @@
 package amidst.gui.license;
 
+import java.io.IOException;
+
 import amidst.ResourceLoader;
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
@@ -17,7 +19,7 @@ public class License {
 	public String readLicenseText(String path) {
 		try {
 			return ResourceLoader.getResourceAsString(path);
-		} catch (Exception e) {
+		} catch (IOException e) {
 			Log.w("Unable to read license for '" + name + "' at '" + path
 					+ "'.");
 			e.printStackTrace();

@@ -52,7 +52,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		try {
 			intCacheClass.callStaticMethod(SymbolicNames.METHOD_INT_CACHE_RESET_INT_CACHE);
 			return (int[]) getBiomeGenerator(useQuarterResolution).callMethod(SymbolicNames.METHOD_GEN_LAYER_GET_INTS, x, y, width, height);
-		} catch (Exception e) {
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
 	}
@@ -75,7 +75,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			Object[] genLayers = getGenLayers(seed, worldType, generatorOptions);
 			quarterResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[0]);
 			fullResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[1]);
-		} catch (Exception e) {
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new MinecraftInterfaceException("unable to create world", e);
 		}
 	}

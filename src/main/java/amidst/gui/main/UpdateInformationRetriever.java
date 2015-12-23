@@ -28,7 +28,9 @@ public class UpdateInformationRetriever {
 	private final int major;
 	private final int minor;
 
-	public UpdateInformationRetriever(AmidstMetaData metadata) throws Exception {
+	public UpdateInformationRetriever(AmidstMetaData metadata)
+			throws MalformedURLException, SAXException, IOException,
+			ParserConfigurationException, RuntimeException {
 		this.metadata = metadata;
 		Document document = getDocument();
 		updateURL = getUpdateURL(document);

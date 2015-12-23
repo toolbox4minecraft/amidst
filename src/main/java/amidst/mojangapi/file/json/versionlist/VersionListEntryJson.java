@@ -1,7 +1,6 @@
 package amidst.mojangapi.file.json.versionlist;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
@@ -65,13 +64,11 @@ public class VersionListEntryJson {
 		return URIUtils.exists(getRemoteClientJar());
 	}
 
-	public void downloadServer(String prefix) throws MalformedURLException,
-			IOException {
+	public void downloadServer(String prefix) throws IOException {
 		URIUtils.download(getRemoteServerJar(), getServerJar(prefix));
 	}
 
-	public void downloadClient(String prefix) throws MalformedURLException,
-			IOException {
+	public void downloadClient(String prefix) throws IOException {
 		URIUtils.download(getRemoteClientJar(), getClientJar(prefix));
 		URIUtils.download(getRemoteClientJson(), getClientJson(prefix));
 	}
@@ -80,7 +77,7 @@ public class VersionListEntryJson {
 		try {
 			downloadServer(prefix);
 			return true;
-		} catch (Exception e) {
+		} catch (IOException e) {
 			Log.w("unable to download server: " + id);
 			e.printStackTrace();
 		}
@@ -91,7 +88,7 @@ public class VersionListEntryJson {
 		try {
 			downloadClient(prefix);
 			return true;
-		} catch (Exception e) {
+		} catch (IOException e) {
 			Log.w("unable to download client: " + id);
 			e.printStackTrace();
 		}

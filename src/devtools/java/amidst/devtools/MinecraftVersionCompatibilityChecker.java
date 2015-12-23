@@ -1,6 +1,7 @@
 package amidst.devtools;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import amidst.clazz.Classes;
+import amidst.clazz.real.JarFileParsingException;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.devtools.settings.DevToolsSettings;
@@ -63,7 +65,7 @@ public class MinecraftVersionCompatibilityChecker {
 				ClassTranslator translator = DefaultClassTranslator.INSTANCE
 						.get();
 				return isSupported(Classes.countMatches(jarFile, translator));
-			} catch (Exception e) {
+			} catch (FileNotFoundException | JarFileParsingException e) {
 				e.printStackTrace();
 			}
 		}
