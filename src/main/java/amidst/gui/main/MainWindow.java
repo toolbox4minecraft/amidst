@@ -224,9 +224,10 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private WorldPlayerType askForWorldPlayerType() {
-		return askForOptions("Loading World",
-				"This world contains Multiplayer and Singleplayer data.\n"
-						+ "What do you want to load?",
+		return askForOptions(
+				"Loading World",
+				"This world contains Multiplayer and Singleplayer data. What do you want to load?\n"
+						+ "If you do not know what to do, just choose Singleplayer.",
 				WorldPlayerType.getSelectable());
 	}
 
