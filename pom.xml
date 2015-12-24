@@ -1,16 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>AMIDST</groupId>
-	<artifactId>AMIDST</artifactId>
+	<groupId>amidst</groupId>
+	<artifactId>amidst</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
-		<jdk.version>1.8</jdk.version>
 	</properties>
 	<build>
-		<finalName>${amidst.filename}</finalName>
+		<finalName>${amidst.build.filename}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -67,8 +65,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
+					<source>${amidst.build.jdk.version}</source>
+					<target>${amidst.build.jdk.version}</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -88,44 +86,13 @@
 									<mainClass>amidst.Amidst</mainClass>
 								</manifest>
 								<manifestEntries>
-									<Amidst-Version>${amidst.filename}</Amidst-Version>
+									<Amidst-Version>${amidst.build.filename}</Amidst-Version>
 									<Built-On>${maven.build.timestamp}</Built-On>
 								</manifestEntries>
 							</archive>
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.akathist.maven.plugins.launch4j</groupId>
-				<artifactId>launch4j-maven-plugin</artifactId>
-				<version>1.7.8</version>
-				<executions>
-					<execution>
-						<id>launch4j</id>
-						<phase>install</phase>
-						<goals>
-							<goal>launch4j</goal>
-						</goals>
-						<configuration>
-							<headerType>gui</headerType>
-							<outfile>${project.build.directory}/${amidst.filename}.exe</outfile>
-							<jar>${project.build.directory}/${amidst.filename}-jar-with-dependencies.jar</jar>
-							<dontWrapJar>false</dontWrapJar>
-							<errTitle>Error in Launcher</errTitle>
-							<classPath>
-								<mainClass>amidst.Amidst</mainClass>
-								<addDependencies>false</addDependencies>
-							</classPath>
-							<icon>${project.build.directory}/icon.ico</icon>
-							<jre>
-								<minVersion>${jdk.version}.0</minVersion>
-								<initialHeapSize>512</initialHeapSize>
-								<maxHeapSize>1024</maxHeapSize>
-							</jre>
 						</configuration>
 					</execution>
 				</executions>
@@ -163,15 +130,8 @@
 			<groupId>org.codehaus.mojo</groupId>
 			<artifactId>properties-maven-plugin</artifactId>
 			<version>1.0.0</version>
-			<type>maven-plugin</type>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.akathist.maven.plugins.launch4j</groupId>
-			<artifactId>launch4j-maven-plugin</artifactId>
-			<version>1.7.8</version>
 			<type>maven-plugin</type>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
