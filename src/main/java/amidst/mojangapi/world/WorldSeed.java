@@ -27,18 +27,6 @@ public class WorldSeed {
 				return labelPrefix + " (" + seed + ")";
 			}
 		}
-
-		private String getTrackingMessage(long seed, String text) {
-			if (this == TEXT) {
-				return "seed/" + text + "/" + seed;
-			} else if (this == NUMERIC) {
-				return "seed/" + seed + "/" + seed;
-			} else if (this == FILE) {
-				return "seed/file/" + seed;
-			} else {
-				return null;
-			}
-		}
 	}
 
 	public static WorldSeed random() {
@@ -67,14 +55,12 @@ public class WorldSeed {
 	private final String text;
 	private final WorldSeedType type;
 	private final String label;
-	private final String trackingMessage;
 
 	private WorldSeed(long seed, String text, WorldSeedType type) {
 		this.seed = seed;
 		this.text = text;
 		this.type = type;
 		this.label = type.getLabel(seed, text);
-		this.trackingMessage = type.getTrackingMessage(seed, text);
 	}
 
 	public long getLong() {
@@ -91,13 +77,5 @@ public class WorldSeed {
 
 	public String getLabel() {
 		return label;
-	}
-
-	public boolean hasTrackingMessage() {
-		return trackingMessage != null;
-	}
-
-	public String getTrackingMessage() {
-		return trackingMessage;
 	}
 }
