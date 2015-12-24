@@ -48,6 +48,11 @@
 	</build>
 	<dependencies>
 		<dependency>
+			<groupId>amidst</groupId>
+			<artifactId>amidst</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>sh.tak.appbundler</groupId>
 			<artifactId>appbundle-maven-plugin</artifactId>
 			<version>1.0.4</version>

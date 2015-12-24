@@ -71,28 +71,25 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4</version>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.3</version>
 				<executions>
 					<execution>
-						<id>make-assembly</id>
 						<phase>package</phase>
 						<goals>
-							<goal>single</goal>
+							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<archive>
-								<manifest>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>amidst.Amidst</mainClass>
-								</manifest>
-								<manifestEntries>
-									<Amidst-Version>${amidst.build.filename}</Amidst-Version>
-									<Built-On>${maven.build.timestamp}</Built-On>
-								</manifestEntries>
-							</archive>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
+									<manifestEntries>
+										<Amidst-Version>${amidst.build.filename}</Amidst-Version>
+										<Built-On>${maven.build.timestamp}</Built-On>
+									</manifestEntries>
+								</transformer>
+							</transformers>
 						</configuration>
 					</execution>
 				</executions>

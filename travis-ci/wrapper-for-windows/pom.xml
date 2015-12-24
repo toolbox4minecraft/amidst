@@ -39,7 +39,7 @@
 						<configuration>
 							<headerType>gui</headerType>
 							<outfile>../../target/${amidst.build.filename}.exe</outfile>
-							<jar>../../target/${amidst.build.filename}-jar-with-dependencies.jar</jar>
+							<jar>../../target/${amidst.build.filename}.jar</jar>
 							<dontWrapJar>false</dontWrapJar>
 							<errTitle>Error in Launcher</errTitle>
 							<classPath>
