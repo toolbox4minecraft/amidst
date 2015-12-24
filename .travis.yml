@@ -11,8 +11,8 @@ before_install:
 before_deploy:
 - bash travis-ci/scripts/create-mac-icon.sh
 - bash travis-ci/scripts/create-windows-icon.sh
-- mvn package -DskipTests=true -f travis-ci/mac-wrapper/pom.xml
-- mvn package -DskipTests=true -f travis-ci/windows-wrapper/pom.xml
+- mvn package -DskipTests=true -f travis-ci/wrapper-for-mac/pom.xml
+- mvn package -DskipTests=true -f travis-ci/wrapper-for-windows/pom.xml
 - export filename=$(bash travis-ci/scripts/get-amidst-filename.sh)
 deploy:
   provider: releases
