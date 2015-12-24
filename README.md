@@ -8,7 +8,7 @@ Advanced Minecraft Interface and Data/Structure Tracking
 Where can I get AMIDST?
 -----------------------
 
-You can download amidst [here](https://github.com/skiphs/AMIDST/releases/latest). If you find any bugs, please [report](https://github.com/skiphs/AMIDST/issues/new) them so we can fix them. If you want to request a feature, you can to this [here](https://github.com/skiphs/AMIDST/issues/new). If you want to help develop amidst, please get in contact [here](https://github.com/skiphs/AMIDST/issues/new). Lastly, [here](https://github.com/stefandollase/AMIDST/blob/master/docs/HOW-TO-BUILD.md) is a description how you can build amidst by yourself.
+You can download amidst [here](https://github.com/skiphs/AMIDST/releases/latest). If you find any bugs, please [report](https://github.com/skiphs/AMIDST/issues/new) them so we can fix them. If you want to request a feature, you can to this [here](https://github.com/skiphs/AMIDST/issues/new). If you want to help develop amidst, please get in contact [here](https://github.com/skiphs/AMIDST/issues/new). Lastly, [here](https://github.com/stefandollase/AMIDST/blob/refactoring/docs/HOW-TO-BUILD.md) is a description how you can build amidst by yourself.
 
 What is AMIDST?
 ---------------
@@ -34,7 +34,7 @@ When the world is loaded from a Minecraft world file, amidst **can** also:
 * load player skins
 * move players to another location, including the y-coordinate
 
-What it **can not** do for you:
+What it **cannot** do for you:
 
 * display changes to the world, that are made after the world generator was finished, this includes
   * changes made by world editors like MCEdit
