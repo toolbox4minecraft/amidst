@@ -13,6 +13,7 @@ before_deploy:
 - bash travis-ci/scripts/create-windows-icon.sh
 - mvn package -DskipTests=true -f travis-ci/wrapper-for-mac/pom.xml
 - mvn package -DskipTests=true -f travis-ci/wrapper-for-windows/pom.xml
+- bash travis-ci/scripts/zip-and-move-wrapper-for-mac.sh
 - export filename=$(bash travis-ci/scripts/get-amidst-filename.sh)
 deploy:
   provider: releases
