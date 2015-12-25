@@ -5,19 +5,21 @@ import amidst.documentation.Immutable;
 // TODO: Rename once we figure out what this actually is!
 @Immutable
 public class BiomeType {
-	public static final BiomeType typeA = new BiomeType(0.1F, 0.2F);
-	public static final BiomeType typeB = new BiomeType(-0.5F, 0.0F);
-	public static final BiomeType typeC = new BiomeType(-1.0F, 0.1F);
-	public static final BiomeType typeD = new BiomeType(-1.8F, 0.1F);
-	public static final BiomeType typeE = new BiomeType(0.125F, 0.05F);
-	public static final BiomeType typeF = new BiomeType(0.2F, 0.2F);
-	public static final BiomeType typeG = new BiomeType(0.45F, 0.3F);
-	public static final BiomeType typeH = new BiomeType(1.5F, 0.025F);
-	public static final BiomeType typeI = new BiomeType(1.0F, 0.5F);
-	public static final BiomeType typeJ = new BiomeType(0.0F, 0.025F);
-	public static final BiomeType typeK = new BiomeType(0.1F, 0.8F);
-	public static final BiomeType typeL = new BiomeType(0.2F, 0.3F);
-	public static final BiomeType typeM = new BiomeType(-0.2F, 0.1F);
+	// @formatter:off
+	public static final BiomeType typeA = new BiomeType( 0.1F,   0.2F);
+	public static final BiomeType typeB = new BiomeType(-0.5F,   0.0F);
+	public static final BiomeType typeC = new BiomeType(-1.0F,   0.1F);
+	public static final BiomeType typeD = new BiomeType(-1.8F,   0.1F);
+	public static final BiomeType typeE = new BiomeType( 0.125F, 0.05F);
+	public static final BiomeType typeF = new BiomeType( 0.2F,   0.2F);
+	public static final BiomeType typeG = new BiomeType( 0.45F,  0.3F);
+	public static final BiomeType typeH = new BiomeType( 1.5F,   0.025F);
+	public static final BiomeType typeI = new BiomeType( 1.0F,   0.5F);
+	public static final BiomeType typeJ = new BiomeType( 0.0F,   0.025F);
+	public static final BiomeType typeK = new BiomeType( 0.1F,   0.8F);
+	public static final BiomeType typeL = new BiomeType( 0.2F,   0.3F);
+	public static final BiomeType typeM = new BiomeType(-0.2F,   0.1F);
+	// @formatter:on
 
 	private final float value1;
 	private final float value2;
