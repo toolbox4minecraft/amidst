@@ -5,6 +5,7 @@ import java.util.prefs.Preferences;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.WorldType;
 import amidst.settings.BooleanSetting;
 import amidst.settings.MultipleStringsSetting;
 import amidst.settings.Setting;
@@ -14,9 +15,6 @@ import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
 
 @ThreadSafe
 public class Settings {
-	private static final String[] WORLD_TYPE_VALUES = new String[] {
-			"Prompt each time", "Default", "Flat", "Large Biomes", "Amplified" };
-
 	public final BooleanSetting showSlimeChunks;
 	public final BooleanSetting showGrid;
 	public final BooleanSetting showNetherFortresses;
@@ -57,7 +55,7 @@ public class Settings {
 		showDebug                  = new BooleanSetting(        preferences, "showDebug",           false);
 		updateToUnstable           = new BooleanSetting(        preferences, "updateToUnstable",    false);
 		lastProfile                = new StringSetting(         preferences, "profile",             null);
-		worldType                  = new MultipleStringsSetting(preferences, "worldType",           "Prompt each time", WORLD_TYPE_VALUES);
+		worldType                  = new MultipleStringsSetting(preferences, "worldType",           WorldType.PROMPT_EACH_TIME, WorldType.getWorldTypeSettingAvailableValues());
 		biomeColorProfileSelection = new BiomeColorProfileSelection(BiomeColorProfile.getDefaultProfile());
 		// @formatter:on
 	}

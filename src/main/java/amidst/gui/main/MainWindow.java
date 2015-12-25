@@ -308,7 +308,7 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldType askForWorldType() {
 		String worldTypeSetting = settings.worldType.get();
-		if (worldTypeSetting.equals("Prompt each time")) {
+		if (worldTypeSetting.equals(WorldType.PROMPT_EACH_TIME)) {
 			return askForOptions("World Type", "Enter world type\n",
 					WorldType.getSelectable());
 		} else {

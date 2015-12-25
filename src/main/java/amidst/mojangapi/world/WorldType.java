@@ -17,6 +17,8 @@ public enum WorldType {
 	CUSTOMIZED		("Customized",		SymbolicNames.FIELD_WORLD_TYPE_CUSTOMIZED);
 	// @formatter:on
 
+	public static final String PROMPT_EACH_TIME = "Prompt each time";
+
 	// @formatter:off
 	private static final List<WorldType> SELECTABLE_WORLD_TYPES = Arrays.asList(
 			WorldType.DEFAULT,
@@ -26,8 +28,22 @@ public enum WorldType {
 	);
 	// @formatter:on
 
+	// @formatter:off
+	private static final String[] WORLD_TYPE_SETTING_AVAILABLE_VALUES = new String[] {
+			PROMPT_EACH_TIME,
+			WorldType.DEFAULT.getName(),
+			WorldType.FLAT.getName(),
+			WorldType.LARGE_BIOMES.getName(),
+			WorldType.AMPLIFIED.getName()
+	};
+	// @formatter:on
+
 	public static List<WorldType> getSelectable() {
 		return SELECTABLE_WORLD_TYPES;
+	}
+
+	public static String[] getWorldTypeSettingAvailableValues() {
+		return WORLD_TYPE_SETTING_AVAILABLE_VALUES;
 	}
 
 	public static WorldType from(String nameOrSymbolicFieldName) {
