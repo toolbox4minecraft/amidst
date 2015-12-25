@@ -15,12 +15,12 @@ import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.Log;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.nbt.LevelDat;
+import amidst.mojangapi.file.nbt.LevelDatNbt;
 import amidst.mojangapi.file.nbt.NBTUtils;
-import amidst.mojangapi.file.nbt.playerfile.LevelDatPlayerFile;
-import amidst.mojangapi.file.nbt.playerfile.PlayerFile;
-import amidst.mojangapi.file.nbt.playerfile.PlayerdataPlayerFile;
-import amidst.mojangapi.file.nbt.playerfile.PlayersPlayerFile;
+import amidst.mojangapi.file.nbt.player.LevelDatPlayerNbt;
+import amidst.mojangapi.file.nbt.player.PlayerNbt;
+import amidst.mojangapi.file.nbt.player.PlayerdataPlayerNbt;
+import amidst.mojangapi.file.nbt.player.PlayersPlayerNbt;
 
 @Immutable
 public class SaveDirectory {
@@ -154,9 +154,9 @@ public class SaveDirectory {
 		return NBTUtils.readTagFromFile(levelDat);
 	}
 
-	public LevelDat createLevelDat() throws IOException,
+	public LevelDatNbt createLevelDat() throws IOException,
 			MojangApiParsingException {
-		return new LevelDat(readLevelDat());
+		return new LevelDatNbt(readLevelDat());
 	}
 
 	public boolean tryBackupLevelDat() {
@@ -200,11 +200,11 @@ public class SaveDirectory {
 	 * and uses the player uuid as filename.
 	 */
 	@NotNull
-	public List<PlayerFile> createMultiplayerPlayerFiles() {
-		List<PlayerFile> result = new ArrayList<PlayerFile>();
+	public List<PlayerNbt> createMultiplayerPlayerNbts() {
+		List<PlayerNbt> result = new ArrayList<PlayerNbt>();
 		for (File playerdataFile : getPlayerdataFiles()) {
 			if (playerdataFile.isFile()) {
-				result.add(createPlayerdataPlayerFile(getPlayerUUIDFromPlayerdataFile(playerdataFile)));
+				result.add(createPlayerdataPlayerNbt(getPlayerUUIDFromPlayerdataFile(playerdataFile)));
 			}
 		}
 		if (!result.isEmpty()) {
@@ -213,7 +213,7 @@ public class SaveDirectory {
 		}
 		for (File playersFile : getPlayersFiles()) {
 			if (playersFile.isFile()) {
-				result.add(createPlayersPlayerFile(getPlayerNameFromPlayersFile(playersFile)));
+				result.add(createPlayersPlayerNbt(getPlayerNameFromPlayersFile(playersFile)));
 			}
 		}
 		if (!result.isEmpty()) {
@@ -237,21 +237,21 @@ public class SaveDirectory {
 	 * the map is used as singleplayer map.
 	 */
 	@NotNull
-	public List<PlayerFile> createSingleplayerPlayerFiles() {
+	public List<PlayerNbt> createSingleplayerPlayerNbts() {
 		Log.i("using player from level.dat");
-		return Arrays.asList(createLevelDatPlayerFile());
+		return Arrays.asList(createLevelDatPlayerNbt());
 	}
 
-	private PlayerFile createLevelDatPlayerFile() {
-		return new LevelDatPlayerFile(this);
+	private PlayerNbt createLevelDatPlayerNbt() {
+		return new LevelDatPlayerNbt(this);
 	}
 
-	private PlayerFile createPlayerdataPlayerFile(String playerUUID) {
-		return new PlayerdataPlayerFile(this, playerUUID);
+	private PlayerNbt createPlayerdataPlayerNbt(String playerUUID) {
+		return new PlayerdataPlayerNbt(this, playerUUID);
 	}
 
-	private PlayerFile createPlayersPlayerFile(String playerName) {
-		return new PlayersPlayerFile(this, playerName);
+	private PlayerNbt createPlayersPlayerNbt(String playerName) {
+		return new PlayersPlayerNbt(this, playerName);
 	}
 
 	private String getPlayerUUIDFromPlayerdataFile(File playerdataFile) {

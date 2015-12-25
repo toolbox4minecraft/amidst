@@ -1,44 +1,46 @@
-package amidst.mojangapi.file.nbt.playerfile;
+package amidst.mojangapi.file.nbt.player;
 
 import java.io.IOException;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.SaveDirectory;
+import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
-import amidst.mojangapi.world.player.PlayerInformation;
 import amidst.mojangapi.world.player.PlayerInformationCache;
 
 @Immutable
-public class LevelDatPlayerFile extends PlayerFile {
+public class PlayerdataPlayerNbt extends PlayerNbt {
 	private final SaveDirectory saveDirectory;
+	private final String playerUUID;
 
-	public LevelDatPlayerFile(SaveDirectory saveDirectory) {
+	public PlayerdataPlayerNbt(SaveDirectory saveDirectory, String playerUUID) {
 		this.saveDirectory = saveDirectory;
+		this.playerUUID = playerUUID;
 	}
 
 	@Override
 	protected boolean tryBackup() {
-		return saveDirectory.tryBackupLevelDat();
+		return saveDirectory.tryBackupPlayerdataFile(playerUUID);
 	}
 
 	@Override
 	protected void doWriteCoordinates(PlayerCoordinates coordinates)
 			throws MojangApiParsingException {
-		PlayerLocationSaver.writeToLevelDat(coordinates,
-				saveDirectory.getLevelDat());
+		PlayerLocationSaver.writeToPlayerFile(coordinates,
+				saveDirectory.getPlayerdataFile(playerUUID));
 	}
 
 	@Override
 	public PlayerCoordinates readCoordinates() throws IOException,
 			MojangApiParsingException {
-		return PlayerLocationLoader.readFromLevelDat(saveDirectory
-				.readLevelDat());
+		return PlayerLocationLoader.readFromPlayerFile(NBTUtils
+				.readTagFromFile(saveDirectory.getPlayerdataFile(playerUUID)));
 	}
 
 	@Override
 	public Player createPlayer(PlayerInformationCache cache) {
-		return new Player(PlayerInformation.theSingleplayerPlayer(), this);
+		return new Player(cache.getByUUID(playerUUID), this);
 	}
 }

@@ -1,4 +1,4 @@
-package amidst.mojangapi.file.nbt.playerfile;
+package amidst.mojangapi.file.nbt.player;
 
 import java.io.IOException;
 
@@ -9,7 +9,7 @@ import amidst.mojangapi.world.player.PlayerCoordinates;
 import amidst.mojangapi.world.player.PlayerInformationCache;
 
 @Immutable
-public abstract class PlayerFile {
+public abstract class PlayerNbt {
 	public boolean tryWriteCoordinates(PlayerCoordinates coordinates)
 			throws MojangApiParsingException {
 		if (tryBackup()) {

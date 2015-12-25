@@ -5,7 +5,7 @@ import java.io.IOException;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.SaveDirectory;
-import amidst.mojangapi.file.nbt.LevelDat;
+import amidst.mojangapi.file.nbt.LevelDatNbt;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -43,7 +43,7 @@ public class WorldBuilder {
 	public World fromFile(MinecraftInterface minecraftInterface,
 			SaveDirectory saveDirectory) throws IOException,
 			MinecraftInterfaceException, MojangApiParsingException {
-		LevelDat levelDat = saveDirectory.createLevelDat();
+		LevelDatNbt levelDat = saveDirectory.createLevelDat();
 		MovablePlayerList movablePlayerList = new MovablePlayerList(
 				playerInformationCache, saveDirectory,
 				isSaveEnabled(minecraftInterface), WorldPlayerType.from(

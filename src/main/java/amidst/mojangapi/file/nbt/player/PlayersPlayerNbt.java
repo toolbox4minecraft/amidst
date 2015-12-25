@@ -1,4 +1,4 @@
-package amidst.mojangapi.file.nbt.playerfile;
+package amidst.mojangapi.file.nbt.player;
 
 import java.io.IOException;
 
@@ -11,36 +11,36 @@ import amidst.mojangapi.world.player.PlayerCoordinates;
 import amidst.mojangapi.world.player.PlayerInformationCache;
 
 @Immutable
-public class PlayerdataPlayerFile extends PlayerFile {
+public class PlayersPlayerNbt extends PlayerNbt {
 	private final SaveDirectory saveDirectory;
-	private final String playerUUID;
+	private final String playerName;
 
-	public PlayerdataPlayerFile(SaveDirectory saveDirectory, String playerUUID) {
+	public PlayersPlayerNbt(SaveDirectory saveDirectory, String playerName) {
 		this.saveDirectory = saveDirectory;
-		this.playerUUID = playerUUID;
+		this.playerName = playerName;
 	}
 
 	@Override
 	protected boolean tryBackup() {
-		return saveDirectory.tryBackupPlayerdataFile(playerUUID);
+		return saveDirectory.tryBackupPlayersFile(playerName);
 	}
 
 	@Override
 	protected void doWriteCoordinates(PlayerCoordinates coordinates)
 			throws MojangApiParsingException {
 		PlayerLocationSaver.writeToPlayerFile(coordinates,
-				saveDirectory.getPlayerdataFile(playerUUID));
+				saveDirectory.getPlayersFile(playerName));
 	}
 
 	@Override
 	public PlayerCoordinates readCoordinates() throws IOException,
 			MojangApiParsingException {
 		return PlayerLocationLoader.readFromPlayerFile(NBTUtils
-				.readTagFromFile(saveDirectory.getPlayerdataFile(playerUUID)));
+				.readTagFromFile(saveDirectory.getPlayersFile(playerName)));
 	}
 
 	@Override
 	public Player createPlayer(PlayerInformationCache cache) {
-		return new Player(cache.getByUUID(playerUUID), this);
+		return new Player(cache.getByName(playerName), this);
 	}
 }

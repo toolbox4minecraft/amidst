@@ -1,4 +1,4 @@
-package amidst.mojangapi.file.nbt.playerfile;
+package amidst.mojangapi.file.nbt.player;
 
 import java.util.List;
 

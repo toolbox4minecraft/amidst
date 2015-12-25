@@ -6,19 +6,19 @@ import java.io.IOException;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.nbt.playerfile.PlayerFile;
+import amidst.mojangapi.file.nbt.player.PlayerNbt;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
 @ThreadSafe
 public class Player {
 	private final PlayerInformation playerInformation;
-	private final PlayerFile playerFile;
+	private final PlayerNbt playerNbt;
 	private volatile PlayerCoordinates savedCoordinates;
 	private volatile PlayerCoordinates currentCoordinates;
 
-	public Player(PlayerInformation playerInformation, PlayerFile playerFile) {
+	public Player(PlayerInformation playerInformation, PlayerNbt playerNbt) {
 		this.playerInformation = playerInformation;
-		this.playerFile = playerFile;
+		this.playerNbt = playerNbt;
 	}
 
 	public String getPlayerName() {
@@ -61,7 +61,7 @@ public class Player {
 	public synchronized boolean saveLocation() throws MojangApiParsingException {
 		PlayerCoordinates currentCoordinates = this.currentCoordinates;
 		if (savedCoordinates != currentCoordinates) {
-			if (playerFile.tryWriteCoordinates(currentCoordinates)) {
+			if (playerNbt.tryWriteCoordinates(currentCoordinates)) {
 				savedCoordinates = currentCoordinates;
 				return true;
 			} else {
@@ -86,7 +86,7 @@ public class Player {
 
 	public synchronized void loadLocation() throws IOException,
 			MojangApiParsingException {
-		this.savedCoordinates = playerFile.readCoordinates();
+		this.savedCoordinates = playerNbt.readCoordinates();
 		this.currentCoordinates = savedCoordinates;
 	}
 }

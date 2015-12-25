@@ -7,8 +7,8 @@ import java.util.List;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.mojangapi.file.directory.SaveDirectory;
-import amidst.mojangapi.file.nbt.LevelDat;
-import amidst.mojangapi.file.nbt.playerfile.PlayerFile;
+import amidst.mojangapi.file.nbt.LevelDatNbt;
+import amidst.mojangapi.file.nbt.player.PlayerNbt;
 
 @Immutable
 public enum WorldPlayerType {
@@ -28,7 +28,7 @@ public enum WorldPlayerType {
 	}
 
 	public static WorldPlayerType from(SaveDirectory saveDirectory,
-			LevelDat levelDat) {
+			LevelDatNbt levelDat) {
 		if (saveDirectory.hasMultiplayerPlayers()) {
 			if (levelDat.hasPlayer()) {
 				return BOTH;
@@ -51,17 +51,17 @@ public enum WorldPlayerType {
 	}
 
 	@NotNull
-	public List<PlayerFile> createPlayerFiles(SaveDirectory saveDirectory) {
+	public List<PlayerNbt> createPlayerNbts(SaveDirectory saveDirectory) {
 		if (this == NONE) {
 			return Collections.emptyList();
 		} else if (this == SINGLEPLAYER) {
-			return saveDirectory.createSingleplayerPlayerFiles();
+			return saveDirectory.createSingleplayerPlayerNbts();
 		} else if (this == MULTIPLAYER) {
-			return saveDirectory.createMultiplayerPlayerFiles();
+			return saveDirectory.createMultiplayerPlayerNbts();
 		} else {
-			List<PlayerFile> result = saveDirectory
-					.createMultiplayerPlayerFiles();
-			result.addAll(saveDirectory.createSingleplayerPlayerFiles());
+			List<PlayerNbt> result = saveDirectory
+					.createMultiplayerPlayerNbts();
+			result.addAll(saveDirectory.createSingleplayerPlayerNbts());
 			return result;
 		}
 	}

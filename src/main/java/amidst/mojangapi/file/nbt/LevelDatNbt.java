@@ -7,13 +7,13 @@ import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.world.WorldType;
 
 @Immutable
-public class LevelDat {
+public class LevelDatNbt {
 	private final long seed;
 	private final WorldType worldType;
 	private final String generatorOptions;
 	private final boolean hasPlayer;
 
-	public LevelDat(CompoundTag root) throws MojangApiParsingException {
+	public LevelDatNbt(CompoundTag root) throws MojangApiParsingException {
 		try {
 			CompoundTag dataTag = readDataTag(root);
 			this.seed = readRandomSeed(dataTag);

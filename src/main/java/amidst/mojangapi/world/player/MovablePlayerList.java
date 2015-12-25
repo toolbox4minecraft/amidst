@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.file.directory.SaveDirectory;
-import amidst.mojangapi.file.nbt.playerfile.PlayerFile;
+import amidst.mojangapi.file.nbt.player.PlayerNbt;
 import amidst.threading.WorkerExecutor;
 import amidst.threading.WorkerWithoutResult;
 
@@ -60,18 +60,18 @@ public class MovablePlayerList implements Iterable<Player> {
 	private void loadPlayersLater(final ConcurrentLinkedQueue<Player> players,
 			final WorkerExecutor workerExecutor,
 			final Runnable onPlayerFinishedLoading) {
-		workerExecutor.invokeLater(new WorkerWithoutResult<PlayerFile>() {
+		workerExecutor.invokeLater(new WorkerWithoutResult<PlayerNbt>() {
 			@Override
 			protected void main() {
-				for (PlayerFile playerFile : worldPlayerType
-						.createPlayerFiles(saveDirectory)) {
-					executeFork(playerFile);
+				for (PlayerNbt playerNbt : worldPlayerType
+						.createPlayerNbts(saveDirectory)) {
+					executeFork(playerNbt);
 				}
 			}
 
 			@Override
-			protected void fork(PlayerFile playerFile) {
-				Player player = playerFile.createPlayer(playerInformationCache);
+			protected void fork(PlayerNbt playerNbt) {
+				Player player = playerNbt.createPlayer(playerInformationCache);
 				if (player.tryLoadLocation()) {
 					players.offer(player);
 				}
