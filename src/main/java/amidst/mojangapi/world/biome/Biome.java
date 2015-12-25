@@ -164,6 +164,10 @@ public class Biome {
 		return index >= 128;
 	}
 
+	public static int compareByIndex(String name1, String name2) {
+		return getByName(name1).getIndex() - getByName(name2).getIndex();
+	}
+
 	private final String name;
 	private final int index;
 	private final BiomeColor defaultColor;

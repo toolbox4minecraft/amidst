@@ -6,14 +6,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
-
-import com.google.gson.GsonBuilder;
 
 @Immutable
 public class BiomeColorProfile {
@@ -55,9 +57,9 @@ public class BiomeColorProfile {
 	public static final File DEFAULT_PROFILE_FILE = new File(PROFILE_DIRECTORY,
 			"default.json");
 
-	private String name;
-	private String shortcut;
-	private Map<String, BiomeColorJson> colorMap;
+	private volatile String name;
+	private volatile String shortcut;
+	private volatile Map<String, BiomeColorJson> colorMap;
 
 	@GsonConstructor
 	public BiomeColorProfile() {
@@ -107,27 +109,32 @@ public class BiomeColorProfile {
 		return writeToFile(file, serialize());
 	}
 
-	@SuppressWarnings("unused")
-	private String serializeWithGson() {
-		return new GsonBuilder().setPrettyPrinting().create().toJson(this);
-	}
-
-	// TODO: @skiphs use serializeWithGson() instead?
 	private String serialize() {
 		String output = "{ \"name\":\"" + name + "\", \"colorMap\":[\r\n";
 		output += serializeColorMap();
 		return output + " ] }\r\n";
 	}
 
+	/**
+	 * This method uses the sorted color map, so the serialization will have a
+	 * reproducible order.
+	 */
 	private String serializeColorMap() {
 		String output = "";
-		for (Map.Entry<String, BiomeColorJson> pairs : colorMap.entrySet()) {
+		for (Map.Entry<String, BiomeColorJson> pairs : getSortedColorMapEntries()) {
 			output += "[ \"" + pairs.getKey() + "\", { ";
 			output += "\"r\":" + pairs.getValue().getR() + ", ";
 			output += "\"g\":" + pairs.getValue().getG() + ", ";
 			output += "\"b\":" + pairs.getValue().getB() + " } ],\r\n";
 		}
 		return output.substring(0, output.length() - 3);
+	}
+
+	private Set<Entry<String, BiomeColorJson>> getSortedColorMapEntries() {
+		SortedMap<String, BiomeColorJson> result = new TreeMap<String, BiomeColorJson>(
+				Biome::compareByIndex);
+		result.putAll(colorMap);
+		return result.entrySet();
 	}
 
 	private boolean writeToFile(File file, String output) {
