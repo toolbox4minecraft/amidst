@@ -113,7 +113,7 @@ public class Biome {
 	public static final Biome taigaHillsM          = new Biome("Taiga Hills M",             147, BiomeColor.from( 22,  57,  51));
 	public static final Biome extremeHillsEdgeM    = new Biome("Extreme Hills Edge M",      148, BiomeColor.from(114, 120, 154));
 	public static final Biome jungleM              = new Biome("Jungle M",                  149, BiomeColor.from( 83, 123,   9));
-	public static final Biome jungleHillsM         = new Biome("Jungle Hills M",	        150, BiomeColor.from( 44,  66,   5));
+	public static final Biome jungleHillsM         = new Biome("Jungle Hills M",            150, BiomeColor.from( 44,  66,   5));
 	public static final Biome jungleEdgeM          = new Biome("Jungle Edge M",             151, BiomeColor.from( 98, 139,  23));
 	public static final Biome deepOceanM           = new Biome("Deep Ocean M",              152, BiomeColor.from(  0,   0,  48));
 	public static final Biome stoneBeachM          = new Biome("Stone Beach M",             153, BiomeColor.from(162, 162, 132));
