@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.SOURCE)
 @Documented
-@Target(ElementType.METHOD)
+@Target({ ElementType.METHOD, ElementType.PARAMETER })
 public @interface NotNull {
 }

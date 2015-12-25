@@ -37,7 +37,7 @@ public class MojangApi {
 
 	public MojangApi(WorldBuilder worldBuilder,
 			DotMinecraftDirectory dotMinecraftDirectory,
-			VersionListJson versionList, File preferedJson) {
+			@NotNull VersionListJson versionList, File preferedJson) {
 		this.worldBuilder = worldBuilder;
 		this.dotMinecraftDirectory = dotMinecraftDirectory;
 		this.versionList = versionList;
