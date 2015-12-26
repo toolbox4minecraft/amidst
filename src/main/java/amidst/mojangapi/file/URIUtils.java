@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
@@ -24,12 +23,16 @@ import amidst.documentation.Immutable;
 public enum URIUtils {
 	;
 
-	public static URI newURI(String location) {
-		return URI.create(location);
+	public static URI newURI(String location) throws IOException {
+		try {
+			return URI.create(location);
+		} catch (IllegalArgumentException e) {
+			throw new IOException("malformed uri: " + location, e);
+		}
 	}
 
-	public static URL newURL(String location) throws MalformedURLException {
-		return URI.create(location).toURL();
+	public static URL newURL(String location) throws IOException {
+		return newURI(location).toURL();
 	}
 
 	public static Reader newReader(String location) throws IOException {
@@ -47,7 +50,7 @@ public enum URIUtils {
 	public static boolean exists(String location) {
 		try {
 			return exists(newURL(location));
-		} catch (MalformedURLException e) {
+		} catch (IOException e) {
 			return false;
 		}
 	}
@@ -63,8 +66,7 @@ public enum URIUtils {
 		}
 	}
 
-	public static void download(String from, String to)
-			throws MalformedURLException, IOException {
+	public static void download(String from, String to) throws IOException {
 		download(newURL(from), Paths.get(to));
 	}
 
