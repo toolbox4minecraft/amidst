@@ -116,27 +116,11 @@ public class FileLogger implements Logger {
 
 	@CalledOnlyBy(AmidstThread.FILE_LOGGER)
 	private void writeLogMessage(String logMessage) {
-		FileWriter writer = null;
-		try {
-			writer = new FileWriter(file, true);
+		try (FileWriter writer = new FileWriter(file, true)) {
 			writer.append(logMessage);
 		} catch (IOException e) {
 			Log.w("Unable to write to log file.");
 			e.printStackTrace();
-		} finally {
-			closeWriter(writer);
-		}
-	}
-
-	@CalledOnlyBy(AmidstThread.FILE_LOGGER)
-	private void closeWriter(FileWriter writer) {
-		if (writer != null) {
-			try {
-				writer.close();
-			} catch (IOException e) {
-				Log.w("Unable to close writer for log file.");
-				e.printStackTrace();
-			}
 		}
 	}
 

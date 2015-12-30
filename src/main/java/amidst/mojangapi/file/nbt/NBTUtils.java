@@ -18,10 +18,9 @@ public enum NBTUtils {
 	;
 
 	public static CompoundTag readTagFromFile(File file) throws IOException {
-		NBTInputStream stream = createNBTInputStream(file);
-		CompoundTag result = (CompoundTag) stream.readTag();
-		stream.close();
-		return result;
+		try (NBTInputStream stream = createNBTInputStream(file)) {
+			return (CompoundTag) stream.readTag();
+		}
 	}
 
 	public static NBTInputStream createNBTInputStream(File file)
@@ -32,9 +31,9 @@ public enum NBTUtils {
 
 	public static void writeTagToFile(File out, CompoundTag root)
 			throws IOException {
-		NBTOutputStream outStream = createNBTOutputStream(out);
-		outStream.writeTag(root);
-		outStream.close();
+		try (NBTOutputStream outStream = createNBTOutputStream(out)) {
+			outStream.writeTag(root);
+		}
 	}
 
 	public static NBTOutputStream createNBTOutputStream(File file)

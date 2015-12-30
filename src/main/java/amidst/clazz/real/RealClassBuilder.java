@@ -13,12 +13,9 @@ import amidst.documentation.Immutable;
 public class RealClassBuilder {
 	public RealClass construct(String realClassName, byte[] classData)
 			throws RealClassCreationException {
-		try {
-			DataInputStream stream = new DataInputStream(
-					new ByteArrayInputStream(classData));
-			RealClass product = doConstruct(realClassName, classData, stream);
-			stream.close();
-			return product;
+		try (DataInputStream stream = new DataInputStream(
+				new ByteArrayInputStream(classData))) {
+			return doConstruct(realClassName, classData, stream);
 		} catch (IOException e) {
 			throw new RealClassCreationException(
 					"unable to create real class for the class: "

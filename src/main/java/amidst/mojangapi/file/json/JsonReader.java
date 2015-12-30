@@ -100,8 +100,8 @@ public enum JsonReader {
 	@NotNull
 	public static <T> T read(Reader reader, Class<T> clazz)
 			throws MojangApiParsingException, IOException {
-		try {
-			T result = GSON.fromJson(reader, clazz);
+		try (Reader theReader = reader) {
+			T result = GSON.fromJson(theReader, clazz);
 			if (result != null) {
 				return result;
 			} else {
@@ -111,17 +111,6 @@ public enum JsonReader {
 			throw new MojangApiParsingException(e);
 		} catch (JsonIOException e) {
 			throw new IOException(e);
-		} finally {
-			tryCloseReader(reader);
-		}
-	}
-
-	private static void tryCloseReader(Reader reader) {
-		try {
-			reader.close();
-		} catch (IOException e) {
-			Log.w("unable to close reader");
-			e.printStackTrace();
 		}
 	}
 

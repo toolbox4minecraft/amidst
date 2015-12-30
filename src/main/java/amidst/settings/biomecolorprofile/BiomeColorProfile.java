@@ -138,25 +138,11 @@ public class BiomeColorProfile {
 	}
 
 	private boolean writeToFile(File file, String output) {
-		BufferedWriter writer = null;
-		try {
-			writer = new BufferedWriter(new FileWriter(file));
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
 			writer.write(output);
-			writer.close();
 			return true;
 		} catch (IOException e) {
-			closeWriter(writer);
-		}
-		return false;
-	}
-
-	private void closeWriter(BufferedWriter writer) {
-		try {
-			if (writer != null) {
-				writer.close();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			return false;
 		}
 	}
 }

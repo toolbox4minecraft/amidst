@@ -16,6 +16,7 @@ import amidst.documentation.Immutable;
 public enum RealClasses {
 	;
 
+	private static final int MAXIMUM_CLASS_BYTES = 8000;
 	private static final RealClassBuilder REAL_CLASS_BUILDER = new RealClassBuilder();
 
 	public static List<RealClass> fromJarFile(File jarFile)
@@ -29,11 +30,8 @@ public enum RealClasses {
 			throw new FileNotFoundException("Attempted to load jar file at: "
 					+ jarFile + " but it does not exist.");
 		}
-		try {
-			ZipFile zipFile = new ZipFile(jarFile);
-			List<RealClass> realClasses = readJarFile(zipFile);
-			zipFile.close();
-			return realClasses;
+		try (ZipFile zipFile = new ZipFile(jarFile)) {
+			return readJarFile(zipFile);
 		} catch (IOException e) {
 			throw new JarFileParsingException("Error extracting jar data.", e);
 		} catch (RealClassCreationException e) {
@@ -59,13 +57,21 @@ public enum RealClasses {
 		String realClassName = getFileNameWithoutExtension(entry.getName(),
 				"class");
 		if (!entry.isDirectory() && realClassName != null) {
-			BufferedInputStream stream = new BufferedInputStream(
-					zipFile.getInputStream(entry));
+			return readRealClass(realClassName,
+					new BufferedInputStream(zipFile.getInputStream(entry)));
+		} else {
+			return null;
+		}
+	}
+
+	private static RealClass readRealClass(String realClassName,
+			BufferedInputStream stream) throws IOException,
+			RealClassCreationException {
+		try (BufferedInputStream theStream = stream) {
 			// TODO: Double check that this filter won't mess anything up.
-			if (stream.available() < 8000) {
-				byte[] classData = new byte[stream.available()];
-				stream.read(classData);
-				stream.close();
+			if (theStream.available() < MAXIMUM_CLASS_BYTES) {
+				byte[] classData = new byte[theStream.available()];
+				theStream.read(classData);
 				return REAL_CLASS_BUILDER.construct(realClassName, classData);
 			}
 		}

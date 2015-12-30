@@ -57,10 +57,8 @@ public class BiomeColorProfileLoader {
 
 	private BiomeColorProfile readProfile(File file) throws IOException,
 			JsonSyntaxException, JsonIOException {
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-		BiomeColorProfile result = GSON.fromJson(reader,
-				BiomeColorProfile.class);
-		reader.close();
-		return result;
+		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+			return GSON.fromJson(reader, BiomeColorProfile.class);
+		}
 	}
 }

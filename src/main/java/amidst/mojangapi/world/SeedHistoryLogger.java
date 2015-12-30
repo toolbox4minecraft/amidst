@@ -48,31 +48,16 @@ public class SeedHistoryLogger {
 	}
 
 	private void writeLine(WorldSeed seed) {
-		FileWriter writer = null;
-		try {
-			writer = new FileWriter(file, true);
+		try (FileWriter writer = new FileWriter(file, true)) {
 			writer.append(createLine(seed));
 		} catch (IOException e) {
 			Log.w("Unable to write to history file.");
 			e.printStackTrace();
-		} finally {
-			closeWriter(writer);
 		}
 	}
 
 	private String createLine(WorldSeed seed) {
 		return new Timestamp(new Date().getTime()) + " " + seed.getLong()
 				+ "\r\n";
-	}
-
-	private void closeWriter(FileWriter writer) {
-		try {
-			if (writer != null) {
-				writer.close();
-			}
-		} catch (IOException e) {
-			Log.w("Unable to close writer for history file.");
-			e.printStackTrace();
-		}
 	}
 }
