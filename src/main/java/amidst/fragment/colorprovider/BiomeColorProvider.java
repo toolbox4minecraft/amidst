@@ -32,6 +32,6 @@ public class BiomeColorProvider implements ColorProvider {
 	}
 
 	private BiomeColor getBiomeColor(int biomeIndex) {
-		return biomeColorProfileSelection.getBiomeColor(biomeIndex);
+		return biomeColorProfileSelection.getBiomeColorOrUnknown(biomeIndex);
 	}
 }

@@ -14,6 +14,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.main.worldsurroundings.BiomeSelection;
 import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.world.biome.BiomeColor;
 import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
 
 @NotThreadSafe
@@ -156,7 +157,7 @@ public class BiomeWidget extends Widget {
 		for (int i = 0; i < biomes.size(); i++) {
 			Biome biome = biomes.get(i);
 			drawBiomeBackgroundColor(g2d, i, getBiomeBackgroudColor(i, biome));
-			drawBiomeColor(g2d, i, biome);
+			drawBiomeColor(g2d, i, getBiomeColorOrUnknown(biome));
 			drawBiomeName(g2d, i, biome);
 		}
 		clearClip(g2d);
@@ -215,9 +216,14 @@ public class BiomeWidget extends Widget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void drawBiomeColor(Graphics2D g2d, int i, Biome biome) {
-		g2d.setColor(biomeColorProfileSelection.getBiomeColor(biome.getIndex())
-				.getColor());
+	private BiomeColor getBiomeColorOrUnknown(Biome biome) {
+		return biomeColorProfileSelection.getBiomeColorOrUnknown(biome
+				.getIndex());
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void drawBiomeColor(Graphics2D g2d, int i, BiomeColor biomeColor) {
+		g2d.setColor(biomeColor.getColor());
 		g2d.fillRect(innerBox.x, innerBox.y + i * 16 + biomeListYOffset, 20, 16);
 	}
 
