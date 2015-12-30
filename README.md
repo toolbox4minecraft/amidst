@@ -8,7 +8,7 @@ Advanced Minecraft Interface and Data/Structure Tracking
 Where can I get Amidst?
 -----------------------
 
-You can download amidst [here](https://github.com/skiphs/amidst/releases/latest). If you find any bugs, please [report](https://github.com/skiphs/amidst/issues/new) them so we can fix them. If you want to request a feature, you can to this [here](https://github.com/skiphs/amidst/issues/new). If you want to help develop amidst, please get in contact [here](https://github.com/skiphs/amidst/issues/new). Lastly, [here](https://github.com/stefandollase/amidst/blob/refactoring/docs/BUILDING.md) is a description how you can build amidst by yourself.
+You can download Amidst [here](https://github.com/skiphs/amidst/releases/latest). If you find any bugs, please [report](https://github.com/skiphs/amidst/issues/new) them so we can fix them. If you want to request a feature, you can to this [here](https://github.com/skiphs/amidst/issues/new). If you want to help develop Amidst, please get in contact [here](https://github.com/skiphs/amidst/issues/new). Lastly, [here](https://github.com/stefandollase/amidst/blob/refactoring/docs/BUILDING.md) is a description how you can build Amidst by yourself.
 
 What is Amidst?
 ---------------
@@ -28,7 +28,7 @@ What it **can** do for you:
   * ocean monuments
   * nether fortresses
 
-When the world is loaded from a Minecraft world file, amidst **can** also:
+When the world is loaded from a Minecraft world file, Amidst **can** also:
 
 * display singleplayer and multiplayer player locations
 * load player skins
@@ -80,9 +80,9 @@ If the `players` and the `playerdata` directory exist, we will simply ignore the
 What is the internet used for?
 -------------------
 
-* amidst v3.7 was the last version that used google analytics, so we do no longer track you
-* amidst will check for updates on every start
-* amidst will use web services provided by mojang, e.g. to
+* Amidst v3.7 was the last version that used google analytics, so we do no longer track you
+* Amidst will check for updates on every start
+* Amidst will use web services provided by mojang, e.g. to
   * display information about minecraft versions
   * display information about players like the name or the skin
 
