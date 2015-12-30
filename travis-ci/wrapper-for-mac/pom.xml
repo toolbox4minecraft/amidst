@@ -39,7 +39,7 @@
 							<mainClass>amidst.Amidst</mainClass>
 							<iconFile>../../target/icon.icns</iconFile>
 							<jvmVersion>${amidst.build.jdk.version}+</jvmVersion>
-							<bundleName>AMIDST</bundleName>
+							<bundleName>Amidst</bundleName>
 						</configuration>
 					</execution>
 				</executions>

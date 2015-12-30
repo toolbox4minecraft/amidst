@@ -26,7 +26,7 @@ public interface MinecraftInterface {
 	 *            paramaters must all correspond to a quarter of the Minecraft
 	 *            block coordinates/sizes you wish to obtain the biome data for.
 	 * 
-	 *            AMIDST displays the quarter-resolution biome map, however full
+	 *            Amidst displays the quarter-resolution biome map, however full
 	 *            resolution is required to determine the position and nature of
 	 *            structures, as the noisy interpolation can change which biome
 	 *            a structure is located in (if the structure is located on a

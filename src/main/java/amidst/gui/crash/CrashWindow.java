@@ -21,9 +21,9 @@ public class CrashWindow {
 
 	public CrashWindow(String message, String logMessages,
 			final Runnable executeOnClose) {
-		frame = new JFrame("AMIDST encountered an unexpected error.");
+		frame = new JFrame("Amidst encountered an unexpected error.");
 		frame.getContentPane().setLayout(new MigLayout());
-		frame.add(new JLabel("AMIDST has crashed with the following message:"),
+		frame.add(new JLabel("Amidst has crashed with the following message:"),
 				"growx, pushx, wrap");
 		frame.add(new JLabel(message), "growx, pushx, wrap");
 		frame.add(createLogMessagesScrollPane(logMessages), "grow, push");

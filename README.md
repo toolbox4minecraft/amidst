@@ -1,16 +1,16 @@
-AMIDST
+Amidst
 ======
 
-[![Build Status](https://travis-ci.org/stefandollase/AMIDST.svg)](https://travis-ci.org/stefandollase/AMIDST)
+[![Build Status](https://travis-ci.org/stefandollase/amidst.svg)](https://travis-ci.org/stefandollase/amidst)
 
 Advanced Minecraft Interface and Data/Structure Tracking
 
-Where can I get AMIDST?
+Where can I get Amidst?
 -----------------------
 
-You can download amidst [here](https://github.com/skiphs/AMIDST/releases/latest). If you find any bugs, please [report](https://github.com/skiphs/AMIDST/issues/new) them so we can fix them. If you want to request a feature, you can to this [here](https://github.com/skiphs/AMIDST/issues/new). If you want to help develop amidst, please get in contact [here](https://github.com/skiphs/AMIDST/issues/new). Lastly, [here](https://github.com/stefandollase/AMIDST/blob/refactoring/docs/HOW-TO-BUILD.md) is a description how you can build amidst by yourself.
+You can download amidst [here](https://github.com/skiphs/amidst/releases/latest). If you find any bugs, please [report](https://github.com/skiphs/amidst/issues/new) them so we can fix them. If you want to request a feature, you can to this [here](https://github.com/skiphs/amidst/issues/new). If you want to help develop amidst, please get in contact [here](https://github.com/skiphs/amidst/issues/new). Lastly, [here](https://github.com/stefandollase/amidst/blob/refactoring/docs/BUILDING.md) is a description how you can build amidst by yourself.
 
-What is AMIDST?
+What is Amidst?
 ---------------
 
 What it **can** do for you:
@@ -50,7 +50,7 @@ More features include:
 Which Minecraft versions are supported?
 ---------------------------------------
 
-We support Minecraft versions from 1.0 up to the latest snapshot. If you find an issue with a specific Minecraft version, [please report it](https://github.com/skiphs/AMIDST/issues/new).
+We support Minecraft versions from 1.0 up to the latest snapshot. If you find an issue with a specific Minecraft version, [please report it](https://github.com/skiphs/amidst/issues/new).
 
 How can I move a player?
 ------------------------
@@ -94,5 +94,5 @@ Amidst is not owned by or related to mojang in any way.
 License and warranty
 --------------------
 
-AMIDST comes with ABSOLUTELY NO WARRANTY. It is free and open source software, license under the
-[GPL v3](https://github.com/skiphs/AMIDST/blob/master/LICENSE.txt), and you are welcome to redistribute it under certain conditions.
+Amidst comes with ABSOLUTELY NO WARRANTY. It is free and open source software, license under the
+[GPL v3](https://github.com/skiphs/amidst/blob/master/LICENSE.txt), and you are welcome to redistribute it under certain conditions.

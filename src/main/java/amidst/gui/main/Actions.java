@@ -244,7 +244,7 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void about() {
 		mainWindow.displayMessage("About",
-				"Advanced Minecraft Interfacing and Data/Structure Tracking (AMIDST)\n"
+				"Advanced Minecraft Interfacing and Data/Structure Tracking (Amidst)\n"
 						+ "By Skidoodle (amidst.project@gmail.com)");
 	}
 

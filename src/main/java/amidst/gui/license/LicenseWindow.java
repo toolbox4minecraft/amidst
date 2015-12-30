@@ -36,7 +36,7 @@ public class LicenseWindow {
 
 	private License[] createLicenses() {
 		List<License> result = Arrays.asList(
-				createLicense("AMIDST", "amidst.txt"),
+				createLicense("Amidst", "amidst.txt"),
 				createLicense("Args4j", "args4j.txt"),
 				createLicense("Gson", "gson.txt"),
 				createLicense("JNBT", "jnbt.txt"),

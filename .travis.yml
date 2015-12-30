@@ -25,5 +25,5 @@ deploy:
   - "target/${filename}.exe"
   skip_cleanup: true
   on:
-    repo: stefandollase/AMIDST
+    repo: stefandollase/amidst
     tags: true
