@@ -9,6 +9,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.license.LicenseWindow;
 import amidst.gui.main.MainWindow;
+import amidst.gui.main.UpdatePrompt;
 import amidst.gui.main.worldsurroundings.WorldSurroundingsBuilder;
 import amidst.gui.profileselect.ProfileSelectWindow;
 import amidst.mojangapi.MojangApi;
@@ -78,11 +79,24 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void run() {
+		checkForUpdatesSilently();
 		if (mojangApi.canCreateWorld()) {
 			displayMainWindow();
 		} else {
 			displayProfileSelectWindow();
 		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void checkForUpdates(MainWindow mainWindow) {
+		UpdatePrompt.from(metadata.getVersion(),
+				threadMaster.getWorkerExecutor(), mainWindow, false).check();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void checkForUpdatesSilently() {
+		UpdatePrompt.from(metadata.getVersion(),
+				threadMaster.getWorkerExecutor(), null, true).check();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

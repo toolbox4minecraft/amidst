@@ -37,7 +37,6 @@ public class Actions {
 	private final MojangApi mojangApi;
 	private final MainWindow mainWindow;
 	private final AtomicReference<WorldSurroundings> worldSurroundings;
-	private final UpdatePrompt updatePrompt;
 	private final BiomeColorProfileSelection biomeColorProfileSelection;
 	private final WorkerExecutor workerExecutor;
 
@@ -45,14 +44,12 @@ public class Actions {
 	public Actions(Application application, MojangApi mojangApi,
 			MainWindow mainWindow,
 			AtomicReference<WorldSurroundings> worldSurroundings,
-			UpdatePrompt updatePrompt,
 			BiomeColorProfileSelection biomeColorProfileSelection,
 			WorkerExecutor workerExecutor) {
 		this.application = application;
 		this.mojangApi = mojangApi;
 		this.mainWindow = mainWindow;
 		this.worldSurroundings = worldSurroundings;
-		this.updatePrompt = updatePrompt;
 		this.biomeColorProfileSelection = biomeColorProfileSelection;
 		this.workerExecutor = workerExecutor;
 	}
@@ -233,7 +230,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void checkForUpdates() {
-		updatePrompt.check();
+		application.checkForUpdates(mainWindow);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
