@@ -35,7 +35,7 @@ When the world is loaded from a Minecraft world file, Amidst **can** also:
 
 * display singleplayer and multiplayer player locations
 * load player skins
-* move players to another location, including the y-coordinate ([see how it works](https://github.com/toolbox4minecraft/amidst/blob/refactoring/docs/how-can-i-move-a-player.md))
+* move players to another location, including the y-coordinate ([see how it works](https://github.com/toolbox4minecraft/amidst/blob/master/docs/how-can-i-move-a-player.md))
 
 What it **cannot** do for you:
 
@@ -80,8 +80,8 @@ Most users should be able to simply start Amidst like any other application. How
 Information for Developers
 --------------------------
 
-* [Get Involved](https://github.com/toolbox4minecraft/amidst/issues/new)
-* [Building Amidst from Source Code](https://github.com/toolbox4minecraft/amidst/blob/refactoring/docs/building-amidst-from-source-code.md)
+* [Getting Involved](https://github.com/toolbox4minecraft/amidst/blob/master/docs/getting-involved.md)
+* [Building Amidst from Source Code](https://github.com/toolbox4minecraft/amidst/blob/master/docs/building-amidst-from-source-code.md)
 
 Current State of Amidst
 -----------------------
