@@ -67,6 +67,18 @@ System Requirements
 Operating System: Any
 Java Version: min 8
 
+Current State of Amidst
+-----------------------
+
+Amidst moved from [the main repository](https://github.com/skiphs/AMIDST) by @skiphs to this repository for the following reasons:
+
+* there was more than one main developer
+* the organization has better permission management
+
+Admist experienced many changes since the last release (3.7). Thus, we will probably need several pre-releases and testers before the next stable release. However, it contains several new features and bug fixes, which are not included in the original AMIDST. Also, it works with the Minecraft 1.9 shapshots.
+
+We plan to integrate [the fork AmidstExporter](https://github.com/Treer/AmidstExporter) by @Treer back into Amidst. However, there might be more releases of AmidstExporter, before we are able to finish the merge, to make the new features of it available for the users.
+
 Legal information
 -----------------
 
