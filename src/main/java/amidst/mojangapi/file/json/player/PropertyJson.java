@@ -25,8 +25,6 @@ public class PropertyJson {
 		return value;
 	}
 
-	// TODO: @skiphs we need a base64 decoder to read this api, but it comes
-	// only with java8. should we use java8 or another base64 decoder?
 	@NotNull
 	public String getDecodedValue() throws MojangApiParsingException {
 		if (value == null) {
