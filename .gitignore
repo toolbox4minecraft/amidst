@@ -1,0 +1,19 @@
+*.class
+
+# Package Files #
+*.war
+*.ear
+
+# IntelliJ IDEA project files #
+./AMIDST.eml
+./AMIDST.iml
+./.idea/*
+/bin
+/dist
+/logs
+/nbproject
+/build
+
+history.txt
+target/
+/dependency-reduced-pom.xml
