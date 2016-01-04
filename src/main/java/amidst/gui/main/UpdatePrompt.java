@@ -2,15 +2,10 @@ package amidst.gui.main;
 
 import java.awt.Desktop;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
-
-import amidst.AmidstMetaData;
+import amidst.AmidstVersion;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -20,14 +15,16 @@ import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
 public class UpdatePrompt {
-	private final AmidstMetaData metadata;
+	private static final String TITLE = "Amidst Updater";
+
+	private final AmidstVersion currentVersion;
 	private final MainWindow mainWindow;
 	private final WorkerExecutor workerExecutor;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public UpdatePrompt(AmidstMetaData metadata, MainWindow mainWindow,
+	public UpdatePrompt(AmidstVersion currentVersion, MainWindow mainWindow,
 			WorkerExecutor workerExecutor) {
-		this.metadata = metadata;
+		this.currentVersion = currentVersion;
 		this.mainWindow = mainWindow;
 		this.workerExecutor = workerExecutor;
 	}
@@ -44,28 +41,24 @@ public class UpdatePrompt {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void check(final boolean silent) {
-		workerExecutor
-				.invokeLater(new SimpleWorker<UpdateInformationRetriever>() {
-					@Override
-					protected UpdateInformationRetriever main()
-							throws MalformedURLException, SAXException,
-							IOException, ParserConfigurationException,
-							RuntimeException {
-						return new UpdateInformationRetriever(metadata);
-					}
+		workerExecutor.invokeLater(new SimpleWorker<UpdateInformationJson>() {
+			@Override
+			protected UpdateInformationJson main() throws IOException {
+				return UpdateInformationRetriever.retrieve();
+			}
 
-					@Override
-					protected void onMainFinished(
-							UpdateInformationRetriever retriever) {
-						displayResult(silent, retriever);
-					}
+			@Override
+			protected void onMainFinished(
+					UpdateInformationJson updateInformation) {
+				displayResult(silent, updateInformation);
+			}
 
-					@Override
-					protected void onMainFinishedWithException(Exception e) {
-						Log.w("unable to check for updates");
-						displayError(silent, e);
-					}
-				});
+			@Override
+			protected void onMainFinishedWithException(Exception e) {
+				Log.w("unable to check for updates");
+				displayError(silent, e);
+			}
+		});
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -78,10 +71,10 @@ public class UpdatePrompt {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void displayResult(boolean silent,
-			UpdateInformationRetriever retriever) {
-		if (getUserChoice(retriever, silent)) {
+			UpdateInformationJson updateInformation) {
+		if (getUserChoice(updateInformation, silent)) {
 			try {
-				openURL(new URI(retriever.getUpdateURL()));
+				openURL(new URI(updateInformation.getDownloadUrl()));
 			} catch (IOException | UnsupportedOperationException
 					| URISyntaxException e) {
 				displayError(silent, e);
@@ -90,20 +83,47 @@ public class UpdatePrompt {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private boolean getUserChoice(UpdateInformationRetriever retriever,
+	private boolean getUserChoice(UpdateInformationJson updateInformation,
 			boolean silent) {
-		if (retriever.isNewMajorVersionAvailable()) {
-			return mainWindow.askToConfirm("Update Found",
-					"A new version was found. Would you like to update?");
-		} else if (retriever.isNewMinorVersionAvailable()) {
-			return mainWindow.askToConfirm("Update Found",
-					"A minor revision was found. Update?");
+		AmidstVersion newVersion = updateInformation.createAmidstVersion();
+		String message = updateInformation.getMessage();
+		if (newVersion.isNewerMajorVersionThan(currentVersion)) {
+			return askToConfirm(createMessage(message, newVersion, "major"));
+		} else if (newVersion.isNewerMinorVersionThan(currentVersion)) {
+			return askToConfirm(createMessage(message, newVersion, "minor"));
+		} else if (newVersion
+				.isSameVersionButOldPreReleaseAndNewStable(currentVersion)) {
+			return askToConfirm(createMessage(message, newVersion, "stable"));
 		} else if (silent) {
 			return false;
 		} else {
-			mainWindow.displayMessage("Updater", "There are no new updates.");
+			mainWindow.displayMessage(TITLE, "There are no updates available.");
 			return false;
 		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private String createMessage(String message, AmidstVersion newVersion,
+			String versionType) {
+		return "A new " + versionType + " version of Amidst is available:\n"
+				+ "Current Version: " + currentVersion.createVersionString()
+				+ "\n" + "New Version: " + newVersion.createVersionString()
+				+ "\n" + "Do you want to upgrade?"
+				+ createMessageSuffix(message);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private String createMessageSuffix(String message) {
+		if (message != null && !message.isEmpty()) {
+			return "\n\n" + message;
+		} else {
+			return "";
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private boolean askToConfirm(String message) {
+		return mainWindow.askToConfirm(TITLE, message);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

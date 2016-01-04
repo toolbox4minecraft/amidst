@@ -1,86 +1,35 @@
 package amidst.gui.main;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.Reader;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import amidst.AmidstMetaData;
-import amidst.AmidstVersion;
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
+import amidst.mojangapi.file.URIUtils;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
 @Immutable
-public class UpdateInformationRetriever {
-	public static final String UPDATE_URL = "https://sites.google.com/site/mothfinder/update.xml";
-	public static final String UPDATE_UNSTABLE_URL = "https://sites.google.com/site/mothfinder/update_unstable.xml";
+public enum UpdateInformationRetriever {
+	;
 
-	private final AmidstMetaData metadata;
-	private final String updateURL;
-	private final AmidstVersion version;
+	private static final String UPDATE_INFORMATION_JSON_URL = "https://toolbox4minecraft.github.io/amidst/api/update-information.json";
+	private static final Gson GSON = new Gson();
 
-	public UpdateInformationRetriever(AmidstMetaData metadata)
-			throws MalformedURLException, SAXException, IOException,
-			ParserConfigurationException, RuntimeException {
-		this.metadata = metadata;
-		Document document = getDocument();
-		updateURL = getUpdateURL(document);
-		version = getVersionNumbers(document);
-	}
-
-	private Document getDocument() throws MalformedURLException, SAXException,
-			IOException, ParserConfigurationException {
-		URL url = new URL(UPDATE_URL);
-		Document document = DocumentBuilderFactory.newInstance()
-				.newDocumentBuilder().parse(url.openStream());
-		document.getDocumentElement().normalize();
-		return document;
-	}
-
-	private String getUpdateURL(Document document) {
-		return document.getFirstChild().getAttributes().item(0).getNodeValue();
-	}
-
-	private AmidstVersion getVersionNumbers(Document document) {
-		NodeList version = document.getDocumentElement()
-				.getElementsByTagName("version").item(0).getChildNodes();
-		int major = -1;
-		int minor = -1;
-		for (int i = 0; i < version.getLength(); i++) {
-			Node node = version.item(i);
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				if (node.getNodeName().equalsIgnoreCase("major")) {
-					major = getVersionNumber(node);
-				} else if (node.getNodeName().equalsIgnoreCase("minor")) {
-					minor = getVersionNumber(node);
-				}
+	@NotNull
+	public static UpdateInformationJson retrieve() throws IOException {
+		try (Reader theReader = URIUtils.newReader(UPDATE_INFORMATION_JSON_URL)) {
+			UpdateInformationJson result = GSON.fromJson(theReader,
+					UpdateInformationJson.class);
+			if (result != null) {
+				return result;
+			} else {
+				throw new IOException("result was null");
 			}
+		} catch (JsonSyntaxException | JsonIOException e) {
+			throw new IOException(e);
 		}
-		if (major == -1 || minor == -1) {
-			throw new RuntimeException("Error parsing version numbers.");
-		}
-		return new AmidstVersion(major, minor);
-	}
-
-	private int getVersionNumber(Node node) {
-		return Integer.parseInt(node.getAttributes().item(0).getNodeValue());
-	}
-
-	public String getUpdateURL() {
-		return updateURL;
-	}
-
-	public boolean isNewMajorVersionAvailable() {
-		return version.isNewerMajorVersionThan(metadata.getVersion());
-	}
-
-	public boolean isNewMinorVersionAvailable() {
-		return version.isNewerMinorVersionThan(metadata.getVersion());
 	}
 }

@@ -76,7 +76,7 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private UpdatePrompt createUpdatePrompt() {
-		return new UpdatePrompt(metadata, this,
+		return new UpdatePrompt(metadata.getVersion(), this,
 				threadMaster.getWorkerExecutor());
 	}
 
@@ -93,8 +93,9 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private String createVersionString(String versionId,
 			String recognisedVersionName) {
-		return metadata.getMainWindowTitle() + " - Minecraft Version "
-				+ versionId + " (" + recognisedVersionName + ")";
+		return "Amidst " + metadata.getVersion().createVersionString()
+				+ " - Minecraft Version " + versionId + " ("
+				+ recognisedVersionName + ")";
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
