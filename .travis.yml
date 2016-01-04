@@ -17,8 +17,8 @@ before_deploy:
 - export filename=$(bash travis-ci/scripts/get-amidst-filename.sh)
 deploy:
   provider: releases
-  api-key: # this encrypted token is only readable by travis ci to access the github accout to attach the files to the created tag/release
-    secure: QMXa1QpW+mlTLlxCbKOAWIRUi2cR+Y2vMQDlwiV8BoUyZchvTBR+stDYuEdxd2fK8/aSRUWEgfUhKMJ4cIZEOOwz/UA/1RQmzumbFLexwTwDXfkTfCcDQFLtzywVoep2P3s1lpheo4f1G3z2sZTCxO5yRnpd/sBtWnaq3j5uifYZB+mv84eH+EsrQL7f+0KjycOPrAdiJ8xh/2twUtGMhaStrnhcH+RCi6qm6D5Dv4mwYM4wRxG3H9i2NceGa6lHIE4bU+kKY9lc3V6EzmTnnShwEcrf+4/ZfCe4A9aU3jzFhKCHKpJ4PlqLEtMeQ08ijaMrF4LaBqwRZ5il5nqKkFdfKOtx7EHqjxrQ1dT7JUXU/3lTfEX/DLbhPa3z5Tl9LgCu9flCS+ltQoPvx7MR1leaQeHNoFCfzWJQ8ytW2CEhnOqx3nr4AIW8q5akJxQB7USfHV5F8kw2T6QmzuniQRZex+15j9SLedaDXZCvno6C0+j59sABpiF9lRVww8jW6BxqklxDcjEtkMxyHiBCG0EgGlKJvVSyGGzDsjb8FweC1KQKBHuG+5UYNE1rJesj6rwfIIrbInjJRTPndb4GpuzzbqbTGxwHd2zqzkQhnxSjCoKIzyhpBzfyCJaqTv/DfimSc95sXH1w1d6zfcO01MkopXYUSlHvr/Rjxh8vE8U=
+  api_key: # this encrypted token is only readable by travis ci to access the github accout to attach the files to the created tag/release
+    secure: aPiYbwV8DGP53SRNPJHLgFWprs6Hv7Rw2h/KMNGOyGYwT+k/psEaJlLpNvBbP5eTsjgseaTjSqyjt5M3tEb6RsGvePWQ4G0M/lgcKIAkEg4QmwJOX4a7oDpG6xcFyx/+l4fZdHQ7EP6CnpFTsNQuojcTvVSpFhV1tdzQJ5XjrOazdldhjN7Bw6vtZSxyH0aYIs9hEvCotWQfIFTh2bMeaS8F9qZdlbFqk/jxzbxC8w8BA/ncXKPg/o/Vb7MZqThVewlXy6DGw+chyp9LYfr/7CPecEWkFz/+2+DRzYry0aucYkTedYB8g0sb+1SFbKvqBtlm0AxBUK4DOHxq2STwFcPQ2LUoDitBGpu/SrHFc1zqa6GS26me6uu/JS640u6nLkJqqvTJTkHmJLRwjAlaGrJs7ZaOAPL/8G3bkbYEUzOy59AgKsVoCM41ExTjiu3aL2VSfg7Ug6R8eMOF8CB836vAQZS55KmXKpf3TFEVFo9EF+jCX9FsW5PFQEe8RHk8+8s5UppTByxSy1Cca4hflYXRWTyhSSjjm4M0dnI3tiOX4+cLE3TnSwgspNGcbWcCU1KxSm64xFwuV5Sxu3btEjCxCNC8gABXCO11HWBRHBPjVfL4aVoaDkzV6BrqW0oMSuvz+WhuSH0mvN0YIsPT6PWUKSQ57K1ICsMbY3JyC5Y=
   file:
   - "target/${filename}.jar"
   - "target/${filename}.zip"
