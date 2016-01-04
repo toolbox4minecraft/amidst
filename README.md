@@ -61,6 +61,12 @@ What is my internet connection used for?
 * Amidst will check for updates on every start
 * Amidst will not track you with Google Analytics (this was the case up to version v3.7)
 
+System Requirements
+-------------------
+
+Operating System: Any
+Java Version: min 8
+
 Legal information
 -----------------
 
