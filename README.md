@@ -81,6 +81,7 @@ Information for Developers
 --------------------------
 
 * [Getting Involved](https://github.com/toolbox4minecraft/amidst/blob/master/docs/getting-involved.md)
+* [Releasing Amidst](https://github.com/toolbox4minecraft/amidst/blob/master/docs/releasing-amidst.md)
 * [Building Amidst from Source Code](https://github.com/toolbox4minecraft/amidst/blob/master/docs/building-amidst-from-source-code.md)
 
 Current State of Amidst
