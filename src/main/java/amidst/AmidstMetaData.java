@@ -8,25 +8,18 @@ import amidst.documentation.Immutable;
 @Immutable
 public class AmidstMetaData {
 	public static AmidstMetaData from(Properties properties, BufferedImage icon) {
-		// @formatter:off
-		return new AmidstMetaData(
-				icon,
-				Integer.parseInt(properties.getProperty("amidst.version.major")),
-				Integer.parseInt(properties.getProperty("amidst.version.minor")),
+		return new AmidstMetaData(icon, AmidstVersion.from(properties),
 				properties.getProperty("amidst.gui.mainWindow.title"));
-		// @formatter:on
 	}
 
 	private final BufferedImage icon;
-	private final int majorVersion;
-	private final int minorVersion;
+	private final AmidstVersion version;
 	private final String mainWindowTitle;
 
-	private AmidstMetaData(BufferedImage icon, int majorVersion,
-			int minorVersion, String mainWindowTitle) {
+	private AmidstMetaData(BufferedImage icon, AmidstVersion version,
+			String mainWindowTitle) {
 		this.icon = icon;
-		this.majorVersion = majorVersion;
-		this.minorVersion = minorVersion;
+		this.version = version;
 		this.mainWindowTitle = mainWindowTitle;
 	}
 
@@ -34,12 +27,8 @@ public class AmidstMetaData {
 		return icon;
 	}
 
-	public int getMajorVersion() {
-		return majorVersion;
-	}
-
-	public int getMinorVersion() {
-		return minorVersion;
+	public AmidstVersion getVersion() {
+		return version;
 	}
 
 	public String getMainWindowTitle() {

@@ -13,6 +13,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import amidst.AmidstMetaData;
+import amidst.AmidstVersion;
 import amidst.documentation.Immutable;
 
 @Immutable
@@ -20,13 +21,9 @@ public class UpdateInformationRetriever {
 	public static final String UPDATE_URL = "https://sites.google.com/site/mothfinder/update.xml";
 	public static final String UPDATE_UNSTABLE_URL = "https://sites.google.com/site/mothfinder/update_unstable.xml";
 
-	private static final int MAJOR_INDEX = 0;
-	private static final int MINOR_INDEX = 1;
-
 	private final AmidstMetaData metadata;
 	private final String updateURL;
-	private final int major;
-	private final int minor;
+	private final AmidstVersion version;
 
 	public UpdateInformationRetriever(AmidstMetaData metadata)
 			throws MalformedURLException, SAXException, IOException,
@@ -34,9 +31,7 @@ public class UpdateInformationRetriever {
 		this.metadata = metadata;
 		Document document = getDocument();
 		updateURL = getUpdateURL(document);
-		int[] versionNumbers = getVersionNumbers(document);
-		major = versionNumbers[MAJOR_INDEX];
-		minor = versionNumbers[MINOR_INDEX];
+		version = getVersionNumbers(document);
 	}
 
 	private Document getDocument() throws MalformedURLException, SAXException,
@@ -52,48 +47,40 @@ public class UpdateInformationRetriever {
 		return document.getFirstChild().getAttributes().item(0).getNodeValue();
 	}
 
-	private int[] getVersionNumbers(Document document) {
+	private AmidstVersion getVersionNumbers(Document document) {
 		NodeList version = document.getDocumentElement()
 				.getElementsByTagName("version").item(0).getChildNodes();
-		int[] result = new int[] { -1, -1 };
+		int major = -1;
+		int minor = -1;
 		for (int i = 0; i < version.getLength(); i++) {
 			Node node = version.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				if (node.getNodeName().equalsIgnoreCase("major")) {
-					result[MAJOR_INDEX] = getVersionNumber(node);
+					major = getVersionNumber(node);
 				} else if (node.getNodeName().equalsIgnoreCase("minor")) {
-					result[MINOR_INDEX] = getVersionNumber(node);
+					minor = getVersionNumber(node);
 				}
 			}
 		}
-		if (result[MAJOR_INDEX] == -1 || result[MINOR_INDEX] == -1) {
+		if (major == -1 || minor == -1) {
 			throw new RuntimeException("Error parsing version numbers.");
 		}
-		return result;
+		return new AmidstVersion(major, minor);
 	}
 
 	private int getVersionNumber(Node node) {
 		return Integer.parseInt(node.getAttributes().item(0).getNodeValue());
 	}
 
-	public boolean isNewMajorVersionAvailable() {
-		return major > metadata.getMajorVersion();
-	}
-
-	public boolean isNewMinorVersionAvailable() {
-		return major == metadata.getMajorVersion()
-				&& minor > metadata.getMinorVersion();
-	}
-
 	public String getUpdateURL() {
 		return updateURL;
 	}
 
-	public int getMajor() {
-		return major;
+	public boolean isNewMajorVersionAvailable() {
+		return version.isNewerMajorVersionThan(metadata.getVersion());
 	}
 
-	public int getMinor() {
-		return minor;
+	public boolean isNewMinorVersionAvailable() {
+		return version.isNewerMinorVersionThan(metadata.getVersion());
 	}
 }
