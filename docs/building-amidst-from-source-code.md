@@ -1,5 +1,5 @@
-Building Amidst
-=====
+Building Amidst from Source Code
+================================
 
 The build process is configured via the file `src/main/resources/amidst/metadata.properties`. For example the `<filename>` is taken from the variable `amidst.build.filename`.
 
