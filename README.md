@@ -102,4 +102,4 @@ Legal information
 Amidst is not owned by or related to Mojang in any way.
 
 Amidst comes with ABSOLUTELY NO WARRANTY. It is free and open source software, license under the GPLv3, 
-[see the license text](https://github.com/toolbox4minecraft/amidst/blob/master/LICENSE.txt). You are welcome to redistribute it under certain conditions.
+[see the license text](https://github.com/toolbox4minecraft/amidst/blob/master/LICENSE.txt).

@@ -1,4 +1,4 @@
-Releaseing Amidst
+Releasing Amidst
 =================
 
 To release Amidst, follow these steps:
