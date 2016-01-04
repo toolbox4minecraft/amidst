@@ -1,7 +1,7 @@
 Amidst
 ======
 
-[![Build Status](https://travis-ci.org/toolbox4minecraft/amidst.svg)](https://travis-ci.org/toolbox4minecraft/amidst)
+[![Build Status](https://travis-ci.org/toolbox4minecraft/amidst.svg?branch=master)](https://travis-ci.org/toolbox4minecraft/amidst)
 
 Advanced Minecraft Interface and Data/Structure Tracking
 
