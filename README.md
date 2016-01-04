@@ -70,6 +70,13 @@ System Requirements
 Operating System: Any
 Java Version: min 8
 
+Running Amidst
+--------------
+
+Most users should be able to simply start Amidst like any other application. However, here is the command to execute the jar file:
+
+	java -jar <filename>
+
 Information for Developers
 --------------------------
 
