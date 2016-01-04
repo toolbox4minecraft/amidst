@@ -1,14 +1,14 @@
 Amidst
 ======
 
-[![Build Status](https://travis-ci.org/stefandollase/amidst.svg)](https://travis-ci.org/stefandollase/amidst)
+[![Build Status](https://travis-ci.org/toolbox4minecraft/amidst.svg)](https://travis-ci.org/toolbox4minecraft/amidst)
 
 Advanced Minecraft Interface and Data/Structure Tracking
 
 Where can I get Amidst?
 -----------------------
 
-You can download Amidst [here](https://github.com/skiphs/amidst/releases/latest). If you find any bugs, please [report](https://github.com/skiphs/amidst/issues/new) them so we can fix them. If you want to request a feature, you can to this [here](https://github.com/skiphs/amidst/issues/new). If you want to help develop Amidst, please get in contact [here](https://github.com/skiphs/amidst/issues/new). Lastly, [here](https://github.com/stefandollase/amidst/blob/refactoring/docs/BUILDING.md) is a description how you can build Amidst by yourself.
+You can download Amidst [here](https://github.com/toolbox4minecraft/amidst/releases/latest). If you find any bugs, please [report](https://github.com/toolbox4minecraft/amidst/issues/new) them so we can fix them. If you want to request a feature, you can to this [here](https://github.com/toolbox4minecraft/amidst/issues/new). If you want to help develop Amidst, please get in contact [here](https://github.com/toolbox4minecraft/amidst/issues/new). Lastly, [here](https://github.com/toolbox4minecraft/amidst/blob/refactoring/docs/BUILDING.md) is a description how you can build Amidst by yourself.
 
 What is Amidst?
 ---------------
@@ -50,7 +50,7 @@ More features include:
 Which Minecraft versions are supported?
 ---------------------------------------
 
-We support Minecraft versions from 1.0 up to the latest snapshot. If you find an issue with a specific Minecraft version, [please report it](https://github.com/skiphs/amidst/issues/new).
+We support Minecraft versions from 1.0 up to the latest snapshot. If you find an issue with a specific Minecraft version, [please report it](https://github.com/toolbox4minecraft/amidst/issues/new).
 
 How can I move a player?
 ------------------------
@@ -77,22 +77,19 @@ If the `players` and the `playerdata` directory exist, we will simply ignore the
 
 **tl;dr** If you use the world just as a singleplayer world, simply choose Singleplayer.
 
-What is the internet used for?
--------------------
+What is my internet connection used for?
+----------------------------------------
 
-* Amidst v3.7 was the last version that used google analytics, so we do no longer track you
-* Amidst will check for updates on every start
-* Amidst will use web services provided by mojang, e.g. to
-  * display information about minecraft versions
+* Amidst will use web services provided by Mojang, e.g. to
+  * display information about Minecraft versions
   * display information about players like the name or the skin
+* Amidst will check for updates on every start
+* Amidst will not track you with Google Analytics (this was the case up to version v3.7)
 
-General information
--------------------
+Legal information
+-----------------
 
-Amidst is not owned by or related to mojang in any way.
+Amidst is not owned by or related to Mojang in any way.
 
-License and warranty
---------------------
-
-Amidst comes with ABSOLUTELY NO WARRANTY. It is free and open source software, license under the
-[GPL v3](https://github.com/skiphs/amidst/blob/master/LICENSE.txt), and you are welcome to redistribute it under certain conditions.
+Amidst comes with ABSOLUTELY NO WARRANTY. It is free and open source software, license under the GPLv3, 
+[see the license text](https://github.com/toolbox4minecraft/amidst/blob/master/LICENSE.txt). You are welcome to redistribute it under certain conditions.
