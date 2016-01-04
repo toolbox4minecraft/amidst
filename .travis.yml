@@ -17,7 +17,7 @@ before_deploy:
 - export filename=$(bash travis-ci/scripts/get-amidst-filename.sh)
 deploy:
   provider: releases
-  api-key:
+  api-key: # this encrypted token is only readable by travis ci to access the github accout to attach the files to the created tag/release
     secure: QMXa1QpW+mlTLlxCbKOAWIRUi2cR+Y2vMQDlwiV8BoUyZchvTBR+stDYuEdxd2fK8/aSRUWEgfUhKMJ4cIZEOOwz/UA/1RQmzumbFLexwTwDXfkTfCcDQFLtzywVoep2P3s1lpheo4f1G3z2sZTCxO5yRnpd/sBtWnaq3j5uifYZB+mv84eH+EsrQL7f+0KjycOPrAdiJ8xh/2twUtGMhaStrnhcH+RCi6qm6D5Dv4mwYM4wRxG3H9i2NceGa6lHIE4bU+kKY9lc3V6EzmTnnShwEcrf+4/ZfCe4A9aU3jzFhKCHKpJ4PlqLEtMeQ08ijaMrF4LaBqwRZ5il5nqKkFdfKOtx7EHqjxrQ1dT7JUXU/3lTfEX/DLbhPa3z5Tl9LgCu9flCS+ltQoPvx7MR1leaQeHNoFCfzWJQ8ytW2CEhnOqx3nr4AIW8q5akJxQB7USfHV5F8kw2T6QmzuniQRZex+15j9SLedaDXZCvno6C0+j59sABpiF9lRVww8jW6BxqklxDcjEtkMxyHiBCG0EgGlKJvVSyGGzDsjb8FweC1KQKBHuG+5UYNE1rJesj6rwfIIrbInjJRTPndb4GpuzzbqbTGxwHd2zqzkQhnxSjCoKIzyhpBzfyCJaqTv/DfimSc95sXH1w1d6zfcO01MkopXYUSlHvr/Rjxh8vE8U=
   file:
   - "target/${filename}.jar"
@@ -25,5 +25,6 @@ deploy:
   - "target/${filename}.exe"
   skip_cleanup: true
   on:
-    repo: stefandollase/amidst
+    repo: toolbox4minecraft/amidst
+    branch: releases
     tags: true
