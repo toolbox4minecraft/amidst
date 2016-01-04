@@ -13,6 +13,7 @@ This repository is [not yet in a stable state](https://github.com/toolbox4minecr
 * [Report a Bug                    ](https://github.com/toolbox4minecraft/amidst/issues/new) (please report bugs, so we can fix them)
 * [Request a New Feature           ](https://github.com/toolbox4minecraft/amidst/issues/new)
 * [Getting Involved                ](https://github.com/toolbox4minecraft/amidst/wiki/Getting-Involved)
+* [Minecraft Forum Thread          ](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-tools/1262200-v3-7-amidst-strongholds-village-biome-etc-finder)
 
 Legal Information
 -----------------
