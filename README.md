@@ -5,10 +5,13 @@ Amidst
 
 Advanced Minecraft Interface and Data/Structure Tracking
 
-Where can I get Amidst?
------------------------
+Important Links
+---------------
 
-You can download Amidst [here](https://github.com/toolbox4minecraft/amidst/releases/latest). If you find any bugs, please [report](https://github.com/toolbox4minecraft/amidst/issues/new) them so we can fix them. If you want to request a feature, you can to this [here](https://github.com/toolbox4minecraft/amidst/issues/new). If you want to help develop Amidst, please get in contact [here](https://github.com/toolbox4minecraft/amidst/issues/new). Lastly, [here](https://github.com/toolbox4minecraft/amidst/blob/refactoring/docs/building-amidst-from-source-code.md) is a description how you can build Amidst by yourself.
+* [Download Current Version](https://github.com/toolbox4minecraft/amidst/releases)
+* [Download Old Version](https://github.com/skiphs/amidst/releases)
+* [Report a Bug](https://github.com/toolbox4minecraft/amidst/issues/new) (please report bugs, so we can fix them)
+* [Request a New Feature](https://github.com/toolbox4minecraft/amidst/issues/new)
 
 What is Amidst?
 ---------------
@@ -66,6 +69,12 @@ System Requirements
 
 Operating System: Any
 Java Version: min 8
+
+Information for Developers
+--------------------------
+
+* [Get Involved](https://github.com/toolbox4minecraft/amidst/issues/new)
+* [Building Amidst from Source Code](https://github.com/toolbox4minecraft/amidst/blob/refactoring/docs/building-amidst-from-source-code.md)
 
 Current State of Amidst
 -----------------------
