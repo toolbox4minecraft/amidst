@@ -3,10 +3,12 @@ package amidst.settings;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.prefs.Preferences;
 
 import javax.swing.JToggleButton.ToggleButtonModel;
 
+import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
 
 @ThreadSafe
@@ -43,7 +45,7 @@ public class MultipleStringsSetting extends SettingBase<String> {
 	private final Iterable<SelectButtonModel> buttonModels;
 
 	public MultipleStringsSetting(Preferences preferences, String key,
-			String defaultValue, String[] values) {
+			@NotNull String defaultValue, String[] values) {
 		super(preferences, key);
 		this.buttonModels = createButtonModels(values);
 		restore(defaultValue);
@@ -53,6 +55,7 @@ public class MultipleStringsSetting extends SettingBase<String> {
 		List<SelectButtonModel> result = new ArrayList<SelectButtonModel>(
 				values.length);
 		for (String value : values) {
+			Objects.requireNonNull(value);
 			result.add(new SelectButtonModel(value));
 		}
 		return Collections.unmodifiableList(result);

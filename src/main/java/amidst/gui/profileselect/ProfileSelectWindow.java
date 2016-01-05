@@ -131,8 +131,10 @@ public class ProfileSelectWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void restoreSelection() {
 		String profileName = settings.lastProfile.get();
-		if (profileName != null) {
+		if (profileName != null && !profileName.isEmpty()) {
 			profileSelectPanel.select(profileName);
+		} else {
+			profileSelectPanel.selectFirst();
 		}
 	}
 

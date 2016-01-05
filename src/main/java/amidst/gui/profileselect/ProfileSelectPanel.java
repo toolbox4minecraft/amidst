@@ -176,6 +176,11 @@ public class ProfileSelectPanel {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	public void selectFirst() {
+		select(0);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void select(String profileName) {
 		select(getIndex(profileName));
 	}

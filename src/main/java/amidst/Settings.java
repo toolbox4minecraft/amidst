@@ -54,7 +54,7 @@ public class Settings {
 		showScale                  = new BooleanSetting(        preferences, "showScale",           true);
 		showDebug                  = new BooleanSetting(        preferences, "showDebug",           false);
 		updateToUnstable           = new BooleanSetting(        preferences, "updateToUnstable",    false);
-		lastProfile                = new StringSetting(         preferences, "profile",             null);
+		lastProfile                = new StringSetting(         preferences, "profile",             "");
 		worldType                  = new MultipleStringsSetting(preferences, "worldType",           WorldType.PROMPT_EACH_TIME, WorldType.getWorldTypeSettingAvailableValues());
 		biomeColorProfileSelection = new BiomeColorProfileSelection(BiomeColorProfile.getDefaultProfile());
 		// @formatter:on
