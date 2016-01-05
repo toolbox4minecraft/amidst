@@ -42,7 +42,6 @@ public class MainWindow {
 	private final MojangApi mojangApi;
 	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
 	private final ThreadMaster threadMaster;
-	private final UpdatePrompt updatePrompt;
 
 	private final JFrame frame;
 	private final Container contentPane;
@@ -62,7 +61,6 @@ public class MainWindow {
 		this.mojangApi = mojangApi;
 		this.worldSurroundingsBuilder = worldSurroundingsBuilder;
 		this.threadMaster = threadMaster;
-		this.updatePrompt = createUpdatePrompt();
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
 		this.actions = createActions();
@@ -70,14 +68,7 @@ public class MainWindow {
 		initKeyListener();
 		initCloseListener();
 		showFrame();
-		checkForUpdates();
 		clearWorldSurroundings();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private UpdatePrompt createUpdatePrompt() {
-		return new UpdatePrompt(metadata, this,
-				threadMaster.getWorkerExecutor());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -93,8 +84,9 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private String createVersionString(String versionId,
 			String recognisedVersionName) {
-		return metadata.getMainWindowTitle() + " - Minecraft Version "
-				+ versionId + " (" + recognisedVersionName + ")";
+		return "Amidst " + metadata.getVersion().createVersionString()
+				+ " - Minecraft Version " + versionId + " ("
+				+ recognisedVersionName + ")";
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -107,7 +99,7 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Actions createActions() {
 		return new Actions(application, mojangApi, this, worldSurroundings,
-				updatePrompt, settings.biomeColorProfileSelection,
+				settings.biomeColorProfileSelection,
 				threadMaster.getWorkerExecutor());
 	}
 
@@ -146,11 +138,6 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void showFrame() {
 		frame.setVisible(true);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void checkForUpdates() {
-		updatePrompt.checkSilently();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

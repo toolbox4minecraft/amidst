@@ -2,17 +2,19 @@ package amidst.gui.main;
 
 import java.awt.Desktop;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-import javax.xml.parsers.ParserConfigurationException;
+import javax.swing.JOptionPane;
 
-import org.xml.sax.SAXException;
-
-import amidst.AmidstMetaData;
+import amidst.AmidstVersion;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotNull;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.Log;
 import amidst.threading.SimpleWorker;
@@ -20,90 +22,167 @@ import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
 public class UpdatePrompt {
-	private final AmidstMetaData metadata;
-	private final MainWindow mainWindow;
-	private final WorkerExecutor workerExecutor;
-
 	@CalledOnlyBy(AmidstThread.EDT)
-	public UpdatePrompt(AmidstMetaData metadata, MainWindow mainWindow,
-			WorkerExecutor workerExecutor) {
-		this.metadata = metadata;
-		this.mainWindow = mainWindow;
-		this.workerExecutor = workerExecutor;
+	@NotNull
+	public static UpdatePrompt from(AmidstVersion currentVersion,
+			WorkerExecutor workerExecutor, MainWindow mainWindow, boolean silent) {
+		// @formatter:off
+		if (mainWindow != null) {
+			if (silent) {
+				return new UpdatePrompt(currentVersion, workerExecutor,
+						NOOP_CONSUMER, NOOP,
+						message   -> mainWindow.askToConfirm(TITLE, message));
+			} else {
+				return new UpdatePrompt(currentVersion, workerExecutor,
+						exception -> mainWindow.displayException(exception),
+						()        -> mainWindow.displayMessage(TITLE, NO_UPDATES_AVAILABLE),
+						message   -> mainWindow.askToConfirm(TITLE, message));
+			}
+		} else {
+			if (silent) {
+				return new UpdatePrompt(currentVersion, workerExecutor,
+						NOOP_CONSUMER, NOOP,
+						message   -> askToConfirmDirectly(message));
+			} else {
+				return new UpdatePrompt(currentVersion, workerExecutor,
+						exception -> displayExceptionDirectly(exception),
+						()        -> displayMessageDirectly(NO_UPDATES_AVAILABLE),
+						message   -> askToConfirmDirectly(message));
+			}
+		}
+		// @formatter:on
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void checkSilently() {
-		check(true);
+	private static void displayExceptionDirectly(Exception exception) {
+		JOptionPane.showMessageDialog(null, getStackTraceAsString(exception),
+				TITLE, JOptionPane.ERROR_MESSAGE);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private static String getStackTraceAsString(Exception exception) {
+		StringWriter writer = new StringWriter();
+		exception.printStackTrace(new PrintWriter(writer));
+		return writer.toString();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private static void displayMessageDirectly(String message) {
+		JOptionPane.showMessageDialog(null, message, TITLE,
+				JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private static boolean askToConfirmDirectly(String message) {
+		return JOptionPane.showConfirmDialog(null, message, TITLE,
+				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+	}
+
+	private static final String TITLE = "Amidst Updater";
+	private static final String NO_UPDATES_AVAILABLE = "There are no updates available.";
+
+	private static final Runnable NOOP = () -> {
+	};
+	private static final Consumer<Exception> NOOP_CONSUMER = e -> {
+	};
+
+	private final AmidstVersion currentVersion;
+	private final WorkerExecutor workerExecutor;
+	private final Consumer<Exception> exceptionConsumer;
+	private final Runnable noUpdatesDisplayer;
+	private final Function<String, Boolean> updateConfirmer;
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public UpdatePrompt(AmidstVersion currentVersion,
+			WorkerExecutor workerExecutor,
+			Consumer<Exception> exceptionConsumer, Runnable noUpdatesDisplayer,
+			Function<String, Boolean> updateConfirmer) {
+		this.currentVersion = currentVersion;
+		this.workerExecutor = workerExecutor;
+		this.exceptionConsumer = exceptionConsumer;
+		this.noUpdatesDisplayer = noUpdatesDisplayer;
+		this.updateConfirmer = updateConfirmer;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void check() {
-		check(false);
+		workerExecutor.invokeLater(new SimpleWorker<UpdateInformationJson>() {
+			@Override
+			protected UpdateInformationJson main() throws IOException {
+				return UpdateInformationRetriever.retrieve();
+			}
+
+			@Override
+			protected void onMainFinished(
+					UpdateInformationJson updateInformation) {
+				displayResult(updateInformation);
+			}
+
+			@Override
+			protected void onMainFinishedWithException(Exception e) {
+				Log.w("unable to check for updates");
+				displayError(e);
+			}
+		});
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void check(final boolean silent) {
-		workerExecutor
-				.invokeLater(new SimpleWorker<UpdateInformationRetriever>() {
-					@Override
-					protected UpdateInformationRetriever main()
-							throws MalformedURLException, SAXException,
-							IOException, ParserConfigurationException,
-							RuntimeException {
-						return new UpdateInformationRetriever(metadata);
-					}
-
-					@Override
-					protected void onMainFinished(
-							UpdateInformationRetriever retriever) {
-						displayResult(silent, retriever);
-					}
-
-					@Override
-					protected void onMainFinishedWithException(Exception e) {
-						Log.w("unable to check for updates");
-						displayError(silent, e);
-					}
-				});
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void displayError(boolean silent, Exception e) {
+	private void displayError(Exception e) {
 		e.printStackTrace();
-		if (!silent) {
-			mainWindow.displayException(e);
-		}
+		exceptionConsumer.accept(e);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void displayResult(boolean silent,
-			UpdateInformationRetriever retriever) {
-		if (getUserChoice(retriever, silent)) {
+	private void displayResult(UpdateInformationJson updateInformation) {
+		if (getUserChoice(updateInformation)) {
 			try {
-				openURL(new URI(retriever.getUpdateURL()));
+				openURL(new URI(updateInformation.getDownloadUrl()));
 			} catch (IOException | UnsupportedOperationException
 					| URISyntaxException e) {
-				displayError(silent, e);
+				displayError(e);
 			}
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private boolean getUserChoice(UpdateInformationRetriever retriever,
-			boolean silent) {
-		if (retriever.isNewMajorVersionAvailable()) {
-			return mainWindow.askToConfirm("Update Found",
-					"A new version was found. Would you like to update?");
-		} else if (retriever.isNewMinorVersionAvailable()) {
-			return mainWindow.askToConfirm("Update Found",
-					"A minor revision was found. Update?");
-		} else if (silent) {
-			return false;
+	private boolean getUserChoice(UpdateInformationJson updateInformation) {
+		AmidstVersion newVersion = updateInformation.createAmidstVersion();
+		String message = updateInformation.getMessage();
+		if (newVersion.isNewerMajorVersionThan(currentVersion)) {
+			return askToConfirm(createMessage(message, newVersion, "major"));
+		} else if (newVersion.isNewerMinorVersionThan(currentVersion)) {
+			return askToConfirm(createMessage(message, newVersion, "minor"));
+		} else if (newVersion
+				.isSameVersionButOldPreReleaseAndNewStable(currentVersion)) {
+			return askToConfirm(createMessage(message, newVersion, "stable"));
 		} else {
-			mainWindow.displayMessage("Updater", "There are no new updates.");
+			noUpdatesDisplayer.run();
 			return false;
 		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private String createMessage(String message, AmidstVersion newVersion,
+			String versionType) {
+		return "A new " + versionType + " version of Amidst is available:\n"
+				+ "Current Version: " + currentVersion.createVersionString()
+				+ "\n" + "New Version: " + newVersion.createVersionString()
+				+ "\n" + "Do you want to upgrade?"
+				+ createMessageSuffix(message);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private String createMessageSuffix(String message) {
+		if (message != null && !message.isEmpty()) {
+			return "\n\n" + message;
+		} else {
+			return "";
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private boolean askToConfirm(String message) {
+		return updateConfirmer.apply(message);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
