@@ -18,6 +18,7 @@ import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreation
 import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.player.PlayerInformationCache;
+import amidst.settings.biomecolorprofile.BiomeColorProfileDirectory;
 import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
@@ -26,6 +27,7 @@ public class Application {
 	private final AmidstMetaData metadata;
 	private final Settings settings;
 	private final MojangApi mojangApi;
+	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
 	private final ViewerFacadeBuilder viewerFacadeBuilder;
 	private final ThreadMaster threadMaster;
 
@@ -40,6 +42,7 @@ public class Application {
 		this.metadata = createMetadata();
 		this.settings = createSettings();
 		this.mojangApi = createMojangApi();
+		this.biomeColorProfileDirectory = createBiomeColorProfileDirectory();
 		this.viewerFacadeBuilder = createViewerFacadeBuilder();
 		this.threadMaster = createThreadMaster();
 	}
@@ -64,6 +67,12 @@ public class Application {
 						parameters.historyPath)), parameters.minecraftPath,
 				parameters.minecraftLibraries, parameters.minecraftJar,
 				parameters.minecraftJson).construct();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private BiomeColorProfileDirectory createBiomeColorProfileDirectory() {
+		return BiomeColorProfileDirectory
+				.create(parameters.biomeColorProfileDirectory);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -101,7 +110,7 @@ public class Application {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayMainWindow() {
 		setMainWindow(new MainWindow(this, metadata, settings, mojangApi,
-				viewerFacadeBuilder, threadMaster));
+				biomeColorProfileDirectory, viewerFacadeBuilder, threadMaster));
 		setProfileSelectWindow(null);
 	}
 

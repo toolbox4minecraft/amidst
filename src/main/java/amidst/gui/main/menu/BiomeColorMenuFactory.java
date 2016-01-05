@@ -16,7 +16,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
 import amidst.logging.Log;
 import amidst.settings.biomecolorprofile.BiomeColorProfile;
-import amidst.settings.biomecolorprofile.BiomeColorProfileLoader;
+import amidst.settings.biomecolorprofile.BiomeColorProfileDirectory;
 import amidst.settings.biomecolorprofile.BiomeColorProfileVisitor;
 
 @NotThreadSafe
@@ -114,10 +114,12 @@ public class BiomeColorMenuFactory {
 
 	private final JMenu parentMenu = new JMenu("Biome color profile");
 	private final Actions actions;
-	private final BiomeColorProfileLoader biomeColorProfileLoader = new BiomeColorProfileLoader();
+	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
 
-	public BiomeColorMenuFactory(Actions actions) {
+	public BiomeColorMenuFactory(Actions actions,
+			BiomeColorProfileDirectory biomeColorProfileDirectory) {
 		this.actions = actions;
+		this.biomeColorProfileDirectory = biomeColorProfileDirectory;
 		Log.i("Checking for additional biome color profiles.");
 		initParentMenu();
 	}
@@ -128,10 +130,10 @@ public class BiomeColorMenuFactory {
 
 	private void initParentMenu() {
 		parentMenu.removeAll();
-		BiomeColorProfile.saveDefaultProfileIfNecessary();
+		biomeColorProfileDirectory.saveDefaultProfileIfNecessary();
 		BiomeColorProfileVisitorImpl visitor = new BiomeColorProfileVisitorImpl(
 				parentMenu, actions);
-		biomeColorProfileLoader.visitProfiles(visitor);
+		biomeColorProfileDirectory.visitProfiles(visitor);
 		parentMenu.add(createReloadMenuItem());
 		visitor.selectFirstProfile();
 	}

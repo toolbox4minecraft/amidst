@@ -27,4 +27,7 @@ public class CommandLineParameters {
 
 	@Option(name = "-mclibs", usage = "Sets the path to the libraries/ folder", metaVar = "<path>")
 	public volatile String minecraftLibraries;
+
+	@Option(name = "-biomeColorProfiles", usage = "Sets the path to the biome color profiles directory", metaVar = "<path>")
+	public volatile String biomeColorProfileDirectory;
 }
