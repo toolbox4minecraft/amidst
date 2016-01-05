@@ -2,12 +2,13 @@ package amidst.settings;
 
 import java.util.prefs.Preferences;
 
+import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
 
 @ThreadSafe
 public class StringSetting extends SettingBase<String> {
 	public StringSetting(Preferences preferences, String key,
-			String defaultValue) {
+			@NotNull String defaultValue) {
 		super(preferences, key);
 		restore(defaultValue);
 	}

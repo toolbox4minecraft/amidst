@@ -1,7 +1,9 @@
 package amidst.settings;
 
+import java.util.Objects;
 import java.util.prefs.Preferences;
 
+import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
 
 @ThreadSafe
@@ -15,7 +17,8 @@ public abstract class SettingBase<T> implements Setting<T> {
 		this.key = key;
 	}
 
-	protected void restore(T defaultValue) {
+	protected void restore(@NotNull T defaultValue) {
+		Objects.requireNonNull(defaultValue);
 		set(getInitialValue(defaultValue));
 	}
 
@@ -30,12 +33,14 @@ public abstract class SettingBase<T> implements Setting<T> {
 	}
 
 	@Override
-	public synchronized void set(T value) {
+	public synchronized void set(@NotNull T value) {
+		Objects.requireNonNull(value);
 		this.value = value;
 		update(value);
 	}
 
-	protected abstract T getInitialValue(T defaultValue);
+	@NotNull
+	protected abstract T getInitialValue(@NotNull T defaultValue);
 
-	protected abstract void update(T value);
+	protected abstract void update(@NotNull T value);
 }
