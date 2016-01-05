@@ -12,6 +12,7 @@ import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -28,19 +29,17 @@ public class MojangApi {
 
 	private final WorldBuilder worldBuilder;
 	private final DotMinecraftDirectory dotMinecraftDirectory;
-	private final VersionListJson versionList;
 	private final File preferedJson;
 
+	private volatile VersionListJson versionList;
 	private volatile ProfileDirectory profileDirectory;
 	private volatile VersionDirectory versionDirectory;
 	private volatile MinecraftInterface minecraftInterface;
 
 	public MojangApi(WorldBuilder worldBuilder,
-			DotMinecraftDirectory dotMinecraftDirectory,
-			@NotNull VersionListJson versionList, File preferedJson) {
+			DotMinecraftDirectory dotMinecraftDirectory, File preferedJson) {
 		this.worldBuilder = worldBuilder;
 		this.dotMinecraftDirectory = dotMinecraftDirectory;
-		this.versionList = versionList;
 		this.preferedJson = preferedJson;
 	}
 
@@ -49,7 +48,17 @@ public class MojangApi {
 	}
 
 	@NotNull
-	public VersionListJson getVersionList() {
+	public VersionListJson getVersionList() throws FileNotFoundException {
+		VersionListJson versionList = this.versionList;
+		if (versionList == null) {
+			synchronized (this) {
+				versionList = this.versionList;
+				if (versionList == null) {
+					versionList = JsonReader.readRemoteOrLocalVersionList();
+					this.versionList = versionList;
+				}
+			}
+		}
 		return versionList;
 	}
 
