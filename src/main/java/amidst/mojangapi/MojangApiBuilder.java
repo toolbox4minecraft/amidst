@@ -9,8 +9,6 @@ import amidst.mojangapi.file.DotMinecraftDirectoryFinder;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
-import amidst.mojangapi.file.json.JsonReader;
-import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.WorldBuilder;
 
@@ -42,7 +40,7 @@ public class MojangApiBuilder {
 							+ dotMinecraftDirectory.getRoot());
 		}
 		MojangApi result = new MojangApi(worldBuilder, dotMinecraftDirectory,
-				readRemoteOrLocalVersionList(), createPreferedJson());
+				createPreferedJson());
 		result.set(createProfileDirectory(), createVersionDirectory(result));
 		return result;
 	}
@@ -59,12 +57,6 @@ public class MojangApiBuilder {
 					DotMinecraftDirectoryFinder
 							.find(preferedDotMinecraftDirectory));
 		}
-	}
-
-	@NotNull
-	private VersionListJson readRemoteOrLocalVersionList()
-			throws FileNotFoundException {
-		return JsonReader.readRemoteOrLocalVersionList();
 	}
 
 	private File createPreferedJson() {
