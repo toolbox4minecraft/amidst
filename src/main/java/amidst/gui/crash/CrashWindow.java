@@ -48,6 +48,7 @@ public class CrashWindow {
 
 	private JTextArea createLogMessagesTextArea(String logMessages) {
 		JTextArea result = new JTextArea(logMessages);
+		result.setEditable(false);
 		result.setFont(new Font("arial", Font.PLAIN, 10));
 		return result;
 	}
