@@ -13,11 +13,49 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 @Immutable
-public class BiomeColorProfileLoader {
+public class BiomeColorProfileDirectory {
+	public static BiomeColorProfileDirectory create(String root) {
+		if (root != null) {
+			return new BiomeColorProfileDirectory(new File(root));
+		} else {
+			return new BiomeColorProfileDirectory(DEFAULT_ROOT_DIRECTORY);
+		}
+	}
+
+	private static final File DEFAULT_ROOT_DIRECTORY = new File(
+			"biome-color-profiles");
 	private static final Gson GSON = new Gson();
 
+	private final File root;
+	private final File defaultProfile;
+
+	public BiomeColorProfileDirectory(File root) {
+		this.root = root;
+		this.defaultProfile = new File(root, "default.json");
+	}
+
+	public boolean isValid() {
+		return root.isDirectory();
+	}
+
+	public void saveDefaultProfileIfNecessary() {
+		if (!isValid()) {
+			Log.i("Unable to find biome color profile directory.");
+		} else {
+			Log.i("Found biome color profile directory.");
+			if (defaultProfile.isFile()) {
+				Log.i("Found default biome color profile.");
+			} else if (BiomeColorProfile.getDefaultProfile().save(
+					defaultProfile)) {
+				Log.i("Saved default biome color profile.");
+			} else {
+				Log.i("Attempted to save default biome color profile, but encountered an error.");
+			}
+		}
+	}
+
 	public void visitProfiles(BiomeColorProfileVisitor visitor) {
-		visitProfiles(BiomeColorProfile.PROFILE_DIRECTORY, visitor);
+		visitProfiles(root, visitor);
 	}
 
 	private void visitProfiles(File directory, BiomeColorProfileVisitor visitor) {
@@ -46,8 +84,12 @@ public class BiomeColorProfileLoader {
 		if (file.exists() && file.isFile()) {
 			try {
 				profile = readProfile(file);
+				if (profile == null) {
+					throw new NullPointerException();
+				}
 				profile.validate();
-			} catch (JsonSyntaxException | JsonIOException | IOException e) {
+			} catch (JsonSyntaxException | JsonIOException | IOException
+					| NullPointerException e) {
 				Log.w("Unable to load file: " + file);
 				e.printStackTrace();
 			}

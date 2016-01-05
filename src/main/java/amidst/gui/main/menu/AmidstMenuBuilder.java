@@ -19,20 +19,23 @@ import amidst.Settings;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
 import amidst.settings.MultipleStringsSetting.SelectButtonModel;
-import amidst.settings.biomecolorprofile.BiomeColorProfile;
+import amidst.settings.biomecolorprofile.BiomeColorProfileDirectory;
 
 @NotThreadSafe
 public class AmidstMenuBuilder {
 	private final Settings settings;
 	private final Actions actions;
+	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
 	private final JMenuBar menuBar;
 	private JMenu worldMenu;
 	private JMenuItem savePlayerLocationsMenu;
 	private JMenuItem reloadPlayerLocationsMenu;
 
-	public AmidstMenuBuilder(Settings settings, Actions actions) {
+	public AmidstMenuBuilder(Settings settings, Actions actions,
+			BiomeColorProfileDirectory biomeColorProfileDirectory) {
 		this.settings = settings;
 		this.actions = actions;
+		this.biomeColorProfileDirectory = biomeColorProfileDirectory;
 		this.menuBar = createMenuBar();
 	}
 
@@ -299,7 +302,7 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("Settings");
 		result.setMnemonic(KeyEvent.VK_S);
 		result.add(create_Settings_DefaultWorldType());
-		if (BiomeColorProfile.isEnabled()) {
+		if (biomeColorProfileDirectory.isValid()) {
 			result.add(create_Settings_BiomeColor());
 		}
 		result.addSeparator();
@@ -325,7 +328,8 @@ public class AmidstMenuBuilder {
 	}
 
 	private JMenu create_Settings_BiomeColor() {
-		return new BiomeColorMenuFactory(actions).getMenu();
+		return new BiomeColorMenuFactory(actions, biomeColorProfileDirectory)
+				.getMenu();
 	}
 
 	private JMenu create_Help() {

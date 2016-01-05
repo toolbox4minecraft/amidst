@@ -19,21 +19,6 @@ import amidst.mojangapi.world.biome.BiomeColor;
 
 @Immutable
 public class BiomeColorProfile {
-	public static void saveDefaultProfileIfNecessary() {
-		if (!isEnabled()) {
-			Log.i("Unable to find biome color profile directory.");
-		} else {
-			Log.i("Found biome color profile directory.");
-			if (DEFAULT_PROFILE_FILE.isFile()) {
-				Log.i("Found default biome color profile.");
-			} else if (DEFAULT_PROFILE.save(DEFAULT_PROFILE_FILE)) {
-				Log.i("Saved default biome color profile.");
-			} else {
-				Log.i("Attempted to save default biome color profile, but encountered an error.");
-			}
-		}
-	}
-
 	private static Map<String, BiomeColorJson> createDefaultColorMap() {
 		Map<String, BiomeColorJson> result = new HashMap<String, BiomeColorJson>();
 		for (Biome biome : Biome.allBiomes()) {
@@ -47,15 +32,8 @@ public class BiomeColorProfile {
 		return DEFAULT_PROFILE;
 	}
 
-	public static boolean isEnabled() {
-		return PROFILE_DIRECTORY.isDirectory();
-	}
-
 	private static final BiomeColorProfile DEFAULT_PROFILE = new BiomeColorProfile(
 			"default", null, createDefaultColorMap());
-	public static final File PROFILE_DIRECTORY = new File("./biome");
-	public static final File DEFAULT_PROFILE_FILE = new File(PROFILE_DIRECTORY,
-			"default.json");
 
 	private volatile String name;
 	private volatile String shortcut;
