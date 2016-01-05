@@ -10,24 +10,32 @@ import amidst.documentation.ThreadSafe;
  */
 @ThreadSafe
 public class CommandLineParameters {
-	@Option(name = "-history", usage = "Sets the path to seed history file.", metaVar = "<file>")
-	public volatile String historyPath;
+	// @formatter:off
+	@Option(name = "-mcpath",                 usage = "location of the '.minecraft' directory.",             metaVar = "<directory>")
+	public volatile String dotMinecraftDirectory;
 
-	@Option(name = "-log", usage = "Sets the path to logging file.", metaVar = "<file>")
-	public volatile String logPath;
+	@Option(name = "-mclibs",                 usage = "location of the '.minecraft/libraries' directory",    metaVar = "<directory>")
+	public volatile String minecraftLibrariesDirectory;
+	
+	@Option(name = "-mcjar",                  usage = "location of the minecraft jar file",                  metaVar = "<file>",       depends = { "-mcjson" })
+	public volatile String minecraftJarFile;
+	
+	@Option(name = "-mcjson",                 usage = "location of the minecraft json file",                 metaVar = "<file>",       depends = { "-mcjar" })
+	public volatile String minecraftJsonFile;
 
-	@Option(name = "-mcpath", usage = "Sets the path to the .minecraft directory.", metaVar = "<path>")
-	public volatile String minecraftPath;
+	@Option(name = "-biome-color-profiles",   usage = "location of the biome color profile directory",       metaVar = "<directory>")
+	public volatile String biomeColorProfilesDirectory;
 
-	@Option(name = "-mcjar", usage = "Sets the path to the minecraft .jar", metaVar = "<path>")
-	public volatile String minecraftJar;
+	@Option(name = "-history",                usage = "location of the seed history file",                   metaVar = "<file>")
+	public volatile String historyFile;
 
-	@Option(name = "-mcjson", usage = "Sets the path to the minecraft .json", metaVar = "<path>")
-	public volatile String minecraftJson;
+	@Option(name = "-log",                    usage = "location of the log file",                            metaVar = "<file>")
+	public volatile String logFile;
+	
+	@Option(name = "-help",                   usage = "print usage information")
+	public volatile boolean printHelp;
 
-	@Option(name = "-mclibs", usage = "Sets the path to the libraries/ folder", metaVar = "<path>")
-	public volatile String minecraftLibraries;
-
-	@Option(name = "-biomeColorProfiles", usage = "Sets the path to the biome color profiles directory", metaVar = "<path>")
-	public volatile String biomeColorProfileDirectory;
+	@Option(name = "-version",                usage = "print version")
+	public volatile boolean printVersion;
+	// @formatter:on
 }

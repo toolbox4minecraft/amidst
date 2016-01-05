@@ -35,7 +35,6 @@ public class DotMinecraftDirectory {
 
 	public boolean isValid() {
 		return root.isDirectory() && libraries.isDirectory()
-				&& saves.isDirectory() && versions.isDirectory()
 				&& launcherProfilesJson.isFile();
 	}
 

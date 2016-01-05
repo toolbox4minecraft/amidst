@@ -8,6 +8,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.ParserProperties;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
@@ -20,17 +21,11 @@ import amidst.logging.Log;
 @NotThreadSafe
 public class Amidst {
 	private static final String UNCAUGHT_EXCEPTION_ERROR_MESSAGE = "Amidst has encounted an uncaught exception on thread: ";
-	private static final String COMMAND_LINE_PARSING_ERROR_MESSAGE = "There was an issue parsing command line parameters.";
-	private static final CommandLineParameters PARAMETERS = new CommandLineParameters();
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
 	public static void main(String args[]) {
 		initUncaughtExceptionHandler();
-		parseCommandLineArguments(args);
-		initLogger();
-		initLookAndFeel();
-		setJava2DEnvironmentVariables();
-		startApplication();
+		parseCommandLineArgumentsAndRun(args);
 	}
 
 	private static void initUncaughtExceptionHandler() {
@@ -42,20 +37,66 @@ public class Amidst {
 		});
 	}
 
-	private static void parseCommandLineArguments(String[] args) {
+	private static void parseCommandLineArgumentsAndRun(String[] args) {
+		AmidstMetaData metadata = createMetadata();
+		CommandLineParameters parameters = new CommandLineParameters();
+		CmdLineParser parser = new CmdLineParser(parameters, ParserProperties
+				.defaults().withShowDefaults(false).withUsageWidth(120)
+				.withOptionSorter(null));
 		try {
-			new CmdLineParser(PARAMETERS).parseArgument(args);
+			parser.parseArgument(args);
+			run(metadata, parameters, parser);
 		} catch (CmdLineException e) {
-			Log.w(COMMAND_LINE_PARSING_ERROR_MESSAGE);
-			e.printStackTrace();
+			printLongVersionString(metadata);
+			System.err.println(e.getMessage());
+			parser.printUsage(System.out);
+			System.exit(2);
 		}
 	}
 
-	private static void initLogger() {
-		if (PARAMETERS.logPath != null) {
-			Log.addListener("file",
-					new FileLogger(new File(PARAMETERS.logPath)));
+	private static AmidstMetaData createMetadata() {
+		return AmidstMetaData.from(
+				ResourceLoader.getProperties("/amidst/metadata.properties"),
+				ResourceLoader.getImage("/amidst/icon.png"));
+	}
+
+	private static void run(AmidstMetaData metadata,
+			CommandLineParameters parameters, CmdLineParser parser) {
+		initFileLogger(parameters.logFile);
+		if (parameters.printHelp) {
+			printLongVersionString(metadata);
+			parser.printUsage(System.out);
+		} else if (parameters.printVersion) {
+			printLongVersionString(metadata);
+		} else {
+			startApplication(parameters, metadata);
 		}
+	}
+
+	private static void printLongVersionString(AmidstMetaData metadata) {
+		System.out.println(metadata.getVersion().createLongVersionString());
+	}
+
+	private static void initFileLogger(String filename) {
+		if (filename != null) {
+			Log.addListener("file", new FileLogger(new File(filename)));
+		}
+	}
+
+	private static void startApplication(CommandLineParameters parameters,
+			AmidstMetaData metadata) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				initGui();
+				doStartApplication(parameters, metadata);
+			}
+		});
+	}
+
+	private static void initGui() {
+		initLookAndFeel();
+		setJava2DEnvironmentVariables();
 	}
 
 	private static void initLookAndFeel() {
@@ -79,19 +120,11 @@ public class Amidst {
 		System.setProperty("sun.java2d.accthreshold", "0");
 	}
 
-	private static void startApplication() {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				doStartApplication();
-			}
-		});
-	}
-
 	@CalledOnlyBy(AmidstThread.EDT)
-	private static void doStartApplication() {
+	private static void doStartApplication(CommandLineParameters parameters,
+			AmidstMetaData metadata) {
 		try {
-			new Application(PARAMETERS).run();
+			new Application(parameters, metadata).run();
 		} catch (Exception e) {
 			handleCrash(e, "Amidst crashed!");
 		}

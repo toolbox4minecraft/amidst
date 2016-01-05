@@ -29,7 +29,6 @@ public class MojangApi {
 
 	private final WorldBuilder worldBuilder;
 	private final DotMinecraftDirectory dotMinecraftDirectory;
-	private final File preferedJson;
 
 	private volatile VersionListJson versionList;
 	private volatile ProfileDirectory profileDirectory;
@@ -37,10 +36,9 @@ public class MojangApi {
 	private volatile MinecraftInterface minecraftInterface;
 
 	public MojangApi(WorldBuilder worldBuilder,
-			DotMinecraftDirectory dotMinecraftDirectory, File preferedJson) {
+			DotMinecraftDirectory dotMinecraftDirectory) {
 		this.worldBuilder = worldBuilder;
 		this.dotMinecraftDirectory = dotMinecraftDirectory;
-		this.preferedJson = preferedJson;
 	}
 
 	public DotMinecraftDirectory getDotMinecraftDirectory() {
@@ -93,13 +91,7 @@ public class MojangApi {
 
 	private VersionDirectory doCreateVersionDirectory(String versionId,
 			File jar, File json) {
-		if (preferedJson != null) {
-			return new VersionDirectory(dotMinecraftDirectory, versionId, jar,
-					preferedJson);
-		} else {
-			return new VersionDirectory(dotMinecraftDirectory, versionId, jar,
-					json);
-		}
+		return new VersionDirectory(dotMinecraftDirectory, versionId, jar, json);
 	}
 
 	public File getSaves() {

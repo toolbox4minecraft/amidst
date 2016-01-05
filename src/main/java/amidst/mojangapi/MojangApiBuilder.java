@@ -3,11 +3,12 @@ package amidst.mojangapi;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import amidst.CommandLineParameters;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
+import amidst.logging.Log;
 import amidst.mojangapi.file.DotMinecraftDirectoryFinder;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
-import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.WorldBuilder;
@@ -15,86 +16,66 @@ import amidst.mojangapi.world.WorldBuilder;
 @Immutable
 public class MojangApiBuilder {
 	private final WorldBuilder worldBuilder;
-	private final String preferedDotMinecraftDirectory;
-	private final String preferedLibraries;
-	private final String preferedVersionJar;
-	private final String preferedVersionJson;
+	private final CommandLineParameters parameters;
 
 	public MojangApiBuilder(WorldBuilder worldBuilder,
-			String preferedDotMinecraftDirectory, String preferedLibraries,
-			String preferedVersionJar, String preferedVersionJson) {
+			CommandLineParameters parameters) {
 		this.worldBuilder = worldBuilder;
-		this.preferedDotMinecraftDirectory = preferedDotMinecraftDirectory;
-		this.preferedLibraries = preferedLibraries;
-		this.preferedVersionJar = preferedVersionJar;
-		this.preferedVersionJson = preferedVersionJson;
+		this.parameters = parameters;
 	}
 
 	@NotNull
 	public MojangApi construct() throws FileNotFoundException,
 			LocalMinecraftInterfaceCreationException {
 		DotMinecraftDirectory dotMinecraftDirectory = createDotMinecraftDirectory();
-		if (!dotMinecraftDirectory.isValid()) {
+		if (dotMinecraftDirectory.isValid()) {
+			Log.i("using '.minecraft' directory at: '"
+					+ dotMinecraftDirectory.getRoot() + "', libraries: '"
+					+ dotMinecraftDirectory.getLibraries() + "'");
+		} else {
 			throw new FileNotFoundException(
-					"Unable to find valid minecraft directory at: "
-							+ dotMinecraftDirectory.getRoot());
+					"invalid '.minecraft' directory at: '"
+							+ dotMinecraftDirectory.getRoot()
+							+ "', libraries: '"
+							+ dotMinecraftDirectory.getLibraries() + "'");
 		}
-		MojangApi result = new MojangApi(worldBuilder, dotMinecraftDirectory,
-				createPreferedJson());
-		result.set(createProfileDirectory(), createVersionDirectory(result));
+		MojangApi result = new MojangApi(worldBuilder, dotMinecraftDirectory);
+		result.set(null, createVersionDirectory(result));
 		return result;
 	}
 
 	@NotNull
 	private DotMinecraftDirectory createDotMinecraftDirectory() {
-		if (preferedLibraries != null) {
-			return new DotMinecraftDirectory(
-					DotMinecraftDirectoryFinder
-							.find(preferedDotMinecraftDirectory),
-					new File(preferedLibraries));
+		File dotMinecraftDirectory = DotMinecraftDirectoryFinder
+				.find(parameters.dotMinecraftDirectory);
+		if (parameters.minecraftLibrariesDirectory != null) {
+			return new DotMinecraftDirectory(dotMinecraftDirectory, new File(
+					parameters.minecraftLibrariesDirectory));
 		} else {
-			return new DotMinecraftDirectory(
-					DotMinecraftDirectoryFinder
-							.find(preferedDotMinecraftDirectory));
+			return new DotMinecraftDirectory(dotMinecraftDirectory);
 		}
-	}
-
-	private File createPreferedJson() {
-		if (preferedVersionJson != null) {
-			File result = new File(preferedVersionJson);
-			if (result.isFile()) {
-				return result;
-			}
-		}
-		return null;
-	}
-
-	private ProfileDirectory createProfileDirectory() {
-		if (preferedDotMinecraftDirectory != null) {
-			ProfileDirectory result = new ProfileDirectory(new File(
-					preferedDotMinecraftDirectory));
-			if (result.isValid()) {
-				return result;
-			}
-		}
-		return null;
 	}
 
 	private VersionDirectory createVersionDirectory(MojangApi mojangApi) {
-		if (preferedVersionJar != null) {
-			File jar = new File(preferedVersionJar);
-			File json = new File(getJsonFileName());
+		if (parameters.minecraftJarFile != null
+				&& parameters.minecraftJsonFile != null) {
+			File jar = new File(parameters.minecraftJarFile);
+			File json = new File(parameters.minecraftJsonFile);
 			VersionDirectory result = mojangApi.createVersionDirectory(jar,
 					json);
 			if (result.isValid()) {
+				Log.i("using minecraft version directory. versionId: '"
+						+ result.getVersionId() + "', jar file: '"
+						+ result.getJar() + "', json file: '"
+						+ result.getJson() + "'");
 				return result;
+			} else {
+				Log.w("invalid minecraft version directory. versionId: '"
+						+ result.getVersionId() + "', jar file: '"
+						+ result.getJar() + "', json file: '"
+						+ result.getJson() + "'");
 			}
 		}
 		return null;
-	}
-
-	private String getJsonFileName() {
-		return preferedVersionJar.substring(0, preferedVersionJar.length() - 4)
-				+ ".json";
 	}
 }
