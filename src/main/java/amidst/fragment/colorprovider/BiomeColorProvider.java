@@ -2,7 +2,7 @@ package amidst.fragment.colorprovider;
 
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
-import amidst.gui.main.worldsurroundings.BiomeSelection;
+import amidst.gui.main.viewer.BiomeSelection;
 import amidst.mojangapi.world.biome.BiomeColor;
 import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
 

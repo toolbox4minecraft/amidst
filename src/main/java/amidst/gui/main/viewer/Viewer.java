@@ -1,4 +1,4 @@
-package amidst.gui.main.worldsurroundings;
+package amidst.gui.main.viewer;
 
 import java.awt.Component;
 import java.awt.FontMetrics;
@@ -12,7 +12,7 @@ import javax.swing.JComponent;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.gui.main.worldsurroundings.widget.Widget;
+import amidst.gui.main.viewer.widget.Widget;
 
 @NotThreadSafe
 public class Viewer {

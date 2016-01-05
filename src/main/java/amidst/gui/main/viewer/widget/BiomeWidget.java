@@ -1,4 +1,4 @@
-package amidst.gui.main.worldsurroundings.widget;
+package amidst.gui.main.viewer.widget;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -12,7 +12,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerReloader;
-import amidst.gui.main.worldsurroundings.BiomeSelection;
+import amidst.gui.main.viewer.BiomeSelection;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
 import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;

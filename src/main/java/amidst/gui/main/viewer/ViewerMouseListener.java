@@ -1,4 +1,4 @@
-package amidst.gui.main.worldsurroundings;
+package amidst.gui.main.viewer;
 
 import java.awt.Component;
 import java.awt.Point;
@@ -12,7 +12,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentGraph;
 import amidst.gui.main.Actions;
-import amidst.gui.main.worldsurroundings.widget.WidgetManager;
+import amidst.gui.main.viewer.widget.WidgetManager;
 
 @NotThreadSafe
 public class ViewerMouseListener implements MouseListener, MouseWheelListener {

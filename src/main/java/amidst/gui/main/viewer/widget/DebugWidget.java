@@ -1,4 +1,4 @@
-package amidst.gui.main.worldsurroundings.widget;
+package amidst.gui.main.viewer.widget;
 
 import java.util.Arrays;
 import java.util.List;

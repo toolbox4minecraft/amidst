@@ -1,4 +1,4 @@
-package amidst.gui.main.worldsurroundings.widget;
+package amidst.gui.main.viewer.widget;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,11 +10,11 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerReloader;
-import amidst.gui.main.worldsurroundings.BiomeSelection;
-import amidst.gui.main.worldsurroundings.FragmentGraphToScreenTranslator;
-import amidst.gui.main.worldsurroundings.WorldIconSelection;
-import amidst.gui.main.worldsurroundings.Zoom;
-import amidst.gui.main.worldsurroundings.widget.Widget.CornerAnchorPoint;
+import amidst.gui.main.viewer.BiomeSelection;
+import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
+import amidst.gui.main.viewer.WorldIconSelection;
+import amidst.gui.main.viewer.Zoom;
+import amidst.gui.main.viewer.widget.Widget.CornerAnchorPoint;
 import amidst.mojangapi.world.World;
 
 @NotThreadSafe

@@ -24,8 +24,8 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.menu.AmidstMenuBuilder;
-import amidst.gui.main.worldsurroundings.WorldSurroundings;
-import amidst.gui.main.worldsurroundings.WorldSurroundingsBuilder;
+import amidst.gui.main.viewer.ViewerFacade;
+import amidst.gui.main.viewer.ViewerFacadeBuilder;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
@@ -40,7 +40,7 @@ public class MainWindow {
 	private final AmidstMetaData metadata;
 	private final Settings settings;
 	private final MojangApi mojangApi;
-	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
+	private final ViewerFacadeBuilder viewerFacadeBuilder;
 	private final ThreadMaster threadMaster;
 
 	private final JFrame frame;
@@ -48,18 +48,17 @@ public class MainWindow {
 	private final Actions actions;
 	private final AmidstMenu menuBar;
 
-	private final AtomicReference<WorldSurroundings> worldSurroundings = new AtomicReference<WorldSurroundings>();
+	private final AtomicReference<ViewerFacade> viewerFacade = new AtomicReference<ViewerFacade>();
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public MainWindow(Application application, AmidstMetaData metadata,
 			Settings settings, MojangApi mojangApi,
-			WorldSurroundingsBuilder worldSurroundingsBuilder,
-			ThreadMaster threadMaster) {
+			ViewerFacadeBuilder viewerFacadeBuilder, ThreadMaster threadMaster) {
 		this.application = application;
 		this.metadata = metadata;
 		this.settings = settings;
 		this.mojangApi = mojangApi;
-		this.worldSurroundingsBuilder = worldSurroundingsBuilder;
+		this.viewerFacadeBuilder = viewerFacadeBuilder;
 		this.threadMaster = threadMaster;
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
@@ -68,7 +67,7 @@ public class MainWindow {
 		initKeyListener();
 		initCloseListener();
 		showFrame();
-		clearWorldSurroundings();
+		clearViewerFacade();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -98,7 +97,7 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Actions createActions() {
-		return new Actions(application, mojangApi, this, worldSurroundings,
+		return new Actions(application, mojangApi, this, viewerFacade,
 				settings.biomeColorProfileSelection,
 				threadMaster.getWorkerExecutor());
 	}
@@ -142,10 +141,9 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void setWorld(World world) {
-		clearWorldSurroundings();
+		clearViewerFacade();
 		if (decideWorldPlayerType(world.getMovablePlayerList())) {
-			setWorldSurroundings(worldSurroundingsBuilder
-					.create(world, actions));
+			setViewerFacade(viewerFacadeBuilder.create(world, actions));
 		} else {
 			frame.revalidate();
 			frame.repaint();
@@ -168,36 +166,35 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void setWorldSurroundings(WorldSurroundings worldSurroundings) {
-		contentPane.add(worldSurroundings.getComponent(), BorderLayout.CENTER);
+	private void setViewerFacade(ViewerFacade viewerFacade) {
+		contentPane.add(viewerFacade.getComponent(), BorderLayout.CENTER);
 		menuBar.setWorldMenuEnabled(true);
-		menuBar.setSavePlayerLocationsMenuEnabled(worldSurroundings
+		menuBar.setSavePlayerLocationsMenuEnabled(viewerFacade
 				.canSavePlayerLocations());
-		menuBar.setReloadPlayerLocationsMenuEnabled(worldSurroundings
+		menuBar.setReloadPlayerLocationsMenuEnabled(viewerFacade
 				.canLoadPlayerLocations());
 		frame.validate();
-		worldSurroundings.loadPlayers(threadMaster.getWorkerExecutor());
-		threadMaster.setOnRepaintTick(worldSurroundings.getOnRepainterTick());
-		threadMaster.setOnFragmentLoadTick(worldSurroundings
+		viewerFacade.loadPlayers(threadMaster.getWorkerExecutor());
+		threadMaster.setOnRepaintTick(viewerFacade.getOnRepainterTick());
+		threadMaster.setOnFragmentLoadTick(viewerFacade
 				.getOnFragmentLoaderTick());
-		this.worldSurroundings.set(worldSurroundings);
+		this.viewerFacade.set(viewerFacade);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void clearWorldSurroundings() {
+	private void clearViewerFacade() {
 		threadMaster.clearOnRepaintTick();
 		threadMaster.clearOnFragmentLoadTick();
-		WorldSurroundings worldSurroundings = this.worldSurroundings
-				.getAndSet(null);
-		if (worldSurroundings != null) {
-			contentPane.remove(worldSurroundings.getComponent());
-			worldSurroundings.dispose();
+		ViewerFacade viewerFacade = this.viewerFacade.getAndSet(null);
+		if (viewerFacade != null) {
+			contentPane.remove(viewerFacade.getComponent());
+			viewerFacade.dispose();
 		}
-		clearWorldSurroundingsFromGui();
+		clearViewerFacadeFromGui();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void clearWorldSurroundingsFromGui() {
+	private void clearViewerFacadeFromGui() {
 		menuBar.setWorldMenuEnabled(false);
 		menuBar.setSavePlayerLocationsMenuEnabled(false);
 		menuBar.setReloadPlayerLocationsMenuEnabled(false);
@@ -205,7 +202,7 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void dispose() {
-		clearWorldSurroundings();
+		clearViewerFacade();
 		frame.dispose();
 	}
 
