@@ -59,6 +59,10 @@ public class AmidstVersion {
 		return preReleaseSuffix != null && !preReleaseSuffix.isEmpty();
 	}
 
+	public String createLongVersionString() {
+		return "Amidst " + createVersionString();
+	}
+
 	public String createVersionString() {
 		if (isPreRelease()) {
 			return "v" + major + "." + minor + "-" + preReleaseSuffix;

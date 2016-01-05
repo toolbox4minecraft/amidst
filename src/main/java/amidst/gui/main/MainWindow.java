@@ -87,7 +87,7 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private String createVersionString(String versionId,
 			String recognisedVersionName) {
-		return "Amidst " + metadata.getVersion().createVersionString()
+		return metadata.getVersion().createLongVersionString()
 				+ " - Minecraft Version " + versionId + " ("
 				+ recognisedVersionName + ")";
 	}

@@ -35,23 +35,16 @@ public class Application {
 	private volatile MainWindow mainWindow;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Application(CommandLineParameters parameters)
+	public Application(CommandLineParameters parameters, AmidstMetaData metadata)
 			throws FileNotFoundException,
 			LocalMinecraftInterfaceCreationException {
 		this.parameters = parameters;
-		this.metadata = createMetadata();
+		this.metadata = metadata;
 		this.settings = createSettings();
 		this.mojangApi = createMojangApi();
 		this.biomeColorProfileDirectory = createBiomeColorProfileDirectory();
 		this.viewerFacadeBuilder = createViewerFacadeBuilder();
 		this.threadMaster = createThreadMaster();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private AmidstMetaData createMetadata() {
-		return AmidstMetaData.from(
-				ResourceLoader.getProperties("/amidst/metadata.properties"),
-				ResourceLoader.getImage("/amidst/icon.png"));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -64,15 +57,13 @@ public class Application {
 			LocalMinecraftInterfaceCreationException {
 		return new MojangApiBuilder(new WorldBuilder(
 				new PlayerInformationCache(), new SeedHistoryLogger(
-						parameters.historyPath)), parameters.minecraftPath,
-				parameters.minecraftLibraries, parameters.minecraftJar,
-				parameters.minecraftJson).construct();
+						parameters.historyFile)), parameters).construct();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private BiomeColorProfileDirectory createBiomeColorProfileDirectory() {
 		return BiomeColorProfileDirectory
-				.create(parameters.biomeColorProfileDirectory);
+				.create(parameters.biomeColorProfilesDirectory);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
