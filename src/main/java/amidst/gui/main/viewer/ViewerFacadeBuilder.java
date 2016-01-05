@@ -1,4 +1,4 @@
-package amidst.gui.main.worldsurroundings;
+package amidst.gui.main.viewer;
 
 import java.util.List;
 
@@ -15,13 +15,13 @@ import amidst.fragment.layer.LayerDeclaration;
 import amidst.fragment.layer.LayerLoader;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.main.Actions;
-import amidst.gui.main.worldsurroundings.widget.Widget;
-import amidst.gui.main.worldsurroundings.widget.WidgetBuilder;
-import amidst.gui.main.worldsurroundings.widget.WidgetManager;
+import amidst.gui.main.viewer.widget.Widget;
+import amidst.gui.main.viewer.widget.WidgetBuilder;
+import amidst.gui.main.viewer.widget.WidgetManager;
 import amidst.mojangapi.world.World;
 
 @NotThreadSafe
-public class WorldSurroundingsBuilder {
+public class ViewerFacadeBuilder {
 	private final Zoom zoom;
 	private final BiomeSelection biomeSelection = new BiomeSelection();
 
@@ -30,7 +30,7 @@ public class WorldSurroundingsBuilder {
 	private final FragmentManager fragmentManager;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public WorldSurroundingsBuilder(Settings settings, LayerBuilder layerBuilder) {
+	public ViewerFacadeBuilder(Settings settings, LayerBuilder layerBuilder) {
 		this.settings = settings;
 		this.zoom = new Zoom(settings.maxZoom);
 		this.layerBuilder = layerBuilder;
@@ -40,7 +40,7 @@ public class WorldSurroundingsBuilder {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public WorldSurroundings create(World world, Actions actions) {
+	public ViewerFacade create(World world, Actions actions) {
 		Movement movement = new Movement(settings.smoothScrolling);
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
 		List<LayerDeclaration> declarations = layerBuilder.getDeclarations();
@@ -63,7 +63,7 @@ public class WorldSurroundingsBuilder {
 				drawers);
 		Viewer viewer = new Viewer(new ViewerMouseListener(new WidgetManager(
 				widgets), graph, translator, zoom, movement, actions), drawer);
-		return new WorldSurroundings(world, graph, translator, zoom, viewer,
+		return new ViewerFacade(world, graph, translator, zoom, viewer,
 				layerReloader, worldIconSelection,
 				createOnRepainterTick(viewer),
 				createOnFragmentLoaderTick(fragmentQueueProcessor),

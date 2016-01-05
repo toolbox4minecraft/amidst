@@ -1,4 +1,4 @@
-package amidst.gui.main.worldsurroundings.widget;
+package amidst.gui.main.viewer.widget;
 
 import java.awt.Point;
 
@@ -7,7 +7,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
-import amidst.gui.main.worldsurroundings.FragmentGraphToScreenTranslator;
+import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
 import amidst.logging.Log;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;

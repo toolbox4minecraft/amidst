@@ -1,4 +1,4 @@
-package amidst.gui.main.worldsurroundings.widget;
+package amidst.gui.main.viewer.widget;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;

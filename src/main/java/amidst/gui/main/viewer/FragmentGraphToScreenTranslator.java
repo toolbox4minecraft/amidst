@@ -1,4 +1,4 @@
-package amidst.gui.main.worldsurroundings;
+package amidst.gui.main.viewer;
 
 import java.awt.Point;
 

@@ -1,4 +1,4 @@
-package amidst.gui.main.worldsurroundings;
+package amidst.gui.main.viewer;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.icon.WorldIcon;

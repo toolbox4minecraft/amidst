@@ -1,11 +1,11 @@
-package amidst.gui.main.worldsurroundings.widget;
+package amidst.gui.main.viewer.widget;
 
 import java.awt.image.BufferedImage;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.gui.main.worldsurroundings.WorldIconSelection;
+import amidst.gui.main.viewer.WorldIconSelection;
 import amidst.mojangapi.world.icon.WorldIcon;
 
 @NotThreadSafe

@@ -10,7 +10,7 @@ import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.license.LicenseWindow;
 import amidst.gui.main.MainWindow;
 import amidst.gui.main.UpdatePrompt;
-import amidst.gui.main.worldsurroundings.WorldSurroundingsBuilder;
+import amidst.gui.main.viewer.ViewerFacadeBuilder;
 import amidst.gui.profileselect.ProfileSelectWindow;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.MojangApiBuilder;
@@ -26,7 +26,7 @@ public class Application {
 	private final AmidstMetaData metadata;
 	private final Settings settings;
 	private final MojangApi mojangApi;
-	private final WorldSurroundingsBuilder worldSurroundingsBuilder;
+	private final ViewerFacadeBuilder viewerFacadeBuilder;
 	private final ThreadMaster threadMaster;
 
 	private volatile ProfileSelectWindow profileSelectWindow;
@@ -40,7 +40,7 @@ public class Application {
 		this.metadata = createMetadata();
 		this.settings = createSettings();
 		this.mojangApi = createMojangApi();
-		this.worldSurroundingsBuilder = createWorldSurroundingsBuilder();
+		this.viewerFacadeBuilder = createViewerFacadeBuilder();
 		this.threadMaster = createThreadMaster();
 	}
 
@@ -67,9 +67,8 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private WorldSurroundingsBuilder createWorldSurroundingsBuilder() {
-		return new WorldSurroundingsBuilder(settings,
-				new LayerBuilder(settings));
+	private ViewerFacadeBuilder createViewerFacadeBuilder() {
+		return new ViewerFacadeBuilder(settings, new LayerBuilder(settings));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -102,7 +101,7 @@ public class Application {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayMainWindow() {
 		setMainWindow(new MainWindow(this, metadata, settings, mojangApi,
-				worldSurroundingsBuilder, threadMaster));
+				viewerFacadeBuilder, threadMaster));
 		setProfileSelectWindow(null);
 	}
 

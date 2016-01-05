@@ -1,4 +1,4 @@
-package amidst.gui.main.worldsurroundings;
+package amidst.gui.main.viewer;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -18,7 +18,7 @@ import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentGraphItem;
 import amidst.fragment.drawer.FragmentDrawer;
-import amidst.gui.main.worldsurroundings.widget.Widget;
+import amidst.gui.main.viewer.widget.Widget;
 
 @NotThreadSafe
 public class Drawer {

@@ -1,4 +1,4 @@
-package amidst.gui.main.worldsurroundings;
+package amidst.gui.main.viewer;
 
 import java.awt.Component;
 import java.awt.Point;
@@ -23,7 +23,7 @@ import amidst.threading.WorkerExecutor;
  * exchange the currently displayed world.
  */
 @NotThreadSafe
-public class WorldSurroundings {
+public class ViewerFacade {
 	private final World world;
 	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
@@ -36,7 +36,7 @@ public class WorldSurroundings {
 	private final Runnable onPlayerFinishedLoading;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public WorldSurroundings(World world, FragmentGraph graph,
+	public ViewerFacade(World world, FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			Viewer viewer, LayerReloader layerReloader,
 			WorldIconSelection worldIconSelection, Runnable onRepainterTick,

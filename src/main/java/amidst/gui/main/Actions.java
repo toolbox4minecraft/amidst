@@ -17,7 +17,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.menu.MovePlayerPopupMenu;
-import amidst.gui.main.worldsurroundings.WorldSurroundings;
+import amidst.gui.main.viewer.ViewerFacade;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
@@ -36,20 +36,19 @@ public class Actions {
 	private final Application application;
 	private final MojangApi mojangApi;
 	private final MainWindow mainWindow;
-	private final AtomicReference<WorldSurroundings> worldSurroundings;
+	private final AtomicReference<ViewerFacade> viewerFacade;
 	private final BiomeColorProfileSelection biomeColorProfileSelection;
 	private final WorkerExecutor workerExecutor;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Actions(Application application, MojangApi mojangApi,
-			MainWindow mainWindow,
-			AtomicReference<WorldSurroundings> worldSurroundings,
+			MainWindow mainWindow, AtomicReference<ViewerFacade> viewerFacade,
 			BiomeColorProfileSelection biomeColorProfileSelection,
 			WorkerExecutor workerExecutor) {
 		this.application = application;
 		this.mojangApi = mojangApi;
 		this.mainWindow = mainWindow;
-		this.worldSurroundings = worldSurroundings;
+		this.viewerFacade = viewerFacade;
 		this.biomeColorProfileSelection = biomeColorProfileSelection;
 		this.workerExecutor = workerExecutor;
 	}
@@ -107,14 +106,14 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void goToCoordinate() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
 			String input = mainWindow.askForCoordinates();
 			if (input != null) {
 				CoordinatesInWorld coordinates = CoordinatesInWorld
 						.tryParse(input);
 				if (coordinates != null) {
-					worldSurroundings.centerOn(coordinates);
+					viewerFacade.centerOn(coordinates);
 				} else {
 					Log.w("Invalid location entered, ignoring.");
 					mainWindow.displayError("You entered an invalid location.");
@@ -125,36 +124,36 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void goToSpawn() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			worldSurroundings.centerOn(worldSurroundings.getSpawnWorldIcon());
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
+			viewerFacade.centerOn(viewerFacade.getSpawnWorldIcon());
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void goToStronghold() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
 			WorldIcon stronghold = mainWindow.askForOptions("Go to",
 					"Select Stronghold:",
-					worldSurroundings.getStrongholdWorldIcons());
+					viewerFacade.getStrongholdWorldIcons());
 			if (stronghold != null) {
-				worldSurroundings.centerOn(stronghold);
+				viewerFacade.centerOn(stronghold);
 			}
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void goToPlayer() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			List<WorldIcon> playerWorldIcons = worldSurroundings
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
+			List<WorldIcon> playerWorldIcons = viewerFacade
 					.getPlayerWorldIcons();
 			if (!playerWorldIcons.isEmpty()) {
 				WorldIcon player = mainWindow.askForOptions("Go to",
 						"Select player:", playerWorldIcons);
 				if (player != null) {
-					worldSurroundings.centerOn(player);
+					viewerFacade.centerOn(player);
 				}
 			} else {
 				mainWindow.displayError("There are no players in this world.");
@@ -164,17 +163,17 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void savePlayerLocations() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			worldSurroundings.savePlayerLocations();
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
+			viewerFacade.savePlayerLocations();
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void reloadPlayerLocations() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			worldSurroundings.loadPlayers(workerExecutor);
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
+			viewerFacade.loadPlayers(workerExecutor);
 		}
 	}
 
@@ -197,9 +196,9 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void copySeedToClipboard() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			String seed = "" + worldSurroundings.getWorldSeed().getLong();
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
+			String seed = "" + viewerFacade.getWorldSeed().getLong();
 			StringSelection selection = new StringSelection(seed);
 			Toolkit.getDefaultToolkit().getSystemClipboard()
 					.setContents(selection, selection);
@@ -208,9 +207,9 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void saveCaptureImage() {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			BufferedImage image = worldSurroundings.createCaptureImage();
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
+			BufferedImage image = viewerFacade.createCaptureImage();
 			File file = mainWindow.askForCaptureImageSaveFile();
 			if (file != null) {
 				saveImageToFile(image, file);
@@ -222,9 +221,9 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void selectBiomeColorProfile(BiomeColorProfile profile) {
 		biomeColorProfileSelection.set(profile);
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			worldSurroundings.reloadBiomeLayer();
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
+			viewerFacade.reloadBiomeLayer();
 		}
 	}
 
@@ -251,56 +250,56 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void adjustZoom(int notches) {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			worldSurroundings.adjustZoom(notches);
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
+			viewerFacade.adjustZoom(notches);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void adjustZoom(Point mousePosition, int notches) {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			worldSurroundings.adjustZoom(mousePosition, notches);
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
+			viewerFacade.adjustZoom(mousePosition, notches);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void selectWorldIcon(WorldIcon worldIcon) {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			worldSurroundings.selectWorldIcon(worldIcon);
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
+			viewerFacade.selectWorldIcon(worldIcon);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void showPlayerPopupMenu(CoordinatesInWorld targetCoordinates,
 			Component component, int x, int y) {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
-			if (worldSurroundings.canSavePlayerLocations()) {
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
+			if (viewerFacade.canSavePlayerLocations()) {
 				new MovePlayerPopupMenu(this,
-						worldSurroundings.getMovablePlayerList(),
-						targetCoordinates).show(component, x, y);
+						viewerFacade.getMovablePlayerList(), targetCoordinates)
+						.show(component, x, y);
 			}
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void movePlayer(Player player, CoordinatesInWorld targetCoordinates) {
-		WorldSurroundings worldSurroundings = this.worldSurroundings.get();
-		if (worldSurroundings != null) {
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
 			long currentHeight = player.getPlayerCoordinates().getY();
 			String input = mainWindow.askForPlayerHeight(currentHeight);
 			if (input != null) {
 				player.moveTo(targetCoordinates,
 						tryParseLong(input, currentHeight));
-				worldSurroundings.reloadPlayerLayer();
+				viewerFacade.reloadPlayerLayer();
 				if (mainWindow
 						.askToConfirm(
 								"Save Player Location",
 								"Do you want to save the player locations NOW? Make sure to not have the world opened in minecraft at the same time!")) {
-					worldSurroundings.savePlayerLocations();
+					viewerFacade.savePlayerLocations();
 				}
 			}
 		}

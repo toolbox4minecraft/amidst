@@ -1,4 +1,4 @@
-package amidst.gui.main.worldsurroundings.widget;
+package amidst.gui.main.viewer.widget;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -7,7 +7,7 @@ import java.awt.Graphics2D;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.gui.main.worldsurroundings.Zoom;
+import amidst.gui.main.viewer.Zoom;
 import amidst.settings.Setting;
 
 @NotThreadSafe
