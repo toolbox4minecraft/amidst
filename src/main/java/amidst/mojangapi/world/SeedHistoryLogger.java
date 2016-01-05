@@ -19,6 +19,7 @@ public class SeedHistoryLogger {
 
 	private File getHistoryFile(String filename) {
 		if (filename != null) {
+			Log.i("using seed history file: '" + filename + "'");
 			return new File(filename);
 		} else {
 			return null;

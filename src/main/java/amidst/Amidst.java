@@ -47,7 +47,7 @@ public class Amidst {
 			parser.parseArgument(args);
 			run(metadata, parameters, parser);
 		} catch (CmdLineException e) {
-			printLongVersionString(metadata);
+			System.out.println(metadata.getVersion().createLongVersionString());
 			System.err.println(e.getMessage());
 			parser.printUsage(System.out);
 			System.exit(2);
@@ -63,22 +63,21 @@ public class Amidst {
 	private static void run(AmidstMetaData metadata,
 			CommandLineParameters parameters, CmdLineParser parser) {
 		initFileLogger(parameters.logFile);
+		String versionString = metadata.getVersion().createLongVersionString();
 		if (parameters.printHelp) {
-			printLongVersionString(metadata);
+			System.out.println(versionString);
 			parser.printUsage(System.out);
 		} else if (parameters.printVersion) {
-			printLongVersionString(metadata);
+			System.out.println(versionString);
 		} else {
+			Log.i(versionString);
 			startApplication(parameters, metadata);
 		}
 	}
 
-	private static void printLongVersionString(AmidstMetaData metadata) {
-		System.out.println(metadata.getVersion().createLongVersionString());
-	}
-
 	private static void initFileLogger(String filename) {
 		if (filename != null) {
+			Log.i("using log file: '" + filename + "'");
 			Log.addListener("file", new FileLogger(new File(filename)));
 		}
 	}

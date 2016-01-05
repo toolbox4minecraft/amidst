@@ -15,10 +15,17 @@ import com.google.gson.JsonSyntaxException;
 @Immutable
 public class BiomeColorProfileDirectory {
 	public static BiomeColorProfileDirectory create(String root) {
+		BiomeColorProfileDirectory result = new BiomeColorProfileDirectory(
+				getRoot(root));
+		Log.i("using biome color profiles at: '" + result.getRoot() + "'");
+		return result;
+	}
+
+	private static File getRoot(String root) {
 		if (root != null) {
-			return new BiomeColorProfileDirectory(new File(root));
+			return new File(root);
 		} else {
-			return new BiomeColorProfileDirectory(DEFAULT_ROOT_DIRECTORY);
+			return DEFAULT_ROOT_DIRECTORY;
 		}
 	}
 
@@ -32,6 +39,14 @@ public class BiomeColorProfileDirectory {
 	public BiomeColorProfileDirectory(File root) {
 		this.root = root;
 		this.defaultProfile = new File(root, "default.json");
+	}
+
+	public File getRoot() {
+		return root;
+	}
+
+	public File getDefaultProfile() {
+		return defaultProfile;
 	}
 
 	public boolean isValid() {
