@@ -1,6 +1,8 @@
 package amidst.mojangapi.world.icon.locationchecker;
 
+import amidst.documentation.ThreadSafe;
 
+@ThreadSafe
 public class AllValidLocationChecker implements LocationChecker {
 	private final LocationChecker[] checkers;
 

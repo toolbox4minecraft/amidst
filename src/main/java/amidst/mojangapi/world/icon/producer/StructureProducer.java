@@ -2,7 +2,7 @@ package amidst.mojangapi.world.icon.producer;
 
 import java.util.function.Consumer;
 
-import amidst.documentation.NotThreadSafe;
+import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.WorldIcon;
@@ -10,7 +10,7 @@ import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.WorldIconTypeProvider;
 
-@NotThreadSafe
+@ThreadSafe
 public class StructureProducer extends WorldIconProducer {
 	private final Resolution resolution;
 	private final int size;

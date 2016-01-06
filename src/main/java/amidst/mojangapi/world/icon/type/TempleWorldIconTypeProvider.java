@@ -1,11 +1,13 @@
 package amidst.mojangapi.world.icon.type;
 
+import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
+@ThreadSafe
 public class TempleWorldIconTypeProvider implements WorldIconTypeProvider {
 	private final BiomeDataOracle biomeDataOracle;
 
