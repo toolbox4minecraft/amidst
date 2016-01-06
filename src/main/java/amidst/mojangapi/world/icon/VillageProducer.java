@@ -31,7 +31,7 @@ public class VillageProducer extends StructureProducer {
 
 	@Override
 	protected boolean isValidLocation() {
-		return algorithm.execute(chunkX, chunkY) && isValidBiomeForStructure();
+		return algorithm.isValid(chunkX, chunkY) && isValidBiomeForStructure();
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package amidst.mojangapi.world.icon;
 
 import java.util.List;
-import java.util.Random;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -10,28 +9,17 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @NotThreadSafe
 public class NetherFortressProducer extends StructureProducer {
-	private final Random random = new Random();
-	private final long seed;
+	private final NetherFortressAlgorithm algorithm;
 
 	public NetherFortressProducer(RecognisedVersion recognisedVersion,
 			long seed, BiomeDataOracle biomeDataOracle) {
 		super(biomeDataOracle, recognisedVersion);
-		this.seed = seed;
+		this.algorithm = new NetherFortressAlgorithm(seed);
 	}
 
 	@Override
 	protected boolean isValidLocation() {
-		int i = chunkX >> 4;
-		int j = chunkY >> 4;
-		random.setSeed(i ^ j << 4 ^ seed);
-		random.nextInt();
-		if (random.nextInt(3) != 0) {
-			return false;
-		}
-		if (chunkX != (i << 4) + 4 + random.nextInt(8)) {
-			return false;
-		}
-		return chunkY == (j << 4) + 4 + random.nextInt(8);
+		return algorithm.isValid(chunkX, chunkY);
 	}
 
 	@Override

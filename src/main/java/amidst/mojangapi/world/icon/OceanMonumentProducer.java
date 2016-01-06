@@ -31,7 +31,7 @@ public class OceanMonumentProducer extends StructureProducer {
 
 	@Override
 	protected boolean isValidLocation() {
-		return algorithm.execute(chunkX, chunkY)
+		return algorithm.isValid(chunkX, chunkY)
 				&& isValidBiomeAtMiddleOfChunk() && isValidBiomeForStructure();
 	}
 

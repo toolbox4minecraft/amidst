@@ -2,9 +2,9 @@ package amidst.mojangapi.world.icon;
 
 import java.util.Random;
 
-import amidst.documentation.NotThreadSafe;
+import amidst.documentation.Immutable;
 
-@NotThreadSafe
+@Immutable
 public class StructureAlgorithm {
 	private final long seed;
 	private final long magicNumberForSeed1;
@@ -13,7 +13,6 @@ public class StructureAlgorithm {
 	private final byte maxDistanceBetweenScatteredFeatures;
 	private final int distanceBetweenScatteredFeaturesRange;
 	private final boolean useTwoValuesForUpdate;
-	private final Random random;
 
 	public StructureAlgorithm(long seed, long magicNumberForSeed1,
 			long magicNumberForSeed2, long magicNumberForSeed3,
@@ -28,15 +27,14 @@ public class StructureAlgorithm {
 		this.distanceBetweenScatteredFeaturesRange = maxDistanceBetweenScatteredFeatures
 				- minDistanceBetweenScatteredFeatures;
 		this.useTwoValuesForUpdate = useTwoValuesForUpdate;
-		this.random = new Random();
 	}
 
-	public boolean execute(int x, int y) {
+	public boolean isValid(int x, int y) {
 		int value1 = getInitialValue(x);
 		int value2 = getInitialValue(y);
-		updateSeed(value1, value2);
-		value1 = updateValue(value1);
-		value2 = updateValue(value2);
+		Random random = new Random(getSeed(value1, value2));
+		value1 = updateValue(random, value1);
+		value2 = updateValue(random, value2);
 		return x == value1 && y == value2;
 	}
 
@@ -52,16 +50,16 @@ public class StructureAlgorithm {
 		}
 	}
 
-	private void updateSeed(int n, int i1) {
-		random.setSeed(getSeed(n, i1));
+	private long getSeed(int value1, int value2) {
+		// @formatter:off
+		return value1 * magicNumberForSeed1
+		     + value2 * magicNumberForSeed2
+		              + seed
+		              + magicNumberForSeed3;
+		// @formatter:on
 	}
 
-	private long getSeed(int n, int i1) {
-		return n * magicNumberForSeed1 + i1 * magicNumberForSeed2 + seed
-				+ magicNumberForSeed3;
-	}
-
-	private int updateValue(int value) {
+	private int updateValue(Random random, int value) {
 		value *= maxDistanceBetweenScatteredFeatures;
 		if (useTwoValuesForUpdate) {
 			value += (random.nextInt(distanceBetweenScatteredFeaturesRange) + random
