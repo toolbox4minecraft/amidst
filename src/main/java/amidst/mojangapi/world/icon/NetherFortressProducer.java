@@ -6,7 +6,7 @@ import amidst.mojangapi.world.coordinates.Resolution;
 @NotThreadSafe
 public class NetherFortressProducer extends StructureProducer {
 	public NetherFortressProducer(long seed) {
-		super(Resolution.CHUNK, new NetherFortressAlgorithm(seed),
+		super(Resolution.NETHER_CHUNK, new NetherFortressAlgorithm(seed),
 				new ImmutableWorldIconTypeProvider(
 						DefaultWorldIconTypes.NETHER_FORTRESS), true);
 	}
