@@ -83,9 +83,9 @@ public class WorldBuilder {
 				new StrongholdProducer(    recognisedVersion, seed.getLong(), biomeDataOracle),
 				new PlayerProducer(        recognisedVersion, movablePlayerList),
 				new TempleProducer(        recognisedVersion, seed.getLong(), biomeDataOracle),
-				new VillageProducer(       recognisedVersion, seed.getLong(), biomeDataOracle),
-				new OceanMonumentProducer( recognisedVersion, seed.getLong(), biomeDataOracle),
-				new NetherFortressProducer(recognisedVersion, seed.getLong(), biomeDataOracle));
+				new VillageProducer(                          seed.getLong(), biomeDataOracle),
+				new OceanMonumentProducer(                    seed.getLong(), biomeDataOracle),
+				new NetherFortressProducer(                   seed.getLong(), biomeDataOracle));
 		// @formatter:on
 	}
 }

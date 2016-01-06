@@ -1,10 +1,6 @@
 package amidst.mojangapi.world.icon;
 
-import java.util.List;
-
 import amidst.documentation.NotThreadSafe;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
@@ -12,14 +8,10 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 @NotThreadSafe
 public abstract class StructureProducer extends WorldIconProducer {
 	protected final BiomeDataOracle biomeDataOracle;
-	protected final RecognisedVersion recognisedVersion;
 	protected final Resolution resolution;
 	protected final int size;
 
-	protected final List<Biome> validBiomesForStructure;
-	protected final List<Biome> validBiomesAtMiddleOfChunk;
 	protected final boolean displayNetherCoordinates;
-	protected final int structureSize;
 
 	private CoordinatesInWorld corner;
 	private WorldIconConsumer consumer;
@@ -28,16 +20,11 @@ public abstract class StructureProducer extends WorldIconProducer {
 	protected int chunkX;
 	protected int chunkY;
 
-	public StructureProducer(BiomeDataOracle biomeDataOracle,
-			RecognisedVersion recognisedVersion) {
+	public StructureProducer(BiomeDataOracle biomeDataOracle) {
 		this.biomeDataOracle = biomeDataOracle;
-		this.recognisedVersion = recognisedVersion;
 		this.resolution = Resolution.CHUNK;
 		this.size = resolution.getStepsPerFragment();
-		validBiomesForStructure = getValidBiomesForStructure();
-		validBiomesAtMiddleOfChunk = getValidBiomesAtMiddleOfChunk();
-		displayNetherCoordinates = displayNetherCoordinates();
-		structureSize = getStructureSize();
+		this.displayNetherCoordinates = displayNetherCoordinates();
 	}
 
 	@Override
@@ -78,12 +65,6 @@ public abstract class StructureProducer extends WorldIconProducer {
 	protected abstract boolean isValidLocation();
 
 	protected abstract DefaultWorldIconTypes getWorldIconType();
-
-	protected abstract List<Biome> getValidBiomesForStructure();
-
-	protected abstract List<Biome> getValidBiomesAtMiddleOfChunk();
-
-	protected abstract int getStructureSize();
 
 	protected abstract boolean displayNetherCoordinates();
 }
