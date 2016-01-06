@@ -13,14 +13,29 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @NotThreadSafe
 public class TempleProducer extends StructureProducer {
+	private static final long MAGIC_NUMBER_FOR_SEED_1 = 341873128712L;
+	private static final long MAGIC_NUMBER_FOR_SEED_2 = 132897987541L;
+	private static final long MAGIC_NUMBER_FOR_SEED_3 = 14357617L;
+	private static final byte MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES = 32;
+	private static final byte MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES = 8;
+	private static final boolean USE_TWO_VALUES_FOR_UPDATE = false;
+
+	private final StructureAlgorithm algorithm;
+
 	public TempleProducer(RecognisedVersion recognisedVersion, long seed,
 			BiomeDataOracle biomeDataOracle) {
-		super(seed, biomeDataOracle, recognisedVersion);
+		super(biomeDataOracle, recognisedVersion);
+		this.algorithm = new StructureAlgorithm(seed, MAGIC_NUMBER_FOR_SEED_1,
+				MAGIC_NUMBER_FOR_SEED_2, MAGIC_NUMBER_FOR_SEED_3,
+				MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
+				MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
+				USE_TWO_VALUES_FOR_UPDATE);
 	}
 
 	@Override
 	protected boolean isValidLocation() {
-		return isSuccessful() && isValidBiomeAtMiddleOfChunk();
+		return algorithm.execute(chunkX, chunkY)
+				&& isValidBiomeAtMiddleOfChunk();
 	}
 
 	@Override
@@ -81,42 +96,12 @@ public class TempleProducer extends StructureProducer {
 	}
 
 	@Override
-	protected long getMagicNumberForSeed1() {
-		return 341873128712L;
-	}
-
-	@Override
-	protected long getMagicNumberForSeed2() {
-		return 132897987541L;
-	}
-
-	@Override
-	protected long getMagicNumberForSeed3() {
-		return 14357617L;
-	}
-
-	@Override
-	protected byte getMaxDistanceBetweenScatteredFeatures() {
-		return 32;
-	}
-
-	@Override
-	protected byte getMinDistanceBetweenScatteredFeatures() {
-		return 8;
-	}
-
-	@Override
 	protected int getStructureSize() {
 		return -1; // not used
 	}
 
 	@Override
 	protected boolean displayNetherCoordinates() {
-		return false;
-	}
-
-	@Override
-	protected boolean getUseTwoValuesForUpdate() {
 		return false;
 	}
 }

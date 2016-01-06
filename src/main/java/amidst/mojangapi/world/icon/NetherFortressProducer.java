@@ -11,10 +11,12 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 @NotThreadSafe
 public class NetherFortressProducer extends StructureProducer {
 	private final Random random = new Random();
+	private final long seed;
 
 	public NetherFortressProducer(RecognisedVersion recognisedVersion,
 			long seed, BiomeDataOracle biomeDataOracle) {
-		super(seed, biomeDataOracle, recognisedVersion);
+		super(biomeDataOracle, recognisedVersion);
+		this.seed = seed;
 	}
 
 	@Override
@@ -48,31 +50,6 @@ public class NetherFortressProducer extends StructureProducer {
 	}
 
 	@Override
-	protected long getMagicNumberForSeed1() {
-		return -1; // not used
-	}
-
-	@Override
-	protected long getMagicNumberForSeed2() {
-		return -1; // not used
-	}
-
-	@Override
-	protected long getMagicNumberForSeed3() {
-		return -1; // not used
-	}
-
-	@Override
-	protected byte getMaxDistanceBetweenScatteredFeatures() {
-		return -1; // not used
-	}
-
-	@Override
-	protected byte getMinDistanceBetweenScatteredFeatures() {
-		return -1; // not used
-	}
-
-	@Override
 	protected int getStructureSize() {
 		return -1; // not used
 	}
@@ -80,10 +57,5 @@ public class NetherFortressProducer extends StructureProducer {
 	@Override
 	protected boolean displayNetherCoordinates() {
 		return true;
-	}
-
-	@Override
-	protected boolean getUseTwoValuesForUpdate() {
-		return false; // not used
 	}
 }

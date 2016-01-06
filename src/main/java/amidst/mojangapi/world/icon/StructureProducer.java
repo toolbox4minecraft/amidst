@@ -14,13 +14,11 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @NotThreadSafe
 public abstract class StructureProducer extends WorldIconProducer {
-	protected final long seed;
 	protected final BiomeDataOracle biomeDataOracle;
 	protected final RecognisedVersion recognisedVersion;
 	protected final Resolution resolution;
 	protected final int size;
 
-	protected final StructureAlgorithm algorithm;
 	protected final List<Biome> validBiomesForStructure;
 	protected final List<Biome> validBiomesAtMiddleOfChunk;
 	protected final boolean displayNetherCoordinates;
@@ -35,19 +33,12 @@ public abstract class StructureProducer extends WorldIconProducer {
 	private int middleOfChunkX;
 	private int middleOfChunkY;
 
-	public StructureProducer(long seed, BiomeDataOracle biomeDataOracle,
+	public StructureProducer(BiomeDataOracle biomeDataOracle,
 			RecognisedVersion recognisedVersion) {
-		this.seed = seed;
 		this.biomeDataOracle = biomeDataOracle;
 		this.recognisedVersion = recognisedVersion;
 		this.resolution = Resolution.CHUNK;
 		this.size = resolution.getStepsPerFragment();
-		this.algorithm = new StructureAlgorithm(seed,
-				getMagicNumberForSeed1(), getMagicNumberForSeed2(),
-				getMagicNumberForSeed3(),
-				getMaxDistanceBetweenScatteredFeatures(),
-				getMinDistanceBetweenScatteredFeatures(),
-				getUseTwoValuesForUpdate());
 		validBiomesForStructure = getValidBiomesForStructure();
 		validBiomesAtMiddleOfChunk = getValidBiomesAtMiddleOfChunk();
 		displayNetherCoordinates = displayNetherCoordinates();
@@ -91,10 +82,6 @@ public abstract class StructureProducer extends WorldIconProducer {
 		return corner.add(xInWorld, yInWorld);
 	}
 
-	protected boolean isSuccessful() {
-		return algorithm.execute(chunkX, chunkY);
-	}
-
 	private int middleOfChunk(int value) {
 		return value * 16 + 8;
 	}
@@ -132,19 +119,7 @@ public abstract class StructureProducer extends WorldIconProducer {
 
 	protected abstract List<Biome> getValidBiomesAtMiddleOfChunk();
 
-	protected abstract long getMagicNumberForSeed1();
-
-	protected abstract long getMagicNumberForSeed2();
-
-	protected abstract long getMagicNumberForSeed3();
-
-	protected abstract byte getMaxDistanceBetweenScatteredFeatures();
-
-	protected abstract byte getMinDistanceBetweenScatteredFeatures();
-
 	protected abstract int getStructureSize();
 
 	protected abstract boolean displayNetherCoordinates();
-
-	protected abstract boolean getUseTwoValuesForUpdate();
 }
