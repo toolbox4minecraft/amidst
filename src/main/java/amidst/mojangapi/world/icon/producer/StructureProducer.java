@@ -11,7 +11,7 @@ import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.WorldIconTypeProvider;
 
 @NotThreadSafe
-public abstract class StructureProducer extends WorldIconProducer {
+public class StructureProducer extends WorldIconProducer {
 	private final Resolution resolution;
 	private final int size;
 	private final LocationChecker checker;

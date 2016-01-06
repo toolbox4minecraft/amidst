@@ -9,13 +9,18 @@ import amidst.mojangapi.file.nbt.LevelDatNbt;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.mojangapi.world.icon.producer.NetherFortressProducer;
-import amidst.mojangapi.world.icon.producer.OceanMonumentProducer;
+import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm;
+import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker;
+import amidst.mojangapi.world.icon.locationchecker.TempleLocationChecker;
+import amidst.mojangapi.world.icon.locationchecker.VillageLocationChecker;
 import amidst.mojangapi.world.icon.producer.PlayerProducer;
 import amidst.mojangapi.world.icon.producer.SpawnProducer;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer;
-import amidst.mojangapi.world.icon.producer.TempleProducer;
-import amidst.mojangapi.world.icon.producer.VillageProducer;
+import amidst.mojangapi.world.icon.producer.StructureProducer;
+import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
+import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
+import amidst.mojangapi.world.icon.type.TempleWorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;
@@ -68,8 +73,9 @@ public class WorldBuilder {
 			MovablePlayerList movablePlayerList)
 			throws MinecraftInterfaceException {
 		seedHistoryLogger.log(seed);
+		long seedAsLong = seed.getLong();
 		// @formatter:off
-		minecraftInterface.createWorld(seed.getLong(), worldType, generatorOptions);
+		minecraftInterface.createWorld(seedAsLong, worldType, generatorOptions);
 		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
 		BiomeDataOracle biomeDataOracle = new BiomeDataOracle(minecraftInterface);
 		return new World(
@@ -78,14 +84,32 @@ public class WorldBuilder {
 				generatorOptions,
 				movablePlayerList,
 				biomeDataOracle,
-				new SlimeChunkOracle(      seed.getLong()),
-				new SpawnProducer(         seed.getLong(), biomeDataOracle),
-				new StrongholdProducer(    seed.getLong(), biomeDataOracle, recognisedVersion),
-				new PlayerProducer(                                         movablePlayerList),
-				new TempleProducer(        seed.getLong(), biomeDataOracle, recognisedVersion),
-				new VillageProducer(       seed.getLong(), biomeDataOracle),
-				new OceanMonumentProducer( seed.getLong(), biomeDataOracle),
-				new NetherFortressProducer(seed.getLong()));
+				new SlimeChunkOracle(  seedAsLong),
+				new SpawnProducer(     seedAsLong, biomeDataOracle),
+				new StrongholdProducer(seedAsLong, biomeDataOracle, recognisedVersion),
+				new PlayerProducer(movablePlayerList),
+				new StructureProducer( 
+						Resolution.CHUNK,
+						new TempleLocationChecker(seedAsLong, biomeDataOracle, recognisedVersion),
+						new TempleWorldIconTypeProvider(biomeDataOracle),
+						false
+				), new StructureProducer(
+						Resolution.CHUNK,
+						new VillageLocationChecker(seedAsLong, biomeDataOracle),
+						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
+						false
+				), new StructureProducer(
+						Resolution.CHUNK,
+						new OceanMonumentLocationChecker(seedAsLong, biomeDataOracle),
+						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
+						false
+				), new StructureProducer(
+						Resolution.NETHER_CHUNK,
+						new NetherFortressAlgorithm(seedAsLong),
+						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
+						true
+				)
+		);
 		// @formatter:on
 	}
 }
