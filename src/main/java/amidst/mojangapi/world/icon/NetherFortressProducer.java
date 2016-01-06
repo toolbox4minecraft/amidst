@@ -1,6 +1,7 @@
 package amidst.mojangapi.world.icon;
 
 import java.util.List;
+import java.util.Random;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -9,6 +10,8 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @NotThreadSafe
 public class NetherFortressProducer extends StructureProducer {
+	private final Random random = new Random();
+
 	public NetherFortressProducer(RecognisedVersion recognisedVersion,
 			long seed, BiomeDataOracle biomeDataOracle) {
 		super(seed, biomeDataOracle, recognisedVersion);
@@ -45,11 +48,6 @@ public class NetherFortressProducer extends StructureProducer {
 	}
 
 	@Override
-	protected int updateValue(int value) {
-		return -1; // not used
-	}
-
-	@Override
 	protected long getMagicNumberForSeed1() {
 		return -1; // not used
 	}
@@ -82,5 +80,10 @@ public class NetherFortressProducer extends StructureProducer {
 	@Override
 	protected boolean displayNetherCoordinates() {
 		return true;
+	}
+
+	@Override
+	protected boolean getUseTwoValuesForUpdate() {
+		return false; // not used
 	}
 }

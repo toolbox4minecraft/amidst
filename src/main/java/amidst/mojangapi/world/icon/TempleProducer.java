@@ -81,13 +81,6 @@ public class TempleProducer extends StructureProducer {
 	}
 
 	@Override
-	protected int updateValue(int value) {
-		value *= maxDistanceBetweenScatteredFeatures;
-		value += random.nextInt(distanceBetweenScatteredFeaturesRange);
-		return value;
-	}
-
-	@Override
 	protected long getMagicNumberForSeed1() {
 		return 341873128712L;
 	}
@@ -119,6 +112,11 @@ public class TempleProducer extends StructureProducer {
 
 	@Override
 	protected boolean displayNetherCoordinates() {
+		return false;
+	}
+
+	@Override
+	protected boolean getUseTwoValuesForUpdate() {
 		return false;
 	}
 }

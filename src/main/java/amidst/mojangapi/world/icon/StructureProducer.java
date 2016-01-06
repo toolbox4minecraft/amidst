@@ -1,7 +1,6 @@
 package amidst.mojangapi.world.icon;
 
 import java.util.List;
-import java.util.Random;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.Log;
@@ -21,17 +20,11 @@ public abstract class StructureProducer extends WorldIconProducer {
 	protected final Resolution resolution;
 	protected final int size;
 
+	protected final StructureAlgorithm algorithm;
 	protected final List<Biome> validBiomesForStructure;
 	protected final List<Biome> validBiomesAtMiddleOfChunk;
-	protected final long magicNumberForSeed1;
-	protected final long magicNumberForSeed2;
-	protected final long magicNumberForSeed3;
-	protected final byte maxDistanceBetweenScatteredFeatures;
-	protected final byte minDistanceBetweenScatteredFeatures;
-	protected final int distanceBetweenScatteredFeaturesRange;
 	protected final boolean displayNetherCoordinates;
 	protected final int structureSize;
-	protected final Random random;
 
 	private CoordinatesInWorld corner;
 	private WorldIconConsumer consumer;
@@ -49,22 +42,16 @@ public abstract class StructureProducer extends WorldIconProducer {
 		this.recognisedVersion = recognisedVersion;
 		this.resolution = Resolution.CHUNK;
 		this.size = resolution.getStepsPerFragment();
+		this.algorithm = new StructureAlgorithm(seed,
+				getMagicNumberForSeed1(), getMagicNumberForSeed2(),
+				getMagicNumberForSeed3(),
+				getMaxDistanceBetweenScatteredFeatures(),
+				getMinDistanceBetweenScatteredFeatures(),
+				getUseTwoValuesForUpdate());
 		validBiomesForStructure = getValidBiomesForStructure();
 		validBiomesAtMiddleOfChunk = getValidBiomesAtMiddleOfChunk();
-		magicNumberForSeed1 = getMagicNumberForSeed1();
-		magicNumberForSeed2 = getMagicNumberForSeed2();
-		magicNumberForSeed3 = getMagicNumberForSeed3();
-		maxDistanceBetweenScatteredFeatures = getMaxDistanceBetweenScatteredFeatures();
-		minDistanceBetweenScatteredFeatures = getMinDistanceBetweenScatteredFeatures();
-		distanceBetweenScatteredFeaturesRange = getDistanceBetweenScatteredFeaturesRange();
 		displayNetherCoordinates = displayNetherCoordinates();
 		structureSize = getStructureSize();
-		random = new Random();
-	}
-
-	private int getDistanceBetweenScatteredFeaturesRange() {
-		return maxDistanceBetweenScatteredFeatures
-				- minDistanceBetweenScatteredFeatures;
 	}
 
 	@Override
@@ -105,37 +92,7 @@ public abstract class StructureProducer extends WorldIconProducer {
 	}
 
 	protected boolean isSuccessful() {
-		int n = getInitialValue(chunkX);
-		int i1 = getInitialValue(chunkY);
-		updateSeed(n, i1);
-		n = updateValue(n);
-		i1 = updateValue(i1);
-		return isSuccessful(n, i1);
-	}
-
-	private int getInitialValue(int value) {
-		return getModified(value) / maxDistanceBetweenScatteredFeatures;
-	}
-
-	private int getModified(int value) {
-		if (value < 0) {
-			return value - maxDistanceBetweenScatteredFeatures + 1;
-		} else {
-			return value;
-		}
-	}
-
-	private void updateSeed(int n, int i1) {
-		random.setSeed(getSeed(n, i1));
-	}
-
-	private long getSeed(int n, int i1) {
-		return n * magicNumberForSeed1 + i1 * magicNumberForSeed2 + seed
-				+ magicNumberForSeed3;
-	}
-
-	private boolean isSuccessful(int n, int i1) {
-		return chunkX == n && chunkY == i1;
+		return algorithm.execute(chunkX, chunkY);
 	}
 
 	private int middleOfChunk(int value) {
@@ -175,8 +132,6 @@ public abstract class StructureProducer extends WorldIconProducer {
 
 	protected abstract List<Biome> getValidBiomesAtMiddleOfChunk();
 
-	protected abstract int updateValue(int value);
-
 	protected abstract long getMagicNumberForSeed1();
 
 	protected abstract long getMagicNumberForSeed2();
@@ -190,4 +145,6 @@ public abstract class StructureProducer extends WorldIconProducer {
 	protected abstract int getStructureSize();
 
 	protected abstract boolean displayNetherCoordinates();
+
+	protected abstract boolean getUseTwoValuesForUpdate();
 }
