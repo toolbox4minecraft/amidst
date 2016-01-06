@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.icon;
+package amidst.mojangapi.world.icon.producer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +8,8 @@ import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.icon.WorldIcon;
+import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @ThreadSafe

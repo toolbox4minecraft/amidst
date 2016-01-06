@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.icon;
+package amidst.mojangapi.world.icon.locationchecker;
 
 import java.util.Random;
 

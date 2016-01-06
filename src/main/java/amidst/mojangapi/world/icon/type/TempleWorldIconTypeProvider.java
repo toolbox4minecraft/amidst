@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.icon;
+package amidst.mojangapi.world.icon.type;
 
 import amidst.logging.Log;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;

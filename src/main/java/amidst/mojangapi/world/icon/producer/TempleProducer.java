@@ -1,8 +1,10 @@
-package amidst.mojangapi.world.icon;
+package amidst.mojangapi.world.icon.producer;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.icon.locationchecker.TempleLocationChecker;
+import amidst.mojangapi.world.icon.type.TempleWorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @NotThreadSafe

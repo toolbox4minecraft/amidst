@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.icon;
+package amidst.mojangapi.world.icon.type;
 
 public class ImmutableWorldIconTypeProvider implements WorldIconTypeProvider {
 	private final DefaultWorldIconTypes worldIconType;

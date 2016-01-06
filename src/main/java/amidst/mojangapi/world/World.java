@@ -4,9 +4,9 @@ import java.util.List;
 
 import amidst.documentation.CalledByAny;
 import amidst.documentation.NotThreadSafe;
-import amidst.mojangapi.world.icon.CachedWorldIconProducer;
 import amidst.mojangapi.world.icon.WorldIcon;
-import amidst.mojangapi.world.icon.WorldIconProducer;
+import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
+import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;

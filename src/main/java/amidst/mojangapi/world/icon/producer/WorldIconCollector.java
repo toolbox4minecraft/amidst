@@ -1,10 +1,11 @@
-package amidst.mojangapi.world.icon;
+package amidst.mojangapi.world.icon.producer;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import amidst.documentation.NotThreadSafe;
+import amidst.mojangapi.world.icon.WorldIcon;
 
 @NotThreadSafe
 public class WorldIconCollector implements WorldIconConsumer {

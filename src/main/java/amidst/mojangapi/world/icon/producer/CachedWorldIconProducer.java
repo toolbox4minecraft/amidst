@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.icon;
+package amidst.mojangapi.world.icon.producer;
 
 import java.util.Collections;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.icon.WorldIcon;
 
 @ThreadSafe
 public abstract class CachedWorldIconProducer extends WorldIconProducer {

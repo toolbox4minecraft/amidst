@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.icon;
+package amidst.mojangapi.world.icon.type;
 
 import java.awt.image.BufferedImage;
 

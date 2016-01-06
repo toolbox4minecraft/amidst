@@ -1,4 +1,5 @@
-package amidst.mojangapi.world.icon;
+package amidst.mojangapi.world.icon.locationchecker;
+
 
 public class AllValidLocationChecker implements LocationChecker {
 	private final LocationChecker[] checkers;

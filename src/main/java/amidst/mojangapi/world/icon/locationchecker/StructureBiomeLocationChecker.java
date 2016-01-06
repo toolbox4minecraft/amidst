@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.icon;
+package amidst.mojangapi.world.icon.locationchecker;
 
 import java.util.List;
 
@@ -7,18 +7,21 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @Immutable
-public class BiomeLocationChecker implements LocationChecker {
+public class StructureBiomeLocationChecker implements LocationChecker {
 	private final BiomeDataOracle biomeDataOracle;
+	private final int size;
 	private final List<Biome> validBiomes;
 
-	public BiomeLocationChecker(BiomeDataOracle biomeDataOracle,
-			List<Biome> validBiomes) {
+	public StructureBiomeLocationChecker(BiomeDataOracle biomeDataOracle,
+			int size, List<Biome> validBiomes) {
 		this.biomeDataOracle = biomeDataOracle;
+		this.size = size;
 		this.validBiomes = validBiomes;
 	}
 
 	@Override
 	public boolean isValidLocation(int x, int y) {
-		return biomeDataOracle.isValidBiomeAtMiddleOfChunk(x, y, validBiomes);
+		return biomeDataOracle.isValidBiomeForStructureAtMiddleOfChunk(x, y,
+				size, validBiomes);
 	}
 }

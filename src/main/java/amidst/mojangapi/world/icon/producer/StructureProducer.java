@@ -1,8 +1,12 @@
-package amidst.mojangapi.world.icon;
+package amidst.mojangapi.world.icon.producer;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.icon.WorldIcon;
+import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
+import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
+import amidst.mojangapi.world.icon.type.WorldIconTypeProvider;
 
 @NotThreadSafe
 public abstract class StructureProducer extends WorldIconProducer {
