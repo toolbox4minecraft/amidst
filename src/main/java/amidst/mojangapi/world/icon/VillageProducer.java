@@ -31,7 +31,9 @@ public class VillageProducer extends StructureProducer {
 
 	@Override
 	protected boolean isValidLocation() {
-		return algorithm.isValid(chunkX, chunkY) && isValidBiomeForStructure();
+		return algorithm.isValidLocation(chunkX, chunkY)
+				&& biomeDataOracle.isValidBiomeForStructureAtMiddleOfChunk(
+						chunkX, chunkY, structureSize, validBiomesForStructure);
 	}
 
 	@Override

@@ -3,11 +3,8 @@ package amidst.mojangapi.world.icon;
 import java.util.List;
 
 import amidst.documentation.NotThreadSafe;
-import amidst.logging.Log;
-import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
-import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
@@ -30,8 +27,6 @@ public abstract class StructureProducer extends WorldIconProducer {
 	private int yRelativeToFragmentAsChunkResolution;
 	protected int chunkX;
 	protected int chunkY;
-	private int middleOfChunkX;
-	private int middleOfChunkY;
 
 	public StructureProducer(BiomeDataOracle biomeDataOracle,
 			RecognisedVersion recognisedVersion) {
@@ -62,8 +57,6 @@ public abstract class StructureProducer extends WorldIconProducer {
 				+ (int) corner.getXAs(resolution);
 		chunkY = yRelativeToFragmentAsChunkResolution
 				+ (int) corner.getYAs(resolution);
-		middleOfChunkX = middleOfChunk(chunkX);
-		middleOfChunkY = middleOfChunk(chunkY);
 		if (isValidLocation()) {
 			DefaultWorldIconTypes worldIconType = getWorldIconType();
 			if (worldIconType != null) {
@@ -80,35 +73,6 @@ public abstract class StructureProducer extends WorldIconProducer {
 		long yInWorld = resolution
 				.convertFromThisToWorld(yRelativeToFragmentAsChunkResolution);
 		return corner.add(xInWorld, yInWorld);
-	}
-
-	private int middleOfChunk(int value) {
-		return value * 16 + 8;
-	}
-
-	protected boolean isValidBiomeAtMiddleOfChunk() {
-		try {
-			return validBiomesAtMiddleOfChunk
-					.contains(getBiomeAtMiddleOfChunk());
-		} catch (UnknownBiomeIndexException e) {
-			Log.e(e.getMessage());
-			e.printStackTrace();
-			return false;
-		} catch (MinecraftInterfaceException e) {
-			Log.e(e.getMessage());
-			e.printStackTrace();
-			return false;
-		}
-	}
-
-	protected Biome getBiomeAtMiddleOfChunk()
-			throws UnknownBiomeIndexException, MinecraftInterfaceException {
-		return biomeDataOracle.getBiomeAt(middleOfChunkX, middleOfChunkY);
-	}
-
-	protected boolean isValidBiomeForStructure() {
-		return biomeDataOracle.isValidBiome(middleOfChunkX, middleOfChunkY,
-				structureSize, validBiomesForStructure);
 	}
 
 	protected abstract boolean isValidLocation();

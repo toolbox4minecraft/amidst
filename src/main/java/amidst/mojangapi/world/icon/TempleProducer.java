@@ -34,14 +34,16 @@ public class TempleProducer extends StructureProducer {
 
 	@Override
 	protected boolean isValidLocation() {
-		return algorithm.isValid(chunkX, chunkY)
-				&& isValidBiomeAtMiddleOfChunk();
+		return algorithm.isValidLocation(chunkX, chunkY)
+				&& biomeDataOracle.isValidBiomeAtMiddleOfChunk(chunkX, chunkY,
+						validBiomesAtMiddleOfChunk);
 	}
 
 	@Override
 	protected DefaultWorldIconTypes getWorldIconType() {
 		try {
-			Biome chunkBiome = getBiomeAtMiddleOfChunk();
+			Biome chunkBiome = biomeDataOracle.getBiomeAtMiddleOfChunk(chunkX,
+					chunkY);
 			if (chunkBiome == Biome.swampland) {
 				return DefaultWorldIconTypes.WITCH;
 			} else if (chunkBiome.getName().contains("Jungle")) {

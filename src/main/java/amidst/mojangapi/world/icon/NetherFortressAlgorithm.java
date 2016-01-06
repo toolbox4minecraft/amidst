@@ -12,7 +12,7 @@ public class NetherFortressAlgorithm {
 		this.seed = seed;
 	}
 
-	public boolean isValid(int x, int y) {
+	public boolean isValidLocation(int x, int y) {
 		int i = x >> 4;
 		int j = y >> 4;
 		Random random = new Random(i ^ j << 4 ^ seed);

@@ -51,7 +51,34 @@ public class BiomeDataOracle {
 		return x + y * width;
 	}
 
-	public boolean isValidBiome(int x, int y, int size, List<Biome> validBiomes) {
+	public boolean isValidBiomeAtMiddleOfChunk(int chunkX, int chunkY,
+			List<Biome> validBiomes) {
+		return isValidBiome(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY),
+				validBiomes);
+	}
+
+	private boolean isValidBiome(int x, int y, List<Biome> validBiomes) {
+		try {
+			return validBiomes.contains(getBiomeAt(x, y));
+		} catch (UnknownBiomeIndexException e) {
+			Log.e(e.getMessage());
+			e.printStackTrace();
+			return false;
+		} catch (MinecraftInterfaceException e) {
+			Log.e(e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean isValidBiomeForStructureAtMiddleOfChunk(int chunkX,
+			int chunkY, int size, List<Biome> validBiomes) {
+		return isValidBiomeForStructure(getMiddleOfChunk(chunkX),
+				getMiddleOfChunk(chunkY), size, validBiomes);
+	}
+
+	private boolean isValidBiomeForStructure(int x, int y, int size,
+			List<Biome> validBiomes) {
 		int left = x - size >> 2;
 		int top = y - size >> 2;
 		int right = x + size >> 2;
@@ -118,12 +145,21 @@ public class BiomeDataOracle {
 		return new Point(x, y);
 	}
 
+	private int getMiddleOfChunk(int coordinate) {
+		return coordinate * 16 + 8;
+	}
+
+	public Biome getBiomeAtMiddleOfChunk(int chunkX, int chunkY)
+			throws UnknownBiomeIndexException, MinecraftInterfaceException {
+		return getBiomeAt(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY));
+	}
+
 	/**
 	 * Gets the biome located at the block-coordinates. This is not a fast
 	 * routine, it was added for rare things like accurately testing structures.
 	 * (uses the 1:1 scale biome-map)
 	 */
-	public Biome getBiomeAt(int x, int y) throws UnknownBiomeIndexException,
+	private Biome getBiomeAt(int x, int y) throws UnknownBiomeIndexException,
 			MinecraftInterfaceException {
 		int[] biomeData = getFullResolutionBiomeData(x, y, 1, 1);
 		return Biome.getByIndex(biomeData[0]);

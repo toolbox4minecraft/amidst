@@ -29,7 +29,7 @@ public class StructureAlgorithm {
 		this.useTwoValuesForUpdate = useTwoValuesForUpdate;
 	}
 
-	public boolean isValid(int x, int y) {
+	public boolean isValidLocation(int x, int y) {
 		int value1 = getInitialValue(x);
 		int value2 = getInitialValue(y);
 		Random random = new Random(getSeed(value1, value2));

@@ -19,7 +19,7 @@ public class NetherFortressProducer extends StructureProducer {
 
 	@Override
 	protected boolean isValidLocation() {
-		return algorithm.isValid(chunkX, chunkY);
+		return algorithm.isValidLocation(chunkX, chunkY);
 	}
 
 	@Override
