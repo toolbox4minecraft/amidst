@@ -85,7 +85,7 @@ public class WorldBuilder {
 				new TempleProducer(        recognisedVersion, seed.getLong(), biomeDataOracle),
 				new VillageProducer(                          seed.getLong(), biomeDataOracle),
 				new OceanMonumentProducer(                    seed.getLong(), biomeDataOracle),
-				new NetherFortressProducer(                   seed.getLong(), biomeDataOracle));
+				new NetherFortressProducer(                   seed.getLong()));
 		// @formatter:on
 	}
 }

@@ -1,25 +1,26 @@
 package amidst.mojangapi.world.icon;
 
 import amidst.documentation.NotThreadSafe;
-import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @NotThreadSafe
 public class NetherFortressProducer extends StructureProducer {
 	private final LocationChecker checker;
+	private final WorldIconTypeProvider provider;
 
-	public NetherFortressProducer(long seed, BiomeDataOracle biomeDataOracle) {
-		super(biomeDataOracle);
+	public NetherFortressProducer(long seed) {
 		this.checker = new NetherFortressAlgorithm(seed);
+		this.provider = new ImmutableWorldIconTypeProvider(
+				DefaultWorldIconTypes.NETHER_FORTRESS);
 	}
 
 	@Override
-	protected boolean isValidLocation() {
-		return checker.isValidLocation(chunkX, chunkY);
+	protected boolean isValidLocation(int x, int y) {
+		return checker.isValidLocation(x, y);
 	}
 
 	@Override
-	protected DefaultWorldIconTypes getWorldIconType() {
-		return DefaultWorldIconTypes.NETHER_FORTRESS;
+	protected DefaultWorldIconTypes getWorldIconType(int x, int y) {
+		return provider.get(x, y);
 	}
 
 	@Override

@@ -3,25 +3,21 @@ package amidst.mojangapi.world.icon;
 import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
-import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @NotThreadSafe
 public abstract class StructureProducer extends WorldIconProducer {
-	protected final BiomeDataOracle biomeDataOracle;
 	protected final Resolution resolution;
 	protected final int size;
-
 	protected final boolean displayNetherCoordinates;
 
 	private CoordinatesInWorld corner;
 	private WorldIconConsumer consumer;
 	private int xRelativeToFragmentAsChunkResolution;
 	private int yRelativeToFragmentAsChunkResolution;
-	protected int chunkX;
-	protected int chunkY;
+	private int chunkX;
+	private int chunkY;
 
-	public StructureProducer(BiomeDataOracle biomeDataOracle) {
-		this.biomeDataOracle = biomeDataOracle;
+	public StructureProducer() {
 		this.resolution = Resolution.CHUNK;
 		this.size = resolution.getStepsPerFragment();
 		this.displayNetherCoordinates = displayNetherCoordinates();
@@ -44,8 +40,9 @@ public abstract class StructureProducer extends WorldIconProducer {
 				+ (int) corner.getXAs(resolution);
 		chunkY = yRelativeToFragmentAsChunkResolution
 				+ (int) corner.getYAs(resolution);
-		if (isValidLocation()) {
-			DefaultWorldIconTypes worldIconType = getWorldIconType();
+		if (isValidLocation(chunkX, chunkY)) {
+			DefaultWorldIconTypes worldIconType = getWorldIconType(chunkX,
+					chunkY);
 			if (worldIconType != null) {
 				consumer.consume(new WorldIcon(createCoordinates(),
 						worldIconType.getName(), worldIconType.getImage(),
@@ -62,9 +59,9 @@ public abstract class StructureProducer extends WorldIconProducer {
 		return corner.add(xInWorld, yInWorld);
 	}
 
-	protected abstract boolean isValidLocation();
+	protected abstract boolean isValidLocation(int x, int y);
 
-	protected abstract DefaultWorldIconTypes getWorldIconType();
+	protected abstract DefaultWorldIconTypes getWorldIconType(int x, int y);
 
 	protected abstract boolean displayNetherCoordinates();
 }
