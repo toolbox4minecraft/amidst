@@ -5,7 +5,7 @@ import java.util.Random;
 import amidst.documentation.Immutable;
 
 @Immutable
-public class StructureAlgorithm {
+public class StructureAlgorithm implements LocationChecker {
 	private final long seed;
 	private final long magicNumberForSeed1;
 	private final long magicNumberForSeed2;
@@ -29,6 +29,7 @@ public class StructureAlgorithm {
 		this.useTwoValuesForUpdate = useTwoValuesForUpdate;
 	}
 
+	@Override
 	public boolean isValidLocation(int x, int y) {
 		int value1 = getInitialValue(x);
 		int value2 = getInitialValue(y);

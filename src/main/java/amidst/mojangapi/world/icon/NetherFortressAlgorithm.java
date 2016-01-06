@@ -5,13 +5,14 @@ import java.util.Random;
 import amidst.documentation.Immutable;
 
 @Immutable
-public class NetherFortressAlgorithm {
+public class NetherFortressAlgorithm implements LocationChecker {
 	private final long seed;
 
 	public NetherFortressAlgorithm(long seed) {
 		this.seed = seed;
 	}
 
+	@Override
 	public boolean isValidLocation(int x, int y) {
 		int i = x >> 4;
 		int j = y >> 4;

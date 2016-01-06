@@ -20,12 +20,12 @@ public class TempleProducer extends StructureProducer {
 	private static final byte MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES = 8;
 	private static final boolean USE_TWO_VALUES_FOR_UPDATE = false;
 
-	private final StructureAlgorithm algorithm;
+	private final LocationChecker checker;
 
 	public TempleProducer(RecognisedVersion recognisedVersion, long seed,
 			BiomeDataOracle biomeDataOracle) {
 		super(biomeDataOracle, recognisedVersion);
-		this.algorithm = new StructureAlgorithm(seed, MAGIC_NUMBER_FOR_SEED_1,
+		this.checker = new StructureAlgorithm(seed, MAGIC_NUMBER_FOR_SEED_1,
 				MAGIC_NUMBER_FOR_SEED_2, MAGIC_NUMBER_FOR_SEED_3,
 				MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 				MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
@@ -34,7 +34,7 @@ public class TempleProducer extends StructureProducer {
 
 	@Override
 	protected boolean isValidLocation() {
-		return algorithm.isValidLocation(chunkX, chunkY)
+		return checker.isValidLocation(chunkX, chunkY)
 				&& biomeDataOracle.isValidBiomeAtMiddleOfChunk(chunkX, chunkY,
 						validBiomesAtMiddleOfChunk);
 	}

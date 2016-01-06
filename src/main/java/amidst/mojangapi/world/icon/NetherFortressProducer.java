@@ -9,17 +9,17 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @NotThreadSafe
 public class NetherFortressProducer extends StructureProducer {
-	private final NetherFortressAlgorithm algorithm;
+	private final LocationChecker checker;
 
 	public NetherFortressProducer(RecognisedVersion recognisedVersion,
 			long seed, BiomeDataOracle biomeDataOracle) {
 		super(biomeDataOracle, recognisedVersion);
-		this.algorithm = new NetherFortressAlgorithm(seed);
+		this.checker = new NetherFortressAlgorithm(seed);
 	}
 
 	@Override
 	protected boolean isValidLocation() {
-		return algorithm.isValidLocation(chunkX, chunkY);
+		return checker.isValidLocation(chunkX, chunkY);
 	}
 
 	@Override
