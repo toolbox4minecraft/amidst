@@ -7,7 +7,7 @@ import amidst.documentation.NotNull;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.PlayerInformationRetriever;
 import amidst.mojangapi.file.json.player.PlayerJson;
-import amidst.mojangapi.world.icon.DefaultWorldIconTypes;
+import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 
 @Immutable
 public class PlayerInformation {

@@ -4,12 +4,11 @@ import java.util.Random;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
-import amidst.documentation.NotThreadSafe;
+import amidst.documentation.Immutable;
 
-@NotThreadSafe
+@Immutable
 public class SlimeChunkOracle {
 	private final long seed;
-	private final Random random = new Random();
 
 	public SlimeChunkOracle(long seed) {
 		this.seed = seed;
@@ -17,13 +16,8 @@ public class SlimeChunkOracle {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public boolean isSlimeChunk(long chunkX, long chunkY) {
-		updateSeed(chunkX, chunkY);
-		return isSlimeChunk();
-	}
-
-	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private void updateSeed(long chunkX, long chunkY) {
-		random.setSeed(getSeed(chunkX, chunkY));
+		Random random = new Random(getSeed(chunkX, chunkY));
+		return isSlimeChunk(random);
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
@@ -33,7 +27,7 @@ public class SlimeChunkOracle {
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private boolean isSlimeChunk() {
+	private boolean isSlimeChunk(Random random) {
 		return random.nextInt(10) == 0;
 	}
 }

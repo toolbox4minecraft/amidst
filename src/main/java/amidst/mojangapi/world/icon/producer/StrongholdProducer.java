@@ -1,6 +1,5 @@
-package amidst.mojangapi.world.icon;
+package amidst.mojangapi.world.icon.producer;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -11,6 +10,8 @@ import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.icon.WorldIcon;
+import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @ThreadSafe
@@ -66,15 +67,15 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 	private final BiomeDataOracle biomeDataOracle;
 	private final List<Biome> validBiomes;
 
-	public StrongholdProducer(RecognisedVersion recognisedVersion, long seed,
-			BiomeDataOracle biomeDataOracle) {
-		super(recognisedVersion);
+	public StrongholdProducer(long seed, BiomeDataOracle biomeDataOracle,
+			RecognisedVersion recognisedVersion) {
 		this.seed = seed;
 		this.biomeDataOracle = biomeDataOracle;
-		this.validBiomes = getValidBiomes();
+		this.validBiomes = getValidBiomes(recognisedVersion);
 	}
 
-	private List<Biome> getValidBiomes() {
+	private static List<Biome> getValidBiomes(
+			RecognisedVersion recognisedVersion) {
 		if (recognisedVersion.isAtLeast(RecognisedVersion.V13w36a)) {
 			return getValidBiomesV13w36a();
 		} else if (recognisedVersion.isAtLeast(RecognisedVersion.V12w03a)) {
@@ -89,7 +90,7 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 		}
 	}
 
-	private List<Biome> getValidBiomesV13w36a() {
+	private static List<Biome> getValidBiomesV13w36a() {
 		List<Biome> result = new ArrayList<Biome>();
 		for (Biome biome : Biome.allBiomes()) {
 			if (isValidBiomeV13w36a(biome)) {
@@ -99,7 +100,7 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 		return result;
 	}
 
-	private boolean isValidBiomeV13w36a(Biome biome) {
+	private static boolean isValidBiomeV13w36a(Biome biome) {
 		return biome.getType().getValue1() > 0;
 	}
 
@@ -112,12 +113,11 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 			double distance = nextDistance(random);
 			int x = getX(angle, distance) << 4;
 			int y = getY(angle, distance) << 4;
-			Point strongholdLocation = findStronghold(random, x, y);
+			CoordinatesInWorld strongholdLocation = findStronghold(random, x, y);
 			if (strongholdLocation != null) {
-				result.add(createWorldIcon(strongholdLocation.x,
-						strongholdLocation.y));
+				result.add(createWorldIcon(strongholdLocation));
 			} else {
-				result.add(createWorldIcon(x, y));
+				result.add(createWorldIcon(CoordinatesInWorld.from(x, y)));
 			}
 			angle = updateAngle(angle);
 		}
@@ -140,13 +140,13 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 		return (int) Math.round(Math.sin(angle) * distance);
 	}
 
-	private Point findStronghold(Random random, int x, int y) {
+	private CoordinatesInWorld findStronghold(Random random, int x, int y) {
 		return biomeDataOracle.findValidLocation(x + 8, y + 8, 112,
 				validBiomes, random);
 	}
 
-	private WorldIcon createWorldIcon(int x, int y) {
-		return new WorldIcon(CoordinatesInWorld.from(x, y),
+	private WorldIcon createWorldIcon(CoordinatesInWorld coordinates) {
+		return new WorldIcon(coordinates,
 				DefaultWorldIconTypes.STRONGHOLD.getName(),
 				DefaultWorldIconTypes.STRONGHOLD.getImage());
 	}

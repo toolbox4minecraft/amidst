@@ -10,12 +10,19 @@ public class WorldIcon {
 	private final CoordinatesInWorld coordinates;
 	private final String name;
 	private final BufferedImage image;
+	private final boolean displayNetherCoordinates;
 
 	public WorldIcon(CoordinatesInWorld coordinates, String name,
 			BufferedImage image) {
+		this(coordinates, name, image, false);
+	}
+
+	public WorldIcon(CoordinatesInWorld coordinates, String name,
+			BufferedImage image, boolean displayNetherCoordinates) {
 		this.coordinates = coordinates;
 		this.name = name;
 		this.image = image;
+		this.displayNetherCoordinates = displayNetherCoordinates;
 	}
 
 	public CoordinatesInWorld getCoordinates() {
@@ -30,8 +37,17 @@ public class WorldIcon {
 		return image;
 	}
 
+	public boolean isDisplayNetherCoordinates() {
+		return displayNetherCoordinates;
+	}
+
 	@Override
 	public String toString() {
-		return name + " " + coordinates.toString();
+		if (displayNetherCoordinates) {
+			return name + " " + coordinates.toString() + " -> "
+					+ coordinates.toNetherString() + " in Nether";
+		} else {
+			return name + " " + coordinates.toString();
+		}
 	}
 }

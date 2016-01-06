@@ -175,4 +175,9 @@ public class CoordinatesInWorld {
 	public String toString() {
 		return "[" + xInWorld + ", " + yInWorld + "]";
 	}
+
+	public String toNetherString() {
+		return "[" + getXAs(Resolution.NETHER) + ", "
+				+ getYAs(Resolution.NETHER) + "]";
+	}
 }

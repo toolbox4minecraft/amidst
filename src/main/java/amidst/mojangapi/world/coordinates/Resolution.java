@@ -4,7 +4,7 @@ import amidst.documentation.Immutable;
 
 @Immutable
 public enum Resolution {
-	WORLD(0), QUARTER(2), CHUNK(4), FRAGMENT(9);
+	WORLD(0), QUARTER(2), NETHER(3), CHUNK(4), NETHER_CHUNK(7), FRAGMENT(9);
 
 	private final int shift;
 

@@ -1,29 +1,24 @@
-package amidst.mojangapi.world.icon;
+package amidst.mojangapi.world.icon.producer;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.icon.WorldIcon;
 
 @ThreadSafe
 public abstract class CachedWorldIconProducer extends WorldIconProducer {
-	protected final RecognisedVersion recognisedVersion;
-
 	private final Object cacheLock = new Object();
 	private volatile List<WorldIcon> cache;
 
-	public CachedWorldIconProducer(RecognisedVersion recognisedVersion) {
-		this.recognisedVersion = recognisedVersion;
-	}
-
 	@Override
-	public void produce(CoordinatesInWorld corner, WorldIconConsumer consumer) {
+	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer) {
 		for (WorldIcon icon : getCache()) {
 			if (icon.getCoordinates().isInBoundsOf(corner, Fragment.SIZE)) {
-				consumer.consume(icon);
+				consumer.accept(icon);
 			}
 		}
 	}
