@@ -2,6 +2,7 @@ package amidst.mojangapi.world.icon.producer;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
@@ -14,10 +15,10 @@ public abstract class CachedWorldIconProducer extends WorldIconProducer {
 	private volatile List<WorldIcon> cache;
 
 	@Override
-	public void produce(CoordinatesInWorld corner, WorldIconConsumer consumer) {
+	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer) {
 		for (WorldIcon icon : getCache()) {
 			if (icon.getCoordinates().isInBoundsOf(corner, Fragment.SIZE)) {
-				consumer.consume(icon);
+				consumer.accept(icon);
 			}
 		}
 	}

@@ -1,5 +1,7 @@
 package amidst.mojangapi.world.icon.producer;
 
+import java.util.function.Consumer;
+
 import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
@@ -26,7 +28,7 @@ public abstract class StructureProducer extends WorldIconProducer {
 	}
 
 	@Override
-	public void produce(CoordinatesInWorld corner, WorldIconConsumer consumer) {
+	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer) {
 		for (int xRelativeToFragment = 0; xRelativeToFragment < size; xRelativeToFragment++) {
 			for (int yRelativeToFragment = 0; yRelativeToFragment < size; yRelativeToFragment++) {
 				generateAt(corner, consumer, xRelativeToFragment,
@@ -37,7 +39,7 @@ public abstract class StructureProducer extends WorldIconProducer {
 
 	// TODO: use longs?
 	private void generateAt(CoordinatesInWorld corner,
-			WorldIconConsumer consumer, int xRelativeToFragment,
+			Consumer<WorldIcon> consumer, int xRelativeToFragment,
 			int yRelativeToFragment) {
 		int x = xRelativeToFragment + (int) corner.getXAs(resolution);
 		int y = yRelativeToFragment + (int) corner.getYAs(resolution);
@@ -46,7 +48,7 @@ public abstract class StructureProducer extends WorldIconProducer {
 			if (worldIconType != null) {
 				CoordinatesInWorld coordinates = createCoordinates(corner,
 						xRelativeToFragment, yRelativeToFragment);
-				consumer.consume(new WorldIcon(coordinates, worldIconType
+				consumer.accept(new WorldIcon(coordinates, worldIconType
 						.getName(), worldIconType.getImage(),
 						displayNetherCoordinates));
 			}
