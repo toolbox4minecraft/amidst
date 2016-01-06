@@ -5,19 +5,12 @@ import java.util.List;
 
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
 @ThreadSafe
 public abstract class CachedWorldIconProducer extends WorldIconProducer {
-	protected final RecognisedVersion recognisedVersion;
-
 	private final Object cacheLock = new Object();
 	private volatile List<WorldIcon> cache;
-
-	public CachedWorldIconProducer(RecognisedVersion recognisedVersion) {
-		this.recognisedVersion = recognisedVersion;
-	}
 
 	@Override
 	public void produce(CoordinatesInWorld corner, WorldIconConsumer consumer) {

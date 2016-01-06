@@ -79,13 +79,13 @@ public class WorldBuilder {
 				movablePlayerList,
 				biomeDataOracle,
 				new SlimeChunkOracle(      seed.getLong()),
-				new SpawnProducer(         recognisedVersion, seed.getLong(), biomeDataOracle),
-				new StrongholdProducer(    recognisedVersion, seed.getLong(), biomeDataOracle),
-				new PlayerProducer(        recognisedVersion, movablePlayerList),
-				new TempleProducer(        recognisedVersion, seed.getLong(), biomeDataOracle),
-				new VillageProducer(                          seed.getLong(), biomeDataOracle),
-				new OceanMonumentProducer(                    seed.getLong(), biomeDataOracle),
-				new NetherFortressProducer(                   seed.getLong()));
+				new SpawnProducer(         seed.getLong(), biomeDataOracle),
+				new StrongholdProducer(    seed.getLong(), biomeDataOracle, recognisedVersion),
+				new PlayerProducer(                                         movablePlayerList),
+				new TempleProducer(        seed.getLong(), biomeDataOracle, recognisedVersion),
+				new VillageProducer(       seed.getLong(), biomeDataOracle),
+				new OceanMonumentProducer( seed.getLong(), biomeDataOracle),
+				new NetherFortressProducer(seed.getLong()));
 		// @formatter:on
 	}
 }

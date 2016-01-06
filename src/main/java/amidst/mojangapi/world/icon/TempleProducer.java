@@ -7,8 +7,8 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @NotThreadSafe
 public class TempleProducer extends StructureProducer {
-	public TempleProducer(RecognisedVersion recognisedVersion, long seed,
-			BiomeDataOracle biomeDataOracle) {
+	public TempleProducer(long seed, BiomeDataOracle biomeDataOracle,
+			RecognisedVersion recognisedVersion) {
 		super(Resolution.CHUNK, new TempleLocationChecker(seed,
 				biomeDataOracle, recognisedVersion),
 				new TempleWorldIconTypeProvider(biomeDataOracle), false);

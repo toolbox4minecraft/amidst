@@ -6,7 +6,6 @@ import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
@@ -28,9 +27,7 @@ public class SpawnProducer extends CachedWorldIconProducer {
 	private final long seed;
 	private final BiomeDataOracle biomeDataOracle;
 
-	public SpawnProducer(RecognisedVersion recognisedVersion, long seed,
-			BiomeDataOracle biomeDataOracle) {
-		super(recognisedVersion);
+	public SpawnProducer(long seed, BiomeDataOracle biomeDataOracle) {
 		this.seed = seed;
 		this.biomeDataOracle = biomeDataOracle;
 	}

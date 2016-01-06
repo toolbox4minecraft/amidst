@@ -65,15 +65,15 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 	private final BiomeDataOracle biomeDataOracle;
 	private final List<Biome> validBiomes;
 
-	public StrongholdProducer(RecognisedVersion recognisedVersion, long seed,
-			BiomeDataOracle biomeDataOracle) {
-		super(recognisedVersion);
+	public StrongholdProducer(long seed, BiomeDataOracle biomeDataOracle,
+			RecognisedVersion recognisedVersion) {
 		this.seed = seed;
 		this.biomeDataOracle = biomeDataOracle;
-		this.validBiomes = getValidBiomes();
+		this.validBiomes = getValidBiomes(recognisedVersion);
 	}
 
-	private List<Biome> getValidBiomes() {
+	private static List<Biome> getValidBiomes(
+			RecognisedVersion recognisedVersion) {
 		if (recognisedVersion.isAtLeast(RecognisedVersion.V13w36a)) {
 			return getValidBiomesV13w36a();
 		} else if (recognisedVersion.isAtLeast(RecognisedVersion.V12w03a)) {
@@ -88,7 +88,7 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 		}
 	}
 
-	private List<Biome> getValidBiomesV13w36a() {
+	private static List<Biome> getValidBiomesV13w36a() {
 		List<Biome> result = new ArrayList<Biome>();
 		for (Biome biome : Biome.allBiomes()) {
 			if (isValidBiomeV13w36a(biome)) {
@@ -98,7 +98,7 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 		return result;
 	}
 
-	private boolean isValidBiomeV13w36a(Biome biome) {
+	private static boolean isValidBiomeV13w36a(Biome biome) {
 		return biome.getType().getValue1() > 0;
 	}
 
