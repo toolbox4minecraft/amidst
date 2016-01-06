@@ -93,4 +93,9 @@ public class OceanMonumentProducer extends StructureProducer {
 	protected int getStructureSize() {
 		return 29;
 	}
+
+	@Override
+	protected boolean displayNetherCoordinates() {
+		return false;
+	}
 }

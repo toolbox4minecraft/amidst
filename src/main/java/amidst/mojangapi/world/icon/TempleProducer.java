@@ -116,4 +116,9 @@ public class TempleProducer extends StructureProducer {
 	protected int getStructureSize() {
 		return -1; // not used
 	}
+
+	@Override
+	protected boolean displayNetherCoordinates() {
+		return false;
+	}
 }

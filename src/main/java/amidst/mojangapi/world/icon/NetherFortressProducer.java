@@ -78,4 +78,9 @@ public class NetherFortressProducer extends StructureProducer {
 	protected int getStructureSize() {
 		return -1; // not used
 	}
+
+	@Override
+	protected boolean displayNetherCoordinates() {
+		return true;
+	}
 }

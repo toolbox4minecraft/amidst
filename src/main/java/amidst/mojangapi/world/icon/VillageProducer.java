@@ -77,4 +77,9 @@ public class VillageProducer extends StructureProducer {
 	protected int getStructureSize() {
 		return 0;
 	}
+
+	@Override
+	protected boolean displayNetherCoordinates() {
+		return false;
+	}
 }

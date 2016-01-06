@@ -29,6 +29,7 @@ public abstract class StructureProducer extends WorldIconProducer {
 	protected final byte maxDistanceBetweenScatteredFeatures;
 	protected final byte minDistanceBetweenScatteredFeatures;
 	protected final int distanceBetweenScatteredFeaturesRange;
+	protected final boolean displayNetherCoordinates;
 	protected final int structureSize;
 	protected final Random random;
 
@@ -56,6 +57,7 @@ public abstract class StructureProducer extends WorldIconProducer {
 		maxDistanceBetweenScatteredFeatures = getMaxDistanceBetweenScatteredFeatures();
 		minDistanceBetweenScatteredFeatures = getMinDistanceBetweenScatteredFeatures();
 		distanceBetweenScatteredFeaturesRange = getDistanceBetweenScatteredFeaturesRange();
+		displayNetherCoordinates = displayNetherCoordinates();
 		structureSize = getStructureSize();
 		random = new Random();
 	}
@@ -88,7 +90,8 @@ public abstract class StructureProducer extends WorldIconProducer {
 			DefaultWorldIconTypes worldIconType = getWorldIconType();
 			if (worldIconType != null) {
 				consumer.consume(new WorldIcon(createCoordinates(),
-						worldIconType.getName(), worldIconType.getImage()));
+						worldIconType.getName(), worldIconType.getImage(),
+						displayNetherCoordinates));
 			}
 		}
 	}
@@ -185,4 +188,6 @@ public abstract class StructureProducer extends WorldIconProducer {
 	protected abstract byte getMinDistanceBetweenScatteredFeatures();
 
 	protected abstract int getStructureSize();
+
+	protected abstract boolean displayNetherCoordinates();
 }
