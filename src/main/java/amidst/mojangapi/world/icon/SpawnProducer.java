@@ -1,6 +1,5 @@
 package amidst.mojangapi.world.icon;
 
-import java.awt.Point;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -42,27 +41,25 @@ public class SpawnProducer extends CachedWorldIconProducer {
 	}
 
 	private WorldIcon createSpawnWorldIcon() {
-		Point spawnCenter = getSpawnCenterInWorldCoordinates();
-		if (spawnCenter != null) {
-			return createSpawnWorldIconAt(CoordinatesInWorld.from(
-					spawnCenter.x, spawnCenter.y));
+		CoordinatesInWorld spawnLocation = getSpawnCenterInWorldCoordinates();
+		if (spawnLocation != null) {
+			return createWorldIcon(spawnLocation);
 		} else {
 			CoordinatesInWorld origin = CoordinatesInWorld.origin();
-			Log.debug("Unable to find spawn biome. Falling back to "
+			Log.i("Unable to find spawn biome. Falling back to "
 					+ origin.toString() + ".");
-			return createSpawnWorldIconAt(origin);
+			return createWorldIcon(origin);
 		}
 	}
 
-	private WorldIcon createSpawnWorldIconAt(CoordinatesInWorld coordinates) {
+	private WorldIcon createWorldIcon(CoordinatesInWorld coordinates) {
 		return new WorldIcon(coordinates,
 				DefaultWorldIconTypes.SPAWN.getName(),
 				DefaultWorldIconTypes.SPAWN.getImage());
 	}
 
-	private Point getSpawnCenterInWorldCoordinates() {
-		Random random = new Random(seed);
+	private CoordinatesInWorld getSpawnCenterInWorldCoordinates() {
 		return biomeDataOracle.findValidLocation(0, 0, 256, VALID_BIOMES,
-				random);
+				new Random(seed));
 	}
 }

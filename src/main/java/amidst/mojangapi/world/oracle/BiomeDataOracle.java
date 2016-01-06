@@ -1,6 +1,5 @@
 package amidst.mojangapi.world.oracle;
 
-import java.awt.Point;
 import java.util.List;
 import java.util.Random;
 
@@ -106,7 +105,7 @@ public class BiomeDataOracle {
 	}
 
 	// TODO: Find out if we should useQuarterResolution or not
-	public Point findValidLocation(int x, int y, int size,
+	public CoordinatesInWorld findValidLocation(int x, int y, int size,
 			List<Biome> validBiomes, Random random) {
 		int left = x - size >> 2;
 		int top = y - size >> 2;
@@ -117,17 +116,17 @@ public class BiomeDataOracle {
 		try {
 			int[] biomeData = getQuarterResolutionBiomeData(left, top, width,
 					height);
-			Point location = null;
+			CoordinatesInWorld result = null;
 			int numberOfValidLocations = 0;
 			for (int i = 0; i < width * height; i++) {
 				if (validBiomes.contains(Biome.getByIndex(biomeData[i]))
-						&& (location == null || random
+						&& (result == null || random
 								.nextInt(numberOfValidLocations + 1) == 0)) {
-					location = createLocation(left, top, width, i);
+					result = createCoordinates(left, top, width, i);
 					numberOfValidLocations++;
 				}
 			}
-			return location;
+			return result;
 		} catch (UnknownBiomeIndexException e) {
 			Log.e(e.getMessage());
 			e.printStackTrace();
@@ -139,10 +138,11 @@ public class BiomeDataOracle {
 		}
 	}
 
-	private Point createLocation(int left, int top, int width, int i) {
+	private CoordinatesInWorld createCoordinates(int left, int top, int width,
+			int i) {
 		int x = left + i % width << 2;
 		int y = top + i / width << 2;
-		return new Point(x, y);
+		return CoordinatesInWorld.from(x, y);
 	}
 
 	private int getMiddleOfChunk(int coordinate) {

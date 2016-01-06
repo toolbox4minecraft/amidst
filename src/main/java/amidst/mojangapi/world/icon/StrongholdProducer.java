@@ -1,6 +1,5 @@
 package amidst.mojangapi.world.icon;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -112,12 +111,11 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 			double distance = nextDistance(random);
 			int x = getX(angle, distance) << 4;
 			int y = getY(angle, distance) << 4;
-			Point strongholdLocation = findStronghold(random, x, y);
+			CoordinatesInWorld strongholdLocation = findStronghold(random, x, y);
 			if (strongholdLocation != null) {
-				result.add(createWorldIcon(strongholdLocation.x,
-						strongholdLocation.y));
+				result.add(createWorldIcon(strongholdLocation));
 			} else {
-				result.add(createWorldIcon(x, y));
+				result.add(createWorldIcon(CoordinatesInWorld.from(x, y)));
 			}
 			angle = updateAngle(angle);
 		}
@@ -140,13 +138,13 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 		return (int) Math.round(Math.sin(angle) * distance);
 	}
 
-	private Point findStronghold(Random random, int x, int y) {
+	private CoordinatesInWorld findStronghold(Random random, int x, int y) {
 		return biomeDataOracle.findValidLocation(x + 8, y + 8, 112,
 				validBiomes, random);
 	}
 
-	private WorldIcon createWorldIcon(int x, int y) {
-		return new WorldIcon(CoordinatesInWorld.from(x, y),
+	private WorldIcon createWorldIcon(CoordinatesInWorld coordinates) {
+		return new WorldIcon(coordinates,
 				DefaultWorldIconTypes.STRONGHOLD.getName(),
 				DefaultWorldIconTypes.STRONGHOLD.getImage());
 	}
