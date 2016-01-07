@@ -76,7 +76,7 @@ public class BiomeDataOracle {
 				getMiddleOfChunk(chunkY), size, validBiomes);
 	}
 
-	private boolean isValidBiomeForStructure(int x, int y, int size,
+	public boolean isValidBiomeForStructure(int x, int y, int size,
 			List<Biome> validBiomes) {
 		int left = x - size >> 2;
 		int top = y - size >> 2;
