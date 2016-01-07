@@ -17,21 +17,22 @@ import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
 public class Settings {
 	public final BooleanSetting showSlimeChunks;
 	public final BooleanSetting showGrid;
-	public final BooleanSetting showNetherFortresses;
-	public final BooleanSetting showTemples;
-	public final BooleanSetting showPlayers;
-	public final BooleanSetting showStrongholds;
-	public final BooleanSetting showVillages;
-	public final BooleanSetting showOceanMonuments;
 	public final BooleanSetting showSpawn;
+	public final BooleanSetting showStrongholds;
+	public final BooleanSetting showPlayers;
+	public final BooleanSetting showVillages;
+	public final BooleanSetting showTemples;
 	public final BooleanSetting showMineshafts;
+	public final BooleanSetting showNetherFortresses;
+	public final BooleanSetting showOceanMonuments;
+
 	public final BooleanSetting smoothScrolling;
 	public final BooleanSetting fragmentFading;
+	public final BooleanSetting maxZoom;
 	public final BooleanSetting showFPS;
 	public final BooleanSetting showScale;
 	public final BooleanSetting showDebug;
-	public final BooleanSetting updateToUnstable;
-	public final BooleanSetting maxZoom;
+
 	public final Setting<String> lastProfile;
 	public final MultipleStringsSetting worldType;
 	public final BiomeColorProfileSelection biomeColorProfileSelection;
@@ -41,21 +42,22 @@ public class Settings {
 		// @formatter:off
 		showSlimeChunks            = new BooleanSetting(        preferences, "slimeChunks",         false);
 		showGrid                   = new BooleanSetting(        preferences, "grid",                false);
+		showSpawn                  = new BooleanSetting(        preferences, "spawnIcon",           true);
+		showStrongholds            = new BooleanSetting(        preferences, "strongholdIcons",     true);
+		showPlayers                = new BooleanSetting(        preferences, "playerIcons",         true);
+		showVillages               = new BooleanSetting(        preferences, "villageIcons",        true);
+		showTemples                = new BooleanSetting(        preferences, "templeIcons",         true);
+		showMineshafts             = new BooleanSetting(        preferences, "mineshaftIcons",      false);
 		showNetherFortresses       = new BooleanSetting(        preferences, "netherFortressIcons", false);
+		showOceanMonuments         = new BooleanSetting(        preferences, "oceanMonumentIcons",  true);
+		
 		smoothScrolling            = new BooleanSetting(        preferences, "mapFlicking",         true);
 		fragmentFading             = new BooleanSetting(        preferences, "mapFading",           true);
 		maxZoom                    = new BooleanSetting(        preferences, "maxZoom",             true);
-		showStrongholds            = new BooleanSetting(        preferences, "strongholdIcons",     true);
-		showPlayers                = new BooleanSetting(        preferences, "playerIcons",         true);
-		showTemples                = new BooleanSetting(        preferences, "templeIcons",         true);
-		showVillages               = new BooleanSetting(        preferences, "villageIcons",        true);
-		showOceanMonuments         = new BooleanSetting(        preferences, "oceanMonumentIcons",  true);
-		showSpawn                  = new BooleanSetting(        preferences, "spawnIcon",           true);
-		showMineshafts             = new BooleanSetting(        preferences, "mineshaftIcons",      true);
 		showFPS                    = new BooleanSetting(        preferences, "showFPS",             true);
 		showScale                  = new BooleanSetting(        preferences, "showScale",           true);
 		showDebug                  = new BooleanSetting(        preferences, "showDebug",           false);
-		updateToUnstable           = new BooleanSetting(        preferences, "updateToUnstable",    false);
+	
 		lastProfile                = new StringSetting(         preferences, "profile",             "");
 		worldType                  = new MultipleStringsSetting(preferences, "worldType",           WorldType.PROMPT_EACH_TIME, WorldType.getWorldTypeSettingAvailableValues());
 		biomeColorProfileSelection = new BiomeColorProfileSelection(BiomeColorProfile.getDefaultProfile());

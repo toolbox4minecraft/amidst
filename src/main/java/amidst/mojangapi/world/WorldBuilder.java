@@ -89,7 +89,13 @@ public class WorldBuilder {
 				new SpawnProducer(     seedAsLong, biomeDataOracle),
 				new StrongholdProducer(seedAsLong, biomeDataOracle, recognisedVersion),
 				new PlayerProducer(movablePlayerList),
-				new StructureProducer( 
+				new StructureProducer(
+						Resolution.CHUNK,
+						4,
+						new VillageLocationChecker(seedAsLong, biomeDataOracle),
+						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
+						false
+				), new StructureProducer( 
 						Resolution.CHUNK,
 						8,
 						new TempleLocationChecker(seedAsLong, biomeDataOracle, recognisedVersion),
@@ -97,15 +103,9 @@ public class WorldBuilder {
 						false
 				), new StructureProducer(
 						Resolution.CHUNK,
-						4,
-						new VillageLocationChecker(seedAsLong, biomeDataOracle),
-						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
-						false
-				), new StructureProducer(
-						Resolution.CHUNK,
 						8,
-						new OceanMonumentLocationChecker(seedAsLong, biomeDataOracle),
-						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
+						MineshaftAlgorithm.from(seedAsLong, recognisedVersion),
+						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.MINESHAFT),
 						false
 				), new StructureProducer(
 						Resolution.NETHER_CHUNK,
@@ -116,8 +116,8 @@ public class WorldBuilder {
 				), new StructureProducer(
 						Resolution.CHUNK,
 						8,
-						MineshaftAlgorithm.from(seedAsLong, recognisedVersion),
-						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.MINESHAFT),
+						new OceanMonumentLocationChecker(seedAsLong, biomeDataOracle),
+						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
 						false
 				)
 		);
