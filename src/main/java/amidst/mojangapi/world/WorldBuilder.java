@@ -10,6 +10,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm;
 import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm;
 import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.TempleLocationChecker;
@@ -112,6 +113,12 @@ public class WorldBuilder {
 						new NetherFortressAlgorithm(seedAsLong),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
 						true
+				), new StructureProducer(
+						Resolution.CHUNK,
+						8,
+						MineshaftAlgorithm.from(seedAsLong, recognisedVersion),
+						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.MINESHAFT),
+						false
 				)
 		);
 		// @formatter:on

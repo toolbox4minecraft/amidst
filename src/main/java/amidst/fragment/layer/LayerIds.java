@@ -18,6 +18,7 @@ public class LayerIds {
 	public static final int TEMPLE = 7;
 	public static final int SPAWN = 8;
 	public static final int NETHER_FORTRESS = 9;
-	public static final int PLAYER = 10;
-	public static final int NUMBER_OF_LAYERS = 11;
+	public static final int MINESHAFT = 10;
+	public static final int PLAYER = 11;
+	public static final int NUMBER_OF_LAYERS = 12;
 }

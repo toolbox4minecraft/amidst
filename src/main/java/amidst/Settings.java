@@ -24,6 +24,7 @@ public class Settings {
 	public final BooleanSetting showVillages;
 	public final BooleanSetting showOceanMonuments;
 	public final BooleanSetting showSpawn;
+	public final BooleanSetting showMineshafts;
 	public final BooleanSetting smoothScrolling;
 	public final BooleanSetting fragmentFading;
 	public final BooleanSetting showFPS;
@@ -50,6 +51,7 @@ public class Settings {
 		showVillages               = new BooleanSetting(        preferences, "villageIcons",        true);
 		showOceanMonuments         = new BooleanSetting(        preferences, "oceanMonumentIcons",  true);
 		showSpawn                  = new BooleanSetting(        preferences, "spawnIcon",           true);
+		showMineshafts             = new BooleanSetting(        preferences, "mineshaftIcons",      true);
 		showFPS                    = new BooleanSetting(        preferences, "showFPS",             true);
 		showScale                  = new BooleanSetting(        preferences, "showScale",           true);
 		showDebug                  = new BooleanSetting(        preferences, "showDebug",           false);

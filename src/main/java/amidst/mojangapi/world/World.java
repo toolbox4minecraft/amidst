@@ -27,6 +27,7 @@ public class World {
 	private final WorldIconProducer villageProducer;
 	private final WorldIconProducer oceanMonumentProducer;
 	private final WorldIconProducer netherFortressProducer;
+	private final WorldIconProducer mineshaftProducer;
 
 	World(WorldSeed seed, WorldType worldType, String generatorOptions,
 			MovablePlayerList movablePlayerList,
@@ -37,7 +38,8 @@ public class World {
 			WorldIconProducer templeProducer,
 			WorldIconProducer villageProducer,
 			WorldIconProducer oceanMonumentProducer,
-			WorldIconProducer netherFortressProducer) {
+			WorldIconProducer netherFortressProducer,
+			WorldIconProducer mineshaftProducer) {
 		this.seed = seed;
 		this.worldType = worldType;
 		this.generatorOptions = generatorOptions;
@@ -51,6 +53,7 @@ public class World {
 		this.villageProducer = villageProducer;
 		this.oceanMonumentProducer = oceanMonumentProducer;
 		this.netherFortressProducer = netherFortressProducer;
+		this.mineshaftProducer = mineshaftProducer;
 	}
 
 	@CalledByAny
@@ -106,6 +109,10 @@ public class World {
 
 	public WorldIconProducer getNetherFortressProducer() {
 		return netherFortressProducer;
+	}
+
+	public WorldIconProducer getMineshaftProducer() {
+		return mineshaftProducer;
 	}
 
 	public WorldIcon getSpawnWorldIcon() {

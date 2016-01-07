@@ -52,6 +52,7 @@ public class LayerBuilder {
 		declarations[LayerIds.TEMPLE]           = new LayerDeclaration(LayerIds.TEMPLE,          settings.showTemples);
 		declarations[LayerIds.SPAWN]            = new LayerDeclaration(LayerIds.SPAWN,           settings.showSpawn);
 		declarations[LayerIds.NETHER_FORTRESS]  = new LayerDeclaration(LayerIds.NETHER_FORTRESS, settings.showNetherFortresses);
+		declarations[LayerIds.MINESHAFT]        = new LayerDeclaration(LayerIds.MINESHAFT,       settings.showMineshafts);
 		declarations[LayerIds.PLAYER]           = new LayerDeclaration(LayerIds.PLAYER,          settings.showPlayers);
 		// @formatter:on
 		return Collections.unmodifiableList(Arrays.asList(declarations));
@@ -105,6 +106,7 @@ public class LayerBuilder {
 				new WorldIconLoader( declarations.get(LayerIds.TEMPLE),          world.getTempleProducer()),
 				new WorldIconLoader( declarations.get(LayerIds.SPAWN),           world.getSpawnProducer()),
 				new WorldIconLoader( declarations.get(LayerIds.NETHER_FORTRESS), world.getNetherFortressProducer()),
+				new WorldIconLoader( declarations.get(LayerIds.MINESHAFT),       world.getMineshaftProducer()),
 				new WorldIconLoader( declarations.get(LayerIds.PLAYER),          world.getPlayerProducer())
 		));
 		// @formatter:on
@@ -127,6 +129,7 @@ public class LayerBuilder {
 				new WorldIconDrawer(declarations.get(LayerIds.TEMPLE),          zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.SPAWN),           zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.NETHER_FORTRESS), zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.MINESHAFT),       zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.PLAYER),          zoom, worldIconSelection)
 		));
 		// @formatter:on
