@@ -2,6 +2,7 @@ package amidst.mojangapi.world.icon.producer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -16,10 +17,14 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @ThreadSafe
 public class StrongholdProducer extends CachedWorldIconProducer {
+	private static final double DISTANCE_IN_CHUNKS = 32.0D;
+	private static final int STRUCTURES_ON_FIRST_RING = 3;
+
 	public static StrongholdProducer from(long seed,
 			BiomeDataOracle biomeDataOracle, RecognisedVersion recognisedVersion) {
 		return new StrongholdProducer(seed, biomeDataOracle,
-				getValidBiomes(recognisedVersion));
+				getValidBiomes(recognisedVersion),
+				getTotalStructureCount(recognisedVersion));
 	}
 
 	private static List<Biome> getValidBiomes(
@@ -50,6 +55,15 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 
 	private static boolean isValidBiomeV13w36a(Biome biome) {
 		return biome.getType().getValue1() > 0;
+	}
+
+	private static int getTotalStructureCount(
+			RecognisedVersion recognisedVersion) {
+		if (recognisedVersion.isAtLeast(RecognisedVersion.V15w43c)) {
+			return 128;
+		} else {
+			return 3;
+		}
 	}
 
 	// @formatter:off
@@ -102,31 +116,39 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 	private final long seed;
 	private final BiomeDataOracle biomeDataOracle;
 	private final List<Biome> validBiomes;
+	private final int totalStructureCount;
 
 	public StrongholdProducer(long seed, BiomeDataOracle biomeDataOracle,
-			List<Biome> validBiomes) {
+			List<Biome> validBiomes, int totalStructureCount) {
 		this.seed = seed;
 		this.biomeDataOracle = biomeDataOracle;
-		this.validBiomes = validBiomes;
+		this.validBiomes = Collections.unmodifiableList(validBiomes);
+		this.totalStructureCount = totalStructureCount;
 	}
 
 	@Override
 	protected List<WorldIcon> doCreateCache() {
 		List<WorldIcon> result = new LinkedList<WorldIcon>();
 		Random random = new Random(seed);
+		int ring = 1;
+		int structuresPerRing = STRUCTURES_ON_FIRST_RING;
+		int currentRingStructureCount = 0;
 		double angle = createAngle(random);
-		for (int i = 0; i < 3; i++) {
-			double distance = nextDistance(random);
+		for (int i = 0; i < totalStructureCount; i++) {
+			double distance = nextDistance(random, ring);
 			int x = getX(angle, distance);
 			int y = getY(angle, distance);
-			CoordinatesInWorld strongholdLocation = findStronghold(random, x, y);
-			if (strongholdLocation != null) {
-				result.add(createWorldIcon(getCornerOfChunk(strongholdLocation)));
-			} else {
-				result.add(createWorldIcon(CoordinatesInWorld.from(x << 4,
-						y << 4)));
+			CoordinatesInWorld strongholdLocation = getStrongholdLocation(x, y,
+					findStronghold(random, x, y));
+			result.add(createWorldIcon(strongholdLocation));
+			angle += getAngleDelta(ring, structuresPerRing);
+			currentRingStructureCount++;
+			if (currentRingStructureCount == structuresPerRing) {
+				ring++;
+				currentRingStructureCount = 0;
+				structuresPerRing += getStructuresPerRingDelta(random,
+						structuresPerRing);
 			}
-			angle = updateAngle(angle);
 		}
 		return result;
 	}
@@ -135,8 +157,9 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 		return random.nextDouble() * 3.141592653589793D * 2.0D;
 	}
 
-	private double nextDistance(Random random) {
-		return (1.25D + random.nextDouble()) * 32.0D;
+	private double nextDistance(Random random, int ring) {
+		return (1.25D * ring + random.nextDouble())
+				* (DISTANCE_IN_CHUNKS * ring);
 	}
 
 	private int getX(double angle, double distance) {
@@ -153,6 +176,15 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 				112, validBiomes, random);
 	}
 
+	private CoordinatesInWorld getStrongholdLocation(int x, int y,
+			CoordinatesInWorld coordinates) {
+		if (coordinates != null) {
+			return getCornerOfChunk(coordinates);
+		} else {
+			return CoordinatesInWorld.from(x << 4, y << 4);
+		}
+	}
+
 	private CoordinatesInWorld getCornerOfChunk(CoordinatesInWorld coordinates) {
 		long xInWorld = (coordinates.getX() >> 4) << 4;
 		long yInWorld = (coordinates.getY() >> 4) << 4;
@@ -165,7 +197,11 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 				DefaultWorldIconTypes.STRONGHOLD.getImage());
 	}
 
-	private double updateAngle(double angle) {
-		return angle + 6.283185307179586D / 3.0D;
+	private double getAngleDelta(int ring, int structuresPerRing) {
+		return 6.283185307179586D * ring / structuresPerRing;
+	}
+
+	private int getStructuresPerRingDelta(Random random, int structuresPerRing) {
+		return structuresPerRing + random.nextInt(structuresPerRing);
 	}
 }
