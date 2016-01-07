@@ -104,6 +104,12 @@ public class BiomeDataOracle {
 		}
 	}
 
+	public CoordinatesInWorld findValidLocationAtMiddleOfChunk(int chunkX,
+			int chunkY, int size, List<Biome> validBiomes, Random random) {
+		return findValidLocation(getMiddleOfChunk(chunkX),
+				getMiddleOfChunk(chunkY), size, validBiomes, random);
+	}
+
 	// TODO: Find out if we should useQuarterResolution or not
 	public CoordinatesInWorld findValidLocation(int x, int y, int size,
 			List<Biome> validBiomes, Random random) {

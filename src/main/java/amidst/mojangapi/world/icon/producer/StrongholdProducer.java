@@ -111,13 +111,14 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 		double angle = createAngle(random);
 		for (int i = 0; i < 3; i++) {
 			double distance = nextDistance(random);
-			int x = getX(angle, distance) << 4;
-			int y = getY(angle, distance) << 4;
+			int x = getX(angle, distance);
+			int y = getY(angle, distance);
 			CoordinatesInWorld strongholdLocation = findStronghold(random, x, y);
 			if (strongholdLocation != null) {
-				result.add(createWorldIcon(strongholdLocation));
+				result.add(createWorldIcon(getCornerOfChunk(strongholdLocation)));
 			} else {
-				result.add(createWorldIcon(CoordinatesInWorld.from(x, y)));
+				result.add(createWorldIcon(CoordinatesInWorld.from(x << 4,
+						y << 4)));
 			}
 			angle = updateAngle(angle);
 		}
@@ -140,9 +141,16 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 		return (int) Math.round(Math.sin(angle) * distance);
 	}
 
-	private CoordinatesInWorld findStronghold(Random random, int x, int y) {
-		return biomeDataOracle.findValidLocation(x + 8, y + 8, 112,
-				validBiomes, random);
+	private CoordinatesInWorld findStronghold(Random random, int chunkX,
+			int chunkY) {
+		return biomeDataOracle.findValidLocationAtMiddleOfChunk(chunkX, chunkY,
+				112, validBiomes, random);
+	}
+
+	private CoordinatesInWorld getCornerOfChunk(CoordinatesInWorld coordinates) {
+		long xInWorld = (coordinates.getX() >> 4) << 4;
+		long yInWorld = (coordinates.getY() >> 4) << 4;
+		return CoordinatesInWorld.from(xInWorld, yInWorld);
 	}
 
 	private WorldIcon createWorldIcon(CoordinatesInWorld coordinates) {
