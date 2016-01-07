@@ -16,6 +16,42 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @ThreadSafe
 public class StrongholdProducer extends CachedWorldIconProducer {
+	public static StrongholdProducer from(long seed,
+			BiomeDataOracle biomeDataOracle, RecognisedVersion recognisedVersion) {
+		return new StrongholdProducer(seed, biomeDataOracle,
+				getValidBiomes(recognisedVersion));
+	}
+
+	private static List<Biome> getValidBiomes(
+			RecognisedVersion recognisedVersion) {
+		if (recognisedVersion.isAtLeast(RecognisedVersion.V13w36a)) {
+			return getValidBiomesV13w36a();
+		} else if (recognisedVersion.isAtLeast(RecognisedVersion.V12w03a)) {
+			return VALID_BIOMES_12w03a;
+		} else if (recognisedVersion == RecognisedVersion.V1_1) {
+			return VALID_BIOMES_1_1;
+		} else if (recognisedVersion == RecognisedVersion.V1_9pre6
+				|| recognisedVersion == RecognisedVersion.V1_0) {
+			return VALID_BIOMES_1_0;
+		} else {
+			return VALID_BIOMES_DEFAULT;
+		}
+	}
+
+	private static List<Biome> getValidBiomesV13w36a() {
+		List<Biome> result = new ArrayList<Biome>();
+		for (Biome biome : Biome.allBiomes()) {
+			if (isValidBiomeV13w36a(biome)) {
+				result.add(biome);
+			}
+		}
+		return result;
+	}
+
+	private static boolean isValidBiomeV13w36a(Biome biome) {
+		return biome.getType().getValue1() > 0;
+	}
+
 	// @formatter:off
 	private static final List<Biome> VALID_BIOMES_DEFAULT = Arrays.asList(
 			Biome.desert,
@@ -68,40 +104,10 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 	private final List<Biome> validBiomes;
 
 	public StrongholdProducer(long seed, BiomeDataOracle biomeDataOracle,
-			RecognisedVersion recognisedVersion) {
+			List<Biome> validBiomes) {
 		this.seed = seed;
 		this.biomeDataOracle = biomeDataOracle;
-		this.validBiomes = getValidBiomes(recognisedVersion);
-	}
-
-	private static List<Biome> getValidBiomes(
-			RecognisedVersion recognisedVersion) {
-		if (recognisedVersion.isAtLeast(RecognisedVersion.V13w36a)) {
-			return getValidBiomesV13w36a();
-		} else if (recognisedVersion.isAtLeast(RecognisedVersion.V12w03a)) {
-			return VALID_BIOMES_12w03a;
-		} else if (recognisedVersion == RecognisedVersion.V1_1) {
-			return VALID_BIOMES_1_1;
-		} else if (recognisedVersion == RecognisedVersion.V1_9pre6
-				|| recognisedVersion == RecognisedVersion.V1_0) {
-			return VALID_BIOMES_1_0;
-		} else {
-			return VALID_BIOMES_DEFAULT;
-		}
-	}
-
-	private static List<Biome> getValidBiomesV13w36a() {
-		List<Biome> result = new ArrayList<Biome>();
-		for (Biome biome : Biome.allBiomes()) {
-			if (isValidBiomeV13w36a(biome)) {
-				result.add(biome);
-			}
-		}
-		return result;
-	}
-
-	private static boolean isValidBiomeV13w36a(Biome biome) {
-		return biome.getType().getValue1() > 0;
+		this.validBiomes = validBiomes;
 	}
 
 	@Override

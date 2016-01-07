@@ -87,7 +87,7 @@ public class WorldBuilder {
 				biomeDataOracle,
 				new SlimeChunkOracle(  seedAsLong),
 				new SpawnProducer(     seedAsLong, biomeDataOracle),
-				new StrongholdProducer(seedAsLong, biomeDataOracle, recognisedVersion),
+				StrongholdProducer.from(seedAsLong, biomeDataOracle, recognisedVersion),
 				new PlayerProducer(movablePlayerList),
 				new StructureProducer(
 						Resolution.CHUNK,
