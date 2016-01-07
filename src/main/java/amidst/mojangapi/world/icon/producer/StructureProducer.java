@@ -14,14 +14,17 @@ import amidst.mojangapi.world.icon.type.WorldIconTypeProvider;
 public class StructureProducer extends WorldIconProducer {
 	private final Resolution resolution;
 	private final int size;
+	private final int offset;
 	private final LocationChecker checker;
 	private final WorldIconTypeProvider provider;
 	private final boolean displayNetherCoordinates;
 
-	public StructureProducer(Resolution resolution, LocationChecker checker,
-			WorldIconTypeProvider provider, boolean displayNetherCoordinates) {
+	public StructureProducer(Resolution resolution, int offset,
+			LocationChecker checker, WorldIconTypeProvider provider,
+			boolean displayNetherCoordinates) {
 		this.resolution = resolution;
 		this.size = resolution.getStepsPerFragment();
+		this.offset = offset;
 		this.checker = checker;
 		this.provider = provider;
 		this.displayNetherCoordinates = displayNetherCoordinates;
@@ -59,6 +62,6 @@ public class StructureProducer extends WorldIconProducer {
 			int xRelativeToFragment, int yRelativeToFragment) {
 		long xInWorld = resolution.convertFromThisToWorld(xRelativeToFragment);
 		long yInWorld = resolution.convertFromThisToWorld(yRelativeToFragment);
-		return corner.add(xInWorld, yInWorld);
+		return corner.add(xInWorld + offset, yInWorld + offset);
 	}
 }

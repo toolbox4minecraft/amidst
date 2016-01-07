@@ -90,21 +90,25 @@ public class WorldBuilder {
 				new PlayerProducer(movablePlayerList),
 				new StructureProducer( 
 						Resolution.CHUNK,
+						8,
 						new TempleLocationChecker(seedAsLong, biomeDataOracle, recognisedVersion),
 						new TempleWorldIconTypeProvider(biomeDataOracle),
 						false
 				), new StructureProducer(
 						Resolution.CHUNK,
+						4,
 						new VillageLocationChecker(seedAsLong, biomeDataOracle),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
 						false
 				), new StructureProducer(
 						Resolution.CHUNK,
+						8,
 						new OceanMonumentLocationChecker(seedAsLong, biomeDataOracle),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
 						false
 				), new StructureProducer(
 						Resolution.NETHER_CHUNK,
+						88,
 						new NetherFortressAlgorithm(seedAsLong),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
 						true
