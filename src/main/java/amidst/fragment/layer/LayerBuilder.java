@@ -46,13 +46,14 @@ public class LayerBuilder {
 		declarations[LayerIds.BIOME]            = new LayerDeclaration(LayerIds.BIOME,           new ImmutableSetting<Boolean>(true));
 		declarations[LayerIds.SLIME]            = new LayerDeclaration(LayerIds.SLIME,           settings.showSlimeChunks);
 		declarations[LayerIds.GRID]             = new LayerDeclaration(LayerIds.GRID,            settings.showGrid);
-		declarations[LayerIds.VILLAGE]          = new LayerDeclaration(LayerIds.VILLAGE,         settings.showVillages);
-		declarations[LayerIds.OCEAN_MONUMENT]   = new LayerDeclaration(LayerIds.OCEAN_MONUMENT,  settings.showOceanMonuments);
-		declarations[LayerIds.STRONGHOLD]       = new LayerDeclaration(LayerIds.STRONGHOLD,      settings.showStrongholds);
-		declarations[LayerIds.TEMPLE]           = new LayerDeclaration(LayerIds.TEMPLE,          settings.showTemples);
 		declarations[LayerIds.SPAWN]            = new LayerDeclaration(LayerIds.SPAWN,           settings.showSpawn);
-		declarations[LayerIds.NETHER_FORTRESS]  = new LayerDeclaration(LayerIds.NETHER_FORTRESS, settings.showNetherFortresses);
+		declarations[LayerIds.STRONGHOLD]       = new LayerDeclaration(LayerIds.STRONGHOLD,      settings.showStrongholds);
 		declarations[LayerIds.PLAYER]           = new LayerDeclaration(LayerIds.PLAYER,          settings.showPlayers);
+		declarations[LayerIds.VILLAGE]          = new LayerDeclaration(LayerIds.VILLAGE,         settings.showVillages);
+		declarations[LayerIds.TEMPLE]           = new LayerDeclaration(LayerIds.TEMPLE,          settings.showTemples);
+		declarations[LayerIds.MINESHAFT]        = new LayerDeclaration(LayerIds.MINESHAFT,       settings.showMineshafts);
+		declarations[LayerIds.NETHER_FORTRESS]  = new LayerDeclaration(LayerIds.NETHER_FORTRESS, settings.showNetherFortresses);
+		declarations[LayerIds.OCEAN_MONUMENT]   = new LayerDeclaration(LayerIds.OCEAN_MONUMENT,  settings.showOceanMonuments);
 		// @formatter:on
 		return Collections.unmodifiableList(Arrays.asList(declarations));
 	}
@@ -99,13 +100,14 @@ public class LayerBuilder {
 				new BiomeDataLoader( declarations.get(LayerIds.BIOME),           world.getBiomeDataOracle()),
 				new ImageLoader(	 declarations.get(LayerIds.BIOME),           Resolution.QUARTER, new BiomeColorProvider(biomeSelection, settings.biomeColorProfileSelection)),
 				new ImageLoader(     declarations.get(LayerIds.SLIME),           Resolution.CHUNK,   new SlimeColorProvider(world.getSlimeChunkOracle())),
-				new WorldIconLoader( declarations.get(LayerIds.VILLAGE),         world.getVillageProducer()),
-				new WorldIconLoader( declarations.get(LayerIds.OCEAN_MONUMENT),  world.getOceanMonumentProducer()),
-				new WorldIconLoader( declarations.get(LayerIds.STRONGHOLD),      world.getStrongholdProducer()),
-				new WorldIconLoader( declarations.get(LayerIds.TEMPLE),          world.getTempleProducer()),
 				new WorldIconLoader( declarations.get(LayerIds.SPAWN),           world.getSpawnProducer()),
+				new WorldIconLoader( declarations.get(LayerIds.STRONGHOLD),      world.getStrongholdProducer()),
+				new WorldIconLoader( declarations.get(LayerIds.PLAYER),          world.getPlayerProducer()),
+				new WorldIconLoader( declarations.get(LayerIds.VILLAGE),         world.getVillageProducer()),
+				new WorldIconLoader( declarations.get(LayerIds.TEMPLE),          world.getTempleProducer()),
+				new WorldIconLoader( declarations.get(LayerIds.MINESHAFT),       world.getMineshaftProducer()),
 				new WorldIconLoader( declarations.get(LayerIds.NETHER_FORTRESS), world.getNetherFortressProducer()),
-				new WorldIconLoader( declarations.get(LayerIds.PLAYER),          world.getPlayerProducer())
+				new WorldIconLoader( declarations.get(LayerIds.OCEAN_MONUMENT),  world.getOceanMonumentProducer())
 		));
 		// @formatter:on
 	}
@@ -121,13 +123,14 @@ public class LayerBuilder {
 				new ImageDrawer(    declarations.get(LayerIds.BIOME),           Resolution.QUARTER),
 				new ImageDrawer(    declarations.get(LayerIds.SLIME),           Resolution.CHUNK),
 				new GridDrawer(     declarations.get(LayerIds.GRID),            zoom),
-				new WorldIconDrawer(declarations.get(LayerIds.VILLAGE),         zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),  zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.STRONGHOLD),      zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.TEMPLE),          zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.SPAWN),           zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.STRONGHOLD),      zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.PLAYER),          zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.VILLAGE),         zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.TEMPLE),          zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.MINESHAFT),       zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.NETHER_FORTRESS), zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.PLAYER),          zoom, worldIconSelection)
+				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),  zoom, worldIconSelection)
 		));
 		// @formatter:on
 	}

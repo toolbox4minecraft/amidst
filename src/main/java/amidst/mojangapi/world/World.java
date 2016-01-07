@@ -23,10 +23,11 @@ public class World {
 	private final CachedWorldIconProducer spawnProducer;
 	private final CachedWorldIconProducer strongholdProducer;
 	private final CachedWorldIconProducer playerProducer;
-	private final WorldIconProducer templeProducer;
 	private final WorldIconProducer villageProducer;
-	private final WorldIconProducer oceanMonumentProducer;
+	private final WorldIconProducer templeProducer;
+	private final WorldIconProducer mineshaftProducer;
 	private final WorldIconProducer netherFortressProducer;
+	private final WorldIconProducer oceanMonumentProducer;
 
 	World(WorldSeed seed, WorldType worldType, String generatorOptions,
 			MovablePlayerList movablePlayerList,
@@ -34,10 +35,11 @@ public class World {
 			CachedWorldIconProducer spawnProducer,
 			CachedWorldIconProducer strongholdProducer,
 			CachedWorldIconProducer playerProducer,
-			WorldIconProducer templeProducer,
 			WorldIconProducer villageProducer,
-			WorldIconProducer oceanMonumentProducer,
-			WorldIconProducer netherFortressProducer) {
+			WorldIconProducer templeProducer,
+			WorldIconProducer mineshaftProducer,
+			WorldIconProducer netherFortressProducer,
+			WorldIconProducer oceanMonumentProducer) {
 		this.seed = seed;
 		this.worldType = worldType;
 		this.generatorOptions = generatorOptions;
@@ -47,10 +49,11 @@ public class World {
 		this.spawnProducer = spawnProducer;
 		this.strongholdProducer = strongholdProducer;
 		this.playerProducer = playerProducer;
-		this.templeProducer = templeProducer;
 		this.villageProducer = villageProducer;
-		this.oceanMonumentProducer = oceanMonumentProducer;
+		this.templeProducer = templeProducer;
+		this.mineshaftProducer = mineshaftProducer;
 		this.netherFortressProducer = netherFortressProducer;
+		this.oceanMonumentProducer = oceanMonumentProducer;
 	}
 
 	@CalledByAny
@@ -92,20 +95,24 @@ public class World {
 		return playerProducer;
 	}
 
-	public WorldIconProducer getTempleProducer() {
-		return templeProducer;
-	}
-
 	public WorldIconProducer getVillageProducer() {
 		return villageProducer;
 	}
 
-	public WorldIconProducer getOceanMonumentProducer() {
-		return oceanMonumentProducer;
+	public WorldIconProducer getTempleProducer() {
+		return templeProducer;
+	}
+
+	public WorldIconProducer getMineshaftProducer() {
+		return mineshaftProducer;
 	}
 
 	public WorldIconProducer getNetherFortressProducer() {
 		return netherFortressProducer;
+	}
+
+	public WorldIconProducer getOceanMonumentProducer() {
+		return oceanMonumentProducer;
 	}
 
 	public WorldIcon getSpawnWorldIcon() {

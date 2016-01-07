@@ -42,6 +42,9 @@ public class VillageLocationChecker extends AllValidLocationChecker {
 						biomeDataOracle,
 						STRUCTURE_SIZE,
 						VALID_BIOMES_FOR_STRUCTURE
+				), new VillageAlgorithm(
+						biomeDataOracle,
+						VALID_BIOMES_FOR_STRUCTURE
 				)
 		);
 		// @formatter:on

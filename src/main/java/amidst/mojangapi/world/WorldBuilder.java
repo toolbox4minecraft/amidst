@@ -10,6 +10,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm;
 import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm;
 import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.TempleLocationChecker;
@@ -86,28 +87,38 @@ public class WorldBuilder {
 				biomeDataOracle,
 				new SlimeChunkOracle(  seedAsLong),
 				new SpawnProducer(     seedAsLong, biomeDataOracle),
-				new StrongholdProducer(seedAsLong, biomeDataOracle, recognisedVersion),
+				StrongholdProducer.from(seedAsLong, biomeDataOracle, recognisedVersion),
 				new PlayerProducer(movablePlayerList),
-				new StructureProducer( 
+				new StructureProducer(
 						Resolution.CHUNK,
+						4,
+						new VillageLocationChecker(seedAsLong, biomeDataOracle),
+						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
+						false
+				), new StructureProducer( 
+						Resolution.CHUNK,
+						8,
 						new TempleLocationChecker(seedAsLong, biomeDataOracle, recognisedVersion),
 						new TempleWorldIconTypeProvider(biomeDataOracle),
 						false
 				), new StructureProducer(
 						Resolution.CHUNK,
-						new VillageLocationChecker(seedAsLong, biomeDataOracle),
-						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
-						false
-				), new StructureProducer(
-						Resolution.CHUNK,
-						new OceanMonumentLocationChecker(seedAsLong, biomeDataOracle),
-						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
+						8,
+						MineshaftAlgorithm.from(seedAsLong, recognisedVersion),
+						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.MINESHAFT),
 						false
 				), new StructureProducer(
 						Resolution.NETHER_CHUNK,
+						88,
 						new NetherFortressAlgorithm(seedAsLong),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
 						true
+				), new StructureProducer(
+						Resolution.CHUNK,
+						8,
+						new OceanMonumentLocationChecker(seedAsLong, biomeDataOracle),
+						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
+						false
 				)
 		);
 		// @formatter:on

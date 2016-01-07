@@ -11,7 +11,9 @@ import amidst.logging.Log;
 @Immutable
 public enum RecognisedVersion {
 	// @formatter:off
+	UNKNOWN(null), // Make sure this is the first entry, so UNKNOWN.isAtLeast(...) returns always true, since an unknown version is most likely a new snapshot.
 	v15w44b("qtoombkapb[Llq;mn[J[[Jmj"),
+	V15w43c("qsoombkapb[Llq;mn[J[[Jmj"),
 	V15w31c("oxnvlnjt[Llg;lz[J[[Jlv"),
 	V1_8_8("orntlljs[Lle;lx[J[[Jlt"), // 1.8.4, 1.8.5, 1.8.6, 1.8.7, and 1.8.8 all have the same typeDump version ID. They are all security issue fixes.
 	V1_8_3("osnulmjt[Llf;ly[J[[Jlu"), // 1.8.3 and 1.8.2 have the same typeDump version ID - probably because 1.8.2 -> 1.8.3 was a fix for a server-side bug (https://mojang.com/2015/02/minecraft-1-8-2-is-now-available/)
@@ -65,8 +67,7 @@ public enum RecognisedVersion {
 	V1_9pre3("to"),
 	V1_9pre2("sv"),
 	V1_9pre1("sq"),
-	Vbeta_1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"), // Had to rename from V1_8_1 - should it just be removed?
-	UNKNOWN(null); // Make sure this is the last entry, so UNKNOWN.isAtLeast(...) returns always false.
+	Vbeta_1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"); // Had to rename from V1_8_1 - should it just be removed?
 	// @formatter:on
 
 	public static RecognisedVersion from(Field[] fields) {

@@ -76,7 +76,7 @@ public class BiomeDataOracle {
 				getMiddleOfChunk(chunkY), size, validBiomes);
 	}
 
-	private boolean isValidBiomeForStructure(int x, int y, int size,
+	public boolean isValidBiomeForStructure(int x, int y, int size,
 			List<Biome> validBiomes) {
 		int left = x - size >> 2;
 		int top = y - size >> 2;
@@ -102,6 +102,12 @@ public class BiomeDataOracle {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	public CoordinatesInWorld findValidLocationAtMiddleOfChunk(int chunkX,
+			int chunkY, int size, List<Biome> validBiomes, Random random) {
+		return findValidLocation(getMiddleOfChunk(chunkX),
+				getMiddleOfChunk(chunkY), size, validBiomes, random);
 	}
 
 	// TODO: Find out if we should useQuarterResolution or not
