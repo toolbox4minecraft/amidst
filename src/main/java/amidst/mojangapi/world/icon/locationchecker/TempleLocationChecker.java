@@ -13,7 +13,17 @@ public class TempleLocationChecker extends AllValidLocationChecker {
 	private static List<Biome> getValidBiomesAtMiddleOfChunk(
 			RecognisedVersion recognisedVersion) {
 		// @formatter:off
-		if (recognisedVersion.isAtLeast(RecognisedVersion.V1_4_2)) {
+		if (recognisedVersion.isAtLeast(RecognisedVersion.V15w43c)) {
+			return Arrays.asList(
+				Biome.desert,
+				Biome.desertHills,
+				Biome.jungle,
+				Biome.jungleHills,
+				Biome.swampland,
+				Biome.icePlains,
+				Biome.coldTaiga
+			);
+		} else if (recognisedVersion.isAtLeast(RecognisedVersion.V1_4_2)) {
 			return Arrays.asList(
 					Biome.desert,
 					Biome.desertHills,

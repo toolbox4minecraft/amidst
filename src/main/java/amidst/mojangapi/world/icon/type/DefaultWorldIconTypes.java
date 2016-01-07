@@ -21,7 +21,8 @@ public enum DefaultWorldIconTypes {
 	VILLAGE("Village"),
 	SPAWN("Default World Spawn"),
 	WITCH("Witch Hut"),
-	OCEAN_MONUMENT("Ocean Monument");
+	OCEAN_MONUMENT("Ocean Monument"),
+	IGLOO("Igloo");
 	// @formatter:on
 
 	private final String name;

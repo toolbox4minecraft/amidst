@@ -22,10 +22,12 @@ public class TempleWorldIconTypeProvider implements WorldIconTypeProvider {
 					chunkY);
 			if (biome == Biome.swampland) {
 				return DefaultWorldIconTypes.WITCH;
-			} else if (biome.getName().contains("Jungle")) {
+			} else if (biome == Biome.jungle || biome == Biome.jungleHills) {
 				return DefaultWorldIconTypes.JUNGLE;
-			} else if (biome.getName().contains("Desert")) {
+			} else if (biome == Biome.desert || biome == Biome.desertHills) {
 				return DefaultWorldIconTypes.DESERT;
+			} else if (biome == Biome.icePlains || biome == Biome.coldTaiga) {
+				return DefaultWorldIconTypes.IGLOO;
 			} else {
 				Log.e("No known structure for this biome type: "
 						+ biome.getName());
