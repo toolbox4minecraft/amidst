@@ -56,8 +56,9 @@ public class Application {
 	private MojangApi createMojangApi() throws FileNotFoundException,
 			LocalMinecraftInterfaceCreationException {
 		return new MojangApiBuilder(new WorldBuilder(
-				new PlayerInformationCache(), new SeedHistoryLogger(
-						parameters.historyFile)), parameters).construct();
+				new PlayerInformationCache(),
+				SeedHistoryLogger.from(parameters.historyFile)), parameters)
+				.construct();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

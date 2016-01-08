@@ -1,41 +1,45 @@
 package amidst.mojangapi.world;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Objects;
 
+import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 
 @ThreadSafe
 public class SeedHistoryLogger {
-	private final File file;
-
-	public SeedHistoryLogger(String filename) {
-		this.file = getHistoryFile(filename);
-	}
-
-	private File getHistoryFile(String filename) {
+	public static SeedHistoryLogger from(String filename) {
 		if (filename != null) {
 			Log.i("using seed history file: '" + filename + "'");
-			return new File(filename);
+			return new SeedHistoryLogger(new File(filename), true);
 		} else {
-			return null;
+			return new SeedHistoryLogger(new File("history.txt"), false);
 		}
 	}
 
+	private final File file;
+	private final boolean createIfNecessary;
+
+	public SeedHistoryLogger(@NotNull File file, boolean createIfNecessary) {
+		Objects.requireNonNull(file);
+		this.file = file;
+		this.createIfNecessary = createIfNecessary;
+	}
+
 	public synchronized void log(WorldSeed seed) {
-		if (file != null) {
-			if (!file.exists()) {
-				tryCreateFile();
-			}
-			if (file.exists() && file.isFile()) {
-				writeLine(seed);
-			} else {
-				Log.w("unable to write seed to seed log file");
-			}
+		if (createIfNecessary && !file.exists()) {
+			tryCreateFile();
+		}
+		if (file.isFile()) {
+			writeLine(seed);
+		} else {
+			Log.w("unable to write seed to seed history log file");
 		}
 	}
 
@@ -49,8 +53,9 @@ public class SeedHistoryLogger {
 	}
 
 	private void writeLine(WorldSeed seed) {
-		try (FileWriter writer = new FileWriter(file, true)) {
-			writer.append(createLine(seed));
+		try (PrintStream stream = new PrintStream(new FileOutputStream(file,
+				true))) {
+			stream.println(createLine(seed));
 		} catch (IOException e) {
 			Log.w("Unable to write to history file.");
 			e.printStackTrace();
@@ -58,7 +63,12 @@ public class SeedHistoryLogger {
 	}
 
 	private String createLine(WorldSeed seed) {
-		return new Timestamp(new Date().getTime()) + " " + seed.getLong()
-				+ "\r\n";
+		String text = seed.getText();
+		if (text != null) {
+			return new Timestamp(new Date().getTime()) + " " + seed.getLong()
+					+ " " + text;
+		} else {
+			return new Timestamp(new Date().getTime()) + " " + seed.getLong();
+		}
 	}
 }
