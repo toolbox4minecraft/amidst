@@ -6,10 +6,14 @@ import java.util.List;
 
 import amidst.Settings;
 import amidst.documentation.Immutable;
+import amidst.fragment.Fragment;
 import amidst.fragment.FragmentQueueProcessor;
+import amidst.fragment.colorprovider.BackgroundColorProvider;
 import amidst.fragment.colorprovider.BiomeColorProvider;
 import amidst.fragment.colorprovider.SlimeColorProvider;
+import amidst.fragment.colorprovider.TheEndColorProvider;
 import amidst.fragment.constructor.BiomeDataConstructor;
+import amidst.fragment.constructor.EndIslandsConstructor;
 import amidst.fragment.constructor.FragmentConstructor;
 import amidst.fragment.constructor.ImageConstructor;
 import amidst.fragment.drawer.AlphaUpdater;
@@ -19,14 +23,17 @@ import amidst.fragment.drawer.ImageDrawer;
 import amidst.fragment.drawer.WorldIconDrawer;
 import amidst.fragment.loader.AlphaInitializer;
 import amidst.fragment.loader.BiomeDataLoader;
+import amidst.fragment.loader.EndIslandsLoader;
 import amidst.fragment.loader.FragmentLoader;
 import amidst.fragment.loader.ImageLoader;
 import amidst.fragment.loader.WorldIconLoader;
 import amidst.gui.main.viewer.BiomeSelection;
+import amidst.gui.main.viewer.DimensionSelection;
 import amidst.gui.main.viewer.WorldIconSelection;
 import amidst.gui.main.viewer.Zoom;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.settings.ImmutableSetting;
 
 @Immutable
@@ -43,7 +50,9 @@ public class LayerBuilder {
 		LayerDeclaration[] declarations = new LayerDeclaration[LayerIds.NUMBER_OF_LAYERS];
 		// @formatter:off
 		declarations[LayerIds.ALPHA]            = new LayerDeclaration(LayerIds.ALPHA,           new ImmutableSetting<Boolean>(true));
-		declarations[LayerIds.BIOME]            = new LayerDeclaration(LayerIds.BIOME,           new ImmutableSetting<Boolean>(true));
+		declarations[LayerIds.BIOME_DATA]       = new LayerDeclaration(LayerIds.BIOME_DATA,      new ImmutableSetting<Boolean>(true));
+		declarations[LayerIds.END_ISLANDS]      = new LayerDeclaration(LayerIds.END_ISLANDS,     new ImmutableSetting<Boolean>(true));
+		declarations[LayerIds.BACKGROUND]       = new LayerDeclaration(LayerIds.BACKGROUND,      new ImmutableSetting<Boolean>(true));
 		declarations[LayerIds.SLIME]            = new LayerDeclaration(LayerIds.SLIME,           settings.showSlimeChunks);
 		declarations[LayerIds.GRID]             = new LayerDeclaration(LayerIds.GRID,            settings.showGrid);
 		declarations[LayerIds.SPAWN]            = new LayerDeclaration(LayerIds.SPAWN,           settings.showSpawn);
@@ -54,6 +63,7 @@ public class LayerBuilder {
 		declarations[LayerIds.MINESHAFT]        = new LayerDeclaration(LayerIds.MINESHAFT,       settings.showMineshafts);
 		declarations[LayerIds.NETHER_FORTRESS]  = new LayerDeclaration(LayerIds.NETHER_FORTRESS, settings.showNetherFortresses);
 		declarations[LayerIds.OCEAN_MONUMENT]   = new LayerDeclaration(LayerIds.OCEAN_MONUMENT,  settings.showOceanMonuments);
+		declarations[LayerIds.END_CITY]         = new LayerDeclaration(LayerIds.END_CITY,        settings.showEndCities);
 		// @formatter:on
 		return Collections.unmodifiableList(Arrays.asList(declarations));
 	}
@@ -65,7 +75,8 @@ public class LayerBuilder {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
 				new BiomeDataConstructor(Resolution.QUARTER),
-				new ImageConstructor(    Resolution.QUARTER,  LayerIds.BIOME),
+				new EndIslandsConstructor(),
+				new ImageConstructor(    Resolution.QUARTER,  LayerIds.BACKGROUND),
 				new ImageConstructor(    Resolution.CHUNK,    LayerIds.SLIME)
 		));
 		// @formatter:on
@@ -84,30 +95,34 @@ public class LayerBuilder {
 	}
 
 	public LayerLoader createLayerLoader(World world,
-			BiomeSelection biomeSelection, Settings settings) {
-		return new LayerLoader(createLoaders(world, biomeSelection, settings),
-				LayerIds.NUMBER_OF_LAYERS);
+			BiomeSelection biomeSelection,
+			DimensionSelection dimensionSelection, Settings settings) {
+		return new LayerLoader(createLoaders(world, biomeSelection,
+				dimensionSelection, settings), LayerIds.NUMBER_OF_LAYERS);
 	}
 
 	/**
 	 * This also defines the loading and reloading order.
 	 */
 	private Iterable<FragmentLoader> createLoaders(World world,
-			BiomeSelection biomeSelection, Settings settings) {
+			BiomeSelection biomeSelection,
+			DimensionSelection dimensionSelection, Settings settings) {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
-				new AlphaInitializer(declarations.get(LayerIds.ALPHA),           settings.fragmentFading),
-				new BiomeDataLoader( declarations.get(LayerIds.BIOME),           world.getBiomeDataOracle()),
-				new ImageLoader(	 declarations.get(LayerIds.BIOME),           Resolution.QUARTER, new BiomeColorProvider(biomeSelection, settings.biomeColorProfileSelection)),
-				new ImageLoader(     declarations.get(LayerIds.SLIME),           Resolution.CHUNK,   new SlimeColorProvider(world.getSlimeChunkOracle())),
-				new WorldIconLoader( declarations.get(LayerIds.SPAWN),           world.getSpawnProducer()),
-				new WorldIconLoader( declarations.get(LayerIds.STRONGHOLD),      world.getStrongholdProducer()),
-				new WorldIconLoader( declarations.get(LayerIds.PLAYER),          world.getPlayerProducer()),
-				new WorldIconLoader( declarations.get(LayerIds.VILLAGE),         world.getVillageProducer()),
-				new WorldIconLoader( declarations.get(LayerIds.TEMPLE),          world.getTempleProducer()),
-				new WorldIconLoader( declarations.get(LayerIds.MINESHAFT),       world.getMineshaftProducer()),
-				new WorldIconLoader( declarations.get(LayerIds.NETHER_FORTRESS), world.getNetherFortressProducer()),
-				new WorldIconLoader( declarations.get(LayerIds.OCEAN_MONUMENT),  world.getOceanMonumentProducer())
+				new AlphaInitializer(                declarations.get(LayerIds.ALPHA),           settings.fragmentFading),
+				new BiomeDataLoader(                 declarations.get(LayerIds.BIOME_DATA),      world.getBiomeDataOracle()),
+				new EndIslandsLoader(                declarations.get(LayerIds.END_ISLANDS),     world.getEndIslandOracle()),
+				new ImageLoader(	                 declarations.get(LayerIds.BACKGROUND),      Resolution.QUARTER, new BackgroundColorProvider(new BiomeColorProvider(biomeSelection, settings.biomeColorProfileSelection), new TheEndColorProvider(), dimensionSelection)),
+				new ImageLoader(                     declarations.get(LayerIds.SLIME),           Resolution.CHUNK,   new SlimeColorProvider(world.getSlimeChunkOracle())),
+				new WorldIconLoader<Void>(           declarations.get(LayerIds.SPAWN),           world.getSpawnProducer()),
+				new WorldIconLoader<Void>(           declarations.get(LayerIds.STRONGHOLD),      world.getStrongholdProducer()),
+				new WorldIconLoader<Void>(           declarations.get(LayerIds.PLAYER),          world.getPlayerProducer()),
+				new WorldIconLoader<Void>(           declarations.get(LayerIds.VILLAGE),         world.getVillageProducer()),
+				new WorldIconLoader<Void>(           declarations.get(LayerIds.TEMPLE),          world.getTempleProducer()),
+				new WorldIconLoader<Void>(           declarations.get(LayerIds.MINESHAFT),       world.getMineshaftProducer()),
+				new WorldIconLoader<Void>(           declarations.get(LayerIds.NETHER_FORTRESS), world.getNetherFortressProducer()),
+				new WorldIconLoader<Void>(           declarations.get(LayerIds.OCEAN_MONUMENT),  world.getOceanMonumentProducer()),
+				new WorldIconLoader<List<EndIsland>>(declarations.get(LayerIds.END_CITY),        world.getEndCityProducer(), Fragment::getEndIslands)
 		));
 		// @formatter:on
 	}
@@ -120,7 +135,7 @@ public class LayerBuilder {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
 				new AlphaUpdater(   declarations.get(LayerIds.ALPHA)),
-				new ImageDrawer(    declarations.get(LayerIds.BIOME),           Resolution.QUARTER),
+				new ImageDrawer(    declarations.get(LayerIds.BACKGROUND),      Resolution.QUARTER),
 				new ImageDrawer(    declarations.get(LayerIds.SLIME),           Resolution.CHUNK),
 				new GridDrawer(     declarations.get(LayerIds.GRID),            zoom),
 				new WorldIconDrawer(declarations.get(LayerIds.SPAWN),           zoom, worldIconSelection),
@@ -130,7 +145,8 @@ public class LayerBuilder {
 				new WorldIconDrawer(declarations.get(LayerIds.TEMPLE),          zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.MINESHAFT),       zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.NETHER_FORTRESS), zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),  zoom, worldIconSelection)
+				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),  zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.END_CITY),        zoom, worldIconSelection)
 		));
 		// @formatter:on
 	}

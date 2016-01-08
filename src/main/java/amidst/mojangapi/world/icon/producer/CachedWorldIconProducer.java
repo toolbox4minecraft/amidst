@@ -10,12 +10,13 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 
 @ThreadSafe
-public abstract class CachedWorldIconProducer extends WorldIconProducer {
+public abstract class CachedWorldIconProducer extends WorldIconProducer<Void> {
 	private final Object cacheLock = new Object();
 	private volatile List<WorldIcon> cache;
 
 	@Override
-	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer) {
+	public void produce(CoordinatesInWorld corner,
+			Consumer<WorldIcon> consumer, Void additionalData) {
 		for (WorldIcon icon : getCache()) {
 			if (icon.getCoordinates().isInBoundsOf(corner, Fragment.SIZE)) {
 				consumer.accept(icon);

@@ -9,6 +9,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentGraph;
+import amidst.fragment.dimension.DimensionSelector;
 import amidst.fragment.layer.LayerReloader;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
@@ -30,6 +31,7 @@ public class ViewerFacade {
 	private final Zoom zoom;
 	private final Viewer viewer;
 	private final LayerReloader layerReloader;
+	private final DimensionSelector dimensionSelector;
 	private final WorldIconSelection worldIconSelection;
 	private final Runnable onRepainterTick;
 	private final Runnable onFragmentLoaderTick;
@@ -39,6 +41,7 @@ public class ViewerFacade {
 	public ViewerFacade(World world, FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			Viewer viewer, LayerReloader layerReloader,
+			DimensionSelector dimensionSelector,
 			WorldIconSelection worldIconSelection, Runnable onRepainterTick,
 			Runnable onFragmentLoaderTick, Runnable onPlayerFinishedLoading) {
 		this.world = world;
@@ -47,6 +50,7 @@ public class ViewerFacade {
 		this.zoom = zoom;
 		this.viewer = viewer;
 		this.layerReloader = layerReloader;
+		this.dimensionSelector = dimensionSelector;
 		this.worldIconSelection = worldIconSelection;
 		this.onRepainterTick = onRepainterTick;
 		this.onFragmentLoaderTick = onFragmentLoaderTick;
@@ -59,8 +63,8 @@ public class ViewerFacade {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void reloadBiomeLayer() {
-		layerReloader.reloadBiomeLayer();
+	public void reloadBackgroundLayer() {
+		layerReloader.reloadBackgroundLayer();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -114,6 +118,11 @@ public class ViewerFacade {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void selectWorldIcon(WorldIcon worldIcon) {
 		worldIconSelection.select(worldIcon);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void selectDimension(int dimensionId) {
+		dimensionSelector.selectDimension(dimensionId);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

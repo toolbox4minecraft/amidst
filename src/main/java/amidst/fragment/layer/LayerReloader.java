@@ -15,8 +15,8 @@ public class LayerReloader {
 		this.fragmentQueueProcessor = fragmentQueueProcessor;
 	}
 
-	public void reloadBiomeLayer() {
-		fragmentQueueProcessor.invalidateLayer(LayerIds.BIOME);
+	public void reloadBackgroundLayer() {
+		fragmentQueueProcessor.invalidateLayer(LayerIds.BACKGROUND);
 	}
 
 	public void reloadPlayerLayer() {

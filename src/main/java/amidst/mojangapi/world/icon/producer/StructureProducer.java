@@ -11,16 +11,16 @@ import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.WorldIconTypeProvider;
 
 @ThreadSafe
-public class StructureProducer extends WorldIconProducer {
+public class StructureProducer<T> extends WorldIconProducer<T> {
 	private final Resolution resolution;
 	private final int size;
 	private final int offset;
 	private final LocationChecker checker;
-	private final WorldIconTypeProvider provider;
+	private final WorldIconTypeProvider<T> provider;
 	private final boolean displayNetherCoordinates;
 
 	public StructureProducer(Resolution resolution, int offset,
-			LocationChecker checker, WorldIconTypeProvider provider,
+			LocationChecker checker, WorldIconTypeProvider<T> provider,
 			boolean displayNetherCoordinates) {
 		this.resolution = resolution;
 		this.size = resolution.getStepsPerFragment();
@@ -31,23 +31,25 @@ public class StructureProducer extends WorldIconProducer {
 	}
 
 	@Override
-	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer) {
+	public void produce(CoordinatesInWorld corner,
+			Consumer<WorldIcon> consumer, T additionalData) {
 		for (int xRelativeToFragment = 0; xRelativeToFragment < size; xRelativeToFragment++) {
 			for (int yRelativeToFragment = 0; yRelativeToFragment < size; yRelativeToFragment++) {
-				generateAt(corner, consumer, xRelativeToFragment,
-						yRelativeToFragment);
+				generateAt(corner, consumer, additionalData,
+						xRelativeToFragment, yRelativeToFragment);
 			}
 		}
 	}
 
 	// TODO: use longs?
 	private void generateAt(CoordinatesInWorld corner,
-			Consumer<WorldIcon> consumer, int xRelativeToFragment,
-			int yRelativeToFragment) {
+			Consumer<WorldIcon> consumer, T additionalData,
+			int xRelativeToFragment, int yRelativeToFragment) {
 		int x = xRelativeToFragment + (int) corner.getXAs(resolution);
 		int y = yRelativeToFragment + (int) corner.getYAs(resolution);
 		if (checker.isValidLocation(x, y)) {
-			DefaultWorldIconTypes worldIconType = provider.get(x, y);
+			DefaultWorldIconTypes worldIconType = provider.get(x, y,
+					additionalData);
 			if (worldIconType != null) {
 				CoordinatesInWorld coordinates = createCoordinates(corner,
 						xRelativeToFragment, yRelativeToFragment);

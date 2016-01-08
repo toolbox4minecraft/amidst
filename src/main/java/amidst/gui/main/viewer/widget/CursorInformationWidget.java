@@ -7,6 +7,8 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
+import amidst.fragment.dimension.DimensionIds;
+import amidst.gui.main.viewer.DimensionSelection;
 import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
 import amidst.logging.Log;
 import amidst.mojangapi.world.biome.Biome;
@@ -20,13 +22,16 @@ public class CursorInformationWidget extends TextWidget {
 
 	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
+	private final DimensionSelection dimensionSelection;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public CursorInformationWidget(CornerAnchorPoint anchor,
-			FragmentGraph graph, FragmentGraphToScreenTranslator translator) {
+			FragmentGraph graph, FragmentGraphToScreenTranslator translator,
+			DimensionSelection dimensionSelection) {
 		super(anchor);
 		this.graph = graph;
 		this.translator = translator;
+		this.dimensionSelection = dimensionSelection;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -45,6 +50,15 @@ public class CursorInformationWidget extends TextWidget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private String getBiomeNameAt(CoordinatesInWorld coordinates) {
+		if (dimensionSelection.isDimensionId(DimensionIds.THE_END)) {
+			return Biome.sky.getName();
+		} else {
+			return getOverworldBiomeNameAt(coordinates);
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private String getOverworldBiomeNameAt(CoordinatesInWorld coordinates) {
 		Fragment fragment = graph.getFragmentAt(coordinates);
 		if (fragment != null && fragment.isLoaded()) {
 			long x = coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);

@@ -8,17 +8,22 @@ import amidst.documentation.Immutable;
  */
 @Immutable
 public class LayerIds {
-	public static final int ALPHA = 0;
-	public static final int BIOME = 1;
-	public static final int SLIME = 2;
-	public static final int GRID = 3;
-	public static final int SPAWN = 4;
-	public static final int STRONGHOLD = 5;
-	public static final int PLAYER = 6;
-	public static final int VILLAGE = 7;
-	public static final int TEMPLE = 8;
-	public static final int MINESHAFT = 9;
-	public static final int NETHER_FORTRESS = 10;
-	public static final int OCEAN_MONUMENT = 11;
-	public static final int NUMBER_OF_LAYERS = 12;
+	// @formatter:off
+	public static final int ALPHA                =  0;
+	public static final int BIOME_DATA           =  1;
+	public static final int END_ISLANDS          =  2;
+	public static final int BACKGROUND           =  3;
+	public static final int SLIME                =  4;
+	public static final int GRID                 =  5;
+	public static final int SPAWN                =  6;
+	public static final int STRONGHOLD           =  7;
+	public static final int PLAYER               =  8;
+	public static final int VILLAGE              =  9;
+	public static final int TEMPLE               = 10;
+	public static final int MINESHAFT            = 11;
+	public static final int NETHER_FORTRESS      = 12;
+	public static final int OCEAN_MONUMENT       = 13;
+	public static final int END_CITY             = 14;
+	public static final int NUMBER_OF_LAYERS     = 15;
+	// @formatter:on
 }

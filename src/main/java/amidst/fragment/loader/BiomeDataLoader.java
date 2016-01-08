@@ -20,12 +20,17 @@ public class BiomeDataLoader extends FragmentLoader {
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	@Override
 	public void load(Fragment fragment) {
-		fragment.populateBiomeData(biomeDataOracle);
+		doLoad(fragment);
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	@Override
 	public void reload(Fragment fragment) {
-		// noop
+		doLoad(fragment);
+	}
+
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	private void doLoad(Fragment fragment) {
+		fragment.populateBiomeData(biomeDataOracle);
 	}
 }

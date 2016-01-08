@@ -8,6 +8,8 @@ import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
+import amidst.mojangapi.world.oracle.EndIsland;
+import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;
 
@@ -19,32 +21,37 @@ public class World {
 	private final MovablePlayerList movablePlayerList;
 
 	private final BiomeDataOracle biomeDataOracle;
+	private final EndIslandOracle endIslandOracle;
 	private final SlimeChunkOracle slimeChunkOracle;
 	private final CachedWorldIconProducer spawnProducer;
 	private final CachedWorldIconProducer strongholdProducer;
 	private final CachedWorldIconProducer playerProducer;
-	private final WorldIconProducer villageProducer;
-	private final WorldIconProducer templeProducer;
-	private final WorldIconProducer mineshaftProducer;
-	private final WorldIconProducer netherFortressProducer;
-	private final WorldIconProducer oceanMonumentProducer;
+	private final WorldIconProducer<Void> villageProducer;
+	private final WorldIconProducer<Void> templeProducer;
+	private final WorldIconProducer<Void> mineshaftProducer;
+	private final WorldIconProducer<Void> netherFortressProducer;
+	private final WorldIconProducer<Void> oceanMonumentProducer;
+	private final WorldIconProducer<List<EndIsland>> endCityProducer;
 
-	World(WorldSeed seed, WorldType worldType, String generatorOptions,
+	public World(WorldSeed seed, WorldType worldType, String generatorOptions,
 			MovablePlayerList movablePlayerList,
-			BiomeDataOracle biomeDataOracle, SlimeChunkOracle slimeChunkOracle,
+			BiomeDataOracle biomeDataOracle, EndIslandOracle endIslandOracle,
+			SlimeChunkOracle slimeChunkOracle,
 			CachedWorldIconProducer spawnProducer,
 			CachedWorldIconProducer strongholdProducer,
 			CachedWorldIconProducer playerProducer,
-			WorldIconProducer villageProducer,
-			WorldIconProducer templeProducer,
-			WorldIconProducer mineshaftProducer,
-			WorldIconProducer netherFortressProducer,
-			WorldIconProducer oceanMonumentProducer) {
+			WorldIconProducer<Void> villageProducer,
+			WorldIconProducer<Void> templeProducer,
+			WorldIconProducer<Void> mineshaftProducer,
+			WorldIconProducer<Void> netherFortressProducer,
+			WorldIconProducer<Void> oceanMonumentProducer,
+			WorldIconProducer<List<EndIsland>> endCityProducer) {
 		this.seed = seed;
 		this.worldType = worldType;
 		this.generatorOptions = generatorOptions;
 		this.movablePlayerList = movablePlayerList;
 		this.biomeDataOracle = biomeDataOracle;
+		this.endIslandOracle = endIslandOracle;
 		this.slimeChunkOracle = slimeChunkOracle;
 		this.spawnProducer = spawnProducer;
 		this.strongholdProducer = strongholdProducer;
@@ -54,6 +61,7 @@ public class World {
 		this.mineshaftProducer = mineshaftProducer;
 		this.netherFortressProducer = netherFortressProducer;
 		this.oceanMonumentProducer = oceanMonumentProducer;
+		this.endCityProducer = endCityProducer;
 	}
 
 	@CalledByAny
@@ -79,40 +87,48 @@ public class World {
 		return biomeDataOracle;
 	}
 
+	public EndIslandOracle getEndIslandOracle() {
+		return endIslandOracle;
+	}
+
 	public SlimeChunkOracle getSlimeChunkOracle() {
 		return slimeChunkOracle;
 	}
 
-	public WorldIconProducer getSpawnProducer() {
+	public WorldIconProducer<Void> getSpawnProducer() {
 		return spawnProducer;
 	}
 
-	public WorldIconProducer getStrongholdProducer() {
+	public WorldIconProducer<Void> getStrongholdProducer() {
 		return strongholdProducer;
 	}
 
-	public WorldIconProducer getPlayerProducer() {
+	public WorldIconProducer<Void> getPlayerProducer() {
 		return playerProducer;
 	}
 
-	public WorldIconProducer getVillageProducer() {
+	public WorldIconProducer<Void> getVillageProducer() {
 		return villageProducer;
 	}
 
-	public WorldIconProducer getTempleProducer() {
+	public WorldIconProducer<Void> getTempleProducer() {
 		return templeProducer;
 	}
 
-	public WorldIconProducer getMineshaftProducer() {
+	public WorldIconProducer<Void> getMineshaftProducer() {
 		return mineshaftProducer;
 	}
 
-	public WorldIconProducer getNetherFortressProducer() {
+	public WorldIconProducer<Void> getNetherFortressProducer() {
 		return netherFortressProducer;
 	}
 
-	public WorldIconProducer getOceanMonumentProducer() {
+	public WorldIconProducer<Void> getOceanMonumentProducer() {
 		return oceanMonumentProducer;
+	}
+
+	public WorldIconProducer<List<EndIsland>> getEndCityProducer() {
+		return endCityProducer;
 	}
 
 	public WorldIcon getSpawnWorldIcon() {

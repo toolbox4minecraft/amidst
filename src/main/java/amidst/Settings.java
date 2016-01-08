@@ -25,6 +25,7 @@ public class Settings {
 	public final BooleanSetting showMineshafts;
 	public final BooleanSetting showNetherFortresses;
 	public final BooleanSetting showOceanMonuments;
+	public final BooleanSetting showEndCities;
 
 	public final BooleanSetting smoothScrolling;
 	public final BooleanSetting fragmentFading;
@@ -50,6 +51,7 @@ public class Settings {
 		showMineshafts             = new BooleanSetting(        preferences, "mineshaftIcons",      false);
 		showNetherFortresses       = new BooleanSetting(        preferences, "netherFortressIcons", false);
 		showOceanMonuments         = new BooleanSetting(        preferences, "oceanMonumentIcons",  true);
+		showEndCities              = new BooleanSetting(        preferences, "endCityIcons",        false);
 		
 		smoothScrolling            = new BooleanSetting(        preferences, "mapFlicking",         true);
 		fragmentFading             = new BooleanSetting(        preferences, "mapFading",           true);
