@@ -6,7 +6,9 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.fragment.layer.LayerIds;
 import amidst.fragment.layer.LayerLoader;
+import amidst.gui.main.viewer.DimensionSelection;
 import amidst.threading.TaskQueue;
 
 @NotThreadSafe
@@ -18,23 +20,38 @@ public class FragmentQueueProcessor {
 	private final ConcurrentLinkedQueue<Fragment> recycleQueue;
 	private final FragmentCache cache;
 	private final LayerLoader layerLoader;
+	private final DimensionSelection dimensionSelection;
 
 	@CalledByAny
 	public FragmentQueueProcessor(
 			ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
 			ConcurrentLinkedQueue<Fragment> recycleQueue, FragmentCache cache,
-			LayerLoader layerLoader) {
+			LayerLoader layerLoader, DimensionSelection dimensionSelection) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
 		this.recycleQueue = recycleQueue;
 		this.cache = cache;
 		this.layerLoader = layerLoader;
+		this.dimensionSelection = dimensionSelection;
+	}
+
+	@CalledByAny
+	public void selectDimension(final int dimensionId) {
+		taskQueue.invoke(new Runnable() {
+			@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+			@Override
+			public void run() {
+				dimensionSelection.setDimensionId(dimensionId);
+				doInvalidateLayer(LayerIds.BACKGROUND);
+			}
+		});
 	}
 
 	@CalledByAny
 	public void invalidateLayer(final int layerId) {
 		taskQueue.invoke(new Runnable() {
+			@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 			@Override
 			public void run() {
 				doInvalidateLayer(layerId);

@@ -7,6 +7,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.constructor.FragmentConstructor;
 import amidst.fragment.layer.LayerLoader;
+import amidst.gui.main.viewer.DimensionSelection;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
 @NotThreadSafe
@@ -41,9 +42,10 @@ public class FragmentManager {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public FragmentQueueProcessor createLayerLoader(LayerLoader layerLoader) {
+	public FragmentQueueProcessor createQueueProcessor(LayerLoader layerLoader,
+			DimensionSelection dimensionSelection) {
 		return new FragmentQueueProcessor(availableQueue, loadingQueue,
-				recycleQueue, cache, layerLoader);
+				recycleQueue, cache, layerLoader, dimensionSelection);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

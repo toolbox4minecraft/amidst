@@ -1,6 +1,7 @@
 package amidst.mojangapi.world;
 
 import java.io.IOException;
+import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.MojangApiParsingException;
@@ -10,6 +11,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.icon.locationchecker.EndCityLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm;
 import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm;
 import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker;
@@ -20,9 +22,12 @@ import amidst.mojangapi.world.icon.producer.SpawnProducer;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer;
 import amidst.mojangapi.world.icon.producer.StructureProducer;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
+import amidst.mojangapi.world.icon.type.EndCityWorldIconTypeProvider;
 import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
 import amidst.mojangapi.world.icon.type.TempleWorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
+import amidst.mojangapi.world.oracle.EndIsland;
+import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.PlayerInformationCache;
@@ -85,39 +90,46 @@ public class WorldBuilder {
 				generatorOptions,
 				movablePlayerList,
 				biomeDataOracle,
+				EndIslandOracle.from(  seedAsLong),
 				new SlimeChunkOracle(  seedAsLong),
 				new SpawnProducer(     seedAsLong, biomeDataOracle),
 				StrongholdProducer.from(seedAsLong, biomeDataOracle, recognisedVersion),
 				new PlayerProducer(movablePlayerList),
-				new StructureProducer(
+				new StructureProducer<Void>(
 						Resolution.CHUNK,
 						4,
 						new VillageLocationChecker(seedAsLong, biomeDataOracle),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
 						false
-				), new StructureProducer( 
+				), new StructureProducer<Void>(
 						Resolution.CHUNK,
 						8,
 						new TempleLocationChecker(seedAsLong, biomeDataOracle, recognisedVersion),
 						new TempleWorldIconTypeProvider(biomeDataOracle),
 						false
-				), new StructureProducer(
+				), new StructureProducer<Void>(
 						Resolution.CHUNK,
 						8,
 						MineshaftAlgorithm.from(seedAsLong, recognisedVersion),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.MINESHAFT),
 						false
-				), new StructureProducer(
+				), new StructureProducer<Void>(
 						Resolution.NETHER_CHUNK,
 						88,
 						new NetherFortressAlgorithm(seedAsLong),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
 						true
-				), new StructureProducer(
+				), new StructureProducer<Void>(
 						Resolution.CHUNK,
 						8,
 						new OceanMonumentLocationChecker(seedAsLong, biomeDataOracle),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
+						false
+				), new StructureProducer<List<EndIsland>>(
+						Resolution.CHUNK,
+						8,
+						new EndCityLocationChecker(seedAsLong),
+						new EndCityWorldIconTypeProvider(),
 						false
 				)
 		);

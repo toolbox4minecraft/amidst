@@ -9,6 +9,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.FragmentQueueProcessor;
+import amidst.fragment.dimension.DimensionSelector;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.layer.LayerBuilder;
 import amidst.fragment.layer.LayerDeclaration;
@@ -40,31 +41,35 @@ public class ViewerFacadeBuilder {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ViewerFacade create(World world, Actions actions) {
+	public ViewerFacade create(World world, Actions actions, int dimensionId) {
 		Movement movement = new Movement(settings.smoothScrolling);
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
+		DimensionSelection dimensionSelection = new DimensionSelection(
+				dimensionId);
 		List<LayerDeclaration> declarations = layerBuilder.getDeclarations();
 		FragmentGraph graph = new FragmentGraph(declarations, fragmentManager);
 		FragmentGraphToScreenTranslator translator = new FragmentGraphToScreenTranslator(
 				graph, zoom);
 		LayerLoader layerLoader = layerBuilder.createLayerLoader(world,
-				biomeSelection, settings);
+				biomeSelection, dimensionSelection, settings);
 		FragmentQueueProcessor fragmentQueueProcessor = fragmentManager
-				.createLayerLoader(layerLoader);
+				.createQueueProcessor(layerLoader, dimensionSelection);
 		Iterable<FragmentDrawer> drawers = layerBuilder.createDrawers(zoom,
 				worldIconSelection);
 		LayerReloader layerReloader = layerBuilder.createLayerReloader(world,
 				fragmentQueueProcessor);
+		DimensionSelector dimensionSelector = new DimensionSelector(
+				fragmentQueueProcessor);
 		WidgetBuilder widgetBuilder = new WidgetBuilder(world, graph,
 				translator, zoom, biomeSelection, worldIconSelection,
 				layerReloader, fragmentManager, settings);
-		List<Widget> widgets = widgetBuilder.create();
+		List<Widget> widgets = widgetBuilder.create(dimensionSelection);
 		Drawer drawer = new Drawer(graph, translator, zoom, movement, widgets,
 				drawers);
 		Viewer viewer = new Viewer(new ViewerMouseListener(new WidgetManager(
 				widgets), graph, translator, zoom, movement, actions), drawer);
 		return new ViewerFacade(world, graph, translator, zoom, viewer,
-				layerReloader, worldIconSelection,
+				layerReloader, dimensionSelector, worldIconSelection,
 				createOnRepainterTick(viewer),
 				createOnFragmentLoaderTick(fragmentQueueProcessor),
 				createOnPlayerFinishedLoading(layerReloader));

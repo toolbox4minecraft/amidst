@@ -39,15 +39,15 @@ public class StructureAlgorithm implements LocationChecker {
 		return x == value1 && y == value2;
 	}
 
-	private int getInitialValue(int value) {
-		return getModified(value) / maxDistanceBetweenScatteredFeatures;
+	private int getInitialValue(int coordinate) {
+		return getModified(coordinate) / maxDistanceBetweenScatteredFeatures;
 	}
 
-	private int getModified(int value) {
-		if (value < 0) {
-			return value - maxDistanceBetweenScatteredFeatures + 1;
+	private int getModified(int coordinate) {
+		if (coordinate < 0) {
+			return coordinate - maxDistanceBetweenScatteredFeatures + 1;
 		} else {
-			return value;
+			return coordinate;
 		}
 	}
 

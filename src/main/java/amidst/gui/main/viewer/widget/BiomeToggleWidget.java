@@ -25,7 +25,7 @@ public class BiomeToggleWidget extends ImmutableIconWidget {
 	@Override
 	public boolean onMousePressed(int x, int y) {
 		biomeSelection.toggleHighlightMode();
-		layerReloader.reloadBiomeLayer();
+		layerReloader.reloadBackgroundLayer();
 		return true;
 	}
 

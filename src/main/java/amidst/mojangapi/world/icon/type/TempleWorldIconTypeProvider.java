@@ -8,7 +8,7 @@ import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @ThreadSafe
-public class TempleWorldIconTypeProvider implements WorldIconTypeProvider {
+public class TempleWorldIconTypeProvider implements WorldIconTypeProvider<Void> {
 	private final BiomeDataOracle biomeDataOracle;
 
 	public TempleWorldIconTypeProvider(BiomeDataOracle biomeDataOracle) {
@@ -16,7 +16,7 @@ public class TempleWorldIconTypeProvider implements WorldIconTypeProvider {
 	}
 
 	@Override
-	public DefaultWorldIconTypes get(int chunkX, int chunkY) {
+	public DefaultWorldIconTypes get(int chunkX, int chunkY, Void additionalData) {
 		try {
 			Biome biome = biomeDataOracle.getBiomeAtMiddleOfChunk(chunkX,
 					chunkY);

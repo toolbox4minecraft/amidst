@@ -14,6 +14,7 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
+import amidst.mojangapi.world.oracle.EndIsland;
 
 /**
  * This class contains nearly no logic but only simple and atomic getters and
@@ -83,6 +84,7 @@ public class Fragment {
 
 	private volatile float alpha;
 	private volatile short[][] biomeData;
+	private volatile List<EndIsland> endIslands;
 	private final AtomicReferenceArray<BufferedImage> images;
 	private final AtomicReferenceArray<List<WorldIcon>> worldIcons;
 
@@ -111,6 +113,14 @@ public class Fragment {
 
 	public short getBiomeDataAt(int x, int y) {
 		return biomeData[x][y];
+	}
+
+	public void setEndIslands(List<EndIsland> endIslands) {
+		this.endIslands = endIslands;
+	}
+
+	public List<EndIsland> getEndIslands() {
+		return endIslands;
 	}
 
 	public BufferedImage getAndSetImage(int layerId, BufferedImage image) {

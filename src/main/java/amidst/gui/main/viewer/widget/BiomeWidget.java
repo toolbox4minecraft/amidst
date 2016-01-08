@@ -286,7 +286,7 @@ public class BiomeWidget extends Widget {
 		}
 		updateScrollbarParameters(mouseX, mouseY);
 		if (processClick(mouseX, mouseY)) {
-			layerReloader.reloadBiomeLayer();
+			layerReloader.reloadBackgroundLayer();
 		}
 		return true;
 	}

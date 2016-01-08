@@ -219,11 +219,19 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	public void selectDimension(int dimensionId) {
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
+			viewerFacade.selectDimension(dimensionId);
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void selectBiomeColorProfile(BiomeColorProfile profile) {
 		biomeColorProfileSelection.set(profile);
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
-			viewerFacade.reloadBiomeLayer();
+			viewerFacade.reloadBackgroundLayer();
 		}
 	}
 

@@ -14,15 +14,18 @@ public class AmidstMenu {
 	private final JMenu worldMenu;
 	private final JMenuItem savePlayerLocationsMenu;
 	private final JMenuItem reloadPlayerLocationsMenu;
+	private final DimensionToggleButtonModels dimensionToggleButtonModels;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public AmidstMenu(JMenuBar menuBar, JMenu worldMenu,
 			JMenuItem savePlayerLocationsMenu,
-			JMenuItem reloadPlayerLocationsMenu) {
+			JMenuItem reloadPlayerLocationsMenu,
+			DimensionToggleButtonModels dimensionToggleButtonModels) {
 		this.menuBar = menuBar;
 		this.worldMenu = worldMenu;
 		this.savePlayerLocationsMenu = savePlayerLocationsMenu;
 		this.reloadPlayerLocationsMenu = reloadPlayerLocationsMenu;
+		this.dimensionToggleButtonModels = dimensionToggleButtonModels;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -43,5 +46,10 @@ public class AmidstMenu {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void setReloadPlayerLocationsMenuEnabled(boolean isEnabled) {
 		reloadPlayerLocationsMenu.setEnabled(isEnabled);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public int getSelectedDimensionId() {
+		return dimensionToggleButtonModels.get();
 	}
 }
