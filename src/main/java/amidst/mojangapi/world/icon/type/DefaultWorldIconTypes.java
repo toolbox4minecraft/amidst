@@ -24,7 +24,7 @@ public enum DefaultWorldIconTypes {
 	OCEAN_MONUMENT("Ocean Monument"),
 	IGLOO("Igloo"),
 	MINESHAFT("Mineshaft"),
-	END_CITY("End City"),
+	END_CITY("Likely End City"),
 	POSSIBLE_END_CITY("Possible End City");
 	// @formatter:on
 
