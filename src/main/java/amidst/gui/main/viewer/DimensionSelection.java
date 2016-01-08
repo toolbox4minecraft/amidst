@@ -1,20 +1,21 @@
 package amidst.gui.main.viewer;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.Dimension;
 
 @ThreadSafe
 public class DimensionSelection {
-	private volatile int dimensionId;
+	private volatile Dimension dimension;
 
-	public DimensionSelection(int dimensionId) {
-		this.dimensionId = dimensionId;
+	public DimensionSelection(Dimension dimension) {
+		this.dimension = dimension;
 	}
 
-	public boolean isDimensionId(int dimensionId) {
-		return this.dimensionId == dimensionId;
+	public boolean isDimension(Dimension dimension) {
+		return this.dimension == dimension;
 	}
 
-	public void setDimensionId(int dimensionId) {
-		this.dimensionId = dimensionId;
+	public void setDimension(Dimension dimension) {
+		this.dimension = dimension;
 	}
 }

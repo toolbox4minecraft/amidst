@@ -24,6 +24,13 @@ public class CoordinatesInWorld {
 		return new CoordinatesInWorld(xInWorld, yInWorld);
 	}
 
+	public static CoordinatesInWorld from(long xAsResolution,
+			long yAsResolution, Resolution resolution) {
+		return new CoordinatesInWorld(
+				resolution.convertFromThisToWorld(xAsResolution),
+				resolution.convertFromThisToWorld(yAsResolution));
+	}
+
 	private static CoordinatesInWorld from(CoordinatesInWorld base,
 			long deltaXInWorld, long deltaYInWorld) {
 		return new CoordinatesInWorld(base.xInWorld + deltaXInWorld,
@@ -176,8 +183,7 @@ public class CoordinatesInWorld {
 		return "[" + xInWorld + ", " + yInWorld + "]";
 	}
 
-	public String toNetherString() {
-		return "[" + getXAs(Resolution.NETHER) + ", "
-				+ getYAs(Resolution.NETHER) + "]";
+	public String toString(Resolution resolution) {
+		return "[" + getXAs(resolution) + ", " + getYAs(resolution) + "]";
 	}
 }

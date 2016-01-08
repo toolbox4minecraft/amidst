@@ -9,6 +9,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerIds;
 import amidst.fragment.layer.LayerLoader;
 import amidst.gui.main.viewer.DimensionSelection;
+import amidst.mojangapi.world.Dimension;
 import amidst.threading.TaskQueue;
 
 @NotThreadSafe
@@ -37,12 +38,12 @@ public class FragmentQueueProcessor {
 	}
 
 	@CalledByAny
-	public void selectDimension(final int dimensionId) {
+	public void selectDimension(final Dimension dimension) {
 		taskQueue.invoke(new Runnable() {
 			@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 			@Override
 			public void run() {
-				dimensionSelection.setDimensionId(dimensionId);
+				dimensionSelection.setDimension(dimension);
 				doInvalidateLayer(LayerIds.BACKGROUND);
 			}
 		});

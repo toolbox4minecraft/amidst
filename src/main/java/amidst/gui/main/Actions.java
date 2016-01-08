@@ -22,11 +22,13 @@ import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
+import amidst.mojangapi.world.player.PlayerCoordinates;
 import amidst.settings.biomecolorprofile.BiomeColorProfile;
 import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
 import amidst.threading.WorkerExecutor;
@@ -219,10 +221,10 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void selectDimension(int dimensionId) {
+	public void selectDimension(Dimension dimension) {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
-			viewerFacade.selectDimension(dimensionId);
+			viewerFacade.selectDimension(dimension);
 		}
 	}
 
@@ -297,11 +299,14 @@ public class Actions {
 	public void movePlayer(Player player, CoordinatesInWorld targetCoordinates) {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
-			long currentHeight = player.getPlayerCoordinates().getY();
+			PlayerCoordinates currentCoordinates = player
+					.getPlayerCoordinates();
+			long currentHeight = currentCoordinates.getY();
 			String input = mainWindow.askForPlayerHeight(currentHeight);
 			if (input != null) {
 				player.moveTo(targetCoordinates,
-						tryParseLong(input, currentHeight));
+						tryParseLong(input, currentHeight),
+						currentCoordinates.getDimension());
 				viewerFacade.reloadPlayerLayer();
 				if (mainWindow
 						.askToConfirm(

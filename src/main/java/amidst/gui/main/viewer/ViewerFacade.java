@@ -11,6 +11,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.dimension.DimensionSelector;
 import amidst.fragment.layer.LayerReloader;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
@@ -121,8 +122,8 @@ public class ViewerFacade {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void selectDimension(int dimensionId) {
-		dimensionSelector.selectDimension(dimensionId);
+	public void selectDimension(Dimension dimension) {
+		dimensionSelector.selectDimension(dimension);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

@@ -1,36 +1,50 @@
 package amidst.mojangapi.world.player;
 
 import amidst.documentation.Immutable;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
 @Immutable
 public class PlayerCoordinates {
+	public static PlayerCoordinates fromNBTFile(long x, long y, long z,
+			int dimensionId) {
+		Dimension dimension = Dimension.from(dimensionId);
+		return new PlayerCoordinates(CoordinatesInWorld.from(x, z,
+				dimension.getResolution()), y, dimension);
+	}
+
 	private final CoordinatesInWorld coordinates;
 	private final long y;
+	private final Dimension dimension;
 
-	public PlayerCoordinates(long x, long y, long z) {
-		this.coordinates = CoordinatesInWorld.from(x, z);
-		this.y = y;
-	}
-
-	public PlayerCoordinates(CoordinatesInWorld coordinates, long y) {
+	public PlayerCoordinates(CoordinatesInWorld coordinates, long y,
+			Dimension dimension) {
 		this.coordinates = coordinates;
 		this.y = y;
+		this.dimension = dimension;
 	}
 
-	public long getX() {
-		return coordinates.getX();
+	public CoordinatesInWorld getCoordinatesInWorld() {
+		return coordinates;
 	}
 
 	public long getY() {
 		return y;
 	}
 
-	public long getZ() {
-		return coordinates.getY();
+	public Dimension getDimension() {
+		return dimension;
 	}
 
-	public CoordinatesInWorld getCoordinatesInWorld() {
-		return coordinates;
+	public long getXForNBTFile() {
+		return coordinates.getXAs(dimension.getResolution());
+	}
+
+	public long getYForNBTFile() {
+		return y;
+	}
+
+	public long getZForNBTFile() {
+		return coordinates.getYAs(dimension.getResolution());
 	}
 }

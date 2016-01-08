@@ -100,37 +100,37 @@ public class WorldBuilder {
 						4,
 						new VillageLocationChecker(seedAsLong, biomeDataOracle),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
-						false
+						Dimension.OVERWORLD
 				), new StructureProducer<Void>(
 						Resolution.CHUNK,
 						8,
 						new TempleLocationChecker(seedAsLong, biomeDataOracle, recognisedVersion),
 						new TempleWorldIconTypeProvider(biomeDataOracle),
-						false
+						Dimension.OVERWORLD
 				), new StructureProducer<Void>(
 						Resolution.CHUNK,
 						8,
 						MineshaftAlgorithm.from(seedAsLong, recognisedVersion),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.MINESHAFT),
-						false
+						Dimension.OVERWORLD
 				), new StructureProducer<Void>(
 						Resolution.NETHER_CHUNK,
 						88,
 						new NetherFortressAlgorithm(seedAsLong),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
-						true
+						Dimension.NETHER
 				), new StructureProducer<Void>(
 						Resolution.CHUNK,
 						8,
 						new OceanMonumentLocationChecker(seedAsLong, biomeDataOracle),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
-						false
+						Dimension.OVERWORLD
 				), new StructureProducer<List<EndIsland>>(
 						Resolution.CHUNK,
 						8,
 						new EndCityLocationChecker(seedAsLong),
 						new EndCityWorldIconTypeProvider(),
-						false
+						Dimension.END
 				)
 		);
 		// @formatter:on

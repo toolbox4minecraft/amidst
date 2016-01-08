@@ -3,32 +3,28 @@ package amidst.gui.main.menu;
 import javax.swing.JToggleButton.ToggleButtonModel;
 
 import amidst.documentation.ThreadSafe;
-import amidst.fragment.dimension.DimensionIds;
 import amidst.gui.main.Actions;
+import amidst.mojangapi.world.Dimension;
 
 @ThreadSafe
 public class DimensionToggleButtonModels {
 	@SuppressWarnings("serial")
-	public class DimensionIdButtonModel extends ToggleButtonModel {
-		private final int dimensionId;
+	public class DimensionButtonModel extends ToggleButtonModel {
+		private final Dimension dimension;
 
-		public DimensionIdButtonModel(int dimensionId) {
-			this.dimensionId = dimensionId;
-		}
-
-		public int getDimensionId() {
-			return dimensionId;
+		public DimensionButtonModel(Dimension dimension) {
+			this.dimension = dimension;
 		}
 
 		@Override
 		public boolean isSelected() {
-			return dimensionId == get();
+			return dimension == get();
 		}
 
 		@Override
 		public void setSelected(boolean isSelected) {
 			if (isSelected) {
-				set(dimensionId);
+				set(dimension);
 			}
 		}
 
@@ -38,15 +34,15 @@ public class DimensionToggleButtonModels {
 	}
 
 	private final Actions actions;
-	private final DimensionIdButtonModel overworld;
-	private final DimensionIdButtonModel theEnd;
-	private volatile int selection;
+	private final DimensionButtonModel overworld;
+	private final DimensionButtonModel theEnd;
+	private volatile Dimension selection;
 
 	public DimensionToggleButtonModels(Actions actions) {
 		this.actions = actions;
-		this.overworld = new DimensionIdButtonModel(DimensionIds.OVERWORLD);
-		this.theEnd = new DimensionIdButtonModel(DimensionIds.THE_END);
-		this.set(DimensionIds.OVERWORLD);
+		this.overworld = new DimensionButtonModel(Dimension.OVERWORLD);
+		this.theEnd = new DimensionButtonModel(Dimension.END);
+		this.set(Dimension.OVERWORLD);
 	}
 
 	public ToggleButtonModel getOverworld() {
@@ -57,14 +53,14 @@ public class DimensionToggleButtonModels {
 		return theEnd;
 	}
 
-	public int get() {
+	public Dimension get() {
 		return selection;
 	}
 
-	public synchronized void set(int dimensionId) {
-		this.selection = dimensionId;
+	public synchronized void set(Dimension value) {
+		this.selection = value;
 		this.overworld.update();
 		this.theEnd.update();
-		this.actions.selectDimension(dimensionId);
+		this.actions.selectDimension(value);
 	}
 }

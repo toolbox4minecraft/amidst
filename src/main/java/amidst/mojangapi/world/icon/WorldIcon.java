@@ -3,26 +3,23 @@ package amidst.mojangapi.world.icon;
 import java.awt.image.BufferedImage;
 
 import amidst.documentation.Immutable;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Resolution;
 
 @Immutable
 public class WorldIcon {
 	private final CoordinatesInWorld coordinates;
 	private final String name;
 	private final BufferedImage image;
-	private final boolean displayNetherCoordinates;
+	private final Dimension dimension;
 
 	public WorldIcon(CoordinatesInWorld coordinates, String name,
-			BufferedImage image) {
-		this(coordinates, name, image, false);
-	}
-
-	public WorldIcon(CoordinatesInWorld coordinates, String name,
-			BufferedImage image, boolean displayNetherCoordinates) {
+			BufferedImage image, Dimension dimension) {
 		this.coordinates = coordinates;
 		this.name = name;
 		this.image = image;
-		this.displayNetherCoordinates = displayNetherCoordinates;
+		this.dimension = dimension;
 	}
 
 	public CoordinatesInWorld getCoordinates() {
@@ -37,17 +34,19 @@ public class WorldIcon {
 		return image;
 	}
 
-	public boolean isDisplayNetherCoordinates() {
-		return displayNetherCoordinates;
+	public Dimension getDimension() {
+		return dimension;
 	}
 
 	@Override
 	public String toString() {
-		if (displayNetherCoordinates) {
-			return name + " " + coordinates.toString() + " -> "
-					+ coordinates.toNetherString() + " in the Nether";
+		if (dimension.getResolution() != Resolution.WORLD) {
+			return name + " in the " + dimension.getName() + " "
+					+ coordinates.toString(dimension.getResolution()) + " -> "
+					+ coordinates.toString() + " in the Overworld";
 		} else {
-			return name + " " + coordinates.toString();
+			return name + " in the " + dimension.getName() + " "
+					+ coordinates.toString();
 		}
 	}
 }

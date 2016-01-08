@@ -2,8 +2,10 @@ package amidst.fragment.colorprovider;
 
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
-import amidst.fragment.dimension.DimensionIds;
 import amidst.gui.main.viewer.DimensionSelection;
+import amidst.logging.Log;
+import amidst.mojangapi.world.Dimension;
+import amidst.mojangapi.world.biome.BiomeColor;
 
 @ThreadSafe
 public class BackgroundColorProvider implements ColorProvider {
@@ -22,12 +24,15 @@ public class BackgroundColorProvider implements ColorProvider {
 	@Override
 	public int getColorAt(Fragment fragment, long cornerX, long cornerY, int x,
 			int y) {
-		if (dimensionSelection.isDimensionId(DimensionIds.THE_END)) {
+		if (dimensionSelection.isDimension(Dimension.OVERWORLD)) {
+			return biomeColorProvider.getColorAt(fragment, cornerX, cornerY, x,
+					y);
+		} else if (dimensionSelection.isDimension(Dimension.END)) {
 			return theEndColorProvider.getColorAt(fragment, cornerX, cornerY,
 					x, y);
 		} else {
-			return biomeColorProvider.getColorAt(fragment, cornerX, cornerY, x,
-					y);
+			Log.w("unsupported dimension");
+			return BiomeColor.unknown().getRGB();
 		}
 	}
 }

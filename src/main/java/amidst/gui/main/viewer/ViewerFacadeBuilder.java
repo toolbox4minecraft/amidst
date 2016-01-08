@@ -19,6 +19,7 @@ import amidst.gui.main.Actions;
 import amidst.gui.main.viewer.widget.Widget;
 import amidst.gui.main.viewer.widget.WidgetBuilder;
 import amidst.gui.main.viewer.widget.WidgetManager;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.World;
 
 @NotThreadSafe
@@ -41,11 +42,11 @@ public class ViewerFacadeBuilder {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ViewerFacade create(World world, Actions actions, int dimensionId) {
+	public ViewerFacade create(World world, Actions actions, Dimension dimension) {
 		Movement movement = new Movement(settings.smoothScrolling);
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
 		DimensionSelection dimensionSelection = new DimensionSelection(
-				dimensionId);
+				dimension);
 		List<LayerDeclaration> declarations = layerBuilder.getDeclarations();
 		FragmentGraph graph = new FragmentGraph(declarations, fragmentManager);
 		FragmentGraphToScreenTranslator translator = new FragmentGraphToScreenTranslator(

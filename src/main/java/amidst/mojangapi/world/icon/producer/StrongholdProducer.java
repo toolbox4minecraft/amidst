@@ -9,6 +9,7 @@ import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
@@ -194,7 +195,8 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 	private WorldIcon createWorldIcon(CoordinatesInWorld coordinates) {
 		return new WorldIcon(coordinates,
 				DefaultWorldIconTypes.STRONGHOLD.getName(),
-				DefaultWorldIconTypes.STRONGHOLD.getImage());
+				DefaultWorldIconTypes.STRONGHOLD.getImage(),
+				Dimension.OVERWORLD);
 	}
 
 	private double getAngleDelta(int ring, int structuresPerRing) {
