@@ -51,7 +51,7 @@ public class CursorInformationWidget extends TextWidget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private String getBiomeNameAt(CoordinatesInWorld coordinates) {
 		if (dimensionSelection.isDimensionId(DimensionIds.THE_END)) {
-			return Biome.sky.getName();
+			return Biome.theEnd.getName();
 		} else {
 			return getOverworldBiomeNameAt(coordinates);
 		}
