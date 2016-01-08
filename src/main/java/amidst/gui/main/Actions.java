@@ -190,7 +190,7 @@ public class Actions {
 								+ "WARNING: This will change the contents of the save folder, so there is a chance that the world gets corrupted.\n"
 								+ "We try to minimize the risk by creating a backup of the changed file, before it is changed.\n"
 								+ "If the backup fails, we will not write the changes.\n"
-								+ "You can find the backup files in a sub folder of the world, named 'amidst_backup'.\n"
+								+ "You can find the backup files in a sub folder of the world, named 'amidst/backup'.\n"
 								+ "Especially, make sure to not have the world loaded in Minecraft during this process.");
 	}
 
