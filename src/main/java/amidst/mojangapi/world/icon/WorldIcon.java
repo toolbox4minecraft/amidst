@@ -45,7 +45,7 @@ public class WorldIcon {
 	public String toString() {
 		if (displayNetherCoordinates) {
 			return name + " " + coordinates.toString() + " -> "
-					+ coordinates.toNetherString() + " in Nether";
+					+ coordinates.toNetherString() + " in the Nether";
 		} else {
 			return name + " " + coordinates.toString();
 		}
