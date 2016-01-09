@@ -56,7 +56,7 @@ public class ViewerFacadeBuilder {
 		FragmentQueueProcessor fragmentQueueProcessor = fragmentManager
 				.createQueueProcessor(layerLoader, dimensionSelection);
 		Iterable<FragmentDrawer> drawers = layerBuilder.createDrawers(zoom,
-				worldIconSelection);
+				worldIconSelection, dimensionSelection);
 		LayerReloader layerReloader = layerBuilder.createLayerReloader(world,
 				fragmentQueueProcessor);
 		DimensionSelector dimensionSelector = new DimensionSelector(
@@ -66,7 +66,7 @@ public class ViewerFacadeBuilder {
 				layerReloader, fragmentManager, settings);
 		List<Widget> widgets = widgetBuilder.create(dimensionSelection);
 		Drawer drawer = new Drawer(graph, translator, zoom, movement, widgets,
-				drawers);
+				drawers, dimensionSelection);
 		Viewer viewer = new Viewer(new ViewerMouseListener(new WidgetManager(
 				widgets), graph, translator, zoom, movement, actions), drawer);
 		return new ViewerFacade(world, graph, translator, zoom, viewer,

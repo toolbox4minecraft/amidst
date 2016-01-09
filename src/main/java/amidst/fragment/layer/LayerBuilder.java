@@ -49,21 +49,21 @@ public class LayerBuilder {
 	private List<LayerDeclaration> createDeclarations(Settings settings) {
 		LayerDeclaration[] declarations = new LayerDeclaration[LayerIds.NUMBER_OF_LAYERS];
 		// @formatter:off
-		declarations[LayerIds.ALPHA]            = new LayerDeclaration(LayerIds.ALPHA,           new ImmutableSetting<Boolean>(true));
-		declarations[LayerIds.BIOME_DATA]       = new LayerDeclaration(LayerIds.BIOME_DATA,      new ImmutableSetting<Boolean>(true));
-		declarations[LayerIds.END_ISLANDS]      = new LayerDeclaration(LayerIds.END_ISLANDS,     new ImmutableSetting<Boolean>(true));
-		declarations[LayerIds.BACKGROUND]       = new LayerDeclaration(LayerIds.BACKGROUND,      new ImmutableSetting<Boolean>(true));
-		declarations[LayerIds.SLIME]            = new LayerDeclaration(LayerIds.SLIME,           settings.showSlimeChunks);
-		declarations[LayerIds.GRID]             = new LayerDeclaration(LayerIds.GRID,            settings.showGrid);
-		declarations[LayerIds.SPAWN]            = new LayerDeclaration(LayerIds.SPAWN,           settings.showSpawn);
-		declarations[LayerIds.STRONGHOLD]       = new LayerDeclaration(LayerIds.STRONGHOLD,      settings.showStrongholds);
-		declarations[LayerIds.PLAYER]           = new LayerDeclaration(LayerIds.PLAYER,          settings.showPlayers);
-		declarations[LayerIds.VILLAGE]          = new LayerDeclaration(LayerIds.VILLAGE,         settings.showVillages);
-		declarations[LayerIds.TEMPLE]           = new LayerDeclaration(LayerIds.TEMPLE,          settings.showTemples);
-		declarations[LayerIds.MINESHAFT]        = new LayerDeclaration(LayerIds.MINESHAFT,       settings.showMineshafts);
-		declarations[LayerIds.NETHER_FORTRESS]  = new LayerDeclaration(LayerIds.NETHER_FORTRESS, settings.showNetherFortresses);
-		declarations[LayerIds.OCEAN_MONUMENT]   = new LayerDeclaration(LayerIds.OCEAN_MONUMENT,  settings.showOceanMonuments);
-		declarations[LayerIds.END_CITY]         = new LayerDeclaration(LayerIds.END_CITY,        settings.showEndCities);
+		declarations[LayerIds.ALPHA]            = new LayerDeclaration(LayerIds.ALPHA,           false, new ImmutableSetting<Boolean>(true));
+		declarations[LayerIds.BIOME_DATA]       = new LayerDeclaration(LayerIds.BIOME_DATA,      false, new ImmutableSetting<Boolean>(true));
+		declarations[LayerIds.END_ISLANDS]      = new LayerDeclaration(LayerIds.END_ISLANDS,     false, new ImmutableSetting<Boolean>(true));
+		declarations[LayerIds.BACKGROUND]       = new LayerDeclaration(LayerIds.BACKGROUND,      false, new ImmutableSetting<Boolean>(true));
+		declarations[LayerIds.SLIME]            = new LayerDeclaration(LayerIds.SLIME,           false, settings.showSlimeChunks);
+		declarations[LayerIds.GRID]             = new LayerDeclaration(LayerIds.GRID,            true,  settings.showGrid);
+		declarations[LayerIds.SPAWN]            = new LayerDeclaration(LayerIds.SPAWN,           false, settings.showSpawn);
+		declarations[LayerIds.STRONGHOLD]       = new LayerDeclaration(LayerIds.STRONGHOLD,      false, settings.showStrongholds);
+		declarations[LayerIds.PLAYER]           = new LayerDeclaration(LayerIds.PLAYER,          false, settings.showPlayers);
+		declarations[LayerIds.VILLAGE]          = new LayerDeclaration(LayerIds.VILLAGE,         false, settings.showVillages);
+		declarations[LayerIds.TEMPLE]           = new LayerDeclaration(LayerIds.TEMPLE,          false, settings.showTemples);
+		declarations[LayerIds.MINESHAFT]        = new LayerDeclaration(LayerIds.MINESHAFT,       false, settings.showMineshafts);
+		declarations[LayerIds.NETHER_FORTRESS]  = new LayerDeclaration(LayerIds.NETHER_FORTRESS, false, settings.showNetherFortresses);
+		declarations[LayerIds.OCEAN_MONUMENT]   = new LayerDeclaration(LayerIds.OCEAN_MONUMENT,  false, settings.showOceanMonuments);
+		declarations[LayerIds.END_CITY]         = new LayerDeclaration(LayerIds.END_CITY,        false, settings.showEndCities);
 		// @formatter:on
 		return Collections.unmodifiableList(Arrays.asList(declarations));
 	}
@@ -129,9 +129,12 @@ public class LayerBuilder {
 
 	/**
 	 * This also defines the rendering order.
+	 * 
+	 * @param dimensionSelection
 	 */
 	public Iterable<FragmentDrawer> createDrawers(Zoom zoom,
-			WorldIconSelection worldIconSelection) {
+			WorldIconSelection worldIconSelection,
+			DimensionSelection dimensionSelection) {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
 				new AlphaUpdater(   declarations.get(LayerIds.ALPHA)),
