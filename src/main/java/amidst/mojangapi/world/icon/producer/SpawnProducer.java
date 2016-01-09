@@ -6,6 +6,7 @@ import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
@@ -54,7 +55,7 @@ public class SpawnProducer extends CachedWorldIconProducer {
 	private WorldIcon createWorldIcon(CoordinatesInWorld coordinates) {
 		return new WorldIcon(coordinates,
 				DefaultWorldIconTypes.SPAWN.getName(),
-				DefaultWorldIconTypes.SPAWN.getImage());
+				DefaultWorldIconTypes.SPAWN.getImage(), Dimension.OVERWORLD);
 	}
 
 	private CoordinatesInWorld getSpawnCenterInWorldCoordinates() {

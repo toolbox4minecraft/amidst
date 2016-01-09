@@ -2,6 +2,7 @@ package amidst.fragment.dimension;
 
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.FragmentQueueProcessor;
+import amidst.mojangapi.world.Dimension;
 
 @ThreadSafe
 public class DimensionSelector {
@@ -11,7 +12,7 @@ public class DimensionSelector {
 		this.fragmentQueueProcessor = fragmentQueueProcessor;
 	}
 
-	public void selectDimension(int dimensionId) {
-		fragmentQueueProcessor.selectDimension(dimensionId);
+	public void selectDimension(Dimension dimension) {
+		fragmentQueueProcessor.selectDimension(dimension);
 	}
 }

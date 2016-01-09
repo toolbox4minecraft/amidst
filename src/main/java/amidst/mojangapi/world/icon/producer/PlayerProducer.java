@@ -7,6 +7,7 @@ import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.Player;
+import amidst.mojangapi.world.player.PlayerCoordinates;
 
 @ThreadSafe
 public class PlayerProducer extends CachedWorldIconProducer {
@@ -20,9 +21,10 @@ public class PlayerProducer extends CachedWorldIconProducer {
 	protected List<WorldIcon> doCreateCache() {
 		List<WorldIcon> result = new LinkedList<WorldIcon>();
 		for (Player player : movablePlayerList) {
-			result.add(new WorldIcon(player.getPlayerCoordinates()
-					.getCoordinatesInWorld(), player.getPlayerName(), player
-					.getHead()));
+			PlayerCoordinates coordinates = player.getPlayerCoordinates();
+			result.add(new WorldIcon(coordinates.getCoordinatesInWorld(),
+					player.getPlayerName(), player.getHead(), coordinates
+							.getDimension()));
 		}
 		return result;
 	}

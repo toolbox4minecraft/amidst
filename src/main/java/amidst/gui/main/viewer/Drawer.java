@@ -5,7 +5,9 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.TexturePaint;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -19,6 +21,8 @@ import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentGraphItem;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.gui.main.viewer.widget.Widget;
+import amidst.mojangapi.world.Dimension;
+import amidst.mojangapi.world.coordinates.Resolution;
 
 @NotThreadSafe
 public class Drawer {
@@ -38,6 +42,8 @@ public class Drawer {
 			.getImage("/amidst/gui/main/dropshadow/inner_left.png");
 	private static final BufferedImage DROP_SHADOW_RIGHT = ResourceLoader
 			.getImage("/amidst/gui/main/dropshadow/inner_right.png");
+	private static final BufferedImage VOID_TEXTURE = ResourceLoader
+			.getImage("/amidst/gui/main/void.png");
 
 	private final AffineTransform originalLayerMatrix = new AffineTransform();
 	private final AffineTransform layerMatrix = new AffineTransform();
@@ -48,6 +54,8 @@ public class Drawer {
 	private final Movement movement;
 	private final List<Widget> widgets;
 	private final Iterable<FragmentDrawer> drawers;
+	private final DimensionSelection dimensionSelection;
+	private final TexturePaint voidTexturePaint;
 
 	private Graphics2D g2d;
 	private int viewerWidth;
@@ -62,13 +70,17 @@ public class Drawer {
 	public Drawer(FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			Movement movement, List<Widget> widgets,
-			Iterable<FragmentDrawer> drawers) {
+			Iterable<FragmentDrawer> drawers,
+			DimensionSelection dimensionSelection) {
 		this.graph = graph;
 		this.translator = translator;
 		this.zoom = zoom;
 		this.movement = movement;
 		this.widgets = widgets;
 		this.drawers = drawers;
+		this.dimensionSelection = dimensionSelection;
+		this.voidTexturePaint = new TexturePaint(VOID_TEXTURE, new Rectangle(0,
+				0, VOID_TEXTURE.getWidth(), VOID_TEXTURE.getHeight()));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -150,6 +162,7 @@ public class Drawer {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		AffineTransform originalGraphicsTransform = g2d.getTransform();
 		initOriginalLayerMatrix(originalGraphicsTransform);
+		drawVoidTexture();
 		drawLayers();
 		g2d.setTransform(originalGraphicsTransform);
 	}
@@ -165,13 +178,29 @@ public class Drawer {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	private void drawVoidTexture() {
+		if (dimensionSelection.isDimension(Dimension.END)) {
+			g2d.setTransform(originalLayerMatrix);
+			g2d.scale(4, 4);
+			g2d.setPaint(voidTexturePaint);
+			int stepsPerFragment = Resolution.QUARTER.getStepsPerFragment();
+			g2d.fillRect(0, 0, stepsPerFragment * graph.getFragmentsPerRow(),
+					stepsPerFragment * graph.getFragmentsPerColumn());
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawLayers() {
 		for (FragmentDrawer drawer : drawers) {
 			if (drawer.isEnabled()) {
 				initLayerMatrix();
 				for (FragmentGraphItem fragmentGraphItem : graph) {
 					Fragment fragment = fragmentGraphItem.getFragment();
-					if (fragment.isLoaded()) {
+					if (drawer.isDrawUnloaded()) {
+						setAlphaComposite(1.0f);
+						g2d.setTransform(layerMatrix);
+						drawer.draw(fragment, g2d, time);
+					} else if (fragment.isLoaded()) {
 						setAlphaComposite(fragment.getAlpha());
 						g2d.setTransform(layerMatrix);
 						drawer.draw(fragment, g2d, time);

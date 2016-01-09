@@ -3,8 +3,6 @@ package amidst.mojangapi.file.directory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,21 +64,17 @@ public class SaveDirectory {
 	}
 
 	private final File root;
+	private final SaveAmidstDirectory amidst;
 	private final File players;
 	private final File playerdata;
 	private final File levelDat;
-	private final File backupRoot;
-	private final File backupPlayers;
-	private final File backupPlayerdata;
 
 	public SaveDirectory(File root) {
 		this.root = root;
+		this.amidst = new SaveAmidstDirectory(new File(root, "amidst"));
 		this.players = new File(root, "players");
 		this.playerdata = new File(root, "playerdata");
 		this.levelDat = new File(root, "level.dat");
-		this.backupRoot = new File(root, "amidst_backup");
-		this.backupPlayers = new File(backupRoot, "players");
-		this.backupPlayerdata = new File(backupRoot, "playerdata");
 	}
 
 	public boolean isValid() {
@@ -93,6 +87,10 @@ public class SaveDirectory {
 
 	public File getRoot() {
 		return root;
+	}
+
+	public SaveAmidstDirectory getAmidst() {
+		return amidst;
 	}
 
 	public File getPlayers() {
@@ -113,23 +111,6 @@ public class SaveDirectory {
 
 	public File getPlayerdataFile(String playerUUID) {
 		return new File(playerdata, playerUUID + ".dat");
-	}
-
-	public File getBackupLevelDat() {
-		return new File(backupRoot, "level.dat" + "_" + millis());
-	}
-
-	public File getBackupPlayersFile(String playerName) {
-		return new File(backupPlayers, playerName + ".dat" + "_" + millis());
-	}
-
-	public File getBackupPlayerdataFile(String playerUUID) {
-		return new File(backupPlayerdata, playerUUID + ".dat" + "_" + millis());
-	}
-
-	private String millis() {
-		return new Timestamp(System.currentTimeMillis()).toString()
-				.replace(" ", "_").replace(":", "-").replace(".", "_");
 	}
 
 	public File[] getPlayersFiles() {
@@ -159,40 +140,18 @@ public class SaveDirectory {
 		return new LevelDatNbt(readLevelDat());
 	}
 
-	public boolean tryBackupLevelDat() {
-		File backupFile = getBackupLevelDat();
-		return ensureDirectoryExists(backupRoot)
-				&& tryCopy(getLevelDat(), backupFile) && backupFile.isFile();
-	}
-
 	public boolean tryBackupPlayersFile(String playerName) {
-		File backupFile = getBackupPlayersFile(playerName);
-		return ensureDirectoryExists(backupPlayers)
-				&& tryCopy(getPlayersFile(playerName), backupFile)
-				&& backupFile.isFile();
+		return amidst.getBackup().tryBackupPlayersFile(
+				getPlayersFile(playerName), playerName);
 	}
 
 	public boolean tryBackupPlayerdataFile(String playerUUID) {
-		File backupFile = getBackupPlayerdataFile(playerUUID);
-		return ensureDirectoryExists(backupPlayerdata)
-				&& tryCopy(getPlayerdataFile(playerUUID), backupFile)
-				&& backupFile.isFile();
+		return amidst.getBackup().tryBackupPlayerdataFile(
+				getPlayerdataFile(playerUUID), playerUUID);
 	}
 
-	private boolean ensureDirectoryExists(File directory) {
-		if (!directory.exists()) {
-			directory.mkdirs();
-		}
-		return directory.isDirectory();
-	}
-
-	private boolean tryCopy(File from, File to) {
-		try {
-			Files.copy(from.toPath(), to.toPath());
-			return true;
-		} catch (IOException e) {
-			return false;
-		}
+	public boolean tryBackupLevelDat() {
+		return amidst.getBackup().tryBackupLevelDat(getLevelDat());
 	}
 
 	/**

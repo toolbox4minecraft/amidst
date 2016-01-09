@@ -59,7 +59,7 @@ public class Biome {
 	public static final Biome swampland            = new Biome("Swampland",                   6, BiomeColor.from(  7, 249, 178), BiomeType.TYPE_M);
 	public static final Biome river                = new Biome("River",                       7, BiomeColor.from(  0,   0, 255), BiomeType.TYPE_B);
 	public static final Biome hell                 = new Biome("Hell",                        8, BiomeColor.from(255,   0,   0), BiomeType.TYPE_A);
-	public static final Biome sky                  = new Biome("Sky",                         9, BiomeColor.from(128, 128, 255), BiomeType.TYPE_A);
+	public static final Biome theEnd               = new Biome("The End",                     9, BiomeColor.from(128, 128, 255), BiomeType.TYPE_A);
 	public static final Biome frozenOcean          = new Biome("Frozen Ocean",               10, BiomeColor.from(144, 144, 160), BiomeType.TYPE_C);
 	public static final Biome frozenRiver          = new Biome("Frozen River",               11, BiomeColor.from(160, 160, 255), BiomeType.TYPE_B);
 	public static final Biome icePlains            = new Biome("Ice Plains",                 12, BiomeColor.from(255, 255, 255), BiomeType.TYPE_E);

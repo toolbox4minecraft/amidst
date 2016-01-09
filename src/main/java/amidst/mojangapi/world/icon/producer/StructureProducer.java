@@ -3,6 +3,7 @@ package amidst.mojangapi.world.icon.producer;
 import java.util.function.Consumer;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.WorldIcon;
@@ -14,20 +15,20 @@ import amidst.mojangapi.world.icon.type.WorldIconTypeProvider;
 public class StructureProducer<T> extends WorldIconProducer<T> {
 	private final Resolution resolution;
 	private final int size;
-	private final int offset;
+	private final int offsetInWorld;
 	private final LocationChecker checker;
 	private final WorldIconTypeProvider<T> provider;
-	private final boolean displayNetherCoordinates;
+	private final Dimension dimension;
 
-	public StructureProducer(Resolution resolution, int offset,
+	public StructureProducer(Resolution resolution, int offsetInWorld,
 			LocationChecker checker, WorldIconTypeProvider<T> provider,
-			boolean displayNetherCoordinates) {
+			Dimension dimension) {
 		this.resolution = resolution;
 		this.size = resolution.getStepsPerFragment();
-		this.offset = offset;
+		this.offsetInWorld = offsetInWorld;
 		this.checker = checker;
 		this.provider = provider;
-		this.displayNetherCoordinates = displayNetherCoordinates;
+		this.dimension = dimension;
 	}
 
 	@Override
@@ -54,8 +55,7 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 				CoordinatesInWorld coordinates = createCoordinates(corner,
 						xRelativeToFragment, yRelativeToFragment);
 				consumer.accept(new WorldIcon(coordinates, worldIconType
-						.getName(), worldIconType.getImage(),
-						displayNetherCoordinates));
+						.getName(), worldIconType.getImage(), dimension));
 			}
 		}
 	}
@@ -64,6 +64,6 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 			int xRelativeToFragment, int yRelativeToFragment) {
 		long xInWorld = resolution.convertFromThisToWorld(xRelativeToFragment);
 		long yInWorld = resolution.convertFromThisToWorld(yRelativeToFragment);
-		return corner.add(xInWorld + offset, yInWorld + offset);
+		return corner.add(xInWorld + offsetInWorld, yInWorld + offsetInWorld);
 	}
 }

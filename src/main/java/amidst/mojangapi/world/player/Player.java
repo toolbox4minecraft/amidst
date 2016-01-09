@@ -7,6 +7,7 @@ import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.nbt.player.PlayerNbt;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
 @ThreadSafe
@@ -33,8 +34,10 @@ public class Player {
 		return currentCoordinates;
 	}
 
-	public void moveTo(CoordinatesInWorld coordinates, long height) {
-		this.currentCoordinates = new PlayerCoordinates(coordinates, height);
+	public void moveTo(CoordinatesInWorld coordinates, long height,
+			Dimension dimension) {
+		this.currentCoordinates = new PlayerCoordinates(coordinates, height,
+				dimension);
 	}
 
 	public boolean trySaveLocation() {

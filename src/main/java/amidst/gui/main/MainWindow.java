@@ -148,7 +148,7 @@ public class MainWindow {
 		clearViewerFacade();
 		if (decideWorldPlayerType(world.getMovablePlayerList())) {
 			setViewerFacade(viewerFacadeBuilder.create(world, actions,
-					menuBar.getSelectedDimensionId()));
+					menuBar.getSelectedDimension()));
 		} else {
 			frame.revalidate();
 			frame.repaint();

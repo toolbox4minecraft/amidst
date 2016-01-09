@@ -123,9 +123,9 @@ public enum PlayerLocationSaver {
 	private static List<Tag> modifyPositionInPosList(List<Tag> posList,
 			PlayerCoordinates coordinates) {
 		List<Tag> result = new ArrayList<Tag>(posList);
-		result.set(0, new DoubleTag("x", coordinates.getX()));
-		result.set(1, new DoubleTag("y", coordinates.getY()));
-		result.set(2, new DoubleTag("z", coordinates.getZ()));
+		result.set(0, new DoubleTag("x", coordinates.getXForNBTFile()));
+		result.set(1, new DoubleTag("y", coordinates.getYForNBTFile()));
+		result.set(2, new DoubleTag("z", coordinates.getZForNBTFile()));
 		return result;
 	}
 }

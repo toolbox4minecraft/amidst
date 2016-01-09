@@ -22,5 +22,10 @@ public abstract class FragmentDrawer {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	public boolean isDrawUnloaded() {
+		return declaration.isDrawUnloaded();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	public abstract void draw(Fragment fragment, Graphics2D g2d, float time);
 }

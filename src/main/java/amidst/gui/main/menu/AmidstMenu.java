@@ -7,6 +7,7 @@ import javax.swing.JMenuItem;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.mojangapi.world.Dimension;
 
 @NotThreadSafe
 public class AmidstMenu {
@@ -49,7 +50,7 @@ public class AmidstMenu {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public int getSelectedDimensionId() {
+	public Dimension getSelectedDimension() {
 		return dimensionToggleButtonModels.get();
 	}
 }

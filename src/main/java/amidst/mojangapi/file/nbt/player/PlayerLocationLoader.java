@@ -3,6 +3,7 @@ package amidst.mojangapi.file.nbt.player;
 import java.util.List;
 
 import org.jnbt.CompoundTag;
+import org.jnbt.IntTag;
 import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
@@ -46,17 +47,22 @@ public enum PlayerLocationLoader {
 	}
 
 	private static PlayerCoordinates readPlayerCoordinates(CompoundTag tag) {
-		ListTag posTag = (ListTag) getTagPos(tag);
-		List<Tag> posList = posTag.getValue();
+		int dimensionId = getTagDimension(tag).getValue();
+		List<Tag> posList = getTagPos(tag).getValue();
 		// @formatter:off
-		return new PlayerCoordinates(
+		return PlayerCoordinates.fromNBTFile(
 				(long) (double) (Double) posList.get(0).getValue(),
 				(long) (double) (Double) posList.get(1).getValue(),
-				(long) (double) (Double) posList.get(2).getValue());
+				(long) (double) (Double) posList.get(2).getValue(),
+				dimensionId);
 		// @formatter:on
 	}
 
-	private static Tag getTagPos(CompoundTag tag) {
-		return tag.getValue().get(NBTTagKeys.TAG_KEY_POS);
+	private static IntTag getTagDimension(CompoundTag tag) {
+		return (IntTag) tag.getValue().get(NBTTagKeys.TAG_KEY_DIMENSION);
+	}
+
+	private static ListTag getTagPos(CompoundTag tag) {
+		return (ListTag) tag.getValue().get(NBTTagKeys.TAG_KEY_POS);
 	}
 }
