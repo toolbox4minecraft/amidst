@@ -2,7 +2,6 @@ package amidst.mojangapi.world;
 
 import java.util.List;
 
-import amidst.documentation.CalledByAny;
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
@@ -12,13 +11,15 @@ import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;
+import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 
 @ThreadSafe
 public class World {
-	private final WorldSeed seed;
+	private final WorldSeed worldSeed;
 	private final WorldType worldType;
 	private final String generatorOptions;
 	private final MovablePlayerList movablePlayerList;
+	private final VersionFeatures versionFeatures;
 
 	private final BiomeDataOracle biomeDataOracle;
 	private final EndIslandOracle endIslandOracle;
@@ -33,10 +34,10 @@ public class World {
 	private final WorldIconProducer<Void> oceanMonumentProducer;
 	private final WorldIconProducer<List<EndIsland>> endCityProducer;
 
-	public World(WorldSeed seed, WorldType worldType, String generatorOptions,
-			MovablePlayerList movablePlayerList,
-			BiomeDataOracle biomeDataOracle, EndIslandOracle endIslandOracle,
-			SlimeChunkOracle slimeChunkOracle,
+	public World(WorldSeed worldSeed, WorldType worldType,
+			String generatorOptions, MovablePlayerList movablePlayerList,
+			VersionFeatures versionFeatures, BiomeDataOracle biomeDataOracle,
+			EndIslandOracle endIslandOracle, SlimeChunkOracle slimeChunkOracle,
 			CachedWorldIconProducer spawnProducer,
 			CachedWorldIconProducer strongholdProducer,
 			CachedWorldIconProducer playerProducer,
@@ -46,10 +47,11 @@ public class World {
 			WorldIconProducer<Void> netherFortressProducer,
 			WorldIconProducer<Void> oceanMonumentProducer,
 			WorldIconProducer<List<EndIsland>> endCityProducer) {
-		this.seed = seed;
+		this.worldSeed = worldSeed;
 		this.worldType = worldType;
 		this.generatorOptions = generatorOptions;
 		this.movablePlayerList = movablePlayerList;
+		this.versionFeatures = versionFeatures;
 		this.biomeDataOracle = biomeDataOracle;
 		this.endIslandOracle = endIslandOracle;
 		this.slimeChunkOracle = slimeChunkOracle;
@@ -64,23 +66,24 @@ public class World {
 		this.endCityProducer = endCityProducer;
 	}
 
-	@CalledByAny
 	public WorldSeed getWorldSeed() {
-		return seed;
+		return worldSeed;
 	}
 
-	@CalledByAny
 	public WorldType getWorldType() {
 		return worldType;
 	}
 
-	@CalledByAny
 	public String getGeneratorOptions() {
 		return generatorOptions;
 	}
 
 	public MovablePlayerList getMovablePlayerList() {
 		return movablePlayerList;
+	}
+
+	public VersionFeatures getVersionFeatures() {
+		return versionFeatures;
 	}
 
 	public BiomeDataOracle getBiomeDataOracle() {

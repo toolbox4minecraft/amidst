@@ -69,11 +69,11 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void newFromSeed(WorldSeed seed) {
+	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = mainWindow.askForWorldType();
 		if (worldType != null) {
 			try {
-				mainWindow.setWorld(mojangApi.createWorldFromSeed(seed,
+				mainWindow.setWorld(mojangApi.createWorldFromSeed(worldSeed,
 						worldType));
 			} catch (IllegalStateException | MinecraftInterfaceException e) {
 				e.printStackTrace();

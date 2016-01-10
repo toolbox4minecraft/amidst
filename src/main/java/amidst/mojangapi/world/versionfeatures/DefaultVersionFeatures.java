@@ -1,28 +1,45 @@
-package amidst.mojangapi.world;
+package amidst.mojangapi.world.versionfeatures;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import amidst.documentation.Immutable;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.icon.locationchecker.ChanceBasedMineshaftAlgorithm;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm;
 import amidst.mojangapi.world.icon.locationchecker.OriginalMineshaftAlgorithm;
-import amidst.mojangapi.world.versionfeatures.VersionFeature;
 
+@Immutable
 public enum DefaultVersionFeatures {
 	INSTANCE;
+	
+	public static VersionFeatures create(RecognisedVersion version) {
+		// @formatter:off
+		return new VersionFeatures(
+				INSTANCE.isSaveEnabled.getValue(version),
+				INSTANCE.validBiomesForStructure_Spawn.getValue(version),
+				INSTANCE.validBiomesAtMiddleOfChunk_Stronghold.getValue(version),
+				INSTANCE.numberOfStrongholds.getValue(version),
+				INSTANCE.validBiomesForStructure_Village.getValue(version),
+				INSTANCE.validBiomesAtMiddleOfChunk_Temple.getValue(version),
+				INSTANCE.mineshaftAlgorithmFactory.getValue(version),
+				INSTANCE.validBiomesAtMiddleOfChunk_OceanMonument.getValue(version),
+				INSTANCE.validBiomesForStructure_OceanMonument.getValue(version)
+		);
+		// @formatter:on
+	}
 
-	public final VersionFeature<Boolean> isSaveEnabled;
-	public final VersionFeature<List<Biome>> validBiomesForStructure_Spawn;
-	public final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Stronghold;
-	public final VersionFeature<Integer> numberOfStrongholds;
-	public final VersionFeature<List<Biome>> validBiomesForStructure_Village;
-	public final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Temple;
-	public final VersionFeature<Function<Long, MineshaftAlgorithm>> mineshaftAlgorithmFactory;
-	public final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_OceanMonument;
-	public final VersionFeature<List<Biome>> validBiomesForStructure_OceanMonument;
+	private final VersionFeature<Boolean> isSaveEnabled;
+	private final VersionFeature<List<Biome>> validBiomesForStructure_Spawn;
+	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Stronghold;
+	private final VersionFeature<Integer> numberOfStrongholds;
+	private final VersionFeature<List<Biome>> validBiomesForStructure_Village;
+	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Temple;
+	private final VersionFeature<Function<Long, MineshaftAlgorithm>> mineshaftAlgorithmFactory;
+	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_OceanMonument;
+	private final VersionFeature<List<Biome>> validBiomesForStructure_OceanMonument;
 
 	private DefaultVersionFeatures() {
 		// @formatter:off
