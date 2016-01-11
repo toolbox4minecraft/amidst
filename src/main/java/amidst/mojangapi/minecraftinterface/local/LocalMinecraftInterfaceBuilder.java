@@ -1,7 +1,6 @@
 package amidst.mojangapi.minecraftinterface.local;
 
 import java.io.FileNotFoundException;
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 import java.util.Map;
@@ -20,11 +19,6 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 @Immutable
 public class LocalMinecraftInterfaceBuilder {
-	private static final String CLIENT_CLASS_RESOURCE = "net/minecraft/client/Minecraft.class";
-	private static final String CLIENT_CLASS = "net.minecraft.client.Minecraft";
-	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
-	private static final String SERVER_CLASS = "net.minecraft.server.MinecraftServer";
-
 	private final ClassTranslator translator;
 
 	public LocalMinecraftInterfaceBuilder(ClassTranslator translator) {
@@ -37,7 +31,7 @@ public class LocalMinecraftInterfaceBuilder {
 		try {
 			URLClassLoader classLoader = versionDirectory.createClassLoader();
 			RecognisedVersion recognisedVersion = RecognisedVersion
-					.from(getMainClassFields(classLoader));
+					.from(classLoader);
 			Map<String, SymbolicClass> symbolicClassMap = Classes
 					.createSymbolicClassMap(versionDirectory.getJar(),
 							classLoader, translator);
@@ -53,19 +47,6 @@ public class LocalMinecraftInterfaceBuilder {
 				| SymbolicClassGraphCreationException e) {
 			throw new LocalMinecraftInterfaceCreationException(
 					"unable to create local minecraft interface", e);
-		}
-	}
-
-	@NotNull
-	private Field[] getMainClassFields(URLClassLoader classLoader)
-			throws ClassNotFoundException {
-		if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
-			return classLoader.loadClass(CLIENT_CLASS).getDeclaredFields();
-		} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {
-			return classLoader.loadClass(SERVER_CLASS).getDeclaredFields();
-		} else {
-			throw new ClassNotFoundException(
-					"unable to find the main class in the given jar file");
 		}
 	}
 }

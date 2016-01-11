@@ -1,9 +1,11 @@
 package amidst.mojangapi.minecraftinterface;
 
 import java.lang.reflect.Field;
+import java.net.URLClassLoader;
 import java.util.Objects;
 
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
 import amidst.logging.Log;
 
 /**
@@ -71,6 +73,24 @@ public enum RecognisedVersion {
 	Vbeta_1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"); // Had to rename from V1_8_1 - should it just be removed?
 	// @formatter:on
 
+	public static RecognisedVersion from(URLClassLoader classLoader)
+			throws ClassNotFoundException {
+		return from(getMainClassFields(classLoader));
+	}
+
+	@NotNull
+	private static Field[] getMainClassFields(URLClassLoader classLoader)
+			throws ClassNotFoundException {
+		if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
+			return classLoader.loadClass(CLIENT_CLASS).getDeclaredFields();
+		} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {
+			return classLoader.loadClass(SERVER_CLASS).getDeclaredFields();
+		} else {
+			throw new ClassNotFoundException(
+					"unable to find the main class in the given jar file");
+		}
+	}
+
 	public static RecognisedVersion from(Field[] fields) {
 		return from(generateMagicString(fields));
 	}
@@ -86,6 +106,7 @@ public enum RecognisedVersion {
 		return result;
 	}
 
+	@NotNull
 	public static RecognisedVersion from(String magicString) {
 		for (RecognisedVersion recognisedVersion : RecognisedVersion.values()) {
 			if (magicString.equals(recognisedVersion.magicString)) {
@@ -139,6 +160,11 @@ public enum RecognisedVersion {
 			return string;
 		}
 	}
+
+	private static final String CLIENT_CLASS_RESOURCE = "net/minecraft/client/Minecraft.class";
+	private static final String CLIENT_CLASS = "net.minecraft.client.Minecraft";
+	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
+	private static final String SERVER_CLASS = "net.minecraft.server.MinecraftServer";
 
 	private final String name;
 	private final String magicString;
