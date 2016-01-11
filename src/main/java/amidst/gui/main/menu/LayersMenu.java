@@ -1,8 +1,12 @@
 package amidst.gui.main.menu;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 import amidst.AmidstSettings;
 import amidst.ResourceLoader;
@@ -22,6 +26,8 @@ public class LayersMenu {
 	private final AmidstSettings settings;
 	private final Setting<Dimension> dimensionSetting;
 	private final Setting<Boolean> unlockAll;
+	private final List<JMenuItem> overworldMenuItems = new LinkedList<JMenuItem>();
+	private final List<JMenuItem> endMenuItems = new LinkedList<JMenuItem>();
 	private volatile World world;
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -53,27 +59,41 @@ public class LayersMenu {
 		}
 		this.world = world;
 		menu.removeAll();
+		overworldMenuItems.clear();
+		endMenuItems.clear();
 		// @formatter:off
-		Menus.checkbox(menu, settings.showGrid,                 "Grid",                   getIcon("grid.png"),            "ctrl G");
+		                       Menus.checkbox(menu, settings.showGrid,                 "Grid",                   getIcon("grid.png"),            "ctrl G");
 		menu.addSeparator();
 		ButtonGroup group = new ButtonGroup();
-		Menus.radio(   menu, dimensionSetting, group,           Dimension.OVERWORLD,                                      "ctrl shift 1");
-		Menus.checkbox(menu, settings.showSlimeChunks,          "Slime Chunks",           getIcon("slime.png"),           "ctrl 1");
-		Menus.checkbox(menu, settings.showSpawn,                "Spawn Location Icon",    getIcon("spawn.png"),           "ctrl 2");
-		Menus.checkbox(menu, settings.showStrongholds,          "Stronghold Icons",       getIcon("stronghold.png"),      "ctrl 3");
-		Menus.checkbox(menu, settings.showPlayers,              "Player Icons",           getIcon("player.png"),          "ctrl 4");
-		Menus.checkbox(menu, settings.showVillages,             "Village Icons",          getIcon("village.png"),         "ctrl 5");
-		Menus.checkbox(menu, settings.showTemples,              "Temple/Witch Hut Icons", getIcon("desert.png"),          "ctrl 6");
-		Menus.checkbox(menu, settings.showMineshafts,           "Mineshaft Icons",        getIcon("mineshaft.png"),       "ctrl 7");
-		Menus.checkbox(menu, settings.showOceanMonuments,       "Ocean Monument Icons",   getIcon("ocean_monument.png"),  "ctrl 8");
-		Menus.checkbox(menu, settings.showNetherFortresses,     "Nether Fortress Icons",  getIcon("nether_fortress.png"), "ctrl 9");
+		                       Menus.radio(   menu, dimensionSetting, group,           Dimension.OVERWORLD,                                      "ctrl shift 1");
+		overworldMenuItems.add(Menus.checkbox(menu, settings.showSlimeChunks,          "Slime Chunks",           getIcon("slime.png"),           "ctrl 1"));
+		overworldMenuItems.add(Menus.checkbox(menu, settings.showSpawn,                "Spawn Location Icon",    getIcon("spawn.png"),           "ctrl 2"));
+		overworldMenuItems.add(Menus.checkbox(menu, settings.showStrongholds,          "Stronghold Icons",       getIcon("stronghold.png"),      "ctrl 3"));
+		overworldMenuItems.add(Menus.checkbox(menu, settings.showPlayers,              "Player Icons",           getIcon("player.png"),          "ctrl 4"));
+		overworldMenuItems.add(Menus.checkbox(menu, settings.showVillages,             "Village Icons",          getIcon("village.png"),         "ctrl 5"));
+		overworldMenuItems.add(Menus.checkbox(menu, settings.showTemples,              "Temple/Witch Hut Icons", getIcon("desert.png"),          "ctrl 6"));
+		overworldMenuItems.add(Menus.checkbox(menu, settings.showMineshafts,           "Mineshaft Icons",        getIcon("mineshaft.png"),       "ctrl 7"));
+		overworldMenuItems.add(Menus.checkbox(menu, settings.showOceanMonuments,       "Ocean Monument Icons",   getIcon("ocean_monument.png"),  "ctrl 8"));
+		overworldMenuItems.add(Menus.checkbox(menu, settings.showNetherFortresses,     "Nether Fortress Icons",  getIcon("nether_fortress.png"), "ctrl 9"));
 		menu.addSeparator();
-		Menus.radio(   menu, dimensionSetting, group,           Dimension.END,                                            "ctrl shift 2");
-		Menus.checkbox(menu, settings.showEndCities,            "End City Icons",         getIcon("end_city.png"),        "ctrl 0");
+		                       Menus.radio(   menu, dimensionSetting, group,           Dimension.END,                                            "ctrl shift 2");
+		endMenuItems.add(      Menus.checkbox(menu, settings.showEndCities,            "End City Icons",         getIcon("end_city.png"),        "ctrl 0"));
 		menu.addSeparator();
-		Menus.checkbox(menu, unlockAll,                         "Unlock All");
+		                       Menus.checkbox(menu, unlockAll,                         "Unlock All");
 		// @formatter:on
 		menu.setEnabled(true);
+		if (dimensionSetting.get().equals(Dimension.OVERWORLD)) {
+			overworldMenuItems.forEach(menuItem -> menuItem.setEnabled(true));
+			endMenuItems.forEach(menuItem -> menuItem.setEnabled(false));
+		} else if (dimensionSetting.get().equals(Dimension.END)) {
+			overworldMenuItems.forEach(menuItem -> menuItem.setEnabled(false));
+			endMenuItems.forEach(menuItem -> menuItem.setEnabled(true));
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void overworldLayer(Setting<Boolean> setting, String text,
+			ImageIcon icon, String accelerator) {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
