@@ -15,7 +15,7 @@ import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 
 import amidst.ResourceLoader;
-import amidst.Settings;
+import amidst.AmidstSettings;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
 import amidst.settings.MultipleStringsSetting.SelectButtonModel;
@@ -23,7 +23,7 @@ import amidst.settings.biomecolorprofile.BiomeColorProfileDirectory;
 
 @NotThreadSafe
 public class AmidstMenuBuilder {
-	private final Settings settings;
+	private final AmidstSettings settings;
 	private final Actions actions;
 	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
 	private final DimensionToggleButtonModels dimensionToggleButtonModels;
@@ -32,7 +32,7 @@ public class AmidstMenuBuilder {
 	private JMenuItem savePlayerLocationsMenu;
 	private JMenuItem reloadPlayerLocationsMenu;
 
-	public AmidstMenuBuilder(Settings settings, Actions actions,
+	public AmidstMenuBuilder(AmidstSettings settings, Actions actions,
 			BiomeColorProfileDirectory biomeColorProfileDirectory) {
 		this.settings = settings;
 		this.actions = actions;

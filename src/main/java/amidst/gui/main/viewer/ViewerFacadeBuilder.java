@@ -2,7 +2,7 @@ package amidst.gui.main.viewer;
 
 import java.util.List;
 
-import amidst.Settings;
+import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -27,12 +27,12 @@ public class ViewerFacadeBuilder {
 	private final Zoom zoom;
 	private final BiomeSelection biomeSelection = new BiomeSelection();
 
-	private final Settings settings;
+	private final AmidstSettings settings;
 	private final LayerBuilder layerBuilder;
 	private final FragmentManager fragmentManager;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ViewerFacadeBuilder(Settings settings, LayerBuilder layerBuilder) {
+	public ViewerFacadeBuilder(AmidstSettings settings, LayerBuilder layerBuilder) {
 		this.settings = settings;
 		this.zoom = new Zoom(settings.maxZoom);
 		this.layerBuilder = layerBuilder;

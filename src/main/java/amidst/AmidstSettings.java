@@ -14,7 +14,7 @@ import amidst.settings.biomecolorprofile.BiomeColorProfile;
 import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
 
 @ThreadSafe
-public class Settings {
+public class AmidstSettings {
 	public final BooleanSetting showSlimeChunks;
 	public final BooleanSetting showGrid;
 	public final BooleanSetting showSpawn;
@@ -39,7 +39,7 @@ public class Settings {
 	public final BiomeColorProfileSelection biomeColorProfileSelection;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Settings(Preferences preferences) {
+	public AmidstSettings(Preferences preferences) {
 		// @formatter:off
 		showSlimeChunks            = new BooleanSetting(        preferences, "slimeChunks",         false);
 		showGrid                   = new BooleanSetting(        preferences, "grid",                false);

@@ -13,7 +13,7 @@ import javax.swing.SwingConstants;
 import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
 import amidst.Application;
-import amidst.Settings;
+import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -31,7 +31,7 @@ public class ProfileSelectWindow {
 	private final AmidstMetaData metadata;
 	private final WorkerExecutor workerExecutor;
 	private final MojangApi mojangApi;
-	private final Settings settings;
+	private final AmidstSettings settings;
 
 	private final JFrame frame;
 	private final ProfileSelectPanel profileSelectPanel;
@@ -39,7 +39,7 @@ public class ProfileSelectWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public ProfileSelectWindow(Application application,
 			AmidstMetaData metadata, WorkerExecutor workerExecutor,
-			MojangApi mojangApi, Settings settings) {
+			MojangApi mojangApi, AmidstSettings settings) {
 		this.application = application;
 		this.metadata = metadata;
 		this.workerExecutor = workerExecutor;

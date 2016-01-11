@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
 
 import amidst.AmidstMetaData;
 import amidst.Application;
-import amidst.Settings;
+import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -39,7 +39,7 @@ import amidst.threading.ThreadMaster;
 public class MainWindow {
 	private final Application application;
 	private final AmidstMetaData metadata;
-	private final Settings settings;
+	private final AmidstSettings settings;
 	private final MojangApi mojangApi;
 	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
 	private final ViewerFacadeBuilder viewerFacadeBuilder;
@@ -54,7 +54,7 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public MainWindow(Application application, AmidstMetaData metadata,
-			Settings settings, MojangApi mojangApi,
+			AmidstSettings settings, MojangApi mojangApi,
 			BiomeColorProfileDirectory biomeColorProfileDirectory,
 			ViewerFacadeBuilder viewerFacadeBuilder, ThreadMaster threadMaster) {
 		this.application = application;

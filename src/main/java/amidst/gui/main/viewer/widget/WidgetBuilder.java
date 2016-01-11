@@ -3,7 +3,7 @@ package amidst.gui.main.viewer.widget;
 import java.util.Arrays;
 import java.util.List;
 
-import amidst.Settings;
+import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -28,14 +28,14 @@ public class WidgetBuilder {
 	private final WorldIconSelection worldIconSelection;
 	private final LayerReloader layerReloader;
 	private final FragmentManager fragmentManager;
-	private final Settings settings;
+	private final AmidstSettings settings;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WidgetBuilder(World world, FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			BiomeSelection biomeSelection,
 			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
-			FragmentManager fragmentManager, Settings settings) {
+			FragmentManager fragmentManager, AmidstSettings settings) {
 		this.world = world;
 		this.graph = graph;
 		this.translator = translator;

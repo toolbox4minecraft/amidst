@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import amidst.Settings;
+import amidst.AmidstSettings;
 import amidst.documentation.Immutable;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentQueueProcessor;
@@ -41,12 +41,12 @@ public class LayerBuilder {
 	private final List<LayerDeclaration> declarations;
 	private final Iterable<FragmentConstructor> constructors;
 
-	public LayerBuilder(Settings settings) {
+	public LayerBuilder(AmidstSettings settings) {
 		this.declarations = createDeclarations(settings);
 		this.constructors = createConstructors();
 	}
 
-	private List<LayerDeclaration> createDeclarations(Settings settings) {
+	private List<LayerDeclaration> createDeclarations(AmidstSettings settings) {
 		LayerDeclaration[] declarations = new LayerDeclaration[LayerIds.NUMBER_OF_LAYERS];
 		// @formatter:off
 		declarations[LayerIds.ALPHA]            = new LayerDeclaration(LayerIds.ALPHA,           false, new ImmutableSetting<Boolean>(true));
@@ -96,7 +96,7 @@ public class LayerBuilder {
 
 	public LayerLoader createLayerLoader(World world,
 			BiomeSelection biomeSelection,
-			DimensionSelection dimensionSelection, Settings settings) {
+			DimensionSelection dimensionSelection, AmidstSettings settings) {
 		return new LayerLoader(createLoaders(world, biomeSelection,
 				dimensionSelection, settings), LayerIds.NUMBER_OF_LAYERS);
 	}
@@ -106,7 +106,7 @@ public class LayerBuilder {
 	 */
 	private Iterable<FragmentLoader> createLoaders(World world,
 			BiomeSelection biomeSelection,
-			DimensionSelection dimensionSelection, Settings settings) {
+			DimensionSelection dimensionSelection, AmidstSettings settings) {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
 				new AlphaInitializer(                declarations.get(LayerIds.ALPHA),           settings.fragmentFading),
