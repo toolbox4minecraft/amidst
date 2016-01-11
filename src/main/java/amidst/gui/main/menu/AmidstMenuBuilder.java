@@ -87,7 +87,6 @@ public class AmidstMenuBuilder {
 	private JMenuItem create_Layers() {
 		JMenu result = new JMenu("Layers");
 		result.setMnemonic(KeyEvent.VK_L);
-		result.setEnabled(false);
 		layersMenu = new LayersMenu(result, actions, settings);
 		return result;
 	}

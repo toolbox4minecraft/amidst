@@ -21,6 +21,7 @@ public class LayersMenu {
 	private final Actions actions;
 	private final AmidstSettings settings;
 	private final Setting<Dimension> dimensionSetting;
+	private final Setting<Boolean> unlockAll;
 	private volatile World world;
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -29,13 +30,19 @@ public class LayersMenu {
 		this.actions = actions;
 		this.settings = settings;
 		this.dimensionSetting = Settings.createWithListener(settings.dimension,
-				this::update);
+				this::selectDimension);
+		this.unlockAll = Settings.createDummyWithListener(false, this::reinit);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void update() {
-		init(world);
+	public void selectDimension() {
+		reinit();
 		actions.selectDimension(dimensionSetting.get());
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void reinit() {
+		init(world);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -63,6 +70,8 @@ public class LayersMenu {
 		menu.addSeparator();
 		Menus.radio(   menu, dimensionSetting, group,           Dimension.END,                                            "ctrl shift 2");
 		Menus.checkbox(menu, settings.showEndCities,            "End City Icons",         getIcon("end_city.png"),        "ctrl 0");
+		menu.addSeparator();
+		Menus.checkbox(menu, unlockAll,                         "Unlock All");
 		// @formatter:on
 		menu.setEnabled(true);
 	}

@@ -41,12 +41,20 @@ public enum Settings {
 		// @formatter:on
 	}
 
-	public static <T> Setting<T> createDummy(Preferences preferences,
-			String key, T defaultValue) {
+	public static <T> Setting<T> createDummy(T defaultValue) {
 		// @formatter:off
 		return new SettingBase<T>(defaultValue,
 				value -> value,
 				value -> {});
+		// @formatter:on
+	}
+
+	public static <T> Setting<T> createDummyWithListener(T defaultValue,
+			Runnable listener) {
+		// @formatter:off
+		return new SettingBase<T>(defaultValue,
+				value -> value,
+				value -> listener.run());
 		// @formatter:on
 	}
 
