@@ -1,6 +1,7 @@
 package amidst.settings;
 
 import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.prefs.Preferences;
 
 import amidst.documentation.NotNull;
@@ -8,6 +9,7 @@ import amidst.documentation.ThreadSafe;
 
 @ThreadSafe
 public abstract class SettingBase<T> implements Setting<T> {
+	private final ConcurrentLinkedQueue<Runnable> listeners = new ConcurrentLinkedQueue<Runnable>();
 	protected final Preferences preferences;
 	protected final String key;
 	private volatile T value;
@@ -22,9 +24,12 @@ public abstract class SettingBase<T> implements Setting<T> {
 		set(getInitialValue(defaultValue));
 	}
 
-	@Override
-	public String getKey() {
-		return key;
+	public void addListener(Runnable listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListener(Runnable listener) {
+		listeners.remove(listener);
 	}
 
 	@Override
@@ -33,14 +38,19 @@ public abstract class SettingBase<T> implements Setting<T> {
 	}
 
 	@Override
-	public synchronized void set(@NotNull T value) {
+	public void set(@NotNull T value) {
 		Objects.requireNonNull(value);
-		this.value = value;
-		update(value);
+		synchronized (this) {
+			this.value = value;
+			doSet(value);
+		}
+		for (Runnable listener : listeners) {
+			listener.run();
+		}
 	}
 
 	@NotNull
 	protected abstract T getInitialValue(@NotNull T defaultValue);
 
-	protected abstract void update(@NotNull T value);
+	protected abstract void doSet(@NotNull T value);
 }

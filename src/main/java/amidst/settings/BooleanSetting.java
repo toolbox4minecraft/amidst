@@ -40,7 +40,7 @@ public class BooleanSetting extends SettingBase<Boolean> {
 	}
 
 	@Override
-	protected void update(Boolean value) {
+	protected void doSet(Boolean value) {
 		this.preferences.putBoolean(key, value);
 		this.buttonModel.update();
 	}

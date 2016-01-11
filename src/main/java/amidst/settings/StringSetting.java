@@ -19,7 +19,7 @@ public class StringSetting extends SettingBase<String> {
 	}
 
 	@Override
-	protected void update(String value) {
+	protected void doSet(String value) {
 		preferences.put(key, value);
 	}
 }

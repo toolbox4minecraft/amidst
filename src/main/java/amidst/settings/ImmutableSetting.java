@@ -11,11 +11,6 @@ public class ImmutableSetting<T> implements Setting<T> {
 	}
 
 	@Override
-	public String getKey() {
-		throw new UnsupportedOperationException("ImmutableSetting has no key!");
-	}
-
-	@Override
 	public T get() {
 		return value;
 	}

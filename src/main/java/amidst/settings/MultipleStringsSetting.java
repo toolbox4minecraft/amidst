@@ -67,7 +67,7 @@ public class MultipleStringsSetting extends SettingBase<String> {
 	}
 
 	@Override
-	protected void update(String value) {
+	protected void doSet(String value) {
 		this.preferences.put(key, value);
 		updateButtonModels();
 	}

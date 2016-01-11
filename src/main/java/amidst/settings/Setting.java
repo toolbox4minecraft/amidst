@@ -1,8 +1,8 @@
 package amidst.settings;
 
-public interface Setting<T> {
-	String getKey();
+import java.util.function.Supplier;
 
+public interface Setting<T> extends Supplier<T> {
 	T get();
 
 	void set(T value);

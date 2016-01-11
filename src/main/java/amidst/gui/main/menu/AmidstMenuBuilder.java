@@ -288,21 +288,21 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("Layers");
 		result.setMnemonic(KeyEvent.VK_L);
 		// @formatter:off
-		result.add(createJCheckBoxItem("Overworld",                null,                  KeyEvent.VK_1, InputEvent.SHIFT_DOWN_MASK, dimensionToggleButtonModels.getOverworld()));
-		result.add(createJCheckBoxItem("The End",                  null,                  KeyEvent.VK_2, InputEvent.SHIFT_DOWN_MASK, dimensionToggleButtonModels.getTheEnd()));
+		result.add(createJCheckBoxItem("Overworld",                null,                  KeyEvent.VK_1, InputEvent.SHIFT_DOWN_MASK, dimensionToggleButtonModels  .getOverworld()));
+		result.add(createJCheckBoxItem("The End",                  null,                  KeyEvent.VK_2, InputEvent.SHIFT_DOWN_MASK, dimensionToggleButtonModels  .getTheEnd()));
 		result.addSeparator();
-		result.add(createJCheckBoxItem("Slime chunks",             "slime.png",           KeyEvent.VK_3, InputEvent.SHIFT_DOWN_MASK, settings.showSlimeChunks.getButtonModel()));
-		result.add(createJCheckBoxItem("Grid",                     "grid.png",            KeyEvent.VK_4, InputEvent.SHIFT_DOWN_MASK, settings.showGrid.getButtonModel()));
+		result.add(createJCheckBoxItem("Slime chunks",             "slime.png",           KeyEvent.VK_3, InputEvent.SHIFT_DOWN_MASK, settings.showSlimeChunks     .getButtonModel()));
+		result.add(createJCheckBoxItem("Grid",                     "grid.png",            KeyEvent.VK_4, InputEvent.SHIFT_DOWN_MASK, settings.showGrid            .getButtonModel()));
 		result.addSeparator();
-		result.add(createJCheckBoxItem("Spawn Location Icon",      "spawn.png",           KeyEvent.VK_1, 0, settings.showSpawn.getButtonModel()));
-		result.add(createJCheckBoxItem("Stronghold Icons",         "stronghold.png",      KeyEvent.VK_2, 0, settings.showStrongholds.getButtonModel()));
-		result.add(createJCheckBoxItem("Player Icons",             "player.png",          KeyEvent.VK_3, 0, settings.showPlayers.getButtonModel()));
-		result.add(createJCheckBoxItem("Village Icons",            "village.png",         KeyEvent.VK_4, 0, settings.showVillages.getButtonModel()));
-		result.add(createJCheckBoxItem("Temple/Witch Hut Icons",   "desert.png",          KeyEvent.VK_5, 0, settings.showTemples.getButtonModel()));
-		result.add(createJCheckBoxItem("Mineshaft Icons",          "mineshaft.png",       KeyEvent.VK_6, 0, settings.showMineshafts.getButtonModel()));
-		result.add(createJCheckBoxItem("Nether Fortress Icons",    "nether_fortress.png", KeyEvent.VK_7, 0, settings.showNetherFortresses.getButtonModel()));
-		result.add(createJCheckBoxItem("Ocean Monument Icons",     "ocean_monument.png",  KeyEvent.VK_8, 0, settings.showOceanMonuments.getButtonModel()));
-		result.add(createJCheckBoxItem("End City Icons",           "end_city.png",        KeyEvent.VK_9, 0, settings.showEndCities.getButtonModel()));
+		result.add(createJCheckBoxItem("Spawn Location Icon",      "spawn.png",           KeyEvent.VK_1, 0,                          settings.showSpawn           .getButtonModel()));
+		result.add(createJCheckBoxItem("Stronghold Icons",         "stronghold.png",      KeyEvent.VK_2, 0,                          settings.showStrongholds     .getButtonModel()));
+		result.add(createJCheckBoxItem("Player Icons",             "player.png",          KeyEvent.VK_3, 0,                          settings.showPlayers         .getButtonModel()));
+		result.add(createJCheckBoxItem("Village Icons",            "village.png",         KeyEvent.VK_4, 0,                          settings.showVillages        .getButtonModel()));
+		result.add(createJCheckBoxItem("Temple/Witch Hut Icons",   "desert.png",          KeyEvent.VK_5, 0,                          settings.showTemples         .getButtonModel()));
+		result.add(createJCheckBoxItem("Mineshaft Icons",          "mineshaft.png",       KeyEvent.VK_6, 0,                          settings.showMineshafts      .getButtonModel()));
+		result.add(createJCheckBoxItem("Nether Fortress Icons",    "nether_fortress.png", KeyEvent.VK_7, 0,                          settings.showNetherFortresses.getButtonModel()));
+		result.add(createJCheckBoxItem("Ocean Monument Icons",     "ocean_monument.png",  KeyEvent.VK_8, 0,                          settings.showOceanMonuments  .getButtonModel()));
+		result.add(createJCheckBoxItem("End City Icons",           "end_city.png",        KeyEvent.VK_9, 0,                          settings.showEndCities       .getButtonModel()));
 		// @formatter:on
 		return result;
 	}
@@ -316,12 +316,12 @@ public class AmidstMenuBuilder {
 		}
 		result.addSeparator();
 		// @formatter:off
-		result.add(createJCheckBoxItem("Smooth Scrolling",         null,                  KeyEvent.VK_I, 0, settings.smoothScrolling.getButtonModel()));
-		result.add(createJCheckBoxItem("Fragment Fading",          null,                  -1,            0, settings.fragmentFading.getButtonModel()));
-		result.add(createJCheckBoxItem("Restrict Maximum Zoom",    null,                  KeyEvent.VK_Z, 0, settings.maxZoom.getButtonModel()));
-		result.add(createJCheckBoxItem("Show Framerate",           null,                  KeyEvent.VK_L, 0, settings.showFPS.getButtonModel()));
-		result.add(createJCheckBoxItem("Show Scale",               null,                  KeyEvent.VK_K, 0, settings.showScale.getButtonModel()));
-		result.add(createJCheckBoxItem("Show Debug Info",          null,                  -1,            0, settings.showDebug.getButtonModel()));
+		result.add(createJCheckBoxItem("Smooth Scrolling",         null,                  KeyEvent.VK_I, 0,                          settings.smoothScrolling     .getButtonModel()));
+		result.add(createJCheckBoxItem("Fragment Fading",          null,                  -1,            0,                          settings.fragmentFading      .getButtonModel()));
+		result.add(createJCheckBoxItem("Restrict Maximum Zoom",    null,                  KeyEvent.VK_Z, 0,                          settings.maxZoom             .getButtonModel()));
+		result.add(createJCheckBoxItem("Show Framerate",           null,                  KeyEvent.VK_L, 0,                          settings.showFPS             .getButtonModel()));
+		result.add(createJCheckBoxItem("Show Scale",               null,                  KeyEvent.VK_K, 0,                          settings.showScale           .getButtonModel()));
+		result.add(createJCheckBoxItem("Show Debug Info",          null,                  -1,            0,                          settings.showDebug           .getButtonModel()));
 		// @formatter:on
 		return result;
 	}
