@@ -36,6 +36,10 @@ public class AmidstSettings {
 
 	public final Setting<String> lastProfile;
 	public final Setting<String> worldType;
+
+	/**
+	 * This is not persisted.
+	 */
 	public final BiomeColorProfileSelection biomeColorProfileSelection;
 
 	@CalledOnlyBy(AmidstThread.EDT)

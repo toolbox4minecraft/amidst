@@ -7,6 +7,7 @@ import javax.swing.JMenuItem;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.mojangapi.world.World;
 
 @NotThreadSafe
 public class AmidstMenu {
@@ -54,6 +55,24 @@ public class AmidstMenu {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void disableLayersMenu() {
+		layersMenu.disable();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void setWorld(World world) {
+		worldMenu.setEnabled(true);
+		savePlayerLocationsMenu.setEnabled(world.getMovablePlayerList()
+				.canSave());
+		reloadPlayerLocationsMenu.setEnabled(world.getMovablePlayerList()
+				.canLoad());
+		layersMenu.init();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void clearWorld() {
+		worldMenu.setEnabled(false);
+		savePlayerLocationsMenu.setEnabled(false);
+		reloadPlayerLocationsMenu.setEnabled(false);
 		layersMenu.disable();
 	}
 }

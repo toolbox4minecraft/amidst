@@ -147,6 +147,7 @@ public class MainWindow {
 	public void setWorld(World world) {
 		clearViewerFacade();
 		if (decideWorldPlayerType(world.getMovablePlayerList())) {
+			menuBar.setWorld(world);
 			setViewerFacade(viewerFacadeBuilder.create(world, actions,
 					settings.dimension.get()));
 		} else {
@@ -173,12 +174,6 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void setViewerFacade(ViewerFacade viewerFacade) {
 		contentPane.add(viewerFacade.getComponent(), BorderLayout.CENTER);
-		menuBar.setWorldMenuEnabled(true);
-		menuBar.setSavePlayerLocationsMenuEnabled(viewerFacade
-				.canSavePlayerLocations());
-		menuBar.setReloadPlayerLocationsMenuEnabled(viewerFacade
-				.canLoadPlayerLocations());
-		menuBar.initLayersMenu();
 		frame.validate();
 		viewerFacade.loadPlayers(threadMaster.getWorkerExecutor());
 		threadMaster.setOnRepaintTick(viewerFacade.getOnRepainterTick());
@@ -196,15 +191,7 @@ public class MainWindow {
 			contentPane.remove(viewerFacade.getComponent());
 			viewerFacade.dispose();
 		}
-		clearViewerFacadeFromGui();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void clearViewerFacadeFromGui() {
-		menuBar.setWorldMenuEnabled(false);
-		menuBar.setSavePlayerLocationsMenuEnabled(false);
-		menuBar.setReloadPlayerLocationsMenuEnabled(false);
-		menuBar.disableLayersMenu();
+		menuBar.clearWorld();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

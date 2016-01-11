@@ -6,17 +6,22 @@ import javax.swing.JMenu;
 
 import amidst.AmidstSettings;
 import amidst.ResourceLoader;
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
+import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
 import amidst.mojangapi.world.Dimension;
 import amidst.settings.Setting;
 import amidst.settings.Settings;
 
+@NotThreadSafe
 public class LayersMenu {
 	private final JMenu menu;
 	private final Actions actions;
 	private final AmidstSettings settings;
 	private final Setting<Dimension> dimensionSetting;
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public LayersMenu(JMenu menu, Actions actions, AmidstSettings settings) {
 		this.menu = menu;
 		this.actions = actions;
@@ -25,11 +30,13 @@ public class LayersMenu {
 				this::update);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void update() {
 		init();
 		actions.selectDimension(dimensionSetting.get());
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void init() {
 		menu.removeAll();
 		// @formatter:off
@@ -40,7 +47,7 @@ public class LayersMenu {
 		Menus.radio(       menu, dimensionSetting, group,           Dimension.END,                                            "ctrl shift 2");
 		menu.addSeparator();
 		if (dimensionSetting.get().equals(Dimension.OVERWORLD)) {
-			Menus.checkbox(menu, settings.showSlimeChunks,          "Slime chunks",           getIcon("slime.png"),           "ctrl 1");
+			Menus.checkbox(menu, settings.showSlimeChunks,          "Slime Chunks",           getIcon("slime.png"),           "ctrl 1");
 			Menus.checkbox(menu, settings.showSpawn,                "Spawn Location Icon",    getIcon("spawn.png"),           "ctrl 2");
 			Menus.checkbox(menu, settings.showStrongholds,          "Stronghold Icons",       getIcon("stronghold.png"),      "ctrl 3");
 			Menus.checkbox(menu, settings.showPlayers,              "Player Icons",           getIcon("player.png"),          "ctrl 4");
@@ -56,10 +63,12 @@ public class LayersMenu {
 		menu.setEnabled(true);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void disable() {
 		menu.setEnabled(false);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private ImageIcon getIcon(String icon) {
 		return new ImageIcon(ResourceLoader.getImage("/amidst/gui/main/icon/"
 				+ icon));
