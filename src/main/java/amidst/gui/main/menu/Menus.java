@@ -6,6 +6,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
 
@@ -101,6 +102,27 @@ public enum Menus {
 			Setting<Boolean> setting, JCheckBoxMenuItem menuItem) {
 		menuItem.setSelected(setting.get());
 		menuItem.addActionListener(e -> setting.set(menuItem.isSelected()));
+		menu.add(menuItem);
+		return menuItem;
+	}
+
+	public static JMenuItem item(JMenu menu, Runnable runnable, String text,
+			int mnemonic) {
+		JMenuItem menuItem = new JMenuItem(text);
+		return item(menu, runnable, menuItem, mnemonic);
+	}
+
+	public static JMenuItem item(JMenu menu, Runnable runnable, String text,
+			int mnemonic, String accelerator) {
+		JMenuItem menuItem = new JMenuItem(text);
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(accelerator));
+		return item(menu, runnable, menuItem, mnemonic);
+	}
+
+	private static JMenuItem item(JMenu menu, Runnable runnable,
+			JMenuItem menuItem, int mnemonic) {
+		menuItem.setMnemonic(mnemonic);
+		menuItem.addActionListener(e -> runnable.run());
 		menu.add(menuItem);
 		return menuItem;
 	}
