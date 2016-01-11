@@ -26,6 +26,10 @@ public enum Dimension {
 		}
 	}
 
+	public static String[] getSelectable() {
+		return new String[] { OVERWORLD.getName(), END.getName() };
+	}
+
 	private final int id;
 	private final String name;
 	private final Resolution resolution;
@@ -46,5 +50,10 @@ public enum Dimension {
 
 	public Resolution getResolution() {
 		return resolution;
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 }

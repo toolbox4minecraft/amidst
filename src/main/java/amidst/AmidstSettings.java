@@ -5,63 +5,64 @@ import java.util.prefs.Preferences;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
-import amidst.settings.BooleanSetting;
-import amidst.settings.MultipleStringsSetting;
 import amidst.settings.Setting;
-import amidst.settings.StringSetting;
+import amidst.settings.Settings;
 import amidst.settings.biomecolorprofile.BiomeColorProfile;
 import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
 
 @ThreadSafe
 public class AmidstSettings {
-	public final BooleanSetting showSlimeChunks;
-	public final BooleanSetting showGrid;
-	public final BooleanSetting showSpawn;
-	public final BooleanSetting showStrongholds;
-	public final BooleanSetting showPlayers;
-	public final BooleanSetting showVillages;
-	public final BooleanSetting showTemples;
-	public final BooleanSetting showMineshafts;
-	public final BooleanSetting showNetherFortresses;
-	public final BooleanSetting showOceanMonuments;
-	public final BooleanSetting showEndCities;
+	public final Setting<Dimension> dimension;
+	public final Setting<Boolean> showGrid;
+	public final Setting<Boolean> showSlimeChunks;
+	public final Setting<Boolean> showSpawn;
+	public final Setting<Boolean> showStrongholds;
+	public final Setting<Boolean> showPlayers;
+	public final Setting<Boolean> showVillages;
+	public final Setting<Boolean> showTemples;
+	public final Setting<Boolean> showMineshafts;
+	public final Setting<Boolean> showOceanMonuments;
+	public final Setting<Boolean> showNetherFortresses;
+	public final Setting<Boolean> showEndCities;
 
-	public final BooleanSetting smoothScrolling;
-	public final BooleanSetting fragmentFading;
-	public final BooleanSetting maxZoom;
-	public final BooleanSetting showFPS;
-	public final BooleanSetting showScale;
-	public final BooleanSetting showDebug;
+	public final Setting<Boolean> smoothScrolling;
+	public final Setting<Boolean> fragmentFading;
+	public final Setting<Boolean> maxZoom;
+	public final Setting<Boolean> showFPS;
+	public final Setting<Boolean> showScale;
+	public final Setting<Boolean> showDebug;
 
 	public final Setting<String> lastProfile;
-	public final MultipleStringsSetting worldType;
+	public final Setting<String> worldType;
 	public final BiomeColorProfileSelection biomeColorProfileSelection;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public AmidstSettings(Preferences preferences) {
 		// @formatter:off
-		showSlimeChunks            = new BooleanSetting(        preferences, "slimeChunks",         false);
-		showGrid                   = new BooleanSetting(        preferences, "grid",                false);
-		showSpawn                  = new BooleanSetting(        preferences, "spawnIcon",           true);
-		showStrongholds            = new BooleanSetting(        preferences, "strongholdIcons",     true);
-		showPlayers                = new BooleanSetting(        preferences, "playerIcons",         true);
-		showVillages               = new BooleanSetting(        preferences, "villageIcons",        true);
-		showTemples                = new BooleanSetting(        preferences, "templeIcons",         true);
-		showMineshafts             = new BooleanSetting(        preferences, "mineshaftIcons",      false);
-		showNetherFortresses       = new BooleanSetting(        preferences, "netherFortressIcons", false);
-		showOceanMonuments         = new BooleanSetting(        preferences, "oceanMonumentIcons",  true);
-		showEndCities              = new BooleanSetting(        preferences, "endCityIcons",        false);
+		dimension                  = Settings.createDimension(preferences, "dimension",           Dimension.OVERWORLD);
+		showGrid                   = Settings.createBoolean(  preferences, "grid",                false);
+		showSlimeChunks            = Settings.createBoolean(  preferences, "slimeChunks",         false);
+		showSpawn                  = Settings.createBoolean(  preferences, "spawnIcon",           true);
+		showStrongholds            = Settings.createBoolean(  preferences, "strongholdIcons",     true);
+		showPlayers                = Settings.createBoolean(  preferences, "playerIcons",         true);
+		showVillages               = Settings.createBoolean(  preferences, "villageIcons",        true);
+		showTemples                = Settings.createBoolean(  preferences, "templeIcons",         true);
+		showMineshafts             = Settings.createBoolean(  preferences, "mineshaftIcons",      false);
+		showOceanMonuments         = Settings.createBoolean(  preferences, "oceanMonumentIcons",  true);
+		showNetherFortresses       = Settings.createBoolean(  preferences, "netherFortressIcons", false);
+		showEndCities              = Settings.createBoolean(  preferences, "endCityIcons",        false);
 		
-		smoothScrolling            = new BooleanSetting(        preferences, "mapFlicking",         true);
-		fragmentFading             = new BooleanSetting(        preferences, "mapFading",           true);
-		maxZoom                    = new BooleanSetting(        preferences, "maxZoom",             true);
-		showFPS                    = new BooleanSetting(        preferences, "showFPS",             true);
-		showScale                  = new BooleanSetting(        preferences, "showScale",           true);
-		showDebug                  = new BooleanSetting(        preferences, "showDebug",           false);
+		smoothScrolling            = Settings.createBoolean(  preferences, "mapFlicking",         true);
+		fragmentFading             = Settings.createBoolean(  preferences, "mapFading",           true);
+		maxZoom                    = Settings.createBoolean(  preferences, "maxZoom",             true);
+		showFPS                    = Settings.createBoolean(  preferences, "showFPS",             true);
+		showScale                  = Settings.createBoolean(  preferences, "showScale",           true);
+		showDebug                  = Settings.createBoolean(  preferences, "showDebug",           false);
 	
-		lastProfile                = new StringSetting(         preferences, "profile",             "");
-		worldType                  = new MultipleStringsSetting(preferences, "worldType",           WorldType.PROMPT_EACH_TIME, WorldType.getWorldTypeSettingAvailableValues());
+		lastProfile                = Settings.createString(   preferences, "profile",             "");
+		worldType                  = Settings.createString(   preferences, "worldType",           WorldType.PROMPT_EACH_TIME);
 		biomeColorProfileSelection = new BiomeColorProfileSelection(BiomeColorProfile.getDefaultProfile());
 		// @formatter:on
 	}

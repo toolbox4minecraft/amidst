@@ -2,8 +2,11 @@ package amidst.settings;
 
 import java.util.function.Supplier;
 
+import amidst.documentation.NotNull;
+
 public interface Setting<T> extends Supplier<T> {
+	@NotNull
 	T get();
 
-	void set(T value);
+	void set(@NotNull T value);
 }

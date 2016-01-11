@@ -34,7 +34,7 @@ import amidst.gui.main.viewer.Zoom;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.oracle.EndIsland;
-import amidst.settings.ImmutableSetting;
+import amidst.settings.Settings;
 
 @Immutable
 public class LayerBuilder {
@@ -49,10 +49,10 @@ public class LayerBuilder {
 	private List<LayerDeclaration> createDeclarations(AmidstSettings settings) {
 		LayerDeclaration[] declarations = new LayerDeclaration[LayerIds.NUMBER_OF_LAYERS];
 		// @formatter:off
-		declarations[LayerIds.ALPHA]            = new LayerDeclaration(LayerIds.ALPHA,           false, new ImmutableSetting<Boolean>(true));
-		declarations[LayerIds.BIOME_DATA]       = new LayerDeclaration(LayerIds.BIOME_DATA,      false, new ImmutableSetting<Boolean>(true));
-		declarations[LayerIds.END_ISLANDS]      = new LayerDeclaration(LayerIds.END_ISLANDS,     false, new ImmutableSetting<Boolean>(true));
-		declarations[LayerIds.BACKGROUND]       = new LayerDeclaration(LayerIds.BACKGROUND,      false, new ImmutableSetting<Boolean>(true));
+		declarations[LayerIds.ALPHA]            = new LayerDeclaration(LayerIds.ALPHA,           false, Settings.createImmutable(true));
+		declarations[LayerIds.BIOME_DATA]       = new LayerDeclaration(LayerIds.BIOME_DATA,      false, Settings.createImmutable(true));
+		declarations[LayerIds.END_ISLANDS]      = new LayerDeclaration(LayerIds.END_ISLANDS,     false, Settings.createImmutable(true));
+		declarations[LayerIds.BACKGROUND]       = new LayerDeclaration(LayerIds.BACKGROUND,      false, Settings.createImmutable(true));
 		declarations[LayerIds.SLIME]            = new LayerDeclaration(LayerIds.SLIME,           false, settings.showSlimeChunks);
 		declarations[LayerIds.GRID]             = new LayerDeclaration(LayerIds.GRID,            true,  settings.showGrid);
 		declarations[LayerIds.SPAWN]            = new LayerDeclaration(LayerIds.SPAWN,           false, settings.showSpawn);
@@ -61,8 +61,8 @@ public class LayerBuilder {
 		declarations[LayerIds.VILLAGE]          = new LayerDeclaration(LayerIds.VILLAGE,         false, settings.showVillages);
 		declarations[LayerIds.TEMPLE]           = new LayerDeclaration(LayerIds.TEMPLE,          false, settings.showTemples);
 		declarations[LayerIds.MINESHAFT]        = new LayerDeclaration(LayerIds.MINESHAFT,       false, settings.showMineshafts);
-		declarations[LayerIds.NETHER_FORTRESS]  = new LayerDeclaration(LayerIds.NETHER_FORTRESS, false, settings.showNetherFortresses);
 		declarations[LayerIds.OCEAN_MONUMENT]   = new LayerDeclaration(LayerIds.OCEAN_MONUMENT,  false, settings.showOceanMonuments);
+		declarations[LayerIds.NETHER_FORTRESS]  = new LayerDeclaration(LayerIds.NETHER_FORTRESS, false, settings.showNetherFortresses);
 		declarations[LayerIds.END_CITY]         = new LayerDeclaration(LayerIds.END_CITY,        false, settings.showEndCities);
 		// @formatter:on
 		return Collections.unmodifiableList(Arrays.asList(declarations));
@@ -120,8 +120,8 @@ public class LayerBuilder {
 				new WorldIconLoader<Void>(           declarations.get(LayerIds.VILLAGE),         world.getVillageProducer()),
 				new WorldIconLoader<Void>(           declarations.get(LayerIds.TEMPLE),          world.getTempleProducer()),
 				new WorldIconLoader<Void>(           declarations.get(LayerIds.MINESHAFT),       world.getMineshaftProducer()),
-				new WorldIconLoader<Void>(           declarations.get(LayerIds.NETHER_FORTRESS), world.getNetherFortressProducer()),
 				new WorldIconLoader<Void>(           declarations.get(LayerIds.OCEAN_MONUMENT),  world.getOceanMonumentProducer()),
+				new WorldIconLoader<Void>(           declarations.get(LayerIds.NETHER_FORTRESS), world.getNetherFortressProducer()),
 				new WorldIconLoader<List<EndIsland>>(declarations.get(LayerIds.END_CITY),        world.getEndCityProducer(), Fragment::getEndIslands)
 		));
 		// @formatter:on
@@ -147,8 +147,8 @@ public class LayerBuilder {
 				new WorldIconDrawer(declarations.get(LayerIds.VILLAGE),         zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.TEMPLE),          zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.MINESHAFT),       zoom, worldIconSelection),
-				new WorldIconDrawer(declarations.get(LayerIds.NETHER_FORTRESS), zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),  zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.NETHER_FORTRESS), zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.END_CITY),        zoom, worldIconSelection)
 		));
 		// @formatter:on

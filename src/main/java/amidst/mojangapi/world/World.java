@@ -30,8 +30,8 @@ public class World {
 	private final WorldIconProducer<Void> villageProducer;
 	private final WorldIconProducer<Void> templeProducer;
 	private final WorldIconProducer<Void> mineshaftProducer;
-	private final WorldIconProducer<Void> netherFortressProducer;
 	private final WorldIconProducer<Void> oceanMonumentProducer;
+	private final WorldIconProducer<Void> netherFortressProducer;
 	private final WorldIconProducer<List<EndIsland>> endCityProducer;
 
 	public World(WorldSeed worldSeed, WorldType worldType,
@@ -44,8 +44,8 @@ public class World {
 			WorldIconProducer<Void> villageProducer,
 			WorldIconProducer<Void> templeProducer,
 			WorldIconProducer<Void> mineshaftProducer,
-			WorldIconProducer<Void> netherFortressProducer,
 			WorldIconProducer<Void> oceanMonumentProducer,
+			WorldIconProducer<Void> netherFortressProducer,
 			WorldIconProducer<List<EndIsland>> endCityProducer) {
 		this.worldSeed = worldSeed;
 		this.worldType = worldType;
@@ -61,8 +61,8 @@ public class World {
 		this.villageProducer = villageProducer;
 		this.templeProducer = templeProducer;
 		this.mineshaftProducer = mineshaftProducer;
-		this.netherFortressProducer = netherFortressProducer;
 		this.oceanMonumentProducer = oceanMonumentProducer;
+		this.netherFortressProducer = netherFortressProducer;
 		this.endCityProducer = endCityProducer;
 	}
 
@@ -122,12 +122,12 @@ public class World {
 		return mineshaftProducer;
 	}
 
-	public WorldIconProducer<Void> getNetherFortressProducer() {
-		return netherFortressProducer;
-	}
-
 	public WorldIconProducer<Void> getOceanMonumentProducer() {
 		return oceanMonumentProducer;
+	}
+
+	public WorldIconProducer<Void> getNetherFortressProducer() {
+		return netherFortressProducer;
 	}
 
 	public WorldIconProducer<List<EndIsland>> getEndCityProducer() {

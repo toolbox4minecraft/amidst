@@ -21,8 +21,8 @@ public class LayerIds {
 	public static final int VILLAGE              =  9;
 	public static final int TEMPLE               = 10;
 	public static final int MINESHAFT            = 11;
-	public static final int NETHER_FORTRESS      = 12;
-	public static final int OCEAN_MONUMENT       = 13;
+	public static final int OCEAN_MONUMENT       = 12;
+	public static final int NETHER_FORTRESS      = 13;
 	public static final int END_CITY             = 14;
 	public static final int NUMBER_OF_LAYERS     = 15;
 	// @formatter:on

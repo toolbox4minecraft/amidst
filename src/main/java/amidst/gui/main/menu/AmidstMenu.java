@@ -7,7 +7,6 @@ import javax.swing.JMenuItem;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.mojangapi.world.Dimension;
 
 @NotThreadSafe
 public class AmidstMenu {
@@ -15,18 +14,17 @@ public class AmidstMenu {
 	private final JMenu worldMenu;
 	private final JMenuItem savePlayerLocationsMenu;
 	private final JMenuItem reloadPlayerLocationsMenu;
-	private final DimensionToggleButtonModels dimensionToggleButtonModels;
+	private final LayersMenu layersMenu;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public AmidstMenu(JMenuBar menuBar, JMenu worldMenu,
 			JMenuItem savePlayerLocationsMenu,
-			JMenuItem reloadPlayerLocationsMenu,
-			DimensionToggleButtonModels dimensionToggleButtonModels) {
+			JMenuItem reloadPlayerLocationsMenu, LayersMenu layersMenu) {
 		this.menuBar = menuBar;
 		this.worldMenu = worldMenu;
 		this.savePlayerLocationsMenu = savePlayerLocationsMenu;
 		this.reloadPlayerLocationsMenu = reloadPlayerLocationsMenu;
-		this.dimensionToggleButtonModels = dimensionToggleButtonModels;
+		this.layersMenu = layersMenu;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -50,7 +48,12 @@ public class AmidstMenu {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Dimension getSelectedDimension() {
-		return dimensionToggleButtonModels.get();
+	public void initLayersMenu() {
+		layersMenu.init();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void disableLayersMenu() {
+		layersMenu.disable();
 	}
 }

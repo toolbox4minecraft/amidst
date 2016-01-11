@@ -109,17 +109,17 @@ public class WorldBuilder {
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.MINESHAFT),
 						Dimension.OVERWORLD
 				), new StructureProducer<Void>(
-						Resolution.NETHER_CHUNK,
-						88,
-						new NetherFortressAlgorithm(seed),
-						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
-						Dimension.NETHER
-				), new StructureProducer<Void>(
 						Resolution.CHUNK,
 						8,
 						new OceanMonumentLocationChecker(seed, biomeDataOracle, versionFeatures.getValidBiomesAtMiddleOfChunk_OceanMonument(), versionFeatures.getValidBiomesForStructure_OceanMonument()),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
 						Dimension.OVERWORLD
+				), new StructureProducer<Void>(
+						Resolution.NETHER_CHUNK,
+						88,
+						new NetherFortressAlgorithm(seed),
+						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
+						Dimension.NETHER
 				), new StructureProducer<List<EndIsland>>(
 						Resolution.CHUNK,
 						8,

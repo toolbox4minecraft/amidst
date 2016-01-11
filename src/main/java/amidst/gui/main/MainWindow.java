@@ -17,8 +17,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import amidst.AmidstMetaData;
-import amidst.Application;
 import amidst.AmidstSettings;
+import amidst.Application;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -148,7 +148,7 @@ public class MainWindow {
 		clearViewerFacade();
 		if (decideWorldPlayerType(world.getMovablePlayerList())) {
 			setViewerFacade(viewerFacadeBuilder.create(world, actions,
-					menuBar.getSelectedDimension()));
+					settings.dimension.get()));
 		} else {
 			frame.revalidate();
 			frame.repaint();
@@ -178,6 +178,7 @@ public class MainWindow {
 				.canSavePlayerLocations());
 		menuBar.setReloadPlayerLocationsMenuEnabled(viewerFacade
 				.canLoadPlayerLocations());
+		menuBar.initLayersMenu();
 		frame.validate();
 		viewerFacade.loadPlayers(threadMaster.getWorkerExecutor());
 		threadMaster.setOnRepaintTick(viewerFacade.getOnRepainterTick());
@@ -203,6 +204,7 @@ public class MainWindow {
 		menuBar.setWorldMenuEnabled(false);
 		menuBar.setSavePlayerLocationsMenuEnabled(false);
 		menuBar.setReloadPlayerLocationsMenuEnabled(false);
+		menuBar.disableLayersMenu();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
