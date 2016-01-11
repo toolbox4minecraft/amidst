@@ -34,38 +34,13 @@ public class AmidstMenu {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void setWorldMenuEnabled(boolean isEnabled) {
-		worldMenu.setEnabled(isEnabled);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public void setSavePlayerLocationsMenuEnabled(boolean isEnabled) {
-		savePlayerLocationsMenu.setEnabled(isEnabled);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public void setReloadPlayerLocationsMenuEnabled(boolean isEnabled) {
-		reloadPlayerLocationsMenu.setEnabled(isEnabled);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public void initLayersMenu() {
-		layersMenu.init();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public void disableLayersMenu() {
-		layersMenu.disable();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
 	public void setWorld(World world) {
 		worldMenu.setEnabled(true);
 		savePlayerLocationsMenu.setEnabled(world.getMovablePlayerList()
 				.canSave());
 		reloadPlayerLocationsMenu.setEnabled(world.getMovablePlayerList()
 				.canLoad());
-		layersMenu.init();
+		layersMenu.init(world);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
