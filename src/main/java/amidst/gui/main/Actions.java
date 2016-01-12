@@ -22,7 +22,6 @@ import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
-import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
@@ -217,14 +216,6 @@ public class Actions {
 				saveImageToFile(image, file);
 			}
 			image.flush();
-		}
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public void selectDimension(Dimension dimension) {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
-		if (viewerFacade != null) {
-			viewerFacade.selectDimension(dimension);
 		}
 	}
 

@@ -51,11 +51,7 @@ public enum Settings {
 
 	public static <T> Setting<T> createDummyWithListener(T defaultValue,
 			Runnable listener) {
-		// @formatter:off
-		return new SettingBase<T>(defaultValue,
-				value -> value,
-				value -> listener.run());
-		// @formatter:on
+		return createWithListener(createDummy(defaultValue), listener);
 	}
 
 	public static <T> Setting<T> createWithListener(Setting<T> setting,

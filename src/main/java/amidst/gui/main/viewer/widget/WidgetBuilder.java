@@ -11,7 +11,6 @@ import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.main.viewer.BiomeSelection;
-import amidst.gui.main.viewer.DimensionSelection;
 import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
 import amidst.gui.main.viewer.WorldIconSelection;
 import amidst.gui.main.viewer.Zoom;
@@ -48,7 +47,7 @@ public class WidgetBuilder {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public List<Widget> create(DimensionSelection dimensionSelection) {
+	public List<Widget> create() {
 		// @formatter:off
 		return Arrays.asList(
 				new FpsWidget(              CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              settings.showFPS),
@@ -56,7 +55,7 @@ public class WidgetBuilder {
 				new ImmutableTextWidget(    CornerAnchorPoint.TOP_LEFT,      world.getWorldSeed().getLabel()),
 				new DebugWidget(            CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, settings.showDebug),
 				new SelectedIconWidget(     CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
-				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      dimensionSelection),
+				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension),
 				new BiomeToggleWidget(      CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection,    layerReloader),
 				new BiomeWidget(            CornerAnchorPoint.NONE,          biomeSelection,    layerReloader,   settings.biomeColorProfileSelection)
 		);

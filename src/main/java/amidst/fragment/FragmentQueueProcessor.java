@@ -6,77 +6,58 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.fragment.layer.LayerIds;
-import amidst.fragment.layer.LayerLoader;
-import amidst.gui.main.viewer.DimensionSelection;
+import amidst.fragment.layer.LayerManager;
 import amidst.mojangapi.world.Dimension;
-import amidst.threading.TaskQueue;
+import amidst.settings.Setting;
 
 @NotThreadSafe
 public class FragmentQueueProcessor {
-	private final TaskQueue taskQueue = new TaskQueue();
-
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
 	private final ConcurrentLinkedQueue<Fragment> recycleQueue;
 	private final FragmentCache cache;
-	private final LayerLoader layerLoader;
-	private final DimensionSelection dimensionSelection;
+	private final LayerManager layerManager;
+	private final Setting<Dimension> dimensionSetting;
 
 	@CalledByAny
 	public FragmentQueueProcessor(
 			ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
 			ConcurrentLinkedQueue<Fragment> recycleQueue, FragmentCache cache,
-			LayerLoader layerLoader, DimensionSelection dimensionSelection) {
+			LayerManager layerManager, Setting<Dimension> dimensionSetting) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
 		this.recycleQueue = recycleQueue;
 		this.cache = cache;
-		this.layerLoader = layerLoader;
-		this.dimensionSelection = dimensionSelection;
+		this.layerManager = layerManager;
+		this.dimensionSetting = dimensionSetting;
 	}
 
-	@CalledByAny
-	public void selectDimension(final Dimension dimension) {
-		taskQueue.invoke(new Runnable() {
-			@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-			@Override
-			public void run() {
-				dimensionSelection.setDimension(dimension);
-				doInvalidateLayer(LayerIds.BACKGROUND);
-			}
-		});
-	}
-
-	@CalledByAny
-	public void invalidateLayer(final int layerId) {
-		taskQueue.invoke(new Runnable() {
-			@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-			@Override
-			public void run() {
-				doInvalidateLayer(layerId);
-			}
-		});
-	}
-
-	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private void doInvalidateLayer(int layerId) {
-		layerLoader.invalidateLayer(layerId);
-		cache.reloadAll();
-	}
-
+	/**
+	 * It is important that the dimension setting is the same while a fragment
+	 * is loaded by different fragment loaders. This is why the dimension
+	 * setting is read by the fragment loader thread.
+	 */
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void processQueues() {
-		taskQueue.processTasks();
+		Dimension dimension = dimensionSetting.get();
+		updateLayerManager(dimension);
 		processRecycleQueue();
 		Fragment fragment;
 		while ((fragment = loadingQueue.poll()) != null) {
-			loadFragment(fragment);
-			taskQueue.processTasks();
+			loadFragment(dimension, fragment);
+			dimension = dimensionSetting.get();
+			updateLayerManager(dimension);
 			processRecycleQueue();
 		}
-		layerLoader.clearInvalidatedLayers();
+		layerManager.clearInvalidatedLayers();
+	}
+
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	private void updateLayerManager(Dimension dimension) {
+		if (layerManager.updateAll(dimension)) {
+			cache.reloadAll();
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
@@ -88,12 +69,12 @@ public class FragmentQueueProcessor {
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private void loadFragment(Fragment fragment) {
+	private void loadFragment(Dimension dimension, Fragment fragment) {
 		if (fragment.isInitialized()) {
 			if (fragment.isLoaded()) {
-				layerLoader.reloadInvalidated(fragment);
+				layerManager.reloadInvalidated(dimension, fragment);
 			} else {
-				layerLoader.loadAll(fragment);
+				layerManager.loadAll(dimension, fragment);
 				fragment.setLoaded();
 			}
 		}

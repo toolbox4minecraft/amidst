@@ -26,6 +26,7 @@ public class AmidstSettings {
 	public final Setting<Boolean> showOceanMonuments;
 	public final Setting<Boolean> showNetherFortresses;
 	public final Setting<Boolean> showEndCities;
+	public final Setting<Boolean> enableAllLayers;
 
 	public final Setting<Boolean> smoothScrolling;
 	public final Setting<Boolean> fragmentFading;
@@ -57,6 +58,7 @@ public class AmidstSettings {
 		showOceanMonuments         = Settings.createBoolean(  preferences, "oceanMonumentIcons",  true);
 		showNetherFortresses       = Settings.createBoolean(  preferences, "netherFortressIcons", false);
 		showEndCities              = Settings.createBoolean(  preferences, "endCityIcons",        false);
+		enableAllLayers            = Settings.createBoolean(  preferences, "enableAllLayers",     false);
 		
 		smoothScrolling            = Settings.createBoolean(  preferences, "mapFlicking",         true);
 		fragmentFading             = Settings.createBoolean(  preferences, "mapFading",           true);

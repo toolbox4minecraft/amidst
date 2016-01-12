@@ -69,7 +69,7 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private ViewerFacadeBuilder createViewerFacadeBuilder() {
-		return new ViewerFacadeBuilder(settings, new LayerBuilder(settings));
+		return new ViewerFacadeBuilder(settings, new LayerBuilder());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

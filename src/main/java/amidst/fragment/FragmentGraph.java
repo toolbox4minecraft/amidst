@@ -1,7 +1,6 @@
 package amidst.fragment;
 
 import java.util.Iterator;
-import java.util.List;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -12,7 +11,7 @@ import amidst.mojangapi.world.icon.WorldIcon;
 
 @NotThreadSafe
 public class FragmentGraph implements Iterable<FragmentGraphItem> {
-	private final List<LayerDeclaration> declarations;
+	private final Iterable<LayerDeclaration> declarations;
 	private final FragmentManager fragmentManager;
 
 	private FragmentGraphItem topLeftFragment;
@@ -20,7 +19,7 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 	private int fragmentsPerColumn;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public FragmentGraph(List<LayerDeclaration> declarations,
+	public FragmentGraph(Iterable<LayerDeclaration> declarations,
 			FragmentManager fragmentManager) {
 		this.declarations = declarations;
 		this.fragmentManager = fragmentManager;

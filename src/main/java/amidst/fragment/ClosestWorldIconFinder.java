@@ -1,7 +1,5 @@
 package amidst.fragment;
 
-import java.util.List;
-
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -12,17 +10,17 @@ import amidst.mojangapi.world.icon.WorldIcon;
 @NotThreadSafe
 public class ClosestWorldIconFinder {
 	private final FragmentGraph graph;
-	private final List<LayerDeclaration> layerDeclarations;
+	private final Iterable<LayerDeclaration> declarations;
 	private final CoordinatesInWorld positionInWorld;
 	private WorldIcon closestIcon;
 	private double closestDistanceSq;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public ClosestWorldIconFinder(FragmentGraph graph,
-			List<LayerDeclaration> layerDeclarations,
+			Iterable<LayerDeclaration> declarations,
 			CoordinatesInWorld positionInWorld, double maxDistanceInWorld) {
 		this.graph = graph;
-		this.layerDeclarations = layerDeclarations;
+		this.declarations = declarations;
 		this.positionInWorld = positionInWorld;
 		this.closestIcon = null;
 		this.closestDistanceSq = maxDistanceInWorld * maxDistanceInWorld;
@@ -33,7 +31,7 @@ public class ClosestWorldIconFinder {
 	private void find() {
 		for (FragmentGraphItem fragmentGraphItem : graph) {
 			Fragment fragment = fragmentGraphItem.getFragment();
-			for (LayerDeclaration declaration : layerDeclarations) {
+			for (LayerDeclaration declaration : declarations) {
 				if (declaration.isVisible()) {
 					int layerId = declaration.getLayerId();
 					for (WorldIcon icon : fragment.getWorldIcons(layerId)) {

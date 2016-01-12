@@ -6,6 +6,7 @@ import java.util.List;
 import amidst.ResourceLoader;
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.oracle.EndIsland;
 
 @ThreadSafe
@@ -28,8 +29,8 @@ public class TheEndColorProvider implements ColorProvider {
 			- INFLUENCE_FADE_FINISH;
 
 	@Override
-	public int getColorAt(Fragment fragment, long cornerX, long cornerY, int x,
-			int y) {
+	public int getColorAt(Dimension dimension, Fragment fragment, long cornerX,
+			long cornerY, int x, int y) {
 		long xAsQuarter = cornerX + x;
 		long yAsQuarter = cornerY + y;
 		// @formatter:off

@@ -147,9 +147,7 @@ public class MainWindow {
 	public void setWorld(World world) {
 		clearViewerFacade();
 		if (decideWorldPlayerType(world.getMovablePlayerList())) {
-			menuBar.setWorld(world);
-			setViewerFacade(viewerFacadeBuilder.create(world, actions,
-					settings.dimension.get()));
+			setViewerFacade(viewerFacadeBuilder.create(world, actions));
 		} else {
 			frame.revalidate();
 			frame.repaint();
@@ -174,6 +172,7 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void setViewerFacade(ViewerFacade viewerFacade) {
 		contentPane.add(viewerFacade.getComponent(), BorderLayout.CENTER);
+		menuBar.set(viewerFacade);
 		frame.validate();
 		viewerFacade.loadPlayers(threadMaster.getWorkerExecutor());
 		threadMaster.setOnRepaintTick(viewerFacade.getOnRepainterTick());
@@ -191,7 +190,7 @@ public class MainWindow {
 			contentPane.remove(viewerFacade.getComponent());
 			viewerFacade.dispose();
 		}
-		menuBar.clearWorld();
+		menuBar.clear();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

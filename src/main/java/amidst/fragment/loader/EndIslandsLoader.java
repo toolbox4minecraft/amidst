@@ -8,6 +8,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.oracle.EndIsland;
@@ -27,13 +28,13 @@ public class EndIslandsLoader extends FragmentLoader {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	@Override
-	public void load(Fragment fragment) {
+	public void load(Dimension dimension, Fragment fragment) {
 		doLoad(fragment);
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	@Override
-	public void reload(Fragment fragment) {
+	public void reload(Dimension dimension, Fragment fragment) {
 		doLoad(fragment);
 	}
 

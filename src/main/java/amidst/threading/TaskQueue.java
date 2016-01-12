@@ -12,11 +12,17 @@ import amidst.documentation.ThreadSafe;
 public class TaskQueue {
 	private final ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
 
-	public void processTasks() {
+	/**
+	 * Executes all tasks. Returns true, if at least one task was executed.
+	 */
+	public boolean processTasks() {
+		boolean result = false;
 		Runnable task;
 		while ((task = tasks.poll()) != null) {
+			result = true;
 			task.run();
 		}
+		return result;
 	}
 
 	public void invoke(Runnable runnable) {

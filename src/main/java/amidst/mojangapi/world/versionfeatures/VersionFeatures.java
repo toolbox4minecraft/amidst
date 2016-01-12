@@ -9,6 +9,7 @@ import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm;
 
 @Immutable
 public class VersionFeatures {
+	private final List<Integer> enabledLayers;
 	private final boolean isSaveEnabled;
 	private final List<Biome> validBiomesForStructure_Spawn;
 	private final List<Biome> validBiomesAtMiddleOfChunk_Stronghold;
@@ -19,7 +20,7 @@ public class VersionFeatures {
 	private final List<Biome> validBiomesAtMiddleOfChunk_OceanMonument;
 	private final List<Biome> validBiomesForStructure_OceanMonument;
 
-	public VersionFeatures(boolean isSaveEnabled,
+	public VersionFeatures(List<Integer> enabledLayers, boolean isSaveEnabled,
 			List<Biome> validBiomesForStructure_Spawn,
 			List<Biome> validBiomesAtMiddleOfChunk_Stronghold,
 			int numberOfStrongholds,
@@ -28,6 +29,7 @@ public class VersionFeatures {
 			Function<Long, MineshaftAlgorithm> mineshaftAlgorithmFactory,
 			List<Biome> validBiomesAtMiddleOfChunk_OceanMonument,
 			List<Biome> validBiomesForStructure_OceanMonument) {
+		this.enabledLayers = enabledLayers;
 		this.isSaveEnabled = isSaveEnabled;
 		this.validBiomesForStructure_Spawn = validBiomesForStructure_Spawn;
 		this.validBiomesAtMiddleOfChunk_Stronghold = validBiomesAtMiddleOfChunk_Stronghold;
@@ -37,6 +39,10 @@ public class VersionFeatures {
 		this.mineshaftAlgorithmFactory = mineshaftAlgorithmFactory;
 		this.validBiomesAtMiddleOfChunk_OceanMonument = validBiomesAtMiddleOfChunk_OceanMonument;
 		this.validBiomesForStructure_OceanMonument = validBiomesForStructure_OceanMonument;
+	}
+
+	public boolean hasLayer(int layerId) {
+		return enabledLayers.contains(layerId);
 	}
 
 	/**

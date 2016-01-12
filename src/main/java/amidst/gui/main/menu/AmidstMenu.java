@@ -7,7 +7,7 @@ import javax.swing.JMenuItem;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.mojangapi.world.World;
+import amidst.gui.main.viewer.ViewerFacade;
 
 @NotThreadSafe
 public class AmidstMenu {
@@ -34,17 +34,17 @@ public class AmidstMenu {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void setWorld(World world) {
+	public void set(ViewerFacade viewerFacade) {
 		worldMenu.setEnabled(true);
-		savePlayerLocationsMenu.setEnabled(world.getMovablePlayerList()
-				.canSave());
-		reloadPlayerLocationsMenu.setEnabled(world.getMovablePlayerList()
-				.canLoad());
-		layersMenu.init(world);
+		savePlayerLocationsMenu.setEnabled(viewerFacade
+				.canSavePlayerLocations());
+		reloadPlayerLocationsMenu.setEnabled(viewerFacade
+				.canLoadPlayerLocations());
+		layersMenu.init(viewerFacade);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void clearWorld() {
+	public void clear() {
 		worldMenu.setEnabled(false);
 		savePlayerLocationsMenu.setEnabled(false);
 		reloadPlayerLocationsMenu.setEnabled(false);

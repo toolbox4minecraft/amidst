@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import amidst.documentation.Immutable;
+import amidst.fragment.layer.LayerIds;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.icon.locationchecker.ChanceBasedMineshaftAlgorithm;
@@ -14,10 +15,11 @@ import amidst.mojangapi.world.icon.locationchecker.OriginalMineshaftAlgorithm;
 @Immutable
 public enum DefaultVersionFeatures {
 	INSTANCE;
-	
+
 	public static VersionFeatures create(RecognisedVersion version) {
 		// @formatter:off
 		return new VersionFeatures(
+				INSTANCE.enabledLayers.getValue(version),
 				INSTANCE.isSaveEnabled.getValue(version),
 				INSTANCE.validBiomesForStructure_Spawn.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_Stronghold.getValue(version),
@@ -31,6 +33,7 @@ public enum DefaultVersionFeatures {
 		// @formatter:on
 	}
 
+	private final VersionFeature<List<Integer>> enabledLayers;
 	private final VersionFeature<Boolean> isSaveEnabled;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_Spawn;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Stronghold;
@@ -43,6 +46,25 @@ public enum DefaultVersionFeatures {
 
 	private DefaultVersionFeatures() {
 		// @formatter:off
+		this.enabledLayers = VersionFeature.<Integer> listBuilder()
+				.init(
+						LayerIds.ALPHA,
+						LayerIds.BIOME_DATA,
+						LayerIds.BACKGROUND,
+						LayerIds.SLIME,
+						LayerIds.GRID,
+						LayerIds.SPAWN,
+						LayerIds.STRONGHOLD,
+						LayerIds.PLAYER,
+						LayerIds.VILLAGE,
+						LayerIds.TEMPLE,
+						LayerIds.MINESHAFT,
+						LayerIds.OCEAN_MONUMENT,
+						LayerIds.NETHER_FORTRESS
+				).sinceExtend(RecognisedVersion.V15w31c,
+						LayerIds.END_ISLANDS,
+						LayerIds.END_CITY
+				).construct();
 		this.isSaveEnabled = VersionFeature.<Boolean> builder()
 				.init(
 						true
