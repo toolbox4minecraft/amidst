@@ -105,8 +105,11 @@ public class ListVersionFeatureBuilder<V> {
 	}
 
 	private List<V> getLatest() {
-		if (entriesNewestFirst.isEmpty()) {
-			return Collections.emptyList();
+		if (this.defaultValue == null) {
+			throw new IllegalStateException(
+					"you need to specify a default value first");
+		} else if (entriesNewestFirst.isEmpty()) {
+			return defaultValue;
 		} else {
 			return entriesNewestFirst.get(0).getValue();
 		}
