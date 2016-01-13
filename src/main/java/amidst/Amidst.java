@@ -2,6 +2,7 @@ package amidst;
 
 import java.io.File;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -17,6 +18,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.gui.crash.CrashWindow;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
+import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 
 @NotThreadSafe
 public class Amidst {
@@ -124,6 +126,15 @@ public class Amidst {
 			AmidstMetaData metadata) {
 		try {
 			new Application(parameters, metadata).run();
+		} catch (DotMinecraftDirectoryNotFoundException e) {
+			Log.w(e.getMessage());
+			e.printStackTrace();
+			JOptionPane
+					.showMessageDialog(
+							null,
+							"Amidst is not able to find your '.minecraft' directory, but it requires a working Minecraft installation.",
+							"Please install Minecraft",
+							JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e) {
 			handleCrash(e, "Amidst crashed!");
 		}
