@@ -55,13 +55,7 @@ public class LayersMenu {
 		menu.removeAll();
 		overworldMenuItems.clear();
 		endMenuItems.clear();
-		Dimension dimension = dimensionSetting.get();
-		createDimensionLayers(dimension);
-		if (!dimension.equals(Dimension.OVERWORLD)) {
-			overworldMenuItems.forEach(menuItem -> menuItem.setEnabled(false));
-		} else if (!dimension.equals(Dimension.END)) {
-			endMenuItems.forEach(menuItem -> menuItem.setEnabled(false));
-		}
+		createDimensionLayers(dimensionSetting.get());
 		menu.setEnabled(true);
 	}
 
@@ -73,6 +67,7 @@ public class LayersMenu {
 			createOverworldAndEndLayers(dimension);
 			menu.addSeparator();
 			createUnlockAllLayers();
+			disableLayers(dimension);
 		} else if (!dimension.equals(Dimension.OVERWORLD)) {
 			dimensionSetting.set(Dimension.OVERWORLD);
 		} else {
@@ -81,6 +76,7 @@ public class LayersMenu {
 			createOverworldLayers(dimension);
 			menu.addSeparator();
 			createUnlockAllLayers();
+			disableLayers(dimension);
 		}
 	}
 
@@ -137,6 +133,15 @@ public class LayersMenu {
 			String accelerator, Dimension dimension, int layerId) {
 		endMenuItems.add(create(setting, text, icon, accelerator, dimension,
 				layerId));
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void disableLayers(Dimension dimension) {
+		if (!dimension.equals(Dimension.OVERWORLD)) {
+			overworldMenuItems.forEach(menuItem -> menuItem.setEnabled(false));
+		} else if (!dimension.equals(Dimension.END)) {
+			endMenuItems.forEach(menuItem -> menuItem.setEnabled(false));
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
