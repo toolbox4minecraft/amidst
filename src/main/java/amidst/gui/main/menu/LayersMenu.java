@@ -29,6 +29,7 @@ public class LayersMenu {
 	private final List<JMenuItem> overworldMenuItems = new LinkedList<JMenuItem>();
 	private final List<JMenuItem> endMenuItems = new LinkedList<JMenuItem>();
 	private volatile ViewerFacade viewerFacade;
+	private volatile boolean showEnableAllLayers;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public LayersMenu(JMenu menu, AmidstSettings settings) {
@@ -55,6 +56,7 @@ public class LayersMenu {
 		menu.removeAll();
 		overworldMenuItems.clear();
 		endMenuItems.clear();
+		showEnableAllLayers = false;
 		createDimensionLayers(dimensionSetting.get());
 		menu.setEnabled(true);
 	}
@@ -65,18 +67,22 @@ public class LayersMenu {
 			createGrid();
 			menu.addSeparator();
 			createOverworldAndEndLayers(dimension);
-			menu.addSeparator();
-			createUnlockAllLayers();
-			disableLayers(dimension);
+			createEnableAllLayersIfNecessary();
 		} else if (!dimension.equals(Dimension.OVERWORLD)) {
 			dimensionSetting.set(Dimension.OVERWORLD);
 		} else {
 			createGrid();
 			menu.addSeparator();
 			createOverworldLayers(dimension);
+			createEnableAllLayersIfNecessary();
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void createEnableAllLayersIfNecessary() {
+		if (enableAllLayersSetting.get() || showEnableAllLayers) {
 			menu.addSeparator();
-			createUnlockAllLayers();
-			disableLayers(dimension);
+			createEnableAllLayers();
 		}
 	}
 
@@ -115,7 +121,7 @@ public class LayersMenu {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void createUnlockAllLayers() {
+	private void createEnableAllLayers() {
 		// @formatter:off
 		Menus.checkbox(menu, enableAllLayersSetting,      "Enable All Layers",                                      "ctrl E");
 		// @formatter:on
@@ -124,34 +130,29 @@ public class LayersMenu {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void overworldLayer(Setting<Boolean> setting, String text,
 			ImageIcon icon, String accelerator, Dimension dimension, int layerId) {
-		overworldMenuItems.add(create(setting, text, icon, accelerator,
+		overworldMenuItems.add(createLayer(setting, text, icon, accelerator,
 				dimension, layerId));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void endLayer(Setting<Boolean> setting, String text, ImageIcon icon,
 			String accelerator, Dimension dimension, int layerId) {
-		endMenuItems.add(create(setting, text, icon, accelerator, dimension,
-				layerId));
+		endMenuItems.add(createLayer(setting, text, icon, accelerator,
+				dimension, layerId));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void disableLayers(Dimension dimension) {
-		if (!dimension.equals(Dimension.OVERWORLD)) {
-			overworldMenuItems.forEach(menuItem -> menuItem.setEnabled(false));
-		} else if (!dimension.equals(Dimension.END)) {
-			endMenuItems.forEach(menuItem -> menuItem.setEnabled(false));
-		}
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private JCheckBoxMenuItem create(Setting<Boolean> setting, String text,
-			ImageIcon icon, String accelerator, Dimension dimension, int layerId) {
+	private JCheckBoxMenuItem createLayer(Setting<Boolean> setting,
+			String text, ImageIcon icon, String accelerator,
+			Dimension dimension, int layerId) {
 		JCheckBoxMenuItem result = Menus.checkbox(menu, setting, text, icon,
 				accelerator);
 		if (!viewerFacade.calculateIsLayerEnabled(layerId, dimension,
 				enableAllLayersSetting.get())) {
 			result.setEnabled(false);
+		}
+		if (!viewerFacade.hasLayer(layerId)) {
+			showEnableAllLayers = true;
 		}
 		return result;
 	}
