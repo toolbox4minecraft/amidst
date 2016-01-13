@@ -72,9 +72,11 @@ public class GenerateRecognisedVersionList {
 			process(version);
 		}
 		for (RecognisedVersion recognisedVersion : allRecognisedVersions) {
-			versionsWithoutAMatch.add(createEnumString(
-					recognisedVersion.getName(),
-					recognisedVersion.getMagicString()));
+			if (!recognisedVersion.equals(RecognisedVersion.UNKNOWN)) {
+				versionsWithoutAMatch.add(createEnumString(
+						recognisedVersion.getName(),
+						recognisedVersion.getMagicString()));
+			}
 		}
 		System.out.println();
 		System.out.println();
