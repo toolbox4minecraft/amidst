@@ -12,8 +12,8 @@ import javax.swing.SwingConstants;
 
 import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
-import amidst.Application;
 import amidst.AmidstSettings;
+import amidst.Application;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
