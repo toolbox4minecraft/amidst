@@ -130,7 +130,7 @@ public class GenerateRecognisedVersionList {
 				magicString = RecognisedVersion
 						.generateMagicString(classLoader);
 				recognisedVersion = RecognisedVersion.from(magicString);
-				process(versionId, recognisedVersion);
+				process(versionId, recognisedVersion, magicString);
 			} catch (ClassNotFoundException | MalformedURLException
 					| NoClassDefFoundError e) {
 				e.printStackTrace();
@@ -143,10 +143,10 @@ public class GenerateRecognisedVersionList {
 		}
 	}
 
-	private void process(String versionId, RecognisedVersion recognisedVersion) {
+	private void process(String versionId, RecognisedVersion recognisedVersion,
+			String magicString) {
 		allRecognisedVersions.remove(recognisedVersion);
 		String knownVersionId = recognisedVersion.getName();
-		String magicString = recognisedVersion.getMagicString();
 		if (recognisedVersion.equals(RecognisedVersion.UNKNOWN)) {
 			unknownVersions.add(createEnumString(versionId, magicString));
 		} else if (!versionId.equals(knownVersionId)) {
