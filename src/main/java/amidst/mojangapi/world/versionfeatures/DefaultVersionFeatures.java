@@ -93,7 +93,7 @@ public enum DefaultVersionFeatures {
 				.init(
 						// this is for the enable all layers function
 						getValidBiomesForStrongholdSinceV13w36a()
-				).since(RecognisedVersion.V1_8_1beta,
+				).since(RecognisedVersion.Vb1_8_1,
 						Biome.desert,
 						Biome.forest,
 						Biome.extremeHills,
