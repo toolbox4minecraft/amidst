@@ -40,7 +40,7 @@ public class MojangApiBuilder {
 							+ dotMinecraftDirectory.getLibraries() + "'");
 		}
 		MojangApi result = new MojangApi(worldBuilder, dotMinecraftDirectory);
-		result.set(null, createVersionDirectory(result));
+		result.set(null, null, createVersionDirectory(result));
 		return result;
 	}
 

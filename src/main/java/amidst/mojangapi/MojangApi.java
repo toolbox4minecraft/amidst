@@ -26,6 +26,7 @@ import amidst.mojangapi.world.WorldType;
 @ThreadSafe
 public class MojangApi {
 	private static final String UNKNOWN_VERSION_ID = "unknown";
+	private static final String UNKNOWN_PROFILE_NAME = "unknown";
 
 	private final WorldBuilder worldBuilder;
 	private final DotMinecraftDirectory dotMinecraftDirectory;
@@ -34,6 +35,7 @@ public class MojangApi {
 	private volatile ProfileDirectory profileDirectory;
 	private volatile VersionDirectory versionDirectory;
 	private volatile MinecraftInterface minecraftInterface;
+	private volatile String profileName;
 
 	public MojangApi(WorldBuilder worldBuilder,
 			DotMinecraftDirectory dotMinecraftDirectory) {
@@ -60,9 +62,10 @@ public class MojangApi {
 		return versionList;
 	}
 
-	public void set(ProfileDirectory profileDirectory,
+	public void set(String profileName, ProfileDirectory profileDirectory,
 			VersionDirectory versionDirectory)
 			throws LocalMinecraftInterfaceCreationException {
+		this.profileName = profileName;
 		this.profileDirectory = profileDirectory;
 		this.versionDirectory = versionDirectory;
 		if (versionDirectory != null) {
@@ -157,6 +160,14 @@ public class MojangApi {
 			return minecraftInterface.getRecognisedVersion().getName();
 		} else {
 			return RecognisedVersion.UNKNOWN.getName();
+		}
+	}
+
+	public String getProfileName() {
+		if (profileName != null) {
+			return profileName;
+		} else {
+			return UNKNOWN_PROFILE_NAME;
 		}
 	}
 }

@@ -79,7 +79,8 @@ public class LocalProfileComponent extends ProfileComponent {
 			@Override
 			protected void main()
 					throws LocalMinecraftInterfaceCreationException {
-				mojangApi.set(profileDirectory, versionDirectory);
+				mojangApi.set(profile.getName(), profileDirectory,
+						versionDirectory);
 			}
 
 			@Override

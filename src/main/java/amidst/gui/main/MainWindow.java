@@ -78,7 +78,8 @@ public class MainWindow {
 	private JFrame createFrame() {
 		JFrame frame = new JFrame();
 		frame.setTitle(createVersionString(mojangApi.getVersionId(),
-				mojangApi.getRecognisedVersionName()));
+				mojangApi.getRecognisedVersionName(),
+				mojangApi.getProfileName()));
 		frame.setSize(1000, 800);
 		frame.setIconImage(metadata.getIcon());
 		return frame;
@@ -86,9 +87,10 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private String createVersionString(String versionId,
-			String recognisedVersionName) {
+			String recognisedVersionName, String profileName) {
 		return metadata.getVersion().createLongVersionString()
-				+ " - Minecraft Version " + versionId + " ("
+				+ " - Selected Profile: " + profileName
+				+ " - Minecraft Version " + versionId + " (recognised: "
 				+ recognisedVersionName + ")";
 	}
 
