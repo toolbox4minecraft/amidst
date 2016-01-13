@@ -2,6 +2,7 @@ package amidst.devtools;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -47,6 +48,7 @@ public class GenerateRecognisedVersionList {
 	private final List<String> knownButIncorrectVersions = new LinkedList<String>();
 	private final List<String> unknownVersions = new LinkedList<String>();
 	private final List<String> versionsWithError = new LinkedList<String>();
+	private final List<String> downloadFailed = new LinkedList<String>();
 	private final List<String> magicStringCollisions = new LinkedList<String>();
 	private final List<String> versionsWithoutAMatch = new LinkedList<String>();
 	private final Map<String, String> magicStringToFirstMatch = new LinkedHashMap<String, String>();
@@ -92,6 +94,7 @@ public class GenerateRecognisedVersionList {
 				magicStringCollisions);
 		print("============ Versions With Error ============",
 				versionsWithError);
+		print("============== Download Failed ==============", downloadFailed);
 		System.out.println();
 		System.out
 				.println("If any version are listed in the error section, this might be due to missing libraries.\n"
@@ -116,9 +119,9 @@ public class GenerateRecognisedVersionList {
 
 	private void process(VersionListEntryJson version) {
 		String versionId = version.getId();
-		RecognisedVersion recognisedVersion = RecognisedVersion.UNKNOWN;
-		String magicString = null;
 		if (version.tryDownloadClient(prefix)) {
+			RecognisedVersion recognisedVersion = RecognisedVersion.UNKNOWN;
+			String magicString = null;
 			try {
 				Log.i("version " + versionId);
 				VersionDirectory versionDirectory = createVersionDirectory(versionId);
@@ -127,49 +130,48 @@ public class GenerateRecognisedVersionList {
 				magicString = RecognisedVersion
 						.generateMagicString(classLoader);
 				recognisedVersion = RecognisedVersion.from(magicString);
-				allRecognisedVersions.remove(recognisedVersion);
-				String name = recognisedVersion.getName();
-				if (recognisedVersion.equals(RecognisedVersion.UNKNOWN)) {
-					unknownVersions
-							.add(createEnumString(versionId, magicString));
-				} else if (!versionId.equals(name)) {
-					knownButIncorrectVersions.add(addPadding(versionId)
-							+ " is known as "
-							+ createEnumString(name, magicString));
-				} else {
-					knownVersions.add(createEnumString(versionId, magicString));
-				}
-				if (magicStringToFirstMatch.containsKey(magicString)) {
-					magicStringCollisions
-							.add(addPadding(magicStringToFirstMatch
-									.get(magicString))
-									+ " and "
-									+ addPadding(versionId)
-									+ " with magic string '"
-									+ magicString
-									+ "'");
-					output.put(magicString, output.get(magicString) + " "
-							+ addPadding(versionId));
-				} else {
-					magicStringToFirstMatch.put(magicString, versionId);
-					output.put(
-							magicString,
-							addPadding(
-									createEnumString(versionId, magicString),
-									MAX_LENGTH_MAGIC_STRING)
-									+ " // matches the versions "
-									+ addPadding(versionId));
-				}
-			} catch (Throwable e) {
+				process(versionId, recognisedVersion);
+			} catch (ClassNotFoundException | MalformedURLException
+					| NoClassDefFoundError e) {
 				e.printStackTrace();
 				versionsWithError.add(addPadding(versionId) + " as "
 						+ addPadding(recognisedVersion.getName())
 						+ " with magic string '" + magicString + "'");
 			}
 		} else {
-			versionsWithError.add(addPadding(versionId) + " as "
-					+ addPadding(recognisedVersion.getName())
+			downloadFailed.add(versionId);
+		}
+	}
+
+	private void process(String versionId, RecognisedVersion recognisedVersion) {
+		allRecognisedVersions.remove(recognisedVersion);
+		String knownVersionId = recognisedVersion.getName();
+		String magicString = recognisedVersion.getMagicString();
+		if (recognisedVersion.equals(RecognisedVersion.UNKNOWN)) {
+			unknownVersions.add(createEnumString(versionId, magicString));
+		} else if (!versionId.equals(knownVersionId)) {
+			knownButIncorrectVersions.add(addPadding(versionId)
+					+ " is known as "
+					+ createEnumString(knownVersionId, magicString));
+		} else {
+			knownVersions.add(createEnumString(versionId, magicString));
+		}
+		if (magicStringToFirstMatch.containsKey(magicString)) {
+			magicStringCollisions.add(addPadding(magicStringToFirstMatch
+					.get(magicString))
+					+ " and "
+					+ addPadding(versionId)
 					+ " with magic string '" + magicString + "'");
+			output.put(magicString, output.get(magicString) + " "
+					+ addPadding(versionId));
+		} else {
+			magicStringToFirstMatch.put(magicString, versionId);
+			output.put(
+					magicString,
+					addPadding(createEnumString(versionId, magicString),
+							MAX_LENGTH_MAGIC_STRING)
+							+ " // matches the versions "
+							+ addPadding(versionId));
 		}
 	}
 
