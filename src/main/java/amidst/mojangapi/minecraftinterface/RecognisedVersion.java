@@ -14,12 +14,17 @@ import amidst.logging.Log;
 @Immutable
 public enum RecognisedVersion {
 	// @formatter:off
-	UNKNOWN(null), // Make sure this is the first entry, so it is always considered newer than all other versions, since an unknown version is most likely a new snapshot
+	// Make sure UNKNOWN is the first entry, so it is always considered newer than all other versions, since an unknown version is most likely a new snapshot.
+	// 1.8.4, 1.8.5, 1.8.6, 1.8.7, and 1.8.8 all have the same typeDump version ID. They are all security issue fixes.
+	// 1.8.3 and 1.8.2 have the same typeDump version ID - probably because 1.8.2 -> 1.8.3 was a fix for a server-side bug (https://mojang.com/2015/02/minecraft-1-8-2-is-now-available/)
+	// TODO: Remove these versions before V1_0?
+	// TODO: stronghold reset on V1_9pre4?
+	UNKNOWN(null),
 	V15w44b("qtoombkapb[Llq;mn[J[[Jmj"),
 	V15w43c("qsoombkapb[Llq;mn[J[[Jmj"),
 	V15w31c("oxnvlnjt[Llg;lz[J[[Jlv"),
-	V1_8_8("orntlljs[Lle;lx[J[[Jlt"), // 1.8.4, 1.8.5, 1.8.6, 1.8.7, and 1.8.8 all have the same typeDump version ID. They are all security issue fixes.
-	V1_8_3("osnulmjt[Llf;ly[J[[Jlu"), // 1.8.3 and 1.8.2 have the same typeDump version ID - probably because 1.8.2 -> 1.8.3 was a fix for a server-side bug (https://mojang.com/2015/02/minecraft-1-8-2-is-now-available/)
+	V1_8_8("orntlljs[Lle;lx[J[[Jlt"),
+	V1_8_3("osnulmjt[Llf;ly[J[[Jlu"),
 	V1_8_1("wduyrdnq[Lqu;sp[J[[Jsa"),
 	V1_8("wbuwrcnp[Lqt;sn[J[[Jry"),
 	V14w21b("tjseoylw[Loq;qd[J[[Jpo"),
@@ -64,13 +69,13 @@ public enum RecognisedVersion {
 	V12w03a("vj"),
 	V1_1("[Bjsudadrvqluhaarcqevyzmqmqugiokzcepgagqvsonhhrgahqfy[J[Jaitpdbo"),
 	V1_0("[Baesmmaijryafvdinqfdrzhabeabexexwadtnglkqdfagvkiahmhsadk[J[Jtkgkyu"),
-	V1_9pre6("uk"), // TODO: Remove these versions?
+	V1_9pre6("uk"),
 	V1_9pre5("ug"),
-	V1_9pre4("uh"),  //TODO stronghold reset??
+	V1_9pre4("uh"),
 	V1_9pre3("to"),
 	V1_9pre2("sv"),
 	V1_9pre1("sq"),
-	V1_8_1beta("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"); // Had to rename from V1_8_1 - should it just be removed?
+	V1_8_1beta("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb");
 	// @formatter:on
 
 	@NotNull
