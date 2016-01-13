@@ -149,7 +149,8 @@ public class LayersMenu {
 			ImageIcon icon, String accelerator, Dimension dimension, int layerId) {
 		JCheckBoxMenuItem result = Menus.checkbox(menu, setting, text, icon,
 				accelerator);
-		if (!viewerFacade.calculateIsLayerEnabled(layerId, dimension)) {
+		if (!viewerFacade.calculateIsLayerEnabled(layerId, dimension,
+				enableAllLayersSetting.get())) {
 			result.setEnabled(false);
 		}
 		return result;

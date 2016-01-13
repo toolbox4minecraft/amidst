@@ -83,7 +83,9 @@ public class LayerManager {
 	 * This should only be used by the layers menu.
 	 */
 	@CalledOnlyBy(AmidstThread.EDT)
-	public boolean calculateIsEnabled(int layerId, Dimension dimension) {
-		return declarations.get(layerId).calculateIsEnabled(dimension);
+	public boolean calculateIsEnabled(int layerId, Dimension dimension,
+			boolean enableAllLayers) {
+		return declarations.get(layerId).calculateIsEnabled(dimension,
+				enableAllLayers);
 	}
 }

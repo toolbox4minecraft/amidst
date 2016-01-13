@@ -169,8 +169,10 @@ public class ViewerFacade {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public boolean calculateIsLayerEnabled(int layerId, Dimension dimension) {
-		return layerManager.calculateIsEnabled(layerId, dimension);
+	public boolean calculateIsLayerEnabled(int layerId, Dimension dimension,
+			boolean enableAllLayers) {
+		return layerManager.calculateIsEnabled(layerId, dimension,
+				enableAllLayers);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

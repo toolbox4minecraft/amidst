@@ -34,7 +34,7 @@ public class LayerLoader {
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void loadAll(Dimension dimension, Fragment fragment) {
 		for (FragmentLoader loader : loaders) {
-			if (loader.getLayerDeclaration().isVisible()) {
+			if (loader.isEnabled()) {
 				loader.load(dimension, fragment);
 			}
 		}
@@ -43,15 +43,14 @@ public class LayerLoader {
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void reloadInvalidated(Dimension dimension, Fragment fragment) {
 		for (FragmentLoader loader : loaders) {
-			LayerDeclaration declaration = loader.getLayerDeclaration();
-			if (declaration.isVisible() && isInvalidated(declaration)) {
+			if (loader.isEnabled() && isInvalidated(loader.getLayerId())) {
 				loader.reload(dimension, fragment);
 			}
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private boolean isInvalidated(LayerDeclaration layerDeclaration) {
-		return invalidatedLayers[layerDeclaration.getLayerId()];
+	private boolean isInvalidated(int layerId) {
+		return invalidatedLayers[layerId];
 	}
 }

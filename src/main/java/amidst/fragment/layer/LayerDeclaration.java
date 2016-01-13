@@ -16,7 +16,6 @@ public class LayerDeclaration {
 	private final Setting<Boolean> isVisibleSetting;
 	private final Setting<Boolean> enableAllLayersSetting;
 
-	private volatile boolean isEnabled;
 	private volatile boolean isVisible;
 
 	/**
@@ -47,27 +46,25 @@ public class LayerDeclaration {
 		return isVisible;
 	}
 
-	public boolean isEnabled() {
-		return isEnabled;
-	}
-
 	/**
 	 * Updates the isVisible and isEnabled fields to the current setting values.
 	 * Returns whether the layer becomes visible.
 	 */
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public boolean update(Dimension dimension) {
-		boolean isEnabled = calculateIsEnabled(dimension);
+		boolean isEnabled = calculateIsEnabled(dimension,
+				enableAllLayersSetting.get());
 		boolean isVisible = isEnabled && isVisibleSetting.get();
 		boolean reload = isVisible == true && this.isVisible == false;
-		this.isEnabled = isEnabled;
 		this.isVisible = isVisible;
 		return reload;
 	}
 
 	@CalledByAny
-	public boolean calculateIsEnabled(Dimension dimension) {
-		return isMatchingDimension(dimension) && isMatchingVersion();
+	public boolean calculateIsEnabled(Dimension dimension,
+			boolean enableAllLayers) {
+		return isMatchingDimension(dimension)
+				&& isMatchingVersion(enableAllLayers);
 	}
 
 	@CalledByAny
@@ -76,7 +73,7 @@ public class LayerDeclaration {
 	}
 
 	@CalledByAny
-	private boolean isMatchingVersion() {
-		return isSupportedInCurrentVersion || enableAllLayersSetting.get();
+	private boolean isMatchingVersion(boolean enabledAllLayers) {
+		return isSupportedInCurrentVersion || enabledAllLayers;
 	}
 }

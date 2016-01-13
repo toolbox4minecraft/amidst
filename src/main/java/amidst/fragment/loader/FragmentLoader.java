@@ -15,8 +15,12 @@ public abstract class FragmentLoader {
 		this.declaration = declaration;
 	}
 
-	public LayerDeclaration getLayerDeclaration() {
-		return declaration;
+	public int getLayerId() {
+		return declaration.getLayerId();
+	}
+
+	public boolean isEnabled() {
+		return declaration.isVisible();
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
