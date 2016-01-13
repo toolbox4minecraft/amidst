@@ -13,13 +13,15 @@ public class WorldIcon {
 	private final String name;
 	private final BufferedImage image;
 	private final Dimension dimension;
+	private final boolean displayDimension;
 
 	public WorldIcon(CoordinatesInWorld coordinates, String name,
-			BufferedImage image, Dimension dimension) {
+			BufferedImage image, Dimension dimension, boolean displayDimension) {
 		this.coordinates = coordinates;
 		this.name = name;
 		this.image = image;
 		this.dimension = dimension;
+		this.displayDimension = displayDimension;
 	}
 
 	public CoordinatesInWorld getCoordinates() {
@@ -44,9 +46,11 @@ public class WorldIcon {
 			return name + " in the " + dimension.getName() + " "
 					+ coordinates.toString(dimension.getResolution()) + " -> "
 					+ coordinates.toString() + " in the Overworld";
-		} else {
+		} else if (displayDimension) {
 			return name + " in the " + dimension.getName() + " "
 					+ coordinates.toString();
+		} else {
+			return name + " " + coordinates.toString();
 		}
 	}
 }

@@ -95,37 +95,43 @@ public class WorldBuilder {
 						4,
 						new VillageLocationChecker(seed, biomeDataOracle, versionFeatures.getValidBiomesForStructure_Village()),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
-						Dimension.OVERWORLD
+						Dimension.OVERWORLD,
+						false
 				), new StructureProducer<Void>(
 						Resolution.CHUNK,
 						8,
 						new TempleLocationChecker(seed, biomeDataOracle, versionFeatures.getValidBiomesAtMiddleOfChunk_Temple()),
 						new TempleWorldIconTypeProvider(biomeDataOracle),
-						Dimension.OVERWORLD
+						Dimension.OVERWORLD,
+						false
 				), new StructureProducer<Void>(
 						Resolution.CHUNK,
 						8,
 						versionFeatures.getMineshaftAlgorithmFactory().apply(seed),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.MINESHAFT),
-						Dimension.OVERWORLD
+						Dimension.OVERWORLD,
+						false
 				), new StructureProducer<Void>(
 						Resolution.CHUNK,
 						8,
 						new OceanMonumentLocationChecker(seed, biomeDataOracle, versionFeatures.getValidBiomesAtMiddleOfChunk_OceanMonument(), versionFeatures.getValidBiomesForStructure_OceanMonument()),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
-						Dimension.OVERWORLD
+						Dimension.OVERWORLD,
+						false
 				), new StructureProducer<Void>(
 						Resolution.NETHER_CHUNK,
 						88,
 						new NetherFortressAlgorithm(seed),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
-						Dimension.NETHER
+						Dimension.NETHER,
+						false
 				), new StructureProducer<List<EndIsland>>(
 						Resolution.CHUNK,
 						8,
 						new EndCityLocationChecker(seed),
 						new EndCityWorldIconTypeProvider(),
-						Dimension.END
+						Dimension.END,
+						false
 				)
 		);
 		// @formatter:on

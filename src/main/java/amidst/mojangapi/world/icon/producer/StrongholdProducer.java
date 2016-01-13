@@ -99,7 +99,7 @@ public class StrongholdProducer extends CachedWorldIconProducer {
 		return new WorldIcon(coordinates,
 				DefaultWorldIconTypes.STRONGHOLD.getName(),
 				DefaultWorldIconTypes.STRONGHOLD.getImage(),
-				Dimension.OVERWORLD);
+				Dimension.OVERWORLD, false);
 	}
 
 	private double getAngleDelta(int ring, int structuresPerRing) {
