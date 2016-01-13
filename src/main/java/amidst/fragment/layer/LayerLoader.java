@@ -6,6 +6,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.loader.FragmentLoader;
+import amidst.mojangapi.world.Dimension;
 
 @NotThreadSafe
 public class LayerLoader {
@@ -31,23 +32,25 @@ public class LayerLoader {
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	public void loadAll(Fragment fragment) {
+	public void loadAll(Dimension dimension, Fragment fragment) {
 		for (FragmentLoader loader : loaders) {
-			loader.load(fragment);
-		}
-	}
-
-	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	public void reloadInvalidated(Fragment fragment) {
-		for (FragmentLoader loader : loaders) {
-			if (isInvalidated(loader.getLayerDeclaration())) {
-				loader.reload(fragment);
+			if (loader.isEnabled()) {
+				loader.load(dimension, fragment);
 			}
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private boolean isInvalidated(LayerDeclaration layerDeclaration) {
-		return invalidatedLayers[layerDeclaration.getLayerId()];
+	public void reloadInvalidated(Dimension dimension, Fragment fragment) {
+		for (FragmentLoader loader : loaders) {
+			if (loader.isEnabled() && isInvalidated(loader.getLayerId())) {
+				loader.reload(dimension, fragment);
+			}
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	private boolean isInvalidated(int layerId) {
+		return invalidatedLayers[layerId];
 	}
 }

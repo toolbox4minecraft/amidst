@@ -15,24 +15,15 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @ThreadSafe
 public class SpawnProducer extends CachedWorldIconProducer {
-	// @formatter:off
-	private static final List<Biome> VALID_BIOMES = Arrays.asList(
-			Biome.forest,
-			Biome.plains,
-			Biome.taiga,
-			Biome.taigaHills,
-			Biome.forestHills,
-			Biome.jungle,
-			Biome.jungleHills
-	);
-	// @formatter:on
-
 	private final long seed;
 	private final BiomeDataOracle biomeDataOracle;
+	private final List<Biome> validBiomes;
 
-	public SpawnProducer(long seed, BiomeDataOracle biomeDataOracle) {
+	public SpawnProducer(long seed, BiomeDataOracle biomeDataOracle,
+			List<Biome> validBiomes) {
 		this.seed = seed;
 		this.biomeDataOracle = biomeDataOracle;
+		this.validBiomes = validBiomes;
 	}
 
 	@Override
@@ -59,7 +50,7 @@ public class SpawnProducer extends CachedWorldIconProducer {
 	}
 
 	private CoordinatesInWorld getSpawnCenterInWorldCoordinates() {
-		return biomeDataOracle.findValidLocation(0, 0, 256, VALID_BIOMES,
+		return biomeDataOracle.findValidLocation(0, 0, 256, validBiomes,
 				new Random(seed));
 	}
 }

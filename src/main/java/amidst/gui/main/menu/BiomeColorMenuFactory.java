@@ -112,20 +112,17 @@ public class BiomeColorMenuFactory {
 		}
 	}
 
-	private final JMenu parentMenu = new JMenu("Biome color profile");
+	private final JMenu parentMenu;
 	private final Actions actions;
 	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
 
-	public BiomeColorMenuFactory(Actions actions,
+	public BiomeColorMenuFactory(JMenu parentMenu, Actions actions,
 			BiomeColorProfileDirectory biomeColorProfileDirectory) {
+		this.parentMenu = parentMenu;
 		this.actions = actions;
 		this.biomeColorProfileDirectory = biomeColorProfileDirectory;
 		Log.i("Checking for additional biome color profiles.");
 		initParentMenu();
-	}
-
-	public JMenu getMenu() {
-		return parentMenu;
 	}
 
 	private void initParentMenu() {

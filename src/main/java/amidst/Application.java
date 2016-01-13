@@ -25,7 +25,7 @@ import amidst.threading.ThreadMaster;
 public class Application {
 	private final CommandLineParameters parameters;
 	private final AmidstMetaData metadata;
-	private final Settings settings;
+	private final AmidstSettings settings;
 	private final MojangApi mojangApi;
 	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
 	private final ViewerFacadeBuilder viewerFacadeBuilder;
@@ -48,8 +48,8 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private Settings createSettings() {
-		return new Settings(Preferences.userNodeForPackage(Amidst.class));
+	private AmidstSettings createSettings() {
+		return new AmidstSettings(Preferences.userNodeForPackage(Amidst.class));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -69,7 +69,7 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private ViewerFacadeBuilder createViewerFacadeBuilder() {
-		return new ViewerFacadeBuilder(settings, new LayerBuilder(settings));
+		return new ViewerFacadeBuilder(settings, new LayerBuilder());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

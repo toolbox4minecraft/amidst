@@ -1,6 +1,5 @@
 package amidst.mojangapi.world.icon.locationchecker;
 
-import java.util.Collections;
 import java.util.List;
 
 import amidst.documentation.ThreadSafe;
@@ -15,7 +14,7 @@ public class BiomeLocationChecker implements LocationChecker {
 	public BiomeLocationChecker(BiomeDataOracle biomeDataOracle,
 			List<Biome> validBiomes) {
 		this.biomeDataOracle = biomeDataOracle;
-		this.validBiomes = Collections.unmodifiableList(validBiomes);
+		this.validBiomes = validBiomes;
 	}
 
 	@Override

@@ -1,8 +1,11 @@
 package amidst.mojangapi.minecraftinterface;
 
 import java.lang.reflect.Field;
+import java.net.URLClassLoader;
+import java.util.Objects;
 
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
 import amidst.logging.Log;
 
 /**
@@ -11,8 +14,8 @@ import amidst.logging.Log;
 @Immutable
 public enum RecognisedVersion {
 	// @formatter:off
-	UNKNOWN(null), // Make sure this is the first entry, so UNKNOWN.isAtLeast(...) returns always true, since an unknown version is most likely a new snapshot.
-	v15w44b("qtoombkapb[Llq;mn[J[[Jmj"),
+	UNKNOWN(null), // Make sure this is the first entry, so it is always considered newer than all other versions, since an unknown version is most likely a new snapshot
+	V15w44b("qtoombkapb[Llq;mn[J[[Jmj"),
 	V15w43c("qsoombkapb[Llq;mn[J[[Jmj"),
 	V15w31c("oxnvlnjt[Llg;lz[J[[Jlv"),
 	V1_8_8("orntlljs[Lle;lx[J[[Jlt"), // 1.8.4, 1.8.5, 1.8.6, 1.8.7, and 1.8.8 all have the same typeDump version ID. They are all security issue fixes.
@@ -25,8 +28,8 @@ public enum RecognisedVersion {
 	V14w02a("qrponkki[Lnb;lv[J[[J"),
 	V1_7_4("pzozmvjs[Lmm;lg[J[[J"),
 	V1_7_2("pvovmsjp[Lmj;ld[J[[J"),
-	V13w39a_or_b("npmp[Lkn;jh[J[J[J[J[J[[J"),
-	V13w37b_or_38a("ntmt[Lkm;jg[J[J[J[J[J[[J"),
+	V13w39a("npmp[Lkn;jh[J[J[J[J[J[[J"), // or 13w39b
+	V13w37b("ntmt[Lkm;jg[J[J[J[J[J[[J"), // or 13w38a
 	V13w37a("nsms[Lkl;jf[J[J[J[J[J[[J"),
 	V13w36b("nkmk[Lkd;hw[J[J[J[J[J[[J"),
 	V13w36a("nkmk[Lkd;hx[J[J[J[J[J[[J"),
@@ -67,8 +70,26 @@ public enum RecognisedVersion {
 	V1_9pre3("to"),
 	V1_9pre2("sv"),
 	V1_9pre1("sq"),
-	Vbeta_1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"); // Had to rename from V1_8_1 - should it just be removed?
+	V1_8_1beta("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"); // Had to rename from V1_8_1 - should it just be removed?
 	// @formatter:on
+
+	public static RecognisedVersion from(URLClassLoader classLoader)
+			throws ClassNotFoundException {
+		return from(getMainClassFields(classLoader));
+	}
+
+	@NotNull
+	private static Field[] getMainClassFields(URLClassLoader classLoader)
+			throws ClassNotFoundException {
+		if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
+			return classLoader.loadClass(CLIENT_CLASS).getDeclaredFields();
+		} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {
+			return classLoader.loadClass(SERVER_CLASS).getDeclaredFields();
+		} else {
+			throw new ClassNotFoundException(
+					"unable to find the main class in the given jar file");
+		}
+	}
 
 	public static RecognisedVersion from(Field[] fields) {
 		return from(generateMagicString(fields));
@@ -85,6 +106,7 @@ public enum RecognisedVersion {
 		return result;
 	}
 
+	@NotNull
 	public static RecognisedVersion from(String magicString) {
 		for (RecognisedVersion recognisedVersion : RecognisedVersion.values()) {
 			if (magicString.equals(recognisedVersion.magicString)) {
@@ -99,11 +121,56 @@ public enum RecognisedVersion {
 		return RecognisedVersion.UNKNOWN;
 	}
 
+	public static boolean isNewerOrEqualTo(RecognisedVersion version1,
+			RecognisedVersion version2) {
+		return compareNewerIsLower(version1, version2) <= 0;
+	}
+
+	public static boolean isNewer(RecognisedVersion version1,
+			RecognisedVersion version2) {
+		return compareNewerIsLower(version1, version2) < 0;
+	}
+
+	public static boolean isOlderOrEqualTo(RecognisedVersion version1,
+			RecognisedVersion version2) {
+		return compareNewerIsLower(version1, version2) >= 0;
+	}
+
+	public static boolean isOlder(RecognisedVersion version1,
+			RecognisedVersion version2) {
+		return compareNewerIsLower(version1, version2) > 0;
+	}
+
+	public static int compareNewerIsGreater(RecognisedVersion version1,
+			RecognisedVersion version2) {
+		return compareNewerIsLower(version2, version1);
+	}
+
+	public static int compareNewerIsLower(RecognisedVersion version1,
+			RecognisedVersion version2) {
+		Objects.requireNonNull(version1);
+		Objects.requireNonNull(version2);
+		return version1.ordinal() - version2.ordinal();
+	}
+
+	private static String getName(String string) {
+		if (string.toLowerCase().startsWith("v")) {
+			return string.substring(1).replace("_", ".");
+		} else {
+			return string;
+		}
+	}
+
+	private static final String CLIENT_CLASS_RESOURCE = "net/minecraft/client/Minecraft.class";
+	private static final String CLIENT_CLASS = "net.minecraft.client.Minecraft";
+	private static final String SERVER_CLASS_RESOURCE = "net/minecraft/server/MinecraftServer.class";
+	private static final String SERVER_CLASS = "net.minecraft.server.MinecraftServer";
+
 	private final String name;
 	private final String magicString;
 
 	private RecognisedVersion(String magicString) {
-		this.name = super.toString().replace("_", ".");
+		this.name = getName(super.toString());
 		this.magicString = magicString;
 	}
 
@@ -113,15 +180,5 @@ public enum RecognisedVersion {
 
 	public String getMagicString() {
 		return magicString;
-	}
-
-	@Deprecated
-	public boolean isSaveEnabled() {
-		return this != V12w21a && this != V12w21b && this != V12w22a
-				&& this != UNKNOWN;
-	}
-
-	public boolean isAtLeast(RecognisedVersion other) {
-		return this.ordinal() <= other.ordinal();
 	}
 }

@@ -6,9 +6,10 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.constructor.FragmentConstructor;
-import amidst.fragment.layer.LayerLoader;
-import amidst.gui.main.viewer.DimensionSelection;
+import amidst.fragment.layer.LayerManager;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.settings.Setting;
 
 @NotThreadSafe
 public class FragmentManager {
@@ -42,10 +43,10 @@ public class FragmentManager {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public FragmentQueueProcessor createQueueProcessor(LayerLoader layerLoader,
-			DimensionSelection dimensionSelection) {
+	public FragmentQueueProcessor createQueueProcessor(
+			LayerManager layerManager, Setting<Dimension> dimensionSetting) {
 		return new FragmentQueueProcessor(availableQueue, loadingQueue,
-				recycleQueue, cache, layerLoader, dimensionSelection);
+				recycleQueue, cache, layerManager, dimensionSetting);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

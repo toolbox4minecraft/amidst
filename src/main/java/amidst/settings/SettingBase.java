@@ -1,30 +1,21 @@
 package amidst.settings;
 
 import java.util.Objects;
-import java.util.prefs.Preferences;
+import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
-import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
 
 @ThreadSafe
-public abstract class SettingBase<T> implements Setting<T> {
-	protected final Preferences preferences;
-	protected final String key;
+public class SettingBase<T> implements Setting<T> {
+	private final Consumer<T> setter;
 	private volatile T value;
 
-	public SettingBase(Preferences preferences, String key) {
-		this.preferences = preferences;
-		this.key = key;
-	}
-
-	protected void restore(@NotNull T defaultValue) {
+	public SettingBase(T defaultValue, UnaryOperator<T> getter,
+			Consumer<T> setter) {
 		Objects.requireNonNull(defaultValue);
-		set(getInitialValue(defaultValue));
-	}
-
-	@Override
-	public String getKey() {
-		return key;
+		this.setter = setter;
+		this.set(getter.apply(defaultValue));
 	}
 
 	@Override
@@ -33,14 +24,9 @@ public abstract class SettingBase<T> implements Setting<T> {
 	}
 
 	@Override
-	public synchronized void set(@NotNull T value) {
+	public synchronized void set(T value) {
 		Objects.requireNonNull(value);
 		this.value = value;
-		update(value);
+		setter.accept(value);
 	}
-
-	@NotNull
-	protected abstract T getInitialValue(@NotNull T defaultValue);
-
-	protected abstract void update(@NotNull T value);
 }

@@ -22,7 +22,6 @@ import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
-import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
@@ -69,11 +68,11 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void newFromSeed(WorldSeed seed) {
+	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = mainWindow.askForWorldType();
 		if (worldType != null) {
 			try {
-				mainWindow.setWorld(mojangApi.createWorldFromSeed(seed,
+				mainWindow.setWorld(mojangApi.createWorldFromSeed(worldSeed,
 						worldType));
 			} catch (IllegalStateException | MinecraftInterfaceException e) {
 				e.printStackTrace();
@@ -217,14 +216,6 @@ public class Actions {
 				saveImageToFile(image, file);
 			}
 			image.flush();
-		}
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public void selectDimension(Dimension dimension) {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
-		if (viewerFacade != null) {
-			viewerFacade.selectDimension(dimension);
 		}
 	}
 

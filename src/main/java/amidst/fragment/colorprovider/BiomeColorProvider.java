@@ -3,6 +3,7 @@ package amidst.fragment.colorprovider;
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.gui.main.viewer.BiomeSelection;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.biome.BiomeColor;
 import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
 
@@ -18,8 +19,8 @@ public class BiomeColorProvider implements ColorProvider {
 	}
 
 	@Override
-	public int getColorAt(Fragment fragment, long cornerX, long cornerY, int x,
-			int y) {
+	public int getColorAt(Dimension dimension, Fragment fragment, long cornerX,
+			long cornerY, int x, int y) {
 		return getColor(fragment.getBiomeDataAt(x, y));
 	}
 

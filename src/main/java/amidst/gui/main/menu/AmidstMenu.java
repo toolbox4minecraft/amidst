@@ -7,7 +7,7 @@ import javax.swing.JMenuItem;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.mojangapi.world.Dimension;
+import amidst.gui.main.viewer.ViewerFacade;
 
 @NotThreadSafe
 public class AmidstMenu {
@@ -15,18 +15,17 @@ public class AmidstMenu {
 	private final JMenu worldMenu;
 	private final JMenuItem savePlayerLocationsMenu;
 	private final JMenuItem reloadPlayerLocationsMenu;
-	private final DimensionToggleButtonModels dimensionToggleButtonModels;
+	private final LayersMenu layersMenu;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public AmidstMenu(JMenuBar menuBar, JMenu worldMenu,
 			JMenuItem savePlayerLocationsMenu,
-			JMenuItem reloadPlayerLocationsMenu,
-			DimensionToggleButtonModels dimensionToggleButtonModels) {
+			JMenuItem reloadPlayerLocationsMenu, LayersMenu layersMenu) {
 		this.menuBar = menuBar;
 		this.worldMenu = worldMenu;
 		this.savePlayerLocationsMenu = savePlayerLocationsMenu;
 		this.reloadPlayerLocationsMenu = reloadPlayerLocationsMenu;
-		this.dimensionToggleButtonModels = dimensionToggleButtonModels;
+		this.layersMenu = layersMenu;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -35,22 +34,20 @@ public class AmidstMenu {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void setWorldMenuEnabled(boolean isEnabled) {
-		worldMenu.setEnabled(isEnabled);
+	public void set(ViewerFacade viewerFacade) {
+		worldMenu.setEnabled(true);
+		savePlayerLocationsMenu.setEnabled(viewerFacade
+				.canSavePlayerLocations());
+		reloadPlayerLocationsMenu.setEnabled(viewerFacade
+				.canLoadPlayerLocations());
+		layersMenu.init(viewerFacade);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void setSavePlayerLocationsMenuEnabled(boolean isEnabled) {
-		savePlayerLocationsMenu.setEnabled(isEnabled);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public void setReloadPlayerLocationsMenuEnabled(boolean isEnabled) {
-		reloadPlayerLocationsMenu.setEnabled(isEnabled);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public Dimension getSelectedDimension() {
-		return dimensionToggleButtonModels.get();
+	public void clear() {
+		worldMenu.setEnabled(false);
+		savePlayerLocationsMenu.setEnabled(false);
+		reloadPlayerLocationsMenu.setEnabled(false);
+		layersMenu.disable();
 	}
 }

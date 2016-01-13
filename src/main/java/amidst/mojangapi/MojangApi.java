@@ -112,11 +112,12 @@ public class MojangApi {
 	 * one world at a time. Creating a new world will break all previously
 	 * created world objects.
 	 */
-	public World createWorldFromSeed(WorldSeed seed, WorldType worldType)
+	public World createWorldFromSeed(WorldSeed worldSeed, WorldType worldType)
 			throws IllegalStateException, MinecraftInterfaceException {
 		MinecraftInterface minecraftInterface = this.minecraftInterface;
 		if (minecraftInterface != null) {
-			return worldBuilder.fromSeed(minecraftInterface, seed, worldType);
+			return worldBuilder.fromSeed(minecraftInterface, worldSeed,
+					worldType);
 		} else {
 			throw new IllegalStateException(
 					"cannot create a world without a minecraft interface");

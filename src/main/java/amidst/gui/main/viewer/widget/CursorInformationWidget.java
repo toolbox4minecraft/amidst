@@ -7,7 +7,6 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
-import amidst.gui.main.viewer.DimensionSelection;
 import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
 import amidst.logging.Log;
 import amidst.mojangapi.world.Dimension;
@@ -15,6 +14,7 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.settings.Setting;
 
 @NotThreadSafe
 public class CursorInformationWidget extends TextWidget {
@@ -22,16 +22,16 @@ public class CursorInformationWidget extends TextWidget {
 
 	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
-	private final DimensionSelection dimensionSelection;
+	private final Setting<Dimension> dimensionSetting;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public CursorInformationWidget(CornerAnchorPoint anchor,
 			FragmentGraph graph, FragmentGraphToScreenTranslator translator,
-			DimensionSelection dimensionSelection) {
+			Setting<Dimension> dimensionSetting) {
 		super(anchor);
 		this.graph = graph;
 		this.translator = translator;
-		this.dimensionSelection = dimensionSelection;
+		this.dimensionSetting = dimensionSetting;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -50,9 +50,10 @@ public class CursorInformationWidget extends TextWidget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private String getBiomeNameAt(CoordinatesInWorld coordinates) {
-		if (dimensionSelection.isDimension(Dimension.OVERWORLD)) {
+		Dimension dimension = dimensionSetting.get();
+		if (dimension.equals(Dimension.OVERWORLD)) {
 			return getOverworldBiomeNameAt(coordinates);
-		} else if (dimensionSelection.isDimension(Dimension.END)) {
+		} else if (dimension.equals(Dimension.END)) {
 			return Biome.theEnd.getName();
 		} else {
 			Log.w("unsupported dimension");

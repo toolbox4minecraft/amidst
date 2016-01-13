@@ -5,6 +5,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
+import amidst.mojangapi.world.Dimension;
 import amidst.settings.Setting;
 
 @NotThreadSafe
@@ -19,7 +20,7 @@ public class AlphaInitializer extends FragmentLoader {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	@Override
-	public void load(Fragment fragment) {
+	public void load(Dimension dimension, Fragment fragment) {
 		if (fragmentFadingSetting.get()) {
 			fragment.setAlpha(0.0f);
 		} else {
@@ -29,7 +30,7 @@ public class AlphaInitializer extends FragmentLoader {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	@Override
-	public void reload(Fragment fragment) {
+	public void reload(Dimension dimension, Fragment fragment) {
 		// noop
 	}
 }

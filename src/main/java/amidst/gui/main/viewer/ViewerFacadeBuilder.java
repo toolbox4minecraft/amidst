@@ -2,24 +2,20 @@ package amidst.gui.main.viewer;
 
 import java.util.List;
 
-import amidst.Settings;
+import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.FragmentQueueProcessor;
-import amidst.fragment.dimension.DimensionSelector;
-import amidst.fragment.drawer.FragmentDrawer;
 import amidst.fragment.layer.LayerBuilder;
-import amidst.fragment.layer.LayerDeclaration;
-import amidst.fragment.layer.LayerLoader;
+import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.main.Actions;
 import amidst.gui.main.viewer.widget.Widget;
 import amidst.gui.main.viewer.widget.WidgetBuilder;
 import amidst.gui.main.viewer.widget.WidgetManager;
-import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.World;
 
 @NotThreadSafe
@@ -27,12 +23,13 @@ public class ViewerFacadeBuilder {
 	private final Zoom zoom;
 	private final BiomeSelection biomeSelection = new BiomeSelection();
 
-	private final Settings settings;
+	private final AmidstSettings settings;
 	private final LayerBuilder layerBuilder;
 	private final FragmentManager fragmentManager;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ViewerFacadeBuilder(Settings settings, LayerBuilder layerBuilder) {
+	public ViewerFacadeBuilder(AmidstSettings settings,
+			LayerBuilder layerBuilder) {
 		this.settings = settings;
 		this.zoom = new Zoom(settings.maxZoom);
 		this.layerBuilder = layerBuilder;
@@ -42,35 +39,28 @@ public class ViewerFacadeBuilder {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ViewerFacade create(World world, Actions actions, Dimension dimension) {
+	public ViewerFacade create(World world, Actions actions) {
 		Movement movement = new Movement(settings.smoothScrolling);
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
-		DimensionSelection dimensionSelection = new DimensionSelection(
-				dimension);
-		List<LayerDeclaration> declarations = layerBuilder.getDeclarations();
-		FragmentGraph graph = new FragmentGraph(declarations, fragmentManager);
+		LayerManager layerManager = layerBuilder.create(settings, world,
+				biomeSelection, worldIconSelection, zoom);
+		FragmentGraph graph = new FragmentGraph(layerManager.getDeclarations(),
+				fragmentManager);
 		FragmentGraphToScreenTranslator translator = new FragmentGraphToScreenTranslator(
 				graph, zoom);
-		LayerLoader layerLoader = layerBuilder.createLayerLoader(world,
-				biomeSelection, dimensionSelection, settings);
 		FragmentQueueProcessor fragmentQueueProcessor = fragmentManager
-				.createQueueProcessor(layerLoader, dimensionSelection);
-		Iterable<FragmentDrawer> drawers = layerBuilder.createDrawers(zoom,
-				worldIconSelection, dimensionSelection);
-		LayerReloader layerReloader = layerBuilder.createLayerReloader(world,
-				fragmentQueueProcessor);
-		DimensionSelector dimensionSelector = new DimensionSelector(
-				fragmentQueueProcessor);
+				.createQueueProcessor(layerManager, settings.dimension);
+		LayerReloader layerReloader = layerManager.createLayerReloader(world);
 		WidgetBuilder widgetBuilder = new WidgetBuilder(world, graph,
 				translator, zoom, biomeSelection, worldIconSelection,
 				layerReloader, fragmentManager, settings);
-		List<Widget> widgets = widgetBuilder.create(dimensionSelection);
+		List<Widget> widgets = widgetBuilder.create();
 		Drawer drawer = new Drawer(graph, translator, zoom, movement, widgets,
-				drawers, dimensionSelection);
+				layerManager.getDrawers(), settings.dimension);
 		Viewer viewer = new Viewer(new ViewerMouseListener(new WidgetManager(
 				widgets), graph, translator, zoom, movement, actions), drawer);
 		return new ViewerFacade(world, graph, translator, zoom, viewer,
-				layerReloader, dimensionSelector, worldIconSelection,
+				layerReloader, worldIconSelection, layerManager,
 				createOnRepainterTick(viewer),
 				createOnFragmentLoaderTick(fragmentQueueProcessor),
 				createOnPlayerFinishedLoading(layerReloader));

@@ -9,7 +9,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentGraph;
-import amidst.fragment.dimension.DimensionSelector;
+import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.World;
@@ -32,8 +32,8 @@ public class ViewerFacade {
 	private final Zoom zoom;
 	private final Viewer viewer;
 	private final LayerReloader layerReloader;
-	private final DimensionSelector dimensionSelector;
 	private final WorldIconSelection worldIconSelection;
+	private final LayerManager layerManager;
 	private final Runnable onRepainterTick;
 	private final Runnable onFragmentLoaderTick;
 	private final Runnable onPlayerFinishedLoading;
@@ -42,17 +42,17 @@ public class ViewerFacade {
 	public ViewerFacade(World world, FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			Viewer viewer, LayerReloader layerReloader,
-			DimensionSelector dimensionSelector,
-			WorldIconSelection worldIconSelection, Runnable onRepainterTick,
-			Runnable onFragmentLoaderTick, Runnable onPlayerFinishedLoading) {
+			WorldIconSelection worldIconSelection, LayerManager layerManager,
+			Runnable onRepainterTick, Runnable onFragmentLoaderTick,
+			Runnable onPlayerFinishedLoading) {
 		this.world = world;
 		this.graph = graph;
 		this.translator = translator;
 		this.zoom = zoom;
 		this.viewer = viewer;
 		this.layerReloader = layerReloader;
-		this.dimensionSelector = dimensionSelector;
 		this.worldIconSelection = worldIconSelection;
+		this.layerManager = layerManager;
 		this.onRepainterTick = onRepainterTick;
 		this.onFragmentLoaderTick = onFragmentLoaderTick;
 		this.onPlayerFinishedLoading = onPlayerFinishedLoading;
@@ -122,11 +122,6 @@ public class ViewerFacade {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void selectDimension(Dimension dimension) {
-		dimensionSelector.selectDimension(dimension);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldSeed getWorldSeed() {
 		return world.getWorldSeed();
 	}
@@ -171,5 +166,17 @@ public class ViewerFacade {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void savePlayerLocations() {
 		world.getMovablePlayerList().save();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public boolean calculateIsLayerEnabled(int layerId, Dimension dimension,
+			boolean enableAllLayers) {
+		return layerManager.calculateIsEnabled(layerId, dimension,
+				enableAllLayers);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public boolean hasLayer(int layerId) {
+		return world.getVersionFeatures().hasLayer(layerId);
 	}
 }

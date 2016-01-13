@@ -99,7 +99,7 @@ public class Amidst {
 	}
 
 	private static void initLookAndFeel() {
-		if (!isOSX()) {
+		if (isWindows()) {
 			try {
 				UIManager.setLookAndFeel(UIManager
 						.getSystemLookAndFeelClassName());
@@ -110,8 +110,8 @@ public class Amidst {
 		}
 	}
 
-	private static boolean isOSX() {
-		return System.getProperty("os.name").contains("OS X");
+	private static boolean isWindows() {
+		return System.getProperty("os.name").contains("win");
 	}
 
 	private static void setJava2DEnvironmentVariables() {

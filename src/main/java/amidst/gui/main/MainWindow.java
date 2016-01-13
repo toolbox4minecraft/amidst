@@ -17,8 +17,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import amidst.AmidstMetaData;
+import amidst.AmidstSettings;
 import amidst.Application;
-import amidst.Settings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -39,7 +39,7 @@ import amidst.threading.ThreadMaster;
 public class MainWindow {
 	private final Application application;
 	private final AmidstMetaData metadata;
-	private final Settings settings;
+	private final AmidstSettings settings;
 	private final MojangApi mojangApi;
 	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
 	private final ViewerFacadeBuilder viewerFacadeBuilder;
@@ -54,7 +54,7 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public MainWindow(Application application, AmidstMetaData metadata,
-			Settings settings, MojangApi mojangApi,
+			AmidstSettings settings, MojangApi mojangApi,
 			BiomeColorProfileDirectory biomeColorProfileDirectory,
 			ViewerFacadeBuilder viewerFacadeBuilder, ThreadMaster threadMaster) {
 		this.application = application;
@@ -147,8 +147,7 @@ public class MainWindow {
 	public void setWorld(World world) {
 		clearViewerFacade();
 		if (decideWorldPlayerType(world.getMovablePlayerList())) {
-			setViewerFacade(viewerFacadeBuilder.create(world, actions,
-					menuBar.getSelectedDimension()));
+			setViewerFacade(viewerFacadeBuilder.create(world, actions));
 		} else {
 			frame.revalidate();
 			frame.repaint();
@@ -173,11 +172,7 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void setViewerFacade(ViewerFacade viewerFacade) {
 		contentPane.add(viewerFacade.getComponent(), BorderLayout.CENTER);
-		menuBar.setWorldMenuEnabled(true);
-		menuBar.setSavePlayerLocationsMenuEnabled(viewerFacade
-				.canSavePlayerLocations());
-		menuBar.setReloadPlayerLocationsMenuEnabled(viewerFacade
-				.canLoadPlayerLocations());
+		menuBar.set(viewerFacade);
 		frame.validate();
 		viewerFacade.loadPlayers(threadMaster.getWorkerExecutor());
 		threadMaster.setOnRepaintTick(viewerFacade.getOnRepainterTick());
@@ -195,14 +190,7 @@ public class MainWindow {
 			contentPane.remove(viewerFacade.getComponent());
 			viewerFacade.dispose();
 		}
-		clearViewerFacadeFromGui();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void clearViewerFacadeFromGui() {
-		menuBar.setWorldMenuEnabled(false);
-		menuBar.setSavePlayerLocationsMenuEnabled(false);
-		menuBar.setReloadPlayerLocationsMenuEnabled(false);
+		menuBar.clear();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

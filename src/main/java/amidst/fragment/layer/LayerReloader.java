@@ -1,26 +1,24 @@
 package amidst.fragment.layer;
 
 import amidst.documentation.ThreadSafe;
-import amidst.fragment.FragmentQueueProcessor;
 import amidst.mojangapi.world.World;
 
 @ThreadSafe
 public class LayerReloader {
 	private final World world;
-	private final FragmentQueueProcessor fragmentQueueProcessor;
+	private final LayerManager layerManager;
 
-	public LayerReloader(World world,
-			FragmentQueueProcessor fragmentQueueProcessor) {
+	public LayerReloader(World world, LayerManager layerManager) {
 		this.world = world;
-		this.fragmentQueueProcessor = fragmentQueueProcessor;
+		this.layerManager = layerManager;
 	}
 
 	public void reloadBackgroundLayer() {
-		fragmentQueueProcessor.invalidateLayer(LayerIds.BACKGROUND);
+		layerManager.invalidateLayer(LayerIds.BACKGROUND);
 	}
 
 	public void reloadPlayerLayer() {
 		world.reloadPlayerWorldIcons();
-		fragmentQueueProcessor.invalidateLayer(LayerIds.PLAYER);
+		layerManager.invalidateLayer(LayerIds.PLAYER);
 	}
 }
