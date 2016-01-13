@@ -73,9 +73,16 @@ public enum RecognisedVersion {
 	V1_8_1beta("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"); // Had to rename from V1_8_1 - should it just be removed?
 	// @formatter:on
 
+	@NotNull
 	public static RecognisedVersion from(URLClassLoader classLoader)
 			throws ClassNotFoundException {
-		return from(getMainClassFields(classLoader));
+		return from(generateMagicString(classLoader));
+	}
+
+	@NotNull
+	public static String generateMagicString(URLClassLoader classLoader)
+			throws ClassNotFoundException {
+		return generateMagicString(getMainClassFields(classLoader));
 	}
 
 	@NotNull
@@ -91,11 +98,13 @@ public enum RecognisedVersion {
 		}
 	}
 
+	@NotNull
 	public static RecognisedVersion from(Field[] fields) {
 		return from(generateMagicString(fields));
 	}
 
-	private static String generateMagicString(Field[] fields) {
+	@NotNull
+	public static String generateMagicString(Field[] fields) {
 		String result = "";
 		for (Field field : fields) {
 			String typeString = field.getType().toString();
