@@ -57,10 +57,12 @@ public enum DefaultVersionFeatures {
 						LayerIds.STRONGHOLD,
 						LayerIds.PLAYER,
 						LayerIds.VILLAGE,
-						LayerIds.TEMPLE,
 						LayerIds.MINESHAFT,
-						LayerIds.OCEAN_MONUMENT,
 						LayerIds.NETHER_FORTRESS
+				).sinceExtend(RecognisedVersion.V12w21a,
+						LayerIds.TEMPLE
+				).sinceExtend(RecognisedVersion.V1_8,
+						LayerIds.OCEAN_MONUMENT
 				).sinceExtend(RecognisedVersion.V15w31c,
 						LayerIds.END_ISLANDS,
 						LayerIds.END_CITY
@@ -89,6 +91,9 @@ public enum DefaultVersionFeatures {
 				).construct();
 		this.validBiomesAtMiddleOfChunk_Stronghold = VersionFeature.<Biome> listBuilder()
 				.init(
+						// this is for the enable all layers function
+						getValidBiomesForStrongholdSinceV13w36a()
+				).since(RecognisedVersion.V1_8_1beta,
 						Biome.desert,
 						Biome.forest,
 						Biome.extremeHills,
@@ -105,6 +110,7 @@ public enum DefaultVersionFeatures {
 						Biome.jungle,
 						Biome.jungleHills
 				).since(RecognisedVersion.V13w36a,
+						// this includes all the biomes above, except for the swampland
 						getValidBiomesForStrongholdSinceV13w36a()
 				).construct();
 		this.numberOfStrongholds = VersionFeature.<Integer> builder()
@@ -121,12 +127,21 @@ public enum DefaultVersionFeatures {
 				).construct();
 		this.validBiomesAtMiddleOfChunk_Temple = VersionFeature.<Biome> listBuilder()
 				.init(
+						// this is for the enable all layers function
+						Biome.desert,
+						Biome.desertHills,
+						Biome.jungle,
+						Biome.jungleHills,
+						Biome.swampland,
+						Biome.icePlains,
+						Biome.coldTaiga
+				).since(RecognisedVersion.V12w21a,
 						Biome.desert,
 						Biome.desertHills
 				).sinceExtend(RecognisedVersion.V12w22a,
 						Biome.jungle
 				).sinceExtend(RecognisedVersion.V1_4_2,
-						Biome.jungleHills,
+						Biome.jungleHills, // TODO: jungle temples spawn only since 1.4.2 in jungle hills?
 						Biome.swampland
 				).sinceExtend(RecognisedVersion.V15w43c,
 						Biome.icePlains,
@@ -134,7 +149,7 @@ public enum DefaultVersionFeatures {
 				).construct();
 		this.mineshaftAlgorithmFactory = VersionFeature.<Function<Long, MineshaftAlgorithm>> builder()
 				.init(
-						OriginalMineshaftAlgorithm::new
+						seed -> new OriginalMineshaftAlgorithm(seed)
 				).since(RecognisedVersion.V1_4_2,
 						seed -> new ChanceBasedMineshaftAlgorithm(seed, 0.01D)
 				).since(RecognisedVersion.V1_7_2,
@@ -142,12 +157,14 @@ public enum DefaultVersionFeatures {
 				).construct();
 		this.validBiomesAtMiddleOfChunk_OceanMonument = VersionFeature.<Biome> listBuilder()
 				.init(
+						// this is also for the enable all layers function, else it would be since 1.8
 						// Not sure if the extended biomes count
 						Biome.deepOcean
 //						Biome.deepOceanM
 				).construct();
 		this.validBiomesForStructure_OceanMonument = VersionFeature.<Biome> listBuilder()
 				.init(
+						// this is also for the enable all layers function, else it would be since 1.8
 						// Not sure if the extended biomes count
 						Biome.ocean,
 						Biome.deepOcean,

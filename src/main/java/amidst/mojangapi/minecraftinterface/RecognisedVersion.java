@@ -28,8 +28,8 @@ public enum RecognisedVersion {
 	V14w02a("qrponkki[Lnb;lv[J[[J"),
 	V1_7_4("pzozmvjs[Lmm;lg[J[[J"),
 	V1_7_2("pvovmsjp[Lmj;ld[J[[J"),
-	V13w39a_or_b("npmp[Lkn;jh[J[J[J[J[J[[J"),
-	V13w37b_or_38a("ntmt[Lkm;jg[J[J[J[J[J[[J"),
+	V13w39a("npmp[Lkn;jh[J[J[J[J[J[[J"), // or 13w39b
+	V13w37b("ntmt[Lkm;jg[J[J[J[J[J[[J"), // or 13w38a
 	V13w37a("nsms[Lkl;jf[J[J[J[J[J[[J"),
 	V13w36b("nkmk[Lkd;hw[J[J[J[J[J[[J"),
 	V13w36a("nkmk[Lkd;hx[J[J[J[J[J[[J"),
@@ -70,7 +70,7 @@ public enum RecognisedVersion {
 	V1_9pre3("to"),
 	V1_9pre2("sv"),
 	V1_9pre1("sq"),
-	Vbeta_1_8_1("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"); // Had to rename from V1_8_1 - should it just be removed?
+	V1_8_1beta("[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"); // Had to rename from V1_8_1 - should it just be removed?
 	// @formatter:on
 
 	public static RecognisedVersion from(URLClassLoader classLoader)
