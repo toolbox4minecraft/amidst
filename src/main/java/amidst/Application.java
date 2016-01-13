@@ -1,6 +1,5 @@
 package amidst;
 
-import java.io.FileNotFoundException;
 import java.util.prefs.Preferences;
 
 import amidst.documentation.AmidstThread;
@@ -14,6 +13,7 @@ import amidst.gui.main.viewer.ViewerFacadeBuilder;
 import amidst.gui.profileselect.ProfileSelectWindow;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.MojangApiBuilder;
+import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.WorldBuilder;
@@ -36,7 +36,7 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Application(CommandLineParameters parameters, AmidstMetaData metadata)
-			throws FileNotFoundException,
+			throws DotMinecraftDirectoryNotFoundException,
 			LocalMinecraftInterfaceCreationException {
 		this.parameters = parameters;
 		this.metadata = metadata;
@@ -53,7 +53,8 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private MojangApi createMojangApi() throws FileNotFoundException,
+	private MojangApi createMojangApi()
+			throws DotMinecraftDirectoryNotFoundException,
 			LocalMinecraftInterfaceCreationException {
 		return new MojangApiBuilder(new WorldBuilder(
 				new PlayerInformationCache(),

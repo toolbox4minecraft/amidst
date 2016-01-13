@@ -24,7 +24,7 @@ public class PlayerProducer extends CachedWorldIconProducer {
 			PlayerCoordinates coordinates = player.getPlayerCoordinates();
 			result.add(new WorldIcon(coordinates.getCoordinatesInWorld(),
 					player.getPlayerName(), player.getHead(), coordinates
-							.getDimension()));
+							.getDimension(), true));
 		}
 		return result;
 	}

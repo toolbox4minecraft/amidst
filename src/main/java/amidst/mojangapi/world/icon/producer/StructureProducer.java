@@ -19,16 +19,18 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 	private final LocationChecker checker;
 	private final WorldIconTypeProvider<T> provider;
 	private final Dimension dimension;
+	private final boolean displayDimension;
 
 	public StructureProducer(Resolution resolution, int offsetInWorld,
 			LocationChecker checker, WorldIconTypeProvider<T> provider,
-			Dimension dimension) {
+			Dimension dimension, boolean displayDimension) {
 		this.resolution = resolution;
 		this.size = resolution.getStepsPerFragment();
 		this.offsetInWorld = offsetInWorld;
 		this.checker = checker;
 		this.provider = provider;
 		this.dimension = dimension;
+		this.displayDimension = displayDimension;
 	}
 
 	@Override
@@ -55,7 +57,8 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 				CoordinatesInWorld coordinates = createCoordinates(corner,
 						xRelativeToFragment, yRelativeToFragment);
 				consumer.accept(new WorldIcon(coordinates, worldIconType
-						.getName(), worldIconType.getImage(), dimension));
+						.getName(), worldIconType.getImage(), dimension,
+						displayDimension));
 			}
 		}
 	}

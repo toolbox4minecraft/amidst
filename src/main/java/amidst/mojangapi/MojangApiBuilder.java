@@ -1,13 +1,13 @@
 package amidst.mojangapi;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 
 import amidst.CommandLineParameters;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.Log;
 import amidst.mojangapi.file.DotMinecraftDirectoryFinder;
+import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
@@ -25,7 +25,7 @@ public class MojangApiBuilder {
 	}
 
 	@NotNull
-	public MojangApi construct() throws FileNotFoundException,
+	public MojangApi construct() throws DotMinecraftDirectoryNotFoundException,
 			LocalMinecraftInterfaceCreationException {
 		DotMinecraftDirectory dotMinecraftDirectory = createDotMinecraftDirectory();
 		if (dotMinecraftDirectory.isValid()) {
@@ -33,14 +33,14 @@ public class MojangApiBuilder {
 					+ dotMinecraftDirectory.getRoot() + "', libraries: '"
 					+ dotMinecraftDirectory.getLibraries() + "'");
 		} else {
-			throw new FileNotFoundException(
+			throw new DotMinecraftDirectoryNotFoundException(
 					"invalid '.minecraft' directory at: '"
 							+ dotMinecraftDirectory.getRoot()
 							+ "', libraries: '"
 							+ dotMinecraftDirectory.getLibraries() + "'");
 		}
 		MojangApi result = new MojangApi(worldBuilder, dotMinecraftDirectory);
-		result.set(null, createVersionDirectory(result));
+		result.set(null, null, createVersionDirectory(result));
 		return result;
 	}
 

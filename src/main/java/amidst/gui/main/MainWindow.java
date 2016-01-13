@@ -78,7 +78,8 @@ public class MainWindow {
 	private JFrame createFrame() {
 		JFrame frame = new JFrame();
 		frame.setTitle(createVersionString(mojangApi.getVersionId(),
-				mojangApi.getRecognisedVersionName()));
+				mojangApi.getRecognisedVersionName(),
+				mojangApi.getProfileName()));
 		frame.setSize(1000, 800);
 		frame.setIconImage(metadata.getIcon());
 		return frame;
@@ -86,9 +87,10 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private String createVersionString(String versionId,
-			String recognisedVersionName) {
+			String recognisedVersionName, String profileName) {
 		return metadata.getVersion().createLongVersionString()
-				+ " - Minecraft Version " + versionId + " ("
+				+ " - Selected Profile: " + profileName
+				+ " - Minecraft Version " + versionId + " (recognised: "
 				+ recognisedVersionName + ")";
 	}
 
@@ -215,7 +217,7 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public File askForMinecraftWorldFile() {
-		return getSelectedFileOrNull(createMinecraftWorldFileChooser());
+		return showOpenDialogAndGetSelectedFileOrNull(createMinecraftWorldFileChooser());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -230,21 +232,32 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public File askForCaptureImageSaveFile() {
-		return getSelectedFileOrNull(createCaptureImageSaveFileChooser());
+	private File showOpenDialogAndGetSelectedFileOrNull(JFileChooser fileChooser) {
+		if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+			return fileChooser.getSelectedFile();
+		} else {
+			return null;
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private JFileChooser createCaptureImageSaveFileChooser() {
+	public File askForCaptureImageSaveFile(String suggestedFilename) {
+		return showSaveDialogAndGetSelectedFileOrNull(createCaptureImageSaveFileChooser(suggestedFilename));
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private JFileChooser createCaptureImageSaveFileChooser(
+			String suggestedFilename) {
 		JFileChooser result = new JFileChooser();
 		result.setFileFilter(new PNGFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
+		result.setSelectedFile(new File(suggestedFilename));
 		return result;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private File getSelectedFileOrNull(JFileChooser fileChooser) {
-		if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+	private File showSaveDialogAndGetSelectedFileOrNull(JFileChooser fileChooser) {
+		if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
 			return fileChooser.getSelectedFile();
 		} else {
 			return null;
