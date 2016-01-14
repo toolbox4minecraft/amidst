@@ -30,6 +30,7 @@ import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.export.ExportConfiguration;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.WorldPlayerType;
 import amidst.settings.biomecolorprofile.BiomeColorProfileDirectory;
@@ -334,5 +335,11 @@ public class MainWindow {
 	private String askForString(String title, String message) {
 		return JOptionPane.showInputDialog(frame, message, title,
 				JOptionPane.QUESTION_MESSAGE);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public ExportConfiguration askForExportConfiguration() {
+		throw new UnsupportedOperationException(
+				"display window to enter export configuration");
 	}
 }

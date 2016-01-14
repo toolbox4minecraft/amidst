@@ -54,6 +54,8 @@ public class AmidstMenuBuilder {
 		Menus.item(result, actions::newFromRandom,         "New from random seed",     KeyEvent.VK_R, "ctrl R");
 		Menus.item(result, actions::openWorldFile,         "Open world file ...",      KeyEvent.VK_F, "ctrl O");
 		result.addSeparator();
+		Menus.item(result, actions::export,                "Export ...",               KeyEvent.VK_E, "ctrl X");
+		result.addSeparator();
 		Menus.item(result, actions::switchProfile,         "Switch profile ...",       KeyEvent.VK_P, "ctrl W");
 		Menus.item(result, actions::exit,                  "Exit",                     KeyEvent.VK_X, "ctrl Q");
 		// @formatter:on

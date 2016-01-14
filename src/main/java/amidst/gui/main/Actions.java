@@ -96,6 +96,14 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	public void export() {
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
+			viewerFacade.export(mainWindow.askForExportConfiguration());
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void switchProfile() {
 		application.displayProfileSelectWindow();
 	}
