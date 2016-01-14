@@ -222,11 +222,10 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JFileChooser createMinecraftWorldFileChooser() {
-		JFileChooser result = new JFileChooser();
+		JFileChooser result = new JFileChooser(mojangApi.getSaves());
 		result.setFileFilter(new LevelFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
 		result.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		result.setCurrentDirectory(mojangApi.getSaves());
 		result.setFileHidingEnabled(false);
 		return result;
 	}

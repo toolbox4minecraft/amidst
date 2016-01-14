@@ -15,7 +15,7 @@ public class ProfileDirectory {
 	}
 
 	public boolean isValid() {
-		return root.isDirectory() && saves.isDirectory();
+		return root.isDirectory();
 	}
 
 	public File getRoot() {
