@@ -46,7 +46,7 @@
 								<mainClass>amidst.Amidst</mainClass>
 								<addDependencies>false</addDependencies>
 							</classPath>
-							<icon>../../target/icon.ico</icon>
+							<icon>../../src/main/resources/amidst/icon/amidst.ico</icon>
 							<jre>
 								<minVersion>${amidst.build.jdk.version}.0</minVersion>
 								<initialHeapSize>512</initialHeapSize>

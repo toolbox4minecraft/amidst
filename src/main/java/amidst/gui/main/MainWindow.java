@@ -81,7 +81,7 @@ public class MainWindow {
 				mojangApi.getRecognisedVersionName(),
 				mojangApi.getProfileName()));
 		frame.setSize(1000, 800);
-		frame.setIconImage(metadata.getIcon());
+		frame.setIconImages(metadata.getIcons());
 		return frame;
 	}
 

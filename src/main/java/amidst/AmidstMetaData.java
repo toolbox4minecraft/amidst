@@ -1,26 +1,30 @@
 package amidst;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import amidst.documentation.Immutable;
 
 @Immutable
 public class AmidstMetaData {
-	public static AmidstMetaData from(Properties properties, BufferedImage icon) {
-		return new AmidstMetaData(icon, AmidstVersion.from(properties));
+	public static AmidstMetaData from(Properties properties,
+			BufferedImage... icons) {
+		return new AmidstMetaData(Arrays.asList(icons),
+				AmidstVersion.from(properties));
 	}
 
-	private final BufferedImage icon;
+	private final List<BufferedImage> icons;
 	private final AmidstVersion version;
 
-	private AmidstMetaData(BufferedImage icon, AmidstVersion version) {
-		this.icon = icon;
+	private AmidstMetaData(List<BufferedImage> icons, AmidstVersion version) {
+		this.icons = icons;
 		this.version = version;
 	}
 
-	public BufferedImage getIcon() {
-		return icon;
+	public List<BufferedImage> getIcons() {
+		return icons;
 	}
 
 	public AmidstVersion getVersion() {
