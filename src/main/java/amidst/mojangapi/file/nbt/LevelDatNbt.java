@@ -5,10 +5,12 @@ import org.jnbt.CompoundTag;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
 @Immutable
 public class LevelDatNbt {
 	private final long seed;
+	private final CoordinatesInWorld worldSpawn;
 	private final WorldType worldType;
 	private final String generatorOptions;
 	private final boolean hasPlayer;
@@ -17,6 +19,8 @@ public class LevelDatNbt {
 		try {
 			CompoundTag dataTag = readDataTag(root);
 			this.seed = readRandomSeed(dataTag);
+			this.worldSpawn = CoordinatesInWorld.from(readSpawnX(dataTag),
+					readSpawnZ(dataTag));
 			if (hasGeneratorName(dataTag)) {
 				this.worldType = WorldType.from(readGeneratorName(dataTag));
 				if (worldType == WorldType.CUSTOMIZED) {
@@ -39,8 +43,18 @@ public class LevelDatNbt {
 	}
 
 	private long readRandomSeed(CompoundTag dataTag) {
-		return (Long) dataTag.getValue().get(NBTTagKeys.TAG_KEY_RANDOM_SEED)
-				.getValue();
+		return NBTUtils.getLongValue(dataTag.getValue().get(
+				NBTTagKeys.TAG_KEY_RANDOM_SEED));
+	}
+
+	private long readSpawnX(CompoundTag dataTag) {
+		return NBTUtils.getLongValue(dataTag.getValue().get(
+				NBTTagKeys.TAG_KEY_SPAWN_X));
+	}
+
+	private long readSpawnZ(CompoundTag dataTag) {
+		return NBTUtils.getLongValue(dataTag.getValue().get(
+				NBTTagKeys.TAG_KEY_SPAWN_Z));
 	}
 
 	private boolean hasGeneratorName(CompoundTag dataTag) {
@@ -63,6 +77,10 @@ public class LevelDatNbt {
 
 	public long getSeed() {
 		return seed;
+	}
+
+	public CoordinatesInWorld getWorldSpawn() {
+		return worldSpawn;
 	}
 
 	public WorldType getWorldType() {
