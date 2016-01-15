@@ -2,28 +2,21 @@ package amidst.mojangapi.world.icon.producer;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
-import amidst.mojangapi.world.oracle.BiomeDataOracle;
+import amidst.mojangapi.world.oracle.WorldSpawnOracle;
 
 @ThreadSafe
 public class SpawnProducer extends CachedWorldIconProducer {
-	private final long seed;
-	private final BiomeDataOracle biomeDataOracle;
-	private final List<Biome> validBiomes;
+	private final WorldSpawnOracle oracle;
 
-	public SpawnProducer(long seed, BiomeDataOracle biomeDataOracle,
-			List<Biome> validBiomes) {
-		this.seed = seed;
-		this.biomeDataOracle = biomeDataOracle;
-		this.validBiomes = validBiomes;
+	public SpawnProducer(WorldSpawnOracle oracle) {
+		this.oracle = oracle;
 	}
 
 	@Override
@@ -32,7 +25,7 @@ public class SpawnProducer extends CachedWorldIconProducer {
 	}
 
 	private WorldIcon createSpawnWorldIcon() {
-		CoordinatesInWorld spawnLocation = getSpawnCenterInWorldCoordinates();
+		CoordinatesInWorld spawnLocation = oracle.get();
 		if (spawnLocation != null) {
 			return createWorldIcon(spawnLocation);
 		} else {
@@ -48,10 +41,5 @@ public class SpawnProducer extends CachedWorldIconProducer {
 				DefaultWorldIconTypes.SPAWN.getName(),
 				DefaultWorldIconTypes.SPAWN.getImage(), Dimension.OVERWORLD,
 				false);
-	}
-
-	private CoordinatesInWorld getSpawnCenterInWorldCoordinates() {
-		return biomeDataOracle.findValidLocation(0, 0, 256, validBiomes,
-				new Random(seed));
 	}
 }

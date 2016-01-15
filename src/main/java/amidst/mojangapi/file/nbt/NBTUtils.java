@@ -10,6 +10,7 @@ import java.io.IOException;
 import org.jnbt.CompoundTag;
 import org.jnbt.NBTInputStream;
 import org.jnbt.NBTOutputStream;
+import org.jnbt.Tag;
 
 import amidst.documentation.Immutable;
 
@@ -40,5 +41,16 @@ public enum NBTUtils {
 			throws IOException {
 		return new NBTOutputStream(new BufferedOutputStream(
 				new FileOutputStream(file)));
+	}
+
+	public static long getLongValue(Tag tag) {
+		Object value = tag.getValue();
+		if (value instanceof Number) {
+			return ((Number) value).longValue();
+		} else {
+			throw new IllegalArgumentException(
+					"cannot read long value from the class '"
+							+ tag.getClass().getName() + "'");
+		}
 	}
 }
