@@ -3,12 +3,13 @@ package amidst.mojangapi.world.player;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.player.PlayerNbt;
 import amidst.threading.WorkerExecutor;
-import amidst.threading.WorkerWithoutResult;
 
 @ThreadSafe
 public class MovablePlayerList implements Iterable<Player> {
@@ -57,31 +58,30 @@ public class MovablePlayerList implements Iterable<Player> {
 		}
 	}
 
-	private void loadPlayersLater(final ConcurrentLinkedQueue<Player> players,
-			final WorkerExecutor workerExecutor,
-			final Runnable onPlayerFinishedLoading) {
-		workerExecutor.invokeLater(new WorkerWithoutResult<PlayerNbt>() {
-			@Override
-			protected void main() {
-				for (PlayerNbt playerNbt : worldPlayerType
-						.createPlayerNbts(saveDirectory)) {
-					executeFork(playerNbt);
-				}
-			}
+	private void loadPlayersLater(ConcurrentLinkedQueue<Player> players,
+			WorkerExecutor workerExecutor, Runnable onPlayerFinishedLoading) {
+		workerExecutor.run(() -> loadPlayers(workerExecutor, players,
+				onPlayerFinishedLoading));
+	}
 
-			@Override
-			protected void fork(PlayerNbt playerNbt) {
-				Player player = playerNbt.createPlayer(playerInformationCache);
-				if (player.tryLoadLocation()) {
-					players.offer(player);
-				}
-			}
+	@CalledOnlyBy(AmidstThread.WORKER)
+	private void loadPlayers(WorkerExecutor workerExecutor,
+			ConcurrentLinkedQueue<Player> players,
+			Runnable onPlayerFinishedLoading) {
+		for (PlayerNbt playerNbt : worldPlayerType
+				.createPlayerNbts(saveDirectory)) {
+			workerExecutor.run(() -> loadPlayer(players, playerNbt),
+					onPlayerFinishedLoading);
+		}
+	}
 
-			@Override
-			protected void onForkFinished() {
-				onPlayerFinishedLoading.run();
-			}
-		});
+	@CalledOnlyBy(AmidstThread.WORKER)
+	private void loadPlayer(ConcurrentLinkedQueue<Player> players,
+			PlayerNbt playerNbt) {
+		Player player = playerNbt.createPlayer(playerInformationCache);
+		if (player.tryLoadLocation()) {
+			players.offer(player);
+		}
 	}
 
 	public boolean canSave() {
