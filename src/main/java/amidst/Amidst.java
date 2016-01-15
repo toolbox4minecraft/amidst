@@ -22,8 +22,6 @@ import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 
 @NotThreadSafe
 public class Amidst {
-	private static final String UNCAUGHT_EXCEPTION_ERROR_MESSAGE = "Amidst has encounted an uncaught exception on thread: ";
-
 	@CalledOnlyBy(AmidstThread.STARTUP)
 	public static void main(String args[]) {
 		initUncaughtExceptionHandler();
@@ -34,7 +32,7 @@ public class Amidst {
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread thread, Throwable e) {
-				handleCrash(e, UNCAUGHT_EXCEPTION_ERROR_MESSAGE + thread);
+				handleCrash(e, thread);
 			}
 		});
 	}
@@ -136,12 +134,14 @@ public class Amidst {
 							"Please install Minecraft",
 							JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e) {
-			handleCrash(e, "Amidst crashed!");
+			handleCrash(e, Thread.currentThread());
 		}
 	}
 
 	@CalledByAny
-	private static void handleCrash(Throwable e, String message) {
+	private static void handleCrash(Throwable e, Thread thread) {
+		String message = "Amidst has encounted an uncaught exception on the thread "
+				+ thread;
 		try {
 			Log.crash(e, message);
 			displayCrashWindow(message, Log.getAllMessages());
