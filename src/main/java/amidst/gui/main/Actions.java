@@ -30,7 +30,6 @@ import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
 import amidst.settings.biomecolorprofile.BiomeColorProfile;
 import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
-import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
 public class Actions {
@@ -39,19 +38,16 @@ public class Actions {
 	private final MainWindow mainWindow;
 	private final AtomicReference<ViewerFacade> viewerFacade;
 	private final BiomeColorProfileSelection biomeColorProfileSelection;
-	private final WorkerExecutor workerExecutor;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Actions(Application application, MojangApi mojangApi,
 			MainWindow mainWindow, AtomicReference<ViewerFacade> viewerFacade,
-			BiomeColorProfileSelection biomeColorProfileSelection,
-			WorkerExecutor workerExecutor) {
+			BiomeColorProfileSelection biomeColorProfileSelection) {
 		this.application = application;
 		this.mojangApi = mojangApi;
 		this.mainWindow = mainWindow;
 		this.viewerFacade = viewerFacade;
 		this.biomeColorProfileSelection = biomeColorProfileSelection;
-		this.workerExecutor = workerExecutor;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -182,7 +178,7 @@ public class Actions {
 	public void reloadPlayerLocations() {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
-			viewerFacade.loadPlayers(workerExecutor);
+			viewerFacade.loadPlayers();
 		}
 	}
 

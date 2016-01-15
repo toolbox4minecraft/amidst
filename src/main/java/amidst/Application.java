@@ -5,7 +5,6 @@ import java.util.prefs.Preferences;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.license.LicenseWindow;
 import amidst.gui.main.MainWindow;
 import amidst.gui.main.UpdatePrompt;
@@ -28,8 +27,8 @@ public class Application {
 	private final AmidstSettings settings;
 	private final MojangApi mojangApi;
 	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
-	private final ViewerFacadeBuilder viewerFacadeBuilder;
 	private final ThreadMaster threadMaster;
+	private final ViewerFacadeBuilder viewerFacadeBuilder;
 
 	private volatile ProfileSelectWindow profileSelectWindow;
 	private volatile MainWindow mainWindow;
@@ -43,8 +42,8 @@ public class Application {
 		this.settings = createSettings();
 		this.mojangApi = createMojangApi();
 		this.biomeColorProfileDirectory = createBiomeColorProfileDirectory();
-		this.viewerFacadeBuilder = createViewerFacadeBuilder();
 		this.threadMaster = createThreadMaster();
+		this.viewerFacadeBuilder = createViewerFacadeBuilder();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -69,13 +68,14 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private ViewerFacadeBuilder createViewerFacadeBuilder() {
-		return new ViewerFacadeBuilder(settings, new LayerBuilder());
+	private ThreadMaster createThreadMaster() {
+		return new ThreadMaster();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private ThreadMaster createThreadMaster() {
-		return new ThreadMaster();
+	private ViewerFacadeBuilder createViewerFacadeBuilder() {
+		return new ViewerFacadeBuilder(settings,
+				threadMaster.getWorkerExecutor());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

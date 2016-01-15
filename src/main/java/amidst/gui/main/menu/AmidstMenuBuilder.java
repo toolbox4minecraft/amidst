@@ -18,6 +18,7 @@ public class AmidstMenuBuilder {
 	private final Actions actions;
 	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
 	private final JMenuBar menuBar;
+	private JMenuItem exportMenu;
 	private JMenu worldMenu;
 	private JMenuItem savePlayerLocationsMenu;
 	private JMenuItem reloadPlayerLocationsMenu;
@@ -32,8 +33,8 @@ public class AmidstMenuBuilder {
 	}
 
 	public AmidstMenu construct() {
-		return new AmidstMenu(menuBar, worldMenu, savePlayerLocationsMenu,
-				reloadPlayerLocationsMenu, layersMenu);
+		return new AmidstMenu(menuBar, exportMenu, worldMenu,
+				savePlayerLocationsMenu, reloadPlayerLocationsMenu, layersMenu);
 	}
 
 	private JMenuBar createMenuBar() {
@@ -54,7 +55,9 @@ public class AmidstMenuBuilder {
 		Menus.item(result, actions::newFromRandom,         "New from random seed",     KeyEvent.VK_R, "ctrl R");
 		Menus.item(result, actions::openWorldFile,         "Open world file ...",      KeyEvent.VK_F, "ctrl O");
 		result.addSeparator();
+		exportMenu =
 		Menus.item(result, actions::export,                "Export ...",               KeyEvent.VK_E, "ctrl X");
+		exportMenu.setEnabled(false);
 		result.addSeparator();
 		Menus.item(result, actions::switchProfile,         "Switch profile ...",       KeyEvent.VK_P, "ctrl W");
 		Menus.item(result, actions::exit,                  "Exit",                     KeyEvent.VK_X, "ctrl Q");

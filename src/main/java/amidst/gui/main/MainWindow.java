@@ -30,7 +30,7 @@ import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
-import amidst.mojangapi.world.export.ExportConfiguration;
+import amidst.mojangapi.world.export.WorldExporterConfiguration;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.WorldPlayerType;
 import amidst.settings.biomecolorprofile.BiomeColorProfileDirectory;
@@ -105,8 +105,7 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Actions createActions() {
 		return new Actions(application, mojangApi, this, viewerFacade,
-				settings.biomeColorProfileSelection,
-				threadMaster.getWorkerExecutor());
+				settings.biomeColorProfileSelection);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -177,7 +176,7 @@ public class MainWindow {
 		contentPane.add(viewerFacade.getComponent(), BorderLayout.CENTER);
 		menuBar.set(viewerFacade);
 		frame.validate();
-		viewerFacade.loadPlayers(threadMaster.getWorkerExecutor());
+		viewerFacade.loadPlayers();
 		threadMaster.setOnRepaintTick(viewerFacade.getOnRepainterTick());
 		threadMaster.setOnFragmentLoadTick(viewerFacade
 				.getOnFragmentLoaderTick());
@@ -338,8 +337,9 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ExportConfiguration askForExportConfiguration() {
-		throw new UnsupportedOperationException(
-				"display window to enter export configuration");
+	public WorldExporterConfiguration askForExportConfiguration() {
+		// TODO: implement me!
+		// TODO: display gui to create configuration
+		return new WorldExporterConfiguration();
 	}
 }
