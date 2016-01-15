@@ -84,7 +84,7 @@ public class LicenseWindow {
 		JFrame frame = new JFrame("Licenses");
 		initContentPane(frame.getContentPane(), licenseList, scrollPane);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.setIconImage(metadata.getIcon());
+		frame.setIconImages(metadata.getIcons());
 		frame.setSize(870, 550);
 		frame.setVisible(true);
 		return frame;

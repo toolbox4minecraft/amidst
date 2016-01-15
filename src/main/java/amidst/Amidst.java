@@ -57,7 +57,12 @@ public class Amidst {
 	private static AmidstMetaData createMetadata() {
 		return AmidstMetaData.from(
 				ResourceLoader.getProperties("/amidst/metadata.properties"),
-				ResourceLoader.getImage("/amidst/icon.png"));
+				ResourceLoader.getImage("/amidst/icon/amidst-16x16.png"),
+				ResourceLoader.getImage("/amidst/icon/amidst-32x32.png"),
+				ResourceLoader.getImage("/amidst/icon/amidst-48x48.png"),
+				ResourceLoader.getImage("/amidst/icon/amidst-64x64.png"),
+				ResourceLoader.getImage("/amidst/icon/amidst-128x128.png"),
+				ResourceLoader.getImage("/amidst/icon/amidst-256x256.png"));
 	}
 
 	private static void run(AmidstMetaData metadata,

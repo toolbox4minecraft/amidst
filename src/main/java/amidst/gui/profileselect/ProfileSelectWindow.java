@@ -53,7 +53,7 @@ public class ProfileSelectWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JFrame createFrame() {
 		JFrame frame = new JFrame("Profile Selector");
-		frame.setIconImage(metadata.getIcon());
+		frame.setIconImages(metadata.getIcons());
 		frame.getContentPane().setLayout(new MigLayout());
 		frame.add(createTitleLabel(), "h 20!,w :400:, growx, pushx, wrap");
 		frame.add(new JScrollPane(profileSelectPanel.getComponent()),
