@@ -17,7 +17,6 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotNull;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.Log;
-import amidst.threading.SimpleWorker;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -106,24 +105,14 @@ public class UpdatePrompt {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void check() {
-		workerExecutor.invokeLater(new SimpleWorker<UpdateInformationJson>() {
-			@Override
-			protected UpdateInformationJson main() throws IOException {
-				return UpdateInformationRetriever.retrieve();
-			}
+		workerExecutor.run(UpdateInformationRetriever::retrieve,
+				this::displayResult, this::onCheckFailed);
+	}
 
-			@Override
-			protected void onMainFinished(
-					UpdateInformationJson updateInformation) {
-				displayResult(updateInformation);
-			}
-
-			@Override
-			protected void onMainFinishedWithException(Exception e) {
-				Log.w("unable to check for updates");
-				displayError(e);
-			}
-		});
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void onCheckFailed(Exception e) {
+		Log.w("unable to check for updates");
+		displayError(e);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

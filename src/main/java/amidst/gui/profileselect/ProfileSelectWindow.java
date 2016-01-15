@@ -22,7 +22,6 @@ import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
-import amidst.threading.SimpleWorker;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -82,25 +81,8 @@ public class ProfileSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void scanAndLoadProfilesLater() {
-		workerExecutor.invokeLater(new SimpleWorker<LauncherProfilesJson>() {
-			@Override
-			protected LauncherProfilesJson main()
-					throws MojangApiParsingException, IOException {
-				return scanAndLoadProfiles();
-			}
-
-			@Override
-			protected void onMainFinished(LauncherProfilesJson launcherProfile) {
-				displayProfiles(launcherProfile);
-			}
-
-			@Override
-			protected void onMainFinishedWithException(Exception e) {
-				Log.e("Error reading launcher_profiles.json");
-				e.printStackTrace();
-				profileSelectPanel.setEmptyMessage("Failed loading");
-			}
-		});
+		workerExecutor.run(this::scanAndLoadProfiles, this::displayProfiles,
+				this::scanAndLoadProfilesFailed);
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
@@ -136,6 +118,13 @@ public class ProfileSelectWindow {
 		} else {
 			profileSelectPanel.selectFirst();
 		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void scanAndLoadProfilesFailed(Exception e) {
+		Log.e("Error reading launcher_profiles.json");
+		e.printStackTrace();
+		profileSelectPanel.setEmptyMessage("Failed loading");
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

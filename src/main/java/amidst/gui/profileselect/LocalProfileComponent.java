@@ -12,8 +12,6 @@ import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
-import amidst.threading.SimpleWorker;
-import amidst.threading.SimpleWorkerWithoutResult;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -46,28 +44,26 @@ public class LocalProfileComponent extends ProfileComponent {
 	private void initDirectoriesLater() {
 		isSearching = true;
 		repaintComponent();
-		workerExecutor.invokeLater(new SimpleWorker<Boolean>() {
-			@Override
-			protected Boolean main() {
-				try {
-					profileDirectory = profile
-							.createValidProfileDirectory(mojangApi);
-					versionDirectory = profile
-							.createValidVersionDirectory(mojangApi);
-					return true;
-				} catch (FileNotFoundException e) {
-					Log.w(e.getMessage());
-					return false;
-				}
-			}
+		workerExecutor.run(this::tryFind, this::findFinished);
+	}
 
-			@Override
-			protected void onMainFinished(Boolean result) {
-				isSearching = false;
-				failedSearching = !result;
-				repaintComponent();
-			}
-		});
+	@CalledOnlyBy(AmidstThread.WORKER)
+	private boolean tryFind() {
+		try {
+			profileDirectory = profile.createValidProfileDirectory(mojangApi);
+			versionDirectory = profile.createValidVersionDirectory(mojangApi);
+			return true;
+		} catch (FileNotFoundException e) {
+			Log.w(e.getMessage());
+			return false;
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void findFinished(boolean isSuccessful) {
+		isSearching = false;
+		failedSearching = !isSuccessful;
+		repaintComponent();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -75,30 +71,30 @@ public class LocalProfileComponent extends ProfileComponent {
 	public void load() {
 		isLoading = true;
 		repaintComponent();
-		workerExecutor.invokeLater(new SimpleWorkerWithoutResult() {
-			@Override
-			protected void main()
-					throws LocalMinecraftInterfaceCreationException {
-				mojangApi.set(profile.getName(), profileDirectory,
-						versionDirectory);
-			}
+		workerExecutor.run(this::tryLoad, this::loadFinished);
+	}
 
-			@Override
-			protected void onMainFinished() {
-				isLoading = false;
-				repaintComponent();
-				application.displayMainWindow();
-			}
+	@CalledOnlyBy(AmidstThread.WORKER)
+	private boolean tryLoad() {
+		try {
+			mojangApi
+					.set(profile.getName(), profileDirectory, versionDirectory);
+			return true;
+		} catch (LocalMinecraftInterfaceCreationException e) {
+			Log.e(e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+	}
 
-			@Override
-			protected void onMainFinishedWithException(Exception e) {
-				Log.e(e.getMessage());
-				e.printStackTrace();
-				isLoading = false;
-				failedLoading = true;
-				repaintComponent();
-			}
-		});
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void loadFinished(boolean isSuccessful) {
+		isLoading = false;
+		failedLoading = !isSuccessful;
+		repaintComponent();
+		if (isSuccessful) {
+			application.displayMainWindow();
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
