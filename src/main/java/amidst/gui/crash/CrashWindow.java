@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.LineBorder;
 
@@ -21,13 +22,14 @@ public class CrashWindow {
 
 	public CrashWindow(String message, String logMessages,
 			final Runnable executeOnClose) {
-		frame = new JFrame("Amidst encountered an unexpected error.");
+		frame = new JFrame("Amidst crashed!");
 		frame.getContentPane().setLayout(new MigLayout());
-		frame.add(new JLabel("Amidst has crashed with the following message:"),
-				"growx, pushx, wrap");
 		frame.add(new JLabel(message), "growx, pushx, wrap");
+		frame.add(new JLabel("Please report this bug on:"),
+				"growx, pushx, wrap");
+		frame.add(createReportingTextField(), "growx, pushx, wrap");
 		frame.add(createLogMessagesScrollPane(logMessages), "grow, push");
-		frame.setSize(500, 400);
+		frame.setSize(800, 600);
 		frame.setVisible(true);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
@@ -36,6 +38,14 @@ public class CrashWindow {
 				executeOnClose.run();
 			}
 		});
+	}
+
+	private JTextField createReportingTextField() {
+		JTextField result = new JTextField(
+				"https://github.com/toolbox4minecraft/amidst/issues/new");
+		result.setEditable(false);
+		result.selectAll();
+		return result;
 	}
 
 	private JScrollPane createLogMessagesScrollPane(String logMessages) {
