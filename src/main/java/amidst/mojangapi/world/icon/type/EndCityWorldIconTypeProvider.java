@@ -39,13 +39,17 @@ public class EndCityWorldIconTypeProvider implements
 	 */
 	private DefaultWorldIconTypes hasSuitableIslandFoundation(int chunkX,
 			int chunkY, List<EndIsland> endIslands) {
+		
+		DefaultWorldIconTypes result = null;
+		
 		for (EndIsland island : endIslands) {
 			float influence = island.influenceAtChunk(chunkX, chunkY);
 			if (influence >= 0.0) {
-				return getResult(influence);
+				result = getResult(influence);
+				if (result == DefaultWorldIconTypes.END_CITY) break;
 			}
 		}
-		return null;
+		return result;
 	}
 
 	private DefaultWorldIconTypes getResult(float influence) {
