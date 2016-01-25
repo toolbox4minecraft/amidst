@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import amidst.devtools.settings.DevToolsSettings;
 import amidst.mojangapi.file.FilenameFactory;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
