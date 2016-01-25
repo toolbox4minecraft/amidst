@@ -32,30 +32,31 @@ public enum ResourceLoader {
 	}
 
 	public static Properties getProperties(String name) {
-		Properties properties = new Properties();
-		try {
-			properties.load(getResourceAsStream(name));
+		try (InputStream stream = getResourceAsStream(name)) {
+			Properties properties = new Properties();
+			properties.load(stream);
+			return properties;
 		} catch (IOException e) {
 			// This is always a developer error, because a resource was not
 			// included in the jar file.
 			throw new IllegalArgumentException(e);
 		}
-		return properties;
 	}
 
 	public static String getResourceAsString(String name) throws IOException {
-		InputStreamReader reader = new InputStreamReader(
-				getResourceAsStream(name), StandardCharsets.UTF_8);
-		char[] buffer = new char[1024];
-		int length;
-		StringBuilder result = new StringBuilder();
-		while ((length = reader.read(buffer)) != -1) {
-			result.append(buffer, 0, length);
+		try (InputStreamReader reader = new InputStreamReader(
+				getResourceAsStream(name), StandardCharsets.UTF_8)) {
+			char[] buffer = new char[1024];
+			int length;
+			StringBuilder result = new StringBuilder();
+			while ((length = reader.read(buffer)) != -1) {
+				result.append(buffer, 0, length);
+			}
+			return result.toString();
 		}
-		return result.toString();
 	}
 
-	private static InputStream getResourceAsStream(String filename) {
+	public static InputStream getResourceAsStream(String filename) {
 		return new BufferedInputStream(
 				ResourceLoader.class.getResourceAsStream(filename));
 	}

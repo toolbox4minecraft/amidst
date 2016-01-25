@@ -20,16 +20,21 @@ public class BiomeDataOracle {
 		this.minecraftInterface = minecraftInterface;
 	}
 
-	public void populateArrayUsingQuarterResolution(CoordinatesInWorld corner,
-			short[][] result) {
+	public void populateArray(CoordinatesInWorld corner, short[][] result,
+			boolean useQuarterResolution) {
+		Resolution resolution = Resolution.from(useQuarterResolution);
 		int width = result.length;
 		if (width > 0) {
 			int height = result[0].length;
-			int left = (int) corner.getXAs(Resolution.QUARTER);
-			int top = (int) corner.getYAs(Resolution.QUARTER);
+			int left = (int) corner.getXAs(resolution);
+			int top = (int) corner.getYAs(resolution);
 			try {
-				copyToResult(result, width, height,
-						getQuarterResolutionBiomeData(left, top, width, height));
+				copyToResult(
+						result,
+						width,
+						height,
+						getBiomeData(left, top, width, height,
+								useQuarterResolution));
 			} catch (MinecraftInterfaceException e) {
 				Log.e(e.getMessage());
 				e.printStackTrace();
@@ -37,7 +42,7 @@ public class BiomeDataOracle {
 		}
 	}
 
-	private void copyToResult(short[][] result, int width, int height,
+	public static void copyToResult(short[][] result, int width, int height,
 			int[] biomeData) {
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
@@ -46,7 +51,7 @@ public class BiomeDataOracle {
 		}
 	}
 
-	private int getBiomeDataIndex(int x, int y, int width) {
+	public static int getBiomeDataIndex(int x, int y, int width) {
 		return x + y * width;
 	}
 
