@@ -40,7 +40,8 @@ public class DebugWidget extends MultilineTextWidget {
 					"Recycle Queue Size: " + fragmentManager.getRecycleQueueSize(),
 					"",
 					"Viewer:",
-					"Size: " + columns + "x" + rows + " [" + (columns * rows) + "]"
+					"Size: " + columns + "x" + rows + " [" + (columns * rows) + "]",
+					String.format("2D Accelerated: %1$.1f%%", 100.0f * this.getGraphicsAccelerationRatio())
 			);
 			// @formatter:on
 		} else {

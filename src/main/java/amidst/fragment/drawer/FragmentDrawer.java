@@ -11,6 +11,7 @@ import amidst.fragment.layer.LayerDeclaration;
 @NotThreadSafe
 public abstract class FragmentDrawer {
 	protected final LayerDeclaration declaration;
+	protected final Graphics2DAccelerationCounter accelerationCounter = new Graphics2DAccelerationCounter(); 
 
 	public FragmentDrawer(LayerDeclaration declaration) {
 		this.declaration = declaration;
@@ -28,4 +29,9 @@ public abstract class FragmentDrawer {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public abstract void draw(Fragment fragment, Graphics2D g2d, float time);
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public Graphics2DAccelerationCounter getAccelerationCounter() {
+		return accelerationCounter;
+	}	
 }

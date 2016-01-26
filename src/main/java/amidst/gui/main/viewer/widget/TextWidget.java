@@ -25,7 +25,7 @@ public abstract class TextWidget extends Widget {
 		String newText = updateText();
 		if (newText != null && !newText.equals(text)) {
 			text = newText;
-			setWidth(fontMetrics.stringWidth(text) + 20);
+			setWidth(fontMetrics.stringWidth(text) + getMarginLeft() + getMarginRight());
 		}
 		isVisible = newText != null;
 	}
@@ -33,7 +33,7 @@ public abstract class TextWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected void doDraw(Graphics2D g2d) {
-		g2d.drawString(text, getX() + 10, getY() + 20);
+		g2d.drawString(text, getX() + getMarginLeft(), getY() + 20);
 	}
 
 	@Override
@@ -41,6 +41,16 @@ public abstract class TextWidget extends Widget {
 		return isVisible;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
+	protected int getMarginLeft() {
+		return 10;
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	protected int getMarginRight() {
+		return 10;
+	}	
+	
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected abstract String updateText();
 }

@@ -20,6 +20,7 @@ import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentGraphItem;
 import amidst.fragment.drawer.FragmentDrawer;
+import amidst.fragment.drawer.Graphics2DAccelerationCounter;
 import amidst.gui.main.viewer.widget.Widget;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.Resolution;
@@ -59,6 +60,7 @@ public class Drawer {
 	private final TexturePaint voidTexturePaint;
 
 	private Graphics2D g2d;
+	private Graphics2DAccelerationCounter accelerationCounter = new Graphics2DAccelerationCounter();
 	private int viewerWidth;
 	private int viewerHeight;
 	private Point mousePosition;
@@ -66,6 +68,7 @@ public class Drawer {
 
 	private long lastTime = System.currentTimeMillis();
 	private float time;
+	private float gfxAccelerationRatio = 0;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Drawer(FragmentGraph graph,
@@ -93,6 +96,7 @@ public class Drawer {
 		this.mousePosition = mousePosition;
 		this.widgetFontMetrics = widgetFontMetrics;
 		this.time = 0;
+		this.gfxAccelerationRatio = 0;
 		updateTranslator();
 		clear();
 		drawFragments();
@@ -108,6 +112,7 @@ public class Drawer {
 		this.mousePosition = mousePosition;
 		this.widgetFontMetrics = widgetFontMetrics;
 		this.time = calculateTimeSpanSinceLastDrawInSeconds();
+		updateGraphicsAccelerationRatio();
 		updateZoom();
 		updateMovement();
 		updateTranslator();
@@ -123,6 +128,19 @@ public class Drawer {
 		float result = Math.min(Math.max(0, currentTime - lastTime), 100) / 1000.0f;
 		lastTime = currentTime;
 		return result;
+	}
+	
+	/**
+	 * Updates the value of this.gfxAccelerationRatio if enough statistics
+	 * have been collected.
+	 */
+	@CalledOnlyBy(AmidstThread.EDT)		
+	private void updateGraphicsAccelerationRatio() {
+		
+		if (accelerationCounter.getOperationCount() > 500) {
+			this.gfxAccelerationRatio = accelerationCounter.AcceleratedRatio();
+			accelerationCounter.Clear();
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -209,6 +227,11 @@ public class Drawer {
 					updateLayerMatrix(fragmentGraphItem,
 							graph.getFragmentsPerRow());
 				}
+				
+				// Sweep any AccelerationCounter values from the fragment drawer 
+				// into our tally.
+				accelerationCounter.AddFrom(drawer.getAccelerationCounter());
+				drawer.getAccelerationCounter().Clear();
 			}
 		}
 		setAlphaComposite(1.0f);
@@ -243,6 +266,15 @@ public class Drawer {
 		g2d.drawImage(DROP_SHADOW_BOTTOM, 10, height10, width20, 10, null);
 		g2d.drawImage(DROP_SHADOW_LEFT, 0, 10, 10, height20, null);
 		g2d.drawImage(DROP_SHADOW_RIGHT, width10, 10, 10, height20, null);
+		
+		accelerationCounter.LogOperationPerformed(DROP_SHADOW_TOP_LEFT);
+		accelerationCounter.LogOperationPerformed(DROP_SHADOW_TOP_RIGHT);
+		accelerationCounter.LogOperationPerformed(DROP_SHADOW_BOTTOM_LEFT);
+		accelerationCounter.LogOperationPerformed(DROP_SHADOW_BOTTOM_RIGHT);
+		accelerationCounter.LogOperationPerformed(DROP_SHADOW_TOP);
+		accelerationCounter.LogOperationPerformed(DROP_SHADOW_BOTTOM);
+		accelerationCounter.LogOperationPerformed(DROP_SHADOW_LEFT);
+		accelerationCounter.LogOperationPerformed(DROP_SHADOW_RIGHT);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -251,7 +283,7 @@ public class Drawer {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		for (Widget widget : widgets) {
 			widget.update(viewerWidth, viewerHeight, mousePosition,
-					widgetFontMetrics, time);
+					widgetFontMetrics, time, gfxAccelerationRatio);
 			if (widget.isVisible()) {
 				setAlphaComposite(widget.getAlpha());
 				widget.draw(g2d);
