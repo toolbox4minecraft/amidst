@@ -63,8 +63,6 @@ public class ProfileSelectWindow {
 		// The preferred height should allow the dialog to fit easily on a 720p
 		// display, while being nicely divisible by ProfileComponent's height
 		// of 40 (so 520 again then?).
-		// +1 is added to preferredWidth because if I don't then preferredWidth
-		// is one pixel too small and a horizontal scrollbar is created
 		int preferredWidth  = 
 			ProfileComponent.getDefaultPreferredSize().width + 
 			(Integer)UIManager.get("ScrollBar.width"); 
