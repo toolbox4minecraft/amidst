@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
@@ -56,8 +57,27 @@ public class ProfileSelectWindow {
 		frame.setIconImages(metadata.getIcons());
 		frame.getContentPane().setLayout(new MigLayout());
 		frame.add(createTitleLabel(), "h 20!,w :400:, growx, pushx, wrap");
-		frame.add(new JScrollPane(profileSelectPanel.getComponent()),
-				"grow, push, h 80::");
+
+		// The preferred width should be at least a scrollbar-width wider than
+        // the ProfileComponent's preferredSize width of 500 (so 520?).
+        // The preferred height should allow the dialog to fit easily on a 720p
+        // display, while being nicely divisible by ProfileComponent's height
+        // of 40 (so 520 again then?).
+		// +1 is added to preferredWidth because if I don't then preferredWidth
+		// is one pixel too small and a horizontal scrollbar is created
+		int preferredWidth  = 
+			ProfileComponent.getDefaultPreferredSize().width + 
+			(Integer)UIManager.get("ScrollBar.width"); 
+		int preferredHeight = ProfileComponent.getDefaultPreferredSize().height * 13;
+
+		JScrollPane scrollPane = new JScrollPane(profileSelectPanel.getComponent());
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		frame.add(
+			scrollPane,
+			"grow, push, w :" + preferredWidth + ":, h 80:" + preferredHeight + ":" 
+		);    
+		
 		frame.pack();
 		frame.addKeyListener(profileSelectPanel.createKeyListener());
 		frame.addWindowListener(new WindowAdapter() {

@@ -30,8 +30,8 @@ public abstract class ProfileComponent {
 
 		@CalledOnlyBy(AmidstThread.EDT)
 		public Component() {
-			this.setMinimumSize(new Dimension(300, 40));
-			this.setPreferredSize(new Dimension(500, 40));
+			this.setMinimumSize(ProfileComponent.getDefaultMinimumSize());
+			this.setPreferredSize(ProfileComponent.getDefaultPreferredSize());
 		}
 
 		@CalledOnlyBy(AmidstThread.EDT)
@@ -141,6 +141,14 @@ public abstract class ProfileComponent {
 	protected void initComponent() {
 		this.component = new Component();
 	}
+	
+	public static Dimension getDefaultPreferredSize() {
+		return new Dimension(500, 40);
+	}
+
+	public static Dimension getDefaultMinimumSize() {
+		return new Dimension(300, 40);
+	}	
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean isSelected() {
