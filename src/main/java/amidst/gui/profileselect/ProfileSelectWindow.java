@@ -59,10 +59,10 @@ public class ProfileSelectWindow {
 		frame.add(createTitleLabel(), "h 20!,w :400:, growx, pushx, wrap");
 
 		// The preferred width should be at least a scrollbar-width wider than
-        // the ProfileComponent's preferredSize width of 500 (so 520?).
-        // The preferred height should allow the dialog to fit easily on a 720p
-        // display, while being nicely divisible by ProfileComponent's height
-        // of 40 (so 520 again then?).
+		// the ProfileComponent's preferredSize width of 500 (so 520?).
+		// The preferred height should allow the dialog to fit easily on a 720p
+		// display, while being nicely divisible by ProfileComponent's height
+		// of 40 (so 520 again then?).
 		// +1 is added to preferredWidth because if I don't then preferredWidth
 		// is one pixel too small and a horizontal scrollbar is created
 		int preferredWidth  = 
