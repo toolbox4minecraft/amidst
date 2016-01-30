@@ -120,6 +120,14 @@ public class ProfileSelectWindow {
 		createProfileComponents(launcherProfile);
 		restoreSelection();
 		frame.pack();
+
+		if (launcherProfile.getProfiles().isEmpty()) {
+			// This is an uncommon occurrence - most situations that 
+			// result in no profiles being found will also result in 
+			// scanAndLoadProfilesFailed() being invoked.
+			Log.w("No profiles found in launcher_profiles.json");
+			profileSelectPanel.setEmptyMessage("No profiles found");					
+		}		
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
