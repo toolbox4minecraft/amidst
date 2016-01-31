@@ -31,7 +31,8 @@ public abstract class ProfileComponent {
 		@CalledOnlyBy(AmidstThread.EDT)
 		public Component() {
 			this.setMinimumSize(new Dimension(300, 40));
-			this.setPreferredSize(new Dimension(500, 40));
+			this.setPreferredSize(new Dimension(PREFERRED_WIDTH,
+					PREFERRED_HEIGHT));
 		}
 
 		@CalledOnlyBy(AmidstThread.EDT)
@@ -128,6 +129,9 @@ public abstract class ProfileComponent {
 	private static final Color LOADING_BG_COLOR = new Color(112, 203, 91);
 	private static final Color DEFAULT_BG_COLOR = Color.white;
 	private static final Color FAILED_BG_COLOR = new Color(250, 160, 160);
+
+	public static final int PREFERRED_WIDTH = 500;
+	public static final int PREFERRED_HEIGHT = 40;
 
 	private Component component;
 	private boolean isSelected = false;
