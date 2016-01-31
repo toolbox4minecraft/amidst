@@ -22,7 +22,6 @@ import amidst.fragment.FragmentGraphItem;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.gui.main.viewer.widget.Widget;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.settings.Setting;
 
 @NotThreadSafe
@@ -145,7 +144,11 @@ public class Drawer {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void clear() {
-		g2d.setColor(Color.black);
+		if (dimensionSetting.get().equals(Dimension.END)) {
+			g2d.setPaint(voidTexturePaint);
+		} else {
+			g2d.setColor(Color.black);
+		}
 		g2d.fillRect(0, 0, viewerWidth, viewerHeight);
 	}
 
@@ -166,7 +169,6 @@ public class Drawer {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		AffineTransform originalGraphicsTransform = g2d.getTransform();
 		initOriginalLayerMatrix(originalGraphicsTransform);
-		drawVoidTexture();
 		drawLayers();
 		g2d.setTransform(originalGraphicsTransform);
 	}
@@ -179,18 +181,6 @@ public class Drawer {
 		originalLayerMatrix.translate(translator.getLeftOnScreen(),
 				translator.getTopOnScreen());
 		originalLayerMatrix.scale(scale, scale);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void drawVoidTexture() {
-		if (dimensionSetting.get().equals(Dimension.END)) {
-			g2d.setTransform(originalLayerMatrix);
-			g2d.scale(4, 4);
-			g2d.setPaint(voidTexturePaint);
-			int stepsPerFragment = Resolution.QUARTER.getStepsPerFragment();
-			g2d.fillRect(0, 0, stepsPerFragment * graph.getFragmentsPerRow(),
-					stepsPerFragment * graph.getFragmentsPerColumn());
-		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
