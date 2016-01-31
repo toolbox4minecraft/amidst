@@ -69,7 +69,6 @@ public abstract class Widget {
 	private int viewerWidth;
 	private int viewerHeight;
 	private Point mousePosition;
-	private float graphicsAccelerationRatio;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected Widget(CornerAnchorPoint anchor) {
@@ -78,11 +77,10 @@ public abstract class Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void update(int viewerWidth, int viewerHeight, Point mousePosition,
-			FontMetrics fontMetrics, float time, float graphicsAccelerationRatio) {
+			FontMetrics fontMetrics, float time) {
 		this.viewerWidth = viewerWidth;
 		this.viewerHeight = viewerHeight;
 		this.mousePosition = mousePosition;
-		this.graphicsAccelerationRatio = graphicsAccelerationRatio;
 		updateAlpha(time);
 		doUpdate(fontMetrics, time);
 		updatePosition();
@@ -338,11 +336,6 @@ public abstract class Widget {
 		return mousePosition;
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	protected float getGraphicsAccelerationRatio() {
-		return graphicsAccelerationRatio;
-	}	
-	
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected abstract void doUpdate(FontMetrics fontMetrics, float time);
 

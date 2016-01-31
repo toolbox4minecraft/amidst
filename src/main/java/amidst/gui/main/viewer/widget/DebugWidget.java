@@ -8,6 +8,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
+import amidst.gui.main.viewer.Graphics2DAccelerationCounter;
 import amidst.settings.Setting;
 
 @NotThreadSafe
@@ -15,14 +16,17 @@ public class DebugWidget extends MultilineTextWidget {
 	private final FragmentGraph graph;
 	private final FragmentManager fragmentManager;
 	private final Setting<Boolean> isVisibleSetting;
+	private final Graphics2DAccelerationCounter accelerationCounter;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public DebugWidget(CornerAnchorPoint anchor, FragmentGraph graph,
-			FragmentManager fragmentManager, Setting<Boolean> isVisibleSetting) {
+			FragmentManager fragmentManager, Setting<Boolean> isVisibleSetting,
+			Graphics2DAccelerationCounter accelerationCounter) {
 		super(anchor);
 		this.graph = graph;
 		this.fragmentManager = fragmentManager;
 		this.isVisibleSetting = isVisibleSetting;
+		this.accelerationCounter = accelerationCounter;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -41,7 +45,7 @@ public class DebugWidget extends MultilineTextWidget {
 					"",
 					"Viewer:",
 					"Size: " + columns + "x" + rows + " [" + (columns * rows) + "]",
-					String.format("2D Accelerated: %1$.1f%%", 100.0f * this.getGraphicsAccelerationRatio())
+					String.format("2D Accelerated: %1$.1f%%", accelerationCounter.getAcceleratedPercentage())
 			);
 			// @formatter:on
 		} else {

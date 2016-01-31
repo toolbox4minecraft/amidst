@@ -40,10 +40,11 @@ public class ViewerFacadeBuilder {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public ViewerFacade create(World world, Actions actions) {
+		Graphics2DAccelerationCounter accelerationCounter = new Graphics2DAccelerationCounter();
 		Movement movement = new Movement(settings.smoothScrolling);
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
 		LayerManager layerManager = layerBuilder.create(settings, world,
-				biomeSelection, worldIconSelection, zoom);
+				biomeSelection, worldIconSelection, zoom, accelerationCounter);
 		FragmentGraph graph = new FragmentGraph(layerManager.getDeclarations(),
 				fragmentManager);
 		FragmentGraphToScreenTranslator translator = new FragmentGraphToScreenTranslator(
@@ -53,10 +54,11 @@ public class ViewerFacadeBuilder {
 		LayerReloader layerReloader = layerManager.createLayerReloader(world);
 		WidgetBuilder widgetBuilder = new WidgetBuilder(world, graph,
 				translator, zoom, biomeSelection, worldIconSelection,
-				layerReloader, fragmentManager, settings);
+				layerReloader, fragmentManager, accelerationCounter, settings);
 		List<Widget> widgets = widgetBuilder.create();
 		Drawer drawer = new Drawer(graph, translator, zoom, movement, widgets,
-				layerManager.getDrawers(), settings.dimension);
+				layerManager.getDrawers(), settings.dimension,
+				accelerationCounter);
 		Viewer viewer = new Viewer(new ViewerMouseListener(new WidgetManager(
 				widgets), graph, translator, zoom, movement, actions), drawer);
 		return new ViewerFacade(world, graph, translator, zoom, viewer,

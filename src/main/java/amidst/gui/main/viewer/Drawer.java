@@ -20,7 +20,6 @@ import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentGraphItem;
 import amidst.fragment.drawer.FragmentDrawer;
-import amidst.fragment.drawer.Graphics2DAccelerationCounter;
 import amidst.gui.main.viewer.widget.Widget;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.Resolution;
@@ -57,10 +56,10 @@ public class Drawer {
 	private final List<Widget> widgets;
 	private final Iterable<FragmentDrawer> drawers;
 	private final Setting<Dimension> dimensionSetting;
+	private final Graphics2DAccelerationCounter accelerationCounter;
 	private final TexturePaint voidTexturePaint;
 
 	private Graphics2D g2d;
-	private Graphics2DAccelerationCounter accelerationCounter = new Graphics2DAccelerationCounter();
 	private int viewerWidth;
 	private int viewerHeight;
 	private Point mousePosition;
@@ -68,14 +67,14 @@ public class Drawer {
 
 	private long lastTime = System.currentTimeMillis();
 	private float time;
-	private float gfxAccelerationRatio = 0;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Drawer(FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			Movement movement, List<Widget> widgets,
 			Iterable<FragmentDrawer> drawers,
-			Setting<Dimension> dimensionSetting) {
+			Setting<Dimension> dimensionSetting,
+			Graphics2DAccelerationCounter accelerationCounter) {
 		this.graph = graph;
 		this.translator = translator;
 		this.zoom = zoom;
@@ -83,6 +82,7 @@ public class Drawer {
 		this.widgets = widgets;
 		this.drawers = drawers;
 		this.dimensionSetting = dimensionSetting;
+		this.accelerationCounter = accelerationCounter;
 		this.voidTexturePaint = new TexturePaint(VOID_TEXTURE, new Rectangle(0,
 				0, VOID_TEXTURE.getWidth(), VOID_TEXTURE.getHeight()));
 	}
@@ -96,7 +96,6 @@ public class Drawer {
 		this.mousePosition = mousePosition;
 		this.widgetFontMetrics = widgetFontMetrics;
 		this.time = 0;
-		this.gfxAccelerationRatio = 0;
 		updateTranslator();
 		clear();
 		drawFragments();
@@ -112,7 +111,6 @@ public class Drawer {
 		this.mousePosition = mousePosition;
 		this.widgetFontMetrics = widgetFontMetrics;
 		this.time = calculateTimeSpanSinceLastDrawInSeconds();
-		updateGraphicsAccelerationRatio();
 		updateZoom();
 		updateMovement();
 		updateTranslator();
@@ -128,19 +126,6 @@ public class Drawer {
 		float result = Math.min(Math.max(0, currentTime - lastTime), 100) / 1000.0f;
 		lastTime = currentTime;
 		return result;
-	}
-	
-	/**
-	 * Updates the value of this.gfxAccelerationRatio if enough statistics
-	 * have been collected.
-	 */
-	@CalledOnlyBy(AmidstThread.EDT)		
-	private void updateGraphicsAccelerationRatio() {
-		
-		if (accelerationCounter.getOperationCount() > 500) {
-			this.gfxAccelerationRatio = accelerationCounter.AcceleratedRatio();
-			accelerationCounter.Clear();
-		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -227,11 +212,6 @@ public class Drawer {
 					updateLayerMatrix(fragmentGraphItem,
 							graph.getFragmentsPerRow());
 				}
-				
-				// Sweep any AccelerationCounter values from the fragment drawer 
-				// into our tally.
-				accelerationCounter.AddFrom(drawer.getAccelerationCounter());
-				drawer.getAccelerationCounter().Clear();
 			}
 		}
 		setAlphaComposite(1.0f);
@@ -258,23 +238,27 @@ public class Drawer {
 		int height10 = viewerHeight - 10;
 		int width20 = viewerWidth - 20;
 		int height20 = viewerHeight - 20;
-		g2d.drawImage(DROP_SHADOW_TOP_LEFT, 0, 0, null);
-		g2d.drawImage(DROP_SHADOW_TOP_RIGHT, width10, 0, null);
-		g2d.drawImage(DROP_SHADOW_BOTTOM_LEFT, 0, height10, null);
-		g2d.drawImage(DROP_SHADOW_BOTTOM_RIGHT, width10, height10, null);
-		g2d.drawImage(DROP_SHADOW_TOP, 10, 0, width20, 10, null);
-		g2d.drawImage(DROP_SHADOW_BOTTOM, 10, height10, width20, 10, null);
-		g2d.drawImage(DROP_SHADOW_LEFT, 0, 10, 10, height20, null);
-		g2d.drawImage(DROP_SHADOW_RIGHT, width10, 10, 10, height20, null);
-		
-		accelerationCounter.LogOperationPerformed(DROP_SHADOW_TOP_LEFT);
-		accelerationCounter.LogOperationPerformed(DROP_SHADOW_TOP_RIGHT);
-		accelerationCounter.LogOperationPerformed(DROP_SHADOW_BOTTOM_LEFT);
-		accelerationCounter.LogOperationPerformed(DROP_SHADOW_BOTTOM_RIGHT);
-		accelerationCounter.LogOperationPerformed(DROP_SHADOW_TOP);
-		accelerationCounter.LogOperationPerformed(DROP_SHADOW_BOTTOM);
-		accelerationCounter.LogOperationPerformed(DROP_SHADOW_LEFT);
-		accelerationCounter.LogOperationPerformed(DROP_SHADOW_RIGHT);
+		drawAndLog(DROP_SHADOW_TOP_LEFT, 0, 0);
+		drawAndLog(DROP_SHADOW_TOP_RIGHT, width10, 0);
+		drawAndLog(DROP_SHADOW_BOTTOM_LEFT, 0, height10);
+		drawAndLog(DROP_SHADOW_BOTTOM_RIGHT, width10, height10);
+		drawAndLog(DROP_SHADOW_TOP, 10, 0, width20, 10);
+		drawAndLog(DROP_SHADOW_BOTTOM, 10, height10, width20, 10);
+		drawAndLog(DROP_SHADOW_LEFT, 0, 10, 10, height20);
+		drawAndLog(DROP_SHADOW_RIGHT, width10, 10, 10, height20);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void drawAndLog(BufferedImage image, int x, int y) {
+		g2d.drawImage(image, x, y, null);
+		accelerationCounter.log(image);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void drawAndLog(BufferedImage image, int x, int y, int width,
+			int height) {
+		g2d.drawImage(image, x, y, width, height, null);
+		accelerationCounter.log(image);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -283,7 +267,7 @@ public class Drawer {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		for (Widget widget : widgets) {
 			widget.update(viewerWidth, viewerHeight, mousePosition,
-					widgetFontMetrics, time, gfxAccelerationRatio);
+					widgetFontMetrics, time);
 			if (widget.isVisible()) {
 				setAlphaComposite(widget.getAlpha());
 				widget.draw(g2d);

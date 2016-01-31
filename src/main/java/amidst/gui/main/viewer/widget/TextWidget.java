@@ -25,7 +25,8 @@ public abstract class TextWidget extends Widget {
 		String newText = updateText();
 		if (newText != null && !newText.equals(text)) {
 			text = newText;
-			setWidth(fontMetrics.stringWidth(text) + getMarginLeft() + getMarginRight());
+			setWidth(fontMetrics.stringWidth(text) + getMarginLeft()
+					+ getMarginRight());
 		}
 		isVisible = newText != null;
 	}
@@ -45,12 +46,12 @@ public abstract class TextWidget extends Widget {
 	protected int getMarginLeft() {
 		return 10;
 	}
-	
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected int getMarginRight() {
 		return 10;
-	}	
-	
+	}
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected abstract String updateText();
 }

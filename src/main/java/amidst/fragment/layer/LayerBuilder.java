@@ -27,6 +27,7 @@ import amidst.fragment.loader.FragmentLoader;
 import amidst.fragment.loader.ImageLoader;
 import amidst.fragment.loader.WorldIconLoader;
 import amidst.gui.main.viewer.BiomeSelection;
+import amidst.gui.main.viewer.Graphics2DAccelerationCounter;
 import amidst.gui.main.viewer.WorldIconSelection;
 import amidst.gui.main.viewer.Zoom;
 import amidst.mojangapi.world.Dimension;
@@ -69,13 +70,14 @@ public class LayerBuilder {
 
 	public LayerManager create(AmidstSettings settings, World world,
 			BiomeSelection biomeSelection,
-			WorldIconSelection worldIconSelection, Zoom zoom) {
+			WorldIconSelection worldIconSelection, Zoom zoom,
+			Graphics2DAccelerationCounter accelerationCounter) {
 		// @formatter:off
 		List<LayerDeclaration> declarations = createDeclarations(settings, world.getVersionFeatures());
 		return new LayerManager(
 				declarations,
 				new LayerLoader(createLoaders(declarations, world, biomeSelection, settings), LayerIds.NUMBER_OF_LAYERS),
-				createDrawers(declarations, zoom, worldIconSelection));
+				createDrawers(declarations, zoom, worldIconSelection, accelerationCounter));
 		// @formatter:on
 	}
 
@@ -142,12 +144,13 @@ public class LayerBuilder {
 	 */
 	private Iterable<FragmentDrawer> createDrawers(
 			List<LayerDeclaration> declarations, Zoom zoom,
-			WorldIconSelection worldIconSelection) {
+			WorldIconSelection worldIconSelection,
+			Graphics2DAccelerationCounter accelerationCounter) {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
 				new AlphaUpdater(   declarations.get(LayerIds.ALPHA)),
-				new ImageDrawer(    declarations.get(LayerIds.BACKGROUND),      Resolution.QUARTER),
-				new ImageDrawer(    declarations.get(LayerIds.SLIME),           Resolution.CHUNK),
+				new ImageDrawer(    declarations.get(LayerIds.BACKGROUND),      Resolution.QUARTER, accelerationCounter),
+				new ImageDrawer(    declarations.get(LayerIds.SLIME),           Resolution.CHUNK,   accelerationCounter),
 				new GridDrawer(     declarations.get(LayerIds.GRID),            zoom),
 				new WorldIconDrawer(declarations.get(LayerIds.SPAWN),           zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.STRONGHOLD),      zoom, worldIconSelection),
