@@ -29,14 +29,14 @@ public class CoordinatesCollectionJson {
 	public static <T> CoordinatesCollectionJson extractWorldIcons(
 			WorldIconProducer<T> producer, String name,
 			Function<CoordinatesInWorld, T> additionalDataFactory,
-			int fragmentsAroundOrigin, int minNumberOfCoordinates) {
+			int fragmentsAroundOrigin, int minimalNumberOfCoordinates) {
 		NameFilteredWorldIconCollector consumer = new NameFilteredWorldIconCollector(
 				name);
 		FragmentCornerWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin)
 				.walk(corner -> producer.produce(corner, consumer,
 						additionalDataFactory.apply(corner)));
 		long[][] coordinatesArray = createArray(consumer.get());
-		if (coordinatesArray.length < minNumberOfCoordinates) {
+		if (coordinatesArray.length < minimalNumberOfCoordinates) {
 			throw new RuntimeException("not enough coordinates for '" + name
 					+ "'");
 		}

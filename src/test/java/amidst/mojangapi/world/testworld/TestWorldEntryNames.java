@@ -19,4 +19,6 @@ public class TestWorldEntryNames {
 	public static final String MINESHAFTS = "mineshafts";
 	public static final String OCEAN_MONUMENTS = "ocean-monuments";
 	public static final String NETHER_FORTRESSES = "nether-fortresses";
+	public static final String LIKELY_END_CITY = "likely-end-city";
+	public static final String POSSIBLE_END_CITY = "possible-end-city";
 }

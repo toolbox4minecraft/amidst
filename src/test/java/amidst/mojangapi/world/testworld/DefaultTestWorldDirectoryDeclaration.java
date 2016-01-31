@@ -22,13 +22,12 @@ public enum DefaultTestWorldDirectoryDeclaration {
 		return INSTANCE.declaration;
 	}
 
-	private static final int MIN_NUMBER_OF_COORDINATES = 5;
+	private static final int MINIMAL_NUMBER_OF_COORDINATES = 5;
 	private static final int OVERWORLD_FRAGMENTS_AROUND_ORIGIN = 10;
 	private static final int END_FRAGMENTS_AROUND_ORIGIN = 4;
 
 	private final TestWorldDirectoryDeclaration declaration = createDeclaration();
 
-	// TODO: add end cities
 	private TestWorldDirectoryDeclaration createDeclaration() {
 		// @formatter:off
 		return TestWorldDirectoryDeclaration.builder()
@@ -107,6 +106,16 @@ public enum DefaultTestWorldDirectoryDeclaration {
 				.deserializer(TestWorldEntrySerializer::readCoordinatesCollection)
 				.extractor(worldIconExtractor(World::getNetherFortressProducer, DefaultWorldIconTypes.NETHER_FORTRESS))
 				.equalityChecker(CoordinatesCollectionJson::equals)
+			.entry(TestWorldEntryNames.LIKELY_END_CITY,   CoordinatesCollectionJson.class)
+				.serializer(TestWorldEntrySerializer::writeJson)
+				.deserializer(TestWorldEntrySerializer::readCoordinatesCollection)
+				.extractor(endCityExtractor(DefaultWorldIconTypes.END_CITY))
+				.equalityChecker(CoordinatesCollectionJson::equals)
+			.entry(TestWorldEntryNames.POSSIBLE_END_CITY, CoordinatesCollectionJson.class)
+				.serializer(TestWorldEntrySerializer::writeJson)
+				.deserializer(TestWorldEntrySerializer::readCoordinatesCollection)
+				.extractor(endCityExtractor(DefaultWorldIconTypes.POSSIBLE_END_CITY))
+				.equalityChecker(CoordinatesCollectionJson::equals)
 			.create();
 		// @formatter:on
 	}
@@ -128,6 +137,15 @@ public enum DefaultTestWorldDirectoryDeclaration {
 			DefaultWorldIconTypes worldIconType) {
 		return world -> CoordinatesCollectionJson.extractWorldIcons(
 				producer.apply(world), worldIconType.getName(), corner -> null,
-				OVERWORLD_FRAGMENTS_AROUND_ORIGIN, MIN_NUMBER_OF_COORDINATES);
+				OVERWORLD_FRAGMENTS_AROUND_ORIGIN,
+				MINIMAL_NUMBER_OF_COORDINATES);
+	}
+
+	private Function<World, CoordinatesCollectionJson> endCityExtractor(
+			DefaultWorldIconTypes worldIconType) {
+		return world -> CoordinatesCollectionJson.extractWorldIcons(
+				world.getEndCityProducer(), worldIconType.getName(),
+				corner -> world.getEndIslandOracle().getAt(corner),
+				END_FRAGMENTS_AROUND_ORIGIN, MINIMAL_NUMBER_OF_COORDINATES);
 	}
 }

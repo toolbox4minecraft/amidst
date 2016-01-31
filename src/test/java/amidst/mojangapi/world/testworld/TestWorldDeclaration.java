@@ -28,7 +28,9 @@ public enum TestWorldDeclaration {
 			TestWorldEntryNames.DESERT_TEMPLES,
 			TestWorldEntryNames.MINESHAFTS,
 			TestWorldEntryNames.OCEAN_MONUMENTS,
-			TestWorldEntryNames.NETHER_FORTRESSES
+			TestWorldEntryNames.NETHER_FORTRESSES,
+			TestWorldEntryNames.LIKELY_END_CITY,
+			TestWorldEntryNames.POSSIBLE_END_CITY
     ),
 	WORLD2(RecognisedVersion.V16w02a, "4805355321235747910", WorldType.DEFAULT,
 			TestWorldEntryNames.METADATA,
@@ -45,7 +47,9 @@ public enum TestWorldDeclaration {
 			TestWorldEntryNames.IGLOOS,
 			TestWorldEntryNames.MINESHAFTS,
 			TestWorldEntryNames.OCEAN_MONUMENTS,
-			TestWorldEntryNames.NETHER_FORTRESSES
+			TestWorldEntryNames.NETHER_FORTRESSES,
+			TestWorldEntryNames.LIKELY_END_CITY,
+			TestWorldEntryNames.POSSIBLE_END_CITY
     );
 	// @formatter:on
 
