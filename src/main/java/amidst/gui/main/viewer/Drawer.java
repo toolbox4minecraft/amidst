@@ -56,6 +56,7 @@ public class Drawer {
 	private final List<Widget> widgets;
 	private final Iterable<FragmentDrawer> drawers;
 	private final Setting<Dimension> dimensionSetting;
+	private final Graphics2DAccelerationCounter accelerationCounter;
 	private final TexturePaint voidTexturePaint;
 
 	private Graphics2D g2d;
@@ -72,7 +73,8 @@ public class Drawer {
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			Movement movement, List<Widget> widgets,
 			Iterable<FragmentDrawer> drawers,
-			Setting<Dimension> dimensionSetting) {
+			Setting<Dimension> dimensionSetting,
+			Graphics2DAccelerationCounter accelerationCounter) {
 		this.graph = graph;
 		this.translator = translator;
 		this.zoom = zoom;
@@ -80,6 +82,7 @@ public class Drawer {
 		this.widgets = widgets;
 		this.drawers = drawers;
 		this.dimensionSetting = dimensionSetting;
+		this.accelerationCounter = accelerationCounter;
 		this.voidTexturePaint = new TexturePaint(VOID_TEXTURE, new Rectangle(0,
 				0, VOID_TEXTURE.getWidth(), VOID_TEXTURE.getHeight()));
 	}
@@ -235,14 +238,27 @@ public class Drawer {
 		int height10 = viewerHeight - 10;
 		int width20 = viewerWidth - 20;
 		int height20 = viewerHeight - 20;
-		g2d.drawImage(DROP_SHADOW_TOP_LEFT, 0, 0, null);
-		g2d.drawImage(DROP_SHADOW_TOP_RIGHT, width10, 0, null);
-		g2d.drawImage(DROP_SHADOW_BOTTOM_LEFT, 0, height10, null);
-		g2d.drawImage(DROP_SHADOW_BOTTOM_RIGHT, width10, height10, null);
-		g2d.drawImage(DROP_SHADOW_TOP, 10, 0, width20, 10, null);
-		g2d.drawImage(DROP_SHADOW_BOTTOM, 10, height10, width20, 10, null);
-		g2d.drawImage(DROP_SHADOW_LEFT, 0, 10, 10, height20, null);
-		g2d.drawImage(DROP_SHADOW_RIGHT, width10, 10, 10, height20, null);
+		drawAndLog(DROP_SHADOW_TOP_LEFT, 0, 0);
+		drawAndLog(DROP_SHADOW_TOP_RIGHT, width10, 0);
+		drawAndLog(DROP_SHADOW_BOTTOM_LEFT, 0, height10);
+		drawAndLog(DROP_SHADOW_BOTTOM_RIGHT, width10, height10);
+		drawAndLog(DROP_SHADOW_TOP, 10, 0, width20, 10);
+		drawAndLog(DROP_SHADOW_BOTTOM, 10, height10, width20, 10);
+		drawAndLog(DROP_SHADOW_LEFT, 0, 10, 10, height20);
+		drawAndLog(DROP_SHADOW_RIGHT, width10, 10, 10, height20);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void drawAndLog(BufferedImage image, int x, int y) {
+		g2d.drawImage(image, x, y, null);
+		accelerationCounter.log(image);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void drawAndLog(BufferedImage image, int x, int y, int width,
+			int height) {
+		g2d.drawImage(image, x, y, width, height, null);
+		accelerationCounter.log(image);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
