@@ -38,6 +38,21 @@ public enum TestWorldDeclaration {
      */
 	WORLD4(RecognisedVersion.V16w02a, "1", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
+    ),
+    
+    /**
+	 * This seed contains all biomes in a 1024 radius around spawn. Source:
+	 * http://www.minecraftforum.net/forums/minecraft-discussion/seeds/2500520-1-8-x-rare-seed-all-biomes-within-1024-blocks
+     */
+	WORLD5(RecognisedVersion.V16w02a, "24922", WorldType.DEFAULT,
+			TestWorldEntryNames.ALL
+    ),
+    
+    /**
+	 * Similar to 24922
+     */
+	WORLD6(RecognisedVersion.V16w02a, "-9223372036681075344", WorldType.DEFAULT,
+			TestWorldEntryNames.ALL
     );
 	// @formatter:on
 
