@@ -76,8 +76,6 @@ public enum DefaultVersionFeatures {
 						false
 				).exact(RecognisedVersion.V12w22a,
 						false
-				).exact(RecognisedVersion.UNKNOWN,
-						false
 				).construct();
 		this.validBiomesForStructure_Spawn = VersionFeature.<Biome> listBuilder()
 				.init(
