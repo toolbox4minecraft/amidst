@@ -9,16 +9,28 @@ import amidst.documentation.Immutable;
 import amidst.fragment.Fragment;
 import amidst.mojangapi.mocking.FragmentCornerWalker;
 import amidst.mojangapi.mocking.NameFilteredWorldIconCollector;
+import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 
 @Immutable
 public class CoordinatesCollectionJson {
-	public static <T> CoordinatesCollectionJson nonEmptyFromWorldIconProducer(
+	public static CoordinatesCollectionJson extractWorldSpawn(World world) {
+		CoordinatesInWorld spawn = world.getSpawnWorldIcon().getCoordinates();
+		return new CoordinatesCollectionJson(
+				new long[][] { createCoordinatesArrayEntry(spawn) });
+	}
+
+	public static CoordinatesCollectionJson extractStrongholds(World world) {
+		List<WorldIcon> strongholds = world.getStrongholdWorldIcons();
+		return new CoordinatesCollectionJson(createArray(strongholds));
+	}
+
+	public static <T> CoordinatesCollectionJson fromWorldIconProducer(
 			WorldIconProducer<T> producer, String name,
 			Function<CoordinatesInWorld, T> additionalDataFactory,
-			int fragmentsAroundOrigin) {
+			int fragmentsAroundOrigin, int minNumberOfCoordinates) {
 		NameFilteredWorldIconCollector consumer = new NameFilteredWorldIconCollector(
 				name);
 		long blocksAroundOrigin = fragmentsAroundOrigin * Fragment.SIZE;
@@ -29,9 +41,9 @@ public class CoordinatesCollectionJson {
 		new FragmentCornerWalker(startCorner, endCorner).walk(producer,
 				consumer, additionalDataFactory);
 		long[][] coordinatesArray = createArray(consumer.get());
-		if (coordinatesArray.length == 0) {
-			throw new RuntimeException("empty coordinates collection for '"
-					+ name + "'");
+		if (coordinatesArray.length < minNumberOfCoordinates) {
+			throw new RuntimeException("not enough coordinates for '" + name
+					+ "'");
 		}
 		return new CoordinatesCollectionJson(coordinatesArray);
 	}

@@ -20,19 +20,19 @@ public enum DefaultTestWorldDirectoryDeclaration {
 		return INSTANCE.declaration;
 	}
 
+	private static final int MIN_NUMBER_OF_COORDINATES = 5;
 	private static final int FRAGMENTS_AROUND_ORIGIN = 10;
 
-	private final TestWorldDirectoryDeclaration declaration = createDeclaration(FRAGMENTS_AROUND_ORIGIN);
+	private final TestWorldDirectoryDeclaration declaration = createDeclaration();
 
 	// TODO: add end cities
-	private TestWorldDirectoryDeclaration createDeclaration(
-			int fragmentsAroundOrigin) {
+	private TestWorldDirectoryDeclaration createDeclaration() {
 		// @formatter:off
 		return TestWorldDirectoryDeclaration.builder()
 			.entry(TestWorldEntryNames.METADATA,                  WorldMetadataJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readMetaData)
-				.extractor(w -> WorldMetadataJson.from(w))
+				.extractor(WorldMetadataJson::from)
 				.skipEqualityCheck()
 			.entry(TestWorldEntryNames.QUARTER_RESOLUTION_BIOME_DATA, BiomeDataJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
@@ -47,52 +47,52 @@ public enum DefaultTestWorldDirectoryDeclaration {
 			.entry(TestWorldEntryNames.SPAWN,             CoordinatesCollectionJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readCoordinatesCollection)
-				.extractor(worldIconExtractor(World::getSpawnProducer,          DefaultWorldIconTypes.SPAWN,           fragmentsAroundOrigin))
+				.extractor(CoordinatesCollectionJson::extractWorldSpawn)
 				.equalityChecker(CoordinatesCollectionJson::equals)
 			.entry(TestWorldEntryNames.STRONGHOLDS,       CoordinatesCollectionJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readCoordinatesCollection)
-				.extractor(worldIconExtractor(World::getStrongholdProducer,     DefaultWorldIconTypes.STRONGHOLD,      fragmentsAroundOrigin))
+				.extractor(CoordinatesCollectionJson::extractStrongholds)
 				.equalityChecker(CoordinatesCollectionJson::equals)
 			.entry(TestWorldEntryNames.VILLAGES,          CoordinatesCollectionJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readCoordinatesCollection)
-				.extractor(worldIconExtractor(World::getVillageProducer,        DefaultWorldIconTypes.VILLAGE,         fragmentsAroundOrigin))
+				.extractor(worldIconExtractor(World::getVillageProducer,        DefaultWorldIconTypes.VILLAGE))
 				.equalityChecker(CoordinatesCollectionJson::equals)
 			.entry(TestWorldEntryNames.WITCH_HUTS,        CoordinatesCollectionJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readCoordinatesCollection)
-				.extractor(worldIconExtractor(World::getTempleProducer,         DefaultWorldIconTypes.WITCH,           fragmentsAroundOrigin))
+				.extractor(worldIconExtractor(World::getTempleProducer,         DefaultWorldIconTypes.WITCH))
 				.equalityChecker(CoordinatesCollectionJson::equals)
 			.entry(TestWorldEntryNames.JUNGLE_TEMPLES,    CoordinatesCollectionJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readCoordinatesCollection)
-				.extractor(worldIconExtractor(World::getTempleProducer,         DefaultWorldIconTypes.JUNGLE,          fragmentsAroundOrigin))
+				.extractor(worldIconExtractor(World::getTempleProducer,         DefaultWorldIconTypes.JUNGLE))
 				.equalityChecker(CoordinatesCollectionJson::equals)
 			.entry(TestWorldEntryNames.DESERT_TEMPLES,    CoordinatesCollectionJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readCoordinatesCollection)
-				.extractor(worldIconExtractor(World::getTempleProducer,         DefaultWorldIconTypes.DESERT,          fragmentsAroundOrigin))
+				.extractor(worldIconExtractor(World::getTempleProducer,         DefaultWorldIconTypes.DESERT))
 				.equalityChecker(CoordinatesCollectionJson::equals)
 			.entry(TestWorldEntryNames.IGLOOS,            CoordinatesCollectionJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readCoordinatesCollection)
-				.extractor(worldIconExtractor(World::getTempleProducer,         DefaultWorldIconTypes.IGLOO,           fragmentsAroundOrigin))
+				.extractor(worldIconExtractor(World::getTempleProducer,         DefaultWorldIconTypes.IGLOO))
 				.equalityChecker(CoordinatesCollectionJson::equals)
 			.entry(TestWorldEntryNames.MINESHAFTS,        CoordinatesCollectionJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readCoordinatesCollection)
-				.extractor(worldIconExtractor(World::getMineshaftProducer,      DefaultWorldIconTypes.MINESHAFT,       fragmentsAroundOrigin))
+				.extractor(worldIconExtractor(World::getMineshaftProducer,      DefaultWorldIconTypes.MINESHAFT))
 				.equalityChecker(CoordinatesCollectionJson::equals)
 			.entry(TestWorldEntryNames.OCEAN_MONUMENTS,   CoordinatesCollectionJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readCoordinatesCollection)
-				.extractor(worldIconExtractor(World::getOceanMonumentProducer,  DefaultWorldIconTypes.OCEAN_MONUMENT,  fragmentsAroundOrigin))
+				.extractor(worldIconExtractor(World::getOceanMonumentProducer,  DefaultWorldIconTypes.OCEAN_MONUMENT))
 				.equalityChecker(CoordinatesCollectionJson::equals)
 			.entry(TestWorldEntryNames.NETHER_FORTRESSES, CoordinatesCollectionJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readCoordinatesCollection)
-				.extractor(worldIconExtractor(World::getNetherFortressProducer, DefaultWorldIconTypes.NETHER_FORTRESS, fragmentsAroundOrigin))
+				.extractor(worldIconExtractor(World::getNetherFortressProducer, DefaultWorldIconTypes.NETHER_FORTRESS))
 				.equalityChecker(CoordinatesCollectionJson::equals)
 			.create();
 		// @formatter:on
@@ -107,11 +107,9 @@ public enum DefaultTestWorldDirectoryDeclaration {
 
 	private Function<World, CoordinatesCollectionJson> worldIconExtractor(
 			Function<World, WorldIconProducer<Void>> producer,
-			DefaultWorldIconTypes worldIconType,
-			int structureFragmentsAroundOrigin) {
-		return world -> CoordinatesCollectionJson
-				.nonEmptyFromWorldIconProducer(producer.apply(world),
-						worldIconType.getName(), corner -> null,
-						structureFragmentsAroundOrigin);
+			DefaultWorldIconTypes worldIconType) {
+		return world -> CoordinatesCollectionJson.fromWorldIconProducer(
+				producer.apply(world), worldIconType.getName(), corner -> null,
+				FRAGMENTS_AROUND_ORIGIN, MIN_NUMBER_OF_COORDINATES);
 	}
 }
