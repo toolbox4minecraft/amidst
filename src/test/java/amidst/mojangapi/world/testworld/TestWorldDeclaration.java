@@ -46,7 +46,7 @@ public enum TestWorldDeclaration {
     );
 	// @formatter:on
 
-	private static final String RESOURCE_PREFIX = "/amidst/mojangapi/world/testdatastorage/";
+	private static final String RESOURCE_PREFIX = "/amidst/mojangapi/world/testworld/storage/";
 	private static final String ZIP_FILE_EXTENSION = ".zip";
 
 	private final RecognisedVersion recognisedVersion;
@@ -64,7 +64,7 @@ public enum TestWorldDeclaration {
 		this.supportedEntryNames = Collections.unmodifiableList(Arrays
 				.asList(supported));
 		this.directory = Paths.get("src", "test", "resources", "amidst",
-				"mojangapi", "world", "testdatastorage",
+				"mojangapi", "world", "testworld", "storage",
 				recognisedVersion.getName(), "" + worldSeed.getLong()).toFile();
 		this.directoryString = RESOURCE_PREFIX + recognisedVersion.getName()
 				+ "/" + worldSeed.getLong() + "/";
