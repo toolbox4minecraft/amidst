@@ -158,15 +158,32 @@ public enum RecognisedVersion {
 	public static RecognisedVersion from(String magicString) {
 		for (RecognisedVersion recognisedVersion : RecognisedVersion.values()) {
 			if (magicString.equals(recognisedVersion.magicString)) {
-				Log.i("Recognised Minecraft Version "
-						+ recognisedVersion.getName()
-						+ " with the magic string \"" + magicString + "\".");
+				logFound(recognisedVersion);
 				return recognisedVersion;
 			}
 		}
 		Log.i("Unable to recognise Minecraft Version with the magic string \""
 				+ magicString + "\".");
 		return RecognisedVersion.UNKNOWN;
+	}
+
+	@NotNull
+	public static RecognisedVersion fromName(String name) {
+		for (RecognisedVersion recognisedVersion : RecognisedVersion.values()) {
+			if (name.equals(recognisedVersion.name)) {
+				logFound(recognisedVersion);
+				return recognisedVersion;
+			}
+		}
+		Log.i("Unable to recognise Minecraft Version with the name \"" + name
+				+ "\".");
+		return RecognisedVersion.UNKNOWN;
+	}
+
+	private static void logFound(RecognisedVersion recognisedVersion) {
+		Log.i("Recognised Minecraft Version " + recognisedVersion.name
+				+ " with the magic string \"" + recognisedVersion.magicString
+				+ "\".");
 	}
 
 	public static boolean isNewerOrEqualTo(RecognisedVersion version1,

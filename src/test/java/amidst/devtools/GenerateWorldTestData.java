@@ -16,8 +16,8 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
-import amidst.mojangapi.world.testdatastorage.TestWorldDeclaration;
-import amidst.mojangapi.world.testdatastorage.WorldTestDataCache;
+import amidst.mojangapi.world.testworld.TestWorldCache;
+import amidst.mojangapi.world.testworld.TestWorldDeclaration;
 
 /**
  * This needs to be placed in the test directory to find the mocking classes.
@@ -71,7 +71,7 @@ public class GenerateWorldTestData {
 		String versionId = version.getId();
 		if (version.tryDownloadClient(prefix)) {
 			try {
-				WorldTestDataCache.createAndPut(declaration,
+				TestWorldCache.createAndPut(declaration,
 						LOCAL_MINECRAFT_INTERFACE_BUILDER
 								.create(createVersionDirectory(versionId)));
 				successful.add(versionId);

@@ -10,17 +10,18 @@ import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.player.PlayerInformation;
-import amidst.mojangapi.world.testdatastorage.TestWorldDeclaration;
-import amidst.mojangapi.world.testdatastorage.WTDEntries;
-import amidst.mojangapi.world.testdatastorage.WorldTestDataZipFileDeclaration;
-import amidst.mojangapi.world.testdatastorage.json.BiomeDataJson;
-import amidst.mojangapi.world.testdatastorage.json.WorldMetadataJson;
+import amidst.mojangapi.world.testworld.TestWorldDeclaration;
+import amidst.mojangapi.world.testworld.TestWorldEntryNames;
+import amidst.mojangapi.world.testworld.file.TestWorldDirectory;
+import amidst.mojangapi.world.testworld.file.TestWorldDirectoryDeclaration;
+import amidst.mojangapi.world.testworld.storage.BiomeDataJson;
+import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
 
 @ThreadSafe
 public class FakeWorldBuilder {
 	public static FakeWorldBuilder create(
-			WorldTestDataZipFileDeclaration zipFileDeclaration) {
-		return new FakeWorldBuilder(createWorldBuilder(), zipFileDeclaration);
+			TestWorldDirectoryDeclaration directoryDeclaration) {
+		return new FakeWorldBuilder(createWorldBuilder(), directoryDeclaration);
 	}
 
 	private static WorldBuilder createWorldBuilder() {
@@ -30,40 +31,42 @@ public class FakeWorldBuilder {
 	}
 
 	private final WorldBuilder builder;
-	private final WorldTestDataZipFileDeclaration zipFileDeclaration;
+	private final TestWorldDirectoryDeclaration directoryDeclaration;
 
 	public FakeWorldBuilder(WorldBuilder builder,
-			WorldTestDataZipFileDeclaration zipFileDeclaration) {
+			TestWorldDirectoryDeclaration directoryDeclaration) {
 		this.builder = builder;
-		this.zipFileDeclaration = zipFileDeclaration;
+		this.directoryDeclaration = directoryDeclaration;
 	}
 
-	public World createRealWorld(TestWorldDeclaration declaration,
+	public World createRealWorld(TestWorldDeclaration worldDeclaration,
 			MinecraftInterface realMinecraftInterface)
 			throws MinecraftInterfaceException {
 		// @formatter:off
 		return builder.fromSeed(
 				realMinecraftInterface,
-				declaration.getWorldSeed(),
-				declaration.getWorldType());
+				worldDeclaration.getWorldSeed(),
+				worldDeclaration.getWorldType());
 		// @formatter:on
 	}
 
-	public World createFakeWorld(Map<String, Object> data)
+	public World createFakeWorld(TestWorldDirectory worldDeclaration)
 			throws MinecraftInterfaceException {
+		Map<String, Object> data = worldDeclaration.getData();
 		// @formatter:off
-		WorldMetadataJson worldMetadata = get(WTDEntries.METADATA,                  WorldMetadataJson.class, data);
-		BiomeDataJson quarterBiomeData =  get(WTDEntries.QUARTER_RESOLUTION_BIOME_DATA, BiomeDataJson.class, data);
-		BiomeDataJson fullBiomeData =     get(WTDEntries.FULL_RESOLUTION_BIOME_DATA,    BiomeDataJson.class, data);
+		WorldMetadataJson worldMetadata = get(TestWorldEntryNames.METADATA,                  WorldMetadataJson.class, data);
+		BiomeDataJson quarterBiomeData =  get(TestWorldEntryNames.QUARTER_RESOLUTION_BIOME_DATA, BiomeDataJson.class, data);
+		BiomeDataJson fullBiomeData =     get(TestWorldEntryNames.FULL_RESOLUTION_BIOME_DATA,    BiomeDataJson.class, data);
 		// @formatter:on
 		return createFakeWorld(worldMetadata, quarterBiomeData, fullBiomeData);
 	}
 
 	private <T> T get(String name, Class<T> clazz, Map<String, Object> data) {
-		return zipFileDeclaration.get(name, clazz).extractFrom(data);
+		return directoryDeclaration.getEntryDeclaration(name, clazz)
+				.extractFromDataMap(data);
 	}
 
-	public World createFakeWorld(WorldMetadataJson worldMetadata,
+	private World createFakeWorld(WorldMetadataJson worldMetadata,
 			BiomeDataJson quarterBiomeData, BiomeDataJson fullBiomeData)
 			throws MinecraftInterfaceException {
 		// @formatter:off

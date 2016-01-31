@@ -100,6 +100,7 @@ public class WorldBuilder {
 				worldType,
 				generatorOptions,
 				movablePlayerList,
+				minecraftInterface.getRecognisedVersion(),
 				versionFeatures,
 				biomeDataOracle,
 				EndIslandOracle.from(  seed),
