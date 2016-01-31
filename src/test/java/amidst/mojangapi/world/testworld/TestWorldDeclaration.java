@@ -13,44 +13,16 @@ import amidst.mojangapi.world.WorldType;
 
 @Immutable
 public enum TestWorldDeclaration {
+	/**
+	 * Not all worlds will have data in all entries. However, we should ensure
+	 * that the behavior is kept like this.
+	 */
 	// @formatter:off
 	WORLD1(RecognisedVersion.V1_8_9, "amidst-test-seed", WorldType.DEFAULT,
-			TestWorldEntryNames.METADATA,
-			TestWorldEntryNames.QUARTER_RESOLUTION_BIOME_DATA,
-			TestWorldEntryNames.FULL_RESOLUTION_BIOME_DATA,
-			TestWorldEntryNames.END_ISLANDS,
-			TestWorldEntryNames.SLIME_CHUNKS,
-			TestWorldEntryNames.SPAWN,
-			TestWorldEntryNames.STRONGHOLDS,
-			TestWorldEntryNames.VILLAGES,
-			TestWorldEntryNames.WITCH_HUTS,
-			TestWorldEntryNames.JUNGLE_TEMPLES,
-			TestWorldEntryNames.DESERT_TEMPLES,
-			TestWorldEntryNames.IGLOOS,
-			TestWorldEntryNames.MINESHAFTS,
-			TestWorldEntryNames.OCEAN_MONUMENTS,
-			TestWorldEntryNames.NETHER_FORTRESSES,
-			TestWorldEntryNames.LIKELY_END_CITY,
-			TestWorldEntryNames.POSSIBLE_END_CITY
+			TestWorldEntryNames.ALL
     ),
 	WORLD2(RecognisedVersion.V16w02a, "4805355321235747910", WorldType.DEFAULT,
-			TestWorldEntryNames.METADATA,
-			TestWorldEntryNames.QUARTER_RESOLUTION_BIOME_DATA,
-			TestWorldEntryNames.FULL_RESOLUTION_BIOME_DATA,
-			TestWorldEntryNames.END_ISLANDS,
-			TestWorldEntryNames.SLIME_CHUNKS,
-			TestWorldEntryNames.SPAWN,
-			TestWorldEntryNames.STRONGHOLDS,
-			TestWorldEntryNames.VILLAGES,
-			TestWorldEntryNames.WITCH_HUTS,
-			TestWorldEntryNames.JUNGLE_TEMPLES,
-			TestWorldEntryNames.DESERT_TEMPLES,
-			TestWorldEntryNames.IGLOOS,
-			TestWorldEntryNames.MINESHAFTS,
-			TestWorldEntryNames.OCEAN_MONUMENTS,
-			TestWorldEntryNames.NETHER_FORTRESSES,
-			TestWorldEntryNames.LIKELY_END_CITY,
-			TestWorldEntryNames.POSSIBLE_END_CITY
+			TestWorldEntryNames.ALL
     );
 	// @formatter:on
 
