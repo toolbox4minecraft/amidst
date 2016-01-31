@@ -4,7 +4,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -23,7 +22,6 @@ import amidst.fragment.FragmentGraphItem;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.gui.main.viewer.widget.Widget;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.settings.Setting;
 
 @NotThreadSafe
@@ -146,11 +144,10 @@ public class Drawer {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void clear() {
-		
 		if (dimensionSetting.get().equals(Dimension.END)) {
 			g2d.setPaint(voidTexturePaint);
 		} else {
-			g2d.setColor(Color.black);		
+			g2d.setColor(Color.black);
 		}
 		g2d.fillRect(0, 0, viewerWidth, viewerHeight);
 	}
@@ -184,20 +181,6 @@ public class Drawer {
 		originalLayerMatrix.translate(translator.getLeftOnScreen(),
 				translator.getTopOnScreen());
 		originalLayerMatrix.scale(scale, scale);
-	}
-
-	/**
-	 * Fills the area of the fragments being drawn with a texture  
-	 * transformed and scaled to match the position/zoom of the layers.
-	 */
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void drawBackgroundLayer(Paint paint) {
-		g2d.setTransform(originalLayerMatrix);
-		g2d.scale(4, 4);
-		g2d.setPaint(paint);
-		int stepsPerFragment = Resolution.QUARTER.getStepsPerFragment();
-		g2d.fillRect(0, 0, stepsPerFragment * graph.getFragmentsPerRow(),
-				stepsPerFragment * graph.getFragmentsPerColumn());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
