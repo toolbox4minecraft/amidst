@@ -1,7 +1,9 @@
-package amidst.mojangapi.world.coordinates;
+package amidst.mojangapi.world.test;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import amidst.mojangapi.world.coordinates.CoordinateUtils;
 
 public class CoordinateUtilsTest {
 	@Test

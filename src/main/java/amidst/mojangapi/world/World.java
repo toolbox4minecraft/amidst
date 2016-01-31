@@ -3,6 +3,7 @@ package amidst.mojangapi.world;
 import java.util.List;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
@@ -19,6 +20,7 @@ public class World {
 	private final WorldType worldType;
 	private final String generatorOptions;
 	private final MovablePlayerList movablePlayerList;
+	private final RecognisedVersion recognisedVersion;
 	private final VersionFeatures versionFeatures;
 
 	private final BiomeDataOracle biomeDataOracle;
@@ -36,6 +38,7 @@ public class World {
 
 	public World(WorldSeed worldSeed, WorldType worldType,
 			String generatorOptions, MovablePlayerList movablePlayerList,
+			RecognisedVersion recognisedVersion,
 			VersionFeatures versionFeatures, BiomeDataOracle biomeDataOracle,
 			EndIslandOracle endIslandOracle, SlimeChunkOracle slimeChunkOracle,
 			CachedWorldIconProducer spawnProducer,
@@ -51,6 +54,7 @@ public class World {
 		this.worldType = worldType;
 		this.generatorOptions = generatorOptions;
 		this.movablePlayerList = movablePlayerList;
+		this.recognisedVersion = recognisedVersion;
 		this.versionFeatures = versionFeatures;
 		this.biomeDataOracle = biomeDataOracle;
 		this.endIslandOracle = endIslandOracle;
@@ -80,6 +84,10 @@ public class World {
 
 	public MovablePlayerList getMovablePlayerList() {
 		return movablePlayerList;
+	}
+
+	public RecognisedVersion getRecognisedVersion() {
+		return recognisedVersion;
 	}
 
 	public VersionFeatures getVersionFeatures() {

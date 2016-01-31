@@ -53,4 +53,39 @@ public class EndIsland {
 			return result;
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + chunkX;
+		result = prime * result + chunkY;
+		result = prime * result + Float.floatToIntBits(erosionFactor);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof EndIsland)) {
+			return false;
+		}
+		EndIsland other = (EndIsland) obj;
+		if (chunkX != other.chunkX) {
+			return false;
+		}
+		if (chunkY != other.chunkY) {
+			return false;
+		}
+		if (Float.floatToIntBits(erosionFactor) != Float
+				.floatToIntBits(other.erosionFactor)) {
+			return false;
+		}
+		return true;
+	}
 }

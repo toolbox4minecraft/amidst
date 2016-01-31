@@ -17,7 +17,7 @@ import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.WorldBuilder;
-import amidst.mojangapi.world.player.PlayerInformationCache;
+import amidst.mojangapi.world.player.PlayerInformationCacheImpl;
 import amidst.settings.biomecolorprofile.BiomeColorProfileDirectory;
 import amidst.threading.ThreadMaster;
 
@@ -57,7 +57,7 @@ public class Application {
 			throws DotMinecraftDirectoryNotFoundException,
 			LocalMinecraftInterfaceCreationException {
 		return new MojangApiBuilder(new WorldBuilder(
-				new PlayerInformationCache(),
+				new PlayerInformationCacheImpl(),
 				SeedHistoryLogger.from(parameters.historyFile)), parameters)
 				.construct();
 	}

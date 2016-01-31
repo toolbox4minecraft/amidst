@@ -10,7 +10,6 @@ import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
-import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 
@@ -45,12 +44,6 @@ public class EndIslandsLoader extends FragmentLoader {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private List<EndIsland> getEndIslands(CoordinatesInWorld corner) {
-		// @formatter:off
-		return endIslandOracle.findSurroundingIslands(
-				(int) corner.getXAs(Resolution.CHUNK),
-				(int) corner.getYAs(Resolution.CHUNK),
-				(int) Resolution.CHUNK.getStepsPerFragment(),
-				(int) Resolution.CHUNK.getStepsPerFragment());
-		// @formatter:on
+		return endIslandOracle.getAt(corner);
 	}
 }
