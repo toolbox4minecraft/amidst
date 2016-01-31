@@ -22,7 +22,12 @@ public enum DefaultTestWorldDirectoryDeclaration {
 		return INSTANCE.declaration;
 	}
 
-	private static final int MINIMAL_NUMBER_OF_COORDINATES = 5;
+	/**
+	 * This should always be 0. Only change it when trying to find a good test
+	 * world.
+	 */
+	private static final int MINIMAL_NUMBER_OF_COORDINATES = 0;
+
 	private static final int OVERWORLD_FRAGMENTS_AROUND_ORIGIN = 10;
 	private static final int END_FRAGMENTS_AROUND_ORIGIN = 4;
 

@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
+import amidst.logging.Log;
 import amidst.mojangapi.mocking.FragmentCornerWalker;
 import amidst.mojangapi.mocking.NameFilteredWorldIconCollector;
 import amidst.mojangapi.world.World;
@@ -37,8 +38,7 @@ public class CoordinatesCollectionJson {
 						additionalDataFactory.apply(corner)));
 		long[][] coordinatesArray = createArray(consumer.get());
 		if (coordinatesArray.length < minimalNumberOfCoordinates) {
-			throw new RuntimeException("not enough coordinates for '" + name
-					+ "'");
+			Log.e("not enough coordinates for '" + name + "'");
 		}
 		return new CoordinatesCollectionJson(coordinatesArray);
 	}

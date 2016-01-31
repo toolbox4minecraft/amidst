@@ -26,6 +26,7 @@ public enum TestWorldDeclaration {
 			TestWorldEntryNames.WITCH_HUTS,
 			TestWorldEntryNames.JUNGLE_TEMPLES,
 			TestWorldEntryNames.DESERT_TEMPLES,
+			TestWorldEntryNames.IGLOOS,
 			TestWorldEntryNames.MINESHAFTS,
 			TestWorldEntryNames.OCEAN_MONUMENTS,
 			TestWorldEntryNames.NETHER_FORTRESSES,
