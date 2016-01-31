@@ -6,7 +6,6 @@ import java.util.function.Function;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
-import amidst.fragment.Fragment;
 import amidst.mojangapi.mocking.FragmentCornerWalker;
 import amidst.mojangapi.mocking.NameFilteredWorldIconCollector;
 import amidst.mojangapi.world.World;
@@ -27,19 +26,15 @@ public class CoordinatesCollectionJson {
 		return new CoordinatesCollectionJson(createArray(strongholds));
 	}
 
-	public static <T> CoordinatesCollectionJson fromWorldIconProducer(
+	public static <T> CoordinatesCollectionJson extractWorldIcons(
 			WorldIconProducer<T> producer, String name,
 			Function<CoordinatesInWorld, T> additionalDataFactory,
 			int fragmentsAroundOrigin, int minNumberOfCoordinates) {
 		NameFilteredWorldIconCollector consumer = new NameFilteredWorldIconCollector(
 				name);
-		long blocksAroundOrigin = fragmentsAroundOrigin * Fragment.SIZE;
-		CoordinatesInWorld startCorner = CoordinatesInWorld.from(
-				-blocksAroundOrigin, -blocksAroundOrigin);
-		CoordinatesInWorld endCorner = startCorner.add(2 * blocksAroundOrigin,
-				2 * blocksAroundOrigin);
-		new FragmentCornerWalker(startCorner, endCorner).walk(producer,
-				consumer, additionalDataFactory);
+		FragmentCornerWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin)
+				.walk(corner -> producer.produce(corner, consumer,
+						additionalDataFactory.apply(corner)));
 		long[][] coordinatesArray = createArray(consumer.get());
 		if (coordinatesArray.length < minNumberOfCoordinates) {
 			throw new RuntimeException("not enough coordinates for '" + name

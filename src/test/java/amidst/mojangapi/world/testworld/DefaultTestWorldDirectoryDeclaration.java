@@ -10,7 +10,8 @@ import amidst.mojangapi.world.testworld.file.TestWorldDirectoryDeclaration;
 import amidst.mojangapi.world.testworld.io.TestWorldEntrySerializer;
 import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.CoordinatesCollectionJson;
-import amidst.mojangapi.world.testworld.storage.json.SlimeChunkJson;
+import amidst.mojangapi.world.testworld.storage.json.EndIslandsJson;
+import amidst.mojangapi.world.testworld.storage.json.SlimeChunksJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
 
 @Immutable
@@ -22,7 +23,8 @@ public enum DefaultTestWorldDirectoryDeclaration {
 	}
 
 	private static final int MIN_NUMBER_OF_COORDINATES = 5;
-	private static final int FRAGMENTS_AROUND_ORIGIN = 10;
+	private static final int OVERWORLD_FRAGMENTS_AROUND_ORIGIN = 10;
+	private static final int END_FRAGMENTS_AROUND_ORIGIN = 4;
 
 	private final TestWorldDirectoryDeclaration declaration = createDeclaration();
 
@@ -38,18 +40,23 @@ public enum DefaultTestWorldDirectoryDeclaration {
 			.entry(TestWorldEntryNames.QUARTER_RESOLUTION_BIOME_DATA, BiomeDataJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readBiomeData)
-				.extractor(extractBiomeData())
+				.extractor(biomeDataExtractor())
 				.skipEqualityCheck()
 			.entry(TestWorldEntryNames.FULL_RESOLUTION_BIOME_DATA,    BiomeDataJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readBiomeData)
-				.extractor(extractBiomeData())
+				.extractor(biomeDataExtractor())
 				.skipEqualityCheck()
-			.entry(TestWorldEntryNames.SLIME_CHUNKS,      SlimeChunkJson.class)
+			.entry(TestWorldEntryNames.END_ISLANDS,      EndIslandsJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
-				.deserializer(TestWorldEntrySerializer::readSlimeChunk)
-				.extractor(SlimeChunkJson::from)
-				.equalityChecker(SlimeChunkJson::equals)
+				.deserializer(TestWorldEntrySerializer::readEndIslands)
+				.extractor(endIslandExtractor())
+				.equalityChecker(EndIslandsJson::equals)
+			.entry(TestWorldEntryNames.SLIME_CHUNKS,      SlimeChunksJson.class)
+				.serializer(TestWorldEntrySerializer::writeJson)
+				.deserializer(TestWorldEntrySerializer::readSlimeChunks)
+				.extractor(SlimeChunksJson::from)
+				.equalityChecker(SlimeChunksJson::equals)
 			.entry(TestWorldEntryNames.SPAWN,             CoordinatesCollectionJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readCoordinatesCollection)
@@ -104,18 +111,23 @@ public enum DefaultTestWorldDirectoryDeclaration {
 		// @formatter:on
 	}
 
-	private Function<World, BiomeDataJson> extractBiomeData() {
+	private Function<World, BiomeDataJson> biomeDataExtractor() {
 		return world -> {
 			throw new UnsupportedOperationException(
 					"the biome data are extracted with a special mechanism: the class RequestStoringMinecraftInterface");
 		};
 	}
 
+	private Function<World, EndIslandsJson> endIslandExtractor() {
+		return world -> EndIslandsJson.extract(world.getEndIslandOracle(),
+				END_FRAGMENTS_AROUND_ORIGIN);
+	}
+
 	private Function<World, CoordinatesCollectionJson> worldIconExtractor(
 			Function<World, WorldIconProducer<Void>> producer,
 			DefaultWorldIconTypes worldIconType) {
-		return world -> CoordinatesCollectionJson.fromWorldIconProducer(
+		return world -> CoordinatesCollectionJson.extractWorldIcons(
 				producer.apply(world), worldIconType.getName(), corner -> null,
-				FRAGMENTS_AROUND_ORIGIN, MIN_NUMBER_OF_COORDINATES);
+				OVERWORLD_FRAGMENTS_AROUND_ORIGIN, MIN_NUMBER_OF_COORDINATES);
 	}
 }

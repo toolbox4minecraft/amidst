@@ -9,8 +9,8 @@ import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 
 @Immutable
-public class SlimeChunkJson {
-	public static SlimeChunkJson from(World world) {
+public class SlimeChunksJson {
+	public static SlimeChunksJson from(World world) {
 		SlimeChunkOracle oracle = world.getSlimeChunkOracle();
 		int steps = Resolution.CHUNK.getStepsPerFragment();
 		boolean[][] isSlimeChunk = new boolean[2 * steps][2 * steps];
@@ -19,16 +19,16 @@ public class SlimeChunkJson {
 				isSlimeChunk[x][y] = oracle.isSlimeChunk(x - steps, y - steps);
 			}
 		}
-		return new SlimeChunkJson(isSlimeChunk);
+		return new SlimeChunksJson(isSlimeChunk);
 	}
 
 	private volatile boolean[][] isSlimeChunk;
 
 	@GsonConstructor
-	public SlimeChunkJson() {
+	public SlimeChunksJson() {
 	}
 
-	public SlimeChunkJson(boolean[][] isSlimeChunk) {
+	public SlimeChunksJson(boolean[][] isSlimeChunk) {
 		this.isSlimeChunk = isSlimeChunk;
 	}
 
@@ -48,10 +48,10 @@ public class SlimeChunkJson {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof SlimeChunkJson)) {
+		if (!(obj instanceof SlimeChunksJson)) {
 			return false;
 		}
-		SlimeChunkJson other = (SlimeChunkJson) obj;
+		SlimeChunksJson other = (SlimeChunksJson) obj;
 		if (!Arrays.deepEquals(isSlimeChunk, other.isSlimeChunk)) {
 			return false;
 		}

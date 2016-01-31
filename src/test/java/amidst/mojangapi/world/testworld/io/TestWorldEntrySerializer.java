@@ -11,7 +11,8 @@ import java.nio.charset.StandardCharsets;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.CoordinatesCollectionJson;
-import amidst.mojangapi.world.testworld.storage.json.SlimeChunkJson;
+import amidst.mojangapi.world.testworld.storage.json.EndIslandsJson;
+import amidst.mojangapi.world.testworld.storage.json.SlimeChunksJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
 
 import com.google.gson.Gson;
@@ -35,8 +36,12 @@ public enum TestWorldEntrySerializer {
 		return readJson(is, BiomeDataJson.class);
 	}
 
-	public static SlimeChunkJson readSlimeChunk(InputStream is) {
-		return readJson(is, SlimeChunkJson.class);
+	public static EndIslandsJson readEndIslands(InputStream is) {
+		return readJson(is, EndIslandsJson.class);
+	}
+
+	public static SlimeChunksJson readSlimeChunks(InputStream is) {
+		return readJson(is, SlimeChunksJson.class);
 	}
 
 	public static CoordinatesCollectionJson readCoordinatesCollection(

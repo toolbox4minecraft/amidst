@@ -7,9 +7,10 @@ public class TestWorldEntryNames {
 	public static final String METADATA = "metadata";
 	public static final String QUARTER_RESOLUTION_BIOME_DATA = "quarter-resolution-biome-data";
 	public static final String FULL_RESOLUTION_BIOME_DATA = "full-resolution-biome-data";
+	public static final String END_ISLANDS = "end-islands";
+	public static final String SLIME_CHUNKS = "slime-chunks";
 	public static final String SPAWN = "spawn";
 	public static final String STRONGHOLDS = "strongholds";
-	public static final String SLIME_CHUNKS = "slime-chunks";
 	public static final String VILLAGES = "villages";
 	public static final String WITCH_HUTS = "witch-huts";
 	public static final String JUNGLE_TEMPLES = "jungle-temples";

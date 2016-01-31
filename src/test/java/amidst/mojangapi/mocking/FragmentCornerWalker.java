@@ -1,16 +1,23 @@
 package amidst.mojangapi.mocking;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import amidst.documentation.Immutable;
 import amidst.fragment.Fragment;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
-import amidst.mojangapi.world.icon.WorldIcon;
-import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 
 @Immutable
 public class FragmentCornerWalker {
+	public static FragmentCornerWalker walkFragmentsAroundOrigin(
+			int fragmentsAroundOrigin) {
+		long blocksAroundOrigin = fragmentsAroundOrigin * Fragment.SIZE;
+		CoordinatesInWorld startCorner = CoordinatesInWorld.from(
+				-blocksAroundOrigin, -blocksAroundOrigin);
+		CoordinatesInWorld endCorner = startCorner.add(2 * blocksAroundOrigin,
+				2 * blocksAroundOrigin);
+		return new FragmentCornerWalker(startCorner, endCorner);
+	}
+
 	private final CoordinatesInWorld startCorner;
 	private final CoordinatesInWorld endCorner;
 
@@ -20,14 +27,10 @@ public class FragmentCornerWalker {
 		this.endCorner = endCorner;
 	}
 
-	public <T> void walk(WorldIconProducer<T> producer,
-			Consumer<WorldIcon> consumer,
-			Function<CoordinatesInWorld, T> additionalDataFactory) {
+	public <T> void walk(Consumer<CoordinatesInWorld> consumer) {
 		for (long x = startCorner.getX(); x < endCorner.getX(); x += Fragment.SIZE) {
 			for (long y = startCorner.getY(); y < endCorner.getY(); y += Fragment.SIZE) {
-				CoordinatesInWorld corner = CoordinatesInWorld.from(x, y);
-				producer.produce(corner, consumer,
-						additionalDataFactory.apply(corner));
+				consumer.accept(CoordinatesInWorld.from(x, y));
 			}
 		}
 	}
