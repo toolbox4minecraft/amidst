@@ -27,22 +27,21 @@ public enum TestWorldDeclaration {
 			TestWorldEntryNames.MINESHAFTS,
 			TestWorldEntryNames.OCEAN_MONUMENTS,
 			TestWorldEntryNames.NETHER_FORTRESSES
-//  This seems to be a good seed for 1.9:
-//    ),
-//	WORLD2(RecognisedVersion.V16w02a, "4805355321235747910", WorldType.DEFAULT,
-//			TestWorldEntryNames.METADATA,
-//			TestWorldEntryNames.QUARTER_RESOLUTION_BIOME_DATA,
-//			TestWorldEntryNames.FULL_RESOLUTION_BIOME_DATA,
-//			TestWorldEntryNames.SPAWN,
-//			TestWorldEntryNames.STRONGHOLDS,
-//			TestWorldEntryNames.VILLAGES,
-//			TestWorldEntryNames.WITCH_HUTS,
-//			TestWorldEntryNames.JUNGLE_TEMPLES,
-//			TestWorldEntryNames.DESERT_TEMPLES,
-//			TestWorldEntryNames.IGLOOS,
-//			TestWorldEntryNames.MINESHAFTS,
-//			TestWorldEntryNames.OCEAN_MONUMENTS,
-//			TestWorldEntryNames.NETHER_FORTRESSES
+    ),
+	WORLD2(RecognisedVersion.V16w02a, "4805355321235747910", WorldType.DEFAULT,
+			TestWorldEntryNames.METADATA,
+			TestWorldEntryNames.QUARTER_RESOLUTION_BIOME_DATA,
+			TestWorldEntryNames.FULL_RESOLUTION_BIOME_DATA,
+			TestWorldEntryNames.SPAWN,
+			TestWorldEntryNames.STRONGHOLDS,
+			TestWorldEntryNames.VILLAGES,
+			TestWorldEntryNames.WITCH_HUTS,
+			TestWorldEntryNames.JUNGLE_TEMPLES,
+			TestWorldEntryNames.DESERT_TEMPLES,
+			TestWorldEntryNames.IGLOOS,
+			TestWorldEntryNames.MINESHAFTS,
+			TestWorldEntryNames.OCEAN_MONUMENTS,
+			TestWorldEntryNames.NETHER_FORTRESSES
     );
 	// @formatter:on
 
