@@ -10,6 +10,7 @@ import amidst.mojangapi.world.testworld.file.TestWorldDirectoryDeclaration;
 import amidst.mojangapi.world.testworld.io.TestWorldEntrySerializer;
 import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.CoordinatesCollectionJson;
+import amidst.mojangapi.world.testworld.storage.json.SlimeChunkJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
 
 @Immutable
@@ -44,6 +45,11 @@ public enum DefaultTestWorldDirectoryDeclaration {
 				.deserializer(TestWorldEntrySerializer::readBiomeData)
 				.extractor(extractBiomeData())
 				.skipEqualityCheck()
+			.entry(TestWorldEntryNames.SLIME_CHUNKS,      SlimeChunkJson.class)
+				.serializer(TestWorldEntrySerializer::writeJson)
+				.deserializer(TestWorldEntrySerializer::readSlimeChunk)
+				.extractor(SlimeChunkJson::from)
+				.equalityChecker(SlimeChunkJson::equals)
 			.entry(TestWorldEntryNames.SPAWN,             CoordinatesCollectionJson.class)
 				.serializer(TestWorldEntrySerializer::writeJson)
 				.deserializer(TestWorldEntrySerializer::readCoordinatesCollection)
