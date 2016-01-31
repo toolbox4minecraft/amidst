@@ -6,10 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import amidst.mojangapi.file.FilenameFactory;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
-import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -19,20 +17,9 @@ import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreation
 import amidst.mojangapi.world.testworld.TestWorldCache;
 import amidst.mojangapi.world.testworld.TestWorldDeclaration;
 
-/**
- * This needs to be placed in the test directory to find the mocking classes.
- */
 public class GenerateWorldTestData {
 	private static final LocalMinecraftInterfaceBuilder LOCAL_MINECRAFT_INTERFACE_BUILDER = new LocalMinecraftInterfaceBuilder(
 			DefaultClassTranslator.INSTANCE.get());
-
-	public static void main(String[] args) throws IOException,
-			MojangApiParsingException {
-		new GenerateWorldTestData(
-				DevToolsSettings.INSTANCE.getMinecraftVersionsDirectory(),
-				DevToolsSettings.INSTANCE.getMinecraftLibrariesDirectory(),
-				JsonReader.readRemoteVersionList()).generate();
-	}
 
 	private final String prefix;
 	private final File libraries;
@@ -52,7 +39,7 @@ public class GenerateWorldTestData {
 				this.libraries);
 	}
 
-	public void generate() {
+	public void run() {
 		for (VersionListEntryJson version : versionList.getVersions()) {
 			for (TestWorldDeclaration declaration : TestWorldDeclaration
 					.values()) {

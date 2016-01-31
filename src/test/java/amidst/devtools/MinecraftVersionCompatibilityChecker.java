@@ -2,7 +2,6 @@ package amidst.devtools;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,9 +11,6 @@ import amidst.clazz.Classes;
 import amidst.clazz.real.JarFileParsingException;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.translator.ClassTranslator;
-import amidst.devtools.settings.DevToolsSettings;
-import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
@@ -26,13 +22,6 @@ import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
  * methods and fields. It also does not try to use the found classes.
  */
 public class MinecraftVersionCompatibilityChecker {
-	public static void main(String[] args) throws IOException,
-			MojangApiParsingException {
-		new MinecraftVersionCompatibilityChecker(
-				DevToolsSettings.INSTANCE.getMinecraftVersionsDirectory(),
-				JsonReader.readRemoteVersionList()).checkAll();
-	}
-
 	private String prefix;
 	private VersionListJson versionList;
 
@@ -42,7 +31,7 @@ public class MinecraftVersionCompatibilityChecker {
 		this.versionList = versionList;
 	}
 
-	public void checkAll() {
+	public void run() {
 		List<VersionListEntryJson> supported = new ArrayList<VersionListEntryJson>();
 		List<VersionListEntryJson> unsupported = new ArrayList<VersionListEntryJson>();
 		for (VersionListEntryJson version : versionList.getVersions()) {

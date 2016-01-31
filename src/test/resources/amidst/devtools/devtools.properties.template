@@ -1,0 +1,9 @@
+# Path to a directory where minecraft versions can be stored.
+# The devtools will also download new minecraft versions into this directory.
+amidst.devtools.directory.versions=
+
+# Path to the directory where minecraft stores its libraries. This is currently use readonly.
+# When the devtools fail to run this might be related to a missing library.
+# To fix this issue, start the corresponding minecraft version via the minecraft launcher.
+# This will download the required libraries.
+amidst.devtools.directory.libraries=
