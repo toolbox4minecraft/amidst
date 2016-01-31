@@ -5,7 +5,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
-import amidst.mojangapi.world.testworld.storage.BiomeDataJson;
+import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
 
 @ThreadSafe

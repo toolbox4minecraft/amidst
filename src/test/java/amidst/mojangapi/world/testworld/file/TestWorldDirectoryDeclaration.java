@@ -9,7 +9,7 @@ import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.testworld.TestWorldDeclaration;
 import amidst.mojangapi.world.testworld.TestWorldEntryNames;
 import amidst.mojangapi.world.testworld.file.builder.TestWorldDirectoryDeclarationBuilder;
-import amidst.mojangapi.world.testworld.storage.BiomeDataJson;
+import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 
 @Immutable
 public class TestWorldDirectoryDeclaration {

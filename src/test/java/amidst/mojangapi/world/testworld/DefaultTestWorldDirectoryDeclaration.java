@@ -8,7 +8,7 @@ import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.testworld.file.TestWorldDirectoryDeclaration;
 import amidst.mojangapi.world.testworld.io.TestWorldEntrySerializer;
-import amidst.mojangapi.world.testworld.storage.BiomeDataJson;
+import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.CoordinatesCollectionJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
 

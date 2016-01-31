@@ -9,7 +9,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 
 import amidst.documentation.Immutable;
-import amidst.mojangapi.world.testworld.storage.BiomeDataJson;
+import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.CoordinatesCollectionJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
 

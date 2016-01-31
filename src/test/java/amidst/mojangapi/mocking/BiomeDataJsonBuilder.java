@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import amidst.documentation.NotThreadSafe;
-import amidst.mojangapi.world.testworld.storage.AreaJson;
-import amidst.mojangapi.world.testworld.storage.BiomeDataJson;
+import amidst.mojangapi.world.testworld.storage.json.AreaJson;
+import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 
 @NotThreadSafe
 public class BiomeDataJsonBuilder {

@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.testworld.storage;
+package amidst.mojangapi.world.testworld.storage.json;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
