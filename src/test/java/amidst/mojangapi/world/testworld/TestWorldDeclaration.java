@@ -21,7 +21,22 @@ public enum TestWorldDeclaration {
 	WORLD1(RecognisedVersion.V1_8_9, "amidst-test-seed", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     ),
+    
 	WORLD2(RecognisedVersion.V16w02a, "4805355321235747910", WorldType.DEFAULT,
+			TestWorldEntryNames.ALL
+    ),
+    
+    /**
+     * This misses an ocean monument if the quarter-resolution map is used for the structure test.
+     */
+	WORLD3(RecognisedVersion.V16w02a, "-1364077613", WorldType.DEFAULT,
+			TestWorldEntryNames.ALL
+    ),
+    
+    /**
+     * This illustrates the probably buggy stronghold generation mechanism of the 1.9 snapshots.
+     */
+	WORLD4(RecognisedVersion.V16w02a, "1", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     );
 	// @formatter:on
