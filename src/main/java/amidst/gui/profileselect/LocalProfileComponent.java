@@ -77,8 +77,9 @@ public class LocalProfileComponent extends ProfileComponent {
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private boolean tryLoad() {
 		try {
-			mojangApi
-					.set(profile.getName(), profileDirectory, versionDirectory);
+			Log.i("using minecraft launcher profile '" + getProfileName()
+					+ "' with versionId '" + getVersionName() + "'");
+			mojangApi.set(getProfileName(), profileDirectory, versionDirectory);
 			return true;
 		} catch (LocalMinecraftInterfaceCreationException e) {
 			Log.e(e.getMessage());
