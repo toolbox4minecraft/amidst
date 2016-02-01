@@ -245,8 +245,8 @@ public class Actions {
 				.displayMessage(
 						"About",
 						"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n\n"
-								+ "Author: Skidoodle\n"
-								+ "Contact: amidst.project@gmail.com\n"
+								+ "Author: Skidoodle aka skiphs\n"
+								+ "Mail: toolbox4minecraft+amidst@gmail.com\n"
 								+ "Project Page: https://github.com/toolbox4minecraft/amidst");
 	}
 
