@@ -14,6 +14,7 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
+import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.MovablePlayerList;
@@ -124,6 +125,11 @@ public class ViewerFacade {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldSeed getWorldSeed() {
 		return world.getWorldSeed();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public WorldType getWorldType() {
+		return world.getWorldType();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
