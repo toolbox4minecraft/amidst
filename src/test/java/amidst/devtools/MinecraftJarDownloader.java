@@ -1,22 +1,10 @@
 package amidst.devtools;
 
-import java.io.IOException;
-
-import amidst.devtools.settings.DevToolsSettings;
 import amidst.devtools.utils.VersionStateRenderer;
-import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 
 public class MinecraftJarDownloader {
-	public static void main(String[] args) throws IOException,
-			MojangApiParsingException {
-		new MinecraftJarDownloader(
-				DevToolsSettings.INSTANCE.getMinecraftVersionsDirectory(),
-				JsonReader.readRemoteVersionList()).downloadAll();
-	}
-
 	private VersionStateRenderer renderer = new VersionStateRenderer();
 	private String prefix;
 	private VersionListJson versionList;
@@ -26,7 +14,7 @@ public class MinecraftJarDownloader {
 		this.versionList = versionList;
 	}
 
-	public void downloadAll() {
+	public void run() {
 		for (VersionListEntryJson version : versionList.getVersions()) {
 			boolean hasServer = version.tryDownloadServer(prefix);
 			boolean hasClient = version.tryDownloadClient(prefix);

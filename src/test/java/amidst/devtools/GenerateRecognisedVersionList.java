@@ -1,7 +1,6 @@
 package amidst.devtools;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 import java.util.Arrays;
@@ -10,34 +9,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import amidst.devtools.settings.DevToolsSettings;
 import amidst.logging.Log;
 import amidst.mojangapi.file.FilenameFactory;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
-import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 public class GenerateRecognisedVersionList {
 	private static final int MAX_LENGTH_MAGIC_STRING = 111;
-
-	public static void main(String[] args) throws IOException,
-			MojangApiParsingException {
-		VersionListJson versionList = JsonReader.readRemoteVersionList();
-		int maxVersionIdLength = 0;
-		for (VersionListEntryJson version : versionList.getVersions()) {
-			if (maxVersionIdLength < version.getId().length()) {
-				maxVersionIdLength = version.getId().length();
-			}
-		}
-		new GenerateRecognisedVersionList(
-				DevToolsSettings.INSTANCE.getMinecraftVersionsDirectory(),
-				DevToolsSettings.INSTANCE.getMinecraftLibrariesDirectory(),
-				versionList, maxVersionIdLength).generate();
-	}
 
 	private final String prefix;
 	private final File libraries;
@@ -57,9 +38,9 @@ public class GenerateRecognisedVersionList {
 	private final int maxVersionIdLength;
 
 	public GenerateRecognisedVersionList(String prefix, String libraries,
-			VersionListJson versionList, int maxVersionIdLength) {
+			VersionListJson versionList) {
 		this.prefix = prefix;
-		this.maxVersionIdLength = maxVersionIdLength;
+		this.maxVersionIdLength = calculateMaxVersionIdLength(versionList);
 		this.libraries = new File(libraries);
 		this.versionList = versionList;
 		this.versions = new File(prefix);
@@ -69,7 +50,17 @@ public class GenerateRecognisedVersionList {
 				.values()));
 	}
 
-	public void generate() {
+	private int calculateMaxVersionIdLength(VersionListJson versionList) {
+		int maxVersionIdLength = 0;
+		for (VersionListEntryJson version : versionList.getVersions()) {
+			if (maxVersionIdLength < version.getId().length()) {
+				maxVersionIdLength = version.getId().length();
+			}
+		}
+		return maxVersionIdLength;
+	}
+
+	public void run() {
 		for (VersionListEntryJson version : versionList.getVersions()) {
 			process(version);
 		}

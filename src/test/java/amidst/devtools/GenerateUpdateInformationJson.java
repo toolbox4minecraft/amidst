@@ -1,7 +1,6 @@
 package amidst.devtools;
 
 import amidst.AmidstVersion;
-import amidst.ResourceLoader;
 import amidst.gui.main.UpdateInformationJson;
 
 import com.google.gson.Gson;
@@ -12,9 +11,13 @@ public class GenerateUpdateInformationJson {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting()
 			.create();
 
-	public static void main(String[] args) {
-		AmidstVersion version = AmidstVersion.from(ResourceLoader
-				.getProperties("/amidst/metadata.properties"));
+	private final AmidstVersion version;
+
+	public GenerateUpdateInformationJson(AmidstVersion version) {
+		this.version = version;
+	}
+
+	public void run() {
 		if (version.isPreRelease()) {
 			throw new RuntimeException(
 					"Update information documents can only be created for stable releases (not a pre-release).");
