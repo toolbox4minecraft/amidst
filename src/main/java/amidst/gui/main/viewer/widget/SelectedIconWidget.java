@@ -17,7 +17,7 @@ public class SelectedIconWidget extends IconTextWidget {
 			WorldIconSelection worldIconSelection) {
 		super(anchor);
 		this.worldIconSelection = worldIconSelection;
-		increaseYMargin(40);
+		increaseYMargin(80);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
