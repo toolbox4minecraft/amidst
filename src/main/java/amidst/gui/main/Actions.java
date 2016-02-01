@@ -211,8 +211,11 @@ public class Actions {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
 			BufferedImage image = viewerFacade.createCaptureImage();
-			File file = mainWindow.askForCaptureImageSaveFile("screenshot-"
-					+ viewerFacade.getWorldSeed().getLong() + ".png");
+			String suggestedFilename = "screenshot_"
+					+ viewerFacade.getWorldType().getFilenameText() + "_"
+					+ viewerFacade.getWorldSeed().getLong() + ".png";
+			File file = mainWindow
+					.askForCaptureImageSaveFile(suggestedFilename);
 			if (file != null) {
 				saveImageToFile(image, file);
 			}
