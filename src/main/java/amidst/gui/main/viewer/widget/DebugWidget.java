@@ -52,10 +52,4 @@ public class DebugWidget extends MultilineTextWidget {
 			return null;
 		}
 	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	@Override
-	public boolean onMousePressed(int x, int y) {
-		return false;
-	}
 }
