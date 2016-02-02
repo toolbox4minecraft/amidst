@@ -303,7 +303,7 @@ public abstract class Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean onClick(int x, int y) {
-		return true;
+		return false;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -313,7 +313,7 @@ public abstract class Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean onMousePressed(int x, int y) {
-		return true;
+		return false;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
