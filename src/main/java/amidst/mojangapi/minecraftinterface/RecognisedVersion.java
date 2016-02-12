@@ -20,6 +20,7 @@ public enum RecognisedVersion {
 	// TODO: Remove these versions before V1_0?
 	// TODO: stronghold reset on V1_9pre4?
 	UNKNOWN(null),
+	V16w06a     ("qvoomajzpb[Llp;mm[J[[Jmi"),                                                                       // matches the versions 16w06a       16w05b       16w04a       16w03a       16w02a (A shame it matches so many, because the stronghold alg. is different starting from 16w06a)      
 	V16w02a     ("qvoomajzpb[Llp;mm[J[[Jmi"),                                                                       // matches the versions 16w02a      
 	V15w51b     ("quonmajzpa[Llp;mm[J[[Jmi"),                                                                       // matches the versions 15w51b       15w51a      
 	V15w50a     ("qtonmajzpa[Llp;mm[J[[Jmi"),                                                                       // matches the versions 15w50a       15w49b       15w47c      
