@@ -17,7 +17,6 @@ import amidst.mojangapi.world.icon.locationchecker.TempleLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.VillageLocationChecker;
 import amidst.mojangapi.world.icon.producer.PlayerProducer;
 import amidst.mojangapi.world.icon.producer.SpawnProducer;
-import amidst.mojangapi.world.icon.producer.StrongholdProducer;
 import amidst.mojangapi.world.icon.producer.StructureProducer;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.EndCityWorldIconTypeProvider;
@@ -106,7 +105,7 @@ public class WorldBuilder {
 				EndIslandOracle.from(  seed),
 				new SlimeChunkOracle(  seed),
 				new SpawnProducer(worldSpawnOracle),
-				new StrongholdProducer(seed, biomeDataOracle, versionFeatures.getValidBiomesAtMiddleOfChunk_Stronghold(), versionFeatures.getNumberOfStrongholds()),
+				versionFeatures.getStrongholdProducerFactory().apply(seed, biomeDataOracle),
 				new PlayerProducer(movablePlayerList),
 				new StructureProducer<Void>(
 						Resolution.CHUNK,

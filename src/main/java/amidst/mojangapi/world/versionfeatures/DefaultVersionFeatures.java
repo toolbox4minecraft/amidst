@@ -2,6 +2,7 @@ package amidst.mojangapi.world.versionfeatures;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import amidst.documentation.Immutable;
@@ -11,6 +12,11 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_ChanceBased;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Base;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Original;
+import amidst.mojangapi.world.icon.producer.StrongholdProducer_AlogorithmUpdateAttempt1;
+import amidst.mojangapi.world.icon.producer.StrongholdProducer_AlogorithmUpdated;
+import amidst.mojangapi.world.icon.producer.StrongholdProducer_Base;
+import amidst.mojangapi.world.icon.producer.StrongholdProducer_Original;
+import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @Immutable
 public enum DefaultVersionFeatures {
@@ -22,8 +28,9 @@ public enum DefaultVersionFeatures {
 				INSTANCE.enabledLayers.getValue(version),
 				INSTANCE.isSaveEnabled.getValue(version),
 				INSTANCE.validBiomesForStructure_Spawn.getValue(version),
-				INSTANCE.validBiomesAtMiddleOfChunk_Stronghold.getValue(version),
-				INSTANCE.numberOfStrongholds.getValue(version),
+				INSTANCE.strongholdProducerFactoryFactory
+					.apply(INSTANCE.validBiomesAtMiddleOfChunk_Stronghold.getValue(version))
+					.getValue(version),
 				INSTANCE.validBiomesForStructure_Village.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_Temple.getValue(version),
 				INSTANCE.mineshaftAlgorithmFactory.getValue(version),
@@ -37,7 +44,7 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<Boolean> isSaveEnabled;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_Spawn;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Stronghold;
-	private final VersionFeature<Integer> numberOfStrongholds;
+	private final Function<List<Biome>, VersionFeature<BiFunction<Long, BiomeDataOracle, StrongholdProducer_Base>>> strongholdProducerFactoryFactory;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_Village;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Temple;
 	private final VersionFeature<Function<Long, MineshaftAlgorithm_Base>> mineshaftAlgorithmFactory;
@@ -111,12 +118,16 @@ public enum DefaultVersionFeatures {
 						// this includes all the biomes above, except for the swampland
 						getValidBiomesForStrongholdSinceV13w36a()
 				).construct();
-		this.numberOfStrongholds = VersionFeature.<Integer> builder()
-				.init(
-						3
-				).since(RecognisedVersion.V15w43c,
-						128
-				).construct();
+		
+		this.strongholdProducerFactoryFactory = validBiomesForStrongholds -> 						
+				VersionFeature.<BiFunction<Long, BiomeDataOracle, StrongholdProducer_Base>> builder()
+						.init(
+								(seed, biomeOracle) -> new StrongholdProducer_Original(seed, biomeOracle, validBiomesForStrongholds)
+						).since(StrongholdProducer_AlogorithmUpdateAttempt1.IntroducedInVersion(),
+								(seed, biomeOracle) -> new StrongholdProducer_AlogorithmUpdateAttempt1(seed, biomeOracle, validBiomesForStrongholds)
+						).since(StrongholdProducer_AlogorithmUpdated.IntroducedInVersion(),
+								(seed, biomeOracle) -> new StrongholdProducer_AlogorithmUpdated(seed, biomeOracle, validBiomesForStrongholds)
+						).construct();
 		this.validBiomesForStructure_Village = VersionFeature.<Biome> listBuilder()
 				.init(
 						Biome.plains,

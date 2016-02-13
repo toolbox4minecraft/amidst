@@ -110,9 +110,18 @@ public enum RecognisedVersion {
 	Va1_0_16    ("hgazihcjebebmdferjtbdgiigbblkcnlvfinrmd[Jmbap"),                                                  // matches the versions a1.0.16     
 	Va1_0_15    ("hfazigcjebebmdferjsbdgiifbbljcnlufinqmc[Jmaap"),                                                  // matches the versions a1.0.15     
 	Va1_0_14    ("hcazidcjebebmdfeqjpbdghicbblfcnlpfhnmly[Jlwap"),                                                  // matches the versions a1.0.14     
-	Va1_0_11    ("haaziacjebebmddenjlbdgfhzbbkzcnljfenels[Jlqap");                                                  // matches the versions a1.0.11     
+	Va1_0_11    ("haaziacjebebmddenjlbdgfhzbbkzcnljfenels[Jlqap");                                                  // matches the versions a1.0.11
+	// Update EARLIEST_VERSION if you add any versions predating the Va1_0_11 entry above
+	
 	// @formatter:on
 
+	/** 
+	 * Returns the earliest version Amidst can recognise.
+	 * Note that unrecognised versions are assumed to be more recent than
+	 * the versions Amidst knows about. 
+	 */
+	public static final RecognisedVersion EARLIEST_VERSION = Va1_0_11;
+	
 	@NotNull
 	public static RecognisedVersion from(URLClassLoader classLoader)
 			throws ClassNotFoundException {
