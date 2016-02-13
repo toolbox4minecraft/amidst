@@ -1,7 +1,6 @@
 package amidst.mojangapi.world.versionfeatures;
 
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import amidst.documentation.Immutable;
@@ -15,16 +14,20 @@ public class VersionFeatures {
 	private final List<Integer> enabledLayers;
 	private final boolean isSaveEnabled;
 	private final List<Biome> validBiomesForStructure_Spawn;
-	private final BiFunction<Long, BiomeDataOracle, StrongholdProducer_Base> strongholdProducerFactory;
+	private final List<Biome> validBiomesAtMiddleOfChunk_Stronghold;
+	private final TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base> strongholdProducerFactory;
 	private final List<Biome> validBiomesForStructure_Village;
 	private final List<Biome> validBiomesAtMiddleOfChunk_Temple;
 	private final Function<Long, MineshaftAlgorithm_Base> mineshaftAlgorithmFactory;
 	private final List<Biome> validBiomesAtMiddleOfChunk_OceanMonument;
 	private final List<Biome> validBiomesForStructure_OceanMonument;
 
-	public VersionFeatures(List<Integer> enabledLayers, boolean isSaveEnabled,
+	public VersionFeatures(
+			List<Integer> enabledLayers,
+			boolean isSaveEnabled,
 			List<Biome> validBiomesForStructure_Spawn,
-			BiFunction<Long, BiomeDataOracle, StrongholdProducer_Base> strongholdProducerFactory,
+			List<Biome> validBiomesAtMiddleOfChunk_Stronghold,
+			TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base> strongholdProducerFactory,
 			List<Biome> validBiomesForStructure_Village,
 			List<Biome> validBiomesAtMiddleOfChunk_Temple,
 			Function<Long, MineshaftAlgorithm_Base> mineshaftAlgorithmFactory,
@@ -33,6 +36,7 @@ public class VersionFeatures {
 		this.enabledLayers = enabledLayers;
 		this.isSaveEnabled = isSaveEnabled;
 		this.validBiomesForStructure_Spawn = validBiomesForStructure_Spawn;
+		this.validBiomesAtMiddleOfChunk_Stronghold = validBiomesAtMiddleOfChunk_Stronghold;
 		this.strongholdProducerFactory = strongholdProducerFactory;
 		this.validBiomesForStructure_Village = validBiomesForStructure_Village;
 		this.validBiomesAtMiddleOfChunk_Temple = validBiomesAtMiddleOfChunk_Temple;
@@ -59,7 +63,11 @@ public class VersionFeatures {
 		return validBiomesForStructure_Spawn;
 	}
 
-	public BiFunction<Long, BiomeDataOracle, StrongholdProducer_Base> getStrongholdProducerFactory() {
+	public List<Biome> getValidBiomesAtMiddleOfChunk_Stronghold() {
+		return validBiomesAtMiddleOfChunk_Stronghold;
+	}
+
+	public TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base> getStrongholdProducerFactory() {
 		return strongholdProducerFactory;
 	}
 

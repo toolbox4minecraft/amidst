@@ -2,7 +2,6 @@ package amidst.mojangapi.world.versionfeatures;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import amidst.documentation.Immutable;
@@ -28,9 +27,8 @@ public enum DefaultVersionFeatures {
 				INSTANCE.enabledLayers.getValue(version),
 				INSTANCE.isSaveEnabled.getValue(version),
 				INSTANCE.validBiomesForStructure_Spawn.getValue(version),
-				INSTANCE.strongholdProducerFactoryFactory
-					.apply(INSTANCE.validBiomesAtMiddleOfChunk_Stronghold.getValue(version))
-					.getValue(version),
+				INSTANCE.validBiomesAtMiddleOfChunk_Stronghold.getValue(version),
+				INSTANCE.strongholdProducerFactory.getValue(version),
 				INSTANCE.validBiomesForStructure_Village.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_Temple.getValue(version),
 				INSTANCE.mineshaftAlgorithmFactory.getValue(version),
@@ -44,7 +42,7 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<Boolean> isSaveEnabled;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_Spawn;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Stronghold;
-	private final Function<List<Biome>, VersionFeature<BiFunction<Long, BiomeDataOracle, StrongholdProducer_Base>>> strongholdProducerFactoryFactory;
+	private final VersionFeature<TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base>> strongholdProducerFactory;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_Village;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Temple;
 	private final VersionFeature<Function<Long, MineshaftAlgorithm_Base>> mineshaftAlgorithmFactory;
@@ -119,17 +117,16 @@ public enum DefaultVersionFeatures {
 						getValidBiomesForStrongholdSinceV13w36a()
 				).construct();
 		
-		this.strongholdProducerFactoryFactory = validBiomesForStrongholds -> 						
-				VersionFeature.<BiFunction<Long, BiomeDataOracle, StrongholdProducer_Base>> builder()
-						.init(
-								(seed, biomeOracle) -> new StrongholdProducer_Original(seed, biomeOracle, validBiomesForStrongholds)
-						).since(RecognisedVersion.V15w43c,
-								// this should be 15w43a, which is no recognised
-								(seed, biomeOracle) -> new StrongholdProducer_AlogorithmUpdateAttempt1(seed, biomeOracle, validBiomesForStrongholds)
-						).since(RecognisedVersion.V16w02a,
-								// this should be 16w06a
-								(seed, biomeOracle) -> new StrongholdProducer_AlogorithmUpdated(seed, biomeOracle, validBiomesForStrongholds)
-						).construct();
+		this.strongholdProducerFactory = VersionFeature.<TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base>> builder()
+				.init(
+						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_Original(seed, biomeOracle, validBiomes)
+				).since(RecognisedVersion.V15w43c,
+						// this should be 15w43a, which is no recognised
+						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_AlogorithmUpdateAttempt1(seed, biomeOracle, validBiomes)
+				).since(RecognisedVersion.V16w02a,
+						// this should be 16w06a
+						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_AlogorithmUpdated(seed, biomeOracle, validBiomes)
+				).construct();
 		this.validBiomesForStructure_Village = VersionFeature.<Biome> listBuilder()
 				.init(
 						Biome.plains,

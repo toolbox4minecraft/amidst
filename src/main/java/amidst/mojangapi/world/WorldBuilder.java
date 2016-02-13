@@ -105,7 +105,7 @@ public class WorldBuilder {
 				EndIslandOracle.from(  seed),
 				new SlimeChunkOracle(  seed),
 				new SpawnProducer(worldSpawnOracle),
-				versionFeatures.getStrongholdProducerFactory().apply(seed, biomeDataOracle),
+				versionFeatures.getStrongholdProducerFactory().apply(seed, biomeDataOracle, versionFeatures.getValidBiomesAtMiddleOfChunk_Stronghold()),
 				new PlayerProducer(movablePlayerList),
 				new StructureProducer<Void>(
 						Resolution.CHUNK,
