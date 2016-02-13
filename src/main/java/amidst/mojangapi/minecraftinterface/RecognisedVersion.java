@@ -15,13 +15,14 @@ import amidst.logging.Log;
 public enum RecognisedVersion {
 	// @formatter:off
 	// Make sure UNKNOWN is the first entry, so it is always considered newer than all other versions, since an unknown version is most likely a new snapshot.
+	// The 128 stronghold algorithm changes in version 16w06a. However, we cannot uniquely identify this version.
 	// 1.8.4, 1.8.5, 1.8.6, 1.8.7, and 1.8.8 all have the same typeDump version ID. They are all security issue fixes.
 	// 1.8.3 and 1.8.2 have the same typeDump version ID - probably because 1.8.2 -> 1.8.3 was a fix for a server-side bug (https://mojang.com/2015/02/minecraft-1-8-2-is-now-available/)
 	// TODO: Remove these versions before V1_0?
 	// TODO: stronghold reset on V1_9pre4?
-	UNKNOWN(null),
-	V16w06a     ("qvoomajzpb[Llp;mm[J[[Jmi"),                                                                       // matches the versions 16w06a       16w05b       16w04a       16w03a       16w02a (A shame it matches so many, because the stronghold alg. is different starting from 16w06a)      
-	V16w02a     ("qvoomajzpb[Llp;mm[J[[Jmi"),                                                                       // matches the versions 16w02a      
+	UNKNOWN     (null),
+	// We will have to look into the issue with the same magic string when it changes the next time. For now, we should keep the name V16w02a, so we do not need to adjust the test data.
+	V16w02a     ("qvoomajzpb[Llp;mm[J[[Jmi"),                                                                       // matches the versions 16w06a       16w05b       16w04a       16w03a       16w02a       
 	V15w51b     ("quonmajzpa[Llp;mm[J[[Jmi"),                                                                       // matches the versions 15w51b       15w51a      
 	V15w50a     ("qtonmajzpa[Llp;mm[J[[Jmi"),                                                                       // matches the versions 15w50a       15w49b       15w47c      
 	V15w46a     ("qsonmajzpa[Llp;mm[J[[Jmi"),                                                                       // matches the versions 15w46a      
@@ -42,7 +43,7 @@ public enum RecognisedVersion {
 	V1_8        ("wbuwrcnp[Lqt;sn[J[[Jry"),                                                                         // matches the versions 1.8         
 	V14w21b     ("tjseoylw[Loq;qd[J[[Jpo"),                                                                         // not generated
 	V1_7_10     ("riqinckb[Lmt;oi[J[[Jns"),                                                                         // matches the versions 1.7.10      
-	V1_7_9      ("rhqhnbkb[Lms;oh[J[[Jnr"),                                                                         // matches the versions 1.7.9       
+	V1_7_9      ("rhqhnbkb[Lms;oh[J[[Jnr"),                                                                         // matches the versions 1.7.9        1.7.8        1.7.7        1.7.6       
 	V14w02a     ("qrponkki[Lnb;lv[J[[J"),                                                                           // not generated
 	V1_7_5      ("qfpfnbjy[Lms;lm[J[[J"),                                                                           // matches the versions 1.7.5       
 	V1_7_4      ("pzozmvjs[Lmm;lg[J[[J"),                                                                           // matches the versions 1.7.4       
@@ -110,18 +111,9 @@ public enum RecognisedVersion {
 	Va1_0_16    ("hgazihcjebebmdferjtbdgiigbblkcnlvfinrmd[Jmbap"),                                                  // matches the versions a1.0.16     
 	Va1_0_15    ("hfazigcjebebmdferjsbdgiifbbljcnlufinqmc[Jmaap"),                                                  // matches the versions a1.0.15     
 	Va1_0_14    ("hcazidcjebebmdfeqjpbdghicbblfcnlpfhnmly[Jlwap"),                                                  // matches the versions a1.0.14     
-	Va1_0_11    ("haaziacjebebmddenjlbdgfhzbbkzcnljfenels[Jlqap");                                                  // matches the versions a1.0.11
-	// Update EARLIEST_VERSION if you add any versions predating the Va1_0_11 entry above
-	
+	Va1_0_11    ("haaziacjebebmddenjlbdgfhzbbkzcnljfenels[Jlqap");                                                  // matches the versions a1.0.11     
 	// @formatter:on
 
-	/** 
-	 * Returns the earliest version Amidst can recognise.
-	 * Note that unrecognised versions are assumed to be more recent than
-	 * the versions Amidst knows about. 
-	 */
-	public static final RecognisedVersion EARLIEST_VERSION = Va1_0_11;
-	
 	@NotNull
 	public static RecognisedVersion from(URLClassLoader classLoader)
 			throws ClassNotFoundException {

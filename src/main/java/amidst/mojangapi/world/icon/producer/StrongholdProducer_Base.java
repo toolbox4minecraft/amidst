@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
@@ -92,9 +91,6 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 				DefaultWorldIconTypes.STRONGHOLD.getImage(),
 				Dimension.OVERWORLD, false);
 	}
-
-	/** The Minecraft version that introduced this stronghold position algorithm */
-	public static RecognisedVersion IntroducedInVersion() { return RecognisedVersion.EARLIEST_VERSION; }		
 	
 	// This function depends on the Minecraft version, subclasses may override.
 	protected int getTotalStructureCount() { return 3; }

@@ -9,8 +9,8 @@ import amidst.documentation.Immutable;
 import amidst.fragment.layer.LayerIds;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
-import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_ChanceBased;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Base;
+import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_ChanceBased;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Original;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_AlogorithmUpdateAttempt1;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_AlogorithmUpdated;
@@ -123,9 +123,11 @@ public enum DefaultVersionFeatures {
 				VersionFeature.<BiFunction<Long, BiomeDataOracle, StrongholdProducer_Base>> builder()
 						.init(
 								(seed, biomeOracle) -> new StrongholdProducer_Original(seed, biomeOracle, validBiomesForStrongholds)
-						).since(StrongholdProducer_AlogorithmUpdateAttempt1.IntroducedInVersion(),
+						).since(RecognisedVersion.V15w43c,
+								// this should be 15w43a, which is no recognised
 								(seed, biomeOracle) -> new StrongholdProducer_AlogorithmUpdateAttempt1(seed, biomeOracle, validBiomesForStrongholds)
-						).since(StrongholdProducer_AlogorithmUpdated.IntroducedInVersion(),
+						).since(RecognisedVersion.V16w02a,
+								// this should be 16w06a
 								(seed, biomeOracle) -> new StrongholdProducer_AlogorithmUpdated(seed, biomeOracle, validBiomesForStrongholds)
 						).construct();
 		this.validBiomesForStructure_Village = VersionFeature.<Biome> listBuilder()

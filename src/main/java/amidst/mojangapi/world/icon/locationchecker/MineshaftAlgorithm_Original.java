@@ -8,7 +8,7 @@ import amidst.documentation.Immutable;
  * Empirical testing suggests this version of the algorithm works all the way
  * back to b1.8, and the Minecraft Wiki says b1.8 was when mineshafts were
  * introduced, but since Amidst versions only go back as far as
- * VersionInfo.Vbeta_1_8_1 I won't bother to check for pre-mineshaft versions.
+ * RecognisedVersion.Vb1_8_1 I won't bother to check for pre-mineshaft versions.
  *
  * I've not decompiled the very early Minecraft versions, and TheMasterCaver
  * points out that "for older versions it is possible that the second part of

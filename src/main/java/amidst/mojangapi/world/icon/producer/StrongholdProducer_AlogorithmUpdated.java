@@ -4,13 +4,12 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.logging.Log;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 /**
  *  This algorithm fixes Issue MC-92289, see https://bugs.mojang.com/browse/MC-92289
- *  It was introduced in version V16w06a 
+ *  It was introduced in version 16w06a.
  *  */
 public class StrongholdProducer_AlogorithmUpdated extends StrongholdProducer_AlogorithmUpdateAttempt1 {
 
@@ -20,13 +19,6 @@ public class StrongholdProducer_AlogorithmUpdated extends StrongholdProducer_Alo
 		Log.i("StrongholdProducer_AlogorithmUpdated");
 	}
 
-	/** The Minecraft version that introduced this stronghold position algorithm */
-	public static RecognisedVersion IntroducedInVersion() {
-		// The buggy implementation described in StrongholdProducer_AlogorithmUpdateAttempt1
-		// was fixed in 6w06a.
-		return RecognisedVersion.V16w06a; 
-	}		
-		
 	@Override
 	protected int getInitialValue_ring() { return 0; }
 
