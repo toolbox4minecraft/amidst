@@ -22,6 +22,7 @@ public enum RecognisedVersion {
 	// TODO: stronghold reset on V1_9pre4?
 	UNKNOWN     (null),
 	// We will have to look into the issue with the same magic string when it changes the next time. For now, we should keep the name V16w02a, so we do not need to adjust the test data.
+//	V16w06a     ("qvoomajzpb[Llp;mm[J[[Jmi"),                                                                       // matches the versions 16w06a       16w05b       16w04a       16w03a       16w02a       
 	V16w02a     ("qvoomajzpb[Llp;mm[J[[Jmi"),                                                                       // matches the versions 16w06a       16w05b       16w04a       16w03a       16w02a       
 	V15w51b     ("quonmajzpa[Llp;mm[J[[Jmi"),                                                                       // matches the versions 15w51b       15w51a      
 	V15w50a     ("qtonmajzpa[Llp;mm[J[[Jmi"),                                                                       // matches the versions 15w50a       15w49b       15w47c      
