@@ -1,7 +1,8 @@
 package amidst.mojangapi.world.testworld.storage.json;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Function;
 
 import amidst.documentation.GsonConstructor;
@@ -18,13 +19,12 @@ import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 public class CoordinatesCollectionJson {
 	public static CoordinatesCollectionJson extractWorldSpawn(World world) {
 		CoordinatesInWorld spawn = world.getSpawnWorldIcon().getCoordinates();
-		return new CoordinatesCollectionJson(
-				new long[][] { createCoordinatesArrayEntry(spawn) });
+		return new CoordinatesCollectionJson(createSortedSet(spawn));
 	}
 
 	public static CoordinatesCollectionJson extractStrongholds(World world) {
 		List<WorldIcon> strongholds = world.getStrongholdWorldIcons();
-		return new CoordinatesCollectionJson(createArray(strongholds));
+		return new CoordinatesCollectionJson(createSortedSet(strongholds));
 	}
 
 	public static <T> CoordinatesCollectionJson extractWorldIcons(
@@ -36,42 +36,43 @@ public class CoordinatesCollectionJson {
 		FragmentCornerWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin)
 				.walk(corner -> producer.produce(corner, consumer,
 						additionalDataFactory.apply(corner)));
-		long[][] coordinatesArray = createArray(consumer.get());
-		if (coordinatesArray.length < minimalNumberOfCoordinates) {
+		SortedSet<CoordinatesInWorld> coordinates = createSortedSet(consumer
+				.get());
+		if (coordinates.size() < minimalNumberOfCoordinates) {
 			Log.e("not enough coordinates for '" + name + "'");
 		}
-		return new CoordinatesCollectionJson(coordinatesArray);
+		return new CoordinatesCollectionJson(coordinates);
 	}
 
-	private static long[][] createArray(List<WorldIcon> icons) {
-		return icons.stream()
-				.map(CoordinatesCollectionJson::createCoordinatesArrayEntry)
-				.toArray(size -> new long[size][]);
+	private static SortedSet<CoordinatesInWorld> createSortedSet(
+			List<WorldIcon> icons) {
+		SortedSet<CoordinatesInWorld> result = new TreeSet<CoordinatesInWorld>();
+		for (WorldIcon icon : icons) {
+			result.add(icon.getCoordinates());
+		}
+		return result;
 	}
 
-	private static long[] createCoordinatesArrayEntry(WorldIcon icon) {
-		return createCoordinatesArrayEntry(icon.getCoordinates());
-	}
-
-	private static long[] createCoordinatesArrayEntry(
+	private static SortedSet<CoordinatesInWorld> createSortedSet(
 			CoordinatesInWorld coordinates) {
-		return new long[] { coordinates.getX(), coordinates.getY() };
+		SortedSet<CoordinatesInWorld> result = new TreeSet<CoordinatesInWorld>();
+		result.add(coordinates);
+		return result;
 	}
 
-	private volatile long[][] coordinatesArray;
+	private volatile SortedSet<CoordinatesInWorld> coordinates;
 
 	@GsonConstructor
 	public CoordinatesCollectionJson() {
 	}
 
-	public CoordinatesCollectionJson(long[][] coordinatesArray) {
-		this.coordinatesArray = coordinatesArray;
+	public CoordinatesCollectionJson(SortedSet<CoordinatesInWorld> coordinates) {
+		this.coordinates = coordinates;
 	}
 
 	public boolean contains(CoordinatesInWorld coordinates) {
-		for (long[] coordinatesArrayEntry : coordinatesArray) {
-			if (Arrays.equals(createCoordinatesArrayEntry(coordinates),
-					coordinatesArrayEntry)) {
+		for (CoordinatesInWorld coordinatesArrayEntry : this.coordinates) {
+			if (coordinates.equals(coordinatesArrayEntry)) {
 				return true;
 			}
 		}
@@ -82,7 +83,8 @@ public class CoordinatesCollectionJson {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Arrays.hashCode(coordinatesArray);
+		result = prime * result
+				+ ((coordinates == null) ? 0 : coordinates.hashCode());
 		return result;
 	}
 
@@ -98,7 +100,11 @@ public class CoordinatesCollectionJson {
 			return false;
 		}
 		CoordinatesCollectionJson other = (CoordinatesCollectionJson) obj;
-		if (!Arrays.deepEquals(coordinatesArray, other.coordinatesArray)) {
+		if (coordinates == null) {
+			if (other.coordinates != null) {
+				return false;
+			}
+		} else if (!coordinates.equals(other.coordinates)) {
 			return false;
 		}
 		return true;

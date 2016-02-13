@@ -1,6 +1,6 @@
 package amidst.mojangapi.world.testworld.storage.json;
 
-import java.util.Map;
+import java.util.SortedMap;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
@@ -23,13 +23,13 @@ public class BiomeDataJson {
 		return result;
 	}
 
-	private volatile Map<AreaJson, short[]> biomeData;
+	private volatile SortedMap<AreaJson, short[]> biomeData;
 
 	@GsonConstructor
 	public BiomeDataJson() {
 	}
 
-	public BiomeDataJson(Map<AreaJson, short[]> biomeData) {
+	public BiomeDataJson(SortedMap<AreaJson, short[]> biomeData) {
 		this.biomeData = biomeData;
 	}
 

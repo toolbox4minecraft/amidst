@@ -4,7 +4,7 @@ import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 
 @Immutable
-public class AreaJson {
+public class AreaJson implements Comparable<AreaJson> {
 	private volatile long x;
 	private volatile long y;
 	private volatile long width;
@@ -35,6 +35,31 @@ public class AreaJson {
 
 	public long getHeight() {
 		return height;
+	}
+
+	@Override
+	public int compareTo(AreaJson o) {
+		if (this == o) {
+			return 0;
+		} else if (this.x < o.x) {
+			return -1;
+		} else if (this.x > o.x) {
+			return 1;
+		} else if (this.y < o.y) {
+			return -1;
+		} else if (this.y > o.y) {
+			return 1;
+		} else if (this.width < o.width) {
+			return -1;
+		} else if (this.width > o.width) {
+			return 1;
+		} else if (this.height < o.height) {
+			return -1;
+		} else if (this.height > o.height) {
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
