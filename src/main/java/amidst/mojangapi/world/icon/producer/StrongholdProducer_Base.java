@@ -20,13 +20,14 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 	private final long seed;
 	private final BiomeDataOracle biomeDataOracle;
 	private final List<Biome> validBiomes;
-	
-	public StrongholdProducer_Base(long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomes) {
+
+	public StrongholdProducer_Base(long seed, BiomeDataOracle biomeDataOracle,
+			List<Biome> validBiomes) {
 		this.seed = seed;
 		this.biomeDataOracle = biomeDataOracle;
 		this.validBiomes = validBiomes;
 	}
-	
+
 	@Override
 	protected List<WorldIcon> doCreateCache() {
 		List<WorldIcon> result = new LinkedList<WorldIcon>();
@@ -45,17 +46,19 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 			angle += getAngleDelta(ring, structuresPerRing);
 			currentRingStructureCount++;
 			if (currentRingStructureCount == structuresPerRing) {
-				// This ring of strongholds is completed, adjust values to 
+				// This ring of strongholds is completed, adjust values to
 				// begin placing strongholds on the next ring.
 				ring = getNextValue_ring(ring);
 				currentRingStructureCount = getNextValue_currentRingStructureCount(currentRingStructureCount);
-				structuresPerRing = getNextValue_structuresPerRing(structuresPerRing, ring, getTotalStructureCount() - i, random);
+				structuresPerRing = getNextValue_structuresPerRing(
+						structuresPerRing, ring, getTotalStructureCount() - i,
+						random);
 				angle = getNextValue_startAngle(angle, random);
 			}
 		}
 		return result;
 	}
-	
+
 	private int getX(double angle, double distance) {
 		return (int) Math.round(Math.cos(angle) * distance);
 	}
@@ -91,15 +94,21 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 				DefaultWorldIconTypes.STRONGHOLD.getImage(),
 				Dimension.OVERWORLD, false);
 	}
-	
-	// This function depends on the Minecraft version, subclasses may override.
-	protected int getTotalStructureCount() { return 3; }
-	
-	// This function depends on the Minecraft version, subclasses may override.
-	protected int getInitialValue_ring() { return 1; }
 
 	// This function depends on the Minecraft version, subclasses may override.
-	protected int getNextValue_ring(int currentValue) { return currentValue + 1; }
+	protected int getTotalStructureCount() {
+		return 3;
+	}
+
+	// This function depends on the Minecraft version, subclasses may override.
+	protected int getInitialValue_ring() {
+		return 1;
+	}
+
+	// This function depends on the Minecraft version, subclasses may override.
+	protected int getNextValue_ring(int currentValue) {
+		return currentValue + 1;
+	}
 
 	// This function depends on the Minecraft version, subclasses may override.
 	protected double getInitialValue_startAngle(Random random) {
@@ -110,28 +119,28 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 	protected double getNextValue_startAngle(double currentValue, Random random) {
 		return currentValue;
 	}
-	
+
 	// This function depends on the Minecraft version, subclasses may override.
 	protected double getAngleDelta(int currentRing, int structuresPerRing) {
 		return 6.283185307179586D * currentRing / structuresPerRing;
-	}	
-	
+	}
+
 	// This function depends on the Minecraft version, subclasses may override.
 	protected double getNextValue_distance(int currentRing, Random random) {
-		return 
-			(1.25D * currentRing + random.nextDouble()) *
-			(DISTANCE_IN_CHUNKS * currentRing);
+		return (1.25D * currentRing + random.nextDouble())
+				* (DISTANCE_IN_CHUNKS * currentRing);
 	}
-	
+
 	// This function depends on the Minecraft version, subclasses may override.
 	protected int getNextValue_currentRingStructureCount(int currentValue) {
-		// Versions with more than 3 structures set currentRingStructureCount 
+		// Versions with more than 3 structures set currentRingStructureCount
 		// back to zero each time a ring is complete.
-		return 0; 
-	}		
-			
+		return 0;
+	}
+
 	// This function depends on the Minecraft version, subclasses may override.
-	protected int getNextValue_structuresPerRing(int currentValue, int currentRing, int structuresRemaining, Random random) { 
+	protected int getNextValue_structuresPerRing(int currentValue,
+			int currentRing, int structuresRemaining, Random random) {
 		return currentValue + currentValue + random.nextInt(currentValue);
-	}			
+	}
 }
