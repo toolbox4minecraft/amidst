@@ -65,10 +65,8 @@ public enum RecognisedVersion {
 	V1_3_1      ("[Batjatbaaoejaatcavaatfjvauaaofaveaouaouapmaobauvamwaxuapxaovajpanyaypanwayiaysaxjaxgij"),        // matches the versions 1.3.1       
 	V1_3pre     ("acl"),                                                                                            // not generated
 	V12w27a     ("acs"),                                                                                            // not generated
-	V12w26a     ("acl"),                                                                                            // not generated
 	V12w25a     ("acg"),                                                                                            // not generated
 	V12w24a     ("aca"),                                                                                            // not generated
-	V12w23b     ("acg"),                                                                                            // not generated
 	V12w22a     ("ace"),                                                                                            // not generated
 	V12w21b     ("aby"),                                                                                            // not generated
 	V12w21a     ("abm"),                                                                                            // not generated
