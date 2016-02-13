@@ -73,6 +73,10 @@ public class TheEndColorProvider implements ColorProvider {
 			int textureY, float maxInfluence) {
 		int result = VOID_TRANSPARENT_BLACK;
 		if (showRockyShores(chunkX, chunkY)) {
+			// Unfortunately the "rocky shore" miniature islands are not deterministic
+			// from the world seed, like chorus plants they are decorations whose PRNG state
+			// depends on the order chunks are created/explored in. This makes me sad :( 
+			// Let's use a symbolic texture, since we can't plot them properly. 
 			result = getRockyShoresTextureAt(textureX, textureY);
 		}
 		if (maxInfluence > INFLUENCE_FADE_FINISH) {
