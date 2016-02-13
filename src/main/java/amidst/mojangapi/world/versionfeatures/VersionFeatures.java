@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.biome.Biome;
-import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm;
+import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Base;
 
 @Immutable
 public class VersionFeatures {
@@ -16,7 +16,7 @@ public class VersionFeatures {
 	private final int numberOfStrongholds;
 	private final List<Biome> validBiomesForStructure_Village;
 	private final List<Biome> validBiomesAtMiddleOfChunk_Temple;
-	private final Function<Long, MineshaftAlgorithm> mineshaftAlgorithmFactory;
+	private final Function<Long, MineshaftAlgorithm_Base> mineshaftAlgorithmFactory;
 	private final List<Biome> validBiomesAtMiddleOfChunk_OceanMonument;
 	private final List<Biome> validBiomesForStructure_OceanMonument;
 
@@ -26,7 +26,7 @@ public class VersionFeatures {
 			int numberOfStrongholds,
 			List<Biome> validBiomesForStructure_Village,
 			List<Biome> validBiomesAtMiddleOfChunk_Temple,
-			Function<Long, MineshaftAlgorithm> mineshaftAlgorithmFactory,
+			Function<Long, MineshaftAlgorithm_Base> mineshaftAlgorithmFactory,
 			List<Biome> validBiomesAtMiddleOfChunk_OceanMonument,
 			List<Biome> validBiomesForStructure_OceanMonument) {
 		this.enabledLayers = enabledLayers;
@@ -75,7 +75,7 @@ public class VersionFeatures {
 		return validBiomesAtMiddleOfChunk_Temple;
 	}
 
-	public Function<Long, MineshaftAlgorithm> getMineshaftAlgorithmFactory() {
+	public Function<Long, MineshaftAlgorithm_Base> getMineshaftAlgorithmFactory() {
 		return mineshaftAlgorithmFactory;
 	}
 

@@ -20,8 +20,8 @@ import amidst.documentation.Immutable;
  * fewer mineshafts near the origin.
  */
 @Immutable
-public class OriginalMineshaftAlgorithm extends MineshaftAlgorithm {
-	public OriginalMineshaftAlgorithm(long seed) {
+public class MineshaftAlgorithm_Original extends MineshaftAlgorithm_Base {
+	public MineshaftAlgorithm_Original(long seed) {
 		super(seed);
 	}
 

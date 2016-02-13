@@ -8,9 +8,9 @@ import amidst.documentation.Immutable;
 import amidst.fragment.layer.LayerIds;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
-import amidst.mojangapi.world.icon.locationchecker.ChanceBasedMineshaftAlgorithm;
-import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm;
-import amidst.mojangapi.world.icon.locationchecker.OriginalMineshaftAlgorithm;
+import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_ChanceBased;
+import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Base;
+import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Original;
 
 @Immutable
 public enum DefaultVersionFeatures {
@@ -40,7 +40,7 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<Integer> numberOfStrongholds;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_Village;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Temple;
-	private final VersionFeature<Function<Long, MineshaftAlgorithm>> mineshaftAlgorithmFactory;
+	private final VersionFeature<Function<Long, MineshaftAlgorithm_Base>> mineshaftAlgorithmFactory;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_OceanMonument;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_OceanMonument;
 
@@ -145,13 +145,13 @@ public enum DefaultVersionFeatures {
 						Biome.icePlains,
 						Biome.coldTaiga
 				).construct();
-		this.mineshaftAlgorithmFactory = VersionFeature.<Function<Long, MineshaftAlgorithm>> builder()
+		this.mineshaftAlgorithmFactory = VersionFeature.<Function<Long, MineshaftAlgorithm_Base>> builder()
 				.init(
-						seed -> new OriginalMineshaftAlgorithm(seed)
+						seed -> new MineshaftAlgorithm_Original(seed)
 				).since(RecognisedVersion.V1_4_2,
-						seed -> new ChanceBasedMineshaftAlgorithm(seed, 0.01D)
+						seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.01D)
 				).since(RecognisedVersion.V1_7_2,
-						seed -> new ChanceBasedMineshaftAlgorithm(seed, 0.004D)
+						seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.004D)
 				).construct();
 		this.validBiomesAtMiddleOfChunk_OceanMonument = VersionFeature.<Biome> listBuilder()
 				.init(

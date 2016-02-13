@@ -5,10 +5,10 @@ import java.util.Random;
 import amidst.documentation.Immutable;
 
 @Immutable
-public abstract class MineshaftAlgorithm implements LocationChecker {
+public abstract class MineshaftAlgorithm_Base implements LocationChecker {
 	private final long seed;
 
-	public MineshaftAlgorithm(long seed) {
+	public MineshaftAlgorithm_Base(long seed) {
 		this.seed = seed;
 	}
 
