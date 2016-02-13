@@ -15,12 +15,12 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
  * see https://bugs.mojang.com/browse/MC-92289
  */
 @ThreadSafe
-public class StrongholdProducer_AlogorithmUpdated extends
-		StrongholdProducer_AlogorithmUpdateAttempt1 {
-	public StrongholdProducer_AlogorithmUpdated(long seed,
+public class StrongholdProducer_128Algorithm extends
+		StrongholdProducer_Buggy128Algorithm {
+	public StrongholdProducer_128Algorithm(long seed,
 			BiomeDataOracle biomeDataOracle, List<Biome> validBiomes) {
 		super(seed, biomeDataOracle, validBiomes);
-		Log.i("StrongholdProducer_AlogorithmUpdated");
+		Log.i("StrongholdProducer_128Algorithm");
 	}
 
 	@Override

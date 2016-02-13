@@ -11,9 +11,9 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Base;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_ChanceBased;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Original;
-import amidst.mojangapi.world.icon.producer.StrongholdProducer_AlogorithmUpdateAttempt1;
-import amidst.mojangapi.world.icon.producer.StrongholdProducer_AlogorithmUpdated;
+import amidst.mojangapi.world.icon.producer.StrongholdProducer_128Algorithm;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Base;
+import amidst.mojangapi.world.icon.producer.StrongholdProducer_Buggy128Algorithm;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Original;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
@@ -116,16 +116,15 @@ public enum DefaultVersionFeatures {
 						// this includes all the biomes above, except for the swampland
 						getValidBiomesForStrongholdSinceV13w36a()
 				).construct();
-		
 		this.strongholdProducerFactory = VersionFeature.<TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base>> builder()
 				.init(
 						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_Original(seed, biomeOracle, validBiomes)
 				).since(RecognisedVersion.V15w43c,
 						// this should be 15w43a, which is no recognised
-						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_AlogorithmUpdateAttempt1(seed, biomeOracle, validBiomes)
+						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_Buggy128Algorithm(seed, biomeOracle, validBiomes)
 				).since(RecognisedVersion.V16w02a,
 						// this should be 16w06a
-						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_AlogorithmUpdated(seed, biomeOracle, validBiomes)
+						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_128Algorithm(seed, biomeOracle, validBiomes)
 				).construct();
 		this.validBiomesForStructure_Village = VersionFeature.<Biome> listBuilder()
 				.init(
