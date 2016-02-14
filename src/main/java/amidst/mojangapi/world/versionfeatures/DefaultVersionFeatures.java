@@ -11,6 +11,7 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Base;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_ChanceBased;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Original;
+import amidst.mojangapi.world.icon.producer.StrongholdProducer_128Algorithm;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Base;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Buggy128Algorithm;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Original;
@@ -121,9 +122,9 @@ public enum DefaultVersionFeatures {
 				).since(RecognisedVersion.V15w43c,
 						// this should be 15w43a, which is no recognised
 						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_Buggy128Algorithm(seed, biomeOracle, validBiomes)
-//				).since(RecognisedVersion.V16w06a,
-//						// this should be 16w06a
-//						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_128Algorithm(seed, biomeOracle, validBiomes)
+				).since(RecognisedVersion.V16w06a,
+						// this should be 16w06a
+						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_128Algorithm(seed, biomeOracle, validBiomes)
 				).construct();
 		this.validBiomesForStructure_Village = VersionFeature.<Biome> listBuilder()
 				.init(
