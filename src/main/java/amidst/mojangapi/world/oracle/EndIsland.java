@@ -26,8 +26,14 @@ public class EndIsland {
 	 * likely the lower the value).
 	 */
 	public float influenceAtBlock(int x, int y) {
-		float chunkX = x / 16.0f;
-		float chunkY = y / 16.0f;
+		// Add 8 blocks to both axis because all the Minecraft calculations are
+		// done using chunk coordinates and are converted as being the center of
+		// the chunk whenever translated to block coordinates, whereas Amidst
+		// treats chunk coords as blockCoordinates >> 4.
+		// This function also does a floating point divide by 16 instead of
+		// shifting by 4 in order to maintain sub-chunk accuracy with x & y.
+		float chunkX = (x + 8) / 16.0f;
+		float chunkY = (y + 8) / 16.0f;
 		float adjustedX = (this.chunkX - chunkX) * 2 + X_ADJUSTMENT;
 		float adjustedY = (this.chunkY - chunkY) * 2 + Y_ADJUSTMENT;
 		return getResult(adjustedX * adjustedX + adjustedY * adjustedY);

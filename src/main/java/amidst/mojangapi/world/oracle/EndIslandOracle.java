@@ -81,8 +81,6 @@ public class EndIslandOracle {
 
 	/**
 	 * Returns a list of all islands that might be touching a chunk-area.
-	 * ("Touching" includes the rocky-island-shore that extends from each
-	 * island)
 	 */
 	private List<EndIsland> findSurroundingIslands(int chunkX, int chunkY,
 			int chunksPerFragmentX, int chunksPerFragmentY) {

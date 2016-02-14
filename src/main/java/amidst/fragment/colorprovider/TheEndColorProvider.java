@@ -105,6 +105,12 @@ public class TheEndColorProvider implements ColorProvider {
 		return TEXTURES.getRGB(textureX, textureY);
 	}
 
+	/**
+	 * Unfortunately the "rocky shore" miniature islands are not deterministic
+	 * from the world seed, like chorus plants they are decorations whose PRNG
+	 * state depends on the order chunks are created/explored in. This makes me
+	 * sad :( Let's use a symbolic texture, since we can't plot them properly.
+	 */
 	private int getRockyShoresTextureAt(int textureX, int textureY) {
 		return TEXTURES.getRGB(textureX, textureY + TEXTURES_HEIGHT);
 	}
