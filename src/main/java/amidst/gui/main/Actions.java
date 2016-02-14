@@ -215,8 +215,11 @@ public class Actions {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
 			BufferedImage image = viewerFacade.createCaptureImage();
-			File file = mainWindow.askForCaptureImageSaveFile("screenshot-"
-					+ viewerFacade.getWorldSeed().getLong() + ".png");
+			String suggestedFilename = "screenshot_"
+					+ viewerFacade.getWorldType().getFilenameText() + "_"
+					+ viewerFacade.getWorldSeed().getLong() + ".png";
+			File file = mainWindow
+					.askForCaptureImageSaveFile(suggestedFilename);
 			if (file != null) {
 				saveImageToFile(image, file);
 			}
@@ -249,8 +252,8 @@ public class Actions {
 				.displayMessage(
 						"About",
 						"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n\n"
-								+ "Author: Skidoodle\n"
-								+ "Contact: amidst.project@gmail.com\n"
+								+ "Author: Skidoodle aka skiphs\n"
+								+ "Mail: toolbox4minecraft+amidst@gmail.com\n"
 								+ "Project Page: https://github.com/toolbox4minecraft/amidst");
 	}
 

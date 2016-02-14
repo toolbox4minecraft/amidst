@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Resolution;
 
 @ThreadSafe
 public class EndIslandOracle {
@@ -67,12 +69,20 @@ public class EndIslandOracle {
 		this.noiseFunction = noiseFunction;
 	}
 
+	public List<EndIsland> getAt(CoordinatesInWorld corner) {
+		// @formatter:off
+		int steps = Resolution.CHUNK.getStepsPerFragment();
+		return findSurroundingIslands(
+				(int) corner.getXAs(Resolution.CHUNK),
+				(int) corner.getYAs(Resolution.CHUNK),
+				steps, steps);
+		// @formatter:on
+	}
+
 	/**
 	 * Returns a list of all islands that might be touching a chunk-area.
-	 * ("Touching" includes the rocky-island-shore that extends from each
-	 * island)
 	 */
-	public List<EndIsland> findSurroundingIslands(int chunkX, int chunkY,
+	private List<EndIsland> findSurroundingIslands(int chunkX, int chunkY,
 			int chunksPerFragmentX, int chunksPerFragmentY) {
 		List<EndIsland> result = new LinkedList<EndIsland>();
 		for (int y = -SURROUNDING_CHUNKS; y <= chunksPerFragmentY

@@ -15,11 +15,13 @@ import amidst.logging.Log;
 public enum RecognisedVersion {
 	// @formatter:off
 	// Make sure UNKNOWN is the first entry, so it is always considered newer than all other versions, since an unknown version is most likely a new snapshot.
+	// The 128 stronghold algorithm changes in version 16w06a. However, we cannot uniquely identify this version.
 	// 1.8.4, 1.8.5, 1.8.6, 1.8.7, and 1.8.8 all have the same typeDump version ID. They are all security issue fixes.
 	// 1.8.3 and 1.8.2 have the same typeDump version ID - probably because 1.8.2 -> 1.8.3 was a fix for a server-side bug (https://mojang.com/2015/02/minecraft-1-8-2-is-now-available/)
 	// TODO: Remove these versions before V1_0?
 	// TODO: stronghold reset on V1_9pre4?
-	UNKNOWN(null),
+	UNKNOWN     (null),
+	V16w06a     ("qvoomajzpb[Llp;mm[J[[Jmi"),                                                                       // matches the versions 16w06a       16w05b       16w04a       16w03a       16w02a       
 	V15w51b     ("quonmajzpa[Llp;mm[J[[Jmi"),                                                                       // matches the versions 15w51b       15w51a      
 	V15w50a     ("qtonmajzpa[Llp;mm[J[[Jmi"),                                                                       // matches the versions 15w50a       15w49b       15w47c      
 	V15w46a     ("qsonmajzpa[Llp;mm[J[[Jmi"),                                                                       // matches the versions 15w46a      
@@ -40,7 +42,7 @@ public enum RecognisedVersion {
 	V1_8        ("wbuwrcnp[Lqt;sn[J[[Jry"),                                                                         // matches the versions 1.8         
 	V14w21b     ("tjseoylw[Loq;qd[J[[Jpo"),                                                                         // not generated
 	V1_7_10     ("riqinckb[Lmt;oi[J[[Jns"),                                                                         // matches the versions 1.7.10      
-	V1_7_9      ("rhqhnbkb[Lms;oh[J[[Jnr"),                                                                         // matches the versions 1.7.9       
+	V1_7_9      ("rhqhnbkb[Lms;oh[J[[Jnr"),                                                                         // matches the versions 1.7.9        1.7.8        1.7.7        1.7.6       
 	V14w02a     ("qrponkki[Lnb;lv[J[[J"),                                                                           // not generated
 	V1_7_5      ("qfpfnbjy[Lms;lm[J[[J"),                                                                           // matches the versions 1.7.5       
 	V1_7_4      ("pzozmvjs[Lmm;lg[J[[J"),                                                                           // matches the versions 1.7.4       
@@ -62,10 +64,8 @@ public enum RecognisedVersion {
 	V1_3_1      ("[Batjatbaaoejaatcavaatfjvauaaofaveaouaouapmaobauvamwaxuapxaovajpanyaypanwayiaysaxjaxgij"),        // matches the versions 1.3.1       
 	V1_3pre     ("acl"),                                                                                            // not generated
 	V12w27a     ("acs"),                                                                                            // not generated
-	V12w26a     ("acl"),                                                                                            // not generated
 	V12w25a     ("acg"),                                                                                            // not generated
 	V12w24a     ("aca"),                                                                                            // not generated
-	V12w23b     ("acg"),                                                                                            // not generated
 	V12w22a     ("ace"),                                                                                            // not generated
 	V12w21b     ("aby"),                                                                                            // not generated
 	V12w21a     ("abm"),                                                                                            // not generated
@@ -157,15 +157,32 @@ public enum RecognisedVersion {
 	public static RecognisedVersion from(String magicString) {
 		for (RecognisedVersion recognisedVersion : RecognisedVersion.values()) {
 			if (magicString.equals(recognisedVersion.magicString)) {
-				Log.i("Recognised Minecraft Version "
-						+ recognisedVersion.getName()
-						+ " with the magic string \"" + magicString + "\".");
+				logFound(recognisedVersion);
 				return recognisedVersion;
 			}
 		}
 		Log.i("Unable to recognise Minecraft Version with the magic string \""
 				+ magicString + "\".");
 		return RecognisedVersion.UNKNOWN;
+	}
+
+	@NotNull
+	public static RecognisedVersion fromName(String name) {
+		for (RecognisedVersion recognisedVersion : RecognisedVersion.values()) {
+			if (name.equals(recognisedVersion.name)) {
+				logFound(recognisedVersion);
+				return recognisedVersion;
+			}
+		}
+		Log.i("Unable to recognise Minecraft Version with the name \"" + name
+				+ "\".");
+		return RecognisedVersion.UNKNOWN;
+	}
+
+	private static void logFound(RecognisedVersion recognisedVersion) {
+		Log.i("Recognised Minecraft Version " + recognisedVersion.name
+				+ " with the magic string \"" + recognisedVersion.magicString
+				+ "\".");
 	}
 
 	public static boolean isNewerOrEqualTo(RecognisedVersion version1,

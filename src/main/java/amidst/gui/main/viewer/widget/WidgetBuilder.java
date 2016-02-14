@@ -13,6 +13,7 @@ import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.main.viewer.BiomeSelection;
 import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
+import amidst.gui.main.viewer.Graphics2DAccelerationCounter;
 import amidst.gui.main.viewer.WorldIconSelection;
 import amidst.gui.main.viewer.Zoom;
 import amidst.gui.main.viewer.widget.Widget.CornerAnchorPoint;
@@ -28,6 +29,7 @@ public class WidgetBuilder {
 	private final WorldIconSelection worldIconSelection;
 	private final LayerReloader layerReloader;
 	private final FragmentManager fragmentManager;
+	private final Graphics2DAccelerationCounter accelerationCounter;
 	private final AmidstSettings settings;
 	private final Supplier<String> progressText;
 
@@ -36,7 +38,9 @@ public class WidgetBuilder {
 			FragmentGraphToScreenTranslator translator, Zoom zoom,
 			BiomeSelection biomeSelection,
 			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
-			FragmentManager fragmentManager, AmidstSettings settings,
+			FragmentManager fragmentManager,
+			Graphics2DAccelerationCounter accelerationCounter,
+			AmidstSettings settings,
 			Supplier<String> progressText) {
 		this.world = world;
 		this.graph = graph;
@@ -46,6 +50,7 @@ public class WidgetBuilder {
 		this.worldIconSelection = worldIconSelection;
 		this.layerReloader = layerReloader;
 		this.fragmentManager = fragmentManager;
+		this.accelerationCounter = accelerationCounter;
 		this.settings = settings;
 		this.progressText = progressText;
 	}
@@ -57,9 +62,10 @@ public class WidgetBuilder {
 				new ChangeableTextWidget(   CornerAnchorPoint.CENTER,        progressText),
 				new FpsWidget(              CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              settings.showFPS),
 				new ScaleWidget(            CornerAnchorPoint.BOTTOM_CENTER, zoom,                               settings.showScale),
-				new ImmutableTextWidget(    CornerAnchorPoint.TOP_LEFT,      world.getWorldSeed().getLabel()),
-				new DebugWidget(            CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, settings.showDebug),
+				new SeedWidget(             CornerAnchorPoint.TOP_LEFT,      world.getWorldSeed()),
+				new WorldTypeWidget(        CornerAnchorPoint.TOP_LEFT,      world.getWorldType()),
 				new SelectedIconWidget(     CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
+				new DebugWidget(            CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, settings.showDebug, accelerationCounter),
 				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension),
 				new BiomeToggleWidget(      CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection,    layerReloader),
 				new BiomeWidget(            CornerAnchorPoint.NONE,          biomeSelection,    layerReloader,   settings.biomeColorProfileSelection)

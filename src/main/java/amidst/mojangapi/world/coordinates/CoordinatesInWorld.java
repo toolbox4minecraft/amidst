@@ -5,7 +5,7 @@ import java.awt.Point;
 import amidst.documentation.Immutable;
 
 @Immutable
-public class CoordinatesInWorld {
+public class CoordinatesInWorld implements Comparable<CoordinatesInWorld> {
 	public static CoordinatesInWorld tryParse(String coordinates) {
 		String[] parsedCoordinates = coordinates.replaceAll(" ", "").split(",");
 		if (parsedCoordinates.length != 2) {
@@ -146,6 +146,23 @@ public class CoordinatesInWorld {
 	public boolean isInBoundsOf(CoordinatesInWorld corner, long size) {
 		return CoordinateUtils.isInBounds(xInWorld, yInWorld, corner.xInWorld,
 				corner.yInWorld, size, size);
+	}
+
+	@Override
+	public int compareTo(CoordinatesInWorld o) {
+		if (this == o) {
+			return 0;
+		} else if (this.xInWorld < o.xInWorld) {
+			return -1;
+		} else if (this.xInWorld > o.xInWorld) {
+			return 1;
+		} else if (this.yInWorld < o.yInWorld) {
+			return -1;
+		} else if (this.yInWorld > o.yInWorld) {
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 
 	@Override

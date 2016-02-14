@@ -37,7 +37,7 @@
 						</goals>
 						<configuration>
 							<mainClass>amidst.Amidst</mainClass>
-							<iconFile>../../target/icon.icns</iconFile>
+							<iconFile>../../src/main/resources/amidst/icon/amidst.icns</iconFile>
 							<jvmVersion>${amidst.build.jdk.version}+</jvmVersion>
 							<bundleName>Amidst</bundleName>
 						</configuration>
