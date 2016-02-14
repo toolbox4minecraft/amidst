@@ -1,7 +1,8 @@
 package amidst.mojangapi.mocking;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.world.testworld.storage.json.AreaJson;
@@ -9,8 +10,8 @@ import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 
 @NotThreadSafe
 public class BiomeDataJsonBuilder {
-	private final Map<AreaJson, short[]> quarterBiomeData = new HashMap<AreaJson, short[]>();
-	private final Map<AreaJson, short[]> fullBiomeData = new HashMap<AreaJson, short[]>();
+	private final SortedMap<AreaJson, short[]> quarterBiomeData = new TreeMap<AreaJson, short[]>();
+	private final SortedMap<AreaJson, short[]> fullBiomeData = new TreeMap<AreaJson, short[]>();
 
 	public void store(int x, int y, int width, int height,
 			boolean useQuarterResolution, int[] biomeData) {

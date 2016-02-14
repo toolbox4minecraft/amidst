@@ -1,8 +1,8 @@
 package amidst.mojangapi.world.testworld.storage.json;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
@@ -15,19 +15,20 @@ import amidst.mojangapi.world.oracle.EndIslandOracle;
 public class EndIslandsJson {
 	public static EndIslandsJson extract(EndIslandOracle oracle,
 			int fragmentsAroundOrigin) {
-		Map<CoordinatesInWorld, List<EndIsland>> result = new HashMap<CoordinatesInWorld, List<EndIsland>>();
+		SortedMap<CoordinatesInWorld, List<EndIsland>> result = new TreeMap<CoordinatesInWorld, List<EndIsland>>();
 		FragmentCornerWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin)
 				.walk(corner -> result.put(corner, oracle.getAt(corner)));
 		return new EndIslandsJson(result);
 	}
 
-	private volatile Map<CoordinatesInWorld, List<EndIsland>> endIslands;
+	private volatile SortedMap<CoordinatesInWorld, List<EndIsland>> endIslands;
 
 	@GsonConstructor
 	public EndIslandsJson() {
 	}
 
-	public EndIslandsJson(Map<CoordinatesInWorld, List<EndIsland>> endIslands) {
+	public EndIslandsJson(
+			SortedMap<CoordinatesInWorld, List<EndIsland>> endIslands) {
 		this.endIslands = endIslands;
 	}
 
