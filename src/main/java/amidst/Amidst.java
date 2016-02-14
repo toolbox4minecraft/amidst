@@ -162,12 +162,7 @@ public class Amidst {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				new CrashWindow(message, allMessages, new Runnable() {
-					@Override
-					public void run() {
-						System.exit(4);
-					}
-				});
+				CrashWindow.show(message, allMessages, () -> System.exit(4));
 			}
 		});
 	}
