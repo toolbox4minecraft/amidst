@@ -27,7 +27,7 @@ public class CommandLineParameters {
 	public volatile String biomeProfilesDirectory;
 
 	@Option(name = "-history",                usage = "location of the seed history file",                   metaVar = "<file>")
-	public volatile String historyFile;
+	public volatile String seedHistoryFile;
 
 	@Option(name = "-log",                    usage = "location of the log file",                            metaVar = "<file>")
 	public volatile String logFile;
