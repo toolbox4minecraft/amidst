@@ -32,7 +32,7 @@ import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.WorldPlayerType;
-import amidst.settings.biomecolorprofile.BiomeColorProfileDirectory;
+import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
@@ -41,7 +41,7 @@ public class MainWindow {
 	private final AmidstMetaData metadata;
 	private final AmidstSettings settings;
 	private final MojangApi mojangApi;
-	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
+	private final BiomeProfileDirectory biomeProfileDirectory;
 	private final ViewerFacadeBuilder viewerFacadeBuilder;
 	private final ThreadMaster threadMaster;
 
@@ -55,13 +55,13 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public MainWindow(Application application, AmidstMetaData metadata,
 			AmidstSettings settings, MojangApi mojangApi,
-			BiomeColorProfileDirectory biomeColorProfileDirectory,
+			BiomeProfileDirectory biomeProfileDirectory,
 			ViewerFacadeBuilder viewerFacadeBuilder, ThreadMaster threadMaster) {
 		this.application = application;
 		this.metadata = metadata;
 		this.settings = settings;
 		this.mojangApi = mojangApi;
-		this.biomeColorProfileDirectory = biomeColorProfileDirectory;
+		this.biomeProfileDirectory = biomeProfileDirectory;
 		this.viewerFacadeBuilder = viewerFacadeBuilder;
 		this.threadMaster = threadMaster;
 		this.frame = createFrame();
@@ -104,14 +104,14 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Actions createActions() {
 		return new Actions(application, mojangApi, this, viewerFacade,
-				settings.biomeColorProfileSelection,
+				settings.biomeProfileSelection,
 				threadMaster.getWorkerExecutor());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private AmidstMenu createMenuBar() {
 		AmidstMenu menuBar = new AmidstMenuBuilder(settings, actions,
-				biomeColorProfileDirectory).construct();
+				biomeProfileDirectory).construct();
 		frame.setJMenuBar(menuBar.getMenuBar());
 		return menuBar;
 	}

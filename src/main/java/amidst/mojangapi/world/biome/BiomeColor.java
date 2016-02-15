@@ -3,7 +3,7 @@ package amidst.mojangapi.world.biome;
 import java.awt.Color;
 
 import amidst.documentation.Immutable;
-import amidst.settings.biomecolorprofile.BiomeColorJson;
+import amidst.settings.biomeprofile.BiomeColorJson;
 
 @Immutable
 public class BiomeColor {

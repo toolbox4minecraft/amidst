@@ -15,7 +15,7 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.gui.main.viewer.BiomeSelection;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
-import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @NotThreadSafe
 public class BiomeWidget extends Widget {
@@ -33,7 +33,7 @@ public class BiomeWidget extends Widget {
 
 	private final BiomeSelection biomeSelection;
 	private final LayerReloader layerReloader;
-	private final BiomeColorProfileSelection biomeColorProfileSelection;
+	private final BiomeProfileSelection biomeProfileSelection;
 
 	private List<Biome> biomes = new ArrayList<Biome>();
 	private int maxNameWidth = 0;
@@ -54,11 +54,11 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public BiomeWidget(CornerAnchorPoint anchor, BiomeSelection biomeSelection,
 			LayerReloader layerReloader,
-			BiomeColorProfileSelection biomeColorProfileSelection) {
+			BiomeProfileSelection biomeProfileSelection) {
 		super(anchor);
 		this.biomeSelection = biomeSelection;
 		this.layerReloader = layerReloader;
-		this.biomeColorProfileSelection = biomeColorProfileSelection;
+		this.biomeProfileSelection = biomeProfileSelection;
 		setWidth(250);
 		setHeight(400);
 		setY(100);
@@ -217,8 +217,7 @@ public class BiomeWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private BiomeColor getBiomeColorOrUnknown(Biome biome) {
-		return biomeColorProfileSelection.getBiomeColorOrUnknown(biome
-				.getIndex());
+		return biomeProfileSelection.getBiomeColorOrUnknown(biome.getIndex());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

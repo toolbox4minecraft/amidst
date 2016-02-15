@@ -10,13 +10,13 @@ import amidst.AmidstSettings;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
 import amidst.mojangapi.world.WorldType;
-import amidst.settings.biomecolorprofile.BiomeColorProfileDirectory;
+import amidst.settings.biomeprofile.BiomeProfileDirectory;
 
 @NotThreadSafe
 public class AmidstMenuBuilder {
 	private final AmidstSettings settings;
 	private final Actions actions;
-	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
+	private final BiomeProfileDirectory biomeProfileDirectory;
 	private final JMenuBar menuBar;
 	private JMenu worldMenu;
 	private JMenuItem savePlayerLocationsMenu;
@@ -24,10 +24,10 @@ public class AmidstMenuBuilder {
 	private LayersMenu layersMenu;
 
 	public AmidstMenuBuilder(AmidstSettings settings, Actions actions,
-			BiomeColorProfileDirectory biomeColorProfileDirectory) {
+			BiomeProfileDirectory biomeProfileDirectory) {
 		this.settings = settings;
 		this.actions = actions;
-		this.biomeColorProfileDirectory = biomeColorProfileDirectory;
+		this.biomeProfileDirectory = biomeProfileDirectory;
 		this.menuBar = createMenuBar();
 	}
 
@@ -95,8 +95,8 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("Settings");
 		result.setMnemonic(KeyEvent.VK_S);
 		result.add(create_Settings_DefaultWorldType());
-		if (biomeColorProfileDirectory.isValid()) {
-			result.add(create_Settings_BiomeColor());
+		if (biomeProfileDirectory.isValid()) {
+			result.add(create_Settings_BiomeProfile());
 		}
 		result.addSeparator();
 		// @formatter:off
@@ -118,9 +118,9 @@ public class AmidstMenuBuilder {
 		return result;
 	}
 
-	private JMenu create_Settings_BiomeColor() {
-		JMenu result = new JMenu("Biome color profile");
-		new BiomeColorMenuFactory(result, actions, biomeColorProfileDirectory);
+	private JMenu create_Settings_BiomeProfile() {
+		JMenu result = new JMenu("Biome profile");
+		new BiomeProfileMenuFactory(result, actions, biomeProfileDirectory);
 		return result;
 	}
 

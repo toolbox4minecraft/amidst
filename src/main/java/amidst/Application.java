@@ -18,7 +18,7 @@ import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreation
 import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.player.PlayerInformationCacheImpl;
-import amidst.settings.biomecolorprofile.BiomeColorProfileDirectory;
+import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
@@ -27,7 +27,7 @@ public class Application {
 	private final AmidstMetaData metadata;
 	private final AmidstSettings settings;
 	private final MojangApi mojangApi;
-	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
+	private final BiomeProfileDirectory biomeProfileDirectory;
 	private final ViewerFacadeBuilder viewerFacadeBuilder;
 	private final ThreadMaster threadMaster;
 
@@ -42,7 +42,7 @@ public class Application {
 		this.metadata = metadata;
 		this.settings = createSettings();
 		this.mojangApi = createMojangApi();
-		this.biomeColorProfileDirectory = createBiomeColorProfileDirectory();
+		this.biomeProfileDirectory = createBiomeProfileDirectory();
 		this.viewerFacadeBuilder = createViewerFacadeBuilder();
 		this.threadMaster = createThreadMaster();
 	}
@@ -63,9 +63,8 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private BiomeColorProfileDirectory createBiomeColorProfileDirectory() {
-		return BiomeColorProfileDirectory
-				.create(parameters.biomeColorProfilesDirectory);
+	private BiomeProfileDirectory createBiomeProfileDirectory() {
+		return BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -103,7 +102,7 @@ public class Application {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayMainWindow() {
 		setMainWindow(new MainWindow(this, metadata, settings, mojangApi,
-				biomeColorProfileDirectory, viewerFacadeBuilder, threadMaster));
+				biomeProfileDirectory, viewerFacadeBuilder, threadMaster));
 		setProfileSelectWindow(null);
 	}
 

@@ -23,8 +23,8 @@ public class CommandLineParameters {
 	@Option(name = "-mcjson",                 usage = "location of the minecraft json file",                 metaVar = "<file>",       depends = { "-mcjar" })
 	public volatile String minecraftJsonFile;
 
-	@Option(name = "-biome-color-profiles",   usage = "location of the biome color profile directory",       metaVar = "<directory>")
-	public volatile String biomeColorProfilesDirectory;
+	@Option(name = "-biome-profiles",         usage = "location of the biome profile directory",             metaVar = "<directory>")
+	public volatile String biomeProfilesDirectory;
 
 	@Option(name = "-history",                usage = "location of the seed history file",                   metaVar = "<file>")
 	public volatile String historyFile;

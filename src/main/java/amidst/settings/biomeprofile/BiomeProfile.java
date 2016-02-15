@@ -1,4 +1,4 @@
-package amidst.settings.biomecolorprofile;
+package amidst.settings.biomeprofile;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,7 +18,7 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
 
 @Immutable
-public class BiomeColorProfile {
+public class BiomeProfile {
 	private static Map<String, BiomeColorJson> createDefaultColorMap() {
 		Map<String, BiomeColorJson> result = new HashMap<String, BiomeColorJson>();
 		for (Biome biome : Biome.allBiomes()) {
@@ -28,11 +28,11 @@ public class BiomeColorProfile {
 		return result;
 	}
 
-	public static BiomeColorProfile getDefaultProfile() {
+	public static BiomeProfile getDefaultProfile() {
 		return DEFAULT_PROFILE;
 	}
 
-	private static final BiomeColorProfile DEFAULT_PROFILE = new BiomeColorProfile(
+	private static final BiomeProfile DEFAULT_PROFILE = new BiomeProfile(
 			"default", null, createDefaultColorMap());
 
 	private volatile String name;
@@ -40,10 +40,10 @@ public class BiomeColorProfile {
 	private volatile Map<String, BiomeColorJson> colorMap;
 
 	@GsonConstructor
-	public BiomeColorProfile() {
+	public BiomeProfile() {
 	}
 
-	private BiomeColorProfile(String name, String shortcut,
+	private BiomeProfile(String name, String shortcut,
 			Map<String, BiomeColorJson> colorMap) {
 		this.name = name;
 		this.shortcut = shortcut;
