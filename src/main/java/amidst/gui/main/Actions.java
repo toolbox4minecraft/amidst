@@ -217,7 +217,21 @@ public class Actions {
 			File file = mainWindow
 					.askForCaptureImageSaveFile(suggestedFilename);
 			if (file != null) {
-				saveImageToFile(image, file);
+				file = appendPNGFileExtensionIfNecessary(file);
+				if (file.exists() && !file.isFile()) {
+					mainWindow
+							.displayError("Unable to write capture image, because the target exists but is not a file: "
+									+ file.getAbsolutePath());
+				} else if (!canWriteToFile(file)) {
+					mainWindow
+							.displayError("Unable to write capture image, because you have no writing permissions: "
+									+ file.getAbsolutePath());
+				} else if (!file.exists()
+						|| mainWindow.askToConfirm("Replace file?",
+								"File already exists. Do you want to replace it?\n"
+										+ file.getAbsolutePath() + "")) {
+					saveImageToFile(image, file);
+				}
 			}
 			image.flush();
 		}
@@ -323,17 +337,26 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	private boolean canWriteToFile(File file) {
+		File parentFile = file.getParentFile();
+		return file.canWrite()
+				|| (!file.exists() && parentFile != null && parentFile
+						.canWrite());
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void saveImageToFile(BufferedImage image, File file) {
 		try {
-			ImageIO.write(image, "png", appendPNGFileExtensionIfNecessary(file));
+			ImageIO.write(image, "png", file);
 		} catch (IOException e) {
 			e.printStackTrace();
+			mainWindow.displayException(e);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private File appendPNGFileExtensionIfNecessary(File file) {
-		String filename = file.toString();
+		String filename = file.getAbsolutePath();
 		if (!filename.toLowerCase().endsWith(".png")) {
 			filename += ".png";
 		}
