@@ -5,17 +5,17 @@ import amidst.fragment.Fragment;
 import amidst.gui.main.viewer.BiomeSelection;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.biome.BiomeColor;
-import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @ThreadSafe
 public class BiomeColorProvider implements ColorProvider {
 	private final BiomeSelection biomeSelection;
-	private final BiomeColorProfileSelection biomeColorProfileSelection;
+	private final BiomeProfileSelection biomeProfileSelection;
 
 	public BiomeColorProvider(BiomeSelection biomeSelection,
-			BiomeColorProfileSelection biomeColorProfileSelection) {
+			BiomeProfileSelection biomeProfileSelection) {
 		this.biomeSelection = biomeSelection;
-		this.biomeColorProfileSelection = biomeColorProfileSelection;
+		this.biomeProfileSelection = biomeProfileSelection;
 	}
 
 	@Override
@@ -33,6 +33,6 @@ public class BiomeColorProvider implements ColorProvider {
 	}
 
 	private BiomeColor getBiomeColor(int biomeIndex) {
-		return biomeColorProfileSelection.getBiomeColorOrUnknown(biomeIndex);
+		return biomeProfileSelection.getBiomeColorOrUnknown(biomeIndex);
 	}
 }

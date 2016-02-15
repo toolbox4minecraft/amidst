@@ -1,4 +1,4 @@
-package amidst.settings.biomecolorprofile;
+package amidst.settings.biomeprofile;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;

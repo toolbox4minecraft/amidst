@@ -28,8 +28,8 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
-import amidst.settings.biomecolorprofile.BiomeColorProfile;
-import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
+import amidst.settings.biomeprofile.BiomeProfile;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -38,19 +38,19 @@ public class Actions {
 	private final MojangApi mojangApi;
 	private final MainWindow mainWindow;
 	private final AtomicReference<ViewerFacade> viewerFacade;
-	private final BiomeColorProfileSelection biomeColorProfileSelection;
+	private final BiomeProfileSelection biomeProfileSelection;
 	private final WorkerExecutor workerExecutor;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Actions(Application application, MojangApi mojangApi,
 			MainWindow mainWindow, AtomicReference<ViewerFacade> viewerFacade,
-			BiomeColorProfileSelection biomeColorProfileSelection,
+			BiomeProfileSelection biomeProfileSelection,
 			WorkerExecutor workerExecutor) {
 		this.application = application;
 		this.mojangApi = mojangApi;
 		this.mainWindow = mainWindow;
 		this.viewerFacade = viewerFacade;
-		this.biomeColorProfileSelection = biomeColorProfileSelection;
+		this.biomeProfileSelection = biomeProfileSelection;
 		this.workerExecutor = workerExecutor;
 	}
 
@@ -224,8 +224,8 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void selectBiomeColorProfile(BiomeColorProfile profile) {
-		biomeColorProfileSelection.set(profile);
+	public void selectBiomeProfile(BiomeProfile profile) {
+		biomeProfileSelection.set(profile);
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
 			viewerFacade.reloadBackgroundLayer();

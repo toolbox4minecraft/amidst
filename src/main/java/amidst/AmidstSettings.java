@@ -9,8 +9,8 @@ import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
 import amidst.settings.Setting;
 import amidst.settings.Settings;
-import amidst.settings.biomecolorprofile.BiomeColorProfile;
-import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
+import amidst.settings.biomeprofile.BiomeProfile;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @ThreadSafe
 public class AmidstSettings {
@@ -41,7 +41,7 @@ public class AmidstSettings {
 	/**
 	 * This is not persisted.
 	 */
-	public final BiomeColorProfileSelection biomeColorProfileSelection;
+	public final BiomeProfileSelection biomeProfileSelection;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public AmidstSettings(Preferences preferences) {
@@ -69,7 +69,7 @@ public class AmidstSettings {
 	
 		lastProfile                = Settings.createString(   preferences, "profile",             "");
 		worldType                  = Settings.createString(   preferences, "worldType",           WorldType.PROMPT_EACH_TIME);
-		biomeColorProfileSelection = new BiomeColorProfileSelection(BiomeColorProfile.getDefaultProfile());
+		biomeProfileSelection = new BiomeProfileSelection(BiomeProfile.getDefaultProfile());
 		// @formatter:on
 	}
 }

@@ -1,4 +1,4 @@
-package amidst.settings.biomecolorprofile;
+package amidst.settings.biomeprofile;
 
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
@@ -6,11 +6,11 @@ import amidst.mojangapi.world.biome.BiomeColor;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
 
 @ThreadSafe
-public class BiomeColorProfileSelection {
+public class BiomeProfileSelection {
 	private volatile BiomeColor[] biomeColors;
 
-	public BiomeColorProfileSelection(BiomeColorProfile biomeColorProfile) {
-		set(biomeColorProfile);
+	public BiomeProfileSelection(BiomeProfile biomeProfile) {
+		set(biomeProfile);
 	}
 
 	public BiomeColor getBiomeColorOrUnknown(int index) {
@@ -35,8 +35,8 @@ public class BiomeColorProfileSelection {
 		}
 	}
 
-	public void set(BiomeColorProfile biomeColorProfile) {
-		this.biomeColors = biomeColorProfile.createBiomeColorArray();
-		Log.i("Biome color profile activated.");
+	public void set(BiomeProfile biomeProfile) {
+		this.biomeColors = biomeProfile.createBiomeColorArray();
+		Log.i("Biome profile activated: " + biomeProfile.getName());
 	}
 }
