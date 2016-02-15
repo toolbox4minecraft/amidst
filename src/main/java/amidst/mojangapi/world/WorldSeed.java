@@ -8,10 +8,10 @@ import amidst.documentation.Immutable;
 public class WorldSeed {
 	public static enum WorldSeedType {
 		// @formatter:off
-		TEXT      ("Text Seed"),
-		NUMERIC("Numeric Seed"),
-		FILE      ("File Seed"),
-		RANDOM  ("Random Seed");
+		TEXT           ("Text Seed"),
+		NUMERIC     ("Numeric Seed"),
+		SAVE_GAME ("Save Game Seed"),
+		RANDOM       ("Random Seed");
 		// @formatter:on
 
 		private final String labelPrefix;
@@ -47,8 +47,8 @@ public class WorldSeed {
 		}
 	}
 
-	public static WorldSeed fromFile(long seed) {
-		return new WorldSeed(seed, null, WorldSeedType.FILE);
+	public static WorldSeed fromSaveGame(long seed) {
+		return new WorldSeed(seed, null, WorldSeedType.SAVE_GAME);
 	}
 
 	private final long seed;

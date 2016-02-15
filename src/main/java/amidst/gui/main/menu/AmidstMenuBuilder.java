@@ -50,9 +50,9 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("File");
 		result.setMnemonic(KeyEvent.VK_F);
 		// @formatter:off
-		Menus.item(result, actions::newFromSeed,           "New from seed",            KeyEvent.VK_S, "ctrl N");
+		Menus.item(result, actions::newFromSeed,           "New from seed",            KeyEvent.VK_N, "ctrl N");
 		Menus.item(result, actions::newFromRandom,         "New from random seed",     KeyEvent.VK_R, "ctrl R");
-		Menus.item(result, actions::openWorldFile,         "Open world file ...",      KeyEvent.VK_F, "ctrl O");
+		Menus.item(result, actions::openSaveGame,          "Open save game ...",       KeyEvent.VK_O, "ctrl O");
 		result.addSeparator();
 		Menus.item(result, actions::switchProfile,         "Switch profile ...",       KeyEvent.VK_P, "ctrl W");
 		Menus.item(result, actions::exit,                  "Exit",                     KeyEvent.VK_X, "ctrl Q");

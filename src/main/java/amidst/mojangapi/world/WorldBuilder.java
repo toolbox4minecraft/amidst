@@ -67,7 +67,7 @@ public class WorldBuilder {
 								.getValidBiomesForStructure_Spawn()));
 	}
 
-	public World fromFile(MinecraftInterface minecraftInterface,
+	public World fromSaveGame(MinecraftInterface minecraftInterface,
 			SaveDirectory saveDirectory) throws IOException,
 			MinecraftInterfaceException, MojangApiParsingException {
 		VersionFeatures versionFeatures = DefaultVersionFeatures
@@ -77,12 +77,11 @@ public class WorldBuilder {
 				playerInformationCache, saveDirectory,
 				versionFeatures.isSaveEnabled(), WorldPlayerType.from(
 						saveDirectory, levelDat));
-		return create(minecraftInterface,
-				WorldSeed.fromFile(levelDat.getSeed()),
-				levelDat.getWorldType(), levelDat.getGeneratorOptions(),
-				movablePlayerList, versionFeatures, new BiomeDataOracle(
-						minecraftInterface), new ImmutableWorldSpawnOracle(
-						levelDat.getWorldSpawn()));
+		return create(minecraftInterface, WorldSeed.fromSaveGame(levelDat
+				.getSeed()), levelDat.getWorldType(),
+				levelDat.getGeneratorOptions(), movablePlayerList,
+				versionFeatures, new BiomeDataOracle(minecraftInterface),
+				new ImmutableWorldSpawnOracle(levelDat.getWorldSpawn()));
 	}
 
 	private World create(MinecraftInterface minecraftInterface,
