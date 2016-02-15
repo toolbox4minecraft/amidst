@@ -132,12 +132,12 @@ public class MojangApi {
 	 * one world at a time. Creating a new world will break all previously
 	 * created world objects.
 	 */
-	public World createWorldFromFile(File file) throws FileNotFoundException,
-			IOException, IllegalStateException, MinecraftInterfaceException,
-			MojangApiParsingException {
+	public World createWorldFromSaveGame(File file)
+			throws FileNotFoundException, IOException, IllegalStateException,
+			MinecraftInterfaceException, MojangApiParsingException {
 		MinecraftInterface minecraftInterface = this.minecraftInterface;
 		if (minecraftInterface != null) {
-			return worldBuilder.fromFile(minecraftInterface,
+			return worldBuilder.fromSaveGame(minecraftInterface,
 					SaveDirectory.from(file));
 		} else {
 			throw new IllegalStateException(

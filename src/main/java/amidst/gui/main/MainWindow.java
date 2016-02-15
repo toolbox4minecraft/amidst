@@ -216,12 +216,12 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public File askForMinecraftWorldFile() {
-		return showOpenDialogAndGetSelectedFileOrNull(createMinecraftWorldFileChooser());
+	public File askForSaveGame() {
+		return showOpenDialogAndGetSelectedFileOrNull(createSaveGameFileChooser());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private JFileChooser createMinecraftWorldFileChooser() {
+	private JFileChooser createSaveGameFileChooser() {
 		JFileChooser result = new JFileChooser(mojangApi.getSaves());
 		result.setFileFilter(new LevelFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
