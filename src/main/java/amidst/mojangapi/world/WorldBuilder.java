@@ -9,6 +9,7 @@ import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.LevelDatNbt;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
+import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.locationchecker.EndCityLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm;
@@ -90,16 +91,17 @@ public class WorldBuilder {
 			VersionFeatures versionFeatures, BiomeDataOracle biomeDataOracle,
 			WorldSpawnOracle worldSpawnOracle)
 			throws MinecraftInterfaceException {
-		seedHistoryLogger.log(worldSeed);
-		long seed = worldSeed.getLong();
 		// @formatter:off
+		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
+		seedHistoryLogger.log(recognisedVersion, worldSeed);
+		long seed = worldSeed.getLong();
 		minecraftInterface.createWorld(seed, worldType, generatorOptions);
 		return new World(
 				worldSeed,
 				worldType,
 				generatorOptions,
 				movablePlayerList,
-				minecraftInterface.getRecognisedVersion(),
+				recognisedVersion,
 				versionFeatures,
 				biomeDataOracle,
 				EndIslandOracle.from(  seed),

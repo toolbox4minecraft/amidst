@@ -58,7 +58,7 @@ public class Application {
 			LocalMinecraftInterfaceCreationException {
 		return new MojangApiBuilder(new WorldBuilder(
 				new PlayerInformationCacheImpl(),
-				SeedHistoryLogger.from(parameters.historyFile)), parameters)
+				SeedHistoryLogger.from(parameters.seedHistoryFile)), parameters)
 				.construct();
 	}
 
