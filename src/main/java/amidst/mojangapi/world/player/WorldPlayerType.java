@@ -1,5 +1,6 @@
 package amidst.mojangapi.world.player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -12,12 +13,11 @@ import amidst.mojangapi.file.nbt.player.PlayerNbt;
 
 @Immutable
 public enum WorldPlayerType {
-	// Only the selectable options need a name.
 	// @formatter:off
-	NONE(null),
+	NONE        ("None"),
 	SINGLEPLAYER("Singleplayer"),
-	MULTIPLAYER("Multiplayer"),
-	BOTH("Both");
+	MULTIPLAYER ("Multiplayer"),
+	BOTH        ("Both");
 	// @formatter:on
 
 	private static final List<WorldPlayerType> SELECTABLE = Arrays.asList(
@@ -29,14 +29,16 @@ public enum WorldPlayerType {
 
 	public static WorldPlayerType from(SaveDirectory saveDirectory,
 			LevelDatNbt levelDat) {
-		if (saveDirectory.hasMultiplayerPlayers()) {
-			if (levelDat.hasPlayer()) {
-				return BOTH;
-			} else {
-				return MULTIPLAYER;
-			}
-		} else {
+		boolean hasSingleplayerPlayer = levelDat.hasPlayer();
+		boolean hasMultiplayerPlayers = saveDirectory.hasMultiplayerPlayers();
+		if (hasSingleplayerPlayer && hasMultiplayerPlayers) {
+			return BOTH;
+		} else if (hasSingleplayerPlayer) {
 			return SINGLEPLAYER;
+		} else if (hasMultiplayerPlayers) {
+			return MULTIPLAYER;
+		} else {
+			return NONE;
 		}
 	}
 
@@ -52,17 +54,17 @@ public enum WorldPlayerType {
 
 	@NotNull
 	public List<PlayerNbt> createPlayerNbts(SaveDirectory saveDirectory) {
-		if (this == NONE) {
-			return Collections.emptyList();
+		if (this == BOTH) {
+			List<PlayerNbt> result = new ArrayList<PlayerNbt>();
+			result.addAll(saveDirectory.createSingleplayerPlayerNbts());
+			result.addAll(saveDirectory.createMultiplayerPlayerNbts());
+			return result;
 		} else if (this == SINGLEPLAYER) {
 			return saveDirectory.createSingleplayerPlayerNbts();
 		} else if (this == MULTIPLAYER) {
 			return saveDirectory.createMultiplayerPlayerNbts();
 		} else {
-			List<PlayerNbt> result = saveDirectory
-					.createMultiplayerPlayerNbts();
-			result.addAll(saveDirectory.createSingleplayerPlayerNbts());
-			return result;
+			return Collections.emptyList();
 		}
 	}
 
