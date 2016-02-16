@@ -166,7 +166,9 @@ public class Actions {
 	public void savePlayerLocations() {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
-			viewerFacade.savePlayerLocations();
+			if (mainWindow.askToConfirmSaveGameManipulation()) {
+				viewerFacade.savePlayerLocations();
+			}
 		}
 	}
 
@@ -187,12 +189,7 @@ public class Actions {
 								+ "1. Scroll the map to and right-click on the new player location, this opens a popup menu.\n"
 								+ "2. Select the player you want to move to the new location.\n"
 								+ "3. Enter the new player height (y-coordinate).\n"
-								+ "4. Save player locations.\n\n"
-								+ "WARNING: This will change the contents of the save game directory, so there is a chance that the world gets corrupted.\n"
-								+ "We try to minimize the risk by creating a backup of the changed file, before it is changed.\n"
-								+ "If the backup fails, we will not write the changes.\n"
-								+ "You can find the backup files in a sub folder of the save game directory, named 'amidst/backup'.\n"
-								+ "Especially, make sure to not have the save game loaded in Minecraft during this process.");
+								+ "4. Save player locations.");
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -303,11 +300,11 @@ public class Actions {
 						tryParseLong(input, currentHeight),
 						currentCoordinates.getDimension());
 				viewerFacade.reloadPlayerLayer();
-				if (mainWindow
-						.askToConfirm(
-								"Save Player Location",
-								"Do you want to save the player locations NOW? Make sure to not have the world opened in minecraft at the same time!")) {
-					viewerFacade.savePlayerLocations();
+				if (mainWindow.askToConfirm("Save Player Locations",
+						"Do you want to save the player locations?")) {
+					if (mainWindow.askToConfirmSaveGameManipulation()) {
+						viewerFacade.savePlayerLocations();
+					}
 				}
 			}
 		}

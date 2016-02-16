@@ -289,6 +289,18 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	public boolean askToConfirmSaveGameManipulation() {
+		return askToConfirm(
+				"Save Game Manipulation",
+				"WARNING: You are about to change the contents of the save game directory. There is a chance that it gets corrupted.\n"
+						+ "We try to minimize the risk by creating a backup of the changed file, before it is changed.\n"
+						+ "If the backup fails, we will not write the changes.\n"
+						+ "You can find the backup files in the directory 'amidst/backup', which is placed in the save game directory.\n"
+						+ "Especially, make sure to not have the save game loaded in Minecraft during this process.\n\n"
+						+ "Do you want to proceed?");
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean askToConfirm(String title, String message) {
 		return JOptionPane.showConfirmDialog(frame, message, title,
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
