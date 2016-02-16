@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
-import amidst.logging.Log;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
@@ -20,7 +19,6 @@ public class StrongholdProducer_128Algorithm extends
 	public StrongholdProducer_128Algorithm(long seed,
 			BiomeDataOracle biomeDataOracle, List<Biome> validBiomes) {
 		super(seed, biomeDataOracle, validBiomes);
-		Log.i("StrongholdProducer_128Algorithm");
 	}
 
 	@Override
