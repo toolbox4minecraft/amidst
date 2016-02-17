@@ -1,8 +1,5 @@
 package amidst.mojangapi.world.test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,20 +7,23 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 public class RecognisedVersionTest {
 	@Test
+	public void shouldPreventNameCollisions() {
+		RecognisedVersion.generateNameToRecognisedVersionMap();
+	}
+
+	@Test
 	public void shouldPreventMagicStringCollisions() {
-		Map<String, RecognisedVersion> magicStringToRecognisedVersion = new HashMap<String, RecognisedVersion>();
+		RecognisedVersion.generateMagicStringToRecognisedVersionMap();
+	}
+
+	@Test
+	public void shouldPreventDifferencesInIdentifierAndName() {
 		for (RecognisedVersion recognisedVersion : RecognisedVersion.values()) {
-			if (magicStringToRecognisedVersion.containsKey(recognisedVersion
-					.getMagicString())) {
-				RecognisedVersion colliding = magicStringToRecognisedVersion
-						.get(recognisedVersion.getMagicString());
-				Assert.fail("magic string collision for the recognised versions "
-						+ recognisedVersion.getName()
-						+ " and "
-						+ colliding.getName());
-			} else {
-				magicStringToRecognisedVersion.put(
-						recognisedVersion.getMagicString(), recognisedVersion);
+			if (recognisedVersion.isKnown()) {
+				String expectedIdentifier = RecognisedVersion
+						.createEnumIdentifier(recognisedVersion.getName());
+				String actualIdentifier = recognisedVersion.name();
+				Assert.assertEquals(expectedIdentifier, actualIdentifier);
 			}
 		}
 	}
