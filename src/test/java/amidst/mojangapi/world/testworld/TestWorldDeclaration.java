@@ -18,32 +18,32 @@ public enum TestWorldDeclaration {
 	 * that the behavior is kept like this.
 	 */
 	// @formatter:off
-	WORLD1(RecognisedVersion.V1_8_9, "amidst-test-seed", WorldType.DEFAULT,
+	WORLD1(RecognisedVersion._1_8_9, "amidst-test-seed", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     ),
     
-	WORLD2(RecognisedVersion.V16w06a, "4805355321235747910", WorldType.DEFAULT,
+	WORLD2(RecognisedVersion._1_9_pre1, "4805355321235747910", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     ),
     
     /**
      * This misses an ocean monument if the quarter-resolution map is used for the structure test.
      */
-	WORLD3(RecognisedVersion.V16w06a, "-1364077613", WorldType.DEFAULT,
+	WORLD3(RecognisedVersion._1_9_pre1, "-1364077613", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     ),
     
     /**
      * This illustrates the buggy stronghold generation mechanism of the 1.9 snapshots.
      */
-	WORLD4(RecognisedVersion.V15w51b, "1", WorldType.DEFAULT,
+	WORLD4(RecognisedVersion._15w51b, "1", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     ),
     
     /**
      * This illustrates the fixed stronghold generation mechanism of the 1.9 snapshots.
      */
-	WORLD5(RecognisedVersion.V16w06a, "1", WorldType.DEFAULT,
+	WORLD5(RecognisedVersion._1_9_pre1, "1", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     ),
     
@@ -51,14 +51,14 @@ public enum TestWorldDeclaration {
 	 * This seed contains all biomes in a 1024 radius around spawn. Source:
 	 * http://www.minecraftforum.net/forums/minecraft-discussion/seeds/2500520-1-8-x-rare-seed-all-biomes-within-1024-blocks
      */
-	WORLD6(RecognisedVersion.V16w06a, "24922", WorldType.DEFAULT,
+	WORLD6(RecognisedVersion._1_9_pre1, "24922", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     ),
     
     /**
 	 * Similar to 24922
      */
-	WORLD7(RecognisedVersion.V16w06a, "-9223372036681075344", WorldType.DEFAULT,
+	WORLD7(RecognisedVersion._1_9_pre1, "-9223372036681075344", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     );
 	// @formatter:on

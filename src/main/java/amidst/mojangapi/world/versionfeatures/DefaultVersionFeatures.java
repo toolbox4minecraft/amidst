@@ -64,22 +64,22 @@ public enum DefaultVersionFeatures {
 						LayerIds.VILLAGE,
 						LayerIds.MINESHAFT,
 						LayerIds.NETHER_FORTRESS
-				).sinceExtend(RecognisedVersion.V12w21a,
+				).sinceExtend(RecognisedVersion._12w21a,
 						LayerIds.TEMPLE
-				).sinceExtend(RecognisedVersion.V1_8,
+				).sinceExtend(RecognisedVersion._1_8,
 						LayerIds.OCEAN_MONUMENT
-				).sinceExtend(RecognisedVersion.V15w31c,
+				).sinceExtend(RecognisedVersion._15w31c,
 						LayerIds.END_ISLANDS,
 						LayerIds.END_CITY
 				).construct();
 		this.isSaveEnabled = VersionFeature.<Boolean> builder()
 				.init(
 						true
-				).exact(RecognisedVersion.V12w21a,
+				).exact(RecognisedVersion._12w21a,
 						false
-				).exact(RecognisedVersion.V12w21b,
+				).exact(RecognisedVersion._12w21b,
 						false
-				).exact(RecognisedVersion.V12w22a,
+				).exact(RecognisedVersion._12w22a,
 						false
 				).construct();
 		this.validBiomesForStructure_Spawn = VersionFeature.<Biome> listBuilder()
@@ -96,33 +96,33 @@ public enum DefaultVersionFeatures {
 				.init(
 						// this is for the enable all layers function
 						getValidBiomesForStrongholdSinceV13w36a()
-				).since(RecognisedVersion.Vb1_8_1,
+				).since(RecognisedVersion._b1_8_1,
 						Biome.desert,
 						Biome.forest,
 						Biome.extremeHills,
 						Biome.swampland
-				).sinceExtend(RecognisedVersion.V1_9pre6,
+				).sinceExtend(RecognisedVersion._b1_9_pre6,
 						Biome.taiga,
 						Biome.icePlains,
 						Biome.iceMountains
-				).sinceExtend(RecognisedVersion.V1_1,
+				).sinceExtend(RecognisedVersion._1_1,
 						Biome.desertHills,
 						Biome.forestHills,
 						Biome.extremeHillsEdge
-				).sinceExtend(RecognisedVersion.V12w03a,
+				).sinceExtend(RecognisedVersion._12w03a,
 						Biome.jungle,
 						Biome.jungleHills
-				).since(RecognisedVersion.V13w36a,
+				).since(RecognisedVersion._13w36a,
 						// this includes all the biomes above, except for the swampland
 						getValidBiomesForStrongholdSinceV13w36a()
 				).construct();
 		this.strongholdProducerFactory = VersionFeature.<TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base>> builder()
 				.init(
 						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_Original(seed, biomeOracle, validBiomes)
-				).since(RecognisedVersion.V15w43c,
+				).since(RecognisedVersion._15w43c,
 						// this should be 15w43a, which is no recognised
 						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_Buggy128Algorithm(seed, biomeOracle, validBiomes)
-				).since(RecognisedVersion.V16w06a,
+				).since(RecognisedVersion._1_9_pre1,
 						// this should be 16w06a
 						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_128Algorithm(seed, biomeOracle, validBiomes)
 				).construct();
@@ -142,24 +142,24 @@ public enum DefaultVersionFeatures {
 						Biome.swampland,
 						Biome.icePlains,
 						Biome.coldTaiga
-				).since(RecognisedVersion.V12w21a,
+				).since(RecognisedVersion._12w21a,
 						Biome.desert,
 						Biome.desertHills
-				).sinceExtend(RecognisedVersion.V12w22a,
+				).sinceExtend(RecognisedVersion._12w22a,
 						Biome.jungle
-				).sinceExtend(RecognisedVersion.V1_4_2,
+				).sinceExtend(RecognisedVersion._1_4_2,
 						Biome.jungleHills, // TODO: jungle temples spawn only since 1.4.2 in jungle hills?
 						Biome.swampland
-				).sinceExtend(RecognisedVersion.V15w43c,
+				).sinceExtend(RecognisedVersion._15w43c,
 						Biome.icePlains,
 						Biome.coldTaiga
 				).construct();
 		this.mineshaftAlgorithmFactory = VersionFeature.<Function<Long, MineshaftAlgorithm_Base>> builder()
 				.init(
 						seed -> new MineshaftAlgorithm_Original(seed)
-				).since(RecognisedVersion.V1_4_2,
+				).since(RecognisedVersion._1_4_2,
 						seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.01D)
-				).since(RecognisedVersion.V1_7_2,
+				).since(RecognisedVersion._1_7_2,
 						seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.004D)
 				).construct();
 		this.validBiomesAtMiddleOfChunk_OceanMonument = VersionFeature.<Biome> listBuilder()
