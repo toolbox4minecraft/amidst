@@ -45,7 +45,7 @@ public class DebugWidget extends MultilineTextWidget {
 					"",
 					"Viewer:",
 					"Size: " + columns + "x" + rows + " [" + (columns * rows) + "]",
-					String.format("2D Accelerated: %1$.1f%%", accelerationCounter.getAcceleratedPercentage())
+					String.format("Acceleration: %1$.1f%%", accelerationCounter.getAcceleratedPercentage())
 			);
 			// @formatter:on
 		} else {
