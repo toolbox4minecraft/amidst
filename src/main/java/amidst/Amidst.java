@@ -99,8 +99,13 @@ public class Amidst {
 	}
 
 	private static void initGui() {
-		initLookAndFeel();
 		setJava2DEnvironmentVariables();
+		initLookAndFeel();
+	}
+
+	private static void setJava2DEnvironmentVariables() {
+		System.setProperty("sun.java2d.opengl", "True");
+		System.setProperty("sun.java2d.accthreshold", "0");
 	}
 
 	private static void initLookAndFeel() {
@@ -116,12 +121,7 @@ public class Amidst {
 	}
 
 	private static boolean isWindows() {
-		return System.getProperty("os.name").contains("win");
-	}
-
-	private static void setJava2DEnvironmentVariables() {
-		System.setProperty("sun.java2d.opengl", "True");
-		System.setProperty("sun.java2d.accthreshold", "0");
+		return System.getProperty("os.name").toLowerCase().contains("win");
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
