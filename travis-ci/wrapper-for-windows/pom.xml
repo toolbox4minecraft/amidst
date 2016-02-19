@@ -37,7 +37,8 @@
 							<goal>launch4j</goal>
 						</goals>
 						<configuration>
-							<headerType>console</headerType>
+							<headerType>gui</headerType>
+							<stayAlive>true</stayAlive>
 							<outfile>../../target/${amidst.build.filename}.exe</outfile>
 							<jar>../../target/${amidst.build.filename}.jar</jar>
 							<dontWrapJar>false</dontWrapJar>
