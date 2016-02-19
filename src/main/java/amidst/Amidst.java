@@ -1,6 +1,8 @@
 package amidst;
 
 import java.io.File;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -74,8 +76,29 @@ public class Amidst {
 			System.out.println(versionString);
 		} else {
 			Log.i(versionString);
+			Log.i("Current system time: " + getCurrentTimeStamp());
+			Log.i(createPropertyString("os.name"));
+			Log.i(createPropertyString("os.version"));
+			Log.i(createPropertyString("os.arch"));
+			Log.i(createPropertyString("java.version"));
+			Log.i(createPropertyString("java.vendor"));
+			Log.i(createPropertyString("sun.arch.data.model"));
 			startApplication(parameters, metadata);
 		}
+	}
+
+	private static String getCurrentTimeStamp() {
+		return new Timestamp(new Date().getTime()).toString();
+	}
+
+	private static String createPropertyString(String key) {
+		StringBuilder b = new StringBuilder();
+		b.append("System.getProperty(\"");
+		b.append(key);
+		b.append("\") == '");
+		b.append(System.getProperty(key));
+		b.append("'");
+		return b.toString();
 	}
 
 	private static void initFileLogger(String filename) {
