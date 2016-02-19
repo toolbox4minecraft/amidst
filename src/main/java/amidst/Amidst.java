@@ -4,8 +4,6 @@ import java.io.File;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -92,36 +90,15 @@ public class Amidst {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				initGui();
+				setJava2DEnvironmentVariables();
 				doStartApplication(parameters, metadata);
 			}
 		});
 	}
 
-	private static void initGui() {
-		setJava2DEnvironmentVariables();
-		initLookAndFeel();
-	}
-
 	private static void setJava2DEnvironmentVariables() {
 		System.setProperty("sun.java2d.opengl", "True");
 		System.setProperty("sun.java2d.accthreshold", "0");
-	}
-
-	private static void initLookAndFeel() {
-		if (isWindows()) {
-			try {
-				UIManager.setLookAndFeel(UIManager
-						.getSystemLookAndFeelClassName());
-			} catch (ClassNotFoundException | InstantiationException
-					| IllegalAccessException | UnsupportedLookAndFeelException e) {
-				Log.printTraceStack(e);
-			}
-		}
-	}
-
-	private static boolean isWindows() {
-		return System.getProperty("os.name").toLowerCase().contains("win");
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
