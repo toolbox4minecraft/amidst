@@ -10,8 +10,6 @@ import amidst.AmidstSettings;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
 import amidst.mojangapi.world.WorldType;
-import amidst.settings.Setting;
-import amidst.settings.Settings;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 
 @NotThreadSafe
@@ -102,7 +100,6 @@ public class AmidstMenuBuilder {
 		}
 		result.addSeparator();
 		// @formatter:off
-		Menus.checkbox(result, wrapGraphicsAcceleration(),    "Graphics Acceleration", "ctrl A");
 		Menus.checkbox(result, settings.smoothScrolling,      "Smooth Scrolling",      "ctrl I");
 		Menus.checkbox(result, settings.fragmentFading,       "Fragment Fading");
 		Menus.checkbox(result, settings.maxZoom,              "Restrict Maximum Zoom", "ctrl Z");
@@ -111,12 +108,6 @@ public class AmidstMenuBuilder {
 		Menus.checkbox(result, settings.showDebug,            "Show Debug Information");
 		// @formatter:on
 		return result;
-	}
-
-	private Setting<Boolean> wrapGraphicsAcceleration() {
-		// @formatter:off
-		return Settings.createWithListener(settings.graphicsAcceleration, () -> actions.updatedGraphicsAcceleration(settings.graphicsAcceleration.get()));
-		// @formatter:on
 	}
 
 	private JMenu create_Settings_DefaultWorldType() {
