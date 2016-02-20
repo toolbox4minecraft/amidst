@@ -28,7 +28,6 @@ public class AmidstSettings {
 	public final Setting<Boolean> showEndCities;
 	public final Setting<Boolean> enableAllLayers;
 
-	public final Setting<Boolean> graphicsAcceleration;
 	public final Setting<Boolean> smoothScrolling;
 	public final Setting<Boolean> fragmentFading;
 	public final Setting<Boolean> maxZoom;
@@ -61,7 +60,6 @@ public class AmidstSettings {
 		showEndCities              = Settings.createBoolean(  preferences, "endCityIcons",         false);
 		enableAllLayers            = Settings.createBoolean(  preferences, "enableAllLayers",      false);
 		
-		graphicsAcceleration       = Settings.createBoolean(  preferences, "graphicsAcceleration", true);
 		smoothScrolling            = Settings.createBoolean(  preferences, "mapFlicking",          true);
 		fragmentFading             = Settings.createBoolean(  preferences, "mapFading",            true);
 		maxZoom                    = Settings.createBoolean(  preferences, "maxZoom",              true);

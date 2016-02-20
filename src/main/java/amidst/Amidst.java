@@ -20,7 +20,6 @@ import amidst.gui.crash.CrashWindow;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
-import amidst.settings.Setting;
 
 @NotThreadSafe
 public class Amidst {
@@ -79,9 +78,8 @@ public class Amidst {
 		} else {
 			Log.i(versionString);
 			logTimeAndProperties();
-			AmidstSettings settings = createSettings();
-			enableGraphicsAccelerationIfNecessary(settings.graphicsAcceleration);
-			startApplication(parameters, metadata, settings);
+			enableGraphicsAcceleration();
+			startApplication(parameters, metadata, createSettings());
 		}
 	}
 
@@ -100,11 +98,6 @@ public class Amidst {
 		Log.i(createPropertyString("java.version"));
 		Log.i(createPropertyString("java.vendor"));
 		Log.i(createPropertyString("sun.arch.data.model"));
-		Log.i(createPropertyString("sun.java2d.opengl"));
-		Log.i(createPropertyString("sun.java2d.accthreshold"));
-		Log.i(createPropertyString("sun.java2d.d3d"));
-		Log.i(createPropertyString("sun.java2d.ddoffscreen"));
-		Log.i(createPropertyString("sun.java2d.noddraw"));
 	}
 
 	private static String getCurrentTimeStamp() {
@@ -125,20 +118,38 @@ public class Amidst {
 		return new AmidstSettings(Preferences.userNodeForPackage(Amidst.class));
 	}
 
-	private static void enableGraphicsAccelerationIfNecessary(
-			Setting<Boolean> graphicsAcceleration) {
-		if (graphicsAcceleration.get()) {
-			Log.i("Graphics Acceleration: enabled");
-			setAndLogProperty("sun.java2d.opengl", "True");
-			setAndLogProperty("sun.java2d.accthreshold", "0");
+	/**
+	 * WARNING: This method MUST be invoked before setLookAndFeel(). The
+	 * sun.java2d.* properties have no effect after setLookAndFeel() has been
+	 * called.
+	 * 
+	 * Please do not remove this comment in case we decide to use another look
+	 * and feel in the future.
+	 */
+	private static void enableGraphicsAcceleration() {
+		enableOpenGLIfNecessary();
+		forceGraphicsToVRAM();
+	}
+
+	/**
+	 * We don't set OpenGL on Windows because it caused lots of bugs. Also,
+	 * Direct3D is better supported and the default.
+	 */
+	private static void enableOpenGLIfNecessary() {
+		if (isWindows()) {
+			Log.i("Not using OpenGL.");
 		} else {
-			Log.i("Graphics Acceleration: disabled");
+			Log.i("Enabling OpenGL.");
+			System.setProperty("sun.java2d.opengl", "True");
 		}
 	}
 
-	private static void setAndLogProperty(String key, String value) {
-		System.setProperty(key, value);
-		Log.i(createPropertyString(key));
+	private static boolean isWindows() {
+		return System.getProperty("os.name").toLowerCase().contains("win");
+	}
+
+	private static void forceGraphicsToVRAM() {
+		System.setProperty("sun.java2d.accthreshold", "0");
 	}
 
 	private static void startApplication(CommandLineParameters parameters,
