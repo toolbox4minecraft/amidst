@@ -28,7 +28,7 @@ public class Viewer {
 
 		@CalledOnlyBy(AmidstThread.EDT)
 		@Override
-		public void paint(Graphics g) {
+		public void paintComponent(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g.create();
 			drawer.draw(g2d, getWidth(), getHeight(), getMousePositionOrNull(),
 					widgetFontMetrics);
@@ -47,7 +47,7 @@ public class Viewer {
 			g2d.dispose();
 			return result;
 		}
-		
+
 		/**
 		 * The method getMousePosition() might throw a null pointer exception in
 		 * a multi-monitor setup, as soon as the window is dragged to the other
@@ -59,7 +59,7 @@ public class Viewer {
 				return getMousePosition();
 			} catch (NullPointerException e) {
 				return null;
-			}	
+			}
 		}
 	}
 

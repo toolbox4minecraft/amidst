@@ -120,7 +120,8 @@ public class Amidst {
 		return new AmidstSettings(Preferences.userNodeForPackage(Amidst.class));
 	}
 
-	private static void enableGraphicsAccelerationIfNecessary(Setting<Boolean> graphicsAcceleration) {
+	private static void enableGraphicsAccelerationIfNecessary(
+			Setting<Boolean> graphicsAcceleration) {
 		if (graphicsAcceleration.get()) {
 			Log.i("Graphics Acceleration: enabled");
 			System.setProperty("sun.java2d.opengl", "True");
@@ -130,14 +131,15 @@ public class Amidst {
 		}
 	}
 
-	private static void startApplication(CommandLineParameters parameters, AmidstMetaData metadata,
-			AmidstSettings settings) {
-		SwingUtilities.invokeLater(() -> doStartApplication(parameters, metadata, settings));
+	private static void startApplication(CommandLineParameters parameters,
+			AmidstMetaData metadata, AmidstSettings settings) {
+		SwingUtilities.invokeLater(() -> doStartApplication(parameters,
+				metadata, settings));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private static void doStartApplication(CommandLineParameters parameters, AmidstMetaData metadata,
-			AmidstSettings settings) {
+	private static void doStartApplication(CommandLineParameters parameters,
+			AmidstMetaData metadata, AmidstSettings settings) {
 		try {
 			new Application(parameters, metadata, settings).run();
 		} catch (DotMinecraftDirectoryNotFoundException e) {

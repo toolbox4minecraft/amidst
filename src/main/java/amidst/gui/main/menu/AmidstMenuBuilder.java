@@ -9,7 +9,6 @@ import javax.swing.JMenuItem;
 import amidst.AmidstSettings;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
-import amidst.logging.Log;
 import amidst.mojangapi.world.WorldType;
 import amidst.settings.Setting;
 import amidst.settings.Settings;
@@ -69,7 +68,7 @@ public class AmidstMenuBuilder {
 		result.setMnemonic(KeyEvent.VK_W);
 		// @formatter:off
 		Menus.item(result, actions::goToCoordinate,        "Go to Coordinate",         KeyEvent.VK_C, "ctrl shift C");
-		Menus.item(result, actions::goToSpawn,             "Go to Spawn",              KeyEvent.VK_S, "ctrl shift S");
+		Menus.item(result, actions::goToSpawn,             "Go to World Spawn",        KeyEvent.VK_S, "ctrl shift S");
 		Menus.item(result, actions::goToStronghold,        "Go to Stronghold",         KeyEvent.VK_H, "ctrl shift H");
 		Menus.item(result, actions::goToPlayer,            "Go to Player",             KeyEvent.VK_P, "ctrl shift P");
 		result.addSeparator();
@@ -115,14 +114,9 @@ public class AmidstMenuBuilder {
 	}
 
 	private Setting<Boolean> wrapGraphicsAcceleration() {
-		return Settings.createWithListener(settings.graphicsAcceleration, () -> {
-			if (settings.graphicsAcceleration.get()) {
-				Log.i("Graphics Acceleration: enabled");
-			} else {
-				Log.i("Graphics Acceleration: disabled");
-				actions.disabledGraphicsAcceleration();
-			}
-		});
+		// @formatter:off
+		return Settings.createWithListener(settings.graphicsAcceleration, () -> actions.updatedGraphicsAcceleration(settings.graphicsAcceleration.get()));
+		// @formatter:on
 	}
 
 	private JMenu create_Settings_DefaultWorldType() {

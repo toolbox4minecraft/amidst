@@ -130,6 +130,7 @@ public class BiomeProfileMenuFactory {
 		BiomeProfileVisitorImpl visitor = new BiomeProfileVisitorImpl(
 				parentMenu, actions);
 		biomeProfileDirectory.visitProfiles(visitor);
+		parentMenu.addSeparator();
 		parentMenu.add(createReloadMenuItem());
 		visitor.selectFirstProfile();
 	}

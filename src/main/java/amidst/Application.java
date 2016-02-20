@@ -33,7 +33,8 @@ public class Application {
 	private volatile MainWindow mainWindow;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Application(CommandLineParameters parameters, AmidstMetaData metadata, AmidstSettings settings)
+	public Application(CommandLineParameters parameters,
+			AmidstMetaData metadata, AmidstSettings settings)
 			throws DotMinecraftDirectoryNotFoundException,
 			LocalMinecraftInterfaceCreationException {
 		this.parameters = parameters;

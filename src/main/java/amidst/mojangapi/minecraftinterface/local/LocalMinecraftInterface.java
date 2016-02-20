@@ -69,8 +69,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	public synchronized void createWorld(long seed, WorldType worldType, String generatorOptions)
 			throws MinecraftInterfaceException {
 		try {
-			Log.debug("Attempting to create world with seed: " + seed + ", type: " + worldType.getName() + ", and the following generator options:");
-			Log.debug(generatorOptions);
+			Log.i("Creating world with seed '" + seed + "' and type '" + worldType.getName() + "'");
+			Log.i("Using the following generator options: " + generatorOptions);
 			initializeBlock();
 			Object[] genLayers = getGenLayers(seed, worldType, generatorOptions);
 			quarterResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[0]);
