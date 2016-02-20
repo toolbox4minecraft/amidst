@@ -28,7 +28,7 @@ public class Viewer {
 
 		@CalledOnlyBy(AmidstThread.EDT)
 		@Override
-		public void paint(Graphics g) {
+		public void paintComponent(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g.create();
 			drawer.draw(g2d, getWidth(), getHeight(), getMousePositionOrNull(),
 					widgetFontMetrics);
