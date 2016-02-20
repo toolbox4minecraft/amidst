@@ -9,7 +9,6 @@ import javax.swing.JMenuItem;
 import amidst.AmidstSettings;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
-import amidst.logging.Log;
 import amidst.mojangapi.world.WorldType;
 import amidst.settings.Setting;
 import amidst.settings.Settings;
@@ -115,15 +114,9 @@ public class AmidstMenuBuilder {
 	}
 
 	private Setting<Boolean> wrapGraphicsAcceleration() {
-		return Settings.createWithListener(settings.graphicsAcceleration,
-				() -> {
-					if (settings.graphicsAcceleration.get()) {
-						Log.i("Graphics Acceleration: enabled");
-					} else {
-						Log.i("Graphics Acceleration: disabled");
-						actions.disabledGraphicsAcceleration();
-					}
-				});
+		// @formatter:off
+		return Settings.createWithListener(settings.graphicsAcceleration, () -> actions.updatedGraphicsAcceleration(settings.graphicsAcceleration.get()));
+		// @formatter:on
 	}
 
 	private JMenu create_Settings_DefaultWorldType() {
