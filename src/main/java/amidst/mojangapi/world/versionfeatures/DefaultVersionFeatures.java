@@ -122,7 +122,7 @@ public enum DefaultVersionFeatures {
 				).since(RecognisedVersion._15w43c,
 						// this should be 15w43a, which is no recognised
 						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_Buggy128Algorithm(seed, biomeOracle, validBiomes)
-				).since(RecognisedVersion._1_9_pre1,
+				).since(RecognisedVersion._1_9_pre2,
 						// this should be 16w06a
 						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_128Algorithm(seed, biomeOracle, validBiomes)
 				).construct();
