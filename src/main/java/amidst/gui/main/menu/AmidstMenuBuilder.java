@@ -115,14 +115,15 @@ public class AmidstMenuBuilder {
 	}
 
 	private Setting<Boolean> wrapGraphicsAcceleration() {
-		return Settings.createWithListener(settings.graphicsAcceleration, () -> {
-			if (settings.graphicsAcceleration.get()) {
-				Log.i("Graphics Acceleration: enabled");
-			} else {
-				Log.i("Graphics Acceleration: disabled");
-				actions.disabledGraphicsAcceleration();
-			}
-		});
+		return Settings.createWithListener(settings.graphicsAcceleration,
+				() -> {
+					if (settings.graphicsAcceleration.get()) {
+						Log.i("Graphics Acceleration: enabled");
+					} else {
+						Log.i("Graphics Acceleration: disabled");
+						actions.disabledGraphicsAcceleration();
+					}
+				});
 	}
 
 	private JMenu create_Settings_DefaultWorldType() {
