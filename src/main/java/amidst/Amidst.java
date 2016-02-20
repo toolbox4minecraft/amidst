@@ -100,6 +100,11 @@ public class Amidst {
 		Log.i(createPropertyString("java.version"));
 		Log.i(createPropertyString("java.vendor"));
 		Log.i(createPropertyString("sun.arch.data.model"));
+		Log.i(createPropertyString("sun.java2d.opengl"));
+		Log.i(createPropertyString("sun.java2d.accthreshold"));
+		Log.i(createPropertyString("sun.java2d.d3d"));
+		Log.i(createPropertyString("sun.java2d.ddoffscreen"));
+		Log.i(createPropertyString("sun.java2d.noddraw"));
 	}
 
 	private static String getCurrentTimeStamp() {
@@ -124,11 +129,16 @@ public class Amidst {
 			Setting<Boolean> graphicsAcceleration) {
 		if (graphicsAcceleration.get()) {
 			Log.i("Graphics Acceleration: enabled");
-			System.setProperty("sun.java2d.opengl", "True");
-			System.setProperty("sun.java2d.accthreshold", "0");
+			setAndLogProperty("sun.java2d.opengl", "True");
+			setAndLogProperty("sun.java2d.accthreshold", "0");
 		} else {
 			Log.i("Graphics Acceleration: disabled");
 		}
+	}
+
+	private static void setAndLogProperty(String key, String value) {
+		System.setProperty(key, value);
+		Log.i(createPropertyString(key));
 	}
 
 	private static void startApplication(CommandLineParameters parameters,
