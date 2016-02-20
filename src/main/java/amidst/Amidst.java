@@ -125,16 +125,29 @@ public class Amidst {
 		return new AmidstSettings(Preferences.userNodeForPackage(Amidst.class));
 	}
 
+	/**
+	 * WARNING: This method MUST be invoked before setLookAndFeel().
+	 * The sun.java2d.* properties have no effect after setLookAndFeel() has 
+	 * been called.
+	 */
 	private static void enableGraphicsAccelerationIfNecessary(
 			Setting<Boolean> graphicsAcceleration) {
 		if (graphicsAcceleration.get()) {
 			Log.i("Graphics Acceleration: enabled");
-			setAndLogProperty("sun.java2d.opengl", "True");
+			if (!isWindows()) {
+				// We don't set OpenGL on Windows because Direct3D is better   
+				// supported, and the default.
+				setAndLogProperty("sun.java2d.opengl", "True");
+			}
 			setAndLogProperty("sun.java2d.accthreshold", "0");
 		} else {
 			Log.i("Graphics Acceleration: disabled");
 		}
 	}
+	
+	private static boolean isWindows() {
+		return System.getProperty("os.name").toLowerCase().contains("win");
+	}	
 
 	private static void setAndLogProperty(String key, String value) {
 		System.setProperty(key, value);
