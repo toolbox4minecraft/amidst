@@ -3,6 +3,7 @@ package amidst;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.prefs.Preferences;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -19,6 +20,7 @@ import amidst.gui.crash.CrashWindow;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
+import amidst.settings.Setting;
 
 @NotThreadSafe
 public class Amidst {
@@ -38,14 +40,14 @@ public class Amidst {
 	}
 
 	private static void parseCommandLineArgumentsAndRun(String[] args) {
-		AmidstMetaData metadata = createMetadata();
 		CommandLineParameters parameters = new CommandLineParameters();
+		AmidstMetaData metadata = createMetadata();
 		CmdLineParser parser = new CmdLineParser(parameters, ParserProperties
 				.defaults().withShowDefaults(false).withUsageWidth(120)
 				.withOptionSorter(null));
 		try {
 			parser.parseArgument(args);
-			run(metadata, parameters, parser);
+			run(parameters, metadata, parser);
 		} catch (CmdLineException e) {
 			System.out.println(metadata.getVersion().createLongVersionString());
 			System.err.println(e.getMessage());
@@ -65,8 +67,8 @@ public class Amidst {
 				ResourceLoader.getImage("/amidst/icon/amidst-256x256.png"));
 	}
 
-	private static void run(AmidstMetaData metadata,
-			CommandLineParameters parameters, CmdLineParser parser) {
+	private static void run(CommandLineParameters parameters,
+			AmidstMetaData metadata, CmdLineParser parser) {
 		initFileLogger(parameters.logFile);
 		String versionString = metadata.getVersion().createLongVersionString();
 		if (parameters.printHelp) {
@@ -76,15 +78,28 @@ public class Amidst {
 			System.out.println(versionString);
 		} else {
 			Log.i(versionString);
-			Log.i("Current system time: " + getCurrentTimeStamp());
-			Log.i(createPropertyString("os.name"));
-			Log.i(createPropertyString("os.version"));
-			Log.i(createPropertyString("os.arch"));
-			Log.i(createPropertyString("java.version"));
-			Log.i(createPropertyString("java.vendor"));
-			Log.i(createPropertyString("sun.arch.data.model"));
-			startApplication(parameters, metadata);
+			logTimeAndProperties();
+			AmidstSettings settings = createSettings();
+			enableGraphicsAccelerationIfNecessary(settings.graphicsAcceleration);
+			startApplication(parameters, metadata, settings);
 		}
+	}
+
+	private static void initFileLogger(String filename) {
+		if (filename != null) {
+			Log.i("using log file: '" + filename + "'");
+			Log.addListener("file", new FileLogger(new File(filename)));
+		}
+	}
+
+	private static void logTimeAndProperties() {
+		Log.i("Current system time: " + getCurrentTimeStamp());
+		Log.i(createPropertyString("os.name"));
+		Log.i(createPropertyString("os.version"));
+		Log.i(createPropertyString("os.arch"));
+		Log.i(createPropertyString("java.version"));
+		Log.i(createPropertyString("java.vendor"));
+		Log.i(createPropertyString("sun.arch.data.model"));
 	}
 
 	private static String getCurrentTimeStamp() {
@@ -101,34 +116,30 @@ public class Amidst {
 		return b.toString();
 	}
 
-	private static void initFileLogger(String filename) {
-		if (filename != null) {
-			Log.i("using log file: '" + filename + "'");
-			Log.addListener("file", new FileLogger(new File(filename)));
+	private static AmidstSettings createSettings() {
+		return new AmidstSettings(Preferences.userNodeForPackage(Amidst.class));
+	}
+
+	private static void enableGraphicsAccelerationIfNecessary(Setting<Boolean> graphicsAcceleration) {
+		if (graphicsAcceleration.get()) {
+			Log.i("Graphics Acceleration: enabled");
+			System.setProperty("sun.java2d.opengl", "True");
+			System.setProperty("sun.java2d.accthreshold", "0");
+		} else {
+			Log.i("Graphics Acceleration: disabled");
 		}
 	}
 
-	private static void startApplication(CommandLineParameters parameters,
-			AmidstMetaData metadata) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				setJava2DEnvironmentVariables();
-				doStartApplication(parameters, metadata);
-			}
-		});
-	}
-
-	private static void setJava2DEnvironmentVariables() {
-		System.setProperty("sun.java2d.opengl", "True");
-		System.setProperty("sun.java2d.accthreshold", "0");
+	private static void startApplication(CommandLineParameters parameters, AmidstMetaData metadata,
+			AmidstSettings settings) {
+		SwingUtilities.invokeLater(() -> doStartApplication(parameters, metadata, settings));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private static void doStartApplication(CommandLineParameters parameters,
-			AmidstMetaData metadata) {
+	private static void doStartApplication(CommandLineParameters parameters, AmidstMetaData metadata,
+			AmidstSettings settings) {
 		try {
-			new Application(parameters, metadata).run();
+			new Application(parameters, metadata, settings).run();
 		} catch (DotMinecraftDirectoryNotFoundException e) {
 			Log.w(e.getMessage());
 			e.printStackTrace();

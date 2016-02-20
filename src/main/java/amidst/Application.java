@@ -1,7 +1,5 @@
 package amidst;
 
-import java.util.prefs.Preferences;
-
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -35,21 +33,16 @@ public class Application {
 	private volatile MainWindow mainWindow;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Application(CommandLineParameters parameters, AmidstMetaData metadata)
+	public Application(CommandLineParameters parameters, AmidstMetaData metadata, AmidstSettings settings)
 			throws DotMinecraftDirectoryNotFoundException,
 			LocalMinecraftInterfaceCreationException {
 		this.parameters = parameters;
 		this.metadata = metadata;
-		this.settings = createSettings();
+		this.settings = settings;
 		this.mojangApi = createMojangApi();
 		this.biomeProfileDirectory = createBiomeProfileDirectory();
 		this.viewerFacadeBuilder = createViewerFacadeBuilder();
 		this.threadMaster = createThreadMaster();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private AmidstSettings createSettings() {
-		return new AmidstSettings(Preferences.userNodeForPackage(Amidst.class));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
