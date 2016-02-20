@@ -244,6 +244,14 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	public void disabledGraphicsAcceleration() {
+		mainWindow.displayMessage("Disabled Graphics Acceleration",
+				"You just disabled the Graphics Acceleration. This will lead to a significant drop in performance.\n"
+						+ "You need to restart Amidst for the changes to take effect.\n\n"
+						+ "If you did not mean to do this, you can re-enable the Graphics Acceleration via the Settings menu.");
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void checkForUpdates() {
 		application.checkForUpdates(mainWindow);
 	}
