@@ -68,7 +68,7 @@ public class AmidstMenuBuilder {
 		result.setMnemonic(KeyEvent.VK_W);
 		// @formatter:off
 		Menus.item(result, actions::goToCoordinate,        "Go to Coordinate",         KeyEvent.VK_C, "ctrl shift C");
-		Menus.item(result, actions::goToSpawn,             "Go to Spawn",              KeyEvent.VK_S, "ctrl shift S");
+		Menus.item(result, actions::goToSpawn,             "Go to World Spawn",        KeyEvent.VK_S, "ctrl shift S");
 		Menus.item(result, actions::goToStronghold,        "Go to Stronghold",         KeyEvent.VK_H, "ctrl shift H");
 		Menus.item(result, actions::goToPlayer,            "Go to Player",             KeyEvent.VK_P, "ctrl shift P");
 		result.addSeparator();
