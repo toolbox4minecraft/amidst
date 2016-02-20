@@ -9,7 +9,10 @@ import javax.swing.JMenuItem;
 import amidst.AmidstSettings;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
+import amidst.logging.Log;
 import amidst.mojangapi.world.WorldType;
+import amidst.settings.Setting;
+import amidst.settings.Settings;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 
 @NotThreadSafe
@@ -100,7 +103,7 @@ public class AmidstMenuBuilder {
 		}
 		result.addSeparator();
 		// @formatter:off
-		Menus.checkbox(result, settings.graphicsAcceleration, "Graphics Acceleration", "ctrl A");
+		Menus.checkbox(result, wrapGraphicsAcceleration(),    "Graphics Acceleration", "ctrl A");
 		Menus.checkbox(result, settings.smoothScrolling,      "Smooth Scrolling",      "ctrl I");
 		Menus.checkbox(result, settings.fragmentFading,       "Fragment Fading");
 		Menus.checkbox(result, settings.maxZoom,              "Restrict Maximum Zoom", "ctrl Z");
@@ -109,6 +112,17 @@ public class AmidstMenuBuilder {
 		Menus.checkbox(result, settings.showDebug,            "Show Debug Information");
 		// @formatter:on
 		return result;
+	}
+
+	private Setting<Boolean> wrapGraphicsAcceleration() {
+		return Settings.createWithListener(settings.graphicsAcceleration, () -> {
+			if (settings.graphicsAcceleration.get()) {
+				Log.i("Graphics Acceleration: enabled");
+			} else {
+				Log.i("Graphics Acceleration: disabled");
+				actions.disabledGraphicsAcceleration();
+			}
+		});
 	}
 
 	private JMenu create_Settings_DefaultWorldType() {
