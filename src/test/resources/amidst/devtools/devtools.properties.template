@@ -7,3 +7,7 @@ amidst.devtools.directory.versions=
 # To fix this issue, start the corresponding minecraft version via the minecraft launcher.
 # This will download the required libraries.
 amidst.devtools.directory.libraries=
+
+# Path to the directory where the biome color images are saved.
+# This directory will not be created if it does not exist.
+amidst.devtools.directory.biome.color.images=
