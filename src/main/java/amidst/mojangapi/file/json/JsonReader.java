@@ -28,9 +28,9 @@ public enum JsonReader {
 
 	private static final Gson GSON = new Gson();
 
-	private static final String REMOTE_VERSION_LIST = "https://s3.amazonaws.com/Minecraft.Download/versions/versions.json";
+	private static final String REMOTE_VERSION_LIST = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
 	private static final URL LOCAL_VERSION_LIST = ResourceLoader
-			.getResourceURL("/amidst/mojangapi/versions.json");
+			.getResourceURL("/amidst/mojangapi/version_manifest.json");
 
 	private static final String UUID_TO_PROFILE = "https://sessionserver.mojang.com/session/minecraft/profile/";
 	private static final String PLAYERNAME_TO_UUID = "https://api.mojang.com/users/profiles/minecraft/";
