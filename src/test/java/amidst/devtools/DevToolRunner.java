@@ -1,5 +1,6 @@
 package amidst.devtools;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.junit.Ignore;
@@ -7,10 +8,11 @@ import org.junit.Test;
 
 import amidst.AmidstVersion;
 import amidst.ResourceLoader;
-import amidst.devtools.settings.DevToolsSettings;
+import amidst.devtools.settings.DevToolSettings;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
+import amidst.mojangapi.world.biome.Biome;
 
 /**
  * Eclipse does not allow to run the main directly as a Java Application,
@@ -63,17 +65,28 @@ public class DevToolRunner {
 				versionList()).run();
 	}
 
+	@Ignore
+	@Test
+	public void generateBiomeColorImages() throws IOException {
+		new GenerateBiomeColorImages(Biome.allBiomes(), new File(
+				biomeColorImagesDirectory())).run();
+	}
+
 	private VersionListJson versionList() throws IOException,
 			MojangApiParsingException {
 		return JsonReader.readRemoteVersionList();
 	}
 
 	private String librariesDirectory() {
-		return DevToolsSettings.INSTANCE.getMinecraftLibrariesDirectory();
+		return DevToolSettings.INSTANCE.getMinecraftLibrariesDirectory();
 	}
 
 	private String versionsDirectory() {
-		return DevToolsSettings.INSTANCE.getMinecraftVersionsDirectory();
+		return DevToolSettings.INSTANCE.getMinecraftVersionsDirectory();
+	}
+
+	private String biomeColorImagesDirectory() {
+		return DevToolSettings.INSTANCE.getBiomeColorImagesDirectory();
 	}
 
 	private AmidstVersion amidstVersion() {
