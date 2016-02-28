@@ -1,6 +1,8 @@
 package amidst.gui.main.viewer.widget;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.List;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -33,10 +35,10 @@ public class SelectedIconWidget extends IconTextWidget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected String updateText() {
+	protected List<String> updateMultilineText() {
 		WorldIcon selection = worldIconSelection.get();
 		if (selection != null) {
-			return selection.toString();
+			return Arrays.asList(selection.toString(true).split("\n"));
 		} else {
 			return null;
 		}

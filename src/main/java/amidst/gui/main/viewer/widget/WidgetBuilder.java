@@ -57,8 +57,7 @@ public class WidgetBuilder {
 		return Arrays.asList(
 				new FpsWidget(              CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              settings.showFPS),
 				new ScaleWidget(            CornerAnchorPoint.BOTTOM_CENTER, zoom,                               settings.showScale),
-				new SeedWidget(             CornerAnchorPoint.TOP_LEFT,      world.getWorldSeed()),
-				new WorldTypeWidget(        CornerAnchorPoint.TOP_LEFT,      world.getWorldType()),
+				new SeedAndWorldTypeWidget( CornerAnchorPoint.TOP_LEFT,      world.getWorldSeed(), world.getWorldType()),
 				new SelectedIconWidget(     CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
 				new DebugWidget(            CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, settings.showDebug, accelerationCounter),
 				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension),

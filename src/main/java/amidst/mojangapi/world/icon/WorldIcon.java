@@ -3,6 +3,7 @@ package amidst.mojangapi.world.icon;
 import java.awt.image.BufferedImage;
 
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
@@ -41,11 +42,25 @@ public class WorldIcon {
 	}
 
 	@Override
+	@NotNull
 	public String toString() {
+		return toString(false);
+	}
+	
+	@NotNull
+	public String toString(boolean multiline) {
 		if (dimension.getResolution() != Resolution.WORLD) {
-			return name + " in the " + dimension.getName() + " "
-					+ coordinates.toString(dimension.getResolution()) + " -> "
-					+ coordinates.toString() + " in the Overworld";
+			if (multiline) {
+				return name 
+						+ "\n    in the " + dimension.getName() + " "
+						+ coordinates.toString(dimension.getResolution()) 
+						+ "\n    in the Overworld "
+						+ coordinates.toString();
+			} else {
+				return name + " in the " + dimension.getName() + " "
+						+ coordinates.toString(dimension.getResolution()) + " -> "
+						+ coordinates.toString() + " in the Overworld";
+			}
 		} else if (displayDimension) {
 			return name + " in the " + dimension.getName() + " "
 					+ coordinates.toString();

@@ -9,8 +9,8 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 
 @NotThreadSafe
-public abstract class IconTextWidget extends Widget {
-	private static final int ICON_HEIGHT = 25;
+public abstract class IconTextWidget extends TextWidget {
+	private static final int ICON_HEIGHT = 24;
 
 	private boolean updated;
 	private BufferedImage icon = null;
@@ -28,7 +28,6 @@ public abstract class IconTextWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected void doUpdate(FontMetrics fontMetrics, float time) {
-		updated = false;
 		BufferedImage newIcon = updateIcon();
 		if (newIcon != null && newIcon != icon) {
 			icon = newIcon;
@@ -36,39 +35,37 @@ public abstract class IconTextWidget extends Widget {
 					.getHeight());
 			updated = true;
 		}
-		String newText = updateText();
-		if (newText != null && !newText.equals(text)) {
-			text = newText;
-			updated = true;
-		}
-		if (updated) {
-			setWidth(getTextOffset() + fontMetrics.stringWidth(text) + 10);
-		}
-		isVisible = newIcon != null && newText != null;
+		super.doUpdate(fontMetrics, time);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected void doDraw(Graphics2D g2d) {
+		super.doDraw(g2d);
 		g2d.drawImage(icon, getX() + 5, getY() + 5, iconWidth, ICON_HEIGHT,
 				null);
-		g2d.drawString(text, getX() + getTextOffset(), getY() + 23);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private int getTextOffset() {
+	@Override
+	protected int getMarginLeft() {
 		return 5 + iconWidth + 5;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected boolean onVisibilityCheck() {
-		return isVisible;
+	protected int getMarginTop() {
+		// Lower the text slightly to align it with the icon
+		return super.getMarginTop() + 2;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	@Override
+	protected int getMinimumHeight() {
+		return 5 + ICON_HEIGHT + 5;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected abstract BufferedImage updateIcon();
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	protected abstract String updateText();
 }
