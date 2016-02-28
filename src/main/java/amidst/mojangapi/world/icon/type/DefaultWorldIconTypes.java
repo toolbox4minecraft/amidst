@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 import amidst.ResourceLoader;
 import amidst.documentation.Immutable;
+import amidst.mojangapi.world.icon.VerticalOutOfFrameImage;
 
 /**
  * This is only a helper enum to have a central place where these constants can
@@ -33,7 +34,7 @@ public enum DefaultWorldIconTypes {
 
 	private DefaultWorldIconTypes(String name) {
 		this.name = name;
-		this.image = ResourceLoader.getImage(getFilename());
+		this.image = new VerticalOutOfFrameImage(ResourceLoader.getImage(getFilename()));
 	}
 
 	private String getFilename() {

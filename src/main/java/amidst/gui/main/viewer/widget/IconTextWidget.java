@@ -7,16 +7,16 @@ import java.awt.image.BufferedImage;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.mojangapi.world.icon.OutOfFrameImage;
 
 @NotThreadSafe
 public abstract class IconTextWidget extends TextWidget {
 	private static final int ICON_HEIGHT = 24;
 
-	private boolean updated;
 	private BufferedImage icon = null;
 	private int iconWidth;
-	private String text = "";
-	private boolean isVisible = false;
+	private int iconHeight;
+	private int iconOffsetY;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected IconTextWidget(CornerAnchorPoint anchor) {
@@ -31,9 +31,17 @@ public abstract class IconTextWidget extends TextWidget {
 		BufferedImage newIcon = updateIcon();
 		if (newIcon != null && newIcon != icon) {
 			icon = newIcon;
-			iconWidth = (int) (((double) ICON_HEIGHT) * icon.getWidth() / icon
-					.getHeight());
-			updated = true;
+			
+			int iconEffectiveHeight = icon.getHeight();
+			int iconEffectiveYOffset = 0;
+			if (icon instanceof OutOfFrameImage) {
+				iconEffectiveHeight  = ((OutOfFrameImage) icon).getFrameHeight();
+				iconEffectiveYOffset = ((OutOfFrameImage) icon).getFrameOffsetY();
+			}
+			double scale = ((double) ICON_HEIGHT) / iconEffectiveHeight;			
+			iconWidth   = (int) Math.round(scale * icon.getWidth());
+			iconHeight  = (int) Math.round(scale * icon.getHeight());
+			iconOffsetY = (int) Math.round(scale * iconEffectiveYOffset);
 		}
 		super.doUpdate(fontMetrics, time);
 	}
@@ -42,8 +50,14 @@ public abstract class IconTextWidget extends TextWidget {
 	@Override
 	protected void doDraw(Graphics2D g2d) {
 		super.doDraw(g2d);
-		g2d.drawImage(icon, getX() + 5, getY() + 5, iconWidth, ICON_HEIGHT,
-				null);
+		g2d.drawImage(
+			icon, 
+			getX() + 5, 
+			getY() + 5 - iconOffsetY, 
+			iconWidth, 
+			iconHeight,
+			null
+		);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
