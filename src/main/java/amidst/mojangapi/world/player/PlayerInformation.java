@@ -1,17 +1,16 @@
 package amidst.mojangapi.world.player;
 
-import java.awt.image.BufferedImage;
-
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.PlayerInformationRetriever;
 import amidst.mojangapi.file.json.player.PlayerJson;
+import amidst.mojangapi.world.icon.WorldIconImage;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 
 @Immutable
 public class PlayerInformation {
-	private static final BufferedImage DEFAULT_HEAD = DefaultWorldIconTypes.PLAYER
+	private static final WorldIconImage DEFAULT_HEAD = DefaultWorldIconTypes.PLAYER
 			.getImage();
 	private static final PlayerInformation THE_SINGLEPLAYER_PLAYER = new PlayerInformation(
 			null, "The Singleplayer Player", DEFAULT_HEAD);
@@ -20,7 +19,7 @@ public class PlayerInformation {
 	public static PlayerInformation fromUUID(String uuid) {
 		PlayerJson player = PlayerInformationRetriever
 				.tryGetPlayerJsonByUUID(uuid);
-		BufferedImage head;
+		WorldIconImage head;
 		if (player != null) {
 			head = tryGetPlayerHeadBySkinUrl(player);
 			if (head != null) {
@@ -39,14 +38,14 @@ public class PlayerInformation {
 	public static PlayerInformation fromName(String name) {
 		PlayerJson player = PlayerInformationRetriever
 				.tryGetPlayerJsonByName(name);
-		BufferedImage head;
+		WorldIconImage head;
 		if (player != null) {
 			head = tryGetPlayerHeadBySkinUrl(player);
 			if (head != null) {
 				return new PlayerInformation(player.getId(), player.getName(),
 						head);
 			} else {
-				head = PlayerInformationRetriever.tryGetPlayerHeadByName(name);
+				head = tryGetPlayerHeadByName(name);
 				if (head != null) {
 					return new PlayerInformation(player.getId(),
 							player.getName(), head);
@@ -56,7 +55,7 @@ public class PlayerInformation {
 				}
 			}
 		} else {
-			head = PlayerInformationRetriever.tryGetPlayerHeadByName(name);
+			head = tryGetPlayerHeadByName(name);
 			if (head != null) {
 				return new PlayerInformation(null, name, head);
 			} else {
@@ -65,13 +64,18 @@ public class PlayerInformation {
 		}
 	}
 
-	private static BufferedImage tryGetPlayerHeadBySkinUrl(PlayerJson player) {
+	private static WorldIconImage tryGetPlayerHeadBySkinUrl(PlayerJson player) {
 		try {
-			return PlayerInformationRetriever.tryGetPlayerHeadBySkinUrl(player
-					.getSkinUrl());
+			return WorldIconImage.from(PlayerInformationRetriever
+					.tryGetPlayerHeadBySkinUrl(player.getSkinUrl()));
 		} catch (MojangApiParsingException e) {
 			return null;
 		}
+	}
+
+	private static WorldIconImage tryGetPlayerHeadByName(String name) {
+		return WorldIconImage.from(PlayerInformationRetriever
+				.tryGetPlayerHeadByName(name));
 	}
 
 	@NotNull
@@ -81,9 +85,9 @@ public class PlayerInformation {
 
 	private final String uuid;
 	private final String name;
-	private final BufferedImage head;
+	private final WorldIconImage head;
 
-	private PlayerInformation(String uuid, String name, BufferedImage head) {
+	private PlayerInformation(String uuid, String name, WorldIconImage head) {
 		this.uuid = uuid;
 		this.name = name;
 		this.head = head;
@@ -97,7 +101,7 @@ public class PlayerInformation {
 		return name;
 	}
 
-	public BufferedImage getHead() {
+	public WorldIconImage getHead() {
 		return head;
 	}
 

@@ -2,18 +2,17 @@ package amidst.gui.main.viewer.widget;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.mojangapi.world.icon.OutOfFrameImage;
+import amidst.mojangapi.world.icon.WorldIconImage;
 
 @NotThreadSafe
 public abstract class IconTextWidget extends TextWidget {
 	private static final int ICON_HEIGHT = 24;
 
-	private BufferedImage icon = null;
+	private WorldIconImage icon = null;
 	private int iconWidth;
 	private int iconHeight;
 	private int iconOffsetY;
@@ -28,21 +27,13 @@ public abstract class IconTextWidget extends TextWidget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected void doUpdate(FontMetrics fontMetrics, float time) {
-		BufferedImage newIcon = updateIcon();
+		WorldIconImage newIcon = updateIcon();
 		if (newIcon != null && newIcon != icon) {
 			icon = newIcon;
-
-			int iconEffectiveHeight = icon.getHeight();
-			int iconEffectiveYOffset = 0;
-			if (icon instanceof OutOfFrameImage) {
-				iconEffectiveHeight = ((OutOfFrameImage) icon).getFrameHeight();
-				iconEffectiveYOffset = ((OutOfFrameImage) icon)
-						.getFrameOffsetY();
-			}
-			double scale = ((double) ICON_HEIGHT) / iconEffectiveHeight;
-			iconWidth = (int) Math.round(scale * icon.getWidth());
-			iconHeight = (int) Math.round(scale * icon.getHeight());
-			iconOffsetY = (int) Math.round(scale * iconEffectiveYOffset);
+			double scale = ((double) ICON_HEIGHT) / icon.getFrameHeight();
+			iconWidth = (int) Math.round(scale * icon.getImage().getWidth());
+			iconHeight = (int) Math.round(scale * icon.getImage().getHeight());
+			iconOffsetY = (int) Math.round(scale * icon.getFrameOffsetY());
 		}
 		super.doUpdate(fontMetrics, time);
 	}
@@ -51,8 +42,8 @@ public abstract class IconTextWidget extends TextWidget {
 	@Override
 	protected void doDraw(Graphics2D g2d) {
 		super.doDraw(g2d);
-		g2d.drawImage(icon, getX() + 5, getY() + 5 - iconOffsetY, iconWidth,
-				iconHeight, null);
+		g2d.drawImage(icon.getImage(), getX() + 5, getY() + 5 - iconOffsetY,
+				iconWidth, iconHeight, null);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -75,6 +66,5 @@ public abstract class IconTextWidget extends TextWidget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	protected abstract BufferedImage updateIcon();
-
+	protected abstract WorldIconImage updateIcon();
 }

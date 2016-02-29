@@ -24,29 +24,24 @@ public abstract class TextWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected void doUpdate(FontMetrics fontMetrics, float time) {
-
 		List<String> newTextLines = updateMultilineText();
 		if (newTextLines != null && !newTextLines.equals(textLines)) {
 			textLines = newTextLines;
-
 			int maxStringWidth = 0;
 			int stringHeight = 0;
 			int lineHeight = fontMetrics.getHeight();
 			for (String line : textLines) {
-
 				if (stringHeight == lineHeight) {
 					// A multiline string's height is 1 full LineHeight plus
 					// (n - 1) line-separation-heights.
 					lineHeight = getLineSeparationHeight(fontMetrics);
 				}
 				stringHeight += lineHeight;
-
 				if (line != null) {
 					maxStringWidth = Math.max(maxStringWidth,
 							fontMetrics.stringWidth(line));
 				}
 			}
-
 			setWidth(getMarginLeft() + maxStringWidth + getMarginRight());
 			setHeight(Math.max(getMinimumHeight(), getMarginTop()
 					+ stringHeight + getMarginBottom()));
@@ -104,20 +99,20 @@ public abstract class TextWidget extends Widget {
 		return 0;
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	/** 
+	/**
 	 * Widgit subclasses with multiple lines of text should override
 	 * updateMultilineText(), rather than updateText()
 	 */
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected List<String> updateMultilineText() {
 		return Arrays.asList(updateText());
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	/** 
-	 * Widgit subclasses with a single line of text should override 
-	 * updateText() instead of updateMultilineText()
+	/**
+	 * Widgit subclasses with a single line of text should override updateText()
+	 * instead of updateMultilineText()
 	 */
+	@CalledOnlyBy(AmidstThread.EDT)
 	protected String updateText() {
 		// Execution should not reach here, as the subclass is supposed
 		// to have overridden this method.

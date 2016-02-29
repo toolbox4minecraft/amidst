@@ -1,7 +1,5 @@
 package amidst.mojangapi.world.icon;
 
-import java.awt.image.BufferedImage;
-
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.mojangapi.world.Dimension;
@@ -12,12 +10,12 @@ import amidst.mojangapi.world.coordinates.Resolution;
 public class WorldIcon {
 	private final CoordinatesInWorld coordinates;
 	private final String name;
-	private final BufferedImage image;
+	private final WorldIconImage image;
 	private final Dimension dimension;
 	private final boolean displayDimension;
 
 	public WorldIcon(CoordinatesInWorld coordinates, String name,
-			BufferedImage image, Dimension dimension, boolean displayDimension) {
+			WorldIconImage image, Dimension dimension, boolean displayDimension) {
 		this.coordinates = coordinates;
 		this.name = name;
 		this.image = image;
@@ -33,7 +31,7 @@ public class WorldIcon {
 		return name;
 	}
 
-	public BufferedImage getImage() {
+	public WorldIconImage getImage() {
 		return image;
 	}
 

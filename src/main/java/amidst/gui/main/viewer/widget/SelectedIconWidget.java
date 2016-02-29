@@ -1,6 +1,5 @@
 package amidst.gui.main.viewer.widget;
 
-import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,6 +8,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.viewer.WorldIconSelection;
 import amidst.mojangapi.world.icon.WorldIcon;
+import amidst.mojangapi.world.icon.WorldIconImage;
 
 @NotThreadSafe
 public class SelectedIconWidget extends IconTextWidget {
@@ -24,7 +24,7 @@ public class SelectedIconWidget extends IconTextWidget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected BufferedImage updateIcon() {
+	protected WorldIconImage updateIcon() {
 		WorldIcon selection = worldIconSelection.get();
 		if (selection != null) {
 			return selection.getImage();
