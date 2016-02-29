@@ -1,9 +1,8 @@
 package amidst.mojangapi.world.icon.type;
 
-import java.awt.image.BufferedImage;
-
 import amidst.ResourceLoader;
 import amidst.documentation.Immutable;
+import amidst.mojangapi.world.icon.WorldIconImage;
 
 /**
  * This is only a helper enum to have a central place where these constants can
@@ -29,11 +28,12 @@ public enum DefaultWorldIconTypes {
 	// @formatter:on
 
 	private final String name;
-	private final BufferedImage image;
+	private final WorldIconImage image;
 
 	private DefaultWorldIconTypes(String name) {
 		this.name = name;
-		this.image = ResourceLoader.getImage(getFilename());
+		this.image = WorldIconImage.fromPixelTransparency(ResourceLoader
+				.getImage(getFilename()));
 	}
 
 	private String getFilename() {
@@ -44,7 +44,7 @@ public enum DefaultWorldIconTypes {
 		return name;
 	}
 
-	public BufferedImage getImage() {
+	public WorldIconImage getImage() {
 		return image;
 	}
 }

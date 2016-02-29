@@ -12,7 +12,7 @@ import amidst.gui.main.viewer.Graphics2DAccelerationCounter;
 import amidst.settings.Setting;
 
 @NotThreadSafe
-public class DebugWidget extends MultilineTextWidget {
+public class DebugWidget extends TextWidget {
 	private final FragmentGraph graph;
 	private final FragmentManager fragmentManager;
 	private final Setting<Boolean> isVisibleSetting;
@@ -31,7 +31,7 @@ public class DebugWidget extends MultilineTextWidget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected List<String> getTextLines() {
+	protected List<String> updateTextLines() {
 		if (isVisibleSetting.get()) {
 			int columns = graph.getFragmentsPerRow();
 			int rows = graph.getFragmentsPerColumn();

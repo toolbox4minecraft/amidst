@@ -1,6 +1,5 @@
 package amidst.mojangapi.world.player;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import amidst.documentation.ThreadSafe;
@@ -9,6 +8,7 @@ import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.nbt.player.PlayerNbt;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.icon.WorldIconImage;
 
 @ThreadSafe
 public class Player {
@@ -26,7 +26,7 @@ public class Player {
 		return playerInformation.getNameOrUUID();
 	}
 
-	public BufferedImage getHead() {
+	public WorldIconImage getHead() {
 		return playerInformation.getHead();
 	}
 

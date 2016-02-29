@@ -1,8 +1,7 @@
 package amidst.mojangapi.world.icon;
 
-import java.awt.image.BufferedImage;
-
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
@@ -11,12 +10,12 @@ import amidst.mojangapi.world.coordinates.Resolution;
 public class WorldIcon {
 	private final CoordinatesInWorld coordinates;
 	private final String name;
-	private final BufferedImage image;
+	private final WorldIconImage image;
 	private final Dimension dimension;
 	private final boolean displayDimension;
 
 	public WorldIcon(CoordinatesInWorld coordinates, String name,
-			BufferedImage image, Dimension dimension, boolean displayDimension) {
+			WorldIconImage image, Dimension dimension, boolean displayDimension) {
 		this.coordinates = coordinates;
 		this.name = name;
 		this.image = image;
@@ -32,7 +31,7 @@ public class WorldIcon {
 		return name;
 	}
 
-	public BufferedImage getImage() {
+	public WorldIconImage getImage() {
 		return image;
 	}
 
@@ -41,11 +40,25 @@ public class WorldIcon {
 	}
 
 	@Override
+	@NotNull
 	public String toString() {
+		return toString(false);
+	}
+
+	@NotNull
+	public String toString(boolean multiline) {
 		if (dimension.getResolution() != Resolution.WORLD) {
-			return name + " in the " + dimension.getName() + " "
-					+ coordinates.toString(dimension.getResolution()) + " -> "
-					+ coordinates.toString() + " in the Overworld";
+			if (multiline) {
+				// @formatter:off
+				return name
+						+ "\n    in the " + dimension.getName() + " " + coordinates.toString(dimension.getResolution())
+						+ "\n    in the Overworld "                   + coordinates.toString();
+				// @formatter:on
+			} else {
+				return name + " in the " + dimension.getName() + " "
+						+ coordinates.toString(dimension.getResolution())
+						+ " -> " + coordinates.toString() + " in the Overworld";
+			}
 		} else if (displayDimension) {
 			return name + " in the " + dimension.getName() + " "
 					+ coordinates.toString();

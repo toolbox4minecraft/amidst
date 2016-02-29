@@ -39,7 +39,7 @@ public class WorldIconDrawer extends FragmentDrawer {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawIcon(WorldIcon icon, double invZoom, Graphics2D g2d) {
-		BufferedImage image = icon.getImage();
+		BufferedImage image = icon.getImage().getImage();
 		int width = image.getWidth();
 		int height = image.getHeight();
 		if (worldIconSelection.isSelected(icon)) {

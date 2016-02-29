@@ -24,7 +24,7 @@ public class WorldSeed {
 			if (this == TEXT) {
 				return labelPrefix + ": '" + text + "' (" + seed + ")";
 			} else {
-				return labelPrefix + " (" + seed + ")";
+				return labelPrefix + ": " + seed;
 			}
 		}
 	}
