@@ -9,7 +9,7 @@ Amidst is a tool to display an overview of a Minecraft world, without actually c
 
 Amidst **can**:
 
-* generate an overview of a world from a given seed and Minecraft version
+* render an overview of a world from a given seed and Minecraft version
 * save an image of the map
 * use a save game
 * display biome information
@@ -48,7 +48,7 @@ Amidst was moved to a new location, since Skidoodle aka skiphs is to busy to mai
 * [Wiki](https://github.com/toolbox4minecraft/amidst/wiki)
 * [Reporting a Bug](https://github.com/toolbox4minecraft/amidst/wiki/Supporting-the-Development#reporting-a-bug) - please report bugs, so we can fix them
 * [Requesting a Feature](https://github.com/toolbox4minecraft/amidst/wiki/Supporting-the-Development#requesting-a-feature)
-* Thread in the minecraftforum - still to come
+* [Thread in the minecraftforum](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-tools/2626547-amidst-has-found-a-new-home)
 * [Project Page](https://github.com/toolbox4minecraft/amidst)
 * [Supporting the Development](https://github.com/toolbox4minecraft/amidst/wiki/Supporting-the-Development)
 * [License Text](https://github.com/toolbox4minecraft/amidst/blob/master/LICENSE.txt)
@@ -69,7 +69,7 @@ Amidst was moved to a new location, since Skidoodle aka skiphs is to busy to mai
 
 ## Screenshots
 
-These screenshots are created from the seed 24922 using Amidst v4.0 and the Minecraft snapshot 16w04a.
+These screenshots are created from the seed 24922 using Amidst v4.0 and Minecraft 1.9.
 
 ![default](https://raw.githubusercontent.com/wiki/toolbox4minecraft/amidst/screenshots/screenshot_default_24922_default.png)
 
