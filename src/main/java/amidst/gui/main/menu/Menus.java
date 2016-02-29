@@ -1,5 +1,6 @@
 package amidst.gui.main.menu;
 
+import java.awt.Toolkit;
 import java.util.Objects;
 
 import javax.swing.ButtonGroup;
@@ -49,7 +50,7 @@ public enum Menus {
 			Setting<T> setting, ButtonGroup group, T value, String accelerator) {
 		JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(
 				value.toString());
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(accelerator));
+		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
 		return radio(menu, setting, group, menuItem, value);
 	}
 
@@ -58,7 +59,7 @@ public enum Menus {
 			String accelerator) {
 		JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(
 				value.toString(), icon);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(accelerator));
+		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
 		return radio(menu, setting, group, menuItem, value);
 	}
 
@@ -86,7 +87,7 @@ public enum Menus {
 	public static JCheckBoxMenuItem checkbox(JMenu menu,
 			Setting<Boolean> setting, String text, String accelerator) {
 		JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(text);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(accelerator));
+		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
 		return checkbox(menu, setting, menuItem);
 	}
 
@@ -94,7 +95,7 @@ public enum Menus {
 			Setting<Boolean> setting, String text, ImageIcon icon,
 			String accelerator) {
 		JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(text, icon);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(accelerator));
+		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
 		return checkbox(menu, setting, menuItem);
 	}
 
@@ -115,7 +116,9 @@ public enum Menus {
 	public static JMenuItem item(JMenu menu, Runnable runnable, String text,
 			int mnemonic, String accelerator) {
 		JMenuItem menuItem = new JMenuItem(text);
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(accelerator));
+		
+		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
+		
 		return item(menu, runnable, menuItem, mnemonic);
 	}
 
@@ -125,5 +128,25 @@ public enum Menus {
 		menuItem.addActionListener(e -> runnable.run());
 		menu.add(menuItem);
 		return menuItem;
+	}
+	
+	public static KeyStroke getAcceleratorKeyStroke(String accelerator) {
+		if(accelerator == null)
+			return null;
+		
+		boolean addMenuMask = true;
+		if(accelerator.startsWith("@")) {
+			accelerator = accelerator.substring(1);
+			addMenuMask = false;
+		}
+		
+		KeyStroke shortcut = KeyStroke.getKeyStroke(accelerator);
+
+		int keycode = shortcut.getKeyCode();
+		int keymask = shortcut.getModifiers();
+		if(addMenuMask)
+			keymask |= Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+				
+		return KeyStroke.getKeyStroke(keycode, keymask);		
 	}
 }

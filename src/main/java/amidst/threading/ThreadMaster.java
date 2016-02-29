@@ -13,6 +13,7 @@ import amidst.documentation.ThreadSafe;
 @ThreadSafe
 public class ThreadMaster {
 	private static final Runnable NOOP = new Runnable() {
+		@Override
 		public void run() {
 			// noop
 		}
