@@ -35,7 +35,7 @@ public class SelectedIconWidget extends IconTextWidget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected List<String> updateMultilineText() {
+	protected List<String> updateTextLines() {
 		WorldIcon selection = worldIconSelection.get();
 		if (selection != null) {
 			return Arrays.asList(selection.toString(true).split("\n"));

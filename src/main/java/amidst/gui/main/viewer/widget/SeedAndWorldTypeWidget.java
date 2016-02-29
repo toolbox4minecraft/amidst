@@ -10,14 +10,16 @@ import amidst.mojangapi.world.WorldType;
 public class SeedAndWorldTypeWidget extends ImmutableTextWidget {
 	public SeedAndWorldTypeWidget(CornerAnchorPoint anchor,
 			WorldSeed worldSeed, WorldType worldType) {
-		super(anchor, worldSeed.getLabel() + "\nWorld Type: "
+		super(anchor, worldSeed.getLabel(), "World Type: "
 				+ worldType.getName());
 	}
 
+	/**
+	 * Add some extra line spacing because the seed and world type are separate
+	 * items, rather than multi-line paragraph text.
+	 */
 	@Override
 	protected int getLineSeparationHeight(FontMetrics fontMetrics) {
-		// Add some extra line spacing because the seed and world type
-		// are separate items, rather than multi-line paragraph text.
 		return (int) Math
 				.round(super.getLineSeparationHeight(fontMetrics) * 1.2);
 	}

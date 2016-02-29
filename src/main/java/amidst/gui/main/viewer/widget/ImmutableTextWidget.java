@@ -9,17 +9,17 @@ import amidst.documentation.NotThreadSafe;
 
 @NotThreadSafe
 public class ImmutableTextWidget extends TextWidget {
-	private List<String> textLines = null;
+	private final List<String> textLines;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ImmutableTextWidget(CornerAnchorPoint anchor, String text) {
+	public ImmutableTextWidget(CornerAnchorPoint anchor, String... textLines) {
 		super(anchor);
-		this.textLines = Arrays.asList(text.split("\n"));
+		this.textLines = Arrays.asList(textLines);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected List<String> updateMultilineText() {
+	protected List<String> updateTextLines() {
 		return textLines;
 	}
 }

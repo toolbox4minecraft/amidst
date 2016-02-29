@@ -2,7 +2,6 @@ package amidst.gui.main.viewer.widget;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.util.Arrays;
 import java.util.List;
 
 import amidst.documentation.AmidstThread;
@@ -24,29 +23,33 @@ public abstract class TextWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected void doUpdate(FontMetrics fontMetrics, float time) {
-		List<String> newTextLines = updateMultilineText();
-		if (newTextLines != null && !newTextLines.equals(textLines)) {
+		List<String> newTextLines = updateTextLines();
+		if (newTextLines != null && !newTextLines.isEmpty()
+				&& !newTextLines.equals(textLines)) {
 			textLines = newTextLines;
-			int maxStringWidth = 0;
-			int stringHeight = 0;
-			int lineHeight = fontMetrics.getHeight();
-			for (String line : textLines) {
-				if (stringHeight == lineHeight) {
-					// A multiline string's height is 1 full LineHeight plus
-					// (n - 1) line-separation-heights.
-					lineHeight = getLineSeparationHeight(fontMetrics);
-				}
-				stringHeight += lineHeight;
-				if (line != null) {
-					maxStringWidth = Math.max(maxStringWidth,
-							fontMetrics.stringWidth(line));
-				}
-			}
-			setWidth(getMarginLeft() + maxStringWidth + getMarginRight());
+			setWidth(getMarginLeft() + getMaxStringWidth(fontMetrics)
+					+ getMarginRight());
 			setHeight(Math.max(getMinimumHeight(), getMarginTop()
-					+ stringHeight + getMarginBottom()));
+					+ getStringHeight(fontMetrics) + getMarginBottom()));
 		}
 		isVisible = newTextLines != null && newTextLines.size() > 0;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private int getMaxStringWidth(FontMetrics fontMetrics) {
+		int result = 0;
+		for (String line : textLines) {
+			result = Math.max(result, fontMetrics.stringWidth(line));
+		}
+		return result;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private int getStringHeight(FontMetrics fontMetrics) {
+		int lineHeight = fontMetrics.getHeight();
+		int lineSeparationHeight = getLineSeparationHeight(fontMetrics);
+		return textLines.size() * lineSeparationHeight + lineHeight
+				- lineSeparationHeight;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -54,22 +57,23 @@ public abstract class TextWidget extends Widget {
 	protected void doDraw(Graphics2D g2d) {
 		int x = getX() + getMarginLeft();
 		int y = getY() + getMarginTop() + g2d.getFontMetrics().getAscent();
-
 		int lineSeparationHeight = getLineSeparationHeight(g2d.getFontMetrics());
 		for (String line : textLines) {
-			if (line != null)
-				g2d.drawString(line, x, y);
+			g2d.drawString(line, x, y);
 			y += lineSeparationHeight;
 		}
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected boolean onVisibilityCheck() {
 		return isVisible;
 	}
 
+	/**
+	 * Override this to adjust the spacing between lines of text
+	 */
 	@CalledOnlyBy(AmidstThread.EDT)
-	/** Override this to adjust the spacing between lines of text */
 	protected int getLineSeparationHeight(FontMetrics fontMetrics) {
 		return fontMetrics.getHeight();
 	}
@@ -99,27 +103,6 @@ public abstract class TextWidget extends Widget {
 		return 0;
 	}
 
-	/**
-	 * Widgit subclasses with multiple lines of text should override
-	 * updateMultilineText(), rather than updateText()
-	 */
 	@CalledOnlyBy(AmidstThread.EDT)
-	protected List<String> updateMultilineText() {
-		return Arrays.asList(updateText());
-	}
-
-	/**
-	 * Widgit subclasses with a single line of text should override updateText()
-	 * instead of updateMultilineText()
-	 */
-	@CalledOnlyBy(AmidstThread.EDT)
-	protected String updateText() {
-		// Execution should not reach here, as the subclass is supposed
-		// to have overridden this method.
-		// The only reason this isn't abstract is so that subclasses
-		// which override updateMultilineText() don't have to provide
-		// an implementation of updateText().
-		throw new RuntimeException(
-				"One of either updateMultilineText() or updateText() must be overridden");
-	}
+	protected abstract List<String> updateTextLines();
 }

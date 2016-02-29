@@ -31,7 +31,7 @@ public class DebugWidget extends TextWidget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected List<String> updateMultilineText() {
+	protected List<String> updateTextLines() {
 		if (isVisibleSetting.get()) {
 			int columns = graph.getFragmentsPerRow();
 			int rows = graph.getFragmentsPerColumn();
