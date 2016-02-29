@@ -116,9 +116,7 @@ public enum Menus {
 	public static JMenuItem item(JMenu menu, Runnable runnable, String text,
 			int mnemonic, String accelerator) {
 		JMenuItem menuItem = new JMenuItem(text);
-		
 		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
-		
 		return item(menu, runnable, menuItem, mnemonic);
 	}
 
@@ -129,24 +127,26 @@ public enum Menus {
 		menu.add(menuItem);
 		return menuItem;
 	}
-	
+
 	public static KeyStroke getAcceleratorKeyStroke(String accelerator) {
-		if(accelerator == null)
-			return null;
-		
-		boolean addMenuMask = true;
-		if(accelerator.startsWith("@")) {
-			accelerator = accelerator.substring(1);
+		boolean addMenuMask;
+		if (accelerator.contains("menu")) {
+			accelerator = accelerator.replace("menu", "");
+			addMenuMask = true;
+		} else {
 			addMenuMask = false;
 		}
-		
-		KeyStroke shortcut = KeyStroke.getKeyStroke(accelerator);
+		return getPlatformSpecificKeyStroke(accelerator, addMenuMask);
+	}
 
-		int keycode = shortcut.getKeyCode();
-		int keymask = shortcut.getModifiers();
-		if(addMenuMask)
+	private static KeyStroke getPlatformSpecificKeyStroke(String accelerator,
+			boolean addMenuMask) {
+		KeyStroke keyStroke = KeyStroke.getKeyStroke(accelerator);
+		int keycode = keyStroke.getKeyCode();
+		int keymask = keyStroke.getModifiers();
+		if (addMenuMask) {
 			keymask |= Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-				
-		return KeyStroke.getKeyStroke(keycode, keymask);		
+		}
+		return KeyStroke.getKeyStroke(keycode, keymask);
 	}
 }

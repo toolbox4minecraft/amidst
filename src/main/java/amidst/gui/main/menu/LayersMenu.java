@@ -90,40 +90,40 @@ public class LayersMenu {
 	private void createOverworldAndEndLayers(Dimension dimension) {
 		// @formatter:off
 		ButtonGroup group = new ButtonGroup();
-		Menus.radio(   menu, dimensionSetting, group,     Dimension.OVERWORLD,                                      "shift 1");
+		Menus.radio(   menu, dimensionSetting, group,     Dimension.OVERWORLD,                                      "menu shift 1");
 		createOverworldLayers(dimension);
 		menu.addSeparator();
-		Menus.radio(   menu, dimensionSetting, group,     Dimension.END,                                            "shift 2");
-		endLayer(      settings.showEndCities,            "End City Icons",         getIcon("end_city.png"),        "9", dimension, LayerIds.END_CITY);
+		Menus.radio(   menu, dimensionSetting, group,     Dimension.END,                                            "menu shift 2");
+		endLayer(      settings.showEndCities,            "End City Icons",         getIcon("end_city.png"),        "menu 9", dimension, LayerIds.END_CITY);
 		// @formatter:on
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createOverworldLayers(Dimension dimension) {
 		// @formatter:off
-		overworldLayer(settings.showSlimeChunks,          "Slime Chunks",           getIcon("slime.png"),           "1", dimension, LayerIds.SLIME);
-		overworldLayer(settings.showSpawn,                "Spawn Location Icon",    getIcon("spawn.png"),           "2", dimension, LayerIds.SPAWN);
-		overworldLayer(settings.showStrongholds,          "Stronghold Icons",       getIcon("stronghold.png"),      "3", dimension, LayerIds.STRONGHOLD);
-		overworldLayer(settings.showVillages,             "Village Icons",          getIcon("village.png"),         "4", dimension, LayerIds.VILLAGE);
-		overworldLayer(settings.showTemples,              "Temple/Witch Hut Icons", getIcon("desert.png"),          "5", dimension, LayerIds.TEMPLE);
-		overworldLayer(settings.showMineshafts,           "Mineshaft Icons",        getIcon("mineshaft.png"),       "6", dimension, LayerIds.MINESHAFT);
-		overworldLayer(settings.showOceanMonuments,       "Ocean Monument Icons",   getIcon("ocean_monument.png"),  "7", dimension, LayerIds.OCEAN_MONUMENT);
-		overworldLayer(settings.showNetherFortresses,     "Nether Fortress Icons",  getIcon("nether_fortress.png"), "8", dimension, LayerIds.NETHER_FORTRESS);
+		overworldLayer(settings.showSlimeChunks,          "Slime Chunks",           getIcon("slime.png"),           "menu 1", dimension, LayerIds.SLIME);
+		overworldLayer(settings.showSpawn,                "Spawn Location Icon",    getIcon("spawn.png"),           "menu 2", dimension, LayerIds.SPAWN);
+		overworldLayer(settings.showStrongholds,          "Stronghold Icons",       getIcon("stronghold.png"),      "menu 3", dimension, LayerIds.STRONGHOLD);
+		overworldLayer(settings.showVillages,             "Village Icons",          getIcon("village.png"),         "menu 4", dimension, LayerIds.VILLAGE);
+		overworldLayer(settings.showTemples,              "Temple/Witch Hut Icons", getIcon("desert.png"),          "menu 5", dimension, LayerIds.TEMPLE);
+		overworldLayer(settings.showMineshafts,           "Mineshaft Icons",        getIcon("mineshaft.png"),       "menu 6", dimension, LayerIds.MINESHAFT);
+		overworldLayer(settings.showOceanMonuments,       "Ocean Monument Icons",   getIcon("ocean_monument.png"),  "menu 7", dimension, LayerIds.OCEAN_MONUMENT);
+		overworldLayer(settings.showNetherFortresses,     "Nether Fortress Icons",  getIcon("nether_fortress.png"), "menu 8", dimension, LayerIds.NETHER_FORTRESS);
 		// @formatter:on
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createAllDimensions() {
 		// @formatter:off
-		Menus.checkbox(menu, settings.showGrid,           "Grid",                   getIcon("grid.png"),            "G");
-		Menus.checkbox(menu, settings.showPlayers,        "Player Icons",           getIcon("player.png"),          "P");
+		Menus.checkbox(menu, settings.showGrid,           "Grid",                   getIcon("grid.png"),            "menu G");
+		Menus.checkbox(menu, settings.showPlayers,        "Player Icons",           getIcon("player.png"),          "menu P");
 		// @formatter:on
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createEnableAllLayers() {
 		// @formatter:off
-		Menus.checkbox(menu, enableAllLayersSetting,      "Enable All Layers",                                      "E");
+		Menus.checkbox(menu, enableAllLayersSetting,      "Enable All Layers",                                      "menu E");
 		// @formatter:on
 	}
 
