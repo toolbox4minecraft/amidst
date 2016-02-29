@@ -120,7 +120,9 @@ public class AmidstMenuBuilder {
 
 	private JMenu create_Settings_BiomeProfile() {
 		JMenu result = new JMenu("Biome profile");
-		new BiomeProfileMenuFactory(result, actions, biomeProfileDirectory);
+		// @formatter:off
+		new BiomeProfileMenuFactory(result, actions, biomeProfileDirectory, "Reload biome profiles", KeyEvent.VK_R, "menu B");
+		// @formatter:on
 		return result;
 	}
 

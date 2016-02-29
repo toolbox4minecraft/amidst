@@ -2,14 +2,11 @@ package amidst.gui.main.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 import amidst.documentation.NotThreadSafe;
@@ -114,12 +111,19 @@ public class BiomeProfileMenuFactory {
 	private final JMenu parentMenu;
 	private final Actions actions;
 	private final BiomeProfileDirectory biomeProfileDirectory;
+	private final String reloadText;
+	private final int reloadMnemonic;
+	private final String reloadAccelerator;
 
 	public BiomeProfileMenuFactory(JMenu parentMenu, Actions actions,
-			BiomeProfileDirectory biomeProfileDirectory) {
+			BiomeProfileDirectory biomeProfileDirectory, String reloadText,
+			int reloadMnemonic, String reloadAccelerator) {
 		this.parentMenu = parentMenu;
 		this.actions = actions;
 		this.biomeProfileDirectory = biomeProfileDirectory;
+		this.reloadText = reloadText;
+		this.reloadMnemonic = reloadMnemonic;
+		this.reloadAccelerator = reloadAccelerator;
 		Log.i("Checking for additional biome profiles.");
 		initParentMenu();
 	}
@@ -131,21 +135,13 @@ public class BiomeProfileMenuFactory {
 				parentMenu, actions);
 		biomeProfileDirectory.visitProfiles(visitor);
 		parentMenu.addSeparator();
-		parentMenu.add(createReloadMenuItem());
+		Menus.item(parentMenu, this::doReload, reloadText, reloadMnemonic,
+				reloadAccelerator);
 		visitor.selectFirstProfile();
 	}
 
-	private JMenuItem createReloadMenuItem() {
-		final JMenuItem result = new JMenuItem("Reload biome profiles");
-		result.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B,
-				InputEvent.CTRL_DOWN_MASK));
-		result.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg) {
-				Log.i("Reloading additional biome profiles.");
-				initParentMenu();
-			}
-		});
-		return result;
+	private void doReload() {
+		Log.i("Reloading additional biome profiles.");
+		initParentMenu();
 	}
 }
