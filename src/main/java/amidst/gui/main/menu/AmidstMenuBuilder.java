@@ -50,12 +50,12 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("File");
 		result.setMnemonic(KeyEvent.VK_F);
 		// @formatter:off
-		Menus.item(result, actions::newFromSeed,           "New from seed",            KeyEvent.VK_N, "N");
-		Menus.item(result, actions::newFromRandom,         "New from random seed",     KeyEvent.VK_R, "R");
-		Menus.item(result, actions::openSaveGame,          "Open save game ...",       KeyEvent.VK_O, "O");
+		Menus.item(result, actions::newFromSeed,           "New from seed",            KeyEvent.VK_N, "menu N");
+		Menus.item(result, actions::newFromRandom,         "New from random seed",     KeyEvent.VK_R, "menu R");
+		Menus.item(result, actions::openSaveGame,          "Open save game ...",       KeyEvent.VK_O, "menu O");
 		result.addSeparator();
-		Menus.item(result, actions::switchProfile,         "Switch profile ...",       KeyEvent.VK_P, "W");
-		Menus.item(result, actions::exit,                  "Exit",                     KeyEvent.VK_X, "Q");
+		Menus.item(result, actions::switchProfile,         "Switch profile ...",       KeyEvent.VK_P, "menu W");
+		Menus.item(result, actions::exit,                  "Exit",                     KeyEvent.VK_X, "menu Q");
 		// @formatter:on
 		return result;
 	}
@@ -65,21 +65,21 @@ public class AmidstMenuBuilder {
 		result.setEnabled(false);
 		result.setMnemonic(KeyEvent.VK_W);
 		// @formatter:off
-		Menus.item(result, actions::goToCoordinate,        "Go to Coordinate",         KeyEvent.VK_C, "shift C");
-		Menus.item(result, actions::goToSpawn,             "Go to World Spawn",        KeyEvent.VK_S, "shift S");
-		Menus.item(result, actions::goToStronghold,        "Go to Stronghold",         KeyEvent.VK_H, "shift H");
-		Menus.item(result, actions::goToPlayer,            "Go to Player",             KeyEvent.VK_P, "shift P");
+		Menus.item(result, actions::goToCoordinate,        "Go to Coordinate",         KeyEvent.VK_C, "menu shift C");
+		Menus.item(result, actions::goToSpawn,             "Go to World Spawn",        KeyEvent.VK_S, "menu shift S");
+		Menus.item(result, actions::goToStronghold,        "Go to Stronghold",         KeyEvent.VK_H, "menu shift H");
+		Menus.item(result, actions::goToPlayer,            "Go to Player",             KeyEvent.VK_P, "menu shift P");
 		result.addSeparator();
 		savePlayerLocationsMenu =
-		Menus.item(result, actions::savePlayerLocations,   "Save player locations",    KeyEvent.VK_V, "S");
+		Menus.item(result, actions::savePlayerLocations,   "Save player locations",    KeyEvent.VK_V, "menu S");
 		savePlayerLocationsMenu.setEnabled(false);
 		reloadPlayerLocationsMenu =
-		Menus.item(result, actions::reloadPlayerLocations, "Reload player locations",  KeyEvent.VK_R, "@F5");
+		Menus.item(result, actions::reloadPlayerLocations, "Reload player locations",  KeyEvent.VK_R, "F5");
 		reloadPlayerLocationsMenu.setEnabled(false);
 		Menus.item(result, actions::howCanIMoveAPlayer,    "How can I move a player?", KeyEvent.VK_M);
 		result.addSeparator();
-		Menus.item(result, actions::copySeedToClipboard,   "Copy Seed to Clipboard",   KeyEvent.VK_B, "C");
-		Menus.item(result, actions::saveCaptureImage,      "Save capture image ...",   KeyEvent.VK_I, "T");
+		Menus.item(result, actions::copySeedToClipboard,   "Copy Seed to Clipboard",   KeyEvent.VK_B, "menu C");
+		Menus.item(result, actions::saveCaptureImage,      "Save capture image ...",   KeyEvent.VK_I, "menu T");
 		// @formatter:on
 		return result;
 	}
@@ -100,11 +100,11 @@ public class AmidstMenuBuilder {
 		}
 		result.addSeparator();
 		// @formatter:off
-		Menus.checkbox(result, settings.smoothScrolling,      "Smooth Scrolling",      "I");
+		Menus.checkbox(result, settings.smoothScrolling,      "Smooth Scrolling",      "menu I");
 		Menus.checkbox(result, settings.fragmentFading,       "Fragment Fading");
-		Menus.checkbox(result, settings.maxZoom,              "Restrict Maximum Zoom", "Z");
-		Menus.checkbox(result, settings.showFPS,              "Show Framerate",        "L");
-		Menus.checkbox(result, settings.showScale,            "Show Scale",            "K");
+		Menus.checkbox(result, settings.maxZoom,              "Restrict Maximum Zoom", "menu Z");
+		Menus.checkbox(result, settings.showFPS,              "Show Framerate",        "menu L");
+		Menus.checkbox(result, settings.showScale,            "Show Scale",            "menu K");
 		Menus.checkbox(result, settings.showDebug,            "Show Debug Information");
 		// @formatter:on
 		return result;
