@@ -31,16 +31,17 @@ public abstract class IconTextWidget extends TextWidget {
 		BufferedImage newIcon = updateIcon();
 		if (newIcon != null && newIcon != icon) {
 			icon = newIcon;
-			
+
 			int iconEffectiveHeight = icon.getHeight();
 			int iconEffectiveYOffset = 0;
 			if (icon instanceof OutOfFrameImage) {
-				iconEffectiveHeight  = ((OutOfFrameImage) icon).getFrameHeight();
-				iconEffectiveYOffset = ((OutOfFrameImage) icon).getFrameOffsetY();
+				iconEffectiveHeight = ((OutOfFrameImage) icon).getFrameHeight();
+				iconEffectiveYOffset = ((OutOfFrameImage) icon)
+						.getFrameOffsetY();
 			}
-			double scale = ((double) ICON_HEIGHT) / iconEffectiveHeight;			
-			iconWidth   = (int) Math.round(scale * icon.getWidth());
-			iconHeight  = (int) Math.round(scale * icon.getHeight());
+			double scale = ((double) ICON_HEIGHT) / iconEffectiveHeight;
+			iconWidth = (int) Math.round(scale * icon.getWidth());
+			iconHeight = (int) Math.round(scale * icon.getHeight());
 			iconOffsetY = (int) Math.round(scale * iconEffectiveYOffset);
 		}
 		super.doUpdate(fontMetrics, time);
@@ -50,14 +51,8 @@ public abstract class IconTextWidget extends TextWidget {
 	@Override
 	protected void doDraw(Graphics2D g2d) {
 		super.doDraw(g2d);
-		g2d.drawImage(
-			icon, 
-			getX() + 5, 
-			getY() + 5 - iconOffsetY, 
-			iconWidth, 
-			iconHeight,
-			null
-		);
+		g2d.drawImage(icon, getX() + 5, getY() + 5 - iconOffsetY, iconWidth,
+				iconHeight, null);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

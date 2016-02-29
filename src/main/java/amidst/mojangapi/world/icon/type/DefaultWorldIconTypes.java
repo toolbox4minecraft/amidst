@@ -34,7 +34,8 @@ public enum DefaultWorldIconTypes {
 
 	private DefaultWorldIconTypes(String name) {
 		this.name = name;
-		this.image = new VerticalOutOfFrameImage(ResourceLoader.getImage(getFilename()));
+		this.image = new VerticalOutOfFrameImage(
+				ResourceLoader.getImage(getFilename()));
 	}
 
 	private String getFilename() {

@@ -9,7 +9,7 @@ import amidst.documentation.NotThreadSafe;
 
 @NotThreadSafe
 public class ImmutableTextWidget extends TextWidget {
-	private List<String> textLines = null;	
+	private List<String> textLines = null;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public ImmutableTextWidget(CornerAnchorPoint anchor, String text) {

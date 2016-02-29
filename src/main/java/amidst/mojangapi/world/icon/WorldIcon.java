@@ -46,20 +46,20 @@ public class WorldIcon {
 	public String toString() {
 		return toString(false);
 	}
-	
+
 	@NotNull
 	public String toString(boolean multiline) {
 		if (dimension.getResolution() != Resolution.WORLD) {
 			if (multiline) {
-				return name 
-						+ "\n    in the " + dimension.getName() + " "
-						+ coordinates.toString(dimension.getResolution()) 
-						+ "\n    in the Overworld "
-						+ coordinates.toString();
+				// @formatter:off
+				return name
+						+ "\n    in the " + dimension.getName() + " " + coordinates.toString(dimension.getResolution())
+						+ "\n    in the Overworld "                   + coordinates.toString();
+				// @formatter:on
 			} else {
 				return name + " in the " + dimension.getName() + " "
-						+ coordinates.toString(dimension.getResolution()) + " -> "
-						+ coordinates.toString() + " in the Overworld";
+						+ coordinates.toString(dimension.getResolution())
+						+ " -> " + coordinates.toString() + " in the Overworld";
 			}
 		} else if (displayDimension) {
 			return name + " in the " + dimension.getName() + " "
