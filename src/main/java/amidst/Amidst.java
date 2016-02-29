@@ -132,20 +132,27 @@ public class Amidst {
 	}
 
 	/**
-	 * We don't set OpenGL on Windows because it caused lots of bugs. Also,
-	 * Direct3D is better supported and the default.
+	 * We only use OpenGL on OS X, because it caused lots of bugs on Windows and
+	 * performance issues on Linux. Also, this is the behavior of Amidst v3.7.
+	 * 
+	 * On Windows Direct3D is better supported and the default.
+	 * 
+	 * Linux has accelerated images without activating OpenGL. The reason for
+	 * this is still unknown to the developers of Amidst.
+	 * 
+	 * https://github.com/toolbox4minecraft/amidst/pull/94
 	 */
 	private static void enableOpenGLIfNecessary() {
-		if (isWindows()) {
-			Log.i("Not using OpenGL.");
-		} else {
+		if (isOSX()) {
 			Log.i("Enabling OpenGL.");
 			System.setProperty("sun.java2d.opengl", "True");
+		} else {
+			Log.i("Not using OpenGL.");
 		}
 	}
 
-	private static boolean isWindows() {
-		return System.getProperty("os.name").toLowerCase().contains("win");
+	private static boolean isOSX() {
+		return System.getProperty("os.name").contains("OS X");
 	}
 
 	private static void forceGraphicsToVRAM() {
