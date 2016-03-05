@@ -13,7 +13,6 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.locationchecker.EndCityLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm;
-import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.TempleLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.VillageLocationChecker;
 import amidst.mojangapi.world.icon.producer.PlayerProducer;
@@ -132,7 +131,7 @@ public class WorldBuilder {
 				), new StructureProducer<Void>(
 						Resolution.CHUNK,
 						8,
-						new OceanMonumentLocationChecker(seed, biomeDataOracle, versionFeatures.getValidBiomesAtMiddleOfChunk_OceanMonument(), versionFeatures.getValidBiomesForStructure_OceanMonument()),
+						versionFeatures.getOceanMonumentLocationCheckerFactory().apply(seed, biomeDataOracle, versionFeatures.getValidBiomesAtMiddleOfChunk_OceanMonument(), versionFeatures.getValidBiomesForStructure_OceanMonument()),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
 						Dimension.OVERWORLD,
 						false

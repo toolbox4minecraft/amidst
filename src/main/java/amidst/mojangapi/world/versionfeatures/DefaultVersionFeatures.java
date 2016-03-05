@@ -8,9 +8,12 @@ import amidst.documentation.Immutable;
 import amidst.fragment.layer.LayerIds;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Base;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_ChanceBased;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Original;
+import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker_Fixed;
+import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker_Original;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_128Algorithm;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Base;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Buggy128Algorithm;
@@ -32,6 +35,7 @@ public enum DefaultVersionFeatures {
 				INSTANCE.validBiomesForStructure_Village.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_Temple.getValue(version),
 				INSTANCE.mineshaftAlgorithmFactory.getValue(version),
+				INSTANCE.oceanMonumentLocationCheckerFactory.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_OceanMonument.getValue(version),
 				INSTANCE.validBiomesForStructure_OceanMonument.getValue(version)
 		);
@@ -46,6 +50,7 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<List<Biome>> validBiomesForStructure_Village;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Temple;
 	private final VersionFeature<Function<Long, MineshaftAlgorithm_Base>> mineshaftAlgorithmFactory;
+	private final VersionFeature<QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker>> oceanMonumentLocationCheckerFactory;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_OceanMonument;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_OceanMonument;
 
@@ -161,6 +166,12 @@ public enum DefaultVersionFeatures {
 						seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.01D)
 				).since(RecognisedVersion._1_7_2,
 						seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.004D)
+				).construct();
+		this.oceanMonumentLocationCheckerFactory = VersionFeature.<QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker>> builder()
+				.init(
+						(seed, biomeOracle, validCenterBiomes, validBiomes) -> new OceanMonumentLocationChecker_Original(seed, biomeOracle, validCenterBiomes, validBiomes)
+				).since(RecognisedVersion._15w46a,
+						(seed, biomeOracle, validCenterBiomes, validBiomes) -> new OceanMonumentLocationChecker_Fixed(seed, biomeOracle, validCenterBiomes, validBiomes)
 				).construct();
 		this.validBiomesAtMiddleOfChunk_OceanMonument = VersionFeature.<Biome> listBuilder()
 				.init(

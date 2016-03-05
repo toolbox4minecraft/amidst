@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Base;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Base;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
@@ -19,6 +20,7 @@ public class VersionFeatures {
 	private final List<Biome> validBiomesForStructure_Village;
 	private final List<Biome> validBiomesAtMiddleOfChunk_Temple;
 	private final Function<Long, MineshaftAlgorithm_Base> mineshaftAlgorithmFactory;
+	private final QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker> oceanMonumentLocationCheckerFactory;
 	private final List<Biome> validBiomesAtMiddleOfChunk_OceanMonument;
 	private final List<Biome> validBiomesForStructure_OceanMonument;
 
@@ -31,6 +33,7 @@ public class VersionFeatures {
 			List<Biome> validBiomesForStructure_Village,
 			List<Biome> validBiomesAtMiddleOfChunk_Temple,
 			Function<Long, MineshaftAlgorithm_Base> mineshaftAlgorithmFactory,
+			QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker> oceanMonumentLocationCheckerFactory,
 			List<Biome> validBiomesAtMiddleOfChunk_OceanMonument,
 			List<Biome> validBiomesForStructure_OceanMonument) {
 		this.enabledLayers = enabledLayers;
@@ -41,6 +44,7 @@ public class VersionFeatures {
 		this.validBiomesForStructure_Village = validBiomesForStructure_Village;
 		this.validBiomesAtMiddleOfChunk_Temple = validBiomesAtMiddleOfChunk_Temple;
 		this.mineshaftAlgorithmFactory = mineshaftAlgorithmFactory;
+		this.oceanMonumentLocationCheckerFactory = oceanMonumentLocationCheckerFactory;
 		this.validBiomesAtMiddleOfChunk_OceanMonument = validBiomesAtMiddleOfChunk_OceanMonument;
 		this.validBiomesForStructure_OceanMonument = validBiomesForStructure_OceanMonument;
 	}
@@ -83,6 +87,10 @@ public class VersionFeatures {
 		return mineshaftAlgorithmFactory;
 	}
 
+	public QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker> getOceanMonumentLocationCheckerFactory() {
+		return oceanMonumentLocationCheckerFactory;
+	}	
+	
 	public List<Biome> getValidBiomesAtMiddleOfChunk_OceanMonument() {
 		return validBiomesAtMiddleOfChunk_OceanMonument;
 	}
