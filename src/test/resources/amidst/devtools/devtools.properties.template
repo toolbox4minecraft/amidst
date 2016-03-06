@@ -1,3 +1,7 @@
+# Paths should be specified using forward-slashes (even on Windows), or escaped
+# back-slashes (double back-slashes). 
+# Directory paths MUST end with a slash.
+
 # Path to a directory where minecraft versions can be stored.
 # The devtools will also download new minecraft versions into this directory.
 amidst.devtools.directory.versions=
