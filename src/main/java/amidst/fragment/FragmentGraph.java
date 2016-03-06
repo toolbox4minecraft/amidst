@@ -8,15 +8,17 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
+import amidst.util.Lazy;
 
 @NotThreadSafe
 public class FragmentGraph implements Iterable<FragmentGraphItem> {
 	private final Iterable<LayerDeclaration> declarations;
 	private final FragmentManager fragmentManager;
 
-	private FragmentGraphItem topLeftFragment;
 	private int fragmentsPerRow;
 	private int fragmentsPerColumn;
+	private final Lazy<FragmentGraphItem> topLeftFragment = Lazy
+			.from(this::createOrigin);
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public FragmentGraph(Iterable<LayerDeclaration> declarations,
@@ -26,28 +28,30 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private FragmentGraphItem getTopLeftFragment() {
-		if (topLeftFragment == null) {
-			init(CoordinatesInWorld.origin());
-		}
-		return topLeftFragment;
+	public void init(CoordinatesInWorld coordinates) {
+		topLeftFragment.setToValue(create(coordinates));
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private FragmentGraphItem createOrigin() {
+		return create(CoordinatesInWorld.origin());
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private FragmentGraphItem create(CoordinatesInWorld coordinates) {
+		recycleAll();
+		fragmentsPerRow = 1;
+		fragmentsPerColumn = 1;
+		return new FragmentGraphItem(
+				fragmentManager.requestFragment(coordinates.toFragmentCorner()));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void adjust(int newLeft, int newAbove, int newRight, int newBelow) {
-		topLeftFragment = getTopLeftFragment().adjustRowsAndColumns(newAbove,
-				newBelow, newLeft, newRight, fragmentManager);
 		fragmentsPerRow = fragmentsPerRow + newLeft + newRight;
 		fragmentsPerColumn = fragmentsPerColumn + newAbove + newBelow;
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public void init(CoordinatesInWorld coordinates) {
-		recycleAll();
-		topLeftFragment = new FragmentGraphItem(
-				fragmentManager.requestFragment(coordinates.toFragmentCorner()));
-		fragmentsPerRow = 1;
-		fragmentsPerColumn = 1;
+		topLeftFragment.replaceWithValue(f -> f.adjustRowsAndColumns(newAbove,
+				newBelow, newLeft, newRight, fragmentManager));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -57,9 +61,7 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void recycleAll() {
-		if (topLeftFragment != null) {
-			topLeftFragment.recycleAll(fragmentManager);
-		}
+		topLeftFragment.ifInitialized(f -> f.recycleAll(fragmentManager));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -74,13 +76,13 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public CoordinatesInWorld getCorner() {
-		return topLeftFragment.getFragment().getCorner();
+		return topLeftFragment.getOrCreateValue().getFragment().getCorner();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public Iterator<FragmentGraphItem> iterator() {
-		return getTopLeftFragment().iterator();
+		return topLeftFragment.getOrCreateValue().iterator();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -93,7 +95,8 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Fragment getFragmentAt(CoordinatesInWorld coordinates) {
 		CoordinatesInWorld corner = coordinates.toFragmentCorner();
-		for (FragmentGraphItem fragmentGraphItem : getTopLeftFragment()) {
+		for (FragmentGraphItem fragmentGraphItem : topLeftFragment
+				.getOrCreateValue()) {
 			Fragment fragment = fragmentGraphItem.getFragment();
 			if (corner.equals(fragment.getCorner())) {
 				return fragment;
