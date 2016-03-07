@@ -18,3 +18,7 @@ history.txt
 target/
 /dependency-reduced-pom.xml
 devtools.properties
+
+# Eclipse Files #
+.metadata/
+.gitignore.bak
