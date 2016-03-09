@@ -7,7 +7,7 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 
 public abstract class BaseFilter {
-  private static short[][] evaluatedRegion = null;
+  private short[][] evaluatedRegion = null;
 
   private final String name;
   protected final long worldFilterSize;

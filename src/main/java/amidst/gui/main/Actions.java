@@ -6,9 +6,6 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -24,12 +21,12 @@ import amidst.gui.main.viewer.ViewerFacade;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
+import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
-import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
-import amidst.mojangapi.world.filter.WorldFilter;
+import amidst.mojangapi.world.filter.WorldFinder;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
@@ -63,56 +60,41 @@ public class Actions {
 	public void newFromSeed() {
 		WorldSeed seed = mainWindow.askForSeed();
 		if (seed != null) {
-			World world = newFromSeed(seed);
-			if (world != null) {
-				mainWindow.setWorld(world);
-			}
+			newFromSeed(seed);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromRandom() {
-		//FIXME: VERY TEMPORARY SAMPLE IMPLEMENTATION.
-  	try {
-			File seedFile = new File("seeds.txt");
-			if (!seedFile.exists()) {
-				seedFile.createNewFile();
-			}
-			FileOutputStream out = new FileOutputStream(seedFile, true);
-			PrintWriter writer = new PrintWriter(out);
-
-			WorldFilter filter = new WorldFilter("sample", 512);
-    	World world = Actions.this.newFromSeed(WorldSeed.random());
-	    while(!filter.isValid(world)) {
-				String message = "Seed failed validation: " + world.getWorldSeed().getLong();
-				
-				System.out.println(message);
-				writer.println(message);
-
-				world = Actions.this.newFromSeed(WorldSeed.random());
-    	}
-
-			writer.close();
-			out.close();
-
-    	Actions.this.mainWindow.setWorld(world);
-  	} catch (IOException ex) {
-  		ex.printStackTrace();
-  	}
+		newFromSeed(WorldSeed.random());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private World newFromSeed(WorldSeed worldSeed) {
+	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = mainWindow.askForWorldType();
 		if (worldType != null) {
 			try {
-				return mojangApi.createWorldFromSeed(worldSeed, worldType);
+				mainWindow.setWorld(mojangApi.createWorldFromSeed(worldSeed,
+						worldType));
 			} catch (IllegalStateException | MinecraftInterfaceException e) {
 				e.printStackTrace();
 				mainWindow.displayException(e);
 			}
 		}
-		return null;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void searchForRandom() {
+		try {
+			final WorldFinder worldFinder = new WorldFinder(mojangApi);
+			final WorldType worldType = mainWindow.askForWorldType();
+			if (worldType != null) {
+				worldFinder.findRandomWorld(worldType, workerExecutor, mainWindow);
+			}
+		} catch (LocalMinecraftInterfaceCreationException | IllegalStateException e) {
+			e.printStackTrace();
+			mainWindow.displayException(e);
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

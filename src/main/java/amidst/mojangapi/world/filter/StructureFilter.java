@@ -9,10 +9,11 @@ class StructureFilter extends BaseFilter {
   public StructureFilter(String name, long worldFilterSize) {
     super(name, worldFilterSize);
 
-    //TODO: make confugrable
+    //TODO: make configurable
   }
 
-  protected boolean isValid(World world, short[][] region) {
+  @Override
+protected boolean isValid(World world, short[][] region) {
     WorldIconCollector villageCollector = new WorldIconCollector();
 
     for (long x = 0; x < worldFilterSize; x += 512) {
