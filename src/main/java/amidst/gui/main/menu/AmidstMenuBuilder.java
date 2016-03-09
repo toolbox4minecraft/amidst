@@ -50,6 +50,7 @@ public class AmidstMenuBuilder {
 		// @formatter:off
 		Menus.item(result, actions::newFromSeed,           "New from seed",            KeyEvent.VK_N, "menu N");
 		Menus.item(result, actions::newFromRandom,         "New from random seed",     KeyEvent.VK_R, "menu R");
+		Menus.item(result, actions::searchForRandom,       "Search for random seed",   KeyEvent.VK_F, "menu F");
 		Menus.item(result, actions::openSaveGame,          "Open save game ...",       KeyEvent.VK_O, "menu O");
 		result.addSeparator();
 		Menus.item(result, actions::switchProfile,         "Switch profile ...",       KeyEvent.VK_P, "menu W");

@@ -1,6 +1,5 @@
 package amidst.mojangapi.world.filter;
 
-import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,11 +12,12 @@ public class WorldFilter extends BaseFilter {
     super(name, worldFilterSize);
 
     //TODO: make the sub filters configurable    
-    filterList = new ArrayList();
-    //filterList.add(new BiomeFilter("mesa", worldFilterSize));
+    filterList = new ArrayList<BaseFilter>();
+    filterList.add(new BiomeFilter("mesa", worldFilterSize));
     filterList.add(new StructureFilter("village", worldFilterSize));
   }
 
+  @Override
   protected boolean isValid(World world, short[][] region) {
     for (BaseFilter filter: filterList) {
       if (!filter.isValid(world, region)) {

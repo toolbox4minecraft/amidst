@@ -1,14 +1,10 @@
 package amidst.mojangapi.world.filter;
 
-import java.lang.IllegalArgumentException;
-
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.biome.Biome;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
-import amidst.mojangapi.world.coordinates.Resolution;
 
 class BiomeFilter extends BaseFilter {
-  private static int[] biomes;
+  private int[] biomes;
 
   public BiomeFilter(String name, long worldFilterSize) {
     super(name, worldFilterSize);
@@ -24,7 +20,8 @@ class BiomeFilter extends BaseFilter {
     this.biomes = biomes;
   }
 
-  protected boolean isValid(World world, short[][] region) {
+  @Override
+protected boolean isValid(World world, short[][] region) {
     for (short[] row: region){
       for (short entry: row) {
         if (isValidBiome(entry)) {
