@@ -7,45 +7,38 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 
 public abstract class BaseFilter {
-  private short[][] evaluatedRegion = null;
+	private short[][] evaluatedRegion = null;
 
-  private final String name;
-  protected final long worldFilterSize;
-  protected final long quarterFilterSize;
-  protected final CoordinatesInWorld corner;
+	protected final long worldFilterSize;
+	protected final long quarterFilterSize;
+	protected final CoordinatesInWorld corner;
 
+	public BaseFilter(long worldFilterDistance) {
+		if (worldFilterDistance % Resolution.FRAGMENT.getStep() != 0) {
+			// Structure filters check spaces in fragment size, so filter
+			// distance not a multiple of
+			// fragment size will include more area in the filter than expected
+			throw new IllegalArgumentException(
+					"World filter size must be a multiple of " + Resolution.FRAGMENT.getStep());
+		}
 
-  public BaseFilter(String name, long worldFilterDistance) {
-    if (worldFilterDistance % Resolution.FRAGMENT.getStep() != 0) {
-      //Structure filters check spaces in fragment size, so filter distance not a multiple of 
-      //fragment size will include more area in the filter than expected
-      throw new IllegalArgumentException("World filter size must be a multiple of " + Resolution.FRAGMENT.getStep());
-    }
+		this.worldFilterSize = worldFilterDistance * 2;
+		this.quarterFilterSize = Resolution.QUARTER.convertFromWorldToThis(this.worldFilterSize);
+		this.corner = new CoordinatesInWorld(-this.worldFilterSize / 2, -this.worldFilterSize / 2);
+	}
 
-    this.name = name;
-    this.worldFilterSize = worldFilterDistance * 2;
-    this.quarterFilterSize =  Resolution.QUARTER.convertFromWorldToThis(this.worldFilterSize);
-    this.corner = new CoordinatesInWorld(-this.worldFilterSize / 2, -this.worldFilterSize / 2);
-    System.out.println("corner: " + corner);
-    System.out.println("quarter: " + quarterFilterSize);
-  }
+	public final boolean isValid(World world) {
+		return isValid(world, getUpdatedRegion(world));
+	}
 
-  public String description() {
-    return name;
-  }
+	abstract protected boolean isValid(World world, short[][] region);
 
-  public final boolean isValid(World world) {
-    return isValid(world, getUpdatedRegion(world));
-  }
+	private short[][] getUpdatedRegion(World world) {
+		if (this.evaluatedRegion == null) {
+			this.evaluatedRegion = new short[(int) this.quarterFilterSize][(int) this.quarterFilterSize];
+		}
 
-  abstract protected boolean isValid(World world, short[][] region);
-
-  private short[][] getUpdatedRegion(World world) {
-    if (this.evaluatedRegion == null) {
-      this.evaluatedRegion = new short[(int)this.quarterFilterSize][(int)this.quarterFilterSize];
-    }
-
-    world.getBiomeDataOracle().populateArray(corner, evaluatedRegion, true);
-    return evaluatedRegion;
-  }
+		world.getBiomeDataOracle().populateArray(corner, evaluatedRegion, true);
+		return evaluatedRegion;
+	}
 }
