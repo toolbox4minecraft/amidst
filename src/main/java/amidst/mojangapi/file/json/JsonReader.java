@@ -12,6 +12,7 @@ import amidst.documentation.NotNull;
 import amidst.logging.Log;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.URIUtils;
+import amidst.mojangapi.file.json.filter.WorldFilterJson;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 import amidst.mojangapi.file.json.player.PlayerJson;
 import amidst.mojangapi.file.json.player.SimplePlayerJson;
@@ -87,6 +88,12 @@ public enum JsonReader {
 	public static LauncherProfilesJson readLauncherProfilesFrom(File file) throws MojangApiParsingException,
 			IOException {
 		return read(URIUtils.newReader(file), LauncherProfilesJson.class);
+	}
+
+	@NotNull
+	public static WorldFilterJson readWorldFilters(File file)
+			throws MojangApiParsingException, IOException {
+		return read(URIUtils.newReader(file), WorldFilterJson.class);
 	}
 
 	@NotNull

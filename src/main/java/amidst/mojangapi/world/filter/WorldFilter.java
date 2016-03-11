@@ -1,29 +1,33 @@
 package amidst.mojangapi.world.filter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import amidst.mojangapi.world.World;
 
 public class WorldFilter extends BaseFilter {
-  private List<BaseFilter> filterList;
-  
-  public WorldFilter(String name, long worldFilterSize) {
-    super(name, worldFilterSize);
+	private final List<BaseFilter> filterList;
 
-    //TODO: make the sub filters configurable    
-    filterList = new ArrayList<BaseFilter>();
-    filterList.add(new BiomeFilter("mesa", worldFilterSize));
-    filterList.add(new StructureFilter("village", worldFilterSize));
-  }
+	public WorldFilter(long worldFilterSize, List<BaseFilter> filters) {
+		super(worldFilterSize);
 
-  @Override
-  protected boolean isValid(World world, short[][] region) {
-    for (BaseFilter filter: filterList) {
-      if (!filter.isValid(world, region)) {
-        return false;
-      }
-    }
-    return true;
-  }
+		filterList = filters;
+	}
+
+	@Override
+	protected boolean isValid(World world, short[][] region) {
+		if (filterList.size() == 0) {
+			return true;
+		}
+
+		for (BaseFilter filter : filterList) {
+			if (!filter.isValid(world)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean hasFilters() {
+		return filterList.size() > 0;
+	}
 }
