@@ -3,6 +3,7 @@ package amidst.mojangapi.world.versionfeatures;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.StreamSupport;
 
 import amidst.documentation.Immutable;
 import amidst.fragment.layer.LayerIds;
@@ -37,7 +38,8 @@ public enum DefaultVersionFeatures {
 				INSTANCE.mineshaftAlgorithmFactory.getValue(version),
 				INSTANCE.oceanMonumentLocationCheckerFactory.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_OceanMonument.getValue(version),
-				INSTANCE.validBiomesForStructure_OceanMonument.getValue(version)
+				INSTANCE.validBiomesForStructure_OceanMonument.getValue(version),
+				INSTANCE.allBiomes.getValue(version)
 		);
 		// @formatter:on
 	}
@@ -53,6 +55,7 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker>> oceanMonumentLocationCheckerFactory;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_OceanMonument;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_OceanMonument;
+	private final VersionFeature<List<Biome>> allBiomes;
 
 	private DefaultVersionFeatures() {
 		// @formatter:off
@@ -197,6 +200,45 @@ public enum DefaultVersionFeatures {
 						Biome.riverM,
 						Biome.frozenRiverM
 				).construct();
+		this.allBiomes = VersionFeature.<Biome> listBuilder()
+				.init(
+						// This is for the Biome Selection Widget, so that it knows which
+						// biomes should be included in the legend.
+						// TODO: This list is very coarse and introduces many biomes earlier
+						// than Minecraft does (but does not AFAIK introduce any late), perhaps
+						// someone wants to make it perfect.
+						
+						// Before b1.8 there was a completely different biome system, with a
+						// different set of biomes, which I refer to as "early-beta biomes" or
+						// "beta biomes".
+						// Ice desert is never created due to bug in Minecraft.
+						StreamSupport.stream(Biome.allBiomes().spliterator(), false)
+							.filter(biome -> biome.getIsBeta() && biome != Biome.iceDesertB && biome != Biome.hellB) 
+							.collect(java.util.stream.Collectors.toList())
+							
+				).since(RecognisedVersion._b1_8_1,
+						
+						// Jungle wasn't introduced until 12w03a
+						// (http://minecraft.gamepedia.com/12w03a)
+						StreamSupport.stream(Biome.allBiomes().spliterator(), false)
+						.filter(biome -> biome.getIndex() < Biome.jungle.getIndex())
+						.collect(java.util.stream.Collectors.toList())
+						
+				).since(RecognisedVersion._12w03a,
+						
+						// Deep Ocean and subsequent biomes weren't introduced until 13w36a,
+						// (http://minecraft.gamepedia.com/13w36a)
+						StreamSupport.stream(Biome.allBiomes().spliterator(), false)
+							.filter(biome -> biome.getIndex() < Biome.deepOcean.getIndex())
+							.collect(java.util.stream.Collectors.toList())
+						
+				).since(RecognisedVersion._13w36a,
+						
+						StreamSupport.stream(Biome.allBiomes().spliterator(), false)
+							.filter(biome -> !biome.getIsBeta())
+							.collect(java.util.stream.Collectors.toList())
+				).construct();
+				
 		// @formatter:on
 	}
 

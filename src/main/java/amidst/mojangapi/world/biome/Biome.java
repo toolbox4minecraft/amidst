@@ -49,6 +49,7 @@ public class Biome {
 	// @formatter:off
 	private static final Map<String, Biome> biomeMap = new HashMap<String, Biome>();
 	private static final Biome[] biomes = new Biome[256];
+	private static final String BETABIOME_PREFIX = "beta ";
 
 	public static final Biome ocean                = new Biome("Ocean",                       0, BiomeColor.from(  0,   0, 112), BiomeType.OCEAN_TERRAIN_DATA);
 	public static final Biome plains               = new Biome("Plains",                      1, BiomeColor.from(141, 179,  96), BiomeType.DEFAULT_TERRAIN_DATA);
@@ -175,6 +176,10 @@ public class Biome {
 		return biomeMap.get(name);
 	}
 
+	public static Biome getBetaBiomeByName(String name) {
+		return biomeMap.get(BETABIOME_PREFIX + name);
+	}
+	
 	public static boolean exists(String name) {
 		return biomeMap.containsKey(name);
 	}
@@ -187,6 +192,9 @@ public class Biome {
 		return getByName(name1).getIndex() - getByName(name2).getIndex();
 	}
 
+	/** The name used when serializing, to prevent beta-biome naming collisions */
+	private final String uniqueName;
+	/** The name used by Minecraft, and displayed to the user */
 	private final String name;
 	private final int index;
 	private final BiomeColor defaultColor;
@@ -200,16 +208,17 @@ public class Biome {
 	}
 
 	/** normal biome constructor */
-	public Biome(String name, int index, BiomeColor defaultColor, BiomeType type) {
+	public Biome(String uniqueName, int index, BiomeColor defaultColor, BiomeType type) {
 		
-		this.isBeta = name.startsWith("beta ");
-		this.name = isBeta ? name.substring(5) : name;
+		this.uniqueName = uniqueName;
+		this.isBeta = uniqueName.startsWith(BETABIOME_PREFIX);
+		this.name = isBeta ? uniqueName.substring(BETABIOME_PREFIX.length()) : uniqueName;
 		
 		this.index = index;
 		this.defaultColor = defaultColor;
 		this.type = type;
 		biomes[index] = this;
-		biomeMap.put(this.name, this);
+		biomeMap.put(uniqueName, this);
 	}
 
 	public String getName() {
