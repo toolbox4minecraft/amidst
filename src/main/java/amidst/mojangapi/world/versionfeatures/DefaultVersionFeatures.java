@@ -64,10 +64,12 @@ public enum DefaultVersionFeatures {
 						LayerIds.SLIME,
 						LayerIds.GRID,
 						LayerIds.SPAWN,
+						LayerIds.PLAYER
+				).sinceExtend(RecognisedVersion._b1_8_1,						
 						LayerIds.STRONGHOLD,
-						LayerIds.PLAYER,
 						LayerIds.VILLAGE,
-						LayerIds.MINESHAFT,
+						LayerIds.MINESHAFT
+				).sinceExtend(RecognisedVersion._b1_9_pre1,						
 						LayerIds.NETHER_FORTRESS
 				).sinceExtend(RecognisedVersion._12w21a,
 						LayerIds.TEMPLE
@@ -201,7 +203,7 @@ public enum DefaultVersionFeatures {
 	private static List<Biome> getValidBiomesForStrongholdSinceV13w36a() {
 		List<Biome> result = new ArrayList<Biome>();
 		for (Biome biome : Biome.allBiomes()) {
-			if (biome.getType().getValue1() > 0) {
+			if (biome.getType().getHeight() > 0) {
 				result.add(biome);
 			}
 		}
