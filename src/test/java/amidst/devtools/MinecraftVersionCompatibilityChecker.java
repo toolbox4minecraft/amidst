@@ -13,7 +13,8 @@ import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
-import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
+import amidst.mojangapi.minecraftinterface.local.MinecraftClassTranslator_Default;
+import amidst.mojangapi.minecraftinterface.local.MinecraftClassTranslator_EarlyBetas;
 
 /**
  * This only checks if there is exactly one class in the jar file for each
@@ -51,9 +52,14 @@ public class MinecraftVersionCompatibilityChecker {
 		if (version.tryDownloadClient(prefix)) {
 			try {
 				File jarFile = new File(version.getClientJar(prefix));
-				ClassTranslator translator = DefaultClassTranslator.INSTANCE
+				ClassTranslator translator = MinecraftClassTranslator_Default.INSTANCE
 						.get();
+				
+				if (isSupported(Classes.countMatches(jarFile, translator))) return true;
+				
+				translator = MinecraftClassTranslator_EarlyBetas.INSTANCE.get();
 				return isSupported(Classes.countMatches(jarFile, translator));
+				
 			} catch (FileNotFoundException | JarFileParsingException e) {
 				e.printStackTrace();
 			}

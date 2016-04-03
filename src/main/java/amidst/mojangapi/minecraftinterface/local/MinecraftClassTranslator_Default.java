@@ -6,7 +6,7 @@ import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.Immutable;
 
 @Immutable
-public enum DefaultClassTranslator {
+public enum MinecraftClassTranslator_Default {
 	INSTANCE;
 
 	private static final int WILDCARD = RealClass.CLASS_DATA_WILDCARD;

@@ -24,4 +24,18 @@ public enum SymbolicNames {
 
 	public static final String CLASS_BLOCK_INIT = "BlockInit";
 	public static final String METHOD_BLOCK_INIT_INITIALIZE = "initialize";
+
+	// The early betas used a completely different biome generation system 
+	public static final String CLASS_BETA_BIOME                       = "betaBiome";
+	public static final String   FIELD_BETA_BIOME_NAME                = "name";	
+	
+	public static final String CLASS_BETA_BIOMEGENERATOR              = "betaBiomeGenerator";
+	public static final String   METHOD_BETA_BIOMEGENERATOR_GET_BIOME = "getBiomes";
+	
+	public static final String CLASS_BETA_WORLD                       = "betaWorld";
+
+	public static final String CLASS_BETA_DIMENSION_ABSTRACT          = "betaDimension_abstract";
+	public static final String CLASS_BETA_DIMENSION_CONCRETE          = "betaDimension_concrete";
+	public static final String   FIELD_BETA_DIMENSION_WORLD           = "betaWorldField";
+	public static final String   FIELD_BETA_DIMENSION_BIOMEGENERATOR  = "betaBiomeGeneratorField";
 }

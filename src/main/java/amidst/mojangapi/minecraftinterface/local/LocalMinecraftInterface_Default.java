@@ -12,7 +12,7 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
 
 @ThreadSafe
-public class LocalMinecraftInterface implements MinecraftInterface {
+public class LocalMinecraftInterface_Default implements MinecraftInterface {
 	/**
 	 * A GenLayer instance, at quarter scale to the final biome layer (i.e. both
 	 * axis are divided by 4). Minecraft calculates biomes at
@@ -35,7 +35,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass worldTypeClass;
 	private final RecognisedVersion recognisedVersion;
 
-	LocalMinecraftInterface(SymbolicClass intCacheClass,
+	LocalMinecraftInterface_Default(SymbolicClass intCacheClass,
 			SymbolicClass blockInitClass, SymbolicClass genLayerClass,
 			SymbolicClass worldTypeClass, RecognisedVersion recognisedVersion) {
 		this.intCacheClass = intCacheClass;
