@@ -30,10 +30,12 @@ public enum MinecraftClassTranslator_EarlyBetas {
 				.thenDeclareRequired(SymbolicNames.CLASS_BETA_BIOMEGENERATOR)
 					.requiredConstructor(SymbolicNames.CLASS_BETA_BIOMEGENERATOR).symbolic(SymbolicNames.CLASS_BETA_WORLD).end()
 					.requiredMethod(SymbolicNames.METHOD_BETA_BIOMEGENERATOR_GET_BIOME, "a").real("int").real("int").end()
+					.requiredMethod(SymbolicNames.METHOD_BETA_BIOMEGENERATOR_GET_BIOMES_ARRAY,      "a").anyReferenceType().real("int").real("int").real("int").real("int").end()
 					// We don't actually need GET_TEMPERATURE_ARRAY, I'm matching it only so that GET_BIOME_ARRAY will
 					// match against the second method with that signature (a feature I've only implemented in requiredMethod()).
+					// (The order matching is performed seems to reverse, so rather than investigate, I've just placed 
+					// GET_TEMPERATURE_ARRAY after GET_BIOMES_ARRAY)
 					.requiredMethod(SymbolicNames.METHOD_BETA_BIOMEGENERATOR_GET_TEMPERATURE_ARRAY, "a").anyReferenceType().real("int").real("int").real("int").real("int").end()
-					.requiredMethod(SymbolicNames.METHOD_BETA_BIOMEGENERATOR_GET_BIOME_ARRAY,       "a").anyReferenceType().real("int").real("int").real("int").real("int").end()
 					
 			.next()
 				// We need the Dimension base class for building constructor declarations.
@@ -78,6 +80,8 @@ public enum MinecraftClassTranslator_EarlyBetas {
 				.thenDeclareRequired(SymbolicNames.CLASS_BETA_CHUNKGENERATOR)
 					.requiredConstructor(SymbolicNames.CLASS_BETA_CHUNKGENERATOR).anyReferenceType().real("long").end()
 					.requiredMethod(SymbolicNames.METHOD_BETA_CHUNKGENERATOR_PREPARECHUNK, "a").real("int").real("int").anyReferenceType().anyReferenceType().anyReferenceType().end()
+					.requiredField(SymbolicNames.FIELD_BETA_CHUNKGENERATOR_PRGN, "j")
+
 										
 			.construct();
 	}

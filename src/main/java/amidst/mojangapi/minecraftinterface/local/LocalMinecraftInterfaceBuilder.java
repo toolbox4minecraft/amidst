@@ -52,6 +52,7 @@ public class LocalMinecraftInterfaceBuilder {
 				symbolicClassMap.get(SymbolicNames.CLASS_BETA_WORLD),
 				symbolicClassMap.get(SymbolicNames.CLASS_BETA_DIMENSION_CONCRETE), // Dimension class MUST be an instantiatable class
 				symbolicClassMap.get(SymbolicNames.CLASS_BETA_BIOMEGENERATOR),
+				symbolicClassMap.get(SymbolicNames.CLASS_BETA_CHUNKGENERATOR),
 				symbolicClassMap.get(SymbolicNames.CLASS_BETA_BIOME),
 				recognisedVersion);
 	}

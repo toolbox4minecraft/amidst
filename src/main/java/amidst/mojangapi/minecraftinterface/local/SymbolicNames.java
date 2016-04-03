@@ -32,10 +32,11 @@ public enum SymbolicNames {
 	public static final String CLASS_BETA_BIOMEGENERATOR                          = "betaBiomeGenerator";
 	public static final String   METHOD_BETA_BIOMEGENERATOR_GET_BIOME             = "getBiomes";
 	public static final String   METHOD_BETA_BIOMEGENERATOR_GET_TEMPERATURE_ARRAY = "getTemperatureArray";
-	public static final String   METHOD_BETA_BIOMEGENERATOR_GET_BIOME_ARRAY	      = "getBiomesArray";
+	public static final String   METHOD_BETA_BIOMEGENERATOR_GET_BIOMES_ARRAY      = "getBiomesArray";
 
 	public static final String CLASS_BETA_CHUNKGENERATOR                          = "betaChunkGenerator";
 	public static final String   METHOD_BETA_CHUNKGENERATOR_PREPARECHUNK          = "prepareChunk";
+	public static final String   FIELD_BETA_CHUNKGENERATOR_PRGN                   = "prng";
 	
 	public static final String CLASS_BETA_WORLD                                   = "betaWorld";
 
