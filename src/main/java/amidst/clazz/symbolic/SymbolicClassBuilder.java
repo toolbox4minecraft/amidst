@@ -202,6 +202,7 @@ public class SymbolicClassBuilder {
 	private Constructor<?> matchConstructor(Class<?> clazz, Class<?>[] parameterClasses) {
 		
 		Constructor<?> result = null;
+		int matches = 0;
 		
 		for(Constructor<?> constructor: clazz.getConstructors()) {
 			
@@ -219,11 +220,12 @@ public class SymbolicClassBuilder {
 				}
 				
 				if (match) {
+					matches++;					
 					if (result == null) {
 						Log.i("constructor successfully wildcard-matched for '" + clazz.getName() + "'");
 						result = constructor;
 					} else {
-						Log.w("More than one matching constructor found for '" + clazz.getName() + "', assuming the first one.");
+						Log.w(matches + " matching constructor found for '" + clazz.getName() + "', assuming the first one.");
 					}					
 				}
 			}
@@ -234,6 +236,8 @@ public class SymbolicClassBuilder {
 	private Method matchDeclaredMethod(Class<?> clazz, String name, Class<?>[] parameterClasses) {
 		
 		Method result = null;
+		int result_MatchIndex = 0;
+		int matchesFound = 0;
 		
 		for(Method method: clazz.getDeclaredMethods()) {
 			
@@ -251,16 +255,43 @@ public class SymbolicClassBuilder {
 				}
 				
 				if (match) {
-					if (result == null) {
-						Log.w("method successfully wildcard-matched for " + clazz.getName() + "." + name);
+					matchesFound++;
+					if (result == null && !methodHasAlreadyBeenMatched(method)) {					
 						result = method;
-					} else {
-						Log.w("More than one matching method found for " + clazz.getName() + "." + name + ", assuming the first one.");
-					}					
+						result_MatchIndex = matchesFound;							
+					}
 				}
+			}		
+		}
+		
+		String methodDesc = clazz.getName() + "." + name;
+		if (result == null) {
+			if (matchesFound == 0) {
+				Log.w("No matches found for " + methodDesc);
+			} else {
+				Log.w(matchesFound + " matching methods found for " + methodDesc + ", but none that aren't already assigned to a symbolic method.");
+			}
+		} else {
+			if (matchesFound == 1) {
+				Log.i("method successfully wildcard-matched for " + methodDesc);
+			} else {
+				Log.i(
+					matchesFound + " matching methods found for " + methodDesc + 
+					", assuming method #" + result_MatchIndex + 
+					" (" + (result_MatchIndex - 1) + " earlier matching methods already assigned to a symbolic method)"
+				);				
 			}
 		}
+		
 		return result;
+	}
+	
+	private boolean methodHasAlreadyBeenMatched(Method method) {
+		
+		for(SymbolicMethod symbolicMethod : methodsBySymbolicName.values()) {
+			if (symbolicMethod.matches(method)) return true;
+		}
+		return false;		
 	}
 	
 	private Field getFieldByRealName(Class<?> clazz, String realName)

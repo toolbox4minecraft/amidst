@@ -30,6 +30,10 @@ public class SymbolicMethod {
 		return realName;
 	}
 
+	public boolean matches(Method method) {
+		return method.equals(this.method);
+	}	
+	
 	public Object call(SymbolicObject symbolicObject, Object... parameters)
 			throws IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException {

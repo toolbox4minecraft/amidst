@@ -30,7 +30,11 @@ public enum MinecraftClassTranslator_EarlyBetas {
 				.thenDeclareRequired(SymbolicNames.CLASS_BETA_BIOMEGENERATOR)
 					.requiredConstructor(SymbolicNames.CLASS_BETA_BIOMEGENERATOR).symbolic(SymbolicNames.CLASS_BETA_WORLD).end()
 					.requiredMethod(SymbolicNames.METHOD_BETA_BIOMEGENERATOR_GET_BIOME, "a").real("int").real("int").end()
-
+					// We don't actually need GET_TEMPERATURE_ARRAY, I'm matching it only so that GET_BIOME_ARRAY will
+					// match against the second method with that signature (a feature I've only implemented in requiredMethod()).
+					.requiredMethod(SymbolicNames.METHOD_BETA_BIOMEGENERATOR_GET_TEMPERATURE_ARRAY, "a").anyReferenceType().real("int").real("int").real("int").real("int").end()
+					.requiredMethod(SymbolicNames.METHOD_BETA_BIOMEGENERATOR_GET_BIOME_ARRAY,       "a").anyReferenceType().real("int").real("int").real("int").real("int").end()
+					
 			.next()
 				// We need the Dimension base class for building constructor declarations.
 				.ifDetect()
@@ -64,7 +68,17 @@ public enum MinecraftClassTranslator_EarlyBetas {
 					.optionalConstructor(SymbolicNames.CLASS_BETA_WORLD).real("String").symbolic(SymbolicNames.CLASS_BETA_DIMENSION_ABSTRACT).real("long").end()
 					// version b1.3 introduced an ISaveHander param to the constructor, so match that form as well:
 					.optionalConstructor(SymbolicNames.CLASS_BETA_WORLD).anyReferenceType().real("String").symbolic(SymbolicNames.CLASS_BETA_DIMENSION_ABSTRACT).real("long").end()
-
+					
+			.next()
+				.ifDetect()
+					.utf8EqualTo("RandomLevelSource")
+					.or()
+					.numberOfFields(23) // b1.0 lacks the handy classname string, so match it on other random stuff
+					.longs(341873128712L, 132897987541L)
+				.thenDeclareRequired(SymbolicNames.CLASS_BETA_CHUNKGENERATOR)
+					.requiredConstructor(SymbolicNames.CLASS_BETA_CHUNKGENERATOR).anyReferenceType().real("long").end()
+					.requiredMethod(SymbolicNames.METHOD_BETA_CHUNKGENERATOR_PREPARECHUNK, "a").real("int").real("int").anyReferenceType().anyReferenceType().anyReferenceType().end()
+										
 			.construct();
 	}
 	// @formatter:on
