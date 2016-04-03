@@ -1,5 +1,6 @@
 package amidst.clazz.symbolic;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
@@ -57,6 +58,21 @@ public class SymbolicClass {
 		return fieldsBySymbolicName.get(symbolicName) != null;
 	}
 
+	public Object callDefaultConstructor() throws InstantiationException,
+			IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
+				
+		Constructor<?>[] constructors = getClazz().getConstructors();
+		for(Constructor<?> constructor : constructors) {
+			
+			if (constructor.getParameterCount() == 0) {
+				return constructor.newInstance();
+			}
+		}
+		// there's no default constructor
+		throw new IllegalArgumentException();
+	}
+	
 	public SymbolicObject callConstructor(String symbolicName,
 			Object... parameters) throws InstantiationException,
 			IllegalAccessException, IllegalArgumentException,

@@ -8,10 +8,13 @@ import java.util.Map;
 import amidst.clazz.real.detector.AllRCD;
 import amidst.clazz.real.detector.AnyRCD;
 import amidst.clazz.real.detector.FieldFlagsRCD;
+import amidst.clazz.real.detector.FloatRCD;
+import amidst.clazz.real.detector.IntegerRCD;
 import amidst.clazz.real.detector.LongRCD;
 import amidst.clazz.real.detector.NumberOfConstructorsRCD;
 import amidst.clazz.real.detector.NumberOfFieldsRCD;
 import amidst.clazz.real.detector.NumberOfMethodsRCD;
+import amidst.clazz.real.detector.ObfuscatedNameRCD;
 import amidst.clazz.real.detector.RealClassDetector;
 import amidst.clazz.real.detector.StringContainingRCD;
 import amidst.clazz.real.detector.Utf8EqualToRCD;
@@ -19,6 +22,7 @@ import amidst.clazz.real.detector.WildcardByteRCD;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicFieldDeclaration;
+import amidst.clazz.symbolic.declaration.SymbolicFieldDeclaration.DeclarationType;
 import amidst.clazz.symbolic.declaration.SymbolicMethodDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList;
 import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.ExecuteOnEnd;
@@ -26,10 +30,13 @@ import amidst.clazz.symbolic.declaration.SymbolicParameterDeclarationList.Symbol
 import amidst.documentation.NotThreadSafe;
 
 /**
+ * ClassTranslator Builder.
  * While this class is not thread-safe by itself, its product is thread-safe.
  */
 @NotThreadSafe
 public class CTBuilder {
+	
+	/** RealClassDetector Builder. */
 	@NotThreadSafe
 	public class RCDBuilder {
 		private final List<List<RealClassDetector>> allDetectors = new ArrayList<List<RealClassDetector>>();
@@ -79,6 +86,16 @@ public class CTBuilder {
 			return this;
 		}
 
+		public RCDBuilder ints(int... ints) {
+			detectors.add(new IntegerRCD(ints));
+			return this;
+		}
+
+		public RCDBuilder floats(float... floats) {
+			detectors.add(new FloatRCD(floats));
+			return this;
+		}		
+		
 		public RCDBuilder numberOfConstructors(int count) {
 			detectors.add(new NumberOfConstructorsRCD(count));
 			return this;
@@ -94,6 +111,11 @@ public class CTBuilder {
 			return this;
 		}
 
+		public RCDBuilder obfuscatedName(String obfuscatedName) {
+			detectors.add(new ObfuscatedNameRCD(obfuscatedName));
+			return this;
+		}
+		
 		public RCDBuilder stringContaining(String string) {
 			detectors.add(new StringContainingRCD(string));
 			return this;
@@ -110,6 +132,7 @@ public class CTBuilder {
 		}
 	}
 
+	/** SymbolicClassDeclaration Builder. */	
 	@NotThreadSafe
 	public class SCDBuilder {
 		private String symbolicClassName;
@@ -187,17 +210,33 @@ public class CTBuilder {
 		}
 
 		public SCDBuilder requiredField(String symbolicName, String realName) {
-			return field(symbolicName, realName, false);
+			return field(symbolicName, realName, DeclarationType.FIELDNAME_REAL_NAME, false);
 		}
 
 		public SCDBuilder optionalField(String symbolicName, String realName) {
-			return field(symbolicName, realName, true);
+			return field(symbolicName, realName, DeclarationType.FIELDNAME_REAL_NAME, true);
 		}
 
+		public SCDBuilder requiredFieldOfSymbolicType(String symbolicName, String symbolicClassname) {
+			return field(symbolicName, symbolicClassname, DeclarationType.FIELDTYPE_BY_SYMBOLIC_CLASSNAME, false);
+		}
+
+		public SCDBuilder optionalFieldOfSymbolicType(String symbolicName, String symbolicClassname) {
+			return field(symbolicName, symbolicClassname, DeclarationType.FIELDTYPE_BY_SYMBOLIC_CLASSNAME, true);
+		}
+		
+		public SCDBuilder requiredFieldOfRealType(String symbolicName, String symbolicClassname) {
+			return field(symbolicName, symbolicClassname, DeclarationType.FIELDTYPE_BY_REAL_TYPE, false);
+		}
+
+		public SCDBuilder optionalFieldOfRealType(String symbolicName, String symbolicClassname) {
+			return field(symbolicName, symbolicClassname, DeclarationType.FIELDTYPE_BY_REAL_TYPE, true);
+		}
+		
 		private SCDBuilder field(String symbolicName, String realName,
-				boolean isOptional) {
+				DeclarationType declarationType, boolean isOptional) {
 			fields.add(new SymbolicFieldDeclaration(symbolicName, realName,
-					isOptional));
+					declarationType, isOptional));
 			return this;
 		}
 	}

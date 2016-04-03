@@ -46,6 +46,7 @@ public class RealClass {
 	private final List<String> utf8Constants;
 	private final List<Float> floatConstants;
 	private final List<Long> longConstants;
+	private final List<Integer> integerConstants;
 	private final List<Integer> stringIndices;
 	private final List<ReferenceIndex> methodIndices;
 
@@ -58,9 +59,10 @@ public class RealClass {
 	RealClass(String realClassName, byte[] classData, int minorVersion,
 			int majorVersion, int cpSize, int[] constantTypes,
 			RealClassConstant<?>[] constants, List<String> utf8Constants,
-			List<Float> floatConstants, List<Long> longConstants,
-			List<Integer> stringIndices, List<ReferenceIndex> methodIndices,
-			int accessFlags, RealClassField[] fields, int numberOfConstructors,
+			List<Float> floatConstants, List<Long> longConstants, 
+			List<Integer> integerConstants, List<Integer> stringIndices, 
+			List<ReferenceIndex> methodIndices,	int accessFlags, 
+			RealClassField[] fields, int numberOfConstructors,
 			int numberOfMethods) {
 		this.realClassName = realClassName;
 		this.classData = classData;
@@ -71,6 +73,7 @@ public class RealClass {
 		this.constants = constants;
 		this.utf8Constants = utf8Constants;
 		this.floatConstants = floatConstants;
+		this.integerConstants = integerConstants;
 		this.longConstants = longConstants;
 		this.stringIndices = stringIndices;
 		this.methodIndices = methodIndices;
@@ -134,6 +137,15 @@ public class RealClass {
 		return false;
 	}
 
+	public boolean searchForInteger(int required) {
+		for (Integer entry : integerConstants) {
+			if (entry.intValue() == required) {
+				return true;
+			}
+		}
+		return false;
+	}	
+	
 	public boolean searchForLong(long required) {
 		for (Long entry : longConstants) {
 			if (entry.longValue() == required) {

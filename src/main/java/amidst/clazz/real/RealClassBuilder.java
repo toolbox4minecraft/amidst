@@ -34,10 +34,12 @@ public class RealClassBuilder {
 			List<String> utf8Constants = new ArrayList<String>();
 			List<Float> floatConstants = new ArrayList<Float>();
 			List<Long> longConstants = new ArrayList<Long>();
+			List<Integer> integerConstants = new ArrayList<Integer>();
 			List<Integer> stringIndices = new ArrayList<Integer>();
 			List<ReferenceIndex> methodIndices = new ArrayList<ReferenceIndex>();
 			readConstants(stream, cpSize, constantTypes, constants,
-					utf8Constants, floatConstants, longConstants, stringIndices);
+					utf8Constants, floatConstants, longConstants, 
+					integerConstants, stringIndices);
 			int accessFlags = readAccessFlags(stream);
 			skipThisClass(stream);
 			skipSuperClass(stream);
@@ -50,7 +52,7 @@ public class RealClassBuilder {
 					- numberOfConstructors;
 			return new RealClass(realClassName, classData, minorVersion,
 					majorVersion, cpSize, constantTypes, constants,
-					utf8Constants, floatConstants, longConstants,
+					utf8Constants, floatConstants, longConstants, integerConstants,
 					stringIndices, methodIndices, accessFlags, fields,
 					numberOfConstructors, numberOfMethods);
 		} else {
@@ -77,13 +79,14 @@ public class RealClassBuilder {
 	private void readConstants(DataInputStream stream, int cpSize,
 			int[] constantTypes, RealClassConstant<?>[] constants,
 			List<String> utf8Constants, List<Float> floatConstants,
-			List<Long> longConstants, List<Integer> stringIndices)
-			throws IOException {
+			List<Long> longConstants, List<Integer> integerConstants, 
+			List<Integer> stringIndices) throws IOException {
 		for (int q = 0; q < cpSize; q++) {
 			byte type = stream.readByte();
 			constantTypes[q] = type;
 			constants[q] = readConstant(stream, type, utf8Constants,
-					floatConstants, longConstants, stringIndices);
+					floatConstants, longConstants, integerConstants, 
+					stringIndices);
 			if (RealClassConstantType.isQIncreasing(type)) {
 				q++;
 			}
@@ -92,13 +95,13 @@ public class RealClassBuilder {
 
 	private RealClassConstant<?> readConstant(DataInputStream stream,
 			byte type, List<String> utf8Constants, List<Float> floatConstants,
-			List<Long> longConstants, List<Integer> stringIndices)
+			List<Long> longConstants, List<Integer> integerConstants, List<Integer> stringIndices)
 			throws IOException {
 		switch (type) {
 		case RealClassConstantType.STRING:
 			return readString(stream, type, utf8Constants);
 		case RealClassConstantType.INTEGER:
-			return readInteger(stream, type);
+			return readInteger(stream, type, integerConstants);
 		case RealClassConstantType.FLOAT:
 			return readFloat(stream, type, floatConstants);
 		case RealClassConstantType.LONG:
@@ -138,8 +141,9 @@ public class RealClassBuilder {
 	}
 
 	private RealClassConstant<Integer> readInteger(DataInputStream stream,
-			byte type) throws IOException {
+			byte type, List<Integer> integerConstants) throws IOException {
 		int value = stream.readInt();
+		integerConstants.add(value);
 		return new RealClassConstant<Integer>(type, value);
 	}
 
