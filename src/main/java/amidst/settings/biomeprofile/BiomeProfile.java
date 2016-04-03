@@ -22,7 +22,7 @@ public class BiomeProfile {
 	private static Map<String, BiomeColorJson> createDefaultColorMap() {
 		Map<String, BiomeColorJson> result = new HashMap<String, BiomeColorJson>();
 		for (Biome biome : Biome.allBiomes()) {
-			result.put(biome.getName(), biome.getDefaultColor()
+			result.put(biome.getUniqueName(), biome.getDefaultColor()
 					.createBiomeColorJson());
 		}
 		return result;
@@ -76,8 +76,8 @@ public class BiomeProfile {
 	}
 
 	private BiomeColor getBiomeColor(Biome biome) {
-		if (colorMap.containsKey(biome.getName())) {
-			return colorMap.get(biome.getName()).createBiomeColor();
+		if (colorMap.containsKey(biome.getUniqueName())) {
+			return colorMap.get(biome.getUniqueName()).createBiomeColor();
 		} else {
 			return biome.getDefaultColor();
 		}

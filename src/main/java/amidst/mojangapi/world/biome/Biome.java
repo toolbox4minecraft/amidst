@@ -137,19 +137,20 @@ public class Biome {
 	// to use any values we like (I'll start at 240), I will be matching
 	// them by name strings tho, so think twice before renaming these.
 	// http://minecraft.gamepedia.com/Biome/Before_Beta_1.8
-	public static final Biome rainforestB          = new Biome("beta Rainforest",           240, BiomeColor.from( 83, 123,   9), BiomeType.DEFAULT_TERRAIN_DATA);	
-	public static final Biome swamplandB           = new Biome("beta Swampland",            241, BiomeColor.from(  7, 249, 178), BiomeType.SWAMPLAND_TERRAIN_DATA);
-	public static final Biome seasonalForestB      = new Biome("beta Seasonal Forest",      242, BiomeColor.from( 48, 116,  68), BiomeType.DEFAULT_TERRAIN_DATA);
-	public static final Biome forestB              = new Biome("beta Forest",               243, BiomeColor.from(  5, 102,  33), BiomeType.DEFAULT_TERRAIN_DATA);
-	public static final Biome savannaB             = new Biome("beta Savanna",              244, BiomeColor.from(189, 178,  95), BiomeType.PLAINS_TERRAIN_DATA);	
-	public static final Biome shrublandB           = new Biome("beta Shrubland",            245, BiomeColor.from( 98, 139,  23), BiomeType.DEFAULT_TERRAIN_DATA);	
-	public static final Biome taigaB               = new Biome("beta Taiga",                246, BiomeColor.from( 11, 102,  89), BiomeType.TAIGA_TERRAIN_DATA);
-	public static final Biome desertB              = new Biome("beta Desert",               247, BiomeColor.from(250, 148,  24), BiomeType.PLAINS_TERRAIN_DATA);
-	public static final Biome plainsB              = new Biome("beta Plains",               248, BiomeColor.from(141, 179,  96), BiomeType.DEFAULT_TERRAIN_DATA);
-	// Note: Ice desert is never seen in Minecraft, due to a bug
-	public static final Biome iceDesertB           = new Biome("beta Ice Desert",           249, BiomeColor.from(144, 144, 160), BiomeType.OCEAN_TERRAIN_DATA);
-	public static final Biome tundraB              = new Biome("beta Tundra",               250, BiomeColor.from(255, 255, 255), BiomeType.PLAINS_TERRAIN_DATA);
+	public static final Biome rainforestB          = new Biome("beta Rainforest",           240, BiomeColor.from(  0,  63,   1), BiomeType.DEFAULT_TERRAIN_DATA);	
+	public static final Biome seasonalForestB      = new Biome("beta Seasonal Forest",      241, BiomeColor.from( 25,  79,  12), BiomeType.DEFAULT_TERRAIN_DATA);
+	public static final Biome swamplandB           = new Biome("beta Swampland",            242, BiomeColor.from( 11, 107,  95), BiomeType.SWAMPLAND_TERRAIN_DATA);
+	public static final Biome forestB              = new Biome("beta Forest",               243, BiomeColor.from( 12,  94,  11), BiomeType.DEFAULT_TERRAIN_DATA);
+	public static final Biome shrublandB           = new Biome("beta Shrubland",            244, BiomeColor.from( 87, 118,  37), BiomeType.DEFAULT_TERRAIN_DATA);	
+	public static final Biome savannaB             = new Biome("beta Savanna",              245, BiomeColor.from(139, 142,  64), BiomeType.PLAINS_TERRAIN_DATA);	
+	public static final Biome plainsB              = new Biome("beta Plains",               246, BiomeColor.from(132, 171,  58), BiomeType.DEFAULT_TERRAIN_DATA);
+	public static final Biome desertB              = new Biome("beta Desert",               247, BiomeColor.from(216, 210, 156), BiomeType.PLAINS_TERRAIN_DATA);
+	public static final Biome taigaB               = new Biome("beta Taiga",                248, BiomeColor.from(134, 190, 143), BiomeType.TAIGA_TERRAIN_DATA);
+	public static final Biome tundraB              = new Biome("beta Tundra",               249, BiomeColor.from(255, 255, 255), BiomeType.PLAINS_TERRAIN_DATA);
+	// The following beta biomes aren't used. (Ice desert is never seen in Minecraft due to a bug)
+	public static final Biome iceDesertB           = new Biome("beta Ice Desert",           250, BiomeColor.from(144, 144, 160), BiomeType.OCEAN_TERRAIN_DATA);
 	public static final Biome hellB                = new Biome("beta Hell",                 251, BiomeColor.from(255,   0,   0), BiomeType.DEFAULT_TERRAIN_DATA);
+	public static final Biome skyB                 = new Biome("beta Sky",                  252, BiomeColor.from(128, 128, 255), BiomeType.DEFAULT_TERRAIN_DATA);
 	
 	// @formatter:on
 
@@ -195,7 +196,7 @@ public class Biome {
 	/** The name used when serializing, to prevent beta-biome naming collisions */
 	private final String uniqueName;
 	/** The name used by Minecraft, and displayed to the user */
-	private final String name;
+	private final String userFriendlyName;
 	private final int index;
 	private final BiomeColor defaultColor;
 	private final BiomeType type;
@@ -212,7 +213,7 @@ public class Biome {
 		
 		this.uniqueName = uniqueName;
 		this.isBeta = uniqueName.startsWith(BETABIOME_PREFIX);
-		this.name = isBeta ? uniqueName.substring(BETABIOME_PREFIX.length()) : uniqueName;
+		this.userFriendlyName = isBeta ? uniqueName.substring(BETABIOME_PREFIX.length()) : uniqueName;
 		
 		this.index = index;
 		this.defaultColor = defaultColor;
@@ -221,10 +222,23 @@ public class Biome {
 		biomeMap.put(uniqueName, this);
 	}
 
-	public String getName() {
-		return name;
+	/** 
+	 * Returns a name uniquely identifying the biome, for example Biome.desertB 
+	 * will return "beta Desert" instead of "Desert". If you want the latter
+	 * then use getUserFriendlyName().
+	 **/
+	public String getUniqueName() {
+		return uniqueName;
 	}
 
+	/** 
+	 * Returns a name appropriate for user interfaces, but not necessarily unique 
+	 * since some of the beta biome names overlap with the normal biome names.
+	 **/
+	public String getUserFriendlyName() {
+		return userFriendlyName;
+	}
+	
 	public int getIndex() {
 		return index;
 	}
@@ -243,6 +257,6 @@ public class Biome {
 	
 	@Override
 	public String toString() {
-		return "[Biome " + name + "]";
+		return "[Biome " + uniqueName + "]";
 	}
 }

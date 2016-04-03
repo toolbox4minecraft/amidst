@@ -96,7 +96,7 @@ public class BiomeWidget extends Widget {
 			isInitialized = true;
 			for (Biome biome : allBiomes) {
 				biomes.add(biome);
-				int width = fontMetrics.stringWidth(biome.getName());
+				int width = fontMetrics.stringWidth(biome.getUserFriendlyName());
 				maxNameWidth = Math.max(width, maxNameWidth);
 			}
 			biomeListHeight = biomes.size() * LINE_HEIGHT;
@@ -252,7 +252,7 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawBiomeName(Graphics2D g2d, int i, Biome biome) {
 		g2d.setColor(Color.white);
-		g2d.drawString(biome.getName(), innerBox.x + 25, innerBox.y + 13 + i
+		g2d.drawString(biome.getUserFriendlyName(), innerBox.x + 25, innerBox.y + 13 + i
 				* LINE_HEIGHT + biomeListYOffset);
 	}
 

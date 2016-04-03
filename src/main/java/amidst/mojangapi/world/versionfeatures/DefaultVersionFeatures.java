@@ -213,7 +213,7 @@ public enum DefaultVersionFeatures {
 						// "beta biomes".
 						// Ice desert is never created due to bug in Minecraft.
 						StreamSupport.stream(Biome.allBiomes().spliterator(), false)
-							.filter(biome -> biome.getIsBeta() && biome != Biome.iceDesertB && biome != Biome.hellB) 
+							.filter(biome -> biome.getIsBeta() && biome != Biome.iceDesertB && biome != Biome.hellB  && biome != Biome.skyB) 
 							.collect(java.util.stream.Collectors.toList())
 							
 				).since(RecognisedVersion._b1_8_1,

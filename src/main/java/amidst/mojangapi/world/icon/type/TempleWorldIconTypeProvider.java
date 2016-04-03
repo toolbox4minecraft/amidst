@@ -30,7 +30,7 @@ public class TempleWorldIconTypeProvider implements WorldIconTypeProvider<Void> 
 				return DefaultWorldIconTypes.IGLOO;
 			} else {
 				Log.e("No known structure for this biome type: "
-						+ biome.getName());
+						+ biome.getUniqueName());
 				return null;
 			}
 		} catch (UnknownBiomeIndexException e) {
