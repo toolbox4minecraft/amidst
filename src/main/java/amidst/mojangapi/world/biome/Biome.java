@@ -147,10 +147,13 @@ public class Biome {
 	public static final Biome desertB              = new Biome("beta Desert",               247, BiomeColor.from(216, 210, 156), BiomeType.PLAINS_TERRAIN_DATA);
 	public static final Biome taigaB               = new Biome("beta Taiga",                248, BiomeColor.from(134, 190, 143), BiomeType.TAIGA_TERRAIN_DATA);
 	public static final Biome tundraB              = new Biome("beta Tundra",               249, BiomeColor.from(255, 255, 255), BiomeType.PLAINS_TERRAIN_DATA);
+	// Ocean and frozen ocean are technically landscape features in the early betas, not biomes.
+	public static final Biome fake_oceanB          = new Biome("beta Ocean",                250, BiomeColor.from(  0,   0, 112), BiomeType.OCEAN_TERRAIN_DATA);
+	public static final Biome fake_frozenOceanB    = new Biome("beta Frozen Ocean",         251, BiomeColor.from(186, 197, 255), BiomeType.OCEAN_TERRAIN_DATA);
 	// The following beta biomes aren't used. (Ice desert is never seen in Minecraft due to a bug)
-	public static final Biome iceDesertB           = new Biome("beta Ice Desert",           250, BiomeColor.from(144, 144, 160), BiomeType.OCEAN_TERRAIN_DATA);
-	public static final Biome hellB                = new Biome("beta Hell",                 251, BiomeColor.from(255,   0,   0), BiomeType.DEFAULT_TERRAIN_DATA);
-	public static final Biome skyB                 = new Biome("beta Sky",                  252, BiomeColor.from(128, 128, 255), BiomeType.DEFAULT_TERRAIN_DATA);
+	public static final Biome iceDesertB           = new Biome("beta Ice Desert",           252, BiomeColor.from(144, 144, 160), BiomeType.DEFAULT_TERRAIN_DATA);
+	public static final Biome hellB                = new Biome("beta Hell",                 253, BiomeColor.from(255,   0,   0), BiomeType.DEFAULT_TERRAIN_DATA);
+	public static final Biome skyB                 = new Biome("beta Sky",                  254, BiomeColor.from(128, 128, 255), BiomeType.DEFAULT_TERRAIN_DATA);
 	
 	// @formatter:on
 
