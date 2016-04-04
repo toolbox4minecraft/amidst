@@ -31,9 +31,17 @@ public class BiomeWidget extends Widget {
 	private static final Color SELECT_BUTTON_COLOR = 	new Color(0.6f, 0.6f, 0.8f, 1.0f);
 	// @formatter:on
 
+	private static final int LINE_HEIGHT = 16;
+	private static final int LIST_HEADER_HEIGHT = 30;
+	private static final int LIST_FOOTER_HEIGHT = 30;
+	private static final int LIST_MARGIN_WIDTH = 8;
+	private static final int WIDGET_VERTICAL_PADDING = 100;
+	private static final int WIDGET_CUTOFF_HEIGHT = 200;
+	
 	private final BiomeSelection biomeSelection;
 	private final LayerReloader layerReloader;
 	private final BiomeProfileSelection biomeProfileSelection;
+	private final List<Biome> allBiomes;
 
 	private List<Biome> biomes = new ArrayList<Biome>();
 	private int maxNameWidth = 0;
@@ -54,11 +62,13 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public BiomeWidget(CornerAnchorPoint anchor, BiomeSelection biomeSelection,
 			LayerReloader layerReloader,
-			BiomeProfileSelection biomeProfileSelection) {
+			BiomeProfileSelection biomeProfileSelection,
+			List<Biome> allBiomes) {
 		super(anchor);
 		this.biomeSelection = biomeSelection;
 		this.layerReloader = layerReloader;
 		this.biomeProfileSelection = biomeProfileSelection;
+		this.allBiomes = allBiomes;
 		setWidth(250);
 		setHeight(400);
 		setY(100);
@@ -70,6 +80,7 @@ public class BiomeWidget extends Widget {
 		initializeIfNecessary(fontMetrics);
 		updateX();
 		updateHeight();
+		updateY();
 		updateInnerBoxPositionAndSize();
 		updateBiomeListYOffset();
 		updateScrollbarVisibility();
@@ -83,12 +94,12 @@ public class BiomeWidget extends Widget {
 	private void initializeIfNecessary(FontMetrics fontMetrics) {
 		if (!isInitialized) {
 			isInitialized = true;
-			for (Biome biome : Biome.allBiomes()) {
+			for (Biome biome : allBiomes) {
 				biomes.add(biome);
-				int width = fontMetrics.stringWidth(biome.getName());
+				int width = fontMetrics.stringWidth(biome.getUserFriendlyName());
 				maxNameWidth = Math.max(width, maxNameWidth);
 			}
-			biomeListHeight = biomes.size() * 16;
+			biomeListHeight = biomes.size() * LINE_HEIGHT;
 		}
 	}
 
@@ -97,16 +108,28 @@ public class BiomeWidget extends Widget {
 		setX(getViewerWidth() - getWidth());
 	}
 
+	private void updateY() {
+		
+		int space = getViewerHeight() - getHeight();
+		setY(space - 100);
+	}
+	
+	
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateHeight() {
-		setHeight(Math.max(200, getViewerHeight() - 200));
+		setHeight(
+			Math.min(
+				LIST_HEADER_HEIGHT + biomeListHeight + LIST_FOOTER_HEIGHT, // sometimes the list isn't very big (beta biomes)
+				getViewerHeight() - (WIDGET_VERTICAL_PADDING * 2) // size is limited by the 100 pixels above and below the widget
+			)
+		);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateInnerBoxPositionAndSize() {
-		innerBox.x = getX() + 8;
-		innerBox.y = getY() + 30;
-		innerBox.width = getWidth() - 16;
+		innerBox.x = getX() + LIST_MARGIN_WIDTH;
+		innerBox.y = getY() + LIST_HEADER_HEIGHT;
+		innerBox.width = getWidth() - (LIST_MARGIN_WIDTH * 2);
 		innerBox.height = getHeight() - 58;
 	}
 
@@ -211,8 +234,8 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawBiomeBackgroundColor(Graphics2D g2d, int i, Color color) {
 		g2d.setColor(color);
-		g2d.fillRect(innerBox.x, innerBox.y + i * 16 + biomeListYOffset,
-				innerBox.width, 16);
+		g2d.fillRect(innerBox.x, innerBox.y + i * LINE_HEIGHT + biomeListYOffset,
+				innerBox.width, LINE_HEIGHT);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -223,14 +246,14 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawBiomeColor(Graphics2D g2d, int i, BiomeColor biomeColor) {
 		g2d.setColor(biomeColor.getColor());
-		g2d.fillRect(innerBox.x, innerBox.y + i * 16 + biomeListYOffset, 20, 16);
+		g2d.fillRect(innerBox.x, innerBox.y + i * LINE_HEIGHT + biomeListYOffset, 20, LINE_HEIGHT);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawBiomeName(Graphics2D g2d, int i, Biome biome) {
 		g2d.setColor(Color.white);
-		g2d.drawString(biome.getName(), innerBox.x + 25, innerBox.y + 13 + i
-				* 16 + biomeListYOffset);
+		g2d.drawString(biome.getUserFriendlyName(), innerBox.x + 25, innerBox.y + 13 + i
+				* LINE_HEIGHT + biomeListYOffset);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -248,7 +271,7 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawTextSelect(Graphics2D g2d) {
 		g2d.setColor(Color.white);
-		g2d.drawString("Select:", getX() + 8, getY() + getHeight() - 10);
+		g2d.drawString("Select:", getX() + LIST_MARGIN_WIDTH, getY() + getHeight() - 10);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -304,7 +327,7 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private boolean processClick(int mouseX, int mouseY) {
 		if (isInBoundsOfInnerBox(mouseX, mouseY)) {
-			int id = (mouseY - (innerBox.y - getY()) - biomeListYOffset) / 16;
+			int id = (mouseY - (innerBox.y - getY()) - biomeListYOffset) / LINE_HEIGHT;
 			if (id < biomes.size()) {
 				int index = biomes.get(id).getIndex();
 				biomeSelection.toggle(index);
@@ -370,6 +393,17 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public boolean onVisibilityCheck() {
-		return biomeSelection.isHighlightMode() && getHeight() > 200;
+		
+		if (biomeSelection.isHighlightMode()) {
+			
+			int requiredWindowHeight = (WIDGET_VERTICAL_PADDING * 2) +
+					Math.min(
+						LIST_HEADER_HEIGHT + biomeListHeight + LIST_FOOTER_HEIGHT,
+						WIDGET_CUTOFF_HEIGHT
+					);
+			
+			return getViewerHeight() >= requiredWindowHeight; 		
+			
+		} else return false;
 	}
 }

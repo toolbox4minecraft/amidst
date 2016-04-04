@@ -36,6 +36,15 @@ public class SymbolicParameterDeclarationList {
 			return this;
 		}
 
+		/** 
+		 * Can stand in for any object or interface, provided the method signature
+		 * is still unique. The method can be called later using null for this parameter.
+		 */
+		public SymbolicParameterDeclarationListBuilder<T> anyReferenceType() {
+			declarations.add(new SymbolicParameterDeclaration("*", false));
+			return this;
+		}
+		
 		public T end() {
 			executeOnEnd
 					.run(new SymbolicParameterDeclarationList(declarations));

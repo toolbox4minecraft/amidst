@@ -19,12 +19,48 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 @Immutable
 public class LocalMinecraftInterfaceBuilder {
-	private final ClassTranslator translator;
-
-	public LocalMinecraftInterfaceBuilder(ClassTranslator translator) {
-		this.translator = translator;
+	
+	@NotNull
+	private ClassTranslator getTranslator(RecognisedVersion recognisedVersion) {
+		
+		if (isEarlyBeta(recognisedVersion)) {
+			return MinecraftClassTranslator_EarlyBetas.INSTANCE.get();
+		} else {
+			return MinecraftClassTranslator_Default.INSTANCE.get();
+		}
+	}
+	
+	@NotNull
+	private MinecraftInterface createLocalMinecraftInterface_Default(
+			Map<String, SymbolicClass> symbolicClassMap,
+			RecognisedVersion recognisedVersion) {
+		
+		return new LocalMinecraftInterface_Default(
+				symbolicClassMap.get(SymbolicNames.CLASS_INT_CACHE),
+				symbolicClassMap.get(SymbolicNames.CLASS_BLOCK_INIT),
+				symbolicClassMap.get(SymbolicNames.CLASS_GEN_LAYER),
+				symbolicClassMap.get(SymbolicNames.CLASS_WORLD_TYPE),
+				recognisedVersion);
 	}
 
+	@NotNull
+	private MinecraftInterface createLocalMinecraftInterface_EarlyBetas(
+			Map<String, SymbolicClass> symbolicClassMap,
+			RecognisedVersion recognisedVersion) {
+		
+		return new LocalMinecraftInterface_EarlyBetas(
+				symbolicClassMap.get(SymbolicNames.CLASS_BETA_WORLD),
+				symbolicClassMap.get(SymbolicNames.CLASS_BETA_DIMENSION_CONCRETE), // Dimension class MUST be an instantiatable class
+				symbolicClassMap.get(SymbolicNames.CLASS_BETA_BIOMEGENERATOR),
+				symbolicClassMap.get(SymbolicNames.CLASS_BETA_CHUNKGENERATOR),
+				symbolicClassMap.get(SymbolicNames.CLASS_BETA_BIOME),
+				recognisedVersion);
+	}
+	
+	public boolean isEarlyBeta(RecognisedVersion recognisedVersion) {
+		return RecognisedVersion.isOlder(recognisedVersion, RecognisedVersion._b1_8_1);
+	}
+		
 	@NotNull
 	public MinecraftInterface create(VersionDirectory versionDirectory)
 			throws LocalMinecraftInterfaceCreationException {
@@ -34,14 +70,15 @@ public class LocalMinecraftInterfaceBuilder {
 					.from(classLoader);
 			Map<String, SymbolicClass> symbolicClassMap = Classes
 					.createSymbolicClassMap(versionDirectory.getJar(),
-							classLoader, translator);
+							classLoader, getTranslator(recognisedVersion));
 			Log.i("Minecraft load complete.");
-			return new LocalMinecraftInterface(
-					symbolicClassMap.get(SymbolicNames.CLASS_INT_CACHE),
-					symbolicClassMap.get(SymbolicNames.CLASS_BLOCK_INIT),
-					symbolicClassMap.get(SymbolicNames.CLASS_GEN_LAYER),
-					symbolicClassMap.get(SymbolicNames.CLASS_WORLD_TYPE),
-					recognisedVersion);
+
+			if (isEarlyBeta(recognisedVersion)) {
+				return createLocalMinecraftInterface_EarlyBetas(symbolicClassMap, recognisedVersion);
+			} else {			
+				return createLocalMinecraftInterface_Default(symbolicClassMap, recognisedVersion);
+			}
+			
 		} catch (MalformedURLException | ClassNotFoundException
 				| FileNotFoundException | JarFileParsingException
 				| SymbolicClassGraphCreationException e) {

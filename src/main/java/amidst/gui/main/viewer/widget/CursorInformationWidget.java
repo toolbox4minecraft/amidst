@@ -56,7 +56,7 @@ public class CursorInformationWidget extends TextWidget {
 		if (dimension.equals(Dimension.OVERWORLD)) {
 			return getOverworldBiomeNameAt(coordinates);
 		} else if (dimension.equals(Dimension.END)) {
-			return Biome.theEnd.getName();
+			return Biome.theEnd.getUserFriendlyName();
 		} else {
 			Log.w("unsupported dimension");
 			return UNKNOWN_BIOME_NAME;
@@ -71,7 +71,7 @@ public class CursorInformationWidget extends TextWidget {
 			long y = coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
 			short biome = fragment.getBiomeDataAt((int) x, (int) y);
 			try {
-				return Biome.getByIndex(biome).getName();
+				return Biome.getByIndex(biome).getUserFriendlyName();
 			} catch (UnknownBiomeIndexException e) {
 				Log.e(e.getMessage());
 				e.printStackTrace();

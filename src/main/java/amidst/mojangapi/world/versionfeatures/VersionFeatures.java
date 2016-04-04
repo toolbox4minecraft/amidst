@@ -23,6 +23,7 @@ public class VersionFeatures {
 	private final QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker> oceanMonumentLocationCheckerFactory;
 	private final List<Biome> validBiomesAtMiddleOfChunk_OceanMonument;
 	private final List<Biome> validBiomesForStructure_OceanMonument;
+	private final List<Biome> allBiomes;
 
 	public VersionFeatures(
 			List<Integer> enabledLayers,
@@ -35,7 +36,8 @@ public class VersionFeatures {
 			Function<Long, MineshaftAlgorithm_Base> mineshaftAlgorithmFactory,
 			QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker> oceanMonumentLocationCheckerFactory,
 			List<Biome> validBiomesAtMiddleOfChunk_OceanMonument,
-			List<Biome> validBiomesForStructure_OceanMonument) {
+			List<Biome> validBiomesForStructure_OceanMonument,
+			List<Biome> allBiomes) {
 		this.enabledLayers = enabledLayers;
 		this.isSaveEnabled = isSaveEnabled;
 		this.validBiomesForStructure_Spawn = validBiomesForStructure_Spawn;
@@ -47,6 +49,7 @@ public class VersionFeatures {
 		this.oceanMonumentLocationCheckerFactory = oceanMonumentLocationCheckerFactory;
 		this.validBiomesAtMiddleOfChunk_OceanMonument = validBiomesAtMiddleOfChunk_OceanMonument;
 		this.validBiomesForStructure_OceanMonument = validBiomesForStructure_OceanMonument;
+		this.allBiomes = allBiomes;
 	}
 
 	public boolean hasLayer(int layerId) {
@@ -98,4 +101,9 @@ public class VersionFeatures {
 	public List<Biome> getValidBiomesForStructure_OceanMonument() {
 		return validBiomesForStructure_OceanMonument;
 	}
+	
+	public List<Biome> getAllBiomes() {
+		return allBiomes;
+	}	
+	
 }

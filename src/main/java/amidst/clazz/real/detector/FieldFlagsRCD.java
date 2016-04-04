@@ -16,7 +16,12 @@ public class FieldFlagsRCD extends RealClassDetector {
 
 	@Override
 	public boolean detect(RealClass realClass) {
+		int fieldCount = realClass.getNumberOfFields();
+		
 		for (int fieldIndex : fieldIndices) {
+			
+			if (fieldIndex >= fieldCount) return false;
+			
 			RealClassField field = realClass.getField(fieldIndex);
 			if (!field.hasFlags(flags)) {
 				return false;

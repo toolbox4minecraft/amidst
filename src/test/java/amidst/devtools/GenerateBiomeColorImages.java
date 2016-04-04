@@ -30,7 +30,7 @@ public class GenerateBiomeColorImages {
 		b.append("---------|-----------:|:----------:\n");
 		for (Biome biome : biomes) {
 			int index = biome.getIndex();
-			String name = biome.getName();
+			String name = biome.getUniqueName();
 			Color color = biome.getDefaultColor().getColor();
 			appendLine(b, index, name);
 			createAndSaveImage(index, color);

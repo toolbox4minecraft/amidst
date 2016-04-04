@@ -62,7 +62,7 @@ public class WidgetBuilder {
 				new DebugWidget(            CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, settings.showDebug, accelerationCounter),
 				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension),
 				new BiomeToggleWidget(      CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection,    layerReloader),
-				new BiomeWidget(            CornerAnchorPoint.NONE,          biomeSelection,    layerReloader,   settings.biomeProfileSelection)
+				new BiomeWidget(            CornerAnchorPoint.NONE,          biomeSelection,    layerReloader,   settings.biomeProfileSelection, world.getVersionFeatures().getAllBiomes())
 		);
 		// @formatter:on
 	}

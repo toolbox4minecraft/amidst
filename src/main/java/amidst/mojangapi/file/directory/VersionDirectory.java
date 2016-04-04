@@ -15,14 +15,12 @@ import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.version.VersionJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
-import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 
 @Immutable
 public class VersionDirectory {
-	private static final LocalMinecraftInterfaceBuilder LOCAL_MINECRAFT_INTERFACE_BUILDER = new LocalMinecraftInterfaceBuilder(
-			DefaultClassTranslator.INSTANCE.get());
+	private static final LocalMinecraftInterfaceBuilder LOCAL_MINECRAFT_INTERFACE_BUILDER = new LocalMinecraftInterfaceBuilder();
 
 	private final DotMinecraftDirectory dotMinecraftDirectory;
 	private final String versionId;
