@@ -30,16 +30,17 @@ public class SpawnProducer extends CachedWorldIconProducer {
 			return createWorldIcon(spawnLocation);
 		} else {
 			CoordinatesInWorld origin = CoordinatesInWorld.origin();
-			Log.i("Unable to find spawn biome. Falling back to "
-					+ origin.toString() + ".");
+			Log.i("Unable to find spawn biome. Falling back to " + origin.toString() + ".");
 			return createWorldIcon(origin);
 		}
 	}
 
 	private WorldIcon createWorldIcon(CoordinatesInWorld coordinates) {
-		return new WorldIcon(coordinates,
+		return new WorldIcon(
+				coordinates,
 				DefaultWorldIconTypes.SPAWN.getName(),
-				DefaultWorldIconTypes.SPAWN.getImage(), Dimension.OVERWORLD,
+				DefaultWorldIconTypes.SPAWN.getImage(),
+				Dimension.OVERWORLD,
 				false);
 	}
 }

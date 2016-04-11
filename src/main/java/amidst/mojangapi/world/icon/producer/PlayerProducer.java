@@ -22,9 +22,12 @@ public class PlayerProducer extends CachedWorldIconProducer {
 		List<WorldIcon> result = new LinkedList<WorldIcon>();
 		for (Player player : movablePlayerList) {
 			PlayerCoordinates coordinates = player.getPlayerCoordinates();
-			result.add(new WorldIcon(coordinates.getCoordinatesInWorld(),
-					player.getPlayerName(), player.getHead(), coordinates
-							.getDimension(), true));
+			result.add(new WorldIcon(
+					coordinates.getCoordinatesInWorld(),
+					player.getPlayerName(),
+					player.getHead(),
+					coordinates.getDimension(),
+					true));
 		}
 		return result;
 	}

@@ -13,8 +13,7 @@ public class HeuristicWorldSpawnOracle implements WorldSpawnOracle {
 	private final BiomeDataOracle biomeDataOracle;
 	private final List<Biome> validBiomes;
 
-	public HeuristicWorldSpawnOracle(long seed,
-			BiomeDataOracle biomeDataOracle, List<Biome> validBiomes) {
+	public HeuristicWorldSpawnOracle(long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomes) {
 		this.seed = seed;
 		this.biomeDataOracle = biomeDataOracle;
 		this.validBiomes = validBiomes;
@@ -22,7 +21,6 @@ public class HeuristicWorldSpawnOracle implements WorldSpawnOracle {
 
 	@Override
 	public CoordinatesInWorld get() {
-		return biomeDataOracle.findValidLocation(0, 0, 256, validBiomes,
-				new Random(seed));
+		return biomeDataOracle.findValidLocation(0, 0, 256, validBiomes, new Random(seed));
 	}
 }

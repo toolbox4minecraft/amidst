@@ -11,21 +11,17 @@ public class BackgroundColorProvider implements ColorProvider {
 	private final BiomeColorProvider biomeColorProvider;
 	private final TheEndColorProvider theEndColorProvider;
 
-	public BackgroundColorProvider(BiomeColorProvider biomeColorProvider,
-			TheEndColorProvider theEndColorProvider) {
+	public BackgroundColorProvider(BiomeColorProvider biomeColorProvider, TheEndColorProvider theEndColorProvider) {
 		this.biomeColorProvider = biomeColorProvider;
 		this.theEndColorProvider = theEndColorProvider;
 	}
 
 	@Override
-	public int getColorAt(Dimension dimension, Fragment fragment, long cornerX,
-			long cornerY, int x, int y) {
+	public int getColorAt(Dimension dimension, Fragment fragment, long cornerX, long cornerY, int x, int y) {
 		if (dimension.equals(Dimension.OVERWORLD)) {
-			return biomeColorProvider.getColorAt(dimension, fragment, cornerX,
-					cornerY, x, y);
+			return biomeColorProvider.getColorAt(dimension, fragment, cornerX, cornerY, x, y);
 		} else if (dimension.equals(Dimension.END)) {
-			return theEndColorProvider.getColorAt(dimension, fragment, cornerX,
-					cornerY, x, y);
+			return theEndColorProvider.getColorAt(dimension, fragment, cornerX, cornerY, x, y);
 		} else {
 			Log.w("unsupported dimension");
 			return BiomeColor.unknown().getRGB();

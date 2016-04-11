@@ -17,13 +17,17 @@ import amidst.documentation.NotThreadSafe;
 @NotThreadSafe
 public abstract class Widget {
 	public static enum CornerAnchorPoint {
-		TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, BOTTOM_CENTER, CENTER, NONE
+		TOP_LEFT,
+		TOP_RIGHT,
+		BOTTOM_LEFT,
+		BOTTOM_RIGHT,
+		BOTTOM_CENTER,
+		CENTER,
+		NONE
 	}
 
-	protected static boolean isInBounds(int x, int y, int offsetX, int offsetY,
-			int width, int height) {
-		return x >= offsetX && x < offsetX + width && y >= offsetY
-				&& y < offsetY + height;
+	protected static boolean isInBounds(int x, int y, int offsetX, int offsetY, int width, int height) {
+		return x >= offsetX && x < offsetX + width && y >= offsetY && y < offsetY + height;
 	}
 
 	private static final BufferedImage DROP_SHADOW_BOTTOM_LEFT = ResourceLoader
@@ -45,12 +49,10 @@ public abstract class Widget {
 
 	public static final Font TEXT_FONT = new Font("arial", Font.BOLD, 15);
 	private static final Color TEXT_COLOR = new Color(1f, 1f, 1f);
-	private static final Color PANEL_COLOR = new Color(0.15f, 0.15f, 0.15f,
-			0.8f);
+	private static final Color PANEL_COLOR = new Color(0.15f, 0.15f, 0.15f, 0.8f);
 
 	protected static final Stroke LINE_STROKE_1 = new BasicStroke(1);
-	protected static final Stroke LINE_STROKE_2 = new BasicStroke(2,
-			BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
+	protected static final Stroke LINE_STROKE_2 = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
 
 	private final CornerAnchorPoint anchor;
 
@@ -76,8 +78,7 @@ public abstract class Widget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void update(int viewerWidth, int viewerHeight, Point mousePosition,
-			FontMetrics fontMetrics, float time) {
+	public void update(int viewerWidth, int viewerHeight, Point mousePosition, FontMetrics fontMetrics, float time) {
 		this.viewerWidth = viewerWidth;
 		this.viewerHeight = viewerHeight;
 		this.mousePosition = mousePosition;

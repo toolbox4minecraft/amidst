@@ -51,8 +51,7 @@ public enum WorldType {
 		if (result != null) {
 			return result;
 		} else {
-			Log.e("Unable to find World Type: " + nameOrSymbolicFieldName
-					+ ". Falling back to default world type.");
+			Log.e("Unable to find World Type: " + nameOrSymbolicFieldName + ". Falling back to default world type.");
 			return DEFAULT;
 		}
 	}
@@ -60,8 +59,7 @@ public enum WorldType {
 	private static WorldType findInstance(String nameOrValue) {
 		for (WorldType worldType : values()) {
 			if (worldType.name.equalsIgnoreCase(nameOrValue)
-					|| worldType.symbolicFieldName
-							.equalsIgnoreCase(nameOrValue)) {
+					|| worldType.symbolicFieldName.equalsIgnoreCase(nameOrValue)) {
 				return worldType;
 			}
 		}

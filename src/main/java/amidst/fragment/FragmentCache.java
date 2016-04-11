@@ -23,9 +23,11 @@ public class FragmentCache {
 	private final int numberOfLayers;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public FragmentCache(ConcurrentLinkedQueue<Fragment> availableQueue,
+	public FragmentCache(
+			ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
-			Iterable<FragmentConstructor> constructors, int numberOfLayers) {
+			Iterable<FragmentConstructor> constructors,
+			int numberOfLayers) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
 		this.constructors = constructors;

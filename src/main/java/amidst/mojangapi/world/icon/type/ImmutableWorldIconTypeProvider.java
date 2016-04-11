@@ -3,8 +3,7 @@ package amidst.mojangapi.world.icon.type;
 import amidst.documentation.Immutable;
 
 @Immutable
-public class ImmutableWorldIconTypeProvider implements
-		WorldIconTypeProvider<Void> {
+public class ImmutableWorldIconTypeProvider implements WorldIconTypeProvider<Void> {
 	private final DefaultWorldIconTypes worldIconType;
 
 	public ImmutableWorldIconTypeProvider(DefaultWorldIconTypes worldIconType) {

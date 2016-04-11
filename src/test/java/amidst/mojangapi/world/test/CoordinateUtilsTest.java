@@ -15,8 +15,7 @@ public class CoordinateUtilsTest {
 		for (long inWorld = -1000; inWorld < 1000; inWorld++) {
 			long inFragment = CoordinateUtils.toFragmentRelative(inWorld);
 			long inWorldOfFragment = CoordinateUtils.toFragmentCorner(inWorld);
-			long actualInWorld = CoordinateUtils.toWorld(inWorldOfFragment,
-					inFragment);
+			long actualInWorld = CoordinateUtils.toWorld(inWorldOfFragment, inFragment);
 			if (inWorld != actualInWorld) {
 				return false;
 			}

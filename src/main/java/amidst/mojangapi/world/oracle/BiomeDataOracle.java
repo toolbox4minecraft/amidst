@@ -20,8 +20,7 @@ public class BiomeDataOracle {
 		this.minecraftInterface = minecraftInterface;
 	}
 
-	public void populateArray(CoordinatesInWorld corner, short[][] result,
-			boolean useQuarterResolution) {
+	public void populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
 		Resolution resolution = Resolution.from(useQuarterResolution);
 		int width = result.length;
 		if (width > 0) {
@@ -29,12 +28,7 @@ public class BiomeDataOracle {
 			int left = (int) corner.getXAs(resolution);
 			int top = (int) corner.getYAs(resolution);
 			try {
-				copyToResult(
-						result,
-						width,
-						height,
-						getBiomeData(left, top, width, height,
-								useQuarterResolution));
+				copyToResult(result, width, height, getBiomeData(left, top, width, height, useQuarterResolution));
 			} catch (MinecraftInterfaceException e) {
 				Log.e(e.getMessage());
 				e.printStackTrace();
@@ -42,8 +36,7 @@ public class BiomeDataOracle {
 		}
 	}
 
-	public static void copyToResult(short[][] result, int width, int height,
-			int[] biomeData) {
+	public static void copyToResult(short[][] result, int width, int height, int[] biomeData) {
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				result[x][y] = (short) biomeData[getBiomeDataIndex(x, y, width)];
@@ -55,10 +48,8 @@ public class BiomeDataOracle {
 		return x + y * width;
 	}
 
-	public boolean isValidBiomeAtMiddleOfChunk(int chunkX, int chunkY,
-			List<Biome> validBiomes) {
-		return isValidBiome(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY),
-				validBiomes);
+	public boolean isValidBiomeAtMiddleOfChunk(int chunkX, int chunkY, List<Biome> validBiomes) {
+		return isValidBiome(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY), validBiomes);
 	}
 
 	private boolean isValidBiome(int x, int y, List<Biome> validBiomes) {
@@ -75,14 +66,11 @@ public class BiomeDataOracle {
 		}
 	}
 
-	public boolean isValidBiomeForStructureAtMiddleOfChunk(int chunkX,
-			int chunkY, int size, List<Biome> validBiomes) {
-		return isValidBiomeForStructure(getMiddleOfChunk(chunkX),
-				getMiddleOfChunk(chunkY), size, validBiomes);
+	public boolean isValidBiomeForStructureAtMiddleOfChunk(int chunkX, int chunkY, int size, List<Biome> validBiomes) {
+		return isValidBiomeForStructure(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY), size, validBiomes);
 	}
 
-	public boolean isValidBiomeForStructure(int x, int y, int size,
-			List<Biome> validBiomes) {
+	public boolean isValidBiomeForStructure(int x, int y, int size, List<Biome> validBiomes) {
 		int left = x - size >> 2;
 		int top = y - size >> 2;
 		int right = x + size >> 2;
@@ -90,8 +78,7 @@ public class BiomeDataOracle {
 		int width = right - left + 1;
 		int height = bottom - top + 1;
 		try {
-			int[] biomeData = getQuarterResolutionBiomeData(left, top, width,
-					height);
+			int[] biomeData = getQuarterResolutionBiomeData(left, top, width, height);
 			for (int i = 0; i < width * height; i++) {
 				if (!validBiomes.contains(Biome.getByIndex(biomeData[i]))) {
 					return false;
@@ -109,15 +96,17 @@ public class BiomeDataOracle {
 		}
 	}
 
-	public CoordinatesInWorld findValidLocationAtMiddleOfChunk(int chunkX,
-			int chunkY, int size, List<Biome> validBiomes, Random random) {
-		return findValidLocation(getMiddleOfChunk(chunkX),
-				getMiddleOfChunk(chunkY), size, validBiomes, random);
+	public CoordinatesInWorld findValidLocationAtMiddleOfChunk(
+			int chunkX,
+			int chunkY,
+			int size,
+			List<Biome> validBiomes,
+			Random random) {
+		return findValidLocation(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY), size, validBiomes, random);
 	}
 
 	// TODO: Find out if we should useQuarterResolution or not
-	public CoordinatesInWorld findValidLocation(int x, int y, int size,
-			List<Biome> validBiomes, Random random) {
+	public CoordinatesInWorld findValidLocation(int x, int y, int size, List<Biome> validBiomes, Random random) {
 		int left = x - size >> 2;
 		int top = y - size >> 2;
 		int right = x + size >> 2;
@@ -125,14 +114,12 @@ public class BiomeDataOracle {
 		int width = right - left + 1;
 		int height = bottom - top + 1;
 		try {
-			int[] biomeData = getQuarterResolutionBiomeData(left, top, width,
-					height);
+			int[] biomeData = getQuarterResolutionBiomeData(left, top, width, height);
 			CoordinatesInWorld result = null;
 			int numberOfValidLocations = 0;
 			for (int i = 0; i < width * height; i++) {
 				if (validBiomes.contains(Biome.getByIndex(biomeData[i]))
-						&& (result == null || random
-								.nextInt(numberOfValidLocations + 1) == 0)) {
+						&& (result == null || random.nextInt(numberOfValidLocations + 1) == 0)) {
 					result = createCoordinates(left, top, width, i);
 					numberOfValidLocations++;
 				}
@@ -149,8 +136,7 @@ public class BiomeDataOracle {
 		}
 	}
 
-	private CoordinatesInWorld createCoordinates(int left, int top, int width,
-			int i) {
+	private CoordinatesInWorld createCoordinates(int left, int top, int width, int i) {
 		int x = left + i % width << 2;
 		int y = top + i / width << 2;
 		return CoordinatesInWorld.from(x, y);
@@ -160,8 +146,8 @@ public class BiomeDataOracle {
 		return coordinate * 16 + 8;
 	}
 
-	public Biome getBiomeAtMiddleOfChunk(int chunkX, int chunkY)
-			throws UnknownBiomeIndexException, MinecraftInterfaceException {
+	public Biome getBiomeAtMiddleOfChunk(int chunkX, int chunkY) throws UnknownBiomeIndexException,
+			MinecraftInterfaceException {
 		return getBiomeAt(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY));
 	}
 
@@ -170,25 +156,21 @@ public class BiomeDataOracle {
 	 * routine, it was added for rare things like accurately testing structures.
 	 * (uses the 1:1 scale biome-map)
 	 */
-	private Biome getBiomeAt(int x, int y) throws UnknownBiomeIndexException,
-			MinecraftInterfaceException {
+	private Biome getBiomeAt(int x, int y) throws UnknownBiomeIndexException, MinecraftInterfaceException {
 		int[] biomeData = getFullResolutionBiomeData(x, y, 1, 1);
 		return Biome.getByIndex(biomeData[0]);
 	}
 
-	private int[] getQuarterResolutionBiomeData(int x, int y, int width,
-			int height) throws MinecraftInterfaceException {
+	private int[] getQuarterResolutionBiomeData(int x, int y, int width, int height) throws MinecraftInterfaceException {
 		return getBiomeData(x, y, width, height, true);
 	}
 
-	private int[] getFullResolutionBiomeData(int x, int y, int width, int height)
-			throws MinecraftInterfaceException {
+	private int[] getFullResolutionBiomeData(int x, int y, int width, int height) throws MinecraftInterfaceException {
 		return getBiomeData(x, y, width, height, false);
 	}
 
-	private int[] getBiomeData(int x, int y, int width, int height,
-			boolean useQuarterResolution) throws MinecraftInterfaceException {
-		return minecraftInterface.getBiomeData(x, y, width, height,
-				useQuarterResolution);
+	private int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+			throws MinecraftInterfaceException {
+		return minecraftInterface.getBiomeData(x, y, width, height, useQuarterResolution);
 	}
 }

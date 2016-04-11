@@ -16,8 +16,7 @@ public class VillageLocationChecker extends AllValidLocationChecker {
 	private static final boolean USE_TWO_VALUES_FOR_UPDATE = false;
 	private static final int STRUCTURE_SIZE = 0;
 
-	public VillageLocationChecker(long seed, BiomeDataOracle biomeDataOracle,
-			List<Biome> validBiomesForStructure) {
+	public VillageLocationChecker(long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomesForStructure) {
 		// @formatter:off
 		super(new StructureAlgorithm(
 						seed,

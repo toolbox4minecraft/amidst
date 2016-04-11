@@ -10,8 +10,10 @@ public class SymbolicConstructorDeclaration {
 	private final boolean isOptional;
 	private final SymbolicParameterDeclarationList parameters;
 
-	public SymbolicConstructorDeclaration(String symbolicName,
-			boolean isOptional, SymbolicParameterDeclarationList parameters) {
+	public SymbolicConstructorDeclaration(
+			String symbolicName,
+			boolean isOptional,
+			SymbolicParameterDeclarationList parameters) {
 		this.symbolicName = symbolicName;
 		this.isOptional = isOptional;
 		this.parameters = parameters;
@@ -29,11 +31,10 @@ public class SymbolicConstructorDeclaration {
 		return parameters;
 	}
 
-	public void handleMissing(Exception e, String symbolicClassName,
-			String realClassName) throws SymbolicClassGraphCreationException {
-		String message = "unable to find the real class constructor "
-				+ realClassName + ".<init>" + parameters.getParameterString()
-				+ " -> " + symbolicClassName + "." + symbolicName;
+	public void handleMissing(Exception e, String symbolicClassName, String realClassName)
+			throws SymbolicClassGraphCreationException {
+		String message = "unable to find the real class constructor " + realClassName + ".<init>"
+				+ parameters.getParameterString() + " -> " + symbolicClassName + "." + symbolicName;
 		if (isOptional) {
 			Log.i(message);
 		} else {

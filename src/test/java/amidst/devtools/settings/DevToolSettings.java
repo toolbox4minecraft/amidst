@@ -9,8 +9,7 @@ import amidst.documentation.Immutable;
 public enum DevToolSettings {
 	INSTANCE;
 
-	private final Properties properties = ResourceLoader
-			.getProperties("/amidst/devtools/devtools.properties");
+	private final Properties properties = ResourceLoader.getProperties("/amidst/devtools/devtools.properties");
 
 	public String getMinecraftVersionsDirectory() {
 		return properties.getProperty("amidst.devtools.directory.versions");
@@ -21,7 +20,6 @@ public enum DevToolSettings {
 	}
 
 	public String getBiomeColorImagesDirectory() {
-		return properties
-				.getProperty("amidst.devtools.directory.biome.color.images");
+		return properties.getProperty("amidst.devtools.directory.biome.color.images");
 	}
 }

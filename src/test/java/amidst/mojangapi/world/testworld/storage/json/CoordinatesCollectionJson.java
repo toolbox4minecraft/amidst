@@ -28,24 +28,22 @@ public class CoordinatesCollectionJson {
 	}
 
 	public static <T> CoordinatesCollectionJson extractWorldIcons(
-			WorldIconProducer<T> producer, String name,
+			WorldIconProducer<T> producer,
+			String name,
 			Function<CoordinatesInWorld, T> additionalDataFactory,
-			int fragmentsAroundOrigin, int minimalNumberOfCoordinates) {
-		NameFilteredWorldIconCollector consumer = new NameFilteredWorldIconCollector(
-				name);
-		FragmentCornerWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin)
-				.walk(corner -> producer.produce(corner, consumer,
-						additionalDataFactory.apply(corner)));
-		SortedSet<CoordinatesInWorld> coordinates = createSortedSet(consumer
-				.get());
+			int fragmentsAroundOrigin,
+			int minimalNumberOfCoordinates) {
+		NameFilteredWorldIconCollector consumer = new NameFilteredWorldIconCollector(name);
+		FragmentCornerWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin).walk(
+				corner -> producer.produce(corner, consumer, additionalDataFactory.apply(corner)));
+		SortedSet<CoordinatesInWorld> coordinates = createSortedSet(consumer.get());
 		if (coordinates.size() < minimalNumberOfCoordinates) {
 			Log.e("not enough coordinates for '" + name + "'");
 		}
 		return new CoordinatesCollectionJson(coordinates);
 	}
 
-	private static SortedSet<CoordinatesInWorld> createSortedSet(
-			List<WorldIcon> icons) {
+	private static SortedSet<CoordinatesInWorld> createSortedSet(List<WorldIcon> icons) {
 		SortedSet<CoordinatesInWorld> result = new TreeSet<CoordinatesInWorld>();
 		for (WorldIcon icon : icons) {
 			result.add(icon.getCoordinates());
@@ -53,8 +51,7 @@ public class CoordinatesCollectionJson {
 		return result;
 	}
 
-	private static SortedSet<CoordinatesInWorld> createSortedSet(
-			CoordinatesInWorld coordinates) {
+	private static SortedSet<CoordinatesInWorld> createSortedSet(CoordinatesInWorld coordinates) {
 		SortedSet<CoordinatesInWorld> result = new TreeSet<CoordinatesInWorld>();
 		result.add(coordinates);
 		return result;
@@ -83,8 +80,7 @@ public class CoordinatesCollectionJson {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((coordinates == null) ? 0 : coordinates.hashCode());
+		result = prime * result + ((coordinates == null) ? 0 : coordinates.hashCode());
 		return result;
 	}
 

@@ -14,17 +14,14 @@ import amidst.mojangapi.world.testworld.io.TestWorldDirectoryWriter;
 
 @ThreadSafe
 public class TestWorldBuilder {
-	public static TestWorldBuilder from(
-			TestWorldDirectoryDeclaration directoryDeclaration) {
-		return new TestWorldBuilder(directoryDeclaration,
-				FakeWorldBuilder.create(directoryDeclaration));
+	public static TestWorldBuilder from(TestWorldDirectoryDeclaration directoryDeclaration) {
+		return new TestWorldBuilder(directoryDeclaration, FakeWorldBuilder.create(directoryDeclaration));
 	}
 
 	private final TestWorldDirectoryDeclaration directoryDeclaration;
 	private final FakeWorldBuilder worldBuilder;
 
-	public TestWorldBuilder(TestWorldDirectoryDeclaration directoryDeclaration,
-			FakeWorldBuilder worldBuilder) {
+	public TestWorldBuilder(TestWorldDirectoryDeclaration directoryDeclaration, FakeWorldBuilder worldBuilder) {
 		this.directoryDeclaration = directoryDeclaration;
 		this.worldBuilder = worldBuilder;
 	}
@@ -39,21 +36,20 @@ public class TestWorldBuilder {
 
 	public TestWorldDirectory createDirectory(
 			TestWorldDeclaration worldDeclaration,
-			MinecraftInterface realMinecraftInterface)
-			throws MinecraftInterfaceException {
+			MinecraftInterface realMinecraftInterface) throws MinecraftInterfaceException {
 		BiomeDataJsonBuilder builder = new BiomeDataJsonBuilder();
 		RequestStoringMinecraftInterface minecraftInterface = new RequestStoringMinecraftInterface(
-				realMinecraftInterface, builder);
-		World realWorld = worldBuilder.createRealWorld(worldDeclaration,
-				minecraftInterface);
-		return directoryDeclaration
-				.create(worldDeclaration, realWorld,
-						builder.createQuarterBiomeData(),
-						builder.createFullBiomeData());
+				realMinecraftInterface,
+				builder);
+		World realWorld = worldBuilder.createRealWorld(worldDeclaration, minecraftInterface);
+		return directoryDeclaration.create(
+				worldDeclaration,
+				realWorld,
+				builder.createQuarterBiomeData(),
+				builder.createFullBiomeData());
 	}
 
-	public TestWorld createTestWorld(TestWorldDirectory directory)
-			throws MinecraftInterfaceException {
+	public TestWorld createTestWorld(TestWorldDirectory directory) throws MinecraftInterfaceException {
 		World world = worldBuilder.createFakeWorld(directory);
 		return new TestWorld(world, directory);
 	}

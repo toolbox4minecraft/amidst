@@ -8,10 +8,8 @@ import amidst.mojangapi.world.WorldType;
 
 @NotThreadSafe
 public class SeedAndWorldTypeWidget extends ImmutableTextWidget {
-	public SeedAndWorldTypeWidget(CornerAnchorPoint anchor,
-			WorldSeed worldSeed, WorldType worldType) {
-		super(anchor, worldSeed.getLabel(), "World Type: "
-				+ worldType.getName());
+	public SeedAndWorldTypeWidget(CornerAnchorPoint anchor, WorldSeed worldSeed, WorldType worldType) {
+		super(anchor, worldSeed.getLabel(), "World Type: " + worldType.getName());
 	}
 
 	/**
@@ -20,7 +18,6 @@ public class SeedAndWorldTypeWidget extends ImmutableTextWidget {
 	 */
 	@Override
 	protected int getLineSeparationHeight(FontMetrics fontMetrics) {
-		return (int) Math
-				.round(super.getLineSeparationHeight(fontMetrics) * 1.2);
+		return (int) Math.round(super.getLineSeparationHeight(fontMetrics) * 1.2);
 	}
 }

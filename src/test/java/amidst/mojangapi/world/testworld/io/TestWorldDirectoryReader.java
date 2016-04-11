@@ -20,22 +20,17 @@ public class TestWorldDirectoryReader {
 
 	private final TestWorldDirectoryDeclaration directoryDeclaration;
 
-	public TestWorldDirectoryReader(
-			TestWorldDirectoryDeclaration directoryDeclaration) {
+	public TestWorldDirectoryReader(TestWorldDirectoryDeclaration directoryDeclaration) {
 		this.directoryDeclaration = directoryDeclaration;
 	}
 
-	public TestWorldDirectory read(TestWorldDeclaration worldDeclaration)
-			throws IOException {
-		return new TestWorldDirectory(directoryDeclaration,
-				readAll(worldDeclaration));
+	public TestWorldDirectory read(TestWorldDeclaration worldDeclaration) throws IOException {
+		return new TestWorldDirectory(directoryDeclaration, readAll(worldDeclaration));
 	}
 
-	private Map<String, Object> readAll(TestWorldDeclaration worldDeclaration)
-			throws IOException {
+	private Map<String, Object> readAll(TestWorldDeclaration worldDeclaration) throws IOException {
 		Map<String, Object> result = new HashMap<String, Object>();
-		for (TestWorldEntryDeclaration<?> entryDeclaration : directoryDeclaration
-				.getEntryDeclarations()) {
+		for (TestWorldEntryDeclaration<?> entryDeclaration : directoryDeclaration.getEntryDeclarations()) {
 			if (worldDeclaration.isSupported(entryDeclaration.getName())) {
 				readEntry(result, worldDeclaration, entryDeclaration);
 			}
@@ -43,28 +38,24 @@ public class TestWorldDirectoryReader {
 		return result;
 	}
 
-	private void readEntry(Map<String, Object> result,
+	private void readEntry(
+			Map<String, Object> result,
 			TestWorldDeclaration worldDeclaration,
-			TestWorldEntryDeclaration<?> entryDeclaration) throws IOException,
-			FileNotFoundException {
+			TestWorldEntryDeclaration<?> entryDeclaration) throws IOException, FileNotFoundException {
 		String name = entryDeclaration.getName();
 		String zipResourceName = worldDeclaration.getZipResourceName(name);
 		try (ZipInputStream zipInputStream = createZipInputStream(zipResourceName)) {
 			String actualFilename = zipInputStream.getNextEntry().getName();
 			String expectedFilename = name + JSON_FILE_EXTENSION;
 			if (actualFilename.equals(expectedFilename)) {
-				result.put(name,
-						entryDeclaration.readFromStream(zipInputStream));
+				result.put(name, entryDeclaration.readFromStream(zipInputStream));
 			} else {
-				throw new FileNotFoundException(zipResourceName
-						+ " does not contain the file " + expectedFilename);
+				throw new FileNotFoundException(zipResourceName + " does not contain the file " + expectedFilename);
 			}
 		}
 	}
 
 	private ZipInputStream createZipInputStream(String zipFilename) {
-		return new ZipInputStream(
-				ResourceLoader.getResourceAsStream(zipFilename),
-				StandardCharsets.UTF_8);
+		return new ZipInputStream(ResourceLoader.getResourceAsStream(zipFilename), StandardCharsets.UTF_8);
 	}
 }

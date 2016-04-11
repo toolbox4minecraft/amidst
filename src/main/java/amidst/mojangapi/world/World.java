@@ -36,11 +36,16 @@ public class World {
 	private final WorldIconProducer<Void> netherFortressProducer;
 	private final WorldIconProducer<List<EndIsland>> endCityProducer;
 
-	public World(WorldSeed worldSeed, WorldType worldType,
-			String generatorOptions, MovablePlayerList movablePlayerList,
+	public World(
+			WorldSeed worldSeed,
+			WorldType worldType,
+			String generatorOptions,
+			MovablePlayerList movablePlayerList,
 			RecognisedVersion recognisedVersion,
-			VersionFeatures versionFeatures, BiomeDataOracle biomeDataOracle,
-			EndIslandOracle endIslandOracle, SlimeChunkOracle slimeChunkOracle,
+			VersionFeatures versionFeatures,
+			BiomeDataOracle biomeDataOracle,
+			EndIslandOracle endIslandOracle,
+			SlimeChunkOracle slimeChunkOracle,
 			CachedWorldIconProducer spawnProducer,
 			CachedWorldIconProducer strongholdProducer,
 			CachedWorldIconProducer playerProducer,

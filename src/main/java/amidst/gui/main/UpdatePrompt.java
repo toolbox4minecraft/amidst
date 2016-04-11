@@ -23,8 +23,11 @@ import amidst.threading.WorkerExecutor;
 public class UpdatePrompt {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@NotNull
-	public static UpdatePrompt from(AmidstVersion currentVersion,
-			WorkerExecutor workerExecutor, MainWindow mainWindow, boolean silent) {
+	public static UpdatePrompt from(
+			AmidstVersion currentVersion,
+			WorkerExecutor workerExecutor,
+			MainWindow mainWindow,
+			boolean silent) {
 		// @formatter:off
 		if (mainWindow != null) {
 			if (silent) {
@@ -54,8 +57,7 @@ public class UpdatePrompt {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private static void displayExceptionDirectly(Exception exception) {
-		JOptionPane.showMessageDialog(null, getStackTraceAsString(exception),
-				TITLE, JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null, getStackTraceAsString(exception), TITLE, JOptionPane.ERROR_MESSAGE);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -67,14 +69,12 @@ public class UpdatePrompt {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private static void displayMessageDirectly(String message) {
-		JOptionPane.showMessageDialog(null, message, TITLE,
-				JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, message, TITLE, JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private static boolean askToConfirmDirectly(String message) {
-		return JOptionPane.showConfirmDialog(null, message, TITLE,
-				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+		return JOptionPane.showConfirmDialog(null, message, TITLE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 	}
 
 	private static final String TITLE = "Amidst Updater";
@@ -92,9 +92,11 @@ public class UpdatePrompt {
 	private final Function<String, Boolean> updateConfirmer;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public UpdatePrompt(AmidstVersion currentVersion,
+	public UpdatePrompt(
+			AmidstVersion currentVersion,
 			WorkerExecutor workerExecutor,
-			Consumer<Exception> exceptionConsumer, Runnable noUpdatesDisplayer,
+			Consumer<Exception> exceptionConsumer,
+			Runnable noUpdatesDisplayer,
 			Function<String, Boolean> updateConfirmer) {
 		this.currentVersion = currentVersion;
 		this.workerExecutor = workerExecutor;
@@ -105,8 +107,7 @@ public class UpdatePrompt {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void check() {
-		workerExecutor.run(UpdateInformationRetriever::retrieve,
-				this::displayResult, this::onCheckFailed);
+		workerExecutor.run(UpdateInformationRetriever::retrieve, this::displayResult, this::onCheckFailed);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -126,8 +127,7 @@ public class UpdatePrompt {
 		if (getUserChoice(updateInformation)) {
 			try {
 				openURL(new URI(updateInformation.getDownloadUrl()));
-			} catch (IOException | UnsupportedOperationException
-					| URISyntaxException e) {
+			} catch (IOException | UnsupportedOperationException | URISyntaxException e) {
 				displayError(e);
 			}
 		}
@@ -141,8 +141,7 @@ public class UpdatePrompt {
 			return askToConfirm(createMessage(message, newVersion, "major"));
 		} else if (newVersion.isNewerMinorVersionThan(currentVersion)) {
 			return askToConfirm(createMessage(message, newVersion, "minor"));
-		} else if (newVersion
-				.isSameVersionButOldPreReleaseAndNewStable(currentVersion)) {
+		} else if (newVersion.isSameVersionButOldPreReleaseAndNewStable(currentVersion)) {
 			return askToConfirm(createMessage(message, newVersion, "stable"));
 		} else {
 			noUpdatesDisplayer.run();
@@ -151,13 +150,10 @@ public class UpdatePrompt {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private String createMessage(String message, AmidstVersion newVersion,
-			String versionType) {
-		return "A new " + versionType + " version of Amidst is available:\n"
-				+ "Current Version: " + currentVersion.createVersionString()
-				+ "\n" + "New Version: " + newVersion.createVersionString()
-				+ "\n" + "Do you want to upgrade?"
-				+ createMessageSuffix(message);
+	private String createMessage(String message, AmidstVersion newVersion, String versionType) {
+		return "A new " + versionType + " version of Amidst is available:\n" + "Current Version: "
+				+ currentVersion.createVersionString() + "\n" + "New Version: " + newVersion.createVersionString()
+				+ "\n" + "Do you want to upgrade?" + createMessageSuffix(message);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -175,15 +171,13 @@ public class UpdatePrompt {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void openURL(URI uri) throws IOException,
-			UnsupportedOperationException {
+	private void openURL(URI uri) throws IOException, UnsupportedOperationException {
 		if (Desktop.isDesktopSupported()) {
 			Desktop desktop = Desktop.getDesktop();
 			if (desktop.isSupported(Desktop.Action.BROWSE)) {
 				desktop.browse(uri);
 			} else {
-				throw new UnsupportedOperationException(
-						"Unable to open browser page.");
+				throw new UnsupportedOperationException("Unable to open browser page.");
 			}
 		} else {
 			throw new UnsupportedOperationException("Unable to open browser.");

@@ -13,8 +13,7 @@ import amidst.mojangapi.world.oracle.EndIsland;
 public class TheEndColorProvider implements ColorProvider {
 	private static final int VOID_TRANSPARENT_BLACK = 0x00000000;
 
-	private static final BufferedImage TEXTURES = ResourceLoader
-			.getImage("/amidst/gui/main/endtextures.png");
+	private static final BufferedImage TEXTURES = ResourceLoader.getImage("/amidst/gui/main/endtextures.png");
 
 	private static final int TEXTURES_WIDTH = TEXTURES.getWidth();
 	private static final int TEXTURES_HEIGHT = TEXTURES.getHeight() >> 1;
@@ -25,12 +24,10 @@ public class TheEndColorProvider implements ColorProvider {
 	 */
 	private static final float INFLUENCE_FADE_START = 0;
 	private static final float INFLUENCE_FADE_FINISH = -8;
-	private static final float INFLUENCE_FADE_RANGE = INFLUENCE_FADE_START
-			- INFLUENCE_FADE_FINISH;
+	private static final float INFLUENCE_FADE_RANGE = INFLUENCE_FADE_START - INFLUENCE_FADE_FINISH;
 
 	@Override
-	public int getColorAt(Dimension dimension, Fragment fragment, long cornerX,
-			long cornerY, int x, int y) {
+	public int getColorAt(Dimension dimension, Fragment fragment, long cornerX, long cornerY, int x, int y) {
 		long xAsQuarter = cornerX + x;
 		long yAsQuarter = cornerY + y;
 		// @formatter:off
@@ -45,16 +42,21 @@ public class TheEndColorProvider implements ColorProvider {
 		// @formatter:on
 	}
 
-	private int getColorAt(int x, int y, long chunkX, long chunkY,
-			int textureX, int textureY, List<EndIsland> endIslands) {
+	private int getColorAt(
+			int x,
+			int y,
+			long chunkX,
+			long chunkY,
+			int textureX,
+			int textureY,
+			List<EndIsland> endIslands) {
 		// Determine whether this
 		float maxInfluence = getMaxInfluence(x, y, endIslands);
 		if (maxInfluence >= INFLUENCE_FADE_START) {
 			// Draw endstone island
 			return getEndStoneTextureAt(textureX, textureY);
 		} else {
-			return getFadingColorAt(chunkX, chunkY, textureX, textureY,
-					maxInfluence);
+			return getFadingColorAt(chunkX, chunkY, textureX, textureY, maxInfluence);
 		}
 	}
 
@@ -69,8 +71,7 @@ public class TheEndColorProvider implements ColorProvider {
 		return result;
 	}
 
-	private int getFadingColorAt(long chunkX, long chunkY, int textureX,
-			int textureY, float maxInfluence) {
+	private int getFadingColorAt(long chunkX, long chunkY, int textureX, int textureY, float maxInfluence) {
 		int result = VOID_TRANSPARENT_BLACK;
 		if (showRockyShores(chunkX, chunkY)) {
 			result = getRockyShoresTextureAt(textureX, textureY);
@@ -83,8 +84,7 @@ public class TheEndColorProvider implements ColorProvider {
 				// favor the island pixel instead of the rocky shores pixel
 				// (Should look perfect without needing to blend, because
 				// rocky shore is still endstone texture)
-				return getFadedEndStoneTextureAt(textureX, textureY,
-						fadingIslandAlpha);
+				return getFadedEndStoneTextureAt(textureX, textureY, fadingIslandAlpha);
 			}
 		}
 		return result;
@@ -116,7 +116,6 @@ public class TheEndColorProvider implements ColorProvider {
 	}
 
 	private int getFadedEndStoneTextureAt(int textureX, int textureY, int alpha) {
-		return (getEndStoneTextureAt(textureX, textureY) & 0x00FFFFFF)
-				| (alpha << 24);
+		return (getEndStoneTextureAt(textureX, textureY) & 0x00FFFFFF) | (alpha << 24);
 	}
 }

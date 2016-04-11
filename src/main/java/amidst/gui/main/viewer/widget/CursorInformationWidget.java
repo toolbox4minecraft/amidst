@@ -27,8 +27,10 @@ public class CursorInformationWidget extends TextWidget {
 	private final Setting<Dimension> dimensionSetting;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public CursorInformationWidget(CornerAnchorPoint anchor,
-			FragmentGraph graph, FragmentGraphToScreenTranslator translator,
+	public CursorInformationWidget(
+			CornerAnchorPoint anchor,
+			FragmentGraph graph,
+			FragmentGraphToScreenTranslator translator,
 			Setting<Dimension> dimensionSetting) {
 		super(anchor);
 		this.graph = graph;
@@ -41,8 +43,7 @@ public class CursorInformationWidget extends TextWidget {
 	protected List<String> updateTextLines() {
 		Point mousePosition = getMousePosition();
 		if (mousePosition != null) {
-			CoordinatesInWorld coordinates = translator
-					.screenToWorld(mousePosition);
+			CoordinatesInWorld coordinates = translator.screenToWorld(mousePosition);
 			String biomeName = getBiomeNameAt(coordinates);
 			return Arrays.asList(biomeName + " " + coordinates.toString());
 		} else {

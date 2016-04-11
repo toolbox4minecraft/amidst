@@ -30,8 +30,7 @@ public class WorldSeed {
 	}
 
 	public static WorldSeed random() {
-		return new WorldSeed(new Random().nextLong(), null,
-				WorldSeedType.RANDOM);
+		return new WorldSeed(new Random().nextLong(), null, WorldSeedType.RANDOM);
 	}
 
 	public static WorldSeed fromUserInput(String input) {

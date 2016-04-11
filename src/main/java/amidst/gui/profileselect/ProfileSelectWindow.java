@@ -39,16 +39,18 @@ public class ProfileSelectWindow {
 	private final ProfileSelectPanel profileSelectPanel;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ProfileSelectWindow(Application application,
-			AmidstMetaData metadata, WorkerExecutor workerExecutor,
-			MojangApi mojangApi, AmidstSettings settings) {
+	public ProfileSelectWindow(
+			Application application,
+			AmidstMetaData metadata,
+			WorkerExecutor workerExecutor,
+			MojangApi mojangApi,
+			AmidstSettings settings) {
 		this.application = application;
 		this.metadata = metadata;
 		this.workerExecutor = workerExecutor;
 		this.mojangApi = mojangApi;
 		this.settings = settings;
-		this.profileSelectPanel = new ProfileSelectPanel(settings.lastProfile,
-				"Scanning...");
+		this.profileSelectPanel = new ProfileSelectPanel(settings.lastProfile, "Scanning...");
 		this.frame = createFrame();
 		scanAndLoadProfilesLater();
 	}
@@ -75,8 +77,7 @@ public class ProfileSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JLabel createTitleLabel() {
-		JLabel result = new JLabel("Please select a Minecraft profile:",
-				SwingConstants.CENTER);
+		JLabel result = new JLabel("Please select a Minecraft profile:", SwingConstants.CENTER);
 		result.setFont(new Font("arial", Font.BOLD, 16));
 		return result;
 	}
@@ -100,24 +101,19 @@ public class ProfileSelectWindow {
 	private String getScrollPaneLayoutString() {
 		int scrollBarWidth = (Integer) UIManager.get("ScrollBar.width");
 		int preferredWidth = ProfileComponent.PREFERRED_WIDTH + scrollBarWidth;
-		int preferredHeight = ProfileComponent.PREFERRED_HEIGHT
-				* HEIGHT_IN_PROFILE_COMPONENTS;
-		return "grow, push, w :" + preferredWidth + ":, h 80:"
-				+ preferredHeight + ":";
+		int preferredHeight = ProfileComponent.PREFERRED_HEIGHT * HEIGHT_IN_PROFILE_COMPONENTS;
+		return "grow, push, w :" + preferredWidth + ":, h 80:" + preferredHeight + ":";
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void scanAndLoadProfilesLater() {
-		workerExecutor.run(this::scanAndLoadProfiles, this::displayProfiles,
-				this::scanAndLoadProfilesFailed);
+		workerExecutor.run(this::scanAndLoadProfiles, this::displayProfiles, this::scanAndLoadProfilesFailed);
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private LauncherProfilesJson scanAndLoadProfiles()
-			throws MojangApiParsingException, IOException {
+	private LauncherProfilesJson scanAndLoadProfiles() throws MojangApiParsingException, IOException {
 		Log.i("Scanning for profiles.");
-		LauncherProfilesJson launcherProfile = mojangApi
-				.getDotMinecraftDirectory().readLauncherProfilesJson();
+		LauncherProfilesJson launcherProfile = mojangApi.getDotMinecraftDirectory().readLauncherProfilesJson();
 		Log.i("Successfully loaded profile list.");
 		return launcherProfile;
 	}
@@ -130,8 +126,7 @@ public class ProfileSelectWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void createProfileComponentsIfNecessary(
-			LauncherProfilesJson launcherProfile) {
+	private void createProfileComponentsIfNecessary(LauncherProfilesJson launcherProfile) {
 		if (launcherProfile.getProfiles().isEmpty()) {
 			Log.w("No profiles found in launcher_profiles.json");
 			profileSelectPanel.setEmptyMessage("No profiles found");
@@ -143,8 +138,7 @@ public class ProfileSelectWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createProfileComponents(LauncherProfilesJson launcherProfile) {
 		for (LauncherProfileJson profile : launcherProfile.getProfiles()) {
-			profileSelectPanel.addProfile(new LocalProfileComponent(
-					application, workerExecutor, mojangApi, profile));
+			profileSelectPanel.addProfile(new LocalProfileComponent(application, workerExecutor, mojangApi, profile));
 		}
 	}
 

@@ -19,7 +19,8 @@ public class VersionFeature<V> {
 	private final List<VersionFeatureEntry<V>> exactMatches;
 	private final List<VersionFeatureEntry<V>> entriesNewestFirst;
 
-	public VersionFeature(V defaultValue,
+	public VersionFeature(
+			V defaultValue,
 			List<VersionFeatureEntry<V>> exactMatches,
 			List<VersionFeatureEntry<V>> entriesNewestFirst) {
 		this.defaultValue = defaultValue;
@@ -49,8 +50,7 @@ public class VersionFeature<V> {
 		return null;
 	}
 
-	private VersionFeatureEntry<V> tryFindGreatestEntryLowerOrEqualTo(
-			RecognisedVersion version) {
+	private VersionFeatureEntry<V> tryFindGreatestEntryLowerOrEqualTo(RecognisedVersion version) {
 		for (VersionFeatureEntry<V> entry : entriesNewestFirst) {
 			if (RecognisedVersion.isOlderOrEqualTo(entry.getVersion(), version)) {
 				return entry;

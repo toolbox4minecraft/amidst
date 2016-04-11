@@ -28,14 +28,11 @@ public class ViewerFacadeBuilder {
 	private final FragmentManager fragmentManager;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ViewerFacadeBuilder(AmidstSettings settings,
-			LayerBuilder layerBuilder) {
+	public ViewerFacadeBuilder(AmidstSettings settings, LayerBuilder layerBuilder) {
 		this.settings = settings;
 		this.zoom = new Zoom(settings.maxZoom);
 		this.layerBuilder = layerBuilder;
-		this.fragmentManager = new FragmentManager(
-				layerBuilder.getConstructors(),
-				layerBuilder.getNumberOfLayers());
+		this.fragmentManager = new FragmentManager(layerBuilder.getConstructors(), layerBuilder.getNumberOfLayers());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -43,26 +40,56 @@ public class ViewerFacadeBuilder {
 		Graphics2DAccelerationCounter accelerationCounter = new Graphics2DAccelerationCounter();
 		Movement movement = new Movement(settings.smoothScrolling);
 		WorldIconSelection worldIconSelection = new WorldIconSelection();
-		LayerManager layerManager = layerBuilder.create(settings, world,
-				biomeSelection, worldIconSelection, zoom, accelerationCounter);
-		FragmentGraph graph = new FragmentGraph(layerManager.getDeclarations(),
-				fragmentManager);
-		FragmentGraphToScreenTranslator translator = new FragmentGraphToScreenTranslator(
-				graph, zoom);
-		FragmentQueueProcessor fragmentQueueProcessor = fragmentManager
-				.createQueueProcessor(layerManager, settings.dimension);
-		LayerReloader layerReloader = layerManager.createLayerReloader(world);
-		WidgetBuilder widgetBuilder = new WidgetBuilder(world, graph,
-				translator, zoom, biomeSelection, worldIconSelection,
-				layerReloader, fragmentManager, accelerationCounter, settings);
-		List<Widget> widgets = widgetBuilder.create();
-		Drawer drawer = new Drawer(graph, translator, zoom, movement, widgets,
-				layerManager.getDrawers(), settings.dimension,
+		LayerManager layerManager = layerBuilder.create(
+				settings,
+				world,
+				biomeSelection,
+				worldIconSelection,
+				zoom,
 				accelerationCounter);
-		Viewer viewer = new Viewer(new ViewerMouseListener(new WidgetManager(
-				widgets), graph, translator, zoom, movement, actions), drawer);
-		return new ViewerFacade(world, graph, translator, zoom, viewer,
-				layerReloader, worldIconSelection, layerManager,
+		FragmentGraph graph = new FragmentGraph(layerManager.getDeclarations(), fragmentManager);
+		FragmentGraphToScreenTranslator translator = new FragmentGraphToScreenTranslator(graph, zoom);
+		FragmentQueueProcessor fragmentQueueProcessor = fragmentManager.createQueueProcessor(
+				layerManager,
+				settings.dimension);
+		LayerReloader layerReloader = layerManager.createLayerReloader(world);
+		WidgetBuilder widgetBuilder = new WidgetBuilder(
+				world,
+				graph,
+				translator,
+				zoom,
+				biomeSelection,
+				worldIconSelection,
+				layerReloader,
+				fragmentManager,
+				accelerationCounter,
+				settings);
+		List<Widget> widgets = widgetBuilder.create();
+		Drawer drawer = new Drawer(
+				graph,
+				translator,
+				zoom,
+				movement,
+				widgets,
+				layerManager.getDrawers(),
+				settings.dimension,
+				accelerationCounter);
+		Viewer viewer = new Viewer(new ViewerMouseListener(
+				new WidgetManager(widgets),
+				graph,
+				translator,
+				zoom,
+				movement,
+				actions), drawer);
+		return new ViewerFacade(
+				world,
+				graph,
+				translator,
+				zoom,
+				viewer,
+				layerReloader,
+				worldIconSelection,
+				layerManager,
 				createOnRepainterTick(viewer),
 				createOnFragmentLoaderTick(fragmentQueueProcessor),
 				createOnPlayerFinishedLoading(layerReloader));
@@ -80,8 +107,7 @@ public class ViewerFacadeBuilder {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private Runnable createOnFragmentLoaderTick(
-			final FragmentQueueProcessor fragmentQueueProcessor) {
+	private Runnable createOnFragmentLoaderTick(final FragmentQueueProcessor fragmentQueueProcessor) {
 		return new Runnable() {
 			@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 			@Override
@@ -92,8 +118,7 @@ public class ViewerFacadeBuilder {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private Runnable createOnPlayerFinishedLoading(
-			final LayerReloader layerReloader) {
+	private Runnable createOnPlayerFinishedLoading(final LayerReloader layerReloader) {
 		return new Runnable() {
 			@CalledOnlyBy(AmidstThread.EDT)
 			@Override

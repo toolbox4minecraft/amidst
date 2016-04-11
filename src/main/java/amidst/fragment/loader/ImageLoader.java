@@ -22,8 +22,7 @@ public class ImageLoader extends FragmentLoader {
 	private volatile BufferedImage bufferedImage;
 
 	@CalledByAny
-	public ImageLoader(LayerDeclaration declaration, Resolution resolution,
-			ColorProvider colorProvider) {
+	public ImageLoader(LayerDeclaration declaration, Resolution resolution, ColorProvider colorProvider) {
 		super(declaration);
 		this.resolution = resolution;
 		this.colorProvider = colorProvider;
@@ -56,18 +55,15 @@ public class ImageLoader extends FragmentLoader {
 		long cornerY = corner.getYAs(resolution);
 		drawToCache(dimension, fragment, cornerX, cornerY);
 		bufferedImage.setRGB(0, 0, size, size, rgbArray, 0, size);
-		bufferedImage = fragment.getAndSetImage(declaration.getLayerId(),
-				bufferedImage);
+		bufferedImage = fragment.getAndSetImage(declaration.getLayerId(), bufferedImage);
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private void drawToCache(Dimension dimension, Fragment fragment,
-			long cornerX, long cornerY) {
+	private void drawToCache(Dimension dimension, Fragment fragment, long cornerX, long cornerY) {
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
 				int index = getCacheIndex(x, y);
-				rgbArray[index] = colorProvider.getColorAt(dimension, fragment,
-						cornerX, cornerY, x, y);
+				rgbArray[index] = colorProvider.getColorAt(dimension, fragment, cornerX, cornerY, x, y);
 			}
 		}
 	}

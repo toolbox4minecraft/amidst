@@ -9,10 +9,8 @@ import amidst.documentation.Immutable;
 
 @Immutable
 public class AmidstMetaData {
-	public static AmidstMetaData from(Properties properties,
-			BufferedImage... icons) {
-		return new AmidstMetaData(Arrays.asList(icons),
-				AmidstVersion.from(properties));
+	public static AmidstMetaData from(Properties properties, BufferedImage... icons) {
+		return new AmidstMetaData(Arrays.asList(icons), AmidstVersion.from(properties));
 	}
 
 	private final List<BufferedImage> icons;

@@ -12,8 +12,7 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 public class BiomeDataLoader extends FragmentLoader {
 	private final BiomeDataOracle biomeDataOracle;
 
-	public BiomeDataLoader(LayerDeclaration declaration,
-			BiomeDataOracle biomeDataOracle) {
+	public BiomeDataLoader(LayerDeclaration declaration, BiomeDataOracle biomeDataOracle) {
 		super(declaration);
 		this.biomeDataOracle = biomeDataOracle;
 	}

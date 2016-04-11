@@ -46,8 +46,10 @@ public class WorkerExecutor {
 		});
 	}
 
-	public <P> void run(ProgressReportingExceptionalWorker<P> main,
-			Consumer<P> onProgress, Consumer<Exception> onException) {
+	public <P> void run(
+			ProgressReportingExceptionalWorker<P> main,
+			Consumer<P> onProgress,
+			Consumer<Exception> onException) {
 		runInWorker(() -> {
 			try {
 				main.run(progressReporter(onProgress));
@@ -71,8 +73,7 @@ public class WorkerExecutor {
 		});
 	}
 
-	public void run(ExceptionalWorker main, Runnable onFinished,
-			Consumer<Exception> onException) {
+	public void run(ExceptionalWorker main, Runnable onFinished, Consumer<Exception> onException) {
 		runInWorker(() -> {
 			try {
 				main.run();
@@ -83,8 +84,7 @@ public class WorkerExecutor {
 		});
 	}
 
-	public <R> void run(ExceptionalWorkerWithResult<R> main,
-			Consumer<R> onFinished, Consumer<Exception> onException) {
+	public <R> void run(ExceptionalWorkerWithResult<R> main, Consumer<R> onFinished, Consumer<Exception> onException) {
 		runInWorker(() -> {
 			try {
 				R output = main.run();
@@ -95,24 +95,24 @@ public class WorkerExecutor {
 		});
 	}
 
-	public <P> void run(ProgressReportingWorker<P> main,
-			Consumer<P> onProgress, Runnable onFinished) {
+	public <P> void run(ProgressReportingWorker<P> main, Consumer<P> onProgress, Runnable onFinished) {
 		runInWorker(() -> {
 			main.run(progressReporter(onProgress));
 			runInEDT(() -> onFinished.run());
 		});
 	}
 
-	public <R, P> void run(ProgressReportingWorkerWithResult<R, P> main,
-			Consumer<P> onProgress, Consumer<R> onFinished) {
+	public <R, P> void run(ProgressReportingWorkerWithResult<R, P> main, Consumer<P> onProgress, Consumer<R> onFinished) {
 		runInWorker(() -> {
 			R output = main.run(progressReporter(onProgress));
 			runInEDT(() -> onFinished.accept(output));
 		});
 	}
 
-	public <P> void run(ProgressReportingExceptionalWorker<P> main,
-			Consumer<P> onProgress, Runnable onFinished,
+	public <P> void run(
+			ProgressReportingExceptionalWorker<P> main,
+			Consumer<P> onProgress,
+			Runnable onFinished,
 			Consumer<Exception> onException) {
 		runInWorker(() -> {
 			try {
@@ -126,7 +126,8 @@ public class WorkerExecutor {
 
 	public <R, P> void run(
 			ProgressReportingExceptionalWorkerWithResult<R, P> main,
-			Consumer<P> onProgress, Consumer<R> onFinished,
+			Consumer<P> onProgress,
+			Consumer<R> onFinished,
 			Consumer<Exception> onException) {
 		runInWorker(() -> {
 			try {

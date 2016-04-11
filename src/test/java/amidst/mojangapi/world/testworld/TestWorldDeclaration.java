@@ -73,18 +73,27 @@ public enum TestWorldDeclaration {
 	private final File directory;
 	private final String directoryString;
 
-	private TestWorldDeclaration(RecognisedVersion recognisedVersion,
-			String seed, WorldType worldType, String... supported) {
+	private TestWorldDeclaration(
+			RecognisedVersion recognisedVersion,
+			String seed,
+			WorldType worldType,
+			String... supported) {
 		this.recognisedVersion = recognisedVersion;
 		this.worldSeed = WorldSeed.fromUserInput(seed);
 		this.worldType = worldType;
-		this.supportedEntryNames = Collections.unmodifiableList(Arrays
-				.asList(supported));
-		this.directory = Paths.get("src", "test", "resources", "amidst",
-				"mojangapi", "world", "testworld", "storage",
-				recognisedVersion.getName(), "" + worldSeed.getLong()).toFile();
-		this.directoryString = RESOURCE_PREFIX + recognisedVersion.getName()
-				+ "/" + worldSeed.getLong() + "/";
+		this.supportedEntryNames = Collections.unmodifiableList(Arrays.asList(supported));
+		this.directory = Paths.get(
+				"src",
+				"test",
+				"resources",
+				"amidst",
+				"mojangapi",
+				"world",
+				"testworld",
+				"storage",
+				recognisedVersion.getName(),
+				"" + worldSeed.getLong()).toFile();
+		this.directoryString = RESOURCE_PREFIX + recognisedVersion.getName() + "/" + worldSeed.getLong() + "/";
 	}
 
 	public RecognisedVersion getRecognisedVersion() {

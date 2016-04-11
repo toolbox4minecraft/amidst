@@ -34,8 +34,7 @@ public class DotMinecraftDirectory {
 	}
 
 	public boolean isValid() {
-		return root.isDirectory() && libraries.isDirectory()
-				&& launcherProfilesJson.isFile();
+		return root.isDirectory() && libraries.isDirectory() && launcherProfilesJson.isFile();
 	}
 
 	public File getRoot() {
@@ -59,8 +58,7 @@ public class DotMinecraftDirectory {
 	}
 
 	@NotNull
-	public LauncherProfilesJson readLauncherProfilesJson()
-			throws MojangApiParsingException, IOException {
+	public LauncherProfilesJson readLauncherProfilesJson() throws MojangApiParsingException, IOException {
 		return JsonReader.readLauncherProfilesFrom(launcherProfilesJson);
 	}
 }

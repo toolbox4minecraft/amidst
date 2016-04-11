@@ -13,10 +13,8 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
  * see https://bugs.mojang.com/browse/MC-92289
  */
 @ThreadSafe
-public class StrongholdProducer_Buggy128Algorithm extends
-		StrongholdProducer_Base {
-	public StrongholdProducer_Buggy128Algorithm(long seed,
-			BiomeDataOracle biomeDataOracle, List<Biome> validBiomes) {
+public class StrongholdProducer_Buggy128Algorithm extends StrongholdProducer_Base {
+	public StrongholdProducer_Buggy128Algorithm(long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomes) {
 		super(seed, biomeDataOracle, validBiomes);
 	}
 

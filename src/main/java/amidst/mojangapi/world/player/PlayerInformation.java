@@ -10,24 +10,22 @@ import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 
 @Immutable
 public class PlayerInformation {
-	private static final WorldIconImage DEFAULT_HEAD = DefaultWorldIconTypes.PLAYER
-			.getImage();
+	private static final WorldIconImage DEFAULT_HEAD = DefaultWorldIconTypes.PLAYER.getImage();
 	private static final PlayerInformation THE_SINGLEPLAYER_PLAYER = new PlayerInformation(
-			null, "The Singleplayer Player", DEFAULT_HEAD);
+			null,
+			"The Singleplayer Player",
+			DEFAULT_HEAD);
 
 	@NotNull
 	public static PlayerInformation fromUUID(String uuid) {
-		PlayerJson player = PlayerInformationRetriever
-				.tryGetPlayerJsonByUUID(uuid);
+		PlayerJson player = PlayerInformationRetriever.tryGetPlayerJsonByUUID(uuid);
 		WorldIconImage head;
 		if (player != null) {
 			head = tryGetPlayerHeadBySkinUrl(player);
 			if (head != null) {
-				return new PlayerInformation(player.getId(), player.getName(),
-						head);
+				return new PlayerInformation(player.getId(), player.getName(), head);
 			} else {
-				return new PlayerInformation(player.getId(), player.getName(),
-						DEFAULT_HEAD);
+				return new PlayerInformation(player.getId(), player.getName(), DEFAULT_HEAD);
 			}
 		} else {
 			return new PlayerInformation(uuid, null, DEFAULT_HEAD);
@@ -36,22 +34,18 @@ public class PlayerInformation {
 
 	@NotNull
 	public static PlayerInformation fromName(String name) {
-		PlayerJson player = PlayerInformationRetriever
-				.tryGetPlayerJsonByName(name);
+		PlayerJson player = PlayerInformationRetriever.tryGetPlayerJsonByName(name);
 		WorldIconImage head;
 		if (player != null) {
 			head = tryGetPlayerHeadBySkinUrl(player);
 			if (head != null) {
-				return new PlayerInformation(player.getId(), player.getName(),
-						head);
+				return new PlayerInformation(player.getId(), player.getName(), head);
 			} else {
 				head = tryGetPlayerHeadByName(name);
 				if (head != null) {
-					return new PlayerInformation(player.getId(),
-							player.getName(), head);
+					return new PlayerInformation(player.getId(), player.getName(), head);
 				} else {
-					return new PlayerInformation(player.getId(),
-							player.getName(), DEFAULT_HEAD);
+					return new PlayerInformation(player.getId(), player.getName(), DEFAULT_HEAD);
 				}
 			}
 		} else {
@@ -66,16 +60,14 @@ public class PlayerInformation {
 
 	private static WorldIconImage tryGetPlayerHeadBySkinUrl(PlayerJson player) {
 		try {
-			return WorldIconImage.from(PlayerInformationRetriever
-					.tryGetPlayerHeadBySkinUrl(player.getSkinUrl()));
+			return WorldIconImage.from(PlayerInformationRetriever.tryGetPlayerHeadBySkinUrl(player.getSkinUrl()));
 		} catch (MojangApiParsingException e) {
 			return null;
 		}
 	}
 
 	private static WorldIconImage tryGetPlayerHeadByName(String name) {
-		return WorldIconImage.from(PlayerInformationRetriever
-				.tryGetPlayerHeadByName(name));
+		return WorldIconImage.from(PlayerInformationRetriever.tryGetPlayerHeadByName(name));
 	}
 
 	@NotNull

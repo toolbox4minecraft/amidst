@@ -9,8 +9,7 @@ import amidst.mojangapi.world.icon.WorldIcon;
 
 @ThreadSafe
 public abstract class WorldIconProducer<T> {
-	public abstract void produce(CoordinatesInWorld corner,
-			Consumer<WorldIcon> consumer, T additionalData);
+	public abstract void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer, T additionalData);
 
 	public List<WorldIcon> getAt(CoordinatesInWorld corner, T additionalData) {
 		WorldIconCollector collector = new WorldIconCollector();

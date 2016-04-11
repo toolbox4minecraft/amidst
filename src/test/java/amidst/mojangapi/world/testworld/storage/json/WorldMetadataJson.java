@@ -9,8 +9,7 @@ import amidst.mojangapi.world.WorldType;
 @Immutable
 public class WorldMetadataJson {
 	public static WorldMetadataJson from(World world) {
-		return new WorldMetadataJson(world.getRecognisedVersion(), world
-				.getWorldSeed().getLong(), world.getWorldType());
+		return new WorldMetadataJson(world.getRecognisedVersion(), world.getWorldSeed().getLong(), world.getWorldType());
 	}
 
 	private volatile RecognisedVersion recognisedVersion;
@@ -21,8 +20,7 @@ public class WorldMetadataJson {
 	public WorldMetadataJson() {
 	}
 
-	public WorldMetadataJson(RecognisedVersion recognisedVersion, long seed,
-			WorldType worldType) {
+	public WorldMetadataJson(RecognisedVersion recognisedVersion, long seed, WorldType worldType) {
 		this.recognisedVersion = recognisedVersion;
 		this.seed = seed;
 		this.worldType = worldType;

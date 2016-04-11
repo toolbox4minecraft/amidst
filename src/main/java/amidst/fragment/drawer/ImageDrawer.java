@@ -17,7 +17,9 @@ public class ImageDrawer extends FragmentDrawer {
 	private final Resolution resolution;
 	private final Graphics2DAccelerationCounter accelerationCounter;
 
-	public ImageDrawer(LayerDeclaration declaration, Resolution resolution,
+	public ImageDrawer(
+			LayerDeclaration declaration,
+			Resolution resolution,
 			Graphics2DAccelerationCounter accelerationCounter) {
 		super(declaration);
 		this.resolution = resolution;

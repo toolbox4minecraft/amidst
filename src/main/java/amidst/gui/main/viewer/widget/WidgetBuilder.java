@@ -32,10 +32,14 @@ public class WidgetBuilder {
 	private final AmidstSettings settings;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public WidgetBuilder(World world, FragmentGraph graph,
-			FragmentGraphToScreenTranslator translator, Zoom zoom,
+	public WidgetBuilder(
+			World world,
+			FragmentGraph graph,
+			FragmentGraphToScreenTranslator translator,
+			Zoom zoom,
 			BiomeSelection biomeSelection,
-			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
+			WorldIconSelection worldIconSelection,
+			LayerReloader layerReloader,
 			FragmentManager fragmentManager,
 			Graphics2DAccelerationCounter accelerationCounter,
 			AmidstSettings settings) {

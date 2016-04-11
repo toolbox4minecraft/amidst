@@ -42,7 +42,9 @@ public class Amidst {
 		CommandLineParameters parameters = new CommandLineParameters();
 		AmidstMetaData metadata = createMetadata();
 		CmdLineParser parser = new CmdLineParser(parameters, ParserProperties
-				.defaults().withShowDefaults(false).withUsageWidth(120)
+				.defaults()
+				.withShowDefaults(false)
+				.withUsageWidth(120)
 				.withOptionSorter(null));
 		try {
 			parser.parseArgument(args);
@@ -66,8 +68,7 @@ public class Amidst {
 				ResourceLoader.getImage("/amidst/icon/amidst-256x256.png"));
 	}
 
-	private static void run(CommandLineParameters parameters,
-			AmidstMetaData metadata, CmdLineParser parser) {
+	private static void run(CommandLineParameters parameters, AmidstMetaData metadata, CmdLineParser parser) {
 		initFileLogger(parameters.logFile);
 		String versionString = metadata.getVersion().createLongVersionString();
 		if (parameters.printHelp) {
@@ -159,15 +160,18 @@ public class Amidst {
 		System.setProperty("sun.java2d.accthreshold", "0");
 	}
 
-	private static void startApplication(CommandLineParameters parameters,
-			AmidstMetaData metadata, AmidstSettings settings) {
-		SwingUtilities.invokeLater(() -> doStartApplication(parameters,
-				metadata, settings));
+	private static void startApplication(
+			CommandLineParameters parameters,
+			AmidstMetaData metadata,
+			AmidstSettings settings) {
+		SwingUtilities.invokeLater(() -> doStartApplication(parameters, metadata, settings));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private static void doStartApplication(CommandLineParameters parameters,
-			AmidstMetaData metadata, AmidstSettings settings) {
+	private static void doStartApplication(
+			CommandLineParameters parameters,
+			AmidstMetaData metadata,
+			AmidstSettings settings) {
 		try {
 			new Application(parameters, metadata, settings).run();
 		} catch (DotMinecraftDirectoryNotFoundException e) {
@@ -186,8 +190,7 @@ public class Amidst {
 
 	@CalledByAny
 	private static void handleCrash(Throwable e, Thread thread) {
-		String message = "Amidst has encounted an uncaught exception on the thread "
-				+ thread;
+		String message = "Amidst has encounted an uncaught exception on the thread " + thread;
 		try {
 			Log.crash(e, message);
 			displayCrashWindow(message, Log.getAllMessages());
@@ -198,8 +201,7 @@ public class Amidst {
 		}
 	}
 
-	private static void displayCrashWindow(final String message,
-			final String allMessages) {
+	private static void displayCrashWindow(final String message, final String allMessages) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {

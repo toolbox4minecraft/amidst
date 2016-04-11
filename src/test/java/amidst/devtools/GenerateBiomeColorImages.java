@@ -56,8 +56,7 @@ public class GenerateBiomeColorImages {
 	}
 
 	private BufferedImage createImage(Color color) {
-		BufferedImage result = new BufferedImage(WIDTH, HEIGHT,
-				BufferedImage.TYPE_INT_RGB);
+		BufferedImage result = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = result.createGraphics();
 		g2d.setColor(color);
 		g2d.fillRect(0, 0, WIDTH, HEIGHT);

@@ -44,8 +44,7 @@ public enum ResourceLoader {
 	}
 
 	public static String getResourceAsString(String name) throws IOException {
-		try (InputStreamReader reader = new InputStreamReader(
-				getResourceAsStream(name), StandardCharsets.UTF_8)) {
+		try (InputStreamReader reader = new InputStreamReader(getResourceAsStream(name), StandardCharsets.UTF_8)) {
 			char[] buffer = new char[1024];
 			int length;
 			StringBuilder result = new StringBuilder();
@@ -57,7 +56,6 @@ public enum ResourceLoader {
 	}
 
 	public static InputStream getResourceAsStream(String filename) {
-		return new BufferedInputStream(
-				ResourceLoader.class.getResourceAsStream(filename));
+		return new BufferedInputStream(ResourceLoader.class.getResourceAsStream(filename));
 	}
 }

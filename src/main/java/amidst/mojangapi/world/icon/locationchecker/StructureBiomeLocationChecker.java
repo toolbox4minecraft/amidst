@@ -12,8 +12,7 @@ public class StructureBiomeLocationChecker implements LocationChecker {
 	private final int size;
 	private final List<Biome> validBiomes;
 
-	public StructureBiomeLocationChecker(BiomeDataOracle biomeDataOracle,
-			int size, List<Biome> validBiomes) {
+	public StructureBiomeLocationChecker(BiomeDataOracle biomeDataOracle, int size, List<Biome> validBiomes) {
 		this.biomeDataOracle = biomeDataOracle;
 		this.size = size;
 		this.validBiomes = validBiomes;
@@ -21,7 +20,6 @@ public class StructureBiomeLocationChecker implements LocationChecker {
 
 	@Override
 	public boolean isValidLocation(int x, int y) {
-		return biomeDataOracle.isValidBiomeForStructureAtMiddleOfChunk(x, y,
-				size, validBiomes);
+		return biomeDataOracle.isValidBiomeForStructureAtMiddleOfChunk(x, y, size, validBiomes);
 	}
 }

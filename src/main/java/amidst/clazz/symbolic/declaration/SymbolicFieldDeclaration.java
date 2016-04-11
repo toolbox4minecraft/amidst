@@ -10,8 +10,7 @@ public class SymbolicFieldDeclaration {
 	private final String realName;
 	private final boolean isOptional;
 
-	public SymbolicFieldDeclaration(String symbolicName, String realName,
-			boolean isOptional) {
+	public SymbolicFieldDeclaration(String symbolicName, String realName, boolean isOptional) {
 		this.symbolicName = symbolicName;
 		this.realName = realName;
 		this.isOptional = isOptional;
@@ -29,11 +28,10 @@ public class SymbolicFieldDeclaration {
 		return isOptional;
 	}
 
-	public void handleMissing(Exception e, String symbolicClassName,
-			String realClassName) throws SymbolicClassGraphCreationException {
-		String message = "unable to find the real class field " + realClassName
-				+ "." + realName + " -> " + symbolicClassName + "."
-				+ symbolicName;
+	public void handleMissing(Exception e, String symbolicClassName, String realClassName)
+			throws SymbolicClassGraphCreationException {
+		String message = "unable to find the real class field " + realClassName + "." + realName + " -> "
+				+ symbolicClassName + "." + symbolicName;
 		if (isOptional) {
 			Log.i(message);
 		} else {

@@ -22,16 +22,13 @@ public class GenerateRecognisedVersionList {
 	private final DotMinecraftDirectory dotMinecraftDirectory;
 	private final List<String> versionsWithError = new LinkedList<String>();
 	private final List<String> downloadFailed = new LinkedList<String>();
-	private final RecognisedVersionEnumBuilder builder = RecognisedVersionEnumBuilder
-			.createPopulated();
+	private final RecognisedVersionEnumBuilder builder = RecognisedVersionEnumBuilder.createPopulated();
 
-	public GenerateRecognisedVersionList(String prefix, String libraries,
-			VersionListJson versionList) {
+	public GenerateRecognisedVersionList(String prefix, String libraries, VersionListJson versionList) {
 		this.prefix = prefix;
 		this.versionList = versionList;
 		this.versions = new File(prefix);
-		this.dotMinecraftDirectory = new DotMinecraftDirectory(null, new File(
-				libraries));
+		this.dotMinecraftDirectory = new DotMinecraftDirectory(null, new File(libraries));
 	}
 
 	public void run() {
@@ -51,8 +48,7 @@ public class GenerateRecognisedVersionList {
 		if (version.tryDownloadClient(prefix)) {
 			try {
 				process(versionId);
-			} catch (ClassNotFoundException | MalformedURLException
-					| NoClassDefFoundError e) {
+			} catch (ClassNotFoundException | MalformedURLException | NoClassDefFoundError e) {
 				e.printStackTrace();
 				versionsWithError.add(versionId);
 			}
@@ -61,8 +57,7 @@ public class GenerateRecognisedVersionList {
 		}
 	}
 
-	private void process(String versionId) throws MalformedURLException,
-			ClassNotFoundException {
+	private void process(String versionId) throws MalformedURLException, ClassNotFoundException {
 		Log.i("version " + versionId);
 		VersionDirectory versionDirectory = createVersionDirectory(versionId);
 		URLClassLoader classLoader = versionDirectory.createClassLoader();
@@ -99,16 +94,14 @@ public class GenerateRecognisedVersionList {
 
 	private void printMessages() {
 		System.out.println();
-		System.out
-				.println("If any version are listed in the error section, this might be due to missing libraries.\n"
-						+ "Start the given minecraft version with the launcher.\n"
-						+ "This should download the missing libraries. Afterwards, try again.");
+		System.out.println("If any version are listed in the error section, this might be due to missing libraries.\n"
+				+ "Start the given minecraft version with the launcher.\n"
+				+ "This should download the missing libraries. Afterwards, try again.");
 		System.out.println();
 		System.out
 				.println("When copying the magic string from this output, make sure to escape all special characters.");
 		System.out.println();
-		System.out
-				.println("Versions without a match are probably removed from the launcher.");
+		System.out.println("Versions without a match are probably removed from the launcher.");
 		System.out.println();
 		System.out
 				.println("You might have to reorder the output, e.g. when a security fix for an old version came out, after the snapshots for the next version started.");

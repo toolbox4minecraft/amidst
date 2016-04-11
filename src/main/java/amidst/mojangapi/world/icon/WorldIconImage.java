@@ -13,8 +13,7 @@ import amidst.documentation.Immutable;
 @Immutable
 public class WorldIconImage {
 	public static WorldIconImage from(BufferedImage image) {
-		return new WorldIconImage(image, 0, 0, image.getWidth(),
-				image.getHeight());
+		return new WorldIconImage(image, 0, 0, image.getWidth(), image.getHeight());
 	}
 
 	/**
@@ -29,10 +28,8 @@ public class WorldIconImage {
 	public static WorldIconImage fromPixelTransparency(BufferedImage image) {
 		int imageMarginTop = findFirstSolidPixelFromTop(image);
 		int imageMarginBottom = findFirstSolidPixelFromBottom(image);
-		int frameHeight = Math.max(0, image.getHeight() - imageMarginTop
-				- imageMarginBottom);
-		return new WorldIconImage(image, 0, imageMarginTop, image.getWidth(),
-				frameHeight);
+		int frameHeight = Math.max(0, image.getHeight() - imageMarginTop - imageMarginBottom);
+		return new WorldIconImage(image, 0, imageMarginTop, image.getWidth(), frameHeight);
 	}
 
 	private static int findFirstSolidPixelFromTop(BufferedImage image) {
@@ -45,8 +42,7 @@ public class WorldIconImage {
 		return findFirstSolidPixel(image, height, height - 1, -1);
 	}
 
-	private static int findFirstSolidPixel(BufferedImage image, int height,
-			int initialY, int deltaY) {
+	private static int findFirstSolidPixel(BufferedImage image, int height, int initialY, int deltaY) {
 		int y = initialY;
 		for (int i = 0; i < height; i++) {
 			if (isNonTransparent(image, 0, y)) {
@@ -69,8 +65,7 @@ public class WorldIconImage {
 	private final int frameWidth;
 	private final int frameHeight;
 
-	public WorldIconImage(BufferedImage image, int frameOffsetX,
-			int frameOffsetY, int frameWidth, int frameHeight) {
+	public WorldIconImage(BufferedImage image, int frameOffsetX, int frameOffsetY, int frameWidth, int frameHeight) {
 		this.image = image;
 		this.frameOffsetX = frameOffsetX;
 		this.frameOffsetY = frameOffsetY;

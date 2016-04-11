@@ -12,9 +12,7 @@ public class CoordinatesInWorld implements Comparable<CoordinatesInWorld> {
 			return null;
 		}
 		try {
-			return CoordinatesInWorld.from(
-					Long.parseLong(parsedCoordinates[0]),
-					Long.parseLong(parsedCoordinates[1]));
+			return CoordinatesInWorld.from(Long.parseLong(parsedCoordinates[0]), Long.parseLong(parsedCoordinates[1]));
 		} catch (NumberFormatException e) {
 			return null;
 		}
@@ -24,25 +22,21 @@ public class CoordinatesInWorld implements Comparable<CoordinatesInWorld> {
 		return new CoordinatesInWorld(xInWorld, yInWorld);
 	}
 
-	public static CoordinatesInWorld from(long xAsResolution,
-			long yAsResolution, Resolution resolution) {
+	public static CoordinatesInWorld from(long xAsResolution, long yAsResolution, Resolution resolution) {
 		return new CoordinatesInWorld(
 				resolution.convertFromThisToWorld(xAsResolution),
 				resolution.convertFromThisToWorld(yAsResolution));
 	}
 
-	private static CoordinatesInWorld from(CoordinatesInWorld base,
-			long deltaXInWorld, long deltaYInWorld) {
-		return new CoordinatesInWorld(base.xInWorld + deltaXInWorld,
-				base.yInWorld + deltaYInWorld);
+	private static CoordinatesInWorld from(CoordinatesInWorld base, long deltaXInWorld, long deltaYInWorld) {
+		return new CoordinatesInWorld(base.xInWorld + deltaXInWorld, base.yInWorld + deltaYInWorld);
 	}
 
 	public static CoordinatesInWorld origin() {
 		return ORIGIN;
 	}
 
-	private static final CoordinatesInWorld ORIGIN = CoordinatesInWorld.from(0,
-			0);
+	private static final CoordinatesInWorld ORIGIN = CoordinatesInWorld.from(0, 0);
 
 	private final long xInWorld;
 	private final long yInWorld;
@@ -77,13 +71,11 @@ public class CoordinatesInWorld implements Comparable<CoordinatesInWorld> {
 	}
 
 	public long getXCornerOfFragmentAs(Resolution targetResolution) {
-		return targetResolution.convertFromWorldToThis(CoordinateUtils
-				.toFragmentCorner(xInWorld));
+		return targetResolution.convertFromWorldToThis(CoordinateUtils.toFragmentCorner(xInWorld));
 	}
 
 	public long getYCornerOfFragmentAs(Resolution targetResolution) {
-		return targetResolution.convertFromWorldToThis(CoordinateUtils
-				.toFragmentCorner(yInWorld));
+		return targetResolution.convertFromWorldToThis(CoordinateUtils.toFragmentCorner(yInWorld));
 	}
 
 	public long getXRelativeToFragment() {
@@ -95,13 +87,11 @@ public class CoordinatesInWorld implements Comparable<CoordinatesInWorld> {
 	}
 
 	public long getXRelativeToFragmentAs(Resolution targetResolution) {
-		return targetResolution.convertFromWorldToThis(CoordinateUtils
-				.toFragmentRelative(xInWorld));
+		return targetResolution.convertFromWorldToThis(CoordinateUtils.toFragmentRelative(xInWorld));
 	}
 
 	public long getYRelativeToFragmentAs(Resolution targetResolution) {
-		return targetResolution.convertFromWorldToThis(CoordinateUtils
-				.toFragmentRelative(yInWorld));
+		return targetResolution.convertFromWorldToThis(CoordinateUtils.toFragmentRelative(yInWorld));
 	}
 
 	public CoordinatesInWorld toFragmentCorner() {
@@ -109,8 +99,7 @@ public class CoordinatesInWorld implements Comparable<CoordinatesInWorld> {
 	}
 
 	public double getDistance(CoordinatesInWorld other) {
-		return Point.distance(xInWorld, yInWorld, other.xInWorld,
-				other.yInWorld);
+		return Point.distance(xInWorld, yInWorld, other.xInWorld, other.yInWorld);
 	}
 
 	public double getDistance(long xInWorld, long yInWorld) {
@@ -118,13 +107,11 @@ public class CoordinatesInWorld implements Comparable<CoordinatesInWorld> {
 	}
 
 	public double getDistanceSq(CoordinatesInWorld other) {
-		return Point.distanceSq(xInWorld, yInWorld, other.xInWorld,
-				other.yInWorld);
+		return Point.distanceSq(xInWorld, yInWorld, other.xInWorld, other.yInWorld);
 	}
 
 	public double getDistanceSq(long xInWorld, long yInWorld) {
-		return Point.distanceSq(this.xInWorld, this.yInWorld, xInWorld,
-				yInWorld);
+		return Point.distanceSq(this.xInWorld, this.yInWorld, xInWorld, yInWorld);
 	}
 
 	public CoordinatesInWorld add(CoordinatesInWorld other) {
@@ -144,8 +131,7 @@ public class CoordinatesInWorld implements Comparable<CoordinatesInWorld> {
 	}
 
 	public boolean isInBoundsOf(CoordinatesInWorld corner, long size) {
-		return CoordinateUtils.isInBounds(xInWorld, yInWorld, corner.xInWorld,
-				corner.yInWorld, size, size);
+		return CoordinateUtils.isInBounds(xInWorld, yInWorld, corner.xInWorld, corner.yInWorld, size, size);
 	}
 
 	@Override

@@ -53,10 +53,14 @@ public class MainWindow {
 	private final AtomicReference<ViewerFacade> viewerFacade = new AtomicReference<ViewerFacade>();
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public MainWindow(Application application, AmidstMetaData metadata,
-			AmidstSettings settings, MojangApi mojangApi,
+	public MainWindow(
+			Application application,
+			AmidstMetaData metadata,
+			AmidstSettings settings,
+			MojangApi mojangApi,
 			BiomeProfileDirectory biomeProfileDirectory,
-			ViewerFacadeBuilder viewerFacadeBuilder, ThreadMaster threadMaster) {
+			ViewerFacadeBuilder viewerFacadeBuilder,
+			ThreadMaster threadMaster) {
 		this.application = application;
 		this.metadata = metadata;
 		this.settings = settings;
@@ -77,7 +81,8 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JFrame createFrame() {
 		JFrame frame = new JFrame();
-		frame.setTitle(createVersionString(mojangApi.getVersionId(),
+		frame.setTitle(createVersionString(
+				mojangApi.getVersionId(),
 				mojangApi.getRecognisedVersionName(),
 				mojangApi.getProfileName()));
 		frame.setSize(1000, 800);
@@ -86,12 +91,9 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private String createVersionString(String versionId,
-			String recognisedVersionName, String profileName) {
-		return metadata.getVersion().createLongVersionString()
-				+ " - Selected Profile: " + profileName
-				+ " - Minecraft Version " + versionId + " (recognised: "
-				+ recognisedVersionName + ")";
+	private String createVersionString(String versionId, String recognisedVersionName, String profileName) {
+		return metadata.getVersion().createLongVersionString() + " - Selected Profile: " + profileName
+				+ " - Minecraft Version " + versionId + " (recognised: " + recognisedVersionName + ")";
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -103,15 +105,18 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Actions createActions() {
-		return new Actions(application, mojangApi, this, viewerFacade,
+		return new Actions(
+				application,
+				mojangApi,
+				this,
+				viewerFacade,
 				settings.biomeProfileSelection,
 				threadMaster.getWorkerExecutor());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private AmidstMenu createMenuBar() {
-		AmidstMenu menuBar = new AmidstMenuBuilder(settings, actions,
-				biomeProfileDirectory).construct();
+		AmidstMenu menuBar = new AmidstMenuBuilder(settings, actions, biomeProfileDirectory).construct();
 		frame.setJMenuBar(menuBar.getMenuBar());
 		return menuBar;
 	}
@@ -178,8 +183,7 @@ public class MainWindow {
 		frame.validate();
 		viewerFacade.loadPlayers(threadMaster.getWorkerExecutor());
 		threadMaster.setOnRepaintTick(viewerFacade.getOnRepainterTick());
-		threadMaster.setOnFragmentLoadTick(viewerFacade
-				.getOnFragmentLoaderTick());
+		threadMaster.setOnFragmentLoadTick(viewerFacade.getOnFragmentLoaderTick());
 		this.viewerFacade.set(viewerFacade);
 	}
 
@@ -245,8 +249,7 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private JFileChooser createCaptureImageSaveFileChooser(
-			String suggestedFilename) {
+	private JFileChooser createCaptureImageSaveFileChooser(String suggestedFilename) {
 		JFileChooser result = new JFileChooser();
 		result.setFileFilter(new PNGFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
@@ -265,20 +268,17 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayMessage(String title, String message) {
-		JOptionPane.showMessageDialog(frame, message, title,
-				JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(frame, message, title, JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayError(String message) {
-		JOptionPane.showMessageDialog(frame, message, "Error",
-				JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(frame, message, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayException(Exception exception) {
-		JOptionPane.showMessageDialog(frame, getStackTraceAsString(exception),
-				"Error", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(frame, getStackTraceAsString(exception), "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -302,16 +302,14 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean askToConfirm(String title, String message) {
-		return JOptionPane.showConfirmDialog(frame, message, title,
-				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+		return JOptionPane.showConfirmDialog(frame, message, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldType askForWorldType() {
 		String worldTypeSetting = settings.worldType.get();
 		if (worldTypeSetting.equals(WorldType.PROMPT_EACH_TIME)) {
-			return askForOptions("World Type", "Enter world type\n",
-					WorldType.getSelectable());
+			return askForOptions("World Type", "Enter world type\n", WorldType.getSelectable());
 		} else {
 			return WorldType.from(worldTypeSetting);
 		}
@@ -321,8 +319,14 @@ public class MainWindow {
 	@SuppressWarnings("unchecked")
 	public <T> T askForOptions(String title, String message, List<T> choices) {
 		Object[] choicesArray = choices.toArray();
-		return (T) JOptionPane.showInputDialog(frame, message, title,
-				JOptionPane.PLAIN_MESSAGE, null, choicesArray, choicesArray[0]);
+		return (T) JOptionPane.showInputDialog(
+				frame,
+				message,
+				title,
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				choicesArray,
+				choicesArray[0]);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -332,9 +336,14 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public String askForPlayerHeight(long currentHeight) {
-		Object input = JOptionPane.showInputDialog(frame,
-				"Enter new player height:", "Move Player",
-				JOptionPane.QUESTION_MESSAGE, null, null, currentHeight);
+		Object input = JOptionPane.showInputDialog(
+				frame,
+				"Enter new player height:",
+				"Move Player",
+				JOptionPane.QUESTION_MESSAGE,
+				null,
+				null,
+				currentHeight);
 		if (input != null) {
 			return input.toString();
 		} else {
@@ -344,7 +353,6 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private String askForString(String title, String message) {
-		return JOptionPane.showInputDialog(frame, message, title,
-				JOptionPane.QUESTION_MESSAGE);
+		return JOptionPane.showInputDialog(frame, message, title, JOptionPane.QUESTION_MESSAGE);
 	}
 }

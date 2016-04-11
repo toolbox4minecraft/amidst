@@ -35,9 +35,12 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass worldTypeClass;
 	private final RecognisedVersion recognisedVersion;
 
-	LocalMinecraftInterface(SymbolicClass intCacheClass,
-			SymbolicClass blockInitClass, SymbolicClass genLayerClass,
-			SymbolicClass worldTypeClass, RecognisedVersion recognisedVersion) {
+	LocalMinecraftInterface(
+			SymbolicClass intCacheClass,
+			SymbolicClass blockInitClass,
+			SymbolicClass genLayerClass,
+			SymbolicClass worldTypeClass,
+			RecognisedVersion recognisedVersion) {
 		this.intCacheClass = intCacheClass;
 		this.blockInitClass = blockInitClass;
 		this.genLayerClass = genLayerClass;

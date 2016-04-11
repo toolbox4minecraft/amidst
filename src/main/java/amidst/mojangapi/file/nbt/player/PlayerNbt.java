@@ -10,8 +10,7 @@ import amidst.mojangapi.world.player.PlayerInformationCache;
 
 @Immutable
 public abstract class PlayerNbt {
-	public boolean tryWriteCoordinates(PlayerCoordinates coordinates)
-			throws MojangApiParsingException {
+	public boolean tryWriteCoordinates(PlayerCoordinates coordinates) throws MojangApiParsingException {
 		if (tryBackup()) {
 			doWriteCoordinates(coordinates);
 			return true;
@@ -22,11 +21,9 @@ public abstract class PlayerNbt {
 
 	protected abstract boolean tryBackup();
 
-	protected abstract void doWriteCoordinates(PlayerCoordinates coordinates)
-			throws MojangApiParsingException;
+	protected abstract void doWriteCoordinates(PlayerCoordinates coordinates) throws MojangApiParsingException;
 
-	public abstract PlayerCoordinates readCoordinates() throws IOException,
-			MojangApiParsingException;
+	public abstract PlayerCoordinates readCoordinates() throws IOException, MojangApiParsingException;
 
 	public abstract Player createPlayer(PlayerInformationCache cache);
 }

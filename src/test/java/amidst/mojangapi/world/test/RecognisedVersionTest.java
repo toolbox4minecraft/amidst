@@ -20,8 +20,7 @@ public class RecognisedVersionTest {
 	public void shouldPreventDifferencesInIdentifierAndName() {
 		for (RecognisedVersion recognisedVersion : RecognisedVersion.values()) {
 			if (recognisedVersion.isKnown()) {
-				String expectedIdentifier = RecognisedVersion
-						.createEnumIdentifier(recognisedVersion.getName());
+				String expectedIdentifier = RecognisedVersion.createEnumIdentifier(recognisedVersion.getName());
 				String actualIdentifier = recognisedVersion.name();
 				Assert.assertEquals(expectedIdentifier, actualIdentifier);
 			}

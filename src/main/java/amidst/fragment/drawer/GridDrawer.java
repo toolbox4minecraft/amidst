@@ -50,14 +50,12 @@ public class GridDrawer extends FragmentDrawer {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private int getGridX(Fragment fragment, int stride) {
-		return (int) fragment.getCorner().getXAs(Resolution.FRAGMENT)
-				% (stride + 1);
+		return (int) fragment.getCorner().getXAs(Resolution.FRAGMENT) % (stride + 1);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private int getGridY(Fragment fragment, int stride) {
-		return (int) fragment.getCorner().getYAs(Resolution.FRAGMENT)
-				% (stride + 1);
+		return (int) fragment.getCorner().getYAs(Resolution.FRAGMENT) % (stride + 1);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

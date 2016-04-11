@@ -15,21 +15,22 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	private final BiomeDataJson fullBiomeData;
 	private volatile boolean isWorldCreated = false;
 
-	public FakeMinecraftInterface(WorldMetadataJson worldMetadataJson,
-			BiomeDataJson quarterBiomeData, BiomeDataJson fullBiomeData) {
+	public FakeMinecraftInterface(
+			WorldMetadataJson worldMetadataJson,
+			BiomeDataJson quarterBiomeData,
+			BiomeDataJson fullBiomeData) {
 		this.worldMetadataJson = worldMetadataJson;
 		this.quarterBiomeData = quarterBiomeData;
 		this.fullBiomeData = fullBiomeData;
 	}
 
 	@Override
-	public int[] getBiomeData(int x, int y, int width, int height,
-			boolean useQuarterResolution) throws MinecraftInterfaceException {
+	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+			throws MinecraftInterfaceException {
 		if (isWorldCreated) {
 			return getBiomeData(useQuarterResolution).get(x, y, width, height);
 		} else {
-			throw new MinecraftInterfaceException(
-					"the world needs to be created first");
+			throw new MinecraftInterfaceException("the world needs to be created first");
 		}
 	}
 
@@ -42,10 +43,8 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public void createWorld(long seed, WorldType worldType,
-			String generatorOptions) throws MinecraftInterfaceException {
-		if (worldMetadataJson.getSeed() == seed
-				&& worldMetadataJson.getWorldType().equals(worldType)
+	public void createWorld(long seed, WorldType worldType, String generatorOptions) throws MinecraftInterfaceException {
+		if (worldMetadataJson.getSeed() == seed && worldMetadataJson.getWorldType().equals(worldType)
 				&& generatorOptions.isEmpty()) {
 			isWorldCreated = true;
 		} else {

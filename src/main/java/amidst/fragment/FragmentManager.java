@@ -19,10 +19,8 @@ public class FragmentManager {
 	private final FragmentCache cache;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public FragmentManager(Iterable<FragmentConstructor> constructors,
-			int numberOfLayers) {
-		this.cache = new FragmentCache(availableQueue, loadingQueue,
-				constructors, numberOfLayers);
+	public FragmentManager(Iterable<FragmentConstructor> constructors, int numberOfLayers) {
+		this.cache = new FragmentCache(availableQueue, loadingQueue, constructors, numberOfLayers);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -43,10 +41,14 @@ public class FragmentManager {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public FragmentQueueProcessor createQueueProcessor(
-			LayerManager layerManager, Setting<Dimension> dimensionSetting) {
-		return new FragmentQueueProcessor(availableQueue, loadingQueue,
-				recycleQueue, cache, layerManager, dimensionSetting);
+	public FragmentQueueProcessor createQueueProcessor(LayerManager layerManager, Setting<Dimension> dimensionSetting) {
+		return new FragmentQueueProcessor(
+				availableQueue,
+				loadingQueue,
+				recycleQueue,
+				cache,
+				layerManager,
+				dimensionSetting);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

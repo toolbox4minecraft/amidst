@@ -13,8 +13,7 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 @NotThreadSafe
 public class ListVersionFeatureBuilder<V> {
 	private static <V> List<V> concat(List<V> values, List<V> additionalValues) {
-		List<V> result = new ArrayList<V>(values.size()
-				+ additionalValues.size());
+		List<V> result = new ArrayList<V>(values.size() + additionalValues.size());
 		result.addAll(values);
 		result.addAll(additionalValues);
 		return result;
@@ -41,73 +40,55 @@ public class ListVersionFeatureBuilder<V> {
 	}
 
 	@SafeVarargs
-	public final ListVersionFeatureBuilder<V> exact(RecognisedVersion since,
-			V... values) {
+	public final ListVersionFeatureBuilder<V> exact(RecognisedVersion since, V... values) {
 		return since(since, Arrays.asList(values));
 	}
 
-	public ListVersionFeatureBuilder<V> exact(RecognisedVersion version,
-			List<V> value) {
+	public ListVersionFeatureBuilder<V> exact(RecognisedVersion version, List<V> value) {
 		Objects.requireNonNull(version, "version cannot be null");
 		if (this.defaultValue == null) {
-			throw new IllegalStateException(
-					"you need to specify a default value first");
+			throw new IllegalStateException("you need to specify a default value first");
 		} else if (previousExact != null && version == previousExact) {
-			throw new IllegalStateException(
-					"you can only specify one value per version");
-		} else if (previousExact != null
-				&& RecognisedVersion.isOlder(version, previousExact)) {
-			throw new IllegalStateException(
-					"you have to specify versions in ascending order");
+			throw new IllegalStateException("you can only specify one value per version");
+		} else if (previousExact != null && RecognisedVersion.isOlder(version, previousExact)) {
+			throw new IllegalStateException("you have to specify versions in ascending order");
 		} else if (!entriesNewestFirst.isEmpty()) {
-			throw new IllegalStateException(
-					"you have to specify all exact matches before the first since");
+			throw new IllegalStateException("you have to specify all exact matches before the first since");
 		} else {
 			previousExact = version;
-			exactMatches.add(0, new VersionFeatureEntry<List<V>>(version,
-					Collections.unmodifiableList(value)));
+			exactMatches.add(0, new VersionFeatureEntry<List<V>>(version, Collections.unmodifiableList(value)));
 			return this;
 		}
 	}
 
 	@SafeVarargs
-	public final ListVersionFeatureBuilder<V> since(RecognisedVersion since,
-			V... values) {
+	public final ListVersionFeatureBuilder<V> since(RecognisedVersion since, V... values) {
 		return since(since, Arrays.asList(values));
 	}
 
 	@SafeVarargs
-	public final ListVersionFeatureBuilder<V> sinceExtend(
-			RecognisedVersion since, V... additionalValues) {
-		return since(since,
-				concat(getLatest(), Arrays.asList(additionalValues)));
+	public final ListVersionFeatureBuilder<V> sinceExtend(RecognisedVersion since, V... additionalValues) {
+		return since(since, concat(getLatest(), Arrays.asList(additionalValues)));
 	}
 
-	public ListVersionFeatureBuilder<V> since(RecognisedVersion version,
-			List<V> value) {
+	public ListVersionFeatureBuilder<V> since(RecognisedVersion version, List<V> value) {
 		Objects.requireNonNull(version, "version cannot be null");
 		if (this.defaultValue == null) {
-			throw new IllegalStateException(
-					"you need to specify a default value first");
+			throw new IllegalStateException("you need to specify a default value first");
 		} else if (previous != null && version == previous) {
-			throw new IllegalStateException(
-					"you can only specify one value per version");
-		} else if (previous != null
-				&& RecognisedVersion.isOlder(version, previous)) {
-			throw new IllegalStateException(
-					"you have to specify versions in ascending order");
+			throw new IllegalStateException("you can only specify one value per version");
+		} else if (previous != null && RecognisedVersion.isOlder(version, previous)) {
+			throw new IllegalStateException("you have to specify versions in ascending order");
 		} else {
 			previous = version;
-			entriesNewestFirst.add(0, new VersionFeatureEntry<List<V>>(version,
-					Collections.unmodifiableList(value)));
+			entriesNewestFirst.add(0, new VersionFeatureEntry<List<V>>(version, Collections.unmodifiableList(value)));
 			return this;
 		}
 	}
 
 	private List<V> getLatest() {
 		if (this.defaultValue == null) {
-			throw new IllegalStateException(
-					"you need to specify a default value first");
+			throw new IllegalStateException("you need to specify a default value first");
 		} else if (entriesNewestFirst.isEmpty()) {
 			return defaultValue;
 		} else {
@@ -116,7 +97,8 @@ public class ListVersionFeatureBuilder<V> {
 	}
 
 	public VersionFeature<List<V>> construct() {
-		return new VersionFeature<List<V>>(defaultValue,
+		return new VersionFeature<List<V>>(
+				defaultValue,
 				Collections.unmodifiableList(exactMatches),
 				Collections.unmodifiableList(entriesNewestFirst));
 	}

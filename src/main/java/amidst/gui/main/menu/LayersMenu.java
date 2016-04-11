@@ -35,10 +35,8 @@ public class LayersMenu {
 	public LayersMenu(JMenu menu, AmidstSettings settings) {
 		this.menu = menu;
 		this.settings = settings;
-		this.dimensionSetting = Settings.createWithListener(settings.dimension,
-				this::createMenu);
-		this.enableAllLayersSetting = Settings.createWithListener(
-				settings.enableAllLayers, this::createMenu);
+		this.dimensionSetting = Settings.createWithListener(settings.dimension, this::createMenu);
+		this.enableAllLayersSetting = Settings.createWithListener(settings.enableAllLayers, this::createMenu);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -128,27 +126,37 @@ public class LayersMenu {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void overworldLayer(Setting<Boolean> setting, String text,
-			ImageIcon icon, String accelerator, Dimension dimension, int layerId) {
-		overworldMenuItems.add(createLayer(setting, text, icon, accelerator,
-				dimension, layerId));
+	public void overworldLayer(
+			Setting<Boolean> setting,
+			String text,
+			ImageIcon icon,
+			String accelerator,
+			Dimension dimension,
+			int layerId) {
+		overworldMenuItems.add(createLayer(setting, text, icon, accelerator, dimension, layerId));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void endLayer(Setting<Boolean> setting, String text, ImageIcon icon,
-			String accelerator, Dimension dimension, int layerId) {
-		endMenuItems.add(createLayer(setting, text, icon, accelerator,
-				dimension, layerId));
+	public void endLayer(
+			Setting<Boolean> setting,
+			String text,
+			ImageIcon icon,
+			String accelerator,
+			Dimension dimension,
+			int layerId) {
+		endMenuItems.add(createLayer(setting, text, icon, accelerator, dimension, layerId));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private JCheckBoxMenuItem createLayer(Setting<Boolean> setting,
-			String text, ImageIcon icon, String accelerator,
-			Dimension dimension, int layerId) {
-		JCheckBoxMenuItem result = Menus.checkbox(menu, setting, text, icon,
-				accelerator);
-		if (!viewerFacade.calculateIsLayerEnabled(layerId, dimension,
-				enableAllLayersSetting.get())) {
+	private JCheckBoxMenuItem createLayer(
+			Setting<Boolean> setting,
+			String text,
+			ImageIcon icon,
+			String accelerator,
+			Dimension dimension,
+			int layerId) {
+		JCheckBoxMenuItem result = Menus.checkbox(menu, setting, text, icon, accelerator);
+		if (!viewerFacade.calculateIsLayerEnabled(layerId, dimension, enableAllLayersSetting.get())) {
 			result.setEnabled(false);
 		}
 		if (!viewerFacade.hasLayer(layerId)) {
@@ -165,7 +173,6 @@ public class LayersMenu {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private ImageIcon getIcon(String icon) {
-		return new ImageIcon(ResourceLoader.getImage("/amidst/gui/main/icon/"
-				+ icon));
+		return new ImageIcon(ResourceLoader.getImage("/amidst/gui/main/icon/" + icon));
 	}
 }

@@ -27,7 +27,6 @@ public abstract class ImmutableIconWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected void doDraw(Graphics2D g2d) {
-		g2d.drawImage(icon, getX(), getY(), icon.getWidth(), icon.getHeight(),
-				null);
+		g2d.drawImage(icon, getX(), getY(), icon.getWidth(), icon.getHeight(), null);
 	}
 }

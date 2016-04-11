@@ -15,18 +15,14 @@ public class TestWorldDirectoryDeclarationBuilder {
 
 	public TestWorldDirectoryDeclaration create() {
 		Map<String, TestWorldEntryDeclaration<?>> result = new HashMap<String, TestWorldEntryDeclaration<?>>();
-		for (Entry<String, TestWorldEntryDeclarationBuilder<?>> entry : builders
-				.entrySet()) {
+		for (Entry<String, TestWorldEntryDeclarationBuilder<?>> entry : builders.entrySet()) {
 			result.put(entry.getKey(), entry.getValue().constructThis());
 		}
-		return new TestWorldDirectoryDeclaration(
-				Collections.unmodifiableMap(result));
+		return new TestWorldDirectoryDeclaration(Collections.unmodifiableMap(result));
 	}
 
-	public <T> TestWorldEntryDeclarationBuilder<T> entry(String name,
-			Class<T> clazz) {
-		TestWorldEntryDeclarationBuilder<T> builder = new TestWorldEntryDeclarationBuilder<T>(
-				this, name, clazz);
+	public <T> TestWorldEntryDeclarationBuilder<T> entry(String name, Class<T> clazz) {
+		TestWorldEntryDeclarationBuilder<T> builder = new TestWorldEntryDeclarationBuilder<T>(this, name, clazz);
 		builders.put(name, builder);
 		return builder;
 	}

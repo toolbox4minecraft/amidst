@@ -13,8 +13,7 @@ import amidst.threading.WorkerExecutor;
 
 @ThreadSafe
 public class MovablePlayerList implements Iterable<Player> {
-	private static final MovablePlayerList DUMMY = new MovablePlayerList(null,
-			null, false, WorldPlayerType.NONE);
+	private static final MovablePlayerList DUMMY = new MovablePlayerList(null, null, false, WorldPlayerType.NONE);
 
 	public static MovablePlayerList dummy() {
 		return DUMMY;
@@ -27,8 +26,10 @@ public class MovablePlayerList implements Iterable<Player> {
 	private volatile WorldPlayerType worldPlayerType;
 	private volatile ConcurrentLinkedQueue<Player> players = new ConcurrentLinkedQueue<Player>();
 
-	public MovablePlayerList(PlayerInformationCache playerInformationCache,
-			SaveDirectory saveDirectory, boolean isSaveEnabled,
+	public MovablePlayerList(
+			PlayerInformationCache playerInformationCache,
+			SaveDirectory saveDirectory,
+			boolean isSaveEnabled,
 			WorldPlayerType worldPlayerType) {
 		this.playerInformationCache = playerInformationCache;
 		this.saveDirectory = saveDirectory;
@@ -48,8 +49,7 @@ public class MovablePlayerList implements Iterable<Player> {
 		return saveDirectory != null;
 	}
 
-	public void load(WorkerExecutor workerExecutor,
-			Runnable onPlayerFinishedLoading) {
+	public void load(WorkerExecutor workerExecutor, Runnable onPlayerFinishedLoading) {
 		if (saveDirectory != null) {
 			Log.i("loading player locations");
 			ConcurrentLinkedQueue<Player> players = new ConcurrentLinkedQueue<Player>();
@@ -58,26 +58,25 @@ public class MovablePlayerList implements Iterable<Player> {
 		}
 	}
 
-	private void loadPlayersLater(ConcurrentLinkedQueue<Player> players,
-			WorkerExecutor workerExecutor, Runnable onPlayerFinishedLoading) {
-		workerExecutor.run(() -> loadPlayers(workerExecutor, players,
-				onPlayerFinishedLoading));
+	private void loadPlayersLater(
+			ConcurrentLinkedQueue<Player> players,
+			WorkerExecutor workerExecutor,
+			Runnable onPlayerFinishedLoading) {
+		workerExecutor.run(() -> loadPlayers(workerExecutor, players, onPlayerFinishedLoading));
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private void loadPlayers(WorkerExecutor workerExecutor,
+	private void loadPlayers(
+			WorkerExecutor workerExecutor,
 			ConcurrentLinkedQueue<Player> players,
 			Runnable onPlayerFinishedLoading) {
-		for (PlayerNbt playerNbt : worldPlayerType
-				.createPlayerNbts(saveDirectory)) {
-			workerExecutor.run(() -> loadPlayer(players, playerNbt),
-					onPlayerFinishedLoading);
+		for (PlayerNbt playerNbt : worldPlayerType.createPlayerNbts(saveDirectory)) {
+			workerExecutor.run(() -> loadPlayer(players, playerNbt), onPlayerFinishedLoading);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private void loadPlayer(ConcurrentLinkedQueue<Player> players,
-			PlayerNbt playerNbt) {
+	private void loadPlayer(ConcurrentLinkedQueue<Player> players, PlayerNbt playerNbt) {
 		Player player = playerNbt.createPlayer(playerInformationCache);
 		if (player.tryLoadLocation()) {
 			players.offer(player);

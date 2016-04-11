@@ -14,8 +14,7 @@ public enum Settings {
 		return new ImmutableSetting<T>(value);
 	}
 
-	public static Setting<String> createString(Preferences preferences,
-			String key, @NotNull String defaultValue) {
+	public static Setting<String> createString(Preferences preferences, String key, @NotNull String defaultValue) {
 		// @formatter:off
 		return new SettingBase<String>(defaultValue,
 				value -> preferences.get(key, value),
@@ -23,8 +22,7 @@ public enum Settings {
 		// @formatter:on
 	}
 
-	public static Setting<Boolean> createBoolean(Preferences preferences,
-			String key, boolean defaultValue) {
+	public static Setting<Boolean> createBoolean(Preferences preferences, String key, boolean defaultValue) {
 		// @formatter:off
 		return new SettingBase<Boolean>(defaultValue,
 				value -> preferences.getBoolean(key, value),
@@ -32,8 +30,7 @@ public enum Settings {
 		// @formatter:on
 	}
 
-	public static Setting<Dimension> createDimension(Preferences preferences,
-			String key, Dimension defaultValue) {
+	public static Setting<Dimension> createDimension(Preferences preferences, String key, Dimension defaultValue) {
 		// @formatter:off
 		return new SettingBase<Dimension>(defaultValue,
 				value -> Dimension.from(preferences.getInt(key, value.getId())),
@@ -49,13 +46,11 @@ public enum Settings {
 		// @formatter:on
 	}
 
-	public static <T> Setting<T> createDummyWithListener(T defaultValue,
-			Runnable listener) {
+	public static <T> Setting<T> createDummyWithListener(T defaultValue, Runnable listener) {
 		return createWithListener(createDummy(defaultValue), listener);
 	}
 
-	public static <T> Setting<T> createWithListener(Setting<T> setting,
-			Runnable listener) {
+	public static <T> Setting<T> createWithListener(Setting<T> setting, Runnable listener) {
 		return new Setting<T>() {
 			@Override
 			public T get() {

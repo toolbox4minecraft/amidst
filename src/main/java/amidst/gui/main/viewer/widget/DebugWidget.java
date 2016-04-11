@@ -19,8 +19,11 @@ public class DebugWidget extends TextWidget {
 	private final Graphics2DAccelerationCounter accelerationCounter;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public DebugWidget(CornerAnchorPoint anchor, FragmentGraph graph,
-			FragmentManager fragmentManager, Setting<Boolean> isVisibleSetting,
+	public DebugWidget(
+			CornerAnchorPoint anchor,
+			FragmentGraph graph,
+			FragmentManager fragmentManager,
+			Setting<Boolean> isVisibleSetting,
 			Graphics2DAccelerationCounter accelerationCounter) {
 		super(anchor);
 		this.graph = graph;

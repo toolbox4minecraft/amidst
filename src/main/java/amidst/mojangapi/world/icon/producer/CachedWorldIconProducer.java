@@ -15,8 +15,7 @@ public abstract class CachedWorldIconProducer extends WorldIconProducer<Void> {
 	private volatile List<WorldIcon> cache;
 
 	@Override
-	public void produce(CoordinatesInWorld corner,
-			Consumer<WorldIcon> consumer, Void additionalData) {
+	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer, Void additionalData) {
 		for (WorldIcon icon : getCache()) {
 			if (icon.getCoordinates().isInBoundsOf(corner, Fragment.SIZE)) {
 				consumer.accept(icon);

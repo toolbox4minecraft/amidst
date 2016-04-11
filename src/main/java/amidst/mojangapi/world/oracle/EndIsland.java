@@ -88,8 +88,7 @@ public class EndIsland {
 		if (chunkY != other.chunkY) {
 			return false;
 		}
-		if (Float.floatToIntBits(erosionFactor) != Float
-				.floatToIntBits(other.erosionFactor)) {
+		if (Float.floatToIntBits(erosionFactor) != Float.floatToIntBits(other.erosionFactor)) {
 			return false;
 		}
 		return true;

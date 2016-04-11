@@ -26,17 +26,14 @@ public class PlayerdataPlayerNbt extends PlayerNbt {
 	}
 
 	@Override
-	protected void doWriteCoordinates(PlayerCoordinates coordinates)
-			throws MojangApiParsingException {
-		PlayerLocationSaver.writeToPlayerFile(coordinates,
-				saveDirectory.getPlayerdataFile(playerUUID));
+	protected void doWriteCoordinates(PlayerCoordinates coordinates) throws MojangApiParsingException {
+		PlayerLocationSaver.writeToPlayerFile(coordinates, saveDirectory.getPlayerdataFile(playerUUID));
 	}
 
 	@Override
-	public PlayerCoordinates readCoordinates() throws IOException,
-			MojangApiParsingException {
-		return PlayerLocationLoader.readFromPlayerFile(NBTUtils
-				.readTagFromFile(saveDirectory.getPlayerdataFile(playerUUID)));
+	public PlayerCoordinates readCoordinates() throws IOException, MojangApiParsingException {
+		return PlayerLocationLoader.readFromPlayerFile(NBTUtils.readTagFromFile(saveDirectory
+				.getPlayerdataFile(playerUUID)));
 	}
 
 	@Override

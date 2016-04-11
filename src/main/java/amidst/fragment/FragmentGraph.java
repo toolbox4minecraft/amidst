@@ -17,12 +17,10 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 
 	private int fragmentsPerRow;
 	private int fragmentsPerColumn;
-	private final Lazy<FragmentGraphItem> topLeftFragment = Lazy
-			.from(this::createOrigin);
+	private final Lazy<FragmentGraphItem> topLeftFragment = Lazy.from(this::createOrigin);
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public FragmentGraph(Iterable<LayerDeclaration> declarations,
-			FragmentManager fragmentManager) {
+	public FragmentGraph(Iterable<LayerDeclaration> declarations, FragmentManager fragmentManager) {
 		this.declarations = declarations;
 		this.fragmentManager = fragmentManager;
 	}
@@ -42,16 +40,19 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 		recycleAll();
 		fragmentsPerRow = 1;
 		fragmentsPerColumn = 1;
-		return new FragmentGraphItem(
-				fragmentManager.requestFragment(coordinates.toFragmentCorner()));
+		return new FragmentGraphItem(fragmentManager.requestFragment(coordinates.toFragmentCorner()));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void adjust(int newLeft, int newAbove, int newRight, int newBelow) {
 		fragmentsPerRow = fragmentsPerRow + newLeft + newRight;
 		fragmentsPerColumn = fragmentsPerColumn + newAbove + newBelow;
-		topLeftFragment.replaceWithValue(f -> f.adjustRowsAndColumns(newAbove,
-				newBelow, newLeft, newRight, fragmentManager));
+		topLeftFragment.replaceWithValue(f -> f.adjustRowsAndColumns(
+				newAbove,
+				newBelow,
+				newLeft,
+				newRight,
+				fragmentManager));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -86,17 +87,14 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public WorldIcon getClosestWorldIcon(CoordinatesInWorld coordinates,
-			double maxDistanceInWorld) {
-		return new ClosestWorldIconFinder(this, declarations, coordinates,
-				maxDistanceInWorld).getWorldIcon();
+	public WorldIcon getClosestWorldIcon(CoordinatesInWorld coordinates, double maxDistanceInWorld) {
+		return new ClosestWorldIconFinder(this, declarations, coordinates, maxDistanceInWorld).getWorldIcon();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Fragment getFragmentAt(CoordinatesInWorld coordinates) {
 		CoordinatesInWorld corner = coordinates.toFragmentCorner();
-		for (FragmentGraphItem fragmentGraphItem : topLeftFragment
-				.getOrCreateValue()) {
+		for (FragmentGraphItem fragmentGraphItem : topLeftFragment.getOrCreateValue()) {
 			Fragment fragment = fragmentGraphItem.getFragment();
 			if (corner.equals(fragment.getCorner())) {
 				return fragment;

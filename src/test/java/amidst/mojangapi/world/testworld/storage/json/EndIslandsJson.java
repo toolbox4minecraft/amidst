@@ -13,11 +13,10 @@ import amidst.mojangapi.world.oracle.EndIslandOracle;
 
 @Immutable
 public class EndIslandsJson {
-	public static EndIslandsJson extract(EndIslandOracle oracle,
-			int fragmentsAroundOrigin) {
+	public static EndIslandsJson extract(EndIslandOracle oracle, int fragmentsAroundOrigin) {
 		SortedMap<CoordinatesInWorld, List<EndIsland>> result = new TreeMap<CoordinatesInWorld, List<EndIsland>>();
-		FragmentCornerWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin)
-				.walk(corner -> result.put(corner, oracle.getAt(corner)));
+		FragmentCornerWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin).walk(
+				corner -> result.put(corner, oracle.getAt(corner)));
 		return new EndIslandsJson(result);
 	}
 
@@ -27,8 +26,7 @@ public class EndIslandsJson {
 	public EndIslandsJson() {
 	}
 
-	public EndIslandsJson(
-			SortedMap<CoordinatesInWorld, List<EndIsland>> endIslands) {
+	public EndIslandsJson(SortedMap<CoordinatesInWorld, List<EndIsland>> endIslands) {
 		this.endIslands = endIslands;
 	}
 
@@ -36,8 +34,7 @@ public class EndIslandsJson {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((endIslands == null) ? 0 : endIslands.hashCode());
+		result = prime * result + ((endIslands == null) ? 0 : endIslands.hashCode());
 		return result;
 	}
 

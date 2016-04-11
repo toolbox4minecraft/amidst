@@ -32,23 +32,19 @@ public class PlayerJson {
 	}
 
 	@NotNull
-	public TexturesPropertyJson readTexturesProperty()
-			throws MojangApiParsingException {
+	public TexturesPropertyJson readTexturesProperty() throws MojangApiParsingException {
 		for (PropertyJson property : properties) {
 			if (property.isTexturesProperty()) {
-				return JsonReader.read(property.getDecodedValue(),
-						TexturesPropertyJson.class);
+				return JsonReader.read(property.getDecodedValue(), TexturesPropertyJson.class);
 			}
 		}
-		throw new MojangApiParsingException(
-				"player json does not contain the textures property");
+		throw new MojangApiParsingException("player json does not contain the textures property");
 	}
 
 	@NotNull
 	public String getSkinUrl() throws MojangApiParsingException {
 		try {
-			String result = readTexturesProperty().getTextures().getSKIN()
-					.getUrl();
+			String result = readTexturesProperty().getTextures().getSKIN().getUrl();
 			if (result != null) {
 				return result;
 			} else {

@@ -29,22 +29,18 @@ public class GenerateWorldTestData {
 	private final List<String> failed = new LinkedList<String>();
 	private final List<String> successful = new LinkedList<String>();
 
-	public GenerateWorldTestData(String prefix, String libraries,
-			VersionListJson versionList) {
+	public GenerateWorldTestData(String prefix, String libraries, VersionListJson versionList) {
 		this.prefix = prefix;
 		this.libraries = new File(libraries);
 		this.versionList = versionList;
 		this.versions = new File(prefix);
-		this.dotMinecraftDirectory = new DotMinecraftDirectory(null,
-				this.libraries);
+		this.dotMinecraftDirectory = new DotMinecraftDirectory(null, this.libraries);
 	}
 
 	public void run() {
 		for (VersionListEntryJson version : versionList.getVersions()) {
-			for (TestWorldDeclaration declaration : TestWorldDeclaration
-					.values()) {
-				if (declaration.getRecognisedVersion().getName()
-						.equals(version.getId())) {
+			for (TestWorldDeclaration declaration : TestWorldDeclaration.values()) {
+				if (declaration.getRecognisedVersion().getName().equals(version.getId())) {
 					generate(declaration, version);
 				}
 			}
@@ -53,17 +49,15 @@ public class GenerateWorldTestData {
 		print("============== Failed ==============", failed);
 	}
 
-	private void generate(TestWorldDeclaration declaration,
-			VersionListEntryJson version) {
+	private void generate(TestWorldDeclaration declaration, VersionListEntryJson version) {
 		String versionId = version.getId();
 		if (version.tryDownloadClient(prefix)) {
 			try {
-				TestWorldCache.createAndPut(declaration,
-						LOCAL_MINECRAFT_INTERFACE_BUILDER
-								.create(createVersionDirectory(versionId)));
+				TestWorldCache.createAndPut(
+						declaration,
+						LOCAL_MINECRAFT_INTERFACE_BUILDER.create(createVersionDirectory(versionId)));
 				successful.add(versionId);
-			} catch (LocalMinecraftInterfaceCreationException
-					| MinecraftInterfaceException | IOException e) {
+			} catch (LocalMinecraftInterfaceCreationException | MinecraftInterfaceException | IOException e) {
 				e.printStackTrace();
 				failed.add(versionId);
 			}
