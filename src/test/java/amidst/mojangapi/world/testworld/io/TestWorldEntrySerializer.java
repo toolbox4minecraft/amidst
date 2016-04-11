@@ -25,8 +25,7 @@ public enum TestWorldEntrySerializer {
 	/*-
 	 * We need complex keys for the BiomeDataJson which contains a Map<AreaJson, short[]>
 	 */
-	private static final Gson GSON = new GsonBuilder()
-			.enableComplexMapKeySerialization().create();
+	private static final Gson GSON = new GsonBuilder().enableComplexMapKeySerialization().create();
 
 	public static WorldMetadataJson readMetaData(InputStream is) {
 		return readJson(is, WorldMetadataJson.class);
@@ -44,14 +43,12 @@ public enum TestWorldEntrySerializer {
 		return readJson(is, SlimeChunksJson.class);
 	}
 
-	public static CoordinatesCollectionJson readCoordinatesCollection(
-			InputStream is) {
+	public static CoordinatesCollectionJson readCoordinatesCollection(InputStream is) {
 		return readJson(is, CoordinatesCollectionJson.class);
 	}
 
 	private static <T> T readJson(InputStream is, Class<T> clazz) {
-		try (InputStreamReader reader = new InputStreamReader(is,
-				StandardCharsets.UTF_8)) {
+		try (InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
 			return GSON.fromJson(reader, clazz);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
@@ -62,8 +59,7 @@ public enum TestWorldEntrySerializer {
 		try {
 			// do not use the try-with-resource mechanism, because this will
 			// also close the output stream
-			OutputStreamWriter writer = new OutputStreamWriter(os,
-					StandardCharsets.UTF_8);
+			OutputStreamWriter writer = new OutputStreamWriter(os, StandardCharsets.UTF_8);
 			GSON.toJson(data, writer);
 			writer.flush();
 		} catch (IOException e) {

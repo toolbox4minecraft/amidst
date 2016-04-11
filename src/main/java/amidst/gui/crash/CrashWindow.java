@@ -23,8 +23,7 @@ public enum CrashWindow {
 	INSTANCE;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public static void show(String message, String logMessages,
-			Runnable executeOnClose) {
+	public static void show(String message, String logMessages, Runnable executeOnClose) {
 		INSTANCE.set(message, logMessages, executeOnClose);
 	}
 
@@ -58,11 +57,9 @@ public enum CrashWindow {
 		JFrame result = new JFrame("Amidst crashed!");
 		result.getContentPane().setLayout(new MigLayout());
 		result.add(messageLabel, "growx, pushx, wrap");
-		result.add(new JLabel("Please report this bug on:"),
-				"growx, pushx, wrap");
+		result.add(new JLabel("Please report this bug on:"), "growx, pushx, wrap");
 		result.add(createReportingTextField(), "growx, pushx, wrap");
-		result.add(createLogMessagesScrollPane(logMessagesTextArea),
-				"grow, push");
+		result.add(createLogMessagesScrollPane(logMessagesTextArea), "grow, push");
 		result.setSize(800, 600);
 		result.addWindowListener(new WindowAdapter() {
 			@Override
@@ -76,8 +73,7 @@ public enum CrashWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JTextField createReportingTextField() {
-		JTextField result = new JTextField(
-				"https://github.com/toolbox4minecraft/amidst/issues/new");
+		JTextField result = new JTextField("https://github.com/toolbox4minecraft/amidst/issues/new");
 		result.setEditable(false);
 		result.selectAll();
 		return result;

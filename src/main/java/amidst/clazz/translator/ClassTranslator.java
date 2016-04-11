@@ -18,19 +18,15 @@ public class ClassTranslator {
 
 	private final Map<RealClassDetector, SymbolicClassDeclaration> translations;
 
-	public ClassTranslator(
-			Map<RealClassDetector, SymbolicClassDeclaration> translations) {
+	public ClassTranslator(Map<RealClassDetector, SymbolicClassDeclaration> translations) {
 		this.translations = translations;
 	}
 
-	public Map<SymbolicClassDeclaration, List<RealClass>> translateToAllMatching(
-			List<RealClass> realClasses) {
+	public Map<SymbolicClassDeclaration, List<RealClass>> translateToAllMatching(List<RealClass> realClasses) {
 		Map<SymbolicClassDeclaration, List<RealClass>> result = new HashMap<SymbolicClassDeclaration, List<RealClass>>();
-		for (Entry<RealClassDetector, SymbolicClassDeclaration> entry : translations
-				.entrySet()) {
+		for (Entry<RealClassDetector, SymbolicClassDeclaration> entry : translations.entrySet()) {
 			SymbolicClassDeclaration declaration = entry.getValue();
-			List<RealClass> allMatching = entry.getKey().allMatching(
-					realClasses);
+			List<RealClass> allMatching = entry.getKey().allMatching(realClasses);
 			if (result.containsKey(declaration)) {
 				result.get(declaration).addAll(allMatching);
 			} else {
@@ -40,11 +36,9 @@ public class ClassTranslator {
 		return result;
 	}
 
-	public Map<SymbolicClassDeclaration, String> translate(
-			List<RealClass> realClasses) throws ClassNotFoundException {
+	public Map<SymbolicClassDeclaration, String> translate(List<RealClass> realClasses) throws ClassNotFoundException {
 		Map<SymbolicClassDeclaration, String> result = new HashMap<SymbolicClassDeclaration, String>();
-		for (Entry<RealClassDetector, SymbolicClassDeclaration> entry : translations
-				.entrySet()) {
+		for (Entry<RealClassDetector, SymbolicClassDeclaration> entry : translations.entrySet()) {
 			RealClass firstMatching = entry.getKey().firstMatching(realClasses);
 			String realClassName = null;
 			if (firstMatching != null) {
@@ -55,14 +49,14 @@ public class ClassTranslator {
 		return result;
 	}
 
-	private void addResult(Map<SymbolicClassDeclaration, String> result,
-			SymbolicClassDeclaration declaration, String realClassName)
-			throws ClassNotFoundException {
+	private void addResult(
+			Map<SymbolicClassDeclaration, String> result,
+			SymbolicClassDeclaration declaration,
+			String realClassName) throws ClassNotFoundException {
 		if (realClassName == null) {
 			declaration.handleNoMatch();
 		} else if (result.containsKey(declaration)) {
-			declaration.handleMultipleMatches(result.get(declaration),
-					realClassName);
+			declaration.handleMultipleMatches(result.get(declaration), realClassName);
 		} else {
 			declaration.handleMatch(realClassName);
 			result.put(declaration, realClassName);

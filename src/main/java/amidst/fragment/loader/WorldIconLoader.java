@@ -15,12 +15,12 @@ public class WorldIconLoader<T> extends FragmentLoader {
 	private final WorldIconProducer<T> producer;
 	private final Function<Fragment, T> additionalDataExtractor;
 
-	public WorldIconLoader(LayerDeclaration declaration,
-			WorldIconProducer<T> producer) {
+	public WorldIconLoader(LayerDeclaration declaration, WorldIconProducer<T> producer) {
 		this(declaration, producer, fragment -> null);
 	}
 
-	public WorldIconLoader(LayerDeclaration declaration,
+	public WorldIconLoader(
+			LayerDeclaration declaration,
 			WorldIconProducer<T> producer,
 			Function<Fragment, T> additionalDataExtractor) {
 		super(declaration);
@@ -44,7 +44,6 @@ public class WorldIconLoader<T> extends FragmentLoader {
 	private void doLoad(Fragment fragment) {
 		fragment.putWorldIcons(
 				declaration.getLayerId(),
-				producer.getAt(fragment.getCorner(),
-						additionalDataExtractor.apply(fragment)));
+				producer.getAt(fragment.getCorner(), additionalDataExtractor.apply(fragment)));
 	}
 }

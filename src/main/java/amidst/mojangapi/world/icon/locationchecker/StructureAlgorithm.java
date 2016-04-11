@@ -14,8 +14,11 @@ public class StructureAlgorithm implements LocationChecker {
 	private final int distanceBetweenScatteredFeaturesRange;
 	private final boolean useTwoValuesForUpdate;
 
-	public StructureAlgorithm(long seed, long magicNumberForSeed1,
-			long magicNumberForSeed2, long magicNumberForSeed3,
+	public StructureAlgorithm(
+			long seed,
+			long magicNumberForSeed1,
+			long magicNumberForSeed2,
+			long magicNumberForSeed3,
 			byte maxDistanceBetweenScatteredFeatures,
 			byte minDistanceBetweenScatteredFeatures,
 			boolean useTwoValuesForUpdate) {

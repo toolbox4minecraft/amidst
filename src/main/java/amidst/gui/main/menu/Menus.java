@@ -23,49 +23,58 @@ import amidst.settings.Setting;
 public enum Menus {
 	;
 
-	public static void radios(JMenu menu, Setting<String> setting,
-			String... values) {
+	public static void radios(JMenu menu, Setting<String> setting, String... values) {
 		Objects.requireNonNull(values);
 		ButtonGroup group = new ButtonGroup();
-		for (int i = 0; i < values.length; i++) {
-			radio(menu, setting, group, values[i]);
+		for (String value : values) {
+			radio(menu, setting, group, value);
 		}
 	}
 
-	public static <T> JRadioButtonMenuItem radio(JMenu menu,
-			Setting<T> setting, ButtonGroup group, T value) {
-		JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(
-				value.toString());
+	public static <T> JRadioButtonMenuItem radio(JMenu menu, Setting<T> setting, ButtonGroup group, T value) {
+		JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(value.toString());
 		return radio(menu, setting, group, menuItem, value);
 	}
 
-	public static <T> JRadioButtonMenuItem radio(JMenu menu,
-			Setting<T> setting, ButtonGroup group, T value, ImageIcon icon) {
-		JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(
-				value.toString(), icon);
+	public static <T> JRadioButtonMenuItem radio(
+			JMenu menu,
+			Setting<T> setting,
+			ButtonGroup group,
+			T value,
+			ImageIcon icon) {
+		JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(value.toString(), icon);
 		return radio(menu, setting, group, menuItem, value);
 	}
 
-	public static <T> JRadioButtonMenuItem radio(JMenu menu,
-			Setting<T> setting, ButtonGroup group, T value, String accelerator) {
-		JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(
-				value.toString());
-		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
-		return radio(menu, setting, group, menuItem, value);
-	}
-
-	public static <T> JRadioButtonMenuItem radio(JMenu menu,
-			Setting<T> setting, ButtonGroup group, T value, ImageIcon icon,
+	public static <T> JRadioButtonMenuItem radio(
+			JMenu menu,
+			Setting<T> setting,
+			ButtonGroup group,
+			T value,
 			String accelerator) {
-		JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(
-				value.toString(), icon);
+		JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(value.toString());
 		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
 		return radio(menu, setting, group, menuItem, value);
 	}
 
-	private static <T> JRadioButtonMenuItem radio(JMenu menu,
-			Setting<T> setting, ButtonGroup group,
-			JRadioButtonMenuItem menuItem, T value) {
+	public static <T> JRadioButtonMenuItem radio(
+			JMenu menu,
+			Setting<T> setting,
+			ButtonGroup group,
+			T value,
+			ImageIcon icon,
+			String accelerator) {
+		JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(value.toString(), icon);
+		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
+		return radio(menu, setting, group, menuItem, value);
+	}
+
+	private static <T> JRadioButtonMenuItem radio(
+			JMenu menu,
+			Setting<T> setting,
+			ButtonGroup group,
+			JRadioButtonMenuItem menuItem,
+			T value) {
 		Objects.requireNonNull(value);
 		menuItem.addActionListener(e -> setting.set(value));
 		menuItem.setSelected(value.equals(setting.get()));
@@ -74,54 +83,50 @@ public enum Menus {
 		return menuItem;
 	}
 
-	public static JCheckBoxMenuItem checkbox(JMenu menu,
-			Setting<Boolean> setting, String text) {
+	public static JCheckBoxMenuItem checkbox(JMenu menu, Setting<Boolean> setting, String text) {
 		return checkbox(menu, setting, new JCheckBoxMenuItem(text));
 	}
 
-	public static JCheckBoxMenuItem checkbox(JMenu menu,
-			Setting<Boolean> setting, String text, ImageIcon icon) {
+	public static JCheckBoxMenuItem checkbox(JMenu menu, Setting<Boolean> setting, String text, ImageIcon icon) {
 		return checkbox(menu, setting, new JCheckBoxMenuItem(text, icon));
 	}
 
-	public static JCheckBoxMenuItem checkbox(JMenu menu,
-			Setting<Boolean> setting, String text, String accelerator) {
+	public static JCheckBoxMenuItem checkbox(JMenu menu, Setting<Boolean> setting, String text, String accelerator) {
 		JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(text);
 		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
 		return checkbox(menu, setting, menuItem);
 	}
 
-	public static JCheckBoxMenuItem checkbox(JMenu menu,
-			Setting<Boolean> setting, String text, ImageIcon icon,
+	public static JCheckBoxMenuItem checkbox(
+			JMenu menu,
+			Setting<Boolean> setting,
+			String text,
+			ImageIcon icon,
 			String accelerator) {
 		JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(text, icon);
 		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
 		return checkbox(menu, setting, menuItem);
 	}
 
-	private static JCheckBoxMenuItem checkbox(JMenu menu,
-			Setting<Boolean> setting, JCheckBoxMenuItem menuItem) {
+	private static JCheckBoxMenuItem checkbox(JMenu menu, Setting<Boolean> setting, JCheckBoxMenuItem menuItem) {
 		menuItem.setSelected(setting.get());
 		menuItem.addActionListener(e -> setting.set(menuItem.isSelected()));
 		menu.add(menuItem);
 		return menuItem;
 	}
 
-	public static JMenuItem item(JMenu menu, Runnable runnable, String text,
-			int mnemonic) {
+	public static JMenuItem item(JMenu menu, Runnable runnable, String text, int mnemonic) {
 		JMenuItem menuItem = new JMenuItem(text);
 		return item(menu, runnable, menuItem, mnemonic);
 	}
 
-	public static JMenuItem item(JMenu menu, Runnable runnable, String text,
-			int mnemonic, String accelerator) {
+	public static JMenuItem item(JMenu menu, Runnable runnable, String text, int mnemonic, String accelerator) {
 		JMenuItem menuItem = new JMenuItem(text);
 		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
 		return item(menu, runnable, menuItem, mnemonic);
 	}
 
-	private static JMenuItem item(JMenu menu, Runnable runnable,
-			JMenuItem menuItem, int mnemonic) {
+	private static JMenuItem item(JMenu menu, Runnable runnable, JMenuItem menuItem, int mnemonic) {
 		menuItem.setMnemonic(mnemonic);
 		menuItem.addActionListener(e -> runnable.run());
 		menu.add(menuItem);
@@ -139,8 +144,7 @@ public enum Menus {
 		return getPlatformSpecificKeyStroke(accelerator, addMenuMask);
 	}
 
-	private static KeyStroke getPlatformSpecificKeyStroke(String accelerator,
-			boolean addMenuMask) {
+	private static KeyStroke getPlatformSpecificKeyStroke(String accelerator, boolean addMenuMask) {
 		KeyStroke keyStroke = KeyStroke.getKeyStroke(accelerator);
 		int keycode = keyStroke.getKeyCode();
 		int keymask = keyStroke.getModifiers();

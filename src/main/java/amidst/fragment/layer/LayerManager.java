@@ -20,8 +20,7 @@ public class LayerManager {
 	private final LayerLoader layerLoader;
 	private final Iterable<FragmentDrawer> drawers;
 
-	public LayerManager(List<LayerDeclaration> declarations,
-			LayerLoader layerLoader, Iterable<FragmentDrawer> drawers) {
+	public LayerManager(List<LayerDeclaration> declarations, LayerLoader layerLoader, Iterable<FragmentDrawer> drawers) {
 		this.declarations = declarations;
 		this.layerLoader = layerLoader;
 		this.drawers = drawers;
@@ -32,8 +31,7 @@ public class LayerManager {
 		for (LayerDeclaration declaration : declarations) {
 			if (declaration.update(dimension)) {
 				int layerId = declaration.getLayerId();
-				if (layerId == LayerIds.BIOME_DATA
-						|| layerId == LayerIds.END_ISLANDS) {
+				if (layerId == LayerIds.BIOME_DATA || layerId == LayerIds.END_ISLANDS) {
 					invalidateLayer(LayerIds.BACKGROUND);
 				}
 				invalidateLayer(layerId);
@@ -83,9 +81,7 @@ public class LayerManager {
 	 * This should only be used by the layers menu.
 	 */
 	@CalledOnlyBy(AmidstThread.EDT)
-	public boolean calculateIsEnabled(int layerId, Dimension dimension,
-			boolean enableAllLayers) {
-		return declarations.get(layerId).calculateIsEnabled(dimension,
-				enableAllLayers);
+	public boolean calculateIsEnabled(int layerId, Dimension dimension, boolean enableAllLayers) {
+		return declarations.get(layerId).calculateIsEnabled(dimension, enableAllLayers);
 	}
 }

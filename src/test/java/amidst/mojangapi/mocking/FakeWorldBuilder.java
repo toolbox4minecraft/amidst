@@ -19,28 +19,25 @@ import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
 
 @ThreadSafe
 public class FakeWorldBuilder {
-	public static FakeWorldBuilder create(
-			TestWorldDirectoryDeclaration directoryDeclaration) {
+	public static FakeWorldBuilder create(TestWorldDirectoryDeclaration directoryDeclaration) {
 		return new FakeWorldBuilder(createWorldBuilder(), directoryDeclaration);
 	}
 
 	private static WorldBuilder createWorldBuilder() {
-		return new WorldBuilder(new ImmutablePlayerInformationCache(
-				PlayerInformation.theSingleplayerPlayer()),
+		return new WorldBuilder(
+				new ImmutablePlayerInformationCache(PlayerInformation.theSingleplayerPlayer()),
 				SeedHistoryLogger.from(null));
 	}
 
 	private final WorldBuilder builder;
 	private final TestWorldDirectoryDeclaration directoryDeclaration;
 
-	public FakeWorldBuilder(WorldBuilder builder,
-			TestWorldDirectoryDeclaration directoryDeclaration) {
+	public FakeWorldBuilder(WorldBuilder builder, TestWorldDirectoryDeclaration directoryDeclaration) {
 		this.builder = builder;
 		this.directoryDeclaration = directoryDeclaration;
 	}
 
-	public World createRealWorld(TestWorldDeclaration worldDeclaration,
-			MinecraftInterface realMinecraftInterface)
+	public World createRealWorld(TestWorldDeclaration worldDeclaration, MinecraftInterface realMinecraftInterface)
 			throws MinecraftInterfaceException {
 		// @formatter:off
 		return builder.fromSeed(
@@ -50,8 +47,7 @@ public class FakeWorldBuilder {
 		// @formatter:on
 	}
 
-	public World createFakeWorld(TestWorldDirectory worldDeclaration)
-			throws MinecraftInterfaceException {
+	public World createFakeWorld(TestWorldDirectory worldDeclaration) throws MinecraftInterfaceException {
 		Map<String, Object> data = worldDeclaration.getData();
 		// @formatter:off
 		WorldMetadataJson worldMetadata = get(TestWorldEntryNames.METADATA,                  WorldMetadataJson.class, data);
@@ -62,13 +58,13 @@ public class FakeWorldBuilder {
 	}
 
 	private <T> T get(String name, Class<T> clazz, Map<String, Object> data) {
-		return directoryDeclaration.getEntryDeclaration(name, clazz)
-				.extractFromDataMap(data);
+		return directoryDeclaration.getEntryDeclaration(name, clazz).extractFromDataMap(data);
 	}
 
-	private World createFakeWorld(WorldMetadataJson worldMetadata,
-			BiomeDataJson quarterBiomeData, BiomeDataJson fullBiomeData)
-			throws MinecraftInterfaceException {
+	private World createFakeWorld(
+			WorldMetadataJson worldMetadata,
+			BiomeDataJson quarterBiomeData,
+			BiomeDataJson fullBiomeData) throws MinecraftInterfaceException {
 		// @formatter:off
 		return builder.fromSeed(
 				createFakeMinecraftInterface(worldMetadata, quarterBiomeData, fullBiomeData),
@@ -79,8 +75,8 @@ public class FakeWorldBuilder {
 
 	private static FakeMinecraftInterface createFakeMinecraftInterface(
 			WorldMetadataJson worldMetadataJson,
-			BiomeDataJson quarterBiomeData, BiomeDataJson fullBiomeData) {
-		return new FakeMinecraftInterface(worldMetadataJson, quarterBiomeData,
-				fullBiomeData);
+			BiomeDataJson quarterBiomeData,
+			BiomeDataJson fullBiomeData) {
+		return new FakeMinecraftInterface(worldMetadataJson, quarterBiomeData, fullBiomeData);
 	}
 }

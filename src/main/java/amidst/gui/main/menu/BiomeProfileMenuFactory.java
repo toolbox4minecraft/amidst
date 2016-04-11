@@ -70,21 +70,18 @@ public class BiomeProfileMenuFactory {
 			return result;
 		}
 
-		private void tryCreateKeyboardShortcut(String shortcut,
-				JCheckBoxMenuItem checkBox) {
+		private void tryCreateKeyboardShortcut(String shortcut, JCheckBoxMenuItem checkBox) {
 			if (shortcut != null) {
 				KeyStroke accelerator = KeyStroke.getKeyStroke(shortcut);
 				if (accelerator != null) {
 					checkBox.setAccelerator(accelerator);
 				} else {
-					Log.i("Unable to create keyboard shortcut from: "
-							+ shortcut);
+					Log.i("Unable to create keyboard shortcut from: " + shortcut);
 				}
 			}
 		}
 
-		private ActionListener createListener(final BiomeProfile profile,
-				final JCheckBoxMenuItem selectedCheckBox) {
+		private ActionListener createListener(final BiomeProfile profile, final JCheckBoxMenuItem selectedCheckBox) {
 			ActionListener result = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -115,9 +112,13 @@ public class BiomeProfileMenuFactory {
 	private final int reloadMnemonic;
 	private final String reloadAccelerator;
 
-	public BiomeProfileMenuFactory(JMenu parentMenu, Actions actions,
-			BiomeProfileDirectory biomeProfileDirectory, String reloadText,
-			int reloadMnemonic, String reloadAccelerator) {
+	public BiomeProfileMenuFactory(
+			JMenu parentMenu,
+			Actions actions,
+			BiomeProfileDirectory biomeProfileDirectory,
+			String reloadText,
+			int reloadMnemonic,
+			String reloadAccelerator) {
 		this.parentMenu = parentMenu;
 		this.actions = actions;
 		this.biomeProfileDirectory = biomeProfileDirectory;
@@ -131,12 +132,10 @@ public class BiomeProfileMenuFactory {
 	private void initParentMenu() {
 		parentMenu.removeAll();
 		biomeProfileDirectory.saveDefaultProfileIfNecessary();
-		BiomeProfileVisitorImpl visitor = new BiomeProfileVisitorImpl(
-				parentMenu, actions);
+		BiomeProfileVisitorImpl visitor = new BiomeProfileVisitorImpl(parentMenu, actions);
 		biomeProfileDirectory.visitProfiles(visitor);
 		parentMenu.addSeparator();
-		Menus.item(parentMenu, this::doReload, reloadText, reloadMnemonic,
-				reloadAccelerator);
+		Menus.item(parentMenu, this::doReload, reloadText, reloadMnemonic, reloadAccelerator);
 		visitor.selectFirstProfile();
 	}
 

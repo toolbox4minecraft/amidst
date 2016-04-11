@@ -16,9 +16,11 @@ public class ClosestWorldIconFinder {
 	private double closestDistanceSq;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ClosestWorldIconFinder(FragmentGraph graph,
+	public ClosestWorldIconFinder(
+			FragmentGraph graph,
 			Iterable<LayerDeclaration> declarations,
-			CoordinatesInWorld positionInWorld, double maxDistanceInWorld) {
+			CoordinatesInWorld positionInWorld,
+			double maxDistanceInWorld) {
 		this.graph = graph;
 		this.declarations = declarations;
 		this.positionInWorld = positionInWorld;
@@ -44,8 +46,7 @@ public class ClosestWorldIconFinder {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateClosest(WorldIcon icon) {
-		double distanceSq = icon.getCoordinates()
-				.getDistanceSq(positionInWorld);
+		double distanceSq = icon.getCoordinates().getDistanceSq(positionInWorld);
 		if (closestDistanceSq > distanceSq) {
 			closestDistanceSq = distanceSq;
 			closestIcon = icon;

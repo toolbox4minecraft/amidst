@@ -50,8 +50,7 @@ public class SaveDirectory {
 				}
 			}
 		}
-		throw new FileNotFoundException("unable to load save directory: "
-				+ file);
+		throw new FileNotFoundException("unable to load save directory: " + file);
 	}
 
 	private static SaveDirectory createValidSaveDirectory(File currentFile) {
@@ -135,19 +134,16 @@ public class SaveDirectory {
 		return NBTUtils.readTagFromFile(levelDat);
 	}
 
-	public LevelDatNbt createLevelDat() throws IOException,
-			MojangApiParsingException {
+	public LevelDatNbt createLevelDat() throws IOException, MojangApiParsingException {
 		return new LevelDatNbt(readLevelDat());
 	}
 
 	public boolean tryBackupPlayersFile(String playerName) {
-		return amidst.getBackup().tryBackupPlayersFile(
-				getPlayersFile(playerName), playerName);
+		return amidst.getBackup().tryBackupPlayersFile(getPlayersFile(playerName), playerName);
 	}
 
 	public boolean tryBackupPlayerdataFile(String playerUUID) {
-		return amidst.getBackup().tryBackupPlayerdataFile(
-				getPlayerdataFile(playerUUID), playerUUID);
+		return amidst.getBackup().tryBackupPlayerdataFile(getPlayerdataFile(playerUUID), playerUUID);
 	}
 
 	public boolean tryBackupLevelDat() {

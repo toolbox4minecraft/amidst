@@ -33,21 +33,18 @@ public class SeedHistoryLogger {
 		this.createIfNecessary = createIfNecessary;
 	}
 
-	public synchronized void log(RecognisedVersion recognisedVersion,
-			WorldSeed worldSeed) {
+	public synchronized void log(RecognisedVersion recognisedVersion, WorldSeed worldSeed) {
 		if (createIfNecessary && !file.exists()) {
 			tryCreateFile();
 		}
 		if (file.isFile()) {
 			writeLine(createLine(recognisedVersion, worldSeed));
 		} else {
-			Log.i("Not writing to seed history file, because it does not exist: "
-					+ file);
+			Log.i("Not writing to seed history file, because it does not exist: " + file);
 		}
 	}
 
-	private String createLine(RecognisedVersion recognisedVersion,
-			WorldSeed worldSeed) {
+	private String createLine(RecognisedVersion recognisedVersion, WorldSeed worldSeed) {
 		String recognisedVersionName = recognisedVersion.getName();
 		String timestamp = createTimestamp();
 		String seedString = getSeedString(worldSeed);
@@ -77,8 +74,7 @@ public class SeedHistoryLogger {
 	}
 
 	private void writeLine(String line) {
-		try (PrintStream stream = new PrintStream(new FileOutputStream(file,
-				true))) {
+		try (PrintStream stream = new PrintStream(new FileOutputStream(file, true))) {
 			stream.println(line);
 		} catch (IOException e) {
 			Log.w("Unable to write to seed history file: " + file);

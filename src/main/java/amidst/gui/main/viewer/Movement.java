@@ -21,8 +21,7 @@ public class Movement {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void update(FragmentGraphToScreenTranslator translator,
-			Point currentMouse) {
+	public void update(FragmentGraphToScreenTranslator translator, Point currentMouse) {
 		updateMovementSpeed(currentMouse);
 		adjustTranslator(translator);
 		throttleMovementSpeed();

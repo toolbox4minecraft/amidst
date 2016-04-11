@@ -22,8 +22,7 @@ public class BiomeProfile {
 	private static Map<String, BiomeColorJson> createDefaultColorMap() {
 		Map<String, BiomeColorJson> result = new HashMap<String, BiomeColorJson>();
 		for (Biome biome : Biome.allBiomes()) {
-			result.put(biome.getName(), biome.getDefaultColor()
-					.createBiomeColorJson());
+			result.put(biome.getName(), biome.getDefaultColor().createBiomeColorJson());
 		}
 		return result;
 	}
@@ -32,8 +31,7 @@ public class BiomeProfile {
 		return DEFAULT_PROFILE;
 	}
 
-	private static final BiomeProfile DEFAULT_PROFILE = new BiomeProfile(
-			"default", null, createDefaultColorMap());
+	private static final BiomeProfile DEFAULT_PROFILE = new BiomeProfile("default", null, createDefaultColorMap());
 
 	private volatile String name;
 	private volatile String shortcut;
@@ -43,8 +41,7 @@ public class BiomeProfile {
 	public BiomeProfile() {
 	}
 
-	private BiomeProfile(String name, String shortcut,
-			Map<String, BiomeColorJson> colorMap) {
+	private BiomeProfile(String name, String shortcut, Map<String, BiomeColorJson> colorMap) {
 		this.name = name;
 		this.shortcut = shortcut;
 		this.colorMap = colorMap;
@@ -61,8 +58,7 @@ public class BiomeProfile {
 	public void validate() {
 		for (String biomeName : colorMap.keySet()) {
 			if (!Biome.exists(biomeName)) {
-				Log.i("Failed to find biome for: " + biomeName
-						+ " in profile: " + name);
+				Log.i("Failed to find biome for: " + biomeName + " in profile: " + name);
 			}
 		}
 	}
@@ -109,8 +105,7 @@ public class BiomeProfile {
 	}
 
 	private Set<Entry<String, BiomeColorJson>> getSortedColorMapEntries() {
-		SortedMap<String, BiomeColorJson> result = new TreeMap<String, BiomeColorJson>(
-				Biome::compareByIndex);
+		SortedMap<String, BiomeColorJson> result = new TreeMap<String, BiomeColorJson>(Biome::compareByIndex);
 		result.putAll(colorMap);
 		return result.entrySet();
 	}

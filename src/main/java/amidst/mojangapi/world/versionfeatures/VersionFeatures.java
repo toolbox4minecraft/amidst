@@ -89,8 +89,8 @@ public class VersionFeatures {
 
 	public QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker> getOceanMonumentLocationCheckerFactory() {
 		return oceanMonumentLocationCheckerFactory;
-	}	
-	
+	}
+
 	public List<Biome> getValidBiomesAtMiddleOfChunk_OceanMonument() {
 		return validBiomesAtMiddleOfChunk_OceanMonument;
 	}

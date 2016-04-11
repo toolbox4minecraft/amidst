@@ -17,8 +17,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	 * cases.
 	 */
 	@NotThreadSafe
-	private static class FragmentGraphItemIterator implements
-			Iterator<FragmentGraphItem> {
+	private static class FragmentGraphItemIterator implements Iterator<FragmentGraphItem> {
 		private FragmentGraphItem rowStart;
 		private FragmentGraphItem currentNode;
 
@@ -90,8 +89,12 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	 * Returns the new fragment in the top left corner, but never null.
 	 */
 	@CalledOnlyBy(AmidstThread.EDT)
-	public FragmentGraphItem adjustRowsAndColumns(int newAbove, int newBelow,
-			int newLeft, int newRight, FragmentManager manager) {
+	public FragmentGraphItem adjustRowsAndColumns(
+			int newAbove,
+			int newBelow,
+			int newLeft,
+			int newRight,
+			FragmentManager manager) {
 		FragmentGraphItem firstColumn = getFirstColumn();
 		FragmentGraphItem topLeft = firstColumn.getFirstRow();
 		topLeft = topLeft.createOrRemoveRowsAbove(manager, newAbove);
@@ -102,8 +105,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private FragmentGraphItem createOrRemoveRowsAbove(FragmentManager manager,
-			int newAbove) {
+	private FragmentGraphItem createOrRemoveRowsAbove(FragmentManager manager, int newAbove) {
 		FragmentGraphItem topLeft = this;
 		for (int i = 0; i < newAbove; i++) {
 			topLeft.createFirstRow(manager);
@@ -118,8 +120,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private FragmentGraphItem createOrRemoveRowsBelow(FragmentManager manager,
-			int newBelow) {
+	private FragmentGraphItem createOrRemoveRowsBelow(FragmentManager manager, int newBelow) {
 		FragmentGraphItem bottomLeft = this;
 		for (int i = 0; i < newBelow; i++) {
 			bottomLeft.createLastRow(manager);
@@ -134,8 +135,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private FragmentGraphItem createOrRemoveColumnsLeft(
-			FragmentManager manager, int newLeft) {
+	private FragmentGraphItem createOrRemoveColumnsLeft(FragmentManager manager, int newLeft) {
 		FragmentGraphItem topLeft = this;
 		for (int i = 0; i < newLeft; i++) {
 			topLeft.createFirstColumn(manager);
@@ -150,8 +150,7 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private FragmentGraphItem createOrRemoveColumnsRight(
-			FragmentManager manager, int newRight) {
+	private FragmentGraphItem createOrRemoveColumnsRight(FragmentManager manager, int newRight) {
 		FragmentGraphItem topRight = this;
 		for (int i = 0; i < newRight; i++) {
 			topRight.createLastColumn(manager);
@@ -378,10 +377,8 @@ public class FragmentGraphItem implements Iterable<FragmentGraphItem> {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private FragmentGraphItem createFragmentGraphItem(FragmentManager manager,
-			int xInWorld, int yInWorld) {
-		return new FragmentGraphItem(manager.requestFragment(fragment
-				.getCorner().add(xInWorld, yInWorld)));
+	private FragmentGraphItem createFragmentGraphItem(FragmentManager manager, int xInWorld, int yInWorld) {
+		return new FragmentGraphItem(manager.requestFragment(fragment.getCorner().add(xInWorld, yInWorld)));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

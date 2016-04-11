@@ -57,8 +57,7 @@ public enum URIUtils {
 
 	public static boolean exists(URL url) {
 		try {
-			HttpURLConnection connection = (HttpURLConnection) url
-					.openConnection();
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("HEAD");
 			return connection.getResponseCode() == HttpURLConnection.HTTP_OK;
 		} catch (IOException e) {
@@ -81,8 +80,7 @@ public enum URIUtils {
 		Files.move(part, to, StandardCopyOption.REPLACE_EXISTING);
 	}
 
-	private static BufferedInputStream newInputStream(URL url)
-			throws IOException {
+	private static BufferedInputStream newInputStream(URL url) throws IOException {
 		return new BufferedInputStream(url.openStream());
 	}
 }

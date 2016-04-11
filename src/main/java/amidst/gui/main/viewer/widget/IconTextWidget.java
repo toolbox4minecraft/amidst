@@ -42,8 +42,7 @@ public abstract class IconTextWidget extends TextWidget {
 	@Override
 	protected void doDraw(Graphics2D g2d) {
 		super.doDraw(g2d);
-		g2d.drawImage(icon.getImage(), getX() + 5, getY() + 5 - iconOffsetY,
-				iconWidth, iconHeight, null);
+		g2d.drawImage(icon.getImage(), getX() + 5, getY() + 5 - iconOffsetY, iconWidth, iconHeight, null);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

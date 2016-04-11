@@ -42,8 +42,7 @@ public class Drawer {
 			.getImage("/amidst/gui/main/dropshadow/inner_left.png");
 	private static final BufferedImage DROP_SHADOW_RIGHT = ResourceLoader
 			.getImage("/amidst/gui/main/dropshadow/inner_right.png");
-	private static final BufferedImage VOID_TEXTURE = ResourceLoader
-			.getImage("/amidst/gui/main/void.png");
+	private static final BufferedImage VOID_TEXTURE = ResourceLoader.getImage("/amidst/gui/main/void.png");
 
 	private final AffineTransform originalLayerMatrix = new AffineTransform();
 	private final AffineTransform layerMatrix = new AffineTransform();
@@ -68,9 +67,12 @@ public class Drawer {
 	private float time;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Drawer(FragmentGraph graph,
-			FragmentGraphToScreenTranslator translator, Zoom zoom,
-			Movement movement, List<Widget> widgets,
+	public Drawer(
+			FragmentGraph graph,
+			FragmentGraphToScreenTranslator translator,
+			Zoom zoom,
+			Movement movement,
+			List<Widget> widgets,
 			Iterable<FragmentDrawer> drawers,
 			Setting<Dimension> dimensionSetting,
 			Graphics2DAccelerationCounter accelerationCounter) {
@@ -82,13 +84,20 @@ public class Drawer {
 		this.drawers = drawers;
 		this.dimensionSetting = dimensionSetting;
 		this.accelerationCounter = accelerationCounter;
-		this.voidTexturePaint = new TexturePaint(VOID_TEXTURE, new Rectangle(0,
-				0, VOID_TEXTURE.getWidth(), VOID_TEXTURE.getHeight()));
+		this.voidTexturePaint = new TexturePaint(VOID_TEXTURE, new Rectangle(
+				0,
+				0,
+				VOID_TEXTURE.getWidth(),
+				VOID_TEXTURE.getHeight()));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void drawCaptureImage(Graphics2D g2d, int viewerWidth,
-			int viewerHeight, Point mousePosition, FontMetrics widgetFontMetrics) {
+	public void drawCaptureImage(
+			Graphics2D g2d,
+			int viewerWidth,
+			int viewerHeight,
+			Point mousePosition,
+			FontMetrics widgetFontMetrics) {
 		this.g2d = g2d;
 		this.viewerWidth = viewerWidth;
 		this.viewerHeight = viewerHeight;
@@ -102,8 +111,12 @@ public class Drawer {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void draw(Graphics2D g2d, int viewerWidth, int viewerHeight,
-			Point mousePosition, FontMetrics widgetFontMetrics) {
+	public void draw(
+			Graphics2D g2d,
+			int viewerWidth,
+			int viewerHeight,
+			Point mousePosition,
+			FontMetrics widgetFontMetrics) {
 		this.g2d = g2d;
 		this.viewerWidth = viewerWidth;
 		this.viewerHeight = viewerHeight;
@@ -163,10 +176,8 @@ public class Drawer {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void doDrawFragments() {
-		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		AffineTransform originalGraphicsTransform = g2d.getTransform();
 		initOriginalLayerMatrix(originalGraphicsTransform);
 		drawLayers();
@@ -174,12 +185,10 @@ public class Drawer {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void initOriginalLayerMatrix(
-			AffineTransform originalGraphicsTransform) {
+	private void initOriginalLayerMatrix(AffineTransform originalGraphicsTransform) {
 		double scale = zoom.getCurrentValue();
 		originalLayerMatrix.setTransform(originalGraphicsTransform);
-		originalLayerMatrix.translate(translator.getLeftOnScreen(),
-				translator.getTopOnScreen());
+		originalLayerMatrix.translate(translator.getLeftOnScreen(), translator.getTopOnScreen());
 		originalLayerMatrix.scale(scale, scale);
 	}
 
@@ -199,8 +208,7 @@ public class Drawer {
 						g2d.setTransform(layerMatrix);
 						drawer.draw(fragment, g2d, time);
 					}
-					updateLayerMatrix(fragmentGraphItem,
-							graph.getFragmentsPerRow());
+					updateLayerMatrix(fragmentGraphItem, graph.getFragmentsPerRow());
 				}
 			}
 		}
@@ -213,12 +221,10 @@ public class Drawer {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void updateLayerMatrix(FragmentGraphItem fragmentGraphItem,
-			int fragmentsPerRow) {
+	private void updateLayerMatrix(FragmentGraphItem fragmentGraphItem, int fragmentsPerRow) {
 		layerMatrix.translate(Fragment.SIZE, 0);
 		if (fragmentGraphItem.isEndOfLine()) {
-			layerMatrix.translate(-Fragment.SIZE * fragmentsPerRow,
-					Fragment.SIZE);
+			layerMatrix.translate(-Fragment.SIZE * fragmentsPerRow, Fragment.SIZE);
 		}
 	}
 
@@ -245,19 +251,16 @@ public class Drawer {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void drawAndLog(BufferedImage image, int x, int y, int width,
-			int height) {
+	private void drawAndLog(BufferedImage image, int x, int y, int width, int height) {
 		g2d.drawImage(image, x, y, width, height, null);
 		accelerationCounter.log(image);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawWidgets() {
-		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		for (Widget widget : widgets) {
-			widget.update(viewerWidth, viewerHeight, mousePosition,
-					widgetFontMetrics, time);
+			widget.update(viewerWidth, viewerHeight, mousePosition, widgetFontMetrics, time);
 			if (widget.isVisible()) {
 				setAlphaComposite(widget.getAlpha());
 				widget.draw(g2d);
@@ -267,7 +270,6 @@ public class Drawer {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void setAlphaComposite(float alpha) {
-		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-				alpha));
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 	}
 }

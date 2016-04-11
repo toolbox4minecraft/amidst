@@ -22,9 +22,7 @@ public abstract class MineshaftAlgorithm_Base implements LocationChecker {
 		random.setSeed(var13 ^ var15 ^ seed);
 		random.nextInt();
 
-		return getResult(chunkX, chunkY, random)
-				&& random.nextInt(80) < Math.max(Math.abs(chunkX),
-						Math.abs(chunkY));
+		return getResult(chunkX, chunkY, random) && random.nextInt(80) < Math.max(Math.abs(chunkX), Math.abs(chunkY));
 	}
 
 	protected abstract boolean getResult(int chunkX, int chunkY, Random random);

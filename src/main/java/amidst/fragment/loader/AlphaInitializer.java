@@ -12,8 +12,7 @@ import amidst.settings.Setting;
 public class AlphaInitializer extends FragmentLoader {
 	private final Setting<Boolean> fragmentFadingSetting;
 
-	public AlphaInitializer(LayerDeclaration declaration,
-			Setting<Boolean> fragmentFadingSetting) {
+	public AlphaInitializer(LayerDeclaration declaration, Setting<Boolean> fragmentFadingSetting) {
 		super(declaration);
 		this.fragmentFadingSetting = fragmentFadingSetting;
 	}

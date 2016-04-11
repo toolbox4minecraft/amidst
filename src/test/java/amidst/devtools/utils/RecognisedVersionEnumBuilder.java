@@ -28,8 +28,8 @@ public class RecognisedVersionEnumBuilder {
 
 	public void addKnown(RecognisedVersion recognisedVersion) {
 		if (recognisedVersion.isKnown()) {
-			builders.put(recognisedVersion.getMagicString(),
-					RecognisedVersionEnumEntryBuilder.known(recognisedVersion));
+			builders
+					.put(recognisedVersion.getMagicString(), RecognisedVersionEnumEntryBuilder.known(recognisedVersion));
 		}
 	}
 
@@ -38,8 +38,7 @@ public class RecognisedVersionEnumBuilder {
 		if (builder != null) {
 			builder.addMatch(versionId);
 		} else {
-			builders.put(magicString, RecognisedVersionEnumEntryBuilder
-					.unknown(versionId, magicString));
+			builders.put(magicString, RecognisedVersionEnumEntryBuilder.unknown(versionId, magicString));
 		}
 	}
 
@@ -59,36 +58,32 @@ public class RecognisedVersionEnumBuilder {
 	private int renderDeclarationsAndGetMaxLength(int maxNameLength) {
 		int result = 0;
 		for (RecognisedVersionEnumEntryBuilder builder : builders.values()) {
-			result = Math.max(result,
-					builder.renderDeclarationAndGetLength(maxNameLength));
+			result = Math.max(result, builder.renderDeclarationAndGetLength(maxNameLength));
 		}
 		return result;
 	}
 
 	public Iterable<String> renderNew() {
 		List<String> result = new LinkedList<String>();
-		render(result, b -> !b.isKnown(),
-				b -> b.renderLine(maxNameLength, maxDeclarationLength));
+		render(result, b -> !b.isKnown(), b -> b.renderLine(maxNameLength, maxDeclarationLength));
 		return result;
 	}
 
 	public Iterable<String> renderRenamed() {
 		List<String> result = new LinkedList<String>();
-		render(result, b -> b.isRenamed(),
-				b -> b.renderLine(maxNameLength, maxDeclarationLength));
+		render(result, b -> b.isRenamed(), b -> b.renderLine(maxNameLength, maxDeclarationLength));
 		return result;
 	}
 
 	public Iterable<String> renderComplete() {
 		List<String> result = new LinkedList<String>();
-		render(result, b -> !b.isKnown(),
-				b -> b.renderLine(maxNameLength, maxDeclarationLength));
-		render(result, b -> b.isKnown(),
-				b -> b.renderLine(maxNameLength, maxDeclarationLength));
+		render(result, b -> !b.isKnown(), b -> b.renderLine(maxNameLength, maxDeclarationLength));
+		render(result, b -> b.isKnown(), b -> b.renderLine(maxNameLength, maxDeclarationLength));
 		return result;
 	}
 
-	private void render(List<String> result,
+	private void render(
+			List<String> result,
 			Function<RecognisedVersionEnumEntryBuilder, Boolean> condition,
 			Function<RecognisedVersionEnumEntryBuilder, String> renderer) {
 		for (RecognisedVersionEnumEntryBuilder builder : builders.values()) {

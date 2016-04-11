@@ -26,10 +26,8 @@ public class RealClass {
 	}
 
 	private static final Map<Character, String> PRIMITIV_TYPE_CONVERSION_MAP = createPrimitiveTypeConversionMap();
-	private static final Pattern ARG_PATTERN = Pattern
-			.compile("([\\[]+)?([BCDFIJSZ]|L[^;]+)");
-	private static final Pattern OBJECT_PATTERN = Pattern
-			.compile("^([\\[]+)?[LBCDFIJSZ]");
+	private static final Pattern ARG_PATTERN = Pattern.compile("([\\[]+)?([BCDFIJSZ]|L[^;]+)");
+	private static final Pattern OBJECT_PATTERN = Pattern.compile("^([\\[]+)?[LBCDFIJSZ]");
 	public static final int CLASS_DATA_WILDCARD = -1;
 
 	private final String realClassName;
@@ -55,12 +53,22 @@ public class RealClass {
 	private final int numberOfConstructors;
 	private final int numberOfMethods;
 
-	RealClass(String realClassName, byte[] classData, int minorVersion,
-			int majorVersion, int cpSize, int[] constantTypes,
-			RealClassConstant<?>[] constants, List<String> utf8Constants,
-			List<Float> floatConstants, List<Long> longConstants,
-			List<Integer> stringIndices, List<ReferenceIndex> methodIndices,
-			int accessFlags, RealClassField[] fields, int numberOfConstructors,
+	RealClass(
+			String realClassName,
+			byte[] classData,
+			int minorVersion,
+			int majorVersion,
+			int cpSize,
+			int[] constantTypes,
+			RealClassConstant<?>[] constants,
+			List<String> utf8Constants,
+			List<Float> floatConstants,
+			List<Long> longConstants,
+			List<Integer> stringIndices,
+			List<ReferenceIndex> methodIndices,
+			int accessFlags,
+			RealClassField[] fields,
+			int numberOfConstructors,
 			int numberOfMethods) {
 		this.realClassName = realClassName;
 		this.classData = classData;
@@ -96,8 +104,7 @@ public class RealClass {
 
 	private boolean isClassDataWildcardMatchingAt(int startIndex, int[] bytes) {
 		for (int offset = 0; offset < bytes.length; offset++) {
-			if (bytes[offset] != CLASS_DATA_WILDCARD
-					&& classData[startIndex + offset] != (byte) bytes[offset]) {
+			if (bytes[offset] != CLASS_DATA_WILDCARD && classData[startIndex + offset] != (byte) bytes[offset]) {
 				return false;
 			}
 		}
@@ -198,8 +205,7 @@ public class RealClass {
 		for (ReferenceIndex entry : methodIndices) {
 			if (getStringValueOfConstant(entry.getValue1()).equals("<init>")) {
 				if (i == constructorId) {
-					String arguments = getStringValueOfConstant(entry
-							.getValue2());
+					String arguments = getStringValueOfConstant(entry.getValue2());
 					return toArgumentString(readArguments(arguments));
 				}
 				i++;
@@ -228,8 +234,7 @@ public class RealClass {
 	}
 
 	private String getObjectArg(String arg, int matcherEnd) {
-		return arg.substring(0, Math.max(0, matcherEnd - 1))
-				+ getPrimitiveType(arg.charAt(matcherEnd - 1))
+		return arg.substring(0, Math.max(0, matcherEnd - 1)) + getPrimitiveType(arg.charAt(matcherEnd - 1))
 				+ arg.substring(Math.min(matcherEnd, arg.length()));
 	}
 

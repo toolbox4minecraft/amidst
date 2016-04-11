@@ -31,8 +31,7 @@ public abstract class ProfileComponent {
 		@CalledOnlyBy(AmidstThread.EDT)
 		public Component() {
 			this.setMinimumSize(new Dimension(300, 40));
-			this.setPreferredSize(new Dimension(PREFERRED_WIDTH,
-					PREFERRED_HEIGHT));
+			this.setPreferredSize(new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT));
 		}
 
 		@CalledOnlyBy(AmidstThread.EDT)
@@ -58,14 +57,11 @@ public abstract class ProfileComponent {
 			int width = getWidth();
 			String versionName = getVersionName();
 			String profileName = getProfileName();
-			if (oldVersionName == null || oldWidth != width
-					|| !oldVersionName.equals(versionName)) {
-				versionNameX = width - 40
-						- versionFontMetrics.stringWidth(versionName);
+			if (oldVersionName == null || oldWidth != width || !oldVersionName.equals(versionName)) {
+				versionNameX = width - 40 - versionFontMetrics.stringWidth(versionName);
 				oldWidth = width;
 				oldVersionName = versionName;
-				oldProfileName = createProfileName(profileName,
-						versionNameX - 25);
+				oldProfileName = createProfileName(profileName, versionNameX - 25);
 			}
 		}
 
@@ -115,16 +111,12 @@ public abstract class ProfileComponent {
 	}
 
 	private static final Font STATUS_FONT = new Font("arial", Font.BOLD, 10);
-	private static final Font VERSION_NAME_FONT = new Font("arial", Font.BOLD,
-			16);
-	private static final Font PROFILE_NAME_FONT = new Font("arial", Font.BOLD,
-			30);
-	private static final BufferedImage ACTIVE_ICON = ResourceLoader
-			.getImage("/amidst/gui/profileselect/active.png");
+	private static final Font VERSION_NAME_FONT = new Font("arial", Font.BOLD, 16);
+	private static final Font PROFILE_NAME_FONT = new Font("arial", Font.BOLD, 30);
+	private static final BufferedImage ACTIVE_ICON = ResourceLoader.getImage("/amidst/gui/profileselect/active.png");
 	private static final BufferedImage INACTIVE_ICON = ResourceLoader
 			.getImage("/amidst/gui/profileselect/inactive.png");
-	private static final BufferedImage LOADING_ICON = ResourceLoader
-			.getImage("/amidst/gui/profileselect/loading.png");
+	private static final BufferedImage LOADING_ICON = ResourceLoader.getImage("/amidst/gui/profileselect/loading.png");
 	private static final Color SELECTED_BG_COLOR = new Color(160, 190, 255);
 	private static final Color LOADING_BG_COLOR = new Color(112, 203, 91);
 	private static final Color DEFAULT_BG_COLOR = Color.white;

@@ -30,8 +30,7 @@ public class Viewer {
 		@Override
 		public void paintComponent(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g.create();
-			drawer.draw(g2d, getWidth(), getHeight(), getMousePositionOrNull(),
-					widgetFontMetrics);
+			drawer.draw(g2d, getWidth(), getHeight(), getMousePositionOrNull(), widgetFontMetrics);
 		}
 
 		@CalledOnlyBy(AmidstThread.EDT)
@@ -39,11 +38,9 @@ public class Viewer {
 			int width = getWidth();
 			int height = getHeight();
 			Point mousePosition = getMousePositionOrNull();
-			BufferedImage result = new BufferedImage(width, height,
-					BufferedImage.TYPE_INT_ARGB);
+			BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g2d = result.createGraphics();
-			drawer.drawCaptureImage(g2d, width, height, mousePosition,
-					widgetFontMetrics);
+			drawer.drawCaptureImage(g2d, width, height, mousePosition, widgetFontMetrics);
 			g2d.dispose();
 			return result;
 		}
@@ -90,8 +87,7 @@ public class Viewer {
 	public Point getMousePositionOrCenter() {
 		Point result = component.getMousePositionOrNull();
 		if (result == null) {
-			result = new Point(component.getWidth() >> 1,
-					component.getHeight() >> 1);
+			result = new Point(component.getWidth() >> 1, component.getHeight() >> 1);
 		}
 		return result;
 	}

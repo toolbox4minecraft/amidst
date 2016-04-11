@@ -16,23 +16,19 @@ import amidst.mojangapi.world.player.PlayerCoordinates;
 public enum PlayerLocationLoader {
 	;
 
-	public static PlayerCoordinates readFromPlayerFile(CompoundTag file)
-			throws MojangApiParsingException {
+	public static PlayerCoordinates readFromPlayerFile(CompoundTag file) throws MojangApiParsingException {
 		try {
 			return readPlayerCoordinates(file);
 		} catch (NullPointerException e) {
-			throw new MojangApiParsingException(
-					"cannot read player coordinates", e);
+			throw new MojangApiParsingException("cannot read player coordinates", e);
 		}
 	}
 
-	public static PlayerCoordinates readFromLevelDat(CompoundTag file)
-			throws MojangApiParsingException {
+	public static PlayerCoordinates readFromLevelDat(CompoundTag file) throws MojangApiParsingException {
 		try {
 			return readPlayerCoordinates(getSinglePlayerPlayerTag(getTagRootTag(file)));
 		} catch (NullPointerException e) {
-			throw new MojangApiParsingException(
-					"cannot read player coordinates", e);
+			throw new MojangApiParsingException("cannot read player coordinates", e);
 		}
 	}
 
@@ -41,8 +37,7 @@ public enum PlayerLocationLoader {
 	}
 
 	private static CompoundTag getSinglePlayerPlayerTag(CompoundTag rootDataTag) {
-		return (CompoundTag) rootDataTag.getValue().get(
-				NBTTagKeys.TAG_KEY_PLAYER);
+		return (CompoundTag) rootDataTag.getValue().get(NBTTagKeys.TAG_KEY_PLAYER);
 
 	}
 

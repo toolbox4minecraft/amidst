@@ -39,8 +39,7 @@ public class Biome {
 		}
 
 		private void findNextValid() {
-			while (nextBiomeIndex < biomes.length
-					&& biomes[nextBiomeIndex] == null) {
+			while (nextBiomeIndex < biomes.length && biomes[nextBiomeIndex] == null) {
 				nextBiomeIndex++;
 			}
 		}
@@ -141,8 +140,7 @@ public class Biome {
 
 	public static Biome getByIndex(int index) throws UnknownBiomeIndexException {
 		if (index < 0 || index >= biomes.length || biomes[index] == null) {
-			throw new UnknownBiomeIndexException(
-					"unsupported biome index detected: " + index);
+			throw new UnknownBiomeIndexException("unsupported biome index detected: " + index);
 		} else {
 			return biomes[index];
 		}
@@ -174,8 +172,7 @@ public class Biome {
 	private final BiomeType type;
 
 	public Biome(String name, int index, BiomeColor defaultColor) {
-		this(name, index, defaultColor.createLightenedBiomeColor(),
-				biomes[index - 128].type.getRare());
+		this(name, index, defaultColor.createLightenedBiomeColor(), biomes[index - 128].type.getRare());
 	}
 
 	public Biome(String name, int index, BiomeColor defaultColor, BiomeType type) {

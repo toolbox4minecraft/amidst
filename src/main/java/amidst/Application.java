@@ -33,10 +33,8 @@ public class Application {
 	private volatile MainWindow mainWindow;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Application(CommandLineParameters parameters,
-			AmidstMetaData metadata, AmidstSettings settings)
-			throws DotMinecraftDirectoryNotFoundException,
-			LocalMinecraftInterfaceCreationException {
+	public Application(CommandLineParameters parameters, AmidstMetaData metadata, AmidstSettings settings)
+			throws DotMinecraftDirectoryNotFoundException, LocalMinecraftInterfaceCreationException {
 		this.parameters = parameters;
 		this.metadata = metadata;
 		this.settings = settings;
@@ -47,13 +45,11 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private MojangApi createMojangApi()
-			throws DotMinecraftDirectoryNotFoundException,
+	private MojangApi createMojangApi() throws DotMinecraftDirectoryNotFoundException,
 			LocalMinecraftInterfaceCreationException {
 		return new MojangApiBuilder(new WorldBuilder(
 				new PlayerInformationCacheImpl(),
-				SeedHistoryLogger.from(parameters.seedHistoryFile)), parameters)
-				.construct();
+				SeedHistoryLogger.from(parameters.seedHistoryFile)), parameters).construct();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -83,27 +79,35 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void checkForUpdates(MainWindow mainWindow) {
-		UpdatePrompt.from(metadata.getVersion(),
-				threadMaster.getWorkerExecutor(), mainWindow, false).check();
+		UpdatePrompt.from(metadata.getVersion(), threadMaster.getWorkerExecutor(), mainWindow, false).check();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void checkForUpdatesSilently() {
-		UpdatePrompt.from(metadata.getVersion(),
-				threadMaster.getWorkerExecutor(), null, true).check();
+		UpdatePrompt.from(metadata.getVersion(), threadMaster.getWorkerExecutor(), null, true).check();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayMainWindow() {
-		setMainWindow(new MainWindow(this, metadata, settings, mojangApi,
-				biomeProfileDirectory, viewerFacadeBuilder, threadMaster));
+		setMainWindow(new MainWindow(
+				this,
+				metadata,
+				settings,
+				mojangApi,
+				biomeProfileDirectory,
+				viewerFacadeBuilder,
+				threadMaster));
 		setProfileSelectWindow(null);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayProfileSelectWindow() {
-		setProfileSelectWindow(new ProfileSelectWindow(this, metadata,
-				threadMaster.getWorkerExecutor(), mojangApi, settings));
+		setProfileSelectWindow(new ProfileSelectWindow(
+				this,
+				metadata,
+				threadMaster.getWorkerExecutor(),
+				mojangApi,
+				settings));
 		setMainWindow(null);
 	}
 

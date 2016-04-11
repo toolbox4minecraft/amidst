@@ -15,8 +15,7 @@ public class UpdateInformationJson {
 	public UpdateInformationJson() {
 	}
 
-	public UpdateInformationJson(int major, int minor, String message,
-			String downloadUrl) {
+	public UpdateInformationJson(int major, int minor, String message, String downloadUrl) {
 		this.major = major;
 		this.minor = minor;
 		this.downloadUrl = downloadUrl;

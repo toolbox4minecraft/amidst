@@ -16,7 +16,8 @@ public class OceanMonumentLocationChecker_Original extends AllValidLocationCheck
 	private static final boolean USE_TWO_VALUES_FOR_UPDATE = true;
 	private static final int STRUCTURE_SIZE = 29;
 
-	public OceanMonumentLocationChecker_Original(long seed,
+	public OceanMonumentLocationChecker_Original(
+			long seed,
 			BiomeDataOracle biomeDataOracle,
 			List<Biome> validBiomesAtMiddleOfChunk,
 			List<Biome> validBiomesForStructure) {

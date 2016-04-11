@@ -9,8 +9,7 @@ import amidst.documentation.Immutable;
 
 @Immutable
 public class LauncherProfilesJson {
-	private volatile Map<String, LauncherProfileJson> profiles = Collections
-			.emptyMap();
+	private volatile Map<String, LauncherProfileJson> profiles = Collections.emptyMap();
 
 	@GsonConstructor
 	public LauncherProfilesJson() {

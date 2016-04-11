@@ -32,8 +32,7 @@ public enum DefaultWorldIconTypes {
 
 	private DefaultWorldIconTypes(String name) {
 		this.name = name;
-		this.image = WorldIconImage.fromPixelTransparency(ResourceLoader
-				.getImage(getFilename()));
+		this.image = WorldIconImage.fromPixelTransparency(ResourceLoader.getImage(getFilename()));
 	}
 
 	private String getFilename() {

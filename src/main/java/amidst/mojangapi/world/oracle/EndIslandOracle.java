@@ -31,8 +31,7 @@ public class EndIslandOracle {
 	 * Mimics the side-effects to the random number generator caused by
 	 * constructing a Perlin3dOctaves instance.
 	 */
-	private static void fakePerlin3dOctavesConstructor(Random random,
-			int octaveCount) {
+	private static void fakePerlin3dOctavesConstructor(Random random, int octaveCount) {
 		for (int i = 0; i < octaveCount; i++) {
 			fakePerlin3dConstructor(random);
 		}
@@ -82,13 +81,14 @@ public class EndIslandOracle {
 	/**
 	 * Returns a list of all islands that might be touching a chunk-area.
 	 */
-	private List<EndIsland> findSurroundingIslands(int chunkX, int chunkY,
-			int chunksPerFragmentX, int chunksPerFragmentY) {
+	private List<EndIsland> findSurroundingIslands(
+			int chunkX,
+			int chunkY,
+			int chunksPerFragmentX,
+			int chunksPerFragmentY) {
 		List<EndIsland> result = new LinkedList<EndIsland>();
-		for (int y = -SURROUNDING_CHUNKS; y <= chunksPerFragmentY
-				+ SURROUNDING_CHUNKS; y++) {
-			for (int x = -SURROUNDING_CHUNKS; x <= chunksPerFragmentX
-					+ SURROUNDING_CHUNKS; x++) {
+		for (int y = -SURROUNDING_CHUNKS; y <= chunksPerFragmentY + SURROUNDING_CHUNKS; y++) {
+			for (int x = -SURROUNDING_CHUNKS; x <= chunksPerFragmentX + SURROUNDING_CHUNKS; x++) {
 				EndIsland island = tryCreateEndIsland(chunkX + x, chunkY + y);
 				if (island != null) {
 					result.add(island);
@@ -125,11 +125,9 @@ public class EndIslandOracle {
 	 */
 	// TODO: check for threading, do we need synchonized or is the SimplexNoise
 	// class thread safe?
-	private synchronized EndIsland tryCreateEndIslandInOuterLands(int chunkX,
-			int chunkY) {
+	private synchronized EndIsland tryCreateEndIslandInOuterLands(int chunkX, int chunkY) {
 		if (noiseFunction.noise(chunkX, chunkY) < ISLAND_DENSITY_THRESHOLD) {
-			return new EndIsland(chunkX, chunkY, getErosionFactor(chunkX,
-					chunkY));
+			return new EndIsland(chunkX, chunkY, getErosionFactor(chunkX, chunkY));
 		} else {
 			return null;
 		}

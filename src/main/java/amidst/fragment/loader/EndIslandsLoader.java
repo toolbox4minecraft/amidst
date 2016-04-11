@@ -19,8 +19,7 @@ public class EndIslandsLoader extends FragmentLoader {
 	private final EndIslandOracle endIslandOracle;
 
 	@CalledByAny
-	public EndIslandsLoader(LayerDeclaration declaration,
-			EndIslandOracle endIslandOracle) {
+	public EndIslandsLoader(LayerDeclaration declaration, EndIslandOracle endIslandOracle) {
 		super(declaration);
 		this.endIslandOracle = endIslandOracle;
 	}

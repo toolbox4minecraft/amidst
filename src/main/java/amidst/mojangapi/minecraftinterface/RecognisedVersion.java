@@ -115,27 +115,23 @@ public enum RecognisedVersion {
 	// @formatter:on
 
 	@NotNull
-	public static RecognisedVersion from(URLClassLoader classLoader)
-			throws ClassNotFoundException {
+	public static RecognisedVersion from(URLClassLoader classLoader) throws ClassNotFoundException {
 		return from(generateMagicString(classLoader));
 	}
 
 	@NotNull
-	public static String generateMagicString(URLClassLoader classLoader)
-			throws ClassNotFoundException {
+	public static String generateMagicString(URLClassLoader classLoader) throws ClassNotFoundException {
 		return generateMagicString(getMainClassFields(classLoader));
 	}
 
 	@NotNull
-	private static Field[] getMainClassFields(URLClassLoader classLoader)
-			throws ClassNotFoundException {
+	private static Field[] getMainClassFields(URLClassLoader classLoader) throws ClassNotFoundException {
 		if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
 			return classLoader.loadClass(CLIENT_CLASS).getDeclaredFields();
 		} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {
 			return classLoader.loadClass(SERVER_CLASS).getDeclaredFields();
 		} else {
-			throw new ClassNotFoundException(
-					"unable to find the main class in the given jar file");
+			throw new ClassNotFoundException("unable to find the main class in the given jar file");
 		}
 	}
 
@@ -164,8 +160,7 @@ public enum RecognisedVersion {
 				return recognisedVersion;
 			}
 		}
-		Log.i("Unable to recognise Minecraft Version with the magic string \""
-				+ magicString + "\".");
+		Log.i("Unable to recognise Minecraft Version with the magic string \"" + magicString + "\".");
 		return RecognisedVersion.UNKNOWN;
 	}
 
@@ -177,44 +172,36 @@ public enum RecognisedVersion {
 				return recognisedVersion;
 			}
 		}
-		Log.i("Unable to recognise Minecraft Version with the name \"" + name
-				+ "\".");
+		Log.i("Unable to recognise Minecraft Version with the name \"" + name + "\".");
 		return RecognisedVersion.UNKNOWN;
 	}
 
 	private static void logFound(RecognisedVersion recognisedVersion) {
-		Log.i("Recognised Minecraft Version " + recognisedVersion.name
-				+ " with the magic string \"" + recognisedVersion.magicString
-				+ "\".");
+		Log.i("Recognised Minecraft Version " + recognisedVersion.name + " with the magic string \""
+				+ recognisedVersion.magicString + "\".");
 	}
 
-	public static boolean isNewerOrEqualTo(RecognisedVersion version1,
-			RecognisedVersion version2) {
+	public static boolean isNewerOrEqualTo(RecognisedVersion version1, RecognisedVersion version2) {
 		return compareNewerIsLower(version1, version2) <= 0;
 	}
 
-	public static boolean isNewer(RecognisedVersion version1,
-			RecognisedVersion version2) {
+	public static boolean isNewer(RecognisedVersion version1, RecognisedVersion version2) {
 		return compareNewerIsLower(version1, version2) < 0;
 	}
 
-	public static boolean isOlderOrEqualTo(RecognisedVersion version1,
-			RecognisedVersion version2) {
+	public static boolean isOlderOrEqualTo(RecognisedVersion version1, RecognisedVersion version2) {
 		return compareNewerIsLower(version1, version2) >= 0;
 	}
 
-	public static boolean isOlder(RecognisedVersion version1,
-			RecognisedVersion version2) {
+	public static boolean isOlder(RecognisedVersion version1, RecognisedVersion version2) {
 		return compareNewerIsLower(version1, version2) > 0;
 	}
 
-	public static int compareNewerIsGreater(RecognisedVersion version1,
-			RecognisedVersion version2) {
+	public static int compareNewerIsGreater(RecognisedVersion version1, RecognisedVersion version2) {
 		return compareNewerIsLower(version2, version1);
 	}
 
-	public static int compareNewerIsLower(RecognisedVersion version1,
-			RecognisedVersion version2) {
+	public static int compareNewerIsLower(RecognisedVersion version1, RecognisedVersion version2) {
 		Objects.requireNonNull(version1);
 		Objects.requireNonNull(version2);
 		return version1.ordinal() - version2.ordinal();
@@ -224,12 +211,9 @@ public enum RecognisedVersion {
 		Map<String, RecognisedVersion> result = new LinkedHashMap<String, RecognisedVersion>();
 		for (RecognisedVersion recognisedVersion : RecognisedVersion.values()) {
 			if (result.containsKey(recognisedVersion.getName())) {
-				RecognisedVersion colliding = result.get(recognisedVersion
-						.getName());
-				throw new RuntimeException(
-						"name collision for the recognised versions "
-								+ recognisedVersion.getName() + " and "
-								+ colliding.getName());
+				RecognisedVersion colliding = result.get(recognisedVersion.getName());
+				throw new RuntimeException("name collision for the recognised versions " + recognisedVersion.getName()
+						+ " and " + colliding.getName());
 			} else {
 				result.put(recognisedVersion.getName(), recognisedVersion);
 			}
@@ -241,15 +225,11 @@ public enum RecognisedVersion {
 		Map<String, RecognisedVersion> result = new LinkedHashMap<String, RecognisedVersion>();
 		for (RecognisedVersion recognisedVersion : RecognisedVersion.values()) {
 			if (result.containsKey(recognisedVersion.getMagicString())) {
-				RecognisedVersion colliding = result.get(recognisedVersion
-						.getMagicString());
-				throw new RuntimeException(
-						"magic string collision for the recognised versions "
-								+ recognisedVersion.getName() + " and "
-								+ colliding.getName());
+				RecognisedVersion colliding = result.get(recognisedVersion.getMagicString());
+				throw new RuntimeException("magic string collision for the recognised versions "
+						+ recognisedVersion.getName() + " and " + colliding.getName());
 			} else {
-				result.put(recognisedVersion.getMagicString(),
-						recognisedVersion);
+				result.put(recognisedVersion.getMagicString(), recognisedVersion);
 			}
 		}
 		return result;

@@ -12,8 +12,7 @@ public class SymbolicField {
 	private final Field field;
 	private final SymbolicClass type;
 
-	public SymbolicField(SymbolicClass parent, String symbolicName,
-			String realName, Field field, SymbolicClass type) {
+	public SymbolicField(SymbolicClass parent, String symbolicName, String realName, Field field, SymbolicClass type) {
 		this.parent = parent;
 		this.symbolicName = symbolicName;
 		this.realName = realName;
@@ -21,18 +20,15 @@ public class SymbolicField {
 		this.type = type;
 	}
 
-	public Object getValue(SymbolicObject symbolicObject)
-			throws IllegalArgumentException, IllegalAccessException {
+	public Object getValue(SymbolicObject symbolicObject) throws IllegalArgumentException, IllegalAccessException {
 		return getValueFromObject(symbolicObject.getObject());
 	}
 
-	public Object getStaticValue() throws IllegalArgumentException,
-			IllegalAccessException {
+	public Object getStaticValue() throws IllegalArgumentException, IllegalAccessException {
 		return getValueFromObject(null);
 	}
 
-	private Object getValueFromObject(Object object)
-			throws IllegalArgumentException, IllegalAccessException {
+	private Object getValueFromObject(Object object) throws IllegalArgumentException, IllegalAccessException {
 		Object value = get(object);
 		if (isTypeSymbolicClass()) {
 			return new SymbolicObject(type, value);
@@ -41,8 +37,7 @@ public class SymbolicField {
 		}
 	}
 
-	private Object get(Object object) throws IllegalArgumentException,
-			IllegalAccessException {
+	private Object get(Object object) throws IllegalArgumentException, IllegalAccessException {
 		return field.get(object);
 	}
 
@@ -52,7 +47,6 @@ public class SymbolicField {
 
 	@Override
 	public String toString() {
-		return "[Field " + symbolicName + " (" + realName + ") of class "
-				+ parent.getSymbolicName() + "]";
+		return "[Field " + symbolicName + " (" + realName + ") of class " + parent.getSymbolicName() + "]";
 	}
 }

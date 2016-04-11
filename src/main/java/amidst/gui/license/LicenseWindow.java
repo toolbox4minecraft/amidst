@@ -63,8 +63,7 @@ public class LicenseWindow {
 		return result;
 	}
 
-	private JList<License> createLicenseList(License[] licenses,
-			final JTextArea textArea) {
+	private JList<License> createLicenseList(License[] licenses, final JTextArea textArea) {
 		final JList<License> result = new JList<License>(licenses);
 		result.setBorder(new LineBorder(Color.darkGray, 1));
 		result.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -79,8 +78,7 @@ public class LicenseWindow {
 		return result;
 	}
 
-	private JFrame createFrame(JList<License> licenseList,
-			JScrollPane scrollPane) {
+	private JFrame createFrame(JList<License> licenseList, JScrollPane scrollPane) {
 		JFrame frame = new JFrame("Licenses");
 		initContentPane(frame.getContentPane(), licenseList, scrollPane);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -90,8 +88,7 @@ public class LicenseWindow {
 		return frame;
 	}
 
-	private void initContentPane(Container contentPane,
-			JList<License> licenseList, JScrollPane scrollPane) {
+	private void initContentPane(Container contentPane, JList<License> licenseList, JScrollPane scrollPane) {
 		contentPane.setLayout(new MigLayout());
 		contentPane.add(licenseList, "w 150!, h 0:2400:2400");
 		contentPane.add(scrollPane, "w 0:4800:4800, h 0:2400:2400");

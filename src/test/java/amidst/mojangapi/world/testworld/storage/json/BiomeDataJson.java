@@ -39,8 +39,7 @@ public class BiomeDataJson {
 		if (result != null) {
 			return short2int(result);
 		} else {
-			throw new IllegalArgumentException(
-					"the requested area was not stored");
+			throw new IllegalArgumentException("the requested area was not stored");
 		}
 	}
 }

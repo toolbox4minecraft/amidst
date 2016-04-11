@@ -22,88 +22,73 @@ import amidst.mojangapi.world.player.PlayerCoordinates;
 public enum PlayerLocationSaver {
 	;
 
-	public static void writeToPlayerFile(PlayerCoordinates coordinates,
-			File file) throws MojangApiParsingException {
+	public static void writeToPlayerFile(PlayerCoordinates coordinates, File file) throws MojangApiParsingException {
 		try {
 			CompoundTag dataTag = NBTUtils.readTagFromFile(file);
-			CompoundTag modifiedDataTag = modifyPositionInDataTagMultiPlayer(
-					dataTag, coordinates);
+			CompoundTag modifiedDataTag = modifyPositionInDataTagMultiPlayer(dataTag, coordinates);
 			NBTUtils.writeTagToFile(file, modifiedDataTag);
 		} catch (IOException | NullPointerException e) {
-			throw new MojangApiParsingException(
-					"cannot write player coordinates", e);
+			throw new MojangApiParsingException("cannot write player coordinates", e);
 		}
 	}
 
-	public static void writeToLevelDat(PlayerCoordinates coordinates, File file)
-			throws MojangApiParsingException {
+	public static void writeToLevelDat(PlayerCoordinates coordinates, File file) throws MojangApiParsingException {
 		try {
 			CompoundTag baseTag = NBTUtils.readTagFromFile(file);
-			CompoundTag modifiedBaseTag = modifyPositionInBaseTagSinglePlayer(
-					baseTag, coordinates);
+			CompoundTag modifiedBaseTag = modifyPositionInBaseTagSinglePlayer(baseTag, coordinates);
 			NBTUtils.writeTagToFile(file, modifiedBaseTag);
 		} catch (IOException | NullPointerException e) {
-			throw new MojangApiParsingException(
-					"cannot write player coordinates", e);
+			throw new MojangApiParsingException("cannot write player coordinates", e);
 		}
 	}
 
-	private static CompoundTag modifyPositionInBaseTagSinglePlayer(
-			CompoundTag baseTag, PlayerCoordinates coordinates) {
+	private static CompoundTag modifyPositionInBaseTagSinglePlayer(CompoundTag baseTag, PlayerCoordinates coordinates) {
 		Map<String, Tag> baseMap = baseTag.getValue();
-		Map<String, Tag> modifiedBaseMap = modifyPositionInBaseMapSinglePlayer(
-				baseMap, coordinates);
+		Map<String, Tag> modifiedBaseMap = modifyPositionInBaseMapSinglePlayer(baseMap, coordinates);
 		return new CompoundTag(NBTTagKeys.TAG_KEY_BASE, modifiedBaseMap);
 	}
 
 	private static Map<String, Tag> modifyPositionInBaseMapSinglePlayer(
-			Map<String, Tag> baseMap, PlayerCoordinates coordinates) {
+			Map<String, Tag> baseMap,
+			PlayerCoordinates coordinates) {
 		Map<String, Tag> result = new HashMap<String, Tag>();
-		CompoundTag dataTag = (CompoundTag) baseMap
-				.get(NBTTagKeys.TAG_KEY_DATA);
-		CompoundTag modifiedDataTag = modifyPositionInDataTagSinglePlayer(
-				dataTag, coordinates);
+		CompoundTag dataTag = (CompoundTag) baseMap.get(NBTTagKeys.TAG_KEY_DATA);
+		CompoundTag modifiedDataTag = modifyPositionInDataTagSinglePlayer(dataTag, coordinates);
 		result.put(NBTTagKeys.TAG_KEY_DATA, modifiedDataTag);
 		return result;
 	}
 
-	private static CompoundTag modifyPositionInDataTagSinglePlayer(
-			CompoundTag dataTag, PlayerCoordinates coordinates) {
+	private static CompoundTag modifyPositionInDataTagSinglePlayer(CompoundTag dataTag, PlayerCoordinates coordinates) {
 		Map<String, Tag> dataMap = dataTag.getValue();
-		Map<String, Tag> modifiedDataMap = modifyPositionInDataMapSinglePlayer(
-				dataMap, coordinates);
+		Map<String, Tag> modifiedDataMap = modifyPositionInDataMapSinglePlayer(dataMap, coordinates);
 		return new CompoundTag(NBTTagKeys.TAG_KEY_DATA, modifiedDataMap);
 	}
 
 	private static Map<String, Tag> modifyPositionInDataMapSinglePlayer(
-			Map<String, Tag> dataMap, PlayerCoordinates coordinates) {
+			Map<String, Tag> dataMap,
+			PlayerCoordinates coordinates) {
 		Map<String, Tag> result = new HashMap<String, Tag>(dataMap);
-		CompoundTag playerTag = (CompoundTag) dataMap
-				.get(NBTTagKeys.TAG_KEY_PLAYER);
-		CompoundTag modifiedPlayerTag = modifyPositionInPlayerTagSinglePlayer(
-				playerTag, coordinates);
+		CompoundTag playerTag = (CompoundTag) dataMap.get(NBTTagKeys.TAG_KEY_PLAYER);
+		CompoundTag modifiedPlayerTag = modifyPositionInPlayerTagSinglePlayer(playerTag, coordinates);
 		result.put(NBTTagKeys.TAG_KEY_PLAYER, modifiedPlayerTag);
 		return result;
 	}
 
 	private static CompoundTag modifyPositionInPlayerTagSinglePlayer(
-			CompoundTag playerTag, PlayerCoordinates coordinates) {
+			CompoundTag playerTag,
+			PlayerCoordinates coordinates) {
 		Map<String, Tag> playerMap = playerTag.getValue();
-		Map<String, Tag> modifiedPlayerMap = modifyPositionInPlayerMap(
-				playerMap, coordinates);
+		Map<String, Tag> modifiedPlayerMap = modifyPositionInPlayerMap(playerMap, coordinates);
 		return new CompoundTag(NBTTagKeys.TAG_KEY_PLAYER, modifiedPlayerMap);
 	}
 
-	private static CompoundTag modifyPositionInDataTagMultiPlayer(
-			CompoundTag dataTag, PlayerCoordinates coordinates) {
+	private static CompoundTag modifyPositionInDataTagMultiPlayer(CompoundTag dataTag, PlayerCoordinates coordinates) {
 		Map<String, Tag> playerMap = dataTag.getValue();
-		Map<String, Tag> modifiedPlayerMap = modifyPositionInPlayerMap(
-				playerMap, coordinates);
+		Map<String, Tag> modifiedPlayerMap = modifyPositionInPlayerMap(playerMap, coordinates);
 		return new CompoundTag(NBTTagKeys.TAG_KEY_DATA, modifiedPlayerMap);
 	}
 
-	private static Map<String, Tag> modifyPositionInPlayerMap(
-			Map<String, Tag> playerMap, PlayerCoordinates coordinates) {
+	private static Map<String, Tag> modifyPositionInPlayerMap(Map<String, Tag> playerMap, PlayerCoordinates coordinates) {
 		Map<String, Tag> result = new HashMap<String, Tag>(playerMap);
 		ListTag posTag = (ListTag) playerMap.get(NBTTagKeys.TAG_KEY_POS);
 		ListTag modifiedPosTag = modifyPositionInPosTag(posTag, coordinates);
@@ -111,17 +96,13 @@ public enum PlayerLocationSaver {
 		return result;
 	}
 
-	private static ListTag modifyPositionInPosTag(ListTag posTag,
-			PlayerCoordinates coordinates) {
+	private static ListTag modifyPositionInPosTag(ListTag posTag, PlayerCoordinates coordinates) {
 		List<Tag> posList = posTag.getValue();
-		List<Tag> modifiedPosList = modifyPositionInPosList(posList,
-				coordinates);
-		return new ListTag(NBTTagKeys.TAG_KEY_POS, DoubleTag.class,
-				modifiedPosList);
+		List<Tag> modifiedPosList = modifyPositionInPosList(posList, coordinates);
+		return new ListTag(NBTTagKeys.TAG_KEY_POS, DoubleTag.class, modifiedPosList);
 	}
 
-	private static List<Tag> modifyPositionInPosList(List<Tag> posList,
-			PlayerCoordinates coordinates) {
+	private static List<Tag> modifyPositionInPosList(List<Tag> posList, PlayerCoordinates coordinates) {
 		List<Tag> result = new ArrayList<Tag>(posList);
 		result.set(0, new DoubleTag("x", coordinates.getXForNBTFile()));
 		result.set(1, new DoubleTag("y", coordinates.getYForNBTFile()));

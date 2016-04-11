@@ -11,8 +11,7 @@ public class BiomeLocationChecker implements LocationChecker {
 	private final BiomeDataOracle biomeDataOracle;
 	private final List<Biome> validBiomes;
 
-	public BiomeLocationChecker(BiomeDataOracle biomeDataOracle,
-			List<Biome> validBiomes) {
+	public BiomeLocationChecker(BiomeDataOracle biomeDataOracle, List<Biome> validBiomes) {
 		this.biomeDataOracle = biomeDataOracle;
 		this.validBiomes = validBiomes;
 	}

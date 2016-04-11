@@ -23,8 +23,7 @@ public class AmidstMenuBuilder {
 	private JMenuItem reloadPlayerLocationsMenu;
 	private LayersMenu layersMenu;
 
-	public AmidstMenuBuilder(AmidstSettings settings, Actions actions,
-			BiomeProfileDirectory biomeProfileDirectory) {
+	public AmidstMenuBuilder(AmidstSettings settings, Actions actions, BiomeProfileDirectory biomeProfileDirectory) {
 		this.settings = settings;
 		this.actions = actions;
 		this.biomeProfileDirectory = biomeProfileDirectory;
@@ -32,8 +31,7 @@ public class AmidstMenuBuilder {
 	}
 
 	public AmidstMenu construct() {
-		return new AmidstMenu(menuBar, worldMenu, savePlayerLocationsMenu,
-				reloadPlayerLocationsMenu, layersMenu);
+		return new AmidstMenu(menuBar, worldMenu, savePlayerLocationsMenu, reloadPlayerLocationsMenu, layersMenu);
 	}
 
 	private JMenuBar createMenuBar() {

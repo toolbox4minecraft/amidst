@@ -8,8 +8,7 @@ import com.google.gson.GsonBuilder;
 
 public class GenerateUpdateInformationJson {
 	private static final String DOWNLOAD_URL = "https://github.com/toolbox4minecraft/amidst/releases";
-	private static final Gson GSON = new GsonBuilder().setPrettyPrinting()
-			.create();
+	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	private final AmidstVersion version;
 
@@ -22,8 +21,7 @@ public class GenerateUpdateInformationJson {
 			throw new RuntimeException(
 					"Update information documents can only be created for stable releases (not a pre-release).");
 		}
-		UpdateInformationJson json = new UpdateInformationJson(
-				version.getMajor(), version.getMinor(), "", DOWNLOAD_URL);
+		UpdateInformationJson json = new UpdateInformationJson(version.getMajor(), version.getMinor(), "", DOWNLOAD_URL);
 		System.out.println(GSON.toJson(json));
 	}
 }

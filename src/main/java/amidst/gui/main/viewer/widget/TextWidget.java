@@ -24,13 +24,10 @@ public abstract class TextWidget extends Widget {
 	@Override
 	protected void doUpdate(FontMetrics fontMetrics, float time) {
 		List<String> newTextLines = updateTextLines();
-		if (newTextLines != null && !newTextLines.isEmpty()
-				&& !newTextLines.equals(textLines)) {
+		if (newTextLines != null && !newTextLines.isEmpty() && !newTextLines.equals(textLines)) {
 			textLines = newTextLines;
-			setWidth(getMarginLeft() + getMaxStringWidth(fontMetrics)
-					+ getMarginRight());
-			setHeight(Math.max(getMinimumHeight(), getMarginTop()
-					+ getStringHeight(fontMetrics) + getMarginBottom()));
+			setWidth(getMarginLeft() + getMaxStringWidth(fontMetrics) + getMarginRight());
+			setHeight(Math.max(getMinimumHeight(), getMarginTop() + getStringHeight(fontMetrics) + getMarginBottom()));
 		}
 		isVisible = newTextLines != null && newTextLines.size() > 0;
 	}
@@ -48,8 +45,7 @@ public abstract class TextWidget extends Widget {
 	private int getStringHeight(FontMetrics fontMetrics) {
 		int lineHeight = fontMetrics.getHeight();
 		int lineSeparationHeight = getLineSeparationHeight(fontMetrics);
-		return textLines.size() * lineSeparationHeight + lineHeight
-				- lineSeparationHeight;
+		return textLines.size() * lineSeparationHeight + lineHeight - lineSeparationHeight;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

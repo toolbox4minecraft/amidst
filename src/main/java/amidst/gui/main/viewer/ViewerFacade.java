@@ -40,11 +40,17 @@ public class ViewerFacade {
 	private final Runnable onPlayerFinishedLoading;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ViewerFacade(World world, FragmentGraph graph,
-			FragmentGraphToScreenTranslator translator, Zoom zoom,
-			Viewer viewer, LayerReloader layerReloader,
-			WorldIconSelection worldIconSelection, LayerManager layerManager,
-			Runnable onRepainterTick, Runnable onFragmentLoaderTick,
+	public ViewerFacade(
+			World world,
+			FragmentGraph graph,
+			FragmentGraphToScreenTranslator translator,
+			Zoom zoom,
+			Viewer viewer,
+			LayerReloader layerReloader,
+			WorldIconSelection worldIconSelection,
+			LayerManager layerManager,
+			Runnable onRepainterTick,
+			Runnable onFragmentLoaderTick,
 			Runnable onPlayerFinishedLoading) {
 		this.world = world;
 		this.graph = graph;
@@ -160,8 +166,7 @@ public class ViewerFacade {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void loadPlayers(WorkerExecutor workerExecutor) {
 		worldIconSelection.clear();
-		world.getMovablePlayerList().load(workerExecutor,
-				onPlayerFinishedLoading);
+		world.getMovablePlayerList().load(workerExecutor, onPlayerFinishedLoading);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -175,10 +180,8 @@ public class ViewerFacade {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public boolean calculateIsLayerEnabled(int layerId, Dimension dimension,
-			boolean enableAllLayers) {
-		return layerManager.calculateIsEnabled(layerId, dimension,
-				enableAllLayers);
+	public boolean calculateIsLayerEnabled(int layerId, Dimension dimension, boolean enableAllLayers) {
+		return layerManager.calculateIsEnabled(layerId, dimension, enableAllLayers);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

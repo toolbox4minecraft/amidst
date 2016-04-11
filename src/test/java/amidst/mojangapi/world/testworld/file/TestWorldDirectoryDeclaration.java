@@ -19,8 +19,7 @@ public class TestWorldDirectoryDeclaration {
 
 	private final Map<String, TestWorldEntryDeclaration<?>> entries;
 
-	public TestWorldDirectoryDeclaration(
-			Map<String, TestWorldEntryDeclaration<?>> entries) {
+	public TestWorldDirectoryDeclaration(Map<String, TestWorldEntryDeclaration<?>> entries) {
 		this.entries = entries;
 	}
 
@@ -32,8 +31,7 @@ public class TestWorldDirectoryDeclaration {
 		return entries.containsKey(name);
 	}
 
-	public <T> TestWorldEntryDeclaration<T> getEntryDeclaration(String name,
-			Class<T> clazz) {
+	public <T> TestWorldEntryDeclaration<T> getEntryDeclaration(String name, Class<T> clazz) {
 		TestWorldEntryDeclaration<?> entry = entries.get(name);
 		if (entry != null) {
 			return entry.getAsEntryWithClazz(clazz);
@@ -42,29 +40,27 @@ public class TestWorldDirectoryDeclaration {
 		}
 	}
 
-	public TestWorldDirectory create(TestWorldDeclaration worldDeclaration,
-			World world, BiomeDataJson quarterBiomeData,
+	public TestWorldDirectory create(
+			TestWorldDeclaration worldDeclaration,
+			World world,
+			BiomeDataJson quarterBiomeData,
 			BiomeDataJson fullBiomeData) {
 		Map<String, Object> data = new HashMap<String, Object>();
-		for (Entry<String, TestWorldEntryDeclaration<?>> entry : entries
-				.entrySet()) {
+		for (Entry<String, TestWorldEntryDeclaration<?>> entry : entries.entrySet()) {
 			String name = entry.getKey();
 			if (name.equals(TestWorldEntryNames.QUARTER_RESOLUTION_BIOME_DATA)) {
 				data.put(name, quarterBiomeData);
-			} else if (name
-					.equals(TestWorldEntryNames.FULL_RESOLUTION_BIOME_DATA)) {
+			} else if (name.equals(TestWorldEntryNames.FULL_RESOLUTION_BIOME_DATA)) {
 				data.put(name, fullBiomeData);
 			} else if (worldDeclaration.isSupported(name)) {
-				TestWorldEntryDeclaration<?> entryDeclaration = entry
-						.getValue();
+				TestWorldEntryDeclaration<?> entryDeclaration = entry.getValue();
 				data.put(name, entryDeclaration.extractFromWorld(world));
 			}
 		}
 		return new TestWorldDirectory(this, data);
 	}
 
-	public boolean isDataMapAndWorldEntryEqual(String name,
-			Map<String, Object> data, World world) {
+	public boolean isDataMapAndWorldEntryEqual(String name, Map<String, Object> data, World world) {
 		return entries.get(name).isDataMapAndWorldEntryEqual(data, world);
 	}
 }

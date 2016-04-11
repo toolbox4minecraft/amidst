@@ -19,8 +19,7 @@ public class WorldIconDrawer extends FragmentDrawer {
 	private final Zoom zoom;
 	private final WorldIconSelection worldIconSelection;
 
-	public WorldIconDrawer(LayerDeclaration declaration, Zoom zoom,
-			WorldIconSelection worldIconSelection) {
+	public WorldIconDrawer(LayerDeclaration declaration, Zoom zoom, WorldIconSelection worldIconSelection) {
 		super(declaration);
 		this.zoom = zoom;
 		this.worldIconSelection = worldIconSelection;
@@ -47,8 +46,7 @@ public class WorldIconDrawer extends FragmentDrawer {
 			height *= 1.5;
 		}
 		CoordinatesInWorld coordinates = icon.getCoordinates();
-		g2d.translate(coordinates.getXRelativeToFragment(),
-				coordinates.getYRelativeToFragment());
+		g2d.translate(coordinates.getXRelativeToFragment(), coordinates.getYRelativeToFragment());
 		g2d.scale(invZoom, invZoom);
 		g2d.drawImage(image, -(width >> 1), -(height >> 1), width, height, null);
 	}

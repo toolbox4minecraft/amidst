@@ -24,9 +24,13 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	private final Actions actions;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ViewerMouseListener(WidgetManager widgetManager,
-			FragmentGraph graph, FragmentGraphToScreenTranslator translator,
-			Zoom zoom, Movement movement, Actions actions) {
+	public ViewerMouseListener(
+			WidgetManager widgetManager,
+			FragmentGraph graph,
+			FragmentGraphToScreenTranslator translator,
+			Zoom zoom,
+			Movement movement,
+			Actions actions) {
 		this.widgetManager = widgetManager;
 		this.graph = graph;
 		this.translator = translator;
@@ -110,7 +114,8 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void doMouseClicked(Point mousePosition) {
 		actions.selectWorldIcon(graph.getClosestWorldIcon(
-				translator.screenToWorld(mousePosition), zoom.screenToWorld(50)));
+				translator.screenToWorld(mousePosition),
+				zoom.screenToWorld(50)));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -124,9 +129,7 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void showPopupMenu(Point mousePosition, Component component, int x,
-			int y) {
-		actions.showPlayerPopupMenu(translator.screenToWorld(mousePosition),
-				component, x, y);
+	private void showPopupMenu(Point mousePosition, Component component, int x, int y) {
+		actions.showPlayerPopupMenu(translator.screenToWorld(mousePosition), component, x, y);
 	}
 }

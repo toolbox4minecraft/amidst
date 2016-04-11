@@ -100,8 +100,7 @@ public class BiomeProfileDirectory {
 					throw new NullPointerException();
 				}
 				profile.validate();
-			} catch (JsonSyntaxException | JsonIOException | IOException
-					| NullPointerException e) {
+			} catch (JsonSyntaxException | JsonIOException | IOException | NullPointerException e) {
 				Log.w("Unable to load file: " + file);
 				e.printStackTrace();
 			}
@@ -109,8 +108,7 @@ public class BiomeProfileDirectory {
 		return profile;
 	}
 
-	private BiomeProfile readProfile(File file) throws IOException,
-			JsonSyntaxException, JsonIOException {
+	private BiomeProfile readProfile(File file) throws IOException, JsonSyntaxException, JsonIOException {
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			return GSON.fromJson(reader, BiomeProfile.class);
 		}

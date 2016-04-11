@@ -20,15 +20,13 @@ public enum WorldPlayerType {
 	BOTH        ("Both");
 	// @formatter:on
 
-	private static final List<WorldPlayerType> SELECTABLE = Arrays.asList(
-			SINGLEPLAYER, MULTIPLAYER, BOTH);
+	private static final List<WorldPlayerType> SELECTABLE = Arrays.asList(SINGLEPLAYER, MULTIPLAYER, BOTH);
 
 	public static List<WorldPlayerType> getSelectable() {
 		return SELECTABLE;
 	}
 
-	public static WorldPlayerType from(SaveDirectory saveDirectory,
-			LevelDatNbt levelDat) {
+	public static WorldPlayerType from(SaveDirectory saveDirectory, LevelDatNbt levelDat) {
 		boolean hasSingleplayerPlayer = levelDat.hasPlayer();
 		boolean hasMultiplayerPlayers = saveDirectory.hasMultiplayerPlayers();
 		if (hasSingleplayerPlayer && hasMultiplayerPlayers) {

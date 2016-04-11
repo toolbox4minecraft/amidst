@@ -34,10 +34,8 @@ public class Player {
 		return currentCoordinates;
 	}
 
-	public void moveTo(CoordinatesInWorld coordinates, long height,
-			Dimension dimension) {
-		this.currentCoordinates = new PlayerCoordinates(coordinates, height,
-				dimension);
+	public void moveTo(CoordinatesInWorld coordinates, long height, Dimension dimension) {
+		this.currentCoordinates = new PlayerCoordinates(coordinates, height, dimension);
 	}
 
 	public boolean trySaveLocation() {
@@ -50,8 +48,7 @@ public class Player {
 				return false;
 			}
 		} catch (MojangApiParsingException e) {
-			Log.w("error while writing player location for player: "
-					+ getPlayerName());
+			Log.w("error while writing player location for player: " + getPlayerName());
 			e.printStackTrace();
 			return false;
 		}
@@ -80,15 +77,13 @@ public class Player {
 			loadLocation();
 			return true;
 		} catch (IOException | MojangApiParsingException e) {
-			Log.w("error while reading player location for player: "
-					+ getPlayerName());
+			Log.w("error while reading player location for player: " + getPlayerName());
 			e.printStackTrace();
 			return false;
 		}
 	}
 
-	public synchronized void loadLocation() throws IOException,
-			MojangApiParsingException {
+	public synchronized void loadLocation() throws IOException, MojangApiParsingException {
 		this.savedCoordinates = playerNbt.readCoordinates();
 		this.currentCoordinates = savedCoordinates;
 	}

@@ -6,19 +6,16 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
 @Immutable
 public class PlayerCoordinates {
-	public static PlayerCoordinates fromNBTFile(long x, long y, long z,
-			int dimensionId) {
+	public static PlayerCoordinates fromNBTFile(long x, long y, long z, int dimensionId) {
 		Dimension dimension = Dimension.from(dimensionId);
-		return new PlayerCoordinates(CoordinatesInWorld.from(x, z,
-				dimension.getResolution()), y, dimension);
+		return new PlayerCoordinates(CoordinatesInWorld.from(x, z, dimension.getResolution()), y, dimension);
 	}
 
 	private final CoordinatesInWorld coordinates;
 	private final long y;
 	private final Dimension dimension;
 
-	public PlayerCoordinates(CoordinatesInWorld coordinates, long y,
-			Dimension dimension) {
+	public PlayerCoordinates(CoordinatesInWorld coordinates, long y, Dimension dimension) {
 		this.coordinates = coordinates;
 		this.y = y;
 		this.dimension = dimension;

@@ -90,8 +90,7 @@ public class Fragment {
 
 	public Fragment(int numberOfLayers) {
 		this.images = new AtomicReferenceArray<BufferedImage>(numberOfLayers);
-		this.worldIcons = new AtomicReferenceArray<List<WorldIcon>>(
-				numberOfLayers);
+		this.worldIcons = new AtomicReferenceArray<List<WorldIcon>>(numberOfLayers);
 	}
 
 	public void setAlpha(float alpha) {

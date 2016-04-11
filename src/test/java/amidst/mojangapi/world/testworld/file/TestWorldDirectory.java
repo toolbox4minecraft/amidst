@@ -10,8 +10,7 @@ public class TestWorldDirectory {
 	private final TestWorldDirectoryDeclaration declaration;
 	private final Map<String, Object> data;
 
-	public TestWorldDirectory(TestWorldDirectoryDeclaration declaration,
-			Map<String, Object> data) {
+	public TestWorldDirectory(TestWorldDirectoryDeclaration declaration, Map<String, Object> data) {
 		this.declaration = declaration;
 		this.data = data;
 	}
@@ -21,13 +20,11 @@ public class TestWorldDirectory {
 	}
 
 	public <T> T getEntryValue(String name, Class<T> clazz) {
-		return declaration.getEntryDeclaration(name, clazz).extractFromDataMap(
-				data);
+		return declaration.getEntryDeclaration(name, clazz).extractFromDataMap(data);
 	}
 
 	public <T> T extractFromWorld(String name, Class<T> clazz, World world) {
-		return declaration.getEntryDeclaration(name, clazz).extractFromWorld(
-				world);
+		return declaration.getEntryDeclaration(name, clazz).extractFromWorld(world);
 	}
 
 	public boolean isDirectoryAndWorldEntryEqual(String name, World world) {

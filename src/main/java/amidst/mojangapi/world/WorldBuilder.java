@@ -40,19 +40,15 @@ public class WorldBuilder {
 	private final PlayerInformationCache playerInformationCache;
 	private final SeedHistoryLogger seedHistoryLogger;
 
-	public WorldBuilder(PlayerInformationCache playerInformationCache,
-			SeedHistoryLogger seedHistoryLogger) {
+	public WorldBuilder(PlayerInformationCache playerInformationCache, SeedHistoryLogger seedHistoryLogger) {
 		this.playerInformationCache = playerInformationCache;
 		this.seedHistoryLogger = seedHistoryLogger;
 	}
 
-	public World fromSeed(MinecraftInterface minecraftInterface,
-			WorldSeed worldSeed, WorldType worldType)
+	public World fromSeed(MinecraftInterface minecraftInterface, WorldSeed worldSeed, WorldType worldType)
 			throws MinecraftInterfaceException {
-		BiomeDataOracle biomeDataOracle = new BiomeDataOracle(
-				minecraftInterface);
-		VersionFeatures versionFeatures = DefaultVersionFeatures
-				.create(minecraftInterface.getRecognisedVersion());
+		BiomeDataOracle biomeDataOracle = new BiomeDataOracle(minecraftInterface);
+		VersionFeatures versionFeatures = DefaultVersionFeatures.create(minecraftInterface.getRecognisedVersion());
 		return create(
 				minecraftInterface,
 				worldSeed,
@@ -61,34 +57,39 @@ public class WorldBuilder {
 				MovablePlayerList.dummy(),
 				versionFeatures,
 				biomeDataOracle,
-				new HeuristicWorldSpawnOracle(worldSeed.getLong(),
-						biomeDataOracle, versionFeatures
-								.getValidBiomesForStructure_Spawn()));
+				new HeuristicWorldSpawnOracle(worldSeed.getLong(), biomeDataOracle, versionFeatures
+						.getValidBiomesForStructure_Spawn()));
 	}
 
-	public World fromSaveGame(MinecraftInterface minecraftInterface,
-			SaveDirectory saveDirectory) throws IOException,
+	public World fromSaveGame(MinecraftInterface minecraftInterface, SaveDirectory saveDirectory) throws IOException,
 			MinecraftInterfaceException, MojangApiParsingException {
-		VersionFeatures versionFeatures = DefaultVersionFeatures
-				.create(minecraftInterface.getRecognisedVersion());
+		VersionFeatures versionFeatures = DefaultVersionFeatures.create(minecraftInterface.getRecognisedVersion());
 		LevelDatNbt levelDat = saveDirectory.createLevelDat();
 		MovablePlayerList movablePlayerList = new MovablePlayerList(
-				playerInformationCache, saveDirectory,
-				versionFeatures.isSaveEnabled(), WorldPlayerType.from(
-						saveDirectory, levelDat));
-		return create(minecraftInterface, WorldSeed.fromSaveGame(levelDat
-				.getSeed()), levelDat.getWorldType(),
-				levelDat.getGeneratorOptions(), movablePlayerList,
-				versionFeatures, new BiomeDataOracle(minecraftInterface),
+				playerInformationCache,
+				saveDirectory,
+				versionFeatures.isSaveEnabled(),
+				WorldPlayerType.from(saveDirectory, levelDat));
+		return create(
+				minecraftInterface,
+				WorldSeed.fromSaveGame(levelDat.getSeed()),
+				levelDat.getWorldType(),
+				levelDat.getGeneratorOptions(),
+				movablePlayerList,
+				versionFeatures,
+				new BiomeDataOracle(minecraftInterface),
 				new ImmutableWorldSpawnOracle(levelDat.getWorldSpawn()));
 	}
 
-	private World create(MinecraftInterface minecraftInterface,
-			WorldSeed worldSeed, WorldType worldType, String generatorOptions,
+	private World create(
+			MinecraftInterface minecraftInterface,
+			WorldSeed worldSeed,
+			WorldType worldType,
+			String generatorOptions,
 			MovablePlayerList movablePlayerList,
-			VersionFeatures versionFeatures, BiomeDataOracle biomeDataOracle,
-			WorldSpawnOracle worldSpawnOracle)
-			throws MinecraftInterfaceException {
+			VersionFeatures versionFeatures,
+			BiomeDataOracle biomeDataOracle,
+			WorldSpawnOracle worldSpawnOracle) throws MinecraftInterfaceException {
 		// @formatter:off
 		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
 		seedHistoryLogger.log(recognisedVersion, worldSeed);

@@ -68,9 +68,12 @@ public class LayerBuilder {
 		return LayerIds.NUMBER_OF_LAYERS;
 	}
 
-	public LayerManager create(AmidstSettings settings, World world,
+	public LayerManager create(
+			AmidstSettings settings,
+			World world,
 			BiomeSelection biomeSelection,
-			WorldIconSelection worldIconSelection, Zoom zoom,
+			WorldIconSelection worldIconSelection,
+			Zoom zoom,
 			Graphics2DAccelerationCounter accelerationCounter) {
 		// @formatter:off
 		List<LayerDeclaration> declarations = createDeclarations(settings, world.getVersionFeatures());
@@ -81,8 +84,7 @@ public class LayerBuilder {
 		// @formatter:on
 	}
 
-	private List<LayerDeclaration> createDeclarations(AmidstSettings settings,
-			VersionFeatures versionFeatures) {
+	private List<LayerDeclaration> createDeclarations(AmidstSettings settings, VersionFeatures versionFeatures) {
 		LayerDeclaration[] declarations = new LayerDeclaration[LayerIds.NUMBER_OF_LAYERS];
 		// @formatter:off
 		declare(settings, declarations, versionFeatures, LayerIds.ALPHA,           null,                false, Settings.createImmutable(true));
@@ -104,21 +106,31 @@ public class LayerBuilder {
 		return Collections.unmodifiableList(Arrays.asList(declarations));
 	}
 
-	private void declare(AmidstSettings settings,
-			LayerDeclaration[] declarations, VersionFeatures versionFeatures,
-			int layerId, Dimension dimension, boolean drawUnloaded,
+	private void declare(
+			AmidstSettings settings,
+			LayerDeclaration[] declarations,
+			VersionFeatures versionFeatures,
+			int layerId,
+			Dimension dimension,
+			boolean drawUnloaded,
 			Setting<Boolean> isVisibleSetting) {
-		declarations[layerId] = new LayerDeclaration(layerId, dimension,
-				drawUnloaded, versionFeatures.hasLayer(layerId),
-				isVisibleSetting, settings.enableAllLayers);
+		declarations[layerId] = new LayerDeclaration(
+				layerId,
+				dimension,
+				drawUnloaded,
+				versionFeatures.hasLayer(layerId),
+				isVisibleSetting,
+				settings.enableAllLayers);
 	}
 
 	/**
 	 * This also defines the loading and reloading order.
 	 */
 	private Iterable<FragmentLoader> createLoaders(
-			List<LayerDeclaration> declarations, World world,
-			BiomeSelection biomeSelection, AmidstSettings settings) {
+			List<LayerDeclaration> declarations,
+			World world,
+			BiomeSelection biomeSelection,
+			AmidstSettings settings) {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
 				new AlphaInitializer(                declarations.get(LayerIds.ALPHA),           settings.fragmentFading),
@@ -143,7 +155,8 @@ public class LayerBuilder {
 	 * This also defines the rendering order.
 	 */
 	private Iterable<FragmentDrawer> createDrawers(
-			List<LayerDeclaration> declarations, Zoom zoom,
+			List<LayerDeclaration> declarations,
+			Zoom zoom,
 			WorldIconSelection worldIconSelection,
 			Graphics2DAccelerationCounter accelerationCounter) {
 		// @formatter:off
