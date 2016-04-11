@@ -62,8 +62,8 @@ public enum LibraryFinder {
 		String result = librariesDirectory.getAbsolutePath() + "/";
 		String[] split = libraryName.split(":");
 		split[0] = split[0].replace('.', '/');
-		for (int i = 0; i < split.length; i++) {
-			result += split[i] + "/";
+		for (String element : split) {
+			result += element + "/";
 		}
 		return new File(result);
 	}

@@ -26,8 +26,8 @@ public enum Menus {
 	public static void radios(JMenu menu, Setting<String> setting, String... values) {
 		Objects.requireNonNull(values);
 		ButtonGroup group = new ButtonGroup();
-		for (int i = 0; i < values.length; i++) {
-			radio(menu, setting, group, values[i]);
+		for (String value : values) {
+			radio(menu, setting, group, value);
 		}
 	}
 
