@@ -125,10 +125,10 @@ public class MainWindow {
 	private void initKeyListener() {
 		frame.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_PLUS) {
+			public void keyTyped(KeyEvent e) {
+				if (e.getKeyChar() == '+') {
 					actions.adjustZoom(-1);
-				} else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
+				} else if (e.getKeyChar() == '-') {
 					actions.adjustZoom(1);
 				}
 			}
