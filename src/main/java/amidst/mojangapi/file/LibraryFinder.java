@@ -10,6 +10,7 @@ import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.Log;
 import amidst.mojangapi.file.json.version.LibraryJson;
+import amidst.util.OperatingSystemDetector;
 
 @Immutable
 public enum LibraryFinder {
@@ -48,10 +49,9 @@ public enum LibraryFinder {
 	}
 
 	private static String getOs() {
-		String osName = System.getProperty("os.name").toLowerCase();
-		if (osName.contains("win")) {
+		if (OperatingSystemDetector.isWindows()) {
 			return "windows";
-		} else if (osName.contains("mac")) {
+		} else if (OperatingSystemDetector.isMac()) {
 			return "osx";
 		} else {
 			return "linux";

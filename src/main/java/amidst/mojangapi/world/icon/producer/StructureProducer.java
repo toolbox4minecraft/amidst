@@ -61,7 +61,7 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 				CoordinatesInWorld coordinates = createCoordinates(corner, xRelativeToFragment, yRelativeToFragment);
 				consumer.accept(new WorldIcon(
 						coordinates,
-						worldIconType.getName(),
+						worldIconType.getLabel(),
 						worldIconType.getImage(),
 						dimension,
 						displayDimension));
