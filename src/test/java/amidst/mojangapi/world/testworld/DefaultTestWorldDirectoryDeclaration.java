@@ -141,7 +141,7 @@ public enum DefaultTestWorldDirectoryDeclaration {
 			DefaultWorldIconTypes worldIconType) {
 		return world -> CoordinatesCollectionJson.extractWorldIcons(
 				producer.apply(world),
-				worldIconType.getName(),
+				worldIconType.getLabel(),
 				corner -> null,
 				OVERWORLD_FRAGMENTS_AROUND_ORIGIN,
 				MINIMAL_NUMBER_OF_COORDINATES);
@@ -150,7 +150,7 @@ public enum DefaultTestWorldDirectoryDeclaration {
 	private Function<World, CoordinatesCollectionJson> endCityExtractor(DefaultWorldIconTypes worldIconType) {
 		return world -> CoordinatesCollectionJson.extractWorldIcons(
 				world.getEndCityProducer(),
-				worldIconType.getName(),
+				worldIconType.getLabel(),
 				corner -> world.getEndIslandOracle().getAt(corner),
 				END_FRAGMENTS_AROUND_ORIGIN,
 				MINIMAL_NUMBER_OF_COORDINATES);

@@ -31,6 +31,7 @@ import amidst.mojangapi.world.player.PlayerCoordinates;
 import amidst.settings.biomeprofile.BiomeProfile;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.threading.WorkerExecutor;
+import amidst.util.FileExtensionChecker;
 
 @NotThreadSafe
 public class Actions {
@@ -336,7 +337,7 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private File appendPNGFileExtensionIfNecessary(File file) {
 		String filename = file.getAbsolutePath();
-		if (!filename.toLowerCase().endsWith(".png")) {
+		if (!FileExtensionChecker.hasFileExtension(filename, "png")) {
 			filename += ".png";
 		}
 		return new File(filename);

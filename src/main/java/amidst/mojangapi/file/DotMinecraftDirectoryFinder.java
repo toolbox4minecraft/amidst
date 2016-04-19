@@ -5,6 +5,7 @@ import java.io.File;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.Log;
+import amidst.util.OperatingSystemDetector;
 
 @Immutable
 public enum DotMinecraftDirectoryFinder {
@@ -27,13 +28,12 @@ public enum DotMinecraftDirectoryFinder {
 	@NotNull
 	private static File getMinecraftDirectory() {
 		File home = new File(System.getProperty("user.home", "."));
-		String os = System.getProperty("os.name").toLowerCase();
-		if (os.contains("win")) {
+		if (OperatingSystemDetector.isWindows()) {
 			File appData = new File(System.getenv("APPDATA"));
 			if (appData.isDirectory()) {
 				return new File(appData, ".minecraft");
 			}
-		} else if (os.contains("mac")) {
+		} else if (OperatingSystemDetector.isMac()) {
 			return new File(home, "Library/Application Support/minecraft");
 		}
 		return new File(home, ".minecraft");

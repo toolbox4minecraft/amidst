@@ -38,7 +38,7 @@ public class SpawnProducer extends CachedWorldIconProducer {
 	private WorldIcon createWorldIcon(CoordinatesInWorld coordinates) {
 		return new WorldIcon(
 				coordinates,
-				DefaultWorldIconTypes.SPAWN.getName(),
+				DefaultWorldIconTypes.SPAWN.getLabel(),
 				DefaultWorldIconTypes.SPAWN.getImage(),
 				Dimension.OVERWORLD,
 				false);

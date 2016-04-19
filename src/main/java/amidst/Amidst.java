@@ -20,6 +20,7 @@ import amidst.gui.crash.CrashWindow;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
+import amidst.util.OperatingSystemDetector;
 
 @NotThreadSafe
 public class Amidst {
@@ -144,16 +145,12 @@ public class Amidst {
 	 * https://github.com/toolbox4minecraft/amidst/pull/94
 	 */
 	private static void enableOpenGLIfNecessary() {
-		if (isOSX()) {
+		if (OperatingSystemDetector.isMac()) {
 			Log.i("Enabling OpenGL.");
 			System.setProperty("sun.java2d.opengl", "True");
 		} else {
 			Log.i("Not using OpenGL.");
 		}
-	}
-
-	private static boolean isOSX() {
-		return System.getProperty("os.name").contains("OS X");
 	}
 
 	private static void forceGraphicsToVRAM() {
