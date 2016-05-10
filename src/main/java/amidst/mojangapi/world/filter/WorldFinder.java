@@ -9,6 +9,7 @@ import amidst.gui.main.MainWindow;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.JsonReader;
+import amidst.mojangapi.file.json.filter.WorldFilterJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.World;
@@ -34,16 +35,10 @@ public class WorldFinder {
 
 	public void configureFromFile(File file) throws MojangApiParsingException, IOException {
 		if (file.exists()) {
-			JsonReader.readWorldFilters(file).configureWorldFinder(this);
+			WorldFilterJson worldFilterJson = JsonReader.readWorldFilter(file);
+			this.continuous = worldFilterJson.isContinuousSearch();
+			this.worldFilter = worldFilterJson.createWorldFilter();
 		}
-	}
-
-	public void setWorldFilter(WorldFilter filter) {
-		this.worldFilter = filter;
-	}
-
-	public void setContinuous(boolean continuous) {
-		this.continuous = continuous;
 	}
 
 	public boolean isSearching() {

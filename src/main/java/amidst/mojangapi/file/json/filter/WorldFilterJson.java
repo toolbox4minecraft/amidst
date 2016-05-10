@@ -8,7 +8,6 @@ import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.filter.BaseFilter;
 import amidst.mojangapi.world.filter.WorldFilter;
-import amidst.mojangapi.world.filter.WorldFinder;
 
 @Immutable
 public class WorldFilterJson {
@@ -20,7 +19,15 @@ public class WorldFilterJson {
 	public WorldFilterJson() {
 	}
 
-	public void configureWorldFinder(WorldFinder worldFinder) {
+	public boolean isContinuousSearch() {
+		return continuousSearch;
+	}
+
+	public WorldFilter createWorldFilter() {
+		return new WorldFilter(0, createFilterList());
+	}
+
+	private List<BaseFilter> createFilterList() {
 		List<BaseFilter> filters = new ArrayList<BaseFilter>();
 		for (BiomeFilterJson biomeFilterJson : biomeFilters) {
 			filters.add(biomeFilterJson.createBiomeFilter());
@@ -29,9 +36,6 @@ public class WorldFilterJson {
 		for (StructureFilterJson structureFilterJson : structureFilters) {
 			filters.add(structureFilterJson.createStructureFilter());
 		}
-
-		WorldFilter worldFilter = new WorldFilter(0, filters);
-		worldFinder.setWorldFilter(worldFilter);
-		worldFinder.setContinuous(continuousSearch);
+		return filters;
 	}
 }

@@ -91,7 +91,7 @@ public enum JsonReader {
 	}
 
 	@NotNull
-	public static WorldFilterJson readWorldFilters(File file) throws MojangApiParsingException, IOException {
+	public static WorldFilterJson readWorldFilter(File file) throws MojangApiParsingException, IOException {
 		return read(URIUtils.newReader(file), WorldFilterJson.class);
 	}
 
