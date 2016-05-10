@@ -1,7 +1,5 @@
 package amidst.mojangapi.world.filter;
 
-import java.lang.IllegalArgumentException;
-
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;

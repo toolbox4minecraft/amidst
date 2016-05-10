@@ -1,6 +1,5 @@
 package amidst.mojangapi.world.filter;
 
-import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +20,8 @@ public class BiomeFilter extends BaseFilter {
 				for (Biome possibleBiome : Biome.allBiomes()) {
 					possibleNames.add(possibleBiome.getName());
 				}
-				throw new IllegalArgumentException("Biome name '" + name + 
-						"' should be one of: " + String.join(", ", possibleNames));
+				throw new IllegalArgumentException("Biome name '" + name + "' should be one of: "
+						+ String.join(", ", possibleNames));
 			}
 			biomes.add(biome);
 		}

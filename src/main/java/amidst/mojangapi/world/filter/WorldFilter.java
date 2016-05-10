@@ -26,7 +26,7 @@ public class WorldFilter extends BaseFilter {
 		}
 		return true;
 	}
-	
+
 	public boolean hasFilters() {
 		return filterList.size() > 0;
 	}

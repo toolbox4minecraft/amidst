@@ -1,7 +1,5 @@
 package amidst.mojangapi.world.filter;
 
-import java.lang.IllegalArgumentException;
-
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
@@ -18,8 +16,8 @@ public abstract class BaseFilter {
 			// Structure filters check spaces in fragment size, so filter
 			// distance not a multiple of
 			// fragment size will include more area in the filter than expected
-			throw new IllegalArgumentException(
-					"World filter size must be a multiple of " + Resolution.FRAGMENT.getStep());
+			throw new IllegalArgumentException("World filter size must be a multiple of "
+					+ Resolution.FRAGMENT.getStep());
 		}
 
 		this.worldFilterSize = worldFilterDistance * 2;

@@ -30,14 +30,14 @@ public enum DefaultWorldIconTypes {
 	END_CITY            ("end_city",          "Likely End City"),
 	POSSIBLE_END_CITY   ("possible_end_city", "Possible End City");
 	// @formatter:on
-	
+
 	private static final Map<String, DefaultWorldIconTypes> typeMap = new HashMap<String, DefaultWorldIconTypes>();
 	static {
 		for (DefaultWorldIconTypes iconType : EnumSet.allOf(DefaultWorldIconTypes.class)) {
 			typeMap.put(iconType.getName(), iconType);
 		}
 	}
-	
+
 	public static DefaultWorldIconTypes getByName(String name) {
 		return typeMap.get(name);
 	}

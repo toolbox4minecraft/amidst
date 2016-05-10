@@ -48,11 +48,11 @@ public class WorldFinder {
 	public void setContinuous(boolean continuous) {
 		this.continuous = continuous;
 	}
-	
+
 	public boolean isSearching() {
 		return searching;
 	}
-	
+
 	public boolean canFindWorlds() {
 		return worldFilter != null && worldFilter.hasFilters();
 	}

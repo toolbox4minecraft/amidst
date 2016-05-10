@@ -21,8 +21,8 @@ import amidst.gui.main.viewer.ViewerFacade;
 import amidst.logging.Log;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
+import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
@@ -79,8 +79,7 @@ public class Actions {
 		WorldType worldType = mainWindow.askForWorldType();
 		if (worldType != null) {
 			try {
-				mainWindow.setWorld(mojangApi.createWorldFromSeed(worldSeed,
-						worldType));
+				mainWindow.setWorld(mojangApi.createWorldFromSeed(worldSeed, worldType));
 			} catch (IllegalStateException | MinecraftInterfaceException e) {
 				e.printStackTrace();
 				mainWindow.displayException(e);
@@ -95,7 +94,7 @@ public class Actions {
 				this.worldFinder = new WorldFinder(mojangApi);
 				worldFinder.configureFromFile(new File("search.json"));
 			}
-			
+
 			if (worldFinder.canFindWorlds()) {
 				if (worldFinder.isSearching()) {
 					mainWindow.displayMessage("", "Search in progress");
@@ -106,12 +105,11 @@ public class Actions {
 					}
 				}
 			} else {
-				mainWindow.displayMessage("Search not configured", 
-						"Please see [url] for details on setting up search");
+				mainWindow.displayMessage("Search not configured", "Please see [url] for details on setting up search");
 			}
 
-		} catch (LocalMinecraftInterfaceCreationException | IllegalStateException |
-				MojangApiParsingException | IOException e) {
+		} catch (LocalMinecraftInterfaceCreationException | IllegalStateException | MojangApiParsingException
+				| IOException e) {
 			e.printStackTrace();
 			mainWindow.displayException(e);
 		}

@@ -162,12 +162,9 @@ public class MojangApi {
 		}
 	}
 
-	public MojangApi duplicateApiInterface(WorldBuilder worldBuilder)
-			throws LocalMinecraftInterfaceCreationException {
-		MojangApi duplicate = new MojangApi(worldBuilder, 
-			getDotMinecraftDirectory());
-		duplicate.set(this.profileName, this.profileDirectory,
-			this.versionDirectory);
+	public MojangApi duplicateApiInterface(WorldBuilder worldBuilder) throws LocalMinecraftInterfaceCreationException {
+		MojangApi duplicate = new MojangApi(worldBuilder, getDotMinecraftDirectory());
+		duplicate.set(this.profileName, this.profileDirectory, this.versionDirectory);
 		return duplicate;
 	}
 }

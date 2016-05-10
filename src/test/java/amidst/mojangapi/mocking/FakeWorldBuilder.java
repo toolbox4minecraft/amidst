@@ -39,12 +39,10 @@ public class FakeWorldBuilder {
 
 	public World createRealWorld(TestWorldDeclaration worldDeclaration, MinecraftInterface realMinecraftInterface)
 			throws MinecraftInterfaceException {
-		// @formatter:off
 		return builder.fromSeed(
 				realMinecraftInterface,
 				worldDeclaration.getWorldSeed(),
 				worldDeclaration.getWorldType());
-		// @formatter:on
 	}
 
 	public World createFakeWorld(TestWorldDirectory worldDeclaration) throws MinecraftInterfaceException {
@@ -65,12 +63,10 @@ public class FakeWorldBuilder {
 			WorldMetadataJson worldMetadata,
 			BiomeDataJson quarterBiomeData,
 			BiomeDataJson fullBiomeData) throws MinecraftInterfaceException {
-		// @formatter:off
 		return builder.fromSeed(
 				createFakeMinecraftInterface(worldMetadata, quarterBiomeData, fullBiomeData),
 				WorldSeed.fromUserInput(worldMetadata.getSeed() + ""),
 				worldMetadata.getWorldType());
-		// @formatter:on
 	}
 
 	private static FakeMinecraftInterface createFakeMinecraftInterface(
