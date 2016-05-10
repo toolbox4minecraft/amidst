@@ -43,7 +43,6 @@ public class Actions {
 	private final AtomicReference<ViewerFacade> viewerFacade;
 	private final BiomeProfileSelection biomeProfileSelection;
 	private final WorkerExecutor workerExecutor;
-	private WorldFinder worldFinder = null;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Actions(
@@ -90,24 +89,20 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void searchForRandom() {
 		try {
-			if (worldFinder == null) {
-				this.worldFinder = new WorldFinder(mojangApi);
-				worldFinder.configureFromFile(new File("search.json"));
-			}
-
+			WorldFinder worldFinder = new WorldFinder(mojangApi, mainWindow);
+			worldFinder.configureFromFile(new File("search.json"));
 			if (worldFinder.canFindWorlds()) {
 				if (worldFinder.isSearching()) {
 					mainWindow.displayMessage("", "Search in progress");
 				} else {
 					final WorldType worldType = mainWindow.askForWorldType();
 					if (worldType != null) {
-						worldFinder.findRandomWorld(worldType, workerExecutor, mainWindow);
+						worldFinder.findRandomWorld(worldType, workerExecutor);
 					}
 				}
 			} else {
 				mainWindow.displayMessage("Search not configured", "Please see [url] for details on setting up search");
 			}
-
 		} catch (LocalMinecraftInterfaceCreationException | IllegalStateException | MojangApiParsingException
 				| IOException e) {
 			e.printStackTrace();
