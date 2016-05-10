@@ -89,7 +89,7 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void searchForRandom() {
 		try {
-			WorldFinder worldFinder = new WorldFinder(mojangApi, mainWindow);
+			WorldFinder worldFinder = new WorldFinder(mojangApi, mainWindow, workerExecutor);
 			worldFinder.configureFromFile(new File("search.json"));
 			if (worldFinder.canFindWorlds()) {
 				if (worldFinder.isSearching()) {
@@ -97,7 +97,7 @@ public class Actions {
 				} else {
 					final WorldType worldType = mainWindow.askForWorldType();
 					if (worldType != null) {
-						worldFinder.findRandomWorld(worldType, workerExecutor);
+						worldFinder.findRandomWorld(worldType);
 					}
 				}
 			} else {

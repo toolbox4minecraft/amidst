@@ -21,15 +21,17 @@ public class WorldFinder {
 	private final MojangApi originalMojangApi;
 	private final MojangApi mojangApi;
 	private final MainWindow mainWindow;
+	private final WorkerExecutor workerExecutor;
 
 	private WorldFilter worldFilter;
 	private boolean continuous = false;
 	private boolean searching = false;
 
-	public WorldFinder(MojangApi originalMojangApi, MainWindow mainWindow)
+	public WorldFinder(MojangApi originalMojangApi, MainWindow mainWindow, WorkerExecutor workerExecutor)
 			throws LocalMinecraftInterfaceCreationException {
 		this.originalMojangApi = originalMojangApi;
 		this.mainWindow = mainWindow;
+		this.workerExecutor = workerExecutor;
 		this.mojangApi = originalMojangApi.createSilentPlayerlessCopy();
 	}
 
@@ -49,7 +51,7 @@ public class WorldFinder {
 		return worldFilter != null && worldFilter.hasFilters();
 	}
 
-	public void findRandomWorld(WorldType worldType, WorkerExecutor workerExecutor) {
+	public void findRandomWorld(WorldType worldType) {
 		searching = true;
 		workerExecutor.run(() -> doFind(worldType));
 	}
@@ -58,7 +60,7 @@ public class WorldFinder {
 	private void doFind(WorldType worldType) {
 		try {
 			do {
-				WorldSeed worldSeed = findRandomWorld(worldType);
+				WorldSeed worldSeed = doFindRandomWorld(worldType);
 				mainWindow.setWorld(originalMojangApi.createWorldFromSeed(worldSeed, worldType));
 			} while (continuous);
 		} catch (MinecraftInterfaceException e) {
@@ -70,7 +72,7 @@ public class WorldFinder {
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private WorldSeed findRandomWorld(WorldType worldType) throws IllegalStateException, MinecraftInterfaceException {
+	private WorldSeed doFindRandomWorld(WorldType worldType) throws IllegalStateException, MinecraftInterfaceException {
 		World world;
 		do {
 			world = mojangApi.createWorldFromSeed(WorldSeed.random(), worldType);
