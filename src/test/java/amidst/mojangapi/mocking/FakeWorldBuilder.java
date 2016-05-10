@@ -5,11 +5,9 @@ import java.util.Map;
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
-import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.WorldSeed;
-import amidst.mojangapi.world.player.PlayerInformation;
 import amidst.mojangapi.world.testworld.TestWorldDeclaration;
 import amidst.mojangapi.world.testworld.TestWorldEntryNames;
 import amidst.mojangapi.world.testworld.file.TestWorldDirectory;
@@ -20,13 +18,7 @@ import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
 @ThreadSafe
 public class FakeWorldBuilder {
 	public static FakeWorldBuilder create(TestWorldDirectoryDeclaration directoryDeclaration) {
-		return new FakeWorldBuilder(createWorldBuilder(), directoryDeclaration);
-	}
-
-	private static WorldBuilder createWorldBuilder() {
-		return new WorldBuilder(
-				new ImmutablePlayerInformationCache(PlayerInformation.theSingleplayerPlayer()),
-				SeedHistoryLogger.from(null));
+		return new FakeWorldBuilder(WorldBuilder.createSilentPlayerless(), directoryDeclaration);
 	}
 
 	private final WorldBuilder builder;

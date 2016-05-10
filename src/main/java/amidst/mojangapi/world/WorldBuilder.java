@@ -29,7 +29,9 @@ import amidst.mojangapi.world.oracle.HeuristicWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.ImmutableWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.oracle.WorldSpawnOracle;
+import amidst.mojangapi.world.player.ImmutablePlayerInformationCache;
 import amidst.mojangapi.world.player.MovablePlayerList;
+import amidst.mojangapi.world.player.PlayerInformation;
 import amidst.mojangapi.world.player.PlayerInformationCache;
 import amidst.mojangapi.world.player.WorldPlayerType;
 import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
@@ -37,6 +39,16 @@ import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 
 @Immutable
 public class WorldBuilder {
+	/**
+	 * Create a new WorldBuilder that does not log any seeds and that provides
+	 * the singleplayer player information for each requested player.
+	 */
+	public static WorldBuilder createSilentPlayerless() {
+		return new WorldBuilder(
+				new ImmutablePlayerInformationCache(PlayerInformation.theSingleplayerPlayer()),
+				SeedHistoryLogger.createDisabled());
+	}
+
 	private final PlayerInformationCache playerInformationCache;
 	private final SeedHistoryLogger seedHistoryLogger;
 

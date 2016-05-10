@@ -93,6 +93,12 @@ public class MojangApi {
 		return new VersionDirectory(dotMinecraftDirectory, versionId, jar, json);
 	}
 
+	public MojangApi createSilentPlayerlessCopy() throws LocalMinecraftInterfaceCreationException {
+		MojangApi result = new MojangApi(WorldBuilder.createSilentPlayerless(), dotMinecraftDirectory);
+		result.set(profileName, profileDirectory, versionDirectory);
+		return result;
+	}
+
 	public File getSaves() {
 		ProfileDirectory profileDirectory = this.profileDirectory;
 		if (profileDirectory != null) {
@@ -160,11 +166,5 @@ public class MojangApi {
 		} else {
 			return UNKNOWN_PROFILE_NAME;
 		}
-	}
-
-	public MojangApi duplicateApiInterface(WorldBuilder worldBuilder) throws LocalMinecraftInterfaceCreationException {
-		MojangApi duplicate = new MojangApi(worldBuilder, getDotMinecraftDirectory());
-		duplicate.set(this.profileName, this.profileDirectory, this.versionDirectory);
-		return duplicate;
 	}
 }

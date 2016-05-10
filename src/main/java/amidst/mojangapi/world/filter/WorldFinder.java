@@ -9,11 +9,8 @@ import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.filter.WorldFilterJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
-import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.World;
-import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.threading.WorkerExecutor;
@@ -22,16 +19,14 @@ import amidst.threading.worker.Worker;
 public class WorldFinder {
 	private final MojangApi originalMojangApi;
 	private final MojangApi mojangApi;
-	private final WorldBuilder worldBuilder;
 
 	private WorldFilter worldFilter;
 	private boolean continuous = false;
 	private boolean searching = false;
 
 	public WorldFinder(MojangApi originalMojangApi) throws LocalMinecraftInterfaceCreationException {
-		this.worldBuilder = new WorldBuilder(null, new SilentLogger());
 		this.originalMojangApi = originalMojangApi;
-		this.mojangApi = originalMojangApi.duplicateApiInterface(this.worldBuilder);
+		this.mojangApi = originalMojangApi.createSilentPlayerlessCopy();
 	}
 
 	public void configureFromFile(File file) throws MojangApiParsingException, IOException {
@@ -84,17 +79,5 @@ public class WorldFinder {
 			world = mojangApi.createWorldFromSeed(worldSeed, worldType);
 		} while (!worldFilter.isValid(world));
 		return world.getWorldSeed();
-	}
-
-	private static class SilentLogger extends SeedHistoryLogger {
-		public SilentLogger() {
-			super(new File("history.txt"), false);
-		}
-
-		@Override
-		public synchronized void log(RecognisedVersion recognisedVersion, WorldSeed worldSeed) {
-			// We don't want to log any of the seeds that don't meet the filter
-			// requirements
-		}
 	}
 }
