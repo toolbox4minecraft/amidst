@@ -8,7 +8,7 @@ import amidst.mojangapi.world.filter.StructureFilter;
 public class StructureFilterJson {
 	private volatile long distance;
 	private volatile String structure;
-	private volatile int minimum;
+	private volatile int minimum = 1;
 	private volatile String group = "Default";
 	private volatile long scoreValue = 0;
 
