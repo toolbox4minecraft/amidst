@@ -15,6 +15,7 @@ import amidst.mojangapi.world.filter.WorldFinder;
 public class WorldFilterJson {
 	private volatile boolean continuousSearch;
 	private volatile String searchName = "Unnamed Search";
+	private volatile long startingSeed = Long.MAX_VALUE;
 	private volatile List<BiomeFilterJson> biomeFilters = Collections.emptyList();
 	private volatile List<StructureFilterJson> structureFilters = Collections.emptyList();
 
@@ -43,5 +44,8 @@ public class WorldFilterJson {
 		WorldFilter worldFilter = new WorldFilter(largestBiomeFilterSize / 2, filters, searchName);
 		worldFinder.setWorldFilter(worldFilter);
 		worldFinder.setContinuous(continuousSearch);
+		if (startingSeed != Long.MAX_VALUE) {
+			worldFinder.setSeed(startingSeed);
+		}
 	}
 }

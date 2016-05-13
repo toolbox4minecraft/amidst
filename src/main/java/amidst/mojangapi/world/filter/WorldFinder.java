@@ -25,7 +25,9 @@ public class WorldFinder {
 
 	private WorldFilter worldFilter;
 	private SeedHistoryLogger logger = new SeedHistoryLogger(new File("SearchResults.txt"), true, true);
+	WorldSeed worldSeed;
 	private boolean continuous = false;
+	private boolean useCustomSeed = false;
 	private boolean searching = false;
 
 	public WorldFinder(MojangApi originalMojangApi) throws LocalMinecraftInterfaceCreationException {
@@ -48,6 +50,11 @@ public class WorldFinder {
 
 	public void setContinuous(boolean continuous) {
 		this.continuous = continuous;
+	}
+
+	public void setSeed(long seed) {
+		this.worldSeed = WorldSeed.fromSaveGame(seed);
+		this.useCustomSeed = true;
 	}
 
 	public boolean isSearching() {
@@ -81,8 +88,12 @@ public class WorldFinder {
 	private WorldSeed findRandomWorld(WorldType worldType) throws IllegalStateException, MinecraftInterfaceException {
 		World world;
 		do {
-			WorldSeed worldSeed = WorldSeed.random();
-			world = mojangApi.createWorldFromSeed(worldSeed, worldType);
+			if (this.useCustomSeed) {
+				this.worldSeed = WorldSeed.fromSaveGame(this.worldSeed.getLong() + 1);
+			} else {
+				this.worldSeed = WorldSeed.random();
+			}
+			world = mojangApi.createWorldFromSeed(this.worldSeed, worldType);
 		} while (!worldFilter.isValid(world));
 		return world.getWorldSeed();
 	}
