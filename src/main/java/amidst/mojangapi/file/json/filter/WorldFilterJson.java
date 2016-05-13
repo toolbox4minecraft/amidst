@@ -13,7 +13,7 @@ import amidst.mojangapi.world.filter.WorldFinder;
 
 @Immutable
 public class WorldFilterJson {
-	private volatile boolean continuousSearch;
+	private volatile boolean continuousSearch = false;
 	private volatile String searchName = "Unnamed Search";
 	private volatile long startingSeed = Long.MAX_VALUE;
 	private volatile List<BiomeFilterJson> biomeFilters = Collections.emptyList();
