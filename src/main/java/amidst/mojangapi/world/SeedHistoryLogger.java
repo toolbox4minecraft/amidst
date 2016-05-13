@@ -26,19 +26,44 @@ public class SeedHistoryLogger {
 
 	private final File file;
 	private final boolean createIfNecessary;
+	private final boolean logResultsOnly;
 
 	public SeedHistoryLogger(@NotNull File file, boolean createIfNecessary) {
 		Objects.requireNonNull(file);
 		this.file = file;
 		this.createIfNecessary = createIfNecessary;
+		this.logResultsOnly = false;
+	}
+
+	public SeedHistoryLogger(@NotNull File file, boolean createIfNecessary, boolean logResultsOnly) {
+		Objects.requireNonNull(file);
+		this.file = file;
+		this.createIfNecessary = createIfNecessary;
+		this.logResultsOnly = logResultsOnly;
 	}
 
 	public synchronized void log(RecognisedVersion recognisedVersion, WorldSeed worldSeed) {
+		// Any calls to this method will not be search results
+		// so suppress them based on the setting
+		if (this.logResultsOnly == false) {
+			if (createIfNecessary && !file.exists()) {
+				tryCreateFile();
+			}
+			if (file.isFile()) {
+				writeLine(createLine(recognisedVersion, worldSeed));
+			} else {
+				Log.i("Not writing to seed history file, because it does not exist: " + file);
+			}
+		}
+	}
+
+	public synchronized void log(RecognisedVersion recognisedVersion, WorldSeed worldSeed, String name, String grp,
+			int lvl) {
 		if (createIfNecessary && !file.exists()) {
 			tryCreateFile();
 		}
 		if (file.isFile()) {
-			writeLine(createLine(recognisedVersion, worldSeed));
+			writeLine(createLine(recognisedVersion, worldSeed, name, grp, lvl));
 		} else {
 			Log.i("Not writing to seed history file, because it does not exist: " + file);
 		}
@@ -49,6 +74,16 @@ public class SeedHistoryLogger {
 		String timestamp = createTimestamp();
 		String seedString = getSeedString(worldSeed);
 		return recognisedVersionName + ", " + timestamp + ", " + seedString;
+	}
+
+	private String createLine(RecognisedVersion recognisedVersion, WorldSeed worldSeed, String name, String grp,
+			int lvl) {
+		String recognisedVersionName = recognisedVersion.getName();
+		String timestamp = createTimestamp();
+		String seedString = getSeedString(worldSeed);
+		String matchLevel = Integer.toString(lvl);
+		return recognisedVersionName + ", " + timestamp + ", " + seedString + ", " + name + ", " + grp + ", "
+				+ matchLevel;
 	}
 
 	private String createTimestamp() {

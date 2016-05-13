@@ -34,12 +34,12 @@ public enum DefaultWorldIconTypes {
 	private static final Map<String, DefaultWorldIconTypes> typeMap = new HashMap<String, DefaultWorldIconTypes>();
 	static {
 		for (DefaultWorldIconTypes iconType : EnumSet.allOf(DefaultWorldIconTypes.class)) {
-			typeMap.put(iconType.getName(), iconType);
+			typeMap.put(iconType.getLabel(), iconType);
 		}
 	}
 	
-	public static DefaultWorldIconTypes getByName(String name) {
-		return typeMap.get(name);
+	public static DefaultWorldIconTypes getByLabel(String label) {
+		return typeMap.get(label);
 	}
 
 	public static Set<String> getValidTypeNames() {

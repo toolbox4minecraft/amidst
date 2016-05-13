@@ -9,7 +9,6 @@ import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.filter.WorldFilterJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.World;
@@ -25,11 +24,12 @@ public class WorldFinder {
 	private final WorldBuilder worldBuilder;
 
 	private WorldFilter worldFilter;
+	private SeedHistoryLogger logger = new SeedHistoryLogger(new File("SearchResults.txt"), true, true);
 	private boolean continuous = false;
 	private boolean searching = false;
 
 	public WorldFinder(MojangApi originalMojangApi) throws LocalMinecraftInterfaceCreationException {
-		this.worldBuilder = new WorldBuilder(null, new SilentLogger());
+		this.worldBuilder = new WorldBuilder(null, logger);
 		this.originalMojangApi = originalMojangApi;
 		this.mojangApi = originalMojangApi.duplicateApiInterface(this.worldBuilder);
 	}
@@ -43,16 +43,17 @@ public class WorldFinder {
 
 	public void setWorldFilter(WorldFilter filter) {
 		this.worldFilter = filter;
+		this.worldFilter.setLogger(logger);
 	}
 
 	public void setContinuous(boolean continuous) {
 		this.continuous = continuous;
 	}
-	
+
 	public boolean isSearching() {
 		return searching;
 	}
-	
+
 	public boolean canFindWorlds() {
 		return worldFilter != null && worldFilter.hasFilters();
 	}
@@ -84,17 +85,5 @@ public class WorldFinder {
 			world = mojangApi.createWorldFromSeed(worldSeed, worldType);
 		} while (!worldFilter.isValid(world));
 		return world.getWorldSeed();
-	}
-
-	private static class SilentLogger extends SeedHistoryLogger {
-		public SilentLogger() {
-			super(new File("history.txt"), false);
-		}
-
-		@Override
-		public synchronized void log(RecognisedVersion recognisedVersion, WorldSeed worldSeed) {
-			// We don't want to log any of the seeds that don't meet the filter
-			// requirements
-		}
 	}
 }

@@ -10,8 +10,11 @@ import amidst.mojangapi.world.biome.Biome;
 public class BiomeFilter extends BaseFilter {
 	private final List<Biome> biomes;
 
-	public BiomeFilter(long worldFilterSize, List<String> biomeNames) {
+	public BiomeFilter(long worldFilterSize, List<String> biomeNames, String group, long scoreValue) {
 		super(worldFilterSize);
+
+		this.scoreValue = scoreValue;
+		this.group = group;
 
 		List<Biome> biomes = new ArrayList<>();
 		for (String name : biomeNames) {
@@ -21,8 +24,8 @@ public class BiomeFilter extends BaseFilter {
 				for (Biome possibleBiome : Biome.allBiomes()) {
 					possibleNames.add(possibleBiome.getName());
 				}
-				throw new IllegalArgumentException("Biome name '" + name + 
-						"' should be one of: " + String.join(", ", possibleNames));
+				throw new IllegalArgumentException(
+						"Biome name '" + name + "' should be one of: " + String.join(", ", possibleNames));
 			}
 			biomes.add(biome);
 		}
@@ -32,13 +35,19 @@ public class BiomeFilter extends BaseFilter {
 
 	@Override
 	protected boolean isValid(World world, short[][] region) {
-		for (short[] row : region) {
-			for (short entry : row) {
-				if (isValidBiome(entry)) {
+		// since the passed area can be larger than this filter
+		// determine the offset to only search the applicable area
+		long dataOffset = region.length - this.quarterFilterSize;
+
+		// loop over only the area specified by the filter
+		for (long x = dataOffset; x < dataOffset + this.quarterFilterSize; x++) {
+			for (long y = dataOffset; y < dataOffset + this.quarterFilterSize; y++) {
+				if (isValidBiome(region[(int) x][(int) y])) {
 					return true;
 				}
 			}
 		}
+
 		return false;
 	}
 

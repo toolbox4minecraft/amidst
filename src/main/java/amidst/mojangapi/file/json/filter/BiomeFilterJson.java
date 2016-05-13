@@ -11,6 +11,8 @@ import amidst.mojangapi.world.filter.BiomeFilter;
 public class BiomeFilterJson {
 	private volatile long distance;
 	private volatile List<String> biomes = Collections.emptyList();
+	private volatile String group = "Default";
+	private volatile long scoreValue = 0;
 
 	@GsonConstructor
 	public BiomeFilterJson() {
@@ -20,6 +22,6 @@ public class BiomeFilterJson {
 		if (biomes.size() == 0) {
 			throw new IllegalStateException("No biomes for filter");
 		}
-		return new BiomeFilter(distance, biomes);
+		return new BiomeFilter(distance, biomes, group, scoreValue);
 	}
 }
