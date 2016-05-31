@@ -10,7 +10,7 @@ import amidst.mojangapi.world.coordinates.Resolution;
 public abstract class BaseFilter implements Comparable<BaseFilter> {
 	public final long worldFilterSize;
 	// this is a quarter of the whole world size in length not area.
-	// i.e. a worldFilterSize of 1024 will have a 
+	// i.e. a worldFilterSize of 1024 will have a
 	// quarterFilterSize of 256 NOT 512 as would be if area
 	public final long quarterFilterSize;
 	protected final CoordinatesInWorld corner;
@@ -22,8 +22,8 @@ public abstract class BaseFilter implements Comparable<BaseFilter> {
 			// Structure filters check spaces in fragment size, so filter
 			// distance not a multiple of
 			// fragment size will include more area in the filter than expected
-			throw new IllegalArgumentException(
-					"World filter size must be a multiple of " + Resolution.FRAGMENT.getStep());
+			throw new IllegalArgumentException("World filter size must be a multiple of "
+					+ Resolution.FRAGMENT.getStep() + "." + System.lineSeparator());
 		}
 
 		this.worldFilterSize = worldFilterDistance * 2;

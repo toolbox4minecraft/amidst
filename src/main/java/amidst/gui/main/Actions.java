@@ -91,9 +91,15 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void searchForRandom() {
 		try {
+			String helpMsg = "Please see [url] for details on setting up search.";
 			if (worldFinder == null) {
 				this.worldFinder = new WorldFinder(mojangApi);
-				worldFinder.configureFromFile(new File("search.json"));
+				try {
+					worldFinder.configureFromFile(new File("search.json"));
+				} catch (IllegalArgumentException e) {
+					mainWindow.displayMessage("", e.getMessage() + helpMsg);
+					return;
+				}
 			}
 			
 			if (worldFinder.canFindWorlds()) {
@@ -106,8 +112,7 @@ public class Actions {
 					}
 				}
 			} else {
-				mainWindow.displayMessage("Search not configured", 
-						"Please see [url] for details on setting up search");
+				mainWindow.displayMessage("Search not configured correctly", helpMsg);
 			}
 
 		} catch (LocalMinecraftInterfaceCreationException | IllegalStateException |
