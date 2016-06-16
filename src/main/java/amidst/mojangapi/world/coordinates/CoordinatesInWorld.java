@@ -1,52 +1,14 @@
 package amidst.mojangapi.world.coordinates;
 
 import java.awt.Point;
-import java.io.IOException;
 
-import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
 
 import amidst.documentation.Immutable;
 
 @Immutable
-@JsonAdapter(CoordinatesInWorld.JsonAdapter.class)
+@JsonAdapter(CoordinatesJsonAdapter.class)
 public class CoordinatesInWorld implements Comparable<CoordinatesInWorld> {
-	
-	public class JsonAdapter extends TypeAdapter<CoordinatesInWorld> {
-
-		@Override
-		public CoordinatesInWorld read(JsonReader reader) throws IOException {
-			if(reader.peek() == JsonToken.NULL)
-				return null;
-			
-			reader.beginArray();
-			long x = reader.nextLong();
-			long y = reader.nextLong();
-			reader.endArray();
-			
-			return CoordinatesInWorld.from(x,  y);
-		}
-
-		@Override
-		public void write(JsonWriter writer, CoordinatesInWorld coo) throws IOException {
-			if(coo == null) {
-				writer.nullValue();
-				return;
-			}
-			
-			// @formatter:off
-			writer.beginArray()
-				  .value(coo.getX())
-				  .value(coo.getY())
-				  .endArray();
-			// @formatter:on
-		}
-
-	}
-	
 	
 	public static CoordinatesInWorld tryParse(String coordinates) {
 		String[] parsedCoordinates = coordinates.replaceAll(" ", "").split(",");
