@@ -107,7 +107,7 @@ public class Fragment {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void populateBiomeData(BiomeDataOracle biomeDataOracle) {
-		biomeDataOracle.populateArray(corner, biomeData, true);
+		biomeDataOracle.populateArray(corner, biomeData, Resolution.QUARTER);
 	}
 
 	public short getBiomeDataAt(int x, int y) {

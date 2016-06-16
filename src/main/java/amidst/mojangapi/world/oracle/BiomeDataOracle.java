@@ -19,33 +19,41 @@ public class BiomeDataOracle {
 	public BiomeDataOracle(MinecraftInterface minecraftInterface) {
 		this.minecraftInterface = minecraftInterface;
 	}
-
-	public void populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
-		Resolution resolution = Resolution.from(useQuarterResolution);
+	
+	public void populateArray(CoordinatesInWorld corner, short[][] result, Resolution resolution) {
+		if(result.length == 0)
+			return;
+		
 		int width = result.length;
-		if (width > 0) {
-			int height = result[0].length;
-			int left = (int) corner.getXAs(resolution);
-			int top = (int) corner.getYAs(resolution);
-			try {
-				copyToResult(result, width, height, getBiomeData(left, top, width, height, useQuarterResolution));
-			} catch (MinecraftInterfaceException e) {
-				Log.e(e.getMessage());
-				e.printStackTrace();
-			}
+		int height = result[0].length;
+		
+		boolean useQuarterResolution = resolution.getStep() >= Resolution.QUARTER.getStep();
+		Resolution targetRes = Resolution.from(useQuarterResolution);
+		int shift = resolution.getShift() - targetRes.getShift();
+		
+		corner = corner.getAs(targetRes);
+		
+		try {
+			int[] data = getBiomeData((int) corner.getX(), (int) corner.getY(), width << shift, height << shift, useQuarterResolution);
+			copyToResult(result, width, height, shift, data);
+			
+		} catch (MinecraftInterfaceException e) {
+			Log.e(e.getMessage());
+			e.printStackTrace();
 		}
+
 	}
 
-	public static void copyToResult(short[][] result, int width, int height, int[] biomeData) {
+	public static void copyToResult(short[][] result, int width, int height, int shift, int[] biomeData) {
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				result[x][y] = (short) biomeData[getBiomeDataIndex(x, y, width)];
+				result[x][y] = (short) biomeData[getBiomeDataIndex(x, y, width, shift)];
 			}
 		}
 	}
 
-	public static int getBiomeDataIndex(int x, int y, int width) {
-		return x + y * width;
+	public static int getBiomeDataIndex(int x, int y, int width, int shift) {
+		return (x + (y*width) << shift) << shift;
 	}
 
 	public boolean isValidBiomeAtMiddleOfChunk(int chunkX, int chunkY, List<Biome> validBiomes) {

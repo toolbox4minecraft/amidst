@@ -1,0 +1,10 @@
+{
+  "continuousSearch": false,
+  "filters": [
+    {
+    	"type":"biome",
+    	"radius": 1024,
+    	"biomes": ["Mesa (Bryce)", "Mesa Plateau F M", "Mesa Plateau M"]
+    }
+  ]
+}
