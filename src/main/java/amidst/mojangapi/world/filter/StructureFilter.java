@@ -48,6 +48,9 @@ public class StructureFilter extends BaseFilter {
 			for (long y = 0; y < worldFilterSize; y += 512) {
 				CoordinatesInWorld subCorner = CoordinatesInWorld.from(x, y).add(corner);
 				structureProducer.produce(subCorner, structureCollector, null);
+				if (multiWitchHutSearch == 0 && structureCollector.get().size() >= count) {
+					return true;
+				} 
 			}
 		}
 
