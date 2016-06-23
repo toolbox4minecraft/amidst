@@ -55,5 +55,8 @@ public class TestRegion {
 		// Intermediate
 		Assert.assertTrue(box.intersectsWith(Region.circle(-10, -10, 50)));
 		Assert.assertFalse(box.intersectsWith(Region.circle(100, -50, 40)));
+		
+		// Other
+		Assert.assertTrue(Region.box(-1536, 0, 512, 512).intersectsWith(Region.circle(-140, 256, 1024)));
 	}
 }

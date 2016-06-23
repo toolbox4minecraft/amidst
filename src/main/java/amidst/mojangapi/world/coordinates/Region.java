@@ -167,12 +167,12 @@ public abstract class Region {
 		
 		@Override
 		public long getCenterX() {
-			return xMin+xMax/2;
+			return (xMin+xMax)/2;
 		}
 		
 		@Override
 		public long getCenterY() {
-			return yMin+yMax/2;
+			return (yMin+yMax)/2;
 		}
 
 		@Override
