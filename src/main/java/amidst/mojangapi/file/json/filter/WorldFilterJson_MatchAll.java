@@ -33,7 +33,7 @@ public class WorldFilterJson_MatchAll {
 	public WorldFilterJson_MatchAll() {
 	}
 
-	public WorldFilter_MatchAll createWorldFilter(int size) {
+	public WorldFilter createWorldFilter(int size) {
 		return new WorldFilter_MatchAll(size * Resolution.FRAGMENT.getStep(), createFilterList());
 	}
 
