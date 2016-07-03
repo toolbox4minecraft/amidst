@@ -1,13 +1,13 @@
 package amidst.gui.main.menu;
 
 import java.awt.event.KeyEvent;
-import java.io.File;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import amidst.AmidstSettings;
+import amidst.FeatureToggles;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
 import amidst.mojangapi.world.WorldType;
@@ -51,7 +51,7 @@ public class AmidstMenuBuilder {
 		// @formatter:off
 		Menus.item(result, actions::newFromSeed,           "New from seed",            KeyEvent.VK_N, "menu N");
 		Menus.item(result, actions::newFromRandom,         "New from random seed",     KeyEvent.VK_R, "menu R");
-		if (new File("search.json").exists()) {
+		if (FeatureToggles.SEED_SEARCH) {
 			Menus.item(result, actions::searchForRandom,     "Search for random seed",   KeyEvent.VK_F, "menu F");
 		}
 		Menus.item(result, actions::openSaveGame,          "Open save game ...",       KeyEvent.VK_O, "menu O");

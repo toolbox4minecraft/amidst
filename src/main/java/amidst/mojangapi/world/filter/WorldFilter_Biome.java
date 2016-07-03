@@ -1,16 +1,15 @@
 package amidst.mojangapi.world.filter;
 
-import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 import java.util.List;
 
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.biome.Biome;
 
-public class BiomeFilter extends BaseFilter {
+public class WorldFilter_Biome extends WorldFilter {
 	private final List<Biome> biomes;
 
-	public BiomeFilter(long worldFilterSize, List<String> biomeNames) {
+	public WorldFilter_Biome(long worldFilterSize, List<String> biomeNames) {
 		super(worldFilterSize);
 
 		List<Biome> biomes = new ArrayList<>();
@@ -21,8 +20,8 @@ public class BiomeFilter extends BaseFilter {
 				for (Biome possibleBiome : Biome.allBiomes()) {
 					possibleNames.add(possibleBiome.getName());
 				}
-				throw new IllegalArgumentException("Biome name '" + name + 
-						"' should be one of: " + String.join(", ", possibleNames));
+				throw new IllegalArgumentException("Biome name '" + name + "' should be one of: "
+						+ String.join(", ", possibleNames));
 			}
 			biomes.add(biome);
 		}

@@ -12,7 +12,6 @@ import amidst.documentation.NotNull;
 import amidst.logging.Log;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.URIUtils;
-import amidst.mojangapi.file.json.filter.WorldFilterJson;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 import amidst.mojangapi.file.json.player.PlayerJson;
 import amidst.mojangapi.file.json.player.SimplePlayerJson;
@@ -23,6 +22,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+/**
+ * This is a utility class used to read JSON data. Please use this class only to
+ * read JSON data provided by Mojang, because it throws a
+ * MojangApiParsingException when an error occurs.
+ */
 @Immutable
 public enum JsonReader {
 	;
@@ -88,12 +92,6 @@ public enum JsonReader {
 	public static LauncherProfilesJson readLauncherProfilesFrom(File file) throws MojangApiParsingException,
 			IOException {
 		return read(URIUtils.newReader(file), LauncherProfilesJson.class);
-	}
-
-	@NotNull
-	public static WorldFilterJson readWorldFilters(File file)
-			throws MojangApiParsingException, IOException {
-		return read(URIUtils.newReader(file), WorldFilterJson.class);
 	}
 
 	@NotNull

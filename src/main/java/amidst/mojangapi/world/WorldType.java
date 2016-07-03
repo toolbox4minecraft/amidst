@@ -20,13 +20,15 @@ public enum WorldType {
 	public static final String PROMPT_EACH_TIME = "Prompt each time";
 
 	// @formatter:off
-	private static final List<WorldType> SELECTABLE_WORLD_TYPES = Arrays.asList(
+	private static final WorldType[] SELECTABLE_WORLD_TYPES_ARRAY = new WorldType[] {
 			WorldType.DEFAULT,
 			WorldType.FLAT,
 			WorldType.LARGE_BIOMES,
 			WorldType.AMPLIFIED
-	);
+	};
 	// @formatter:on
+
+	private static final List<WorldType> SELECTABLE_WORLD_TYPES = Arrays.asList(SELECTABLE_WORLD_TYPES_ARRAY);
 
 	// @formatter:off
 	private static final String[] WORLD_TYPE_SETTING_AVAILABLE_VALUES = new String[] {
@@ -40,6 +42,10 @@ public enum WorldType {
 
 	public static List<WorldType> getSelectable() {
 		return SELECTABLE_WORLD_TYPES;
+	}
+
+	public static WorldType[] getSelectableArray() {
+		return SELECTABLE_WORLD_TYPES_ARRAY;
 	}
 
 	public static String[] getWorldTypeSettingAvailableValues() {

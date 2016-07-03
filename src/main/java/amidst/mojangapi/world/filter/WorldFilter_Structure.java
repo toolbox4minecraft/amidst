@@ -1,7 +1,5 @@
 package amidst.mojangapi.world.filter;
 
-import java.lang.IllegalArgumentException;
-
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
@@ -9,11 +7,11 @@ import amidst.mojangapi.world.icon.producer.WorldIconCollector;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 
-public class StructureFilter extends BaseFilter {
+public class WorldFilter_Structure extends WorldFilter {
 	final int count;
 	final DefaultWorldIconTypes structure;
 
-	public StructureFilter(long worldFilterSize, String structureName, int count) {
+	public WorldFilter_Structure(long worldFilterSize, String structureName, int count) {
 		super(worldFilterSize);
 
 		this.structure = DefaultWorldIconTypes.getByName(structureName);
@@ -27,8 +25,8 @@ public class StructureFilter extends BaseFilter {
 		@SuppressWarnings("rawtypes")
 		WorldIconProducer structureProducer = getProducer(world);
 
-		for (long x = 0; x < worldFilterSize; x += 512) {
-			for (long y = 0; y < worldFilterSize; y += 512) {
+		for (long x = 0; x < 2 * worldFilterSize; x += 512) {
+			for (long y = 0; y < 2 * worldFilterSize; y += 512) {
 				CoordinatesInWorld subCorner = CoordinatesInWorld.from(x, y).add(corner);
 				structureProducer.produce(subCorner, structureCollector, null);
 			}

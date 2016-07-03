@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -26,7 +27,11 @@ import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.menu.AmidstMenuBuilder;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.main.viewer.ViewerFacadeBuilder;
+import amidst.gui.seedsearcher.SeedSearcher;
+import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.file.MojangApiParsingException;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
@@ -49,6 +54,7 @@ public class MainWindow {
 	private final Container contentPane;
 	private final Actions actions;
 	private final AmidstMenu menuBar;
+	private final SeedSearcherWindow seedSearcherWindow;
 
 	private final AtomicReference<ViewerFacade> viewerFacade = new AtomicReference<ViewerFacade>();
 
@@ -72,6 +78,7 @@ public class MainWindow {
 		this.contentPane = createContentPane();
 		this.actions = createActions();
 		this.menuBar = createMenuBar();
+		this.seedSearcherWindow = createSeedSearcherWindow();
 		initKeyListener();
 		initCloseListener();
 		showFrame();
@@ -107,7 +114,6 @@ public class MainWindow {
 	private Actions createActions() {
 		return new Actions(
 				application,
-				mojangApi,
 				this,
 				viewerFacade,
 				settings.biomeProfileSelection,
@@ -119,6 +125,14 @@ public class MainWindow {
 		AmidstMenu menuBar = new AmidstMenuBuilder(settings, actions, biomeProfileDirectory).construct();
 		frame.setJMenuBar(menuBar.getMenuBar());
 		return menuBar;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private SeedSearcherWindow createSeedSearcherWindow() {
+		return new SeedSearcherWindow(metadata, this, new SeedSearcher(
+				this,
+				mojangApi,
+				threadMaster.getWorkerExecutor()));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -151,7 +165,27 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void setWorld(World world) {
+	public void displayWorld(WorldSeed worldSeed, WorldType worldType) {
+		try {
+			setWorld(mojangApi.createWorldFromSeed(worldSeed, worldType));
+		} catch (IllegalStateException | MinecraftInterfaceException e) {
+			e.printStackTrace();
+			displayException(e);
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void displayWorld(File file) {
+		try {
+			setWorld(mojangApi.createWorldFromSaveGame(file));
+		} catch (IllegalStateException | MinecraftInterfaceException | IOException | MojangApiParsingException e) {
+			e.printStackTrace();
+			displayException(e);
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void setWorld(World world) {
 		clearViewerFacade();
 		if (decideWorldPlayerType(world.getMovablePlayerList())) {
 			setViewerFacade(viewerFacadeBuilder.create(world, actions));
@@ -202,6 +236,7 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void dispose() {
 		clearViewerFacade();
+		seedSearcherWindow.dispose();
 		frame.dispose();
 	}
 
@@ -354,5 +389,10 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private String askForString(String title, String message) {
 		return JOptionPane.showInputDialog(frame, message, title, JOptionPane.QUESTION_MESSAGE);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void displaySeedSearcherWindow() {
+		seedSearcherWindow.show();
 	}
 }

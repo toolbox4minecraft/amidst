@@ -18,22 +18,36 @@ public class SeedHistoryLogger {
 	public static SeedHistoryLogger from(String filename) {
 		if (filename != null) {
 			Log.i("using seed history file: '" + filename + "'");
-			return new SeedHistoryLogger(new File(filename), true);
+			return new SeedHistoryLogger(new File(filename), true, true);
 		} else {
-			return new SeedHistoryLogger(new File("history.txt"), false);
+			return new SeedHistoryLogger(new File(HISTORY_TXT), false, true);
 		}
 	}
 
+	public static SeedHistoryLogger createDisabled() {
+		return new SeedHistoryLogger(new File(HISTORY_TXT), false, false);
+	}
+
+	private static final String HISTORY_TXT = "history.txt";
+
 	private final File file;
 	private final boolean createIfNecessary;
+	private final boolean isEnabled;
 
-	public SeedHistoryLogger(@NotNull File file, boolean createIfNecessary) {
+	public SeedHistoryLogger(@NotNull File file, boolean createIfNecessary, boolean isEnabled) {
 		Objects.requireNonNull(file);
 		this.file = file;
 		this.createIfNecessary = createIfNecessary;
+		this.isEnabled = isEnabled;
 	}
 
-	public synchronized void log(RecognisedVersion recognisedVersion, WorldSeed worldSeed) {
+	public void log(RecognisedVersion recognisedVersion, WorldSeed worldSeed) {
+		if (isEnabled) {
+			doLog(recognisedVersion, worldSeed);
+		}
+	}
+
+	private synchronized void doLog(RecognisedVersion recognisedVersion, WorldSeed worldSeed) {
 		if (createIfNecessary && !file.exists()) {
 			tryCreateFile();
 		}
