@@ -124,7 +124,7 @@ public class SeedSearcherWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private SeedSearcherConfiguration createSeedSearcherConfiguration(WorldFilterJson_MatchAll worldFilter) {
 		return new SeedSearcherConfiguration(
-				worldFilter.createWorldFilter(4),
+				worldFilter.createWorldFilter(),
 				(WorldType) worldTypeComboBox.getSelectedItem(),
 				searchContinuouslyCheckBox.isSelected());
 	}

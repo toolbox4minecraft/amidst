@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
-import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.filter.WorldFilter;
 import amidst.mojangapi.world.filter.WorldFilter_MatchAll;
 
@@ -33,8 +32,10 @@ public class WorldFilterJson_MatchAll {
 	public WorldFilterJson_MatchAll() {
 	}
 
-	public WorldFilter createWorldFilter(int size) {
-		return new WorldFilter_MatchAll(size * Resolution.FRAGMENT.getStep(), createFilterList());
+	public WorldFilter createWorldFilter() {
+		// TODO: the size is 0, because this filter will never use its biome
+		// data
+		return new WorldFilter_MatchAll(0, createFilterList());
 	}
 
 	private List<WorldFilter> createFilterList() {
