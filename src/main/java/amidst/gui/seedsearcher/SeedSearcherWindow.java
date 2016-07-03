@@ -141,20 +141,13 @@ public class SeedSearcherWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateGUI() {
-		if (seedSearcher.isSearching()) {
-			if (seedSearcher.isStopable()) {
-				searchButton.setText("Stop");
-				searchButton.setEnabled(true);
-			} else {
-				searchButton.setText("Search");
-				searchButton.setEnabled(false);
-			}
+		if (seedSearcher.isSearching() && !seedSearcher.isStopRequested()) {
+			searchButton.setText("Stop");
 			searchQueryTextArea.setEditable(false);
 			worldTypeComboBox.setEnabled(false);
 			searchContinuouslyCheckBox.setEnabled(false);
 		} else {
 			searchButton.setText("Search");
-			searchButton.setEnabled(true);
 			searchQueryTextArea.setEditable(true);
 			worldTypeComboBox.setEnabled(true);
 			searchContinuouslyCheckBox.setEnabled(true);
