@@ -201,7 +201,7 @@ public enum DefaultVersionFeatures {
 	private static List<Biome> getValidBiomesForStrongholdSinceV13w36a() {
 		List<Biome> result = new ArrayList<Biome>();
 		for (Biome biome : Biome.allBiomes()) {
-			if (biome.getType().getValue1() > 0) {
+			if (biome.getType().getBiomeDepth() > 0) {
 				result.add(biome);
 			}
 		}
