@@ -3,7 +3,7 @@ package amidst.mojangapi.world.filter;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
-import amidst.mojangapi.world.icon.WorldIcon;
+import amidst.mojangapi.world.icon.producer.NameFilteredWorldIconCollector;
 import amidst.mojangapi.world.icon.producer.WorldIconCollector;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
@@ -61,7 +61,7 @@ public class WorldFilter_Structure extends WorldFilter {
 		case DESERT:
 		case IGLOO:
 		case WITCH:
-			return new TypedWorldIconCollector(structure);
+			return new NameFilteredWorldIconCollector(structure.getName());
 		case STRONGHOLD:
 		case VILLAGE:
 		case OCEAN_MONUMENT:
@@ -69,21 +69,6 @@ public class WorldFilter_Structure extends WorldFilter {
 			return new WorldIconCollector();
 		default:
 			throw new IllegalArgumentException("Unsupported structure type: " + structure.getName());
-		}
-	}
-
-	private static class TypedWorldIconCollector extends WorldIconCollector {
-		private final DefaultWorldIconTypes acceptedStructure;
-
-		TypedWorldIconCollector(DefaultWorldIconTypes acceptedStructure) {
-			this.acceptedStructure = acceptedStructure;
-		}
-
-		@Override
-		public void accept(WorldIcon worldIcon) {
-			if (worldIcon.getName().equals(acceptedStructure.getName())) {
-				super.accept(worldIcon);
-			}
 		}
 	}
 }
