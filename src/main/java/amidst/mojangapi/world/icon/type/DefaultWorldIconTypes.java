@@ -45,6 +45,10 @@ public enum DefaultWorldIconTypes {
 		return typeMap.get(name);
 	}
 
+	public static boolean exists(String name) {
+		return typeMap.containsKey(name);
+	}
+
 	private static String getFilename(String name) {
 		return "/amidst/gui/main/icon/" + name + ".png";
 	}

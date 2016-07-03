@@ -1,64 +1,29 @@
 package amidst.mojangapi.world.filter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
+import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.world.World;
-import amidst.mojangapi.world.biome.Biome;
 
+@NotThreadSafe
 public class WorldFilter_Biome extends WorldFilter {
-	private short[][] evaluatedRegion = null;
-	private final List<Biome> biomes;
+	private final Set<Short> validBiomeIndexes;
+	private short[][] region;
 
-	public WorldFilter_Biome(long worldFilterSize, List<String> biomeNames) {
+	public WorldFilter_Biome(long worldFilterSize, Set<Short> validBiomeIndexes) {
 		super(worldFilterSize);
-
-		List<Biome> biomes = new ArrayList<>();
-		for (String name : biomeNames) {
-			Biome biome = Biome.getByName(name);
-			if (biome == null) {
-				List<String> possibleNames = new ArrayList<String>();
-				for (Biome possibleBiome : Biome.allBiomes()) {
-					possibleNames.add(possibleBiome.getName());
-				}
-				throw new IllegalArgumentException("Biome name '" + name + "' should be one of: "
-						+ String.join(", ", possibleNames));
-			}
-			biomes.add(biome);
-		}
-
-		this.biomes = biomes;
+		this.validBiomeIndexes = validBiomeIndexes;
+		this.region = new short[(int) this.quarterFilterSize * 2][(int) this.quarterFilterSize * 2];
 	}
 
 	@Override
 	public boolean isValid(World world) {
-		return isValid(world, getUpdatedRegion(world));
-	}
-
-	protected short[][] getUpdatedRegion(World world) {
-		if (this.evaluatedRegion == null) {
-			this.evaluatedRegion = new short[(int) this.quarterFilterSize * 2][(int) this.quarterFilterSize * 2];
-		}
-
-		world.getBiomeDataOracle().populateArray(corner, evaluatedRegion, true);
-		return evaluatedRegion;
-	}
-
-	protected boolean isValid(World world, short[][] region) {
+		world.getBiomeDataOracle().populateArray(corner, region, true);
 		for (short[] row : region) {
 			for (short entry : row) {
-				if (isValidBiome(entry)) {
+				if (validBiomeIndexes.contains(entry)) {
 					return true;
 				}
-			}
-		}
-		return false;
-	}
-
-	private boolean isValidBiome(short biomeIndex) {
-		for (Biome biome : biomes) {
-			if (biomeIndex == biome.getIndex()) {
-				return true;
 			}
 		}
 		return false;

@@ -13,26 +13,25 @@ public class WorldFilter_Structure extends WorldFilter {
 	private final DefaultWorldIconTypes structure;
 	private final int count;
 
-	public WorldFilter_Structure(long worldFilterSize, String structureName, int count) {
+	public WorldFilter_Structure(long worldFilterSize, DefaultWorldIconTypes structure, int count) {
 		super(worldFilterSize);
-
-		this.structure = DefaultWorldIconTypes.getByName(structureName);
+		this.structure = structure;
 		this.count = count;
 	}
 
 	@Override
 	public boolean isValid(World world) {
 		WorldIconCollector structureCollector = getCollector();
-		WorldIconProducer<Void> structureProducer = getProducer(world);
+		procudeAndCollect(getProducer(world), structureCollector);
+		return structureCollector.get().size() > count;
+	}
 
+	private void procudeAndCollect(WorldIconProducer<Void> structureProducer, WorldIconCollector structureCollector) {
 		for (long x = 0; x < 2 * worldFilterSize; x += 512) {
 			for (long y = 0; y < 2 * worldFilterSize; y += 512) {
-				CoordinatesInWorld subCorner = CoordinatesInWorld.from(x, y).add(corner);
-				structureProducer.produce(subCorner, structureCollector, null);
+				structureProducer.produce(CoordinatesInWorld.from(x, y).add(corner), structureCollector, null);
 			}
 		}
-
-		return structureCollector.get().size() > count;
 	}
 
 	private WorldIconProducer<Void> getProducer(World world) {
