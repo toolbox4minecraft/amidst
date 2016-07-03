@@ -22,6 +22,7 @@ import amidst.gui.main.MainWindow;
 import amidst.mojangapi.file.json.filter.WorldFilterJson_MatchAll;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.filter.WorldFilter;
 
 @NotThreadSafe
 public class SeedSearcherWindow {
@@ -118,13 +119,16 @@ public class SeedSearcherWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Optional<SeedSearcherConfiguration> createSeedSearcherConfiguration() {
-		return WorldFilterJson_MatchAll.from(searchQueryTextArea.getText()).map(this::createSeedSearcherConfiguration);
+		return WorldFilterJson_MatchAll
+				.from(searchQueryTextArea.getText())
+				.flatMap(WorldFilterJson_MatchAll::createValidWorldFilter)
+				.map(this::createSeedSearcherConfiguration);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private SeedSearcherConfiguration createSeedSearcherConfiguration(WorldFilterJson_MatchAll worldFilter) {
+	private SeedSearcherConfiguration createSeedSearcherConfiguration(WorldFilter worldFilter) {
 		return new SeedSearcherConfiguration(
-				worldFilter.createWorldFilter(),
+				worldFilter,
 				(WorldType) worldTypeComboBox.getSelectedItem(),
 				searchContinuouslyCheckBox.isSelected());
 	}

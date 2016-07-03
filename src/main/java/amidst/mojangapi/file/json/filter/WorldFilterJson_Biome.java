@@ -16,10 +16,13 @@ public class WorldFilterJson_Biome {
 	public WorldFilterJson_Biome() {
 	}
 
-	public WorldFilter_Biome createBiomeFilter() {
-		if (biomes.size() == 0) {
-			throw new IllegalStateException("No biomes for filter");
+	public void validate(List<String> notifications) {
+		if (biomes.isEmpty()) {
+			notifications.add("No biomes for filter");
 		}
+	}
+
+	public WorldFilter_Biome createBiomeFilter() {
 		return new WorldFilter_Biome(distance, biomes);
 	}
 }

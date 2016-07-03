@@ -1,5 +1,7 @@
 package amidst.mojangapi.file.json.filter;
 
+import java.util.List;
+
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.filter.WorldFilter_Structure;
@@ -12,6 +14,10 @@ public class WorldFilterJson_Structure {
 
 	@GsonConstructor
 	public WorldFilterJson_Structure() {
+	}
+
+	public void validate(List<String> notifications) {
+		// noop
 	}
 
 	public WorldFilter_Structure createStructureFilter() {

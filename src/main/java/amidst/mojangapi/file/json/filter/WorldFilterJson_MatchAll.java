@@ -2,6 +2,7 @@ package amidst.mojangapi.file.json.filter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,10 +33,30 @@ public class WorldFilterJson_MatchAll {
 	public WorldFilterJson_MatchAll() {
 	}
 
+	public List<String> getValidationMessages() {
+		List<String> result = new LinkedList<>();
+		validate(result);
+		return result;
+	}
+
+	private void validate(List<String> notifications) {
+		biomeFilters.forEach(f -> f.validate(notifications));
+		structureFilters.forEach(f -> f.validate(notifications));
+	}
+
 	public WorldFilter createWorldFilter() {
 		// TODO: the size is 0, because this filter will never use its biome
 		// data
 		return new WorldFilter_MatchAll(0, createFilterList());
+	}
+
+	public Optional<WorldFilter> createValidWorldFilter() {
+		if (getValidationMessages().isEmpty()) {
+			return Optional.of(createWorldFilter());
+		} else {
+			// TODO: use error messages
+			return Optional.empty();
+		}
 	}
 
 	private List<WorldFilter> createFilterList() {
