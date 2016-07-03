@@ -5,29 +5,20 @@ import java.util.List;
 import amidst.mojangapi.world.World;
 
 public class WorldFilter extends BaseFilter {
-	private final List<BaseFilter> filterList;
+	private final List<BaseFilter> filters;
 
-	public WorldFilter(long worldFilterSize, List<BaseFilter> filters) {
-		super(worldFilterSize);
-
-		filterList = filters;
+	public WorldFilter(long worldFilterDistance, List<BaseFilter> filters) {
+		super(worldFilterDistance);
+		this.filters = filters;
 	}
 
 	@Override
 	protected boolean isValid(World world, short[][] region) {
-		if (filterList.size() == 0) {
-			return true;
-		}
-
-		for (BaseFilter filter : filterList) {
+		for (BaseFilter filter : filters) {
 			if (!filter.isValid(world)) {
 				return false;
 			}
 		}
 		return true;
-	}
-
-	public boolean hasFilters() {
-		return filterList.size() > 0;
 	}
 }

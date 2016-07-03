@@ -29,7 +29,7 @@ public abstract class BaseFilter {
 		return isValid(world, getUpdatedRegion(world));
 	}
 
-	abstract protected boolean isValid(World world, short[][] region);
+	protected abstract boolean isValid(World world, short[][] region);
 
 	private short[][] getUpdatedRegion(World world) {
 		if (this.evaluatedRegion == null) {
