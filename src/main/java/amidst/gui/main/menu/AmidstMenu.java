@@ -4,6 +4,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import amidst.FeatureToggles;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -41,7 +42,9 @@ public class AmidstMenu {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void set(ViewerFacade viewerFacade) {
-		exportMenu.setEnabled(true);
+		if (FeatureToggles.WORLD_EXPORTER) {
+			exportMenu.setEnabled(true);
+		}
 		worldMenu.setEnabled(true);
 		savePlayerLocationsMenu.setEnabled(viewerFacade.canSavePlayerLocations());
 		reloadPlayerLocationsMenu.setEnabled(viewerFacade.canLoadPlayerLocations());
@@ -50,7 +53,9 @@ public class AmidstMenu {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void clear() {
-		exportMenu.setEnabled(false);
+		if (FeatureToggles.WORLD_EXPORTER) {
+			exportMenu.setEnabled(false);
+		}
 		worldMenu.setEnabled(false);
 		savePlayerLocationsMenu.setEnabled(false);
 		reloadPlayerLocationsMenu.setEnabled(false);

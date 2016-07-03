@@ -1,6 +1,7 @@
 package amidst.gui.main.viewer.widget;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -21,6 +22,11 @@ public class ChangeableTextWidget extends TextWidget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected List<String> updateTextLines() {
-		return Arrays.asList(text.get());
+		String currentText = text.get();
+		if (currentText == null) {
+			return Collections.emptyList();
+		} else {
+			return Arrays.asList(text.get());
+		}
 	}
 }

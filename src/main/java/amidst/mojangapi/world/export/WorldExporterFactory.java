@@ -20,8 +20,7 @@ public class WorldExporterFactory {
 	}
 
 	public WorldExporter create(WorldExporterConfiguration configuration) {
-		return new WorldExporter(workerExecutor, world, configuration,
-				this::setProgressMessage);
+		return new WorldExporter(workerExecutor, world, configuration, this::setProgressMessage);
 	}
 
 	@CalledByAny

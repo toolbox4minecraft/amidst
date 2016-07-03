@@ -12,11 +12,15 @@ import amidst.threading.worker.ProgressReporter;
 @NotThreadSafe
 public class WorldExporter {
 	private final WorkerExecutor workerExecutor;
+	@SuppressWarnings("unused")
 	private final World world;
+	@SuppressWarnings("unused")
 	private final WorldExporterConfiguration configuration;
 	private final Consumer<String> progressListener;
 
-	public WorldExporter(WorkerExecutor workerExecutor, World world,
+	public WorldExporter(
+			WorkerExecutor workerExecutor,
+			World world,
 			WorldExporterConfiguration configuration,
 			Consumer<String> progressListener) {
 		this.workerExecutor = workerExecutor;
@@ -27,8 +31,7 @@ public class WorldExporter {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void export() {
-		workerExecutor.<String> run(this::doExport, progressListener,
-				this::onFinished);
+		workerExecutor.<String> run(this::doExport, progressListener, this::onFinished);
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)

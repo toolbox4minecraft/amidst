@@ -63,10 +63,12 @@ public class AmidstMenuBuilder {
 		}
 		Menus.item(result, actions::openSaveGame,          "Open save game ...",       KeyEvent.VK_O, "menu O");
 		result.addSeparator();
-		exportMenu =
-		Menus.item(result, actions::export,                "Export ...",               KeyEvent.VK_E, "ctrl X");
-		exportMenu.setEnabled(false);
-		result.addSeparator();
+		if (FeatureToggles.WORLD_EXPORTER) {
+			exportMenu =
+			Menus.item(result, actions::export,            "Export ...",               KeyEvent.VK_E, "menu X");
+			exportMenu.setEnabled(false);
+			result.addSeparator();
+		}
 		Menus.item(result, actions::switchProfile,         "Switch profile ...",       KeyEvent.VK_P, "menu W");
 		Menus.item(result, actions::exit,                  "Exit",                     KeyEvent.VK_X, "menu Q");
 		// @formatter:on
