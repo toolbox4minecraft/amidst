@@ -7,16 +7,17 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import amidst.AmidstSettings;
+import amidst.FeatureToggles;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
 import amidst.mojangapi.world.WorldType;
-import amidst.settings.biomecolorprofile.BiomeColorProfileDirectory;
+import amidst.settings.biomeprofile.BiomeProfileDirectory;
 
 @NotThreadSafe
 public class AmidstMenuBuilder {
 	private final AmidstSettings settings;
 	private final Actions actions;
-	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
+	private final BiomeProfileDirectory biomeProfileDirectory;
 	private final JMenuBar menuBar;
 	private JMenuItem exportMenu;
 	private JMenu worldMenu;
@@ -24,17 +25,21 @@ public class AmidstMenuBuilder {
 	private JMenuItem reloadPlayerLocationsMenu;
 	private LayersMenu layersMenu;
 
-	public AmidstMenuBuilder(AmidstSettings settings, Actions actions,
-			BiomeColorProfileDirectory biomeColorProfileDirectory) {
+	public AmidstMenuBuilder(AmidstSettings settings, Actions actions, BiomeProfileDirectory biomeProfileDirectory) {
 		this.settings = settings;
 		this.actions = actions;
-		this.biomeColorProfileDirectory = biomeColorProfileDirectory;
+		this.biomeProfileDirectory = biomeProfileDirectory;
 		this.menuBar = createMenuBar();
 	}
 
 	public AmidstMenu construct() {
-		return new AmidstMenu(menuBar, exportMenu, worldMenu,
-				savePlayerLocationsMenu, reloadPlayerLocationsMenu, layersMenu);
+		return new AmidstMenu(
+				menuBar,
+				exportMenu,
+				worldMenu,
+				savePlayerLocationsMenu,
+				reloadPlayerLocationsMenu,
+				layersMenu);
 	}
 
 	private JMenuBar createMenuBar() {
@@ -51,16 +56,19 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("File");
 		result.setMnemonic(KeyEvent.VK_F);
 		// @formatter:off
-		Menus.item(result, actions::newFromSeed,           "New from seed",            KeyEvent.VK_S, "ctrl N");
-		Menus.item(result, actions::newFromRandom,         "New from random seed",     KeyEvent.VK_R, "ctrl R");
-		Menus.item(result, actions::openWorldFile,         "Open world file ...",      KeyEvent.VK_F, "ctrl O");
+		Menus.item(result, actions::newFromSeed,           "New from seed",            KeyEvent.VK_N, "menu N");
+		Menus.item(result, actions::newFromRandom,         "New from random seed",     KeyEvent.VK_R, "menu R");
+		if (FeatureToggles.SEED_SEARCH) {
+			Menus.item(result, actions::searchForRandom,   "Search for random seed",   KeyEvent.VK_F, "menu F");
+		}
+		Menus.item(result, actions::openSaveGame,          "Open save game ...",       KeyEvent.VK_O, "menu O");
 		result.addSeparator();
 		exportMenu =
 		Menus.item(result, actions::export,                "Export ...",               KeyEvent.VK_E, "ctrl X");
 		exportMenu.setEnabled(false);
 		result.addSeparator();
-		Menus.item(result, actions::switchProfile,         "Switch profile ...",       KeyEvent.VK_P, "ctrl W");
-		Menus.item(result, actions::exit,                  "Exit",                     KeyEvent.VK_X, "ctrl Q");
+		Menus.item(result, actions::switchProfile,         "Switch profile ...",       KeyEvent.VK_P, "menu W");
+		Menus.item(result, actions::exit,                  "Exit",                     KeyEvent.VK_X, "menu Q");
 		// @formatter:on
 		return result;
 	}
@@ -70,21 +78,21 @@ public class AmidstMenuBuilder {
 		result.setEnabled(false);
 		result.setMnemonic(KeyEvent.VK_W);
 		// @formatter:off
-		Menus.item(result, actions::goToCoordinate,        "Go to Coordinate",         KeyEvent.VK_C, "ctrl shift C");
-		Menus.item(result, actions::goToSpawn,             "Go to Spawn",              KeyEvent.VK_S, "ctrl shift S");
-		Menus.item(result, actions::goToStronghold,        "Go to Stronghold",         KeyEvent.VK_H, "ctrl shift H");
-		Menus.item(result, actions::goToPlayer,            "Go to Player",             KeyEvent.VK_P, "ctrl shift P");
+		Menus.item(result, actions::goToCoordinate,        "Go to Coordinate",         KeyEvent.VK_C, "menu shift C");
+		Menus.item(result, actions::goToSpawn,             "Go to World Spawn",        KeyEvent.VK_S, "menu shift S");
+		Menus.item(result, actions::goToStronghold,        "Go to Stronghold",         KeyEvent.VK_H, "menu shift H");
+		Menus.item(result, actions::goToPlayer,            "Go to Player",             KeyEvent.VK_P, "menu shift P");
 		result.addSeparator();
 		savePlayerLocationsMenu =
-		Menus.item(result, actions::savePlayerLocations,   "Save player locations",    KeyEvent.VK_V, "ctrl S");
+		Menus.item(result, actions::savePlayerLocations,   "Save player locations",    KeyEvent.VK_V, "menu S");
 		savePlayerLocationsMenu.setEnabled(false);
 		reloadPlayerLocationsMenu =
 		Menus.item(result, actions::reloadPlayerLocations, "Reload player locations",  KeyEvent.VK_R, "F5");
 		reloadPlayerLocationsMenu.setEnabled(false);
 		Menus.item(result, actions::howCanIMoveAPlayer,    "How can I move a player?", KeyEvent.VK_M);
 		result.addSeparator();
-		Menus.item(result, actions::copySeedToClipboard,   "Copy Seed to Clipboard",   KeyEvent.VK_B, "ctrl C");
-		Menus.item(result, actions::saveCaptureImage,      "Save capture image ...",   KeyEvent.VK_I, "ctrl T");
+		Menus.item(result, actions::copySeedToClipboard,   "Copy Seed to Clipboard",   KeyEvent.VK_B, "menu C");
+		Menus.item(result, actions::saveCaptureImage,      "Save capture image ...",   KeyEvent.VK_I, "menu T");
 		// @formatter:on
 		return result;
 	}
@@ -100,17 +108,17 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("Settings");
 		result.setMnemonic(KeyEvent.VK_S);
 		result.add(create_Settings_DefaultWorldType());
-		if (biomeColorProfileDirectory.isValid()) {
-			result.add(create_Settings_BiomeColor());
+		if (biomeProfileDirectory.isValid()) {
+			result.add(create_Settings_BiomeProfile());
 		}
 		result.addSeparator();
 		// @formatter:off
-		Menus.checkbox(result, settings.smoothScrolling,   "Smooth Scrolling",      "ctrl I");
-		Menus.checkbox(result, settings.fragmentFading,    "Fragment Fading");
-		Menus.checkbox(result, settings.maxZoom,           "Restrict Maximum Zoom", "ctrl Z");
-		Menus.checkbox(result, settings.showFPS,           "Show Framerate",        "ctrl L");
-		Menus.checkbox(result, settings.showScale,         "Show Scale",            "ctrl K");
-		Menus.checkbox(result, settings.showDebug,         "Show Debug Information");
+		Menus.checkbox(result, settings.smoothScrolling,      "Smooth Scrolling",      "menu I");
+		Menus.checkbox(result, settings.fragmentFading,       "Fragment Fading");
+		Menus.checkbox(result, settings.maxZoom,              "Restrict Maximum Zoom", "menu Z");
+		Menus.checkbox(result, settings.showFPS,              "Show Framerate",        "menu L");
+		Menus.checkbox(result, settings.showScale,            "Show Scale",            "menu K");
+		Menus.checkbox(result, settings.showDebug,            "Show Debug Information");
 		// @formatter:on
 		return result;
 	}
@@ -123,9 +131,11 @@ public class AmidstMenuBuilder {
 		return result;
 	}
 
-	private JMenu create_Settings_BiomeColor() {
-		JMenu result = new JMenu("Biome color profile");
-		new BiomeColorMenuFactory(result, actions, biomeColorProfileDirectory);
+	private JMenu create_Settings_BiomeProfile() {
+		JMenu result = new JMenu("Biome profile");
+		// @formatter:off
+		new BiomeProfileMenuFactory(result, actions, biomeProfileDirectory, "Reload biome profiles", KeyEvent.VK_R, "menu B");
+		// @formatter:on
 		return result;
 	}
 

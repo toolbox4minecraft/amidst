@@ -2,21 +2,20 @@ package amidst.gui.main.viewer.widget;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.mojangapi.world.icon.WorldIconImage;
 
 @NotThreadSafe
-public abstract class IconTextWidget extends Widget {
-	private static final int ICON_HEIGHT = 25;
+public abstract class IconTextWidget extends TextWidget {
+	private static final int ICON_HEIGHT = 24;
 
-	private boolean updated;
-	private BufferedImage icon = null;
+	private WorldIconImage icon = null;
 	private int iconWidth;
-	private String text = "";
-	private boolean isVisible = false;
+	private int iconHeight;
+	private int iconOffsetY;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected IconTextWidget(CornerAnchorPoint anchor) {
@@ -28,47 +27,43 @@ public abstract class IconTextWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected void doUpdate(FontMetrics fontMetrics, float time) {
-		updated = false;
-		BufferedImage newIcon = updateIcon();
+		WorldIconImage newIcon = updateIcon();
 		if (newIcon != null && newIcon != icon) {
 			icon = newIcon;
-			iconWidth = (int) (((double) ICON_HEIGHT) * icon.getWidth() / icon
-					.getHeight());
-			updated = true;
+			double scale = ((double) ICON_HEIGHT) / icon.getFrameHeight();
+			iconWidth = (int) Math.round(scale * icon.getImage().getWidth());
+			iconHeight = (int) Math.round(scale * icon.getImage().getHeight());
+			iconOffsetY = (int) Math.round(scale * icon.getFrameOffsetY());
 		}
-		String newText = updateText();
-		if (newText != null && !newText.equals(text)) {
-			text = newText;
-			updated = true;
-		}
-		if (updated) {
-			setWidth(getTextOffset() + fontMetrics.stringWidth(text) + 10);
-		}
-		isVisible = newIcon != null && newText != null;
+		super.doUpdate(fontMetrics, time);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected void doDraw(Graphics2D g2d) {
-		g2d.drawImage(icon, getX() + 5, getY() + 5, iconWidth, ICON_HEIGHT,
-				null);
-		g2d.drawString(text, getX() + getTextOffset(), getY() + 23);
+		super.doDraw(g2d);
+		g2d.drawImage(icon.getImage(), getX() + 5, getY() + 5 - iconOffsetY, iconWidth, iconHeight, null);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private int getTextOffset() {
+	@Override
+	protected int getMarginLeft() {
 		return 5 + iconWidth + 5;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected boolean onVisibilityCheck() {
-		return isVisible;
+	protected int getMarginTop() {
+		// Lower the text slightly to align it with the icon
+		return super.getMarginTop() + 2;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	protected abstract BufferedImage updateIcon();
+	@Override
+	protected int getMinimumHeight() {
+		return 5 + ICON_HEIGHT + 5;
+	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	protected abstract String updateText();
+	protected abstract WorldIconImage updateIcon();
 }

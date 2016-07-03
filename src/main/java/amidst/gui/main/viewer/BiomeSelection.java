@@ -39,8 +39,8 @@ public class BiomeSelection {
 	}
 
 	private void setAll(boolean value) {
-		for (int i = 0; i < selectedBiomes.length; i++) {
-			selectedBiomes[i].set(value);
+		for (AtomicBoolean selectedBiome : selectedBiomes) {
+			selectedBiome.set(value);
 		}
 	}
 

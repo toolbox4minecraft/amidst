@@ -15,7 +15,8 @@ public class SymbolicClassDeclaration {
 	private final List<SymbolicMethodDeclaration> methods;
 	private final List<SymbolicFieldDeclaration> fields;
 
-	public SymbolicClassDeclaration(String symbolicClassName,
+	public SymbolicClassDeclaration(
+			String symbolicClassName,
 			boolean isOptional,
 			List<SymbolicConstructorDeclaration> constructors,
 			List<SymbolicMethodDeclaration> methods,
@@ -47,10 +48,8 @@ public class SymbolicClassDeclaration {
 		return fields;
 	}
 
-	public void handleMultipleMatches(String firstRealClassName,
-			String otherRealClassName) {
-		Log.w("Found class " + symbolicClassName + " again: "
-				+ firstRealClassName + ", " + otherRealClassName);
+	public void handleMultipleMatches(String firstRealClassName, String otherRealClassName) {
+		Log.w("Found class " + symbolicClassName + " again: " + firstRealClassName + ", " + otherRealClassName);
 	}
 
 	public void handleMatch(String realClassName) {
@@ -61,16 +60,14 @@ public class SymbolicClassDeclaration {
 		if (isOptional) {
 			Log.i("Missing class " + symbolicClassName);
 		} else {
-			throw new ClassNotFoundException(
-					"cannot find a real class matching the symbolic class "
-							+ symbolicClassName);
+			throw new ClassNotFoundException("cannot find a real class matching the symbolic class "
+					+ symbolicClassName);
 		}
 	}
 
 	public void handleMissing(ClassNotFoundException e, String realClassName)
 			throws SymbolicClassGraphCreationException {
-		String message = "unable to find the real class " + realClassName
-				+ " -> " + symbolicClassName;
+		String message = "unable to find the real class " + realClassName + " -> " + symbolicClassName;
 		if (isOptional) {
 			Log.i(message);
 		} else {

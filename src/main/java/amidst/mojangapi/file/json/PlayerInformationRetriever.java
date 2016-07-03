@@ -55,24 +55,19 @@ public enum PlayerInformationRetriever {
 		}
 	}
 
-	private static PlayerJson getPlayerJsonByName(String name)
-			throws IOException, MojangApiParsingException {
-		return JsonReader.readPlayerFromUUID(JsonReader
-				.readSimplePlayerFromPlayerName(name).getId());
+	private static PlayerJson getPlayerJsonByName(String name) throws IOException, MojangApiParsingException {
+		return JsonReader.readPlayerFromUUID(JsonReader.readSimplePlayerFromPlayerName(name).getId());
 	}
 
-	private static PlayerJson getPlayerJsonByUUID(String uuid)
-			throws IOException, MojangApiParsingException {
+	private static PlayerJson getPlayerJsonByUUID(String uuid) throws IOException, MojangApiParsingException {
 		return JsonReader.readPlayerFromUUID(uuid);
 	}
 
-	private static BufferedImage getPlayerHeadByName(String name)
-			throws IOException {
+	private static BufferedImage getPlayerHeadByName(String name) throws IOException {
 		return extractPlayerHead(new URL(SIMPLE_PLAYER_SKIN_URL + name + ".png"));
 	}
 
-	private static BufferedImage getPlayerHeadBySkinUrl(String skinUrl)
-			throws IOException {
+	private static BufferedImage getPlayerHeadBySkinUrl(String skinUrl) throws IOException {
 		return extractPlayerHead(new URL(skinUrl));
 	}
 
@@ -81,8 +76,7 @@ public enum PlayerInformationRetriever {
 	}
 
 	private static BufferedImage extractPlayerHead(BufferedImage skin) {
-		BufferedImage head = new BufferedImage(20, 20,
-				BufferedImage.TYPE_INT_ARGB);
+		BufferedImage head = new BufferedImage(20, 20, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = head.createGraphics();
 		g2d.setColor(Color.black);
 		g2d.fillRect(0, 0, 20, 20);

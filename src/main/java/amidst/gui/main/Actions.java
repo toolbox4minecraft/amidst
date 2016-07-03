@@ -19,35 +19,33 @@ import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.logging.Log;
-import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
-import amidst.settings.biomecolorprofile.BiomeColorProfile;
-import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
+import amidst.settings.biomeprofile.BiomeProfile;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
+import amidst.util.FileExtensionChecker;
 
 @NotThreadSafe
 public class Actions {
 	private final Application application;
-	private final MojangApi mojangApi;
 	private final MainWindow mainWindow;
 	private final AtomicReference<ViewerFacade> viewerFacade;
-	private final BiomeColorProfileSelection biomeColorProfileSelection;
+	private final BiomeProfileSelection biomeProfileSelection;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Actions(Application application, MojangApi mojangApi,
-			MainWindow mainWindow, AtomicReference<ViewerFacade> viewerFacade,
-			BiomeColorProfileSelection biomeColorProfileSelection) {
+	public Actions(
+			Application application,
+			MainWindow mainWindow,
+			AtomicReference<ViewerFacade> viewerFacade,
+			BiomeProfileSelection biomeProfileSelection) {
 		this.application = application;
-		this.mojangApi = mojangApi;
 		this.mainWindow = mainWindow;
 		this.viewerFacade = viewerFacade;
-		this.biomeColorProfileSelection = biomeColorProfileSelection;
+		this.biomeProfileSelection = biomeProfileSelection;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -67,27 +65,20 @@ public class Actions {
 	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = mainWindow.askForWorldType();
 		if (worldType != null) {
-			try {
-				mainWindow.setWorld(mojangApi.createWorldFromSeed(worldSeed,
-						worldType));
-			} catch (IllegalStateException | MinecraftInterfaceException e) {
-				e.printStackTrace();
-				mainWindow.displayException(e);
-			}
+			mainWindow.displayWorld(worldSeed, worldType);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void openWorldFile() {
-		File file = mainWindow.askForMinecraftWorldFile();
+	public void searchForRandom() {
+		mainWindow.displaySeedSearcherWindow();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void openSaveGame() {
+		File file = mainWindow.askForSaveGame();
 		if (file != null) {
-			try {
-				mainWindow.setWorld(mojangApi.createWorldFromFile(file));
-			} catch (IllegalStateException | MinecraftInterfaceException
-					| IOException | MojangApiParsingException e) {
-				e.printStackTrace();
-				mainWindow.displayException(e);
-			}
+			mainWindow.displayWorld(file);
 		}
 	}
 
@@ -115,8 +106,7 @@ public class Actions {
 		if (viewerFacade != null) {
 			String input = mainWindow.askForCoordinates();
 			if (input != null) {
-				CoordinatesInWorld coordinates = CoordinatesInWorld
-						.tryParse(input);
+				CoordinatesInWorld coordinates = CoordinatesInWorld.tryParse(input);
 				if (coordinates != null) {
 					viewerFacade.centerOn(coordinates);
 				} else {
@@ -139,7 +129,8 @@ public class Actions {
 	public void goToStronghold() {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
-			WorldIcon stronghold = mainWindow.askForOptions("Go to",
+			WorldIcon stronghold = mainWindow.askForOptions(
+					"Go to",
 					"Select Stronghold:",
 					viewerFacade.getStrongholdWorldIcons());
 			if (stronghold != null) {
@@ -152,11 +143,9 @@ public class Actions {
 	public void goToPlayer() {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
-			List<WorldIcon> playerWorldIcons = viewerFacade
-					.getPlayerWorldIcons();
+			List<WorldIcon> playerWorldIcons = viewerFacade.getPlayerWorldIcons();
 			if (!playerWorldIcons.isEmpty()) {
-				WorldIcon player = mainWindow.askForOptions("Go to",
-						"Select player:", playerWorldIcons);
+				WorldIcon player = mainWindow.askForOptions("Go to", "Select player:", playerWorldIcons);
 				if (player != null) {
 					viewerFacade.centerOn(player);
 				}
@@ -170,7 +159,9 @@ public class Actions {
 	public void savePlayerLocations() {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
-			viewerFacade.savePlayerLocations();
+			if (mainWindow.askToConfirmSaveGameManipulation()) {
+				viewerFacade.savePlayerLocations();
+			}
 		}
 	}
 
@@ -184,19 +175,12 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void howCanIMoveAPlayer() {
-		mainWindow
-				.displayMessage(
-						"How can I move a player?",
-						"If you load the world from a Minecraft save folder, you can change the player locations.\n"
-								+ "1. Scroll the map to and right-click on the new player location, this opens a popup menu.\n"
-								+ "2. Select the player you want to move to the new location.\n"
-								+ "3. Enter the new player height (y-coordinate).\n"
-								+ "4. Save player locations.\n\n"
-								+ "WARNING: This will change the contents of the save folder, so there is a chance that the world gets corrupted.\n"
-								+ "We try to minimize the risk by creating a backup of the changed file, before it is changed.\n"
-								+ "If the backup fails, we will not write the changes.\n"
-								+ "You can find the backup files in a sub folder of the world, named 'amidst/backup'.\n"
-								+ "Especially, make sure to not have the world loaded in Minecraft during this process.");
+		mainWindow.displayMessage(
+				"How can I move a player?",
+				"If you load the world from a save game, you can change the player locations.\n"
+						+ "1. Scroll the map to and right-click on the new player location, this opens a popup menu.\n"
+						+ "2. Select the player you want to move to the new location.\n"
+						+ "3. Enter the new player height (y-coordinate).\n" + "4. Save player locations.");
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -205,8 +189,7 @@ public class Actions {
 		if (viewerFacade != null) {
 			String seed = "" + viewerFacade.getWorldSeed().getLong();
 			StringSelection selection = new StringSelection(seed);
-			Toolkit.getDefaultToolkit().getSystemClipboard()
-					.setContents(selection, selection);
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
 		}
 	}
 
@@ -215,21 +198,31 @@ public class Actions {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
 			BufferedImage image = viewerFacade.createCaptureImage();
-			String suggestedFilename = "screenshot_"
-					+ viewerFacade.getWorldType().getFilenameText() + "_"
+			String suggestedFilename = "screenshot_" + viewerFacade.getWorldType().getFilenameText() + "_"
 					+ viewerFacade.getWorldSeed().getLong() + ".png";
-			File file = mainWindow
-					.askForCaptureImageSaveFile(suggestedFilename);
+			File file = mainWindow.askForCaptureImageSaveFile(suggestedFilename);
 			if (file != null) {
-				saveImageToFile(image, file);
+				file = appendPNGFileExtensionIfNecessary(file);
+				if (file.exists() && !file.isFile()) {
+					mainWindow
+							.displayError("Unable to write capture image, because the target exists but is not a file: "
+									+ file.getAbsolutePath());
+				} else if (!canWriteToFile(file)) {
+					mainWindow.displayError("Unable to write capture image, because you have no writing permissions: "
+							+ file.getAbsolutePath());
+				} else if (!file.exists()
+						|| mainWindow.askToConfirm("Replace file?", "File already exists. Do you want to replace it?\n"
+								+ file.getAbsolutePath() + "")) {
+					saveImageToFile(image, file);
+				}
 			}
 			image.flush();
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void selectBiomeColorProfile(BiomeColorProfile profile) {
-		biomeColorProfileSelection.set(profile);
+	public void selectBiomeProfile(BiomeProfile profile) {
+		biomeProfileSelection.set(profile);
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
 			viewerFacade.reloadBackgroundLayer();
@@ -248,13 +241,9 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void about() {
-		mainWindow
-				.displayMessage(
-						"About",
-						"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n\n"
-								+ "Author: Skidoodle aka skiphs\n"
-								+ "Mail: toolbox4minecraft+amidst@gmail.com\n"
-								+ "Project Page: https://github.com/toolbox4minecraft/amidst");
+		mainWindow.displayMessage("About", "Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n\n"
+				+ "Author: Skidoodle aka skiphs\n" + "Mail: toolbox4minecraft+amidst@gmail.com\n"
+				+ "Project Page: https://github.com/toolbox4minecraft/amidst");
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -282,14 +271,14 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void showPlayerPopupMenu(CoordinatesInWorld targetCoordinates,
-			Component component, int x, int y) {
+	public void showPlayerPopupMenu(CoordinatesInWorld targetCoordinates, Component component, int x, int y) {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
 			if (viewerFacade.canSavePlayerLocations()) {
-				new MovePlayerPopupMenu(this,
-						viewerFacade.getMovablePlayerList(), targetCoordinates)
-						.show(component, x, y);
+				new MovePlayerPopupMenu(this, viewerFacade.getMovablePlayerList(), targetCoordinates).show(
+						component,
+						x,
+						y);
 			}
 		}
 	}
@@ -298,20 +287,16 @@ public class Actions {
 	public void movePlayer(Player player, CoordinatesInWorld targetCoordinates) {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
-			PlayerCoordinates currentCoordinates = player
-					.getPlayerCoordinates();
+			PlayerCoordinates currentCoordinates = player.getPlayerCoordinates();
 			long currentHeight = currentCoordinates.getY();
 			String input = mainWindow.askForPlayerHeight(currentHeight);
 			if (input != null) {
-				player.moveTo(targetCoordinates,
-						tryParseLong(input, currentHeight),
-						currentCoordinates.getDimension());
+				player.moveTo(targetCoordinates, tryParseLong(input, currentHeight), currentCoordinates.getDimension());
 				viewerFacade.reloadPlayerLayer();
-				if (mainWindow
-						.askToConfirm(
-								"Save Player Location",
-								"Do you want to save the player locations NOW? Make sure to not have the world opened in minecraft at the same time!")) {
-					viewerFacade.savePlayerLocations();
+				if (mainWindow.askToConfirm("Save Player Locations", "Do you want to save the player locations?")) {
+					if (mainWindow.askToConfirmSaveGameManipulation()) {
+						viewerFacade.savePlayerLocations();
+					}
 				}
 			}
 		}
@@ -327,18 +312,25 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	private boolean canWriteToFile(File file) {
+		File parentFile = file.getParentFile();
+		return file.canWrite() || (!file.exists() && parentFile != null && parentFile.canWrite());
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void saveImageToFile(BufferedImage image, File file) {
 		try {
-			ImageIO.write(image, "png", appendPNGFileExtensionIfNecessary(file));
+			ImageIO.write(image, "png", file);
 		} catch (IOException e) {
 			e.printStackTrace();
+			mainWindow.displayException(e);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private File appendPNGFileExtensionIfNecessary(File file) {
-		String filename = file.toString();
-		if (!filename.toLowerCase().endsWith(".png")) {
+		String filename = file.getAbsolutePath();
+		if (!FileExtensionChecker.hasFileExtension(filename, "png")) {
 			filename += ".png";
 		}
 		return new File(filename);

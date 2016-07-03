@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -26,14 +27,18 @@ import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.menu.AmidstMenuBuilder;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.main.viewer.ViewerFacadeBuilder;
+import amidst.gui.seedsearcher.SeedSearcher;
+import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.file.MojangApiParsingException;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.export.WorldExporterConfiguration;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.WorldPlayerType;
-import amidst.settings.biomecolorprofile.BiomeColorProfileDirectory;
+import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
@@ -42,7 +47,7 @@ public class MainWindow {
 	private final AmidstMetaData metadata;
 	private final AmidstSettings settings;
 	private final MojangApi mojangApi;
-	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
+	private final BiomeProfileDirectory biomeProfileDirectory;
 	private final ViewerFacadeBuilder viewerFacadeBuilder;
 	private final ThreadMaster threadMaster;
 
@@ -50,25 +55,31 @@ public class MainWindow {
 	private final Container contentPane;
 	private final Actions actions;
 	private final AmidstMenu menuBar;
+	private final SeedSearcherWindow seedSearcherWindow;
 
 	private final AtomicReference<ViewerFacade> viewerFacade = new AtomicReference<ViewerFacade>();
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public MainWindow(Application application, AmidstMetaData metadata,
-			AmidstSettings settings, MojangApi mojangApi,
-			BiomeColorProfileDirectory biomeColorProfileDirectory,
-			ViewerFacadeBuilder viewerFacadeBuilder, ThreadMaster threadMaster) {
+	public MainWindow(
+			Application application,
+			AmidstMetaData metadata,
+			AmidstSettings settings,
+			MojangApi mojangApi,
+			BiomeProfileDirectory biomeProfileDirectory,
+			ViewerFacadeBuilder viewerFacadeBuilder,
+			ThreadMaster threadMaster) {
 		this.application = application;
 		this.metadata = metadata;
 		this.settings = settings;
 		this.mojangApi = mojangApi;
-		this.biomeColorProfileDirectory = biomeColorProfileDirectory;
+		this.biomeProfileDirectory = biomeProfileDirectory;
 		this.viewerFacadeBuilder = viewerFacadeBuilder;
 		this.threadMaster = threadMaster;
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
 		this.actions = createActions();
 		this.menuBar = createMenuBar();
+		this.seedSearcherWindow = createSeedSearcherWindow();
 		initKeyListener();
 		initCloseListener();
 		showFrame();
@@ -78,7 +89,8 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JFrame createFrame() {
 		JFrame frame = new JFrame();
-		frame.setTitle(createVersionString(mojangApi.getVersionId(),
+		frame.setTitle(createVersionString(
+				mojangApi.getVersionId(),
 				mojangApi.getRecognisedVersionName(),
 				mojangApi.getProfileName()));
 		frame.setSize(1000, 800);
@@ -87,12 +99,9 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private String createVersionString(String versionId,
-			String recognisedVersionName, String profileName) {
-		return metadata.getVersion().createLongVersionString()
-				+ " - Selected Profile: " + profileName
-				+ " - Minecraft Version " + versionId + " (recognised: "
-				+ recognisedVersionName + ")";
+	private String createVersionString(String versionId, String recognisedVersionName, String profileName) {
+		return metadata.getVersion().createLongVersionString() + " - Selected Profile: " + profileName
+				+ " - Minecraft Version " + versionId + " (recognised: " + recognisedVersionName + ")";
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -104,26 +113,32 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Actions createActions() {
-		return new Actions(application, mojangApi, this, viewerFacade,
-				settings.biomeColorProfileSelection);
+		return new Actions(application, this, viewerFacade, settings.biomeProfileSelection);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private AmidstMenu createMenuBar() {
-		AmidstMenu menuBar = new AmidstMenuBuilder(settings, actions,
-				biomeColorProfileDirectory).construct();
+		AmidstMenu menuBar = new AmidstMenuBuilder(settings, actions, biomeProfileDirectory).construct();
 		frame.setJMenuBar(menuBar.getMenuBar());
 		return menuBar;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private SeedSearcherWindow createSeedSearcherWindow() {
+		return new SeedSearcherWindow(metadata, this, new SeedSearcher(
+				this,
+				mojangApi,
+				threadMaster.getWorkerExecutor()));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void initKeyListener() {
 		frame.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_PLUS) {
+			public void keyTyped(KeyEvent e) {
+				if (e.getKeyChar() == '+') {
 					actions.adjustZoom(-1);
-				} else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
+				} else if (e.getKeyChar() == '-') {
 					actions.adjustZoom(1);
 				}
 			}
@@ -146,7 +161,27 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void setWorld(World world) {
+	public void displayWorld(WorldSeed worldSeed, WorldType worldType) {
+		try {
+			setWorld(mojangApi.createWorldFromSeed(worldSeed, worldType));
+		} catch (IllegalStateException | MinecraftInterfaceException e) {
+			e.printStackTrace();
+			displayException(e);
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void displayWorld(File file) {
+		try {
+			setWorld(mojangApi.createWorldFromSaveGame(file));
+		} catch (IllegalStateException | MinecraftInterfaceException | IOException | MojangApiParsingException e) {
+			e.printStackTrace();
+			displayException(e);
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void setWorld(World world) {
 		clearViewerFacade();
 		if (decideWorldPlayerType(world.getMovablePlayerList())) {
 			setViewerFacade(viewerFacadeBuilder.create(world, actions));
@@ -178,8 +213,7 @@ public class MainWindow {
 		frame.validate();
 		viewerFacade.loadPlayers();
 		threadMaster.setOnRepaintTick(viewerFacade.getOnRepainterTick());
-		threadMaster.setOnFragmentLoadTick(viewerFacade
-				.getOnFragmentLoaderTick());
+		threadMaster.setOnFragmentLoadTick(viewerFacade.getOnFragmentLoaderTick());
 		this.viewerFacade.set(viewerFacade);
 	}
 
@@ -198,6 +232,7 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void dispose() {
 		clearViewerFacade();
+		seedSearcherWindow.dispose();
 		frame.dispose();
 	}
 
@@ -216,12 +251,12 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public File askForMinecraftWorldFile() {
-		return showOpenDialogAndGetSelectedFileOrNull(createMinecraftWorldFileChooser());
+	public File askForSaveGame() {
+		return showOpenDialogAndGetSelectedFileOrNull(createSaveGameFileChooser());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private JFileChooser createMinecraftWorldFileChooser() {
+	private JFileChooser createSaveGameFileChooser() {
 		JFileChooser result = new JFileChooser(mojangApi.getSaves());
 		result.setFileFilter(new LevelFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
@@ -245,8 +280,7 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private JFileChooser createCaptureImageSaveFileChooser(
-			String suggestedFilename) {
+	private JFileChooser createCaptureImageSaveFileChooser(String suggestedFilename) {
 		JFileChooser result = new JFileChooser();
 		result.setFileFilter(new PNGFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
@@ -265,20 +299,17 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayMessage(String title, String message) {
-		JOptionPane.showMessageDialog(frame, message, title,
-				JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(frame, message, title, JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayError(String message) {
-		JOptionPane.showMessageDialog(frame, message, "Error",
-				JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(frame, message, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayException(Exception exception) {
-		JOptionPane.showMessageDialog(frame, getStackTraceAsString(exception),
-				"Error", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(frame, getStackTraceAsString(exception), "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -289,17 +320,27 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	public boolean askToConfirmSaveGameManipulation() {
+		return askToConfirm(
+				"Save Game Manipulation",
+				"WARNING: You are about to change the contents of the save game directory. There is a chance that it gets corrupted.\n"
+						+ "We try to minimize the risk by creating a backup of the changed file, before it is changed.\n"
+						+ "If the backup fails, we will not write the changes.\n"
+						+ "You can find the backup files in the directory 'amidst/backup', which is placed in the save game directory.\n"
+						+ "Especially, make sure to not have the save game loaded in Minecraft during this process.\n\n"
+						+ "Do you want to proceed?");
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean askToConfirm(String title, String message) {
-		return JOptionPane.showConfirmDialog(frame, message, title,
-				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+		return JOptionPane.showConfirmDialog(frame, message, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldType askForWorldType() {
 		String worldTypeSetting = settings.worldType.get();
 		if (worldTypeSetting.equals(WorldType.PROMPT_EACH_TIME)) {
-			return askForOptions("World Type", "Enter world type\n",
-					WorldType.getSelectable());
+			return askForOptions("World Type", "Enter world type\n", WorldType.getSelectable());
 		} else {
 			return WorldType.from(worldTypeSetting);
 		}
@@ -309,8 +350,14 @@ public class MainWindow {
 	@SuppressWarnings("unchecked")
 	public <T> T askForOptions(String title, String message, List<T> choices) {
 		Object[] choicesArray = choices.toArray();
-		return (T) JOptionPane.showInputDialog(frame, message, title,
-				JOptionPane.PLAIN_MESSAGE, null, choicesArray, choicesArray[0]);
+		return (T) JOptionPane.showInputDialog(
+				frame,
+				message,
+				title,
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				choicesArray,
+				choicesArray[0]);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -320,9 +367,14 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public String askForPlayerHeight(long currentHeight) {
-		Object input = JOptionPane.showInputDialog(frame,
-				"Enter new player height:", "Move Player",
-				JOptionPane.QUESTION_MESSAGE, null, null, currentHeight);
+		Object input = JOptionPane.showInputDialog(
+				frame,
+				"Enter new player height:",
+				"Move Player",
+				JOptionPane.QUESTION_MESSAGE,
+				null,
+				null,
+				currentHeight);
 		if (input != null) {
 			return input.toString();
 		} else {
@@ -332,8 +384,12 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private String askForString(String title, String message) {
-		return JOptionPane.showInputDialog(frame, message, title,
-				JOptionPane.QUESTION_MESSAGE);
+		return JOptionPane.showInputDialog(frame, message, title, JOptionPane.QUESTION_MESSAGE);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void displaySeedSearcherWindow() {
+		seedSearcherWindow.show();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

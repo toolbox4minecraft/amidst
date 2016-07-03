@@ -37,8 +37,7 @@ public class MojangApi {
 	private volatile MinecraftInterface minecraftInterface;
 	private volatile String profileName;
 
-	public MojangApi(WorldBuilder worldBuilder,
-			DotMinecraftDirectory dotMinecraftDirectory) {
+	public MojangApi(WorldBuilder worldBuilder, DotMinecraftDirectory dotMinecraftDirectory) {
 		this.worldBuilder = worldBuilder;
 		this.dotMinecraftDirectory = dotMinecraftDirectory;
 	}
@@ -62,16 +61,14 @@ public class MojangApi {
 		return versionList;
 	}
 
-	public void set(String profileName, ProfileDirectory profileDirectory,
-			VersionDirectory versionDirectory)
+	public void set(String profileName, ProfileDirectory profileDirectory, VersionDirectory versionDirectory)
 			throws LocalMinecraftInterfaceCreationException {
 		this.profileName = profileName;
 		this.profileDirectory = profileDirectory;
 		this.versionDirectory = versionDirectory;
 		if (versionDirectory != null) {
 			try {
-				this.minecraftInterface = versionDirectory
-						.createLocalMinecraftInterface();
+				this.minecraftInterface = versionDirectory.createLocalMinecraftInterface();
 			} catch (LocalMinecraftInterfaceCreationException e) {
 				this.minecraftInterface = null;
 				throw e;
@@ -92,9 +89,20 @@ public class MojangApi {
 		return doCreateVersionDirectory(UNKNOWN_VERSION_ID, jar, json);
 	}
 
-	private VersionDirectory doCreateVersionDirectory(String versionId,
-			File jar, File json) {
+	private VersionDirectory doCreateVersionDirectory(String versionId, File jar, File json) {
 		return new VersionDirectory(dotMinecraftDirectory, versionId, jar, json);
+	}
+
+	public MojangApi createSilentPlayerlessCopy() {
+		MojangApi result = new MojangApi(WorldBuilder.createSilentPlayerless(), dotMinecraftDirectory);
+		try {
+			result.set(profileName, profileDirectory, versionDirectory);
+		} catch (LocalMinecraftInterfaceCreationException e) {
+			// This will not happen normally, because we already successfully
+			// created the same LocalMinecraftInterface once before.
+			throw new RuntimeException("exception while duplicating the MojangApi", e);
+		}
+		return result;
 	}
 
 	public File getSaves() {
@@ -115,15 +123,13 @@ public class MojangApi {
 	 * one world at a time. Creating a new world will break all previously
 	 * created world objects.
 	 */
-	public World createWorldFromSeed(WorldSeed worldSeed, WorldType worldType)
-			throws IllegalStateException, MinecraftInterfaceException {
+	public World createWorldFromSeed(WorldSeed worldSeed, WorldType worldType) throws IllegalStateException,
+			MinecraftInterfaceException {
 		MinecraftInterface minecraftInterface = this.minecraftInterface;
 		if (minecraftInterface != null) {
-			return worldBuilder.fromSeed(minecraftInterface, worldSeed,
-					worldType);
+			return worldBuilder.fromSeed(minecraftInterface, worldSeed, worldType);
 		} else {
-			throw new IllegalStateException(
-					"cannot create a world without a minecraft interface");
+			throw new IllegalStateException("cannot create a world without a minecraft interface");
 		}
 	}
 
@@ -132,16 +138,13 @@ public class MojangApi {
 	 * one world at a time. Creating a new world will break all previously
 	 * created world objects.
 	 */
-	public World createWorldFromFile(File file) throws FileNotFoundException,
-			IOException, IllegalStateException, MinecraftInterfaceException,
-			MojangApiParsingException {
+	public World createWorldFromSaveGame(File file) throws FileNotFoundException, IOException, IllegalStateException,
+			MinecraftInterfaceException, MojangApiParsingException {
 		MinecraftInterface minecraftInterface = this.minecraftInterface;
 		if (minecraftInterface != null) {
-			return worldBuilder.fromFile(minecraftInterface,
-					SaveDirectory.from(file));
+			return worldBuilder.fromSaveGame(minecraftInterface, SaveDirectory.from(file));
 		} else {
-			throw new IllegalStateException(
-					"cannot create a world without a minecraft interface");
+			throw new IllegalStateException("cannot create a world without a minecraft interface");
 		}
 	}
 

@@ -41,8 +41,11 @@ public class SaveAmidstBackupDirectory {
 	}
 
 	private String millis() {
-		return new Timestamp(System.currentTimeMillis()).toString()
-				.replace(" ", "_").replace(":", "-").replace(".", "_");
+		return new Timestamp(System.currentTimeMillis())
+				.toString()
+				.replace(" ", "_")
+				.replace(":", "-")
+				.replace(".", "_");
 	}
 
 	public boolean tryBackupPlayersFile(File from, String playerName) {
@@ -58,8 +61,7 @@ public class SaveAmidstBackupDirectory {
 	}
 
 	private boolean tryBackup(File toDirectory, File from, File to) {
-		return ensureDirectoryExists(toDirectory) && tryCopy(from, to)
-				&& to.isFile();
+		return ensureDirectoryExists(toDirectory) && tryCopy(from, to) && to.isFile();
 	}
 
 	private boolean ensureDirectoryExists(File directory) {

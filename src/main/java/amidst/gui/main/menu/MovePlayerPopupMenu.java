@@ -19,7 +19,8 @@ public class MovePlayerPopupMenu {
 	private final MovablePlayerList movablePlayerList;
 	private final CoordinatesInWorld targetCoordinates;
 
-	public MovePlayerPopupMenu(Actions actions,
+	public MovePlayerPopupMenu(
+			Actions actions,
 			MovablePlayerList movablePlayerList,
 			CoordinatesInWorld targetCoordinates) {
 		this.actions = actions;
@@ -39,8 +40,7 @@ public class MovePlayerPopupMenu {
 		return result;
 	}
 
-	private JMenuItem createPlayerMenuItem(final Player player,
-			final CoordinatesInWorld targetCoordinates) {
+	private JMenuItem createPlayerMenuItem(final Player player, final CoordinatesInWorld targetCoordinates) {
 		JMenuItem result = new JMenuItem(player.getPlayerName());
 		result.addActionListener(new ActionListener() {
 			@Override

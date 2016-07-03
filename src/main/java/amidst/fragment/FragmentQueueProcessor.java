@@ -23,8 +23,10 @@ public class FragmentQueueProcessor {
 	public FragmentQueueProcessor(
 			ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedQueue<Fragment> loadingQueue,
-			ConcurrentLinkedQueue<Fragment> recycleQueue, FragmentCache cache,
-			LayerManager layerManager, Setting<Dimension> dimensionSetting) {
+			ConcurrentLinkedQueue<Fragment> recycleQueue,
+			FragmentCache cache,
+			LayerManager layerManager,
+			Setting<Dimension> dimensionSetting) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
 		this.recycleQueue = recycleQueue;

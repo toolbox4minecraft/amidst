@@ -11,8 +11,11 @@ public class SymbolicMethodDeclaration {
 	private final boolean isOptional;
 	private final SymbolicParameterDeclarationList parameters;
 
-	public SymbolicMethodDeclaration(String symbolicName, String realName,
-			boolean isOptional, SymbolicParameterDeclarationList parameters) {
+	public SymbolicMethodDeclaration(
+			String symbolicName,
+			String realName,
+			boolean isOptional,
+			SymbolicParameterDeclarationList parameters) {
 		this.symbolicName = symbolicName;
 		this.realName = realName;
 		this.isOptional = isOptional;
@@ -35,12 +38,10 @@ public class SymbolicMethodDeclaration {
 		return parameters;
 	}
 
-	public void handleMissing(Exception e, String symbolicClassName,
-			String realClassName) throws SymbolicClassGraphCreationException {
-		String message = "unable to find the real class method "
-				+ realClassName + "." + realName
-				+ parameters.getParameterString() + " -> " + symbolicClassName
-				+ "." + symbolicName;
+	public void handleMissing(Exception e, String symbolicClassName, String realClassName)
+			throws SymbolicClassGraphCreationException {
+		String message = "unable to find the real class method " + realClassName + "." + realName
+				+ parameters.getParameterString() + " -> " + symbolicClassName + "." + symbolicName;
 		if (isOptional) {
 			Log.i(message);
 		} else {

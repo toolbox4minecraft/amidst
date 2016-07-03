@@ -22,8 +22,11 @@ public class LayerDeclaration {
 	 * @param dimension
 	 *            Can be null to enable for all dimensions.
 	 */
-	public LayerDeclaration(int layerId, Dimension dimension,
-			boolean drawUnloaded, boolean isSupportedInCurrentVersion,
+	public LayerDeclaration(
+			int layerId,
+			Dimension dimension,
+			boolean drawUnloaded,
+			boolean isSupportedInCurrentVersion,
 			Setting<Boolean> isVisibleSetting,
 			Setting<Boolean> enableAllLayersSetting) {
 		this.layerId = layerId;
@@ -52,8 +55,7 @@ public class LayerDeclaration {
 	 */
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public boolean update(Dimension dimension) {
-		boolean isEnabled = calculateIsEnabled(dimension,
-				enableAllLayersSetting.get());
+		boolean isEnabled = calculateIsEnabled(dimension, enableAllLayersSetting.get());
 		boolean isVisible = isEnabled && isVisibleSetting.get();
 		boolean reload = isVisible == true && this.isVisible == false;
 		this.isVisible = isVisible;
@@ -61,10 +63,8 @@ public class LayerDeclaration {
 	}
 
 	@CalledByAny
-	public boolean calculateIsEnabled(Dimension dimension,
-			boolean enableAllLayers) {
-		return isMatchingDimension(dimension)
-				&& isMatchingVersion(enableAllLayers);
+	public boolean calculateIsEnabled(Dimension dimension, boolean enableAllLayers) {
+		return isMatchingDimension(dimension) && isMatchingVersion(enableAllLayers);
 	}
 
 	@CalledByAny

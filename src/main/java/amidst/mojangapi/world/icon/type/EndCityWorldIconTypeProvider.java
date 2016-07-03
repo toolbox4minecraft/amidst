@@ -4,8 +4,7 @@ import java.util.List;
 
 import amidst.mojangapi.world.oracle.EndIsland;
 
-public class EndCityWorldIconTypeProvider implements
-		WorldIconTypeProvider<List<EndIsland>> {
+public class EndCityWorldIconTypeProvider implements WorldIconTypeProvider<List<EndIsland>> {
 	/**
 	 * REQUIRED_INFLUENCE is a value between 0 and 80 that I'm finding by trial
 	 * and error. If the island influence is 0 or higher then an End City can
@@ -17,8 +16,7 @@ public class EndCityWorldIconTypeProvider implements
 	private static final int REQUIRED_INFLUENCE = 60;
 
 	@Override
-	public DefaultWorldIconTypes get(int chunkX, int chunkY,
-			List<EndIsland> endIslands) {
+	public DefaultWorldIconTypes get(int chunkX, int chunkY, List<EndIsland> endIslands) {
 		if ((chunkX * chunkX + chunkY * chunkY) > 4096) {
 			return hasSuitableIslandFoundation(chunkX, chunkY, endIslands);
 		} else {
@@ -37,8 +35,7 @@ public class EndCityWorldIconTypeProvider implements
 	 * 
 	 * In the meantime, fall back on the requiredInfluence heuristic
 	 */
-	private DefaultWorldIconTypes hasSuitableIslandFoundation(int chunkX,
-			int chunkY, List<EndIsland> endIslands) {
+	private DefaultWorldIconTypes hasSuitableIslandFoundation(int chunkX, int chunkY, List<EndIsland> endIslands) {
 		DefaultWorldIconTypes result = null;
 		for (EndIsland island : endIslands) {
 			float influence = island.influenceAtChunk(chunkX, chunkY);

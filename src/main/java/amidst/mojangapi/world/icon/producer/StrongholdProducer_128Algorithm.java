@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
-import amidst.logging.Log;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
@@ -15,12 +14,9 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
  * see https://bugs.mojang.com/browse/MC-92289
  */
 @ThreadSafe
-public class StrongholdProducer_128Algorithm extends
-		StrongholdProducer_Buggy128Algorithm {
-	public StrongholdProducer_128Algorithm(long seed,
-			BiomeDataOracle biomeDataOracle, List<Biome> validBiomes) {
+public class StrongholdProducer_128Algorithm extends StrongholdProducer_Buggy128Algorithm {
+	public StrongholdProducer_128Algorithm(long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomes) {
 		super(seed, biomeDataOracle, validBiomes);
-		Log.i("StrongholdProducer_128Algorithm");
 	}
 
 	@Override
@@ -42,14 +38,16 @@ public class StrongholdProducer_128Algorithm extends
 
 	@Override
 	protected double getNextValue_distance(int currentRing, Random random) {
-		return (4.0 * DISTANCE_IN_CHUNKS)
-				+ (6.0 * currentRing * DISTANCE_IN_CHUNKS)
-				+ (random.nextDouble() - 0.5) * (DISTANCE_IN_CHUNKS * 2.5);
+		return (4.0 * DISTANCE_IN_CHUNKS) + (6.0 * currentRing * DISTANCE_IN_CHUNKS) + (random.nextDouble() - 0.5)
+				* (DISTANCE_IN_CHUNKS * 2.5);
 	}
 
 	@Override
-	protected int getNextValue_structuresPerRing(int currentValue,
-			int currentRing, int structuresRemaining, Random random) {
+	protected int getNextValue_structuresPerRing(
+			int currentValue,
+			int currentRing,
+			int structuresRemaining,
+			Random random) {
 		int result = currentValue + 2 * currentValue / (currentRing + 1);
 		result = Math.min(result, structuresRemaining);
 		return result;

@@ -5,6 +5,7 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 import amidst.documentation.NotThreadSafe;
+import amidst.util.FileExtensionChecker;
 
 @NotThreadSafe
 public class PNGFileFilter extends FileFilter {
@@ -13,7 +14,7 @@ public class PNGFileFilter extends FileFilter {
 		if (file.isDirectory()) {
 			return true;
 		} else {
-			return file.getName().toLowerCase().endsWith(".png");
+			return FileExtensionChecker.hasFileExtension(file.getName(), "png");
 		}
 	}
 

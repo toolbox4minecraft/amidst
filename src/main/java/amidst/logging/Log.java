@@ -67,8 +67,7 @@ public class Log {
 	public static void e(Object... messages) {
 		synchronized (LOG_LOCK) {
 			if (IS_USING_ALERTS) {
-				JOptionPane.showMessageDialog(null, messages, "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, messages, "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			for (Logger listener : LOGGER.values()) {
 				listener.error(messages);

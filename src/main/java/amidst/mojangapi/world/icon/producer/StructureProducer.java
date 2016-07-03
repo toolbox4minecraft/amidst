@@ -21,9 +21,13 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 	private final Dimension dimension;
 	private final boolean displayDimension;
 
-	public StructureProducer(Resolution resolution, int offsetInWorld,
-			LocationChecker checker, WorldIconTypeProvider<T> provider,
-			Dimension dimension, boolean displayDimension) {
+	public StructureProducer(
+			Resolution resolution,
+			int offsetInWorld,
+			LocationChecker checker,
+			WorldIconTypeProvider<T> provider,
+			Dimension dimension,
+			boolean displayDimension) {
 		this.resolution = resolution;
 		this.size = resolution.getStepsPerFragment();
 		this.offsetInWorld = offsetInWorld;
@@ -34,37 +38,41 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 	}
 
 	@Override
-	public void produce(CoordinatesInWorld corner,
-			Consumer<WorldIcon> consumer, T additionalData) {
+	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer, T additionalData) {
 		for (int xRelativeToFragment = 0; xRelativeToFragment < size; xRelativeToFragment++) {
 			for (int yRelativeToFragment = 0; yRelativeToFragment < size; yRelativeToFragment++) {
-				generateAt(corner, consumer, additionalData,
-						xRelativeToFragment, yRelativeToFragment);
+				generateAt(corner, consumer, additionalData, xRelativeToFragment, yRelativeToFragment);
 			}
 		}
 	}
 
 	// TODO: use longs?
-	private void generateAt(CoordinatesInWorld corner,
-			Consumer<WorldIcon> consumer, T additionalData,
-			int xRelativeToFragment, int yRelativeToFragment) {
+	private void generateAt(
+			CoordinatesInWorld corner,
+			Consumer<WorldIcon> consumer,
+			T additionalData,
+			int xRelativeToFragment,
+			int yRelativeToFragment) {
 		int x = xRelativeToFragment + (int) corner.getXAs(resolution);
 		int y = yRelativeToFragment + (int) corner.getYAs(resolution);
 		if (checker.isValidLocation(x, y)) {
-			DefaultWorldIconTypes worldIconType = provider.get(x, y,
-					additionalData);
+			DefaultWorldIconTypes worldIconType = provider.get(x, y, additionalData);
 			if (worldIconType != null) {
-				CoordinatesInWorld coordinates = createCoordinates(corner,
-						xRelativeToFragment, yRelativeToFragment);
-				consumer.accept(new WorldIcon(coordinates, worldIconType
-						.getName(), worldIconType.getImage(), dimension,
+				CoordinatesInWorld coordinates = createCoordinates(corner, xRelativeToFragment, yRelativeToFragment);
+				consumer.accept(new WorldIcon(
+						coordinates,
+						worldIconType.getLabel(),
+						worldIconType.getImage(),
+						dimension,
 						displayDimension));
 			}
 		}
 	}
 
-	private CoordinatesInWorld createCoordinates(CoordinatesInWorld corner,
-			int xRelativeToFragment, int yRelativeToFragment) {
+	private CoordinatesInWorld createCoordinates(
+			CoordinatesInWorld corner,
+			int xRelativeToFragment,
+			int yRelativeToFragment) {
 		long xInWorld = resolution.convertFromThisToWorld(xRelativeToFragment);
 		long yInWorld = resolution.convertFromThisToWorld(yRelativeToFragment);
 		return corner.add(xInWorld + offsetInWorld, yInWorld + offsetInWorld);

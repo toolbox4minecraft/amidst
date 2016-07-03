@@ -28,24 +28,35 @@ public class Viewer {
 
 		@CalledOnlyBy(AmidstThread.EDT)
 		@Override
-		public void paint(Graphics g) {
+		public void paintComponent(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g.create();
-			drawer.draw(g2d, getWidth(), getHeight(), getMousePosition(),
-					widgetFontMetrics);
+			drawer.draw(g2d, getWidth(), getHeight(), getMousePositionOrNull(), widgetFontMetrics);
 		}
 
 		@CalledOnlyBy(AmidstThread.EDT)
 		public BufferedImage createCaptureImage() {
 			int width = getWidth();
 			int height = getHeight();
-			Point mousePosition = getMousePosition();
-			BufferedImage result = new BufferedImage(width, height,
-					BufferedImage.TYPE_INT_ARGB);
+			Point mousePosition = getMousePositionOrNull();
+			BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g2d = result.createGraphics();
-			drawer.drawCaptureImage(g2d, width, height, mousePosition,
-					widgetFontMetrics);
+			drawer.drawCaptureImage(g2d, width, height, mousePosition, widgetFontMetrics);
 			g2d.dispose();
 			return result;
+		}
+
+		/**
+		 * The method getMousePosition() might throw a null pointer exception in
+		 * a multi-monitor setup, as soon as the window is dragged to the other
+		 * monitor.
+		 */
+		@CalledOnlyBy(AmidstThread.EDT)
+		private Point getMousePositionOrNull() {
+			try {
+				return getMousePosition();
+			} catch (NullPointerException e) {
+				return null;
+			}
 		}
 	}
 
@@ -74,10 +85,9 @@ public class Viewer {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Point getMousePositionOrCenter() {
-		Point result = component.getMousePosition();
+		Point result = component.getMousePositionOrNull();
 		if (result == null) {
-			result = new Point(component.getWidth() >> 1,
-					component.getHeight() >> 1);
+			result = new Point(component.getWidth() >> 1, component.getHeight() >> 1);
 		}
 		return result;
 	}

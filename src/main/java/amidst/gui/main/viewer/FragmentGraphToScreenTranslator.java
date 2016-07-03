@@ -47,8 +47,7 @@ public class FragmentGraphToScreenTranslator {
 	private void adjustNumberOfRowsAndColumns() {
 		double fragmentSizeOnScreen = zoom.worldToScreen(Fragment.SIZE);
 		int desiredFragmentsPerRow = (int) (viewerWidth / fragmentSizeOnScreen + 2);
-		int desiredFragmentsPerColumn = (int) (viewerHeight
-				/ fragmentSizeOnScreen + 2);
+		int desiredFragmentsPerColumn = (int) (viewerHeight / fragmentSizeOnScreen + 2);
 		int newColumns = desiredFragmentsPerRow - graph.getFragmentsPerRow();
 		int newRows = desiredFragmentsPerColumn - graph.getFragmentsPerColumn();
 		int newLeft = getNewLeft(fragmentSizeOnScreen);
@@ -56,8 +55,7 @@ public class FragmentGraphToScreenTranslator {
 		int newRight = newColumns - newLeft;
 		int newBelow = newRows - newAbove;
 		graph.adjust(newLeft, newAbove, newRight, newBelow);
-		adjustTopLeftOnScreen(fragmentSizeOnScreen * -newLeft,
-				fragmentSizeOnScreen * -newAbove);
+		adjustTopLeftOnScreen(fragmentSizeOnScreen * -newLeft, fragmentSizeOnScreen * -newAbove);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -96,8 +94,7 @@ public class FragmentGraphToScreenTranslator {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void adjustToZoom(double previous, double current,
-			Point mousePosition) {
+	public void adjustToZoom(double previous, double current, Point mousePosition) {
 		double baseX = mousePosition.x - leftOnScreen;
 		double baseY = mousePosition.y - topOnScreen;
 		double deltaX = baseX - (baseX / previous) * current;

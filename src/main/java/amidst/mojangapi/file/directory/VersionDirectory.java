@@ -29,8 +29,7 @@ public class VersionDirectory {
 	private final File jar;
 	private final File json;
 
-	public VersionDirectory(DotMinecraftDirectory dotMinecraftDirectory,
-			String versionId, File jar, File json) {
+	public VersionDirectory(DotMinecraftDirectory dotMinecraftDirectory, String versionId, File jar, File json) {
 		this.dotMinecraftDirectory = dotMinecraftDirectory;
 		this.versionId = versionId;
 		this.jar = jar;
@@ -54,8 +53,7 @@ public class VersionDirectory {
 	}
 
 	@NotNull
-	public VersionJson readVersionJson() throws MojangApiParsingException,
-			IOException {
+	public VersionJson readVersionJson() throws MojangApiParsingException, IOException {
 		return JsonReader.readVersionFrom(json);
 	}
 
@@ -65,8 +63,7 @@ public class VersionDirectory {
 			Log.i("Loading libraries.");
 			return doCreateClassLoader(getJarFileUrl(), getAllLibraryUrls());
 		} else {
-			Log.i("Unable to find Minecraft library JSON at: " + json
-					+ ". Skipping.");
+			Log.i("Unable to find Minecraft library JSON at: " + json + ". Skipping.");
 			return doCreateClassLoader(getJarFileUrl());
 		}
 	}
@@ -79,18 +76,15 @@ public class VersionDirectory {
 	@NotNull
 	private List<URL> getAllLibraryUrls() {
 		try {
-			return readVersionJson().getLibraryUrls(
-					dotMinecraftDirectory.getLibraries());
+			return readVersionJson().getLibraryUrls(dotMinecraftDirectory.getLibraries());
 		} catch (IOException | MojangApiParsingException e) {
-			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: "
-					+ json + ")");
+			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: " + json + ")");
 			return new ArrayList<URL>();
 		}
 	}
 
 	@NotNull
-	private URLClassLoader doCreateClassLoader(URL jarFileUrl,
-			List<URL> libraries) {
+	private URLClassLoader doCreateClassLoader(URL jarFileUrl, List<URL> libraries) {
 		libraries.add(jarFileUrl);
 		return new URLClassLoader(libraries.toArray(new URL[libraries.size()]));
 	}
@@ -101,8 +95,7 @@ public class VersionDirectory {
 	}
 
 	@NotNull
-	public MinecraftInterface createLocalMinecraftInterface()
-			throws LocalMinecraftInterfaceCreationException {
+	public MinecraftInterface createLocalMinecraftInterface() throws LocalMinecraftInterfaceCreationException {
 		return LOCAL_MINECRAFT_INTERFACE_BUILDER.create(this);
 	}
 }

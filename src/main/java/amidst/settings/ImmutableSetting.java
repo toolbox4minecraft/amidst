@@ -17,7 +17,6 @@ public class ImmutableSetting<T> implements Setting<T> {
 
 	@Override
 	public void set(T value) {
-		throw new UnsupportedOperationException(
-				"ImmutableSetting cannot be modified!");
+		throw new UnsupportedOperationException("ImmutableSetting cannot be modified!");
 	}
 }

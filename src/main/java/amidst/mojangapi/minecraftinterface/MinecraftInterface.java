@@ -32,11 +32,10 @@ public interface MinecraftInterface {
 	 *            a structure is located in (if the structure is located on a
 	 *            biome boundary).
 	 */
-	public int[] getBiomeData(int x, int y, int width, int height,
-			boolean useQuarterResolution) throws MinecraftInterfaceException;
+	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+			throws MinecraftInterfaceException;
 
-	public void createWorld(long seed, WorldType worldType,
-			String generatorOptions) throws MinecraftInterfaceException;
+	public void createWorld(long seed, WorldType worldType, String generatorOptions) throws MinecraftInterfaceException;
 
 	public RecognisedVersion getRecognisedVersion();
 }

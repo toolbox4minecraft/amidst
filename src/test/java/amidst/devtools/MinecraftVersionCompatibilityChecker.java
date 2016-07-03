@@ -25,8 +25,7 @@ public class MinecraftVersionCompatibilityChecker {
 	private String prefix;
 	private VersionListJson versionList;
 
-	public MinecraftVersionCompatibilityChecker(String prefix,
-			VersionListJson versionList) {
+	public MinecraftVersionCompatibilityChecker(String prefix, VersionListJson versionList) {
 		this.prefix = prefix;
 		this.versionList = versionList;
 	}
@@ -41,18 +40,15 @@ public class MinecraftVersionCompatibilityChecker {
 				unsupported.add(version);
 			}
 		}
-		displayVersionList(supported,
-				"================= SUPPORTED VERSIONS =================");
-		displayVersionList(unsupported,
-				"================ UNSUPPORTED VERSIONS ================");
+		displayVersionList(supported, "================= SUPPORTED VERSIONS =================");
+		displayVersionList(unsupported, "================ UNSUPPORTED VERSIONS ================");
 	}
 
 	private boolean checkOne(VersionListEntryJson version) {
 		if (version.tryDownloadClient(prefix)) {
 			try {
 				File jarFile = new File(version.getClientJar(prefix));
-				ClassTranslator translator = DefaultClassTranslator.INSTANCE
-						.get();
+				ClassTranslator translator = DefaultClassTranslator.INSTANCE.get();
 				return isSupported(Classes.countMatches(jarFile, translator));
 			} catch (FileNotFoundException | JarFileParsingException e) {
 				e.printStackTrace();
@@ -61,10 +57,8 @@ public class MinecraftVersionCompatibilityChecker {
 		return false;
 	}
 
-	private boolean isSupported(
-			Map<SymbolicClassDeclaration, Integer> matchesMap) {
-		for (Entry<SymbolicClassDeclaration, Integer> entry : matchesMap
-				.entrySet()) {
+	private boolean isSupported(Map<SymbolicClassDeclaration, Integer> matchesMap) {
+		for (Entry<SymbolicClassDeclaration, Integer> entry : matchesMap.entrySet()) {
 			if (entry.getValue() > 1) {
 				return false;
 			} else if (entry.getValue() == 0 && !entry.getKey().isOptional()) {
@@ -74,8 +68,7 @@ public class MinecraftVersionCompatibilityChecker {
 		return true;
 	}
 
-	private void displayVersionList(List<VersionListEntryJson> supported,
-			String message) {
+	private void displayVersionList(List<VersionListEntryJson> supported, String message) {
 		System.out.println();
 		System.out.println(message);
 		for (VersionListEntryJson version : supported) {

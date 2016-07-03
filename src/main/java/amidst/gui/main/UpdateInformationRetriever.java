@@ -21,8 +21,7 @@ public enum UpdateInformationRetriever {
 	@NotNull
 	public static UpdateInformationJson retrieve() throws IOException {
 		try (Reader theReader = URIUtils.newReader(UPDATE_INFORMATION_JSON_URL)) {
-			UpdateInformationJson result = GSON.fromJson(theReader,
-					UpdateInformationJson.class);
+			UpdateInformationJson result = GSON.fromJson(theReader, UpdateInformationJson.class);
 			if (result != null) {
 				return result;
 			} else {

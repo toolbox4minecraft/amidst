@@ -1,5 +1,7 @@
 package amidst.gui.main.viewer.widget;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Supplier;
 
 import amidst.documentation.AmidstThread;
@@ -11,15 +13,14 @@ public class ChangeableTextWidget extends TextWidget {
 	private final Supplier<String> text;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	protected ChangeableTextWidget(CornerAnchorPoint anchor,
-			Supplier<String> text) {
+	protected ChangeableTextWidget(CornerAnchorPoint anchor, Supplier<String> text) {
 		super(anchor);
 		this.text = text;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected String updateText() {
-		return text.get();
+	protected List<String> updateTextLines() {
+		return Arrays.asList(text.get());
 	}
 }

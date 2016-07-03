@@ -21,8 +21,7 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 	private final BiomeDataOracle biomeDataOracle;
 	private final List<Biome> validBiomes;
 
-	public StrongholdProducer_Base(long seed, BiomeDataOracle biomeDataOracle,
-			List<Biome> validBiomes) {
+	public StrongholdProducer_Base(long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomes) {
 		this.seed = seed;
 		this.biomeDataOracle = biomeDataOracle;
 		this.validBiomes = validBiomes;
@@ -40,8 +39,7 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 			double distance = getNextValue_distance(ring, random);
 			int x = getX(angle, distance);
 			int y = getY(angle, distance);
-			CoordinatesInWorld strongholdLocation = getStrongholdLocation(x, y,
-					findStronghold(random, x, y));
+			CoordinatesInWorld strongholdLocation = getStrongholdLocation(x, y, findStronghold(random, x, y));
 			result.add(createWorldIcon(strongholdLocation));
 			angle += getAngleDelta(ring, structuresPerRing);
 			currentRingStructureCount++;
@@ -50,9 +48,8 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 				// begin placing strongholds on the next ring.
 				ring = getNextValue_ring(ring);
 				currentRingStructureCount = getNextValue_currentRingStructureCount(currentRingStructureCount);
-				structuresPerRing = getNextValue_structuresPerRing(
-						structuresPerRing, ring, getTotalStructureCount() - i,
-						random);
+				structuresPerRing = getNextValue_structuresPerRing(structuresPerRing, ring, getTotalStructureCount()
+						- i, random);
 				angle = getNextValue_startAngle(angle, random);
 			}
 		}
@@ -67,14 +64,11 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 		return (int) Math.round(Math.sin(angle) * distance);
 	}
 
-	private CoordinatesInWorld findStronghold(Random random, int chunkX,
-			int chunkY) {
-		return biomeDataOracle.findValidLocationAtMiddleOfChunk(chunkX, chunkY,
-				112, validBiomes, random);
+	private CoordinatesInWorld findStronghold(Random random, int chunkX, int chunkY) {
+		return biomeDataOracle.findValidLocationAtMiddleOfChunk(chunkX, chunkY, 112, validBiomes, random);
 	}
 
-	private CoordinatesInWorld getStrongholdLocation(int x, int y,
-			CoordinatesInWorld coordinates) {
+	private CoordinatesInWorld getStrongholdLocation(int x, int y, CoordinatesInWorld coordinates) {
 		if (coordinates != null) {
 			return getCornerOfChunk(coordinates);
 		} else {
@@ -89,10 +83,12 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 	}
 
 	private WorldIcon createWorldIcon(CoordinatesInWorld coordinates) {
-		return new WorldIcon(coordinates,
-				DefaultWorldIconTypes.STRONGHOLD.getName(),
+		return new WorldIcon(
+				coordinates,
+				DefaultWorldIconTypes.STRONGHOLD.getLabel(),
 				DefaultWorldIconTypes.STRONGHOLD.getImage(),
-				Dimension.OVERWORLD, false);
+				Dimension.OVERWORLD,
+				false);
 	}
 
 	// This function depends on the Minecraft version, subclasses may override.
@@ -127,8 +123,7 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 
 	// This function depends on the Minecraft version, subclasses may override.
 	protected double getNextValue_distance(int currentRing, Random random) {
-		return (1.25D * currentRing + random.nextDouble())
-				* (DISTANCE_IN_CHUNKS * currentRing);
+		return (1.25D * currentRing + random.nextDouble()) * (DISTANCE_IN_CHUNKS * currentRing);
 	}
 
 	// This function depends on the Minecraft version, subclasses may override.
@@ -139,8 +134,11 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 	}
 
 	// This function depends on the Minecraft version, subclasses may override.
-	protected int getNextValue_structuresPerRing(int currentValue,
-			int currentRing, int structuresRemaining, Random random) {
+	protected int getNextValue_structuresPerRing(
+			int currentValue,
+			int currentRing,
+			int structuresRemaining,
+			Random random) {
 		return currentValue + currentValue + random.nextInt(currentValue);
 	}
 }

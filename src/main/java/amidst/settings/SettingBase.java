@@ -11,8 +11,7 @@ public class SettingBase<T> implements Setting<T> {
 	private final Consumer<T> setter;
 	private volatile T value;
 
-	public SettingBase(T defaultValue, UnaryOperator<T> getter,
-			Consumer<T> setter) {
+	public SettingBase(T defaultValue, UnaryOperator<T> getter, Consumer<T> setter) {
 		Objects.requireNonNull(defaultValue);
 		this.setter = setter;
 		this.set(getter.apply(defaultValue));

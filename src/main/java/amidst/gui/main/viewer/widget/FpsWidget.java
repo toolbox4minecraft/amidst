@@ -1,5 +1,8 @@
 package amidst.gui.main.viewer.widget;
 
+import java.util.Arrays;
+import java.util.List;
+
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -11,8 +14,7 @@ public class FpsWidget extends TextWidget {
 	private final Setting<Boolean> isVisibleSetting;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public FpsWidget(CornerAnchorPoint anchor, FramerateTimer fpsTimer,
-			Setting<Boolean> isVisibleSetting) {
+	public FpsWidget(CornerAnchorPoint anchor, FramerateTimer fpsTimer, Setting<Boolean> isVisibleSetting) {
 		super(anchor);
 		this.fpsTimer = fpsTimer;
 		this.isVisibleSetting = isVisibleSetting;
@@ -20,10 +22,10 @@ public class FpsWidget extends TextWidget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected String updateText() {
+	protected List<String> updateTextLines() {
 		fpsTimer.tick();
 		if (isVisibleSetting.get()) {
-			return "FPS: " + String.format("%.1f", fpsTimer.getCurrentFPS());
+			return Arrays.asList("FPS: " + String.format("%.1f", fpsTimer.getCurrentFPS()));
 		} else {
 			return null;
 		}

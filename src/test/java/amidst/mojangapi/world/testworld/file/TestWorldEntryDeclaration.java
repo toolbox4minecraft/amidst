@@ -20,10 +20,13 @@ public class TestWorldEntryDeclaration<T> {
 	private final BiPredicate<T, T> equalityChecker;
 	private final boolean skipEqualityCheck;
 
-	public TestWorldEntryDeclaration(String name, Class<T> clazz,
+	public TestWorldEntryDeclaration(
+			String name,
+			Class<T> clazz,
 			BiConsumer<OutputStream, T> serializer,
 			Function<InputStream, T> deserializer,
-			Function<World, T> extractor, BiPredicate<T, T> equalityChecker,
+			Function<World, T> extractor,
+			BiPredicate<T, T> equalityChecker,
 			boolean skipEqualityCheck) {
 		this.name = name;
 		this.clazz = clazz;
@@ -67,8 +70,7 @@ public class TestWorldEntryDeclaration<T> {
 		if (isMatchingClazz(object.getClass())) {
 			return (T) object;
 		} else {
-			throw new ClassCastException(clazz + " is not assignable from "
-					+ object.getClass());
+			throw new ClassCastException(clazz + " is not assignable from " + object.getClass());
 		}
 	}
 
@@ -77,8 +79,7 @@ public class TestWorldEntryDeclaration<T> {
 		if (isMatchingClazz(clazz)) {
 			return (TestWorldEntryDeclaration<E>) this;
 		} else {
-			throw new ClassCastException(clazz + " is not assignable from "
-					+ clazz);
+			throw new ClassCastException(clazz + " is not assignable from " + clazz);
 		}
 	}
 
@@ -86,13 +87,11 @@ public class TestWorldEntryDeclaration<T> {
 		return this.clazz.isAssignableFrom(clazz);
 	}
 
-	public boolean isDataMapAndWorldEntryEqual(Map<String, Object> data,
-			World world) {
+	public boolean isDataMapAndWorldEntryEqual(Map<String, Object> data, World world) {
 		if (skipEqualityCheck) {
 			return true;
 		} else {
-			return equalityChecker.test(extractFromDataMap(data),
-					extractFromWorld(world));
+			return equalityChecker.test(extractFromDataMap(data), extractFromWorld(world));
 		}
 	}
 }

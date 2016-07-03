@@ -7,6 +7,5 @@ import amidst.mojangapi.world.Dimension;
 
 public interface ColorProvider {
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	int getColorAt(Dimension dimension, Fragment fragment, long cornerX,
-			long cornerY, int x, int y);
+	int getColorAt(Dimension dimension, Fragment fragment, long cornerX, long cornerY, int x, int y);
 }

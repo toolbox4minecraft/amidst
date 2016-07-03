@@ -8,21 +8,17 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
 @Immutable
 public class FragmentCornerWalker {
-	public static FragmentCornerWalker walkFragmentsAroundOrigin(
-			int fragmentsAroundOrigin) {
+	public static FragmentCornerWalker walkFragmentsAroundOrigin(int fragmentsAroundOrigin) {
 		long blocksAroundOrigin = fragmentsAroundOrigin * Fragment.SIZE;
-		CoordinatesInWorld startCorner = CoordinatesInWorld.from(
-				-blocksAroundOrigin, -blocksAroundOrigin);
-		CoordinatesInWorld endCorner = startCorner.add(2 * blocksAroundOrigin,
-				2 * blocksAroundOrigin);
+		CoordinatesInWorld startCorner = CoordinatesInWorld.from(-blocksAroundOrigin, -blocksAroundOrigin);
+		CoordinatesInWorld endCorner = startCorner.add(2 * blocksAroundOrigin, 2 * blocksAroundOrigin);
 		return new FragmentCornerWalker(startCorner, endCorner);
 	}
 
 	private final CoordinatesInWorld startCorner;
 	private final CoordinatesInWorld endCorner;
 
-	public FragmentCornerWalker(CoordinatesInWorld startCorner,
-			CoordinatesInWorld endCorner) {
+	public FragmentCornerWalker(CoordinatesInWorld startCorner, CoordinatesInWorld endCorner) {
 		this.startCorner = startCorner;
 		this.endCorner = endCorner;
 	}

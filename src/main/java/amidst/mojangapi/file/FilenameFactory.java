@@ -22,8 +22,7 @@ public enum FilenameFactory {
 		return getClientFile(prefix, versionId, JAR_FILE_EXTENSION);
 	}
 
-	private static File getClientFile(File prefix, String versionId,
-			String fileExtension) {
+	private static File getClientFile(File prefix, String versionId, String fileExtension) {
 		return new File(prefix, getClientLocation("", versionId, fileExtension));
 	}
 
@@ -43,8 +42,7 @@ public enum FilenameFactory {
 		return getClientLocation(prefix, versionId, JAR_FILE_EXTENSION);
 	}
 
-	private static String getClientLocation(String prefix, String versionId,
-			String fileExtension) {
+	private static String getClientLocation(String prefix, String versionId, String fileExtension) {
 		return prefix + versionId + MIDDLE_CLIENT + versionId + fileExtension;
 	}
 
@@ -56,8 +54,7 @@ public enum FilenameFactory {
 		return getServerLocation(prefix, versionId, JAR_FILE_EXTENSION);
 	}
 
-	private static String getServerLocation(String prefix, String versionId,
-			String fileExtension) {
+	private static String getServerLocation(String prefix, String versionId, String fileExtension) {
 		return prefix + versionId + MIDDLE_SERVER + versionId + fileExtension;
 	}
 }

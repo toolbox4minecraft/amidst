@@ -28,11 +28,10 @@ public class PropertyJson {
 	@NotNull
 	public String getDecodedValue() throws MojangApiParsingException {
 		if (value == null) {
-			throw new MojangApiParsingException(
-					"unable to decode property value");
+			throw new MojangApiParsingException("unable to decode property value");
 		} else {
-			return new String(Base64.getDecoder().decode(
-					value.getBytes(StandardCharsets.UTF_8)),
+			return new String(
+					Base64.getDecoder().decode(value.getBytes(StandardCharsets.UTF_8)),
 					StandardCharsets.UTF_8);
 		}
 	}

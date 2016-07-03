@@ -22,7 +22,8 @@ public class Graphics2DAccelerationCounter {
 	private volatile float acceleratedPercentage = 0;
 
 	private static final GraphicsConfiguration GC = GraphicsEnvironment
-			.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+			.getLocalGraphicsEnvironment()
+			.getDefaultScreenDevice()
 			.getDefaultConfiguration();
 
 	/**

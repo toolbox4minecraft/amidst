@@ -23,8 +23,7 @@ public class ScaleWidget extends Widget {
 	private int textWidth;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ScaleWidget(CornerAnchorPoint anchor, Zoom zoom,
-			Setting<Boolean> isVisibleSetting) {
+	public ScaleWidget(CornerAnchorPoint anchor, Zoom zoom, Setting<Boolean> isVisibleSetting) {
 		super(anchor);
 		this.zoom = zoom;
 		this.isVisibleSetting = isVisibleSetting;

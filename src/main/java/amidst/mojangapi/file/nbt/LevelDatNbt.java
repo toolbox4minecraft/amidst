@@ -19,8 +19,7 @@ public class LevelDatNbt {
 		try {
 			CompoundTag dataTag = readDataTag(root);
 			this.seed = readRandomSeed(dataTag);
-			this.worldSpawn = CoordinatesInWorld.from(readSpawnX(dataTag),
-					readSpawnZ(dataTag));
+			this.worldSpawn = CoordinatesInWorld.from(readSpawnX(dataTag), readSpawnZ(dataTag));
 			if (hasGeneratorName(dataTag)) {
 				this.worldType = WorldType.from(readGeneratorName(dataTag));
 				if (worldType == WorldType.CUSTOMIZED) {
@@ -43,18 +42,15 @@ public class LevelDatNbt {
 	}
 
 	private long readRandomSeed(CompoundTag dataTag) {
-		return NBTUtils.getLongValue(dataTag.getValue().get(
-				NBTTagKeys.TAG_KEY_RANDOM_SEED));
+		return NBTUtils.getLongValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_RANDOM_SEED));
 	}
 
 	private long readSpawnX(CompoundTag dataTag) {
-		return NBTUtils.getLongValue(dataTag.getValue().get(
-				NBTTagKeys.TAG_KEY_SPAWN_X));
+		return NBTUtils.getLongValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_SPAWN_X));
 	}
 
 	private long readSpawnZ(CompoundTag dataTag) {
-		return NBTUtils.getLongValue(dataTag.getValue().get(
-				NBTTagKeys.TAG_KEY_SPAWN_Z));
+		return NBTUtils.getLongValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_SPAWN_Z));
 	}
 
 	private boolean hasGeneratorName(CompoundTag dataTag) {
@@ -62,13 +58,11 @@ public class LevelDatNbt {
 	}
 
 	private String readGeneratorName(CompoundTag dataTag) {
-		return (String) dataTag.getValue()
-				.get(NBTTagKeys.TAG_KEY_GENERATOR_NAME).getValue();
+		return (String) dataTag.getValue().get(NBTTagKeys.TAG_KEY_GENERATOR_NAME).getValue();
 	}
 
 	private String readGeneratorOptions(CompoundTag dataTag) {
-		return (String) dataTag.getValue()
-				.get(NBTTagKeys.TAG_KEY_GENERATOR_OPTIONS).getValue();
+		return (String) dataTag.getValue().get(NBTTagKeys.TAG_KEY_GENERATOR_OPTIONS).getValue();
 	}
 
 	private boolean hasPlayerTag(CompoundTag dataTag) {

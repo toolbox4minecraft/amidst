@@ -9,10 +9,10 @@ import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.LevelDatNbt;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
+import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.locationchecker.EndCityLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm;
-import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.TempleLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.VillageLocationChecker;
 import amidst.mojangapi.world.icon.producer.PlayerProducer;
@@ -29,7 +29,9 @@ import amidst.mojangapi.world.oracle.HeuristicWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.ImmutableWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.oracle.WorldSpawnOracle;
+import amidst.mojangapi.world.player.ImmutablePlayerInformationCache;
 import amidst.mojangapi.world.player.MovablePlayerList;
+import amidst.mojangapi.world.player.PlayerInformation;
 import amidst.mojangapi.world.player.PlayerInformationCache;
 import amidst.mojangapi.world.player.WorldPlayerType;
 import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
@@ -37,22 +39,28 @@ import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 
 @Immutable
 public class WorldBuilder {
+	/**
+	 * Create a new WorldBuilder that does not log any seeds and that provides
+	 * the singleplayer player information for each requested player.
+	 */
+	public static WorldBuilder createSilentPlayerless() {
+		return new WorldBuilder(
+				new ImmutablePlayerInformationCache(PlayerInformation.theSingleplayerPlayer()),
+				SeedHistoryLogger.createDisabled());
+	}
+
 	private final PlayerInformationCache playerInformationCache;
 	private final SeedHistoryLogger seedHistoryLogger;
 
-	public WorldBuilder(PlayerInformationCache playerInformationCache,
-			SeedHistoryLogger seedHistoryLogger) {
+	public WorldBuilder(PlayerInformationCache playerInformationCache, SeedHistoryLogger seedHistoryLogger) {
 		this.playerInformationCache = playerInformationCache;
 		this.seedHistoryLogger = seedHistoryLogger;
 	}
 
-	public World fromSeed(MinecraftInterface minecraftInterface,
-			WorldSeed worldSeed, WorldType worldType)
+	public World fromSeed(MinecraftInterface minecraftInterface, WorldSeed worldSeed, WorldType worldType)
 			throws MinecraftInterfaceException {
-		BiomeDataOracle biomeDataOracle = new BiomeDataOracle(
-				minecraftInterface);
-		VersionFeatures versionFeatures = DefaultVersionFeatures
-				.create(minecraftInterface.getRecognisedVersion());
+		BiomeDataOracle biomeDataOracle = new BiomeDataOracle(minecraftInterface);
+		VersionFeatures versionFeatures = DefaultVersionFeatures.create(minecraftInterface.getRecognisedVersion());
 		return create(
 				minecraftInterface,
 				worldSeed,
@@ -61,45 +69,50 @@ public class WorldBuilder {
 				MovablePlayerList.dummy(),
 				versionFeatures,
 				biomeDataOracle,
-				new HeuristicWorldSpawnOracle(worldSeed.getLong(),
-						biomeDataOracle, versionFeatures
-								.getValidBiomesForStructure_Spawn()));
+				new HeuristicWorldSpawnOracle(worldSeed.getLong(), biomeDataOracle, versionFeatures
+						.getValidBiomesForStructure_Spawn()));
 	}
 
-	public World fromFile(MinecraftInterface minecraftInterface,
-			SaveDirectory saveDirectory) throws IOException,
+	public World fromSaveGame(MinecraftInterface minecraftInterface, SaveDirectory saveDirectory) throws IOException,
 			MinecraftInterfaceException, MojangApiParsingException {
-		VersionFeatures versionFeatures = DefaultVersionFeatures
-				.create(minecraftInterface.getRecognisedVersion());
+		VersionFeatures versionFeatures = DefaultVersionFeatures.create(minecraftInterface.getRecognisedVersion());
 		LevelDatNbt levelDat = saveDirectory.createLevelDat();
 		MovablePlayerList movablePlayerList = new MovablePlayerList(
-				playerInformationCache, saveDirectory,
-				versionFeatures.isSaveEnabled(), WorldPlayerType.from(
-						saveDirectory, levelDat));
-		return create(minecraftInterface,
-				WorldSeed.fromFile(levelDat.getSeed()),
-				levelDat.getWorldType(), levelDat.getGeneratorOptions(),
-				movablePlayerList, versionFeatures, new BiomeDataOracle(
-						minecraftInterface), new ImmutableWorldSpawnOracle(
-						levelDat.getWorldSpawn()));
+				playerInformationCache,
+				saveDirectory,
+				versionFeatures.isSaveEnabled(),
+				WorldPlayerType.from(saveDirectory, levelDat));
+		return create(
+				minecraftInterface,
+				WorldSeed.fromSaveGame(levelDat.getSeed()),
+				levelDat.getWorldType(),
+				levelDat.getGeneratorOptions(),
+				movablePlayerList,
+				versionFeatures,
+				new BiomeDataOracle(minecraftInterface),
+				new ImmutableWorldSpawnOracle(levelDat.getWorldSpawn()));
 	}
 
-	private World create(MinecraftInterface minecraftInterface,
-			WorldSeed worldSeed, WorldType worldType, String generatorOptions,
+	private World create(
+			MinecraftInterface minecraftInterface,
+			WorldSeed worldSeed,
+			WorldType worldType,
+			String generatorOptions,
 			MovablePlayerList movablePlayerList,
-			VersionFeatures versionFeatures, BiomeDataOracle biomeDataOracle,
-			WorldSpawnOracle worldSpawnOracle)
-			throws MinecraftInterfaceException {
-		seedHistoryLogger.log(worldSeed);
-		long seed = worldSeed.getLong();
+			VersionFeatures versionFeatures,
+			BiomeDataOracle biomeDataOracle,
+			WorldSpawnOracle worldSpawnOracle) throws MinecraftInterfaceException {
 		// @formatter:off
+		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
+		seedHistoryLogger.log(recognisedVersion, worldSeed);
+		long seed = worldSeed.getLong();
 		minecraftInterface.createWorld(seed, worldType, generatorOptions);
 		return new World(
 				worldSeed,
 				worldType,
 				generatorOptions,
 				movablePlayerList,
-				minecraftInterface.getRecognisedVersion(),
+				recognisedVersion,
 				versionFeatures,
 				biomeDataOracle,
 				EndIslandOracle.from(  seed),
@@ -131,7 +144,7 @@ public class WorldBuilder {
 				), new StructureProducer<Void>(
 						Resolution.CHUNK,
 						8,
-						new OceanMonumentLocationChecker(seed, biomeDataOracle, versionFeatures.getValidBiomesAtMiddleOfChunk_OceanMonument(), versionFeatures.getValidBiomesForStructure_OceanMonument()),
+						versionFeatures.getOceanMonumentLocationCheckerFactory().apply(seed, biomeDataOracle, versionFeatures.getValidBiomesAtMiddleOfChunk_OceanMonument(), versionFeatures.getValidBiomesForStructure_OceanMonument()),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
 						Dimension.OVERWORLD,
 						false

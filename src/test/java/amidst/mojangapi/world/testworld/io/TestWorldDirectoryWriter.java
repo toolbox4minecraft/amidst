@@ -22,32 +22,29 @@ public class TestWorldDirectoryWriter {
 
 	private final TestWorldDirectoryDeclaration directoryDeclaration;
 
-	public TestWorldDirectoryWriter(
-			TestWorldDirectoryDeclaration directoryDeclaration) {
+	public TestWorldDirectoryWriter(TestWorldDirectoryDeclaration directoryDeclaration) {
 		this.directoryDeclaration = directoryDeclaration;
 	}
 
-	public void write(TestWorldDeclaration worldDeclaration,
-			TestWorldDirectory directory) throws FileNotFoundException,
-			IOException {
+	public void write(TestWorldDeclaration worldDeclaration, TestWorldDirectory directory)
+			throws FileNotFoundException, IOException {
 		worldDeclaration.createDirectoryIfNecessary();
 		writeAll(worldDeclaration, directory.getData());
 	}
 
-	private void writeAll(TestWorldDeclaration worldDeclaration,
-			Map<String, Object> data) throws FileNotFoundException, IOException {
-		for (TestWorldEntryDeclaration<?> entryDeclaration : directoryDeclaration
-				.getEntryDeclarations()) {
+	private void writeAll(TestWorldDeclaration worldDeclaration, Map<String, Object> data)
+			throws FileNotFoundException, IOException {
+		for (TestWorldEntryDeclaration<?> entryDeclaration : directoryDeclaration.getEntryDeclarations()) {
 			if (worldDeclaration.isSupported(entryDeclaration.getName())) {
 				writeEntry(data, worldDeclaration, entryDeclaration);
 			}
 		}
 	}
 
-	private void writeEntry(Map<String, Object> data,
+	private void writeEntry(
+			Map<String, Object> data,
 			TestWorldDeclaration worldDeclaration,
-			TestWorldEntryDeclaration<?> entryDeclaration) throws IOException,
-			FileNotFoundException {
+			TestWorldEntryDeclaration<?> entryDeclaration) throws IOException, FileNotFoundException {
 		String name = entryDeclaration.getName();
 		File zipFile = worldDeclaration.getZipFile(name);
 		try (ZipOutputStream zipOutputStream = createZipOutputStream(zipFile)) {
@@ -57,10 +54,8 @@ public class TestWorldDirectoryWriter {
 		}
 	}
 
-	private ZipOutputStream createZipOutputStream(File zipFile)
-			throws FileNotFoundException {
-		return new ZipOutputStream(new BufferedOutputStream(
-				new FileOutputStream(zipFile)), StandardCharsets.UTF_8);
+	private ZipOutputStream createZipOutputStream(File zipFile) throws FileNotFoundException {
+		return new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)), StandardCharsets.UTF_8);
 	}
 
 	private ZipEntry createZipEntry(String name) {

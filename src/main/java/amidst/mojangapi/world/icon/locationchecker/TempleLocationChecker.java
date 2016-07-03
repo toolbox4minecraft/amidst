@@ -15,8 +15,7 @@ public class TempleLocationChecker extends AllValidLocationChecker {
 	private static final byte MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES = 8;
 	private static final boolean USE_TWO_VALUES_FOR_UPDATE = false;
 
-	public TempleLocationChecker(long seed, BiomeDataOracle biomeDataOracle,
-			List<Biome> validBiomesAtMiddleOfChunk) {
+	public TempleLocationChecker(long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomesAtMiddleOfChunk) {
 		// @formatter:off
 		super(new StructureAlgorithm(
 						seed,

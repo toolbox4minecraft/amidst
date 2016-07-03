@@ -28,18 +28,13 @@ public class VersionFeatureBuilder<V> {
 	public VersionFeatureBuilder<V> exact(RecognisedVersion version, V value) {
 		Objects.requireNonNull(version, "version cannot be null");
 		if (this.defaultValue == null) {
-			throw new IllegalStateException(
-					"you need to specify a default value first");
+			throw new IllegalStateException("you need to specify a default value first");
 		} else if (previousExact != null && version == previousExact) {
-			throw new IllegalStateException(
-					"you can only specify one value per version");
-		} else if (previousExact != null
-				&& RecognisedVersion.isOlder(version, previousExact)) {
-			throw new IllegalStateException(
-					"you have to specify versions in ascending order");
+			throw new IllegalStateException("you can only specify one value per version");
+		} else if (previousExact != null && RecognisedVersion.isOlder(version, previousExact)) {
+			throw new IllegalStateException("you have to specify versions in ascending order");
 		} else if (!entriesNewestFirst.isEmpty()) {
-			throw new IllegalStateException(
-					"you have to specify all exact matches before the first since");
+			throw new IllegalStateException("you have to specify all exact matches before the first since");
 		} else {
 			previousExact = version;
 			exactMatches.add(0, new VersionFeatureEntry<V>(version, value));
@@ -50,25 +45,21 @@ public class VersionFeatureBuilder<V> {
 	public VersionFeatureBuilder<V> since(RecognisedVersion version, V value) {
 		Objects.requireNonNull(version, "version cannot be null");
 		if (this.defaultValue == null) {
-			throw new IllegalStateException(
-					"you need to specify a default value first");
+			throw new IllegalStateException("you need to specify a default value first");
 		} else if (previous != null && version == previous) {
-			throw new IllegalStateException(
-					"you can only specify one value per version");
-		} else if (previous != null
-				&& RecognisedVersion.isOlder(version, previous)) {
-			throw new IllegalStateException(
-					"you have to specify versions in ascending order");
+			throw new IllegalStateException("you can only specify one value per version");
+		} else if (previous != null && RecognisedVersion.isOlder(version, previous)) {
+			throw new IllegalStateException("you have to specify versions in ascending order");
 		} else {
 			previous = version;
-			entriesNewestFirst.add(0,
-					new VersionFeatureEntry<V>(version, value));
+			entriesNewestFirst.add(0, new VersionFeatureEntry<V>(version, value));
 			return this;
 		}
 	}
 
 	public VersionFeature<V> construct() {
-		return new VersionFeature<V>(defaultValue,
+		return new VersionFeature<V>(
+				defaultValue,
 				Collections.unmodifiableList(exactMatches),
 				Collections.unmodifiableList(entriesNewestFirst));
 	}

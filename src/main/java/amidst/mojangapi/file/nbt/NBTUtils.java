@@ -24,23 +24,18 @@ public enum NBTUtils {
 		}
 	}
 
-	public static NBTInputStream createNBTInputStream(File file)
-			throws IOException {
-		return new NBTInputStream(new BufferedInputStream(new FileInputStream(
-				file)));
+	public static NBTInputStream createNBTInputStream(File file) throws IOException {
+		return new NBTInputStream(new BufferedInputStream(new FileInputStream(file)));
 	}
 
-	public static void writeTagToFile(File out, CompoundTag root)
-			throws IOException {
+	public static void writeTagToFile(File out, CompoundTag root) throws IOException {
 		try (NBTOutputStream outStream = createNBTOutputStream(out)) {
 			outStream.writeTag(root);
 		}
 	}
 
-	public static NBTOutputStream createNBTOutputStream(File file)
-			throws IOException {
-		return new NBTOutputStream(new BufferedOutputStream(
-				new FileOutputStream(file)));
+	public static NBTOutputStream createNBTOutputStream(File file) throws IOException {
+		return new NBTOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
 	}
 
 	public static long getLongValue(Tag tag) {
@@ -48,9 +43,8 @@ public enum NBTUtils {
 		if (value instanceof Number) {
 			return ((Number) value).longValue();
 		} else {
-			throw new IllegalArgumentException(
-					"cannot read long value from the class '"
-							+ tag.getClass().getName() + "'");
+			throw new IllegalArgumentException("cannot read long value from the class '" + tag.getClass().getName()
+					+ "'");
 		}
 	}
 }

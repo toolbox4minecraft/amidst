@@ -12,13 +12,21 @@ import java.util.Properties;
 import javax.imageio.ImageIO;
 
 import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
 
 @Immutable
 public enum ResourceLoader {
 	;
 
-	public static URL getResourceURL(String name) {
-		return ResourceLoader.class.getResource(name);
+	@NotNull
+	public static URL getResourceURL(String name) throws IllegalArgumentException {
+		URL result = ResourceLoader.class.getResource(name);
+		if (result == null) {
+			// This is always a developer error, because a resource was not
+			// included in the jar file.
+			throw new IllegalArgumentException("unable to load resource: '" + name + "'");
+		}
+		return result;
 	}
 
 	public static BufferedImage getImage(String name) {
@@ -44,8 +52,7 @@ public enum ResourceLoader {
 	}
 
 	public static String getResourceAsString(String name) throws IOException {
-		try (InputStreamReader reader = new InputStreamReader(
-				getResourceAsStream(name), StandardCharsets.UTF_8)) {
+		try (InputStreamReader reader = new InputStreamReader(getResourceAsStream(name), StandardCharsets.UTF_8)) {
 			char[] buffer = new char[1024];
 			int length;
 			StringBuilder result = new StringBuilder();
@@ -57,7 +64,6 @@ public enum ResourceLoader {
 	}
 
 	public static InputStream getResourceAsStream(String filename) {
-		return new BufferedInputStream(
-				ResourceLoader.class.getResourceAsStream(filename));
+		return new BufferedInputStream(ResourceLoader.class.getResourceAsStream(filename));
 	}
 }

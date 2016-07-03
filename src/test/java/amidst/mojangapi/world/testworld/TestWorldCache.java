@@ -22,29 +22,23 @@ public enum TestWorldCache {
 		}
 	}
 
-	public static void createAndPut(TestWorldDeclaration declaration,
-			MinecraftInterface realMinecraftInterface)
-			throws MinecraftInterfaceException, FileNotFoundException,
-			IOException {
+	public static void createAndPut(TestWorldDeclaration declaration, MinecraftInterface realMinecraftInterface)
+			throws MinecraftInterfaceException, FileNotFoundException, IOException {
 		INSTANCE.doCreateAndPut(declaration, realMinecraftInterface);
 	}
 
-	private final TestWorldBuilder builder = TestWorldBuilder
-			.from(DefaultTestWorldDirectoryDeclaration.get());
+	private final TestWorldBuilder builder = TestWorldBuilder.from(DefaultTestWorldDirectoryDeclaration.get());
 	private final TestWorldDirectoryReader reader = builder.createReader();
 	private final TestWorldDirectoryWriter writer = builder.createWriter();
 	private final ConcurrentHashMap<TestWorldDeclaration, TestWorld> cache = new ConcurrentHashMap<TestWorldDeclaration, TestWorld>();
 
-	public void doCreateAndPut(TestWorldDeclaration declaration,
-			MinecraftInterface realMinecraftInterface)
-			throws MinecraftInterfaceException, FileNotFoundException,
-			IOException {
-		writer.write(declaration,
-				builder.createDirectory(declaration, realMinecraftInterface));
+	public void doCreateAndPut(TestWorldDeclaration declaration, MinecraftInterface realMinecraftInterface)
+			throws MinecraftInterfaceException, FileNotFoundException, IOException {
+		writer.write(declaration, builder.createDirectory(declaration, realMinecraftInterface));
 	}
 
-	public TestWorld createIfNecessaryAndGet(TestWorldDeclaration declaration)
-			throws IOException, MinecraftInterfaceException {
+	public TestWorld createIfNecessaryAndGet(TestWorldDeclaration declaration) throws IOException,
+			MinecraftInterfaceException {
 		TestWorld result = cache.get(declaration);
 		if (result != null) {
 			return result;
@@ -54,9 +48,7 @@ public enum TestWorldCache {
 		}
 	}
 
-	private synchronized void create(TestWorldDeclaration declaration)
-			throws IOException, MinecraftInterfaceException {
-		cache.putIfAbsent(declaration,
-				builder.createTestWorld(reader.read(declaration)));
+	private synchronized void create(TestWorldDeclaration declaration) throws IOException, MinecraftInterfaceException {
+		cache.putIfAbsent(declaration, builder.createTestWorld(reader.read(declaration)));
 	}
 }

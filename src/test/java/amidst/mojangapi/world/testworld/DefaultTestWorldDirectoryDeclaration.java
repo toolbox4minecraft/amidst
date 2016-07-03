@@ -133,24 +133,26 @@ public enum DefaultTestWorldDirectoryDeclaration {
 	}
 
 	private Function<World, EndIslandsJson> endIslandExtractor() {
-		return world -> EndIslandsJson.extract(world.getEndIslandOracle(),
-				END_FRAGMENTS_AROUND_ORIGIN);
+		return world -> EndIslandsJson.extract(world.getEndIslandOracle(), END_FRAGMENTS_AROUND_ORIGIN);
 	}
 
 	private Function<World, CoordinatesCollectionJson> worldIconExtractor(
 			Function<World, WorldIconProducer<Void>> producer,
 			DefaultWorldIconTypes worldIconType) {
 		return world -> CoordinatesCollectionJson.extractWorldIcons(
-				producer.apply(world), worldIconType.getName(), corner -> null,
+				producer.apply(world),
+				worldIconType.getLabel(),
+				corner -> null,
 				OVERWORLD_FRAGMENTS_AROUND_ORIGIN,
 				MINIMAL_NUMBER_OF_COORDINATES);
 	}
 
-	private Function<World, CoordinatesCollectionJson> endCityExtractor(
-			DefaultWorldIconTypes worldIconType) {
+	private Function<World, CoordinatesCollectionJson> endCityExtractor(DefaultWorldIconTypes worldIconType) {
 		return world -> CoordinatesCollectionJson.extractWorldIcons(
-				world.getEndCityProducer(), worldIconType.getName(),
+				world.getEndCityProducer(),
+				worldIconType.getLabel(),
 				corner -> world.getEndIslandOracle().getAt(corner),
-				END_FRAGMENTS_AROUND_ORIGIN, MINIMAL_NUMBER_OF_COORDINATES);
+				END_FRAGMENTS_AROUND_ORIGIN,
+				MINIMAL_NUMBER_OF_COORDINATES);
 	}
 }

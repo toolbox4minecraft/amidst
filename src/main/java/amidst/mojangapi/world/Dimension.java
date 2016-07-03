@@ -20,8 +20,7 @@ public enum Dimension {
 		} else if (id == END.getId()) {
 			return END;
 		} else {
-			Log.w("Unsupported dimension id: " + id
-					+ ". Falling back to Overworld.");
+			Log.w("Unsupported dimension id: " + id + ". Falling back to Overworld.");
 			return OVERWORLD;
 		}
 	}

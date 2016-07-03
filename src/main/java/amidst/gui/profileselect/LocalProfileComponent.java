@@ -29,8 +29,10 @@ public class LocalProfileComponent extends ProfileComponent {
 	private volatile ProfileDirectory profileDirectory;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public LocalProfileComponent(Application application,
-			WorkerExecutor workerExecutor, MojangApi mojangApi,
+	public LocalProfileComponent(
+			Application application,
+			WorkerExecutor workerExecutor,
+			MojangApi mojangApi,
 			LauncherProfileJson profile) {
 		this.application = application;
 		this.mojangApi = mojangApi;
@@ -77,8 +79,8 @@ public class LocalProfileComponent extends ProfileComponent {
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private boolean tryLoad() {
 		try {
-			Log.i("using minecraft launcher profile '" + getProfileName()
-					+ "' with versionId '" + getVersionName() + "'");
+			Log.i("using minecraft launcher profile '" + getProfileName() + "' with versionId '" + getVersionName()
+					+ "'");
 			mojangApi.set(getProfileName(), profileDirectory, versionDirectory);
 			return true;
 		} catch (LocalMinecraftInterfaceCreationException e) {

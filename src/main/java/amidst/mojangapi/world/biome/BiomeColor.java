@@ -3,7 +3,7 @@ package amidst.mojangapi.world.biome;
 import java.awt.Color;
 
 import amidst.documentation.Immutable;
-import amidst.settings.biomecolorprofile.BiomeColorJson;
+import amidst.settings.biomeprofile.BiomeColorJson;
 
 @Immutable
 public class BiomeColor {
@@ -15,8 +15,7 @@ public class BiomeColor {
 		return UNKNOWN_BIOME_COLOR;
 	}
 
-	private static final BiomeColor UNKNOWN_BIOME_COLOR = new BiomeColor(0, 0,
-			0);
+	private static final BiomeColor UNKNOWN_BIOME_COLOR = new BiomeColor(0, 0, 0);
 
 	private static final int DESELECT_NUMBER = 30;
 	private static final int LIGHTEN_BRIGHTNESS = 40;

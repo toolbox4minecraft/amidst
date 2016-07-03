@@ -11,35 +11,70 @@ import java.util.Objects;
 import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.Log;
+import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 @ThreadSafe
 public class SeedHistoryLogger {
 	public static SeedHistoryLogger from(String filename) {
 		if (filename != null) {
 			Log.i("using seed history file: '" + filename + "'");
-			return new SeedHistoryLogger(new File(filename), true);
+			return new SeedHistoryLogger(new File(filename), true, true);
 		} else {
-			return new SeedHistoryLogger(new File("history.txt"), false);
+			return new SeedHistoryLogger(new File(HISTORY_TXT), false, true);
 		}
 	}
 
+	public static SeedHistoryLogger createDisabled() {
+		return new SeedHistoryLogger(new File(HISTORY_TXT), false, false);
+	}
+
+	private static final String HISTORY_TXT = "history.txt";
+
 	private final File file;
 	private final boolean createIfNecessary;
+	private final boolean isEnabled;
 
-	public SeedHistoryLogger(@NotNull File file, boolean createIfNecessary) {
+	public SeedHistoryLogger(@NotNull File file, boolean createIfNecessary, boolean isEnabled) {
 		Objects.requireNonNull(file);
 		this.file = file;
 		this.createIfNecessary = createIfNecessary;
+		this.isEnabled = isEnabled;
 	}
 
-	public synchronized void log(WorldSeed seed) {
+	public void log(RecognisedVersion recognisedVersion, WorldSeed worldSeed) {
+		if (isEnabled) {
+			doLog(recognisedVersion, worldSeed);
+		}
+	}
+
+	private synchronized void doLog(RecognisedVersion recognisedVersion, WorldSeed worldSeed) {
 		if (createIfNecessary && !file.exists()) {
 			tryCreateFile();
 		}
 		if (file.isFile()) {
-			writeLine(seed);
+			writeLine(createLine(recognisedVersion, worldSeed));
 		} else {
-			Log.w("unable to write seed to seed history log file");
+			Log.i("Not writing to seed history file, because it does not exist: " + file);
+		}
+	}
+
+	private String createLine(RecognisedVersion recognisedVersion, WorldSeed worldSeed) {
+		String recognisedVersionName = recognisedVersion.getName();
+		String timestamp = createTimestamp();
+		String seedString = getSeedString(worldSeed);
+		return recognisedVersionName + ", " + timestamp + ", " + seedString;
+	}
+
+	private String createTimestamp() {
+		return new Timestamp(new Date().getTime()).toString();
+	}
+
+	private String getSeedString(WorldSeed worldSeed) {
+		String text = worldSeed.getText();
+		if (text != null) {
+			return worldSeed.getLong() + ", " + text;
+		} else {
+			return worldSeed.getLong() + "";
 		}
 	}
 
@@ -47,28 +82,17 @@ public class SeedHistoryLogger {
 		try {
 			file.createNewFile();
 		} catch (IOException e) {
-			Log.w("Unable to create history file: " + file);
+			Log.w("Unable to create seed history file: " + file);
 			e.printStackTrace();
 		}
 	}
 
-	private void writeLine(WorldSeed seed) {
-		try (PrintStream stream = new PrintStream(new FileOutputStream(file,
-				true))) {
-			stream.println(createLine(seed));
+	private void writeLine(String line) {
+		try (PrintStream stream = new PrintStream(new FileOutputStream(file, true))) {
+			stream.println(line);
 		} catch (IOException e) {
-			Log.w("Unable to write to history file.");
+			Log.w("Unable to write to seed history file: " + file);
 			e.printStackTrace();
-		}
-	}
-
-	private String createLine(WorldSeed seed) {
-		String text = seed.getText();
-		if (text != null) {
-			return new Timestamp(new Date().getTime()) + " " + seed.getLong()
-					+ " " + text;
-		} else {
-			return new Timestamp(new Date().getTime()) + " " + seed.getLong();
 		}
 	}
 }

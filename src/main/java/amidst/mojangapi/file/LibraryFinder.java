@@ -10,14 +10,14 @@ import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.Log;
 import amidst.mojangapi.file.json.version.LibraryJson;
+import amidst.util.OperatingSystemDetector;
 
 @Immutable
 public enum LibraryFinder {
 	;
 
 	@NotNull
-	public static List<URL> getLibraryUrls(File librariesDirectory,
-			List<LibraryJson> libraries) {
+	public static List<URL> getLibraryUrls(File librariesDirectory, List<LibraryJson> libraries) {
 		List<URL> result = new ArrayList<URL>();
 		for (LibraryJson library : libraries) {
 			File libraryFile = getLibraryFile(librariesDirectory, library);
@@ -26,8 +26,7 @@ public enum LibraryFinder {
 					result.add(libraryFile.toURI().toURL());
 					Log.i("Found library: " + libraryFile);
 				} catch (MalformedURLException e) {
-					Log.w("Unable to convert library file to URL: "
-							+ libraryFile);
+					Log.w("Unable to convert library file to URL: " + libraryFile);
 					e.printStackTrace();
 				}
 			} else {
@@ -37,12 +36,10 @@ public enum LibraryFinder {
 		return result;
 	}
 
-	private static File getLibraryFile(File librariesDirectory,
-			LibraryJson library) {
+	private static File getLibraryFile(File librariesDirectory, LibraryJson library) {
 		try {
 			if (library.isActive(getOs())) {
-				return getLibraryFile(getLibrarySearchPath(librariesDirectory,
-						library.getName()));
+				return getLibraryFile(getLibrarySearchPath(librariesDirectory, library.getName()));
 			} else {
 				return null;
 			}
@@ -52,36 +49,32 @@ public enum LibraryFinder {
 	}
 
 	private static String getOs() {
-		String osName = System.getProperty("os.name").toLowerCase();
-		if (osName.contains("win")) {
+		if (OperatingSystemDetector.isWindows()) {
 			return "windows";
-		} else if (osName.contains("mac")) {
+		} else if (OperatingSystemDetector.isMac()) {
 			return "osx";
 		} else {
 			return "linux";
 		}
 	}
 
-	private static File getLibrarySearchPath(File librariesDirectory,
-			String libraryName) {
+	private static File getLibrarySearchPath(File librariesDirectory, String libraryName) {
 		String result = librariesDirectory.getAbsolutePath() + "/";
 		String[] split = libraryName.split(":");
 		split[0] = split[0].replace('.', '/');
-		for (int i = 0; i < split.length; i++) {
-			result += split[i] + "/";
+		for (String element : split) {
+			result += element + "/";
 		}
 		return new File(result);
 	}
 
 	private static File getLibraryFile(File librarySearchPath) {
 		if (librarySearchPath.exists()) {
-			File result = getFirstFileWithExtension(
-					librarySearchPath.listFiles(), "jar");
+			File result = getFirstFileWithExtension(librarySearchPath.listFiles(), "jar");
 			if (result != null && result.exists()) {
 				return result;
 			} else {
-				Log.w("Attempted to search for file at path: "
-						+ librarySearchPath + " but found nothing. Skipping.");
+				Log.w("Attempted to search for file at path: " + librarySearchPath + " but found nothing. Skipping.");
 				return null;
 			}
 		} else {

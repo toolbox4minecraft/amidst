@@ -23,11 +23,10 @@ public class WidgetManager {
 		for (Widget widget : widgets) {
 			if (widget.isVisible()
 					&& widget.isInBounds(mousePosition)
-					&& widget
-							.onMouseWheelMoved(
-									widget.translateXToWidgetCoordinates(mousePosition),
-									widget.translateYToWidgetCoordinates(mousePosition),
-									notches)) {
+					&& widget.onMouseWheelMoved(
+							widget.translateXToWidgetCoordinates(mousePosition),
+							widget.translateYToWidgetCoordinates(mousePosition),
+							notches)) {
 				return true;
 			}
 		}
@@ -39,10 +38,9 @@ public class WidgetManager {
 		for (Widget widget : widgets) {
 			if (widget.isVisible()
 					&& widget.isInBounds(mousePosition)
-					&& widget
-							.onClick(
-									widget.translateXToWidgetCoordinates(mousePosition),
-									widget.translateYToWidgetCoordinates(mousePosition))) {
+					&& widget.onClick(
+							widget.translateXToWidgetCoordinates(mousePosition),
+							widget.translateYToWidgetCoordinates(mousePosition))) {
 				return true;
 			}
 		}
@@ -54,10 +52,9 @@ public class WidgetManager {
 		for (Widget widget : widgets) {
 			if (widget.isVisible()
 					&& widget.isInBounds(mousePosition)
-					&& widget
-							.onMousePressed(
-									widget.translateXToWidgetCoordinates(mousePosition),
-									widget.translateYToWidgetCoordinates(mousePosition))) {
+					&& widget.onMousePressed(
+							widget.translateXToWidgetCoordinates(mousePosition),
+							widget.translateYToWidgetCoordinates(mousePosition))) {
 				mouseOwner = widget;
 				return true;
 			}

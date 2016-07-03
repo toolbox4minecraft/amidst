@@ -11,8 +11,7 @@ import amidst.mojangapi.file.json.ReleaseType;
 
 @Immutable
 public class VersionListJson {
-	private volatile List<VersionListEntryJson> versions = Collections
-			.emptyList();
+	private volatile List<VersionListEntryJson> versions = Collections.emptyList();
 
 	@GsonConstructor
 	public VersionListJson() {
@@ -22,12 +21,10 @@ public class VersionListJson {
 		return versions;
 	}
 
-	public VersionDirectory tryFindFirstValidVersionDirectory(
-			List<ReleaseType> allowedReleaseTypes, MojangApi mojangApi) {
+	public VersionDirectory tryFindFirstValidVersionDirectory(List<ReleaseType> allowedReleaseTypes, MojangApi mojangApi) {
 		for (VersionListEntryJson version : versions) {
 			if (allowedReleaseTypes.contains(version.getType())) {
-				VersionDirectory versionDirectory = version
-						.createVersionDirectory(mojangApi);
+				VersionDirectory versionDirectory = version.createVersionDirectory(mojangApi);
 				if (versionDirectory.isValid()) {
 					return versionDirectory;
 				}

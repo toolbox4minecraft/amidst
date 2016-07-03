@@ -9,8 +9,8 @@ import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
 import amidst.settings.Setting;
 import amidst.settings.Settings;
-import amidst.settings.biomecolorprofile.BiomeColorProfile;
-import amidst.settings.biomecolorprofile.BiomeColorProfileSelection;
+import amidst.settings.biomeprofile.BiomeProfile;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @ThreadSafe
 public class AmidstSettings {
@@ -41,35 +41,35 @@ public class AmidstSettings {
 	/**
 	 * This is not persisted.
 	 */
-	public final BiomeColorProfileSelection biomeColorProfileSelection;
+	public final BiomeProfileSelection biomeProfileSelection;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public AmidstSettings(Preferences preferences) {
 		// @formatter:off
-		dimension                  = Settings.createDimension(preferences, "dimension",           Dimension.OVERWORLD);
-		showGrid                   = Settings.createBoolean(  preferences, "grid",                false);
-		showSlimeChunks            = Settings.createBoolean(  preferences, "slimeChunks",         false);
-		showSpawn                  = Settings.createBoolean(  preferences, "spawnIcon",           true);
-		showStrongholds            = Settings.createBoolean(  preferences, "strongholdIcons",     true);
-		showPlayers                = Settings.createBoolean(  preferences, "playerIcons",         true);
-		showVillages               = Settings.createBoolean(  preferences, "villageIcons",        true);
-		showTemples                = Settings.createBoolean(  preferences, "templeIcons",         true);
-		showMineshafts             = Settings.createBoolean(  preferences, "mineshaftIcons",      false);
-		showOceanMonuments         = Settings.createBoolean(  preferences, "oceanMonumentIcons",  true);
-		showNetherFortresses       = Settings.createBoolean(  preferences, "netherFortressIcons", false);
-		showEndCities              = Settings.createBoolean(  preferences, "endCityIcons",        false);
-		enableAllLayers            = Settings.createBoolean(  preferences, "enableAllLayers",     false);
+		dimension                  = Settings.createDimension(preferences, "dimension",            Dimension.OVERWORLD);
+		showGrid                   = Settings.createBoolean(  preferences, "grid",                 false);
+		showSlimeChunks            = Settings.createBoolean(  preferences, "slimeChunks",          false);
+		showSpawn                  = Settings.createBoolean(  preferences, "spawnIcon",            true);
+		showStrongholds            = Settings.createBoolean(  preferences, "strongholdIcons",      true);
+		showPlayers                = Settings.createBoolean(  preferences, "playerIcons",          true);
+		showVillages               = Settings.createBoolean(  preferences, "villageIcons",         true);
+		showTemples                = Settings.createBoolean(  preferences, "templeIcons",          true);
+		showMineshafts             = Settings.createBoolean(  preferences, "mineshaftIcons",       false);
+		showOceanMonuments         = Settings.createBoolean(  preferences, "oceanMonumentIcons",   true);
+		showNetherFortresses       = Settings.createBoolean(  preferences, "netherFortressIcons",  false);
+		showEndCities              = Settings.createBoolean(  preferences, "endCityIcons",         false);
+		enableAllLayers            = Settings.createBoolean(  preferences, "enableAllLayers",      false);
 		
-		smoothScrolling            = Settings.createBoolean(  preferences, "mapFlicking",         true);
-		fragmentFading             = Settings.createBoolean(  preferences, "mapFading",           true);
-		maxZoom                    = Settings.createBoolean(  preferences, "maxZoom",             true);
-		showFPS                    = Settings.createBoolean(  preferences, "showFPS",             true);
-		showScale                  = Settings.createBoolean(  preferences, "showScale",           true);
-		showDebug                  = Settings.createBoolean(  preferences, "showDebug",           false);
+		smoothScrolling            = Settings.createBoolean(  preferences, "mapFlicking",          true);
+		fragmentFading             = Settings.createBoolean(  preferences, "mapFading",            true);
+		maxZoom                    = Settings.createBoolean(  preferences, "maxZoom",              true);
+		showFPS                    = Settings.createBoolean(  preferences, "showFPS",              true);
+		showScale                  = Settings.createBoolean(  preferences, "showScale",            true);
+		showDebug                  = Settings.createBoolean(  preferences, "showDebug",            false);
 	
-		lastProfile                = Settings.createString(   preferences, "profile",             "");
-		worldType                  = Settings.createString(   preferences, "worldType",           WorldType.PROMPT_EACH_TIME);
-		biomeColorProfileSelection = new BiomeColorProfileSelection(BiomeColorProfile.getDefaultProfile());
+		lastProfile                = Settings.createString(   preferences, "profile",              "");
+		worldType                  = Settings.createString(   preferences, "worldType",            WorldType.PROMPT_EACH_TIME);
+		biomeProfileSelection = new BiomeProfileSelection(BiomeProfile.getDefaultProfile());
 		// @formatter:on
 	}
 }

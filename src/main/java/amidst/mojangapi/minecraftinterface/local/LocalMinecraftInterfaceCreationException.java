@@ -5,8 +5,7 @@ import amidst.documentation.Immutable;
 @SuppressWarnings("serial")
 @Immutable
 public class LocalMinecraftInterfaceCreationException extends Exception {
-	public LocalMinecraftInterfaceCreationException(String message,
-			Throwable cause) {
+	public LocalMinecraftInterfaceCreationException(String message, Throwable cause) {
 		super(message, cause);
 	}
 

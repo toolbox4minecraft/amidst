@@ -8,10 +8,10 @@ import amidst.documentation.Immutable;
 public class WorldSeed {
 	public static enum WorldSeedType {
 		// @formatter:off
-		TEXT      ("Text Seed"),
-		NUMERIC("Numeric Seed"),
-		FILE      ("File Seed"),
-		RANDOM  ("Random Seed");
+		TEXT           ("Text Seed"),
+		NUMERIC     ("Numeric Seed"),
+		SAVE_GAME ("Save Game Seed"),
+		RANDOM       ("Random Seed");
 		// @formatter:on
 
 		private final String labelPrefix;
@@ -24,14 +24,13 @@ public class WorldSeed {
 			if (this == TEXT) {
 				return labelPrefix + ": '" + text + "' (" + seed + ")";
 			} else {
-				return labelPrefix + " (" + seed + ")";
+				return labelPrefix + ": " + seed;
 			}
 		}
 	}
 
 	public static WorldSeed random() {
-		return new WorldSeed(new Random().nextLong(), null,
-				WorldSeedType.RANDOM);
+		return new WorldSeed(new Random().nextLong(), null, WorldSeedType.RANDOM);
 	}
 
 	public static WorldSeed fromUserInput(String input) {
@@ -47,8 +46,8 @@ public class WorldSeed {
 		}
 	}
 
-	public static WorldSeed fromFile(long seed) {
-		return new WorldSeed(seed, null, WorldSeedType.FILE);
+	public static WorldSeed fromSaveGame(long seed) {
+		return new WorldSeed(seed, null, WorldSeedType.SAVE_GAME);
 	}
 
 	private final long seed;

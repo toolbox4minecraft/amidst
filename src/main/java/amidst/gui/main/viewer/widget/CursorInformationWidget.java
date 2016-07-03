@@ -1,6 +1,8 @@
 package amidst.gui.main.viewer.widget;
 
 import java.awt.Point;
+import java.util.Arrays;
+import java.util.List;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -25,8 +27,10 @@ public class CursorInformationWidget extends TextWidget {
 	private final Setting<Dimension> dimensionSetting;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public CursorInformationWidget(CornerAnchorPoint anchor,
-			FragmentGraph graph, FragmentGraphToScreenTranslator translator,
+	public CursorInformationWidget(
+			CornerAnchorPoint anchor,
+			FragmentGraph graph,
+			FragmentGraphToScreenTranslator translator,
 			Setting<Dimension> dimensionSetting) {
 		super(anchor);
 		this.graph = graph;
@@ -36,13 +40,12 @@ public class CursorInformationWidget extends TextWidget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected String updateText() {
+	protected List<String> updateTextLines() {
 		Point mousePosition = getMousePosition();
 		if (mousePosition != null) {
-			CoordinatesInWorld coordinates = translator
-					.screenToWorld(mousePosition);
+			CoordinatesInWorld coordinates = translator.screenToWorld(mousePosition);
 			String biomeName = getBiomeNameAt(coordinates);
-			return biomeName + " " + coordinates.toString();
+			return Arrays.asList(biomeName + " " + coordinates.toString());
 		} else {
 			return null;
 		}

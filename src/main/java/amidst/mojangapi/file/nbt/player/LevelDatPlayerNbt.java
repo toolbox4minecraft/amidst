@@ -24,17 +24,13 @@ public class LevelDatPlayerNbt extends PlayerNbt {
 	}
 
 	@Override
-	protected void doWriteCoordinates(PlayerCoordinates coordinates)
-			throws MojangApiParsingException {
-		PlayerLocationSaver.writeToLevelDat(coordinates,
-				saveDirectory.getLevelDat());
+	protected void doWriteCoordinates(PlayerCoordinates coordinates) throws MojangApiParsingException {
+		PlayerLocationSaver.writeToLevelDat(coordinates, saveDirectory.getLevelDat());
 	}
 
 	@Override
-	public PlayerCoordinates readCoordinates() throws IOException,
-			MojangApiParsingException {
-		return PlayerLocationLoader.readFromLevelDat(saveDirectory
-				.readLevelDat());
+	public PlayerCoordinates readCoordinates() throws IOException, MojangApiParsingException {
+		return PlayerLocationLoader.readFromLevelDat(saveDirectory.readLevelDat());
 	}
 
 	@Override

@@ -3,22 +3,88 @@ Amidst
 
 [![Build Status](https://travis-ci.org/toolbox4minecraft/amidst.svg?branch=master)](https://travis-ci.org/toolbox4minecraft/amidst)
 
-This repository is [not yet in a stable state](https://github.com/toolbox4minecraft/amidst/wiki).
+## What is Amidst?
 
-* [What is Amidst?                 ](https://github.com/toolbox4minecraft/amidst/wiki/FAQ#what-is-amidst)
-* [FAQ                             ](https://github.com/toolbox4minecraft/amidst/wiki/FAQ)
-* [Wiki                            ](https://github.com/toolbox4minecraft/amidst/wiki)
-* [Download Current Version        ](https://github.com/toolbox4minecraft/amidst/releases)
-* [Download Old Version            ](https://github.com/skiphs/amidst/releases)
-* [Report a Bug                    ](https://github.com/toolbox4minecraft/amidst/issues/new) (please report bugs, so we can fix them)
-* [Request a New Feature           ](https://github.com/toolbox4minecraft/amidst/issues/new)
-* [Getting Involved                ](https://github.com/toolbox4minecraft/amidst/wiki/Getting-Involved)
-* [Minecraft Forum Thread          ](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-tools/1262200-v3-7-amidst-strongholds-village-biome-etc-finder)
+Amidst is a tool to display an overview of a Minecraft world, without actually creating it.
 
-Legal Information
------------------
+Amidst **can**:
 
-Amidst is not owned by or related to Mojang in any way.
+* render an overview of a world from a given seed and Minecraft version
+* save an image of the map
+* use a save game
+* display biome information
+* display slime chunks
+* display end islands
+* display the following structures
+  * world spawn
+  * strongholds
+  * villages
+  * witch huts
+  * jungle temples
+  * desert temples
+  * igloos
+  * abandoned mine shafts
+  * ocean monuments
+  * nether fortresses
+  * end cities
 
-Amidst comes with ABSOLUTELY NO WARRANTY. It is free and open source software, license under the GPLv3, 
-[see the license text](https://github.com/toolbox4minecraft/amidst/blob/master/LICENSE.txt).
+Amidst **cannot**:
+
+* display changes that were applied to a save game like
+  * changes made by world editors like MCEdit
+  * changes made while loading the world in Minecraft
+* find individual blocks or mobs like
+  * diamond ore
+  * cows
+
+## Amidst has found a new home
+
+Amidst was moved to a new location, since Skidoodle aka skiphs is to busy to maintain it. It has also found some new developers. One of them is DrFrankenstone aka Treer who is the developer of AmidstExporter. Skidoodle is still an owner of Amidst and agreed to move the project.
+
+### Links
+
+* [Download](https://github.com/toolbox4minecraft/amidst/releases)
+* [FAQ](https://github.com/toolbox4minecraft/amidst/wiki/FAQ)
+* [Wiki](https://github.com/toolbox4minecraft/amidst/wiki)
+* [Reporting a Bug](https://github.com/toolbox4minecraft/amidst/wiki/Supporting-the-Development#reporting-a-bug) - please report bugs, so we can fix them
+* [Requesting a Feature](https://github.com/toolbox4minecraft/amidst/wiki/Supporting-the-Development#requesting-a-feature)
+* [Thread in the minecraftforum](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-tools/2626547-amidst-has-found-a-new-home)
+* [Project Page](https://github.com/toolbox4minecraft/amidst)
+* [Supporting the Development](https://github.com/toolbox4minecraft/amidst/wiki/Supporting-the-Development)
+* [License Text](https://github.com/toolbox4minecraft/amidst/blob/master/LICENSE.txt)
+
+## What is my internet connection used for?
+
+* Amidst **will** use web services provided by Mojang, e.g. to
+  * display information about Minecraft versions.
+  * display information about players like the name or the skin.
+* Amidst **will** check for updates on every start.
+* Amidst **will not** track you with Google Analytics, which was the case in older versions.
+
+## Legal Information
+
+* Amidst is **not** owned by or related to Mojang in any way.
+* Amidst comes with **absolutely no warranty**.
+* Amidst is free and open source software, licensed under the GPLv3.
+
+## Screenshots
+
+These screenshots are created from the seed 24922 using Amidst v4.0 and Minecraft 1.9.
+
+![default](https://raw.githubusercontent.com/wiki/toolbox4minecraft/amidst/screenshots/screenshot_default_24922_default.png)
+
+### The End Dimension
+
+![The End Dimension](https://raw.githubusercontent.com/wiki/toolbox4minecraft/amidst/screenshots/screenshot_default_24922_end.png)
+
+### Biome Highlighter
+
+![Biome Highlighter](https://raw.githubusercontent.com/wiki/toolbox4minecraft/amidst/screenshots/screenshot_default_24922_biome-highlighter.png)
+
+### Grid
+
+![Grid](https://raw.githubusercontent.com/wiki/toolbox4minecraft/amidst/screenshots/screenshot_default_24922_grid.png)
+
+### Slime Chunks
+
+![Slime Chunks](https://raw.githubusercontent.com/wiki/toolbox4minecraft/amidst/screenshots/screenshot_default_24922_slime.png)

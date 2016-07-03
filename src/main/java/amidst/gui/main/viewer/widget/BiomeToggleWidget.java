@@ -13,10 +13,8 @@ public class BiomeToggleWidget extends ImmutableIconWidget {
 	private final LayerReloader layerReloader;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public BiomeToggleWidget(CornerAnchorPoint anchor,
-			BiomeSelection biomeSelection, LayerReloader layerReloader) {
-		super(anchor, ResourceLoader
-				.getImage("/amidst/gui/main/highlighter.png"));
+	public BiomeToggleWidget(CornerAnchorPoint anchor, BiomeSelection biomeSelection, LayerReloader layerReloader) {
+		super(anchor, ResourceLoader.getImage("/amidst/gui/main/highlighter.png"));
 		this.biomeSelection = biomeSelection;
 		this.layerReloader = layerReloader;
 	}

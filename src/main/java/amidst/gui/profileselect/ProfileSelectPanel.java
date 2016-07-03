@@ -67,8 +67,7 @@ public class ProfileSelectPanel {
 
 		@CalledOnlyBy(AmidstThread.EDT)
 		private void drawBackground(Graphics2D g2d) {
-			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			g2d.setColor(Color.white);
 			g2d.fillRect(0, 0, getWidth(), getHeight());
 		}
@@ -84,16 +83,13 @@ public class ProfileSelectPanel {
 
 		@CalledOnlyBy(AmidstThread.EDT)
 		private void updateEmptyMessageWidth(Graphics2D g2d) {
-			if (!oldEmptyMessage.equals(emptyMessage)
-					|| emptyMessageWidth == INVALID_EMPTY_MESSAGE_WIDTH) {
-				emptyMessageWidth = g2d.getFontMetrics().stringWidth(
-						emptyMessage);
+			if (!oldEmptyMessage.equals(emptyMessage) || emptyMessageWidth == INVALID_EMPTY_MESSAGE_WIDTH) {
+				emptyMessageWidth = g2d.getFontMetrics().stringWidth(emptyMessage);
 			}
 		}
 	}
 
-	private static final Font EMPTY_MESSAGE_FONT = new Font("arial", Font.BOLD,
-			30);
+	private static final Font EMPTY_MESSAGE_FONT = new Font("arial", Font.BOLD, 30);
 	private static final int INVALID_INDEX = -1;
 
 	private final Setting<String> lastProfileSetting;
@@ -105,8 +101,7 @@ public class ProfileSelectPanel {
 	private String emptyMessage;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ProfileSelectPanel(Setting<String> lastProfileSetting,
-			String emptyMessage) {
+	public ProfileSelectPanel(Setting<String> lastProfileSetting, String emptyMessage) {
 		this.lastProfileSetting = lastProfileSetting;
 		this.emptyMessage = emptyMessage;
 		this.component = createComponent();

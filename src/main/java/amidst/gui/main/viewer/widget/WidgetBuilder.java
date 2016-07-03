@@ -34,10 +34,14 @@ public class WidgetBuilder {
 	private final Supplier<String> progressText;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public WidgetBuilder(World world, FragmentGraph graph,
-			FragmentGraphToScreenTranslator translator, Zoom zoom,
+	public WidgetBuilder(
+			World world,
+			FragmentGraph graph,
+			FragmentGraphToScreenTranslator translator,
+			Zoom zoom,
 			BiomeSelection biomeSelection,
-			WorldIconSelection worldIconSelection, LayerReloader layerReloader,
+			WorldIconSelection worldIconSelection,
+			LayerReloader layerReloader,
 			FragmentManager fragmentManager,
 			Graphics2DAccelerationCounter accelerationCounter,
 			AmidstSettings settings,
@@ -62,13 +66,12 @@ public class WidgetBuilder {
 				new ChangeableTextWidget(   CornerAnchorPoint.CENTER,        progressText),
 				new FpsWidget(              CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              settings.showFPS),
 				new ScaleWidget(            CornerAnchorPoint.BOTTOM_CENTER, zoom,                               settings.showScale),
-				new SeedWidget(             CornerAnchorPoint.TOP_LEFT,      world.getWorldSeed()),
-				new WorldTypeWidget(        CornerAnchorPoint.TOP_LEFT,      world.getWorldType()),
+				new SeedAndWorldTypeWidget( CornerAnchorPoint.TOP_LEFT,      world.getWorldSeed(), world.getWorldType()),
 				new SelectedIconWidget(     CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
 				new DebugWidget(            CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, settings.showDebug, accelerationCounter),
 				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension),
 				new BiomeToggleWidget(      CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection,    layerReloader),
-				new BiomeWidget(            CornerAnchorPoint.NONE,          biomeSelection,    layerReloader,   settings.biomeColorProfileSelection)
+				new BiomeWidget(            CornerAnchorPoint.NONE,          biomeSelection,    layerReloader,   settings.biomeProfileSelection)
 		);
 		// @formatter:on
 	}

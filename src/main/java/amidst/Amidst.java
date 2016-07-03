@@ -1,11 +1,12 @@
 package amidst;
 
 import java.io.File;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.prefs.Preferences;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -19,6 +20,7 @@ import amidst.gui.crash.CrashWindow;
 import amidst.logging.FileLogger;
 import amidst.logging.Log;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
+import amidst.util.OperatingSystemDetector;
 
 @NotThreadSafe
 public class Amidst {
@@ -38,14 +40,16 @@ public class Amidst {
 	}
 
 	private static void parseCommandLineArgumentsAndRun(String[] args) {
-		AmidstMetaData metadata = createMetadata();
 		CommandLineParameters parameters = new CommandLineParameters();
+		AmidstMetaData metadata = createMetadata();
 		CmdLineParser parser = new CmdLineParser(parameters, ParserProperties
-				.defaults().withShowDefaults(false).withUsageWidth(120)
+				.defaults()
+				.withShowDefaults(false)
+				.withUsageWidth(120)
 				.withOptionSorter(null));
 		try {
 			parser.parseArgument(args);
-			run(metadata, parameters, parser);
+			run(parameters, metadata, parser);
 		} catch (CmdLineException e) {
 			System.out.println(metadata.getVersion().createLongVersionString());
 			System.err.println(e.getMessage());
@@ -65,8 +69,7 @@ public class Amidst {
 				ResourceLoader.getImage("/amidst/icon/amidst-256x256.png"));
 	}
 
-	private static void run(AmidstMetaData metadata,
-			CommandLineParameters parameters, CmdLineParser parser) {
+	private static void run(CommandLineParameters parameters, AmidstMetaData metadata, CmdLineParser parser) {
 		initFileLogger(parameters.logFile);
 		String versionString = metadata.getVersion().createLongVersionString();
 		if (parameters.printHelp) {
@@ -76,7 +79,9 @@ public class Amidst {
 			System.out.println(versionString);
 		} else {
 			Log.i(versionString);
-			startApplication(parameters, metadata);
+			logTimeAndProperties();
+			enableGraphicsAcceleration();
+			startApplication(parameters, metadata, createSettings());
 		}
 	}
 
@@ -87,48 +92,85 @@ public class Amidst {
 		}
 	}
 
-	private static void startApplication(CommandLineParameters parameters,
-			AmidstMetaData metadata) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				initGui();
-				doStartApplication(parameters, metadata);
-			}
-		});
+	private static void logTimeAndProperties() {
+		Log.i("Current system time: " + getCurrentTimeStamp());
+		Log.i(createPropertyString("os.name"));
+		Log.i(createPropertyString("os.version"));
+		Log.i(createPropertyString("os.arch"));
+		Log.i(createPropertyString("java.version"));
+		Log.i(createPropertyString("java.vendor"));
+		Log.i(createPropertyString("sun.arch.data.model"));
 	}
 
-	private static void initGui() {
-		initLookAndFeel();
-		setJava2DEnvironmentVariables();
+	private static String getCurrentTimeStamp() {
+		return new Timestamp(new Date().getTime()).toString();
 	}
 
-	private static void initLookAndFeel() {
-		if (isWindows()) {
-			try {
-				UIManager.setLookAndFeel(UIManager
-						.getSystemLookAndFeelClassName());
-			} catch (ClassNotFoundException | InstantiationException
-					| IllegalAccessException | UnsupportedLookAndFeelException e) {
-				Log.printTraceStack(e);
-			}
+	private static String createPropertyString(String key) {
+		StringBuilder b = new StringBuilder();
+		b.append("System.getProperty(\"");
+		b.append(key);
+		b.append("\") == '");
+		b.append(System.getProperty(key));
+		b.append("'");
+		return b.toString();
+	}
+
+	private static AmidstSettings createSettings() {
+		return new AmidstSettings(Preferences.userNodeForPackage(Amidst.class));
+	}
+
+	/**
+	 * WARNING: This method MUST be invoked before setLookAndFeel(). The
+	 * sun.java2d.* properties have no effect after setLookAndFeel() has been
+	 * called.
+	 * 
+	 * Please do not remove this comment in case we decide to use another look
+	 * and feel in the future.
+	 */
+	private static void enableGraphicsAcceleration() {
+		enableOpenGLIfNecessary();
+		forceGraphicsToVRAM();
+	}
+
+	/**
+	 * We only use OpenGL on OS X, because it caused lots of bugs on Windows and
+	 * performance issues on Linux. Also, this is the behavior of Amidst v3.7.
+	 * 
+	 * On Windows Direct3D is better supported and the default.
+	 * 
+	 * Linux has accelerated images without activating OpenGL. The reason for
+	 * this is still unknown to the developers of Amidst.
+	 * 
+	 * https://github.com/toolbox4minecraft/amidst/pull/94
+	 */
+	private static void enableOpenGLIfNecessary() {
+		if (OperatingSystemDetector.isMac()) {
+			Log.i("Enabling OpenGL.");
+			System.setProperty("sun.java2d.opengl", "True");
+		} else {
+			Log.i("Not using OpenGL.");
 		}
 	}
 
-	private static boolean isWindows() {
-		return System.getProperty("os.name").contains("win");
-	}
-
-	private static void setJava2DEnvironmentVariables() {
-		System.setProperty("sun.java2d.opengl", "True");
+	private static void forceGraphicsToVRAM() {
 		System.setProperty("sun.java2d.accthreshold", "0");
 	}
 
+	private static void startApplication(
+			CommandLineParameters parameters,
+			AmidstMetaData metadata,
+			AmidstSettings settings) {
+		SwingUtilities.invokeLater(() -> doStartApplication(parameters, metadata, settings));
+	}
+
 	@CalledOnlyBy(AmidstThread.EDT)
-	private static void doStartApplication(CommandLineParameters parameters,
-			AmidstMetaData metadata) {
+	private static void doStartApplication(
+			CommandLineParameters parameters,
+			AmidstMetaData metadata,
+			AmidstSettings settings) {
 		try {
-			new Application(parameters, metadata).run();
+			new Application(parameters, metadata, settings).run();
 		} catch (DotMinecraftDirectoryNotFoundException e) {
 			Log.w(e.getMessage());
 			e.printStackTrace();
@@ -145,8 +187,7 @@ public class Amidst {
 
 	@CalledByAny
 	private static void handleCrash(Throwable e, Thread thread) {
-		String message = "Amidst has encounted an uncaught exception on the thread "
-				+ thread;
+		String message = "Amidst has encounted an uncaught exception on the thread " + thread;
 		try {
 			Log.crash(e, message);
 			displayCrashWindow(message, Log.getAllMessages());
@@ -157,8 +198,7 @@ public class Amidst {
 		}
 	}
 
-	private static void displayCrashWindow(final String message,
-			final String allMessages) {
+	private static void displayCrashWindow(final String message, final String allMessages) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {

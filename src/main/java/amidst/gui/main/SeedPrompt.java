@@ -112,11 +112,9 @@ public class SeedPrompt {
 
 	private void update() {
 		seed = WorldSeed.fromUserInput(textField.getText());
-		if (WorldSeedType.TEXT == seed.getType()
-				&& seed.getText().startsWith(" ")) {
+		if (WorldSeedType.TEXT == seed.getType() && seed.getText().startsWith(" ")) {
 			warningLabel.setText(STARTS_WITH_SPACE_TEXT);
-		} else if (WorldSeedType.TEXT == seed.getType()
-				&& seed.getText().endsWith(" ")) {
+		} else if (WorldSeedType.TEXT == seed.getType() && seed.getText().endsWith(" ")) {
 			warningLabel.setText(ENDS_WITH_SPACE_TEXT);
 		} else {
 			warningLabel.setText("");
@@ -128,8 +126,7 @@ public class SeedPrompt {
 	public WorldSeed askForSeed() {
 		update();
 		grabFocus();
-		if (JOptionPane.showConfirmDialog(frame, panel, TITLE,
-				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+		if (JOptionPane.showConfirmDialog(frame, panel, TITLE, JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 			return seed;
 		} else {
 			return null;

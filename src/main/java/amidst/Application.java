@@ -1,10 +1,9 @@
 package amidst;
 
-import java.util.prefs.Preferences;
-
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.license.LicenseWindow;
 import amidst.gui.main.MainWindow;
 import amidst.gui.main.UpdatePrompt;
@@ -17,7 +16,7 @@ import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreation
 import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.player.PlayerInformationCacheImpl;
-import amidst.settings.biomecolorprofile.BiomeColorProfileDirectory;
+import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
@@ -26,56 +25,46 @@ public class Application {
 	private final AmidstMetaData metadata;
 	private final AmidstSettings settings;
 	private final MojangApi mojangApi;
-	private final BiomeColorProfileDirectory biomeColorProfileDirectory;
-	private final ThreadMaster threadMaster;
+	private final BiomeProfileDirectory biomeProfileDirectory;
 	private final ViewerFacadeBuilder viewerFacadeBuilder;
+	private final ThreadMaster threadMaster;
 
 	private volatile ProfileSelectWindow profileSelectWindow;
 	private volatile MainWindow mainWindow;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Application(CommandLineParameters parameters, AmidstMetaData metadata)
-			throws DotMinecraftDirectoryNotFoundException,
-			LocalMinecraftInterfaceCreationException {
+	public Application(CommandLineParameters parameters, AmidstMetaData metadata, AmidstSettings settings)
+			throws DotMinecraftDirectoryNotFoundException, LocalMinecraftInterfaceCreationException {
 		this.parameters = parameters;
 		this.metadata = metadata;
-		this.settings = createSettings();
+		this.settings = settings;
 		this.mojangApi = createMojangApi();
-		this.biomeColorProfileDirectory = createBiomeColorProfileDirectory();
-		this.threadMaster = createThreadMaster();
+		this.biomeProfileDirectory = createBiomeProfileDirectory();
 		this.viewerFacadeBuilder = createViewerFacadeBuilder();
+		this.threadMaster = createThreadMaster();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private AmidstSettings createSettings() {
-		return new AmidstSettings(Preferences.userNodeForPackage(Amidst.class));
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private MojangApi createMojangApi()
-			throws DotMinecraftDirectoryNotFoundException,
+	private MojangApi createMojangApi() throws DotMinecraftDirectoryNotFoundException,
 			LocalMinecraftInterfaceCreationException {
 		return new MojangApiBuilder(new WorldBuilder(
 				new PlayerInformationCacheImpl(),
-				SeedHistoryLogger.from(parameters.historyFile)), parameters)
-				.construct();
+				SeedHistoryLogger.from(parameters.seedHistoryFile)), parameters).construct();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private BiomeColorProfileDirectory createBiomeColorProfileDirectory() {
-		return BiomeColorProfileDirectory
-				.create(parameters.biomeColorProfilesDirectory);
+	private BiomeProfileDirectory createBiomeProfileDirectory() {
+		return BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private ViewerFacadeBuilder createViewerFacadeBuilder() {
+		return new ViewerFacadeBuilder(settings, threadMaster.getWorkerExecutor(), new LayerBuilder());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private ThreadMaster createThreadMaster() {
 		return new ThreadMaster();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private ViewerFacadeBuilder createViewerFacadeBuilder() {
-		return new ViewerFacadeBuilder(settings,
-				threadMaster.getWorkerExecutor());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -90,27 +79,35 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void checkForUpdates(MainWindow mainWindow) {
-		UpdatePrompt.from(metadata.getVersion(),
-				threadMaster.getWorkerExecutor(), mainWindow, false).check();
+		UpdatePrompt.from(metadata.getVersion(), threadMaster.getWorkerExecutor(), mainWindow, false).check();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void checkForUpdatesSilently() {
-		UpdatePrompt.from(metadata.getVersion(),
-				threadMaster.getWorkerExecutor(), null, true).check();
+		UpdatePrompt.from(metadata.getVersion(), threadMaster.getWorkerExecutor(), null, true).check();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayMainWindow() {
-		setMainWindow(new MainWindow(this, metadata, settings, mojangApi,
-				biomeColorProfileDirectory, viewerFacadeBuilder, threadMaster));
+		setMainWindow(new MainWindow(
+				this,
+				metadata,
+				settings,
+				mojangApi,
+				biomeProfileDirectory,
+				viewerFacadeBuilder,
+				threadMaster));
 		setProfileSelectWindow(null);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayProfileSelectWindow() {
-		setProfileSelectWindow(new ProfileSelectWindow(this, metadata,
-				threadMaster.getWorkerExecutor(), mojangApi, settings));
+		setProfileSelectWindow(new ProfileSelectWindow(
+				this,
+				metadata,
+				threadMaster.getWorkerExecutor(),
+				mojangApi,
+				settings));
 		setMainWindow(null);
 	}
 

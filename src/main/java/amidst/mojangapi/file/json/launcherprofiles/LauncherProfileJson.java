@@ -30,8 +30,7 @@ public class LauncherProfileJson {
 	private volatile String name = "";
 	private volatile String lastVersionId;
 	private volatile String gameDir;
-	private volatile List<ReleaseType> allowedReleaseTypes = Arrays
-			.asList(ReleaseType.RELEASE);
+	private volatile List<ReleaseType> allowedReleaseTypes = Arrays.asList(ReleaseType.RELEASE);
 
 	@GsonConstructor
 	public LauncherProfileJson() {
@@ -50,43 +49,34 @@ public class LauncherProfileJson {
 	}
 
 	@NotNull
-	public ProfileDirectory createValidProfileDirectory(MojangApi mojangApi)
-			throws FileNotFoundException {
+	public ProfileDirectory createValidProfileDirectory(MojangApi mojangApi) throws FileNotFoundException {
 		if (gameDir != null) {
 			ProfileDirectory result = new ProfileDirectory(new File(gameDir));
 			if (result.isValid()) {
 				return result;
 			} else {
-				throw new FileNotFoundException(
-						"cannot find valid profile directory for launcher profile '"
-								+ name + "': " + gameDir);
+				throw new FileNotFoundException("cannot find valid profile directory for launcher profile '" + name
+						+ "': " + gameDir);
 			}
 		} else {
-			return new ProfileDirectory(mojangApi.getDotMinecraftDirectory()
-					.getRoot());
+			return new ProfileDirectory(mojangApi.getDotMinecraftDirectory().getRoot());
 		}
 	}
 
 	@NotNull
-	public VersionDirectory createValidVersionDirectory(MojangApi mojangApi)
-			throws FileNotFoundException {
+	public VersionDirectory createValidVersionDirectory(MojangApi mojangApi) throws FileNotFoundException {
 		VersionListJson versionList = mojangApi.getVersionList();
 		if (lastVersionId != null) {
-			VersionDirectory result = mojangApi
-					.createVersionDirectory(lastVersionId);
+			VersionDirectory result = mojangApi.createVersionDirectory(lastVersionId);
 			if (result.isValid()) {
 				return result;
 			}
 		} else {
-			VersionDirectory result = versionList
-					.tryFindFirstValidVersionDirectory(allowedReleaseTypes,
-							mojangApi);
+			VersionDirectory result = versionList.tryFindFirstValidVersionDirectory(allowedReleaseTypes, mojangApi);
 			if (result != null) {
 				return result;
 			}
 		}
-		throw new FileNotFoundException(
-				"cannot find valid version directory for launcher profile '"
-						+ name + "'");
+		throw new FileNotFoundException("cannot find valid version directory for launcher profile '" + name + "'");
 	}
 }

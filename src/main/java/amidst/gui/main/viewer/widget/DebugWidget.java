@@ -12,15 +12,18 @@ import amidst.gui.main.viewer.Graphics2DAccelerationCounter;
 import amidst.settings.Setting;
 
 @NotThreadSafe
-public class DebugWidget extends MultilineTextWidget {
+public class DebugWidget extends TextWidget {
 	private final FragmentGraph graph;
 	private final FragmentManager fragmentManager;
 	private final Setting<Boolean> isVisibleSetting;
 	private final Graphics2DAccelerationCounter accelerationCounter;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public DebugWidget(CornerAnchorPoint anchor, FragmentGraph graph,
-			FragmentManager fragmentManager, Setting<Boolean> isVisibleSetting,
+	public DebugWidget(
+			CornerAnchorPoint anchor,
+			FragmentGraph graph,
+			FragmentManager fragmentManager,
+			Setting<Boolean> isVisibleSetting,
 			Graphics2DAccelerationCounter accelerationCounter) {
 		super(anchor);
 		this.graph = graph;
@@ -31,7 +34,7 @@ public class DebugWidget extends MultilineTextWidget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected List<String> getTextLines() {
+	protected List<String> updateTextLines() {
 		if (isVisibleSetting.get()) {
 			int columns = graph.getFragmentsPerRow();
 			int rows = graph.getFragmentsPerColumn();
@@ -45,7 +48,7 @@ public class DebugWidget extends MultilineTextWidget {
 					"",
 					"Viewer:",
 					"Size: " + columns + "x" + rows + " [" + (columns * rows) + "]",
-					String.format("2D Accelerated: %1$.1f%%", accelerationCounter.getAcceleratedPercentage())
+					String.format("Acceleration: %1$.1f%%", accelerationCounter.getAcceleratedPercentage())
 			);
 			// @formatter:on
 		} else {

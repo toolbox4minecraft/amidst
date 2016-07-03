@@ -19,9 +19,13 @@ public class AmidstMenu {
 	private final LayersMenu layersMenu;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public AmidstMenu(JMenuBar menuBar, JMenuItem exportMenu, JMenu worldMenu,
+	public AmidstMenu(
+			JMenuBar menuBar,
+			JMenuItem exportMenu,
+			JMenu worldMenu,
 			JMenuItem savePlayerLocationsMenu,
-			JMenuItem reloadPlayerLocationsMenu, LayersMenu layersMenu) {
+			JMenuItem reloadPlayerLocationsMenu,
+			LayersMenu layersMenu) {
 		this.menuBar = menuBar;
 		this.exportMenu = exportMenu;
 		this.worldMenu = worldMenu;
@@ -39,10 +43,8 @@ public class AmidstMenu {
 	public void set(ViewerFacade viewerFacade) {
 		exportMenu.setEnabled(true);
 		worldMenu.setEnabled(true);
-		savePlayerLocationsMenu.setEnabled(viewerFacade
-				.canSavePlayerLocations());
-		reloadPlayerLocationsMenu.setEnabled(viewerFacade
-				.canLoadPlayerLocations());
+		savePlayerLocationsMenu.setEnabled(viewerFacade.canSavePlayerLocations());
+		reloadPlayerLocationsMenu.setEnabled(viewerFacade.canLoadPlayerLocations());
 		layersMenu.init(viewerFacade);
 	}
 

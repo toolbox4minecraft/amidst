@@ -11,8 +11,7 @@ public class VillageAlgorithm implements LocationChecker {
 	private final BiomeDataOracle biomeDataOracle;
 	private final List<Biome> validBiomes;
 
-	public VillageAlgorithm(BiomeDataOracle biomeDataOracle,
-			List<Biome> validBiomes) {
+	public VillageAlgorithm(BiomeDataOracle biomeDataOracle, List<Biome> validBiomes) {
 		this.biomeDataOracle = biomeDataOracle;
 		this.validBiomes = validBiomes;
 	}
@@ -93,7 +92,6 @@ public class VillageAlgorithm implements LocationChecker {
 		 */
 		// @formatter:on
 
-		return biomeDataOracle.isValidBiomeForStructure(wellX, wellY,
-				wellStructureSize, validBiomes);
+		return biomeDataOracle.isValidBiomeForStructure(wellX, wellY, wellStructureSize, validBiomes);
 	}
 }
