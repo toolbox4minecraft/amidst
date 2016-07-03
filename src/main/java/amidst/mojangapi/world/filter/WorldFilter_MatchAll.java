@@ -2,8 +2,10 @@ package amidst.mojangapi.world.filter;
 
 import java.util.List;
 
+import amidst.documentation.Immutable;
 import amidst.mojangapi.world.World;
 
+@Immutable
 public class WorldFilter_MatchAll extends WorldFilter {
 	private final List<WorldFilter> filters;
 
@@ -13,7 +15,7 @@ public class WorldFilter_MatchAll extends WorldFilter {
 	}
 
 	@Override
-	protected boolean isValid(World world, short[][] region) {
+	public boolean isValid(World world) {
 		for (WorldFilter filter : filters) {
 			if (!filter.isValid(world)) {
 				return false;

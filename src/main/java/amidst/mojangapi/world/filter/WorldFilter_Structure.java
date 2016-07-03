@@ -1,5 +1,6 @@
 package amidst.mojangapi.world.filter;
 
+import amidst.documentation.Immutable;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
@@ -7,6 +8,7 @@ import amidst.mojangapi.world.icon.producer.WorldIconCollector;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 
+@Immutable
 public class WorldFilter_Structure extends WorldFilter {
 	private final DefaultWorldIconTypes structure;
 	private final int count;
@@ -19,7 +21,7 @@ public class WorldFilter_Structure extends WorldFilter {
 	}
 
 	@Override
-	protected boolean isValid(World world, short[][] region) {
+	public boolean isValid(World world) {
 		WorldIconCollector structureCollector = getCollector();
 		WorldIconProducer<Void> structureProducer = getProducer(world);
 
@@ -71,7 +73,7 @@ public class WorldFilter_Structure extends WorldFilter {
 	}
 
 	private static class TypedWorldIconCollector extends WorldIconCollector {
-		final DefaultWorldIconTypes acceptedStructure;
+		private final DefaultWorldIconTypes acceptedStructure;
 
 		TypedWorldIconCollector(DefaultWorldIconTypes acceptedStructure) {
 			this.acceptedStructure = acceptedStructure;

@@ -1,13 +1,13 @@
 package amidst.mojangapi.world.filter;
 
+import amidst.documentation.Immutable;
 import amidst.fragment.Fragment;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 
+@Immutable
 public abstract class WorldFilter {
-	private short[][] evaluatedRegion = null;
-
 	protected final long worldFilterSize;
 	protected final long quarterFilterSize;
 	protected final CoordinatesInWorld corner;
@@ -30,18 +30,5 @@ public abstract class WorldFilter {
 		}
 	}
 
-	public final boolean isValid(World world) {
-		return isValid(world, getUpdatedRegion(world));
-	}
-
-	protected abstract boolean isValid(World world, short[][] region);
-
-	private short[][] getUpdatedRegion(World world) {
-		if (this.evaluatedRegion == null) {
-			this.evaluatedRegion = new short[(int) this.quarterFilterSize * 2][(int) this.quarterFilterSize * 2];
-		}
-
-		world.getBiomeDataOracle().populateArray(corner, evaluatedRegion, true);
-		return evaluatedRegion;
-	}
+	public abstract boolean isValid(World world);
 }

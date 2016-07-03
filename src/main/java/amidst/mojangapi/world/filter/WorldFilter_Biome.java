@@ -7,6 +7,7 @@ import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.biome.Biome;
 
 public class WorldFilter_Biome extends WorldFilter {
+	private short[][] evaluatedRegion = null;
 	private final List<Biome> biomes;
 
 	public WorldFilter_Biome(long worldFilterSize, List<String> biomeNames) {
@@ -30,6 +31,19 @@ public class WorldFilter_Biome extends WorldFilter {
 	}
 
 	@Override
+	public boolean isValid(World world) {
+		return isValid(world, getUpdatedRegion(world));
+	}
+
+	protected short[][] getUpdatedRegion(World world) {
+		if (this.evaluatedRegion == null) {
+			this.evaluatedRegion = new short[(int) this.quarterFilterSize * 2][(int) this.quarterFilterSize * 2];
+		}
+
+		world.getBiomeDataOracle().populateArray(corner, evaluatedRegion, true);
+		return evaluatedRegion;
+	}
+
 	protected boolean isValid(World world, short[][] region) {
 		for (short[] row : region) {
 			for (short entry : row) {
