@@ -9,10 +9,10 @@ import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.mocking.FragmentCornerWalker;
-import amidst.mojangapi.mocking.NameFilteredWorldIconCollector;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
+import amidst.mojangapi.world.icon.producer.NameFilteredWorldIconCollector;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 
 @Immutable
