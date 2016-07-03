@@ -93,9 +93,15 @@ public class MojangApi {
 		return new VersionDirectory(dotMinecraftDirectory, versionId, jar, json);
 	}
 
-	public MojangApi createSilentPlayerlessCopy() throws LocalMinecraftInterfaceCreationException {
+	public MojangApi createSilentPlayerlessCopy() {
 		MojangApi result = new MojangApi(WorldBuilder.createSilentPlayerless(), dotMinecraftDirectory);
-		result.set(profileName, profileDirectory, versionDirectory);
+		try {
+			result.set(profileName, profileDirectory, versionDirectory);
+		} catch (LocalMinecraftInterfaceCreationException e) {
+			// This will not happen normally, because we already successfully
+			// created the same LocalMinecraftInterface once before.
+			throw new RuntimeException("exception while duplicating the MojangApi", e);
+		}
 		return result;
 	}
 
