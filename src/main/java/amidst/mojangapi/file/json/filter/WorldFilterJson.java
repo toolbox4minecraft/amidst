@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
+import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.filter.BaseFilter;
 import amidst.mojangapi.world.filter.WorldFilter;
 
@@ -32,8 +33,8 @@ public class WorldFilterJson {
 	public WorldFilterJson() {
 	}
 
-	public WorldFilter createWorldFilter() {
-		return new WorldFilter(0, createFilterList());
+	public WorldFilter createWorldFilter(int size) {
+		return new WorldFilter(size * Resolution.FRAGMENT.getStep(), createFilterList());
 	}
 
 	private List<BaseFilter> createFilterList() {
