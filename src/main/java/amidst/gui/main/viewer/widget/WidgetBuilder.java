@@ -2,6 +2,7 @@ package amidst.gui.main.viewer.widget;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
@@ -30,6 +31,7 @@ public class WidgetBuilder {
 	private final FragmentManager fragmentManager;
 	private final Graphics2DAccelerationCounter accelerationCounter;
 	private final AmidstSettings settings;
+	private final Supplier<String> progressText;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WidgetBuilder(
@@ -42,7 +44,8 @@ public class WidgetBuilder {
 			LayerReloader layerReloader,
 			FragmentManager fragmentManager,
 			Graphics2DAccelerationCounter accelerationCounter,
-			AmidstSettings settings) {
+			AmidstSettings settings,
+			Supplier<String> progressText) {
 		this.world = world;
 		this.graph = graph;
 		this.translator = translator;
@@ -53,12 +56,14 @@ public class WidgetBuilder {
 		this.fragmentManager = fragmentManager;
 		this.accelerationCounter = accelerationCounter;
 		this.settings = settings;
+		this.progressText = progressText;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public List<Widget> create() {
 		// @formatter:off
 		return Arrays.asList(
+				new ChangeableTextWidget(   CornerAnchorPoint.CENTER,        progressText),
 				new FpsWidget(              CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              settings.showFPS),
 				new ScaleWidget(            CornerAnchorPoint.BOTTOM_CENTER, zoom,                               settings.showScale),
 				new SeedAndWorldTypeWidget( CornerAnchorPoint.TOP_LEFT,      world.getWorldSeed(), world.getWorldType()),

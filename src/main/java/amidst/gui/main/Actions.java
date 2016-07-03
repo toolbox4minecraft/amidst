@@ -27,7 +27,6 @@ import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
 import amidst.settings.biomeprofile.BiomeProfile;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
-import amidst.threading.WorkerExecutor;
 import amidst.util.FileExtensionChecker;
 
 @NotThreadSafe
@@ -36,20 +35,17 @@ public class Actions {
 	private final MainWindow mainWindow;
 	private final AtomicReference<ViewerFacade> viewerFacade;
 	private final BiomeProfileSelection biomeProfileSelection;
-	private final WorkerExecutor workerExecutor;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Actions(
 			Application application,
 			MainWindow mainWindow,
 			AtomicReference<ViewerFacade> viewerFacade,
-			BiomeProfileSelection biomeProfileSelection,
-			WorkerExecutor workerExecutor) {
+			BiomeProfileSelection biomeProfileSelection) {
 		this.application = application;
 		this.mainWindow = mainWindow;
 		this.viewerFacade = viewerFacade;
 		this.biomeProfileSelection = biomeProfileSelection;
-		this.workerExecutor = workerExecutor;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -83,6 +79,14 @@ public class Actions {
 		File file = mainWindow.askForSaveGame();
 		if (file != null) {
 			mainWindow.displayWorld(file);
+		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void export() {
+		ViewerFacade viewerFacade = this.viewerFacade.get();
+		if (viewerFacade != null) {
+			viewerFacade.export(mainWindow.askForExportConfiguration());
 		}
 	}
 
@@ -165,7 +169,7 @@ public class Actions {
 	public void reloadPlayerLocations() {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
-			viewerFacade.loadPlayers(workerExecutor);
+			viewerFacade.loadPlayers();
 		}
 	}
 

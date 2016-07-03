@@ -35,6 +35,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.export.WorldExporterConfiguration;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.WorldPlayerType;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
@@ -112,12 +113,7 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Actions createActions() {
-		return new Actions(
-				application,
-				this,
-				viewerFacade,
-				settings.biomeProfileSelection,
-				threadMaster.getWorkerExecutor());
+		return new Actions(application, this, viewerFacade, settings.biomeProfileSelection);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -215,7 +211,7 @@ public class MainWindow {
 		contentPane.add(viewerFacade.getComponent(), BorderLayout.CENTER);
 		menuBar.set(viewerFacade);
 		frame.validate();
-		viewerFacade.loadPlayers(threadMaster.getWorkerExecutor());
+		viewerFacade.loadPlayers();
 		threadMaster.setOnRepaintTick(viewerFacade.getOnRepainterTick());
 		threadMaster.setOnFragmentLoadTick(viewerFacade.getOnFragmentLoaderTick());
 		this.viewerFacade.set(viewerFacade);
@@ -394,5 +390,12 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displaySeedSearcherWindow() {
 		seedSearcherWindow.show();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public WorldExporterConfiguration askForExportConfiguration() {
+		// TODO: implement me!
+		// TODO: display gui to create configuration
+		return new WorldExporterConfiguration();
 	}
 }

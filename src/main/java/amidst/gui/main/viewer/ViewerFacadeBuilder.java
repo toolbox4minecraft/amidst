@@ -17,6 +17,8 @@ import amidst.gui.main.viewer.widget.Widget;
 import amidst.gui.main.viewer.widget.WidgetBuilder;
 import amidst.gui.main.viewer.widget.WidgetManager;
 import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.export.WorldExporterFactory;
+import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
 public class ViewerFacadeBuilder {
@@ -24,12 +26,14 @@ public class ViewerFacadeBuilder {
 	private final BiomeSelection biomeSelection = new BiomeSelection();
 
 	private final AmidstSettings settings;
+	private final WorkerExecutor workerExecutor;
 	private final LayerBuilder layerBuilder;
 	private final FragmentManager fragmentManager;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ViewerFacadeBuilder(AmidstSettings settings, LayerBuilder layerBuilder) {
+	public ViewerFacadeBuilder(AmidstSettings settings, WorkerExecutor workerExecutor, LayerBuilder layerBuilder) {
 		this.settings = settings;
+		this.workerExecutor = workerExecutor;
 		this.zoom = new Zoom(settings.maxZoom);
 		this.layerBuilder = layerBuilder;
 		this.fragmentManager = new FragmentManager(layerBuilder.getConstructors(), layerBuilder.getNumberOfLayers());
@@ -53,6 +57,7 @@ public class ViewerFacadeBuilder {
 				layerManager,
 				settings.dimension);
 		LayerReloader layerReloader = layerManager.createLayerReloader(world);
+		WorldExporterFactory worldExporterFactory = new WorldExporterFactory(workerExecutor, world);
 		WidgetBuilder widgetBuilder = new WidgetBuilder(
 				world,
 				graph,
@@ -63,7 +68,8 @@ public class ViewerFacadeBuilder {
 				layerReloader,
 				fragmentManager,
 				accelerationCounter,
-				settings);
+				settings,
+				worldExporterFactory::getProgressMessage);
 		List<Widget> widgets = widgetBuilder.create();
 		Drawer drawer = new Drawer(
 				graph,
@@ -90,6 +96,8 @@ public class ViewerFacadeBuilder {
 				layerReloader,
 				worldIconSelection,
 				layerManager,
+				workerExecutor,
+				worldExporterFactory,
 				createOnRepainterTick(viewer),
 				createOnFragmentLoaderTick(fragmentQueueProcessor),
 				createOnPlayerFinishedLoading(layerReloader));
