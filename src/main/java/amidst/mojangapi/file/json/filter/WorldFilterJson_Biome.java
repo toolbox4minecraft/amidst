@@ -24,7 +24,7 @@ public class WorldFilterJson_Biome {
 			notifications.add("No biomes for filter");
 		} else {
 			for (String name : biomes) {
-				if (Biome.exists(name)) {
+				if (!Biome.exists(name)) {
 					notifications.add("invalid biome name: '" + name + "'");
 				}
 			}
