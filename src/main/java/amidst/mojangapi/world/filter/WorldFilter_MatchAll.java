@@ -7,8 +7,8 @@ import amidst.mojangapi.world.World;
 public class WorldFilter_MatchAll extends WorldFilter {
 	private final List<WorldFilter> filters;
 
-	public WorldFilter_MatchAll(long worldFilterDistance, List<WorldFilter> filters) {
-		super(worldFilterDistance);
+	public WorldFilter_MatchAll(long worldFilterSize, List<WorldFilter> filters) {
+		super(worldFilterSize);
 		this.filters = filters;
 	}
 

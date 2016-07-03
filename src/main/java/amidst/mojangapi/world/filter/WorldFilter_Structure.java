@@ -25,8 +25,8 @@ public class WorldFilter_Structure extends WorldFilter {
 		@SuppressWarnings("rawtypes")
 		WorldIconProducer structureProducer = getProducer(world);
 
-		for (long x = 0; x < worldFilterSize; x += 512) {
-			for (long y = 0; y < worldFilterSize; y += 512) {
+		for (long x = 0; x < 2 * worldFilterSize; x += 512) {
+			for (long y = 0; y < 2 * worldFilterSize; y += 512) {
 				CoordinatesInWorld subCorner = CoordinatesInWorld.from(x, y).add(corner);
 				structureProducer.produce(subCorner, structureCollector, null);
 			}
