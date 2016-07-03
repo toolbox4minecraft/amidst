@@ -8,8 +8,8 @@ import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 
 public class WorldFilter_Structure extends WorldFilter {
-	final int count;
-	final DefaultWorldIconTypes structure;
+	private final DefaultWorldIconTypes structure;
+	private final int count;
 
 	public WorldFilter_Structure(long worldFilterSize, String structureName, int count) {
 		super(worldFilterSize);
@@ -18,12 +18,10 @@ public class WorldFilter_Structure extends WorldFilter {
 		this.count = count;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected boolean isValid(World world, short[][] region) {
 		WorldIconCollector structureCollector = getCollector();
-		@SuppressWarnings("rawtypes")
-		WorldIconProducer structureProducer = getProducer(world);
+		WorldIconProducer<Void> structureProducer = getProducer(world);
 
 		for (long x = 0; x < 2 * worldFilterSize; x += 512) {
 			for (long y = 0; y < 2 * worldFilterSize; y += 512) {
@@ -35,8 +33,7 @@ public class WorldFilter_Structure extends WorldFilter {
 		return structureCollector.get().size() > count;
 	}
 
-	@SuppressWarnings("rawtypes")
-	private WorldIconProducer getProducer(World world) {
+	private WorldIconProducer<Void> getProducer(World world) {
 		switch (structure) {
 		case JUNGLE:
 		case DESERT:
