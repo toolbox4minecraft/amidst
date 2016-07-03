@@ -11,7 +11,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
-import amidst.mojangapi.world.filter.WorldFilter;
+import amidst.mojangapi.world.filter.WorldFilter_MatchAll;
 import amidst.threading.WorkerExecutor;
 import amidst.threading.worker.ProgressReporter;
 import amidst.threading.worker.ProgressReportingWorker;
@@ -81,7 +81,7 @@ public class SeedSearcher {
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private void doSearch(ProgressReporter<WorldSeed> reporter, WorldFilter worldFilter, WorldType worldType)
+	private void doSearch(ProgressReporter<WorldSeed> reporter, WorldFilter_MatchAll worldFilter, WorldType worldType)
 			throws IllegalStateException, MinecraftInterfaceException {
 		do {
 			doSearchOne(reporter, worldFilter, worldType);
@@ -89,7 +89,7 @@ public class SeedSearcher {
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private void doSearchOne(ProgressReporter<WorldSeed> reporter, WorldFilter worldFilter, WorldType worldType)
+	private void doSearchOne(ProgressReporter<WorldSeed> reporter, WorldFilter_MatchAll worldFilter, WorldType worldType)
 			throws MinecraftInterfaceException {
 		while (!isStopRequested) {
 			World world = mojangApi.createWorldFromSeed(WorldSeed.random(), worldType);

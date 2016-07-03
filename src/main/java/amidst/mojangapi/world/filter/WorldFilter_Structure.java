@@ -7,11 +7,11 @@ import amidst.mojangapi.world.icon.producer.WorldIconCollector;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 
-public class StructureFilter extends BaseFilter {
+public class WorldFilter_Structure extends WorldFilter {
 	final int count;
 	final DefaultWorldIconTypes structure;
 
-	public StructureFilter(long worldFilterSize, String structureName, int count) {
+	public WorldFilter_Structure(long worldFilterSize, String structureName, int count) {
 		super(worldFilterSize);
 
 		this.structure = DefaultWorldIconTypes.getByName(structureName);

@@ -1,24 +1,42 @@
 package amidst.mojangapi.world.filter;
 
-import java.util.List;
-
 import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Resolution;
 
-public class WorldFilter extends BaseFilter {
-	private final List<BaseFilter> filters;
+public abstract class WorldFilter {
+	private short[][] evaluatedRegion = null;
 
-	public WorldFilter(long worldFilterDistance, List<BaseFilter> filters) {
-		super(worldFilterDistance);
-		this.filters = filters;
+	protected final long worldFilterSize;
+	protected final long quarterFilterSize;
+	protected final CoordinatesInWorld corner;
+
+	public WorldFilter(long worldFilterDistance) {
+		if (worldFilterDistance % Resolution.FRAGMENT.getStep() != 0) {
+			// Structure filters check spaces in fragment size, so filter
+			// distance not a multiple of
+			// fragment size will include more area in the filter than expected
+			throw new IllegalArgumentException("World filter size must be a multiple of "
+					+ Resolution.FRAGMENT.getStep());
+		}
+
+		this.worldFilterSize = worldFilterDistance * 2;
+		this.quarterFilterSize = Resolution.QUARTER.convertFromWorldToThis(this.worldFilterSize);
+		this.corner = new CoordinatesInWorld(-this.worldFilterSize / 2, -this.worldFilterSize / 2);
 	}
 
-	@Override
-	protected boolean isValid(World world, short[][] region) {
-		for (BaseFilter filter : filters) {
-			if (!filter.isValid(world)) {
-				return false;
-			}
+	public final boolean isValid(World world) {
+		return isValid(world, getUpdatedRegion(world));
+	}
+
+	protected abstract boolean isValid(World world, short[][] region);
+
+	private short[][] getUpdatedRegion(World world) {
+		if (this.evaluatedRegion == null) {
+			this.evaluatedRegion = new short[(int) this.quarterFilterSize][(int) this.quarterFilterSize];
 		}
-		return true;
+
+		world.getBiomeDataOracle().populateArray(corner, evaluatedRegion, true);
+		return evaluatedRegion;
 	}
 }

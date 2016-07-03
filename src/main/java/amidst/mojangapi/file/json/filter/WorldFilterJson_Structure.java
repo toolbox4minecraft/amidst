@@ -2,19 +2,19 @@ package amidst.mojangapi.file.json.filter;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
-import amidst.mojangapi.world.filter.StructureFilter;
+import amidst.mojangapi.world.filter.WorldFilter_Structure;
 
 @Immutable
-public class StructureFilterJson {
+public class WorldFilterJson_Structure {
 	private volatile long distance;
 	private volatile String structure;
 	private volatile int minimum;
 
 	@GsonConstructor
-	public StructureFilterJson() {
+	public WorldFilterJson_Structure() {
 	}
 
-	public StructureFilter createStructureFilter() {
-		return new StructureFilter(distance, structure, minimum);
+	public WorldFilter_Structure createStructureFilter() {
+		return new WorldFilter_Structure(distance, structure, minimum);
 	}
 }

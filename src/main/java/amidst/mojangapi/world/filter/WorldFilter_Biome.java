@@ -6,10 +6,10 @@ import java.util.List;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.biome.Biome;
 
-public class BiomeFilter extends BaseFilter {
+public class WorldFilter_Biome extends WorldFilter {
 	private final List<Biome> biomes;
 
-	public BiomeFilter(long worldFilterSize, List<String> biomeNames) {
+	public WorldFilter_Biome(long worldFilterSize, List<String> biomeNames) {
 		super(worldFilterSize);
 
 		List<Biome> biomes = new ArrayList<>();
