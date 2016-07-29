@@ -4,5 +4,5 @@
 root = true
 
 [*]
-indent_style = tabs
+indent_style = tab
 indent_size = 4

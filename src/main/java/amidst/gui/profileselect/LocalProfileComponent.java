@@ -1,7 +1,5 @@
 package amidst.gui.profileselect;
 
-import java.io.FileNotFoundException;
-
 import amidst.Application;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -13,6 +11,9 @@ import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.threading.WorkerExecutor;
+
+import java.io.FileNotFoundException;
+import java.util.regex.Pattern;
 
 @NotThreadSafe
 public class LocalProfileComponent extends ProfileComponent {
