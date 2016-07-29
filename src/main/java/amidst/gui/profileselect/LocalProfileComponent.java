@@ -81,6 +81,13 @@ public class LocalProfileComponent extends ProfileComponent {
 		try {
 			Log.i("using minecraft launcher profile '" + getProfileName() + "' with versionId '" + getVersionName()
 					+ "'");
+					
+			String possibleModProfiles = "optifine|forge";
+            if (Pattern.matches(possibleModProfiles, getProfileName().toLowerCase())) {
+                Log.e("Amidst does not support modded Profiles, please select or create an unmodded profile");
+                return false;
+            }
+
 			mojangApi.set(getProfileName(), profileDirectory, versionDirectory);
 			return true;
 		} catch (LocalMinecraftInterfaceCreationException e) {
