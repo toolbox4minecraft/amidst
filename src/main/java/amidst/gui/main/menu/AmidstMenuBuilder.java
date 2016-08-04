@@ -1,13 +1,13 @@
 package amidst.gui.main.menu;
 
 import java.awt.event.KeyEvent;
-import java.io.File;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import amidst.AmidstSettings;
+import amidst.FeatureToggles;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
 import amidst.mojangapi.world.WorldType;
@@ -19,6 +19,7 @@ public class AmidstMenuBuilder {
 	private final Actions actions;
 	private final BiomeProfileDirectory biomeProfileDirectory;
 	private final JMenuBar menuBar;
+	private JMenuItem exportMenu;
 	private JMenu worldMenu;
 	private JMenuItem savePlayerLocationsMenu;
 	private JMenuItem reloadPlayerLocationsMenu;
@@ -32,7 +33,13 @@ public class AmidstMenuBuilder {
 	}
 
 	public AmidstMenu construct() {
-		return new AmidstMenu(menuBar, worldMenu, savePlayerLocationsMenu, reloadPlayerLocationsMenu, layersMenu);
+		return new AmidstMenu(
+				menuBar,
+				exportMenu,
+				worldMenu,
+				savePlayerLocationsMenu,
+				reloadPlayerLocationsMenu,
+				layersMenu);
 	}
 
 	private JMenuBar createMenuBar() {
@@ -51,11 +58,17 @@ public class AmidstMenuBuilder {
 		// @formatter:off
 		Menus.item(result, actions::newFromSeed,           "New from seed",            KeyEvent.VK_N, "menu N");
 		Menus.item(result, actions::newFromRandom,         "New from random seed",     KeyEvent.VK_R, "menu R");
-		if (new File("search.json").exists()) {
-			Menus.item(result, actions::searchForRandom,     "Search for random seed",   KeyEvent.VK_F, "menu F");
+		if (FeatureToggles.SEED_SEARCH) {
+			Menus.item(result, actions::searchForRandom,   "Search for random seed",   KeyEvent.VK_F, "menu F");
 		}
 		Menus.item(result, actions::openSaveGame,          "Open save game ...",       KeyEvent.VK_O, "menu O");
 		result.addSeparator();
+		if (FeatureToggles.WORLD_EXPORTER) {
+			exportMenu =
+			Menus.item(result, actions::export,            "Export ...",               KeyEvent.VK_E, "menu X");
+			exportMenu.setEnabled(false);
+			result.addSeparator();
+		}
 		Menus.item(result, actions::switchProfile,         "Switch profile ...",       KeyEvent.VK_P, "menu W");
 		Menus.item(result, actions::exit,                  "Exit",                     KeyEvent.VK_X, "menu Q");
 		// @formatter:on

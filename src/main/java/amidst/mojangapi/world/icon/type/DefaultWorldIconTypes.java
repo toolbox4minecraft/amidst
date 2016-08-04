@@ -1,9 +1,9 @@
 package amidst.mojangapi.world.icon.type;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import amidst.ResourceLoader;
 import amidst.documentation.Immutable;
@@ -30,20 +30,23 @@ public enum DefaultWorldIconTypes {
 	END_CITY            ("end_city",          "Likely End City"),
 	POSSIBLE_END_CITY   ("possible_end_city", "Possible End City");
 	// @formatter:on
-	
-	private static final Map<String, DefaultWorldIconTypes> typeMap = new HashMap<String, DefaultWorldIconTypes>();
-	static {
+
+	private static final Map<String, DefaultWorldIconTypes> typeMap = createTypeMap();
+
+	private static Map<String, DefaultWorldIconTypes> createTypeMap() {
+		Map<String, DefaultWorldIconTypes> result = new HashMap<String, DefaultWorldIconTypes>();
 		for (DefaultWorldIconTypes iconType : EnumSet.allOf(DefaultWorldIconTypes.class)) {
-			typeMap.put(iconType.getName(), iconType);
+			result.put(iconType.getName(), iconType);
 		}
+		return Collections.unmodifiableMap(result);
 	}
-	
+
 	public static DefaultWorldIconTypes getByName(String name) {
 		return typeMap.get(name);
 	}
 
-	public static Set<String> getValidTypeNames() {
-		return typeMap.keySet();
+	public static boolean exists(String name) {
+		return typeMap.containsKey(name);
 	}
 
 	private static String getFilename(String name) {

@@ -16,6 +16,8 @@ import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.export.WorldExporterConfiguration;
+import amidst.mojangapi.world.export.WorldExporterFactory;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.threading.WorkerExecutor;
@@ -35,6 +37,8 @@ public class ViewerFacade {
 	private final LayerReloader layerReloader;
 	private final WorldIconSelection worldIconSelection;
 	private final LayerManager layerManager;
+	private final WorkerExecutor workerExecutor;
+	private final WorldExporterFactory worldExporterFactory;
 	private final Runnable onRepainterTick;
 	private final Runnable onFragmentLoaderTick;
 	private final Runnable onPlayerFinishedLoading;
@@ -49,6 +53,8 @@ public class ViewerFacade {
 			LayerReloader layerReloader,
 			WorldIconSelection worldIconSelection,
 			LayerManager layerManager,
+			WorkerExecutor workerExecutor,
+			WorldExporterFactory worldExporterFactory,
 			Runnable onRepainterTick,
 			Runnable onFragmentLoaderTick,
 			Runnable onPlayerFinishedLoading) {
@@ -60,6 +66,8 @@ public class ViewerFacade {
 		this.layerReloader = layerReloader;
 		this.worldIconSelection = worldIconSelection;
 		this.layerManager = layerManager;
+		this.workerExecutor = workerExecutor;
+		this.worldExporterFactory = worldExporterFactory;
 		this.onRepainterTick = onRepainterTick;
 		this.onFragmentLoaderTick = onFragmentLoaderTick;
 		this.onPlayerFinishedLoading = onPlayerFinishedLoading;
@@ -164,7 +172,7 @@ public class ViewerFacade {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void loadPlayers(WorkerExecutor workerExecutor) {
+	public void loadPlayers() {
 		worldIconSelection.clear();
 		world.getMovablePlayerList().load(workerExecutor, onPlayerFinishedLoading);
 	}
@@ -187,5 +195,10 @@ public class ViewerFacade {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean hasLayer(int layerId) {
 		return world.getVersionFeatures().hasLayer(layerId);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void export(WorldExporterConfiguration configuration) {
+		worldExporterFactory.create(configuration).export();
 	}
 }

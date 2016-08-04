@@ -1,9 +1,7 @@
-package amidst.mojangapi.mocking;
+package amidst.mojangapi.world.player;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.mojangapi.world.player.PlayerInformation;
-import amidst.mojangapi.world.player.PlayerInformationCache;
 
 @Immutable
 public class ImmutablePlayerInformationCache implements PlayerInformationCache {

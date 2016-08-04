@@ -26,8 +26,8 @@ public class Application {
 	private final AmidstSettings settings;
 	private final MojangApi mojangApi;
 	private final BiomeProfileDirectory biomeProfileDirectory;
-	private final ViewerFacadeBuilder viewerFacadeBuilder;
 	private final ThreadMaster threadMaster;
+	private final ViewerFacadeBuilder viewerFacadeBuilder;
 
 	private volatile ProfileSelectWindow profileSelectWindow;
 	private volatile MainWindow mainWindow;
@@ -40,8 +40,8 @@ public class Application {
 		this.settings = settings;
 		this.mojangApi = createMojangApi();
 		this.biomeProfileDirectory = createBiomeProfileDirectory();
-		this.viewerFacadeBuilder = createViewerFacadeBuilder();
 		this.threadMaster = createThreadMaster();
+		this.viewerFacadeBuilder = createViewerFacadeBuilder();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -58,13 +58,13 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private ViewerFacadeBuilder createViewerFacadeBuilder() {
-		return new ViewerFacadeBuilder(settings, new LayerBuilder());
+	private ThreadMaster createThreadMaster() {
+		return new ThreadMaster();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private ThreadMaster createThreadMaster() {
-		return new ThreadMaster();
+	private ViewerFacadeBuilder createViewerFacadeBuilder() {
+		return new ViewerFacadeBuilder(settings, threadMaster.getWorkerExecutor(), new LayerBuilder());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
