@@ -125,7 +125,7 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private SeedSearcherWindow createSeedSearcherWindow() {
-		return new SeedSearcherWindow(metadata, this, new SeedSearcher(
+		return new SeedSearcherWindow(metadata, settings, this, new SeedSearcher(
 				this,
 				mojangApi,
 				threadMaster.getWorkerExecutor()));

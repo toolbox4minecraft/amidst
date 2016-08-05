@@ -37,6 +37,7 @@ public class AmidstSettings {
 
 	public final Setting<String> lastProfile;
 	public final Setting<String> worldType;
+	public final Setting<String> searchJsonFile;
 
 	/**
 	 * This is not persisted.
@@ -69,6 +70,8 @@ public class AmidstSettings {
 	
 		lastProfile                = Settings.createString(   preferences, "profile",              "");
 		worldType                  = Settings.createString(   preferences, "worldType",            WorldType.PROMPT_EACH_TIME);
+		searchJsonFile             = Settings.createString(   preferences, "searchJsonFile",       "search.json");
+		
 		biomeProfileSelection = new BiomeProfileSelection(BiomeProfile.getDefaultProfile());
 		// @formatter:on
 	}
