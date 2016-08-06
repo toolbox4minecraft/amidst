@@ -4,6 +4,7 @@ import amidst.mojangapi.world.World;
 
 public class WorldFilter {
 
+
 	
 	public WorldFilter() {
 	}
@@ -11,6 +12,7 @@ public class WorldFilter {
 	//Todo
 	
 	public boolean isValid(World world) {
-		return false;
+		throw new RuntimeException("not implemented");
 	}
+
 }

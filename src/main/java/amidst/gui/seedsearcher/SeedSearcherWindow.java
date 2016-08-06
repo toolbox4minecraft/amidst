@@ -28,6 +28,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.MainWindow;
 import amidst.logging.Log;
+import amidst.mojangapi.file.json.filter.WorldFilterJson;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.filter.WorldFilter;
@@ -156,8 +157,10 @@ public class SeedSearcherWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private Optional<SeedSearcherConfiguration> createSeedSearcherConfiguration() {
-		return Optional.empty();
+	private Optional<SeedSearcherConfiguration> createSeedSearcherConfiguration() {	
+		return WorldFilterJson.fromJSON(searchQueryTextArea.getText())
+						.validate()
+						.map(this::createSeedSearcherConfiguration);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
