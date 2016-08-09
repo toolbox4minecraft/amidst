@@ -7,8 +7,8 @@ import java.io.IOException;
 
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
+import amidst.util.GsonProvider;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
@@ -29,7 +29,6 @@ public class BiomeProfileDirectory {
 	}
 
 	private static final File DEFAULT_ROOT_DIRECTORY = new File("biome");
-	private static final Gson GSON = new Gson();
 
 	private final File root;
 	private final File defaultProfile;
@@ -110,7 +109,7 @@ public class BiomeProfileDirectory {
 
 	private BiomeProfile readProfile(File file) throws IOException, JsonSyntaxException, JsonIOException {
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-			return GSON.fromJson(reader, BiomeProfile.class);
+			return GsonProvider.get().fromJson(reader, BiomeProfile.class);
 		}
 	}
 }

@@ -5,25 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import amidst.documentation.GsonConstructor;
-import amidst.documentation.Immutable;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.filter.WorldFilter;
+import amidst.util.GsonProvider;
 
-@Immutable
 public class WorldFilterJson {
-	
-	//@formatter: off
-	private static final Gson GSON = new GsonBuilder()
-					.registerTypeAdapter(CriterionJson.class, new CriterionDeserializer())
-					.registerTypeAdapter(CriterionJson.ClusterInfo.class,
-										new CriterionJson.ClusterInfoDeserializer())
-					.create();
-	//@formatter: on
-	
+
+
 	public Defaults defaults = new Defaults();
 	public Map<String, CriterionJson> groups = Collections.emptyMap();
 	public CriterionJson match = null;
@@ -45,7 +34,7 @@ public class WorldFilterJson {
 	}
 
 	public static WorldFilterJson fromJSON(String json) {
-		return GSON.fromJson(json, WorldFilterJson.class);
+		return GsonProvider.get().fromJson(json, WorldFilterJson.class);
 	}
 	
 }
