@@ -8,22 +8,10 @@ import amidst.mojangapi.file.json.filter.CriterionJson;
 
 public enum GsonProvider {
 	;
-	
-	// @formatter:off
-	private static final GsonBuilder BUILDER_LENIENT = new GsonBuilder()
-			.enableComplexMapKeySerialization()
-			.registerTypeAdapter(
-					CriterionJson.class,
-					new CriterionDeserializer())
-			.registerTypeAdapter(
-					CriterionJson.ClusterInfo.class,
-					new CriterionJson.ClusterInfoDeserializer());
-	// @formatter:on
-	
-	private static final GsonBuilder BUILDER_STRICT = null; //TODO
-	
-	private static final Gson LENIENT = BUILDER_LENIENT.create();
-	private static final Gson STRICT = BUILDER_STRICT.create();
+
+
+	private static final Gson LENIENT = builder().create();
+	private static final Gson STRICT = builderStrict().create();
 	
 	public static Gson get() {
 		return LENIENT;
@@ -34,10 +22,19 @@ public enum GsonProvider {
 	}
 	
 	public static GsonBuilder builder() {
-		return BUILDER_LENIENT;
+		// @formatter:off
+		return new GsonBuilder()
+				.enableComplexMapKeySerialization()
+				.registerTypeAdapter(
+					CriterionJson.class,
+					new CriterionDeserializer())
+				.registerTypeAdapter(
+					CriterionJson.ClusterInfo.class,
+					new CriterionJson.ClusterInfoDeserializer());
+		// @formatter:on
 	}
 	
 	public static GsonBuilder builderStrict() {
-		return BUILDER_STRICT;
+		return builder().registerTypeAdapterFactory(new StrictTypeAdapterFactory());
 	}
 }
