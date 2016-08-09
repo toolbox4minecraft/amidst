@@ -1,8 +1,14 @@
 *.class
 
+#System Files #
+**/.DS_Store
+
 # Package Files #
 *.war
 *.ear
+
+# Compiled dependencies #
+/lib/*
 
 # IntelliJ IDEA project files #
 ./AMIDST.eml
