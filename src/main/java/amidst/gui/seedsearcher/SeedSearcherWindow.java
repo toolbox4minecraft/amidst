@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.swing.JButton;
@@ -29,6 +28,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.MainWindow;
 import amidst.logging.Log;
 import amidst.mojangapi.file.json.filter.WorldFilterJson;
+import amidst.mojangapi.file.json.filter.WorldFilterParseException;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.filter.WorldFilter;
@@ -144,23 +144,21 @@ public class SeedSearcherWindow {
 		if (seedSearcher.isSearching()) {
 			seedSearcher.stop();
 		} else {
-			Optional<SeedSearcherConfiguration> configuration = createSeedSearcherConfiguration();
-			if (configuration.isPresent()) {
-				SeedSearcherConfiguration seedSearcherConfiguration = configuration.get();
+			try {
+				SeedSearcherConfiguration seedSearcherConfiguration = createSeedSearcherConfiguration();
 				WorldType worldType = seedSearcherConfiguration.getWorldType();
 				seedSearcher.search(seedSearcherConfiguration, worldSeed -> seedFound(worldSeed, worldType));
-			} else {
-				mainWindow.displayError("invalid configuration");
+			} catch (WorldFilterParseException e) {
+				mainWindow.displayError(e.getMessage());
 			}
 		}
 		updateGUI();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private Optional<SeedSearcherConfiguration> createSeedSearcherConfiguration() {	
-		return WorldFilterJson.fromJSON(searchQueryTextArea.getText())
-						.validate()
-						.map(this::createSeedSearcherConfiguration);
+	private SeedSearcherConfiguration createSeedSearcherConfiguration() throws WorldFilterParseException {
+		WorldFilterJson filter = WorldFilterJson.fromJSON(searchQueryTextArea.getText());
+		return createSeedSearcherConfiguration(filter.validate());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

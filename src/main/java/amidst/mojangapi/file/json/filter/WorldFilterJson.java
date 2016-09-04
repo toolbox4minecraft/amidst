@@ -1,12 +1,17 @@
 package amidst.mojangapi.file.json.filter;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.google.gson.JsonParseException;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.JsonField;
+import amidst.mojangapi.file.world.filter.Criterion;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.filter.WorldFilter;
 import amidst.util.GsonProvider;
@@ -33,19 +38,38 @@ public class WorldFilterJson {
 		@JsonField(optional=true)
 		public String shape = "circle";
 	}
-	
+		
 	@GsonConstructor
 	public WorldFilterJson() {
 	}
 	
 	
-	public Optional<WorldFilter> validate() {
-		//TODO validation
-		return Optional.empty();
+	public WorldFilter validate() throws WorldFilterParseException {
+		CriterionJsonContext ctx = new CriterionJsonContext(defaults, groups::get);
+	
+		
+		Set<String> ignoreSet = new HashSet<>(ignore);
+		
+		List<Criterion> criteria = groups.keySet().stream()
+			.filter(name -> !ignoreSet.contains(name))
+			.map(name -> ctx.convertCriterion(name).orElse(null))
+			.collect(Collectors.toList());
+		
+		Criterion main = match.validate(ctx.withName("<main>")).orElse(null);
+		
+		if(ctx.hasErrors())
+			throw new WorldFilterParseException(ctx.getErrors());
+		
+		return new WorldFilter(defaults.center, criteria, main);
 	}
 
-	public static WorldFilterJson fromJSON(String json) {
-		return GsonProvider.getStrict().fromJson(json, WorldFilterJson.class);
+	public static WorldFilterJson fromJSON(String json) throws WorldFilterParseException {
+		try {
+			return GsonProvider.getStrict().fromJson(json, WorldFilterJson.class);
+		} catch (JsonParseException e) {
+			throw new WorldFilterParseException(e);
+		}
 	}
+	
 	
 }

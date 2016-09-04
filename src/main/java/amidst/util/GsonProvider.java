@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import amidst.mojangapi.file.json.filter.CriterionDeserializer;
 import amidst.mojangapi.file.json.filter.CriterionJson;
+import amidst.mojangapi.file.json.filter.CriterionJsonBase;
 
 public enum GsonProvider {
 	;
@@ -29,8 +30,8 @@ public enum GsonProvider {
 					CriterionJson.class,
 					new CriterionDeserializer())
 				.registerTypeAdapter(
-					CriterionJson.ClusterInfo.class,
-					new CriterionJson.ClusterInfoDeserializer());
+					CriterionJsonBase.ClusterInfo.class,
+					new CriterionJsonBase.ClusterInfoDeserializer());
 		// @formatter:on
 	}
 	

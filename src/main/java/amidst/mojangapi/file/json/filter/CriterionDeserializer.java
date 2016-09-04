@@ -40,19 +40,19 @@ public class CriterionDeserializer implements JsonDeserializer<CriterionJson> {
 		
 	public Class<? extends CriterionJson> getRealClass(JsonObject obj) {
 		if(obj.has("group"))
-			return CriterionJson.Group.class;
+			return CriterionJsonGroup.class;
 		
 		if(obj.has("and"))
-			return CriterionJson.And.class;
+			return CriterionJsonAnd.class;
 		
 		if(obj.has("or"))
-			return CriterionJson.Or.class;
+			return CriterionJsonOr.class;
 		
 		if(obj.has("structures"))
-			return CriterionJson.Base.class;
+			return CriterionJsonBase.class;
 		
 		if(obj.has("biomes"))
-			return CriterionJson.Base.class;
+			return CriterionJsonBase.class;
 		
 		throw new JsonParseException("unknown criterion type");
 	}

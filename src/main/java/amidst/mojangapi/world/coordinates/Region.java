@@ -46,6 +46,10 @@ public abstract class Region {
 		return new Box(xMin, yMin, xMax, yMax);
 	}
 	
+	public static Box box(CoordinatesInWorld center, long radius) {
+		return box(center.substract(radius, radius), 2*radius, 2*radius);
+	}
+	
 	public static Circle circle(CoordinatesInWorld center, long radius) {
 		return circle(center.getX(), center.getY(), radius);
 	}
