@@ -46,16 +46,21 @@ public class WorldFilterJson {
 	
 	public WorldFilter validate() throws WorldFilterParseException {
 		CriterionJsonContext ctx = new CriterionJsonContext(defaults, groups::get);
-	
+		
+		CriterionJsonContext ctx2 = ctx.withName("<ignore>");
+		for(String gname: ignore) {
+			if(!groups.containsKey(gname))
+				ctx2.error("the group " + gname + " doesn't exist");
+		}
 		
 		Set<String> ignoreSet = new HashSet<>(ignore);
 		
 		List<Criterion> criteria = groups.keySet().stream()
 			.filter(name -> !ignoreSet.contains(name))
-			.map(name -> ctx.convertCriterion(name).orElse(null))
+			.map(name -> ctx.convertCriterion(name))
 			.collect(Collectors.toList());
 		
-		Criterion main = match.validate(ctx.withName("<main>")).orElse(null);
+		Criterion main = match.validate(ctx.withName("<main>"));
 		
 		if(ctx.hasErrors())
 			throw new WorldFilterParseException(ctx.getErrors());

@@ -1,7 +1,6 @@
 package amidst.mojangapi.file.json.filter;
 
 import java.util.List;
-import java.util.Optional;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.JsonField;
@@ -16,13 +15,8 @@ public class CriterionJsonAnd extends CriterionJson {
 	public CriterionJsonAnd() {}
 	
 	@Override
-	protected Optional<Criterion> doValidate(CriterionJsonContext ctx) {
-		
-		List<Criterion> criteria = validateList(and, ctx, "and");
-		
-		if(criteria.size() < and.size())
-			return Optional.empty();
-		
-		return Optional.of(new CriterionAnd(ctx.getName(), criteria));
+	protected Criterion doValidate(CriterionJsonContext ctx) {
+
+		return new CriterionAnd(ctx.getName(), validateList(and, ctx, "and"));
 	}
 }

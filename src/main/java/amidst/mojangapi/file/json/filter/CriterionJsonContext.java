@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 
 import amidst.mojangapi.file.world.filter.Criterion;
+import amidst.mojangapi.file.world.filter.CriterionInvalid;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
 public class CriterionJsonContext {
@@ -22,9 +22,10 @@ public class CriterionJsonContext {
 	
 	private static class Globals {
 		public Function<String, CriterionJson> supplier;
+		
 		//List of criteria already converted;
 		//if null, the criterion is being converted and we have a circular reference
-		public Map<String, Optional<Criterion>> mappings;
+		public Map<String, Criterion> mappings;
 		public List<String> errors;
 		
 		public Globals(Function<String, CriterionJson> criterionSupplier) {
@@ -63,7 +64,6 @@ public class CriterionJsonContext {
 		if(!ctx.name.isEmpty())
 			ctx.name += ".";
 		ctx.name += name;
-		System.out.println(this.name + ";" + name + ";" + ctx.name);
 		return ctx;
 	}
 	
@@ -87,18 +87,18 @@ public class CriterionJsonContext {
 		return ctx;
 	}
 	
-	public Optional<Criterion> convertCriterion(String name) {
+	public Criterion convertCriterion(String name) {
 		CriterionJson json = globals.supplier.apply(name);
 		if(json == null) {
 			error("the group " + name + " doesn't exist");
-			return Optional.empty();
+			return new CriterionInvalid(name);
 		}
 		
 		if(globals.mappings.containsKey(name)) {
-			Optional<Criterion> c = globals.mappings.get(name);
+			Criterion c = globals.mappings.get(name);
 			if(c == null) {
 				error("circular reference to group " + name);
-				return Optional.empty();
+				return new CriterionInvalid(name);
 			}
 			return c;
 		}
@@ -106,13 +106,13 @@ public class CriterionJsonContext {
 		globals.mappings.put(name, null);
 		CriterionJsonContext ctx = copy();
 		ctx.name = name;
-		Optional<Criterion> c = json.validate(ctx);
+		Criterion c = json.validate(ctx);
 		globals.mappings.put(name, c);
 		return c;
 	}
 	
 	public void error(String msg) {
-		msg = "Error at " + getName() + ": " + msg;
+		msg = "In " + getName() + ": " + msg;
 		globals.errors.add(msg);
 		
 		CriterionJsonContext cur = this;

@@ -4,7 +4,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -15,6 +14,7 @@ import com.google.gson.JsonParseException;
 import amidst.documentation.JsonField;
 import amidst.mojangapi.file.world.filter.Criterion;
 import amidst.mojangapi.file.world.filter.CriterionBiome;
+import amidst.mojangapi.file.world.filter.CriterionInvalid;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.coordinates.Region;
 
@@ -47,7 +47,7 @@ public class CriterionJsonBase extends CriterionJson {
 	
 	
 	@Override
-	protected Optional<Criterion> doValidate(CriterionJsonContext ctx) {
+	protected Criterion doValidate(CriterionJsonContext ctx) {
 
 		if(shape == null)
 			shape = ctx.getShape();
@@ -91,15 +91,15 @@ public class CriterionJsonBase extends CriterionJson {
 			
 		default:
 			ctx.error("unknown shape " + shape);
-			return Optional.empty();
+			return new CriterionInvalid(ctx.getName());
 		}
 		
 		if(ctx.hasErrors())
-			return Optional.empty();
+			return new CriterionInvalid(ctx.getName());
 		
 		Region region = isSquare ? Region.box(center, radius) : Region.circle(center, radius);
 
-		return Optional.of(new CriterionBiome(ctx.getName(), region, list, isChecked));
+		return new CriterionBiome(ctx.getName(), region, list, isChecked);
 	}
 	
 	public static class ClusterInfoDeserializer implements JsonDeserializer<ClusterInfo> {

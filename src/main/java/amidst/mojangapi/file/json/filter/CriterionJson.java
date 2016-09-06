@@ -2,11 +2,11 @@ package amidst.mojangapi.file.json.filter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.JsonField;
 import amidst.mojangapi.file.world.filter.Criterion;
+import amidst.mojangapi.file.world.filter.CriterionInvalid;
 import amidst.mojangapi.file.world.filter.CriterionNegate;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
@@ -24,16 +24,15 @@ public abstract class CriterionJson {
 	@GsonConstructor
 	public CriterionJson() {}
 	
-	public Optional<Criterion> validate(CriterionJsonContext ctx) {
+	public Criterion validate(CriterionJsonContext ctx) {
 
 		if(center != null) {
 			ctx.withCenter(ctx.getCenter().add(center));
 		}
 		
-		Optional<Criterion> criterion;
+		Criterion criterion;
 		if(negate) {
-			criterion = doValidate(ctx.withName("!"))
-					.map(c -> new CriterionNegate(ctx.getName(), c));
+			criterion = new CriterionNegate(ctx.getName(), doValidate(ctx.withName("!")));
 		} else {
 			criterion = doValidate(ctx);
 		}
@@ -41,19 +40,19 @@ public abstract class CriterionJson {
 			
 		if(score != 0) {
 			ctx.error("the score attribute isn't supported yet");
+			return new CriterionInvalid(ctx.getName());
 		}
 		
 		return criterion;
 	}
 	
-	protected abstract Optional<Criterion> doValidate(CriterionJsonContext ctx);
+	protected abstract Criterion doValidate(CriterionJsonContext ctx);
 	
 	
 	protected static List<Criterion> validateList(List<CriterionJson> list, CriterionJsonContext ctx, String listName) {	
 		List<Criterion> criteria = new ArrayList<>();
 		for(int i = 0; i < list.size(); i++) {
-			Optional<Criterion> c = list.get(i).validate(ctx.withName(listName + "[" + i + "]"));
-			c.ifPresent(criteria::add);
+			criteria.add(list.get(i).validate(ctx.withName(listName + "[" + i + "]")));
 		}
 		return criteria;
 	}

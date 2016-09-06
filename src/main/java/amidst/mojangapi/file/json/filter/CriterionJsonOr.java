@@ -1,12 +1,12 @@
 package amidst.mojangapi.file.json.filter;
 
 import java.util.List;
-import java.util.Optional;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.JsonField;
 import amidst.mojangapi.file.world.filter.Criterion;
 import amidst.mojangapi.file.world.filter.CriterionAnd;
+import amidst.mojangapi.file.world.filter.CriterionInvalid;
 
 public class CriterionJsonOr extends CriterionJson {
 	@JsonField()
@@ -22,18 +22,12 @@ public class CriterionJsonOr extends CriterionJson {
 	public CriterionJsonOr() {}
 	
 	@Override
-	protected Optional<Criterion> doValidate(CriterionJsonContext ctx) {
-		
-		List<Criterion> criteria = validateList(or, ctx, "or");
-		
-		if(criteria.size() < or.size())
-			return Optional.empty();
-		
+	protected Criterion doValidate(CriterionJsonContext ctx) {		
 		if(minScore != Integer.MIN_VALUE) {
 			ctx.error("the minScore attribute isn't supported yet");
-			return Optional.empty();
+			return new CriterionInvalid(ctx.getName());
 		}
 		
-		return Optional.of(new CriterionAnd(ctx.getName(), criteria));
+		return new CriterionAnd(ctx.getName(), validateList(or, ctx, "or"));
 	}
 }
