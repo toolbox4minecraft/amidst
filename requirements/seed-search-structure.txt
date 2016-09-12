@@ -1,0 +1,103 @@
+* the user can divide a set of search seeds into a set of matching seeds and a set of unmatching seeds by using a search query. For this, the user provides
+  * a set of search seeds
+  * a search query
+  * additional information
+
+* a search seed consists of
+  * a minecraft version
+  * a world type
+  * a seed
+  * a search area
+
+* a search area consists of
+  * a center point
+  * a size
+  * a shape (optional)
+  
+* a set of search seeds can be given by
+  * a set of search seeds
+  * a search-seed-generator
+
+* a search-seed-generator
+  * is identified by its name
+  * receives a map of strings as parameters (optional)
+  * returns a set of search seeds, one at a time
+
+* a search query consists of
+  * a name-indexed map of search criterions
+  * a matching condition
+  * a set of report-criterions
+  
+* a search criterion consists of
+  * a filter
+  * a score
+
+* a filter
+  * is one of
+    * a biome filter
+    * a structure filter
+    * a logic filter
+  * receives its search area from the search criterion
+
+* a biome filter
+  * consists of
+    * a set of biomes
+    * a search area (optional)
+    * a minimal size (optional)
+    * a shape (optional)
+  * matches a search seed, iff the search seed contains an area in the search area that matches all of the following
+    * it contains only biomes from the given set of biomes
+    * it has at least the given size
+    * it has the given shape
+
+* a structure filter
+  * consists of
+    * a set of structure types
+    * a search area (optional)
+    * a minimal number of structures (optional)
+    * a shape (optional)
+  * matches a search seed, iff the set of structure from the search seed, which are located in the search area contain a subset of structures that matches all of the following
+    * it contains only structures with a type from the given set of structure types
+    * it has at least the given number of structures
+    * it has the given shape
+
+* a logic filter
+  * consists of
+    * a criterion-operation
+    * a set of search criterions
+  * matches a search seed, iff the operation (parameterized with the given search criterions) matches
+
+* a criterion-operation
+  * is identified by its name
+  * receives a list of strings as parameters (optional)
+  * receives a set of search criterions
+  * can use all properties of the search criterions
+  * returns a boolean value (matches or matches not)
+
+* a score can be
+  * a fixed number
+  * a score-operation
+
+* a score-operation
+  * is identified by its name
+  * receives a list of strings as parameters (optional)
+  * receives a filter
+  * can use all properties of the filter
+  * returns a score value
+
+#* the center point of a search area can be given by
+#  * a fixed coordinate
+#  * a coordinate-operation
+#
+#* a coordinate-operation
+#  * is identified by its name
+#  * receives a list of strings as parameters (optional)
+#  * receives a list of coordinates
+#  * returns a coordinate
+#
+#* a coordinate for the coordinate-operation can be one of
+#  * "spawn" for the spawn point
+#  * the name of a criterion for the ...
+
+an example score-operation is one that has a higher score when the matched structure is near to the center point. note, that this prevents the filter from short-circuiting
+examples for a criterion-operation are "and", "or", "not", "minimal score" and "minimal number of matches"

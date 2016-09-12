@@ -1,0 +1,7 @@
+* add CLI
+* terminology: replace "report" by "ignore"?
+* use array shorthand for and?
+* check for cyclic dependencies
+* don't calculate score for "and" and "or" by adding the childrens score by default, because it prevents the short-circuiting
+* if another criterion is refered to use its position, make sure it has a position property -> should be obsolete now, that we dropped the relative center point feature
+* score that is calculated based on the match location (e.g. distance from the center) -> prevents filter from short-circuiting, because there might always be a better match -> filters have a findAnyMatch and findAllMatches operation?
