@@ -1,5 +1,9 @@
 package amidst.gui.profileselect;
 
+import java.io.FileNotFoundException;
+import java.util.Locale;
+import java.util.regex.Pattern;
+
 import amidst.Application;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -11,9 +15,6 @@ import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.threading.WorkerExecutor;
-
-import java.io.FileNotFoundException;
-import java.util.regex.Pattern;
 
 @NotThreadSafe
 public class LocalProfileComponent extends ProfileComponent {
@@ -79,15 +80,15 @@ public class LocalProfileComponent extends ProfileComponent {
 
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private boolean tryLoad() {
+		// TODO: Replace with proper handling for modded profiles.
 		try {
-			Log.i("using minecraft launcher profile '" + getProfileName() + "' with versionId '" + getVersionName()
-					+ "'");
-					
-			String possibleModProfiles = "optifine|forge";
-            if (Pattern.matches(possibleModProfiles, getProfileName().toLowerCase())) {
-                Log.e("Amidst does not support modded Profiles, please select or create an unmodded profile");
-                return false;
-            }
+			Log.i("using minecraft launcher profile '" + getProfileName() + "' with versionId '" + getVersionName() + "'");
+
+			String possibleModProfiles = ".*[optifine|forge].*";
+			if (Pattern.matches(possibleModProfiles, getVersionName().toLowerCase(Locale.ENGLISH))) {
+				Log.e("Amidst does not support modded Minecraft profiles! Please select or create an unmodded Minecraft profile via the Minecraft Launcher.");
+				return false;
+			}
 
 			mojangApi.set(getProfileName(), profileDirectory, versionDirectory);
 			return true;
