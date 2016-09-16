@@ -84,7 +84,7 @@ public class LocalProfileComponent extends ProfileComponent {
 		try {
 			Log.i("using minecraft launcher profile '" + getProfileName() + "' with versionId '" + getVersionName() + "'");
 
-			String possibleModProfiles = ".*[optifine|forge].*";
+			String possibleModProfiles = ".*(optifine|forge).*";
 			if (Pattern.matches(possibleModProfiles, getVersionName().toLowerCase(Locale.ENGLISH))) {
 				Log.e("Amidst does not support modded Minecraft profiles! Please select or create an unmodded Minecraft profile via the Minecraft Launcher.");
 				return false;
