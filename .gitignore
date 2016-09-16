@@ -5,11 +5,9 @@
 *.ear
 
 # IntelliJ IDEA project files #
-*.iml
-/.idea/
-/out/
-
-# Netbeans files
+./AMIDST.eml
+./AMIDST.iml
+./.idea/*
 /bin
 /dist
 /logs
