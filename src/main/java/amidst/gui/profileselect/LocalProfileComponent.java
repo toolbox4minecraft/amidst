@@ -1,6 +1,8 @@
 package amidst.gui.profileselect;
 
 import java.io.FileNotFoundException;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 import amidst.Application;
 import amidst.documentation.AmidstThread;
@@ -78,9 +80,16 @@ public class LocalProfileComponent extends ProfileComponent {
 
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private boolean tryLoad() {
+		// TODO: Replace with proper handling for modded profiles.
 		try {
-			Log.i("using minecraft launcher profile '" + getProfileName() + "' with versionId '" + getVersionName()
-					+ "'");
+			Log.i("using minecraft launcher profile '" + getProfileName() + "' with versionId '" + getVersionName() + "'");
+
+			String possibleModProfiles = ".*(optifine|forge).*";
+			if (Pattern.matches(possibleModProfiles, getVersionName().toLowerCase(Locale.ENGLISH))) {
+				Log.e("Amidst does not support modded Minecraft profiles! Please select or create an unmodded Minecraft profile via the Minecraft Launcher.");
+				return false;
+			}
+
 			mojangApi.set(getProfileName(), profileDirectory, versionDirectory);
 			return true;
 		} catch (LocalMinecraftInterfaceCreationException e) {
