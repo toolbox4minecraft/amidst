@@ -29,9 +29,9 @@ import amidst.gui.main.MainWindow;
 import amidst.logging.Log;
 import amidst.mojangapi.file.json.filter.WorldFilterJson;
 import amidst.mojangapi.file.json.filter.WorldFilterParseException;
+import amidst.mojangapi.file.world.filter.WorldFilter;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
-import amidst.mojangapi.world.filter.WorldFilter;
 
 @NotThreadSafe
 public class SeedSearcherWindow {

@@ -1,8 +1,7 @@
-package amidst.mojangapi.world.filter;
+package amidst.mojangapi.file.world.filter;
 
 import java.util.List;
 
-import amidst.mojangapi.file.world.filter.Criterion;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 

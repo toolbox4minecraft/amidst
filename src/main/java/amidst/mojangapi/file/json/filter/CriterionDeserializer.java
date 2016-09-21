@@ -1,6 +1,7 @@
 package amidst.mojangapi.file.json.filter;
 
 import java.lang.reflect.Type;
+import java.util.stream.Collectors;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -54,18 +55,27 @@ public class CriterionDeserializer implements JsonDeserializer<CriterionJson> {
 		if(obj.has("biomes"))
 			return CriterionJsonBase.class;
 		
-		throw new JsonParseException("unknown criterion type");
+		
+		String summary = obj.entrySet().stream()
+							.map(e -> e.getKey())
+							.collect(Collectors.joining(", ", "{ ", " }"));
+							
+		throw new JsonParseException("unknown criterion type: " + summary);
 	}
 	
 	private static String getTypeString(JsonElement e) {
 		if(e.isJsonArray())
 			return "array";
+		
 		if(e.isJsonObject())
 			return "object";
+		
 		if(e.isJsonPrimitive())
 			return "primitive";
+	
 		if(e.isJsonNull())
 			return "null";
+		
 		return "unknown";
 	}
 	

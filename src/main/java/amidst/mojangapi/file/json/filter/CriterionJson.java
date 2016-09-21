@@ -10,6 +10,12 @@ import amidst.mojangapi.file.world.filter.CriterionInvalid;
 import amidst.mojangapi.file.world.filter.CriterionNegate;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
+/*
+ * This class represent a criterion, as represented in the JSON structure.
+ * The criterion is NOT validated, and may not be valid for semantic reasons.
+ * 
+ * It can be converted to an usable form with the method validate().
+ */
 public abstract class CriterionJson {
 	
 	@JsonField(optional=true)
@@ -24,6 +30,16 @@ public abstract class CriterionJson {
 	@GsonConstructor
 	public CriterionJson() {}
 	
+	/*
+	 * This method validate the criterion and convert it to a
+	 * instance of the amidst.mojangapi.world.filter.Criterion.
+	 * 
+	 * The CriterionJsonContext is used to collect errors and to
+	 * provide default values.
+	 * 
+	 * If any error occurs while validating a criterion, it will be
+	 * converted to an instance of CriterionInvalid.
+	 */
 	public Criterion validate(CriterionJsonContext ctx) {
 
 		if(center != null) {
@@ -46,8 +62,10 @@ public abstract class CriterionJson {
 		return criterion;
 	}
 	
+
+	// This method takes care of subclass-specific validation.
 	protected abstract Criterion doValidate(CriterionJsonContext ctx);
-	
+
 	
 	protected static List<Criterion> validateList(List<CriterionJson> list, CriterionJsonContext ctx, String listName) {	
 		List<Criterion> criteria = new ArrayList<>();

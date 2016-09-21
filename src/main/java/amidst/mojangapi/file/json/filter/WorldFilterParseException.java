@@ -9,9 +9,6 @@ import java.util.Collections;
 
 public class WorldFilterParseException extends Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 631895046392283086L;
 	
 	private List<String> errors;
