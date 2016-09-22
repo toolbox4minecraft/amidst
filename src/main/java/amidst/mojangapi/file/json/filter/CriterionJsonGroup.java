@@ -2,7 +2,7 @@ package amidst.mojangapi.file.json.filter;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.JsonField;
-import amidst.mojangapi.file.world.filter.Criterion;
+import amidst.mojangapi.world.filter.Criterion;
 
 public class CriterionJsonGroup extends CriterionJson {
 	@JsonField()

@@ -12,11 +12,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import amidst.documentation.JsonField;
-import amidst.mojangapi.file.world.filter.Criterion;
-import amidst.mojangapi.file.world.filter.CriterionBiome;
-import amidst.mojangapi.file.world.filter.CriterionInvalid;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.coordinates.Region;
+import amidst.mojangapi.world.filter.Criterion;
+import amidst.mojangapi.world.filter.CriterionBiome;
+import amidst.mojangapi.world.filter.CriterionInvalid;
 
 public class CriterionJsonBase extends CriterionJson {
 	@JsonField()

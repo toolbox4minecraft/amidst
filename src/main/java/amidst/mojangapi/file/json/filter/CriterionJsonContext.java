@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import amidst.mojangapi.file.world.filter.Criterion;
-import amidst.mojangapi.file.world.filter.CriterionInvalid;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.filter.Criterion;
+import amidst.mojangapi.world.filter.CriterionInvalid;
 
 public class CriterionJsonContext {
 	private Globals globals;

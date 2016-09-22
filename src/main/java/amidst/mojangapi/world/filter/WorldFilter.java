@@ -1,4 +1,4 @@
-package amidst.mojangapi.file.world.filter;
+package amidst.mojangapi.world.filter;
 
 import java.util.List;
 

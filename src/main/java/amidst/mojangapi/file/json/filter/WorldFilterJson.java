@@ -11,9 +11,9 @@ import com.google.gson.JsonParseException;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.JsonField;
-import amidst.mojangapi.file.world.filter.Criterion;
-import amidst.mojangapi.file.world.filter.WorldFilter;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.filter.Criterion;
+import amidst.mojangapi.world.filter.WorldFilter;
 import amidst.util.GsonProvider;
 
 public class WorldFilterJson {

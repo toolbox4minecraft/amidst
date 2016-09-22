@@ -4,8 +4,8 @@ import java.util.List;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.JsonField;
-import amidst.mojangapi.file.world.filter.Criterion;
-import amidst.mojangapi.file.world.filter.CriterionAnd;
+import amidst.mojangapi.world.filter.Criterion;
+import amidst.mojangapi.world.filter.CriterionAnd;
 
 public class CriterionJsonAnd extends CriterionJson {
 	@JsonField()

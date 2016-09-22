@@ -1,10 +1,12 @@
-package amidst.mojangapi.file.world.filter;
+package amidst.mojangapi.world.filter;
 
 import java.util.Set;
 
+import amidst.documentation.Immutable;
 import amidst.mojangapi.world.coordinates.Region;
 
 //This class is used to represent a criterion which couldn't be parsed
+@Immutable
 public class CriterionInvalid implements Criterion {
 
 	private String name;

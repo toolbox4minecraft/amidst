@@ -1,12 +1,14 @@
-package amidst.mojangapi.file.world.filter;
+package amidst.mojangapi.world.filter;
 
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.List;
 
+import amidst.documentation.Immutable;
 import amidst.mojangapi.world.coordinates.Region;
 
+@Immutable
 public class CriterionAnd implements Criterion {
 
 	private String name;

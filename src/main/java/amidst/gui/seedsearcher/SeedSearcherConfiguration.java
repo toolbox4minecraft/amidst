@@ -1,8 +1,8 @@
 package amidst.gui.seedsearcher;
 
 import amidst.documentation.Immutable;
-import amidst.mojangapi.file.world.filter.WorldFilter;
 import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.filter.WorldFilter;
 
 @Immutable
 public class SeedSearcherConfiguration {

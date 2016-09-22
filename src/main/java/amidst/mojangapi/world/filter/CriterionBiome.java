@@ -1,13 +1,15 @@
-package amidst.mojangapi.file.world.filter;
+package amidst.mojangapi.world.filter;
 
 import java.util.List;
 
+import amidst.documentation.Immutable;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.coordinates.Region;
 
 import java.util.Set;
 import java.util.Collections;
 
+@Immutable
 public class CriterionBiome implements Criterion {
 	
 	

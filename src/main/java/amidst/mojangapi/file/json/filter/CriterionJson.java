@@ -5,10 +5,10 @@ import java.util.List;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.JsonField;
-import amidst.mojangapi.file.world.filter.Criterion;
-import amidst.mojangapi.file.world.filter.CriterionInvalid;
-import amidst.mojangapi.file.world.filter.CriterionNegate;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.filter.Criterion;
+import amidst.mojangapi.world.filter.CriterionInvalid;
+import amidst.mojangapi.world.filter.CriterionNegate;
 
 /*
  * This class represent a criterion, as represented in the JSON structure.
