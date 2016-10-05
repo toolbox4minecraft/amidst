@@ -10,9 +10,9 @@ import amidst.mojangapi.world.coordinates.Region;
 
 @Immutable
 public class CriterionOr implements Criterion {
-	private String name;
-	private List<Criterion> criteria;
-	private int minimum;
+	private final String name;
+	private final List<Criterion> criteria;
+	private final int minimum;
 	
 	public CriterionOr(String name, List<Criterion> list, int min) {
 		this.name = name;

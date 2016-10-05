@@ -1,9 +1,10 @@
 package amidst.mojangapi.file.json.filter;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -32,7 +33,7 @@ public class CriterionJsonBase extends CriterionJson {
 	public boolean variants = false;
 
 	@JsonField(optional=true)
-	public List<String> structures = Collections.emptyList();
+	public List<String> structures = null;
 	
 	@JsonField(optional=true, require={"structures"})
 	public ClusterInfo cluster;
@@ -54,44 +55,37 @@ public class CriterionJsonBase extends CriterionJson {
 		
 		if(structures != null)
 			ctx.error("the structures attribute isn't supported yet");
-		
-		if(variants)
-			ctx.error("the variants attribute isn't supported yet");
-		
+
 		if(radius <= 0)
 			ctx.error("the radius must be strictly positive (is " + radius + ")");
 		
-		List<Biome> list = new ArrayList<>();
-		if(biomes.isEmpty()) {
-			ctx.error("the biome list can't be empty");
-			
-		} else {
-			for(String biomeName: biomes) {
-				if(Biome.exists(biomeName))
-					list.add(Biome.getByName(biomeName));	
-					
-				else ctx.error("the biome " + biomeName + " doesn't exist");
-			}
-		}
+		Set<Biome> biomeSet = getBiomeSet(ctx);
 		
-		boolean isChecked, isSquare;
-		
+		boolean isChecked = false;
+		boolean isSquare = false;
 		switch(shape) {
 		case "square":
-			isChecked = true; isSquare = true; break;
+			isChecked = true;
+			isSquare = true;
+			break;
 			
 		case "circle":
-			isChecked = true; isSquare = false; break;
+			isChecked = true;
+			isSquare = false;
+			break;
 			
 		case "square_nocheck":
-			isChecked = false; isSquare = true; break;
+			isChecked = false;
+			isSquare = true;
+			break;
 			
 		case "circle_nocheck":
-			isChecked = false; isSquare = false; break;
+			isChecked = false;
+			isSquare = false;
+			break;
 			
 		default:
 			ctx.error("unknown shape " + shape);
-			return new CriterionInvalid(ctx.getName());
 		}
 		
 		if(ctx.hasErrors())
@@ -99,7 +93,31 @@ public class CriterionJsonBase extends CriterionJson {
 		
 		Region region = isSquare ? Region.box(center, radius) : Region.circle(center, radius);
 
-		return new CriterionBiome(ctx.getName(), region, list, isChecked);
+		return new CriterionBiome(ctx.getName(), region, biomeSet, isChecked);
+	}
+	
+	private Set<Biome> getBiomeSet(CriterionJsonContext ctx) {
+		Set<Biome> biomeSet = new HashSet<>();
+		if(biomes.isEmpty() && structures == null) {
+			ctx.error("the biome list can't be empty");
+			
+		} else {
+			for(String biomeName: biomes) {
+				if(Biome.exists(biomeName)) {
+					Biome b = Biome.getByName(biomeName); 
+					if(!biomeSet.add(b))
+						ctx.error("duplicate biome " + b.getName());
+					
+					if(variants && b.isSpecialBiome()) {
+						Biome spec = b.getSpecialVariant();
+						if(!biomeSet.add(spec))
+							ctx.error("duplicate biome " + spec.getName());
+					}
+								
+				} else ctx.error("the biome " + biomeName + " doesn't exist");
+			}
+		}
+		return biomeSet;
 	}
 	
 	public static class ClusterInfoDeserializer implements JsonDeserializer<ClusterInfo> {
@@ -109,6 +127,7 @@ public class CriterionJsonBase extends CriterionJson {
 			if(json.isJsonPrimitive()) {
 				JsonObject obj = new JsonObject();
 				obj.add("size", json);
+				json = obj;
 			}
 			
 			return context.deserialize(json, ClusterInfo.class);

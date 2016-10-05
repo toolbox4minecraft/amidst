@@ -9,7 +9,7 @@ import amidst.mojangapi.world.coordinates.Region;
 @Immutable
 public class CriterionInvalid implements Criterion {
 
-	private String name;
+	private final String name;
 	
 	private static String ERROR_MSG = "This class doesn't support any operations";
 	

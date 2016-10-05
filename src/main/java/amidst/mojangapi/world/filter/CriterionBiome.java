@@ -7,21 +7,23 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.coordinates.Region;
 
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 @Immutable
 public class CriterionBiome implements Criterion {
 	
 	
-	private Region region;
-	private String name;
-	private List<Biome> biomes;
-	private boolean checkDistance;
+	private final Region region;
+	private final String name;
+	private final List<Biome> biomes;
+	private final boolean checkDistance;
 	
-	public CriterionBiome(String name, Region region, List<Biome> biomes, boolean check) {
+	public CriterionBiome(String name, Region region, Collection<Biome> biomes, boolean check) {
 		this.name = name;
 		this.region = region;
-		this.biomes = biomes;
+		this.biomes = new ArrayList<>(biomes);
 		checkDistance = check;
 	}
 

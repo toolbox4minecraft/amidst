@@ -8,8 +8,8 @@ import amidst.mojangapi.world.coordinates.Region;
 @Immutable
 public class CriterionNegate implements Criterion {
 	
-	private String name;
-	private Criterion criterion;
+	private final String name;
+	private final Criterion criterion;
 	
 	public CriterionNegate(String name, Criterion c) {
 		this.name = name;

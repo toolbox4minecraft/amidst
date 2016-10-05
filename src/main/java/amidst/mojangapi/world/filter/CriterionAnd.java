@@ -11,8 +11,8 @@ import amidst.mojangapi.world.coordinates.Region;
 @Immutable
 public class CriterionAnd implements Criterion {
 
-	private String name;
-	private List<Criterion> criteria;
+	private final String name;
+	private final List<Criterion> criteria;
 	
 	public CriterionAnd(String name, List<Criterion> list) {
 		this.name = name;
