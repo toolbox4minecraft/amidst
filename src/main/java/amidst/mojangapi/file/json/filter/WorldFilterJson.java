@@ -57,12 +57,12 @@ public class WorldFilterJson {
 		
 		List<Criterion> criteria = groups.keySet().stream()
 			.filter(name -> !ignoreSet.contains(name))
-			.map(name -> ctx.convertCriterion(name))
+			.map(name -> ctx.convertCriterion(name).orElse(null))
 			.collect(Collectors.toList());
 		
-		Criterion main = match.validate(ctx.withName("<main>"));
+		Criterion main = match.validate(ctx.withName("<main>")).orElse(null);
 		
-		if(ctx.hasErrors())
+		if(!ctx.getErrors().isEmpty())
 			throw new WorldFilterParseException(ctx.getErrors());
 		
 		return new WorldFilter(defaults.center, criteria, main);

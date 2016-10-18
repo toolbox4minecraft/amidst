@@ -1,5 +1,7 @@
 package amidst.mojangapi.file.json.filter;
 
+import java.util.Optional;
+
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.JsonField;
 import amidst.mojangapi.world.filter.Criterion;
@@ -12,7 +14,7 @@ public class CriterionJsonGroup extends CriterionJson {
 	public CriterionJsonGroup() {}
 
 	@Override
-	protected Criterion doValidate(CriterionJsonContext ctx) {
+	protected Optional<Criterion> doValidate(CriterionJsonContext ctx) {
 		return ctx.convertCriterion(group);
 	}
 }

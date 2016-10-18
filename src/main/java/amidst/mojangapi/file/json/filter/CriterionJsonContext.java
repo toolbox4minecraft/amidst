@@ -4,16 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.filter.Criterion;
-import amidst.mojangapi.world.filter.CriterionInvalid;
 
 public class CriterionJsonContext {
 	private Globals globals;
 	
-	private CriterionJsonContext parent = null;
 	private boolean hasErrors = false;
 	
 	private String name = "";
@@ -25,7 +24,7 @@ public class CriterionJsonContext {
 		
 		//List of criteria already converted;
 		//if null, the criterion is being converted and we have a circular reference
-		public Map<String, Criterion> mappings;
+		public Map<String, Optional<Criterion>> mappings;
 		public List<String> errors;
 		
 		public Globals(Function<String, CriterionJson> criterionSupplier) {
@@ -44,7 +43,6 @@ public class CriterionJsonContext {
 	
 	private CriterionJsonContext(CriterionJsonContext ctx) {
 		globals = ctx.globals;
-		parent = ctx;
 		name = ctx.name;
 		hasErrors = false;
 		shape = ctx.shape;
@@ -87,18 +85,18 @@ public class CriterionJsonContext {
 		return ctx;
 	}
 	
-	public Criterion convertCriterion(String name) {
+	public Optional<Criterion> convertCriterion(String name) {
 		CriterionJson json = globals.supplier.apply(name);
 		if(json == null) {
 			error("the group " + name + " doesn't exist");
-			return new CriterionInvalid(name);
+			return Optional.empty();
 		}
 		
 		if(globals.mappings.containsKey(name)) {
-			Criterion c = globals.mappings.get(name);
+			Optional<Criterion> c = globals.mappings.get(name);
 			if(c == null) {
 				error("circular reference to group " + name);
-				return new CriterionInvalid(name);
+				return Optional.empty();
 			}
 			return c;
 		}
@@ -106,7 +104,7 @@ public class CriterionJsonContext {
 		globals.mappings.put(name, null);
 		CriterionJsonContext ctx = copy();
 		ctx.name = name;
-		Criterion c = json.validate(ctx);
+		Optional<Criterion> c = json.validate(ctx);
 		globals.mappings.put(name, c);
 		return c;
 	}
@@ -114,12 +112,11 @@ public class CriterionJsonContext {
 	public void error(String msg) {
 		msg = "In " + getName() + ": " + msg;
 		globals.errors.add(msg);
-		
-		CriterionJsonContext cur = this;
-		while(cur != null && !cur.hasErrors) {
-			cur.hasErrors = true;
-			cur = cur.parent;
-		}
+		hasErrors = true;
+	}
+	
+	public void unsupportedAttribute(String attName) {
+		error("the " + attName + " attribute isn't supported yet");
 	}
 	
 	public boolean hasErrors() {

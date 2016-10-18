@@ -1,9 +1,11 @@
 package amidst.mojangapi.file.json.filter;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.gson.JsonDeserializationContext;
@@ -16,8 +18,9 @@ import amidst.documentation.JsonField;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.coordinates.Region;
 import amidst.mojangapi.world.filter.Criterion;
-import amidst.mojangapi.world.filter.CriterionBiome;
-import amidst.mojangapi.world.filter.CriterionInvalid;
+import amidst.mojangapi.world.filter.ConstraintBiome;
+import amidst.mojangapi.world.filter.CriterionOr;
+import amidst.mojangapi.world.filter.CriterionSimple;
 
 public class CriterionJsonBase extends CriterionJson {
 	@JsonField()
@@ -48,18 +51,20 @@ public class CriterionJsonBase extends CriterionJson {
 	
 	
 	@Override
-	protected Criterion doValidate(CriterionJsonContext ctx) {
+	protected Optional<Criterion> doValidate(CriterionJsonContext ctx) {
 
 		if(shape == null)
 			shape = ctx.getShape();
 		
 		if(structures != null)
-			ctx.error("the structures attribute isn't supported yet");
+			ctx.unsupportedAttribute("structures");
 
 		if(radius <= 0)
 			ctx.error("the radius must be strictly positive (is " + radius + ")");
 		
 		Set<Biome> biomeSet = getBiomeSet(ctx);
+		if(biomeSet.isEmpty() && structures == null)
+			ctx.error("the biome list can't be empty");
 		
 		boolean isChecked = false;
 		boolean isSquare = false;
@@ -87,35 +92,42 @@ public class CriterionJsonBase extends CriterionJson {
 		default:
 			ctx.error("unknown shape " + shape);
 		}
-		
+					
 		if(ctx.hasErrors())
-			return new CriterionInvalid(ctx.getName());
+			return Optional.empty();
 		
 		Region region = isSquare ? Region.box(center, radius) : Region.circle(center, radius);
+		
+		List<Criterion> list = new ArrayList<>(biomeSet.size());
+		for(Biome b: biomeSet) {
+			list.add(new CriterionSimple(
+						ctx.getName() + ":" + b.getIndex(),
+						new ConstraintBiome(region, b, isChecked)
+					));
+		}
+		
+		if(list.size() == 1)
+			return Optional.of(list.get(0));
 
-		return new CriterionBiome(ctx.getName(), region, biomeSet, isChecked);
+		return Optional.of(new CriterionOr(ctx.getName(), list));
 	}
 	
+
 	private Set<Biome> getBiomeSet(CriterionJsonContext ctx) {
 		Set<Biome> biomeSet = new HashSet<>();
-		if(biomes.isEmpty() && structures == null) {
-			ctx.error("the biome list can't be empty");
-			
-		} else {
-			for(String biomeName: biomes) {
-				if(Biome.exists(biomeName)) {
-					Biome b = Biome.getByName(biomeName); 
-					if(!biomeSet.add(b))
-						ctx.error("duplicate biome " + b.getName());
-					
-					if(variants && b.isSpecialBiome()) {
-						Biome spec = b.getSpecialVariant();
-						if(!biomeSet.add(spec))
-							ctx.error("duplicate biome " + spec.getName());
-					}
-								
-				} else ctx.error("the biome " + biomeName + " doesn't exist");
-			}
+		for(String biomeName: biomes) {
+			if(Biome.exists(biomeName)) {
+				Biome b = Biome.getByName(biomeName); 
+				if(!biomeSet.add(b))
+					ctx.error("duplicate biome " + b.getName());
+				
+				if(variants && b.isSpecialBiome()) {
+					Biome spec = b.getSpecialVariant();
+					if(!biomeSet.add(spec))
+						ctx.error("duplicate biome " + spec.getName());
+				}
+							
+			} else ctx.error("the biome " + biomeName + " doesn't exist");
 		}
 		return biomeSet;
 	}

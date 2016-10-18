@@ -2,12 +2,12 @@ package amidst.mojangapi.file.json.filter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.JsonField;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.filter.Criterion;
-import amidst.mojangapi.world.filter.CriterionInvalid;
 import amidst.mojangapi.world.filter.CriterionNegate;
 
 /*
@@ -40,23 +40,24 @@ public abstract class CriterionJson {
 	 * If any error occurs while validating a criterion, it will be
 	 * converted to an instance of CriterionInvalid.
 	 */
-	public Criterion validate(CriterionJsonContext ctx) {
+	public Optional<Criterion> validate(CriterionJsonContext ctx) {
 
 		if(center != null) {
 			ctx.withCenter(ctx.getCenter().add(center));
 		}
 		
-		Criterion criterion;
+		Optional<Criterion> criterion;
 		if(negate) {
-			criterion = new CriterionNegate(ctx.getName(), doValidate(ctx.withName("!")));
+			criterion = doValidate(ctx.withName("!"))
+						.map(c -> new CriterionNegate(ctx.getName(), c));
 		} else {
 			criterion = doValidate(ctx);
 		}
 		
 			
 		if(score != 0) {
-			ctx.error("the score attribute isn't supported yet");
-			return new CriterionInvalid(ctx.getName());
+			ctx.unsupportedAttribute("score");
+			return Optional.empty();
 		}
 		
 		return criterion;
@@ -64,14 +65,19 @@ public abstract class CriterionJson {
 	
 
 	// This method takes care of subclass-specific validation.
-	protected abstract Criterion doValidate(CriterionJsonContext ctx);
+	protected abstract Optional<Criterion> doValidate(CriterionJsonContext ctx);
 
 	
-	protected static List<Criterion> validateList(List<CriterionJson> list, CriterionJsonContext ctx, String listName) {	
+	protected static Optional<List<Criterion>> validateList(List<CriterionJson> list, CriterionJsonContext ctx, String listName) {	
 		List<Criterion> criteria = new ArrayList<>();
+		boolean isOk = true;
 		for(int i = 0; i < list.size(); i++) {
-			criteria.add(list.get(i).validate(ctx.withName(listName + "[" + i + "]")));
+			Optional<Criterion> res = list.get(i).validate(ctx.withName(listName + "[" + i + "]"));
+			
+			if(isOk && res.isPresent())
+				criteria.add(res.get());
+			else isOk = false;
 		}
-		return criteria;
+		return isOk ? Optional.of(criteria) : Optional.empty();
 	}
 }
