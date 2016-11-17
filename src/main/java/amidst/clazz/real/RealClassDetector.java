@@ -1,14 +1,14 @@
-package amidst.clazz.real.detector;
+package amidst.clazz.real;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import amidst.clazz.real.RealClass;
 import amidst.documentation.Immutable;
 
 @Immutable
-public abstract class RealClassDetector {
-	public RealClass firstMatching(List<RealClass> realClasses) {
+@FunctionalInterface
+public interface RealClassDetector {
+	public default RealClass firstMatching(List<RealClass> realClasses) {
 		for (RealClass realClass : realClasses) {
 			if (detect(realClass)) {
 				return realClass;
@@ -17,7 +17,7 @@ public abstract class RealClassDetector {
 		return null;
 	}
 
-	public List<RealClass> allMatching(List<RealClass> realClasses) {
+	public default List<RealClass> allMatching(List<RealClass> realClasses) {
 		List<RealClass> result = new ArrayList<RealClass>();
 		for (RealClass realClass : realClasses) {
 			if (detect(realClass)) {
@@ -27,5 +27,5 @@ public abstract class RealClassDetector {
 		return result;
 	}
 
-	public abstract boolean detect(RealClass realClass);
+	public boolean detect(RealClass realClass);
 }

@@ -21,15 +21,14 @@ public enum DefaultClassTranslator {
 	private ClassTranslator createClassTranslator() {
 		return ClassTranslator
 			.builder()
-				.ifDetect()
-					.wildcardBytes(createIntCacheWildcardBytes())
-					.or()
-					.stringContaining(", tcache: ")
+				.ifDetect(c -> 
+					c.isClassDataWildcardMatching(createIntCacheWildcardBytes())
+					|| c.searchForStringContaining(", tcache: ") 
+				)
 				.thenDeclareRequired(SymbolicNames.CLASS_INT_CACHE)
 					.requiredMethod(SymbolicNames.METHOD_INT_CACHE_RESET_INT_CACHE, "a").end()
 			.next()
-				.ifDetect()
-					.stringContaining("default_1_1")
+				.ifDetect(c -> c.searchForStringContaining("default_1_1"))
 				.thenDeclareOptional(SymbolicNames.CLASS_WORLD_TYPE)
 					.requiredField(SymbolicNames.FIELD_WORLD_TYPE_DEFAULT,      "b")
 					.requiredField(SymbolicNames.FIELD_WORLD_TYPE_FLAT,         "c")
@@ -37,8 +36,11 @@ public enum DefaultClassTranslator {
 					.requiredField(SymbolicNames.FIELD_WORLD_TYPE_AMPLIFIED,    "e")
 					.requiredField(SymbolicNames.FIELD_WORLD_TYPE_CUSTOMIZED,   "f")
 			.next()
-				.ifDetect()
-					.longs(1000L, 2001L, 2000L)
+				.ifDetect(c ->
+					c.searchForLong(1000L)
+					&& c.searchForLong(2001L)
+					&& c.searchForLong(2000L)
+				)
 				.thenDeclareRequired(SymbolicNames.CLASS_GEN_LAYER)
 					// one if the initializeAllBiomeGenerators-methods is required!
 					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_1, "a").real("long").end()
@@ -46,19 +48,15 @@ public enum DefaultClassTranslator {
 					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3, "a").real("long").symbolic("WorldType").real("String").end()
 					.requiredMethod(SymbolicNames.METHOD_GEN_LAYER_GET_INTS,                          "a").real("int") .real("int")          .real("int")   .real("int").end()
 			.next()
-				.ifDetect()
-					.numberOfConstructors(0)
-					.numberOfMethods(6)
-					.numberOfFields(3)
-					.fieldFlags(AccessFlags.PRIVATE | AccessFlags.STATIC, 0, 1, 2)
-					.utf8EqualTo("isDebugEnabled")
-					.or()
-					.numberOfConstructors(0)
-					.numberOfMethods(6)
-					.numberOfFields(3)
-					.fieldFlags(AccessFlags.PUBLIC | AccessFlags.STATIC, 0)
-					.fieldFlags(AccessFlags.PRIVATE | AccessFlags.STATIC, 1, 2)
-					.utf8EqualTo("isDebugEnabled")
+				.ifDetect(c -> 
+					c.getNumberOfConstructors() == 0
+					&& c.getNumberOfMethods() == 6
+					&& c.getNumberOfFields() == 3
+					&& c.getField(0).hasFlags(AccessFlags.STATIC)
+					&& c.getField(1).hasFlags(AccessFlags.PRIVATE | AccessFlags.STATIC)
+					&& c.getField(2).hasFlags(AccessFlags.PRIVATE | AccessFlags.STATIC)
+					&& c.searchForUtf8EqualTo("isDebugEnabled")
+				)
 				.thenDeclareOptional(SymbolicNames.CLASS_BLOCK_INIT)
 					.requiredMethod(SymbolicNames.METHOD_BLOCK_INIT_INITIALIZE, "c").end()
 			.construct();
