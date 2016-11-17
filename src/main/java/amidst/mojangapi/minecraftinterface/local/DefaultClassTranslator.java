@@ -46,6 +46,7 @@ public enum DefaultClassTranslator {
 					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_1, "a").real("long").end()
 					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_2, "a").real("long").symbolic("WorldType").end()
 					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3, "a").real("long").symbolic("WorldType").real("String").end()
+					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3A,"a").real("long").symbolic("WorldType").symbolic("ChunkProviderSettings").end()
 					.requiredMethod(SymbolicNames.METHOD_GEN_LAYER_GET_INTS,                          "a").real("int") .real("int")          .real("int")   .real("int").end()
 			.next()
 				.ifDetect(c -> 
@@ -59,6 +60,23 @@ public enum DefaultClassTranslator {
 				)
 				.thenDeclareOptional(SymbolicNames.CLASS_BLOCK_INIT)
 					.requiredMethod(SymbolicNames.METHOD_BLOCK_INIT_INITIALIZE, "c").end()
+			.next()
+				.ifDetect(c ->
+				 	//some leeway in case Mojang adds or removes fields in the future
+					c.getNumberOfFields() > 70 && c.getNumberOfFields() < 100
+					&& c.getNumberOfMethods() == 0
+				)
+				.thenDeclareOptional(SymbolicNames.CLASS_GEN_OPTIONS)
+			.next()
+				.ifDetect(c ->
+					//same as above
+					c.getNumberOfFields() > 70 && c.getNumberOfFields() < 100
+					&& c.getField(0).hasFlags(AccessFlags.STATIC | AccessFlags.FINAL)
+					&& c.getField(1).hasFlags(AccessFlags.PUBLIC)
+				)
+				.thenDeclareOptional(SymbolicNames.CLASS_GEN_OPTIONS_FACTORY)
+					.requiredMethod(SymbolicNames.METHOD_GEN_OPTIONS_FACTORY_BUILD, "b").end()
+					.requiredMethod(SymbolicNames.METHOD_GEN_OPTIONS_FACTORY_JSON_TO_FACTORY, "a").real("String").end()
 			.construct();
 	}
 	// @formatter:on

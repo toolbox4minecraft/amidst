@@ -40,6 +40,7 @@ public class LocalMinecraftInterfaceBuilder {
 					symbolicClassMap.get(SymbolicNames.CLASS_BLOCK_INIT),
 					symbolicClassMap.get(SymbolicNames.CLASS_GEN_LAYER),
 					symbolicClassMap.get(SymbolicNames.CLASS_WORLD_TYPE),
+					symbolicClassMap.get(SymbolicNames.CLASS_GEN_OPTIONS_FACTORY),
 					recognisedVersion);
 		} catch (MalformedURLException | ClassNotFoundException | FileNotFoundException | JarFileParsingException
 				| SymbolicClassGraphCreationException e) {
