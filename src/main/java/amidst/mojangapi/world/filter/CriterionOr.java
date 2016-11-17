@@ -2,11 +2,9 @@ package amidst.mojangapi.world.filter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import amidst.documentation.Immutable;
-import amidst.mojangapi.world.coordinates.Region;
 
 @Immutable
 public class CriterionOr implements Criterion {
@@ -31,9 +29,7 @@ public class CriterionOr implements Criterion {
 	}
 
 	@Override
-	public Set<Region> getBiomeRegionsNeeded() {
-		return criteria.stream()
-					.flatMap(c -> c.getBiomeRegionsNeeded().stream())
-					.collect(Collectors.toSet());
+	public Stream<Constraint> getConstraintStream() {
+		return criteria.stream().flatMap(Criterion::getConstraintStream);
 	}
 }

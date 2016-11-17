@@ -137,8 +137,7 @@ public abstract class Region {
 		}
 		@Override
 		public int hashCode() {
-			int result = 21;
-			result = 31*result + (int) ((x ^ (x >>> 32)));
+			int result = (int) ((x ^ (x >>> 32)));
 			result = 31*result + (int) ((y ^ (y >>> 32)));
 			result = 31*result + (int) ((radius ^ (radius >>> 32)));
 			return result;

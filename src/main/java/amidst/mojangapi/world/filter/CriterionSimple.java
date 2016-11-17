@@ -5,16 +5,16 @@ import java.util.stream.Stream;
 import amidst.documentation.Immutable;
 
 @Immutable
-public class CriterionNegate implements Criterion {
-	
-	private final String name;
-	private final Criterion criterion;
-	
-	public CriterionNegate(String name, Criterion c) {
-		this.name = name;
-		criterion = c;
-	}
+public class CriterionSimple implements Criterion {
 
+	private final String name;
+	private final Constraint constraint;
+	
+	public CriterionSimple(String n, Constraint c) {
+		name = n;
+		constraint = c;
+	}
+	
 	@Override
 	public String getName() {
 		return name;
@@ -22,6 +22,7 @@ public class CriterionNegate implements Criterion {
 
 	@Override
 	public Stream<Constraint> getConstraintStream() {
-		return criterion.getConstraintStream();
+		return Stream.of(constraint);
 	}
+
 }
