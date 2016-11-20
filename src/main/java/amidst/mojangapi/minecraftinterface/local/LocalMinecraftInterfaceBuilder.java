@@ -26,14 +26,13 @@ public class LocalMinecraftInterfaceBuilder {
 	}
 
 	@NotNull
-	public MinecraftInterface create(VersionDirectory versionDirectory) throws LocalMinecraftInterfaceCreationException {
+	public MinecraftInterface create(VersionDirectory versionDirectory)
+			throws LocalMinecraftInterfaceCreationException {
 		try {
 			URLClassLoader classLoader = versionDirectory.createClassLoader();
 			RecognisedVersion recognisedVersion = RecognisedVersion.from(classLoader);
-			Map<String, SymbolicClass> symbolicClassMap = Classes.createSymbolicClassMap(
-					versionDirectory.getJar(),
-					classLoader,
-					translator);
+			Map<String, SymbolicClass> symbolicClassMap = Classes
+					.createSymbolicClassMap(versionDirectory.getJar(), classLoader, translator);
 			Log.i("Minecraft load complete.");
 			return new LocalMinecraftInterface(
 					symbolicClassMap.get(SymbolicNames.CLASS_INT_CACHE),
@@ -42,7 +41,11 @@ public class LocalMinecraftInterfaceBuilder {
 					symbolicClassMap.get(SymbolicNames.CLASS_WORLD_TYPE),
 					symbolicClassMap.get(SymbolicNames.CLASS_GEN_OPTIONS_FACTORY),
 					recognisedVersion);
-		} catch (MalformedURLException | ClassNotFoundException | FileNotFoundException | JarFileParsingException
+		} catch (
+				MalformedURLException
+				| ClassNotFoundException
+				| FileNotFoundException
+				| JarFileParsingException
 				| SymbolicClassGraphCreationException e) {
 			throw new LocalMinecraftInterfaceCreationException("unable to create local minecraft interface", e);
 		}

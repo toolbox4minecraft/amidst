@@ -123,7 +123,8 @@ public class MojangApi {
 	 * one world at a time. Creating a new world will break all previously
 	 * created world objects.
 	 */
-	public World createWorldFromSeed(WorldSeed worldSeed, WorldType worldType) throws IllegalStateException,
+	public World createWorldFromSeed(WorldSeed worldSeed, WorldType worldType)
+			throws IllegalStateException,
 			MinecraftInterfaceException {
 		MinecraftInterface minecraftInterface = this.minecraftInterface;
 		if (minecraftInterface != null) {
@@ -138,8 +139,12 @@ public class MojangApi {
 	 * one world at a time. Creating a new world will break all previously
 	 * created world objects.
 	 */
-	public World createWorldFromSaveGame(File file) throws FileNotFoundException, IOException, IllegalStateException,
-			MinecraftInterfaceException, MojangApiParsingException {
+	public World createWorldFromSaveGame(File file)
+			throws FileNotFoundException,
+			IOException,
+			IllegalStateException,
+			MinecraftInterfaceException,
+			MojangApiParsingException {
 		MinecraftInterface minecraftInterface = this.minecraftInterface;
 		if (minecraftInterface != null) {
 			return worldBuilder.fromSaveGame(minecraftInterface, SaveDirectory.from(file));

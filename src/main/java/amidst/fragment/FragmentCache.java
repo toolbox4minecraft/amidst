@@ -36,8 +36,10 @@ public class FragmentCache {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public synchronized void increaseSize() {
-		Log.i("increasing fragment cache size from " + cache.size() + " to "
-				+ (cache.size() + NEW_FRAGMENTS_PER_REQUEST));
+		Log
+				.i(
+						"increasing fragment cache size from " + cache.size() + " to "
+								+ (cache.size() + NEW_FRAGMENTS_PER_REQUEST));
 		requestNewFragments();
 		Log.i("fragment cache size increased to " + cache.size());
 	}

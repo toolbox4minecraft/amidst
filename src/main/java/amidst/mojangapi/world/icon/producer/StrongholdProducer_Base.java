@@ -48,8 +48,11 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 				// begin placing strongholds on the next ring.
 				ring = getNextValue_ring(ring);
 				currentRingStructureCount = getNextValue_currentRingStructureCount(currentRingStructureCount);
-				structuresPerRing = getNextValue_structuresPerRing(structuresPerRing, ring, getTotalStructureCount()
-						- i, random);
+				structuresPerRing = getNextValue_structuresPerRing(
+						structuresPerRing,
+						ring,
+						getTotalStructureCount() - i,
+						random);
 				angle = getNextValue_startAngle(angle, random);
 			}
 		}

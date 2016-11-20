@@ -94,16 +94,17 @@ public class GenerateRecognisedVersionList {
 
 	private void printMessages() {
 		System.out.println();
-		System.out.println("If any version are listed in the error section, this might be due to missing libraries.\n"
-				+ "Start the given minecraft version with the launcher.\n"
-				+ "This should download the missing libraries. Afterwards, try again.");
+		System.out.println(
+				"If any version are listed in the error section, this might be due to missing libraries.\n"
+						+ "Start the given minecraft version with the launcher.\n"
+						+ "This should download the missing libraries. Afterwards, try again.");
 		System.out.println();
 		System.out
 				.println("When copying the magic string from this output, make sure to escape all special characters.");
 		System.out.println();
 		System.out.println("Versions without a match are probably removed from the launcher.");
 		System.out.println();
-		System.out
-				.println("You might have to reorder the output, e.g. when a security fix for an old version came out, after the snapshots for the next version started.");
+		System.out.println(
+				"You might have to reorder the output, e.g. when a security fix for an old version came out, after the snapshots for the next version started.");
 	}
 }

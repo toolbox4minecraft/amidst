@@ -38,8 +38,8 @@ public class StrongholdProducer_128Algorithm extends StrongholdProducer_Buggy128
 
 	@Override
 	protected double getNextValue_distance(int currentRing, Random random) {
-		return (4.0 * DISTANCE_IN_CHUNKS) + (6.0 * currentRing * DISTANCE_IN_CHUNKS) + (random.nextDouble() - 0.5)
-				* (DISTANCE_IN_CHUNKS * 2.5);
+		return (4.0 * DISTANCE_IN_CHUNKS) + (6.0 * currentRing * DISTANCE_IN_CHUNKS)
+				+ (random.nextDouble() - 0.5) * (DISTANCE_IN_CHUNKS * 2.5);
 	}
 
 	@Override

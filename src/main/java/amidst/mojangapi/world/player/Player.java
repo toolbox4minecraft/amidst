@@ -43,8 +43,10 @@ public class Player {
 			if (saveLocation()) {
 				return true;
 			} else {
-				Log.w("skipping to save player location, because the backup file cannot be created for player: "
-						+ getPlayerName());
+				Log
+						.w(
+								"skipping to save player location, because the backup file cannot be created for player: "
+										+ getPlayerName());
 				return false;
 			}
 		} catch (MojangApiParsingException e) {

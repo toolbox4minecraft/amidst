@@ -146,7 +146,8 @@ public class BiomeDataOracle {
 		return coordinate * 16 + 8;
 	}
 
-	public Biome getBiomeAtMiddleOfChunk(int chunkX, int chunkY) throws UnknownBiomeIndexException,
+	public Biome getBiomeAtMiddleOfChunk(int chunkX, int chunkY)
+			throws UnknownBiomeIndexException,
 			MinecraftInterfaceException {
 		return getBiomeAt(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY));
 	}
@@ -161,7 +162,8 @@ public class BiomeDataOracle {
 		return Biome.getByIndex(biomeData[0]);
 	}
 
-	private int[] getQuarterResolutionBiomeData(int x, int y, int width, int height) throws MinecraftInterfaceException {
+	private int[] getQuarterResolutionBiomeData(int x, int y, int width, int height)
+			throws MinecraftInterfaceException {
 		return getBiomeData(x, y, width, height, true);
 	}
 

@@ -69,13 +69,12 @@ public class EndIslandOracle {
 	}
 
 	public List<EndIsland> getAt(CoordinatesInWorld corner) {
-		// @formatter:off
 		int steps = Resolution.CHUNK.getStepsPerFragment();
 		return findSurroundingIslands(
 				(int) corner.getXAs(Resolution.CHUNK),
 				(int) corner.getYAs(Resolution.CHUNK),
-				steps, steps);
-		// @formatter:on
+				steps,
+				steps);
 	}
 
 	/**

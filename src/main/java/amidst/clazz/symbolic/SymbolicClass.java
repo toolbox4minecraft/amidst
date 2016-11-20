@@ -59,22 +59,30 @@ public class SymbolicClass {
 		return fieldsBySymbolicName.get(symbolicName) != null;
 	}
 
-	public SymbolicObject callConstructor(String symbolicName, Object... parameters) throws InstantiationException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public SymbolicObject callConstructor(String symbolicName, Object... parameters)
+			throws InstantiationException,
+			IllegalAccessException,
+			IllegalArgumentException,
+			InvocationTargetException {
 		return constructorsBySymbolicName.get(symbolicName).call(parameters);
 	}
 
 	public Object callMethod(String symbolicName, SymbolicObject symbolicObject, Object... parameters)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			throws IllegalAccessException,
+			IllegalArgumentException,
+			InvocationTargetException {
 		return methodsBySymbolicName.get(symbolicName).call(symbolicObject, parameters);
 	}
 
-	public Object callStaticMethod(String symbolicName, Object... parameters) throws IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
+	public Object callStaticMethod(String symbolicName, Object... parameters)
+			throws IllegalAccessException,
+			IllegalArgumentException,
+			InvocationTargetException {
 		return methodsBySymbolicName.get(symbolicName).callStatic(parameters);
 	}
 
-	public Object getFieldValue(String symbolicName, SymbolicObject symbolicObject) throws IllegalArgumentException,
+	public Object getFieldValue(String symbolicName, SymbolicObject symbolicObject)
+			throws IllegalArgumentException,
 			IllegalAccessException {
 		return fieldsBySymbolicName.get(symbolicName).getValue(symbolicObject);
 	}

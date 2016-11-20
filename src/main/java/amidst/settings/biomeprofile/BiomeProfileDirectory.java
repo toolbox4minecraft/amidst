@@ -5,12 +5,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import amidst.documentation.Immutable;
-import amidst.logging.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+
+import amidst.documentation.Immutable;
+import amidst.logging.Log;
 
 @Immutable
 public class BiomeProfileDirectory {

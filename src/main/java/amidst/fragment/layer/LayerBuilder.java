@@ -50,14 +50,12 @@ public class LayerBuilder {
 	 * This also defines the construction order.
 	 */
 	private Iterable<FragmentConstructor> createConstructors() {
-		// @formatter:off
-		return Collections.unmodifiableList(Arrays.asList(
-				new BiomeDataConstructor(Resolution.QUARTER),
-				new EndIslandsConstructor(),
-				new ImageConstructor(    Resolution.QUARTER,  LayerIds.BACKGROUND),
-				new ImageConstructor(    Resolution.CHUNK,    LayerIds.SLIME)
-		));
-		// @formatter:on
+		return Collections.unmodifiableList(
+				Arrays.asList(
+						new BiomeDataConstructor(Resolution.QUARTER),
+						new EndIslandsConstructor(),
+						new ImageConstructor(Resolution.QUARTER, LayerIds.BACKGROUND),
+						new ImageConstructor(Resolution.CHUNK, LayerIds.SLIME)));
 	}
 
 	public Iterable<FragmentConstructor> getConstructors() {
@@ -75,13 +73,13 @@ public class LayerBuilder {
 			WorldIconSelection worldIconSelection,
 			Zoom zoom,
 			Graphics2DAccelerationCounter accelerationCounter) {
-		// @formatter:off
 		List<LayerDeclaration> declarations = createDeclarations(settings, world.getVersionFeatures());
 		return new LayerManager(
 				declarations,
-				new LayerLoader(createLoaders(declarations, world, biomeSelection, settings), LayerIds.NUMBER_OF_LAYERS),
+				new LayerLoader(
+						createLoaders(declarations, world, biomeSelection, settings),
+						LayerIds.NUMBER_OF_LAYERS),
 				createDrawers(declarations, zoom, worldIconSelection, accelerationCounter));
-		// @formatter:on
 	}
 
 	private List<LayerDeclaration> createDeclarations(AmidstSettings settings, VersionFeatures versionFeatures) {

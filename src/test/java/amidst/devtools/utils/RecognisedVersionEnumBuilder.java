@@ -28,8 +28,9 @@ public class RecognisedVersionEnumBuilder {
 
 	public void addKnown(RecognisedVersion recognisedVersion) {
 		if (recognisedVersion.isKnown()) {
-			builders
-					.put(recognisedVersion.getMagicString(), RecognisedVersionEnumEntryBuilder.known(recognisedVersion));
+			builders.put(
+					recognisedVersion.getMagicString(),
+					RecognisedVersionEnumEntryBuilder.known(recognisedVersion));
 		}
 	}
 

@@ -66,8 +66,8 @@ public class StructureAlgorithm implements LocationChecker {
 	private int updateValue(Random random, int value) {
 		value *= maxDistanceBetweenScatteredFeatures;
 		if (useTwoValuesForUpdate) {
-			value += (random.nextInt(distanceBetweenScatteredFeaturesRange) + random
-					.nextInt(distanceBetweenScatteredFeaturesRange)) / 2;
+			value += (random.nextInt(distanceBetweenScatteredFeaturesRange)
+					+ random.nextInt(distanceBetweenScatteredFeaturesRange)) / 2;
 		} else {
 			value += random.nextInt(distanceBetweenScatteredFeaturesRange);
 		}

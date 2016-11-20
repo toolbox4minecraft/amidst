@@ -24,15 +24,19 @@ public class MojangApiBuilder {
 	}
 
 	@NotNull
-	public MojangApi construct() throws DotMinecraftDirectoryNotFoundException,
+	public MojangApi construct()
+			throws DotMinecraftDirectoryNotFoundException,
 			LocalMinecraftInterfaceCreationException {
 		DotMinecraftDirectory dotMinecraftDirectory = createDotMinecraftDirectory();
 		if (dotMinecraftDirectory.isValid()) {
-			Log.i("using '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "', libraries: '"
-					+ dotMinecraftDirectory.getLibraries() + "'");
+			Log
+					.i(
+							"using '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "', libraries: '"
+									+ dotMinecraftDirectory.getLibraries() + "'");
 		} else {
-			throw new DotMinecraftDirectoryNotFoundException("invalid '.minecraft' directory at: '"
-					+ dotMinecraftDirectory.getRoot() + "', libraries: '" + dotMinecraftDirectory.getLibraries() + "'");
+			throw new DotMinecraftDirectoryNotFoundException(
+					"invalid '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "', libraries: '"
+							+ dotMinecraftDirectory.getLibraries() + "'");
 		}
 		MojangApi result = new MojangApi(worldBuilder, dotMinecraftDirectory);
 		result.set(null, null, createVersionDirectory(result));
@@ -55,12 +59,18 @@ public class MojangApiBuilder {
 			File json = new File(parameters.minecraftJsonFile);
 			VersionDirectory result = mojangApi.createVersionDirectory(jar, json);
 			if (result.isValid()) {
-				Log.i("using minecraft version directory. versionId: '" + result.getVersionId() + "', jar file: '"
-						+ result.getJar() + "', json file: '" + result.getJson() + "'");
+				Log
+						.i(
+								"using minecraft version directory. versionId: '" + result.getVersionId()
+										+ "', jar file: '" + result.getJar() + "', json file: '" + result.getJson()
+										+ "'");
 				return result;
 			} else {
-				Log.w("invalid minecraft version directory. versionId: '" + result.getVersionId() + "', jar file: '"
-						+ result.getJar() + "', json file: '" + result.getJson() + "'");
+				Log
+						.w(
+								"invalid minecraft version directory. versionId: '" + result.getVersionId()
+										+ "', jar file: '" + result.getJar() + "', json file: '" + result.getJson()
+										+ "'");
 			}
 		}
 		return null;

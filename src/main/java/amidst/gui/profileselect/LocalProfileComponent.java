@@ -82,11 +82,16 @@ public class LocalProfileComponent extends ProfileComponent {
 	private boolean tryLoad() {
 		// TODO: Replace with proper handling for modded profiles.
 		try {
-			Log.i("using minecraft launcher profile '" + getProfileName() + "' with versionId '" + getVersionName() + "'");
+			Log
+					.i(
+							"using minecraft launcher profile '" + getProfileName() + "' with versionId '"
+									+ getVersionName() + "'");
 
 			String possibleModProfiles = ".*(optifine|forge).*";
 			if (Pattern.matches(possibleModProfiles, getVersionName().toLowerCase(Locale.ENGLISH))) {
-				Log.e("Amidst does not support modded Minecraft profiles! Please select or create an unmodded Minecraft profile via the Minecraft Launcher.");
+				Log
+						.e(
+								"Amidst does not support modded Minecraft profiles! Please select or create an unmodded Minecraft profile via the Minecraft Launcher.");
 				return false;
 			}
 

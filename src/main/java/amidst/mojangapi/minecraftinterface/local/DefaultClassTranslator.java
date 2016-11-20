@@ -79,7 +79,6 @@ public enum DefaultClassTranslator {
 					.requiredMethod(SymbolicNames.METHOD_GEN_OPTIONS_FACTORY_JSON_TO_FACTORY, "a").real("String").end()
 			.construct();
 	}
-	// @formatter:on
 
 	private int[] createIntCacheWildcardBytes() {
 		return new int[] { 0x11, 0x01, 0x00, 0xB3, 0x00, WILDCARD, 0xBB, 0x00, WILDCARD, 0x59, 0xB7, 0x00, WILDCARD,
@@ -87,4 +86,5 @@ public enum DefaultClassTranslator {
 				0x00, WILDCARD, 0x59, 0xB7, 0x00, WILDCARD, 0xB3, 0x00, WILDCARD, 0xBB, 0x00, WILDCARD, 0x59, 0xB7,
 				0x00, WILDCARD, 0xB3, 0x00, WILDCARD, 0xB1 };
 	}
+	// @formatter:on
 }

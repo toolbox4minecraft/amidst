@@ -15,12 +15,11 @@ import amidst.mojangapi.world.WorldType;
 @ThreadSafe
 public interface MinecraftInterface {
 	/**
-	 * @param useQuarterResolution
-	 *            Minecraft calculates biomes at quarter-resolution, then
-	 *            noisily interpolates the biome-map up to 1:1 resolution when
-	 *            needed, set useQuarterResolutionMap to true to read from the
-	 *            quarter-resolution map, or false to read values that have been
-	 *            interpolated up to full resolution.
+	 * @param useQuarterResolution Minecraft calculates biomes at
+	 *            quarter-resolution, then noisily interpolates the biome-map up
+	 *            to 1:1 resolution when needed, set useQuarterResolutionMap to
+	 *            true to read from the quarter-resolution map, or false to read
+	 *            values that have been interpolated up to full resolution.
 	 * 
 	 *            When useQuarterResolution is true, the x, y, width, and height
 	 *            paramaters must all correspond to a quarter of the Minecraft

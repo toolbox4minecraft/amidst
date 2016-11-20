@@ -16,20 +16,15 @@ public class TempleLocationChecker extends AllValidLocationChecker {
 	private static final boolean USE_TWO_VALUES_FOR_UPDATE = false;
 
 	public TempleLocationChecker(long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomesAtMiddleOfChunk) {
-		// @formatter:off
-		super(new StructureAlgorithm(
+		super(
+				new StructureAlgorithm(
 						seed,
 						MAGIC_NUMBER_FOR_SEED_1,
 						MAGIC_NUMBER_FOR_SEED_2,
 						MAGIC_NUMBER_FOR_SEED_3,
 						MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 						MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-						USE_TWO_VALUES_FOR_UPDATE
-				), new BiomeLocationChecker(
-						biomeDataOracle,
-						validBiomesAtMiddleOfChunk
-				)
-		);
-		// @formatter:on
+						USE_TWO_VALUES_FOR_UPDATE),
+				new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk));
 	}
 }

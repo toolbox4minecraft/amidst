@@ -13,11 +13,11 @@ import amidst.mojangapi.world.WorldType;
 
 @Immutable
 public enum TestWorldDeclaration {
+	// @formatter:off
 	/**
 	 * Not all worlds will have data in all entries. However, we should ensure
 	 * that the behavior is kept like this.
 	 */
-	// @formatter:off
 	WORLD1(RecognisedVersion._1_8_9, "amidst-test-seed", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     ),

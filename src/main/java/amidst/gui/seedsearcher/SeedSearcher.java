@@ -77,7 +77,8 @@ public class SeedSearcher {
 
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private void doSearch(ProgressReporter<WorldSeed> reporter, SeedSearcherConfiguration configuration)
-			throws IllegalStateException, MinecraftInterfaceException {
+			throws IllegalStateException,
+			MinecraftInterfaceException {
 		do {
 			doSearchOne(reporter, configuration);
 		} while (configuration.isSearchContinuously() && !isStopRequested);

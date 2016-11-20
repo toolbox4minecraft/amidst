@@ -44,13 +44,11 @@ public enum PlayerLocationLoader {
 	private static PlayerCoordinates readPlayerCoordinates(CompoundTag tag) {
 		int dimensionId = getTagDimension(tag).getValue();
 		List<Tag> posList = getTagPos(tag).getValue();
-		// @formatter:off
 		return PlayerCoordinates.fromNBTFile(
 				(long) (double) (Double) posList.get(0).getValue(),
 				(long) (double) (Double) posList.get(1).getValue(),
 				(long) (double) (Double) posList.get(2).getValue(),
 				dimensionId);
-		// @formatter:on
 	}
 
 	private static IntTag getTagDimension(CompoundTag tag) {

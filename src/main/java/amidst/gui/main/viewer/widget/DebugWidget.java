@@ -38,7 +38,6 @@ public class DebugWidget extends TextWidget {
 		if (isVisibleSetting.get()) {
 			int columns = graph.getFragmentsPerRow();
 			int rows = graph.getFragmentsPerColumn();
-			// @formatter:off
 			return Arrays.asList(
 					"Fragment Manager:",
 					"Cache Size: " + fragmentManager.getCacheSize(),
@@ -48,9 +47,7 @@ public class DebugWidget extends TextWidget {
 					"",
 					"Viewer:",
 					"Size: " + columns + "x" + rows + " [" + (columns * rows) + "]",
-					String.format("Acceleration: %1$.1f%%", accelerationCounter.getAcceleratedPercentage())
-			);
-			// @formatter:on
+					String.format("Acceleration: %1$.1f%%", accelerationCounter.getAcceleratedPercentage()));
 		} else {
 			return null;
 		}

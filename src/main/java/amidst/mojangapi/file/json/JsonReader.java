@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+
 import amidst.ResourceLoader;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
@@ -17,10 +21,6 @@ import amidst.mojangapi.file.json.player.PlayerJson;
 import amidst.mojangapi.file.json.player.SimplePlayerJson;
 import amidst.mojangapi.file.json.version.VersionJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 
 /**
  * This is a utility class used to read JSON data. Please use this class only to
@@ -89,7 +89,8 @@ public enum JsonReader {
 	}
 
 	@NotNull
-	public static LauncherProfilesJson readLauncherProfilesFrom(File file) throws MojangApiParsingException,
+	public static LauncherProfilesJson readLauncherProfilesFrom(File file)
+			throws MojangApiParsingException,
 			IOException {
 		return read(URIUtils.newReader(file), LauncherProfilesJson.class);
 	}
@@ -116,7 +117,8 @@ public enum JsonReader {
 	}
 
 	@NotNull
-	public static SimplePlayerJson readSimplePlayerFromPlayerName(String playerName) throws IOException,
+	public static SimplePlayerJson readSimplePlayerFromPlayerName(String playerName)
+			throws IOException,
 			MojangApiParsingException {
 		return read(URIUtils.newReader(PLAYERNAME_TO_UUID + playerName), SimplePlayerJson.class);
 	}

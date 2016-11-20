@@ -88,7 +88,9 @@ public enum PlayerLocationSaver {
 		return new CompoundTag(NBTTagKeys.TAG_KEY_DATA, modifiedPlayerMap);
 	}
 
-	private static Map<String, Tag> modifyPositionInPlayerMap(Map<String, Tag> playerMap, PlayerCoordinates coordinates) {
+	private static Map<String, Tag> modifyPositionInPlayerMap(
+			Map<String, Tag> playerMap,
+			PlayerCoordinates coordinates) {
 		Map<String, Tag> result = new HashMap<String, Tag>(playerMap);
 		ListTag posTag = (ListTag) playerMap.get(NBTTagKeys.TAG_KEY_POS);
 		ListTag modifiedPosTag = modifyPositionInPosTag(posTag, coordinates);

@@ -15,9 +15,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
 import amidst.documentation.Immutable;
+import net.miginfocom.swing.MigLayout;
 
 @Immutable
 public class LicenseWindow {

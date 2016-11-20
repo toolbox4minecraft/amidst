@@ -9,17 +9,14 @@ public class EndCityLocationChecker extends AllValidLocationChecker {
 	private static final boolean USE_TWO_VALUES_FOR_UPDATE = true;
 
 	public EndCityLocationChecker(long seed) {
-		// @formatter:off
-		super(new StructureAlgorithm(
+		super(
+				new StructureAlgorithm(
 						seed,
 						MAGIC_NUMBER_FOR_SEED_1,
 						MAGIC_NUMBER_FOR_SEED_2,
 						MAGIC_NUMBER_FOR_SEED_3,
 						MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 						MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-						USE_TWO_VALUES_FOR_UPDATE
-				)
-		);
-		// @formatter:on
+						USE_TWO_VALUES_FOR_UPDATE));
 	}
 }

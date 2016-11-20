@@ -64,11 +64,15 @@ public class CTBuilder {
 			});
 		}
 
-		public SymbolicParameterDeclarationListBuilder<SCDBuilder> requiredMethod(String symbolicName, String realName) {
+		public SymbolicParameterDeclarationListBuilder<SCDBuilder> requiredMethod(
+				String symbolicName,
+				String realName) {
 			return method(symbolicName, realName, false);
 		}
 
-		public SymbolicParameterDeclarationListBuilder<SCDBuilder> optionalMethod(String symbolicName, String realName) {
+		public SymbolicParameterDeclarationListBuilder<SCDBuilder> optionalMethod(
+				String symbolicName,
+				String realName) {
 			return method(symbolicName, realName, true);
 		}
 
@@ -115,7 +119,7 @@ public class CTBuilder {
 		this.detector = detector;
 		return this;
 	}
-	
+
 	public SCDBuilder thenDeclareRequired(String symbolicClassName) {
 		return thenDeclare(symbolicClassName, false);
 	}
@@ -125,7 +129,7 @@ public class CTBuilder {
 	}
 
 	private SCDBuilder thenDeclare(String symbolicClassName, boolean isOptional) {
-		if(detector == null)
+		if (detector == null)
 			throw new IllegalStateException("can't declare a symbolic class without calling ifDetect before");
 		CTBuilder.this.declarationBuilder.init(symbolicClassName, isOptional);
 		return CTBuilder.this.declarationBuilder;

@@ -34,8 +34,10 @@ public class SymbolicObject {
 		return type.hasField(symbolicName);
 	}
 
-	public Object callMethod(String symbolicName, Object... parameters) throws IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
+	public Object callMethod(String symbolicName, Object... parameters)
+			throws IllegalAccessException,
+			IllegalArgumentException,
+			InvocationTargetException {
 		return type.callMethod(symbolicName, this, parameters);
 	}
 

@@ -187,8 +187,10 @@ public enum RecognisedVersion {
 	}
 
 	private static void logFound(RecognisedVersion recognisedVersion) {
-		Log.i("Recognised Minecraft Version " + recognisedVersion.name + " with the magic string \""
-				+ recognisedVersion.magicString + "\".");
+		Log
+				.i(
+						"Recognised Minecraft Version " + recognisedVersion.name + " with the magic string \""
+								+ recognisedVersion.magicString + "\".");
 	}
 
 	public static boolean isNewerOrEqualTo(RecognisedVersion version1, RecognisedVersion version2) {
@@ -222,8 +224,9 @@ public enum RecognisedVersion {
 		for (RecognisedVersion recognisedVersion : RecognisedVersion.values()) {
 			if (result.containsKey(recognisedVersion.getName())) {
 				RecognisedVersion colliding = result.get(recognisedVersion.getName());
-				throw new RuntimeException("name collision for the recognised versions " + recognisedVersion.getName()
-						+ " and " + colliding.getName());
+				throw new RuntimeException(
+						"name collision for the recognised versions " + recognisedVersion.getName() + " and "
+								+ colliding.getName());
 			} else {
 				result.put(recognisedVersion.getName(), recognisedVersion);
 			}
@@ -236,8 +239,9 @@ public enum RecognisedVersion {
 		for (RecognisedVersion recognisedVersion : RecognisedVersion.values()) {
 			if (result.containsKey(recognisedVersion.getMagicString())) {
 				RecognisedVersion colliding = result.get(recognisedVersion.getMagicString());
-				throw new RuntimeException("magic string collision for the recognised versions "
-						+ recognisedVersion.getName() + " and " + colliding.getName());
+				throw new RuntimeException(
+						"magic string collision for the recognised versions " + recognisedVersion.getName() + " and "
+								+ colliding.getName());
 			} else {
 				result.put(recognisedVersion.getMagicString(), recognisedVersion);
 			}

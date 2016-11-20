@@ -42,11 +42,9 @@ public class Amidst {
 	private static void parseCommandLineArgumentsAndRun(String[] args) {
 		CommandLineParameters parameters = new CommandLineParameters();
 		AmidstMetaData metadata = createMetadata();
-		CmdLineParser parser = new CmdLineParser(parameters, ParserProperties
-				.defaults()
-				.withShowDefaults(false)
-				.withUsageWidth(120)
-				.withOptionSorter(null));
+		CmdLineParser parser = new CmdLineParser(
+				parameters,
+				ParserProperties.defaults().withShowDefaults(false).withUsageWidth(120).withOptionSorter(null));
 		try {
 			parser.parseArgument(args);
 			run(parameters, metadata, parser);
@@ -174,12 +172,11 @@ public class Amidst {
 		} catch (DotMinecraftDirectoryNotFoundException e) {
 			Log.w(e.getMessage());
 			e.printStackTrace();
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"Amidst is not able to find your '.minecraft' directory, but it requires a working Minecraft installation.",
-							"Please install Minecraft",
-							JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(
+					null,
+					"Amidst is not able to find your '.minecraft' directory, but it requires a working Minecraft installation.",
+					"Please install Minecraft",
+					JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e) {
 			handleCrash(e, Thread.currentThread());
 		}

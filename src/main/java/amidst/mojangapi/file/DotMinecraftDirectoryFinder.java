@@ -18,8 +18,10 @@ public enum DotMinecraftDirectoryFinder {
 			if (result.isDirectory()) {
 				return result;
 			} else {
-				Log.w("Unable to set Minecraft directory to: " + result
-						+ " as that location does not exist or is not a folder.");
+				Log
+						.w(
+								"Unable to set Minecraft directory to: " + result
+										+ " as that location does not exist or is not a folder.");
 			}
 		}
 		return getMinecraftDirectory();

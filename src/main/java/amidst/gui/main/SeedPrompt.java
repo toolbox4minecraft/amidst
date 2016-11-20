@@ -14,10 +14,10 @@ import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import net.miginfocom.swing.MigLayout;
 import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldSeed.WorldSeedType;
+import net.miginfocom.swing.MigLayout;
 
 @NotThreadSafe
 public class SeedPrompt {

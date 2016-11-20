@@ -94,14 +94,16 @@ public class SymbolicClassBuilder {
 	}
 
 	private SymbolicConstructor createConstructor(SymbolicConstructorDeclaration declaration)
-			throws ClassNotFoundException, NoSuchMethodException {
+			throws ClassNotFoundException,
+			NoSuchMethodException {
 		String symbolicName = declaration.getSymbolicName();
 		Class<?>[] parameterClasses = getParameterClasses(declaration.getParameters().getDeclarations());
 		Constructor<?> constructor = getConstructor(product.getClazz(), parameterClasses);
 		return new SymbolicConstructor(product, symbolicName, constructor);
 	}
 
-	private SymbolicMethod createMethod(SymbolicMethodDeclaration declaration) throws ClassNotFoundException,
+	private SymbolicMethod createMethod(SymbolicMethodDeclaration declaration)
+			throws ClassNotFoundException,
 			NoSuchMethodException {
 		String symbolicName = declaration.getSymbolicName();
 		String realName = declaration.getRealName();
@@ -125,7 +127,8 @@ public class SymbolicClassBuilder {
 		return result;
 	}
 
-	private Method getMethod(Class<?> clazz, String realName, Class<?>[] parameterClasses) throws NoSuchMethodException {
+	private Method getMethod(Class<?> clazz, String realName, Class<?>[] parameterClasses)
+			throws NoSuchMethodException {
 		Method result = clazz.getDeclaredMethod(realName, parameterClasses);
 		result.setAccessible(true);
 		return result;

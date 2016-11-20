@@ -17,11 +17,11 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import net.miginfocom.swing.MigLayout;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.settings.Setting;
+import net.miginfocom.swing.MigLayout;
 
 @NotThreadSafe
 public class ProfileSelectPanel {
