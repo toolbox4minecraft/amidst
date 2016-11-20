@@ -28,7 +28,6 @@ public enum DefaultVersionFeatures {
 		// @formatter:off
 		return new VersionFeatures(
 				INSTANCE.enabledLayers.getValue(version),
-				INSTANCE.isSaveEnabled.getValue(version),
 				INSTANCE.validBiomesForStructure_Spawn.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_Stronghold.getValue(version),
 				INSTANCE.strongholdProducerFactory.getValue(version),
@@ -43,7 +42,6 @@ public enum DefaultVersionFeatures {
 	}
 
 	private final VersionFeature<List<Integer>> enabledLayers;
-	private final VersionFeature<Boolean> isSaveEnabled;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_Spawn;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Stronghold;
 	private final VersionFeature<TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base>> strongholdProducerFactory;
@@ -76,16 +74,6 @@ public enum DefaultVersionFeatures {
 				).sinceExtend(RecognisedVersion._15w31c,
 						LayerIds.END_ISLANDS,
 						LayerIds.END_CITY
-				).construct();
-		this.isSaveEnabled = VersionFeature.<Boolean> builder()
-				.init(
-						true
-				).exact(RecognisedVersion._12w21a,
-						false
-				).exact(RecognisedVersion._12w21b,
-						false
-				).exact(RecognisedVersion._12w22a,
-						false
 				).construct();
 		this.validBiomesForStructure_Spawn = VersionFeature.<Biome> listBuilder()
 				.init(
