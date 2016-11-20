@@ -13,8 +13,8 @@ public class VersionFeatureBuilder<V> {
 	private V defaultValue = null;
 	private RecognisedVersion previous = null;
 	private RecognisedVersion previousExact = null;
-	private final List<VersionFeatureEntry<V>> exactMatches = new LinkedList<VersionFeatureEntry<V>>();
-	private final List<VersionFeatureEntry<V>> entriesNewestFirst = new LinkedList<VersionFeatureEntry<V>>();
+	private final List<VersionFeatureEntry<V>> exactMatches = new LinkedList<>();
+	private final List<VersionFeatureEntry<V>> entriesNewestFirst = new LinkedList<>();
 
 	public VersionFeatureBuilder<V> init(V defaultValue) {
 		if (this.defaultValue == null) {
@@ -37,7 +37,7 @@ public class VersionFeatureBuilder<V> {
 			throw new IllegalStateException("you have to specify all exact matches before the first since");
 		} else {
 			previousExact = version;
-			exactMatches.add(0, new VersionFeatureEntry<V>(version, value));
+			exactMatches.add(0, new VersionFeatureEntry<>(version, value));
 			return this;
 		}
 	}
@@ -52,13 +52,13 @@ public class VersionFeatureBuilder<V> {
 			throw new IllegalStateException("you have to specify versions in ascending order");
 		} else {
 			previous = version;
-			entriesNewestFirst.add(0, new VersionFeatureEntry<V>(version, value));
+			entriesNewestFirst.add(0, new VersionFeatureEntry<>(version, value));
 			return this;
 		}
 	}
 
 	public VersionFeature<V> construct() {
-		return new VersionFeature<V>(
+		return new VersionFeature<>(
 				defaultValue,
 				Collections.unmodifiableList(exactMatches),
 				Collections.unmodifiableList(entriesNewestFirst));

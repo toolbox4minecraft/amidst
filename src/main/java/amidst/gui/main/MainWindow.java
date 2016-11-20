@@ -55,7 +55,7 @@ public class MainWindow {
 	private final AmidstMenu menuBar;
 	private final SeedSearcherWindow seedSearcherWindow;
 
-	private final AtomicReference<ViewerFacade> viewerFacade = new AtomicReference<ViewerFacade>();
+	private final AtomicReference<ViewerFacade> viewerFacade = new AtomicReference<>();
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public MainWindow(

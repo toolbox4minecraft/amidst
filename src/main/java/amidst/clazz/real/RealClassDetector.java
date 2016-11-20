@@ -18,7 +18,7 @@ public interface RealClassDetector {
 	}
 
 	public default List<RealClass> allMatching(List<RealClass> realClasses) {
-		List<RealClass> result = new ArrayList<RealClass>();
+		List<RealClass> result = new ArrayList<>();
 		for (RealClass realClass : realClasses) {
 			if (detect(realClass)) {
 				result.add(realClass);

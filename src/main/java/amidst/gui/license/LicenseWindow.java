@@ -64,7 +64,7 @@ public class LicenseWindow {
 	}
 
 	private JList<License> createLicenseList(License[] licenses, final JTextArea textArea) {
-		final JList<License> result = new JList<License>(licenses);
+		final JList<License> result = new JList<>(licenses);
 		result.setBorder(new LineBorder(Color.darkGray, 1));
 		result.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		result.addListSelectionListener(new ListSelectionListener() {

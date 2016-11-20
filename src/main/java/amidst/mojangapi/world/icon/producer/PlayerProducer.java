@@ -19,7 +19,7 @@ public class PlayerProducer extends CachedWorldIconProducer {
 
 	@Override
 	protected List<WorldIcon> doCreateCache() {
-		List<WorldIcon> result = new LinkedList<WorldIcon>();
+		List<WorldIcon> result = new LinkedList<>();
 		for (Player player : movablePlayerList) {
 			PlayerCoordinates coordinates = player.getPlayerCoordinates();
 			result.add(

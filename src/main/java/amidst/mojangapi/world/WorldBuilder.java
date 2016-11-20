@@ -1,7 +1,6 @@
 package amidst.mojangapi.world;
 
 import java.io.IOException;
-import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.MojangApiParsingException;
@@ -23,7 +22,6 @@ import amidst.mojangapi.world.icon.type.EndCityWorldIconTypeProvider;
 import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
 import amidst.mojangapi.world.icon.type.TempleWorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
-import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.HeuristicWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.ImmutableWorldSpawnOracle;
@@ -126,7 +124,7 @@ public class WorldBuilder {
 						biomeDataOracle,
 						versionFeatures.getValidBiomesAtMiddleOfChunk_Stronghold()),
 				new PlayerProducer(movablePlayerList),
-				new StructureProducer<Void>(
+				new StructureProducer<>(
 						Resolution.CHUNK,
 						4,
 						new VillageLocationChecker(
@@ -136,7 +134,7 @@ public class WorldBuilder {
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
 						Dimension.OVERWORLD,
 						false),
-				new StructureProducer<Void>(
+				new StructureProducer<>(
 						Resolution.CHUNK,
 						8,
 						new TempleLocationChecker(
@@ -146,14 +144,14 @@ public class WorldBuilder {
 						new TempleWorldIconTypeProvider(biomeDataOracle),
 						Dimension.OVERWORLD,
 						false),
-				new StructureProducer<Void>(
+				new StructureProducer<>(
 						Resolution.CHUNK,
 						8,
 						versionFeatures.getMineshaftAlgorithmFactory().apply(seed),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.MINESHAFT),
 						Dimension.OVERWORLD,
 						false),
-				new StructureProducer<Void>(
+				new StructureProducer<>(
 						Resolution.CHUNK,
 						8,
 						versionFeatures.getOceanMonumentLocationCheckerFactory().apply(
@@ -164,14 +162,14 @@ public class WorldBuilder {
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
 						Dimension.OVERWORLD,
 						false),
-				new StructureProducer<Void>(
+				new StructureProducer<>(
 						Resolution.NETHER_CHUNK,
 						88,
 						new NetherFortressAlgorithm(seed),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
 						Dimension.NETHER,
 						false),
-				new StructureProducer<List<EndIsland>>(
+				new StructureProducer<>(
 						Resolution.CHUNK,
 						8,
 						new EndCityLocationChecker(seed),

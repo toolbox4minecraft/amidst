@@ -16,8 +16,8 @@ import amidst.logging.Log;
  */
 @ThreadSafe
 public class PlayerInformationCacheImpl implements PlayerInformationCache {
-	private final Map<String, PlayerInformation> byUUID = new ConcurrentHashMap<String, PlayerInformation>();
-	private final Map<String, PlayerInformation> byName = new ConcurrentHashMap<String, PlayerInformation>();
+	private final Map<String, PlayerInformation> byUUID = new ConcurrentHashMap<>();
+	private final Map<String, PlayerInformation> byName = new ConcurrentHashMap<>();
 
 	@NotNull
 	@Override

@@ -24,7 +24,7 @@ public class RecognisedVersionEnumEntryBuilder {
 	private final boolean isKnown;
 	private final String knownName;
 	private final String magicString;
-	private final List<String> matches = new LinkedList<String>();
+	private final List<String> matches = new LinkedList<>();
 	private String declaration;
 
 	public RecognisedVersionEnumEntryBuilder(boolean isKnown, String knownName, String magicString) {

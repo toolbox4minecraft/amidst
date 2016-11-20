@@ -61,7 +61,7 @@ public class SeedSearcherWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JComboBox<WorldType> createWorldTypeComboBox() {
-		return new JComboBox<WorldType>(WorldType.getSelectableArray());
+		return new JComboBox<>(WorldType.getSelectableArray());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

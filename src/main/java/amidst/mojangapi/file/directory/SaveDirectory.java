@@ -156,7 +156,7 @@ public class SaveDirectory {
 	 */
 	@NotNull
 	public List<PlayerNbt> createMultiplayerPlayerNbts() {
-		List<PlayerNbt> result = new ArrayList<PlayerNbt>();
+		List<PlayerNbt> result = new ArrayList<>();
 		for (File playerdataFile : getPlayerdataFiles()) {
 			if (playerdataFile.isFile()) {
 				result.add(createPlayerdataPlayerNbt(getPlayerUUIDFromPlayerdataFile(playerdataFile)));

@@ -20,7 +20,7 @@ import amidst.mojangapi.world.biome.BiomeColor;
 @Immutable
 public class BiomeProfile {
 	private static Map<String, BiomeColorJson> createDefaultColorMap() {
-		Map<String, BiomeColorJson> result = new HashMap<String, BiomeColorJson>();
+		Map<String, BiomeColorJson> result = new HashMap<>();
 		for (Biome biome : Biome.allBiomes()) {
 			result.put(biome.getName(), biome.getDefaultColor().createBiomeColorJson());
 		}
@@ -105,7 +105,7 @@ public class BiomeProfile {
 	}
 
 	private Set<Entry<String, BiomeColorJson>> getSortedColorMapEntries() {
-		SortedMap<String, BiomeColorJson> result = new TreeMap<String, BiomeColorJson>(Biome::compareByIndex);
+		SortedMap<String, BiomeColorJson> result = new TreeMap<>(Biome::compareByIndex);
 		result.putAll(colorMap);
 		return result.entrySet();
 	}

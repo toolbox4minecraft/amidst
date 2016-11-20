@@ -32,7 +32,7 @@ public enum TestWorldCache {
 	private final TestWorldBuilder builder = TestWorldBuilder.from(DefaultTestWorldDirectoryDeclaration.get());
 	private final TestWorldDirectoryReader reader = builder.createReader();
 	private final TestWorldDirectoryWriter writer = builder.createWriter();
-	private final ConcurrentHashMap<TestWorldDeclaration, TestWorld> cache = new ConcurrentHashMap<TestWorldDeclaration, TestWorld>();
+	private final ConcurrentHashMap<TestWorldDeclaration, TestWorld> cache = new ConcurrentHashMap<>();
 
 	public void doCreateAndPut(TestWorldDeclaration declaration, MinecraftInterface realMinecraftInterface)
 			throws MinecraftInterfaceException,

@@ -35,7 +35,7 @@ public class BiomeWidget extends Widget {
 	private final LayerReloader layerReloader;
 	private final BiomeProfileSelection biomeProfileSelection;
 
-	private List<Biome> biomes = new ArrayList<Biome>();
+	private List<Biome> biomes = new ArrayList<>();
 	private int maxNameWidth = 0;
 	private int biomeListHeight;
 	private boolean isInitialized = false;

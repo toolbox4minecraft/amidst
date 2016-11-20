@@ -85,7 +85,7 @@ public class EndIslandOracle {
 			int chunkY,
 			int chunksPerFragmentX,
 			int chunksPerFragmentY) {
-		List<EndIsland> result = new LinkedList<EndIsland>();
+		List<EndIsland> result = new LinkedList<>();
 		for (int y = -SURROUNDING_CHUNKS; y <= chunksPerFragmentY + SURROUNDING_CHUNKS; y++) {
 			for (int x = -SURROUNDING_CHUNKS; x <= chunksPerFragmentX + SURROUNDING_CHUNKS; x++) {
 				EndIsland island = tryCreateEndIsland(chunkX + x, chunkY + y);

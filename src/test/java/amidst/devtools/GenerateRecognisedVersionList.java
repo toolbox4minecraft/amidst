@@ -20,8 +20,8 @@ public class GenerateRecognisedVersionList {
 	private final VersionListJson versionList;
 	private final File versions;
 	private final DotMinecraftDirectory dotMinecraftDirectory;
-	private final List<String> versionsWithError = new LinkedList<String>();
-	private final List<String> downloadFailed = new LinkedList<String>();
+	private final List<String> versionsWithError = new LinkedList<>();
+	private final List<String> downloadFailed = new LinkedList<>();
 	private final RecognisedVersionEnumBuilder builder = RecognisedVersionEnumBuilder.createPopulated();
 
 	public GenerateRecognisedVersionList(String prefix, String libraries, VersionListJson versionList) {

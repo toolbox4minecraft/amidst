@@ -40,7 +40,7 @@ public enum RealClasses {
 
 	private static List<RealClass> readJarFile(ZipFile zipFile) throws IOException, RealClassCreationException {
 		Enumeration<? extends ZipEntry> enu = zipFile.entries();
-		List<RealClass> result = new ArrayList<RealClass>();
+		List<RealClass> result = new ArrayList<>();
 		while (enu.hasMoreElements()) {
 			RealClass entry = readJarFileEntry(zipFile, enu.nextElement());
 			if (entry != null) {

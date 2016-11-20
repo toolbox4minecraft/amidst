@@ -50,7 +50,7 @@ public enum Classes {
 		Log.i("Checking " + jarFile.getName());
 		List<RealClass> realClasses = RealClasses.fromJarFile(jarFile);
 		Map<SymbolicClassDeclaration, List<RealClass>> map = translator.translateToAllMatching(realClasses);
-		Map<SymbolicClassDeclaration, Integer> result = new HashMap<SymbolicClassDeclaration, Integer>();
+		Map<SymbolicClassDeclaration, Integer> result = new HashMap<>();
 		for (Entry<SymbolicClassDeclaration, List<RealClass>> entry : map.entrySet()) {
 			result.put(entry.getKey(), entry.getValue().size());
 			if (entry.getValue().isEmpty()) {

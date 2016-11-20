@@ -11,10 +11,10 @@ import amidst.mojangapi.world.testworld.file.TestWorldEntryDeclaration;
 
 @NotThreadSafe
 public class TestWorldDirectoryDeclarationBuilder {
-	private final Map<String, TestWorldEntryDeclarationBuilder<?>> builders = new HashMap<String, TestWorldEntryDeclarationBuilder<?>>();
+	private final Map<String, TestWorldEntryDeclarationBuilder<?>> builders = new HashMap<>();
 
 	public TestWorldDirectoryDeclaration create() {
-		Map<String, TestWorldEntryDeclaration<?>> result = new HashMap<String, TestWorldEntryDeclaration<?>>();
+		Map<String, TestWorldEntryDeclaration<?>> result = new HashMap<>();
 		for (Entry<String, TestWorldEntryDeclarationBuilder<?>> entry : builders.entrySet()) {
 			result.put(entry.getKey(), entry.getValue().constructThis());
 		}
@@ -22,7 +22,7 @@ public class TestWorldDirectoryDeclarationBuilder {
 	}
 
 	public <T> TestWorldEntryDeclarationBuilder<T> entry(String name, Class<T> clazz) {
-		TestWorldEntryDeclarationBuilder<T> builder = new TestWorldEntryDeclarationBuilder<T>(this, name, clazz);
+		TestWorldEntryDeclarationBuilder<T> builder = new TestWorldEntryDeclarationBuilder<>(this, name, clazz);
 		builders.put(name, builder);
 		return builder;
 	}

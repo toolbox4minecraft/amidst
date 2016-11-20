@@ -62,7 +62,7 @@ public class WorldFilterJson_MatchAll {
 	}
 
 	private List<WorldFilter> createFilterList() {
-		List<WorldFilter> filters = new ArrayList<WorldFilter>();
+		List<WorldFilter> filters = new ArrayList<>();
 		for (WorldFilterJson_Biome biomeFilterJson : biomeFilters) {
 			filters.add(biomeFilterJson.createBiomeFilter());
 		}

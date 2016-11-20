@@ -14,7 +14,7 @@ import amidst.logging.Log;
 public class FragmentCache {
 	private static final int NEW_FRAGMENTS_PER_REQUEST = 1024;
 
-	private final List<Fragment> cache = new LinkedList<Fragment>();
+	private final List<Fragment> cache = new LinkedList<>();
 	private volatile int cacheSize = 0;
 
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;

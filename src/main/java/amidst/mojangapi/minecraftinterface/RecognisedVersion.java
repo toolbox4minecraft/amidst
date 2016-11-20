@@ -220,7 +220,7 @@ public enum RecognisedVersion {
 	}
 
 	public static Map<String, RecognisedVersion> generateNameToRecognisedVersionMap() {
-		Map<String, RecognisedVersion> result = new LinkedHashMap<String, RecognisedVersion>();
+		Map<String, RecognisedVersion> result = new LinkedHashMap<>();
 		for (RecognisedVersion recognisedVersion : RecognisedVersion.values()) {
 			if (result.containsKey(recognisedVersion.getName())) {
 				RecognisedVersion colliding = result.get(recognisedVersion.getName());
@@ -235,7 +235,7 @@ public enum RecognisedVersion {
 	}
 
 	public static Map<String, RecognisedVersion> generateMagicStringToRecognisedVersionMap() {
-		Map<String, RecognisedVersion> result = new LinkedHashMap<String, RecognisedVersion>();
+		Map<String, RecognisedVersion> result = new LinkedHashMap<>();
 		for (RecognisedVersion recognisedVersion : RecognisedVersion.values()) {
 			if (result.containsKey(recognisedVersion.getMagicString())) {
 				RecognisedVersion colliding = result.get(recognisedVersion.getMagicString());

@@ -13,7 +13,7 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 @NotThreadSafe
 public class ListVersionFeatureBuilder<V> {
 	private static <V> List<V> concat(List<V> values, List<V> additionalValues) {
-		List<V> result = new ArrayList<V>(values.size() + additionalValues.size());
+		List<V> result = new ArrayList<>(values.size() + additionalValues.size());
 		result.addAll(values);
 		result.addAll(additionalValues);
 		return result;
@@ -22,8 +22,8 @@ public class ListVersionFeatureBuilder<V> {
 	private List<V> defaultValue = null;
 	private RecognisedVersion previous = null;
 	private RecognisedVersion previousExact = null;
-	private final List<VersionFeatureEntry<List<V>>> exactMatches = new LinkedList<VersionFeatureEntry<List<V>>>();
-	private final List<VersionFeatureEntry<List<V>>> entriesNewestFirst = new LinkedList<VersionFeatureEntry<List<V>>>();
+	private final List<VersionFeatureEntry<List<V>>> exactMatches = new LinkedList<>();
+	private final List<VersionFeatureEntry<List<V>>> entriesNewestFirst = new LinkedList<>();
 
 	@SafeVarargs
 	public final ListVersionFeatureBuilder<V> init(V... defaultValues) {
@@ -56,7 +56,7 @@ public class ListVersionFeatureBuilder<V> {
 			throw new IllegalStateException("you have to specify all exact matches before the first since");
 		} else {
 			previousExact = version;
-			exactMatches.add(0, new VersionFeatureEntry<List<V>>(version, Collections.unmodifiableList(value)));
+			exactMatches.add(0, new VersionFeatureEntry<>(version, Collections.unmodifiableList(value)));
 			return this;
 		}
 	}
@@ -81,7 +81,7 @@ public class ListVersionFeatureBuilder<V> {
 			throw new IllegalStateException("you have to specify versions in ascending order");
 		} else {
 			previous = version;
-			entriesNewestFirst.add(0, new VersionFeatureEntry<List<V>>(version, Collections.unmodifiableList(value)));
+			entriesNewestFirst.add(0, new VersionFeatureEntry<>(version, Collections.unmodifiableList(value)));
 			return this;
 		}
 	}
@@ -97,7 +97,7 @@ public class ListVersionFeatureBuilder<V> {
 	}
 
 	public VersionFeature<List<V>> construct() {
-		return new VersionFeature<List<V>>(
+		return new VersionFeature<>(
 				defaultValue,
 				Collections.unmodifiableList(exactMatches),
 				Collections.unmodifiableList(entriesNewestFirst));

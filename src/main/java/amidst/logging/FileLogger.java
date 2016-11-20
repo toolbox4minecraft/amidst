@@ -17,7 +17,7 @@ import amidst.documentation.NotThreadSafe;
 
 @NotThreadSafe
 public class FileLogger implements Logger {
-	private final ConcurrentLinkedQueue<String> logMessageQueue = new ConcurrentLinkedQueue<String>();
+	private final ConcurrentLinkedQueue<String> logMessageQueue = new ConcurrentLinkedQueue<>();
 	private final File file;
 	private final ScheduledExecutorService executor;
 

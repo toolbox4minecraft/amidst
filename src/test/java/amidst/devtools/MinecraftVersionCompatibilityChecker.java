@@ -31,8 +31,8 @@ public class MinecraftVersionCompatibilityChecker {
 	}
 
 	public void run() {
-		List<VersionListEntryJson> supported = new ArrayList<VersionListEntryJson>();
-		List<VersionListEntryJson> unsupported = new ArrayList<VersionListEntryJson>();
+		List<VersionListEntryJson> supported = new ArrayList<>();
+		List<VersionListEntryJson> unsupported = new ArrayList<>();
 		for (VersionListEntryJson version : versionList.getVersions()) {
 			if (checkOne(version)) {
 				supported.add(version);

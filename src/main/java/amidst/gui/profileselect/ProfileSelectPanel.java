@@ -94,7 +94,7 @@ public class ProfileSelectPanel {
 
 	private final Setting<String> lastProfileSetting;
 	private final Component component;
-	private final List<ProfileComponent> profileComponents = new ArrayList<ProfileComponent>();
+	private final List<ProfileComponent> profileComponents = new ArrayList<>();
 
 	private ProfileComponent selected = null;
 	private int selectedIndex = INVALID_INDEX;
