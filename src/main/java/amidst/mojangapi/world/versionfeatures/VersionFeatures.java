@@ -13,7 +13,6 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
 @Immutable
 public class VersionFeatures {
 	private final List<Integer> enabledLayers;
-	private final boolean isSaveEnabled;
 	private final List<Biome> validBiomesForStructure_Spawn;
 	private final List<Biome> validBiomesAtMiddleOfChunk_Stronghold;
 	private final TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base> strongholdProducerFactory;
@@ -26,7 +25,6 @@ public class VersionFeatures {
 
 	public VersionFeatures(
 			List<Integer> enabledLayers,
-			boolean isSaveEnabled,
 			List<Biome> validBiomesForStructure_Spawn,
 			List<Biome> validBiomesAtMiddleOfChunk_Stronghold,
 			TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base> strongholdProducerFactory,
@@ -37,7 +35,6 @@ public class VersionFeatures {
 			List<Biome> validBiomesAtMiddleOfChunk_OceanMonument,
 			List<Biome> validBiomesForStructure_OceanMonument) {
 		this.enabledLayers = enabledLayers;
-		this.isSaveEnabled = isSaveEnabled;
 		this.validBiomesForStructure_Spawn = validBiomesForStructure_Spawn;
 		this.validBiomesAtMiddleOfChunk_Stronghold = validBiomesAtMiddleOfChunk_Stronghold;
 		this.strongholdProducerFactory = strongholdProducerFactory;
@@ -51,16 +48,6 @@ public class VersionFeatures {
 
 	public boolean hasLayer(int layerId) {
 		return enabledLayers.contains(layerId);
-	}
-
-	/**
-	 * TODO: @skiphs why does it depend on the loaded minecraft version whether
-	 * we can save player locations or not? we do not use the minecraft jar file
-	 * to save player locations and it does not depend on the jar file which
-	 * worlds can be loaded.
-	 */
-	public boolean isSaveEnabled() {
-		return isSaveEnabled;
 	}
 
 	public List<Biome> getValidBiomesForStructure_Spawn() {

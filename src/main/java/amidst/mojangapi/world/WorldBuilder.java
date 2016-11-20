@@ -80,7 +80,7 @@ public class WorldBuilder {
 		MovablePlayerList movablePlayerList = new MovablePlayerList(
 				playerInformationCache,
 				saveDirectory,
-				versionFeatures.isSaveEnabled(),
+				true,
 				WorldPlayerType.from(saveDirectory, levelDat));
 		return create(
 				minecraftInterface,
