@@ -2,8 +2,6 @@ package amidst.gui.main;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -80,7 +78,6 @@ public class MainWindow {
 		this.actions = createActions();
 		this.menuBar = createMenuBar();
 		this.seedSearcherWindow = createSeedSearcherWindow();
-		initKeyListener();
 		initCloseListener();
 		showFrame();
 		clearViewerFacade();
@@ -129,20 +126,6 @@ public class MainWindow {
 				this,
 				mojangApi,
 				threadMaster.getWorkerExecutor()));
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void initKeyListener() {
-		frame.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				if (e.getKeyChar() == '+') {
-					actions.adjustZoom(-1);
-				} else if (e.getKeyChar() == '-') {
-					actions.adjustZoom(1);
-				}
-			}
-		});
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

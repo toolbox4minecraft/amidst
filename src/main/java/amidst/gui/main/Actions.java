@@ -156,6 +156,16 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	public void zoomIn() {
+		adjustZoom(-1);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void zoomOut() {
+		adjustZoom(1);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void savePlayerLocations() {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
@@ -247,7 +257,7 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void adjustZoom(int notches) {
+	private void adjustZoom(int notches) {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
 			viewerFacade.adjustZoom(notches);
