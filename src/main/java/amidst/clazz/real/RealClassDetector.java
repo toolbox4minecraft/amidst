@@ -1,31 +1,25 @@
 package amidst.clazz.real;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import amidst.documentation.Immutable;
 
 @Immutable
-@FunctionalInterface
-public interface RealClassDetector {
-	public default RealClass firstMatching(List<RealClass> realClasses) {
-		for (RealClass realClass : realClasses) {
-			if (detect(realClass)) {
-				return realClass;
-			}
-		}
-		return null;
+public class RealClassDetector {
+	private final Predicate<RealClass> predicate;
+
+	public RealClassDetector(Predicate<RealClass> predicate) {
+		this.predicate = predicate;
 	}
 
-	public default List<RealClass> allMatching(List<RealClass> realClasses) {
-		List<RealClass> result = new ArrayList<>();
-		for (RealClass realClass : realClasses) {
-			if (detect(realClass)) {
-				result.add(realClass);
-			}
-		}
-		return result;
+	public Optional<RealClass> firstMatching(List<RealClass> realClasses) {
+		return realClasses.stream().filter(predicate).findFirst();
 	}
 
-	public boolean detect(RealClass realClass);
+	public List<RealClass> allMatching(List<RealClass> realClasses) {
+		return realClasses.stream().filter(predicate).collect(Collectors.toList());
+	}
 }

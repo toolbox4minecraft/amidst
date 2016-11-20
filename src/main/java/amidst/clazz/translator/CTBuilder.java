@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
+import amidst.clazz.real.RealClass;
 import amidst.clazz.real.RealClassDetector;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
@@ -115,8 +117,8 @@ public class CTBuilder {
 		this.previous = previous;
 	}
 
-	public CTBuilder ifDetect(RealClassDetector detector) {
-		this.detector = detector;
+	public CTBuilder ifDetect(Predicate<RealClass> predicate) {
+		this.detector = new RealClassDetector(predicate);
 		return this;
 	}
 
@@ -132,8 +134,8 @@ public class CTBuilder {
 		if (detector == null) {
 			throw new IllegalStateException("can't declare a symbolic class without calling ifDetect before");
 		}
-		CTBuilder.this.declarationBuilder.init(symbolicClassName, isOptional);
-		return CTBuilder.this.declarationBuilder;
+		declarationBuilder.init(symbolicClassName, isOptional);
+		return declarationBuilder;
 	}
 
 	public ClassTranslator construct() {
