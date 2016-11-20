@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import amidst.clazz.real.RealClass;
-import amidst.clazz.real.detector.RealClassDetector;
+import amidst.clazz.real.RealClassDetector;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.documentation.Immutable;
 
