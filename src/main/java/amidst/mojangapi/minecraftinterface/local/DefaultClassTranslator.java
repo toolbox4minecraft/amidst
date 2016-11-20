@@ -44,10 +44,10 @@ public enum DefaultClassTranslator {
 				.thenDeclareRequired(SymbolicNames.CLASS_GEN_LAYER)
 					// one if the initializeAllBiomeGenerators-methods is required!
 					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_1, "a").real("long").end()
-					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_2, "a").real("long").symbolic("WorldType").end()
-					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3, "a").real("long").symbolic("WorldType").real("String").end()
-					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3A,"a").real("long").symbolic("WorldType").symbolic("ChunkProviderSettings").end()
-					.requiredMethod(SymbolicNames.METHOD_GEN_LAYER_GET_INTS,                          "a").real("int") .real("int")          .real("int")   .real("int").end()
+					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_2, "a").real("long").symbolic(SymbolicNames.CLASS_WORLD_TYPE).end()
+					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3, "a").real("long").symbolic(SymbolicNames.CLASS_WORLD_TYPE).real("String").end()
+					.optionalMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_4, "a").real("long").symbolic(SymbolicNames.CLASS_WORLD_TYPE).symbolic(SymbolicNames.CLASS_GEN_OPTIONS).end()
+					.requiredMethod(SymbolicNames.METHOD_GEN_LAYER_GET_INTS,                          "a").real("int") .real("int")                             .real("int")   .real("int").end()
 			.next()
 				.ifDetect(c -> 
 					c.getNumberOfConstructors() == 0
@@ -62,14 +62,14 @@ public enum DefaultClassTranslator {
 					.requiredMethod(SymbolicNames.METHOD_BLOCK_INIT_INITIALIZE, "c").end()
 			.next()
 				.ifDetect(c ->
-				 	//some leeway in case Mojang adds or removes fields in the future
+					// some leeway in case Mojang adds or removes fields in the future
 					c.getNumberOfFields() > 70 && c.getNumberOfFields() < 100
 					&& c.getNumberOfMethods() == 0
 				)
 				.thenDeclareOptional(SymbolicNames.CLASS_GEN_OPTIONS)
 			.next()
 				.ifDetect(c ->
-					//same as above
+					// some leeway in case Mojang adds or removes fields in the future
 					c.getNumberOfFields() > 70 && c.getNumberOfFields() < 100
 					&& c.getField(0).hasFlags(AccessFlags.STATIC | AccessFlags.FINAL)
 					&& c.getField(1).hasFlags(AccessFlags.PUBLIC)
