@@ -16,7 +16,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotNull;
 import amidst.documentation.NotThreadSafe;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -120,7 +120,7 @@ public class UpdatePrompt {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void onCheckFailed(Exception e) {
-		Log.w("unable to check for updates");
+		AmidstLogger.warn("unable to check for updates");
 		displayError(e);
 	}
 

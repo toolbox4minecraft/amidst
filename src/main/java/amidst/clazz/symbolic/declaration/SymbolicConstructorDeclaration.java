@@ -2,7 +2,7 @@ package amidst.clazz.symbolic.declaration;
 
 import amidst.clazz.symbolic.SymbolicClassGraphCreationException;
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 
 @Immutable
 public class SymbolicConstructorDeclaration {
@@ -36,7 +36,7 @@ public class SymbolicConstructorDeclaration {
 		String message = "unable to find the real class constructor " + realClassName + ".<init>"
 				+ parameters.getParameterString() + " -> " + symbolicClassName + "." + symbolicName;
 		if (isOptional) {
-			Log.i(message);
+			AmidstLogger.info(message);
 		} else {
 			throw new SymbolicClassGraphCreationException(message, e);
 		}

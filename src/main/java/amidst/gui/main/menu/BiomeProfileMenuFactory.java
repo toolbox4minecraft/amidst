@@ -11,7 +11,7 @@ import javax.swing.KeyStroke;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.settings.biomeprofile.BiomeProfile;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.settings.biomeprofile.BiomeProfileVisitor;
@@ -76,7 +76,7 @@ public class BiomeProfileMenuFactory {
 				if (accelerator != null) {
 					checkBox.setAccelerator(accelerator);
 				} else {
-					Log.i("Unable to create keyboard shortcut from: " + shortcut);
+					AmidstLogger.info("Unable to create keyboard shortcut from: " + shortcut);
 				}
 			}
 		}
@@ -125,7 +125,7 @@ public class BiomeProfileMenuFactory {
 		this.reloadText = reloadText;
 		this.reloadMnemonic = reloadMnemonic;
 		this.reloadAccelerator = reloadAccelerator;
-		Log.i("Checking for additional biome profiles.");
+		AmidstLogger.info("Checking for additional biome profiles.");
 		initParentMenu();
 	}
 
@@ -140,7 +140,7 @@ public class BiomeProfileMenuFactory {
 	}
 
 	private void doReload() {
-		Log.i("Reloading additional biome profiles.");
+		AmidstLogger.info("Reloading additional biome profiles.");
 		initParentMenu();
 	}
 }

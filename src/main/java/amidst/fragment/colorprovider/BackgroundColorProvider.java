@@ -2,7 +2,7 @@ package amidst.fragment.colorprovider;
 
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.biome.BiomeColor;
 
@@ -23,7 +23,7 @@ public class BackgroundColorProvider implements ColorProvider {
 		} else if (dimension.equals(Dimension.END)) {
 			return theEndColorProvider.getColorAt(dimension, fragment, cornerX, cornerY, x, y);
 		} else {
-			Log.w("unsupported dimension");
+			AmidstLogger.warn("unsupported dimension");
 			return BiomeColor.unknown().getRGB();
 		}
 	}

@@ -1,7 +1,7 @@
 package amidst.mojangapi.world.icon.type;
 
 import amidst.documentation.ThreadSafe;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
@@ -28,15 +28,15 @@ public class TempleWorldIconTypeProvider implements WorldIconTypeProvider<Void> 
 			} else if (biome == Biome.icePlains || biome == Biome.coldTaiga) {
 				return DefaultWorldIconTypes.IGLOO;
 			} else {
-				Log.e("No known structure for this biome type: " + biome.getName());
+				AmidstLogger.error("No known structure for this biome type: " + biome.getName());
 				return null;
 			}
 		} catch (UnknownBiomeIndexException e) {
-			Log.e(e.getMessage());
+			AmidstLogger.error(e.getMessage());
 			e.printStackTrace();
 			return null;
 		} catch (MinecraftInterfaceException e) {
-			Log.e(e.getMessage());
+			AmidstLogger.error(e.getMessage());
 			e.printStackTrace();
 			return null;
 		}

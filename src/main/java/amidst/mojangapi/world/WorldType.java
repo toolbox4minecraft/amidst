@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.local.SymbolicNames;
 
 @Immutable
@@ -51,7 +51,8 @@ public enum WorldType {
 		if (result != null) {
 			return result;
 		} else {
-			Log.e("Unable to find World Type: " + nameOrSymbolicFieldName + ". Falling back to default world type.");
+			AmidstLogger.error(
+					"Unable to find World Type: " + nameOrSymbolicFieldName + ". Falling back to default world type.");
 			return DEFAULT;
 		}
 	}

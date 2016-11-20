@@ -5,7 +5,7 @@ import java.io.File;
 import amidst.CommandLineParameters;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.DotMinecraftDirectoryFinder;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
@@ -29,10 +29,9 @@ public class MojangApiBuilder {
 			LocalMinecraftInterfaceCreationException {
 		DotMinecraftDirectory dotMinecraftDirectory = createDotMinecraftDirectory();
 		if (dotMinecraftDirectory.isValid()) {
-			Log
-					.i(
-							"using '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "', libraries: '"
-									+ dotMinecraftDirectory.getLibraries() + "'");
+			AmidstLogger.info(
+					"using '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "', libraries: '"
+							+ dotMinecraftDirectory.getLibraries() + "'");
 		} else {
 			throw new DotMinecraftDirectoryNotFoundException(
 					"invalid '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "', libraries: '"
@@ -59,18 +58,14 @@ public class MojangApiBuilder {
 			File json = new File(parameters.minecraftJsonFile);
 			VersionDirectory result = mojangApi.createVersionDirectory(jar, json);
 			if (result.isValid()) {
-				Log
-						.i(
-								"using minecraft version directory. versionId: '" + result.getVersionId()
-										+ "', jar file: '" + result.getJar() + "', json file: '" + result.getJson()
-										+ "'");
+				AmidstLogger.info(
+						"using minecraft version directory. versionId: '" + result.getVersionId() + "', jar file: '"
+								+ result.getJar() + "', json file: '" + result.getJson() + "'");
 				return result;
 			} else {
-				Log
-						.w(
-								"invalid minecraft version directory. versionId: '" + result.getVersionId()
-										+ "', jar file: '" + result.getJar() + "', json file: '" + result.getJson()
-										+ "'");
+				AmidstLogger.warn(
+						"invalid minecraft version directory. versionId: '" + result.getVersionId() + "', jar file: '"
+								+ result.getJar() + "', json file: '" + result.getJson() + "'");
 			}
 		}
 		return null;

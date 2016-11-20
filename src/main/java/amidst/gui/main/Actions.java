@@ -18,7 +18,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
@@ -110,7 +110,7 @@ public class Actions {
 				if (coordinates != null) {
 					viewerFacade.centerOn(coordinates);
 				} else {
-					Log.w("Invalid location entered, ignoring.");
+					AmidstLogger.warn("Invalid location entered, ignoring.");
 					mainWindow.displayError("You entered an invalid location.");
 				}
 			}

@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 
 /**
  * Even though this class is thread-safe, it is possible that the same player
@@ -27,7 +27,7 @@ public class PlayerInformationCacheImpl implements PlayerInformationCache {
 		if (result != null) {
 			return result;
 		} else {
-			Log.i("requesting player information for uuid: " + cleanUUID);
+			AmidstLogger.info("requesting player information for uuid: " + cleanUUID);
 			result = PlayerInformation.fromUUID(cleanUUID);
 			put(result);
 			return result;
@@ -41,7 +41,7 @@ public class PlayerInformationCacheImpl implements PlayerInformationCache {
 		if (result != null) {
 			return result;
 		} else {
-			Log.i("requesting player information for name: " + name);
+			AmidstLogger.info("requesting player information for name: " + name);
 			result = PlayerInformation.fromName(name);
 			put(result);
 			return result;

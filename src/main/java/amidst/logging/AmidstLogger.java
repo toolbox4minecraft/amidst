@@ -11,7 +11,7 @@ import amidst.documentation.ThreadSafe;
 
 // TODO: switch to standard logging framework like slf4j + log4j?
 @ThreadSafe
-public class Log {
+public class AmidstLogger {
 	private static final ConsoleLogger CONSOLE_LOGGER = new ConsoleLogger();
 	private static final InMemoryLogger IN_MEMORY_LOGGER = new InMemoryLogger();
 
@@ -26,9 +26,9 @@ public class Log {
 		addListener("master", IN_MEMORY_LOGGER);
 	}
 
-	public static void addListener(String name, Logger l) {
+	public static void addListener(String name, Logger logger) {
 		synchronized (LOG_LOCK) {
-			LOGGER.put(name, l);
+			LOGGER.put(name, logger);
 		}
 	}
 
@@ -38,7 +38,7 @@ public class Log {
 		}
 	}
 
-	public static void i(Object... messages) {
+	public static void info(Object... messages) {
 		synchronized (LOG_LOCK) {
 			for (Logger listener : LOGGER.values()) {
 				listener.info(messages);
@@ -56,7 +56,7 @@ public class Log {
 		}
 	}
 
-	public static void w(Object... messages) {
+	public static void warn(Object... messages) {
 		synchronized (LOG_LOCK) {
 			for (Logger listener : LOGGER.values()) {
 				listener.warning(messages);
@@ -64,7 +64,7 @@ public class Log {
 		}
 	}
 
-	public static void e(Object... messages) {
+	public static void error(Object... messages) {
 		synchronized (LOG_LOCK) {
 			if (IS_USING_ALERTS) {
 				JOptionPane.showMessageDialog(null, messages, "Error", JOptionPane.ERROR_MESSAGE);
@@ -99,7 +99,7 @@ public class Log {
 	}
 
 	public static void printTraceStack(Throwable e) {
-		w(getStackTraceAsString(e));
+		warn(getStackTraceAsString(e));
 	}
 
 	private static String getStackTraceAsString(Throwable e) {

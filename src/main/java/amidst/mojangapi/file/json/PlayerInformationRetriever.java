@@ -9,7 +9,7 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.player.PlayerJson;
 
@@ -23,7 +23,7 @@ public enum PlayerInformationRetriever {
 		try {
 			return getPlayerJsonByName(name);
 		} catch (IOException | MojangApiParsingException | NullPointerException e) {
-			Log.w("unable to load player information by name: " + name);
+			AmidstLogger.warn("unable to load player information by name: " + name);
 			return null;
 		}
 	}
@@ -32,7 +32,7 @@ public enum PlayerInformationRetriever {
 		try {
 			return getPlayerJsonByUUID(uuid);
 		} catch (IOException | MojangApiParsingException | NullPointerException e) {
-			Log.w("unable to load player information by uuid: " + uuid);
+			AmidstLogger.warn("unable to load player information by uuid: " + uuid);
 			return null;
 		}
 	}
@@ -41,7 +41,7 @@ public enum PlayerInformationRetriever {
 		try {
 			return getPlayerHeadByName(name);
 		} catch (IOException | NullPointerException e) {
-			Log.w("unable to load player head by name: " + name);
+			AmidstLogger.warn("unable to load player head by name: " + name);
 			return null;
 		}
 	}
@@ -50,7 +50,7 @@ public enum PlayerInformationRetriever {
 		try {
 			return getPlayerHeadBySkinUrl(skinUrl);
 		} catch (IOException | NullPointerException e) {
-			Log.w("unable to load player head by skin url: " + skinUrl);
+			AmidstLogger.warn("unable to load player head by skin url: " + skinUrl);
 			return null;
 		}
 	}

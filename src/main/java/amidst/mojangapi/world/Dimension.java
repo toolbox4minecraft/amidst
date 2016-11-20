@@ -1,7 +1,7 @@
 package amidst.mojangapi.world;
 
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.coordinates.Resolution;
 
 @Immutable
@@ -20,7 +20,7 @@ public enum Dimension {
 		} else if (id == END.getId()) {
 			return END;
 		} else {
-			Log.w("Unsupported dimension id: " + id + ". Falling back to Overworld.");
+			AmidstLogger.warn("Unsupported dimension id: " + id + ". Falling back to Overworld.");
 			return OVERWORLD;
 		}
 	}

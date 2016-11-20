@@ -10,7 +10,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
@@ -59,7 +59,7 @@ public class CursorInformationWidget extends TextWidget {
 		} else if (dimension.equals(Dimension.END)) {
 			return Biome.theEnd.getName();
 		} else {
-			Log.w("unsupported dimension");
+			AmidstLogger.warn("unsupported dimension");
 			return UNKNOWN_BIOME_NAME;
 		}
 	}
@@ -74,7 +74,7 @@ public class CursorInformationWidget extends TextWidget {
 			try {
 				return Biome.getByIndex(biome).getName();
 			} catch (UnknownBiomeIndexException e) {
-				Log.e(e.getMessage());
+				AmidstLogger.error(e.getMessage());
 				e.printStackTrace();
 				return UNKNOWN_BIOME_NAME;
 			}
