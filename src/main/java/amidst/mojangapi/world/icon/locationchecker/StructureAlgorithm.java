@@ -64,13 +64,13 @@ public class StructureAlgorithm implements LocationChecker {
 	}
 
 	private int updateValue(Random random, int value) {
-		value *= maxDistanceBetweenScatteredFeatures;
+		int result = value * maxDistanceBetweenScatteredFeatures;
 		if (useTwoValuesForUpdate) {
-			value += (random.nextInt(distanceBetweenScatteredFeaturesRange) + random
-					.nextInt(distanceBetweenScatteredFeaturesRange)) / 2;
+			result += (random.nextInt(distanceBetweenScatteredFeaturesRange)
+					+ random.nextInt(distanceBetweenScatteredFeaturesRange)) / 2;
 		} else {
-			value += random.nextInt(distanceBetweenScatteredFeaturesRange);
+			result += random.nextInt(distanceBetweenScatteredFeaturesRange);
 		}
-		return value;
+		return result;
 	}
 }

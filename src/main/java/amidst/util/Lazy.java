@@ -12,12 +12,12 @@ import amidst.documentation.NotThreadSafe;
 public class Lazy<T> {
 	public static <T> Lazy<T> fromValue(T value) {
 		Objects.requireNonNull(value, VALUE_NULL_ERROR);
-		return new Lazy<T>(() -> value);
+		return new Lazy<>(() -> value);
 	}
 
 	public static <T> Lazy<T> from(Supplier<T> supplier) {
 		Objects.requireNonNull(supplier, SUPPLIER_NULL_ERROR);
-		return new Lazy<T>(supplier);
+		return new Lazy<>(supplier);
 	}
 
 	private static final String VALUE_NULL_ERROR = "the value of a lazy cannot be null";

@@ -44,7 +44,7 @@ public class CoordinatesCollectionJson {
 	}
 
 	private static SortedSet<CoordinatesInWorld> createSortedSet(List<WorldIcon> icons) {
-		SortedSet<CoordinatesInWorld> result = new TreeSet<CoordinatesInWorld>();
+		SortedSet<CoordinatesInWorld> result = new TreeSet<>();
 		for (WorldIcon icon : icons) {
 			result.add(icon.getCoordinates());
 		}
@@ -52,7 +52,7 @@ public class CoordinatesCollectionJson {
 	}
 
 	private static SortedSet<CoordinatesInWorld> createSortedSet(CoordinatesInWorld coordinates) {
-		SortedSet<CoordinatesInWorld> result = new TreeSet<CoordinatesInWorld>();
+		SortedSet<CoordinatesInWorld> result = new TreeSet<>();
 		result.add(coordinates);
 		return result;
 	}

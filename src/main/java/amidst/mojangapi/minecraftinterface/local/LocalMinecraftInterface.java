@@ -51,13 +51,13 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		this.recognisedVersion = recognisedVersion;
 	}
 
-	// @formatter:off
 	@Override
 	public synchronized int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
 		try {
 			intCacheClass.callStaticMethod(SymbolicNames.METHOD_INT_CACHE_RESET_INT_CACHE);
-			return (int[]) getBiomeGenerator(useQuarterResolution).callMethod(SymbolicNames.METHOD_GEN_LAYER_GET_INTS, x, y, width, height);
+			return (int[]) getBiomeGenerator(useQuarterResolution)
+					.callMethod(SymbolicNames.METHOD_GEN_LAYER_GET_INTS, x, y, width, height);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
@@ -90,37 +90,51 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	 * Minecraft 1.8 and higher require block initialization to be called before
 	 * creating a biome generator.
 	 */
-	private void initializeBlock()
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	private void initializeBlock() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		if (blockInitClass != null) {
 			blockInitClass.callStaticMethod(SymbolicNames.METHOD_BLOCK_INIT_INITIALIZE);
 		}
 	}
 
 	private Object[] getGenLayers(long seed, WorldType worldType, String generatorOptions)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			throws IllegalAccessException,
+			IllegalArgumentException,
+			InvocationTargetException {
 		if (worldTypeClass == null) {
-			return (Object[]) genLayerClass.callStaticMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_1, seed);
+			return (Object[]) genLayerClass
+					.callStaticMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_1, seed);
 		} else if (genLayerClass.hasMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_4)) {
-			return (Object[]) genLayerClass.callStaticMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_4, seed, getWorldType(worldType).getObject(), getGeneratorOptions(generatorOptions).getObject());
+			return (Object[]) genLayerClass.callStaticMethod(
+					SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_4,
+					seed,
+					getWorldType(worldType).getObject(),
+					getGeneratorOptions(generatorOptions).getObject());
 		} else if (genLayerClass.hasMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3)) {
-			return (Object[]) genLayerClass.callStaticMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3, seed, getWorldType(worldType).getObject(), generatorOptions);
+			return (Object[]) genLayerClass.callStaticMethod(
+					SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3,
+					seed,
+					getWorldType(worldType).getObject(),
+					generatorOptions);
 		} else {
-			return (Object[]) genLayerClass.callStaticMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_2, seed, getWorldType(worldType).getObject());
+			return (Object[]) genLayerClass.callStaticMethod(
+					SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_2,
+					seed,
+					getWorldType(worldType).getObject());
 		}
 	}
-	
+
 	private SymbolicObject getGeneratorOptions(String generatorOptions)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		SymbolicObject factory = (SymbolicObject) genOptionsFactoryClass.callStaticMethod(SymbolicNames.METHOD_GEN_OPTIONS_FACTORY_JSON_TO_FACTORY, generatorOptions);
+			throws IllegalAccessException,
+			IllegalArgumentException,
+			InvocationTargetException {
+		SymbolicObject factory = (SymbolicObject) genOptionsFactoryClass
+				.callStaticMethod(SymbolicNames.METHOD_GEN_OPTIONS_FACTORY_JSON_TO_FACTORY, generatorOptions);
 		return (SymbolicObject) factory.callMethod(SymbolicNames.METHOD_GEN_OPTIONS_FACTORY_BUILD);
 	}
 
-	private SymbolicObject getWorldType(WorldType worldType)
-			throws IllegalArgumentException, IllegalAccessException {
+	private SymbolicObject getWorldType(WorldType worldType) throws IllegalArgumentException, IllegalAccessException {
 		return (SymbolicObject) worldTypeClass.getStaticFieldValue(worldType.getSymbolicFieldName());
 	}
-	// @formatter:on
 
 	@Override
 	public RecognisedVersion getRecognisedVersion() {

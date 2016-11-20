@@ -3,13 +3,13 @@ package amidst.gui.main;
 import java.io.IOException;
 import java.io.Reader;
 
-import amidst.documentation.Immutable;
-import amidst.documentation.NotNull;
-import amidst.mojangapi.file.URIUtils;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+
+import amidst.documentation.Immutable;
+import amidst.documentation.NotNull;
+import amidst.mojangapi.file.URIUtils;
 
 @Immutable
 public enum UpdateInformationRetriever {

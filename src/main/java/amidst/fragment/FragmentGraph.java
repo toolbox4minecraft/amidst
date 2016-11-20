@@ -47,12 +47,8 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 	public void adjust(int newLeft, int newAbove, int newRight, int newBelow) {
 		fragmentsPerRow = fragmentsPerRow + newLeft + newRight;
 		fragmentsPerColumn = fragmentsPerColumn + newAbove + newBelow;
-		topLeftFragment.replaceWithValue(f -> f.adjustRowsAndColumns(
-				newAbove,
-				newBelow,
-				newLeft,
-				newRight,
-				fragmentManager));
+		topLeftFragment
+				.replaceWithValue(f -> f.adjustRowsAndColumns(newAbove, newBelow, newLeft, newRight, fragmentManager));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

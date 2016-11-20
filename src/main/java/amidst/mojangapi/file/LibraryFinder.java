@@ -18,7 +18,7 @@ public enum LibraryFinder {
 
 	@NotNull
 	public static List<URL> getLibraryUrls(File librariesDirectory, List<LibraryJson> libraries) {
-		List<URL> result = new ArrayList<URL>();
+		List<URL> result = new ArrayList<>();
 		for (LibraryJson library : libraries) {
 			File libraryFile = getLibraryFile(librariesDirectory, library);
 			if (libraryFile != null) {

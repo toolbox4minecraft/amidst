@@ -26,8 +26,11 @@ public enum Classes {
 	public static Map<String, SymbolicClass> createSymbolicClassMap(
 			File jarFile,
 			URLClassLoader classLoader,
-			ClassTranslator translator) throws FileNotFoundException, JarFileParsingException,
-			SymbolicClassGraphCreationException, ClassNotFoundException {
+			ClassTranslator translator)
+			throws FileNotFoundException,
+			JarFileParsingException,
+			SymbolicClassGraphCreationException,
+			ClassNotFoundException {
 		Log.i("Reading " + jarFile.getName());
 		List<RealClass> realClasses = RealClasses.fromJarFile(jarFile);
 		Log.i("Jar load complete.");
@@ -42,11 +45,12 @@ public enum Classes {
 	}
 
 	public static Map<SymbolicClassDeclaration, Integer> countMatches(File jarFile, ClassTranslator translator)
-			throws FileNotFoundException, JarFileParsingException {
+			throws FileNotFoundException,
+			JarFileParsingException {
 		Log.i("Checking " + jarFile.getName());
 		List<RealClass> realClasses = RealClasses.fromJarFile(jarFile);
 		Map<SymbolicClassDeclaration, List<RealClass>> map = translator.translateToAllMatching(realClasses);
-		Map<SymbolicClassDeclaration, Integer> result = new HashMap<SymbolicClassDeclaration, Integer>();
+		Map<SymbolicClassDeclaration, Integer> result = new HashMap<>();
 		for (Entry<SymbolicClassDeclaration, List<RealClass>> entry : map.entrySet()) {
 			result.put(entry.getKey(), entry.getValue().size());
 			if (entry.getValue().isEmpty()) {
@@ -56,8 +60,10 @@ public enum Classes {
 				for (RealClass realClass : entry.getValue()) {
 					builder.append(", ").append(realClass.getRealClassName());
 				}
-				Log.w(entry.getKey().getSymbolicClassName() + " has multiple matching classes: "
-						+ builder.toString().substring(2));
+				Log
+						.w(
+								entry.getKey().getSymbolicClassName() + " has multiple matching classes: "
+										+ builder.toString().substring(2));
 			}
 		}
 		return result;

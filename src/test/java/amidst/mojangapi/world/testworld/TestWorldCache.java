@@ -23,21 +23,26 @@ public enum TestWorldCache {
 	}
 
 	public static void createAndPut(TestWorldDeclaration declaration, MinecraftInterface realMinecraftInterface)
-			throws MinecraftInterfaceException, FileNotFoundException, IOException {
+			throws MinecraftInterfaceException,
+			FileNotFoundException,
+			IOException {
 		INSTANCE.doCreateAndPut(declaration, realMinecraftInterface);
 	}
 
 	private final TestWorldBuilder builder = TestWorldBuilder.from(DefaultTestWorldDirectoryDeclaration.get());
 	private final TestWorldDirectoryReader reader = builder.createReader();
 	private final TestWorldDirectoryWriter writer = builder.createWriter();
-	private final ConcurrentHashMap<TestWorldDeclaration, TestWorld> cache = new ConcurrentHashMap<TestWorldDeclaration, TestWorld>();
+	private final ConcurrentHashMap<TestWorldDeclaration, TestWorld> cache = new ConcurrentHashMap<>();
 
 	public void doCreateAndPut(TestWorldDeclaration declaration, MinecraftInterface realMinecraftInterface)
-			throws MinecraftInterfaceException, FileNotFoundException, IOException {
+			throws MinecraftInterfaceException,
+			FileNotFoundException,
+			IOException {
 		writer.write(declaration, builder.createDirectory(declaration, realMinecraftInterface));
 	}
 
-	public TestWorld createIfNecessaryAndGet(TestWorldDeclaration declaration) throws IOException,
+	public TestWorld createIfNecessaryAndGet(TestWorldDeclaration declaration)
+			throws IOException,
 			MinecraftInterfaceException {
 		TestWorld result = cache.get(declaration);
 		if (result != null) {

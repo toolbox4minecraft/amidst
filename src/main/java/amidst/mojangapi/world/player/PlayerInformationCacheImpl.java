@@ -16,19 +16,19 @@ import amidst.logging.Log;
  */
 @ThreadSafe
 public class PlayerInformationCacheImpl implements PlayerInformationCache {
-	private final Map<String, PlayerInformation> byUUID = new ConcurrentHashMap<String, PlayerInformation>();
-	private final Map<String, PlayerInformation> byName = new ConcurrentHashMap<String, PlayerInformation>();
+	private final Map<String, PlayerInformation> byUUID = new ConcurrentHashMap<>();
+	private final Map<String, PlayerInformation> byName = new ConcurrentHashMap<>();
 
 	@NotNull
 	@Override
 	public PlayerInformation getByUUID(String uuid) {
-		uuid = getCleanUUID(uuid);
-		PlayerInformation result = byUUID.get(uuid);
+		String cleanUUID = getCleanUUID(uuid);
+		PlayerInformation result = byUUID.get(cleanUUID);
 		if (result != null) {
 			return result;
 		} else {
-			Log.i("requesting player information for uuid: " + uuid);
-			result = PlayerInformation.fromUUID(uuid);
+			Log.i("requesting player information for uuid: " + cleanUUID);
+			result = PlayerInformation.fromUUID(cleanUUID);
 			put(result);
 			return result;
 		}

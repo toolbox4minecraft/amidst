@@ -27,13 +27,15 @@ public class TestWorldDirectoryWriter {
 	}
 
 	public void write(TestWorldDeclaration worldDeclaration, TestWorldDirectory directory)
-			throws FileNotFoundException, IOException {
+			throws FileNotFoundException,
+			IOException {
 		worldDeclaration.createDirectoryIfNecessary();
 		writeAll(worldDeclaration, directory.getData());
 	}
 
 	private void writeAll(TestWorldDeclaration worldDeclaration, Map<String, Object> data)
-			throws FileNotFoundException, IOException {
+			throws FileNotFoundException,
+			IOException {
 		for (TestWorldEntryDeclaration<?> entryDeclaration : directoryDeclaration.getEntryDeclarations()) {
 			if (worldDeclaration.isSupported(entryDeclaration.getName())) {
 				writeEntry(data, worldDeclaration, entryDeclaration);

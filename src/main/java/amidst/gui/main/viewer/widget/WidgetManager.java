@@ -21,8 +21,7 @@ public class WidgetManager {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean mouseWheelMoved(Point mousePosition, int notches) {
 		for (Widget widget : widgets) {
-			if (widget.isVisible()
-					&& widget.isInBounds(mousePosition)
+			if (widget.isVisible() && widget.isInBounds(mousePosition)
 					&& widget.onMouseWheelMoved(
 							widget.translateXToWidgetCoordinates(mousePosition),
 							widget.translateYToWidgetCoordinates(mousePosition),
@@ -36,8 +35,7 @@ public class WidgetManager {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean mouseClicked(Point mousePosition) {
 		for (Widget widget : widgets) {
-			if (widget.isVisible()
-					&& widget.isInBounds(mousePosition)
+			if (widget.isVisible() && widget.isInBounds(mousePosition)
 					&& widget.onClick(
 							widget.translateXToWidgetCoordinates(mousePosition),
 							widget.translateYToWidgetCoordinates(mousePosition))) {
@@ -50,8 +48,7 @@ public class WidgetManager {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean mousePressed(Point mousePosition) {
 		for (Widget widget : widgets) {
-			if (widget.isVisible()
-					&& widget.isInBounds(mousePosition)
+			if (widget.isVisible() && widget.isInBounds(mousePosition)
 					&& widget.onMousePressed(
 							widget.translateXToWidgetCoordinates(mousePosition),
 							widget.translateYToWidgetCoordinates(mousePosition))) {

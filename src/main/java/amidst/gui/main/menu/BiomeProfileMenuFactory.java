@@ -20,8 +20,8 @@ import amidst.settings.biomeprofile.BiomeProfileVisitor;
 public class BiomeProfileMenuFactory {
 	@NotThreadSafe
 	private static class BiomeProfileVisitorImpl implements BiomeProfileVisitor {
-		private final List<JCheckBoxMenuItem> allCheckBoxes = new ArrayList<JCheckBoxMenuItem>();
-		private final List<JMenu> menuStack = new ArrayList<JMenu>();
+		private final List<JCheckBoxMenuItem> allCheckBoxes = new ArrayList<>();
+		private final List<JMenu> menuStack = new ArrayList<>();
 		private ActionListener firstListener;
 		private boolean isFirstContainer = true;
 

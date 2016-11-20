@@ -79,7 +79,7 @@ public class VersionDirectory {
 			return readVersionJson().getLibraryUrls(dotMinecraftDirectory.getLibraries());
 		} catch (IOException | MojangApiParsingException e) {
 			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: " + json + ")");
-			return new ArrayList<URL>();
+			return new ArrayList<>();
 		}
 	}
 

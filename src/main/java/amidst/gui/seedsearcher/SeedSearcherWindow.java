@@ -13,7 +13,6 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.LineBorder;
 
-import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -23,6 +22,7 @@ import amidst.mojangapi.file.json.filter.WorldFilterJson_MatchAll;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.filter.WorldFilter;
+import net.miginfocom.swing.MigLayout;
 
 @NotThreadSafe
 public class SeedSearcherWindow {
@@ -61,7 +61,7 @@ public class SeedSearcherWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JComboBox<WorldType> createWorldTypeComboBox() {
-		return new JComboBox<WorldType>(WorldType.getSelectableArray());
+		return new JComboBox<>(WorldType.getSelectableArray());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

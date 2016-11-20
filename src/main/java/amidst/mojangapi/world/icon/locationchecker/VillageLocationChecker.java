@@ -17,24 +17,16 @@ public class VillageLocationChecker extends AllValidLocationChecker {
 	private static final int STRUCTURE_SIZE = 0;
 
 	public VillageLocationChecker(long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomesForStructure) {
-		// @formatter:off
-		super(new StructureAlgorithm(
+		super(
+				new StructureAlgorithm(
 						seed,
 						MAGIC_NUMBER_FOR_SEED_1,
 						MAGIC_NUMBER_FOR_SEED_2,
 						MAGIC_NUMBER_FOR_SEED_3,
 						MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 						MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-						USE_TWO_VALUES_FOR_UPDATE
-				), new StructureBiomeLocationChecker(
-						biomeDataOracle,
-						STRUCTURE_SIZE,
-						validBiomesForStructure
-				), new VillageAlgorithm(
-						biomeDataOracle,
-						validBiomesForStructure
-				)
-		);
-		// @formatter:on
+						USE_TWO_VALUES_FOR_UPDATE),
+				new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomesForStructure),
+				new VillageAlgorithm(biomeDataOracle, validBiomesForStructure));
 	}
 }

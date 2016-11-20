@@ -17,13 +17,19 @@ public class SymbolicConstructor {
 		this.constructor = constructor;
 	}
 
-	public SymbolicObject call(Object... parameters) throws InstantiationException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
+	public SymbolicObject call(Object... parameters)
+			throws InstantiationException,
+			IllegalAccessException,
+			IllegalArgumentException,
+			InvocationTargetException {
 		return new SymbolicObject(parent, newInstance(parameters));
 	}
 
-	private Object newInstance(Object... parameters) throws InstantiationException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
+	private Object newInstance(Object... parameters)
+			throws InstantiationException,
+			IllegalAccessException,
+			IllegalArgumentException,
+			InvocationTargetException {
 		return constructor.newInstance(parameters);
 	}
 

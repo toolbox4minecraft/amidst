@@ -53,7 +53,7 @@ public enum WorldPlayerType {
 	@NotNull
 	public List<PlayerNbt> createPlayerNbts(SaveDirectory saveDirectory) {
 		if (this == BOTH) {
-			List<PlayerNbt> result = new ArrayList<PlayerNbt>();
+			List<PlayerNbt> result = new ArrayList<>();
 			result.addAll(saveDirectory.createSingleplayerPlayerNbts());
 			result.addAll(saveDirectory.createMultiplayerPlayerNbts());
 			return result;

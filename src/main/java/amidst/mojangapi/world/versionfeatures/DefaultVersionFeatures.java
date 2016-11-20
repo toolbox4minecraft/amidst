@@ -25,7 +25,6 @@ public enum DefaultVersionFeatures {
 	INSTANCE;
 
 	public static VersionFeatures create(RecognisedVersion version) {
-		// @formatter:off
 		return new VersionFeatures(
 				INSTANCE.enabledLayers.getValue(version),
 				INSTANCE.validBiomesForStructure_Spawn.getValue(version),
@@ -36,9 +35,7 @@ public enum DefaultVersionFeatures {
 				INSTANCE.mineshaftAlgorithmFactory.getValue(version),
 				INSTANCE.oceanMonumentLocationCheckerFactory.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_OceanMonument.getValue(version),
-				INSTANCE.validBiomesForStructure_OceanMonument.getValue(version)
-		);
-		// @formatter:on
+				INSTANCE.validBiomesForStructure_OceanMonument.getValue(version));
 	}
 
 	private final VersionFeature<List<Integer>> enabledLayers;
@@ -187,7 +184,7 @@ public enum DefaultVersionFeatures {
 	}
 
 	private static List<Biome> getValidBiomesForStrongholdSinceV13w36a() {
-		List<Biome> result = new ArrayList<Biome>();
+		List<Biome> result = new ArrayList<>();
 		for (Biome biome : Biome.allBiomes()) {
 			if (biome.getType().getBiomeDepth() > 0) {
 				result.add(biome);

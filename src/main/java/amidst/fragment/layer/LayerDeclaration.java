@@ -19,8 +19,7 @@ public class LayerDeclaration {
 	private volatile boolean isVisible;
 
 	/**
-	 * @param dimension
-	 *            Can be null to enable for all dimensions.
+	 * @param dimension Can be null to enable for all dimensions.
 	 */
 	public LayerDeclaration(
 			int layerId,

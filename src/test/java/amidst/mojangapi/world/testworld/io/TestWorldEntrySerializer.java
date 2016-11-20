@@ -8,15 +8,15 @@ import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.CoordinatesCollectionJson;
 import amidst.mojangapi.world.testworld.storage.json.EndIslandsJson;
 import amidst.mojangapi.world.testworld.storage.json.SlimeChunksJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 @Immutable
 public enum TestWorldEntrySerializer {

@@ -51,7 +51,7 @@ public enum PlayerLocationSaver {
 	private static Map<String, Tag> modifyPositionInBaseMapSinglePlayer(
 			Map<String, Tag> baseMap,
 			PlayerCoordinates coordinates) {
-		Map<String, Tag> result = new HashMap<String, Tag>();
+		Map<String, Tag> result = new HashMap<>();
 		CompoundTag dataTag = (CompoundTag) baseMap.get(NBTTagKeys.TAG_KEY_DATA);
 		CompoundTag modifiedDataTag = modifyPositionInDataTagSinglePlayer(dataTag, coordinates);
 		result.put(NBTTagKeys.TAG_KEY_DATA, modifiedDataTag);
@@ -67,7 +67,7 @@ public enum PlayerLocationSaver {
 	private static Map<String, Tag> modifyPositionInDataMapSinglePlayer(
 			Map<String, Tag> dataMap,
 			PlayerCoordinates coordinates) {
-		Map<String, Tag> result = new HashMap<String, Tag>(dataMap);
+		Map<String, Tag> result = new HashMap<>(dataMap);
 		CompoundTag playerTag = (CompoundTag) dataMap.get(NBTTagKeys.TAG_KEY_PLAYER);
 		CompoundTag modifiedPlayerTag = modifyPositionInPlayerTagSinglePlayer(playerTag, coordinates);
 		result.put(NBTTagKeys.TAG_KEY_PLAYER, modifiedPlayerTag);
@@ -88,8 +88,10 @@ public enum PlayerLocationSaver {
 		return new CompoundTag(NBTTagKeys.TAG_KEY_DATA, modifiedPlayerMap);
 	}
 
-	private static Map<String, Tag> modifyPositionInPlayerMap(Map<String, Tag> playerMap, PlayerCoordinates coordinates) {
-		Map<String, Tag> result = new HashMap<String, Tag>(playerMap);
+	private static Map<String, Tag> modifyPositionInPlayerMap(
+			Map<String, Tag> playerMap,
+			PlayerCoordinates coordinates) {
+		Map<String, Tag> result = new HashMap<>(playerMap);
 		ListTag posTag = (ListTag) playerMap.get(NBTTagKeys.TAG_KEY_POS);
 		ListTag modifiedPosTag = modifyPositionInPosTag(posTag, coordinates);
 		result.put(NBTTagKeys.TAG_KEY_POS, modifiedPosTag);
@@ -103,7 +105,7 @@ public enum PlayerLocationSaver {
 	}
 
 	private static List<Tag> modifyPositionInPosList(List<Tag> posList, PlayerCoordinates coordinates) {
-		List<Tag> result = new ArrayList<Tag>(posList);
+		List<Tag> result = new ArrayList<>(posList);
 		result.set(0, new DoubleTag("x", coordinates.getXForNBTFile()));
 		result.set(1, new DoubleTag("y", coordinates.getYForNBTFile()));
 		result.set(2, new DoubleTag("z", coordinates.getZForNBTFile()));

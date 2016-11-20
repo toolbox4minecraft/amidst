@@ -20,7 +20,7 @@ public class WorldIconCollector implements Consumer<WorldIcon> {
 
 	private void initListIfNecessary() {
 		if (worldIcons == null) {
-			worldIcons = new LinkedList<WorldIcon>();
+			worldIcons = new LinkedList<>();
 		}
 	}
 

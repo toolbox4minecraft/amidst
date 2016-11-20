@@ -6,14 +6,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.logging.Log;
 import amidst.mojangapi.world.filter.WorldFilter;
 import amidst.mojangapi.world.filter.WorldFilter_MatchAll;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 
 @Immutable
 public class WorldFilterJson_MatchAll {
@@ -62,7 +62,7 @@ public class WorldFilterJson_MatchAll {
 	}
 
 	private List<WorldFilter> createFilterList() {
-		List<WorldFilter> filters = new ArrayList<WorldFilter>();
+		List<WorldFilter> filters = new ArrayList<>();
 		for (WorldFilterJson_Biome biomeFilterJson : biomeFilters) {
 			filters.add(biomeFilterJson.createBiomeFilter());
 		}

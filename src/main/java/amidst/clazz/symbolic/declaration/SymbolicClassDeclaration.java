@@ -60,8 +60,8 @@ public class SymbolicClassDeclaration {
 		if (isOptional) {
 			Log.i("Missing class " + symbolicClassName);
 		} else {
-			throw new ClassNotFoundException("cannot find a real class matching the symbolic class "
-					+ symbolicClassName);
+			throw new ClassNotFoundException(
+					"cannot find a real class matching the symbolic class " + symbolicClassName);
 		}
 	}
 

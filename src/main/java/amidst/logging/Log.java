@@ -19,7 +19,7 @@ public class Log {
 	private static final boolean IS_USING_ALERTS = true;
 	private static final boolean IS_SHOWING_DEBUG = true;
 
-	private static final Map<String, Logger> LOGGER = new HashMap<String, Logger>();
+	private static final Map<String, Logger> LOGGER = new HashMap<>();
 
 	static {
 		addListener("console", CONSOLE_LOGGER);

@@ -28,31 +28,39 @@ public class UpdatePrompt {
 			WorkerExecutor workerExecutor,
 			MainWindow mainWindow,
 			boolean silent) {
-		// @formatter:off
 		if (mainWindow != null) {
 			if (silent) {
-				return new UpdatePrompt(currentVersion, workerExecutor,
-						NOOP_CONSUMER, NOOP,
-						message   -> mainWindow.askToConfirm(TITLE, message));
+				return new UpdatePrompt(
+						currentVersion,
+						workerExecutor,
+						NOOP_CONSUMER,
+						NOOP,
+						message -> mainWindow.askToConfirm(TITLE, message));
 			} else {
-				return new UpdatePrompt(currentVersion, workerExecutor,
+				return new UpdatePrompt(
+						currentVersion,
+						workerExecutor,
 						exception -> mainWindow.displayException(exception),
-						()        -> mainWindow.displayMessage(TITLE, NO_UPDATES_AVAILABLE),
-						message   -> mainWindow.askToConfirm(TITLE, message));
+						() -> mainWindow.displayMessage(TITLE, NO_UPDATES_AVAILABLE),
+						message -> mainWindow.askToConfirm(TITLE, message));
 			}
 		} else {
 			if (silent) {
-				return new UpdatePrompt(currentVersion, workerExecutor,
-						NOOP_CONSUMER, NOOP,
-						message   -> askToConfirmDirectly(message));
+				return new UpdatePrompt(
+						currentVersion,
+						workerExecutor,
+						NOOP_CONSUMER,
+						NOOP,
+						message -> askToConfirmDirectly(message));
 			} else {
-				return new UpdatePrompt(currentVersion, workerExecutor,
+				return new UpdatePrompt(
+						currentVersion,
+						workerExecutor,
 						exception -> displayExceptionDirectly(exception),
-						()        -> displayMessageDirectly(NO_UPDATES_AVAILABLE),
-						message   -> askToConfirmDirectly(message));
+						() -> displayMessageDirectly(NO_UPDATES_AVAILABLE),
+						message -> askToConfirmDirectly(message));
 			}
 		}
-		// @formatter:on
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

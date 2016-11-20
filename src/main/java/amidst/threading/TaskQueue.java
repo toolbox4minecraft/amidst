@@ -10,7 +10,7 @@ import amidst.documentation.ThreadSafe;
  */
 @ThreadSafe
 public class TaskQueue {
-	private final ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+	private final ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<>();
 
 	/**
 	 * Executes all tasks. Returns true, if at least one task was executed.

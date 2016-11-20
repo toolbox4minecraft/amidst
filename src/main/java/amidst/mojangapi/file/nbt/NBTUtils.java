@@ -43,8 +43,8 @@ public enum NBTUtils {
 		if (value instanceof Number) {
 			return ((Number) value).longValue();
 		} else {
-			throw new IllegalArgumentException("cannot read long value from the class '" + tag.getClass().getName()
-					+ "'");
+			throw new IllegalArgumentException(
+					"cannot read long value from the class '" + tag.getClass().getName() + "'");
 		}
 	}
 }

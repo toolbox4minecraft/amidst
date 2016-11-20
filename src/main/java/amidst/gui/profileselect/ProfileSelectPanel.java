@@ -17,11 +17,11 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import net.miginfocom.swing.MigLayout;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.settings.Setting;
+import net.miginfocom.swing.MigLayout;
 
 @NotThreadSafe
 public class ProfileSelectPanel {
@@ -94,7 +94,7 @@ public class ProfileSelectPanel {
 
 	private final Setting<String> lastProfileSetting;
 	private final Component component;
-	private final List<ProfileComponent> profileComponents = new ArrayList<ProfileComponent>();
+	private final List<ProfileComponent> profileComponents = new ArrayList<>();
 
 	private ProfileComponent selected = null;
 	private int selectedIndex = INVALID_INDEX;

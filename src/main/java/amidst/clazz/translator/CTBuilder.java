@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
+import amidst.clazz.real.RealClass;
 import amidst.clazz.real.RealClassDetector;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
@@ -24,9 +26,9 @@ public class CTBuilder {
 	public class SCDBuilder {
 		private String symbolicClassName;
 		private boolean isOptional;
-		private final List<SymbolicConstructorDeclaration> constructors = new ArrayList<SymbolicConstructorDeclaration>();
-		private final List<SymbolicMethodDeclaration> methods = new ArrayList<SymbolicMethodDeclaration>();
-		private final List<SymbolicFieldDeclaration> fields = new ArrayList<SymbolicFieldDeclaration>();
+		private final List<SymbolicConstructorDeclaration> constructors = new ArrayList<>();
+		private final List<SymbolicMethodDeclaration> methods = new ArrayList<>();
+		private final List<SymbolicFieldDeclaration> fields = new ArrayList<>();
 
 		private void init(String symbolicClassName, boolean isOptional) {
 			this.symbolicClassName = symbolicClassName;
@@ -56,7 +58,7 @@ public class CTBuilder {
 		private SymbolicParameterDeclarationListBuilder<SCDBuilder> constructor(
 				final String symbolicName,
 				final boolean isOptional) {
-			return new SymbolicParameterDeclarationListBuilder<SCDBuilder>(this, new ExecuteOnEnd() {
+			return new SymbolicParameterDeclarationListBuilder<>(this, new ExecuteOnEnd() {
 				@Override
 				public void run(SymbolicParameterDeclarationList parameters) {
 					constructors.add(new SymbolicConstructorDeclaration(symbolicName, isOptional, parameters));
@@ -64,11 +66,15 @@ public class CTBuilder {
 			});
 		}
 
-		public SymbolicParameterDeclarationListBuilder<SCDBuilder> requiredMethod(String symbolicName, String realName) {
+		public SymbolicParameterDeclarationListBuilder<SCDBuilder> requiredMethod(
+				String symbolicName,
+				String realName) {
 			return method(symbolicName, realName, false);
 		}
 
-		public SymbolicParameterDeclarationListBuilder<SCDBuilder> optionalMethod(String symbolicName, String realName) {
+		public SymbolicParameterDeclarationListBuilder<SCDBuilder> optionalMethod(
+				String symbolicName,
+				String realName) {
 			return method(symbolicName, realName, true);
 		}
 
@@ -76,7 +82,7 @@ public class CTBuilder {
 				final String symbolicName,
 				final String realName,
 				final boolean isOptional) {
-			return new SymbolicParameterDeclarationListBuilder<SCDBuilder>(this, new ExecuteOnEnd() {
+			return new SymbolicParameterDeclarationListBuilder<>(this, new ExecuteOnEnd() {
 				@Override
 				public void run(SymbolicParameterDeclarationList parameters) {
 					methods.add(new SymbolicMethodDeclaration(symbolicName, realName, isOptional, parameters));
@@ -111,11 +117,11 @@ public class CTBuilder {
 		this.previous = previous;
 	}
 
-	public CTBuilder ifDetect(RealClassDetector detector) {
-		this.detector = detector;
+	public CTBuilder ifDetect(Predicate<RealClass> predicate) {
+		this.detector = new RealClassDetector(predicate);
 		return this;
 	}
-	
+
 	public SCDBuilder thenDeclareRequired(String symbolicClassName) {
 		return thenDeclare(symbolicClassName, false);
 	}
@@ -125,10 +131,11 @@ public class CTBuilder {
 	}
 
 	private SCDBuilder thenDeclare(String symbolicClassName, boolean isOptional) {
-		if(detector == null)
+		if (detector == null) {
 			throw new IllegalStateException("can't declare a symbolic class without calling ifDetect before");
-		CTBuilder.this.declarationBuilder.init(symbolicClassName, isOptional);
-		return CTBuilder.this.declarationBuilder;
+		}
+		declarationBuilder.init(symbolicClassName, isOptional);
+		return declarationBuilder;
 	}
 
 	public ClassTranslator construct() {
@@ -145,7 +152,7 @@ public class CTBuilder {
 		if (previous != null) {
 			return previous.constructResult();
 		} else {
-			return new HashMap<RealClassDetector, SymbolicClassDeclaration>();
+			return new HashMap<>();
 		}
 	}
 }

@@ -45,7 +45,7 @@ public class TestWorldDirectoryDeclaration {
 			World world,
 			BiomeDataJson quarterBiomeData,
 			BiomeDataJson fullBiomeData) {
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<>();
 		for (Entry<String, TestWorldEntryDeclaration<?>> entry : entries.entrySet()) {
 			String name = entry.getKey();
 			if (name.equals(TestWorldEntryNames.QUARTER_RESOLUTION_BIOME_DATA)) {

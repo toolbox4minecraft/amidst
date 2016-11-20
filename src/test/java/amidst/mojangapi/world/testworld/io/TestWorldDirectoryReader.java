@@ -29,7 +29,7 @@ public class TestWorldDirectoryReader {
 	}
 
 	private Map<String, Object> readAll(TestWorldDeclaration worldDeclaration) throws IOException {
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<>();
 		for (TestWorldEntryDeclaration<?> entryDeclaration : directoryDeclaration.getEntryDeclarations()) {
 			if (worldDeclaration.isSupported(entryDeclaration.getName())) {
 				readEntry(result, worldDeclaration, entryDeclaration);

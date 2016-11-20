@@ -29,7 +29,7 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 
 	@Override
 	protected List<WorldIcon> doCreateCache() {
-		List<WorldIcon> result = new LinkedList<WorldIcon>();
+		List<WorldIcon> result = new LinkedList<>();
 		Random random = new Random(seed);
 		int ring = getInitialValue_ring();
 		int structuresPerRing = STRUCTURES_ON_FIRST_RING;
@@ -48,8 +48,11 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 				// begin placing strongholds on the next ring.
 				ring = getNextValue_ring(ring);
 				currentRingStructureCount = getNextValue_currentRingStructureCount(currentRingStructureCount);
-				structuresPerRing = getNextValue_structuresPerRing(structuresPerRing, ring, getTotalStructureCount()
-						- i, random);
+				structuresPerRing = getNextValue_structuresPerRing(
+						structuresPerRing,
+						ring,
+						getTotalStructureCount() - i,
+						random);
 				angle = getNextValue_startAngle(angle, random);
 			}
 		}

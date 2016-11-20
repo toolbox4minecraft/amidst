@@ -8,11 +8,11 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 @Immutable
 public class VersionFeature<V> {
 	public static <V> VersionFeatureBuilder<V> builder() {
-		return new VersionFeatureBuilder<V>();
+		return new VersionFeatureBuilder<>();
 	}
 
 	public static <V> ListVersionFeatureBuilder<V> listBuilder() {
-		return new ListVersionFeatureBuilder<V>();
+		return new ListVersionFeatureBuilder<>();
 	}
 
 	private final V defaultValue;

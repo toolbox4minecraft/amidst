@@ -42,11 +42,8 @@ public class TestWorldBuilder {
 				realMinecraftInterface,
 				builder);
 		World realWorld = worldBuilder.createRealWorld(worldDeclaration, minecraftInterface);
-		return directoryDeclaration.create(
-				worldDeclaration,
-				realWorld,
-				builder.createQuarterBiomeData(),
-				builder.createFullBiomeData());
+		return directoryDeclaration
+				.create(worldDeclaration, realWorld, builder.createQuarterBiomeData(), builder.createFullBiomeData());
 	}
 
 	public TestWorld createTestWorld(TestWorldDirectory directory) throws MinecraftInterfaceException {

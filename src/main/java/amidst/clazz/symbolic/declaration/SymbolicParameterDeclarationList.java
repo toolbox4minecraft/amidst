@@ -15,7 +15,7 @@ public class SymbolicParameterDeclarationList {
 	@Immutable
 	public static class SymbolicParameterDeclarationListBuilder<T> {
 		private final T nextBuilder;
-		private final List<SymbolicParameterDeclaration> declarations = new ArrayList<SymbolicParameterDeclaration>();
+		private final List<SymbolicParameterDeclaration> declarations = new ArrayList<>();
 		private final ExecuteOnEnd executeOnEnd;
 
 		public SymbolicParameterDeclarationListBuilder(T nextBuilder, ExecuteOnEnd executeOnEnd) {

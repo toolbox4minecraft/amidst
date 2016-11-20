@@ -129,10 +129,8 @@ public class Actions {
 	public void goToStronghold() {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
-			WorldIcon stronghold = mainWindow.askForOptions(
-					"Go to",
-					"Select Stronghold:",
-					viewerFacade.getStrongholdWorldIcons());
+			WorldIcon stronghold = mainWindow
+					.askForOptions("Go to", "Select Stronghold:", viewerFacade.getStrongholdWorldIcons());
 			if (stronghold != null) {
 				viewerFacade.centerOn(stronghold);
 			}
@@ -214,15 +212,16 @@ public class Actions {
 			if (file != null) {
 				file = appendPNGFileExtensionIfNecessary(file);
 				if (file.exists() && !file.isFile()) {
-					mainWindow
-							.displayError("Unable to write capture image, because the target exists but is not a file: "
+					mainWindow.displayError(
+							"Unable to write capture image, because the target exists but is not a file: "
 									+ file.getAbsolutePath());
 				} else if (!canWriteToFile(file)) {
-					mainWindow.displayError("Unable to write capture image, because you have no writing permissions: "
-							+ file.getAbsolutePath());
-				} else if (!file.exists()
-						|| mainWindow.askToConfirm("Replace file?", "File already exists. Do you want to replace it?\n"
-								+ file.getAbsolutePath() + "")) {
+					mainWindow.displayError(
+							"Unable to write capture image, because you have no writing permissions: "
+									+ file.getAbsolutePath());
+				} else if (!file.exists() || mainWindow.askToConfirm(
+						"Replace file?",
+						"File already exists. Do you want to replace it?\n" + file.getAbsolutePath() + "")) {
 					saveImageToFile(image, file);
 				}
 			}
@@ -251,9 +250,11 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void about() {
-		mainWindow.displayMessage("About", "Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n\n"
-				+ "Author: Skidoodle aka skiphs\n" + "Mail: toolbox4minecraft+amidst@gmail.com\n"
-				+ "Project Page: https://github.com/toolbox4minecraft/amidst");
+		mainWindow.displayMessage(
+				"About",
+				"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n\n"
+						+ "Author: Skidoodle aka skiphs\n" + "Mail: toolbox4minecraft+amidst@gmail.com\n"
+						+ "Project Page: https://github.com/toolbox4minecraft/amidst");
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -285,10 +286,8 @@ public class Actions {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
 			if (viewerFacade.canSavePlayerLocations()) {
-				new MovePlayerPopupMenu(this, viewerFacade.getMovablePlayerList(), targetCoordinates).show(
-						component,
-						x,
-						y);
+				new MovePlayerPopupMenu(this, viewerFacade.getMovablePlayerList(), targetCoordinates)
+						.show(component, x, y);
 			}
 		}
 	}

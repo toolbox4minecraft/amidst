@@ -13,7 +13,7 @@ import amidst.documentation.Immutable;
 @Immutable
 public class RealClass {
 	private static Map<Character, String> createPrimitiveTypeConversionMap() {
-		Map<Character, String> result = new HashMap<Character, String>();
+		Map<Character, String> result = new HashMap<>();
 		result.put('B', "byte");
 		result.put('C', "char");
 		result.put('D', "double");
@@ -219,7 +219,7 @@ public class RealClass {
 	}
 
 	private String[] readArguments(String arguments) {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		String args = arguments.substring(1).split("\\)")[0];
 		Matcher matcher = ARG_PATTERN.matcher(args);
 		while (matcher.find()) {

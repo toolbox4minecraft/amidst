@@ -55,7 +55,7 @@ public class MainWindow {
 	private final AmidstMenu menuBar;
 	private final SeedSearcherWindow seedSearcherWindow;
 
-	private final AtomicReference<ViewerFacade> viewerFacade = new AtomicReference<ViewerFacade>();
+	private final AtomicReference<ViewerFacade> viewerFacade = new AtomicReference<>();
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public MainWindow(
@@ -86,10 +86,11 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JFrame createFrame() {
 		JFrame frame = new JFrame();
-		frame.setTitle(createVersionString(
-				mojangApi.getVersionId(),
-				mojangApi.getRecognisedVersionName(),
-				mojangApi.getProfileName()));
+		frame.setTitle(
+				createVersionString(
+						mojangApi.getVersionId(),
+						mojangApi.getRecognisedVersionName(),
+						mojangApi.getProfileName()));
 		frame.setSize(1000, 800);
 		frame.setIconImages(metadata.getIcons());
 		return frame;
@@ -122,10 +123,10 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private SeedSearcherWindow createSeedSearcherWindow() {
-		return new SeedSearcherWindow(metadata, this, new SeedSearcher(
+		return new SeedSearcherWindow(
+				metadata,
 				this,
-				mojangApi,
-				threadMaster.getWorkerExecutor()));
+				new SeedSearcher(this, mojangApi, threadMaster.getWorkerExecutor()));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -316,7 +317,8 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean askToConfirm(String title, String message) {
-		return JOptionPane.showConfirmDialog(frame, message, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+		return JOptionPane
+				.showConfirmDialog(frame, message, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -333,14 +335,8 @@ public class MainWindow {
 	@SuppressWarnings("unchecked")
 	public <T> T askForOptions(String title, String message, List<T> choices) {
 		Object[] choicesArray = choices.toArray();
-		return (T) JOptionPane.showInputDialog(
-				frame,
-				message,
-				title,
-				JOptionPane.PLAIN_MESSAGE,
-				null,
-				choicesArray,
-				choicesArray[0]);
+		return (T) JOptionPane
+				.showInputDialog(frame, message, title, JOptionPane.PLAIN_MESSAGE, null, choicesArray, choicesArray[0]);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

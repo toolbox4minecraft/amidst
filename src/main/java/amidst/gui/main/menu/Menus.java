@@ -134,14 +134,7 @@ public enum Menus {
 	}
 
 	public static KeyStroke getAcceleratorKeyStroke(String accelerator) {
-		boolean addMenuMask;
-		if (accelerator.contains("menu")) {
-			accelerator = accelerator.replace("menu", "");
-			addMenuMask = true;
-		} else {
-			addMenuMask = false;
-		}
-		return getPlatformSpecificKeyStroke(accelerator, addMenuMask);
+		return getPlatformSpecificKeyStroke(accelerator.replace("menu", ""), accelerator.contains("menu"));
 	}
 
 	private static KeyStroke getPlatformSpecificKeyStroke(String accelerator, boolean addMenuMask) {

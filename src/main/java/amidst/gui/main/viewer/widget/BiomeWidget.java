@@ -35,7 +35,7 @@ public class BiomeWidget extends Widget {
 	private final LayerReloader layerReloader;
 	private final BiomeProfileSelection biomeProfileSelection;
 
-	private List<Biome> biomes = new ArrayList<Biome>();
+	private List<Biome> biomes = new ArrayList<>();
 	private int maxNameWidth = 0;
 	private int biomeListHeight;
 	private boolean isInitialized = false;
@@ -137,7 +137,8 @@ public class BiomeWidget extends Widget {
 		float listHeight = biomeListHeight;
 		if (scrollbarGrabbed) {
 			if (mousePosition != null) {
-				biomeListYOffset = (int) ((listHeight / boxHeight) * (-scrollbarYOnGrab - (mousePosition.y - mouseYOnGrab)));
+				biomeListYOffset = (int) ((listHeight / boxHeight)
+						* (-scrollbarYOnGrab - (mousePosition.y - mouseYOnGrab)));
 				updateBiomeListYOffset();
 			} else {
 				scrollbarGrabbed = false;
@@ -264,9 +265,8 @@ public class BiomeWidget extends Widget {
 			return false;
 		}
 		if (isInBoundsOfInnerBox(mouseX, mouseY)) {
-			biomeListYOffset = Math.min(
-					0,
-					Math.max(-biomeListHeight + innerBox.height, biomeListYOffset - notches * 35));
+			biomeListYOffset = Math
+					.min(0, Math.max(-biomeListHeight + innerBox.height, biomeListYOffset - notches * 35));
 		}
 		return true;
 	}

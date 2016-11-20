@@ -26,8 +26,8 @@ public class GenerateWorldTestData {
 	private final VersionListJson versionList;
 	private final File versions;
 	private final DotMinecraftDirectory dotMinecraftDirectory;
-	private final List<String> failed = new LinkedList<String>();
-	private final List<String> successful = new LinkedList<String>();
+	private final List<String> failed = new LinkedList<>();
+	private final List<String> successful = new LinkedList<>();
 
 	public GenerateWorldTestData(String prefix, String libraries, VersionListJson versionList) {
 		this.prefix = prefix;
