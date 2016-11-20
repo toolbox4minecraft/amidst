@@ -38,7 +38,7 @@ public enum LibraryFinder {
 
 	private static File getLibraryFile(File librariesDirectory, LibraryJson library) {
 		try {
-			if (library.isActive(getOs())) {
+			if (library.isActive(getOs(), OperatingSystemDetector.getVersion())) {
 				return getLibraryFile(getLibrarySearchPath(librariesDirectory, library.getName()));
 			} else {
 				return null;

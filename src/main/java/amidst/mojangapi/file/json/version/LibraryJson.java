@@ -24,13 +24,13 @@ public class LibraryJson {
 	 * applicable rule. However, this might be wrong so we need to take the most
 	 * specific rule? For now this works fine.
 	 */
-	public boolean isActive(String os) {
+	public boolean isActive(String os, String version) {
 		if (rules.isEmpty()) {
 			return true;
 		}
 		boolean result = false;
 		for (LibraryRuleJson rule : rules) {
-			if (rule.isApplicable(os)) {
+			if (rule.isApplicable(os, version)) {
 				result = rule.isAllowed();
 			}
 		}

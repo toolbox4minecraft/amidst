@@ -7,6 +7,7 @@ public enum OperatingSystemDetector {
 	;
 
 	private static String OS_NAME = System.getProperty("os.name").toLowerCase();
+	private static String OS_VERSION = System.getProperty("os.version");
 
 	public static boolean isWindows() {
 		return OS_NAME.indexOf("win") >= 0;
@@ -22,5 +23,9 @@ public enum OperatingSystemDetector {
 
 	public static boolean isSolaris() {
 		return OS_NAME.indexOf("sunos") >= 0;
+	}
+
+	public static String getVersion() {
+		return OS_VERSION;
 	}
 }
