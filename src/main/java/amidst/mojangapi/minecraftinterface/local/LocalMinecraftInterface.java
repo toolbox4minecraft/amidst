@@ -101,14 +101,10 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		if (worldTypeClass == null) {
 			return (Object[]) genLayerClass.callStaticMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_1, seed);
-			
-		} else if (genLayerClass.hasMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3A)) {
-			SymbolicObject options = getGeneratorOptions(generatorOptions);
-			return (Object[]) genLayerClass.callStaticMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3A, seed, getWorldType(worldType).getObject(), options.getObject());
-			
+		} else if (genLayerClass.hasMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_4)) {
+			return (Object[]) genLayerClass.callStaticMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_4, seed, getWorldType(worldType).getObject(), getGeneratorOptions(generatorOptions).getObject());
 		} else if (genLayerClass.hasMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3)) {
 			return (Object[]) genLayerClass.callStaticMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3, seed, getWorldType(worldType).getObject(), generatorOptions);
-		
 		} else {
 			return (Object[]) genLayerClass.callStaticMethod(SymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_2, seed, getWorldType(worldType).getObject());
 		}
@@ -116,7 +112,6 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	
 	private SymbolicObject getGeneratorOptions(String generatorOptions)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		
 		SymbolicObject factory = (SymbolicObject) genOptionsFactoryClass.callStaticMethod(SymbolicNames.METHOD_GEN_OPTIONS_FACTORY_JSON_TO_FACTORY, generatorOptions);
 		return (SymbolicObject) factory.callMethod(SymbolicNames.METHOD_GEN_OPTIONS_FACTORY_BUILD);
 	}

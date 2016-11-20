@@ -23,7 +23,17 @@ public enum RecognisedVersion {
 	// TODO: Remove these versions before V1_0?
 	// TODO: stronghold reset on V1_9pre4?
 	UNKNOWN,
-	_1_9       ("1.9",        "qwoomajzpb[Llp;mm[J[[Jmi"),                                                                // matches the launcher version id: 1.9          1.9-pre4     1.9-pre3     
+	_1_11      ("1.11",       "rroumhkfph[Llw;mt[J[[Jmp"),                                                                // matches the launcher version id: 1.11         1.11-pre1    
+	_16w44a    ("16w44a",     "rqotmgkfpg[Llv;ms[J[[Jmo"),                                                                // matches the launcher version id: 16w44a       
+	_16w43a    ("16w43a",     "rpotmgkfpg[Llv;ms[J[[Jmo"),                                                                // matches the launcher version id: 16w43a       16w42a       16w41a       16w40a       16w39c       
+	_16w38a    ("16w38a",     "rlosmfkepf[Llu;mr[J[[Jmn"),                                                                // matches the launcher version id: 16w38a       
+	_16w36a    ("16w36a",     "rkosmfkepf[Llu;mr[J[[Jmn"),                                                                // matches the launcher version id: 16w36a       
+	_16w35a    ("16w35a",     "rjosmfkepf[Llu;mr[J[[Jmn"),                                                                // matches the launcher version id: 16w35a       16w33a       16w32b       
+	_1_10_2    ("1.10.2",     "rboqmdkcpd[Lls;mp[J[[Jml"),                                                                // matches the launcher version id: 1.10.2       1.10.1       1.10         
+	_16w21b    ("16w21b",     "qzopmckbpc[Llr;mo[J[[Jmk"),                                                                // matches the launcher version id: 16w21b       
+	_16w20a    ("16w20a",     "qxopmckbpc[Llr;mo[J[[Jmk"),                                                                // matches the launcher version id: 16w20a       
+	_1_9_4     ("1.9.4",      "qwoombkapb[Llq;mn[J[[Jmj"),                                                                // matches the launcher version id: 1.9.4        1.9.3        
+	_1_9_2     ("1.9.2",      "qwoomajzpb[Llp;mm[J[[Jmi"),                                                                // matches the launcher version id: 1.9.2        1.9.1        1.9          
 	_1_9_pre2  ("1.9-pre2",   "qvoomajzpb[Llp;mm[J[[Jmi"),                                                                // matches the launcher version id: 1.9-pre2     1.9-pre1     16w07b       16w06a       16w05b       16w04a       16w03a       16w02a       
 	_15w51b    ("15w51b",     "quonmajzpa[Llp;mm[J[[Jmi"),                                                                // matches the launcher version id: 15w51b       
 	_15w50a    ("15w50a",     "qtonmajzpa[Llp;mm[J[[Jmi"),                                                                // matches the launcher version id: 15w50a       15w49b       15w47c       
