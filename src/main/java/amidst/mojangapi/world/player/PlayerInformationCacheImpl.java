@@ -22,13 +22,13 @@ public class PlayerInformationCacheImpl implements PlayerInformationCache {
 	@NotNull
 	@Override
 	public PlayerInformation getByUUID(String uuid) {
-		uuid = getCleanUUID(uuid);
-		PlayerInformation result = byUUID.get(uuid);
+		String cleanUUID = getCleanUUID(uuid);
+		PlayerInformation result = byUUID.get(cleanUUID);
 		if (result != null) {
 			return result;
 		} else {
-			Log.i("requesting player information for uuid: " + uuid);
-			result = PlayerInformation.fromUUID(uuid);
+			Log.i("requesting player information for uuid: " + cleanUUID);
+			result = PlayerInformation.fromUUID(cleanUUID);
 			put(result);
 			return result;
 		}
