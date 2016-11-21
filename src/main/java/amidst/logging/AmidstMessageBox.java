@@ -3,6 +3,7 @@ package amidst.logging;
 import java.awt.Component;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -12,52 +13,42 @@ import amidst.documentation.NotThreadSafe;
 public enum AmidstMessageBox {
 	;
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	public static void displayError(String title, Throwable e) {
 		displayMessageBox(title, MessageFormatter.format(e), JOptionPane.ERROR_MESSAGE);
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	public static void displayError(String title, Throwable e, String message) {
 		displayMessageBox(title, MessageFormatter.format(e, message), JOptionPane.ERROR_MESSAGE);
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	public static void displayError(String title, Throwable e, String message, String part1, String[] parts) {
 		displayMessageBox(title, MessageFormatter.format(e, message, part1, parts), JOptionPane.ERROR_MESSAGE);
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	public static void displayError(String title, String message) {
 		displayMessageBox(title, MessageFormatter.format(message), JOptionPane.ERROR_MESSAGE);
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	public static void displayError(String title, String message, String part1, String[] parts) {
 		displayMessageBox(title, MessageFormatter.format(message, part1, parts), JOptionPane.ERROR_MESSAGE);
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	public static void displayInfo(String title, String message) {
 		displayMessageBox(title, MessageFormatter.format(message), JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	public static void displayInfo(String title, String message, String part1, String[] parts) {
 		displayMessageBox(title, MessageFormatter.format(message, part1, parts), JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	public static void displayError(Component parent, String title, Throwable e) {
 		displayMessageBox(parent, title, MessageFormatter.format(e), JOptionPane.ERROR_MESSAGE);
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	public static void displayError(Component parent, String title, Throwable e, String message) {
 		displayMessageBox(parent, title, MessageFormatter.format(e, message), JOptionPane.ERROR_MESSAGE);
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	public static void displayError(
 			Component parent,
 			String title,
@@ -68,22 +59,18 @@ public enum AmidstMessageBox {
 		displayMessageBox(parent, title, MessageFormatter.format(e, message, part1, parts), JOptionPane.ERROR_MESSAGE);
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	public static void displayError(Component parent, String title, String message) {
 		displayMessageBox(parent, title, MessageFormatter.format(message), JOptionPane.ERROR_MESSAGE);
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	public static void displayError(Component parent, String title, String message, String part1, String[] parts) {
 		displayMessageBox(parent, title, MessageFormatter.format(message, part1, parts), JOptionPane.ERROR_MESSAGE);
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	public static void displayInfo(Component parent, String title, String message) {
 		displayMessageBox(parent, title, MessageFormatter.format(message), JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	public static void displayInfo(Component parent, String title, String message, String part1, String[] parts) {
 		displayMessageBox(
 				parent,
@@ -92,14 +79,12 @@ public enum AmidstMessageBox {
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	private static void displayMessageBox(String title, String message, int type) {
 		displayMessageBox(null, title, message, type);
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	private static void displayMessageBox(Component parent, String title, String message, int type) {
-		JOptionPane.showMessageDialog(parent, message, title, type);
+		SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(parent, message, title, type));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
