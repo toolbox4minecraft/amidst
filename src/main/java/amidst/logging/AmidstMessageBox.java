@@ -94,11 +94,22 @@ public enum AmidstMessageBox {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private static void displayMessageBox(String title, String message, int type) {
-		JOptionPane.showMessageDialog(null, message, title, type);
+		displayMessageBox(null, title, message, type);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private static void displayMessageBox(Component parent, String title, String message, int type) {
 		JOptionPane.showMessageDialog(parent, message, title, type);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public static boolean askToConfirmYesNo(String title, String message) {
+		return askToConfirmYesNo(null, title, message);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public static boolean askToConfirmYesNo(Component parent, String title, String message) {
+		return JOptionPane
+				.showConfirmDialog(parent, message, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 	}
 }

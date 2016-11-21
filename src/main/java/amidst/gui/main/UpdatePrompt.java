@@ -7,8 +7,6 @@ import java.net.URISyntaxException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import javax.swing.JOptionPane;
-
 import amidst.AmidstVersion;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -34,14 +32,14 @@ public class UpdatePrompt {
 						workerExecutor,
 						NOOP_CONSUMER,
 						NOOP,
-						message -> mainWindow.askToConfirm(TITLE, message));
+						message -> mainWindow.askToConfirmYesNo(TITLE, message));
 			} else {
 				return new UpdatePrompt(
 						currentVersion,
 						workerExecutor,
 						e -> mainWindow.displayException(e),
 						() -> mainWindow.displayMessage(TITLE, NO_UPDATES_AVAILABLE),
-						message -> mainWindow.askToConfirm(TITLE, message));
+						message -> mainWindow.askToConfirmYesNo(TITLE, message));
 			}
 		} else {
 			if (silent) {
@@ -50,21 +48,16 @@ public class UpdatePrompt {
 						workerExecutor,
 						NOOP_CONSUMER,
 						NOOP,
-						message -> askToConfirmDirectly(message));
+						message -> AmidstMessageBox.askToConfirmYesNo(TITLE, message));
 			} else {
 				return new UpdatePrompt(
 						currentVersion,
 						workerExecutor,
 						e -> AmidstMessageBox.displayError(TITLE, e),
 						() -> AmidstMessageBox.displayInfo(TITLE, NO_UPDATES_AVAILABLE),
-						message -> askToConfirmDirectly(message));
+						message -> AmidstMessageBox.askToConfirmYesNo(TITLE, message));
 			}
 		}
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private static boolean askToConfirmDirectly(String message) {
-		return JOptionPane.showConfirmDialog(null, message, TITLE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 	}
 
 	private static final String TITLE = "Amidst Updater";

@@ -298,7 +298,7 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean askToConfirmSaveGameManipulation() {
-		return askToConfirm(
+		return askToConfirmYesNo(
 				"Save Game Manipulation",
 				"WARNING: You are about to change the contents of the save game directory. There is a chance that it gets corrupted.\n"
 						+ "We try to minimize the risk by creating a backup of the changed file, before it is changed.\n"
@@ -309,9 +309,8 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public boolean askToConfirm(String title, String message) {
-		return JOptionPane
-				.showConfirmDialog(frame, message, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+	public boolean askToConfirmYesNo(String title, String message) {
+		return AmidstMessageBox.askToConfirmYesNo(frame, title, message);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

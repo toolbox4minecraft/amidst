@@ -222,7 +222,7 @@ public class Actions {
 							+ file.getAbsolutePath();
 					AmidstLogger.warn(message);
 					mainWindow.displayError(message);
-				} else if (!file.exists() || mainWindow.askToConfirm(
+				} else if (!file.exists() || mainWindow.askToConfirmYesNo(
 						"Replace file?",
 						"File already exists. Do you want to replace it?\n" + file.getAbsolutePath() + "")) {
 					saveImageToFile(image, file);
@@ -305,7 +305,7 @@ public class Actions {
 			if (input != null) {
 				player.moveTo(targetCoordinates, tryParseLong(input, currentHeight), currentCoordinates.getDimension());
 				viewerFacade.reloadPlayerLayer();
-				if (mainWindow.askToConfirm("Save Player Locations", "Do you want to save the player locations?")) {
+				if (mainWindow.askToConfirmYesNo("Save Player Locations", "Do you want to save the player locations?")) {
 					if (mainWindow.askToConfirmSaveGameManipulation()) {
 						viewerFacade.savePlayerLocations();
 					}
