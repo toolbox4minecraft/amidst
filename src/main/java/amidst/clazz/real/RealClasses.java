@@ -16,14 +16,15 @@ import amidst.documentation.Immutable;
 public enum RealClasses {
 	;
 
-	private static final int MAXIMUM_CLASS_BYTES = 8000;
+	private static final int MAXIMUM_CLASS_BYTES = 16 * 1024;
 	private static final RealClassBuilder REAL_CLASS_BUILDER = new RealClassBuilder();
 
 	public static List<RealClass> fromJarFile(File jarFile) throws FileNotFoundException, JarFileParsingException {
 		return readRealClassesFromJarFile(jarFile);
 	}
 
-	private static List<RealClass> readRealClassesFromJarFile(File jarFile) throws JarFileParsingException,
+	private static List<RealClass> readRealClassesFromJarFile(File jarFile)
+			throws JarFileParsingException,
 			FileNotFoundException {
 		if (!jarFile.exists()) {
 			throw new FileNotFoundException("Attempted to load jar file at: " + jarFile + " but it does not exist.");
@@ -39,7 +40,7 @@ public enum RealClasses {
 
 	private static List<RealClass> readJarFile(ZipFile zipFile) throws IOException, RealClassCreationException {
 		Enumeration<? extends ZipEntry> enu = zipFile.entries();
-		List<RealClass> result = new ArrayList<RealClass>();
+		List<RealClass> result = new ArrayList<>();
 		while (enu.hasMoreElements()) {
 			RealClass entry = readJarFileEntry(zipFile, enu.nextElement());
 			if (entry != null) {
@@ -49,7 +50,8 @@ public enum RealClasses {
 		return result;
 	}
 
-	private static RealClass readJarFileEntry(ZipFile zipFile, ZipEntry entry) throws IOException,
+	private static RealClass readJarFileEntry(ZipFile zipFile, ZipEntry entry)
+			throws IOException,
 			RealClassCreationException {
 		String realClassName = getFileNameWithoutExtension(entry.getName(), "class");
 		if (!entry.isDirectory() && realClassName != null) {
@@ -59,7 +61,8 @@ public enum RealClasses {
 		}
 	}
 
-	private static RealClass readRealClass(String realClassName, BufferedInputStream stream) throws IOException,
+	private static RealClass readRealClass(String realClassName, BufferedInputStream stream)
+			throws IOException,
 			RealClassCreationException {
 		try (BufferedInputStream theStream = stream) {
 			// TODO: Double check that this filter won't mess anything up.

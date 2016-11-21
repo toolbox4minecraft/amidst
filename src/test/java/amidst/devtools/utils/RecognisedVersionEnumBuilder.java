@@ -22,14 +22,15 @@ public class RecognisedVersionEnumBuilder {
 		return result;
 	}
 
-	private final Map<String, RecognisedVersionEnumEntryBuilder> builders = new LinkedHashMap<String, RecognisedVersionEnumEntryBuilder>();
+	private final Map<String, RecognisedVersionEnumEntryBuilder> builders = new LinkedHashMap<>();
 	private int maxNameLength;
 	private int maxDeclarationLength;
 
 	public void addKnown(RecognisedVersion recognisedVersion) {
 		if (recognisedVersion.isKnown()) {
-			builders
-					.put(recognisedVersion.getMagicString(), RecognisedVersionEnumEntryBuilder.known(recognisedVersion));
+			builders.put(
+					recognisedVersion.getMagicString(),
+					RecognisedVersionEnumEntryBuilder.known(recognisedVersion));
 		}
 	}
 
@@ -64,19 +65,19 @@ public class RecognisedVersionEnumBuilder {
 	}
 
 	public Iterable<String> renderNew() {
-		List<String> result = new LinkedList<String>();
+		List<String> result = new LinkedList<>();
 		render(result, b -> !b.isKnown(), b -> b.renderLine(maxNameLength, maxDeclarationLength));
 		return result;
 	}
 
 	public Iterable<String> renderRenamed() {
-		List<String> result = new LinkedList<String>();
+		List<String> result = new LinkedList<>();
 		render(result, b -> b.isRenamed(), b -> b.renderLine(maxNameLength, maxDeclarationLength));
 		return result;
 	}
 
 	public Iterable<String> renderComplete() {
-		List<String> result = new LinkedList<String>();
+		List<String> result = new LinkedList<>();
 		render(result, b -> !b.isKnown(), b -> b.renderLine(maxNameLength, maxDeclarationLength));
 		render(result, b -> b.isKnown(), b -> b.renderLine(maxNameLength, maxDeclarationLength));
 		return result;

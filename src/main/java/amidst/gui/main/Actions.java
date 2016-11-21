@@ -16,9 +16,10 @@ import amidst.Application;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gui.crash.CrashWindow;
 import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
@@ -110,7 +111,7 @@ public class Actions {
 				if (coordinates != null) {
 					viewerFacade.centerOn(coordinates);
 				} else {
-					Log.w("Invalid location entered, ignoring.");
+					AmidstLogger.warn("Invalid location entered, ignoring.");
 					mainWindow.displayError("You entered an invalid location.");
 				}
 			}
@@ -129,10 +130,8 @@ public class Actions {
 	public void goToStronghold() {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
-			WorldIcon stronghold = mainWindow.askForOptions(
-					"Go to",
-					"Select Stronghold:",
-					viewerFacade.getStrongholdWorldIcons());
+			WorldIcon stronghold = mainWindow
+					.askForOptions("Go to", "Select Stronghold:", viewerFacade.getStrongholdWorldIcons());
 			if (stronghold != null) {
 				viewerFacade.centerOn(stronghold);
 			}
@@ -150,9 +149,20 @@ public class Actions {
 					viewerFacade.centerOn(player);
 				}
 			} else {
+				AmidstLogger.warn("There are no players in this world.");
 				mainWindow.displayError("There are no players in this world.");
 			}
 		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void zoomIn() {
+		adjustZoom(-1);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void zoomOut() {
+		adjustZoom(1);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -175,7 +185,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void howCanIMoveAPlayer() {
-		mainWindow.displayMessage(
+		mainWindow.displayInfo(
 				"How can I move a player?",
 				"If you load the world from a save game, you can change the player locations.\n"
 						+ "1. Scroll the map to and right-click on the new player location, this opens a popup menu.\n"
@@ -204,15 +214,18 @@ public class Actions {
 			if (file != null) {
 				file = appendPNGFileExtensionIfNecessary(file);
 				if (file.exists() && !file.isFile()) {
-					mainWindow
-							.displayError("Unable to write capture image, because the target exists but is not a file: "
-									+ file.getAbsolutePath());
+					String message = "Unable to write capture image, because the target exists but is not a file: "
+							+ file.getAbsolutePath();
+					AmidstLogger.warn(message);
+					mainWindow.displayError(message);
 				} else if (!canWriteToFile(file)) {
-					mainWindow.displayError("Unable to write capture image, because you have no writing permissions: "
-							+ file.getAbsolutePath());
-				} else if (!file.exists()
-						|| mainWindow.askToConfirm("Replace file?", "File already exists. Do you want to replace it?\n"
-								+ file.getAbsolutePath() + "")) {
+					String message = "Unable to write capture image, because you have no writing permissions: "
+							+ file.getAbsolutePath();
+					AmidstLogger.warn(message);
+					mainWindow.displayError(message);
+				} else if (!file.exists() || mainWindow.askToConfirmYesNo(
+						"Replace file?",
+						"File already exists. Do you want to replace it?\n" + file.getAbsolutePath() + "")) {
 					saveImageToFile(image, file);
 				}
 			}
@@ -230,6 +243,11 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	public void displayLogMessages() {
+		CrashWindow.showForInterest();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void checkForUpdates() {
 		application.checkForUpdates(mainWindow);
 	}
@@ -241,13 +259,15 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void about() {
-		mainWindow.displayMessage("About", "Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n\n"
-				+ "Author: Skidoodle aka skiphs\n" + "Mail: toolbox4minecraft+amidst@gmail.com\n"
-				+ "Project Page: https://github.com/toolbox4minecraft/amidst");
+		mainWindow.displayInfo(
+				"About",
+				"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n\n"
+						+ "Author: Skidoodle aka skiphs\n" + "Mail: toolbox4minecraft+amidst@gmail.com\n"
+						+ "Project Page: https://github.com/toolbox4minecraft/amidst");
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void adjustZoom(int notches) {
+	private void adjustZoom(int notches) {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
 			viewerFacade.adjustZoom(notches);
@@ -275,10 +295,8 @@ public class Actions {
 		ViewerFacade viewerFacade = this.viewerFacade.get();
 		if (viewerFacade != null) {
 			if (viewerFacade.canSavePlayerLocations()) {
-				new MovePlayerPopupMenu(this, viewerFacade.getMovablePlayerList(), targetCoordinates).show(
-						component,
-						x,
-						y);
+				new MovePlayerPopupMenu(this, viewerFacade.getMovablePlayerList(), targetCoordinates)
+						.show(component, x, y);
 			}
 		}
 	}
@@ -293,7 +311,8 @@ public class Actions {
 			if (input != null) {
 				player.moveTo(targetCoordinates, tryParseLong(input, currentHeight), currentCoordinates.getDimension());
 				viewerFacade.reloadPlayerLayer();
-				if (mainWindow.askToConfirm("Save Player Locations", "Do you want to save the player locations?")) {
+				if (mainWindow
+						.askToConfirmYesNo("Save Player Locations", "Do you want to save the player locations?")) {
 					if (mainWindow.askToConfirmSaveGameManipulation()) {
 						viewerFacade.savePlayerLocations();
 					}
@@ -322,8 +341,8 @@ public class Actions {
 		try {
 			ImageIO.write(image, "png", file);
 		} catch (IOException e) {
-			e.printStackTrace();
-			mainWindow.displayException(e);
+			AmidstLogger.warn(e);
+			mainWindow.displayError(e);
 		}
 	}
 

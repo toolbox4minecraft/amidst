@@ -16,6 +16,7 @@ import amidst.mojangapi.world.testworld.storage.json.SlimeChunksJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
 import amidst.util.GsonProvider;
 
+
 @Immutable
 public enum TestWorldEntrySerializer {
 	;

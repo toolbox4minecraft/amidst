@@ -5,7 +5,7 @@ import java.util.List;
 
 import amidst.clazz.symbolic.SymbolicClassGraphCreationException;
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 
 @Immutable
 public class SymbolicClassDeclaration {
@@ -49,19 +49,20 @@ public class SymbolicClassDeclaration {
 	}
 
 	public void handleMultipleMatches(String firstRealClassName, String otherRealClassName) {
-		Log.w("Found class " + symbolicClassName + " again: " + firstRealClassName + ", " + otherRealClassName);
+		AmidstLogger
+				.warn("Found class " + symbolicClassName + " again: " + firstRealClassName + ", " + otherRealClassName);
 	}
 
 	public void handleMatch(String realClassName) {
-		Log.i("Found class " + symbolicClassName + ": " + realClassName);
+		AmidstLogger.info("Found class " + symbolicClassName + ": " + realClassName);
 	}
 
 	public void handleNoMatch() throws ClassNotFoundException {
 		if (isOptional) {
-			Log.i("Missing class " + symbolicClassName);
+			AmidstLogger.info("Missing class " + symbolicClassName);
 		} else {
-			throw new ClassNotFoundException("cannot find a real class matching the symbolic class "
-					+ symbolicClassName);
+			throw new ClassNotFoundException(
+					"cannot find a real class matching the symbolic class " + symbolicClassName);
 		}
 	}
 
@@ -69,7 +70,7 @@ public class SymbolicClassDeclaration {
 			throws SymbolicClassGraphCreationException {
 		String message = "unable to find the real class " + realClassName + " -> " + symbolicClassName;
 		if (isOptional) {
-			Log.i(message);
+			AmidstLogger.info(message);
 		} else {
 			throw new SymbolicClassGraphCreationException(message, e);
 		}

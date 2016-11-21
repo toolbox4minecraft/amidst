@@ -11,37 +11,54 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
-import net.miginfocom.swing.MigLayout;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.logging.AmidstLogger;
+import net.miginfocom.swing.MigLayout;
 
 @NotThreadSafe
 public enum CrashWindow {
-	INSTANCE;
+	CRASHING("Amidst crashed!", true, () -> {
+		System.exit(4);
+	}),
+	INTEREST("Log Messages", false, () -> {
+		// noop
+	});
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	public static void show(String message, String logMessages, Runnable executeOnClose) {
-		INSTANCE.set(message, logMessages, executeOnClose);
+	public static void showAfterCrash() {
+		String allMessages = AmidstLogger.getAllMessages();
+		SwingUtilities.invokeLater(() -> CRASHING.set(allMessages));
 	}
 
-	private final JLabel messageLabel;
+	public static void showForInterest() {
+		String allMessages = AmidstLogger.getAllMessages();
+		SwingUtilities.invokeLater(() -> INTEREST.set(allMessages));
+	}
+
+	private final JLabel pleaseReportLabel;
+	private final JTextField pleaseReportTextField;
 	private final JTextArea logMessagesTextArea;
 	private final JFrame frame;
-	private volatile Runnable executeOnClose;
+	private final boolean isCrashing;
+	private final Runnable executeOnClose;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private CrashWindow() {
-		this.messageLabel = createMessageLabel();
+	private CrashWindow(String title, boolean isCrashing, Runnable executeOnClose) {
+		this.isCrashing = isCrashing;
+		this.executeOnClose = executeOnClose;
+		if (isCrashing) {
+			this.pleaseReportLabel = new JLabel("Please report this bug on:");
+			this.pleaseReportTextField = createReportingTextField();
+		} else {
+			this.pleaseReportLabel = null;
+			this.pleaseReportTextField = null;
+		}
 		this.logMessagesTextArea = createLogMessagesTextArea();
-		this.frame = createFrame();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private JLabel createMessageLabel() {
-		return new JLabel();
+		this.frame = createFrame(title);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -53,18 +70,19 @@ public enum CrashWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private JFrame createFrame() {
-		JFrame result = new JFrame("Amidst crashed!");
+	private JFrame createFrame(String title) {
+		JFrame result = new JFrame(title);
 		result.getContentPane().setLayout(new MigLayout());
-		result.add(messageLabel, "growx, pushx, wrap");
-		result.add(new JLabel("Please report this bug on:"), "growx, pushx, wrap");
-		result.add(createReportingTextField(), "growx, pushx, wrap");
+		if (isCrashing) {
+			result.add(pleaseReportLabel, "growx, pushx, wrap");
+			result.add(pleaseReportTextField, "growx, pushx, wrap");
+		}
 		result.add(createLogMessagesScrollPane(logMessagesTextArea), "grow, push");
 		result.setSize(800, 600);
 		result.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				result.dispose();
+				result.setVisible(false);
 				executeOnClose.run();
 			}
 		});
@@ -88,10 +106,11 @@ public enum CrashWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void set(String message, String logMessages, Runnable executeOnClose) {
-		this.messageLabel.setText(message);
+	public void set(String logMessages) {
+		if (isCrashing) {
+			this.pleaseReportTextField.selectAll();
+		}
 		this.logMessagesTextArea.setText(logMessages);
-		this.executeOnClose = executeOnClose;
 		this.frame.setVisible(true);
 	}
 }

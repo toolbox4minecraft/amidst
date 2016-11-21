@@ -32,8 +32,8 @@ public class PlayersPlayerNbt extends PlayerNbt {
 
 	@Override
 	public PlayerCoordinates readCoordinates() throws IOException, MojangApiParsingException {
-		return PlayerLocationLoader.readFromPlayerFile(NBTUtils.readTagFromFile(saveDirectory
-				.getPlayersFile(playerName)));
+		return PlayerLocationLoader
+				.readFromPlayerFile(NBTUtils.readTagFromFile(saveDirectory.getPlayersFile(playerName)));
 	}
 
 	@Override

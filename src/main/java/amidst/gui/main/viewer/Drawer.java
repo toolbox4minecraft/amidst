@@ -84,11 +84,9 @@ public class Drawer {
 		this.drawers = drawers;
 		this.dimensionSetting = dimensionSetting;
 		this.accelerationCounter = accelerationCounter;
-		this.voidTexturePaint = new TexturePaint(VOID_TEXTURE, new Rectangle(
-				0,
-				0,
-				VOID_TEXTURE.getWidth(),
-				VOID_TEXTURE.getHeight()));
+		this.voidTexturePaint = new TexturePaint(
+				VOID_TEXTURE,
+				new Rectangle(0, 0, VOID_TEXTURE.getWidth(), VOID_TEXTURE.getHeight()));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

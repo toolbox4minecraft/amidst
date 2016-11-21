@@ -2,14 +2,10 @@ package amidst.gui.main;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -29,6 +25,8 @@ import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.main.viewer.ViewerFacadeBuilder;
 import amidst.gui.seedsearcher.SeedSearcher;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
+import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -57,7 +55,7 @@ public class MainWindow {
 	private final AmidstMenu menuBar;
 	private final SeedSearcherWindow seedSearcherWindow;
 
-	private final AtomicReference<ViewerFacade> viewerFacade = new AtomicReference<ViewerFacade>();
+	private final AtomicReference<ViewerFacade> viewerFacade = new AtomicReference<>();
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public MainWindow(
@@ -80,7 +78,6 @@ public class MainWindow {
 		this.actions = createActions();
 		this.menuBar = createMenuBar();
 		this.seedSearcherWindow = createSeedSearcherWindow();
-		initKeyListener();
 		initCloseListener();
 		showFrame();
 		clearViewerFacade();
@@ -89,10 +86,11 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JFrame createFrame() {
 		JFrame frame = new JFrame();
-		frame.setTitle(createVersionString(
-				mojangApi.getVersionId(),
-				mojangApi.getRecognisedVersionName(),
-				mojangApi.getProfileName()));
+		frame.setTitle(
+				createVersionString(
+						mojangApi.getVersionId(),
+						mojangApi.getRecognisedVersionName(),
+						mojangApi.getProfileName()));
 		frame.setSize(1000, 800);
 		frame.setIconImages(metadata.getIcons());
 		return frame;
@@ -125,24 +123,11 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private SeedSearcherWindow createSeedSearcherWindow() {
-		return new SeedSearcherWindow(metadata, settings, this, new SeedSearcher(
+		return new SeedSearcherWindow(
+				metadata,
+				settings,
 				this,
-				mojangApi,
-				threadMaster.getWorkerExecutor()));
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void initKeyListener() {
-		frame.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				if (e.getKeyChar() == '+') {
-					actions.adjustZoom(-1);
-				} else if (e.getKeyChar() == '-') {
-					actions.adjustZoom(1);
-				}
-			}
-		});
+				new SeedSearcher(this, mojangApi, threadMaster.getWorkerExecutor()));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -165,8 +150,8 @@ public class MainWindow {
 		try {
 			setWorld(mojangApi.createWorldFromSeed(worldSeed, worldType));
 		} catch (IllegalStateException | MinecraftInterfaceException e) {
-			e.printStackTrace();
-			displayException(e);
+			AmidstLogger.warn(e);
+			displayError(e);
 		}
 	}
 
@@ -175,8 +160,8 @@ public class MainWindow {
 		try {
 			setWorld(mojangApi.createWorldFromSaveGame(file));
 		} catch (IllegalStateException | MinecraftInterfaceException | IOException | MojangApiParsingException e) {
-			e.printStackTrace();
-			displayException(e);
+			AmidstLogger.warn(e);
+			displayError(e);
 		}
 	}
 
@@ -298,30 +283,23 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayMessage(String title, String message) {
-		JOptionPane.showMessageDialog(frame, message, title, JOptionPane.INFORMATION_MESSAGE);
+	public void displayInfo(String title, String message) {
+		AmidstMessageBox.displayInfo(frame, title, message);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayError(String message) {
-		JOptionPane.showMessageDialog(frame, message, "Error", JOptionPane.ERROR_MESSAGE);
+		AmidstMessageBox.displayError(frame, "Error", message);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayException(Exception exception) {
-		JOptionPane.showMessageDialog(frame, getStackTraceAsString(exception), "Error", JOptionPane.ERROR_MESSAGE);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private String getStackTraceAsString(Exception exception) {
-		StringWriter writer = new StringWriter();
-		exception.printStackTrace(new PrintWriter(writer));
-		return writer.toString();
+	public void displayError(Exception e) {
+		AmidstMessageBox.displayError(frame, "Error", e);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean askToConfirmSaveGameManipulation() {
-		return askToConfirm(
+		return askToConfirmYesNo(
 				"Save Game Manipulation",
 				"WARNING: You are about to change the contents of the save game directory. There is a chance that it gets corrupted.\n"
 						+ "We try to minimize the risk by creating a backup of the changed file, before it is changed.\n"
@@ -332,8 +310,8 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public boolean askToConfirm(String title, String message) {
-		return JOptionPane.showConfirmDialog(frame, message, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+	public boolean askToConfirmYesNo(String title, String message) {
+		return AmidstMessageBox.askToConfirmYesNo(frame, title, message);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -350,14 +328,8 @@ public class MainWindow {
 	@SuppressWarnings("unchecked")
 	public <T> T askForOptions(String title, String message, List<T> choices) {
 		Object[] choicesArray = choices.toArray();
-		return (T) JOptionPane.showInputDialog(
-				frame,
-				message,
-				title,
-				JOptionPane.PLAIN_MESSAGE,
-				null,
-				choicesArray,
-				choicesArray[0]);
+		return (T) JOptionPane
+				.showInputDialog(frame, message, title, JOptionPane.PLAIN_MESSAGE, null, choicesArray, choicesArray[0]);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

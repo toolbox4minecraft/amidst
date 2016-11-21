@@ -17,7 +17,7 @@ import amidst.documentation.NotThreadSafe;
 
 @NotThreadSafe
 public class FileLogger implements Logger {
-	private final ConcurrentLinkedQueue<String> logMessageQueue = new ConcurrentLinkedQueue<String>();
+	private final ConcurrentLinkedQueue<String> logMessageQueue = new ConcurrentLinkedQueue<>();
 	private final File file;
 	private final ScheduledExecutorService executor;
 
@@ -65,23 +65,23 @@ public class FileLogger implements Logger {
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
 	private void disableBecauseFileCreationFailed() {
-		Log.w("Unable to create new file at: " + file + " disabling logging to file. (No exception thrown)");
+		AmidstLogger
+				.warn("Unable to create new file at: " + file + " disabling logging to file. (No exception thrown)");
 	}
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
 	private void disableBecauseFileCreationThrowsException(IOException e) {
-		Log.w("Unable to create new file at: " + file + " disabling logging to file.");
-		e.printStackTrace();
+		AmidstLogger.warn(e, "Unable to create new file at: " + file + " disabling logging to file.");
 	}
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
 	private void disableBecauseFileIsDirectory() {
-		Log.w("Unable to log at path: " + file + " because location is a directory.");
+		AmidstLogger.warn("Unable to log at path: " + file + " because location is a directory.");
 	}
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
 	private void writeWelcomeMessageToFile() {
-		write("log", "New FileLogger started.");
+		log("log", "New FileLogger started.");
 	}
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
@@ -116,55 +116,20 @@ public class FileLogger implements Logger {
 		try (FileWriter writer = new FileWriter(file, true)) {
 			writer.append(logMessage);
 		} catch (IOException e) {
-			Log.w("Unable to write to log file.");
-			e.printStackTrace();
+			AmidstLogger.warn(e, "Unable to write to log file.");
 		}
 	}
 
 	@Override
-	public void debug(Object... messages) {
-		write("debug", messages);
-	}
-
-	@Override
-	public void info(Object... messages) {
-		write("info", messages);
-	}
-
-	@Override
-	public void warning(Object... messages) {
-		write("warning", messages);
-	}
-
-	@Override
-	public void error(Object... messages) {
-		write("error", messages);
-	}
-
-	@Override
-	public void crash(Throwable e, String exceptionText, String message) {
-		write("crash", message);
-		if (!exceptionText.isEmpty()) {
-			write("crash", exceptionText);
-		}
-	}
-
-	private void write(String tag, Object... messages) {
+	public void log(String tag, String message) {
 		String currentTime = new Timestamp(new Date().getTime()).toString();
-		StringBuilder builder = new StringBuilder(currentTime);
-		builder.append(" [").append(tag).append("] ");
-		for (int i = 0; i < messages.length; i++) {
-			builder.append(messages[i]);
-			builder.append(getMessageDelimiter(i, messages));
-		}
+		StringBuilder builder = new StringBuilder()
+				.append(currentTime)
+				.append(" [")
+				.append(tag)
+				.append("] ")
+				.append(message)
+				.append("\r\n");
 		logMessageQueue.add(builder.toString());
-	}
-
-	private String getMessageDelimiter(int i, Object... messages) {
-		if (i < messages.length - 1) {
-			return " ";
-		} else {
-			return "\r\n";
-		}
 	}
 }

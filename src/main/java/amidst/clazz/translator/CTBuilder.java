@@ -4,18 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
-import amidst.clazz.real.detector.AllRCD;
-import amidst.clazz.real.detector.AnyRCD;
-import amidst.clazz.real.detector.FieldFlagsRCD;
-import amidst.clazz.real.detector.LongRCD;
-import amidst.clazz.real.detector.NumberOfConstructorsRCD;
-import amidst.clazz.real.detector.NumberOfFieldsRCD;
-import amidst.clazz.real.detector.NumberOfMethodsRCD;
-import amidst.clazz.real.detector.RealClassDetector;
-import amidst.clazz.real.detector.StringContainingRCD;
-import amidst.clazz.real.detector.Utf8EqualToRCD;
-import amidst.clazz.real.detector.WildcardByteRCD;
+import amidst.clazz.real.RealClass;
+import amidst.clazz.real.RealClassDetector;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicConstructorDeclaration;
 import amidst.clazz.symbolic.declaration.SymbolicFieldDeclaration;
@@ -31,90 +23,12 @@ import amidst.documentation.NotThreadSafe;
 @NotThreadSafe
 public class CTBuilder {
 	@NotThreadSafe
-	public class RCDBuilder {
-		private final List<List<RealClassDetector>> allDetectors = new ArrayList<List<RealClassDetector>>();
-		private List<RealClassDetector> detectors = new ArrayList<RealClassDetector>();
-
-		private RealClassDetector constructThis() {
-			if (allDetectors.size() == 1) {
-				return new AllRCD(allDetectors.get(0));
-			} else {
-				List<RealClassDetector> result = new ArrayList<RealClassDetector>();
-				for (List<RealClassDetector> detectors : allDetectors) {
-					result.add(new AllRCD(detectors));
-				}
-				return new AnyRCD(result);
-			}
-		}
-
-		public RCDBuilder or() {
-			allDetectors.add(detectors);
-			detectors = new ArrayList<RealClassDetector>();
-			return this;
-		}
-
-		public SCDBuilder thenDeclareRequired(String symbolicClassName) {
-			return thenDeclare(symbolicClassName, false);
-		}
-
-		public SCDBuilder thenDeclareOptional(String symbolicClassName) {
-			return thenDeclare(symbolicClassName, true);
-		}
-
-		private SCDBuilder thenDeclare(String symbolicClassName, boolean isOptional) {
-			allDetectors.add(detectors);
-			CTBuilder.this.declarationBuilder.init(symbolicClassName, isOptional);
-			return CTBuilder.this.declarationBuilder;
-		}
-
-		public RCDBuilder fieldFlags(int flags, int... fieldIndices) {
-			detectors.add(new FieldFlagsRCD(flags, fieldIndices));
-			return this;
-		}
-
-		public RCDBuilder longs(long... longs) {
-			detectors.add(new LongRCD(longs));
-			return this;
-		}
-
-		public RCDBuilder numberOfConstructors(int count) {
-			detectors.add(new NumberOfConstructorsRCD(count));
-			return this;
-		}
-
-		public RCDBuilder numberOfFields(int count) {
-			detectors.add(new NumberOfFieldsRCD(count));
-			return this;
-		}
-
-		public RCDBuilder numberOfMethods(int count) {
-			detectors.add(new NumberOfMethodsRCD(count));
-			return this;
-		}
-
-		public RCDBuilder stringContaining(String string) {
-			detectors.add(new StringContainingRCD(string));
-			return this;
-		}
-
-		public RCDBuilder utf8EqualTo(String utf8) {
-			detectors.add(new Utf8EqualToRCD(utf8));
-			return this;
-		}
-
-		public RCDBuilder wildcardBytes(int[] bytes) {
-			detectors.add(new WildcardByteRCD(bytes));
-			return this;
-		}
-	}
-
-	@NotThreadSafe
 	public class SCDBuilder {
 		private String symbolicClassName;
 		private boolean isOptional;
-		private final List<SymbolicConstructorDeclaration> constructors = new ArrayList<SymbolicConstructorDeclaration>();
-		private final List<SymbolicMethodDeclaration> methods = new ArrayList<SymbolicMethodDeclaration>();
-		private final List<SymbolicFieldDeclaration> fields = new ArrayList<SymbolicFieldDeclaration>();
+		private final List<SymbolicConstructorDeclaration> constructors = new ArrayList<>();
+		private final List<SymbolicMethodDeclaration> methods = new ArrayList<>();
+		private final List<SymbolicFieldDeclaration> fields = new ArrayList<>();
 
 		private void init(String symbolicClassName, boolean isOptional) {
 			this.symbolicClassName = symbolicClassName;
@@ -144,7 +58,7 @@ public class CTBuilder {
 		private SymbolicParameterDeclarationListBuilder<SCDBuilder> constructor(
 				final String symbolicName,
 				final boolean isOptional) {
-			return new SymbolicParameterDeclarationListBuilder<SCDBuilder>(this, new ExecuteOnEnd() {
+			return new SymbolicParameterDeclarationListBuilder<>(this, new ExecuteOnEnd() {
 				@Override
 				public void run(SymbolicParameterDeclarationList parameters) {
 					constructors.add(new SymbolicConstructorDeclaration(symbolicName, isOptional, parameters));
@@ -152,11 +66,15 @@ public class CTBuilder {
 			});
 		}
 
-		public SymbolicParameterDeclarationListBuilder<SCDBuilder> requiredMethod(String symbolicName, String realName) {
+		public SymbolicParameterDeclarationListBuilder<SCDBuilder> requiredMethod(
+				String symbolicName,
+				String realName) {
 			return method(symbolicName, realName, false);
 		}
 
-		public SymbolicParameterDeclarationListBuilder<SCDBuilder> optionalMethod(String symbolicName, String realName) {
+		public SymbolicParameterDeclarationListBuilder<SCDBuilder> optionalMethod(
+				String symbolicName,
+				String realName) {
 			return method(symbolicName, realName, true);
 		}
 
@@ -164,7 +82,7 @@ public class CTBuilder {
 				final String symbolicName,
 				final String realName,
 				final boolean isOptional) {
-			return new SymbolicParameterDeclarationListBuilder<SCDBuilder>(this, new ExecuteOnEnd() {
+			return new SymbolicParameterDeclarationListBuilder<>(this, new ExecuteOnEnd() {
 				@Override
 				public void run(SymbolicParameterDeclarationList parameters) {
 					methods.add(new SymbolicMethodDeclaration(symbolicName, realName, isOptional, parameters));
@@ -192,15 +110,32 @@ public class CTBuilder {
 
 	private final CTBuilder previous;
 
-	private final RCDBuilder detectorBuilder = new RCDBuilder();
+	private RealClassDetector detector = null;
 	private final SCDBuilder declarationBuilder = new SCDBuilder();
 
 	private CTBuilder(CTBuilder previous) {
 		this.previous = previous;
 	}
 
-	public RCDBuilder ifDetect() {
-		return detectorBuilder;
+	public CTBuilder ifDetect(Predicate<RealClass> predicate) {
+		this.detector = new RealClassDetector(predicate);
+		return this;
+	}
+
+	public SCDBuilder thenDeclareRequired(String symbolicClassName) {
+		return thenDeclare(symbolicClassName, false);
+	}
+
+	public SCDBuilder thenDeclareOptional(String symbolicClassName) {
+		return thenDeclare(symbolicClassName, true);
+	}
+
+	private SCDBuilder thenDeclare(String symbolicClassName, boolean isOptional) {
+		if (detector == null) {
+			throw new IllegalStateException("can't declare a symbolic class without calling ifDetect before");
+		}
+		declarationBuilder.init(symbolicClassName, isOptional);
+		return declarationBuilder;
 	}
 
 	public ClassTranslator construct() {
@@ -209,7 +144,7 @@ public class CTBuilder {
 
 	private Map<RealClassDetector, SymbolicClassDeclaration> constructResult() {
 		Map<RealClassDetector, SymbolicClassDeclaration> result = constructPreviousResult();
-		result.put(detectorBuilder.constructThis(), declarationBuilder.constructThis());
+		result.put(detector, declarationBuilder.constructThis());
 		return result;
 	}
 
@@ -217,7 +152,7 @@ public class CTBuilder {
 		if (previous != null) {
 			return previous.constructResult();
 		} else {
-			return new HashMap<RealClassDetector, SymbolicClassDeclaration>();
+			return new HashMap<>();
 		}
 	}
 }

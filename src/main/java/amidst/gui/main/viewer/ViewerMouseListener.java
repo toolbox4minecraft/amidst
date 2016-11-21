@@ -113,9 +113,8 @@ public class ViewerMouseListener implements MouseListener, MouseWheelListener {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void doMouseClicked(Point mousePosition) {
-		actions.selectWorldIcon(graph.getClosestWorldIcon(
-				translator.screenToWorld(mousePosition),
-				zoom.screenToWorld(50)));
+		actions.selectWorldIcon(
+				graph.getClosestWorldIcon(translator.screenToWorld(mousePosition), zoom.screenToWorld(50)));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

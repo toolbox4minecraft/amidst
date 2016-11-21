@@ -26,8 +26,8 @@ public class LayersMenu {
 	private final AmidstSettings settings;
 	private final Setting<Dimension> dimensionSetting;
 	private final Setting<Boolean> enableAllLayersSetting;
-	private final List<JMenuItem> overworldMenuItems = new LinkedList<JMenuItem>();
-	private final List<JMenuItem> endMenuItems = new LinkedList<JMenuItem>();
+	private final List<JMenuItem> overworldMenuItems = new LinkedList<>();
+	private final List<JMenuItem> endMenuItems = new LinkedList<>();
 	private volatile ViewerFacade viewerFacade;
 	private volatile boolean showEnableAllLayers;
 

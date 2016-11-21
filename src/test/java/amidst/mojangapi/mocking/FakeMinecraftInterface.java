@@ -43,7 +43,8 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public void createWorld(long seed, WorldType worldType, String generatorOptions) throws MinecraftInterfaceException {
+	public void createWorld(long seed, WorldType worldType, String generatorOptions)
+			throws MinecraftInterfaceException {
 		if (worldMetadataJson.getSeed() == seed && worldMetadataJson.getWorldType().equals(worldType)
 				&& generatorOptions.isEmpty()) {
 			isWorldCreated = true;

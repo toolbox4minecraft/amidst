@@ -65,7 +65,7 @@ public class TestWorldEntryDeclarationBuilder<T> {
 		Objects.requireNonNull(deserializer);
 		Objects.requireNonNull(extractor);
 		Objects.requireNonNull(equalityChecker);
-		return new TestWorldEntryDeclaration<T>(
+		return new TestWorldEntryDeclaration<>(
 				name,
 				clazz,
 				serializer,

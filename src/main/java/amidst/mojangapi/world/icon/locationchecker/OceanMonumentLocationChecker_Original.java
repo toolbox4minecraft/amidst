@@ -21,24 +21,16 @@ public class OceanMonumentLocationChecker_Original extends AllValidLocationCheck
 			BiomeDataOracle biomeDataOracle,
 			List<Biome> validBiomesAtMiddleOfChunk,
 			List<Biome> validBiomesForStructure) {
-		// @formatter:off
-		super(new StructureAlgorithm(
+		super(
+				new StructureAlgorithm(
 						seed,
 						MAGIC_NUMBER_FOR_SEED_1,
 						MAGIC_NUMBER_FOR_SEED_2,
 						MAGIC_NUMBER_FOR_SEED_3,
 						MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 						MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-						USE_TWO_VALUES_FOR_UPDATE
-				), new BiomeLocationChecker(
-						biomeDataOracle,
-						validBiomesAtMiddleOfChunk
-				), new StructureBiomeLocationChecker(
-						biomeDataOracle,
-						STRUCTURE_SIZE,
-						validBiomesForStructure
-				)
-		);
-		// @formatter:on
+						USE_TWO_VALUES_FOR_UPDATE),
+				new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk),
+				new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomesForStructure));
 	}
 }

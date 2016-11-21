@@ -15,9 +15,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
 import amidst.documentation.Immutable;
+import net.miginfocom.swing.MigLayout;
 
 @Immutable
 public class LicenseWindow {
@@ -64,7 +64,7 @@ public class LicenseWindow {
 	}
 
 	private JList<License> createLicenseList(License[] licenses, final JTextArea textArea) {
-		final JList<License> result = new JList<License>(licenses);
+		final JList<License> result = new JList<>(licenses);
 		result.setBorder(new LineBorder(Color.darkGray, 1));
 		result.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		result.addListSelectionListener(new ListSelectionListener() {

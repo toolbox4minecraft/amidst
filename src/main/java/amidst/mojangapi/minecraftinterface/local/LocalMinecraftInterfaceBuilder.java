@@ -12,7 +12,7 @@ import amidst.clazz.symbolic.SymbolicClassGraphCreationException;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -26,22 +26,26 @@ public class LocalMinecraftInterfaceBuilder {
 	}
 
 	@NotNull
-	public MinecraftInterface create(VersionDirectory versionDirectory) throws LocalMinecraftInterfaceCreationException {
+	public MinecraftInterface create(VersionDirectory versionDirectory)
+			throws LocalMinecraftInterfaceCreationException {
 		try {
 			URLClassLoader classLoader = versionDirectory.createClassLoader();
 			RecognisedVersion recognisedVersion = RecognisedVersion.from(classLoader);
-			Map<String, SymbolicClass> symbolicClassMap = Classes.createSymbolicClassMap(
-					versionDirectory.getJar(),
-					classLoader,
-					translator);
-			Log.i("Minecraft load complete.");
+			Map<String, SymbolicClass> symbolicClassMap = Classes
+					.createSymbolicClassMap(versionDirectory.getJar(), classLoader, translator);
+			AmidstLogger.info("Minecraft load complete.");
 			return new LocalMinecraftInterface(
 					symbolicClassMap.get(SymbolicNames.CLASS_INT_CACHE),
 					symbolicClassMap.get(SymbolicNames.CLASS_BLOCK_INIT),
 					symbolicClassMap.get(SymbolicNames.CLASS_GEN_LAYER),
 					symbolicClassMap.get(SymbolicNames.CLASS_WORLD_TYPE),
+					symbolicClassMap.get(SymbolicNames.CLASS_GEN_OPTIONS_FACTORY),
 					recognisedVersion);
-		} catch (MalformedURLException | ClassNotFoundException | FileNotFoundException | JarFileParsingException
+		} catch (
+				MalformedURLException
+				| ClassNotFoundException
+				| FileNotFoundException
+				| JarFileParsingException
 				| SymbolicClassGraphCreationException e) {
 			throw new LocalMinecraftInterfaceCreationException("unable to create local minecraft interface", e);
 		}

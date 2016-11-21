@@ -34,7 +34,7 @@ public enum DefaultWorldIconTypes {
 	private static final Map<String, DefaultWorldIconTypes> typeMap = createTypeMap();
 
 	private static Map<String, DefaultWorldIconTypes> createTypeMap() {
-		Map<String, DefaultWorldIconTypes> result = new HashMap<String, DefaultWorldIconTypes>();
+		Map<String, DefaultWorldIconTypes> result = new HashMap<>();
 		for (DefaultWorldIconTypes iconType : EnumSet.allOf(DefaultWorldIconTypes.class)) {
 			result.put(iconType.getName(), iconType);
 		}

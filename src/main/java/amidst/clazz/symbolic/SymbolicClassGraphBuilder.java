@@ -24,9 +24,9 @@ public class SymbolicClassGraphBuilder {
 	}
 
 	public Map<String, SymbolicClass> construct() throws SymbolicClassGraphCreationException {
-		Map<String, String> realClassNamesBySymbolicClassName = new HashMap<String, String>();
-		Map<String, SymbolicClass> symbolicClassesByRealClassName = new HashMap<String, SymbolicClass>();
-		Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration = new HashMap<SymbolicClassDeclaration, SymbolicClassBuilder>();
+		Map<String, String> realClassNamesBySymbolicClassName = new HashMap<>();
+		Map<String, SymbolicClass> symbolicClassesByRealClassName = new HashMap<>();
+		Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration = new HashMap<>();
 		createSymbolicClasses(
 				realClassNamesBySymbolicClassName,
 				symbolicClassesByRealClassName,
@@ -97,7 +97,7 @@ public class SymbolicClassGraphBuilder {
 
 	private Map<String, SymbolicClass> createProduct(
 			Map<SymbolicClassDeclaration, SymbolicClassBuilder> symbolicClassBuildersBySymbolicClassDeclaration) {
-		Map<String, SymbolicClass> result = new HashMap<String, SymbolicClass>();
+		Map<String, SymbolicClass> result = new HashMap<>();
 		for (Entry<SymbolicClassDeclaration, SymbolicClassBuilder> entry : symbolicClassBuildersBySymbolicClassDeclaration
 				.entrySet()) {
 			result.put(entry.getKey().getSymbolicClassName(), entry.getValue().getProduct());

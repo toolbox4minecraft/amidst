@@ -7,7 +7,8 @@ import java.util.function.Function;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.mocking.FragmentCornerWalker;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
@@ -38,13 +39,15 @@ public class CoordinatesCollectionJson {
 				corner -> producer.produce(corner, consumer, additionalDataFactory.apply(corner)));
 		SortedSet<CoordinatesInWorld> coordinates = createSortedSet(consumer.get());
 		if (coordinates.size() < minimalNumberOfCoordinates) {
-			Log.e("not enough coordinates for '" + name + "'");
+			String message = "not enough coordinates for '" + name + "'";
+			AmidstLogger.error(message);
+			AmidstMessageBox.displayError("Error", message);
 		}
 		return new CoordinatesCollectionJson(coordinates);
 	}
 
 	private static SortedSet<CoordinatesInWorld> createSortedSet(List<WorldIcon> icons) {
-		SortedSet<CoordinatesInWorld> result = new TreeSet<CoordinatesInWorld>();
+		SortedSet<CoordinatesInWorld> result = new TreeSet<>();
 		for (WorldIcon icon : icons) {
 			result.add(icon.getCoordinates());
 		}
@@ -52,7 +55,7 @@ public class CoordinatesCollectionJson {
 	}
 
 	private static SortedSet<CoordinatesInWorld> createSortedSet(CoordinatesInWorld coordinates) {
-		SortedSet<CoordinatesInWorld> result = new TreeSet<CoordinatesInWorld>();
+		SortedSet<CoordinatesInWorld> result = new TreeSet<>();
 		result.add(coordinates);
 		return result;
 	}

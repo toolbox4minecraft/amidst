@@ -2,7 +2,7 @@ package amidst.clazz.symbolic.declaration;
 
 import amidst.clazz.symbolic.SymbolicClassGraphCreationException;
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 
 @Immutable
 public class SymbolicFieldDeclaration {
@@ -33,7 +33,7 @@ public class SymbolicFieldDeclaration {
 		String message = "unable to find the real class field " + realClassName + "." + realName + " -> "
 				+ symbolicClassName + "." + symbolicName;
 		if (isOptional) {
-			Log.i(message);
+			AmidstLogger.info(message);
 		} else {
 			throw new SymbolicClassGraphCreationException(message, e);
 		}

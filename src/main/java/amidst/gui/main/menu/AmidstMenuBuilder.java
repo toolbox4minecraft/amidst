@@ -85,6 +85,9 @@ public class AmidstMenuBuilder {
 		Menus.item(result, actions::goToStronghold,        "Go to Stronghold",         KeyEvent.VK_H, "menu shift H");
 		Menus.item(result, actions::goToPlayer,            "Go to Player",             KeyEvent.VK_P, "menu shift P");
 		result.addSeparator();
+		Menus.item(result, actions::zoomIn,                "Zoom in",                  KeyEvent.VK_I, "menu G");
+		Menus.item(result, actions::zoomOut,               "Zoom out",                 KeyEvent.VK_O, "menu H");
+		result.addSeparator();
 		savePlayerLocationsMenu =
 		Menus.item(result, actions::savePlayerLocations,   "Save player locations",    KeyEvent.VK_V, "menu S");
 		savePlayerLocationsMenu.setEnabled(false);
@@ -94,7 +97,7 @@ public class AmidstMenuBuilder {
 		Menus.item(result, actions::howCanIMoveAPlayer,    "How can I move a player?", KeyEvent.VK_M);
 		result.addSeparator();
 		Menus.item(result, actions::copySeedToClipboard,   "Copy Seed to Clipboard",   KeyEvent.VK_B, "menu C");
-		Menus.item(result, actions::saveCaptureImage,      "Save capture image ...",   KeyEvent.VK_I, "menu T");
+		Menus.item(result, actions::saveCaptureImage,      "Save capture image ...",   KeyEvent.VK_T, "menu T");
 		// @formatter:on
 		return result;
 	}
@@ -145,6 +148,7 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("Help");
 		result.setMnemonic(KeyEvent.VK_H);
 		// @formatter:off
+		Menus.item(result, actions::displayLogMessages,    "Display Log Messages",     KeyEvent.VK_M);
 		Menus.item(result, actions::checkForUpdates,       "Check for Updates",        KeyEvent.VK_U);
 		Menus.item(result, actions::viewLicense,           "View Licenses",            KeyEvent.VK_L);
 		Menus.item(result, actions::about,                 "About",                    KeyEvent.VK_A);

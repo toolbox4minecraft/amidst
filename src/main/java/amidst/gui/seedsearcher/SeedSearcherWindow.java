@@ -19,19 +19,19 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.LineBorder;
 
-import net.miginfocom.swing.MigLayout;
 import amidst.AmidstMetaData;
 import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.MainWindow;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.json.filter.WorldFilterJson;
 import amidst.mojangapi.file.json.filter.WorldFilterParseException;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.filter.WorldFilter;
+import net.miginfocom.swing.MigLayout;
 
 @NotThreadSafe
 public class SeedSearcherWindow {
@@ -80,7 +80,7 @@ public class SeedSearcherWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JComboBox<WorldType> createWorldTypeComboBox() {
-		return new JComboBox<WorldType>(WorldType.getSelectableArray());
+		return new JComboBox<>(WorldType.getSelectableArray());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -124,7 +124,7 @@ public class SeedSearcherWindow {
 		Path file = Paths.get(settings.searchJsonFile.get());
 		
 		if(Files.notExists(file)) {
-			Log.i("The search file " + file + "doesn't exist: abort loading");
+			AmidstLogger.info("The search file " + file + "doesn't exist: abort loading");
 			return;
 		}
 		
@@ -134,7 +134,7 @@ public class SeedSearcherWindow {
 			searchQueryTextArea.setText(content);
 			
 		} catch (IOException e) {
-			Log.w("Unable to read search file " + file + ": " + e.getMessage());
+			AmidstLogger.warn("Unable to read search file " + file + ": " + e.getMessage());
 			mainWindow.displayError("Could not load file; see logs.");
 		}
 	}
@@ -148,7 +148,9 @@ public class SeedSearcherWindow {
 				SeedSearcherConfiguration seedSearcherConfiguration = createSeedSearcherConfiguration();
 				WorldType worldType = seedSearcherConfiguration.getWorldType();
 				seedSearcher.search(seedSearcherConfiguration, worldSeed -> seedFound(worldSeed, worldType));
+				
 			} catch (WorldFilterParseException e) {
+				AmidstLogger.warn("Invalid seed search configuration: {}", e.getMessage());
 				mainWindow.displayError(e.getMessage());
 			}
 		}

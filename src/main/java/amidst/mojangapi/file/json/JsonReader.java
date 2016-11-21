@@ -6,10 +6,13 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+
 import amidst.ResourceLoader;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.URIUtils;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
@@ -18,9 +21,6 @@ import amidst.mojangapi.file.json.player.SimplePlayerJson;
 import amidst.mojangapi.file.json.version.VersionJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.util.GsonProvider;
-
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 
 /**
  * This is a utility class used to read JSON data. Please use this class only to
@@ -40,34 +40,34 @@ public enum JsonReader {
 
 	@NotNull
 	public static VersionListJson readRemoteOrLocalVersionList() throws FileNotFoundException {
-		Log.i("Beginning latest version list load.");
-		Log.i("Attempting to download remote version list...");
+		AmidstLogger.info("Beginning latest version list load.");
+		AmidstLogger.info("Attempting to download remote version list...");
 		VersionListJson remote = null;
 		try {
 			remote = readRemoteVersionList();
 		} catch (IOException | MojangApiParsingException e) {
-			Log.w("Unable to read remote version list.");
-			Log.printTraceStack(e);
-			Log.w("Aborting version list load. URL: " + REMOTE_VERSION_LIST);
+			AmidstLogger.warn("Unable to read remote version list.");
+			AmidstLogger.warn(e);
+			AmidstLogger.warn("Aborting version list load. URL: " + REMOTE_VERSION_LIST);
 		}
 		if (remote != null) {
-			Log.i("Successfully loaded version list. URL: " + REMOTE_VERSION_LIST);
+			AmidstLogger.info("Successfully loaded version list. URL: " + REMOTE_VERSION_LIST);
 			return remote;
 		}
-		Log.i("Attempting to load local version list...");
+		AmidstLogger.info("Attempting to load local version list...");
 		VersionListJson local = null;
 		try {
 			local = readLocalVersionListFromResource();
 		} catch (IOException | MojangApiParsingException e) {
-			Log.w("Unable to read local version list.");
-			Log.printTraceStack(e);
-			Log.w("Aborting version list load. URL: " + LOCAL_VERSION_LIST);
+			AmidstLogger.warn("Unable to read local version list.");
+			AmidstLogger.warn(e);
+			AmidstLogger.warn("Aborting version list load. URL: " + LOCAL_VERSION_LIST);
 		}
 		if (local != null) {
-			Log.i("Successfully loaded version list. URL: " + LOCAL_VERSION_LIST);
+			AmidstLogger.info("Successfully loaded version list. URL: " + LOCAL_VERSION_LIST);
 			return local;
 		}
-		Log.w("Failed to load both remote and local version list.");
+		AmidstLogger.warn("Failed to load both remote and local version list.");
 		throw new FileNotFoundException("unable to read version list");
 	}
 
@@ -87,7 +87,8 @@ public enum JsonReader {
 	}
 
 	@NotNull
-	public static LauncherProfilesJson readLauncherProfilesFrom(File file) throws MojangApiParsingException,
+	public static LauncherProfilesJson readLauncherProfilesFrom(File file)
+			throws MojangApiParsingException,
 			IOException {
 		return read(URIUtils.newReader(file), LauncherProfilesJson.class);
 	}
@@ -114,7 +115,8 @@ public enum JsonReader {
 	}
 
 	@NotNull
-	public static SimplePlayerJson readSimplePlayerFromPlayerName(String playerName) throws IOException,
+	public static SimplePlayerJson readSimplePlayerFromPlayerName(String playerName)
+			throws IOException,
 			MojangApiParsingException {
 		return read(URIUtils.newReader(PLAYERNAME_TO_UUID + playerName), SimplePlayerJson.class);
 	}

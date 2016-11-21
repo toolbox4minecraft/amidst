@@ -10,14 +10,14 @@ import java.util.Objects;
 
 import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 @ThreadSafe
 public class SeedHistoryLogger {
 	public static SeedHistoryLogger from(String filename) {
 		if (filename != null) {
-			Log.i("using seed history file: '" + filename + "'");
+			AmidstLogger.info("using seed history file: '" + filename + "'");
 			return new SeedHistoryLogger(new File(filename), true, true);
 		} else {
 			return new SeedHistoryLogger(new File(HISTORY_TXT), false, true);
@@ -54,7 +54,7 @@ public class SeedHistoryLogger {
 		if (file.isFile()) {
 			writeLine(createLine(recognisedVersion, worldSeed));
 		} else {
-			Log.i("Not writing to seed history file, because it does not exist: " + file);
+			AmidstLogger.info("Not writing to seed history file, because it does not exist: " + file);
 		}
 	}
 
@@ -82,8 +82,7 @@ public class SeedHistoryLogger {
 		try {
 			file.createNewFile();
 		} catch (IOException e) {
-			Log.w("Unable to create seed history file: " + file);
-			e.printStackTrace();
+			AmidstLogger.warn(e, "Unable to create seed history file: " + file);
 		}
 	}
 
@@ -91,8 +90,7 @@ public class SeedHistoryLogger {
 		try (PrintStream stream = new PrintStream(new FileOutputStream(file, true))) {
 			stream.println(line);
 		} catch (IOException e) {
-			Log.w("Unable to write to seed history file: " + file);
-			e.printStackTrace();
+			AmidstLogger.warn(e, "Unable to write to seed history file: " + file);
 		}
 	}
 }

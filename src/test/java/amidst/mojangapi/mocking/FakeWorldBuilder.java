@@ -31,10 +31,8 @@ public class FakeWorldBuilder {
 
 	public World createRealWorld(TestWorldDeclaration worldDeclaration, MinecraftInterface realMinecraftInterface)
 			throws MinecraftInterfaceException {
-		return builder.fromSeed(
-				realMinecraftInterface,
-				worldDeclaration.getWorldSeed(),
-				worldDeclaration.getWorldType());
+		return builder
+				.fromSeed(realMinecraftInterface, worldDeclaration.getWorldSeed(), worldDeclaration.getWorldType());
 	}
 
 	public World createFakeWorld(TestWorldDirectory worldDeclaration) throws MinecraftInterfaceException {

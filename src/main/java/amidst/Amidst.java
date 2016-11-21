@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.prefs.Preferences;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.kohsuke.args4j.CmdLineException;
@@ -17,8 +16,9 @@ import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.crash.CrashWindow;
+import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.logging.FileLogger;
-import amidst.logging.Log;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.util.OperatingSystemDetector;
 
@@ -42,11 +42,9 @@ public class Amidst {
 	private static void parseCommandLineArgumentsAndRun(String[] args) {
 		CommandLineParameters parameters = new CommandLineParameters();
 		AmidstMetaData metadata = createMetadata();
-		CmdLineParser parser = new CmdLineParser(parameters, ParserProperties
-				.defaults()
-				.withShowDefaults(false)
-				.withUsageWidth(120)
-				.withOptionSorter(null));
+		CmdLineParser parser = new CmdLineParser(
+				parameters,
+				ParserProperties.defaults().withShowDefaults(false).withUsageWidth(120).withOptionSorter(null));
 		try {
 			parser.parseArgument(args);
 			run(parameters, metadata, parser);
@@ -78,7 +76,7 @@ public class Amidst {
 		} else if (parameters.printVersion) {
 			System.out.println(versionString);
 		} else {
-			Log.i(versionString);
+			AmidstLogger.info(versionString);
 			logTimeAndProperties();
 			enableGraphicsAcceleration();
 			startApplication(parameters, metadata, createSettings());
@@ -87,19 +85,19 @@ public class Amidst {
 
 	private static void initFileLogger(String filename) {
 		if (filename != null) {
-			Log.i("using log file: '" + filename + "'");
-			Log.addListener("file", new FileLogger(new File(filename)));
+			AmidstLogger.info("using log file: '" + filename + "'");
+			AmidstLogger.addListener("file", new FileLogger(new File(filename)));
 		}
 	}
 
 	private static void logTimeAndProperties() {
-		Log.i("Current system time: " + getCurrentTimeStamp());
-		Log.i(createPropertyString("os.name"));
-		Log.i(createPropertyString("os.version"));
-		Log.i(createPropertyString("os.arch"));
-		Log.i(createPropertyString("java.version"));
-		Log.i(createPropertyString("java.vendor"));
-		Log.i(createPropertyString("sun.arch.data.model"));
+		AmidstLogger.info("Current system time: " + getCurrentTimeStamp());
+		AmidstLogger.info(createPropertyString("os.name"));
+		AmidstLogger.info(createPropertyString("os.version"));
+		AmidstLogger.info(createPropertyString("os.arch"));
+		AmidstLogger.info(createPropertyString("java.version"));
+		AmidstLogger.info(createPropertyString("java.vendor"));
+		AmidstLogger.info(createPropertyString("sun.arch.data.model"));
 	}
 
 	private static String getCurrentTimeStamp() {
@@ -146,10 +144,10 @@ public class Amidst {
 	 */
 	private static void enableOpenGLIfNecessary() {
 		if (OperatingSystemDetector.isMac()) {
-			Log.i("Enabling OpenGL.");
+			AmidstLogger.info("Enabling OpenGL.");
 			System.setProperty("sun.java2d.opengl", "True");
 		} else {
-			Log.i("Not using OpenGL.");
+			AmidstLogger.info("Not using OpenGL.");
 		}
 	}
 
@@ -172,14 +170,10 @@ public class Amidst {
 		try {
 			new Application(parameters, metadata, settings).run();
 		} catch (DotMinecraftDirectoryNotFoundException e) {
-			Log.w(e.getMessage());
-			e.printStackTrace();
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"Amidst is not able to find your '.minecraft' directory, but it requires a working Minecraft installation.",
-							"Please install Minecraft",
-							JOptionPane.ERROR_MESSAGE);
+			AmidstLogger.warn(e);
+			AmidstMessageBox.displayError(
+					"Please install Minecraft",
+					"Amidst is not able to find your '.minecraft' directory, but it requires a working Minecraft installation.");
 		} catch (Exception e) {
 			handleCrash(e, Thread.currentThread());
 		}
@@ -189,21 +183,12 @@ public class Amidst {
 	private static void handleCrash(Throwable e, Thread thread) {
 		String message = "Amidst has encounted an uncaught exception on the thread " + thread;
 		try {
-			Log.crash(e, message);
-			displayCrashWindow(message, Log.getAllMessages());
+			AmidstLogger.crash(e, message);
+			CrashWindow.showAfterCrash();
 		} catch (Throwable t) {
 			System.err.println("Amidst crashed!");
 			System.err.println(message);
 			e.printStackTrace();
 		}
-	}
-
-	private static void displayCrashWindow(final String message, final String allMessages) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				CrashWindow.show(message, allMessages, () -> System.exit(4));
-			}
-		});
 	}
 }

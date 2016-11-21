@@ -20,7 +20,10 @@ public class LayerManager {
 	private final LayerLoader layerLoader;
 	private final Iterable<FragmentDrawer> drawers;
 
-	public LayerManager(List<LayerDeclaration> declarations, LayerLoader layerLoader, Iterable<FragmentDrawer> drawers) {
+	public LayerManager(
+			List<LayerDeclaration> declarations,
+			LayerLoader layerLoader,
+			Iterable<FragmentDrawer> drawers) {
 		this.declarations = declarations;
 		this.layerLoader = layerLoader;
 		this.drawers = drawers;

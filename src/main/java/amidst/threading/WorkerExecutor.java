@@ -102,7 +102,10 @@ public class WorkerExecutor {
 		});
 	}
 
-	public <R, P> void run(ProgressReportingWorkerWithResult<R, P> main, Consumer<P> onProgress, Consumer<R> onFinished) {
+	public <R, P> void run(
+			ProgressReportingWorkerWithResult<R, P> main,
+			Consumer<P> onProgress,
+			Consumer<R> onFinished) {
 		runInWorker(() -> {
 			R output = main.run(progressReporter(onProgress));
 			runInEDT(() -> onFinished.accept(output));

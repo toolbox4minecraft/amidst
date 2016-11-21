@@ -22,25 +22,22 @@ public class TestWorldEntryNames {
 	public static final String LIKELY_END_CITY = "likely-end-city";
 	public static final String POSSIBLE_END_CITY = "possible-end-city";
 
-	// @formatter:off
 	public static final String[] ALL = {
-		TestWorldEntryNames.METADATA,
-		TestWorldEntryNames.QUARTER_RESOLUTION_BIOME_DATA,
-		TestWorldEntryNames.FULL_RESOLUTION_BIOME_DATA,
-		TestWorldEntryNames.END_ISLANDS,
-		TestWorldEntryNames.SLIME_CHUNKS,
-		TestWorldEntryNames.SPAWN,
-		TestWorldEntryNames.STRONGHOLDS,
-		TestWorldEntryNames.VILLAGES,
-		TestWorldEntryNames.WITCH_HUTS,
-		TestWorldEntryNames.JUNGLE_TEMPLES,
-		TestWorldEntryNames.DESERT_TEMPLES,
-		TestWorldEntryNames.IGLOOS,
-		TestWorldEntryNames.MINESHAFTS,
-		TestWorldEntryNames.OCEAN_MONUMENTS,
-		TestWorldEntryNames.NETHER_FORTRESSES,
-		TestWorldEntryNames.LIKELY_END_CITY,
-		TestWorldEntryNames.POSSIBLE_END_CITY
-	};
-	// @formatter:on
+			TestWorldEntryNames.METADATA,
+			TestWorldEntryNames.QUARTER_RESOLUTION_BIOME_DATA,
+			TestWorldEntryNames.FULL_RESOLUTION_BIOME_DATA,
+			TestWorldEntryNames.END_ISLANDS,
+			TestWorldEntryNames.SLIME_CHUNKS,
+			TestWorldEntryNames.SPAWN,
+			TestWorldEntryNames.STRONGHOLDS,
+			TestWorldEntryNames.VILLAGES,
+			TestWorldEntryNames.WITCH_HUTS,
+			TestWorldEntryNames.JUNGLE_TEMPLES,
+			TestWorldEntryNames.DESERT_TEMPLES,
+			TestWorldEntryNames.IGLOOS,
+			TestWorldEntryNames.MINESHAFTS,
+			TestWorldEntryNames.OCEAN_MONUMENTS,
+			TestWorldEntryNames.NETHER_FORTRESSES,
+			TestWorldEntryNames.LIKELY_END_CITY,
+			TestWorldEntryNames.POSSIBLE_END_CITY };
 }

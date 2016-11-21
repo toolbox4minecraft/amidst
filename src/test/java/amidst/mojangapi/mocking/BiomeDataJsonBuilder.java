@@ -10,8 +10,8 @@ import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 
 @NotThreadSafe
 public class BiomeDataJsonBuilder {
-	private final SortedMap<AreaJson, short[]> quarterBiomeData = new TreeMap<AreaJson, short[]>();
-	private final SortedMap<AreaJson, short[]> fullBiomeData = new TreeMap<AreaJson, short[]>();
+	private final SortedMap<AreaJson, short[]> quarterBiomeData = new TreeMap<>();
+	private final SortedMap<AreaJson, short[]> fullBiomeData = new TreeMap<>();
 
 	public void store(int x, int y, int width, int height, boolean useQuarterResolution, int[] biomeData) {
 		store(getBiomeDataMap(useQuarterResolution), x, y, width, height, biomeData);

@@ -10,7 +10,7 @@ import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.version.VersionJson;
@@ -60,10 +60,10 @@ public class VersionDirectory {
 	@NotNull
 	public URLClassLoader createClassLoader() throws MalformedURLException {
 		if (json.isFile()) {
-			Log.i("Loading libraries.");
+			AmidstLogger.info("Loading libraries.");
 			return doCreateClassLoader(getJarFileUrl(), getAllLibraryUrls());
 		} else {
-			Log.i("Unable to find Minecraft library JSON at: " + json + ". Skipping.");
+			AmidstLogger.info("Unable to find Minecraft library JSON at: " + json + ". Skipping.");
 			return doCreateClassLoader(getJarFileUrl());
 		}
 	}
@@ -78,8 +78,8 @@ public class VersionDirectory {
 		try {
 			return readVersionJson().getLibraryUrls(dotMinecraftDirectory.getLibraries());
 		} catch (IOException | MojangApiParsingException e) {
-			Log.w("Invalid jar profile loaded. Library loading will be skipped. (Path: " + json + ")");
-			return new ArrayList<URL>();
+			AmidstLogger.warn("Invalid jar profile loaded. Library loading will be skipped. (Path: " + json + ")");
+			return new ArrayList<>();
 		}
 	}
 

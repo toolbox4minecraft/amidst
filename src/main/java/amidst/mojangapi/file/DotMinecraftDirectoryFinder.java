@@ -4,7 +4,7 @@ import java.io.File;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.util.OperatingSystemDetector;
 
 @Immutable
@@ -18,8 +18,9 @@ public enum DotMinecraftDirectoryFinder {
 			if (result.isDirectory()) {
 				return result;
 			} else {
-				Log.w("Unable to set Minecraft directory to: " + result
-						+ " as that location does not exist or is not a folder.");
+				AmidstLogger.warn(
+						"Unable to set Minecraft directory to: " + result
+								+ " as that location does not exist or is not a folder.");
 			}
 		}
 		return getMinecraftDirectory();

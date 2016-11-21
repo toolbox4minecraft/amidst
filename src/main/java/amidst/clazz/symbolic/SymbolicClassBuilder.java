@@ -19,7 +19,7 @@ import amidst.documentation.NotThreadSafe;
 @NotThreadSafe
 public class SymbolicClassBuilder {
 	private static Map<String, Class<?>> createPrimitivesMap() {
-		Map<String, Class<?>> result = new HashMap<String, Class<?>>();
+		Map<String, Class<?>> result = new HashMap<>();
 		result.put("byte", byte.class);
 		result.put("int", int.class);
 		result.put("float", float.class);
@@ -34,9 +34,9 @@ public class SymbolicClassBuilder {
 
 	private static final Map<String, Class<?>> PRIMITIVES_MAP = createPrimitivesMap();
 
-	private final Map<String, SymbolicConstructor> constructorsBySymbolicName = new HashMap<String, SymbolicConstructor>();
-	private final Map<String, SymbolicMethod> methodsBySymbolicName = new HashMap<String, SymbolicMethod>();
-	private final Map<String, SymbolicField> fieldsBySymbolicName = new HashMap<String, SymbolicField>();
+	private final Map<String, SymbolicConstructor> constructorsBySymbolicName = new HashMap<>();
+	private final Map<String, SymbolicMethod> methodsBySymbolicName = new HashMap<>();
+	private final Map<String, SymbolicField> fieldsBySymbolicName = new HashMap<>();
 
 	private final ClassLoader classLoader;
 	private final Map<String, String> realClassNamesBySymbolicClassName;
@@ -94,14 +94,16 @@ public class SymbolicClassBuilder {
 	}
 
 	private SymbolicConstructor createConstructor(SymbolicConstructorDeclaration declaration)
-			throws ClassNotFoundException, NoSuchMethodException {
+			throws ClassNotFoundException,
+			NoSuchMethodException {
 		String symbolicName = declaration.getSymbolicName();
 		Class<?>[] parameterClasses = getParameterClasses(declaration.getParameters().getDeclarations());
 		Constructor<?> constructor = getConstructor(product.getClazz(), parameterClasses);
 		return new SymbolicConstructor(product, symbolicName, constructor);
 	}
 
-	private SymbolicMethod createMethod(SymbolicMethodDeclaration declaration) throws ClassNotFoundException,
+	private SymbolicMethod createMethod(SymbolicMethodDeclaration declaration)
+			throws ClassNotFoundException,
 			NoSuchMethodException {
 		String symbolicName = declaration.getSymbolicName();
 		String realName = declaration.getRealName();
@@ -125,7 +127,8 @@ public class SymbolicClassBuilder {
 		return result;
 	}
 
-	private Method getMethod(Class<?> clazz, String realName, Class<?>[] parameterClasses) throws NoSuchMethodException {
+	private Method getMethod(Class<?> clazz, String realName, Class<?>[] parameterClasses)
+			throws NoSuchMethodException {
 		Method result = clazz.getDeclaredMethod(realName, parameterClasses);
 		result.setAccessible(true);
 		return result;

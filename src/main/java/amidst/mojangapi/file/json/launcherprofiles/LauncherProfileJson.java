@@ -55,8 +55,8 @@ public class LauncherProfileJson {
 			if (result.isValid()) {
 				return result;
 			} else {
-				throw new FileNotFoundException("cannot find valid profile directory for launcher profile '" + name
-						+ "': " + gameDir);
+				throw new FileNotFoundException(
+						"cannot find valid profile directory for launcher profile '" + name + "': " + gameDir);
 			}
 		} else {
 			return new ProfileDirectory(mojangApi.getDotMinecraftDirectory().getRoot());

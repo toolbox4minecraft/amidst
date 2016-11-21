@@ -8,7 +8,7 @@ import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.json.version.LibraryJson;
 import amidst.util.OperatingSystemDetector;
 
@@ -18,19 +18,18 @@ public enum LibraryFinder {
 
 	@NotNull
 	public static List<URL> getLibraryUrls(File librariesDirectory, List<LibraryJson> libraries) {
-		List<URL> result = new ArrayList<URL>();
+		List<URL> result = new ArrayList<>();
 		for (LibraryJson library : libraries) {
 			File libraryFile = getLibraryFile(librariesDirectory, library);
 			if (libraryFile != null) {
 				try {
 					result.add(libraryFile.toURI().toURL());
-					Log.i("Found library: " + libraryFile);
+					AmidstLogger.info("Found library: " + libraryFile);
 				} catch (MalformedURLException e) {
-					Log.w("Unable to convert library file to URL: " + libraryFile);
-					e.printStackTrace();
+					AmidstLogger.warn(e, "Unable to convert library file to URL: " + libraryFile);
 				}
 			} else {
-				Log.i("Skipping library: " + library.getName());
+				AmidstLogger.info("Skipping library: " + library.getName());
 			}
 		}
 		return result;
@@ -38,7 +37,7 @@ public enum LibraryFinder {
 
 	private static File getLibraryFile(File librariesDirectory, LibraryJson library) {
 		try {
-			if (library.isActive(getOs())) {
+			if (library.isActive(getOs(), OperatingSystemDetector.getVersion())) {
 				return getLibraryFile(getLibrarySearchPath(librariesDirectory, library.getName()));
 			} else {
 				return null;
@@ -74,11 +73,12 @@ public enum LibraryFinder {
 			if (result != null && result.exists()) {
 				return result;
 			} else {
-				Log.w("Attempted to search for file at path: " + librarySearchPath + " but found nothing. Skipping.");
+				AmidstLogger.warn(
+						"Attempted to search for file at path: " + librarySearchPath + " but found nothing. Skipping.");
 				return null;
 			}
 		} else {
-			Log.w("Failed attempt to load library at: " + librarySearchPath);
+			AmidstLogger.warn("Failed attempt to load library at: " + librarySearchPath);
 			return null;
 		}
 	}

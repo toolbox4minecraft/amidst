@@ -30,7 +30,6 @@ public class TheEndColorProvider implements ColorProvider {
 	public int getColorAt(Dimension dimension, Fragment fragment, long cornerX, long cornerY, int x, int y) {
 		long xAsQuarter = cornerX + x;
 		long yAsQuarter = cornerY + y;
-		// @formatter:off
 		return getColorAt(
 				(int) (xAsQuarter << 2),
 				(int) (yAsQuarter << 2),
@@ -39,7 +38,6 @@ public class TheEndColorProvider implements ColorProvider {
 				(int) (x % TEXTURES_WIDTH),
 				(int) (y % TEXTURES_HEIGHT),
 				fragment.getEndIslands());
-		// @formatter:on
 	}
 
 	private int getColorAt(

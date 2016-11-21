@@ -11,7 +11,7 @@ import org.jnbt.CompoundTag;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.nbt.LevelDatNbt;
 import amidst.mojangapi.file.nbt.NBTUtils;
@@ -156,14 +156,14 @@ public class SaveDirectory {
 	 */
 	@NotNull
 	public List<PlayerNbt> createMultiplayerPlayerNbts() {
-		List<PlayerNbt> result = new ArrayList<PlayerNbt>();
+		List<PlayerNbt> result = new ArrayList<>();
 		for (File playerdataFile : getPlayerdataFiles()) {
 			if (playerdataFile.isFile()) {
 				result.add(createPlayerdataPlayerNbt(getPlayerUUIDFromPlayerdataFile(playerdataFile)));
 			}
 		}
 		if (!result.isEmpty()) {
-			Log.i("using players from the playerdata directory");
+			AmidstLogger.info("using players from the playerdata directory");
 			return result;
 		}
 		for (File playersFile : getPlayersFiles()) {
@@ -172,10 +172,10 @@ public class SaveDirectory {
 			}
 		}
 		if (!result.isEmpty()) {
-			Log.i("using players from the players directory");
+			AmidstLogger.info("using players from the players directory");
 			return result;
 		}
-		Log.i("no multiplayer players found");
+		AmidstLogger.info("no multiplayer players found");
 		return result;
 	}
 
@@ -193,7 +193,7 @@ public class SaveDirectory {
 	 */
 	@NotNull
 	public List<PlayerNbt> createSingleplayerPlayerNbts() {
-		Log.i("using player from level.dat");
+		AmidstLogger.info("using player from level.dat");
 		return Arrays.asList(createLevelDatPlayerNbt());
 	}
 

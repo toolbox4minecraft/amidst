@@ -59,12 +59,13 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 			DefaultWorldIconTypes worldIconType = provider.get(x, y, additionalData);
 			if (worldIconType != null) {
 				CoordinatesInWorld coordinates = createCoordinates(corner, xRelativeToFragment, yRelativeToFragment);
-				consumer.accept(new WorldIcon(
-						coordinates,
-						worldIconType.getLabel(),
-						worldIconType.getImage(),
-						dimension,
-						displayDimension));
+				consumer.accept(
+						new WorldIcon(
+								coordinates,
+								worldIconType.getLabel(),
+								worldIconType.getImage(),
+								dimension,
+								displayDimension));
 			}
 		}
 	}

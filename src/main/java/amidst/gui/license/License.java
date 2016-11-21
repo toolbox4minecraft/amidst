@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import amidst.ResourceLoader;
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 
 @Immutable
 public class License {
@@ -20,8 +20,7 @@ public class License {
 		try {
 			return ResourceLoader.getResourceAsString(path);
 		} catch (IOException e) {
-			Log.w("Unable to read license for '" + name + "' at '" + path + "'.");
-			e.printStackTrace();
+			AmidstLogger.warn(e, "Unable to read license for '" + name + "' at '" + path + "'.");
 			return "License text is missing.";
 		}
 	}

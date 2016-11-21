@@ -14,7 +14,7 @@ import amidst.mojangapi.world.oracle.EndIslandOracle;
 @Immutable
 public class EndIslandsJson {
 	public static EndIslandsJson extract(EndIslandOracle oracle, int fragmentsAroundOrigin) {
-		SortedMap<CoordinatesInWorld, List<EndIsland>> result = new TreeMap<CoordinatesInWorld, List<EndIsland>>();
+		SortedMap<CoordinatesInWorld, List<EndIsland>> result = new TreeMap<>();
 		FragmentCornerWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin).walk(
 				corner -> result.put(corner, oracle.getAt(corner)));
 		return new EndIslandsJson(result);

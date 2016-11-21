@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.biome.Biome;
@@ -38,8 +39,8 @@ public class BiomeDataOracle {
 			copyToResult(result, width, height, shift, data);
 			
 		} catch (MinecraftInterfaceException e) {
-			Log.e(e.getMessage());
-			e.printStackTrace();
+				AmidstLogger.error(e);
+				AmidstMessageBox.displayError("Error", e);
 		}
 
 	}
@@ -64,12 +65,12 @@ public class BiomeDataOracle {
 		try {
 			return validBiomes.contains(getBiomeAt(x, y));
 		} catch (UnknownBiomeIndexException e) {
-			Log.e(e.getMessage());
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return false;
 		} catch (MinecraftInterfaceException e) {
-			Log.e(e.getMessage());
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return false;
 		}
 	}
@@ -94,12 +95,12 @@ public class BiomeDataOracle {
 			}
 			return true;
 		} catch (UnknownBiomeIndexException e) {
-			Log.e(e.getMessage());
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return false;
 		} catch (MinecraftInterfaceException e) {
-			Log.e(e.getMessage());
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return false;
 		}
 	}
@@ -134,12 +135,12 @@ public class BiomeDataOracle {
 			}
 			return result;
 		} catch (UnknownBiomeIndexException e) {
-			Log.e(e.getMessage());
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return null;
 		} catch (MinecraftInterfaceException e) {
-			Log.e(e.getMessage());
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return null;
 		}
 	}
@@ -154,7 +155,8 @@ public class BiomeDataOracle {
 		return coordinate * 16 + 8;
 	}
 
-	public Biome getBiomeAtMiddleOfChunk(int chunkX, int chunkY) throws UnknownBiomeIndexException,
+	public Biome getBiomeAtMiddleOfChunk(int chunkX, int chunkY)
+			throws UnknownBiomeIndexException,
 			MinecraftInterfaceException {
 		return getBiomeAt(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY));
 	}
@@ -169,7 +171,8 @@ public class BiomeDataOracle {
 		return Biome.getByIndex(biomeData[0]);
 	}
 
-	private int[] getQuarterResolutionBiomeData(int x, int y, int width, int height) throws MinecraftInterfaceException {
+	private int[] getQuarterResolutionBiomeData(int x, int y, int width, int height)
+			throws MinecraftInterfaceException {
 		return getBiomeData(x, y, width, height, true);
 	}
 
