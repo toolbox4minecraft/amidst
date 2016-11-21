@@ -18,10 +18,8 @@ public class BiomeProfileSelection {
 		try {
 			return getBiomeColor(index);
 		} catch (UnknownBiomeIndexException e) {
-			String message = e.getMessage();
-			AmidstLogger.error(message);
-			AmidstMessageBox.displayError("Error", message);
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return BiomeColor.unknown();
 		}
 	}

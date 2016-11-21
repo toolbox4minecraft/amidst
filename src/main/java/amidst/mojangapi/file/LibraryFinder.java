@@ -26,8 +26,7 @@ public enum LibraryFinder {
 					result.add(libraryFile.toURI().toURL());
 					AmidstLogger.info("Found library: " + libraryFile);
 				} catch (MalformedURLException e) {
-					AmidstLogger.warn("Unable to convert library file to URL: " + libraryFile);
-					e.printStackTrace();
+					AmidstLogger.warn(e, "Unable to convert library file to URL: " + libraryFile);
 				}
 			} else {
 				AmidstLogger.info("Skipping library: " + library.getName());

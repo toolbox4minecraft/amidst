@@ -49,8 +49,7 @@ public class Player {
 				return false;
 			}
 		} catch (MojangApiParsingException e) {
-			AmidstLogger.warn("error while writing player location for player: " + getPlayerName());
-			e.printStackTrace();
+			AmidstLogger.warn(e, "error while writing player location for player: " + getPlayerName());
 			return false;
 		}
 	}
@@ -78,8 +77,7 @@ public class Player {
 			loadLocation();
 			return true;
 		} catch (IOException | MojangApiParsingException e) {
-			AmidstLogger.warn("error while reading player location for player: " + getPlayerName());
-			e.printStackTrace();
+			AmidstLogger.warn(e, "error while reading player location for player: " + getPlayerName());
 			return false;
 		}
 	}

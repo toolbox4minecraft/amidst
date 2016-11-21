@@ -6,6 +6,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.MainWindow;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.World;
@@ -67,7 +68,7 @@ public class SeedSearcher {
 		try {
 			doSearch(reporter, configuration);
 		} catch (IllegalStateException | MinecraftInterfaceException e) {
-			e.printStackTrace();
+			AmidstLogger.warn(e);
 			mainWindow.displayException(e);
 		} finally {
 			this.isSearching = false;

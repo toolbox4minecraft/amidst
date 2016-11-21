@@ -82,8 +82,7 @@ public class SeedHistoryLogger {
 		try {
 			file.createNewFile();
 		} catch (IOException e) {
-			AmidstLogger.warn("Unable to create seed history file: " + file);
-			e.printStackTrace();
+			AmidstLogger.warn(e, "Unable to create seed history file: " + file);
 		}
 	}
 
@@ -91,8 +90,7 @@ public class SeedHistoryLogger {
 		try (PrintStream stream = new PrintStream(new FileOutputStream(file, true))) {
 			stream.println(line);
 		} catch (IOException e) {
-			AmidstLogger.warn("Unable to write to seed history file: " + file);
-			e.printStackTrace();
+			AmidstLogger.warn(e, "Unable to write to seed history file: " + file);
 		}
 	}
 }

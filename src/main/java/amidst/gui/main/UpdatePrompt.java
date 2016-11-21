@@ -108,7 +108,7 @@ public class UpdatePrompt {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void displayError(Exception e) {
-		e.printStackTrace();
+		AmidstLogger.warn(e);
 		exceptionConsumer.accept(e);
 	}
 

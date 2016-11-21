@@ -25,6 +25,7 @@ import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.main.viewer.ViewerFacadeBuilder;
 import amidst.gui.seedsearcher.SeedSearcher;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
+import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
@@ -148,7 +149,7 @@ public class MainWindow {
 		try {
 			setWorld(mojangApi.createWorldFromSeed(worldSeed, worldType));
 		} catch (IllegalStateException | MinecraftInterfaceException e) {
-			e.printStackTrace();
+			AmidstLogger.warn(e);
 			displayException(e);
 		}
 	}
@@ -158,7 +159,7 @@ public class MainWindow {
 		try {
 			setWorld(mojangApi.createWorldFromSaveGame(file));
 		} catch (IllegalStateException | MinecraftInterfaceException | IOException | MojangApiParsingException e) {
-			e.printStackTrace();
+			AmidstLogger.warn(e);
 			displayException(e);
 		}
 	}

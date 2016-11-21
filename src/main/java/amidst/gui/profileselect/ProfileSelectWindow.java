@@ -155,9 +155,8 @@ public class ProfileSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void scanAndLoadProfilesFailed(Exception e) {
-		AmidstLogger.error("Error reading launcher_profiles.json");
-		AmidstMessageBox.displayError("Error", "Error reading launcher_profiles.json");
-		e.printStackTrace();
+		AmidstLogger.error(e, "Error reading launcher_profiles.json");
+		AmidstMessageBox.displayError("Error", e, "Error reading launcher_profiles.json");
 		profileSelectPanel.setEmptyMessage("Failed loading");
 	}
 

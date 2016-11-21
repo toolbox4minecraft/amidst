@@ -71,8 +71,7 @@ public class FileLogger implements Logger {
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
 	private void disableBecauseFileCreationThrowsException(IOException e) {
-		AmidstLogger.warn("Unable to create new file at: " + file + " disabling logging to file.");
-		e.printStackTrace();
+		AmidstLogger.warn(e, "Unable to create new file at: " + file + " disabling logging to file.");
 	}
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
@@ -117,8 +116,7 @@ public class FileLogger implements Logger {
 		try (FileWriter writer = new FileWriter(file, true)) {
 			writer.append(logMessage);
 		} catch (IOException e) {
-			AmidstLogger.warn("Unable to write to log file.");
-			e.printStackTrace();
+			AmidstLogger.warn(e, "Unable to write to log file.");
 		}
 	}
 

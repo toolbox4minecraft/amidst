@@ -101,8 +101,7 @@ public class BiomeProfileDirectory {
 				}
 				profile.validate();
 			} catch (JsonSyntaxException | JsonIOException | IOException | NullPointerException e) {
-				AmidstLogger.warn("Unable to load file: " + file);
-				e.printStackTrace();
+				AmidstLogger.warn(e, "Unable to load file: " + file);
 			}
 		}
 		return profile;

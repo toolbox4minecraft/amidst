@@ -59,7 +59,7 @@ public class LocalProfileComponent extends ProfileComponent {
 			versionDirectory = profile.createValidVersionDirectory(mojangApi);
 			return true;
 		} catch (FileNotFoundException e) {
-			AmidstLogger.warn(e.getMessage());
+			AmidstLogger.warn(e);
 			return false;
 		}
 	}
@@ -89,18 +89,19 @@ public class LocalProfileComponent extends ProfileComponent {
 
 			String possibleModProfiles = ".*(optifine|forge).*";
 			if (Pattern.matches(possibleModProfiles, getVersionName().toLowerCase(Locale.ENGLISH))) {
-				AmidstLogger.error("Amidst does not support modded Minecraft profiles! Please select or create an unmodded Minecraft profile via the Minecraft Launcher.");
-				AmidstMessageBox.displayError("Error", "Amidst does not support modded Minecraft profiles! Please select or create an unmodded Minecraft profile via the Minecraft Launcher.");
+				AmidstLogger.error(
+						"Amidst does not support modded Minecraft profiles! Please select or create an unmodded Minecraft profile via the Minecraft Launcher.");
+				AmidstMessageBox.displayError(
+						"Error",
+						"Amidst does not support modded Minecraft profiles! Please select or create an unmodded Minecraft profile via the Minecraft Launcher.");
 				return false;
 			}
 
 			mojangApi.set(getProfileName(), profileDirectory, versionDirectory);
 			return true;
 		} catch (LocalMinecraftInterfaceCreationException e) {
-			String message = e.getMessage();
-			AmidstLogger.error(message);
-			AmidstMessageBox.displayError("Error", message);
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return false;
 		}
 	}

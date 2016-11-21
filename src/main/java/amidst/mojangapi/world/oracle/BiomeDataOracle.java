@@ -31,10 +31,8 @@ public class BiomeDataOracle {
 			try {
 				copyToResult(result, width, height, getBiomeData(left, top, width, height, useQuarterResolution));
 			} catch (MinecraftInterfaceException e) {
-				String message = e.getMessage();
-				AmidstLogger.error(message);
-				AmidstMessageBox.displayError("Error", message);
-				e.printStackTrace();
+				AmidstLogger.error(e);
+				AmidstMessageBox.displayError("Error", e);
 			}
 		}
 	}
@@ -59,16 +57,12 @@ public class BiomeDataOracle {
 		try {
 			return validBiomes.contains(getBiomeAt(x, y));
 		} catch (UnknownBiomeIndexException e) {
-			String message = e.getMessage();
-			AmidstLogger.error(message);
-			AmidstMessageBox.displayError("Error", message);
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return false;
 		} catch (MinecraftInterfaceException e) {
-			String message = e.getMessage();
-			AmidstLogger.error(message);
-			AmidstMessageBox.displayError("Error", message);
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return false;
 		}
 	}
@@ -93,16 +87,12 @@ public class BiomeDataOracle {
 			}
 			return true;
 		} catch (UnknownBiomeIndexException e) {
-			String message = e.getMessage();
-			AmidstLogger.error(message);
-			AmidstMessageBox.displayError("Error", message);
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return false;
 		} catch (MinecraftInterfaceException e) {
-			String message = e.getMessage();
-			AmidstLogger.error(message);
-			AmidstMessageBox.displayError("Error", message);
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return false;
 		}
 	}
@@ -137,16 +127,12 @@ public class BiomeDataOracle {
 			}
 			return result;
 		} catch (UnknownBiomeIndexException e) {
-			String message = e.getMessage();
-			AmidstLogger.error(message);
-			AmidstMessageBox.displayError("Error", message);
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return null;
 		} catch (MinecraftInterfaceException e) {
-			String message = e.getMessage();
-			AmidstLogger.error(message);
-			AmidstMessageBox.displayError("Error", message);
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return null;
 		}
 	}

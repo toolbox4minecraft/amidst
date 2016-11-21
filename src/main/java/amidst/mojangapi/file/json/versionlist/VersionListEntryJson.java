@@ -78,8 +78,7 @@ public class VersionListEntryJson {
 			downloadServer(prefix);
 			return true;
 		} catch (IOException e) {
-			AmidstLogger.warn("unable to download server: " + id);
-			e.printStackTrace();
+			AmidstLogger.warn(e, "unable to download server: " + id);
 		}
 		return false;
 	}
@@ -89,8 +88,7 @@ public class VersionListEntryJson {
 			downloadClient(prefix);
 			return true;
 		} catch (IOException e) {
-			AmidstLogger.warn("unable to download client: " + id);
-			e.printStackTrace();
+			AmidstLogger.warn(e, "unable to download client: " + id);
 		}
 		return false;
 	}

@@ -170,8 +170,7 @@ public class Amidst {
 		try {
 			new Application(parameters, metadata, settings).run();
 		} catch (DotMinecraftDirectoryNotFoundException e) {
-			AmidstLogger.warn(e.getMessage());
-			e.printStackTrace();
+			AmidstLogger.warn(e);
 			AmidstMessageBox.displayError(
 					"Please install Minecraft",
 					"Amidst is not able to find your '.minecraft' directory, but it requires a working Minecraft installation.");

@@ -35,16 +35,12 @@ public class TempleWorldIconTypeProvider implements WorldIconTypeProvider<Void> 
 				return null;
 			}
 		} catch (UnknownBiomeIndexException e) {
-			String message = e.getMessage();
-			AmidstLogger.error(message);
-			AmidstMessageBox.displayError("Error", message);
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return null;
 		} catch (MinecraftInterfaceException e) {
-			String message = e.getMessage();
-			AmidstLogger.error(message);
-			AmidstMessageBox.displayError("Error", message);
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return null;
 		}
 	}

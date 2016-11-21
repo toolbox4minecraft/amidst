@@ -331,7 +331,7 @@ public class Actions {
 		try {
 			ImageIO.write(image, "png", file);
 		} catch (IOException e) {
-			e.printStackTrace();
+			AmidstLogger.warn(e);
 			mainWindow.displayException(e);
 		}
 	}
