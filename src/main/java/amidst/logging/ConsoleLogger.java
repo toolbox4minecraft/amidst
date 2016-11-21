@@ -5,23 +5,23 @@ import amidst.documentation.NotThreadSafe;
 @NotThreadSafe
 public class ConsoleLogger implements Logger {
 	@Override
-	public void debug(Object... messages) {
-		printWithTag("debug", messages);
+	public void debug(String message) {
+		printWithTag("debug", message);
 	}
 
 	@Override
-	public void info(Object... messages) {
-		printWithTag("info", messages);
+	public void info(String message) {
+		printWithTag("info", message);
 	}
 
 	@Override
-	public void warning(Object... messages) {
-		printWithTag("warning", messages);
+	public void warning(String message) {
+		printWithTag("warning", message);
 	}
 
 	@Override
-	public void error(Object... messages) {
-		printWithTag("error", messages);
+	public void error(String message) {
+		printWithTag("error", message);
 	}
 
 	@Override
@@ -32,19 +32,7 @@ public class ConsoleLogger implements Logger {
 		}
 	}
 
-	private void printWithTag(String tag, Object... messages) {
-		System.out.print("[" + tag + "] ");
-		for (int i = 0; i < messages.length; i++) {
-			System.out.print(messages[i]);
-			System.out.print(getMessageDelimiter(i, messages));
-		}
-	}
-
-	private String getMessageDelimiter(int i, Object... messages) {
-		if (i < messages.length - 1) {
-			return " ";
-		} else {
-			return "\n";
-		}
+	private void printWithTag(String tag, String message) {
+		System.out.println("[" + tag + "] " + message);
 	}
 }

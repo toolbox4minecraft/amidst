@@ -3,8 +3,6 @@ package amidst.logging;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JOptionPane;
-
 import amidst.documentation.ThreadSafe;
 
 // TODO: switch to standard logging framework like slf4j + log4j?
@@ -38,28 +36,28 @@ public class AmidstLogger {
 		}
 	}
 
-	public static void info(Object... messages) {
+	public static void info(String message) {
 		synchronized (LOG_LOCK) {
 			for (Logger listener : LOGGER.values()) {
-				listener.info(messages);
+				listener.info(message);
 			}
 		}
 	}
 
-	public static void debug(Object... messages) {
+	public static void debug(String message) {
 		if (IS_SHOWING_DEBUG) {
 			synchronized (LOG_LOCK) {
 				for (Logger listener : LOGGER.values()) {
-					listener.debug(messages);
+					listener.debug(message);
 				}
 			}
 		}
 	}
 
-	public static void warn(Object... messages) {
+	public static void warn(String message) {
 		synchronized (LOG_LOCK) {
 			for (Logger listener : LOGGER.values()) {
-				listener.warning(messages);
+				listener.warning(message);
 			}
 		}
 	}
@@ -68,13 +66,13 @@ public class AmidstLogger {
 		warn(MessageFormatter.format(e));
 	}
 
-	public static void error(Object... messages) {
+	public static void error(String message) {
 		synchronized (LOG_LOCK) {
 			if (IS_USING_ALERTS) {
-				JOptionPane.showMessageDialog(null, messages, "Error", JOptionPane.ERROR_MESSAGE);
+				AmidstMessageBox.displayError("Error", message);
 			}
 			for (Logger listener : LOGGER.values()) {
-				listener.error(messages);
+				listener.error(message);
 			}
 		}
 	}

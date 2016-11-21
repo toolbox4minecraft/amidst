@@ -7,23 +7,23 @@ public class InMemoryLogger implements Logger {
 	private StringBuffer buffer = new StringBuffer();
 
 	@Override
-	public void debug(Object... messages) {
-		write("debug", messages);
+	public void debug(String message) {
+		write("debug", message);
 	}
 
 	@Override
-	public void info(Object... messages) {
-		write("info", messages);
+	public void info(String message) {
+		write("info", message);
 	}
 
 	@Override
-	public void warning(Object... messages) {
-		write("warning", messages);
+	public void warning(String message) {
+		write("warning", message);
 	}
 
 	@Override
-	public void error(Object... messages) {
-		write("error", messages);
+	public void error(String message) {
+		write("error", message);
 	}
 
 	@Override
@@ -34,20 +34,8 @@ public class InMemoryLogger implements Logger {
 		}
 	}
 
-	private void write(String tag, Object... messages) {
-		buffer.append("[").append(tag).append("] ");
-		for (int i = 0; i < messages.length; i++) {
-			buffer.append(messages[i]);
-			buffer.append(getMessageDelimiter(i, messages));
-		}
-	}
-
-	private String getMessageDelimiter(int i, Object... messages) {
-		if (i < messages.length - 1) {
-			return " ";
-		} else {
-			return "\n";
-		}
+	private void write(String tag, String message) {
+		buffer.append("[").append(tag).append("] ").append(message).append("\n");
 	}
 
 	public String getContents() {

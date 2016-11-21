@@ -56,7 +56,7 @@ public class WorldFilterJson_MatchAll {
 			return Optional.of(createWorldFilter());
 		} else {
 			// TODO: use error messages
-			AmidstLogger.debug(getValidationMessages());
+			AmidstLogger.debug(getValidationMessages().toString());
 			return Optional.empty();
 		}
 	}

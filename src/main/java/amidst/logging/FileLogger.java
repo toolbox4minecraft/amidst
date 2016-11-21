@@ -123,23 +123,23 @@ public class FileLogger implements Logger {
 	}
 
 	@Override
-	public void debug(Object... messages) {
-		write("debug", messages);
+	public void debug(String message) {
+		write("debug", message);
 	}
 
 	@Override
-	public void info(Object... messages) {
-		write("info", messages);
+	public void info(String message) {
+		write("info", message);
 	}
 
 	@Override
-	public void warning(Object... messages) {
-		write("warning", messages);
+	public void warning(String message) {
+		write("warning", message);
 	}
 
 	@Override
-	public void error(Object... messages) {
-		write("error", messages);
+	public void error(String message) {
+		write("error", message);
 	}
 
 	@Override
@@ -150,22 +150,15 @@ public class FileLogger implements Logger {
 		}
 	}
 
-	private void write(String tag, Object... messages) {
+	private void write(String tag, String message) {
 		String currentTime = new Timestamp(new Date().getTime()).toString();
-		StringBuilder builder = new StringBuilder(currentTime);
-		builder.append(" [").append(tag).append("] ");
-		for (int i = 0; i < messages.length; i++) {
-			builder.append(messages[i]);
-			builder.append(getMessageDelimiter(i, messages));
-		}
+		StringBuilder builder = new StringBuilder()
+				.append(currentTime)
+				.append(" [")
+				.append(tag)
+				.append("] ")
+				.append(message)
+				.append("\r\n");
 		logMessageQueue.add(builder.toString());
-	}
-
-	private String getMessageDelimiter(int i, Object... messages) {
-		if (i < messages.length - 1) {
-			return " ";
-		} else {
-			return "\r\n";
-		}
 	}
 }
