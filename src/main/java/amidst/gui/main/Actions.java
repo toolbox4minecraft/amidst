@@ -305,7 +305,8 @@ public class Actions {
 			if (input != null) {
 				player.moveTo(targetCoordinates, tryParseLong(input, currentHeight), currentCoordinates.getDimension());
 				viewerFacade.reloadPlayerLayer();
-				if (mainWindow.askToConfirmYesNo("Save Player Locations", "Do you want to save the player locations?")) {
+				if (mainWindow
+						.askToConfirmYesNo("Save Player Locations", "Do you want to save the player locations?")) {
 					if (mainWindow.askToConfirmSaveGameManipulation()) {
 						viewerFacade.savePlayerLocations();
 					}

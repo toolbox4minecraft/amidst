@@ -52,7 +52,8 @@ public enum WorldType {
 		if (result != null) {
 			return result;
 		} else {
-			String message = "Unable to find World Type: " + nameOrSymbolicFieldName + ". Falling back to default world type.";
+			String message = "Unable to find World Type: " + nameOrSymbolicFieldName
+					+ ". Falling back to default world type.";
 			AmidstLogger.error(message);
 			AmidstMessageBox.displayError("Error", message);
 			return DEFAULT;
