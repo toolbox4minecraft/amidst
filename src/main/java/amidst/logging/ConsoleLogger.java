@@ -25,11 +25,8 @@ public class ConsoleLogger implements Logger {
 	}
 
 	@Override
-	public void crash(Throwable e, String exceptionText, String message) {
+	public void crash(String message) {
 		printWithTag("crash", message);
-		if (!exceptionText.isEmpty()) {
-			printWithTag("crash", exceptionText);
-		}
 	}
 
 	private void printWithTag(String tag, String message) {

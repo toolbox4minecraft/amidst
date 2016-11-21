@@ -9,5 +9,5 @@ public interface Logger {
 
 	public void error(String messages);
 
-	public void crash(Throwable e, String exceptionText, String message);
+	public void crash(String message);
 }

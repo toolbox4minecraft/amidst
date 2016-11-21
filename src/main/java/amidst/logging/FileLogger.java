@@ -143,11 +143,8 @@ public class FileLogger implements Logger {
 	}
 
 	@Override
-	public void crash(Throwable e, String exceptionText, String message) {
+	public void crash(String message) {
 		write("crash", message);
-		if (!exceptionText.isEmpty()) {
-			write("crash", exceptionText);
-		}
 	}
 
 	private void write(String tag, String message) {

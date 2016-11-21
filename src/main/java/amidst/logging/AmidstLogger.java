@@ -81,7 +81,10 @@ public class AmidstLogger {
 		synchronized (LOG_LOCK) {
 			String exceptionText = MessageFormatter.format(e);
 			for (Logger listener : LOGGER.values()) {
-				listener.crash(e, exceptionText, message);
+				listener.crash(message);
+				if (e != null) {
+					listener.crash(exceptionText);
+				}
 			}
 		}
 	}
