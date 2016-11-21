@@ -6,8 +6,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -27,6 +25,8 @@ import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.main.viewer.ViewerFacadeBuilder;
 import amidst.gui.seedsearcher.SeedSearcher;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
+import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -149,8 +149,8 @@ public class MainWindow {
 		try {
 			setWorld(mojangApi.createWorldFromSeed(worldSeed, worldType));
 		} catch (IllegalStateException | MinecraftInterfaceException e) {
-			e.printStackTrace();
-			displayException(e);
+			AmidstLogger.warn(e);
+			displayError(e);
 		}
 	}
 
@@ -159,8 +159,8 @@ public class MainWindow {
 		try {
 			setWorld(mojangApi.createWorldFromSaveGame(file));
 		} catch (IllegalStateException | MinecraftInterfaceException | IOException | MojangApiParsingException e) {
-			e.printStackTrace();
-			displayException(e);
+			AmidstLogger.warn(e);
+			displayError(e);
 		}
 	}
 
@@ -282,30 +282,23 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayMessage(String title, String message) {
-		JOptionPane.showMessageDialog(frame, message, title, JOptionPane.INFORMATION_MESSAGE);
+	public void displayInfo(String title, String message) {
+		AmidstMessageBox.displayInfo(frame, title, message);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayError(String message) {
-		JOptionPane.showMessageDialog(frame, message, "Error", JOptionPane.ERROR_MESSAGE);
+		AmidstMessageBox.displayError(frame, "Error", message);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayException(Exception exception) {
-		JOptionPane.showMessageDialog(frame, getStackTraceAsString(exception), "Error", JOptionPane.ERROR_MESSAGE);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private String getStackTraceAsString(Exception exception) {
-		StringWriter writer = new StringWriter();
-		exception.printStackTrace(new PrintWriter(writer));
-		return writer.toString();
+	public void displayError(Exception e) {
+		AmidstMessageBox.displayError(frame, "Error", e);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean askToConfirmSaveGameManipulation() {
-		return askToConfirm(
+		return askToConfirmYesNo(
 				"Save Game Manipulation",
 				"WARNING: You are about to change the contents of the save game directory. There is a chance that it gets corrupted.\n"
 						+ "We try to minimize the risk by creating a backup of the changed file, before it is changed.\n"
@@ -316,9 +309,8 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public boolean askToConfirm(String title, String message) {
-		return JOptionPane
-				.showConfirmDialog(frame, message, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+	public boolean askToConfirmYesNo(String title, String message) {
+		return AmidstMessageBox.askToConfirmYesNo(frame, title, message);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

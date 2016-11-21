@@ -17,7 +17,8 @@ import amidst.Application;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
@@ -112,9 +113,9 @@ public class ProfileSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private LauncherProfilesJson scanAndLoadProfiles() throws MojangApiParsingException, IOException {
-		Log.i("Scanning for profiles.");
+		AmidstLogger.info("Scanning for profiles.");
 		LauncherProfilesJson launcherProfile = mojangApi.getDotMinecraftDirectory().readLauncherProfilesJson();
-		Log.i("Successfully loaded profile list.");
+		AmidstLogger.info("Successfully loaded profile list.");
 		return launcherProfile;
 	}
 
@@ -128,7 +129,7 @@ public class ProfileSelectWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createProfileComponentsIfNecessary(LauncherProfilesJson launcherProfile) {
 		if (launcherProfile.getProfiles().isEmpty()) {
-			Log.w("No profiles found in launcher_profiles.json");
+			AmidstLogger.warn("No profiles found in launcher_profiles.json");
 			profileSelectPanel.setEmptyMessage("No profiles found");
 		} else {
 			createProfileComponents(launcherProfile);
@@ -154,8 +155,8 @@ public class ProfileSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void scanAndLoadProfilesFailed(Exception e) {
-		Log.e("Error reading launcher_profiles.json");
-		e.printStackTrace();
+		AmidstLogger.error(e, "Error reading launcher_profiles.json");
+		AmidstMessageBox.displayError("Error", e, "Error reading launcher_profiles.json");
 		profileSelectPanel.setEmptyMessage("Failed loading");
 	}
 

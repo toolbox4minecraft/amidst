@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.FilenameFactory;
 import amidst.mojangapi.file.URIUtils;
@@ -78,8 +78,7 @@ public class VersionListEntryJson {
 			downloadServer(prefix);
 			return true;
 		} catch (IOException e) {
-			Log.w("unable to download server: " + id);
-			e.printStackTrace();
+			AmidstLogger.warn(e, "unable to download server: " + id);
 		}
 		return false;
 	}
@@ -89,8 +88,7 @@ public class VersionListEntryJson {
 			downloadClient(prefix);
 			return true;
 		} catch (IOException e) {
-			Log.w("unable to download client: " + id);
-			e.printStackTrace();
+			AmidstLogger.warn(e, "unable to download client: " + id);
 		}
 		return false;
 	}

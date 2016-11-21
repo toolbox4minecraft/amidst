@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.player.PlayerNbt;
 import amidst.threading.WorkerExecutor;
@@ -51,7 +51,7 @@ public class MovablePlayerList implements Iterable<Player> {
 
 	public void load(WorkerExecutor workerExecutor, Runnable onPlayerFinishedLoading) {
 		if (saveDirectory != null) {
-			Log.i("loading player locations");
+			AmidstLogger.info("loading player locations");
 			ConcurrentLinkedQueue<Player> players = new ConcurrentLinkedQueue<>();
 			this.players = players;
 			loadPlayersLater(players, workerExecutor, onPlayerFinishedLoading);
@@ -89,12 +89,12 @@ public class MovablePlayerList implements Iterable<Player> {
 
 	public void save() {
 		if (isSaveEnabled) {
-			Log.i("saving player locations");
+			AmidstLogger.info("saving player locations");
 			for (Player player : players) {
 				player.trySaveLocation();
 			}
 		} else {
-			Log.i("not saving player locations, because it is disabled for this version");
+			AmidstLogger.info("not saving player locations, because it is disabled for this version");
 		}
 	}
 

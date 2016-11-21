@@ -10,13 +10,13 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 
 @Immutable
 public class BiomeProfileDirectory {
 	public static BiomeProfileDirectory create(String root) {
 		BiomeProfileDirectory result = new BiomeProfileDirectory(getRoot(root));
-		Log.i("using biome profiles at: '" + result.getRoot() + "'");
+		AmidstLogger.info("using biome profiles at: '" + result.getRoot() + "'");
 		return result;
 	}
 
@@ -53,15 +53,15 @@ public class BiomeProfileDirectory {
 
 	public void saveDefaultProfileIfNecessary() {
 		if (!isValid()) {
-			Log.i("Unable to find biome profile directory.");
+			AmidstLogger.info("Unable to find biome profile directory.");
 		} else {
-			Log.i("Found biome profile directory.");
+			AmidstLogger.info("Found biome profile directory.");
 			if (defaultProfile.isFile()) {
-				Log.i("Found default biome profile.");
+				AmidstLogger.info("Found default biome profile.");
 			} else if (BiomeProfile.getDefaultProfile().save(defaultProfile)) {
-				Log.i("Saved default biome profile.");
+				AmidstLogger.info("Saved default biome profile.");
 			} else {
-				Log.i("Attempted to save default biome profile, but encountered an error.");
+				AmidstLogger.info("Attempted to save default biome profile, but encountered an error.");
 			}
 		}
 	}
@@ -101,8 +101,7 @@ public class BiomeProfileDirectory {
 				}
 				profile.validate();
 			} catch (JsonSyntaxException | JsonIOException | IOException | NullPointerException e) {
-				Log.w("Unable to load file: " + file);
-				e.printStackTrace();
+				AmidstLogger.warn(e, "Unable to load file: " + file);
 			}
 		}
 		return profile;

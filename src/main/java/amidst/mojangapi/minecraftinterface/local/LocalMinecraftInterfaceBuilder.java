@@ -12,7 +12,7 @@ import amidst.clazz.symbolic.SymbolicClassGraphCreationException;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -33,7 +33,7 @@ public class LocalMinecraftInterfaceBuilder {
 			RecognisedVersion recognisedVersion = RecognisedVersion.from(classLoader);
 			Map<String, SymbolicClass> symbolicClassMap = Classes
 					.createSymbolicClassMap(versionDirectory.getJar(), classLoader, translator);
-			Log.i("Minecraft load complete.");
+			AmidstLogger.info("Minecraft load complete.");
 			return new LocalMinecraftInterface(
 					symbolicClassMap.get(SymbolicNames.CLASS_INT_CACHE),
 					symbolicClassMap.get(SymbolicNames.CLASS_BLOCK_INIT),

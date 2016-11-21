@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
 
@@ -58,7 +58,7 @@ public class BiomeProfile {
 	public void validate() {
 		for (String biomeName : colorMap.keySet()) {
 			if (!Biome.exists(biomeName)) {
-				Log.i("Failed to find biome for: " + biomeName + " in profile: " + name);
+				AmidstLogger.info("Failed to find biome for: " + biomeName + " in profile: " + name);
 			}
 		}
 	}

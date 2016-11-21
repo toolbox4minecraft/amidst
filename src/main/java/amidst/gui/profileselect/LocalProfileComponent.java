@@ -8,7 +8,8 @@ import amidst.Application;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
@@ -58,7 +59,7 @@ public class LocalProfileComponent extends ProfileComponent {
 			versionDirectory = profile.createValidVersionDirectory(mojangApi);
 			return true;
 		} catch (FileNotFoundException e) {
-			Log.w(e.getMessage());
+			AmidstLogger.warn(e);
 			return false;
 		}
 	}
@@ -82,24 +83,25 @@ public class LocalProfileComponent extends ProfileComponent {
 	private boolean tryLoad() {
 		// TODO: Replace with proper handling for modded profiles.
 		try {
-			Log
-					.i(
-							"using minecraft launcher profile '" + getProfileName() + "' with versionId '"
-									+ getVersionName() + "'");
+			AmidstLogger.info(
+					"using minecraft launcher profile '" + getProfileName() + "' with versionId '" + getVersionName()
+							+ "'");
 
 			String possibleModProfiles = ".*(optifine|forge).*";
 			if (Pattern.matches(possibleModProfiles, getVersionName().toLowerCase(Locale.ENGLISH))) {
-				Log
-						.e(
-								"Amidst does not support modded Minecraft profiles! Please select or create an unmodded Minecraft profile via the Minecraft Launcher.");
+				AmidstLogger.error(
+						"Amidst does not support modded Minecraft profiles! Please select or create an unmodded Minecraft profile via the Minecraft Launcher.");
+				AmidstMessageBox.displayError(
+						"Error",
+						"Amidst does not support modded Minecraft profiles! Please select or create an unmodded Minecraft profile via the Minecraft Launcher.");
 				return false;
 			}
 
 			mojangApi.set(getProfileName(), profileDirectory, versionDirectory);
 			return true;
 		} catch (LocalMinecraftInterfaceCreationException e) {
-			Log.e(e.getMessage());
-			e.printStackTrace();
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 			return false;
 		}
 	}

@@ -2,21 +2,18 @@ package amidst.gui.main;
 
 import java.awt.Desktop;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import javax.swing.JOptionPane;
 
 import amidst.AmidstVersion;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotNull;
 import amidst.documentation.NotThreadSafe;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -35,14 +32,14 @@ public class UpdatePrompt {
 						workerExecutor,
 						NOOP_CONSUMER,
 						NOOP,
-						message -> mainWindow.askToConfirm(TITLE, message));
+						message -> mainWindow.askToConfirmYesNo(TITLE, message));
 			} else {
 				return new UpdatePrompt(
 						currentVersion,
 						workerExecutor,
-						exception -> mainWindow.displayException(exception),
-						() -> mainWindow.displayMessage(TITLE, NO_UPDATES_AVAILABLE),
-						message -> mainWindow.askToConfirm(TITLE, message));
+						e -> mainWindow.displayError(e),
+						() -> mainWindow.displayInfo(TITLE, NO_UPDATES_AVAILABLE),
+						message -> mainWindow.askToConfirmYesNo(TITLE, message));
 			}
 		} else {
 			if (silent) {
@@ -51,38 +48,16 @@ public class UpdatePrompt {
 						workerExecutor,
 						NOOP_CONSUMER,
 						NOOP,
-						message -> askToConfirmDirectly(message));
+						message -> AmidstMessageBox.askToConfirmYesNo(TITLE, message));
 			} else {
 				return new UpdatePrompt(
 						currentVersion,
 						workerExecutor,
-						exception -> displayExceptionDirectly(exception),
-						() -> displayMessageDirectly(NO_UPDATES_AVAILABLE),
-						message -> askToConfirmDirectly(message));
+						e -> AmidstMessageBox.displayError(TITLE, e),
+						() -> AmidstMessageBox.displayInfo(TITLE, NO_UPDATES_AVAILABLE),
+						message -> AmidstMessageBox.askToConfirmYesNo(TITLE, message));
 			}
 		}
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private static void displayExceptionDirectly(Exception exception) {
-		JOptionPane.showMessageDialog(null, getStackTraceAsString(exception), TITLE, JOptionPane.ERROR_MESSAGE);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private static String getStackTraceAsString(Exception exception) {
-		StringWriter writer = new StringWriter();
-		exception.printStackTrace(new PrintWriter(writer));
-		return writer.toString();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private static void displayMessageDirectly(String message) {
-		JOptionPane.showMessageDialog(null, message, TITLE, JOptionPane.INFORMATION_MESSAGE);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private static boolean askToConfirmDirectly(String message) {
-		return JOptionPane.showConfirmDialog(null, message, TITLE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 	}
 
 	private static final String TITLE = "Amidst Updater";
@@ -120,13 +95,7 @@ public class UpdatePrompt {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void onCheckFailed(Exception e) {
-		Log.w("unable to check for updates");
-		displayError(e);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void displayError(Exception e) {
-		e.printStackTrace();
+		AmidstLogger.warn(e, "unable to check for updates");
 		exceptionConsumer.accept(e);
 	}
 
@@ -136,7 +105,8 @@ public class UpdatePrompt {
 			try {
 				openURL(new URI(updateInformation.getDownloadUrl()));
 			} catch (IOException | UnsupportedOperationException | URISyntaxException e) {
-				displayError(e);
+				AmidstLogger.warn(e);
+				exceptionConsumer.accept(e);
 			}
 		}
 	}
@@ -152,6 +122,7 @@ public class UpdatePrompt {
 		} else if (newVersion.isSameVersionButOldPreReleaseAndNewStable(currentVersion)) {
 			return askToConfirm(createMessage(message, newVersion, "stable"));
 		} else {
+			AmidstLogger.info(NO_UPDATES_AVAILABLE);
 			noUpdatesDisplayer.run();
 			return false;
 		}

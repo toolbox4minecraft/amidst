@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
 import amidst.documentation.ThreadSafe;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -75,8 +75,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	public synchronized void createWorld(long seed, WorldType worldType, String generatorOptions)
 			throws MinecraftInterfaceException {
 		try {
-			Log.i("Creating world with seed '" + seed + "' and type '" + worldType.getName() + "'");
-			Log.i("Using the following generator options: " + generatorOptions);
+			AmidstLogger.info("Creating world with seed '" + seed + "' and type '" + worldType.getName() + "'");
+			AmidstLogger.info("Using the following generator options: " + generatorOptions);
 			initializeBlock();
 			Object[] genLayers = getGenLayers(seed, worldType, generatorOptions);
 			quarterResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[0]);

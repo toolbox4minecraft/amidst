@@ -8,7 +8,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.constructor.FragmentConstructor;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 
 @ThreadSafe
 public class FragmentCache {
@@ -36,12 +36,11 @@ public class FragmentCache {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public synchronized void increaseSize() {
-		Log
-				.i(
-						"increasing fragment cache size from " + cache.size() + " to "
-								+ (cache.size() + NEW_FRAGMENTS_PER_REQUEST));
+		AmidstLogger.info(
+				"increasing fragment cache size from " + cache.size() + " to "
+						+ (cache.size() + NEW_FRAGMENTS_PER_REQUEST));
 		requestNewFragments();
-		Log.i("fragment cache size increased to " + cache.size());
+		AmidstLogger.info("fragment cache size increased to " + cache.size());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

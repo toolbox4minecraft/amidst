@@ -3,7 +3,7 @@ package amidst.mojangapi.world.player;
 import java.io.IOException;
 
 import amidst.documentation.ThreadSafe;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.nbt.player.PlayerNbt;
 import amidst.mojangapi.world.Dimension;
@@ -43,15 +43,13 @@ public class Player {
 			if (saveLocation()) {
 				return true;
 			} else {
-				Log
-						.w(
-								"skipping to save player location, because the backup file cannot be created for player: "
-										+ getPlayerName());
+				AmidstLogger.warn(
+						"skipping to save player location, because the backup file cannot be created for player: "
+								+ getPlayerName());
 				return false;
 			}
 		} catch (MojangApiParsingException e) {
-			Log.w("error while writing player location for player: " + getPlayerName());
-			e.printStackTrace();
+			AmidstLogger.warn(e, "error while writing player location for player: " + getPlayerName());
 			return false;
 		}
 	}
@@ -79,8 +77,7 @@ public class Player {
 			loadLocation();
 			return true;
 		} catch (IOException | MojangApiParsingException e) {
-			Log.w("error while reading player location for player: " + getPlayerName());
-			e.printStackTrace();
+			AmidstLogger.warn(e, "error while reading player location for player: " + getPlayerName());
 			return false;
 		}
 	}

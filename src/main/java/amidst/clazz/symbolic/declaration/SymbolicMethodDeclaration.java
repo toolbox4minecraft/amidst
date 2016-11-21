@@ -2,7 +2,7 @@ package amidst.clazz.symbolic.declaration;
 
 import amidst.clazz.symbolic.SymbolicClassGraphCreationException;
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 
 @Immutable
 public class SymbolicMethodDeclaration {
@@ -43,7 +43,7 @@ public class SymbolicMethodDeclaration {
 		String message = "unable to find the real class method " + realClassName + "." + realName
 				+ parameters.getParameterString() + " -> " + symbolicClassName + "." + symbolicName;
 		if (isOptional) {
-			Log.i(message);
+			AmidstLogger.info(message);
 		} else {
 			throw new SymbolicClassGraphCreationException(message, e);
 		}

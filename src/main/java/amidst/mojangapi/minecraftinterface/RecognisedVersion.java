@@ -8,7 +8,7 @@ import java.util.Objects;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 
 /**
  * Information about what each supported version is
@@ -170,7 +170,7 @@ public enum RecognisedVersion {
 				return recognisedVersion;
 			}
 		}
-		Log.i("Unable to recognise Minecraft Version with the magic string \"" + magicString + "\".");
+		AmidstLogger.info("Unable to recognise Minecraft Version with the magic string \"" + magicString + "\".");
 		return RecognisedVersion.UNKNOWN;
 	}
 
@@ -182,15 +182,14 @@ public enum RecognisedVersion {
 				return recognisedVersion;
 			}
 		}
-		Log.i("Unable to recognise Minecraft Version with the name \"" + name + "\".");
+		AmidstLogger.info("Unable to recognise Minecraft Version with the name \"" + name + "\".");
 		return RecognisedVersion.UNKNOWN;
 	}
 
 	private static void logFound(RecognisedVersion recognisedVersion) {
-		Log
-				.i(
-						"Recognised Minecraft Version " + recognisedVersion.name + " with the magic string \""
-								+ recognisedVersion.magicString + "\".");
+		AmidstLogger.info(
+				"Recognised Minecraft Version " + recognisedVersion.name + " with the magic string \""
+						+ recognisedVersion.magicString + "\".");
 	}
 
 	public static boolean isNewerOrEqualTo(RecognisedVersion version1, RecognisedVersion version2) {

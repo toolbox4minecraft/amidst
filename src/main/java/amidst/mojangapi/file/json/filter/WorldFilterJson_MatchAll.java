@@ -11,7 +11,7 @@ import com.google.gson.JsonSyntaxException;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
-import amidst.logging.Log;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.filter.WorldFilter;
 import amidst.mojangapi.world.filter.WorldFilter_MatchAll;
 
@@ -56,7 +56,7 @@ public class WorldFilterJson_MatchAll {
 			return Optional.of(createWorldFilter());
 		} else {
 			// TODO: use error messages
-			Log.debug(getValidationMessages());
+			AmidstLogger.debug(getValidationMessages().toString());
 			return Optional.empty();
 		}
 	}
