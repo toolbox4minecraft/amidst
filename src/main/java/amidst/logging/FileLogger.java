@@ -82,7 +82,7 @@ public class FileLogger implements Logger {
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
 	private void writeWelcomeMessageToFile() {
-		write("log", "New FileLogger started.");
+		log("log", "New FileLogger started.");
 	}
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
@@ -123,31 +123,7 @@ public class FileLogger implements Logger {
 	}
 
 	@Override
-	public void debug(String message) {
-		write("debug", message);
-	}
-
-	@Override
-	public void info(String message) {
-		write("info", message);
-	}
-
-	@Override
-	public void warning(String message) {
-		write("warning", message);
-	}
-
-	@Override
-	public void error(String message) {
-		write("error", message);
-	}
-
-	@Override
-	public void crash(String message) {
-		write("crash", message);
-	}
-
-	private void write(String tag, String message) {
+	public void log(String tag, String message) {
 		String currentTime = new Timestamp(new Date().getTime()).toString();
 		StringBuilder builder = new StringBuilder()
 				.append(currentTime)

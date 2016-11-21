@@ -8,6 +8,12 @@ import amidst.documentation.ThreadSafe;
 // TODO: switch to standard logging framework like slf4j + log4j?
 @ThreadSafe
 public class AmidstLogger {
+	private static final String DEBUG_TAG = "debug";
+	private static final String INFO_TAG = "info";
+	private static final String WARNING_TAG = "warning";
+	private static final String ERROR_TAG = "error";
+	private static final String CRASH_TAG = "crash";
+
 	private static final ConsoleLogger CONSOLE_LOGGER = new ConsoleLogger();
 	private static final InMemoryLogger IN_MEMORY_LOGGER = new InMemoryLogger();
 
@@ -36,20 +42,20 @@ public class AmidstLogger {
 		}
 	}
 
-	public static void info(String message) {
-		synchronized (LOG_LOCK) {
-			for (Logger listener : LOGGER.values()) {
-				listener.info(message);
-			}
-		}
-	}
-
 	public static void debug(String message) {
 		if (IS_SHOWING_DEBUG) {
 			synchronized (LOG_LOCK) {
 				for (Logger listener : LOGGER.values()) {
-					listener.debug(message);
+					listener.log(DEBUG_TAG, message);
 				}
+			}
+		}
+	}
+
+	public static void info(String message) {
+		synchronized (LOG_LOCK) {
+			for (Logger listener : LOGGER.values()) {
+				listener.log(INFO_TAG, message);
 			}
 		}
 	}
@@ -57,7 +63,7 @@ public class AmidstLogger {
 	public static void warn(String message) {
 		synchronized (LOG_LOCK) {
 			for (Logger listener : LOGGER.values()) {
-				listener.warning(message);
+				listener.log(WARNING_TAG, message);
 			}
 		}
 	}
@@ -72,7 +78,7 @@ public class AmidstLogger {
 				AmidstMessageBox.displayError("Error", message);
 			}
 			for (Logger listener : LOGGER.values()) {
-				listener.error(message);
+				listener.log(ERROR_TAG, message);
 			}
 		}
 	}
@@ -81,9 +87,9 @@ public class AmidstLogger {
 		synchronized (LOG_LOCK) {
 			String exceptionText = MessageFormatter.format(e);
 			for (Logger listener : LOGGER.values()) {
-				listener.crash(message);
+				listener.log(CRASH_TAG, message);
 				if (e != null) {
-					listener.crash(exceptionText);
+					listener.log(CRASH_TAG, exceptionText);
 				}
 			}
 		}
