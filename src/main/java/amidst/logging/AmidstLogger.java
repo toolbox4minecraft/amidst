@@ -40,31 +40,114 @@ public class AmidstLogger {
 		}
 	}
 
+	public static void debug(Throwable e) {
+		log(DEBUG_TAG, MessageFormatter.format(e));
+	}
+
 	public static void debug(String message) {
-		log(DEBUG_TAG, message);
+		log(DEBUG_TAG, MessageFormatter.format(message));
+	}
+
+	public static void debug(String message, String part1, String... parts) {
+		log(DEBUG_TAG, MessageFormatter.format(message, part1, parts));
+	}
+
+	public static void debug(Throwable e, String message) {
+		log(DEBUG_TAG, MessageFormatter.format(message));
+		log(DEBUG_TAG, MessageFormatter.format(e));
+	}
+
+	public static void debug(Throwable e, String message, String part1, String... parts) {
+		log(DEBUG_TAG, MessageFormatter.format(message, part1, parts));
+		log(DEBUG_TAG, MessageFormatter.format(e));
+	}
+
+	public static void info(Throwable e) {
+		log(INFO_TAG, MessageFormatter.format(e));
 	}
 
 	public static void info(String message) {
-		log(INFO_TAG, message);
+		log(INFO_TAG, MessageFormatter.format(message));
 	}
 
-	public static void warn(String message) {
-		log(WARNING_TAG, message);
+	public static void info(String message, String part1, String... parts) {
+		log(INFO_TAG, MessageFormatter.format(message, part1, parts));
+	}
+
+	public static void info(Throwable e, String message) {
+		log(INFO_TAG, MessageFormatter.format(message));
+		log(INFO_TAG, MessageFormatter.format(e));
+	}
+
+	public static void info(Throwable e, String message, String part1, String... parts) {
+		log(INFO_TAG, MessageFormatter.format(message, part1, parts));
+		log(INFO_TAG, MessageFormatter.format(e));
 	}
 
 	public static void warn(Throwable e) {
 		log(WARNING_TAG, MessageFormatter.format(e));
 	}
 
+	public static void warn(String message) {
+		log(WARNING_TAG, MessageFormatter.format(message));
+	}
+
+	public static void warn(String message, String part1, String... parts) {
+		log(WARNING_TAG, MessageFormatter.format(message, part1, parts));
+	}
+
+	public static void warn(Throwable e, String message) {
+		log(WARNING_TAG, MessageFormatter.format(message));
+		log(WARNING_TAG, MessageFormatter.format(e));
+	}
+
+	public static void warn(Throwable e, String message, String part1, String... parts) {
+		log(WARNING_TAG, MessageFormatter.format(message, part1, parts));
+		log(WARNING_TAG, MessageFormatter.format(e));
+	}
+
+	public static void error(Throwable e) {
+		log(ERROR_TAG, MessageFormatter.format(e));
+	}
+
 	public static void error(String message) {
-		log(ERROR_TAG, message);
+		log(ERROR_TAG, MessageFormatter.format(message));
+	}
+
+	public static void error(String message, String part1, String... parts) {
+		log(ERROR_TAG, MessageFormatter.format(message, part1, parts));
+	}
+
+	public static void error(Throwable e, String message) {
+		log(ERROR_TAG, MessageFormatter.format(message));
+		log(ERROR_TAG, MessageFormatter.format(e));
+	}
+
+	public static void error(Throwable e, String message, String part1, String... parts) {
+		log(ERROR_TAG, MessageFormatter.format(message, part1, parts));
+		log(ERROR_TAG, MessageFormatter.format(e));
+	}
+
+	public static void crash(Throwable e) {
+		log(CRASH_TAG, MessageFormatter.format(e));
+	}
+
+	public static void crash(String message) {
+		log(CRASH_TAG, MessageFormatter.format(message));
+	}
+
+	public static void crash(String message, String part1, String... parts) {
+		log(CRASH_TAG, MessageFormatter.format(message, part1, parts));
 	}
 
 	public static void crash(Throwable e, String message) {
-		log(CRASH_TAG, message);
-		if (e != null) {
-			log(CRASH_TAG, MessageFormatter.format(e));
-		}
+		log(CRASH_TAG, MessageFormatter.format(message));
+		log(CRASH_TAG, MessageFormatter.format(e));
+	}
+
+	public static void crash(Throwable e, String message, String part1, String... parts) {
+		log(CRASH_TAG, MessageFormatter.format(message, part1, parts));
+		log(CRASH_TAG, MessageFormatter.format(e));
 	}
 
 	private static void log(String tag, String message) {
