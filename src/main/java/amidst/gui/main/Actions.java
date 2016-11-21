@@ -184,7 +184,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void howCanIMoveAPlayer() {
-		mainWindow.displayMessage(
+		mainWindow.displayInfo(
 				"How can I move a player?",
 				"If you load the world from a save game, you can change the player locations.\n"
 						+ "1. Scroll the map to and right-click on the new player location, this opens a popup menu.\n"
@@ -253,7 +253,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void about() {
-		mainWindow.displayMessage(
+		mainWindow.displayInfo(
 				"About",
 				"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n\n"
 						+ "Author: Skidoodle aka skiphs\n" + "Mail: toolbox4minecraft+amidst@gmail.com\n"
@@ -335,7 +335,7 @@ public class Actions {
 			ImageIO.write(image, "png", file);
 		} catch (IOException e) {
 			AmidstLogger.warn(e);
-			mainWindow.displayException(e);
+			mainWindow.displayError(e);
 		}
 	}
 

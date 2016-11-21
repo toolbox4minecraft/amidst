@@ -37,8 +37,8 @@ public class UpdatePrompt {
 				return new UpdatePrompt(
 						currentVersion,
 						workerExecutor,
-						e -> mainWindow.displayException(e),
-						() -> mainWindow.displayMessage(TITLE, NO_UPDATES_AVAILABLE),
+						e -> mainWindow.displayError(e),
+						() -> mainWindow.displayInfo(TITLE, NO_UPDATES_AVAILABLE),
 						message -> mainWindow.askToConfirmYesNo(TITLE, message));
 			}
 		} else {

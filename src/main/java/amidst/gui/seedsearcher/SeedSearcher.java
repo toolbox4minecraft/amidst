@@ -69,7 +69,7 @@ public class SeedSearcher {
 			doSearch(reporter, configuration);
 		} catch (IllegalStateException | MinecraftInterfaceException e) {
 			AmidstLogger.warn(e);
-			mainWindow.displayException(e);
+			mainWindow.displayError(e);
 		} finally {
 			this.isSearching = false;
 			this.isStopRequested = false;

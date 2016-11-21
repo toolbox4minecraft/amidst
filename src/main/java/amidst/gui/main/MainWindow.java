@@ -150,7 +150,7 @@ public class MainWindow {
 			setWorld(mojangApi.createWorldFromSeed(worldSeed, worldType));
 		} catch (IllegalStateException | MinecraftInterfaceException e) {
 			AmidstLogger.warn(e);
-			displayException(e);
+			displayError(e);
 		}
 	}
 
@@ -160,7 +160,7 @@ public class MainWindow {
 			setWorld(mojangApi.createWorldFromSaveGame(file));
 		} catch (IllegalStateException | MinecraftInterfaceException | IOException | MojangApiParsingException e) {
 			AmidstLogger.warn(e);
-			displayException(e);
+			displayError(e);
 		}
 	}
 
@@ -282,7 +282,7 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayMessage(String title, String message) {
+	public void displayInfo(String title, String message) {
 		AmidstMessageBox.displayInfo(frame, title, message);
 	}
 
@@ -292,7 +292,7 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayException(Exception e) {
+	public void displayError(Exception e) {
 		AmidstMessageBox.displayError(frame, "Error", e);
 	}
 
