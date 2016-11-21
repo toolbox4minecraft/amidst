@@ -16,6 +16,7 @@ import amidst.Application;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gui.crash.CrashWindow;
 import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.logging.AmidstLogger;
@@ -239,6 +240,11 @@ public class Actions {
 		if (viewerFacade != null) {
 			viewerFacade.reloadBackgroundLayer();
 		}
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void displayLogMessages() {
+		CrashWindow.showForInterest();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

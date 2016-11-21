@@ -184,20 +184,11 @@ public class Amidst {
 		String message = "Amidst has encounted an uncaught exception on the thread " + thread;
 		try {
 			AmidstLogger.crash(e, message);
-			displayCrashWindow(message, AmidstLogger.getAllMessages());
+			CrashWindow.showAfterCrash();
 		} catch (Throwable t) {
 			System.err.println("Amidst crashed!");
 			System.err.println(message);
 			e.printStackTrace();
 		}
-	}
-
-	private static void displayCrashWindow(final String message, final String allMessages) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				CrashWindow.show(message, allMessages, () -> System.exit(4));
-			}
-		});
 	}
 }

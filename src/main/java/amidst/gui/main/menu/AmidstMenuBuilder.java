@@ -148,6 +148,7 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("Help");
 		result.setMnemonic(KeyEvent.VK_H);
 		// @formatter:off
+		Menus.item(result, actions::displayLogMessages,    "Display Log Messages",     KeyEvent.VK_M);
 		Menus.item(result, actions::checkForUpdates,       "Check for Updates",        KeyEvent.VK_U);
 		Menus.item(result, actions::viewLicense,           "View Licenses",            KeyEvent.VK_L);
 		Menus.item(result, actions::about,                 "About",                    KeyEvent.VK_A);
