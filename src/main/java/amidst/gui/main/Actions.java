@@ -148,6 +148,7 @@ public class Actions {
 					viewerFacade.centerOn(player);
 				}
 			} else {
+				AmidstLogger.warn("There are no players in this world.");
 				mainWindow.displayError("There are no players in this world.");
 			}
 		}
@@ -212,13 +213,15 @@ public class Actions {
 			if (file != null) {
 				file = appendPNGFileExtensionIfNecessary(file);
 				if (file.exists() && !file.isFile()) {
-					mainWindow.displayError(
-							"Unable to write capture image, because the target exists but is not a file: "
-									+ file.getAbsolutePath());
+					String message = "Unable to write capture image, because the target exists but is not a file: "
+							+ file.getAbsolutePath();
+					AmidstLogger.warn(message);
+					mainWindow.displayError(message);
 				} else if (!canWriteToFile(file)) {
-					mainWindow.displayError(
-							"Unable to write capture image, because you have no writing permissions: "
-									+ file.getAbsolutePath());
+					String message = "Unable to write capture image, because you have no writing permissions: "
+							+ file.getAbsolutePath();
+					AmidstLogger.warn(message);
+					mainWindow.displayError(message);
 				} else if (!file.exists() || mainWindow.askToConfirm(
 						"Replace file?",
 						"File already exists. Do you want to replace it?\n" + file.getAbsolutePath() + "")) {

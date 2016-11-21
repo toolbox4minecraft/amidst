@@ -292,8 +292,8 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayException(Exception exception) {
-		AmidstMessageBox.displayError(frame, "Error", exception);
+	public void displayException(Exception e) {
+		AmidstMessageBox.displayError(frame, "Error", e);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

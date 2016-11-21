@@ -39,7 +39,7 @@ public class UpdatePrompt {
 				return new UpdatePrompt(
 						currentVersion,
 						workerExecutor,
-						exception -> mainWindow.displayException(exception),
+						e -> mainWindow.displayException(e),
 						() -> mainWindow.displayMessage(TITLE, NO_UPDATES_AVAILABLE),
 						message -> mainWindow.askToConfirm(TITLE, message));
 			}
@@ -55,7 +55,7 @@ public class UpdatePrompt {
 				return new UpdatePrompt(
 						currentVersion,
 						workerExecutor,
-						exception -> AmidstMessageBox.displayError(TITLE, exception),
+						e -> AmidstMessageBox.displayError(TITLE, e),
 						() -> AmidstMessageBox.displayInfo(TITLE, NO_UPDATES_AVAILABLE),
 						message -> askToConfirmDirectly(message));
 			}
@@ -102,13 +102,7 @@ public class UpdatePrompt {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void onCheckFailed(Exception e) {
-		AmidstLogger.warn("unable to check for updates");
-		displayError(e);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void displayError(Exception e) {
-		AmidstLogger.warn(e);
+		AmidstLogger.warn(e, "unable to check for updates");
 		exceptionConsumer.accept(e);
 	}
 
@@ -118,7 +112,8 @@ public class UpdatePrompt {
 			try {
 				openURL(new URI(updateInformation.getDownloadUrl()));
 			} catch (IOException | UnsupportedOperationException | URISyntaxException e) {
-				displayError(e);
+				AmidstLogger.warn(e);
+				exceptionConsumer.accept(e);
 			}
 		}
 	}
@@ -134,6 +129,7 @@ public class UpdatePrompt {
 		} else if (newVersion.isSameVersionButOldPreReleaseAndNewStable(currentVersion)) {
 			return askToConfirm(createMessage(message, newVersion, "stable"));
 		} else {
+			AmidstLogger.info(NO_UPDATES_AVAILABLE);
 			noUpdatesDisplayer.run();
 			return false;
 		}
