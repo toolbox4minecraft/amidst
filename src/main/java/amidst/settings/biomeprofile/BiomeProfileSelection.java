@@ -2,6 +2,7 @@ package amidst.settings.biomeprofile;
 
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.world.biome.BiomeColor;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
 
@@ -17,7 +18,9 @@ public class BiomeProfileSelection {
 		try {
 			return getBiomeColor(index);
 		} catch (UnknownBiomeIndexException e) {
-			AmidstLogger.error(e.getMessage());
+			String message = e.getMessage();
+			AmidstLogger.error(message);
+			AmidstMessageBox.displayError("Error", message);
 			e.printStackTrace();
 			return BiomeColor.unknown();
 		}

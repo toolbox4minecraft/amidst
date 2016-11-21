@@ -18,6 +18,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
@@ -155,6 +156,7 @@ public class ProfileSelectWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void scanAndLoadProfilesFailed(Exception e) {
 		AmidstLogger.error("Error reading launcher_profiles.json");
+		AmidstMessageBox.displayError("Error", "Error reading launcher_profiles.json");
 		e.printStackTrace();
 		profileSelectPanel.setEmptyMessage("Failed loading");
 	}

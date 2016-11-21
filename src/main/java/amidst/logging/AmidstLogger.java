@@ -18,8 +18,6 @@ public class AmidstLogger {
 	private static final InMemoryLogger IN_MEMORY_LOGGER = new InMemoryLogger();
 
 	private static final Object LOG_LOCK = new Object();
-	private static final boolean IS_USING_ALERTS = true;
-	private static final boolean IS_SHOWING_DEBUG = true;
 
 	private static final Map<String, Logger> LOGGER = createLoggerMap();
 
@@ -43,11 +41,9 @@ public class AmidstLogger {
 	}
 
 	public static void debug(String message) {
-		if (IS_SHOWING_DEBUG) {
-			synchronized (LOG_LOCK) {
-				for (Logger listener : LOGGER.values()) {
-					listener.log(DEBUG_TAG, message);
-				}
+		synchronized (LOG_LOCK) {
+			for (Logger listener : LOGGER.values()) {
+				listener.log(DEBUG_TAG, message);
 			}
 		}
 	}
@@ -74,9 +70,6 @@ public class AmidstLogger {
 
 	public static void error(String message) {
 		synchronized (LOG_LOCK) {
-			if (IS_USING_ALERTS) {
-				AmidstMessageBox.displayError("Error", message);
-			}
 			for (Logger listener : LOGGER.values()) {
 				listener.log(ERROR_TAG, message);
 			}

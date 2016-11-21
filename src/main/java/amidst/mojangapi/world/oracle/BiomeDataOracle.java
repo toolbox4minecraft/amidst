@@ -5,6 +5,7 @@ import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.biome.Biome;
@@ -30,7 +31,9 @@ public class BiomeDataOracle {
 			try {
 				copyToResult(result, width, height, getBiomeData(left, top, width, height, useQuarterResolution));
 			} catch (MinecraftInterfaceException e) {
-				AmidstLogger.error(e.getMessage());
+				String message = e.getMessage();
+				AmidstLogger.error(message);
+				AmidstMessageBox.displayError("Error", message);
 				e.printStackTrace();
 			}
 		}
@@ -56,11 +59,15 @@ public class BiomeDataOracle {
 		try {
 			return validBiomes.contains(getBiomeAt(x, y));
 		} catch (UnknownBiomeIndexException e) {
-			AmidstLogger.error(e.getMessage());
+			String message = e.getMessage();
+			AmidstLogger.error(message);
+			AmidstMessageBox.displayError("Error", message);
 			e.printStackTrace();
 			return false;
 		} catch (MinecraftInterfaceException e) {
-			AmidstLogger.error(e.getMessage());
+			String message = e.getMessage();
+			AmidstLogger.error(message);
+			AmidstMessageBox.displayError("Error", message);
 			e.printStackTrace();
 			return false;
 		}
@@ -86,11 +93,15 @@ public class BiomeDataOracle {
 			}
 			return true;
 		} catch (UnknownBiomeIndexException e) {
-			AmidstLogger.error(e.getMessage());
+			String message = e.getMessage();
+			AmidstLogger.error(message);
+			AmidstMessageBox.displayError("Error", message);
 			e.printStackTrace();
 			return false;
 		} catch (MinecraftInterfaceException e) {
-			AmidstLogger.error(e.getMessage());
+			String message = e.getMessage();
+			AmidstLogger.error(message);
+			AmidstMessageBox.displayError("Error", message);
 			e.printStackTrace();
 			return false;
 		}
@@ -126,11 +137,15 @@ public class BiomeDataOracle {
 			}
 			return result;
 		} catch (UnknownBiomeIndexException e) {
-			AmidstLogger.error(e.getMessage());
+			String message = e.getMessage();
+			AmidstLogger.error(message);
+			AmidstMessageBox.displayError("Error", message);
 			e.printStackTrace();
 			return null;
 		} catch (MinecraftInterfaceException e) {
-			AmidstLogger.error(e.getMessage());
+			String message = e.getMessage();
+			AmidstLogger.error(message);
+			AmidstMessageBox.displayError("Error", message);
 			e.printStackTrace();
 			return null;
 		}

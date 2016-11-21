@@ -11,6 +11,7 @@ import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
 import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
@@ -74,7 +75,9 @@ public class CursorInformationWidget extends TextWidget {
 			try {
 				return Biome.getByIndex(biome).getName();
 			} catch (UnknownBiomeIndexException e) {
-				AmidstLogger.error(e.getMessage());
+				String message = e.getMessage();
+				AmidstLogger.error(message);
+				AmidstMessageBox.displayError("Error", message);
 				e.printStackTrace();
 				return UNKNOWN_BIOME_NAME;
 			}
