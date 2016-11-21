@@ -41,49 +41,36 @@ public class AmidstLogger {
 	}
 
 	public static void debug(String message) {
-		synchronized (LOG_LOCK) {
-			for (Logger listener : LOGGER.values()) {
-				listener.log(DEBUG_TAG, message);
-			}
-		}
+		log(DEBUG_TAG, message);
 	}
 
 	public static void info(String message) {
-		synchronized (LOG_LOCK) {
-			for (Logger listener : LOGGER.values()) {
-				listener.log(INFO_TAG, message);
-			}
-		}
+		log(INFO_TAG, message);
 	}
 
 	public static void warn(String message) {
-		synchronized (LOG_LOCK) {
-			for (Logger listener : LOGGER.values()) {
-				listener.log(WARNING_TAG, message);
-			}
-		}
+		log(WARNING_TAG, message);
 	}
 
 	public static void warn(Throwable e) {
-		warn(MessageFormatter.format(e));
+		log(WARNING_TAG, MessageFormatter.format(e));
 	}
 
 	public static void error(String message) {
-		synchronized (LOG_LOCK) {
-			for (Logger listener : LOGGER.values()) {
-				listener.log(ERROR_TAG, message);
-			}
-		}
+		log(ERROR_TAG, message);
 	}
 
 	public static void crash(Throwable e, String message) {
+		log(CRASH_TAG, message);
+		if (e != null) {
+			log(CRASH_TAG, MessageFormatter.format(e));
+		}
+	}
+
+	private static void log(String tag, String message) {
 		synchronized (LOG_LOCK) {
-			String exceptionText = MessageFormatter.format(e);
 			for (Logger listener : LOGGER.values()) {
-				listener.log(CRASH_TAG, message);
-				if (e != null) {
-					listener.log(CRASH_TAG, exceptionText);
-				}
+				listener.log(tag, message);
 			}
 		}
 	}
