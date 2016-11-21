@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.prefs.Preferences;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.kohsuke.args4j.CmdLineException;
@@ -18,6 +17,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.crash.CrashWindow;
 import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.logging.FileLogger;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.util.OperatingSystemDetector;
@@ -172,11 +172,9 @@ public class Amidst {
 		} catch (DotMinecraftDirectoryNotFoundException e) {
 			AmidstLogger.warn(e.getMessage());
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(
-					null,
-					"Amidst is not able to find your '.minecraft' directory, but it requires a working Minecraft installation.",
+			AmidstMessageBox.displayError(
 					"Please install Minecraft",
-					JOptionPane.ERROR_MESSAGE);
+					"Amidst is not able to find your '.minecraft' directory, but it requires a working Minecraft installation.");
 		} catch (Exception e) {
 			handleCrash(e, Thread.currentThread());
 		}

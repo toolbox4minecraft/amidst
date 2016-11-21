@@ -1,7 +1,5 @@
 package amidst.logging;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,11 +17,13 @@ public class AmidstLogger {
 	private static final boolean IS_USING_ALERTS = true;
 	private static final boolean IS_SHOWING_DEBUG = true;
 
-	private static final Map<String, Logger> LOGGER = new HashMap<>();
+	private static final Map<String, Logger> LOGGER = createLoggerMap();
 
-	static {
-		addListener("console", CONSOLE_LOGGER);
-		addListener("master", IN_MEMORY_LOGGER);
+	private static Map<String, Logger> createLoggerMap() {
+		Map<String, Logger> result = new HashMap<>();
+		result.put("console", CONSOLE_LOGGER);
+		result.put("master", IN_MEMORY_LOGGER);
+		return result;
 	}
 
 	public static void addListener(String name, Logger logger) {
@@ -64,6 +64,10 @@ public class AmidstLogger {
 		}
 	}
 
+	public static void warn(Throwable e) {
+		warn(MessageFormatter.format(e));
+	}
+
 	public static void error(Object... messages) {
 		synchronized (LOG_LOCK) {
 			if (IS_USING_ALERTS) {
@@ -77,7 +81,7 @@ public class AmidstLogger {
 
 	public static void crash(Throwable e, String message) {
 		synchronized (LOG_LOCK) {
-			String exceptionText = getExceptionText(e);
+			String exceptionText = MessageFormatter.format(e);
 			for (Logger listener : LOGGER.values()) {
 				listener.crash(e, exceptionText, message);
 			}
@@ -88,23 +92,5 @@ public class AmidstLogger {
 		synchronized (LOG_LOCK) {
 			return IN_MEMORY_LOGGER.getContents();
 		}
-	}
-
-	private static String getExceptionText(Throwable e) {
-		if (e != null) {
-			return getStackTraceAsString(e);
-		} else {
-			return "";
-		}
-	}
-
-	public static void printTraceStack(Throwable e) {
-		warn(getStackTraceAsString(e));
-	}
-
-	private static String getStackTraceAsString(Throwable e) {
-		StringWriter writer = new StringWriter();
-		e.printStackTrace(new PrintWriter(writer));
-		return writer.toString();
 	}
 }

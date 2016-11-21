@@ -6,8 +6,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -27,6 +25,7 @@ import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.main.viewer.ViewerFacadeBuilder;
 import amidst.gui.seedsearcher.SeedSearcher;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
+import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -283,24 +282,17 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayMessage(String title, String message) {
-		JOptionPane.showMessageDialog(frame, message, title, JOptionPane.INFORMATION_MESSAGE);
+		AmidstMessageBox.displayInfo(frame, title, message);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayError(String message) {
-		JOptionPane.showMessageDialog(frame, message, "Error", JOptionPane.ERROR_MESSAGE);
+		AmidstMessageBox.displayError(frame, "Error", message);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayException(Exception exception) {
-		JOptionPane.showMessageDialog(frame, getStackTraceAsString(exception), "Error", JOptionPane.ERROR_MESSAGE);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private String getStackTraceAsString(Exception exception) {
-		StringWriter writer = new StringWriter();
-		exception.printStackTrace(new PrintWriter(writer));
-		return writer.toString();
+		AmidstMessageBox.displayError(frame, "Error", exception);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

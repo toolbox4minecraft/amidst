@@ -2,8 +2,6 @@ package amidst.gui.main;
 
 import java.awt.Desktop;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.function.Consumer;
@@ -17,6 +15,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotNull;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -56,28 +55,11 @@ public class UpdatePrompt {
 				return new UpdatePrompt(
 						currentVersion,
 						workerExecutor,
-						exception -> displayExceptionDirectly(exception),
-						() -> displayMessageDirectly(NO_UPDATES_AVAILABLE),
+						exception -> AmidstMessageBox.displayError(TITLE, exception),
+						() -> AmidstMessageBox.displayInfo(TITLE, NO_UPDATES_AVAILABLE),
 						message -> askToConfirmDirectly(message));
 			}
 		}
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private static void displayExceptionDirectly(Exception exception) {
-		JOptionPane.showMessageDialog(null, getStackTraceAsString(exception), TITLE, JOptionPane.ERROR_MESSAGE);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private static String getStackTraceAsString(Exception exception) {
-		StringWriter writer = new StringWriter();
-		exception.printStackTrace(new PrintWriter(writer));
-		return writer.toString();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private static void displayMessageDirectly(String message) {
-		JOptionPane.showMessageDialog(null, message, TITLE, JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

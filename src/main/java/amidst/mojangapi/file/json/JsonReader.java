@@ -49,7 +49,7 @@ public enum JsonReader {
 			remote = readRemoteVersionList();
 		} catch (IOException | MojangApiParsingException e) {
 			AmidstLogger.warn("Unable to read remote version list.");
-			AmidstLogger.printTraceStack(e);
+			AmidstLogger.warn(e);
 			AmidstLogger.warn("Aborting version list load. URL: " + REMOTE_VERSION_LIST);
 		}
 		if (remote != null) {
@@ -62,7 +62,7 @@ public enum JsonReader {
 			local = readLocalVersionListFromResource();
 		} catch (IOException | MojangApiParsingException e) {
 			AmidstLogger.warn("Unable to read local version list.");
-			AmidstLogger.printTraceStack(e);
+			AmidstLogger.warn(e);
 			AmidstLogger.warn("Aborting version list load. URL: " + LOCAL_VERSION_LIST);
 		}
 		if (local != null) {
