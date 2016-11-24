@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
@@ -21,6 +20,7 @@ import amidst.mojangapi.file.json.player.PlayerJson;
 import amidst.mojangapi.file.json.player.SimplePlayerJson;
 import amidst.mojangapi.file.json.version.VersionJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
+import amidst.util.GsonProvider;
 
 /**
  * This is a utility class used to read JSON data. Please use this class only to
@@ -30,8 +30,6 @@ import amidst.mojangapi.file.json.versionlist.VersionListJson;
 @Immutable
 public enum JsonReader {
 	;
-
-	private static final Gson GSON = new Gson();
 
 	private static final String REMOTE_VERSION_LIST = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
 	private static final URL LOCAL_VERSION_LIST = ResourceLoader
@@ -98,7 +96,7 @@ public enum JsonReader {
 	@NotNull
 	public static <T> T read(Reader reader, Class<T> clazz) throws MojangApiParsingException, IOException {
 		try (Reader theReader = reader) {
-			T result = GSON.fromJson(theReader, clazz);
+			T result = GsonProvider.get().fromJson(theReader, clazz);
 			if (result != null) {
 				return result;
 			} else {
@@ -126,7 +124,7 @@ public enum JsonReader {
 	@NotNull
 	public static <T> T read(String string, Class<T> clazz) throws MojangApiParsingException {
 		try {
-			T result = GSON.fromJson(string, clazz);
+			T result = GsonProvider.get().fromJson(string, clazz);
 			if (result != null) {
 				return result;
 			} else {

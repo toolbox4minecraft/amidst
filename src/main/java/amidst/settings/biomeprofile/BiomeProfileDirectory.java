@@ -5,12 +5,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import com.google.gson.Gson;
+import amidst.documentation.Immutable;
+import amidst.util.GsonProvider;
+import amidst.logging.AmidstLogger;
+
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-
-import amidst.documentation.Immutable;
-import amidst.logging.AmidstLogger;
 
 @Immutable
 public class BiomeProfileDirectory {
@@ -29,7 +29,6 @@ public class BiomeProfileDirectory {
 	}
 
 	private static final File DEFAULT_ROOT_DIRECTORY = new File("biome");
-	private static final Gson GSON = new Gson();
 
 	private final File root;
 	private final File defaultProfile;
@@ -109,7 +108,7 @@ public class BiomeProfileDirectory {
 
 	private BiomeProfile readProfile(File file) throws IOException, JsonSyntaxException, JsonIOException {
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-			return GSON.fromJson(reader, BiomeProfile.class);
+			return GsonProvider.get().fromJson(reader, BiomeProfile.class);
 		}
 	}
 }

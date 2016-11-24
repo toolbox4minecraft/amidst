@@ -15,7 +15,6 @@ import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm;
 import amidst.mojangapi.world.icon.locationchecker.TempleLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.VillageLocationChecker;
 import amidst.mojangapi.world.icon.producer.PlayerProducer;
-import amidst.mojangapi.world.icon.producer.SpawnProducer;
 import amidst.mojangapi.world.icon.producer.StructureProducer;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.EndCityWorldIconTypeProvider;
@@ -118,7 +117,7 @@ public class WorldBuilder {
 				biomeDataOracle,
 				EndIslandOracle.from(seed),
 				new SlimeChunkOracle(seed),
-				new SpawnProducer(worldSpawnOracle),
+				worldSpawnOracle,
 				versionFeatures.getStrongholdProducerFactory().apply(
 						seed,
 						biomeDataOracle,

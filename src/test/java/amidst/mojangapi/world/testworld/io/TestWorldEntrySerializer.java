@@ -8,24 +8,18 @@ import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.CoordinatesCollectionJson;
 import amidst.mojangapi.world.testworld.storage.json.EndIslandsJson;
 import amidst.mojangapi.world.testworld.storage.json.SlimeChunksJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
+import amidst.util.GsonProvider;
+
 
 @Immutable
 public enum TestWorldEntrySerializer {
 	;
-
-	/*-
-	 * We need complex keys for the BiomeDataJson which contains a Map<AreaJson, short[]>
-	 */
-	private static final Gson GSON = new GsonBuilder().enableComplexMapKeySerialization().create();
 
 	public static WorldMetadataJson readMetaData(InputStream is) {
 		return readJson(is, WorldMetadataJson.class);
@@ -49,7 +43,7 @@ public enum TestWorldEntrySerializer {
 
 	private static <T> T readJson(InputStream is, Class<T> clazz) {
 		try (InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-			return GSON.fromJson(reader, clazz);
+			return GsonProvider.get().fromJson(reader, clazz);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
@@ -60,7 +54,7 @@ public enum TestWorldEntrySerializer {
 			// do not use the try-with-resource mechanism, because this will
 			// also close the output stream
 			OutputStreamWriter writer = new OutputStreamWriter(os, StandardCharsets.UTF_8);
-			GSON.toJson(data, writer);
+			GsonProvider.get().toJson(data, writer);
 			writer.flush();
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);

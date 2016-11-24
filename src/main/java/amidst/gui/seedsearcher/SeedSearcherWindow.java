@@ -1,7 +1,13 @@
 package amidst.gui.seedsearcher;
 
 import java.awt.Color;
-import java.util.Optional;
+import java.awt.Font;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -14,12 +20,14 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.border.LineBorder;
 
 import amidst.AmidstMetaData;
+import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.MainWindow;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.json.filter.WorldFilterJson_MatchAll;
+import amidst.mojangapi.file.json.filter.WorldFilterJson;
+import amidst.mojangapi.file.json.filter.WorldFilterParseException;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.filter.WorldFilter;
@@ -27,7 +35,9 @@ import net.miginfocom.swing.MigLayout;
 
 @NotThreadSafe
 public class SeedSearcherWindow {
+	
 	private final AmidstMetaData metadata;
+	private final AmidstSettings settings;
 	private final MainWindow mainWindow;
 	private final SeedSearcher seedSearcher;
 
@@ -38,8 +48,10 @@ public class SeedSearcherWindow {
 	private final JFrame frame;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public SeedSearcherWindow(AmidstMetaData metadata, MainWindow mainWindow, SeedSearcher seedSearcher) {
+	public SeedSearcherWindow(AmidstMetaData metadata, AmidstSettings settings,
+			MainWindow mainWindow, SeedSearcher seedSearcher) {
 		this.metadata = metadata;
+		this.settings = settings;
 		this.mainWindow = mainWindow;
 		this.seedSearcher = seedSearcher;
 		this.searchQueryTextArea = createSearchQueryTextArea();
@@ -47,6 +59,8 @@ public class SeedSearcherWindow {
 		this.searchContinuouslyCheckBox = createSearchContinuouslyCheckBox();
 		this.searchButton = createSearchButton();
 		this.frame = createFrame();
+		
+		tryReloadFromFile();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -57,7 +71,11 @@ public class SeedSearcherWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JTextArea createSearchQueryTextArea() {
-		return new JTextArea();
+		JTextArea area = new JTextArea();
+		
+		area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+		area.setTabSize(2);
+		return area;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -100,31 +118,49 @@ public class SeedSearcherWindow {
 		result.setBorder(new LineBorder(Color.darkGray, 1));
 		return result;
 	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void tryReloadFromFile() {
+		Path file = Paths.get(settings.searchJsonFile.get());
+		
+		if(Files.notExists(file)) {
+			AmidstLogger.info("The search file " + file + "doesn't exist: abort loading");
+			return;
+		}
+		
+		try {
+			List<String> lines = Files.readAllLines(file);
+			String content = lines.stream().collect(Collectors.joining("\n"));
+			searchQueryTextArea.setText(content);
+			
+		} catch (IOException e) {
+			AmidstLogger.warn("Unable to read search file " + file + ": " + e.getMessage());
+			mainWindow.displayError("Could not load file; see logs.");
+		}
+	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void searchButtonClicked() {
 		if (seedSearcher.isSearching()) {
 			seedSearcher.stop();
 		} else {
-			Optional<SeedSearcherConfiguration> configuration = createSeedSearcherConfiguration();
-			if (configuration.isPresent()) {
-				SeedSearcherConfiguration seedSearcherConfiguration = configuration.get();
+			try {
+				SeedSearcherConfiguration seedSearcherConfiguration = createSeedSearcherConfiguration();
 				WorldType worldType = seedSearcherConfiguration.getWorldType();
 				seedSearcher.search(seedSearcherConfiguration, worldSeed -> seedFound(worldSeed, worldType));
-			} else {
-				AmidstLogger.warn("invalid configuration");
-				mainWindow.displayError("invalid configuration");
+				
+			} catch (WorldFilterParseException e) {
+				AmidstLogger.warn("Invalid seed search configuration: {}", e.getMessage());
+				mainWindow.displayError(e.getMessage());
 			}
 		}
 		updateGUI();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private Optional<SeedSearcherConfiguration> createSeedSearcherConfiguration() {
-		return WorldFilterJson_MatchAll
-				.from(searchQueryTextArea.getText())
-				.flatMap(WorldFilterJson_MatchAll::createValidWorldFilter)
-				.map(this::createSeedSearcherConfiguration);
+	private SeedSearcherConfiguration createSeedSearcherConfiguration() throws WorldFilterParseException {
+		WorldFilterJson filter = WorldFilterJson.fromJSON(searchQueryTextArea.getText());
+		return createSeedSearcherConfiguration(filter.validate());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

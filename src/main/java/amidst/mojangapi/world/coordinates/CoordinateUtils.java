@@ -7,8 +7,10 @@ import amidst.fragment.Fragment;
 public enum CoordinateUtils {
 	;
 
-	public static boolean isInBounds(long x, long y, long offsetX, long offsetY, long width, long height) {
-		return x >= offsetX && x < offsetX + width && y >= offsetY && y < offsetY + height;
+	public static boolean isInBounds(long x, long y, long offsetX,
+			long offsetY, long width, long height) {
+		return x >= offsetX && x < offsetX + width
+			&& y >= offsetY && y < offsetY + height;
 	}
 
 	/**

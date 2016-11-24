@@ -1,0 +1,46 @@
+{
+  "defaults": {
+  	"center": null,
+  	"shape": "circle"
+  },
+  
+  "groups": {
+  	"biome1": {
+  	  "biomes": ["Forest", "Mesa"],
+  	  "variants": true,
+  	  "radius": 500,
+  	  "center": [-50,50]
+  	},
+  	
+  	"biome2": {
+  	  "biomes": ["Forest", "Mesa"],
+  	  "variants": true,
+  	  "radius": 500,
+  	  "shape": "square"
+  	},
+  	
+  	"struct1": {
+  		"structures": ["Stronghold"],
+  		"radius": 1000
+  	},
+  	
+  	"and1": {
+  	  "and": ["biome1", "biome2"],
+  	  "center": [100,100]
+  	},
+  	
+  	"or1": {
+      "or": ["and1", "struct1"],
+      "minScore": 2
+  	},
+  	
+  	"ref1": {
+  	  "group": "or1",
+  	  "negate": true
+  	}
+  },
+  
+  "match": ["ref1"],
+  
+  "ignore": ["biome1"]
+}

@@ -28,6 +28,12 @@ public enum Resolution {
 	public int getStep() {
 		return 1 << shift;
 	}
+	
+	public int getShift() {
+		return shift;
+	}
+	
+	
 
 	public int getStepsPerFragment() {
 		return 1 << (FRAGMENT.shift - shift);
@@ -39,5 +45,9 @@ public enum Resolution {
 
 	public long convertFromThisToWorld(long coordinateInThisResolution) {
 		return coordinateInThisResolution << shift;
+	}
+	
+	public long snapToResolution(long coordinateInWorld) {
+		return coordinateInWorld & ~((1 << shift) - 1);
 	}
 }

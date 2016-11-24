@@ -1,34 +1,34 @@
 package amidst.mojangapi.world.filter;
 
-import amidst.documentation.Immutable;
-import amidst.fragment.Fragment;
+import java.util.List;
+
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
-import amidst.mojangapi.world.coordinates.Resolution;
 
-@Immutable
-public abstract class WorldFilter {
-	protected final long worldFilterSize;
-	protected final long quarterFilterSize;
-	protected final CoordinatesInWorld corner;
+public class WorldFilter {
 
-	public WorldFilter(long worldFilterSize) {
-		ensureIsMultipleOfFragmentSize(worldFilterSize);
-		this.worldFilterSize = worldFilterSize;
-		this.quarterFilterSize = Resolution.QUARTER.convertFromWorldToThis(this.worldFilterSize);
-		this.corner = new CoordinatesInWorld(-this.worldFilterSize, -this.worldFilterSize);
+	//if null, use world spawn point
+	private CoordinatesInWorld globalCenter = null;
+	
+	private List<Criterion> criteria;
+	
+	private Criterion match;
+	
+	public WorldFilter(CoordinatesInWorld center, List<Criterion> criteria, Criterion match) {
+		globalCenter = center;
+		this.criteria = criteria;
+		this.match = match;
 	}
-
-	/**
-	 * Structure filters check spaces in fragment size, so filter distance not a
-	 * multiple of fragment size will include more area in the filter than
-	 * expected
-	 */
-	private void ensureIsMultipleOfFragmentSize(long worldFilterSize) {
-		if (worldFilterSize % Fragment.SIZE != 0) {
-			throw new IllegalArgumentException("World filter size must be a multiple of " + Fragment.SIZE);
-		}
+	
+	private CoordinatesInWorld getGlobalCenter(World world) {
+		if(globalCenter != null)
+			return globalCenter;
+		CoordinatesInWorld center = world.getSpawnOracle().get();
+		return center == null ? CoordinatesInWorld.origin() : center;
 	}
-
-	public abstract boolean isValid(World world);
+	
+	public boolean isValid(World world) {
+		throw new RuntimeException("not implemented!");
+		//TODO
+	}
 }

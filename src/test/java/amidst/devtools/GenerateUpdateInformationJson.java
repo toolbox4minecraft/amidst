@@ -1,14 +1,14 @@
 package amidst.devtools;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import amidst.AmidstVersion;
 import amidst.gui.main.UpdateInformationJson;
+import amidst.util.GsonProvider;
 
 public class GenerateUpdateInformationJson {
 	private static final String DOWNLOAD_URL = "https://github.com/toolbox4minecraft/amidst/releases";
-	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+	private static final Gson GSON = GsonProvider.builder().setPrettyPrinting().create();
 
 	private final AmidstVersion version;
 

@@ -125,6 +125,7 @@ public class MainWindow {
 	private SeedSearcherWindow createSeedSearcherWindow() {
 		return new SeedSearcherWindow(
 				metadata,
+				settings,
 				this,
 				new SeedSearcher(this, mojangApi, threadMaster.getWorkerExecutor()));
 	}
