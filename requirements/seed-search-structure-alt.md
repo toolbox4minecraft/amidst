@@ -4,7 +4,6 @@ THIS IS A DRAFT
 
 **TODO:**
 - number of structures feature in criteria (should constraints returns multiple coordinates for reporting multiple structures?)
-- negating a criterion
 - score/result propagation for criterion references
 - merge AND and OR criteria into Combining (with a combining operation)?
 
@@ -46,7 +45,7 @@ Given a world, find among the coordinates which satisfy the predicate the one wi
 **Short-circuiting:** When evaluating the constraint, we can stop testing coordinates as soon as we know that no non-tested coordinate will have a better valuation than the current one. (e.g. if the valuation is constant, we can return the first coordinate we find)
 
 
-### Criteria
+### Criterion
 Given a world, returns whether or not it matches a certain condition.
 If it matches, returns the resulting score (a positive number), and a list of matched constraints, along with their result.
 
@@ -58,9 +57,14 @@ A Constraint can be "lifted" to a criterion.
 The criterion matches iff the constraint returns a coordinate, and its score is the valuation of this coordinate.
 
 
-#### A reference to another Criterion
+#### A reference to another criterion
 Matches iff the specified criterion matches.
-    
+
+#### A Negation of another criterion
+Matches iff the specified criterion DOES NOT match.
+If it matches, ignore the result returned by the inner criterion, and return and empty match list, with the score of the Negation itself.
+
+**Short-circuiting:** As the matches and the score of the inner criterion are ignored, we can abord as soon as the inner criterion is garanteed to match.
 
 #### An `and` criterion
 Consists of: 
