@@ -6,7 +6,6 @@ THIS IS A DRAFT
 - number of structures feature in criteria (should constraints returns multiple coordinates for reporting multiple structures?)
 - negating a criterion
 - score/result propagation for criterion references
-- expliciting the criterion result?
 - merge AND and OR criteria into Combining (with a combining operation)?
 
 ### World
@@ -37,25 +36,27 @@ Given a coordinate, returns a positive value (higher is better)
 - a constant valuation
 - a higher valuation when the coordinate is closer to a given center point
 
-
-### Criteria
-Given a world, returns whether or not it matches a certain condition.
-If it matches, returns a list of pair (criterion, coordinates) giving where each leaf criterion has matched (if it has matched), and a score (a positive number).
-
-The different type of criteria are:
-
-#### A Constraint
-The basic type of criterion: all criteria are ultimately made with these.
-
+### Constraint
 Consists of:
 - a Predicate
 - a Valuation
 
-Matches iff there exists one coordinate which satisfy the predicate.
-
-Returns itself and the coordinate with maximum valuation among those which satisfy the predicate. If more than one coordinate have maximum valuation, only one will be returned. The score is the valuation of the returned coordinate.
+Given a world, find among the coordinates which satisfy the predicate the one with maximum valuation, and returns it (along with its valuation). If more than one coordinate have maximum valuation, only one will be returned. If no coordinate satisfy the predicate, the constraint returns nothing.
 
 **Short-circuiting:** When evaluating the constraint, we can stop testing coordinates as soon as we know that no non-tested coordinate will have a better valuation than the current one. (e.g. if the valuation is constant, we can return the first coordinate we find)
+
+
+### Criteria
+Given a world, returns whether or not it matches a certain condition.
+If it matches, returns the resulting score (a positive number), and a list of matched constraints, along with their result.
+
+
+The different type of criteria are:
+
+#### A Constraint
+A Constraint can be "lifted" to a criterion.
+The criterion matches iff the constraint returns a coordinate, and its score is the valuation of this coordinate.
+
 
 #### A reference to another Criterion
 Matches iff the specified criterion matches.
