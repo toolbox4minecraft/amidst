@@ -5,7 +5,6 @@ THIS IS A DRAFT
 **TODO:**
 - number of structures feature in criteria (should constraints returns multiple coordinates for reporting multiple structures?)
 - score/result propagation for criterion references
-- merge AND and OR criteria into Combining (with a combining operation)?
 
 ### World
 Consists of:
@@ -47,10 +46,11 @@ Given a world, find among the coordinates which satisfy the predicate the one wi
 
 ### Criterion
 Given a world, returns whether or not it matches a certain condition.
-If it matches, returns the resulting score (a positive number), and a list of matched constraints, along with their result.
-
+If it matches, returns the resulting score (a positive number), and a list of matched constraints, along with their result.  
+In addition to the score calculation specific to each type, a criterion also has an optional `score` attribute, whose value will be added to the score of the criterion if it matches.
 
 The different type of criteria are:
+
 
 #### A Constraint
 A Constraint can be "lifted" to a criterion.
@@ -59,21 +59,23 @@ The criterion matches iff the constraint returns a coordinate, and its score is 
 
 #### A reference to another criterion
 Matches iff the specified criterion matches.
+TODO decide how to propagate score/result
 
 #### A Negation of another criterion
 Matches iff the specified criterion DOES NOT match.
-If it matches, ignore the result returned by the inner criterion, and return and empty match list, with the score of the Negation itself.
+If it matches, ignore the result returned by the inner criterion, and return and empty match list, with a score of 0.
 
 **Short-circuiting:** As the matches and the score of the inner criterion are ignored, we can abord as soon as the inner criterion is garanteed to match.
+
 
 #### An `and` criterion
 Consists of: 
 - a list of children criteria
 
-
-Matches iff all of its children match, and returns the results of all of its children; the score is the sum of the scores of all children, plus the score of the `and` criterion itself (if present).
+Matches iff all of its children match, and returns the results of all of its children; the score is the sum of the scores of all children.
 
 **Short-circuiting:** If one children criterion doesn't match, we can immediately abort and say the `and` criterion doesn't match.
+
 
 #### An `or` criterion
 Consists of:
@@ -82,9 +84,10 @@ Consists of:
 
 Matches iff at least `min` children matches AND the sum of their scores is at least `minScore`. Only use criteria with a score of 0 if it is required for the criterion to match.
 
-Returns the results of all of the matched children; the score is the sum of the score of all of the matched children, plus the score of the `or` criterion itself (if present).
+Returns the results of all of the matched children; the score is the sum of the score of all of the matched children.
 
 **Short-circuiting:** If there is not enough untested criteria for the `or` to match, we can immediately abort. Also, we only test the criteria with a score of 0 only after testing all the others (and the `or` still hasn't matched).
+
 
 ### Search Query
 TODO
