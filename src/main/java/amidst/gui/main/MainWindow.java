@@ -16,13 +16,13 @@ import javax.swing.JOptionPane;
 import amidst.AmidstMetaData;
 import amidst.AmidstSettings;
 import amidst.Application;
+import amidst.dependency.injection.Factory2;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.menu.AmidstMenuBuilder;
 import amidst.gui.main.viewer.ViewerFacade;
-import amidst.gui.main.viewer.ViewerFacadeBuilder;
 import amidst.gui.seedsearcher.SeedSearcher;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.logging.AmidstLogger;
@@ -46,7 +46,7 @@ public class MainWindow {
 	private final AmidstSettings settings;
 	private final MojangApi mojangApi;
 	private final BiomeProfileDirectory biomeProfileDirectory;
-	private final ViewerFacadeBuilder viewerFacadeBuilder;
+	private final Factory2<World, Actions, ViewerFacade> viewerFacadeFactory;
 	private final ThreadMaster threadMaster;
 
 	private final JFrame frame;
@@ -64,14 +64,14 @@ public class MainWindow {
 			AmidstSettings settings,
 			MojangApi mojangApi,
 			BiomeProfileDirectory biomeProfileDirectory,
-			ViewerFacadeBuilder viewerFacadeBuilder,
+			Factory2<World, Actions, ViewerFacade> viewerFacadeFactory,
 			ThreadMaster threadMaster) {
 		this.application = application;
 		this.metadata = metadata;
 		this.settings = settings;
 		this.mojangApi = mojangApi;
 		this.biomeProfileDirectory = biomeProfileDirectory;
-		this.viewerFacadeBuilder = viewerFacadeBuilder;
+		this.viewerFacadeFactory = viewerFacadeFactory;
 		this.threadMaster = threadMaster;
 		this.frame = createFrame();
 		this.contentPane = createContentPane();
@@ -168,7 +168,7 @@ public class MainWindow {
 	private void setWorld(World world) {
 		clearViewerFacade();
 		if (decideWorldPlayerType(world.getMovablePlayerList())) {
-			setViewerFacade(viewerFacadeBuilder.create(world, actions));
+			setViewerFacade(viewerFacadeFactory.create(world, actions));
 		} else {
 			frame.revalidate();
 			frame.repaint();
