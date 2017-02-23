@@ -88,41 +88,23 @@ public class ViewerFacadeBuilder {
 				layerManager,
 				workerExecutor,
 				worldExporterFactory,
-				createOnRepainterTick(viewer),
-				createOnFragmentLoaderTick(fragmentQueueProcessor),
-				createOnPlayerFinishedLoading(layerReloader));
+				() -> onRepainterTick(viewer),
+				() -> onFragmentLoaderTick(fragmentQueueProcessor),
+				() -> onPlayerFinishedLoading(layerReloader));
+	}
+
+	@CalledOnlyBy(AmidstThread.REPAINTER)
+	private void onRepainterTick(final Viewer viewer) {
+		viewer.repaintComponent();
+	}
+
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	private void onFragmentLoaderTick(final FragmentQueueProcessor fragmentQueueProcessor) {
+		fragmentQueueProcessor.processQueues();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private Runnable createOnRepainterTick(final Viewer viewer) {
-		return new Runnable() {
-			@CalledOnlyBy(AmidstThread.REPAINTER)
-			@Override
-			public void run() {
-				viewer.repaintComponent();
-			}
-		};
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private Runnable createOnFragmentLoaderTick(final FragmentQueueProcessor fragmentQueueProcessor) {
-		return new Runnable() {
-			@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-			@Override
-			public void run() {
-				fragmentQueueProcessor.processQueues();
-			}
-		};
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private Runnable createOnPlayerFinishedLoading(final LayerReloader layerReloader) {
-		return new Runnable() {
-			@CalledOnlyBy(AmidstThread.EDT)
-			@Override
-			public void run() {
-				layerReloader.reloadPlayerLayer();
-			}
-		};
+	private void onPlayerFinishedLoading(final LayerReloader layerReloader) {
+		layerReloader.reloadPlayerLayer();
 	}
 }
