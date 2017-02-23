@@ -11,6 +11,7 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.ParserProperties;
 
+import amidst.dependency.injection.PerApplicationInjector;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
@@ -168,7 +169,7 @@ public class Amidst {
 			AmidstMetaData metadata,
 			AmidstSettings settings) {
 		try {
-			new Application(parameters, metadata, settings).run();
+			new PerApplicationInjector(parameters, metadata, settings).getApplication().run();
 		} catch (DotMinecraftDirectoryNotFoundException e) {
 			AmidstLogger.warn(e);
 			AmidstMessageBox.displayError(
