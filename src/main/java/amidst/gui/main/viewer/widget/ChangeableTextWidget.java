@@ -14,7 +14,7 @@ public class ChangeableTextWidget extends TextWidget {
 	private final Supplier<String> text;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	protected ChangeableTextWidget(CornerAnchorPoint anchor, Supplier<String> text) {
+	public ChangeableTextWidget(CornerAnchorPoint anchor, Supplier<String> text) {
 		super(anchor);
 		this.text = text;
 	}

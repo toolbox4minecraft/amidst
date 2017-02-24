@@ -14,7 +14,7 @@ public abstract class TextWidget extends Widget {
 	private boolean isVisible = false;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	protected TextWidget(CornerAnchorPoint anchor) {
+	public TextWidget(CornerAnchorPoint anchor) {
 		super(anchor);
 		setWidth(20);
 		setHeight(30);
