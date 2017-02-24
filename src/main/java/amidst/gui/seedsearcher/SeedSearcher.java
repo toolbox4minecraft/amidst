@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.gui.main.MainWindow;
+import amidst.gui.main.MainWindowDialogs;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -17,7 +17,7 @@ import amidst.threading.worker.ProgressReportingWorker;
 
 @NotThreadSafe
 public class SeedSearcher {
-	private final MainWindow mainWindow;
+	private final MainWindowDialogs dialogs;
 	private final MojangApi mojangApi;
 	private final WorkerExecutor workerExecutor;
 
@@ -25,8 +25,8 @@ public class SeedSearcher {
 	private volatile boolean isStopRequested = false;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public SeedSearcher(MainWindow mainWindow, MojangApi mojangApi, WorkerExecutor workerExecutor) {
-		this.mainWindow = mainWindow;
+	public SeedSearcher(MainWindowDialogs dialogs, MojangApi mojangApi, WorkerExecutor workerExecutor) {
+		this.dialogs = dialogs;
 		this.mojangApi = mojangApi.createSilentPlayerlessCopy();
 		this.workerExecutor = workerExecutor;
 	}
@@ -69,7 +69,7 @@ public class SeedSearcher {
 			doSearch(reporter, configuration);
 		} catch (IllegalStateException | MinecraftInterfaceException e) {
 			AmidstLogger.warn(e);
-			mainWindow.displayError(e);
+			dialogs.displayError(e);
 		} finally {
 			this.isSearching = false;
 			this.isStopRequested = false;

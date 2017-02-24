@@ -12,6 +12,7 @@ import amidst.fragment.layer.LayerBuilder;
 import amidst.gui.license.LicenseWindow;
 import amidst.gui.main.Actions;
 import amidst.gui.main.MainWindow;
+import amidst.gui.main.MainWindowDialogs;
 import amidst.gui.main.UpdatePrompt;
 import amidst.gui.main.viewer.BiomeSelection;
 import amidst.gui.main.viewer.ViewerFacade;
@@ -71,8 +72,8 @@ public class PerApplicationInjector {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private UpdatePrompt createNoisyUpdatePrompt(MainWindow mainWindow) {
-		return UpdatePrompt.from(metadata.getVersion(), threadMaster.getWorkerExecutor(), mainWindow, false);
+	private UpdatePrompt createNoisyUpdatePrompt(MainWindowDialogs dialogs) {
+		return UpdatePrompt.from(metadata.getVersion(), threadMaster.getWorkerExecutor(), dialogs, false);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -82,14 +83,14 @@ public class PerApplicationInjector {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private MainWindow createMainWindow() {
-		return new MainWindow(
+		return new PerMainWindowInjector(
 				application,
 				metadata,
 				settings,
 				mojangApi,
 				biomeProfileDirectory,
 				this::createViewerFacade,
-				threadMaster);
+				threadMaster).getMainWindow();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

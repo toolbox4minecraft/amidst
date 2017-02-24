@@ -23,23 +23,23 @@ public class UpdatePrompt {
 	public static UpdatePrompt from(
 			AmidstVersion currentVersion,
 			WorkerExecutor workerExecutor,
-			MainWindow mainWindow,
+			MainWindowDialogs dialogs,
 			boolean silent) {
-		if (mainWindow != null) {
+		if (dialogs != null) {
 			if (silent) {
 				return new UpdatePrompt(
 						currentVersion,
 						workerExecutor,
 						NOOP_CONSUMER,
 						NOOP,
-						message -> mainWindow.askToConfirmYesNo(TITLE, message));
+						message -> dialogs.askToConfirmYesNo(TITLE, message));
 			} else {
 				return new UpdatePrompt(
 						currentVersion,
 						workerExecutor,
-						e -> mainWindow.displayError(e),
-						() -> mainWindow.displayInfo(TITLE, NO_UPDATES_AVAILABLE),
-						message -> mainWindow.askToConfirmYesNo(TITLE, message));
+						e -> dialogs.displayError(e),
+						() -> dialogs.displayInfo(TITLE, NO_UPDATES_AVAILABLE),
+						message -> dialogs.askToConfirmYesNo(TITLE, message));
 			}
 		} else {
 			if (silent) {

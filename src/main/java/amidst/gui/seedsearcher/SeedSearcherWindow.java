@@ -17,7 +17,8 @@ import amidst.AmidstMetaData;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.gui.main.MainWindow;
+import amidst.gui.main.MainWindowDialogs;
+import amidst.gui.main.WorldSwitcher;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.json.filter.WorldFilterJson_MatchAll;
 import amidst.mojangapi.world.WorldSeed;
@@ -28,7 +29,8 @@ import net.miginfocom.swing.MigLayout;
 @NotThreadSafe
 public class SeedSearcherWindow {
 	private final AmidstMetaData metadata;
-	private final MainWindow mainWindow;
+	private final MainWindowDialogs dialogs;
+	private final WorldSwitcher worldSwitcher;
 	private final SeedSearcher seedSearcher;
 
 	private final JTextArea searchQueryTextArea;
@@ -38,9 +40,14 @@ public class SeedSearcherWindow {
 	private final JFrame frame;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public SeedSearcherWindow(AmidstMetaData metadata, MainWindow mainWindow, SeedSearcher seedSearcher) {
+	public SeedSearcherWindow(
+			AmidstMetaData metadata,
+			MainWindowDialogs dialogs,
+			WorldSwitcher worldSwitcher,
+			SeedSearcher seedSearcher) {
 		this.metadata = metadata;
-		this.mainWindow = mainWindow;
+		this.dialogs = dialogs;
+		this.worldSwitcher = worldSwitcher;
 		this.seedSearcher = seedSearcher;
 		this.searchQueryTextArea = createSearchQueryTextArea();
 		this.worldTypeComboBox = createWorldTypeComboBox();
@@ -113,7 +120,7 @@ public class SeedSearcherWindow {
 				seedSearcher.search(seedSearcherConfiguration, worldSeed -> seedFound(worldSeed, worldType));
 			} else {
 				AmidstLogger.warn("invalid configuration");
-				mainWindow.displayError("invalid configuration");
+				dialogs.displayError("invalid configuration");
 			}
 		}
 		updateGUI();
@@ -137,7 +144,7 @@ public class SeedSearcherWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void seedFound(WorldSeed worldSeed, WorldType worldType) {
-		mainWindow.displayWorld(worldSeed, worldType);
+		worldSwitcher.displayWorld(worldSeed, worldType);
 		updateGUI();
 	}
 
