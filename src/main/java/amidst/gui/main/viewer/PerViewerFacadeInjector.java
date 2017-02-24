@@ -1,4 +1,4 @@
-package amidst.dependency.injection;
+package amidst.gui.main.viewer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,17 +15,6 @@ import amidst.fragment.layer.LayerBuilder;
 import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gui.main.Actions;
-import amidst.gui.main.viewer.BiomeSelection;
-import amidst.gui.main.viewer.Drawer;
-import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
-import amidst.gui.main.viewer.Graphics2DAccelerationCounter;
-import amidst.gui.main.viewer.Movement;
-import amidst.gui.main.viewer.ProgressMessageHolder;
-import amidst.gui.main.viewer.Viewer;
-import amidst.gui.main.viewer.ViewerFacade;
-import amidst.gui.main.viewer.ViewerMouseListener;
-import amidst.gui.main.viewer.WorldIconSelection;
-import amidst.gui.main.viewer.Zoom;
 import amidst.gui.main.viewer.widget.BiomeToggleWidget;
 import amidst.gui.main.viewer.widget.BiomeWidget;
 import amidst.gui.main.viewer.widget.ChangeableTextWidget;

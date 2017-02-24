@@ -1,4 +1,4 @@
-package amidst.dependency.injection;
+package amidst.gui.main;
 
 import java.awt.Container;
 import java.util.concurrent.atomic.AtomicReference;
@@ -8,13 +8,10 @@ import javax.swing.JFrame;
 import amidst.AmidstMetaData;
 import amidst.AmidstSettings;
 import amidst.Application;
+import amidst.dependency.injection.Factory2;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.gui.main.Actions;
-import amidst.gui.main.MainWindow;
-import amidst.gui.main.MainWindowDialogs;
-import amidst.gui.main.WorldSwitcher;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.menu.AmidstMenuBuilder;
 import amidst.gui.main.viewer.ViewerFacade;

@@ -1,9 +1,5 @@
-package amidst.dependency.injection;
+package amidst;
 
-import amidst.AmidstMetaData;
-import amidst.AmidstSettings;
-import amidst.Application;
-import amidst.CommandLineParameters;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -13,8 +9,10 @@ import amidst.gui.license.LicenseWindow;
 import amidst.gui.main.Actions;
 import amidst.gui.main.MainWindow;
 import amidst.gui.main.MainWindowDialogs;
+import amidst.gui.main.PerMainWindowInjector;
 import amidst.gui.main.UpdatePrompt;
 import amidst.gui.main.viewer.BiomeSelection;
+import amidst.gui.main.viewer.PerViewerFacadeInjector;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.main.viewer.Zoom;
 import amidst.gui.profileselect.ProfileSelectWindow;
