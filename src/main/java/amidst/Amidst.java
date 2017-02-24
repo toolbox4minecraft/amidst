@@ -168,7 +168,7 @@ public class Amidst {
 			AmidstMetaData metadata,
 			AmidstSettings settings) {
 		try {
-			new Application(parameters, metadata, settings).run();
+			new PerApplicationInjector(parameters, metadata, settings).getApplication().run();
 		} catch (DotMinecraftDirectoryNotFoundException e) {
 			AmidstLogger.warn(e);
 			AmidstMessageBox.displayError(

@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import javax.imageio.ImageIO;
 
@@ -19,6 +19,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.gui.crash.CrashWindow;
 import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
+import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
@@ -33,25 +34,31 @@ import amidst.util.FileExtensionChecker;
 @NotThreadSafe
 public class Actions {
 	private final Application application;
-	private final MainWindow mainWindow;
-	private final AtomicReference<ViewerFacade> viewerFacade;
+	private final MainWindowDialogs dialogs;
+	private final WorldSwitcher worldSwitcher;
+	private final SeedSearcherWindow seedSearcherWindow;
+	private final Supplier<ViewerFacade> viewerFacadeSupplier;
 	private final BiomeProfileSelection biomeProfileSelection;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Actions(
 			Application application,
-			MainWindow mainWindow,
-			AtomicReference<ViewerFacade> viewerFacade,
+			MainWindowDialogs dialogs,
+			WorldSwitcher worldSwitcher,
+			SeedSearcherWindow seedSearcherWindow,
+			Supplier<ViewerFacade> viewerFacadeSupplier,
 			BiomeProfileSelection biomeProfileSelection) {
 		this.application = application;
-		this.mainWindow = mainWindow;
-		this.viewerFacade = viewerFacade;
+		this.dialogs = dialogs;
+		this.worldSwitcher = worldSwitcher;
+		this.seedSearcherWindow = seedSearcherWindow;
+		this.viewerFacadeSupplier = viewerFacadeSupplier;
 		this.biomeProfileSelection = biomeProfileSelection;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromSeed() {
-		WorldSeed seed = mainWindow.askForSeed();
+		WorldSeed seed = dialogs.askForSeed();
 		if (seed != null) {
 			newFromSeed(seed);
 		}
@@ -64,30 +71,30 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void newFromSeed(WorldSeed worldSeed) {
-		WorldType worldType = mainWindow.askForWorldType();
+		WorldType worldType = dialogs.askForWorldType();
 		if (worldType != null) {
-			mainWindow.displayWorld(worldSeed, worldType);
+			worldSwitcher.displayWorld(worldSeed, worldType);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void searchForRandom() {
-		mainWindow.displaySeedSearcherWindow();
+		seedSearcherWindow.show();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void openSaveGame() {
-		File file = mainWindow.askForSaveGame();
+		File file = dialogs.askForSaveGame();
 		if (file != null) {
-			mainWindow.displayWorld(file);
+			worldSwitcher.displayWorld(file);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void export() {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
-			viewerFacade.export(mainWindow.askForExportConfiguration());
+			viewerFacade.export(dialogs.askForExportConfiguration());
 		}
 	}
 
@@ -103,16 +110,16 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void goToCoordinate() {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
-			String input = mainWindow.askForCoordinates();
+			String input = dialogs.askForCoordinates();
 			if (input != null) {
 				CoordinatesInWorld coordinates = CoordinatesInWorld.tryParse(input);
 				if (coordinates != null) {
 					viewerFacade.centerOn(coordinates);
 				} else {
 					AmidstLogger.warn("Invalid location entered, ignoring.");
-					mainWindow.displayError("You entered an invalid location.");
+					dialogs.displayError("You entered an invalid location.");
 				}
 			}
 		}
@@ -120,7 +127,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void goToSpawn() {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			viewerFacade.centerOn(viewerFacade.getSpawnWorldIcon());
 		}
@@ -128,9 +135,9 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void goToStronghold() {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
-			WorldIcon stronghold = mainWindow
+			WorldIcon stronghold = dialogs
 					.askForOptions("Go to", "Select Stronghold:", viewerFacade.getStrongholdWorldIcons());
 			if (stronghold != null) {
 				viewerFacade.centerOn(stronghold);
@@ -140,17 +147,17 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void goToPlayer() {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			List<WorldIcon> playerWorldIcons = viewerFacade.getPlayerWorldIcons();
 			if (!playerWorldIcons.isEmpty()) {
-				WorldIcon player = mainWindow.askForOptions("Go to", "Select player:", playerWorldIcons);
+				WorldIcon player = dialogs.askForOptions("Go to", "Select player:", playerWorldIcons);
 				if (player != null) {
 					viewerFacade.centerOn(player);
 				}
 			} else {
 				AmidstLogger.warn("There are no players in this world.");
-				mainWindow.displayError("There are no players in this world.");
+				dialogs.displayError("There are no players in this world.");
 			}
 		}
 	}
@@ -167,9 +174,9 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void savePlayerLocations() {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
-			if (mainWindow.askToConfirmSaveGameManipulation()) {
+			if (dialogs.askToConfirmSaveGameManipulation()) {
 				viewerFacade.savePlayerLocations();
 			}
 		}
@@ -177,7 +184,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void reloadPlayerLocations() {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			viewerFacade.loadPlayers();
 		}
@@ -185,7 +192,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void howCanIMoveAPlayer() {
-		mainWindow.displayInfo(
+		dialogs.displayInfo(
 				"How can I move a player?",
 				"If you load the world from a save game, you can change the player locations.\n"
 						+ "1. Scroll the map to and right-click on the new player location, this opens a popup menu.\n"
@@ -195,7 +202,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void copySeedToClipboard() {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			String seed = "" + viewerFacade.getWorldSeed().getLong();
 			StringSelection selection = new StringSelection(seed);
@@ -205,25 +212,25 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void saveCaptureImage() {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			BufferedImage image = viewerFacade.createCaptureImage();
 			String suggestedFilename = "screenshot_" + viewerFacade.getWorldType().getFilenameText() + "_"
 					+ viewerFacade.getWorldSeed().getLong() + ".png";
-			File file = mainWindow.askForCaptureImageSaveFile(suggestedFilename);
+			File file = dialogs.askForCaptureImageSaveFile(suggestedFilename);
 			if (file != null) {
 				file = appendPNGFileExtensionIfNecessary(file);
 				if (file.exists() && !file.isFile()) {
 					String message = "Unable to write capture image, because the target exists but is not a file: "
 							+ file.getAbsolutePath();
 					AmidstLogger.warn(message);
-					mainWindow.displayError(message);
+					dialogs.displayError(message);
 				} else if (!canWriteToFile(file)) {
 					String message = "Unable to write capture image, because you have no writing permissions: "
 							+ file.getAbsolutePath();
 					AmidstLogger.warn(message);
-					mainWindow.displayError(message);
-				} else if (!file.exists() || mainWindow.askToConfirmYesNo(
+					dialogs.displayError(message);
+				} else if (!file.exists() || dialogs.askToConfirmYesNo(
 						"Replace file?",
 						"File already exists. Do you want to replace it?\n" + file.getAbsolutePath() + "")) {
 					saveImageToFile(image, file);
@@ -236,7 +243,7 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void selectBiomeProfile(BiomeProfile profile) {
 		biomeProfileSelection.set(profile);
-		ViewerFacade viewerFacade = this.viewerFacade.get();
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			viewerFacade.reloadBackgroundLayer();
 		}
@@ -249,7 +256,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void checkForUpdates() {
-		application.checkForUpdates(mainWindow);
+		application.checkForUpdates(dialogs);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -259,7 +266,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void about() {
-		mainWindow.displayInfo(
+		dialogs.displayInfo(
 				"About",
 				"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n\n"
 						+ "Author: Skidoodle aka skiphs\n" + "Mail: toolbox4minecraft+amidst@gmail.com\n"
@@ -268,7 +275,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void adjustZoom(int notches) {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			viewerFacade.adjustZoom(notches);
 		}
@@ -276,7 +283,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void adjustZoom(Point mousePosition, int notches) {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			viewerFacade.adjustZoom(mousePosition, notches);
 		}
@@ -284,7 +291,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void selectWorldIcon(WorldIcon worldIcon) {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			viewerFacade.selectWorldIcon(worldIcon);
 		}
@@ -292,7 +299,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void showPlayerPopupMenu(CoordinatesInWorld targetCoordinates, Component component, int x, int y) {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			if (viewerFacade.canSavePlayerLocations()) {
 				new MovePlayerPopupMenu(this, viewerFacade.getMovablePlayerList(), targetCoordinates)
@@ -303,17 +310,16 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void movePlayer(Player player, CoordinatesInWorld targetCoordinates) {
-		ViewerFacade viewerFacade = this.viewerFacade.get();
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			PlayerCoordinates currentCoordinates = player.getPlayerCoordinates();
 			long currentHeight = currentCoordinates.getY();
-			String input = mainWindow.askForPlayerHeight(currentHeight);
+			String input = dialogs.askForPlayerHeight(currentHeight);
 			if (input != null) {
 				player.moveTo(targetCoordinates, tryParseLong(input, currentHeight), currentCoordinates.getDimension());
 				viewerFacade.reloadPlayerLayer();
-				if (mainWindow
-						.askToConfirmYesNo("Save Player Locations", "Do you want to save the player locations?")) {
-					if (mainWindow.askToConfirmSaveGameManipulation()) {
+				if (dialogs.askToConfirmYesNo("Save Player Locations", "Do you want to save the player locations?")) {
+					if (dialogs.askToConfirmSaveGameManipulation()) {
 						viewerFacade.savePlayerLocations();
 					}
 				}
@@ -342,7 +348,7 @@ public class Actions {
 			ImageIO.write(image, "png", file);
 		} catch (IOException e) {
 			AmidstLogger.warn(e);
-			mainWindow.displayError(e);
+			dialogs.displayError(e);
 		}
 	}
 

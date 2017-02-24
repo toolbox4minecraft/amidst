@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import amidst.dependency.injection.Factory1;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -16,8 +17,8 @@ import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.export.WorldExporter;
 import amidst.mojangapi.world.export.WorldExporterConfiguration;
-import amidst.mojangapi.world.export.WorldExporterFactory;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.threading.WorkerExecutor;
@@ -38,7 +39,7 @@ public class ViewerFacade {
 	private final WorldIconSelection worldIconSelection;
 	private final LayerManager layerManager;
 	private final WorkerExecutor workerExecutor;
-	private final WorldExporterFactory worldExporterFactory;
+	private final Factory1<WorldExporterConfiguration, WorldExporter> worldExporterFactory;
 	private final Runnable onRepainterTick;
 	private final Runnable onFragmentLoaderTick;
 	private final Runnable onPlayerFinishedLoading;
@@ -54,7 +55,7 @@ public class ViewerFacade {
 			WorldIconSelection worldIconSelection,
 			LayerManager layerManager,
 			WorkerExecutor workerExecutor,
-			WorldExporterFactory worldExporterFactory,
+			Factory1<WorldExporterConfiguration, WorldExporter> worldExporterFactory,
 			Runnable onRepainterTick,
 			Runnable onFragmentLoaderTick,
 			Runnable onPlayerFinishedLoading) {

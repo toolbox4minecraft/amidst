@@ -172,6 +172,7 @@ public class MojangApi {
 	}
 
 	public String getProfileName() {
+		String profileName = this.profileName;
 		if (profileName != null) {
 			return profileName;
 		} else {
