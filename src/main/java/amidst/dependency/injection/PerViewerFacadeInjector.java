@@ -20,6 +20,7 @@ import amidst.gui.main.viewer.Drawer;
 import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
 import amidst.gui.main.viewer.Graphics2DAccelerationCounter;
 import amidst.gui.main.viewer.Movement;
+import amidst.gui.main.viewer.ProgressMessageHolder;
 import amidst.gui.main.viewer.Viewer;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.main.viewer.ViewerMouseListener;
@@ -39,7 +40,8 @@ import amidst.gui.main.viewer.widget.Widget;
 import amidst.gui.main.viewer.widget.Widget.CornerAnchorPoint;
 import amidst.gui.main.viewer.widget.WidgetManager;
 import amidst.mojangapi.world.World;
-import amidst.mojangapi.world.export.WorldExporterFactory;
+import amidst.mojangapi.world.export.WorldExporter;
+import amidst.mojangapi.world.export.WorldExporterConfiguration;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -72,6 +74,8 @@ public class PerViewerFacadeInjector {
 		// @formatter:on
 	}
 
+	private final WorkerExecutor workerExecutor;
+	private final World world;
 	private final Graphics2DAccelerationCounter accelerationCounter;
 	private final Movement movement;
 	private final WorldIconSelection worldIconSelection;
@@ -80,7 +84,7 @@ public class PerViewerFacadeInjector {
 	private final FragmentGraphToScreenTranslator translator;
 	private final FragmentQueueProcessor fragmentQueueProcessor;
 	private final LayerReloader layerReloader;
-	private final WorldExporterFactory worldExporterFactory;
+	private final ProgressMessageHolder progressMessageHolder;
 	private final List<Widget> widgets;
 	private final Drawer drawer;
 	private final WidgetManager widgetManager;
@@ -98,6 +102,8 @@ public class PerViewerFacadeInjector {
 			BiomeSelection biomeSelection,
 			World world,
 			Actions actions) {
+		this.workerExecutor = workerExecutor;
+		this.world = world;
 		this.accelerationCounter = new Graphics2DAccelerationCounter();
 		this.movement = new Movement(settings.smoothScrolling);
 		this.worldIconSelection = new WorldIconSelection();
@@ -107,7 +113,7 @@ public class PerViewerFacadeInjector {
 		this.translator = new FragmentGraphToScreenTranslator(graph, zoom);
 		this.fragmentQueueProcessor = fragmentManager.createQueueProcessor(layerManager, settings.dimension);
 		this.layerReloader = layerManager.createLayerReloader(world);
-		this.worldExporterFactory = new WorldExporterFactory(workerExecutor, world);
+		this.progressMessageHolder = new ProgressMessageHolder();
 		this.widgets = createWidgets(
 				world,
 				graph,
@@ -119,7 +125,7 @@ public class PerViewerFacadeInjector {
 				fragmentManager,
 				accelerationCounter,
 				settings,
-				worldExporterFactory::getProgressMessage);
+				progressMessageHolder::getProgressMessage);
 		this.drawer = new Drawer(
 				graph,
 				translator,
@@ -142,10 +148,15 @@ public class PerViewerFacadeInjector {
 				worldIconSelection,
 				layerManager,
 				workerExecutor,
-				worldExporterFactory,
+				this::createWorldExporter,
 				this::onRepainterTick,
 				this::onFragmentLoaderTick,
 				this::onPlayerFinishedLoading);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public WorldExporter createWorldExporter(WorldExporterConfiguration configuration) {
+		return new WorldExporter(workerExecutor, world, configuration, progressMessageHolder::setProgressMessage);
 	}
 
 	@CalledOnlyBy(AmidstThread.REPAINTER)
