@@ -18,6 +18,7 @@ public enum PlayerInformationRetriever {
 	;
 
 	private static final String SIMPLE_PLAYER_SKIN_URL = "http://s3.amazonaws.com/MinecraftSkins/";
+	private static final String STEVE_SKIN_URL = "http://assets.mojang.com/SkinTemplates/steve.png";
 
 	public static PlayerJson tryGetPlayerJsonByName(String name) {
 		try {
@@ -42,7 +43,11 @@ public enum PlayerInformationRetriever {
 			return getPlayerHeadByName(name);
 		} catch (IOException | NullPointerException e) {
 			AmidstLogger.warn("unable to load player head by name: " + name);
-			return null;
+			try {
+				return getPlayerHeadBySkinUrl(STEVE_SKIN_URL);
+			} catch (IOException | NullPointerException x) {
+				return null;
+			}
 		}
 	}
 
@@ -51,7 +56,11 @@ public enum PlayerInformationRetriever {
 			return getPlayerHeadBySkinUrl(skinUrl);
 		} catch (IOException | NullPointerException e) {
 			AmidstLogger.warn("unable to load player head by skin url: " + skinUrl);
-			return null;
+			try {
+				return getPlayerHeadBySkinUrl(STEVE_SKIN_URL);
+			} catch (IOException | NullPointerException x) {
+				return null;
+			}
 		}
 	}
 
