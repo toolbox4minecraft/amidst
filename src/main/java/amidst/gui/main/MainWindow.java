@@ -7,6 +7,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 
 import amidst.AmidstMetaData;
+import amidst.FeatureToggles;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -46,7 +47,9 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void dispose() {
 		worldSwitcher.clearWorld();
-		seedSearcherWindow.dispose();
+		if (FeatureToggles.SEED_SEARCH) {
+			seedSearcherWindow.dispose();
+		}
 		frame.dispose();
 	}
 }

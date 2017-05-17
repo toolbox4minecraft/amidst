@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import amidst.AmidstMetaData;
 import amidst.AmidstSettings;
 import amidst.Application;
+import amidst.FeatureToggles;
 import amidst.dependency.injection.Factory2;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -68,8 +69,13 @@ public class PerMainWindowInjector {
 				viewerFacadeReference,
 				dialogs,
 				this::getMenuBar);
-		this.seedSearcher = new SeedSearcher(dialogs, mojangApi, threadMaster.getWorkerExecutor());
-		this.seedSearcherWindow = new SeedSearcherWindow(metadata, dialogs, worldSwitcher, seedSearcher);
+		if (FeatureToggles.SEED_SEARCH) {
+			this.seedSearcher = new SeedSearcher(dialogs, mojangApi, threadMaster.getWorkerExecutor());
+			this.seedSearcherWindow = new SeedSearcherWindow(metadata, dialogs, worldSwitcher, seedSearcher);
+		} else {
+			this.seedSearcher = null;
+			this.seedSearcherWindow = null;
+		}
 		this.actions = new Actions(
 				application,
 				dialogs,
