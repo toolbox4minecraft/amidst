@@ -70,12 +70,12 @@ public class MainWindowDialogs {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public File askForCaptureImageSaveFile(String suggestedFilename) {
-		return showSaveDialogAndGetSelectedFileOrNull(createCaptureImageSaveFileChooser(suggestedFilename));
+	public File askForScreenshotSaveFile(String suggestedFilename) {
+		return showSaveDialogAndGetSelectedFileOrNull(createScreenshotSaveFileChooser(suggestedFilename));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private JFileChooser createCaptureImageSaveFileChooser(String suggestedFilename) {
+	private JFileChooser createScreenshotSaveFileChooser(String suggestedFilename) {
 		JFileChooser result = new JFileChooser();
 		result.setFileFilter(new PNGFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
