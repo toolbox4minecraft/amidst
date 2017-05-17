@@ -34,13 +34,13 @@ public class Viewer {
 		}
 
 		@CalledOnlyBy(AmidstThread.EDT)
-		public BufferedImage createCaptureImage() {
+		public BufferedImage createScreenshot() {
 			int width = getWidth();
 			int height = getHeight();
 			Point mousePosition = getMousePositionOrNull();
 			BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g2d = result.createGraphics();
-			drawer.drawCaptureImage(g2d, width, height, mousePosition, widgetFontMetrics);
+			drawer.drawScreenshot(g2d, width, height, mousePosition, widgetFontMetrics);
 			g2d.dispose();
 			return result;
 		}
@@ -79,8 +79,8 @@ public class Viewer {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public BufferedImage createCaptureImage() {
-		return component.createCaptureImage();
+	public BufferedImage createScreenshot() {
+		return component.createScreenshot();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

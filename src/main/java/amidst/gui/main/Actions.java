@@ -211,22 +211,22 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void saveCaptureImage() {
+	public void takeScreenshot() {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
-			BufferedImage image = viewerFacade.createCaptureImage();
+			BufferedImage image = viewerFacade.createScreenshot();
 			String suggestedFilename = "screenshot_" + viewerFacade.getWorldType().getFilenameText() + "_"
 					+ viewerFacade.getWorldSeed().getLong() + ".png";
-			File file = dialogs.askForCaptureImageSaveFile(suggestedFilename);
+			File file = dialogs.askForScreenshotSaveFile(suggestedFilename);
 			if (file != null) {
 				file = appendPNGFileExtensionIfNecessary(file);
 				if (file.exists() && !file.isFile()) {
-					String message = "Unable to write capture image, because the target exists but is not a file: "
+					String message = "Unable to write screenshot, because the target exists but is not a file: "
 							+ file.getAbsolutePath();
 					AmidstLogger.warn(message);
 					dialogs.displayError(message);
 				} else if (!canWriteToFile(file)) {
-					String message = "Unable to write capture image, because you have no writing permissions: "
+					String message = "Unable to write screenshot, because you have no writing permissions: "
 							+ file.getAbsolutePath();
 					AmidstLogger.warn(message);
 					dialogs.displayError(message);

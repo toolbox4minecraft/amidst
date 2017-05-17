@@ -118,8 +118,8 @@ public class ViewerFacade {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public BufferedImage createCaptureImage() {
-		return viewer.createCaptureImage();
+	public BufferedImage createScreenshot() {
+		return viewer.createScreenshot();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

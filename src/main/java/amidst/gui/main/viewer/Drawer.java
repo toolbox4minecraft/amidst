@@ -90,7 +90,7 @@ public class Drawer {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void drawCaptureImage(
+	public void drawScreenshot(
 			Graphics2D g2d,
 			int viewerWidth,
 			int viewerHeight,

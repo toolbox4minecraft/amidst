@@ -1,6 +1,5 @@
 package amidst.gui.main.menu;
 
-import java.awt.Toolkit;
 import java.util.Objects;
 
 import javax.swing.ButtonGroup;
@@ -9,7 +8,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.KeyStroke;
 
 import amidst.documentation.Immutable;
 import amidst.settings.Setting;
@@ -51,9 +49,9 @@ public enum Menus {
 			Setting<T> setting,
 			ButtonGroup group,
 			T value,
-			String accelerator) {
+			MenuShortcut menuShortcut) {
 		JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(value.toString());
-		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
+		menuItem.setAccelerator(menuShortcut.getKeyStroke());
 		return radio(menu, setting, group, menuItem, value);
 	}
 
@@ -63,9 +61,9 @@ public enum Menus {
 			ButtonGroup group,
 			T value,
 			ImageIcon icon,
-			String accelerator) {
+			MenuShortcut menuShortcut) {
 		JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(value.toString(), icon);
-		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
+		menuItem.setAccelerator(menuShortcut.getKeyStroke());
 		return radio(menu, setting, group, menuItem, value);
 	}
 
@@ -91,9 +89,13 @@ public enum Menus {
 		return checkbox(menu, setting, new JCheckBoxMenuItem(text, icon));
 	}
 
-	public static JCheckBoxMenuItem checkbox(JMenu menu, Setting<Boolean> setting, String text, String accelerator) {
+	public static JCheckBoxMenuItem checkbox(
+			JMenu menu,
+			Setting<Boolean> setting,
+			String text,
+			MenuShortcut menuShortcut) {
 		JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(text);
-		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
+		menuItem.setAccelerator(menuShortcut.getKeyStroke());
 		return checkbox(menu, setting, menuItem);
 	}
 
@@ -102,9 +104,9 @@ public enum Menus {
 			Setting<Boolean> setting,
 			String text,
 			ImageIcon icon,
-			String accelerator) {
+			MenuShortcut menuShortcut) {
 		JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(text, icon);
-		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
+		menuItem.setAccelerator(menuShortcut.getKeyStroke());
 		return checkbox(menu, setting, menuItem);
 	}
 
@@ -120,9 +122,9 @@ public enum Menus {
 		return item(menu, runnable, menuItem, mnemonic);
 	}
 
-	public static JMenuItem item(JMenu menu, Runnable runnable, String text, int mnemonic, String accelerator) {
+	public static JMenuItem item(JMenu menu, Runnable runnable, String text, int mnemonic, MenuShortcut menuShortcut) {
 		JMenuItem menuItem = new JMenuItem(text);
-		menuItem.setAccelerator(getAcceleratorKeyStroke(accelerator));
+		menuItem.setAccelerator(menuShortcut.getKeyStroke());
 		return item(menu, runnable, menuItem, mnemonic);
 	}
 
@@ -131,19 +133,5 @@ public enum Menus {
 		menuItem.addActionListener(e -> runnable.run());
 		menu.add(menuItem);
 		return menuItem;
-	}
-
-	public static KeyStroke getAcceleratorKeyStroke(String accelerator) {
-		return getPlatformSpecificKeyStroke(accelerator.replace("menu", ""), accelerator.contains("menu"));
-	}
-
-	private static KeyStroke getPlatformSpecificKeyStroke(String accelerator, boolean addMenuMask) {
-		KeyStroke keyStroke = KeyStroke.getKeyStroke(accelerator);
-		int keycode = keyStroke.getKeyCode();
-		int keymask = keyStroke.getModifiers();
-		if (addMenuMask) {
-			keymask |= Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-		}
-		return KeyStroke.getKeyStroke(keycode, keymask);
 	}
 }
