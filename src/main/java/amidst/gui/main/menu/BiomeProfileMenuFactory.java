@@ -22,7 +22,7 @@ public class BiomeProfileMenuFactory {
 	private static class BiomeProfileVisitorImpl implements BiomeProfileVisitor {
 		private final List<JCheckBoxMenuItem> allCheckBoxes = new ArrayList<>();
 		private final List<JMenu> menuStack = new ArrayList<>();
-		private ActionListener firstListener;
+		private Runnable defaultBiomeProfileSelector;
 		private boolean isFirstContainer = true;
 
 		private final Actions actions;
@@ -92,15 +92,15 @@ public class BiomeProfileMenuFactory {
 					actions.selectBiomeProfile(profile);
 				}
 			};
-			if (firstListener == null) {
-				firstListener = result;
+			if (defaultBiomeProfileSelector == null && profile.getName().equals("default")) {
+				defaultBiomeProfileSelector = () -> result.actionPerformed(null);
 			}
 			return result;
 		}
 
-		public void selectFirstProfile() {
-			if (firstListener != null) {
-				firstListener.actionPerformed(null);
+		public void selectDefaultBiomeProfile() {
+			if (defaultBiomeProfileSelector != null) {
+				defaultBiomeProfileSelector.run();
 			}
 		}
 	}
@@ -136,7 +136,7 @@ public class BiomeProfileMenuFactory {
 		biomeProfileDirectory.visitProfiles(visitor);
 		parentMenu.addSeparator();
 		Menus.item(parentMenu, this::doReload, reloadText, reloadMnemonic, reloadMenuShortcut);
-		visitor.selectFirstProfile();
+		visitor.selectDefaultBiomeProfile();
 	}
 
 	private void doReload() {
