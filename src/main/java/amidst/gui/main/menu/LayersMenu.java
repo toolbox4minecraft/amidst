@@ -88,40 +88,40 @@ public class LayersMenu {
 	private void createOverworldAndEndLayers(Dimension dimension) {
 		// @formatter:off
 		ButtonGroup group = new ButtonGroup();
-		Menus.radio(   menu, dimensionSetting, group,     Dimension.OVERWORLD,                                      "menu shift 1");
+		Menus.radio(   menu, dimensionSetting, group,     Dimension.OVERWORLD,                                      MenuShortcuts.DISPLAY_DIMENSION_OVERWORLD);
 		createOverworldLayers(dimension);
 		menu.addSeparator();
-		Menus.radio(   menu, dimensionSetting, group,     Dimension.END,                                            "menu shift 2");
-		endLayer(      settings.showEndCities,            "End City Icons",         getIcon("end_city.png"),        "menu 9", dimension, LayerIds.END_CITY);
+		Menus.radio(   menu, dimensionSetting, group,     Dimension.END,                                            MenuShortcuts.DISPLAY_DIMENSION_END);
+		endLayer(      settings.showEndCities,            "End City Icons",         getIcon("end_city.png"),        MenuShortcuts.SHOW_END_CITIES, dimension, LayerIds.END_CITY);
 		// @formatter:on
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createOverworldLayers(Dimension dimension) {
 		// @formatter:off
-		overworldLayer(settings.showSlimeChunks,          "Slime Chunks",           getIcon("slime.png"),           "menu 1", dimension, LayerIds.SLIME);
-		overworldLayer(settings.showSpawn,                "Spawn Location Icon",    getIcon("spawn.png"),           "menu 2", dimension, LayerIds.SPAWN);
-		overworldLayer(settings.showStrongholds,          "Stronghold Icons",       getIcon("stronghold.png"),      "menu 3", dimension, LayerIds.STRONGHOLD);
-		overworldLayer(settings.showVillages,             "Village Icons",          getIcon("village.png"),         "menu 4", dimension, LayerIds.VILLAGE);
-		overworldLayer(settings.showTemples,              "Temple/Witch Hut Icons", getIcon("desert.png"),          "menu 5", dimension, LayerIds.TEMPLE);
-		overworldLayer(settings.showMineshafts,           "Mineshaft Icons",        getIcon("mineshaft.png"),       "menu 6", dimension, LayerIds.MINESHAFT);
-		overworldLayer(settings.showOceanMonuments,       "Ocean Monument Icons",   getIcon("ocean_monument.png"),  "menu 7", dimension, LayerIds.OCEAN_MONUMENT);
-		overworldLayer(settings.showNetherFortresses,     "Nether Fortress Icons",  getIcon("nether_fortress.png"), "menu 8", dimension, LayerIds.NETHER_FORTRESS);
+		overworldLayer(settings.showSlimeChunks,          "Slime Chunks",           getIcon("slime.png"),           MenuShortcuts.SHOW_SLIME_CHUNKS,      dimension, LayerIds.SLIME);
+		overworldLayer(settings.showSpawn,                "Spawn Location Icon",    getIcon("spawn.png"),           MenuShortcuts.SHOW_WORLD_SPAWN,       dimension, LayerIds.SPAWN);
+		overworldLayer(settings.showStrongholds,          "Stronghold Icons",       getIcon("stronghold.png"),      MenuShortcuts.SHOW_STRONGHOLDS,       dimension, LayerIds.STRONGHOLD);
+		overworldLayer(settings.showVillages,             "Village Icons",          getIcon("village.png"),         MenuShortcuts.SHOW_VILLAGES,          dimension, LayerIds.VILLAGE);
+		overworldLayer(settings.showTemples,              "Temple/Witch Hut Icons", getIcon("desert.png"),          MenuShortcuts.SHOW_TEMPLES,           dimension, LayerIds.TEMPLE);
+		overworldLayer(settings.showMineshafts,           "Mineshaft Icons",        getIcon("mineshaft.png"),       MenuShortcuts.SHOW_MINESHAFTS,        dimension, LayerIds.MINESHAFT);
+		overworldLayer(settings.showOceanMonuments,       "Ocean Monument Icons",   getIcon("ocean_monument.png"),  MenuShortcuts.SHOW_OCEAN_MONUMENTS,   dimension, LayerIds.OCEAN_MONUMENT);
+		overworldLayer(settings.showNetherFortresses,     "Nether Fortress Icons",  getIcon("nether_fortress.png"), MenuShortcuts.SHOW_NETHER_FORTRESSES, dimension, LayerIds.NETHER_FORTRESS);
 		// @formatter:on
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createAllDimensions() {
 		// @formatter:off
-		Menus.checkbox(menu, settings.showGrid,           "Grid",                   getIcon("grid.png"),            "menu G");
-		Menus.checkbox(menu, settings.showPlayers,        "Player Icons",           getIcon("player.png"),          "menu P");
+		Menus.checkbox(menu, settings.showGrid,           "Grid",                   getIcon("grid.png"),            MenuShortcuts.SHOW_GRID);
+		Menus.checkbox(menu, settings.showPlayers,        "Player Icons",           getIcon("player.png"),          MenuShortcuts.SHOW_PLAYERS);
 		// @formatter:on
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createEnableAllLayers() {
 		// @formatter:off
-		Menus.checkbox(menu, enableAllLayersSetting,      "Enable All Layers",                                      "menu E");
+		Menus.checkbox(menu, enableAllLayersSetting,      "Enable All Layers",                                      MenuShortcuts.ENABLE_ALL_LAYERS);
 		// @formatter:on
 	}
 
@@ -130,10 +130,10 @@ public class LayersMenu {
 			Setting<Boolean> setting,
 			String text,
 			ImageIcon icon,
-			String accelerator,
+			MenuShortcut menuShortcut,
 			Dimension dimension,
 			int layerId) {
-		overworldMenuItems.add(createLayer(setting, text, icon, accelerator, dimension, layerId));
+		overworldMenuItems.add(createLayer(setting, text, icon, menuShortcut, dimension, layerId));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -141,10 +141,10 @@ public class LayersMenu {
 			Setting<Boolean> setting,
 			String text,
 			ImageIcon icon,
-			String accelerator,
+			MenuShortcut menuShortcut,
 			Dimension dimension,
 			int layerId) {
-		endMenuItems.add(createLayer(setting, text, icon, accelerator, dimension, layerId));
+		endMenuItems.add(createLayer(setting, text, icon, menuShortcut, dimension, layerId));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -152,10 +152,10 @@ public class LayersMenu {
 			Setting<Boolean> setting,
 			String text,
 			ImageIcon icon,
-			String accelerator,
+			MenuShortcut menuShortcut,
 			Dimension dimension,
 			int layerId) {
-		JCheckBoxMenuItem result = Menus.checkbox(menu, setting, text, icon, accelerator);
+		JCheckBoxMenuItem result = Menus.checkbox(menu, setting, text, icon, menuShortcut);
 		if (!viewerFacade.calculateIsLayerEnabled(layerId, dimension, enableAllLayersSetting.get())) {
 			result.setEnabled(false);
 		}
