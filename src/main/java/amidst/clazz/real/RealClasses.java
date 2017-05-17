@@ -11,6 +11,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import amidst.documentation.Immutable;
+import amidst.logging.AmidstLogger;
 
 @Immutable
 public enum RealClasses {
@@ -71,6 +72,8 @@ public enum RealClasses {
 				theStream.read(classData);
 				return REAL_CLASS_BUILDER.construct(realClassName, classData);
 			}
+		} catch (RealClassCreationException e) {
+			AmidstLogger.warn(e);
 		}
 		return null;
 	}
