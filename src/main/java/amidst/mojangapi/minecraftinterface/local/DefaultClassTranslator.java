@@ -52,10 +52,10 @@ public enum DefaultClassTranslator {
 				.ifDetect(c -> 
 					c.getNumberOfConstructors() == 0
 					&& c.getNumberOfMethods() == 6
-					&& c.getNumberOfFields() == 3
+					&& c.getNumberOfFields() >= 3
+					&& c.getNumberOfFields() <= 4
 					&& c.getField(0).hasFlags(AccessFlags.STATIC)
 					&& c.getField(1).hasFlags(AccessFlags.PRIVATE | AccessFlags.STATIC)
-					&& c.getField(2).hasFlags(AccessFlags.PRIVATE | AccessFlags.STATIC)
 					&& c.searchForUtf8EqualTo("isDebugEnabled")
 				)
 				.thenDeclareOptional(SymbolicNames.CLASS_BLOCK_INIT)

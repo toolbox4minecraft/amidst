@@ -23,6 +23,16 @@ public enum RecognisedVersion {
 	// TODO: Remove these versions before V1_0?
 	// TODO: stronghold reset on V1_9pre4?
 	UNKNOWN,
+	_1_12_pre3 ("1.12-pre3",  "ujrjoxmsrw[Lom;pj[J[[Jpf"),                                                                // matches the launcher version id: 1.12-pre3    
+	_1_12_pre2 ("1.12-pre2",  "uhrhovmqru[Lok;ph[J[[Jpd"),                                                                // matches the launcher version id: 1.12-pre2    
+	_1_12_pre1 ("1.12-pre1",  "ugrgoumprt[Loj;pg[J[[Jpc"),                                                                // matches the launcher version id: 1.12-pre1    
+	_17w18b    ("17w18b",     "tyqyommirl[Lob;oy[J[[Jou"),                                                                // matches the launcher version id: 17w18b       
+	_17w17b    ("17w17b",     "tpqroemare[Lnt;oq[J[[Jom"),                                                                // matches the launcher version id: 17w17b       
+	_17w16b    ("17w16b",     "tnqpoclyrc[Lnr;oo[J[[Jok"),                                                                // matches the launcher version id: 17w16b       
+	_17w15a    ("17w15a",     "tlqnoalwra[Lnp;om[J[[Joi"),                                                                // matches the launcher version id: 17w15a       
+	_17w14a    ("17w14a",     "tkqmoalwqz[Lnp;om[J[[Joi"),                                                                // matches the launcher version id: 17w14a       
+	_17w13b    ("17w13b",     "tgqinwlsqv[Lnl;oi[J[[Joe"),                                                                // matches the launcher version id: 17w13b       
+	_17w06a    ("17w06a",     "rsoumhkfph[Llw;mt[J[[Jmp"),                                                                // matches the launcher version id: 17w06a       1.11.2       1.11.1       16w50a       
 	_1_11      ("1.11",       "rroumhkfph[Llw;mt[J[[Jmp"),                                                                // matches the launcher version id: 1.11         1.11-pre1    
 	_16w44a    ("16w44a",     "rqotmgkfpg[Llv;ms[J[[Jmo"),                                                                // matches the launcher version id: 16w44a       
 	_16w43a    ("16w43a",     "rpotmgkfpg[Llv;ms[J[[Jmo"),                                                                // matches the launcher version id: 16w43a       16w42a       16w41a       16w40a       16w39c       
