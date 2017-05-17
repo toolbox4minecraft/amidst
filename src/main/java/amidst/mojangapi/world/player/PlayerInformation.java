@@ -1,5 +1,7 @@
 package amidst.mojangapi.world.player;
 
+import java.awt.image.BufferedImage;
+
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.mojangapi.file.MojangApiParsingException;
@@ -59,15 +61,19 @@ public class PlayerInformation {
 	}
 
 	private static WorldIconImage tryGetPlayerHeadBySkinUrl(PlayerJson player) {
+		BufferedImage head;
 		try {
-			return WorldIconImage.from(PlayerInformationRetriever.tryGetPlayerHeadBySkinUrl(player.getSkinUrl()));
+			head = PlayerInformationRetriever.tryGetPlayerHeadBySkinUrl(player.getSkinUrl());
+			return head != null ? WorldIconImage.from(head) : null;
 		} catch (MojangApiParsingException e) {
 			return null;
 		}
 	}
 
 	private static WorldIconImage tryGetPlayerHeadByName(String name) {
-		return WorldIconImage.from(PlayerInformationRetriever.tryGetPlayerHeadByName(name));
+		BufferedImage head;
+		head = PlayerInformationRetriever.tryGetPlayerHeadByName(name);
+		return head != null ? WorldIconImage.from(head) : null;
 	}
 
 	@NotNull
