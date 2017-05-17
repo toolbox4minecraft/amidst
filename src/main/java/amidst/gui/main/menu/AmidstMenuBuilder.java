@@ -118,11 +118,11 @@ public class AmidstMenuBuilder {
 		}
 		result.addSeparator();
 		// @formatter:off
-		Menus.checkbox(result, settings.smoothScrolling,      "Smooth Scrolling",      MenuShortcuts.SMOOTH_SCROLLING);
+		Menus.checkbox(result, settings.smoothScrolling,      "Smooth Scrolling");
 		Menus.checkbox(result, settings.fragmentFading,       "Fragment Fading");
-		Menus.checkbox(result, settings.maxZoom,              "Restrict Maximum Zoom", MenuShortcuts.RESTRICT_MAXIMUM_ZOOM);
-		Menus.checkbox(result, settings.showFPS,              "Show Framerate",        MenuShortcuts.SHOW_FRAMERATE);
-		Menus.checkbox(result, settings.showScale,            "Show Scale",            MenuShortcuts.SHOW_SCALE);
+		Menus.checkbox(result, settings.maxZoom,              "Restrict Maximum Zoom");
+		Menus.checkbox(result, settings.showFPS,              "Show Framerate");
+		Menus.checkbox(result, settings.showScale,            "Show Scale");
 		Menus.checkbox(result, settings.showDebug,            "Show Debug Information");
 		// @formatter:on
 		return result;

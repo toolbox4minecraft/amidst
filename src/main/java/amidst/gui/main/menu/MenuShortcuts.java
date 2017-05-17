@@ -46,10 +46,6 @@ public enum MenuShortcuts implements MenuShortcut {
 	SHOW_PLAYERS("menu P"),
 	ENABLE_ALL_LAYERS("menu E"),
 
-	SMOOTH_SCROLLING("menu I"),
-	RESTRICT_MAXIMUM_ZOOM("menu Z"),
-	SHOW_FRAMERATE("menu L"),
-	SHOW_SCALE("menu K"),
 	RELOAD_BIOME_PROFILES("menu B");
 
 	private static KeyStroke getKeyStroke(String accelerator) {
