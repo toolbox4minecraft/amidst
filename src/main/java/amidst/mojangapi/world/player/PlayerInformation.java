@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.mojangapi.file.MojangApiParsingException;
+import amidst.mojangapi.file.PlayerSkinService;
 import amidst.mojangapi.file.json.PlayerInformationRetriever;
 import amidst.mojangapi.file.json.player.PlayerJson;
 import amidst.mojangapi.world.icon.WorldIconImage;
@@ -63,7 +64,7 @@ public class PlayerInformation {
 	private static WorldIconImage tryGetPlayerHeadBySkinUrl(PlayerJson player) {
 		BufferedImage head;
 		try {
-			head = PlayerInformationRetriever.tryGetPlayerHeadBySkinUrl(player.getSkinUrl());
+			head = PlayerInformationRetriever.tryGetPlayerHeadBySkinUrl(new PlayerSkinService().getSkinUrl(player));
 			return head != null ? WorldIconImage.from(head) : null;
 		} catch (MojangApiParsingException e) {
 			return null;
