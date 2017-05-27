@@ -24,7 +24,7 @@ public class DotMinecraftDirectoryService {
 
 		for (VersionListEntryJson version : versionListJson.getVersions()) {
 			if (allowedReleaseTypes.contains(version.getType())) {
-				VersionDirectory versionDirectory = version.createVersionDirectory(mojangApi);
+				VersionDirectory versionDirectory = mojangApi.createVersionDirectory(version.getId());
 				if (versionDirectory.isValid()) {
 					return versionDirectory;
 				}
