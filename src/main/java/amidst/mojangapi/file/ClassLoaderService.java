@@ -54,8 +54,9 @@ public class ClassLoaderService {
 			DotMinecraftDirectory dotMinecraftDirectory) {
 		File json = versionDirectory.getJson();
 		try {
-			return new LibraryService()
-					.getLibraryUrls(dotMinecraftDirectory.getLibraries(), JsonReader.readVersionFrom(json));
+			return new LibraryService().getLibraryUrls(
+					dotMinecraftDirectory.getLibraries(),
+					JsonReader.readVersionFrom(json).getLibraries());
 		} catch (IOException | MojangApiParsingException e) {
 			AmidstLogger.warn("Invalid jar profile loaded. Library loading will be skipped. (Path: " + json + ")");
 			return new ArrayList<>();
