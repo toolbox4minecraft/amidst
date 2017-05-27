@@ -1,7 +1,7 @@
 package amidst.devtools;
 
 import amidst.devtools.utils.VersionStateRenderer;
-import amidst.mojangapi.file.json.DotMinecraftDirectoryService;
+import amidst.mojangapi.file.DotMinecraftDirectoryService;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 

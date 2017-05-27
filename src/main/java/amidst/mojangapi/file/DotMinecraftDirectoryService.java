@@ -1,4 +1,4 @@
-package amidst.mojangapi.file.json;
+package amidst.mojangapi.file;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -7,9 +7,8 @@ import java.util.List;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.file.FilenameService;
-import amidst.mojangapi.file.URIUtils;
 import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.json.ReleaseType;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 
