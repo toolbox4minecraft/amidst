@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import amidst.mojangapi.file.FilenameFactory;
+import amidst.mojangapi.file.FilenameService;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.DotMinecraftDirectoryService;
@@ -68,8 +68,9 @@ public class GenerateWorldTestData {
 	}
 
 	private VersionDirectory createVersionDirectory(String versionId) {
-		File jar = FilenameFactory.getClientJarFile(versions, versionId);
-		File json = FilenameFactory.getClientJsonFile(versions, versionId);
+		FilenameService filenameService = new FilenameService();
+		File jar = filenameService.getClientJarFile(versions, versionId);
+		File json = filenameService.getClientJsonFile(versions, versionId);
 		return new VersionDirectory(dotMinecraftDirectory, versionId, jar, json);
 	}
 

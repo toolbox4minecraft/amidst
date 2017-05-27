@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
-import amidst.mojangapi.file.FilenameFactory;
+import amidst.mojangapi.file.FilenameService;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
@@ -80,8 +80,9 @@ public class MojangApi {
 
 	public VersionDirectory createVersionDirectory(String versionId) {
 		File versions = dotMinecraftDirectory.getVersions();
-		File jar = FilenameFactory.getClientJarFile(versions, versionId);
-		File json = FilenameFactory.getClientJsonFile(versions, versionId);
+		FilenameService filenameService = new FilenameService();
+		File jar = filenameService.getClientJarFile(versions, versionId);
+		File json = filenameService.getClientJsonFile(versions, versionId);
 		return doCreateVersionDirectory(versionId, jar, json);
 	}
 
