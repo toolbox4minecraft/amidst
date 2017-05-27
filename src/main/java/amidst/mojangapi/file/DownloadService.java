@@ -1,36 +1,14 @@
 package amidst.mojangapi.file;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.file.directory.VersionDirectory;
-import amidst.mojangapi.file.json.ReleaseType;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
-import amidst.mojangapi.file.json.versionlist.VersionListJson;
 
 @Immutable
-public class DotMinecraftDirectoryService {
+public class DownloadService {
 	private final FilenameService filenameService = new FilenameService();
-
-	public VersionDirectory tryFindFirstValidVersionDirectory(
-			List<ReleaseType> allowedReleaseTypes,
-			MojangApi mojangApi) throws FileNotFoundException {
-		VersionListJson versionListJson = mojangApi.getVersionList();
-
-		for (VersionListEntryJson version : versionListJson.getVersions()) {
-			if (allowedReleaseTypes.contains(version.getType())) {
-				VersionDirectory versionDirectory = mojangApi.createVersionDirectory(version.getId());
-				if (versionDirectory.isValid()) {
-					return versionDirectory;
-				}
-			}
-		}
-		return null;
-	}
 
 	public boolean hasServer(VersionListEntryJson version) {
 		return URIUtils.exists(filenameService.getRemoteServerJar(version.getId()));

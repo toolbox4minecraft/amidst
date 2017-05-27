@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import amidst.clazz.translator.ClassTranslator;
-import amidst.mojangapi.file.DotMinecraftDirectoryService;
+import amidst.mojangapi.file.DownloadService;
 import amidst.mojangapi.file.FilenameService;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
@@ -50,7 +50,7 @@ public class GenerateWorldTestData {
 
 	private void generate(TestWorldDeclaration declaration, VersionListEntryJson version) {
 		String versionId = version.getId();
-		if (new DotMinecraftDirectoryService().tryDownloadClient(prefix, version)) {
+		if (new DownloadService().tryDownloadClient(prefix, version)) {
 			try {
 				ClassTranslator translator = DefaultClassTranslator.INSTANCE.get();
 				VersionDirectory versionDirectory = createVersionDirectory(versionId);

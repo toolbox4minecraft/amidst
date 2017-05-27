@@ -9,7 +9,7 @@ import java.util.List;
 import amidst.devtools.utils.RecognisedVersionEnumBuilder;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.ClassLoaderService;
-import amidst.mojangapi.file.DotMinecraftDirectoryService;
+import amidst.mojangapi.file.DownloadService;
 import amidst.mojangapi.file.FilenameService;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
@@ -47,7 +47,7 @@ public class GenerateRecognisedVersionList {
 
 	private void process(VersionListEntryJson version) {
 		String versionId = version.getId();
-		if (new DotMinecraftDirectoryService().tryDownloadClient(prefix, version)) {
+		if (new DownloadService().tryDownloadClient(prefix, version)) {
 			try {
 				process(versionId);
 			} catch (ClassNotFoundException | MalformedURLException | NoClassDefFoundError e) {
