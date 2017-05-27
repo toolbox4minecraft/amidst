@@ -8,6 +8,7 @@ import java.util.List;
 import amidst.mojangapi.file.FilenameFactory;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.json.DotMinecraftDirectoryService;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -51,7 +52,7 @@ public class GenerateWorldTestData {
 
 	private void generate(TestWorldDeclaration declaration, VersionListEntryJson version) {
 		String versionId = version.getId();
-		if (version.tryDownloadClient(prefix)) {
+		if (new DotMinecraftDirectoryService().tryDownloadClient(prefix, version)) {
 			try {
 				TestWorldCache.createAndPut(
 						declaration,

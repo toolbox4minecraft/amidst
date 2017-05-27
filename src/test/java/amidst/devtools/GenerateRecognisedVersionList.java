@@ -11,6 +11,7 @@ import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.FilenameFactory;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.json.DotMinecraftDirectoryService;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -45,7 +46,7 @@ public class GenerateRecognisedVersionList {
 
 	private void process(VersionListEntryJson version) {
 		String versionId = version.getId();
-		if (version.tryDownloadClient(prefix)) {
+		if (new DotMinecraftDirectoryService().tryDownloadClient(prefix, version)) {
 			try {
 				process(versionId);
 			} catch (ClassNotFoundException | MalformedURLException | NoClassDefFoundError e) {

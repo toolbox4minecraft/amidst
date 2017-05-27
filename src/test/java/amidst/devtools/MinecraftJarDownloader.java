@@ -1,6 +1,7 @@
 package amidst.devtools;
 
 import amidst.devtools.utils.VersionStateRenderer;
+import amidst.mojangapi.file.json.DotMinecraftDirectoryService;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 
@@ -15,9 +16,10 @@ public class MinecraftJarDownloader {
 	}
 
 	public void run() {
+		DotMinecraftDirectoryService dotMinecraftDirectoryService = new DotMinecraftDirectoryService();
 		for (VersionListEntryJson version : versionList.getVersions()) {
-			boolean hasServer = version.tryDownloadServer(prefix);
-			boolean hasClient = version.tryDownloadClient(prefix);
+			boolean hasServer = dotMinecraftDirectoryService.tryDownloadServer(prefix, version);
+			boolean hasClient = dotMinecraftDirectoryService.tryDownloadClient(prefix, version);
 			System.out.println(renderer.render(version, hasServer, hasClient));
 		}
 	}

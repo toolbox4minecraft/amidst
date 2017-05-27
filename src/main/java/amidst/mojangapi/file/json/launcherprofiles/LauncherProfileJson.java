@@ -11,8 +11,8 @@ import amidst.documentation.NotNull;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.json.DotMinecraftDirectoryService;
 import amidst.mojangapi.file.json.ReleaseType;
-import amidst.mojangapi.file.json.versionlist.VersionListJson;
 
 @Immutable
 public class LauncherProfileJson {
@@ -65,14 +65,14 @@ public class LauncherProfileJson {
 
 	@NotNull
 	public VersionDirectory createValidVersionDirectory(MojangApi mojangApi) throws FileNotFoundException {
-		VersionListJson versionList = mojangApi.getVersionList();
 		if (lastVersionId != null) {
 			VersionDirectory result = mojangApi.createVersionDirectory(lastVersionId);
 			if (result.isValid()) {
 				return result;
 			}
 		} else {
-			VersionDirectory result = versionList.tryFindFirstValidVersionDirectory(allowedReleaseTypes, mojangApi);
+			VersionDirectory result = new DotMinecraftDirectoryService()
+					.tryFindFirstValidVersionDirectory(allowedReleaseTypes, mojangApi);
 			if (result != null) {
 				return result;
 			}

@@ -11,6 +11,7 @@ import amidst.clazz.Classes;
 import amidst.clazz.real.JarFileParsingException;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.translator.ClassTranslator;
+import amidst.mojangapi.file.json.DotMinecraftDirectoryService;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
@@ -45,7 +46,7 @@ public class MinecraftVersionCompatibilityChecker {
 	}
 
 	private boolean checkOne(VersionListEntryJson version) {
-		if (version.tryDownloadClient(prefix)) {
+		if (new DotMinecraftDirectoryService().tryDownloadClient(prefix, version)) {
 			try {
 				File jarFile = new File(version.getClientJar(prefix));
 				ClassTranslator translator = DefaultClassTranslator.INSTANCE.get();
