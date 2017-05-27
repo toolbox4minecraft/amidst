@@ -3,6 +3,7 @@ package amidst.mojangapi.file.nbt.player;
 import java.io.IOException;
 
 import amidst.documentation.Immutable;
+import amidst.mojangapi.file.AmidstBackupService;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.NBTUtils;
@@ -22,7 +23,7 @@ public class PlayersPlayerNbt extends PlayerNbt {
 
 	@Override
 	protected boolean tryBackup() {
-		return saveDirectory.tryBackupPlayersFile(playerName);
+		return new AmidstBackupService().tryBackupPlayersFile(saveDirectory, playerName);
 	}
 
 	@Override

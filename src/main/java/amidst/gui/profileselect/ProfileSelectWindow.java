@@ -20,6 +20,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.file.LauncherProfileService;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
@@ -114,7 +115,8 @@ public class ProfileSelectWindow {
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private LauncherProfilesJson scanAndLoadProfiles() throws MojangApiParsingException, IOException {
 		AmidstLogger.info("Scanning for profiles.");
-		LauncherProfilesJson launcherProfile = mojangApi.getDotMinecraftDirectory().readLauncherProfilesJson();
+		LauncherProfilesJson launcherProfile = new LauncherProfileService()
+				.readLauncherProfilesFrom(mojangApi.getDotMinecraftDirectory());
 		AmidstLogger.info("Successfully loaded profile list.");
 		return launcherProfile;
 	}

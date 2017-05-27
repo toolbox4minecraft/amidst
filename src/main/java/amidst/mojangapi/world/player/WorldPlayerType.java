@@ -7,6 +7,7 @@ import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
+import amidst.mojangapi.file.SaveDirectoryService;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.LevelDatNbt;
 import amidst.mojangapi.file.nbt.player.PlayerNbt;
@@ -52,15 +53,16 @@ public enum WorldPlayerType {
 
 	@NotNull
 	public List<PlayerNbt> createPlayerNbts(SaveDirectory saveDirectory) {
+		SaveDirectoryService saveDirectoryService = new SaveDirectoryService();
 		if (this == BOTH) {
 			List<PlayerNbt> result = new ArrayList<>();
-			result.addAll(saveDirectory.createSingleplayerPlayerNbts());
-			result.addAll(saveDirectory.createMultiplayerPlayerNbts());
+			result.addAll(saveDirectoryService.createSingleplayerPlayerNbts(saveDirectory));
+			result.addAll(saveDirectoryService.createMultiplayerPlayerNbts(saveDirectory));
 			return result;
 		} else if (this == SINGLEPLAYER) {
-			return saveDirectory.createSingleplayerPlayerNbts();
+			return saveDirectoryService.createSingleplayerPlayerNbts(saveDirectory);
 		} else if (this == MULTIPLAYER) {
-			return saveDirectory.createMultiplayerPlayerNbts();
+			return saveDirectoryService.createMultiplayerPlayerNbts(saveDirectory);
 		} else {
 			return Collections.emptyList();
 		}

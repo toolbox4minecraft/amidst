@@ -8,6 +8,7 @@ import java.util.List;
 
 import amidst.devtools.utils.RecognisedVersionEnumBuilder;
 import amidst.logging.AmidstLogger;
+import amidst.mojangapi.file.ClassLoaderService;
 import amidst.mojangapi.file.DotMinecraftDirectoryService;
 import amidst.mojangapi.file.FilenameService;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
@@ -61,7 +62,8 @@ public class GenerateRecognisedVersionList {
 	private void process(String versionId) throws MalformedURLException, ClassNotFoundException {
 		AmidstLogger.info("version " + versionId);
 		VersionDirectory versionDirectory = createVersionDirectory(versionId);
-		URLClassLoader classLoader = versionDirectory.createClassLoader();
+		URLClassLoader classLoader = new ClassLoaderService()
+				.createClassLoader(versionDirectory, dotMinecraftDirectory);
 		String magicString = RecognisedVersion.generateMagicString(classLoader);
 		builder.addLauncherVersionId(versionId, magicString);
 	}
@@ -70,7 +72,7 @@ public class GenerateRecognisedVersionList {
 		FilenameService filenameService = new FilenameService();
 		File jar = filenameService.getClientJarFile(versions, versionId);
 		File json = filenameService.getClientJsonFile(versions, versionId);
-		return new VersionDirectory(dotMinecraftDirectory, versionId, jar, json);
+		return new VersionDirectory(versionId, jar, json);
 	}
 
 	private void print() {

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import amidst.clazz.translator.ClassTranslator;
 import amidst.mojangapi.file.DotMinecraftDirectoryService;
 import amidst.mojangapi.file.FilenameService;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
@@ -13,15 +14,12 @@ import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceBuilder;
+import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterface;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.testworld.TestWorldCache;
 import amidst.mojangapi.world.testworld.TestWorldDeclaration;
 
 public class GenerateWorldTestData {
-	private static final LocalMinecraftInterfaceBuilder LOCAL_MINECRAFT_INTERFACE_BUILDER = new LocalMinecraftInterfaceBuilder(
-			DefaultClassTranslator.INSTANCE.get());
-
 	private final String prefix;
 	private final File libraries;
 	private final VersionListJson versionList;
@@ -54,9 +52,11 @@ public class GenerateWorldTestData {
 		String versionId = version.getId();
 		if (new DotMinecraftDirectoryService().tryDownloadClient(prefix, version)) {
 			try {
+				ClassTranslator translator = DefaultClassTranslator.INSTANCE.get();
+				VersionDirectory versionDirectory = createVersionDirectory(versionId);
 				TestWorldCache.createAndPut(
 						declaration,
-						LOCAL_MINECRAFT_INTERFACE_BUILDER.create(createVersionDirectory(versionId)));
+						LocalMinecraftInterface.create(translator, versionDirectory, dotMinecraftDirectory));
 				successful.add(versionId);
 			} catch (LocalMinecraftInterfaceCreationException | MinecraftInterfaceException | IOException e) {
 				e.printStackTrace();
@@ -71,7 +71,7 @@ public class GenerateWorldTestData {
 		FilenameService filenameService = new FilenameService();
 		File jar = filenameService.getClientJarFile(versions, versionId);
 		File json = filenameService.getClientJsonFile(versions, versionId);
-		return new VersionDirectory(dotMinecraftDirectory, versionId, jar, json);
+		return new VersionDirectory(versionId, jar, json);
 	}
 
 	private void print(String title, Iterable<String> lines) {

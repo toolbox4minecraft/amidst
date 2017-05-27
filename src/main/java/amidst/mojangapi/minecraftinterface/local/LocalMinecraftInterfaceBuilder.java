@@ -13,8 +13,9 @@ import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
+import amidst.mojangapi.file.ClassLoaderService;
+import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
-import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 @Immutable
@@ -26,10 +27,12 @@ public class LocalMinecraftInterfaceBuilder {
 	}
 
 	@NotNull
-	public MinecraftInterface create(VersionDirectory versionDirectory)
-			throws LocalMinecraftInterfaceCreationException {
+	public LocalMinecraftInterface create(
+			VersionDirectory versionDirectory,
+			DotMinecraftDirectory dotMinecraftDirectory) throws LocalMinecraftInterfaceCreationException {
 		try {
-			URLClassLoader classLoader = versionDirectory.createClassLoader();
+			URLClassLoader classLoader = new ClassLoaderService()
+					.createClassLoader(versionDirectory, dotMinecraftDirectory);
 			RecognisedVersion recognisedVersion = RecognisedVersion.from(classLoader);
 			Map<String, SymbolicClass> symbolicClassMap = Classes
 					.createSymbolicClassMap(versionDirectory.getJar(), classLoader, translator);

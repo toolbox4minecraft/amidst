@@ -2,13 +2,17 @@ package amidst.mojangapi.file;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
+import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 
 @Immutable
 public class LauncherProfileService {
@@ -48,5 +52,12 @@ public class LauncherProfileService {
 		}
 		throw new FileNotFoundException(
 				"cannot find valid version directory for launcher profile '" + launcherProfileJson.getName() + "'");
+	}
+
+	@NotNull
+	public LauncherProfilesJson readLauncherProfilesFrom(DotMinecraftDirectory dotMinecraftDirectory)
+			throws MojangApiParsingException,
+			IOException {
+		return JsonReader.readLauncherProfilesFrom(dotMinecraftDirectory.getLauncherProfilesJson());
 	}
 }

@@ -8,15 +8,17 @@ import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.file.FilenameService;
 import amidst.mojangapi.file.MojangApiParsingException;
+import amidst.mojangapi.file.SaveDirectoryService;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
-import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
+import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterface;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
@@ -68,7 +70,8 @@ public class MojangApi {
 		this.versionDirectory = versionDirectory;
 		if (versionDirectory != null) {
 			try {
-				this.minecraftInterface = versionDirectory.createLocalMinecraftInterface();
+				this.minecraftInterface = LocalMinecraftInterface
+						.create(DefaultClassTranslator.INSTANCE.get(), versionDirectory, dotMinecraftDirectory);
 			} catch (LocalMinecraftInterfaceCreationException e) {
 				this.minecraftInterface = null;
 				throw e;
@@ -91,7 +94,7 @@ public class MojangApi {
 	}
 
 	private VersionDirectory doCreateVersionDirectory(String versionId, File jar, File json) {
-		return new VersionDirectory(dotMinecraftDirectory, versionId, jar, json);
+		return new VersionDirectory(versionId, jar, json);
 	}
 
 	public MojangApi createSilentPlayerlessCopy() {
@@ -148,7 +151,7 @@ public class MojangApi {
 			MojangApiParsingException {
 		MinecraftInterface minecraftInterface = this.minecraftInterface;
 		if (minecraftInterface != null) {
-			return worldBuilder.fromSaveGame(minecraftInterface, SaveDirectory.from(file));
+			return worldBuilder.fromSaveGame(minecraftInterface, new SaveDirectoryService().from(file));
 		} else {
 			throw new IllegalStateException("cannot create a world without a minecraft interface");
 		}
