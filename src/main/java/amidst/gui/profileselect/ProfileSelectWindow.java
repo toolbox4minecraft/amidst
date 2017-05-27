@@ -128,7 +128,7 @@ public class ProfileSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createProfileComponentsIfNecessary(LauncherProfilesJson launcherProfile) {
-		if (launcherProfile.getProfiles().isEmpty()) {
+		if (launcherProfile.getProfiles().values().isEmpty()) {
 			AmidstLogger.warn("No profiles found in launcher_profiles.json");
 			profileSelectPanel.setEmptyMessage("No profiles found");
 		} else {
@@ -138,7 +138,7 @@ public class ProfileSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createProfileComponents(LauncherProfilesJson launcherProfile) {
-		for (LauncherProfileJson profile : launcherProfile.getProfiles()) {
+		for (LauncherProfileJson profile : launcherProfile.getProfiles().values()) {
 			profileSelectPanel.addProfile(new LocalProfileComponent(application, workerExecutor, mojangApi, profile));
 		}
 	}
