@@ -1,16 +1,12 @@
 package amidst.settings.biomeprofile;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
+import amidst.parsing.FormatException;
+import amidst.parsing.json.JsonReader;
 
 @Immutable
 public class BiomeProfileDirectory {
@@ -29,7 +25,6 @@ public class BiomeProfileDirectory {
 	}
 
 	private static final File DEFAULT_ROOT_DIRECTORY = new File("biome");
-	private static final Gson GSON = new Gson();
 
 	private final File root;
 	private final File defaultProfile;
@@ -95,21 +90,12 @@ public class BiomeProfileDirectory {
 		BiomeProfile profile = null;
 		if (file.exists() && file.isFile()) {
 			try {
-				profile = readProfile(file);
-				if (profile == null) {
-					throw new NullPointerException();
-				}
+				profile = JsonReader.readLocation(file, BiomeProfile.class);
 				profile.validate();
-			} catch (JsonSyntaxException | JsonIOException | IOException | NullPointerException e) {
+			} catch (IOException | FormatException e) {
 				AmidstLogger.warn(e, "Unable to load file: " + file);
 			}
 		}
 		return profile;
-	}
-
-	private BiomeProfile readProfile(File file) throws IOException, JsonSyntaxException, JsonIOException {
-		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-			return GSON.fromJson(reader, BiomeProfile.class);
-		}
 	}
 }
