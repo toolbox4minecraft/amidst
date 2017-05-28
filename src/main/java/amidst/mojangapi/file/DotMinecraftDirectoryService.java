@@ -7,6 +7,7 @@ import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
@@ -16,9 +17,46 @@ import amidst.mojangapi.file.json.ReleaseType;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
+import amidst.util.OperatingSystemDetector;
 
 @Immutable
-public class LauncherProfileService {
+public class DotMinecraftDirectoryService {
+	@NotNull
+	public File createDotMinecraftDirectory(String dotMinecraftCMDParameter) {
+		if (dotMinecraftCMDParameter != null) {
+			File result = new File(dotMinecraftCMDParameter);
+			if (result.isDirectory()) {
+				return result;
+			} else {
+				AmidstLogger.warn(
+						"Unable to set Minecraft directory to: " + result
+								+ " as that location does not exist or is not a folder.");
+			}
+		}
+		return getMinecraftDirectory();
+	}
+
+	@NotNull
+	private File getMinecraftDirectory() {
+		File home = new File(System.getProperty("user.home", "."));
+		if (OperatingSystemDetector.isWindows()) {
+			File appData = new File(System.getenv("APPDATA"));
+			if (appData.isDirectory()) {
+				return new File(appData, ".minecraft");
+			}
+		} else if (OperatingSystemDetector.isMac()) {
+			return new File(home, "Library/Application Support/minecraft");
+		}
+		return new File(home, ".minecraft");
+	}
+
+	@NotNull
+	public LauncherProfilesJson readLauncherProfilesFrom(DotMinecraftDirectory dotMinecraftDirectory)
+			throws MojangApiParsingException,
+			IOException {
+		return JsonReader.readLauncherProfilesFrom(dotMinecraftDirectory.getLauncherProfilesJson());
+	}
+
 	@NotNull
 	public ProfileDirectory createValidProfileDirectory(LauncherProfileJson launcherProfileJson, MojangApi mojangApi)
 			throws FileNotFoundException {
@@ -70,12 +108,5 @@ public class LauncherProfileService {
 			}
 		}
 		return null;
-	}
-
-	@NotNull
-	public LauncherProfilesJson readLauncherProfilesFrom(DotMinecraftDirectory dotMinecraftDirectory)
-			throws MojangApiParsingException,
-			IOException {
-		return JsonReader.readLauncherProfilesFrom(dotMinecraftDirectory.getLauncherProfilesJson());
 	}
 }

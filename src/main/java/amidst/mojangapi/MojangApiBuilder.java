@@ -6,8 +6,8 @@ import amidst.CommandLineParameters;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.DotMinecraftDirectoryFinder;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
+import amidst.mojangapi.file.DotMinecraftDirectoryService;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
@@ -44,7 +44,8 @@ public class MojangApiBuilder {
 
 	@NotNull
 	private DotMinecraftDirectory createDotMinecraftDirectory() {
-		File dotMinecraftDirectory = DotMinecraftDirectoryFinder.find(parameters.dotMinecraftDirectory);
+		File dotMinecraftDirectory = new DotMinecraftDirectoryService()
+				.createDotMinecraftDirectory(parameters.dotMinecraftDirectory);
 		if (parameters.minecraftLibrariesDirectory != null) {
 			return new DotMinecraftDirectory(dotMinecraftDirectory, new File(parameters.minecraftLibrariesDirectory));
 		} else {

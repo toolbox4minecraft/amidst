@@ -33,7 +33,7 @@ public class LevelDatNbt {
 			}
 			this.hasPlayer = hasPlayerTag(dataTag);
 		} catch (NullPointerException e) {
-			throw new MojangApiParsingException("cannot read leve.dat", e);
+			throw new MojangApiParsingException("cannot read level.dat", e);
 		}
 	}
 

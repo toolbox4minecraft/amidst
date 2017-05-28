@@ -11,7 +11,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.file.LauncherProfileService;
+import amidst.mojangapi.file.DotMinecraftDirectoryService;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
@@ -55,9 +55,10 @@ public class LocalProfileComponent extends ProfileComponent {
 
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private boolean tryFind() {
+		DotMinecraftDirectoryService dotMinecraftDirectoryService = new DotMinecraftDirectoryService();
 		try {
-			profileDirectory = new LauncherProfileService().createValidProfileDirectory(profile, mojangApi);
-			versionDirectory = new LauncherProfileService().createValidVersionDirectory(profile, mojangApi);
+			profileDirectory = dotMinecraftDirectoryService.createValidProfileDirectory(profile, mojangApi);
+			versionDirectory = dotMinecraftDirectoryService.createValidVersionDirectory(profile, mojangApi);
 			return true;
 		} catch (FileNotFoundException e) {
 			AmidstLogger.warn(e);
