@@ -14,11 +14,6 @@ import amidst.documentation.NotNull;
 import amidst.mojangapi.file.FormatException;
 import amidst.mojangapi.file.URIUtils;
 
-/**
- * This is a utility class used to read JSON data. Please use this class only to
- * read JSON data provided by Mojang, because it throws a
- * MojangApiParsingException when an error occurs.
- */
 @Immutable
 public enum JsonReader {
 	;
