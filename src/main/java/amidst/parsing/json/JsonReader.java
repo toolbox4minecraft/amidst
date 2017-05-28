@@ -1,4 +1,4 @@
-package amidst.mojangapi.file.json;
+package amidst.parsing.json;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +11,8 @@ import com.google.gson.JsonSyntaxException;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.mojangapi.file.FormatException;
 import amidst.mojangapi.file.URIUtils;
+import amidst.parsing.FormatException;
 
 @Immutable
 public enum JsonReader {

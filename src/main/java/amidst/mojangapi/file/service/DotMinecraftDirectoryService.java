@@ -8,17 +8,17 @@ import java.util.List;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.FormatException;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
-import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.ReleaseType;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
+import amidst.parsing.FormatException;
+import amidst.parsing.json.JsonReader;
 import amidst.util.OperatingSystemDetector;
 
 @Immutable

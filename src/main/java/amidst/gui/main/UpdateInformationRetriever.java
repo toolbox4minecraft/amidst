@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.mojangapi.file.FormatException;
-import amidst.mojangapi.file.json.JsonReader;
+import amidst.parsing.FormatException;
+import amidst.parsing.json.JsonReader;
 
 @Immutable
 public enum UpdateInformationRetriever {

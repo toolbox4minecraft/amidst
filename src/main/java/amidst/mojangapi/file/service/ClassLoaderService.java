@@ -11,11 +11,11 @@ import java.util.List;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.FormatException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
-import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.version.VersionJson;
+import amidst.parsing.FormatException;
+import amidst.parsing.json.JsonReader;
 
 @Immutable
 public class ClassLoaderService {

@@ -1,4 +1,4 @@
-package amidst.mojangapi.file;
+package amidst.parsing;
 
 @SuppressWarnings("serial")
 public class FormatException extends Exception {

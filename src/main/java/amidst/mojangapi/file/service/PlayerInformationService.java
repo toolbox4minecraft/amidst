@@ -14,9 +14,7 @@ import javax.imageio.ImageIO;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.FormatException;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.player.PlayerJson;
 import amidst.mojangapi.file.json.player.PropertyJson;
 import amidst.mojangapi.file.json.player.SKINJson;
@@ -26,6 +24,8 @@ import amidst.mojangapi.file.json.player.TexturesPropertyJson;
 import amidst.mojangapi.world.icon.WorldIconImage;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.player.PlayerInformation;
+import amidst.parsing.FormatException;
+import amidst.parsing.json.JsonReader;
 
 @Immutable
 public class PlayerInformationService {
