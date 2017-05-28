@@ -8,7 +8,6 @@ import java.util.List;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
@@ -18,23 +17,40 @@ import amidst.mojangapi.file.json.ReleaseType;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
+import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.util.OperatingSystemDetector;
 
 @Immutable
 public class DotMinecraftDirectoryService {
+	private final FilenameService filenameService = new FilenameService();
+
 	@NotNull
-	public File createDotMinecraftDirectory(String dotMinecraftCMDParameter) {
-		if (dotMinecraftCMDParameter != null) {
-			File result = new File(dotMinecraftCMDParameter);
+	public DotMinecraftDirectory createDotMinecraftDirectory(
+			String preferredDotMinecraftDirectory,
+			String preferredLibrariesDirectory) {
+		File dotMinecraftDirectory = findDotMinecraftDirectory(preferredDotMinecraftDirectory);
+		if (preferredLibrariesDirectory != null) {
+			return new DotMinecraftDirectory(dotMinecraftDirectory, new File(preferredLibrariesDirectory));
+		} else {
+			return new DotMinecraftDirectory(dotMinecraftDirectory);
+		}
+	}
+
+	@NotNull
+	private File findDotMinecraftDirectory(String preferredDotMinecraftDirectory) {
+		if (preferredDotMinecraftDirectory != null) {
+			File result = new File(preferredDotMinecraftDirectory);
 			if (result.isDirectory()) {
 				return result;
 			} else {
 				AmidstLogger.warn(
 						"Unable to set Minecraft directory to: " + result
 								+ " as that location does not exist or is not a folder.");
+				return getMinecraftDirectory();
 			}
+		} else {
+			return getMinecraftDirectory();
 		}
-		return getMinecraftDirectory();
 	}
 
 	@NotNull
@@ -59,8 +75,9 @@ public class DotMinecraftDirectoryService {
 	}
 
 	@NotNull
-	public ProfileDirectory createValidProfileDirectory(LauncherProfileJson launcherProfileJson, MojangApi mojangApi)
-			throws FileNotFoundException {
+	public ProfileDirectory createValidProfileDirectory(
+			LauncherProfileJson launcherProfileJson,
+			DotMinecraftDirectory dotMinecraftDirectory) throws FileNotFoundException {
 		String gameDir = launcherProfileJson.getGameDir();
 		if (gameDir != null) {
 			ProfileDirectory result = new ProfileDirectory(new File(gameDir));
@@ -72,25 +89,32 @@ public class DotMinecraftDirectoryService {
 								+ "': " + gameDir);
 			}
 		} else {
-			return new ProfileDirectory(mojangApi.getDotMinecraftDirectory().getRoot());
+			return new ProfileDirectory(dotMinecraftDirectory.getRoot());
 		}
 	}
 
 	@NotNull
-	public VersionDirectory createValidVersionDirectory(LauncherProfileJson launcherProfileJson, MojangApi mojangApi)
-			throws FileNotFoundException {
+	public VersionDirectory createValidVersionDirectory(
+			LauncherProfileJson launcherProfileJson,
+			VersionListJson versionList,
+			DotMinecraftDirectory dotMinecraftDirectory) throws FileNotFoundException {
 		String lastVersionId = launcherProfileJson.getLastVersionId();
 		if (lastVersionId != null) {
-			VersionDirectory result = mojangApi.createVersionDirectory(lastVersionId);
+			VersionDirectory result = createVersionDirectory(dotMinecraftDirectory, lastVersionId);
 			if (result.isValid()) {
 				return result;
+			} else {
+				// error
 			}
 		} else {
 			VersionDirectory result = tryFindFirstValidVersionDirectory(
 					launcherProfileJson.getAllowedReleaseTypes(),
-					mojangApi);
+					versionList,
+					dotMinecraftDirectory);
 			if (result != null) {
 				return result;
+			} else {
+				// error
 			}
 		}
 		throw new FileNotFoundException(
@@ -99,15 +123,29 @@ public class DotMinecraftDirectoryService {
 
 	private VersionDirectory tryFindFirstValidVersionDirectory(
 			List<ReleaseType> allowedReleaseTypes,
-			MojangApi mojangApi) throws FileNotFoundException {
-		for (VersionListEntryJson version : mojangApi.getVersionList().getVersions()) {
+			VersionListJson versionList,
+			DotMinecraftDirectory dotMinecraftDirectory) {
+		for (VersionListEntryJson version : versionList.getVersions()) {
 			if (allowedReleaseTypes.contains(version.getType())) {
-				VersionDirectory versionDirectory = mojangApi.createVersionDirectory(version.getId());
+				VersionDirectory versionDirectory = createVersionDirectory(dotMinecraftDirectory, version.getId());
 				if (versionDirectory.isValid()) {
 					return versionDirectory;
 				}
 			}
 		}
 		return null;
+	}
+
+	@NotNull
+	public VersionDirectory createVersionDirectory(DotMinecraftDirectory dotMinecraftDirectory, String versionId) {
+		File versions = dotMinecraftDirectory.getVersions();
+		File jar = filenameService.getClientJarFile(versions, versionId);
+		File json = filenameService.getClientJsonFile(versions, versionId);
+		return new VersionDirectory(versionId, jar, json);
+	}
+
+	@NotNull
+	public VersionDirectory createVersionDirectoryWithUnknownVersionId(File jar, File json) {
+		return new VersionDirectory(VersionDirectory.UNKNOWN_VERSION_ID, jar, json);
 	}
 }

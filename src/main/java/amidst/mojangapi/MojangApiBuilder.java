@@ -17,6 +17,7 @@ import amidst.mojangapi.world.WorldBuilder;
 public class MojangApiBuilder {
 	private final WorldBuilder worldBuilder;
 	private final CommandLineParameters parameters;
+	private final DotMinecraftDirectoryService dotMinecraftDirectoryService = new DotMinecraftDirectoryService();
 
 	public MojangApiBuilder(WorldBuilder worldBuilder, CommandLineParameters parameters) {
 		this.worldBuilder = worldBuilder;
@@ -27,7 +28,8 @@ public class MojangApiBuilder {
 	public MojangApi construct()
 			throws DotMinecraftDirectoryNotFoundException,
 			LocalMinecraftInterfaceCreationException {
-		DotMinecraftDirectory dotMinecraftDirectory = createDotMinecraftDirectory();
+		DotMinecraftDirectory dotMinecraftDirectory = dotMinecraftDirectoryService
+				.createDotMinecraftDirectory(parameters.dotMinecraftDirectory, parameters.minecraftLibrariesDirectory);
 		if (dotMinecraftDirectory.isValid()) {
 			AmidstLogger.info(
 					"using '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "', libraries: '"
@@ -38,26 +40,16 @@ public class MojangApiBuilder {
 							+ dotMinecraftDirectory.getLibraries() + "'");
 		}
 		MojangApi result = new MojangApi(worldBuilder, dotMinecraftDirectory);
-		result.set(null, null, createVersionDirectory(result));
+		result.set(null, null, createVersionDirectory());
 		return result;
 	}
 
-	@NotNull
-	private DotMinecraftDirectory createDotMinecraftDirectory() {
-		File dotMinecraftDirectory = new DotMinecraftDirectoryService()
-				.createDotMinecraftDirectory(parameters.dotMinecraftDirectory);
-		if (parameters.minecraftLibrariesDirectory != null) {
-			return new DotMinecraftDirectory(dotMinecraftDirectory, new File(parameters.minecraftLibrariesDirectory));
-		} else {
-			return new DotMinecraftDirectory(dotMinecraftDirectory);
-		}
-	}
-
-	private VersionDirectory createVersionDirectory(MojangApi mojangApi) {
+	private VersionDirectory createVersionDirectory() {
 		if (parameters.minecraftJarFile != null && parameters.minecraftJsonFile != null) {
 			File jar = new File(parameters.minecraftJarFile);
 			File json = new File(parameters.minecraftJsonFile);
-			VersionDirectory result = mojangApi.createVersionDirectory(jar, json);
+			VersionDirectory result = dotMinecraftDirectoryService
+					.createVersionDirectoryWithUnknownVersionId(jar, json);
 			if (result.isValid()) {
 				AmidstLogger.info(
 						"using minecraft version directory. versionId: '" + result.getVersionId() + "', jar file: '"

@@ -11,7 +11,6 @@ import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
-import amidst.mojangapi.file.service.FilenameService;
 import amidst.mojangapi.file.service.SaveDirectoryService;
 import amidst.mojangapi.file.service.VersionListService;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
@@ -27,7 +26,6 @@ import amidst.mojangapi.world.WorldType;
 
 @ThreadSafe
 public class MojangApi {
-	private static final String UNKNOWN_VERSION_ID = "unknown";
 	private static final String UNKNOWN_PROFILE_NAME = "unknown";
 
 	private final WorldBuilder worldBuilder;
@@ -79,22 +77,6 @@ public class MojangApi {
 		} else {
 			this.minecraftInterface = null;
 		}
-	}
-
-	public VersionDirectory createVersionDirectory(String versionId) {
-		File versions = dotMinecraftDirectory.getVersions();
-		FilenameService filenameService = new FilenameService();
-		File jar = filenameService.getClientJarFile(versions, versionId);
-		File json = filenameService.getClientJsonFile(versions, versionId);
-		return doCreateVersionDirectory(versionId, jar, json);
-	}
-
-	public VersionDirectory createVersionDirectory(File jar, File json) {
-		return doCreateVersionDirectory(UNKNOWN_VERSION_ID, jar, json);
-	}
-
-	private VersionDirectory doCreateVersionDirectory(String versionId, File jar, File json) {
-		return new VersionDirectory(versionId, jar, json);
 	}
 
 	public MojangApi createSilentPlayerlessCopy() {
@@ -162,7 +144,7 @@ public class MojangApi {
 		if (versionDirectory != null) {
 			return versionDirectory.getVersionId();
 		} else {
-			return UNKNOWN_VERSION_ID;
+			return VersionDirectory.UNKNOWN_VERSION_ID;
 		}
 	}
 

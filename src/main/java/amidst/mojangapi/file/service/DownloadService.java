@@ -36,6 +36,26 @@ public class DownloadService {
 		}
 	}
 
+	public boolean tryDownloadServer(String prefix, VersionListEntryJson version) {
+		try {
+			downloadServer(prefix, version);
+			return true;
+		} catch (IOException e) {
+			AmidstLogger.warn(e, "unable to download server: " + version.getId());
+		}
+		return false;
+	}
+
+	public boolean tryDownloadClient(String prefix, VersionListEntryJson version) {
+		try {
+			downloadClient(prefix, version);
+			return true;
+		} catch (IOException e) {
+			AmidstLogger.warn(e, "unable to download client: " + version.getId());
+		}
+		return false;
+	}
+
 	public void downloadServer(String prefix, VersionListEntryJson version) throws IOException {
 		download(
 				filenameService.getRemoteServerJar(version.getId()),
@@ -64,25 +84,5 @@ public class DownloadService {
 		InputStream in = URIUtils.newInputStream(from);
 		Files.copy(in, part, StandardCopyOption.REPLACE_EXISTING);
 		Files.move(part, to, StandardCopyOption.REPLACE_EXISTING);
-	}
-
-	public boolean tryDownloadServer(String prefix, VersionListEntryJson version) {
-		try {
-			downloadServer(prefix, version);
-			return true;
-		} catch (IOException e) {
-			AmidstLogger.warn(e, "unable to download server: " + version.getId());
-		}
-		return false;
-	}
-
-	public boolean tryDownloadClient(String prefix, VersionListEntryJson version) {
-		try {
-			downloadClient(prefix, version);
-			return true;
-		} catch (IOException e) {
-			AmidstLogger.warn(e, "unable to download client: " + version.getId());
-		}
-		return false;
 	}
 }

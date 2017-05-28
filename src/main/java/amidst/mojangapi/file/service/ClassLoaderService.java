@@ -19,6 +19,8 @@ import amidst.mojangapi.file.json.version.VersionJson;
 
 @Immutable
 public class ClassLoaderService {
+	private final LibraryService libraryService = new LibraryService();
+
 	@NotNull
 	public URLClassLoader createClassLoader(
 			VersionDirectory versionDirectory,
@@ -56,7 +58,7 @@ public class ClassLoaderService {
 			DotMinecraftDirectory dotMinecraftDirectory) {
 		File json = versionDirectory.getJson();
 		try {
-			return new LibraryService().getLibraryUrls(
+			return libraryService.getLibraryUrls(
 					dotMinecraftDirectory.getLibraries(),
 					JsonReader.readLocation(json, VersionJson.class).getLibraries());
 		} catch (IOException | MojangApiParsingException e) {

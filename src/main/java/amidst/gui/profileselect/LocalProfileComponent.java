@@ -57,8 +57,12 @@ public class LocalProfileComponent extends ProfileComponent {
 	private boolean tryFind() {
 		DotMinecraftDirectoryService dotMinecraftDirectoryService = new DotMinecraftDirectoryService();
 		try {
-			profileDirectory = dotMinecraftDirectoryService.createValidProfileDirectory(profile, mojangApi);
-			versionDirectory = dotMinecraftDirectoryService.createValidVersionDirectory(profile, mojangApi);
+			profileDirectory = dotMinecraftDirectoryService
+					.createValidProfileDirectory(profile, mojangApi.getDotMinecraftDirectory());
+			versionDirectory = dotMinecraftDirectoryService.createValidVersionDirectory(
+					profile,
+					mojangApi.getVersionList(),
+					mojangApi.getDotMinecraftDirectory());
 			return true;
 		} catch (FileNotFoundException e) {
 			AmidstLogger.warn(e);

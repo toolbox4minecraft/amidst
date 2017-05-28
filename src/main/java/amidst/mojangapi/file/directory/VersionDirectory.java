@@ -6,6 +6,8 @@ import amidst.documentation.Immutable;
 
 @Immutable
 public class VersionDirectory {
+	public static final String UNKNOWN_VERSION_ID = "unknown";
+
 	private final String versionId;
 	private final File jar;
 	private final File json;

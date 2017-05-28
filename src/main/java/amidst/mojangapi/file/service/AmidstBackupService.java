@@ -39,7 +39,7 @@ public class AmidstBackupService {
 				.replace(".", "_");
 	}
 
-	public boolean tryBackup(File toDirectory, File from, File to) {
+	private boolean tryBackup(File toDirectory, File from, File to) {
 		return ensureDirectoryExists(toDirectory) && tryCopy(from, to) && to.isFile();
 	}
 
