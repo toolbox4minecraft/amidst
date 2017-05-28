@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
-import amidst.mojangapi.file.JsonReader;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
@@ -14,6 +13,7 @@ import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.file.service.FilenameService;
 import amidst.mojangapi.file.service.SaveDirectoryService;
+import amidst.mojangapi.file.service.VersionListService;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -55,7 +55,7 @@ public class MojangApi {
 			synchronized (this) {
 				versionList = this.versionList;
 				if (versionList == null) {
-					versionList = JsonReader.readRemoteOrLocalVersionList();
+					versionList = new VersionListService().readRemoteOrLocalVersionList();
 					this.versionList = versionList;
 				}
 			}

@@ -10,13 +10,17 @@ import javax.imageio.ImageIO;
 
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
+import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.player.PlayerJson;
+import amidst.mojangapi.file.json.player.SimplePlayerJson;
 
 @Immutable
 public enum PlayerInformationRetriever {
 	;
 
 	private static final String SIMPLE_PLAYER_SKIN_URL = "http://s3.amazonaws.com/MinecraftSkins/";
+	private static final String PLAYERNAME_TO_UUID = "https://api.mojang.com/users/profiles/minecraft/";
+	private static final String UUID_TO_PROFILE = "https://sessionserver.mojang.com/session/minecraft/profile/";
 
 	public static PlayerJson tryGetPlayerJsonByName(String name) {
 		try {
@@ -54,12 +58,16 @@ public enum PlayerInformationRetriever {
 		}
 	}
 
-	private static PlayerJson getPlayerJsonByName(String name) throws IOException, MojangApiParsingException {
-		return JsonReader.readPlayerFromUUID(JsonReader.readSimplePlayerFromPlayerName(name).getId());
+	private static PlayerJson getPlayerJsonByUUID(String uuid) throws MojangApiParsingException, IOException {
+		return JsonReader.readLocation(UUID_TO_PROFILE + uuid, PlayerJson.class);
 	}
 
-	private static PlayerJson getPlayerJsonByUUID(String uuid) throws IOException, MojangApiParsingException {
-		return JsonReader.readPlayerFromUUID(uuid);
+	private static PlayerJson getPlayerJsonByName(String name) throws MojangApiParsingException, IOException {
+		return getPlayerJsonByUUID(getUUIDByName(name));
+	}
+
+	private static String getUUIDByName(String name) throws MojangApiParsingException, IOException {
+		return JsonReader.readLocation(PLAYERNAME_TO_UUID + name, SimplePlayerJson.class).getId();
 	}
 
 	private static BufferedImage getPlayerHeadByName(String name) throws IOException {

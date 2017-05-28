@@ -6,8 +6,8 @@ import java.util.Optional;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.mojangapi.file.JsonReader;
 import amidst.mojangapi.file.MojangApiParsingException;
+import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.player.PlayerJson;
 import amidst.mojangapi.file.json.player.PropertyJson;
 import amidst.mojangapi.file.json.player.SKINJson;
@@ -30,7 +30,7 @@ public class PlayerSkinService {
 			throws MojangApiParsingException {
 		for (PropertyJson property : playerJson.getProperties()) {
 			if (isTexturesProperty(property)) {
-				return Optional.of(JsonReader.read(getDecodedValue(property), TexturesPropertyJson.class));
+				return Optional.of(JsonReader.readString(getDecodedValue(property), TexturesPropertyJson.class));
 			}
 		}
 		return Optional.empty();

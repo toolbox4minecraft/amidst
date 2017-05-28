@@ -11,10 +11,11 @@ import java.util.List;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.JsonReader;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.json.JsonReader;
+import amidst.mojangapi.file.json.version.VersionJson;
 
 @Immutable
 public class ClassLoaderService {
@@ -57,7 +58,7 @@ public class ClassLoaderService {
 		try {
 			return new LibraryService().getLibraryUrls(
 					dotMinecraftDirectory.getLibraries(),
-					JsonReader.readVersionFrom(json).getLibraries());
+					JsonReader.readLocation(json, VersionJson.class).getLibraries());
 		} catch (IOException | MojangApiParsingException e) {
 			AmidstLogger.warn("Invalid jar profile loaded. Library loading will be skipped. (Path: " + json + ")");
 			return new ArrayList<>();

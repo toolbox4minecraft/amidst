@@ -9,9 +9,9 @@ import org.junit.Test;
 import amidst.AmidstVersion;
 import amidst.ResourceLoader;
 import amidst.devtools.settings.DevToolSettings;
-import amidst.mojangapi.file.JsonReader;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
+import amidst.mojangapi.file.service.VersionListService;
 import amidst.mojangapi.world.biome.Biome;
 
 /**
@@ -63,7 +63,7 @@ public class DevToolRunner {
 	}
 
 	private VersionListJson versionList() throws IOException, MojangApiParsingException {
-		return JsonReader.readRemoteVersionList();
+		return new VersionListService().readRemoteVersionList();
 	}
 
 	private String librariesDirectory() {
