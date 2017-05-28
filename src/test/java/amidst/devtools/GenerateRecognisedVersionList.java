@@ -8,13 +8,13 @@ import java.util.List;
 
 import amidst.devtools.utils.RecognisedVersionEnumBuilder;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.ClassLoaderService;
-import amidst.mojangapi.file.DownloadService;
-import amidst.mojangapi.file.FilenameService;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
+import amidst.mojangapi.file.service.ClassLoaderService;
+import amidst.mojangapi.file.service.DownloadService;
+import amidst.mojangapi.file.service.FilenameService;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 public class GenerateRecognisedVersionList {

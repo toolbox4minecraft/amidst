@@ -11,10 +11,10 @@ import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.file.DotMinecraftDirectoryService;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
+import amidst.mojangapi.file.service.DotMinecraftDirectoryService;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.threading.WorkerExecutor;
 

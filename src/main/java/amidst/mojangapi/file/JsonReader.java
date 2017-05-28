@@ -1,4 +1,4 @@
-package amidst.mojangapi.file.json;
+package amidst.mojangapi.file;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,8 +14,6 @@ import amidst.ResourceLoader;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.URIUtils;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
 import amidst.mojangapi.file.json.player.PlayerJson;
 import amidst.mojangapi.file.json.player.SimplePlayerJson;

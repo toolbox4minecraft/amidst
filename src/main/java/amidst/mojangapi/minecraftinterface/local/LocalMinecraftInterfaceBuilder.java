@@ -13,9 +13,9 @@ import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.ClassLoaderService;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.service.ClassLoaderService;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 @Immutable

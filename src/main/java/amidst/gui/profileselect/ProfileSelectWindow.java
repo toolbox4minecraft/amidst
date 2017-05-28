@@ -20,10 +20,10 @@ import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.file.DotMinecraftDirectoryService;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
+import amidst.mojangapi.file.service.DotMinecraftDirectoryService;
 import amidst.threading.WorkerExecutor;
 import net.miginfocom.swing.MigLayout;
 

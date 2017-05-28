@@ -1,4 +1,4 @@
-package amidst.mojangapi.file;
+package amidst.mojangapi.file.service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -6,7 +6,8 @@ import java.util.Optional;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.mojangapi.file.json.JsonReader;
+import amidst.mojangapi.file.JsonReader;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.player.PlayerJson;
 import amidst.mojangapi.file.json.player.PropertyJson;
 import amidst.mojangapi.file.json.player.SKINJson;

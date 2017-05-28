@@ -1,4 +1,4 @@
-package amidst.mojangapi.file;
+package amidst.mojangapi.file.service;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +11,7 @@ import java.nio.file.StandardCopyOption;
 
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
+import amidst.mojangapi.file.URIUtils;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 
 @Immutable

@@ -5,9 +5,9 @@ import java.awt.image.BufferedImage;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.PlayerSkinService;
-import amidst.mojangapi.file.json.PlayerInformationRetriever;
+import amidst.mojangapi.file.PlayerInformationRetriever;
 import amidst.mojangapi.file.json.player.PlayerJson;
+import amidst.mojangapi.file.service.PlayerSkinService;
 import amidst.mojangapi.world.icon.WorldIconImage;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 

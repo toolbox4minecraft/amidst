@@ -11,10 +11,10 @@ import amidst.clazz.Classes;
 import amidst.clazz.real.JarFileParsingException;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.translator.ClassTranslator;
-import amidst.mojangapi.file.DownloadService;
-import amidst.mojangapi.file.FilenameService;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
+import amidst.mojangapi.file.service.DownloadService;
+import amidst.mojangapi.file.service.FilenameService;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
 
 /**

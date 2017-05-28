@@ -1,9 +1,9 @@
 package amidst.devtools;
 
 import amidst.devtools.utils.VersionStateRenderer;
-import amidst.mojangapi.file.DownloadService;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
+import amidst.mojangapi.file.service.DownloadService;
 
 public class MinecraftJarDownloadAvailabilityChecker {
 	private VersionStateRenderer renderer = new VersionStateRenderer();

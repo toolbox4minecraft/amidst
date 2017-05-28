@@ -9,8 +9,8 @@ import org.junit.Test;
 import amidst.AmidstVersion;
 import amidst.ResourceLoader;
 import amidst.devtools.settings.DevToolSettings;
+import amidst.mojangapi.file.JsonReader;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.world.biome.Biome;
 

@@ -6,12 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import amidst.clazz.translator.ClassTranslator;
-import amidst.mojangapi.file.DownloadService;
-import amidst.mojangapi.file.FilenameService;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
+import amidst.mojangapi.file.service.DownloadService;
+import amidst.mojangapi.file.service.FilenameService;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterface;

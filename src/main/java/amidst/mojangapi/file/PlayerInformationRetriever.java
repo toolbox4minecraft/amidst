@@ -1,4 +1,4 @@
-package amidst.mojangapi.file.json;
+package amidst.mojangapi.file;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -10,7 +10,6 @@ import javax.imageio.ImageIO;
 
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.player.PlayerJson;
 
 @Immutable
