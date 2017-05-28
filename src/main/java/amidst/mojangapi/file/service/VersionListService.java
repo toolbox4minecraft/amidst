@@ -8,6 +8,7 @@ import amidst.ResourceLoader;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
+import amidst.mojangapi.file.FormatException;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
@@ -47,11 +48,19 @@ public class VersionListService {
 
 	@NotNull
 	public VersionListJson readRemoteVersionList() throws MojangApiParsingException, IOException {
-		return JsonReader.readLocation(REMOTE_VERSION_LIST, VersionListJson.class);
+		try {
+			return JsonReader.readLocation(REMOTE_VERSION_LIST, VersionListJson.class);
+		} catch (FormatException e) {
+			throw new MojangApiParsingException(e);
+		}
 	}
 
 	@NotNull
 	public VersionListJson readLocalVersionListFromResource() throws MojangApiParsingException, IOException {
-		return JsonReader.readLocation(LOCAL_VERSION_LIST, VersionListJson.class);
+		try {
+			return JsonReader.readLocation(LOCAL_VERSION_LIST, VersionListJson.class);
+		} catch (FormatException e) {
+			throw new MojangApiParsingException(e);
+		}
 	}
 }

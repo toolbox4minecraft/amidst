@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
+import amidst.mojangapi.file.FormatException;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.JsonReader;
 import amidst.mojangapi.file.json.player.PlayerJson;
@@ -95,7 +96,7 @@ public class PlayerInformationService {
 				}
 			}
 			return Optional.empty();
-		} catch (MojangApiParsingException e) {
+		} catch (FormatException | MojangApiParsingException e) {
 			return Optional.empty();
 		}
 	}
@@ -125,7 +126,7 @@ public class PlayerInformationService {
 	private Optional<PlayerJson> tryGetPlayerJsonByName(String name) {
 		try {
 			return Optional.of(getPlayerJsonByName(name));
-		} catch (IOException | MojangApiParsingException | NullPointerException e) {
+		} catch (IOException | FormatException | NullPointerException e) {
 			AmidstLogger.warn("unable to load player information by name: " + name);
 			return Optional.empty();
 		}
@@ -135,24 +136,24 @@ public class PlayerInformationService {
 	private Optional<PlayerJson> tryGetPlayerJsonByUUID(String uuid) {
 		try {
 			return Optional.of(getPlayerJsonByUUID(uuid));
-		} catch (IOException | MojangApiParsingException | NullPointerException e) {
+		} catch (IOException | FormatException | NullPointerException e) {
 			AmidstLogger.warn("unable to load player information by uuid: " + uuid);
 			return Optional.empty();
 		}
 	}
 
 	@NotNull
-	private PlayerJson getPlayerJsonByName(String name) throws MojangApiParsingException, IOException {
+	private PlayerJson getPlayerJsonByName(String name) throws FormatException, IOException {
 		return getPlayerJsonByUUID(getUUIDByName(name).getId());
 	}
 
 	@NotNull
-	private PlayerJson getPlayerJsonByUUID(String uuid) throws MojangApiParsingException, IOException {
+	private PlayerJson getPlayerJsonByUUID(String uuid) throws FormatException, IOException {
 		return JsonReader.readLocation(UUID_TO_PROFILE + uuid, PlayerJson.class);
 	}
 
 	@NotNull
-	private SimplePlayerJson getUUIDByName(String name) throws MojangApiParsingException, IOException {
+	private SimplePlayerJson getUUIDByName(String name) throws FormatException, IOException {
 		return JsonReader.readLocation(PLAYERNAME_TO_UUID + name, SimplePlayerJson.class);
 	}
 

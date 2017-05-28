@@ -11,7 +11,7 @@ import com.google.gson.JsonSyntaxException;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.mojangapi.file.MojangApiParsingException;
+import amidst.mojangapi.file.FormatException;
 import amidst.mojangapi.file.URIUtils;
 
 /**
@@ -26,47 +26,47 @@ public enum JsonReader {
 	private static final Gson GSON = new Gson();
 
 	@NotNull
-	public static <T> T readLocation(File location, Class<T> clazz) throws MojangApiParsingException, IOException {
+	public static <T> T readLocation(File location, Class<T> clazz) throws FormatException, IOException {
 		return readReader(URIUtils.newReader(location), clazz);
 	}
 
 	@NotNull
-	public static <T> T readLocation(URL location, Class<T> clazz) throws MojangApiParsingException, IOException {
+	public static <T> T readLocation(URL location, Class<T> clazz) throws FormatException, IOException {
 		return readReader(URIUtils.newReader(location), clazz);
 	}
 
 	@NotNull
-	public static <T> T readLocation(String location, Class<T> clazz) throws MojangApiParsingException, IOException {
+	public static <T> T readLocation(String location, Class<T> clazz) throws FormatException, IOException {
 		return readReader(URIUtils.newReader(location), clazz);
 	}
 
 	@NotNull
-	private static <T> T readReader(Reader reader, Class<T> clazz) throws MojangApiParsingException, IOException {
+	private static <T> T readReader(Reader reader, Class<T> clazz) throws FormatException, IOException {
 		try (Reader theReader = reader) {
 			T result = GSON.fromJson(theReader, clazz);
 			if (result != null) {
 				return result;
 			} else {
-				throw new MojangApiParsingException("result was null");
+				throw new FormatException("result was null");
 			}
 		} catch (JsonSyntaxException e) {
-			throw new MojangApiParsingException(e);
+			throw new FormatException(e);
 		} catch (JsonIOException e) {
 			throw new IOException(e);
 		}
 	}
 
 	@NotNull
-	public static <T> T readString(String string, Class<T> clazz) throws MojangApiParsingException {
+	public static <T> T readString(String string, Class<T> clazz) throws FormatException {
 		try {
 			T result = GSON.fromJson(string, clazz);
 			if (result != null) {
 				return result;
 			} else {
-				throw new MojangApiParsingException("result was null");
+				throw new FormatException("result was null");
 			}
 		} catch (JsonSyntaxException e) {
-			throw new MojangApiParsingException(e);
+			throw new FormatException(e);
 		}
 	}
 }
