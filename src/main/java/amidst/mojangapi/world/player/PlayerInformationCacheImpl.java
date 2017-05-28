@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
+import amidst.mojangapi.file.service.PlayerInformationService;
 
 /**
  * Even though this class is thread-safe, it is possible that the same player
@@ -18,6 +19,7 @@ import amidst.logging.AmidstLogger;
 public class PlayerInformationCacheImpl implements PlayerInformationCache {
 	private final Map<String, PlayerInformation> byUUID = new ConcurrentHashMap<>();
 	private final Map<String, PlayerInformation> byName = new ConcurrentHashMap<>();
+	private final PlayerInformationService playerInformationService = new PlayerInformationService();
 
 	@NotNull
 	@Override
@@ -28,7 +30,7 @@ public class PlayerInformationCacheImpl implements PlayerInformationCache {
 			return result;
 		} else {
 			AmidstLogger.info("requesting player information for uuid: " + cleanUUID);
-			result = PlayerInformation.fromUUID(cleanUUID);
+			result = playerInformationService.fromUUID(cleanUUID);
 			put(result);
 			return result;
 		}
@@ -42,7 +44,7 @@ public class PlayerInformationCacheImpl implements PlayerInformationCache {
 			return result;
 		} else {
 			AmidstLogger.info("requesting player information for name: " + name);
-			result = PlayerInformation.fromName(name);
+			result = playerInformationService.fromName(name);
 			put(result);
 			return result;
 		}

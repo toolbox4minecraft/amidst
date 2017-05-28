@@ -23,7 +23,7 @@ public class Player {
 	}
 
 	public String getPlayerName() {
-		return playerInformation.getNameOrUUID();
+		return playerInformation.getNameOrElseUUID();
 	}
 
 	public WorldIconImage getHead() {
