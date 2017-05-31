@@ -6,8 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import amidst.clazz.translator.ClassTranslator;
+import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.facade.MinecraftInstallation;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.file.service.DownloadService;
@@ -28,12 +30,15 @@ public class GenerateWorldTestData {
 	private final List<String> failed = new LinkedList<>();
 	private final List<String> successful = new LinkedList<>();
 
-	public GenerateWorldTestData(String prefix, String libraries, VersionListJson versionList) {
+	public GenerateWorldTestData(String prefix, String libraries, VersionListJson versionList)
+			throws DotMinecraftDirectoryNotFoundException {
 		this.prefix = prefix;
 		this.libraries = new File(libraries);
 		this.versionList = versionList;
 		this.versions = new File(prefix);
-		this.dotMinecraftDirectory = new DotMinecraftDirectory(null, this.libraries);
+		this.dotMinecraftDirectory = MinecraftInstallation
+				.newCustomMinecraftInstallation(this.libraries, null, null, null)
+				.getDotMinecraftDirectory();
 	}
 
 	public void run() {

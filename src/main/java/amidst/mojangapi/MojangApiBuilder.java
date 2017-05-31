@@ -9,6 +9,7 @@ import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.facade.MinecraftInstallation;
 import amidst.mojangapi.file.service.DotMinecraftDirectoryService;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.WorldBuilder;
@@ -28,17 +29,10 @@ public class MojangApiBuilder {
 	public MojangApi construct()
 			throws DotMinecraftDirectoryNotFoundException,
 			LocalMinecraftInterfaceCreationException {
-		DotMinecraftDirectory dotMinecraftDirectory = dotMinecraftDirectoryService
-				.createDotMinecraftDirectory(parameters.dotMinecraftDirectory, parameters.minecraftLibrariesDirectory);
-		if (dotMinecraftDirectory.isValid()) {
-			AmidstLogger.info(
-					"using '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "', libraries: '"
-							+ dotMinecraftDirectory.getLibraries() + "'");
-		} else {
-			throw new DotMinecraftDirectoryNotFoundException(
-					"invalid '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "', libraries: '"
-							+ dotMinecraftDirectory.getLibraries() + "'");
-		}
+		DotMinecraftDirectory dotMinecraftDirectory = MinecraftInstallation
+				.newLocalMinecraftInstallation(parameters.dotMinecraftDirectory)
+				.getDotMinecraftDirectory();
+		AmidstLogger.info("using '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "'");
 		MojangApi result = new MojangApi(worldBuilder, dotMinecraftDirectory);
 		result.set(null, null, createVersionDirectory());
 		return result;

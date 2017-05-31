@@ -8,8 +8,10 @@ import java.util.List;
 
 import amidst.devtools.utils.RecognisedVersionEnumBuilder;
 import amidst.logging.AmidstLogger;
+import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.facade.MinecraftInstallation;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.file.service.ClassLoaderService;
@@ -27,11 +29,14 @@ public class GenerateRecognisedVersionList {
 	private final List<String> downloadFailed = new LinkedList<>();
 	private final RecognisedVersionEnumBuilder builder = RecognisedVersionEnumBuilder.createPopulated();
 
-	public GenerateRecognisedVersionList(String prefix, String libraries, VersionListJson versionList) {
+	public GenerateRecognisedVersionList(String prefix, String libraries, VersionListJson versionList)
+			throws DotMinecraftDirectoryNotFoundException {
 		this.prefix = prefix;
 		this.versionList = versionList;
 		this.versions = new File(prefix);
-		this.dotMinecraftDirectory = new DotMinecraftDirectory(null, new File(libraries));
+		this.dotMinecraftDirectory = MinecraftInstallation
+				.newCustomMinecraftInstallation(new File(libraries), null, null, null)
+				.getDotMinecraftDirectory();
 	}
 
 	public void run() {

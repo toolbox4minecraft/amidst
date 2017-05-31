@@ -8,6 +8,7 @@ import java.util.List;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
+import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
@@ -26,14 +27,30 @@ public class DotMinecraftDirectoryService {
 	private final FilenameService filenameService = new FilenameService();
 
 	@NotNull
-	public DotMinecraftDirectory createDotMinecraftDirectory(
-			String preferredDotMinecraftDirectory,
-			String preferredLibrariesDirectory) {
-		File dotMinecraftDirectory = findDotMinecraftDirectory(preferredDotMinecraftDirectory);
-		if (preferredLibrariesDirectory != null) {
-			return new DotMinecraftDirectory(dotMinecraftDirectory, new File(preferredLibrariesDirectory));
+	public DotMinecraftDirectory createCustomDotMinecraftDirectory(
+			File libraries,
+			File saves,
+			File versions,
+			File launcherProfilesJson) throws DotMinecraftDirectoryNotFoundException {
+		return validate(
+				DotMinecraftDirectory
+						.newCustom(getMinecraftDirectory(), libraries, saves, versions, launcherProfilesJson));
+	}
+
+	@NotNull
+	public DotMinecraftDirectory createDotMinecraftDirectory(String preferredDotMinecraftDirectory)
+			throws DotMinecraftDirectoryNotFoundException {
+		return validate(new DotMinecraftDirectory(findDotMinecraftDirectory(preferredDotMinecraftDirectory)));
+	}
+
+	@NotNull
+	private DotMinecraftDirectory validate(DotMinecraftDirectory dotMinecraftDirectory)
+			throws DotMinecraftDirectoryNotFoundException {
+		if (dotMinecraftDirectory.isValid()) {
+			return dotMinecraftDirectory;
 		} else {
-			return new DotMinecraftDirectory(dotMinecraftDirectory);
+			throw new DotMinecraftDirectoryNotFoundException(
+					"invalid '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "'");
 		}
 	}
 

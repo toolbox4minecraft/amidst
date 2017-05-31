@@ -14,9 +14,6 @@ public class CommandLineParameters {
 	@Option(name = "-mcpath",                 usage = "location of the '.minecraft' directory.",             metaVar = "<directory>")
 	public volatile String dotMinecraftDirectory;
 
-	@Option(name = "-mclibs",                 usage = "location of the '.minecraft/libraries' directory",    metaVar = "<directory>")
-	public volatile String minecraftLibrariesDirectory;
-	
 	@Option(name = "-mcjar",                  usage = "location of the minecraft jar file",                  metaVar = "<file>",       depends = { "-mcjson" })
 	public volatile String minecraftJarFile;
 	

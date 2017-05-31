@@ -1,11 +1,31 @@
 package amidst.mojangapi.file.directory;
 
 import java.io.File;
+import java.util.Objects;
 
 import amidst.documentation.Immutable;
 
 @Immutable
 public class DotMinecraftDirectory {
+	/**
+	 * Allows to customize all parts of the .minecraft directory, mainly for
+	 * testing and the dev tools. Pass null to use default values.
+	 */
+	public static DotMinecraftDirectory newCustom(
+			File root,
+			File libraries,
+			File saves,
+			File versions,
+			File launcherProfilesJson) {
+		Objects.requireNonNull(root);
+		return new DotMinecraftDirectory(
+				root,
+				libraries != null ? libraries : new File(root, "libraries"),
+				saves != null ? saves : new File(root, "saves"),
+				versions != null ? versions : new File(root, "versions"),
+				launcherProfilesJson != null ? launcherProfilesJson : new File(root, "launcher_profiles.json"));
+	}
+
 	private final File root;
 	private final File libraries;
 	private final File saves;
@@ -20,16 +40,16 @@ public class DotMinecraftDirectory {
 		this.launcherProfilesJson = new File(root, "launcher_profiles.json");
 	}
 
-	public DotMinecraftDirectory(File root, File libraries) {
+	private DotMinecraftDirectory(File root, File libraries, File saves, File versions, File launcherProfilesJson) {
 		this.root = root;
 		this.libraries = libraries;
-		this.saves = new File(root, "saves");
-		this.versions = new File(root, "versions");
-		this.launcherProfilesJson = new File(root, "launcher_profiles.json");
+		this.saves = saves;
+		this.versions = versions;
+		this.launcherProfilesJson = launcherProfilesJson;
 	}
 
 	public boolean isValid() {
-		return root.isDirectory() && libraries.isDirectory() && launcherProfilesJson.isFile();
+		return root.isDirectory() && libraries.isDirectory() && versions.isDirectory() && launcherProfilesJson.isFile();
 	}
 
 	public File getRoot() {
