@@ -1,7 +1,7 @@
 package amidst.devtools;
 
 import java.io.File;
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URLClassLoader;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +16,7 @@ import amidst.mojangapi.file.service.ClassLoaderService;
 import amidst.mojangapi.file.service.DownloadService;
 import amidst.mojangapi.file.service.FilenameService;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.parsing.FormatException;
 
 public class GenerateRecognisedVersionList {
 	private final String prefix;
@@ -50,7 +51,7 @@ public class GenerateRecognisedVersionList {
 		if (new DownloadService().tryDownloadClient(prefix, version)) {
 			try {
 				process(versionId);
-			} catch (ClassNotFoundException | MalformedURLException | NoClassDefFoundError e) {
+			} catch (ClassNotFoundException | NoClassDefFoundError | FormatException | IOException e) {
 				e.printStackTrace();
 				versionsWithError.add(versionId);
 			}
@@ -59,7 +60,7 @@ public class GenerateRecognisedVersionList {
 		}
 	}
 
-	private void process(String versionId) throws MalformedURLException, ClassNotFoundException {
+	private void process(String versionId) throws ClassNotFoundException, FormatException, IOException {
 		AmidstLogger.info("version " + versionId);
 		VersionDirectory versionDirectory = createVersionDirectory(versionId);
 		URLClassLoader classLoader = new ClassLoaderService()

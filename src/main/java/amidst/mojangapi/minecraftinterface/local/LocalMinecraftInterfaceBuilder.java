@@ -1,7 +1,6 @@
 package amidst.mojangapi.minecraftinterface.local;
 
-import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URLClassLoader;
 import java.util.Map;
 
@@ -17,6 +16,7 @@ import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.service.ClassLoaderService;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.parsing.FormatException;
 
 @Immutable
 public class LocalMinecraftInterfaceBuilder {
@@ -45,11 +45,11 @@ public class LocalMinecraftInterfaceBuilder {
 					symbolicClassMap.get(SymbolicNames.CLASS_GEN_OPTIONS_FACTORY),
 					recognisedVersion);
 		} catch (
-				MalformedURLException
-				| ClassNotFoundException
-				| FileNotFoundException
+				ClassNotFoundException
 				| JarFileParsingException
-				| SymbolicClassGraphCreationException e) {
+				| SymbolicClassGraphCreationException
+				| FormatException
+				| IOException e) {
 			throw new LocalMinecraftInterfaceCreationException("unable to create local minecraft interface", e);
 		}
 	}
