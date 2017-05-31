@@ -7,8 +7,7 @@ import amidst.clazz.symbolic.SymbolicObject;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.directory.DotMinecraftDirectory;
-import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.facade.LauncherProfile;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -16,11 +15,9 @@ import amidst.mojangapi.world.WorldType;
 
 @ThreadSafe
 public class LocalMinecraftInterface implements MinecraftInterface {
-	public static LocalMinecraftInterface create(
-			ClassTranslator translator,
-			VersionDirectory versionDirectory,
-			DotMinecraftDirectory dotMinecraftDirectory) throws LocalMinecraftInterfaceCreationException {
-		return new LocalMinecraftInterfaceBuilder(translator).create(versionDirectory, dotMinecraftDirectory);
+	public static LocalMinecraftInterface create(ClassTranslator translator, LauncherProfile launcherProfile)
+			throws LocalMinecraftInterfaceCreationException {
+		return new LocalMinecraftInterfaceBuilder(translator).create(launcherProfile);
 	}
 
 	/**

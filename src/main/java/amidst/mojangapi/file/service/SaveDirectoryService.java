@@ -27,7 +27,7 @@ public class SaveDirectoryService {
 	 * that is also not valid it will throw a FileNotFoundException.
 	 */
 	@NotNull
-	public SaveDirectory from(File file) throws FileNotFoundException {
+	public SaveDirectory newSaveDirectory(File file) throws FileNotFoundException {
 		File currentFile = file;
 		SaveDirectory result = null;
 		if (currentFile == null) {

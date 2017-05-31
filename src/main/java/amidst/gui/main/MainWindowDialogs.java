@@ -13,6 +13,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.file.facade.LauncherProfile;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.export.WorldExporterConfiguration;
@@ -52,7 +53,8 @@ public class MainWindowDialogs {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JFileChooser createSaveGameFileChooser() {
-		JFileChooser result = new JFileChooser(mojangApi.getSaves());
+		JFileChooser result = new JFileChooser(
+				mojangApi.getLauncherProfile().map(LauncherProfile::getSaves).orElse(null));
 		result.setFileFilter(new LevelFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
 		result.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);

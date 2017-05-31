@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,9 +22,7 @@ import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
-import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
-import amidst.mojangapi.file.service.DotMinecraftDirectoryService;
+import amidst.mojangapi.file.facade.UnresolvedLauncherProfile;
 import amidst.threading.WorkerExecutor;
 import net.miginfocom.swing.MigLayout;
 
@@ -113,34 +112,33 @@ public class ProfileSelectWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private LauncherProfilesJson scanAndLoadProfiles() throws MojangApiParsingException, IOException {
+	private List<UnresolvedLauncherProfile> scanAndLoadProfiles() throws MojangApiParsingException, IOException {
 		AmidstLogger.info("Scanning for profiles.");
-		LauncherProfilesJson launcherProfile = new DotMinecraftDirectoryService()
-				.readLauncherProfilesFrom(mojangApi.getDotMinecraftDirectory());
+		List<UnresolvedLauncherProfile> launcherProfiles = mojangApi.getMinecraftInstallation().readLauncherProfiles();
 		AmidstLogger.info("Successfully loaded profile list.");
-		return launcherProfile;
+		return launcherProfiles;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void displayProfiles(LauncherProfilesJson launcherProfile) {
-		createProfileComponentsIfNecessary(launcherProfile);
+	private void displayProfiles(List<UnresolvedLauncherProfile> launcherProfiles) {
+		createProfileComponentsIfNecessary(launcherProfiles);
 		restoreSelection();
 		frame.pack();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void createProfileComponentsIfNecessary(LauncherProfilesJson launcherProfile) {
-		if (launcherProfile.getProfiles().values().isEmpty()) {
+	private void createProfileComponentsIfNecessary(List<UnresolvedLauncherProfile> launcherProfiles) {
+		if (launcherProfiles.isEmpty()) {
 			AmidstLogger.warn("No profiles found in launcher_profiles.json");
 			profileSelectPanel.setEmptyMessage("No profiles found");
 		} else {
-			createProfileComponents(launcherProfile);
+			createProfileComponents(launcherProfiles);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void createProfileComponents(LauncherProfilesJson launcherProfile) {
-		for (LauncherProfileJson profile : launcherProfile.getProfiles().values()) {
+	private void createProfileComponents(List<UnresolvedLauncherProfile> launcherProfiles) {
+		for (UnresolvedLauncherProfile profile : launcherProfiles) {
 			profileSelectPanel.addProfile(new LocalProfileComponent(application, workerExecutor, mojangApi, profile));
 		}
 	}

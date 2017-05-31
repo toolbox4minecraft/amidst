@@ -3,13 +3,14 @@ package amidst.mojangapi;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Optional;
 
 import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.directory.DotMinecraftDirectory;
-import amidst.mojangapi.file.directory.ProfileDirectory;
-import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.facade.LauncherProfile;
+import amidst.mojangapi.file.facade.MinecraftInstallation;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.file.service.SaveDirectoryService;
 import amidst.mojangapi.file.service.VersionListService;
@@ -27,23 +28,26 @@ import amidst.mojangapi.world.WorldType;
 @ThreadSafe
 public class MojangApi {
 	private static final String UNKNOWN_PROFILE_NAME = "unknown";
+	public static final String UNKNOWN_VERSION_ID = "unknown";
 
 	private final WorldBuilder worldBuilder;
-	private final DotMinecraftDirectory dotMinecraftDirectory;
+	private final MinecraftInstallation minecraftInstallation;
 
 	private volatile VersionListJson versionList;
-	private volatile ProfileDirectory profileDirectory;
-	private volatile VersionDirectory versionDirectory;
 	private volatile MinecraftInterface minecraftInterface;
-	private volatile String profileName;
+	private volatile LauncherProfile launcherProfile;
 
-	public MojangApi(WorldBuilder worldBuilder, DotMinecraftDirectory dotMinecraftDirectory) {
+	public MojangApi(WorldBuilder worldBuilder, MinecraftInstallation minecraftInstallation) {
 		this.worldBuilder = worldBuilder;
-		this.dotMinecraftDirectory = dotMinecraftDirectory;
+		this.minecraftInstallation = minecraftInstallation;
 	}
 
-	public DotMinecraftDirectory getDotMinecraftDirectory() {
-		return dotMinecraftDirectory;
+	public MinecraftInstallation getMinecraftInstallation() {
+		return minecraftInstallation;
+	}
+
+	public Optional<LauncherProfile> getLauncherProfile() {
+		return Optional.ofNullable(launcherProfile);
 	}
 
 	@NotNull
@@ -61,15 +65,15 @@ public class MojangApi {
 		return versionList;
 	}
 
-	public void set(String profileName, ProfileDirectory profileDirectory, VersionDirectory versionDirectory)
-			throws LocalMinecraftInterfaceCreationException {
-		this.profileName = profileName;
-		this.profileDirectory = profileDirectory;
-		this.versionDirectory = versionDirectory;
-		if (versionDirectory != null) {
+	public void setLauncherProfile(LauncherProfile launcherProfile) throws LocalMinecraftInterfaceCreationException {
+		this.launcherProfile = launcherProfile;
+		if (launcherProfile != null) {
+			AmidstLogger.info(
+					"using launcher profile. version id: '" + launcherProfile.getVersionId() + "', profile name: '"
+							+ launcherProfile.getProfileName() + "', jar file: '" + launcherProfile.getJar() + "'");
 			try {
 				this.minecraftInterface = LocalMinecraftInterface
-						.create(DefaultClassTranslator.INSTANCE.get(), versionDirectory, dotMinecraftDirectory);
+						.create(DefaultClassTranslator.INSTANCE.get(), launcherProfile);
 			} catch (LocalMinecraftInterfaceCreationException e) {
 				this.minecraftInterface = null;
 				throw e;
@@ -80,24 +84,15 @@ public class MojangApi {
 	}
 
 	public MojangApi createSilentPlayerlessCopy() {
-		MojangApi result = new MojangApi(WorldBuilder.createSilentPlayerless(), dotMinecraftDirectory);
+		MojangApi result = new MojangApi(WorldBuilder.createSilentPlayerless(), minecraftInstallation);
 		try {
-			result.set(profileName, profileDirectory, versionDirectory);
+			result.setLauncherProfile(launcherProfile);
 		} catch (LocalMinecraftInterfaceCreationException e) {
 			// This will not happen normally, because we already successfully
 			// created the same LocalMinecraftInterface once before.
 			throw new RuntimeException("exception while duplicating the MojangApi", e);
 		}
 		return result;
-	}
-
-	public File getSaves() {
-		ProfileDirectory profileDirectory = this.profileDirectory;
-		if (profileDirectory != null) {
-			return profileDirectory.getSaves();
-		} else {
-			return dotMinecraftDirectory.getSaves();
-		}
 	}
 
 	public boolean canCreateWorld() {
@@ -133,19 +128,14 @@ public class MojangApi {
 			MojangApiParsingException {
 		MinecraftInterface minecraftInterface = this.minecraftInterface;
 		if (minecraftInterface != null) {
-			return worldBuilder.fromSaveGame(minecraftInterface, new SaveDirectoryService().from(file));
+			return worldBuilder.fromSaveGame(minecraftInterface, new SaveDirectoryService().newSaveDirectory(file));
 		} else {
 			throw new IllegalStateException("cannot create a world without a minecraft interface");
 		}
 	}
 
 	public String getVersionId() {
-		VersionDirectory versionDirectory = this.versionDirectory;
-		if (versionDirectory != null) {
-			return versionDirectory.getVersionId();
-		} else {
-			return VersionDirectory.UNKNOWN_VERSION_ID;
-		}
+		return getLauncherProfile().map(LauncherProfile::getVersionId).orElse(UNKNOWN_VERSION_ID);
 	}
 
 	public String getRecognisedVersionName() {
@@ -158,11 +148,6 @@ public class MojangApi {
 	}
 
 	public String getProfileName() {
-		String profileName = this.profileName;
-		if (profileName != null) {
-			return profileName;
-		} else {
-			return UNKNOWN_PROFILE_NAME;
-		}
+		return getLauncherProfile().map(LauncherProfile::getProfileName).orElse(UNKNOWN_PROFILE_NAME);
 	}
 }

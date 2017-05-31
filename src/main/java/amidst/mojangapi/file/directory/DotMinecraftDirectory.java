@@ -52,6 +52,10 @@ public class DotMinecraftDirectory {
 		return root.isDirectory() && libraries.isDirectory() && versions.isDirectory() && launcherProfilesJson.isFile();
 	}
 
+	public ProfileDirectory asProfileDirectory() {
+		return new ProfileDirectory(root);
+	}
+
 	public File getRoot() {
 		return root;
 	}

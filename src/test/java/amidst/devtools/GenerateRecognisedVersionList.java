@@ -9,22 +9,17 @@ import java.util.List;
 import amidst.devtools.utils.RecognisedVersionEnumBuilder;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
-import amidst.mojangapi.file.directory.DotMinecraftDirectory;
-import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.facade.MinecraftInstallation;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
-import amidst.mojangapi.file.service.ClassLoaderService;
 import amidst.mojangapi.file.service.DownloadService;
-import amidst.mojangapi.file.service.FilenameService;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.parsing.FormatException;
 
 public class GenerateRecognisedVersionList {
 	private final String prefix;
 	private final VersionListJson versionList;
-	private final File versions;
-	private final DotMinecraftDirectory dotMinecraftDirectory;
+	private final MinecraftInstallation minecraftInstallation;
 	private final List<String> versionsWithError = new LinkedList<>();
 	private final List<String> downloadFailed = new LinkedList<>();
 	private final RecognisedVersionEnumBuilder builder = RecognisedVersionEnumBuilder.createPopulated();
@@ -33,10 +28,8 @@ public class GenerateRecognisedVersionList {
 			throws DotMinecraftDirectoryNotFoundException {
 		this.prefix = prefix;
 		this.versionList = versionList;
-		this.versions = new File(prefix);
-		this.dotMinecraftDirectory = MinecraftInstallation
-				.newCustomMinecraftInstallation(new File(libraries), null, null, null)
-				.getDotMinecraftDirectory();
+		this.minecraftInstallation = MinecraftInstallation
+				.newCustomMinecraftInstallation(new File(libraries), null, new File(prefix), null);
 	}
 
 	public void run() {
@@ -56,7 +49,7 @@ public class GenerateRecognisedVersionList {
 		if (new DownloadService().tryDownloadClient(prefix, version)) {
 			try {
 				process(versionId);
-			} catch (ClassNotFoundException | NoClassDefFoundError | FormatException | IOException e) {
+			} catch (ClassNotFoundException | NoClassDefFoundError | MojangApiParsingException | IOException e) {
 				e.printStackTrace();
 				versionsWithError.add(versionId);
 			}
@@ -65,20 +58,11 @@ public class GenerateRecognisedVersionList {
 		}
 	}
 
-	private void process(String versionId) throws ClassNotFoundException, FormatException, IOException {
+	private void process(String versionId) throws ClassNotFoundException, MojangApiParsingException, IOException {
 		AmidstLogger.info("version " + versionId);
-		VersionDirectory versionDirectory = createVersionDirectory(versionId);
-		URLClassLoader classLoader = new ClassLoaderService()
-				.createClassLoader(versionDirectory, dotMinecraftDirectory);
+		URLClassLoader classLoader = minecraftInstallation.newLauncherProfile(versionId).newClassLoader();
 		String magicString = RecognisedVersion.generateMagicString(classLoader);
 		builder.addLauncherVersionId(versionId, magicString);
-	}
-
-	private VersionDirectory createVersionDirectory(String versionId) {
-		FilenameService filenameService = new FilenameService();
-		File jar = filenameService.getClientJarFile(versions, versionId);
-		File json = filenameService.getClientJsonFile(versions, versionId);
-		return new VersionDirectory(versionId, jar, json);
 	}
 
 	private void print() {

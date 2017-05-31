@@ -12,11 +12,8 @@ import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.directory.DotMinecraftDirectory;
-import amidst.mojangapi.file.directory.VersionDirectory;
-import amidst.mojangapi.file.service.ClassLoaderService;
+import amidst.mojangapi.file.facade.LauncherProfile;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.parsing.FormatException;
 
 @Immutable
 public class LocalMinecraftInterfaceBuilder {
@@ -27,15 +24,13 @@ public class LocalMinecraftInterfaceBuilder {
 	}
 
 	@NotNull
-	public LocalMinecraftInterface create(
-			VersionDirectory versionDirectory,
-			DotMinecraftDirectory dotMinecraftDirectory) throws LocalMinecraftInterfaceCreationException {
+	public LocalMinecraftInterface create(LauncherProfile launcherProfile)
+			throws LocalMinecraftInterfaceCreationException {
 		try {
-			URLClassLoader classLoader = new ClassLoaderService()
-					.createClassLoader(versionDirectory, dotMinecraftDirectory);
+			URLClassLoader classLoader = launcherProfile.newClassLoader();
 			RecognisedVersion recognisedVersion = RecognisedVersion.from(classLoader);
 			Map<String, SymbolicClass> symbolicClassMap = Classes
-					.createSymbolicClassMap(versionDirectory.getJar(), classLoader, translator);
+					.createSymbolicClassMap(launcherProfile.getJar(), classLoader, translator);
 			AmidstLogger.info("Minecraft load complete.");
 			return new LocalMinecraftInterface(
 					symbolicClassMap.get(SymbolicNames.CLASS_INT_CACHE),
@@ -48,7 +43,6 @@ public class LocalMinecraftInterfaceBuilder {
 				ClassNotFoundException
 				| JarFileParsingException
 				| SymbolicClassGraphCreationException
-				| FormatException
 				| IOException e) {
 			throw new LocalMinecraftInterfaceCreationException("unable to create local minecraft interface", e);
 		}

@@ -1,16 +1,14 @@
 package amidst.mojangapi;
 
 import java.io.File;
+import java.io.IOException;
 
 import amidst.CommandLineParameters;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
-import amidst.mojangapi.file.directory.DotMinecraftDirectory;
-import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.facade.MinecraftInstallation;
-import amidst.mojangapi.file.service.DotMinecraftDirectoryService;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.WorldBuilder;
 
@@ -18,7 +16,6 @@ import amidst.mojangapi.world.WorldBuilder;
 public class MojangApiBuilder {
 	private final WorldBuilder worldBuilder;
 	private final CommandLineParameters parameters;
-	private final DotMinecraftDirectoryService dotMinecraftDirectoryService = new DotMinecraftDirectoryService();
 
 	public MojangApiBuilder(WorldBuilder worldBuilder, CommandLineParameters parameters) {
 		this.worldBuilder = worldBuilder;
@@ -29,32 +26,21 @@ public class MojangApiBuilder {
 	public MojangApi construct()
 			throws DotMinecraftDirectoryNotFoundException,
 			LocalMinecraftInterfaceCreationException {
-		DotMinecraftDirectory dotMinecraftDirectory = MinecraftInstallation
-				.newLocalMinecraftInstallation(parameters.dotMinecraftDirectory)
-				.getDotMinecraftDirectory();
-		AmidstLogger.info("using '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "'");
-		MojangApi result = new MojangApi(worldBuilder, dotMinecraftDirectory);
-		result.set(null, null, createVersionDirectory());
-		return result;
-	}
-
-	private VersionDirectory createVersionDirectory() {
+		MinecraftInstallation minecraftInstallation = MinecraftInstallation
+				.newLocalMinecraftInstallation(parameters.dotMinecraftDirectory);
+		MojangApi result = new MojangApi(worldBuilder, minecraftInstallation);
 		if (parameters.minecraftJarFile != null && parameters.minecraftJsonFile != null) {
-			File jar = new File(parameters.minecraftJarFile);
-			File json = new File(parameters.minecraftJsonFile);
-			VersionDirectory result = dotMinecraftDirectoryService
-					.createVersionDirectoryWithUnknownVersionId(jar, json);
-			if (result.isValid()) {
-				AmidstLogger.info(
-						"using minecraft version directory. versionId: '" + result.getVersionId() + "', jar file: '"
-								+ result.getJar() + "', json file: '" + result.getJson() + "'");
-				return result;
-			} else {
-				AmidstLogger.warn(
-						"invalid minecraft version directory. versionId: '" + result.getVersionId() + "', jar file: '"
-								+ result.getJar() + "', json file: '" + result.getJson() + "'");
+			try {
+				result.setLauncherProfile(
+						minecraftInstallation.newLauncherProfile(
+								new File(parameters.minecraftJarFile),
+								new File(parameters.minecraftJsonFile)));
+			} catch (MojangApiParsingException | IOException e) {
+				result.setLauncherProfile(null);
 			}
+		} else {
+			result.setLauncherProfile(null);
 		}
-		return null;
+		return result;
 	}
 }

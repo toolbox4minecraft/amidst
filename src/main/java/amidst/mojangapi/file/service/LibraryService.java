@@ -5,6 +5,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -21,6 +23,14 @@ import amidst.util.OperatingSystemDetector;
 @Immutable
 public class LibraryService {
 	private static final String ACTION_ALLOW = "allow";
+
+	@NotNull
+	public List<URL> getAllClassLoaderUrls(File librariesDirectory, List<LibraryJson> libraries, File versionJarFile)
+			throws MalformedURLException {
+		List<URL> result = new LinkedList<>(getLibraryUrls(librariesDirectory, libraries));
+		result.add(versionJarFile.toURI().toURL());
+		return Collections.unmodifiableList(result);
+	}
 
 	@NotNull
 	public List<URL> getLibraryUrls(File librariesDirectory, List<LibraryJson> libraries) {

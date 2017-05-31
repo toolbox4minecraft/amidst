@@ -101,17 +101,22 @@ public class DotMinecraftDirectoryService {
 			LauncherProfileJson launcherProfileJson,
 			DotMinecraftDirectory dotMinecraftDirectory) throws FileNotFoundException {
 		String gameDir = launcherProfileJson.getGameDir();
-		if (gameDir != null) {
-			ProfileDirectory result = new ProfileDirectory(new File(gameDir));
-			if (result.isValid()) {
-				return result;
-			} else {
-				throw new FileNotFoundException(
-						"cannot find valid profile directory for launcher profile '" + launcherProfileJson.getName()
-								+ "': " + gameDir);
-			}
+		ProfileDirectory result = createProfileDirectory(dotMinecraftDirectory, gameDir);
+		if (result.isValid()) {
+			return result;
 		} else {
-			return new ProfileDirectory(dotMinecraftDirectory.getRoot());
+			throw new FileNotFoundException(
+					"cannot find valid profile directory for launcher profile '" + launcherProfileJson.getName() + "': "
+							+ gameDir);
+		}
+	}
+
+	@NotNull
+	private ProfileDirectory createProfileDirectory(DotMinecraftDirectory dotMinecraftDirectory, String gameDir) {
+		if (gameDir != null) {
+			return new ProfileDirectory(new File(gameDir));
+		} else {
+			return dotMinecraftDirectory.asProfileDirectory();
 		}
 	}
 
@@ -159,15 +164,32 @@ public class DotMinecraftDirectoryService {
 	}
 
 	@NotNull
-	public VersionDirectory createVersionDirectory(DotMinecraftDirectory dotMinecraftDirectory, String versionId) {
-		File versions = dotMinecraftDirectory.getVersions();
-		File jar = filenameService.getClientJarFile(versions, versionId);
-		File json = filenameService.getClientJsonFile(versions, versionId);
-		return new VersionDirectory(versionId, jar, json);
+	public VersionDirectory createValidVersionDirectory(File jar, File json) throws FileNotFoundException {
+		VersionDirectory versionDirectory = new VersionDirectory(jar, json);
+		if (versionDirectory.isValid()) {
+			return versionDirectory;
+		} else {
+			throw new FileNotFoundException(
+					"cannot find valid version directory for jar: '" + jar + "', json: '" + json + "'");
+		}
 	}
 
 	@NotNull
-	public VersionDirectory createVersionDirectoryWithUnknownVersionId(File jar, File json) {
-		return new VersionDirectory(VersionDirectory.UNKNOWN_VERSION_ID, jar, json);
+	public VersionDirectory createValidVersionDirectory(DotMinecraftDirectory dotMinecraftDirectory, String versionId)
+			throws FileNotFoundException {
+		VersionDirectory versionDirectory = createVersionDirectory(dotMinecraftDirectory, versionId);
+		if (versionDirectory.isValid()) {
+			return versionDirectory;
+		} else {
+			throw new FileNotFoundException("cannot find valid version directory for version id '" + versionId + "'");
+		}
+	}
+
+	@NotNull
+	private VersionDirectory createVersionDirectory(DotMinecraftDirectory dotMinecraftDirectory, String versionId) {
+		File versions = dotMinecraftDirectory.getVersions();
+		File jar = filenameService.getClientJarFile(versions, versionId);
+		File json = filenameService.getClientJsonFile(versions, versionId);
+		return new VersionDirectory(jar, json);
 	}
 }

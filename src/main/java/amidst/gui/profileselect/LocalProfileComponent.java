@@ -1,6 +1,6 @@
 package amidst.gui.profileselect;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -11,10 +11,9 @@ import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.file.directory.ProfileDirectory;
-import amidst.mojangapi.file.directory.VersionDirectory;
-import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
-import amidst.mojangapi.file.service.DotMinecraftDirectoryService;
+import amidst.mojangapi.file.MojangApiParsingException;
+import amidst.mojangapi.file.facade.LauncherProfile;
+import amidst.mojangapi.file.facade.UnresolvedLauncherProfile;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.threading.WorkerExecutor;
 
@@ -23,25 +22,24 @@ public class LocalProfileComponent extends ProfileComponent {
 	private final Application application;
 	private final WorkerExecutor workerExecutor;
 	private final MojangApi mojangApi;
-	private final LauncherProfileJson profile;
+	private final UnresolvedLauncherProfile unresolvedProfile;
 
 	private volatile boolean isSearching = false;
 	private volatile boolean failedSearching = false;
 	private volatile boolean isLoading = false;
 	private volatile boolean failedLoading = false;
-	private volatile VersionDirectory versionDirectory;
-	private volatile ProfileDirectory profileDirectory;
+	private volatile LauncherProfile resolvedProfile;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public LocalProfileComponent(
 			Application application,
 			WorkerExecutor workerExecutor,
 			MojangApi mojangApi,
-			LauncherProfileJson profile) {
+			UnresolvedLauncherProfile unresolvedProfile) {
 		this.application = application;
 		this.mojangApi = mojangApi;
 		this.workerExecutor = workerExecutor;
-		this.profile = profile;
+		this.unresolvedProfile = unresolvedProfile;
 		initComponent();
 		initDirectoriesLater();
 	}
@@ -55,16 +53,10 @@ public class LocalProfileComponent extends ProfileComponent {
 
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private boolean tryFind() {
-		DotMinecraftDirectoryService dotMinecraftDirectoryService = new DotMinecraftDirectoryService();
 		try {
-			profileDirectory = dotMinecraftDirectoryService
-					.createValidProfileDirectory(profile, mojangApi.getDotMinecraftDirectory());
-			versionDirectory = dotMinecraftDirectoryService.createValidVersionDirectory(
-					profile,
-					mojangApi.getVersionList(),
-					mojangApi.getDotMinecraftDirectory());
+			resolvedProfile = unresolvedProfile.resolve(mojangApi.getVersionList());
 			return true;
-		} catch (FileNotFoundException e) {
+		} catch (IOException | MojangApiParsingException e) {
 			AmidstLogger.warn(e);
 			return false;
 		}
@@ -103,7 +95,7 @@ public class LocalProfileComponent extends ProfileComponent {
 				return false;
 			}
 
-			mojangApi.set(getProfileName(), profileDirectory, versionDirectory);
+			mojangApi.setLauncherProfile(resolvedProfile);
 			return true;
 		} catch (LocalMinecraftInterfaceCreationException e) {
 			AmidstLogger.error(e);
@@ -155,14 +147,14 @@ public class LocalProfileComponent extends ProfileComponent {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected String getProfileName() {
-		return profile.getName();
+		return unresolvedProfile.getName();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected String getVersionName() {
 		if (isReadyToLoad()) {
-			return versionDirectory.getVersionId();
+			return resolvedProfile.getVersionId();
 		} else {
 			return "";
 		}

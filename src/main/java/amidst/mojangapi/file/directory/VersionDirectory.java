@@ -6,24 +6,16 @@ import amidst.documentation.Immutable;
 
 @Immutable
 public class VersionDirectory {
-	public static final String UNKNOWN_VERSION_ID = "unknown";
-
-	private final String versionId;
 	private final File jar;
 	private final File json;
 
-	public VersionDirectory(String versionId, File jar, File json) {
-		this.versionId = versionId;
+	public VersionDirectory(File jar, File json) {
 		this.jar = jar;
 		this.json = json;
 	}
 
 	public boolean isValid() {
 		return jar.isFile() && json.isFile();
-	}
-
-	public String getVersionId() {
-		return versionId;
 	}
 
 	public File getJar() {
