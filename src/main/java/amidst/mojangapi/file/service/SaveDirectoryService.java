@@ -62,7 +62,7 @@ public class SaveDirectoryService {
 	}
 
 	public LevelDatNbt createLevelDat(SaveDirectory saveDirectory) throws IOException, MojangApiParsingException {
-		return new LevelDatNbt(NBTUtils.readTagFromFile(saveDirectory.getLevelDat()));
+		return LevelDatNbt.from(NBTUtils.readTagFromFile(saveDirectory.getLevelDat()));
 	}
 
 	/**
