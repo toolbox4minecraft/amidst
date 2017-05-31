@@ -1,12 +1,12 @@
 package amidst.mojangapi.file.nbt.player;
 
 import java.io.IOException;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
-import amidst.mojangapi.world.player.PlayerInformationCache;
 
 @Immutable
 public abstract class PlayerNbt {
@@ -25,5 +25,8 @@ public abstract class PlayerNbt {
 
 	public abstract PlayerCoordinates readCoordinates() throws IOException, MojangApiParsingException;
 
-	public abstract Player createPlayer(PlayerInformationCache cache);
+	public abstract <R> R map(
+			Supplier<R> ifIsLevelDat,
+			Function<String, R> ifIsPlayerdata,
+			Function<String, R> ifIsPlayers);
 }

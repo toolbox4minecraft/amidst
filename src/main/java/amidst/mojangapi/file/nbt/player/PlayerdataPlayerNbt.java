@@ -1,15 +1,15 @@
 package amidst.mojangapi.file.nbt.player;
 
 import java.io.IOException;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.file.service.AmidstBackupService;
-import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
-import amidst.mojangapi.world.player.PlayerInformationCache;
 
 @Immutable
 public class PlayerdataPlayerNbt extends PlayerNbt {
@@ -38,7 +38,7 @@ public class PlayerdataPlayerNbt extends PlayerNbt {
 	}
 
 	@Override
-	public Player createPlayer(PlayerInformationCache cache) {
-		return new Player(cache.getByUUID(playerUUID), this);
+	public <R> R map(Supplier<R> ifIsLevelDat, Function<String, R> ifIsPlayerdata, Function<String, R> ifIsPlayers) {
+		return ifIsPlayerdata.apply(playerUUID);
 	}
 }

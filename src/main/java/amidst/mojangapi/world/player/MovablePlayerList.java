@@ -77,7 +77,10 @@ public class MovablePlayerList implements Iterable<Player> {
 
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private void loadPlayer(ConcurrentLinkedQueue<Player> players, PlayerNbt playerNbt) {
-		Player player = playerNbt.createPlayer(playerInformationCache);
+		Player player = playerNbt.map(
+				() -> new Player(PlayerInformation.theSingleplayerPlayer(), playerNbt),
+				playerUUID -> new Player(playerInformationCache.getByUUID(playerUUID), playerNbt),
+				playerName -> new Player(playerInformationCache.getByName(playerName), playerNbt));
 		if (player.tryLoadLocation()) {
 			players.offer(player);
 		}
