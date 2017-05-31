@@ -7,7 +7,6 @@ import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.version.VersionJson;
@@ -22,12 +21,10 @@ public class ClassLoaderService {
 	public URLClassLoader createClassLoader(
 			VersionDirectory versionDirectory,
 			DotMinecraftDirectory dotMinecraftDirectory) throws FormatException, IOException {
-		AmidstLogger.info("Loading libraries.");
 		VersionJson versionJson = JsonReader.readLocation(versionDirectory.getJson(), VersionJson.class);
 		List<URL> libraries = libraryService
 				.getLibraryUrls(dotMinecraftDirectory.getLibraries(), versionJson.getLibraries());
 		libraries.add(versionDirectory.getJar().toURI().toURL());
-		AmidstLogger.info("Finished loading libraries.");
 		return new URLClassLoader(libraries.toArray(new URL[libraries.size()]));
 	}
 }

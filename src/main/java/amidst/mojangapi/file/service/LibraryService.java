@@ -4,7 +4,10 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import amidst.documentation.Immutable;
@@ -22,35 +25,34 @@ public class LibraryService {
 	@NotNull
 	public List<URL> getLibraryUrls(File librariesDirectory, List<LibraryJson> libraries) {
 		List<URL> result = new ArrayList<>();
+		AmidstLogger.info("Loading libraries.");
 		for (LibraryJson library : libraries) {
-			File libraryFile = getLibraryFile(librariesDirectory, library);
-			if (libraryFile != null) {
-				try {
-					result.add(libraryFile.toURI().toURL());
-					AmidstLogger.info("Found library: " + libraryFile);
-				} catch (MalformedURLException e) {
-					AmidstLogger.warn(e, "Unable to convert library file to URL: " + libraryFile);
+			if (isLibraryActive(library)) {
+				Optional<File> libraryFile = getLibraryFile(librariesDirectory, library);
+				if (libraryFile.isPresent()) {
+					try {
+						URL libraryUrl = libraryFile.get().toURI().toURL();
+						result.add(libraryUrl);
+						AmidstLogger.info("Found library " + library.getName() + " at " + libraryUrl);
+					} catch (MalformedURLException e) {
+						AmidstLogger.warn(e, "Skipping erroneous library " + library.getName());
+					}
+				} else {
+					AmidstLogger.warn("Skipping missing library " + library.getName());
 				}
 			} else {
-				AmidstLogger.info("Skipping library: " + library.getName());
+				AmidstLogger.info("Skipping inactive library " + library.getName());
 			}
 		}
+		AmidstLogger.info("Finished loading libraries.");
 		return result;
 	}
 
-	private File getLibraryFile(File librariesDirectory, LibraryJson library) {
-		try {
-			if (isLibraryActive(library, getOs(), OperatingSystemDetector.getVersion())) {
-				return getLibraryFile(getLibrarySearchPath(librariesDirectory, library.getName()));
-			} else {
-				return null;
-			}
-		} catch (NullPointerException e) {
-			return null;
-		}
+	private boolean isLibraryActive(LibraryJson library) {
+		return isLibraryActive(getOsName(), OperatingSystemDetector.getVersion(), library.getRules());
 	}
 
-	private String getOs() {
+	private String getOsName() {
 		if (OperatingSystemDetector.isWindows()) {
 			return "windows";
 		} else if (OperatingSystemDetector.isMac()) {
@@ -60,8 +62,48 @@ public class LibraryService {
 		}
 	}
 
-	private File getLibrarySearchPath(File librariesDirectory, String libraryName) {
-		String result = librariesDirectory.getAbsolutePath() + "/";
+	/**
+	 * Note, that multiple rules might be applicable. We take the last
+	 * applicable rule. However, this might be wrong so we need to take the most
+	 * specific rule? For now this works fine.
+	 */
+	private boolean isLibraryActive(String osName, String osVersion, List<LibraryRuleJson> rules) {
+		if (rules.isEmpty()) {
+			return true;
+		}
+		boolean result = false;
+		for (LibraryRuleJson rule : rules) {
+			if (isApplicable(osName, osVersion, rule)) {
+				result = isAllowed(rule);
+			}
+		}
+		return result;
+	}
+
+	private boolean isApplicable(String osName, String osVersion, LibraryRuleJson rule) {
+		LibraryRuleOsJson osRule = rule.getOs();
+		return osRule == null || Objects.equals(osRule.getName(), osName)
+				&& (osRule.getVersion() == null || Pattern.matches(osRule.getVersion(), osVersion));
+	}
+
+	private boolean isAllowed(LibraryRuleJson rule) {
+		return Objects.equals(rule.getAction(), ACTION_ALLOW);
+	}
+
+	private Optional<File> getLibraryFile(File librariesDirectory, LibraryJson library) {
+		return Arrays
+				.stream(getLibrarySearchFiles(librariesDirectory, library))
+				.filter(f -> hasFileExtension(f, "jar"))
+				.findFirst()
+				.filter(File::exists);
+	}
+
+	private File[] getLibrarySearchFiles(File librariesDirectory, LibraryJson library) {
+		return getLibrarySearchFiles(getLibrarySearchPath(librariesDirectory.getAbsolutePath(), library.getName()));
+	}
+
+	private File getLibrarySearchPath(String librariesDirectory, String libraryName) {
+		String result = librariesDirectory + "/";
 		String[] split = libraryName.split(":");
 		split[0] = split[0].replace('.', '/');
 		for (String element : split) {
@@ -70,71 +112,24 @@ public class LibraryService {
 		return new File(result);
 	}
 
-	private File getLibraryFile(File librarySearchPath) {
-		if (librarySearchPath.exists()) {
-			File result = getFirstFileWithExtension(librarySearchPath.listFiles(), "jar");
-			if (result != null && result.exists()) {
-				return result;
-			} else {
-				AmidstLogger.warn(
-						"Attempted to search for file at path: " + librarySearchPath + " but found nothing. Skipping.");
-				return null;
-			}
+	private File[] getLibrarySearchFiles(File librarySearchPath) {
+		if (librarySearchPath.isDirectory()) {
+			return librarySearchPath.listFiles();
 		} else {
-			AmidstLogger.warn("Failed attempt to load library at: " + librarySearchPath);
-			return null;
+			return new File[0];
 		}
 	}
 
-	private File getFirstFileWithExtension(File[] files, String extension) {
-		for (File libraryFile : files) {
-			if (getFileExtension(libraryFile.getName()).equals(extension)) {
-				return libraryFile;
-			}
-		}
-		return null;
+	private boolean hasFileExtension(File file, String extension) {
+		return getFileExtension(file.getName()).equals(extension);
 	}
 
 	private String getFileExtension(String fileName) {
-		String extension = "";
-		int q = fileName.lastIndexOf('.');
-		if (q > 0) {
-			extension = fileName.substring(q + 1);
+		int index = fileName.lastIndexOf('.');
+		if (index > 0) {
+			return fileName.substring(index + 1);
+		} else {
+			return "";
 		}
-		return extension;
-	}
-
-	/**
-	 * Note, that multiple rules might be applicable. We take the last
-	 * applicable rule. However, this might be wrong so we need to take the most
-	 * specific rule? For now this works fine.
-	 */
-	private boolean isLibraryActive(LibraryJson libraryJson, String os, String version) {
-		List<LibraryRuleJson> rules = libraryJson.getRules();
-		if (rules.isEmpty()) {
-			return true;
-		}
-		boolean result = false;
-		for (LibraryRuleJson rule : rules) {
-			if (isApplicable(os, version, rule)) {
-				result = isAllowed(rule);
-			}
-		}
-		return result;
-	}
-
-	private boolean isApplicable(String os, String version, LibraryRuleJson rule) {
-		LibraryRuleOsJson osRule = rule.getOs();
-		return osRule == null || isApplicable(os, version, osRule);
-	}
-
-	private boolean isApplicable(String os, String version, LibraryRuleOsJson osRule) {
-		String nameInJson = osRule.getName();
-		String versionInJson = osRule.getVersion();
-		return nameInJson.equals(os) && (versionInJson == null || Pattern.matches(versionInJson, version));
-	}
-
-	private boolean isAllowed(LibraryRuleJson rule) {
-		return rule.getAction().equals(ACTION_ALLOW);
 	}
 }
