@@ -22,15 +22,24 @@ import amidst.parsing.FormatException;
 
 @ThreadSafe
 public class MojangApi {
-	private final WorldBuilder worldBuilder;
+	public static MojangApi from(
+			MinecraftInstallation minecraftInstallation,
+			Optional<LauncherProfile> preferredLauncherProfile,
+			WorldBuilder worldBuilder) throws LocalMinecraftInterfaceCreationException {
+		MojangApi result = new MojangApi(minecraftInstallation, worldBuilder);
+		result.setLauncherProfile(preferredLauncherProfile.orElse(null));
+		return result;
+	}
+
 	private final MinecraftInstallation minecraftInstallation;
+	private final WorldBuilder worldBuilder;
 
 	private volatile MinecraftInterface minecraftInterface;
 	private volatile LauncherProfile launcherProfile;
 
-	public MojangApi(WorldBuilder worldBuilder, MinecraftInstallation minecraftInstallation) {
-		this.worldBuilder = worldBuilder;
+	public MojangApi(MinecraftInstallation minecraftInstallation, WorldBuilder worldBuilder) {
 		this.minecraftInstallation = minecraftInstallation;
+		this.worldBuilder = worldBuilder;
 	}
 
 	public MinecraftInstallation getMinecraftInstallation() {
@@ -60,7 +69,7 @@ public class MojangApi {
 	}
 
 	public MojangApi createSilentPlayerlessCopy() {
-		MojangApi result = new MojangApi(WorldBuilder.createSilentPlayerless(), minecraftInstallation);
+		MojangApi result = new MojangApi(minecraftInstallation, WorldBuilder.createSilentPlayerless());
 		try {
 			result.setLauncherProfile(launcherProfile);
 		} catch (LocalMinecraftInterfaceCreationException e) {

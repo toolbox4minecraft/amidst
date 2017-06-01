@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import amidst.documentation.Immutable;
@@ -91,5 +92,24 @@ public class MinecraftInstallation {
 		SaveDirectoryService saveDirectoryService = new SaveDirectoryService();
 		SaveDirectory saveDirectory = saveDirectoryService.newSaveDirectory(location);
 		return new SaveGame(saveDirectory, saveDirectoryService.readLevelDat(saveDirectory));
+	}
+
+	public Optional<LauncherProfile> tryReadLauncherProfile(
+			String preferredMinecraftJarFile,
+			String preferredMinecraftJsonFile) {
+		if (preferredMinecraftJarFile != null && preferredMinecraftJsonFile != null) {
+			try {
+				return Optional.of(
+						newLauncherProfile(new File(preferredMinecraftJarFile), new File(preferredMinecraftJsonFile)));
+			} catch (FormatException | IOException e) {
+				AmidstLogger.error(
+						e,
+						"cannot read launcher profile. preferredMinecraftJarFile: '" + preferredMinecraftJarFile
+								+ "', preferredMinecraftJsonFile: '" + "'");
+				return Optional.empty();
+			}
+		} else {
+			return Optional.empty();
+		}
 	}
 }

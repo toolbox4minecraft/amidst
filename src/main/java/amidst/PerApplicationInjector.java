@@ -1,5 +1,7 @@
 package amidst;
 
+import java.util.Optional;
+
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -17,8 +19,9 @@ import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.main.viewer.Zoom;
 import amidst.gui.profileselect.ProfileSelectWindow;
 import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.MojangApiBuilder;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
+import amidst.mojangapi.file.LauncherProfile;
+import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.PlayerInformationCache;
 import amidst.mojangapi.file.PlayerInformationProvider;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
@@ -34,6 +37,8 @@ public class PerApplicationInjector {
 	private final AmidstSettings settings;
 	private final PlayerInformationProvider playerInformationProvider;
 	private final SeedHistoryLogger seedHistoryLogger;
+	private final MinecraftInstallation minecraftInstallation;
+	private final Optional<LauncherProfile> preferredLauncherProfile;
 	private final WorldBuilder worldBuilder;
 	private final MojangApi mojangApi;
 	private final BiomeProfileDirectory biomeProfileDirectory;
@@ -52,8 +57,12 @@ public class PerApplicationInjector {
 		this.settings = settings;
 		this.playerInformationProvider = new PlayerInformationCache();
 		this.seedHistoryLogger = SeedHistoryLogger.from(parameters.seedHistoryFile);
+		this.minecraftInstallation = MinecraftInstallation
+				.newLocalMinecraftInstallation(parameters.dotMinecraftDirectory);
+		this.preferredLauncherProfile = minecraftInstallation
+				.tryReadLauncherProfile(parameters.minecraftJarFile, parameters.minecraftJsonFile);
 		this.worldBuilder = new WorldBuilder(playerInformationProvider, seedHistoryLogger);
-		this.mojangApi = new MojangApiBuilder(worldBuilder, parameters).construct();
+		this.mojangApi = MojangApi.from(minecraftInstallation, preferredLauncherProfile, worldBuilder);
 		this.biomeProfileDirectory = BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);
 		this.threadMaster = new ThreadMaster();
 		this.layerBuilder = new LayerBuilder();
