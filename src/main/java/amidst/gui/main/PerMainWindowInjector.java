@@ -19,6 +19,7 @@ import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcher;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.world.World;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.threading.ThreadMaster;
@@ -27,9 +28,16 @@ import amidst.threading.ThreadMaster;
 public class PerMainWindowInjector {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private static String createVersionString(AmidstMetaData metadata, MojangApi mojangApi) {
-		return metadata.getVersion().createLongVersionString() + " - Selected Profile: " + mojangApi.getProfileName()
-				+ " - Minecraft Version " + mojangApi.getVersionId() + " (recognised: "
-				+ mojangApi.getRecognisedVersionName() + ")";
+		return new StringBuilder()
+				.append(metadata.getVersion().createLongVersionString())
+				.append(" - Selected Profile: ")
+				.append(mojangApi.getLauncherProfile().map(LauncherProfile::getProfileName).orElse("unknown"))
+				.append(" - Minecraft Version ")
+				.append(mojangApi.getLauncherProfile().map(LauncherProfile::getVersionId).orElse("unknown"))
+				.append(" (recognised: ")
+				.append(mojangApi.getRecognisedVersionName())
+				.append(")")
+				.toString();
 	}
 
 	private final Factory2<World, Actions, ViewerFacade> viewerFacadeFactory;

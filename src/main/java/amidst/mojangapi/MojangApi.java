@@ -22,9 +22,6 @@ import amidst.parsing.FormatException;
 
 @ThreadSafe
 public class MojangApi {
-	private static final String UNKNOWN_PROFILE_NAME = "unknown";
-	public static final String UNKNOWN_VERSION_ID = "unknown";
-
 	private final WorldBuilder worldBuilder;
 	private final MinecraftInstallation minecraftInstallation;
 
@@ -112,20 +109,11 @@ public class MojangApi {
 		}
 	}
 
-	public String getVersionId() {
-		return getLauncherProfile().map(LauncherProfile::getVersionId).orElse(UNKNOWN_VERSION_ID);
-	}
-
 	public String getRecognisedVersionName() {
-		MinecraftInterface minecraftInterface = this.minecraftInterface;
-		if (minecraftInterface != null) {
-			return minecraftInterface.getRecognisedVersion().getName();
-		} else {
-			return RecognisedVersion.UNKNOWN.getName();
-		}
-	}
-
-	public String getProfileName() {
-		return getLauncherProfile().map(LauncherProfile::getProfileName).orElse(UNKNOWN_PROFILE_NAME);
+		return Optional
+				.ofNullable(this.minecraftInterface)
+				.map(MinecraftInterface::getRecognisedVersion)
+				.map(RecognisedVersion::getName)
+				.orElse(RecognisedVersion.UNKNOWN.getName());
 	}
 }
