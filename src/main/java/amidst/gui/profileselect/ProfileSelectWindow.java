@@ -23,6 +23,7 @@ import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.LauncherProfileRunner;
 import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.UnresolvedLauncherProfile;
+import amidst.mojangapi.file.VersionListProvider;
 import amidst.parsing.FormatException;
 import amidst.threading.WorkerExecutor;
 import net.miginfocom.swing.MigLayout;
@@ -34,6 +35,7 @@ public class ProfileSelectWindow {
 	private final Application application;
 	private final AmidstMetaData metadata;
 	private final WorkerExecutor workerExecutor;
+	private final VersionListProvider versionListProvider;
 	private final MinecraftInstallation minecraftInstallation;
 	private final LauncherProfileRunner launcherProfileRunner;
 	private final AmidstSettings settings;
@@ -46,12 +48,14 @@ public class ProfileSelectWindow {
 			Application application,
 			AmidstMetaData metadata,
 			WorkerExecutor workerExecutor,
+			VersionListProvider versionListProvider,
 			MinecraftInstallation minecraftInstallation,
 			LauncherProfileRunner launcherProfileRunner,
 			AmidstSettings settings) {
 		this.application = application;
 		this.metadata = metadata;
 		this.workerExecutor = workerExecutor;
+		this.versionListProvider = versionListProvider;
 		this.minecraftInstallation = minecraftInstallation;
 		this.launcherProfileRunner = launcherProfileRunner;
 		this.settings = settings;
@@ -137,14 +141,21 @@ public class ProfileSelectWindow {
 			profileSelectPanel.setEmptyMessage("No profiles found");
 		} else {
 			createProfileComponents(launcherProfiles);
+			versionListProvider.onDownloadRemoteFinished(profileSelectPanel::resolveAllLater);
+			profileSelectPanel.resolveAllLater();
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createProfileComponents(List<UnresolvedLauncherProfile> launcherProfiles) {
 		for (UnresolvedLauncherProfile profile : launcherProfiles) {
-			profileSelectPanel
-					.addProfile(new LocalProfileComponent(application, workerExecutor, launcherProfileRunner, profile));
+			profileSelectPanel.addProfile(
+					new LocalProfileComponent(
+							application,
+							workerExecutor,
+							versionListProvider,
+							launcherProfileRunner,
+							profile));
 		}
 	}
 

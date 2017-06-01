@@ -1,5 +1,6 @@
 package amidst;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import amidst.documentation.AmidstThread;
@@ -25,9 +26,11 @@ import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.PlayerInformationCache;
 import amidst.mojangapi.file.PlayerInformationProvider;
+import amidst.mojangapi.file.VersionListProvider;
 import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
+import amidst.parsing.FormatException;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.threading.ThreadMaster;
 
@@ -43,6 +46,7 @@ public class PerApplicationInjector {
 	private final LauncherProfileRunner launcherProfileRunner;
 	private final BiomeProfileDirectory biomeProfileDirectory;
 	private final ThreadMaster threadMaster;
+	private final VersionListProvider versionListProvider;
 	private final LayerBuilder layerBuilder;
 	private final Zoom zoom;
 	private final FragmentManager fragmentManager;
@@ -51,7 +55,9 @@ public class PerApplicationInjector {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public PerApplicationInjector(CommandLineParameters parameters, AmidstMetaData metadata, AmidstSettings settings)
-			throws DotMinecraftDirectoryNotFoundException {
+			throws DotMinecraftDirectoryNotFoundException,
+			FormatException,
+			IOException {
 		this.metadata = metadata;
 		this.settings = settings;
 		this.playerInformationProvider = new PlayerInformationCache();
@@ -64,6 +70,8 @@ public class PerApplicationInjector {
 		this.launcherProfileRunner = new LauncherProfileRunner(worldBuilder);
 		this.biomeProfileDirectory = BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);
 		this.threadMaster = new ThreadMaster();
+		this.versionListProvider = VersionListProvider
+				.createLocalAndStartDownloadingRemote(threadMaster.getWorkerExecutor());
 		this.layerBuilder = new LayerBuilder();
 		this.zoom = new Zoom(settings.maxZoom);
 		this.fragmentManager = new FragmentManager(layerBuilder.getConstructors(), layerBuilder.getNumberOfLayers());
@@ -107,6 +115,7 @@ public class PerApplicationInjector {
 				application,
 				metadata,
 				threadMaster.getWorkerExecutor(),
+				versionListProvider,
 				minecraftInstallation,
 				launcherProfileRunner,
 				settings);

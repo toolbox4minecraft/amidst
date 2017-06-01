@@ -24,6 +24,7 @@ import amidst.threading.WorkerExecutor;
 public class LocalProfileComponent extends ProfileComponent {
 	private final Application application;
 	private final WorkerExecutor workerExecutor;
+	private final VersionListProvider versionListProvider;
 	private final LauncherProfileRunner launcherProfileRunner;
 	private final UnresolvedLauncherProfile unresolvedProfile;
 
@@ -37,38 +38,41 @@ public class LocalProfileComponent extends ProfileComponent {
 	public LocalProfileComponent(
 			Application application,
 			WorkerExecutor workerExecutor,
+			VersionListProvider versionListProvider,
 			LauncherProfileRunner launcherProfileRunner,
 			UnresolvedLauncherProfile unresolvedProfile) {
 		this.application = application;
 		this.workerExecutor = workerExecutor;
+		this.versionListProvider = versionListProvider;
 		this.launcherProfileRunner = launcherProfileRunner;
 		this.unresolvedProfile = unresolvedProfile;
 		initComponent();
-		resolveLater();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void resolveLater() {
+	@Override
+	public void resolveLater() {
+		resolvedProfile = null;
 		isResolving = true;
 		repaintComponent();
 		workerExecutor.run(this::tryResolve, this::resolveFinished);
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private boolean tryResolve() {
+	private Optional<LauncherProfile> tryResolve() {
 		try {
-			resolvedProfile = unresolvedProfile.resolve(VersionListProvider.getRemoteOrLocalVersionList());
-			return true;
+			return Optional.of(unresolvedProfile.resolve(versionListProvider.getRemoteOrElseLocal()));
 		} catch (FormatException | IOException e) {
 			AmidstLogger.warn(e);
-			return false;
+			return Optional.empty();
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void resolveFinished(boolean isSuccessful) {
+	private void resolveFinished(Optional<LauncherProfile> launcherProfile) {
 		isResolving = false;
-		failedResolving = !isSuccessful;
+		failedResolving = !launcherProfile.isPresent();
+		resolvedProfile = launcherProfile.orElse(null);
 		repaintComponent();
 	}
 
@@ -143,7 +147,7 @@ public class LocalProfileComponent extends ProfileComponent {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected boolean isReadyToLoad() {
-		return !isResolving && !failedResolving;
+		return resolvedProfile != null;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -155,7 +159,7 @@ public class LocalProfileComponent extends ProfileComponent {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected String getVersionName() {
-		if (isReadyToLoad()) {
+		if (resolvedProfile != null) {
 			return resolvedProfile.getVersionId();
 		} else {
 			return "";

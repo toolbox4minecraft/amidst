@@ -229,4 +229,7 @@ public abstract class ProfileComponent {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected abstract String getVersionName();
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public abstract void resolveLater();
 }
