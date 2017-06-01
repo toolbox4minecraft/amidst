@@ -9,7 +9,6 @@ import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.file.json.version.VersionJson;
-import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.mojangapi.file.service.DotMinecraftDirectoryService;
 import amidst.parsing.FormatException;
 import amidst.parsing.json.JsonReader;
@@ -30,7 +29,7 @@ public class UnresolvedLauncherProfile {
 		return launcherProfileJson.getName();
 	}
 
-	public LauncherProfile resolve(VersionListJson versionList) throws MojangApiParsingException, IOException {
+	public LauncherProfile resolve(VersionList versionList) throws MojangApiParsingException, IOException {
 		DotMinecraftDirectoryService dotMinecraftDirectoryService = new DotMinecraftDirectoryService();
 		ProfileDirectory profileDirectory = dotMinecraftDirectoryService
 				.createValidProfileDirectory(launcherProfileJson, dotMinecraftDirectory);

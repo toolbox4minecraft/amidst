@@ -12,18 +12,17 @@ import java.nio.file.StandardCopyOption;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.URIUtils;
-import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
 
 @Immutable
 public class DownloadService {
 	private final FilenameService filenameService = new FilenameService();
 
-	public boolean hasServer(VersionListEntryJson version) {
-		return exists(filenameService.getRemoteServerJar(version.getId()));
+	public boolean hasServer(String versionId) {
+		return exists(filenameService.getRemoteServerJar(versionId));
 	}
 
-	public boolean hasClient(VersionListEntryJson version) {
-		return exists(filenameService.getRemoteClientJar(version.getId()));
+	public boolean hasClient(String versionId) {
+		return exists(filenameService.getRemoteClientJar(versionId));
 	}
 
 	private static boolean exists(String location) {
@@ -36,39 +35,33 @@ public class DownloadService {
 		}
 	}
 
-	public boolean tryDownloadServer(String prefix, VersionListEntryJson version) {
+	public boolean tryDownloadServer(String prefix, String versionId) {
 		try {
-			downloadServer(prefix, version);
+			downloadServer(prefix, versionId);
 			return true;
 		} catch (IOException e) {
-			AmidstLogger.warn(e, "unable to download server: " + version.getId());
+			AmidstLogger.warn(e, "unable to download server: " + versionId);
 		}
 		return false;
 	}
 
-	public boolean tryDownloadClient(String prefix, VersionListEntryJson version) {
+	public boolean tryDownloadClient(String prefix, String versionId) {
 		try {
-			downloadClient(prefix, version);
+			downloadClient(prefix, versionId);
 			return true;
 		} catch (IOException e) {
-			AmidstLogger.warn(e, "unable to download client: " + version.getId());
+			AmidstLogger.warn(e, "unable to download client: " + versionId);
 		}
 		return false;
 	}
 
-	public void downloadServer(String prefix, VersionListEntryJson version) throws IOException {
-		download(
-				filenameService.getRemoteServerJar(version.getId()),
-				filenameService.getServerJar(prefix, version.getId()));
+	public void downloadServer(String prefix, String versionId) throws IOException {
+		download(filenameService.getRemoteServerJar(versionId), filenameService.getServerJar(prefix, versionId));
 	}
 
-	public void downloadClient(String prefix, VersionListEntryJson version) throws IOException {
-		download(
-				filenameService.getRemoteClientJar(version.getId()),
-				filenameService.getClientJar(prefix, version.getId()));
-		download(
-				filenameService.getRemoteClientJson(version.getId()),
-				filenameService.getClientJson(prefix, version.getId()));
+	public void downloadClient(String prefix, String versionId) throws IOException {
+		download(filenameService.getRemoteClientJar(versionId), filenameService.getClientJar(prefix, versionId));
+		download(filenameService.getRemoteClientJson(versionId), filenameService.getClientJson(prefix, versionId));
 	}
 
 	private void download(String from, String to) throws IOException {

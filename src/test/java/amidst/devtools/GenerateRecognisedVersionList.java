@@ -11,20 +11,19 @@ import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.facade.MinecraftInstallation;
-import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
-import amidst.mojangapi.file.json.versionlist.VersionListJson;
-import amidst.mojangapi.file.service.DownloadService;
+import amidst.mojangapi.file.facade.Version;
+import amidst.mojangapi.file.facade.VersionList;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 public class GenerateRecognisedVersionList {
 	private final String prefix;
-	private final VersionListJson versionList;
+	private final VersionList versionList;
 	private final MinecraftInstallation minecraftInstallation;
 	private final List<String> versionsWithError = new LinkedList<>();
 	private final List<String> downloadFailed = new LinkedList<>();
 	private final RecognisedVersionEnumBuilder builder = RecognisedVersionEnumBuilder.createPopulated();
 
-	public GenerateRecognisedVersionList(String prefix, String libraries, VersionListJson versionList)
+	public GenerateRecognisedVersionList(String prefix, String libraries, VersionList versionList)
 			throws DotMinecraftDirectoryNotFoundException {
 		this.prefix = prefix;
 		this.versionList = versionList;
@@ -38,23 +37,22 @@ public class GenerateRecognisedVersionList {
 	}
 
 	private void populate() {
-		for (VersionListEntryJson version : versionList.getVersions()) {
+		for (Version version : versionList.getVersions()) {
 			process(version);
 		}
 		builder.calculateMaxLength();
 	}
 
-	private void process(VersionListEntryJson version) {
-		String versionId = version.getId();
-		if (new DownloadService().tryDownloadClient(prefix, version)) {
+	private void process(Version version) {
+		if (version.tryDownloadClient(prefix)) {
 			try {
-				process(versionId);
+				process(version.getId());
 			} catch (ClassNotFoundException | NoClassDefFoundError | MojangApiParsingException | IOException e) {
 				e.printStackTrace();
-				versionsWithError.add(versionId);
+				versionsWithError.add(version.getId());
 			}
 		} else {
-			downloadFailed.add(versionId);
+			downloadFailed.add(version.getId());
 		}
 	}
 

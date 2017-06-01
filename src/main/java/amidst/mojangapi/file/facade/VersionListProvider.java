@@ -6,32 +6,27 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.json.versionlist.VersionListJson;
-import amidst.mojangapi.file.service.VersionListService;
 
 @ThreadSafe
 public class VersionListProvider {
 	public static VersionListProvider create() throws MojangApiParsingException, IOException {
-		VersionListService versionListService = new VersionListService();
-		return new VersionListProvider(versionListService, versionListService.readLocalVersionListFromResource());
+		return new VersionListProvider(VersionList.newLocalVersionList());
 	}
 
-	private final VersionListService versionListService;
-	private final VersionListJson local;
-	private volatile VersionListJson remote;
+	private final VersionList local;
+	private volatile VersionList remote;
 
-	public VersionListProvider(VersionListService versionListService, VersionListJson local) {
-		this.versionListService = versionListService;
+	public VersionListProvider(VersionList local) {
 		this.local = local;
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
 	public void startDownload() throws MojangApiParsingException, IOException {
-		remote = versionListService.readRemoteVersionList();
+		remote = VersionList.newRemoteVersionList();
 	}
 
-	public VersionListJson getRemoteOrElseLocal() {
-		VersionListJson remote = this.remote;
+	public VersionList getRemoteOrElseLocal() {
+		VersionList remote = this.remote;
 		if (remote != null) {
 			return remote;
 		} else {

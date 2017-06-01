@@ -11,8 +11,7 @@ import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.facade.LauncherProfile;
 import amidst.mojangapi.file.facade.MinecraftInstallation;
-import amidst.mojangapi.file.json.versionlist.VersionListJson;
-import amidst.mojangapi.file.service.VersionListService;
+import amidst.mojangapi.file.facade.VersionList;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -32,7 +31,7 @@ public class MojangApi {
 	private final WorldBuilder worldBuilder;
 	private final MinecraftInstallation minecraftInstallation;
 
-	private volatile VersionListJson versionList;
+	private volatile VersionList versionList;
 	private volatile MinecraftInterface minecraftInterface;
 	private volatile LauncherProfile launcherProfile;
 
@@ -50,13 +49,13 @@ public class MojangApi {
 	}
 
 	@NotNull
-	public VersionListJson getVersionList() throws FileNotFoundException {
-		VersionListJson versionList = this.versionList;
+	public VersionList getVersionList() throws FileNotFoundException {
+		VersionList versionList = this.versionList;
 		if (versionList == null) {
 			synchronized (this) {
 				versionList = this.versionList;
 				if (versionList == null) {
-					versionList = new VersionListService().readRemoteOrLocalVersionList();
+					versionList = VersionList.newRemoteOrLocalVersionList();
 					this.versionList = versionList;
 				}
 			}

@@ -13,11 +13,11 @@ import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
+import amidst.mojangapi.file.facade.Version;
+import amidst.mojangapi.file.facade.VersionList;
 import amidst.mojangapi.file.json.ReleaseType;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
-import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
-import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.parsing.FormatException;
 import amidst.parsing.json.JsonReader;
 import amidst.util.OperatingSystemDetector;
@@ -123,7 +123,7 @@ public class DotMinecraftDirectoryService {
 	@NotNull
 	public VersionDirectory createValidVersionDirectory(
 			LauncherProfileJson launcherProfileJson,
-			VersionListJson versionList,
+			VersionList versionList,
 			DotMinecraftDirectory dotMinecraftDirectory) throws FileNotFoundException {
 		String lastVersionId = launcherProfileJson.getLastVersionId();
 		if (lastVersionId != null) {
@@ -150,9 +150,9 @@ public class DotMinecraftDirectoryService {
 
 	private VersionDirectory tryFindFirstValidVersionDirectory(
 			List<ReleaseType> allowedReleaseTypes,
-			VersionListJson versionList,
+			VersionList versionList,
 			DotMinecraftDirectory dotMinecraftDirectory) {
-		for (VersionListEntryJson version : versionList.getVersions()) {
+		for (Version version : versionList.getVersions()) {
 			if (allowedReleaseTypes.contains(version.getType())) {
 				VersionDirectory versionDirectory = createVersionDirectory(dotMinecraftDirectory, version.getId());
 				if (versionDirectory.isValid()) {

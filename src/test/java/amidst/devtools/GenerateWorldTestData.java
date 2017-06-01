@@ -10,9 +10,8 @@ import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.facade.LauncherProfile;
 import amidst.mojangapi.file.facade.MinecraftInstallation;
-import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
-import amidst.mojangapi.file.json.versionlist.VersionListJson;
-import amidst.mojangapi.file.service.DownloadService;
+import amidst.mojangapi.file.facade.Version;
+import amidst.mojangapi.file.facade.VersionList;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterface;
@@ -22,12 +21,12 @@ import amidst.mojangapi.world.testworld.TestWorldDeclaration;
 
 public class GenerateWorldTestData {
 	private final String prefix;
-	private final VersionListJson versionList;
+	private final VersionList versionList;
 	private final MinecraftInstallation minecraftInstallation;
 	private final List<String> failed = new LinkedList<>();
 	private final List<String> successful = new LinkedList<>();
 
-	public GenerateWorldTestData(String prefix, String libraries, VersionListJson versionList)
+	public GenerateWorldTestData(String prefix, String libraries, VersionList versionList)
 			throws DotMinecraftDirectoryNotFoundException {
 		this.prefix = prefix;
 		this.versionList = versionList;
@@ -36,7 +35,7 @@ public class GenerateWorldTestData {
 	}
 
 	public void run() {
-		for (VersionListEntryJson version : versionList.getVersions()) {
+		for (Version version : versionList.getVersions()) {
 			for (TestWorldDeclaration declaration : TestWorldDeclaration.values()) {
 				if (declaration.getRecognisedVersion().getName().equals(version.getId())) {
 					generate(declaration, version);
@@ -47,24 +46,23 @@ public class GenerateWorldTestData {
 		print("============== Failed ==============", failed);
 	}
 
-	private void generate(TestWorldDeclaration declaration, VersionListEntryJson version) {
-		String versionId = version.getId();
-		if (new DownloadService().tryDownloadClient(prefix, version)) {
+	private void generate(TestWorldDeclaration declaration, Version version) {
+		if (version.tryDownloadClient(prefix)) {
 			try {
 				ClassTranslator translator = DefaultClassTranslator.INSTANCE.get();
-				LauncherProfile launcherProfile = minecraftInstallation.newLauncherProfile(versionId);
+				LauncherProfile launcherProfile = minecraftInstallation.newLauncherProfile(version.getId());
 				TestWorldCache.createAndPut(declaration, LocalMinecraftInterface.create(translator, launcherProfile));
-				successful.add(versionId);
+				successful.add(version.getId());
 			} catch (
 					LocalMinecraftInterfaceCreationException
 					| MinecraftInterfaceException
 					| IOException
 					| MojangApiParsingException e) {
 				e.printStackTrace();
-				failed.add(versionId);
+				failed.add(version.getId());
 			}
 		} else {
-			failed.add(versionId);
+			failed.add(version.getId());
 		}
 	}
 

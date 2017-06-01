@@ -1,23 +1,21 @@
 package amidst.devtools;
 
 import amidst.devtools.utils.VersionStateRenderer;
-import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
-import amidst.mojangapi.file.json.versionlist.VersionListJson;
-import amidst.mojangapi.file.service.DownloadService;
+import amidst.mojangapi.file.facade.Version;
+import amidst.mojangapi.file.facade.VersionList;
 
 public class MinecraftJarDownloadAvailabilityChecker {
 	private VersionStateRenderer renderer = new VersionStateRenderer();
-	private VersionListJson versionList;
+	private VersionList versionList;
 
-	public MinecraftJarDownloadAvailabilityChecker(VersionListJson versionList) {
+	public MinecraftJarDownloadAvailabilityChecker(VersionList versionList) {
 		this.versionList = versionList;
 	}
 
 	public void run() {
-		DownloadService downloadService = new DownloadService();
-		for (VersionListEntryJson version : versionList.getVersions()) {
-			boolean hasServer = downloadService.hasServer(version);
-			boolean hasClient = downloadService.hasClient(version);
+		for (Version version : versionList.getVersions()) {
+			boolean hasServer = version.hasServer();
+			boolean hasClient = version.hasClient();
 			System.out.println(renderer.render(version, hasServer, hasClient));
 		}
 	}

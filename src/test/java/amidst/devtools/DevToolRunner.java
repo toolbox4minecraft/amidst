@@ -10,8 +10,7 @@ import amidst.AmidstVersion;
 import amidst.ResourceLoader;
 import amidst.devtools.settings.DevToolSettings;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.json.versionlist.VersionListJson;
-import amidst.mojangapi.file.service.VersionListService;
+import amidst.mojangapi.file.facade.VersionList;
 import amidst.mojangapi.world.biome.Biome;
 
 /**
@@ -62,8 +61,8 @@ public class DevToolRunner {
 		new GenerateBiomeColorImages(Biome.allBiomes(), new File(biomeColorImagesDirectory())).run();
 	}
 
-	private VersionListJson versionList() throws IOException, MojangApiParsingException {
-		return new VersionListService().readRemoteVersionList();
+	private VersionList versionList() throws IOException, MojangApiParsingException {
+		return VersionList.newRemoteVersionList();
 	}
 
 	private String librariesDirectory() {
