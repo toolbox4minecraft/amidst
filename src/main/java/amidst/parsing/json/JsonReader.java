@@ -11,8 +11,8 @@ import com.google.gson.JsonSyntaxException;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.mojangapi.file.URIUtils;
 import amidst.parsing.FormatException;
+import amidst.parsing.URIUtils;
 
 @Immutable
 public enum JsonReader {

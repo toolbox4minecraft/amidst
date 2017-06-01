@@ -1,4 +1,4 @@
-package amidst.mojangapi.file;
+package amidst.parsing;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

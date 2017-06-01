@@ -11,7 +11,7 @@ import java.nio.file.StandardCopyOption;
 
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.URIUtils;
+import amidst.parsing.URIUtils;
 
 @Immutable
 public class DownloadService {
