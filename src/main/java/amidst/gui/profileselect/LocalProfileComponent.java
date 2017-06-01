@@ -11,9 +11,9 @@ import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.facade.LauncherProfile;
-import amidst.mojangapi.file.facade.UnresolvedLauncherProfile;
+import amidst.mojangapi.file.UnresolvedLauncherProfile;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.threading.WorkerExecutor;
 

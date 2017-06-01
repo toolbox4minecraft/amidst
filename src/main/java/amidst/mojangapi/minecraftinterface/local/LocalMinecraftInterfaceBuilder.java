@@ -12,7 +12,7 @@ import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.facade.LauncherProfile;
+import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 @Immutable

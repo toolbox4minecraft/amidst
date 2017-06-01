@@ -1,4 +1,4 @@
-package amidst.mojangapi.file.facade;
+package amidst.mojangapi.file;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

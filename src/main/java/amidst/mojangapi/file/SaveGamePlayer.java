@@ -1,4 +1,4 @@
-package amidst.mojangapi.file.facade;
+package amidst.mojangapi.file;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.directory.SaveDirectory;

@@ -11,8 +11,8 @@ import amidst.clazz.Classes;
 import amidst.clazz.real.JarFileParsingException;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.translator.ClassTranslator;
-import amidst.mojangapi.file.facade.Version;
-import amidst.mojangapi.file.facade.VersionList;
+import amidst.mojangapi.file.Version;
+import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
 
 /**

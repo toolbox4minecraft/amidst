@@ -22,7 +22,7 @@ import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.facade.UnresolvedLauncherProfile;
+import amidst.mojangapi.file.UnresolvedLauncherProfile;
 import amidst.threading.WorkerExecutor;
 import net.miginfocom.swing.MigLayout;
 

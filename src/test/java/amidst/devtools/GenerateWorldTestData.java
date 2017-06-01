@@ -7,11 +7,11 @@ import java.util.List;
 
 import amidst.clazz.translator.ClassTranslator;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
+import amidst.mojangapi.file.LauncherProfile;
+import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.facade.LauncherProfile;
-import amidst.mojangapi.file.facade.MinecraftInstallation;
-import amidst.mojangapi.file.facade.Version;
-import amidst.mojangapi.file.facade.VersionList;
+import amidst.mojangapi.file.Version;
+import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterface;

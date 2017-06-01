@@ -7,7 +7,7 @@ import amidst.clazz.symbolic.SymbolicObject;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.facade.LauncherProfile;
+import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;

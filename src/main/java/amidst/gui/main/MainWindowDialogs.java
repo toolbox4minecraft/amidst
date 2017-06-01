@@ -13,7 +13,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.file.facade.LauncherProfile;
+import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.export.WorldExporterConfiguration;

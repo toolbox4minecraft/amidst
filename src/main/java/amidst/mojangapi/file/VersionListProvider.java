@@ -1,11 +1,10 @@
-package amidst.mojangapi.file.facade;
+package amidst.mojangapi.file;
 
 import java.io.IOException;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
-import amidst.mojangapi.file.MojangApiParsingException;
 
 @ThreadSafe
 public class VersionListProvider {

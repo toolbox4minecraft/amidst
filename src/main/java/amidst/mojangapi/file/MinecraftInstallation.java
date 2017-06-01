@@ -1,4 +1,4 @@
-package amidst.mojangapi.file.facade;
+package amidst.mojangapi.file;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;

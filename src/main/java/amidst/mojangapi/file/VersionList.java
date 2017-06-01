@@ -1,4 +1,4 @@
-package amidst.mojangapi.file.facade;
+package amidst.mojangapi.file;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import amidst.documentation.Immutable;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.service.VersionListService;
 
 @Immutable

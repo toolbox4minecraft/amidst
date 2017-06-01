@@ -10,7 +10,7 @@ import amidst.AmidstVersion;
 import amidst.ResourceLoader;
 import amidst.devtools.settings.DevToolSettings;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.facade.VersionList;
+import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.world.biome.Biome;
 
 /**

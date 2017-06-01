@@ -2,7 +2,7 @@ package amidst.mojangapi.world.player;
 
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.facade.SaveGamePlayer;
+import amidst.mojangapi.file.SaveGamePlayer;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIconImage;

@@ -7,9 +7,9 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.facade.PlayerInformationProvider;
-import amidst.mojangapi.file.facade.SaveGame;
-import amidst.mojangapi.file.facade.SaveGamePlayer;
+import amidst.mojangapi.file.PlayerInformationProvider;
+import amidst.mojangapi.file.SaveGame;
+import amidst.mojangapi.file.SaveGamePlayer;
 import amidst.threading.WorkerExecutor;
 
 @ThreadSafe

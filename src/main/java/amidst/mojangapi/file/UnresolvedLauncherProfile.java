@@ -1,9 +1,8 @@
-package amidst.mojangapi.file.facade;
+package amidst.mojangapi.file;
 
 import java.io.IOException;
 
 import amidst.documentation.Immutable;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;

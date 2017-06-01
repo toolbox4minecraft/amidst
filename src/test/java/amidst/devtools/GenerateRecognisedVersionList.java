@@ -9,10 +9,10 @@ import java.util.List;
 import amidst.devtools.utils.RecognisedVersionEnumBuilder;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
+import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.facade.MinecraftInstallation;
-import amidst.mojangapi.file.facade.Version;
-import amidst.mojangapi.file.facade.VersionList;
+import amidst.mojangapi.file.Version;
+import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 public class GenerateRecognisedVersionList {

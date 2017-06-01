@@ -6,8 +6,8 @@ import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.mojangapi.file.facade.SaveGame;
-import amidst.mojangapi.file.facade.SaveGamePlayer;
+import amidst.mojangapi.file.SaveGame;
+import amidst.mojangapi.file.SaveGamePlayer;
 
 @Immutable
 public enum WorldPlayerType {

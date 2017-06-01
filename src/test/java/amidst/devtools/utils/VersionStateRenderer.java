@@ -1,6 +1,6 @@
 package amidst.devtools.utils;
 
-import amidst.mojangapi.file.facade.Version;
+import amidst.mojangapi.file.Version;
 
 public class VersionStateRenderer {
 	public String render(Version version, boolean hasServer, boolean hasClient) {

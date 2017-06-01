@@ -3,10 +3,10 @@ package amidst.mojangapi.world;
 import java.io.IOException;
 
 import amidst.documentation.Immutable;
+import amidst.mojangapi.file.ImmutablePlayerInformationProvider;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.facade.ImmutablePlayerInformationProvider;
-import amidst.mojangapi.file.facade.PlayerInformationProvider;
-import amidst.mojangapi.file.facade.SaveGame;
+import amidst.mojangapi.file.PlayerInformationProvider;
+import amidst.mojangapi.file.SaveGame;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;

@@ -7,8 +7,8 @@ import amidst.CommandLineParameters;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
+import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.facade.MinecraftInstallation;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.WorldBuilder;
 
