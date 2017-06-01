@@ -1,16 +1,13 @@
 package amidst.mojangapi;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 
-import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.MinecraftInstallation;
-import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -31,7 +28,6 @@ public class MojangApi {
 	private final WorldBuilder worldBuilder;
 	private final MinecraftInstallation minecraftInstallation;
 
-	private volatile VersionList versionList;
 	private volatile MinecraftInterface minecraftInterface;
 	private volatile LauncherProfile launcherProfile;
 
@@ -46,21 +42,6 @@ public class MojangApi {
 
 	public Optional<LauncherProfile> getLauncherProfile() {
 		return Optional.ofNullable(launcherProfile);
-	}
-
-	@NotNull
-	public VersionList getVersionList() throws FileNotFoundException {
-		VersionList versionList = this.versionList;
-		if (versionList == null) {
-			synchronized (this) {
-				versionList = this.versionList;
-				if (versionList == null) {
-					versionList = VersionList.newRemoteOrLocalVersionList();
-					this.versionList = versionList;
-				}
-			}
-		}
-		return versionList;
 	}
 
 	public void setLauncherProfile(LauncherProfile launcherProfile) throws LocalMinecraftInterfaceCreationException {

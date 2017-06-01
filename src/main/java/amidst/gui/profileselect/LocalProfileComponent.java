@@ -13,6 +13,7 @@ import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.UnresolvedLauncherProfile;
+import amidst.mojangapi.file.VersionListProvider;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.parsing.FormatException;
 import amidst.threading.WorkerExecutor;
@@ -54,7 +55,7 @@ public class LocalProfileComponent extends ProfileComponent {
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private boolean tryFind() {
 		try {
-			resolvedProfile = unresolvedProfile.resolve(mojangApi.getVersionList());
+			resolvedProfile = unresolvedProfile.resolve(VersionListProvider.getRemoteOrLocalVersionList());
 			return true;
 		} catch (FormatException | IOException e) {
 			AmidstLogger.warn(e);
