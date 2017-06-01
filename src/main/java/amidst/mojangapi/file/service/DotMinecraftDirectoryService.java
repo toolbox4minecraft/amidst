@@ -3,7 +3,10 @@ package amidst.mojangapi.file.service;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
@@ -186,5 +189,24 @@ public class DotMinecraftDirectoryService {
 		File jar = filenameService.getClientJarFile(versions, versionId);
 		File json = filenameService.getClientJsonFile(versions, versionId);
 		return new VersionDirectory(jar, json);
+	}
+
+	public List<VersionDirectory> findInstalledValidVersionDirectories(DotMinecraftDirectory dotMinecraftDirectory) {
+		return listFiles(dotMinecraftDirectory.getVersions())
+				.stream()
+				.filter(File::isDirectory)
+				.map(File::getName)
+				.map(id -> createVersionDirectory(dotMinecraftDirectory, id))
+				.filter(VersionDirectory::isValid)
+				.collect(Collectors.toList());
+	}
+
+	private List<File> listFiles(File file) {
+		File[] files = file.listFiles();
+		if (files != null) {
+			return Arrays.asList(files);
+		} else {
+			return Collections.emptyList();
+		}
 	}
 }

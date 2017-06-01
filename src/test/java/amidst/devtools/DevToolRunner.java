@@ -9,6 +9,7 @@ import org.junit.Test;
 import amidst.AmidstVersion;
 import amidst.ResourceLoader;
 import amidst.devtools.settings.DevToolSettings;
+import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.parsing.FormatException;
@@ -19,6 +20,12 @@ import amidst.parsing.FormatException;
  * ignored when creating a commit, so they will be ignored by travis ci.
  */
 public class DevToolRunner {
+	@Ignore
+	@Test
+	public void generateInstalledVersionsList() throws FormatException, IOException {
+		new GenerateInstalledVersionsList(MinecraftInstallation.newLocalMinecraftInstallation()).run();
+	}
+
 	@Ignore
 	@Test
 	public void generateRecognisedVersionList() throws FormatException, IOException {

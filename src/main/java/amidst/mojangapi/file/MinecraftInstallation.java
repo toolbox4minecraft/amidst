@@ -2,6 +2,7 @@ package amidst.mojangapi.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,10 @@ public class MinecraftInstallation {
 		return new MinecraftInstallation(dotMinecraftDirectory);
 	}
 
+	public static MinecraftInstallation newLocalMinecraftInstallation() throws DotMinecraftDirectoryNotFoundException {
+		return newLocalMinecraftInstallation(null);
+	}
+
 	public static MinecraftInstallation newLocalMinecraftInstallation(String preferredDotMinecraftDirectory)
 			throws DotMinecraftDirectoryNotFoundException {
 		DotMinecraftDirectory dotMinecraftDirectory = new DotMinecraftDirectoryService()
@@ -42,6 +47,15 @@ public class MinecraftInstallation {
 
 	public MinecraftInstallation(DotMinecraftDirectory dotMinecraftDirectory) {
 		this.dotMinecraftDirectory = dotMinecraftDirectory;
+	}
+
+	public List<LauncherProfile> readInstalledVersionsAsLauncherProfiles() throws FormatException, IOException {
+		List<LauncherProfile> result = new LinkedList<>();
+		for (VersionDirectory versionDirectory : dotMinecraftDirectoryService
+				.findInstalledValidVersionDirectories(dotMinecraftDirectory)) {
+			result.add(newLauncherProfile(versionDirectory));
+		}
+		return result;
 	}
 
 	public List<UnresolvedLauncherProfile> readLauncherProfiles() throws FormatException, IOException {
