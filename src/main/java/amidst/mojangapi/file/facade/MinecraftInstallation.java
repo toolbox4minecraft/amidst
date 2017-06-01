@@ -46,11 +46,6 @@ public class MinecraftInstallation {
 		this.dotMinecraftDirectory = dotMinecraftDirectory;
 	}
 
-	@Deprecated
-	public DotMinecraftDirectory getDotMinecraftDirectory() {
-		return dotMinecraftDirectory;
-	}
-
 	public List<UnresolvedLauncherProfile> readLauncherProfiles() throws MojangApiParsingException, IOException {
 		return dotMinecraftDirectoryService
 				.readLauncherProfilesFrom(dotMinecraftDirectory)
