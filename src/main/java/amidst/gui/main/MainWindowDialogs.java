@@ -12,8 +12,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstMessageBox;
-import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.file.LauncherProfile;
+import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.export.WorldExporterConfiguration;
@@ -22,13 +21,13 @@ import amidst.mojangapi.world.player.WorldPlayerType;
 @NotThreadSafe
 public class MainWindowDialogs {
 	private final AmidstSettings settings;
-	private final MojangApi mojangApi;
+	private final RunningLauncherProfile runningLauncherProfile;
 	private final JFrame frame;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public MainWindowDialogs(AmidstSettings settings, MojangApi mojangApi, JFrame frame) {
+	public MainWindowDialogs(AmidstSettings settings, RunningLauncherProfile runningLauncherProfile, JFrame frame) {
 		this.settings = settings;
-		this.mojangApi = mojangApi;
+		this.runningLauncherProfile = runningLauncherProfile;
 		this.frame = frame;
 	}
 
@@ -53,8 +52,7 @@ public class MainWindowDialogs {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JFileChooser createSaveGameFileChooser() {
-		JFileChooser result = new JFileChooser(
-				mojangApi.getLauncherProfile().map(LauncherProfile::getSaves).orElse(null));
+		JFileChooser result = new JFileChooser(runningLauncherProfile.getLauncherProfile().getSaves());
 		result.setFileFilter(new LevelFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
 		result.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);

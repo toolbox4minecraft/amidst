@@ -18,8 +18,7 @@ import amidst.gui.main.menu.AmidstMenuBuilder;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcher;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
-import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.file.LauncherProfile;
+import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.world.World;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
@@ -28,15 +27,15 @@ import amidst.threading.ThreadMaster;
 @NotThreadSafe
 public class PerMainWindowInjector {
 	@CalledOnlyBy(AmidstThread.EDT)
-	private static String createVersionString(AmidstMetaData metadata, MojangApi mojangApi) {
+	private static String createVersionString(AmidstMetaData metadata, RunningLauncherProfile runningLauncherProfile) {
 		return new StringBuilder()
 				.append(metadata.getVersion().createLongVersionString())
 				.append(" - Selected Profile: ")
-				.append(mojangApi.getLauncherProfile().map(LauncherProfile::getProfileName).orElse("unknown"))
+				.append(runningLauncherProfile.getLauncherProfile().getProfileName())
 				.append(" - Minecraft Version ")
-				.append(mojangApi.getLauncherProfile().map(LauncherProfile::getVersionId).orElse("unknown"))
+				.append(runningLauncherProfile.getLauncherProfile().getVersionId())
 				.append(" (recognised: ")
-				.append(mojangApi.getRecognisedVersionName())
+				.append(runningLauncherProfile.getRecognisedVersion().getName())
 				.append(")")
 				.toString();
 	}
@@ -60,19 +59,19 @@ public class PerMainWindowInjector {
 			AmidstMetaData metadata,
 			AmidstSettings settings,
 			MinecraftInstallation minecraftInstallation,
-			MojangApi mojangApi,
+			RunningLauncherProfile runningLauncherProfile,
 			BiomeProfileDirectory biomeProfileDirectory,
 			Factory2<World, Actions, ViewerFacade> viewerFacadeFactory,
 			ThreadMaster threadMaster) {
 		this.viewerFacadeFactory = viewerFacadeFactory;
-		this.versionString = createVersionString(metadata, mojangApi);
+		this.versionString = createVersionString(metadata, runningLauncherProfile);
 		this.frame = new JFrame();
 		this.contentPane = frame.getContentPane();
 		this.viewerFacadeReference = new AtomicReference<>();
-		this.dialogs = new MainWindowDialogs(settings, mojangApi, frame);
+		this.dialogs = new MainWindowDialogs(settings, runningLauncherProfile, frame);
 		this.worldSwitcher = new WorldSwitcher(
 				minecraftInstallation,
-				mojangApi,
+				runningLauncherProfile,
 				this::createViewerFacade,
 				threadMaster,
 				frame,
@@ -81,7 +80,10 @@ public class PerMainWindowInjector {
 				dialogs,
 				this::getMenuBar);
 		if (FeatureToggles.SEED_SEARCH) {
-			this.seedSearcher = new SeedSearcher(dialogs, mojangApi, threadMaster.getWorkerExecutor());
+			this.seedSearcher = new SeedSearcher(
+					dialogs,
+					runningLauncherProfile.createSilentPlayerlessCopy(),
+					threadMaster.getWorkerExecutor());
 			this.seedSearcherWindow = new SeedSearcherWindow(metadata, dialogs, worldSwitcher, seedSearcher);
 		} else {
 			this.seedSearcher = null;

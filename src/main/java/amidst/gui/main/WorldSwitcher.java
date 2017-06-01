@@ -16,7 +16,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.World;
@@ -30,7 +30,7 @@ import amidst.threading.ThreadMaster;
 @NotThreadSafe
 public class WorldSwitcher {
 	private final MinecraftInstallation minecraftInstallation;
-	private final MojangApi mojangApi;
+	private final RunningLauncherProfile runningLauncherProfile;
 	private final Factory1<World, ViewerFacade> viewerFacadeFactory;
 	private final ThreadMaster threadMaster;
 	private final JFrame frame;
@@ -42,7 +42,7 @@ public class WorldSwitcher {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldSwitcher(
 			MinecraftInstallation minecraftInstallation,
-			MojangApi mojangApi,
+			RunningLauncherProfile runningLauncherProfile,
 			Factory1<World, ViewerFacade> viewerFacadeFactory,
 			ThreadMaster threadMaster,
 			JFrame frame,
@@ -51,7 +51,7 @@ public class WorldSwitcher {
 			MainWindowDialogs dialogs,
 			Supplier<AmidstMenu> menuBarSupplier) {
 		this.minecraftInstallation = minecraftInstallation;
-		this.mojangApi = mojangApi;
+		this.runningLauncherProfile = runningLauncherProfile;
 		this.viewerFacadeFactory = viewerFacadeFactory;
 		this.threadMaster = threadMaster;
 		this.frame = frame;
@@ -64,8 +64,8 @@ public class WorldSwitcher {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayWorld(WorldSeed worldSeed, WorldType worldType) {
 		try {
-			setWorld(mojangApi.createWorldFromSeed(worldSeed, worldType));
-		} catch (IllegalStateException | MinecraftInterfaceException e) {
+			setWorld(runningLauncherProfile.createWorldFromSeed(worldSeed, worldType));
+		} catch (MinecraftInterfaceException e) {
 			AmidstLogger.warn(e);
 			dialogs.displayError(e);
 		}
@@ -74,8 +74,8 @@ public class WorldSwitcher {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayWorld(File file) {
 		try {
-			setWorld(mojangApi.createWorldFromSaveGame(minecraftInstallation.newSaveGame(file)));
-		} catch (IllegalStateException | MinecraftInterfaceException | IOException | FormatException e) {
+			setWorld(runningLauncherProfile.createWorldFromSaveGame(minecraftInstallation.newSaveGame(file)));
+		} catch (MinecraftInterfaceException | IOException | FormatException e) {
 			AmidstLogger.warn(e);
 			dialogs.displayError(e);
 		}

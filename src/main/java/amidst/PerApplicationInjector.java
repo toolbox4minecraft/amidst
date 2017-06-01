@@ -18,13 +18,13 @@ import amidst.gui.main.viewer.PerViewerFacadeInjector;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.main.viewer.Zoom;
 import amidst.gui.profileselect.ProfileSelectWindow;
-import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.LauncherProfileRunner;
+import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.PlayerInformationCache;
 import amidst.mojangapi.file.PlayerInformationProvider;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
@@ -40,7 +40,7 @@ public class PerApplicationInjector {
 	private final MinecraftInstallation minecraftInstallation;
 	private final Optional<LauncherProfile> preferredLauncherProfile;
 	private final WorldBuilder worldBuilder;
-	private final MojangApi mojangApi;
+	private final LauncherProfileRunner launcherProfileRunner;
 	private final BiomeProfileDirectory biomeProfileDirectory;
 	private final ThreadMaster threadMaster;
 	private final LayerBuilder layerBuilder;
@@ -51,8 +51,7 @@ public class PerApplicationInjector {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public PerApplicationInjector(CommandLineParameters parameters, AmidstMetaData metadata, AmidstSettings settings)
-			throws DotMinecraftDirectoryNotFoundException,
-			LocalMinecraftInterfaceCreationException {
+			throws DotMinecraftDirectoryNotFoundException {
 		this.metadata = metadata;
 		this.settings = settings;
 		this.playerInformationProvider = new PlayerInformationCache();
@@ -62,7 +61,7 @@ public class PerApplicationInjector {
 		this.preferredLauncherProfile = minecraftInstallation
 				.tryReadLauncherProfile(parameters.minecraftJarFile, parameters.minecraftJsonFile);
 		this.worldBuilder = new WorldBuilder(playerInformationProvider, seedHistoryLogger);
-		this.mojangApi = MojangApi.from(preferredLauncherProfile, worldBuilder);
+		this.launcherProfileRunner = new LauncherProfileRunner(worldBuilder);
 		this.biomeProfileDirectory = BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);
 		this.threadMaster = new ThreadMaster();
 		this.layerBuilder = new LayerBuilder();
@@ -70,7 +69,8 @@ public class PerApplicationInjector {
 		this.fragmentManager = new FragmentManager(layerBuilder.getConstructors(), layerBuilder.getNumberOfLayers());
 		this.biomeSelection = new BiomeSelection();
 		this.application = new Application(
-				mojangApi,
+				preferredLauncherProfile,
+				launcherProfileRunner,
 				this::createNoisyUpdatePrompt,
 				this::createSilentUpdatePrompt,
 				this::createMainWindow,
@@ -89,13 +89,13 @@ public class PerApplicationInjector {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private MainWindow createMainWindow() {
+	private MainWindow createMainWindow(RunningLauncherProfile runningLauncherProfile) {
 		return new PerMainWindowInjector(
 				application,
 				metadata,
 				settings,
 				minecraftInstallation,
-				mojangApi,
+				runningLauncherProfile,
 				biomeProfileDirectory,
 				this::createViewerFacade,
 				threadMaster).getMainWindow();
@@ -108,7 +108,7 @@ public class PerApplicationInjector {
 				metadata,
 				threadMaster.getWorkerExecutor(),
 				minecraftInstallation,
-				mojangApi,
+				launcherProfileRunner,
 				settings);
 	}
 

@@ -20,7 +20,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
-import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.LauncherProfileRunner;
 import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.UnresolvedLauncherProfile;
 import amidst.parsing.FormatException;
@@ -35,7 +35,7 @@ public class ProfileSelectWindow {
 	private final AmidstMetaData metadata;
 	private final WorkerExecutor workerExecutor;
 	private final MinecraftInstallation minecraftInstallation;
-	private final MojangApi mojangApi;
+	private final LauncherProfileRunner launcherProfileRunner;
 	private final AmidstSettings settings;
 
 	private final JFrame frame;
@@ -47,13 +47,13 @@ public class ProfileSelectWindow {
 			AmidstMetaData metadata,
 			WorkerExecutor workerExecutor,
 			MinecraftInstallation minecraftInstallation,
-			MojangApi mojangApi,
+			LauncherProfileRunner launcherProfileRunner,
 			AmidstSettings settings) {
 		this.application = application;
 		this.metadata = metadata;
 		this.workerExecutor = workerExecutor;
 		this.minecraftInstallation = minecraftInstallation;
-		this.mojangApi = mojangApi;
+		this.launcherProfileRunner = launcherProfileRunner;
 		this.settings = settings;
 		this.profileSelectPanel = new ProfileSelectPanel(settings.lastProfile, "Scanning...");
 		this.frame = createFrame();
@@ -143,7 +143,8 @@ public class ProfileSelectWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createProfileComponents(List<UnresolvedLauncherProfile> launcherProfiles) {
 		for (UnresolvedLauncherProfile profile : launcherProfiles) {
-			profileSelectPanel.addProfile(new LocalProfileComponent(application, workerExecutor, mojangApi, profile));
+			profileSelectPanel
+					.addProfile(new LocalProfileComponent(application, workerExecutor, launcherProfileRunner, profile));
 		}
 	}
 

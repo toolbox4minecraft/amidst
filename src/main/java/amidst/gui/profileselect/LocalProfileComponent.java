@@ -2,6 +2,7 @@ package amidst.gui.profileselect;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import amidst.Application;
@@ -10,7 +11,8 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
-import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.LauncherProfileRunner;
+import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.UnresolvedLauncherProfile;
 import amidst.mojangapi.file.VersionListProvider;
@@ -22,11 +24,11 @@ import amidst.threading.WorkerExecutor;
 public class LocalProfileComponent extends ProfileComponent {
 	private final Application application;
 	private final WorkerExecutor workerExecutor;
-	private final MojangApi mojangApi;
+	private final LauncherProfileRunner launcherProfileRunner;
 	private final UnresolvedLauncherProfile unresolvedProfile;
 
-	private volatile boolean isSearching = false;
-	private volatile boolean failedSearching = false;
+	private volatile boolean isResolving = false;
+	private volatile boolean failedResolving = false;
 	private volatile boolean isLoading = false;
 	private volatile boolean failedLoading = false;
 	private volatile LauncherProfile resolvedProfile;
@@ -35,25 +37,25 @@ public class LocalProfileComponent extends ProfileComponent {
 	public LocalProfileComponent(
 			Application application,
 			WorkerExecutor workerExecutor,
-			MojangApi mojangApi,
+			LauncherProfileRunner launcherProfileRunner,
 			UnresolvedLauncherProfile unresolvedProfile) {
 		this.application = application;
-		this.mojangApi = mojangApi;
 		this.workerExecutor = workerExecutor;
+		this.launcherProfileRunner = launcherProfileRunner;
 		this.unresolvedProfile = unresolvedProfile;
 		initComponent();
-		initDirectoriesLater();
+		resolveLater();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void initDirectoriesLater() {
-		isSearching = true;
+	private void resolveLater() {
+		isResolving = true;
 		repaintComponent();
-		workerExecutor.run(this::tryFind, this::findFinished);
+		workerExecutor.run(this::tryResolve, this::resolveFinished);
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private boolean tryFind() {
+	private boolean tryResolve() {
 		try {
 			resolvedProfile = unresolvedProfile.resolve(VersionListProvider.getRemoteOrLocalVersionList());
 			return true;
@@ -64,9 +66,9 @@ public class LocalProfileComponent extends ProfileComponent {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void findFinished(boolean isSuccessful) {
-		isSearching = false;
-		failedSearching = !isSuccessful;
+	private void resolveFinished(boolean isSuccessful) {
+		isResolving = false;
+		failedResolving = !isSuccessful;
 		repaintComponent();
 	}
 
@@ -79,7 +81,7 @@ public class LocalProfileComponent extends ProfileComponent {
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private boolean tryLoad() {
+	private Optional<RunningLauncherProfile> tryLoad() {
 		// TODO: Replace with proper handling for modded profiles.
 		try {
 			AmidstLogger.info(
@@ -93,38 +95,37 @@ public class LocalProfileComponent extends ProfileComponent {
 				AmidstMessageBox.displayError(
 						"Error",
 						"Amidst does not support modded Minecraft profiles! Please select or create an unmodded Minecraft profile via the Minecraft Launcher.");
-				return false;
+				return Optional.empty();
 			}
 
-			mojangApi.setLauncherProfile(resolvedProfile);
-			return true;
+			return Optional.of(launcherProfileRunner.run(resolvedProfile));
 		} catch (LocalMinecraftInterfaceCreationException e) {
 			AmidstLogger.error(e);
 			AmidstMessageBox.displayError("Error", e);
-			return false;
+			return Optional.empty();
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void loadFinished(boolean isSuccessful) {
+	private void loadFinished(Optional<RunningLauncherProfile> runningLauncherProfile) {
 		isLoading = false;
-		failedLoading = !isSuccessful;
+		failedLoading = !runningLauncherProfile.isPresent();
 		repaintComponent();
-		if (isSuccessful) {
-			application.displayMainWindow();
+		if (runningLauncherProfile.isPresent()) {
+			application.displayMainWindow(runningLauncherProfile.get());
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected boolean isSearching() {
-		return isSearching;
+	protected boolean isResolving() {
+		return isResolving;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
-	protected boolean failedSearching() {
-		return failedSearching;
+	protected boolean failedResolving() {
+		return failedResolving;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -142,7 +143,7 @@ public class LocalProfileComponent extends ProfileComponent {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	protected boolean isReadyToLoad() {
-		return !isSearching && !failedSearching;
+		return !isResolving && !failedResolving;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

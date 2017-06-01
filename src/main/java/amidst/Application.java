@@ -1,5 +1,7 @@
 package amidst;
 
+import java.util.Optional;
+
 import amidst.dependency.injection.Factory0;
 import amidst.dependency.injection.Factory1;
 import amidst.documentation.AmidstThread;
@@ -10,14 +12,18 @@ import amidst.gui.main.MainWindow;
 import amidst.gui.main.MainWindowDialogs;
 import amidst.gui.main.UpdatePrompt;
 import amidst.gui.profileselect.ProfileSelectWindow;
-import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.LauncherProfileRunner;
+import amidst.mojangapi.RunningLauncherProfile;
+import amidst.mojangapi.file.LauncherProfile;
+import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 
 @NotThreadSafe
 public class Application {
-	private final MojangApi mojangApi;
+	private final Optional<LauncherProfile> preferredLauncherProfile;
+	private final LauncherProfileRunner launcherProfileRunner;
 	private final Factory1<MainWindowDialogs, UpdatePrompt> noisyUpdatePromptFactory;
 	private final Factory0<UpdatePrompt> silentUpdatePromptFactory;
-	private final Factory0<MainWindow> mainWindowFactory;
+	private final Factory1<RunningLauncherProfile, MainWindow> mainWindowFactory;
 	private final Factory0<ProfileSelectWindow> profileSelectWindowFactory;
 	private final Factory0<LicenseWindow> licenseWindowFactory;
 
@@ -26,13 +32,15 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Application(
-			MojangApi mojangApi,
+			Optional<LauncherProfile> preferredLauncherProfile,
+			LauncherProfileRunner launcherProfileRunner,
 			Factory1<MainWindowDialogs, UpdatePrompt> noisyUpdatePromptFactory,
 			Factory0<UpdatePrompt> silentUpdatePromptFactory,
-			Factory0<MainWindow> mainWindowFactory,
+			Factory1<RunningLauncherProfile, MainWindow> mainWindowFactory,
 			Factory0<ProfileSelectWindow> profileSelectWindowFactory,
 			Factory0<LicenseWindow> licenseWindowFactory) {
-		this.mojangApi = mojangApi;
+		this.preferredLauncherProfile = preferredLauncherProfile;
+		this.launcherProfileRunner = launcherProfileRunner;
 		this.noisyUpdatePromptFactory = noisyUpdatePromptFactory;
 		this.silentUpdatePromptFactory = silentUpdatePromptFactory;
 		this.mainWindowFactory = mainWindowFactory;
@@ -41,10 +49,10 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void run() {
+	public void run() throws LocalMinecraftInterfaceCreationException {
 		checkForUpdatesSilently();
-		if (mojangApi.canCreateWorld()) {
-			displayMainWindow();
+		if (preferredLauncherProfile.isPresent()) {
+			displayMainWindow(launcherProfileRunner.run(preferredLauncherProfile.get()));
 		} else {
 			displayProfileSelectWindow();
 		}
@@ -61,8 +69,8 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayMainWindow() {
-		setMainWindow(mainWindowFactory.create());
+	public void displayMainWindow(RunningLauncherProfile runningLauncherProfile) {
+		setMainWindow(mainWindowFactory.create(runningLauncherProfile));
 		setProfileSelectWindow(null);
 	}
 
