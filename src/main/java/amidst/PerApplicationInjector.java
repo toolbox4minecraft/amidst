@@ -62,7 +62,7 @@ public class PerApplicationInjector {
 		this.preferredLauncherProfile = minecraftInstallation
 				.tryReadLauncherProfile(parameters.minecraftJarFile, parameters.minecraftJsonFile);
 		this.worldBuilder = new WorldBuilder(playerInformationProvider, seedHistoryLogger);
-		this.mojangApi = MojangApi.from(minecraftInstallation, preferredLauncherProfile, worldBuilder);
+		this.mojangApi = MojangApi.from(preferredLauncherProfile, worldBuilder);
 		this.biomeProfileDirectory = BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);
 		this.threadMaster = new ThreadMaster();
 		this.layerBuilder = new LayerBuilder();
@@ -94,6 +94,7 @@ public class PerApplicationInjector {
 				application,
 				metadata,
 				settings,
+				minecraftInstallation,
 				mojangApi,
 				biomeProfileDirectory,
 				this::createViewerFacade,

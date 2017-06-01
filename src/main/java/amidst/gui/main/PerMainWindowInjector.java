@@ -20,6 +20,7 @@ import amidst.gui.seedsearcher.SeedSearcher;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.LauncherProfile;
+import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.world.World;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.threading.ThreadMaster;
@@ -58,6 +59,7 @@ public class PerMainWindowInjector {
 			Application application,
 			AmidstMetaData metadata,
 			AmidstSettings settings,
+			MinecraftInstallation minecraftInstallation,
 			MojangApi mojangApi,
 			BiomeProfileDirectory biomeProfileDirectory,
 			Factory2<World, Actions, ViewerFacade> viewerFacadeFactory,
@@ -69,6 +71,7 @@ public class PerMainWindowInjector {
 		this.viewerFacadeReference = new AtomicReference<>();
 		this.dialogs = new MainWindowDialogs(settings, mojangApi, frame);
 		this.worldSwitcher = new WorldSwitcher(
+				minecraftInstallation,
 				mojangApi,
 				this::createViewerFacade,
 				threadMaster,

@@ -1,13 +1,12 @@
 package amidst.mojangapi;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.LauncherProfile;
-import amidst.mojangapi.file.MinecraftInstallation;
+import amidst.mojangapi.file.SaveGame;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -18,27 +17,22 @@ import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
-import amidst.parsing.FormatException;
 
 @ThreadSafe
 public class MojangApi {
-	public static MojangApi from(
-			MinecraftInstallation minecraftInstallation,
-			Optional<LauncherProfile> preferredLauncherProfile,
-			WorldBuilder worldBuilder) throws LocalMinecraftInterfaceCreationException {
-		MojangApi result = new MojangApi(minecraftInstallation, worldBuilder);
+	public static MojangApi from(Optional<LauncherProfile> preferredLauncherProfile, WorldBuilder worldBuilder)
+			throws LocalMinecraftInterfaceCreationException {
+		MojangApi result = new MojangApi(worldBuilder);
 		result.setLauncherProfile(preferredLauncherProfile.orElse(null));
 		return result;
 	}
 
-	private final MinecraftInstallation minecraftInstallation;
 	private final WorldBuilder worldBuilder;
 
 	private volatile MinecraftInterface minecraftInterface;
 	private volatile LauncherProfile launcherProfile;
 
-	public MojangApi(MinecraftInstallation minecraftInstallation, WorldBuilder worldBuilder) {
-		this.minecraftInstallation = minecraftInstallation;
+	public MojangApi(WorldBuilder worldBuilder) {
 		this.worldBuilder = worldBuilder;
 	}
 
@@ -65,7 +59,7 @@ public class MojangApi {
 	}
 
 	public MojangApi createSilentPlayerlessCopy() {
-		MojangApi result = new MojangApi(minecraftInstallation, WorldBuilder.createSilentPlayerless());
+		MojangApi result = new MojangApi(WorldBuilder.createSilentPlayerless());
 		try {
 			result.setLauncherProfile(launcherProfile);
 		} catch (LocalMinecraftInterfaceCreationException e) {
@@ -101,14 +95,13 @@ public class MojangApi {
 	 * one world at a time. Creating a new world will break all previously
 	 * created world objects.
 	 */
-	public World createWorldFromSaveGame(File file)
+	public World createWorldFromSaveGame(SaveGame saveGame)
 			throws IllegalStateException,
-			MinecraftInterfaceException,
 			IOException,
-			FormatException {
+			MinecraftInterfaceException {
 		MinecraftInterface minecraftInterface = this.minecraftInterface;
 		if (minecraftInterface != null) {
-			return worldBuilder.fromSaveGame(minecraftInterface, minecraftInstallation.newSaveGame(file));
+			return worldBuilder.fromSaveGame(minecraftInterface, saveGame);
 		} else {
 			throw new IllegalStateException("cannot create a world without a minecraft interface");
 		}

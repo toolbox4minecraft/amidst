@@ -17,6 +17,7 @@ import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
@@ -28,6 +29,7 @@ import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
 public class WorldSwitcher {
+	private final MinecraftInstallation minecraftInstallation;
 	private final MojangApi mojangApi;
 	private final Factory1<World, ViewerFacade> viewerFacadeFactory;
 	private final ThreadMaster threadMaster;
@@ -39,6 +41,7 @@ public class WorldSwitcher {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldSwitcher(
+			MinecraftInstallation minecraftInstallation,
 			MojangApi mojangApi,
 			Factory1<World, ViewerFacade> viewerFacadeFactory,
 			ThreadMaster threadMaster,
@@ -47,6 +50,7 @@ public class WorldSwitcher {
 			AtomicReference<ViewerFacade> viewerFacadeReference,
 			MainWindowDialogs dialogs,
 			Supplier<AmidstMenu> menuBarSupplier) {
+		this.minecraftInstallation = minecraftInstallation;
 		this.mojangApi = mojangApi;
 		this.viewerFacadeFactory = viewerFacadeFactory;
 		this.threadMaster = threadMaster;
@@ -70,7 +74,7 @@ public class WorldSwitcher {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayWorld(File file) {
 		try {
-			setWorld(mojangApi.createWorldFromSaveGame(file));
+			setWorld(mojangApi.createWorldFromSaveGame(minecraftInstallation.newSaveGame(file)));
 		} catch (IllegalStateException | MinecraftInterfaceException | IOException | FormatException e) {
 			AmidstLogger.warn(e);
 			dialogs.displayError(e);
