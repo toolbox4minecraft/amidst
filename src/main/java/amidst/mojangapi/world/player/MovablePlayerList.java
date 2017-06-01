@@ -7,6 +7,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
+import amidst.mojangapi.file.facade.PlayerInformationProvider;
 import amidst.mojangapi.file.facade.SaveGame;
 import amidst.mojangapi.file.facade.SaveGamePlayer;
 import amidst.threading.WorkerExecutor;
@@ -19,7 +20,7 @@ public class MovablePlayerList implements Iterable<Player> {
 		return DUMMY;
 	}
 
-	private final PlayerInformationCache playerInformationCache;
+	private final PlayerInformationProvider playerInformationProvider;
 	private final SaveGame saveGame;
 	private final boolean isSaveEnabled;
 
@@ -27,11 +28,11 @@ public class MovablePlayerList implements Iterable<Player> {
 	private volatile ConcurrentLinkedQueue<Player> players = new ConcurrentLinkedQueue<>();
 
 	public MovablePlayerList(
-			PlayerInformationCache playerInformationCache,
+			PlayerInformationProvider playerInformationProvider,
 			SaveGame saveGame,
 			boolean isSaveEnabled,
 			WorldPlayerType worldPlayerType) {
-		this.playerInformationCache = playerInformationCache;
+		this.playerInformationProvider = playerInformationProvider;
 		this.saveGame = saveGame;
 		this.isSaveEnabled = isSaveEnabled;
 		this.worldPlayerType = worldPlayerType;
@@ -77,10 +78,7 @@ public class MovablePlayerList implements Iterable<Player> {
 
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private void loadPlayer(ConcurrentLinkedQueue<Player> players, SaveGamePlayer saveGamePlayer) {
-		players.offer(saveGamePlayer.map(
-				() -> new Player(PlayerInformation.theSingleplayerPlayer(), saveGamePlayer),
-				playerUUID -> new Player(playerInformationCache.getByUUID(playerUUID), saveGamePlayer),
-				playerName -> new Player(playerInformationCache.getByName(playerName), saveGamePlayer)));
+		players.offer(new Player(saveGamePlayer.getPlayerInformation(playerInformationProvider), saveGamePlayer));
 	}
 
 	public boolean canSave() {

@@ -19,12 +19,12 @@ import amidst.gui.profileselect.ProfileSelectWindow;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.MojangApiBuilder;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
+import amidst.mojangapi.file.facade.PlayerInformationCache;
+import amidst.mojangapi.file.facade.PlayerInformationProvider;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
-import amidst.mojangapi.world.player.PlayerInformationCache;
-import amidst.mojangapi.world.player.PlayerInformationCacheImpl;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.threading.ThreadMaster;
 
@@ -32,7 +32,7 @@ import amidst.threading.ThreadMaster;
 public class PerApplicationInjector {
 	private final AmidstMetaData metadata;
 	private final AmidstSettings settings;
-	private final PlayerInformationCache playerInformationCache;
+	private final PlayerInformationProvider playerInformationProvider;
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final WorldBuilder worldBuilder;
 	private final MojangApi mojangApi;
@@ -50,9 +50,9 @@ public class PerApplicationInjector {
 			LocalMinecraftInterfaceCreationException {
 		this.metadata = metadata;
 		this.settings = settings;
-		this.playerInformationCache = new PlayerInformationCacheImpl();
+		this.playerInformationProvider = new PlayerInformationCache();
 		this.seedHistoryLogger = SeedHistoryLogger.from(parameters.seedHistoryFile);
-		this.worldBuilder = new WorldBuilder(playerInformationCache, seedHistoryLogger);
+		this.worldBuilder = new WorldBuilder(playerInformationProvider, seedHistoryLogger);
 		this.mojangApi = new MojangApiBuilder(worldBuilder, parameters).construct();
 		this.biomeProfileDirectory = BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);
 		this.threadMaster = new ThreadMaster();

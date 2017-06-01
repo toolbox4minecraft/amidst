@@ -1,13 +1,11 @@
 package amidst.mojangapi.file.facade;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.player.PlayerNbt;
 import amidst.mojangapi.file.service.SaveDirectoryService;
 import amidst.mojangapi.world.player.PlayerCoordinates;
+import amidst.mojangapi.world.player.PlayerInformation;
 
 @Immutable
 public class SaveGamePlayer {
@@ -29,7 +27,10 @@ public class SaveGamePlayer {
 				&& saveDirectoryService.tryWriteCoordinates(saveDirectory, playerNbt, coordinates);
 	}
 
-	public <R> R map(Supplier<R> ifIsLevelDat, Function<String, R> ifIsPlayerdata, Function<String, R> ifIsPlayers) {
-		return playerNbt.map(ifIsLevelDat, ifIsPlayerdata, ifIsPlayers);
+	public PlayerInformation getPlayerInformation(PlayerInformationProvider playerInformationProvider) {
+		return playerNbt.map(
+				() -> PlayerInformation.theSingleplayerPlayer(),
+				playerUUID -> playerInformationProvider.getByPlayerUUID(playerUUID),
+				playerName -> playerInformationProvider.getByPlayerName(playerName));
 	}
 }

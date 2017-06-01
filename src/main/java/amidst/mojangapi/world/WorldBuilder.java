@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.MojangApiParsingException;
+import amidst.mojangapi.file.facade.ImmutablePlayerInformationProvider;
+import amidst.mojangapi.file.facade.PlayerInformationProvider;
 import amidst.mojangapi.file.facade.SaveGame;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -26,10 +28,8 @@ import amidst.mojangapi.world.oracle.HeuristicWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.ImmutableWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.oracle.WorldSpawnOracle;
-import amidst.mojangapi.world.player.ImmutablePlayerInformationCache;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.PlayerInformation;
-import amidst.mojangapi.world.player.PlayerInformationCache;
 import amidst.mojangapi.world.player.WorldPlayerType;
 import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
 import amidst.mojangapi.world.versionfeatures.VersionFeatures;
@@ -42,15 +42,15 @@ public class WorldBuilder {
 	 */
 	public static WorldBuilder createSilentPlayerless() {
 		return new WorldBuilder(
-				new ImmutablePlayerInformationCache(PlayerInformation.theSingleplayerPlayer()),
+				new ImmutablePlayerInformationProvider(PlayerInformation.theSingleplayerPlayer()),
 				SeedHistoryLogger.createDisabled());
 	}
 
-	private final PlayerInformationCache playerInformationCache;
+	private final PlayerInformationProvider playerInformationProvider;
 	private final SeedHistoryLogger seedHistoryLogger;
 
-	public WorldBuilder(PlayerInformationCache playerInformationCache, SeedHistoryLogger seedHistoryLogger) {
-		this.playerInformationCache = playerInformationCache;
+	public WorldBuilder(PlayerInformationProvider playerInformationProvider, SeedHistoryLogger seedHistoryLogger) {
+		this.playerInformationProvider = playerInformationProvider;
 		this.seedHistoryLogger = seedHistoryLogger;
 	}
 
@@ -78,7 +78,7 @@ public class WorldBuilder {
 			MojangApiParsingException {
 		VersionFeatures versionFeatures = DefaultVersionFeatures.create(minecraftInterface.getRecognisedVersion());
 		MovablePlayerList movablePlayerList = new MovablePlayerList(
-				playerInformationCache,
+				playerInformationProvider,
 				saveGame,
 				true,
 				WorldPlayerType.from(saveGame));

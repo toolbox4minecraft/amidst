@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.player;
+package amidst.mojangapi.file.facade;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -7,6 +7,7 @@ import amidst.documentation.NotNull;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.service.PlayerInformationService;
+import amidst.mojangapi.world.player.PlayerInformation;
 
 /**
  * Even though this class is thread-safe, it is possible that the same player
@@ -16,15 +17,15 @@ import amidst.mojangapi.file.service.PlayerInformationService;
  * problem.
  */
 @ThreadSafe
-public class PlayerInformationCacheImpl implements PlayerInformationCache {
+public class PlayerInformationCache implements PlayerInformationProvider {
 	private final Map<String, PlayerInformation> byUUID = new ConcurrentHashMap<>();
 	private final Map<String, PlayerInformation> byName = new ConcurrentHashMap<>();
 	private final PlayerInformationService playerInformationService = new PlayerInformationService();
 
 	@NotNull
 	@Override
-	public PlayerInformation getByUUID(String uuid) {
-		String cleanUUID = getCleanUUID(uuid);
+	public PlayerInformation getByPlayerUUID(String playerUUID) {
+		String cleanUUID = getCleanUUID(playerUUID);
 		PlayerInformation result = byUUID.get(cleanUUID);
 		if (result != null) {
 			return result;
@@ -38,13 +39,13 @@ public class PlayerInformationCacheImpl implements PlayerInformationCache {
 
 	@NotNull
 	@Override
-	public PlayerInformation getByName(String name) {
-		PlayerInformation result = byName.get(name);
+	public PlayerInformation getByPlayerName(String playerName) {
+		PlayerInformation result = byName.get(playerName);
 		if (result != null) {
 			return result;
 		} else {
-			AmidstLogger.info("requesting player information for name: " + name);
-			result = playerInformationService.fromName(name);
+			AmidstLogger.info("requesting player information for name: " + playerName);
+			result = playerInformationService.fromName(playerName);
 			put(result);
 			return result;
 		}
