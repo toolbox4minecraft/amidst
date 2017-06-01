@@ -10,9 +10,11 @@ import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
+import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.version.VersionJson;
 import amidst.mojangapi.file.service.DotMinecraftDirectoryService;
+import amidst.mojangapi.file.service.SaveDirectoryService;
 import amidst.parsing.FormatException;
 import amidst.parsing.json.JsonReader;
 
@@ -82,5 +84,11 @@ public class MinecraftInstallation {
 		} catch (FormatException e) {
 			throw new MojangApiParsingException(e);
 		}
+	}
+
+	public SaveGame newSaveGame(File location) throws IOException, MojangApiParsingException {
+		SaveDirectoryService saveDirectoryService = new SaveDirectoryService();
+		SaveDirectory saveDirectory = saveDirectoryService.newSaveDirectory(location);
+		return new SaveGame(saveDirectory, saveDirectoryService.createLevelDat(saveDirectory));
 	}
 }

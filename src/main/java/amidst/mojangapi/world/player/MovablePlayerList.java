@@ -7,8 +7,8 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.directory.SaveDirectory;
-import amidst.mojangapi.file.nbt.player.PlayerNbt;
+import amidst.mojangapi.file.facade.SaveGame;
+import amidst.mojangapi.file.facade.SaveGamePlayer;
 import amidst.threading.WorkerExecutor;
 
 @ThreadSafe
@@ -20,7 +20,7 @@ public class MovablePlayerList implements Iterable<Player> {
 	}
 
 	private final PlayerInformationCache playerInformationCache;
-	private final SaveDirectory saveDirectory;
+	private final SaveGame saveGame;
 	private final boolean isSaveEnabled;
 
 	private volatile WorldPlayerType worldPlayerType;
@@ -28,11 +28,11 @@ public class MovablePlayerList implements Iterable<Player> {
 
 	public MovablePlayerList(
 			PlayerInformationCache playerInformationCache,
-			SaveDirectory saveDirectory,
+			SaveGame saveGame,
 			boolean isSaveEnabled,
 			WorldPlayerType worldPlayerType) {
 		this.playerInformationCache = playerInformationCache;
-		this.saveDirectory = saveDirectory;
+		this.saveGame = saveGame;
 		this.isSaveEnabled = isSaveEnabled;
 		this.worldPlayerType = worldPlayerType;
 	}
@@ -46,11 +46,11 @@ public class MovablePlayerList implements Iterable<Player> {
 	}
 
 	public boolean canLoad() {
-		return saveDirectory != null;
+		return saveGame != null;
 	}
 
 	public void load(WorkerExecutor workerExecutor, Runnable onPlayerFinishedLoading) {
-		if (saveDirectory != null) {
+		if (saveGame != null) {
 			AmidstLogger.info("loading player locations");
 			ConcurrentLinkedQueue<Player> players = new ConcurrentLinkedQueue<>();
 			this.players = players;
@@ -70,20 +70,17 @@ public class MovablePlayerList implements Iterable<Player> {
 			WorkerExecutor workerExecutor,
 			ConcurrentLinkedQueue<Player> players,
 			Runnable onPlayerFinishedLoading) {
-		for (PlayerNbt playerNbt : worldPlayerType.createPlayerNbts(saveDirectory)) {
-			workerExecutor.run(() -> loadPlayer(players, playerNbt), onPlayerFinishedLoading);
+		for (SaveGamePlayer saveGamePlayer : worldPlayerType.tryReadPlayers(saveGame)) {
+			workerExecutor.run(() -> loadPlayer(players, saveGamePlayer), onPlayerFinishedLoading);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private void loadPlayer(ConcurrentLinkedQueue<Player> players, PlayerNbt playerNbt) {
-		Player player = playerNbt.map(
-				() -> new Player(PlayerInformation.theSingleplayerPlayer(), playerNbt),
-				playerUUID -> new Player(playerInformationCache.getByUUID(playerUUID), playerNbt),
-				playerName -> new Player(playerInformationCache.getByName(playerName), playerNbt));
-		if (player.tryLoadLocation()) {
-			players.offer(player);
-		}
+	private void loadPlayer(ConcurrentLinkedQueue<Player> players, SaveGamePlayer saveGamePlayer) {
+		players.offer(saveGamePlayer.map(
+				() -> new Player(PlayerInformation.theSingleplayerPlayer(), saveGamePlayer),
+				playerUUID -> new Player(playerInformationCache.getByUUID(playerUUID), saveGamePlayer),
+				playerName -> new Player(playerInformationCache.getByName(playerName), saveGamePlayer)));
 	}
 
 	public boolean canSave() {

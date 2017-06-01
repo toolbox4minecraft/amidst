@@ -4,9 +4,7 @@ import java.io.IOException;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.directory.SaveDirectory;
-import amidst.mojangapi.file.nbt.LevelDatNbt;
-import amidst.mojangapi.file.service.SaveDirectoryService;
+import amidst.mojangapi.file.facade.SaveGame;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -74,26 +72,25 @@ public class WorldBuilder {
 						versionFeatures.getValidBiomesForStructure_Spawn()));
 	}
 
-	public World fromSaveGame(MinecraftInterface minecraftInterface, SaveDirectory saveDirectory)
+	public World fromSaveGame(MinecraftInterface minecraftInterface, SaveGame saveGame)
 			throws IOException,
 			MinecraftInterfaceException,
 			MojangApiParsingException {
 		VersionFeatures versionFeatures = DefaultVersionFeatures.create(minecraftInterface.getRecognisedVersion());
-		LevelDatNbt levelDat = new SaveDirectoryService().createLevelDat(saveDirectory);
 		MovablePlayerList movablePlayerList = new MovablePlayerList(
 				playerInformationCache,
-				saveDirectory,
+				saveGame,
 				true,
-				WorldPlayerType.from(saveDirectory, levelDat));
+				WorldPlayerType.from(saveGame));
 		return create(
 				minecraftInterface,
-				WorldSeed.fromSaveGame(levelDat.getSeed()),
-				levelDat.getWorldType(),
-				levelDat.getGeneratorOptions(),
+				WorldSeed.fromSaveGame(saveGame.getSeed()),
+				saveGame.getWorldType(),
+				saveGame.getGeneratorOptions(),
 				movablePlayerList,
 				versionFeatures,
 				new BiomeDataOracle(minecraftInterface),
-				new ImmutableWorldSpawnOracle(levelDat.getWorldSpawn()));
+				new ImmutableWorldSpawnOracle(saveGame.getWorldSpawn()));
 	}
 
 	private World create(

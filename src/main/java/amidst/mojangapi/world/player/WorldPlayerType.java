@@ -1,16 +1,13 @@
 package amidst.mojangapi.world.player;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
-import amidst.mojangapi.file.directory.SaveDirectory;
-import amidst.mojangapi.file.nbt.LevelDatNbt;
-import amidst.mojangapi.file.nbt.player.PlayerNbt;
-import amidst.mojangapi.file.service.SaveDirectoryService;
+import amidst.mojangapi.file.facade.SaveGame;
+import amidst.mojangapi.file.facade.SaveGamePlayer;
 
 @Immutable
 public enum WorldPlayerType {
@@ -27,9 +24,9 @@ public enum WorldPlayerType {
 		return SELECTABLE;
 	}
 
-	public static WorldPlayerType from(SaveDirectory saveDirectory, LevelDatNbt levelDat) {
-		boolean hasSingleplayerPlayer = levelDat.hasPlayer();
-		boolean hasMultiplayerPlayers = saveDirectory.hasMultiplayerPlayers();
+	public static WorldPlayerType from(SaveGame saveGame) {
+		boolean hasSingleplayerPlayer = saveGame.hasSingleplayerPlayer();
+		boolean hasMultiplayerPlayers = saveGame.hasMultiplayerPlayers();
 		if (hasSingleplayerPlayer && hasMultiplayerPlayers) {
 			return BOTH;
 		} else if (hasSingleplayerPlayer) {
@@ -52,17 +49,16 @@ public enum WorldPlayerType {
 	}
 
 	@NotNull
-	public List<PlayerNbt> createPlayerNbts(SaveDirectory saveDirectory) {
-		SaveDirectoryService saveDirectoryService = new SaveDirectoryService();
+	public List<SaveGamePlayer> tryReadPlayers(SaveGame saveGame) {
 		if (this == BOTH) {
-			List<PlayerNbt> result = new ArrayList<>();
-			result.addAll(saveDirectoryService.createSingleplayerPlayerNbts(saveDirectory));
-			result.addAll(saveDirectoryService.createMultiplayerPlayerNbts(saveDirectory));
-			return result;
+			return saveGame.tryReadAllPlayers();
 		} else if (this == SINGLEPLAYER) {
-			return saveDirectoryService.createSingleplayerPlayerNbts(saveDirectory);
+			return saveGame
+					.tryReadSingleplayerPlayer()
+					.map(Collections::singletonList)
+					.orElseGet(Collections::emptyList);
 		} else if (this == MULTIPLAYER) {
-			return saveDirectoryService.createMultiplayerPlayerNbts(saveDirectory);
+			return saveGame.tryReadMultiplayerPlayers();
 		} else {
 			return Collections.emptyList();
 		}

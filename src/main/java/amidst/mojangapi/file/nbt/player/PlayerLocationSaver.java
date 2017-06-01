@@ -13,7 +13,6 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.documentation.Immutable;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.nbt.NBTTagKeys;
 import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.world.player.PlayerCoordinates;
@@ -22,23 +21,25 @@ import amidst.mojangapi.world.player.PlayerCoordinates;
 public enum PlayerLocationSaver {
 	;
 
-	public static void writeToPlayerFile(PlayerCoordinates coordinates, File file) throws MojangApiParsingException {
+	public static boolean tryWriteToPlayerFile(PlayerCoordinates coordinates, File file) throws IOException {
 		try {
 			CompoundTag dataTag = NBTUtils.readTagFromFile(file);
 			CompoundTag modifiedDataTag = modifyPositionInDataTagMultiPlayer(dataTag, coordinates);
 			NBTUtils.writeTagToFile(file, modifiedDataTag);
-		} catch (IOException | NullPointerException e) {
-			throw new MojangApiParsingException("cannot write player coordinates", e);
+			return true;
+		} catch (NullPointerException e) {
+			return false;
 		}
 	}
 
-	public static void writeToLevelDat(PlayerCoordinates coordinates, File file) throws MojangApiParsingException {
+	public static boolean tryWriteToLevelDat(PlayerCoordinates coordinates, File file) throws IOException {
 		try {
 			CompoundTag baseTag = NBTUtils.readTagFromFile(file);
 			CompoundTag modifiedBaseTag = modifyPositionInBaseTagSinglePlayer(baseTag, coordinates);
 			NBTUtils.writeTagToFile(file, modifiedBaseTag);
-		} catch (IOException | NullPointerException e) {
-			throw new MojangApiParsingException("cannot write player coordinates", e);
+			return true;
+		} catch (NullPointerException e) {
+			return false;
 		}
 	}
 

@@ -12,7 +12,6 @@ import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.facade.LauncherProfile;
 import amidst.mojangapi.file.facade.MinecraftInstallation;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
-import amidst.mojangapi.file.service.SaveDirectoryService;
 import amidst.mojangapi.file.service.VersionListService;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -128,7 +127,7 @@ public class MojangApi {
 			MojangApiParsingException {
 		MinecraftInterface minecraftInterface = this.minecraftInterface;
 		if (minecraftInterface != null) {
-			return worldBuilder.fromSaveGame(minecraftInterface, new SaveDirectoryService().newSaveDirectory(file));
+			return worldBuilder.fromSaveGame(minecraftInterface, minecraftInstallation.newSaveGame(file));
 		} else {
 			throw new IllegalStateException("cannot create a world without a minecraft interface");
 		}

@@ -3,9 +3,13 @@ package amidst.mojangapi.file.service;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
@@ -14,13 +18,15 @@ import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.LevelDatNbt;
 import amidst.mojangapi.file.nbt.NBTUtils;
-import amidst.mojangapi.file.nbt.player.LevelDatPlayerNbt;
+import amidst.mojangapi.file.nbt.player.PlayerLocationLoader;
+import amidst.mojangapi.file.nbt.player.PlayerLocationSaver;
 import amidst.mojangapi.file.nbt.player.PlayerNbt;
-import amidst.mojangapi.file.nbt.player.PlayerdataPlayerNbt;
-import amidst.mojangapi.file.nbt.player.PlayersPlayerNbt;
+import amidst.mojangapi.world.player.PlayerCoordinates;
 
 @Immutable
 public class SaveDirectoryService {
+	private final AmidstBackupService amidstBackupService = new AmidstBackupService();
+
 	/**
 	 * Returns a new valid instance of the class SaveDirectory. It tries to use
 	 * the given file. If that is not valid it tires to use its parent file. If
@@ -78,9 +84,9 @@ public class SaveDirectoryService {
 	 * the map is used as singleplayer map.
 	 */
 	@NotNull
-	public List<PlayerNbt> createSingleplayerPlayerNbts(SaveDirectory saveDirectory) {
+	public Optional<PlayerNbt> tryReadSingleplayerPlayerNbt(SaveDirectory saveDirectory) {
 		AmidstLogger.info("using player from level.dat");
-		return Arrays.asList(new LevelDatPlayerNbt(saveDirectory));
+		return tryReadCoordinatesFromLevelDat(saveDirectory).map(this::createLevelDatPlayerNbt);
 	}
 
 	/**
@@ -88,53 +94,175 @@ public class SaveDirectoryService {
 	 * and uses the player uuid as filename.
 	 */
 	@NotNull
-	public List<PlayerNbt> createMultiplayerPlayerNbts(SaveDirectory saveDirectory) {
-		List<PlayerNbt> result = new ArrayList<>();
-		for (File playerdataFile : getPlayerdataFiles(saveDirectory)) {
-			if (playerdataFile.isFile()) {
-				result.add(new PlayerdataPlayerNbt(saveDirectory, getPlayerUUIDFromPlayerdataFile(playerdataFile)));
-			}
-		}
-		if (!result.isEmpty()) {
+	public List<PlayerNbt> tryReadMultiplayerPlayerNbts(SaveDirectory saveDirectory) {
+		List<PlayerNbt> playerdataPlayers = listFiles(saveDirectory.getPlayerdata())
+				.stream()
+				.filter(File::isFile)
+				.map(f -> createPlayerdataPlayerNbt(saveDirectory, f))
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.collect(Collectors.toList());
+		if (!playerdataPlayers.isEmpty()) {
 			AmidstLogger.info("using players from the playerdata directory");
-			return result;
-		}
-		for (File playersFile : getPlayersFiles(saveDirectory)) {
-			if (playersFile.isFile()) {
-				result.add(new PlayersPlayerNbt(saveDirectory, getPlayerNameFromPlayersFile(playersFile)));
+			return playerdataPlayers;
+		} else {
+			List<PlayerNbt> playersPlayers = listFiles(saveDirectory.getPlayers())
+					.stream()
+					.filter(File::isFile)
+					.map(f -> createPlayersPlayerNbt(saveDirectory, f))
+					.filter(Optional::isPresent)
+					.map(Optional::get)
+					.collect(Collectors.toList());
+			if (!playersPlayers.isEmpty()) {
+				AmidstLogger.info("using players from the players directory");
+				return playersPlayers;
+			} else {
+				AmidstLogger.info("no multiplayer players found");
+				return Collections.emptyList();
 			}
 		}
-		if (!result.isEmpty()) {
-			AmidstLogger.info("using players from the players directory");
-			return result;
-		}
-		AmidstLogger.info("no multiplayer players found");
-		return result;
 	}
 
-	private File[] getPlayerdataFiles(SaveDirectory saveDirectory) {
-		File[] files = saveDirectory.getPlayerdata().listFiles();
-		if (files == null) {
-			return new File[0];
+	private List<File> listFiles(File file) {
+		File[] files = file.listFiles();
+		if (files != null) {
+			return Arrays.asList(files);
 		} else {
-			return files;
+			return Collections.emptyList();
 		}
 	}
 
-	private File[] getPlayersFiles(SaveDirectory saveDirectory) {
-		File[] files = saveDirectory.getPlayers().listFiles();
-		if (files == null) {
-			return new File[0];
-		} else {
-			return files;
-		}
+	private Optional<PlayerNbt> createPlayerdataPlayerNbt(SaveDirectory saveDirectory, File playerdataFile) {
+		String playerUUID = getPlayerUUIDFromPlayerdataFile(playerdataFile);
+		return tryReadCoordinatesFromPlayerdata(saveDirectory, playerUUID)
+				.map(c -> createPlayerdataPlayerNbt(playerUUID, c));
 	}
 
 	private String getPlayerUUIDFromPlayerdataFile(File playerdataFile) {
 		return playerdataFile.getName().split("\\.")[0];
 	}
 
+	private Optional<PlayerNbt> createPlayersPlayerNbt(SaveDirectory saveDirectory, File playersFile) {
+		String playerName = getPlayerNameFromPlayersFile(playersFile);
+		return tryReadCoordinatesFromPlayers(saveDirectory, playerName).map(c -> createPlayersPlayerNbt(playerName, c));
+	}
+
 	private String getPlayerNameFromPlayersFile(File playersFile) {
 		return playersFile.getName().split("\\.")[0];
+	}
+
+	private PlayerNbt createLevelDatPlayerNbt(PlayerCoordinates playerCoordinates) {
+		return new PlayerNbt(playerCoordinates) {
+			@Override
+			public <R> R map(
+					Supplier<R> ifIsLevelDat,
+					Function<String, R> ifIsPlayerdata,
+					Function<String, R> ifIsPlayers) {
+				return ifIsLevelDat.get();
+			}
+		};
+	}
+
+	private PlayerNbt createPlayerdataPlayerNbt(String playerUUID, PlayerCoordinates playerCoordinates) {
+		return new PlayerNbt(playerCoordinates) {
+			@Override
+			public <R> R map(
+					Supplier<R> ifIsLevelDat,
+					Function<String, R> ifIsPlayerdata,
+					Function<String, R> ifIsPlayers) {
+				return ifIsPlayerdata.apply(playerUUID);
+			}
+		};
+	}
+
+	private PlayerNbt createPlayersPlayerNbt(String playerName, PlayerCoordinates playerCoordinates) {
+		return new PlayerNbt(playerCoordinates) {
+			@Override
+			public <R> R map(
+					Supplier<R> ifIsLevelDat,
+					Function<String, R> ifIsPlayerdata,
+					Function<String, R> ifIsPlayers) {
+				return ifIsPlayers.apply(playerName);
+			}
+		};
+	}
+
+	private Optional<PlayerCoordinates> tryReadCoordinatesFromLevelDat(SaveDirectory saveDirectory) {
+		try {
+			return PlayerLocationLoader.tryReadFromLevelDat(saveDirectory.getLevelDat());
+		} catch (IOException e) {
+			AmidstLogger.warn(e, "error while reading player coordinates from level.dat");
+			return Optional.empty();
+		}
+	}
+
+	private Optional<PlayerCoordinates> tryReadCoordinatesFromPlayerdata(
+			SaveDirectory saveDirectory,
+			String playerUUID) {
+		try {
+			return PlayerLocationLoader.tryReadFromPlayerFile(saveDirectory.getPlayerdataFile(playerUUID));
+		} catch (IOException e) {
+			AmidstLogger.warn(e, "error while reading player coordinates for player " + playerUUID);
+			return Optional.empty();
+		}
+	}
+
+	private Optional<PlayerCoordinates> tryReadCoordinatesFromPlayers(SaveDirectory saveDirectory, String playerName) {
+		try {
+			return PlayerLocationLoader.tryReadFromPlayerFile(saveDirectory.getPlayersFile(playerName));
+		} catch (IOException e) {
+			AmidstLogger.warn(e, "error while reading player coordinates for player " + playerName);
+			return Optional.empty();
+		}
+	}
+
+	public boolean tryBackup(SaveDirectory saveDirectory, PlayerNbt playerNbt) {
+		return playerNbt.map(
+				() -> amidstBackupService.tryBackupLevelDat(saveDirectory),
+				playerUUID -> amidstBackupService.tryBackupPlayerdataFile(saveDirectory, playerUUID),
+				playerName -> amidstBackupService.tryBackupPlayersFile(saveDirectory, playerName));
+	}
+
+	public boolean tryWriteCoordinates(
+			SaveDirectory saveDirectory,
+			PlayerNbt playerNbt,
+			PlayerCoordinates coordinates) {
+		return playerNbt.map(
+				() -> tryWriteCoordinatesToLevelDat(saveDirectory, coordinates),
+				playerUUID -> tryWriteCoordinatesToPlayerdata(saveDirectory, playerUUID, coordinates),
+				playerName -> tryWriteCoordinatesToPlayers(saveDirectory, playerName, coordinates));
+	}
+
+	private boolean tryWriteCoordinatesToLevelDat(SaveDirectory saveDirectory, PlayerCoordinates coordinates) {
+		try {
+			return PlayerLocationSaver.tryWriteToLevelDat(coordinates, saveDirectory.getLevelDat());
+		} catch (IOException e) {
+			AmidstLogger.warn(e, "error while writing player coordinates to level.dat");
+			return false;
+		}
+	}
+
+	private boolean tryWriteCoordinatesToPlayerdata(
+			SaveDirectory saveDirectory,
+			String playerUUID,
+			PlayerCoordinates coordinates) {
+		try {
+			return PlayerLocationSaver.tryWriteToPlayerFile(coordinates, saveDirectory.getPlayerdataFile(playerUUID));
+		} catch (IOException e) {
+			AmidstLogger.warn(e, "error while writing player coordinates for player " + playerUUID);
+			return false;
+		}
+	}
+
+	private boolean tryWriteCoordinatesToPlayers(
+			SaveDirectory saveDirectory,
+			String playerName,
+			PlayerCoordinates coordinates) {
+		try {
+			return PlayerLocationSaver.tryWriteToPlayerFile(coordinates, saveDirectory.getPlayersFile(playerName));
+		} catch (IOException e) {
+			AmidstLogger.warn(e, "error while writing player coordinates for player " + playerName);
+			return false;
+		}
 	}
 }
