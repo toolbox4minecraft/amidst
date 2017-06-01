@@ -8,7 +8,6 @@ import amidst.ResourceLoader;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.versionlist.VersionListJson;
 import amidst.parsing.FormatException;
 import amidst.parsing.json.JsonReader;
@@ -27,7 +26,7 @@ public class VersionListService {
 			VersionListJson remote = readRemoteVersionList();
 			AmidstLogger.info("Successfully loaded version list. URL: " + REMOTE_VERSION_LIST);
 			return remote;
-		} catch (IOException | MojangApiParsingException e) {
+		} catch (FormatException | IOException e) {
 			AmidstLogger.warn("Unable to read remote version list.");
 			AmidstLogger.warn(e);
 			AmidstLogger.warn("Aborting version list load. URL: " + REMOTE_VERSION_LIST);
@@ -37,7 +36,7 @@ public class VersionListService {
 			VersionListJson local = readLocalVersionListFromResource();
 			AmidstLogger.info("Successfully loaded version list. URL: " + LOCAL_VERSION_LIST);
 			return local;
-		} catch (IOException | MojangApiParsingException e) {
+		} catch (FormatException | IOException e) {
 			AmidstLogger.warn("Unable to read local version list.");
 			AmidstLogger.warn(e);
 			AmidstLogger.warn("Aborting version list load. URL: " + LOCAL_VERSION_LIST);
@@ -47,20 +46,12 @@ public class VersionListService {
 	}
 
 	@NotNull
-	public VersionListJson readRemoteVersionList() throws MojangApiParsingException, IOException {
-		try {
-			return JsonReader.readLocation(REMOTE_VERSION_LIST, VersionListJson.class);
-		} catch (FormatException e) {
-			throw new MojangApiParsingException(e);
-		}
+	public VersionListJson readRemoteVersionList() throws FormatException, IOException {
+		return JsonReader.readLocation(REMOTE_VERSION_LIST, VersionListJson.class);
 	}
 
 	@NotNull
-	public VersionListJson readLocalVersionListFromResource() throws MojangApiParsingException, IOException {
-		try {
-			return JsonReader.readLocation(LOCAL_VERSION_LIST, VersionListJson.class);
-		} catch (FormatException e) {
-			throw new MojangApiParsingException(e);
-		}
+	public VersionListJson readLocalVersionListFromResource() throws FormatException, IOException {
+		return JsonReader.readLocation(LOCAL_VERSION_LIST, VersionListJson.class);
 	}
 }

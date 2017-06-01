@@ -12,9 +12,9 @@ import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
 import amidst.mojangapi.file.LauncherProfile;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.UnresolvedLauncherProfile;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
+import amidst.parsing.FormatException;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -56,7 +56,7 @@ public class LocalProfileComponent extends ProfileComponent {
 		try {
 			resolvedProfile = unresolvedProfile.resolve(mojangApi.getVersionList());
 			return true;
-		} catch (IOException | MojangApiParsingException e) {
+		} catch (FormatException | IOException e) {
 			AmidstLogger.warn(e);
 			return false;
 		}

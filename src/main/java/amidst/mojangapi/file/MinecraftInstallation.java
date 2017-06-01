@@ -44,7 +44,7 @@ public class MinecraftInstallation {
 		this.dotMinecraftDirectory = dotMinecraftDirectory;
 	}
 
-	public List<UnresolvedLauncherProfile> readLauncherProfiles() throws MojangApiParsingException, IOException {
+	public List<UnresolvedLauncherProfile> readLauncherProfiles() throws FormatException, IOException {
 		return dotMinecraftDirectoryService
 				.readLauncherProfilesFrom(dotMinecraftDirectory)
 				.getProfiles()
@@ -54,34 +54,28 @@ public class MinecraftInstallation {
 				.collect(Collectors.toList());
 	}
 
-	public LauncherProfile newLauncherProfile(String versionId) throws MojangApiParsingException, IOException {
+	public LauncherProfile newLauncherProfile(String versionId) throws FormatException, IOException {
 		return newLauncherProfile(
 				dotMinecraftDirectoryService.createValidVersionDirectory(dotMinecraftDirectory, versionId));
 	}
 
-	public LauncherProfile newLauncherProfile(File jar, File json) throws MojangApiParsingException, IOException {
+	public LauncherProfile newLauncherProfile(File jar, File json) throws FormatException, IOException {
 		return newLauncherProfile(dotMinecraftDirectoryService.createValidVersionDirectory(jar, json));
 	}
 
-	private LauncherProfile newLauncherProfile(VersionDirectory versionDirectory)
-			throws IOException,
-			MojangApiParsingException {
-		try {
-			VersionJson versionJson = JsonReader.readLocation(versionDirectory.getJson(), VersionJson.class);
-			return new LauncherProfile(
-					dotMinecraftDirectory,
-					dotMinecraftDirectory.asProfileDirectory(),
-					versionDirectory,
-					versionJson,
-					versionJson.getId());
-		} catch (FormatException e) {
-			throw new MojangApiParsingException(e);
-		}
+	private LauncherProfile newLauncherProfile(VersionDirectory versionDirectory) throws FormatException, IOException {
+		VersionJson versionJson = JsonReader.readLocation(versionDirectory.getJson(), VersionJson.class);
+		return new LauncherProfile(
+				dotMinecraftDirectory,
+				dotMinecraftDirectory.asProfileDirectory(),
+				versionDirectory,
+				versionJson,
+				versionJson.getId());
 	}
 
-	public SaveGame newSaveGame(File location) throws IOException, MojangApiParsingException {
+	public SaveGame newSaveGame(File location) throws IOException, FormatException {
 		SaveDirectoryService saveDirectoryService = new SaveDirectoryService();
 		SaveDirectory saveDirectory = saveDirectoryService.newSaveDirectory(location);
-		return new SaveGame(saveDirectory, saveDirectoryService.createLevelDat(saveDirectory));
+		return new SaveGame(saveDirectory, saveDirectoryService.readLevelDat(saveDirectory));
 	}
 }

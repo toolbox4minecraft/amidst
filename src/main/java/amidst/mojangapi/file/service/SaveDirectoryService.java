@@ -14,14 +14,13 @@ import java.util.stream.Collectors;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.LevelDatNbt;
-import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.file.nbt.player.PlayerLocationLoader;
 import amidst.mojangapi.file.nbt.player.PlayerLocationSaver;
 import amidst.mojangapi.file.nbt.player.PlayerNbt;
 import amidst.mojangapi.world.player.PlayerCoordinates;
+import amidst.parsing.FormatException;
 
 @Immutable
 public class SaveDirectoryService {
@@ -67,8 +66,8 @@ public class SaveDirectoryService {
 		}
 	}
 
-	public LevelDatNbt createLevelDat(SaveDirectory saveDirectory) throws IOException, MojangApiParsingException {
-		return LevelDatNbt.from(NBTUtils.readTagFromFile(saveDirectory.getLevelDat()));
+	public LevelDatNbt readLevelDat(SaveDirectory saveDirectory) throws IOException, FormatException {
+		return LevelDatNbt.from(saveDirectory.getLevelDat());
 	}
 
 	/**

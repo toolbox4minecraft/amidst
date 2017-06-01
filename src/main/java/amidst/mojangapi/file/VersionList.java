@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.service.VersionListService;
+import amidst.parsing.FormatException;
 
 @Immutable
 public class VersionList {
@@ -21,7 +22,7 @@ public class VersionList {
 						.collect(Collectors.toList()));
 	}
 
-	public static VersionList newRemoteVersionList() throws MojangApiParsingException, IOException {
+	public static VersionList newRemoteVersionList() throws FormatException, IOException {
 		return new VersionList(
 				new VersionListService()
 						.readRemoteVersionList()
@@ -31,7 +32,7 @@ public class VersionList {
 						.collect(Collectors.toList()));
 	}
 
-	public static VersionList newLocalVersionList() throws MojangApiParsingException, IOException {
+	public static VersionList newLocalVersionList() throws FormatException, IOException {
 		return new VersionList(
 				new VersionListService()
 						.readLocalVersionListFromResource()

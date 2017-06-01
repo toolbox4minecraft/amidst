@@ -5,10 +5,11 @@ import java.io.IOException;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
+import amidst.parsing.FormatException;
 
 @ThreadSafe
 public class VersionListProvider {
-	public static VersionListProvider create() throws MojangApiParsingException, IOException {
+	public static VersionListProvider create() throws FormatException, IOException {
 		return new VersionListProvider(VersionList.newLocalVersionList());
 	}
 
@@ -20,7 +21,7 @@ public class VersionListProvider {
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	public void startDownload() throws MojangApiParsingException, IOException {
+	public void startDownload() throws FormatException, IOException {
 		remote = VersionList.newRemoteVersionList();
 	}
 

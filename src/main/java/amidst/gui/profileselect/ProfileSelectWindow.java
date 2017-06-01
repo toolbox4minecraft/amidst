@@ -21,8 +21,8 @@ import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.UnresolvedLauncherProfile;
+import amidst.parsing.FormatException;
 import amidst.threading.WorkerExecutor;
 import net.miginfocom.swing.MigLayout;
 
@@ -112,7 +112,7 @@ public class ProfileSelectWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private List<UnresolvedLauncherProfile> scanAndLoadProfiles() throws MojangApiParsingException, IOException {
+	private List<UnresolvedLauncherProfile> scanAndLoadProfiles() throws FormatException, IOException {
 		AmidstLogger.info("Scanning for profiles.");
 		List<UnresolvedLauncherProfile> launcherProfiles = mojangApi.getMinecraftInstallation().readLauncherProfiles();
 		AmidstLogger.info("Successfully loaded profile list.");

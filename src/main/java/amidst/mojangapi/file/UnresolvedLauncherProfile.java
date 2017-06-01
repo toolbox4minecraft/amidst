@@ -28,22 +28,18 @@ public class UnresolvedLauncherProfile {
 		return launcherProfileJson.getName();
 	}
 
-	public LauncherProfile resolve(VersionList versionList) throws MojangApiParsingException, IOException {
+	public LauncherProfile resolve(VersionList versionList) throws FormatException, IOException {
 		DotMinecraftDirectoryService dotMinecraftDirectoryService = new DotMinecraftDirectoryService();
 		ProfileDirectory profileDirectory = dotMinecraftDirectoryService
 				.createValidProfileDirectory(launcherProfileJson, dotMinecraftDirectory);
 		VersionDirectory versionDirectory = dotMinecraftDirectoryService
 				.createValidVersionDirectory(launcherProfileJson, versionList, dotMinecraftDirectory);
-		try {
-			VersionJson versionJson = JsonReader.readLocation(versionDirectory.getJson(), VersionJson.class);
-			return new LauncherProfile(
-					dotMinecraftDirectory,
-					profileDirectory,
-					versionDirectory,
-					versionJson,
-					launcherProfileJson.getName());
-		} catch (FormatException e) {
-			throw new MojangApiParsingException(e);
-		}
+		VersionJson versionJson = JsonReader.readLocation(versionDirectory.getJson(), VersionJson.class);
+		return new LauncherProfile(
+				dotMinecraftDirectory,
+				profileDirectory,
+				versionDirectory,
+				versionJson,
+				launcherProfileJson.getName());
 	}
 }

@@ -8,9 +8,9 @@ import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.MinecraftInstallation;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.WorldBuilder;
+import amidst.parsing.FormatException;
 
 @Immutable
 public class MojangApiBuilder {
@@ -35,7 +35,7 @@ public class MojangApiBuilder {
 						minecraftInstallation.newLauncherProfile(
 								new File(parameters.minecraftJarFile),
 								new File(parameters.minecraftJsonFile)));
-			} catch (MojangApiParsingException | IOException e) {
+			} catch (FormatException | IOException e) {
 				result.setLauncherProfile(null);
 			}
 		} else {

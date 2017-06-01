@@ -14,7 +14,6 @@ import javax.imageio.ImageIO;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.json.player.PlayerJson;
 import amidst.mojangapi.file.json.player.PropertyJson;
 import amidst.mojangapi.file.json.player.SKINJson;
@@ -96,25 +95,25 @@ public class PlayerInformationService {
 				}
 			}
 			return Optional.empty();
-		} catch (FormatException | MojangApiParsingException e) {
+		} catch (FormatException e) {
 			return Optional.empty();
 		}
 	}
 
-	private boolean isTexturesProperty(PropertyJson propertyJson) throws MojangApiParsingException {
+	private boolean isTexturesProperty(PropertyJson propertyJson) throws FormatException {
 		String name = propertyJson.getName();
 		if (name == null) {
-			throw new MojangApiParsingException("property has no name");
+			throw new FormatException("property has no name");
 		} else {
 			return name.equals("textures");
 		}
 	}
 
 	@NotNull
-	private String getDecodedValue(PropertyJson propertyJson) throws MojangApiParsingException {
+	private String getDecodedValue(PropertyJson propertyJson) throws FormatException {
 		String value = propertyJson.getValue();
 		if (value == null) {
-			throw new MojangApiParsingException("unable to decode property value");
+			throw new FormatException("unable to decode property value");
 		} else {
 			return new String(
 					Base64.getDecoder().decode(value.getBytes(StandardCharsets.UTF_8)),

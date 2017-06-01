@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.ImmutablePlayerInformationProvider;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.PlayerInformationProvider;
 import amidst.mojangapi.file.SaveGame;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
@@ -74,8 +73,7 @@ public class WorldBuilder {
 
 	public World fromSaveGame(MinecraftInterface minecraftInterface, SaveGame saveGame)
 			throws IOException,
-			MinecraftInterfaceException,
-			MojangApiParsingException {
+			MinecraftInterfaceException {
 		VersionFeatures versionFeatures = DefaultVersionFeatures.create(minecraftInterface.getRecognisedVersion());
 		MovablePlayerList movablePlayerList = new MovablePlayerList(
 				playerInformationProvider,

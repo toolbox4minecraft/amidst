@@ -10,10 +10,10 @@ import amidst.devtools.utils.RecognisedVersionEnumBuilder;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.MinecraftInstallation;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.Version;
 import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.parsing.FormatException;
 
 public class GenerateRecognisedVersionList {
 	private final String prefix;
@@ -47,7 +47,7 @@ public class GenerateRecognisedVersionList {
 		if (version.tryDownloadClient(prefix)) {
 			try {
 				process(version.getId());
-			} catch (ClassNotFoundException | NoClassDefFoundError | MojangApiParsingException | IOException e) {
+			} catch (ClassNotFoundException | NoClassDefFoundError | FormatException | IOException e) {
 				e.printStackTrace();
 				versionsWithError.add(version.getId());
 			}
@@ -56,7 +56,7 @@ public class GenerateRecognisedVersionList {
 		}
 	}
 
-	private void process(String versionId) throws ClassNotFoundException, MojangApiParsingException, IOException {
+	private void process(String versionId) throws ClassNotFoundException, FormatException, IOException {
 		AmidstLogger.info("version " + versionId);
 		URLClassLoader classLoader = minecraftInstallation.newLauncherProfile(versionId).newClassLoader();
 		String magicString = RecognisedVersion.generateMagicString(classLoader);

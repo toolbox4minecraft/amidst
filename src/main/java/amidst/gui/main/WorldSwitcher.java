@@ -17,13 +17,13 @@ import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.WorldPlayerType;
+import amidst.parsing.FormatException;
 import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
@@ -71,7 +71,7 @@ public class WorldSwitcher {
 	public void displayWorld(File file) {
 		try {
 			setWorld(mojangApi.createWorldFromSaveGame(file));
-		} catch (IllegalStateException | MinecraftInterfaceException | IOException | MojangApiParsingException e) {
+		} catch (IllegalStateException | MinecraftInterfaceException | IOException | FormatException e) {
 			AmidstLogger.warn(e);
 			dialogs.displayError(e);
 		}

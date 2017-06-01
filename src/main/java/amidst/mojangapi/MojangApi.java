@@ -10,7 +10,6 @@ import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.MinecraftInstallation;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -22,6 +21,7 @@ import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
+import amidst.parsing.FormatException;
 
 @ThreadSafe
 public class MojangApi {
@@ -119,11 +119,10 @@ public class MojangApi {
 	 * created world objects.
 	 */
 	public World createWorldFromSaveGame(File file)
-			throws FileNotFoundException,
-			IOException,
-			IllegalStateException,
+			throws IllegalStateException,
 			MinecraftInterfaceException,
-			MojangApiParsingException {
+			IOException,
+			FormatException {
 		MinecraftInterface minecraftInterface = this.minecraftInterface;
 		if (minecraftInterface != null) {
 			return worldBuilder.fromSaveGame(minecraftInterface, minecraftInstallation.newSaveGame(file));

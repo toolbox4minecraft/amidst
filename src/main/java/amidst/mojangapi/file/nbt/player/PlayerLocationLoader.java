@@ -11,6 +11,7 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.documentation.Immutable;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.nbt.NBTTagKeys;
 import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.world.player.PlayerCoordinates;
@@ -23,6 +24,7 @@ public enum PlayerLocationLoader {
 		try {
 			return Optional.of(readPlayerCoordinates(NBTUtils.readTagFromFile(file)));
 		} catch (NullPointerException e) {
+			AmidstLogger.warn(e, "cannot read player from file: " + file);
 			return Optional.empty();
 		}
 	}
@@ -32,6 +34,7 @@ public enum PlayerLocationLoader {
 			return Optional
 					.of(readPlayerCoordinates(getSinglePlayerPlayerTag(getTagRootTag(NBTUtils.readTagFromFile(file)))));
 		} catch (NullPointerException e) {
+			AmidstLogger.warn(e, "cannot read player from level.dat: " + file);
 			return Optional.empty();
 		}
 	}

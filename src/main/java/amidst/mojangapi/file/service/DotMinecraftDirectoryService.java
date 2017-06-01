@@ -9,7 +9,6 @@ import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.Version;
 import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
@@ -87,13 +86,9 @@ public class DotMinecraftDirectoryService {
 
 	@NotNull
 	public LauncherProfilesJson readLauncherProfilesFrom(DotMinecraftDirectory dotMinecraftDirectory)
-			throws MojangApiParsingException,
+			throws FormatException,
 			IOException {
-		try {
-			return JsonReader.readLocation(dotMinecraftDirectory.getLauncherProfilesJson(), LauncherProfilesJson.class);
-		} catch (FormatException e) {
-			throw new MojangApiParsingException(e);
-		}
+		return JsonReader.readLocation(dotMinecraftDirectory.getLauncherProfilesJson(), LauncherProfilesJson.class);
 	}
 
 	@NotNull

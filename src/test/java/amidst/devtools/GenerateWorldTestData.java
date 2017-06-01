@@ -9,7 +9,6 @@ import amidst.clazz.translator.ClassTranslator;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.MinecraftInstallation;
-import amidst.mojangapi.file.MojangApiParsingException;
 import amidst.mojangapi.file.Version;
 import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -18,6 +17,7 @@ import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterface;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.testworld.TestWorldCache;
 import amidst.mojangapi.world.testworld.TestWorldDeclaration;
+import amidst.parsing.FormatException;
 
 public class GenerateWorldTestData {
 	private final String prefix;
@@ -56,8 +56,8 @@ public class GenerateWorldTestData {
 			} catch (
 					LocalMinecraftInterfaceCreationException
 					| MinecraftInterfaceException
-					| IOException
-					| MojangApiParsingException e) {
+					| FormatException
+					| IOException e) {
 				e.printStackTrace();
 				failed.add(version.getId());
 			}

@@ -13,6 +13,7 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.documentation.Immutable;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.nbt.NBTTagKeys;
 import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.world.player.PlayerCoordinates;
@@ -28,6 +29,7 @@ public enum PlayerLocationSaver {
 			NBTUtils.writeTagToFile(file, modifiedDataTag);
 			return true;
 		} catch (NullPointerException e) {
+			AmidstLogger.warn(e, "cannot write player to file: " + file);
 			return false;
 		}
 	}
@@ -39,6 +41,7 @@ public enum PlayerLocationSaver {
 			NBTUtils.writeTagToFile(file, modifiedBaseTag);
 			return true;
 		} catch (NullPointerException e) {
+			AmidstLogger.warn(e, "cannot write player to level.dat: " + file);
 			return false;
 		}
 	}
