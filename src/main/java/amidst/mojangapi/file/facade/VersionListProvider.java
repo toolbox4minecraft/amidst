@@ -1,4 +1,4 @@
-package amidst.mojangapi;
+package amidst.mojangapi.file.facade;
 
 import java.io.IOException;
 
