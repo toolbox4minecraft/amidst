@@ -102,7 +102,13 @@ public class PerApplicationInjector {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private ProfileSelectWindow createProfileSelectWindow() {
-		return new ProfileSelectWindow(application, metadata, threadMaster.getWorkerExecutor(), mojangApi, settings);
+		return new ProfileSelectWindow(
+				application,
+				metadata,
+				threadMaster.getWorkerExecutor(),
+				minecraftInstallation,
+				mojangApi,
+				settings);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

@@ -21,6 +21,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.UnresolvedLauncherProfile;
 import amidst.parsing.FormatException;
 import amidst.threading.WorkerExecutor;
@@ -33,6 +34,7 @@ public class ProfileSelectWindow {
 	private final Application application;
 	private final AmidstMetaData metadata;
 	private final WorkerExecutor workerExecutor;
+	private final MinecraftInstallation minecraftInstallation;
 	private final MojangApi mojangApi;
 	private final AmidstSettings settings;
 
@@ -44,11 +46,13 @@ public class ProfileSelectWindow {
 			Application application,
 			AmidstMetaData metadata,
 			WorkerExecutor workerExecutor,
+			MinecraftInstallation minecraftInstallation,
 			MojangApi mojangApi,
 			AmidstSettings settings) {
 		this.application = application;
 		this.metadata = metadata;
 		this.workerExecutor = workerExecutor;
+		this.minecraftInstallation = minecraftInstallation;
 		this.mojangApi = mojangApi;
 		this.settings = settings;
 		this.profileSelectPanel = new ProfileSelectPanel(settings.lastProfile, "Scanning...");
@@ -114,7 +118,7 @@ public class ProfileSelectWindow {
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private List<UnresolvedLauncherProfile> scanAndLoadProfiles() throws FormatException, IOException {
 		AmidstLogger.info("Scanning for profiles.");
-		List<UnresolvedLauncherProfile> launcherProfiles = mojangApi.getMinecraftInstallation().readLauncherProfiles();
+		List<UnresolvedLauncherProfile> launcherProfiles = minecraftInstallation.readLauncherProfiles();
 		AmidstLogger.info("Successfully loaded profile list.");
 		return launcherProfiles;
 	}

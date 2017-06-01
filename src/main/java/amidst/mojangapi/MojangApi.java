@@ -42,10 +42,6 @@ public class MojangApi {
 		this.worldBuilder = worldBuilder;
 	}
 
-	public MinecraftInstallation getMinecraftInstallation() {
-		return minecraftInstallation;
-	}
-
 	public Optional<LauncherProfile> getLauncherProfile() {
 		return Optional.ofNullable(launcherProfile);
 	}
