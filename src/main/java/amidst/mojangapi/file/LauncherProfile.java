@@ -2,20 +2,18 @@ package amidst.mojangapi.file;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.version.VersionJson;
-import amidst.mojangapi.file.service.LibraryService;
+import amidst.mojangapi.file.service.ClassLoaderService;
 
 @Immutable
 public class LauncherProfile {
-	private final LibraryService libraryService = new LibraryService();
+	private final ClassLoaderService classLoaderService = new ClassLoaderService();
 	private final DotMinecraftDirectory dotMinecraftDirectory;
 	private final ProfileDirectory profileDirectory;
 	private final VersionDirectory versionDirectory;
@@ -52,10 +50,9 @@ public class LauncherProfile {
 	}
 
 	public URLClassLoader newClassLoader() throws MalformedURLException {
-		List<URL> classLoaderUrls = libraryService.getAllClassLoaderUrls(
+		return classLoaderService.createClassLoader(
 				dotMinecraftDirectory.getLibraries(),
 				versionJson.getLibraries(),
 				versionDirectory.getJar());
-		return new URLClassLoader(classLoaderUrls.toArray(new URL[classLoaderUrls.size()]));
 	}
 }

@@ -3,6 +3,7 @@ package amidst.mojangapi.file.service;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,11 +22,18 @@ import amidst.mojangapi.file.json.version.LibraryRuleOsJson;
 import amidst.util.OperatingSystemDetector;
 
 @Immutable
-public class LibraryService {
+public class ClassLoaderService {
 	private static final String ACTION_ALLOW = "allow";
 
 	@NotNull
-	public List<URL> getAllClassLoaderUrls(File librariesDirectory, List<LibraryJson> libraries, File versionJarFile)
+	public URLClassLoader createClassLoader(File librariesDirectory, List<LibraryJson> libraries, File versionJarFile)
+			throws MalformedURLException {
+		List<URL> classLoaderUrls = getAllClassLoaderUrls(librariesDirectory, libraries, versionJarFile);
+		return new URLClassLoader(classLoaderUrls.toArray(new URL[classLoaderUrls.size()]));
+	}
+
+	@NotNull
+	private List<URL> getAllClassLoaderUrls(File librariesDirectory, List<LibraryJson> libraries, File versionJarFile)
 			throws MalformedURLException {
 		List<URL> result = new LinkedList<>(getLibraryUrls(librariesDirectory, libraries));
 		result.add(versionJarFile.toURI().toURL());
@@ -33,7 +41,7 @@ public class LibraryService {
 	}
 
 	@NotNull
-	public List<URL> getLibraryUrls(File librariesDirectory, List<LibraryJson> libraries) {
+	private List<URL> getLibraryUrls(File librariesDirectory, List<LibraryJson> libraries) {
 		List<URL> result = new ArrayList<>();
 		AmidstLogger.info("Loading libraries.");
 		for (LibraryJson library : libraries) {
