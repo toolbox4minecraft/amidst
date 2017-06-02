@@ -9,6 +9,9 @@ import java.util.List;
 import amidst.clazz.real.RealClassConstant.RealClassConstantType;
 import amidst.documentation.Immutable;
 
+/**
+ * See https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4.8
+ */
 @Immutable
 public class RealClassBuilder {
 	public RealClass construct(String realClassName, byte[] classData) throws RealClassCreationException {
@@ -139,8 +142,14 @@ public class RealClassBuilder {
 			return readAnotherReference(stream, type);
 		case RealClassConstantType.NAME_AND_TYPE_DESCRIPTOR:
 			return readAnotherReference(stream, type);
+		case RealClassConstantType.METHOD_HANDLE:
+			return readMethodHandle(stream, type);
+		case RealClassConstantType.METHOD_TYPE:
+			return readMethodType(stream, type);
+		case RealClassConstantType.INVOKE_DYNAMIC:
+			return readInvokeDynamic(stream, type);
 		default:
-			return null;
+			throw new IOException("unknown constant type: " + type);
 		}
 	}
 
@@ -201,6 +210,26 @@ public class RealClassBuilder {
 			throws IOException {
 		ReferenceIndex value = readReferenceIndex(stream);
 		return new RealClassConstant<>(type, value);
+	}
+
+	private RealClassConstant<Void> readMethodHandle(DataInputStream stream, byte type) throws IOException {
+		stream.readByte();
+		stream.readUnsignedShort();
+		// return a dummy
+		return new RealClassConstant<Void>(type, null);
+	}
+
+	private RealClassConstant<Void> readMethodType(DataInputStream stream, byte type) throws IOException {
+		stream.readUnsignedShort();
+		// return a dummy
+		return new RealClassConstant<Void>(type, null);
+	}
+
+	private RealClassConstant<Void> readInvokeDynamic(DataInputStream stream, byte type) throws IOException {
+		stream.readUnsignedShort();
+		stream.readUnsignedShort();
+		// return a dummy
+		return new RealClassConstant<Void>(type, null);
 	}
 
 	private int readAccessFlags(DataInputStream stream) throws IOException {
