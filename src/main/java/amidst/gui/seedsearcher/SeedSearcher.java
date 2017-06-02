@@ -90,13 +90,16 @@ public class SeedSearcher {
 
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private void doSearchOne(ProgressReporter<WorldSeed> reporter, SeedSearcherConfiguration configuration)
-			throws MinecraftInterfaceException {
+			throws IllegalStateException,
+			MinecraftInterfaceException {
 		while (!isStopRequested) {
 			World world = runningLauncherProfile.createWorldFromSeed(WorldSeed.random(), configuration.getWorldType());
 			if (configuration.getWorldFilter().isValid(world)) {
 				reporter.report(world.getWorldSeed());
+				world.dispose();
 				break;
 			}
+			world.dispose();
 		}
 	}
 }

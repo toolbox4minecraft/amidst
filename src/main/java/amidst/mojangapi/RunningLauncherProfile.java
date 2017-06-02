@@ -33,6 +33,7 @@ public class RunningLauncherProfile {
 	private final WorldBuilder worldBuilder;
 	private final LauncherProfile launcherProfile;
 	private final MinecraftInterface minecraftInterface;
+	private volatile World currentWorld = null;
 
 	public RunningLauncherProfile(
 			WorldBuilder worldBuilder,
@@ -66,8 +67,16 @@ public class RunningLauncherProfile {
 	 * one world at a time. Creating a new world will break all previously
 	 * created world objects.
 	 */
-	public World createWorldFromSeed(WorldSeed worldSeed, WorldType worldType) throws MinecraftInterfaceException {
-		return worldBuilder.fromSeed(minecraftInterface, worldSeed, worldType);
+	public synchronized World createWorldFromSeed(WorldSeed worldSeed, WorldType worldType)
+			throws IllegalStateException,
+			MinecraftInterfaceException {
+		if (currentWorld == null) {
+			currentWorld = worldBuilder.fromSeed(minecraftInterface, this::unlock, worldSeed, worldType);
+			return currentWorld;
+		} else {
+			throw new IllegalStateException(
+					"Each minecraft interface can only handle one world at a time. Dispose the previous world before creating a new one.");
+		}
 	}
 
 	/**
@@ -75,7 +84,24 @@ public class RunningLauncherProfile {
 	 * one world at a time. Creating a new world will break all previously
 	 * created world objects.
 	 */
-	public World createWorldFromSaveGame(SaveGame saveGame) throws IOException, MinecraftInterfaceException {
-		return worldBuilder.fromSaveGame(minecraftInterface, saveGame);
+	public synchronized World createWorldFromSaveGame(SaveGame saveGame)
+			throws IllegalStateException,
+			IOException,
+			MinecraftInterfaceException {
+		if (currentWorld == null) {
+			currentWorld = worldBuilder.fromSaveGame(minecraftInterface, this::unlock, saveGame);
+			return currentWorld;
+		} else {
+			throw new IllegalStateException(
+					"Each minecraft interface can only handle one world at a time. Dispose the previous world before creating a new one.");
+		}
+	}
+
+	private synchronized void unlock(World world) throws IllegalStateException {
+		if (currentWorld == world) {
+			currentWorld = null;
+		} else {
+			throw new IllegalStateException("The requested world is no longer the currentWorld.");
+		}
 	}
 }

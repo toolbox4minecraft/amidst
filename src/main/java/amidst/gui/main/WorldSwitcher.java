@@ -64,8 +64,9 @@ public class WorldSwitcher {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayWorld(WorldSeed worldSeed, WorldType worldType) {
 		try {
+			clearViewerFacade();
 			setWorld(runningLauncherProfile.createWorldFromSeed(worldSeed, worldType));
-		} catch (MinecraftInterfaceException e) {
+		} catch (IllegalStateException | MinecraftInterfaceException e) {
 			AmidstLogger.warn(e);
 			dialogs.displayError(e);
 		}
@@ -74,16 +75,28 @@ public class WorldSwitcher {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayWorld(File file) {
 		try {
+			clearViewerFacade();
 			setWorld(runningLauncherProfile.createWorldFromSaveGame(minecraftInstallation.newSaveGame(file)));
-		} catch (MinecraftInterfaceException | IOException | FormatException e) {
+		} catch (IllegalStateException | MinecraftInterfaceException | IOException | FormatException e) {
 			AmidstLogger.warn(e);
 			dialogs.displayError(e);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	private void clearViewerFacade() {
+		threadMaster.clearOnRepaintTick();
+		threadMaster.clearOnFragmentLoadTick();
+		ViewerFacade viewerFacade = viewerFacadeReference.getAndSet(null);
+		if (viewerFacade != null) {
+			contentPane.remove(viewerFacade.getComponent());
+			viewerFacade.dispose();
+		}
+		menuBarSupplier.get().clear();
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void setWorld(World world) {
-		clearViewerFacade();
 		if (decideWorldPlayerType(world.getMovablePlayerList())) {
 			setViewerFacade(viewerFacadeFactory.create(world));
 		} else {
@@ -116,18 +129,6 @@ public class WorldSwitcher {
 		threadMaster.setOnRepaintTick(viewerFacade.getOnRepainterTick());
 		threadMaster.setOnFragmentLoadTick(viewerFacade.getOnFragmentLoaderTick());
 		viewerFacadeReference.set(viewerFacade);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private void clearViewerFacade() {
-		threadMaster.clearOnRepaintTick();
-		threadMaster.clearOnFragmentLoadTick();
-		ViewerFacade viewerFacade = viewerFacadeReference.getAndSet(null);
-		if (viewerFacade != null) {
-			contentPane.remove(viewerFacade.getComponent());
-			viewerFacade.dispose();
-		}
-		menuBarSupplier.get().clear();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

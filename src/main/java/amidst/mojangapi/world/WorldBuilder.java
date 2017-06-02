@@ -1,6 +1,7 @@
 package amidst.mojangapi.world;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.ImmutablePlayerInformationProvider;
@@ -53,12 +54,16 @@ public class WorldBuilder {
 		this.seedHistoryLogger = seedHistoryLogger;
 	}
 
-	public World fromSeed(MinecraftInterface minecraftInterface, WorldSeed worldSeed, WorldType worldType)
-			throws MinecraftInterfaceException {
+	public World fromSeed(
+			MinecraftInterface minecraftInterface,
+			Consumer<World> onDisposeWorld,
+			WorldSeed worldSeed,
+			WorldType worldType) throws MinecraftInterfaceException {
 		BiomeDataOracle biomeDataOracle = new BiomeDataOracle(minecraftInterface);
 		VersionFeatures versionFeatures = DefaultVersionFeatures.create(minecraftInterface.getRecognisedVersion());
 		return create(
 				minecraftInterface,
+				onDisposeWorld,
 				worldSeed,
 				worldType,
 				"",
@@ -71,7 +76,7 @@ public class WorldBuilder {
 						versionFeatures.getValidBiomesForStructure_Spawn()));
 	}
 
-	public World fromSaveGame(MinecraftInterface minecraftInterface, SaveGame saveGame)
+	public World fromSaveGame(MinecraftInterface minecraftInterface, Consumer<World> onDisposeWorld, SaveGame saveGame)
 			throws IOException,
 			MinecraftInterfaceException {
 		VersionFeatures versionFeatures = DefaultVersionFeatures.create(minecraftInterface.getRecognisedVersion());
@@ -82,6 +87,7 @@ public class WorldBuilder {
 				WorldPlayerType.from(saveGame));
 		return create(
 				minecraftInterface,
+				onDisposeWorld,
 				WorldSeed.fromSaveGame(saveGame.getSeed()),
 				saveGame.getWorldType(),
 				saveGame.getGeneratorOptions(),
@@ -93,6 +99,7 @@ public class WorldBuilder {
 
 	private World create(
 			MinecraftInterface minecraftInterface,
+			Consumer<World> onDisposeWorld,
 			WorldSeed worldSeed,
 			WorldType worldType,
 			String generatorOptions,
@@ -105,6 +112,7 @@ public class WorldBuilder {
 		long seed = worldSeed.getLong();
 		minecraftInterface.createWorld(seed, worldType, generatorOptions);
 		return new World(
+				onDisposeWorld,
 				worldSeed,
 				worldType,
 				generatorOptions,
