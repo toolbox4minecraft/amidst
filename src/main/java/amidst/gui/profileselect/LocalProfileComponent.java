@@ -1,9 +1,7 @@
 package amidst.gui.profileselect;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import amidst.Application;
 import amidst.documentation.AmidstThread;
@@ -61,7 +59,7 @@ public class LocalProfileComponent extends ProfileComponent {
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private Optional<LauncherProfile> tryResolve() {
 		try {
-			return Optional.of(unresolvedProfile.resolve(versionListProvider.getRemoteOrElseLocal()));
+			return Optional.of(unresolvedProfile.resolveToVanilla(versionListProvider.getRemoteOrElseLocal()));
 		} catch (FormatException | IOException e) {
 			AmidstLogger.warn(e);
 			return Optional.empty();
@@ -81,27 +79,26 @@ public class LocalProfileComponent extends ProfileComponent {
 	public void load() {
 		isLoading = true;
 		repaintComponent();
+		displayModdedMinecraftInfoIfNecessary();
 		workerExecutor.run(this::tryLoad, this::loadFinished);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void displayModdedMinecraftInfoIfNecessary() {
+		if (!resolvedProfile.isVersionListedInProfile()) {
+			String message = "Amidst does not support modded Minecraft versions! Using underlying vanilla Minecraft version "
+					+ resolvedProfile.getVersionId() + " instead.";
+			AmidstLogger.info(message);
+			AmidstMessageBox.displayInfo("Info", message);
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private Optional<RunningLauncherProfile> tryLoad() {
-		// TODO: Replace with proper handling for modded profiles.
 		try {
 			AmidstLogger.info(
 					"using minecraft launcher profile '" + resolvedProfile.getProfileName() + "' with versionId '"
-							+ resolvedProfile.getVersionId() + "'");
-
-			String possibleModProfiles = ".*(optifine|forge).*";
-			if (Pattern.matches(possibleModProfiles, getVersionName().toLowerCase(Locale.ENGLISH))) {
-				AmidstLogger.error(
-						"Amidst does not support modded Minecraft profiles! Please select or create an unmodded Minecraft profile via the Minecraft Launcher.");
-				AmidstMessageBox.displayError(
-						"Error",
-						"Amidst does not support modded Minecraft profiles! Please select or create an unmodded Minecraft profile via the Minecraft Launcher.");
-				return Optional.empty();
-			}
-
+							+ resolvedProfile.getVersionName() + "'");
 			return Optional.of(launcherProfileRunner.run(resolvedProfile));
 		} catch (LocalMinecraftInterfaceCreationException e) {
 			AmidstLogger.error(e);
@@ -160,7 +157,7 @@ public class LocalProfileComponent extends ProfileComponent {
 	@Override
 	protected String getVersionName() {
 		if (resolvedProfile != null) {
-			return resolvedProfile.getVersionId();
+			return resolvedProfile.getVersionName();
 		} else {
 			return "";
 		}

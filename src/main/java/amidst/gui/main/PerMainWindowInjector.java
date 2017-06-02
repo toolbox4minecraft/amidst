@@ -33,7 +33,7 @@ public class PerMainWindowInjector {
 				.append(" - Selected Profile: ")
 				.append(runningLauncherProfile.getLauncherProfile().getProfileName())
 				.append(" - Minecraft Version ")
-				.append(runningLauncherProfile.getLauncherProfile().getVersionId())
+				.append(runningLauncherProfile.getLauncherProfile().getVersionName())
 				.append(" (recognised: ")
 				.append(runningLauncherProfile.getRecognisedVersion().getName())
 				.append(")")
