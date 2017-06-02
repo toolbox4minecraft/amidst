@@ -15,6 +15,7 @@ import amidst.mojangapi.file.service.LibraryService;
 
 @Immutable
 public class LauncherProfile {
+	private final LibraryService libraryService = new LibraryService();
 	private final DotMinecraftDirectory dotMinecraftDirectory;
 	private final ProfileDirectory profileDirectory;
 	private final VersionDirectory versionDirectory;
@@ -51,7 +52,6 @@ public class LauncherProfile {
 	}
 
 	public URLClassLoader newClassLoader() throws MalformedURLException {
-		LibraryService libraryService = new LibraryService();
 		List<URL> classLoaderUrls = libraryService.getAllClassLoaderUrls(
 				dotMinecraftDirectory.getLibraries(),
 				versionJson.getLibraries(),

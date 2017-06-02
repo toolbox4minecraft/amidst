@@ -14,6 +14,7 @@ import amidst.parsing.json.JsonReader;
 
 @Immutable
 public class UnresolvedLauncherProfile {
+	private final DotMinecraftDirectoryService dotMinecraftDirectoryService = new DotMinecraftDirectoryService();
 	private final DotMinecraftDirectory dotMinecraftDirectory;
 	private final LauncherProfileJson launcherProfileJson;
 
@@ -29,7 +30,6 @@ public class UnresolvedLauncherProfile {
 	}
 
 	public LauncherProfile resolve(VersionList versionList) throws FormatException, IOException {
-		DotMinecraftDirectoryService dotMinecraftDirectoryService = new DotMinecraftDirectoryService();
 		ProfileDirectory profileDirectory = dotMinecraftDirectoryService
 				.createValidProfileDirectory(launcherProfileJson, dotMinecraftDirectory);
 		VersionDirectory versionDirectory = dotMinecraftDirectoryService

@@ -43,6 +43,7 @@ public class MinecraftInstallation {
 		return new MinecraftInstallation(dotMinecraftDirectory);
 	}
 
+	private final SaveDirectoryService saveDirectoryService = new SaveDirectoryService();
 	private final DotMinecraftDirectoryService dotMinecraftDirectoryService = new DotMinecraftDirectoryService();
 	private final DotMinecraftDirectory dotMinecraftDirectory;
 
@@ -89,7 +90,6 @@ public class MinecraftInstallation {
 	}
 
 	public SaveGame newSaveGame(File location) throws IOException, FormatException {
-		SaveDirectoryService saveDirectoryService = new SaveDirectoryService();
 		SaveDirectory saveDirectory = saveDirectoryService.newSaveDirectory(location);
 		return new SaveGame(saveDirectory, saveDirectoryService.readLevelDat(saveDirectory));
 	}
