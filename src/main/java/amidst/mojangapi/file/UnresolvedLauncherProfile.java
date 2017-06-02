@@ -40,6 +40,29 @@ public class UnresolvedLauncherProfile {
 				profileDirectory,
 				versionDirectory,
 				versionJson,
+				true,
+				launcherProfileJson.getName());
+	}
+
+	public LauncherProfile resolveToVanilla(VersionList versionList) throws FormatException, IOException {
+		ProfileDirectory profileDirectory = dotMinecraftDirectoryService
+				.createValidProfileDirectory(launcherProfileJson, dotMinecraftDirectory);
+		VersionDirectory versionDirectory = dotMinecraftDirectoryService
+				.createValidVersionDirectory(launcherProfileJson, versionList, dotMinecraftDirectory);
+		VersionJson versionJson = JsonReader.readLocation(versionDirectory.getJson(), VersionJson.class);
+		boolean isVersionListedInProfile = true;
+		while (versionJson.getInheritsFrom() != null) {
+			versionDirectory = dotMinecraftDirectoryService
+					.createValidVersionDirectory(dotMinecraftDirectory, versionJson.getInheritsFrom());
+			versionJson = JsonReader.readLocation(versionDirectory.getJson(), VersionJson.class);
+			isVersionListedInProfile = false;
+		}
+		return new LauncherProfile(
+				dotMinecraftDirectory,
+				profileDirectory,
+				versionDirectory,
+				versionJson,
+				isVersionListedInProfile,
 				launcherProfileJson.getName());
 	}
 }

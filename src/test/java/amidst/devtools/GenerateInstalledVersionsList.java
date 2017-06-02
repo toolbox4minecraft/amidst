@@ -13,7 +13,7 @@ public class GenerateInstalledVersionsList {
 	}
 
 	public void run() throws FormatException, IOException {
-		minecraftInstallation.readInstalledVersionsAsLauncherProfiles().stream().map(p -> p.getVersionId()).forEach(
+		minecraftInstallation.readInstalledVersionsAsLauncherProfiles().stream().map(p -> p.getVersionName()).forEach(
 				System.out::println);
 	}
 }

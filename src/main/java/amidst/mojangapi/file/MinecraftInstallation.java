@@ -86,6 +86,7 @@ public class MinecraftInstallation {
 				dotMinecraftDirectory.asProfileDirectory(),
 				versionDirectory,
 				versionJson,
+				false,
 				versionJson.getId());
 	}
 

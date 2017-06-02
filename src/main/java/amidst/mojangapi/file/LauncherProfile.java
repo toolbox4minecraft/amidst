@@ -18,6 +18,7 @@ public class LauncherProfile {
 	private final ProfileDirectory profileDirectory;
 	private final VersionDirectory versionDirectory;
 	private final VersionJson versionJson;
+	private final boolean isVersionListedInProfile;
 	private final String profileName;
 
 	public LauncherProfile(
@@ -25,16 +26,39 @@ public class LauncherProfile {
 			ProfileDirectory profileDirectory,
 			VersionDirectory versionDirectory,
 			VersionJson versionJson,
+			boolean isVersionListedInProfile,
 			String profileName) {
 		this.dotMinecraftDirectory = dotMinecraftDirectory;
 		this.profileDirectory = profileDirectory;
 		this.versionDirectory = versionDirectory;
 		this.versionJson = versionJson;
+		this.isVersionListedInProfile = isVersionListedInProfile;
 		this.profileName = profileName;
 	}
 
 	public String getVersionId() {
 		return versionJson.getId();
+	}
+
+	/**
+	 * True, iff the contained version was listed in the profile. Especially,
+	 * this is false if a modded profiles was resolved via
+	 * {@link UnresolvedLauncherProfile#resolveToVanilla(VersionList)}.
+	 */
+	public boolean isVersionListedInProfile() {
+		return isVersionListedInProfile;
+	}
+
+	public String getVersionName() {
+		return getVersionNamePrefix() + versionJson.getId();
+	}
+
+	private String getVersionNamePrefix() {
+		if (isVersionListedInProfile) {
+			return "";
+		} else {
+			return "*";
+		}
 	}
 
 	public String getProfileName() {
