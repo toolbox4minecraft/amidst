@@ -19,6 +19,9 @@ public class RealClassConstant<T> {
 		public static final int METHOD_REFERENCE = 10;
 		public static final int INTERFACE_METHOD_REFERENCE = 11;
 		public static final int NAME_AND_TYPE_DESCRIPTOR = 12;
+		public static final int METHOD_HANDLE = 15;
+		public static final int METHOD_TYPE = 16;
+		public static final int INVOKE_DYNAMIC = 18;
 
 		public static boolean isQIncreasing(byte type) {
 			return type == LONG || type == DOUBLE;
