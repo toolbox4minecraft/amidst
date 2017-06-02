@@ -89,8 +89,8 @@ public class LocalProfileComponent extends ProfileComponent {
 		// TODO: Replace with proper handling for modded profiles.
 		try {
 			AmidstLogger.info(
-					"using minecraft launcher profile '" + getProfileName() + "' with versionId '" + getVersionName()
-							+ "'");
+					"using minecraft launcher profile '" + resolvedProfile.getProfileName() + "' with versionId '"
+							+ resolvedProfile.getVersionId() + "'");
 
 			String possibleModProfiles = ".*(optifine|forge).*";
 			if (Pattern.matches(possibleModProfiles, getVersionName().toLowerCase(Locale.ENGLISH))) {

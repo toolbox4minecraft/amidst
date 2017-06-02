@@ -3,7 +3,6 @@ package amidst.mojangapi;
 import java.io.IOException;
 
 import amidst.documentation.ThreadSafe;
-import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.SaveGame;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
@@ -21,9 +20,6 @@ import amidst.mojangapi.world.WorldType;
 public class RunningLauncherProfile {
 	public static RunningLauncherProfile from(WorldBuilder worldBuilder, LauncherProfile launcherProfile)
 			throws LocalMinecraftInterfaceCreationException {
-		AmidstLogger.info(
-				"using launcher profile. version id: '" + launcherProfile.getVersionId() + "', profile name: '"
-						+ launcherProfile.getProfileName() + "', jar file: '" + launcherProfile.getJar() + "'");
 		return new RunningLauncherProfile(
 				worldBuilder,
 				launcherProfile,
