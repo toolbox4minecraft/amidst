@@ -1,34 +1,34 @@
 package amidst.devtools;
 
 import java.io.File;
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URLClassLoader;
 import java.util.LinkedList;
 import java.util.List;
 
 import amidst.devtools.utils.RecognisedVersionEnumBuilder;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.FilenameFactory;
-import amidst.mojangapi.file.directory.DotMinecraftDirectory;
-import amidst.mojangapi.file.directory.VersionDirectory;
-import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
-import amidst.mojangapi.file.json.versionlist.VersionListJson;
+import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
+import amidst.mojangapi.file.MinecraftInstallation;
+import amidst.mojangapi.file.Version;
+import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.parsing.FormatException;
 
 public class GenerateRecognisedVersionList {
 	private final String prefix;
-	private final VersionListJson versionList;
-	private final File versions;
-	private final DotMinecraftDirectory dotMinecraftDirectory;
+	private final VersionList versionList;
+	private final MinecraftInstallation minecraftInstallation;
 	private final List<String> versionsWithError = new LinkedList<>();
 	private final List<String> downloadFailed = new LinkedList<>();
 	private final RecognisedVersionEnumBuilder builder = RecognisedVersionEnumBuilder.createPopulated();
 
-	public GenerateRecognisedVersionList(String prefix, String libraries, VersionListJson versionList) {
+	public GenerateRecognisedVersionList(String prefix, String libraries, VersionList versionList)
+			throws DotMinecraftDirectoryNotFoundException {
 		this.prefix = prefix;
 		this.versionList = versionList;
-		this.versions = new File(prefix);
-		this.dotMinecraftDirectory = new DotMinecraftDirectory(null, new File(libraries));
+		this.minecraftInstallation = MinecraftInstallation
+				.newCustomMinecraftInstallation(new File(libraries), null, new File(prefix), null);
 	}
 
 	public void run() {
@@ -37,38 +37,30 @@ public class GenerateRecognisedVersionList {
 	}
 
 	private void populate() {
-		for (VersionListEntryJson version : versionList.getVersions()) {
+		for (Version version : versionList.getVersions()) {
 			process(version);
 		}
 		builder.calculateMaxLength();
 	}
 
-	private void process(VersionListEntryJson version) {
-		String versionId = version.getId();
+	private void process(Version version) {
 		if (version.tryDownloadClient(prefix)) {
 			try {
-				process(versionId);
-			} catch (ClassNotFoundException | MalformedURLException | NoClassDefFoundError e) {
+				process(version.getId());
+			} catch (ClassNotFoundException | NoClassDefFoundError | FormatException | IOException e) {
 				e.printStackTrace();
-				versionsWithError.add(versionId);
+				versionsWithError.add(version.getId());
 			}
 		} else {
-			downloadFailed.add(versionId);
+			downloadFailed.add(version.getId());
 		}
 	}
 
-	private void process(String versionId) throws MalformedURLException, ClassNotFoundException {
+	private void process(String versionId) throws ClassNotFoundException, FormatException, IOException {
 		AmidstLogger.info("version " + versionId);
-		VersionDirectory versionDirectory = createVersionDirectory(versionId);
-		URLClassLoader classLoader = versionDirectory.createClassLoader();
+		URLClassLoader classLoader = minecraftInstallation.newLauncherProfile(versionId).newClassLoader();
 		String magicString = RecognisedVersion.generateMagicString(classLoader);
 		builder.addLauncherVersionId(versionId, magicString);
-	}
-
-	private VersionDirectory createVersionDirectory(String versionId) {
-		File jar = FilenameFactory.getClientJarFile(versions, versionId);
-		File json = FilenameFactory.getClientJsonFile(versions, versionId);
-		return new VersionDirectory(dotMinecraftDirectory, versionId, jar, json);
 	}
 
 	private void print() {

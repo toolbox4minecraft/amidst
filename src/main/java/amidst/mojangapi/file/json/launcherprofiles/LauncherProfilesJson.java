@@ -1,6 +1,5 @@
 package amidst.mojangapi.file.json.launcherprofiles;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
@@ -15,7 +14,7 @@ public class LauncherProfilesJson {
 	public LauncherProfilesJson() {
 	}
 
-	public Collection<LauncherProfileJson> getProfiles() {
-		return profiles.values();
+	public Map<String, LauncherProfileJson> getProfiles() {
+		return profiles;
 	}
 }

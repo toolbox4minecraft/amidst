@@ -1,7 +1,6 @@
 package amidst.mojangapi.minecraftinterface.local;
 
-import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URLClassLoader;
 import java.util.Map;
 
@@ -13,8 +12,7 @@ import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.directory.VersionDirectory;
-import amidst.mojangapi.minecraftinterface.MinecraftInterface;
+import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 @Immutable
@@ -26,13 +24,13 @@ public class LocalMinecraftInterfaceBuilder {
 	}
 
 	@NotNull
-	public MinecraftInterface create(VersionDirectory versionDirectory)
+	public LocalMinecraftInterface create(LauncherProfile launcherProfile)
 			throws LocalMinecraftInterfaceCreationException {
 		try {
-			URLClassLoader classLoader = versionDirectory.createClassLoader();
+			URLClassLoader classLoader = launcherProfile.newClassLoader();
 			RecognisedVersion recognisedVersion = RecognisedVersion.from(classLoader);
 			Map<String, SymbolicClass> symbolicClassMap = Classes
-					.createSymbolicClassMap(versionDirectory.getJar(), classLoader, translator);
+					.createSymbolicClassMap(launcherProfile.getJar(), classLoader, translator);
 			AmidstLogger.info("Minecraft load complete.");
 			return new LocalMinecraftInterface(
 					symbolicClassMap.get(SymbolicNames.CLASS_INT_CACHE),
@@ -42,11 +40,10 @@ public class LocalMinecraftInterfaceBuilder {
 					symbolicClassMap.get(SymbolicNames.CLASS_GEN_OPTIONS_FACTORY),
 					recognisedVersion);
 		} catch (
-				MalformedURLException
-				| ClassNotFoundException
-				| FileNotFoundException
+				ClassNotFoundException
 				| JarFileParsingException
-				| SymbolicClassGraphCreationException e) {
+				| SymbolicClassGraphCreationException
+				| IOException e) {
 			throw new LocalMinecraftInterfaceCreationException("unable to create local minecraft interface", e);
 		}
 	}

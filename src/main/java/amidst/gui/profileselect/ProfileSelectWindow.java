@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,10 +20,11 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
-import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
-import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
+import amidst.mojangapi.LauncherProfileRunner;
+import amidst.mojangapi.file.MinecraftInstallation;
+import amidst.mojangapi.file.UnresolvedLauncherProfile;
+import amidst.mojangapi.file.VersionListProvider;
+import amidst.parsing.FormatException;
 import amidst.threading.WorkerExecutor;
 import net.miginfocom.swing.MigLayout;
 
@@ -33,23 +35,31 @@ public class ProfileSelectWindow {
 	private final Application application;
 	private final AmidstMetaData metadata;
 	private final WorkerExecutor workerExecutor;
-	private final MojangApi mojangApi;
+	private final VersionListProvider versionListProvider;
+	private final MinecraftInstallation minecraftInstallation;
+	private final LauncherProfileRunner launcherProfileRunner;
 	private final AmidstSettings settings;
 
 	private final JFrame frame;
 	private final ProfileSelectPanel profileSelectPanel;
+
+	private volatile boolean isDisposed = false;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public ProfileSelectWindow(
 			Application application,
 			AmidstMetaData metadata,
 			WorkerExecutor workerExecutor,
-			MojangApi mojangApi,
+			VersionListProvider versionListProvider,
+			MinecraftInstallation minecraftInstallation,
+			LauncherProfileRunner launcherProfileRunner,
 			AmidstSettings settings) {
 		this.application = application;
 		this.metadata = metadata;
 		this.workerExecutor = workerExecutor;
-		this.mojangApi = mojangApi;
+		this.versionListProvider = versionListProvider;
+		this.minecraftInstallation = minecraftInstallation;
+		this.launcherProfileRunner = launcherProfileRunner;
 		this.settings = settings;
 		this.profileSelectPanel = new ProfileSelectPanel(settings.lastProfile, "Scanning...");
 		this.frame = createFrame();
@@ -112,34 +122,48 @@ public class ProfileSelectWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private LauncherProfilesJson scanAndLoadProfiles() throws MojangApiParsingException, IOException {
+	private List<UnresolvedLauncherProfile> scanAndLoadProfiles() throws FormatException, IOException {
 		AmidstLogger.info("Scanning for profiles.");
-		LauncherProfilesJson launcherProfile = mojangApi.getDotMinecraftDirectory().readLauncherProfilesJson();
+		List<UnresolvedLauncherProfile> launcherProfiles = minecraftInstallation.readLauncherProfiles();
 		AmidstLogger.info("Successfully loaded profile list.");
-		return launcherProfile;
+		return launcherProfiles;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void displayProfiles(LauncherProfilesJson launcherProfile) {
-		createProfileComponentsIfNecessary(launcherProfile);
+	private void displayProfiles(List<UnresolvedLauncherProfile> launcherProfiles) {
+		createProfileComponentsIfNecessary(launcherProfiles);
 		restoreSelection();
 		frame.pack();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void createProfileComponentsIfNecessary(LauncherProfilesJson launcherProfile) {
-		if (launcherProfile.getProfiles().isEmpty()) {
+	private void createProfileComponentsIfNecessary(List<UnresolvedLauncherProfile> launcherProfiles) {
+		if (launcherProfiles.isEmpty()) {
 			AmidstLogger.warn("No profiles found in launcher_profiles.json");
 			profileSelectPanel.setEmptyMessage("No profiles found");
 		} else {
-			createProfileComponents(launcherProfile);
+			createProfileComponents(launcherProfiles);
+			versionListProvider.onDownloadRemoteFinished(this::resolveAllLater);
+			profileSelectPanel.resolveAllLater();
+		}
+	}
+
+	private void resolveAllLater() {
+		if (!isDisposed) {
+			profileSelectPanel.resolveAllLater();
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void createProfileComponents(LauncherProfilesJson launcherProfile) {
-		for (LauncherProfileJson profile : launcherProfile.getProfiles()) {
-			profileSelectPanel.addProfile(new LocalProfileComponent(application, workerExecutor, mojangApi, profile));
+	private void createProfileComponents(List<UnresolvedLauncherProfile> launcherProfiles) {
+		for (UnresolvedLauncherProfile profile : launcherProfiles) {
+			profileSelectPanel.addProfile(
+					new LocalProfileComponent(
+							application,
+							workerExecutor,
+							versionListProvider,
+							launcherProfileRunner,
+							profile));
 		}
 	}
 
@@ -162,6 +186,7 @@ public class ProfileSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void dispose() {
+		isDisposed = true;
 		frame.dispose();
 	}
 }

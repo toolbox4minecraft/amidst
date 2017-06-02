@@ -261,4 +261,11 @@ public class ProfileSelectPanel {
 		}
 		return false;
 	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void resolveAllLater() {
+		if (!isLoading()) {
+			profileComponents.forEach(ProfileComponent::resolveLater);
+		}
+	}
 }

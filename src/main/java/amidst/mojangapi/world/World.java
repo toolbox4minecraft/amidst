@@ -1,6 +1,7 @@
 package amidst.mojangapi.world;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -16,6 +17,8 @@ import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 
 @ThreadSafe
 public class World {
+	private final Consumer<World> onDisposeWorld;
+
 	private final WorldSeed worldSeed;
 	private final WorldType worldType;
 	private final String generatorOptions;
@@ -37,6 +40,7 @@ public class World {
 	private final WorldIconProducer<List<EndIsland>> endCityProducer;
 
 	public World(
+			Consumer<World> onDisposeWorld,
 			WorldSeed worldSeed,
 			WorldType worldType,
 			String generatorOptions,
@@ -55,6 +59,7 @@ public class World {
 			WorldIconProducer<Void> oceanMonumentProducer,
 			WorldIconProducer<Void> netherFortressProducer,
 			WorldIconProducer<List<EndIsland>> endCityProducer) {
+		this.onDisposeWorld = onDisposeWorld;
 		this.worldSeed = worldSeed;
 		this.worldType = worldType;
 		this.generatorOptions = generatorOptions;
@@ -161,5 +166,14 @@ public class World {
 
 	public void reloadPlayerWorldIcons() {
 		playerProducer.resetCache();
+	}
+
+	/**
+	 * Unlocks the RunningLauncherProfile to allow the creation of another
+	 * world. However, this does not actually prevent the usage of this world.
+	 * If you keep using it, something will break.
+	 */
+	public void dispose() {
+		onDisposeWorld.accept(this);
 	}
 }

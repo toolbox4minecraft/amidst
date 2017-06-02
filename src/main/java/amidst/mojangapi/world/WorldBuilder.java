@@ -1,11 +1,12 @@
 package amidst.mojangapi.world;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 import amidst.documentation.Immutable;
-import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.directory.SaveDirectory;
-import amidst.mojangapi.file.nbt.LevelDatNbt;
+import amidst.mojangapi.file.ImmutablePlayerInformationProvider;
+import amidst.mojangapi.file.PlayerInformationProvider;
+import amidst.mojangapi.file.SaveGame;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -27,10 +28,8 @@ import amidst.mojangapi.world.oracle.HeuristicWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.ImmutableWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.oracle.WorldSpawnOracle;
-import amidst.mojangapi.world.player.ImmutablePlayerInformationCache;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.PlayerInformation;
-import amidst.mojangapi.world.player.PlayerInformationCache;
 import amidst.mojangapi.world.player.WorldPlayerType;
 import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
 import amidst.mojangapi.world.versionfeatures.VersionFeatures;
@@ -43,24 +42,28 @@ public class WorldBuilder {
 	 */
 	public static WorldBuilder createSilentPlayerless() {
 		return new WorldBuilder(
-				new ImmutablePlayerInformationCache(PlayerInformation.theSingleplayerPlayer()),
+				new ImmutablePlayerInformationProvider(PlayerInformation.theSingleplayerPlayer()),
 				SeedHistoryLogger.createDisabled());
 	}
 
-	private final PlayerInformationCache playerInformationCache;
+	private final PlayerInformationProvider playerInformationProvider;
 	private final SeedHistoryLogger seedHistoryLogger;
 
-	public WorldBuilder(PlayerInformationCache playerInformationCache, SeedHistoryLogger seedHistoryLogger) {
-		this.playerInformationCache = playerInformationCache;
+	public WorldBuilder(PlayerInformationProvider playerInformationProvider, SeedHistoryLogger seedHistoryLogger) {
+		this.playerInformationProvider = playerInformationProvider;
 		this.seedHistoryLogger = seedHistoryLogger;
 	}
 
-	public World fromSeed(MinecraftInterface minecraftInterface, WorldSeed worldSeed, WorldType worldType)
-			throws MinecraftInterfaceException {
+	public World fromSeed(
+			MinecraftInterface minecraftInterface,
+			Consumer<World> onDisposeWorld,
+			WorldSeed worldSeed,
+			WorldType worldType) throws MinecraftInterfaceException {
 		BiomeDataOracle biomeDataOracle = new BiomeDataOracle(minecraftInterface);
 		VersionFeatures versionFeatures = DefaultVersionFeatures.create(minecraftInterface.getRecognisedVersion());
 		return create(
 				minecraftInterface,
+				onDisposeWorld,
 				worldSeed,
 				worldType,
 				"",
@@ -73,30 +76,30 @@ public class WorldBuilder {
 						versionFeatures.getValidBiomesForStructure_Spawn()));
 	}
 
-	public World fromSaveGame(MinecraftInterface minecraftInterface, SaveDirectory saveDirectory)
+	public World fromSaveGame(MinecraftInterface minecraftInterface, Consumer<World> onDisposeWorld, SaveGame saveGame)
 			throws IOException,
-			MinecraftInterfaceException,
-			MojangApiParsingException {
+			MinecraftInterfaceException {
 		VersionFeatures versionFeatures = DefaultVersionFeatures.create(minecraftInterface.getRecognisedVersion());
-		LevelDatNbt levelDat = saveDirectory.createLevelDat();
 		MovablePlayerList movablePlayerList = new MovablePlayerList(
-				playerInformationCache,
-				saveDirectory,
+				playerInformationProvider,
+				saveGame,
 				true,
-				WorldPlayerType.from(saveDirectory, levelDat));
+				WorldPlayerType.from(saveGame));
 		return create(
 				minecraftInterface,
-				WorldSeed.fromSaveGame(levelDat.getSeed()),
-				levelDat.getWorldType(),
-				levelDat.getGeneratorOptions(),
+				onDisposeWorld,
+				WorldSeed.fromSaveGame(saveGame.getSeed()),
+				saveGame.getWorldType(),
+				saveGame.getGeneratorOptions(),
 				movablePlayerList,
 				versionFeatures,
 				new BiomeDataOracle(minecraftInterface),
-				new ImmutableWorldSpawnOracle(levelDat.getWorldSpawn()));
+				new ImmutableWorldSpawnOracle(saveGame.getWorldSpawn()));
 	}
 
 	private World create(
 			MinecraftInterface minecraftInterface,
+			Consumer<World> onDisposeWorld,
 			WorldSeed worldSeed,
 			WorldType worldType,
 			String generatorOptions,
@@ -109,6 +112,7 @@ public class WorldBuilder {
 		long seed = worldSeed.getLong();
 		minecraftInterface.createWorld(seed, worldType, generatorOptions);
 		return new World(
+				onDisposeWorld,
 				worldSeed,
 				worldType,
 				generatorOptions,

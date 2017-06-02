@@ -4,8 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
+import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
+import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -13,6 +15,11 @@ import amidst.mojangapi.world.WorldType;
 
 @ThreadSafe
 public class LocalMinecraftInterface implements MinecraftInterface {
+	public static LocalMinecraftInterface create(ClassTranslator translator, LauncherProfile launcherProfile)
+			throws LocalMinecraftInterfaceCreationException {
+		return new LocalMinecraftInterfaceBuilder(translator).create(launcherProfile);
+	}
+
 	/**
 	 * A GenLayer instance, at quarter scale to the final biome layer (i.e. both
 	 * axis are divided by 4). Minecraft calculates biomes at

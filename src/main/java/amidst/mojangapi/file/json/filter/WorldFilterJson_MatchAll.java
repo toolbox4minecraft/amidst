@@ -6,26 +6,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.filter.WorldFilter;
 import amidst.mojangapi.world.filter.WorldFilter_MatchAll;
+import amidst.parsing.FormatException;
+import amidst.parsing.json.JsonReader;
 
 @Immutable
 public class WorldFilterJson_MatchAll {
 	public static Optional<WorldFilterJson_MatchAll> from(String queryString) {
 		try {
-			return Optional.ofNullable(GSON.fromJson(queryString, WorldFilterJson_MatchAll.class));
-		} catch (JsonSyntaxException e) {
+			return Optional.of(JsonReader.readString(queryString, WorldFilterJson_MatchAll.class));
+		} catch (FormatException e) {
 			return Optional.empty();
 		}
 	}
-
-	private static final Gson GSON = new Gson();
 
 	private volatile List<WorldFilterJson_Biome> biomeFilters = Collections.emptyList();
 	private volatile List<WorldFilterJson_Structure> structureFilters = Collections.emptyList();

@@ -1,29 +1,30 @@
 package amidst.mojangapi.file.json.version;
 
-import java.io.File;
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
-import amidst.documentation.NotNull;
-import amidst.mojangapi.file.LibraryFinder;
 
 @Immutable
 public class VersionJson {
+	private volatile String id;
+	private volatile String inheritsFrom;
 	private volatile List<LibraryJson> libraries = Collections.emptyList();
 
 	@GsonConstructor
 	public VersionJson() {
 	}
 
-	public List<LibraryJson> getLibraries() {
-		return libraries;
+	public String getId() {
+		return id;
 	}
 
-	@NotNull
-	public List<URL> getLibraryUrls(File librariesDirectory) {
-		return LibraryFinder.getLibraryUrls(librariesDirectory, libraries);
+	public String getInheritsFrom() {
+		return inheritsFrom;
+	}
+
+	public List<LibraryJson> getLibraries() {
+		return libraries;
 	}
 }

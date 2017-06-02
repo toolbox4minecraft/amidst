@@ -1,29 +1,25 @@
 package amidst.mojangapi.file.nbt.player;
 
-import java.io.IOException;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import amidst.documentation.Immutable;
-import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
-import amidst.mojangapi.world.player.PlayerInformationCache;
 
 @Immutable
 public abstract class PlayerNbt {
-	public boolean tryWriteCoordinates(PlayerCoordinates coordinates) throws MojangApiParsingException {
-		if (tryBackup()) {
-			doWriteCoordinates(coordinates);
-			return true;
-		} else {
-			return false;
-		}
+	private final PlayerCoordinates playerCoordinates;
+
+	public PlayerNbt(PlayerCoordinates playerCoordinates) {
+		this.playerCoordinates = playerCoordinates;
 	}
 
-	protected abstract boolean tryBackup();
+	public PlayerCoordinates getPlayerCoordinates() {
+		return playerCoordinates;
+	}
 
-	protected abstract void doWriteCoordinates(PlayerCoordinates coordinates) throws MojangApiParsingException;
-
-	public abstract PlayerCoordinates readCoordinates() throws IOException, MojangApiParsingException;
-
-	public abstract Player createPlayer(PlayerInformationCache cache);
+	public abstract <R> R map(
+			Supplier<R> ifIsLevelDat,
+			Function<String, R> ifIsPlayerdata,
+			Function<String, R> ifIsPlayers);
 }

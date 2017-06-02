@@ -1,11 +1,8 @@
 package amidst.mojangapi.world.player;
 
-import java.io.IOException;
-
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.nbt.player.PlayerNbt;
+import amidst.mojangapi.file.SaveGamePlayer;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIconImage;
@@ -13,17 +10,19 @@ import amidst.mojangapi.world.icon.WorldIconImage;
 @ThreadSafe
 public class Player {
 	private final PlayerInformation playerInformation;
-	private final PlayerNbt playerNbt;
+	private final SaveGamePlayer saveGamePlayer;
 	private volatile PlayerCoordinates savedCoordinates;
 	private volatile PlayerCoordinates currentCoordinates;
 
-	public Player(PlayerInformation playerInformation, PlayerNbt playerNbt) {
+	public Player(PlayerInformation playerInformation, SaveGamePlayer saveGamePlayer) {
 		this.playerInformation = playerInformation;
-		this.playerNbt = playerNbt;
+		this.saveGamePlayer = saveGamePlayer;
+		this.savedCoordinates = saveGamePlayer.getPlayerCoordinates();
+		this.currentCoordinates = savedCoordinates;
 	}
 
 	public String getPlayerName() {
-		return playerInformation.getNameOrUUID();
+		return playerInformation.getNameOrElseUUID();
 	}
 
 	public WorldIconImage getHead() {
@@ -38,52 +37,22 @@ public class Player {
 		this.currentCoordinates = new PlayerCoordinates(coordinates, height, dimension);
 	}
 
-	public boolean trySaveLocation() {
-		try {
-			if (saveLocation()) {
-				return true;
-			} else {
-				AmidstLogger.warn(
-						"skipping to save player location, because the backup file cannot be created for player: "
-								+ getPlayerName());
-				return false;
-			}
-		} catch (MojangApiParsingException e) {
-			AmidstLogger.warn(e, "error while writing player location for player: " + getPlayerName());
-			return false;
-		}
-	}
-
 	/**
 	 * Returns true if the player was not moved or the new location was
 	 * successfully saved.
 	 */
-	public synchronized boolean saveLocation() throws MojangApiParsingException {
+	public synchronized boolean trySaveLocation() {
 		PlayerCoordinates currentCoordinates = this.currentCoordinates;
 		if (savedCoordinates != currentCoordinates) {
-			if (playerNbt.tryWriteCoordinates(currentCoordinates)) {
+			if (saveGamePlayer.tryBackupAndWritePlayerCoordinates(currentCoordinates)) {
 				savedCoordinates = currentCoordinates;
 				return true;
 			} else {
+				AmidstLogger.warn("error while writing player location for player: " + getPlayerName());
 				return false;
 			}
 		} else {
 			return true;
 		}
-	}
-
-	public boolean tryLoadLocation() {
-		try {
-			loadLocation();
-			return true;
-		} catch (IOException | MojangApiParsingException e) {
-			AmidstLogger.warn(e, "error while reading player location for player: " + getPlayerName());
-			return false;
-		}
-	}
-
-	public synchronized void loadLocation() throws IOException, MojangApiParsingException {
-		this.savedCoordinates = playerNbt.readCoordinates();
-		this.currentCoordinates = savedCoordinates;
 	}
 }

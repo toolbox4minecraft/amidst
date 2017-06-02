@@ -9,10 +9,10 @@ import org.junit.Test;
 import amidst.AmidstVersion;
 import amidst.ResourceLoader;
 import amidst.devtools.settings.DevToolSettings;
-import amidst.mojangapi.file.MojangApiParsingException;
-import amidst.mojangapi.file.json.JsonReader;
-import amidst.mojangapi.file.json.versionlist.VersionListJson;
+import amidst.mojangapi.file.MinecraftInstallation;
+import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.world.biome.Biome;
+import amidst.parsing.FormatException;
 
 /**
  * Eclipse does not allow to run the main directly as a Java Application,
@@ -22,37 +22,43 @@ import amidst.mojangapi.world.biome.Biome;
 public class DevToolRunner {
 	@Ignore
 	@Test
-	public void generateRecognisedVersionList() throws IOException, MojangApiParsingException {
+	public void generateInstalledVersionsList() throws FormatException, IOException {
+		new GenerateInstalledVersionsList(MinecraftInstallation.newLocalMinecraftInstallation()).run();
+	}
+
+	@Ignore
+	@Test
+	public void generateRecognisedVersionList() throws FormatException, IOException {
 		new GenerateRecognisedVersionList(versionsDirectory(), librariesDirectory(), versionList()).run();
 	}
 
 	@Ignore
 	@Test
-	public void generateUpdateInformationJson() throws IOException, MojangApiParsingException {
+	public void generateUpdateInformationJson() {
 		new GenerateUpdateInformationJson(amidstVersion()).run();
 	}
 
 	@Ignore
 	@Test
-	public void generateWorldTestData() throws IOException, MojangApiParsingException {
+	public void generateWorldTestData() throws FormatException, IOException {
 		new GenerateWorldTestData(versionsDirectory(), librariesDirectory(), versionList()).run();
 	}
 
 	@Ignore
 	@Test
-	public void checkMinecraftJarFileDownloadAvailability() throws IOException, MojangApiParsingException {
+	public void checkMinecraftJarFileDownloadAvailability() throws FormatException, IOException {
 		new MinecraftJarDownloadAvailabilityChecker(versionList()).run();
 	}
 
 	@Ignore
 	@Test
-	public void downloadMinecraftJarFiles() throws IOException, MojangApiParsingException {
+	public void downloadMinecraftJarFiles() throws FormatException, IOException {
 		new MinecraftJarDownloader(versionsDirectory(), versionList()).run();
 	}
 
 	@Ignore
 	@Test
-	public void checkMinecraftVersionCompatibility() throws IOException, MojangApiParsingException {
+	public void checkMinecraftVersionCompatibility() throws FormatException, IOException {
 		new MinecraftVersionCompatibilityChecker(versionsDirectory(), versionList()).run();
 	}
 
@@ -62,8 +68,8 @@ public class DevToolRunner {
 		new GenerateBiomeColorImages(Biome.allBiomes(), new File(biomeColorImagesDirectory())).run();
 	}
 
-	private VersionListJson versionList() throws IOException, MojangApiParsingException {
-		return JsonReader.readRemoteVersionList();
+	private VersionList versionList() throws FormatException, IOException {
+		return VersionList.newRemoteVersionList();
 	}
 
 	private String librariesDirectory() {

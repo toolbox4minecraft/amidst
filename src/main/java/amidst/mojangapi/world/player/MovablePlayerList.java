@@ -7,8 +7,9 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.directory.SaveDirectory;
-import amidst.mojangapi.file.nbt.player.PlayerNbt;
+import amidst.mojangapi.file.PlayerInformationProvider;
+import amidst.mojangapi.file.SaveGame;
+import amidst.mojangapi.file.SaveGamePlayer;
 import amidst.threading.WorkerExecutor;
 
 @ThreadSafe
@@ -19,20 +20,20 @@ public class MovablePlayerList implements Iterable<Player> {
 		return DUMMY;
 	}
 
-	private final PlayerInformationCache playerInformationCache;
-	private final SaveDirectory saveDirectory;
+	private final PlayerInformationProvider playerInformationProvider;
+	private final SaveGame saveGame;
 	private final boolean isSaveEnabled;
 
 	private volatile WorldPlayerType worldPlayerType;
 	private volatile ConcurrentLinkedQueue<Player> players = new ConcurrentLinkedQueue<>();
 
 	public MovablePlayerList(
-			PlayerInformationCache playerInformationCache,
-			SaveDirectory saveDirectory,
+			PlayerInformationProvider playerInformationProvider,
+			SaveGame saveGame,
 			boolean isSaveEnabled,
 			WorldPlayerType worldPlayerType) {
-		this.playerInformationCache = playerInformationCache;
-		this.saveDirectory = saveDirectory;
+		this.playerInformationProvider = playerInformationProvider;
+		this.saveGame = saveGame;
 		this.isSaveEnabled = isSaveEnabled;
 		this.worldPlayerType = worldPlayerType;
 	}
@@ -46,11 +47,11 @@ public class MovablePlayerList implements Iterable<Player> {
 	}
 
 	public boolean canLoad() {
-		return saveDirectory != null;
+		return saveGame != null;
 	}
 
 	public void load(WorkerExecutor workerExecutor, Runnable onPlayerFinishedLoading) {
-		if (saveDirectory != null) {
+		if (saveGame != null) {
 			AmidstLogger.info("loading player locations");
 			ConcurrentLinkedQueue<Player> players = new ConcurrentLinkedQueue<>();
 			this.players = players;
@@ -70,17 +71,14 @@ public class MovablePlayerList implements Iterable<Player> {
 			WorkerExecutor workerExecutor,
 			ConcurrentLinkedQueue<Player> players,
 			Runnable onPlayerFinishedLoading) {
-		for (PlayerNbt playerNbt : worldPlayerType.createPlayerNbts(saveDirectory)) {
-			workerExecutor.run(() -> loadPlayer(players, playerNbt), onPlayerFinishedLoading);
+		for (SaveGamePlayer saveGamePlayer : worldPlayerType.tryReadPlayers(saveGame)) {
+			workerExecutor.run(() -> loadPlayer(players, saveGamePlayer), onPlayerFinishedLoading);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private void loadPlayer(ConcurrentLinkedQueue<Player> players, PlayerNbt playerNbt) {
-		Player player = playerNbt.createPlayer(playerInformationCache);
-		if (player.tryLoadLocation()) {
-			players.offer(player);
-		}
+	private void loadPlayer(ConcurrentLinkedQueue<Player> players, SaveGamePlayer saveGamePlayer) {
+		players.offer(new Player(saveGamePlayer.getPlayerInformation(playerInformationProvider), saveGamePlayer));
 	}
 
 	public boolean canSave() {

@@ -1,5 +1,8 @@
 package amidst;
 
+import java.io.IOException;
+import java.util.Optional;
+
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -16,15 +19,18 @@ import amidst.gui.main.viewer.PerViewerFacadeInjector;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.main.viewer.Zoom;
 import amidst.gui.profileselect.ProfileSelectWindow;
-import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.MojangApiBuilder;
+import amidst.mojangapi.LauncherProfileRunner;
+import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
+import amidst.mojangapi.file.LauncherProfile;
+import amidst.mojangapi.file.MinecraftInstallation;
+import amidst.mojangapi.file.PlayerInformationCache;
+import amidst.mojangapi.file.PlayerInformationProvider;
+import amidst.mojangapi.file.VersionListProvider;
 import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
-import amidst.mojangapi.world.player.PlayerInformationCache;
-import amidst.mojangapi.world.player.PlayerInformationCacheImpl;
+import amidst.parsing.FormatException;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.threading.ThreadMaster;
 
@@ -32,12 +38,15 @@ import amidst.threading.ThreadMaster;
 public class PerApplicationInjector {
 	private final AmidstMetaData metadata;
 	private final AmidstSettings settings;
-	private final PlayerInformationCache playerInformationCache;
+	private final PlayerInformationProvider playerInformationProvider;
 	private final SeedHistoryLogger seedHistoryLogger;
+	private final MinecraftInstallation minecraftInstallation;
+	private final Optional<LauncherProfile> preferredLauncherProfile;
 	private final WorldBuilder worldBuilder;
-	private final MojangApi mojangApi;
+	private final LauncherProfileRunner launcherProfileRunner;
 	private final BiomeProfileDirectory biomeProfileDirectory;
 	private final ThreadMaster threadMaster;
+	private final VersionListProvider versionListProvider;
 	private final LayerBuilder layerBuilder;
 	private final Zoom zoom;
 	private final FragmentManager fragmentManager;
@@ -47,21 +56,29 @@ public class PerApplicationInjector {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public PerApplicationInjector(CommandLineParameters parameters, AmidstMetaData metadata, AmidstSettings settings)
 			throws DotMinecraftDirectoryNotFoundException,
-			LocalMinecraftInterfaceCreationException {
+			FormatException,
+			IOException {
 		this.metadata = metadata;
 		this.settings = settings;
-		this.playerInformationCache = new PlayerInformationCacheImpl();
+		this.playerInformationProvider = new PlayerInformationCache();
 		this.seedHistoryLogger = SeedHistoryLogger.from(parameters.seedHistoryFile);
-		this.worldBuilder = new WorldBuilder(playerInformationCache, seedHistoryLogger);
-		this.mojangApi = new MojangApiBuilder(worldBuilder, parameters).construct();
+		this.minecraftInstallation = MinecraftInstallation
+				.newLocalMinecraftInstallation(parameters.dotMinecraftDirectory);
+		this.preferredLauncherProfile = minecraftInstallation
+				.tryReadLauncherProfile(parameters.minecraftJarFile, parameters.minecraftJsonFile);
+		this.worldBuilder = new WorldBuilder(playerInformationProvider, seedHistoryLogger);
+		this.launcherProfileRunner = new LauncherProfileRunner(worldBuilder);
 		this.biomeProfileDirectory = BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);
 		this.threadMaster = new ThreadMaster();
+		this.versionListProvider = VersionListProvider
+				.createLocalAndStartDownloadingRemote(threadMaster.getWorkerExecutor());
 		this.layerBuilder = new LayerBuilder();
 		this.zoom = new Zoom(settings.maxZoom);
 		this.fragmentManager = new FragmentManager(layerBuilder.getConstructors(), layerBuilder.getNumberOfLayers());
 		this.biomeSelection = new BiomeSelection();
 		this.application = new Application(
-				mojangApi,
+				preferredLauncherProfile,
+				launcherProfileRunner,
 				this::createNoisyUpdatePrompt,
 				this::createSilentUpdatePrompt,
 				this::createMainWindow,
@@ -80,12 +97,13 @@ public class PerApplicationInjector {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private MainWindow createMainWindow() {
+	private MainWindow createMainWindow(RunningLauncherProfile runningLauncherProfile) {
 		return new PerMainWindowInjector(
 				application,
 				metadata,
 				settings,
-				mojangApi,
+				minecraftInstallation,
+				runningLauncherProfile,
 				biomeProfileDirectory,
 				this::createViewerFacade,
 				threadMaster).getMainWindow();
@@ -93,7 +111,14 @@ public class PerApplicationInjector {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private ProfileSelectWindow createProfileSelectWindow() {
-		return new ProfileSelectWindow(application, metadata, threadMaster.getWorkerExecutor(), mojangApi, settings);
+		return new ProfileSelectWindow(
+				application,
+				metadata,
+				threadMaster.getWorkerExecutor(),
+				versionListProvider,
+				minecraftInstallation,
+				launcherProfileRunner,
+				settings);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

@@ -1,6 +1,9 @@
 package amidst.mojangapi.file.nbt.player;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.jnbt.CompoundTag;
 import org.jnbt.IntTag;
@@ -8,27 +11,31 @@ import org.jnbt.ListTag;
 import org.jnbt.Tag;
 
 import amidst.documentation.Immutable;
-import amidst.mojangapi.file.MojangApiParsingException;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.nbt.NBTTagKeys;
+import amidst.mojangapi.file.nbt.NBTUtils;
 import amidst.mojangapi.world.player.PlayerCoordinates;
 
 @Immutable
 public enum PlayerLocationLoader {
 	;
 
-	public static PlayerCoordinates readFromPlayerFile(CompoundTag file) throws MojangApiParsingException {
+	public static Optional<PlayerCoordinates> tryReadFromPlayerFile(File file) throws IOException {
 		try {
-			return readPlayerCoordinates(file);
+			return Optional.of(readPlayerCoordinates(NBTUtils.readTagFromFile(file)));
 		} catch (NullPointerException e) {
-			throw new MojangApiParsingException("cannot read player coordinates", e);
+			AmidstLogger.warn(e, "cannot read player from file: " + file);
+			return Optional.empty();
 		}
 	}
 
-	public static PlayerCoordinates readFromLevelDat(CompoundTag file) throws MojangApiParsingException {
+	public static Optional<PlayerCoordinates> tryReadFromLevelDat(File file) throws IOException {
 		try {
-			return readPlayerCoordinates(getSinglePlayerPlayerTag(getTagRootTag(file)));
+			return Optional
+					.of(readPlayerCoordinates(getSinglePlayerPlayerTag(getTagRootTag(NBTUtils.readTagFromFile(file)))));
 		} catch (NullPointerException e) {
-			throw new MojangApiParsingException("cannot read player coordinates", e);
+			AmidstLogger.warn(e, "cannot read player from level.dat: " + file);
+			return Optional.empty();
 		}
 	}
 

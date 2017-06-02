@@ -5,8 +5,6 @@ import amidst.documentation.Immutable;
 
 @Immutable
 public class LibraryRuleJson {
-	private static final String ACTION_ALLOW = "allow";
-
 	private volatile String action;
 	private volatile LibraryRuleOsJson os;
 
@@ -14,11 +12,11 @@ public class LibraryRuleJson {
 	public LibraryRuleJson() {
 	}
 
-	public boolean isApplicable(String os, String version) {
-		return this.os == null || this.os.isApplicable(os, version);
+	public String getAction() {
+		return action;
 	}
 
-	public boolean isAllowed() {
-		return action.equals(ACTION_ALLOW);
+	public LibraryRuleOsJson getOs() {
+		return os;
 	}
 }

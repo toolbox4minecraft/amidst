@@ -11,8 +11,8 @@ import amidst.clazz.Classes;
 import amidst.clazz.real.JarFileParsingException;
 import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.translator.ClassTranslator;
-import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
-import amidst.mojangapi.file.json.versionlist.VersionListJson;
+import amidst.mojangapi.file.Version;
+import amidst.mojangapi.file.VersionList;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
 
 /**
@@ -23,17 +23,17 @@ import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
  */
 public class MinecraftVersionCompatibilityChecker {
 	private String prefix;
-	private VersionListJson versionList;
+	private VersionList versionList;
 
-	public MinecraftVersionCompatibilityChecker(String prefix, VersionListJson versionList) {
+	public MinecraftVersionCompatibilityChecker(String prefix, VersionList versionList) {
 		this.prefix = prefix;
 		this.versionList = versionList;
 	}
 
 	public void run() {
-		List<VersionListEntryJson> supported = new ArrayList<>();
-		List<VersionListEntryJson> unsupported = new ArrayList<>();
-		for (VersionListEntryJson version : versionList.getVersions()) {
+		List<Version> supported = new ArrayList<>();
+		List<Version> unsupported = new ArrayList<>();
+		for (Version version : versionList.getVersions()) {
 			if (checkOne(version)) {
 				supported.add(version);
 			} else {
@@ -44,10 +44,10 @@ public class MinecraftVersionCompatibilityChecker {
 		displayVersionList(unsupported, "================ UNSUPPORTED VERSIONS ================");
 	}
 
-	private boolean checkOne(VersionListEntryJson version) {
+	private boolean checkOne(Version version) {
 		if (version.tryDownloadClient(prefix)) {
 			try {
-				File jarFile = new File(version.getClientJar(prefix));
+				File jarFile = version.getClientJarFile(new File(prefix));
 				ClassTranslator translator = DefaultClassTranslator.INSTANCE.get();
 				return isSupported(Classes.countMatches(jarFile, translator));
 			} catch (FileNotFoundException | JarFileParsingException e) {
@@ -68,10 +68,10 @@ public class MinecraftVersionCompatibilityChecker {
 		return true;
 	}
 
-	private void displayVersionList(List<VersionListEntryJson> supported, String message) {
+	private void displayVersionList(List<Version> versions, String message) {
 		System.out.println();
 		System.out.println(message);
-		for (VersionListEntryJson version : supported) {
+		for (Version version : versions) {
 			System.out.println(version.getId());
 		}
 	}

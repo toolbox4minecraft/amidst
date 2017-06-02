@@ -7,7 +7,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.MainWindowDialogs;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.MojangApi;
+import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
@@ -18,16 +18,19 @@ import amidst.threading.worker.ProgressReportingWorker;
 @NotThreadSafe
 public class SeedSearcher {
 	private final MainWindowDialogs dialogs;
-	private final MojangApi mojangApi;
+	private final RunningLauncherProfile runningLauncherProfile;
 	private final WorkerExecutor workerExecutor;
 
 	private volatile boolean isSearching = false;
 	private volatile boolean isStopRequested = false;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public SeedSearcher(MainWindowDialogs dialogs, MojangApi mojangApi, WorkerExecutor workerExecutor) {
+	public SeedSearcher(
+			MainWindowDialogs dialogs,
+			RunningLauncherProfile runningLauncherProfile,
+			WorkerExecutor workerExecutor) {
 		this.dialogs = dialogs;
-		this.mojangApi = mojangApi.createSilentPlayerlessCopy();
+		this.runningLauncherProfile = runningLauncherProfile;
 		this.workerExecutor = workerExecutor;
 	}
 
@@ -87,13 +90,16 @@ public class SeedSearcher {
 
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private void doSearchOne(ProgressReporter<WorldSeed> reporter, SeedSearcherConfiguration configuration)
-			throws MinecraftInterfaceException {
+			throws IllegalStateException,
+			MinecraftInterfaceException {
 		while (!isStopRequested) {
-			World world = mojangApi.createWorldFromSeed(WorldSeed.random(), configuration.getWorldType());
+			World world = runningLauncherProfile.createWorldFromSeed(WorldSeed.random(), configuration.getWorldType());
 			if (configuration.getWorldFilter().isValid(world)) {
 				reporter.report(world.getWorldSeed());
+				world.dispose();
 				break;
 			}
+			world.dispose();
 		}
 	}
 }

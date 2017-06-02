@@ -1,18 +1,11 @@
 package amidst.mojangapi.file.json.launcherprofiles;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
-import amidst.documentation.NotNull;
-import amidst.mojangapi.MojangApi;
-import amidst.mojangapi.file.directory.ProfileDirectory;
-import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.ReleaseType;
-import amidst.mojangapi.file.json.versionlist.VersionListJson;
 
 @Immutable
 public class LauncherProfileJson {
@@ -48,35 +41,7 @@ public class LauncherProfileJson {
 		return gameDir;
 	}
 
-	@NotNull
-	public ProfileDirectory createValidProfileDirectory(MojangApi mojangApi) throws FileNotFoundException {
-		if (gameDir != null) {
-			ProfileDirectory result = new ProfileDirectory(new File(gameDir));
-			if (result.isValid()) {
-				return result;
-			} else {
-				throw new FileNotFoundException(
-						"cannot find valid profile directory for launcher profile '" + name + "': " + gameDir);
-			}
-		} else {
-			return new ProfileDirectory(mojangApi.getDotMinecraftDirectory().getRoot());
-		}
-	}
-
-	@NotNull
-	public VersionDirectory createValidVersionDirectory(MojangApi mojangApi) throws FileNotFoundException {
-		VersionListJson versionList = mojangApi.getVersionList();
-		if (lastVersionId != null) {
-			VersionDirectory result = mojangApi.createVersionDirectory(lastVersionId);
-			if (result.isValid()) {
-				return result;
-			}
-		} else {
-			VersionDirectory result = versionList.tryFindFirstValidVersionDirectory(allowedReleaseTypes, mojangApi);
-			if (result != null) {
-				return result;
-			}
-		}
-		throw new FileNotFoundException("cannot find valid version directory for launcher profile '" + name + "'");
+	public List<ReleaseType> getAllowedReleaseTypes() {
+		return allowedReleaseTypes;
 	}
 }
