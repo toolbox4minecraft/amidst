@@ -39,7 +39,9 @@ public class VersionListProvider {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void onDownloadRemoteFinished(Runnable listener) {
-		listeners.offer(listener);
+		if (remote == null) {
+			listeners.offer(listener);
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -58,6 +60,7 @@ public class VersionListProvider {
 		AmidstLogger.info("Successfully loaded remote version list.");
 		this.remote = remote;
 		listeners.forEach(Runnable::run);
+		listeners.clear();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

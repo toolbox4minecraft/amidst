@@ -43,6 +43,8 @@ public class ProfileSelectWindow {
 	private final JFrame frame;
 	private final ProfileSelectPanel profileSelectPanel;
 
+	private volatile boolean isDisposed = false;
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	public ProfileSelectWindow(
 			Application application,
@@ -141,7 +143,13 @@ public class ProfileSelectWindow {
 			profileSelectPanel.setEmptyMessage("No profiles found");
 		} else {
 			createProfileComponents(launcherProfiles);
-			versionListProvider.onDownloadRemoteFinished(profileSelectPanel::resolveAllLater);
+			versionListProvider.onDownloadRemoteFinished(this::resolveAllLater);
+			profileSelectPanel.resolveAllLater();
+		}
+	}
+
+	private void resolveAllLater() {
+		if (!isDisposed) {
 			profileSelectPanel.resolveAllLater();
 		}
 	}
@@ -178,6 +186,7 @@ public class ProfileSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void dispose() {
+		isDisposed = true;
 		frame.dispose();
 	}
 }
