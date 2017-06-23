@@ -6,7 +6,6 @@ import java.util.Random;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
-import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeData;
@@ -16,12 +15,9 @@ import amidst.mojangapi.world.coordinates.Region;
 import amidst.mojangapi.world.coordinates.Resolution;
 
 @ThreadSafe
-public class BiomeDataOracle {
-	private final MinecraftInterface minecraftInterface;
+public abstract class BiomeDataOracle {
 
-	public BiomeDataOracle(MinecraftInterface minecraftInterface) {
-		this.minecraftInterface = minecraftInterface;
-	}
+	public BiomeDataOracle() {}
 		
 	/**
 	 * Returns the biome data of the specified region.
@@ -33,14 +29,11 @@ public class BiomeDataOracle {
 	public BiomeData getBiomeData(Region.Box region, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
 		region = region.getAs(Resolution.from(useQuarterResolution));
-		return doGetBiomeData(region, useQuarterResolution); 
+		return doGetBiomeData(region, useQuarterResolution);
 	}
-
-	private BiomeData doGetBiomeData(Region.Box region, boolean useQuarterResolution)
-			throws MinecraftInterfaceException {
-		int[] data = minecraftInterface.getBiomeData(region, useQuarterResolution);
-		return new BiomeData(data, region.getWidth(), region.getHeight()).view();
-	}
+	
+	protected abstract BiomeData doGetBiomeData(Region.Box region, boolean useQuarterResolution)
+			 throws MinecraftInterfaceException;
 
 	public boolean isValidBiomeAtMiddleOfChunk(int chunkX, int chunkY, List<Biome> validBiomes) {
 		return isValidBiome(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY), validBiomes);

@@ -5,11 +5,13 @@ import java.util.function.Consumer;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.coordinates.Region;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
 import amidst.mojangapi.world.icon.producer.SpawnProducer;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
+import amidst.mojangapi.world.oracle.CachedBiomeDataOracle;
 import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
@@ -78,6 +80,30 @@ public class World {
 		this.endCityProducer = endCityProducer;
 	}
 	
+	public World cached(Region.Box region) {
+		//@formatter: off
+		return new World(
+			onDisposeWorld,
+			worldOptions,
+			movablePlayerList,
+			recognisedVersion,
+			versionFeatures,
+			new CachedBiomeDataOracle(biomeDataOracle, region),
+			endIslandOracle,
+			slimeChunkOracle,
+			worldSpawnOracle,
+			strongholdProducer,
+			playerProducer,
+			villageProducer,
+			templeProducer,
+			mineshaftProducer,
+			oceanMonumentProducer,
+			netherFortressProducer,
+			endCityProducer
+		);
+		//@formatter: on
+	}
+
 	public WorldOptions getWorldOptions() {
 		return worldOptions;
 	}
