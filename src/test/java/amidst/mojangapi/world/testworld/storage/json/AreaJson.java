@@ -1,16 +1,16 @@
 package amidst.mojangapi.world.testworld.storage.json;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 
 @Immutable
+@GsonObject
 public class AreaJson implements Comparable<AreaJson> {
 	private volatile long x;
 	private volatile long y;
 	private volatile long width;
 	private volatile long height;
 
-	@GsonConstructor
 	public AreaJson() {
 	}
 

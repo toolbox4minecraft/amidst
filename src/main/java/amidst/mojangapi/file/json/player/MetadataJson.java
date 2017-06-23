@@ -1,13 +1,13 @@
 package amidst.mojangapi.file.json.player;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 
 @Immutable
+@GsonObject
 public class MetadataJson {
 	private volatile String model;
 
-	@GsonConstructor
 	public MetadataJson() {
 	}
 

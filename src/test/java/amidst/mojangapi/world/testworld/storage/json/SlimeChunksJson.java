@@ -2,13 +2,14 @@ package amidst.mojangapi.world.testworld.storage.json;
 
 import java.util.Arrays;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 
 @Immutable
+@GsonObject
 public class SlimeChunksJson {
 	public static SlimeChunksJson from(World world) {
 		SlimeChunkOracle oracle = world.getSlimeChunkOracle();
@@ -24,7 +25,6 @@ public class SlimeChunksJson {
 
 	private volatile boolean[][] isSlimeChunk;
 
-	@GsonConstructor
 	public SlimeChunksJson() {
 	}
 

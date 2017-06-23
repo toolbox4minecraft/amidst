@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
@@ -17,8 +16,6 @@ import amidst.parsing.URIUtils;
 @Immutable
 public enum JsonReader {
 	;
-
-	private static final Gson GSON = new Gson();
 
 	@NotNull
 	public static <T> T readLocation(File location, Class<T> clazz) throws FormatException, IOException {
@@ -38,7 +35,7 @@ public enum JsonReader {
 	@NotNull
 	private static <T> T readReader(Reader reader, Class<T> clazz) throws FormatException, IOException {
 		try (Reader theReader = reader) {
-			T result = GSON.fromJson(theReader, clazz);
+			T result = GsonProvider.getStrict().fromJson(theReader, clazz);
 			if (result != null) {
 				return result;
 			} else {
@@ -54,7 +51,7 @@ public enum JsonReader {
 	@NotNull
 	public static <T> T readString(String string, Class<T> clazz) throws FormatException {
 		try {
-			T result = GSON.fromJson(string, clazz);
+			T result = GsonProvider.getStrict().fromJson(string, clazz);
 			if (result != null) {
 				return result;
 			} else {

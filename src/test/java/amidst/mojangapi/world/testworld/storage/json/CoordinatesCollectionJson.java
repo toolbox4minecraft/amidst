@@ -5,7 +5,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Function;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
@@ -17,6 +17,7 @@ import amidst.mojangapi.world.icon.producer.NameFilteredWorldIconCollector;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 
 @Immutable
+@GsonObject
 public class CoordinatesCollectionJson {
 	public static CoordinatesCollectionJson extractWorldSpawn(World world) {
 		Coordinates spawn = world.getSpawnWorldIcon().getCoordinates();
@@ -62,7 +63,6 @@ public class CoordinatesCollectionJson {
 
 	private volatile SortedSet<Coordinates> coordinates;
 
-	@GsonConstructor
 	public CoordinatesCollectionJson() {
 	}
 

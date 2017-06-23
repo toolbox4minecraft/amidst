@@ -1,17 +1,17 @@
 package amidst.gui.main;
 
 import amidst.AmidstVersion;
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 
 @Immutable
+@GsonObject
 public class UpdateInformationJson {
 	private volatile int major;
 	private volatile int minor;
 	private volatile String message;
 	private volatile String downloadUrl;
-
-	@GsonConstructor
+	
 	public UpdateInformationJson() {
 	}
 

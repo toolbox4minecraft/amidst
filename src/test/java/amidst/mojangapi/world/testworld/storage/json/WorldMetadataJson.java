@@ -1,12 +1,13 @@
 package amidst.mojangapi.world.testworld.storage.json;
 
 import amidst.documentation.Immutable;
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldType;
 
 @Immutable
+@GsonObject
 public class WorldMetadataJson {
 	public static WorldMetadataJson from(World world) {
 		return new WorldMetadataJson(
@@ -19,7 +20,6 @@ public class WorldMetadataJson {
 	private volatile long seed;
 	private volatile WorldType worldType;
 
-	@GsonConstructor
 	public WorldMetadataJson() {
 	}
 

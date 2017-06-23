@@ -2,10 +2,11 @@ package amidst.mojangapi.world.testworld.storage.json;
 
 import java.util.SortedMap;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 
 @Immutable
+@GsonObject
 public class BiomeDataJson {
 	private static int[] short2int(short[] in) {
 		int[] result = new int[in.length];
@@ -25,7 +26,6 @@ public class BiomeDataJson {
 
 	private volatile SortedMap<AreaJson, short[]> biomeData;
 
-	@GsonConstructor
 	public BiomeDataJson() {
 	}
 

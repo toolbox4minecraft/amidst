@@ -3,15 +3,15 @@ package amidst.mojangapi.file.json.version;
 import java.util.Collections;
 import java.util.List;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 
 @Immutable
+@GsonObject(ignoreUnknown=true)
 public class LibraryJson {
 	private volatile String name;
 	private volatile List<LibraryRuleJson> rules = Collections.emptyList();
 
-	@GsonConstructor
 	public LibraryJson() {
 	}
 

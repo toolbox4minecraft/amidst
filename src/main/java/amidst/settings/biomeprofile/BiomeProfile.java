@@ -11,13 +11,14 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
 
 @Immutable
+@GsonObject
 public class BiomeProfile {
 	private static Map<String, BiomeColorJson> createDefaultColorMap() {
 		Map<String, BiomeColorJson> result = new HashMap<>();
@@ -37,7 +38,6 @@ public class BiomeProfile {
 	private volatile String shortcut;
 	private volatile Map<String, BiomeColorJson> colorMap;
 
-	@GsonConstructor
 	public BiomeProfile() {
 	}
 

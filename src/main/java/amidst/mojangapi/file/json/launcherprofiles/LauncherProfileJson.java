@@ -3,11 +3,12 @@ package amidst.mojangapi.file.json.launcherprofiles;
 import java.util.Arrays;
 import java.util.List;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.json.ReleaseType;
 
 @Immutable
+@GsonObject
 public class LauncherProfileJson {
 	/**
 	 * Some Minecraft installations have a profile with the key "(Default)" and
@@ -25,7 +26,6 @@ public class LauncherProfileJson {
 	private volatile String gameDir;
 	private volatile List<ReleaseType> allowedReleaseTypes = Arrays.asList(ReleaseType.RELEASE);
 
-	@GsonConstructor
 	public LauncherProfileJson() {
 	}
 

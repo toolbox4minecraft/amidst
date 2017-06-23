@@ -2,9 +2,11 @@ package amidst.mojangapi.world.coordinates;
 
 import java.awt.Point;
 
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 
 @Immutable
+@GsonObject
 public class Coordinates implements Comparable<Coordinates> {
 	public static Coordinates tryParse(String coordinates) {
 		String[] parsedCoordinates = coordinates.replaceAll(" ", "").split(",");

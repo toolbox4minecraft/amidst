@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.filter.WorldFilter;
@@ -15,6 +15,7 @@ import amidst.parsing.FormatException;
 import amidst.parsing.json.JsonReader;
 
 @Immutable
+@GsonObject
 public class WorldFilterJson_MatchAll {
 	public static Optional<WorldFilterJson_MatchAll> from(String queryString) {
 		try {
@@ -27,7 +28,6 @@ public class WorldFilterJson_MatchAll {
 	private volatile List<WorldFilterJson_Biome> biomeFilters = Collections.emptyList();
 	private volatile List<WorldFilterJson_Structure> structureFilters = Collections.emptyList();
 
-	@GsonConstructor
 	public WorldFilterJson_MatchAll() {
 	}
 

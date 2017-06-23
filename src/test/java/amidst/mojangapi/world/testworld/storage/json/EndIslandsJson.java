@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.mocking.FragmentCornerWalker;
 import amidst.mojangapi.world.coordinates.Coordinates;
@@ -12,6 +12,7 @@ import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 
 @Immutable
+@GsonObject
 public class EndIslandsJson {
 	public static EndIslandsJson extract(EndIslandOracle oracle, int fragmentsAroundOrigin) {
 		SortedMap<Coordinates, List<EndIsland>> result = new TreeMap<>();
@@ -22,7 +23,6 @@ public class EndIslandsJson {
 
 	private volatile SortedMap<Coordinates, List<EndIsland>> endIslands;
 
-	@GsonConstructor
 	public EndIslandsJson() {
 	}
 

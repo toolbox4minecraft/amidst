@@ -5,17 +5,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.filter.WorldFilter_Biome;
 
 @Immutable
+@GsonObject
 public class WorldFilterJson_Biome {
 	private volatile long distance;
 	private volatile List<String> biomes = Collections.emptyList();
 
-	@GsonConstructor
 	public WorldFilterJson_Biome() {
 	}
 
