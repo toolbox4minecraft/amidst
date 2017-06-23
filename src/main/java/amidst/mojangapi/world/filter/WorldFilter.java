@@ -3,20 +3,20 @@ package amidst.mojangapi.world.filter;
 import amidst.documentation.Immutable;
 import amidst.fragment.Fragment;
 import amidst.mojangapi.world.World;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.coordinates.Resolution;
 
 @Immutable
 public abstract class WorldFilter {
 	protected final long worldFilterSize;
 	protected final long quarterFilterSize;
-	protected final CoordinatesInWorld corner;
+	protected final Coordinates corner;
 
 	public WorldFilter(long worldFilterSize) {
 		ensureIsMultipleOfFragmentSize(worldFilterSize);
 		this.worldFilterSize = worldFilterSize;
 		this.quarterFilterSize = Resolution.QUARTER.convertFromWorldToThis(this.worldFilterSize);
-		this.corner = new CoordinatesInWorld(-this.worldFilterSize, -this.worldFilterSize);
+		this.corner = new Coordinates(-this.worldFilterSize, -this.worldFilterSize);
 	}
 
 	/**

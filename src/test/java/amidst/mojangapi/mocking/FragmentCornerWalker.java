@@ -4,29 +4,29 @@ import java.util.function.Consumer;
 
 import amidst.documentation.Immutable;
 import amidst.fragment.Fragment;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 
 @Immutable
 public class FragmentCornerWalker {
 	public static FragmentCornerWalker walkFragmentsAroundOrigin(int fragmentsAroundOrigin) {
 		long blocksAroundOrigin = fragmentsAroundOrigin * Fragment.SIZE;
-		CoordinatesInWorld startCorner = CoordinatesInWorld.from(-blocksAroundOrigin, -blocksAroundOrigin);
-		CoordinatesInWorld endCorner = startCorner.add(2 * blocksAroundOrigin, 2 * blocksAroundOrigin);
+		Coordinates startCorner = Coordinates.from(-blocksAroundOrigin, -blocksAroundOrigin);
+		Coordinates endCorner = startCorner.add(2 * blocksAroundOrigin, 2 * blocksAroundOrigin);
 		return new FragmentCornerWalker(startCorner, endCorner);
 	}
 
-	private final CoordinatesInWorld startCorner;
-	private final CoordinatesInWorld endCorner;
+	private final Coordinates startCorner;
+	private final Coordinates endCorner;
 
-	public FragmentCornerWalker(CoordinatesInWorld startCorner, CoordinatesInWorld endCorner) {
+	public FragmentCornerWalker(Coordinates startCorner, Coordinates endCorner) {
 		this.startCorner = startCorner;
 		this.endCorner = endCorner;
 	}
 
-	public <T> void walk(Consumer<CoordinatesInWorld> consumer) {
+	public <T> void walk(Consumer<Coordinates> consumer) {
 		for (long x = startCorner.getX(); x < endCorner.getX(); x += Fragment.SIZE) {
 			for (long y = startCorner.getY(); y < endCorner.getY(); y += Fragment.SIZE) {
-				consumer.accept(CoordinatesInWorld.from(x, y));
+				consumer.accept(Coordinates.from(x, y));
 			}
 		}
 	}

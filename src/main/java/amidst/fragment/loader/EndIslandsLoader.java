@@ -9,7 +9,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 
@@ -42,7 +42,7 @@ public class EndIslandsLoader extends FragmentLoader {
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private List<EndIsland> getEndIslands(CoordinatesInWorld corner) {
+	private List<EndIsland> getEndIslands(Coordinates corner) {
 		return endIslandOracle.getAt(corner);
 	}
 }

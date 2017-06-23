@@ -7,7 +7,7 @@ import java.util.Random;
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.biome.Biome;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
@@ -39,7 +39,7 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 			double distance = getNextValue_distance(ring, random);
 			int x = getX(angle, distance);
 			int y = getY(angle, distance);
-			CoordinatesInWorld strongholdLocation = getStrongholdLocation(x, y, findStronghold(random, x, y));
+			Coordinates strongholdLocation = getStrongholdLocation(x, y, findStronghold(random, x, y));
 			result.add(createWorldIcon(strongholdLocation));
 			angle += getAngleDelta(ring, structuresPerRing);
 			currentRingStructureCount++;
@@ -67,25 +67,25 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 		return (int) Math.round(Math.sin(angle) * distance);
 	}
 
-	private CoordinatesInWorld findStronghold(Random random, int chunkX, int chunkY) {
+	private Coordinates findStronghold(Random random, int chunkX, int chunkY) {
 		return biomeDataOracle.findValidLocationAtMiddleOfChunk(chunkX, chunkY, 112, validBiomes, random);
 	}
 
-	private CoordinatesInWorld getStrongholdLocation(int x, int y, CoordinatesInWorld coordinates) {
+	private Coordinates getStrongholdLocation(int x, int y, Coordinates coordinates) {
 		if (coordinates != null) {
 			return getCornerOfChunk(coordinates);
 		} else {
-			return CoordinatesInWorld.from(x << 4, y << 4);
+			return Coordinates.from(x << 4, y << 4);
 		}
 	}
 
-	private CoordinatesInWorld getCornerOfChunk(CoordinatesInWorld coordinates) {
+	private Coordinates getCornerOfChunk(Coordinates coordinates) {
 		long xInWorld = (coordinates.getX() >> 4) << 4;
 		long yInWorld = (coordinates.getY() >> 4) << 4;
-		return CoordinatesInWorld.from(xInWorld, yInWorld);
+		return Coordinates.from(xInWorld, yInWorld);
 	}
 
-	private WorldIcon createWorldIcon(CoordinatesInWorld coordinates) {
+	private WorldIcon createWorldIcon(Coordinates coordinates) {
 		return new WorldIcon(
 				coordinates,
 				DefaultWorldIconTypes.STRONGHOLD.getLabel(),

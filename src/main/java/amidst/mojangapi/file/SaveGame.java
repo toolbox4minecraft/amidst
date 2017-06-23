@@ -11,7 +11,7 @@ import amidst.mojangapi.file.directory.SaveDirectory;
 import amidst.mojangapi.file.nbt.LevelDatNbt;
 import amidst.mojangapi.file.service.SaveDirectoryService;
 import amidst.mojangapi.world.WorldType;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 
 @Immutable
 public class SaveGame {
@@ -28,7 +28,7 @@ public class SaveGame {
 		return levelDatNbt.getSeed();
 	}
 
-	public CoordinatesInWorld getWorldSpawn() {
+	public Coordinates getWorldSpawn() {
 		return levelDatNbt.getWorldSpawn();
 	}
 

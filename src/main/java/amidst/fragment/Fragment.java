@@ -10,7 +10,7 @@ import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.viewer.Drawer;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
@@ -80,7 +80,7 @@ public class Fragment {
 
 	private volatile boolean isInitialized = false;
 	private volatile boolean isLoaded = false;
-	private volatile CoordinatesInWorld corner;
+	private volatile Coordinates corner;
 
 	private volatile float alpha;
 	private volatile short[][] biomeData;
@@ -172,11 +172,11 @@ public class Fragment {
 		return isLoaded;
 	}
 
-	public void setCorner(CoordinatesInWorld corner) {
+	public void setCorner(Coordinates corner) {
 		this.corner = corner;
 	}
 
-	public CoordinatesInWorld getCorner() {
+	public Coordinates getCorner() {
 		return corner;
 	}
 }

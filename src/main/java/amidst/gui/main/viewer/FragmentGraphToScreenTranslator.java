@@ -7,7 +7,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 
 @NotThreadSafe
 public class FragmentGraphToScreenTranslator {
@@ -39,7 +39,7 @@ public class FragmentGraphToScreenTranslator {
 	private void centerOnOriginIfNecessary() {
 		if (isFirstUpdate) {
 			isFirstUpdate = false;
-			centerOn(CoordinatesInWorld.origin());
+			centerOn(Coordinates.origin());
 		}
 	}
 
@@ -77,7 +77,7 @@ public class FragmentGraphToScreenTranslator {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void centerOn(final CoordinatesInWorld coordinates) {
+	public void centerOn(final Coordinates coordinates) {
 		graph.init(coordinates);
 		int xCenterOnScreen = viewerWidth >> 1;
 		int yCenterOnScreen = viewerHeight >> 1;
@@ -125,8 +125,8 @@ public class FragmentGraphToScreenTranslator {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {
-		CoordinatesInWorld corner = graph.getCorner();
+	public Coordinates screenToWorld(Point pointOnScreen) {
+		Coordinates corner = graph.getCorner();
 		return corner.add(
 				(long) zoom.screenToWorld(pointOnScreen.x - leftOnScreen),
 				(long) zoom.screenToWorld(pointOnScreen.y - topOnScreen));

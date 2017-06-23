@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.coordinates.Resolution;
 
 @ThreadSafe
@@ -68,7 +68,7 @@ public class EndIslandOracle {
 		this.noiseFunction = noiseFunction;
 	}
 
-	public List<EndIsland> getAt(CoordinatesInWorld corner) {
+	public List<EndIsland> getAt(Coordinates corner) {
 		int steps = Resolution.CHUNK.getStepsPerFragment();
 		return findSurroundingIslands(
 				(int) corner.getXAs(Resolution.CHUNK),

@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
@@ -38,7 +38,7 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 	}
 
 	@Override
-	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer, T additionalData) {
+	public void produce(Coordinates corner, Consumer<WorldIcon> consumer, T additionalData) {
 		for (int xRelativeToFragment = 0; xRelativeToFragment < size; xRelativeToFragment++) {
 			for (int yRelativeToFragment = 0; yRelativeToFragment < size; yRelativeToFragment++) {
 				generateAt(corner, consumer, additionalData, xRelativeToFragment, yRelativeToFragment);
@@ -48,7 +48,7 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 
 	// TODO: use longs?
 	private void generateAt(
-			CoordinatesInWorld corner,
+			Coordinates corner,
 			Consumer<WorldIcon> consumer,
 			T additionalData,
 			int xRelativeToFragment,
@@ -58,7 +58,7 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 		if (checker.isValidLocation(x, y)) {
 			DefaultWorldIconTypes worldIconType = provider.get(x, y, additionalData);
 			if (worldIconType != null) {
-				CoordinatesInWorld coordinates = createCoordinates(corner, xRelativeToFragment, yRelativeToFragment);
+				Coordinates coordinates = createCoordinates(corner, xRelativeToFragment, yRelativeToFragment);
 				consumer.accept(
 						new WorldIcon(
 								coordinates,
@@ -70,8 +70,8 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 		}
 	}
 
-	private CoordinatesInWorld createCoordinates(
-			CoordinatesInWorld corner,
+	private Coordinates createCoordinates(
+			Coordinates corner,
 			int xRelativeToFragment,
 			int yRelativeToFragment) {
 		long xInWorld = resolution.convertFromThisToWorld(xRelativeToFragment);

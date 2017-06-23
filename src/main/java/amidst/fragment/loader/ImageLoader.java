@@ -10,7 +10,7 @@ import amidst.fragment.Fragment;
 import amidst.fragment.colorprovider.ColorProvider;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.coordinates.Resolution;
 
 @NotThreadSafe
@@ -50,7 +50,7 @@ public class ImageLoader extends FragmentLoader {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void doLoad(Dimension dimension, Fragment fragment) {
-		CoordinatesInWorld corner = fragment.getCorner();
+		Coordinates corner = fragment.getCorner();
 		long cornerX = corner.getXAs(resolution);
 		long cornerY = corner.getYAs(resolution);
 		drawToCache(dimension, fragment, cornerX, cornerY);

@@ -3,19 +3,19 @@ package amidst.mojangapi.world.icon;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.coordinates.Resolution;
 
 @Immutable
 public class WorldIcon {
-	private final CoordinatesInWorld coordinates;
+	private final Coordinates coordinates;
 	private final String name;
 	private final WorldIconImage image;
 	private final Dimension dimension;
 	private final boolean displayDimension;
 
 	public WorldIcon(
-			CoordinatesInWorld coordinates,
+			Coordinates coordinates,
 			String name,
 			WorldIconImage image,
 			Dimension dimension,
@@ -27,7 +27,7 @@ public class WorldIcon {
 		this.displayDimension = displayDimension;
 	}
 
-	public CoordinatesInWorld getCoordinates() {
+	public Coordinates getCoordinates() {
 		return coordinates;
 	}
 

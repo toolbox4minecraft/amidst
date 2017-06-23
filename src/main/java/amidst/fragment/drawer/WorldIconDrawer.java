@@ -11,7 +11,7 @@ import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.gui.main.viewer.WorldIconSelection;
 import amidst.gui.main.viewer.Zoom;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.icon.WorldIcon;
 
 @NotThreadSafe
@@ -45,7 +45,7 @@ public class WorldIconDrawer extends FragmentDrawer {
 			width *= 1.5;
 			height *= 1.5;
 		}
-		CoordinatesInWorld coordinates = icon.getCoordinates();
+		Coordinates coordinates = icon.getCoordinates();
 		g2d.translate(coordinates.getXRelativeToFragment(), coordinates.getYRelativeToFragment());
 		g2d.scale(invZoom, invZoom);
 		g2d.drawImage(image, -(width >> 1), -(height >> 1), width, height, null);

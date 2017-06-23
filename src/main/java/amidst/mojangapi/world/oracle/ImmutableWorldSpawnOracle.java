@@ -1,18 +1,18 @@
 package amidst.mojangapi.world.oracle;
 
 import amidst.documentation.Immutable;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 
 @Immutable
 public class ImmutableWorldSpawnOracle implements WorldSpawnOracle {
-	private final CoordinatesInWorld worldSpawn;
+	private final Coordinates worldSpawn;
 
-	public ImmutableWorldSpawnOracle(CoordinatesInWorld worldSpawn) {
+	public ImmutableWorldSpawnOracle(Coordinates worldSpawn) {
 		this.worldSpawn = worldSpawn;
 	}
 
 	@Override
-	public CoordinatesInWorld get() {
+	public Coordinates get() {
 		return worldSpawn;
 	}
 }

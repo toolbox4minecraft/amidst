@@ -4,7 +4,7 @@ import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.SaveGamePlayer;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.icon.WorldIconImage;
 
 @ThreadSafe
@@ -33,7 +33,7 @@ public class Player {
 		return currentCoordinates;
 	}
 
-	public void moveTo(CoordinatesInWorld coordinates, long height, Dimension dimension) {
+	public void moveTo(Coordinates coordinates, long height, Dimension dimension) {
 		this.currentCoordinates = new PlayerCoordinates(coordinates, height, dimension);
 	}
 

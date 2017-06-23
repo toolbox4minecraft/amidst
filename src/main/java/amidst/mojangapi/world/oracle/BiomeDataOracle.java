@@ -10,7 +10,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.coordinates.Resolution;
 
 @ThreadSafe
@@ -21,7 +21,7 @@ public class BiomeDataOracle {
 		this.minecraftInterface = minecraftInterface;
 	}
 
-	public void populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
+	public void populateArray(Coordinates corner, short[][] result, boolean useQuarterResolution) {
 		Resolution resolution = Resolution.from(useQuarterResolution);
 		int width = result.length;
 		if (width > 0) {
@@ -97,7 +97,7 @@ public class BiomeDataOracle {
 		}
 	}
 
-	public CoordinatesInWorld findValidLocationAtMiddleOfChunk(
+	public Coordinates findValidLocationAtMiddleOfChunk(
 			int chunkX,
 			int chunkY,
 			int size,
@@ -107,7 +107,7 @@ public class BiomeDataOracle {
 	}
 
 	// TODO: Find out if we should useQuarterResolution or not
-	public CoordinatesInWorld findValidLocation(int x, int y, int size, List<Biome> validBiomes, Random random) {
+	public Coordinates findValidLocation(int x, int y, int size, List<Biome> validBiomes, Random random) {
 		int left = x - size >> 2;
 		int top = y - size >> 2;
 		int right = x + size >> 2;
@@ -116,7 +116,7 @@ public class BiomeDataOracle {
 		int height = bottom - top + 1;
 		try {
 			int[] biomeData = getQuarterResolutionBiomeData(left, top, width, height);
-			CoordinatesInWorld result = null;
+			Coordinates result = null;
 			int numberOfValidLocations = 0;
 			for (int i = 0; i < width * height; i++) {
 				if (validBiomes.contains(Biome.getByIndex(biomeData[i]))
@@ -137,10 +137,10 @@ public class BiomeDataOracle {
 		}
 	}
 
-	private CoordinatesInWorld createCoordinates(int left, int top, int width, int i) {
+	private Coordinates createCoordinates(int left, int top, int width, int i) {
 		int x = left + i % width << 2;
 		int y = top + i / width << 2;
-		return CoordinatesInWorld.from(x, y);
+		return Coordinates.from(x, y);
 	}
 
 	private int getMiddleOfChunk(int coordinate) {

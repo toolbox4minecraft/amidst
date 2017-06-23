@@ -23,7 +23,7 @@ import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
@@ -114,7 +114,7 @@ public class Actions {
 		if (viewerFacade != null) {
 			String input = dialogs.askForCoordinates();
 			if (input != null) {
-				CoordinatesInWorld coordinates = CoordinatesInWorld.tryParse(input);
+				Coordinates coordinates = Coordinates.tryParse(input);
 				if (coordinates != null) {
 					viewerFacade.centerOn(coordinates);
 				} else {
@@ -298,7 +298,7 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void showPlayerPopupMenu(CoordinatesInWorld targetCoordinates, Component component, int x, int y) {
+	public void showPlayerPopupMenu(Coordinates targetCoordinates, Component component, int x, int y) {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			if (viewerFacade.canSavePlayerLocations()) {
@@ -309,7 +309,7 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void movePlayer(Player player, CoordinatesInWorld targetCoordinates) {
+	public void movePlayer(Player player, Coordinates targetCoordinates) {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			PlayerCoordinates currentCoordinates = player.getPlayerCoordinates();
