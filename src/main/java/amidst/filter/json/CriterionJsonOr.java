@@ -22,7 +22,7 @@ public class CriterionJsonOr extends CriterionJson {
 	public CriterionJsonOr() {}
 	
 	@Override
-	protected Optional<Criterion> doValidate(CriterionJsonContext ctx) {		
+	protected Optional<Criterion<?>> doValidate(CriterionJsonContext ctx) {		
 		if(minScore != Integer.MIN_VALUE)
 			ctx.unsupportedAttribute("minScore");
 		

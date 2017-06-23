@@ -14,7 +14,7 @@ public class CriterionJsonGroup extends CriterionJson {
 	public CriterionJsonGroup() {}
 
 	@Override
-	protected Optional<Criterion> doValidate(CriterionJsonContext ctx) {
+	protected Optional<Criterion<?>> doValidate(CriterionJsonContext ctx) {
 		return ctx.convertCriterion(group);
 	}
 }

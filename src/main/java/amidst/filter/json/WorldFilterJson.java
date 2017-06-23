@@ -50,14 +50,14 @@ public class WorldFilterJson {
 		
 		Set<String> ignoreSet = makeIgnoreSet(ctx.withName("<ignore>"));
 		
-		Map<String, Criterion> criteria = new HashMap<>();
+		Map<String, Criterion<?>> criteria = new HashMap<>();
 	
 		for(String name: groups.keySet()) {
 			if(!ignoreSet.contains(name))
 				criteria.put(name, ctx.convertCriterion(name).orElse(null));
 		}
 		
-		Criterion main = match.validate(ctx.withName("<main>")).orElse(null);
+		Criterion<?> main = match.validate(ctx.withName("<main>")).orElse(null);
 		
 		if(!ctx.getErrors().isEmpty())
 			throw new WorldFilterParseException(ctx.getErrors());

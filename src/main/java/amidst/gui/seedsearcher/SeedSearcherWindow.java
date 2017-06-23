@@ -25,13 +25,13 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.filter.WorldFilter;
+import amidst.filter.WorldFilterResult;
 import amidst.filter.json.WorldFilterJson;
 import amidst.filter.json.WorldFilterParseException;
 import amidst.gui.main.MainWindowDialogs;
 import amidst.gui.main.WorldSwitcher;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
-import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldType;
 import net.miginfocom.swing.MigLayout;
 
@@ -181,10 +181,10 @@ public class SeedSearcherWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void worldFound(WorldOptions world) {
+	private void worldFound(WorldFilterResult filterResult) {
 		//TODO better reporting
-		AmidstLogger.info("Found world!");
-		worldSwitcher.displayWorld(world);
+		AmidstLogger.info("Found world:\n" + filterResult.toString());
+		worldSwitcher.displayWorld(filterResult.getWorldOptions());
 		updateGUI();
 	}
 

@@ -57,7 +57,7 @@ public class CriterionJsonBase extends CriterionJson {
 	
 	
 	@Override
-	protected Optional<Criterion> doValidate(CriterionJsonContext ctx) {
+	protected Optional<Criterion<?>> doValidate(CriterionJsonContext ctx) {
 
 		if(shape == null)
 			shape = ctx.getShape();
@@ -107,7 +107,7 @@ public class CriterionJsonBase extends CriterionJson {
 		Region region = isSquare ? Region.box(center, radius) : Region.circle(center, radius);
 		
 		
-		List<Criterion> list = new ArrayList<>();
+		List<Criterion<?>> list = new ArrayList<>();
 		
 		if(structSet.isEmpty()) {
 			for(Biome b: biomeSet) {
@@ -167,6 +167,8 @@ public class CriterionJsonBase extends CriterionJson {
 			DefaultWorldIconTypes struct = DefaultWorldIconTypes.getByName(structName.toLowerCase());
 			if(struct == null)
 				ctx.error("the structure " + structName + " doesn't exist");
+			else if(StructureConstraint.UNSUPPORTED_STRUCTURES.contains(struct))
+				ctx.error("the structure " + structName + " isn't supported");
 			else structSet.add(struct);
 		}
 		return structSet;

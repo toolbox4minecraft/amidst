@@ -5,20 +5,93 @@ import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.filter.Criterion;
+import amidst.filter.CriterionResult;
+import amidst.filter.ResultsMap;
+import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.coordinates.Coordinates;
+import amidst.mojangapi.world.coordinates.Region;
+import amidst.util.TriState;
 
 import java.util.Collections;
+import java.util.Iterator;
 
 @Immutable
-public class MatchAllCriterion implements Criterion {
+public class MatchAllCriterion implements Criterion<MatchAllCriterion.Result> {
 
-	private final List<Criterion> criteria;
+	private final List<Criterion<?>> criteria;
 	
-	public MatchAllCriterion(List<Criterion> list) {
+	public MatchAllCriterion(List<Criterion<?>> list) {
 		criteria = Collections.unmodifiableList(new ArrayList<>(list));
 	}
 	
 	@Override
-	public List<Criterion> getChildren() {
+	public List<Criterion<?>> getChildren() {
 		return criteria;
+	}
+	
+	@Override
+	public Result createResult() {
+		return new Result();
+	}
+	
+	@Override
+	public Region.Box getNextRegionToCheck(ResultsMap map) {
+		Result res = map.get(this);
+		if(res == null)
+			return null;
+				
+		for(Criterion<?> c: res.undecided) {
+			Region.Box r = c.getNextRegionToCheck(map);
+			if(r != null)
+				return r;
+		}
+		
+		return null;
+	}
+	
+	public class Result implements CriterionResult {
+		private List<Criterion<?>> undecided;
+		private boolean isMatch;
+		
+		public Result() {
+			this.undecided = new ArrayList<>(criteria);
+			this.isMatch = true;
+		}
+		
+		public Result(Result r) {
+			this.undecided = new ArrayList<>(r.undecided);
+			this.isMatch = r.isMatch;
+		}
+		
+		@Override
+		public TriState hasMatched() {
+			if(!isMatch)
+				return TriState.FALSE;
+			if(undecided.isEmpty())
+				return TriState.TRUE;
+			return TriState.UNKNOWN;
+		}
+		@Override
+		public void checkRegionAndUpdate(ResultsMap map, World world, Coordinates offset, Region.Box region) {
+			Iterator<Criterion<?>> iter = undecided.iterator();
+			while(iter.hasNext()) {
+				TriState match = iter.next().checkRegion(map, world, offset, region);
+				
+				if(match != TriState.UNKNOWN)
+					iter.remove();
+				
+				if(match == TriState.FALSE) {
+					isMatch = false;
+					undecided.clear();
+					break;
+				}
+			}
+		}
+
+		@Override
+		public CriterionResult copy() {
+			return new Result(this);
+		}
+		
 	}
 }

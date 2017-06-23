@@ -1,8 +1,16 @@
 package amidst.filter;
 
+import java.util.Optional;
+
 import amidst.documentation.Immutable;
+import amidst.logging.AmidstLogger;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
+import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.world.biome.BiomeData;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.coordinates.Region;
+import amidst.mojangapi.world.coordinates.Resolution;
 
 
 @Immutable
@@ -21,6 +29,34 @@ public class BiomeConstraint implements Constraint {
 	@Override
 	public Region getRegion() {
 		return region;
+	}
+	
+	@Override
+	public Optional<Coordinates> checkRegion(World world, Region.Box region) {
+		try {
+			BiomeData data = world.getBiomeDataOracle().getBiomeData(region, true);
+			
+			return Optional.ofNullable(data.findFirst((x, y, b) -> {
+				if(b != biome.getIndex())
+					return null;
+				
+				Coordinates pos = region.getCorner().add(Coordinates.from(x, y, Resolution.QUARTER));
+				if(checkDistance && !region.contains(pos))
+					return null;
+				return pos;
+			}));
+		} catch (MinecraftInterfaceException e) {
+			AmidstLogger.error(e);
+			return Optional.empty();
+		}		
+	}
+	
+	@Override
+	public void addMarkers(WorldFilterResult.ResultItem item) {
+		if(item.biome != null && item.biome != biome)
+			throw new IllegalArgumentException("biome is already set!");
+		
+		item.biome = biome;
 	}
 	
 	@Override

@@ -16,7 +16,7 @@ public class CriterionJsonAnd extends CriterionJson {
 	public CriterionJsonAnd() {}
 	
 	@Override
-	protected Optional<Criterion> doValidate(CriterionJsonContext ctx) {
+	protected Optional<Criterion<?>> doValidate(CriterionJsonContext ctx) {
 		return validateList(and, ctx, "and")
 				.map(MatchAllCriterion::new);
 	}

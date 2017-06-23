@@ -40,13 +40,13 @@ public abstract class CriterionJson {
 	 * If any error occurs while validating a criterion, an empty
 	 * Optional is returned.
 	 */
-	public Optional<Criterion> validate(CriterionJsonContext ctx) {
+	public Optional<Criterion<?>> validate(CriterionJsonContext ctx) {
 
 		if(center != null) {
 			ctx.withCenter(ctx.getCenter().add(center));
 		}
 		
-		Optional<Criterion> criterion;
+		Optional<Criterion<?>> criterion;
 		if(negate) {
 			criterion = doValidate(ctx.withName("!"))
 						.map(c -> new NegateCriterion(ctx.getName(), c));
@@ -65,14 +65,14 @@ public abstract class CriterionJson {
 	
 
 	// This method takes care of subclass-specific validation.
-	protected abstract Optional<Criterion> doValidate(CriterionJsonContext ctx);
+	protected abstract Optional<Criterion<?>> doValidate(CriterionJsonContext ctx);
 
 	
-	protected static Optional<List<Criterion>> validateList(List<CriterionJson> list, CriterionJsonContext ctx, String listName) {	
-		List<Criterion> criteria = new ArrayList<>();
+	protected static Optional<List<Criterion<?>>> validateList(List<CriterionJson> list, CriterionJsonContext ctx, String listName) {	
+		List<Criterion<?>> criteria = new ArrayList<>();
 		boolean isOk = true;
 		for(int i = 0; i < list.size(); i++) {
-			Optional<Criterion> res = list.get(i).validate(ctx.withName(listName + "[" + i + "]"));
+			Optional<Criterion<?>> res = list.get(i).validate(ctx.withName(listName + "[" + i + "]"));
 			
 			if(isOk && res.isPresent())
 				criteria.add(res.get());

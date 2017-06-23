@@ -24,7 +24,7 @@ public class CriterionJsonContext {
 		
 		//List of criteria already converted;
 		//if null, the criterion is being converted and we have a circular reference
-		public Map<String, Optional<Criterion>> mappings;
+		public Map<String, Optional<Criterion<?>>> mappings;
 		public List<String> errors;
 		
 		public Globals(Function<String, CriterionJson> criterionSupplier) {
@@ -85,7 +85,7 @@ public class CriterionJsonContext {
 		return ctx;
 	}
 	
-	public Optional<Criterion> convertCriterion(String name) {
+	public Optional<Criterion<?>> convertCriterion(String name) {
 		CriterionJson json = globals.supplier.apply(name);
 		if(json == null) {
 			error("the group " + name + " doesn't exist");
@@ -93,7 +93,7 @@ public class CriterionJsonContext {
 		}
 		
 		if(globals.mappings.containsKey(name)) {
-			Optional<Criterion> c = globals.mappings.get(name);
+			Optional<Criterion<?>> c = globals.mappings.get(name);
 			if(c == null) {
 				error("circular reference to group " + name);
 				return Optional.empty();
@@ -104,7 +104,7 @@ public class CriterionJsonContext {
 		globals.mappings.put(name, null);
 		CriterionJsonContext ctx = copy();
 		ctx.name = name;
-		Optional<Criterion> c = json.validate(ctx);
+		Optional<Criterion<?>> c = json.validate(ctx);
 		globals.mappings.put(name, c);
 		return c;
 	}
