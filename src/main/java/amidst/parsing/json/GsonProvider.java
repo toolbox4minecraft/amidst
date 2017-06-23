@@ -3,6 +3,10 @@ package amidst.parsing.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import amidst.filter.json.CriterionDeserializer;
+import amidst.filter.json.CriterionJson;
+import amidst.filter.json.CriterionJsonBase;
+
 public enum GsonProvider {
 	;
 
@@ -21,7 +25,13 @@ public enum GsonProvider {
 	private static GsonBuilder createBuilder(GsonBuilder base) {
 		// @formatter:off
 		return base
-			.enableComplexMapKeySerialization();
+			.enableComplexMapKeySerialization()
+			.registerTypeAdapter(
+				CriterionJson.class,
+				new CriterionDeserializer())
+			.registerTypeAdapter(
+				CriterionJsonBase.ClusterInfo.class,
+				new CriterionJsonBase.ClusterInfoDeserializer());
 		// @formatter:on
 	}
 	

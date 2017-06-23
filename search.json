@@ -1,0 +1,24 @@
+{
+  "defaults": {
+  	"center": null,
+  	"shape": "circle"
+  },
+  
+  "groups": {
+
+  	
+  	"struct": {
+  		"structures": ["Witch"],
+  		"radius": 2000
+  	},
+
+    "biome": {
+      "biomes": ["Forest"],
+      "radius": 2000
+    }
+
+  },
+  
+  "match": ["struct", "biome"],
+  "ignore": []
+}
