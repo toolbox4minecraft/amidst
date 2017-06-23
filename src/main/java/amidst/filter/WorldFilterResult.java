@@ -1,5 +1,6 @@
 package amidst.filter;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,8 +42,16 @@ public class WorldFilterResult {
 		optionalGoals.add(name);
 	}
 	
+	public Set<String> getOptionalGoals() {
+		return Collections.unmodifiableSet(optionalGoals);
+	}
+	
 	public ResultItem getItemFor(Coordinates coordinates) {
 		return items.computeIfAbsent(coordinates, c -> new ResultItem());
+	}
+	
+	public Map<Coordinates, ResultItem> getItems() {
+		return Collections.unmodifiableMap(items);
 	}
 	
 	@Override
