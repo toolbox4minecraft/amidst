@@ -10,6 +10,10 @@ import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.viewer.Drawer;
+import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
+import amidst.mojangapi.world.biome.BiomeData;
 import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.coordinates.Region;
 import amidst.mojangapi.world.coordinates.Resolution;
@@ -84,7 +88,7 @@ public class Fragment {
 	private volatile Coordinates corner;
 
 	private volatile float alpha;
-	private volatile short[][] biomeData;
+	private volatile BiomeData biomeData;
 	private volatile List<EndIsland> endIslands;
 	private final AtomicReferenceArray<BufferedImage> images;
 	private final AtomicReferenceArray<List<WorldIcon>> worldIcons;
@@ -103,16 +107,22 @@ public class Fragment {
 	}
 
 	public void initBiomeData(int width, int height) {
-		biomeData = new short[width][height];
+		biomeData = new BiomeData(null, width, height);
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void populateBiomeData(BiomeDataOracle biomeDataOracle) {
-		biomeDataOracle.populateArray(corner, biomeData, true);
+		try {
+			Region.Box region = Region.box(corner, SIZE, SIZE);
+			biomeData.copyFrom(biomeDataOracle.getBiomeData(region, true));
+		} catch (MinecraftInterfaceException e) {
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
+		}
 	}
 
 	public short getBiomeDataAt(int x, int y) {
-		return biomeData[x][y];
+		return biomeData.get(x, y);
 	}
 
 	public void setEndIslands(List<EndIsland> endIslands) {
