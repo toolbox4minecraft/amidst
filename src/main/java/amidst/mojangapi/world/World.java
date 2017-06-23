@@ -7,11 +7,13 @@ import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
+import amidst.mojangapi.world.icon.producer.SpawnProducer;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
+import amidst.mojangapi.world.oracle.WorldSpawnOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 
@@ -19,9 +21,7 @@ import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 public class World {
 	private final Consumer<World> onDisposeWorld;
 
-	private final WorldSeed worldSeed;
-	private final WorldType worldType;
-	private final String generatorOptions;
+	private final WorldOptions worldOptions;
 	private final MovablePlayerList movablePlayerList;
 	private final RecognisedVersion recognisedVersion;
 	private final VersionFeatures versionFeatures;
@@ -29,6 +29,7 @@ public class World {
 	private final BiomeDataOracle biomeDataOracle;
 	private final EndIslandOracle endIslandOracle;
 	private final SlimeChunkOracle slimeChunkOracle;
+	private final WorldSpawnOracle worldSpawnOracle;
 	private final CachedWorldIconProducer spawnProducer;
 	private final CachedWorldIconProducer strongholdProducer;
 	private final CachedWorldIconProducer playerProducer;
@@ -38,19 +39,17 @@ public class World {
 	private final WorldIconProducer<Void> oceanMonumentProducer;
 	private final WorldIconProducer<Void> netherFortressProducer;
 	private final WorldIconProducer<List<EndIsland>> endCityProducer;
-
+	
 	public World(
 			Consumer<World> onDisposeWorld,
-			WorldSeed worldSeed,
-			WorldType worldType,
-			String generatorOptions,
+			WorldOptions worldOptions,
 			MovablePlayerList movablePlayerList,
 			RecognisedVersion recognisedVersion,
 			VersionFeatures versionFeatures,
 			BiomeDataOracle biomeDataOracle,
 			EndIslandOracle endIslandOracle,
 			SlimeChunkOracle slimeChunkOracle,
-			CachedWorldIconProducer spawnProducer,
+			WorldSpawnOracle worldSpawnOracle,
 			CachedWorldIconProducer strongholdProducer,
 			CachedWorldIconProducer playerProducer,
 			WorldIconProducer<Void> villageProducer,
@@ -60,16 +59,15 @@ public class World {
 			WorldIconProducer<Void> netherFortressProducer,
 			WorldIconProducer<List<EndIsland>> endCityProducer) {
 		this.onDisposeWorld = onDisposeWorld;
-		this.worldSeed = worldSeed;
-		this.worldType = worldType;
-		this.generatorOptions = generatorOptions;
+		this.worldOptions = worldOptions;
 		this.movablePlayerList = movablePlayerList;
 		this.recognisedVersion = recognisedVersion;
 		this.versionFeatures = versionFeatures;
 		this.biomeDataOracle = biomeDataOracle;
 		this.endIslandOracle = endIslandOracle;
 		this.slimeChunkOracle = slimeChunkOracle;
-		this.spawnProducer = spawnProducer;
+		this.worldSpawnOracle = worldSpawnOracle;
+		this.spawnProducer = new SpawnProducer(worldSpawnOracle);
 		this.strongholdProducer = strongholdProducer;
 		this.playerProducer = playerProducer;
 		this.villageProducer = villageProducer;
@@ -79,17 +77,9 @@ public class World {
 		this.netherFortressProducer = netherFortressProducer;
 		this.endCityProducer = endCityProducer;
 	}
-
-	public WorldSeed getWorldSeed() {
-		return worldSeed;
-	}
-
-	public WorldType getWorldType() {
-		return worldType;
-	}
-
-	public String getGeneratorOptions() {
-		return generatorOptions;
+	
+	public WorldOptions getWorldOptions() {
+		return worldOptions;
 	}
 
 	public MovablePlayerList getMovablePlayerList() {
@@ -114,6 +104,10 @@ public class World {
 
 	public SlimeChunkOracle getSlimeChunkOracle() {
 		return slimeChunkOracle;
+	}
+	
+	public WorldSpawnOracle getSpawnOracle() {
+		return worldSpawnOracle;
 	}
 
 	public WorldIconProducer<Void> getSpawnProducer() {
