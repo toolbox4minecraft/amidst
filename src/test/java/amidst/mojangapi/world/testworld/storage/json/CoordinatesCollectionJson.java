@@ -9,9 +9,10 @@ import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
-import amidst.mojangapi.mocking.FragmentCornerWalker;
+import amidst.mojangapi.mocking.FragmentWalker;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.Coordinates;
+import amidst.mojangapi.world.coordinates.Region;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.producer.NameFilteredWorldIconCollector;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
@@ -32,12 +33,12 @@ public class CoordinatesCollectionJson {
 	public static <T> CoordinatesCollectionJson extractWorldIcons(
 			WorldIconProducer<T> producer,
 			String name,
-			Function<Coordinates, T> additionalDataFactory,
+			Function<Region.Box, T> additionalDataFactory,
 			int fragmentsAroundOrigin,
 			int minimalNumberOfCoordinates) {
 		NameFilteredWorldIconCollector consumer = new NameFilteredWorldIconCollector(name);
-		FragmentCornerWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin).walk(
-				corner -> producer.produce(corner, consumer, additionalDataFactory.apply(corner)));
+		FragmentWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin).walk(
+				region -> producer.produce(region, consumer, additionalDataFactory.apply(region)));
 		SortedSet<Coordinates> coordinates = createSortedSet(consumer.get());
 		if (coordinates.size() < minimalNumberOfCoordinates) {
 			String message = "not enough coordinates for '" + name + "'";

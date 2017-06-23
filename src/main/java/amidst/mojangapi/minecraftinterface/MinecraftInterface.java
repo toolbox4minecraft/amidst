@@ -2,6 +2,7 @@ package amidst.mojangapi.minecraftinterface;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.coordinates.Region;
 
 /**
  * Acts as an additional layer of abstraction for interfacing with Minecraft.
@@ -31,7 +32,7 @@ public interface MinecraftInterface {
 	 *            a structure is located in (if the structure is located on a
 	 *            biome boundary).
 	 */
-	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+	public int[] getBiomeData(Region.Box region, boolean useQuarterResolution)
 			throws MinecraftInterfaceException;
 
 	public void createWorld(long seed, WorldType worldType, String generatorOptions) throws MinecraftInterfaceException;

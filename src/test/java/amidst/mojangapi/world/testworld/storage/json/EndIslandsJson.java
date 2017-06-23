@@ -6,7 +6,7 @@ import java.util.TreeMap;
 
 import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
-import amidst.mojangapi.mocking.FragmentCornerWalker;
+import amidst.mojangapi.mocking.FragmentWalker;
 import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
@@ -16,7 +16,7 @@ import amidst.mojangapi.world.oracle.EndIslandOracle;
 public class EndIslandsJson {
 	public static EndIslandsJson extract(EndIslandOracle oracle, int fragmentsAroundOrigin) {
 		SortedMap<Coordinates, List<EndIsland>> result = new TreeMap<>();
-		FragmentCornerWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin).walk(
+		FragmentWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin).walkCorners(
 				corner -> result.put(corner, oracle.getAt(corner)));
 		return new EndIslandsJson(result);
 	}

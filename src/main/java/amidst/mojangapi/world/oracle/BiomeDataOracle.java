@@ -11,6 +11,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
 import amidst.mojangapi.world.coordinates.Coordinates;
+import amidst.mojangapi.world.coordinates.Region;
 import amidst.mojangapi.world.coordinates.Resolution;
 
 @ThreadSafe
@@ -22,25 +23,30 @@ public class BiomeDataOracle {
 	}
 
 	public void populateArray(Coordinates corner, short[][] result, boolean useQuarterResolution) {
-		Resolution resolution = Resolution.from(useQuarterResolution);
+		if(result.length == 0)
+			return;
+
 		int width = result.length;
-		if (width > 0) {
-			int height = result[0].length;
-			int left = (int) corner.getXAs(resolution);
-			int top = (int) corner.getYAs(resolution);
-			try {
-				copyToResult(result, width, height, getBiomeData(left, top, width, height, useQuarterResolution));
-			} catch (MinecraftInterfaceException e) {
-				AmidstLogger.error(e);
-				AmidstMessageBox.displayError("Error", e);
-			}
+		int height = result[0].length;
+		if(height == 0)
+			return;
+
+		Resolution res = Resolution.from(useQuarterResolution);
+		Region.Box region = Region.box(corner.getAs(res), width, height);
+		try {
+			int[] data = getBiomeData(region, useQuarterResolution);
+			copyToResult(result, data);
+		} catch (MinecraftInterfaceException e) {
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
 		}
 	}
 
-	public static void copyToResult(short[][] result, int width, int height, int[] biomeData) {
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				result[x][y] = (short) biomeData[getBiomeDataIndex(x, y, width)];
+	public static void copyToResult(short[][] result, int[] biomeData) {		
+		int width = result[0].length;
+		for (int y = 0; y < result.length; y++) {
+			for (int x = 0; x < result[y].length; x++) {
+				result[x][y] = (short) biomeData[x + y*width];
 			}
 		}
 	}
@@ -79,7 +85,7 @@ public class BiomeDataOracle {
 		int width = right - left + 1;
 		int height = bottom - top + 1;
 		try {
-			int[] biomeData = getQuarterResolutionBiomeData(left, top, width, height);
+			int[] biomeData = getQuarterResolutionBiomeData(Region.box(left, top, width, height));
 			for (int i = 0; i < width * height; i++) {
 				if (!validBiomes.contains(Biome.getByIndex(biomeData[i]))) {
 					return false;
@@ -115,7 +121,7 @@ public class BiomeDataOracle {
 		int width = right - left + 1;
 		int height = bottom - top + 1;
 		try {
-			int[] biomeData = getQuarterResolutionBiomeData(left, top, width, height);
+			int[] biomeData = getQuarterResolutionBiomeData(Region.box(left, top, width, height));
 			Coordinates result = null;
 			int numberOfValidLocations = 0;
 			for (int i = 0; i < width * height; i++) {
@@ -159,21 +165,21 @@ public class BiomeDataOracle {
 	 * (uses the 1:1 scale biome-map)
 	 */
 	private Biome getBiomeAt(int x, int y) throws UnknownBiomeIndexException, MinecraftInterfaceException {
-		int[] biomeData = getFullResolutionBiomeData(x, y, 1, 1);
+		int[] biomeData = getFullResolutionBiomeData(Region.box(x, y, 1, 1));
 		return Biome.getByIndex(biomeData[0]);
 	}
 
-	private int[] getQuarterResolutionBiomeData(int x, int y, int width, int height)
+	private int[] getQuarterResolutionBiomeData(Region.Box region)
 			throws MinecraftInterfaceException {
-		return getBiomeData(x, y, width, height, true);
+		return getBiomeData(region, true);
 	}
 
-	private int[] getFullResolutionBiomeData(int x, int y, int width, int height) throws MinecraftInterfaceException {
-		return getBiomeData(x, y, width, height, false);
-	}
+	private int[] getFullResolutionBiomeData(Region.Box region) throws MinecraftInterfaceException {
+		return getBiomeData(region, false);
+}
 
-	private int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+	private int[] getBiomeData(Region.Box region, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
-		return minecraftInterface.getBiomeData(x, y, width, height, useQuarterResolution);
+		return minecraftInterface.getBiomeData(region, useQuarterResolution);
 	}
 }

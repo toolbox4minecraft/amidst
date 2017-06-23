@@ -3,6 +3,7 @@ package amidst.mojangapi.world.filter;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.Coordinates;
+import amidst.mojangapi.world.coordinates.Region;
 import amidst.mojangapi.world.icon.producer.NameFilteredWorldIconCollector;
 import amidst.mojangapi.world.icon.producer.WorldIconCollector;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
@@ -29,7 +30,7 @@ public class WorldFilter_Structure extends WorldFilter {
 	private void procudeAndCollect(WorldIconProducer<Void> structureProducer, WorldIconCollector structureCollector) {
 		for (int x = 0; x < 2 * worldFilterSize; x += 512) {
 			for (int y = 0; y < 2 * worldFilterSize; y += 512) {
-				structureProducer.produce(Coordinates.from(x, y).add(corner), structureCollector, null);
+				structureProducer.produce(Region.box(Coordinates.from(x, y).add(corner), 512, 512), structureCollector, null);
 			}
 		}
 	}

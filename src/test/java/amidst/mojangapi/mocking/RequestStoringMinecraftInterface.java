@@ -5,6 +5,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.coordinates.Region;
 
 @ThreadSafe
 public class RequestStoringMinecraftInterface implements MinecraftInterface {
@@ -17,15 +18,15 @@ public class RequestStoringMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public synchronized int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+	public synchronized int[] getBiomeData(Region.Box region, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
-		int[] biomeData = realMinecraftInterface.getBiomeData(x, y, width, height, useQuarterResolution);
-		store(x, y, width, height, useQuarterResolution, biomeData);
+		int[] biomeData = realMinecraftInterface.getBiomeData(region, useQuarterResolution);
+		store(region, useQuarterResolution, biomeData);
 		return biomeData;
 	}
 
-	private void store(int x, int y, int width, int height, boolean useQuarterResolution, int[] biomeData) {
-		builder.store(x, y, width, height, useQuarterResolution, biomeData);
+	private void store(Region.Box region, boolean useQuarterResolution, int[] biomeData) {
+		builder.store(region, useQuarterResolution, biomeData);
 	}
 
 	@Override

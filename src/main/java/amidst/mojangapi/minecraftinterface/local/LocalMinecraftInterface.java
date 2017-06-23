@@ -12,6 +12,8 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.coordinates.Coordinates;
+import amidst.mojangapi.world.coordinates.Region;
 
 @ThreadSafe
 public class LocalMinecraftInterface implements MinecraftInterface {
@@ -59,12 +61,14 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public synchronized int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+	public synchronized int[] getBiomeData(Region.Box region, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
 		try {
 			intCacheClass.callStaticMethod(SymbolicNames.METHOD_INT_CACHE_RESET_INT_CACHE);
+			
+			Coordinates corner = region.getCorner();			
 			return (int[]) getBiomeGenerator(useQuarterResolution)
-					.callMethod(SymbolicNames.METHOD_GEN_LAYER_GET_INTS, x, y, width, height);
+					.callMethod(SymbolicNames.METHOD_GEN_LAYER_GET_INTS, corner.getX(), corner.getY(), region.getWidth(), region.getHeight());
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}

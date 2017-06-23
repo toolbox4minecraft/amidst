@@ -11,6 +11,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.viewer.Drawer;
 import amidst.mojangapi.world.coordinates.Coordinates;
+import amidst.mojangapi.world.coordinates.Region;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
@@ -178,5 +179,9 @@ public class Fragment {
 
 	public Coordinates getCorner() {
 		return corner;
+	}
+	
+	public Region.Box getRegion() {
+		return Region.box(corner, Fragment.SIZE, Fragment.SIZE);
 	}
 }
