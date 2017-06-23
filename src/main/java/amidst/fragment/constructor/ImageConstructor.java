@@ -15,7 +15,7 @@ public class ImageConstructor implements FragmentConstructor {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public ImageConstructor(Resolution resolution, int layerId) {
-		this.size = resolution.getStepsPerFragment();
+		this.size = resolution.getStepsPer(Resolution.FRAGMENT);
 		this.layerId = layerId;
 	}
 

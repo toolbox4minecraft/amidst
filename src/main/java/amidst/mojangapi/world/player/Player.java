@@ -33,7 +33,7 @@ public class Player {
 		return currentCoordinates;
 	}
 
-	public void moveTo(Coordinates coordinates, long height, Dimension dimension) {
+	public void moveTo(Coordinates coordinates, int height, Dimension dimension) {
 		this.currentCoordinates = new PlayerCoordinates(coordinates, height, dimension);
 	}
 

@@ -29,7 +29,7 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 			Dimension dimension,
 			boolean displayDimension) {
 		this.resolution = resolution;
-		this.size = resolution.getStepsPerFragment();
+		this.size = resolution.getStepsPer(Resolution.FRAGMENT);
 		this.offsetInWorld = offsetInWorld;
 		this.checker = checker;
 		this.provider = provider;
@@ -74,8 +74,8 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 			Coordinates corner,
 			int xRelativeToFragment,
 			int yRelativeToFragment) {
-		long xInWorld = resolution.convertFromThisToWorld(xRelativeToFragment);
-		long yInWorld = resolution.convertFromThisToWorld(yRelativeToFragment);
+		int xInWorld = resolution.convertFromThisToWorld(xRelativeToFragment);
+		int yInWorld = resolution.convertFromThisToWorld(yRelativeToFragment);
 		return corner.add(xInWorld + offsetInWorld, yInWorld + offsetInWorld);
 	}
 }

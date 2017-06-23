@@ -2,125 +2,145 @@ package amidst.mojangapi.world.coordinates;
 
 import java.awt.Point;
 
+import com.google.gson.annotations.JsonAdapter;
+
 import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 
 @Immutable
+@JsonAdapter(CoordinatesJsonAdapter.class)
 @GsonObject
 public class Coordinates implements Comparable<Coordinates> {
+	
 	public static Coordinates tryParse(String coordinates) {
 		String[] parsedCoordinates = coordinates.replaceAll(" ", "").split(",");
 		if (parsedCoordinates.length != 2) {
 			return null;
 		}
 		try {
-			return Coordinates.from(Long.parseLong(parsedCoordinates[0]), Long.parseLong(parsedCoordinates[1]));
+			return Coordinates.from(
+					Integer.parseInt(parsedCoordinates[0]),
+					Integer.parseInt(parsedCoordinates[1]));
 		} catch (NumberFormatException e) {
 			return null;
 		}
 	}
 
-	public static Coordinates from(long xInWorld, long yInWorld) {
+	public static Coordinates from(int xInWorld, int yInWorld) {
 		return new Coordinates(xInWorld, yInWorld);
 	}
 
-	public static Coordinates from(long xAsResolution, long yAsResolution, Resolution resolution) {
+	public static Coordinates from(int xAsResolution,
+			int yAsResolution, Resolution resolution) {
 		return new Coordinates(
 				resolution.convertFromThisToWorld(xAsResolution),
 				resolution.convertFromThisToWorld(yAsResolution));
 	}
+	
+	public static Coordinates from(Coordinates coordAsResolution, Resolution resolution) {
+		return Coordinates.from(coordAsResolution.getX(), coordAsResolution.getY(), resolution);
+	}
 
-	private static Coordinates from(Coordinates base, long deltaXInWorld, long deltaYInWorld) {
-		return new Coordinates(base.xInWorld + deltaXInWorld, base.yInWorld + deltaYInWorld);
+	private static Coordinates from(Coordinates base,
+			int deltaXInWorld, int deltaYInWorld) {
+		return new Coordinates(base.xInWorld + deltaXInWorld,
+				base.yInWorld + deltaYInWorld);
 	}
 
 	public static Coordinates origin() {
 		return ORIGIN;
 	}
 
-	private static final Coordinates ORIGIN = Coordinates.from(0, 0);
+	private static final Coordinates ORIGIN = Coordinates.from(0,
+			0);
 
-	private final long xInWorld;
-	private final long yInWorld;
+	private final int xInWorld;
+	private final int yInWorld;
 
-	public Coordinates(long xInWorld, long yInWorld) {
+	public Coordinates(int xInWorld, int yInWorld) {
 		this.xInWorld = xInWorld;
 		this.yInWorld = yInWorld;
 	}
 
-	public long getX() {
+	public int getX() {
 		return xInWorld;
 	}
 
-	public long getY() {
+	public int getY() {
 		return yInWorld;
 	}
 
-	public long getXAs(Resolution targetResolution) {
+	public int getXAs(Resolution targetResolution) {
 		return targetResolution.convertFromWorldToThis(xInWorld);
 	}
 
-	public long getYAs(Resolution targetResolution) {
+	public int getYAs(Resolution targetResolution) {
 		return targetResolution.convertFromWorldToThis(yInWorld);
 	}
-
-	public long getXCornerOfFragment() {
-		return CoordinateUtils.toFragmentCorner(xInWorld);
+	
+	public Coordinates getAs(Resolution targetResolution) {
+		return Coordinates.from(getXAs(targetResolution), getYAs(targetResolution));
+	}
+	
+	public int snapXTo(Resolution targetResolution) {
+		return targetResolution.snapToResolution(xInWorld);
+	}
+	
+	public int snapYTo(Resolution targetResolution) {
+		return targetResolution.snapToResolution(yInWorld);
+	}
+	
+	public Coordinates snapTo(Resolution targetResolution) {
+		return Coordinates.from(snapXTo(targetResolution), snapYTo(targetResolution));
+	}
+	
+	public int snapUpwardsXTo(Resolution targetResolution) {
+		return targetResolution.snapUpwardsToResolution(xInWorld);
+	}
+	
+	public int snapUpwardsYTo(Resolution targetResolution) {
+		return targetResolution.snapUpwardsToResolution(yInWorld);
 	}
 
-	public long getYCornerOfFragment() {
-		return CoordinateUtils.toFragmentCorner(yInWorld);
+	public Coordinates snapUpwardsTo(Resolution targetResolution) {
+		return Coordinates.from(snapUpwardsXTo(targetResolution), snapUpwardsYTo(targetResolution));
+	}
+	public int getXRelativeTo(Resolution resolution) {
+		return resolution.toRelative(xInWorld);
 	}
 
-	public long getXCornerOfFragmentAs(Resolution targetResolution) {
-		return targetResolution.convertFromWorldToThis(CoordinateUtils.toFragmentCorner(xInWorld));
+	public int getYRelativeTo(Resolution resolution) {
+		return resolution.toRelative(yInWorld);
 	}
-
-	public long getYCornerOfFragmentAs(Resolution targetResolution) {
-		return targetResolution.convertFromWorldToThis(CoordinateUtils.toFragmentCorner(yInWorld));
-	}
-
-	public long getXRelativeToFragment() {
-		return CoordinateUtils.toFragmentRelative(xInWorld);
-	}
-
-	public long getYRelativeToFragment() {
-		return CoordinateUtils.toFragmentRelative(yInWorld);
-	}
-
-	public long getXRelativeToFragmentAs(Resolution targetResolution) {
-		return targetResolution.convertFromWorldToThis(CoordinateUtils.toFragmentRelative(xInWorld));
-	}
-
-	public long getYRelativeToFragmentAs(Resolution targetResolution) {
-		return targetResolution.convertFromWorldToThis(CoordinateUtils.toFragmentRelative(yInWorld));
-	}
-
-	public Coordinates toFragmentCorner() {
-		return from(getXCornerOfFragment(), getYCornerOfFragment());
+	
+	public Coordinates getRelativeTo(Resolution resolution) {
+		return Coordinates.from(getXRelativeTo(resolution), getYRelativeTo(resolution));
 	}
 
 	public double getDistance(Coordinates other) {
-		return Point.distance(xInWorld, yInWorld, other.xInWorld, other.yInWorld);
+		return Point.distance(xInWorld, yInWorld, other.xInWorld,
+				other.yInWorld);
 	}
 
-	public double getDistance(long xInWorld, long yInWorld) {
+	public double getDistance(int xInWorld, int yInWorld) {
 		return Point.distance(this.xInWorld, this.yInWorld, xInWorld, yInWorld);
 	}
 
 	public double getDistanceSq(Coordinates other) {
-		return Point.distanceSq(xInWorld, yInWorld, other.xInWorld, other.yInWorld);
+		return Point.distanceSq(xInWorld, yInWorld, other.xInWorld,
+				other.yInWorld);
 	}
 
-	public double getDistanceSq(long xInWorld, long yInWorld) {
-		return Point.distanceSq(this.xInWorld, this.yInWorld, xInWorld, yInWorld);
+	public double getDistanceSq(int xInWorld, int yInWorld) {
+		return Point.distanceSq(this.xInWorld, this.yInWorld, xInWorld,
+				yInWorld);
 	}
 
 	public Coordinates add(Coordinates other) {
 		return add(other.xInWorld, other.yInWorld);
 	}
 
-	public Coordinates add(long xInWorld, long yInWorld) {
+	public Coordinates add(int xInWorld, int yInWorld) {
 		return from(this, xInWorld, yInWorld);
 	}
 
@@ -128,12 +148,15 @@ public class Coordinates implements Comparable<Coordinates> {
 		return substract(other.xInWorld, other.yInWorld);
 	}
 
-	public Coordinates substract(long xInWorld, long yInWorld) {
+	public Coordinates substract(int xInWorld, int yInWorld) {
 		return from(this, -xInWorld, -yInWorld);
 	}
 
-	public boolean isInBoundsOf(Coordinates corner, long size) {
-		return CoordinateUtils.isInBounds(xInWorld, yInWorld, corner.xInWorld, corner.yInWorld, size, size);
+	public boolean isInBoundsOf(Coordinates corner, int size) {
+		return xInWorld >= corner.xInWorld
+			&& xInWorld < corner.xInWorld + size
+			&& yInWorld >= corner.yInWorld 
+			&& yInWorld < corner.yInWorld + size;
 	}
 
 	@Override
@@ -157,8 +180,8 @@ public class Coordinates implements Comparable<Coordinates> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (xInWorld ^ (xInWorld >>> 32));
-		result = prime * result + (int) (yInWorld ^ (yInWorld >>> 32));
+		result = prime * result + xInWorld;
+		result = prime * result + yInWorld;
 		return result;
 	}
 

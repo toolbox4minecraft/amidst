@@ -10,6 +10,7 @@ import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 @Immutable
 @GsonObject
 public class WorldFilterJson_Structure {
+	@SuppressWarnings("unused")
 	private volatile long distance;
 	private volatile String structure;
 	private volatile int minimum;
@@ -27,6 +28,6 @@ public class WorldFilterJson_Structure {
 	}
 
 	public WorldFilter_Structure createStructureFilter() {
-		return new WorldFilter_Structure(distance, DefaultWorldIconTypes.getByName(structure), minimum);
+		return null;
 	}
 }

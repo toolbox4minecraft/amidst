@@ -80,8 +80,8 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 	}
 
 	private Coordinates getCornerOfChunk(Coordinates coordinates) {
-		long xInWorld = (coordinates.getX() >> 4) << 4;
-		long yInWorld = (coordinates.getY() >> 4) << 4;
+		int xInWorld = (coordinates.getX() >> 4) << 4;
+		int yInWorld = (coordinates.getY() >> 4) << 4;
 		return Coordinates.from(xInWorld, yInWorld);
 	}
 

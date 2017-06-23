@@ -6,16 +6,16 @@ import amidst.mojangapi.world.coordinates.Coordinates;
 
 @Immutable
 public class PlayerCoordinates {
-	public static PlayerCoordinates fromNBTFile(long x, long y, long z, int dimensionId) {
+	public static PlayerCoordinates fromNBTFile(int x, int y, int z, int dimensionId) {
 		Dimension dimension = Dimension.from(dimensionId);
 		return new PlayerCoordinates(Coordinates.from(x, z, dimension.getResolution()), y, dimension);
 	}
 
 	private final Coordinates coordinates;
-	private final long y;
+	private final int y;
 	private final Dimension dimension;
 
-	public PlayerCoordinates(Coordinates coordinates, long y, Dimension dimension) {
+	public PlayerCoordinates(Coordinates coordinates, int y, Dimension dimension) {
 		this.coordinates = coordinates;
 		this.y = y;
 		this.dimension = dimension;
@@ -25,7 +25,7 @@ public class PlayerCoordinates {
 		return coordinates;
 	}
 
-	public long getY() {
+	public int getY() {
 		return y;
 	}
 
@@ -33,15 +33,15 @@ public class PlayerCoordinates {
 		return dimension;
 	}
 
-	public long getXForNBTFile() {
+	public int getXForNBTFile() {
 		return coordinates.getXAs(dimension.getResolution());
 	}
 
-	public long getYForNBTFile() {
+	public int getYForNBTFile() {
 		return y;
 	}
 
-	public long getZForNBTFile() {
+	public int getZForNBTFile() {
 		return coordinates.getYAs(dimension.getResolution());
 	}
 }

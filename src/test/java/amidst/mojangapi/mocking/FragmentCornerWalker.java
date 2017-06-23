@@ -9,7 +9,7 @@ import amidst.mojangapi.world.coordinates.Coordinates;
 @Immutable
 public class FragmentCornerWalker {
 	public static FragmentCornerWalker walkFragmentsAroundOrigin(int fragmentsAroundOrigin) {
-		long blocksAroundOrigin = fragmentsAroundOrigin * Fragment.SIZE;
+		int blocksAroundOrigin = fragmentsAroundOrigin * Fragment.SIZE;
 		Coordinates startCorner = Coordinates.from(-blocksAroundOrigin, -blocksAroundOrigin);
 		Coordinates endCorner = startCorner.add(2 * blocksAroundOrigin, 2 * blocksAroundOrigin);
 		return new FragmentCornerWalker(startCorner, endCorner);
@@ -24,8 +24,8 @@ public class FragmentCornerWalker {
 	}
 
 	public <T> void walk(Consumer<Coordinates> consumer) {
-		for (long x = startCorner.getX(); x < endCorner.getX(); x += Fragment.SIZE) {
-			for (long y = startCorner.getY(); y < endCorner.getY(); y += Fragment.SIZE) {
+		for (int x = startCorner.getX(); x < endCorner.getX(); x += Fragment.SIZE) {
+			for (int y = startCorner.getY(); y < endCorner.getY(); y += Fragment.SIZE) {
 				consumer.accept(Coordinates.from(x, y));
 			}
 		}

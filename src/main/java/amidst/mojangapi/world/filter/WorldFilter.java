@@ -8,11 +8,11 @@ import amidst.mojangapi.world.coordinates.Resolution;
 
 @Immutable
 public abstract class WorldFilter {
-	protected final long worldFilterSize;
-	protected final long quarterFilterSize;
+	protected final int worldFilterSize;
+	protected final int quarterFilterSize;
 	protected final Coordinates corner;
 
-	public WorldFilter(long worldFilterSize) {
+	public WorldFilter(int worldFilterSize) {
 		ensureIsMultipleOfFragmentSize(worldFilterSize);
 		this.worldFilterSize = worldFilterSize;
 		this.quarterFilterSize = Resolution.QUARTER.convertFromWorldToThis(this.worldFilterSize);

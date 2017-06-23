@@ -315,10 +315,12 @@ public class Actions {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			PlayerCoordinates currentCoordinates = player.getPlayerCoordinates();
-			long currentHeight = currentCoordinates.getY();
+
+			int currentHeight = currentCoordinates.getY();
 			String input = dialogs.askForPlayerHeight(currentHeight);
+			
 			if (input != null) {
-				player.moveTo(targetCoordinates, tryParseLong(input, currentHeight), currentCoordinates.getDimension());
+				player.moveTo(targetCoordinates, tryParseint(input, currentHeight), currentCoordinates.getDimension());
 				viewerFacade.reloadPlayerLayer();
 				if (dialogs.askToConfirmYesNo("Save Player Locations", "Do you want to save the player locations?")) {
 					if (dialogs.askToConfirmSaveGameManipulation()) {
@@ -330,9 +332,9 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private long tryParseLong(String text, long defaultValue) {
+	private int tryParseint(String text, int defaultValue) {
 		try {
-			return Long.parseLong(text);
+			return Integer.parseInt(text);
 		} catch (NumberFormatException e) {
 			return defaultValue;
 		}

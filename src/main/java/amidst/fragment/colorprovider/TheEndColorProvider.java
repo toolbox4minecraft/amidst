@@ -27,9 +27,9 @@ public class TheEndColorProvider implements ColorProvider {
 	private static final float INFLUENCE_FADE_RANGE = INFLUENCE_FADE_START - INFLUENCE_FADE_FINISH;
 
 	@Override
-	public int getColorAt(Dimension dimension, Fragment fragment, long cornerX, long cornerY, int x, int y) {
-		long xAsQuarter = cornerX + x;
-		long yAsQuarter = cornerY + y;
+	public int getColorAt(Dimension dimension, Fragment fragment, int cornerX, int cornerY, int x, int y) {
+		int xAsQuarter = cornerX + x;
+		int yAsQuarter = cornerY + y;
 		return getColorAt(
 				(int) (xAsQuarter << 2),
 				(int) (yAsQuarter << 2),
@@ -43,8 +43,8 @@ public class TheEndColorProvider implements ColorProvider {
 	private int getColorAt(
 			int x,
 			int y,
-			long chunkX,
-			long chunkY,
+			int chunkX,
+			int chunkY,
 			int textureX,
 			int textureY,
 			List<EndIsland> endIslands) {
@@ -69,7 +69,7 @@ public class TheEndColorProvider implements ColorProvider {
 		return result;
 	}
 
-	private int getFadingColorAt(long chunkX, long chunkY, int textureX, int textureY, float maxInfluence) {
+	private int getFadingColorAt(int chunkX, int chunkY, int textureX, int textureY, float maxInfluence) {
 		int result = VOID_TRANSPARENT_BLACK;
 		if (showRockyShores(chunkX, chunkY)) {
 			result = getRockyShoresTextureAt(textureX, textureY);
@@ -91,7 +91,7 @@ public class TheEndColorProvider implements ColorProvider {
 	/**
 	 * Determine if the chunk may contain miniature islands.
 	 */
-	private boolean showRockyShores(long chunkX, long chunkY) {
+	private boolean showRockyShores(int chunkX, int chunkY) {
 		return (chunkX * chunkX + chunkY * chunkY) > 4096;
 	}
 

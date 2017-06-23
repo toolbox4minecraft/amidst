@@ -7,6 +7,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.mojangapi.world.coordinates.Coordinates;
+import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.util.Lazy;
 
@@ -40,7 +41,7 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 		recycleAll();
 		fragmentsPerRow = 1;
 		fragmentsPerColumn = 1;
-		return new FragmentGraphItem(fragmentManager.requestFragment(coordinates.toFragmentCorner()));
+		return new FragmentGraphItem(fragmentManager.requestFragment(coordinates.snapTo(Resolution.FRAGMENT)));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -89,7 +90,7 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Fragment getFragmentAt(Coordinates coordinates) {
-		Coordinates corner = coordinates.toFragmentCorner();
+		Coordinates corner = coordinates.snapTo(Resolution.FRAGMENT);
 		for (FragmentGraphItem fragmentGraphItem : topLeftFragment.getOrCreateValue()) {
 			Fragment fragment = fragmentGraphItem.getFragment();
 			if (corner.equals(fragment.getCorner())) {

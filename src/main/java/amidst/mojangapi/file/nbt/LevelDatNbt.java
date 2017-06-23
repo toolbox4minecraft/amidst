@@ -7,11 +7,12 @@ import org.jnbt.CompoundTag;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.WorldType;
-import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.parsing.FormatException;
+import amidst.mojangapi.world.coordinates.Coordinates;
 
 @Immutable
 public class LevelDatNbt {
+	
 	public static LevelDatNbt from(File file) throws IOException, FormatException {
 		try {
 			CompoundTag dataTag = readDataTag(NBTUtils.readTagFromFile(file));
@@ -34,16 +35,17 @@ public class LevelDatNbt {
 		return NBTUtils.getLongValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_RANDOM_SEED));
 	}
 
+
 	private static Coordinates readWorldSpawn(CompoundTag dataTag) {
 		return Coordinates.from(readSpawnX(dataTag), readSpawnZ(dataTag));
 	}
 
-	private static long readSpawnX(CompoundTag dataTag) {
-		return NBTUtils.getLongValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_SPAWN_X));
+	private static int readSpawnX(CompoundTag dataTag) {
+		return NBTUtils.getIntValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_SPAWN_X));
 	}
 
-	private static long readSpawnZ(CompoundTag dataTag) {
-		return NBTUtils.getLongValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_SPAWN_Z));
+	private static int readSpawnZ(CompoundTag dataTag) {
+		return NBTUtils.getIntValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_SPAWN_Z));
 	}
 
 	private static WorldType readWorldType(CompoundTag dataTag) {

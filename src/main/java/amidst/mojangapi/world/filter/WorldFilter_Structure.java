@@ -13,7 +13,7 @@ public class WorldFilter_Structure extends WorldFilter {
 	private final DefaultWorldIconTypes structure;
 	private final int count;
 
-	public WorldFilter_Structure(long worldFilterSize, DefaultWorldIconTypes structure, int count) {
+	public WorldFilter_Structure(int worldFilterSize, DefaultWorldIconTypes structure, int count) {
 		super(worldFilterSize);
 		this.structure = structure;
 		this.count = count;
@@ -27,8 +27,8 @@ public class WorldFilter_Structure extends WorldFilter {
 	}
 
 	private void procudeAndCollect(WorldIconProducer<Void> structureProducer, WorldIconCollector structureCollector) {
-		for (long x = 0; x < 2 * worldFilterSize; x += 512) {
-			for (long y = 0; y < 2 * worldFilterSize; y += 512) {
+		for (int x = 0; x < 2 * worldFilterSize; x += 512) {
+			for (int y = 0; y < 2 * worldFilterSize; y += 512) {
 				structureProducer.produce(Coordinates.from(x, y).add(corner), structureCollector, null);
 			}
 		}

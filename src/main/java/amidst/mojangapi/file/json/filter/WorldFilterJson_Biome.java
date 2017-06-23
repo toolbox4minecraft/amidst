@@ -13,6 +13,7 @@ import amidst.mojangapi.world.filter.WorldFilter_Biome;
 @Immutable
 @GsonObject
 public class WorldFilterJson_Biome {
+	@SuppressWarnings("unused")
 	private volatile long distance;
 	private volatile List<String> biomes = Collections.emptyList();
 
@@ -32,9 +33,10 @@ public class WorldFilterJson_Biome {
 	}
 
 	public WorldFilter_Biome createBiomeFilter() {
-		return new WorldFilter_Biome(distance, createValidBiomeIndexes());
+		return null;
 	}
 
+	@SuppressWarnings("unused")
 	private Set<Short> createValidBiomeIndexes() {
 		Set<Short> result = new HashSet<>();
 		for (String name : biomes) {

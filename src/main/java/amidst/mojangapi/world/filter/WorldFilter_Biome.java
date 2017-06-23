@@ -10,7 +10,7 @@ public class WorldFilter_Biome extends WorldFilter {
 	private final Set<Short> validBiomeIndexes;
 	private short[][] region;
 
-	public WorldFilter_Biome(long worldFilterSize, Set<Short> validBiomeIndexes) {
+	public WorldFilter_Biome(int worldFilterSize, Set<Short> validBiomeIndexes) {
 		super(worldFilterSize);
 		this.validBiomeIndexes = validBiomeIndexes;
 		this.region = new short[(int) this.quarterFilterSize * 2][(int) this.quarterFilterSize * 2];

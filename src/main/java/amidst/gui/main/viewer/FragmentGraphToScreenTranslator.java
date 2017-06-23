@@ -8,6 +8,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.mojangapi.world.coordinates.Coordinates;
+import amidst.mojangapi.world.coordinates.Resolution;
 
 @NotThreadSafe
 public class FragmentGraphToScreenTranslator {
@@ -81,11 +82,10 @@ public class FragmentGraphToScreenTranslator {
 		graph.init(coordinates);
 		int xCenterOnScreen = viewerWidth >> 1;
 		int yCenterOnScreen = viewerHeight >> 1;
-		long xFragmentRelative = coordinates.getXRelativeToFragment();
-		long yFragmentRelative = coordinates.getYRelativeToFragment();
+		Coordinates fragmentRelative = coordinates.getRelativeTo(Resolution.FRAGMENT);
 		setTopLeftOnScreen(
-				xCenterOnScreen - zoom.worldToScreen(xFragmentRelative),
-				yCenterOnScreen - zoom.worldToScreen(yFragmentRelative));
+				xCenterOnScreen - zoom.worldToScreen(fragmentRelative.getX()),
+				yCenterOnScreen - zoom.worldToScreen(fragmentRelative.getY()));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -128,7 +128,7 @@ public class FragmentGraphToScreenTranslator {
 	public Coordinates screenToWorld(Point pointOnScreen) {
 		Coordinates corner = graph.getCorner();
 		return corner.add(
-				(long) zoom.screenToWorld(pointOnScreen.x - leftOnScreen),
-				(long) zoom.screenToWorld(pointOnScreen.y - topOnScreen));
+				(int) zoom.screenToWorld(pointOnScreen.x - leftOnScreen),
+				(int) zoom.screenToWorld(pointOnScreen.y - topOnScreen));
 	}
 }

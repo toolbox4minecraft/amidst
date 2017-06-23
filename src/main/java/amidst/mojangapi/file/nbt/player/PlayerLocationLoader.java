@@ -52,9 +52,9 @@ public enum PlayerLocationLoader {
 		int dimensionId = getTagDimension(tag).getValue();
 		List<Tag> posList = getTagPos(tag).getValue();
 		return PlayerCoordinates.fromNBTFile(
-				(long) (double) (Double) posList.get(0).getValue(),
-				(long) (double) (Double) posList.get(1).getValue(),
-				(long) (double) (Double) posList.get(2).getValue(),
+				(int) (double) (Double) posList.get(0).getValue(),
+				(int) (double) (Double) posList.get(1).getValue(),
+				(int) (double) (Double) posList.get(2).getValue(),
 				dimensionId);
 	}
 
