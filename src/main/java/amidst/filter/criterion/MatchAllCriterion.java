@@ -53,12 +53,12 @@ public class MatchAllCriterion implements Criterion<MatchAllCriterion.Result> {
 		private List<Criterion<?>> undecided;
 		private boolean isMatch;
 		
-		public Result() {
+		private Result() {
 			this.undecided = new ArrayList<>(criteria);
 			this.isMatch = true;
 		}
 		
-		public Result(Result r) {
+		private Result(Result r) {
 			this.undecided = new ArrayList<>(r.undecided);
 			this.isMatch = r.isMatch;
 		}

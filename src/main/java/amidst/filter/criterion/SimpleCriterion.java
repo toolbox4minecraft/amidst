@@ -53,12 +53,12 @@ public class SimpleCriterion implements Criterion<SimpleCriterion.Result> {
 		private Set<Region.Box> regionsToTest;
 		Coordinates found = null;
 		
-		public Result() {
+		private Result() {
 			regionsToTest = new HashSet<>();
 			forEachSubRegion(constraint, regionsToTest::add);
 		}
 		
-		public Result(Result other) {
+		private Result(Result other) {
 			this.regionsToTest = new HashSet<>(other.regionsToTest);
 		}
 

@@ -39,7 +39,7 @@ public class NegateCriterion implements Criterion<NegateCriterion.Result> {
 	public class Result implements CriterionResult {
 		TriState state;
 		
-		public Result(TriState state) {
+		private Result(TriState state) {
 			this.state = state;
 		}
 
@@ -50,7 +50,8 @@ public class NegateCriterion implements Criterion<NegateCriterion.Result> {
 
 		@Override
 		public void checkRegionAndUpdate(ResultsMap map, World world, Coordinates offset, Region.Box region) {
-			state = criterion.checkRegion(map, world, offset, region);
+			if(state == TriState.UNKNOWN)
+				state = criterion.checkRegion(map, world, offset, region).not();
 		}
 
 		@Override
