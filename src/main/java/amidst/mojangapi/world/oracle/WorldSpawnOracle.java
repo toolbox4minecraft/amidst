@@ -1,9 +1,9 @@
 package amidst.mojangapi.world.oracle;
 
 import amidst.documentation.ThreadSafe;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 
 @ThreadSafe
 public interface WorldSpawnOracle {
-	CoordinatesInWorld get();
+	Coordinates get();
 }

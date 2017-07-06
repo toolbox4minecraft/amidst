@@ -15,7 +15,7 @@ import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.settings.Setting;
 
@@ -44,7 +44,7 @@ public class CursorInformationWidget extends TextWidget {
 	protected List<String> updateTextLines() {
 		Point mousePosition = getMousePosition();
 		if (mousePosition != null) {
-			CoordinatesInWorld coordinates = translator.screenToWorld(mousePosition);
+			Coordinates coordinates = translator.screenToWorld(mousePosition);
 			String biomeName = getBiomeNameAt(coordinates);
 			return Arrays.asList(biomeName + " " + coordinates.toString());
 		} else {
@@ -53,7 +53,7 @@ public class CursorInformationWidget extends TextWidget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private String getBiomeNameAt(CoordinatesInWorld coordinates) {
+	private String getBiomeNameAt(Coordinates coordinates) {
 		Dimension dimension = dimensionSetting.get();
 		if (dimension.equals(Dimension.OVERWORLD)) {
 			return getOverworldBiomeNameAt(coordinates);
@@ -66,12 +66,11 @@ public class CursorInformationWidget extends TextWidget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private String getOverworldBiomeNameAt(CoordinatesInWorld coordinates) {
+	private String getOverworldBiomeNameAt(Coordinates coordinates) {
 		Fragment fragment = graph.getFragmentAt(coordinates);
 		if (fragment != null && fragment.isLoaded()) {
-			long x = coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
-			long y = coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
-			short biome = fragment.getBiomeDataAt((int) x, (int) y);
+			Coordinates c = coordinates.getRelativeTo(Resolution.FRAGMENT).getAs(Resolution.QUARTER);
+			short biome = fragment.getBiomeDataAt(c.getX(), c.getY());
 			try {
 				return Biome.getByIndex(biome).getName();
 			} catch (UnknownBiomeIndexException e) {

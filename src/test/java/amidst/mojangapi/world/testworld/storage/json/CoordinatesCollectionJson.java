@@ -5,21 +5,23 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Function;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
-import amidst.mojangapi.mocking.FragmentCornerWalker;
+import amidst.mojangapi.mocking.FragmentWalker;
 import amidst.mojangapi.world.World;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
+import amidst.mojangapi.world.coordinates.Region;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.producer.NameFilteredWorldIconCollector;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 
 @Immutable
+@GsonObject
 public class CoordinatesCollectionJson {
 	public static CoordinatesCollectionJson extractWorldSpawn(World world) {
-		CoordinatesInWorld spawn = world.getSpawnWorldIcon().getCoordinates();
+		Coordinates spawn = world.getSpawnWorldIcon().getCoordinates();
 		return new CoordinatesCollectionJson(createSortedSet(spawn));
 	}
 
@@ -31,13 +33,13 @@ public class CoordinatesCollectionJson {
 	public static <T> CoordinatesCollectionJson extractWorldIcons(
 			WorldIconProducer<T> producer,
 			String name,
-			Function<CoordinatesInWorld, T> additionalDataFactory,
+			Function<Region.Box, T> additionalDataFactory,
 			int fragmentsAroundOrigin,
 			int minimalNumberOfCoordinates) {
 		NameFilteredWorldIconCollector consumer = new NameFilteredWorldIconCollector(name);
-		FragmentCornerWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin).walk(
-				corner -> producer.produce(corner, consumer, additionalDataFactory.apply(corner)));
-		SortedSet<CoordinatesInWorld> coordinates = createSortedSet(consumer.get());
+		FragmentWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin).walk(
+				region -> producer.produce(region, consumer, additionalDataFactory.apply(region)));
+		SortedSet<Coordinates> coordinates = createSortedSet(consumer.get());
 		if (coordinates.size() < minimalNumberOfCoordinates) {
 			String message = "not enough coordinates for '" + name + "'";
 			AmidstLogger.error(message);
@@ -46,32 +48,31 @@ public class CoordinatesCollectionJson {
 		return new CoordinatesCollectionJson(coordinates);
 	}
 
-	private static SortedSet<CoordinatesInWorld> createSortedSet(List<WorldIcon> icons) {
-		SortedSet<CoordinatesInWorld> result = new TreeSet<>();
+	private static SortedSet<Coordinates> createSortedSet(List<WorldIcon> icons) {
+		SortedSet<Coordinates> result = new TreeSet<>();
 		for (WorldIcon icon : icons) {
 			result.add(icon.getCoordinates());
 		}
 		return result;
 	}
 
-	private static SortedSet<CoordinatesInWorld> createSortedSet(CoordinatesInWorld coordinates) {
-		SortedSet<CoordinatesInWorld> result = new TreeSet<>();
+	private static SortedSet<Coordinates> createSortedSet(Coordinates coordinates) {
+		SortedSet<Coordinates> result = new TreeSet<>();
 		result.add(coordinates);
 		return result;
 	}
 
-	private volatile SortedSet<CoordinatesInWorld> coordinates;
+	private volatile SortedSet<Coordinates> coordinates;
 
-	@GsonConstructor
 	public CoordinatesCollectionJson() {
 	}
 
-	public CoordinatesCollectionJson(SortedSet<CoordinatesInWorld> coordinates) {
+	public CoordinatesCollectionJson(SortedSet<Coordinates> coordinates) {
 		this.coordinates = coordinates;
 	}
 
-	public boolean contains(CoordinatesInWorld coordinates) {
-		for (CoordinatesInWorld coordinatesArrayEntry : this.coordinates) {
+	public boolean contains(Coordinates coordinates) {
+		for (Coordinates coordinatesArrayEntry : this.coordinates) {
 			if (coordinates.equals(coordinatesArrayEntry)) {
 				return true;
 			}

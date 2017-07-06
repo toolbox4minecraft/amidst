@@ -1,39 +1,44 @@
 package amidst.mojangapi.world.testworld.storage.json;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
+import amidst.mojangapi.world.coordinates.Region;
 
 @Immutable
+@GsonObject
 public class AreaJson implements Comparable<AreaJson> {
-	private volatile long x;
-	private volatile long y;
-	private volatile long width;
-	private volatile long height;
+	private volatile int x;
+	private volatile int y;
+	private volatile int width;
+	private volatile int height;
 
-	@GsonConstructor
 	public AreaJson() {
 	}
 
-	public AreaJson(long x, long y, long width, long height) {
+	public AreaJson(int x, int y, int width, int height) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
 	}
+	
+	public static AreaJson from(Region.Box region) {
+		return new AreaJson(region.getXMin(), region.getYMin(), region.getWidth(), region.getHeight());
+	}
 
-	public long getX() {
+	public int getX() {
 		return x;
 	}
 
-	public long getY() {
+	public int getY() {
 		return y;
 	}
 
-	public long getWidth() {
+	public int getWidth() {
 		return width;
 	}
 
-	public long getHeight() {
+	public int getHeight() {
 		return height;
 	}
 

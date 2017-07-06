@@ -5,7 +5,7 @@ import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.biome.Biome;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 
 @ThreadSafe
 public class HeuristicWorldSpawnOracle implements WorldSpawnOracle {
@@ -20,7 +20,7 @@ public class HeuristicWorldSpawnOracle implements WorldSpawnOracle {
 	}
 
 	@Override
-	public CoordinatesInWorld get() {
+	public Coordinates get() {
 		return biomeDataOracle.findValidLocation(0, 0, 256, validBiomes, new Random(seed));
 	}
 }

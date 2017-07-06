@@ -2,10 +2,12 @@ package amidst.mojangapi.world.testworld.storage.json;
 
 import java.util.SortedMap;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
+import amidst.mojangapi.world.coordinates.Region;
 
 @Immutable
+@GsonObject
 public class BiomeDataJson {
 	private static int[] short2int(short[] in) {
 		int[] result = new int[in.length];
@@ -25,7 +27,6 @@ public class BiomeDataJson {
 
 	private volatile SortedMap<AreaJson, short[]> biomeData;
 
-	@GsonConstructor
 	public BiomeDataJson() {
 	}
 
@@ -33,9 +34,8 @@ public class BiomeDataJson {
 		this.biomeData = biomeData;
 	}
 
-	public int[] get(int x, int y, int width, int height) {
-		AreaJson area = new AreaJson(x, y, width, height);
-		short[] result = biomeData.get(area);
+	public int[] get(Region.Box region) {
+		short[] result = biomeData.get(AreaJson.from(region));
 		if (result != null) {
 			return short2int(result);
 		} else {

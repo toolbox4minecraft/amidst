@@ -28,16 +28,42 @@ public enum Resolution {
 	public int getStep() {
 		return 1 << shift;
 	}
-
-	public int getStepsPerFragment() {
-		return 1 << (FRAGMENT.shift - shift);
+	
+	public int getShift() {
+		return shift;
 	}
 
-	public long convertFromWorldToThis(long coordinateInWorld) {
+	public int getShiftPer(Resolution resolution) {
+		return resolution.shift - shift;
+	}
+	
+	public int getStepsPer(Resolution resolution) {
+		return 1 << getShiftPer(resolution);
+	}
+	
+	public int convertFromWorldToThis(int coordinateInWorld) {
 		return coordinateInWorld >> shift;
 	}
 
-	public long convertFromThisToWorld(long coordinateInThisResolution) {
+	public int convertFromThisToWorld(int coordinateInThisResolution) {
 		return coordinateInThisResolution << shift;
+	}
+	
+	public int snapUpwardsToResolution(int coordinateInWorld) {
+		if(toRelative(coordinateInWorld) == 0)
+			return coordinateInWorld;
+		return snapToResolution(coordinateInWorld+1);
+	}
+	
+	public int snapToResolution(int coordinateInWorld) {
+		return coordinateInWorld & ~getResolutionMask();
+	}
+	
+	public int toRelative(int coordinateInWorld) {
+		return coordinateInWorld & getResolutionMask();
+	}
+	
+	private int getResolutionMask() {
+		return (1 << shift) - 1;
 	}
 }

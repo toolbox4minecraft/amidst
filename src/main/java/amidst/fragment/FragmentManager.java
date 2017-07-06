@@ -8,7 +8,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.constructor.FragmentConstructor;
 import amidst.fragment.layer.LayerManager;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.settings.Setting;
 
 @NotThreadSafe
@@ -24,7 +24,7 @@ public class FragmentManager {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Fragment requestFragment(CoordinatesInWorld coordinates) {
+	public Fragment requestFragment(Coordinates coordinates) {
 		Fragment fragment;
 		while ((fragment = availableQueue.poll()) == null) {
 			cache.increaseSize();

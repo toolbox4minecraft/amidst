@@ -18,7 +18,7 @@ public class BiomeColorProvider implements ColorProvider {
 	}
 
 	@Override
-	public int getColorAt(Dimension dimension, Fragment fragment, long cornerX, long cornerY, int x, int y) {
+	public int getColorAt(Dimension dimension, Fragment fragment, int cornerX, int cornerY, int x, int y) {
 		return getColor(fragment.getBiomeDataAt(x, y));
 	}
 

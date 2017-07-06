@@ -4,29 +4,29 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
-import amidst.mojangapi.mocking.FragmentCornerWalker;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.mocking.FragmentWalker;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 
 @Immutable
+@GsonObject
 public class EndIslandsJson {
 	public static EndIslandsJson extract(EndIslandOracle oracle, int fragmentsAroundOrigin) {
-		SortedMap<CoordinatesInWorld, List<EndIsland>> result = new TreeMap<>();
-		FragmentCornerWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin).walk(
+		SortedMap<Coordinates, List<EndIsland>> result = new TreeMap<>();
+		FragmentWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin).walkCorners(
 				corner -> result.put(corner, oracle.getAt(corner)));
 		return new EndIslandsJson(result);
 	}
 
-	private volatile SortedMap<CoordinatesInWorld, List<EndIsland>> endIslands;
+	private volatile SortedMap<Coordinates, List<EndIsland>> endIslands;
 
-	@GsonConstructor
 	public EndIslandsJson() {
 	}
 
-	public EndIslandsJson(SortedMap<CoordinatesInWorld, List<EndIsland>> endIslands) {
+	public EndIslandsJson(SortedMap<Coordinates, List<EndIsland>> endIslands) {
 		this.endIslands = endIslands;
 	}
 

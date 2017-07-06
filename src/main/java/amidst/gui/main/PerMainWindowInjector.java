@@ -79,16 +79,18 @@ public class PerMainWindowInjector {
 				viewerFacadeReference,
 				dialogs,
 				this::getMenuBar);
+
 		if (FeatureToggles.SEED_SEARCH) {
 			this.seedSearcher = new SeedSearcher(
 					dialogs,
 					runningLauncherProfile.createSilentPlayerlessCopy(),
 					threadMaster.getWorkerExecutor());
-			this.seedSearcherWindow = new SeedSearcherWindow(metadata, dialogs, worldSwitcher, seedSearcher);
+			this.seedSearcherWindow = new SeedSearcherWindow(metadata, settings, dialogs, worldSwitcher, seedSearcher);
 		} else {
 			this.seedSearcher = null;
 			this.seedSearcherWindow = null;
 		}
+
 		this.actions = new Actions(
 				application,
 				dialogs,

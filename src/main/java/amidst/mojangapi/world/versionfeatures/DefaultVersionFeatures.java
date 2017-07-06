@@ -19,6 +19,8 @@ import amidst.mojangapi.world.icon.producer.StrongholdProducer_Base;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Buggy128Algorithm;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Original;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
+import amidst.util.QuadFunction;
+import amidst.util.TriFunction;
 
 @Immutable
 public enum DefaultVersionFeatures {

@@ -6,7 +6,7 @@ import java.util.List;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.oracle.WorldSpawnOracle;
@@ -25,17 +25,17 @@ public class SpawnProducer extends CachedWorldIconProducer {
 	}
 
 	private WorldIcon createSpawnWorldIcon() {
-		CoordinatesInWorld spawnLocation = oracle.get();
+		Coordinates spawnLocation = oracle.get();
 		if (spawnLocation != null) {
 			return createWorldIcon(spawnLocation);
 		} else {
-			CoordinatesInWorld origin = CoordinatesInWorld.origin();
+			Coordinates origin = Coordinates.origin();
 			AmidstLogger.info("Unable to find spawn biome. Falling back to " + origin.toString() + ".");
 			return createWorldIcon(origin);
 		}
 	}
 
-	private WorldIcon createWorldIcon(CoordinatesInWorld coordinates) {
+	private WorldIcon createWorldIcon(Coordinates coordinates) {
 		return new WorldIcon(
 				coordinates,
 				DefaultWorldIconTypes.SPAWN.getLabel(),

@@ -21,9 +21,10 @@ import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.logging.AmidstLogger;
+import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
@@ -73,7 +74,7 @@ public class Actions {
 	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = dialogs.askForWorldType();
 		if (worldType != null) {
-			worldSwitcher.displayWorld(worldSeed, worldType);
+			worldSwitcher.displayWorld(new WorldOptions(worldSeed, worldType));
 		}
 	}
 
@@ -114,7 +115,7 @@ public class Actions {
 		if (viewerFacade != null) {
 			String input = dialogs.askForCoordinates();
 			if (input != null) {
-				CoordinatesInWorld coordinates = CoordinatesInWorld.tryParse(input);
+				Coordinates coordinates = Coordinates.tryParse(input);
 				if (coordinates != null) {
 					viewerFacade.centerOn(coordinates);
 				} else {
@@ -204,7 +205,7 @@ public class Actions {
 	public void copySeedToClipboard() {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
-			String seed = "" + viewerFacade.getWorldSeed().getLong();
+			String seed = "" + viewerFacade.getWorldOptions().getWorldSeed().getLong();
 			StringSelection selection = new StringSelection(seed);
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
 		}
@@ -214,9 +215,10 @@ public class Actions {
 	public void takeScreenshot() {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
+			WorldOptions worldOptions = viewerFacade.getWorldOptions();
 			BufferedImage image = viewerFacade.createScreenshot();
-			String suggestedFilename = "screenshot_" + viewerFacade.getWorldType().getFilenameText() + "_"
-					+ viewerFacade.getWorldSeed().getLong() + ".png";
+			String suggestedFilename = "screenshot_" + worldOptions.getWorldType().getFilenameText() + "_"
+					+ worldOptions.getWorldSeed().getLong() + ".png";
 			File file = dialogs.askForScreenshotSaveFile(suggestedFilename);
 			if (file != null) {
 				file = appendPNGFileExtensionIfNecessary(file);
@@ -298,7 +300,7 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void showPlayerPopupMenu(CoordinatesInWorld targetCoordinates, Component component, int x, int y) {
+	public void showPlayerPopupMenu(Coordinates targetCoordinates, Component component, int x, int y) {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			if (viewerFacade.canSavePlayerLocations()) {
@@ -309,14 +311,16 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void movePlayer(Player player, CoordinatesInWorld targetCoordinates) {
+	public void movePlayer(Player player, Coordinates targetCoordinates) {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			PlayerCoordinates currentCoordinates = player.getPlayerCoordinates();
-			long currentHeight = currentCoordinates.getY();
+
+			int currentHeight = currentCoordinates.getY();
 			String input = dialogs.askForPlayerHeight(currentHeight);
+			
 			if (input != null) {
-				player.moveTo(targetCoordinates, tryParseLong(input, currentHeight), currentCoordinates.getDimension());
+				player.moveTo(targetCoordinates, tryParseint(input, currentHeight), currentCoordinates.getDimension());
 				viewerFacade.reloadPlayerLayer();
 				if (dialogs.askToConfirmYesNo("Save Player Locations", "Do you want to save the player locations?")) {
 					if (dialogs.askToConfirmSaveGameManipulation()) {
@@ -328,9 +332,9 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private long tryParseLong(String text, long defaultValue) {
+	private int tryParseint(String text, int defaultValue) {
 		try {
-			return Long.parseLong(text);
+			return Integer.parseInt(text);
 		} catch (NumberFormatException e) {
 			return defaultValue;
 		}

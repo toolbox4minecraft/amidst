@@ -5,6 +5,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.coordinates.Region;
 import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
 
@@ -25,10 +26,10 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+	public int[] getBiomeData(Region.Box region, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
 		if (isWorldCreated) {
-			return getBiomeData(useQuarterResolution).get(x, y, width, height);
+			return getBiomeData(useQuarterResolution).get(region);
 		} else {
 			throw new MinecraftInterfaceException("the world needs to be created first");
 		}

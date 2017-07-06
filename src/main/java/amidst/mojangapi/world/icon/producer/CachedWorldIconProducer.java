@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import amidst.documentation.ThreadSafe;
-import amidst.fragment.Fragment;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Region;
 import amidst.mojangapi.world.icon.WorldIcon;
 
 @ThreadSafe
@@ -15,9 +14,9 @@ public abstract class CachedWorldIconProducer extends WorldIconProducer<Void> {
 	private volatile List<WorldIcon> cache;
 
 	@Override
-	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer, Void additionalData) {
+	public void produce(Region.Box region, Consumer<WorldIcon> consumer, Void additionalData) {
 		for (WorldIcon icon : getCache()) {
-			if (icon.getCoordinates().isInBoundsOf(corner, Fragment.SIZE)) {
+			if (region.contains(icon.getCoordinates())) {
 				consumer.accept(icon);
 			}
 		}

@@ -7,16 +7,17 @@ import org.jnbt.CompoundTag;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.WorldType;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.parsing.FormatException;
+import amidst.mojangapi.world.coordinates.Coordinates;
 
 @Immutable
 public class LevelDatNbt {
+	
 	public static LevelDatNbt from(File file) throws IOException, FormatException {
 		try {
 			CompoundTag dataTag = readDataTag(NBTUtils.readTagFromFile(file));
 			long seed = readRandomSeed(dataTag);
-			CoordinatesInWorld worldSpawn = readWorldSpawn(dataTag);
+			Coordinates worldSpawn = readWorldSpawn(dataTag);
 			WorldType worldType = readWorldType(dataTag);
 			String generatorOptions = readGeneratorOptions(dataTag, worldType);
 			boolean hasPlayer = hasPlayerTag(dataTag);
@@ -34,16 +35,17 @@ public class LevelDatNbt {
 		return NBTUtils.getLongValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_RANDOM_SEED));
 	}
 
-	private static CoordinatesInWorld readWorldSpawn(CompoundTag dataTag) {
-		return CoordinatesInWorld.from(readSpawnX(dataTag), readSpawnZ(dataTag));
+
+	private static Coordinates readWorldSpawn(CompoundTag dataTag) {
+		return Coordinates.from(readSpawnX(dataTag), readSpawnZ(dataTag));
 	}
 
-	private static long readSpawnX(CompoundTag dataTag) {
-		return NBTUtils.getLongValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_SPAWN_X));
+	private static int readSpawnX(CompoundTag dataTag) {
+		return NBTUtils.getIntValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_SPAWN_X));
 	}
 
-	private static long readSpawnZ(CompoundTag dataTag) {
-		return NBTUtils.getLongValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_SPAWN_Z));
+	private static int readSpawnZ(CompoundTag dataTag) {
+		return NBTUtils.getIntValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_SPAWN_Z));
 	}
 
 	private static WorldType readWorldType(CompoundTag dataTag) {
@@ -79,14 +81,14 @@ public class LevelDatNbt {
 	}
 
 	private final long seed;
-	private final CoordinatesInWorld worldSpawn;
+	private final Coordinates worldSpawn;
 	private final WorldType worldType;
 	private final String generatorOptions;
 	private final boolean hasPlayer;
 
 	public LevelDatNbt(
 			long seed,
-			CoordinatesInWorld worldSpawn,
+			Coordinates worldSpawn,
 			WorldType worldType,
 			String generatorOptions,
 			boolean hasPlayer) {
@@ -101,7 +103,7 @@ public class LevelDatNbt {
 		return seed;
 	}
 
-	public CoordinatesInWorld getWorldSpawn() {
+	public Coordinates getWorldSpawn() {
 		return worldSpawn;
 	}
 

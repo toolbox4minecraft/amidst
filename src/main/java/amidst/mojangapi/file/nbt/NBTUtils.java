@@ -47,4 +47,14 @@ public enum NBTUtils {
 					"cannot read long value from the class '" + tag.getClass().getName() + "'");
 		}
 	}
+	
+	public static int getIntValue(Tag tag) {
+		Object value = tag.getValue();
+		if (value instanceof Number) {
+			return ((Number) value).intValue();
+		} else {
+			throw new IllegalArgumentException(
+					"cannot read int value from the class '" + tag.getClass().getName() + "'");
+		}
+	}
 }

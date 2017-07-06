@@ -10,7 +10,7 @@ import amidst.fragment.Fragment;
 import amidst.fragment.colorprovider.ColorProvider;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.coordinates.Resolution;
 
 @NotThreadSafe
@@ -26,7 +26,7 @@ public class ImageLoader extends FragmentLoader {
 		super(declaration);
 		this.resolution = resolution;
 		this.colorProvider = colorProvider;
-		this.size = resolution.getStepsPerFragment();
+		this.size = resolution.getStepsPer(Resolution.FRAGMENT);
 		this.rgbArray = new int[size * size];
 		this.bufferedImage = createBufferedImage();
 	}
@@ -50,16 +50,16 @@ public class ImageLoader extends FragmentLoader {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void doLoad(Dimension dimension, Fragment fragment) {
-		CoordinatesInWorld corner = fragment.getCorner();
-		long cornerX = corner.getXAs(resolution);
-		long cornerY = corner.getYAs(resolution);
+		Coordinates corner = fragment.getCorner();
+		int cornerX = corner.getXAs(resolution);
+		int cornerY = corner.getYAs(resolution);
 		drawToCache(dimension, fragment, cornerX, cornerY);
 		bufferedImage.setRGB(0, 0, size, size, rgbArray, 0, size);
 		bufferedImage = fragment.getAndSetImage(declaration.getLayerId(), bufferedImage);
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private void drawToCache(Dimension dimension, Fragment fragment, long cornerX, long cornerY) {
+	private void drawToCache(Dimension dimension, Fragment fragment, int cornerX, int cornerY) {
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
 				int index = getCacheIndex(x, y);

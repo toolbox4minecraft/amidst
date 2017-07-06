@@ -1,12 +1,12 @@
 package amidst.mojangapi.file.json.player;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 
+@GsonObject
 public class SimplePlayerJson {
 	private String id;
 	private String name;
 
-	@GsonConstructor
 	public SimplePlayerJson() {
 	}
 

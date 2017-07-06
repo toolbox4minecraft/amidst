@@ -9,7 +9,7 @@ import javax.swing.JPopupMenu;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.Player;
 
@@ -17,12 +17,12 @@ import amidst.mojangapi.world.player.Player;
 public class MovePlayerPopupMenu {
 	private final Actions actions;
 	private final MovablePlayerList movablePlayerList;
-	private final CoordinatesInWorld targetCoordinates;
+	private final Coordinates targetCoordinates;
 
 	public MovePlayerPopupMenu(
 			Actions actions,
 			MovablePlayerList movablePlayerList,
-			CoordinatesInWorld targetCoordinates) {
+			Coordinates targetCoordinates) {
 		this.actions = actions;
 		this.movablePlayerList = movablePlayerList;
 		this.targetCoordinates = targetCoordinates;
@@ -40,7 +40,7 @@ public class MovePlayerPopupMenu {
 		return result;
 	}
 
-	private JMenuItem createPlayerMenuItem(final Player player, final CoordinatesInWorld targetCoordinates) {
+	private JMenuItem createPlayerMenuItem(final Player player, final Coordinates targetCoordinates) {
 		JMenuItem result = new JMenuItem(player.getPlayerName());
 		result.addActionListener(new ActionListener() {
 			@Override

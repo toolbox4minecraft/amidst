@@ -4,14 +4,14 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
 import amidst.mojangapi.world.icon.WorldIcon;
 
 @NotThreadSafe
 public class ClosestWorldIconFinder {
 	private final FragmentGraph graph;
 	private final Iterable<LayerDeclaration> declarations;
-	private final CoordinatesInWorld positionInWorld;
+	private final Coordinates positionInWorld;
 	private WorldIcon closestIcon;
 	private double closestDistanceSq;
 
@@ -19,7 +19,7 @@ public class ClosestWorldIconFinder {
 	public ClosestWorldIconFinder(
 			FragmentGraph graph,
 			Iterable<LayerDeclaration> declarations,
-			CoordinatesInWorld positionInWorld,
+			Coordinates positionInWorld,
 			double maxDistanceInWorld) {
 		this.graph = graph;
 		this.declarations = declarations;

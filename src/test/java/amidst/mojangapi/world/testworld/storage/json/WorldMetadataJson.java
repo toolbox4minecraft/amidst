@@ -1,25 +1,25 @@
 package amidst.mojangapi.world.testworld.storage.json;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldType;
 
 @Immutable
+@GsonObject
 public class WorldMetadataJson {
 	public static WorldMetadataJson from(World world) {
 		return new WorldMetadataJson(
 				world.getRecognisedVersion(),
-				world.getWorldSeed().getLong(),
-				world.getWorldType());
+				world.getWorldOptions().getWorldSeed().getLong(),
+				world.getWorldOptions().getWorldType());
 	}
 
 	private volatile RecognisedVersion recognisedVersion;
 	private volatile long seed;
 	private volatile WorldType worldType;
 
-	@GsonConstructor
 	public WorldMetadataJson() {
 	}
 

@@ -8,6 +8,7 @@ import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 
@@ -100,12 +101,10 @@ public enum TestWorldDeclaration {
 		return recognisedVersion;
 	}
 
-	public WorldSeed getWorldSeed() {
-		return worldSeed;
-	}
 
-	public WorldType getWorldType() {
-		return worldType;
+
+	public WorldOptions getWorldOptions() {
+		return new WorldOptions(worldSeed, worldType);
 	}
 
 	public boolean isSupported(String name) {

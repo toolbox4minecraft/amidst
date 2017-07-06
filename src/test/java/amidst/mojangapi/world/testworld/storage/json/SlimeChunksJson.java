@@ -2,17 +2,18 @@ package amidst.mojangapi.world.testworld.storage.json;
 
 import java.util.Arrays;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 
 @Immutable
+@GsonObject
 public class SlimeChunksJson {
 	public static SlimeChunksJson from(World world) {
 		SlimeChunkOracle oracle = world.getSlimeChunkOracle();
-		int steps = Resolution.CHUNK.getStepsPerFragment();
+		int steps = Resolution.CHUNK.getStepsPer(Resolution.FRAGMENT);
 		boolean[][] isSlimeChunk = new boolean[2 * steps][2 * steps];
 		for (int x = 0; x < isSlimeChunk.length; x++) {
 			for (int y = 0; y < isSlimeChunk[x].length; y++) {
@@ -24,7 +25,6 @@ public class SlimeChunksJson {
 
 	private volatile boolean[][] isSlimeChunk;
 
-	@GsonConstructor
 	public SlimeChunksJson() {
 	}
 

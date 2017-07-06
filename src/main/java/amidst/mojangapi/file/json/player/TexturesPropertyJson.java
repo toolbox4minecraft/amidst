@@ -1,13 +1,13 @@
 package amidst.mojangapi.file.json.player;
 
-import amidst.documentation.GsonConstructor;
+import amidst.documentation.GsonObject;
 import amidst.documentation.Immutable;
 
 @Immutable
+@GsonObject
 public class TexturesPropertyJson {
 	private volatile TexturesJson textures;
 
-	@GsonConstructor
 	public TexturesPropertyJson() {
 	}
 

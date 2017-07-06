@@ -1,4 +1,4 @@
-package amidst.mojangapi.world.versionfeatures;
+package amidst.util;
 
 @FunctionalInterface
 public interface QuadFunction<P1, P2, P3, P4, R> {

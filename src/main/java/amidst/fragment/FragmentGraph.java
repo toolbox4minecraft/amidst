@@ -6,7 +6,8 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerDeclaration;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Coordinates;
+import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.util.Lazy;
 
@@ -26,21 +27,21 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void init(CoordinatesInWorld coordinates) {
+	public void init(Coordinates coordinates) {
 		topLeftFragment.setToValue(create(coordinates));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private FragmentGraphItem createOrigin() {
-		return create(CoordinatesInWorld.origin());
+		return create(Coordinates.origin());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private FragmentGraphItem create(CoordinatesInWorld coordinates) {
+	private FragmentGraphItem create(Coordinates coordinates) {
 		recycleAll();
 		fragmentsPerRow = 1;
 		fragmentsPerColumn = 1;
-		return new FragmentGraphItem(fragmentManager.requestFragment(coordinates.toFragmentCorner()));
+		return new FragmentGraphItem(fragmentManager.requestFragment(coordinates.snapTo(Resolution.FRAGMENT)));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -72,7 +73,7 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public CoordinatesInWorld getCorner() {
+	public Coordinates getCorner() {
 		return topLeftFragment.getOrCreateValue().getFragment().getCorner();
 	}
 
@@ -83,13 +84,13 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public WorldIcon getClosestWorldIcon(CoordinatesInWorld coordinates, double maxDistanceInWorld) {
+	public WorldIcon getClosestWorldIcon(Coordinates coordinates, double maxDistanceInWorld) {
 		return new ClosestWorldIconFinder(this, declarations, coordinates, maxDistanceInWorld).getWorldIcon();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Fragment getFragmentAt(CoordinatesInWorld coordinates) {
-		CoordinatesInWorld corner = coordinates.toFragmentCorner();
+	public Fragment getFragmentAt(Coordinates coordinates) {
+		Coordinates corner = coordinates.snapTo(Resolution.FRAGMENT);
 		for (FragmentGraphItem fragmentGraphItem : topLeftFragment.getOrCreateValue()) {
 			Fragment fragment = fragmentGraphItem.getFragment();
 			if (corner.equals(fragment.getCorner())) {

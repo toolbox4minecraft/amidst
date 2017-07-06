@@ -12,7 +12,7 @@ public class BiomeDataConstructor implements FragmentConstructor {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public BiomeDataConstructor(Resolution resolution) {
-		this.size = resolution.getStepsPerFragment();
+		this.size = resolution.getStepsPer(Resolution.FRAGMENT);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
