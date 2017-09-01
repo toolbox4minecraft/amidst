@@ -8,6 +8,7 @@ import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 
@@ -67,8 +68,7 @@ public enum TestWorldDeclaration {
 	private static final String ZIP_FILE_EXTENSION = ".zip";
 
 	private final RecognisedVersion recognisedVersion;
-	private final WorldSeed worldSeed;
-	private final WorldType worldType;
+	private final WorldOptions worldOptions;
 	private final List<String> supportedEntryNames;
 	private final File directory;
 	private final String directoryString;
@@ -79,8 +79,8 @@ public enum TestWorldDeclaration {
 			WorldType worldType,
 			String... supported) {
 		this.recognisedVersion = recognisedVersion;
-		this.worldSeed = WorldSeed.fromUserInput(seed);
-		this.worldType = worldType;
+		WorldSeed worldSeed = WorldSeed.fromUserInput(seed);
+		this.worldOptions = new WorldOptions(worldSeed, worldType);
 		this.supportedEntryNames = Collections.unmodifiableList(Arrays.asList(supported));
 		this.directory = Paths.get(
 				"src",
@@ -100,12 +100,8 @@ public enum TestWorldDeclaration {
 		return recognisedVersion;
 	}
 
-	public WorldSeed getWorldSeed() {
-		return worldSeed;
-	}
-
-	public WorldType getWorldType() {
-		return worldType;
+	public WorldOptions getWorldOptions() {
+		return worldOptions;
 	}
 
 	public boolean isSupported(String name) {

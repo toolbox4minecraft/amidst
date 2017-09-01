@@ -4,6 +4,8 @@ import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.WorldOptions;
+import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 
 @Immutable
@@ -39,5 +41,9 @@ public class WorldMetadataJson {
 
 	public WorldType getWorldType() {
 		return worldType;
+	}
+
+	public WorldOptions intoWorldOptions() {
+		return new WorldOptions(WorldSeed.fromUserInput(seed + ""), worldType);
 	}
 }

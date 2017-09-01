@@ -8,7 +8,6 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
-import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.testworld.TestWorldDeclaration;
 import amidst.mojangapi.world.testworld.TestWorldEntryNames;
 import amidst.mojangapi.world.testworld.file.TestWorldDirectory;
@@ -34,11 +33,10 @@ public class FakeWorldBuilder {
 
 	public World createRealWorld(TestWorldDeclaration worldDeclaration, MinecraftInterface realMinecraftInterface)
 			throws MinecraftInterfaceException {
-		return builder.fromSeed(
+		return builder.from(
 				realMinecraftInterface,
 				NOOP,
-				worldDeclaration.getWorldSeed(),
-				worldDeclaration.getWorldType());
+				worldDeclaration.getWorldOptions());
 	}
 
 	public World createFakeWorld(TestWorldDirectory worldDeclaration) throws MinecraftInterfaceException {
@@ -59,11 +57,10 @@ public class FakeWorldBuilder {
 			WorldMetadataJson worldMetadata,
 			BiomeDataJson quarterBiomeData,
 			BiomeDataJson fullBiomeData) throws MinecraftInterfaceException {
-		return builder.fromSeed(
+		return builder.from(
 				createFakeMinecraftInterface(worldMetadata, quarterBiomeData, fullBiomeData),
 				NOOP,
-				WorldSeed.fromUserInput(worldMetadata.getSeed() + ""),
-				worldMetadata.getWorldType());
+				worldMetadata.intoWorldOptions());
 	}
 
 	private static FakeMinecraftInterface createFakeMinecraftInterface(

@@ -21,6 +21,7 @@ import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.logging.AmidstLogger;
+import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
@@ -73,7 +74,7 @@ public class Actions {
 	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = dialogs.askForWorldType();
 		if (worldType != null) {
-			worldSwitcher.displayWorld(worldSeed, worldType);
+			worldSwitcher.displayWorld(new WorldOptions(worldSeed, worldType));
 		}
 	}
 

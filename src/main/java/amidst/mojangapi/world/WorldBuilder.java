@@ -54,24 +54,23 @@ public class WorldBuilder {
 		this.seedHistoryLogger = seedHistoryLogger;
 	}
 
-	public World fromSeed(
+	public World from(
 			MinecraftInterface minecraftInterface,
 			Consumer<World> onDisposeWorld,
-			WorldSeed worldSeed,
-			WorldType worldType) throws MinecraftInterfaceException {
+			WorldOptions worldOptions) throws MinecraftInterfaceException {
 		BiomeDataOracle biomeDataOracle = new BiomeDataOracle(minecraftInterface);
 		VersionFeatures versionFeatures = DefaultVersionFeatures.create(minecraftInterface.getRecognisedVersion());
 		return create(
 				minecraftInterface,
 				onDisposeWorld,
-				worldSeed,
-				worldType,
-				"",
+				worldOptions.getWorldSeed(),
+				worldOptions.getWorldType(),
+				worldOptions.getGeneratorOptions(),
 				MovablePlayerList.dummy(),
 				versionFeatures,
 				biomeDataOracle,
 				new HeuristicWorldSpawnOracle(
-						worldSeed.getLong(),
+						worldOptions.getWorldSeed().getLong(),
 						biomeDataOracle,
 						versionFeatures.getValidBiomesForStructure_Spawn()));
 	}

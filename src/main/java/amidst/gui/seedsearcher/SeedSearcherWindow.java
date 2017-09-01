@@ -21,6 +21,7 @@ import amidst.gui.main.MainWindowDialogs;
 import amidst.gui.main.WorldSwitcher;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.json.filter.WorldFilterJson_MatchAll;
+import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.filter.WorldFilter;
@@ -117,7 +118,7 @@ public class SeedSearcherWindow {
 			if (configuration.isPresent()) {
 				SeedSearcherConfiguration seedSearcherConfiguration = configuration.get();
 				WorldType worldType = seedSearcherConfiguration.getWorldType();
-				seedSearcher.search(seedSearcherConfiguration, worldSeed -> seedFound(worldSeed, worldType));
+				seedSearcher.search(seedSearcherConfiguration, worldOptions -> seedFound(worldOptions));
 			} else {
 				AmidstLogger.warn("invalid configuration");
 				dialogs.displayError("invalid configuration");
@@ -143,8 +144,8 @@ public class SeedSearcherWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void seedFound(WorldSeed worldSeed, WorldType worldType) {
-		worldSwitcher.displayWorld(worldSeed, worldType);
+	private void seedFound(WorldOptions worldOptions) {
+		worldSwitcher.displayWorld(worldOptions);
 		updateGUI();
 	}
 

@@ -13,8 +13,7 @@ import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterface;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
-import amidst.mojangapi.world.WorldSeed;
-import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.WorldOptions;
 
 @ThreadSafe
 public class RunningLauncherProfile {
@@ -63,11 +62,11 @@ public class RunningLauncherProfile {
 	 * one world at a time. Creating a new world will break all previously
 	 * created world objects.
 	 */
-	public synchronized World createWorldFromSeed(WorldSeed worldSeed, WorldType worldType)
+	public synchronized World createWorld(WorldOptions worldOptions)
 			throws IllegalStateException,
 			MinecraftInterfaceException {
 		if (currentWorld == null) {
-			currentWorld = worldBuilder.fromSeed(minecraftInterface, this::unlock, worldSeed, worldType);
+			currentWorld = worldBuilder.from(minecraftInterface, this::unlock, worldOptions);
 			return currentWorld;
 		} else {
 			throw new IllegalStateException(
