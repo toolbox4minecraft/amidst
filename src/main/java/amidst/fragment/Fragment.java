@@ -1,6 +1,7 @@
 package amidst.fragment;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReferenceArray;
@@ -124,15 +125,46 @@ public class Fragment {
 			int step = localResolution.getStep() / Resolution.QUARTER.getStep();
 			short[][] tmpBiomeData = new short[size][size];
 			biomeDataOracle.populateArray(corner, tmpBiomeData, true);
-			for (int i = 0; i<tmpBiomeData.length; i+=step) {
-			    for (int j = 0; j<tmpBiomeData[i].length; j+=step) {
-			        // here we could take the most common biome, but for speed we only
-			        // use the first one
-			        short biome = tmpBiomeData[i][j];
-			        biomeData[i/step][j/step] = biome;
+			for (int i = 0; i<biomeData.length; i++) {
+			    for (int j = 0; j<biomeData[i].length; j++) {
+			    	// This way is faster
+			        //short biome = tmpBiomeData[i*step][j*step];
+			    	// This way is more accurate: it finds the most common biome
+			        short biomes[] = new short[step*step];
+			        for (int k = 0; k<step; k++) {
+			        	for (int l = 0; l<step; l++) {
+			        		biomes[k*step+l] = tmpBiomeData[i*step+k][j*step+l];
+			        	}
+			        }
+			        short biome = mostCommonFromArray(biomes);
+			        biomeData[i][j] = biome;
 			    }
 			}
 		}
+	}
+	
+	private short mostCommonFromArray(short a[]) {
+	    Arrays.sort(a);
+
+	    short previous = a[0];
+	    short popular = a[0];
+	    int count = 1;
+	    int maxCount = 1;
+
+	    for (int i = 1; i < a.length; i++) {
+	        if (a[i] == previous)
+	            count++;
+	        else {
+	            if (count > maxCount) {
+	                popular = a[i-1];
+	                maxCount = count;
+	            }
+	            previous = a[i];
+	            count = 1;
+	        }
+	    }
+
+	    return count > maxCount ? a[a.length-1] : popular;
 	}
 
 	public short getBiomeDataAt(int x, int y) {
