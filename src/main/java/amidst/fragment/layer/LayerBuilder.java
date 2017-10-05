@@ -43,7 +43,7 @@ public class LayerBuilder {
 	private Resolution biomeResolution;
 
 	public LayerBuilder() {
-		this.biomeResolution = Resolution.QUARTER;
+		this.biomeResolution = Resolution.CHUNK;
 		Fragment.resolution = this.biomeResolution;
 		this.constructors = createConstructors();
 	}
