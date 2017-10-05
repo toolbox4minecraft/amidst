@@ -76,7 +76,12 @@ import amidst.mojangapi.world.oracle.EndIsland;
  */
 @NotThreadSafe
 public class Fragment {
-	public static final int SIZE = Resolution.FRAGMENT.getStep();
+	// Every pixel in the fragment is 2^size blocks in minecraft
+	private int size; //= Resolution.FRAGMENT.getStep();
+	public static int SIZE = 1 << 9;
+	// Resolution, same as size
+	public static Resolution resolution = null;
+	public Resolution localResolution = null;
 
 	private volatile boolean isInitialized = false;
 	private volatile boolean isLoaded = false;
@@ -101,16 +106,38 @@ public class Fragment {
 		return alpha;
 	}
 
-	public void initBiomeData(int width, int height) {
+	public void initBiomeData(int width, int height, Resolution resolution) {
+		this.localResolution = resolution;
 		biomeData = new short[width][height];
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void populateBiomeData(BiomeDataOracle biomeDataOracle) {
-		biomeDataOracle.populateArray(corner, biomeData, true);
+		if(localResolution == Resolution.WORLD) {
+			biomeDataOracle.populateArray(corner, biomeData, false);
+		}
+		else if(localResolution == Resolution.QUARTER) {
+			biomeDataOracle.populateArray(corner, biomeData, true);
+		}
+		else {
+			int size = Resolution.QUARTER.getStepsPerFragment();
+			int step = localResolution.getStep() / Resolution.QUARTER.getStep();
+			short[][] tmpBiomeData = new short[size][size];
+			biomeDataOracle.populateArray(corner, tmpBiomeData, true);
+			for (int i = 0; i<tmpBiomeData.length; i+=step) {
+			    for (int j = 0; j<tmpBiomeData[i].length; j+=step) {
+			        // here we could take the most common biome, but for speed we only
+			        // use the first one
+			        short biome = tmpBiomeData[i][j];
+			        biomeData[i/step][j/step] = biome;
+			    }
+			}
+		}
 	}
 
 	public short getBiomeDataAt(int x, int y) {
+		//if(x==0 || y==0) return 0;
+		//return (short)(((x+y)&1)+5);
 		return biomeData[x][y];
 	}
 

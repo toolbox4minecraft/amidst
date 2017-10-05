@@ -69,8 +69,8 @@ public class CursorInformationWidget extends TextWidget {
 	private String getOverworldBiomeNameAt(CoordinatesInWorld coordinates) {
 		Fragment fragment = graph.getFragmentAt(coordinates);
 		if (fragment != null && fragment.isLoaded()) {
-			long x = coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
-			long y = coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
+			long x = coordinates.getXRelativeToFragmentAs(Fragment.resolution);
+			long y = coordinates.getYRelativeToFragmentAs(Fragment.resolution);
 			short biome = fragment.getBiomeDataAt((int) x, (int) y);
 			try {
 				return Biome.getByIndex(biome).getName();
