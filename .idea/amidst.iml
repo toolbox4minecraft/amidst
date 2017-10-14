@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="amidst" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$" external.system.id="GRADLE" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5">
+    <output url="file://$MODULE_DIR$/out/production/classes" />
+    <output-test url="file://$MODULE_DIR$/out/test/classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/resources" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/build" />
+      <excludeFolder url="file://$MODULE_DIR$/out" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.google.code.gson:gson:2.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.miglayout:miglayout-swing:4.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: args4j:args4j:2.32" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.codehaus.mojo:properties-maven-plugin:1.0.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.miglayout:miglayout-core:4.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.maven:maven-project:2.2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.maven:maven-settings:2.2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.maven:maven-profile:2.2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.maven:maven-model:2.2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.maven:maven-plugin-api:2.2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.maven:maven-artifact-manager:2.2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.maven:maven-plugin-registry:2.2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.maven:maven-artifact:2.2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.codehaus.plexus:plexus-container-default:1.0-alpha-9-stable-1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.maven:maven-repository-metadata:2.2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.maven.wagon:wagon-provider-api:1.0-beta-6" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.codehaus.plexus:plexus-utils:3.0.22" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.codehaus.plexus:plexus-interpolation:1.11" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: backport-util-concurrent:backport-util-concurrent:3.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: junit:junit:3.8.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: classworlds:classworlds:1.1-alpha-2" level="project" />
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="Gradle: jnbt-1.3:3">
+        <CLASSES />
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.google.code.gson:gson:2.5" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.miglayout:miglayout-swing:4.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: args4j:args4j:2.32" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.miglayout:miglayout-core:4.2" level="project" />
+    <orderEntry type="module-library" scope="RUNTIME">
+      <library name="Gradle: jnbt-1.3:3">
+        <CLASSES />
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" scope="TEST" name="Gradle: com.google.code.gson:gson:2.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.miglayout:miglayout-swing:4.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: args4j:args4j:2.32" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: junit:junit:4.11" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.miglayout:miglayout-core:4.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
+    <orderEntry type="module-library" scope="TEST">
+      <library name="Gradle: jnbt-1.3:3">
+        <CLASSES />
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>
