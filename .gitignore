@@ -7,14 +7,11 @@
 # IntelliJ IDEA project files #
 ./AMIDST.eml
 ./AMIDST.iml
-./.idea/*
-/bin
-/dist
-/logs
-/nbproject
-/build
+**/.*/
+bin/
+dist/
+logs/
+build/
 
 history.txt
 target/
-/dependency-reduced-pom.xml
-devtools.properties

@@ -1,0 +1,23 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'amidst'
+version = '0.0.1-SNAPSHOT'
+
+description = ""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'com.google.code.gson', name: 'gson', version:'2.5'
+    compile group: 'com.miglayout', name: 'miglayout-swing', version:'4.2'
+    compile group: 'args4j', name: 'args4j', version:'2.32'
+    compile fileTree(dir: 'lib', include: '*.jar')
+    testCompile group: 'junit', name: 'junit', version:'4.11'
+    compileOnly group: 'org.codehaus.mojo', name: 'properties-maven-plugin', version:'1.0.0'
+}
