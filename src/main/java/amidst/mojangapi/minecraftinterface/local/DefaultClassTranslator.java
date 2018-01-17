@@ -73,6 +73,7 @@ public enum DefaultClassTranslator {
 					c.getNumberOfFields() > 70 && c.getNumberOfFields() < 100
 					&& c.getField(0).hasFlags(AccessFlags.STATIC | AccessFlags.FINAL)
 					&& c.getField(1).hasFlags(AccessFlags.PUBLIC)
+					&& (!c.getField(1).hasFlags(AccessFlags.STATIC))
 				)
 				.thenDeclareOptional(SymbolicNames.CLASS_GEN_OPTIONS_FACTORY)
 					.requiredMethod(SymbolicNames.METHOD_GEN_OPTIONS_FACTORY_BUILD, "b").end()
