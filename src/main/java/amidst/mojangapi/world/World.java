@@ -152,6 +152,11 @@ public class World {
 		return endCityProducer;
 	}
 
+	public WorldIconProducer<Void> getWoodlandMansionProducer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public WorldIcon getSpawnWorldIcon() {
 		return spawnProducer.getFirstWorldIcon();
 	}

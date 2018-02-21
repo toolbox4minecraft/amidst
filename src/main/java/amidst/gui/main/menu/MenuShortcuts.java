@@ -40,13 +40,14 @@ public enum MenuShortcuts implements MenuShortcut {
 	SHOW_TEMPLES("menu 5"),
 	SHOW_MINESHAFTS("menu 6"),
 	SHOW_OCEAN_MONUMENTS("menu 7"),
-	SHOW_NETHER_FORTRESSES("menu 8"),
-	SHOW_END_CITIES("menu 9"),
+	SHOW_WOODLAND_MANSIONS("menu 8"),
+	SHOW_NETHER_FORTRESSES("menu 9"),
+	SHOW_END_CITIES("menu 0"),
 	SHOW_GRID("menu G"),
 	SHOW_PLAYERS("menu P"),
 	ENABLE_ALL_LAYERS("menu E"),
 
-	RELOAD_BIOME_PROFILES("menu B");
+	RELOAD_BIOME_PROFILES("menu B"),;
 
 	private static KeyStroke getKeyStroke(String accelerator) {
 		return getPlatformSpecificKeyStroke(accelerator.replace("menu", ""), accelerator.contains("menu"));
