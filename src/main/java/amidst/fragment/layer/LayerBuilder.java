@@ -40,11 +40,8 @@ import amidst.settings.Settings;
 @Immutable
 public class LayerBuilder {
 	private final Iterable<FragmentConstructor> constructors;
-	private Resolution biomeResolution;
 
 	public LayerBuilder() {
-		this.biomeResolution = Resolution.CHUNK;
-		Fragment.resolution = this.biomeResolution;
 		this.constructors = createConstructors();
 	}
 
@@ -54,9 +51,9 @@ public class LayerBuilder {
 	private Iterable<FragmentConstructor> createConstructors() {
 		return Collections.unmodifiableList(
 				Arrays.asList(
-						new BiomeDataConstructor(this.biomeResolution),
+						new BiomeDataConstructor(Resolution.QUARTER),
 						new EndIslandsConstructor(),
-						new ImageConstructor(this.biomeResolution, LayerIds.BACKGROUND),
+						new ImageConstructor(Resolution.QUARTER, LayerIds.BACKGROUND),
 						new ImageConstructor(Resolution.CHUNK, LayerIds.SLIME)));
 	}
 
@@ -136,7 +133,7 @@ public class LayerBuilder {
 				new AlphaInitializer( declarations.get(LayerIds.ALPHA),           settings.fragmentFading),
 				new BiomeDataLoader(  declarations.get(LayerIds.BIOME_DATA),      world.getBiomeDataOracle()),
 				new EndIslandsLoader( declarations.get(LayerIds.END_ISLANDS),     world.getEndIslandOracle()),
-				new ImageLoader(	  declarations.get(LayerIds.BACKGROUND),      this.biomeResolution, new BackgroundColorProvider(new BiomeColorProvider(biomeSelection, settings.biomeProfileSelection), new TheEndColorProvider())),
+				new ImageLoader(	  declarations.get(LayerIds.BACKGROUND),      Resolution.QUARTER, new BackgroundColorProvider(new BiomeColorProvider(biomeSelection, settings.biomeProfileSelection), new TheEndColorProvider())),
 				new ImageLoader(      declarations.get(LayerIds.SLIME),           Resolution.CHUNK,   new SlimeColorProvider(world.getSlimeChunkOracle())),
 				new WorldIconLoader<>(declarations.get(LayerIds.SPAWN),           world.getSpawnProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.STRONGHOLD),      world.getStrongholdProducer()),
@@ -162,7 +159,7 @@ public class LayerBuilder {
 		// @formatter:off
 		return Collections.unmodifiableList(Arrays.asList(
 				new AlphaUpdater(   declarations.get(LayerIds.ALPHA)),
-				new ImageDrawer(    declarations.get(LayerIds.BACKGROUND),      this.biomeResolution, accelerationCounter),
+				new ImageDrawer(    declarations.get(LayerIds.BACKGROUND),      Resolution.QUARTER, accelerationCounter),
 				new ImageDrawer(    declarations.get(LayerIds.SLIME),           Resolution.CHUNK,   accelerationCounter),
 				new GridDrawer(     declarations.get(LayerIds.GRID),            zoom),
 				new WorldIconDrawer(declarations.get(LayerIds.SPAWN),           zoom, worldIconSelection),

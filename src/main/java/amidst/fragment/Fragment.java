@@ -1,7 +1,6 @@
 package amidst.fragment;
 
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReferenceArray;
@@ -77,12 +76,7 @@ import amidst.mojangapi.world.oracle.EndIsland;
  */
 @NotThreadSafe
 public class Fragment {
-	// Every pixel in the fragment is 2^size blocks in minecraft
-	private int size; //= Resolution.FRAGMENT.getStep();
-	public static int SIZE = 1 << 9;
-	// Resolution, same as size
-	public static Resolution resolution = null;
-	public Resolution localResolution = null;
+	public static final int SIZE = Resolution.FRAGMENT.getStep();
 
 	private volatile boolean isInitialized = false;
 	private volatile boolean isLoaded = false;
@@ -107,69 +101,16 @@ public class Fragment {
 		return alpha;
 	}
 
-	public void initBiomeData(int width, int height, Resolution resolution) {
-		this.localResolution = resolution;
+	public void initBiomeData(int width, int height) {
 		biomeData = new short[width][height];
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void populateBiomeData(BiomeDataOracle biomeDataOracle) {
-		if(localResolution == Resolution.WORLD) {
-			biomeDataOracle.populateArray(corner, biomeData, false);
-		}
-		else if(localResolution == Resolution.QUARTER) {
-			biomeDataOracle.populateArray(corner, biomeData, true);
-		}
-		else {
-			int size = Resolution.QUARTER.getStepsPerFragment();
-			int step = localResolution.getStep() / Resolution.QUARTER.getStep();
-			short[][] tmpBiomeData = new short[size][size];
-			biomeDataOracle.populateArray(corner, tmpBiomeData, true);
-			for (int i = 0; i<biomeData.length; i++) {
-			    for (int j = 0; j<biomeData[i].length; j++) {
-			    	// This way is faster
-			        //short biome = tmpBiomeData[i*step][j*step];
-			    	// This way is more accurate: it finds the most common biome
-			        short biomes[] = new short[step*step];
-			        for (int k = 0; k<step; k++) {
-			        	for (int l = 0; l<step; l++) {
-			        		biomes[k*step+l] = tmpBiomeData[i*step+k][j*step+l];
-			        	}
-			        }
-			        short biome = mostCommonFromArray(biomes);
-			        biomeData[i][j] = biome;
-			    }
-			}
-		}
-	}
-	
-	private short mostCommonFromArray(short a[]) {
-	    Arrays.sort(a);
-
-	    short previous = a[0];
-	    short popular = a[0];
-	    int count = 1;
-	    int maxCount = 1;
-
-	    for (int i = 1; i < a.length; i++) {
-	        if (a[i] == previous)
-	            count++;
-	        else {
-	            if (count > maxCount) {
-	                popular = a[i-1];
-	                maxCount = count;
-	            }
-	            previous = a[i];
-	            count = 1;
-	        }
-	    }
-
-	    return count > maxCount ? a[a.length-1] : popular;
+		biomeDataOracle.populateArray(corner, biomeData, true);
 	}
 
 	public short getBiomeDataAt(int x, int y) {
-		//if(x==0 || y==0) return 0;
-		//return (short)(((x+y)&1)+5);
 		return biomeData[x][y];
 	}
 
