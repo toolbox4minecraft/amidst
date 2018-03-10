@@ -9,6 +9,7 @@ import amidst.documentation.Immutable;
 import amidst.fragment.Fragment;
 import amidst.fragment.colorprovider.BackgroundColorProvider;
 import amidst.fragment.colorprovider.BiomeColorProvider;
+import amidst.fragment.colorprovider.MinetestOceanColorProvider;
 import amidst.fragment.colorprovider.MinetestRiverColorProvider;
 import amidst.fragment.colorprovider.SlimeColorProvider;
 import amidst.fragment.colorprovider.TheEndColorProvider;
@@ -144,6 +145,7 @@ public class LayerBuilder {
 				new EndIslandsLoader( declarations.get(LayerIds.END_ISLANDS),     world.getEndIslandOracle()),
 				new ImageLoader(	  declarations.get(LayerIds.BACKGROUND),      Resolution.QUARTER, new BackgroundColorProvider(new BiomeColorProvider(biomeSelection, settings.biomeProfileSelection), new TheEndColorProvider())),
 				new ImageLoader(      declarations.get(LayerIds.MINETEST_RIVER),  Resolution.QUARTER, new MinetestRiverColorProvider()),
+				new ImageLoader(      declarations.get(LayerIds.MINETEST_OCEAN),  Resolution.QUARTER, new MinetestOceanColorProvider()),
 				new ImageLoader(      declarations.get(LayerIds.SLIME),           Resolution.CHUNK,   new SlimeColorProvider(world.getSlimeChunkOracle())),
 				new WorldIconLoader<>(declarations.get(LayerIds.SPAWN),           world.getSpawnProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.STRONGHOLD),      world.getStrongholdProducer()),
@@ -171,6 +173,7 @@ public class LayerBuilder {
 				new AlphaUpdater(   declarations.get(LayerIds.ALPHA)),
 				new ImageDrawer(    declarations.get(LayerIds.BACKGROUND),      Resolution.QUARTER, accelerationCounter),
 				new ImageDrawer(    declarations.get(LayerIds.MINETEST_RIVER),  Resolution.QUARTER, accelerationCounter),
+				new ImageDrawer(    declarations.get(LayerIds.MINETEST_OCEAN),  Resolution.QUARTER, accelerationCounter),
 				new ImageDrawer(    declarations.get(LayerIds.SLIME),           Resolution.CHUNK,   accelerationCounter),
 				new GridDrawer(     declarations.get(LayerIds.GRID),            zoom),
 				new WorldIconDrawer(declarations.get(LayerIds.SPAWN),           zoom, worldIconSelection),

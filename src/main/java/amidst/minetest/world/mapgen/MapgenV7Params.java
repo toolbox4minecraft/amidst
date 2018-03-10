@@ -33,6 +33,7 @@ public class MapgenV7Params {
 	*/
 	
 	
+	public short water_level = 1; // from MapgenParams	
 	
 	public int spflags = FLAG_V7_MOUNTAINS | FLAG_V7_RIDGES | FLAG_V7_CAVERNS;
 	short mount_zero_level     = 0;
@@ -40,7 +41,7 @@ public class MapgenV7Params {
 	short large_cave_depth     = -33;
 	short lava_depth           = -256;
 	float float_mount_density  = 0.6f;
-	float float_mount_height   = 128.0f;
+	public float float_mount_height   = 128.0f;
 	float float_mount_exponent = 0.75f;
 	short floatland_level      = 1280;
 	short shadow_limit         = 1024;
@@ -56,15 +57,15 @@ public class MapgenV7Params {
 	public int chunk_length_z = chunk_length_x;
 
 	// params that aren't public aren't being used by Amidst
-	       NoiseParams np_terrain_base      = new NoiseParams(4,     70,   new Vector3f(600,  600,  600),  82341, (short)5, 0.6f,  2.0f);
-	       NoiseParams np_terrain_alt       = new NoiseParams(4,     25,   new Vector3f(600,  600,  600),  5934,  (short)5, 0.6f,  2.0f);
-	       NoiseParams np_terrain_persist   = new NoiseParams(0.6f,  0.1f, new Vector3f(2000, 2000, 2000), 539,   (short)3, 0.6f,  2.0f);
-	       NoiseParams np_height_select     = new NoiseParams(-8,    16,   new Vector3f(500,  500,  500),  4213,  (short)6, 0.7f,  2.0f);
-           NoiseParams np_filler_depth      = new NoiseParams(0,     1.2f, new Vector3f(150,  150,  150),  261,   (short)3, 0.7f,  2.0f);
-	       NoiseParams np_mount_height      = new NoiseParams(256f,  112f, new Vector3f(1000, 1000, 1000), 72449, (short)3, 0.6f,  2.0f);
+	public NoiseParams np_terrain_base      = new NoiseParams(4,     70,   new Vector3f(600,  600,  600),  82341, (short)5, 0.6f,  2.0f);
+	public NoiseParams np_terrain_alt       = new NoiseParams(4,     25,   new Vector3f(600,  600,  600),  5934,  (short)5, 0.6f,  2.0f);
+	public NoiseParams np_terrain_persist   = new NoiseParams(0.6f,  0.1f, new Vector3f(2000, 2000, 2000), 539,   (short)3, 0.6f,  2.0f);
+	public NoiseParams np_height_select     = new NoiseParams(-8,    16,   new Vector3f(500,  500,  500),  4213,  (short)6, 0.7f,  2.0f);
+    public NoiseParams np_filler_depth      = new NoiseParams(0,     1.2f, new Vector3f(150,  150,  150),  261,   (short)3, 0.7f,  2.0f);
+	public NoiseParams np_mount_height      = new NoiseParams(256f,  112f, new Vector3f(1000, 1000, 1000), 72449, (short)3, 0.6f,  2.0f);
 	public NoiseParams np_ridge_uwater      = new NoiseParams(0,     1,    new Vector3f(1000, 1000, 1000), 85039, (short)5, 0.6f,  2.0f);
-	       NoiseParams np_floatland_base    = new NoiseParams(-0.6f, 1.5f, new Vector3f(600,  600,  600),  114,   (short)5, 0.6f,  2.0f);
-	       NoiseParams np_float_base_height = new NoiseParams(48,    24,   new Vector3f(300,  300,  300),  907,   (short)4, 0.7f,  2.0f);
+	public NoiseParams np_floatland_base    = new NoiseParams(-0.6f, 1.5f, new Vector3f(600,  600,  600),  114,   (short)5, 0.6f,  2.0f);
+	public NoiseParams np_float_base_height = new NoiseParams(48,    24,   new Vector3f(300,  300,  300),  907,   (short)4, 0.7f,  2.0f);
 	public NoiseParams np_mountain          = new NoiseParams(-0.6f, 1,    new Vector3f(250,  350,  250),  5333,  (short)5, 0.63f, 2.0f);
 	public NoiseParams np_ridge             = new NoiseParams(0,     1,    new Vector3f(100,  100,  100),  6467,  (short)4, 0.75f, 2.0f);
 	       NoiseParams np_cavern            = new NoiseParams(0,     1,    new Vector3f(384,  128,  384),  723,   (short)5, 0.63f, 2.0f);

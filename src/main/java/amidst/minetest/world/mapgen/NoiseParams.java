@@ -9,7 +9,7 @@ public class NoiseParams {
 	Vector3f spread = new Vector3f(250, 250, 250);
 	int seed = 12345;
 	short octaves = 3;
-	float persist = 0.6f;
+	public float persist = 0.6f;
 	float lacunarity = 2.0f;
 	int flags = Noise.FLAG_DEFAULTS; // Static methods like compareUnsigned, divideUnsigned etc have been added to the Integer class to support the arithmetic operations for unsigned integers
 

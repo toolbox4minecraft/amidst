@@ -6,17 +6,17 @@ import amidst.mojangapi.world.Dimension;
 import amidst.minetest.world.oracle.BiomeDataOracle;
 
 @ThreadSafe
-public class MinetestRiverColorProvider implements ColorProvider {
-	private static final int RIVER_COLOR     = 0xB00010B0; // 0xAARRGGBB
-	private static final int NOT_RIVER_COLOR = 0x00000000; // 0xAARRGGBB
+public class MinetestOceanColorProvider implements ColorProvider {
+	private static final int OCEAN_COLOR     = 0xD8000555; // 0xAARRGGBB
+	private static final int NOT_OCEAN_COLOR = 0x00000000; // 0xAARRGGBB
 
 	@Override
 	public int getColorAt(Dimension dimension, Fragment fragment, long cornerX, long cornerY, int x, int y) {
 		
-		if ((fragment.getBiomeDataAt(x, y) & BiomeDataOracle.BITPLANE_RIVER) > 0) {
-			return RIVER_COLOR;
+		if ((fragment.getBiomeDataAt(x, y) & BiomeDataOracle.BITPLANE_OCEAN) > 0) {
+			return OCEAN_COLOR;
 		} else {
-			return NOT_RIVER_COLOR;
+			return NOT_OCEAN_COLOR;
 		}
 	}
 }

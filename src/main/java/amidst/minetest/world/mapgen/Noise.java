@@ -21,7 +21,7 @@ public class Noise {
 	private float[] _noise_buf = null;
 	private float[] _gradient_buf = null;
 	private float[] _persist_buf = null;
-	private float[] _result = null;
+	public float[] _result = null;
 	
 	public Noise(NoiseParams np_, int seed, int sx, int sy) throws InvalidNoiseParamsException {
 		
@@ -225,7 +225,7 @@ public class Noise {
 	 * @param persistence_map can be null
 	 * @return
 	 */
-	float[] perlinMap2D(float x, float y, float[] persistence_map)
+	public float[] perlinMap2D(float x, float y, float[] persistence_map)
 	{
 		float f = 1.0f, g = 1.0f;
 		int bufsize = _sx * _sy;
@@ -267,7 +267,7 @@ public class Noise {
 	 * @param persistence_map can be null
 	 * @return
 	 */
-	float[] perlinMap3D(float x, float y, float z, float[] persistence_map)
+	public float[] perlinMap3D(float x, float y, float z, float[] persistence_map)
 	{
 		float f = 1.0f, g = 1.0f;
 		int bufsize = _sx * _sy * _sz;
