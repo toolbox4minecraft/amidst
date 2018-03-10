@@ -15,9 +15,9 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.viewer.ViewerFacade;
+import amidst.gameengineabstraction.file.IGameInstallation;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.RunningLauncherProfile;
-import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldSeed;
@@ -29,7 +29,7 @@ import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
 public class WorldSwitcher {
-	private final MinecraftInstallation minecraftInstallation;
+	private final IGameInstallation minecraftInstallation;
 	private final RunningLauncherProfile runningLauncherProfile;
 	private final Factory1<World, ViewerFacade> viewerFacadeFactory;
 	private final ThreadMaster threadMaster;
@@ -41,7 +41,7 @@ public class WorldSwitcher {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldSwitcher(
-			MinecraftInstallation minecraftInstallation,
+			IGameInstallation minecraftInstallation,
 			RunningLauncherProfile runningLauncherProfile,
 			Factory1<World, ViewerFacade> viewerFacadeFactory,
 			ThreadMaster threadMaster,
@@ -75,9 +75,9 @@ public class WorldSwitcher {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayWorld(File file) {
 		try {
-			clearViewerFacade();
+			clearViewerFacade();			
 			setWorld(runningLauncherProfile.createWorldFromSaveGame(minecraftInstallation.newSaveGame(file)));
-		} catch (IllegalStateException | MinecraftInterfaceException | IOException | FormatException e) {
+		} catch (IllegalStateException | MinecraftInterfaceException | IOException | FormatException | UnsupportedOperationException e) {
 			AmidstLogger.warn(e);
 			dialogs.displayError(e);
 		}

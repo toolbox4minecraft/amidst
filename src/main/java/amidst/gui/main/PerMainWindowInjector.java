@@ -13,13 +13,14 @@ import amidst.dependency.injection.Factory2;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gameengineabstraction.GameEngineType;
+import amidst.gameengineabstraction.file.IGameInstallation;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.menu.AmidstMenuBuilder;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcher;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.mojangapi.RunningLauncherProfile;
-import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.world.World;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.threading.ThreadMaster;
@@ -52,17 +53,21 @@ public class PerMainWindowInjector {
 	private final Actions actions;
 	private final AmidstMenu menuBar;
 	private final MainWindow mainWindow;
+	private final GameEngineType gameEngine;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public PerMainWindowInjector(
 			Application application,
 			AmidstMetaData metadata,
 			AmidstSettings settings,
-			MinecraftInstallation minecraftInstallation,
+			IGameInstallation gameInstallation,
 			RunningLauncherProfile runningLauncherProfile,
 			BiomeProfileDirectory biomeProfileDirectory,
 			Factory2<World, Actions, ViewerFacade> viewerFacadeFactory,
 			ThreadMaster threadMaster) {
+		
+		gameEngine = runningLauncherProfile.getGameEngineType();
+		
 		this.viewerFacadeFactory = viewerFacadeFactory;
 		this.versionString = createVersionString(metadata, runningLauncherProfile);
 		this.frame = new JFrame();
@@ -70,7 +75,7 @@ public class PerMainWindowInjector {
 		this.viewerFacadeReference = new AtomicReference<>();
 		this.dialogs = new MainWindowDialogs(settings, runningLauncherProfile, frame);
 		this.worldSwitcher = new WorldSwitcher(
-				minecraftInstallation,
+				gameInstallation,
 				runningLauncherProfile,
 				this::createViewerFacade,
 				threadMaster,
@@ -95,7 +100,8 @@ public class PerMainWindowInjector {
 				worldSwitcher,
 				seedSearcherWindow,
 				viewerFacadeReference::get,
-				settings.biomeProfileSelection);
+				settings.biomeProfileSelection,
+				gameEngine);
 		this.menuBar = new AmidstMenuBuilder(settings, actions, biomeProfileDirectory).construct();
 		this.mainWindow = new MainWindow(frame, worldSwitcher, seedSearcherWindow);
 		this.mainWindow.initializeFrame(metadata, versionString, actions, menuBar);

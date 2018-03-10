@@ -6,6 +6,7 @@ import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.ThreadSafe;
+import amidst.gameengineabstraction.GameEngineType;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
@@ -147,4 +148,9 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	public RecognisedVersion getRecognisedVersion() {
 		return recognisedVersion;
 	}
+	
+	@Override
+	public GameEngineType getGameEngineType() {
+		return GameEngineType.MINECRAFT;
+	}		
 }

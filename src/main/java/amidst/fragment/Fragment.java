@@ -83,7 +83,14 @@ public class Fragment {
 	private volatile CoordinatesInWorld corner;
 
 	private volatile float alpha;
-	private volatile short[][] biomeData;
+	private volatile short[][] biomeData;	
+	/**
+	 * a mask to apply to biomeData if you wish to use it like a biome index.
+	 * This will remove any bits from the integer that are being used
+	 * to indicate 1-bit overlay biome layers, such as minetest rivers 
+	 * and oceans	
+	 */
+	private volatile short biomeDataIndexMask; // 
 	private volatile List<EndIsland> endIslands;
 	private final AtomicReferenceArray<BufferedImage> images;
 	private final AtomicReferenceArray<List<WorldIcon>> worldIcons;
@@ -106,14 +113,23 @@ public class Fragment {
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	public void populateBiomeData(BiomeDataOracle biomeDataOracle) {
-		biomeDataOracle.populateArray(corner, biomeData, true);
+	public void populateBiomeData(IBiomeDataOracle biomeDataOracle) {
+		biomeDataIndexMask = biomeDataOracle.populateArray(corner, biomeData, true);
 	}
 
+	public short getBiomeIndexAt(int x, int y) {
+		return (short)(biomeData[x][y] & biomeDataIndexMask);
+	}
+
+	/**
+	 * Gets the raw data stored in the biomeData array, not to be 
+	 * confused with getBiomeIndexAt(), as the raw data may contain
+	 * bitplanes so should not be treated as a short integer index.
+	 */
 	public short getBiomeDataAt(int x, int y) {
 		return biomeData[x][y];
 	}
-
+	
 	public void setEndIslands(List<EndIsland> endIslands) {
 		this.endIslands = endIslands;
 	}

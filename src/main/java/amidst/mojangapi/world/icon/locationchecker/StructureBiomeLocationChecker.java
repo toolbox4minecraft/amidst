@@ -3,6 +3,7 @@ package amidst.mojangapi.world.icon.locationchecker;
 import java.util.List;
 
 import amidst.documentation.ThreadSafe;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
@@ -20,6 +21,10 @@ public class StructureBiomeLocationChecker implements LocationChecker {
 
 	@Override
 	public boolean isValidLocation(int x, int y) {
+		if (biomeDataOracle == null) {
+			AmidstLogger.warn("isValidLocation asked with null biome - LocationCheckers not suitable for the current biome may be in use!");
+			return false;
+		}
 		return biomeDataOracle.isValidBiomeForStructureAtMiddleOfChunk(x, y, size, validBiomes);
 	}
 }

@@ -25,20 +25,38 @@ public enum DefaultVersionFeatures {
 	INSTANCE;
 
 	public static VersionFeatures create(RecognisedVersion version) {
-		return new VersionFeatures(
-				INSTANCE.enabledLayers.getValue(version),
-				INSTANCE.validBiomesForStructure_Spawn.getValue(version),
-				INSTANCE.validBiomesAtMiddleOfChunk_Stronghold.getValue(version),
-				INSTANCE.strongholdProducerFactory.getValue(version),
-				INSTANCE.validBiomesForStructure_Village.getValue(version),
-				INSTANCE.validBiomesAtMiddleOfChunk_Temple.getValue(version),
-				INSTANCE.mineshaftAlgorithmFactory.getValue(version),
-				INSTANCE.oceanMonumentLocationCheckerFactory.getValue(version),
-				INSTANCE.validBiomesAtMiddleOfChunk_OceanMonument.getValue(version),
-				INSTANCE.validBiomesForStructure_OceanMonument.getValue(version));
+		
+		if (version == RecognisedVersion.Minetest_v7) {
+			// Minetest
+			return new VersionFeatures(			
+					INSTANCE.enabledLayers_Minetest.getValue(version),
+					null, 
+					null, 
+					(seed, biomeOracle, validBiomes) -> null, 
+					null, 
+					null, 
+					seed -> null, 
+					(seed, biomeOracle, validCenterBiomes, validBiomes) -> null,
+					null, 
+					null); 			
+		} else {
+			// Minecraft
+			return new VersionFeatures(
+					((version == RecognisedVersion.Minetest_v7) ? INSTANCE.enabledLayers_Minetest : INSTANCE.enabledLayers_Minecraft).getValue(version),
+					INSTANCE.validBiomesForStructure_Spawn.getValue(version),
+					INSTANCE.validBiomesAtMiddleOfChunk_Stronghold.getValue(version),
+					INSTANCE.strongholdProducerFactory.getValue(version),
+					INSTANCE.validBiomesForStructure_Village.getValue(version),
+					INSTANCE.validBiomesAtMiddleOfChunk_Temple.getValue(version),
+					INSTANCE.mineshaftAlgorithmFactory.getValue(version),
+					INSTANCE.oceanMonumentLocationCheckerFactory.getValue(version),
+					INSTANCE.validBiomesAtMiddleOfChunk_OceanMonument.getValue(version),
+					INSTANCE.validBiomesForStructure_OceanMonument.getValue(version));
+		}
 	}
 
-	private final VersionFeature<List<Integer>> enabledLayers;
+	private final VersionFeature<List<Integer>> enabledLayers_Minecraft;
+	private final VersionFeature<List<Integer>> enabledLayers_Minetest;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_Spawn;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Stronghold;
 	private final VersionFeature<TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base>> strongholdProducerFactory;
@@ -51,13 +69,27 @@ public enum DefaultVersionFeatures {
 
 	private DefaultVersionFeatures() {
 		// @formatter:off
-		this.enabledLayers = VersionFeature.<Integer> listBuilder()
+
+		this.enabledLayers_Minetest = VersionFeature.<Integer> listBuilder()
 				.init(
 						LayerIds.ALPHA,
 						LayerIds.BIOME_DATA,
 						LayerIds.BACKGROUND,
-						LayerIds.SLIME,
 						LayerIds.GRID,
+						LayerIds.MINETEST_OCEAN,
+						LayerIds.MINETEST_RIVER,
+						LayerIds.MINETEST_MOUNTAIN,
+						LayerIds.SLIME
+				).construct();
+		
+		
+		this.enabledLayers_Minecraft = VersionFeature.<Integer> listBuilder()
+				.init(
+						LayerIds.ALPHA,
+						LayerIds.BIOME_DATA,
+						LayerIds.BACKGROUND,
+						LayerIds.GRID,
+						LayerIds.SLIME,
 						LayerIds.SPAWN,
 						LayerIds.STRONGHOLD,
 						LayerIds.PLAYER,

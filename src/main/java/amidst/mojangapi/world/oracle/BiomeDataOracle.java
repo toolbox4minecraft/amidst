@@ -12,16 +12,17 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.fragment.IBiomeDataOracle;
 
 @ThreadSafe
-public class BiomeDataOracle {
+public class BiomeDataOracle implements IBiomeDataOracle {
 	private final MinecraftInterface minecraftInterface;
 
 	public BiomeDataOracle(MinecraftInterface minecraftInterface) {
 		this.minecraftInterface = minecraftInterface;
 	}
 
-	public void populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
+	public short populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
 		Resolution resolution = Resolution.from(useQuarterResolution);
 		int width = result.length;
 		if (width > 0) {
@@ -35,6 +36,7 @@ public class BiomeDataOracle {
 				AmidstMessageBox.displayError("Error", e);
 			}
 		}
+		return (short)0xffff;
 	}
 
 	public static void copyToResult(short[][] result, int width, int height, int[] biomeData) {

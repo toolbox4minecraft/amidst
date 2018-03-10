@@ -11,6 +11,7 @@ import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gameengineabstraction.GameEngineType;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.world.WorldSeed;
@@ -41,8 +42,8 @@ public class MainWindowDialogs {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public WorldSeed askForSeed() {
-		return new SeedPrompt(frame).askForSeed();
+	public WorldSeed askForSeed(GameEngineType engine_type) {
+		return new SeedPrompt(frame, engine_type).askForSeed();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

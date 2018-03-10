@@ -8,4 +8,5 @@ public enum FeatureToggles {
 
 	public static final boolean SEED_SEARCH = false;
 	public static final boolean WORLD_EXPORTER = false;
+	public static final boolean MINETEST_SUPPORT = true;
 }

@@ -16,6 +16,7 @@ import amidst.Application;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gameengineabstraction.GameEngineType;
 import amidst.gui.crash.CrashWindow;
 import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
@@ -39,6 +40,7 @@ public class Actions {
 	private final SeedSearcherWindow seedSearcherWindow;
 	private final Supplier<ViewerFacade> viewerFacadeSupplier;
 	private final BiomeProfileSelection biomeProfileSelection;
+	private final GameEngineType gameEngineType;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Actions(
@@ -47,18 +49,20 @@ public class Actions {
 			WorldSwitcher worldSwitcher,
 			SeedSearcherWindow seedSearcherWindow,
 			Supplier<ViewerFacade> viewerFacadeSupplier,
-			BiomeProfileSelection biomeProfileSelection) {
+			BiomeProfileSelection biomeProfileSelection,
+			GameEngineType gameEngineType) {
 		this.application = application;
 		this.dialogs = dialogs;
 		this.worldSwitcher = worldSwitcher;
 		this.seedSearcherWindow = seedSearcherWindow;
 		this.viewerFacadeSupplier = viewerFacadeSupplier;
 		this.biomeProfileSelection = biomeProfileSelection;
+		this.gameEngineType = gameEngineType;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromSeed() {
-		WorldSeed seed = dialogs.askForSeed();
+		WorldSeed seed = dialogs.askForSeed(gameEngineType);
 		if (seed != null) {
 			newFromSeed(seed);
 		}
@@ -66,7 +70,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromRandom() {
-		newFromSeed(WorldSeed.random());
+		newFromSeed(WorldSeed.random(gameEngineType));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

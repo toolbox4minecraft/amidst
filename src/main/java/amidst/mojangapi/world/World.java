@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import amidst.documentation.ThreadSafe;
+import amidst.fragment.IBiomeDataOracle;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
@@ -26,7 +27,7 @@ public class World {
 	private final RecognisedVersion recognisedVersion;
 	private final VersionFeatures versionFeatures;
 
-	private final BiomeDataOracle biomeDataOracle;
+	private final IBiomeDataOracle biomeDataOracle;
 	private final EndIslandOracle endIslandOracle;
 	private final SlimeChunkOracle slimeChunkOracle;
 	private final CachedWorldIconProducer spawnProducer;
@@ -47,7 +48,7 @@ public class World {
 			MovablePlayerList movablePlayerList,
 			RecognisedVersion recognisedVersion,
 			VersionFeatures versionFeatures,
-			BiomeDataOracle biomeDataOracle,
+			IBiomeDataOracle biomeDataOracle,
 			EndIslandOracle endIslandOracle,
 			SlimeChunkOracle slimeChunkOracle,
 			CachedWorldIconProducer spawnProducer,
@@ -104,7 +105,7 @@ public class World {
 		return versionFeatures;
 	}
 
-	public BiomeDataOracle getBiomeDataOracle() {
+	public IBiomeDataOracle getBiomeDataOracle() {
 		return biomeDataOracle;
 	}
 

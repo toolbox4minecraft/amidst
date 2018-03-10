@@ -1,6 +1,7 @@
 package amidst.mojangapi.mocking;
 
 import amidst.documentation.ThreadSafe;
+import amidst.gameengineabstraction.GameEngineType;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -58,4 +59,9 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	public RecognisedVersion getRecognisedVersion() {
 		return worldMetadataJson.getRecognisedVersion();
 	}
+	
+	@Override
+	public GameEngineType getGameEngineType() {
+		return GameEngineType.MINECRAFT;
+	}	
 }

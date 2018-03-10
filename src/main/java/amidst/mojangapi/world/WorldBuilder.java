@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 import amidst.documentation.Immutable;
+import amidst.fragment.IBiomeDataOracle;
+import amidst.logging.AmidstLogger;
+import amidst.minetest.MinetestMapgenV7Interface;
+import amidst.minetest.world.mapgen.InvalidNoiseParamsException;
 import amidst.mojangapi.file.ImmutablePlayerInformationProvider;
 import amidst.mojangapi.file.PlayerInformationProvider;
 import amidst.mojangapi.file.SaveGame;
@@ -55,14 +59,36 @@ public class WorldBuilder {
 	}
 
 	public World fromSeed(
-			MinecraftInterface minecraftInterface,
+			MinecraftInterface gameCodeInterface,
 			Consumer<World> onDisposeWorld,
 			WorldSeed worldSeed,
 			WorldType worldType) throws MinecraftInterfaceException {
-		BiomeDataOracle biomeDataOracle = new BiomeDataOracle(minecraftInterface);
-		VersionFeatures versionFeatures = DefaultVersionFeatures.create(minecraftInterface.getRecognisedVersion());
+
+		VersionFeatures versionFeatures = DefaultVersionFeatures.create(gameCodeInterface.getRecognisedVersion());
+		
+		IBiomeDataOracle biomeDataOracle;
+		WorldSpawnOracle spawnOracle;
+		
+		if (gameCodeInterface instanceof MinetestMapgenV7Interface) {			
+			MinetestMapgenV7Interface mapgen = (MinetestMapgenV7Interface)gameCodeInterface;
+			try {
+				biomeDataOracle = new amidst.minetest.world.oracle.BiomeDataOracle(mapgen.params, worldSeed.getLong());
+			} catch (InvalidNoiseParamsException e) {
+				AmidstLogger.error("Invalid param from Minetest game.");
+				e.printStackTrace();
+				biomeDataOracle = null;
+			}
+			spawnOracle     = new amidst.minetest.world.oracle.HeuristicWorldSpawnOracle(mapgen.params, worldSeed.getLong());
+		} else{		
+			biomeDataOracle = new BiomeDataOracle(gameCodeInterface);
+			spawnOracle     = new HeuristicWorldSpawnOracle(
+				worldSeed.getLong(),
+				(BiomeDataOracle)biomeDataOracle,
+				versionFeatures.getValidBiomesForStructure_Spawn()
+			);
+		}
 		return create(
-				minecraftInterface,
+				gameCodeInterface,
 				onDisposeWorld,
 				worldSeed,
 				worldType,
@@ -70,10 +96,7 @@ public class WorldBuilder {
 				MovablePlayerList.dummy(),
 				versionFeatures,
 				biomeDataOracle,
-				new HeuristicWorldSpawnOracle(
-						worldSeed.getLong(),
-						biomeDataOracle,
-						versionFeatures.getValidBiomesForStructure_Spawn()));
+				spawnOracle);
 	}
 
 	public World fromSaveGame(MinecraftInterface minecraftInterface, Consumer<World> onDisposeWorld, SaveGame saveGame)
@@ -88,7 +111,7 @@ public class WorldBuilder {
 		return create(
 				minecraftInterface,
 				onDisposeWorld,
-				WorldSeed.fromSaveGame(saveGame.getSeed()),
+				WorldSeed.fromSaveGame(saveGame.getSeed(), minecraftInterface.getGameEngineType()),
 				saveGame.getWorldType(),
 				saveGame.getGeneratorOptions(),
 				movablePlayerList,
@@ -105,12 +128,16 @@ public class WorldBuilder {
 			String generatorOptions,
 			MovablePlayerList movablePlayerList,
 			VersionFeatures versionFeatures,
-			BiomeDataOracle biomeDataOracle,
+			IBiomeDataOracle biomeDataOracle,
 			WorldSpawnOracle worldSpawnOracle) throws MinecraftInterfaceException {
 		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
 		seedHistoryLogger.log(recognisedVersion, worldSeed);
 		long seed = worldSeed.getLong();
 		minecraftInterface.createWorld(seed, worldType, generatorOptions);
+		
+		amidst.mojangapi.world.oracle.BiomeDataOracle minecraftBiomeOrNull = 
+				(biomeDataOracle instanceof amidst.mojangapi.world.oracle.BiomeDataOracle) ? (amidst.mojangapi.world.oracle.BiomeDataOracle)biomeDataOracle : null;
+
 		return new World(
 				onDisposeWorld,
 				worldSeed,
@@ -125,7 +152,7 @@ public class WorldBuilder {
 				new SpawnProducer(worldSpawnOracle),
 				versionFeatures.getStrongholdProducerFactory().apply(
 						seed,
-						biomeDataOracle,
+						minecraftBiomeOrNull,
 						versionFeatures.getValidBiomesAtMiddleOfChunk_Stronghold()),
 				new PlayerProducer(movablePlayerList),
 				new StructureProducer<>(
@@ -133,7 +160,7 @@ public class WorldBuilder {
 						4,
 						new VillageLocationChecker(
 								seed,
-								biomeDataOracle,
+								minecraftBiomeOrNull,
 								versionFeatures.getValidBiomesForStructure_Village()),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
 						Dimension.OVERWORLD,
@@ -143,9 +170,9 @@ public class WorldBuilder {
 						8,
 						new TempleLocationChecker(
 								seed,
-								biomeDataOracle,
+								minecraftBiomeOrNull,
 								versionFeatures.getValidBiomesAtMiddleOfChunk_Temple()),
-						new TempleWorldIconTypeProvider(biomeDataOracle),
+						new TempleWorldIconTypeProvider(minecraftBiomeOrNull),
 						Dimension.OVERWORLD,
 						false),
 				new StructureProducer<>(
@@ -160,7 +187,7 @@ public class WorldBuilder {
 						8,
 						versionFeatures.getOceanMonumentLocationCheckerFactory().apply(
 								seed,
-								biomeDataOracle,
+								minecraftBiomeOrNull,
 								versionFeatures.getValidBiomesAtMiddleOfChunk_OceanMonument(),
 								versionFeatures.getValidBiomesForStructure_OceanMonument()),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),

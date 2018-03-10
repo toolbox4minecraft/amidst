@@ -15,6 +15,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import amidst.documentation.NotThreadSafe;
+import amidst.gameengineabstraction.GameEngineType;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldSeed.WorldSeedType;
 import net.miginfocom.swing.MigLayout;
@@ -31,13 +32,16 @@ public class SeedPrompt {
 	private final JLabel warningLabel;
 	private final JPanel panel;
 	private WorldSeed seed;
+	private GameEngineType engineType;
 
-	public SeedPrompt(JFrame frame) {
+	public SeedPrompt(JFrame frame, GameEngineType engine_type) {
 		this.frame = frame;
 		this.textField = createTextField();
 		this.seedLabel = createSeedLabel();
 		this.warningLabel = createWarningLabel();
 		this.panel = createPanel();
+		
+		this.engineType = engine_type;
 	}
 
 	private JTextField createTextField() {
@@ -111,7 +115,8 @@ public class SeedPrompt {
 	}
 
 	private void update() {
-		seed = WorldSeed.fromUserInput(textField.getText());
+		
+		seed = WorldSeed.fromUserInput(textField.getText(), engineType);
 		if (WorldSeedType.TEXT == seed.getType() && seed.getText().startsWith(" ")) {
 			warningLabel.setText(STARTS_WITH_SPACE_TEXT);
 		} else if (WorldSeedType.TEXT == seed.getType() && seed.getText().endsWith(" ")) {

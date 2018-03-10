@@ -1,6 +1,7 @@
 package amidst.mojangapi.mocking;
 
 import amidst.documentation.ThreadSafe;
+import amidst.gameengineabstraction.GameEngineType;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -38,4 +39,9 @@ public class RequestStoringMinecraftInterface implements MinecraftInterface {
 	public synchronized RecognisedVersion getRecognisedVersion() {
 		return realMinecraftInterface.getRecognisedVersion();
 	}
+	
+	@Override
+	public GameEngineType getGameEngineType() {
+		return realMinecraftInterface.getGameEngineType();
+	}		
 }

@@ -71,7 +71,7 @@ public class CursorInformationWidget extends TextWidget {
 		if (fragment != null && fragment.isLoaded()) {
 			long x = coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
 			long y = coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
-			short biome = fragment.getBiomeDataAt((int) x, (int) y);
+			short biome = fragment.getBiomeIndexAt((int) x, (int) y);
 			try {
 				return Biome.getByIndex(biome).getName();
 			} catch (UnknownBiomeIndexException e) {

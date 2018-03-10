@@ -16,6 +16,11 @@ public class VersionJson {
 	public VersionJson() {
 	}
 
+	public VersionJson(String id, String inheritsFrom) {
+		this.id = id;
+		this.inheritsFrom = inheritsFrom;				
+	}
+	
 	public String getId() {
 		return id;
 	}

@@ -19,6 +19,7 @@ import amidst.gui.main.viewer.PerViewerFacadeInjector;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.main.viewer.Zoom;
 import amidst.gui.profileselect.ProfileSelectWindow;
+import amidst.minetest.file.MinetestInstallation;
 import amidst.mojangapi.LauncherProfileRunner;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
@@ -41,6 +42,7 @@ public class PerApplicationInjector {
 	private final PlayerInformationProvider playerInformationProvider;
 	private final SeedHistoryLogger seedHistoryLogger;
 	private final MinecraftInstallation minecraftInstallation;
+	private final MinetestInstallation minetestInstallation;
 	private final Optional<LauncherProfile> preferredLauncherProfile;
 	private final WorldBuilder worldBuilder;
 	private final LauncherProfileRunner launcherProfileRunner;
@@ -64,8 +66,12 @@ public class PerApplicationInjector {
 		this.seedHistoryLogger = SeedHistoryLogger.from(parameters.seedHistoryFile);
 		this.minecraftInstallation = MinecraftInstallation
 				.newLocalMinecraftInstallation(parameters.dotMinecraftDirectory);
-		this.preferredLauncherProfile = minecraftInstallation
-				.tryReadLauncherProfile(parameters.minecraftJarFile, parameters.minecraftJsonFile);
+		this.minetestInstallation = MinetestInstallation
+				.newLocalMinetestInstallationOrDefault(parameters.minetestDirectory);
+		//this.preferredLauncherProfile = minecraftInstallation
+		//		.tryReadLauncherProfile(parameters.minecraftJarFile, parameters.minecraftJsonFile);
+		this.preferredLauncherProfile = minetestInstallation
+				.defaultLauncherProfile();
 		this.worldBuilder = new WorldBuilder(playerInformationProvider, seedHistoryLogger);
 		this.launcherProfileRunner = new LauncherProfileRunner(worldBuilder);
 		this.biomeProfileDirectory = BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);
@@ -102,7 +108,7 @@ public class PerApplicationInjector {
 				application,
 				metadata,
 				settings,
-				minecraftInstallation,
+				minetestInstallation,
 				runningLauncherProfile,
 				biomeProfileDirectory,
 				this::createViewerFacade,
@@ -116,7 +122,7 @@ public class PerApplicationInjector {
 				metadata,
 				threadMaster.getWorkerExecutor(),
 				versionListProvider,
-				minecraftInstallation,
+				minetestInstallation,
 				launcherProfileRunner,
 				settings);
 	}

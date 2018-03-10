@@ -3,6 +3,9 @@ package amidst.mojangapi;
 import java.io.IOException;
 
 import amidst.documentation.ThreadSafe;
+import amidst.gameengineabstraction.GameEngineType;
+import amidst.minetest.MinetestLauncherProfile;
+import amidst.minetest.MinetestMapgenV7Interface;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.SaveGame;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
@@ -20,10 +23,18 @@ import amidst.mojangapi.world.WorldType;
 public class RunningLauncherProfile {
 	public static RunningLauncherProfile from(WorldBuilder worldBuilder, LauncherProfile launcherProfile)
 			throws LocalMinecraftInterfaceCreationException {
+		
+		MinecraftInterface mapgenInterface;
+		
+		if (launcherProfile instanceof MinetestLauncherProfile) {			
+			mapgenInterface = new MinetestMapgenV7Interface(((MinetestLauncherProfile)launcherProfile).getMapGenParams());
+		} else {		
+			mapgenInterface = LocalMinecraftInterface.create(DefaultClassTranslator.INSTANCE.get(), launcherProfile);
+		}
 		return new RunningLauncherProfile(
 				worldBuilder,
 				launcherProfile,
-				LocalMinecraftInterface.create(DefaultClassTranslator.INSTANCE.get(), launcherProfile));
+				mapgenInterface);
 	}
 
 	private final WorldBuilder worldBuilder;
@@ -48,6 +59,10 @@ public class RunningLauncherProfile {
 		return minecraftInterface.getRecognisedVersion();
 	}
 
+	public GameEngineType getGameEngineType() {
+		return minecraftInterface.getGameEngineType();
+	}	
+	
 	public RunningLauncherProfile createSilentPlayerlessCopy() {
 		try {
 			return RunningLauncherProfile.from(WorldBuilder.createSilentPlayerless(), launcherProfile);

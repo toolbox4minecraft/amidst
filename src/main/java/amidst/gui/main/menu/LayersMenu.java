@@ -61,7 +61,13 @@ public class LayersMenu {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createDimensionLayers(Dimension dimension) {
-		if (viewerFacade.hasLayer(LayerIds.END_ISLANDS)) {
+		if (viewerFacade.hasLayer(LayerIds.MINETEST_OCEAN)) {
+			createAllDimensions();
+			menu.addSeparator();
+			createMinetestLayers(dimension);
+			createEnableAllLayersIfNecessary();
+		
+		} else if (viewerFacade.hasLayer(LayerIds.END_ISLANDS)) {
 			createAllDimensions();
 			menu.addSeparator();
 			createOverworldAndEndLayers(dimension);
@@ -96,6 +102,21 @@ public class LayersMenu {
 		// @formatter:on
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void createMinetestLayers(Dimension dimension) {
+		// @formatter:off
+		overworldLayer(settings.showMinetestRivers,       "Rivers",                 getIcon("slime.png"),           MenuShortcuts.SHOW_MINETEST_RIVERS,    dimension, LayerIds.MINETEST_RIVER);
+		overworldLayer(settings.showMinetestOceans,       "Oceans",                 getIcon("slime.png"),           MenuShortcuts.SHOW_MINETEST_OCEANS,    dimension, LayerIds.MINETEST_OCEAN);
+		overworldLayer(settings.showMinetestMountains,    "Mountains",              getIcon("slime.png"),           MenuShortcuts.SHOW_MINETEST_MOUNTAINS, dimension, LayerIds.MINETEST_MOUNTAIN);
+
+		// temp for debug
+		// (Remove SLIME from DefaultVersionFeatures as well when finished)
+		if (viewerFacade.hasLayer(LayerIds.SLIME)) {
+			overworldLayer(settings.showSlimeChunks,          "Slime Chunks",           getIcon("slime.png"),           MenuShortcuts.SHOW_SLIME_CHUNKS,      dimension, LayerIds.SLIME);
+		}
+		// @formatter:on
+	}
+	
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createOverworldLayers(Dimension dimension) {
 		// @formatter:off

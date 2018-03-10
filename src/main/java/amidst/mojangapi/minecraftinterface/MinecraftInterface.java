@@ -1,6 +1,7 @@
 package amidst.mojangapi.minecraftinterface;
 
 import amidst.documentation.ThreadSafe;
+import amidst.gameengineabstraction.GameEngineType;
 import amidst.mojangapi.world.WorldType;
 
 /**
@@ -37,4 +38,6 @@ public interface MinecraftInterface {
 	public void createWorld(long seed, WorldType worldType, String generatorOptions) throws MinecraftInterfaceException;
 
 	public RecognisedVersion getRecognisedVersion();
+	
+	public GameEngineType getGameEngineType();
 }

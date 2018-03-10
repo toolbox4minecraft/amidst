@@ -3,6 +3,7 @@ package amidst.mojangapi.file;
 import java.io.IOException;
 
 import amidst.documentation.Immutable;
+import amidst.gameengineabstraction.file.IUnresolvedLauncherProfile;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.ProfileDirectory;
 import amidst.mojangapi.file.directory.VersionDirectory;
@@ -13,7 +14,7 @@ import amidst.parsing.FormatException;
 import amidst.parsing.json.JsonReader;
 
 @Immutable
-public class UnresolvedLauncherProfile {
+public class UnresolvedLauncherProfile implements IUnresolvedLauncherProfile {
 	private final DotMinecraftDirectoryService dotMinecraftDirectoryService = new DotMinecraftDirectoryService();
 	private final DotMinecraftDirectory dotMinecraftDirectory;
 	private final LauncherProfileJson launcherProfileJson;

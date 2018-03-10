@@ -9,6 +9,7 @@ import amidst.documentation.Immutable;
 import amidst.fragment.Fragment;
 import amidst.fragment.colorprovider.BackgroundColorProvider;
 import amidst.fragment.colorprovider.BiomeColorProvider;
+import amidst.fragment.colorprovider.MinetestRiverColorProvider;
 import amidst.fragment.colorprovider.SlimeColorProvider;
 import amidst.fragment.colorprovider.TheEndColorProvider;
 import amidst.fragment.constructor.BiomeDataConstructor;
@@ -54,6 +55,9 @@ public class LayerBuilder {
 						new BiomeDataConstructor(Resolution.QUARTER),
 						new EndIslandsConstructor(),
 						new ImageConstructor(Resolution.QUARTER, LayerIds.BACKGROUND),
+						new ImageConstructor(Resolution.QUARTER, LayerIds.MINETEST_RIVER),
+						new ImageConstructor(Resolution.QUARTER, LayerIds.MINETEST_OCEAN),
+						new ImageConstructor(Resolution.QUARTER, LayerIds.MINETEST_MOUNTAIN),
 						new ImageConstructor(Resolution.CHUNK, LayerIds.SLIME)));
 	}
 
@@ -99,6 +103,11 @@ public class LayerBuilder {
 		declare(settings, declarations, versionFeatures, LayerIds.OCEAN_MONUMENT,  Dimension.OVERWORLD, false, settings.showOceanMonuments);
 		declare(settings, declarations, versionFeatures, LayerIds.NETHER_FORTRESS, Dimension.OVERWORLD, false, settings.showNetherFortresses);
 		declare(settings, declarations, versionFeatures, LayerIds.END_CITY,        Dimension.END,       false, settings.showEndCities);
+		
+		declare(settings, declarations, versionFeatures, LayerIds.MINETEST_RIVER,    Dimension.OVERWORLD, false, settings.showMinetestRivers);
+		declare(settings, declarations, versionFeatures, LayerIds.MINETEST_OCEAN,    Dimension.OVERWORLD, false, settings.showMinetestOceans);
+		declare(settings, declarations, versionFeatures, LayerIds.MINETEST_MOUNTAIN, Dimension.OVERWORLD, false, settings.showMinetestMountains);
+		
 		// @formatter:on
 		return Collections.unmodifiableList(Arrays.asList(declarations));
 	}
@@ -134,6 +143,7 @@ public class LayerBuilder {
 				new BiomeDataLoader(  declarations.get(LayerIds.BIOME_DATA),      world.getBiomeDataOracle()),
 				new EndIslandsLoader( declarations.get(LayerIds.END_ISLANDS),     world.getEndIslandOracle()),
 				new ImageLoader(	  declarations.get(LayerIds.BACKGROUND),      Resolution.QUARTER, new BackgroundColorProvider(new BiomeColorProvider(biomeSelection, settings.biomeProfileSelection), new TheEndColorProvider())),
+				new ImageLoader(      declarations.get(LayerIds.MINETEST_RIVER),  Resolution.QUARTER, new MinetestRiverColorProvider()),
 				new ImageLoader(      declarations.get(LayerIds.SLIME),           Resolution.CHUNK,   new SlimeColorProvider(world.getSlimeChunkOracle())),
 				new WorldIconLoader<>(declarations.get(LayerIds.SPAWN),           world.getSpawnProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.STRONGHOLD),      world.getStrongholdProducer()),
@@ -160,6 +170,7 @@ public class LayerBuilder {
 		return Collections.unmodifiableList(Arrays.asList(
 				new AlphaUpdater(   declarations.get(LayerIds.ALPHA)),
 				new ImageDrawer(    declarations.get(LayerIds.BACKGROUND),      Resolution.QUARTER, accelerationCounter),
+				new ImageDrawer(    declarations.get(LayerIds.MINETEST_RIVER),  Resolution.QUARTER, accelerationCounter),
 				new ImageDrawer(    declarations.get(LayerIds.SLIME),           Resolution.CHUNK,   accelerationCounter),
 				new GridDrawer(     declarations.get(LayerIds.GRID),            zoom),
 				new WorldIconDrawer(declarations.get(LayerIds.SPAWN),           zoom, worldIconSelection),

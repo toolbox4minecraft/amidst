@@ -40,8 +40,8 @@ public class ListVersionFeatureBuilder<V> {
 	}
 
 	@SafeVarargs
-	public final ListVersionFeatureBuilder<V> exact(RecognisedVersion since, V... values) {
-		return since(since, Arrays.asList(values));
+	public final ListVersionFeatureBuilder<V> exact(RecognisedVersion version, V... values) {
+		return exact(version, Arrays.asList(values));
 	}
 
 	public ListVersionFeatureBuilder<V> exact(RecognisedVersion version, List<V> value) {
