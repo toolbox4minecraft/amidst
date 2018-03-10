@@ -5,6 +5,7 @@ import java.util.Random;
 import amidst.documentation.Immutable;
 import amidst.fragment.Fragment;
 import amidst.fragment.IBiomeDataOracle;
+import amidst.gameengineabstraction.CoordinateSystem;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.minetest.world.mapgen.InvalidNoiseParamsException;
@@ -49,6 +50,7 @@ public class BiomeDataOracle implements IBiomeDataOracle {
 		}
 	}
 
+	@Override
 	public short populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
 		Resolution resolution = Resolution.from(useQuarterResolution);
 		int width = result.length;
@@ -59,14 +61,14 @@ public class BiomeDataOracle implements IBiomeDataOracle {
 			int shift = resolution.getShift();
 			int step  = resolution.getStep();
 			float river_width = 0.2f;
-			int world_y;
+			int world_z;
 			int world_x;
 			short biomeValue;
 
 			try {			
 				for (int y = 0; y < height; y++) {
 					
-					world_y = top + (y << shift);
+					world_z = top + (y << shift);
 					world_x = left;
 					
 					for (int x = 0; x < width; x++) {
@@ -74,7 +76,9 @@ public class BiomeDataOracle implements IBiomeDataOracle {
 						biomeValue = 0;
 						
 						// add the river bitplane
-						float uwatern = Noise.NoisePerlin2D(noise_ridge_uwater.np, world_x, world_y, seed) * 2;						
+						// use -world_z because Minetest uses left-handed coordinates, while
+						// Minecraft and Amidst use right-handed coordinates.
+						float uwatern = Noise.NoisePerlin2D(noise_ridge_uwater.np, world_x, -world_z, seed) * 2;						
 						if (Math.abs(uwatern) <= river_width) biomeValue |= BITPLANE_RIVER;
 
 						
@@ -91,6 +95,17 @@ public class BiomeDataOracle implements IBiomeDataOracle {
 			}
 		}
 		return MASK_BITPLANES;
+	}
+	
+	/**
+	 * Gets the native coordinate system of the game-engine this biome
+	 * data represents. This is only needed if you want to know how the
+	 * game would describe a biome location. 
+	 */
+	@Override
+	public CoordinateSystem getNativeCoordinateSystem() {
+		// Minetest uses left-handed coords
+		return CoordinateSystem.LEFT_HANDED;
 	}
 	
 	/*

@@ -120,7 +120,8 @@ public class Actions {
 			if (input != null) {
 				CoordinatesInWorld coordinates = CoordinatesInWorld.tryParse(input);
 				if (coordinates != null) {
-					viewerFacade.centerOn(coordinates);
+					CoordinatesInWorld amidstCoords = gameEngineType.getGameCoordinateSystem().ConvertToRightHanded(coordinates);
+					viewerFacade.centerOn(amidstCoords);
 				} else {
 					AmidstLogger.warn("Invalid location entered, ignoring.");
 					dialogs.displayError("You entered an invalid location.");

@@ -9,6 +9,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gameengineabstraction.CoordinateSystem;
 import amidst.gui.main.viewer.Drawer;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
@@ -90,7 +91,8 @@ public class Fragment {
 	 * to indicate 1-bit overlay biome layers, such as minetest rivers 
 	 * and oceans	
 	 */
-	private volatile short biomeDataIndexMask; // 
+	private volatile short biomeDataIndexMask; 
+	private volatile CoordinateSystem biomeDataCoordinateSystem = CoordinateSystem.RIGHT_HANDED;
 	private volatile List<EndIsland> endIslands;
 	private final AtomicReferenceArray<BufferedImage> images;
 	private final AtomicReferenceArray<List<WorldIcon>> worldIcons;
@@ -115,6 +117,7 @@ public class Fragment {
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void populateBiomeData(IBiomeDataOracle biomeDataOracle) {
 		biomeDataIndexMask = biomeDataOracle.populateArray(corner, biomeData, true);
+		biomeDataCoordinateSystem = biomeDataOracle.getNativeCoordinateSystem();
 	}
 
 	public short getBiomeIndexAt(int x, int y) {
@@ -128,6 +131,10 @@ public class Fragment {
 	 */
 	public short getBiomeDataAt(int x, int y) {
 		return biomeData[x][y];
+	}
+
+	public CoordinateSystem getBiomeDataCoordinateSystem() {
+		return biomeDataCoordinateSystem;
 	}
 	
 	public void setEndIslands(List<EndIsland> endIslands) {

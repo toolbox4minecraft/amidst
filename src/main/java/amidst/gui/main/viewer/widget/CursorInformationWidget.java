@@ -9,6 +9,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
+import amidst.gameengineabstraction.CoordinateSystem;
 import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
@@ -26,6 +27,7 @@ public class CursorInformationWidget extends TextWidget {
 	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
 	private final Setting<Dimension> dimensionSetting;
+	private CoordinateSystem displayCoordSystem;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public CursorInformationWidget(
@@ -37,6 +39,8 @@ public class CursorInformationWidget extends TextWidget {
 		this.graph = graph;
 		this.translator = translator;
 		this.dimensionSetting = dimensionSetting;
+		
+		displayCoordSystem = CoordinateSystem.RIGHT_HANDED; // Until we know better
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -46,7 +50,7 @@ public class CursorInformationWidget extends TextWidget {
 		if (mousePosition != null) {
 			CoordinatesInWorld coordinates = translator.screenToWorld(mousePosition);
 			String biomeName = getBiomeNameAt(coordinates);
-			return Arrays.asList(biomeName + " " + coordinates.toString());
+			return Arrays.asList(biomeName + " " + coordinates.toString(displayCoordSystem));
 		} else {
 			return null;
 		}
@@ -68,10 +72,11 @@ public class CursorInformationWidget extends TextWidget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private String getOverworldBiomeNameAt(CoordinatesInWorld coordinates) {
 		Fragment fragment = graph.getFragmentAt(coordinates);
-		if (fragment != null && fragment.isLoaded()) {
+		if (fragment != null && fragment.isLoaded()) {		
 			long x = coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
 			long y = coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
 			short biome = fragment.getBiomeIndexAt((int) x, (int) y);
+			displayCoordSystem = fragment.getBiomeDataCoordinateSystem();
 			try {
 				return Biome.getByIndex(biome).getName();
 			} catch (UnknownBiomeIndexException e) {
