@@ -51,11 +51,21 @@ public class MinetestInstallation implements IGameInstallation {
 
 	private final MinetestDirectoryService minetestDirectoryService = new MinetestDirectoryService();
 	private final MinetestDirectory minetestDirectory;
+	private IGameInstallation passThrough;
 
 	public MinetestInstallation(MinetestDirectory minetestDirectory) {
 		this.minetestDirectory = minetestDirectory;
+		this.passThrough = null;
 	}
 
+	/**
+	 * Allows IGameInstallation calls to be chained with another IGameInstallation,
+	 * so that a call to readLauncherProfiles() can return both Minetest and Minecraft
+	 * profiles. 
+	 */
+	public void setGameInstallationPassThrough(IGameInstallation game_installation) {
+		this.passThrough = game_installation;
+	}
 	
 	public Optional<LauncherProfile> defaultLauncherProfile() {
 		
@@ -65,7 +75,16 @@ public class MinetestInstallation implements IGameInstallation {
 	public SaveGame newSaveGame(File location) throws IOException, FormatException {
 		//SaveDirectory saveDirectory = saveDirectoryService.newSaveDirectory(location);
 		//return new SaveGame(saveDirectory, saveDirectoryService.readLevelDat(saveDirectory));
-		throw new UnsupportedOperationException("need to add support for world saves");
+		
+		if (passThrough != null) {
+			// This will end in tears if the current Launcher profile is not 
+			// already a Minecraft game. newSaveGame() doesn't re-init all the 
+			// Minecraft things that MinetestInstallation fails to init.
+			// (Hopefully the menu is disabled whenever the current profile is Minetest)
+			return passThrough.newSaveGame(location);
+		} else {
+			throw new UnsupportedOperationException("Still need to add support for Minetest world saves!");
+		}
 	}
 
 	@Override
@@ -75,6 +94,7 @@ public class MinetestInstallation implements IGameInstallation {
 		
 		ArrayList<IUnresolvedLauncherProfile> result = new ArrayList<IUnresolvedLauncherProfile>();
 		result.add(new UnresolvedLauncherProfile());
+		if (passThrough != null) result.addAll(passThrough.readLauncherProfiles());
 		return result;
 	}	
 	

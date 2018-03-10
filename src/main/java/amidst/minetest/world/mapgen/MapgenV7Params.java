@@ -2,6 +2,9 @@ package amidst.minetest.world.mapgen;
 
 import javax.vecmath.Vector3f;
 
+import amidst.mojangapi.world.biome.BiomeColor;
+
+// TODO: be able to import these values from map_meta.txt files
 public class MapgenV7Params {
 
 	public static final int FLAG_V7_MOUNTAINS   = 0x01;
@@ -61,7 +64,7 @@ public class MapgenV7Params {
 	public NoiseParams np_terrain_alt       = new NoiseParams(4,     25,   new Vector3f(600,  600,  600),  5934,  (short)5, 0.6f,  2.0f);
 	public NoiseParams np_terrain_persist   = new NoiseParams(0.6f,  0.1f, new Vector3f(2000, 2000, 2000), 539,   (short)3, 0.6f,  2.0f);
 	public NoiseParams np_height_select     = new NoiseParams(-8,    16,   new Vector3f(500,  500,  500),  4213,  (short)6, 0.7f,  2.0f);
-    public NoiseParams np_filler_depth      = new NoiseParams(0,     1.2f, new Vector3f(150,  150,  150),  261,   (short)3, 0.7f,  2.0f);
+           NoiseParams np_filler_depth      = new NoiseParams(0,     1.2f, new Vector3f(150,  150,  150),  261,   (short)3, 0.7f,  2.0f);
 	public NoiseParams np_mount_height      = new NoiseParams(256f,  112f, new Vector3f(1000, 1000, 1000), 72449, (short)3, 0.6f,  2.0f);
 	public NoiseParams np_ridge_uwater      = new NoiseParams(0,     1,    new Vector3f(1000, 1000, 1000), 85039, (short)5, 0.6f,  2.0f);
 	public NoiseParams np_floatland_base    = new NoiseParams(-0.6f, 1.5f, new Vector3f(600,  600,  600),  114,   (short)5, 0.6f,  2.0f);
@@ -70,5 +73,30 @@ public class MapgenV7Params {
 	public NoiseParams np_ridge             = new NoiseParams(0,     1,    new Vector3f(100,  100,  100),  6467,  (short)4, 0.75f, 2.0f);
 	       NoiseParams np_cavern            = new NoiseParams(0,     1,    new Vector3f(384,  128,  384),  723,   (short)5, 0.63f, 2.0f);
 	       NoiseParams np_cave1             = new NoiseParams(0,     12,   new Vector3f(61,   61,   61),   52534, (short)3, 0.5f,  2.0f);
-	       NoiseParams np_cave2             = new NoiseParams(0,     12,   new Vector3f(67,   67,   67),   10325, (short)3, 0.5f,  2.0f);	
+	       NoiseParams np_cave2             = new NoiseParams(0,     12,   new Vector3f(67,   67,   67),   10325, (short)3, 0.5f,  2.0f);
+	       
+	// BiomeParamsOriginal
+	public NoiseParams np_heat           = new NoiseParams(50,   50, new Vector3f(1000, 1000, 1000),  5349, (short)3, 0.5f, 2.0f);
+	public NoiseParams np_humidity       = new NoiseParams(50,   50, new Vector3f(1000, 1000, 1000),   842, (short)3, 0.5f, 2.0f);
+	public NoiseParams np_heat_blend     = new NoiseParams( 0, 1.5f, new Vector3f(   8,    8,    8),    13, (short)2, 1.0f, 2.0f);
+	public NoiseParams np_humidity_blend = new NoiseParams( 0, 1.5f, new Vector3f(   8,    8,    8), 90003, (short)2, 1.0f, 2.0f);
+	
+	public Biome[] Biomes = {
+		Biome.NONE,
+		new Biome("Icesheet",                 1, BiomeColor.from(220, 220, 230), (short)  -8, Short.MAX_VALUE,  0, 73),	
+		new Biome("Icesheet ocean",           2, BiomeColor.from(220, 220, 230), (short)-112,       (short)-9,  0, 73),	
+		new Biome("Tundra",                   3, BiomeColor.from(200, 200, 230), (short)   2, Short.MAX_VALUE,  0, 40),	
+		new Biome("Tundra beach",             4, BiomeColor.from(200, 200, 230), (short)  -3,        (short)1,  0, 40),	
+		new Biome("Tundra ocean",             5, BiomeColor.from(200, 200, 230), (short)-112,       (short)-4,  0, 40),	
+		new Biome("Taiga",                    6, BiomeColor.from(100, 140, 100), (short)   2, Short.MAX_VALUE, 25, 70),	
+		new Biome("Taiga ocean",              7, BiomeColor.from(100, 140, 100), (short)-112,       (short)-1, 25, 70),	
+		new Biome("Snowy grassland",          8, BiomeColor.from(160, 230, 160), (short)   5, Short.MAX_VALUE, 20, 35),	
+		new Biome("Snowy grassland ocean",    9, BiomeColor.from(160, 230, 160), (short)-112,       (short)-4, 20, 35),	
+		new Biome("Grassland",               10, BiomeColor.from( 60, 200,  60), (short)   6, Short.MAX_VALUE, 50, 35),	
+		new Biome("Grassland dunes",         11, BiomeColor.from(160, 200,   0), (short)   4,        (short)5, 50, 35),	
+		new Biome("Grassland ocean",         12, BiomeColor.from( 60, 200, 160), (short)-112,        (short)3, 50, 35),	
+		new Biome("Coniferous forest",       13, BiomeColor.from(  0, 100,  10), (short)   6, Short.MAX_VALUE, 45, 70),	
+		new Biome("Coniferous forest dunes", 14, BiomeColor.from(160, 200,   0), (short)   4,        (short)5, 45, 70),	
+		new Biome("Coniferous forest ocean", 15, BiomeColor.from(  0, 100, 160), (short)-112,        (short)3, 45, 70)	
+	};	
 }

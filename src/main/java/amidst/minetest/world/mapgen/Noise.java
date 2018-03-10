@@ -121,6 +121,32 @@ public class Noise {
 		return np.offset + a * np.scale;
 	}	
 	
+	public static float NoisePerlin3D(NoiseParams np, float x, float y, float z, int seed)
+	{
+		float a = 0;
+		float f = 1.0f;
+		float g = 1.0f;
+
+		x /= np.spread.x;
+		y /= np.spread.y;
+		z /= np.spread.z;
+		seed += np.seed;
+
+		for (int i = 0; i < np.octaves; i++) {
+			float noiseval = noise3d_gradient(x * f, y * f, z * f, seed + i,
+				(np.flags & FLAG_EASED) > 0);
+
+			if ((np.flags & FLAG_ABSVALUE) > 0)
+				noiseval = Math.abs(noiseval);
+
+			a += g * noiseval;
+			f *= np.lacunarity;
+			g *= np.persist;
+		}
+
+		return np.offset + a * np.scale;
+	}	
+	
 	static float noise2d(int x, int y, int seed)
 	{
 		// n is an unsigned int, which Java does not possess, so 
@@ -140,7 +166,7 @@ public class Noise {
 		return 1.f - (float)(int)n / 0x40000000; // ?? check this
 	}
 	
-	float noise3d(int x, int y, int z, int seed)
+	static float noise3d(int x, int y, int z, int seed)
 	{
 		int n = (MAGIC_X * x + MAGIC_Y * y + MAGIC_Z * z
 				+ MAGIC_SEED * seed) & 0x7fffffff;
@@ -171,6 +197,40 @@ public class Noise {
 		return biLinearInterpolationNoEase(v00, v10, v01, v11, xl, yl);
 	}	
 	
+	static float noise3d_gradient(float x, float y, float z, int seed, boolean eased)
+	{
+		// Calculate the integer coordinates
+		int x0 = ((x) < 0.0 ? (int)(x) - 1 : (int)(x)); // x0 = myfloor(x)
+		int y0 = ((y) < 0.0 ? (int)(y) - 1 : (int)(y)); // y0 = myfloor(y)
+		int z0 = ((z) < 0.0 ? (int)(z) - 1 : (int)(z)); // z0 = myfloor(x)
+		// Calculate the remaining part of the coordinates
+		float xl = x - (float)x0;
+		float yl = y - (float)y0;
+		float zl = z - (float)z0;
+		// Get values for corners of cube
+		float v000 = noise3d(x0,     y0,     z0,     seed);
+		float v100 = noise3d(x0 + 1, y0,     z0,     seed);
+		float v010 = noise3d(x0,     y0 + 1, z0,     seed);
+		float v110 = noise3d(x0 + 1, y0 + 1, z0,     seed);
+		float v001 = noise3d(x0,     y0,     z0 + 1, seed);
+		float v101 = noise3d(x0 + 1, y0,     z0 + 1, seed);
+		float v011 = noise3d(x0,     y0 + 1, z0 + 1, seed);
+		float v111 = noise3d(x0 + 1, y0 + 1, z0 + 1, seed);
+		// Interpolate
+		if (eased) {
+			return triLinearInterpolation(
+				v000, v100, v010, v110,
+				v001, v101, v011, v111,
+				xl, yl, zl);
+		}
+
+		return triLinearInterpolationNoEase(
+			v000, v100, v010, v110,
+			v001, v101, v011, v111,
+			xl, yl, zl);
+	}
+	
+	
 	static float biLinearInterpolation(
 			float v00, float v10,
 			float v01, float v11,
@@ -194,28 +254,28 @@ public class Noise {
 		return      u + (v   -   u) * y; // linearInterpolation(u, v, y);
 	}	
 	
-	float triLinearInterpolation(
+	static float triLinearInterpolation(
 			float v000, float v100, float v010, float v110,
 			float v001, float v101, float v011, float v111,
 			float x, float y, float z)
-		{
-			float tx = x * x * x * (x * (6.f * x - 15.f) + 10.f); // easeCurve(x);
-			float ty = y * y * y * (y * (6.f * y - 15.f) + 10.f); // easeCurve(y);
-			float tz = z * z * z * (z * (6.f * z - 15.f) + 10.f); // easeCurve(z);
-			float u = biLinearInterpolationNoEase(v000, v100, v010, v110, tx, ty);
-			float v = biLinearInterpolationNoEase(v001, v101, v011, v111, tx, ty);
-			return u + (v - u) * tz; // linearInterpolation(u, v, tz);
-		}
+	{
+		float tx = x * x * x * (x * (6.f * x - 15.f) + 10.f); // easeCurve(x);
+		float ty = y * y * y * (y * (6.f * y - 15.f) + 10.f); // easeCurve(y);
+		float tz = z * z * z * (z * (6.f * z - 15.f) + 10.f); // easeCurve(z);
+		float u = biLinearInterpolationNoEase(v000, v100, v010, v110, tx, ty);
+		float v = biLinearInterpolationNoEase(v001, v101, v011, v111, tx, ty);
+		return u + (v - u) * tz; // linearInterpolation(u, v, tz);
+	}
 
-		float triLinearInterpolationNoEase(
-			float v000, float v100, float v010, float v110,
-			float v001, float v101, float v011, float v111,
-			float x, float y, float z)
-		{
-			float u = biLinearInterpolationNoEase(v000, v100, v010, v110, x, y);
-			float v = biLinearInterpolationNoEase(v001, v101, v011, v111, x, y);
-			return u + (v - u) * z; // linearInterpolation(u, v, z);
-		}
+	static float triLinearInterpolationNoEase(
+		float v000, float v100, float v010, float v110,
+		float v001, float v101, float v011, float v111,
+		float x, float y, float z)
+	{
+		float u = biLinearInterpolationNoEase(v000, v100, v010, v110, x, y);
+		float v = biLinearInterpolationNoEase(v001, v101, v011, v111, x, y);
+		return u + (v - u) * z; // linearInterpolation(u, v, z);
+	}
 	
 	
 	/**
@@ -369,7 +429,7 @@ public class Noise {
 			noisex = 0;
 			for (i = 0; i != _sx; i++) {
 				if (eased) {
-					_gradient_buf[index++] = biLinearInterpolation(v00, v10, v01, v11, u, v);
+					_gradient_buf[index++] =       biLinearInterpolation(v00, v10, v01, v11, u, v);
 				} else {
 					_gradient_buf[index++] = biLinearInterpolationNoEase(v00, v10, v01, v11, u, v);					
 				}
@@ -380,7 +440,7 @@ public class Noise {
 					noisex++;
 					v00 = v10;
 					v01 = v11;
-					v10 = _noise_buf[(noisey) * nlx + (noisex + 1)];     // was idx(noisex + 1, noisey), from #define idx(x, y) ((y) * nlx + (x))
+					v10 = _noise_buf[(noisey)     * nlx + (noisex + 1)];     // was idx(noisex + 1, noisey), from #define idx(x, y) ((y) * nlx + (x))
 					v11 = _noise_buf[(noisey + 1) * nlx + (noisex + 1)];
 				}
 			}

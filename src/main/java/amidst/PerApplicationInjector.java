@@ -64,14 +64,18 @@ public class PerApplicationInjector {
 		this.settings = settings;
 		this.playerInformationProvider = new PlayerInformationCache();
 		this.seedHistoryLogger = SeedHistoryLogger.from(parameters.seedHistoryFile);
+		
 		this.minecraftInstallation = MinecraftInstallation
 				.newLocalMinecraftInstallation(parameters.dotMinecraftDirectory);
 		this.minetestInstallation = MinetestInstallation
 				.newLocalMinetestInstallationOrDefault(parameters.minetestDirectory);
+		minetestInstallation.setGameInstallationPassThrough(minecraftInstallation);
+
 		//this.preferredLauncherProfile = minecraftInstallation
 		//		.tryReadLauncherProfile(parameters.minecraftJarFile, parameters.minecraftJsonFile);
 		this.preferredLauncherProfile = minetestInstallation
 				.defaultLauncherProfile();
+		
 		this.worldBuilder = new WorldBuilder(playerInformationProvider, seedHistoryLogger);
 		this.launcherProfileRunner = new LauncherProfileRunner(worldBuilder);
 		this.biomeProfileDirectory = BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);

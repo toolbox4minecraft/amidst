@@ -1,5 +1,7 @@
 package amidst.minetest;
 
+import java.io.File;
+
 import amidst.minetest.file.directory.MinetestDirectory;
 import amidst.minetest.world.mapgen.MapgenV7Params;
 import amidst.mojangapi.file.LauncherProfile;
@@ -34,5 +36,13 @@ public class MinetestLauncherProfile extends LauncherProfile {
 		// TODO: fetch the MapgenV7Params from MinetestDirectory
 		return new MapgenV7Params();
 	}
+
+	@Override
+	public File getSaves() {
+		// Amidst currently only supports loading Minecraft games
+		// and from here we dunno where the minecraft saves are kept.
+		return null;
+	}
+	
 
 }
