@@ -105,15 +105,9 @@ public class LayersMenu {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createMinetestLayers(Dimension dimension) {
 		// @formatter:off
-		overworldLayer(settings.showMinetestRivers,       "Rivers",                 getIcon("slime.png"),           MenuShortcuts.SHOW_MINETEST_RIVERS,    dimension, LayerIds.MINETEST_RIVER);
-		overworldLayer(settings.showMinetestOceans,       "Oceans",                 getIcon("slime.png"),           MenuShortcuts.SHOW_MINETEST_OCEANS,    dimension, LayerIds.MINETEST_OCEAN);
-		overworldLayer(settings.showMinetestMountains,    "Mountains",              getIcon("slime.png"),           MenuShortcuts.SHOW_MINETEST_MOUNTAINS, dimension, LayerIds.MINETEST_MOUNTAIN);
-
-		// temp for debug
-		// (Remove SLIME from DefaultVersionFeatures as well when finished)
-		if (viewerFacade.hasLayer(LayerIds.SLIME)) {
-			overworldLayer(settings.showSlimeChunks,          "Slime Chunks",           getIcon("slime.png"),           MenuShortcuts.SHOW_SLIME_CHUNKS,      dimension, LayerIds.SLIME);
-		}
+		overworldLayer(settings.showMinetestRivers,       "Rivers",                 getIcon("rivers.png"),          MenuShortcuts.SHOW_MINETEST_RIVERS,    dimension, LayerIds.MINETEST_RIVER);
+		overworldLayer(settings.showMinetestOceans,       "Oceans",                 getIcon("oceans.png"),          MenuShortcuts.SHOW_MINETEST_OCEANS,    dimension, LayerIds.MINETEST_OCEAN);
+		overworldLayer(settings.showMinetestMountains,    "Mountains",              getIcon("mountains.png"),       MenuShortcuts.SHOW_MINETEST_MOUNTAINS, dimension, LayerIds.MINETEST_MOUNTAIN);
 		// @formatter:on
 	}
 	
