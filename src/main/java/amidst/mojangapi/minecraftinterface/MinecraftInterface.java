@@ -1,7 +1,7 @@
 package amidst.mojangapi.minecraftinterface;
 
 import amidst.documentation.ThreadSafe;
-import amidst.gameengineabstraction.GameEngineType;
+import amidst.gameengineabstraction.GameEngineDetails;
 import amidst.mojangapi.world.WorldType;
 
 /**
@@ -15,6 +15,8 @@ import amidst.mojangapi.world.WorldType;
  */
 @ThreadSafe
 public interface MinecraftInterface {
+	Object getGameEngineDetails = null;
+
 	/**
 	 * @param useQuarterResolution Minecraft calculates biomes at
 	 *            quarter-resolution, then noisily interpolates the biome-map up
@@ -39,5 +41,5 @@ public interface MinecraftInterface {
 
 	public RecognisedVersion getRecognisedVersion();
 	
-	public GameEngineType getGameEngineType();
+	public GameEngineDetails getGameEngineDetails();
 }

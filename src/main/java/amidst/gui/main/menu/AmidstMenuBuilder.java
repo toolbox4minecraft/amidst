@@ -9,6 +9,7 @@ import javax.swing.JMenuItem;
 import amidst.AmidstSettings;
 import amidst.FeatureToggles;
 import amidst.documentation.NotThreadSafe;
+import amidst.gameengineabstraction.world.WorldTypes;
 import amidst.gui.main.Actions;
 import amidst.mojangapi.world.WorldType;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
@@ -24,11 +25,13 @@ public class AmidstMenuBuilder {
 	private JMenuItem savePlayerLocationsMenu;
 	private JMenuItem reloadPlayerLocationsMenu;
 	private LayersMenu layersMenu;
+	private WorldTypes worldTypes;
 
-	public AmidstMenuBuilder(AmidstSettings settings, Actions actions, BiomeProfileDirectory biomeProfileDirectory) {
+	public AmidstMenuBuilder(AmidstSettings settings, Actions actions, BiomeProfileDirectory biomeProfileDirectory, WorldTypes worldTypes) {
 		this.settings = settings;
 		this.actions = actions;
 		this.biomeProfileDirectory = biomeProfileDirectory;
+		this.worldTypes = worldTypes;
 		this.menuBar = createMenuBar();
 	}
 
@@ -61,7 +64,10 @@ public class AmidstMenuBuilder {
 		if (FeatureToggles.SEED_SEARCH) {
 			Menus.item(result, actions::searchForRandom,   "Search for random seed",   KeyEvent.VK_F, MenuShortcuts.SEARCH_FOR_RANDOM_SEED);
 		}
-		Menus.item(result, actions::openSaveGame,          "Open save game ...",       KeyEvent.VK_O, MenuShortcuts.OPEN_SAVE_GAME);
+		
+		JMenuItem item = Menus.item(result, actions::openSaveGame,          "Open save game ...",       KeyEvent.VK_O, MenuShortcuts.OPEN_SAVE_GAME);
+		item.setEnabled(actions.canOpenSaveGame());
+
 		result.addSeparator();
 		if (FeatureToggles.WORLD_EXPORTER) {
 			exportMenu =
@@ -82,19 +88,24 @@ public class AmidstMenuBuilder {
 		// @formatter:off
 		Menus.item(result, actions::goToCoordinate,        "Go to Coordinate",         KeyEvent.VK_C, MenuShortcuts.GO_TO_COORDINATE);
 		Menus.item(result, actions::goToSpawn,             "Go to World Spawn",        KeyEvent.VK_S, MenuShortcuts.GO_TO_WORLD_SPAWN);
-		Menus.item(result, actions::goToStronghold,        "Go to Stronghold",         KeyEvent.VK_H, MenuShortcuts.GO_TO_STRONGHOLD);
+		if (actions.canGoToStronghold()) {
+			Menus.item(result, actions::goToStronghold,        "Go to Stronghold",         KeyEvent.VK_H, MenuShortcuts.GO_TO_STRONGHOLD);
+		}
 		Menus.item(result, actions::goToPlayer,            "Go to Player",             KeyEvent.VK_P, MenuShortcuts.GO_TO_PLAYER);
 		result.addSeparator();
 		Menus.item(result, actions::zoomIn,                "Zoom in",                  KeyEvent.VK_I, MenuShortcuts.ZOOM_IN);
 		Menus.item(result, actions::zoomOut,               "Zoom out",                 KeyEvent.VK_O, MenuShortcuts.ZOOM_OUT);
 		result.addSeparator();
 		savePlayerLocationsMenu =
-		Menus.item(result, actions::savePlayerLocations,   "Save player locations",    KeyEvent.VK_V, MenuShortcuts.SAVE_PLAYER_LOCATIONS);
+				Menus.item(result, actions::savePlayerLocations,   "Save player locations",    KeyEvent.VK_V, MenuShortcuts.SAVE_PLAYER_LOCATIONS);
 		savePlayerLocationsMenu.setEnabled(false);
 		reloadPlayerLocationsMenu =
-		Menus.item(result, actions::reloadPlayerLocations, "Reload player locations",  KeyEvent.VK_R, MenuShortcuts.RELOAD_PLAYER_LOCATIONS);
+				Menus.item(result, actions::reloadPlayerLocations, "Reload player locations",  KeyEvent.VK_R, MenuShortcuts.RELOAD_PLAYER_LOCATIONS);
 		reloadPlayerLocationsMenu.setEnabled(false);
-		Menus.item(result, actions::howCanIMoveAPlayer,    "How can I move a player?", KeyEvent.VK_M);
+		JMenuItem howCanIMoveAPlayerMenu = 
+				Menus.item(result, actions::howCanIMoveAPlayer,    "How can I move a player?", KeyEvent.VK_M);
+		howCanIMoveAPlayerMenu.setEnabled(actions.canOpenSaveGame());
+		
 		result.addSeparator();
 		Menus.item(result, actions::copySeedToClipboard,   "Copy Seed to Clipboard",   KeyEvent.VK_B, MenuShortcuts.COPY_SEED_TO_CLIPBOARD);
 		Menus.item(result, actions::takeScreenshot,        "Take Screenshot ...",      KeyEvent.VK_T, MenuShortcuts.TAKE_SCREENSHOT);
@@ -131,7 +142,7 @@ public class AmidstMenuBuilder {
 	private JMenu create_Settings_DefaultWorldType() {
 		JMenu result = new JMenu("Default world type");
 		// @formatter:off
-		Menus.radios(result, settings.worldType, WorldType.getWorldTypeSettingAvailableValues());
+		Menus.radios(result, settings.worldType, worldTypes.getWorldTypeSettingAvailableValues());
 		// @formatter:on
 		return result;
 	}

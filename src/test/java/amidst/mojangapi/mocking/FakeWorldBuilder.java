@@ -65,7 +65,7 @@ public class FakeWorldBuilder {
 		return builder.fromSeed(
 				fakeMinecraftInterface,
 				NOOP,
-				WorldSeed.fromUserInput(worldMetadata.getSeed() + "", fakeMinecraftInterface.getGameEngineType()),
+				WorldSeed.fromUserInput(worldMetadata.getSeed() + "", fakeMinecraftInterface.getGameEngineDetails().getType()),
 				worldMetadata.getWorldType());
 	}
 

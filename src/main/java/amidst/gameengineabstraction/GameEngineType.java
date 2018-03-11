@@ -2,8 +2,8 @@ package amidst.gameengineabstraction;
 
 public enum GameEngineType {
 
-	MINECRAFT  ("Minecraft",   CoordinateSystem.RIGHT_HANDED),
-	MINETESTv7 ("Minetest v7", CoordinateSystem.LEFT_HANDED);
+	MINECRAFT  ("Minecraft", CoordinateSystem.RIGHT_HANDED),
+	MINETEST   ("Minetest",  CoordinateSystem.LEFT_HANDED);
 	
 	private final String name;
 	private final CoordinateSystem coordinateSystem;

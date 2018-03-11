@@ -5,16 +5,15 @@ import java.util.function.Consumer;
 
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.IBiomeDataOracle;
+import amidst.gameengineabstraction.world.versionfeatures.IVersionFeatures;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
-import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;
-import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 
 @ThreadSafe
 public class World {
@@ -25,7 +24,7 @@ public class World {
 	private final String generatorOptions;
 	private final MovablePlayerList movablePlayerList;
 	private final RecognisedVersion recognisedVersion;
-	private final VersionFeatures versionFeatures;
+	private final IVersionFeatures versionFeatures;
 
 	private final IBiomeDataOracle biomeDataOracle;
 	private final EndIslandOracle endIslandOracle;
@@ -47,7 +46,7 @@ public class World {
 			String generatorOptions,
 			MovablePlayerList movablePlayerList,
 			RecognisedVersion recognisedVersion,
-			VersionFeatures versionFeatures,
+			IVersionFeatures versionFeatures,
 			IBiomeDataOracle biomeDataOracle,
 			EndIslandOracle endIslandOracle,
 			SlimeChunkOracle slimeChunkOracle,
@@ -101,7 +100,7 @@ public class World {
 		return recognisedVersion;
 	}
 
-	public VersionFeatures getVersionFeatures() {
+	public IVersionFeatures getVersionFeatures() {
 		return versionFeatures;
 	}
 

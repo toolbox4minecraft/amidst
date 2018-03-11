@@ -1,6 +1,7 @@
 package amidst.mojangapi.mocking;
 
 import amidst.documentation.ThreadSafe;
+import amidst.gameengineabstraction.GameEngineDetails;
 import amidst.gameengineabstraction.GameEngineType;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -15,6 +16,7 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	private final BiomeDataJson quarterBiomeData;
 	private final BiomeDataJson fullBiomeData;
 	private volatile boolean isWorldCreated = false;
+	private final GameEngineDetails engineDetails;		
 
 	public FakeMinecraftInterface(
 			WorldMetadataJson worldMetadataJson,
@@ -23,6 +25,11 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 		this.worldMetadataJson = worldMetadataJson;
 		this.quarterBiomeData = quarterBiomeData;
 		this.fullBiomeData = fullBiomeData;
+		
+		this.engineDetails = new GameEngineDetails(
+				GameEngineType.MINETEST,
+				new amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures()
+		);		
 	}
 
 	@Override
@@ -61,7 +68,7 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	}
 	
 	@Override
-	public GameEngineType getGameEngineType() {
-		return GameEngineType.MINECRAFT;
-	}	
+	public GameEngineDetails getGameEngineDetails() {
+		return engineDetails;
+	}			
 }

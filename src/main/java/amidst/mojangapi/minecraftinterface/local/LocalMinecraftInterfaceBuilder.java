@@ -11,6 +11,8 @@ import amidst.clazz.symbolic.SymbolicClassGraphCreationException;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
+import amidst.gameengineabstraction.GameEngineDetails;
+import amidst.gameengineabstraction.GameEngineType;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -38,7 +40,12 @@ public class LocalMinecraftInterfaceBuilder {
 					symbolicClassMap.get(SymbolicNames.CLASS_GEN_LAYER),
 					symbolicClassMap.get(SymbolicNames.CLASS_WORLD_TYPE),
 					symbolicClassMap.get(SymbolicNames.CLASS_GEN_OPTIONS_FACTORY),
-					recognisedVersion);
+					recognisedVersion,
+					new GameEngineDetails(
+							GameEngineType.MINETEST,
+							new amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures()
+					)
+			);
 		} catch (
 				ClassNotFoundException
 				| JarFileParsingException

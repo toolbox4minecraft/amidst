@@ -46,7 +46,7 @@ public class WorldSeed {
 		if (input.isEmpty()) {
 			return random(engine_type);
 		}
-		if (engine_type == GameEngineType.MINETESTv7) {
+		if (engine_type == GameEngineType.MINETEST) {
 			SimpleEntry<Long, Boolean> covertedSeed = Numeric.stringToSeed(input);
 			return new WorldSeed(
 					covertedSeed.getKey(), 
@@ -72,13 +72,11 @@ public class WorldSeed {
 	private final String text;
 	private final WorldSeedType type;
 	private final String label;
-	private final GameEngineType gameEngineType;
 
 	private WorldSeed(long seed, String text, WorldSeedType type, GameEngineType game_engine_type) {
 		this.seed = seed;
 		this.text = text;
 		this.type = type;
-		this.gameEngineType = game_engine_type;
 		this.label = type.getLabel(seed, text, game_engine_type);
 	}
 

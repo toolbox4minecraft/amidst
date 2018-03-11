@@ -1,7 +1,7 @@
 package amidst.mojangapi.mocking;
 
 import amidst.documentation.ThreadSafe;
-import amidst.gameengineabstraction.GameEngineType;
+import amidst.gameengineabstraction.GameEngineDetails;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -41,7 +41,7 @@ public class RequestStoringMinecraftInterface implements MinecraftInterface {
 	}
 	
 	@Override
-	public GameEngineType getGameEngineType() {
-		return realMinecraftInterface.getGameEngineType();
+	public GameEngineDetails getGameEngineDetails() {
+		return realMinecraftInterface.getGameEngineDetails();
 	}		
 }

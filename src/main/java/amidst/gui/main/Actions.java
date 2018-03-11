@@ -13,9 +13,11 @@ import java.util.function.Supplier;
 import javax.imageio.ImageIO;
 
 import amidst.Application;
+import amidst.FeatureToggles;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gameengineabstraction.GameEngineDetails;
 import amidst.gameengineabstraction.GameEngineType;
 import amidst.gui.crash.CrashWindow;
 import amidst.gui.main.menu.MovePlayerPopupMenu;
@@ -40,7 +42,7 @@ public class Actions {
 	private final SeedSearcherWindow seedSearcherWindow;
 	private final Supplier<ViewerFacade> viewerFacadeSupplier;
 	private final BiomeProfileSelection biomeProfileSelection;
-	private final GameEngineType gameEngineType;
+	private final GameEngineDetails gameEngineDetails;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Actions(
@@ -50,19 +52,19 @@ public class Actions {
 			SeedSearcherWindow seedSearcherWindow,
 			Supplier<ViewerFacade> viewerFacadeSupplier,
 			BiomeProfileSelection biomeProfileSelection,
-			GameEngineType gameEngineType) {
+			GameEngineDetails gameEngineDetails) {
 		this.application = application;
 		this.dialogs = dialogs;
 		this.worldSwitcher = worldSwitcher;
 		this.seedSearcherWindow = seedSearcherWindow;
 		this.viewerFacadeSupplier = viewerFacadeSupplier;
 		this.biomeProfileSelection = biomeProfileSelection;
-		this.gameEngineType = gameEngineType;
+		this.gameEngineDetails = gameEngineDetails;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromSeed() {
-		WorldSeed seed = dialogs.askForSeed(gameEngineType);
+		WorldSeed seed = dialogs.askForSeed(gameEngineDetails.getType());
 		if (seed != null) {
 			newFromSeed(seed);
 		}
@@ -70,7 +72,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromRandom() {
-		newFromSeed(WorldSeed.random(gameEngineType));
+		newFromSeed(WorldSeed.random(gameEngineDetails.getType()));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -86,11 +88,20 @@ public class Actions {
 		seedSearcherWindow.show();
 	}
 
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public boolean canOpenSaveGame() {
+		// "Temporary solution" until this feature is implemented in Minetest code
+		return gameEngineDetails.getType() == GameEngineType.MINECRAFT;
+	}
+	
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void openSaveGame() {
-		File file = dialogs.askForSaveGame();
-		if (file != null) {
-			worldSwitcher.displayWorld(file);
+		if (canOpenSaveGame()) {
+			File file = dialogs.askForSaveGame();
+			if (file != null) {
+				worldSwitcher.displayWorld(file);
+			}
 		}
 	}
 
@@ -120,7 +131,10 @@ public class Actions {
 			if (input != null) {
 				CoordinatesInWorld coordinates = CoordinatesInWorld.tryParse(input);
 				if (coordinates != null) {
-					CoordinatesInWorld amidstCoords = gameEngineType.getGameCoordinateSystem().ConvertToRightHanded(coordinates);
+					CoordinatesInWorld amidstCoords = gameEngineDetails
+							.getType()
+							.getGameCoordinateSystem()
+							.ConvertToRightHanded(coordinates);
 					viewerFacade.centerOn(amidstCoords);
 				} else {
 					AmidstLogger.warn("Invalid location entered, ignoring.");
@@ -139,13 +153,21 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	public boolean canGoToStronghold() {
+		// Strongholds make no sense outside of Minecraft
+		return gameEngineDetails.getType() == GameEngineType.MINECRAFT;
+	}	
+	
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void goToStronghold() {
-		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
-		if (viewerFacade != null) {
-			WorldIcon stronghold = dialogs
-					.askForOptions("Go to", "Select Stronghold:", viewerFacade.getStrongholdWorldIcons());
-			if (stronghold != null) {
-				viewerFacade.centerOn(stronghold);
+		if (canGoToStronghold()) {
+			ViewerFacade viewerFacade = viewerFacadeSupplier.get();
+			if (viewerFacade != null) {
+				WorldIcon stronghold = dialogs
+						.askForOptions("Go to", "Select Stronghold:", viewerFacade.getStrongholdWorldIcons());
+				if (stronghold != null) {
+					viewerFacade.centerOn(stronghold);
+				}
 			}
 		}
 	}
@@ -273,7 +295,8 @@ public class Actions {
 	public void about() {
 		dialogs.displayInfo(
 				"About",
-				"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n\n"
+				"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n"
+						+ (FeatureToggles.MINETEST_SUPPORT ? "Amidstest - Amidst for Minetest\n\n" : "\n")
 						+ "Author: Skidoodle aka skiphs\n" + "Mail: toolbox4minecraft+amidst@gmail.com\n"
 						+ "Project Page: https://github.com/toolbox4minecraft/amidst");
 	}

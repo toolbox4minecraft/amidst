@@ -3,7 +3,7 @@ package amidst.mojangapi;
 import java.io.IOException;
 
 import amidst.documentation.ThreadSafe;
-import amidst.gameengineabstraction.GameEngineType;
+import amidst.gameengineabstraction.GameEngineDetails;
 import amidst.minetest.MinetestLauncherProfile;
 import amidst.minetest.MinetestMapgenV7Interface;
 import amidst.mojangapi.file.LauncherProfile;
@@ -59,8 +59,8 @@ public class RunningLauncherProfile {
 		return minecraftInterface.getRecognisedVersion();
 	}
 
-	public GameEngineType getGameEngineType() {
-		return minecraftInterface.getGameEngineType();
+	public GameEngineDetails getGameEngineDetails() {
+		return minecraftInterface.getGameEngineDetails();
 	}	
 	
 	public RunningLauncherProfile createSilentPlayerlessCopy() {

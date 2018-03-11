@@ -12,6 +12,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gameengineabstraction.GameEngineType;
+import amidst.gameengineabstraction.world.WorldTypes;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.world.WorldSeed;
@@ -128,8 +129,18 @@ public class MainWindowDialogs {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldType askForWorldType() {
 		String worldTypeSetting = settings.worldType.get();
-		if (worldTypeSetting.equals(WorldType.PROMPT_EACH_TIME)) {
-			return askForOptions("World Type", "Enter world type\n", WorldType.getSelectable());
+		
+		WorldTypes engineWorldTypes = runningLauncherProfile
+				.getGameEngineDetails()
+				.getVersionFeatures(runningLauncherProfile.getRecognisedVersion())
+				.getWorldTypes();
+
+		
+		if (!engineWorldTypes.contains(worldTypeSetting)) {   
+			// The setting PROMPT_EACH_TIME won't be in engineWorldTypes, so that will always
+			// prompt (in addition to with old settings the current engine doesn't support). 
+			
+			return askForOptions("World Type", "Enter world type\n", engineWorldTypes.getSelectable());
 		} else {
 			return WorldType.from(worldTypeSetting);
 		}

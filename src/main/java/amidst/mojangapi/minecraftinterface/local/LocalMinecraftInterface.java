@@ -6,8 +6,10 @@ import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.ThreadSafe;
+import amidst.gameengineabstraction.GameEngineDetails;
 import amidst.gameengineabstraction.GameEngineType;
 import amidst.logging.AmidstLogger;
+import amidst.minetest.world.mapgen.MapgenV7Params;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -42,7 +44,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass genLayerClass;
 	private final SymbolicClass worldTypeClass;
 	private final SymbolicClass genOptionsFactoryClass;
-	private final RecognisedVersion recognisedVersion;
+	private final RecognisedVersion recognisedVersion;	
+	private final GameEngineDetails engineDetails;		
 
 	LocalMinecraftInterface(
 			SymbolicClass intCacheClass,
@@ -50,13 +53,15 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			SymbolicClass genLayerClass,
 			SymbolicClass worldTypeClass,
 			SymbolicClass genOptionsFactoryClass,
-			RecognisedVersion recognisedVersion) {
+			RecognisedVersion recognisedVersion,
+			GameEngineDetails engineDetails) {
 		this.intCacheClass = intCacheClass;
 		this.blockInitClass = blockInitClass;
 		this.genLayerClass = genLayerClass;
 		this.worldTypeClass = worldTypeClass;
 		this.genOptionsFactoryClass = genOptionsFactoryClass;
-		this.recognisedVersion = recognisedVersion;
+		this.recognisedVersion = recognisedVersion;		
+		this.engineDetails = engineDetails;
 	}
 
 	@Override
@@ -150,7 +155,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	}
 	
 	@Override
-	public GameEngineType getGameEngineType() {
-		return GameEngineType.MINECRAFT;
-	}		
+	public GameEngineDetails getGameEngineDetails() {
+		return engineDetails;
+	}			
 }

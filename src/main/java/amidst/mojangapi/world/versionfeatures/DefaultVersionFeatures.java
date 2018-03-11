@@ -6,7 +6,10 @@ import java.util.function.Function;
 
 import amidst.documentation.Immutable;
 import amidst.fragment.layer.LayerIds;
+import amidst.gameengineabstraction.world.WorldTypes;
+import amidst.gameengineabstraction.world.versionfeatures.VersionFeaturesFactory;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Base;
@@ -21,42 +24,10 @@ import amidst.mojangapi.world.icon.producer.StrongholdProducer_Original;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @Immutable
-public enum DefaultVersionFeatures {
-	INSTANCE;
-
-	public static VersionFeatures create(RecognisedVersion version) {
-		
-		if (version == RecognisedVersion.Minetest_v7) {
-			// Minetest
-			return new VersionFeatures(			
-					INSTANCE.enabledLayers_Minetest.getValue(version),
-					null, 
-					null, 
-					(seed, biomeOracle, validBiomes) -> null, 
-					null, 
-					null, 
-					seed -> null, 
-					(seed, biomeOracle, validCenterBiomes, validBiomes) -> null,
-					null, 
-					null); 			
-		} else {
-			// Minecraft
-			return new VersionFeatures(
-					((version == RecognisedVersion.Minetest_v7) ? INSTANCE.enabledLayers_Minetest : INSTANCE.enabledLayers_Minecraft).getValue(version),
-					INSTANCE.validBiomesForStructure_Spawn.getValue(version),
-					INSTANCE.validBiomesAtMiddleOfChunk_Stronghold.getValue(version),
-					INSTANCE.strongholdProducerFactory.getValue(version),
-					INSTANCE.validBiomesForStructure_Village.getValue(version),
-					INSTANCE.validBiomesAtMiddleOfChunk_Temple.getValue(version),
-					INSTANCE.mineshaftAlgorithmFactory.getValue(version),
-					INSTANCE.oceanMonumentLocationCheckerFactory.getValue(version),
-					INSTANCE.validBiomesAtMiddleOfChunk_OceanMonument.getValue(version),
-					INSTANCE.validBiomesForStructure_OceanMonument.getValue(version));
-		}
-	}
+public class DefaultVersionFeatures implements VersionFeaturesFactory {
 
 	private final VersionFeature<List<Integer>> enabledLayers_Minecraft;
-	private final VersionFeature<List<Integer>> enabledLayers_Minetest;
+	private final WorldTypes worldTypes;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_Spawn;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Stronghold;
 	private final VersionFeature<TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base>> strongholdProducerFactory;
@@ -67,21 +38,10 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_OceanMonument;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_OceanMonument;
 
-	private DefaultVersionFeatures() {
+	public DefaultVersionFeatures() {
 		// @formatter:off
 
-		this.enabledLayers_Minetest = VersionFeature.<Integer> listBuilder()
-				.init(
-						LayerIds.ALPHA,
-						LayerIds.BIOME_DATA,
-						LayerIds.BACKGROUND,
-						LayerIds.GRID,
-						LayerIds.MINETEST_OCEAN,
-						LayerIds.MINETEST_RIVER,
-						LayerIds.MINETEST_MOUNTAIN,
-						LayerIds.SLIME
-				).construct();
-		
+		this.worldTypes = getWorldTypes();
 		
 		this.enabledLayers_Minecraft = VersionFeature.<Integer> listBuilder()
 				.init(
@@ -214,8 +174,31 @@ public enum DefaultVersionFeatures {
 				).construct();
 		// @formatter:on
 	}
+	
+	@Override
+	public VersionFeatures create(RecognisedVersion version) {
 
-	private static List<Biome> getValidBiomesForStrongholdSinceV13w36a() {
+		return new VersionFeatures(
+				enabledLayers_Minecraft.getValue(version),
+				worldTypes,
+				validBiomesForStructure_Spawn.getValue(version),
+				validBiomesAtMiddleOfChunk_Stronghold.getValue(version),
+				strongholdProducerFactory.getValue(version),
+				validBiomesForStructure_Village.getValue(version),
+				validBiomesAtMiddleOfChunk_Temple.getValue(version),
+				mineshaftAlgorithmFactory.getValue(version),
+				oceanMonumentLocationCheckerFactory.getValue(version),
+				validBiomesAtMiddleOfChunk_OceanMonument.getValue(version),
+				validBiomesForStructure_OceanMonument.getValue(version));
+	}
+
+	// Made static for now, to reduce the amount of refactoring required in
+	// the minecraft code.
+	public static WorldTypes getWorldTypes() {
+		return new WorldTypes(new WorldType[]{WorldType.DEFAULT, WorldType.FLAT, WorldType.LARGE_BIOMES, WorldType.AMPLIFIED});
+	}
+
+	private List<Biome> getValidBiomesForStrongholdSinceV13w36a() {
 		List<Biome> result = new ArrayList<>();
 		for (Biome biome : Biome.allBiomes()) {
 			if (biome.getType().getBiomeDepth() > 0) {
