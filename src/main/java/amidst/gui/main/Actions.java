@@ -30,6 +30,7 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
+import amidst.settings.biomeprofile.BiomeAuthority;
 import amidst.settings.biomeprofile.BiomeProfile;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.util.FileExtensionChecker;
@@ -41,7 +42,7 @@ public class Actions {
 	private final WorldSwitcher worldSwitcher;
 	private final SeedSearcherWindow seedSearcherWindow;
 	private final Supplier<ViewerFacade> viewerFacadeSupplier;
-	private final BiomeProfileSelection biomeProfileSelection;
+	private final BiomeAuthority biomeAuthority;
 	private final GameEngineDetails gameEngineDetails;
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -51,14 +52,14 @@ public class Actions {
 			WorldSwitcher worldSwitcher,
 			SeedSearcherWindow seedSearcherWindow,
 			Supplier<ViewerFacade> viewerFacadeSupplier,
-			BiomeProfileSelection biomeProfileSelection,
+			BiomeAuthority biomeAuthority,
 			GameEngineDetails gameEngineDetails) {
 		this.application = application;
 		this.dialogs = dialogs;
 		this.worldSwitcher = worldSwitcher;
 		this.seedSearcherWindow = seedSearcherWindow;
 		this.viewerFacadeSupplier = viewerFacadeSupplier;
-		this.biomeProfileSelection = biomeProfileSelection;
+		this.biomeAuthority = biomeAuthority;
 		this.gameEngineDetails = gameEngineDetails;
 	}
 
@@ -79,7 +80,7 @@ public class Actions {
 	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = dialogs.askForWorldType();
 		if (worldType != null) {
-			worldSwitcher.displayWorld(worldSeed, worldType);
+			worldSwitcher.displayWorld(worldSeed, worldType, biomeAuthority.getBiomeProfileSelection());
 		}
 	}
 
@@ -269,7 +270,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void selectBiomeProfile(BiomeProfile profile) {
-		biomeProfileSelection.set(profile);
+		biomeAuthority.getBiomeProfileSelection().set(profile);
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			viewerFacade.reloadBackgroundLayer();

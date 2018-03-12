@@ -148,7 +148,7 @@ public class SeedSearcherWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void seedFound(WorldSeed worldSeed, WorldType worldType) {
-		worldSwitcher.displayWorld(worldSeed, worldType);
+		worldSwitcher.displayWorld(worldSeed, worldType, null);
 		updateGUI();
 	}
 

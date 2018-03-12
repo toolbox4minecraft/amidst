@@ -5,7 +5,7 @@ import java.io.IOException;
 import amidst.documentation.ThreadSafe;
 import amidst.gameengineabstraction.GameEngineDetails;
 import amidst.minetest.MinetestLauncherProfile;
-import amidst.minetest.MinetestMapgenV7Interface;
+import amidst.minetest.MinetestMapgenInterface;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.SaveGame;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
@@ -18,6 +18,8 @@ import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
+import amidst.settings.biomeprofile.BiomeProfile;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @ThreadSafe
 public class RunningLauncherProfile {
@@ -27,7 +29,7 @@ public class RunningLauncherProfile {
 		MinecraftInterface mapgenInterface;
 		
 		if (launcherProfile instanceof MinetestLauncherProfile) {			
-			mapgenInterface = new MinetestMapgenV7Interface(((MinetestLauncherProfile)launcherProfile).getMapGenParams());
+			mapgenInterface = new MinetestMapgenInterface(((MinetestLauncherProfile)launcherProfile).getMapGenParams());
 		} else {		
 			mapgenInterface = LocalMinecraftInterface.create(DefaultClassTranslator.INSTANCE.get(), launcherProfile);
 		}
@@ -77,12 +79,20 @@ public class RunningLauncherProfile {
 	 * Due to the limitation of the minecraft interface, you can only work with
 	 * one world at a time. Creating a new world will break all previously
 	 * created world objects.
+	 * 
+	 * @param worldSeed
+	 * @param worldType
+	 * @param biomeProfile - Can be null for Minecraft (or for mocks), but with Minetest 
+	 * it's best to inject the BiomeProfile the GUI is using.
+	 * @return
+	 * @throws IllegalStateException
+	 * @throws MinecraftInterfaceException
 	 */
-	public synchronized World createWorldFromSeed(WorldSeed worldSeed, WorldType worldType)
+	public synchronized World createWorldFromSeed(WorldSeed worldSeed, WorldType worldType, BiomeProfileSelection biomeProfileSelection)
 			throws IllegalStateException,
 			MinecraftInterfaceException {
 		if (currentWorld == null) {
-			currentWorld = worldBuilder.fromSeed(minecraftInterface, this::unlock, worldSeed, worldType);
+			currentWorld = worldBuilder.fromSeed(minecraftInterface, this::unlock, worldSeed, worldType, biomeProfileSelection);
 			return currentWorld;
 		} else {
 			throw new IllegalStateException(

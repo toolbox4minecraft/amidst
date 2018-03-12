@@ -43,9 +43,9 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 
 		this.worldTypes = new WorldTypes(
 				new WorldType[]{
-						//WorldType.V5, 
-						WorldType.V6, 
 						WorldType.V7, 
+						//WorldType.V6, 
+						//WorldType.V5, 
 						//WorldType.FLAT, 
 						//WorldType.FRACTAL
 				}

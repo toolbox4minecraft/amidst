@@ -135,12 +135,15 @@ public class MainWindowDialogs {
 				.getVersionFeatures(runningLauncherProfile.getRecognisedVersion())
 				.getWorldTypes();
 
-		
 		if (!engineWorldTypes.contains(worldTypeSetting)) {   
 			// The setting PROMPT_EACH_TIME won't be in engineWorldTypes, so that will always
 			// prompt (in addition to with old settings the current engine doesn't support). 
 			
-			return askForOptions("World Type", "Enter world type\n", engineWorldTypes.getSelectable());
+			if (engineWorldTypes.getSelectable().size() == 1) {
+				return engineWorldTypes.getSelectable().get(0);
+			} else {			
+				return askForOptions("World Type", "Enter world type\n", engineWorldTypes.getSelectable());
+			}
 		} else {
 			return WorldType.from(worldTypeSetting);
 		}

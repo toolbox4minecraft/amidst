@@ -38,7 +38,8 @@ public class FakeWorldBuilder {
 				realMinecraftInterface,
 				NOOP,
 				worldDeclaration.getWorldSeed(),
-				worldDeclaration.getWorldType());
+				worldDeclaration.getWorldType(),
+				null);
 	}
 
 	public World createFakeWorld(TestWorldDirectory worldDeclaration) throws MinecraftInterfaceException {
@@ -66,7 +67,8 @@ public class FakeWorldBuilder {
 				fakeMinecraftInterface,
 				NOOP,
 				WorldSeed.fromUserInput(worldMetadata.getSeed() + "", fakeMinecraftInterface.getGameEngineDetails().getType()),
-				worldMetadata.getWorldType());
+				worldMetadata.getWorldType(),
+				null);
 	}
 
 	private static FakeMinecraftInterface createFakeMinecraftInterface(

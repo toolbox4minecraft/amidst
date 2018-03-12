@@ -14,9 +14,6 @@ public enum CoordinateSystem {
 	RIGHT_HANDED,
 	LEFT_HANDED;
 	
-	// use -world_z because Minetest uses left-handed coordinates, while
-	// Minecraft and Amidst use right-handed coordinates.
-	
 	/**
 	 * Converts the z value from a right-handed 3D coordinate system (i.e. what Amidst/Minecraft use)
 	 * to whichever system the enum represents. x and y values are the same in both

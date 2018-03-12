@@ -7,8 +7,9 @@ import amidst.documentation.Immutable;
 import amidst.fragment.IBiomeDataOracle;
 import amidst.gameengineabstraction.world.versionfeatures.IVersionFeatures;
 import amidst.logging.AmidstLogger;
-import amidst.minetest.MinetestMapgenV7Interface;
+import amidst.minetest.MinetestMapgenInterface;
 import amidst.minetest.world.mapgen.InvalidNoiseParamsException;
+import amidst.minetest.world.mapgen.MinetestBiomeProfileImpl;
 import amidst.mojangapi.file.ImmutablePlayerInformationProvider;
 import amidst.mojangapi.file.PlayerInformationProvider;
 import amidst.mojangapi.file.SaveGame;
@@ -36,8 +37,9 @@ import amidst.mojangapi.world.oracle.WorldSpawnOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.PlayerInformation;
 import amidst.mojangapi.world.player.WorldPlayerType;
-import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
 import amidst.mojangapi.world.versionfeatures.VersionFeatures;
+import amidst.settings.biomeprofile.BiomeProfile;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @Immutable
 public class WorldBuilder {
@@ -59,11 +61,24 @@ public class WorldBuilder {
 		this.seedHistoryLogger = seedHistoryLogger;
 	}
 
+	/**
+	 * 
+	 * @param gameCodeInterface
+	 * @param onDisposeWorld
+	 * @param worldSeed
+	 * @param worldType
+	 * @param biomeProfile - Can be null for Minecraft (or for mocks), but with Minetest 
+	 * it's best to inject the BiomeProfile the GUI is using.
+	 * @return
+	 * @throws MinecraftInterfaceException
+	 */
 	public World fromSeed(
 			MinecraftInterface gameCodeInterface,
 			Consumer<World> onDisposeWorld,
 			WorldSeed worldSeed,
-			WorldType worldType) throws MinecraftInterfaceException {
+			WorldType worldType,
+			BiomeProfileSelection biomeProfileSelection  
+			) throws MinecraftInterfaceException {
 
 		IVersionFeatures versionFeatures = gameCodeInterface
 				.getGameEngineDetails()
@@ -74,16 +89,16 @@ public class WorldBuilder {
 		IBiomeDataOracle biomeDataOracle;
 		WorldSpawnOracle spawnOracle;
 		
-		if (gameCodeInterface instanceof MinetestMapgenV7Interface) {
+		if (gameCodeInterface instanceof MinetestMapgenInterface) {
 			// Minetest
-			MinetestMapgenV7Interface mapgen = (MinetestMapgenV7Interface)gameCodeInterface;
+			MinetestMapgenInterface mapgen = (MinetestMapgenInterface)gameCodeInterface;
 			try {
 				// TODO: Figure out a clean way for the worldtype to determine biomeDataOracle
 				if (worldType == WorldType.V7) {
-					biomeDataOracle = new amidst.minetest.world.oracle.BiomeDataOracle(mapgen.params, worldSeed.getLong());
+					biomeDataOracle = new amidst.minetest.world.oracle.BiomeDataOracle(mapgen.params, biomeProfileSelection, worldSeed.getLong());
 				} else {
 					// todo: some other BiomeDataOracle
-					biomeDataOracle = new amidst.minetest.world.oracle.BiomeDataOracle(mapgen.params, worldSeed.getLong());					
+					biomeDataOracle = new amidst.minetest.world.oracle.BiomeDataOracle(mapgen.params, biomeProfileSelection, worldSeed.getLong());					
 				}
 			} catch (InvalidNoiseParamsException e) {
 				AmidstLogger.error("Invalid param from Minetest game.");

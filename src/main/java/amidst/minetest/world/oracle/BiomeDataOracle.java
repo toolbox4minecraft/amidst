@@ -1,23 +1,26 @@
 package amidst.minetest.world.oracle;
 
-import java.util.Random;
+import java.util.Collection;
 
 import amidst.documentation.Immutable;
-import amidst.fragment.Fragment;
 import amidst.fragment.IBiomeDataOracle;
 import amidst.gameengineabstraction.CoordinateSystem;
+import amidst.gameengineabstraction.world.biome.IBiome;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
-import amidst.minetest.world.mapgen.Biome;
 import amidst.minetest.world.mapgen.InvalidNoiseParamsException;
 import amidst.minetest.world.mapgen.MapgenV7Params;
+import amidst.minetest.world.mapgen.MinetestBiome;
+import amidst.minetest.world.mapgen.MinetestBiomeProfileImpl;
 import amidst.minetest.world.mapgen.Noise;
-import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.settings.biomeprofile.BiomeProfile;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
+import amidst.settings.biomeprofile.BiomeProfileUpdateListener;
 
 @Immutable
-public class BiomeDataOracle implements IBiomeDataOracle {
+public class BiomeDataOracle implements IBiomeDataOracle, BiomeProfileUpdateListener {
 	private final int seed;
 	private final MapgenV7Params params;
 	
@@ -32,6 +35,12 @@ public class BiomeDataOracle implements IBiomeDataOracle {
 	private Noise noise_mountain;
 	private Noise noise_ridge;
 	//private Noise noise_filler_depth; // commented out because it shouldn't been needed for the surface
+
+
+	/**
+	 * Updated by onBiomeProfileUpdate event, can be null.
+	 */
+	private volatile BiomeProfile biomeProfile;
 	
 	short mount_zero_level     = 0;
 	float float_mount_density  = 0.6f;
@@ -50,10 +59,24 @@ public class BiomeDataOracle implements IBiomeDataOracle {
 	 */
 	public static final int cMimimumMountainHeight = 10; 
 	
-	public BiomeDataOracle(MapgenV7Params params, long seed) throws InvalidNoiseParamsException {
+	/**
+	 * @param params
+	 * @param biomeProfileSelection - if null then a default biomeprofile will be used
+	 * @param seed
+	 * @throws InvalidNoiseParamsException
+	 */
+	public BiomeDataOracle(MapgenV7Params params, BiomeProfileSelection biomeProfileSelection, long seed) throws InvalidNoiseParamsException {
 		//this.seed = (int)(seed & 0xFFFFFFFFL);
 		this.seed = (int)seed;		
 		this.params = params;
+		
+		if (biomeProfileSelection == null) {
+			AmidstLogger.warn("BiomeDataOracle running with default BiomeProfile which is not connected with the biomes the GUI will display");
+			this.biomeProfile = (MinetestBiomeProfileImpl)MinetestBiomeProfileImpl.getDefaultProfile();
+		} else {
+			this.biomeProfile = biomeProfileSelection.getCurrentBiomeProfile();
+			biomeProfileSelection.addUpdateListener(this);			
+		}
 		
 		// This is to avoid a divide-by-zero.
 		// Parameter will be saved to map_meta.txt in limited form.
@@ -88,6 +111,11 @@ public class BiomeDataOracle implements IBiomeDataOracle {
 			noise_mountain = new Noise(params.np_mountain, this.seed, params.chunk_length_x, params.chunk_length_y + 2, params.chunk_length_z);
 		}
 	}
+	
+	public void onBiomeProfileUpdate(BiomeProfile newBiomeProfile) {
+		this.biomeProfile = newBiomeProfile;
+	}	
+	
 	
 	float baseTerrainLevelFromMap(int index)
 	{
@@ -125,7 +153,7 @@ public class BiomeDataOracle implements IBiomeDataOracle {
 	}
 	
 	
-	Biome calcBiomeAtPoint(int x, int y, int z)
+	MinetestBiome calcBiomeAtPoint(MinetestBiome[] biomes, int x, int y, int z)
 	{
 		float heat =
 			Noise.NoisePerlin2D(params.np_heat,           x, z, seed) +
@@ -134,18 +162,18 @@ public class BiomeDataOracle implements IBiomeDataOracle {
 			Noise.NoisePerlin2D(params.np_humidity,       x, z, seed) +
 			Noise.NoisePerlin2D(params.np_humidity_blend, x, z, seed);
 
-		return calcBiomeFromNoise(heat, humidity, y);
+		return calcBiomeFromNoise(biomes, heat, humidity, y);
 	}	
 
-	Biome calcBiomeFromNoise(float heat, float humidity, int y)
+	MinetestBiome calcBiomeFromNoise(MinetestBiome[] biomes, float heat, float humidity, int y)
 	{
-		Biome biome_closest = null;
-		Biome biome_closest_blend = null;
+		MinetestBiome biome_closest = null;
+		MinetestBiome biome_closest_blend = null;
 		float dist_min = Float.MAX_VALUE;
 		float dist_min_blend = Float.MAX_VALUE;
 
-		for (short i = 1; i < params.Biomes.length; i++) {
-			Biome b = params.Biomes[i];
+		for (short i = (short)(biomes.length - 1); i >= 0; i--) {
+			MinetestBiome b = biomes[i];
 			if (y > b.y_max + b.vertical_blend || y < b.y_min)
 				continue;
 
@@ -178,16 +206,41 @@ public class BiomeDataOracle implements IBiomeDataOracle {
 			return biome_closest_blend;
 		*/
 
-		return (biome_closest != null) ? biome_closest : Biome.NONE;	
+		return (biome_closest != null) ? biome_closest : MinetestBiome.NONE;	
 	}
 	
-	
+	private MinetestBiome[] getBiomeArray() {
+		
+		MinetestBiome[] result;
+		
+		if (biomeProfile == null) {
+			result = new MinetestBiome[0];			
+		} else {		
+			Collection<IBiome> allBiomes = biomeProfile.allBiomes();
+			result = new MinetestBiome[allBiomes.size()];
+			int index = 0;
+			for (IBiome biome: allBiomes) {
+				if (biome != null && biome instanceof MinetestBiome) {
+					result[index++] = (MinetestBiome)biome;
+				}
+			}
+			if (index < result.length) {
+				// One or all of the biomes are null or for a different engine than Minetest.
+				// Resize the array to match any correct contents
+				MinetestBiome[] resizedArray = new MinetestBiome[index];
+				System.arraycopy(result, 0, resizedArray, 0, index);
+				result = resizedArray;
+				AmidstLogger.error("Current BiomeProfile contains biomes of wrong type for Minetest BiomeDataOracle");
+			}
+		}
+		return result;
+	}
 
 	@Override
 	public short populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
-		Resolution resolution = Resolution.from(useQuarterResolution);
 		int width = result.length;
 		if (width > 0) {
+			Resolution resolution = Resolution.from(useQuarterResolution);
 			int height = result[0].length;
 			int left   = (int) corner.getX();
 			int top    = (int) corner.getY();
@@ -197,6 +250,7 @@ public class BiomeDataOracle implements IBiomeDataOracle {
 			int world_z;
 			int world_x;
 			short biomeValue;
+			MinetestBiome[] biomes = getBiomeArray();
 			
 			/* part of (faster) version of oceans not working yet
 			//// Calculate noise for terrain generation
@@ -253,7 +307,7 @@ public class BiomeDataOracle implements IBiomeDataOracle {
 						if (Math.abs(uwatern) <= river_width) biomeValue |= BITPLANE_RIVER;
 						
 						// add the biome index
-						biomeValue |= calcBiomeAtPoint(world_x, surface_y, world_z).getIndex();
+						biomeValue |= calcBiomeAtPoint(biomes, world_x, surface_y, world_z).getIndex();
 						
 						result[x][y] = biomeValue;					
 						world_x += step;

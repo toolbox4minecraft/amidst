@@ -16,6 +16,7 @@ import amidst.gameengineabstraction.GameEngineType;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.settings.biomeprofile.BiomeProfileImpl;
 
 @Immutable
 public class LocalMinecraftInterfaceBuilder {
@@ -42,8 +43,9 @@ public class LocalMinecraftInterfaceBuilder {
 					symbolicClassMap.get(SymbolicNames.CLASS_GEN_OPTIONS_FACTORY),
 					recognisedVersion,
 					new GameEngineDetails(
-							GameEngineType.MINETEST,
-							new amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures()
+							GameEngineType.MINECRAFT,
+							new amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures(),
+							BiomeProfileImpl.class
 					)
 			);
 		} catch (

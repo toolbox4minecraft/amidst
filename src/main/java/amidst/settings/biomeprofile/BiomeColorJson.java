@@ -31,6 +31,11 @@ public class BiomeColorJson {
 	public int getB() {
 		return b;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("{ \"r\":%d, \"g\":%d, \"b\":%d }", r, g, b);
+	}
 
 	public BiomeColor createBiomeColor() {
 		return BiomeColor.from(r, g, b);

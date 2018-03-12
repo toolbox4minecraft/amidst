@@ -14,7 +14,7 @@ public class MinetestLauncherProfile extends LauncherProfile {
 	private final MinetestDirectory minetestDirectory;
 
 	public static MinetestLauncherProfile InternalDefault = new MinetestLauncherProfile(
-			null, "Minetest mapgen v7 default");
+			null, "Minetest defaults");
 
 	public MinetestLauncherProfile(MinetestDirectory minetestDirectory,
 			String profileName) {
@@ -22,7 +22,7 @@ public class MinetestLauncherProfile extends LauncherProfile {
 		super(null, // dotMinecraftDirectory,
 				null, // profileDirectory,
 				null, // versionDirectory,
-				new VersionJson("v7", null), // versionJson,
+				new VersionJson("0.5", null), // versionJson,
 				true, // isVersionListedInProfile,
 				profileName);
 

@@ -1,24 +1,41 @@
 package amidst.mojangapi.world.biome;
 
+import java.util.AbstractCollection;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotThreadSafe;
+import amidst.gameengineabstraction.world.biome.IBiome;
 
 @Immutable
-public class Biome {
+public class Biome implements IBiome {
 	@Immutable
-	private static class BiomeIterable implements Iterable<Biome> {
+	private static class BiomeIterable_concrete extends AbstractCollection<Biome> {
 		@Override
 		public Iterator<Biome> iterator() {
-			return new BiomeIterator();
+			return new BiomeIterator<Biome>();
 		}
+
+		@Override
+		public int size() { return biomes.length; }
 	}
 
+	@Immutable
+	private static class BiomeIterable_abstract extends AbstractCollection<IBiome> {
+		@Override
+		public Iterator<IBiome> iterator() {
+			return new BiomeIterator<IBiome>();
+		}
+
+		@Override
+		public int size() { return biomes.length; }
+	}
+	
 	@NotThreadSafe
-	private static class BiomeIterator implements Iterator<Biome> {
+	private static class BiomeIterator<T extends IBiome> implements Iterator<T> {
 		private int nextBiomeIndex = 0;
 
 		private BiomeIterator() {
@@ -31,8 +48,9 @@ public class Biome {
 		}
 
 		@Override
-		public Biome next() {
-			Biome result = biomes[nextBiomeIndex];
+		public T next() {
+			@SuppressWarnings("unchecked") 
+			T result = (T)biomes[nextBiomeIndex];
 			nextBiomeIndex++;
 			findNextValid();
 			return result;
@@ -132,10 +150,15 @@ public class Biome {
 	public static final Biome mesaPlateauM         = new Biome("Mesa Plateau M",            167, BiomeColor.from(202, 140, 101));
 	// @formatter:on
 
-	private static final BiomeIterable ITERABLE = new BiomeIterable();
+	private static final BiomeIterable_concrete ITERABLE_CONCRETE = new BiomeIterable_concrete();
+	private static final BiomeIterable_abstract ITERABLE_ABSTRACT = new BiomeIterable_abstract();
 
-	public static Iterable<Biome> allBiomes() {
-		return ITERABLE;
+	public static Collection<Biome> allBiomes() {
+		return ITERABLE_CONCRETE;
+	}
+	
+	public static Collection<IBiome> allBiomes_abstract() {
+		return ITERABLE_ABSTRACT;
 	}
 
 	public static Biome getByIndex(int index) throws UnknownBiomeIndexException {
@@ -184,20 +207,28 @@ public class Biome {
 		biomeMap.put(name, this);
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override	
 	public int getIndex() {
 		return index;
 	}
 
+	@Override
 	public BiomeColor getDefaultColor() {
 		return defaultColor;
 	}
 
 	public BiomeType getType() {
 		return type;
+	}
+	
+	@Override
+	public boolean isSpecialBiome() {
+		return index > 128;
 	}
 
 	@Override

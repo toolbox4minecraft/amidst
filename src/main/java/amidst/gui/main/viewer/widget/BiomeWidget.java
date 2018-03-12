@@ -12,9 +12,11 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerReloader;
+import amidst.gameengineabstraction.world.biome.IBiome;
 import amidst.gui.main.viewer.BiomeSelection;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
+import amidst.settings.biomeprofile.BiomeAuthority;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @NotThreadSafe
@@ -31,11 +33,11 @@ public class BiomeWidget extends Widget {
 	private static final Color SELECT_BUTTON_COLOR = 	new Color(0.6f, 0.6f, 0.8f, 1.0f);
 	// @formatter:on
 
-	private final BiomeSelection biomeSelection;
+	private final BiomeAuthority biomeAuthority;
 	private final LayerReloader layerReloader;
 	private final BiomeProfileSelection biomeProfileSelection;
 
-	private List<Biome> biomes = new ArrayList<>();
+	private List<IBiome> biomes = new ArrayList<>();
 	private int maxNameWidth = 0;
 	private int biomeListHeight;
 	private boolean isInitialized = false;
@@ -54,11 +56,11 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public BiomeWidget(
 			CornerAnchorPoint anchor,
-			BiomeSelection biomeSelection,
+			BiomeAuthority biomeAuthority,
 			LayerReloader layerReloader,
 			BiomeProfileSelection biomeProfileSelection) {
 		super(anchor);
-		this.biomeSelection = biomeSelection;
+		this.biomeAuthority = biomeAuthority;
 		this.layerReloader = layerReloader;
 		this.biomeProfileSelection = biomeProfileSelection;
 		setWidth(250);
@@ -85,7 +87,7 @@ public class BiomeWidget extends Widget {
 	private void initializeIfNecessary(FontMetrics fontMetrics) {
 		if (!isInitialized) {
 			isInitialized = true;
-			for (Biome biome : Biome.allBiomes()) {
+			for (IBiome biome : biomeAuthority.getAllBiomes()) {
 				biomes.add(biome);
 				int width = fontMetrics.stringWidth(biome.getName());
 				maxNameWidth = Math.max(width, maxNameWidth);
@@ -156,7 +158,7 @@ public class BiomeWidget extends Widget {
 		drawInnerBoxBorder(g2d);
 		setClipToInnerBox(g2d);
 		for (int i = 0; i < biomes.size(); i++) {
-			Biome biome = biomes.get(i);
+			IBiome biome = biomes.get(i);
 			drawBiomeBackgroundColor(g2d, i, getBiomeBackgroudColor(i, biome));
 			drawBiomeColor(g2d, i, getBiomeColorOrUnknown(biome));
 			drawBiomeName(g2d, i, biome);
@@ -196,8 +198,8 @@ public class BiomeWidget extends Widget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private Color getBiomeBackgroudColor(int i, Biome biome) {
-		if (biomeSelection.isSelected(biome.getIndex())) {
+	private Color getBiomeBackgroudColor(int i, IBiome biome) {
+		if (biomeAuthority.getBiomeSelection().isSelected(biome.getIndex())) {
 			if (i % 2 == 1) {
 				return BIOME_LIT_BG_COLOR_1;
 			} else {
@@ -219,7 +221,7 @@ public class BiomeWidget extends Widget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private BiomeColor getBiomeColorOrUnknown(Biome biome) {
+	private BiomeColor getBiomeColorOrUnknown(IBiome biome) {
 		return biomeProfileSelection.getBiomeColorOrUnknown(biome.getIndex());
 	}
 
@@ -230,7 +232,7 @@ public class BiomeWidget extends Widget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void drawBiomeName(Graphics2D g2d, int i, Biome biome) {
+	private void drawBiomeName(Graphics2D g2d, int i, IBiome biome) {
 		g2d.setColor(Color.white);
 		g2d.drawString(biome.getName(), innerBox.x + 25, innerBox.y + 13 + i * 16 + biomeListYOffset);
 	}
@@ -307,18 +309,18 @@ public class BiomeWidget extends Widget {
 			int id = (mouseY - (innerBox.y - getY()) - biomeListYOffset) / 16;
 			if (id < biomes.size()) {
 				int index = biomes.get(id).getIndex();
-				biomeSelection.toggle(index);
+				biomeAuthority.getBiomeSelection().toggle(index);
 				return true;
 			}
 		} else if (isButton(mouseY)) {
 			if (isSelectAllButton(mouseX)) {
-				biomeSelection.selectAll();
+				biomeAuthority.getBiomeSelection().selectAll();
 				return true;
 			} else if (isSelectSpecialBiomesButton(mouseX)) {
-				biomeSelection.selectOnlySpecial();
+				biomeAuthority.getBiomeSelection().selectOnlySpecial();
 				return true;
 			} else if (isDeselectAllButton(mouseX)) {
-				biomeSelection.deselectAll();
+				biomeAuthority.getBiomeSelection().deselectAll();
 				return true;
 			}
 		}
@@ -368,6 +370,6 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public boolean onVisibilityCheck() {
-		return biomeSelection.isHighlightMode() && getHeight() > 200;
+		return biomeAuthority.getBiomeSelection().isHighlightMode() && getHeight() > 200;
 	}
 }

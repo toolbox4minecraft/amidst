@@ -9,7 +9,7 @@ import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
 import amidst.settings.Setting;
 import amidst.settings.Settings;
-import amidst.settings.biomeprofile.BiomeProfile;
+import amidst.settings.biomeprofile.BiomeProfileImpl;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @ThreadSafe
@@ -75,7 +75,7 @@ public class AmidstSettings {
 	
 		lastProfile                = Settings.createString(   preferences, "profile",              "");
 		worldType                  = Settings.createString(   preferences, "worldType",            WorldType.PROMPT_EACH_TIME);
-		biomeProfileSelection = new BiomeProfileSelection(BiomeProfile.getDefaultProfile());
+		biomeProfileSelection = new BiomeProfileSelection(BiomeProfileImpl.getDefaultProfile());
 		// @formatter:on
 	}
 }

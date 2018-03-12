@@ -8,6 +8,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerBuilder;
+import amidst.gameengineabstraction.GameEngineDetails;
 import amidst.gui.license.LicenseWindow;
 import amidst.gui.main.Actions;
 import amidst.gui.main.MainWindow;
@@ -32,6 +33,7 @@ import amidst.mojangapi.world.SeedHistoryLogger;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.parsing.FormatException;
+import amidst.settings.biomeprofile.BiomeAuthority;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.threading.ThreadMaster;
 
@@ -46,13 +48,12 @@ public class PerApplicationInjector {
 	private final Optional<LauncherProfile> preferredLauncherProfile;
 	private final WorldBuilder worldBuilder;
 	private final LauncherProfileRunner launcherProfileRunner;
-	private final BiomeProfileDirectory biomeProfileDirectory;
+	private final BiomeAuthority biomeAuthority;
 	private final ThreadMaster threadMaster;
 	private final VersionListProvider versionListProvider;
 	private final LayerBuilder layerBuilder;
 	private final Zoom zoom;
 	private final FragmentManager fragmentManager;
-	private final BiomeSelection biomeSelection;
 	private final Application application;
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -78,14 +79,13 @@ public class PerApplicationInjector {
 		
 		this.worldBuilder = new WorldBuilder(playerInformationProvider, seedHistoryLogger);
 		this.launcherProfileRunner = new LauncherProfileRunner(worldBuilder);
-		this.biomeProfileDirectory = BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);
+		this.biomeAuthority = new BiomeAuthority(parameters.biomeProfilesDirectory, settings.biomeProfileSelection);
 		this.threadMaster = new ThreadMaster();
 		this.versionListProvider = VersionListProvider
 				.createLocalAndStartDownloadingRemote(threadMaster.getWorkerExecutor());
 		this.layerBuilder = new LayerBuilder();
 		this.zoom = new Zoom(settings.maxZoom);
 		this.fragmentManager = new FragmentManager(layerBuilder.getConstructors(), layerBuilder.getNumberOfLayers());
-		this.biomeSelection = new BiomeSelection();
 		this.application = new Application(
 				preferredLauncherProfile,
 				launcherProfileRunner,
@@ -108,13 +108,18 @@ public class PerApplicationInjector {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private MainWindow createMainWindow(RunningLauncherProfile runningLauncherProfile) {
+		
+		// Switch the biomeProfileDirectory to use profiles for this game engine
+		GameEngineDetails currentGameEngine = runningLauncherProfile.getGameEngineDetails();		
+		biomeAuthority.selectGameEngine(currentGameEngine);
+		
 		return new PerMainWindowInjector(
 				application,
 				metadata,
 				settings,
 				minetestInstallation,
 				runningLauncherProfile,
-				biomeProfileDirectory,
+				biomeAuthority,
 				this::createViewerFacade,
 				threadMaster).getMainWindow();
 	}
@@ -144,7 +149,7 @@ public class PerApplicationInjector {
 				zoom,
 				layerBuilder,
 				fragmentManager,
-				biomeSelection,
+				biomeAuthority,
 				world,
 				actions).getViewerFacade();
 	}

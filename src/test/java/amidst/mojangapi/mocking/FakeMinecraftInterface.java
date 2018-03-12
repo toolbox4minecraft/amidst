@@ -9,6 +9,7 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
+import amidst.settings.biomeprofile.BiomeProfileImpl;
 
 @ThreadSafe
 public class FakeMinecraftInterface implements MinecraftInterface {
@@ -27,8 +28,9 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 		this.fullBiomeData = fullBiomeData;
 		
 		this.engineDetails = new GameEngineDetails(
-				GameEngineType.MINETEST,
-				new amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures()
+				GameEngineType.MINECRAFT,
+				new amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures(),
+				BiomeProfileImpl.class
 		);		
 	}
 

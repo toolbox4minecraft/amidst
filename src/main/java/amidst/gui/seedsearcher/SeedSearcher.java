@@ -94,7 +94,7 @@ public class SeedSearcher {
 			throws IllegalStateException,
 			MinecraftInterfaceException {
 		while (!isStopRequested) {
-			World world = runningLauncherProfile.createWorldFromSeed(WorldSeed.random(GameEngineType.MINECRAFT), configuration.getWorldType());
+			World world = runningLauncherProfile.createWorldFromSeed(WorldSeed.random(GameEngineType.MINECRAFT), configuration.getWorldType(), null);
 			if (configuration.getWorldFilter().isValid(world)) {
 				reporter.report(world.getWorldSeed());
 				world.dispose();

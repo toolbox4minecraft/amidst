@@ -14,7 +14,6 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gameengineabstraction.GameEngineDetails;
-import amidst.gameengineabstraction.GameEngineType;
 import amidst.gameengineabstraction.file.IGameInstallation;
 import amidst.gameengineabstraction.world.WorldTypes;
 import amidst.gui.main.menu.AmidstMenu;
@@ -24,7 +23,7 @@ import amidst.gui.seedsearcher.SeedSearcher;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.world.World;
-import amidst.settings.biomeprofile.BiomeProfileDirectory;
+import amidst.settings.biomeprofile.BiomeAuthority;
 import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
@@ -64,7 +63,7 @@ public class PerMainWindowInjector {
 			AmidstSettings settings,
 			IGameInstallation gameInstallation,
 			RunningLauncherProfile runningLauncherProfile,
-			BiomeProfileDirectory biomeProfileDirectory,
+			BiomeAuthority biomeAuthority,
 			Factory2<World, Actions, ViewerFacade> viewerFacadeFactory,
 			ThreadMaster threadMaster) {
 				
@@ -107,9 +106,9 @@ public class PerMainWindowInjector {
 				worldSwitcher,
 				seedSearcherWindow,
 				viewerFacadeReference::get,
-				settings.biomeProfileSelection,
+				biomeAuthority,
 				gameEngineDetails);
-		this.menuBar = new AmidstMenuBuilder(settings, actions, biomeProfileDirectory, worldTypes).construct();
+		this.menuBar = new AmidstMenuBuilder(settings, actions, biomeAuthority.getBiomeProfileDirectory(), worldTypes).construct();
 		this.mainWindow = new MainWindow(frame, worldSwitcher, seedSearcherWindow);
 		this.mainWindow.initializeFrame(metadata, versionString, actions, menuBar);
 	}

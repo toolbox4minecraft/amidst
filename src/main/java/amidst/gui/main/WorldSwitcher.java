@@ -25,6 +25,8 @@ import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.WorldPlayerType;
 import amidst.parsing.FormatException;
+import amidst.settings.biomeprofile.BiomeProfile;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
@@ -62,10 +64,10 @@ public class WorldSwitcher {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayWorld(WorldSeed worldSeed, WorldType worldType) {
+	public void displayWorld(WorldSeed worldSeed, WorldType worldType, BiomeProfileSelection biomeProfileSelection) {
 		try {
 			clearViewerFacade();
-			setWorld(runningLauncherProfile.createWorldFromSeed(worldSeed, worldType));
+			setWorld(runningLauncherProfile.createWorldFromSeed(worldSeed, worldType, biomeProfileSelection));
 		} catch (IllegalStateException | MinecraftInterfaceException e) {
 			AmidstLogger.warn(e);
 			dialogs.displayError(e);
