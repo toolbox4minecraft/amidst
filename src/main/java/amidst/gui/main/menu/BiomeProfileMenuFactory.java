@@ -1,7 +1,9 @@
 package amidst.gui.main.menu;
 
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,6 +113,9 @@ public class BiomeProfileMenuFactory {
 	private final String reloadText;
 	private final int reloadMnemonic;
 	private final MenuShortcut reloadMenuShortcut;
+	private final String editText;
+	private final int editMnemonic;
+	private final MenuShortcut editMenuShortcut;
 
 	public BiomeProfileMenuFactory(
 			JMenu parentMenu,
@@ -118,13 +123,19 @@ public class BiomeProfileMenuFactory {
 			BiomeProfileDirectory biomeProfileDirectory,
 			String reloadText,
 			int reloadMnemonic,
-			MenuShortcut reloadMenuShortcut) {
+			MenuShortcut reloadMenuShortcut,
+			String editText,
+			int editMnemonic,
+			MenuShortcut editMenuShortcut) {
 		this.parentMenu = parentMenu;
 		this.actions = actions;
 		this.biomeProfileDirectory = biomeProfileDirectory;
 		this.reloadText = reloadText;
 		this.reloadMnemonic = reloadMnemonic;
 		this.reloadMenuShortcut = reloadMenuShortcut;
+		this.editText = editText;
+		this.editMnemonic = editMnemonic;
+		this.editMenuShortcut = editMenuShortcut;
 		AmidstLogger.info("Checking for additional biome profiles.");
 		initParentMenu();
 	}
@@ -135,6 +146,7 @@ public class BiomeProfileMenuFactory {
 		BiomeProfileVisitorImpl visitor = new BiomeProfileVisitorImpl(parentMenu, actions);
 		biomeProfileDirectory.visitProfiles(visitor);
 		parentMenu.addSeparator();
+		Menus.item(parentMenu, this::doEdit,     editText,   editMnemonic,   editMenuShortcut);
 		Menus.item(parentMenu, this::doReload, reloadText, reloadMnemonic, reloadMenuShortcut);
 		visitor.selectDefaultBiomeProfile();
 	}
@@ -143,4 +155,15 @@ public class BiomeProfileMenuFactory {
 		AmidstLogger.info("Reloading additional biome profiles.");
 		initParentMenu();
 	}
+
+	private void doEdit() {
+		AmidstLogger.info("Opening biomes directory.");
+		Desktop desktop = Desktop.getDesktop();
+		try {
+			desktop.open(biomeProfileDirectory.getRoot());
+		} catch (IOException ex) {
+			AmidstLogger.info("Failed to open biomes folder: " + ex.getMessage());
+		}		
+	}
+	
 }

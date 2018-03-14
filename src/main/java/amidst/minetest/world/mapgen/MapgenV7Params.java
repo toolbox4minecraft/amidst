@@ -80,23 +80,4 @@ public class MapgenV7Params {
 	public NoiseParams np_humidity       = new NoiseParams(50,   50, new Vector3f(1000, 1000, 1000),   842, (short)3, 0.5f, 2.0f);
 	public NoiseParams np_heat_blend     = new NoiseParams( 0, 1.5f, new Vector3f(   8,    8,    8),    13, (short)2, 1.0f, 2.0f);
 	public NoiseParams np_humidity_blend = new NoiseParams( 0, 1.5f, new Vector3f(   8,    8,    8), 90003, (short)2, 1.0f, 2.0f);
-	
-	public MinetestBiome[] Biomes = {
-		MinetestBiome.NONE,
-		new MinetestBiome("Icesheet",                 0, BiomeColor.from(220, 220, 230), (short)  -8, Short.MAX_VALUE,  0, 73),	
-		new MinetestBiome("Icesheet ocean",           1, BiomeColor.from(220, 220, 230), (short)-112,       (short)-9,  0, 73),	
-		new MinetestBiome("Tundra",                   2, BiomeColor.from(200, 200, 230), (short)   2, Short.MAX_VALUE,  0, 40),	
-		new MinetestBiome("Tundra beach",             3, BiomeColor.from(200, 200, 230), (short)  -3,        (short)1,  0, 40),	
-		new MinetestBiome("Tundra ocean",             4, BiomeColor.from(200, 200, 230), (short)-112,       (short)-4,  0, 40),	
-		new MinetestBiome("Taiga",                    5, BiomeColor.from(100, 140, 100), (short)   2, Short.MAX_VALUE, 25, 70),	
-		new MinetestBiome("Taiga ocean",              6, BiomeColor.from(100, 140, 100), (short)-112,       (short)-1, 25, 70),	
-		new MinetestBiome("Snowy grassland",          7, BiomeColor.from(160, 230, 160), (short)   5, Short.MAX_VALUE, 20, 35),	
-		new MinetestBiome("Snowy grassland ocean",    8, BiomeColor.from(160, 230, 160), (short)-112,       (short)-4, 20, 35),	
-		new MinetestBiome("Grassland",                9, BiomeColor.from( 60, 200,  60), (short)   6, Short.MAX_VALUE, 50, 35),	
-		new MinetestBiome("Grassland dunes",         10, BiomeColor.from(160, 200,   0), (short)   4,        (short)5, 50, 35),	
-		new MinetestBiome("Grassland ocean",         11, BiomeColor.from( 60, 200, 160), (short)-112,        (short)3, 50, 35),	
-		new MinetestBiome("Coniferous forest",       12, BiomeColor.from(  0, 100,  10), (short)   6, Short.MAX_VALUE, 45, 70),	
-		new MinetestBiome("Coniferous forest dunes", 13, BiomeColor.from(160, 200,   0), (short)   4,        (short)5, 45, 70),	
-		new MinetestBiome("Coniferous forest ocean", 14, BiomeColor.from(  0, 100, 160), (short)-112,        (short)3, 45, 70)	
-	};	
 }

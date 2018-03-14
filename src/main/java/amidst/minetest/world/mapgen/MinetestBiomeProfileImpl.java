@@ -24,9 +24,8 @@ import amidst.settings.biomeprofile.BiomeProfile;
 @Immutable
 public class MinetestBiomeProfileImpl implements BiomeProfile{
 	private static List<MinetestBiome> createDefaultColorMap() {
-		MapgenV7Params defaultParams = new MapgenV7Params();
 		List<MinetestBiome> result = new ArrayList<MinetestBiome>();
-		for (MinetestBiome biome : defaultParams.Biomes) {
+		for (MinetestBiome biome : DefaultBiomes_v7.getDefaultBiomeSet()) {
 			if (biome != MinetestBiome.NONE) result.add(biome);
 		}
 		return result;

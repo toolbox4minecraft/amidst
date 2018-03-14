@@ -63,7 +63,7 @@ public class AmidstSettings {
 		showEndCities              = Settings.createBoolean(  preferences, "endCityIcons",         false);
 		showMinetestRivers         = Settings.createBoolean(  preferences, "minetestRivers",       true);
 		showMinetestOceans         = Settings.createBoolean(  preferences, "minetestOceans",       true);
-		showMinetestMountains      = Settings.createBoolean(  preferences, "minetestMountains",    true);
+		showMinetestMountains      = Settings.createBoolean(  preferences, "minetestMountains",    false);
 		enableAllLayers            = Settings.createBoolean(  preferences, "enableAllLayers",      false);
 		
 		smoothScrolling            = Settings.createBoolean(  preferences, "mapFlicking",          true);

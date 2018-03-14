@@ -51,7 +51,8 @@ public enum MenuShortcuts implements MenuShortcut {
 	SHOW_PLAYERS("menu P"),
 	ENABLE_ALL_LAYERS("menu E"),
 
-	RELOAD_BIOME_PROFILES("menu B");
+	RELOAD_BIOME_PROFILES("menu B"),
+	EDIT_BIOME_PROFILES("menu D");
 
 	private static KeyStroke getKeyStroke(String accelerator) {
 		return getPlatformSpecificKeyStroke(accelerator.replace("menu", ""), accelerator.contains("menu"));

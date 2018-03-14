@@ -150,7 +150,13 @@ public class AmidstMenuBuilder {
 	private JMenu create_Settings_BiomeProfile() {
 		JMenu result = new JMenu("Biome profile");
 		// @formatter:off
-		new BiomeProfileMenuFactory(result, actions, biomeProfileDirectory, "Reload biome profiles", KeyEvent.VK_R, MenuShortcuts.RELOAD_BIOME_PROFILES);
+		new BiomeProfileMenuFactory(
+				result, 
+				actions, 
+				biomeProfileDirectory, 
+				"Reload biome profiles", KeyEvent.VK_R, MenuShortcuts.RELOAD_BIOME_PROFILES,
+				"Edit biome profiles",   KeyEvent.VK_D, MenuShortcuts.EDIT_BIOME_PROFILES
+				);
 		// @formatter:on
 		return result;
 	}

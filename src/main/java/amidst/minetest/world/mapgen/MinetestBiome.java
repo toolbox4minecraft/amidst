@@ -7,6 +7,10 @@ import amidst.mojangapi.world.biome.BiomeColor;
 public class MinetestBiome extends BiomeBase {
 	
 	public static MinetestBiome NONE = new MinetestBiome("None", -1, BiomeColor.from(0, 0, 0), (short)0, (short)0, 0, 0);
+
+	protected MinetestBiome(String name, BiomeColor defaultColor, short y_min, short y_max, float heat_point, float humidity_point) {
+		this(name, -1, defaultColor, y_min, y_max, heat_point, humidity_point);
+	}
 	
 	protected MinetestBiome(String name, int index, BiomeColor defaultColor, short y_min, short y_max, float heat_point, float humidity_point) {
 		super(name, index, defaultColor);

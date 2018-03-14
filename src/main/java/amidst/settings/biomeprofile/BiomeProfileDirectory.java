@@ -40,7 +40,7 @@ public class BiomeProfileDirectory {
 		selectGameEngine("mc", BiomeProfileImpl.class);
 	}
 
-	private File getRoot() {
+	public File getRoot() {
 		return root;
 	}
 
