@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 
 import amidst.documentation.Immutable;
 import amidst.fragment.IBiomeDataOracle;
+import amidst.gameengineabstraction.GameEngineType;
 import amidst.gameengineabstraction.world.versionfeatures.IVersionFeatures;
 import amidst.logging.AmidstLogger;
 import amidst.minetest.MinetestMapgenInterface;
@@ -175,81 +176,91 @@ public class WorldBuilder {
 		seedHistoryLogger.log(recognisedVersion, worldSeed);
 		long seed = worldSeed.getLong();
 		minecraftInterface.createWorld(seed, worldType, generatorOptions);
-		
-		amidst.mojangapi.world.oracle.BiomeDataOracle minecraftBiomeOrNull = 
-				(biomeDataOracle instanceof amidst.mojangapi.world.oracle.BiomeDataOracle) ? (amidst.mojangapi.world.oracle.BiomeDataOracle)biomeDataOracle : null;
-
-		VersionFeatures minecraftVersionFeaturesOrNull = 
-				(versionFeatures instanceof VersionFeatures) ? (VersionFeatures)versionFeatures : null;
-				
-		return new World(
-				onDisposeWorld,
-				worldSeed,
-				worldType,
-				generatorOptions,
-				movablePlayerList,
-				recognisedVersion,
-				versionFeatures,
-				biomeDataOracle,
-				EndIslandOracle.from(seed),
-				new SlimeChunkOracle(seed),
-				new SpawnProducer(worldSpawnOracle),
-				minecraftVersionFeaturesOrNull.getStrongholdProducerFactory().apply(
-						seed,
-						minecraftBiomeOrNull,
-						minecraftVersionFeaturesOrNull.getValidBiomesAtMiddleOfChunk_Stronghold()),
-				new PlayerProducer(movablePlayerList),
-				new StructureProducer<>(
-						Resolution.CHUNK,
-						4,
-						new VillageLocationChecker(
-								seed,
-								minecraftBiomeOrNull,
-								minecraftVersionFeaturesOrNull.getValidBiomesForStructure_Village()),
-						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
-						Dimension.OVERWORLD,
-						false),
-				new StructureProducer<>(
-						Resolution.CHUNK,
-						8,
-						new TempleLocationChecker(
-								seed,
-								minecraftBiomeOrNull,
-								minecraftVersionFeaturesOrNull.getValidBiomesAtMiddleOfChunk_Temple()),
-						new TempleWorldIconTypeProvider(minecraftBiomeOrNull),
-						Dimension.OVERWORLD,
-						false),
-				new StructureProducer<>(
-						Resolution.CHUNK,
-						8,
-						minecraftVersionFeaturesOrNull.getMineshaftAlgorithmFactory().apply(seed),
-						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.MINESHAFT),
-						Dimension.OVERWORLD,
-						false),
-				new StructureProducer<>(
-						Resolution.CHUNK,
-						8,
-						minecraftVersionFeaturesOrNull.getOceanMonumentLocationCheckerFactory().apply(
-								seed,
-								minecraftBiomeOrNull,
-								minecraftVersionFeaturesOrNull.getValidBiomesAtMiddleOfChunk_OceanMonument(),
-								minecraftVersionFeaturesOrNull.getValidBiomesForStructure_OceanMonument()),
-						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
-						Dimension.OVERWORLD,
-						false),
-				new StructureProducer<>(
-						Resolution.NETHER_CHUNK,
-						88,
-						new NetherFortressAlgorithm(seed),
-						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
-						Dimension.NETHER,
-						false),
-				new StructureProducer<>(
-						Resolution.CHUNK,
-						8,
-						new EndCityLocationChecker(seed),
-						new EndCityWorldIconTypeProvider(),
-						Dimension.END,
-						false));
+						
+		if (minecraftInterface.getGameEngineDetails().getType() == GameEngineType.MINETEST) {
+			return new World(
+					onDisposeWorld,
+					worldSeed,
+					worldType,
+					movablePlayerList,
+					recognisedVersion,
+					versionFeatures,
+					biomeDataOracle,
+					new SpawnProducer(worldSpawnOracle),
+					null /* Hope to have a dungeon LocationChecker here one day */);
+		} else {			
+			amidst.mojangapi.world.oracle.BiomeDataOracle minecraftBiome = (amidst.mojangapi.world.oracle.BiomeDataOracle)biomeDataOracle;
+			VersionFeatures minecraftVersionFeatures = (VersionFeatures)versionFeatures;			
+			
+			return new World(
+					onDisposeWorld,
+					worldSeed,
+					worldType,
+					generatorOptions,
+					movablePlayerList,
+					recognisedVersion,
+					versionFeatures,
+					biomeDataOracle,
+					EndIslandOracle.from(seed),
+					new SlimeChunkOracle(seed),
+					new SpawnProducer(worldSpawnOracle),
+					minecraftVersionFeatures.getStrongholdProducerFactory().apply(
+							seed,
+							minecraftBiome,
+							minecraftVersionFeatures.getValidBiomesAtMiddleOfChunk_Stronghold()),
+					new PlayerProducer(movablePlayerList),
+					new StructureProducer<>(
+							Resolution.CHUNK,
+							4,
+							new VillageLocationChecker(
+									seed,
+									minecraftBiome,
+									minecraftVersionFeatures.getValidBiomesForStructure_Village()),
+							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
+							Dimension.OVERWORLD,
+							false),
+					new StructureProducer<>(
+							Resolution.CHUNK,
+							8,
+							new TempleLocationChecker(
+									seed,
+									minecraftBiome,
+									minecraftVersionFeatures.getValidBiomesAtMiddleOfChunk_Temple()),
+							new TempleWorldIconTypeProvider(minecraftBiome),
+							Dimension.OVERWORLD,
+							false),
+					new StructureProducer<>(
+							Resolution.CHUNK,
+							8,
+							minecraftVersionFeatures.getMineshaftAlgorithmFactory().apply(seed),
+							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.MINESHAFT),
+							Dimension.OVERWORLD,
+							false),
+					new StructureProducer<>(
+							Resolution.CHUNK,
+							8,
+							minecraftVersionFeatures.getOceanMonumentLocationCheckerFactory().apply(
+									seed,
+									minecraftBiome,
+									minecraftVersionFeatures.getValidBiomesAtMiddleOfChunk_OceanMonument(),
+									minecraftVersionFeatures.getValidBiomesForStructure_OceanMonument()),
+							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
+							Dimension.OVERWORLD,
+							false),
+					new StructureProducer<>(
+							Resolution.NETHER_CHUNK,
+							88,
+							new NetherFortressAlgorithm(seed),
+							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
+							Dimension.NETHER,
+							false),
+					new StructureProducer<>(
+							Resolution.CHUNK,
+							8,
+							new EndCityLocationChecker(seed),
+							new EndCityWorldIconTypeProvider(),
+							Dimension.END,
+							false));
+		}
 	}
 }

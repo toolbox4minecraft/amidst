@@ -1,5 +1,6 @@
 package amidst.settings.biomeprofile;
 
+import amidst.AmidstSettings;
 import amidst.fragment.layer.LayerIds;
 import amidst.fragment.layer.LayerManager;
 import amidst.gameengineabstraction.GameEngineDetails;
@@ -29,7 +30,7 @@ public class BiomeAuthority implements BiomeProfileUpdateListener {
 		
 		// Consumes BiomeProfiles
 		if (inject_biomeProfileSelection == null) {
-			biomeProfileSelection = new BiomeProfileSelection(BiomeProfileImpl.getDefaultProfile());
+			biomeProfileSelection = new BiomeProfileSelection(BiomeProfileImpl.getDefaultProfiles().iterator().next());
 		} else {
 			biomeProfileSelection = inject_biomeProfileSelection;
 			biomeProfileSelection.addUpdateListener(this);
@@ -55,18 +56,34 @@ public class BiomeAuthority implements BiomeProfileUpdateListener {
 		this.layerManager = layerManager;
 	}
 	
+	/**
+	 * Never null
+	 * @return
+	 */
 	public BiomeProfileDirectory getBiomeProfileDirectory() {
 		return biomeProfileDirectory;
 	}
 	
+	/**
+	 * Never null
+	 * @return
+	 */
 	public BiomeProfileSelection getBiomeProfileSelection() {
 		return biomeProfileSelection;
 	}
 	
+	/**
+	 * Never null
+	 * @return
+	 */
 	public BiomeSelection getBiomeSelection() {
 		return biomeSelection;
 	}
 	
+	/**
+	 * Never null
+	 * @return
+	 */
 	public Iterable<IBiome> getAllBiomes() {
 		return biomeProfileSelection.getCurrentBiomeProfile().allBiomes();
 	}
@@ -75,14 +92,25 @@ public class BiomeAuthority implements BiomeProfileUpdateListener {
 		return biomeProfileSelection.getCurrentBiomeProfile().getByIndex(index);
 	}
 		
-	/** Updates the biomes to match the specified engine */
-	public void selectGameEngine(GameEngineDetails currentGameEngine) {
+	/** 
+	 * Updates the biomes to match the specified engine 
+	 * @param settings - can be null, but if you can provide the settings then do so as it means 
+	 * a previously selected biomeProfile may be preserved as the current selection.
+	 */
+	public void selectGameEngine(GameEngineDetails currentGameEngine, AmidstSettings settings) {
 		biomeProfileDirectory.selectGameEngine(
 			currentGameEngine.getType().getAbbreviatedName().toLowerCase(),
 			currentGameEngine.getBiomeProfileImplementation()
 		);
 		
-		// TODO: Makes sure biomeProfileSelection has a profile from the reconfigured biomeProfileDirectory
-		//       Then refresh biomeSelection
+		// Makes sure the default biomeprofiles for this game engine are added to the biomes 
+		// directory so the user can edit them. 
+		biomeProfileDirectory.saveDefaultProfilesIfNecessary();
+
+		// Makes sure biomeProfileSelection is set to a profile that's suitable for the
+		// current game engine.
+		String preferredBiomeProfile = null;		
+		if (settings != null) preferredBiomeProfile = settings.lastBiomeProfile.get();
+		biomeProfileSelection.set(biomeProfileDirectory.getProfile(preferredBiomeProfile));
 	};
 }

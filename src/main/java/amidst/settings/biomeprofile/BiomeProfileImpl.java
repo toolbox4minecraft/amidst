@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,12 +18,35 @@ import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.gameengineabstraction.world.biome.IBiome;
 import amidst.logging.AmidstLogger;
+import amidst.minetest.world.mapgen.DefaultBiomes_v7;
+import amidst.minetest.world.mapgen.MinetestBiome;
+import amidst.minetest.world.mapgen.MinetestBiomeProfileImpl;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
 
 @Immutable
 public class BiomeProfileImpl implements BiomeProfile{
+
+	private static final Collection<BiomeProfile> DEFAULT_PROFILE = new ArrayList<BiomeProfile>(
+		Arrays.asList(
+			new BiomeProfileImpl("default", null, createDefaultColorMap())
+		)
+	);
+
+	private volatile String name;
+	private volatile String shortcut;
+	private volatile Map<String, BiomeColorJson> colorMap;
+
+	/**
+	 * All BiomeProfile classes MUST implement a static function getDefaultProfiles()
+	 * which returns one or more instances of that class.
+	 * It will be invoked via reflection.
+	 */
+	public static Collection<BiomeProfile> getDefaultProfiles() {
+		return DEFAULT_PROFILE;
+	}
+
 	private static Map<String, BiomeColorJson> createDefaultColorMap() {
 		Map<String, BiomeColorJson> result = new HashMap<>();
 		for (Biome biome : Biome.allBiomes()) {
@@ -29,17 +54,7 @@ public class BiomeProfileImpl implements BiomeProfile{
 		}
 		return result;
 	}
-
-	public static BiomeProfile getDefaultProfile() {
-		return DEFAULT_PROFILE;
-	}
-
-	private static final BiomeProfile DEFAULT_PROFILE = new BiomeProfileImpl("default", null, createDefaultColorMap());
-
-	private volatile String name;
-	private volatile String shortcut;
-	private volatile Map<String, BiomeColorJson> colorMap;
-
+	
 	@GsonConstructor
 	public BiomeProfileImpl() {
 	}

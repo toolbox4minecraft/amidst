@@ -7,10 +7,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
 
+import amidst.AmidstSettings;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
 import amidst.logging.AmidstLogger;
@@ -22,15 +26,18 @@ import amidst.settings.biomeprofile.BiomeProfileVisitor;
 public class BiomeProfileMenuFactory {
 	@NotThreadSafe
 	private static class BiomeProfileVisitorImpl implements BiomeProfileVisitor {
-		private final List<JCheckBoxMenuItem> allCheckBoxes = new ArrayList<>();
+		private final List<AbstractButton> allCheckBoxes = new ArrayList<>();
 		private final List<JMenu> menuStack = new ArrayList<>();
 		private Runnable defaultBiomeProfileSelector;
 		private boolean isFirstContainer = true;
 
 		private final Actions actions;
+		private final AmidstSettings settings;
+		
 
-		private BiomeProfileVisitorImpl(JMenu parentMenu, Actions actions) {
+		private BiomeProfileVisitorImpl(JMenu parentMenu, Actions actions, AmidstSettings settings) {
 			this.actions = actions;
+			this.settings = settings;
 			menuStack.add(parentMenu);
 		}
 
@@ -47,7 +54,8 @@ public class BiomeProfileMenuFactory {
 
 		@Override
 		public void visitProfile(BiomeProfile profile) {
-			JCheckBoxMenuItem checkBox = createCheckBox(profile);
+			AbstractButton checkBox = createRadioButton(profile);
+			checkBox.setSelected(profile.getName().equals(settings.lastBiomeProfile.get()));
 			allCheckBoxes.add(checkBox);
 			getLastMenu().add(checkBox);
 		}
@@ -72,7 +80,14 @@ public class BiomeProfileMenuFactory {
 			return result;
 		}
 
-		private void tryCreateKeyboardShortcut(String shortcut, JCheckBoxMenuItem checkBox) {
+		private JRadioButtonMenuItem createRadioButton(BiomeProfile profile) {
+			JRadioButtonMenuItem result = new JRadioButtonMenuItem(profile.getName());
+			tryCreateKeyboardShortcut(profile.getShortcut(), result);
+			result.addActionListener(createListener(profile, result));
+			return result;
+		}
+		
+		private void tryCreateKeyboardShortcut(String shortcut, JMenuItem checkBox) {
 			if (shortcut != null) {
 				KeyStroke accelerator = KeyStroke.getKeyStroke(shortcut);
 				if (accelerator != null) {
@@ -83,15 +98,15 @@ public class BiomeProfileMenuFactory {
 			}
 		}
 
-		private ActionListener createListener(final BiomeProfile profile, final JCheckBoxMenuItem selectedCheckBox) {
+		private ActionListener createListener(final BiomeProfile profile, final AbstractButton selectedCheckBox) {
 			ActionListener result = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					for (JCheckBoxMenuItem checkBox : allCheckBoxes) {
+					for (AbstractButton checkBox : allCheckBoxes) {
 						checkBox.setSelected(false);
 					}
 					selectedCheckBox.setSelected(true);
-					actions.selectBiomeProfile(profile);
+					actions.selectBiomeProfile(profile, settings);
 				}
 			};
 			if (defaultBiomeProfileSelector == null && profile.getName().equals("default")) {
@@ -109,6 +124,7 @@ public class BiomeProfileMenuFactory {
 
 	private final JMenu parentMenu;
 	private final Actions actions;
+	private final AmidstSettings settings;
 	private final BiomeProfileDirectory biomeProfileDirectory;
 	private final String reloadText;
 	private final int reloadMnemonic;
@@ -120,6 +136,7 @@ public class BiomeProfileMenuFactory {
 	public BiomeProfileMenuFactory(
 			JMenu parentMenu,
 			Actions actions,
+			AmidstSettings settings,			
 			BiomeProfileDirectory biomeProfileDirectory,
 			String reloadText,
 			int reloadMnemonic,
@@ -129,6 +146,7 @@ public class BiomeProfileMenuFactory {
 			MenuShortcut editMenuShortcut) {
 		this.parentMenu = parentMenu;
 		this.actions = actions;
+		this.settings = settings;
 		this.biomeProfileDirectory = biomeProfileDirectory;
 		this.reloadText = reloadText;
 		this.reloadMnemonic = reloadMnemonic;
@@ -142,8 +160,8 @@ public class BiomeProfileMenuFactory {
 
 	private void initParentMenu() {
 		parentMenu.removeAll();
-		biomeProfileDirectory.saveDefaultProfileIfNecessary();
-		BiomeProfileVisitorImpl visitor = new BiomeProfileVisitorImpl(parentMenu, actions);
+		biomeProfileDirectory.saveDefaultProfilesIfNecessary();
+		BiomeProfileVisitorImpl visitor = new BiomeProfileVisitorImpl(parentMenu, actions, settings);
 		biomeProfileDirectory.visitProfiles(visitor);
 		parentMenu.addSeparator();
 		Menus.item(parentMenu, this::doEdit,     editText,   editMnemonic,   editMenuShortcut);

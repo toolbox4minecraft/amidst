@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 
 import javax.imageio.ImageIO;
 
+import amidst.AmidstSettings;
 import amidst.Application;
 import amidst.FeatureToggles;
 import amidst.documentation.AmidstThread;
@@ -269,8 +270,9 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void selectBiomeProfile(BiomeProfile profile) {
+	public void selectBiomeProfile(BiomeProfile profile, AmidstSettings settings) {
 		biomeAuthority.getBiomeProfileSelection().set(profile);
+		settings.lastBiomeProfile.set(profile.getName());
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			viewerFacade.reloadBackgroundLayer();

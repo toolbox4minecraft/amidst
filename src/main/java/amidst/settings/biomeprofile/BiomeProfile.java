@@ -12,14 +12,14 @@ import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
 public interface BiomeProfile {
 
 	/**
-	 * All BiomeProfile classes MUST implement a static function getDefaultProfile()
-	 * which returns an instance of that class.
+	 * All BiomeProfile classes MUST implement a static function getDefaultProfiles()
+	 * which returns one or more instances of that class.
 	 * It will be invoked via reflection.
 	 */
-	//public static BiomeProfile getDefaultProfile();
+	//public static Collection<BiomeProfile> getDefaultProfiles();
 
 	String getName();
-
+	
 	String getShortcut();
 
 	boolean validate();

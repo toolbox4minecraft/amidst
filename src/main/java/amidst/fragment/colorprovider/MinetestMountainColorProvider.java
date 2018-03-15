@@ -23,6 +23,8 @@ public class MinetestMountainColorProvider implements ColorProvider {
 	public int getColorAt(Dimension dimension, Fragment fragment, long cornerX, long cornerY, int x, int y) {
 		
 		if ((fragment.getBiomeDataAt(x, y) & BiomeDataOracle.BITPLANE_MOUNTAIN) > 0) {
+			/* Commented out because I haven't found a way to use 1px outlines on mountains that I 
+			 * feel is worth the mountain coloring being 4x slower
 			// draw using an edge colour if we're next to a location that isn't mountain.
 			if ((x >               0 && (fragment.getBiomeDataAt(x - 1, y) & BiomeDataOracle.BITPLANE_MOUNTAIN) == 0) ||
 			    (x < FRAGSIZE_MINUS1 && (fragment.getBiomeDataAt(x + 1, y) & BiomeDataOracle.BITPLANE_MOUNTAIN) == 0) ||
@@ -31,7 +33,8 @@ public class MinetestMountainColorProvider implements ColorProvider {
 				return MOUNTAIN_EDGE_COLOR;
 			} else {			
 				return MOUNTAIN_COLOR;
-			}
+			}*/
+			return MOUNTAIN_COLOR;
 		} else {
 			return NOT_MOUNTAIN_COLOR;
 		}

@@ -17,10 +17,12 @@ import amidst.gui.main.viewer.BiomeSelection;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
 import amidst.settings.biomeprofile.BiomeAuthority;
+import amidst.settings.biomeprofile.BiomeProfile;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
+import amidst.settings.biomeprofile.BiomeProfileUpdateListener;
 
 @NotThreadSafe
-public class BiomeWidget extends Widget {
+public class BiomeWidget extends Widget implements BiomeProfileUpdateListener {
 	// @formatter:off
 	private static final Color INNER_BOX_BG_COLOR = 	new Color(0.3f, 0.3f, 0.3f, 0.3f);
 	private static final Color BIOME_BG_COLOR_1 = 		new Color(0.8f, 0.8f, 0.8f, 0.2f);
@@ -40,7 +42,7 @@ public class BiomeWidget extends Widget {
 	private List<IBiome> biomes = new ArrayList<>();
 	private int maxNameWidth = 0;
 	private int biomeListHeight;
-	private boolean isInitialized = false;
+	private boolean isBiomeListInitialized = false;
 
 	private Rectangle innerBox = new Rectangle(0, 0, 1, 1);
 
@@ -66,6 +68,8 @@ public class BiomeWidget extends Widget {
 		setWidth(250);
 		setHeight(400);
 		setY(100);
+		
+		biomeAuthority.getBiomeProfileSelection().addUpdateListener(this);		
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -85,8 +89,10 @@ public class BiomeWidget extends Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void initializeIfNecessary(FontMetrics fontMetrics) {
-		if (!isInitialized) {
-			isInitialized = true;
+		if (!isBiomeListInitialized) {
+			isBiomeListInitialized = true;
+			
+			biomes.clear();
 			for (IBiome biome : biomeAuthority.getAllBiomes()) {
 				biomes.add(biome);
 				int width = fontMetrics.stringWidth(biome.getName());
@@ -95,6 +101,11 @@ public class BiomeWidget extends Widget {
 			biomeListHeight = biomes.size() * 16;
 		}
 	}
+	
+	@Override
+	public void onBiomeProfileUpdate(BiomeProfile newBiomeProfile) {
+		isBiomeListInitialized = false;
+	}	
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateX() {
@@ -263,7 +274,7 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public boolean onMouseWheelMoved(int mouseX, int mouseY, int notches) {
-		if (!isInitialized) {
+		if (!isBiomeListInitialized) {
 			return false;
 		}
 		if (isInBoundsOfInnerBox(mouseX, mouseY)) {
@@ -282,7 +293,7 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public boolean onMousePressed(int mouseX, int mouseY) {
-		if (!isInitialized) {
+		if (!isBiomeListInitialized) {
 			return false;
 		}
 		updateScrollbarParameters(mouseX, mouseY);

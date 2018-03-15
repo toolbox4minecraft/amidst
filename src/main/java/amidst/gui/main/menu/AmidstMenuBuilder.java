@@ -152,7 +152,8 @@ public class AmidstMenuBuilder {
 		// @formatter:off
 		new BiomeProfileMenuFactory(
 				result, 
-				actions, 
+				actions,
+				settings,
 				biomeProfileDirectory, 
 				"Reload biome profiles", KeyEvent.VK_R, MenuShortcuts.RELOAD_BIOME_PROFILES,
 				"Edit biome profiles",   KeyEvent.VK_D, MenuShortcuts.EDIT_BIOME_PROFILES

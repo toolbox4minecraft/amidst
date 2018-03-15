@@ -15,8 +15,6 @@ import amidst.mojangapi.world.WorldType;
  */
 @ThreadSafe
 public interface MinecraftInterface {
-	Object getGameEngineDetails = null;
-
 	/**
 	 * @param useQuarterResolution Minecraft calculates biomes at
 	 *            quarter-resolution, then noisily interpolates the biome-map up

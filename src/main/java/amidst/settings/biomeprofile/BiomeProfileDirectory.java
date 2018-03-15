@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
@@ -13,6 +14,7 @@ import amidst.parsing.json.JsonReader;
 
 @Immutable
 public class BiomeProfileDirectory {
+	
 	public static BiomeProfileDirectory create(String root) {
 		BiomeProfileDirectory result = new BiomeProfileDirectory(getRoot(root));
 		AmidstLogger.info("using biome profiles at: '" + result.getRoot() + "'");
@@ -30,7 +32,6 @@ public class BiomeProfileDirectory {
 	private static final File DEFAULT_ROOT_DIRECTORY = new File("biome");
 
 	private final File root;
-	private File defaultProfile;
 	private String profileFileExtension;
 	private Class<? extends BiomeProfile> biomeProfileImpl;
 
@@ -44,15 +45,32 @@ public class BiomeProfileDirectory {
 		return root;
 	}
 
-	private BiomeProfile createDefaultProfile() {
-		
+	@SuppressWarnings("unchecked")
+	private Collection<BiomeProfile> createDefaultProfiles() {		
 		try {
-			Method staticMethod = biomeProfileImpl.getMethod("getDefaultProfile");
+			Method staticMethod = biomeProfileImpl.getMethod("getDefaultProfiles");
 			Object defaultProfile = staticMethod.invoke(null);
-			return (BiomeProfile)defaultProfile;
+			return (Collection<BiomeProfile>)defaultProfile;
 		} catch (Exception e) {
-			throw new RuntimeException("BiomeProfile implementations must implement getDefaultProfile(): " + e);
+			throw new RuntimeException("BiomeProfile implementations must implement getDefaultProfiles(): " + e);
 		}
+	}
+	
+	/**
+	 * Returns a profile suitable for the current game engine
+	 * @param optional_suggestion - can be null, if not null then the profile with this name
+	 * will be returned if the directory has it.
+	 */
+	public BiomeProfile getProfile(String optional_suggestion) {
+		BiomeProfile result = null;
+		if (optional_suggestion != null && optional_suggestion.length() > 0) {
+			result = createFromName(optional_suggestion);
+		}
+		if (result == null) {		
+			// Return the first profile that biomeProfileImpl provides 
+			result = createDefaultProfiles().iterator().next();
+		}
+		return result;
 	}
 	
 	public boolean isValid() {
@@ -70,20 +88,23 @@ public class BiomeProfileDirectory {
 
 		this.profileFileExtension = profile_file_extension;
 		this.biomeProfileImpl = biome_profile_impl;
-		this.defaultProfile = new File(getRoot(), "default." + profile_file_extension);
 	}
 	
-	public void saveDefaultProfileIfNecessary() {
+	public void saveDefaultProfilesIfNecessary() {
 		if (!isValid()) {
 			AmidstLogger.info("Unable to find biome profile directory.");
 		} else {
 			AmidstLogger.info("Found biome profile directory.");
-			if (defaultProfile.isFile()) {
-				AmidstLogger.info("Found default biome profile.");
-			} else if (createDefaultProfile().save(defaultProfile)) {
-				AmidstLogger.info("Saved default biome profile.");
-			} else {
-				AmidstLogger.info("Attempted to save default biome profile, but encountered an error.");
+			for(BiomeProfile profile : createDefaultProfiles()) {						
+				File profileFile = new File(root, profile.getName() + "." + profileFileExtension);
+				
+				if (profileFile.isFile()) {
+					AmidstLogger.info("Found default biome profile \"" + profile.getName() + "\"");
+				} else if (profile.save(profileFile)) {
+					AmidstLogger.info("Saved default biome profile \"" + profile.getName() + "\"");
+				} else {
+					AmidstLogger.info("Attempted to save default biome profile \"" + profile.getName() + "\", but encountered an error.");
+				}				
 			}
 		}
 	}
@@ -95,14 +116,7 @@ public class BiomeProfileDirectory {
 	private void visitProfiles(File directory, BiomeProfileVisitor visitor) {
 		boolean entered = false;
 		
-		FilenameFilter filter = new FilenameFilter() {
-		    @Override
-		    public boolean accept(File dir, String name) {
-		        return name.toLowerCase().endsWith("." + profileFileExtension);
-		    }
-		};
-		
-		for (File file : directory.listFiles(filter)) {
+		for (File file : getBiomeProfileFileList(directory)) {
 			if (file.isFile()) {
 				BiomeProfile profile = createFromFile(file);
 				if (profile != null) {
@@ -120,13 +134,39 @@ public class BiomeProfileDirectory {
 			visitor.leaveDirectory();
 		}
 	}
+	
+	private File[] getBiomeProfileFileList(File directory) {
+		FilenameFilter filter = new FilenameFilter() {
+		    @Override
+		    public boolean accept(File dir, String name) {
+		        return name.toLowerCase().endsWith("." + profileFileExtension);
+		    }
+		};		
+		return directory.listFiles(filter);		
+	}
 
+	private BiomeProfile createFromName(String name) {
+		// Unfortunately we can't assume the name matches the file name,
+		// so load every biome file until we find the right one.
+		
+		for (File file : getBiomeProfileFileList(root)) {
+			if (file.isFile()) {
+				BiomeProfile profile = createFromFile(file);
+				if (profile != null && profile.getName().equals(name)) {
+					return profile;				
+				}
+			}
+		}
+		return null;		
+	}
+	
+	
 	private BiomeProfile createFromFile(File file) {
 		BiomeProfile profile = null;
 		if (file.exists() && file.isFile()) {
 			try {
 				profile = JsonReader.readLocation(file, biomeProfileImpl);
-				profile.validate();
+				if (!profile.validate()) throw new FormatException("validate() failed");
 			} catch (IOException | FormatException e) {
 				AmidstLogger.warn(e, "Unable to load file: " + file);
 			}

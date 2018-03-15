@@ -111,7 +111,7 @@ public class PerApplicationInjector {
 		
 		// Switch the biomeProfileDirectory to use profiles for this game engine
 		GameEngineDetails currentGameEngine = runningLauncherProfile.getGameEngineDetails();		
-		biomeAuthority.selectGameEngine(currentGameEngine);
+		biomeAuthority.selectGameEngine(currentGameEngine, settings);
 		
 		return new PerMainWindowInjector(
 				application,

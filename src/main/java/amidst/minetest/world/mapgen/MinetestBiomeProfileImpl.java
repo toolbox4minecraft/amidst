@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
@@ -22,20 +23,9 @@ import amidst.settings.biomeprofile.BiomeProfile;
  * Minetest-specific BiomeProfile, for the biome details Minetest needs
  */
 @Immutable
-public class MinetestBiomeProfileImpl implements BiomeProfile{
-	private static List<MinetestBiome> createDefaultColorMap() {
-		List<MinetestBiome> result = new ArrayList<MinetestBiome>();
-		for (MinetestBiome biome : DefaultBiomes_v7.getDefaultBiomeSet()) {
-			if (biome != MinetestBiome.NONE) result.add(biome);
-		}
-		return result;
-	}
+public class MinetestBiomeProfileImpl implements BiomeProfile {
 
-	public static BiomeProfile getDefaultProfile() {
-		return DEFAULT_PROFILE;
-	}
-
-	private static final BiomeProfile DEFAULT_PROFILE = new MinetestBiomeProfileImpl("default", null, createDefaultColorMap());
+	private static List<BiomeProfile> defaultProfiles = null;
 
 	private volatile String name;
 	private volatile String shortcut;
@@ -45,6 +35,31 @@ public class MinetestBiomeProfileImpl implements BiomeProfile{
 	 * A cached abstract version of biomeList which we expose, and which doesn't 
 	 * include MinetestBiome.NONE */ 
 	private List<IBiome> allBiomes = null;
+	
+	private static List<MinetestBiome> createDefaultColorMap(MinetestBiome[] biomeSet) {
+		List<MinetestBiome> result = new ArrayList<MinetestBiome>();
+		for (MinetestBiome biome : biomeSet) {
+			if (biome != MinetestBiome.NONE) result.add(biome);
+		}
+		return result;
+	}
+
+	/**
+	 * All BiomeProfile classes MUST implement a static function getDefaultProfiles()
+	 * which returns one or more instances of that class.
+	 * It will be invoked via reflection.
+	 */
+	public static Collection<BiomeProfile> getDefaultProfiles() {
+		if (defaultProfiles == null) {
+			defaultProfiles = new ArrayList<>();
+			for(Entry<String, MinetestBiome[]> entry : DefaultBiomes_v7.getDefaultBiomeSets().entrySet()) {
+				defaultProfiles.add(
+					new MinetestBiomeProfileImpl(entry.getKey(), null, createDefaultColorMap(entry.getValue()))
+				);
+			}
+		}
+		return defaultProfiles;
+	}
 	
 	private List<IBiome> getAllBiomes() {
 		if (allBiomes == null) {

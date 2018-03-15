@@ -39,6 +39,7 @@ public class AmidstSettings {
 	public final Setting<Boolean> showDebug;
 
 	public final Setting<String> lastProfile;
+	public final Setting<String> lastBiomeProfile;
 	public final Setting<String> worldType;
 
 	/**
@@ -74,8 +75,9 @@ public class AmidstSettings {
 		showDebug                  = Settings.createBoolean(  preferences, "showDebug",            false);
 	
 		lastProfile                = Settings.createString(   preferences, "profile",              "");
+		lastBiomeProfile           = Settings.createString(   preferences, "biomeProfile",         "");
 		worldType                  = Settings.createString(   preferences, "worldType",            WorldType.PROMPT_EACH_TIME);
-		biomeProfileSelection = new BiomeProfileSelection(BiomeProfileImpl.getDefaultProfile());
+		biomeProfileSelection = new BiomeProfileSelection(BiomeProfileImpl.getDefaultProfiles().iterator().next());
 		// @formatter:on
 	}
 }

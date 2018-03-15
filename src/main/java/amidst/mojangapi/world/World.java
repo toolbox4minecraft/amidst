@@ -39,6 +39,46 @@ public class World {
 	private final WorldIconProducer<Void> netherFortressProducer;
 	private final WorldIconProducer<List<EndIsland>> endCityProducer;
 
+	/**
+	 * Constructor for Minetest worlds
+	 */
+	public World(
+			Consumer<World> onDisposeWorld,
+			WorldSeed worldSeed,
+			WorldType worldType,
+			MovablePlayerList movablePlayerList,
+			RecognisedVersion recognisedVersion,
+			IVersionFeatures versionFeatures,
+			IBiomeDataOracle biomeDataOracle,
+			CachedWorldIconProducer spawnProducer,
+			WorldIconProducer<Void> dungeonProducer) {
+		
+		// Constructor for Minetest maps
+		this.onDisposeWorld         = onDisposeWorld;
+		this.worldSeed              = worldSeed;
+		this.worldType              = worldType;
+		this.generatorOptions       = "";
+		this.movablePlayerList      = movablePlayerList;
+		this.recognisedVersion      = recognisedVersion;
+		this.versionFeatures        = versionFeatures;
+		this.biomeDataOracle        = biomeDataOracle;
+		this.endIslandOracle        = null;
+		this.slimeChunkOracle       = null;
+		this.spawnProducer          = spawnProducer;
+		this.strongholdProducer     = null;
+		this.playerProducer         = null;
+		this.villageProducer        = null;
+		this.templeProducer         = dungeonProducer;
+		this.mineshaftProducer      = null;
+		this.oceanMonumentProducer  = null;
+		this.netherFortressProducer = null;
+		this.endCityProducer        = null;
+	}
+
+	
+	/**
+	 * Constructor for Minecraft worlds
+	 */
 	public World(
 			Consumer<World> onDisposeWorld,
 			WorldSeed worldSeed,
@@ -59,6 +99,8 @@ public class World {
 			WorldIconProducer<Void> oceanMonumentProducer,
 			WorldIconProducer<Void> netherFortressProducer,
 			WorldIconProducer<List<EndIsland>> endCityProducer) {
+		
+		// Constructor for Minecraft maps		
 		this.onDisposeWorld = onDisposeWorld;
 		this.worldSeed = worldSeed;
 		this.worldType = worldType;

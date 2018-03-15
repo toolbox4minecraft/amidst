@@ -1,6 +1,7 @@
 package amidst.minetest.world.oracle;
 
 import java.util.Collection;
+import java.util.Map.Entry;
 
 import amidst.documentation.Immutable;
 import amidst.fragment.IBiomeDataOracle;
@@ -72,7 +73,9 @@ public class BiomeDataOracle implements IBiomeDataOracle, BiomeProfileUpdateList
 		
 		if (biomeProfileSelection == null) {
 			AmidstLogger.warn("BiomeDataOracle running with default BiomeProfile which is not connected with the biomes the GUI will display");
-			this.biomeProfile = (MinetestBiomeProfileImpl)MinetestBiomeProfileImpl.getDefaultProfile();
+			this.biomeProfile = (MinetestBiomeProfileImpl)MinetestBiomeProfileImpl.getDefaultProfiles()
+					.iterator()
+					.next();
 		} else {
 			this.biomeProfile = biomeProfileSelection.getCurrentBiomeProfile();
 			biomeProfileSelection.addUpdateListener(this);			
