@@ -61,11 +61,11 @@ public class LayersMenu {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createDimensionLayers(Dimension dimension) {
-		if (viewerFacade.hasLayer(LayerIds.MINETEST_OCEAN)) {
+		if (!viewerFacade.hasLayer(LayerIds.SLIME)) {
+			// Minetest doesn't have a slime layer (all Minecraft versions do)
 			createAllDimensions();
 			menu.addSeparator();
 			createMinetestLayers(dimension);
-			createEnableAllLayersIfNecessary();
 		
 		} else if (viewerFacade.hasLayer(LayerIds.END_ISLANDS)) {
 			createAllDimensions();
@@ -105,10 +105,13 @@ public class LayersMenu {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createMinetestLayers(Dimension dimension) {
 		// @formatter:off
+		// Dungeons and spawn don't work yet
+		//overworldLayer(settings.showSpawn,                "Spawn Location Icon",    getIcon("spawn.png"),           MenuShortcuts.SHOW_WORLD_SPAWN,       dimension, LayerIds.SPAWN);
+		//overworldLayer(settings.showTemples,              "Dungeons",               getIcon("jungle.png"),          MenuShortcuts.SHOW_TEMPLES,            dimension, LayerIds.MINETEST_DUNGEON);
+		
 		overworldLayer(settings.showMinetestRivers,       "Rivers",                 getIcon("rivers.png"),          MenuShortcuts.SHOW_MINETEST_RIVERS,    dimension, LayerIds.MINETEST_RIVER);
 		overworldLayer(settings.showMinetestOceans,       "Oceans",                 getIcon("oceans.png"),          MenuShortcuts.SHOW_MINETEST_OCEANS,    dimension, LayerIds.MINETEST_OCEAN);
 		overworldLayer(settings.showMinetestMountains,    "Mountains",              getIcon("mountains.png"),       MenuShortcuts.SHOW_MINETEST_MOUNTAINS, dimension, LayerIds.MINETEST_MOUNTAIN);
-		overworldLayer(settings.showTemples,              "Dungeons",               getIcon("jungle.png"),          MenuShortcuts.SHOW_TEMPLES,            dimension, LayerIds.MINETEST_DUNGEON);
 		// @formatter:on
 	}
 	

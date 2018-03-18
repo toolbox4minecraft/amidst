@@ -30,6 +30,16 @@ public class ListVersionFeatureBuilder<V> {
 		return init(Arrays.asList(defaultValues));
 	}
 
+	@SafeVarargs
+	public final ListVersionFeatureBuilder<V> initExtend(V... additionalDefaultValues) {
+		if (this.defaultValue == null) {
+			throw new IllegalStateException("you need to specify an init value before initExtend");
+		} else {
+			this.defaultValue = concat(this.defaultValue, Arrays.asList(additionalDefaultValues));
+			return this;
+		}
+	}
+	
 	public ListVersionFeatureBuilder<V> init(List<V> defaultValue) {
 		if (this.defaultValue == null) {
 			this.defaultValue = defaultValue;

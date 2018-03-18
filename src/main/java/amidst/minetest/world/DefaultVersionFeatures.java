@@ -1,6 +1,9 @@
 package amidst.minetest.world;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +13,7 @@ import amidst.fragment.layer.LayerIds;
 import amidst.gameengineabstraction.world.WorldTypes;
 import amidst.gameengineabstraction.world.versionfeatures.IVersionFeatures;
 import amidst.gameengineabstraction.world.versionfeatures.VersionFeaturesFactory;
+import amidst.logging.AmidstLogger;
 import amidst.minetest.world.mapgen.MapgenParams;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
@@ -20,23 +24,34 @@ import amidst.settings.biomeprofile.BiomeProfileSelection;
 @Immutable
 public class DefaultVersionFeatures implements VersionFeaturesFactory {
 
-	private final VersionFeature<List<Integer>> enabledLayers;
+	private final Map<WorldType, VersionFeature<List<Integer>>> enabledLayers;
 	private final WorldTypes worldTypes;
 	private final VersionFeature<Map<WorldType, TriFunction<Long, MapgenParams, BiomeProfileSelection, IBiomeDataOracle>>> biomeDataOracle;
 	
 	@Override
-	public IVersionFeatures create(RecognisedVersion version) {
+	public IVersionFeatures create(RecognisedVersion version) {		
+		return create(null, version);
+	}
+
+	@Override
+	public IVersionFeatures create(WorldType worldType, RecognisedVersion version) {
+		
+		if (!enabledLayers.containsKey(worldType)) {
+			if (worldType != null) AmidstLogger.error("DefaultVersionFeatures asked for unknown worldtype: " + worldType);
+			// Default to a worldtype that is known			
+			worldType = WorldType.V7; // V7 exposes all layers
+		}
 		
 		return new MinetestVersionFeatures(			
-				enabledLayers.getValue(version),
+				enabledLayers.get(worldType).getValue(version),
 				worldTypes, 
 				biomeDataOracle.getValue(version));
 	}
-
+	
 
 	public DefaultVersionFeatures() {
 		// @formatter:off
-
+		
 		this.worldTypes = new WorldTypes(
 				new WorldType[]{
 						//WorldType.CARPATHIAN,
@@ -48,18 +63,58 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 				}
 		);
 		
-		this.enabledLayers = VersionFeature.<Integer> listBuilder()
-				.init(
-						LayerIds.ALPHA,
-						LayerIds.BIOME_DATA,
-						LayerIds.BACKGROUND,
-						LayerIds.GRID,
+		List<Integer> commonLayers = Arrays.asList(new Integer[] {
+				LayerIds.ALPHA,
+				LayerIds.BIOME_DATA,
+				LayerIds.BACKGROUND,
+				LayerIds.GRID
+		});
+		
+		enabledLayers = new HashMap<WorldType, VersionFeature<List<Integer>>>();
+		enabledLayers.put(WorldType.CARPATHIAN,
+				VersionFeature.<Integer> listBuilder()
+				.init(commonLayers)
+				.initExtend(
 						LayerIds.MINETEST_OCEAN,
 						LayerIds.MINETEST_RIVER,
-						LayerIds.MINETEST_MOUNTAIN,
-						LayerIds.MINETEST_DUNGEON
-				).construct();
-		
+						LayerIds.MINETEST_MOUNTAIN
+				).construct()
+		);
+		enabledLayers.put(WorldType.V7,
+				VersionFeature.<Integer> listBuilder()
+				.init(commonLayers)
+				.initExtend(
+						LayerIds.MINETEST_OCEAN,
+						LayerIds.MINETEST_RIVER,
+						LayerIds.MINETEST_MOUNTAIN
+				).construct()
+		);
+		enabledLayers.put(WorldType.V6,
+				VersionFeature.<Integer> listBuilder()
+				.init(commonLayers)
+				.initExtend(
+						LayerIds.MINETEST_OCEAN,
+						LayerIds.MINETEST_MOUNTAIN
+				).construct()
+		);
+		enabledLayers.put(WorldType.V5,
+				VersionFeature.<Integer> listBuilder()
+				.init(commonLayers)
+				.initExtend(
+						LayerIds.MINETEST_OCEAN
+				).construct()
+		);
+		enabledLayers.put(WorldType.FLAT,
+				VersionFeature.<Integer> listBuilder()
+				.init(commonLayers)
+				.construct()
+		);
+		enabledLayers.put(WorldType.FRACTAL,
+				VersionFeature.<Integer> listBuilder()
+				.init(commonLayers)
+				.construct()
+		);
+				
 		// This stuff will be hard to wrap your head around, just follow the pattern.
 		// It had to be this way because of how VersionFeatures for Minecraft are handled
 		this.biomeDataOracle = VersionFeature.<WorldType, TriFunction<Long, MapgenParams, BiomeProfileSelection, IBiomeDataOracle>> mapBuilder()

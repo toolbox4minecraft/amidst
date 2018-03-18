@@ -7,6 +7,7 @@ import java.util.function.Function;
 import amidst.documentation.Immutable;
 import amidst.fragment.layer.LayerIds;
 import amidst.gameengineabstraction.world.WorldTypes;
+import amidst.gameengineabstraction.world.versionfeatures.IVersionFeatures;
 import amidst.gameengineabstraction.world.versionfeatures.VersionFeaturesFactory;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
@@ -175,6 +176,13 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 		// @formatter:on
 	}
 	
+	
+	@Override
+	public IVersionFeatures create(WorldType worldtype,	RecognisedVersion version) {
+		// WorldType doesn't make a difference in Minecraft
+		return create(version);
+	}
+	
 	@Override
 	public VersionFeatures create(RecognisedVersion version) {
 
@@ -195,7 +203,14 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 	// Made static for now, to reduce the amount of refactoring required in
 	// the minecraft code.
 	public static WorldTypes getWorldTypes() {
-		return new WorldTypes(new WorldType[]{WorldType.DEFAULT, WorldType.FLAT, WorldType.LARGE_BIOMES, WorldType.AMPLIFIED});
+		return new WorldTypes(
+			new WorldType[]{
+				WorldType.DEFAULT, 
+				WorldType.FLAT, 
+				WorldType.LARGE_BIOMES, 
+				WorldType.AMPLIFIED
+			}
+		);
 	}
 
 	private List<Biome> getValidBiomesForStrongholdSinceV13w36a() {

@@ -85,6 +85,7 @@ public class WorldBuilder {
 		IVersionFeatures versionFeatures = gameCodeInterface
 				.getGameEngineDetails()
 				.getVersionFeatures(
+						worldType,
 						gameCodeInterface.getRecognisedVersion()
 				); 
 		
