@@ -13,15 +13,17 @@ import amidst.dependency.injection.Factory2;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gameengineabstraction.GameEngineDetails;
+import amidst.gameengineabstraction.file.IGameInstallation;
+import amidst.gameengineabstraction.world.WorldTypes;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.menu.AmidstMenuBuilder;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcher;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.mojangapi.RunningLauncherProfile;
-import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.world.World;
-import amidst.settings.biomeprofile.BiomeProfileDirectory;
+import amidst.settings.biomeprofile.BiomeAuthority;
 import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
@@ -52,25 +54,33 @@ public class PerMainWindowInjector {
 	private final Actions actions;
 	private final AmidstMenu menuBar;
 	private final MainWindow mainWindow;
+	private final GameEngineDetails gameEngineDetails;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public PerMainWindowInjector(
 			Application application,
 			AmidstMetaData metadata,
 			AmidstSettings settings,
-			MinecraftInstallation minecraftInstallation,
+			IGameInstallation gameInstallation,
 			RunningLauncherProfile runningLauncherProfile,
-			BiomeProfileDirectory biomeProfileDirectory,
+			BiomeAuthority biomeAuthority,
 			Factory2<World, Actions, ViewerFacade> viewerFacadeFactory,
 			ThreadMaster threadMaster) {
+				
 		this.viewerFacadeFactory = viewerFacadeFactory;
-		this.versionString = createVersionString(metadata, runningLauncherProfile);
+		this.versionString = createVersionString(metadata, runningLauncherProfile);		
+		this.gameEngineDetails = runningLauncherProfile.getGameEngineDetails();
+		
+		WorldTypes worldTypes = gameEngineDetails
+				.getVersionFeatures(runningLauncherProfile.getRecognisedVersion())
+				.getWorldTypes();
+		
 		this.frame = new JFrame();
 		this.contentPane = frame.getContentPane();
 		this.viewerFacadeReference = new AtomicReference<>();
 		this.dialogs = new MainWindowDialogs(settings, runningLauncherProfile, frame);
 		this.worldSwitcher = new WorldSwitcher(
-				minecraftInstallation,
+				gameInstallation,
 				runningLauncherProfile,
 				this::createViewerFacade,
 				threadMaster,
@@ -84,7 +94,8 @@ public class PerMainWindowInjector {
 					dialogs,
 					runningLauncherProfile.createSilentPlayerlessCopy(),
 					threadMaster.getWorkerExecutor());
-			this.seedSearcherWindow = new SeedSearcherWindow(metadata, dialogs, worldSwitcher, seedSearcher);
+			
+			this.seedSearcherWindow = new SeedSearcherWindow(metadata, dialogs, worldSwitcher, seedSearcher, worldTypes);
 		} else {
 			this.seedSearcher = null;
 			this.seedSearcherWindow = null;
@@ -95,8 +106,9 @@ public class PerMainWindowInjector {
 				worldSwitcher,
 				seedSearcherWindow,
 				viewerFacadeReference::get,
-				settings.biomeProfileSelection);
-		this.menuBar = new AmidstMenuBuilder(settings, actions, biomeProfileDirectory).construct();
+				biomeAuthority,
+				gameEngineDetails);
+		this.menuBar = new AmidstMenuBuilder(settings, actions, biomeAuthority, worldTypes).construct();
 		this.mainWindow = new MainWindow(frame, worldSwitcher, seedSearcherWindow);
 		this.mainWindow.initializeFrame(metadata, versionString, actions, menuBar);
 	}

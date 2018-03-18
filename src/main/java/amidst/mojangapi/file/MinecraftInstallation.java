@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import amidst.documentation.Immutable;
+import amidst.gameengineabstraction.file.IGameInstallation;
+import amidst.gameengineabstraction.file.IUnresolvedLauncherProfile;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
 import amidst.mojangapi.file.directory.SaveDirectory;
@@ -19,7 +21,7 @@ import amidst.parsing.FormatException;
 import amidst.parsing.json.JsonReader;
 
 @Immutable
-public class MinecraftInstallation {
+public class MinecraftInstallation implements IGameInstallation {
 	public static MinecraftInstallation newCustomMinecraftInstallation(
 			File libraries,
 			File saves,
@@ -60,13 +62,13 @@ public class MinecraftInstallation {
 		return result;
 	}
 
-	public List<UnresolvedLauncherProfile> readLauncherProfiles() throws FormatException, IOException {
+	public List<IUnresolvedLauncherProfile> readLauncherProfiles() throws FormatException, IOException {
 		return dotMinecraftDirectoryService
 				.readLauncherProfilesFrom(dotMinecraftDirectory)
 				.getProfiles()
 				.values()
 				.stream()
-				.map(p -> new UnresolvedLauncherProfile(dotMinecraftDirectory, p))
+				.map(p -> (IUnresolvedLauncherProfile)new UnresolvedLauncherProfile(dotMinecraftDirectory, p))
 				.collect(Collectors.toList());
 	}
 

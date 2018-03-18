@@ -30,6 +30,16 @@ public class ListVersionFeatureBuilder<V> {
 		return init(Arrays.asList(defaultValues));
 	}
 
+	@SafeVarargs
+	public final ListVersionFeatureBuilder<V> initExtend(V... additionalDefaultValues) {
+		if (this.defaultValue == null) {
+			throw new IllegalStateException("you need to specify an init value before initExtend");
+		} else {
+			this.defaultValue = concat(this.defaultValue, Arrays.asList(additionalDefaultValues));
+			return this;
+		}
+	}
+	
 	public ListVersionFeatureBuilder<V> init(List<V> defaultValue) {
 		if (this.defaultValue == null) {
 			this.defaultValue = defaultValue;
@@ -40,8 +50,8 @@ public class ListVersionFeatureBuilder<V> {
 	}
 
 	@SafeVarargs
-	public final ListVersionFeatureBuilder<V> exact(RecognisedVersion since, V... values) {
-		return since(since, Arrays.asList(values));
+	public final ListVersionFeatureBuilder<V> exact(RecognisedVersion version, V... values) {
+		return exact(version, Arrays.asList(values));
 	}
 
 	public ListVersionFeatureBuilder<V> exact(RecognisedVersion version, List<V> value) {

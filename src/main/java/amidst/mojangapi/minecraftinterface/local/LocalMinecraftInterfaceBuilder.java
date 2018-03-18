@@ -11,9 +11,12 @@ import amidst.clazz.symbolic.SymbolicClassGraphCreationException;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
+import amidst.gameengineabstraction.GameEngineDetails;
+import amidst.gameengineabstraction.GameEngineType;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.settings.biomeprofile.BiomeProfileImpl;
 
 @Immutable
 public class LocalMinecraftInterfaceBuilder {
@@ -38,7 +41,13 @@ public class LocalMinecraftInterfaceBuilder {
 					symbolicClassMap.get(SymbolicNames.CLASS_GEN_LAYER),
 					symbolicClassMap.get(SymbolicNames.CLASS_WORLD_TYPE),
 					symbolicClassMap.get(SymbolicNames.CLASS_GEN_OPTIONS_FACTORY),
-					recognisedVersion);
+					recognisedVersion,
+					new GameEngineDetails(
+							GameEngineType.MINECRAFT,
+							new amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures(),
+							BiomeProfileImpl.class
+					)
+			);
 		} catch (
 				ClassNotFoundException
 				| JarFileParsingException

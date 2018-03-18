@@ -31,6 +31,7 @@ import amidst.gui.main.viewer.widget.WidgetManager;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.export.WorldExporter;
 import amidst.mojangapi.world.export.WorldExporterConfiguration;
+import amidst.settings.biomeprofile.BiomeAuthority;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -41,7 +42,7 @@ public class PerViewerFacadeInjector {
 			FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator,
 			Zoom zoom,
-			BiomeSelection biomeSelection,
+			BiomeAuthority biomeAuthority,
 			WorldIconSelection worldIconSelection,
 			LayerReloader layerReloader,
 			FragmentManager fragmentManager,
@@ -56,9 +57,9 @@ public class PerViewerFacadeInjector {
 				new SeedAndWorldTypeWidget( CornerAnchorPoint.TOP_LEFT,      world.getWorldSeed(), world.getWorldType()),
 				new SelectedIconWidget(     CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
 				new DebugWidget(            CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, settings.showDebug, accelerationCounter),
-				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension),
-				new BiomeToggleWidget(      CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection,    layerReloader),
-				new BiomeWidget(            CornerAnchorPoint.NONE,          biomeSelection,    layerReloader,   settings.biomeProfileSelection)
+				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension, biomeAuthority),
+				new BiomeToggleWidget(      CornerAnchorPoint.BOTTOM_RIGHT,  biomeAuthority.getBiomeSelection(),    layerReloader),
+				new BiomeWidget(            CornerAnchorPoint.NONE,          biomeAuthority,    layerReloader,   settings.biomeProfileSelection)
 		);
 		// @formatter:on
 	}
@@ -88,7 +89,7 @@ public class PerViewerFacadeInjector {
 			Zoom zoom,
 			LayerBuilder layerBuilder,
 			FragmentManager fragmentManager,
-			BiomeSelection biomeSelection,
+			BiomeAuthority biomeAuthority,
 			World world,
 			Actions actions) {
 		this.workerExecutor = workerExecutor;
@@ -97,7 +98,8 @@ public class PerViewerFacadeInjector {
 		this.movement = new Movement(settings.smoothScrolling);
 		this.worldIconSelection = new WorldIconSelection();
 		this.layerManager = layerBuilder
-				.create(settings, world, biomeSelection, worldIconSelection, zoom, accelerationCounter);
+				.create(settings, world, biomeAuthority.getBiomeSelection(), worldIconSelection, zoom, accelerationCounter);
+		biomeAuthority.setLayerManager(layerManager);
 		this.graph = new FragmentGraph(layerManager.getDeclarations(), fragmentManager);
 		this.translator = new FragmentGraphToScreenTranslator(graph, zoom);
 		this.fragmentQueueProcessor = fragmentManager.createQueueProcessor(layerManager, settings.dimension);
@@ -108,7 +110,7 @@ public class PerViewerFacadeInjector {
 				graph,
 				translator,
 				zoom,
-				biomeSelection,
+				biomeAuthority,
 				worldIconSelection,
 				layerReloader,
 				fragmentManager,

@@ -25,6 +25,12 @@ public class LayerIds {
 	public static final int WOODLAND_MANSION     = 13; 
 	public static final int NETHER_FORTRESS      = 14;
 	public static final int END_CITY             = 15;
-	public static final int NUMBER_OF_LAYERS     = 16;
+		
+	public static final int MINETEST_RIVER       = 16;
+	public static final int MINETEST_OCEAN       = 17;
+	public static final int MINETEST_MOUNTAIN    = 18;
+	public static final int MINETEST_DUNGEON     = 19;
+			
+	public static final int NUMBER_OF_LAYERS     = 20;	
 	// @formatter:on
 }

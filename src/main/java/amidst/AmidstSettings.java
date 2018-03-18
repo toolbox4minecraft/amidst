@@ -9,7 +9,7 @@ import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
 import amidst.settings.Setting;
 import amidst.settings.Settings;
-import amidst.settings.biomeprofile.BiomeProfile;
+import amidst.settings.biomeprofile.BiomeProfileImpl;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @ThreadSafe
@@ -27,6 +27,9 @@ public class AmidstSettings {
 	public final Setting<Boolean> showWoodlandMansions;
 	public final Setting<Boolean> showNetherFortresses;
 	public final Setting<Boolean> showEndCities;
+	public final Setting<Boolean> showMinetestRivers;	
+	public final Setting<Boolean> showMinetestOceans;	
+	public final Setting<Boolean> showMinetestMountains;	
 	public final Setting<Boolean> enableAllLayers;
 
 	public final Setting<Boolean> smoothScrolling;
@@ -37,6 +40,7 @@ public class AmidstSettings {
 	public final Setting<Boolean> showDebug;
 
 	public final Setting<String> lastProfile;
+	public final Setting<String> lastBiomeProfile;
 	public final Setting<String> worldType;
 
 	/**
@@ -60,6 +64,9 @@ public class AmidstSettings {
 		showWoodlandMansions       = Settings.createBoolean(  preferences, "woodlandMansionIcons", true);
 		showNetherFortresses       = Settings.createBoolean(  preferences, "netherFortressIcons",  false);
 		showEndCities              = Settings.createBoolean(  preferences, "endCityIcons",         false);
+		showMinetestRivers         = Settings.createBoolean(  preferences, "minetestRivers",       true);
+		showMinetestOceans         = Settings.createBoolean(  preferences, "minetestOceans",       true);
+		showMinetestMountains      = Settings.createBoolean(  preferences, "minetestMountains",    false);
 		enableAllLayers            = Settings.createBoolean(  preferences, "enableAllLayers",      false);
 		
 		smoothScrolling            = Settings.createBoolean(  preferences, "mapFlicking",          true);
@@ -70,8 +77,9 @@ public class AmidstSettings {
 		showDebug                  = Settings.createBoolean(  preferences, "showDebug",            false);
 	
 		lastProfile                = Settings.createString(   preferences, "profile",              "");
+		lastBiomeProfile           = Settings.createString(   preferences, "biomeProfile",         "");
 		worldType                  = Settings.createString(   preferences, "worldType",            WorldType.PROMPT_EACH_TIME);
-		biomeProfileSelection = new BiomeProfileSelection(BiomeProfile.getDefaultProfile());
+		biomeProfileSelection = new BiomeProfileSelection(BiomeProfileImpl.getDefaultProfiles().iterator().next());
 		// @formatter:on
 	}
 }

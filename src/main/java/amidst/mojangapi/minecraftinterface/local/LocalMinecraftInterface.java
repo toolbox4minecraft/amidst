@@ -6,6 +6,7 @@ import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.ThreadSafe;
+import amidst.gameengineabstraction.GameEngineDetails;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
@@ -41,7 +42,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass genLayerClass;
 	private final SymbolicClass worldTypeClass;
 	private final SymbolicClass genOptionsFactoryClass;
-	private final RecognisedVersion recognisedVersion;
+	private final RecognisedVersion recognisedVersion;	
+	private final GameEngineDetails engineDetails;		
 
 	LocalMinecraftInterface(
 			SymbolicClass intCacheClass,
@@ -49,13 +51,15 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			SymbolicClass genLayerClass,
 			SymbolicClass worldTypeClass,
 			SymbolicClass genOptionsFactoryClass,
-			RecognisedVersion recognisedVersion) {
+			RecognisedVersion recognisedVersion,
+			GameEngineDetails engineDetails) {
 		this.intCacheClass = intCacheClass;
 		this.blockInitClass = blockInitClass;
 		this.genLayerClass = genLayerClass;
 		this.worldTypeClass = worldTypeClass;
 		this.genOptionsFactoryClass = genOptionsFactoryClass;
-		this.recognisedVersion = recognisedVersion;
+		this.recognisedVersion = recognisedVersion;		
+		this.engineDetails = engineDetails;
 	}
 
 	@Override
@@ -147,4 +151,9 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	public RecognisedVersion getRecognisedVersion() {
 		return recognisedVersion;
 	}
+	
+	@Override
+	public GameEngineDetails getGameEngineDetails() {
+		return engineDetails;
+	}			
 }

@@ -60,7 +60,7 @@ public class AmidstVersion {
 	}
 
 	public String createLongVersionString() {
-		return "Amidst " + createVersionString();
+		return FeatureToggles.MINETEST_SUPPORT ? "Amidstest " : "Amidst "; 
 	}
 
 	public String createVersionString() {

@@ -38,7 +38,8 @@ public class FakeWorldBuilder {
 				realMinecraftInterface,
 				NOOP,
 				worldDeclaration.getWorldSeed(),
-				worldDeclaration.getWorldType());
+				worldDeclaration.getWorldType(),
+				null);
 	}
 
 	public World createFakeWorld(TestWorldDirectory worldDeclaration) throws MinecraftInterfaceException {
@@ -59,11 +60,15 @@ public class FakeWorldBuilder {
 			WorldMetadataJson worldMetadata,
 			BiomeDataJson quarterBiomeData,
 			BiomeDataJson fullBiomeData) throws MinecraftInterfaceException {
+		
+		FakeMinecraftInterface fakeMinecraftInterface = createFakeMinecraftInterface(worldMetadata, quarterBiomeData, fullBiomeData);
+		
 		return builder.fromSeed(
-				createFakeMinecraftInterface(worldMetadata, quarterBiomeData, fullBiomeData),
+				fakeMinecraftInterface,
 				NOOP,
-				WorldSeed.fromUserInput(worldMetadata.getSeed() + ""),
-				worldMetadata.getWorldType());
+				WorldSeed.fromUserInput(worldMetadata.getSeed() + "", fakeMinecraftInterface.getGameEngineDetails().getType()),
+				worldMetadata.getWorldType(),
+				null);
 	}
 
 	private static FakeMinecraftInterface createFakeMinecraftInterface(

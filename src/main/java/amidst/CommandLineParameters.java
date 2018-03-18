@@ -11,6 +11,9 @@ import amidst.documentation.ThreadSafe;
 @ThreadSafe
 public class CommandLineParameters {
 	// @formatter:off
+	@Option(name = "-mtpath",                 usage = "location of the minetest directory.",                 metaVar = "<directory>")
+	public volatile String minetestDirectory;
+	
 	@Option(name = "-mcpath",                 usage = "location of the '.minecraft' directory.",             metaVar = "<directory>")
 	public volatile String dotMinecraftDirectory;
 

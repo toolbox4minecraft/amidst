@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import amidst.documentation.Immutable;
+import amidst.gameengineabstraction.GameEngineType;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
@@ -79,7 +80,7 @@ public enum TestWorldDeclaration {
 			WorldType worldType,
 			String... supported) {
 		this.recognisedVersion = recognisedVersion;
-		this.worldSeed = WorldSeed.fromUserInput(seed);
+		this.worldSeed = WorldSeed.fromUserInput(seed, GameEngineType.MINECRAFT);
 		this.worldType = worldType;
 		this.supportedEntryNames = Collections.unmodifiableList(Arrays.asList(supported));
 		this.directory = Paths.get(

@@ -1,5 +1,6 @@
 package amidst.gui.main.viewer;
 
+import java.security.InvalidParameterException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import amidst.documentation.ThreadSafe;
@@ -23,6 +24,12 @@ public class BiomeSelection {
 	}
 
 	public boolean isSelected(int id) {
+		if (id >= selectedBiomes.length) {
+			throw new InvalidParameterException("BiomeSelection requires refactoring - biome id greater than " + (selectedBiomes.length - 1) + " was requested!");
+		} else if (id < 0) {
+			// Less then zero indicates Unknown/NONE, which biome oracles are allowed to return.
+			return false;
+		}
 		return !isHighlightMode.get() || selectedBiomes[id].get();
 	}
 
@@ -35,7 +42,13 @@ public class BiomeSelection {
 	}
 
 	public void toggle(int id) {
-		toggle(selectedBiomes[id]);
+		if (id >= selectedBiomes.length) {
+			throw new InvalidParameterException("BiomeSelection requires refactoring - biome id greater than " + (selectedBiomes.length - 1) + " was requested!");
+		} else if (id >= 0) {
+			// Biome isn't Invalid/NONE 
+			// (less then zero indicates Unknown/NONE, which biome oracles are allowed to return))
+			toggle(selectedBiomes[id]);
+		}
 	}
 
 	private void setAll(boolean value) {

@@ -59,7 +59,7 @@ public class ImageLoader extends FragmentLoader {
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private void drawToCache(Dimension dimension, Fragment fragment, long cornerX, long cornerY) {
+	private void drawToCache(Dimension dimension, Fragment fragment, long cornerX, long cornerY) {		
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
 				int index = getCacheIndex(x, y);

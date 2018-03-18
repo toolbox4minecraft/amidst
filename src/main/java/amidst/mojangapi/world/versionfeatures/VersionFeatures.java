@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.function.Function;
 
 import amidst.documentation.Immutable;
+import amidst.gameengineabstraction.world.WorldTypes;
+import amidst.gameengineabstraction.world.versionfeatures.IVersionFeatures;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Base;
@@ -11,8 +13,9 @@ import amidst.mojangapi.world.icon.producer.StrongholdProducer_Base;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @Immutable
-public class VersionFeatures {
+public class VersionFeatures implements IVersionFeatures {
 	private final List<Integer> enabledLayers;
+	private final WorldTypes worldTypes;
 	private final List<Biome> validBiomesForStructure_Spawn;
 	private final List<Biome> validBiomesAtMiddleOfChunk_Stronghold;
 	private final TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base> strongholdProducerFactory;
@@ -26,6 +29,7 @@ public class VersionFeatures {
 
 	public VersionFeatures(
 			List<Integer> enabledLayers,
+			WorldTypes worldTypes,
 			List<Biome> validBiomesForStructure_Spawn,
 			List<Biome> validBiomesAtMiddleOfChunk_Stronghold,
 			TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base> strongholdProducerFactory,
@@ -37,6 +41,7 @@ public class VersionFeatures {
 			List<Biome> validBiomesForStructure_OceanMonument,
 			List<Biome> validBiomesForStructure_WoodlandMansion) {
 		this.enabledLayers = enabledLayers;
+		this.worldTypes= worldTypes;
 		this.validBiomesForStructure_Spawn = validBiomesForStructure_Spawn;
 		this.validBiomesAtMiddleOfChunk_Stronghold = validBiomesAtMiddleOfChunk_Stronghold;
 		this.strongholdProducerFactory = strongholdProducerFactory;
@@ -49,6 +54,12 @@ public class VersionFeatures {
 		this.validBiomesForStructure_WoodlandMansion = validBiomesForStructure_WoodlandMansion;
 	}
 
+	@Override
+	public WorldTypes getWorldTypes() {
+		return worldTypes;
+	}
+	
+	@Override
 	public boolean hasLayer(int layerId) {
 		return enabledLayers.contains(layerId);
 	}

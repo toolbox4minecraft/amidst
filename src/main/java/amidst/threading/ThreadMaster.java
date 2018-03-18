@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
+import amidst.logging.AmidstLogger;
 
 @ThreadSafe
 public class ThreadMaster {
@@ -91,7 +92,11 @@ public class ThreadMaster {
 			@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 			@Override
 			public void run() {
-				onFragmentLoadTick.run();
+				try {
+					onFragmentLoadTick.run();
+				} catch (Exception e) {
+					AmidstLogger.error("Error in fragment loader thread: " + e.getMessage());
+				}
 			}
 		}, 0, 20, TimeUnit.MILLISECONDS);
 	}

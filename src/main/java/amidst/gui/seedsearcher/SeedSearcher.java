@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gameengineabstraction.GameEngineType;
 import amidst.gui.main.MainWindowDialogs;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.RunningLauncherProfile;
@@ -93,7 +94,7 @@ public class SeedSearcher {
 			throws IllegalStateException,
 			MinecraftInterfaceException {
 		while (!isStopRequested) {
-			World world = runningLauncherProfile.createWorldFromSeed(WorldSeed.random(), configuration.getWorldType());
+			World world = runningLauncherProfile.createWorldFromSeed(WorldSeed.random(GameEngineType.MINECRAFT), configuration.getWorldType(), null);
 			if (configuration.getWorldFilter().isValid(world)) {
 				reporter.report(world.getWorldSeed());
 				world.dispose();

@@ -29,6 +29,10 @@ public enum Resolution {
 		return 1 << shift;
 	}
 
+	public int getShift() {
+		return shift;
+	}
+	
 	public int getStepsPerFragment() {
 		return 1 << (FRAGMENT.shift - shift);
 	}

@@ -10,6 +10,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.gui.main.viewer.Zoom;
+import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 
 @NotThreadSafe
@@ -87,10 +88,15 @@ public class GridDrawer extends FragmentDrawer {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void updateText(Fragment fragment) {
+		
+		long gameCoordsX = fragment.getCorner().getX();
+		long gameCoordsY = fragment.getBiomeDataCoordinateSystem().ConvertFromRightHanded(
+				fragment.getCorner().getY()				
+		);
 		textBuffer.setLength(0);
-		textBuffer.append(fragment.getCorner().getX());
+		textBuffer.append(gameCoordsX);
 		textBuffer.append(", ");
-		textBuffer.append(fragment.getCorner().getY());
+		textBuffer.append(gameCoordsY);
 		textBuffer.getChars(0, textBuffer.length(), textCache, 0);
 	}
 

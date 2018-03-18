@@ -12,21 +12,27 @@ import java.util.function.Supplier;
 
 import javax.imageio.ImageIO;
 
+import amidst.AmidstSettings;
 import amidst.Application;
+import amidst.FeatureToggles;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gameengineabstraction.GameEngineDetails;
+import amidst.gameengineabstraction.GameEngineType;
 import amidst.gui.crash.CrashWindow;
 import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.logging.AmidstLogger;
+import amidst.minetest.world.mapgen.DefaultBiomes;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
+import amidst.settings.biomeprofile.BiomeAuthority;
 import amidst.settings.biomeprofile.BiomeProfile;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.util.FileExtensionChecker;
@@ -38,7 +44,8 @@ public class Actions {
 	private final WorldSwitcher worldSwitcher;
 	private final SeedSearcherWindow seedSearcherWindow;
 	private final Supplier<ViewerFacade> viewerFacadeSupplier;
-	private final BiomeProfileSelection biomeProfileSelection;
+	private final BiomeAuthority biomeAuthority;
+	private final GameEngineDetails gameEngineDetails;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Actions(
@@ -47,18 +54,20 @@ public class Actions {
 			WorldSwitcher worldSwitcher,
 			SeedSearcherWindow seedSearcherWindow,
 			Supplier<ViewerFacade> viewerFacadeSupplier,
-			BiomeProfileSelection biomeProfileSelection) {
+			BiomeAuthority biomeAuthority,
+			GameEngineDetails gameEngineDetails) {
 		this.application = application;
 		this.dialogs = dialogs;
 		this.worldSwitcher = worldSwitcher;
 		this.seedSearcherWindow = seedSearcherWindow;
 		this.viewerFacadeSupplier = viewerFacadeSupplier;
-		this.biomeProfileSelection = biomeProfileSelection;
+		this.biomeAuthority = biomeAuthority;
+		this.gameEngineDetails = gameEngineDetails;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromSeed() {
-		WorldSeed seed = dialogs.askForSeed();
+		WorldSeed seed = dialogs.askForSeed(gameEngineDetails.getType());
 		if (seed != null) {
 			newFromSeed(seed);
 		}
@@ -66,14 +75,25 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromRandom() {
-		newFromSeed(WorldSeed.random());
+		newFromSeed(WorldSeed.random(gameEngineDetails.getType()));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = dialogs.askForWorldType();
 		if (worldType != null) {
-			worldSwitcher.displayWorld(worldSeed, worldType);
+			
+			if (worldType == WorldType.V6) {
+				// V6 has a fixed biome, and rendering it with different biomes is
+				// meaningless, unless the difference is only in the biome colours
+				BiomeProfile v6profile = biomeAuthority.getBiomeProfileDirectory().getProfile(DefaultBiomes.BIOMEPROFILENAME_V6);
+				if (v6profile != null) biomeAuthority.getBiomeProfileSelection().set(v6profile);
+			} else if (DefaultBiomes.BIOMEPROFILENAME_V6.equals(biomeAuthority.getBiomeProfileSelection().getCurrentBiomeProfile().getName())) {
+				// Probably previously viewed a v6 world - not a good profile for any other world type
+				BiomeProfile mainProfile = biomeAuthority.getBiomeProfileDirectory().getProfile(DefaultBiomes.BIOMEPROFILENAME_DEFAULT);
+				if (mainProfile != null) biomeAuthority.getBiomeProfileSelection().set(mainProfile);
+			}
+			worldSwitcher.displayWorld(worldSeed, worldType, biomeAuthority.getBiomeProfileSelection());
 		}
 	}
 
@@ -82,11 +102,20 @@ public class Actions {
 		seedSearcherWindow.show();
 	}
 
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public boolean canOpenSaveGame() {
+		// "Temporary solution" until this feature is implemented in Minetest code
+		return gameEngineDetails.getType() == GameEngineType.MINECRAFT;
+	}
+	
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void openSaveGame() {
-		File file = dialogs.askForSaveGame();
-		if (file != null) {
-			worldSwitcher.displayWorld(file);
+		if (canOpenSaveGame()) {
+			File file = dialogs.askForSaveGame();
+			if (file != null) {
+				worldSwitcher.displayWorld(file);
+			}
 		}
 	}
 
@@ -116,7 +145,11 @@ public class Actions {
 			if (input != null) {
 				CoordinatesInWorld coordinates = CoordinatesInWorld.tryParse(input);
 				if (coordinates != null) {
-					viewerFacade.centerOn(coordinates);
+					CoordinatesInWorld amidstCoords = gameEngineDetails
+							.getType()
+							.getGameCoordinateSystem()
+							.ConvertToRightHanded(coordinates);
+					viewerFacade.centerOn(amidstCoords);
 				} else {
 					AmidstLogger.warn("Invalid location entered, ignoring.");
 					dialogs.displayError("You entered an invalid location.");
@@ -134,13 +167,21 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	public boolean canGoToStronghold() {
+		// Strongholds make no sense outside of Minecraft
+		return gameEngineDetails.getType() == GameEngineType.MINECRAFT;
+	}	
+	
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void goToStronghold() {
-		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
-		if (viewerFacade != null) {
-			WorldIcon stronghold = dialogs
-					.askForOptions("Go to", "Select Stronghold:", viewerFacade.getStrongholdWorldIcons());
-			if (stronghold != null) {
-				viewerFacade.centerOn(stronghold);
+		if (canGoToStronghold()) {
+			ViewerFacade viewerFacade = viewerFacadeSupplier.get();
+			if (viewerFacade != null) {
+				WorldIcon stronghold = dialogs
+						.askForOptions("Go to", "Select Stronghold:", viewerFacade.getStrongholdWorldIcons());
+				if (stronghold != null) {
+					viewerFacade.centerOn(stronghold);
+				}
 			}
 		}
 	}
@@ -241,8 +282,9 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void selectBiomeProfile(BiomeProfile profile) {
-		biomeProfileSelection.set(profile);
+	public void selectBiomeProfile(BiomeProfile profile, AmidstSettings settings) {
+		biomeAuthority.getBiomeProfileSelection().set(profile);
+		settings.lastBiomeProfile.set(profile.getName());
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			viewerFacade.reloadBackgroundLayer();
@@ -268,7 +310,8 @@ public class Actions {
 	public void about() {
 		dialogs.displayInfo(
 				"About",
-				"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n\n"
+				"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n"
+						+ (FeatureToggles.MINETEST_SUPPORT ? "Amidstest - Amidst for Minetest\n\n" : "\n")
 						+ "Author: Skidoodle aka skiphs\n" + "Mail: toolbox4minecraft+amidst@gmail.com\n"
 						+ "Project Page: https://github.com/toolbox4minecraft/amidst");
 	}

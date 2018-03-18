@@ -9,10 +9,10 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
+import amidst.gameengineabstraction.file.IUnresolvedLauncherProfile;
 import amidst.mojangapi.LauncherProfileRunner;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.file.LauncherProfile;
-import amidst.mojangapi.file.UnresolvedLauncherProfile;
 import amidst.mojangapi.file.VersionListProvider;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.parsing.FormatException;
@@ -24,7 +24,7 @@ public class LocalProfileComponent extends ProfileComponent {
 	private final WorkerExecutor workerExecutor;
 	private final VersionListProvider versionListProvider;
 	private final LauncherProfileRunner launcherProfileRunner;
-	private final UnresolvedLauncherProfile unresolvedProfile;
+	private final IUnresolvedLauncherProfile unresolvedProfile;
 
 	private volatile boolean isResolving = false;
 	private volatile boolean failedResolving = false;
@@ -38,7 +38,7 @@ public class LocalProfileComponent extends ProfileComponent {
 			WorkerExecutor workerExecutor,
 			VersionListProvider versionListProvider,
 			LauncherProfileRunner launcherProfileRunner,
-			UnresolvedLauncherProfile unresolvedProfile) {
+			IUnresolvedLauncherProfile unresolvedProfile) {
 		this.application = application;
 		this.workerExecutor = workerExecutor;
 		this.versionListProvider = versionListProvider;

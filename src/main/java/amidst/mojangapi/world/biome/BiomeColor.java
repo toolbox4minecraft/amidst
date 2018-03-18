@@ -11,6 +11,10 @@ public class BiomeColor {
 		return new BiomeColor(r, g, b);
 	}
 
+	public static BiomeColor fromBiomeColorJson(BiomeColorJson json_color) {
+		return new BiomeColor(json_color.getR(), json_color.getG(), json_color.getB());
+	}
+	
 	public static BiomeColor unknown() {
 		return UNKNOWN_BIOME_COLOR;
 	}

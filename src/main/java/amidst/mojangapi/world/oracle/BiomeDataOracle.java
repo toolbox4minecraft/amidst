@@ -12,16 +12,19 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.fragment.IBiomeDataOracle;
+import amidst.gameengineabstraction.CoordinateSystem;
 
 @ThreadSafe
-public class BiomeDataOracle {
+public class BiomeDataOracle implements IBiomeDataOracle {
 	private final MinecraftInterface minecraftInterface;
 
 	public BiomeDataOracle(MinecraftInterface minecraftInterface) {
 		this.minecraftInterface = minecraftInterface;
 	}
 
-	public void populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
+	@Override
+	public short populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
 		Resolution resolution = Resolution.from(useQuarterResolution);
 		int width = result.length;
 		if (width > 0) {
@@ -35,8 +38,21 @@ public class BiomeDataOracle {
 				AmidstMessageBox.displayError("Error", e);
 			}
 		}
+		return (short)0xffff;
 	}
 
+	/**
+	 * Gets the native coordinate system of the game-engine this biome
+	 * data represents. This is only needed if you want to know how the
+	 * game would describe a biome location. 
+	 */
+	@Override
+	public CoordinateSystem getNativeCoordinateSystem() {
+		// Minecraft uses right-handed coords
+		return CoordinateSystem.RIGHT_HANDED;
+	}
+	
+	
 	public static void copyToResult(short[][] result, int width, int height, int[] biomeData) {
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {

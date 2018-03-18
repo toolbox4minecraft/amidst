@@ -20,9 +20,9 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
+import amidst.gameengineabstraction.file.IGameInstallation;
+import amidst.gameengineabstraction.file.IUnresolvedLauncherProfile;
 import amidst.mojangapi.LauncherProfileRunner;
-import amidst.mojangapi.file.MinecraftInstallation;
-import amidst.mojangapi.file.UnresolvedLauncherProfile;
 import amidst.mojangapi.file.VersionListProvider;
 import amidst.parsing.FormatException;
 import amidst.threading.WorkerExecutor;
@@ -36,7 +36,7 @@ public class ProfileSelectWindow {
 	private final AmidstMetaData metadata;
 	private final WorkerExecutor workerExecutor;
 	private final VersionListProvider versionListProvider;
-	private final MinecraftInstallation minecraftInstallation;
+	private final IGameInstallation gameInstallation;
 	private final LauncherProfileRunner launcherProfileRunner;
 	private final AmidstSettings settings;
 
@@ -51,14 +51,14 @@ public class ProfileSelectWindow {
 			AmidstMetaData metadata,
 			WorkerExecutor workerExecutor,
 			VersionListProvider versionListProvider,
-			MinecraftInstallation minecraftInstallation,
+			IGameInstallation gameInstallation,
 			LauncherProfileRunner launcherProfileRunner,
 			AmidstSettings settings) {
 		this.application = application;
 		this.metadata = metadata;
 		this.workerExecutor = workerExecutor;
 		this.versionListProvider = versionListProvider;
-		this.minecraftInstallation = minecraftInstallation;
+		this.gameInstallation = gameInstallation;
 		this.launcherProfileRunner = launcherProfileRunner;
 		this.settings = settings;
 		this.profileSelectPanel = new ProfileSelectPanel(settings.lastProfile, "Scanning...");
@@ -122,22 +122,22 @@ public class ProfileSelectWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private List<UnresolvedLauncherProfile> scanAndLoadProfiles() throws FormatException, IOException {
+	private List<IUnresolvedLauncherProfile> scanAndLoadProfiles() throws FormatException, IOException {
 		AmidstLogger.info("Scanning for profiles.");
-		List<UnresolvedLauncherProfile> launcherProfiles = minecraftInstallation.readLauncherProfiles();
+		List<IUnresolvedLauncherProfile> launcherProfiles = gameInstallation.readLauncherProfiles();
 		AmidstLogger.info("Successfully loaded profile list.");
 		return launcherProfiles;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void displayProfiles(List<UnresolvedLauncherProfile> launcherProfiles) {
+	private void displayProfiles(List<IUnresolvedLauncherProfile> launcherProfiles) {
 		createProfileComponentsIfNecessary(launcherProfiles);
 		restoreSelection();
 		frame.pack();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void createProfileComponentsIfNecessary(List<UnresolvedLauncherProfile> launcherProfiles) {
+	private void createProfileComponentsIfNecessary(List<IUnresolvedLauncherProfile> launcherProfiles) {
 		if (launcherProfiles.isEmpty()) {
 			AmidstLogger.warn("No profiles found in launcher_profiles.json");
 			profileSelectPanel.setEmptyMessage("No profiles found");
@@ -155,8 +155,8 @@ public class ProfileSelectWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void createProfileComponents(List<UnresolvedLauncherProfile> launcherProfiles) {
-		for (UnresolvedLauncherProfile profile : launcherProfiles) {
+	private void createProfileComponents(List<IUnresolvedLauncherProfile> launcherProfiles) {
+		for (IUnresolvedLauncherProfile profile : launcherProfiles) {
 			profileSelectPanel.addProfile(
 					new LocalProfileComponent(
 							application,

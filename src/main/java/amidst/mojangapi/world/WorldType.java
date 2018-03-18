@@ -1,8 +1,5 @@
 package amidst.mojangapi.world;
 
-import java.util.Arrays;
-import java.util.List;
-
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
@@ -15,37 +12,18 @@ public enum WorldType {
 	FLAT         ("Flat",         "flat",         SymbolicNames.FIELD_WORLD_TYPE_FLAT),
 	LARGE_BIOMES ("Large Biomes", "large-biomes", SymbolicNames.FIELD_WORLD_TYPE_LARGE_BIOMES),
 	AMPLIFIED    ("Amplified",    "amplified",    SymbolicNames.FIELD_WORLD_TYPE_AMPLIFIED),
-	CUSTOMIZED   ("Customized",   "customized",   SymbolicNames.FIELD_WORLD_TYPE_CUSTOMIZED);
+	CUSTOMIZED   ("Customized",   "customized",   SymbolicNames.FIELD_WORLD_TYPE_CUSTOMIZED),
+	
+	// Minetest world types
+	V5           ("v5",           "v5",         null),
+	V6           ("v6",           "v6",         null),
+	V7           ("v7",           "v7",         null),
+	// FLAT - can reuse the minecraft FLAT
+	FRACTAL      ("Fractal",      "fractal",    null),
+	CARPATHIAN   ("Carpathian",   "carpathian", null);
 	// @formatter:on
 
 	public static final String PROMPT_EACH_TIME = "Prompt each time";
-
-	private static final WorldType[] SELECTABLE_WORLD_TYPES_ARRAY = new WorldType[] {
-			WorldType.DEFAULT,
-			WorldType.FLAT,
-			WorldType.LARGE_BIOMES,
-			WorldType.AMPLIFIED };
-
-	private static final List<WorldType> SELECTABLE_WORLD_TYPES = Arrays.asList(SELECTABLE_WORLD_TYPES_ARRAY);
-
-	private static final String[] WORLD_TYPE_SETTING_AVAILABLE_VALUES = new String[] {
-			PROMPT_EACH_TIME,
-			WorldType.DEFAULT.getName(),
-			WorldType.FLAT.getName(),
-			WorldType.LARGE_BIOMES.getName(),
-			WorldType.AMPLIFIED.getName() };
-
-	public static List<WorldType> getSelectable() {
-		return SELECTABLE_WORLD_TYPES;
-	}
-
-	public static WorldType[] getSelectableArray() {
-		return SELECTABLE_WORLD_TYPES_ARRAY;
-	}
-
-	public static String[] getWorldTypeSettingAvailableValues() {
-		return WORLD_TYPE_SETTING_AVAILABLE_VALUES;
-	}
 
 	public static WorldType from(String nameOrSymbolicFieldName) {
 		WorldType result = findInstance(nameOrSymbolicFieldName);

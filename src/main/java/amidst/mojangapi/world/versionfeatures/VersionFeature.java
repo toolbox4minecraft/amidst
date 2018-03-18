@@ -15,6 +15,10 @@ public class VersionFeature<V> {
 		return new ListVersionFeatureBuilder<>();
 	}
 
+	public static <K, V> MapVersionFeatureBuilder<K, V> mapBuilder() {
+		return new MapVersionFeatureBuilder<>();
+	}
+	
 	private final V defaultValue;
 	private final List<VersionFeatureEntry<V>> exactMatches;
 	private final List<VersionFeatureEntry<V>> entriesNewestFirst;

@@ -3,6 +3,7 @@ package amidst.mojangapi.world.coordinates;
 import java.awt.Point;
 
 import amidst.documentation.Immutable;
+import amidst.gameengineabstraction.CoordinateSystem;
 
 @Immutable
 public class CoordinatesInWorld implements Comparable<CoordinatesInWorld> {
@@ -186,6 +187,10 @@ public class CoordinatesInWorld implements Comparable<CoordinatesInWorld> {
 		return "[" + xInWorld + ", " + yInWorld + "]";
 	}
 
+	public String toString(CoordinateSystem targetCoordSystem) {
+		return "[" + xInWorld + ", " + targetCoordSystem.ConvertFromRightHanded(yInWorld) + "]";
+	}
+	
 	public String toString(Resolution resolution) {
 		return "[" + getXAs(resolution) + ", " + getYAs(resolution) + "]";
 	}

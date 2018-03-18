@@ -17,6 +17,7 @@ import amidst.AmidstMetaData;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gameengineabstraction.world.WorldTypes;
 import amidst.gui.main.MainWindowDialogs;
 import amidst.gui.main.WorldSwitcher;
 import amidst.logging.AmidstLogger;
@@ -32,6 +33,7 @@ public class SeedSearcherWindow {
 	private final MainWindowDialogs dialogs;
 	private final WorldSwitcher worldSwitcher;
 	private final SeedSearcher seedSearcher;
+	private final WorldTypes worldTypes;
 
 	private final JTextArea searchQueryTextArea;
 	private final JComboBox<WorldType> worldTypeComboBox;
@@ -44,11 +46,13 @@ public class SeedSearcherWindow {
 			AmidstMetaData metadata,
 			MainWindowDialogs dialogs,
 			WorldSwitcher worldSwitcher,
-			SeedSearcher seedSearcher) {
+			SeedSearcher seedSearcher,
+			WorldTypes worldTypes) {
 		this.metadata = metadata;
 		this.dialogs = dialogs;
 		this.worldSwitcher = worldSwitcher;
 		this.seedSearcher = seedSearcher;
+		this.worldTypes = worldTypes;
 		this.searchQueryTextArea = createSearchQueryTextArea();
 		this.worldTypeComboBox = createWorldTypeComboBox();
 		this.searchContinuouslyCheckBox = createSearchContinuouslyCheckBox();
@@ -69,7 +73,7 @@ public class SeedSearcherWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JComboBox<WorldType> createWorldTypeComboBox() {
-		return new JComboBox<>(WorldType.getSelectableArray());
+		return new JComboBox<>(worldTypes.getSelectableArray());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -144,7 +148,7 @@ public class SeedSearcherWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void seedFound(WorldSeed worldSeed, WorldType worldType) {
-		worldSwitcher.displayWorld(worldSeed, worldType);
+		worldSwitcher.displayWorld(worldSeed, worldType, null);
 		updateGUI();
 	}
 

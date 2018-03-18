@@ -4,15 +4,15 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.Fragment;
+import amidst.fragment.IBiomeDataOracle;
 import amidst.fragment.layer.LayerDeclaration;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @NotThreadSafe
 public class BiomeDataLoader extends FragmentLoader {
-	private final BiomeDataOracle biomeDataOracle;
+	private final IBiomeDataOracle biomeDataOracle;
 
-	public BiomeDataLoader(LayerDeclaration declaration, BiomeDataOracle biomeDataOracle) {
+	public BiomeDataLoader(LayerDeclaration declaration, IBiomeDataOracle biomeDataOracle) {
 		super(declaration);
 		this.biomeDataOracle = biomeDataOracle;
 	}
