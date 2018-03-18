@@ -255,17 +255,17 @@ public class WorldBuilder {
 							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
 							Dimension.OVERWORLD,
 							false),
-				new StructureProducer<>(
-						Resolution.CHUNK,
-						8,
-						new WoodlandMansionLocationChecker(
-								seed,
-								biomeDataOracle,
-								versionFeatures.getValidBiomesForStructure_WoodlandMansion()
-						),
-						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.WOODLAND_MANSION),
-						Dimension.OVERWORLD,
-						false),
+					new StructureProducer<>(
+							Resolution.CHUNK,
+							8,
+							new WoodlandMansionLocationChecker(
+									seed,
+									minecraftBiome,
+									minecraftVersionFeatures.getValidBiomesForStructure_WoodlandMansion()
+							),
+							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.WOODLAND_MANSION),
+							Dimension.OVERWORLD,
+							false),
 					new StructureProducer<>(
 							Resolution.NETHER_CHUNK,
 							88,

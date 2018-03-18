@@ -67,7 +67,7 @@ public class DefaultBiomes {
 						new MinetestBiome[] {
 							// Keep in alphabetical order, as v6 references them by index, and biome sets are ordered
 							// alphabetically when saved.
-							new MinetestBiome("Beach",  BiomeColor.from(230, 230, 130), (short)   1,                      (short)5, 50, 35),	
+							new MinetestBiome("Beach",  BiomeColor.from(214, 186, 109), (short)   1,                      (short)5, 50, 35),	
 							new MinetestBiome("Desert", BiomeColor.from(216, 210, 156), (short)   Short.MIN_VALUE, Short.MAX_VALUE, 92, 16),	
 							new MinetestBiome("Jungle", BiomeColor.from(  0,  63,   1), (short)   Short.MIN_VALUE, Short.MAX_VALUE, 86, 65),	
 							new MinetestBiome("Normal", BiomeColor.from( 97, 157,  53), (short)   Short.MIN_VALUE, Short.MAX_VALUE, 50, 35),	
@@ -149,10 +149,10 @@ public class DefaultBiomes {
 							new MinetestBiome("Sea desert sand",         BiomeColor.from(105, 132, 169), (short)-32000,        (short)5, 110, -60),	
 							new MinetestBiome("Sea gravel",              BiomeColor.from( 86, 108, 151), (short)-32000,        (short)5,  30, -60),	
 
-							new MinetestBiome("Conifer",                 BiomeColor.from( 11, 107,  95), (short)     1, Short.MAX_VALUE,   0,  70),	
-							new MinetestBiome("Conifer-Tree transition", BiomeColor.from( 12, 100,  50), (short)     1, Short.MAX_VALUE,  25,  75),
-							new MinetestBiome("Tree",                    BiomeColor.from( 12,  94,  11), (short)     1, Short.MAX_VALUE,  50,  80),	
-							new MinetestBiome("Tree-Jungle transition",  BiomeColor.from(  6,  80,   4), (short)     1, Short.MAX_VALUE,  90,  75),
+							new MinetestBiome("Conifer",                 BiomeColor.from(124, 190, 150), (short)     1, Short.MAX_VALUE,   0,  70),	
+							new MinetestBiome("Conifer-Tree transition", BiomeColor.from(111, 170, 100), (short)     1, Short.MAX_VALUE,  25,  75),
+							new MinetestBiome("Tree",                    BiomeColor.from( 97, 157,  53), (short)     1, Short.MAX_VALUE,  50,  80),	
+							new MinetestBiome("Tree-Jungle transition",  BiomeColor.from( 40, 100,  25), (short)     1, Short.MAX_VALUE,  90,  75),
 							new MinetestBiome("Jungle",                  BiomeColor.from(  0,  63,   1), (short)     1, Short.MAX_VALUE, 100,  70),	
 							new MinetestBiome("Desert",                  BiomeColor.from(216, 210, 156), (short)     1, Short.MAX_VALUE, 120, -45),	
 							new MinetestBiome("Glacier",                 BiomeColor.from(202, 216, 229), (short)     1, Short.MAX_VALUE, -20, -30),	

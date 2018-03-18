@@ -148,7 +148,7 @@ public class BiomeDataOracleV7 extends MinetestBiomeDataOracle {
 			int top    = (int) corner.getY();
 			int shift = resolution.getShift();
 			int step  = resolution.getStep();
-			float river_width = 0.19f; // 0.2f is the value used to block spawn, but 1.9 looks more accurate
+			float river_width = 0.14f; // 0.2f is the value used to block spawn, but 0.14 looks more accurate
 			int world_z;
 			int world_x;
 			short biomeValue;

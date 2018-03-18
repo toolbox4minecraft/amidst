@@ -205,7 +205,8 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 				mineshaftAlgorithmFactory.getValue(version),
 				oceanMonumentLocationCheckerFactory.getValue(version),
 				validBiomesAtMiddleOfChunk_OceanMonument.getValue(version),
-				validBiomesForStructure_OceanMonument.getValue(version));
+				validBiomesForStructure_OceanMonument.getValue(version),
+				validBiomesForStructure_WoodlandMansion.getValue(version));
 	}
 
 	// Made static for now, to reduce the amount of refactoring required in

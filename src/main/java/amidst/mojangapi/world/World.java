@@ -72,6 +72,7 @@ public class World {
 		this.templeProducer         = dungeonProducer;
 		this.mineshaftProducer      = null;
 		this.oceanMonumentProducer  = null;
+		this.woodlandMansionProducer = null;
 		this.netherFortressProducer = null;
 		this.endCityProducer        = null;
 	}
