@@ -11,7 +11,7 @@ import amidst.parsing.json.JsonReader;
 public enum UpdateInformationRetriever {
 	;
 
-	private static final String UPDATE_INFORMATION_JSON_URL = "https://toolbox4minecraft.github.io/amidst/api/update-information.json";
+	private static final String UPDATE_INFORMATION_JSON_URL = "https://treer.github.io/amidstest/api/update-information.json";
 
 	@NotNull
 	public static UpdateInformationJson retrieve() throws FormatException, IOException {
