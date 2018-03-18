@@ -38,6 +38,7 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 	private final VersionFeature<QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker>> oceanMonumentLocationCheckerFactory;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_OceanMonument;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_OceanMonument;
+	private final VersionFeature<List<Biome>> validBiomesForStructure_WoodlandMansion;
 
 	public DefaultVersionFeatures() {
 		// @formatter:off
@@ -64,6 +65,8 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 				).sinceExtend(RecognisedVersion._15w31c,
 						LayerIds.END_ISLANDS,
 						LayerIds.END_CITY
+				).sinceExtend(RecognisedVersion._16w43a,
+						LayerIds.WOODLAND_MANSION
 				).construct();
 		this.validBiomesForStructure_Spawn = VersionFeature.<Biome> listBuilder()
 				.init(
@@ -172,6 +175,11 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 						Biome.frozenOceanM,
 						Biome.riverM,
 						Biome.frozenRiverM
+				).construct();
+		this.validBiomesForStructure_WoodlandMansion = VersionFeature.<Biome> listBuilder()
+				.init(
+						Biome.roofedForest,
+						Biome.roofedForestM
 				).construct();
 		// @formatter:on
 	}

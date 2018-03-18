@@ -103,6 +103,7 @@ public class LayerBuilder {
 		declare(settings, declarations, versionFeatures, LayerIds.TEMPLE,          Dimension.OVERWORLD, false, settings.showTemples);
 		declare(settings, declarations, versionFeatures, LayerIds.MINESHAFT,       Dimension.OVERWORLD, false, settings.showMineshafts);
 		declare(settings, declarations, versionFeatures, LayerIds.OCEAN_MONUMENT,  Dimension.OVERWORLD, false, settings.showOceanMonuments);
+		declare(settings, declarations, versionFeatures, LayerIds.WOODLAND_MANSION,Dimension.OVERWORLD, false, settings.showWoodlandMansions);
 		declare(settings, declarations, versionFeatures, LayerIds.NETHER_FORTRESS, Dimension.OVERWORLD, false, settings.showNetherFortresses);
 		declare(settings, declarations, versionFeatures, LayerIds.END_CITY,        Dimension.END,       false, settings.showEndCities);
 		
@@ -145,7 +146,7 @@ public class LayerBuilder {
 				new AlphaInitializer( declarations.get(LayerIds.ALPHA),             settings.fragmentFading),
 				new BiomeDataLoader(  declarations.get(LayerIds.BIOME_DATA),        world.getBiomeDataOracle()),
 				new EndIslandsLoader( declarations.get(LayerIds.END_ISLANDS),       world.getEndIslandOracle()),
-				new ImageLoader(	  declarations.get(LayerIds.BACKGROUND),        Resolution.QUARTER, new BackgroundColorProvider(new BiomeColorProvider(biomeSelection, settings.biomeProfileSelection), new TheEndColorProvider())),
+				new ImageLoader(	    declarations.get(LayerIds.BACKGROUND),        Resolution.QUARTER, new BackgroundColorProvider(new BiomeColorProvider(biomeSelection, settings.biomeProfileSelection), new TheEndColorProvider())),
 				new ImageLoader(      declarations.get(LayerIds.MINETEST_RIVER),    Resolution.QUARTER, new MinetestRiverColorProvider(Resolution.QUARTER)),
 				new ImageLoader(      declarations.get(LayerIds.MINETEST_OCEAN),    Resolution.QUARTER, new MinetestOceanColorProvider()),
 				new ImageLoader(      declarations.get(LayerIds.MINETEST_MOUNTAIN), Resolution.QUARTER, new MinetestMountainColorProvider(Resolution.QUARTER)),
@@ -158,6 +159,7 @@ public class LayerBuilder {
 				new WorldIconLoader<>(declarations.get(LayerIds.MINETEST_DUNGEON),  world.getTempleProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.MINESHAFT),         world.getMineshaftProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.OCEAN_MONUMENT),    world.getOceanMonumentProducer()),
+				new WorldIconLoader<>(declarations.get(LayerIds.WOODLAND_MANSION),  world.getWoodlandMansionProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.NETHER_FORTRESS),   world.getNetherFortressProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.END_CITY),          world.getEndCityProducer(), Fragment::getEndIslands)
 		));
@@ -189,6 +191,7 @@ public class LayerBuilder {
 				new WorldIconDrawer(declarations.get(LayerIds.MINETEST_DUNGEON),  zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.MINESHAFT),         zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),    zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.WOODLAND_MANSION),zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.NETHER_FORTRESS),   zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.END_CITY),          zoom, worldIconSelection)
 		));
