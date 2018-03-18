@@ -52,7 +52,7 @@ public class MinetestBiomeProfileImpl implements BiomeProfile {
 	public static Collection<BiomeProfile> getDefaultProfiles() {
 		if (defaultProfiles == null) {
 			defaultProfiles = new ArrayList<>();
-			for(Entry<String, MinetestBiome[]> entry : DefaultBiomes_v7.getDefaultBiomeSets().entrySet()) {
+			for(Entry<String, MinetestBiome[]> entry : DefaultBiomes.getDefaultBiomeSets().entrySet()) {
 				defaultProfiles.add(
 					new MinetestBiomeProfileImpl(entry.getKey(), null, createDefaultColorMap(entry.getValue()))
 				);

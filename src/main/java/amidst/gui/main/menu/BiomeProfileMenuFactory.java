@@ -20,10 +20,12 @@ import amidst.gui.main.Actions;
 import amidst.logging.AmidstLogger;
 import amidst.settings.biomeprofile.BiomeProfile;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
+import amidst.settings.biomeprofile.BiomeProfileUpdateListener;
 import amidst.settings.biomeprofile.BiomeProfileVisitor;
 
 @NotThreadSafe
-public class BiomeProfileMenuFactory {
+public class BiomeProfileMenuFactory implements BiomeProfileUpdateListener {
 	@NotThreadSafe
 	private static class BiomeProfileVisitorImpl implements BiomeProfileVisitor {
 		private final List<AbstractButton> allCheckBoxes = new ArrayList<>();
@@ -138,6 +140,7 @@ public class BiomeProfileMenuFactory {
 			Actions actions,
 			AmidstSettings settings,			
 			BiomeProfileDirectory biomeProfileDirectory,
+			BiomeProfileSelection biomeProfileSelection,
 			String reloadText,
 			int reloadMnemonic,
 			MenuShortcut reloadMenuShortcut,
@@ -156,6 +159,7 @@ public class BiomeProfileMenuFactory {
 		this.editMenuShortcut = editMenuShortcut;
 		AmidstLogger.info("Checking for additional biome profiles.");
 		initParentMenu();
+		biomeProfileSelection.addUpdateListener(this);
 	}
 
 	private void initParentMenu() {
@@ -167,6 +171,23 @@ public class BiomeProfileMenuFactory {
 		Menus.item(parentMenu, this::doEdit,     editText,   editMnemonic,   editMenuShortcut);
 		Menus.item(parentMenu, this::doReload, reloadText, reloadMnemonic, reloadMenuShortcut);
 		visitor.selectDefaultBiomeProfile();
+	}
+	
+	@Override
+	public void onBiomeProfileUpdate(BiomeProfile newBiomeProfile) {
+		
+		// If the selection has been changed by another part of the program
+		// (e.g. by loading a V6 world) then update the menu items to reflect
+		// the current selection		
+		String newName = newBiomeProfile.getName();
+		if (newName != null && newName.length() > 0) {
+			for (int i = 0 ; i <  parentMenu.getItemCount(); i++) {
+			      JMenuItem item = parentMenu.getItem(i);
+			      if (item instanceof AbstractButton) {
+			    	  item.setSelected(newName.equals(item.getText()));
+			      }
+			}
+		}
 	}
 
 	private void doReload() {

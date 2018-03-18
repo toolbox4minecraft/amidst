@@ -13,8 +13,6 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerReloader;
 import amidst.gameengineabstraction.world.biome.IBiome;
-import amidst.gui.main.viewer.BiomeSelection;
-import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
 import amidst.settings.biomeprofile.BiomeAuthority;
 import amidst.settings.biomeprofile.BiomeProfile;

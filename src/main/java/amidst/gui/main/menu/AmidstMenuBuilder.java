@@ -12,13 +12,14 @@ import amidst.documentation.NotThreadSafe;
 import amidst.gameengineabstraction.world.WorldTypes;
 import amidst.gui.main.Actions;
 import amidst.mojangapi.world.WorldType;
+import amidst.settings.biomeprofile.BiomeAuthority;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 
 @NotThreadSafe
 public class AmidstMenuBuilder {
 	private final AmidstSettings settings;
 	private final Actions actions;
-	private final BiomeProfileDirectory biomeProfileDirectory;
+	private final BiomeAuthority biomeAuthority;
 	private final JMenuBar menuBar;
 	private JMenuItem exportMenu;
 	private JMenu worldMenu;
@@ -27,10 +28,10 @@ public class AmidstMenuBuilder {
 	private LayersMenu layersMenu;
 	private WorldTypes worldTypes;
 
-	public AmidstMenuBuilder(AmidstSettings settings, Actions actions, BiomeProfileDirectory biomeProfileDirectory, WorldTypes worldTypes) {
+	public AmidstMenuBuilder(AmidstSettings settings, Actions actions, BiomeAuthority biomeAuthority, WorldTypes worldTypes) {
 		this.settings = settings;
 		this.actions = actions;
-		this.biomeProfileDirectory = biomeProfileDirectory;
+		this.biomeAuthority = biomeAuthority;
 		this.worldTypes = worldTypes;
 		this.menuBar = createMenuBar();
 	}
@@ -124,7 +125,7 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("Settings");
 		result.setMnemonic(KeyEvent.VK_S);
 		result.add(create_Settings_DefaultWorldType());
-		if (biomeProfileDirectory.isValid()) {
+		if (biomeAuthority.getBiomeProfileDirectory().isValid()) {
 			result.add(create_Settings_BiomeProfile());
 		}
 		result.addSeparator();
@@ -154,7 +155,8 @@ public class AmidstMenuBuilder {
 				result, 
 				actions,
 				settings,
-				biomeProfileDirectory, 
+				biomeAuthority.getBiomeProfileDirectory(),
+				biomeAuthority.getBiomeProfileSelection(),
 				"Reload biome profiles", KeyEvent.VK_R, MenuShortcuts.RELOAD_BIOME_PROFILES,
 				"Edit biome profiles",   KeyEvent.VK_D, MenuShortcuts.EDIT_BIOME_PROFILES
 				);

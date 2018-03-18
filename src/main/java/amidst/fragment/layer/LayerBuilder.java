@@ -109,6 +109,7 @@ public class LayerBuilder {
 		declare(settings, declarations, versionFeatures, LayerIds.MINETEST_RIVER,    Dimension.OVERWORLD, false, settings.showMinetestRivers);
 		declare(settings, declarations, versionFeatures, LayerIds.MINETEST_OCEAN,    Dimension.OVERWORLD, false, settings.showMinetestOceans);
 		declare(settings, declarations, versionFeatures, LayerIds.MINETEST_MOUNTAIN, Dimension.OVERWORLD, false, settings.showMinetestMountains);
+		declare(settings, declarations, versionFeatures, LayerIds.MINETEST_DUNGEON,  Dimension.OVERWORLD, false, settings.showTemples);
 		
 		// @formatter:on
 		return Collections.unmodifiableList(Arrays.asList(declarations));
@@ -154,6 +155,7 @@ public class LayerBuilder {
 				new WorldIconLoader<>(declarations.get(LayerIds.PLAYER),            world.getPlayerProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.VILLAGE),           world.getVillageProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.TEMPLE),            world.getTempleProducer()),
+				new WorldIconLoader<>(declarations.get(LayerIds.MINETEST_DUNGEON),  world.getTempleProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.MINESHAFT),         world.getMineshaftProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.OCEAN_MONUMENT),    world.getOceanMonumentProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.NETHER_FORTRESS),   world.getNetherFortressProducer()),
@@ -184,6 +186,7 @@ public class LayerBuilder {
 				new WorldIconDrawer(declarations.get(LayerIds.PLAYER),            zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.VILLAGE),           zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.TEMPLE),            zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.MINETEST_DUNGEON),  zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.MINESHAFT),         zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),    zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.NETHER_FORTRESS),   zoom, worldIconSelection),

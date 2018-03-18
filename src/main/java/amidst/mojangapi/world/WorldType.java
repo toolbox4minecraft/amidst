@@ -15,11 +15,12 @@ public enum WorldType {
 	CUSTOMIZED   ("Customized",   "customized",   SymbolicNames.FIELD_WORLD_TYPE_CUSTOMIZED),
 	
 	// Minetest world types
-	V5           ("v5",           "v5",   null),
-	V6           ("v6",           "v6",   null),
-	V7           ("v7",           "v7",   null),
+	V5           ("v5",           "v5",         null),
+	V6           ("v6",           "v6",         null),
+	V7           ("v7",           "v7",         null),
 	// FLAT - can reuse the minecraft FLAT
-	FRACTAL      ("Fractal",      "fractal",   null);
+	FRACTAL      ("Fractal",      "fractal",    null),
+	CARPATHIAN   ("Carpathian",   "carpathian", null);
 	// @formatter:on
 
 	public static final String PROMPT_EACH_TIME = "Prompt each time";

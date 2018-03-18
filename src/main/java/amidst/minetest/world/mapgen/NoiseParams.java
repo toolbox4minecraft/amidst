@@ -4,9 +4,9 @@ import javax.vecmath.Vector3f;
 
 public class NoiseParams {
 
-	float offset = 0.0f;
+	public float offset = 0.0f;
 	float scale = 1.0f;
-	Vector3f spread = new Vector3f(250, 250, 250);
+	public Vector3f spread = new Vector3f(250, 250, 250);
 	int seed = 12345;
 	short octaves = 3;
 	public float persist = 0.6f;

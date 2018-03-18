@@ -9,8 +9,9 @@ import amidst.gameengineabstraction.GameEngineType;
 import amidst.gameengineabstraction.world.versionfeatures.IVersionFeatures;
 import amidst.logging.AmidstLogger;
 import amidst.minetest.MinetestMapgenInterface;
-import amidst.minetest.world.mapgen.InvalidNoiseParamsException;
-import amidst.minetest.world.mapgen.MinetestBiomeProfileImpl;
+import amidst.minetest.world.MinetestVersionFeatures;
+import amidst.minetest.world.icon.MinetestDungeonLocationChecker;
+import amidst.minetest.world.mapgen.MapgenV7Params;
 import amidst.mojangapi.file.ImmutablePlayerInformationProvider;
 import amidst.mojangapi.file.PlayerInformationProvider;
 import amidst.mojangapi.file.SaveGame;
@@ -92,21 +93,16 @@ public class WorldBuilder {
 		
 		if (gameCodeInterface instanceof MinetestMapgenInterface) {
 			// Minetest
-			MinetestMapgenInterface mapgen = (MinetestMapgenInterface)gameCodeInterface;
-			try {
-				// TODO: Figure out a clean way for the worldtype to determine biomeDataOracle
-				if (worldType == WorldType.V7) {
-					biomeDataOracle = new amidst.minetest.world.oracle.BiomeDataOracle(mapgen.params, biomeProfileSelection, worldSeed.getLong());
-				} else {
-					// todo: some other BiomeDataOracle
-					biomeDataOracle = new amidst.minetest.world.oracle.BiomeDataOracle(mapgen.params, biomeProfileSelection, worldSeed.getLong());					
-				}
-			} catch (InvalidNoiseParamsException e) {
-				AmidstLogger.error("Invalid param from Minetest game.");
-				e.printStackTrace();
-				biomeDataOracle = null;
-			}
-			spawnOracle     = new amidst.minetest.world.oracle.HeuristicWorldSpawnOracle(mapgen.params, worldSeed.getLong());
+			MinetestMapgenInterface mapgen = (MinetestMapgenInterface)gameCodeInterface;			
+			
+			biomeDataOracle = ((MinetestVersionFeatures)versionFeatures)
+					.getFactory_BiomeDataOracle(worldType)
+					.apply(
+						worldSeed.getLong(),
+						mapgen.params, 
+						biomeProfileSelection
+					);
+			spawnOracle     = new amidst.minetest.world.oracle.HeuristicWorldSpawnOracle((MapgenV7Params)mapgen.params, worldSeed.getLong());
 		} else{		
 			// Minecraft
 			if (versionFeatures instanceof VersionFeatures) {				
@@ -187,7 +183,17 @@ public class WorldBuilder {
 					versionFeatures,
 					biomeDataOracle,
 					new SpawnProducer(worldSpawnOracle),
-					null /* Hope to have a dungeon LocationChecker here one day */);
+					new StructureProducer<>(
+							Resolution.CHUNK,
+							8,
+							new MinetestDungeonLocationChecker(
+									(int)seed,
+									biomeDataOracle
+							),
+							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.JUNGLE),
+							Dimension.OVERWORLD,
+							false)
+			);
 		} else {			
 			amidst.mojangapi.world.oracle.BiomeDataOracle minecraftBiome = (amidst.mojangapi.world.oracle.BiomeDataOracle)biomeDataOracle;
 			VersionFeatures minecraftVersionFeatures = (VersionFeatures)versionFeatures;			

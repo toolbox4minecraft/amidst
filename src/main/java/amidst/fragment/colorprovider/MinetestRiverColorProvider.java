@@ -4,7 +4,7 @@ import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.Resolution;
-import amidst.minetest.world.oracle.BiomeDataOracle;
+import amidst.minetest.world.oracle.MinetestBiomeDataOracle;
 
 @ThreadSafe
 public class MinetestRiverColorProvider implements ColorProvider {
@@ -12,7 +12,7 @@ public class MinetestRiverColorProvider implements ColorProvider {
 	private static final int RIVERS_EDGE_COLOR = 0xA05555FF; // 0xAARRGGBB
 	private static final int NOT_RIVER_COLOR   = 0x00000000; // 0xAARRGGBB
 
-	private static final int OCEAN_RIVER_MASK = BiomeDataOracle.BITPLANE_RIVER | BiomeDataOracle.BITPLANE_OCEAN;
+	private static final int OCEAN_RIVER_MASK = MinetestBiomeDataOracle.BITPLANE_RIVER | MinetestBiomeDataOracle.BITPLANE_OCEAN;
 	private static int FRAGSIZE_MINUS1;
 				
 	public MinetestRiverColorProvider(Resolution resolution) {
@@ -22,7 +22,7 @@ public class MinetestRiverColorProvider implements ColorProvider {
 	@Override
 	public int getColorAt(Dimension dimension, Fragment fragment, long cornerX, long cornerY, int x, int y) {
 		
-		if ((fragment.getBiomeDataAt(x, y) & BiomeDataOracle.BITPLANE_RIVER) > 0) {
+		if ((fragment.getBiomeDataAt(x, y) & MinetestBiomeDataOracle.BITPLANE_RIVER) > 0) {
 			// draw using a river's edge colour if we're next to a location that isn't river or ocean.
 			if ((x >               0 && (fragment.getBiomeDataAt(x - 1, y) & OCEAN_RIVER_MASK) == 0) ||
 			    (x < FRAGSIZE_MINUS1 && (fragment.getBiomeDataAt(x + 1, y) & OCEAN_RIVER_MASK) == 0) ||

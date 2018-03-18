@@ -28,8 +28,9 @@ public class LayerIds {
 	public static final int MINETEST_RIVER       = 15;
 	public static final int MINETEST_OCEAN       = 16;
 	public static final int MINETEST_MOUNTAIN    = 17;
-		
-	public static final int NUMBER_OF_LAYERS     = 18;
+	public static final int MINETEST_DUNGEON     = 18;
+			
+	public static final int NUMBER_OF_LAYERS     = 19;
 	
 	// @formatter:on
 }

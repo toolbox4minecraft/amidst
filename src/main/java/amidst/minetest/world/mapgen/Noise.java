@@ -147,7 +147,24 @@ public class Noise {
 		return np.offset + a * np.scale;
 	}	
 	
-	static float noise2d(int x, int y, int seed)
+	/* wasn't needed
+	float noise2d_perlin(float x, float y, int seed,
+			int octaves, float persistence, boolean eased)
+	{
+		float a = 0;
+		float f = 1.0f;
+		float g = 1.0f;
+		for (int i = 0; i < octaves; i++)
+		{
+			a += g * noise2d_gradient(x * f, y * f, seed + i, eased);
+			f *= 2.0;
+			g *= persistence;
+		}
+		return a;
+	}*/
+	
+	
+	public static float noise2d(int x, int y, int seed)
 	{
 		// n is an unsigned int, which Java does not possess, so 
 		// divide and shift operations on it must be performed unsigned 

@@ -25,6 +25,7 @@ import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.logging.AmidstLogger;
+import amidst.minetest.world.mapgen.DefaultBiomes;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
@@ -81,6 +82,17 @@ public class Actions {
 	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = dialogs.askForWorldType();
 		if (worldType != null) {
+			
+			if (worldType == WorldType.V6) {
+				// V6 has a fixed biome, and rendering it with different biomes is
+				// meaningless, unless the difference is only in the biome colours
+				BiomeProfile v6profile = biomeAuthority.getBiomeProfileDirectory().getProfile(DefaultBiomes.BIOMEPROFILENAME_V6);
+				if (v6profile != null) biomeAuthority.getBiomeProfileSelection().set(v6profile);
+			} else if (DefaultBiomes.BIOMEPROFILENAME_V6.equals(biomeAuthority.getBiomeProfileSelection().getCurrentBiomeProfile().getName())) {
+				// Probably previously viewed a v6 world - not a good profile for any other world type
+				BiomeProfile mainProfile = biomeAuthority.getBiomeProfileDirectory().getProfile(DefaultBiomes.BIOMEPROFILENAME_DEFAULT);
+				if (mainProfile != null) biomeAuthority.getBiomeProfileSelection().set(mainProfile);
+			}
 			worldSwitcher.displayWorld(worldSeed, worldType, biomeAuthority.getBiomeProfileSelection());
 		}
 	}

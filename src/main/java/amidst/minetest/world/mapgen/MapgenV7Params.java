@@ -2,10 +2,11 @@ package amidst.minetest.world.mapgen;
 
 import javax.vecmath.Vector3f;
 
+import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.biome.BiomeColor;
 
 // TODO: be able to import these values from map_meta.txt files
-public class MapgenV7Params {
+public class MapgenV7Params extends MapgenParams {
 
 	public static final int FLAG_V7_MOUNTAINS   = 0x01;
 	public static final int FLAG_V7_RIDGES      = 0x02;
@@ -34,10 +35,7 @@ public class MapgenV7Params {
 	private Noise noise_mountain;
 	private Noise noise_ridge;
 	*/
-	
-	
-	public short water_level = 1; // from MapgenParams	
-	
+		
 	public int spflags = FLAG_V7_MOUNTAINS | FLAG_V7_RIDGES | FLAG_V7_CAVERNS;
 	short mount_zero_level     = 0;
 	float cave_width           = 0.09f;
@@ -54,11 +52,6 @@ public class MapgenV7Params {
 	short dungeon_ymin         = -31000;
 	short dungeon_ymax         = 31000;
 	
-	int chunksize_in_mapblocks = 5;
-	public int chunk_length_x = chunksize_in_mapblocks * Constants.MAP_BLOCKSIZE;
-	public int chunk_length_y = chunk_length_x;
-	public int chunk_length_z = chunk_length_x;
-
 	// params that aren't public aren't being used by Amidst
 	public NoiseParams np_terrain_base      = new NoiseParams(4,     70,   new Vector3f(600,  600,  600),  82341, (short)5, 0.6f,  2.0f);
 	public NoiseParams np_terrain_alt       = new NoiseParams(4,     25,   new Vector3f(600,  600,  600),  5934,  (short)5, 0.6f,  2.0f);
@@ -75,9 +68,8 @@ public class MapgenV7Params {
 	       NoiseParams np_cave1             = new NoiseParams(0,     12,   new Vector3f(61,   61,   61),   52534, (short)3, 0.5f,  2.0f);
 	       NoiseParams np_cave2             = new NoiseParams(0,     12,   new Vector3f(67,   67,   67),   10325, (short)3, 0.5f,  2.0f);
 	       
-	// BiomeParamsOriginal
-	public NoiseParams np_heat           = new NoiseParams(50,   50, new Vector3f(1000, 1000, 1000),  5349, (short)3, 0.5f, 2.0f);
-	public NoiseParams np_humidity       = new NoiseParams(50,   50, new Vector3f(1000, 1000, 1000),   842, (short)3, 0.5f, 2.0f);
-	public NoiseParams np_heat_blend     = new NoiseParams( 0, 1.5f, new Vector3f(   8,    8,    8),    13, (short)2, 1.0f, 2.0f);
-	public NoiseParams np_humidity_blend = new NoiseParams( 0, 1.5f, new Vector3f(   8,    8,    8), 90003, (short)2, 1.0f, 2.0f);
+   	@Override
+	public WorldType getWorldType() {
+		return WorldType.V7;
+	}		       
 }

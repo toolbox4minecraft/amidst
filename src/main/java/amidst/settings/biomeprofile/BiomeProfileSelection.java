@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
+import amidst.minetest.world.mapgen.MinetestBiome;
 import amidst.mojangapi.world.biome.BiomeColor;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
 
@@ -22,13 +23,19 @@ public class BiomeProfileSelection {
 		try {
 			return getBiomeColor(index);
 		} catch (UnknownBiomeIndexException e) {
-			AmidstLogger.error(e);
-			AmidstMessageBox.displayError("Error", e);
+			if (index >= 0) {
+				// less then zero indicates Unknown/NONE, which biome oracles are allowed to return
+				AmidstLogger.error(e);
+				AmidstMessageBox.displayError("Error", e);
+			}
 			return BiomeColor.unknown();
 		}
 	}
 
-	public BiomeColor getBiomeColor(int index) throws UnknownBiomeIndexException {
+	/**
+	 * (Private because you probably want getBiomeColorOrUnknown())
+	 */
+	private BiomeColor getBiomeColor(int index) throws UnknownBiomeIndexException {
 		BiomeColor[] biomeColors = this.biomeColors;
 		if (index < 0 || index >= biomeColors.length || biomeColors[index] == null) {
 			throw new UnknownBiomeIndexException("unsupported biome index detected: " + index);

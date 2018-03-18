@@ -108,6 +108,7 @@ public class LayersMenu {
 		overworldLayer(settings.showMinetestRivers,       "Rivers",                 getIcon("rivers.png"),          MenuShortcuts.SHOW_MINETEST_RIVERS,    dimension, LayerIds.MINETEST_RIVER);
 		overworldLayer(settings.showMinetestOceans,       "Oceans",                 getIcon("oceans.png"),          MenuShortcuts.SHOW_MINETEST_OCEANS,    dimension, LayerIds.MINETEST_OCEAN);
 		overworldLayer(settings.showMinetestMountains,    "Mountains",              getIcon("mountains.png"),       MenuShortcuts.SHOW_MINETEST_MOUNTAINS, dimension, LayerIds.MINETEST_MOUNTAIN);
+		overworldLayer(settings.showTemples,              "Dungeons",               getIcon("jungle.png"),          MenuShortcuts.SHOW_TEMPLES,            dimension, LayerIds.MINETEST_DUNGEON);
 		// @formatter:on
 	}
 	

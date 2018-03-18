@@ -3,6 +3,7 @@ package amidst.minetest;
 import java.io.File;
 
 import amidst.minetest.file.directory.MinetestDirectory;
+import amidst.minetest.world.mapgen.MapgenParams;
 import amidst.minetest.world.mapgen.MapgenV7Params;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.json.version.VersionJson;
@@ -31,7 +32,7 @@ public class MinetestLauncherProfile extends LauncherProfile {
 		// TODO Auto-generated constructor stub
 	}
 
-	public MapgenV7Params getMapGenParams() {
+	public MapgenParams getMapGenParams() {
 
 		// TODO: fetch the MapgenV7Params from MinetestDirectory
 		return new MapgenV7Params();

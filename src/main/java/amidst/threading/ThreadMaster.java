@@ -95,7 +95,7 @@ public class ThreadMaster {
 				try {
 					onFragmentLoadTick.run();
 				} catch (Exception e) {
-					AmidstLogger.error("Error in fragemnt loader thread: " + e.getMessage());
+					AmidstLogger.error("Error in fragment loader thread: " + e.getMessage());
 				}
 			}
 		}, 0, 20, TimeUnit.MILLISECONDS);

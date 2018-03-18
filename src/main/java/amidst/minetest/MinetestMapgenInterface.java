@@ -2,7 +2,7 @@ package amidst.minetest;
 
 import amidst.gameengineabstraction.GameEngineDetails;
 import amidst.gameengineabstraction.GameEngineType;
-import amidst.minetest.world.mapgen.MapgenV7Params;
+import amidst.minetest.world.mapgen.MapgenParams;
 import amidst.minetest.world.mapgen.MinetestBiomeProfileImpl;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -13,9 +13,9 @@ public class MinetestMapgenInterface implements MinecraftInterface {
 
 	private final GameEngineDetails engineDetails;
 	
-	public final MapgenV7Params params;	
+	public final MapgenParams params;	
 	
-	public MinetestMapgenInterface(MapgenV7Params params) {
+	public MinetestMapgenInterface(MapgenParams params) {
 		
 		this.params = params;
 		
