@@ -25,6 +25,7 @@ public class VersionFeatures implements IVersionFeatures {
 	private final QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker> oceanMonumentLocationCheckerFactory;
 	private final List<Biome> validBiomesAtMiddleOfChunk_OceanMonument;
 	private final List<Biome> validBiomesForStructure_OceanMonument;
+	private final List<Biome> validBiomesForStructure_WoodlandMansion;
 
 	public VersionFeatures(
 			List<Integer> enabledLayers,
@@ -37,7 +38,8 @@ public class VersionFeatures implements IVersionFeatures {
 			Function<Long, MineshaftAlgorithm_Base> mineshaftAlgorithmFactory,
 			QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker> oceanMonumentLocationCheckerFactory,
 			List<Biome> validBiomesAtMiddleOfChunk_OceanMonument,
-			List<Biome> validBiomesForStructure_OceanMonument) {
+			List<Biome> validBiomesForStructure_OceanMonument,
+			List<Biome> validBiomesForStructure_WoodlandMansion) {
 		this.enabledLayers = enabledLayers;
 		this.worldTypes= worldTypes;
 		this.validBiomesForStructure_Spawn = validBiomesForStructure_Spawn;
@@ -49,6 +51,7 @@ public class VersionFeatures implements IVersionFeatures {
 		this.oceanMonumentLocationCheckerFactory = oceanMonumentLocationCheckerFactory;
 		this.validBiomesAtMiddleOfChunk_OceanMonument = validBiomesAtMiddleOfChunk_OceanMonument;
 		this.validBiomesForStructure_OceanMonument = validBiomesForStructure_OceanMonument;
+		this.validBiomesForStructure_WoodlandMansion = validBiomesForStructure_WoodlandMansion;
 	}
 
 	@Override
@@ -95,5 +98,9 @@ public class VersionFeatures implements IVersionFeatures {
 
 	public List<Biome> getValidBiomesForStructure_OceanMonument() {
 		return validBiomesForStructure_OceanMonument;
+	}
+	
+	public List<Biome> getValidBiomesForStructure_WoodlandMansion() {
+		return validBiomesForStructure_WoodlandMansion;
 	}
 }

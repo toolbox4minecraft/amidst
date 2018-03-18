@@ -40,8 +40,9 @@ public enum MenuShortcuts implements MenuShortcut {
 	SHOW_TEMPLES("menu 5"),
 	SHOW_MINESHAFTS("menu 6"),
 	SHOW_OCEAN_MONUMENTS("menu 7"),
-	SHOW_NETHER_FORTRESSES("menu 8"),
-	SHOW_END_CITIES("menu 9"),
+	SHOW_WOODLAND_MANSIONS("menu 8"),
+	SHOW_NETHER_FORTRESSES("menu 9"),
+	SHOW_END_CITIES("menu 0"),
 	
 	SHOW_MINETEST_RIVERS("menu 1"),
 	SHOW_MINETEST_OCEANS("menu 2"),
