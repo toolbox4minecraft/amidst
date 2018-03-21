@@ -23,6 +23,6 @@ deploy:
   - "target/${filename}.exe"
   skip_cleanup: true
   on:
-    repo: treer/amidstest
+    repo: Treer/amidstest
     branch: releases
     tags: true
