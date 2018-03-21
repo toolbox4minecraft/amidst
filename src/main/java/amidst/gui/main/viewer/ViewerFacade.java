@@ -149,6 +149,11 @@ public class ViewerFacade {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	public String getGeneratorOptions() {
+		return world.getGeneratorOptions();
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldIcon getSpawnWorldIcon() {
 		return world.getSpawnWorldIcon();
 	}

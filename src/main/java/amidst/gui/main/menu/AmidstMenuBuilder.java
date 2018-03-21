@@ -128,6 +128,8 @@ public class AmidstMenuBuilder {
 		if (biomeAuthority.getBiomeProfileDirectory().isValid()) {
 			result.add(create_Settings_BiomeProfile());
 		}
+		Menus.item(result, actions::displayGeneratorOptions,    "View MapGen params",     KeyEvent.VK_V);
+
 		result.addSeparator();
 		// @formatter:off
 		Menus.checkbox(result, settings.smoothScrolling,      "Smooth Scrolling");
@@ -147,7 +149,7 @@ public class AmidstMenuBuilder {
 		// @formatter:on
 		return result;
 	}
-
+	
 	private JMenu create_Settings_BiomeProfile() {
 		JMenu result = new JMenu("Biome profile");
 		// @formatter:off

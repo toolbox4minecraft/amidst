@@ -33,6 +33,27 @@ public class MapgenV6Params extends MapgenParams {
 	public NoiseParams np_trees          = new NoiseParams(0,     1.0f, new Vector3f(125, 125, 125),      2, (short)4, 0.66f, 2.0f);
 	public NoiseParams np_apple_trees    = new NoiseParams(0,     1.0f, new Vector3f(100, 100, 100), 342902, (short)3, 0.45f, 2.0f);
 	
+   	@Override
+   	public String toString() {   		
+   		String prefix = "mgv6_";
+		StringBuilder result = new StringBuilder();
+		result.append("mg_flags    = "); 
+		appendFlags(result, spflags, new String[] {"jungles", "biomeblend", "mudflow", "snowbiomes", "flat", "trees"}); 
+		result.append("\r\n");
+		result.append(String.format("freq_desert = %s\r\n", formatFloat(freq_desert)));		
+		result.append(String.format("freq_beach  = %s\r\n", formatFloat(freq_beach)));		
+		result.append(super.toString());
+		result.append(np_terrain_base.toString(  prefix + "np_terrain_base"));
+		result.append(np_terrain_higher.toString(prefix + "np_terrain_higher"));
+		result.append(np_steepness.toString(     prefix + "np_steepness"));
+		result.append(np_height_select.toString( prefix + "np_height_select"));
+		result.append(np_mud.toString(           prefix + "np_mud"));
+		result.append(np_beach.toString(         prefix + "np_beach"));
+		result.append(np_biome.toString(         prefix + "np_biome"));
+		result.append(np_humidity.toString(      prefix + "np_humidity"));
+        return result.toString();		
+   	}	
+	
 	@Override
 	public WorldType getWorldType() {
 		return WorldType.V6;

@@ -6,7 +6,8 @@ import amidst.mojangapi.world.WorldType;
 
 public class MapgenFlatParams extends MapgenParams {
 
-	public static final int FLAG_V5_CAVERNS   = 0x01;
+	public static final int FLAG_FLAT_LAKES   = 0x01;
+	public static final int FLAG_FLAT_HILLS   = 0x02;
 	
 	public int spflags = 0;
 	public short ground_level = 8;
@@ -22,6 +23,19 @@ public class MapgenFlatParams extends MapgenParams {
 	short dungeon_ymax = 31000;
 
 	NoiseParams np_terrain = new NoiseParams(0, 1,  new Vector3f(600, 600, 600), 7244, (short)5, 0.6f,  2.0f);
+	
+   	@Override
+   	public String toString() {   		
+   		String prefix = "mgflat_";
+		StringBuilder result = new StringBuilder();
+		result.append("mg_flags     = "); 
+		appendFlags(result, spflags, new String[] {"lakes", "hills"}); 
+		result.append("\r\n");
+		result.append(String.format("ground_level = %s\r\n", formatFloat(ground_level))); 
+		result.append(super.toString());
+		result.append(np_terrain.toString(prefix + "np_terrain"));
+        return result.toString();		
+   	}		
 	
 	@Override
 	public WorldType getWorldType() {

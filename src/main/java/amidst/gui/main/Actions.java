@@ -24,6 +24,7 @@ import amidst.gui.crash.CrashWindow;
 import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
+import amidst.gui.text.TextWindow;
 import amidst.logging.AmidstLogger;
 import amidst.minetest.world.mapgen.DefaultBiomes;
 import amidst.mojangapi.world.WorldSeed;
@@ -304,6 +305,25 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void viewLicense() {
 		application.displayLicenseWindow();
+	}
+
+	/**
+	 * This is more useful for Minetest than Minecraft, as Minetest has extensive
+	 * modabble MapgenParams, which are exposed as the GeneratorOptions
+	 */
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void displayGeneratorOptions() {
+		// 
+		String generatorOptions = null;
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
+		if (viewerFacade != null) {
+			generatorOptions = viewerFacade.getGeneratorOptions();			
+		}
+		if (generatorOptions != null && generatorOptions.length() > 0) {
+			TextWindow.showMonospace("World mapgen options", generatorOptions);
+		} else {
+			dialogs.displayInfo("World MapGen options", "There are currently no mapgen options in use");
+		}		
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

@@ -27,7 +27,7 @@ public class BiomeDataOracleV5 extends MinetestBiomeDataOracle {
 				v5params = (MapgenV5Params)params;
 			} else {
 				AmidstLogger.error("Error: BiomeDataOracleV5 cannot cast params to v5params. Using defaults instead.");
-				v5params = new MapgenV5Params();
+				this.params = v5params = new MapgenV5Params();
 			}
 			
 			noise_factor = new Noise(v5params.np_factor, this.seed, params.chunk_length_x, params.chunk_length_z);

@@ -16,7 +16,7 @@ import amidst.settings.biomeprofile.BiomeProfileUpdateListener;
 
 public abstract class MinetestBiomeDataOracle implements IBiomeDataOracle, BiomeProfileUpdateListener {
 	protected final int seed;
-	protected final MapgenParams params;
+	protected MapgenParams params;
 	/**
 	 * Updated by onBiomeProfileUpdate event, can be null.
 	 */
@@ -42,6 +42,10 @@ public abstract class MinetestBiomeDataOracle implements IBiomeDataOracle, Biome
 			this.biomeProfile = biomeProfileSelection.getCurrentBiomeProfile();
 			biomeProfileSelection.addUpdateListener(this);			
 		}		
+	}
+	
+	public MapgenParams getMapgenParams() {
+		return params;
 	}
 	
 	protected MinetestBiome[] getBiomeArray() {

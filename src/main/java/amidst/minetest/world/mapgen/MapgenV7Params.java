@@ -68,6 +68,25 @@ public class MapgenV7Params extends MapgenParams {
 	       NoiseParams np_cave1             = new NoiseParams(0,     12,   new Vector3f(61,   61,   61),   52534, (short)3, 0.5f,  2.0f);
 	       NoiseParams np_cave2             = new NoiseParams(0,     12,   new Vector3f(67,   67,   67),   10325, (short)3, 0.5f,  2.0f);
 	       
+	       
+   	@Override
+   	public String toString() {   		
+   		String prefix = "mgv7_";
+		StringBuilder result = new StringBuilder();
+		result.append("mg_flags    = "); 
+		appendFlags(result, spflags, new String[] {"mountains", "ridges", "floatlands", "caverns", "biomerepeat"}); 
+		result.append("\r\n");
+		result.append(super.toString());
+		result.append(np_terrain_base.toString(   prefix + "np_terrain_base"));
+		result.append(np_terrain_alt.toString(    prefix + "np_terrain_alt"));
+		result.append(np_terrain_persist.toString(prefix + "np_terrain_persist"));
+		result.append(np_height_select.toString(  prefix + "np_height_select"));
+		result.append(np_mount_height.toString(   prefix + "np_mount_height"));
+		result.append(np_mountain.toString(       prefix + "np_terrain_persist"));
+		result.append(np_ridge_uwater.toString(   prefix + "np_ridge_uwater"));
+        return result.toString();		
+   	}
+	       
    	@Override
 	public WorldType getWorldType() {
 		return WorldType.V7;

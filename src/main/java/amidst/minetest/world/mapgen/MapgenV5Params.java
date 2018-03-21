@@ -22,6 +22,20 @@ public class MapgenV5Params extends MapgenParams {
 	public NoiseParams np_height = new NoiseParams(0, 10, new Vector3f(250, 250, 250), 84174,  (short)4, 0.5f,   2.0f);
 	public NoiseParams np_ground = new NoiseParams(0, 40, new Vector3f( 80,  80,  80), 983240, (short)4, 0.55f,  2.0f, Noise.FLAG_EASED);
 	
+   	@Override
+   	public String toString() {   		
+   		String prefix = "mgv5_";
+		StringBuilder result = new StringBuilder();
+		result.append("mg_flags    = "); 
+		appendFlags(result, spflags, new String[] {"caverns"}); 
+		result.append("\r\n");
+		result.append(super.toString());
+		result.append(np_factor.toString(prefix + "np_factor"));
+		result.append(np_height.toString(prefix + "np_height"));
+		result.append(np_ground.toString(prefix + "np_ground"));
+        return result.toString();		
+   	}	
+		
 	@Override
 	public WorldType getWorldType() {
 		return WorldType.V5;

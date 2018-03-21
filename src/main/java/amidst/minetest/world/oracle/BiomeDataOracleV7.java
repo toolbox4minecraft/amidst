@@ -60,7 +60,7 @@ public class BiomeDataOracleV7 extends MinetestBiomeDataOracle {
 			v7params = (MapgenV7Params)params;
 		} else {
 			AmidstLogger.error("Error: BiomeDataOracleV7 cannot cast params to v7params. Using defaults instead.");
-			v7params = new MapgenV7Params();
+			this.params = v7params = new MapgenV7Params();
 		}
 		
 				

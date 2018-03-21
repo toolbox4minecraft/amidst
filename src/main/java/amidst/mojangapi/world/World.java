@@ -6,6 +6,8 @@ import java.util.function.Consumer;
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.IBiomeDataOracle;
 import amidst.gameengineabstraction.world.versionfeatures.IVersionFeatures;
+import amidst.minetest.world.mapgen.MapgenParams;
+import amidst.minetest.world.oracle.MinetestBiomeDataOracle;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
@@ -58,7 +60,6 @@ public class World {
 		this.onDisposeWorld         = onDisposeWorld;
 		this.worldSeed              = worldSeed;
 		this.worldType              = worldType;
-		this.generatorOptions       = "";
 		this.movablePlayerList      = movablePlayerList;
 		this.recognisedVersion      = recognisedVersion;
 		this.versionFeatures        = versionFeatures;
@@ -75,6 +76,15 @@ public class World {
 		this.woodlandMansionProducer = null;
 		this.netherFortressProducer = null;
 		this.endCityProducer        = null;
+		
+		String mapgenParamsString = "";
+		if (biomeDataOracle instanceof MinetestBiomeDataOracle) {
+			MapgenParams params = ((MinetestBiomeDataOracle)biomeDataOracle).getMapgenParams();
+			if (params != null) mapgenParamsString = params.toString();
+		}
+		// Repurposing the generatorOptions string from being a prescriptive
+		// parameter with Minecraft, into a descriptive parameter for Minetest worlds.
+		this.generatorOptions = mapgenParamsString;
 	}
 
 	

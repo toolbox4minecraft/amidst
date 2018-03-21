@@ -24,7 +24,7 @@ public class BiomeDataOracleFlat extends MinetestBiomeDataOracle {
 			flatParams = (MapgenFlatParams)params;
 		} else {
 			AmidstLogger.error("Error: BiomeDataOracleFlat cannot cast params to flatParams. Using defaults instead.");
-			flatParams = new MapgenFlatParams();
+			this.params = flatParams = new MapgenFlatParams();
 		}
 	}
 

@@ -61,7 +61,7 @@ public class BiomeDataOracleV6 extends MinetestBiomeDataOracle {
 				v6params = (MapgenV6Params)params;
 			} else {
 				AmidstLogger.error("Error: BiomeDataOracleV6 cannot cast params to v6params. Using defaults instead.");
-				v6params = new MapgenV6Params();
+				this.params = v6params = new MapgenV6Params();
 			}
 			
 			noise_terrain_base = new Noise(v6params.np_terrain_base,     this.seed, params.chunk_length_x, params.chunk_length_z);
