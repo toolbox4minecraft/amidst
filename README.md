@@ -1,7 +1,12 @@
-Amidst
-======
+﻿Amidstest
+=========
 
-[![Build Status](https://travis-ci.org/toolbox4minecraft/amidst.svg?branch=master)](https://travis-ci.org/toolbox4minecraft/amidst)
+[![Build Status](https://travis-ci.org/Treer/amidstest.svg?branch=master)](https://travis-ci.org/Treer/amidstest)
+
+## What is Amidstest?
+
+Amidstest is Amidst converted to support [Minetest](https://www.minetest.net/) — a completely free and open implementation of Minecraft.
+
 
 ## What is Amidst?
 
