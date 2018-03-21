@@ -23,8 +23,8 @@ public enum RecognisedVersion {
 	// TODO: Remove these versions before V1_0?
 	// TODO: stronghold reset on V1_9pre4?
 	UNKNOWN,
-	Minetest_0_5x ("Minetest v0.5x",  ""),
-	Minetest_0_4x ("Minetest v0.4x",  ""),
+	_Minetest_v0_5x ("Minetest v0.5x",  "dummy magic string 2"),
+	_Minetest_v0_4x ("Minetest v0.4x",  "dummy magic string 1"),
 	
 	_1_12_pre7 ("1.12-pre7",  "ujrjoxmsrw[Lom;pj[J[[Jpf"),                                                                // matches the launcher version id: 1.12-pre7    1.12-pre6    1.12-pre5    1.12-pre4    1.12-pre3    
 	_1_12_pre2 ("1.12-pre2",  "uhrhovmqru[Lok;ph[J[[Jpd"),                                                                // matches the launcher version id: 1.12-pre2    
