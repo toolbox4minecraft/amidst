@@ -8,8 +8,8 @@ import amidst.minetest.world.oracle.MinetestBiomeDataOracle;
 
 @ThreadSafe
 public class MinetestRiverColorProvider implements ColorProvider {
-	private static final int RIVER_COLOR       = 0xC8001090; // 0xAARRGGBB
-	private static final int RIVERS_EDGE_COLOR = 0xA05555FF; // 0xAARRGGBB
+	private static final int RIVER_COLOR       = 0xC8062170; // 0xAARRGGBB
+	private static final int RIVERS_EDGE_COLOR = 0x70949d96; // 0xAARRGGBB
 	private static final int NOT_RIVER_COLOR   = 0x00000000; // 0xAARRGGBB
 
 	private static final int OCEAN_RIVER_MASK = MinetestBiomeDataOracle.BITPLANE_RIVER | MinetestBiomeDataOracle.BITPLANE_OCEAN;

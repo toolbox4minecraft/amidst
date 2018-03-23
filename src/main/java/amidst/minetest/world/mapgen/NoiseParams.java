@@ -12,15 +12,6 @@ public class NoiseParams {
 	public float persist = 0.6f;
 	float lacunarity = 2.0f;
 	int flags = Noise.FLAG_DEFAULTS; // Static methods like compareUnsigned, divideUnsigned etc have been added to the Integer class to support the arithmetic operations for unsigned integers
-
-
-	public NoiseParams() { }
-
-	public NoiseParams(float offset_, float scale_, Vector3f spread_, int seed_,
-			short octaves_, float persist_, float lacunarity_)
-	{
-		this(offset_, scale_, spread_, seed_, octaves_, persist_, lacunarity_, Noise.FLAG_DEFAULTS);
-	}
 	
 	public String toString(String name) {
 		StringBuilder result = new StringBuilder();
@@ -41,6 +32,14 @@ public class NoiseParams {
 		
 	}
 	
+	public NoiseParams() { }
+
+	public NoiseParams(float offset_, float scale_, Vector3f spread_, int seed_,
+			short octaves_, float persist_, float lacunarity_)
+	{
+		this(offset_, scale_, spread_, seed_, octaves_, persist_, lacunarity_, Noise.FLAG_DEFAULTS);
+	}
+
 	public NoiseParams(float offset_, float scale_, Vector3f spread_, int seed_,
 		short octaves_, float persist_, float lacunarity_,
 		int flags_)

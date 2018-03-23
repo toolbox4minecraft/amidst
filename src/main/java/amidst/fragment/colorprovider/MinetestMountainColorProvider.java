@@ -8,7 +8,7 @@ import amidst.minetest.world.oracle.MinetestBiomeDataOracle;
 
 @ThreadSafe
 public class MinetestMountainColorProvider implements ColorProvider {
-	private static final int MOUNTAIN_COLOR      = 0xF0D0D0D0; // 0xAARRGGBB
+	private static final int MOUNTAIN_COLOR      = 0xF045403B; // 0xAARRGGBB
 	private static final int MOUNTAIN_EDGE_COLOR = 0x80D0D0D0; // 0xAARRGGBB
 	private static final int NOT_MOUNTAIN_COLOR  = 0x00000000; // 0xAARRGGBB
 

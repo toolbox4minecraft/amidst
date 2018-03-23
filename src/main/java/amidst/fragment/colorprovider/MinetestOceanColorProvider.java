@@ -7,7 +7,7 @@ import amidst.minetest.world.oracle.MinetestBiomeDataOracle;
 
 @ThreadSafe
 public class MinetestOceanColorProvider implements ColorProvider {
-	private static final int OCEAN_COLOR     = 0xE0000550; // 0xAARRGGBB
+	private static final int OCEAN_COLOR     = 0xF0041750; // 0xAARRGGBB
 	private static final int NOT_OCEAN_COLOR = 0x00000000; // 0xAARRGGBB
 
 	@Override
