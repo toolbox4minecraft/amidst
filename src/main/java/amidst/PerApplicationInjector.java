@@ -66,8 +66,14 @@ public class PerApplicationInjector {
 		this.playerInformationProvider = new PlayerInformationCache();
 		this.seedHistoryLogger = SeedHistoryLogger.from(parameters.seedHistoryFile);
 		
-		this.minecraftInstallation = MinecraftInstallation
-				.newLocalMinecraftInstallation(parameters.dotMinecraftDirectory);
+		MinecraftInstallation mcInstallation = null;
+		try {
+			mcInstallation = MinecraftInstallation
+					.newLocalMinecraftInstallation(parameters.dotMinecraftDirectory);
+		} catch (DotMinecraftDirectoryNotFoundException ex) {
+			// Minecraft not found, Amidstest will be minetest only
+		}
+		this.minecraftInstallation = mcInstallation;
 		this.minetestInstallation = MinetestInstallation
 				.newLocalMinetestInstallationOrDefault(parameters.minetestDirectory);
 		minetestInstallation.setGameInstallationPassThrough(minecraftInstallation);
