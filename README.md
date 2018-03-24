@@ -7,10 +7,43 @@
 
 Amidstest is Amidst converted to support [Minetest](https://www.minetest.net/) — a completely free and open implementation of Minecraft.
 
+Amidstest is a tool to display a map of a world (either Minetest or Minecraft), without actually creating it.
+
+With Minetest worlds, it can:
+
+* render an overview of a world from a given seed and mapgen version
+* Apply different biome sets to the world
+* save an image of the map
+* display biome information
+* locate biomes
+
+
+The following has not *yet* been implemented for Minetest worlds:
+* display dungeon locations
+* locate and load any non-default advanced mapgen parameters you might be tweaking
+* Player locations, and exact spawn location.
+
+## Download
+
+* [Releases](https://github.com/treer/amidstest/releases)
+
+
+## Screenshots
+
+![default](https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/v5_default1.png)
+
+![default](https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/v7_30-biomes1.png)
+
+![default](https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/v7_default1.png)
+
+
+
+----
+
 
 ## What is Amidst?
 
-Amidst is a tool to display an overview of a Minecraft world, without actually creating it.
+Amidst is the original tool for Minecraft which this project has built off. It is a tool to display an overview of a Minecraft world, without actually creating it.
 
 Amidst **can**:
 
