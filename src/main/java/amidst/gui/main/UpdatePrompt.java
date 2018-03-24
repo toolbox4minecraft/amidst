@@ -60,7 +60,7 @@ public class UpdatePrompt {
 		}
 	}
 
-	private static final String TITLE = "Amidst Updater";
+	private static final String TITLE = AmidstVersion.getName() + " Updater";
 	private static final String NO_UPDATES_AVAILABLE = "There are no updates available.";
 
 	private static final Runnable NOOP = () -> {
@@ -130,7 +130,7 @@ public class UpdatePrompt {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private String createMessage(String message, AmidstVersion newVersion, String versionType) {
-		return "A new " + versionType + " version of Amidst is available:\n" + "Current Version: "
+		return "A new " + versionType + " version of " + AmidstVersion.getName() + " is available:\n" + "Current Version: "
 				+ currentVersion.createVersionString() + "\n" + "New Version: " + newVersion.createVersionString()
 				+ "\n" + "Do you want to upgrade?" + createMessageSuffix(message);
 	}

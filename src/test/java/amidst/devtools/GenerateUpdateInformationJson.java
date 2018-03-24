@@ -7,7 +7,7 @@ import amidst.AmidstVersion;
 import amidst.gui.main.UpdateInformationJson;
 
 public class GenerateUpdateInformationJson {
-	private static final String DOWNLOAD_URL = "https://github.com/treer/amidst/releases";
+	private static final String DOWNLOAD_URL = "https://github.com/treer/amidstest/releases";
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	private final AmidstVersion version;

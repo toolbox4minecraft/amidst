@@ -26,6 +26,10 @@ public class AmidstVersion {
 		this.minor = minor;
 		this.preReleaseSuffix = preReleaseSuffix;
 	}
+	
+	public static String getName() {
+		return FeatureToggles.MINETEST_SUPPORT ? "Amidstest" : "Amidst"; 
+	}	
 
 	public int getMajor() {
 		return major;
@@ -60,7 +64,7 @@ public class AmidstVersion {
 	}
 
 	public String createLongVersionString() {
-		return FeatureToggles.MINETEST_SUPPORT ? "Amidstest " : "Amidst "; 
+		return getName() + " " + createVersionString(); 
 	}
 
 	public String createVersionString() {
