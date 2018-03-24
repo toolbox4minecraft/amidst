@@ -7,10 +7,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+import amidst.AmidstVersion;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.parsing.FormatException;
 import amidst.parsing.json.JsonReader;
+import amidst.util.OperatingSystemDetector;
 
 @Immutable
 public class BiomeProfileDirectory {
@@ -22,13 +24,60 @@ public class BiomeProfileDirectory {
 	}
 
 	private static File getRoot(String root) {
+		File result = null;		
+		
 		if (root != null) {
-			return new File(root);
-		} else {
-			return DEFAULT_ROOT_DIRECTORY;
+			result = new File(root);
+			tryCreateDirectory(result);
+			if (!(result.isDirectory() && result.canWrite())) result = null;
 		}
+		if (result == null) result = getWriteableRootDirectory();
+		if (result == null) {
+			// We can't find a writable directory
+			result = (root != null) ? new File(root) : DEFAULT_ROOT_DIRECTORY;
+		}
+		return result;
 	}
 
+	/**
+	 * Returns null, or a writeable biome directory.
+	 */
+	private static File getWriteableRootDirectory() {
+		
+		File result = DEFAULT_ROOT_DIRECTORY;
+		tryCreateDirectory(result);
+		
+		if (!(result.isDirectory() && result.canWrite() && result.canRead())) {
+			// biome menu won't work without a directory with write access
+			// Try using the location the OS has designated for app data.
+			
+			File home = new File(System.getProperty("user.home", "."));
+			if (OperatingSystemDetector.isWindows()) {
+				File appData = new File(System.getenv("APPDATA"));
+				if (appData.isDirectory()) {
+					result = new File(appData, AmidstVersion.getName());
+				}
+			} else if (OperatingSystemDetector.isMac()) {
+				result = new File(home, "Library/Application Support/" + AmidstVersion.getName());
+			} else {
+				result = new File(home, "." + AmidstVersion.getName().toLowerCase());
+			}
+		}
+		tryCreateDirectory(result);
+		
+		return (result.isDirectory() && result.canWrite()) ? result : null;
+	}
+	
+	private static void tryCreateDirectory(File directory) {
+		if (!directory.exists()) {
+			try {
+				directory.mkdirs();
+			} catch (Exception ex) {
+				AmidstLogger.error("Could not create directory \"" + directory.toString() + "\": " + ex.getMessage());
+			}
+		}		
+	}
+	
 	private static final File DEFAULT_ROOT_DIRECTORY = new File("biome");
 
 	private final File root;
@@ -145,17 +194,23 @@ public class BiomeProfileDirectory {
 		return directory.listFiles(filter);		
 	}
 
-	private BiomeProfile createFromName(String name) {
-		// Unfortunately we can't assume the name matches the file name,
-		// so load every biome file until we find the right one.
-		
-		for (File file : getBiomeProfileFileList(root)) {
-			if (file.isFile()) {
-				BiomeProfile profile = createFromFile(file);
-				if (profile != null && profile.getName().equals(name)) {
-					return profile;				
+	private BiomeProfile createFromName(String name) {		
+		if (isValid()) {
+			// Unfortunately we can't assume the name matches the file name,
+			// so load every biome file until we find the right one.			
+			for (File file : getBiomeProfileFileList(root)) {
+				if (file.isFile()) {
+					BiomeProfile profile = createFromFile(file);
+					if (profile != null && profile.getName().equals(name)) {
+						return profile;				
+					}
 				}
 			}
+		} else {
+			// We don't have a biome directory, see if the defaults contains this biome 
+			for (BiomeProfile profile : createDefaultProfiles()) {
+				if (profile != null && profile.getName().equals(name)) return profile;				
+			}			
 		}
 		return null;		
 	}
