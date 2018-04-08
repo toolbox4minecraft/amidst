@@ -22,7 +22,6 @@ import amidst.gui.main.WorldSwitcher;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.json.filter.WorldFilterJson_MatchAll;
 import amidst.mojangapi.world.WorldOptions;
-import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.filter.WorldFilter;
 import net.miginfocom.swing.MigLayout;
@@ -117,7 +116,6 @@ public class SeedSearcherWindow {
 			Optional<SeedSearcherConfiguration> configuration = createSeedSearcherConfiguration();
 			if (configuration.isPresent()) {
 				SeedSearcherConfiguration seedSearcherConfiguration = configuration.get();
-				WorldType worldType = seedSearcherConfiguration.getWorldType();
 				seedSearcher.search(seedSearcherConfiguration, worldOptions -> seedFound(worldOptions));
 			} else {
 				AmidstLogger.warn("invalid configuration");
