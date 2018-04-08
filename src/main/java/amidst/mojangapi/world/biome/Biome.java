@@ -90,49 +90,50 @@ public class Biome {
 	public static final Biome mesaPlateauF         = new Biome("Mesa Plateau F",             38, BiomeColor.from(176, 151, 101), BiomeType.PLATEAU);
 	public static final Biome mesaPlateau          = new Biome("Mesa Plateau",               39, BiomeColor.from(202, 140, 101), BiomeType.PLATEAU);
 
-	public static final Biome oceanM               = new Biome("Ocean M",                   128, BiomeColor.from(  0,   0, 112));
-	public static final Biome sunflowerPlains      = new Biome("Sunflower Plains",          129, BiomeColor.from(141, 179,  96));
-	public static final Biome desertM              = new Biome("Desert M",                  130, BiomeColor.from(250, 148,  24));
-	public static final Biome extremeHillsM        = new Biome("Extreme Hills M",           131, BiomeColor.from( 96,  96,  96));
-	public static final Biome flowerForest         = new Biome("Flower Forest",             132, BiomeColor.from(  5, 102,  33));
-	public static final Biome taigaM               = new Biome("Taiga M",                   133, BiomeColor.from( 11, 102,  89));
-	public static final Biome swamplandM           = new Biome("Swampland M",               134, BiomeColor.from(  7, 249, 178));
-	public static final Biome riverM               = new Biome("River M",                   135, BiomeColor.from(  0,   0, 255));
-	public static final Biome hellM                = new Biome("Hell M",                    136, BiomeColor.from(255,   0,   0));
-	public static final Biome skyM                 = new Biome("Sky M",                     137, BiomeColor.from(128, 128, 255));
-	public static final Biome frozenOceanM         = new Biome("Frozen Ocean M",            138, BiomeColor.from(144, 144, 160));
-	public static final Biome frozenRiverM         = new Biome("Frozen River M",            139, BiomeColor.from(160, 160, 255));
-	public static final Biome icePlainsSpikes      = new Biome("Ice Plains Spikes",         140, BiomeColor.from(140, 180, 180));
-	public static final Biome iceMountainsM        = new Biome("Ice Mountains M",           141, BiomeColor.from(160, 160, 160));
-	public static final Biome mushroomIslandM      = new Biome("Mushroom Island M",         142, BiomeColor.from(255,   0, 255));
-	public static final Biome mushroomIslandShoreM = new Biome("Mushroom Island Shore M",   143, BiomeColor.from(160,   0, 255));
-	public static final Biome beachM               = new Biome("Beach M",                   144, BiomeColor.from(250, 222,  85));
-	public static final Biome desertHillsM         = new Biome("Desert Hills M",            145, BiomeColor.from(210,  95,  18));
-	public static final Biome forestHillsM         = new Biome("Forest Hills M",            146, BiomeColor.from( 34,  85,  28));
-	public static final Biome taigaHillsM          = new Biome("Taiga Hills M",             147, BiomeColor.from( 22,  57,  51));
-	public static final Biome extremeHillsEdgeM    = new Biome("Extreme Hills Edge M",      148, BiomeColor.from(114, 120, 154));
-	public static final Biome jungleM              = new Biome("Jungle M",                  149, BiomeColor.from( 83, 123,   9));
-	public static final Biome jungleHillsM         = new Biome("Jungle Hills M",            150, BiomeColor.from( 44,  66,   5));
-	public static final Biome jungleEdgeM          = new Biome("Jungle Edge M",             151, BiomeColor.from( 98, 139,  23));
-	public static final Biome deepOceanM           = new Biome("Deep Ocean M",              152, BiomeColor.from(  0,   0,  48));
-	public static final Biome stoneBeachM          = new Biome("Stone Beach M",             153, BiomeColor.from(162, 162, 132));
-	public static final Biome coldBeachM           = new Biome("Cold Beach M",              154, BiomeColor.from(250, 240, 192));
-	public static final Biome birchForestM         = new Biome("Birch Forest M",            155, BiomeColor.from( 48, 116,  68));
-	public static final Biome birchForestHillsM    = new Biome("Birch Forest Hills M",      156, BiomeColor.from( 31,  95,  50));
-	public static final Biome roofedForestM        = new Biome("Roofed Forest M",           157, BiomeColor.from( 64,  81,  26));
-	public static final Biome coldTaigaM           = new Biome("Cold Taiga M",              158, BiomeColor.from( 49,  85,  74));
-	public static final Biome coldTaigaHillsM      = new Biome("Cold Taiga Hills M",        159, BiomeColor.from( 36,  63,  54));
-	public static final Biome megaSpruceTaiga      = new Biome("Mega Spruce Taiga",         160, BiomeColor.from( 89, 102,  81));
-	public static final Biome megaSpurceTaigaHills = new Biome("Mega Spruce Taiga (Hills)", 161, BiomeColor.from( 69,  79,  62));
-	public static final Biome extremeHillsPlusM    = new Biome("Extreme Hills+ M",          162, BiomeColor.from( 80, 112,  80));
-	public static final Biome savannaM             = new Biome("Savanna M",                 163, BiomeColor.from(189, 178,  95));
-	public static final Biome savannaPlateauM      = new Biome("Savanna Plateau M",         164, BiomeColor.from(167, 157, 100));
-	public static final Biome mesaBryce            = new Biome("Mesa (Bryce)",              165, BiomeColor.from(217,  69,  21));
-	public static final Biome mesaPlateauFM        = new Biome("Mesa Plateau F M",          166, BiomeColor.from(176, 151, 101));
-	public static final Biome mesaPlateauM         = new Biome("Mesa Plateau M",            167, BiomeColor.from(202, 140, 101));
+	public static final Biome oceanM               = new Biome("Ocean M",                   ocean);
+	public static final Biome sunflowerPlains      = new Biome("Sunflower Plains",          plains);
+	public static final Biome desertM              = new Biome("Desert M",                  desert);
+	public static final Biome extremeHillsM        = new Biome("Extreme Hills M",           extremeHills);
+	public static final Biome flowerForest         = new Biome("Flower Forest",             forest);
+	public static final Biome taigaM               = new Biome("Taiga M",                   taiga);
+	public static final Biome swamplandM           = new Biome("Swampland M",               swampland);
+	public static final Biome riverM               = new Biome("River M",                   river);
+	public static final Biome hellM                = new Biome("Hell M",                    hell);
+	public static final Biome skyM                 = new Biome("Sky M",                     theEnd);
+	public static final Biome frozenOceanM         = new Biome("Frozen Ocean M",            frozenOcean);
+	public static final Biome frozenRiverM         = new Biome("Frozen River M",            frozenRiver);
+	public static final Biome icePlainsSpikes      = new Biome("Ice Plains Spikes",         icePlains,          BiomeColor.from(180, 220, 220));
+	public static final Biome iceMountainsM        = new Biome("Ice Mountains M",           iceMountains);
+	public static final Biome mushroomIslandM      = new Biome("Mushroom Island M",         mushroomIsland);
+	public static final Biome mushroomIslandShoreM = new Biome("Mushroom Island Shore M",   mushroomIslandShore);
+	public static final Biome beachM               = new Biome("Beach M",                   beach);
+	public static final Biome desertHillsM         = new Biome("Desert Hills M",            desertHills);
+	public static final Biome forestHillsM         = new Biome("Forest Hills M",            forestHills);
+	public static final Biome taigaHillsM          = new Biome("Taiga Hills M",             taigaHills);
+	public static final Biome extremeHillsEdgeM    = new Biome("Extreme Hills Edge M",      extremeHillsEdge);
+	public static final Biome jungleM              = new Biome("Jungle M",                  jungle);
+	public static final Biome jungleHillsM         = new Biome("Jungle Hills M",            jungleHills);
+	public static final Biome jungleEdgeM          = new Biome("Jungle Edge M",             jungleEdge);
+	public static final Biome deepOceanM           = new Biome("Deep Ocean M",              deepOcean);
+	public static final Biome stoneBeachM          = new Biome("Stone Beach M",             stoneBeach);
+	public static final Biome coldBeachM           = new Biome("Cold Beach M",              coldBeach);
+	public static final Biome birchForestM         = new Biome("Birch Forest M",            birchForest);
+	public static final Biome birchForestHillsM    = new Biome("Birch Forest Hills M",      birchForestHills);
+	public static final Biome roofedForestM        = new Biome("Roofed Forest M",           roofedForest);
+	public static final Biome coldTaigaM           = new Biome("Cold Taiga M",              coldTaiga);
+	public static final Biome coldTaigaHillsM      = new Biome("Cold Taiga Hills M",        coldTaigaHills);
+	public static final Biome megaSpruceTaiga      = new Biome("Mega Spruce Taiga",         megaTaiga);
+	public static final Biome megaSpurceTaigaHills = new Biome("Mega Spruce Taiga (Hills)", megaTaigaHills);
+	public static final Biome extremeHillsPlusM    = new Biome("Extreme Hills+ M",          extremeHillsPlus);
+	public static final Biome savannaM             = new Biome("Savanna M",                 savanna);
+	public static final Biome savannaPlateauM      = new Biome("Savanna Plateau M",         savannaPlateau);
+	public static final Biome mesaBryce            = new Biome("Mesa (Bryce)",              mesa);
+	public static final Biome mesaPlateauFM        = new Biome("Mesa Plateau F M",          mesaPlateauF);
+	public static final Biome mesaPlateauM         = new Biome("Mesa Plateau M",            mesaPlateau);
 	// @formatter:on
 
 	private static final BiomeIterable ITERABLE = new BiomeIterable();
+	private static final int SPECIAL_BIOMES_START = 128;
 
 	public static Iterable<Biome> allBiomes() {
 		return ITERABLE;
@@ -159,7 +160,7 @@ public class Biome {
 	}
 
 	public static boolean isSpecialBiomeIndex(int index) {
-		return index >= 128;
+		return index >= SPECIAL_BIOMES_START;
 	}
 
 	public static int compareByIndex(String name1, String name2) {
@@ -170,9 +171,13 @@ public class Biome {
 	private final int index;
 	private final BiomeColor defaultColor;
 	private final BiomeType type;
-
-	public Biome(String name, int index, BiomeColor defaultColor) {
-		this(name, index, defaultColor.createLightenedBiomeColor(), biomes[index - 128].type.strengthen());
+	
+	public Biome(String name, Biome base) {
+		this(name, base, base.defaultColor.createLightenedBiomeColor());
+	}
+	
+	public Biome(String name, Biome base, BiomeColor defaultColor) {
+		this(name, base.index + SPECIAL_BIOMES_START, defaultColor, base.type.strengthen());
 	}
 
 	public Biome(String name, int index, BiomeColor defaultColor, BiomeType type) {
@@ -199,7 +204,23 @@ public class Biome {
 	public BiomeType getType() {
 		return type;
 	}
+	
+	public boolean isSpecialBiome() {
+		return Biome.isSpecialBiomeIndex(index);
+	}
+	
+	public Biome getSpecialVariant() {
+		if(index >= SPECIAL_BIOMES_START)
+			return this;
+		return biomes[index + SPECIAL_BIOMES_START];
+	}
 
+	public Biome getNormalVariant() {
+		if(index < SPECIAL_BIOMES_START)
+			return this;
+		return biomes[index - SPECIAL_BIOMES_START];
+	}
+	
 	@Override
 	public String toString() {
 		return "[Biome " + name + "]";
