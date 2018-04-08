@@ -97,6 +97,7 @@ public class LayerBuilder {
 		declare(settings, declarations, versionFeatures, LayerIds.TEMPLE,          Dimension.OVERWORLD, false, settings.showTemples);
 		declare(settings, declarations, versionFeatures, LayerIds.MINESHAFT,       Dimension.OVERWORLD, false, settings.showMineshafts);
 		declare(settings, declarations, versionFeatures, LayerIds.OCEAN_MONUMENT,  Dimension.OVERWORLD, false, settings.showOceanMonuments);
+		declare(settings, declarations, versionFeatures, LayerIds.WOODLAND_MANSION,Dimension.OVERWORLD, false, settings.showWoodlandMansions);
 		declare(settings, declarations, versionFeatures, LayerIds.NETHER_FORTRESS, Dimension.OVERWORLD, false, settings.showNetherFortresses);
 		declare(settings, declarations, versionFeatures, LayerIds.END_CITY,        Dimension.END,       false, settings.showEndCities);
 		// @formatter:on
@@ -142,6 +143,7 @@ public class LayerBuilder {
 				new WorldIconLoader<>(declarations.get(LayerIds.TEMPLE),          world.getTempleProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.MINESHAFT),       world.getMineshaftProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.OCEAN_MONUMENT),  world.getOceanMonumentProducer()),
+				new WorldIconLoader<>(declarations.get(LayerIds.WOODLAND_MANSION),world.getWoodlandMansionProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.NETHER_FORTRESS), world.getNetherFortressProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.END_CITY),        world.getEndCityProducer(), Fragment::getEndIslands)
 		));
@@ -169,6 +171,7 @@ public class LayerBuilder {
 				new WorldIconDrawer(declarations.get(LayerIds.TEMPLE),          zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.MINESHAFT),       zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.OCEAN_MONUMENT),  zoom, worldIconSelection),
+				new WorldIconDrawer(declarations.get(LayerIds.WOODLAND_MANSION),zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.NETHER_FORTRESS), zoom, worldIconSelection),
 				new WorldIconDrawer(declarations.get(LayerIds.END_CITY),        zoom, worldIconSelection)
 		));
