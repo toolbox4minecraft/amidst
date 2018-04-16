@@ -332,8 +332,8 @@ public class Actions {
 				"About",
 				"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n"
 						+ (FeatureToggles.MINETEST_SUPPORT ? "Amidstest - Amidst for Minetest\n\n" : "\n")
-						+ "Author: Skidoodle aka skiphs\n" + "Mail: toolbox4minecraft+amidst@gmail.com\n"
-						+ "Project Page: https://github.com/toolbox4minecraft/amidst");
+						+ "Project page: https://github.com/Treer/amidstest\n"
+						+ "Forum thread: https://forum.minetest.net/viewtopic.php?f=14&t=19869");
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
