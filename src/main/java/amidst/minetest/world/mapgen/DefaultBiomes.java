@@ -141,26 +141,80 @@ public class DefaultBiomes {
 			);
 			
 			biomeLists.put(
-					"VoxelGardon",
-					setIndexes(
-						new MinetestBiome[] {
-							new MinetestBiome("Sea dirt",                BiomeColor.from(106,  95,  61), (short)-32000,        (short)0,  30,  40),	
-							new MinetestBiome("Sea sand",                BiomeColor.from(211, 199, 148), (short)-32000,        (short)5,  90,  40),	
-							new MinetestBiome("Sea desert sand",         BiomeColor.from(203, 175, 119), (short)-32000,        (short)5, 110, -60),	
-							new MinetestBiome("Sea gravel",              BiomeColor.from( 93,  93,  93), (short)-32000,        (short)5,  30, -60),	
+				"Ethereal", // https://github.com/tenplus1/ethereal
+				setIndexes(
+					new MinetestBiome[] {
+						new MinetestBiome("Glacier",         BiomeColor.from(233, 242, 255), (short)    -8, (short)31000,  0, 50),
+						new MinetestBiome("Glacier ocean",   BiomeColor.from(222, 222, 255), (short)  -112, (short)   -9,  0, 50),
+						new MinetestBiome("Mountain",        BiomeColor.from(243, 252, 255), (short)   140, (short)31000, 50, 50),
+						new MinetestBiome("Desert",          BiomeColor.from(203, 163,  96), (short)     3, (short)   23, 35, 20),
+						new MinetestBiome("Desert ocean",    BiomeColor.from(212, 200, 151), (short)  -192, (short)    3, 35, 20),
+						new MinetestBiome("Clearing",        BiomeColor.from( 75, 120,  38), (short)     3, (short)   71, 45, 65),
+						new MinetestBiome("Bamboo",          BiomeColor.from(133, 167,  80), (short)     3, (short)   71, 45, 75),
+						new MinetestBiome("Bamboo ocean",    BiomeColor.from(199, 205, 155), (short)  -192, (short)    2, 45, 75),
+						new MinetestBiome("Mesa",            BiomeColor.from(188, 149,  77), (short)     1, (short)   71, 25, 28),
+						new MinetestBiome("Mesa ocean",      BiomeColor.from(208, 195, 145), (short)  -192, (short)    1, 25, 28),
+						new MinetestBiome("Alpine",          BiomeColor.from(227, 221, 231), (short)    40, (short)  140, 10, 40),
+						new MinetestBiome("Snowy",           BiomeColor.from(197, 221, 197), (short)     4, (short)   40, 10, 40),
+						new MinetestBiome("Frost",           BiomeColor.from( 73, 144, 160), (short)     1, (short)   71, 10, 40),
+						new MinetestBiome("Frost ocean",     BiomeColor.from(187, 201, 171), (short)  -192, (short)    1, 10, 40),
+						new MinetestBiome("Grassy",          BiomeColor.from(130, 184, 111), (short)     3, (short)   91, 13, 40),
+						new MinetestBiome("Grassy ocean",    BiomeColor.from(199, 209, 161), (short)-31000, (short)    3, 13, 40),
+						new MinetestBiome("Caves",           BiomeColor.from(129,  79,  59), (short)     4, (short)   41, 15, 25),
+						new MinetestBiome("Grayness",        BiomeColor.from( 94, 146, 116), (short)     2, (short)   41, 15, 30),
+						new MinetestBiome("Grayness ocean",  BiomeColor.from(192, 192, 192), (short)  -192, (short)    1, 15, 30),
+						new MinetestBiome("Grassytwo",       BiomeColor.from( 62, 146,  25), (short)     1, (short)   91, 15, 40),
+						new MinetestBiome("Grassytwo ocean", BiomeColor.from(185, 201, 144), (short)  -192, (short)    1, 15, 40),
+						new MinetestBiome("Prairie",         BiomeColor.from(118, 178,  53), (short)     3, (short)   26, 20, 40),
+						new MinetestBiome("Prairie ocean",   BiomeColor.from(196, 208, 150), (short)  -192, (short)    1, 20, 40),
+						new MinetestBiome("Jumble",          BiomeColor.from( 58,  93,  34), (short)     1, (short)   71, 25, 50),
+						new MinetestBiome("Jumble ocean",    BiomeColor.from(156, 169, 121), (short)  -192, (short)    1, 25, 50),
+						new MinetestBiome("Junglee",         BiomeColor.from( 27,  54,  19), (short)     1, (short)   71, 30, 60),
+						new MinetestBiome("Junglee ocean",   BiomeColor.from(188, 195, 151), (short)  -192, (short)    1, 30, 60),
+						new MinetestBiome("Grove",           BiomeColor.from( 42, 132,  18), (short)     3, (short)   23, 45, 35),
+						new MinetestBiome("Grove ocean",     BiomeColor.from(181, 198, 143), (short)  -192, (short)    2, 45, 35),
+						new MinetestBiome("Mushroom",        BiomeColor.from(164,  58,  76), (short)     3, (short)   50, 45, 55),
+						new MinetestBiome("Mushroom ocean",  BiomeColor.from(206, 184, 154), (short)  -192, (short)    2, 45, 55),
+						new MinetestBiome("Sandstone",       BiomeColor.from(195, 190, 140), (short)     3, (short)   23, 50, 20),
+						new MinetestBiome("Sandstone ocean", BiomeColor.from(210, 208, 164), (short)  -192, (short)    2, 50, 20),
+						new MinetestBiome("Quicksand",       BiomeColor.from(190, 186, 138), (short)     1, (short)    1, 50, 38),
+						new MinetestBiome("Plains",          BiomeColor.from(127,  96,  53), (short)     3, (short)   25, 65, 25),
+						new MinetestBiome("Plains ocean",    BiomeColor.from(191, 184, 146), (short)  -192, (short)    2, 55, 25),
+						new MinetestBiome("Savannah",        BiomeColor.from(139, 142,  64), (short)     3, (short)   50, 55, 25),
+						new MinetestBiome("Savannah ocean",  BiomeColor.from(201, 200, 152), (short)  -192, (short)    1, 55, 25),
+						new MinetestBiome("Fiery",           BiomeColor.from(251, 108,   9), (short)     5, (short)   20, 75, 10),
+						new MinetestBiome("Fiery ocean",     BiomeColor.from(223, 194, 141), (short)  -192, (short)    4, 75, 10),
+						new MinetestBiome("Sandclay",        BiomeColor.from(190, 188, 162), (short)     1, (short)   11, 65,  2),
+						new MinetestBiome("Swamp",           BiomeColor.from(126, 161,  20), (short)     1, (short)    7, 80, 90),
+						new MinetestBiome("Swamp ocean",     BiomeColor.from(182, 194, 115), (short)  -192, (short)    1, 80, 90),
+						
+						// Underground (Amidst don't care) 
+						// new MinetestBiome("underground",     BiomeColor.from(20, 20, 20), (short)-31000, (short) -192, 50, 50),						
+					}
+				)
+			);
+			
+			biomeLists.put(
+				"VoxelGarden",
+				setIndexes(
+					new MinetestBiome[] {
+						new MinetestBiome("Sea dirt",                BiomeColor.from(106,  95,  61), (short)-32000,        (short)0,  30,  40),	
+						new MinetestBiome("Sea sand",                BiomeColor.from(211, 199, 148), (short)-32000,        (short)5,  90,  40),	
+						new MinetestBiome("Sea desert sand",         BiomeColor.from(203, 175, 119), (short)-32000,        (short)5, 110, -60),	
+						new MinetestBiome("Sea gravel",              BiomeColor.from( 93,  93,  93), (short)-32000,        (short)5,  30, -60),	
 
-							new MinetestBiome("Conifer",                 BiomeColor.from( 25,  61,  33), (short)     1, Short.MAX_VALUE,   0,  70),	
-							new MinetestBiome("Conifer-Tree transition", BiomeColor.from( 20,  75,  23), (short)     1, Short.MAX_VALUE,  25,  75),
-							new MinetestBiome("Tree",                    BiomeColor.from( 15, 115,  13), (short)     1, Short.MAX_VALUE,  50,  80),	
-							new MinetestBiome("Tree-Jungle transition",  BiomeColor.from(  7,  76,   7), (short)     1, Short.MAX_VALUE,  90,  75),
-							new MinetestBiome("Jungle",                  BiomeColor.from(  0,  46,   0), (short)     1, Short.MAX_VALUE, 100,  70),	
-							new MinetestBiome("Desert",                  BiomeColor.from(205, 180, 125), (short)     1, Short.MAX_VALUE, 120, -45),	
-							new MinetestBiome("Glacier",                 BiomeColor.from(237, 238, 255), (short)     1, Short.MAX_VALUE, -20, -30),	
-							new MinetestBiome("Gravel ice",              BiomeColor.from(213, 221, 240), (short)     1, Short.MAX_VALUE, -40, -40),															
-							new MinetestBiome("Gravel desert",           BiomeColor.from( 93,  93,  93), (short)     1, Short.MAX_VALUE, 160, -20),	
-						}
-					)
-				);
+						new MinetestBiome("Conifer",                 BiomeColor.from( 25,  61,  33), (short)     1, Short.MAX_VALUE,   0,  70),	
+						new MinetestBiome("Conifer-Tree transition", BiomeColor.from( 20,  75,  23), (short)     1, Short.MAX_VALUE,  25,  75),
+						new MinetestBiome("Tree",                    BiomeColor.from( 15, 115,  13), (short)     1, Short.MAX_VALUE,  50,  80),	
+						new MinetestBiome("Tree-Jungle transition",  BiomeColor.from(  7,  76,   7), (short)     1, Short.MAX_VALUE,  90,  75),
+						new MinetestBiome("Jungle",                  BiomeColor.from(  0,  46,   0), (short)     1, Short.MAX_VALUE, 100,  70),	
+						new MinetestBiome("Desert",                  BiomeColor.from(205, 180, 125), (short)     1, Short.MAX_VALUE, 120, -45),	
+						new MinetestBiome("Glacier",                 BiomeColor.from(237, 238, 255), (short)     1, Short.MAX_VALUE, -20, -30),	
+						new MinetestBiome("Gravel ice",              BiomeColor.from(213, 221, 240), (short)     1, Short.MAX_VALUE, -40, -40),															
+						new MinetestBiome("Gravel desert",           BiomeColor.from( 93,  93,  93), (short)     1, Short.MAX_VALUE, 160, -20),	
+					}
+				)
+			);
 			
 		}
 		return biomeLists;
