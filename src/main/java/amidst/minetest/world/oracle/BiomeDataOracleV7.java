@@ -77,9 +77,10 @@ public class BiomeDataOracleV7 extends MinetestBiomeDataOracle {
 			noise_terrain_persist = new Noise(v7params.np_terrain_persist, this.seed, params.chunk_length_x, params.chunk_length_z);
 			noise_height_select   = new Noise(v7params.np_height_select,   this.seed, params.chunk_length_x, params.chunk_length_z);
 			//noise_filler_depth    = new Noise(v7params.np_filler_depth,    this.seed, v7params.chunk_length_x, v7params.chunk_length_z);
-	
-			if ((v7params.spflags & MapgenV7Params.FLAG_V7_MOUNTAINS) > 0)
-				noise_mount_height = new Noise(v7params.np_mount_height, this.seed, params.chunk_length_x, params.chunk_length_z);
+
+			// Mountains layer might be displayed even if mountains are off, so initialize these regardless
+			noise_mount_height    = new Noise(v7params.np_mount_height,    this.seed, params.chunk_length_x, params.chunk_length_z);
+			noise_mountain        = new Noise(v7params.np_mountain,        this.seed, params.chunk_length_x, params.chunk_length_y + 2, params.chunk_length_z);
 	
 			if ((v7params.spflags & MapgenV7Params.FLAG_V7_FLOATLANDS) > 0) {
 				noise_floatland_base    = new Noise(v7params.np_floatland_base,    this.seed, params.chunk_length_x, params.chunk_length_z);
@@ -93,10 +94,6 @@ public class BiomeDataOracleV7 extends MinetestBiomeDataOracle {
 				noise_ridge = new Noise(v7params.np_ridge, this.seed, params.chunk_length_x, params.chunk_length_y + 2, params.chunk_length_z);
 			}
 			
-			// 3D noise, 1 up, 1 down overgeneration
-			if ((v7params.spflags & (MapgenV7Params.FLAG_V7_MOUNTAINS | MapgenV7Params.FLAG_V7_FLOATLANDS)) > 0) {
-				noise_mountain = new Noise(v7params.np_mountain, this.seed, params.chunk_length_x, params.chunk_length_y + 2, params.chunk_length_z);
-			}
 		} catch (InvalidNoiseParamsException ex) {
 			AmidstLogger.error("Invalid v7params from Minetest game. " + ex);
 			ex.printStackTrace();
@@ -195,7 +192,7 @@ public class BiomeDataOracleV7 extends MinetestBiomeDataOracle {
 						// Add the ocean bitplane
 						int surface_y = (int)baseTerrainLevelAtPoint(world_x, world_z);
 						if (surface_y < v7params.water_level) biomeValue |= BITPLANE_OCEAN;
-						
+												
 						// Add the mountains bitplane
 						int surfaceOrSeaLevel = Math.max(surface_y, v7params.water_level);
 						float mnt_h_n = Math.max(Noise.NoisePerlin2D(noise_mount_height.np, world_x, world_z, seed), 1.0f);
@@ -207,8 +204,30 @@ public class BiomeDataOracleV7 extends MinetestBiomeDataOracle {
 							// only draw ones that are quite high
 							float mnt_n2 = Noise.NoisePerlin3D(noise_mountain.np, world_x, surfaceOrSeaLevel + cMimimumMountainHeight, world_z, seed);
 							density_gradient = -((float)(surfaceOrSeaLevel + cMimimumMountainHeight - mount_zero_level) / mnt_h_n);
-							if (mnt_n2 + density_gradient >= 0.0) biomeValue |= BITPLANE_MOUNTAIN;
-						}						
+							if (mnt_n2 + density_gradient >= 0.0) {
+								biomeValue |= BITPLANE_MOUNTAIN;
+								surface_y = Math.max(surface_y, surfaceOrSeaLevel + cMimimumMountainHeight);
+							}
+							
+							if ((v7params.spflags & MapgenV7Params.FLAG_V7_MOUNTAINS) > 0) {
+								// Remove ocean if mountains rise above sea level.
+								// This makes the oceans more correct, but the biome here might be wrong since
+								// we haven't worked out the real height.
+								// TODO: Perhaps do a logarithmic search for the height like we do in v5 oracle
+								if ((biomeValue & BITPLANE_OCEAN) > 0) {
+									if ((biomeValue & BITPLANE_MOUNTAIN) > 0) {
+										biomeValue -= BITPLANE_OCEAN;									
+									} else {
+										mnt_n2 = Noise.NoisePerlin3D(noise_mountain.np, world_x, surfaceOrSeaLevel + 1, world_z, seed);
+										density_gradient = -((float)(surfaceOrSeaLevel + 1 - mount_zero_level) / mnt_h_n);
+										if (mnt_n2 + density_gradient >= 0.0) {
+											biomeValue -= BITPLANE_OCEAN;
+											surface_y = Math.max(surface_y, surfaceOrSeaLevel + 1);
+										}
+									}
+								}							
+							}
+						}
 						
 						// add the river bitplane
 						float uwatern = Noise.NoisePerlin2D(noise_ridge_uwater.np, world_x, world_z, seed) * 2;						
