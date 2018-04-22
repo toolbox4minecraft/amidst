@@ -94,7 +94,8 @@ public abstract class MinetestBiomeDataOracle implements IBiomeDataOracle, Biome
 		float dist_min = Float.MAX_VALUE;
 		float dist_min_blend = Float.MAX_VALUE;
 
-		for (short i = (short)(biomes.length - 1); i >= 0; i--) {
+		short biomesArrayLength = (short)biomes.length;
+		for (short i = 0; i < biomesArrayLength; i++) {
 			MinetestBiome b = biomes[i];
 			if (y > b.y_max + b.vertical_blend || y < b.y_min)
 				continue;

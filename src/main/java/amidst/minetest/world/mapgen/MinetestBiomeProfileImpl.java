@@ -159,13 +159,9 @@ public class MinetestBiomeProfileImpl implements BiomeProfile {
 		return output + "\r\n] }\r\n";
 	}
 
-	/**
-	 * This method uses the sorted color map, so the serialization will have a
-	 * reproducible order.
-	 */
 	private String serializeColorMap() {
 		String output = "";
-		for (MinetestBiome biome : getSortedBiomeEntries()) {
+		for (MinetestBiome biome : biomeList) {
 			output += String.format("    { \"name\": \"%s\", \"color\": %s, \"y_min\": %d, \"y_max\": %d, \"heat_point\": %.2f, \"humidity_point\": %.2f },\r\n",
 					biome.getName(), 
 					biome.getDefaultColor().createBiomeColorJson().toString(),
@@ -173,19 +169,6 @@ public class MinetestBiomeProfileImpl implements BiomeProfile {
 					biome.heat_point, biome.humidity_point);
 		}
 		return output.substring(0, output.length() - 3);
-	}
-
-	private List<MinetestBiome> getSortedBiomeEntries() {
-
-		Comparator<MinetestBiome> SortByName = new Comparator<MinetestBiome>() {			
-			@Override
-			public int compare(MinetestBiome a, MinetestBiome b) {
-		        return a.getName().compareTo(b.getName());
-		    }
-		};
-		List<MinetestBiome> result = new ArrayList<>(biomeList);		
-		Collections.sort(result, SortByName);
-		return result;
 	}
 
 	private boolean writeToFile(File file, String output) {
