@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 import javax.imageio.ImageIO;
 
 import amidst.AmidstSettings;
+import amidst.AmidstVersion;
 import amidst.Application;
 import amidst.FeatureToggles;
 import amidst.documentation.AmidstThread;
@@ -47,6 +48,7 @@ public class Actions {
 	private final Supplier<ViewerFacade> viewerFacadeSupplier;
 	private final BiomeAuthority biomeAuthority;
 	private final GameEngineDetails gameEngineDetails;
+	private final AmidstVersion amidstVersion;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Actions(
@@ -56,7 +58,8 @@ public class Actions {
 			SeedSearcherWindow seedSearcherWindow,
 			Supplier<ViewerFacade> viewerFacadeSupplier,
 			BiomeAuthority biomeAuthority,
-			GameEngineDetails gameEngineDetails) {
+			GameEngineDetails gameEngineDetails,
+			AmidstVersion amidstVersion) {
 		this.application = application;
 		this.dialogs = dialogs;
 		this.worldSwitcher = worldSwitcher;
@@ -64,6 +67,7 @@ public class Actions {
 		this.viewerFacadeSupplier = viewerFacadeSupplier;
 		this.biomeAuthority = biomeAuthority;
 		this.gameEngineDetails = gameEngineDetails;
+		this.amidstVersion = amidstVersion;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -332,6 +336,7 @@ public class Actions {
 				"About",
 				"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n"
 						+ (FeatureToggles.MINETEST_SUPPORT ? "Amidstest - Amidst for Minetest\n\n" : "\n")
+						+ amidstVersion.createVersionString() + "\n"
 						+ "Project page: https://github.com/Treer/amidstest\n"
 						+ "Forum thread: https://forum.minetest.net/viewtopic.php?f=14&t=19869");
 	}

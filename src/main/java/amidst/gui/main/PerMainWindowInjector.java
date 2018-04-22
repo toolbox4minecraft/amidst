@@ -109,7 +109,8 @@ public class PerMainWindowInjector {
 				seedSearcherWindow,
 				viewerFacadeReference::get,
 				biomeAuthority,
-				gameEngineDetails);
+				gameEngineDetails,
+				metadata.getVersion());
 		this.menuBar = new AmidstMenuBuilder(settings, actions, biomeAuthority, worldTypes).construct();
 		this.mainWindow = new MainWindow(frame, worldSwitcher, seedSearcherWindow);
 		this.mainWindow.initializeFrame(metadata, versionString, actions, menuBar);
