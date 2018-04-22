@@ -140,6 +140,12 @@ public class BiomeDataOracleV7 extends MinetestBiomeDataOracle {
 		
 	@Override
 	public short populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
+		
+		// The v7 mapgen terrain has been officially stable since 0.4.16 when it was made the default 
+		// mapgen, however the optional floatlands (disabled by default) are not stable yet, maybe they 
+		// will be for 0.5.0.
+		// See https://forum.minetest.net/viewtopic.php?f=18&t=19132						
+		
 		int width = result.length;
 		if (width > 0) {
 			Resolution resolution = Resolution.from(useQuarterResolution);
