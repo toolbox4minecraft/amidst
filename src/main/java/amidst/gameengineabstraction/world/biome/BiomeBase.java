@@ -1,6 +1,7 @@
 package amidst.gameengineabstraction.world.biome;
 
 import amidst.documentation.GsonConstructor;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.biome.BiomeColor;
 import amidst.settings.biomeprofile.BiomeColorJson;
 
@@ -50,8 +51,14 @@ public abstract class BiomeBase implements IBiome {
 	
 	public BiomeColor getDefaultColor() {
 		if (defaultColor == null) {
-			// Must have been deserialized rather than constructed
-			defaultColor = BiomeColor.fromBiomeColorJson(color);			
+			try {
+				// Must have been deserialized rather than constructed
+				defaultColor = BiomeColor.fromBiomeColorJson(color);
+			} catch(IllegalArgumentException ex) {
+				// badly formatted data file
+				AmidstLogger.error("Biome \"" + name + "\" has invalid colour");
+				defaultColor = BiomeColor.error();
+			}
 		}
 		return defaultColor;
 	}
