@@ -1,6 +1,5 @@
 package amidst.mojangapi.file.json.launcherprofiles;
 
-import java.util.Arrays;
 import java.util.List;
 
 import amidst.documentation.GsonConstructor;
@@ -9,10 +8,12 @@ import amidst.mojangapi.file.json.ReleaseType;
 
 @Immutable
 public class LauncherProfileJson {
+	
 	/**
-	 * Some Minecraft installations have a profile with the key "(Default)" and
-	 * no properties in the actual profile object. The JSON looks like this:
+	 * Some Minecraft installations using the legacy launcher have a profile
+	 * with the key "(Default)" and no properties in the actual profile object.
 	 * 
+	 * The JSON looks like this:
 	 * "(Default)": {},
 	 * 
 	 * This profile has the name null. Also, it cannot be deleted from the
@@ -23,14 +24,16 @@ public class LauncherProfileJson {
 	private volatile String name = "";
 	private volatile String lastVersionId;
 	private volatile String gameDir;
-	private volatile List<ReleaseType> allowedReleaseTypes = Arrays.asList(ReleaseType.RELEASE);
+	private volatile List<ReleaseType> allowedReleaseTypes = ProfileType.LATEST_RELEASE.getAllowedReleaseTypes().get();
+	
+	private volatile ProfileType type = ProfileType.LEGACY;
 
 	@GsonConstructor
 	public LauncherProfileJson() {
 	}
 
 	public String getName() {
-		return name;
+		return type.getDefaultName().orElse(name);
 	}
 
 	public String getLastVersionId() {
@@ -42,6 +45,6 @@ public class LauncherProfileJson {
 	}
 
 	public List<ReleaseType> getAllowedReleaseTypes() {
-		return allowedReleaseTypes;
+		return type.getAllowedReleaseTypes().orElse(allowedReleaseTypes);
 	}
 }
