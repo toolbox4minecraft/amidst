@@ -215,7 +215,8 @@ public class DefaultBiomes {
 					}
 				)
 			);
-			
+
+			biomeLists.put("MineClone 2", setIndexes(MineCloneBiomes.getBiomeList()));			
 		}
 		return biomeLists;
 	}

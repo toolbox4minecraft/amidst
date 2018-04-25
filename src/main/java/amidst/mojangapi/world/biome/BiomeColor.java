@@ -94,6 +94,16 @@ public class BiomeColor {
 		return BiomeColor.from(lighten(r), lighten(g), lighten(b));
 	}
 
+	public BiomeColor blend(float secondColorWeight, BiomeColor secondColor) {
+		secondColorWeight = Math.max(0, Math.min(1, secondColorWeight));
+		float firstColorWeight = 1.0f - secondColorWeight;
+		return BiomeColor.from(
+			Math.round(r * firstColorWeight + secondColor.r * secondColorWeight),
+			Math.round(g * firstColorWeight + secondColor.g * secondColorWeight),
+			Math.round(b * firstColorWeight + secondColor.b * secondColorWeight)
+		);
+	}
+
 	private int lighten(int x) {
 		return Math.min(x + LIGHTEN_BRIGHTNESS, 0xFF);
 	}
