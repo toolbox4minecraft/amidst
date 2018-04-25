@@ -4,7 +4,6 @@ import java.io.Console;
 
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
-import amidst.minetest.world.mapgen.DefaultBiomes;
 import amidst.minetest.world.mapgen.InvalidNoiseParamsException;
 import amidst.minetest.world.mapgen.MapgenParams;
 import amidst.minetest.world.mapgen.MapgenV6Params;

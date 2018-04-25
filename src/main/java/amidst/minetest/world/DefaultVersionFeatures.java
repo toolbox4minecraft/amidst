@@ -54,10 +54,10 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 		
 		this.worldTypes = new WorldTypes(
 				new WorldType[]{
-						//WorldType.CARPATHIAN,
 						WorldType.V7, 
 						WorldType.V6, 
 						WorldType.V5, 
+						WorldType.CARPATHIAN,
 						WorldType.FLAT, 
 						//WorldType.FRACTAL
 				}
@@ -75,9 +75,7 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 				VersionFeature.<Integer> listBuilder()
 				.init(commonLayers)
 				.initExtend(
-						LayerIds.MINETEST_OCEAN,
-						LayerIds.MINETEST_RIVER,
-						LayerIds.MINETEST_MOUNTAIN
+						LayerIds.MINETEST_OCEAN
 				).construct()
 		);
 		enabledLayers.put(WorldType.V7,
@@ -130,6 +128,10 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 						new AbstractMap.SimpleEntry<WorldType, TriFunction<Long, MapgenParams, BiomeProfileSelection, IBiomeDataOracle>>(
 								WorldType.V5, 
 								(seed, mapgenParams, biomeProfile) -> new amidst.minetest.world.oracle.BiomeDataOracleV5(mapgenParams, biomeProfile, seed)
+						),
+						new AbstractMap.SimpleEntry<WorldType, TriFunction<Long, MapgenParams, BiomeProfileSelection, IBiomeDataOracle>>(
+								WorldType.CARPATHIAN, 
+								(seed, mapgenParams, biomeProfile) -> new amidst.minetest.world.oracle.BiomeDataOracleCarpathian(mapgenParams, biomeProfile, seed)
 						),
 						new AbstractMap.SimpleEntry<WorldType, TriFunction<Long, MapgenParams, BiomeProfileSelection, IBiomeDataOracle>>(
 								WorldType.FLAT, 

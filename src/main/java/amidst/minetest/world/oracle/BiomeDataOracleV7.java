@@ -10,7 +10,6 @@ import amidst.minetest.world.mapgen.MinetestBiome;
 import amidst.minetest.world.mapgen.Noise;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
-import amidst.settings.biomeprofile.BiomeProfile;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @Immutable
@@ -30,11 +29,6 @@ public class BiomeDataOracleV7 extends MinetestBiomeDataOracle {
 	//private Noise noise_filler_depth; // commented out because it shouldn't been needed for the surface
 
 
-	/**
-	 * Updated by onBiomeProfileUpdate event, can be null.
-	 */
-	private volatile BiomeProfile biomeProfile;
-	
 	short mount_zero_level     = 0;
 	float float_mount_density  = 0.6f;
 	float float_mount_height   = 128.0f;
@@ -191,10 +185,10 @@ public class BiomeDataOracleV7 extends MinetestBiomeDataOracle {
 						
 						// Add the ocean bitplane
 						int surface_y = (int)baseTerrainLevelAtPoint(world_x, world_z);
-						if (surface_y < v7params.water_level) biomeValue |= BITPLANE_OCEAN;
+						if (surface_y < params.water_level) biomeValue |= BITPLANE_OCEAN;
 												
 						// Add the mountains bitplane
-						int surfaceOrSeaLevel = Math.max(surface_y, v7params.water_level);
+						int surfaceOrSeaLevel = Math.max(surface_y, params.water_level);
 						float mnt_h_n = Math.max(Noise.NoisePerlin2D(noise_mount_height.np, world_x, world_z, seed), 1.0f);
 						float density_gradient = -((float)(surfaceOrSeaLevel - mount_zero_level) / mnt_h_n);
 						float mnt_n1 = Noise.NoisePerlin3D(noise_mountain.np, world_x, surfaceOrSeaLevel, world_z, seed);
