@@ -27,6 +27,8 @@ The following has not *yet* been implemented for Minetest worlds:
 
 * [Releases](https://github.com/treer/amidstest/releases)
 
+### Notes for running on Linux
+Java JRE 8 is required, which could be newer than the version available in your distro's package manager. I installed Java8 [this way](https://superuser.com/a/1249304/384788), and search engines bring up plenty of other pages describing how to obtain it.
 
 ## Screenshots
 
