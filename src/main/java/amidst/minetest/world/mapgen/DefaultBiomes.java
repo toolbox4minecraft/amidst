@@ -54,8 +54,8 @@ public class DefaultBiomes {
 						new MinetestBiome("Rainforest swamp",        BiomeColor.from(  0,  40,   0), (short)  -1,        (short)0, 86, 65),	
 						new MinetestBiome("Rainforest ocean",        BiomeColor.from(188, 195, 151), (short)-112,       (short)-2, 86, 65),
 
-						// Underground (Amidst don't care) 
-						// new MinetestBiome("Underground",          BiomeColor.from( 20,  20,  20), -Short.MAX_VALUE, (short)-113, 50, 50),
+						// Underground (normally Amidst don't care, but here it's needed because ocean floor can drop lower than -112)						
+						new MinetestBiome("Underground",             BiomeColor.from( 20,  20,  20), Short.MIN_VALUE, (short)-113, 50, 50) 
 					}
 				)
 			);
@@ -132,10 +132,10 @@ public class DefaultBiomes {
 						new MinetestBiome("Pack ice",                BiomeColor.from(220, 220, 255), (short)-112,       (short)-6, -24,  41), 
 						new MinetestBiome("Cold sea",                BiomeColor.from(146, 158, 148), (short)-112,       (short)-6,  20,  47), 
 						new MinetestBiome("Tempered sea",            BiomeColor.from(205, 212, 179), (short)-112,       (short)-6,  41,  48), 
-						new MinetestBiome("Warm sea",                BiomeColor.from(206, 212, 160), (short)-112,       (short)-6,  89,  51) 
+						new MinetestBiome("Warm sea",                BiomeColor.from(206, 212, 160), (short)-112,       (short)-6,  89,  51), 
 
-						// Underground (Amidst don't care) 
-						// new MinetestBiome("Underground",          BiomeColor.from( 20,  20,  20), -Short.MAX_VALUE, (short)-113, 50, 50), 
+						// Underground (normally Amidst don't care, but here it's needed because ocean floor can drop lower than -112)						
+						new MinetestBiome("Underground",             BiomeColor.from( 20,  20,  20), Short.MIN_VALUE, (short)-113, 50, 50) 
 					}
 				)
 			);
