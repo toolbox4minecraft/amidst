@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 
 import amidst.documentation.GsonConstructor;
@@ -162,7 +163,7 @@ public class MinetestBiomeProfileImpl implements BiomeProfile {
 	private String serializeColorMap() {
 		String output = "";
 		for (MinetestBiome biome : biomeList) {
-			output += String.format("    { \"name\": \"%s\", \"color\": %s, \"y_min\": %d, \"y_max\": %d, \"heat_point\": %.2f, \"humidity_point\": %.2f },\r\n",
+			output += String.format(Locale.ROOT, "    { \"name\": \"%s\", \"color\": %s, \"y_min\": %d, \"y_max\": %d, \"heat_point\": %.2f, \"humidity_point\": %.2f },\r\n",
 					biome.getName(), 
 					biome.getDefaultColor().createBiomeColorJson().toString(),
 					biome.y_min, biome.y_max,
