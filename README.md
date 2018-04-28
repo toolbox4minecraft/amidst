@@ -5,7 +5,7 @@
 
 ## What is Amidstest?
 
-Amidstest is Amidst converted to support [Minetest](https://www.minetest.net/) — a completely free and open implementation of Minecraft.
+Amidstest is Amidst converted to support [Minetest](https://www.minetest.net/) — a completely free and open implementation of Minecraft, and a mod paradise.
 
 Amidstest is a tool to display a map of a world (either Minetest or Minecraft), without actually creating it.
 
@@ -27,8 +27,9 @@ The following has not *yet* been implemented for Minetest worlds:
 
 * [Releases](https://github.com/treer/amidstest/releases)
 
-### Notes for running on Linux
-Java JRE 8 is required, which could be newer than the version available in your distro's package manager. I installed Java8 [this way](https://superuser.com/a/1249304/384788), and search engines bring up plenty of other pages describing how to obtain it.
+## Documentation
+* [Installation](https://github.com/Treer/amidstest/wiki/Installation)
+* [Getting or sharing more biome profiles](https://github.com/Treer/amidstest/wiki/Get-or-share-more-biome-profiles)
 
 ## Screenshots
 
