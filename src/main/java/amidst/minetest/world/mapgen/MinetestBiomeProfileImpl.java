@@ -126,6 +126,12 @@ public class MinetestBiomeProfileImpl implements BiomeProfile {
 	
 	@Override
 	public boolean validate() {
+		// Before validation, remove any null biomes the JSON reader may have created due 
+		// to excess commas, such as files with a comma after the last item in the list.
+		for (int i = biomeList.size() - 1; i >= 0; i--) {
+			if (biomeList.get(i) == null) biomeList.remove(i);
+		}	
+
 		for (MinetestBiome biome : biomeList) {
 			if (!biome.validate()) {
 				AmidstLogger.info("Biome in biomeprofile invalid");
