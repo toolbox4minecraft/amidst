@@ -1,8 +1,10 @@
-﻿Amidstest
+<img src="https://avatars1.githubusercontent.com/u/16545761?s=150&v=4" align="right" />
+
+Amidstest
 =========
 
 [![Build Status](https://travis-ci.org/Treer/amidstest.svg?branch=master)](https://travis-ci.org/Treer/amidstest)
-
+ 
 ## What is Amidstest?
 
 Amidstest is Amidst converted to support [Minetest](https://www.minetest.net/) — a completely free and open implementation of Minecraft, and a mod paradise.
