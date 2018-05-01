@@ -1,13 +1,11 @@
 package amidst.mojangapi.minecraftinterface.local;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
-import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.ThreadSafe;
-import amidst.logging.AmidstLogger;
-import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -15,10 +13,6 @@ import amidst.mojangapi.world.WorldType;
 
 @ThreadSafe
 public class LocalMinecraftInterface implements MinecraftInterface {
-	public static LocalMinecraftInterface create(ClassTranslator translator, LauncherProfile launcherProfile)
-			throws LocalMinecraftInterfaceCreationException {
-		return new LocalMinecraftInterfaceBuilder(translator).create(launcherProfile);
-	}
 
 	/**
 	 * A GenLayer instance, at quarter scale to the final biome layer (i.e. both
@@ -57,6 +51,16 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		this.genOptionsFactoryClass = genOptionsFactoryClass;
 		this.recognisedVersion = recognisedVersion;
 	}
+	
+	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
+		this(
+			symbolicClassMap.get(SymbolicNames.CLASS_INT_CACHE),
+			symbolicClassMap.get(SymbolicNames.CLASS_BLOCK_INIT),
+			symbolicClassMap.get(SymbolicNames.CLASS_GEN_LAYER),
+			symbolicClassMap.get(SymbolicNames.CLASS_WORLD_TYPE),
+			symbolicClassMap.get(SymbolicNames.CLASS_GEN_OPTIONS_FACTORY),
+			recognisedVersion);
+	}
 
 	@Override
 	public synchronized int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
@@ -82,8 +86,6 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	public synchronized void createWorld(long seed, WorldType worldType, String generatorOptions)
 			throws MinecraftInterfaceException {
 		try {
-			AmidstLogger.info("Creating world with seed '" + seed + "' and type '" + worldType.getName() + "'");
-			AmidstLogger.info("Using the following generator options: " + generatorOptions);
 			initializeBlock();
 			Object[] genLayers = getGenLayers(seed, worldType, generatorOptions);
 			quarterResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[0]);
