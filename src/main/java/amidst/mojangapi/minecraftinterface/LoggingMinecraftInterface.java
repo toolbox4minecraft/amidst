@@ -15,7 +15,7 @@ public class LoggingMinecraftInterface implements MinecraftInterface {
 	@Override
 	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
-		AmidstLogger.info("Requesting biome data: " + x + ":" + y + ":" + width + ":" + height +
+		AmidstLogger.debug("Requesting biome data: " + x + ":" + y + ":" + width + ":" + height +
 				" (quarter=" + useQuarterResolution + ")");
 		return inner.getBiomeData(x, y, width, height, useQuarterResolution);
 	}

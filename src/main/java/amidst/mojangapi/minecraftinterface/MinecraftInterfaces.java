@@ -12,11 +12,15 @@ import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.NotNull;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.LauncherProfile;
+import amidst.mojangapi.minecraftinterface.legacy.LegacyClassTranslator;
+import amidst.mojangapi.minecraftinterface.legacy.LegacyMinecraftInterface;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterface;
 
 public enum MinecraftInterfaces {
 	;
+	
+	private static final RecognisedVersion LAST_LEGACY_VERSION = RecognisedVersion._18w05a;
 	
 	@NotNull
 	public static MinecraftInterface fromLocalProfile(LauncherProfile launcherProfile)
@@ -42,10 +46,22 @@ public enum MinecraftInterfaces {
 	}
 	
 	private static ClassTranslator getClassTranslatorFromVersion(RecognisedVersion version) {
-		return DefaultClassTranslator.INSTANCE.get();
+		if(isLegacyVersion(version)) {
+			return LegacyClassTranslator.INSTANCE.get();
+		} else {
+			return DefaultClassTranslator.INSTANCE.get();
+		}
 	}
 	
 	private static MinecraftInterface fromSymbolicMapAndVersion(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion version) {
-		return new LocalMinecraftInterface(symbolicClassMap, version);
-	}	
+		if(isLegacyVersion(version)) {
+			return new LegacyMinecraftInterface(symbolicClassMap, version);
+		} else {
+			return new LocalMinecraftInterface(version);
+		}
+	}
+	
+	private static boolean isLegacyVersion(RecognisedVersion version) {
+		return RecognisedVersion.isOlderOrEqualTo(version, LAST_LEGACY_VERSION);
+	}
 }

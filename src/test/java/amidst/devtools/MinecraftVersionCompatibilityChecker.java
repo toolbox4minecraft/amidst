@@ -13,7 +13,7 @@ import amidst.clazz.symbolic.declaration.SymbolicClassDeclaration;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.mojangapi.file.Version;
 import amidst.mojangapi.file.VersionList;
-import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
+import amidst.mojangapi.minecraftinterface.legacy.LegacyClassTranslator;
 
 /**
  * This only checks if there is exactly one class in the jar file for each
@@ -48,7 +48,7 @@ public class MinecraftVersionCompatibilityChecker {
 		if (version.tryDownloadClient(prefix)) {
 			try {
 				File jarFile = version.getClientJarFile(new File(prefix));
-				ClassTranslator translator = DefaultClassTranslator.INSTANCE.get();
+				ClassTranslator translator = LegacyClassTranslator.INSTANCE.get();
 				return isSupported(Classes.countMatches(jarFile, translator));
 			} catch (FileNotFoundException | JarFileParsingException e) {
 				e.printStackTrace();

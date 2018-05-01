@@ -6,16 +6,16 @@ import java.util.List;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
-import amidst.mojangapi.minecraftinterface.local.SymbolicNames;
+import amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames;
 
 @Immutable
 public enum WorldType {
 	// @formatter:off
-	DEFAULT      ("Default",      "default",      SymbolicNames.FIELD_WORLD_TYPE_DEFAULT),
-	FLAT         ("Flat",         "flat",         SymbolicNames.FIELD_WORLD_TYPE_FLAT),
-	LARGE_BIOMES ("Large Biomes", "large-biomes", SymbolicNames.FIELD_WORLD_TYPE_LARGE_BIOMES),
-	AMPLIFIED    ("Amplified",    "amplified",    SymbolicNames.FIELD_WORLD_TYPE_AMPLIFIED),
-	CUSTOMIZED   ("Customized",   "customized",   SymbolicNames.FIELD_WORLD_TYPE_CUSTOMIZED);
+	DEFAULT      ("Default",      "default",      LegacySymbolicNames.FIELD_WORLD_TYPE_DEFAULT),
+	FLAT         ("Flat",         "flat",         LegacySymbolicNames.FIELD_WORLD_TYPE_FLAT),
+	LARGE_BIOMES ("Large Biomes", "large-biomes", LegacySymbolicNames.FIELD_WORLD_TYPE_LARGE_BIOMES),
+	AMPLIFIED    ("Amplified",    "amplified",    LegacySymbolicNames.FIELD_WORLD_TYPE_AMPLIFIED),
+	CUSTOMIZED   ("Customized",   "customized",   LegacySymbolicNames.FIELD_WORLD_TYPE_CUSTOMIZED);
 	// @formatter:on
 
 	public static final String PROMPT_EACH_TIME = "Prompt each time";
