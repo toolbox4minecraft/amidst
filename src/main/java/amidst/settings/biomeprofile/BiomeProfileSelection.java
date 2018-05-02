@@ -38,7 +38,11 @@ public class BiomeProfileSelection {
 	private BiomeColor getBiomeColor(int index) throws UnknownBiomeIndexException {
 		BiomeColor[] biomeColors = this.biomeColors;
 		if (index < 0 || index >= biomeColors.length || biomeColors[index] == null) {
-			throw new UnknownBiomeIndexException("unsupported biome index detected: " + index);
+			if (index == MinetestBiome.VOID.getIndex()) {
+				return BiomeColor.transparent();
+			} else {
+				throw new UnknownBiomeIndexException("unsupported biome index detected: " + index);
+			}
 		} else {
 			return biomeColors[index];
 		}

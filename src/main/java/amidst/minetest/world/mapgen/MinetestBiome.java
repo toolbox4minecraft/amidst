@@ -6,7 +6,10 @@ import amidst.mojangapi.world.biome.BiomeColor;
 
 public class MinetestBiome extends BiomeBase {
 	
-	public static MinetestBiome NONE = new MinetestBiome("None", -1, BiomeColor.from(0, 0, 0), (short)0, (short)0, 0, 0);
+	// The index for out-of-bounds biomes must be (Short.MIN_VALUE + x) rather than -x, as values  
+	// like -1 would be destroyed by applying a bitplane mask. 
+	public static MinetestBiome NONE = new MinetestBiome("None", Short.MIN_VALUE + 1, BiomeColor.from(0, 0, 0), (short)0, (short)0, 0, 0);
+	public static MinetestBiome VOID = new MinetestBiome("Void", Short.MIN_VALUE + 2, BiomeColor.transparent(), (short)0, (short)0, 0, 0);
 
 	protected MinetestBiome(String name, BiomeColor defaultColor, short y_min, short y_max, float heat_point, float humidity_point) {
 		this(name, -1, defaultColor, y_min, y_max, heat_point, humidity_point);

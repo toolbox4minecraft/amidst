@@ -146,7 +146,7 @@ public class LayerBuilder {
 				new AlphaInitializer( declarations.get(LayerIds.ALPHA),             settings.fragmentFading),
 				new BiomeDataLoader(  declarations.get(LayerIds.BIOME_DATA),        world.getBiomeDataOracle()),
 				new EndIslandsLoader( declarations.get(LayerIds.END_ISLANDS),       world.getEndIslandOracle()),
-				new ImageLoader(	    declarations.get(LayerIds.BACKGROUND),        Resolution.QUARTER, new BackgroundColorProvider(new BiomeColorProvider(biomeSelection, settings.biomeProfileSelection), new TheEndColorProvider())),
+				new ImageLoader(	  declarations.get(LayerIds.BACKGROUND),        Resolution.QUARTER, new BackgroundColorProvider(new BiomeColorProvider(biomeSelection, settings.biomeProfileSelection), new TheEndColorProvider())),
 				new ImageLoader(      declarations.get(LayerIds.MINETEST_RIVER),    Resolution.QUARTER, new MinetestRiverColorProvider(Resolution.QUARTER)),
 				new ImageLoader(      declarations.get(LayerIds.MINETEST_OCEAN),    Resolution.QUARTER, new MinetestOceanColorProvider()),
 				new ImageLoader(      declarations.get(LayerIds.MINETEST_MOUNTAIN), Resolution.QUARTER, new MinetestMountainColorProvider(Resolution.QUARTER)),

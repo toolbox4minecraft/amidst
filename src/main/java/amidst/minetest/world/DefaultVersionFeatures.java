@@ -55,6 +55,7 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 		this.worldTypes = new WorldTypes(
 				new WorldType[]{
 						WorldType.V7, 
+						WorldType.V7_FLOATLANDS, 
 						WorldType.V6, 
 						WorldType.V5, 
 						WorldType.CARPATHIAN,
@@ -84,6 +85,14 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 				.initExtend(
 						LayerIds.MINETEST_OCEAN,
 						LayerIds.MINETEST_RIVER,
+						LayerIds.MINETEST_MOUNTAIN
+				).construct()
+		);
+		enabledLayers.put(WorldType.V7_FLOATLANDS,
+				VersionFeature.<Integer> listBuilder()
+				.init(commonLayers)
+				.initExtend(
+						LayerIds.MINETEST_OCEAN,
 						LayerIds.MINETEST_MOUNTAIN
 				).construct()
 		);
@@ -119,7 +128,11 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 				.init(
 						new AbstractMap.SimpleEntry<WorldType, TriFunction<Long, MapgenParams, BiomeProfileSelection, IBiomeDataOracle>>(
 								WorldType.V7,
-								(seed, mapgenParams, biomeProfile) -> new amidst.minetest.world.oracle.BiomeDataOracleV7(mapgenParams, biomeProfile, seed)
+								(seed, mapgenParams, biomeProfile) -> new amidst.minetest.world.oracle.BiomeDataOracleV7(false, mapgenParams, biomeProfile, seed)
+						),
+						new AbstractMap.SimpleEntry<WorldType, TriFunction<Long, MapgenParams, BiomeProfileSelection, IBiomeDataOracle>>(
+								WorldType.V7_FLOATLANDS,
+								(seed, mapgenParams, biomeProfile) -> new amidst.minetest.world.oracle.BiomeDataOracleV7(true, mapgenParams, biomeProfile, seed)
 						),
 						new AbstractMap.SimpleEntry<WorldType, TriFunction<Long, MapgenParams, BiomeProfileSelection, IBiomeDataOracle>>(
 								WorldType.V6,

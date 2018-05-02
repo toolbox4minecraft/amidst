@@ -22,6 +22,7 @@ import amidst.fragment.FragmentGraphItem;
 import amidst.fragment.drawer.FragmentDrawer;
 import amidst.gui.main.viewer.widget.Widget;
 import amidst.mojangapi.world.Dimension;
+import amidst.mojangapi.world.WorldType;
 import amidst.settings.Setting;
 
 @NotThreadSafe
@@ -42,11 +43,13 @@ public class Drawer {
 			.getImage("/amidst/gui/main/dropshadow/inner_left.png");
 	private static final BufferedImage DROP_SHADOW_RIGHT = ResourceLoader
 			.getImage("/amidst/gui/main/dropshadow/inner_right.png");
-	private static final BufferedImage VOID_TEXTURE = ResourceLoader.getImage("/amidst/gui/main/void.png");
+	private static final BufferedImage VOID_TEXTURE  = ResourceLoader.getImage("/amidst/gui/main/void.png");
+	private static final BufferedImage VOID2_TEXTURE = ResourceLoader.getImage("/amidst/gui/main/void2.png"); // void2 is clouds, or atmospheric
 
 	private final AffineTransform originalLayerMatrix = new AffineTransform();
 	private final AffineTransform layerMatrix = new AffineTransform();
 
+	private final WorldType worldType;
 	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
 	private final Zoom zoom;
@@ -55,7 +58,7 @@ public class Drawer {
 	private final Iterable<FragmentDrawer> drawers;
 	private final Setting<Dimension> dimensionSetting;
 	private final Graphics2DAccelerationCounter accelerationCounter;
-	private final TexturePaint voidTexturePaint;
+	private final TexturePaint voidTexturePaint, void2TexturePaint;
 
 	private Graphics2D g2d;
 	private int viewerWidth;
@@ -68,6 +71,7 @@ public class Drawer {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Drawer(
+			WorldType worldType,
 			FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator,
 			Zoom zoom,
@@ -76,6 +80,7 @@ public class Drawer {
 			Iterable<FragmentDrawer> drawers,
 			Setting<Dimension> dimensionSetting,
 			Graphics2DAccelerationCounter accelerationCounter) {
+		this.worldType = worldType;
 		this.graph = graph;
 		this.translator = translator;
 		this.zoom = zoom;
@@ -87,6 +92,10 @@ public class Drawer {
 		this.voidTexturePaint = new TexturePaint(
 				VOID_TEXTURE,
 				new Rectangle(0, 0, VOID_TEXTURE.getWidth(), VOID_TEXTURE.getHeight()));
+		this.void2TexturePaint = new TexturePaint(
+				VOID2_TEXTURE,
+				new Rectangle(0, 0, VOID2_TEXTURE.getWidth(), VOID2_TEXTURE.getHeight()));
+		
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -157,6 +166,8 @@ public class Drawer {
 	private void clear() {
 		if (dimensionSetting.get().equals(Dimension.END)) {
 			g2d.setPaint(voidTexturePaint);
+		} else if (worldType == WorldType.V7_FLOATLANDS) { // consider making "isAboveVoid" a field of WorldType if it ever applies to more than one worldtype 
+			g2d.setPaint(void2TexturePaint);			
 		} else {
 			g2d.setColor(Color.black);
 		}

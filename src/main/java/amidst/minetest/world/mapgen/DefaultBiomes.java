@@ -12,6 +12,9 @@ public class DefaultBiomes {
 	public static final String BIOMEPROFILENAME_V6      = "V6 biomes";
 	public static final String BIOMEPROFILENAME_DEFAULT = "Minetest default";
 	
+	public static final short FLOATLAND_SHADOW_LIMIT    = 1024;
+	public static final short FLOATLAND_LEVEL           = 1280;
+	
 	/**
 	 * The first item in the list will be considered the definitive biome list
 	 */
@@ -23,39 +26,43 @@ public class DefaultBiomes {
 				BIOMEPROFILENAME_DEFAULT,
 				setIndexes(
 					new MinetestBiome[] {
-						new MinetestBiome("Icesheet",                BiomeColor.from(213, 221, 240), (short)  -8, Short.MAX_VALUE,  0, 73),	
-						new MinetestBiome("Icesheet ocean",          BiomeColor.from(216, 216, 183), (short)-112,       (short)-9,  0, 73),	
-						new MinetestBiome("Tundra",                  BiomeColor.from(205, 205, 216), (short)   2, Short.MAX_VALUE,  0, 40),	
-						new MinetestBiome("Tundra beach",            BiomeColor.from(131, 131, 131), (short)  -3,        (short)1,  0, 40),	
-						new MinetestBiome("Tundra ocean",            BiomeColor.from(214, 213, 179), (short)-112,       (short)-4,  0, 40),	
-						new MinetestBiome("Taiga",                   BiomeColor.from(174, 191, 190), (short)   2, Short.MAX_VALUE, 25, 70),	
-						new MinetestBiome("Taiga ocean",             BiomeColor.from(208, 210, 177), (short)-112,        (short)1, 25, 70),	
-						new MinetestBiome("Snowy grassland",         BiomeColor.from(187, 201, 187), (short)   5, Short.MAX_VALUE, 20, 35),	
-						new MinetestBiome("Snowy grassland ocean",   BiomeColor.from(210, 212, 177), (short)-112,        (short)4, 20, 35),	
-						new MinetestBiome("Grassland",               BiomeColor.from( 76, 129,  36), (short)   6, Short.MAX_VALUE, 50, 35),	
-						new MinetestBiome("Grassland dunes",         BiomeColor.from(174, 175,  81), (short)   4,        (short)5, 50, 35),	
-						new MinetestBiome("Grassland ocean",         BiomeColor.from(198, 204, 156), (short)-112,        (short)3, 50, 35),	
-						new MinetestBiome("Coniferous forest",       BiomeColor.from( 25,  61,  33), (short)   6, Short.MAX_VALUE, 45, 70),	
-						new MinetestBiome("Coniferous forest dunes", BiomeColor.from(162, 180, 114), (short)   4,        (short)5, 45, 70),	
-						new MinetestBiome("Coniferous forest ocean", BiomeColor.from(191, 195, 156), (short)-112,        (short)3, 45, 70),	
-						new MinetestBiome("Deciduous forest",        BiomeColor.from( 12,  94,  11), (short)   1, Short.MAX_VALUE, 60, 68),
-						new MinetestBiome("Deciduous forest shore",  BiomeColor.from( 95,  64,  39), (short)  -1,        (short)0, 60, 68),
-						new MinetestBiome("Deciduous forest ocean",  BiomeColor.from(190, 199, 153), (short)-112,       (short)-2, 60, 68),
-						new MinetestBiome("Desert",                  BiomeColor.from(206, 199, 152), (short)   5, Short.MAX_VALUE, 92, 16),	
-						new MinetestBiome("Desert ocean",            BiomeColor.from(215, 213, 171), (short)-112,        (short)4, 92, 16),	
-						new MinetestBiome("Sandstone desert",        BiomeColor.from(194, 168, 127), (short)   5, Short.MAX_VALUE, 60,  0),	
-						new MinetestBiome("Sandstone desert ocean",  BiomeColor.from(212, 206, 165), (short)-112,        (short)4, 60,  0),	
-						new MinetestBiome("Cold desert",             BiomeColor.from(193, 191, 179), (short)   5, Short.MAX_VALUE, 40,  0),	
-						new MinetestBiome("Cold desert ocean",       BiomeColor.from(211, 210, 175), (short)-112,        (short)4, 40,  0),	
-						new MinetestBiome("Savanna",                 BiomeColor.from(139, 142,  64), (short)   1, Short.MAX_VALUE, 89, 42),	
-						new MinetestBiome("Savanna shore",           BiomeColor.from(113,  95,  49), (short)  -1,        (short)0, 89, 42),	
-						new MinetestBiome("Savanna ocean",           BiomeColor.from(201, 200, 152), (short)-112,       (short)-2, 89, 42),	
-						new MinetestBiome("Rainforest",              BiomeColor.from(  0,  60,   0), (short)   1, Short.MAX_VALUE, 86, 65),	
-						new MinetestBiome("Rainforest swamp",        BiomeColor.from(  0,  40,   0), (short)  -1,        (short)0, 86, 65),	
-						new MinetestBiome("Rainforest ocean",        BiomeColor.from(188, 195, 151), (short)-112,       (short)-2, 86, 65),
+						new MinetestBiome("Icesheet",                BiomeColor.from(213, 221, 240), (short)  -8, FLOATLAND_SHADOW_LIMIT,  0, 73),
+						new MinetestBiome("Icesheet ocean",          BiomeColor.from(216, 216, 183), (short)-112,              (short)-9,  0, 73),
+						new MinetestBiome("Tundra",                  BiomeColor.from(205, 205, 216), (short)   2, FLOATLAND_SHADOW_LIMIT,  0, 40),
+						new MinetestBiome("Tundra beach",            BiomeColor.from(131, 131, 131), (short)  -3,               (short)1,  0, 40),
+						new MinetestBiome("Tundra ocean",            BiomeColor.from(214, 213, 179), (short)-112,              (short)-4,  0, 40),
+						new MinetestBiome("Taiga",                   BiomeColor.from(174, 191, 190), (short)   2, FLOATLAND_SHADOW_LIMIT, 25, 70),
+						new MinetestBiome("Taiga ocean",             BiomeColor.from(208, 210, 177), (short)-112,               (short)1, 25, 70),
+						new MinetestBiome("Snowy grassland",         BiomeColor.from(187, 201, 187), (short)   5, FLOATLAND_SHADOW_LIMIT, 20, 35),
+						new MinetestBiome("Snowy grassland ocean",   BiomeColor.from(210, 212, 177), (short)-112,               (short)4, 20, 35),
+						new MinetestBiome("Grassland",               BiomeColor.from( 76, 129,  36), (short)   6, FLOATLAND_SHADOW_LIMIT, 50, 35),
+						new MinetestBiome("Grassland dunes",         BiomeColor.from(174, 175,  81), (short)   4,               (short)5, 50, 35),
+						new MinetestBiome("Grassland ocean",         BiomeColor.from(198, 204, 156), (short)-112,               (short)3, 50, 35),
+						new MinetestBiome("Coniferous forest",       BiomeColor.from( 25,  61,  33), (short)   6, FLOATLAND_SHADOW_LIMIT, 45, 70),
+						new MinetestBiome("Coniferous forest dunes", BiomeColor.from(162, 180, 114), (short)   4,               (short)5, 45, 70),
+						new MinetestBiome("Coniferous forest ocean", BiomeColor.from(191, 195, 156), (short)-112,               (short)3, 45, 70),
+						new MinetestBiome("Deciduous forest",        BiomeColor.from( 12,  94,  11), (short)   1, FLOATLAND_SHADOW_LIMIT, 60, 68),
+						new MinetestBiome("Deciduous forest shore",  BiomeColor.from( 95,  64,  39), (short)  -1,               (short)0, 60, 68),
+						new MinetestBiome("Deciduous forest ocean",  BiomeColor.from(190, 199, 153), (short)-112,              (short)-2, 60, 68),
+						new MinetestBiome("Desert",                  BiomeColor.from(206, 199, 152), (short)   5, FLOATLAND_SHADOW_LIMIT, 92, 16),
+						new MinetestBiome("Desert ocean",            BiomeColor.from(215, 213, 171), (short)-112,               (short)4, 92, 16),
+						new MinetestBiome("Sandstone desert",        BiomeColor.from(194, 168, 127), (short)   5, FLOATLAND_SHADOW_LIMIT, 60,  0),
+						new MinetestBiome("Sandstone desert ocean",  BiomeColor.from(212, 206, 165), (short)-112,               (short)4, 60,  0),
+						new MinetestBiome("Cold desert",             BiomeColor.from(193, 191, 179), (short)   5, FLOATLAND_SHADOW_LIMIT, 40,  0),
+						new MinetestBiome("Cold desert ocean",       BiomeColor.from(211, 210, 175), (short)-112,               (short)4, 40,  0),
+						new MinetestBiome("Savanna",                 BiomeColor.from(139, 142,  64), (short)   1, FLOATLAND_SHADOW_LIMIT, 89, 42),
+						new MinetestBiome("Savanna shore",           BiomeColor.from(113,  95,  49), (short)  -1,               (short)0, 89, 42),
+						new MinetestBiome("Savanna ocean",           BiomeColor.from(201, 200, 152), (short)-112,              (short)-2, 89, 42),
+						new MinetestBiome("Rainforest",              BiomeColor.from(  0,  60,   0), (short)   1, FLOATLAND_SHADOW_LIMIT, 86, 65),
+						new MinetestBiome("Rainforest swamp",        BiomeColor.from(  0,  40,   0), (short)  -1,               (short)0, 86, 65),
+						new MinetestBiome("Rainforest ocean",        BiomeColor.from(188, 195, 151), (short)-112,              (short)-2, 86, 65),
 
 						// Underground (normally Amidst don't care, but here it's needed because ocean floor can drop lower than -112)						
-						new MinetestBiome("Underground",             BiomeColor.from( 20,  20,  20), Short.MIN_VALUE, (short)-113, 50, 50) 
+						new MinetestBiome("Underground",             BiomeColor.from( 20,  20,  20), Short.MIN_VALUE, (short)-113, 50, 50),
+						
+						// Floatlands
+						new MinetestBiome("Floatland grassland",       BiomeColor.from( 76, 129,  36), (short)(FLOATLAND_LEVEL + 4),              Short.MAX_VALUE, 50, 50),	
+						new MinetestBiome("Floatland grassland ocean", BiomeColor.from(198, 204, 156),       FLOATLAND_SHADOW_LIMIT, (short)(FLOATLAND_LEVEL + 3), 50, 50)	
 					}
 				)
 			);

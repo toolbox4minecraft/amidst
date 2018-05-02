@@ -22,9 +22,14 @@ public class BiomeColor {
 	public static BiomeColor error() {
 		return ERROR_BIOME_COLOR;
 	}
+
+	public static BiomeColor transparent() {
+		return TRANSPARENT_BIOME_COLOR;
+	}	
 	
-	private static final BiomeColor UNKNOWN_BIOME_COLOR = new BiomeColor(0, 0, 0);
-	private static final BiomeColor ERROR_BIOME_COLOR = new BiomeColor(255, 0, 255);
+	private static final BiomeColor UNKNOWN_BIOME_COLOR     = new BiomeColor(0, 0, 0);
+	private static final BiomeColor ERROR_BIOME_COLOR       = new BiomeColor(255, 0, 255);
+	private static final BiomeColor TRANSPARENT_BIOME_COLOR = new BiomeColor(0, 0, 0, 0);
 
 	private static final int DESELECT_NUMBER = 30;
 	private static final int LIGHTEN_BRIGHTNESS = 40;
@@ -36,26 +41,31 @@ public class BiomeColor {
 	private final int deselectRGB;
 	private final Color color;
 
+	
 	private BiomeColor(int r, int g, int b) {
+		this(r, g, b, 255);
+	}	
+	
+	private BiomeColor(int r, int g, int b, int alpha) {
 		this.r = r;
 		this.g = g;
 		this.b = b;
-		this.rgb = createRGB(r, g, b);
-		this.deselectRGB = createDeselectRGB(r, g, b);
-		this.color = new Color(r, g, b);
+		this.rgb = createRGB(r, g, b, alpha);
+		this.deselectRGB = createDeselectRGB(r, g, b, alpha);
+		this.color = new Color(r, g, b, alpha);
 	}
 
-	private int createRGB(int r, int g, int b) {
-		int result = 0xFF000000;
+	private int createRGB(int r, int g, int b, int alpha) {
+		int result = 0xFF000000 & (alpha << 24);
 		result |= 0xFF0000 & (r << 16);
 		result |= 0xFF00 & (g << 8);
 		result |= 0xFF & b;
 		return result;
 	}
 
-	private int createDeselectRGB(int r, int g, int b) {
+	private int createDeselectRGB(int r, int g, int b, int alpha) {
 		int sum = r + g + b;
-		return createRGB(deselect(r, sum), deselect(g, sum), deselect(b, sum));
+		return createRGB(deselect(r, sum), deselect(g, sum), deselect(b, sum), alpha);
 	}
 
 	private int deselect(int x, int average) {

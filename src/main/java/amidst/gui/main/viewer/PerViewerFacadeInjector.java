@@ -118,6 +118,7 @@ public class PerViewerFacadeInjector {
 				settings,
 				progressMessageHolder::getProgressMessage);
 		this.drawer = new Drawer(
+				world.getWorldType(),
 				graph,
 				translator,
 				zoom,

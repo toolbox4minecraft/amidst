@@ -13,6 +13,7 @@ import amidst.gameengineabstraction.CoordinateSystem;
 import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
+import amidst.minetest.world.mapgen.MinetestBiome;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
@@ -84,6 +85,11 @@ public class CursorInformationWidget extends TextWidget {
 			try {
 				return biomeAuthority.getBiomeByIndex(biome).getName();
 			} catch (UnknownBiomeIndexException e) {
+				if (biome == MinetestBiome.VOID.getIndex()) {
+					// Special case
+					return MinetestBiome.VOID.getName();
+				}
+				
 				// This can happen legitimately now, as changing the biomeprofile in minetest (not minecraft)
 				// causes the biome data to be recalculated with the new biomes, which might now be fewer than 
 				// the index of the soon-to-be-updated biome your mouse is currently hovering over.
