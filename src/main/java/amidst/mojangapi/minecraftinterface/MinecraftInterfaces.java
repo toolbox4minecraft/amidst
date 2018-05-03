@@ -52,12 +52,11 @@ public enum MinecraftInterfaces {
 			return DefaultClassTranslator.INSTANCE.get();
 		}
 	}
-	
 	private static MinecraftInterface fromSymbolicMapAndVersion(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion version) {
 		if(isLegacyVersion(version)) {
 			return new LegacyMinecraftInterface(symbolicClassMap, version);
 		} else {
-			return new LocalMinecraftInterface(version);
+			return new LocalMinecraftInterface(symbolicClassMap, version);
 		}
 	}
 	

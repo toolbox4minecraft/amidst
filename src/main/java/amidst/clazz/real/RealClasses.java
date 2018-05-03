@@ -16,7 +16,7 @@ import amidst.documentation.Immutable;
 public enum RealClasses {
 	;
 
-	private static final int MAXIMUM_CLASS_BYTES = 16 * 1024;
+	private static final int MAXIMUM_CLASS_BYTES = 24 * 1024;
 	private static final RealClassBuilder REAL_CLASS_BUILDER = new RealClassBuilder();
 
 	public static List<RealClass> fromJarFile(File jarFile) throws FileNotFoundException, JarFileParsingException {

@@ -24,6 +24,10 @@ public class SymbolicConstructor {
 			InvocationTargetException {
 		return new SymbolicObject(parent, newInstance(parameters));
 	}
+	
+	public Constructor<?> getRawConstructor() {
+		return constructor;
+	}
 
 	private Object newInstance(Object... parameters)
 			throws InstantiationException,

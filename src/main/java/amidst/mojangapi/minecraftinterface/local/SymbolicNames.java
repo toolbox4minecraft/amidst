@@ -14,6 +14,19 @@ public enum SymbolicNames {
 	public static final String FIELD_WORLD_TYPE_AMPLIFIED = "amplified";
 	public static final String FIELD_WORLD_TYPE_CUSTOMIZED = "customized";
 
-	public static final String CLASS_BLOCK_INIT = "BlockInit";
-	public static final String METHOD_BLOCK_INIT_INITIALIZE = "initialize";
+	public static final String CLASS_BOOTSTRAP = "Bootstrap";
+	public static final String METHOD_BOOTSTRAP_REGISTER = "register";
+	
+	public static final String CLASS_LAYER_UTIL = "LayerUtil";
+	public static final String METHOD_LAYER_UTIL_INITIALIZE_ALL = "initializeAll";
+	
+	public static final String CLASS_GEN_SETTINGS = "OverworldGenSettings";
+	public static final String CONSTRUCTOR_GEN_SETTINGS = "<init>";
+	
+	public static final String CLASS_GEN_LAYER = "GenLayer";
+	public static final String METHOD_GEN_LAYER_GET_BIOME_DATA = "getBiomeData"; //For the BiomeRegistry variant
+	
+	//For the BiomeRegistry variant
+	public static final String CLASS_BIOME = "Biome";
+	public static final String METHOD_BIOME_GET_ID = "getBiomeId";
 }

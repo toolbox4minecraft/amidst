@@ -43,6 +43,7 @@ public class RealClass {
 
 	private final List<String> utf8Constants;
 	private final List<Float> floatConstants;
+	private final List<Double> doubleConstants;
 	private final List<Long> longConstants;
 	private final List<Integer> stringIndices;
 	private final List<ReferenceIndex> methodIndices;
@@ -63,6 +64,7 @@ public class RealClass {
 			RealClassConstant<?>[] constants,
 			List<String> utf8Constants,
 			List<Float> floatConstants,
+			List<Double> doubleConstants,
 			List<Long> longConstants,
 			List<Integer> stringIndices,
 			List<ReferenceIndex> methodIndices,
@@ -79,6 +81,7 @@ public class RealClass {
 		this.constants = constants;
 		this.utf8Constants = utf8Constants;
 		this.floatConstants = floatConstants;
+		this.doubleConstants = doubleConstants;
 		this.longConstants = longConstants;
 		this.stringIndices = stringIndices;
 		this.methodIndices = methodIndices;
@@ -149,6 +152,15 @@ public class RealClass {
 		}
 		return false;
 	}
+	
+	public boolean searchForDouble(double required) {
+		for (Double entry : doubleConstants) {
+			if (entry.doubleValue() == required) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public boolean searchForStringContaining(String requiredValue) {
 		for (Integer entry : stringIndices) {
@@ -170,6 +182,21 @@ public class RealClass {
 			}
 		}
 		return null;
+	}
+	
+	public boolean hasMethodWithRealArguments(String... arguments) {
+		for (ReferenceIndex entry : methodIndices) {
+			String value = getStringValueOfConstant(entry.getValue2());
+			String[] args = readArguments(value);
+			if(arguments.length == args.length) {
+				for(int i = 0; i < args.length; i++) {
+					if(args[i] != null && !args[i].equals(arguments[i]))
+						break;
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public RealClassField getField(int index) {

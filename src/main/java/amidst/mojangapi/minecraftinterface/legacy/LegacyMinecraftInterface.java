@@ -17,20 +17,8 @@ import amidst.mojangapi.world.WorldType;
  */
 public class LegacyMinecraftInterface implements MinecraftInterface {
 
-	/**
-	 * A GenLayer instance, at quarter scale to the final biome layer (i.e. both
-	 * axis are divided by 4). Minecraft calculates biomes at
-	 * quarter-resolution, then noisily interpolates the biome-map up to 1:1
-	 * resolution when needed, this is the biome GenLayer before it is
-	 * interpolated.
-	 */
-	private volatile SymbolicObject quarterResolutionBiomeGenerator;
 
-	/**
-	 * A GenLayer instance, the biome layer. (1:1 scale) Minecraft calculates
-	 * biomes at quarter-resolution, then noisily interpolates the biome-map up
-	 * to 1:1 resolution when needed, this is the interpolated biome GenLayer.
-	 */
+	private volatile SymbolicObject quarterResolutionBiomeGenerator;
 	private volatile SymbolicObject fullResolutionBiomeGenerator;
 
 	private final SymbolicClass intCacheClass;

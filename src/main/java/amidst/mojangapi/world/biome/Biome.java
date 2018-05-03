@@ -141,7 +141,8 @@ public class Biome {
 
 	public static Biome getByIndex(int index) throws UnknownBiomeIndexException {
 		if (index < 0 || index >= biomes.length || biomes[index] == null) {
-			throw new UnknownBiomeIndexException("unsupported biome index detected: " + index);
+			return biomes[0];
+			//TODO: throw new UnknownBiomeIndexException("unsupported biome index detected: " + index);
 		} else {
 			return biomes[index];
 		}
