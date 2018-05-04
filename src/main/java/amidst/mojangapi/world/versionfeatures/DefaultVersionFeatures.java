@@ -165,24 +165,29 @@ public enum DefaultVersionFeatures {
 		this.validBiomesAtMiddleOfChunk_OceanMonument = VersionFeature.<Biome> listBuilder()
 				.init(
 						// this is also for the enable all layers function, else it would be since 1.8
-						// Not sure if the extended biomes count
 						Biome.deepOcean
-//						Biome.deepOceanM
+				).sinceExtend(RecognisedVersion._12w08a,
+						Biome.coldDeepOcean,
+						Biome.warmDeepOcean,
+						Biome.lukewarmDeepOcean,
+						Biome.frozenDeepOcean
 				).construct();
 		this.validBiomesForStructure_OceanMonument = VersionFeature.<Biome> listBuilder()
 				.init(
 						// this is also for the enable all layers function, else it would be since 1.8
-						// Not sure if the extended biomes count
 						Biome.ocean,
 						Biome.deepOcean,
 						Biome.frozenOcean,
 						Biome.river,
-						Biome.frozenRiver,
-						Biome.oceanM,
-						Biome.deepOceanM,
-						Biome.frozenOceanM,
-						Biome.riverM,
-						Biome.frozenRiverM
+						Biome.frozenRiver
+				).sinceExtend(RecognisedVersion._12w08a,
+						Biome.coldOcean,
+						Biome.coldDeepOcean,
+						Biome.warmOcean,
+						Biome.warmDeepOcean,
+						Biome.lukewarmOcean,
+						Biome.lukewarmDeepOcean,
+						Biome.frozenDeepOcean
 				).construct();
 		this.validBiomesForStructure_WoodlandMansion = VersionFeature.<Biome> listBuilder()
 				.init(

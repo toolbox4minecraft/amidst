@@ -27,8 +27,7 @@ public class BiomeProfileSelection {
 	public BiomeColor getBiomeColor(int index) throws UnknownBiomeIndexException {
 		BiomeColor[] biomeColors = this.biomeColors;
 		if (index < 0 || index >= biomeColors.length || biomeColors[index] == null) {
-			return BiomeColor.unknown();
-			//TODO: throw new UnknownBiomeIndexException("unsupported biome index detected: " + index);
+			throw new UnknownBiomeIndexException("unsupported biome index detected: " + index);
 		} else {
 			return biomeColors[index];
 		}

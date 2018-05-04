@@ -59,7 +59,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+	public synchronized int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
 		try {
 			if(biomeGetIdMethod == null) {
@@ -67,13 +67,25 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 				biomeGetIdMethod = MethodHandles.lookup().unreflect(biomeRawMethod);
 			}
 			
-			SymbolicObject biomeGen = getBiomeGenerator(useQuarterResolution);
-			Object[] biomes = (Object[]) biomeGen.callMethod(SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA, x, y, width, height, null);
 			
-			int[] data = ensureArrayCapacity(biomes.length);
+			int[] data = ensureArrayCapacity(width*height);
 			
-			for(int i = 0; i < biomes.length; i++) {
-				data[i] = getBiomeId(biomes[i]);
+			for(int x0 = 0; x0 < width; x0 += 16) {
+				int w = Math.min(16, width - x0);
+				
+				for(int y0 = 0; y0 < height; y0 += 16) {
+					int h = Math.min(16, height - y0);
+					
+					Object[] biomes = getBiomeDataInner(x+x0, y+y0, w, h, useQuarterResolution);
+					
+					for(int i = 0; i < w; i++) {
+						for(int j = 0; j < h; j++) {
+							int idx = i + j*w;
+							int trueIdx = (x0+i) + (y0+j)*width;
+							data[trueIdx] = getBiomeId(biomes[idx]);
+						}
+					}
+				}
 			}
 			
 			return data;			
@@ -81,9 +93,16 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
 	}
+	
+	private Object[] getBiomeDataInner(int x, int y, int width, int height, boolean useQuarterResolution)
+		throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		SymbolicObject biomeGen = getBiomeGenerator(useQuarterResolution);
+		Object[] biomes = (Object[]) biomeGen.callMethod(SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA, x, y, width, height, null);
+		return biomes;
+	}
 
 	@Override
-	public void createWorld(long seed, WorldType worldType, String generatorOptions)
+	public synchronized void createWorld(long seed, WorldType worldType, String generatorOptions)
 			throws MinecraftInterfaceException {
 
 		try {
