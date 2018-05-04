@@ -70,6 +70,10 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			
 			int[] data = ensureArrayCapacity(width*height);
 			
+			/**
+			 * We break the region in 16x16 chunks, to get better performance out of the LazyArea used by the game.
+			 * Sadly, we get no performance gain in 18w06a, but in previous snapshots we get a ~1.5x improvement.
+			 */
 			for(int x0 = 0; x0 < width; x0 += 16) {
 				int w = Math.min(16, width - x0);
 				
@@ -118,7 +122,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			// @formatter:on
 			
 			quarterResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[0]);
-			fullResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[0]);
+			fullResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[1]);
 			
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
 			throw new MinecraftInterfaceException("unable to create world", e);
