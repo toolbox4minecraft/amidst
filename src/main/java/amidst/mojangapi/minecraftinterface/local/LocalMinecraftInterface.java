@@ -59,7 +59,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public synchronized int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
 		try {
 			if(biomeGetIdMethod == null) {
@@ -74,19 +74,26 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			 * We break the region in 16x16 chunks, to get better performance out of the LazyArea used by the game.
 			 * Sadly, we get no performance gain in 18w06a, but in previous snapshots we get a ~1.5x improvement.
 			 */
-			for(int x0 = 0; x0 < width; x0 += 16) {
-				int w = Math.min(16, width - x0);
-				
-				for(int y0 = 0; y0 < height; y0 += 16) {
-					int h = Math.min(16, height - y0);
+			if(recognisedVersion == RecognisedVersion._18w06a) {
+				Object[] biomes = getBiomeDataInner(x, y, width, height, useQuarterResolution);
+				for(int i = 0; i < biomes.length; i++) {
+					data[i] = getBiomeId(biomes[i]);
+				}
+			} else {
+				for(int x0 = 0; x0 < width; x0 += 16) {
+					int w = Math.min(16, width - x0);
 					
-					Object[] biomes = getBiomeDataInner(x+x0, y+y0, w, h, useQuarterResolution);
-					
-					for(int i = 0; i < w; i++) {
-						for(int j = 0; j < h; j++) {
-							int idx = i + j*w;
-							int trueIdx = (x0+i) + (y0+j)*width;
-							data[trueIdx] = getBiomeId(biomes[idx]);
+					for(int y0 = 0; y0 < height; y0 += 16) {
+						int h = Math.min(16, height - y0);
+						
+						Object[] biomes = getBiomeDataInner(x+x0, y+y0, w, h, useQuarterResolution);
+						
+						for(int i = 0; i < w; i++) {
+							for(int j = 0; j < h; j++) {
+								int idx = i + j*w;
+								int trueIdx = (x0+i) + (y0+j)*width;
+								data[trueIdx] = getBiomeId(biomes[idx]);
+							}
 						}
 					}
 				}
