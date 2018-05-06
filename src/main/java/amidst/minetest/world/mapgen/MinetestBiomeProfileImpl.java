@@ -159,6 +159,26 @@ public class MinetestBiomeProfileImpl implements BiomeProfile {
 	public boolean save(File file) {
 		return writeToFile(file, serialize());
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+	    if (obj == null) return false;
+	    if (!MinetestBiomeProfileImpl.class.isAssignableFrom(obj.getClass())) return false;
+	    final MinetestBiomeProfileImpl other = (MinetestBiomeProfileImpl)obj;
+	    if ((this.name      == null) ? (other.name      != null) : !this.name.equals(other.name))           return false;
+	    if ((this.shortcut  == null) ? (other.shortcut  != null) : !this.shortcut.equals(other.shortcut))   return false;
+	    if ((this.biomeList == null) ? (other.biomeList != null) : !this.biomeList.equals(other.biomeList)) return false;	    
+	    return true;
+	}
+
+	@Override
+	public int hashCode() {
+	    int hash = 3;
+	    hash = 37 * hash + this.name.hashCode();
+	    hash = 37 * hash + this.shortcut.hashCode();
+	    hash = 37 * hash + this.biomeList.hashCode();
+	    return hash;
+	}		
 
 	private String serialize() {
 		String output = "{ \"name\":\"" + name + "\", \"biomeList\":[\r\n";

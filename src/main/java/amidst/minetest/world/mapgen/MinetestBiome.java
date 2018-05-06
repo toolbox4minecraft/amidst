@@ -33,6 +33,34 @@ public class MinetestBiome extends BiomeBase {
 		super.setIndex(index);
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+	    if (obj == null) return false;
+	    if (!MinetestBiome.class.isAssignableFrom(obj.getClass())) return false;
+	    final MinetestBiome other = (MinetestBiome)obj;
+	    if ((this.getName() == null) ? (other.getName() != null) : !this.getName().equals(other.getName())) return false;
+	    if ((this.getDefaultColor() == null) ? (other.getDefaultColor() != null) : !this.getDefaultColor().equals(other.getDefaultColor())) return false;
+	    
+	    return  y_min == other.y_min &&
+	    		y_max == other.y_max &&
+	    		heat_point == other.heat_point &&
+	    		humidity_point == other.humidity_point &&
+	    		vertical_blend == other.vertical_blend;
+	}
+
+	@Override
+	public int hashCode() {
+	    int hash = 3;
+	    hash = 37 * hash + (this.getName() != null ? this.getName().hashCode() : 0);
+	    hash = 37 * hash + (this.getDefaultColor() != null ? this.getDefaultColor().hashCode() : 0);
+	    hash = 37 * hash + (int)y_min;
+	    hash = 37 * hash + (int)y_max;
+	    hash = 37 * hash + (int)Float.floatToIntBits(heat_point);
+	    hash = 37 * hash + (int)Float.floatToIntBits(humidity_point);
+	    hash = 37 * hash + (int)vertical_blend;
+	    return hash;
+	}	
+	
 	public short y_min;
 	public short y_max;
 	public float heat_point;

@@ -128,7 +128,8 @@ public class AmidstMenuBuilder {
 		if (biomeAuthority.getBiomeProfileDirectory().isValid()) {
 			result.add(create_Settings_BiomeProfile());
 		}
-		Menus.item(result, actions::displayGeneratorOptions,    "View MapGen params",     KeyEvent.VK_V);
+		Menus.item(result, actions::displayBiomeProfileVoronoi, "Biome Voronoi",      KeyEvent.VK_V);
+		Menus.item(result, actions::displayGeneratorOptions,    "View MapGen params", KeyEvent.VK_G);
 
 		result.addSeparator();
 		// @formatter:off

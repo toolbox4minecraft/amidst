@@ -117,4 +117,16 @@ public class BiomeColor {
 	private int lighten(int x) {
 		return Math.min(x + LIGHTEN_BRIGHTNESS, 0xFF);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+	    if (obj == null) return false;
+	    if (!BiomeColor.class.isAssignableFrom(obj.getClass())) return false;
+	    return rgb == ((BiomeColor)obj).rgb;
+	}
+
+	@Override
+	public int hashCode() {
+		return rgb;
+	}		
 }

@@ -26,6 +26,7 @@ import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.gui.text.TextWindow;
+import amidst.gui.voronoi.VoronoiWindow;
 import amidst.logging.AmidstLogger;
 import amidst.minetest.world.mapgen.DefaultBiomes;
 import amidst.mojangapi.world.WorldSeed;
@@ -330,6 +331,19 @@ public class Actions {
 		}		
 	}
 
+	/**
+	 * This is more useful for Minetest than Minecraft, as Minetest has biomes
+	 * determined by heat and humidy, which Minecraft hasn't had since early betas
+	 */
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void displayBiomeProfileVoronoi() {
+		if (gameEngineDetails.getType() != GameEngineType.MINECRAFT) {
+			VoronoiWindow.showDiagram(biomeAuthority.getBiomeProfileSelection());
+		} else {
+			dialogs.displayInfo("Biome profile Voronoi diagram", "Minecraft biomes are not determined by heat and humidity.");
+		}		
+	}
+	
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void about() {
 		dialogs.displayInfo(
