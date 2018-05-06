@@ -3,8 +3,7 @@ package amidst.mojangapi.world.biome;
 import amidst.documentation.Immutable;
 
 @Immutable
-public class BiomeType {
-	
+public class BiomeType {	
 	// @formatter:off
 	public static final BiomeType PLAINS            = new BiomeType( 0.1F,   0.2F);
 	public static final BiomeType RIVER             = new BiomeType(-0.5F,   0.0F);

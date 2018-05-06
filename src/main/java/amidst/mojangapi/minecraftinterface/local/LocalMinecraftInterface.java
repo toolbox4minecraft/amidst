@@ -47,15 +47,34 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	 */
 	private volatile int[] dataArray = new int[256];
 	
-	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
-		this.bootstrapClass = symbolicClassMap.get(SymbolicNames.CLASS_BOOTSTRAP);
-		this.worldTypeClass = symbolicClassMap.get(SymbolicNames.CLASS_WORLD_TYPE);
-		this.genSettingsClass = symbolicClassMap.get(SymbolicNames.CLASS_GEN_SETTINGS);
-		this.layerUtilClass = symbolicClassMap.get(SymbolicNames.CLASS_LAYER_UTIL);
-		this.genLayerClass = symbolicClassMap.get(SymbolicNames.CLASS_GEN_LAYER);
-		this.biomeClass = symbolicClassMap.get(SymbolicNames.CLASS_BIOME);
+	public LocalMinecraftInterface(
+			SymbolicClass bootstrapClass,
+			SymbolicClass worldTypeClass,
+			SymbolicClass genSettingsClass,
+			SymbolicClass genLayerClass,
+			SymbolicClass layerUtilClass,
+			SymbolicClass biomeClass,
+			RecognisedVersion recognisedVersion) {
+		this.bootstrapClass = bootstrapClass;
+		this.worldTypeClass = worldTypeClass;
+		this.genSettingsClass = genSettingsClass;
+		this.genLayerClass = genLayerClass;
+		this.layerUtilClass = layerUtilClass;
+		this.biomeClass = biomeClass;
 		
 		this.recognisedVersion = recognisedVersion;
+	}
+	
+	
+	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
+		this(
+			symbolicClassMap.get(SymbolicNames.CLASS_BOOTSTRAP),
+			symbolicClassMap.get(SymbolicNames.CLASS_WORLD_TYPE),
+			symbolicClassMap.get(SymbolicNames.CLASS_GEN_SETTINGS),
+			symbolicClassMap.get(SymbolicNames.CLASS_GEN_LAYER),
+			symbolicClassMap.get(SymbolicNames.CLASS_LAYER_UTIL),
+			symbolicClassMap.get(SymbolicNames.CLASS_BIOME),
+			recognisedVersion);
 	}
 
 	@Override
@@ -72,9 +91,9 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			
 			/**
 			 * We break the region in 16x16 chunks, to get better performance out of the LazyArea used by the game.
-			 * Sadly, we get no performance gain in 18w06a, but in previous snapshots we get a ~1.5x improvement.
+			 * Sadly, we get no performance gain in 18w16a, but in previous snapshots we get a ~1.5x improvement.
 			 */
-			if(recognisedVersion == RecognisedVersion._18w06a) {
+			if(recognisedVersion == RecognisedVersion._18w16a) {
 				Object[] biomes = getBiomeDataInner(x, y, width, height, useQuarterResolution);
 				for(int i = 0; i < biomes.length; i++) {
 					data[i] = getBiomeId(biomes[i]);
