@@ -12,9 +12,7 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -22,22 +20,21 @@ import javax.swing.JPanel;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
-import amidst.fragment.Fragment;
 import amidst.gameengineabstraction.world.biome.IBiome;
-import amidst.logging.AmidstLogger;
 import amidst.minetest.world.mapgen.MinetestBiome;
 import amidst.minetest.world.mapgen.MinetestBiomeProfileImpl;
-import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
+/**
+ * Panel which displays a Voronoi graph of Minetest biomes 
+ */
 public class VoronoiPanel extends JPanel {
 
-	public static final int FLAG_SHOWLABELS       = 0x01;
-	public static final int FLAG_SHOWAXIS         = 0x02;
-	public static final int FLAG_SHOWNODES        = 0x04;
-	public static final int FLAG_SHOWDISTRIBUTION = 0x08;
+	public static final int FLAG_SHOWLABELS         = 0x01;
+	public static final int FLAG_SHOWAXIS           = 0x02;
+	public static final int FLAG_SHOWNODES          = 0x04;
+	public static final int FLAG_SHOWDISTRIBUTION   = 0x08;
 
-	public static final boolean GRAPHICS_DEBUG = false;
+	public static final boolean GRAPHICS_DEBUG      = false;
 
 	private static final float AXIS_WIDTH           = 0.5f;
 	private static final int   TICKMARK_WIDTH_SMALL = 3;
@@ -47,7 +44,7 @@ public class VoronoiPanel extends JPanel {
 	private static final int   NODE_LABEL_SPACE     = 0;
 	private static final int   NODE_LABEL_FONTSIZE  = 3;
 
-	private static final long serialVersionUID = 1L;
+	private static final long  serialVersionUID     = 1L;
 
 	private static Stroke          stroke_capButt   = new BasicStroke(AXIS_WIDTH, BasicStroke.CAP_BUTT,   BasicStroke.JOIN_ROUND);
 	private static Stroke          stroke_capSquare = new BasicStroke(AXIS_WIDTH, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
@@ -57,17 +54,18 @@ public class VoronoiPanel extends JPanel {
 	public int axis_max         = 140;
 	public int graph_resolution = 1000;
 
-	private MinetestBiome[] nodes;
+	//private MinetestBiome[] nodes;
+	ArrayList<MinetestBiome> biomes = new ArrayList<MinetestBiome>();
+	private List<GraphNode> graphNodes = null; 
 	private int renderFlags;
-	private BufferedImage graph;
-	private int[] rgbArray;
+	private VoronoiGraph graph = null;
 
 	@Override
 	@CalledOnlyBy(AmidstThread.EDT)
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        createBufferedImage(graph_resolution);
+        if (graph == null) graph = new VoronoiGraph(graph_resolution, graph_resolution);
 
         this.setBorder(null);
         Rectangle panelBounds = getBounds();
@@ -104,10 +102,13 @@ public class VoronoiPanel extends JPanel {
         	g2d.setColor(Color.WHITE);
         	g2d.fillRect(axis_min, axis_min, axis_max - axis_min, axis_max - axis_min);
 
-        	//drawVoronoi(g2d);
-        	drawVoronoiGraph(rgbArray, graph_resolution, graph_resolution);
-        	graph.setRGB(0, 0, graph_resolution, graph_resolution, rgbArray, 0, graph_resolution);
-        	g2d.drawImage(graph, axis_min, axis_min, desiredAxisLength, desiredAxisLength, Color.WHITE, null);
+        	// Draw the filled voronoi graph 
+        	if (graphNodes != null) {
+        		g2d.drawImage(
+        			graph.render(graphNodes, axis_min, axis_max, axis_min, axis_max),
+        			axis_min, axis_min, desiredAxisLength, desiredAxisLength, Color.WHITE, null
+        		);
+        	}
 
         	// draw nodes
         	drawNodesOrNodeLabels(g2d);
@@ -125,8 +126,7 @@ public class VoronoiPanel extends JPanel {
     	boolean showNodes = (renderFlags & FLAG_SHOWNODES) > 0;
     	boolean showLabels = (renderFlags & FLAG_SHOWLABELS) > 0;
 
-    	for (short i = 0; i < nodes.length; i++) {
-			MinetestBiome biome = nodes[i];
+    	for (MinetestBiome biome: biomes) {
 			int x = Math.round(biome.heat_point);
 			int y = Math.round(biome.humidity_point);
 
@@ -240,7 +240,7 @@ public class VoronoiPanel extends JPanel {
 
 	/** returns the perceived brightness of col, between 0 (dark) and 255 (bight) */
 	@CalledByAny
-	public double perceivedBrightness(Color col)
+	public static double perceivedBrightness(Color col)
 	{
 		return Math.sqrt(
 			.299 * Math.pow(col.getRed(),   2) +
@@ -248,109 +248,30 @@ public class VoronoiPanel extends JPanel {
 			.114 * Math.pow(col.getBlue(),  2)
 		);
 	}
-
-	/** Create the graph BufferedImage if it doesn't already exist at the correct size */
-	private void createBufferedImage(int size) {
-		if (graph == null || graph.getWidth() != size) {
-			graph = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-			rgbArray = new int[size * size];
-		}
-	}
-
-	@CalledByAny
-	private void drawVoronoiGraph(int[] rgbArray, int width, int height) {
-
-		if (nodes == null) return;
-
-		MinetestBiome biome_closest;
-		float dist_min;
-		int nodeCount = nodes.length;
-    	float xScale = (axis_max - axis_min) / (float)width;
-    	float yScale = (axis_max - axis_min) / (float)height;
-		int index = 0;
-
-		for (int y = 0; y < height; y++) {
-			float humidity = (y * yScale) + axis_min;
-
-			// TODO: break up rgbArray?
-
-			for (int x = 0; x < width; x++) {
-				float heat = (x * xScale) + axis_min;
-
-				dist_min = Float.MAX_VALUE;
-				biome_closest = null;
-
-				for (short i = 0; i < nodeCount; i++) {
-					MinetestBiome b = nodes[i];
-					float d_heat = heat - b.heat_point;
-					float d_humidity = humidity - b.humidity_point;
-					float dist = (d_heat * d_heat) + (d_humidity * d_humidity);
-
-					if (dist < dist_min) {
-						dist_min = dist;
-						biome_closest = b;
-					}
-				}
-				rgbArray[index++] = (biome_closest == null) ? 0x00000000 : biome_closest.getDefaultColor().getRGB();
-			}
-		}
-	}
-
-
-	private void drawVoronoi(Graphics2D g2d) {
-
-		if (nodes == null) return;
-
-		MinetestBiome biome_closest;
-		float dist_min;
-		int nodeCount = nodes.length;
-
-		for (int y = axis_min; y <= axis_max; y++) {
-			for (int x = axis_min; x <= axis_max; x++) {
-
-				float heat = x;
-				float humidity = y;
-				dist_min = Float.MAX_VALUE;
-				biome_closest = null;
-
-				for (short i = 0; i < nodeCount; i++) {
-					MinetestBiome b = nodes[i];
-					float d_heat = heat - b.heat_point;
-					float d_humidity = humidity - b.humidity_point;
-					float dist = (d_heat * d_heat) + (d_humidity * d_humidity);
-
-					if (dist < dist_min) {
-						dist_min = dist;
-						biome_closest = b;
-					}
-				}
-				if (biome_closest != null) {
-					g2d.setColor(biome_closest.getDefaultColor().getColor());
-					g2d.drawRect(x, y, 1, 1);
-				}
-			}
-		}
-	}
+	
+	public int getRenderFlags() { return renderFlags; }	
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void Update(MinetestBiomeProfileImpl biomeProfile, int height, int flags) {
 
-		ArrayList<MinetestBiome> biomes = new ArrayList<MinetestBiome>();
+		ArrayList<MinetestBiome> newBiomes = new ArrayList<MinetestBiome>();
 		if (biomeProfile != null) for (IBiome biome : biomeProfile.allBiomes()) {
 			MinetestBiome mtBiome = (MinetestBiome)biome;
 			if (height <= (mtBiome.y_max + mtBiome.vertical_blend) && height >= mtBiome.y_min) {
-				biomes.add(mtBiome);
+				newBiomes.add(mtBiome);
 			}
 		}
 
-		ArrayList<MinetestBiome> currentNodes = nodes == null ? new ArrayList<MinetestBiome>() : new ArrayList<MinetestBiome>(Arrays.asList(nodes));
-		if (flags != this.renderFlags || !currentNodes.equals(biomes)) {
+		//ArrayList<MinetestBiome> currentBiomes = this.biomes == null ? new ArrayList<MinetestBiome>() : new ArrayList<MinetestBiome>(Arrays.asList(nodes));
+		if (flags != this.renderFlags || !newBiomes.equals(biomes)) {
 			this.renderFlags = flags;
-			this.nodes = biomes.toArray(new MinetestBiome[biomes.size()]);
-			invalidate();
+			biomes = newBiomes;
+			graphNodes = new ArrayList<GraphNode>();
+			for(MinetestBiome biome: newBiomes) {
+				graphNodes.add(new GraphNode(biome.heat_point, biome.humidity_point, biome.getDefaultColor().getRGB()));
+			}
+			
 			repaint();
 		}
 	}
-
-	public int getRenderFlags() { return renderFlags; }
 }

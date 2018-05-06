@@ -1,8 +1,6 @@
 package amidst.gui.voronoi;
 
 import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -26,8 +24,9 @@ import amidst.settings.biomeprofile.BiomeProfileUpdateListener;
 
 public class VoronoiWindow implements BiomeProfileUpdateListener, ChangeListener {
 
-	private static final int ALTITUDESLIDER_DEFAULT_LOW  = -40;
-	private static final int ALTITUDESLIDER_DEFAULT_HIGH = 200;
+	private static final int ALTITUDESLIDER_DEFAULT_LOW    = -40;
+	private static final int ALTITUDESLIDER_DEFAULT_HIGH   = 200;
+	private static final int ALTITUDESLIDER_STARTING_VALUE = 10; // higher than beaches and oceans, so we start showing "normal" biomes.
 
 	private static VoronoiWindow voronoiWindow = null;
 	private BiomeProfileSelection biomeProfileSelection;
@@ -41,7 +40,6 @@ public class VoronoiWindow implements BiomeProfileUpdateListener, ChangeListener
 	private JCheckBox option_showNodes;
 	private JSpinner altitudeOffset;
 
-	/** the profile being used by Amidstest **/
 	private MinetestBiomeProfileImpl selectedProfile = null;
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -69,7 +67,7 @@ public class VoronoiWindow implements BiomeProfileUpdateListener, ChangeListener
 		JLabel heightLabel = new JLabel("Altitude");
 		result.add(heightLabel, "center, wrap");
 
-		altitudeSlider = new JSlider(JSlider.VERTICAL, ALTITUDESLIDER_DEFAULT_LOW, ALTITUDESLIDER_DEFAULT_HIGH, 1);
+		altitudeSlider = new JSlider(JSlider.VERTICAL, ALTITUDESLIDER_DEFAULT_LOW, ALTITUDESLIDER_DEFAULT_HIGH, ALTITUDESLIDER_STARTING_VALUE);
 		altitudeSlider.addChangeListener(this);
 		altitudeSlider.setMajorTickSpacing(10);
 		altitudeSlider.setMinorTickSpacing(5);
@@ -173,12 +171,13 @@ public class VoronoiWindow implements BiomeProfileUpdateListener, ChangeListener
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void show(BiomeProfileSelection biomeProfileSelection) {
 
-		BiomeProfile newProfile = null;
-
 		if (this.biomeProfileSelection != null) {
 			this.biomeProfileSelection.removeUpdateListener(this);
 		}
+
 		this.biomeProfileSelection = biomeProfileSelection;
+		
+		BiomeProfile newProfile = null;
 		if (biomeProfileSelection != null) {
 			this.biomeProfileSelection.addUpdateListener(this);
 			newProfile = this.biomeProfileSelection.getCurrentBiomeProfile();
