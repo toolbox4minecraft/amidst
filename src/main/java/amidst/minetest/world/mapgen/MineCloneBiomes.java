@@ -64,7 +64,7 @@ public class MineCloneBiomes {
 			baseBiomes.put("MegaSpruceTaiga", BiomeColor.from( 89, 102,  81));
 			baseBiomes.put("StoneBeach",      BiomeColor.from(162, 162, 132));
 			baseBiomes.put("Plains",          BiomeColor.from(141, 179,  96));
-			baseBiomes.put("SunflowerPlains", BiomeColor.from(141, 179,  96));
+			baseBiomes.put("SunflowerPlains", BiomeColor.from(118, 178,  53));
 			baseBiomes.put("Forest",          BiomeColor.from(  5, 102,  33));
 			baseBiomes.put("FlowerForest",    BiomeColor.from( 32, 175, 180));
 			baseBiomes.put("BirchForest",     BiomeColor.from( 48, 116,  68));
