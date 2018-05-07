@@ -32,6 +32,7 @@ The following has not *yet* been implemented for Minetest worlds:
 ## Documentation
 * [Installation](https://github.com/Treer/amidstest/wiki/Installation)
 * [Getting or sharing more biome profiles](https://github.com/Treer/amidstest/wiki/Get-or-share-more-biome-profiles)
+* [Dev info](https://github.com/Treer/amidstest/wiki/Development)
 
 ## Screenshots
 
