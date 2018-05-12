@@ -251,10 +251,10 @@ public class VoronoiWindow implements BiomeProfileUpdateListener, ChangeListener
 				+ "    * Red solid rings - these indicate the four quartiles. 25% of the world\r\n"
 				+ "        has a temperature and humidity falling outside the outermost quartile\r\n"
 				+ "        ring. The next ring has 50% of the world inside it, and 50% outside.\r\n"
-				+ "        The innermost red ring contains 25% of the world inside it, and 25%\r\n"
+				+ "        The innermost red ring contains 25% of the world inside it, with 25%\r\n"
 				+ "        between it and the middle ring, etc.\r\n"
 				+ "    * Blue solid rings - these are spaced at 10 percentile intervals. Note\r\n"
-				+ "        that the 50 percentile ring is drawn red, but can also be considered\r\n"
+				+ "        that the 50th percentile ring is drawn red, but can also be considered\r\n"
 				+ "        one of the blue rings.\r\n"
 				+ "    * Red dot - the center of the distribution. This is the most common\r\n"
 				+ "        temperature and humidity value\r\n.");
