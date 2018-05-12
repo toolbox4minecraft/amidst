@@ -1,6 +1,7 @@
 package amidst.gui.text;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -21,8 +22,8 @@ import net.miginfocom.swing.MigLayout;
 public class TextWindow {
 	private static final TextWindow monospaceWindow = new TextWindow(Font.MONOSPACED);
 
-	public static void showMonospace(String title, String content) {
-		SwingUtilities.invokeLater(() -> monospaceWindow.show(title, content));
+	public static void showMonospace(Component parent, String title, String content) {
+		SwingUtilities.invokeLater(() -> monospaceWindow.show(parent, title, content));
 	}
 
 	private final JFrame frame;
@@ -66,9 +67,10 @@ public class TextWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void show(String title, String content) {
+	public void show(Component parent, String title, String content) {
 		this.contentTextArea.setText(content);
 		this.frame.setTitle(title);
+		this.frame.setLocationRelativeTo(parent);
 		this.frame.setVisible(true);
 	}
 }

@@ -25,8 +25,6 @@ import amidst.gui.crash.CrashWindow;
 import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
-import amidst.gui.text.TextWindow;
-import amidst.gui.voronoi.VoronoiWindow;
 import amidst.logging.AmidstLogger;
 import amidst.minetest.world.mapgen.DefaultBiomes;
 import amidst.mojangapi.world.WorldSeed;
@@ -37,7 +35,6 @@ import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
 import amidst.settings.biomeprofile.BiomeAuthority;
 import amidst.settings.biomeprofile.BiomeProfile;
-import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.util.FileExtensionChecker;
 
 @NotThreadSafe
@@ -325,7 +322,7 @@ public class Actions {
 			generatorOptions = viewerFacade.getGeneratorOptions();			
 		}
 		if (generatorOptions != null && generatorOptions.length() > 0) {
-			TextWindow.showMonospace("World mapgen options", generatorOptions);
+			dialogs.displayMonospaceText("World mapgen options", generatorOptions);
 		} else {
 			dialogs.displayInfo("World MapGen options", "There are currently no mapgen options in use");
 		}		
@@ -338,7 +335,11 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayBiomeProfileVoronoi() {
 		if (gameEngineDetails.getType() != GameEngineType.MINECRAFT) {
-			VoronoiWindow.showDiagram(biomeAuthority.getBiomeProfileSelection());
+			// Passing a null IClimateHistogram because the default one is currently the 
+			// only one implemented anyway.
+			// It might be worth passing this value once Amidstest is reading game profiles,
+			// as then it will at least know if the current world DOESN'T use the default climate settings.
+			dialogs.displayVoronoiDiagram(biomeAuthority.getBiomeProfileSelection(), null);
 		} else {
 			dialogs.displayInfo("Biome profile Voronoi diagram", "Minecraft biomes are not determined by heat and humidity.");
 		}		

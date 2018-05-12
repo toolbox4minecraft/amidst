@@ -1,7 +1,9 @@
 package amidst.gui.voronoi;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -16,32 +18,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.gameengineabstraction.world.biome.IBiome;
+import amidst.minetest.world.mapgen.ClimateHistogram;
+import amidst.minetest.world.mapgen.IHistogram2D;
 import amidst.minetest.world.mapgen.MinetestBiome;
 import amidst.minetest.world.mapgen.MinetestBiomeProfileImpl;
 
 /**
- * Panel which displays a Voronoi graph of Minetest biomes 
+ * Panel which displays a Voronoi graph of Minetest biomes
  */
 public class VoronoiPanel extends JPanel {
 
 	public static final int FLAG_SHOWLABELS         = 0x01;
 	public static final int FLAG_SHOWAXIS           = 0x02;
 	public static final int FLAG_SHOWNODES          = 0x04;
-	public static final int FLAG_SHOWDISTRIBUTION   = 0x08;
+	public static final int FLAG_SHOWCOVERAGE       = 0x08;
 
 	public static final boolean GRAPHICS_DEBUG      = false;
 
 	private static final float AXIS_WIDTH           = 0.5f;
-	private static final int   TICKMARK_WIDTH_SMALL = 3;
-	private static final int   TICKMARK_WIDTH_LARGE = 6;
+	private static final int   TICKMARK_WIDTH_SMALL = 2;
+	private static final int   TICKMARK_WIDTH_LARGE = 4;
 	private static final int   TICKMARK_LABEL_SPACE = 1;
 	private static final int   NODE_RADIUS          = 0;
-	private static final int   NODE_LABEL_SPACE     = 0;
+	private static final int   NODE_LABEL_SPACE     = 2;
 	private static final int   NODE_LABEL_FONTSIZE  = 3;
 
 	private static final long  serialVersionUID     = 1L;
@@ -54,18 +59,23 @@ public class VoronoiPanel extends JPanel {
 	public int axis_max         = 140;
 	public int graph_resolution = 1000;
 
-	//private MinetestBiome[] nodes;
+	private IHistogram2D climateHistogram = null;
 	ArrayList<MinetestBiome> biomes = new ArrayList<MinetestBiome>();
-	private List<GraphNode> graphNodes = null; 
+	private List<GraphNode> graphNodes = null;
+	private VoronoiGraph   voronoiGraph   = null;
+	private FrequencyGraph frequencyGraph = null;
+	private float frequencyGraphOpacity = 0;
 	private int renderFlags;
-	private VoronoiGraph graph = null;
 
 	@Override
 	@CalledOnlyBy(AmidstThread.EDT)
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (graph == null) graph = new VoronoiGraph(graph_resolution, graph_resolution);
+        boolean frequencyGraphWasNull = frequencyGraph == null;
+        if (climateHistogram == null) climateHistogram = new ClimateHistogram();
+        if (voronoiGraph     == null) voronoiGraph     = new VoronoiGraph(graph_resolution, graph_resolution, climateHistogram);
+        if (frequencyGraph   == null) frequencyGraph   = new FrequencyGraph(graph_resolution, graph_resolution);
 
         this.setBorder(null);
         Rectangle panelBounds = getBounds();
@@ -102,10 +112,10 @@ public class VoronoiPanel extends JPanel {
         	g2d.setColor(Color.WHITE);
         	g2d.fillRect(axis_min, axis_min, axis_max - axis_min, axis_max - axis_min);
 
-        	// Draw the filled voronoi graph 
+        	// Draw the filled voronoi graph
         	if (graphNodes != null) {
         		g2d.drawImage(
-        			graph.render(graphNodes, axis_min, axis_max, axis_min, axis_max),
+        			voronoiGraph.render(graphNodes, axis_min, axis_max, axis_min, axis_max),
         			axis_min, axis_min, desiredAxisLength, desiredAxisLength, Color.WHITE, null
         		);
         	}
@@ -113,8 +123,35 @@ public class VoronoiPanel extends JPanel {
         	// draw nodes
         	drawNodesOrNodeLabels(g2d);
 
+        	// overlay the frequency graph
+        	if (frequencyGraphOpacity > 0) {
+	        	int rule = AlphaComposite.SRC_OVER;
+	            Composite alphaComposite = AlphaComposite.getInstance(rule , frequencyGraphOpacity);
+	        	Composite originalComposite = g2d.getComposite();
+	            g2d.setComposite(alphaComposite);
+	            try {
+	            	if (graphNodes != null) {
+	            		g2d.drawImage(
+	            			frequencyGraph.render(climateHistogram, axis_min, axis_max, axis_min, axis_max),
+	            			axis_min, axis_min, desiredAxisLength, desiredAxisLength, null, null
+	            		);
+	            	}
+	            } finally {
+	                g2d.setComposite(originalComposite);
+	            }
+        	}
+
         	// draw axis
         	if ((renderFlags & FLAG_SHOWAXIS) > 0) drawAxes(g2d);
+        }
+
+
+        if (frequencyGraphWasNull && frequencyGraphOpacity <= 0) {
+        	// In order to prevent a delay when the user enables the frequencyGraph,
+        	// Make it pre-render after the UI has finished updating.
+        	SwingUtilities.invokeLater(() -> {
+        		frequencyGraph.render(climateHistogram, axis_min, axis_max, axis_min, axis_max);
+    		});
         }
     }
 
@@ -122,9 +159,13 @@ public class VoronoiPanel extends JPanel {
 	private void drawNodesOrNodeLabels(Graphics2D g2d) {
 
 		AffineTransform currentTransform = g2d.getTransform();
-		FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
+		Font font_original = g2d.getFont();
+
+		FontMetrics fontMetrics = g2d.getFontMetrics(font_original);
     	boolean showNodes = (renderFlags & FLAG_SHOWNODES) > 0;
     	boolean showLabels = (renderFlags & FLAG_SHOWLABELS) > 0;
+    	boolean showCoverage = (renderFlags & FLAG_SHOWCOVERAGE) > 0;
+    	int biomeIndex = 0;
 
     	for (MinetestBiome biome: biomes) {
 			int x = Math.round(biome.heat_point);
@@ -140,18 +181,36 @@ public class VoronoiPanel extends JPanel {
         		g2d.fillOval(x - NODE_RADIUS, y - NODE_RADIUS, 1 + NODE_RADIUS * 2, 1 + NODE_RADIUS * 2);
         	}
 
-        	if (showLabels) {
-		    	Point2D fontPos            = new Point(x, y - (showNodes ? NODE_LABEL_SPACE : 0));
-		    	Point2D fontPosTransformed = currentTransform.transform(fontPos, null);
+	    	Point2D fontPos            = new Point(x, y - (showNodes ? NODE_LABEL_SPACE : 0));
+	    	Point2D fontPosTransformed = currentTransform.transform(fontPos, null);
+	    	float fontY = (float)fontPosTransformed.getY() + (fontMetrics.getAscent() / 4f);
 
-		        g2d.setTransform(noTransform);
-		    	g2d.drawString(
-					biome.getName(),
-					(float)fontPosTransformed.getX() - (metrics.stringWidth(biome.getName()) / 2),
-					(float)fontPosTransformed.getY() + (metrics.getAscent() / (showNodes ? 1 : -4))
-				);
+	        g2d.setTransform(noTransform);
+	        try {
+		    	if (showLabels) {
+			    	g2d.drawString(
+						biome.getName(),
+						(float)fontPosTransformed.getX() - (fontMetrics.stringWidth(biome.getName()) / 2),
+						fontY
+					);
+		    		fontY += fontMetrics.getAscent();
+		    	}
+
+		    	if (showCoverage) {
+			        String value = String.format(" %.1f", graphNodes.get(biomeIndex).occurrenceFrequency * 100);
+			        if (value.charAt(value.length() - 1) == '0') value = value.substring(0, value.length() - 2);
+			        value += "%";
+
+			    	g2d.drawString(
+			    		value,
+						(float)fontPosTransformed.getX() - (fontMetrics.stringWidth(value) / 2),
+						fontY
+					);
+		    	}
+	        } finally {
 		        g2d.setTransform(currentTransform);
-        	}
+	        }
+    		biomeIndex++;
     	}
     }
 
@@ -191,8 +250,9 @@ public class VoronoiPanel extends JPanel {
                 		);
     	            g2d.setTransform(currentTransform);
     			} else {
-    				g2d.drawLine(0, i, -TICKMARK_WIDTH_SMALL, i);
-    				g2d.drawLine(i, 0, i, -TICKMARK_WIDTH_SMALL);
+    				int tickmarkWidth = (i % 50 == 0) ? (int)Math.ceil((TICKMARK_WIDTH_SMALL + TICKMARK_WIDTH_LARGE) / 2f) : TICKMARK_WIDTH_SMALL;
+    				g2d.drawLine(0, i, -tickmarkWidth, i);
+    				g2d.drawLine(i, 0, i, -tickmarkWidth);
     			}
     		}
     	}
@@ -248,29 +308,48 @@ public class VoronoiPanel extends JPanel {
 			.114 * Math.pow(col.getBlue(),  2)
 		);
 	}
-	
-	public int getRenderFlags() { return renderFlags; }	
+
+	public int getRenderFlags() { return renderFlags; }
+
+	public String getDistributionData() {
+		StringBuilder result = new StringBuilder();
+
+    	int biomeIndex = 0;
+    	for (MinetestBiome biome: biomes) {
+    		result.append(biome.getName());
+    		result.append(", ");
+    		result.append(String.format(" %.1f%%\r\n", graphNodes.get(biomeIndex).occurrenceFrequency * 100));
+    		biomeIndex++;
+    	}
+		return result.toString();
+	}
+
+	/**
+	 * If the world doesn't use Minetest's default Heat&Humidity algorithm, then pass
+	 * a histogram of it here.
+	 */
+	public void setClimateHistogram(IHistogram2D climate_histogram) { this.climateHistogram = climate_histogram; }
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void Update(MinetestBiomeProfileImpl biomeProfile, int height, int flags) {
+	public void Update(MinetestBiomeProfileImpl biomeProfile, int altitude, float frequency_graph_opacity, int flags) {
 
 		ArrayList<MinetestBiome> newBiomes = new ArrayList<MinetestBiome>();
 		if (biomeProfile != null) for (IBiome biome : biomeProfile.allBiomes()) {
 			MinetestBiome mtBiome = (MinetestBiome)biome;
-			if (height <= (mtBiome.y_max + mtBiome.vertical_blend) && height >= mtBiome.y_min) {
+			if (altitude <= (mtBiome.y_max + mtBiome.vertical_blend) && altitude >= mtBiome.y_min) {
 				newBiomes.add(mtBiome);
 			}
 		}
 
-		//ArrayList<MinetestBiome> currentBiomes = this.biomes == null ? new ArrayList<MinetestBiome>() : new ArrayList<MinetestBiome>(Arrays.asList(nodes));
-		if (flags != this.renderFlags || !newBiomes.equals(biomes)) {
+		if (flags != this.renderFlags || !newBiomes.equals(biomes) || frequencyGraphOpacity != frequency_graph_opacity) {
 			this.renderFlags = flags;
 			biomes = newBiomes;
+			frequencyGraphOpacity = frequency_graph_opacity;
 			graphNodes = new ArrayList<GraphNode>();
 			for(MinetestBiome biome: newBiomes) {
 				graphNodes.add(new GraphNode(biome.heat_point, biome.humidity_point, biome.getDefaultColor().getRGB()));
 			}
-			
+
 			repaint();
 		}
 	}

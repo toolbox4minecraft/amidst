@@ -13,12 +13,16 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gameengineabstraction.GameEngineType;
 import amidst.gameengineabstraction.world.WorldTypes;
+import amidst.gui.text.TextWindow;
+import amidst.gui.voronoi.VoronoiWindow;
 import amidst.logging.AmidstMessageBox;
+import amidst.minetest.world.mapgen.IHistogram2D;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.export.WorldExporterConfiguration;
 import amidst.mojangapi.world.player.WorldPlayerType;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @NotThreadSafe
 public class MainWindowDialogs {
@@ -100,6 +104,11 @@ public class MainWindowDialogs {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	public void displayMonospaceText(String title, String content) {
+		TextWindow.showMonospace(frame, title, content);
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayError(String message) {
 		AmidstMessageBox.displayError(frame, "Error", message);
 	}
@@ -108,6 +117,11 @@ public class MainWindowDialogs {
 	public void displayError(Exception e) {
 		AmidstMessageBox.displayError(frame, "Error", e);
 	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void displayVoronoiDiagram(BiomeProfileSelection biome_profile_selection, IHistogram2D climate_histogram) {
+		VoronoiWindow.showDiagram(frame, biome_profile_selection, climate_histogram);
+	}	
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean askToConfirmSaveGameManipulation() {

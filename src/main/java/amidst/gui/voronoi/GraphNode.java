@@ -7,6 +7,8 @@ public class GraphNode {
 	float x;
 	float y;
 	
+	double occurrenceFrequency;
+	
 	@Override
 	public boolean equals(Object obj) {
 	    if (obj == null) return false;

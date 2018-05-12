@@ -6,6 +6,8 @@ import amidst.fragment.IBiomeDataOracle;
 import amidst.gameengineabstraction.CoordinateSystem;
 import amidst.gameengineabstraction.world.biome.IBiome;
 import amidst.logging.AmidstLogger;
+import amidst.minetest.world.mapgen.ClimateHistogram;
+import amidst.minetest.world.mapgen.IHistogram2D;
 import amidst.minetest.world.mapgen.MapgenParams;
 import amidst.minetest.world.mapgen.MinetestBiome;
 import amidst.minetest.world.mapgen.MinetestBiomeProfileImpl;
@@ -17,6 +19,7 @@ import amidst.settings.biomeprofile.BiomeProfileUpdateListener;
 public abstract class MinetestBiomeDataOracle implements IBiomeDataOracle, BiomeProfileUpdateListener {
 	protected final int seed;
 	protected MapgenParams params;
+	protected ClimateHistogram climateHistogram;
 	/**
 	 * Updated by onBiomeProfileUpdate event, can be null.
 	 */
@@ -132,6 +135,17 @@ public abstract class MinetestBiomeDataOracle implements IBiomeDataOracle, Biome
 		return (biome_closest != null) ? biome_closest : MinetestBiome.NONE;	
 	}
 	
+	public IHistogram2D getClimateHistogram() {
+		if (climateHistogram == null) {
+			climateHistogram = new ClimateHistogram(
+				params.np_heat,
+				params.np_heat_blend,
+				params.np_humidity,
+				params.np_humidity_blend
+			);
+		}
+		return climateHistogram;		
+	}
 	
 	@Override
 	public void onBiomeProfileUpdate(BiomeProfile newBiomeProfile) {
