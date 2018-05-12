@@ -38,11 +38,11 @@ The following has not *yet* been implemented for Minetest worlds:
 
 ![default](https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/v5_default1.png)
 
+![default](https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/30-biomes_voronoi2.png)
+
 ![default](https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/v7_30-biomes1.png)
 
 ![default](https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/v7_default1.png)
-
-![default](https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/30-biomes_voronoi.png)
 
 
 
