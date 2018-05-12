@@ -58,6 +58,7 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 						WorldType.V6, 
 						WorldType.V5, 
 						WorldType.CARPATHIAN,
+						WorldType.VALLEYS,
 						WorldType.FLAT, 
 						WorldType.HALLELUJAH_MOUNTAINS, 
 						//WorldType.FRACTAL
@@ -84,6 +85,15 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 				VersionFeature.<Integer> listBuilder()
 				.init(commonLayers)
 				.initExtend(
+						LayerIds.MINETEST_OCEAN,
+						LayerIds.MINETEST_MOUNTAIN
+				).construct()
+		);
+		enabledLayers.put(WorldType.VALLEYS,
+				VersionFeature.<Integer> listBuilder()
+				.init(commonLayers)
+				.initExtend(
+						LayerIds.MINETEST_OCEAN,
 						LayerIds.MINETEST_OCEAN,
 						LayerIds.MINETEST_MOUNTAIN
 				).construct()

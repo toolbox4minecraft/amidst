@@ -22,6 +22,7 @@ public enum WorldType {
 	// FLAT - can reuse the minecraft FLAT
 	FRACTAL              ("Fractal",                    "fractal",             null),
 	CARPATHIAN           ("Carpathian",                 "carpathian",          null),
+	VALLEYS              ("Valleys",                    "valleys",             null),
 	HALLELUJAH_MOUNTAINS ("Hallelujah Mountains (mod)", "hallelujahmountains", null);
 	// @formatter:on
 
