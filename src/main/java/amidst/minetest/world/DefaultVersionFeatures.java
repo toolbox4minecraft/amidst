@@ -76,7 +76,8 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 				VersionFeature.<Integer> listBuilder()
 				.init(commonLayers)
 				.initExtend(
-						LayerIds.MINETEST_OCEAN
+						LayerIds.MINETEST_OCEAN,
+						LayerIds.MINETEST_MOUNTAIN
 				).construct()
 		);
 		enabledLayers.put(WorldType.V7,

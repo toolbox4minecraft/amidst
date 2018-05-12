@@ -32,6 +32,8 @@ public class BiomeDataOracleCarpathian extends MinetestBiomeDataOracle {
 	
 	private int grad_wl;
 	
+	private boolean isMountains;
+	
 	/**
 	 * @param mapgenCarpathianParams
 	 * @param biomeProfileSelection - if null then a default biomeprofile will be used
@@ -102,6 +104,7 @@ public class BiomeDataOracleCarpathian extends MinetestBiomeDataOracle {
 		int height = -Constants.MAX_MAP_GENERATION_LIMIT;
 
 		int searchInc = 1;
+		isMountains = false;
 		
 		for (short y = 1; y <= 200; y += searchInc) { // we're going to break out of this loop when y is close to surface_level
 			float mnt_var = Noise.NoisePerlin3D(noise_mnt_var.np, x, y, z, seed);
@@ -143,6 +146,8 @@ public class BiomeDataOracleCarpathian extends MinetestBiomeDataOracle {
 			if ((y + (searchInc / 2)) >= surface_level) {
 				// Close enough.
 				// (should be properly accurate at water level, but will lose accuracy with height)
+				
+				isMountains = mountains > (ground * 1.9f); // Low effort ad-hoc way of determining if something should be called "mountains", but seems to work ;)
 				break;
 			}
 			if (y > 2 && searchInc < 12) searchInc += 2;
@@ -187,6 +192,7 @@ public class BiomeDataOracleCarpathian extends MinetestBiomeDataOracle {
 						// Add the ocean bitplane
 						int surface_y = (int)terrainLevelAtPoint(world_x, world_z);
 						if (surface_y < carpathianParams.water_level) biomeValue |= BITPLANE_OCEAN;
+						if (isMountains) biomeValue |= BITPLANE_MOUNTAIN;
 																		
 						// add the biome index
 						// (mask the bitplanes in case the biome returned is -1 (NONE)
