@@ -36,7 +36,7 @@ The following has not *yet* been implemented for Minetest worlds:
 
 ## Screenshots
 
-![default](https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/v5_default1.png)
+![default](https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/carpathian2.png)
 
 ![default](https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/30-biomes_voronoi2.png)
 
