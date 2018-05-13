@@ -55,8 +55,8 @@ public class VoronoiPanel extends JPanel {
 	private static Stroke          stroke_capSquare = new BasicStroke(AXIS_WIDTH, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
 	private static AffineTransform noTransform      = new AffineTransform();
 
-	public int axis_min         = -40;
-	public int axis_max         = 140;
+	public int axis_min         = -40; // This should be considered an inclusive value, i.e. position -40 should be visible in graphs
+	public int axis_max         = 140; // This should be considered an inclusive value, i.e. position 140 should be visible in graphs
 	public int graph_resolution = 1000;
 
 	private IHistogram2D climateHistogram = null;

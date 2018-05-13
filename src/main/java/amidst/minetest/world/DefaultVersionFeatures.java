@@ -1,7 +1,6 @@
 package amidst.minetest.world;
 
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

@@ -81,10 +81,14 @@ public class ClimateHistogram implements IHistogram2D {
 
 		double freq_floor = FrequencyOfTemperature(temperature_floor);
 		double freq_ceil  = FrequencyOfTemperature((float)Math.ceil(temperature));
+
+		if (!(freq_floor > 0 && freq_ceil > 0) && FrequencyOfTemperature(temperature) == 0) return 0; // Don't interpolate the frequency if it's a value that cannot ever happen (the first two checks are just an optimization to prevent unnecessarily invoking FrequencyOfTemperature)
 		double temperature_interp = freq_floor + (freq_ceil - freq_floor) * (temperature - temperature_floor);
 
 		freq_floor = FrequencyOfHumidity(humidity_floor);
 		freq_ceil  = FrequencyOfHumidity((float)Math.ceil(humidity));
+
+		if (!(freq_floor > 0 && freq_ceil > 0) && FrequencyOfTemperature(humidity) == 0) return 0; // Don't interpolate the frequency if it's a value that cannot ever happen (the first two checks are just an optimization to prevent unnecessarily invoking FrequencyOfTemperature)
 		double humidity_interp = freq_floor + (freq_ceil - freq_floor) * (humidity - humidity_floor);
 
 		return temperature_interp * humidity_interp;
@@ -217,7 +221,7 @@ public class ClimateHistogram implements IHistogram2D {
 	/**
 	 * Processes the sample counts from sampledHistogram_Heat & sampledHistogram_Humidity and
 	 * uses what we know about the climate noise algorithm (the center and symmetry) to create
-	 * data likely to be closer to the true distrubtion.
+	 * data likely to be closer to the true distribution.
 	 *
 	 * This matters if you want quartile lines to look smooth.
 	 *

@@ -29,10 +29,10 @@ public class FrequencyGraph {
 	 */
 	public BufferedImage render(IHistogram2D histogram2d, int x_min, int x_max, int y_min, int y_max) {
 
-		int xRange = 1 + x_max - x_min; // inclusive range
-		int yRange = 1 + y_max - y_min; // inclusive range
-    	float xScale = xRange / (float)width;
-    	float yScale = yRange / (float)height;
+		int xRange = x_max - x_min; // inclusive range (x_max is an inclusive value)
+		int yRange = y_max - y_min; // inclusive range (y_max is an inclusive value)
+    	float xScale = xRange / (float)(width  - 1); // xRange is inclusive, but width  is not, so subtract 1 from width  so that at the top of the range, scaling by xScale will give the correct pixel location of (width-1) and vice versa. 
+    	float yScale = yRange / (float)(height - 1); // yRange is inclusive, but height is not, so subtract 1 from height so that at the top of the range, scaling by yScale will give the correct pixel location of (height-1) and vice versa.
 
 		if (graph == null || graph.getWidth() != width || graph.getHeight() != height) {
 			graph = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
