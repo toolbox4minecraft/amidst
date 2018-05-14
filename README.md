@@ -14,10 +14,11 @@ Amidstest is a tool to display a map of a world (either Minetest or Minecraft), 
 With Minetest worlds, it can:
 
 * render an overview of a world from a given seed and mapgen version
-* Apply different biome sets to the world
-* save an image of the map
-* display biome information
+* apply different biome sets to the world
 * locate biomes
+* view biomes as Voronoi diagrams (to aid designing/tuning biomes)
+* calculate biome coverage of worlds
+* save images of the map
 
 
 The following has not *yet* been implemented for Minetest worlds:
