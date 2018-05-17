@@ -20,7 +20,12 @@ public class Numeric {
 			if (input.startsWith("0x")) {
 				seed = Long.decode(input);
 			} else {
-				seed = Long.parseLong(input);
+				try {
+					seed = Long.parseUnsignedLong(input);
+				} catch(NumberFormatException ex) {
+					// perhaps they entered a signed seed? (even though Minetest seeds aren't) 				
+					seed = Long.parseLong(input);
+				}
 			}
 		} catch (NumberFormatException err) {
 			byte[] stringAsBytes = input.getBytes(Charset.forName("UTF-8"));
