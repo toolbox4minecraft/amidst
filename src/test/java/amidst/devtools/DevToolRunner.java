@@ -56,10 +56,10 @@ public class DevToolRunner {
 		new MinecraftJarDownloader(versionsDirectory(), versionList()).run();
 	}
 
-	@Ignore
+	//@Ignore
 	@Test
 	public void checkMinecraftVersionCompatibility() throws FormatException, IOException {
-		new MinecraftVersionCompatibilityChecker(versionsDirectory(), versionList()).run();
+		new MinecraftVersionCompatibilityChecker(versionsDirectory(), librariesDirectory(), versionList()).run();
 	}
 
 	@Ignore

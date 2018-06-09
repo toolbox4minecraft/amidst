@@ -45,7 +45,7 @@ public enum MinecraftInterfaces {
 		}
 	}
 	
-	private static ClassTranslator getClassTranslatorFromVersion(RecognisedVersion version) {
+	public static ClassTranslator getClassTranslatorFromVersion(RecognisedVersion version) {
 		if(isLegacyVersion(version)) {
 			return LegacyClassTranslator.INSTANCE.get();
 		} else {
