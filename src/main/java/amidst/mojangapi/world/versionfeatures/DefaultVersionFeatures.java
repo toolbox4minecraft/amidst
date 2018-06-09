@@ -31,12 +31,19 @@ public enum DefaultVersionFeatures {
 				INSTANCE.validBiomesAtMiddleOfChunk_Stronghold.getValue(version),
 				INSTANCE.strongholdProducerFactory.getValue(version),
 				INSTANCE.validBiomesForStructure_Village.getValue(version),
-				INSTANCE.validBiomesAtMiddleOfChunk_Temple.getValue(version),
+				INSTANCE.validBiomesAtMiddleOfChunk_DesertTemple.getValue(version),
+				INSTANCE.validBiomesAtMiddleOfChunk_Igloo.getValue(version),
+				INSTANCE.validBiomesAtMiddleOfChunk_JungleTemple.getValue(version),
+				INSTANCE.validBiomesAtMiddleOfChunk_WitchHut.getValue(version),
 				INSTANCE.mineshaftAlgorithmFactory.getValue(version),
 				INSTANCE.oceanMonumentLocationCheckerFactory.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_OceanMonument.getValue(version),
 				INSTANCE.validBiomesForStructure_OceanMonument.getValue(version),
-				INSTANCE.validBiomesForStructure_WoodlandMansion.getValue(version));
+				INSTANCE.validBiomesForStructure_WoodlandMansion.getValue(version),
+				INSTANCE.seedForStructure_DesertTemple.getValue(version),
+				INSTANCE.seedForStructure_Igloo.getValue(version),
+				INSTANCE.seedForStructure_JungleTemple.getValue(version),
+				INSTANCE.seedForStructure_WitchHut.getValue(version));
 	}
 
 	private final VersionFeature<List<Integer>> enabledLayers;
@@ -44,12 +51,19 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Stronghold;
 	private final VersionFeature<TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base>> strongholdProducerFactory;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_Village;
-	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Temple;
+	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_DesertTemple;
+	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Igloo;
+	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_JungleTemple;
+	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_WitchHut;
 	private final VersionFeature<Function<Long, MineshaftAlgorithm_Base>> mineshaftAlgorithmFactory;
 	private final VersionFeature<QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker>> oceanMonumentLocationCheckerFactory;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_OceanMonument;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_OceanMonument;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_WoodlandMansion;
+	private final VersionFeature<Long> seedForStructure_DesertTemple;
+	private final VersionFeature<Long> seedForStructure_Igloo;
+	private final VersionFeature<Long> seedForStructure_JungleTemple;
+	private final VersionFeature<Long> seedForStructure_WitchHut;
 
 	private DefaultVersionFeatures() {
 		// @formatter:off
@@ -126,27 +140,39 @@ public enum DefaultVersionFeatures {
 						Biome.desert,
 						Biome.savanna
 				).construct();
-		this.validBiomesAtMiddleOfChunk_Temple = VersionFeature.<Biome> listBuilder()
+		this.validBiomesAtMiddleOfChunk_DesertTemple = VersionFeature.<Biome> listBuilder()
 				.init(
-						// this is for the enable all layers function
-						Biome.desert,
-						Biome.desertHills,
-						Biome.jungle,
-						Biome.jungleHills,
-						Biome.swampland,
-						Biome.icePlains,
-						Biome.coldTaiga
-				).since(RecognisedVersion._12w21a,
 						Biome.desert,
 						Biome.desertHills
-				).sinceExtend(RecognisedVersion._12w22a,
-						Biome.jungle
-				).sinceExtend(RecognisedVersion._1_4_2,
-						Biome.jungleHills, // TODO: jungle temples spawn only since 1.4.2 in jungle hills?
-						Biome.swampland
+				).construct();
+		this.validBiomesAtMiddleOfChunk_Igloo = VersionFeature.<Biome> listBuilder()
+				.init(
+						// this is for the enable all layers function
+						Biome.icePlains,
+						Biome.coldTaiga
+				).since(RecognisedVersion._12w21a
 				).sinceExtend(RecognisedVersion._15w43c,
 						Biome.icePlains,
 						Biome.coldTaiga
+				).construct();
+		this.validBiomesAtMiddleOfChunk_JungleTemple = VersionFeature.<Biome> listBuilder()
+				.init(
+						// this is for the enable all layers function
+						Biome.jungle,
+						Biome.jungleHills
+				).since(RecognisedVersion._12w21a
+				).sinceExtend(RecognisedVersion._12w22a,
+						Biome.jungle
+				).sinceExtend(RecognisedVersion._1_4_2,
+						Biome.jungleHills // TODO: jungle temples spawn only since 1.4.2 in jungle hills?
+				).construct();
+		this.validBiomesAtMiddleOfChunk_WitchHut = VersionFeature.<Biome> listBuilder()
+				.init(
+						// this is for the enable all layers function
+						Biome.swampland
+				).since(RecognisedVersion._12w21a
+				).sinceExtend(RecognisedVersion._1_4_2,
+						Biome.swampland
 				).construct();
 		this.mineshaftAlgorithmFactory = VersionFeature.<Function<Long, MineshaftAlgorithm_Base>> builder()
 				.init(
@@ -193,6 +219,28 @@ public enum DefaultVersionFeatures {
 				.init(
 						Biome.roofedForest,
 						Biome.roofedForestM
+				).construct();
+		this.seedForStructure_DesertTemple = VersionFeature.<Long> builder()
+				.init(
+						14357617L
+				).construct();
+		this.seedForStructure_Igloo = VersionFeature.<Long> builder()
+				.init(
+						14357617L
+				).since(RecognisedVersion._18w06a,
+						14357618L
+				).construct();
+		this.seedForStructure_JungleTemple = VersionFeature.<Long> builder()
+				.init(
+						14357617L
+				).since(RecognisedVersion._18w06a,
+						14357619L
+				).construct();
+		this.seedForStructure_WitchHut = VersionFeature.<Long> builder()
+				.init(
+						14357617L
+				).since(RecognisedVersion._18w06a,
+						14357620L
 				).construct();
 		// @formatter:on
 	}
