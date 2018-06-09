@@ -9,8 +9,10 @@ import org.junit.Test;
 import amidst.AmidstVersion;
 import amidst.ResourceLoader;
 import amidst.devtools.settings.DevToolSettings;
+import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.VersionList;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceCreationException;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.parsing.FormatException;
 
@@ -56,7 +58,7 @@ public class DevToolRunner {
 		new MinecraftJarDownloader(versionsDirectory(), versionList()).run();
 	}
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void checkMinecraftVersionCompatibility() throws FormatException, IOException {
 		new MinecraftVersionCompatibilityChecker(versionsDirectory(), librariesDirectory(), versionList()).run();
@@ -66,6 +68,12 @@ public class DevToolRunner {
 	@Test
 	public void generateBiomeColorImages() throws IOException {
 		new GenerateBiomeColorImages(Biome.allBiomes(), new File(biomeColorImagesDirectory())).run();
+	}
+	
+	@Ignore
+	@Test
+	public void benchmarkWorldGeneration() throws FormatException, IOException {
+		new WorldGenerationBencher(benchmarksDirectory(), versionsDirectory(), librariesDirectory(), versionList()).run();
 	}
 
 	private VersionList versionList() throws FormatException, IOException {
@@ -82,6 +90,10 @@ public class DevToolRunner {
 
 	private String biomeColorImagesDirectory() {
 		return DevToolSettings.INSTANCE.getBiomeColorImagesDirectory();
+	}
+	
+	private String benchmarksDirectory() {
+		return DevToolSettings.INSTANCE.getBenchmarksDirectory();
 	}
 
 	private AmidstVersion amidstVersion() {

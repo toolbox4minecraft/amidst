@@ -22,4 +22,8 @@ public enum DevToolSettings {
 	public String getBiomeColorImagesDirectory() {
 		return properties.getProperty("amidst.devtools.directory.biome.color.images");
 	}
+
+	public String getBenchmarksDirectory() {
+		return properties.getProperty("amidst.devtools.directory.benchmarks");
+	}
 }

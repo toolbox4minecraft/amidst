@@ -15,16 +15,7 @@ public class LoggingMinecraftInterface implements MinecraftInterface {
 	@Override
 	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
-		
-		long before = System.nanoTime();
-		int[] data = inner.getBiomeData(x, y, width, height, useQuarterResolution);
-		long after = System.nanoTime();
-		long time = after - before;
-		
-		AmidstLogger.debug("Generated biome data at [{},{}] ({}x{}, quarter={}) in {} (t={})",
-				x, y, width, height, useQuarterResolution, time, before);
-
-		return data;
+		return inner.getBiomeData(x, y, width, height, useQuarterResolution);
 	}
 
 	@Override
