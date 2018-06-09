@@ -50,16 +50,16 @@ public class SymbolicClassDeclaration {
 
 	public void handleMultipleMatches(String firstRealClassName, String otherRealClassName) {
 		AmidstLogger
-				.warn("Found class " + symbolicClassName + " again: " + firstRealClassName + ", " + otherRealClassName);
+				.warn("Found class {} again: {}, {}", symbolicClassName, firstRealClassName, otherRealClassName);
 	}
 
 	public void handleMatch(String realClassName) {
-		AmidstLogger.info("Found class " + symbolicClassName + ": " + realClassName);
+		AmidstLogger.info("Found class {}: {}", symbolicClassName, realClassName);
 	}
 
 	public void handleNoMatch() throws ClassNotFoundException {
 		if (isOptional) {
-			AmidstLogger.info("Missing class " + symbolicClassName);
+			AmidstLogger.info("Missing class {}", symbolicClassName);
 		} else {
 			throw new ClassNotFoundException(
 					"cannot find a real class matching the symbolic class " + symbolicClassName);
@@ -68,7 +68,7 @@ public class SymbolicClassDeclaration {
 
 	public void handleMissing(ClassNotFoundException e, String realClassName)
 			throws SymbolicClassGraphCreationException {
-		String message = "unable to find the real class " + realClassName + " -> " + symbolicClassName;
+		String message = "unable to find the real class {}" + realClassName + " -> " + symbolicClassName;
 		if (isOptional) {
 			AmidstLogger.info(message);
 		} else {

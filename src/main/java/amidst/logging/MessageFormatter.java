@@ -14,11 +14,11 @@ public enum MessageFormatter {
 		return format(message) + "\n\n" + format(e);
 	}
 
-	public static String format(Throwable e, String message, String part1, String[] parts) {
+	public static String format(Throwable e, String message, Object part1, Object[] parts) {
 		return format(message, part1, parts) + "\n\n" + format(e);
 	}
 
-	public static String format(String message) {
+	public static String format(Object message) {
 		return String.valueOf(message);
 	}
 
@@ -32,7 +32,7 @@ public enum MessageFormatter {
 		}
 	}
 
-	public static String format(String message, String part1, String... parts) {
+	public static String format(String message, Object part1, Object... parts) {
 		Objects.requireNonNull(message, "the message cannot be null");
 
 		int expectedNumberOfMessageParts = 2 + parts.length;

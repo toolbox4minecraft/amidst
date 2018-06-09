@@ -54,7 +54,7 @@ public class SeedHistoryLogger {
 		if (file.isFile()) {
 			writeLine(createLine(recognisedVersion, worldSeed));
 		} else {
-			AmidstLogger.info("Not writing to seed history file, because it does not exist: " + file);
+			AmidstLogger.info("Not writing to seed history file, because it does not exist: {}", file);
 		}
 	}
 
@@ -82,7 +82,7 @@ public class SeedHistoryLogger {
 		try {
 			file.createNewFile();
 		} catch (IOException e) {
-			AmidstLogger.warn(e, "Unable to create seed history file: " + file);
+			AmidstLogger.warn(e, "Unable to create seed history file: {}", file);
 		}
 	}
 
@@ -90,7 +90,7 @@ public class SeedHistoryLogger {
 		try (PrintStream stream = new PrintStream(new FileOutputStream(file, true))) {
 			stream.println(line);
 		} catch (IOException e) {
-			AmidstLogger.warn(e, "Unable to write to seed history file: " + file);
+			AmidstLogger.warn(e, "Unable to write to seed history file: {}", file);
 		}
 	}
 }

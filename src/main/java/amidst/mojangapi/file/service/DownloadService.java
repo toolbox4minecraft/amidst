@@ -40,7 +40,7 @@ public class DownloadService {
 			downloadServer(prefix, versionId);
 			return true;
 		} catch (IOException e) {
-			AmidstLogger.warn(e, "unable to download server: " + versionId);
+			AmidstLogger.warn(e, "unable to download server: {}", versionId);
 		}
 		return false;
 	}
@@ -50,7 +50,7 @@ public class DownloadService {
 			downloadClient(prefix, versionId);
 			return true;
 		} catch (IOException e) {
-			AmidstLogger.warn(e, "unable to download client: " + versionId);
+			AmidstLogger.warn(e, "unable to download client: {}", versionId);
 		}
 		return false;
 	}
