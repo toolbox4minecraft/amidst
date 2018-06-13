@@ -48,7 +48,7 @@ public class AmidstLogger {
 		log(DEBUG_TAG, MessageFormatter.format(message));
 	}
 
-	public static void debug(String message, String part1, String... parts) {
+	public static void debug(String message, Object part1, Object... parts) {
 		log(DEBUG_TAG, MessageFormatter.format(message, part1, parts));
 	}
 
@@ -57,7 +57,7 @@ public class AmidstLogger {
 		log(DEBUG_TAG, MessageFormatter.format(e));
 	}
 
-	public static void debug(Throwable e, String message, String part1, String... parts) {
+	public static void debug(Throwable e, String message, Object part1, Object... parts) {
 		log(DEBUG_TAG, MessageFormatter.format(message, part1, parts));
 		log(DEBUG_TAG, MessageFormatter.format(e));
 	}
@@ -70,7 +70,7 @@ public class AmidstLogger {
 		log(INFO_TAG, MessageFormatter.format(message));
 	}
 
-	public static void info(String message, String part1, String... parts) {
+	public static void info(String message, Object part1, Object... parts) {
 		log(INFO_TAG, MessageFormatter.format(message, part1, parts));
 	}
 
@@ -79,7 +79,7 @@ public class AmidstLogger {
 		log(INFO_TAG, MessageFormatter.format(e));
 	}
 
-	public static void info(Throwable e, String message, String part1, String... parts) {
+	public static void info(Throwable e, String message, Object part1, Object... parts) {
 		log(INFO_TAG, MessageFormatter.format(message, part1, parts));
 		log(INFO_TAG, MessageFormatter.format(e));
 	}
@@ -92,7 +92,7 @@ public class AmidstLogger {
 		log(WARNING_TAG, MessageFormatter.format(message));
 	}
 
-	public static void warn(String message, String part1, String... parts) {
+	public static void warn(String message, Object part1, Object... parts) {
 		log(WARNING_TAG, MessageFormatter.format(message, part1, parts));
 	}
 
@@ -101,7 +101,7 @@ public class AmidstLogger {
 		log(WARNING_TAG, MessageFormatter.format(e));
 	}
 
-	public static void warn(Throwable e, String message, String part1, String... parts) {
+	public static void warn(Throwable e, String message, Object part1, Object... parts) {
 		log(WARNING_TAG, MessageFormatter.format(message, part1, parts));
 		log(WARNING_TAG, MessageFormatter.format(e));
 	}
@@ -114,7 +114,7 @@ public class AmidstLogger {
 		log(ERROR_TAG, MessageFormatter.format(message));
 	}
 
-	public static void error(String message, String part1, String... parts) {
+	public static void error(String message, Object part1, Object... parts) {
 		log(ERROR_TAG, MessageFormatter.format(message, part1, parts));
 	}
 
@@ -123,7 +123,7 @@ public class AmidstLogger {
 		log(ERROR_TAG, MessageFormatter.format(e));
 	}
 
-	public static void error(Throwable e, String message, String part1, String... parts) {
+	public static void error(Throwable e, String message, Object part1, Object... parts) {
 		log(ERROR_TAG, MessageFormatter.format(message, part1, parts));
 		log(ERROR_TAG, MessageFormatter.format(e));
 	}
@@ -136,7 +136,7 @@ public class AmidstLogger {
 		log(CRASH_TAG, MessageFormatter.format(message));
 	}
 
-	public static void crash(String message, String part1, String... parts) {
+	public static void crash(String message, Object part1, Object... parts) {
 		log(CRASH_TAG, MessageFormatter.format(message, part1, parts));
 	}
 
@@ -145,7 +145,7 @@ public class AmidstLogger {
 		log(CRASH_TAG, MessageFormatter.format(e));
 	}
 
-	public static void crash(Throwable e, String message, String part1, String... parts) {
+	public static void crash(Throwable e, String message, Object part1, Object... parts) {
 		log(CRASH_TAG, MessageFormatter.format(message, part1, parts));
 		log(CRASH_TAG, MessageFormatter.format(e));
 	}

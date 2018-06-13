@@ -24,7 +24,7 @@ public enum RecognisedVersion {
 	// TODO: stronghold reset on V1_9pre4?
 	UNKNOWN,
 	_1_13_pre1 ("1.13-pre1",  "ahhxctknwxo[Lsm;uy[J[[Juuuguebuayxwkpbpfcfsoyoz"),                                         // matches the launcher version id: 1.13-pre1
-	_18w21b    ("18w21b",     "ahdxbtjnvxn[Lsl;ux[J[[Jutufudbtaytwjpapecfooxoy"),                                         // matches the launcher version id: 18w21b
+	_18w21c    ("18w21c",     "ahfxctknwxo[Lsm;uy[J[[Juuuguebuayvwkpbpfcfqoyoz"),                                         // matches the launcher version id: 18w21c
 	_18w20c    ("18w20c",     "ahcxatinuxm[Lsk;uw[J[[Jusueucbtayswiozpdcexowox"),                                         // matches the launcher version id: 18w20c
 	_18w19b    ("18w19b",     "agwwzthntxm[Lsj;uv[J[[Jurudubbsaymwhoypccerovow"),                                         // matches the launcher version id: 18w19b
 	_18w16a    ("18w16a",     "aavwutfnsxf[Lsh;ut[J[[Jupubtzbsaskweowpabyhotou"),                                         // matches the launcher version id: 18w16a
@@ -170,12 +170,16 @@ public enum RecognisedVersion {
 
 	@NotNull
 	private static Field[] getMainClassFields(URLClassLoader classLoader) throws ClassNotFoundException {
-		if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
-			return classLoader.loadClass(CLIENT_CLASS).getDeclaredFields();
-		} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {
-			return classLoader.loadClass(SERVER_CLASS).getDeclaredFields();
-		} else {
-			throw new ClassNotFoundException("unable to find the main class in the given jar file");
+		try {
+			if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
+				return classLoader.loadClass(CLIENT_CLASS).getDeclaredFields();
+			} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {
+				return classLoader.loadClass(SERVER_CLASS).getDeclaredFields();
+			} else {
+				throw new ClassNotFoundException("unable to find the main class in the given jar file");
+			}
+		} catch (NoClassDefFoundError e) {
+			throw new ClassNotFoundException("error while loading main class; are some libraries missing?", e);
 		}
 	}
 

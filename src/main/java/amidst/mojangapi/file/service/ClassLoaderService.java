@@ -53,13 +53,13 @@ public class ClassLoaderService {
 						result.add(libraryUrl);
 						AmidstLogger.info("Found library " + library.getName() + " at " + libraryUrl);
 					} catch (MalformedURLException e) {
-						AmidstLogger.warn(e, "Skipping erroneous library " + library.getName());
+						AmidstLogger.warn(e, "Skipping erroneous library {}", library.getName());
 					}
 				} else {
-					AmidstLogger.warn("Skipping missing library " + library.getName());
+					AmidstLogger.warn("Skipping missing library {}", library.getName());
 				}
 			} else {
-				AmidstLogger.info("Skipping inactive library " + library.getName());
+				AmidstLogger.info("Skipping inactive library {}", library.getName());
 			}
 		}
 		AmidstLogger.info("Finished loading libraries.");

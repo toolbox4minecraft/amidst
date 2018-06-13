@@ -10,6 +10,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentGraph;
+import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.mojangapi.world.Dimension;
@@ -31,6 +32,7 @@ import amidst.threading.WorkerExecutor;
 @NotThreadSafe
 public class ViewerFacade {
 	private final World world;
+	private final FragmentManager fragmentManager;
 	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
 	private final Zoom zoom;
@@ -47,6 +49,7 @@ public class ViewerFacade {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public ViewerFacade(
 			World world,
+			FragmentManager fragmentManager,
 			FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator,
 			Zoom zoom,
@@ -60,6 +63,7 @@ public class ViewerFacade {
 			Runnable onFragmentLoaderTick,
 			Runnable onPlayerFinishedLoading) {
 		this.world = world;
+		this.fragmentManager = fragmentManager;
 		this.graph = graph;
 		this.translator = translator;
 		this.zoom = zoom;
@@ -203,4 +207,9 @@ public class ViewerFacade {
 	public void export(WorldExporterConfiguration configuration) {
 		worldExporterFactory.create(configuration).export();
 	}
+	
+	public boolean isFullyLoaded() {
+		return fragmentManager.getLoadingQueueSize() == 0;
+	}
+	
 }

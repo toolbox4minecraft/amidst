@@ -201,7 +201,7 @@ public class SaveDirectoryService {
 		try {
 			return PlayerLocationLoader.tryReadFromPlayerFile(saveDirectory.getPlayerdataFile(playerUUID));
 		} catch (IOException e) {
-			AmidstLogger.warn(e, "error while reading player coordinates for player " + playerUUID);
+			AmidstLogger.warn(e, "error while reading player coordinates for player {}", playerUUID);
 			return Optional.empty();
 		}
 	}
@@ -210,7 +210,7 @@ public class SaveDirectoryService {
 		try {
 			return PlayerLocationLoader.tryReadFromPlayerFile(saveDirectory.getPlayersFile(playerName));
 		} catch (IOException e) {
-			AmidstLogger.warn(e, "error while reading player coordinates for player " + playerName);
+			AmidstLogger.warn(e, "error while reading player coordinates for player {}", playerName);
 			return Optional.empty();
 		}
 	}
@@ -248,7 +248,7 @@ public class SaveDirectoryService {
 		try {
 			return PlayerLocationSaver.tryWriteToPlayerFile(coordinates, saveDirectory.getPlayerdataFile(playerUUID));
 		} catch (IOException e) {
-			AmidstLogger.warn(e, "error while writing player coordinates for player " + playerUUID);
+			AmidstLogger.warn(e, "error while writing player coordinates for player {}", playerUUID);
 			return false;
 		}
 	}
@@ -260,7 +260,7 @@ public class SaveDirectoryService {
 		try {
 			return PlayerLocationSaver.tryWriteToPlayerFile(coordinates, saveDirectory.getPlayersFile(playerName));
 		} catch (IOException e) {
-			AmidstLogger.warn(e, "error while writing player coordinates for player " + playerName);
+			AmidstLogger.warn(e, "error while writing player coordinates for player {}", playerName);
 			return false;
 		}
 	}

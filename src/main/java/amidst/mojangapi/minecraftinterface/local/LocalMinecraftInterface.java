@@ -99,11 +99,12 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 					data[i] = getBiomeId(biomes[i]);
 				}
 			} else {
-				for(int x0 = 0; x0 < width; x0 += 16) {
-					int w = Math.min(16, width - x0);
+				int chunkSize = 16;
+				for(int x0 = 0; x0 < width; x0 += chunkSize) {
+					int w = Math.min(chunkSize, width - x0);
 					
-					for(int y0 = 0; y0 < height; y0 += 16) {
-						int h = Math.min(16, height - y0);
+					for(int y0 = 0; y0 < height; y0 += chunkSize) {
+						int h = Math.min(chunkSize, height - y0);
 						
 						Object[] biomes = getBiomeDataInner(x+x0, y+y0, w, h, useQuarterResolution);
 						

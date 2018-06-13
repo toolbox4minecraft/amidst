@@ -69,15 +69,17 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayMainWindow(RunningLauncherProfile runningLauncherProfile) {
+	public MainWindow displayMainWindow(RunningLauncherProfile runningLauncherProfile) {
 		setMainWindow(mainWindowFactory.create(runningLauncherProfile));
 		setProfileSelectWindow(null);
+		return mainWindow;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayProfileSelectWindow() {
+	public ProfileSelectWindow displayProfileSelectWindow() {
 		setProfileSelectWindow(profileSelectWindowFactory.create());
 		setMainWindow(null);
+		return profileSelectWindow;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
