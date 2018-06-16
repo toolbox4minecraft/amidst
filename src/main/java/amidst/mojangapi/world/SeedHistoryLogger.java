@@ -72,9 +72,9 @@ public class SeedHistoryLogger {
 	private String getSeedString(WorldSeed worldSeed) {
 		String text = worldSeed.getText();
 		if (text != null) {
-			return worldSeed.getLong() + ", " + text;
+			return worldSeed.getLongAsString() + ", " + text;
 		} else {
-			return worldSeed.getLong() + "";
+			return worldSeed.getLongAsString();
 		}
 	}
 

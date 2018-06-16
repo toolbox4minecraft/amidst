@@ -93,8 +93,8 @@ public enum TestWorldDeclaration {
 				"testworld",
 				"storage",
 				recognisedVersion.getName(),
-				"" + worldSeed.getLong()).toFile();
-		this.directoryString = RESOURCE_PREFIX + recognisedVersion.getName() + "/" + worldSeed.getLong() + "/";
+				worldSeed.getLongAsString()).toFile();
+		this.directoryString = RESOURCE_PREFIX + recognisedVersion.getName() + "/" + worldSeed.getLongAsString() + "/";
 	}
 
 	public RecognisedVersion getRecognisedVersion() {

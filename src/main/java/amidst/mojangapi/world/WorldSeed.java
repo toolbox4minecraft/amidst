@@ -72,16 +72,22 @@ public class WorldSeed {
 	private final String text;
 	private final WorldSeedType type;
 	private final String label;
+	private final GameEngineType gameEngineType;
 
 	private WorldSeed(long seed, String text, WorldSeedType type, GameEngineType game_engine_type) {
 		this.seed = seed;
 		this.text = text;
 		this.type = type;
+		this.gameEngineType = game_engine_type;
 		this.label = type.getLabel(seed, text, game_engine_type);
 	}
 
 	public long getLong() {
 		return seed;
+	}
+
+	public String getLongAsString() {
+		return (gameEngineType == GameEngineType.MINETEST) ? Long.toUnsignedString(seed) : Long.toString(seed);
 	}
 	
 	public String getText() {
