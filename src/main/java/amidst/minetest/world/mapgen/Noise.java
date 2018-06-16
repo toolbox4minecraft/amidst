@@ -1,5 +1,8 @@
 package amidst.minetest.world.mapgen;
 
+/**
+ * Copy of the noise functions from Minetest - should produce exact same results 
+ */
 public class Noise {
 
 	public static final int FLAG_DEFAULTS    = 0x01;

@@ -59,6 +59,7 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 						WorldType.V5, 
 						WorldType.CARPATHIAN,
 						WorldType.FLAT, 
+						WorldType.HALLELUJAH_MOUNTAINS, 
 						//WorldType.FRACTAL
 				}
 		);
@@ -71,6 +72,14 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 		});
 		
 		enabledLayers = new HashMap<WorldType, VersionFeature<List<Integer>>>();
+		enabledLayers.put(WorldType.HALLELUJAH_MOUNTAINS,
+				VersionFeature.<Integer> listBuilder()
+				.init(commonLayers)
+				.initExtend(
+						LayerIds.MINETEST_OCEAN
+						//,LayerIds.MINETEST_MOUNTAIN
+				).construct()
+		);
 		enabledLayers.put(WorldType.CARPATHIAN,
 				VersionFeature.<Integer> listBuilder()
 				.init(commonLayers)
@@ -126,6 +135,10 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 		// It had to be this way because of how VersionFeatures for Minecraft are handled
 		this.biomeDataOracle = VersionFeature.<WorldType, TriFunction<Long, MapgenParams, BiomeProfileSelection, IBiomeDataOracle>> mapBuilder()
 				.init(
+						new AbstractMap.SimpleEntry<WorldType, TriFunction<Long, MapgenParams, BiomeProfileSelection, IBiomeDataOracle>>(
+								WorldType.HALLELUJAH_MOUNTAINS,
+								(seed, mapgenParams, biomeProfile) -> new amidst.minetest.world.oracle.BiomeDataOracleHallelujah(mapgenParams, biomeProfile, seed)
+						),
 						new AbstractMap.SimpleEntry<WorldType, TriFunction<Long, MapgenParams, BiomeProfileSelection, IBiomeDataOracle>>(
 								WorldType.V7,
 								(seed, mapgenParams, biomeProfile) -> new amidst.minetest.world.oracle.BiomeDataOracleV7(false, mapgenParams, biomeProfile, seed)

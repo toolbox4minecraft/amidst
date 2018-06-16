@@ -166,7 +166,7 @@ public class Drawer {
 	private void clear() {
 		if (dimensionSetting.get().equals(Dimension.END)) {
 			g2d.setPaint(voidTexturePaint);
-		} else if (worldType == WorldType.V7_FLOATLANDS) { // consider making "isAboveVoid" a field of WorldType if it ever applies to more than one worldtype 
+		} else if (worldType == WorldType.V7_FLOATLANDS || worldType == WorldType.HALLELUJAH_MOUNTAINS) { // consider making "isAboveVoid" a field of WorldType if it ever applies to more than one worldtype 
 			g2d.setPaint(void2TexturePaint);			
 		} else {
 			g2d.setColor(Color.black);
