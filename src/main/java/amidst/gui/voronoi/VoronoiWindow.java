@@ -248,16 +248,19 @@ public class VoronoiWindow implements BiomeProfileUpdateListener, ChangeListener
 				+ "    * Red dotted ring — the practical limit of temperature and humidity. The\r\n"
 				+ "        temperature and humidity in the world falls within this ring 99.99% of\r\n"
 				+ "        the time.\r\n"
-				+ "    * Red solid rings - these indicate the four quartiles. 25% of the world\r\n"
-				+ "        has a temperature and humidity falling outside the outermost quartile\r\n"
-				+ "        ring. The next ring has 50% of the world inside it, and 50% outside.\r\n"
-				+ "        The innermost red ring contains 25% of the world inside it, with 25%\r\n"
-				+ "        between it and the middle ring, etc.\r\n"
-				+ "    * Blue solid rings - these are spaced at 10 percentile intervals. Note\r\n"
-				+ "        that the 50th percentile ring is drawn red, but should also be\r\n"
+				+ "    * Red or purple solid rings - these indicate the four quartiles. 25% of\r\n"
+				+ "        the world has a temperature and humidity falling outside the outermost\r\n"
+				+ "        quartile ring. The next (purple) ring has 50% of the world inside it,\r\n"
+				+ "        and 50% outside. The innermost red ring contains 25% of the world\r\n"
+				+ "        inside it, with 25% between it and the middle ring, etc.\r\n"
+				+ "    * Blue or purple solid rings - these are spaced at 10 percentile\r\n"
+				+ "        intervals.\r\n"				
+				+ "        Note the 50th percentile ring is drawn purple, but should also be\r\n"
 				+ "        considered one of the blue rings.\r\n"
 				+ "    * Red dot - the center of the distribution. This is the most common\r\n"
-				+ "        temperature and humidity value\r\n.");
+				+ "        temperature and humidity value.\r\n"
+				+ "    * Purple solid ring - the median, or 50th percentile. 50% of the world is\r\n"
+				+ "        inside this ring and 50% is outside.\n\n");
 
 		TextWindow.showMonospace(windowFrame, "Voronoi diagram data", data.toString());
 	}

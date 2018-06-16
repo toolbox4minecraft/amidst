@@ -31,8 +31,8 @@ public class FrequencyGraph {
 
 		int xRange = x_max - x_min; // inclusive range (x_max is an inclusive value)
 		int yRange = y_max - y_min; // inclusive range (y_max is an inclusive value)
-    	float xScale = xRange / (float)(width  - 1); // xRange is inclusive, but width  is not, so subtract 1 from width  so that at the top of the range, scaling by xScale will give the correct pixel location of (width-1) and vice versa. 
-    	float yScale = yRange / (float)(height - 1); // yRange is inclusive, but height is not, so subtract 1 from height so that at the top of the range, scaling by yScale will give the correct pixel location of (height-1) and vice versa.
+		float xScale = xRange / (float)(width  - 1); // xRange is inclusive, but width  is not, so subtract 1 from width  so that at the top of the range, scaling by xScale will give the correct pixel location of (width-1) and vice versa. 
+		float yScale = yRange / (float)(height - 1); // yRange is inclusive, but height is not, so subtract 1 from height so that at the top of the range, scaling by yScale will give the correct pixel location of (height-1) and vice versa.
 
 		if (graph == null || graph.getWidth() != width || graph.getHeight() != height) {
 			graph = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -53,15 +53,15 @@ public class FrequencyGraph {
 
 		// No math here, these minDist values for band thicknesses were set by trial/eyeballing
 		double minDistRed  = 0.0000017;
-		double minDistBlue = 0.000001;
+		double minDistBlue = 0.0000010;
 		double minDistBase = 0.00000001;
 
 		// the 0.01 percentile is the lowest the ClimateHistogram lookup tables store values for.
 		double bottomFrequency = histogram2d.frequencyAtPercentile(0.01);
 
 		Point2d mean = histogram2d.getSampleMean();
-    	int xMean = (int)Math.round((mean.x - x_min) / xScale);
-    	int yMean = (int)Math.round((mean.y - y_min) / yScale);
+		int xMean = (int)Math.round((mean.x - x_min) / xScale);
+		int yMean = (int)Math.round((mean.y - y_min) / yScale);
 
 
 		for (int y = 0; y < height; y++) {
@@ -104,7 +104,27 @@ public class FrequencyGraph {
 							distance = Math.abs(frequency - histogram2d.frequencyAtPercentile(percentile));
 							if (distance <= minDistRed) {
 								// Draw a quartile boundary line here.
-								graph.setRGB(x, y, 0x00FF3030 | (255 - (int)Math.round((255 * distance) / minDistRed)) << 24);
+								if (percentile == 50) {
+									// Need to draw both a quartile line here, and a 10-percentile line.
+									// Colour it purple.									
+									graph.setRGB(x, y, 0x000C000FF | (255 - (int)Math.round((255 * distance) / minDistRed)) << 24);
+									
+									/*
+									// A dotted line that alternates between blue and red									
+									// trying to make a dotted circle while avoiding sin() or cos() ;)
+									int absX = (int)Math.abs(x - xMean);
+									int absY = (int)Math.abs(y - yMean);
+									int travel = Math.abs((absX < absY) ? absX - (absY / 2) : absY - (absX / 2));
+									//int travel = Math.abs((absX < absY) ? absX : absY);
+
+									if(((travel / 10) & 1) > 0) {
+										graph.setRGB(x, y, 0x00FF3030 | (255 - (int)Math.round((255 * distance) / minDistRed)) << 24);
+									} else {
+										graph.setRGB(x, y, 0x003050FF | (255 - (int)Math.round((255 * distance) / minDistRed)) << 24);
+									}*/									
+								} else {															
+									graph.setRGB(x, y, 0x00FF3030 | (255 - (int)Math.round((255 * distance) / minDistRed)) << 24);
+								}								
 							}
 						} else if ((percentile % 10) == 0) {
 							distance = Math.abs(frequency - histogram2d.frequencyAtPercentile(percentile));
