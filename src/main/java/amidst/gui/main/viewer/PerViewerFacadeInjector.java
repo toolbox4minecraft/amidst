@@ -28,6 +28,7 @@ import amidst.gui.main.viewer.widget.SelectedIconWidget;
 import amidst.gui.main.viewer.widget.Widget;
 import amidst.gui.main.viewer.widget.Widget.CornerAnchorPoint;
 import amidst.gui.main.viewer.widget.WidgetManager;
+import amidst.minetest.world.MinetestVersionFeatures;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.export.WorldExporter;
 import amidst.mojangapi.world.export.WorldExporterConfiguration;
@@ -50,10 +51,13 @@ public class PerViewerFacadeInjector {
 			AmidstSettings settings,
 			Supplier<String> progressText) {
 		// @formatter:off
+		
+		boolean isMinetest = world.getVersionFeatures() instanceof MinetestVersionFeatures; // don't have a clean way to get this yet
+		
 		return Arrays.asList(
 				new ChangeableTextWidget(   CornerAnchorPoint.CENTER,        progressText),
 				new FpsWidget(              CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              settings.showFPS),
-				new ScaleWidget(            CornerAnchorPoint.BOTTOM_CENTER, zoom,                               settings.showScale),
+				new ScaleWidget(            CornerAnchorPoint.BOTTOM_CENTER, zoom, isMinetest,                   settings.showScale),
 				new SeedAndWorldTypeWidget( CornerAnchorPoint.TOP_LEFT,      world.getWorldSeed(), world.getWorldType()),
 				new SelectedIconWidget(     CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
 				new DebugWidget(            CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, settings.showDebug, accelerationCounter),

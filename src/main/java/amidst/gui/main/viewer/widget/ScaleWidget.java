@@ -16,6 +16,7 @@ public class ScaleWidget extends Widget {
 	public static final int MARGIN = 8;
 
 	private final Zoom zoom;
+	private boolean isMinetest;
 	private final Setting<Boolean> isVisibleSetting;
 
 	private int scaleLengthOnScreen;
@@ -23,9 +24,10 @@ public class ScaleWidget extends Widget {
 	private int textWidth;
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public ScaleWidget(CornerAnchorPoint anchor, Zoom zoom, Setting<Boolean> isVisibleSetting) {
+	public ScaleWidget(CornerAnchorPoint anchor, Zoom zoom, boolean isMinetest, Setting<Boolean> isVisibleSetting) {
 		super(anchor);
 		this.zoom = zoom;
+		this.isMinetest = isMinetest;
 		this.isVisibleSetting = isVisibleSetting;
 		setWidth(100);
 		setHeight(34);
@@ -36,7 +38,7 @@ public class ScaleWidget extends Widget {
 	protected void doUpdate(FontMetrics fontMetrics, float time) {
 		int scaleLengthInWorld = getScaleLengthInWorld();
 		scaleLengthOnScreen = (int) zoom.worldToScreen(scaleLengthInWorld);
-		text = scaleLengthInWorld + " blocks";
+		text = scaleLengthInWorld + (isMinetest ? " nodes" : " blocks");
 		textWidth = fontMetrics.stringWidth(text);
 		setWidth(Math.max(scaleLengthOnScreen, textWidth) + (MARGIN * 2));
 	}

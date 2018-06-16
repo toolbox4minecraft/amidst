@@ -15,7 +15,7 @@ public class MinetestLauncherProfile extends LauncherProfile {
 	private final MinetestDirectory minetestDirectory;
 
 	public static MinetestLauncherProfile InternalDefault = new MinetestLauncherProfile(
-			null, "Minetest defaults");
+			null, "Minetest");
 
 	public MinetestLauncherProfile(MinetestDirectory minetestDirectory,
 			String profileName) {

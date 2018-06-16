@@ -353,7 +353,7 @@ public class Actions {
 						+ (FeatureToggles.MINETEST_SUPPORT ? "Amidstest - Amidst for Minetest\n\n" : "\n")
 						+ amidstVersion.createVersionString() + "\n"
 						+ "Project page: https://github.com/Treer/amidstest\n"
-						+ "Forum thread: https://forum.minetest.net/viewtopic.php?f=14&t=19869");
+						+ "Forum thread: https://forum.minetest.net/viewtopic.php?t=19869");
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
