@@ -9,8 +9,8 @@ public class DefaultBiomes {
 
 	private static Map<String, MinetestBiome[]> biomeLists = null;
 
-	public static final String BIOMEPROFILENAME_V6      = "V6 biomes";
-	public static final String BIOMEPROFILENAME_DEFAULT = "Minetest default";
+	public static final String BIOMEPROFILENAME_V6      = "v6";
+	public static final String BIOMEPROFILENAME_DEFAULT = "Minetest Game";
 	
 	public static final short FLOATLAND_SHADOW_LIMIT    = 1024;
 	public static final short FLOATLAND_LEVEL           = 1280;
@@ -202,7 +202,7 @@ public class DefaultBiomes {
 			);
 			
 			biomeLists.put(
-				"VoxelGarden",
+				"Voxelgarden",
 				setIndexes(
 					new MinetestBiome[] {
 						new MinetestBiome("Sea dirt",                BiomeColor.from(106,  95,  61), (short)-32000,        (short)0,  30,  40),	
