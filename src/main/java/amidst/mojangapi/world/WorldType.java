@@ -43,7 +43,7 @@ public enum WorldType {
 	private static WorldType findInstance(String nameOrValue) {
 		for (WorldType worldType : values()) {
 			if (worldType.name.equalsIgnoreCase(nameOrValue)
-					|| worldType.symbolicFieldName.equalsIgnoreCase(nameOrValue)) {
+					|| (worldType.symbolicFieldName != null && worldType.symbolicFieldName.equalsIgnoreCase(nameOrValue))) {
 				return worldType;
 			}
 		}

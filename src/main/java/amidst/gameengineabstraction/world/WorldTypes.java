@@ -46,7 +46,7 @@ public class WorldTypes {
 
 	public boolean contains(String worldTypeName) {
 		for(WorldType worldType: selectable_AsList) {
-			if (worldType.getName() == worldTypeName) return true;
+			if (worldType.getName().equals(worldTypeName)) return true;
 		}
 		return false;
 	}	
