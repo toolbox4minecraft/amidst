@@ -337,7 +337,17 @@ public class VoronoiPanel extends JPanel {
 		if (biomeProfile != null) for (IBiome biome : biomeProfile.allBiomes()) {
 			MinetestBiome mtBiome = (MinetestBiome)biome;
 			if (altitude <= (mtBiome.y_max + mtBiome.vertical_blend) && altitude >= mtBiome.y_min) {
-				newBiomes.add(mtBiome);
+				// We have a new biome to add, check whether the heat/humidity point is already occupied
+				// (When Minetest looks for the closest biome to a heat/humidity point, it iterates through
+				// the biomes in order, and ignores any matches that are not better than previous matches)
+				boolean alreadyOccupied = false;
+				for (MinetestBiome existingBiome : newBiomes) {
+					if (existingBiome.heat_point == mtBiome.heat_point && existingBiome.humidity_point == mtBiome.humidity_point) {
+						alreadyOccupied = true;
+						break;
+					}
+				}
+				if (!alreadyOccupied) newBiomes.add(mtBiome);
 			}
 		}
 
