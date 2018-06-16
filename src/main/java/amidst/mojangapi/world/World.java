@@ -11,6 +11,7 @@ import amidst.minetest.world.oracle.MinetestBiomeDataOracle;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
+import amidst.mojangapi.world.icon.producer.PlayerProducer;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
@@ -68,7 +69,7 @@ public class World {
 		this.slimeChunkOracle       = null;
 		this.spawnProducer          = spawnProducer;
 		this.strongholdProducer     = null;
-		this.playerProducer         = null;
+		this.playerProducer         = new PlayerProducer(MovablePlayerList.dummy());
 		this.villageProducer        = null;
 		this.templeProducer         = dungeonProducer;
 		this.mineshaftProducer      = null;
