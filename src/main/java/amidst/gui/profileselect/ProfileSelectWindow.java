@@ -88,7 +88,7 @@ public class ProfileSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JLabel createTitleLabel() {
-		JLabel result = new JLabel("Please select a Minecraft profile:", SwingConstants.CENTER);
+		JLabel result = new JLabel("Please select a game profile:", SwingConstants.CENTER);
 		result.setFont(new Font("arial", Font.BOLD, 16));
 		return result;
 	}
