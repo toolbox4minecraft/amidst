@@ -1,5 +1,6 @@
 package amidst.mojangapi.world.icon.locationchecker;
 
+import java.util.function.BiFunction;
 import java.util.List;
 
 import amidst.documentation.ThreadSafe;
@@ -28,7 +29,8 @@ public class TempleLocationChecker implements LocationChecker {
 			long magicNumber_DesertTemple,
 			long magicNumber_Igloo,
 			long magicNumber_JungleTemple,
-			long magicNumber_WitchHut) {
+			long magicNumber_WitchHut,
+			BiFunction<Integer, Integer, Integer> modifyNegativeCoordinate) {
 
 		this.desertTempleChecker = new AllValidLocationChecker(
 			new StructureAlgorithm(
@@ -38,7 +40,8 @@ public class TempleLocationChecker implements LocationChecker {
 					magicNumber_DesertTemple,
 					MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 					MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-					USE_TWO_VALUES_FOR_UPDATE),
+					USE_TWO_VALUES_FOR_UPDATE,
+					modifyNegativeCoordinate),
 			new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk_DesertTemple));
 
 		this.iglooChecker = new AllValidLocationChecker(
@@ -49,7 +52,8 @@ public class TempleLocationChecker implements LocationChecker {
 					magicNumber_Igloo,
 					MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 					MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-					USE_TWO_VALUES_FOR_UPDATE),
+					USE_TWO_VALUES_FOR_UPDATE,
+					modifyNegativeCoordinate),
 			new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk_Igloo));
 
 		this.jungleTempleChecker = new AllValidLocationChecker(
@@ -60,7 +64,8 @@ public class TempleLocationChecker implements LocationChecker {
 					magicNumber_JungleTemple,
 					MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 					MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-					USE_TWO_VALUES_FOR_UPDATE),
+					USE_TWO_VALUES_FOR_UPDATE,
+					modifyNegativeCoordinate),
 			new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk_JungleTemple));
 
 		this.witchHutChecker = new AllValidLocationChecker(
@@ -71,7 +76,8 @@ public class TempleLocationChecker implements LocationChecker {
 					magicNumber_WitchHut,
 					MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 					MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-					USE_TWO_VALUES_FOR_UPDATE),
+					USE_TWO_VALUES_FOR_UPDATE,
+					modifyNegativeCoordinate),
 			new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk_WitchHut));
 	}
 

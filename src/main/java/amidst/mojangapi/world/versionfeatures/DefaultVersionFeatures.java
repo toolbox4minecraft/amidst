@@ -3,6 +3,7 @@ package amidst.mojangapi.world.versionfeatures;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import amidst.documentation.Immutable;
 import amidst.fragment.layer.LayerIds;
@@ -43,7 +44,8 @@ public enum DefaultVersionFeatures {
 				INSTANCE.seedForStructure_DesertTemple.getValue(version),
 				INSTANCE.seedForStructure_Igloo.getValue(version),
 				INSTANCE.seedForStructure_JungleTemple.getValue(version),
-				INSTANCE.seedForStructure_WitchHut.getValue(version));
+				INSTANCE.seedForStructure_WitchHut.getValue(version),
+				INSTANCE.structureModifyNegativeCoordinate.getValue(version));
 	}
 
 	private final VersionFeature<List<Integer>> enabledLayers;
@@ -64,6 +66,7 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<Long> seedForStructure_Igloo;
 	private final VersionFeature<Long> seedForStructure_JungleTemple;
 	private final VersionFeature<Long> seedForStructure_WitchHut;
+	private final VersionFeature<BiFunction<Integer, Integer, Integer>> structureModifyNegativeCoordinate;
 
 	private DefaultVersionFeatures() {
 		// @formatter:off
@@ -241,6 +244,13 @@ public enum DefaultVersionFeatures {
 						14357617L
 				).since(RecognisedVersion._18w06a,
 						14357620L
+				).construct();
+		this.structureModifyNegativeCoordinate = VersionFeature.<BiFunction<Integer, Integer, Integer>> builder()
+				.init(
+						(coordinate, distance) -> coordinate - distance + 1
+				).since(RecognisedVersion._18w06a,
+						// Implementation of bug MC-131462.
+						(coordinate, distance) -> coordinate - distance - 1
 				).construct();
 		// @formatter:on
 	}

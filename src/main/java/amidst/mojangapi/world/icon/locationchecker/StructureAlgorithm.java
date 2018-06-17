@@ -1,5 +1,6 @@
 package amidst.mojangapi.world.icon.locationchecker;
 
+import java.util.function.BiFunction;
 import java.util.Random;
 
 import amidst.documentation.Immutable;
@@ -13,6 +14,7 @@ public class StructureAlgorithm implements LocationChecker {
 	private final byte maxDistanceBetweenScatteredFeatures;
 	private final int distanceBetweenScatteredFeaturesRange;
 	private final boolean useTwoValuesForUpdate;
+	private final BiFunction<Integer, Integer, Integer> modifyNegativeCoordinate;
 
 	public StructureAlgorithm(
 			long seed,
@@ -22,6 +24,26 @@ public class StructureAlgorithm implements LocationChecker {
 			byte maxDistanceBetweenScatteredFeatures,
 			byte minDistanceBetweenScatteredFeatures,
 			boolean useTwoValuesForUpdate) {
+		this(
+				seed,
+				magicNumberForSeed1,
+				magicNumberForSeed2,
+				magicNumberForSeed3,
+				maxDistanceBetweenScatteredFeatures,
+				minDistanceBetweenScatteredFeatures,
+				useTwoValuesForUpdate,
+				(coordinate, distance) -> coordinate - distance + 1);
+	}
+
+	public StructureAlgorithm(
+			long seed,
+			long magicNumberForSeed1,
+			long magicNumberForSeed2,
+			long magicNumberForSeed3,
+			byte maxDistanceBetweenScatteredFeatures,
+			byte minDistanceBetweenScatteredFeatures,
+			boolean useTwoValuesForUpdate,
+			BiFunction<Integer, Integer, Integer> modifyNegativeCoordinate) {
 		this.seed = seed;
 		this.magicNumberForSeed1 = magicNumberForSeed1;
 		this.magicNumberForSeed2 = magicNumberForSeed2;
@@ -30,6 +52,7 @@ public class StructureAlgorithm implements LocationChecker {
 		this.distanceBetweenScatteredFeaturesRange = maxDistanceBetweenScatteredFeatures
 				- minDistanceBetweenScatteredFeatures;
 		this.useTwoValuesForUpdate = useTwoValuesForUpdate;
+		this.modifyNegativeCoordinate = modifyNegativeCoordinate;
 	}
 
 	@Override
@@ -48,7 +71,8 @@ public class StructureAlgorithm implements LocationChecker {
 
 	private int getModified(int coordinate) {
 		if (coordinate < 0) {
-			return coordinate - maxDistanceBetweenScatteredFeatures + 1;
+			return this.modifyNegativeCoordinate.apply(
+					coordinate, (int)maxDistanceBetweenScatteredFeatures);
 		} else {
 			return coordinate;
 		}
