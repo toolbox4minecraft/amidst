@@ -2,7 +2,6 @@ package amidst.mojangapi.world.versionfeatures;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.BiFunction;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.biome.Biome;
@@ -31,7 +30,7 @@ public class VersionFeatures {
 	private final Long seedForStructure_Igloo;
 	private final Long seedForStructure_JungleTemple;
 	private final Long seedForStructure_WitchHut;
-	private final BiFunction<Integer, Integer, Integer> structureModifyNegativeCoordinate;
+	private final Boolean buggyStructureCoordinateMath;
 
 	public VersionFeatures(
 			List<Integer> enabledLayers,
@@ -52,7 +51,7 @@ public class VersionFeatures {
 			Long seedForStructure_Igloo,
 			Long seedForStructure_JungleTemple,
 			Long seedForStructure_WitchHut,
-			BiFunction<Integer, Integer, Integer> structureModifyNegativeCoordinate) {
+			Boolean buggyStructureCoordinateMath) {
 		this.enabledLayers = enabledLayers;
 		this.validBiomesForStructure_Spawn = validBiomesForStructure_Spawn;
 		this.validBiomesAtMiddleOfChunk_Stronghold = validBiomesAtMiddleOfChunk_Stronghold;
@@ -71,7 +70,7 @@ public class VersionFeatures {
 		this.seedForStructure_Igloo = seedForStructure_Igloo;
 		this.seedForStructure_JungleTemple = seedForStructure_JungleTemple;
 		this.seedForStructure_WitchHut = seedForStructure_WitchHut;
-		this.structureModifyNegativeCoordinate = structureModifyNegativeCoordinate;
+		this.buggyStructureCoordinateMath = buggyStructureCoordinateMath;
 	}
 
 	public boolean hasLayer(int layerId) {
@@ -146,7 +145,7 @@ public class VersionFeatures {
 		return seedForStructure_WitchHut;
 	}
 
-	public BiFunction<Integer, Integer, Integer> getStructureModifyNegativeCoordinate() {
-		return structureModifyNegativeCoordinate;
+	public Boolean getBuggyStructureCoordinateMath() {
+		return buggyStructureCoordinateMath;
 	}
 }

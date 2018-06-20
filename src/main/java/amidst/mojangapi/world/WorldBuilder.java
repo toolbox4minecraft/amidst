@@ -152,7 +152,7 @@ public class WorldBuilder {
 								versionFeatures.getSeedForStructure_Igloo(),
 								versionFeatures.getSeedForStructure_JungleTemple(),
 								versionFeatures.getSeedForStructure_WitchHut(),
-								versionFeatures.getStructureModifyNegativeCoordinate()),
+								versionFeatures.getBuggyStructureCoordinateMath()),
 						new TempleWorldIconTypeProvider(biomeDataOracle),
 						Dimension.OVERWORLD,
 						false),
