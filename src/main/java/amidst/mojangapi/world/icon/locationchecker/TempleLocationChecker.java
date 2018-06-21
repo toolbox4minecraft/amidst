@@ -31,53 +31,33 @@ public class TempleLocationChecker implements LocationChecker {
 			long magicNumber_WitchHut,
 			boolean buggyStructureCoordinateMath) {
 
-		this.desertTempleChecker = new AllValidLocationChecker(
+		this.desertTempleChecker = makeChecker(seed, biomeDataOracle, magicNumber_DesertTemple,
+				buggyStructureCoordinateMath, validBiomesAtMiddleOfChunk_DesertTemple);
+		this.iglooChecker = makeChecker(seed, biomeDataOracle, magicNumber_Igloo,
+				buggyStructureCoordinateMath, validBiomesAtMiddleOfChunk_Igloo);
+		this.jungleTempleChecker = makeChecker(seed, biomeDataOracle, magicNumber_JungleTemple,
+				buggyStructureCoordinateMath, validBiomesAtMiddleOfChunk_JungleTemple);
+		this.witchHutChecker = makeChecker(seed, biomeDataOracle, magicNumber_WitchHut,
+				buggyStructureCoordinateMath, validBiomesAtMiddleOfChunk_WitchHut);
+	}
+	
+	private LocationChecker makeChecker(
+			long seed, BiomeDataOracle biomeDataOracle,
+			long magicNumber,
+			boolean buggyStructureCoordinateMath,
+			List<Biome> validBiomesAtMiddleOfChunk) {
+		
+		return new AllValidLocationChecker(
 			new StructureAlgorithm(
-					seed,
-					MAGIC_NUMBER_FOR_SEED_1,
-					MAGIC_NUMBER_FOR_SEED_2,
-					magicNumber_DesertTemple,
-					MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-					MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-					USE_TWO_VALUES_FOR_UPDATE,
-					buggyStructureCoordinateMath),
-			new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk_DesertTemple));
-
-		this.iglooChecker = new AllValidLocationChecker(
-			new StructureAlgorithm(
-					seed,
-					MAGIC_NUMBER_FOR_SEED_1,
-					MAGIC_NUMBER_FOR_SEED_2,
-					magicNumber_Igloo,
-					MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-					MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-					USE_TWO_VALUES_FOR_UPDATE,
-					buggyStructureCoordinateMath),
-			new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk_Igloo));
-
-		this.jungleTempleChecker = new AllValidLocationChecker(
-			new StructureAlgorithm(
-					seed,
-					MAGIC_NUMBER_FOR_SEED_1,
-					MAGIC_NUMBER_FOR_SEED_2,
-					magicNumber_JungleTemple,
-					MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-					MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-					USE_TWO_VALUES_FOR_UPDATE,
-					buggyStructureCoordinateMath),
-			new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk_JungleTemple));
-
-		this.witchHutChecker = new AllValidLocationChecker(
-			new StructureAlgorithm(
-					seed,
-					MAGIC_NUMBER_FOR_SEED_1,
-					MAGIC_NUMBER_FOR_SEED_2,
-					magicNumber_WitchHut,
-					MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-					MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-					USE_TWO_VALUES_FOR_UPDATE,
-					buggyStructureCoordinateMath),
-			new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk_WitchHut));
+				seed,
+				MAGIC_NUMBER_FOR_SEED_1,
+				MAGIC_NUMBER_FOR_SEED_2,
+				magicNumber,
+				MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
+				MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
+				USE_TWO_VALUES_FOR_UPDATE,
+				buggyStructureCoordinateMath),
+				new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk));
 	}
 
 	@Override
