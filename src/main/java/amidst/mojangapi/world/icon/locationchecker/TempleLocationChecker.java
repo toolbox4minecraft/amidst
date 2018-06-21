@@ -1,6 +1,5 @@
 package amidst.mojangapi.world.icon.locationchecker;
 
-import java.util.function.BiFunction;
 import java.util.List;
 
 import amidst.documentation.ThreadSafe;

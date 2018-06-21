@@ -9,10 +9,8 @@ import org.junit.Test;
 import amidst.AmidstVersion;
 import amidst.ResourceLoader;
 import amidst.devtools.settings.DevToolSettings;
-import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.VersionList;
-import amidst.mojangapi.minecraftinterface.MinecraftInterfaceCreationException;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.parsing.FormatException;
 
