@@ -21,6 +21,8 @@ public class VersionFeatures {
 	private final List<Biome> validBiomesAtMiddleOfChunk_Igloo;
 	private final List<Biome> validBiomesAtMiddleOfChunk_JungleTemple;
 	private final List<Biome> validBiomesAtMiddleOfChunk_WitchHut;
+	private final List<Biome> validBiomesAtMiddleOfChunk_OceanRuins;
+	private final List<Biome> validBiomesAtMiddleOfChunk_Shipwreck;
 	private final Function<Long, MineshaftAlgorithm_Base> mineshaftAlgorithmFactory;
 	private final QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker> oceanMonumentLocationCheckerFactory;
 	private final List<Biome> validBiomesAtMiddleOfChunk_OceanMonument;
@@ -30,6 +32,8 @@ public class VersionFeatures {
 	private final Long seedForStructure_Igloo;
 	private final Long seedForStructure_JungleTemple;
 	private final Long seedForStructure_WitchHut;
+	private final Long seedForStructure_OceanRuins;
+	private final Long seedForStructure_Shipwreck;
 	private final Boolean buggyStructureCoordinateMath;
 
 	public VersionFeatures(
@@ -42,6 +46,8 @@ public class VersionFeatures {
 			List<Biome> validBiomesAtMiddleOfChunk_Igloo,
 			List<Biome> validBiomesAtMiddleOfChunk_JungleTemple,
 			List<Biome> validBiomesAtMiddleOfChunk_WitchHut,
+			List<Biome> validBiomesAtMiddleOfChunk_OceanRuins,
+			List<Biome> validBiomesAtMiddleOfChunk_Shipwreck,
 			Function<Long, MineshaftAlgorithm_Base> mineshaftAlgorithmFactory,
 			QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker> oceanMonumentLocationCheckerFactory,
 			List<Biome> validBiomesAtMiddleOfChunk_OceanMonument,
@@ -51,6 +57,8 @@ public class VersionFeatures {
 			Long seedForStructure_Igloo,
 			Long seedForStructure_JungleTemple,
 			Long seedForStructure_WitchHut,
+			Long seedForStructure_OceanRuins,
+			Long seedForStructure_Shipwreck,
 			Boolean buggyStructureCoordinateMath) {
 		this.enabledLayers = enabledLayers;
 		this.validBiomesForStructure_Spawn = validBiomesForStructure_Spawn;
@@ -61,6 +69,8 @@ public class VersionFeatures {
 		this.validBiomesAtMiddleOfChunk_Igloo = validBiomesAtMiddleOfChunk_Igloo;
 		this.validBiomesAtMiddleOfChunk_JungleTemple = validBiomesAtMiddleOfChunk_JungleTemple;
 		this.validBiomesAtMiddleOfChunk_WitchHut = validBiomesAtMiddleOfChunk_WitchHut;
+		this.validBiomesAtMiddleOfChunk_OceanRuins = validBiomesAtMiddleOfChunk_OceanRuins;
+		this.validBiomesAtMiddleOfChunk_Shipwreck = validBiomesAtMiddleOfChunk_Shipwreck;
 		this.mineshaftAlgorithmFactory = mineshaftAlgorithmFactory;
 		this.oceanMonumentLocationCheckerFactory = oceanMonumentLocationCheckerFactory;
 		this.validBiomesAtMiddleOfChunk_OceanMonument = validBiomesAtMiddleOfChunk_OceanMonument;
@@ -70,6 +80,8 @@ public class VersionFeatures {
 		this.seedForStructure_Igloo = seedForStructure_Igloo;
 		this.seedForStructure_JungleTemple = seedForStructure_JungleTemple;
 		this.seedForStructure_WitchHut = seedForStructure_WitchHut;
+		this.seedForStructure_OceanRuins = seedForStructure_OceanRuins;
+		this.seedForStructure_Shipwreck = seedForStructure_Shipwreck;
 		this.buggyStructureCoordinateMath = buggyStructureCoordinateMath;
 	}
 
@@ -108,6 +120,14 @@ public class VersionFeatures {
 	public List<Biome> getValidBiomesAtMiddleOfChunk_WitchHut() {
 		return validBiomesAtMiddleOfChunk_WitchHut;
 	}
+	
+	public List<Biome> getValidBiomesAtMiddleOfChunk_OceanRuins() {
+		return validBiomesAtMiddleOfChunk_OceanRuins;
+	}
+	
+	public List<Biome> getValidBiomesAtMiddleOfChunk_Shipwreck() {
+		return validBiomesAtMiddleOfChunk_Shipwreck;
+	}
 
 	public Function<Long, MineshaftAlgorithm_Base> getMineshaftAlgorithmFactory() {
 		return mineshaftAlgorithmFactory;
@@ -143,6 +163,14 @@ public class VersionFeatures {
 
 	public Long getSeedForStructure_WitchHut() {
 		return seedForStructure_WitchHut;
+	}
+	
+	public Long getSeedForStructure_OceanRuins() {
+		return seedForStructure_OceanRuins;
+	}
+	
+	public Long getSeedForStructure_Shipwreck() {
+		return seedForStructure_Shipwreck;
 	}
 
 	public Boolean getBuggyStructureCoordinateMath() {

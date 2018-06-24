@@ -35,6 +35,8 @@ public enum DefaultVersionFeatures {
 				INSTANCE.validBiomesAtMiddleOfChunk_Igloo.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_JungleTemple.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_WitchHut.getValue(version),
+				INSTANCE.validBiomesAtMiddleOfChunk_OceanRuins.getValue(version),
+				INSTANCE.validBiomesAtMiddleOfChunk_Shipwreck.getValue(version),
 				INSTANCE.mineshaftAlgorithmFactory.getValue(version),
 				INSTANCE.oceanMonumentLocationCheckerFactory.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_OceanMonument.getValue(version),
@@ -44,6 +46,8 @@ public enum DefaultVersionFeatures {
 				INSTANCE.seedForStructure_Igloo.getValue(version),
 				INSTANCE.seedForStructure_JungleTemple.getValue(version),
 				INSTANCE.seedForStructure_WitchHut.getValue(version),
+				INSTANCE.seedForStructure_OceanRuins.getValue(version),
+				INSTANCE.seedForStructure_Shipwreck.getValue(version),
 				INSTANCE.buggyStructureCoordinateMath.getValue(version));
 	}
 
@@ -56,6 +60,8 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Igloo;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_JungleTemple;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_WitchHut;
+	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_OceanRuins;
+	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Shipwreck;
 	private final VersionFeature<Function<Long, MineshaftAlgorithm_Base>> mineshaftAlgorithmFactory;
 	private final VersionFeature<QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker>> oceanMonumentLocationCheckerFactory;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_OceanMonument;
@@ -65,6 +71,8 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<Long> seedForStructure_Igloo;
 	private final VersionFeature<Long> seedForStructure_JungleTemple;
 	private final VersionFeature<Long> seedForStructure_WitchHut;
+	private final VersionFeature<Long> seedForStructure_OceanRuins;
+	private final VersionFeature<Long> seedForStructure_Shipwreck;
 	private final VersionFeature<Boolean> buggyStructureCoordinateMath;
 
 	private DefaultVersionFeatures() {
@@ -176,6 +184,62 @@ public enum DefaultVersionFeatures {
 				).sinceExtend(RecognisedVersion._1_4_2,
 						Biome.swampland
 				).construct();
+		this.validBiomesAtMiddleOfChunk_OceanRuins = VersionFeature.<Biome> listBuilder()
+				.init(
+						// this is for the enable all layers function
+						Biome.ocean,
+						Biome.deepOcean,
+						Biome.coldOcean,
+						Biome.coldDeepOcean,
+						Biome.warmOcean,
+						Biome.warmDeepOcean,
+						Biome.lukewarmOcean,
+						Biome.lukewarmDeepOcean,
+						Biome.frozenOcean,
+						Biome.frozenDeepOcean
+				).since(RecognisedVersion._12w21a
+				).sinceExtend(RecognisedVersion._18w09a,
+						Biome.ocean,
+						Biome.deepOcean,
+						Biome.coldOcean,
+						Biome.coldDeepOcean,
+						Biome.warmOcean,
+						Biome.warmDeepOcean,
+						Biome.lukewarmOcean,
+						Biome.lukewarmDeepOcean,
+						Biome.frozenOcean,
+						Biome.frozenDeepOcean
+				).construct();
+		this.validBiomesAtMiddleOfChunk_Shipwreck = VersionFeature.<Biome> listBuilder()
+				.init(
+						// this is for the enable all layers function
+						Biome.beach,
+						Biome.coldBeach,
+						Biome.ocean,
+						Biome.deepOcean,
+						Biome.coldOcean,
+						Biome.coldDeepOcean,
+						Biome.warmOcean,
+						Biome.warmDeepOcean,
+						Biome.lukewarmOcean,
+						Biome.lukewarmDeepOcean,
+						Biome.frozenOcean,
+						Biome.frozenDeepOcean
+				).since(RecognisedVersion._12w21a
+				).sinceExtend(RecognisedVersion._18w11a,
+						Biome.beach,
+						Biome.coldBeach,
+						Biome.ocean,
+						Biome.deepOcean,
+						Biome.coldOcean,
+						Biome.coldDeepOcean,
+						Biome.warmOcean,
+						Biome.warmDeepOcean,
+						Biome.lukewarmOcean,
+						Biome.lukewarmDeepOcean,
+						Biome.frozenOcean,
+						Biome.frozenDeepOcean
+				).construct();
 		this.mineshaftAlgorithmFactory = VersionFeature.<Function<Long, MineshaftAlgorithm_Base>> builder()
 				.init(
 						seed -> new MineshaftAlgorithm_Original(seed)
@@ -244,6 +308,15 @@ public enum DefaultVersionFeatures {
 				).since(RecognisedVersion._18w06a,
 						14357620L
 				).construct();
+		this.seedForStructure_OceanRuins = VersionFeature.<Long> builder()
+				.init(
+						14357621L
+				).construct();
+		this.seedForStructure_Shipwreck = VersionFeature.<Long> builder()
+				.init(
+						165745295L
+				).construct();
+				
 		this.buggyStructureCoordinateMath = VersionFeature.<Boolean> builder()
 				.init(
 						false

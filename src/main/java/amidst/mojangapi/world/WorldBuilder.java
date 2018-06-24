@@ -187,6 +187,30 @@ public class WorldBuilder {
 										buggyStructureCoordinateMath),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.WITCH),
 								Dimension.OVERWORLD,
+								false),
+						new StructureProducer<>(
+								Resolution.CHUNK,
+								8,
+								new ScatteredFeaturesLocationChecker(
+										seed,
+										biomeDataOracle,
+										versionFeatures.getValidBiomesAtMiddleOfChunk_OceanRuins(),
+										versionFeatures.getSeedForStructure_OceanRuins(),
+										buggyStructureCoordinateMath),
+								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_RUINS),
+								Dimension.OVERWORLD,
+								false),
+						new StructureProducer<>(
+								Resolution.CHUNK,
+								8,
+								new ScatteredFeaturesLocationChecker(
+										seed,
+										biomeDataOracle,
+										versionFeatures.getValidBiomesAtMiddleOfChunk_Shipwreck(),
+										versionFeatures.getSeedForStructure_Shipwreck(),
+										buggyStructureCoordinateMath),
+								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.SHIPWRECK),
+								Dimension.OVERWORLD,
 								false)
 				),
 				new StructureProducer<>(
