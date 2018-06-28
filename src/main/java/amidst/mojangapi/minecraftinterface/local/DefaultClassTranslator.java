@@ -28,7 +28,8 @@ public enum DefaultClassTranslator {
 				.next()
 					.ifDetect(c -> 
 						c.getNumberOfConstructors() == 0
-						&& c.getNumberOfMethods() == 6
+						&& c.getNumberOfMethods() >= 6
+						&& c.getNumberOfMethods() <= 8
 						&& c.getNumberOfFields() >= 3
 						&& c.getNumberOfFields() <= 4
 						&& c.getField(0).hasFlags(AccessFlags.STATIC)
