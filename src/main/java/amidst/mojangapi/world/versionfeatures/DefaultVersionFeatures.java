@@ -149,7 +149,10 @@ public enum DefaultVersionFeatures {
 						Biome.plains,
 						Biome.desert,
 						Biome.savanna
-				).construct();
+				).sinceExtend(RecognisedVersion._16w20a,
+						Biome.taiga
+				)
+				.construct();
 		this.validBiomesAtMiddleOfChunk_DesertTemple = VersionFeature.<Biome> listBuilder()
 				.init(
 						Biome.desert,
