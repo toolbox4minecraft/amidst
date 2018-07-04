@@ -91,9 +91,9 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			
 			/**
 			 * We break the region in 16x16 chunks, to get better performance out of the LazyArea used by the game.
-			 * Sadly, we get no performance gain in 18w16a, but in previous snapshots we get a ~1.5x improvement.
+			 * Sadly, we get no performance gain in 18w16a and newer, but in previous snapshots we get a ~1.5x improvement.
 			 */
-			if(recognisedVersion == RecognisedVersion._18w16a) {
+			if(RecognisedVersion.isNewerOrEqualTo(recognisedVersion, RecognisedVersion._18w16a)) {
 				Object[] biomes = getBiomeDataInner(x, y, width, height, useQuarterResolution);
 				for(int i = 0; i < biomes.length; i++) {
 					data[i] = getBiomeId(biomes[i]);
