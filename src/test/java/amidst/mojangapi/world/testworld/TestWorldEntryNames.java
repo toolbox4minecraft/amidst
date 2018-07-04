@@ -16,8 +16,11 @@ public class TestWorldEntryNames {
 	public static final String JUNGLE_TEMPLES = "jungle-temples";
 	public static final String DESERT_TEMPLES = "desert-temples";
 	public static final String IGLOOS = "igloos";
+	public static final String OCEAN_RUINS = "ocean-ruins";
+	public static final String SHIPWRECKS = "shipwrecks";
 	public static final String MINESHAFTS = "mineshafts";
 	public static final String OCEAN_MONUMENTS = "ocean-monuments";
+	public static final String WOODLAND_MANSIONS = "woodland-mansions";
 	public static final String NETHER_FORTRESSES = "nether-fortresses";
 	public static final String LIKELY_END_CITY = "likely-end-city";
 	public static final String POSSIBLE_END_CITY = "possible-end-city";
@@ -35,8 +38,11 @@ public class TestWorldEntryNames {
 			TestWorldEntryNames.JUNGLE_TEMPLES,
 			TestWorldEntryNames.DESERT_TEMPLES,
 			TestWorldEntryNames.IGLOOS,
+			TestWorldEntryNames.OCEAN_RUINS,
+			TestWorldEntryNames.SHIPWRECKS,
 			TestWorldEntryNames.MINESHAFTS,
 			TestWorldEntryNames.OCEAN_MONUMENTS,
+			TestWorldEntryNames.WOODLAND_MANSIONS,
 			TestWorldEntryNames.NETHER_FORTRESSES,
 			TestWorldEntryNames.LIKELY_END_CITY,
 			TestWorldEntryNames.POSSIBLE_END_CITY };
