@@ -327,6 +327,8 @@ public enum DefaultVersionFeatures {
 						true  // Bug MC-131462.
 				).since(RecognisedVersion._1_13_pre4,
 						false
+				).since(RecognisedVersion._1_13_pre7,
+						true
 				).construct();
 		// @formatter:on
 	}
