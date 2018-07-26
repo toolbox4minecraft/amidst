@@ -39,7 +39,7 @@ Amidst **cannot**:
 
 ## Amidst has found a new home
 
-Amidst was moved to a new location, since Skidoodle aka skiphs is too busy to maintain it. It has also found some new developers. One of them is DrFrankenstone aka Treer who is the developer of AmidstExporter. Skidoodle is still an owner of Amidst and agreed to move the project.
+Amidst was moved to a new location, since Skidoodle aka skiphs is too busy to maintain it. It has also found some new developers. One of them is DrFrankenstone, a.k.a. Treer, who is the developer of AmidstExporter. Skidoodle is still an owner of Amidst and agreed to move the project.
 
 ### Links
 
