@@ -187,32 +187,6 @@ public class WorldBuilder {
 										buggyStructureCoordinateMath),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.WITCH),
 								Dimension.OVERWORLD,
-								false),
-						new StructureProducer<>(
-								Resolution.CHUNK,
-								8,
-								new ScatteredFeaturesLocationChecker(
-										seed,
-										biomeDataOracle,
-										(byte) 16, (byte) 8,
-										versionFeatures.getValidBiomesAtMiddleOfChunk_OceanRuins(),
-										versionFeatures.getSeedForStructure_OceanRuins(),
-										buggyStructureCoordinateMath),
-								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_RUINS),
-								Dimension.OVERWORLD,
-								false),
-						new StructureProducer<>(
-								Resolution.CHUNK,
-								8,
-								new ScatteredFeaturesLocationChecker(
-										seed,
-										biomeDataOracle,
-										(byte) 15, (byte) 8,
-										versionFeatures.getValidBiomesAtMiddleOfChunk_Shipwreck(),
-										versionFeatures.getSeedForStructure_Shipwreck(),
-										buggyStructureCoordinateMath),
-								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.SHIPWRECK),
-								Dimension.OVERWORLD,
 								false)
 				),
 				new StructureProducer<>(
@@ -244,6 +218,34 @@ public class WorldBuilder {
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.WOODLAND_MANSION),
 						Dimension.OVERWORLD,
 						false),
+				new MultiProducer<>(
+						new StructureProducer<>(
+								Resolution.CHUNK,
+								8,
+								new ScatteredFeaturesLocationChecker(
+										seed,
+										biomeDataOracle,
+										(byte) 16, (byte) 8,
+										versionFeatures.getValidBiomesAtMiddleOfChunk_OceanRuins(),
+										versionFeatures.getSeedForStructure_OceanRuins(),
+										buggyStructureCoordinateMath),
+								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_RUINS),
+								Dimension.OVERWORLD,
+								false),
+						new StructureProducer<>(
+								Resolution.CHUNK,
+								8,
+								new ScatteredFeaturesLocationChecker(
+										seed,
+										biomeDataOracle,
+										(byte) 15, (byte) 8,
+										versionFeatures.getValidBiomesAtMiddleOfChunk_Shipwreck(),
+										versionFeatures.getSeedForStructure_Shipwreck(),
+										buggyStructureCoordinateMath),
+								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.SHIPWRECK),
+								Dimension.OVERWORLD,
+								false)
+				),
 				new StructureProducer<>(
 						Resolution.NETHER_CHUNK,
 						88,

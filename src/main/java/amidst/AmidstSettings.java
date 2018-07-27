@@ -25,6 +25,7 @@ public class AmidstSettings {
 	public final Setting<Boolean> showMineshafts;
 	public final Setting<Boolean> showOceanMonuments;
 	public final Setting<Boolean> showWoodlandMansions;
+	public final Setting<Boolean> showOceanFeatures;
 	public final Setting<Boolean> showNetherFortresses;
 	public final Setting<Boolean> showEndCities;
 	public final Setting<Boolean> enableAllLayers;
@@ -58,6 +59,7 @@ public class AmidstSettings {
 		showMineshafts             = Settings.createBoolean(  preferences, "mineshaftIcons",       false);
 		showOceanMonuments         = Settings.createBoolean(  preferences, "oceanMonumentIcons",   true);
 		showWoodlandMansions       = Settings.createBoolean(  preferences, "woodlandMansionIcons", true);
+		showOceanFeatures          = Settings.createBoolean(  preferences, "oceanFeaturesIcons",   true);
 		showNetherFortresses       = Settings.createBoolean(  preferences, "netherFortressIcons",  false);
 		showEndCities              = Settings.createBoolean(  preferences, "endCityIcons",         false);
 		enableAllLayers            = Settings.createBoolean(  preferences, "enableAllLayers",      false);

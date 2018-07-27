@@ -99,6 +99,8 @@ public enum DefaultVersionFeatures {
 						LayerIds.END_CITY
 				).sinceExtend(RecognisedVersion._16w43a,
 						LayerIds.WOODLAND_MANSION
+				).sinceExtend(RecognisedVersion._18w09a,
+						LayerIds.OCEAN_FEATURES
 				).construct();
 		this.validBiomesForStructure_Spawn = VersionFeature.<Biome> listBuilder()
 				.init(
