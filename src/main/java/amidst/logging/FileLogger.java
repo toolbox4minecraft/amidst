@@ -66,17 +66,17 @@ public class FileLogger implements Logger {
 	@CalledOnlyBy(AmidstThread.STARTUP)
 	private void disableBecauseFileCreationFailed() {
 		AmidstLogger
-				.warn("Unable to create new file at: " + file + " disabling logging to file. (No exception thrown)");
+				.warn("Unable to create new file at: {} disabling logging to file. (No exception thrown)", file);
 	}
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
 	private void disableBecauseFileCreationThrowsException(IOException e) {
-		AmidstLogger.warn(e, "Unable to create new file at: " + file + " disabling logging to file.");
+		AmidstLogger.warn(e, "Unable to create new file at: {} disabling logging to file.", file);
 	}
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
 	private void disableBecauseFileIsDirectory() {
-		AmidstLogger.warn("Unable to log at path: " + file + " because location is a directory.");
+		AmidstLogger.warn("Unable to log at path: {} because location is a directory.", file);
 	}
 
 	@CalledOnlyBy(AmidstThread.STARTUP)

@@ -24,7 +24,7 @@ public enum PlayerLocationLoader {
 		try {
 			return Optional.of(readPlayerCoordinates(NBTUtils.readTagFromFile(file)));
 		} catch (NullPointerException e) {
-			AmidstLogger.warn(e, "cannot read player from file: " + file);
+			AmidstLogger.warn(e, "cannot read player from file: {}", file);
 			return Optional.empty();
 		}
 	}
@@ -34,7 +34,7 @@ public enum PlayerLocationLoader {
 			return Optional
 					.of(readPlayerCoordinates(getSinglePlayerPlayerTag(getTagRootTag(NBTUtils.readTagFromFile(file)))));
 		} catch (NullPointerException e) {
-			AmidstLogger.warn(e, "cannot read player from level.dat: " + file);
+			AmidstLogger.warn(e, "cannot read player from level.dat: {}", file);
 			return Optional.empty();
 		}
 	}

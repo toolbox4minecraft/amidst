@@ -20,7 +20,7 @@ public class License {
 		try {
 			return ResourceLoader.getResourceAsString(path);
 		} catch (IOException e) {
-			AmidstLogger.warn(e, "Unable to read license for '" + name + "' at '" + path + "'.");
+			AmidstLogger.warn(e, "Unable to read license for '{}' at '{}'.", name, path);
 			return "License text is missing.";
 		}
 	}

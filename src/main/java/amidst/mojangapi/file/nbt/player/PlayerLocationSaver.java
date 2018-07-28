@@ -29,7 +29,7 @@ public enum PlayerLocationSaver {
 			NBTUtils.writeTagToFile(file, modifiedDataTag);
 			return true;
 		} catch (NullPointerException e) {
-			AmidstLogger.warn(e, "cannot write player to file: " + file);
+			AmidstLogger.warn(e, "cannot write player to file: {}", file);
 			return false;
 		}
 	}
@@ -41,7 +41,7 @@ public enum PlayerLocationSaver {
 			NBTUtils.writeTagToFile(file, modifiedBaseTag);
 			return true;
 		} catch (NullPointerException e) {
-			AmidstLogger.warn(e, "cannot write player to level.dat: " + file);
+			AmidstLogger.warn(e, "cannot write player to level.dat: {}", file);
 			return false;
 		}
 	}

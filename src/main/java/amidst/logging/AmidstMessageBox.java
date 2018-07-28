@@ -21,7 +21,7 @@ public enum AmidstMessageBox {
 		displayMessageBox(title, MessageFormatter.format(e, message), JOptionPane.ERROR_MESSAGE);
 	}
 
-	public static void displayError(String title, Throwable e, String message, String part1, String[] parts) {
+	public static void displayError(String title, Throwable e, String message, Object part1, Object[] parts) {
 		displayMessageBox(title, MessageFormatter.format(e, message, part1, parts), JOptionPane.ERROR_MESSAGE);
 	}
 
@@ -29,7 +29,7 @@ public enum AmidstMessageBox {
 		displayMessageBox(title, MessageFormatter.format(message), JOptionPane.ERROR_MESSAGE);
 	}
 
-	public static void displayError(String title, String message, String part1, String[] parts) {
+	public static void displayError(String title, String message, Object part1, Object[] parts) {
 		displayMessageBox(title, MessageFormatter.format(message, part1, parts), JOptionPane.ERROR_MESSAGE);
 	}
 
@@ -37,7 +37,7 @@ public enum AmidstMessageBox {
 		displayMessageBox(title, MessageFormatter.format(message), JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	public static void displayInfo(String title, String message, String part1, String[] parts) {
+	public static void displayInfo(String title, String message, Object part1, Object[] parts) {
 		displayMessageBox(title, MessageFormatter.format(message, part1, parts), JOptionPane.INFORMATION_MESSAGE);
 	}
 
@@ -63,7 +63,7 @@ public enum AmidstMessageBox {
 		displayMessageBox(parent, title, MessageFormatter.format(message), JOptionPane.ERROR_MESSAGE);
 	}
 
-	public static void displayError(Component parent, String title, String message, String part1, String[] parts) {
+	public static void displayError(Component parent, String title, String message, Object part1, Object[] parts) {
 		displayMessageBox(parent, title, MessageFormatter.format(message, part1, parts), JOptionPane.ERROR_MESSAGE);
 	}
 
@@ -71,7 +71,7 @@ public enum AmidstMessageBox {
 		displayMessageBox(parent, title, MessageFormatter.format(message), JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	public static void displayInfo(Component parent, String title, String message, String part1, String[] parts) {
+	public static void displayInfo(Component parent, String title, String message, Object part1, Object[] parts) {
 		displayMessageBox(
 				parent,
 				title,

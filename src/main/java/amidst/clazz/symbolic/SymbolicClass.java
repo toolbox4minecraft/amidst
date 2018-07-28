@@ -46,17 +46,29 @@ public class SymbolicClass {
 	public Class<?> getClazz() {
 		return clazz;
 	}
+	
+	public SymbolicConstructor getConstructor(String symbolicName) {
+		return constructorsBySymbolicName.get(symbolicName);
+	}
+	
+	public SymbolicMethod getMethod(String symbolicName) {
+		return methodsBySymbolicName.get(symbolicName);
+	}
+	
+	public SymbolicField getField(String symbolicName) {
+		return fieldsBySymbolicName.get(symbolicName);
+	}
 
 	public boolean hasConstructor(String symbolicName) {
-		return constructorsBySymbolicName.get(symbolicName) != null;
+		return getConstructor(symbolicName) != null;
 	}
 
 	public boolean hasMethod(String symbolicName) {
-		return methodsBySymbolicName.get(symbolicName) != null;
+		return getMethod(symbolicName) != null;
 	}
 
 	public boolean hasField(String symbolicName) {
-		return fieldsBySymbolicName.get(symbolicName) != null;
+		return getField(symbolicName) != null;
 	}
 
 	public SymbolicObject callConstructor(String symbolicName, Object... parameters)

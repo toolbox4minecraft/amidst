@@ -56,7 +56,7 @@ public class Amidst {
 		}
 	}
 
-	private static AmidstMetaData createMetadata() {
+	public static AmidstMetaData createMetadata() {
 		return AmidstMetaData.from(
 				ResourceLoader.getProperties("/amidst/metadata.properties"),
 				ResourceLoader.getImage("/amidst/icon/amidst-16x16.png"),

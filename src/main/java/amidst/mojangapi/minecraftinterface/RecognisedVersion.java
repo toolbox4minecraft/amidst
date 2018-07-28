@@ -23,6 +23,22 @@ public enum RecognisedVersion {
 	// TODO: Remove these versions before V1_0?
 	// TODO: stronghold reset on V1_9pre4?
 	UNKNOWN,
+	_1_13      ("1.13",       "adrxquaom[Ltc;vo[J[[Jvkuwuubvavhxaprpvccipopp"),                                           // matches the launcher version id: 1.13
+	_1_13_pre10("1.13-pre10", "adpxquaom[Ltc;vo[J[[Jvkuwuubvavfxaprpvccgpopp"),                                           // matches the launcher version id: 1.13-pre10
+	_1_13_pre8 ("1.13-pre8",  "adoxquaom[Ltc;vo[J[[Jvkuwuubvavexaprpvccgpopp"),                                           // matches the launcher version id: 1.13-pre8	   1.13-pre9
+	_1_13_pre7 ("1.13-pre7",  "adixquaom[Ltc;vo[J[[Jvkuwuubvauyxaprpvcbxpopp"),                                           // matches the launcher version id: 1.13-pre7
+	_1_13_pre6 ("1.13-pre6",  "adexntxoj[Lsz;vl[J[[Jvhuturbvautwxpopscbtplpm"),                                           // matches the launcher version id: 1.13-pre6
+	_1_13_pre5 ("1.13-pre5",  "adbxltvoh[Lsx;vj[J[[Jvfurupbvauqwvpmpqcbqpjpk"),                                           // matches the launcher version id: 1.13-pre5
+	_1_13_pre4 ("1.13-pre4",  "ahyxntvohya[Lsx;vj[J[[Jvfurupbvazowvpmpqcgnpjpk"),                                         // matches the launcher version id: 1.13-pre4
+	_1_13_pre3 ("1.13-pre3",  "ahqxftnnzxs[Lsp;vb[J[[Juxujuhbvazgwnpepicgepbpc"),                                         // matches the launcher version id: 1.13-pre3
+	_1_13_pre2 ("1.13-pre2",  "ahixdtlnxxp[Lsn;uz[J[[Juvuhufbvayywlpcpgcfvozpa"),                                         // matches the launcher version id: 1.13-pre2
+	_1_13_pre1 ("1.13-pre1",  "ahhxctknwxo[Lsm;uy[J[[Juuuguebuayxwkpbpfcfsoyoz"),                                         // matches the launcher version id: 1.13-pre1
+	_18w22c    ("18w22c",     "ahfxctknwxo[Lsm;uy[J[[Juuuguebuayvwkpbpfcfqoyoz"),                                         // matches the launcher version id: 18w22c
+	_18w21b    ("18w21b",     "ahdxbtjnvxn[Lsl;ux[J[[Jutufudbtaytwjpapecfooxoy"),                                         // matches the launcher version id: 18w21b
+	_18w20c    ("18w20c",     "ahcxatinuxm[Lsk;uw[J[[Jusueucbtayswiozpdcexowox"),                                         // matches the launcher version id: 18w20c
+	_18w19b    ("18w19b",     "agwwzthntxm[Lsj;uv[J[[Jurudubbsaymwhoypccerovow"),                                         // matches the launcher version id: 18w19b
+	_18w16a    ("18w16a",     "aavwutfnsxf[Lsh;ut[J[[Jupubtzbsaskweowpabyhotou"),                                         // matches the launcher version id: 18w16a
+	_18w15a    ("18w15a",     "aauwttensxe[Lsh;us[J[[Juouatybsasjwdowpabxrotou"),                                         // matches the launcher version id: 18w15a
 	_18w14b    ("18w14b",     "aauwttensxe[Lsh;us[J[[Juouatybsasawdowpabwyotou"),                                         // matches the launcher version id: 18w14b       
 	_18w11a    ("18w11a",     "aaqwqtbnpxb[Lse;up[J[[Jultxtvbparwwaotoxbwroqor"),                                         // matches the launcher version id: 18w11a       
 	_18w10d    ("18w10d",     "aaqwqtbnpxb[Lse;up[J[[Jultxtvbparvwaotoxbwmoqor"),                                         // matches the launcher version id: 18w10d       
@@ -164,12 +180,16 @@ public enum RecognisedVersion {
 
 	@NotNull
 	private static Field[] getMainClassFields(URLClassLoader classLoader) throws ClassNotFoundException {
-		if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
-			return classLoader.loadClass(CLIENT_CLASS).getDeclaredFields();
-		} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {
-			return classLoader.loadClass(SERVER_CLASS).getDeclaredFields();
-		} else {
-			throw new ClassNotFoundException("unable to find the main class in the given jar file");
+		try {
+			if (classLoader.findResource(CLIENT_CLASS_RESOURCE) != null) {
+				return classLoader.loadClass(CLIENT_CLASS).getDeclaredFields();
+			} else if (classLoader.findResource(SERVER_CLASS_RESOURCE) != null) {
+				return classLoader.loadClass(SERVER_CLASS).getDeclaredFields();
+			} else {
+				throw new ClassNotFoundException("unable to find the main class in the given jar file");
+			}
+		} catch (NoClassDefFoundError e) {
+			throw new ClassNotFoundException("error while loading main class; are some libraries missing?", e);
 		}
 	}
 

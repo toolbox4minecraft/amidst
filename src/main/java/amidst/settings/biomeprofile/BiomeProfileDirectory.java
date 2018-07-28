@@ -93,7 +93,7 @@ public class BiomeProfileDirectory {
 				profile = JsonReader.readLocation(file, BiomeProfile.class);
 				profile.validate();
 			} catch (IOException | FormatException e) {
-				AmidstLogger.warn(e, "Unable to load file: " + file);
+				AmidstLogger.warn(e, "Unable to load file: {}", file);
 			}
 		}
 		return profile;

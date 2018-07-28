@@ -48,7 +48,7 @@ public class Player {
 				savedCoordinates = currentCoordinates;
 				return true;
 			} else {
-				AmidstLogger.warn("error while writing player location for player: " + getPlayerName());
+				AmidstLogger.warn("error while writing player location for player: {}", getPlayerName());
 				return false;
 			}
 		} else {

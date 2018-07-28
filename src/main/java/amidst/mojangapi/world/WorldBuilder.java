@@ -13,16 +13,16 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.locationchecker.EndCityLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm;
-import amidst.mojangapi.world.icon.locationchecker.TempleLocationChecker;
+import amidst.mojangapi.world.icon.locationchecker.ScatteredFeaturesLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.VillageLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.WoodlandMansionLocationChecker;
+import amidst.mojangapi.world.icon.producer.MultiProducer;
 import amidst.mojangapi.world.icon.producer.PlayerProducer;
 import amidst.mojangapi.world.icon.producer.SpawnProducer;
 import amidst.mojangapi.world.icon.producer.StructureProducer;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.EndCityWorldIconTypeProvider;
 import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
-import amidst.mojangapi.world.icon.type.TempleWorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.HeuristicWorldSpawnOracle;
@@ -110,6 +110,7 @@ public class WorldBuilder {
 		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
 		seedHistoryLogger.log(recognisedVersion, worldSeed);
 		long seed = worldSeed.getLong();
+		boolean buggyStructureCoordinateMath = versionFeatures.getBuggyStructureCoordinateMath();
 		minecraftInterface.createWorld(seed, worldType, generatorOptions);
 		return new World(
 				onDisposeWorld,
@@ -138,16 +139,56 @@ public class WorldBuilder {
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
 						Dimension.OVERWORLD,
 						false),
-				new StructureProducer<>(
-						Resolution.CHUNK,
-						8,
-						new TempleLocationChecker(
-								seed,
-								biomeDataOracle,
-								versionFeatures.getValidBiomesAtMiddleOfChunk_Temple()),
-						new TempleWorldIconTypeProvider(biomeDataOracle),
-						Dimension.OVERWORLD,
-						false),
+				new MultiProducer<>(
+						new StructureProducer<>(
+								Resolution.CHUNK,
+								8,
+								new ScatteredFeaturesLocationChecker(
+										seed,
+										biomeDataOracle,
+										versionFeatures.getValidBiomesAtMiddleOfChunk_DesertTemple(),
+										versionFeatures.getSeedForStructure_DesertTemple(),
+										buggyStructureCoordinateMath),
+								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.DESERT),
+								Dimension.OVERWORLD,
+								false),
+						new StructureProducer<>(
+								Resolution.CHUNK,
+								8,
+								new ScatteredFeaturesLocationChecker(
+										seed,
+										biomeDataOracle,
+										versionFeatures.getValidBiomesAtMiddleOfChunk_Igloo(),
+										versionFeatures.getSeedForStructure_Igloo(),
+										buggyStructureCoordinateMath),
+								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.IGLOO),
+								Dimension.OVERWORLD,
+								false),
+						new StructureProducer<>(
+								Resolution.CHUNK,
+								8,
+								new ScatteredFeaturesLocationChecker(
+										seed,
+										biomeDataOracle,
+										versionFeatures.getValidBiomesAtMiddleOfChunk_JungleTemple(),
+										versionFeatures.getSeedForStructure_JungleTemple(),
+										buggyStructureCoordinateMath),
+								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.JUNGLE),
+								Dimension.OVERWORLD,
+								false),
+						new StructureProducer<>(
+								Resolution.CHUNK,
+								8,
+								new ScatteredFeaturesLocationChecker(
+										seed,
+										biomeDataOracle,
+										versionFeatures.getValidBiomesAtMiddleOfChunk_WitchHut(),
+										versionFeatures.getSeedForStructure_WitchHut(),
+										buggyStructureCoordinateMath),
+								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.WITCH),
+								Dimension.OVERWORLD,
+								false)
+				),
 				new StructureProducer<>(
 						Resolution.CHUNK,
 						8,
@@ -177,6 +218,34 @@ public class WorldBuilder {
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.WOODLAND_MANSION),
 						Dimension.OVERWORLD,
 						false),
+				new MultiProducer<>(
+						new StructureProducer<>(
+								Resolution.CHUNK,
+								8,
+								new ScatteredFeaturesLocationChecker(
+										seed,
+										biomeDataOracle,
+										(byte) 16, (byte) 8,
+										versionFeatures.getValidBiomesAtMiddleOfChunk_OceanRuins(),
+										versionFeatures.getSeedForStructure_OceanRuins(),
+										buggyStructureCoordinateMath),
+								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_RUINS),
+								Dimension.OVERWORLD,
+								false),
+						new StructureProducer<>(
+								Resolution.CHUNK,
+								8,
+								new ScatteredFeaturesLocationChecker(
+										seed,
+										biomeDataOracle,
+										(byte) 15, (byte) 8,
+										versionFeatures.getValidBiomesAtMiddleOfChunk_Shipwreck(),
+										versionFeatures.getSeedForStructure_Shipwreck(),
+										buggyStructureCoordinateMath),
+								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.SHIPWRECK),
+								Dimension.OVERWORLD,
+								false)
+				),
 				new StructureProducer<>(
 						Resolution.NETHER_CHUNK,
 						88,

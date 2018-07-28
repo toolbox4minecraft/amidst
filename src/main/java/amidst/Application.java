@@ -15,7 +15,7 @@ import amidst.gui.profileselect.ProfileSelectWindow;
 import amidst.mojangapi.LauncherProfileRunner;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.file.LauncherProfile;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceCreationException;
 
 @NotThreadSafe
 public class Application {
@@ -49,7 +49,7 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void run() throws LocalMinecraftInterfaceCreationException {
+	public void run() throws MinecraftInterfaceCreationException {
 		checkForUpdatesSilently();
 		if (preferredLauncherProfile.isPresent()) {
 			displayMainWindow(launcherProfileRunner.run(preferredLauncherProfile.get()));
@@ -69,15 +69,17 @@ public class Application {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayMainWindow(RunningLauncherProfile runningLauncherProfile) {
+	public MainWindow displayMainWindow(RunningLauncherProfile runningLauncherProfile) {
 		setMainWindow(mainWindowFactory.create(runningLauncherProfile));
 		setProfileSelectWindow(null);
+		return mainWindow;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayProfileSelectWindow() {
+	public ProfileSelectWindow displayProfileSelectWindow() {
 		setProfileSelectWindow(profileSelectWindowFactory.create());
 		setMainWindow(null);
+		return profileSelectWindow;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

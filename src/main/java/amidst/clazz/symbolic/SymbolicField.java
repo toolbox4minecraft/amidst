@@ -19,6 +19,10 @@ public class SymbolicField {
 		this.field = field;
 		this.type = type;
 	}
+	
+	public Field getRawField() {
+		return field;
+	}
 
 	public Object getValue(SymbolicObject symbolicObject) throws IllegalArgumentException, IllegalAccessException {
 		return getValueFromObject(symbolicObject.getObject());

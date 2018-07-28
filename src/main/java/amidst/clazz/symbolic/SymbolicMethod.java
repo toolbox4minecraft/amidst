@@ -33,6 +33,10 @@ public class SymbolicMethod {
 	public String getRealName() {
 		return realName;
 	}
+	
+	public Method getRawMethod() {
+		return method;
+	}
 
 	public Object call(SymbolicObject symbolicObject, Object... parameters)
 			throws IllegalAccessException,

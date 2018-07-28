@@ -13,6 +13,7 @@ public class StructureAlgorithm implements LocationChecker {
 	private final byte maxDistanceBetweenScatteredFeatures;
 	private final int distanceBetweenScatteredFeaturesRange;
 	private final boolean useTwoValuesForUpdate;
+	private final boolean buggyStructureCoordinateMath;
 
 	public StructureAlgorithm(
 			long seed,
@@ -22,6 +23,26 @@ public class StructureAlgorithm implements LocationChecker {
 			byte maxDistanceBetweenScatteredFeatures,
 			byte minDistanceBetweenScatteredFeatures,
 			boolean useTwoValuesForUpdate) {
+		this(
+				seed,
+				magicNumberForSeed1,
+				magicNumberForSeed2,
+				magicNumberForSeed3,
+				maxDistanceBetweenScatteredFeatures,
+				minDistanceBetweenScatteredFeatures,
+				useTwoValuesForUpdate,
+				false);
+	}
+
+	public StructureAlgorithm(
+			long seed,
+			long magicNumberForSeed1,
+			long magicNumberForSeed2,
+			long magicNumberForSeed3,
+			byte maxDistanceBetweenScatteredFeatures,
+			byte minDistanceBetweenScatteredFeatures,
+			boolean useTwoValuesForUpdate,
+			boolean buggyStructureCoordinateMath) {
 		this.seed = seed;
 		this.magicNumberForSeed1 = magicNumberForSeed1;
 		this.magicNumberForSeed2 = magicNumberForSeed2;
@@ -30,6 +51,7 @@ public class StructureAlgorithm implements LocationChecker {
 		this.distanceBetweenScatteredFeaturesRange = maxDistanceBetweenScatteredFeatures
 				- minDistanceBetweenScatteredFeatures;
 		this.useTwoValuesForUpdate = useTwoValuesForUpdate;
+		this.buggyStructureCoordinateMath = buggyStructureCoordinateMath;
 	}
 
 	@Override
@@ -48,7 +70,12 @@ public class StructureAlgorithm implements LocationChecker {
 
 	private int getModified(int coordinate) {
 		if (coordinate < 0) {
-			return coordinate - maxDistanceBetweenScatteredFeatures + 1;
+			if (buggyStructureCoordinateMath) {
+				// Bug MC-131462.
+				return coordinate - maxDistanceBetweenScatteredFeatures - 1;
+			} else {
+				return coordinate - maxDistanceBetweenScatteredFeatures + 1;
+			}
 		} else {
 			return coordinate;
 		}

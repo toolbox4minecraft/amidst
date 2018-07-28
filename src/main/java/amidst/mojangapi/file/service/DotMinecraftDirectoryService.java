@@ -64,8 +64,8 @@ public class DotMinecraftDirectoryService {
 				return result;
 			} else {
 				AmidstLogger.warn(
-						"Unable to set Minecraft directory to: " + result
-								+ " as that location does not exist or is not a folder.");
+					"Unable to set Minecraft directory to: {} as that location does not exist or is not a folder.",
+					result);
 				return getMinecraftDirectory();
 			}
 		} else {

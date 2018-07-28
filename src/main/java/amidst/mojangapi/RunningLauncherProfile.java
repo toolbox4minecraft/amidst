@@ -5,12 +5,12 @@ import java.io.IOException;
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.SaveGame;
+import amidst.mojangapi.minecraftinterface.LoggingMinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaces;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceCreationException;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterface;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
 import amidst.mojangapi.world.WorldOptions;
@@ -18,11 +18,11 @@ import amidst.mojangapi.world.WorldOptions;
 @ThreadSafe
 public class RunningLauncherProfile {
 	public static RunningLauncherProfile from(WorldBuilder worldBuilder, LauncherProfile launcherProfile)
-			throws LocalMinecraftInterfaceCreationException {
+			throws MinecraftInterfaceCreationException {
 		return new RunningLauncherProfile(
 				worldBuilder,
 				launcherProfile,
-				LocalMinecraftInterface.create(DefaultClassTranslator.INSTANCE.get(), launcherProfile));
+				new LoggingMinecraftInterface(MinecraftInterfaces.fromLocalProfile(launcherProfile)));
 	}
 
 	private final WorldBuilder worldBuilder;
@@ -50,7 +50,7 @@ public class RunningLauncherProfile {
 	public RunningLauncherProfile createSilentPlayerlessCopy() {
 		try {
 			return RunningLauncherProfile.from(WorldBuilder.createSilentPlayerless(), launcherProfile);
-		} catch (LocalMinecraftInterfaceCreationException e) {
+		} catch (MinecraftInterfaceCreationException e) {
 			// This will not happen normally, because we already successfully
 			// created the same LocalMinecraftInterface once before.
 			throw new RuntimeException("exception while duplicating the RunningLauncherProfile", e);

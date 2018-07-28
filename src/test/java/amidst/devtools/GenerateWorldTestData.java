@@ -5,16 +5,15 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import amidst.clazz.translator.ClassTranslator;
 import amidst.mojangapi.file.DotMinecraftDirectoryNotFoundException;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.Version;
 import amidst.mojangapi.file.VersionList;
+import amidst.mojangapi.minecraftinterface.MinecraftInterface;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceCreationException;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
-import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterface;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaces;
 import amidst.mojangapi.world.testworld.TestWorldCache;
 import amidst.mojangapi.world.testworld.TestWorldDeclaration;
 import amidst.parsing.FormatException;
@@ -49,12 +48,12 @@ public class GenerateWorldTestData {
 	private void generate(TestWorldDeclaration declaration, Version version) {
 		if (version.tryDownloadClient(prefix)) {
 			try {
-				ClassTranslator translator = DefaultClassTranslator.INSTANCE.get();
 				LauncherProfile launcherProfile = minecraftInstallation.newLauncherProfile(version.getId());
-				TestWorldCache.createAndPut(declaration, LocalMinecraftInterface.create(translator, launcherProfile));
+				MinecraftInterface minecraftInterface = MinecraftInterfaces.fromLocalProfile(launcherProfile);
+				TestWorldCache.createAndPut(declaration, minecraftInterface);
 				successful.add(version.getId());
 			} catch (
-					LocalMinecraftInterfaceCreationException
+					MinecraftInterfaceCreationException
 					| MinecraftInterfaceException
 					| FormatException
 					| IOException e) {

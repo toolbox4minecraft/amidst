@@ -14,7 +14,7 @@ import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.UnresolvedLauncherProfile;
 import amidst.mojangapi.file.VersionListProvider;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterfaceCreationException;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaceCreationException;
 import amidst.parsing.FormatException;
 import amidst.threading.WorkerExecutor;
 
@@ -100,7 +100,7 @@ public class LocalProfileComponent extends ProfileComponent {
 					"using minecraft launcher profile '" + resolvedProfile.getProfileName() + "' with versionId '"
 							+ resolvedProfile.getVersionName() + "'");
 			return Optional.of(launcherProfileRunner.run(resolvedProfile));
-		} catch (LocalMinecraftInterfaceCreationException e) {
+		} catch (MinecraftInterfaceCreationException e) {
 			AmidstLogger.error(e);
 			AmidstMessageBox.displayError("Error", e);
 			return Optional.empty();
