@@ -17,6 +17,7 @@ public class VersionFeatures {
 	private final List<Biome> validBiomesAtMiddleOfChunk_Stronghold;
 	private final TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base> strongholdProducerFactory;
 	private final List<Biome> validBiomesForStructure_Village;
+	private final Boolean doComplexVillageCheck;
 	private final List<Biome> validBiomesAtMiddleOfChunk_DesertTemple;
 	private final List<Biome> validBiomesAtMiddleOfChunk_Igloo;
 	private final List<Biome> validBiomesAtMiddleOfChunk_JungleTemple;
@@ -42,6 +43,7 @@ public class VersionFeatures {
 			List<Biome> validBiomesAtMiddleOfChunk_Stronghold,
 			TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base> strongholdProducerFactory,
 			List<Biome> validBiomesForStructure_Village,
+			Boolean doComplexVillageCheck,
 			List<Biome> validBiomesAtMiddleOfChunk_DesertTemple,
 			List<Biome> validBiomesAtMiddleOfChunk_Igloo,
 			List<Biome> validBiomesAtMiddleOfChunk_JungleTemple,
@@ -65,6 +67,7 @@ public class VersionFeatures {
 		this.validBiomesAtMiddleOfChunk_Stronghold = validBiomesAtMiddleOfChunk_Stronghold;
 		this.strongholdProducerFactory = strongholdProducerFactory;
 		this.validBiomesForStructure_Village = validBiomesForStructure_Village;
+		this.doComplexVillageCheck = doComplexVillageCheck;
 		this.validBiomesAtMiddleOfChunk_DesertTemple = validBiomesAtMiddleOfChunk_DesertTemple;
 		this.validBiomesAtMiddleOfChunk_Igloo = validBiomesAtMiddleOfChunk_Igloo;
 		this.validBiomesAtMiddleOfChunk_JungleTemple = validBiomesAtMiddleOfChunk_JungleTemple;
@@ -103,6 +106,10 @@ public class VersionFeatures {
 
 	public List<Biome> getValidBiomesForStructure_Village() {
 		return validBiomesForStructure_Village;
+	}
+	
+	public Boolean getDoComplexVillageCheck() {
+		return doComplexVillageCheck;
 	}
 
 	public List<Biome> getValidBiomesAtMiddleOfChunk_DesertTemple() {

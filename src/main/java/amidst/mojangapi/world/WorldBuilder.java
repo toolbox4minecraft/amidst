@@ -135,7 +135,8 @@ public class WorldBuilder {
 						new VillageLocationChecker(
 								seed,
 								biomeDataOracle,
-								versionFeatures.getValidBiomesForStructure_Village()),
+								versionFeatures.getValidBiomesForStructure_Village(),
+								versionFeatures.getDoComplexVillageCheck()),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
 						Dimension.OVERWORLD,
 						false),
