@@ -16,17 +16,28 @@ public class VillageLocationChecker extends AllValidLocationChecker {
 	private static final boolean USE_TWO_VALUES_FOR_UPDATE = false;
 	private static final int STRUCTURE_SIZE = 0;
 
-	public VillageLocationChecker(long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomesForStructure) {
-		super(
-				new StructureAlgorithm(
-						seed,
-						MAGIC_NUMBER_FOR_SEED_1,
-						MAGIC_NUMBER_FOR_SEED_2,
-						MAGIC_NUMBER_FOR_SEED_3,
-						MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-						MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-						USE_TWO_VALUES_FOR_UPDATE),
-				new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomesForStructure),
-				new VillageAlgorithm(biomeDataOracle, validBiomesForStructure));
+	public VillageLocationChecker(
+			long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomesForStructure, boolean doComplexVillageCheck) {
+		super(getLocationCheckers(seed, biomeDataOracle, validBiomesForStructure, doComplexVillageCheck));
+	}
+	
+	private static LocationChecker[] getLocationCheckers(
+			long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomesForStructure, boolean doComplexVillageCheck) {
+		LocationChecker base = new StructureAlgorithm(
+				seed,
+				MAGIC_NUMBER_FOR_SEED_1,
+				MAGIC_NUMBER_FOR_SEED_2,
+				MAGIC_NUMBER_FOR_SEED_3,
+				MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
+				MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
+				USE_TWO_VALUES_FOR_UPDATE
+			);
+		LocationChecker biome = new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomesForStructure);
+
+		if(doComplexVillageCheck) {
+			return new LocationChecker[] { base, biome, new VillageAlgorithm(biomeDataOracle, validBiomesForStructure) };
+		} else {
+			return new LocationChecker[] { base, biome };
+		}
 	}
 }
