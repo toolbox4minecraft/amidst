@@ -23,6 +23,7 @@ public enum RecognisedVersion {
 	// TODO: Remove these versions before V1_0?
 	// TODO: stronghold reset on V1_9pre4?
 	UNKNOWN,
+	_18w32a    ("18w32a",     "adsxquaolvo[Jvkuwuubvavixapqpuccqpnpo"),                                                   // matches the launcher version id: 18w32a
 	_18w31a    ("18w31a",     "aduxsuconvq[Jvmuyuwbvavkxcpspwccqpppq"),                                                   // matches the launcher version id: 18w31a
 	_18w30b    ("18w30b",     "adtxruaom[Ltc;vo[J[[Jvkuwuubvavjxaprpvcclpopp"),                                           // matches the launcher version id: 18w30b
 	_1_13      ("1.13",       "adrxquaom[Ltc;vo[J[[Jvkuwuubvavhxaprpvccipopp"),                                           // matches the launcher version id: 1.13
