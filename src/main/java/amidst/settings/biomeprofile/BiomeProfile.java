@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,19 +49,30 @@ public class BiomeProfile {
 	}
 
 	public String getName() {
-		return name;
+		return name == null ? "<unnamed>" : name;
 	}
 
 	public String getShortcut() {
 		return shortcut;
 	}
 
-	public void validate() {
+	public boolean validate() {
+		if(this.colorMap == null) {
+			AmidstLogger.info("Color map is missing in profile: {}", name);
+			return false;
+		}
+		
+		if(this.name == null) {
+			AmidstLogger.info("Name is missing in profile");
+			return false;
+		}
+
 		for (String biomeName : colorMap.keySet()) {
 			if (!Biome.exists(biomeName)) {
-				AmidstLogger.info("Failed to find biome for: " + biomeName + " in profile: " + name);
+				AmidstLogger.info("Failed to find biome for: {} in profile: {}", biomeName, name);
 			}
 		}
+		return true;
 	}
 
 	public BiomeColor[] createBiomeColorArray() {
@@ -72,7 +84,7 @@ public class BiomeProfile {
 	}
 
 	private BiomeColor getBiomeColor(Biome biome) {
-		if (colorMap.containsKey(biome.getName())) {
+		if (colorMap != null && colorMap.containsKey(biome.getName())) {
 			return colorMap.get(biome.getName()).createBiomeColor();
 		} else {
 			return biome.getDefaultColor();
@@ -105,6 +117,10 @@ public class BiomeProfile {
 	}
 
 	private Set<Entry<String, BiomeColorJson>> getSortedColorMapEntries() {
+		if(colorMap == null) {
+			return Collections.emptySet();
+		}
+
 		SortedMap<String, BiomeColorJson> result = new TreeMap<>(Biome::compareByIndex);
 		result.putAll(colorMap);
 		return result.entrySet();

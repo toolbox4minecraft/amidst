@@ -87,15 +87,17 @@ public class BiomeProfileDirectory {
 	}
 
 	private BiomeProfile createFromFile(File file) {
-		BiomeProfile profile = null;
 		if (file.exists() && file.isFile()) {
 			try {
-				profile = JsonReader.readLocation(file, BiomeProfile.class);
-				profile.validate();
+				BiomeProfile profile = JsonReader.readLocation(file, BiomeProfile.class);
+				if(profile.validate()) {
+					return profile;
+				}
+				AmidstLogger.warn("Profile invalid, ignoring: {}", file);
 			} catch (IOException | FormatException e) {
 				AmidstLogger.warn(e, "Unable to load file: {}", file);
 			}
 		}
-		return profile;
+		return null;
 	}
 }
