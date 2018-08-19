@@ -115,7 +115,7 @@ public class Amidst {
 	}
 
 	private static AmidstSettings createSettings() {
-		return new AmidstSettings(Preferences.userNodeForPackage(Amidst.class));
+		return new AmidstSettings(Preferences.userNodeForPackage(amidstest.Amidstest.class));
 	}
 
 	/**
