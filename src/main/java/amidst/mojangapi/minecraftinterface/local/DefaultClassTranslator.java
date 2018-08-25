@@ -74,7 +74,30 @@ public enum DefaultClassTranslator {
 						&& c.searchForFloat(0.62222224F)
 					)
 					.thenDeclareRequired(CLASS_BIOME)
-						.requiredMethod(METHOD_BIOME_GET_ID, "a").symbolic(CLASS_BIOME).end()
+						.optionalMethod(METHOD_BIOME_GET_ID, "a").symbolic(CLASS_BIOME).end()
+				.next()
+					.ifDetect(c ->
+							c.getNumberOfConstructors() == 3
+							&& c.getNumberOfFields() == 3
+							&& c.getField(0).hasFlags(AccessFlags.PRIVATE | AccessFlags.STATIC | AccessFlags.FINAL)
+							&& c.searchForUtf8EqualTo("argument.id.invalid")
+							&& c.searchForUtf8EqualTo("minecraft")
+					)
+					.thenDeclareOptional(CLASS_REGISTRY_KEY)
+						.requiredConstructor(CONSTRUCTOR_REGISTRY_KEY).real("java.lang.String").end()
+				.next()
+					.ifDetect(c ->
+						c.getNumberOfConstructors() == 0
+						&& c.getNumberOfFields() > 15
+						&& c.searchForUtf8EqualTo("block")
+						&& c.searchForUtf8EqualTo("potion")
+						&& c.searchForUtf8EqualTo("biome")
+						&& c.searchForUtf8EqualTo("item")
+					)
+					.thenDeclareOptional(CLASS_REGISTRY)
+						.requiredField(FIELD_REGISTRY_META_REGISTRY, "f")
+						.requiredMethod(METHOD_REGISTRY_GET_ID, "a").real("java.lang.Object").end()
+						.requiredMethod(METHOD_REGISTRY_GET_BY_KEY, "b").symbolic(CLASS_REGISTRY_KEY).end()
 					
 				.construct();
 		}

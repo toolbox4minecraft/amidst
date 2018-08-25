@@ -28,4 +28,12 @@ public enum SymbolicNames {
 	
 	public static final String CLASS_BIOME = "Biome";
 	public static final String METHOD_BIOME_GET_ID = "getBiomeId";
+	
+	public static final String CLASS_REGISTRY = "Registry";
+	public static final String FIELD_REGISTRY_META_REGISTRY = "metaRegistry";
+	public static final String METHOD_REGISTRY_GET_BY_KEY = "getByKey";
+	public static final String METHOD_REGISTRY_GET_ID = "getId";
+	
+	public static final String CLASS_REGISTRY_KEY = "RegistryKey";
+	public static final String CONSTRUCTOR_REGISTRY_KEY = "<init>";
 }

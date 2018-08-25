@@ -21,10 +21,25 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass genSettingsClass;
 	private final SymbolicClass layerUtilClass;
 	private final SymbolicClass genLayerClass;
-	private final SymbolicClass biomeClass; 
-	private MethodHandle biomeGetIdMethod;
+	private final SymbolicClass biomeClass;
+	private final SymbolicClass registryClass;
+	private final SymbolicClass registryKeyClass;
+	
+	private boolean isInitialized = false;
 	
 	private final RecognisedVersion recognisedVersion;
+	
+	/**
+	 * The Biome.getId method handle.
+	 * If version < 18w33a, the signature is: int getId(Biome)
+	 * If version >= 18w33a, the signature is: int getId(Registry<Biome>, Biome)
+	 */
+	private MethodHandle biomeGetIdMethod;
+	
+	/**
+	 * The biome registry, for use with versions >= 18w33a
+	 */
+	private Object biomeRegistry;
 	
 	/**
 	 * A GenLayer instance, at quarter scale to the final biome layer (i.e. both
@@ -54,6 +69,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			SymbolicClass genLayerClass,
 			SymbolicClass layerUtilClass,
 			SymbolicClass biomeClass,
+			SymbolicClass registryClass,
+			SymbolicClass registryKeyClass,
 			RecognisedVersion recognisedVersion) {
 		this.bootstrapClass = bootstrapClass;
 		this.worldTypeClass = worldTypeClass;
@@ -61,6 +78,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		this.genLayerClass = genLayerClass;
 		this.layerUtilClass = layerUtilClass;
 		this.biomeClass = biomeClass;
+		this.registryClass = registryClass;
+		this.registryKeyClass = registryKeyClass;
 		
 		this.recognisedVersion = recognisedVersion;
 	}
@@ -74,6 +93,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			symbolicClassMap.get(SymbolicNames.CLASS_GEN_LAYER),
 			symbolicClassMap.get(SymbolicNames.CLASS_LAYER_UTIL),
 			symbolicClassMap.get(SymbolicNames.CLASS_BIOME),
+			symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY),
+			symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY_KEY),
 			recognisedVersion);
 	}
 
@@ -81,9 +102,15 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
 		try {
-			if(biomeGetIdMethod == null) {
+			if(!isInitialized) {	
 				Method biomeRawMethod = biomeClass.getMethod(SymbolicNames.METHOD_BIOME_GET_ID).getRawMethod();
+				if(registryKeyClass != null && !biomeRawMethod.getReturnType().equals(Integer.TYPE)) {
+					biomeRegistry = getBiomeRegistry();
+					biomeRawMethod = registryClass.getMethod(SymbolicNames.METHOD_REGISTRY_GET_ID).getRawMethod();
+				}
 				biomeGetIdMethod = MethodHandles.lookup().unreflect(biomeRawMethod);
+				
+				isInitialized = true;
 			}
 			
 			
@@ -120,7 +147,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			}
 			
 			return data;			
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+		} catch (IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | InstantiationException e) {
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
 	}
@@ -130,6 +158,15 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		SymbolicObject biomeGen = getBiomeGenerator(useQuarterResolution);
 		Object[] biomes = (Object[]) biomeGen.callMethod(SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA, x, y, width, height, null);
 		return biomes;
+	}
+	
+	private Object getBiomeRegistry()
+		throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException {
+		SymbolicObject metaRegistry = (SymbolicObject) 
+				registryClass.getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY);
+		Object biomeRegistryKey = registryKeyClass.callConstructor(SymbolicNames.CONSTRUCTOR_REGISTRY_KEY, "biome").getObject();
+		Object biomeRegistryObj = metaRegistry.callMethod(SymbolicNames.METHOD_REGISTRY_GET_BY_KEY, biomeRegistryKey);
+		return biomeRegistryObj;
 	}
 
 	@Override
@@ -178,8 +215,11 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	
 	private int getBiomeId(Object biome) throws MinecraftInterfaceException {
 		try {
-			Object res = biomeGetIdMethod.invoke(biome);
-			return (int) res;
+			if(biomeRegistry != null) {
+				return (int) biomeGetIdMethod.invoke(biomeRegistry, biome);
+			} else {
+				return (int) biomeGetIdMethod.invoke(biome);
+			}
 		} catch (Throwable e) {
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}

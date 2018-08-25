@@ -79,7 +79,7 @@ public enum LegacyClassTranslator {
 				)
 				.thenDeclareOptional(CLASS_GEN_OPTIONS_FACTORY)
 					.requiredMethod(METHOD_GEN_OPTIONS_FACTORY_BUILD, "b").end()
-					.requiredMethod(METHOD_GEN_OPTIONS_FACTORY_JSON_TO_FACTORY, "a").real("String").end()
+					.requiredMethod(METHOD_GEN_OPTIONS_FACTORY_JSON_TO_FACTORY, "a").real("java.lang.String").end()
 			.construct();
 	}
 
