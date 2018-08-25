@@ -35,6 +35,7 @@ public class VersionFeatures {
 	private final Long seedForStructure_WitchHut;
 	private final Long seedForStructure_OceanRuins;
 	private final Long seedForStructure_Shipwreck;
+	private final Byte maxDistanceScatteredFeatures_Shipwreck;
 	private final Boolean buggyStructureCoordinateMath;
 
 	public VersionFeatures(
@@ -61,6 +62,7 @@ public class VersionFeatures {
 			Long seedForStructure_WitchHut,
 			Long seedForStructure_OceanRuins,
 			Long seedForStructure_Shipwreck,
+			Byte maxDistanceScatteredFeatures_Shipwreck,
 			Boolean buggyStructureCoordinateMath) {
 		this.enabledLayers = enabledLayers;
 		this.validBiomesForStructure_Spawn = validBiomesForStructure_Spawn;
@@ -85,6 +87,7 @@ public class VersionFeatures {
 		this.seedForStructure_WitchHut = seedForStructure_WitchHut;
 		this.seedForStructure_OceanRuins = seedForStructure_OceanRuins;
 		this.seedForStructure_Shipwreck = seedForStructure_Shipwreck;
+		this.maxDistanceScatteredFeatures_Shipwreck = maxDistanceScatteredFeatures_Shipwreck;
 		this.buggyStructureCoordinateMath = buggyStructureCoordinateMath;
 	}
 
@@ -178,6 +181,10 @@ public class VersionFeatures {
 	
 	public Long getSeedForStructure_Shipwreck() {
 		return seedForStructure_Shipwreck;
+	}
+	
+	public Byte getMaxDistanceScatteredFeatures_Shipwreck() {
+		return maxDistanceScatteredFeatures_Shipwreck;
 	}
 
 	public Boolean getBuggyStructureCoordinateMath() {

@@ -49,6 +49,7 @@ public enum DefaultVersionFeatures {
 				INSTANCE.seedForStructure_WitchHut.getValue(version),
 				INSTANCE.seedForStructure_OceanRuins.getValue(version),
 				INSTANCE.seedForStructure_Shipwreck.getValue(version),
+				INSTANCE.maxDistanceScatteredFeatures_Shipwreck.getValue(version),
 				INSTANCE.buggyStructureCoordinateMath.getValue(version));
 	}
 
@@ -75,6 +76,7 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<Long> seedForStructure_WitchHut;
 	private final VersionFeature<Long> seedForStructure_OceanRuins;
 	private final VersionFeature<Long> seedForStructure_Shipwreck;
+	private final VersionFeature<Byte> maxDistanceScatteredFeatures_Shipwreck;
 	private final VersionFeature<Boolean> buggyStructureCoordinateMath;
 
 	private DefaultVersionFeatures() {
@@ -327,6 +329,12 @@ public enum DefaultVersionFeatures {
 		this.seedForStructure_Shipwreck = VersionFeature.<Long> builder()
 				.init(
 						165745295L
+				).construct();
+		this.maxDistanceScatteredFeatures_Shipwreck = VersionFeature.<Byte> builder()
+				.init(
+					(byte) 15
+				).since(RecognisedVersion._1_13_pre7,
+					(byte) 16
 				).construct();
 				
 		this.buggyStructureCoordinateMath = VersionFeature.<Boolean> builder()
