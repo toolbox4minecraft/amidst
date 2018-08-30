@@ -183,7 +183,10 @@ public class Amidst {
 	private static void handleCrash(Throwable e, Thread thread) {
 		String message = "Amidst has encounted an uncaught exception on the thread " + thread;
 		try {
-			AmidstLogger.crash(e, message);
+			// troubleshoot/check for known problems first
+			boolean crashHandled = handleKnownCrashes(e);
+			
+			if (!crashHandled) AmidstLogger.crash(e, message);				
 			CrashWindow.showAfterCrash();
 		} catch (Throwable t) {
 			System.err.println("Amidst crashed!");
@@ -191,4 +194,35 @@ public class Amidst {
 			e.printStackTrace();
 		}
 	}
+	
+	@CalledByAny
+	private static boolean handleKnownCrashes(Throwable e) {
+
+		boolean result = false;
+		
+		if (e instanceof java.awt.AWTError && 
+			e.getCause() instanceof java.lang.ClassNotFoundException &&
+			e.getMessage() != null && e.getMessage().contains("GNOME.Accessibility")) {
+			// User is probably running this GUI app with a headless JDK
+			// https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=798794#10
+			AmidstLogger.crash(e); // Log the exception just in case this diagnoses is wrong
+			
+			AmidstLogger.crash("WARNING: You might be attempting to run this graphical application using a");
+			AmidstLogger.crash("JDK designed for headless systems.");
+			AmidstLogger.crash("Several solutions are detailed in the link below:");
+			AmidstLogger.crash("https://askubuntu.com/questions/695560/assistive-technology-not-found-awterror");
+			result = true;
+		}
+		
+		if (e instanceof java.lang.UnsupportedClassVersionError &&
+			e.getMessage() != null && e.getMessage().contains("Unsupported major.minor version 52")) {
+			// JRE 8 is required
+			AmidstLogger.crash(e); // Log the exception just in case this diagnoses is wrong
+			AmidstLogger.crash("WARNING: JRE 8 or later is required");			
+			result = true;
+		}
+		
+		return result;
+	}
+	
 }
