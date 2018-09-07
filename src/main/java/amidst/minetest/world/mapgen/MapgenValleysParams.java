@@ -8,8 +8,10 @@ import amidst.mojangapi.world.biome.BiomeColor;
 // TODO: be able to import these values from map_meta.txt files
 public class MapgenValleysParams extends MapgenParams {
 
-	public static final int FLAG_VALLEYS_ALT_CHILL     = 0x01;
-	public static final int FLAG_VALLEYS_HUMID_RIVERS  = 0x02;
+	public static final int FLAG_VALLEYS_ALT_CHILL         = 0x01;
+	public static final int FLAG_VALLEYS_HUMID_RIVERS      = 0x02;
+	public static final int FLAG_VALLEYS_VARY_RIVER_DEPTH  = 0x04;
+	public static final int FLAG_VALLEYS_ALT_DRY           = 0x08;
 		
 	public int spflags = FLAG_VALLEYS_ALT_CHILL | FLAG_VALLEYS_HUMID_RIVERS;
 	

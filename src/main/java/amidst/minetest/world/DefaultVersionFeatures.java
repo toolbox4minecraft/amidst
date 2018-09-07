@@ -94,8 +94,7 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 				.init(commonLayers)
 				.initExtend(
 						LayerIds.MINETEST_OCEAN,
-						LayerIds.MINETEST_OCEAN,
-						LayerIds.MINETEST_MOUNTAIN
+						LayerIds.MINETEST_RIVER
 				).construct()
 		);
 		enabledLayers.put(WorldType.V7,
@@ -168,6 +167,10 @@ public class DefaultVersionFeatures implements VersionFeaturesFactory {
 						new AbstractMap.SimpleEntry<WorldType, TriFunction<Long, MapgenParams, BiomeProfileSelection, IBiomeDataOracle>>(
 								WorldType.CARPATHIAN, 
 								(seed, mapgenParams, biomeProfile) -> new amidst.minetest.world.oracle.BiomeDataOracleCarpathian(mapgenParams, biomeProfile, seed)
+						),
+						new AbstractMap.SimpleEntry<WorldType, TriFunction<Long, MapgenParams, BiomeProfileSelection, IBiomeDataOracle>>(
+								WorldType.VALLEYS, 
+								(seed, mapgenParams, biomeProfile) -> new amidst.minetest.world.oracle.BiomeDataOracleValleys(mapgenParams, biomeProfile, seed)
 						),
 						new AbstractMap.SimpleEntry<WorldType, TriFunction<Long, MapgenParams, BiomeProfileSelection, IBiomeDataOracle>>(
 								WorldType.FLAT, 
