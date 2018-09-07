@@ -13,7 +13,7 @@ public class MapgenValleysParams extends MapgenParams {
 	public static final int FLAG_VALLEYS_VARY_RIVER_DEPTH  = 0x04;
 	public static final int FLAG_VALLEYS_ALT_DRY           = 0x08;
 		
-	public int spflags = FLAG_VALLEYS_ALT_CHILL | FLAG_VALLEYS_HUMID_RIVERS;
+	public int spflags = FLAG_VALLEYS_ALT_CHILL | FLAG_VALLEYS_HUMID_RIVERS | FLAG_VALLEYS_VARY_RIVER_DEPTH | FLAG_VALLEYS_ALT_DRY;
 	
 	public NoiseParams np_cave1              = new NoiseParams(0,    12.0f, new Vector3f(61,   61,   61),   52534, (short)3, 0.5f,  2.0f);
 	public NoiseParams np_cave2              = new NoiseParams(0,    12.0f, new Vector3f(67,   67,   67),   10325, (short)3, 0.5f,  2.0f);
@@ -43,7 +43,7 @@ public class MapgenValleysParams extends MapgenParams {
    		String prefix = "mgvalleys_";
 		StringBuilder result = new StringBuilder();
 		result.append(prefix + "spflags = "); 
-		appendFlags(result, spflags, new String[] {"altitude_chill", "humid_rivers"}); 
+		appendFlags(result, spflags, new String[] {"altitude_chill", "humid_rivers", "vary_river_depth", "altitude_dry"}); 
 		result.append("\r\n");
 		result.append(super.toString());
 		/* TODO

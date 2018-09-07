@@ -17,6 +17,15 @@ import amidst.settings.biomeprofile.BiomeProfileSelection;
 public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 	private final MapgenValleysParams valleysParams;
 		
+	// Raising this reduces the rate of evaporation
+	static final float evaporation = 300.0f;
+	static final float humidity_dropoff = 4.0f;
+	// Constant to convert altitude chill to heat
+	static final float alt_to_heat = 20.0f;
+	// Humidity reduction by altitude
+	static final float alt_to_humid = 10.0f;
+	
+	
 	private Noise noise_cave1;
 	private Noise noise_cave2;
 	private Noise noise_filler_depth;
@@ -27,7 +36,6 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 	private Noise noise_terrain_height;
 	private Noise noise_valley_depth;
 	private Noise noise_valley_profile;
-	private int grad_wl;
 	
 	boolean humid_rivers;
 	boolean use_altitude_chill;
@@ -35,7 +43,6 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 	boolean vary_driver_depth;
 	
 	float altitude_chill;
-	float humidity_adjust;
 	float river_depth_bed;
 	float river_size_factor;	
 	
@@ -53,6 +60,9 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 		float valley_profile;
 		float slope;
 		float inter_valley_fill;
+		
+		float heat;
+		float humidity;
 		boolean isRiver;
 	};
 	
@@ -74,7 +84,8 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 			this.params = valleysParams = new MapgenValleysParams();
 		}
 		
-		grad_wl = 1 - params.water_level;
+		altitude_chill    = valleysParams.altitude_chill;
+		river_depth_bed   = valleysParams.river_depth + 1.0f;
 		river_size_factor = valleysParams.river_size / 100.0f;
 		
 		try {
@@ -99,14 +110,26 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 			ex.printStackTrace();
 		}
 		
-		humid_rivers       = (valleysParams.spflags & MapgenValleysParams.FLAG_VALLEYS_HUMID_RIVERS) > 0;
-		use_altitude_chill = (valleysParams.spflags & MapgenValleysParams.FLAG_VALLEYS_ALT_CHILL) > 0;
-		use_altitude_dry   = (valleysParams.spflags & MapgenValleysParams.FLAG_VALLEYS_ALT_DRY) > 0;
+		humid_rivers       = (valleysParams.spflags & MapgenValleysParams.FLAG_VALLEYS_HUMID_RIVERS)     > 0;
+		use_altitude_chill = (valleysParams.spflags & MapgenValleysParams.FLAG_VALLEYS_ALT_CHILL)        > 0;
+		use_altitude_dry   = (valleysParams.spflags & MapgenValleysParams.FLAG_VALLEYS_ALT_DRY)          > 0;
 		vary_driver_depth  = (valleysParams.spflags & MapgenValleysParams.FLAG_VALLEYS_VARY_RIVER_DEPTH) > 0;
 	}	
 		
 	float terrainLevelAtPoint(int x, int z)
 	{
+		tempTerrainNoise.heat =
+				Noise.NoisePerlin2D(params.np_heat,           x, z, seed) +
+				Noise.NoisePerlin2D(params.np_heat_blend,     x, z, seed);
+		tempTerrainNoise.humidity =
+				Noise.NoisePerlin2D(params.np_humidity,       x, z, seed) +
+				Noise.NoisePerlin2D(params.np_humidity_blend, x, z, seed);
+			
+		// Altitude chill tends to reduce the average heat.
+		if (use_altitude_chill) tempTerrainNoise.heat += 5.0f;
+		// River humidity tends to increase the humidity range.
+		if (humid_rivers) tempTerrainNoise.humidity *= 0.8f;		
+		
 		tempTerrainNoise.x                 = x;
 		tempTerrainNoise.z                 = z;
 		tempTerrainNoise.terrain_height    = Noise.NoisePerlin2D(noise_terrain_height.np, x, z, seed);
@@ -115,12 +138,46 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 		tempTerrainNoise.valley_profile    = Noise.NoisePerlin2D(noise_valley_profile.np, x, z, seed);
 		tempTerrainNoise.slope             = Noise.NoisePerlin2D(noise_inter_valley_slope.np, x, z, seed);
 		tempTerrainNoise.inter_valley_fill = 0.f;
-
-		return adjustedTerrainLevelFromNoise(tempTerrainNoise);	
+		
+		float terrain_height = adjustedTerrainLevelFromNoise(tempTerrainNoise);
+		
+		// Note that tempTerrainNoise.slope, tempTerrainNoise.rivers, and 
+		// tempTerrainNoise.valley have now been updated with new values.
+		
+		// Ground height ignoring riverbeds
+		float t_alt = Math.max(tempTerrainNoise.rivers, terrain_height);
+		
+		if (humid_rivers) {			
+			float river_y = tempTerrainNoise.rivers;
+			if (vary_driver_depth) {
+				float heat = (use_altitude_chill && (terrain_height > 0.0f || river_y > 0.0f)) ?
+						tempTerrainNoise.heat - alt_to_heat * Math.max(terrain_height, river_y) / altitude_chill : 
+						tempTerrainNoise.heat;
+				float delta = tempTerrainNoise.humidity - 50.0f;
+				if (delta < 0.0f) {
+					float t_evap = (heat - 32.0f) / evaporation;
+					river_y += delta * Math.max(t_evap, 0.08f);
+				}				
+			}			
+			float water_depth = (t_alt - river_y) / humidity_dropoff;
+			tempTerrainNoise.humidity *= 1.0f + Math.pow(0.5f, Math.max(water_depth, 1.0f));
+		}
+		if (use_altitude_dry) {
+			if (t_alt > 0.0f) tempTerrainNoise.humidity -= alt_to_humid * t_alt / altitude_chill;
+		}
+		if (use_altitude_chill) {
+			if (t_alt > 0.0f) tempTerrainNoise.heat -= alt_to_heat * t_alt / altitude_chill;			
+		}
+		
+		return terrain_height;
 	}
 	
-	// This avoids duplicating the code in terrainLevelFromNoise, adding
-	// only the final step of terrain generation without a noise map.
+	/**
+	 * Side effect warning: Updates tn.slope, tn.rivers, tn.valley
+	 *
+	 * This avoids duplicating the code in terrainLevelFromNoise, adding
+	 * only the final step of terrain generation without a noise map.
+	 */
 	float adjustedTerrainLevelFromNoise(TerrainNoise tn)
 	{
 		float mount = terrainLevelFromNoise(tn);
@@ -128,18 +185,22 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 
 		for (int y = y_start; y <= y_start + 1000; y++) {
 			float fill = Noise.NoisePerlin3D(noise_inter_valley_fill.np, tn.x, y, tn.z, seed);
-
 			if (fill * tn.slope < y - mount) {
 				mount = Math.max(y - 1, mount);   // was using MYMAX(),, #define MYMAX(a, b) ((a) > (b) ? (a) : (b))
 				break;
 			}
 		}
-
 		return mount;
 	}	
 		
-	// This is in a separate function to save the code inside minetest from having  
-	// to maintain two similar sets of complicated code to determine ground level.
+	/**
+	 * Side effect warning: Updates tn.slope, tn.rivers, tn.valley
+	 * 
+	 * This is in a separate function to save the code inside minetest from having
+	 * to maintain two similar sets of complicated code to determine ground level.  
+	 * @param tn
+	 * @return
+	 */
 	float terrainLevelFromNoise(TerrainNoise tn)
 	{
 		// The square function changes the behaviour of this noise:
@@ -152,11 +213,11 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 		float base = tn.terrain_height + valley_d;
 
 		// "river" represents the distance from the river
-		float river = Math.abs(tn.rivers) - river_size_factor;
+		float riverDist = Math.abs(tn.rivers) - river_size_factor;
 
 		// Use the curve of the function 1-exp(-(x/a)^2) to model valleys.
 		// "valley" represents the height of the terrain, from the rivers.
-		float tv = Math.max(river / tn.valley_profile, 0.0f);
+		float tv = Math.max(riverDist / tn.valley_profile, 0.0f);
 		tn.valley = valley_d * (1.0f - (float)Math.exp(-(tv * tv)));
 
 		// Approximate height of the terrain at this point
@@ -169,11 +230,11 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 
 		// Rivers are placed where "river" is negative, so where the original noise
 		// value is close to zero.
-		if (river < 0.0f) {
+		if (riverDist < 0.0f) {
 			tn.isRiver = true;
 			
 			// Use the the function -sqrt(1-x^2) which models a circle
-			float tr = river / river_size_factor + 1.0f;
+			float tr = riverDist / river_size_factor + 1.0f;
 			float depth = (float) (river_depth_bed *
 				Math.sqrt(Math.max(0.0f, 1.0f - (tr * tr))));
 
@@ -235,7 +296,7 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 																		
 						// add the biome index
 						// (mask the bitplanes in case the biome returned is -1 (NONE)
-						biomeValue |= calcBiomeAtPoint(biomes, world_x, surface_y, world_z).getIndex() & MASK_BITPLANES;
+						biomeValue |= calcBiomeFromNoise(biomes, tempTerrainNoise.heat, tempTerrainNoise.humidity, surface_y).getIndex() & MASK_BITPLANES;
 						
 						result[x][y] = biomeValue;					
 						world_x += step;
