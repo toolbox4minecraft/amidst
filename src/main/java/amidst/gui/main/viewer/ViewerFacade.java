@@ -10,6 +10,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentGraph;
+import amidst.fragment.IBiomeDataOracle;
 import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.mojangapi.world.Dimension;
@@ -138,6 +139,11 @@ public class ViewerFacade {
 		worldIconSelection.select(worldIcon);
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
+	public IBiomeDataOracle getBiomeDataOracle() {
+		return world.getBiomeDataOracle();
+	}
+	
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldSeed getWorldSeed() {
 		return world.getWorldSeed();

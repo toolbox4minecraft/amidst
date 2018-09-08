@@ -17,6 +17,7 @@ import amidst.gui.text.TextWindow;
 import amidst.gui.voronoi.VoronoiWindow;
 import amidst.logging.AmidstMessageBox;
 import amidst.minetest.world.mapgen.IHistogram2D;
+import amidst.minetest.world.mapgen.MapgenRelay;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
@@ -119,8 +120,8 @@ public class MainWindowDialogs {
 	}
 	
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayVoronoiDiagram(BiomeProfileSelection biome_profile_selection, IHistogram2D climate_histogram) {
-		VoronoiWindow.showDiagram(frame, biome_profile_selection, climate_histogram);
+	public void displayVoronoiDiagram(BiomeProfileSelection biome_profile_selection, MapgenRelay mapgen, IHistogram2D climate_histogram) {
+		VoronoiWindow.showDiagram(frame, biome_profile_selection, mapgen, climate_histogram);
 	}	
 
 	@CalledOnlyBy(AmidstThread.EDT)

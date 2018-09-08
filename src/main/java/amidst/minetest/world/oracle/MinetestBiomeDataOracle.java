@@ -8,6 +8,7 @@ import amidst.gameengineabstraction.world.biome.IBiome;
 import amidst.logging.AmidstLogger;
 import amidst.minetest.world.mapgen.ClimateHistogram;
 import amidst.minetest.world.mapgen.IHistogram2D;
+import amidst.minetest.world.mapgen.IHistogram2DTransformationProvider;
 import amidst.minetest.world.mapgen.MapgenParams;
 import amidst.minetest.world.mapgen.MinetestBiome;
 import amidst.minetest.world.mapgen.MinetestBiomeProfileImpl;
@@ -145,6 +146,21 @@ public abstract class MinetestBiomeDataOracle implements IBiomeDataOracle, Biome
 			);
 		}
 		return climateHistogram;		
+	}
+	
+	/**
+	 * Feel free to override this with the name of the mapgen in subclasses.
+	 * (Currently it's only needed by Oracles that implement IHistogram2DTransformationProvider)
+	 * Normally you could get a name from the WorldType, but in some places
+	 * the worldType hasn't been stored.
+	 */
+	public String getName() {
+		String result = this.getClass().getName();
+		int pos = result.lastIndexOf("DataOracle");
+		if (pos >= 0 && (pos + 10) < result.length()) {
+			result = result.substring(pos + 10);
+		}
+		return result;
 	}
 	
 	@Override

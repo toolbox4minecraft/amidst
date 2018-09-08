@@ -4,10 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import amidst.dependency.injection.Factory1;
 import amidst.documentation.AmidstThread;
@@ -25,7 +27,6 @@ import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.WorldPlayerType;
 import amidst.parsing.FormatException;
-import amidst.settings.biomeprofile.BiomeProfile;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.threading.ThreadMaster;
 
@@ -40,6 +41,7 @@ public class WorldSwitcher {
 	private final AtomicReference<ViewerFacade> viewerFacadeReference;
 	private final MainWindowDialogs dialogs;
 	private final Supplier<AmidstMenu> menuBarSupplier;
+	private final ArrayList<WorldSwitchedListener> listeners = new ArrayList<WorldSwitchedListener>();
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldSwitcher(
@@ -62,6 +64,14 @@ public class WorldSwitcher {
 		this.dialogs = dialogs;
 		this.menuBarSupplier = menuBarSupplier;
 	}
+	
+	public ViewerFacade addWorldSwitchedListener(WorldSwitchedListener listener) {
+		listeners.add(listener);
+		return viewerFacadeReference.get();
+	}
+	public void removeWorldSwitchedListener(WorldSwitchedListener listener) {
+		listeners.remove(listener);
+	}	
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayWorld(WorldSeed worldSeed, WorldType worldType, BiomeProfileSelection biomeProfileSelection) {
@@ -131,6 +141,12 @@ public class WorldSwitcher {
 		threadMaster.setOnRepaintTick(viewerFacade.getOnRepainterTick());
 		threadMaster.setOnFragmentLoadTick(viewerFacade.getOnFragmentLoaderTick());
 		viewerFacadeReference.set(viewerFacade);
+		
+		SwingUtilities.invokeLater(() -> {
+			for (WorldSwitchedListener listener: listeners) {
+				listener.onWorldSwitched(viewerFacade);
+			}		
+		});		
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

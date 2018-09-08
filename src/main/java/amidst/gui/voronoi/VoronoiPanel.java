@@ -23,9 +23,11 @@ import javax.swing.SwingUtilities;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
+import amidst.fragment.IBiomeDataOracle;
 import amidst.gameengineabstraction.world.biome.IBiome;
 import amidst.minetest.world.mapgen.ClimateHistogram;
 import amidst.minetest.world.mapgen.IHistogram2D;
+import amidst.minetest.world.mapgen.IHistogram2DTransformationProvider;
 import amidst.minetest.world.mapgen.MinetestBiome;
 import amidst.minetest.world.mapgen.MinetestBiomeProfileImpl;
 
@@ -60,6 +62,9 @@ public class VoronoiPanel extends JPanel {
 	public int graph_resolution = 1000;
 
 	private IHistogram2D climateHistogram = null;
+	private IHistogram2D adjustedClimateHistogram         = null;
+	private float        adjustedClimateHistogramArgument = Float.NaN;
+	private IHistogram2DTransformationProvider mapgenClimateHistogramAdjustment = null;
 	ArrayList<MinetestBiome> biomes = new ArrayList<MinetestBiome>();
 	private List<GraphNode> graphNodes = null;
 	private VoronoiGraph   voronoiGraph   = null;
@@ -73,8 +78,12 @@ public class VoronoiPanel extends JPanel {
         super.paintComponent(g);
 
         boolean frequencyGraphWasNull = frequencyGraph == null;
-        if (climateHistogram == null) climateHistogram = new ClimateHistogram();
-        if (voronoiGraph     == null) voronoiGraph     = new VoronoiGraph(graph_resolution, graph_resolution, climateHistogram);
+        if (adjustedClimateHistogram == null) {
+        	if (climateHistogram == null) climateHistogram = new ClimateHistogram();
+        	adjustedClimateHistogram = (mapgenClimateHistogramAdjustment == null) ? climateHistogram : mapgenClimateHistogramAdjustment.getTransformedHistogram(climateHistogram, adjustedClimateHistogramArgument);
+        	if (voronoiGraph != null) voronoiGraph.setHistogram(adjustedClimateHistogram);
+        }
+        if (voronoiGraph     == null) voronoiGraph     = new VoronoiGraph(graph_resolution, graph_resolution, adjustedClimateHistogram);
         if (frequencyGraph   == null) frequencyGraph   = new FrequencyGraph(graph_resolution, graph_resolution);
 
         this.setBorder(null);
@@ -132,7 +141,7 @@ public class VoronoiPanel extends JPanel {
 	            try {
 	            	if (graphNodes != null) {
 	            		g2d.drawImage(
-	            			frequencyGraph.render(climateHistogram, axis_min, axis_max, axis_min, axis_max),
+	            			frequencyGraph.render(adjustedClimateHistogram, axis_min, axis_max, axis_min, axis_max),
 	            			axis_min, axis_min, desiredAxisLength, desiredAxisLength, null, null
 	            		);
 	            	}
@@ -150,7 +159,7 @@ public class VoronoiPanel extends JPanel {
         	// In order to prevent a delay when the user enables the frequencyGraph,
         	// Make it pre-render after the UI has finished updating.
         	SwingUtilities.invokeLater(() -> {
-        		frequencyGraph.render(climateHistogram, axis_min, axis_max, axis_min, axis_max);
+        		frequencyGraph.render(adjustedClimateHistogram, axis_min, axis_max, axis_min, axis_max);
     		});
         }
     }
@@ -328,10 +337,13 @@ public class VoronoiPanel extends JPanel {
 	 * If the world doesn't use Minetest's default Heat&Humidity algorithm, then pass
 	 * a histogram of it here.
 	 */
-	public void setClimateHistogram(IHistogram2D climate_histogram) { this.climateHistogram = climate_histogram; }
+	public void setClimateHistogram(IHistogram2D climate_histogram) { 
+		this.climateHistogram = climate_histogram;
+		this.adjustedClimateHistogram = null; // force adjustedClimateHistogram to be recalculated with the new climateHistogram
+	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void Update(MinetestBiomeProfileImpl biomeProfile, int altitude, float frequency_graph_opacity, int flags) {
+	public void Update(MinetestBiomeProfileImpl biomeProfile, IBiomeDataOracle mapgen, int altitude, float frequency_graph_opacity, int flags) {
 
 		ArrayList<MinetestBiome> newBiomes = new ArrayList<MinetestBiome>();
 		if (biomeProfile != null) for (IBiome biome : biomeProfile.allBiomes()) {
@@ -350,7 +362,23 @@ public class VoronoiPanel extends JPanel {
 				if (!alreadyOccupied) newBiomes.add(mtBiome);
 			}
 		}
-
+				
+		IHistogram2DTransformationProvider oldAjustment = mapgenClimateHistogramAdjustment;
+		float oldArgument = adjustedClimateHistogramArgument;
+		
+		if (mapgen instanceof IHistogram2DTransformationProvider) {
+			mapgenClimateHistogramAdjustment = (IHistogram2DTransformationProvider)mapgen;
+			adjustedClimateHistogramArgument = altitude;
+		} else {
+			mapgenClimateHistogramAdjustment = null;
+			adjustedClimateHistogramArgument = Float.NaN;
+		}
+		boolean histogramAdjusted = oldAjustment != mapgenClimateHistogramAdjustment || oldArgument != adjustedClimateHistogramArgument;
+		if (histogramAdjusted) {
+			// something changed, force adjustedClimateHistogram to be recalculated.
+			this.adjustedClimateHistogram = null;
+		}
+		
 		if (flags != this.renderFlags || !newBiomes.equals(biomes) || frequencyGraphOpacity != frequency_graph_opacity) {
 			this.renderFlags = flags;
 			biomes = newBiomes;
@@ -360,6 +388,8 @@ public class VoronoiPanel extends JPanel {
 				graphNodes.add(new GraphNode(biome.heat_point, biome.humidity_point, biome.getDefaultColor().getRGB()));
 			}
 
+			repaint();
+		} else if (histogramAdjusted) {
 			repaint();
 		}
 	}

@@ -27,6 +27,7 @@ import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.logging.AmidstLogger;
 import amidst.minetest.world.mapgen.DefaultBiomes;
+import amidst.minetest.world.mapgen.MapgenRelay;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
@@ -47,6 +48,7 @@ public class Actions {
 	private final BiomeAuthority biomeAuthority;
 	private final GameEngineDetails gameEngineDetails;
 	private final AmidstVersion amidstVersion;
+	private final MapgenRelay mapgenRelay;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Actions(
@@ -66,6 +68,8 @@ public class Actions {
 		this.biomeAuthority = biomeAuthority;
 		this.gameEngineDetails = gameEngineDetails;
 		this.amidstVersion = amidstVersion;
+		
+		this.mapgenRelay = new MapgenRelay(worldSwitcher);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -339,7 +343,7 @@ public class Actions {
 			// only one implemented anyway.
 			// It might be worth passing this value once Amidstest is reading game profiles,
 			// as then it will at least know if the current world DOESN'T use the default climate settings.
-			dialogs.displayVoronoiDiagram(biomeAuthority.getBiomeProfileSelection(), null);
+			dialogs.displayVoronoiDiagram(biomeAuthority.getBiomeProfileSelection(), mapgenRelay, null);
 		} else {
 			dialogs.displayInfo("Biome profile Voronoi diagram", "Minecraft biomes are not determined by heat and humidity.");
 		}		

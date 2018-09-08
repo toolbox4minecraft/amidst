@@ -1,9 +1,12 @@
 package amidst.minetest.world.oracle;
 
+import javax.vecmath.Point2d;
+
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
-import amidst.minetest.world.mapgen.Constants;
+import amidst.minetest.world.mapgen.IHistogram2D;
+import amidst.minetest.world.mapgen.IHistogram2DTransformationProvider;
 import amidst.minetest.world.mapgen.InvalidNoiseParamsException;
 import amidst.minetest.world.mapgen.MapgenParams;
 import amidst.minetest.world.mapgen.MapgenValleysParams;
@@ -14,15 +17,15 @@ import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @Immutable
-public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
+public class BiomeDataOracleValleys extends MinetestBiomeDataOracle implements IHistogram2DTransformationProvider {
 	private final MapgenValleysParams valleysParams;
 		
-	// Raising this reduces the rate of evaporation
+	/** Raising this reduces the rate of evaporation */
 	static final float evaporation = 300.0f;
 	static final float humidity_dropoff = 4.0f;
-	// Constant to convert altitude chill to heat
+	/** Constant to convert altitude chill to heat */
 	static final float alt_to_heat = 20.0f;
-	// Humidity reduction by altitude
+	/** Humidity reduction by altitude */
 	static final float alt_to_humid = 10.0f;
 	
 	
@@ -66,7 +69,77 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 		boolean isRiver;
 	};
 	
-	
+	/**
+	 * Provides the climate histogram for a Valleys map at the given altitude
+	 * (Valleys mapgen adjusts the climate with altitude and around rivers)
+	 */
+	class ValleysClimateHistogram implements IHistogram2D {
+		IHistogram2D sourceHistogram;
+		float altitude;
+		Point2d sampleMean = null;		
+		
+		@Override
+		public double frequencyOfOccurance(float temperature, float humidity) {
+
+			if (altitude > 0.0f) {
+				if (use_altitude_dry)   humidity    += alt_to_humid * altitude / altitude_chill;
+				if (use_altitude_chill) temperature += alt_to_heat  * altitude / altitude_chill;			
+			}
+			
+			// TODO Crazy math to add river humidity distribution to sourceHistogram
+
+			// Average heat was increased to balance against altitude chill.
+			if (use_altitude_chill) temperature -= 5.0f;
+			// Humidity was scaled down to balance the effect of rivers.
+			if (humid_rivers) humidity /= 0.8f;	
+
+			// Now that we've performed the opposite of every transformation Valleys mapgen
+			// makes to the humidity and temperature, we can obtain the frequencyOfOccurance.
+			double result = sourceHistogram.frequencyOfOccurance(temperature, humidity);
+			
+			// results outside the sampling range return NaN rather than zero, but the
+			// sampling range covers all non-zero values, so we can treat NaN as zero.
+			return Double.isNaN(result) ? 0 : result;
+		}
+
+		@Override
+		/**
+		 * Returns the "FrequencyOfOccurance" value at which 'percentile' amount of
+		 * samples will fall beneath.
+		 * So if percentile was 10, then a value between 0 and 1 would be returned such
+		 * that 10% of results from FrequencyOfOccurance() would fall below it.
+		 */
+		public double frequencyAtPercentile(double percentile) {
+			// TODO Auto-generated method stub
+			return sourceHistogram.frequencyAtPercentile(percentile);
+		}
+
+		@Override
+		public Point2d getSampleMean() {
+			if (sampleMean == null) { 
+				sampleMean = new Point2d(sourceHistogram.getSampleMean());
+				
+				// Average heat was increased to balance against altitude chill.
+				if (use_altitude_chill) sampleMean.x += 5.0f;
+				// Humidity was scaled down to balance the effect of rivers.
+				if (humid_rivers) sampleMean.y *= 0.8f;	
+							
+				// TODO Crazy math to add river humidity distribution to sourceHistogram
+				
+				if (altitude > 0.0f) {
+					if (use_altitude_dry)   sampleMean.y -= alt_to_humid * altitude / altitude_chill;
+					if (use_altitude_chill) sampleMean.x -= alt_to_heat  * altitude / altitude_chill;			
+				}
+			}
+			return sampleMean;
+		}
+
+		public ValleysClimateHistogram(IHistogram2D source_histogram, float altitude) {
+			this.sourceHistogram = source_histogram;
+			this.altitude        = altitude;			
+		}		
+	}
+		
 	/**
 	 * @param mapgenCarpathianParams
 	 * @param biomeProfileSelection - if null then a default biomeprofile will be used
@@ -115,6 +188,11 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 		use_altitude_dry   = (valleysParams.spflags & MapgenValleysParams.FLAG_VALLEYS_ALT_DRY)          > 0;
 		vary_driver_depth  = (valleysParams.spflags & MapgenValleysParams.FLAG_VALLEYS_VARY_RIVER_DEPTH) > 0;
 	}	
+	
+	@Override
+	public IHistogram2D getTransformedHistogram(IHistogram2D climate_histogram, float altitude) {
+		return new ValleysClimateHistogram(climate_histogram, altitude);
+	}	
 		
 	float terrainLevelAtPoint(int x, int z)
 	{
@@ -143,6 +221,11 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 		
 		// Note that tempTerrainNoise.slope, tempTerrainNoise.rivers, and 
 		// tempTerrainNoise.valley have now been updated with new values.
+		//
+		// If there is a river then terrain_height is the height of the bottom of the
+		// river, otherwise it's the height above the water-table.
+		// tempTerrainNoise.rivers is the water table (and the height of rivers), it's 
+		// greater than terrain_height if there is a river.
 		
 		// Ground height ignoring riverbeds
 		float t_alt = Math.max(tempTerrainNoise.rivers, terrain_height);
@@ -150,6 +233,7 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 		if (humid_rivers) {			
 			float river_y = tempTerrainNoise.rivers;
 			if (vary_driver_depth) {
+				// get a heat value that includes altitude chill
 				float heat = (use_altitude_chill && (terrain_height > 0.0f || river_y > 0.0f)) ?
 						tempTerrainNoise.heat - alt_to_heat * Math.max(terrain_height, river_y) / altitude_chill : 
 						tempTerrainNoise.heat;
@@ -159,8 +243,11 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle {
 					river_y += delta * Math.max(t_evap, 0.08f);
 				}				
 			}			
-			float water_depth = (t_alt - river_y) / humidity_dropoff;
-			tempTerrainNoise.humidity *= 1.0f + Math.pow(0.5f, Math.max(water_depth, 1.0f));
+			float water_depth = (t_alt - river_y) / humidity_dropoff; // depth of water-table from surface, not depth of the river
+			double humidityScale = 1.0f + Math.pow(0.5f, Math.max(water_depth, 1.0f));
+			tempTerrainNoise.humidity *= humidityScale;
+			//AmidstLogger.info("*" + humidityScale);
+			
 		}
 		if (use_altitude_dry) {
 			if (t_alt > 0.0f) tempTerrainNoise.humidity -= alt_to_humid * t_alt / altitude_chill;

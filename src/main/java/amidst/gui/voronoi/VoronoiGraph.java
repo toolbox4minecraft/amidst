@@ -25,6 +25,10 @@ public class VoronoiGraph {
 		}
 	}
 
+	public void setHistogram(IHistogram2D histogram) {
+		climateHistogram = histogram;
+	}
+
 	/**
 	 * Returns an image of the Vonoroi graph, and if a climateHistogram has been provided then
 	 * it calculates and sets the occurrenceFrequency field in each of the GraphNodes.

@@ -5,8 +5,11 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Image;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Hashtable;
@@ -32,14 +35,19 @@ import net.miginfocom.swing.MigLayout;
 import amidst.ResourceLoader;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
+import amidst.fragment.IBiomeDataOracle;
 import amidst.gui.text.TextWindow;
 import amidst.minetest.world.mapgen.IHistogram2D;
+import amidst.minetest.world.mapgen.IHistogram2DTransformationProvider;
+import amidst.minetest.world.mapgen.MapgenRelay;
+import amidst.minetest.world.mapgen.MapgenUpdatedListener;
 import amidst.minetest.world.mapgen.MinetestBiomeProfileImpl;
+import amidst.minetest.world.oracle.MinetestBiomeDataOracle;
 import amidst.settings.biomeprofile.BiomeProfile;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.settings.biomeprofile.BiomeProfileUpdateListener;
 
-public class VoronoiWindow implements BiomeProfileUpdateListener, ChangeListener {
+public class VoronoiWindow implements BiomeProfileUpdateListener, MapgenUpdatedListener, ChangeListener, KeyEventDispatcher {
 
 	private static final int ALTITUDESLIDER_DEFAULT_LOW    = -40;
 	private static final int ALTITUDESLIDER_DEFAULT_HIGH   = 200;
@@ -47,6 +55,7 @@ public class VoronoiWindow implements BiomeProfileUpdateListener, ChangeListener
 
 	private static VoronoiWindow voronoiWindow = null;
 	private BiomeProfileSelection biomeProfileSelection;
+	private MapgenRelay mapgenRelay;
 
 	private final JFrame windowFrame;
 	private VoronoiPanel voronoiPanel;
@@ -60,6 +69,7 @@ public class VoronoiWindow implements BiomeProfileUpdateListener, ChangeListener
 	private JCheckBox option_showCoverage;
 
 	private MinetestBiomeProfileImpl selectedProfile = null;
+	private MinetestBiomeDataOracle  selectedMapgen  = null;
 
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -213,6 +223,22 @@ public class VoronoiWindow implements BiomeProfileUpdateListener, ChangeListener
 	}
 
 	@Override
+	public void onMapgenUpdated(IBiomeDataOracle biomeDataOracle) {
+		UpdateSelectedMapgen(biomeDataOracle);
+	}
+	
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent e) {
+		if (e.getID() == KeyEvent.VK_F5) {
+			// TODO: Reload the biome from disk and update the Voronoi diagram
+			// (Use case: biome-editing using a text editor, since Amidst doesn't provide
+			// a Voronoi editor. Auto update when file updates would be even better)			
+	    }
+		// return false to pass the KeyEvent to the next KeyEventDispatcher in the chain
+		return false;
+	}	
+
+	@Override
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource() == altitudeOffset) {
 			updateHeightSlider((int)altitudeOffset.getValue());
@@ -223,7 +249,12 @@ public class VoronoiWindow implements BiomeProfileUpdateListener, ChangeListener
 	private void InfoButtonClicked() {
 		StringBuilder data = new StringBuilder();
 		data.append("Biome profile: ");
-		data.append(selectedProfile.getName());
+		data.append(selectedProfile.getName());		
+		if (selectedMapgen instanceof IHistogram2DTransformationProvider) {
+			data.append(" with ");
+			data.append(selectedMapgen.getName());
+			data.append(" mapgen");
+		}		
 		data.append("\r\n\r\n");
 		data.append("At altitude " + getAltitudeFromDialog() + ", the world is composed of the following biomes:\r\n\r\n");
 		data.append(voronoiPanel.getDistributionData());
@@ -273,7 +304,27 @@ public class VoronoiWindow implements BiomeProfileUpdateListener, ChangeListener
 		selectedProfile = minetestProfile;
 
 		if (changed) updateVoronoiDiagram();
-		this.windowFrame.setTitle(selectedProfile == null ? "Biome profile Voronoi diagram" : "Voronoi diagram for " + selectedProfile.getName());
+		this.windowFrame.setTitle(getTitle(selectedProfile, selectedMapgen));
+	}
+	
+	private void UpdateSelectedMapgen(IBiomeDataOracle newMapgen) {
+
+		MinetestBiomeDataOracle minetestMapgen = (newMapgen instanceof MinetestBiomeDataOracle) ? (MinetestBiomeDataOracle)newMapgen : null;
+
+		boolean changed = (minetestMapgen == null) ? (selectedMapgen != null) : (selectedMapgen == null || (minetestMapgen.getClass() != selectedMapgen.getClass()));
+		selectedMapgen = minetestMapgen;
+
+		if (changed) updateVoronoiDiagram();
+		this.windowFrame.setTitle(getTitle(selectedProfile, selectedMapgen));
+	}
+	
+	private String getTitle(MinetestBiomeProfileImpl biome_profile, MinetestBiomeDataOracle mapgen) {
+		String result = biome_profile == null ? "Biome profile Voronoi diagram" : "Voronoi diagram for " + biome_profile.getName();
+		
+		if (mapgen instanceof IHistogram2DTransformationProvider) {
+			result += " with " + mapgen.getName() + " mapgen";
+		}
+		return result;
 	}
 
 	private void updateVoronoiDiagram() {
@@ -281,7 +332,7 @@ public class VoronoiWindow implements BiomeProfileUpdateListener, ChangeListener
 			() -> {
 				int altitude = getAltitudeFromDialog();
 				float freqGraphOpacity = freqGraphSlider.getValue() / 100f;
-				voronoiPanel.Update(selectedProfile, altitude, freqGraphOpacity, getOptionFlagsFromDialog());
+				voronoiPanel.Update(selectedProfile, selectedMapgen, altitude, freqGraphOpacity, getOptionFlagsFromDialog());
 				graphHeading.setText("Biomes at altitude " + altitude);
 			}
 		);
@@ -319,33 +370,44 @@ public class VoronoiWindow implements BiomeProfileUpdateListener, ChangeListener
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void show(BiomeProfileSelection biomeProfileSelection) {
+	private void show(BiomeProfileSelection biomeProfileSelection, MapgenRelay mapgen_relay) {
 
 		if (this.biomeProfileSelection != null) {
 			this.biomeProfileSelection.removeUpdateListener(this);
 		}
+		if (this.mapgenRelay != null) {
+			this.mapgenRelay.removeMapgenUpdatedListener(this);
+		}
 
 		this.biomeProfileSelection = biomeProfileSelection;
+		this.mapgenRelay = mapgen_relay;
 
 		BiomeProfile newProfile = null;
 		if (biomeProfileSelection != null) {
 			this.biomeProfileSelection.addUpdateListener(this);
 			newProfile = this.biomeProfileSelection.getCurrentBiomeProfile();
 		}
+		IBiomeDataOracle newMapgen = null;
+		if (mapgen_relay != null) {
+			this.mapgenRelay.addMapgenUpdatedListener(this);
+			newMapgen = this.mapgenRelay.getBiomeDataOracle();
+		}
+		
 
 		UpdateSelectedBiomeProfile(newProfile);
+		UpdateSelectedMapgen(newMapgen);
 		this.windowFrame.setVisible(true);
 	}
 
 	/** Creates and displays the Voronoi diagram window */
-	public static void showDiagram(Component parent, BiomeProfileSelection biome_profile_selection, IHistogram2D climate_histogram) {
+	public static void showDiagram(Component parent, BiomeProfileSelection biome_profile_selection, MapgenRelay mapgen, IHistogram2D climate_histogram) {
 
 		if (voronoiWindow == null) {
 			voronoiWindow = new VoronoiWindow(parent);
 		}
 		SwingUtilities.invokeLater(() -> {
 			voronoiWindow.voronoiPanel.setClimateHistogram(climate_histogram);
-			voronoiWindow.show(biome_profile_selection);
+			voronoiWindow.show(biome_profile_selection, mapgen);
 		});
 	}
 
@@ -362,5 +424,7 @@ public class VoronoiWindow implements BiomeProfileUpdateListener, ChangeListener
 				VoronoiPanel.FLAG_SHOWNODES  |
 				VoronoiPanel.FLAG_SHOWCOVERAGE
 		);
+		
+		//KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
 	}
 }
