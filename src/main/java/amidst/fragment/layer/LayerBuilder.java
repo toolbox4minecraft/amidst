@@ -147,7 +147,7 @@ public class LayerBuilder {
 				new BiomeDataLoader(  declarations.get(LayerIds.BIOME_DATA),        world.getBiomeDataOracle()),
 				new EndIslandsLoader( declarations.get(LayerIds.END_ISLANDS),       world.getEndIslandOracle()),
 				new ImageLoader(	  declarations.get(LayerIds.BACKGROUND),        Resolution.QUARTER, new BackgroundColorProvider(new BiomeColorProvider(biomeSelection, settings.biomeProfileSelection), new TheEndColorProvider())),
-				new ImageLoader(      declarations.get(LayerIds.MINETEST_RIVER),    Resolution.QUARTER, new MinetestRiverColorProvider(Resolution.QUARTER)),
+				new ImageLoader(      declarations.get(LayerIds.MINETEST_RIVER),    Resolution.QUARTER, new MinetestRiverColorProvider(world.getWorldType(), Resolution.QUARTER)),
 				new ImageLoader(      declarations.get(LayerIds.MINETEST_OCEAN),    Resolution.QUARTER, new MinetestOceanColorProvider()),
 				new ImageLoader(      declarations.get(LayerIds.MINETEST_MOUNTAIN), Resolution.QUARTER, new MinetestMountainColorProvider(Resolution.QUARTER)),
 				new ImageLoader(      declarations.get(LayerIds.SLIME),             Resolution.CHUNK,   new SlimeColorProvider(world.getSlimeChunkOracle())),
