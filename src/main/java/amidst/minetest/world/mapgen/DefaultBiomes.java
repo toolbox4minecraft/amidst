@@ -223,7 +223,9 @@ public class DefaultBiomes {
 				)
 			);
 
-			biomeLists.put("MineClone 2", setIndexes(MineCloneBiomes.getBiomeList()));			
+			biomeLists.put("MineClone 2", setIndexes(MineCloneBiomes.getBiomeList()));
+			
+			biomeLists.put("Aotearoa (New Zealand) " + AotearoaBiomes.getVersion(), setIndexes(AotearoaBiomes.getBiomeList()));						
 		}
 		return biomeLists;
 	}
