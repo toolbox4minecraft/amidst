@@ -223,8 +223,38 @@ public class DefaultBiomes {
 				)
 			);
 
-			biomeLists.put("MineClone 2", setIndexes(MineCloneBiomes.getBiomeList()));
+			biomeLists.put(
+				"Australia v0.4", // https://github.com/vlapsley/australia
+				setIndexes(
+					new MinetestBiome[] {
+						new MinetestBiome("Arnhem land",            BiomeColor.from( 90, 140,  60), (short)      4,(short)    35, 60, 80),
+						new MinetestBiome("Australian alps",        BiomeColor.from(224, 225, 238), (short)    150,(short) 31000, 10, 50),
+						new MinetestBiome("Central australia",      BiomeColor.from(183,  62,  34), (short)     36,(short) 31000, 80, 25),
+						new MinetestBiome("Eastern coasts",         BiomeColor.from( 97, 120,  43), (short)      4,(short)    35, 35, 60),
+						new MinetestBiome("Far north queensland",   BiomeColor.from( 47, 132,  75), (short)      4,(short)    35, 75, 90),
+						new MinetestBiome("Flinders lofty",         BiomeColor.from(183, 189,  93), (short)     36,(short) 31000, 50, 50),
+						new MinetestBiome("Goldfields esperence",   BiomeColor.from(204, 187, 106), (short)      4,(short)    35, 60, 20),
+						new MinetestBiome("Great australian bight", BiomeColor.from(193, 188, 125), (short)    -64,(short)     3, 40, 50),
+						new MinetestBiome("Great barrier reef",     BiomeColor.from(214, 207, 158), (short)    -64,(short)     3, 75, 75),
+						new MinetestBiome("Great dividing range",   BiomeColor.from( 63, 120,  43), (short)     36,(short) 31000, 25, 65),
+						new MinetestBiome("Gulf of carpentaria",    BiomeColor.from(200, 168,  70), (short)      4,(short)    35, 75, 55),
+						new MinetestBiome("Indian ocean",           BiomeColor.from(204, 193, 116), (short)    -64,(short)     3, 60, 50),
+						new MinetestBiome("Jarrah karri forests",   BiomeColor.from(137, 160,  30), (short)      4,(short)    35, 20, 50),
+						new MinetestBiome("Kimberley",              BiomeColor.from(204,  80,  13), (short)      4,(short)    35, 80, 75),
+						new MinetestBiome("Mangroves",              BiomeColor.from(122, 142,  92), (short)     -2,(short)     3, 80, 80),
+						new MinetestBiome("Mulga lands",            BiomeColor.from(200, 146,  70), (short)     36,(short) 31000, 75, 45),
+						new MinetestBiome("Murray darling basin",   BiomeColor.from(180, 166, 102), (short)     36,(short) 31000, 60, 40),
+						new MinetestBiome("Pilbara",                BiomeColor.from(205, 111,  48), (short)      4,(short)    35, 80, 20),
+						new MinetestBiome("Simpson desert",         BiomeColor.from(163,  42,  13), (short)     36,(short) 31000, 85, 10),
+						new MinetestBiome("Tasmania",               BiomeColor.from( 36,  97,  28), (short)     36,(short) 31000, 15, 85),
+						new MinetestBiome("Tasman sea",             BiomeColor.from(197, 196, 146), (short)    -64,(short)     3, 20, 50),
+						new MinetestBiome("Timor sea",              BiomeColor.from(211, 214, 158), (short)    -64,(short)     3, 80, 90),
+						new MinetestBiome("Underground",            BiomeColor.from( 20,  20,  20), (short) -31000,(short)   -65, 50, 50),
+						new MinetestBiome("Victorian forests",      BiomeColor.from(61,  148,  38), (short)     36,(short) 31000, 40, 50),					}
+				)
+			);			
 			
+			biomeLists.put("MineClone 2", setIndexes(MineCloneBiomes.getBiomeList()));			
 			biomeLists.put("Aotearoa (New Zealand) " + AotearoaBiomes.getVersion(), setIndexes(AotearoaBiomes.getBiomeList()));						
 		}
 		return biomeLists;
