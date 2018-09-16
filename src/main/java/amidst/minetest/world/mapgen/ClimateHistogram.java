@@ -13,10 +13,10 @@ import amidst.logging.AmidstLogger;
  */
 public class ClimateHistogram implements IHistogram2D {
 
-	private static final float DEFAULT_SCALE = 50;
-	private static final float DEFAULT_OFFSET = 50;
-	private static final float DEFAULT_BLEND_SCALE = 50;
-	private static final float DEFAULT_BLEND_OFFSET = 50;
+	protected static final float DEFAULT_SCALE = 50;
+	protected static final float DEFAULT_OFFSET = 50;
+	protected static final float DEFAULT_BLEND_SCALE = 50;
+	protected static final float DEFAULT_BLEND_OFFSET = 50;
 
 	float scaleAdj = 1;
 	float offsetAdj = 0;
@@ -34,19 +34,25 @@ public class ClimateHistogram implements IHistogram2D {
 	double[] frequencyAtPerdimileTable  = new double[] {0.0, 7.906411381395254E-8, 1.4281584607842585E-7, 2.0367198773824541E-7, 2.579481623074614E-7, 3.103739993944631E-7, 3.663211869054443E-7, 4.169483003809781E-7, 4.635227228946929E-7, 5.288508873488246E-7, 5.686991889665327E-7, 6.204826202407989E-7, 6.812762234709958E-7, 7.263347560698961E-7, 7.657426809358803E-7, 8.193734165334142E-7, 8.656717598377384E-7, 9.267166497130238E-7, 9.687699186503285E-7, 1.0100613846028922E-6, 1.040421908192894E-6, 1.0981246626722591E-6, 1.1626975068704957E-6, 1.2072828789096895E-6, 1.245628837090483E-6, 1.2925330631771625E-6, 1.3136720582621303E-6, 1.3539419032545604E-6, 1.4261585444809766E-6, 1.4613406586174258E-6, 1.5325176657436087E-6, 1.5737994074503633E-6, 1.6102602927831794E-6, 1.6548696775342068E-6, 1.6814410653583067E-6, 1.7109022657620896E-6, 1.739729245372117E-6, 1.818909640506737E-6, 1.860652162367776E-6, 1.918256413753668E-6, 1.950305933579097E-6, 2.0142046144063015E-6, 2.0414075345970236E-6, 2.078387302258539E-6, 2.1271279829810187E-6, 2.149899817465148E-6, 2.1755325291439493E-6, 2.204795837375724E-6, 2.2850671080176522E-6, 2.32281076679128E-6, 2.373852151766557E-6, 2.420014414654376E-6, 2.4519443333869577E-6, 2.4886672811746097E-6, 2.5482357788527957E-6, 2.5826040900445513E-6, 2.62377928182969E-6, 2.6443912878365593E-6, 2.6742844225227714E-6, 2.6967536393142994E-6, 2.729072454192572E-6, 2.7697985570250263E-6, 2.8357136937141744E-6, 2.886882959408015E-6, 2.9324497121704535E-6, 2.973268481768577E-6, 3.010129601199772E-6, 3.0440263924820617E-6, 3.097221433350364E-6, 3.153942913939244E-6, 3.1693172695523055E-6, 3.208017787514919E-6, 3.2466586058243742E-6, 3.2873911331250026E-6, 3.300640985971264E-6, 3.3135005090680394E-6, 3.360507790578272E-6, 3.4192720091466502E-6, 3.4414606133149838E-6, 3.480699054050278E-6, 3.5502316470557827E-6, 3.608426792734956E-6, 3.6396339028551223E-6, 3.6863827940008945E-6, 3.7040534454740007E-6, 3.7410242395545514E-6, 3.7825944022123806E-6, 3.847435398836006E-6, 3.873875563025558E-6, 3.9031983332453956E-6, 3.931204415840417E-6, 3.9598830516054155E-6, 3.975995856789808E-6, 3.998365240336164E-6, 4.039172655337482E-6, 4.0632862055249795E-6, 4.0990893986543585E-6, 4.183983009230883E-6, 4.216663091722728E-6, 4.245830038292284E-6};
 
 	// See the code in the constructor if you wish to recalculate processedHistogram_Heat
-	long[] processedHistogram_Heat     = new long[] {0, 153, 1768, 7613, 20266, 39237, 68532, 129569, 253672, 466068, 749036, 1118894, 1652120, 2336026, 3177411, 4289864, 5747526, 7589850, 9856728, 12682921, 16136759, 20151942, 24748602, 29931873, 35920626, 43062341, 51271017, 60327682, 70390031, 81495625, 93747434, 106799416, 120743363, 135914606, 152365699, 170101021, 189361871, 209772514, 231217617, 253641954, 277358294, 302642651, 330020944, 358968983, 388063091, 417818461, 448511484, 480304585, 512482974, 545137696, 578609204, 612633066, 646964215, 681044286, 714529707, 747302721, 780388840, 814149746, 848456881, 882775746, 916166774, 948689945, 980390026, 1010742090, 1039733085, 1067743075, 1094655102, 1120797912, 1146302590, 1170887019, 1193985679, 1216640602, 1238594372, 1258144428, 1275121725, 1291945812, 1309002000, 1325954529, 1341857749, 1355308147, 1366591082, 1376374738, 1385463561, 1393347395, 1400442971, 1406379379, 1410776631, 1414661410, 1418401449, 1420937467, 1421631268, 1420937467, 1418401449, 1414661410, 1410776631, 1406379379, 1400442971, 1393347395, 1385463561, 1376374738, 1366591082, 1355308147, 1341857749, 1325954529, 1309002000, 1291945812, 1275121725, 1258144428, 1238594372, 1216640602, 1193985679, 1170887019, 1146302590, 1120797912, 1094655102, 1067743075, 1039733085, 1010742090, 980390026, 948689945, 916166774, 882775746, 848456881, 814149746, 780388840, 747302721, 714529707, 681044286, 646964215, 612633066, 578609204, 545137696, 512482974, 480304585, 448511484, 417818461, 388063091, 358968983, 330020944, 302642651, 277358294, 253641954, 231217617, 209772514, 189361871, 170101021, 152365699, 135914606, 120743363, 106799416, 93747434, 81495625, 70390031, 60327682, 51271017, 43062341, 35920626, 29931873, 24748602, 20151942, 16136759, 12682921, 9856728, 7589850, 5747526, 4289864, 3177411, 2336026, 1652120, 1118894, 749036, 466068, 253672, 129569, 68532, 39237, 20266, 7613, 1768, 153, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	long[] processedHistogram_Humidity = processedHistogram_Heat;
-	double dataProcessedCount = dataSampleCount * 4; // we doubled the sample data by mirroring it horizontally, and doubled that by mirroring vertically
+	long[] processedHistogram_Heat       = new long[] {0, 153, 1768, 7613, 20266, 39237, 68532, 129569, 253672, 466068, 749036, 1118894, 1652120, 2336026, 3177411, 4289864, 5747526, 7589850, 9856728, 12682921, 16136759, 20151942, 24748602, 29931873, 35920626, 43062341, 51271017, 60327682, 70390031, 81495625, 93747434, 106799416, 120743363, 135914606, 152365699, 170101021, 189361871, 209772514, 231217617, 253641954, 277358294, 302642651, 330020944, 358968983, 388063091, 417818461, 448511484, 480304585, 512482974, 545137696, 578609204, 612633066, 646964215, 681044286, 714529707, 747302721, 780388840, 814149746, 848456881, 882775746, 916166774, 948689945, 980390026, 1010742090, 1039733085, 1067743075, 1094655102, 1120797912, 1146302590, 1170887019, 1193985679, 1216640602, 1238594372, 1258144428, 1275121725, 1291945812, 1309002000, 1325954529, 1341857749, 1355308147, 1366591082, 1376374738, 1385463561, 1393347395, 1400442971, 1406379379, 1410776631, 1414661410, 1418401449, 1420937467, 1421631268, 1420937467, 1418401449, 1414661410, 1410776631, 1406379379, 1400442971, 1393347395, 1385463561, 1376374738, 1366591082, 1355308147, 1341857749, 1325954529, 1309002000, 1291945812, 1275121725, 1258144428, 1238594372, 1216640602, 1193985679, 1170887019, 1146302590, 1120797912, 1094655102, 1067743075, 1039733085, 1010742090, 980390026, 948689945, 916166774, 882775746, 848456881, 814149746, 780388840, 747302721, 714529707, 681044286, 646964215, 612633066, 578609204, 545137696, 512482974, 480304585, 448511484, 417818461, 388063091, 358968983, 330020944, 302642651, 277358294, 253641954, 231217617, 209772514, 189361871, 170101021, 152365699, 135914606, 120743363, 106799416, 93747434, 81495625, 70390031, 60327682, 51271017, 43062341, 35920626, 29931873, 24748602, 20151942, 16136759, 12682921, 9856728, 7589850, 5747526, 4289864, 3177411, 2336026, 1652120, 1118894, 749036, 466068, 253672, 129569, 68532, 39237, 20266, 7613, 1768, 153, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	double processedDataSampleCount_Heat = dataSampleCount * 4; // we doubled the sample data by mirroring it horizontally, and doubled that by mirroring vertically
 
+	// Heat and humidity use the same noise function, so copy the processed values to humidity 
+	long[] processedHistogram_Humidity           = processedHistogram_Heat;	
+	double processedDataSampleCount_Humidity     = processedDataSampleCount_Heat;
+		
+	int    processedDataSampleOffset_Heat        = dataSampleOffset;
+	int    processedDataSampleOffset_Humidity    = dataSampleOffset;
+	
 	Point2d sampleMean = null;
 
 
 	public double FrequencyOfTemperature(float temperature) {
-		int index = Math.round((temperature / scaleAdj) + offsetAdj) + dataSampleOffset;
+		int index = Math.round((temperature / scaleAdj) + offsetAdj) + processedDataSampleOffset_Heat;
 
 		if (index >= 0 && index < processedHistogram_Heat.length) {
 			//return sampledHistogram_Heat[index] / dataSampleCount;
-			return processedHistogram_Heat[index] / dataProcessedCount;
+			return processedHistogram_Heat[index] / processedDataSampleCount_Heat;
 		} else {
 			// Our sampling range covers all non-zero values, so the answer to return is zero,
 			// however NaN should help highlight if range bugs are occurring elsewhere in the app.
@@ -55,11 +61,11 @@ public class ClimateHistogram implements IHistogram2D {
 	}
 
 	public double FrequencyOfHumidity(float humidity) {
-		int index = Math.round((humidity / scaleAdj) + offsetAdj) + dataSampleOffset;
+		int index = Math.round((humidity / scaleAdj) + offsetAdj) + processedDataSampleOffset_Humidity;
 
-		if (index >= 0 && index < processedHistogram_Heat.length) {
+		if (index >= 0 && index < processedHistogram_Humidity.length) {
 			//return sampledHistogram_Humidity[index] / dataSampleCount;
-			return processedHistogram_Heat[index] / dataProcessedCount;
+			return processedHistogram_Humidity[index] / processedDataSampleCount_Humidity;
 		} else {
 			// Our sampling range covers all non-zero values, so the answer to return is zero,
 			// however NaN should help highlight if range bugs are occurring elsewhere in the app.
@@ -88,7 +94,7 @@ public class ClimateHistogram implements IHistogram2D {
 		freq_floor = FrequencyOfHumidity(humidity_floor);
 		freq_ceil  = FrequencyOfHumidity((float)Math.ceil(humidity));
 
-		if (!(freq_floor > 0 && freq_ceil > 0) && FrequencyOfTemperature(humidity) == 0) return 0; // Don't interpolate the frequency if it's a value that cannot ever happen (the first two checks are just an optimization to prevent unnecessarily invoking FrequencyOfTemperature)
+		if (!(freq_floor > 0 && freq_ceil > 0) && FrequencyOfHumidity(humidity) == 0) return 0; // Don't interpolate the frequency if it's a value that cannot ever happen (the first two checks are just an optimization to prevent unnecessarily invoking FrequencyOfTemperature)
 		double humidity_interp = freq_floor + (freq_ceil - freq_floor) * (humidity - humidity_floor);
 
 		return temperature_interp * humidity_interp;
@@ -182,7 +188,7 @@ public class ClimateHistogram implements IHistogram2D {
 		double probabilityUnderFrequency = 0;
 		for (int y = processedHistogram_Humidity.length - 1; y >= 0; y--) {
 			for (int x = processedHistogram_Heat.length - 1; x >= 0; x--) {
-				double probability = (processedHistogram_Heat[x] / dataProcessedCount) * (processedHistogram_Humidity[y] / dataProcessedCount);
+				double probability = (processedHistogram_Heat[x] / processedDataSampleCount_Heat) * (processedHistogram_Humidity[y] / processedDataSampleCount_Humidity);
 				if (probability <= frequency_of_occurance) {
 					probabilityUnderFrequency += probability;
 				}
@@ -251,7 +257,7 @@ public class ClimateHistogram implements IHistogram2D {
 			distFromCenter++;
 		}
 		// each value in processedHistogram_Heat is now the left+right of both heat+humidy added together
-		dataProcessedCount = dataSampleCount * 4;
+		processedDataSampleCount_Heat = dataSampleCount * 4;
 
 		AmidstLogger.info("processedHistogram_Heat: " + Arrays.toString(processedHistogram_Heat));
 	}
@@ -261,19 +267,24 @@ public class ClimateHistogram implements IHistogram2D {
 	 * frequencyAtPerdimileTable.
 	 * @see SearchForFrequencyAtPercentile
 	 */
-	private void calculatePercentileTables(int search_depth) {
+	protected void calculatePercentileTables(int search_depth) {
 		LongSummaryStatistics heatStats     = Arrays.stream(processedHistogram_Heat).summaryStatistics();
 		LongSummaryStatistics humidityStats = Arrays.stream(processedHistogram_Humidity).summaryStatistics();
 
-		frequencyAtPerdimileTable[0]   = (heatStats.getMin() / (double)dataProcessedCount) * (humidityStats.getMin() / (double)dataProcessedCount);
-		frequencyAtPercentileTable[99] = (heatStats.getMax() / (double)dataProcessedCount) * (humidityStats.getMax() / (double)dataProcessedCount);
+		frequencyAtPerdimileTable[0]   = (heatStats.getMin() / (double)processedDataSampleCount_Heat) * (humidityStats.getMin() / (double)processedDataSampleCount_Humidity);
+		frequencyAtPercentileTable[99] = (heatStats.getMax() / (double)processedDataSampleCount_Heat) * (humidityStats.getMax() / (double)processedDataSampleCount_Humidity);
 		double lowerBound_percentile = frequencyAtPerdimileTable[0];
 		double lowerBound_perdimile  = frequencyAtPerdimileTable[0];
 		for(int i = 1; i < 100; i++) {
 			frequencyAtPercentileTable[i - 1] = SearchForFrequencyAtPercentile(i, 1.00, lowerBound_percentile, search_depth);
 			frequencyAtPerdimileTable[i]      = SearchForFrequencyAtPercentile(i / 100d, frequencyAtPercentileTable[0], lowerBound_perdimile, search_depth);
+			
+			/* This optimization is commented out because it assumes a standard-ish shaped
+			 * distribution, but the ClimateHistogram_ValleysHumidRivers subclass uses this method
+			 * and it has a hump shaped humidity distribution.
 			lowerBound_percentile = frequencyAtPercentileTable[i];
 			lowerBound_perdimile  = frequencyAtPerdimileTable[i];
+			 */
 		}
 
 		AmidstLogger.info("frequencyAtPercentileTable: " + Arrays.toString(frequencyAtPercentileTable));
@@ -285,7 +296,7 @@ public class ClimateHistogram implements IHistogram2D {
 	 */
 	public ClimateHistogram() {
 
-		if (dataProcessedCount == 0) {
+		if (processedDataSampleCount_Heat == 0) {
 			// the samples are already processed, and the percentile tables already
 			// calculated, but I leave this code here in case someone wants to update
 			// sampledHistogram_Heat and sampledHistogram_Humidity with their own sampled

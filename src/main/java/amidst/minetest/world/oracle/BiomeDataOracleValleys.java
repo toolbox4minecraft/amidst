@@ -5,6 +5,7 @@ import javax.vecmath.Point2d;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
+import amidst.minetest.world.mapgen.ClimateHistogram_ValleysHumidRivers;
 import amidst.minetest.world.mapgen.IHistogram2D;
 import amidst.minetest.world.mapgen.IHistogram2DTransformationProvider;
 import amidst.minetest.world.mapgen.InvalidNoiseParamsException;
@@ -43,12 +44,15 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle implements I
 	boolean humid_rivers;
 	boolean use_altitude_chill;
 	boolean use_altitude_dry;
-	boolean vary_driver_depth;
+	boolean vary_river_depth;
 	
 	float altitude_chill;
 	float river_depth_bed;
 	float river_size_factor;	
-	
+
+	ClimateHistogram_ValleysHumidRivers humidRiversHistogram;
+
+
 	/**
 	 * Reusable instance of TerrainNoise, to save unnecessary construction/mem-fragmentation 
 	 */
@@ -85,17 +89,24 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle implements I
 				if (use_altitude_dry)   humidity    += alt_to_humid * altitude / altitude_chill;
 				if (use_altitude_chill) temperature += alt_to_heat  * altitude / altitude_chill;			
 			}
-			
-			// TODO Crazy math to add river humidity distribution to sourceHistogram
 
 			// Average heat was increased to balance against altitude chill.
 			if (use_altitude_chill) temperature -= 5.0f;
-			// Humidity was scaled down to balance the effect of rivers.
+			// Humidity was scaled down to balance the effect of humid rivers.
 			if (humid_rivers) humidity /= 0.8f;	
 
 			// Now that we've performed the opposite of every transformation Valleys mapgen
 			// makes to the humidity and temperature, we can obtain the frequencyOfOccurance.
 			double result = sourceHistogram.frequencyOfOccurance(temperature, humidity);
+			
+			if (humid_rivers) {
+				// when we scaled up the value of humidity (a couple of lines of code above)
+				// we created a problem where a function trying to sum all the buckets will
+				// miss some of them - the probability distribution won't sum to 1.
+				// Work around that by scaling up the result frequency by the amount of 
+				// buckets that will be missed.
+				result /= 0.8f;
+			}
 			
 			// results outside the sampling range return NaN rather than zero, but the
 			// sampling range covers all non-zero values, so we can treat NaN as zero.
@@ -111,7 +122,14 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle implements I
 		 */
 		public double frequencyAtPercentile(double percentile) {
 			// TODO Auto-generated method stub
-			return sourceHistogram.frequencyAtPercentile(percentile);
+			double result = sourceHistogram.frequencyAtPercentile(percentile);
+			
+			if (humid_rivers) {
+				// because we're scaling the result returned by frequencyOfOccurance()
+				// we must also scale this result to match it
+				result /= 0.8f;
+			}
+			return result;
 		}
 
 		@Override
@@ -124,8 +142,6 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle implements I
 				// Humidity was scaled down to balance the effect of rivers.
 				if (humid_rivers) sampleMean.y *= 0.8f;	
 							
-				// TODO Crazy math to add river humidity distribution to sourceHistogram
-				
 				if (altitude > 0.0f) {
 					if (use_altitude_dry)   sampleMean.y -= alt_to_humid * altitude / altitude_chill;
 					if (use_altitude_chill) sampleMean.x -= alt_to_heat  * altitude / altitude_chill;			
@@ -153,7 +169,7 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle implements I
 		if (params instanceof MapgenValleysParams) {
 			valleysParams = (MapgenValleysParams)params;
 		} else {
-			AmidstLogger.error("Error: BiomeDataOracleCarpathian cannot cast params to CarpathianParams. Using defaults instead.");
+			AmidstLogger.error("Error: BiomeDataOracleValleys cannot cast params to CarpathianParams. Using defaults instead.");
 			this.params = valleysParams = new MapgenValleysParams();
 		}
 		
@@ -186,12 +202,18 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle implements I
 		humid_rivers       = (valleysParams.spflags & MapgenValleysParams.FLAG_VALLEYS_HUMID_RIVERS)     > 0;
 		use_altitude_chill = (valleysParams.spflags & MapgenValleysParams.FLAG_VALLEYS_ALT_CHILL)        > 0;
 		use_altitude_dry   = (valleysParams.spflags & MapgenValleysParams.FLAG_VALLEYS_ALT_DRY)          > 0;
-		vary_driver_depth  = (valleysParams.spflags & MapgenValleysParams.FLAG_VALLEYS_VARY_RIVER_DEPTH) > 0;
+		vary_river_depth   = (valleysParams.spflags & MapgenValleysParams.FLAG_VALLEYS_VARY_RIVER_DEPTH) > 0;
+		
+		humidRiversHistogram = new ClimateHistogram_ValleysHumidRivers(humid_rivers, vary_river_depth);
 	}	
 	
 	@Override
 	public IHistogram2D getTransformedHistogram(IHistogram2D climate_histogram, float altitude) {
-		return new ValleysClimateHistogram(climate_histogram, altitude);
+		// technically we should do something to make humidRiversHistogram use the same climate 
+		// noise settings as the climate_histogram we are passed here, but that hasn't been
+		// implemented, and currently Amdist will only ever pass the default ClimateHistogram
+		// anyway, so for now we just use humidRiversHistogram, which is a subclass of ClimateHistogram.
+		return new ValleysClimateHistogram(humidRiversHistogram, altitude);
 	}	
 		
 	float terrainLevelAtPoint(int x, int z)
@@ -232,7 +254,7 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle implements I
 		
 		if (humid_rivers) {			
 			float river_y = tempTerrainNoise.rivers;
-			if (vary_driver_depth) {
+			if (vary_river_depth) {
 				// get a heat value that includes altitude chill
 				float heat = (use_altitude_chill && (terrain_height > 0.0f || river_y > 0.0f)) ?
 						tempTerrainNoise.heat - alt_to_heat * Math.max(terrain_height, river_y) / altitude_chill : 
@@ -345,7 +367,7 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle implements I
 	@Override
 	public short populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
 		
-		// The Carpathian mapgen terrain is not yet stable.
+		// The Valleys mapgen terrain is not yet stable.
 		// See https://forum.minetest.net/viewtopic.php?f=18&t=19132						
 		
 		int width = result.length;

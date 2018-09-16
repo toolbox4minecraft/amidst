@@ -24,6 +24,8 @@ public interface IHistogram2D {
 	 * get's the mean value of the distribution.
 	 * If the histogram were a normal distribution, this would return the location of
 	 * the peak. If  the histogram had two peaks, it would return a location between them.
+	 * If the distribution is lopsided (or long-tailed), then it would return a value
+	 * offset from the peak. 
 	 */
 	Point2d getSampleMean();
 }
