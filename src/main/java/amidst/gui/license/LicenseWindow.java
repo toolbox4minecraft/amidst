@@ -41,7 +41,6 @@ public class LicenseWindow {
 				createLicense("Gson", "gson.txt"),
 				createLicense("JNBT", "jnbt.txt"),
 				createLicense("MiG Layout", "miglayout.txt"),
-				createLicense("Modern UI Icons", "modernUIIcons.txt"),
 				createLicense("Attribution", "attribution.txt"));
 		return result.toArray(new License[result.size()]);
 	}
