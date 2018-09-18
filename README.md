@@ -1,4 +1,4 @@
-<img src="https://avatars1.githubusercontent.com/u/16545761?s=150&v=4" align="right" />
+<img src="https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/150px-Minetest-logo.png" align="right" />
 
 Amidstest
 =========
@@ -6,6 +6,7 @@ Amidstest
 [![Build Status](https://travis-ci.org/Treer/amidstest.svg?branch=master)](https://travis-ci.org/Treer/amidstest)
  
 ## What is Amidstest?
+<img src="https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/moretrees-screenshot4-small.jpg" align="right" />
 
 Amidstest is Amidst converted to support [Minetest](https://www.minetest.net/) — a completely free and open implementation of Minecraft-like games, and a mod paradise.
 
