@@ -7,7 +7,7 @@ Amidstest
  
 ## What is Amidstest?
 
-Amidstest is Amidst converted to support [Minetest](https://www.minetest.net/) — a completely free and open implementation of Minecraft, and a mod paradise.
+Amidstest is Amidst converted to support [Minetest](https://www.minetest.net/) — a completely free and open implementation of Minecraftish games, and a mod paradise.
 
 Amidstest is a tool to display a map of a world (either Minetest or Minecraft), without actually creating it.
 
