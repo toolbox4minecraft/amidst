@@ -23,6 +23,6 @@ deploy:
   - "target/${filename}.exe"
   skip_cleanup: true
   on:
-    repo: Treer/amidstest
+    repo: Treer/Amidst-for-Minetest
     branch: releases
     tags: true
