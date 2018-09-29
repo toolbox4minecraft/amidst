@@ -354,7 +354,7 @@ public class Actions {
 		dialogs.displayInfo(
 				"About",
 				"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n"
-						+ (FeatureToggles.MINETEST_SUPPORT ? "Amidstest - Amidst for Minetest\n\n" : "\n")
+						+ (FeatureToggles.MINETEST_SUPPORT ? "Amidst for Minetest - The Amidst project adapted to support Minetest\n\n" : "\n")
 						+ amidstVersion.createVersionString() + "\n"
 						+ "Project page: https://github.com/Treer/amidstest\n"
 						+ "Forum thread: https://forum.minetest.net/viewtopic.php?t=19869");

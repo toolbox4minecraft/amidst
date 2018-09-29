@@ -1,20 +1,20 @@
 <img src="https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/150px-Minetest-logo.png" align="right" />
 
-Amidstest
-=========
+Amidst for Minetest
+===================
 
 [![Build Status](https://travis-ci.org/Treer/amidstest.svg?branch=master)](https://travis-ci.org/Treer/amidstest)
  
-## What is Amidstest?
+## What is Amidst for Minetest?
 <img src="https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/moretrees-screenshot4-small.jpg" align="right" />
 
-Amidstest is Amidst converted to support [Minetest](https://www.minetest.net/) — a completely free and open implementation of Minecraft-like games, and a mod paradise.
+Amidst for Minetest is the [Amidst project](https://github.com/toolbox4minecraft/amidst) converted to support [Minetest](https://www.minetest.net/) — a completely free and open implementation of Minecraft-like games, and a mod paradise.
 
-Amidstest is a tool to display a map of a world (either Minetest or Minecraft), without actually creating it.
+Amidst for Minetest is a tool to display a map of a world without actually creating it.
 
 With Minetest worlds, it can:
 
-* render an overview of a world from a given seed and mapgen version
+* render an overview of a world from a given seed and map-generator
 * apply different biome sets to the world
 * locate biomes
 * view biomes as Voronoi diagrams (to aid designing/tuning biomes)
@@ -22,7 +22,7 @@ With Minetest worlds, it can:
 * save images of the map
 
 
-The following has not *yet* been implemented for Minetest worlds:
+The following has not yet been implemented for Minetest worlds:
 * display dungeon locations
 * locate and load any non-default advanced mapgen parameters you might be tweaking
 * Player locations, and exact spawn location.

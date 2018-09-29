@@ -14,6 +14,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gameengineabstraction.GameEngineDetails;
+import amidst.gameengineabstraction.GameEngineType;
 import amidst.gameengineabstraction.file.IGameInstallation;
 import amidst.gameengineabstraction.world.WorldTypes;
 import amidst.gui.main.menu.AmidstMenu;
@@ -30,9 +31,11 @@ import amidst.threading.ThreadMaster;
 public class PerMainWindowInjector {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private static String createVersionString(AmidstMetaData metadata, RunningLauncherProfile runningLauncherProfile) {
-		return new StringBuilder()
-				.append(metadata.getVersion().createLongVersionString())
-				.append(" - Selected Profile: ")
+		
+		StringBuilder sb = new StringBuilder().append(metadata.getVersion().createLongVersionString());
+		
+		if (runningLauncherProfile.getGameEngineDetails().getType() == GameEngineType.MINECRAFT) {
+			sb.append(" - Selected Profile: ")
 				.append(runningLauncherProfile.getLauncherProfile().getProfileName())
 				.append(" - ")
 				.append(runningLauncherProfile.getGameEngineDetails().getType().getName())
@@ -40,8 +43,9 @@ public class PerMainWindowInjector {
 				.append(runningLauncherProfile.getLauncherProfile().getVersionName())
 				.append(" (recognised: ")
 				.append(runningLauncherProfile.getRecognisedVersion().getName())
-				.append(")")
-				.toString();
+				.append(")");
+		}
+		return sb.toString();
 	}
 
 	private final Factory2<World, Actions, ViewerFacade> viewerFacadeFactory;

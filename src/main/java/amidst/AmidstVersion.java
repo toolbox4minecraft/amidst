@@ -28,6 +28,14 @@ public class AmidstVersion {
 	}
 	
 	public static String getName() {
+		return FeatureToggles.MINETEST_SUPPORT ? "Amidst for Minetest" : "Amidst"; 
+	}	
+
+	/**
+	 * Used for creating data folders, so that the name change from Amidstest to 
+	 * "Amidst for Minetest" doesn't lose any saved data. 
+	 */
+	public static String getDataName() {
 		return FeatureToggles.MINETEST_SUPPORT ? "Amidstest" : "Amidst"; 
 	}	
 

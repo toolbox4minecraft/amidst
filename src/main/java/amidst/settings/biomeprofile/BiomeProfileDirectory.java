@@ -55,12 +55,12 @@ public class BiomeProfileDirectory {
 			if (OperatingSystemDetector.isWindows()) {
 				File appData = new File(System.getenv("APPDATA"));
 				if (appData.isDirectory()) {
-					result = new File(appData, AmidstVersion.getName());
+					result = new File(appData, AmidstVersion.getDataName());
 				}
 			} else if (OperatingSystemDetector.isMac()) {
-				result = new File(home, "Library/Application Support/" + AmidstVersion.getName());
+				result = new File(home, "Library/Application Support/" + AmidstVersion.getDataName());
 			} else {
-				result = new File(home, "." + AmidstVersion.getName().toLowerCase());
+				result = new File(home, "." + AmidstVersion.getDataName().toLowerCase());
 			}
 		}
 		tryCreateDirectory(result);
