@@ -3,7 +3,7 @@
 Amidst for Minetest
 ===================
 
-[![Build Status](https://travis-ci.org/Treer/amidstest.svg?branch=master)](https://travis-ci.org/Treer/amidstest)
+[![Build Status](https://travis-ci.org/Treer/Amidst-for-Minetest.svg?branch=master)](https://travis-ci.org/Treer/Amidst-for-Minetest)
  
 ## What is Amidst for Minetest?
 <img src="https://raw.githubusercontent.com/wiki/treer/amidstest/screenshots/moretrees-screenshot4-small.jpg" align="right" />
