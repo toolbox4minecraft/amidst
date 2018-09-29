@@ -15,16 +15,16 @@ public class MapgenValleysParams extends MapgenParams {
 		
 	public int spflags = FLAG_VALLEYS_ALT_CHILL | FLAG_VALLEYS_HUMID_RIVERS | FLAG_VALLEYS_VARY_RIVER_DEPTH | FLAG_VALLEYS_ALT_DRY;
 	
-	public NoiseParams np_cave1              = new NoiseParams(0,    12.0f, new Vector3f(61,   61,   61),   52534, (short)3, 0.5f,  2.0f);
-	public NoiseParams np_cave2              = new NoiseParams(0,    12.0f, new Vector3f(67,   67,   67),   10325, (short)3, 0.5f,  2.0f);
 	public NoiseParams np_filler_depth       = new NoiseParams(0,     1.2f, new Vector3f(256,  256,  256),   1605, (short)3, 0.5f,  2.0f);
 	public NoiseParams np_inter_valley_fill  = new NoiseParams(0,     1.0f, new Vector3f(256,  512,  256),   1993, (short)6, 0.8f,  2.0f);
 	public NoiseParams np_inter_valley_slope = new NoiseParams(0.5f,  0.5f, new Vector3f(128,  128,  128),    746, (short)1, 1.0f,  2.0f);
 	public NoiseParams np_rivers             = new NoiseParams(0,     1.0f, new Vector3f(256,  256,  256),  -6050, (short)5, 0.6f,  2.0f);
-	public NoiseParams np_massive_caves      = new NoiseParams(0,     1.0f, new Vector3f(768,  256,  768),  59033, (short)6, 0.63f, 2.0f);
 	public NoiseParams np_terrain_height     = new NoiseParams(-10,  50.0f, new Vector3f(1024, 1024, 1024),  5202, (short)6, 0.4f,  2.0f);
 	public NoiseParams np_valley_depth       = new NoiseParams(5,     4.0f, new Vector3f(512,  512,  512),  -1914, (short)1, 1.0f,  2.0f);
 	public NoiseParams np_valley_profile     = new NoiseParams(0.6f,  0.5f, new Vector3f(512,  512,  512),    777, (short)1, 1.0f,  2.0f);
+	public NoiseParams np_cave1              = new NoiseParams(0,    12.0f, new Vector3f(61,   61,   61),   52534, (short)3, 0.5f,  2.0f);
+	public NoiseParams np_cave2              = new NoiseParams(0,    12.0f, new Vector3f(67,   67,   67),   10325, (short)3, 0.5f,  2.0f);
+	public NoiseParams np_cavern             = new NoiseParams(0,     1.0f, new Vector3f(768,  256,  768),  59033, (short)6, 0.63f, 2.0f);
 	       
 	public short large_cave_depth   =    -33;
 	public short massive_cave_depth =   -256; // highest altitude of massive caves

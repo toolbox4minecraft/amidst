@@ -30,16 +30,16 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle implements I
 	static final float alt_to_humid = 10.0f;
 	
 	
-	private Noise noise_cave1;
-	private Noise noise_cave2;
 	private Noise noise_filler_depth;
 	private Noise noise_inter_valley_fill;
 	private Noise noise_inter_valley_slope;
 	private Noise noise_rivers;
-	private Noise noise_massive_caves;
 	private Noise noise_terrain_height;
 	private Noise noise_valley_depth;
 	private Noise noise_valley_profile;
+	private Noise noise_cave1;
+	private Noise noise_cave2;
+	private Noise noise_cavern;
 	
 	boolean humid_rivers;
 	boolean use_altitude_chill;
@@ -66,7 +66,7 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle implements I
 		float valley;
 		float valley_profile;
 		float slope;
-		float inter_valley_fill;
+		//float inter_valley_fill; (doesn't seem to be used)
 		
 		float heat;
 		float humidity;
@@ -192,7 +192,7 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle implements I
 			// 1-down overgeneraion
 			noise_cave1             = new Noise(valleysParams.np_cave1,             this.seed, params.chunk_length_x, params.chunk_length_y + 1, params.chunk_length_z);
 			noise_cave2             = new Noise(valleysParams.np_cave2,             this.seed, params.chunk_length_x, params.chunk_length_y + 1, params.chunk_length_z);
-			noise_massive_caves     = new Noise(valleysParams.np_massive_caves,     this.seed, params.chunk_length_x, params.chunk_length_y + 1, params.chunk_length_z);
+			noise_cavern            = new Noise(valleysParams.np_cavern,            this.seed, params.chunk_length_x, params.chunk_length_y + 1, params.chunk_length_z);
 			
 		} catch (InvalidNoiseParamsException ex) {
 			AmidstLogger.error("Invalid valleysParams from Minetest game. " + ex);
@@ -237,7 +237,7 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle implements I
 		tempTerrainNoise.valley            = Noise.NoisePerlin2D(noise_valley_depth.np, x, z, seed);
 		tempTerrainNoise.valley_profile    = Noise.NoisePerlin2D(noise_valley_profile.np, x, z, seed);
 		tempTerrainNoise.slope             = Noise.NoisePerlin2D(noise_inter_valley_slope.np, x, z, seed);
-		tempTerrainNoise.inter_valley_fill = 0.f;
+		//tempTerrainNoise.inter_valley_fill = 0.f;
 		
 		float terrain_height = adjustedTerrainLevelFromNoise(tempTerrainNoise);
 		
@@ -290,16 +290,25 @@ public class BiomeDataOracleValleys extends MinetestBiomeDataOracle implements I
 	float adjustedTerrainLevelFromNoise(TerrainNoise tn)
 	{
 		float mount = terrainLevelFromNoise(tn);
+		float result = mount;
+		
 		int y_start = (int)(mount < 0.f ? (mount - 0.5f) : (mount + 0.5f)); // was "myround(muount);", s32 myround(f32 f) { return (s32)(f < 0.f ? (f - 0.5f) : (f + 0.5f)); }
 
-		for (int y = y_start; y <= y_start + 1000; y++) {
-			float fill = Noise.NoisePerlin3D(noise_inter_valley_fill.np, tn.x, y, tn.z, seed);
-			if (fill * tn.slope < y - mount) {
-				mount = Math.max(y - 1, mount);   // was using MYMAX(),, #define MYMAX(a, b) ((a) > (b) ? (a) : (b))
-				break;
-			}
-		}
-		return mount;
+		float fill = Noise.NoisePerlin3D(noise_inter_valley_fill.np, tn.x, y_start, tn.z, seed);
+		boolean isGround = fill * tn.slope >= y_start - mount;
+		int searchDirection = isGround ? 1 : -1;
+		
+		for (int i = 1; i <= 1000; i++) {
+			int y = y_start + (i * searchDirection);
+			fill = Noise.NoisePerlin3D(noise_inter_valley_fill.np, tn.x, y, tn.z, seed);			
+
+			boolean wasGround = isGround;
+			isGround = fill * tn.slope >= y - mount;			
+			if (isGround) result = y;
+			if (isGround != wasGround) break;
+		}		
+		
+		return result;
 	}	
 		
 	/**
