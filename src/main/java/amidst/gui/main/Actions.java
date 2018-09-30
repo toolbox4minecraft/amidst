@@ -97,7 +97,7 @@ public class Actions {
 				if (v6profile != null) biomeAuthority.getBiomeProfileSelection().set(v6profile);
 			} else if (DefaultBiomes.BIOMEPROFILENAME_V6.equals(biomeAuthority.getBiomeProfileSelection().getCurrentBiomeProfile().getName())) {
 				// Probably previously viewed a v6 world - not a good profile for any other world type
-				BiomeProfile mainProfile = biomeAuthority.getBiomeProfileDirectory().getProfile(DefaultBiomes.BIOMEPROFILENAME_DEFAULT);
+				BiomeProfile mainProfile = biomeAuthority.getBiomeProfileDirectory().getProfile(DefaultBiomes.BIOMEPROFILENAME_MINETEST_GAME);
 				if (mainProfile != null) biomeAuthority.getBiomeProfileSelection().set(mainProfile);
 			}
 			worldSwitcher.displayWorld(worldSeed, worldType, biomeAuthority.getBiomeProfileSelection());

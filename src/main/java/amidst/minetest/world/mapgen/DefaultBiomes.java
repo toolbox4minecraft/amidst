@@ -9,8 +9,8 @@ public class DefaultBiomes {
 
 	private static Map<String, MinetestBiome[]> biomeLists = null;
 
-	public static final String BIOMEPROFILENAME_V6      = "v6";
-	public static final String BIOMEPROFILENAME_DEFAULT = "Minetest Game";
+	public static final String BIOMEPROFILENAME_V6            = "v6";
+	public static final String BIOMEPROFILENAME_MINETEST_GAME = "Minetest Game";
 	
 	public static final short FLOATLAND_SHADOW_LIMIT    = 1024;
 	public static final short FLOATLAND_LEVEL           = 1280;
@@ -23,7 +23,7 @@ public class DefaultBiomes {
 			biomeLists = new LinkedHashMap<String, MinetestBiome[]>();
 			
 			biomeLists.put(
-				BIOMEPROFILENAME_DEFAULT,
+				BIOMEPROFILENAME_MINETEST_GAME,
 				setIndexes(
 					new MinetestBiome[] {
 						new MinetestBiome("Icesheet",                BiomeColor.from(213, 221, 240), (short)  -8, FLOATLAND_SHADOW_LIMIT,  0, 73),
@@ -69,20 +69,20 @@ public class DefaultBiomes {
 
 			
 			biomeLists.put(
-					BIOMEPROFILENAME_V6,
-					setIndexes(
-						new MinetestBiome[] {
-							// Keep in alphabetical order, as v6 references them by index, and biome sets are ordered
-							// alphabetically when saved.
-							new MinetestBiome("Beach",  BiomeColor.from(214, 186, 109), (short)   1,                      (short)5, 50, 35),	
-							new MinetestBiome("Desert", BiomeColor.from(206, 199, 152), (short)   Short.MIN_VALUE, Short.MAX_VALUE, 92, 16),	
-							new MinetestBiome("Jungle", BiomeColor.from(  0,  60,   0), (short)   Short.MIN_VALUE, Short.MAX_VALUE, 86, 65),	
-							new MinetestBiome("Normal", BiomeColor.from( 76, 129,  36), (short)   Short.MIN_VALUE, Short.MAX_VALUE, 50, 35),	
-							new MinetestBiome("Taiga",  BiomeColor.from(174, 191, 190), (short)   Short.MIN_VALUE, Short.MAX_VALUE, 25, 70),	
-							new MinetestBiome("Tundra", BiomeColor.from(224, 225, 238), (short)   Short.MIN_VALUE, Short.MAX_VALUE,  0, 40),	
-						}
-					)
-				);
+				BIOMEPROFILENAME_V6,
+				setIndexes(
+					new MinetestBiome[] {
+						// Keep in alphabetical order, as v6 references them by index, and biome sets are ordered
+						// alphabetically when saved.
+						new MinetestBiome("Beach",  BiomeColor.from(214, 186, 109), (short)   1,                      (short)5, 50, 35),	
+						new MinetestBiome("Desert", BiomeColor.from(206, 199, 152), (short)   Short.MIN_VALUE, Short.MAX_VALUE, 92, 16),	
+						new MinetestBiome("Jungle", BiomeColor.from(  0,  60,   0), (short)   Short.MIN_VALUE, Short.MAX_VALUE, 86, 65),	
+						new MinetestBiome("Normal", BiomeColor.from( 76, 129,  36), (short)   Short.MIN_VALUE, Short.MAX_VALUE, 50, 35),	
+						new MinetestBiome("Taiga",  BiomeColor.from(174, 191, 190), (short)   Short.MIN_VALUE, Short.MAX_VALUE, 25, 70),	
+						new MinetestBiome("Tundra", BiomeColor.from(224, 225, 238), (short)   Short.MIN_VALUE, Short.MAX_VALUE,  0, 40),	
+					}
+				)
+			);
 			
 			
 			biomeLists.put(
