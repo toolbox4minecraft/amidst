@@ -130,6 +130,65 @@ public class BiomeDataOracleV7 extends MinetestBiomeDataOracle {
 		return (height_base * hselect) + (height_alt * (1.0f - hselect));
 	}
 
+	/**
+	 * A logarithmic-ish search for some ground with air directly above.
+	 * (If it's the top of a floating island or ground beneath an underhang then tough, but because we start
+	 * low, it should find what the player will consider the ground most of the time)
+	 * @param lastHeight - the height of the previously calculated adjacent coord. set to Short.MIN_VALUE if not known
+	 * @param mnt_h_n - the 2D perlin noise of noise_mount_height for the location
+	 * @param highestGround - highest known ground height
+	 * @param lowestAir - lowest known air height.
+	 * @return height of the first highest level of ground located with air directly above.
+	 */
+	int findMountainHeight(int lastHeight, float mnt_h_n, int highestGround, int x, int z) {
+		
+		int lowestAir     = Short.MAX_VALUE;    // We don't know where the air starts
+		int testHeight    = highestGround + 4;  // Seems like a good start point if we don't know anything else (most of the time this value is overwritten with lastAirHeight, so it's not too important).
+
+		if (lastHeight != Short.MIN_VALUE) {
+			// Perhaps the height hasn't changed and we can save some tests with this information: We can check if
+			// height is the same with only two tests (and only 1 will be needed if lastHeight was sea level).
+			int lastAirHeight = lastHeight + 1;
+			
+			float density_gradient = -((float)(lastAirHeight - mount_zero_level) / mnt_h_n);
+			float mnt_n = Noise.NoisePerlin3D(noise_mountain.np, x, lastAirHeight, z, seed);			
+			boolean isAir = mnt_n + density_gradient < 0.0f;
+			
+			if (isAir) {
+				lowestAir = lastAirHeight;
+				testHeight = lastHeight;
+			} else {
+				// Nope, height has changed, we will have to do a proper search
+				highestGround = lastAirHeight;
+				testHeight = lastAirHeight + 1; // perhaps the land has only raised by 1, we can live in hope
+			}
+		}
+
+		while (highestGround + 1 < lowestAir) {
+			float density_gradient = -((float)(testHeight - mount_zero_level) / mnt_h_n);
+			float mnt_n = Noise.NoisePerlin3D(noise_mountain.np, x, testHeight, z, seed);			
+			boolean isAir = mnt_n + density_gradient < 0.0f;
+			
+			if (isAir) {
+				lowestAir = testHeight;
+				testHeight -= ((testHeight - highestGround) / 2);
+			} else {
+				int previousHighestGround = highestGround;
+				highestGround = testHeight;
+				if (lowestAir == Short.MAX_VALUE) {
+					testHeight += 2 * (testHeight - previousHighestGround);
+				} else {
+					testHeight += (lowestAir - testHeight) / 2;
+				}
+			}
+		}
+		if (highestGround + 1 != lowestAir) {
+			AmidstLogger.error("Ground search alg failed! highestGround: " + highestGround + ", lowestAir: " + lowestAir);
+		}
+		
+		return highestGround;		
+	}
+	
 	@Override
 	public short populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
 		return isFloatlands ? 
@@ -179,6 +238,8 @@ public class BiomeDataOracleV7 extends MinetestBiomeDataOracle {
 					// and Amidst use right-handed coordinates.
 					world_z = -world_z;
 					
+					int lastMountainHeight = Short.MIN_VALUE; // minvalue will be the "not-known" value
+					
 					for (int x = 0; x < width; x++, index2d++) {
 						
 						biomeValue = 0;
@@ -201,33 +262,25 @@ public class BiomeDataOracleV7 extends MinetestBiomeDataOracle {
 						float mnt_n1 = Noise.NoisePerlin3D(noise_mountain.np, world_x, surfaceOrSeaLevel, world_z, seed);
 												
 						if (mnt_n1 + density_gradient >= 0.0) {							
-							// Mountains are here, but since we only have a 1-bit plane to represent them, lets
+							// Mountains are here
+							int mountainHeight = findMountainHeight(lastMountainHeight, mnt_h_n, surfaceOrSeaLevel, world_x, world_z);
+							lastMountainHeight = mountainHeight;
+																			
+							// since we only have a 1-bit plane to represent them, lets
 							// only draw ones that are quite high
-							float mnt_n2 = Noise.NoisePerlin3D(noise_mountain.np, world_x, surfaceOrSeaLevel + cMimimumMountainHeight, world_z, seed);
-							density_gradient = -((float)(surfaceOrSeaLevel + cMimimumMountainHeight - mount_zero_level) / mnt_h_n);
-							if (mnt_n2 + density_gradient >= 0.0) {
+							if (mountainHeight >= surfaceOrSeaLevel + cMimimumMountainHeight) {
 								biomeValue |= BITPLANE_MOUNTAIN;
-								surface_y = Math.max(surface_y, surfaceOrSeaLevel + cMimimumMountainHeight);
 							}
 							
 							if ((v7params.spflags & MapgenV7Params.FLAG_V7_MOUNTAINS) > 0) {
+								surface_y = mountainHeight;
 								// Remove ocean if mountains rise above sea level.
-								// This makes the oceans more correct, but the biome here might be wrong since
-								// we haven't worked out the real height.
-								// TODO: Perhaps do a logarithmic search for the height like we do in v5 oracle
-								if ((biomeValue & BITPLANE_OCEAN) > 0) {
-									if ((biomeValue & BITPLANE_MOUNTAIN) > 0) {
-										biomeValue -= BITPLANE_OCEAN;									
-									} else {
-										mnt_n2 = Noise.NoisePerlin3D(noise_mountain.np, world_x, surfaceOrSeaLevel + 1, world_z, seed);
-										density_gradient = -((float)(surfaceOrSeaLevel + 1 - mount_zero_level) / mnt_h_n);
-										if (mnt_n2 + density_gradient >= 0.0) {
-											biomeValue -= BITPLANE_OCEAN;
-											surface_y = Math.max(surface_y, surfaceOrSeaLevel + 1);
-										}
-									}
-								}							
+								if ((biomeValue & BITPLANE_OCEAN) > 0 && mountainHeight > surfaceOrSeaLevel) {
+									biomeValue -= BITPLANE_OCEAN;
+								}
 							}
+						} else {
+							lastMountainHeight = Short.MIN_VALUE; // minvalue will be the "not-known" value
 						}
 						
 						// add the river bitplane
