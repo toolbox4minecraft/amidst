@@ -104,8 +104,8 @@ public class BiomeAuthority implements BiomeProfileUpdateListener {
 		);
 		
 		// Makes sure the default biomeprofiles for this game engine are added to the biomes 
-		// directory so the user can edit them. 
-		biomeProfileDirectory.saveDefaultProfilesIfNecessary();
+		// directory so the user can edit them.
+		biomeProfileDirectory.saveDefaultProfilesIfNecessary(settings);
 
 		// Makes sure biomeProfileSelection is set to a profile that's suitable for the
 		// current game engine.

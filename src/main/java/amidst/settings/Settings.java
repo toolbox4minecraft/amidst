@@ -28,6 +28,13 @@ public enum Settings {
 				value -> preferences.putBoolean(key, value));
 	}
 
+	public static Setting<Long> createLong(Preferences preferences, String key, long defaultValue) {
+		return new SettingBase<>(
+				defaultValue,
+				value -> preferences.getLong(key, value),
+				value -> preferences.putLong(key, value));
+	}
+	
 	public static Setting<Dimension> createDimension(Preferences preferences, String key, Dimension defaultValue) {
 		return new SettingBase<>(
 				defaultValue,

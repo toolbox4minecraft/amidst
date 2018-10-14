@@ -1,15 +1,20 @@
 package amidst.settings.biomeprofile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.MessageDigest;
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Map.Entry;
 
+import amidst.AmidstSettings;
 import amidst.AmidstVersion;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
+import amidst.minetest.world.mapgen.DefaultBiomes;
 import amidst.parsing.FormatException;
 import amidst.parsing.json.JsonReader;
 import amidst.util.OperatingSystemDetector;
@@ -139,11 +144,14 @@ public class BiomeProfileDirectory {
 		this.biomeProfileImpl = biome_profile_impl;
 	}
 	
-	public void saveDefaultProfilesIfNecessary() {
+	public void saveDefaultProfilesIfNecessary(AmidstSettings settings) {
 		if (!isValid()) {
 			AmidstLogger.info("Unable to find biome profile directory.");
 		} else {
 			AmidstLogger.info("Found biome profile directory.");
+			
+			removeObsoleteBiomeProfileFiles(settings);
+			
 			for(BiomeProfile profile : createDefaultProfiles()) {						
 				File profileFile = new File(root, profile.getName() + "." + profileFileExtension);
 				
@@ -158,6 +166,73 @@ public class BiomeProfileDirectory {
 		}
 	}
 
+	/**
+	 * Delete any old biome profile files that are out of date, or have had their name changed.
+	 * This only deletes known files, to prevent removal of anything user-created or user-edited. 
+	 */
+	private void removeObsoleteBiomeProfileFiles(AmidstSettings settings) {
+		
+		long obsoleteLastRemoved_epochDay = settings.lastBiomeProfilePurge.get();
+		
+		if ((obsoleteLastRemoved_epochDay == 0) || (LocalDate.now().toEpochDay() < obsoleteLastRemoved_epochDay)) {
+			// The data we have about obsolete biome profiles is more recent than the 
+			// last time we removed obsolete biome profiles, so do so again.
+			try {
+				MessageDigest shaDigest = MessageDigest.getInstance("SHA-1");
+				
+				// Realistically it's only the Minetest biome profiles that will need older files removed 
+				for(Entry<String, String> entry : DefaultBiomes.getObsoleteBiomeProfiles()) {
+					
+					File obsoleteFile = new File(root, entry.getKey() + "." + profileFileExtension);
+					if (obsoleteFile.isFile()) {
+						// check the file content matches the obsolete content, i.e. hasn't been edited by the user
+						if (entry.getValue().equals(getFileChecksum(shaDigest, obsoleteFile))) {
+							AmidstLogger.info("Removing obsolete biome profile \"" + obsoleteFile.getName() + "\"");
+							obsoleteFile.delete();
+						}
+					}
+				}
+				// Save the date the cleanup was performed
+				settings.lastBiomeProfilePurge.set(LocalDate.now().toEpochDay());
+			} catch(Exception ex) {
+				// cleaning up obsolete files is not critical
+				AmidstLogger.error("Exception removing old biome profiles: " + ex.getMessage());
+			}
+		}
+	}
+	
+	private static String getFileChecksum(MessageDigest digest, File file) throws IOException
+	{
+	    //Get file input stream for reading the file content
+	    FileInputStream fis = new FileInputStream(file);
+	     
+	    //Create byte array to read data in chunks
+	    byte[] byteArray = new byte[1024];
+	    int bytesCount = 0;
+	      
+	    //Read file data and update in message digest
+	    while ((bytesCount = fis.read(byteArray)) != -1) {
+	        digest.update(byteArray, 0, bytesCount);
+	    };
+	     
+	    //close the stream; We don't need it now.
+	    fis.close();
+	     
+	    //Get the hash's bytes
+	    byte[] bytes = digest.digest();
+	     
+	    //This bytes[] has bytes in decimal format;
+	    //Convert it to hexadecimal format
+	    StringBuilder sb = new StringBuilder();
+	    for(int i=0; i< bytes.length ;i++)
+	    {
+	        sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+	    }
+	     
+	    //return complete hash
+	    return sb.toString();
+	}	
+	
 	public void visitProfiles(BiomeProfileVisitor visitor) {
 		visitProfiles(root, visitor);
 	}

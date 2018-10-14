@@ -147,7 +147,7 @@ public class BiomeDataOracleV7 extends MinetestBiomeDataOracle {
 
 		if (lastHeight != Short.MIN_VALUE) {
 			// Perhaps the height hasn't changed and we can save some tests with this information: We can check if
-			// height is the same with only two tests (and only 1 will be needed if lastHeight was sea level).
+			// height is the same with only two tests (and only 1 will be needed if lastHeight was highestGround).
 			int lastAirHeight = lastHeight + 1;
 			
 			float density_gradient = -((float)(lastAirHeight - mount_zero_level) / mnt_h_n);

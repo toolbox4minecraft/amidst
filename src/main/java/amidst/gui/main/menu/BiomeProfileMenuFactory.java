@@ -164,7 +164,7 @@ public class BiomeProfileMenuFactory implements BiomeProfileUpdateListener {
 
 	private void initParentMenu() {
 		parentMenu.removeAll();
-		biomeProfileDirectory.saveDefaultProfilesIfNecessary();
+		biomeProfileDirectory.saveDefaultProfilesIfNecessary(settings);
 		BiomeProfileVisitorImpl visitor = new BiomeProfileVisitorImpl(parentMenu, actions, settings);
 		biomeProfileDirectory.visitProfiles(visitor);
 		parentMenu.addSeparator();

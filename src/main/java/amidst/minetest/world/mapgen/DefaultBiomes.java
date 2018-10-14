@@ -1,7 +1,13 @@
 package amidst.minetest.world.mapgen;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import amidst.mojangapi.world.biome.BiomeColor;
 
@@ -10,10 +16,38 @@ public class DefaultBiomes {
 	private static Map<String, MinetestBiome[]> biomeLists = null;
 
 	public static final String BIOMEPROFILENAME_V6            = "v6";
-	public static final String BIOMEPROFILENAME_MINETEST_GAME = "Minetest Game";
+	public static final String BIOMEPROFILENAME_MINETEST_GAME = "Minetest Game v.4";
 	
 	public static final short FLOATLAND_SHADOW_LIMIT    = 1024;
 	public static final short FLOATLAND_LEVEL           = 1280;
+	
+	/**
+	 * List of biome profile files that were created by older versions of Admist
+	 * and can now be deleted.
+	 * @see getObsoleteBiomeProfilesDate()
+	 */
+	public static List<Entry<String, String>> getObsoleteBiomeProfiles() {
+		
+		List<Entry<String, String>> result = new ArrayList<Entry<String, String>>();
+		
+		result.add(new AbstractMap.SimpleEntry<String, String>("Minetest Game",    "c0f90f045b4111bab064f669958196fd73bad894"));
+		
+		result.add(new AbstractMap.SimpleEntry<String, String>("Minetest default", "b9535c9299fd0ee92067c8c6b38a46c43d22be71")); // v1.1
+		result.add(new AbstractMap.SimpleEntry<String, String>("V6 biomes",        "2c74eaf3c805c9f05797bfed906b70dd18772587")); // v1.1
+		result.add(new AbstractMap.SimpleEntry<String, String>("VoxelGarden",      "8ab488cbbe5c3cbfc1aa3bae8c717104e98e00ca")); // v1.1
+
+		return result;
+	}
+	
+	/**
+	 * Returns the date of the data provided by getObsoleteBiomeProfiles().
+	 * If the returned date is younger than the last time obsolete biomes were removed, then
+	 * no further checks are necessary. 
+	 * @see getObsoleteBiomeProfiles()
+	 */
+	public static LocalDate getObsoleteBiomeProfilesDate() {
+		return LocalDate.of(2018, Month.OCTOBER, 20);
+	}
 	
 	/**
 	 * The first item in the list will be considered the definitive biome list
