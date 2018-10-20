@@ -174,7 +174,7 @@ public class BiomeProfileDirectory {
 		
 		long obsoleteLastRemoved_epochDay = settings.lastBiomeProfilePurge.get();
 		
-		if ((obsoleteLastRemoved_epochDay == 0) || (LocalDate.now().toEpochDay() < obsoleteLastRemoved_epochDay)) {
+		if ((obsoleteLastRemoved_epochDay == 0) || (obsoleteLastRemoved_epochDay < DefaultBiomes.getObsoleteBiomeProfilesDate().toEpochDay())) {
 			// The data we have about obsolete biome profiles is more recent than the 
 			// last time we removed obsolete biome profiles, so do so again.
 			try {
