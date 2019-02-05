@@ -56,6 +56,8 @@ public class DefaultBiomes {
 		if (biomeLists == null) {
 			biomeLists = new LinkedHashMap<String, MinetestBiome[]>();
 			
+			// Constructed from mapgen.lua in Master branch, where mapgen.lua last updated in ab1a79b13c on Oct 10, 2018
+			// https://github.com/minetest/minetest_game/blob/ab1a79b13c5739d73083236ca29869b60ff3b380/mods/default/mapgen.lua
 			biomeLists.put(
 				BIOMEPROFILENAME_MINETEST_GAME,
 				setIndexes(
@@ -103,7 +105,9 @@ public class DefaultBiomes {
 				)
 			);
 			
-						
+			// Constructed from mapgen.lua in backport branch, where mapgen.lua last updated in c2d1a5e on 24 Apr 2017
+			// (and the mapgen.lua file in stable-0.4 branch is identical)
+			// https://github.com/minetest/minetest_game/blob/c2d1a5ed4bebd01a1a9340d55cb2d5edf6d59df2/mods/default/mapgen.lua
 			biomeLists.put(
 				"Minetest Game v.4",
 				setIndexes(

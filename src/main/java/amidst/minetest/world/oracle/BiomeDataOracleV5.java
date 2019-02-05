@@ -45,8 +45,8 @@ public class BiomeDataOracleV5 extends MinetestBiomeDataOracle {
 	@Override
 	public short populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
 
-		// FYI: at the time of writing this, the mapgen for v5 is not yet officially stable
-		// See https://forum.minetest.net/viewtopic.php?f=18&t=19132		
+		// The v5 mapgen terrain became officially stable in Minetest v5, Dec 2018
+		// See https://github.com/minetest/minetest/commit/40007351569413fd9dcff861ee00562d0c405722
 		
 		int width = result.length;
 		if (width > 0) {
