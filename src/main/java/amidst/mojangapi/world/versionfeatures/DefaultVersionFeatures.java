@@ -189,6 +189,9 @@ public enum DefaultVersionFeatures {
 						Biome.jungle
 				).sinceExtend(RecognisedVersion._1_4_2,
 						Biome.jungleHills // TODO: jungle temples spawn only since 1.4.2 in jungle hills?
+				).sinceExtend(RecognisedVersion._19w06a,
+						Biome.bambooJungle,
+						Biome.bambooJungleHills
 				).construct();
 		this.validBiomesAtMiddleOfChunk_WitchHut = VersionFeature.<Biome> listBuilder()
 				.init(
@@ -336,7 +339,7 @@ public enum DefaultVersionFeatures {
 				).since(RecognisedVersion._1_13_pre7,
 					(byte) 16
 				).construct();
-				
+
 		this.buggyStructureCoordinateMath = VersionFeature.<Boolean> builder()
 				.init(
 						false

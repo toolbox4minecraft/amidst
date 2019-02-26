@@ -71,4 +71,6 @@
 [ "Savanna Plateau M", { "r":207, "g":197, "b":140 } ],
 [ "Mesa (Bryce)", { "r":255, "g":109, "b":61 } ],
 [ "Mesa Plateau F M", { "r":216, "g":191, "b":141 } ],
-[ "Mesa Plateau M", { "r":242, "g":180, "b":141 } ] ] }
+[ "Mesa Plateau M", { "r":242, "g":180, "b":141 } ],
+[ "Bamboo Jungle", { "r":118, "g":142, "b":20 } ],
+[ "Bamboo Jungle Hills", { "r":59, "g":71, "b":10 } ] ] }
