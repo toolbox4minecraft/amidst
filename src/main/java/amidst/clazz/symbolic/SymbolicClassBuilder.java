@@ -48,7 +48,8 @@ public class SymbolicClassBuilder {
 			Map<String, String> realClassNamesBySymbolicClassName,
 			Map<String, SymbolicClass> symbolicClassesByRealClassName,
 			String symbolicClassName,
-			String realClassName) throws ClassNotFoundException {
+			String realClassName)
+			throws ClassNotFoundException {
 		this.classLoader = classLoader;
 		this.realClassNamesBySymbolicClassName = realClassNamesBySymbolicClassName;
 		this.symbolicClassesByRealClassName = symbolicClassesByRealClassName;
@@ -109,7 +110,7 @@ public class SymbolicClassBuilder {
 		String realName = declaration.getRealName();
 		Class<?>[] parameterClasses = getParameterClasses(declaration.getParameters().getDeclarations());
 		Method method = getMethod(product.getClazz(), realName, parameterClasses);
-		SymbolicClass returnType = getType(method.getReturnType());
+		SymbolicClass returnType = getTypeOrSupertype(method.getReturnType());
 		return new SymbolicMethod(product, symbolicName, realName, method, returnType);
 	}
 
@@ -117,7 +118,7 @@ public class SymbolicClassBuilder {
 		String symbolicName = declaration.getSymbolicName();
 		String realName = declaration.getRealName();
 		Field field = getField(product.getClazz(), realName);
-		SymbolicClass type = getType(field.getType());
+		SymbolicClass type = getTypeOrSupertype(field.getType());
 		return new SymbolicField(product, symbolicName, realName, field, type);
 	}
 
@@ -172,5 +173,18 @@ public class SymbolicClassBuilder {
 			result = typeSplit[typeSplit.length - 1];
 		}
 		return symbolicClassesByRealClassName.get(result);
+	}
+
+	private SymbolicClass getTypeOrSupertype(Class<?> type) {
+		// Check the class hierarchy of 'type' to find a known class
+		Class<?> clazz = type;
+		while (clazz != null) {
+			SymbolicClass symClass = getType(clazz);
+			if (symClass != null) {
+				return symClass;
+			}
+			clazz = clazz.getSuperclass();
+		}
+		return null;
 	}
 }
