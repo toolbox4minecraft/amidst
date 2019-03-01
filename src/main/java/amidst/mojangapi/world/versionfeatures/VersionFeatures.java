@@ -17,6 +17,7 @@ public class VersionFeatures {
 	private final List<Biome> validBiomesAtMiddleOfChunk_Stronghold;
 	private final TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base> strongholdProducerFactory;
 	private final List<Biome> validBiomesForStructure_Village;
+	private final List<Biome> validBiomesForStructure_PillagerOutpost;
 	private final Boolean doComplexVillageCheck;
 	private final List<Biome> validBiomesAtMiddleOfChunk_DesertTemple;
 	private final List<Biome> validBiomesAtMiddleOfChunk_Igloo;
@@ -44,6 +45,7 @@ public class VersionFeatures {
 			List<Biome> validBiomesAtMiddleOfChunk_Stronghold,
 			TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base> strongholdProducerFactory,
 			List<Biome> validBiomesForStructure_Village,
+			List<Biome> validBiomesForStructure_PillagerOutpost,
 			Boolean doComplexVillageCheck,
 			List<Biome> validBiomesAtMiddleOfChunk_DesertTemple,
 			List<Biome> validBiomesAtMiddleOfChunk_Igloo,
@@ -69,6 +71,7 @@ public class VersionFeatures {
 		this.validBiomesAtMiddleOfChunk_Stronghold = validBiomesAtMiddleOfChunk_Stronghold;
 		this.strongholdProducerFactory = strongholdProducerFactory;
 		this.validBiomesForStructure_Village = validBiomesForStructure_Village;
+		this.validBiomesForStructure_PillagerOutpost = validBiomesForStructure_PillagerOutpost;
 		this.doComplexVillageCheck = doComplexVillageCheck;
 		this.validBiomesAtMiddleOfChunk_DesertTemple = validBiomesAtMiddleOfChunk_DesertTemple;
 		this.validBiomesAtMiddleOfChunk_Igloo = validBiomesAtMiddleOfChunk_Igloo;
@@ -110,7 +113,11 @@ public class VersionFeatures {
 	public List<Biome> getValidBiomesForStructure_Village() {
 		return validBiomesForStructure_Village;
 	}
-	
+
+	public List<Biome> validBiomesForStructure_PillagerOutpost() {
+		return validBiomesForStructure_PillagerOutpost;
+	}
+
 	public Boolean getDoComplexVillageCheck() {
 		return doComplexVillageCheck;
 	}
@@ -130,11 +137,11 @@ public class VersionFeatures {
 	public List<Biome> getValidBiomesAtMiddleOfChunk_WitchHut() {
 		return validBiomesAtMiddleOfChunk_WitchHut;
 	}
-	
+
 	public List<Biome> getValidBiomesAtMiddleOfChunk_OceanRuins() {
 		return validBiomesAtMiddleOfChunk_OceanRuins;
 	}
-	
+
 	public List<Biome> getValidBiomesAtMiddleOfChunk_Shipwreck() {
 		return validBiomesAtMiddleOfChunk_Shipwreck;
 	}
@@ -174,15 +181,15 @@ public class VersionFeatures {
 	public Long getSeedForStructure_WitchHut() {
 		return seedForStructure_WitchHut;
 	}
-	
+
 	public Long getSeedForStructure_OceanRuins() {
 		return seedForStructure_OceanRuins;
 	}
-	
+
 	public Long getSeedForStructure_Shipwreck() {
 		return seedForStructure_Shipwreck;
 	}
-	
+
 	public Byte getMaxDistanceScatteredFeatures_Shipwreck() {
 		return maxDistanceScatteredFeatures_Shipwreck;
 	}

@@ -13,6 +13,7 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.locationchecker.EndCityLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm;
+import amidst.mojangapi.world.icon.locationchecker.PillagerOutpostLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.ScatteredFeaturesLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.VillageLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.WoodlandMansionLocationChecker;
@@ -129,17 +130,30 @@ public class WorldBuilder {
 						biomeDataOracle,
 						versionFeatures.getValidBiomesAtMiddleOfChunk_Stronghold()),
 				new PlayerProducer(movablePlayerList),
-				new StructureProducer<>(
-						Resolution.CHUNK,
-						4,
-						new VillageLocationChecker(
-								seed,
-								biomeDataOracle,
-								versionFeatures.getValidBiomesForStructure_Village(),
-								versionFeatures.getDoComplexVillageCheck()),
-						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
-						Dimension.OVERWORLD,
-						false),
+				new MultiProducer<>(
+						new StructureProducer<>(
+							Resolution.CHUNK,
+							4,
+							new VillageLocationChecker(
+									seed,
+									biomeDataOracle,
+									versionFeatures.getValidBiomesForStructure_Village(),
+									versionFeatures.getDoComplexVillageCheck()),
+							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
+							Dimension.OVERWORLD,
+							false),
+						new StructureProducer<>( // OUTPOSTS HERE
+							Resolution.CHUNK,
+							4,
+							new PillagerOutpostLocationChecker(
+									seed,
+									biomeDataOracle,
+									versionFeatures.getValidBiomesForStructure_Village(),
+									versionFeatures.getDoComplexVillageCheck()),
+							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.PILLAGER_OUTPOST),
+							Dimension.OVERWORLD,
+							false)
+				),
 				new MultiProducer<>(
 						new StructureProducer<>(
 								Resolution.CHUNK,
