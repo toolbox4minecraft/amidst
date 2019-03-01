@@ -114,7 +114,7 @@ public class VersionFeatures {
 		return validBiomesForStructure_Village;
 	}
 
-	public List<Biome> validBiomesForStructure_PillagerOutpost() {
+	public List<Biome> getValidBiomesForStructure_PillagerOutpost() {
 		return validBiomesForStructure_PillagerOutpost;
 	}
 

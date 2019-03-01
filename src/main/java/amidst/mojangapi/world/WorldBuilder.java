@@ -148,7 +148,7 @@ public class WorldBuilder {
 							new PillagerOutpostLocationChecker(
 									seed,
 									biomeDataOracle,
-									versionFeatures.getValidBiomesForStructure_Village()),
+									versionFeatures.getValidBiomesForStructure_PillagerOutpost()),
 							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.PILLAGER_OUTPOST),
 							Dimension.OVERWORLD,
 							false)
