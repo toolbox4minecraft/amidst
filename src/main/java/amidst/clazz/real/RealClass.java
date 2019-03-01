@@ -197,8 +197,8 @@ public class RealClass {
 			String[] args = readArguments(value);
 			if(arguments.length == args.length) {
 				for(int i = 0; i < args.length; i++) {
-					if(args[i] != null && !args[i].equals(arguments[i]))
-						break;
+					if(arguments[i] != null && !arguments[i].equals(args[i]))
+						return false;
 				}
 				return true;
 			}
