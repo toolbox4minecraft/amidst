@@ -249,7 +249,7 @@ public class RealClassBuilder {
 
 	private String readSuperClass(DataInputStream stream, RealClassConstant<?>[] constants) throws IOException {
 		int superClassEntry = stream.readUnsignedShort();
-		int superClassName = (int) constants[superClassEntry-1].getValue();
+		int superClassName = (Integer) constants[superClassEntry-1].getValue();
 		return (String) constants[superClassName-1].getValue();
 	}
 
