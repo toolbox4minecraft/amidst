@@ -142,14 +142,13 @@ public class WorldBuilder {
 							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
 							Dimension.OVERWORLD,
 							false),
-						new StructureProducer<>( // OUTPOSTS HERE
+						new StructureProducer<>(
 							Resolution.CHUNK,
 							4,
 							new PillagerOutpostLocationChecker(
 									seed,
 									biomeDataOracle,
-									versionFeatures.getValidBiomesForStructure_Village(),
-									versionFeatures.getDoComplexVillageCheck()),
+									versionFeatures.getValidBiomesForStructure_Village()),
 							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.PILLAGER_OUTPOST),
 							Dimension.OVERWORLD,
 							false)
