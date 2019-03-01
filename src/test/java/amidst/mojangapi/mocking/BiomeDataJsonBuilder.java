@@ -26,7 +26,9 @@ public class BiomeDataJsonBuilder {
 	}
 
 	private void store(Map<AreaJson, short[]> biomeDataMap, int x, int y, int width, int height, int[] biomeData) {
-		biomeDataMap.put(new AreaJson(x, y, width, height), BiomeDataJson.int2short(biomeData));
+		// Store biome data, and trim the array to exclude potential garbage data
+		// at the end, which isn't deterministic
+		biomeDataMap.put(new AreaJson(x, y, width, height), BiomeDataJson.int2short(biomeData, width*height));
 	}
 
 	public BiomeDataJson createQuarterBiomeData() {
