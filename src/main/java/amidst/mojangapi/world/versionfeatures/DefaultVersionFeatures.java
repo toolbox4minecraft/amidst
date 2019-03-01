@@ -157,6 +157,8 @@ public enum DefaultVersionFeatures {
 						Biome.savanna
 				).sinceExtend(RecognisedVersion._16w20a,
 						Biome.taiga
+				).sinceExtend(RecognisedVersion._18w49a,
+						Biome.icePlains
 				).construct();
 		this.doComplexVillageCheck = VersionFeature.<Boolean> builder()
 				.init(
