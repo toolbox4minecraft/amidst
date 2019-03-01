@@ -48,25 +48,42 @@ public enum DefaultClassTranslator {
 					.thenDeclareRequired(CLASS_LAYER_UTIL)
 						.requiredMethod(METHOD_LAYER_UTIL_INITIALIZE_ALL, "a").real("long").symbolic(CLASS_WORLD_TYPE).symbolic(CLASS_GEN_SETTINGS).end()
 				.next()
-					.ifDetect(c ->
-						c.getNumberOfConstructors() == 1
-						&& c.getNumberOfFields() >= 15
-						&& c.getNumberOfMethods() >= 19
-						&& c.searchForFloat(684.412F)
-					)
-					.thenDeclareRequired(CLASS_GEN_SETTINGS)
+					.ifDetect(c -> ( // before 18w46a
+							c.getNumberOfConstructors() == 1
+							&& c.getNumberOfFields() >= 15
+							&& c.getNumberOfMethods() >= 19
+							&& c.searchForFloat(684.412F)
+						) || ( // from 18w46a
+							!c.getRealClassName().contains("$")
+							&& !c.getRealSuperClassName().equals("java/lang/Object")
+							&& c.getNumberOfFields() >= 4
+							&& c.getNumberOfMethods() == c.getNumberOfFields()
+							&& c.getNumberOfConstructors() >= 1
+							&& c.getField(0).hasFlags(AccessFlags.FINAL | AccessFlags.PRIVATE)
+							&& !c.getField(0).hasFlags(AccessFlags.STATIC)
+							&& !c.searchForStringContaining("textures")
+						    && c.hasMethodWithRealArguments()
+						    && !c.hasMethodWithRealArguments(new String[]{ null })
+						    && !c.hasMethodWithRealArguments(null, null)
+						    && !c.hasMethodWithRealArguments(null, null, null)
+						    && !c.hasMethodWithRealArguments(null, null, null, null)
+						)
+					).thenDeclareRequired(CLASS_GEN_SETTINGS)
 						.requiredConstructor(CONSTRUCTOR_GEN_SETTINGS).end()
 				.next()
 					.ifDetect(c ->
 						!c.getRealClassName().contains("$")
+						&& c.getRealSuperClassName().equals("java/lang/Object")
 						&& c.getNumberOfConstructors() == 1
-						&& c.getNumberOfMethods() == 1
-						&& c.getNumberOfFields() == 1
+						&& (c.getNumberOfMethods() >= 1 || c.getNumberOfMethods() <= 3)
+						&& (c.getNumberOfFields() == 1 || c.getNumberOfFields() == 2)
 						&& c.getField(0).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
-						&& c.hasMethodWithRealArguments("int", "int", "int", "int", null)
+						&& (c.hasMethodWithRealArguments("int", "int", "int", "int", null)
+						    || c.hasMethodWithRealArguments("int", "int", "int", "int"))
 					)
 					.thenDeclareRequired(CLASS_GEN_LAYER)
-						.requiredMethod(METHOD_GEN_LAYER_GET_BIOME_DATA, "a").real("int").real("int").real("int").real("int").symbolic(CLASS_BIOME).end()
+						.optionalMethod(METHOD_GEN_LAYER_GET_BIOME_DATA, "a").real("int").real("int").real("int").real("int").symbolic(CLASS_BIOME).end()
+						.requiredMethod(METHOD_GEN_LAYER_GET_BIOME_DATA2, "a").real("int").real("int").real("int").real("int").end() //changed in 18w47b
 				.next()
 					.ifDetect(c ->
 						c.getNumberOfConstructors() == 1

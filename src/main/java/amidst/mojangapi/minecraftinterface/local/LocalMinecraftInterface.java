@@ -154,8 +154,14 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			IllegalArgumentException,
 			InvocationTargetException {
 		SymbolicObject biomeGen = getBiomeGenerator(useQuarterResolution);
-		Object[] biomes = (Object[]) biomeGen
-				.callMethod(SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA, x, y, width, height, null);
+		Object[] biomes = null;
+		if(genLayerClass.hasMethod(SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA)) {
+			biomes = (Object[]) biomeGen.callMethod(
+					SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA, x, y, width, height, null);
+		} else {
+			biomes = (Object[]) biomeGen.callMethod(
+					SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA2, x, y, width, height);
+		}
 		return biomes;
 	}
 

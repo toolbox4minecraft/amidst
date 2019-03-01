@@ -26,6 +26,7 @@ public enum SymbolicNames {
 
 	public static final String CLASS_GEN_LAYER = "GenLayer";
 	public static final String METHOD_GEN_LAYER_GET_BIOME_DATA = "getBiomeData";
+	public static final String METHOD_GEN_LAYER_GET_BIOME_DATA2 = "getBiomeData2";
 
 	public static final String CLASS_BIOME = "Biome";
 	public static final String METHOD_BIOME_GET_ID = "getBiomeId";
