@@ -39,6 +39,10 @@ public class StructureProducer<T> extends WorldIconProducer<T> {
 
 	@Override
 	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer, T additionalData) {
+		if(!checker.hasValidLocations()) {
+			return; // No need to check if the LocationChecker will never accept anything
+		}
+
 		for (int xRelativeToFragment = 0; xRelativeToFragment < size; xRelativeToFragment++) {
 			for (int yRelativeToFragment = 0; yRelativeToFragment < size; yRelativeToFragment++) {
 				generateAt(corner, consumer, additionalData, xRelativeToFragment, yRelativeToFragment);

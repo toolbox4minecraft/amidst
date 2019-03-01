@@ -22,4 +22,9 @@ public class StructureBiomeLocationChecker implements LocationChecker {
 	public boolean isValidLocation(int x, int y) {
 		return biomeDataOracle.isValidBiomeForStructureAtMiddleOfChunk(x, y, size, validBiomes);
 	}
+
+	@Override
+	public boolean hasValidLocations() {
+		return !validBiomes.isEmpty();
+	}
 }
