@@ -26,10 +26,9 @@ public enum DefaultClassTranslator {
 						.requiredField(FIELD_WORLD_TYPE_AMPLIFIED,    "e")
 						.requiredField(FIELD_WORLD_TYPE_CUSTOMIZED,   "f")
 				.next()
-					.ifDetect(c ->
-						c.getNumberOfConstructors() == 0
+					.ifDetect(c -> c.getNumberOfConstructors() == 0
 						&& c.getNumberOfMethods() >= 6
-						&& c.getNumberOfMethods() <= 8
+						&& c.getNumberOfMethods() <= 11
 						&& c.getNumberOfFields() >= 3
 						&& c.getNumberOfFields() <= 4
 						&& c.getField(0).hasFlags(AccessFlags.STATIC)
