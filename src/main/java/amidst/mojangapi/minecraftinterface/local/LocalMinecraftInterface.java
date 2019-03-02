@@ -234,9 +234,12 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			IllegalArgumentException,
 			InvocationTargetException {
 		String register = SymbolicNames.METHOD_BOOTSTRAP_REGISTER;
-		if (bootstrapClass.getMethod(register).hasModifiers(Modifier.PRIVATE)) {
+		if(bootstrapClass.getMethod(SymbolicNames.METHOD_BOOTSTRAP_REGISTER3).hasModifiers(Modifier.PUBLIC)) {
+			register = SymbolicNames.METHOD_BOOTSTRAP_REGISTER3;
+		} else if (bootstrapClass.getMethod(register).hasModifiers(Modifier.PRIVATE)) {
 			register = SymbolicNames.METHOD_BOOTSTRAP_REGISTER2;
 		}
+
 		bootstrapClass.callStaticMethod(register);
 	}
 

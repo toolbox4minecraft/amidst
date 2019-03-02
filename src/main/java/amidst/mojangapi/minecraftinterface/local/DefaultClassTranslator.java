@@ -38,6 +38,7 @@ public enum DefaultClassTranslator {
 					.thenDeclareRequired(CLASS_BOOTSTRAP)
 						.optionalMethod(METHOD_BOOTSTRAP_REGISTER, "c").end()
                         .optionalMethod(METHOD_BOOTSTRAP_REGISTER2, "b").end() // the name changed in 18w43c
+                        .optionalMethod(METHOD_BOOTSTRAP_REGISTER3, "a").end() // the name changed again in 19w07a
 				.next()
 					.ifDetect(c ->
 						c.searchForLong(1000L)
@@ -82,7 +83,7 @@ public enum DefaultClassTranslator {
 					)
 					.thenDeclareRequired(CLASS_GEN_LAYER)
 						.optionalMethod(METHOD_GEN_LAYER_GET_BIOME_DATA, "a").real("int").real("int").real("int").real("int").symbolic(CLASS_BIOME).end()
-						.requiredMethod(METHOD_GEN_LAYER_GET_BIOME_DATA2, "a").real("int").real("int").real("int").real("int").end() //changed in 18w47b
+						.optionalMethod(METHOD_GEN_LAYER_GET_BIOME_DATA2, "a").real("int").real("int").real("int").real("int").end() //changed in 18w47b
 				.next()
 					.ifDetect(c ->
 						c.getNumberOfConstructors() == 1
