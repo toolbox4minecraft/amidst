@@ -23,10 +23,10 @@ public class BiomeColorProvider implements ColorProvider {
 	}
 
 	private int getColor(int biomeIndex) {
-		if (biomeSelection.isSelected(biomeIndex)) {
+		if (biomeSelection.isVisible(biomeIndex)) {
 			return getBiomeColor(biomeIndex).getRGB();
 		} else {
-			return getBiomeColor(biomeIndex).getDeselectRGB();
+			return getBiomeColor(biomeIndex).getHiddenRGB();
 		}
 	}
 
