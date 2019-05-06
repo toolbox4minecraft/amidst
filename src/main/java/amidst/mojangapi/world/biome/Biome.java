@@ -95,7 +95,7 @@ public class Biome {
 	public static final Biome theEndMedium         = new Biome("The End - Medium island"   , 41, BiomeColor.from(128, 128, 255), BiomeType.PLAINS);
 	public static final Biome theEndHigh           = new Biome("The End - High island"     , 42, BiomeColor.from(128, 128, 255), BiomeType.PLAINS);
 	public static final Biome theEndBarren         = new Biome("The End - Barren island"   , 43, BiomeColor.from(128, 128, 255), BiomeType.PLAINS);
-	
+
 	public static final Biome warmOcean            = new Biome("Warm Ocean"                , 44, BiomeColor.from(  0,   0, 172), BiomeType.OCEAN);
 	public static final Biome lukewarmOcean        = new Biome("Lukewarm Ocean"            , 45, BiomeColor.from(  0,   0, 144), BiomeType.OCEAN);
 	public static final Biome coldOcean            = new Biome("Cold Ocean"                , 46, BiomeColor.from( 32,  32, 112), BiomeType.OCEAN);
@@ -103,9 +103,9 @@ public class Biome {
 	public static final Biome lukewarmDeepOcean    = new Biome("Lukewarm Deep Ocean"       , 48, BiomeColor.from(  0,   0,  64), BiomeType.OCEAN);
 	public static final Biome coldDeepOcean        = new Biome("Cold Deep Ocean"           , 49, BiomeColor.from( 32,  32,  56), BiomeType.OCEAN);
 	public static final Biome frozenDeepOcean      = new Biome("Frozen Deep Ocean"         , 50, BiomeColor.from( 64,  64, 144), BiomeType.OCEAN);
-	
+
 	public static final Biome theVoid              = new Biome("The Void",                  127, BiomeColor.from(  0,   0,   0), BiomeType.PLAINS);
-	
+
 	public static final Biome sunflowerPlains      = new Biome("Sunflower Plains",          plains);
 	public static final Biome desertM              = new Biome("Desert M",                  desert);
 	public static final Biome extremeHillsM        = new Biome("Extreme Hills M",           extremeHills);
@@ -127,6 +127,9 @@ public class Biome {
 	public static final Biome mesaBryce            = new Biome("Mesa (Bryce)",              mesa);
 	public static final Biome mesaPlateauFM        = new Biome("Mesa Plateau F M",          mesaPlateauF);
 	public static final Biome mesaPlateauM         = new Biome("Mesa Plateau M",            mesaPlateau);
+
+	public static final Biome bambooJungle         = new Biome("Bamboo Jungle",             168, BiomeColor.from(118, 142,  20), BiomeType.PLAINS);
+	public static final Biome bambooJungleHills    = new Biome("Bamboo Jungle Hills",       169, BiomeColor.from(59 ,  71,  10), BiomeType.HILLS);
 	// @formatter:on
 
 	private static final BiomeIterable ITERABLE = new BiomeIterable();
@@ -157,7 +160,7 @@ public class Biome {
 	}
 
 	public static boolean isSpecialBiomeIndex(int index) {
-		return index >= SPECIAL_BIOMES_START;
+		return biomes[index] != null && biomes[index].isSpecialBiome();
 	}
 
 	public static int compareByIndex(String name1, String name2) {
@@ -168,20 +171,26 @@ public class Biome {
 	private final int index;
 	private final BiomeColor defaultColor;
 	private final BiomeType type;
-	
+	private final boolean isSpecialBiome;
+
 	public Biome(String name, Biome base) {
 		this(name, base, base.defaultColor.createLightenedBiomeColor());
 	}
-	
+
 	public Biome(String name, Biome base, BiomeColor defaultColor) {
-		this(name, base.index + SPECIAL_BIOMES_START, defaultColor, base.type.strengthen());
+		this(name, base.index + SPECIAL_BIOMES_START, defaultColor, base.type.strengthen(), true);
 	}
 
 	public Biome(String name, int index, BiomeColor defaultColor, BiomeType type) {
+		this(name, index, defaultColor, type, false);
+	}
+
+	public Biome(String name, int index, BiomeColor defaultColor, BiomeType type, boolean isSpecialBiome) {
 		this.name = name;
 		this.index = index;
 		this.defaultColor = defaultColor;
 		this.type = type;
+		this.isSpecialBiome = isSpecialBiome;
 		biomes[index] = this;
 		biomeMap.put(name, this);
 	}
@@ -201,23 +210,29 @@ public class Biome {
 	public BiomeType getType() {
 		return type;
 	}
-	
+
 	public boolean isSpecialBiome() {
-		return Biome.isSpecialBiomeIndex(index);
+		return isSpecialBiome;
 	}
-	
+
 	public Biome getSpecialVariant() {
-		if(index >= SPECIAL_BIOMES_START)
+		if(isSpecialBiome)
 			return this;
-		return biomes[index + SPECIAL_BIOMES_START];
+		int special = index + SPECIAL_BIOMES_START;
+		if(special < biomes.length && biomes[special].isSpecialBiome())
+			return biomes[special];
+		return null;
 	}
 
 	public Biome getNormalVariant() {
-		if(index < SPECIAL_BIOMES_START)
+		if(!isSpecialBiome)
 			return this;
-		return biomes[index - SPECIAL_BIOMES_START];
+		int normal = index - SPECIAL_BIOMES_START;
+		if(normal >= 0 && !biomes[normal].isSpecialBiome())
+			return biomes[normal];
+		return null;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[Biome " + name + "]";

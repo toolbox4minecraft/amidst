@@ -39,6 +39,7 @@ public class BiomeWidget extends Widget {
 	private int maxNameWidth = 0;
 	private int biomeListHeight;
 	private boolean isInitialized = false;
+	private boolean isVisible = false;
 
 	private Rectangle innerBox = new Rectangle(0, 0, 1, 1);
 
@@ -64,6 +65,11 @@ public class BiomeWidget extends Widget {
 		setWidth(250);
 		setHeight(400);
 		setY(100);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void toggleVisibility() {
+		isVisible = !isVisible;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -144,7 +150,7 @@ public class BiomeWidget extends Widget {
 				scrollbarGrabbed = false;
 			}
 		}
-		scrollbarY = (int) (((float) -biomeListYOffset / listHeight) * boxHeight);
+		scrollbarY = (int) ((-biomeListYOffset / listHeight) * boxHeight);
 		scrollbarHeight = (int) (Math.ceil(boxHeight * (boxHeight / listHeight)));
 	}
 
@@ -255,6 +261,8 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawSpecialButtons(Graphics2D g2d) {
 		g2d.setColor(SELECT_BUTTON_COLOR);
+		String activeText = biomeSelection.isHighlightMode() ? "Active" : "Inactive";
+		g2d.drawString(activeText, getX() + getWidth() - 65, getY() + 20);
 		g2d.drawString("All  Special  None", getX() + 120, getY() + getHeight() - 10);
 	}
 
@@ -308,18 +316,21 @@ public class BiomeWidget extends Widget {
 			if (id < biomes.size()) {
 				int index = biomes.get(id).getIndex();
 				biomeSelection.toggle(index);
-				return true;
+				return biomeSelection.isHighlightMode();
 			}
-		} else if (isButton(mouseY)) {
+		} else if (isActiveButton(mouseX, mouseY)) {
+			biomeSelection.toggleHighlightMode();
+			return true;
+		} else if (isBottomButton(mouseY)) {
 			if (isSelectAllButton(mouseX)) {
 				biomeSelection.selectAll();
-				return true;
+				return biomeSelection.isHighlightMode();
 			} else if (isSelectSpecialBiomesButton(mouseX)) {
 				biomeSelection.selectOnlySpecial();
-				return true;
+				return biomeSelection.isHighlightMode();
 			} else if (isDeselectAllButton(mouseX)) {
 				biomeSelection.deselectAll();
-				return true;
+				return biomeSelection.isHighlightMode();
 			}
 		}
 		return false;
@@ -346,7 +357,7 @@ public class BiomeWidget extends Widget {
 	// TODO: These values are temporarily hard coded for the sake of a fast
 	// release
 	@CalledOnlyBy(AmidstThread.EDT)
-	private boolean isButton(int mouseY) {
+	private boolean isBottomButton(int mouseY) {
 		return mouseY > getHeight() - 25 && mouseY < getHeight() - 9;
 	}
 
@@ -366,8 +377,13 @@ public class BiomeWidget extends Widget {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	private boolean isActiveButton(int mouseX, int mouseY) {
+		return mouseX >= getWidth() - 65 && mouseX < getWidth() - 5 && mouseY >= 5 && mouseY < 21;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public boolean onVisibilityCheck() {
-		return biomeSelection.isHighlightMode() && getHeight() > 200;
+		return isVisible && getHeight() > 200;
 	}
 }

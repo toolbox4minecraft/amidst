@@ -47,7 +47,7 @@ public class RealClassBuilder {
 					stringIndices);
 			int accessFlags = readAccessFlags(stream);
 			skipThisClass(stream);
-			skipSuperClass(stream);
+			String superClassName = readSuperClass(stream, constants);
 			skipInterfaces(stream);
 			RealClassField[] fields = readFields(stream);
 			int numberOfMethodsAndConstructors = readNumberOfMethodsAndConstructors(stream);
@@ -59,6 +59,7 @@ public class RealClassBuilder {
 			int numberOfMethods = numberOfMethodsAndConstructors - numberOfConstructors;
 			return new RealClass(
 					realClassName,
+					superClassName,
 					classData,
 					minorVersion,
 					majorVersion,
@@ -246,8 +247,10 @@ public class RealClassBuilder {
 		stream.skip(2);
 	}
 
-	private void skipSuperClass(DataInputStream stream) throws IOException {
-		stream.skip(2);
+	private String readSuperClass(DataInputStream stream, RealClassConstant<?>[] constants) throws IOException {
+		int superClassEntry = stream.readUnsignedShort();
+		int superClassName = (Integer) constants[superClassEntry-1].getValue();
+		return (String) constants[superClassName-1].getValue();
 	}
 
 	private void skipInterfaces(DataInputStream stream) throws IOException {

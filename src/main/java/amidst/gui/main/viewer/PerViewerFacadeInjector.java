@@ -49,6 +49,7 @@ public class PerViewerFacadeInjector {
 			AmidstSettings settings,
 			Supplier<String> progressText) {
 		// @formatter:off
+		BiomeWidget biomeWidget = new BiomeWidget(CornerAnchorPoint.NONE, biomeSelection, layerReloader, settings.biomeProfileSelection);
 		return Arrays.asList(
 				new ChangeableTextWidget(   CornerAnchorPoint.CENTER,        progressText),
 				new FpsWidget(              CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              settings.showFPS),
@@ -57,8 +58,8 @@ public class PerViewerFacadeInjector {
 				new SelectedIconWidget(     CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
 				new DebugWidget(            CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, settings.showDebug, accelerationCounter),
 				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension),
-				new BiomeToggleWidget(      CornerAnchorPoint.BOTTOM_RIGHT,  biomeSelection,    layerReloader),
-				new BiomeWidget(            CornerAnchorPoint.NONE,          biomeSelection,    layerReloader,   settings.biomeProfileSelection)
+				new BiomeToggleWidget(      CornerAnchorPoint.BOTTOM_RIGHT,  biomeWidget, biomeSelection),
+				biomeWidget
 		);
 		// @formatter:on
 	}

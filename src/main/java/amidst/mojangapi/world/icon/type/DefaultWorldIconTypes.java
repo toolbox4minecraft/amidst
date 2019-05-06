@@ -31,7 +31,8 @@ public enum DefaultWorldIconTypes {
 	END_CITY            ("end_city",          "Likely End City"),
 	POSSIBLE_END_CITY   ("possible_end_city", "Possible End City"),
 	OCEAN_RUINS         ("ocean_ruins",       "Ocean Ruins"),
-	SHIPWRECK           ("shipwreck",         "Shipwreck");
+	SHIPWRECK           ("shipwreck",         "Shipwreck"),
+	PILLAGER_OUTPOST    ("pillager_outpost",  "Pillager Outpost");
 	// @formatter:on
 
 	private static final Map<String, DefaultWorldIconTypes> typeMap = createTypeMap();

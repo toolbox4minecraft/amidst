@@ -8,7 +8,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 
 public abstract class ImmutableIconWidget extends Widget {
-	private final BufferedImage icon;
+	private BufferedImage icon;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected ImmutableIconWidget(CornerAnchorPoint anchor, BufferedImage icon) {

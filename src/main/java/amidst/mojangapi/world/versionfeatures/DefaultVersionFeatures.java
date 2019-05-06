@@ -31,6 +31,7 @@ public enum DefaultVersionFeatures {
 				INSTANCE.validBiomesAtMiddleOfChunk_Stronghold.getValue(version),
 				INSTANCE.strongholdProducerFactory.getValue(version),
 				INSTANCE.validBiomesForStructure_Village.getValue(version),
+				INSTANCE.validBiomesForStructure_PillagerOutpost.getValue(version),
 				INSTANCE.doComplexVillageCheck.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_DesertTemple.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_Igloo.getValue(version),
@@ -58,6 +59,7 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Stronghold;
 	private final VersionFeature<TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base>> strongholdProducerFactory;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_Village;
+	private final VersionFeature<List<Biome>> validBiomesForStructure_PillagerOutpost;
 	private final VersionFeature<Boolean> doComplexVillageCheck;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_DesertTemple;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Igloo;
@@ -157,6 +159,25 @@ public enum DefaultVersionFeatures {
 						Biome.savanna
 				).sinceExtend(RecognisedVersion._16w20a,
 						Biome.taiga
+				).sinceExtend(RecognisedVersion._18w49a,
+						Biome.icePlains
+				).construct();
+		this.validBiomesForStructure_PillagerOutpost = VersionFeature.<Biome> listBuilder()
+				.init(
+						// this is for the enable all layers function
+						Biome.plains,
+						Biome.desert,
+						Biome.savanna,
+						Biome.taiga,
+						Biome.icePlains
+				).since(RecognisedVersion._12w03a
+				).sinceExtend(RecognisedVersion._18w47b,
+						Biome.plains,
+						Biome.desert,
+						Biome.savanna,
+						Biome.taiga
+				).sinceExtend(RecognisedVersion._18w49a,
+						Biome.icePlains
 				).construct();
 		this.doComplexVillageCheck = VersionFeature.<Boolean> builder()
 				.init(
@@ -189,6 +210,9 @@ public enum DefaultVersionFeatures {
 						Biome.jungle
 				).sinceExtend(RecognisedVersion._1_4_2,
 						Biome.jungleHills // TODO: jungle temples spawn only since 1.4.2 in jungle hills?
+				).sinceExtend(RecognisedVersion._19w06a,
+						Biome.bambooJungle,
+						Biome.bambooJungleHills
 				).construct();
 		this.validBiomesAtMiddleOfChunk_WitchHut = VersionFeature.<Biome> listBuilder()
 				.init(
@@ -336,7 +360,7 @@ public enum DefaultVersionFeatures {
 				).since(RecognisedVersion._1_13_pre7,
 					(byte) 16
 				).construct();
-				
+
 		this.buggyStructureCoordinateMath = VersionFeature.<Boolean> builder()
 				.init(
 						false

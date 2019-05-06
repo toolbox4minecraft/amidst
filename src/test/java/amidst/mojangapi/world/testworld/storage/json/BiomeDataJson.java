@@ -15,9 +15,9 @@ public class BiomeDataJson {
 		return result;
 	}
 
-	public static short[] int2short(int[] in) {
-		short[] result = new short[in.length];
-		for (int i = 0; i < in.length; i++) {
+	public static short[] int2short(int[] in, int outLen) {
+		short[] result = new short[outLen];
+		for (int i = 0; i < outLen; i++) {
 			result[i] = (short) in[i];
 		}
 		return result;

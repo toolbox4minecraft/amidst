@@ -17,14 +17,14 @@ public class BiomeColor {
 
 	private static final BiomeColor UNKNOWN_BIOME_COLOR = new BiomeColor(0, 0, 0);
 
-	private static final int DESELECT_NUMBER = 30;
+	private static final int HIDDEN_NUMBER = 30;
 	private static final int LIGHTEN_BRIGHTNESS = 40;
 
 	private final int r;
 	private final int g;
 	private final int b;
 	private final int rgb;
-	private final int deselectRGB;
+	private final int hiddenRGB;
 	private final Color color;
 
 	private BiomeColor(int r, int g, int b) {
@@ -32,7 +32,7 @@ public class BiomeColor {
 		this.g = g;
 		this.b = b;
 		this.rgb = createRGB(r, g, b);
-		this.deselectRGB = createDeselectRGB(r, g, b);
+		this.hiddenRGB = createHiddenRGB(r, g, b);
 		this.color = new Color(r, g, b);
 	}
 
@@ -44,13 +44,13 @@ public class BiomeColor {
 		return result;
 	}
 
-	private int createDeselectRGB(int r, int g, int b) {
+	private int createHiddenRGB(int r, int g, int b) {
 		int sum = r + g + b;
-		return createRGB(deselect(r, sum), deselect(g, sum), deselect(b, sum));
+		return createRGB(hide(r, sum), hide(g, sum), hide(b, sum));
 	}
 
-	private int deselect(int x, int average) {
-		return (x + average) / DESELECT_NUMBER;
+	private int hide(int x, int average) {
+		return (x + average) / HIDDEN_NUMBER;
 	}
 
 	public int getR() {
@@ -69,8 +69,8 @@ public class BiomeColor {
 		return rgb;
 	}
 
-	public int getDeselectRGB() {
-		return deselectRGB;
+	public int getHiddenRGB() {
+		return hiddenRGB;
 	}
 
 	public Color getColor() {

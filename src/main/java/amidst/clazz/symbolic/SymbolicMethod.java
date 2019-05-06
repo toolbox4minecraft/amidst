@@ -33,9 +33,17 @@ public class SymbolicMethod {
 	public String getRealName() {
 		return realName;
 	}
-	
+
 	public Method getRawMethod() {
 		return method;
+	}
+
+	public boolean hasModifiers(int modifiers) {
+	    return (method.getModifiers() & modifiers) != 0;
+	}
+
+	public boolean hasReturnType(Class<?> type) {
+	    return type.equals(method.getReturnType());
 	}
 
 	public Object call(SymbolicObject symbolicObject, Object... parameters)

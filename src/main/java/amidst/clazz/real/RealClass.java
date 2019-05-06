@@ -31,6 +31,7 @@ public class RealClass {
 	public static final int CLASS_DATA_WILDCARD = -1;
 
 	private final String realClassName;
+	private final String superClassName;
 	private final byte[] classData;
 
 	private final int minorVersion;
@@ -56,6 +57,7 @@ public class RealClass {
 
 	RealClass(
 			String realClassName,
+			String superClassName,
 			byte[] classData,
 			int minorVersion,
 			int majorVersion,
@@ -73,6 +75,7 @@ public class RealClass {
 			int numberOfConstructors,
 			int numberOfMethods) {
 		this.realClassName = realClassName;
+		this.superClassName = superClassName;
 		this.classData = classData;
 		this.minorVersion = minorVersion;
 		this.majorVersion = majorVersion;
@@ -93,6 +96,10 @@ public class RealClass {
 
 	public String getRealClassName() {
 		return realClassName;
+	}
+
+	public String getRealSuperClassName() {
+		return superClassName;
 	}
 
 	public boolean isClassDataWildcardMatching(int[] bytes) {
@@ -152,7 +159,7 @@ public class RealClass {
 		}
 		return false;
 	}
-	
+
 	public boolean searchForDouble(double required) {
 		for (Double entry : doubleConstants) {
 			if (entry.doubleValue() == required) {
@@ -183,15 +190,15 @@ public class RealClass {
 		}
 		return null;
 	}
-	
+
 	public boolean hasMethodWithRealArguments(String... arguments) {
 		for (ReferenceIndex entry : methodIndices) {
 			String value = getStringValueOfConstant(entry.getValue2());
 			String[] args = readArguments(value);
 			if(arguments.length == args.length) {
 				for(int i = 0; i < args.length; i++) {
-					if(args[i] != null && !args[i].equals(arguments[i]))
-						break;
+					if(arguments[i] != null && !arguments[i].equals(args[i]))
+						return false;
 				}
 				return true;
 			}

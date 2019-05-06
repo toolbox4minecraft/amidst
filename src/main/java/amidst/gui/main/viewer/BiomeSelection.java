@@ -23,7 +23,11 @@ public class BiomeSelection {
 	}
 
 	public boolean isSelected(int id) {
-		return !isHighlightMode.get() || selectedBiomes[id].get();
+		return selectedBiomes[id].get();
+	}
+
+	public boolean isVisible(int id) {
+		return !isHighlightMode.get() || isSelected(id);
 	}
 
 	public void selectAll() {
