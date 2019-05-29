@@ -6,8 +6,7 @@ import java.util.function.Function;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
-import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Base;
-import amidst.mojangapi.world.icon.producer.StrongholdProducer_Base;
+import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @Immutable
@@ -15,7 +14,7 @@ public class VersionFeatures {
 	private final List<Integer> enabledLayers;
 	private final List<Biome> validBiomesForStructure_Spawn;
 	private final List<Biome> validBiomesAtMiddleOfChunk_Stronghold;
-	private final TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base> strongholdProducerFactory;
+	private final TriFunction<Long, BiomeDataOracle, List<Biome>, CachedWorldIconProducer> strongholdProducerFactory;
 	private final List<Biome> validBiomesForStructure_Village;
 	private final List<Biome> validBiomesForStructure_PillagerOutpost;
 	private final Boolean doComplexVillageCheck;
@@ -25,7 +24,7 @@ public class VersionFeatures {
 	private final List<Biome> validBiomesAtMiddleOfChunk_WitchHut;
 	private final List<Biome> validBiomesAtMiddleOfChunk_OceanRuins;
 	private final List<Biome> validBiomesAtMiddleOfChunk_Shipwreck;
-	private final Function<Long, MineshaftAlgorithm_Base> mineshaftAlgorithmFactory;
+	private final Function<Long, LocationChecker> mineshaftAlgorithmFactory;
 	private final QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker> oceanMonumentLocationCheckerFactory;
 	private final List<Biome> validBiomesAtMiddleOfChunk_OceanMonument;
 	private final List<Biome> validBiomesForStructure_OceanMonument;
@@ -43,7 +42,7 @@ public class VersionFeatures {
 			List<Integer> enabledLayers,
 			List<Biome> validBiomesForStructure_Spawn,
 			List<Biome> validBiomesAtMiddleOfChunk_Stronghold,
-			TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base> strongholdProducerFactory,
+			TriFunction<Long, BiomeDataOracle, List<Biome>, CachedWorldIconProducer> strongholdProducerFactory,
 			List<Biome> validBiomesForStructure_Village,
 			List<Biome> validBiomesForStructure_PillagerOutpost,
 			Boolean doComplexVillageCheck,
@@ -53,7 +52,7 @@ public class VersionFeatures {
 			List<Biome> validBiomesAtMiddleOfChunk_WitchHut,
 			List<Biome> validBiomesAtMiddleOfChunk_OceanRuins,
 			List<Biome> validBiomesAtMiddleOfChunk_Shipwreck,
-			Function<Long, MineshaftAlgorithm_Base> mineshaftAlgorithmFactory,
+			Function<Long, LocationChecker> mineshaftAlgorithmFactory,
 			QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker> oceanMonumentLocationCheckerFactory,
 			List<Biome> validBiomesAtMiddleOfChunk_OceanMonument,
 			List<Biome> validBiomesForStructure_OceanMonument,
@@ -106,7 +105,7 @@ public class VersionFeatures {
 		return validBiomesAtMiddleOfChunk_Stronghold;
 	}
 
-	public TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base> getStrongholdProducerFactory() {
+	public TriFunction<Long, BiomeDataOracle, List<Biome>, CachedWorldIconProducer> getStrongholdProducerFactory() {
 		return strongholdProducerFactory;
 	}
 
@@ -146,7 +145,7 @@ public class VersionFeatures {
 		return validBiomesAtMiddleOfChunk_Shipwreck;
 	}
 
-	public Function<Long, MineshaftAlgorithm_Base> getMineshaftAlgorithmFactory() {
+	public Function<Long, LocationChecker> getMineshaftAlgorithmFactory() {
 		return mineshaftAlgorithmFactory;
 	}
 

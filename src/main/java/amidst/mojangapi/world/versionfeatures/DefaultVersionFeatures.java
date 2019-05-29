@@ -9,13 +9,12 @@ import amidst.fragment.layer.LayerIds;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
-import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Base;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_ChanceBased;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Original;
 import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker_Fixed;
 import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker_Original;
+import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_128Algorithm;
-import amidst.mojangapi.world.icon.producer.StrongholdProducer_Base;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Buggy128Algorithm;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Original;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
@@ -57,7 +56,7 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<List<Integer>> enabledLayers;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_Spawn;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Stronghold;
-	private final VersionFeature<TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base>> strongholdProducerFactory;
+	private final VersionFeature<TriFunction<Long, BiomeDataOracle, List<Biome>, CachedWorldIconProducer>> strongholdProducerFactory;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_Village;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_PillagerOutpost;
 	private final VersionFeature<Boolean> doComplexVillageCheck;
@@ -67,7 +66,7 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_WitchHut;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_OceanRuins;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Shipwreck;
-	private final VersionFeature<Function<Long, MineshaftAlgorithm_Base>> mineshaftAlgorithmFactory;
+	private final VersionFeature<Function<Long, LocationChecker>> mineshaftAlgorithmFactory;
 	private final VersionFeature<QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker>> oceanMonumentLocationCheckerFactory;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_OceanMonument;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_OceanMonument;
@@ -142,7 +141,7 @@ public enum DefaultVersionFeatures {
 						// this includes all the biomes above, except for the swampland
 						getValidBiomesForStrongholdSinceV13w36a()
 				).construct();
-		this.strongholdProducerFactory = VersionFeature.<TriFunction<Long, BiomeDataOracle, List<Biome>, StrongholdProducer_Base>> builder()
+		this.strongholdProducerFactory = VersionFeature.<TriFunction<Long, BiomeDataOracle, List<Biome>, CachedWorldIconProducer>> builder()
 				.init(
 						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_Original(seed, biomeOracle, validBiomes)
 				).since(RecognisedVersion._15w43c,
@@ -278,13 +277,15 @@ public enum DefaultVersionFeatures {
 						Biome.frozenOcean,
 						Biome.frozenDeepOcean
 				).construct();
-		this.mineshaftAlgorithmFactory = VersionFeature.<Function<Long, MineshaftAlgorithm_Base>> builder()
+		this.mineshaftAlgorithmFactory = VersionFeature.<Function<Long, LocationChecker>> builder()
 				.init(
 						seed -> new MineshaftAlgorithm_Original(seed)
 				).since(RecognisedVersion._1_4_2,
-						seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.01D)
+						seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.01D, true)
 				).since(RecognisedVersion._1_7_2,
-						seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.004D)
+						seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.004D, true)
+				).since(RecognisedVersion._18w06a,
+						seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.01D, false)
 				).construct();
 		this.oceanMonumentLocationCheckerFactory = VersionFeature.<QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker>> builder()
 				.init(

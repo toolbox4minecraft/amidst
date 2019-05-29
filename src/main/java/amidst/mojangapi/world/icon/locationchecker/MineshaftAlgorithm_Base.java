@@ -16,14 +16,21 @@ public abstract class MineshaftAlgorithm_Base implements LocationChecker {
 	public boolean isValidLocation(int chunkX, int chunkY) {
 		Random random = new Random(seed);
 
-		long var13 = (long) chunkX * random.nextLong();
-		long var15 = (long) chunkY * random.nextLong();
+		long var13 = chunkX * random.nextLong();
+		long var15 = chunkY * random.nextLong();
 
 		random.setSeed(var13 ^ var15 ^ seed);
-		random.nextInt();
+		if(doExtraCheck())
+			random.nextInt();
 
-		return getResult(chunkX, chunkY, random) && random.nextInt(80) < Math.max(Math.abs(chunkX), Math.abs(chunkY));
+		if(!getResult(chunkX, chunkY, random))
+			return false;
+		return !doExtraCheck() || random.nextInt(80) < Math.max(Math.abs(chunkX), Math.abs(chunkY));
 	}
 
 	protected abstract boolean getResult(int chunkX, int chunkY, Random random);
+
+	protected boolean doExtraCheck() {
+		return true;
+	}
 }
