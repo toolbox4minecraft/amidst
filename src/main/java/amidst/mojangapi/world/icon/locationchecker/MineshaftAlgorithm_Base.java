@@ -14,6 +14,12 @@ public abstract class MineshaftAlgorithm_Base implements LocationChecker {
 
 	@Override
 	public boolean isValidLocation(int chunkX, int chunkY) {
+		/**
+		 * Note: even if this check succeeds, the mineshaft may fail to generate if the
+		 * central room isn't in a suitable location (for example, if it spawns inside
+		 * a cave or a ravine). We can't check these cases, so we will have to accept
+		 * some false positives.
+		 */
 		Random random = new Random(seed);
 
 		long var13 = chunkX * random.nextLong();
