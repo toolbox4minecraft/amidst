@@ -8,6 +8,7 @@ import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
+import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
@@ -106,8 +107,20 @@ public class BiomeDataOracle {
 		return findValidLocation(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY), size, validBiomes, random);
 	}
 
-	// TODO: Find out if we should useQuarterResolution or not
 	public CoordinatesInWorld findValidLocation(int x, int y, int size, List<Biome> validBiomes, Random random) {
+		if(RecognisedVersion.isNewerOrEqualTo(minecraftInterface.getRecognisedVersion(), RecognisedVersion._18w06a)) {
+			return doFindValidLocation(x, y, size, validBiomes, random, true);
+		} else {
+			return doFindValidLocation(x, y, size, validBiomes, random, false);
+		}
+	}
+
+	// This algorithm slightly changed in 18w06: prior to this version,
+	// numberOfValidLocations was only incremented if the random check
+	// succeeded; it is now always incremented.
+	private CoordinatesInWorld doFindValidLocation(
+			int x, int y, int size, List<Biome> validBiomes,
+			Random random, boolean accurateLocationCount) {
 		int left = x - size >> 2;
 		int top = y - size >> 2;
 		int right = x + size >> 2;
@@ -119,10 +132,13 @@ public class BiomeDataOracle {
 			CoordinatesInWorld result = null;
 			int numberOfValidLocations = 0;
 			for (int i = 0; i < width * height; i++) {
-				if (validBiomes.contains(Biome.getByIndex(biomeData[i]))
-						&& (result == null || random.nextInt(numberOfValidLocations + 1) == 0)) {
-					result = createCoordinates(left, top, width, i);
-					numberOfValidLocations++;
+				if(validBiomes.contains(Biome.getByIndex(biomeData[i]))) {
+					boolean updateResult = result == null || random.nextInt(numberOfValidLocations + 1) == 0;
+					result = updateResult ? createCoordinates(left, top, width, i) : result;
+
+					if(accurateLocationCount || updateResult) {
+						numberOfValidLocations++;
+					}
 				}
 			}
 			return result;
