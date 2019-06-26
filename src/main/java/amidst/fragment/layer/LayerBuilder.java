@@ -118,8 +118,7 @@ public class LayerBuilder {
 				dimension,
 				drawUnloaded,
 				versionFeatures.hasLayer(layerId),
-				isVisibleSetting,
-				settings.enableAllLayers);
+				isVisibleSetting);
 	}
 
 	/**

@@ -14,7 +14,6 @@ public class LayerDeclaration {
 	private final boolean isDrawUnloaded;
 	private final boolean isSupportedInCurrentVersion;
 	private final Setting<Boolean> isVisibleSetting;
-	private final Setting<Boolean> enableAllLayersSetting;
 
 	private volatile boolean isVisible;
 
@@ -26,14 +25,12 @@ public class LayerDeclaration {
 			Dimension dimension,
 			boolean drawUnloaded,
 			boolean isSupportedInCurrentVersion,
-			Setting<Boolean> isVisibleSetting,
-			Setting<Boolean> enableAllLayersSetting) {
+			Setting<Boolean> isVisibleSetting) {
 		this.layerId = layerId;
 		this.dimension = dimension;
 		this.isDrawUnloaded = drawUnloaded;
 		this.isSupportedInCurrentVersion = isSupportedInCurrentVersion;
 		this.isVisibleSetting = isVisibleSetting;
-		this.enableAllLayersSetting = enableAllLayersSetting;
 	}
 
 	public int getLayerId() {
@@ -54,7 +51,7 @@ public class LayerDeclaration {
 	 */
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public boolean update(Dimension dimension) {
-		boolean isEnabled = calculateIsEnabled(dimension, enableAllLayersSetting.get());
+		boolean isEnabled = calculateIsEnabled(dimension);
 		boolean isVisible = isEnabled && isVisibleSetting.get();
 		boolean reload = isVisible == true && this.isVisible == false;
 		this.isVisible = isVisible;
@@ -62,8 +59,8 @@ public class LayerDeclaration {
 	}
 
 	@CalledByAny
-	public boolean calculateIsEnabled(Dimension dimension, boolean enableAllLayers) {
-		return isMatchingDimension(dimension) && isMatchingVersion(enableAllLayers);
+	public boolean calculateIsEnabled(Dimension dimension) {
+		return isMatchingDimension(dimension) && isMatchingVersion();
 	}
 
 	@CalledByAny
@@ -72,7 +69,7 @@ public class LayerDeclaration {
 	}
 
 	@CalledByAny
-	private boolean isMatchingVersion(boolean enabledAllLayers) {
-		return isSupportedInCurrentVersion || enabledAllLayers;
+	private boolean isMatchingVersion() {
+		return isSupportedInCurrentVersion;
 	}
 }

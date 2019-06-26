@@ -118,10 +118,7 @@ public enum DefaultVersionFeatures {
 						Biome.jungleHills
 				).construct();
 		this.validBiomesAtMiddleOfChunk_Stronghold = VersionFeature.<Biome> listBuilder()
-				.init(
-						// this is for the enable all layers function
-						getValidBiomesForStrongholdSinceV13w36a()
-				).since(RecognisedVersion._b1_8_1,
+				.init().since(RecognisedVersion._b1_8_1,
 						Biome.desert,
 						Biome.forest,
 						Biome.extremeHills,
@@ -162,15 +159,7 @@ public enum DefaultVersionFeatures {
 						Biome.icePlains
 				).construct();
 		this.validBiomesForStructure_PillagerOutpost = VersionFeature.<Biome> listBuilder()
-				.init(
-						// this is for the enable all layers function
-						Biome.plains,
-						Biome.desert,
-						Biome.savanna,
-						Biome.taiga,
-						Biome.icePlains
-				).since(RecognisedVersion._12w03a
-				).sinceExtend(RecognisedVersion._18w47b,
+				.init().sinceExtend(RecognisedVersion._18w47b,
 						Biome.plains,
 						Biome.desert,
 						Biome.savanna,
@@ -190,22 +179,12 @@ public enum DefaultVersionFeatures {
 						Biome.desertHills
 				).construct();
 		this.validBiomesAtMiddleOfChunk_Igloo = VersionFeature.<Biome> listBuilder()
-				.init(
-						// this is for the enable all layers function
-						Biome.icePlains,
-						Biome.coldTaiga
-				).since(RecognisedVersion._12w21a
-				).sinceExtend(RecognisedVersion._15w43c,
+				.init().sinceExtend(RecognisedVersion._15w43c,
 						Biome.icePlains,
 						Biome.coldTaiga
 				).construct();
 		this.validBiomesAtMiddleOfChunk_JungleTemple = VersionFeature.<Biome> listBuilder()
-				.init(
-						// this is for the enable all layers function
-						Biome.jungle,
-						Biome.jungleHills
-				).since(RecognisedVersion._12w21a
-				).sinceExtend(RecognisedVersion._12w22a,
+				.init().sinceExtend(RecognisedVersion._12w22a,
 						Biome.jungle
 				).sinceExtend(RecognisedVersion._1_4_2,
 						Biome.jungleHills // TODO: jungle temples spawn only since 1.4.2 in jungle hills?
@@ -214,28 +193,11 @@ public enum DefaultVersionFeatures {
 						Biome.bambooJungleHills
 				).construct();
 		this.validBiomesAtMiddleOfChunk_WitchHut = VersionFeature.<Biome> listBuilder()
-				.init(
-						// this is for the enable all layers function
-						Biome.swampland
-				).since(RecognisedVersion._12w21a
-				).sinceExtend(RecognisedVersion._1_4_2,
+				.init().sinceExtend(RecognisedVersion._1_4_2,
 						Biome.swampland
 				).construct();
 		this.validBiomesAtMiddleOfChunk_OceanRuins = VersionFeature.<Biome> listBuilder()
-				.init(
-						// this is for the enable all layers function
-						Biome.ocean,
-						Biome.deepOcean,
-						Biome.coldOcean,
-						Biome.coldDeepOcean,
-						Biome.warmOcean,
-						Biome.warmDeepOcean,
-						Biome.lukewarmOcean,
-						Biome.lukewarmDeepOcean,
-						Biome.frozenOcean,
-						Biome.frozenDeepOcean
-				).since(RecognisedVersion._12w21a
-				).sinceExtend(RecognisedVersion._18w09a,
+				.init().sinceExtend(RecognisedVersion._18w09a,
 						Biome.ocean,
 						Biome.deepOcean,
 						Biome.coldOcean,
@@ -248,22 +210,7 @@ public enum DefaultVersionFeatures {
 						Biome.frozenDeepOcean
 				).construct();
 		this.validBiomesAtMiddleOfChunk_Shipwreck = VersionFeature.<Biome> listBuilder()
-				.init(
-						// this is for the enable all layers function
-						Biome.beach,
-						Biome.coldBeach,
-						Biome.ocean,
-						Biome.deepOcean,
-						Biome.coldOcean,
-						Biome.coldDeepOcean,
-						Biome.warmOcean,
-						Biome.warmDeepOcean,
-						Biome.lukewarmOcean,
-						Biome.lukewarmDeepOcean,
-						Biome.frozenOcean,
-						Biome.frozenDeepOcean
-				).since(RecognisedVersion._12w21a
-				).sinceExtend(RecognisedVersion._18w11a,
+				.init().sinceExtend(RecognisedVersion._18w11a,
 						Biome.beach,
 						Biome.coldBeach,
 						Biome.ocean,
@@ -294,8 +241,7 @@ public enum DefaultVersionFeatures {
 						(seed, biomeOracle, validCenterBiomes, validBiomes) -> new OceanMonumentLocationChecker_Fixed(seed, biomeOracle, validCenterBiomes, validBiomes)
 				).construct();
 		this.validBiomesAtMiddleOfChunk_OceanMonument = VersionFeature.<Biome> listBuilder()
-				.init(
-						// this is also for the enable all layers function, else it would be since 1.8
+				.init().sinceExtend(RecognisedVersion._1_8,
 						Biome.deepOcean
 				).sinceExtend(RecognisedVersion._12w08a,
 						Biome.coldDeepOcean,
@@ -304,8 +250,7 @@ public enum DefaultVersionFeatures {
 						Biome.frozenDeepOcean
 				).construct();
 		this.validBiomesForStructure_OceanMonument = VersionFeature.<Biome> listBuilder()
-				.init(
-						// this is also for the enable all layers function, else it would be since 1.8
+				.init().sinceExtend(RecognisedVersion._1_8,
 						Biome.ocean,
 						Biome.deepOcean,
 						Biome.frozenOcean,

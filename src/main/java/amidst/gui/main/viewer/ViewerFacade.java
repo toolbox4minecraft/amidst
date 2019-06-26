@@ -194,8 +194,8 @@ public class ViewerFacade {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public boolean calculateIsLayerEnabled(int layerId, Dimension dimension, boolean enableAllLayers) {
-		return layerManager.calculateIsEnabled(layerId, dimension, enableAllLayers);
+	public boolean calculateIsLayerEnabled(int layerId, Dimension dimension) {
+		return layerManager.calculateIsEnabled(layerId, dimension);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -207,9 +207,9 @@ public class ViewerFacade {
 	public void export(WorldExporterConfiguration configuration) {
 		worldExporterFactory.create(configuration).export();
 	}
-	
+
 	public boolean isFullyLoaded() {
 		return fragmentManager.getLoadingQueueSize() == 0;
 	}
-	
+
 }

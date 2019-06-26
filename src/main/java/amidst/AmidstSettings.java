@@ -28,7 +28,6 @@ public class AmidstSettings {
 	public final Setting<Boolean> showOceanFeatures;
 	public final Setting<Boolean> showNetherFortresses;
 	public final Setting<Boolean> showEndCities;
-	public final Setting<Boolean> enableAllLayers;
 
 	public final Setting<Boolean> smoothScrolling;
 	public final Setting<Boolean> fragmentFading;
@@ -62,15 +61,14 @@ public class AmidstSettings {
 		showOceanFeatures          = Settings.createBoolean(  preferences, "oceanFeaturesIcons",   true);
 		showNetherFortresses       = Settings.createBoolean(  preferences, "netherFortressIcons",  false);
 		showEndCities              = Settings.createBoolean(  preferences, "endCityIcons",         false);
-		enableAllLayers            = Settings.createBoolean(  preferences, "enableAllLayers",      false);
-		
+
 		smoothScrolling            = Settings.createBoolean(  preferences, "mapFlicking",          true);
 		fragmentFading             = Settings.createBoolean(  preferences, "mapFading",            true);
 		maxZoom                    = Settings.createBoolean(  preferences, "maxZoom",              true);
 		showFPS                    = Settings.createBoolean(  preferences, "showFPS",              true);
 		showScale                  = Settings.createBoolean(  preferences, "showScale",            true);
 		showDebug                  = Settings.createBoolean(  preferences, "showDebug",            false);
-	
+
 		lastProfile                = Settings.createString(   preferences, "profile",              "");
 		worldType                  = Settings.createString(   preferences, "worldType",            WorldType.PROMPT_EACH_TIME);
 		biomeProfileSelection = new BiomeProfileSelection(BiomeProfile.getDefaultProfile());
