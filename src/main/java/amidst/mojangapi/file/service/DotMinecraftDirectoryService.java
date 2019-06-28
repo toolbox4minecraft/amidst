@@ -20,6 +20,7 @@ import amidst.mojangapi.file.directory.VersionDirectory;
 import amidst.mojangapi.file.json.ReleaseType;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfileJson;
 import amidst.mojangapi.file.json.launcherprofiles.LauncherProfilesJson;
+import amidst.mojangapi.file.json.launcherprofiles.ProfileType;
 import amidst.parsing.FormatException;
 import amidst.parsing.json.JsonReader;
 import amidst.util.OperatingSystemDetector;
@@ -124,24 +125,31 @@ public class DotMinecraftDirectoryService {
 			VersionList versionList,
 			DotMinecraftDirectory dotMinecraftDirectory) throws FileNotFoundException {
 		String lastVersionId = launcherProfileJson.getLastVersionId();
-		if (lastVersionId != null) {
+
+		List<ReleaseType> releaseTypesToSearch = null;
+		if (lastVersionId == null) {
+			releaseTypesToSearch = launcherProfileJson.getAllowedReleaseTypes();
+		} else if (lastVersionId.equals("latest-release")) {
+			releaseTypesToSearch = ProfileType.LATEST_RELEASE.getAllowedReleaseTypes().get();
+		} else if (lastVersionId.equals("latest-snapshot")) {
+			releaseTypesToSearch = ProfileType.LATEST_SNAPSHOT.getAllowedReleaseTypes().get();
+		}
+
+		if (releaseTypesToSearch == null) {
 			VersionDirectory result = createVersionDirectory(dotMinecraftDirectory, lastVersionId);
 			if (result.isValid()) {
 				return result;
-			} else {
-				// error
 			}
 		} else {
 			VersionDirectory result = tryFindFirstValidVersionDirectory(
-					launcherProfileJson.getAllowedReleaseTypes(),
+					releaseTypesToSearch,
 					versionList,
 					dotMinecraftDirectory);
 			if (result != null) {
 				return result;
-			} else {
-				// error
 			}
 		}
+
 		throw new FileNotFoundException(
 				"cannot find valid version directory for launcher profile '" + launcherProfileJson.getName() + "'");
 	}
