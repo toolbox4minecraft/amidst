@@ -242,8 +242,7 @@ public enum DefaultVersionFeatures {
 				).construct();
 		this.validBiomesAtMiddleOfChunk_OceanMonument = VersionFeature.<Biome> listBuilder()
 				.init().sinceExtend(RecognisedVersion._1_8,
-						Biome.deepOcean
-				).sinceExtend(RecognisedVersion._12w08a,
+						Biome.deepOcean,
 						Biome.coldDeepOcean,
 						Biome.warmDeepOcean,
 						Biome.lukewarmDeepOcean,
@@ -255,8 +254,7 @@ public enum DefaultVersionFeatures {
 						Biome.deepOcean,
 						Biome.frozenOcean,
 						Biome.river,
-						Biome.frozenRiver
-				).sinceExtend(RecognisedVersion._12w08a,
+						Biome.frozenRiver,
 						Biome.coldOcean,
 						Biome.coldDeepOcean,
 						Biome.warmOcean,
