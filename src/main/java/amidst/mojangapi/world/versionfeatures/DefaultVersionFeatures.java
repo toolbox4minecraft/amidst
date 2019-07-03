@@ -41,6 +41,7 @@ public enum DefaultVersionFeatures {
 				INSTANCE.mineshaftAlgorithmFactory.getValue(version),
 				INSTANCE.oceanMonumentLocationCheckerFactory.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_OceanMonument.getValue(version),
+				INSTANCE.validBiomesAtMiddleOfChunk_BuriedTreasure.getValue(version),
 				INSTANCE.validBiomesForStructure_OceanMonument.getValue(version),
 				INSTANCE.validBiomesForStructure_WoodlandMansion.getValue(version),
 				INSTANCE.seedForStructure_DesertTemple.getValue(version),
@@ -49,6 +50,7 @@ public enum DefaultVersionFeatures {
 				INSTANCE.seedForStructure_WitchHut.getValue(version),
 				INSTANCE.seedForStructure_OceanRuins.getValue(version),
 				INSTANCE.seedForStructure_Shipwreck.getValue(version),
+				INSTANCE.seedForStructure_BuriedTreasure.getValue(version),
 				INSTANCE.maxDistanceScatteredFeatures_Shipwreck.getValue(version),
 				INSTANCE.buggyStructureCoordinateMath.getValue(version));
 	}
@@ -69,6 +71,7 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<Function<Long, LocationChecker>> mineshaftAlgorithmFactory;
 	private final VersionFeature<QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker>> oceanMonumentLocationCheckerFactory;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_OceanMonument;
+	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_BuriedTreasure;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_OceanMonument;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_WoodlandMansion;
 	private final VersionFeature<Long> seedForStructure_DesertTemple;
@@ -77,6 +80,7 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<Long> seedForStructure_WitchHut;
 	private final VersionFeature<Long> seedForStructure_OceanRuins;
 	private final VersionFeature<Long> seedForStructure_Shipwreck;
+	private final VersionFeature<Long> seedForStructure_BuriedTreasure;
 	private final VersionFeature<Byte> maxDistanceScatteredFeatures_Shipwreck;
 	private final VersionFeature<Boolean> buggyStructureCoordinateMath;
 
@@ -248,6 +252,11 @@ public enum DefaultVersionFeatures {
 						Biome.lukewarmDeepOcean,
 						Biome.frozenDeepOcean
 				).construct();
+		this.validBiomesAtMiddleOfChunk_BuriedTreasure = VersionFeature.<Biome> listBuilder()
+				.init().sinceExtend(RecognisedVersion._18w10d,
+						Biome.beach,
+						Biome.coldBeach
+				).construct();
 		this.validBiomesForStructure_OceanMonument = VersionFeature.<Biome> listBuilder()
 				.init().sinceExtend(RecognisedVersion._1_8,
 						Biome.ocean,
@@ -297,6 +306,10 @@ public enum DefaultVersionFeatures {
 		this.seedForStructure_Shipwreck = VersionFeature.<Long> builder()
 				.init(
 						165745295L
+				).construct();
+		this.seedForStructure_BuriedTreasure = VersionFeature.<Long> builder()
+				.init(
+						10387320L
 				).construct();
 		this.maxDistanceScatteredFeatures_Shipwreck = VersionFeature.<Byte> builder()
 				.init(

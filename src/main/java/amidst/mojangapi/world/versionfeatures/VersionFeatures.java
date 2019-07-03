@@ -27,6 +27,7 @@ public class VersionFeatures {
 	private final Function<Long, LocationChecker> mineshaftAlgorithmFactory;
 	private final QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker> oceanMonumentLocationCheckerFactory;
 	private final List<Biome> validBiomesAtMiddleOfChunk_OceanMonument;
+	private final List<Biome> validBiomesAtMiddleOfChunk_BuriedTreasure;
 	private final List<Biome> validBiomesForStructure_OceanMonument;
 	private final List<Biome> validBiomesForStructure_WoodlandMansion;
 	private final Long seedForStructure_DesertTemple;
@@ -35,6 +36,7 @@ public class VersionFeatures {
 	private final Long seedForStructure_WitchHut;
 	private final Long seedForStructure_OceanRuins;
 	private final Long seedForStructure_Shipwreck;
+	private final Long seedForStructure_BuriedTreasure;
 	private final Byte maxDistanceScatteredFeatures_Shipwreck;
 	private final Boolean buggyStructureCoordinateMath;
 
@@ -55,6 +57,7 @@ public class VersionFeatures {
 			Function<Long, LocationChecker> mineshaftAlgorithmFactory,
 			QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker> oceanMonumentLocationCheckerFactory,
 			List<Biome> validBiomesAtMiddleOfChunk_OceanMonument,
+			List<Biome> validBiomesAtMiddleOfChunk_BuriedTreasure,
 			List<Biome> validBiomesForStructure_OceanMonument,
 			List<Biome> validBiomesForStructure_WoodlandMansion,
 			Long seedForStructure_DesertTemple,
@@ -63,6 +66,7 @@ public class VersionFeatures {
 			Long seedForStructure_WitchHut,
 			Long seedForStructure_OceanRuins,
 			Long seedForStructure_Shipwreck,
+			Long seedForStructure_BuriedTreasure,
 			Byte maxDistanceScatteredFeatures_Shipwreck,
 			Boolean buggyStructureCoordinateMath) {
 		this.enabledLayers = enabledLayers;
@@ -81,6 +85,7 @@ public class VersionFeatures {
 		this.mineshaftAlgorithmFactory = mineshaftAlgorithmFactory;
 		this.oceanMonumentLocationCheckerFactory = oceanMonumentLocationCheckerFactory;
 		this.validBiomesAtMiddleOfChunk_OceanMonument = validBiomesAtMiddleOfChunk_OceanMonument;
+		this.validBiomesAtMiddleOfChunk_BuriedTreasure = validBiomesAtMiddleOfChunk_BuriedTreasure;
 		this.validBiomesForStructure_OceanMonument = validBiomesForStructure_OceanMonument;
 		this.validBiomesForStructure_WoodlandMansion = validBiomesForStructure_WoodlandMansion;
 		this.seedForStructure_DesertTemple = seedForStructure_DesertTemple;
@@ -89,6 +94,7 @@ public class VersionFeatures {
 		this.seedForStructure_WitchHut = seedForStructure_WitchHut;
 		this.seedForStructure_OceanRuins = seedForStructure_OceanRuins;
 		this.seedForStructure_Shipwreck = seedForStructure_Shipwreck;
+		this.seedForStructure_BuriedTreasure = seedForStructure_BuriedTreasure;
 		this.maxDistanceScatteredFeatures_Shipwreck = maxDistanceScatteredFeatures_Shipwreck;
 		this.buggyStructureCoordinateMath = buggyStructureCoordinateMath;
 	}
@@ -157,6 +163,10 @@ public class VersionFeatures {
 		return validBiomesAtMiddleOfChunk_OceanMonument;
 	}
 
+	public List<Biome> getValidBiomesAtMiddleOfChunk_BuriedTreasure() {
+		return validBiomesAtMiddleOfChunk_BuriedTreasure;
+	}
+
 	public List<Biome> getValidBiomesForStructure_OceanMonument() {
 		return validBiomesForStructure_OceanMonument;
 	}
@@ -187,6 +197,10 @@ public class VersionFeatures {
 
 	public Long getSeedForStructure_Shipwreck() {
 		return seedForStructure_Shipwreck;
+	}
+
+	public Long getSeedForStructure_BuriedTreasure() {
+		return seedForStructure_BuriedTreasure;
 	}
 
 	public Byte getMaxDistanceScatteredFeatures_Shipwreck() {

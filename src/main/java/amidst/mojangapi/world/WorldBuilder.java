@@ -11,6 +11,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.icon.locationchecker.BuriedTreasureLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.EndCityLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm;
 import amidst.mojangapi.world.icon.locationchecker.PillagerOutpostLocationChecker;
@@ -258,6 +259,17 @@ public class WorldBuilder {
 										versionFeatures.getSeedForStructure_Shipwreck(),
 										buggyStructureCoordinateMath),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.SHIPWRECK),
+								Dimension.OVERWORLD,
+								false),
+						new StructureProducer<>(
+								Resolution.CHUNK,
+								9,
+								new BuriedTreasureLocationChecker(
+										seed,
+										biomeDataOracle,
+										versionFeatures.getValidBiomesAtMiddleOfChunk_BuriedTreasure(),
+										versionFeatures.getSeedForStructure_BuriedTreasure()),
+								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.BURIED_TREASURE),
 								Dimension.OVERWORLD,
 								false)
 				),

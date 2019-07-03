@@ -32,6 +32,7 @@ public enum DefaultWorldIconTypes {
 	POSSIBLE_END_CITY   ("possible_end_city", "Possible End City"),
 	OCEAN_RUINS         ("ocean_ruins",       "Ocean Ruins"),
 	SHIPWRECK           ("shipwreck",         "Shipwreck"),
+	BURIED_TREASURE     ("buried_treasure",   "Buried Treasure"),
 	PILLAGER_OUTPOST    ("pillager_outpost",  "Pillager Outpost");
 	// @formatter:on
 
