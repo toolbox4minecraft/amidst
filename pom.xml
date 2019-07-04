@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>amidst</groupId>
 	<artifactId>amidst</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>4.3</version>
 	<repositories>
 		<repository>
 			<id>local-m2</id>
