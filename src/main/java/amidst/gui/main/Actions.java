@@ -270,7 +270,7 @@ public class Actions {
 		dialogs.displayInfo(
 				"About",
 				"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n\n"
-						+ "Author: Skidoodle aka skiphs\n" + "Mail: toolbox4minecraft+amidst@gmail.com\n"
+						+ "Author: Skidoodle aka skiphs\n" + "Mail: toolbox4minecraft+amidst@outlook.com\n"
 						+ "Project Page: https://github.com/toolbox4minecraft/amidst");
 	}
 
