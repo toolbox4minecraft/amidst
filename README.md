@@ -20,11 +20,15 @@ Amidst **can**:
   * strongholds
   * villages
   * witch huts
+  * pillager outposts
   * jungle temples
   * desert temples
   * igloos
   * abandoned mine shafts
   * ocean monuments
+  * ocean ruins
+  * shipwrecks
+  * buried treasures
   * nether fortresses
   * end cities
 
@@ -48,7 +52,7 @@ Amidst was moved to a new location, since Skidoodle aka skiphs is too busy to ma
 * [Wiki](https://github.com/toolbox4minecraft/amidst/wiki)
 * [Reporting a Bug](https://github.com/toolbox4minecraft/amidst/wiki/Supporting-the-Development#reporting-a-bug) - please report bugs, so we can fix them
 * [Requesting a Feature](https://github.com/toolbox4minecraft/amidst/wiki/Supporting-the-Development#requesting-a-feature)
-* [Thread in the minecraftforum](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-tools/2626547-amidst-has-found-a-new-home)
+* [Thread in the minecraftforum](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-tools/2970854-amidst-map-explorer-for-minecraft-1-14)
 * [Project Page](https://github.com/toolbox4minecraft/amidst)
 * [Supporting the Development](https://github.com/toolbox4minecraft/amidst/wiki/Supporting-the-Development)
 * [License Text](https://github.com/toolbox4minecraft/amidst/blob/master/LICENSE.txt)
