@@ -20,8 +20,9 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass bootstrapClass;
 	private final SymbolicClass worldTypeClass;
 	private final SymbolicClass genSettingsClass;
+	private final SymbolicClass layerClass;
 	private final SymbolicClass layerUtilClass;
-	private final SymbolicClass genLayerClass;
+	private final SymbolicClass lazyAreaClass;
 	private final SymbolicClass biomeClass;
 	private final SymbolicClass registryClass;
 	private final SymbolicClass registryKeyClass;
@@ -67,8 +68,9 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			SymbolicClass bootstrapClass,
 			SymbolicClass worldTypeClass,
 			SymbolicClass genSettingsClass,
-			SymbolicClass genLayerClass,
+			SymbolicClass layerClass,
 			SymbolicClass layerUtilClass,
+			SymbolicClass lazyAreaClass,
 			SymbolicClass biomeClass,
 			SymbolicClass registryClass,
 			SymbolicClass registryKeyClass,
@@ -76,8 +78,9 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		this.bootstrapClass = bootstrapClass;
 		this.worldTypeClass = worldTypeClass;
 		this.genSettingsClass = genSettingsClass;
-		this.genLayerClass = genLayerClass;
+		this.layerClass = layerClass;
 		this.layerUtilClass = layerUtilClass;
+		this.lazyAreaClass = lazyAreaClass;
 		this.biomeClass = biomeClass;
 		this.registryClass = registryClass;
 		this.registryKeyClass = registryKeyClass;
@@ -90,8 +93,9 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 				symbolicClassMap.get(SymbolicNames.CLASS_BOOTSTRAP),
 				symbolicClassMap.get(SymbolicNames.CLASS_WORLD_TYPE),
 				symbolicClassMap.get(SymbolicNames.CLASS_GEN_SETTINGS),
-				symbolicClassMap.get(SymbolicNames.CLASS_GEN_LAYER),
+				symbolicClassMap.get(SymbolicNames.CLASS_LAYER),
 				symbolicClassMap.get(SymbolicNames.CLASS_LAYER_UTIL),
+				symbolicClassMap.get(SymbolicNames.CLASS_LAZY_AREA),
 				symbolicClassMap.get(SymbolicNames.CLASS_BIOME),
 				symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY),
 				symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY_KEY),
@@ -113,8 +117,12 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			 * out of the LazyArea used by the game. Sadly, we get no
 			 * performance gain in 18w16a and newer, but in previous snapshots
 			 * we get a ~1.5x improvement.
+			 * 
+			 * UPDATE: By getting the biome data directly from the lazy areas,
+			 * we get a ~3.25x improvement.
 			 */
-			if (RecognisedVersion.isNewerOrEqualTo(recognisedVersion, RecognisedVersion._18w16a)) {
+			if (RecognisedVersion.isNewerOrEqualTo(recognisedVersion, RecognisedVersion._18w16a)
+					  && RecognisedVersion.isOlder(recognisedVersion, RecognisedVersion._18w47b)) {
 				Object[] biomes = getBiomeDataInner(x, y, width, height, useQuarterResolution);
 				for (int i = 0; i < biomes.length; i++) {
 					data[i] = getBiomeId(biomes[i]);
@@ -127,13 +135,25 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 					for (int y0 = 0; y0 < height; y0 += chunkSize) {
 						int h = Math.min(chunkSize, height - y0);
 
-						Object[] biomes = getBiomeDataInner(x + x0, y + y0, w, h, useQuarterResolution);
-
-						for (int i = 0; i < w; i++) {
-							for (int j = 0; j < h; j++) {
-								int idx = i + j * w;
-								int trueIdx = (x0 + i) + (y0 + j) * width;
-								data[trueIdx] = getBiomeId(biomes[idx]);
+						if (RecognisedVersion.isNewerOrEqualTo(recognisedVersion, RecognisedVersion._18w47b)) {
+							int[] biomedata = getBiomeDataDirect(x + x0, y + y0, w, h, useQuarterResolution);
+							
+							for (int i = 0; i < w; i++) {
+								for (int j = 0; j < h; j++) {
+									int idx = i + j * w;
+									int trueIdx = (x0 + i) + (y0 + j) * width;
+									data[trueIdx] = biomedata[idx];
+								}
+							}
+						} else {
+							Object[] biomes = getBiomeDataInner(x + x0, y + y0, w, h, useQuarterResolution);
+	
+							for (int i = 0; i < w; i++) {
+								for (int j = 0; j < h; j++) {
+									int idx = i + j * w;
+									int trueIdx = (x0 + i) + (y0 + j) * width;
+									data[trueIdx] = getBiomeId(biomes[idx]);
+								}
 							}
 						}
 					}
@@ -155,16 +175,32 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			InvocationTargetException {
 		SymbolicObject biomeGen = getBiomeGenerator(useQuarterResolution);
 		Object[] biomes = null;
-		if(genLayerClass.hasMethod(SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA)) {
+		if(layerClass.hasMethod(SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA)) {
 			biomes = (Object[]) biomeGen.callMethod(
 					SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA, x, y, width, height, null);
 		} else {
 			biomes = (Object[]) biomeGen.callMethod(
-					SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA2, x, y, width, height);
+					SymbolicNames.METHOD_LAYER_GET_BIOME_DATA, x, y, width, height);
 		}
 		return biomes;
 	}
 
+	private int[] getBiomeDataDirect(int x, int y, int width, int height, boolean useQuarterResolution)
+			throws IllegalAccessException,
+			IllegalArgumentException,
+			InvocationTargetException {
+		SymbolicObject biomeGen = getBiomeGenerator(useQuarterResolution);
+		int[] biomeints = new int[width * height];
+	      for(int i = 0; i < height; ++i) {
+	          for(int j = 0; j < width; ++j) {
+	        	  SymbolicObject lazyarea = (SymbolicObject) biomeGen.getFieldValue(SymbolicNames.FIELD_LAYER_LAZY_AREA);
+	        	  int biome = (int) lazyarea.callMethod(SymbolicNames.METHOD_LAZY_AREA_GET_VALUE, (x + j), (y + i));
+	        	  biomeints[j + i * width] = biome;
+	          }
+	       }
+		return biomeints;
+	}
+	
 	private MethodHandle getBiomeGetIdHandle()
 			throws IllegalArgumentException,
 			IllegalAccessException,
@@ -217,8 +253,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			);
 			// @formatter:on
 
-			quarterResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[0]);
-			fullResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[1]);
+			quarterResolutionBiomeGenerator = new SymbolicObject(layerClass, genLayers[0]);
+			fullResolutionBiomeGenerator = new SymbolicObject(layerClass, genLayers[1]);
 
 		} catch (
 				IllegalAccessException

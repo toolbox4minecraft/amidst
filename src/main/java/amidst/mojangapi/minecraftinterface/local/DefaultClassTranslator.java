@@ -3,6 +3,7 @@ package amidst.mojangapi.minecraftinterface.local;
 import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.*;
 
 import amidst.clazz.real.AccessFlags;
+import amidst.clazz.real.RealClass;
 import amidst.clazz.translator.ClassTranslator;
 
 public enum DefaultClassTranslator {
@@ -75,15 +76,32 @@ public enum DefaultClassTranslator {
 						!c.getRealClassName().contains("$")
 						&& c.getRealSuperClassName().equals("java/lang/Object")
 						&& c.getNumberOfConstructors() == 1
-						&& (c.getNumberOfMethods() >= 1 || c.getNumberOfMethods() <= 3)
+						&& (c.getNumberOfMethods() >= 1 && c.getNumberOfMethods() <= 4)
 						&& (c.getNumberOfFields() == 1 || c.getNumberOfFields() == 2)
 						&& c.getField(0).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
 						&& (c.hasMethodWithRealArguments("int", "int", "int", "int", null)
 						    || c.hasMethodWithRealArguments("int", "int", "int", "int"))
 					)
-					.thenDeclareRequired(CLASS_GEN_LAYER)
+					.thenDeclareRequired(CLASS_LAYER) // the class Layer doesn't exist before 18w47b, but it still recognizes it instead as GenLayer for compatability
 						.optionalMethod(METHOD_GEN_LAYER_GET_BIOME_DATA, "a").real("int").real("int").real("int").real("int").symbolic(CLASS_BIOME).end()
-						.optionalMethod(METHOD_GEN_LAYER_GET_BIOME_DATA2, "a").real("int").real("int").real("int").real("int").end() //changed in 18w47b
+						.optionalMethod(METHOD_LAYER_GET_BIOME_DATA, "a").real("int").real("int").real("int").real("int").end() //changed in 18w47b
+						.optionalField(FIELD_LAYER_LAZY_AREA, "b") // doesn't exist before 18w47b
+				.next()
+					.ifDetect(c -> // only use after 18w47b, slower in previous versions
+					(c.getNumberOfMethods() == 2 || c.getNumberOfMethods() == 3)
+					&& (c.getNumberOfFields() == 3 || c.getNumberOfFields() == 4)
+					&& (c.getCpSize() == 63 || c.getCpSize() == 73)
+					&& c.getRealSuperClassName().equals("java/lang/Object")
+					&& c.getNumberOfConstructors() == 1
+					&& c.getField(0).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
+					&& c.getField(1).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
+					&& c.getField(2).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
+					&& c.hasMethodWithRealArguments("int", "int")
+					&& c.hasMethodWithRealArguments()
+					&& c.isFinal()
+					)
+					.thenDeclareOptional(CLASS_LAZY_AREA)
+						.requiredMethod(METHOD_LAZY_AREA_GET_VALUE, "a").real("int").real("int").end()
 				.next()
 					.ifDetect(c ->
 						c.getNumberOfConstructors() == 1
@@ -120,4 +138,8 @@ public enum DefaultClassTranslator {
 				.construct();
 		}
 		// @formatter:on
+	private boolean extractRealClass(RealClass r) {
+		System.err.println(r.getNumberOfMethods());
+		return true;
+	}
 }

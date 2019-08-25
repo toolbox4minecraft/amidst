@@ -25,10 +25,14 @@ public enum SymbolicNames {
 	public static final String CLASS_GEN_SETTINGS = "OverworldGenSettings";
 	public static final String CONSTRUCTOR_GEN_SETTINGS = "<init>";
 
-	public static final String CLASS_GEN_LAYER = "GenLayer";
-	public static final String METHOD_GEN_LAYER_GET_BIOME_DATA = "getBiomeData";
-	public static final String METHOD_GEN_LAYER_GET_BIOME_DATA2 = "getBiomeData2";
-
+	public static final String CLASS_LAYER = "Layer";	// used to be GenLayer
+	public static final String METHOD_LAYER_GET_BIOME_DATA = "getBiomeDataNew";
+	public static final String METHOD_GEN_LAYER_GET_BIOME_DATA = "getBiomeDataOld";
+	public static final String FIELD_LAYER_LAZY_AREA = "lazyArea";
+	
+	public static final String CLASS_LAZY_AREA = "LazyArea";
+	public static final String METHOD_LAZY_AREA_GET_VALUE = "getValue";
+	
 	public static final String CLASS_BIOME = "Biome";
 	public static final String METHOD_BIOME_GET_ID = "getBiomeId";
 
