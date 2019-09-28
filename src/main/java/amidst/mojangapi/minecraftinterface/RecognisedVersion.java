@@ -23,6 +23,15 @@ public enum RecognisedVersion {
 	// TODO: Remove these versions before V1_0?
 	// TODO: stronghold reset on V1_9pre4?
 	UNKNOWN,
+	_19w39a    ("19w39a",     "bjocqtajfahyxorrzi[Jzeykyicobglaavsvcqnsycrgcrfssstabd"),                                  // matches the launcher version id: 19w39a
+	_19w38b    ("19w38b",     "bjgcqlaiyahrxhrkzb[Jyxydybckbgdaaosocqfsrcqycqxslsmaaw"),                                  // matches the launcher version id: 19w38b
+	_19w36a    ("19w36a",     "bjbcqfaisahlxareyu[Jyqxwxucebfxaahsislcqssfsgaaq"),                                        // matches the launcher version id: 19w36a 19w37a
+    _19w35a    ("19w35a",     "bizcpyaiqahjxareyu[Jyqxwxucebfvaahsislcqlsfsgaaq"),                                        // matches the launcher version id: 19w35a
+	_19w34a    ("19w34a",     "bixcpwaiqahjxareyu[Jyqxwxucebfuaahsislcqjsfsgaaq"),                                        // matches the launcher version id: 19w34a
+    _1_14_4    ("1.14.4",     "bhvcoqahqagjwbqfxv[Jxrwxwvcebeszirjrmcpdrgrhzr"),                                          // matches the launcher version id: 1.14.4-pre4 1.14.4-pre5 1.14.4-pre6 1.14.4-pre7 1.14.4
+	_1_14_4_pre3("1.14.4-pre3", "bhucopahpagiwaqexu[Jxqwwwuceberzhrirlcpcrfrgzq"),                                        // matches the launcher version id: 1.14.4-pre3
+	_1_14_4_pre2("1.14.4-pre2", "bhtcooahoaghvzqdxt[Jxpwvwtcebeqzgrhrkcpbrerfzp"),                                        // matches the launcher version id: 1.14.4-pre2
+	_1_14_4_pre1("1.14.4-pre1", "bhscolahoaghvzqdxt[Jxpwvwtcebepzgrhrkcozrerfzp"),                                        // matches the launcher version id: 1.14.4-pre1
 	_1_14_3    ("1.14.3",     "bhqcojahnaggvzqdxt[Jxpwvwtcebenzgrhrkcoxrerfzo"),                                          // matches the launcher version id: 1.14.3-pre3  1.14.3-pre4 1.14.3
 	_1_14_3_pre2("1.14.3-pre2", "bhpcoiahnaggvzqdxt[Jxpwvwtcebenzgrhrkcowrerfzo"),                                        // matches the launcher version id: 1.14.3-pre2
 	_1_14_3_pre1("1.14.3-pre1", "bhncogahlagevxqcxr[Jxnwtwrcebelzergrjcourdrezm"),                                        // matches the launcher version id: 1.14.3-pre1
