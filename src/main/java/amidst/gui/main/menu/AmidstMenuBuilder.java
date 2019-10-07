@@ -1,7 +1,16 @@
 package amidst.gui.main.menu;
 
+import java.awt.Toolkit;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.KeyStroke;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -49,6 +58,10 @@ public class AmidstMenuBuilder {
 		result.add(create_Layers());
 		result.add(create_Settings());
 		result.add(create_Help());
+
+                // add additional zoom key mappings for '-', '+', and '='
+                addAdditionalZoomActionMappings(result);
+
 		return result;
 	}
 
@@ -101,6 +114,32 @@ public class AmidstMenuBuilder {
 		// @formatter:on
 		return result;
 	}
+
+    private void addAdditionalZoomActionMappings(final JComponent component) {
+        int keyMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+        InputMap inputMap = component.getInputMap();
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, keyMask), "zoom-in");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, keyMask | InputEvent.SHIFT_MASK), "zoom-in");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, keyMask), "zoom-in");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, keyMask | InputEvent.SHIFT_MASK), "zoom-in");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, keyMask), "zoom-out");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, keyMask | InputEvent.SHIFT_MASK), "zoom-out");
+
+        ActionMap actionMap = component.getActionMap();
+        actionMap.put("zoom-in", new AbstractAction("Zoom in") {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    actions.zoomIn();
+                }
+            });
+        actionMap.put("zoom-out", new AbstractAction("Zoom out") {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    actions.zoomOut();
+                }
+            });
+    }
 
 	private JMenuItem create_Layers() {
 		JMenu result = new JMenu("Layers");
