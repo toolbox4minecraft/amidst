@@ -29,7 +29,8 @@ public enum MenuShortcuts implements MenuShortcut {
 	SAVE_PLAYER_LOCATIONS("menu S"),
 	RELOAD_PLAYER_LOCATIONS("F5"),
 	COPY_SEED_TO_CLIPBOARD("menu C"),
-	TAKE_SCREENSHOT("menu T"),
+	TAKE_PNG_SCREENSHOT("menu T"),
+	TAKE_SVG_SCREENSHOT("menu Y"),
 
 	DISPLAY_DIMENSION_OVERWORLD("menu shift 1"),
 	DISPLAY_DIMENSION_END("menu shift 2"),

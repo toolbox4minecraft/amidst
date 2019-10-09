@@ -7,12 +7,23 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import javax.swing.JComponent;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.viewer.widget.Widget;
+
+import org.apache.batik.dom.GenericDOMImplementation;
+
+import org.apache.batik.svggen.SVGGraphics2D;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.DOMImplementation;
 
 @NotThreadSafe
 public class Viewer {
@@ -45,7 +56,20 @@ public class Viewer {
 			return result;
 		}
 
-		/**
+            public void writeSvgScreenshot(final File file) throws IOException {
+                int width = getWidth();
+                int height = getHeight();
+                Point mousePosition = getMousePositionOrNull();
+                try (FileWriter writer = new FileWriter(file)) {
+                    DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
+                    Document document = domImpl.createDocument("http://www.w3.org/2000/svg", "svg", null);
+                    SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+                    drawer.drawScreenshot(svgGenerator, width, height, mousePosition, widgetFontMetrics);
+                    svgGenerator.stream(writer, true);
+                }
+            }
+
+            /**
 		 * The method getMousePosition() might throw a null pointer exception in
 		 * a multi-monitor setup, as soon as the window is dragged to the other
 		 * monitor.
@@ -82,6 +106,11 @@ public class Viewer {
 	public BufferedImage createScreenshot() {
 		return component.createScreenshot();
 	}
+
+    @CalledOnlyBy(AmidstThread.EDT)
+    public void writeSvgScreenshot(final File file) throws IOException {
+        component.writeSvgScreenshot(file);
+    }
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Point getMousePositionOrCenter() {

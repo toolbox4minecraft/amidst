@@ -74,6 +74,11 @@ public class MainWindowDialogs {
 		return showSaveDialogAndGetSelectedFileOrNull(createScreenshotSaveFileChooser(suggestedFilename));
 	}
 
+    @CalledOnlyBy(AmidstThread.EDT)
+    public File askForSvgScreenshotSaveFile(String suggestedFilename) {
+        return showSaveDialogAndGetSelectedFileOrNull(createSvgScreenshotSaveFileChooser(suggestedFilename));
+    }
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JFileChooser createScreenshotSaveFileChooser(String suggestedFilename) {
 		JFileChooser result = new JFileChooser();
@@ -82,6 +87,15 @@ public class MainWindowDialogs {
 		result.setSelectedFile(new File(suggestedFilename));
 		return result;
 	}
+
+    @CalledOnlyBy(AmidstThread.EDT)
+    private JFileChooser createSvgScreenshotSaveFileChooser(String suggestedFilename) {
+        JFileChooser result = new JFileChooser();
+        result.setFileFilter(new SVGFileFilter());
+        result.setAcceptAllFileFilterUsed(false);
+        result.setSelectedFile(new File(suggestedFilename));
+        return result;
+    }
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private File showSaveDialogAndGetSelectedFileOrNull(JFileChooser fileChooser) {

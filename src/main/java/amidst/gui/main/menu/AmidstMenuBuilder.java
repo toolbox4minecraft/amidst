@@ -97,7 +97,8 @@ public class AmidstMenuBuilder {
 		Menus.item(result, actions::howCanIMoveAPlayer,    "How can I move a player?", KeyEvent.VK_M);
 		result.addSeparator();
 		Menus.item(result, actions::copySeedToClipboard,   "Copy Seed to Clipboard",   KeyEvent.VK_B, MenuShortcuts.COPY_SEED_TO_CLIPBOARD);
-		Menus.item(result, actions::takeScreenshot,        "Take Screenshot ...",      KeyEvent.VK_T, MenuShortcuts.TAKE_SCREENSHOT);
+		Menus.item(result, actions::takePngScreenshot,        "Take PNG Screenshot ...",      KeyEvent.VK_T, MenuShortcuts.TAKE_PNG_SCREENSHOT);
+                Menus.item(result, actions::takeSvgScreenshot,        "Take SVG Screenshot ...",      KeyEvent.VK_Y, MenuShortcuts.TAKE_SVG_SCREENSHOT);
 		// @formatter:on
 		return result;
 	}
