@@ -264,7 +264,6 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 			InstantiationException,
 			InvocationTargetException {
 		if (!generatorOptions.isEmpty()) {
-			// TODO fix me
 			AmidstLogger.warn("Custom generator options aren't supported in this version");
 		}
 		return genSettingsClass.callConstructor(_1_13SymbolicNames.CONSTRUCTOR_GEN_SETTINGS);

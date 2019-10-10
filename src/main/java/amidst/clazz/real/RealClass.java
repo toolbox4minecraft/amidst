@@ -191,10 +191,11 @@ public class RealClass {
 		return null;
 	}
 
-	public boolean hasMethodWithRealArguments(String... arguments) {
+	public boolean hasMethodWithRealArgsReturning(String... arguments) {
 		for (ReferenceIndex entry : methodIndices) {
 			String value = getStringValueOfConstant(entry.getValue2());
-			String[] args = readArguments(value);
+			String[] args = readArgumentsAndReturn(value);
+
 			if(arguments.length == args.length) {
 				for(int i = 0; i < args.length; i++) {
 					if(arguments[i] != null && !arguments[i].equals(args[i]))
@@ -240,7 +241,8 @@ public class RealClass {
 			if (getStringValueOfConstant(entry.getValue1()).equals("<init>")) {
 				if (i == constructorId) {
 					String arguments = getStringValueOfConstant(entry.getValue2());
-					return toArgumentString(readArguments(arguments));
+					//TODO CHECK THIS
+					return toArgumentString(readArgumentsAndReturn(arguments));
 				}
 				i++;
 			}
@@ -252,12 +254,11 @@ public class RealClass {
 		return (String) constants[value - 1].getValue();
 	}
 
-	private String[] readArguments(String arguments) {
+	private String[] readArgumentsAndReturn(String arguments) {
 		List<String> result = new ArrayList<>();
-		String args = arguments.substring(1).split("\\)")[0];
-		Matcher matcher = ARG_PATTERN.matcher(args);
+		Matcher matcher = ARG_PATTERN.matcher(arguments);
 		while (matcher.find()) {
-			String arg = args.substring(matcher.start(), matcher.end());
+			String arg = arguments.substring(matcher.start(), matcher.end());
 			Matcher objectMatcher = OBJECT_PATTERN.matcher(arg);
 			if (objectMatcher.find()) {
 				arg = getObjectArg(arg, objectMatcher.end());
@@ -283,9 +284,9 @@ public class RealClass {
 	private String toArgumentString(String[] arguments) {
 		StringBuilder result = new StringBuilder();
 		result.append("(");
-		if (arguments.length > 0) {
+		if (arguments.length > 1) { // Skip return value
 			result.append(arguments[0]);
-			for (int i = 1; i < arguments.length; i++) {
+			for (int i = 1; i < arguments.length - 1; i++) {
 				result.append(",").append(arguments[i]);
 			}
 		}
