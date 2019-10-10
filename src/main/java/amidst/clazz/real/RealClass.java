@@ -241,7 +241,6 @@ public class RealClass {
 			if (getStringValueOfConstant(entry.getValue1()).equals("<init>")) {
 				if (i == constructorId) {
 					String arguments = getStringValueOfConstant(entry.getValue2());
-					//TODO CHECK THIS
 					return toArgumentString(readArgumentsAndReturn(arguments));
 				}
 				i++;

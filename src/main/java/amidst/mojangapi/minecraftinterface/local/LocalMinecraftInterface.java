@@ -36,9 +36,22 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private Object biomeRegistry;
 	private Object biomeProviderRegistry;
 
-	private long seedForBiomeZoomer;
-	private Object biomeProvider;
+	/**
+	 * A BiomeProvider instance for the current world, giving
+	 * access to the quarter-scale biome data.
+	 */
+    private Object biomeProvider;
+    /**
+     * The BiomeZoomer instance for the current world, which
+     * interpolates the quarter-scale BiomeProvider to give
+     * full-scale biome data.
+     */
     private Object biomeZoomer;
+    /**
+     * The seed used by the BiomeZoomer during interpolation.
+     * It is derived from the world seed.
+     */
+	private long seedForBiomeZoomer;
 
     /**
      * An array used to return biome data
