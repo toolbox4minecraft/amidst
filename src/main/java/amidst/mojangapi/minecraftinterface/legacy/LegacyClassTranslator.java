@@ -1,24 +1,6 @@
 package amidst.mojangapi.minecraftinterface.legacy;
 
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.CLASS_BLOCK_INIT;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.CLASS_GEN_OPTIONS;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.CLASS_GEN_OPTIONS_FACTORY;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.CLASS_INT_CACHE;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.CLASS_WORLD_TYPE;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.FIELD_WORLD_TYPE_AMPLIFIED;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.FIELD_WORLD_TYPE_CUSTOMIZED;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.FIELD_WORLD_TYPE_DEFAULT;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.FIELD_WORLD_TYPE_FLAT;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.FIELD_WORLD_TYPE_LARGE_BIOMES;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_BLOCK_INIT_INITIALIZE;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_GEN_LAYER_GET_INTS;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_1;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_2;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_4;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_GEN_OPTIONS_FACTORY_BUILD;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_GEN_OPTIONS_FACTORY_JSON_TO_FACTORY;
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_INT_CACHE_RESET_INT_CACHE;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.*;
 
 import amidst.clazz.real.AccessFlags;
 import amidst.clazz.real.RealClass;
