@@ -16,7 +16,7 @@ import amidst.mojangapi.world.WorldType;
  * This is the MinecraftInterface used for versions older than 18w06a, before the 1.13 refactoring
  */
 public class LegacyMinecraftInterface implements MinecraftInterface {
-
+    public static final RecognisedVersion LAST_COMPATIBLE_VERSION = RecognisedVersion._18w05a;
 
 	private volatile SymbolicObject quarterResolutionBiomeGenerator;
 	private volatile SymbolicObject fullResolutionBiomeGenerator;
@@ -42,7 +42,7 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 		this.genOptionsFactoryClass = genOptionsFactoryClass;
 		this.recognisedVersion = recognisedVersion;
 	}
-	
+
 	public LegacyMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this(
 			symbolicClassMap.get(LegacySymbolicNames.CLASS_INT_CACHE),
