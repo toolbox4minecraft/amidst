@@ -61,6 +61,7 @@ public enum _1_13ClassTranslator {
 						&& c.getNumberOfConstructors() >= 1
 						&& c.getField(0).hasFlags(AccessFlags.FINAL | AccessFlags.PRIVATE)
 						&& !c.getField(0).hasFlags(AccessFlags.STATIC)
+                        && c.getField(2).hasFlags(AccessFlags.FINAL | AccessFlags.PRIVATE)
 						&& !c.searchForStringContaining("textures")
 					    && c.hasMethodWithRealArgsReturning(new String[]{ null })
 					    && !c.hasMethodWithRealArgsReturning(null, null)
