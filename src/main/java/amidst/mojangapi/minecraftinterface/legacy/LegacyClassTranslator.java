@@ -1,11 +1,29 @@
 package amidst.mojangapi.minecraftinterface.legacy;
 
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.CLASS_BLOCK_INIT;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.CLASS_GEN_OPTIONS;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.CLASS_GEN_OPTIONS_FACTORY;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.CLASS_INT_CACHE;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.CLASS_WORLD_TYPE;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.FIELD_WORLD_TYPE_AMPLIFIED;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.FIELD_WORLD_TYPE_CUSTOMIZED;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.FIELD_WORLD_TYPE_DEFAULT;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.FIELD_WORLD_TYPE_FLAT;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.FIELD_WORLD_TYPE_LARGE_BIOMES;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_BLOCK_INIT_INITIALIZE;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_GEN_LAYER_GET_INTS;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_1;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_2;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_3;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_4;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_GEN_OPTIONS_FACTORY_BUILD;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_GEN_OPTIONS_FACTORY_JSON_TO_FACTORY;
+import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.METHOD_INT_CACHE_RESET_INT_CACHE;
+
 import amidst.clazz.real.AccessFlags;
 import amidst.clazz.real.RealClass;
 import amidst.clazz.translator.ClassTranslator;
 import amidst.documentation.Immutable;
-
-import static amidst.mojangapi.minecraftinterface.legacy.LegacySymbolicNames.*;
 
 @Immutable
 public enum LegacyClassTranslator {
@@ -15,17 +33,17 @@ public enum LegacyClassTranslator {
 
 	private final ClassTranslator classTranslator = createClassTranslator();
 
-	public ClassTranslator get() {
-		return classTranslator;
+	public static ClassTranslator get() {
+		return INSTANCE.classTranslator;
 	}
 
 	// @formatter:off
 	private ClassTranslator createClassTranslator() {
 		return ClassTranslator
 			.builder()
-				.ifDetect(c -> 
+				.ifDetect(c ->
 					c.isClassDataWildcardMatching(createIntCacheWildcardBytes())
-					|| c.searchForStringContaining(", tcache: ") 
+					|| c.searchForStringContaining(", tcache: ")
 				)
 				.thenDeclareRequired(CLASS_INT_CACHE)
 					.requiredMethod(METHOD_INT_CACHE_RESET_INT_CACHE, "a").end()
@@ -51,7 +69,7 @@ public enum LegacyClassTranslator {
 					.optionalMethod(METHOD_GEN_LAYER_INITIALIZE_ALL_BIOME_GENERATORS_4, "a").real("long").symbolic(CLASS_WORLD_TYPE).symbolic(CLASS_GEN_OPTIONS).end()
 					.requiredMethod(METHOD_GEN_LAYER_GET_INTS,                          "a").real("int") .real("int")                             .real("int")   .real("int").end()
 			.next()
-				.ifDetect(c -> 
+				.ifDetect(c ->
 					c.getNumberOfConstructors() == 0
 					&& c.getNumberOfMethods() == 6
 					&& c.getNumberOfFields() >= 3
