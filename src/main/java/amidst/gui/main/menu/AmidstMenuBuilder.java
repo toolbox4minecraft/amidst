@@ -77,10 +77,12 @@ public class AmidstMenuBuilder {
 		result.setEnabled(false);
 		result.setMnemonic(KeyEvent.VK_W);
 		// @formatter:off
+                Menus.item(result, actions::displayBookmarks, "Display bookmarks", KeyEvent.VK_B);
 		Menus.item(result, actions::goToCoordinate,        "Go to Coordinate ...",       KeyEvent.VK_C, MenuShortcuts.GO_TO_COORDINATE);
 		Menus.item(result, actions::goToSpawn,             "Go to World Spawn",          KeyEvent.VK_S, MenuShortcuts.GO_TO_WORLD_SPAWN);
 		Menus.item(result, actions::goToStronghold,        "Go to Stronghold ...",       KeyEvent.VK_H, MenuShortcuts.GO_TO_STRONGHOLD);
 		Menus.item(result, actions::goToPlayer,            "Go to Player ...",           KeyEvent.VK_P, MenuShortcuts.GO_TO_PLAYER);
+
 		result.addSeparator();
 		Menus.item(result, actions::zoomIn,                "Zoom In",                    KeyEvent.VK_I, MenuShortcuts.ZOOM_IN);
 		Menus.item(result, actions::zoomOut,               "Zoom Out",                   KeyEvent.VK_O, MenuShortcuts.ZOOM_OUT);

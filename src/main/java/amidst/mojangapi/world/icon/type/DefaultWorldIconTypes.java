@@ -29,6 +29,7 @@ public enum DefaultWorldIconTypes {
 	MINESHAFT           ("mineshaft",         "Mineshaft"),
 	WOODLAND_MANSION    ("woodland_mansion",  "Woodland Mansion"),
 	END_CITY            ("end_city",          "Likely End City"),
+	BOOKMARK            ("bookmark",          "Bookmark"),
 	POSSIBLE_END_CITY   ("possible_end_city", "Possible End City"),
 	OCEAN_RUINS         ("ocean_ruins",       "Ocean Ruins"),
 	SHIPWRECK           ("shipwreck",         "Shipwreck"),

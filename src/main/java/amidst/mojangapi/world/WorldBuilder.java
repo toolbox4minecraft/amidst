@@ -3,6 +3,7 @@ package amidst.mojangapi.world;
 import java.io.IOException;
 
 import amidst.documentation.Immutable;
+import amidst.gui.main.bookmarks.Bookmarks;
 import amidst.mojangapi.file.ImmutablePlayerInformationProvider;
 import amidst.mojangapi.file.PlayerInformationProvider;
 import amidst.mojangapi.file.SaveGame;
@@ -10,6 +11,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.icon.producer.BookmarkProducer;
 import amidst.mojangapi.world.icon.producer.MultiProducer;
 import amidst.mojangapi.world.icon.producer.PlayerProducer;
 import amidst.mojangapi.world.icon.producer.SpawnProducer;
@@ -204,6 +206,7 @@ public class WorldBuilder {
 						versionFeatures.get(FeatureKey.END_ISLAND_LOCATION_CHECKER),
 						new EndCityWorldIconTypeProvider(),
 						Dimension.END,
-						false));
+						false),
+                                new BookmarkProducer(Bookmarks.getInstance()));
 	}
 }

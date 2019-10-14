@@ -12,6 +12,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.logging.AmidstMessageBox;
+import amidst.gui.main.bookmarks.BookmarkDialog;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
@@ -90,8 +91,13 @@ public class MainWindowDialogs {
 			return null;
 		}
 	}
+    
+    @CalledOnlyBy(AmidstThread.EDT)
+    public void displayBookmarks() {
+        new BookmarkDialog(frame).setVisible(true);
+    }
 
-	@CalledOnlyBy(AmidstThread.EDT)
+    @CalledOnlyBy(AmidstThread.EDT)
 	public void displayInfo(String title, String message) {
 		AmidstMessageBox.displayInfo(frame, title, message);
 	}
