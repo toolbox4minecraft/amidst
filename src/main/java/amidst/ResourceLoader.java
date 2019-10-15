@@ -35,7 +35,7 @@ public enum ResourceLoader {
 		} catch (IOException e) {
 			// This is always a developer error, because a resource was not
 			// included in the jar file.
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException("unable to load resource: '" + name + "'", e);
 		}
 	}
 
@@ -47,7 +47,7 @@ public enum ResourceLoader {
 		} catch (IOException e) {
 			// This is always a developer error, because a resource was not
 			// included in the jar file.
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException("unable to load resource: '" + name + "'", e);
 		}
 	}
 
