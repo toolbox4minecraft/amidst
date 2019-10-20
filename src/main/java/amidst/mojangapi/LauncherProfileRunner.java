@@ -8,12 +8,14 @@ import amidst.mojangapi.world.WorldBuilder;
 @Immutable
 public class LauncherProfileRunner {
 	private final WorldBuilder worldBuilder;
+	private String initialSeed;
 
-	public LauncherProfileRunner(WorldBuilder worldBuilder) {
+	public LauncherProfileRunner(WorldBuilder worldBuilder, String initialSeed) {
 		this.worldBuilder = worldBuilder;
+		this.initialSeed = initialSeed;
 	}
 
 	public RunningLauncherProfile run(LauncherProfile launcherProfile) throws MinecraftInterfaceCreationException {
-		return RunningLauncherProfile.from(worldBuilder, launcherProfile);
+		return RunningLauncherProfile.from(worldBuilder, launcherProfile, initialSeed);
 	}
 }

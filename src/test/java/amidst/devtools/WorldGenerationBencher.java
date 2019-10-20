@@ -87,7 +87,8 @@ public class WorldGenerationBencher {
 			profile = new RunningLauncherProfile(
 					WorldBuilder.createSilentPlayerless(),
 					launcherProfile,
-					new BenchmarkingMinecraftInterface(MinecraftInterfaces.fromLocalProfile(launcherProfile), records));
+					new BenchmarkingMinecraftInterface(MinecraftInterfaces.fromLocalProfile(launcherProfile), records),
+					null);
 		} catch (FormatException | IOException | MinecraftInterfaceCreationException e) {
 			failed.add(version);
 			return;
