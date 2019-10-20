@@ -67,7 +67,7 @@ public class PerApplicationInjector {
 		this.preferredLauncherProfile = minecraftInstallation
 				.tryReadLauncherProfile(parameters.minecraftJarFile, parameters.minecraftJsonFile);
 		this.worldBuilder = new WorldBuilder(playerInformationProvider, seedHistoryLogger);
-		this.launcherProfileRunner = new LauncherProfileRunner(worldBuilder);
+		this.launcherProfileRunner = new LauncherProfileRunner(worldBuilder, parameters.initialSeed);
 		this.biomeProfileDirectory = BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);
 		this.threadMaster = new ThreadMaster();
 		this.versionListProvider = VersionListProvider

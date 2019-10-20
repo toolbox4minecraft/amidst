@@ -15,6 +15,10 @@ import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
+import amidst.logging.AmidstLogger;
+import amidst.mojangapi.world.WorldOptions;
+import amidst.mojangapi.world.WorldSeed;
+import amidst.mojangapi.world.WorldType;
 
 @NotThreadSafe
 public class MainWindow {
@@ -33,7 +37,8 @@ public class MainWindow {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void initializeFrame(AmidstMetaData metadata, String versionString, Actions actions, AmidstMenu menuBar) {
+	public void initializeFrame(AmidstMetaData metadata, String versionString, Actions actions, AmidstMenu menuBar,
+				 String initialSeed) {
 		frame.setSize(1000, 800);
 		frame.setIconImages(metadata.getIcons());
 		frame.setTitle(versionString);
@@ -47,6 +52,10 @@ public class MainWindow {
 		});
 		frame.setVisible(true);
 		worldSwitcher.clearWorld();
+		if (initialSeed != null) {
+			AmidstLogger.info("Setting initial seed to " + initialSeed);
+			worldSwitcher.displayWorld(new WorldOptions(WorldSeed.fromUserInput(initialSeed), WorldType.DEFAULT));
+		}
 	}
 	
 	public WorldSwitcher getWorldSwitcher() {

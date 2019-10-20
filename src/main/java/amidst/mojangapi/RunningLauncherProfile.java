@@ -17,30 +17,37 @@ import amidst.mojangapi.world.WorldOptions;
 
 @ThreadSafe
 public class RunningLauncherProfile {
-	public static RunningLauncherProfile from(WorldBuilder worldBuilder, LauncherProfile launcherProfile)
+	public static RunningLauncherProfile from(WorldBuilder worldBuilder, LauncherProfile launcherProfile, String initialSeed)
 			throws MinecraftInterfaceCreationException {
 		return new RunningLauncherProfile(
 				worldBuilder,
 				launcherProfile,
-				new LoggingMinecraftInterface(MinecraftInterfaces.fromLocalProfile(launcherProfile)));
+				new LoggingMinecraftInterface(MinecraftInterfaces.fromLocalProfile(launcherProfile)), initialSeed);
 	}
 
 	private final WorldBuilder worldBuilder;
 	private final LauncherProfile launcherProfile;
 	private final MinecraftInterface minecraftInterface;
 	private volatile World currentWorld = null;
+	private final String initialSeed;
 
 	public RunningLauncherProfile(
 			WorldBuilder worldBuilder,
 			LauncherProfile launcherProfile,
-			MinecraftInterface minecraftInterface) {
+			MinecraftInterface minecraftInterface,
+			String initialSeed) {
 		this.worldBuilder = worldBuilder;
 		this.launcherProfile = launcherProfile;
 		this.minecraftInterface = minecraftInterface;
+		this.initialSeed = initialSeed;
 	}
 
 	public LauncherProfile getLauncherProfile() {
 		return launcherProfile;
+	}
+
+	public String getInitialSeed() {
+		return initialSeed;
 	}
 
 	public RecognisedVersion getRecognisedVersion() {
@@ -49,7 +56,7 @@ public class RunningLauncherProfile {
 
 	public RunningLauncherProfile createSilentPlayerlessCopy() {
 		try {
-			return RunningLauncherProfile.from(WorldBuilder.createSilentPlayerless(), launcherProfile);
+			return RunningLauncherProfile.from(WorldBuilder.createSilentPlayerless(), launcherProfile, null);
 		} catch (MinecraftInterfaceCreationException e) {
 			// This will not happen normally, because we already successfully
 			// created the same LocalMinecraftInterface once before.
