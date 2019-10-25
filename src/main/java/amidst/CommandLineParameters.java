@@ -14,11 +14,14 @@ public class CommandLineParameters {
 	@Option(name = "-mcpath",                 usage = "location of the '.minecraft' directory.",             metaVar = "<directory>")
 	public volatile String dotMinecraftDirectory;
 
-	@Option(name = "-mcjar",                  usage = "location of the minecraft jar file",                  metaVar = "<file>",       depends = { "-mcjson" })
+	@Option(name = "-mcjar",                  usage = "location of the minecraft jar file",                  metaVar = "<file>",       depends = { "-mcjson" },   forbids = { "-profile" })
 	public volatile String minecraftJarFile;
 	
-	@Option(name = "-mcjson",                 usage = "location of the minecraft json file",                 metaVar = "<file>",       depends = { "-mcjar" })
+	@Option(name = "-mcjson",                 usage = "location of the minecraft json file",                 metaVar = "<file>",       depends = { "-mcjar" },    forbids = { "-profile" })
 	public volatile String minecraftJsonFile;
+
+	@Option(name = "-profile",                usage = "name of profile to select",                           metaVar = "<name>",       forbids = { "-mcjar", "-mcjson" })
+	public volatile String profileName;
 
 	@Option(name = "-biome-profiles",         usage = "location of the biome profile directory",             metaVar = "<directory>")
 	public volatile String biomeProfilesDirectory;

@@ -95,9 +95,33 @@ public class MinecraftInstallation {
 		return new SaveGame(saveDirectory, saveDirectoryService.readLevelDat(saveDirectory));
 	}
 
+	/**
+	 * Try to locate a local profile with a name that matches the given string. No remote profiles are
+	 * supported. Any errors are ignored and will return in a non-match. A null return value means that
+	 * no match was found.
+	 */
+	private LauncherProfile newLauncherProfileFromName(String profileName) {
+		try {
+			VersionList versionList = VersionList.newLocalVersionList();
+			List<UnresolvedLauncherProfile> unresolvedProfiles = readLauncherProfiles();
+			for (UnresolvedLauncherProfile unresolvedProfile : unresolvedProfiles) {
+				LauncherProfile profile = unresolvedProfile.resolveToVanilla(versionList);
+				if (profile.getProfileName().equalsIgnoreCase(profileName)) {
+					return profile;
+				}
+			}
+		} catch (Exception e) {
+			// We can't do much if this fails
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 	public Optional<LauncherProfile> tryReadLauncherProfile(
 			String preferredMinecraftJarFile,
-			String preferredMinecraftJsonFile) {
+			String preferredMinecraftJsonFile,
+			String profileName) {
 		if (preferredMinecraftJarFile != null && preferredMinecraftJsonFile != null) {
 			try {
 				return Optional.of(
@@ -107,10 +131,17 @@ public class MinecraftInstallation {
 						e,
 						"cannot read launcher profile. preferredMinecraftJarFile: '" + preferredMinecraftJarFile
 								+ "', preferredMinecraftJsonFile: '" + "'");
-				return Optional.empty();
 			}
-		} else {
-			return Optional.empty();
+		} else if (profileName != null) {
+			LauncherProfile profile = newLauncherProfileFromName(profileName);
+			if (profile != null) {
+				AmidstLogger.info("Selecting profile with name '" + profile.getProfileName() + "'");
+				return Optional.of(profile);
+			} else {
+				AmidstLogger.error("Cannot find profile matching name '" + profileName + "'");
+			}
 		}
+
+		return Optional.empty();
 	}
 }
