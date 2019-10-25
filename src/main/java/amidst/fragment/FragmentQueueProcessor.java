@@ -1,5 +1,6 @@
 package amidst.fragment;
 
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.documentation.AmidstThread;
@@ -13,7 +14,7 @@ import amidst.settings.Setting;
 @NotThreadSafe
 public class FragmentQueueProcessor {
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
-	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
+	private final ConcurrentLinkedDeque<Fragment> loadingQueue;
 	private final ConcurrentLinkedQueue<Fragment> recycleQueue;
 	private final FragmentCache cache;
 	private final LayerManager layerManager;
@@ -22,7 +23,7 @@ public class FragmentQueueProcessor {
 	@CalledByAny
 	public FragmentQueueProcessor(
 			ConcurrentLinkedQueue<Fragment> availableQueue,
-			ConcurrentLinkedQueue<Fragment> loadingQueue,
+			ConcurrentLinkedDeque<Fragment> loadingQueue,
 			ConcurrentLinkedQueue<Fragment> recycleQueue,
 			FragmentCache cache,
 			LayerManager layerManager,
@@ -84,9 +85,9 @@ public class FragmentQueueProcessor {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void recycleFragment(Fragment fragment) {
-		fragment.recycle();
-		removeFromLoadingQueue(fragment);
-		availableQueue.offer(fragment);
+	//	fragment.recycle();
+	//	removeFromLoadingQueue(fragment);
+	//	availableQueue.offer(fragment);
 	}
 
 	// TODO: Check performance with and without this. It is not needed, since

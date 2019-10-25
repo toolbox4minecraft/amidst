@@ -1,5 +1,9 @@
 package amidst.fragment;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.documentation.AmidstThread;
@@ -14,7 +18,7 @@ import amidst.settings.Setting;
 @NotThreadSafe
 public class FragmentManager {
 	private final ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<>();
-	private final ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<>();
+	private final ConcurrentLinkedDeque<Fragment> loadingQueue = new ConcurrentLinkedDeque<>();
 	private final ConcurrentLinkedQueue<Fragment> recycleQueue = new ConcurrentLinkedQueue<>();
 	private final FragmentCache cache;
 
@@ -23,15 +27,26 @@ public class FragmentManager {
 		this.cache = new FragmentCache(availableQueue, loadingQueue, constructors, numberOfLayers);
 	}
 
+	private final static Map<CoordinatesInWorld, Fragment> fragmentCache = new WeakHashMap<>();
+	private void storeFragmentInCache(Fragment fragment, CoordinatesInWorld coordinates) {
+		fragmentCache.putIfAbsent(coordinates, fragment);
+	}
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Fragment requestFragment(CoordinatesInWorld coordinates) {
 		Fragment fragment;
+
+		fragment = fragmentCache.get(coordinates);
+		if (fragment != null) {
+			System.out.println("CACHE HIT!!!");
+			return fragment;
+		}
 		while ((fragment = availableQueue.poll()) == null) {
 			cache.increaseSize();
 		}
 		fragment.setCorner(coordinates);
 		fragment.setInitialized();
-		loadingQueue.offer(fragment);
+		loadingQueue.offerFirst(fragment);
+		storeFragmentInCache(fragment, coordinates);
 		return fragment;
 	}
 

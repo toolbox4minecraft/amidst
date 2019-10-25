@@ -2,6 +2,7 @@ package amidst.fragment;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import amidst.documentation.AmidstThread;
@@ -18,14 +19,14 @@ public class FragmentCache {
 	private volatile int cacheSize = 0;
 
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
-	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
+	private final ConcurrentLinkedDeque<Fragment> loadingQueue;
 	private final Iterable<FragmentConstructor> constructors;
 	private final int numberOfLayers;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public FragmentCache(
 			ConcurrentLinkedQueue<Fragment> availableQueue,
-			ConcurrentLinkedQueue<Fragment> loadingQueue,
+			ConcurrentLinkedDeque<Fragment> loadingQueue,
 			Iterable<FragmentConstructor> constructors,
 			int numberOfLayers) {
 		this.availableQueue = availableQueue;
