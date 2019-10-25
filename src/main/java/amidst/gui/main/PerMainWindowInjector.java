@@ -98,7 +98,7 @@ public class PerMainWindowInjector {
 				settings.biomeProfileSelection);
 		this.menuBar = new AmidstMenuBuilder(settings, actions, biomeProfileDirectory).construct();
 		this.mainWindow = new MainWindow(frame, worldSwitcher, viewerFacadeReference::get, seedSearcherWindow);
-		this.mainWindow.initializeFrame(metadata, versionString, actions, menuBar, runningLauncherProfile.getInitialSeed());
+		this.mainWindow.initializeFrame(metadata, versionString, actions, menuBar, runningLauncherProfile.getInitialWorldOptions());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
