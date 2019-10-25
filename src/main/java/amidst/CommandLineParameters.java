@@ -29,8 +29,11 @@ public class CommandLineParameters {
 	@Option(name = "-log",                    usage = "location of the log file",                            metaVar = "<file>")
 	public volatile String logFile;
 
-	@Option(name = "-seed",                   usage = "initial seed to use",                                         metaVar = "<string>")
+	@Option(name = "-seed",                   usage = "initial seed to use",                                 metaVar = "<string>")
 	public volatile String initialSeed;
+
+	@Option(name = "-world-type",             usage = "world type for the initial seed",                     metaVar = "<string>")
+	public volatile String initialWorldType;
 
 	@Option(name = "-help",                   usage = "print usage information")
 	public volatile boolean printHelp;
