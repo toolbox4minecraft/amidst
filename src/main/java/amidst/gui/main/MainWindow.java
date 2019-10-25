@@ -38,7 +38,7 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void initializeFrame(AmidstMetaData metadata, String versionString, Actions actions, AmidstMenu menuBar,
-				 String initialSeed) {
+				 WorldOptions initialWorldOptions) {
 		frame.setSize(1000, 800);
 		frame.setIconImages(metadata.getIcons());
 		frame.setTitle(versionString);
@@ -52,9 +52,9 @@ public class MainWindow {
 		});
 		frame.setVisible(true);
 		worldSwitcher.clearWorld();
-		if (initialSeed != null) {
-			AmidstLogger.info("Setting initial seed to " + initialSeed);
-			worldSwitcher.displayWorld(new WorldOptions(WorldSeed.fromUserInput(initialSeed), WorldType.DEFAULT));
+		if (initialWorldOptions != null) {
+			AmidstLogger.info("Setting initial world options to [" + initialWorldOptions.getWorldSeed().getLabel() + ", World Type: " + initialWorldOptions.getWorldType() + "]");
+			worldSwitcher.displayWorld(initialWorldOptions);
 		}
 	}
 	

@@ -17,37 +17,37 @@ import amidst.mojangapi.world.WorldOptions;
 
 @ThreadSafe
 public class RunningLauncherProfile {
-	public static RunningLauncherProfile from(WorldBuilder worldBuilder, LauncherProfile launcherProfile, String initialSeed)
+	public static RunningLauncherProfile from(WorldBuilder worldBuilder, LauncherProfile launcherProfile, WorldOptions initialWorldOptions)
 			throws MinecraftInterfaceCreationException {
 		return new RunningLauncherProfile(
 				worldBuilder,
 				launcherProfile,
-				new LoggingMinecraftInterface(MinecraftInterfaces.fromLocalProfile(launcherProfile)), initialSeed);
+				new LoggingMinecraftInterface(MinecraftInterfaces.fromLocalProfile(launcherProfile)), initialWorldOptions);
 	}
 
 	private final WorldBuilder worldBuilder;
 	private final LauncherProfile launcherProfile;
 	private final MinecraftInterface minecraftInterface;
 	private volatile World currentWorld = null;
-	private final String initialSeed;
+	private final WorldOptions initialWorldOptions;
 
 	public RunningLauncherProfile(
 			WorldBuilder worldBuilder,
 			LauncherProfile launcherProfile,
 			MinecraftInterface minecraftInterface,
-			String initialSeed) {
+			WorldOptions initialWorldOptions) {
 		this.worldBuilder = worldBuilder;
 		this.launcherProfile = launcherProfile;
 		this.minecraftInterface = minecraftInterface;
-		this.initialSeed = initialSeed;
+		this.initialWorldOptions = initialWorldOptions;
 	}
 
 	public LauncherProfile getLauncherProfile() {
 		return launcherProfile;
 	}
 
-	public String getInitialSeed() {
-		return initialSeed;
+	public WorldOptions getInitialWorldOptions() {
+		return initialWorldOptions;
 	}
 
 	public RecognisedVersion getRecognisedVersion() {
