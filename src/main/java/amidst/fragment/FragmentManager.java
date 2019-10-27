@@ -1,6 +1,5 @@
 package amidst.fragment;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -19,6 +18,8 @@ import amidst.settings.Setting;
 public class FragmentManager {
 	private final ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<>();
 	private final ConcurrentLinkedDeque<Fragment> loadingQueue = new ConcurrentLinkedDeque<>();
+	private final ConcurrentLinkedDeque<Fragment> backgroundQueue =  new ConcurrentLinkedDeque<>();
+
 	private final ConcurrentLinkedQueue<Fragment> recycleQueue = new ConcurrentLinkedQueue<>();
 	private final FragmentCache cache;
 
@@ -38,6 +39,11 @@ public class FragmentManager {
 		fragment = fragmentCache.get(coordinates);
 		if (fragment != null) {
 			System.out.println("CACHE HIT!!!");
+			if (!fragment.isLoaded()) {
+				// It has not finished loading, request high priority loading
+				loadingQueue.offer(fragment);
+				backgroundQueue.remove(fragment);
+			}
 			return fragment;
 		}
 		while ((fragment = availableQueue.poll()) == null) {
@@ -45,14 +51,19 @@ public class FragmentManager {
 		}
 		fragment.setCorner(coordinates);
 		fragment.setInitialized();
-		loadingQueue.offerFirst(fragment);
-		storeFragmentInCache(fragment, coordinates);
+		loadingQueue.offer(fragment);
+		storeFragmentInCache(fragment, fragment.getCorner());
 		return fragment;
 	}
 
+	/**
+	 * Called when a fragment is no longer shown on the screen.
+	 */
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void recycleFragment(Fragment fragment) {
-		recycleQueue.offer(fragment);
+	public void retireFragment(Fragment fragment) {
+		// Make rendering of this fragment lowest effort
+		loadingQueue.remove(fragment);
+		backgroundQueue.offerFirst(fragment);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -60,6 +71,7 @@ public class FragmentManager {
 		return new FragmentQueueProcessor(
 				availableQueue,
 				loadingQueue,
+				backgroundQueue,
 				recycleQueue,
 				cache,
 				layerManager,

@@ -15,6 +15,7 @@ import amidst.settings.Setting;
 public class FragmentQueueProcessor {
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
 	private final ConcurrentLinkedDeque<Fragment> loadingQueue;
+	private final ConcurrentLinkedDeque<Fragment> backgroundQueue;
 	private final ConcurrentLinkedQueue<Fragment> recycleQueue;
 	private final FragmentCache cache;
 	private final LayerManager layerManager;
@@ -24,18 +25,32 @@ public class FragmentQueueProcessor {
 	public FragmentQueueProcessor(
 			ConcurrentLinkedQueue<Fragment> availableQueue,
 			ConcurrentLinkedDeque<Fragment> loadingQueue,
+			ConcurrentLinkedDeque<Fragment> backgroundQueue,
 			ConcurrentLinkedQueue<Fragment> recycleQueue,
 			FragmentCache cache,
 			LayerManager layerManager,
 			Setting<Dimension> dimensionSetting) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
+		this.backgroundQueue = backgroundQueue;
 		this.recycleQueue = recycleQueue;
 		this.cache = cache;
 		this.layerManager = layerManager;
 		this.dimensionSetting = dimensionSetting;
 	}
 
+	private Fragment getNextFragment() {
+		Fragment fragment;
+
+		// First process all visible fragments
+		fragment = loadingQueue.poll();
+		if (fragment != null) {
+			return fragment;
+		}
+		// If there are no visible fragments, then we can process previously enqueued
+		// but currently hidden fragments
+		return backgroundQueue.poll();
+	}
 	/**
 	 * It is important that the dimension setting is the same while a fragment
 	 * is loaded by different fragment loaders. This is why the dimension
@@ -47,7 +62,7 @@ public class FragmentQueueProcessor {
 		updateLayerManager(dimension);
 		processRecycleQueue();
 		Fragment fragment;
-		while ((fragment = loadingQueue.poll()) != null) {
+		while ((fragment = getNextFragment()) != null) {
 			loadFragment(dimension, fragment);
 			dimension = dimensionSetting.get();
 			updateLayerManager(dimension);
@@ -85,9 +100,9 @@ public class FragmentQueueProcessor {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void recycleFragment(Fragment fragment) {
-	//	fragment.recycle();
-	//	removeFromLoadingQueue(fragment);
-	//	availableQueue.offer(fragment);
+		fragment.recycle();
+		removeFromLoadingQueue(fragment);
+		availableQueue.offer(fragment);
 	}
 
 	// TODO: Check performance with and without this. It is not needed, since
