@@ -17,9 +17,8 @@ import amidst.settings.Setting;
 @NotThreadSafe
 public class FragmentManager {
 	private final ConcurrentLinkedQueue<Fragment> availableQueue = new ConcurrentLinkedQueue<>();
-	private final ConcurrentLinkedDeque<Fragment> loadingQueue = new ConcurrentLinkedDeque<>();
+	private final ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<>();
 	private final ConcurrentLinkedDeque<Fragment> backgroundQueue =  new ConcurrentLinkedDeque<>();
-
 	private final ConcurrentLinkedQueue<Fragment> recycleQueue = new ConcurrentLinkedQueue<>();
 	private final FragmentCache cache;
 
@@ -29,21 +28,24 @@ public class FragmentManager {
 	}
 
 	private final static Map<CoordinatesInWorld, Fragment> fragmentCache = new WeakHashMap<>();
+	private Fragment getFragmentFromCache(CoordinatesInWorld coordinates) {
+		Fragment fragment = fragmentCache.get(coordinates);
+		if (fragment != null && !fragment.isLoaded()) {
+			// It has not finished loading, request high priority loading
+			loadingQueue.offer(fragment);
+			backgroundQueue.remove(fragment);
+		}
+		return fragment;
+	}
+
 	private void storeFragmentInCache(Fragment fragment, CoordinatesInWorld coordinates) {
 		fragmentCache.putIfAbsent(coordinates, fragment);
 	}
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Fragment requestFragment(CoordinatesInWorld coordinates) {
-		Fragment fragment;
-
-		fragment = fragmentCache.get(coordinates);
+		Fragment fragment = getFragmentFromCache(coordinates);
 		if (fragment != null) {
-			System.out.println("CACHE HIT!!!");
-			if (!fragment.isLoaded()) {
-				// It has not finished loading, request high priority loading
-				loadingQueue.offer(fragment);
-				backgroundQueue.remove(fragment);
-			}
 			return fragment;
 		}
 		while ((fragment = availableQueue.poll()) == null) {
@@ -51,8 +53,8 @@ public class FragmentManager {
 		}
 		fragment.setCorner(coordinates);
 		fragment.setInitialized();
+		storeFragmentInCache(fragment, coordinates);
 		loadingQueue.offer(fragment);
-		storeFragmentInCache(fragment, fragment.getCorner());
 		return fragment;
 	}
 
@@ -61,9 +63,12 @@ public class FragmentManager {
 	 */
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void retireFragment(Fragment fragment) {
-		// Make rendering of this fragment lowest effort
-		loadingQueue.remove(fragment);
-		backgroundQueue.offerFirst(fragment);
+		if (!fragment.isLoaded()) {
+			// Make rendering of this fragment lowest effort
+			loadingQueue.remove(fragment);
+			// Assume last unloaded is most likely to be reloaded, so put it first in the queue
+			backgroundQueue.offerFirst(fragment);
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

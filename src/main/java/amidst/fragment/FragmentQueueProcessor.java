@@ -14,7 +14,7 @@ import amidst.settings.Setting;
 @NotThreadSafe
 public class FragmentQueueProcessor {
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
-	private final ConcurrentLinkedDeque<Fragment> loadingQueue;
+	private final ConcurrentLinkedQueue<Fragment> loadingQueue;
 	private final ConcurrentLinkedDeque<Fragment> backgroundQueue;
 	private final ConcurrentLinkedQueue<Fragment> recycleQueue;
 	private final FragmentCache cache;
@@ -24,7 +24,7 @@ public class FragmentQueueProcessor {
 	@CalledByAny
 	public FragmentQueueProcessor(
 			ConcurrentLinkedQueue<Fragment> availableQueue,
-			ConcurrentLinkedDeque<Fragment> loadingQueue,
+			ConcurrentLinkedQueue<Fragment> loadingQueue,
 			ConcurrentLinkedDeque<Fragment> backgroundQueue,
 			ConcurrentLinkedQueue<Fragment> recycleQueue,
 			FragmentCache cache,
@@ -39,6 +39,9 @@ public class FragmentQueueProcessor {
 		this.dimensionSetting = dimensionSetting;
 	}
 
+	/**
+	 * Return the next fragment the loader should process, or null if no more fragments are available.
+	 */
 	private Fragment getNextFragment() {
 		Fragment fragment;
 
@@ -51,6 +54,7 @@ public class FragmentQueueProcessor {
 		// but currently hidden fragments
 		return backgroundQueue.poll();
 	}
+
 	/**
 	 * It is important that the dimension setting is the same while a fragment
 	 * is loaded by different fragment loaders. This is why the dimension
