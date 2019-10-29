@@ -58,6 +58,7 @@ public class FragmentGraph implements Iterable<FragmentGraphItem> {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void recycleAll() {
+		fragmentManager.invalidateFragmentCache();
 		topLeftFragment.ifInitialized(f -> f.recycleAll(fragmentManager));
 	}
 

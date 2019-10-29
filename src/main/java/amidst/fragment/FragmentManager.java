@@ -20,6 +20,7 @@ public class FragmentManager {
 	private final ConcurrentLinkedQueue<Fragment> loadingQueue = new ConcurrentLinkedQueue<>();
 	private final ConcurrentLinkedDeque<Fragment> backgroundQueue =  new ConcurrentLinkedDeque<>();
 	private final ConcurrentLinkedQueue<Fragment> recycleQueue = new ConcurrentLinkedQueue<>();
+	private final Map<CoordinatesInWorld, Fragment> fragmentCache = new WeakHashMap<>();
 	private final FragmentCache cache;
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -27,7 +28,7 @@ public class FragmentManager {
 		this.cache = new FragmentCache(availableQueue, loadingQueue, constructors, numberOfLayers);
 	}
 
-	private final static Map<CoordinatesInWorld, Fragment> fragmentCache = new WeakHashMap<>();
+	@CalledOnlyBy(AmidstThread.EDT)
 	private Fragment getFragmentFromCache(CoordinatesInWorld coordinates) {
 		Fragment fragment = fragmentCache.get(coordinates);
 		if (fragment != null && !fragment.isLoaded()) {
@@ -38,8 +39,17 @@ public class FragmentManager {
 		return fragment;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
 	private void storeFragmentInCache(Fragment fragment, CoordinatesInWorld coordinates) {
 		fragmentCache.putIfAbsent(coordinates, fragment);
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void invalidateFragmentCache() {
+		// When we invalidate the cache, we can recycle the fragments.
+		// (This recycling is probably neither necessary nor efficient, but let's keep it for now)
+		recycleQueue.addAll(fragmentCache.values());
+		fragmentCache.clear();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

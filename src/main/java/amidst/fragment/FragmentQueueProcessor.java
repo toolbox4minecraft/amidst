@@ -106,6 +106,7 @@ public class FragmentQueueProcessor {
 	private void recycleFragment(Fragment fragment) {
 		fragment.recycle();
 		removeFromLoadingQueue(fragment);
+		backgroundQueue.remove(fragment);
 		availableQueue.offer(fragment);
 	}
 
