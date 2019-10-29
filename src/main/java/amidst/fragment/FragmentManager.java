@@ -35,7 +35,7 @@ public class FragmentManager {
 		SoftReference<Fragment> softref = fragmentCache.get(coordinates);
 		if (softref != null) {
 			Fragment fragment = softref.get();
-			if (!fragment.isLoaded()) {
+			if (fragment != null && !fragment.isLoaded()) {
 				// It has not finished loading, request high priority loading
 				loadingQueue.offer(fragment);
 				backgroundQueue.remove(fragment);
