@@ -1,15 +1,16 @@
 package amidst.mojangapi;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.file.LauncherProfile;
 import amidst.mojangapi.file.SaveGame;
 import amidst.mojangapi.minecraftinterface.LoggingMinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
-import amidst.mojangapi.minecraftinterface.MinecraftInterfaces;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceCreationException;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
+import amidst.mojangapi.minecraftinterface.MinecraftInterfaces;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldBuilder;
@@ -17,7 +18,7 @@ import amidst.mojangapi.world.WorldOptions;
 
 @ThreadSafe
 public class RunningLauncherProfile {
-	public static RunningLauncherProfile from(WorldBuilder worldBuilder, LauncherProfile launcherProfile, WorldOptions initialWorldOptions)
+	public static RunningLauncherProfile from(WorldBuilder worldBuilder, LauncherProfile launcherProfile, Optional<WorldOptions> initialWorldOptions)
 			throws MinecraftInterfaceCreationException {
 		return new RunningLauncherProfile(
 				worldBuilder,
@@ -29,13 +30,13 @@ public class RunningLauncherProfile {
 	private final LauncherProfile launcherProfile;
 	private final MinecraftInterface minecraftInterface;
 	private volatile World currentWorld = null;
-	private final WorldOptions initialWorldOptions;
+	private final Optional<WorldOptions> initialWorldOptions;
 
 	public RunningLauncherProfile(
 			WorldBuilder worldBuilder,
 			LauncherProfile launcherProfile,
 			MinecraftInterface minecraftInterface,
-			WorldOptions initialWorldOptions) {
+			Optional<WorldOptions> initialWorldOptions) {
 		this.worldBuilder = worldBuilder;
 		this.launcherProfile = launcherProfile;
 		this.minecraftInterface = minecraftInterface;
@@ -46,7 +47,7 @@ public class RunningLauncherProfile {
 		return launcherProfile;
 	}
 
-	public WorldOptions getInitialWorldOptions() {
+	public Optional<WorldOptions> getInitialWorldOptions() {
 		return initialWorldOptions;
 	}
 

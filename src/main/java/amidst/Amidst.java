@@ -84,10 +84,10 @@ public class Amidst {
 		}
 	}
 
-	private static void initFileLogger(String filename) {
-		if (filename != null) {
-			AmidstLogger.info("using log file: '" + filename + "'");
-			AmidstLogger.addListener("file", new FileLogger(new File(filename)));
+	private static void initFileLogger(File file) {
+		if (file != null) {
+			AmidstLogger.info("using log file: '" + file + "'");
+			AmidstLogger.addListener("file", new FileLogger(file));
 		}
 	}
 
@@ -123,7 +123,7 @@ public class Amidst {
 	 * WARNING: This method MUST be invoked before setLookAndFeel(). The
 	 * sun.java2d.* properties have no effect after setLookAndFeel() has been
 	 * called.
-	 * 
+	 *
 	 * Please do not remove this comment in case we decide to use another look
 	 * and feel in the future.
 	 */
@@ -135,12 +135,12 @@ public class Amidst {
 	/**
 	 * We only use OpenGL on OS X, because it caused lots of bugs on Windows and
 	 * performance issues on Linux. Also, this is the behavior of Amidst v3.7.
-	 * 
+	 *
 	 * On Windows Direct3D is better supported and the default.
-	 * 
+	 *
 	 * Linux has accelerated images without activating OpenGL. The reason for
 	 * this is still unknown to the developers of Amidst.
-	 * 
+	 *
 	 * https://github.com/toolbox4minecraft/amidst/pull/94
 	 */
 	private static void enableOpenGLIfNecessary() {

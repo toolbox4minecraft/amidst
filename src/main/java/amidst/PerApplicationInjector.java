@@ -64,12 +64,9 @@ public class PerApplicationInjector {
 		this.seedHistoryLogger = SeedHistoryLogger.from(parameters.seedHistoryFile);
 		this.minecraftInstallation = MinecraftInstallation
 				.newLocalMinecraftInstallation(parameters.dotMinecraftDirectory);
-		this.preferredLauncherProfile = minecraftInstallation.tryReadLauncherProfile(
-				parameters.minecraftJarFile,
-				parameters.minecraftJsonFile,
-				parameters.profileName);
+		this.preferredLauncherProfile = parameters.getInitialLauncherProfile(minecraftInstallation);
 		this.worldBuilder = new WorldBuilder(playerInformationProvider, seedHistoryLogger);
-		this.launcherProfileRunner = new LauncherProfileRunner(worldBuilder, parameters.initialSeed, parameters.initialWorldType);
+		this.launcherProfileRunner = new LauncherProfileRunner(worldBuilder, parameters.getInitialWorldOptions());
 		this.biomeProfileDirectory = BiomeProfileDirectory.create(parameters.biomeProfilesDirectory);
 		this.threadMaster = new ThreadMaster();
 		this.versionListProvider = VersionListProvider

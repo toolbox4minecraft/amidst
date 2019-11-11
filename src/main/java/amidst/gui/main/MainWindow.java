@@ -3,6 +3,7 @@ package amidst.gui.main;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import javax.swing.JFrame;
@@ -17,8 +18,6 @@ import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.WorldOptions;
-import amidst.mojangapi.world.WorldSeed;
-import amidst.mojangapi.world.WorldType;
 
 @NotThreadSafe
 public class MainWindow {
@@ -38,7 +37,7 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void initializeFrame(AmidstMetaData metadata, String versionString, Actions actions, AmidstMenu menuBar,
-				 WorldOptions initialWorldOptions) {
+				 Optional<WorldOptions> initialWorldOptions) {
 		frame.setSize(1000, 800);
 		frame.setIconImages(metadata.getIcons());
 		frame.setTitle(versionString);
@@ -52,16 +51,16 @@ public class MainWindow {
 		});
 		frame.setVisible(true);
 		worldSwitcher.clearWorld();
-		if (initialWorldOptions != null) {
-			AmidstLogger.info("Setting initial world options to [" + initialWorldOptions.getWorldSeed().getLabel() + ", World Type: " + initialWorldOptions.getWorldType() + "]");
-			worldSwitcher.displayWorld(initialWorldOptions);
-		}
+		initialWorldOptions.ifPresent(options -> {
+            AmidstLogger.info("Setting initial world options to [" + options.getWorldSeed().getLabel() + ", World Type: " + options.getWorldType() + "]");
+            worldSwitcher.displayWorld(options);
+		});
 	}
-	
+
 	public WorldSwitcher getWorldSwitcher() {
 		return worldSwitcher;
 	}
-	
+
 	public ViewerFacade getViewerFacade() {
 		return viewerFacadeSupplier.get();
 	}

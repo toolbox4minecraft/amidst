@@ -41,9 +41,9 @@ public class DotMinecraftDirectoryService {
 	}
 
 	@NotNull
-	public DotMinecraftDirectory createDotMinecraftDirectory(String preferredDotMinecraftDirectory)
+	public DotMinecraftDirectory createDotMinecraftDirectory(File dotMinecraftDirectory2)
 			throws DotMinecraftDirectoryNotFoundException {
-		return validate(new DotMinecraftDirectory(findDotMinecraftDirectory(preferredDotMinecraftDirectory)));
+		return validate(new DotMinecraftDirectory(findDotMinecraftDirectory(dotMinecraftDirectory2)));
 	}
 
 	@NotNull
@@ -58,15 +58,14 @@ public class DotMinecraftDirectoryService {
 	}
 
 	@NotNull
-	private File findDotMinecraftDirectory(String preferredDotMinecraftDirectory) {
+	private File findDotMinecraftDirectory(File preferredDotMinecraftDirectory) {
 		if (preferredDotMinecraftDirectory != null) {
-			File result = new File(preferredDotMinecraftDirectory);
-			if (result.isDirectory()) {
-				return result;
+			if (preferredDotMinecraftDirectory.isDirectory()) {
+				return preferredDotMinecraftDirectory;
 			} else {
 				AmidstLogger.warn(
 					"Unable to set Minecraft directory to: {} as that location does not exist or is not a folder.",
-					result);
+					preferredDotMinecraftDirectory);
 				return getMinecraftDirectory();
 			}
 		} else {

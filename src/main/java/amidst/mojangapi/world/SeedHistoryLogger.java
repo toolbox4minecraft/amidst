@@ -15,10 +15,10 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 
 @ThreadSafe
 public class SeedHistoryLogger {
-	public static SeedHistoryLogger from(String filename) {
-		if (filename != null) {
-			AmidstLogger.info("using seed history file: '" + filename + "'");
-			return new SeedHistoryLogger(new File(filename), true, true);
+	public static SeedHistoryLogger from(File seedHistoryFile) {
+		if (seedHistoryFile != null) {
+			AmidstLogger.info("using seed history file: '" + seedHistoryFile + "'");
+			return new SeedHistoryLogger(seedHistoryFile, true, true);
 		} else {
 			return new SeedHistoryLogger(new File(HISTORY_TXT), false, true);
 		}

@@ -35,10 +35,10 @@ public class MinecraftInstallation {
 		return newLocalMinecraftInstallation(null);
 	}
 
-	public static MinecraftInstallation newLocalMinecraftInstallation(String preferredDotMinecraftDirectory)
+	public static MinecraftInstallation newLocalMinecraftInstallation(File dotMinecraftDirectory2)
 			throws DotMinecraftDirectoryNotFoundException {
 		DotMinecraftDirectory dotMinecraftDirectory = new DotMinecraftDirectoryService()
-				.createDotMinecraftDirectory(preferredDotMinecraftDirectory);
+				.createDotMinecraftDirectory(dotMinecraftDirectory2);
 		AmidstLogger.info("using '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "'");
 		return new MinecraftInstallation(dotMinecraftDirectory);
 	}
@@ -95,42 +95,32 @@ public class MinecraftInstallation {
 		return new SaveGame(saveDirectory, saveDirectoryService.readLevelDat(saveDirectory));
 	}
 
-	/**
-	 * Try to locate a local profile with a name that matches the given string. No remote profiles are
-	 * supported. Any errors are ignored and will return in a non-match. A null return value means that
-	 * no match was found.
-	 */
-	private LauncherProfile newLauncherProfileFromName(String profileName) {
-		try {
-			VersionList versionList = VersionList.newLocalVersionList();
-			List<UnresolvedLauncherProfile> unresolvedProfiles = readLauncherProfiles();
-			for (UnresolvedLauncherProfile unresolvedProfile : unresolvedProfiles) {
-				LauncherProfile profile = unresolvedProfile.resolveToVanilla(versionList);
-				if (profile.getProfileName().equalsIgnoreCase(profileName)) {
-					return profile;
-				}
-			}
-		} catch (Exception e) {
-			// We can't do much if this fails
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
+/*
 	public Optional<LauncherProfile> tryReadLauncherProfile(
+<<<<<<< Updated upstream
 			String preferredMinecraftJarFile,
 			String preferredMinecraftJsonFile,
 			String profileName) {
 		if (preferredMinecraftJarFile != null && preferredMinecraftJsonFile != null) {
+=======
+			File minecraftJarFile,
+			File minecraftJsonFile) {
+		if (minecraftJarFile != null && minecraftJsonFile != null) {
+>>>>>>> Stashed changes
 			try {
 				return Optional.of(
-						newLauncherProfile(new File(preferredMinecraftJarFile), new File(preferredMinecraftJsonFile)));
+						newLauncherProfile(minecraftJarFile, minecraftJsonFile));
 			} catch (FormatException | IOException e) {
 				AmidstLogger.error(
 						e,
+<<<<<<< Updated upstream
 						"cannot read launcher profile. preferredMinecraftJarFile: '" + preferredMinecraftJarFile
 								+ "', preferredMinecraftJsonFile: '" + "'");
+=======
+						"cannot read launcher profile. preferredMinecraftJarFile: '" + minecraftJarFile
+								+ "', preferredMinecraftJsonFile: '" + minecraftJsonFile + "'");
+				return Optional.empty();
+>>>>>>> Stashed changes
 			}
 		} else if (profileName != null) {
 			LauncherProfile profile = newLauncherProfileFromName(profileName);
@@ -144,4 +134,44 @@ public class MinecraftInstallation {
 
 		return Optional.empty();
 	}
+*/
+    public Optional<LauncherProfile> tryReadLauncherProfile(
+            File minecraftJarFile,
+            File minecraftJsonFile) {
+        if (minecraftJarFile != null && minecraftJsonFile != null) {
+            try {
+                return Optional.of(
+                        newLauncherProfile(minecraftJarFile, minecraftJsonFile));
+            } catch (FormatException | IOException e) {
+                AmidstLogger.error(
+                        e,
+                        "cannot read launcher profile. minecraftJarFile: '" + minecraftJarFile
+                                + "', minecraftJsonFile: '" + minecraftJsonFile + "'");
+                return Optional.empty();
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Try to locate a local profile with a name that matches the given string. No remote profiles are
+     * supported. Any errors are ignored and will result in a non-match.
+     */
+    public Optional<LauncherProfile> tryGetLauncherProfileFromName(String profileName) {
+        try {
+            VersionList versionList = VersionList.newLocalVersionList();
+            List<UnresolvedLauncherProfile> unresolvedProfiles = readLauncherProfiles();
+            for (UnresolvedLauncherProfile unresolvedProfile : unresolvedProfiles) {
+                LauncherProfile profile = unresolvedProfile.resolveToVanilla(versionList);
+                if (profile.getProfileName().equalsIgnoreCase(profileName)) {
+                    return Optional.of(profile);
+                }
+            }
+        } catch(FormatException | IOException e) {
+            AmidstLogger.error(e, "error while reading launcher profiles");
+        }
+
+        return Optional.empty();
+    }
 }

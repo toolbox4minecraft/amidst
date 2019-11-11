@@ -10,18 +10,13 @@ import amidst.parsing.json.JsonReader;
 
 @Immutable
 public class BiomeProfileDirectory {
-	public static BiomeProfileDirectory create(String root) {
-		BiomeProfileDirectory result = new BiomeProfileDirectory(getRoot(root));
+	public static BiomeProfileDirectory create(File biomeProfilesDirectory) {
+	    if (biomeProfilesDirectory == null) {
+	        biomeProfilesDirectory = DEFAULT_ROOT_DIRECTORY;
+	    }
+		BiomeProfileDirectory result = new BiomeProfileDirectory(biomeProfilesDirectory);
 		AmidstLogger.info("using biome profiles at: '" + result.getRoot() + "'");
 		return result;
-	}
-
-	private static File getRoot(String root) {
-		if (root != null) {
-			return new File(root);
-		} else {
-			return DEFAULT_ROOT_DIRECTORY;
-		}
 	}
 
 	private static final File DEFAULT_ROOT_DIRECTORY = new File("biome");
