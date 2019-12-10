@@ -76,7 +76,7 @@ public enum _1_13ClassTranslator {
 					!c.getRealClassName().contains("$")
 					&& c.getRealSuperClassName().equals("java/lang/Object")
 					&& c.getNumberOfConstructors() == 1
-					&& (c.getNumberOfMethods() >= 1 || c.getNumberOfMethods() <= 3)
+					&& (c.getNumberOfMethods() >= 1 && c.getNumberOfMethods() <= 4)
 					&& (c.getNumberOfFields() == 1 || c.getNumberOfFields() == 2)
 					&& c.getField(0).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
 					&& (c.hasMethodWithRealArgsReturning("int", "int", "int", "int", null, null)
