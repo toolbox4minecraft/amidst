@@ -1,6 +1,28 @@
 package amidst.mojangapi.minecraftinterface.local;
 
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.*;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_BIOME;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_BIOME_ZOOMER;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_GAME_TYPE;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_NOISE_BIOME_PROVIDER;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_REGISTRY;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_REGISTRY_KEY;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_WORLD_DATA;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_WORLD_SETTINGS;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_WORLD_TYPE;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CONSTRUCTOR_REGISTRY_KEY;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CONSTRUCTOR_WORLD_DATA;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CONSTRUCTOR_WORLD_SETTINGS;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.FIELD_REGISTRY_META_REGISTRY;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.FIELD_WORLD_TYPE_AMPLIFIED;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.FIELD_WORLD_TYPE_CUSTOMIZED;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.FIELD_WORLD_TYPE_DEFAULT;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.FIELD_WORLD_TYPE_FLAT;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.FIELD_WORLD_TYPE_LARGE_BIOMES;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.METHOD_BIOME_ZOOMER_GET_BIOME;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.METHOD_NOISE_BIOME_PROVIDER_GET_BIOME;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.METHOD_REGISTRY_GET_BY_KEY;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.METHOD_REGISTRY_GET_ID;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.METHOD_WORLD_DATA_MAP_SEED;
 
 import amidst.clazz.real.AccessFlags;
 import amidst.clazz.translator.ClassTranslator;
@@ -92,7 +114,7 @@ public enum DefaultClassTranslator {
                     c.getNumberOfConstructors() == 1
                     && c.getNumberOfFields() > 0
                     && c.getField(0).hasFlags(AccessFlags.STATIC | AccessFlags.FINAL)
-                    && c.searchForFloat(0.62222224F)
+                    && (c.searchForFloat(0.62222224F) || c.searchForUtf8EqualTo("Feature placement"))
                 )
                 .thenDeclareRequired(CLASS_BIOME)
             .construct();
