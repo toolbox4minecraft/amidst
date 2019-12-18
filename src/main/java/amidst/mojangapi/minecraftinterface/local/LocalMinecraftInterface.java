@@ -1,15 +1,11 @@
 package amidst.mojangapi.minecraftinterface.local;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Objects;
+import java.util.function.LongFunction;
 
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
-import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -21,34 +17,21 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final RecognisedVersion recognisedVersion;
 
 	private final SymbolicClass registryClass;
-	private final SymbolicClass registryKeyClass;
 	private final SymbolicClass worldTypeClass;
-	private final SymbolicClass gameTypeClass;
-	private final SymbolicClass worldSettingsClass;
-	private final SymbolicClass worldDataClass;
-	private final SymbolicClass noiseBiomeProviderClass;
-	private final SymbolicClass overworldBiomeZoomerClass;
+	private final SymbolicClass genSettingsClass;
+	private final SymbolicClass levelDataClass;
+	private final SymbolicClass layersClass;
+	private final SymbolicClass lazyAreaClass;
+	private final SymbolicClass lazyAreaContextClass;
+	private final SymbolicClass fuzzyOffsetBiomeZoomerClass;
 
-	private MethodHandle registryGetIdMethod;
-    private MethodHandle biomeProviderGetBiomeMethod;
-    private MethodHandle biomeZoomerGetBiomeMethod;
-
-	private Object biomeRegistry;
-	private Object biomeProviderRegistry;
-
-	/**
-	 * A BiomeProvider instance for the current world, giving
-	 * access to the quarter-scale biome data.
-	 */
-    private Object biomeProvider;
     /**
-     * The BiomeZoomer instance for the current world, which
-     * interpolates the quarter-scale BiomeProvider to give
-     * full-scale biome data.
+     * A PixelTransformer instance for the current world, giving direct
+     * access to the quarter-scale biome data.
      */
-    private Object biomeZoomer;
+    private SymbolicObject pixelTransformer;
     /**
-     * The seed used by the BiomeZoomer during interpolation.
+     * The seed used by the FuzzyOffsetBiomeZoomer during interpolation.
      * It is derived from the world seed.
      */
 	private long seedForBiomeZoomer;
@@ -61,31 +44,52 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;
 		this.registryClass = symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY);
-        this.registryKeyClass = symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY_KEY);
         this.worldTypeClass = symbolicClassMap.get(SymbolicNames.CLASS_WORLD_TYPE);
-        this.gameTypeClass = symbolicClassMap.get(SymbolicNames.CLASS_GAME_TYPE);
-        this.worldSettingsClass = symbolicClassMap.get(SymbolicNames.CLASS_WORLD_SETTINGS);
-        this.worldDataClass = symbolicClassMap.get(SymbolicNames.CLASS_WORLD_DATA);
-        this.noiseBiomeProviderClass = symbolicClassMap.get(SymbolicNames.CLASS_NOISE_BIOME_PROVIDER);
-        this.overworldBiomeZoomerClass = symbolicClassMap.get(SymbolicNames.CLASS_BIOME_ZOOMER);
+        this.genSettingsClass = symbolicClassMap.get(SymbolicNames.CLASS_GEN_SETTINGS);
+        this.levelDataClass = symbolicClassMap.get(SymbolicNames.CLASS_LEVEL_DATA);
+        this.layersClass = symbolicClassMap.get(SymbolicNames.CLASS_LAYERS);
+        this.lazyAreaClass = symbolicClassMap.get(SymbolicNames.CLASS_LAZY_AREA);
+        this.lazyAreaContextClass = symbolicClassMap.get(SymbolicNames.CLASS_LAZY_AREA_CONTEXT);
+        this.fuzzyOffsetBiomeZoomerClass = symbolicClassMap.get(SymbolicNames.CLASS_FUZZY_OFFSET_BIOME_ZOOMER);
 	}
 
 	@Override
 	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
-	    if (!isInitialized || biomeProvider == null || biomeZoomer == null) {
+	    if (!isInitialized) {
 	        throw new MinecraftInterfaceException("no world was created");
 	    }
 
 	    int[] data = ensureArrayCapacity(width * height);
 
 	    try {
-    	    for (int i = 0; i < width; i++) {
-                for (int j = 0; j < height; j++) {
-                    int idx = i + j * width;
-                    data[idx] = getBiomeIdAt(x + i, y + j, useQuarterResolution);
-                }
-            }
+	    	/*
+	    	 *	Re-implemented from older updates where this would speed
+	    	 *	up the process due to they way LazyAreas worked. This
+	    	 *	helps here quite a bit, giving a signifigant performance
+	    	 *	boost.
+	    	 *
+	    	 *	OLD DESCRIPTION: 
+	    	 *	We break the region in 16x16 chunks, to get better performance
+			 * 	out of the LazyArea used by the game. Sadly, we get no
+			 * 	performance gain in 18w16a and newer, but in previous snapshots
+			 * 	we get a ~1.5x improvement.
+	    	 * */
+			int chunkSize = 16;
+			for (int x0 = 0; x0 < width; x0 += chunkSize) {
+				int w = Math.min(chunkSize, width - x0);
+
+				for (int y0 = 0; y0 < height; y0 += chunkSize) {
+					int h = Math.min(chunkSize, height - y0);
+					
+		    	    for (int i = 0; i < w; i++) {
+		                for (int j = 0; j < h; j++) {
+		                    int trueIdx = (x0 + i) + (y0 + j) * width;
+		                    data[trueIdx] = getBiomeIdAt(x + x0 + i, y + y0 + j, useQuarterResolution);
+		                }
+		            }
+				}
+			}
 	    } catch (Throwable e) {
 	        throw new MinecraftInterfaceException("unable to get biome data", e);
 	    }
@@ -94,119 +98,72 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	}
 
 	private int getBiomeIdAt(int x, int y, boolean useQuarterResolution) throws Throwable {
-	    Object biome;
-        // We don't care about the vertical component, so we pass a bogus value
-	    int height = -9999;
 	    if(useQuarterResolution) {
-	        biome = biomeProviderGetBiomeMethod.invoke(biomeProvider, x, height, y);
+	    	return (int) pixelTransformer.callMethod(SymbolicNames.METHOD_PIXEL_TRANSFORMER_APPLY, x, y);
 	    } else {
-	        biome = biomeZoomerGetBiomeMethod.invoke(biomeZoomer, seedForBiomeZoomer, x, height, y, biomeProvider);
+	    	return getFullResolutionBiome(x, y);
 	    }
-	    return (int) registryGetIdMethod.invoke(biomeRegistry, biome);
 	}
 
 	@Override
 	public synchronized void createWorld(long seed, WorldType worldType, String generatorOptions)
 			throws MinecraftInterfaceException {
-	    initializeIfNeeded();
-
+		initializeIfNeeded();
+		
 	    try {
-	        Object worldData = createWorldDataObject(seed, worldType, generatorOptions);
-	        biomeProvider = createBiomeProviderObject(worldData);
-	        biomeZoomer = overworldBiomeZoomerClass.getClazz().getEnumConstants()[0];
-            seedForBiomeZoomer = (Long) worldDataClass.callStaticMethod(SymbolicNames.METHOD_WORLD_DATA_MAP_SEED, seed);
-
+            seedForBiomeZoomer = (long) levelDataClass.callStaticMethod(SymbolicNames.METHOD_LEVEL_DATA_MAP_SEED, seed);
+            pixelTransformer = createPixelTransformerObject(seed, worldType);
+            
         } catch(IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new MinecraftInterfaceException("unable to create world", e);
         }
 	}
-
-	private Object createWorldDataObject(long seed, WorldType worldType, String generatorOptions)
-	        throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException {
-        if (!generatorOptions.isEmpty()) {
-            //TODO: fix me
-            AmidstLogger.warn("Custom generator options aren't supported in this version");
-        }
-
-	    SymbolicObject worldTypeObj = (SymbolicObject) worldTypeClass
-	            .getStaticFieldValue(worldType.getSymbolicFieldName());
-
-	    // We don't care which GameType we pick
-	    Object gameType = gameTypeClass.getClazz().getEnumConstants()[0];
-
-	    SymbolicObject worldSettings = worldSettingsClass.callConstructor(SymbolicNames.CONSTRUCTOR_WORLD_SETTINGS,
-	            seed, gameType, false, false, worldTypeObj.getObject());
-
-	    SymbolicObject worldData = worldDataClass.callConstructor(SymbolicNames.CONSTRUCTOR_WORLD_DATA,
-	            worldSettings.getObject(), "<amidst-world>");
-
-        return worldData.getObject();
-	}
-
-	private Object createBiomeProviderObject(Object worldData)
-            throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException {
-	    Object providerType = getFromRegistryByKey(biomeProviderRegistry, "vanilla_layered");
-
-	    /*
-	     * The BiomeProviderType class is hard to properly detect with the ClassTranslator, so
-	     * we prefer working with it directly with the Java reflection API.
-	     */
-	    Method createMethod = null; // BiomeProvider create(BiomeProviderSettings settings)
-	    Method createSettingsMethod = null; // BiomeProviderSettings createSettings(WorldData world)
-	    for (Method meth: providerType.getClass().getDeclaredMethods()) {
-	        if (meth.getParameterCount() == 1) {
-	            if(meth.getParameterTypes()[0].equals(worldDataClass.getClazz())) {
-	                createSettingsMethod = meth;
-	            } else if (noiseBiomeProviderClass.getClazz().isAssignableFrom(meth.getReturnType())) {
-	                createMethod = meth;
-	            }
-	        }
-	    }
-
-	    Object providerSettings = createSettingsMethod.invoke(providerType, worldData);
-	    return createMethod.invoke(providerType, providerSettings);
-	}
-
-	@Override
-	public RecognisedVersion getRecognisedVersion() {
-		return recognisedVersion;
-	}
-
+	
 	private void initializeIfNeeded() throws MinecraftInterfaceException {
 	    if (isInitialized) {
 	        return;
 	    }
-
 	    try {
-	        Object metaRegistry = ((SymbolicObject) registryClass
-	                .getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY)).getObject();
-            biomeRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome"));
-            biomeProviderRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome_source_type"));
-
-            registryGetIdMethod = getMethodHandle(registryClass, SymbolicNames.METHOD_REGISTRY_GET_ID);
-            biomeProviderGetBiomeMethod = getMethodHandle(noiseBiomeProviderClass, SymbolicNames.METHOD_NOISE_BIOME_PROVIDER_GET_BIOME);
-            biomeZoomerGetBiomeMethod = getMethodHandle(overworldBiomeZoomerClass, SymbolicNames.METHOD_BIOME_ZOOMER_GET_BIOME);
-        } catch(IllegalArgumentException | IllegalAccessException | InstantiationException
-                | InvocationTargetException e) {
+	    	registryClass.getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY);
+        } catch(IllegalArgumentException | IllegalAccessException e) {
             throw new MinecraftInterfaceException("unable to initialize the MinecraftInterface", e);
         }
 
 	    isInitialized = true;
 	}
-
-	private Object getFromRegistryByKey(Object registry, String key)
-	        throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-	    Object registryKey = registryKeyClass
-                .callConstructor(SymbolicNames.CONSTRUCTOR_REGISTRY_KEY, key)
-                .getObject();
-
-	    Method getByKey = registryClass.getMethod(SymbolicNames.METHOD_REGISTRY_GET_BY_KEY).getRawMethod();
-	    return getByKey.invoke(registry, registryKey);
+	
+	
+	private SymbolicObject createPixelTransformerObject(long seed, WorldType worldType)
+			throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException {
+		Object worldTypeObj = ((SymbolicObject) worldTypeClass.getStaticFieldValue(worldType.getSymbolicFieldName())).getObject();
+		
+		Object genSettingsObj = ((SymbolicObject) genSettingsClass.callConstructor(SymbolicNames.CONSTRUCTOR_GEN_SETTINGS)).getObject();
+		
+		SymbolicObject areaFactoryObj = (SymbolicObject) layersClass.callStaticMethod(
+				SymbolicNames.METHOD_LAYERS_GET_DEFAULT_LAYER,
+				worldTypeObj,
+				genSettingsObj,
+				(LongFunction<?>)l -> {
+					try {
+						return lazyAreaContextClass.callConstructor(
+								SymbolicNames.CONSTRUCTOR_LAZY_AREA_CONTEXT, 25, seed, l
+								).getObject();
+					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+							| InvocationTargetException e) {
+						e.printStackTrace();
+						return null;
+					}
+				}
+				);
+		
+		SymbolicObject lazyAreaObj = new SymbolicObject(lazyAreaClass, areaFactoryObj.callMethod(SymbolicNames.METHOD_AREA_FACTORY_MAKE));
+		
+		return (SymbolicObject) lazyAreaObj.getFieldValue(SymbolicNames.FIELD_LAZY_AREA_PIXEL_TRANSFORMER);
 	}
 
-	private MethodHandle getMethodHandle(SymbolicClass symbolicClass, String method) throws IllegalAccessException {
-	    Method rawMethod = symbolicClass.getMethod(method).getRawMethod();
-	    return MethodHandles.lookup().unreflect(rawMethod);
+	@Override
+	public RecognisedVersion getRecognisedVersion() {
+		return recognisedVersion;
 	}
 
     private int[] ensureArrayCapacity(int length) {
@@ -219,5 +176,45 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
         dataArray = new int[cur];
         return dataArray;
+    }
+    
+    private int getFullResolutionBiome(int x, int y) throws Throwable {
+        int var7 = x - 2;
+        int var8 = 0 - 2;
+        int var9 = y - 2;
+        int var10 = var7 >> 2;
+        int var11 = var8 >> 2;
+        int var12 = var9 >> 2;
+        double var13 = (double)(var7 & 3) / 4.0D;
+        double var15 = (double)(var8 & 3) / 4.0D;
+        double var17 = (double)(var9 & 3) / 4.0D;
+        double[] var19 = new double[8];
+
+        for(int var20 = 0; var20 < 8; ++var20) {
+           boolean var21 = (var20 & 4) == 0;
+           boolean var22 = (var20 & 2) == 0;
+           boolean var23 = (var20 & 1) == 0;
+           int var24 = var21 ? var10 : var10 + 1;
+           int var25 = var22 ? var11 : var11 + 1;
+           int var26 = var23 ? var12 : var12 + 1;
+           double var27 = var21 ? var13 : var13 - 1.0D;
+           double var29 = var22 ? var15 : var15 - 1.0D;
+           double var31 = var23 ? var17 : var17 - 1.0D;
+           var19[var20] = (double) fuzzyOffsetBiomeZoomerClass.callStaticMethod(SymbolicNames.METHOD_FUZZY_OFFSET_BIOME_ZOOMER_GET_FIDDLE_DISTANCE, seedForBiomeZoomer, var24, var25, var26, var27, var29, var31);
+        }
+
+        int var33 = 0;
+        double var34 = var19[0];
+
+        for(int var35 = 1; var35 < 8; ++var35) {
+           if (var34 > var19[var35]) {
+              var33 = var35;
+              var34 = var19[var35];
+           }
+        }
+
+        int var36 = (var33 & 4) == 0 ? var10 : var10 + 1;
+        int var38 = (var33 & 1) == 0 ? var12 : var12 + 1;
+        return getBiomeIdAt(var36, var38, true);
     }
 }

@@ -1,6 +1,7 @@
 package amidst.clazz.real;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +47,7 @@ public class RealClass {
 	private final List<Float> floatConstants;
 	private final List<Double> doubleConstants;
 	private final List<Long> longConstants;
+	private final List<Integer> intConstants;
 	private final List<Integer> stringIndices;
 	private final List<ReferenceIndex> methodIndices;
 
@@ -68,6 +70,7 @@ public class RealClass {
 			List<Float> floatConstants,
 			List<Double> doubleConstants,
 			List<Long> longConstants,
+			List<Integer> intConstants,
 			List<Integer> stringIndices,
 			List<ReferenceIndex> methodIndices,
 			int accessFlags,
@@ -86,6 +89,7 @@ public class RealClass {
 		this.floatConstants = floatConstants;
 		this.doubleConstants = doubleConstants;
 		this.longConstants = longConstants;
+		this.intConstants = intConstants;
 		this.stringIndices = stringIndices;
 		this.methodIndices = methodIndices;
 		this.accessFlags = accessFlags;
@@ -168,7 +172,16 @@ public class RealClass {
 		}
 		return false;
 	}
-
+	
+	public boolean searchForInt(int required) {
+		for (Integer entry : intConstants) {
+			if (entry.intValue() == required) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public boolean searchForStringContaining(String requiredValue) {
 		for (Integer entry : stringIndices) {
 			String entryValue = getStringValueOfConstant(entry);
@@ -196,11 +209,28 @@ public class RealClass {
 			String value = getStringValueOfConstant(entry.getValue2());
 			String[] args = readArgumentsAndReturn(value);
 
+			int argsTrue = -1;
 			if(arguments.length == args.length) {
+				argsTrue = 0;
 				for(int i = 0; i < args.length; i++) {
-					if(arguments[i] != null && !arguments[i].equals(args[i]))
-						return false;
+					if(arguments[i] == null || arguments[i].equals(args[i]))
+						argsTrue++;
 				}
+			}
+			
+			if (argsTrue == args.length) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean hasMethodWithNoArgs() {
+		for (ReferenceIndex entry : methodIndices) {
+			String value = getStringValueOfConstant(entry.getValue2());
+			String split = value.substring(1).split("\\(")[0].split("\\)")[0];
+
+			if (split.equals("")) {
 				return true;
 			}
 		}
