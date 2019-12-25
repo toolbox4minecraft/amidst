@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.LongFunction;
 
 import amidst.clazz.symbolic.SymbolicClass;
+import amidst.clazz.symbolic.SymbolicMethod;
 import amidst.clazz.symbolic.SymbolicObject;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -30,6 +31,14 @@ public class LocalMinecraftInterface implements MinecraftInterface {
      * access to the quarter-scale biome data.
      */
     private SymbolicObject pixelTransformer;
+    
+    /**
+     * A method used to retrieve the full resolution biome data.
+     * We create a SymbolicMethod for it so we dont lose performance
+     * searching the SymbolicClass for it every time it's called.
+     */
+    private SymbolicMethod getFiddleDistanceMethod;
+    
     /**
      * The seed used by the FuzzyOffsetBiomeZoomer during interpolation.
      * It is derived from the world seed.
@@ -113,6 +122,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    try {
             seedForBiomeZoomer = (long) levelDataClass.callStaticMethod(SymbolicNames.METHOD_LEVEL_DATA_MAP_SEED, seed);
             pixelTransformer = createPixelTransformerObject(seed, worldType);
+            getFiddleDistanceMethod = fuzzyOffsetBiomeZoomerClass.getMethod(SymbolicNames.METHOD_FUZZY_OFFSET_BIOME_ZOOMER_GET_FIDDLE_DISTANCE);
             
         } catch(IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new MinecraftInterfaceException("unable to create world", e);
@@ -200,7 +210,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
            double var27 = var21 ? var13 : var13 - 1.0D;
            double var29 = var22 ? var15 : var15 - 1.0D;
            double var31 = var23 ? var17 : var17 - 1.0D;
-           var19[var20] = (double) fuzzyOffsetBiomeZoomerClass.callStaticMethod(SymbolicNames.METHOD_FUZZY_OFFSET_BIOME_ZOOMER_GET_FIDDLE_DISTANCE, seedForBiomeZoomer, var24, var25, var26, var27, var29, var31);
+           var19[var20] = (double) getFiddleDistanceMethod.callStatic(seedForBiomeZoomer, var24, var25, var26, var27, var29, var31);
         }
 
         int var33 = 0;
