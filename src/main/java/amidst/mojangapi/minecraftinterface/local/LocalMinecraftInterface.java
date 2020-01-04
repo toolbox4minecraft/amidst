@@ -80,10 +80,24 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    int[] data = ensureArrayCapacity(width * height);
 
 	    try {
-    	    for (int i = 0; i < width; i++) {
-                for (int j = 0; j < height; j++) {
-                    int idx = i + j * width;
-                    data[idx] = getBiomeIdAt(x + i, y + j, useQuarterResolution);
+
+	        /**
+	         * We break the region in 16x16 chunks, to get better performance out
+	         * of the LazyArea used by the game. This gives a ~2x improvement.
+             */
+            int chunkSize = 16;
+            for (int x0 = 0; x0 < width; x0 += chunkSize) {
+                int w = Math.min(chunkSize, width - x0);
+
+                for (int y0 = 0; y0 < height; y0 += chunkSize) {
+                    int h = Math.min(chunkSize, height - y0);
+
+                    for (int i = 0; i < w; i++) {
+                        for (int j = 0; j < h; j++) {
+                            int trueIdx = (x0 + i) + (y0 + j) * width;
+                            data[trueIdx] = getBiomeIdAt(x + x0 + i, y + y0 + j, useQuarterResolution);
+                        }
+                    }
                 }
             }
 	    } catch (Throwable e) {
