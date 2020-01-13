@@ -143,8 +143,7 @@ public enum DefaultClassTranslator {
 				.thenDeclareRequired(CLASS_NOISE_BIOME_SOURCE)
 			.next()
 				.ifDetect(c -> 
-					c.getRealClassName().equals("bly")
-					&& c.getNumberOfMethods() == 4
+					c.getNumberOfMethods() == 4
 					&& c.getNumberOfFields() == 2
 					&& c.getNumberOfConstructors() == 1
 					&& c.getRealSuperClassName().equals("java/lang/Enum")
