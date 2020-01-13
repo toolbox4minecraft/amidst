@@ -1,28 +1,6 @@
 package amidst.mojangapi.minecraftinterface.local;
 
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_BIOME;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_BIOME_ZOOMER;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_GAME_TYPE;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_NOISE_BIOME_PROVIDER;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_REGISTRY;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_REGISTRY_KEY;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_WORLD_DATA;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_WORLD_SETTINGS;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_WORLD_TYPE;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CONSTRUCTOR_REGISTRY_KEY;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CONSTRUCTOR_WORLD_DATA;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CONSTRUCTOR_WORLD_SETTINGS;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.FIELD_REGISTRY_META_REGISTRY;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.FIELD_WORLD_TYPE_AMPLIFIED;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.FIELD_WORLD_TYPE_CUSTOMIZED;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.FIELD_WORLD_TYPE_DEFAULT;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.FIELD_WORLD_TYPE_FLAT;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.FIELD_WORLD_TYPE_LARGE_BIOMES;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.METHOD_BIOME_ZOOMER_GET_BIOME;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.METHOD_NOISE_BIOME_PROVIDER_GET_BIOME;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.METHOD_REGISTRY_GET_BY_KEY;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.METHOD_REGISTRY_GET_ID;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.METHOD_WORLD_DATA_MAP_SEED;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.*;
 
 import amidst.clazz.real.AccessFlags;
 import amidst.clazz.translator.ClassTranslator;
@@ -40,28 +18,26 @@ public enum DefaultClassTranslator {
 	private ClassTranslator createClassTranslator() {
 	    return ClassTranslator
             .builder()
-                .ifDetect(c ->
-                        c.getNumberOfConstructors() == 3
-                        && c.getNumberOfFields() == 3
-                        && c.getField(0).hasFlags(AccessFlags.PRIVATE | AccessFlags.STATIC | AccessFlags.FINAL)
-                        && c.searchForUtf8EqualTo("argument.id.invalid")
-                        && c.searchForUtf8EqualTo("minecraft")
-                )
-                .thenDeclareOptional(CLASS_REGISTRY_KEY)
-                    .requiredConstructor(CONSTRUCTOR_REGISTRY_KEY).real("java.lang.String").end()
-            .next()
-                .ifDetect(c -> c.getNumberOfConstructors() <= 1
-                    && c.getNumberOfFields() > 15
-                    && c.searchForUtf8EqualTo("block")
-                    && c.searchForUtf8EqualTo("potion")
-                    && c.searchForUtf8EqualTo("biome")
-                    && c.searchForUtf8EqualTo("item")
-                )
-                .thenDeclareOptional(CLASS_REGISTRY)
-                    .requiredField(FIELD_REGISTRY_META_REGISTRY, "f")
-                    .requiredMethod(METHOD_REGISTRY_GET_ID, "a").real("java.lang.Object").end()
-                    .requiredMethod(METHOD_REGISTRY_GET_BY_KEY, "a").symbolic(CLASS_REGISTRY_KEY).end()
-
+		    	.ifDetect(c ->
+		    		c.getNumberOfConstructors() <= 1
+			        && c.getNumberOfFields() > 15
+			        && c.searchForUtf8EqualTo("block")
+			        && c.searchForUtf8EqualTo("potion")
+			        && c.searchForUtf8EqualTo("biome")
+			        && c.searchForUtf8EqualTo("item")
+		    	)
+		    	.thenDeclareOptional(CLASS_REGISTRY)
+		    		.requiredField(FIELD_REGISTRY_BIOME, "s")
+		    .next()
+		    	.ifDetect(c ->
+		    		c.getNumberOfMethods() == 13
+		    		&& c.getNumberOfConstructors() == 1
+		    		&& c.getNumberOfFields() == 5
+		    		&& c.searchForUtf8EqualTo("debug")
+		    	)
+		    	.thenDeclareRequired(CLASS_MAPPED_REGISTRY)
+			    	.requiredMethod(METHOD_MAPPED_REGISTRY_BY_ID, "a").real("int").end()
+			    	.requiredMethod(METHOD_MAPPED_REGISTRY_GET_ID, "a").real("java.lang.Object").end()
             .next()
                 .ifDetect(c -> c.searchForStringContaining("default_1_1"))
                 .thenDeclareRequired(CLASS_WORLD_TYPE)
@@ -71,52 +47,113 @@ public enum DefaultClassTranslator {
                     .requiredField(FIELD_WORLD_TYPE_AMPLIFIED,    "e")
                     .requiredField(FIELD_WORLD_TYPE_CUSTOMIZED,   "f")
             .next()
-                .ifDetect(c -> c.getRealSuperClassName().equals("java/lang/Enum")
-                    && c.searchForUtf8EqualTo("gameMode.")
-                )
-                .thenDeclareRequired(CLASS_GAME_TYPE)
-            .next()
-                .ifDetect(c -> !c.getRealClassName().contains("$")
-                    && c.isFinal()
-                    && c.getNumberOfConstructors() == 2
-                    && c.getNumberOfFields() >= 5
-                    && c.getNumberOfFields() <= 10
-                    && c.getField(1).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
-                )
-                .thenDeclareRequired(CLASS_WORLD_SETTINGS)
-                    .requiredConstructor(CONSTRUCTOR_WORLD_SETTINGS).real("long").symbolic(CLASS_GAME_TYPE).real("boolean").real("boolean").symbolic(CLASS_WORLD_TYPE).end()
-            .next()
                 .ifDetect(c -> c.getNumberOfFields() > 40
                     && c.searchForUtf8EqualTo("SizeOnDisk")
                 )
-                .thenDeclareRequired(CLASS_WORLD_DATA)
-                    .requiredConstructor(CONSTRUCTOR_WORLD_DATA).symbolic(CLASS_WORLD_SETTINGS).real("java.lang.String").end()
-                    .requiredMethod(METHOD_WORLD_DATA_MAP_SEED, "c").real("long").end()
-            .next()
-                .ifDetect(c -> c.getRealClassName().contains("$")
-                    && c.isInterface()
-                    && c.getNumberOfMethods() == 1
-                    && c.hasMethodWithRealArgsReturning("int", "int", "int", null)
-                    && !c.hasMethodWithRealArgsReturning("int", "int", "int", "boolean")
-                )
-                .thenDeclareRequired(CLASS_NOISE_BIOME_PROVIDER)
-                    .requiredMethod(METHOD_NOISE_BIOME_PROVIDER_GET_BIOME, "b").real("int").real("int").real("int").end()
-            .next()
-                .ifDetect(c -> !c.getRealClassName().contains("$")
-                    && c.getRealSuperClassName().equals("java/lang/Enum")
-                    && c.hasMethodWithRealArgsReturning("long", "int", "int", "int", null, null)
-                    && c.getNumberOfMethods() == 4
-                )
-                .thenDeclareRequired(CLASS_BIOME_ZOOMER)
-                    .requiredMethod(METHOD_BIOME_ZOOMER_GET_BIOME, "a").real("long").real("int").real("int").real("int").symbolic(CLASS_NOISE_BIOME_PROVIDER).end()
-            .next()
-                .ifDetect(c ->
-                    c.getNumberOfConstructors() == 1
-                    && c.getNumberOfFields() > 0
-                    && c.getField(0).hasFlags(AccessFlags.STATIC | AccessFlags.FINAL)
-                    && (c.searchForFloat(0.62222224F) || c.searchForUtf8EqualTo("Feature placement"))
-                )
-                .thenDeclareRequired(CLASS_BIOME)
+                .thenDeclareRequired(CLASS_LEVEL_DATA)
+                    .requiredMethod(METHOD_LEVEL_DATA_MAP_SEED, "c").real("long").end()
+			.next()
+				.ifDetect(c ->
+					c.searchForLong(1000L)
+					&& c.searchForLong(2001L)
+					&& c.searchForLong(2000L)
+				)
+				.thenDeclareRequired(CLASS_LAYERS)
+					.requiredMethod(METHOD_LAYERS_GET_DEFAULT_LAYER, "a").symbolic(CLASS_WORLD_TYPE).symbolic(CLASS_GEN_SETTINGS).real("java.util.function.LongFunction").end()
+			.next()
+				.ifDetect(c -> ( // before 18w46a
+						c.getNumberOfConstructors() == 1
+						&& c.getNumberOfFields() >= 15
+						&& c.getNumberOfMethods() >= 19
+						&& c.searchForFloat(684.412F)
+					) || ( // from 18w46a
+						!c.getRealClassName().contains("$")
+						&& !c.getRealSuperClassName().equals("java/lang/Object")
+						&& c.getNumberOfFields() >= 4
+						&& c.getNumberOfMethods() == c.getNumberOfFields()
+						&& c.getNumberOfConstructors() >= 1
+						&& c.getField(0).hasFlags(AccessFlags.FINAL | AccessFlags.PRIVATE)
+						&& !c.getField(0).hasFlags(AccessFlags.STATIC)
+                        && c.getField(2).hasFlags(AccessFlags.FINAL | AccessFlags.PRIVATE)
+						&& !c.searchForStringContaining("textures")
+					    && c.hasMethodWithNoArgs()
+					    && !c.hasMethodWithRealArgsReturning(null, null)
+					    && !c.hasMethodWithRealArgsReturning(null, null, null)
+					    && !c.hasMethodWithRealArgsReturning(null, null, null, null)
+					    && !c.hasMethodWithRealArgsReturning(null, null, null, null, null)
+					)
+				)
+				.thenDeclareRequired(CLASS_GEN_SETTINGS)
+					.requiredConstructor(CONSTRUCTOR_GEN_SETTINGS).end()
+			.next()
+				.ifDetect(c -> 
+					(c.getNumberOfMethods() == 2 || c.getNumberOfMethods() == 3)
+					&& (c.getNumberOfFields() == 3 || c.getNumberOfFields() == 4)
+					&& c.searchForInt(Integer.MIN_VALUE)
+					&& c.getRealSuperClassName().equals("java/lang/Object")
+					&& c.getNumberOfConstructors() == 1
+					&& c.getField(0).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
+					&& c.getField(1).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
+					&& c.getField(2).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
+					&& c.hasMethodWithRealArgsReturning("int", "int", "int")
+					&& c.hasMethodWithNoArgs()
+					&& c.isFinal()
+				)
+				.thenDeclareRequired(CLASS_LAZY_AREA)
+					.requiredMethod(METHOD_LAZY_AREA_GET, "a").real("int").real("int").end()
+					.optionalField(FIELD_LAZY_AREA_PIXEL_TRANSFORMER, "a")
+			.next()
+				.ifDetect(c -> 
+				c.searchForFloat(0.25f)
+				&& c.searchForInt(Integer.MIN_VALUE)
+				&& c.getNumberOfFields() == 5
+				)
+				.thenDeclareRequired(CLASS_LAZY_AREA_CONTEXT)
+					.requiredConstructor(CONSTRUCTOR_LAZY_AREA_CONTEXT).real("int").real("long").real("long").end()
+			.next()
+				.ifDetect(c -> 
+					c.isInterface()
+					&& c.hasMethodWithNoArgs()
+					&& c.getNumberOfMethods() == 1
+					&& c.getNumberOfConstructors() == 0
+					&& c.getNumberOfFields() == 0
+					&& c.searchForUtf8EqualTo("make")
+				)
+				.thenDeclareRequired(CLASS_AREA_FACTORY)
+					.requiredMethod(METHOD_AREA_FACTORY_MAKE, "make").end()
+			.next()
+				.ifDetect(c -> 
+					c.isInterface()
+					&& c.hasMethodWithRealArgsReturning("int", "int", "int")
+					&& c.getNumberOfMethods() == 1
+					&& c.getNumberOfConstructors() == 0
+					&& c.getNumberOfFields() == 0
+					&& c.searchForUtf8EqualTo("apply")
+				)
+				.thenDeclareRequired(CLASS_PIXEL_TRANSFORMER)
+					.requiredMethod(METHOD_PIXEL_TRANSFORMER_APPLY, "apply").real("int").real("int").end()
+			.next()
+				.ifDetect(c -> 
+					c.getRealClassName().contains("$")
+					&& c.getNumberOfMethods() == 1
+					&& c.hasMethodWithRealArgsReturning("int", "int", "int", null)
+					&& c.getNumberOfConstructors() == 0
+					&& c.getNumberOfFields() == 0
+				)
+				.thenDeclareRequired(CLASS_NOISE_BIOME_SOURCE)
+			.next()
+				.ifDetect(c -> 
+					c.getRealClassName().equals("bly")
+					&& c.getNumberOfMethods() == 4
+					&& c.getNumberOfFields() == 2
+					&& c.getNumberOfConstructors() == 1
+					&& c.getRealSuperClassName().equals("java/lang/Enum")
+					&& c.searchForUtf8EqualTo("values")
+					&& c.searchForUtf8EqualTo("valueOf")
+					&& c.hasMethodWithRealArgsReturning("long", "int", "int", "int", null, null)
+				)
+				.thenDeclareRequired(CLASS_FUZZY_OFFSET_CONSTANT_COLUMN_BIOME_ZOOMER)
+					.requiredMethod(METHOD_FUZZY_OFFSET_CONSTANT_COLUMN_BIOME_ZOOMER_GET_BIOME, "a").real("long").real("int").real("int").real("int").symbolic(CLASS_NOISE_BIOME_SOURCE).end()
             .construct();
 	}
 	// @formatter:on

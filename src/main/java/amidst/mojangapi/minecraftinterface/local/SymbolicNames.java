@@ -6,13 +6,12 @@ import amidst.documentation.Immutable;
 public enum SymbolicNames {
 	;
 
-    public static final String CLASS_REGISTRY = "Registry";
-    public static final String FIELD_REGISTRY_META_REGISTRY = "metaRegistry";
-    public static final String METHOD_REGISTRY_GET_BY_KEY = "getByKey";
-    public static final String METHOD_REGISTRY_GET_ID = "getId";
-
-    public static final String CLASS_REGISTRY_KEY = "RegistryKey";
-    public static final String CONSTRUCTOR_REGISTRY_KEY = "<init>";
+	public static final String CLASS_REGISTRY = "Registry";
+	public static final String FIELD_REGISTRY_BIOME = "biomeRegistry";
+	
+	public static final String CLASS_MAPPED_REGISTRY = "MappedRegistry";
+	public static final String METHOD_MAPPED_REGISTRY_GET_ID = "getId";
+	public static final String METHOD_MAPPED_REGISTRY_BY_ID = "byId";
 
 	// TODO: correctly manage world types; remove duplication with legacy SymbolicNames
 	public static final String CLASS_WORLD_TYPE = "WorldType";
@@ -22,20 +21,32 @@ public enum SymbolicNames {
 	public static final String FIELD_WORLD_TYPE_AMPLIFIED = "amplified";
 	public static final String FIELD_WORLD_TYPE_CUSTOMIZED = "customized";
 
-	public static final String CLASS_WORLD_DATA = "WorldData";
-	public static final String METHOD_WORLD_DATA_MAP_SEED = "mapSeed";
-	public static final String CONSTRUCTOR_WORLD_DATA = "<init>";
+	public static final String CLASS_LEVEL_DATA = "LevelData";
+	public static final String METHOD_LEVEL_DATA_MAP_SEED = "mapSeed";
 
-	public static final String CLASS_WORLD_SETTINGS = "WorldSettings";
-	public static final String CONSTRUCTOR_WORLD_SETTINGS = "<init>";
+	// LazyArea quarter resolution data retreival
+	public static final String CLASS_LAYERS = "Layers";
+	public static final String METHOD_LAYERS_GET_DEFAULT_LAYER = "getDefaultLayer";
 
-	public static final String CLASS_GAME_TYPE = "GameType";
+	public static final String CLASS_GEN_SETTINGS = "OverworldGenSettings";
+	public static final String CONSTRUCTOR_GEN_SETTINGS = "<init>";
 
-	public static final String CLASS_NOISE_BIOME_PROVIDER = "NoiseBiomeProvider";
-	public static final String METHOD_NOISE_BIOME_PROVIDER_GET_BIOME = "getBiome";
+	public static final String CLASS_LAZY_AREA = "LazyArea";
+	public static final String METHOD_LAZY_AREA_GET = "get";
+	public static final String FIELD_LAZY_AREA_PIXEL_TRANSFORMER = "pixelTransformer";
 
-	public static final String CLASS_BIOME_ZOOMER = "OverworldBiomeZoomer";
-	public static final String METHOD_BIOME_ZOOMER_GET_BIOME = "getBiome";
+	public static final String CLASS_LAZY_AREA_CONTEXT = "LazyAreaContext";
+	public static final String CONSTRUCTOR_LAZY_AREA_CONTEXT = "<init>";
 
-    public static final String CLASS_BIOME = "Biome";
+	public static final String CLASS_AREA_FACTORY = "AreaFactory";
+	public static final String METHOD_AREA_FACTORY_MAKE = "make";
+
+	public static final String CLASS_PIXEL_TRANSFORMER = "PixelTransformer";
+	public static final String METHOD_PIXEL_TRANSFORMER_APPLY = "apply";
+
+	// BiomeZoomer full resolution converter
+	public static final String CLASS_NOISE_BIOME_SOURCE = "NoiseBiomeSource";
+	
+	public static final String CLASS_FUZZY_OFFSET_CONSTANT_COLUMN_BIOME_ZOOMER = "FuzzyOffsetConstantColumnBiomeZoomer";
+	public static final String METHOD_FUZZY_OFFSET_CONSTANT_COLUMN_BIOME_ZOOMER_GET_BIOME = "getBiome";
 }

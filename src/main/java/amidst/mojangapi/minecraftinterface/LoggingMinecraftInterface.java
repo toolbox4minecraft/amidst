@@ -30,5 +30,9 @@ public class LoggingMinecraftInterface implements MinecraftInterface {
 	public RecognisedVersion getRecognisedVersion() {
 		return inner.getRecognisedVersion();
 	}
+	
+	public MinecraftInterface getInner() {
+		return inner;
+	}
 
 }
