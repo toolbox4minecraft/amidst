@@ -111,18 +111,11 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    int[] data = ensureArrayCapacity(width * height);
 
 	    try {
-	    	/*
-	    	 *	Re-implemented from older updates where this would speed
-	    	 *	up the process due to they way LazyAreas worked. This
-	    	 *	helps here quite a bit, giving a signifigant performance
-	    	 *	boost.
-	    	 *
-	    	 *	OLD DESCRIPTION: 
-	    	 *	We break the region in 16x16 chunks, to get better performance
-			 * 	out of the LazyArea used by the game. Sadly, we get no
-			 * 	performance gain in 18w16a and newer, but in previous snapshots
-			 * 	we get a ~1.5x improvement.
-	    	 * */
+	    	
+	        /**
+	         * We break the region in 16x16 chunks, to get better performance out
+	         * of the LazyArea used by the game. This gives a ~2x improvement.
+             */
 			int chunkSize = 16;
 			for (int x0 = 0; x0 < width; x0 += chunkSize) {
 				int w = Math.min(chunkSize, width - x0);
