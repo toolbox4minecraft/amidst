@@ -5,7 +5,9 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.prefs.Preferences;
 
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -79,6 +81,7 @@ public class Amidst {
 			AmidstLogger.info(versionString);
 			logTimeAndProperties();
 			enableGraphicsAcceleration();
+			setLookAndFeel();
 			osxMenuProperties();
 			startApplication(parameters, metadata, createSettings());
 		}
@@ -166,6 +169,20 @@ public class Amidst {
 			AmidstMetaData metadata,
 			AmidstSettings settings) {
 		SwingUtilities.invokeLater(() -> doStartApplication(parameters, metadata, settings));
+	}
+
+	private static void setLookAndFeel() {
+		try {
+			String lafClass = UIManager.getSystemLookAndFeelClassName();
+			if (!lafClass.equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
+				UIManager.setLookAndFeel(lafClass);
+			} else {
+				AmidstLogger.warn("Nimbus Look and Feel not supported, reverting to default...");
+			}
+			JFrame.setDefaultLookAndFeelDecorated(true);
+		} catch (Exception e) {
+			AmidstLogger.warn("Error setting look and feel, reverting to default...");
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
