@@ -104,9 +104,16 @@ public class EndIslandOracle {
 	private EndIsland tryCreateEndIsland(int chunkX, int chunkY) {
 		if (chunkX == 0 && chunkY == 0) {
 			return createMainEndIsland(chunkX, chunkY);
-		} else if (chunkX * chunkX + chunkY * chunkY > 4096) {
-			return tryCreateEndIslandInOuterLands(chunkX, chunkY);
 		} else {
+			boolean inRange = false;
+			try {
+				inRange = Math.addExact(Math.multiplyExact(chunkX, chunkX), Math.multiplyExact(chunkY, chunkY)) > 4096;
+			} catch(ArithmeticException e) {
+				inRange = true;
+			}
+			if (inRange) {
+				return tryCreateEndIslandInOuterLands(chunkX, chunkY);
+			}
 			return null;
 		}
 	}
@@ -137,7 +144,7 @@ public class EndIslandOracle {
 	 * erosion factor between 9 and 21 (i.e. they will be smaller than the main
 	 * island).
 	 */
-	private int getErosionFactor(int chunkX, int chunkY) {
-		return (Math.abs(chunkX) * 3439 + Math.abs(chunkY) * 147) % 13 + 9;
+	private int getErosionFactor(long chunkX, long chunkY) {
+		return (int) ((Math.abs(chunkX) * 3439 + Math.abs(chunkY) * 147) % 13) + 9;
 	}
 }
