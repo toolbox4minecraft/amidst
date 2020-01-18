@@ -38,6 +38,18 @@ public interface Setting<T> extends Supplier<T> {
 			value -> preferences.putInt(key, value.getId()));
 	}
 
+	public static <T extends Enum<T>> Setting<T> createEnum(Preferences preferences, String key, T defaultValue) {
+		Class<T> enumType = defaultValue.getDeclaringClass();
+		return new SettingBase<>(defaultValue, value -> {
+			String stored = preferences.get(key, null);
+			try {
+				return stored == null ? value : Enum.valueOf(enumType, stored);
+			} catch (IllegalArgumentException e) {
+				return value;
+			}
+		}, value -> preferences.put(key, value.name()));
+	}
+
 	public static <T> Setting<T> createDummy(T defaultValue) {
 		return new SettingBase<>(defaultValue, value -> value, value -> {
 		});

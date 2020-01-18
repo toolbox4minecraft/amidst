@@ -329,6 +329,20 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	public boolean tryChangeLookAndFeel(AmidstLookAndFeel lookAndFeel) {
+		if (dialogs.askToConfirmYesNo("Changing Look & Feel",
+				"Changing the look & feel will reload Amidst. Do you want to continue?")) {
+			if (lookAndFeel.tryApply()) {
+				application.restart();
+				return true;
+			} else {
+				dialogs.displayError("An error occured while trying to switch to " + lookAndFeel);
+			}
+		}
+		return false;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	private long tryParseLong(String text, long defaultValue) {
 		try {
 			return Long.parseLong(text);
