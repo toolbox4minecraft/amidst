@@ -24,7 +24,7 @@ public enum Menus {
 	;
 
 	public static <T> List<JRadioButtonMenuItem> radios(JMenu menu, Setting<T> setting,
-	        @SuppressWarnings("unchecked") T... values) {
+			@SuppressWarnings("unchecked") T... values) {
 		Objects.requireNonNull(values);
 		ButtonGroup group = new ButtonGroup();
 		List<JRadioButtonMenuItem> radios = new ArrayList<>(values.length);

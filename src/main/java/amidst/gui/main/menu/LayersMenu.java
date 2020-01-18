@@ -33,7 +33,7 @@ public class LayersMenu {
 		this.menu = menu;
 		this.settings = settings;
 		this.dimensionSetting = settings.dimension
-		        .withListener((oldValue, newValue) -> this.createMenu(newValue));
+				.withListener((oldValue, newValue) -> this.createMenu(newValue));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

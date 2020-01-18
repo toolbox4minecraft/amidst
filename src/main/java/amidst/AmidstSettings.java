@@ -5,6 +5,7 @@ import java.util.prefs.Preferences;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
+import amidst.gui.main.AmidstLookAndFeel;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
 import amidst.settings.Setting;
@@ -34,6 +35,7 @@ public class AmidstSettings {
 	public final Setting<Boolean> showFPS;
 	public final Setting<Boolean> showScale;
 	public final Setting<Boolean> showDebug;
+	public final Setting<AmidstLookAndFeel> lookAndFeel;
 
 	public final Setting<String> lastProfile;
 	public final Setting<String> worldType;
@@ -67,6 +69,7 @@ public class AmidstSettings {
 		showFPS                    = Setting.createBoolean(  preferences, "showFPS",              true);
 		showScale                  = Setting.createBoolean(  preferences, "showScale",            true);
 		showDebug                  = Setting.createBoolean(  preferences, "showDebug",            false);
+		lookAndFeel                = Setting.createEnum(     preferences, "lookAndFeel",          AmidstLookAndFeel.DEFAULT);
 
 		lastProfile                = Setting.createString(   preferences, "profile",              "");
 		worldType                  = Setting.createString(   preferences, "worldType",            WorldType.PROMPT_EACH_TIME);

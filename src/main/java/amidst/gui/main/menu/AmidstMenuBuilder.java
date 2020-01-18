@@ -1,7 +1,10 @@
 package amidst.gui.main.menu;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -10,7 +13,9 @@ import amidst.AmidstSettings;
 import amidst.FeatureToggles;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
+import amidst.gui.main.AmidstLookAndFeel;
 import amidst.mojangapi.world.WorldType;
+import amidst.settings.Setting;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 
 @NotThreadSafe
@@ -125,6 +130,8 @@ public class AmidstMenuBuilder {
 		Menus.checkbox(result, settings.showScale,            "Show Scale");
 		Menus.checkbox(result, settings.showDebug,            "Show Debug Information");
 		// @formatter:on
+		result.addSeparator();
+		result.add(create_Settings_LookAndFeel());
 		return result;
 	}
 
@@ -133,6 +140,22 @@ public class AmidstMenuBuilder {
 		// @formatter:off
 		Menus.radios(result, settings.worldType, WorldType.getWorldTypeSettingAvailableValues());
 		// @formatter:on
+		return result;
+	}
+
+	private JMenu create_Settings_LookAndFeel() {
+		JMenu result = new JMenu("Select Look & Feel");
+
+		List<AbstractButton> radios = new ArrayList<>();
+		Setting<AmidstLookAndFeel> lookAndFeelSetting = settings.lookAndFeel.withListener(
+			(oldValue, newValue) -> {
+				if (!oldValue.equals(newValue) && !actions.tryChangeLookAndFeel(newValue)) {
+					settings.lookAndFeel.set(oldValue);
+					radios.get(oldValue.ordinal()).setSelected(true);
+				}
+			});
+
+		radios.addAll(Menus.radios(result, lookAndFeelSetting, AmidstLookAndFeel.values()));
 		return result;
 	}
 
