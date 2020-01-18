@@ -1,5 +1,7 @@
 package amidst.gui.main.menu;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.swing.ButtonGroup;
@@ -21,12 +23,15 @@ import amidst.settings.Setting;
 public enum Menus {
 	;
 
-	public static void radios(JMenu menu, Setting<String> setting, String... values) {
+	public static <T> List<JRadioButtonMenuItem> radios(JMenu menu, Setting<T> setting,
+	        @SuppressWarnings("unchecked") T... values) {
 		Objects.requireNonNull(values);
 		ButtonGroup group = new ButtonGroup();
-		for (String value : values) {
-			radio(menu, setting, group, value);
+		List<JRadioButtonMenuItem> radios = new ArrayList<>(values.length);
+		for (T value : values) {
+			radios.add(radio(menu, setting, group, value));
 		}
+		return radios;
 	}
 
 	public static <T> JRadioButtonMenuItem radio(JMenu menu, Setting<T> setting, ButtonGroup group, T value) {

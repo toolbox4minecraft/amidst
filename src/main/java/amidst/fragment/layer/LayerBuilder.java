@@ -35,7 +35,6 @@ import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 import amidst.settings.Setting;
-import amidst.settings.Settings;
 
 @Immutable
 public class LayerBuilder {
@@ -84,10 +83,10 @@ public class LayerBuilder {
 	private List<LayerDeclaration> createDeclarations(AmidstSettings settings, VersionFeatures versionFeatures) {
 		LayerDeclaration[] declarations = new LayerDeclaration[LayerIds.NUMBER_OF_LAYERS];
 		// @formatter:off
-		declare(settings, declarations, versionFeatures, LayerIds.ALPHA,           null,                false, Settings.createImmutable(true));
-		declare(settings, declarations, versionFeatures, LayerIds.BIOME_DATA,      Dimension.OVERWORLD, false, Settings.createImmutable(true));
-		declare(settings, declarations, versionFeatures, LayerIds.END_ISLANDS,     Dimension.END,       false, Settings.createImmutable(true));
-		declare(settings, declarations, versionFeatures, LayerIds.BACKGROUND,      null,                false, Settings.createImmutable(true));
+		declare(settings, declarations, versionFeatures, LayerIds.ALPHA,           null,                false, Setting.createImmutable(true));
+		declare(settings, declarations, versionFeatures, LayerIds.BIOME_DATA,      Dimension.OVERWORLD, false, Setting.createImmutable(true));
+		declare(settings, declarations, versionFeatures, LayerIds.END_ISLANDS,     Dimension.END,       false, Setting.createImmutable(true));
+		declare(settings, declarations, versionFeatures, LayerIds.BACKGROUND,      null,                false, Setting.createImmutable(true));
 		declare(settings, declarations, versionFeatures, LayerIds.SLIME,           Dimension.OVERWORLD, false, settings.showSlimeChunks);
 		declare(settings, declarations, versionFeatures, LayerIds.GRID,            null,                true,  settings.showGrid);
 		declare(settings, declarations, versionFeatures, LayerIds.SPAWN,           Dimension.OVERWORLD, false, settings.showSpawn);
