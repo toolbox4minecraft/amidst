@@ -1,7 +1,10 @@
 package amidst.gui.main.menu;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -10,7 +13,9 @@ import amidst.AmidstSettings;
 import amidst.FeatureToggles;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
+import amidst.gui.main.AmidstLookAndFeel;
 import amidst.mojangapi.world.WorldType;
+import amidst.settings.Setting;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 
 @NotThreadSafe
@@ -56,12 +61,12 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("File");
 		result.setMnemonic(KeyEvent.VK_F);
 		// @formatter:off
-		Menus.item(result, actions::newFromSeed,           "New from seed",            KeyEvent.VK_N, MenuShortcuts.NEW_FROM_SEED);
-		Menus.item(result, actions::newFromRandom,         "New from random seed",     KeyEvent.VK_R, MenuShortcuts.NEW_FROM_RANDOM_SEED);
+		Menus.item(result, actions::newFromSeed,           "New From Seed ...",        KeyEvent.VK_N, MenuShortcuts.NEW_FROM_SEED);
+		Menus.item(result, actions::newFromRandom,         "New From Random Seed",     KeyEvent.VK_R, MenuShortcuts.NEW_FROM_RANDOM_SEED);
 		if (FeatureToggles.SEED_SEARCH) {
-			Menus.item(result, actions::searchForRandom,   "Search for random seed",   KeyEvent.VK_F, MenuShortcuts.SEARCH_FOR_RANDOM_SEED);
+			Menus.item(result, actions::searchForRandom,   "Search for Random Seed",   KeyEvent.VK_F, MenuShortcuts.SEARCH_FOR_RANDOM_SEED);
 		}
-		Menus.item(result, actions::openSaveGame,          "Open save game ...",       KeyEvent.VK_O, MenuShortcuts.OPEN_SAVE_GAME);
+		Menus.item(result, actions::openSaveGame,          "Open Save Game ...",       KeyEvent.VK_O, MenuShortcuts.OPEN_SAVE_GAME);
 		result.addSeparator();
 		if (FeatureToggles.WORLD_EXPORTER) {
 			exportMenu =
@@ -69,7 +74,7 @@ public class AmidstMenuBuilder {
 			exportMenu.setEnabled(false);
 			result.addSeparator();
 		}
-		Menus.item(result, actions::switchProfile,         "Switch profile ...",       KeyEvent.VK_P, MenuShortcuts.SWITCH_PROFILE);
+		Menus.item(result, actions::switchProfile,         "Switch Profile ...",       KeyEvent.VK_P, MenuShortcuts.SWITCH_PROFILE);
 		Menus.item(result, actions::exit,                  "Exit",                     KeyEvent.VK_X, MenuShortcuts.EXIT);
 		// @formatter:on
 		return result;
@@ -80,21 +85,21 @@ public class AmidstMenuBuilder {
 		result.setEnabled(false);
 		result.setMnemonic(KeyEvent.VK_W);
 		// @formatter:off
-		Menus.item(result, actions::goToCoordinate,        "Go to Coordinate",         KeyEvent.VK_C, MenuShortcuts.GO_TO_COORDINATE);
+		Menus.item(result, actions::goToCoordinate,        "Go to Coordinate ...",     KeyEvent.VK_C, MenuShortcuts.GO_TO_COORDINATE);
 		Menus.item(result, actions::goToSpawn,             "Go to World Spawn",        KeyEvent.VK_S, MenuShortcuts.GO_TO_WORLD_SPAWN);
-		Menus.item(result, actions::goToStronghold,        "Go to Stronghold",         KeyEvent.VK_H, MenuShortcuts.GO_TO_STRONGHOLD);
-		Menus.item(result, actions::goToPlayer,            "Go to Player",             KeyEvent.VK_P, MenuShortcuts.GO_TO_PLAYER);
+		Menus.item(result, actions::goToStronghold,        "Go to Stronghold ...",     KeyEvent.VK_H, MenuShortcuts.GO_TO_STRONGHOLD);
+		Menus.item(result, actions::goToPlayer,            "Go to Player ...",             KeyEvent.VK_P, MenuShortcuts.GO_TO_PLAYER);
 		result.addSeparator();
-		Menus.item(result, actions::zoomIn,                "Zoom in",                  KeyEvent.VK_I, MenuShortcuts.ZOOM_IN);
-		Menus.item(result, actions::zoomOut,               "Zoom out",                 KeyEvent.VK_O, MenuShortcuts.ZOOM_OUT);
+		Menus.item(result, actions::zoomIn,                "Zoom In",                  KeyEvent.VK_I, MenuShortcuts.ZOOM_IN);
+		Menus.item(result, actions::zoomOut,               "Zoom Out",                 KeyEvent.VK_O, MenuShortcuts.ZOOM_OUT);
 		result.addSeparator();
 		savePlayerLocationsMenu =
-		Menus.item(result, actions::savePlayerLocations,   "Save player locations",    KeyEvent.VK_V, MenuShortcuts.SAVE_PLAYER_LOCATIONS);
+		Menus.item(result, actions::savePlayerLocations,   "Save Player Locations",    KeyEvent.VK_V, MenuShortcuts.SAVE_PLAYER_LOCATIONS);
 		savePlayerLocationsMenu.setEnabled(false);
 		reloadPlayerLocationsMenu =
-		Menus.item(result, actions::reloadPlayerLocations, "Reload player locations",  KeyEvent.VK_R, MenuShortcuts.RELOAD_PLAYER_LOCATIONS);
+		Menus.item(result, actions::reloadPlayerLocations, "Reload Player Locations",  KeyEvent.VK_R, MenuShortcuts.RELOAD_PLAYER_LOCATIONS);
 		reloadPlayerLocationsMenu.setEnabled(false);
-		Menus.item(result, actions::howCanIMoveAPlayer,    "How can I move a player?", KeyEvent.VK_M);
+		Menus.item(result, actions::howCanIMoveAPlayer,    "How Can I Move a Player?", KeyEvent.VK_M);
 		result.addSeparator();
 		Menus.item(result, actions::copySeedToClipboard,   "Copy Seed to Clipboard",   KeyEvent.VK_B, MenuShortcuts.COPY_SEED_TO_CLIPBOARD);
 		Menus.item(result, actions::takeScreenshot,        "Take Screenshot ...",      KeyEvent.VK_T, MenuShortcuts.TAKE_SCREENSHOT);
@@ -125,21 +130,39 @@ public class AmidstMenuBuilder {
 		Menus.checkbox(result, settings.showScale,            "Show Scale");
 		Menus.checkbox(result, settings.showDebug,            "Show Debug Information");
 		// @formatter:on
+		result.addSeparator();
+		result.add(create_Settings_LookAndFeel());
 		return result;
 	}
 
 	private JMenu create_Settings_DefaultWorldType() {
-		JMenu result = new JMenu("Default world type");
+		JMenu result = new JMenu("Default World Type");
 		// @formatter:off
 		Menus.radios(result, settings.worldType, WorldType.getWorldTypeSettingAvailableValues());
 		// @formatter:on
 		return result;
 	}
 
+	private JMenu create_Settings_LookAndFeel() {
+		JMenu result = new JMenu("Select Look & Feel");
+
+		List<AbstractButton> radios = new ArrayList<>();
+		Setting<AmidstLookAndFeel> lookAndFeelSetting = settings.lookAndFeel.withListener(
+			(oldValue, newValue) -> {
+				if (!oldValue.equals(newValue) && !actions.tryChangeLookAndFeel(newValue)) {
+					settings.lookAndFeel.set(oldValue);
+					radios.get(oldValue.ordinal()).setSelected(true);
+				}
+			});
+
+		radios.addAll(Menus.radios(result, lookAndFeelSetting, AmidstLookAndFeel.values()));
+		return result;
+	}
+
 	private JMenu create_Settings_BiomeProfile() {
-		JMenu result = new JMenu("Biome profile");
+		JMenu result = new JMenu("Biome Profile");
 		// @formatter:off
-		new BiomeProfileMenuFactory(result, actions, biomeProfileDirectory, "Reload biome profiles", KeyEvent.VK_R, MenuShortcuts.RELOAD_BIOME_PROFILES);
+		new BiomeProfileMenuFactory(result, actions, biomeProfileDirectory, "Reload Biome Profiles", KeyEvent.VK_R, MenuShortcuts.RELOAD_BIOME_PROFILES);
 		// @formatter:on
 		return result;
 	}
@@ -148,10 +171,10 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("Help");
 		result.setMnemonic(KeyEvent.VK_H);
 		// @formatter:off
-		Menus.item(result, actions::displayLogMessages,    "Display Log Messages",     KeyEvent.VK_M);
-		Menus.item(result, actions::checkForUpdates,       "Check for Updates",        KeyEvent.VK_U);
-		Menus.item(result, actions::viewLicense,           "View Licenses",            KeyEvent.VK_L);
-		Menus.item(result, actions::about,                 "About",                    KeyEvent.VK_A);
+		Menus.item(result, actions::displayLogMessages,    "Display Log Messages ...",     KeyEvent.VK_M);
+		Menus.item(result, actions::checkForUpdates,       "Check for Updates ...",        KeyEvent.VK_U);
+		Menus.item(result, actions::viewLicense,           "View Licenses ...",            KeyEvent.VK_L);
+		Menus.item(result, actions::about,                 "About ...",                    KeyEvent.VK_A);
 		// @formatter:on
 		return result;
 	}

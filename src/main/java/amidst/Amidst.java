@@ -120,12 +120,9 @@ public class Amidst {
 	}
 
 	/**
-	 * WARNING: This method MUST be invoked before setLookAndFeel(). The
-	 * sun.java2d.* properties have no effect after setLookAndFeel() has been
-	 * called.
-	 *
-	 * Please do not remove this comment in case we decide to use another look
-	 * and feel in the future.
+	 * WARNING: This method MUST be invoked before applyLookAndFeel(). The
+	 * sun.java2d.* properties have no effect after applyLookAndFeel() has
+	 * been called.
 	 */
 	private static void enableGraphicsAcceleration() {
 		enableOpenGLIfNecessary();
@@ -161,6 +158,10 @@ public class Amidst {
 		System.setProperty("com.apple.macos.useScreenMenuBar", "true");
 	}
 
+	private static void applyLookAndFeel(AmidstSettings settings) {
+    	settings.lookAndFeel.get().tryApply();
+	}
+
 	private static void startApplication(
 			CommandLineParameters parameters,
 			AmidstMetaData metadata,
@@ -174,6 +175,7 @@ public class Amidst {
 			AmidstMetaData metadata,
 			AmidstSettings settings) {
 		try {
+			applyLookAndFeel(settings);
 			new PerApplicationInjector(parameters, metadata, settings).getApplication().run();
 		} catch (DotMinecraftDirectoryNotFoundException e) {
 			AmidstLogger.warn(e);

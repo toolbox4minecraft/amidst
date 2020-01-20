@@ -2,6 +2,8 @@ package amidst;
 
 import java.util.Optional;
 
+import javax.swing.SwingUtilities;
+
 import amidst.dependency.injection.Factory0;
 import amidst.dependency.injection.Factory1;
 import amidst.documentation.AmidstThread;
@@ -19,7 +21,6 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterfaceCreationException;
 
 @NotThreadSafe
 public class Application {
-	private final Optional<LauncherProfile> preferredLauncherProfile;
 	private final LauncherProfileRunner launcherProfileRunner;
 	private final Factory1<MainWindowDialogs, UpdatePrompt> noisyUpdatePromptFactory;
 	private final Factory0<UpdatePrompt> silentUpdatePromptFactory;
@@ -29,6 +30,7 @@ public class Application {
 
 	private volatile ProfileSelectWindow profileSelectWindow;
 	private volatile MainWindow mainWindow;
+	private volatile Optional<LauncherProfile> selectedLauncherProfile;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Application(
@@ -39,7 +41,7 @@ public class Application {
 			Factory1<RunningLauncherProfile, MainWindow> mainWindowFactory,
 			Factory0<ProfileSelectWindow> profileSelectWindowFactory,
 			Factory0<LicenseWindow> licenseWindowFactory) {
-		this.preferredLauncherProfile = preferredLauncherProfile;
+		this.selectedLauncherProfile = preferredLauncherProfile;
 		this.launcherProfileRunner = launcherProfileRunner;
 		this.noisyUpdatePromptFactory = noisyUpdatePromptFactory;
 		this.silentUpdatePromptFactory = silentUpdatePromptFactory;
@@ -51,8 +53,8 @@ public class Application {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void run() throws MinecraftInterfaceCreationException {
 		checkForUpdatesSilently();
-		if (preferredLauncherProfile.isPresent()) {
-			displayMainWindow(launcherProfileRunner.run(preferredLauncherProfile.get()));
+		if (selectedLauncherProfile.isPresent()) {
+			displayMainWindow(launcherProfileRunner.run(selectedLauncherProfile.get()));
 		} else {
 			displayProfileSelectWindow();
 		}
@@ -70,6 +72,7 @@ public class Application {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public MainWindow displayMainWindow(RunningLauncherProfile runningLauncherProfile) {
+		selectedLauncherProfile = Optional.of(runningLauncherProfile.getLauncherProfile());
 		setMainWindow(mainWindowFactory.create(runningLauncherProfile));
 		setProfileSelectWindow(null);
 		return mainWindow;
@@ -125,5 +128,18 @@ public class Application {
 	public void dispose() {
 		setProfileSelectWindow(null);
 		setMainWindow(null);
+	}
+
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void restart() {
+		dispose();
+		SwingUtilities.invokeLater(() -> {
+			try {
+				run();
+			} catch(MinecraftInterfaceCreationException e) {
+				throw new RuntimeException("Unexpected exception while restarting Amidst", e);
+			}
+		});
 	}
 }

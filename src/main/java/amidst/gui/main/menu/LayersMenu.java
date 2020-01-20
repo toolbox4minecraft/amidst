@@ -18,7 +18,6 @@ import amidst.fragment.layer.LayerIds;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.mojangapi.world.Dimension;
 import amidst.settings.Setting;
-import amidst.settings.Settings;
 
 @NotThreadSafe
 public class LayersMenu {
@@ -33,25 +32,26 @@ public class LayersMenu {
 	public LayersMenu(JMenu menu, AmidstSettings settings) {
 		this.menu = menu;
 		this.settings = settings;
-		this.dimensionSetting = Settings.createWithListener(settings.dimension, this::createMenu);
+		this.dimensionSetting = settings.dimension
+				.withListener((oldValue, newValue) -> this.createMenu(newValue));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void init(ViewerFacade viewerFacade) {
 		this.viewerFacade = viewerFacade;
 		if (viewerFacade != null) {
-			createMenu();
+			createMenu(dimensionSetting.get());
 		} else {
 			disable();
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void createMenu() {
+	private void createMenu(Dimension selectedDimension) {
 		menu.removeAll();
 		overworldMenuItems.clear();
 		endMenuItems.clear();
-		createDimensionLayers(dimensionSetting.get());
+		createDimensionLayers(selectedDimension);
 		menu.setEnabled(true);
 	}
 
