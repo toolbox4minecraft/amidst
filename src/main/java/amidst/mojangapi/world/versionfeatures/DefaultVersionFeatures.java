@@ -141,6 +141,8 @@ public enum DefaultVersionFeatures {
 				).since(RecognisedVersion._13w36a,
 						// this includes all the biomes above, except for the swampland
 						getValidBiomesForStrongholdSinceV13w36a()
+				).sinceExtend(RecognisedVersion._18w06a,
+						Biome.mushroomIslandShore
 				).construct();
 		this.strongholdProducerFactory = VersionFeature.<TriFunction<Long, BiomeDataOracle, List<Biome>, CachedWorldIconProducer>> builder()
 				.init(
