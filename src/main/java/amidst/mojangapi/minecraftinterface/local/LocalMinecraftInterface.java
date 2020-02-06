@@ -168,7 +168,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    Method createMethod = null; // BiomeProvider create(BiomeProviderSettings settings)
 	    Method createSettingsMethod = null; // BiomeProviderSettings createSettings(WorldData world)
 	    for (Method meth: providerType.getClass().getDeclaredMethods()) {
-	        if (meth.getParameterCount() == 1) {
+	        if (!meth.isSynthetic() && meth.getParameterCount() == 1) {
 	            if(meth.getParameterTypes()[0].equals(worldDataClass.getClazz())) {
 	                createSettingsMethod = meth;
 	            } else if (noiseBiomeProviderClass.getClazz().isAssignableFrom(meth.getReturnType())) {
