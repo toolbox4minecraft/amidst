@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.LongFunction;
 
@@ -89,11 +90,6 @@ public class LocalMinecraftInterface implements MinecraftInterface {
      * It is derived from the world seed.
      */
 	private long seedForBiomeZoomer;
-	
-    /**
-     * An array used to return biome data
-     */
-    private volatile int[] dataArray = new int[256];
     
 	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;
@@ -249,15 +245,14 @@ public class LocalMinecraftInterface implements MinecraftInterface {
     	if (length > 1073741824) {
     		throw new MinecraftInterfaceException("Biome data array size exceeds maximum limit");
     	} else {
-	        int cur = dataArray.length;
+	        int cur = ThreadArrayMap.getArray().length;
 	        if (length <= cur)
-	            return dataArray;
+	            return ThreadArrayMap.getArray();
 	
 	        while (cur < length)
 	            cur *= 2;
 	
-	        dataArray = new int[cur];
-	        return dataArray;
+	        return ThreadArrayMap.setArray(cur);
         }
     }
     
@@ -269,5 +264,26 @@ public class LocalMinecraftInterface implements MinecraftInterface {
     private Object getBiomeFromId(int id)
     		throws WrongMethodTypeException, Throwable {
     	return getBiomeFromIdMethod.invoke(biomeRegistry, id);
+    }
+    
+    private enum ThreadArrayMap {
+    	;
+    	
+    	private static volatile HashMap<Long, int[]> arrayMap = new HashMap<Long, int[]>();
+    	
+    	public static int[] getArray() {
+    		Long id = Thread.currentThread().getId();
+    		if (arrayMap.containsKey(id)) {
+    			return arrayMap.get(id);
+    		} else {
+    			return setArray(16384);
+    		}
+    	}
+    	
+    	public static int[] setArray(int size) {
+			int[] array = new int[size];
+			arrayMap.put(Thread.currentThread().getId(), array);
+			return array;
+    	}
     }
 }
