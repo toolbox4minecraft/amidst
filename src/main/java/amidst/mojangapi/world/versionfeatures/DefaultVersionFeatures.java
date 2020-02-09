@@ -53,6 +53,8 @@ public enum DefaultVersionFeatures {
 				INSTANCE.seedForStructure_Shipwreck.getValue(version),
 				INSTANCE.seedForStructure_BuriedTreasure.getValue(version),
 				INSTANCE.maxDistanceScatteredFeatures_Shipwreck.getValue(version),
+				INSTANCE.minDistanceScatteredFeatures_Shipwreck.getValue(version),
+				INSTANCE.maxDistanceScatteredFeatures_OceanRuins.getValue(version),
 				INSTANCE.buggyStructureCoordinateMath.getValue(version));
 	}
 
@@ -84,6 +86,8 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<Long> seedForStructure_Shipwreck;
 	private final VersionFeature<Long> seedForStructure_BuriedTreasure;
 	private final VersionFeature<Byte> maxDistanceScatteredFeatures_Shipwreck;
+	private final VersionFeature<Byte> minDistanceScatteredFeatures_Shipwreck;
+	private final VersionFeature<Byte> maxDistanceScatteredFeatures_OceanRuins;
 	private final VersionFeature<Boolean> buggyStructureCoordinateMath;
 
 	private DefaultVersionFeatures() {
@@ -329,8 +333,21 @@ public enum DefaultVersionFeatures {
 					(byte) 15
 				).since(RecognisedVersion._1_13_pre7,
 					(byte) 16
+				).since(RecognisedVersion._20w06a,
+					(byte) 24
 				).construct();
-
+		this.minDistanceScatteredFeatures_Shipwreck = VersionFeature.<Byte> builder()
+				.init(
+					(byte) 8
+				).since(RecognisedVersion._20w06a,
+					(byte) 4
+				).construct();
+		this.maxDistanceScatteredFeatures_OceanRuins = VersionFeature.<Byte> builder()
+				.init(
+					(byte) 16
+				).since(RecognisedVersion._20w06a,
+					(byte) 20
+				).construct();
 		this.buggyStructureCoordinateMath = VersionFeature.<Boolean> builder()
 				.init(
 						false
