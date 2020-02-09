@@ -30,9 +30,11 @@ public class WorldSeed {
 		}
 	}
 
+	private static final SecureRandom random = new SecureRandom();
+
 	public static WorldSeed random() {
 		byte[] bytes = new byte[8];
-		new SecureRandom().nextBytes(bytes);
+		random.nextBytes(bytes);
 		return new WorldSeed(ByteBuffer.wrap(bytes).getLong(), null, WorldSeedType.RANDOM);
 	}
 
