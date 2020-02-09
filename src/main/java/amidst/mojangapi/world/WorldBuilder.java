@@ -244,7 +244,8 @@ public class WorldBuilder {
 								new ScatteredFeaturesLocationChecker(
 										seed,
 										biomeDataOracle,
-										(byte) 16, (byte) 8,
+										versionFeatures.getMaxDistanceScatteredFeatures_OceanRuins(),
+										(byte) 8,
 										versionFeatures.getValidBiomesAtMiddleOfChunk_OceanRuins(),
 										versionFeatures.getSeedForStructure_OceanRuins(),
 										buggyStructureCoordinateMath),
@@ -258,7 +259,7 @@ public class WorldBuilder {
 										seed,
 										biomeDataOracle,
 										versionFeatures.getMaxDistanceScatteredFeatures_Shipwreck(),
-										(byte) 8,
+										versionFeatures.getMinDistanceScatteredFeatures_Shipwreck(),
 										versionFeatures.getValidBiomesAtMiddleOfChunk_Shipwreck(),
 										versionFeatures.getSeedForStructure_Shipwreck(),
 										buggyStructureCoordinateMath),
