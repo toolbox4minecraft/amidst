@@ -13,6 +13,7 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.locationchecker.BuriedTreasureLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.EndCityLocationChecker;
+import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm;
 import amidst.mojangapi.world.icon.locationchecker.PillagerOutpostLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.ScatteredFeaturesLocationChecker;
@@ -113,6 +114,11 @@ public class WorldBuilder {
 		seedHistoryLogger.log(recognisedVersion, worldSeed);
 		long seed = worldSeed.getLong();
 		boolean buggyStructureCoordinateMath = versionFeatures.getBuggyStructureCoordinateMath();
+		LocationChecker villageLocationChecker = new VillageLocationChecker(
+			seed,
+			biomeDataOracle,
+			versionFeatures.getValidBiomesForStructure_Village(),
+			versionFeatures.getDoComplexVillageCheck());
 		minecraftInterface.createWorld(seed, worldType, generatorOptions);
 		return new World(
 				onDisposeWorld,
@@ -135,11 +141,7 @@ public class WorldBuilder {
 						new StructureProducer<>(
 							Resolution.CHUNK,
 							4,
-							new VillageLocationChecker(
-									seed,
-									biomeDataOracle,
-									versionFeatures.getValidBiomesForStructure_Village(),
-									versionFeatures.getDoComplexVillageCheck()),
+							villageLocationChecker,
 							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
 							Dimension.OVERWORLD,
 							false),
@@ -149,6 +151,8 @@ public class WorldBuilder {
 							new PillagerOutpostLocationChecker(
 									seed,
 									biomeDataOracle,
+									villageLocationChecker,
+									versionFeatures.getOutpostVillageAvoidDistance(),
 									versionFeatures.getValidBiomesForStructure_PillagerOutpost()),
 							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.PILLAGER_OUTPOST),
 							Dimension.OVERWORLD,

@@ -16,10 +16,10 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
 
 public class LocalMinecraftInterface implements MinecraftInterface {
-
+	
     private boolean isInitialized = false;
 	private final RecognisedVersion recognisedVersion;
-
+	
 	private final SymbolicClass registryClass;
 	private final SymbolicClass worldTypeClass;
 	private final SymbolicClass genSettingsClass;
@@ -31,7 +31,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass foccbzClass; // stands for fuzzyOffsetConstantColumnBiomeZoomerClass
 	private final SymbolicClass mappedRegistryClass;
 	private final SymbolicClass pixelTransformerClass;
-
+	
     /**
      * A PixelTransformer instance for the current world, giving direct
      * access to the quarter-scale biome data.
@@ -89,12 +89,12 @@ public class LocalMinecraftInterface implements MinecraftInterface {
      * It is derived from the world seed.
      */
 	private long seedForBiomeZoomer;
-
+	
     /**
      * An array used to return biome data
      */
     private volatile int[] dataArray = new int[256];
-
+    
 	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;
 		this.registryClass = symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY);
@@ -109,7 +109,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
         this.mappedRegistryClass = symbolicClassMap.get(SymbolicNames.CLASS_MAPPED_REGISTRY);
         this.pixelTransformerClass = symbolicClassMap.get(SymbolicNames.CLASS_PIXEL_TRANSFORMER);
 	}
-
+	
 	@Override
 	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
@@ -146,7 +146,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
 	    return data;
 	}
-
+	
 	private int getBiomeIdAt(int x, int y, boolean useQuarterResolution) throws Throwable {
 	    if(useQuarterResolution) {
 	    	return (int) getQuarterResBiomeMethod.invoke(pixelTransformer, x, y);
@@ -162,7 +162,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
 	}
-
+	
 	@Override
 	public synchronized void createWorld(long seed, WorldType worldType, String generatorOptions)
 			throws MinecraftInterfaceException {
@@ -239,12 +239,12 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		
 		return lazyAreaClass.getField(SymbolicNames.FIELD_LAZY_AREA_PIXEL_TRANSFORMER).getRawField().get(lazyAreaObj);
 	}
-
+	
 	@Override
 	public RecognisedVersion getRecognisedVersion() {
 		return recognisedVersion;
 	}
-
+	
     private int[] ensureArrayCapacity(int length) throws MinecraftInterfaceException {
     	if (length > 1073741824) {
     		throw new MinecraftInterfaceException("Biome data array size exceeds maximum limit");

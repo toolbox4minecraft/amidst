@@ -32,6 +32,7 @@ public enum DefaultVersionFeatures {
 				INSTANCE.validBiomesForStructure_Village.getValue(version),
 				INSTANCE.validBiomesForStructure_PillagerOutpost.getValue(version),
 				INSTANCE.doComplexVillageCheck.getValue(version),
+				INSTANCE.outpostVillageAvoidDistance.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_DesertTemple.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_Igloo.getValue(version),
 				INSTANCE.validBiomesAtMiddleOfChunk_JungleTemple.getValue(version),
@@ -62,6 +63,7 @@ public enum DefaultVersionFeatures {
 	private final VersionFeature<List<Biome>> validBiomesForStructure_Village;
 	private final VersionFeature<List<Biome>> validBiomesForStructure_PillagerOutpost;
 	private final VersionFeature<Boolean> doComplexVillageCheck;
+	private final VersionFeature<Integer> outpostVillageAvoidDistance;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_DesertTemple;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Igloo;
 	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_JungleTemple;
@@ -179,6 +181,15 @@ public enum DefaultVersionFeatures {
 				).since(RecognisedVersion._16w20a,
 						false
 				).construct();
+		this.outpostVillageAvoidDistance = VersionFeature.<Integer> builder()
+				.init(
+					-1
+				// from 19w11a to 19w13a, outpost towers aren't generated close
+				// to villages, but the structure is still reported by `/locate`.
+				).since(RecognisedVersion._19w13b,
+					10
+				).construct();
+
 		this.validBiomesAtMiddleOfChunk_DesertTemple = VersionFeature.<Biome> listBuilder()
 				.init(
 						Biome.desert,

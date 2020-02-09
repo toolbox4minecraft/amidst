@@ -18,8 +18,8 @@ public class PillagerOutpostLocationChecker extends AllValidLocationChecker {
 	private static final int STRUCTURE_SIZE = 0;
 
 
-	public PillagerOutpostLocationChecker(
-			long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomesForStructure) {
+	public PillagerOutpostLocationChecker(long seed, BiomeDataOracle biomeDataOracle,
+			LocationChecker villageLocationChecker, int avoidVillageRadius, List<Biome> validBiomesForStructure) {
 		super(
 			new StructureAlgorithm(
 				seed,
@@ -30,7 +30,8 @@ public class PillagerOutpostLocationChecker extends AllValidLocationChecker {
 				MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 				USE_TWO_VALUES_FOR_UPDATE),
 			new PillagerOutpostAlgorithm(seed),
-			new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomesForStructure)
+			new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomesForStructure),
+			new SuppressAroundLocationChecker(villageLocationChecker, avoidVillageRadius)
 		);
 	}
 

@@ -18,6 +18,7 @@ public class VersionFeatures {
 	private final List<Biome> validBiomesForStructure_Village;
 	private final List<Biome> validBiomesForStructure_PillagerOutpost;
 	private final Boolean doComplexVillageCheck;
+	private final Integer outpostVillageAvoidDistance;
 	private final List<Biome> validBiomesAtMiddleOfChunk_DesertTemple;
 	private final List<Biome> validBiomesAtMiddleOfChunk_Igloo;
 	private final List<Biome> validBiomesAtMiddleOfChunk_JungleTemple;
@@ -48,6 +49,7 @@ public class VersionFeatures {
 			List<Biome> validBiomesForStructure_Village,
 			List<Biome> validBiomesForStructure_PillagerOutpost,
 			Boolean doComplexVillageCheck,
+			Integer outpostVillageAvoidDistance,
 			List<Biome> validBiomesAtMiddleOfChunk_DesertTemple,
 			List<Biome> validBiomesAtMiddleOfChunk_Igloo,
 			List<Biome> validBiomesAtMiddleOfChunk_JungleTemple,
@@ -76,6 +78,7 @@ public class VersionFeatures {
 		this.validBiomesForStructure_Village = validBiomesForStructure_Village;
 		this.validBiomesForStructure_PillagerOutpost = validBiomesForStructure_PillagerOutpost;
 		this.doComplexVillageCheck = doComplexVillageCheck;
+		this.outpostVillageAvoidDistance = outpostVillageAvoidDistance;
 		this.validBiomesAtMiddleOfChunk_DesertTemple = validBiomesAtMiddleOfChunk_DesertTemple;
 		this.validBiomesAtMiddleOfChunk_Igloo = validBiomesAtMiddleOfChunk_Igloo;
 		this.validBiomesAtMiddleOfChunk_JungleTemple = validBiomesAtMiddleOfChunk_JungleTemple;
@@ -125,6 +128,10 @@ public class VersionFeatures {
 
 	public Boolean getDoComplexVillageCheck() {
 		return doComplexVillageCheck;
+	}
+
+	public Integer getOutpostVillageAvoidDistance() {
+		return outpostVillageAvoidDistance;
 	}
 
 	public List<Biome> getValidBiomesAtMiddleOfChunk_DesertTemple() {
