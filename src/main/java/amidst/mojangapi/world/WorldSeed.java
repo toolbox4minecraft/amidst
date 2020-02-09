@@ -1,6 +1,6 @@
 package amidst.mojangapi.world;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 import amidst.documentation.Immutable;
 
@@ -30,7 +30,7 @@ public class WorldSeed {
 	}
 
 	public static WorldSeed random() {
-		return new WorldSeed(new Random().nextLong(), null, WorldSeedType.RANDOM);
+		return new WorldSeed(new SecureRandom().nextLong(), null, WorldSeedType.RANDOM);
 	}
 
 	public static WorldSeed fromUserInput(String input) {
