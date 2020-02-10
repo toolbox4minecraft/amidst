@@ -16,46 +16,48 @@ public class VersionFeature<V> {
 	}
 
 	private final V defaultValue;
-	private final List<VersionFeatureEntry<V>> exactMatches;
-	private final List<VersionFeatureEntry<V>> entriesNewestFirst;
+	private final List<Entry<V>> entriesNewestFirst;
 
 	public VersionFeature(
 			V defaultValue,
-			List<VersionFeatureEntry<V>> exactMatches,
-			List<VersionFeatureEntry<V>> entriesNewestFirst) {
+			List<Entry<V>> entriesNewestFirst) {
 		this.defaultValue = defaultValue;
-		this.exactMatches = exactMatches;
 		this.entriesNewestFirst = entriesNewestFirst;
 	}
 
 	public V getValue(RecognisedVersion version) {
-		VersionFeatureEntry<V> entry;
-		entry = tryFindExactMatch(version);
-		if (entry != null) {
-			return entry.getValue();
-		}
-		entry = tryFindGreatestEntryLowerOrEqualTo(version);
+		Entry<V> entry = tryFindGreatestEntryLowerOrEqualTo(version);
 		if (entry != null) {
 			return entry.getValue();
 		}
 		return defaultValue;
 	}
 
-	private VersionFeatureEntry<V> tryFindExactMatch(RecognisedVersion version) {
-		for (VersionFeatureEntry<V> entry : exactMatches) {
-			if (entry.getVersion() == version) {
+	private Entry<V> tryFindGreatestEntryLowerOrEqualTo(RecognisedVersion version) {
+		for (Entry<V> entry : entriesNewestFirst) {
+			if (RecognisedVersion.isOlderOrEqualTo(entry.getVersion(), version)) {
 				return entry;
 			}
 		}
 		return null;
 	}
 
-	private VersionFeatureEntry<V> tryFindGreatestEntryLowerOrEqualTo(RecognisedVersion version) {
-		for (VersionFeatureEntry<V> entry : entriesNewestFirst) {
-			if (RecognisedVersion.isOlderOrEqualTo(entry.getVersion(), version)) {
-				return entry;
-			}
+	@Immutable
+	public static class Entry<V> {
+		private final RecognisedVersion version;
+		private final V value;
+
+		public Entry(RecognisedVersion version, V value) {
+			this.version = version;
+			this.value = value;
 		}
-		return null;
+
+		public RecognisedVersion getVersion() {
+			return version;
+		}
+
+		public V getValue() {
+			return value;
+		}
 	}
 }

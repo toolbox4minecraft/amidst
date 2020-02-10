@@ -21,9 +21,7 @@ public class ListVersionFeatureBuilder<V> {
 
 	private List<V> defaultValue = null;
 	private RecognisedVersion previous = null;
-	private RecognisedVersion previousExact = null;
-	private final List<VersionFeatureEntry<List<V>>> exactMatches = new LinkedList<>();
-	private final List<VersionFeatureEntry<List<V>>> entriesNewestFirst = new LinkedList<>();
+	private final List<VersionFeature.Entry<List<V>>> entriesNewestFirst = new LinkedList<>();
 
 	@SafeVarargs
 	public final ListVersionFeatureBuilder<V> init(V... defaultValues) {
@@ -36,28 +34,6 @@ public class ListVersionFeatureBuilder<V> {
 			return this;
 		} else {
 			throw new IllegalStateException("only one default value is allowed");
-		}
-	}
-
-	@SafeVarargs
-	public final ListVersionFeatureBuilder<V> exact(RecognisedVersion since, V... values) {
-		return since(since, Arrays.asList(values));
-	}
-
-	public ListVersionFeatureBuilder<V> exact(RecognisedVersion version, List<V> value) {
-		Objects.requireNonNull(version, "version cannot be null");
-		if (this.defaultValue == null) {
-			throw new IllegalStateException("you need to specify a default value first");
-		} else if (previousExact != null && version == previousExact) {
-			throw new IllegalStateException("you can only specify one value per version");
-		} else if (previousExact != null && RecognisedVersion.isOlder(version, previousExact)) {
-			throw new IllegalStateException("you have to specify versions in ascending order");
-		} else if (!entriesNewestFirst.isEmpty()) {
-			throw new IllegalStateException("you have to specify all exact matches before the first since");
-		} else {
-			previousExact = version;
-			exactMatches.add(0, new VersionFeatureEntry<>(version, Collections.unmodifiableList(value)));
-			return this;
 		}
 	}
 
@@ -81,7 +57,7 @@ public class ListVersionFeatureBuilder<V> {
 			throw new IllegalStateException("you have to specify versions in ascending order");
 		} else {
 			previous = version;
-			entriesNewestFirst.add(0, new VersionFeatureEntry<>(version, Collections.unmodifiableList(value)));
+			entriesNewestFirst.add(0, new VersionFeature.Entry<>(version, Collections.unmodifiableList(value)));
 			return this;
 		}
 	}
@@ -99,7 +75,6 @@ public class ListVersionFeatureBuilder<V> {
 	public VersionFeature<List<V>> construct() {
 		return new VersionFeature<>(
 				defaultValue,
-				Collections.unmodifiableList(exactMatches),
 				Collections.unmodifiableList(entriesNewestFirst));
 	}
 }
