@@ -36,6 +36,7 @@ import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.PlayerInformation;
 import amidst.mojangapi.world.player.WorldPlayerType;
 import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
+import amidst.mojangapi.world.versionfeatures.FeatureKey;
 import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 
 @Immutable
@@ -76,7 +77,7 @@ public class WorldBuilder {
 				new HeuristicWorldSpawnOracle(
 						worldOptions.getWorldSeed().getLong(),
 						biomeDataOracle,
-						versionFeatures.getValidBiomesForStructure_Spawn()));
+						versionFeatures.get(FeatureKey.VALID_BIOMES_FOR_STRUCTURE_SPAWN)));
 	}
 
 	public World fromSaveGame(MinecraftInterface minecraftInterface, Consumer<World> onDisposeWorld, SaveGame saveGame)
@@ -113,12 +114,12 @@ public class WorldBuilder {
 		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
 		seedHistoryLogger.log(recognisedVersion, worldSeed);
 		long seed = worldSeed.getLong();
-		boolean buggyStructureCoordinateMath = versionFeatures.getBuggyStructureCoordinateMath();
+		boolean buggyStructureCoordinateMath = versionFeatures.get(FeatureKey.BUGGY_STRUCTURE_COORDINATE_MATH);
 		LocationChecker villageLocationChecker = new VillageLocationChecker(
 			seed,
 			biomeDataOracle,
-			versionFeatures.getValidBiomesForStructure_Village(),
-			versionFeatures.getDoComplexVillageCheck());
+			versionFeatures.get(FeatureKey.VALID_BIOMES_FOR_STRUCTURE_VILLAGE),
+			versionFeatures.get(FeatureKey.DO_COMPLEX_VILLAGE_CHECK));
 		minecraftInterface.createWorld(seed, worldType, generatorOptions);
 		return new World(
 				onDisposeWorld,
@@ -132,10 +133,10 @@ public class WorldBuilder {
 				EndIslandOracle.from(seed),
 				new SlimeChunkOracle(seed),
 				new SpawnProducer(worldSpawnOracle),
-				versionFeatures.getStrongholdProducerFactory().apply(
+				versionFeatures.get(FeatureKey.STRONGHOLD_PRODUCER_FACTORY).apply(
 						seed,
 						biomeDataOracle,
-						versionFeatures.getValidBiomesAtMiddleOfChunk_Stronghold()),
+						versionFeatures.get(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD)),
 				new PlayerProducer(movablePlayerList),
 				new MultiProducer<>(
 						new StructureProducer<>(
@@ -152,8 +153,8 @@ public class WorldBuilder {
 									seed,
 									biomeDataOracle,
 									villageLocationChecker,
-									versionFeatures.getOutpostVillageAvoidDistance(),
-									versionFeatures.getValidBiomesForStructure_PillagerOutpost()),
+									versionFeatures.get(FeatureKey.OUTPOST_VILLAGE_AVOID_DISTANCE),
+									versionFeatures.get(FeatureKey.VALID_BIOMES_FOR_STRUCTURE_PILLAGER_OUTPOST)),
 							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.PILLAGER_OUTPOST),
 							Dimension.OVERWORLD,
 							false)
@@ -165,8 +166,8 @@ public class WorldBuilder {
 								new ScatteredFeaturesLocationChecker(
 										seed,
 										biomeDataOracle,
-										versionFeatures.getValidBiomesAtMiddleOfChunk_DesertTemple(),
-										versionFeatures.getSeedForStructure_DesertTemple(),
+										versionFeatures.get(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_DESERT_TEMPLE),
+										versionFeatures.get(FeatureKey.SEED_FOR_STRUCTURE_DESERT_TEMPLE),
 										buggyStructureCoordinateMath),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.DESERT),
 								Dimension.OVERWORLD,
@@ -177,8 +178,8 @@ public class WorldBuilder {
 								new ScatteredFeaturesLocationChecker(
 										seed,
 										biomeDataOracle,
-										versionFeatures.getValidBiomesAtMiddleOfChunk_Igloo(),
-										versionFeatures.getSeedForStructure_Igloo(),
+										versionFeatures.get(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_IGLOO),
+										versionFeatures.get(FeatureKey.SEED_FOR_STRUCTURE_IGLOO),
 										buggyStructureCoordinateMath),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.IGLOO),
 								Dimension.OVERWORLD,
@@ -189,8 +190,8 @@ public class WorldBuilder {
 								new ScatteredFeaturesLocationChecker(
 										seed,
 										biomeDataOracle,
-										versionFeatures.getValidBiomesAtMiddleOfChunk_JungleTemple(),
-										versionFeatures.getSeedForStructure_JungleTemple(),
+										versionFeatures.get(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_JUNGLE_TEMPLE),
+										versionFeatures.get(FeatureKey.SEED_FOR_STRUCTURE_JUNGLE_TEMPLE),
 										buggyStructureCoordinateMath),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.JUNGLE),
 								Dimension.OVERWORLD,
@@ -201,8 +202,8 @@ public class WorldBuilder {
 								new ScatteredFeaturesLocationChecker(
 										seed,
 										biomeDataOracle,
-										versionFeatures.getValidBiomesAtMiddleOfChunk_WitchHut(),
-										versionFeatures.getSeedForStructure_WitchHut(),
+										versionFeatures.get(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_WITCH_HUT),
+										versionFeatures.get(FeatureKey.SEED_FOR_STRUCTURE_WITCH_HUT),
 										buggyStructureCoordinateMath),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.WITCH),
 								Dimension.OVERWORLD,
@@ -211,18 +212,18 @@ public class WorldBuilder {
 				new StructureProducer<>(
 						Resolution.CHUNK,
 						8,
-						versionFeatures.getMineshaftAlgorithmFactory().apply(seed),
+						versionFeatures.get(FeatureKey.MINESHAFT_ALGORITHM_FACTORY).apply(seed),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.MINESHAFT),
 						Dimension.OVERWORLD,
 						false),
 				new StructureProducer<>(
 						Resolution.CHUNK,
 						8,
-						versionFeatures.getOceanMonumentLocationCheckerFactory().apply(
+						versionFeatures.get(FeatureKey.OCEAN_MONUMENT_LOCATION_CHECKER_FACTORY).apply(
 								seed,
 								biomeDataOracle,
-								versionFeatures.getValidBiomesAtMiddleOfChunk_OceanMonument(),
-								versionFeatures.getValidBiomesForStructure_OceanMonument()),
+								versionFeatures.get(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_MONUMENT),
+								versionFeatures.get(FeatureKey.VALID_BIOMES_FOR_STRUCTURE_OCEAN_MONUMENT)),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
 						Dimension.OVERWORLD,
 						false),
@@ -232,7 +233,7 @@ public class WorldBuilder {
 						new WoodlandMansionLocationChecker(
 								seed,
 								biomeDataOracle,
-								versionFeatures.getValidBiomesForStructure_WoodlandMansion()
+								versionFeatures.get(FeatureKey.VALID_BIOMES_FOR_STRUCTURE_WOODLAND_MANSION)
 						),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.WOODLAND_MANSION),
 						Dimension.OVERWORLD,
@@ -244,10 +245,10 @@ public class WorldBuilder {
 								new ScatteredFeaturesLocationChecker(
 										seed,
 										biomeDataOracle,
-										versionFeatures.getMaxDistanceScatteredFeatures_OceanRuins(),
+										versionFeatures.get(FeatureKey.MAX_DISTANCE_SCATTERED_FEATURES_OCEAN_RUINS),
 										(byte) 8,
-										versionFeatures.getValidBiomesAtMiddleOfChunk_OceanRuins(),
-										versionFeatures.getSeedForStructure_OceanRuins(),
+										versionFeatures.get(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_RUINS),
+										versionFeatures.get(FeatureKey.SEED_FOR_STRUCTURE_OCEAN_RUINS),
 										buggyStructureCoordinateMath),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_RUINS),
 								Dimension.OVERWORLD,
@@ -258,10 +259,10 @@ public class WorldBuilder {
 								new ScatteredFeaturesLocationChecker(
 										seed,
 										biomeDataOracle,
-										versionFeatures.getMaxDistanceScatteredFeatures_Shipwreck(),
-										versionFeatures.getMinDistanceScatteredFeatures_Shipwreck(),
-										versionFeatures.getValidBiomesAtMiddleOfChunk_Shipwreck(),
-										versionFeatures.getSeedForStructure_Shipwreck(),
+										versionFeatures.get(FeatureKey.MAX_DISTANCE_SCATTERED_FEATURES_SHIPWRECK),
+										versionFeatures.get(FeatureKey.MIN_DISTANCE_SCATTERED_FEATURES_SHIPWRECK),
+										versionFeatures.get(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_SHIPWRECK),
+										versionFeatures.get(FeatureKey.SEED_FOR_STRUCTURE_SHIPWRECK),
 										buggyStructureCoordinateMath),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.SHIPWRECK),
 								Dimension.OVERWORLD,
@@ -272,8 +273,8 @@ public class WorldBuilder {
 								new BuriedTreasureLocationChecker(
 										seed,
 										biomeDataOracle,
-										versionFeatures.getValidBiomesAtMiddleOfChunk_BuriedTreasure(),
-										versionFeatures.getSeedForStructure_BuriedTreasure()),
+										versionFeatures.get(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_BURIED_TREASURE),
+										versionFeatures.get(FeatureKey.SEED_FOR_STRUCTURE_BURIED_TREASURE)),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.BURIED_TREASURE),
 								Dimension.OVERWORLD,
 								false)

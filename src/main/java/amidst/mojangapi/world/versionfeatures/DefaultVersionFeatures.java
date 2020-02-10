@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import amidst.documentation.Immutable;
 import amidst.fragment.layer.LayerIds;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
@@ -19,336 +18,278 @@ import amidst.mojangapi.world.icon.producer.StrongholdProducer_Buggy128Algorithm
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Original;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
-@Immutable
 public enum DefaultVersionFeatures {
-	INSTANCE;
+	;
 
 	public static VersionFeatures create(RecognisedVersion version) {
-		return new VersionFeatures(
-				INSTANCE.enabledLayers.getValue(version),
-				INSTANCE.validBiomesForStructure_Spawn.getValue(version),
-				INSTANCE.validBiomesAtMiddleOfChunk_Stronghold.getValue(version),
-				INSTANCE.strongholdProducerFactory.getValue(version),
-				INSTANCE.validBiomesForStructure_Village.getValue(version),
-				INSTANCE.validBiomesForStructure_PillagerOutpost.getValue(version),
-				INSTANCE.doComplexVillageCheck.getValue(version),
-				INSTANCE.outpostVillageAvoidDistance.getValue(version),
-				INSTANCE.validBiomesAtMiddleOfChunk_DesertTemple.getValue(version),
-				INSTANCE.validBiomesAtMiddleOfChunk_Igloo.getValue(version),
-				INSTANCE.validBiomesAtMiddleOfChunk_JungleTemple.getValue(version),
-				INSTANCE.validBiomesAtMiddleOfChunk_WitchHut.getValue(version),
-				INSTANCE.validBiomesAtMiddleOfChunk_OceanRuins.getValue(version),
-				INSTANCE.validBiomesAtMiddleOfChunk_Shipwreck.getValue(version),
-				INSTANCE.mineshaftAlgorithmFactory.getValue(version),
-				INSTANCE.oceanMonumentLocationCheckerFactory.getValue(version),
-				INSTANCE.validBiomesAtMiddleOfChunk_OceanMonument.getValue(version),
-				INSTANCE.validBiomesAtMiddleOfChunk_BuriedTreasure.getValue(version),
-				INSTANCE.validBiomesForStructure_OceanMonument.getValue(version),
-				INSTANCE.validBiomesForStructure_WoodlandMansion.getValue(version),
-				INSTANCE.seedForStructure_DesertTemple.getValue(version),
-				INSTANCE.seedForStructure_Igloo.getValue(version),
-				INSTANCE.seedForStructure_JungleTemple.getValue(version),
-				INSTANCE.seedForStructure_WitchHut.getValue(version),
-				INSTANCE.seedForStructure_OceanRuins.getValue(version),
-				INSTANCE.seedForStructure_Shipwreck.getValue(version),
-				INSTANCE.seedForStructure_BuriedTreasure.getValue(version),
-				INSTANCE.maxDistanceScatteredFeatures_Shipwreck.getValue(version),
-				INSTANCE.minDistanceScatteredFeatures_Shipwreck.getValue(version),
-				INSTANCE.maxDistanceScatteredFeatures_OceanRuins.getValue(version),
-				INSTANCE.buggyStructureCoordinateMath.getValue(version));
+		return FEATURES_BUILDER.create(version);
 	}
 
-	private final VersionFeature<List<Integer>> enabledLayers;
-	private final VersionFeature<List<Biome>> validBiomesForStructure_Spawn;
-	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Stronghold;
-	private final VersionFeature<TriFunction<Long, BiomeDataOracle, List<Biome>, CachedWorldIconProducer>> strongholdProducerFactory;
-	private final VersionFeature<List<Biome>> validBiomesForStructure_Village;
-	private final VersionFeature<List<Biome>> validBiomesForStructure_PillagerOutpost;
-	private final VersionFeature<Boolean> doComplexVillageCheck;
-	private final VersionFeature<Integer> outpostVillageAvoidDistance;
-	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_DesertTemple;
-	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Igloo;
-	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_JungleTemple;
-	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_WitchHut;
-	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_OceanRuins;
-	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_Shipwreck;
-	private final VersionFeature<Function<Long, LocationChecker>> mineshaftAlgorithmFactory;
-	private final VersionFeature<QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker>> oceanMonumentLocationCheckerFactory;
-	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_OceanMonument;
-	private final VersionFeature<List<Biome>> validBiomesAtMiddleOfChunk_BuriedTreasure;
-	private final VersionFeature<List<Biome>> validBiomesForStructure_OceanMonument;
-	private final VersionFeature<List<Biome>> validBiomesForStructure_WoodlandMansion;
-	private final VersionFeature<Long> seedForStructure_DesertTemple;
-	private final VersionFeature<Long> seedForStructure_Igloo;
-	private final VersionFeature<Long> seedForStructure_JungleTemple;
-	private final VersionFeature<Long> seedForStructure_WitchHut;
-	private final VersionFeature<Long> seedForStructure_OceanRuins;
-	private final VersionFeature<Long> seedForStructure_Shipwreck;
-	private final VersionFeature<Long> seedForStructure_BuriedTreasure;
-	private final VersionFeature<Byte> maxDistanceScatteredFeatures_Shipwreck;
-	private final VersionFeature<Byte> minDistanceScatteredFeatures_Shipwreck;
-	private final VersionFeature<Byte> maxDistanceScatteredFeatures_OceanRuins;
-	private final VersionFeature<Boolean> buggyStructureCoordinateMath;
-
-	private DefaultVersionFeatures() {
-		// @formatter:off
-		this.enabledLayers = VersionFeature.<Integer> listBuilder()
+	// @formatter:off
+	private static final VersionFeatures.Builder FEATURES_BUILDER = VersionFeatures.builder()
+			.with(FeatureKey.ENABLED_LAYERS, VersionFeature.<Integer> listBuilder()
 				.init(
-						LayerIds.ALPHA,
-						LayerIds.BIOME_DATA,
-						LayerIds.BACKGROUND,
-						LayerIds.SLIME,
-						LayerIds.GRID,
-						LayerIds.SPAWN,
-						LayerIds.STRONGHOLD,
-						LayerIds.PLAYER,
-						LayerIds.VILLAGE,
-						LayerIds.MINESHAFT,
-						LayerIds.NETHER_FORTRESS
+					LayerIds.ALPHA,
+					LayerIds.BIOME_DATA,
+					LayerIds.BACKGROUND,
+					LayerIds.SLIME,
+					LayerIds.GRID,
+					LayerIds.SPAWN,
+					LayerIds.STRONGHOLD,
+					LayerIds.PLAYER,
+					LayerIds.VILLAGE,
+					LayerIds.MINESHAFT,
+					LayerIds.NETHER_FORTRESS
 				).sinceExtend(RecognisedVersion._12w21a,
-						LayerIds.TEMPLE
+					LayerIds.TEMPLE
 				).sinceExtend(RecognisedVersion._1_8,
-						LayerIds.OCEAN_MONUMENT
+					LayerIds.OCEAN_MONUMENT
 				).sinceExtend(RecognisedVersion._15w31c,
-						LayerIds.END_ISLANDS,
-						LayerIds.END_CITY
+					LayerIds.END_ISLANDS,
+					LayerIds.END_CITY
 				).sinceExtend(RecognisedVersion._16w43a,
-						LayerIds.WOODLAND_MANSION
+					LayerIds.WOODLAND_MANSION
 				).sinceExtend(RecognisedVersion._18w09a,
-						LayerIds.OCEAN_FEATURES
-				).construct();
-		this.validBiomesForStructure_Spawn = VersionFeature.<Biome> listBuilder()
+					LayerIds.OCEAN_FEATURES
+				).construct())
+			.with(FeatureKey.VALID_BIOMES_FOR_STRUCTURE_SPAWN, VersionFeature.<Biome> listBuilder()
 				.init(
-						Biome.forest,
-						Biome.plains,
-						Biome.taiga,
-						Biome.taigaHills,
-						Biome.forestHills,
-						Biome.jungle,
-						Biome.jungleHills
-				).construct();
-		this.validBiomesAtMiddleOfChunk_Stronghold = VersionFeature.<Biome> listBuilder()
+					Biome.forest,
+					Biome.plains,
+					Biome.taiga,
+					Biome.taigaHills,
+					Biome.forestHills,
+					Biome.jungle,
+					Biome.jungleHills
+				).construct())
+			.with(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD, VersionFeature.<Biome> listBuilder()
 				.init().since(RecognisedVersion._b1_8_1,
-						Biome.desert,
-						Biome.forest,
-						Biome.extremeHills,
-						Biome.swampland
+					Biome.desert,
+					Biome.forest,
+					Biome.extremeHills,
+					Biome.swampland
 				).sinceExtend(RecognisedVersion._b1_9_pre6,
-						Biome.taiga,
-						Biome.icePlains,
-						Biome.iceMountains
+					Biome.taiga,
+					Biome.icePlains,
+					Biome.iceMountains
 				).sinceExtend(RecognisedVersion._1_1,
-						Biome.desertHills,
-						Biome.forestHills,
-						Biome.extremeHillsEdge
+					Biome.desertHills,
+					Biome.forestHills,
+					Biome.extremeHillsEdge
 				).sinceExtend(RecognisedVersion._12w03a,
-						Biome.jungle,
-						Biome.jungleHills
+					Biome.jungle,
+					Biome.jungleHills
 				).since(RecognisedVersion._13w36a,
-						// this includes all the biomes above, except for the swampland
-						getValidBiomesForStrongholdSinceV13w36a()
+					// this includes all the biomes above, except for the swampland
+					getValidBiomesForStrongholdSinceV13w36a()
 				).sinceExtend(RecognisedVersion._18w06a,
-						Biome.mushroomIslandShore
-				).construct();
-		this.strongholdProducerFactory = VersionFeature.<TriFunction<Long, BiomeDataOracle, List<Biome>, CachedWorldIconProducer>> builder()
+					Biome.mushroomIslandShore
+				).construct())
+			.with(FeatureKey.STRONGHOLD_PRODUCER_FACTORY, VersionFeature.<TriFunction<Long, BiomeDataOracle, List<Biome>, CachedWorldIconProducer>> builder()
 				.init(
-						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_Original(seed, biomeOracle, validBiomes)
+					(seed, biomeOracle, validBiomes) -> new StrongholdProducer_Original(seed, biomeOracle, validBiomes)
 				).since(RecognisedVersion._15w43c,
-						// this should be 15w43a, which is no recognised
-						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_Buggy128Algorithm(seed, biomeOracle, validBiomes)
+					// this should be 15w43a, which is not recognised
+					(seed, biomeOracle, validBiomes) -> new StrongholdProducer_Buggy128Algorithm(seed, biomeOracle, validBiomes)
 				).since(RecognisedVersion._1_9_pre2,
-						// this should be 16w06a
-						(seed, biomeOracle, validBiomes) -> new StrongholdProducer_128Algorithm(seed, biomeOracle, validBiomes)
-				).construct();
-		this.validBiomesForStructure_Village = VersionFeature.<Biome> listBuilder()
+					// this should be 16w06a
+					(seed, biomeOracle, validBiomes) -> new StrongholdProducer_128Algorithm(seed, biomeOracle, validBiomes)
+				).construct())
+			.with(FeatureKey.VALID_BIOMES_FOR_STRUCTURE_VILLAGE, VersionFeature.<Biome> listBuilder()
 				.init(
-						Biome.plains,
-						Biome.desert,
-						Biome.savanna
+					Biome.plains,
+					Biome.desert,
+					Biome.savanna
 				).sinceExtend(RecognisedVersion._16w20a,
-						Biome.taiga
+					Biome.taiga
 				).sinceExtend(RecognisedVersion._18w49a,
-						Biome.icePlains
-				).construct();
-		this.validBiomesForStructure_PillagerOutpost = VersionFeature.<Biome> listBuilder()
-				.init().sinceExtend(RecognisedVersion._18w47b,
-						Biome.plains,
-						Biome.desert,
-						Biome.savanna,
-						Biome.taiga
+					Biome.icePlains
+				).construct())
+			.with(FeatureKey.VALID_BIOMES_FOR_STRUCTURE_PILLAGER_OUTPOST, VersionFeature.<Biome> listBuilder()
+				.init()
+				.sinceExtend(RecognisedVersion._18w47b,
+					Biome.plains,
+					Biome.desert,
+					Biome.savanna,
+					Biome.taiga
 				).sinceExtend(RecognisedVersion._18w49a,
-						Biome.icePlains
-				).construct();
-		this.doComplexVillageCheck = VersionFeature.<Boolean> builder()
+					Biome.icePlains
+				).construct())
+			.with(FeatureKey.DO_COMPLEX_VILLAGE_CHECK, VersionFeature.<Boolean> builder()
 				.init(
-						true
+					true
 				).since(RecognisedVersion._16w20a,
-						false
-				).construct();
-		this.outpostVillageAvoidDistance = VersionFeature.<Integer> builder()
+					false
+				).construct())
+			.with(FeatureKey.OUTPOST_VILLAGE_AVOID_DISTANCE, VersionFeature.<Integer> builder()
 				.init(
 					-1
 				// from 19w11a to 19w13a, outpost towers aren't generated close
 				// to villages, but the structure is still reported by `/locate`.
 				).since(RecognisedVersion._19w13b,
 					10
-				).construct();
-
-		this.validBiomesAtMiddleOfChunk_DesertTemple = VersionFeature.<Biome> listBuilder()
+				).construct())
+			.with(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_DESERT_TEMPLE, VersionFeature.<Biome> listBuilder()
 				.init(
-						Biome.desert,
-						Biome.desertHills
-				).construct();
-		this.validBiomesAtMiddleOfChunk_Igloo = VersionFeature.<Biome> listBuilder()
-				.init().sinceExtend(RecognisedVersion._15w43c,
-						Biome.icePlains,
-						Biome.coldTaiga
-				).construct();
-		this.validBiomesAtMiddleOfChunk_JungleTemple = VersionFeature.<Biome> listBuilder()
-				.init().sinceExtend(RecognisedVersion._12w22a,
-						Biome.jungle
+					Biome.desert,
+					Biome.desertHills
+				).construct())
+			.with(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_IGLOO, VersionFeature.<Biome> listBuilder()
+				.init()
+				.sinceExtend(RecognisedVersion._15w43c,
+					Biome.icePlains,
+					Biome.coldTaiga
+				).construct())
+			.with(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_JUNGLE_TEMPLE, VersionFeature.<Biome> listBuilder()
+				.init()
+				.sinceExtend(RecognisedVersion._12w22a,
+					Biome.jungle
 				).sinceExtend(RecognisedVersion._1_4_2,
-						Biome.jungleHills // TODO: jungle temples spawn only since 1.4.2 in jungle hills?
+					Biome.jungleHills // TODO: jungle temples spawn only since 1.4.2 in jungle hills?
 				).sinceExtend(RecognisedVersion._19w06a,
-						Biome.bambooJungle,
-						Biome.bambooJungleHills
-				).construct();
-		this.validBiomesAtMiddleOfChunk_WitchHut = VersionFeature.<Biome> listBuilder()
-				.init().sinceExtend(RecognisedVersion._1_4_2,
-						Biome.swampland
-				).construct();
-		this.validBiomesAtMiddleOfChunk_OceanRuins = VersionFeature.<Biome> listBuilder()
-				.init().sinceExtend(RecognisedVersion._18w09a,
-						Biome.ocean,
-						Biome.deepOcean,
-						Biome.coldOcean,
-						Biome.coldDeepOcean,
-						Biome.warmOcean,
-						Biome.warmDeepOcean,
-						Biome.lukewarmOcean,
-						Biome.lukewarmDeepOcean,
-						Biome.frozenOcean,
-						Biome.frozenDeepOcean
-				).construct();
-		this.validBiomesAtMiddleOfChunk_Shipwreck = VersionFeature.<Biome> listBuilder()
-				.init().sinceExtend(RecognisedVersion._18w11a,
-						Biome.beach,
-						Biome.coldBeach,
-						Biome.ocean,
-						Biome.deepOcean,
-						Biome.coldOcean,
-						Biome.coldDeepOcean,
-						Biome.warmOcean,
-						Biome.warmDeepOcean,
-						Biome.lukewarmOcean,
-						Biome.lukewarmDeepOcean,
-						Biome.frozenOcean,
-						Biome.frozenDeepOcean
-				).construct();
-		this.mineshaftAlgorithmFactory = VersionFeature.<Function<Long, LocationChecker>> builder()
+					Biome.bambooJungle,
+					Biome.bambooJungleHills
+				).construct())
+			.with(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_WITCH_HUT, VersionFeature.<Biome> listBuilder()
+				.init()
+				.sinceExtend(RecognisedVersion._1_4_2,
+					Biome.swampland
+				).construct())
+			.with(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_RUINS, VersionFeature.<Biome> listBuilder()
+				.init()
+				.sinceExtend(RecognisedVersion._18w09a,
+					Biome.ocean,
+					Biome.deepOcean,
+					Biome.coldOcean,
+					Biome.coldDeepOcean,
+					Biome.warmOcean,
+					Biome.warmDeepOcean,
+					Biome.lukewarmOcean,
+					Biome.lukewarmDeepOcean,
+					Biome.frozenOcean,
+					Biome.frozenDeepOcean
+				).construct())
+			.with(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_SHIPWRECK, VersionFeature.<Biome> listBuilder()
+				.init()
+				.sinceExtend(RecognisedVersion._18w11a,
+					Biome.beach,
+					Biome.coldBeach,
+					Biome.ocean,
+					Biome.deepOcean,
+					Biome.coldOcean,
+					Biome.coldDeepOcean,
+					Biome.warmOcean,
+					Biome.warmDeepOcean,
+					Biome.lukewarmOcean,
+					Biome.lukewarmDeepOcean,
+					Biome.frozenOcean,
+					Biome.frozenDeepOcean
+				).construct())
+			.with(FeatureKey.MINESHAFT_ALGORITHM_FACTORY, VersionFeature.<Function<Long, LocationChecker>> builder()
 				.init(
-						seed -> new MineshaftAlgorithm_Original(seed)
+					seed -> new MineshaftAlgorithm_Original(seed)
 				).since(RecognisedVersion._1_4_2,
-						seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.01D, true)
+					seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.01D, true)
 				).since(RecognisedVersion._1_7_2,
-						seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.004D, true)
+					seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.004D, true)
 				).since(RecognisedVersion._18w06a,
-						seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.01D, false)
-				).construct();
-		this.oceanMonumentLocationCheckerFactory = VersionFeature.<QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker>> builder()
+					seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.01D, false)
+				).construct())
+			.with(FeatureKey.OCEAN_MONUMENT_LOCATION_CHECKER_FACTORY, VersionFeature.<QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker>> builder()
 				.init(
-						(seed, biomeOracle, validCenterBiomes, validBiomes) -> new OceanMonumentLocationChecker_Original(seed, biomeOracle, validCenterBiomes, validBiomes)
+					(seed, biomeOracle, validCenterBiomes, validBiomes) -> new OceanMonumentLocationChecker_Original(seed, biomeOracle, validCenterBiomes, validBiomes)
 				).since(RecognisedVersion._15w46a,
-						(seed, biomeOracle, validCenterBiomes, validBiomes) -> new OceanMonumentLocationChecker_Fixed(seed, biomeOracle, validCenterBiomes, validBiomes)
-				).construct();
-		this.validBiomesAtMiddleOfChunk_OceanMonument = VersionFeature.<Biome> listBuilder()
-				.init().sinceExtend(RecognisedVersion._1_8,
-						Biome.deepOcean,
-						Biome.coldDeepOcean,
-						Biome.warmDeepOcean,
-						Biome.lukewarmDeepOcean,
-						Biome.frozenDeepOcean
-				).construct();
-		this.validBiomesAtMiddleOfChunk_BuriedTreasure = VersionFeature.<Biome> listBuilder()
+					(seed, biomeOracle, validCenterBiomes, validBiomes) -> new OceanMonumentLocationChecker_Fixed(seed, biomeOracle, validCenterBiomes, validBiomes)
+				).construct())
+			.with(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_MONUMENT, VersionFeature.<Biome> listBuilder()
+				.init()
+				.sinceExtend(RecognisedVersion._1_8,
+					Biome.deepOcean,
+					Biome.coldDeepOcean,
+					Biome.warmDeepOcean,
+					Biome.lukewarmDeepOcean,
+					Biome.frozenDeepOcean
+				).construct())
+			.with(FeatureKey.VALID_BIOMES_AT_MIDDLE_OF_CHUNK_BURIED_TREASURE, VersionFeature.<Biome> listBuilder()
 				.init().sinceExtend(RecognisedVersion._18w10d,
-						Biome.beach,
-						Biome.coldBeach
-				).construct();
-		this.validBiomesForStructure_OceanMonument = VersionFeature.<Biome> listBuilder()
+					Biome.beach,
+					Biome.coldBeach
+				).construct())
+			.with(FeatureKey.VALID_BIOMES_FOR_STRUCTURE_OCEAN_MONUMENT, VersionFeature.<Biome> listBuilder()
 				.init().sinceExtend(RecognisedVersion._1_8,
-						Biome.ocean,
-						Biome.deepOcean,
-						Biome.frozenOcean,
-						Biome.river,
-						Biome.frozenRiver,
-						Biome.coldOcean,
-						Biome.coldDeepOcean,
-						Biome.warmOcean,
-						Biome.warmDeepOcean,
-						Biome.lukewarmOcean,
-						Biome.lukewarmDeepOcean,
-						Biome.frozenDeepOcean
-				).construct();
-		this.validBiomesForStructure_WoodlandMansion = VersionFeature.<Biome> listBuilder()
+					Biome.ocean,
+					Biome.deepOcean,
+					Biome.frozenOcean,
+					Biome.river,
+					Biome.frozenRiver,
+					Biome.coldOcean,
+					Biome.coldDeepOcean,
+					Biome.warmOcean,
+					Biome.warmDeepOcean,
+					Biome.lukewarmOcean,
+					Biome.lukewarmDeepOcean,
+					Biome.frozenDeepOcean
+				).construct())
+			.with(FeatureKey.VALID_BIOMES_FOR_STRUCTURE_WOODLAND_MANSION, VersionFeature.<Biome> listBuilder()
 				.init(
-						Biome.roofedForest,
-						Biome.roofedForestM
-				).construct();
-		this.seedForStructure_DesertTemple = VersionFeature.<Long> builder()
+					Biome.roofedForest,
+					Biome.roofedForestM
+				).construct())
+			.with(FeatureKey.SEED_FOR_STRUCTURE_DESERT_TEMPLE, VersionFeature.<Long> builder()
 				.init(
-						14357617L
-				).construct();
-		this.seedForStructure_Igloo = VersionFeature.<Long> builder()
+					14357617L
+				).construct())
+			.with(FeatureKey.SEED_FOR_STRUCTURE_IGLOO, VersionFeature.<Long> builder()
 				.init(
-						14357617L
+					14357617L
 				).since(RecognisedVersion._18w06a,
-						14357618L
-				).construct();
-		this.seedForStructure_JungleTemple = VersionFeature.<Long> builder()
+					14357618L
+				).construct())
+			.with(FeatureKey.SEED_FOR_STRUCTURE_JUNGLE_TEMPLE,  VersionFeature.<Long> builder()
 				.init(
 						14357617L
 				).since(RecognisedVersion._18w06a,
 						14357619L
-				).construct();
-		this.seedForStructure_WitchHut = VersionFeature.<Long> builder()
+				).construct())
+			.with(FeatureKey.SEED_FOR_STRUCTURE_WITCH_HUT, VersionFeature.<Long> builder()
 				.init(
 						14357617L
 				).since(RecognisedVersion._18w06a,
 						14357620L
-				).construct();
-		this.seedForStructure_OceanRuins = VersionFeature.<Long> builder()
+				).construct())
+			.with(FeatureKey.SEED_FOR_STRUCTURE_OCEAN_RUINS, VersionFeature.<Long> builder()
 				.init(
 						14357621L
-				).construct();
-		this.seedForStructure_Shipwreck = VersionFeature.<Long> builder()
+				).construct())
+			.with(FeatureKey.SEED_FOR_STRUCTURE_SHIPWRECK, VersionFeature.<Long> builder()
 				.init(
 						165745295L
-				).construct();
-		this.seedForStructure_BuriedTreasure = VersionFeature.<Long> builder()
+				).construct())
+			.with(FeatureKey.SEED_FOR_STRUCTURE_BURIED_TREASURE, VersionFeature.<Long> builder()
 				.init(
 						10387320L
-				).construct();
-		this.maxDistanceScatteredFeatures_Shipwreck = VersionFeature.<Byte> builder()
+				).construct())
+			.with(FeatureKey.MAX_DISTANCE_SCATTERED_FEATURES_SHIPWRECK, VersionFeature.<Byte> builder()
 				.init(
 					(byte) 15
 				).since(RecognisedVersion._1_13_pre7,
 					(byte) 16
 				).since(RecognisedVersion._20w06a,
 					(byte) 24
-				).construct();
-		this.minDistanceScatteredFeatures_Shipwreck = VersionFeature.<Byte> builder()
+				).construct())
+			.with(FeatureKey.MIN_DISTANCE_SCATTERED_FEATURES_SHIPWRECK, VersionFeature.<Byte> builder()
 				.init(
 					(byte) 8
 				).since(RecognisedVersion._20w06a,
 					(byte) 4
-				).construct();
-		this.maxDistanceScatteredFeatures_OceanRuins = VersionFeature.<Byte> builder()
+				).construct())
+			.with(FeatureKey.MAX_DISTANCE_SCATTERED_FEATURES_OCEAN_RUINS, VersionFeature.<Byte> builder()
 				.init(
 					(byte) 16
 				).since(RecognisedVersion._20w06a,
 					(byte) 20
-				).construct();
-		this.buggyStructureCoordinateMath = VersionFeature.<Boolean> builder()
+				).construct())
+			.with(FeatureKey.BUGGY_STRUCTURE_COORDINATE_MATH, VersionFeature.<Boolean> builder()
 				.init(
 						false
 				).since(RecognisedVersion._18w06a,
@@ -359,9 +300,7 @@ public enum DefaultVersionFeatures {
 						true  // Bug MC-131462, again.
 				).since(RecognisedVersion._18w30b,
 						false
-				).construct();
-		// @formatter:on
-	}
+				).construct());
 
 	private static List<Biome> getValidBiomesForStrongholdSinceV13w36a() {
 		List<Biome> result = new ArrayList<>();

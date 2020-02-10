@@ -22,6 +22,7 @@ import amidst.mojangapi.world.export.WorldExporter;
 import amidst.mojangapi.world.export.WorldExporterConfiguration;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.MovablePlayerList;
+import amidst.mojangapi.world.versionfeatures.FeatureKey;
 import amidst.threading.WorkerExecutor;
 
 /**
@@ -200,7 +201,7 @@ public class ViewerFacade {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean hasLayer(int layerId) {
-		return world.getVersionFeatures().hasLayer(layerId);
+		return world.getVersionFeatures().get(FeatureKey.ENABLED_LAYERS).contains(layerId);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

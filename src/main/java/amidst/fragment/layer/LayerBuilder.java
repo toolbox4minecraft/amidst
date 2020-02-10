@@ -33,6 +33,7 @@ import amidst.gui.main.viewer.Zoom;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.versionfeatures.FeatureKey;
 import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 import amidst.settings.Setting;
 
@@ -116,7 +117,7 @@ public class LayerBuilder {
 				layerId,
 				dimension,
 				drawUnloaded,
-				versionFeatures.hasLayer(layerId),
+				versionFeatures.get(FeatureKey.ENABLED_LAYERS).contains(layerId),
 				isVisibleSetting);
 	}
 
