@@ -34,19 +34,36 @@ public class VersionFeatures {
 	}
 
 	public static class Builder {
-		private final Map<FeatureKey<?>, Entry<?>> features = new IdentityHashMap<>();
+		private final Map<FeatureKey<?>, Entry<?>> features;
 
 		private Builder() {
+			features = new IdentityHashMap<>();
 		}
 
-		public<T> Builder with(FeatureKey<T> key, VersionFeature<T> feature) {
+		private Builder(Builder builder) {
+			features = new IdentityHashMap<>(builder.features);
+		}
+
+		private<T> Builder addEntry(FeatureKey<T> key, Entry<T> entry) {
 			Objects.requireNonNull(key);
-			Objects.requireNonNull(feature);
 			if (features.containsKey(key)) {
 				throw new IllegalArgumentException("the feature " + key + " was already set");
 			}
-			features.put(key, new Entry<>(feature));
+			features.put(key, entry);
 			return this;
+		}
+
+		public<T> Builder with(FeatureKey<T> key, VersionFeature<T> feature) {
+			return addEntry(key, new Entry<>(Objects.requireNonNull(feature)));
+		}
+
+		public<T> Builder withValue(FeatureKey<T> key, T value) {
+			return addEntry(key, new Entry<>(Objects.requireNonNull(value)));
+		}
+
+		@Override
+		public Builder clone() {
+			return new Builder(this);
 		}
 
 		public VersionFeatures create(RecognisedVersion version) {
@@ -76,6 +93,11 @@ public class VersionFeatures {
 		public Entry(VersionFeature<T> feature) {
 			this.value = null;
 			this.feature = feature;
+		}
+
+		public Entry(T value) {
+			this.value = value;
+			this.feature = null;
 		}
 
 		public Entry(Entry<T> other) {

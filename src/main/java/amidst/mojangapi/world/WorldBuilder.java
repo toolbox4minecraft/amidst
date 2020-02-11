@@ -19,10 +19,7 @@ import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.EndCityWorldIconTypeProvider;
 import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
-import amidst.mojangapi.world.oracle.EndIslandOracle;
-import amidst.mojangapi.world.oracle.HeuristicWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.ImmutableWorldSpawnOracle;
-import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.oracle.WorldSpawnOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;
 import amidst.mojangapi.world.player.PlayerInformation;
@@ -55,76 +52,74 @@ public class WorldBuilder {
 			MinecraftInterface minecraftInterface,
 			Consumer<World> onDisposeWorld,
 			WorldOptions worldOptions) throws MinecraftInterfaceException {
-		BiomeDataOracle biomeDataOracle = new BiomeDataOracle(minecraftInterface);
-		VersionFeatures versionFeatures = DefaultVersionFeatures.create(minecraftInterface.getRecognisedVersion());
+		VersionFeatures versionFeatures = initInterfaceAndGetFeatures(worldOptions, minecraftInterface);
 		return create(
-				minecraftInterface,
+				minecraftInterface.getRecognisedVersion(),
 				onDisposeWorld,
-				worldOptions,
 				MovablePlayerList.dummy(),
 				versionFeatures,
-				biomeDataOracle,
-				new HeuristicWorldSpawnOracle(
-						worldOptions.getWorldSeed().getLong(),
-						biomeDataOracle,
-						versionFeatures.get(FeatureKey.VALID_BIOMES_FOR_STRUCTURE_SPAWN)));
+				versionFeatures.get(FeatureKey.WORLD_SPAWN_ORACLE));
 	}
 
 	public World fromSaveGame(MinecraftInterface minecraftInterface, Consumer<World> onDisposeWorld, SaveGame saveGame)
 			throws IOException,
 			MinecraftInterfaceException {
-		VersionFeatures versionFeatures = DefaultVersionFeatures.create(minecraftInterface.getRecognisedVersion());
-		MovablePlayerList movablePlayerList = new MovablePlayerList(
-				playerInformationProvider,
-				saveGame,
-				true,
-				WorldPlayerType.from(saveGame));
+		VersionFeatures versionFeatures = initInterfaceAndGetFeatures(WorldOptions.fromSaveGame(saveGame), minecraftInterface);
 		return create(
-				minecraftInterface,
+				minecraftInterface.getRecognisedVersion(),
 				onDisposeWorld,
-				WorldOptions.fromSaveGame(saveGame),
-				movablePlayerList,
+				new MovablePlayerList(
+					playerInformationProvider,
+					saveGame,
+					true,
+					WorldPlayerType.from(saveGame)),
 				versionFeatures,
-				new BiomeDataOracle(minecraftInterface),
 				new ImmutableWorldSpawnOracle(saveGame.getWorldSpawn()));
 	}
 
+	private VersionFeatures initInterfaceAndGetFeatures(WorldOptions worldOptions, MinecraftInterface minecraftInterface)
+		throws MinecraftInterfaceException {
+		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
+		minecraftInterface.createWorld(
+			worldOptions.getWorldSeed().getLong(),
+			worldOptions.getWorldType(),
+			worldOptions.getGeneratorOptions());
+		seedHistoryLogger.log(recognisedVersion, worldOptions.getWorldSeed());
+		return DefaultVersionFeatures.builder(worldOptions, new BiomeDataOracle(minecraftInterface))
+				.create(recognisedVersion);
+	}
+
 	private World create(
-			MinecraftInterface minecraftInterface,
+			RecognisedVersion recognisedVersion,
 			Consumer<World> onDisposeWorld,
-			WorldOptions worldOptions,
 			MovablePlayerList movablePlayerList,
 			VersionFeatures versionFeatures,
-			BiomeDataOracle biomeDataOracle,
 			WorldSpawnOracle worldSpawnOracle) throws MinecraftInterfaceException {
-		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
-		seedHistoryLogger.log(recognisedVersion, worldOptions.getWorldSeed());
-		long seed = worldOptions.getWorldSeed().getLong();
-		minecraftInterface.createWorld(seed, worldOptions.getWorldType(), worldOptions.getGeneratorOptions());
+
 		return new World(
 				onDisposeWorld,
-				worldOptions,
+				versionFeatures.get(FeatureKey.WORLD_OPTIONS),
 				movablePlayerList,
 				recognisedVersion,
 				versionFeatures.get(FeatureKey.ENABLED_LAYERS),
-				biomeDataOracle,
-				EndIslandOracle.from(seed),
-				new SlimeChunkOracle(seed),
+				versionFeatures.get(FeatureKey.BIOME_DATA_ORACLE),
+				versionFeatures.get(FeatureKey.END_ISLAND_ORACLE),
+				versionFeatures.get(FeatureKey.SLIME_CHUNK_ORACLE),
 				new SpawnProducer(worldSpawnOracle),
-				versionFeatures.get(FeatureKey.STRONGHOLD_PRODUCER_FACTORY).apply(seed, biomeDataOracle),
+				versionFeatures.get(FeatureKey.STRONGHOLD_PRODUCER),
 				new PlayerProducer(movablePlayerList),
 				new MultiProducer<>(
 						new StructureProducer<>(
 							Resolution.CHUNK,
 							4,
-							versionFeatures.get(FeatureKey.VILLAGE_LOCATION_CHECKER_FACTORY).apply(seed, biomeDataOracle),
+							versionFeatures.get(FeatureKey.VILLAGE_LOCATION_CHECKER),
 							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
 							Dimension.OVERWORLD,
 							false),
 						new StructureProducer<>(
 							Resolution.CHUNK,
 							4,
-							versionFeatures.get(FeatureKey.PILLAGER_OUTPOST_LOCATION_CHECKER_FACTORY).apply(seed, biomeDataOracle),
+							versionFeatures.get(FeatureKey.PILLAGER_OUTPOST_LOCATION_CHECKER),
 							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.PILLAGER_OUTPOST),
 							Dimension.OVERWORLD,
 							false)
@@ -133,28 +128,28 @@ public class WorldBuilder {
 						new StructureProducer<>(
 								Resolution.CHUNK,
 								8,
-								versionFeatures.get(FeatureKey.DESERT_TEMPLE_LOCATION_CHECKER_FACTORY).apply(seed, biomeDataOracle),
+								versionFeatures.get(FeatureKey.DESERT_TEMPLE_LOCATION_CHECKER),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.DESERT),
 								Dimension.OVERWORLD,
 								false),
 						new StructureProducer<>(
 								Resolution.CHUNK,
 								8,
-								versionFeatures.get(FeatureKey.IGLOO_LOCATION_CHECKER_FACTORY).apply(seed, biomeDataOracle),
+								versionFeatures.get(FeatureKey.IGLOO_LOCATION_CHECKER),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.IGLOO),
 								Dimension.OVERWORLD,
 								false),
 						new StructureProducer<>(
 								Resolution.CHUNK,
 								8,
-								versionFeatures.get(FeatureKey.JUNGLE_TEMPLE_LOCATION_CHECKER_FACTORY).apply(seed, biomeDataOracle),
+								versionFeatures.get(FeatureKey.JUNGLE_TEMPLE_LOCATION_CHECKER),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.JUNGLE),
 								Dimension.OVERWORLD,
 								false),
 						new StructureProducer<>(
 								Resolution.CHUNK,
 								8,
-								versionFeatures.get(FeatureKey.WITCH_HUT_LOCATION_CHECKER_FACTORY).apply(seed, biomeDataOracle),
+								versionFeatures.get(FeatureKey.WITCH_HUT_LOCATION_CHECKER),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.WITCH),
 								Dimension.OVERWORLD,
 								false)
@@ -162,21 +157,21 @@ public class WorldBuilder {
 				new StructureProducer<>(
 						Resolution.CHUNK,
 						8,
-						versionFeatures.get(FeatureKey.MINESHAFT_LOCATION_CHECKER_FACTORY).apply(seed, biomeDataOracle),
+						versionFeatures.get(FeatureKey.MINESHAFT_LOCATION_CHECKER),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.MINESHAFT),
 						Dimension.OVERWORLD,
 						false),
 				new StructureProducer<>(
 						Resolution.CHUNK,
 						8,
-						versionFeatures.get(FeatureKey.OCEAN_MONUMENT_LOCATION_CHECKER_FACTORY).apply(seed, biomeDataOracle),
+						versionFeatures.get(FeatureKey.OCEAN_MONUMENT_LOCATION_CHECKER),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
 						Dimension.OVERWORLD,
 						false),
 				new StructureProducer<>(
 						Resolution.CHUNK,
 						8,
-						versionFeatures.get(FeatureKey.WOODLAND_MANSION_LOCATION_CHECKER_FACTORY).apply(seed, biomeDataOracle),
+						versionFeatures.get(FeatureKey.WOODLAND_MANSION_LOCATION_CHECKER),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.WOODLAND_MANSION),
 						Dimension.OVERWORLD,
 						false),
@@ -184,21 +179,21 @@ public class WorldBuilder {
 						new StructureProducer<>(
 								Resolution.CHUNK,
 								8,
-								versionFeatures.get(FeatureKey.OCEAN_RUINS_LOCATION_CHECKER_FACTORY).apply(seed, biomeDataOracle),
+								versionFeatures.get(FeatureKey.OCEAN_RUINS_LOCATION_CHECKER),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_RUINS),
 								Dimension.OVERWORLD,
 								false),
 						new StructureProducer<>(
 								Resolution.CHUNK,
 								8,
-								versionFeatures.get(FeatureKey.SHIPWRECK_LOCATION_CHECKER_FACTORY).apply(seed, biomeDataOracle),
+								versionFeatures.get(FeatureKey.SHIPWRECK_LOCATION_CHECKER),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.SHIPWRECK),
 								Dimension.OVERWORLD,
 								false),
 						new StructureProducer<>(
 								Resolution.CHUNK,
 								9,
-								versionFeatures.get(FeatureKey.BURIED_TREASURE_LOCATION_CHECKER_FACTORY).apply(seed, biomeDataOracle),
+								versionFeatures.get(FeatureKey.BURIED_TREASURE_LOCATION_CHECKER),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.BURIED_TREASURE),
 								Dimension.OVERWORLD,
 								false)
@@ -206,14 +201,14 @@ public class WorldBuilder {
 				new StructureProducer<>(
 						Resolution.NETHER_CHUNK,
 						88,
-						versionFeatures.get(FeatureKey.NETHER_FORTRESS_LOCATION_CHECKER_FACTORY).apply(seed, biomeDataOracle),
+						versionFeatures.get(FeatureKey.NETHER_FORTRESS_LOCATION_CHECKER),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
 						Dimension.NETHER,
 						false),
 				new StructureProducer<>(
 						Resolution.CHUNK,
 						8,
-						versionFeatures.get(FeatureKey.END_ISLAND_LOCATION_CHECKER_FACTORY).apply(seed, biomeDataOracle),
+						versionFeatures.get(FeatureKey.END_ISLAND_LOCATION_CHECKER),
 						new EndCityWorldIconTypeProvider(),
 						Dimension.END,
 						false));
