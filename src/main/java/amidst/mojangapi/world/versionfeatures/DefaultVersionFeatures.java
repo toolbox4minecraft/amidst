@@ -187,13 +187,13 @@ public enum DefaultVersionFeatures {
 				).construct())
 			.with(FeatureKey.MINESHAFT_ALGORITHM_FACTORY, VersionFeature.<Function<Long, LocationChecker>> builder()
 				.init(
-					seed -> new MineshaftAlgorithm_Original(seed)
+					(Long seed) -> new MineshaftAlgorithm_Original(seed)
 				).since(RecognisedVersion._1_4_2,
-					seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.01D, true)
+					(Long seed) -> new MineshaftAlgorithm_ChanceBased(seed, 0.01D, true)
 				).since(RecognisedVersion._1_7_2,
-					seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.004D, true)
+					(Long seed) -> new MineshaftAlgorithm_ChanceBased(seed, 0.004D, true)
 				).since(RecognisedVersion._18w06a,
-					seed -> new MineshaftAlgorithm_ChanceBased(seed, 0.01D, false)
+					(Long seed) -> new MineshaftAlgorithm_ChanceBased(seed, 0.01D, false)
 				).construct())
 			.with(FeatureKey.OCEAN_MONUMENT_LOCATION_CHECKER_FACTORY, VersionFeature.<QuadFunction<Long, BiomeDataOracle, List<Biome>, List<Biome>, LocationChecker>> builder()
 				.init(
