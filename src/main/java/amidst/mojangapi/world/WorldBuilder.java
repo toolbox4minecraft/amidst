@@ -68,9 +68,7 @@ public class WorldBuilder {
 		return create(
 				minecraftInterface,
 				onDisposeWorld,
-				worldOptions.getWorldSeed(),
-				worldOptions.getWorldType(),
-				worldOptions.getGeneratorOptions(),
+				worldOptions,
 				MovablePlayerList.dummy(),
 				versionFeatures,
 				biomeDataOracle,
@@ -92,9 +90,7 @@ public class WorldBuilder {
 		return create(
 				minecraftInterface,
 				onDisposeWorld,
-				WorldSeed.fromSaveGame(saveGame.getSeed()),
-				saveGame.getWorldType(),
-				saveGame.getGeneratorOptions(),
+				WorldOptions.fromSaveGame(saveGame),
 				movablePlayerList,
 				versionFeatures,
 				new BiomeDataOracle(minecraftInterface),
@@ -104,31 +100,27 @@ public class WorldBuilder {
 	private World create(
 			MinecraftInterface minecraftInterface,
 			Consumer<World> onDisposeWorld,
-			WorldSeed worldSeed,
-			WorldType worldType,
-			String generatorOptions,
+			WorldOptions worldOptions,
 			MovablePlayerList movablePlayerList,
 			VersionFeatures versionFeatures,
 			BiomeDataOracle biomeDataOracle,
 			WorldSpawnOracle worldSpawnOracle) throws MinecraftInterfaceException {
 		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
-		seedHistoryLogger.log(recognisedVersion, worldSeed);
-		long seed = worldSeed.getLong();
+		seedHistoryLogger.log(recognisedVersion, worldOptions.getWorldSeed());
+		long seed = worldOptions.getWorldSeed().getLong();
 		boolean buggyStructureCoordinateMath = versionFeatures.get(FeatureKey.BUGGY_STRUCTURE_COORDINATE_MATH);
 		LocationChecker villageLocationChecker = new VillageLocationChecker(
 			seed,
 			biomeDataOracle,
 			versionFeatures.get(FeatureKey.VALID_BIOMES_FOR_STRUCTURE_VILLAGE),
 			versionFeatures.get(FeatureKey.DO_COMPLEX_VILLAGE_CHECK));
-		minecraftInterface.createWorld(seed, worldType, generatorOptions);
+		minecraftInterface.createWorld(seed, worldOptions.getWorldType(), worldOptions.getGeneratorOptions());
 		return new World(
 				onDisposeWorld,
-				worldSeed,
-				worldType,
-				generatorOptions,
+				worldOptions,
 				movablePlayerList,
 				recognisedVersion,
-				versionFeatures,
+				versionFeatures.get(FeatureKey.ENABLED_LAYERS),
 				biomeDataOracle,
 				EndIslandOracle.from(seed),
 				new SlimeChunkOracle(seed),

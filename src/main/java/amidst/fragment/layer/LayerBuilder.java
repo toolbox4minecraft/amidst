@@ -33,8 +33,6 @@ import amidst.gui.main.viewer.Zoom;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.coordinates.Resolution;
-import amidst.mojangapi.world.versionfeatures.FeatureKey;
-import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 import amidst.settings.Setting;
 
 @Immutable
@@ -72,7 +70,7 @@ public class LayerBuilder {
 			WorldIconSelection worldIconSelection,
 			Zoom zoom,
 			Graphics2DAccelerationCounter accelerationCounter) {
-		List<LayerDeclaration> declarations = createDeclarations(settings, world.getVersionFeatures());
+		List<LayerDeclaration> declarations = createDeclarations(settings, world.getEnabledLayers());
 		return new LayerManager(
 				declarations,
 				new LayerLoader(
@@ -81,26 +79,26 @@ public class LayerBuilder {
 				createDrawers(declarations, zoom, worldIconSelection, accelerationCounter));
 	}
 
-	private List<LayerDeclaration> createDeclarations(AmidstSettings settings, VersionFeatures versionFeatures) {
+	private List<LayerDeclaration> createDeclarations(AmidstSettings settings, List<Integer> enabledLayers) {
 		LayerDeclaration[] declarations = new LayerDeclaration[LayerIds.NUMBER_OF_LAYERS];
 		// @formatter:off
-		declare(settings, declarations, versionFeatures, LayerIds.ALPHA,           null,                false, Setting.createImmutable(true));
-		declare(settings, declarations, versionFeatures, LayerIds.BIOME_DATA,      Dimension.OVERWORLD, false, Setting.createImmutable(true));
-		declare(settings, declarations, versionFeatures, LayerIds.END_ISLANDS,     Dimension.END,       false, Setting.createImmutable(true));
-		declare(settings, declarations, versionFeatures, LayerIds.BACKGROUND,      null,                false, Setting.createImmutable(true));
-		declare(settings, declarations, versionFeatures, LayerIds.SLIME,           Dimension.OVERWORLD, false, settings.showSlimeChunks);
-		declare(settings, declarations, versionFeatures, LayerIds.GRID,            null,                true,  settings.showGrid);
-		declare(settings, declarations, versionFeatures, LayerIds.SPAWN,           Dimension.OVERWORLD, false, settings.showSpawn);
-		declare(settings, declarations, versionFeatures, LayerIds.STRONGHOLD,      Dimension.OVERWORLD, false, settings.showStrongholds);
-		declare(settings, declarations, versionFeatures, LayerIds.PLAYER,          null,                false, settings.showPlayers);
-		declare(settings, declarations, versionFeatures, LayerIds.VILLAGE,         Dimension.OVERWORLD, false, settings.showVillages);
-		declare(settings, declarations, versionFeatures, LayerIds.TEMPLE,          Dimension.OVERWORLD, false, settings.showTemples);
-		declare(settings, declarations, versionFeatures, LayerIds.MINESHAFT,       Dimension.OVERWORLD, false, settings.showMineshafts);
-		declare(settings, declarations, versionFeatures, LayerIds.OCEAN_MONUMENT,  Dimension.OVERWORLD, false, settings.showOceanMonuments);
-		declare(settings, declarations, versionFeatures, LayerIds.WOODLAND_MANSION,Dimension.OVERWORLD, false, settings.showWoodlandMansions);
-		declare(settings, declarations, versionFeatures, LayerIds.OCEAN_FEATURES,  Dimension.OVERWORLD, false, settings.showOceanFeatures);
-		declare(settings, declarations, versionFeatures, LayerIds.NETHER_FORTRESS, Dimension.OVERWORLD, false, settings.showNetherFortresses);
-		declare(settings, declarations, versionFeatures, LayerIds.END_CITY,        Dimension.END,       false, settings.showEndCities);
+		declare(settings, declarations, enabledLayers, LayerIds.ALPHA,           null,                false, Setting.createImmutable(true));
+		declare(settings, declarations, enabledLayers, LayerIds.BIOME_DATA,      Dimension.OVERWORLD, false, Setting.createImmutable(true));
+		declare(settings, declarations, enabledLayers, LayerIds.END_ISLANDS,     Dimension.END,       false, Setting.createImmutable(true));
+		declare(settings, declarations, enabledLayers, LayerIds.BACKGROUND,      null,                false, Setting.createImmutable(true));
+		declare(settings, declarations, enabledLayers, LayerIds.SLIME,           Dimension.OVERWORLD, false, settings.showSlimeChunks);
+		declare(settings, declarations, enabledLayers, LayerIds.GRID,            null,                true,  settings.showGrid);
+		declare(settings, declarations, enabledLayers, LayerIds.SPAWN,           Dimension.OVERWORLD, false, settings.showSpawn);
+		declare(settings, declarations, enabledLayers, LayerIds.STRONGHOLD,      Dimension.OVERWORLD, false, settings.showStrongholds);
+		declare(settings, declarations, enabledLayers, LayerIds.PLAYER,          null,                false, settings.showPlayers);
+		declare(settings, declarations, enabledLayers, LayerIds.VILLAGE,         Dimension.OVERWORLD, false, settings.showVillages);
+		declare(settings, declarations, enabledLayers, LayerIds.TEMPLE,          Dimension.OVERWORLD, false, settings.showTemples);
+		declare(settings, declarations, enabledLayers, LayerIds.MINESHAFT,       Dimension.OVERWORLD, false, settings.showMineshafts);
+		declare(settings, declarations, enabledLayers, LayerIds.OCEAN_MONUMENT,  Dimension.OVERWORLD, false, settings.showOceanMonuments);
+		declare(settings, declarations, enabledLayers, LayerIds.WOODLAND_MANSION,Dimension.OVERWORLD, false, settings.showWoodlandMansions);
+		declare(settings, declarations, enabledLayers, LayerIds.OCEAN_FEATURES,  Dimension.OVERWORLD, false, settings.showOceanFeatures);
+		declare(settings, declarations, enabledLayers, LayerIds.NETHER_FORTRESS, Dimension.OVERWORLD, false, settings.showNetherFortresses);
+		declare(settings, declarations, enabledLayers, LayerIds.END_CITY,        Dimension.END,       false, settings.showEndCities);
 		// @formatter:on
 		return Collections.unmodifiableList(Arrays.asList(declarations));
 	}
@@ -108,7 +106,7 @@ public class LayerBuilder {
 	private void declare(
 			AmidstSettings settings,
 			LayerDeclaration[] declarations,
-			VersionFeatures versionFeatures,
+			List<Integer> enabledLayers,
 			int layerId,
 			Dimension dimension,
 			boolean drawUnloaded,
@@ -117,7 +115,7 @@ public class LayerBuilder {
 				layerId,
 				dimension,
 				drawUnloaded,
-				versionFeatures.get(FeatureKey.ENABLED_LAYERS).contains(layerId),
+				enabledLayers.contains(layerId),
 				isVisibleSetting);
 	}
 

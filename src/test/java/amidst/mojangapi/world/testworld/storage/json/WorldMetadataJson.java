@@ -13,8 +13,8 @@ public class WorldMetadataJson {
 	public static WorldMetadataJson from(World world) {
 		return new WorldMetadataJson(
 				world.getRecognisedVersion(),
-				world.getWorldSeed().getLong(),
-				world.getWorldType());
+				world.getWorldOptions().getWorldSeed().getLong(),
+				world.getWorldOptions().getWorldType());
 	}
 
 	private volatile RecognisedVersion recognisedVersion;
