@@ -2,6 +2,7 @@ package amidst.mojangapi.world.versionfeatures;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -30,5 +31,10 @@ public class VersionFeatureListBuilder<V, B extends VersionFeatureListBuilder<V,
 			}
 			return oldValue;
 		});
+	}
+
+	@Override
+	public VersionFeature<List<V>> construct() {
+		return super.construct().andThen(Collections::unmodifiableList);
 	}
 }

@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.mojangapi.world.versionfeatures.VersionFeature.Entry;
+import amidst.mojangapi.world.versionfeatures.VersionFeatureImpl.Entry;
 
 @NotThreadSafe
 public class VersionFeatureBuilder<V, B extends VersionFeatureBuilder<V, B>> {
@@ -69,6 +69,6 @@ public class VersionFeatureBuilder<V, B extends VersionFeatureBuilder<V, B>> {
 		if (this.entriesOldestFirst.isEmpty()) {
 			throw new IllegalStateException("you must specify a default value first");
 		}
-		return new VersionFeature<>(entriesOldestFirst.subList(0, entriesOldestFirst.size()));
+		return new VersionFeatureImpl<>(entriesOldestFirst.subList(0, entriesOldestFirst.size()));
 	}
 }
