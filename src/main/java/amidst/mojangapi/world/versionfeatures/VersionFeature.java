@@ -16,6 +16,14 @@ public interface VersionFeature<V> {
 		return new VersionFeatureListBuilder<>();
 	}
 
+	public static<V> VersionFeature<V> constant(V value) {
+		return (version, features) -> value;
+	}
+
+	public static<V> VersionFeature<V> bind(Function<VersionFeatures, VersionFeature<V>> factory) {
+		return (version, features) -> factory.apply(features).getValue(version, features);
+	}
+
 	public default<W> VersionFeature<W> andThen(Function<V, W> mapper) {
 		return (version, features) -> mapper.apply(this.getValue(version, features));
 	}
