@@ -3,6 +3,10 @@ package amidst.gui.main.viewer;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+
+import java.io.File;
+import java.io.IOException;
+
 import java.util.List;
 
 import amidst.dependency.injection.Factory1;
@@ -127,7 +131,12 @@ public class ViewerFacade {
 		return viewer.createScreenshot();
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
+    @CalledOnlyBy(AmidstThread.EDT)
+    public void writeSvgScreenshot(final File file) throws IOException {
+        viewer.writeSvgScreenshot(file);
+    }
+
+    @CalledOnlyBy(AmidstThread.EDT)
 	public void adjustZoom(int notches) {
 		zoom.adjustZoom(viewer.getMousePositionOrCenter(), notches);
 	}

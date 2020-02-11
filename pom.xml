@@ -80,6 +80,11 @@
 		</plugins>
 	</build>
 	<dependencies>
+          <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-all</artifactId>
+            <version>1.11</version>
+          </dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>

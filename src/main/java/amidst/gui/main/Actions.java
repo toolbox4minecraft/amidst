@@ -212,13 +212,13 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void takeScreenshot() {
+	public void takePngScreenshot() {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			BufferedImage image = viewerFacade.createScreenshot();
 			String suggestedFilename = "screenshot_" + viewerFacade.getWorldType().getFilenameText() + "_"
 					+ viewerFacade.getWorldSeed().getLong() + ".png";
-			File file = dialogs.askForScreenshotSaveFile(suggestedFilename);
+			File file = dialogs.askForSvgScreenshotSaveFile(suggestedFilename);
 			if (file != null) {
 				file = appendPNGFileExtensionIfNecessary(file);
 				if (file.exists() && !file.isFile()) {
@@ -241,7 +241,51 @@ public class Actions {
 		}
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
+    @CalledOnlyBy(AmidstThread.EDT)
+    public void takeSvgScreenshot() {
+        ViewerFacade viewerFacade = viewerFacadeSupplier.get();
+        if (viewerFacade != null) {
+            String suggestedFilename = "screenshot_" + viewerFacade.getWorldType().getFilenameText() + "_"
+                + viewerFacade.getWorldSeed().getLong() + ".svg";
+            File file = dialogs.askForScreenshotSaveFile(suggestedFilename);
+            if (file != null) {
+                file = appendSvgFileExtensionIfNecessary(file);
+                if (file.exists() && !file.isFile()) {
+                    String message = "Unable to write screenshot, because the target exists but is not a file: "
+                        + file.getAbsolutePath();
+                    AmidstLogger.warn(message);
+                    dialogs.displayError(message);
+                } else if (!canWriteToFile(file)) {
+                    String message = "Unable to write screenshot, because you have no writing permissions: "
+                        + file.getAbsolutePath();
+                    AmidstLogger.warn(message);
+                    dialogs.displayError(message);
+                } else if (!file.exists() || dialogs.askToConfirmYesNo(
+                                                                       "Replace file?",
+                                                                       "File already exists. Do you want to replace it?\n" + file.getAbsolutePath() + "")) {
+
+                    try {
+                        viewerFacade.writeSvgScreenshot(file);
+                    }
+                    catch (IOException e) {
+			AmidstLogger.warn(e);
+			dialogs.displayError(e);
+                    }
+                }
+            }
+        }
+    }
+
+    @CalledOnlyBy(AmidstThread.EDT)
+    private File appendSvgFileExtensionIfNecessary(File file) {
+        String filename = file.getAbsolutePath();
+        if (!FileExtensionChecker.hasFileExtension(filename, "svg")) {
+            filename += ".svg";
+        }
+        return new File(filename);
+    }
+
+    @CalledOnlyBy(AmidstThread.EDT)
 	public void selectBiomeProfile(BiomeProfile profile) {
 		biomeProfileSelection.set(profile);
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
