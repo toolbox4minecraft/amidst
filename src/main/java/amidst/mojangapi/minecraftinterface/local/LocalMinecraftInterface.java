@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
 
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
@@ -28,6 +29,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass worldDataClass;
 	private final SymbolicClass noiseBiomeProviderClass;
 	private final SymbolicClass overworldBiomeZoomerClass;
+	private final SymbolicClass utilClass;
 
 	private MethodHandle registryGetIdMethod;
     private MethodHandle biomeProviderGetBiomeMethod;
@@ -68,6 +70,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
         this.worldDataClass = symbolicClassMap.get(SymbolicNames.CLASS_WORLD_DATA);
         this.noiseBiomeProviderClass = symbolicClassMap.get(SymbolicNames.CLASS_NOISE_BIOME_PROVIDER);
         this.overworldBiomeZoomerClass = symbolicClassMap.get(SymbolicNames.CLASS_BIOME_ZOOMER);
+        this.utilClass = symbolicClassMap.get(SymbolicNames.CLASS_UTIL);
 	}
 
 	@Override
@@ -196,6 +199,11 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	                .getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY)).getObject();
             biomeRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome"));
             biomeProviderRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome_source_type"));
+			try {
+				((ExecutorService) utilClass.getStaticFieldValue(SymbolicNames.FIELD_UTIL_SERVER_EXECUTOR)).shutdownNow();
+			} catch (NullPointerException e) {
+				AmidstLogger.warn("Unable to shut down Server-Worker threads");
+			}
 
             registryGetIdMethod = getMethodHandle(registryClass, SymbolicNames.METHOD_REGISTRY_GET_ID);
             biomeProviderGetBiomeMethod = getMethodHandle(noiseBiomeProviderClass, SymbolicNames.METHOD_NOISE_BIOME_PROVIDER_GET_BIOME);

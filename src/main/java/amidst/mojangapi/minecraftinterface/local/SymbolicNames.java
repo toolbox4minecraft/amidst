@@ -13,6 +13,9 @@ public enum SymbolicNames {
 
     public static final String CLASS_REGISTRY_KEY = "RegistryKey";
     public static final String CONSTRUCTOR_REGISTRY_KEY = "<init>";
+    
+	public static final String CLASS_UTIL = "Util";
+	public static final String FIELD_UTIL_SERVER_EXECUTOR = "SERVER_EXECUTOR";
 
 	// TODO: correctly manage world types; remove duplication with legacy SymbolicNames
 	public static final String CLASS_WORLD_TYPE = "WorldType";
