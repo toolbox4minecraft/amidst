@@ -5,12 +5,14 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.LongFunction;
 
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -32,6 +34,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass foccbzClass; // stands for fuzzyOffsetConstantColumnBiomeZoomerClass
 	private final SymbolicClass mappedRegistryClass;
 	private final SymbolicClass pixelTransformerClass;
+	private final SymbolicClass utilClass;
 	
     /**
      * A PixelTransformer instance for the current world, giving direct
@@ -90,6 +93,13 @@ public class LocalMinecraftInterface implements MinecraftInterface {
      * It is derived from the world seed.
      */
 	private long seedForBiomeZoomer;
+	
+    /**
+     * An array used to return biome data. It's a ThreadLocal
+     * so different threads don't try to access it at the same
+     * time.
+     */
+    private volatile ThreadLocal<int[]> dataArray = ThreadLocal.withInitial(() -> new int[256]);
     
 	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;
@@ -104,6 +114,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
         this.noiseBiomeSourceClass = symbolicClassMap.get(SymbolicNames.CLASS_NOISE_BIOME_SOURCE);
         this.mappedRegistryClass = symbolicClassMap.get(SymbolicNames.CLASS_MAPPED_REGISTRY);
         this.pixelTransformerClass = symbolicClassMap.get(SymbolicNames.CLASS_PIXEL_TRANSFORMER);
+        this.utilClass = symbolicClassMap.get(SymbolicNames.CLASS_UTIL);
 	}
 	
 	@Override
@@ -188,6 +199,11 @@ public class LocalMinecraftInterface implements MinecraftInterface {
             getBiomeFromIdMethod = mappedRegistryClass.getMethod(SymbolicNames.METHOD_MAPPED_REGISTRY_BY_ID).getRawMethod();
             noiseBiomeSource = createNoiseBiomeSource();
 			biomeRegistry = registryClass.getField(SymbolicNames.FIELD_REGISTRY_BIOME).getRawField().get(null);
+			try {
+				((ExecutorService) utilClass.getStaticFieldValue(SymbolicNames.FIELD_UTIL_SERVER_EXECUTOR)).shutdownNow();
+			} catch (NullPointerException e) {
+				AmidstLogger.warn("Unable to shut down Server-Worker threads");
+			}
             
         } catch(IllegalArgumentException | IllegalAccessException e) {
             throw new MinecraftInterfaceException("unable to initialize the MinecraftInterface", e);
@@ -245,14 +261,17 @@ public class LocalMinecraftInterface implements MinecraftInterface {
     	if (length > 1073741824) {
     		throw new MinecraftInterfaceException("Biome data array size exceeds maximum limit");
     	} else {
-	        int cur = ThreadArrayMap.getArray().length;
+    		int[] currentArray = dataArray.get();
+	        int cur = currentArray.length;
 	        if (length <= cur)
-	            return ThreadArrayMap.getArray();
-	
+	            return currentArray;
+	        
 	        while (cur < length)
 	            cur *= 2;
-	
-	        return ThreadArrayMap.setArray(cur);
+	        
+	        currentArray = new int[cur];
+	        dataArray.set(currentArray);
+	        return currentArray;
         }
     }
     
@@ -264,26 +283,5 @@ public class LocalMinecraftInterface implements MinecraftInterface {
     private Object getBiomeFromId(int id)
     		throws WrongMethodTypeException, Throwable {
     	return getBiomeFromIdMethod.invoke(biomeRegistry, id);
-    }
-    
-    private enum ThreadArrayMap {
-    	;
-    	
-    	private static volatile HashMap<Long, int[]> arrayMap = new HashMap<Long, int[]>();
-    	
-    	public static int[] getArray() {
-    		Long id = Thread.currentThread().getId();
-    		if (arrayMap.containsKey(id)) {
-    			return arrayMap.get(id);
-    		} else {
-    			return setArray(16384);
-    		}
-    	}
-    	
-    	public static int[] setArray(int size) {
-			int[] array = new int[size];
-			arrayMap.put(Thread.currentThread().getId(), array);
-			return array;
-    	}
     }
 }

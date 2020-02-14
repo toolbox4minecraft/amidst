@@ -12,6 +12,9 @@ public enum SymbolicNames {
 	public static final String CLASS_MAPPED_REGISTRY = "MappedRegistry";
 	public static final String METHOD_MAPPED_REGISTRY_GET_ID = "getId";
 	public static final String METHOD_MAPPED_REGISTRY_BY_ID = "byId";
+	
+	public static final String CLASS_UTIL = "Util";
+	public static final String FIELD_UTIL_SERVER_EXECUTOR = "SERVER_EXECUTOR";
 
 	// TODO: correctly manage world types; remove duplication with legacy SymbolicNames
 	public static final String CLASS_WORLD_TYPE = "WorldType";

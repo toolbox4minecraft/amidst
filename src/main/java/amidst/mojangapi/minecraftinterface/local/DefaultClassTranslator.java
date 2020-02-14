@@ -153,6 +153,14 @@ public enum DefaultClassTranslator {
 				)
 				.thenDeclareRequired(CLASS_FUZZY_OFFSET_CONSTANT_COLUMN_BIOME_ZOOMER)
 					.requiredMethod(METHOD_FUZZY_OFFSET_CONSTANT_COLUMN_BIOME_ZOOMER_GET_BIOME, "a").real("long").real("int").real("int").real("int").symbolic(CLASS_NOISE_BIOME_SOURCE).end()
+			.next()
+				.ifDetect(c -> 
+					c.searchForStringContaining("Server-Worker-")
+					&& c.searchForStringContaining("os.name")
+					&& c.searchForLong(1000000L)
+				)
+				.thenDeclareOptional(CLASS_UTIL)
+					.optionalField(FIELD_UTIL_SERVER_EXECUTOR, "c")
             .construct();
 	}
 	// @formatter:on
