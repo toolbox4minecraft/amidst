@@ -97,7 +97,8 @@ public enum DefaultClassTranslator {
                 .thenDeclareRequired(CLASS_BIOME)
             .next()
 				.ifDetect(c -> 
-					c.searchForStringContaining("Server-Worker-")
+					(c.searchForStringContaining("Server-Worker-")
+					| c.searchForStringContaining("Worker-"))
 					&& c.searchForStringContaining("os.name")
 					&& c.searchForLong(1000000L)
 				)
