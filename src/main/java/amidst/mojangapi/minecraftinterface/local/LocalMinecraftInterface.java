@@ -197,13 +197,14 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    try {
 	        Object metaRegistry = ((SymbolicObject) registryClass
 	                .getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY)).getObject();
-            biomeRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome"));
-            biomeProviderRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome_source_type"));
 			try {
 				((ExecutorService) utilClass.getStaticFieldValue(SymbolicNames.FIELD_UTIL_SERVER_EXECUTOR)).shutdownNow();
 			} catch (NullPointerException e) {
 				AmidstLogger.warn("Unable to shut down Server-Worker threads");
 			}
+			
+            biomeRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome"));
+            biomeProviderRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome_source_type"));
 
             registryGetIdMethod = getMethodHandle(registryClass, SymbolicNames.METHOD_REGISTRY_GET_ID);
             biomeProviderGetBiomeMethod = getMethodHandle(noiseBiomeProviderClass, SymbolicNames.METHOD_NOISE_BIOME_PROVIDER_GET_BIOME);
