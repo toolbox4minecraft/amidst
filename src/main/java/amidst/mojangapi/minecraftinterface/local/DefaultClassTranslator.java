@@ -155,7 +155,8 @@ public enum DefaultClassTranslator {
 					.requiredMethod(METHOD_FUZZY_OFFSET_CONSTANT_COLUMN_BIOME_ZOOMER_GET_BIOME, "a").real("long").real("int").real("int").real("int").symbolic(CLASS_NOISE_BIOME_SOURCE).end()
 			.next()
 				.ifDetect(c -> 
-					c.searchForStringContaining("Server-Worker-")
+					(c.searchForStringContaining("Server-Worker-")
+					| c.searchForStringContaining("Worker-"))
 					&& c.searchForStringContaining("os.name")
 					&& c.searchForLong(1000000L)
 				)
