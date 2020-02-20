@@ -18,10 +18,10 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
 
 public class LocalMinecraftInterface implements MinecraftInterface {
-	
+
     private boolean isInitialized = false;
 	private final RecognisedVersion recognisedVersion;
-	
+
 	private final SymbolicClass registryClass;
 	private final SymbolicClass worldTypeClass;
 	private final SymbolicClass genSettingsClass;
@@ -34,40 +34,40 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass mappedRegistryClass;
 	private final SymbolicClass pixelTransformerClass;
 	private final SymbolicClass utilClass;
-	
+
     /**
      * A PixelTransformer instance for the current world, giving direct
      * access to the quarter-scale biome data.
      */
     private Object pixelTransformer;
-    
+
     /**
      * An instance of fuzzyOffsetConstantColumnBiomeZoomer that we use to get the full resolution
      * biome data.
      */
-    private SymbolicObject fuzzyOffsetConstantColumnBiomeZoomer;
-    
+    private Object fuzzyOffsetConstantColumnBiomeZoomer;
+
     /**
      * An instance of NoiseBiomeSource that we create and provide quarter
-     * resolution biome data to. This is used by minecraft to create the 
+     * resolution biome data to. This is used by minecraft to create the
      * full resolution biome data.
      */
     private Object noiseBiomeSource;
-    
+
     /**
      * A method used to retrieve the full resolution biome data.
      * We create a SymbolicMethod for it so we dont lose performance
      * searching the SymbolicClass for it every time it's called.
      */
     private Method getFullResBiomeMethod;
-    
+
     /**
      * A method used to retrieve the quarter resolution biome data.
      * We create a SymbolicMethod for it so we dont lose performance
      * searching the SymbolicClass for it every time it's called.
      */
     private Method getQuarterResBiomeMethod;
-    
+
     /**
      * A method used to retrieve biome ids for the full resolution
      * biome data. We create a SymbolicMethod for it so we dont lose
@@ -75,31 +75,31 @@ public class LocalMinecraftInterface implements MinecraftInterface {
      * called.
      */
     private Method getIdFromBiomeMethod;
-    
+
     /**
      * A method used for converting back to ints from Biomes after
      * minecraft has generated the full resolution biome data.
      */
     private Method getBiomeFromIdMethod;
-    
+
     /**
      * The registry for converting between ints and biomes.
      */
     private Object biomeRegistry;
-    
+
     /**
      * The seed used by the BiomeZoomer during interpolation.
      * It is derived from the world seed.
      */
 	private long seedForBiomeZoomer;
-	
+
     /**
      * An array used to return biome data. It's a ThreadLocal
      * so different threads don't try to access it at the same
      * time.
      */
     private volatile ThreadLocal<int[]> dataArray = ThreadLocal.withInitial(() -> new int[256]);
-    
+
 	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;
 		this.registryClass = symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY);
@@ -115,7 +115,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
         this.pixelTransformerClass = symbolicClassMap.get(SymbolicNames.CLASS_PIXEL_TRANSFORMER);
         this.utilClass = symbolicClassMap.get(SymbolicNames.CLASS_UTIL);
 	}
-	
+
 	@Override
 	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
@@ -126,7 +126,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    int[] data = ensureArrayCapacity(width * height);
 
 	    try {
-	    	
+
 	        /**
 	         * We break the region in 16x16 chunks, to get better performance out
 	         * of the LazyArea used by the game. This gives a ~2x improvement.
@@ -137,7 +137,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
 				for (int y0 = 0; y0 < height; y0 += chunkSize) {
 					int h = Math.min(chunkSize, height - y0);
-					
+
 		    	    for (int i = 0; i < w; i++) {
 		                for (int j = 0; j < h; j++) {
 		                    int trueIdx = (x0 + i) + (y0 + j) * width;
@@ -152,15 +152,15 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
 	    return data;
 	}
-	
+
 	private int getBiomeIdAt(int x, int y, boolean useQuarterResolution) throws Throwable {
 	    if(useQuarterResolution) {
 	    	return (int) getQuarterResBiomeMethod.invoke(pixelTransformer, x, y);
 	    } else {
-	    	return getIdFromBiome((Object) getFullResBiomeMethod.invoke(fuzzyOffsetConstantColumnBiomeZoomer.getObject(), seedForBiomeZoomer, x, 0, y, noiseBiomeSource));
+	    	return getIdFromBiome((Object) getFullResBiomeMethod.invoke(fuzzyOffsetConstantColumnBiomeZoomer, seedForBiomeZoomer, x, 0, y, noiseBiomeSource));
 	    }
 	}
-	
+
 	public int getBiomeIdAt(int x, int y) throws MinecraftInterfaceException {
 		try {
 			return getBiomeIdAt(x, y, false);
@@ -168,16 +168,16 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
 	}
-	
+
 	@Override
 	public synchronized void createWorld(long seed, WorldType worldType, String generatorOptions)
 			throws MinecraftInterfaceException {
 		initializeIfNeeded();
-		
+
 	    try {
             seedForBiomeZoomer = (long) levelDataClass.callStaticMethod(SymbolicNames.METHOD_LEVEL_DATA_MAP_SEED, seed);
             pixelTransformer = createPixelTransformerObject(seed, worldType);
-            
+
         } catch(IllegalArgumentException
         		| IllegalAccessException
         		| InstantiationException
@@ -185,13 +185,13 @@ public class LocalMinecraftInterface implements MinecraftInterface {
             throw new MinecraftInterfaceException("unable to create world", e);
         }
 	}
-	
+
 	private void initializeIfNeeded() throws MinecraftInterfaceException {
 	    if (isInitialized) {
 	        return;
 	    }
 	    try {
-            fuzzyOffsetConstantColumnBiomeZoomer = new SymbolicObject(foccbzClass, foccbzClass.getClazz().getEnumConstants()[0]);
+            fuzzyOffsetConstantColumnBiomeZoomer = foccbzClass.getClazz().getEnumConstants()[0];
             getFullResBiomeMethod = foccbzClass.getMethod(SymbolicNames.METHOD_FUZZY_OFFSET_CONSTANT_COLUMN_BIOME_ZOOMER_GET_BIOME).getRawMethod();
             getQuarterResBiomeMethod = pixelTransformerClass.getMethod(SymbolicNames.METHOD_PIXEL_TRANSFORMER_APPLY).getRawMethod();
             getIdFromBiomeMethod = mappedRegistryClass.getMethod(SymbolicNames.METHOD_MAPPED_REGISTRY_GET_ID).getRawMethod();
@@ -203,31 +203,31 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			} catch (NullPointerException e) {
 				AmidstLogger.warn("Unable to shut down Server-Worker threads");
 			}
-            
+
         } catch(IllegalArgumentException | IllegalAccessException e) {
             throw new MinecraftInterfaceException("unable to initialize the MinecraftInterface", e);
         }
 
 	    isInitialized = true;
 	}
-	
+
 	private Object createNoiseBiomeSource() {
 		Class<?> nbsInterface = noiseBiomeSourceClass.getClazz();
-		
+
 		return Proxy.newProxyInstance(nbsInterface.getClassLoader(), new Class<?>[]{nbsInterface}, new InvocationHandler() {
 			@Override
 	        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 				return getBiomeFromId(getBiomeIdAt((int) args[0], (int) args[2], true));
 	        }
-	    }); 
+	    });
 	}
-	
+
 	private Object createPixelTransformerObject(long seed, WorldType worldType)
 			throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException {
 		Object worldTypeObj = worldTypeClass.getField(worldType.getSymbolicFieldName()).getRawField().get(null);
-		
+
 		Object genSettingsObj = genSettingsClass.getConstructor(SymbolicNames.CONSTRUCTOR_GEN_SETTINGS).getRawConstructor().newInstance(new Object[] {});
-		
+
 		SymbolicObject areaFactoryObj = (SymbolicObject) layersClass.callStaticMethod(
 				SymbolicNames.METHOD_LAYERS_GET_DEFAULT_LAYER,
 				worldTypeObj,
@@ -245,17 +245,17 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 					}
 				}
 				);
-		
+
 		Object lazyAreaObj = areaFactoryObj.callMethod(SymbolicNames.METHOD_AREA_FACTORY_MAKE);
-		
+
 		return lazyAreaClass.getField(SymbolicNames.FIELD_LAZY_AREA_PIXEL_TRANSFORMER).getRawField().get(lazyAreaObj);
 	}
-	
+
 	@Override
 	public RecognisedVersion getRecognisedVersion() {
 		return recognisedVersion;
 	}
-	
+
     private int[] ensureArrayCapacity(int length) throws MinecraftInterfaceException {
     	if (length > 1073741824) {
     		throw new MinecraftInterfaceException("Biome data array size exceeds maximum limit");
@@ -264,21 +264,21 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	        int cur = currentArray.length;
 	        if (length <= cur)
 	            return currentArray;
-	        
+
 	        while (cur < length)
 	            cur *= 2;
-	        
+
 	        currentArray = new int[cur];
 	        dataArray.set(currentArray);
 	        return currentArray;
         }
     }
-    
+
     private int getIdFromBiome(Object biome)
     		throws WrongMethodTypeException, Throwable {
     	return (int) getIdFromBiomeMethod.invoke(biomeRegistry, biome);
     }
-    
+
     private Object getBiomeFromId(int id)
     		throws WrongMethodTypeException, Throwable {
     	return getBiomeFromIdMethod.invoke(biomeRegistry, id);
