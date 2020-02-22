@@ -104,9 +104,9 @@ public enum DefaultClassTranslator {
 					.optionalField(FIELD_LAZY_AREA_PIXEL_TRANSFORMER, "a")
 			.next()
 				.ifDetect(c -> 
-				c.searchForFloat(0.25f)
-				&& c.searchForInt(Integer.MIN_VALUE)
-				&& c.getNumberOfFields() == 5
+					c.searchForFloat(0.25f)
+					&& c.searchForInt(Integer.MIN_VALUE)
+					&& c.getNumberOfFields() == 5
 				)
 				.thenDeclareRequired(CLASS_LAZY_AREA_CONTEXT)
 					.requiredConstructor(CONSTRUCTOR_LAZY_AREA_CONTEXT).real("int").real("long").real("long").end()

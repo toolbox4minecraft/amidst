@@ -46,7 +46,6 @@ public class LocalMinecraftInterface implements MinecraftInterface {
      * biome data.
      */
     private Object fuzzyOffsetConstantColumnBiomeZoomer;
-
     /**
      * An instance of NoiseBiomeSource that we create and provide quarter
      * resolution biome data to. This is used by minecraft to create the
@@ -198,12 +197,13 @@ public class LocalMinecraftInterface implements MinecraftInterface {
             getBiomeFromIdMethod = mappedRegistryClass.getMethod(SymbolicNames.METHOD_MAPPED_REGISTRY_BY_ID).getRawMethod();
             noiseBiomeSource = createNoiseBiomeSource();
 			biomeRegistry = registryClass.getField(SymbolicNames.FIELD_REGISTRY_BIOME).getRawField().get(null);
+			
 			try {
 				((ExecutorService) utilClass.getStaticFieldValue(SymbolicNames.FIELD_UTIL_SERVER_EXECUTOR)).shutdownNow();
 			} catch (NullPointerException e) {
 				AmidstLogger.warn("Unable to shut down Server-Worker threads");
 			}
-
+			
         } catch(IllegalArgumentException | IllegalAccessException e) {
             throw new MinecraftInterfaceException("unable to initialize the MinecraftInterface", e);
         }
