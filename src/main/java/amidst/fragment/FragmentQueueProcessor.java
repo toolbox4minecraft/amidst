@@ -49,7 +49,7 @@ public class FragmentQueueProcessor {
 		this.layerManager = layerManager;
 		this.dimensionSetting = dimensionSetting;
 	}
-
+	
 	/**
 	 * It is important that the dimension setting is the same while a fragment
 	 * is loaded by different fragment loaders. This is why the dimension
@@ -62,11 +62,14 @@ public class FragmentQueueProcessor {
 		processRecycleQueue();
 		int threadCount;
 		int maxSize = fragWorkers.getMaximumPoolSize();
-		while (loadingQueue.peek() != null) {
+		while (loadingQueue.isEmpty() == false) {
 			if ((threadCount = fragWorkers.getActiveCount()) < maxSize) {
 				for (int i = 0; i < maxSize - threadCount; i++) {
 					fragWorkers.execute(() -> {
-						loadFragment(dimension, loadingQueue.poll());
+						Fragment f = loadingQueue.poll();
+						if (f != null) {
+							loadFragment(dimension, f);
+						}
 						updateLayerManager(dimensionSetting.get());
 						processRecycleQueue();
 					});
