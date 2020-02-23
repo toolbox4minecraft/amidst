@@ -22,7 +22,7 @@ public class FragmentQueueProcessor {
 	private final FragmentCache cache;
 	private final LayerManager layerManager;
 	private final Setting<Dimension> dimensionSetting;
-	private ThreadPoolExecutor fragWorkers = (ThreadPoolExecutor) Executors.newFixedThreadPool(8, new ThreadFactory() {
+	private ThreadPoolExecutor fragWorkers = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new ThreadFactory() {
 			private int num;
 		
 			@Override
