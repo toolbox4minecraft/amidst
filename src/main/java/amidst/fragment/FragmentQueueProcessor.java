@@ -60,20 +60,17 @@ public class FragmentQueueProcessor {
 		Dimension dimension = dimensionSetting.get();
 		updateLayerManager(dimension);
 		processRecycleQueue();
-		int threadCount;
 		int maxSize = fragWorkers.getMaximumPoolSize();
 		while (loadingQueue.isEmpty() == false) {
-			if ((threadCount = fragWorkers.getActiveCount()) < maxSize) {
-				for (int i = 0; i < maxSize - threadCount; i++) {
-					fragWorkers.execute(() -> {
-						Fragment f = loadingQueue.poll();
-						if (f != null) {
-							loadFragment(dimension, f);
-						}
+			while (fragWorkers.getActiveCount() < maxSize) {
+				fragWorkers.execute(() -> {
+					Fragment f = loadingQueue.poll();
+					if (f != null) {
+						loadFragment(dimension, f);
 						updateLayerManager(dimensionSetting.get());
 						processRecycleQueue();
-					});
-				}
+					}
+				});
 			}
 			try {
 				Thread.sleep(1);
@@ -101,17 +98,13 @@ public class FragmentQueueProcessor {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void loadFragment(Dimension dimension, Fragment fragment) {
-		if (fragment != null) {
-			if (fragment.isInitialized()) {
-				if (fragment.isLoaded()) {
-					layerManager.reloadInvalidated(dimension, fragment);
-				} else {
-					layerManager.loadAll(dimension, fragment);
-					fragment.setLoaded();
-				}
+		if (fragment.isInitialized()) {
+			if (fragment.isLoaded()) {
+				layerManager.reloadInvalidated(dimension, fragment);
+			} else {
+				layerManager.loadAll(dimension, fragment);
+				fragment.setLoaded();
 			}
-		} else {
-			AmidstLogger.warn("fragment is null");
 		}
 	}
 
