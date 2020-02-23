@@ -12,6 +12,7 @@ import java.util.function.LongFunction;
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
 import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -36,14 +37,14 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass utilClass;
 
 	/**
-	 * A PixelTransformer instance for the current world, giving direct
-	 * access to the quarter-scale biome data.
+	 * A PixelTransformer instance for the current world that is given to
+	 * each thread, giving direct access to the quarter-scale biome data.
 	 */
-	private Object pixelTransformer;
+	private ThreadLocal<Object> threadedPixelTransformer;
 
 	/**
-	 * An instance of fuzzyOffsetConstantColumnBiomeZoomer that we use to get the full resolution
-	 * biome data.
+	 * An instance of fuzzyOffsetConstantColumnBiomeZoomer that we use to
+	 * get the full resolution biome data.
 	 */
 	private Object fuzzyOffsetConstantColumnBiomeZoomer;
 
@@ -88,17 +89,17 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private Object biomeRegistry;
 
 	/**
-	 * The seed used by the BiomeZoomer during interpolation.
-	 * It is derived from the world seed.
+	 * The seed used by the BiomeZoomer during interpolation. It is
+	 * derived from the world seed.
 	 */
 	private long seedForBiomeZoomer;
 
 	/**
-	 * An array used to return biome data. It's a ThreadLocal
-	 * so different threads don't try to access it at the same
+	 * An array used to return biome data. It's a ThreadLocal so
+	 * different threads don't try to access the same array at the same
 	 * time.
 	 */
-	private volatile ThreadLocal<int[]> dataArray = ThreadLocal.withInitial(() -> new int[256]);
+	private ThreadLocal<int[]> dataArray = ThreadLocal.withInitial(() -> new int[256]);
 
 	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;
@@ -155,7 +156,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
 	private int getBiomeIdAt(int x, int y, boolean useQuarterResolution) throws Throwable {
 		if(useQuarterResolution) {
-			return (int) getQuarterResBiomeMethod.invoke(pixelTransformer, x, y);
+			return (int) getQuarterResBiomeMethod.invoke(threadedPixelTransformer.get(), x, y);
 		} else {
 			return getIdFromBiome((Object) getFullResBiomeMethod.invoke(fuzzyOffsetConstantColumnBiomeZoomer, seedForBiomeZoomer, x, 0, y, noiseBiomeSource));
 		}
@@ -176,11 +177,19 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
 		try {
 			seedForBiomeZoomer = (long) levelDataClass.callStaticMethod(SymbolicNames.METHOD_LEVEL_DATA_MAP_SEED, seed);
-			pixelTransformer = createPixelTransformerObject(seed, worldType);
+			threadedPixelTransformer = ThreadLocal.withInitial(() -> {
+				try {
+					return createPixelTransformerObject(seed, worldType);
+				} catch (Exception e) {
+					MinecraftInterfaceException e1 = new MinecraftInterfaceException("unable to create pixel transformer", e);
+					AmidstLogger.error(e1);
+					AmidstMessageBox.displayError("Error", e1);
+					return null;
+				}
+			});
 
 		} catch(IllegalArgumentException
 				| IllegalAccessException
-				| InstantiationException
 				| InvocationTargetException e) {
 			throw new MinecraftInterfaceException("unable to create world", e);
 		}

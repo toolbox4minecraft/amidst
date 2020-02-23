@@ -1,12 +1,16 @@
 package amidst.fragment;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerManager;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.Dimension;
 import amidst.settings.Setting;
 
@@ -18,6 +22,17 @@ public class FragmentQueueProcessor {
 	private final FragmentCache cache;
 	private final LayerManager layerManager;
 	private final Setting<Dimension> dimensionSetting;
+	private ThreadPoolExecutor fragWorkers = (ThreadPoolExecutor) Executors.newFixedThreadPool(8, new ThreadFactory() {
+			private int num;
+		
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread thread = new Thread(r);
+				thread.setName("Fragment-Worker-" + num++);
+				return thread;
+			}
+		}
+	);
 
 	@CalledByAny
 	public FragmentQueueProcessor(
@@ -45,12 +60,23 @@ public class FragmentQueueProcessor {
 		Dimension dimension = dimensionSetting.get();
 		updateLayerManager(dimension);
 		processRecycleQueue();
-		Fragment fragment;
-		while ((fragment = loadingQueue.poll()) != null) {
-			loadFragment(dimension, fragment);
-			dimension = dimensionSetting.get();
-			updateLayerManager(dimension);
-			processRecycleQueue();
+		int threadCount;
+		int maxSize = fragWorkers.getMaximumPoolSize();
+		while (loadingQueue.peek() != null) {
+			if ((threadCount = fragWorkers.getActiveCount()) < maxSize) {
+				for (int i = 0; i < maxSize - threadCount; i++) {
+					fragWorkers.execute(() -> {
+						loadFragment(dimension, loadingQueue.poll());
+						updateLayerManager(dimensionSetting.get());
+						processRecycleQueue();
+					});
+				}
+			}
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				AmidstLogger.warn("fragment loader thread interrupted unexpectedly", e);
+			}
 		}
 		layerManager.clearInvalidatedLayers();
 	}
@@ -72,13 +98,17 @@ public class FragmentQueueProcessor {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void loadFragment(Dimension dimension, Fragment fragment) {
-		if (fragment.isInitialized()) {
-			if (fragment.isLoaded()) {
-				layerManager.reloadInvalidated(dimension, fragment);
-			} else {
-				layerManager.loadAll(dimension, fragment);
-				fragment.setLoaded();
+		if (fragment != null) {
+			if (fragment.isInitialized()) {
+				if (fragment.isLoaded()) {
+					layerManager.reloadInvalidated(dimension, fragment);
+				} else {
+					layerManager.loadAll(dimension, fragment);
+					fragment.setLoaded();
+				}
 			}
+		} else {
+			AmidstLogger.warn("fragment is null");
 		}
 	}
 
