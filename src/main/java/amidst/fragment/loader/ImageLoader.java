@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
-import amidst.documentation.NotThreadSafe;
+import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.fragment.colorprovider.ColorProvider;
 import amidst.fragment.layer.LayerDeclaration;
@@ -13,7 +13,7 @@ import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 
-@NotThreadSafe
+@ThreadSafe
 public class ImageLoader extends FragmentLoader {
 	private final Resolution resolution;
 	private final ColorProvider colorProvider;
