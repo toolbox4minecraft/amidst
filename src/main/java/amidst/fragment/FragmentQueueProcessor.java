@@ -11,7 +11,6 @@ import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerManager;
-import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.Dimension;
 import amidst.settings.Setting;
 
