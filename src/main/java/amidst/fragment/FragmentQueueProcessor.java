@@ -4,6 +4,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.locks.LockSupport;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
@@ -57,6 +58,7 @@ public class FragmentQueueProcessor {
 	 */
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void processQueues() {
+		final Thread flThread = Thread.currentThread();
 		Dimension dimension = dimensionSetting.get();
 		updateLayerManager(dimension);
 		processRecycleQueue();
@@ -70,13 +72,10 @@ public class FragmentQueueProcessor {
 						updateLayerManager(dimensionSetting.get());
 						processRecycleQueue();
 					}
+					LockSupport.unpark(flThread);
 				});
 			}
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				AmidstLogger.warn("fragment loader thread interrupted unexpectedly", e);
-			}
+			LockSupport.park();
 		}
 		layerManager.clearInvalidatedLayers();
 	}
