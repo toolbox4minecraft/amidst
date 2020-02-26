@@ -56,10 +56,8 @@ public abstract class Widget {
 
 	private final CornerAnchorPoint anchor;
 
-	private int x;
-	private int y;
-	private int width;
-	private int height;
+	private int x, y;
+	private int width, height;
 
 	private int xMargin = 10;
 	private int yMargin = 10;
@@ -68,13 +66,20 @@ public abstract class Widget {
 	private float alpha = 1.0f;
 	private float targetAlpha = 1.0f;
 
-	private int viewerWidth;
-	private int viewerHeight;
+	private int viewerWidth, viewerHeight;
 	private Point mousePosition;
+	
+	private int xOffset, yOffset;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected Widget(CornerAnchorPoint anchor) {
 		this.anchor = anchor;
+	}
+	
+	protected Widget(CornerAnchorPoint anchor, int xOffset, int yOffset) {
+		this.anchor = anchor;
+		this.xOffset = xOffset;
+		this.yOffset = yOffset;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -284,12 +289,12 @@ public abstract class Widget {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected void setX(int x) {
-		this.x = x;
+		this.x = x + xOffset;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	protected void setY(int y) {
-		this.y = y;
+		this.y = y + yOffset;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

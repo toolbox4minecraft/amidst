@@ -19,6 +19,13 @@ public abstract class TextWidget extends Widget {
 		setWidth(20);
 		setHeight(30);
 	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public TextWidget(CornerAnchorPoint anchor, int xOffset, int yOffset) {
+		super(anchor, xOffset, yOffset);
+		setWidth(20);
+		setHeight(30);
+	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override

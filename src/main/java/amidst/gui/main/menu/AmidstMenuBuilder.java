@@ -129,6 +129,7 @@ public class AmidstMenuBuilder {
 		Menus.checkbox(result, settings.showFPS,              "Show Framerate");
 		Menus.checkbox(result, settings.showScale,            "Show Scale");
 		Menus.checkbox(result, settings.showDebug,            "Show Debug Information");
+		Menus.checkbox(result, settings.showUsage,            "Show CPU Usage");
 		// @formatter:on
 		result.addSeparator();
 		result.add(create_Settings_LookAndFeel());
