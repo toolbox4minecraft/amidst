@@ -41,14 +41,15 @@ public class FragmentManager {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public FragmentQueueProcessor createQueueProcessor(LayerManager layerManager, Setting<Dimension> dimensionSetting) {
+	public FragmentQueueProcessor createQueueProcessor(LayerManager layerManager, Setting<Dimension> dimensionSetting, Setting<Integer> threadsSetting) {
 		return new FragmentQueueProcessor(
 				availableQueue,
 				loadingQueue,
 				recycleQueue,
 				cache,
 				layerManager,
-				dimensionSetting);
+				dimensionSetting,
+				threadsSetting);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

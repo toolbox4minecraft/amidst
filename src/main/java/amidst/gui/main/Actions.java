@@ -28,6 +28,7 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
+import amidst.settings.Setting;
 import amidst.settings.biomeprofile.BiomeProfile;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.util.FileExtensionChecker;
@@ -340,6 +341,13 @@ public class Actions {
 			}
 		}
 		return false;
+	}
+	
+	public void tryChangeThreads() {
+		if (dialogs.askToConfirmYesNo("Change Threads",
+				"This setting does not take effect until you restart the program. Restart now?")) {
+			application.restart();
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

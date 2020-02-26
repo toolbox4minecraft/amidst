@@ -22,7 +22,25 @@ public class FragmentQueueProcessor {
 	private final FragmentCache cache;
 	private final LayerManager layerManager;
 	private final Setting<Dimension> dimensionSetting;
-	private ThreadPoolExecutor fragWorkers = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new ThreadFactory() {
+	private ThreadPoolExecutor fragWorkers;
+
+	@CalledByAny
+	public FragmentQueueProcessor(
+			ConcurrentLinkedQueue<Fragment> availableQueue,
+			ConcurrentLinkedQueue<Fragment> loadingQueue,
+			ConcurrentLinkedQueue<Fragment> recycleQueue,
+			FragmentCache cache,
+			LayerManager layerManager,
+			Setting<Dimension> dimensionSetting,
+			Setting<Integer> threadsSetting) {
+		this.availableQueue = availableQueue;
+		this.loadingQueue = loadingQueue;
+		this.recycleQueue = recycleQueue;
+		this.cache = cache;
+		this.layerManager = layerManager;
+		this.dimensionSetting = dimensionSetting;
+		
+		fragWorkers = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadsSetting.get(), new ThreadFactory() {
 			private int num;
 		
 			@Override
@@ -33,21 +51,6 @@ public class FragmentQueueProcessor {
 			}
 		}
 	);
-
-	@CalledByAny
-	public FragmentQueueProcessor(
-			ConcurrentLinkedQueue<Fragment> availableQueue,
-			ConcurrentLinkedQueue<Fragment> loadingQueue,
-			ConcurrentLinkedQueue<Fragment> recycleQueue,
-			FragmentCache cache,
-			LayerManager layerManager,
-			Setting<Dimension> dimensionSetting) {
-		this.availableQueue = availableQueue;
-		this.loadingQueue = loadingQueue;
-		this.recycleQueue = recycleQueue;
-		this.cache = cache;
-		this.layerManager = layerManager;
-		this.dimensionSetting = dimensionSetting;
 	}
 	
 	/**

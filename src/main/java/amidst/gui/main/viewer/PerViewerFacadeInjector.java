@@ -101,7 +101,7 @@ public class PerViewerFacadeInjector {
 				.create(settings, world, biomeSelection, worldIconSelection, zoom, accelerationCounter);
 		this.graph = new FragmentGraph(layerManager.getDeclarations(), fragmentManager);
 		this.translator = new FragmentGraphToScreenTranslator(graph, zoom);
-		this.fragmentQueueProcessor = fragmentManager.createQueueProcessor(layerManager, settings.dimension);
+		this.fragmentQueueProcessor = fragmentManager.createQueueProcessor(layerManager, settings.dimension, settings.threads);
 		this.layerReloader = layerManager.createLayerReloader(world);
 		this.progressMessageHolder = new ProgressMessageHolder();
 		this.widgets = createWidgets(

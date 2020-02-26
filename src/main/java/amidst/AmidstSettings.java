@@ -5,6 +5,8 @@ import java.util.prefs.Preferences;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
+import amidst.fragment.FragmentQueueProcessor;
+import amidst.gui.main.Actions;
 import amidst.gui.main.AmidstLookAndFeel;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
@@ -35,6 +37,7 @@ public class AmidstSettings {
 	public final Setting<Boolean> showFPS;
 	public final Setting<Boolean> showScale;
 	public final Setting<Boolean> showDebug;
+	public final Setting<Integer> threads;
 	public final Setting<AmidstLookAndFeel> lookAndFeel;
 
 	public final Setting<String> lastProfile;
@@ -69,6 +72,7 @@ public class AmidstSettings {
 		showFPS                    = Setting.createBoolean(  preferences, "showFPS",              true);
 		showScale                  = Setting.createBoolean(  preferences, "showScale",            true);
 		showDebug                  = Setting.createBoolean(  preferences, "showDebug",            false);
+		threads                    = Setting.createInteger(  preferences, "threads",              Runtime.getRuntime().availableProcessors());
 		lookAndFeel                = Setting.createEnum(     preferences, "lookAndFeel",          AmidstLookAndFeel.DEFAULT);
 
 		lastProfile                = Setting.createString(   preferences, "profile",              "");

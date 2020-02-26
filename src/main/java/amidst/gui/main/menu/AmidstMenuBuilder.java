@@ -1,13 +1,20 @@
 package amidst.gui.main.menu;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.AbstractButton;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JSlider;
+import javax.swing.MenuSelectionManager;
+import javax.swing.UIManager;
 
 import amidst.AmidstSettings;
 import amidst.FeatureToggles;
@@ -132,6 +139,7 @@ public class AmidstMenuBuilder {
 		// @formatter:on
 		result.addSeparator();
 		result.add(create_Settings_LookAndFeel());
+		result.add(create_Settings_Threads(result));
 		return result;
 	}
 
@@ -141,6 +149,40 @@ public class AmidstMenuBuilder {
 		Menus.radios(result, settings.worldType, WorldType.getWorldTypeSettingAvailableValues());
 		// @formatter:on
 		return result;
+	}
+	
+	private JMenu create_Settings_Threads(JMenu result) {
+		UIManager.put("Slider.focus", UIManager.get("Slider.background"));
+		int cores = Runtime.getRuntime().availableProcessors();
+		JMenu submenu = new JMenu("Number of Threads Used");
+		JSlider slider = Menus.slider(submenu, settings.threads, 1, cores);
+		slider.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if (e.getSource() instanceof JSlider) {
+					if(settings.threads.get().intValue() != ((JSlider) e.getSource()).getValue()) {
+						settings.threads.set(((JSlider) e.getSource()).getValue());
+						MenuSelectionManager.defaultManager().clearSelectedPath();
+						actions.tryChangeThreads();
+					}
+				}
+			}
+			public void mouseClicked(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {}
+			
+		});
+		slider.setMinorTickSpacing(1);
+		slider.setPaintTicks(true);
+		slider.setSnapToTicks(true);
+		slider.setPaintLabels(true);
+		Hashtable<Integer, JLabel> table = new Hashtable<Integer, JLabel>(3);
+		table.put(1, new JLabel("1"));
+		table.put(cores / 2, new JLabel("" + cores / 2));
+		table.put(cores, new JLabel("" + cores));
+		slider.setLabelTable(table);
+		return submenu;
 	}
 
 	private JMenu create_Settings_LookAndFeel() {

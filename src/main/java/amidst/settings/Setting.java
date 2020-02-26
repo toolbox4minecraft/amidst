@@ -23,6 +23,13 @@ public interface Setting<T> extends Supplier<T> {
 			value -> preferences.get(key, value),
 			value -> preferences.put(key, value));
 	}
+	
+	public static Setting<Integer> createInteger(Preferences preferences, String key, @NotNull Integer defaultValue) {
+		return new SettingBase<>(
+			defaultValue,
+			value -> preferences.getInt(key, value),
+			value -> preferences.putInt(key, value));
+	}
 
 	public static Setting<Boolean> createBoolean(Preferences preferences, String key, boolean defaultValue) {
 		return new SettingBase<>(

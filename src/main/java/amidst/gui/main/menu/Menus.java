@@ -1,5 +1,7 @@
 package amidst.gui.main.menu;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -10,6 +12,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JSlider;
 
 import amidst.documentation.Immutable;
 import amidst.settings.Setting;
@@ -138,5 +141,11 @@ public enum Menus {
 		menuItem.addActionListener(e -> runnable.run());
 		menu.add(menuItem);
 		return menuItem;
+	}
+	
+	public static JSlider slider(JMenu menu, Setting<Integer> setting, int min, int max) {
+		JSlider slider = new JSlider(JSlider.VERTICAL, min, max, setting.get());
+		menu.add(slider);
+		return slider;
 	}
 }
