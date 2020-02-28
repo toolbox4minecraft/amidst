@@ -1,6 +1,8 @@
 package amidst.mojangapi.minecraftinterface.legacy;
 
 import static amidst.mojangapi.minecraftinterface.legacy._1_13SymbolicNames.*;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_UTIL;
+import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.FIELD_UTIL_SERVER_EXECUTOR;
 
 import amidst.clazz.real.AccessFlags;
 import amidst.clazz.translator.ClassTranslator;
@@ -40,14 +42,6 @@ public enum _1_13ClassTranslator {
                     .optionalMethod(METHOD_BOOTSTRAP_REGISTER2, "b").end() // the name changed in 18w43c
                     .optionalMethod(METHOD_BOOTSTRAP_REGISTER3, "a").end() // the name changed again in 19w07a
 			.next()
-				.ifDetect(c ->
-					c.searchForLong(1000L)
-					&& c.searchForLong(2001L)
-					&& c.searchForLong(2000L)
-				)
-				.thenDeclareRequired(CLASS_LAYER_UTIL)
-					.requiredMethod(METHOD_LAYER_UTIL_INITIALIZE_ALL, "a").real("long").symbolic(CLASS_WORLD_TYPE).symbolic(CLASS_GEN_SETTINGS).end()
-			.next()
 				.ifDetect(c -> ( // before 18w46a
 						c.getNumberOfConstructors() == 1
 						&& c.getNumberOfFields() >= 15
@@ -73,6 +67,14 @@ public enum _1_13ClassTranslator {
 					.requiredConstructor(CONSTRUCTOR_GEN_SETTINGS).end()
 			.next()
 				.ifDetect(c ->
+					c.searchForLong(1000L)
+					&& c.searchForLong(2001L)
+					&& c.searchForLong(2000L)
+				)
+				.thenDeclareRequired(CLASS_LAYER_UTIL)
+					.requiredMethod(METHOD_LAYER_UTIL_GET_LAYERS, "a").real("long").symbolic(CLASS_WORLD_TYPE).symbolic(CLASS_GEN_SETTINGS).end()
+			.next()
+				.ifDetect(c ->
 					!c.getRealClassName().contains("$")
 					&& c.getRealSuperClassName().equals("java/lang/Object")
 					&& c.getNumberOfConstructors() == 1
@@ -83,41 +85,60 @@ public enum _1_13ClassTranslator {
 					    || c.hasMethodWithRealArgsReturning("int", "int", "int", "int", null))
 				)
 				.thenDeclareRequired(CLASS_GEN_LAYER)
-					.optionalMethod(METHOD_GEN_LAYER_GET_BIOME_DATA, "a").real("int").real("int").real("int").real("int").symbolic(CLASS_BIOME).end()
-					.optionalMethod(METHOD_GEN_LAYER_GET_BIOME_DATA2, "a").real("int").real("int").real("int").real("int").end() //changed in 18w47b
+					.optionalField(FIELD_GEN_LAYER_LAZY_AREA_FACTORY, "a")
+					.optionalField(FIELD_GEN_LAYER_LAZY_AREA, "b")
 			.next()
-				.ifDetect(c ->
-					c.getNumberOfConstructors() == 1
-					&& c.getNumberOfFields() > 0
-					&& c.getField(0).hasFlags(AccessFlags.STATIC | AccessFlags.FINAL)
-					&& c.searchForFloat(0.62222224F)
+				.ifDetect(c -> 
+					(c.getNumberOfMethods() == 2 || c.getNumberOfMethods() == 3)
+					&& (c.getNumberOfFields() == 3 || c.getNumberOfFields() == 4)
+					&& c.searchForInt(Integer.MIN_VALUE)
+					&& c.getRealSuperClassName().equals("java/lang/Object")
+					&& c.getNumberOfConstructors() == 1
+					&& c.getField(0).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
+					&& c.getField(1).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
+					&& c.getField(2).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
+					&& c.hasMethodWithRealArgsReturning("int", "int", "int")
+					&& c.hasMethodWithNoArgs()
+					&& c.isFinal()
 				)
-				.thenDeclareRequired(CLASS_BIOME)
-					.optionalMethod(METHOD_BIOME_GET_ID, "a").symbolic(CLASS_BIOME).end()
+				.thenDeclareRequired(CLASS_LAZY_AREA)
+					.optionalMethod(METHOD_LAZY_AREA_GET, "a").real("int").real("int").end()
+					.requiredField(FIELD_LAZY_AREA_PIXEL_TRANSFORMER, "a")
 			.next()
-				.ifDetect(c ->
-						c.getNumberOfConstructors() == 3
-						&& c.getNumberOfFields() == 3
-						&& c.getField(0).hasFlags(AccessFlags.PRIVATE | AccessFlags.STATIC | AccessFlags.FINAL)
-						&& c.searchForUtf8EqualTo("argument.id.invalid")
-						&& c.searchForUtf8EqualTo("minecraft")
+				.ifDetect(c -> 
+					c.getRealClassName().equals("bzg")
 				)
-				.thenDeclareOptional(CLASS_REGISTRY_KEY)
-					.requiredConstructor(CONSTRUCTOR_REGISTRY_KEY).real("java.lang.String").end()
+				.thenDeclareOptional(CLASS_AREA_DIMENSION)
+					.optionalConstructor(CONSTRUCTOR_AREA_DIMENSION).real("int").real("int").real("int").real("int").end()
 			.next()
-				.ifDetect(c -> c.getNumberOfConstructors() <= 1
-					&& c.getNumberOfFields() > 15
-					&& c.searchForUtf8EqualTo("block")
-					&& c.searchForUtf8EqualTo("potion")
-					&& c.searchForUtf8EqualTo("biome")
-					&& c.searchForUtf8EqualTo("item")
+				.ifDetect(c -> 
+					c.isInterface()
+					&& c.getNumberOfMethods() == 1
+					&& c.getNumberOfConstructors() == 0
+					&& c.getNumberOfFields() == 0
+					&& c.searchForUtf8EqualTo("make")
 				)
-				.thenDeclareOptional(CLASS_REGISTRY)
-					.requiredField(FIELD_REGISTRY_META_REGISTRY, "f")
-					.requiredMethod(METHOD_REGISTRY_GET_ID, "a").real("java.lang.Object").end()
-					.optionalMethod(METHOD_REGISTRY_GET_BY_KEY, "b").symbolic(CLASS_REGISTRY_KEY).end()
-					.optionalMethod(METHOD_REGISTRY_GET_BY_KEY2, "a").symbolic(CLASS_REGISTRY_KEY).end()  // the name changed in 18w43c
-
+				.thenDeclareOptional(CLASS_AREA_FACTORY)
+					.optionalMethod(METHOD_AREA_FACTORY_MAKE, "make").symbolic(CLASS_AREA_DIMENSION).end()
+			.next()
+				.ifDetect(c -> 
+					c.isInterface()
+					&& c.hasMethodWithRealArgsReturning("int", "int", "int")
+					&& c.getNumberOfMethods() == 1
+					&& c.getNumberOfConstructors() == 0
+					&& c.getNumberOfFields() == 0
+					&& c.searchForUtf8EqualTo("apply")
+				)
+				.thenDeclareRequired(CLASS_PIXEL_TRANSFORMER)
+					.requiredMethod(METHOD_PIXEL_TRANSFORMER_APPLY, "apply").real("int").real("int").end()
+			.next()
+				.ifDetect(c -> 
+					c.searchForStringContaining("Server-Worker-")
+					&& c.searchForStringContaining("os.name")
+					&& c.searchForLong(1000000L)
+				)
+				.thenDeclareOptional(CLASS_UTIL)
+					.optionalField(FIELD_UTIL_SERVER_EXECUTOR, "c")
 			.construct();
 	}
 	// @formatter:on

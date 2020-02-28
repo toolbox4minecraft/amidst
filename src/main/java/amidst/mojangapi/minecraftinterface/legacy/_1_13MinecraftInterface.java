@@ -1,11 +1,11 @@
 package amidst.mojangapi.minecraftinterface.legacy;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.function.Predicate;
 
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
@@ -13,290 +13,235 @@ import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.minecraftinterface.local.SymbolicNames;
 import amidst.mojangapi.world.WorldType;
+
+import static amidst.mojangapi.minecraftinterface.legacy._1_13SymbolicNames.*;
 
 public class _1_13MinecraftInterface implements MinecraftInterface {
     public static final RecognisedVersion LAST_COMPATIBLE_VERSION = RecognisedVersion._19w35a;
 
+	private boolean isInitialized = false;
+	private final RecognisedVersion recognisedVersion;
+	
 	private final SymbolicClass bootstrapClass;
 	private final SymbolicClass worldTypeClass;
 	private final SymbolicClass genSettingsClass;
 	private final SymbolicClass layerUtilClass;
 	private final SymbolicClass genLayerClass;
-	private final SymbolicClass biomeClass;
-	private final SymbolicClass registryClass;
-	private final SymbolicClass registryKeyClass;
-
-	private boolean isBootstrapCalled = false;
-
-	private final RecognisedVersion recognisedVersion;
+	private final SymbolicClass lazyAreaClass;
+	private final SymbolicClass pixelTransformerClass;
+	private final SymbolicClass areaDimensionClass;
+	private final SymbolicClass utilClass;
 
 	/**
-	 * The Biome.getId method handle. If version < 18w33a, the signature is: int
-	 * getId(Biome) If version >= 18w33a, the signature is: int
-	 * getId(Registry<Biome>, Biome)
+	 * Two PixelTransformer instances for the current world that are given
+	 * to each thread, giving direct access to the quarter and full scale
+	 * biome data.
 	 */
-	private MethodHandle biomeGetIdMethod;
+	private ThreadLocal<Object[]> threadedPixelTransformers;
 
 	/**
-	 * The biome registry, for use with versions >= 18w33a
+	 * A method used to retrieve the biome data from a PixelTransformer.
+	 * We create a SymbolicMethod for it so we dont lose performance
+	 * searching the SymbolicClass for it every time it's called.
 	 */
-	private Object biomeRegistry;
+	private Method getBiomesMethod;
 
 	/**
-	 * A GenLayer instance, at quarter scale to the final biome layer (i.e. both
-	 * axis are divided by 4). Minecraft calculates biomes at
-	 * quarter-resolution, then noisily interpolates the biome-map up to 1:1
-	 * resolution when needed, this is the biome GenLayer before it is
-	 * interpolated.
+	 * An array used to return biome data. It's a ThreadLocal so
+	 * different threads don't try to access the same array at the same
+	 * time.
 	 */
-	private volatile SymbolicObject quarterResolutionBiomeGenerator;
-
-	/**
-	 * A GenLayer instance, the biome layer. (1:1 scale) Minecraft calculates
-	 * biomes at quarter-resolution, then noisily interpolates the biome-map up
-	 * to 1:1 resolution when needed, this is the interpolated biome GenLayer.
-	 */
-	private volatile SymbolicObject fullResolutionBiomeGenerator;
-
-	/**
-	 * An array used to return biome data
-	 */
-	private volatile int[] dataArray = new int[256];
-
-	public _1_13MinecraftInterface(
-			SymbolicClass bootstrapClass,
-			SymbolicClass worldTypeClass,
-			SymbolicClass genSettingsClass,
-			SymbolicClass genLayerClass,
-			SymbolicClass layerUtilClass,
-			SymbolicClass biomeClass,
-			SymbolicClass registryClass,
-			SymbolicClass registryKeyClass,
-			RecognisedVersion recognisedVersion) {
-		this.bootstrapClass = bootstrapClass;
-		this.worldTypeClass = worldTypeClass;
-		this.genSettingsClass = genSettingsClass;
-		this.genLayerClass = genLayerClass;
-		this.layerUtilClass = layerUtilClass;
-		this.biomeClass = biomeClass;
-		this.registryClass = registryClass;
-		this.registryKeyClass = registryKeyClass;
-
-		this.recognisedVersion = recognisedVersion;
-	}
+	private ThreadLocal<int[]> dataArray = ThreadLocal.withInitial(() -> new int[256]);
 
 	public _1_13MinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
-		this(
-				symbolicClassMap.get(_1_13SymbolicNames.CLASS_BOOTSTRAP),
-				symbolicClassMap.get(_1_13SymbolicNames.CLASS_WORLD_TYPE),
-				symbolicClassMap.get(_1_13SymbolicNames.CLASS_GEN_SETTINGS),
-				symbolicClassMap.get(_1_13SymbolicNames.CLASS_GEN_LAYER),
-				symbolicClassMap.get(_1_13SymbolicNames.CLASS_LAYER_UTIL),
-				symbolicClassMap.get(_1_13SymbolicNames.CLASS_BIOME),
-				symbolicClassMap.get(_1_13SymbolicNames.CLASS_REGISTRY),
-				symbolicClassMap.get(_1_13SymbolicNames.CLASS_REGISTRY_KEY),
-				recognisedVersion);
+		this.recognisedVersion = recognisedVersion;
+		this.bootstrapClass = symbolicClassMap.get(CLASS_BOOTSTRAP);
+		this.worldTypeClass = symbolicClassMap.get(CLASS_WORLD_TYPE);
+		this.genSettingsClass = symbolicClassMap.get(CLASS_GEN_SETTINGS);
+		this.layerUtilClass = symbolicClassMap.get(CLASS_LAYER_UTIL);
+		this.genLayerClass = symbolicClassMap.get(CLASS_GEN_LAYER);
+		this.lazyAreaClass = symbolicClassMap.get(CLASS_LAZY_AREA);
+		this.pixelTransformerClass = symbolicClassMap.get(CLASS_PIXEL_TRANSFORMER);
+		this.areaDimensionClass = symbolicClassMap.get(CLASS_AREA_DIMENSION);
+		this.utilClass = symbolicClassMap.get(CLASS_UTIL);
 	}
 
 	@Override
 	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
-		try {
-			if (biomeGetIdMethod == null) {
-				biomeGetIdMethod = getBiomeGetIdHandle();
-			}
+		if (!isInitialized) {
+			throw new MinecraftInterfaceException("no world was created");
+		}
 
-			int[] data = ensureArrayCapacity(width * height);
+		int[] data = ensureArrayCapacity(width * height);
+
+		try {
 
 			/**
-			 * We break the region in 16x16 chunks, to get better performance
-			 * out of the LazyArea used by the game. Sadly, we get no
-			 * performance gain in 18w16a and newer, but in previous snapshots
-			 * we get a ~1.5x improvement.
+			 * We break the region in 16x16 chunks, to get better performance out
+			 * of the LazyArea used by the game. This gives a ~2x improvement.
 			 */
-			if (RecognisedVersion.isNewerOrEqualTo(recognisedVersion, RecognisedVersion._18w16a)) {
-				Object[] biomes = getBiomeDataInner(x, y, width, height, useQuarterResolution);
-				for (int i = 0; i < biomes.length; i++) {
-					data[i] = getBiomeId(biomes[i]);
-				}
-			} else {
-				int chunkSize = 16;
-				for (int x0 = 0; x0 < width; x0 += chunkSize) {
-					int w = Math.min(chunkSize, width - x0);
+			int chunkSize = 16;
+			for (int x0 = 0; x0 < width; x0 += chunkSize) {
+				int w = Math.min(chunkSize, width - x0);
 
-					for (int y0 = 0; y0 < height; y0 += chunkSize) {
-						int h = Math.min(chunkSize, height - y0);
+				for (int y0 = 0; y0 < height; y0 += chunkSize) {
+					int h = Math.min(chunkSize, height - y0);
 
-						Object[] biomes = getBiomeDataInner(x + x0, y + y0, w, h, useQuarterResolution);
-
-						for (int i = 0; i < w; i++) {
-							for (int j = 0; j < h; j++) {
-								int idx = i + j * w;
-								int trueIdx = (x0 + i) + (y0 + j) * width;
-								data[trueIdx] = getBiomeId(biomes[idx]);
-							}
+					for (int i = 0; i < w; i++) {
+						for (int j = 0; j < h; j++) {
+							int trueIdx = (x0 + i) + (y0 + j) * width;
+							data[trueIdx] = getBiomeIdAt(x + x0 + i, y + y0 + j, useQuarterResolution);
 						}
 					}
 				}
 			}
-			return data;
-		} catch (
-				IllegalAccessException
-				| IllegalArgumentException
-				| InvocationTargetException
-				| InstantiationException e) {
+		} catch (Throwable e) {
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
+
+		return data;
 	}
 
-	private Object[] getBiomeDataInner(int x, int y, int width, int height, boolean useQuarterResolution)
-			throws IllegalAccessException,
-			IllegalArgumentException,
-			InvocationTargetException {
-		SymbolicObject biomeGen = getBiomeGenerator(useQuarterResolution);
-		Object[] biomes = null;
-		if(genLayerClass.hasMethod(_1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA)) {
-			biomes = (Object[]) biomeGen.callMethod(
-					_1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA, x, y, width, height, null);
+	private int getBiomeIdAt(int x, int y, boolean useQuarterResolution) throws Throwable {
+		if(useQuarterResolution) {
+			return (int) getBiomesMethod.invoke(threadedPixelTransformers.get()[1], x, y);
 		} else {
-			biomes = (Object[]) biomeGen.callMethod(
-					_1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA2, x, y, width, height);
+			return(int) getBiomesMethod.invoke(threadedPixelTransformers.get()[0], x, y);
 		}
-		return biomes;
 	}
 
-	private MethodHandle getBiomeGetIdHandle()
-			throws IllegalArgumentException,
-			IllegalAccessException,
-			InstantiationException,
-			InvocationTargetException {
-		Method biomeRawMethod = biomeClass.getMethod(_1_13SymbolicNames.METHOD_BIOME_GET_ID).getRawMethod();
-		if (registryKeyClass != null && !biomeRawMethod.getReturnType().equals(Integer.TYPE)) {
-			biomeRegistry = getBiomeRegistry();
-			biomeRawMethod = registryClass.getMethod(_1_13SymbolicNames.METHOD_REGISTRY_GET_ID).getRawMethod();
+	public int getBiomeIdAt(int x, int y) throws MinecraftInterfaceException {
+		try {
+			return getBiomeIdAt(x, y, false);
+		} catch (Throwable e) {
+			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
-		return MethodHandles.lookup().unreflect(biomeRawMethod);
-	}
-
-	private Object getBiomeRegistry()
-			throws IllegalArgumentException,
-			IllegalAccessException,
-			InstantiationException,
-			InvocationTargetException {
-		SymbolicObject metaRegistry = (SymbolicObject) registryClass
-				.getStaticFieldValue(_1_13SymbolicNames.FIELD_REGISTRY_META_REGISTRY);
-		Object biomeRegistryKey = registryKeyClass
-				.callConstructor(_1_13SymbolicNames.CONSTRUCTOR_REGISTRY_KEY, "biome")
-				.getObject();
-
-		String getByKey = _1_13SymbolicNames.METHOD_REGISTRY_GET_BY_KEY;
-		if (!registryClass.getMethod(getByKey).hasReturnType(Object.class)) {
-			getByKey = _1_13SymbolicNames.METHOD_REGISTRY_GET_BY_KEY2;
-		}
-
-		Object biomeRegistryObj = metaRegistry.callMethod(getByKey, biomeRegistryKey);
-		return biomeRegistryObj;
 	}
 
 	@Override
 	public synchronized void createWorld(long seed, WorldType worldType, String generatorOptions)
 			throws MinecraftInterfaceException {
+		initializeIfNeeded();
 
 		try {
-			if (!isBootstrapCalled) {
-				callBootstrapRegister();
-				isBootstrapCalled = true;
-			}
+			threadedPixelTransformers = ThreadLocal.withInitial(() -> {
+				try {
+					return createPixelTransformersArray(seed, worldType);
+				} catch (Exception e) {
+					MinecraftInterfaceException e1 = new MinecraftInterfaceException("unable to create pixel transformer", e);
+					AmidstLogger.error(e1);
+					System.exit(2);
+					return null;
+				}
+			});
 
-			// @formatter:off
-			Object[] genLayers = (Object[]) layerUtilClass.callStaticMethod(
-				_1_13SymbolicNames.METHOD_LAYER_UTIL_INITIALIZE_ALL,
-				seed,
-				getWorldType(worldType).getObject(),
-				getGenSettings(generatorOptions).getObject()
-			);
-			// @formatter:on
-
-			quarterResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[0]);
-			fullResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[1]);
-
-		} catch (
-				IllegalAccessException
-				| IllegalArgumentException
-				| InvocationTargetException
-				| InstantiationException e) {
+		} catch(IllegalArgumentException e) {
 			throw new MinecraftInterfaceException("unable to create world", e);
 		}
 	}
 
+	private void initializeIfNeeded() throws MinecraftInterfaceException {
+		if (isInitialized) {
+			return;
+		}
+		try {
+			getBiomesMethod = pixelTransformerClass.getMethod(METHOD_PIXEL_TRANSFORMER_APPLY).getRawMethod();
+			callBootstrapRegister();
+			
+			try {
+				((ExecutorService) utilClass.getStaticFieldValue(SymbolicNames.FIELD_UTIL_SERVER_EXECUTOR)).shutdownNow();
+			} catch (NullPointerException e) {
+				AmidstLogger.warn("Unable to shut down Server-Worker threads");
+			}
+
+		} catch(IllegalArgumentException
+				| IllegalAccessException
+				| InvocationTargetException e) {
+			throw new MinecraftInterfaceException("unable to initialize the MinecraftInterface", e);
+		}
+
+		isInitialized = true;
+	}
+
+	private Object[] createPixelTransformersArray(long seed, WorldType worldType)
+			throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException {
+		Object worldTypeObj = worldTypeClass.getField(worldType.getSymbolicFieldName()).getRawField().get(null);
+		
+		Object genSettingsObj = genSettingsClass.getConstructor(CONSTRUCTOR_GEN_SETTINGS).getRawConstructor().newInstance(new Object[] {});
+		
+		Object[] genLayers = (Object[]) layerUtilClass.callStaticMethod(
+								METHOD_LAYER_UTIL_GET_LAYERS,
+								seed,
+								worldTypeObj,
+								genSettingsObj
+							);
+		
+		Object[] pixelTransformers = new Object[2];
+		
+		if (RecognisedVersion.isOlder(recognisedVersion, RecognisedVersion._18w47b)) {
+			SymbolicObject[] areaFactoryObjs = {
+				(SymbolicObject) new SymbolicObject(genLayerClass, genLayers[0]).getFieldValue(FIELD_GEN_LAYER_LAZY_AREA_FACTORY),
+				(SymbolicObject) new SymbolicObject(genLayerClass, genLayers[1]).getFieldValue(FIELD_GEN_LAYER_LAZY_AREA_FACTORY)
+			};
+			
+			Object areaDimensionObj = areaDimensionClass.getConstructor(CONSTRUCTOR_AREA_DIMENSION).getRawConstructor().newInstance(0, 0, 0, 0);
+			
+			for (int i = 0; i < areaFactoryObjs.length; i++) {
+				SymbolicObject lazyAreaObj = new SymbolicObject(lazyAreaClass, areaFactoryObjs[i].callMethod(METHOD_AREA_FACTORY_MAKE, areaDimensionObj));
+				pixelTransformers[i] = ((SymbolicObject) lazyAreaClass.getFieldValue(FIELD_LAZY_AREA_PIXEL_TRANSFORMER, lazyAreaObj)).getObject();
+			}
+			
+		} else {
+			SymbolicObject[] lazyAreaObjs = {
+				(SymbolicObject) new SymbolicObject(genLayerClass, genLayers[0]).getFieldValue(FIELD_GEN_LAYER_LAZY_AREA),
+				(SymbolicObject) new SymbolicObject(genLayerClass, genLayers[1]).getFieldValue(FIELD_GEN_LAYER_LAZY_AREA)
+			};
+			
+			for (int i = 0; i < lazyAreaObjs.length; i++) {
+				pixelTransformers[i] = ((SymbolicObject) lazyAreaClass.getFieldValue(FIELD_LAZY_AREA_PIXEL_TRANSFORMER, lazyAreaObjs[i])).getObject();
+			}
+		}
+		
+		return pixelTransformers;
+	}
+	
 	private void callBootstrapRegister()
-			throws IllegalAccessException,
-			IllegalArgumentException,
-			InvocationTargetException {
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		String register = _1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER;
-		if(RecognisedVersion.isNewer(recognisedVersion, RecognisedVersion._1_13_2)) {
-			if(bootstrapClass.getMethod(_1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER3).hasModifiers(Modifier.PUBLIC)) {
+		if (RecognisedVersion.isNewer(recognisedVersion, RecognisedVersion._1_13_2)) {
+			if (bootstrapClass.getMethod(_1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER3).hasModifiers(Modifier.PUBLIC)) {
 				register = _1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER3;
 			} else if (bootstrapClass.getMethod(register).hasModifiers(Modifier.PRIVATE)) {
 				register = _1_13SymbolicNames.METHOD_BOOTSTRAP_REGISTER2;
 			}
 		}
-
+		
 		bootstrapClass.callStaticMethod(register);
 	}
-
-	private SymbolicObject getBiomeGenerator(boolean useQuarterResolution) {
-		if (useQuarterResolution) {
-			return quarterResolutionBiomeGenerator;
-		} else {
-			return fullResolutionBiomeGenerator;
-		}
-	}
-
-	private SymbolicObject getWorldType(WorldType worldType) throws IllegalArgumentException, IllegalAccessException {
-		return (SymbolicObject) worldTypeClass.getStaticFieldValue(worldType.getSymbolicFieldName());
-	}
-
-	private SymbolicObject getGenSettings(String generatorOptions)
-			throws IllegalArgumentException,
-			IllegalAccessException,
-			InstantiationException,
-			InvocationTargetException {
-		if (!generatorOptions.isEmpty()) {
-			AmidstLogger.warn("Custom generator options aren't supported in this version");
-		}
-		return genSettingsClass.callConstructor(_1_13SymbolicNames.CONSTRUCTOR_GEN_SETTINGS);
-	}
-
-	private int getBiomeId(Object biome) throws MinecraftInterfaceException {
-		try {
-			if (biomeRegistry != null) {
-				return (int) biomeGetIdMethod.invoke(biomeRegistry, biome);
-			} else {
-				return (int) biomeGetIdMethod.invoke(biome);
-			}
-		} catch (Throwable e) {
-			e.printStackTrace();
-			throw new MinecraftInterfaceException("unable to get biome data", e);
-		}
-	}
-
-	private int[] ensureArrayCapacity(int length) {
-		int cur = dataArray.length;
-		if (length <= cur)
-			return dataArray;
-
-		while (cur < length)
-			cur *= 2;
-
-		dataArray = new int[cur];
-		return dataArray;
-	}
-
+	
 	@Override
 	public RecognisedVersion getRecognisedVersion() {
 		return recognisedVersion;
 	}
 
+	private int[] ensureArrayCapacity(int length) throws MinecraftInterfaceException {
+		if (length > 1073741824) {
+			throw new MinecraftInterfaceException("Biome data array size exceeds maximum limit");
+		} else {
+			int[] currentArray = dataArray.get();
+			int cur = currentArray.length;
+			if (length <= cur)
+				return currentArray;
+
+			while (cur < length)
+				cur *= 2;
+
+			currentArray = new int[cur];
+			dataArray.set(currentArray);
+			return currentArray;
+		}
+	}
 }

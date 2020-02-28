@@ -77,7 +77,7 @@ public class FragmentQueueProcessor {
 					LockSupport.unpark(flThread);
 				});
 			}
-			LockSupport.park();
+			LockSupport.parkNanos(1000000000); // if for some reason unpark was never called, eventually unpark itself
 		}
 		layerManager.clearInvalidatedLayers();
 	}

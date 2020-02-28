@@ -100,8 +100,8 @@ public enum DefaultClassTranslator {
 					&& c.isFinal()
 				)
 				.thenDeclareRequired(CLASS_LAZY_AREA)
-					.requiredMethod(METHOD_LAZY_AREA_GET, "a").real("int").real("int").end()
-					.optionalField(FIELD_LAZY_AREA_PIXEL_TRANSFORMER, "a")
+					.optionalMethod(METHOD_LAZY_AREA_GET, "a").real("int").real("int").end()
+					.requiredField(FIELD_LAZY_AREA_PIXEL_TRANSFORMER, "a")
 			.next()
 				.ifDetect(c -> 
 					c.searchForFloat(0.25f)
