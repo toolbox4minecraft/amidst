@@ -1,7 +1,5 @@
 package amidst.gui.main.menu;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

@@ -5,8 +5,6 @@ import java.util.prefs.Preferences;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
-import amidst.fragment.FragmentQueueProcessor;
-import amidst.gui.main.Actions;
 import amidst.gui.main.AmidstLookAndFeel;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;

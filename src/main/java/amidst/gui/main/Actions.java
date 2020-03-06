@@ -28,7 +28,6 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
-import amidst.settings.Setting;
 import amidst.settings.biomeprofile.BiomeProfile;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.util.FileExtensionChecker;
