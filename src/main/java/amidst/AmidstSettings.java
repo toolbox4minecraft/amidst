@@ -70,7 +70,6 @@ public class AmidstSettings {
 		showFPS                    = Setting.createBoolean(  preferences, "showFPS",              true);
 		showScale                  = Setting.createBoolean(  preferences, "showScale",            true);
 		showDebug                  = Setting.createBoolean(  preferences, "showDebug",            false);
-		showUsage                  = Setting.createBoolean(  preferences, "showUsage",            false);
 		lookAndFeel                = Setting.createEnum(     preferences, "lookAndFeel",          AmidstLookAndFeel.DEFAULT);
 
 		lastProfile                = Setting.createString(   preferences, "profile",              "");
