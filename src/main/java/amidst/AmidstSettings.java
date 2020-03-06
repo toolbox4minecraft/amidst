@@ -35,7 +35,6 @@ public class AmidstSettings {
 	public final Setting<Boolean> showFPS;
 	public final Setting<Boolean> showScale;
 	public final Setting<Boolean> showDebug;
-	public final Setting<Boolean> showUsage;
 	public final Setting<AmidstLookAndFeel> lookAndFeel;
 
 	public final Setting<String> lastProfile;
