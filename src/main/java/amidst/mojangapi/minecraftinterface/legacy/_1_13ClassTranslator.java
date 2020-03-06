@@ -1,8 +1,6 @@
 package amidst.mojangapi.minecraftinterface.legacy;
 
 import static amidst.mojangapi.minecraftinterface.legacy._1_13SymbolicNames.*;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.CLASS_UTIL;
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.FIELD_UTIL_SERVER_EXECUTOR;
 
 import amidst.clazz.real.AccessFlags;
 import amidst.clazz.translator.ClassTranslator;
