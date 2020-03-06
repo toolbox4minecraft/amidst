@@ -19,7 +19,7 @@ public class ImageLoader extends FragmentLoader {
 	private final ColorProvider colorProvider;
 	private final int size;
 	private final ThreadLocal<int[]> rgbArray;
-	private volatile ThreadLocal<BufferedImage> bufferedImage;
+	private final ThreadLocal<BufferedImage> bufferedImage;
 
 	@CalledByAny
 	public ImageLoader(LayerDeclaration declaration, Resolution resolution, ColorProvider colorProvider) {
