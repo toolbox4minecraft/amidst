@@ -69,15 +69,15 @@ public class FragmentQueueProcessor {
 			while (fragWorkers.getActiveCount() < maxSize) {
 				fragWorkers.execute(() -> {
 					Fragment f = loadingQueue.poll();
-					if (f != null) {
+					if (f != null && dimension.equals(dimensionSetting.get())) {
 						loadFragment(dimension, f);
-						updateLayerManager(dimensionSetting.get());
+						updateLayerManager(dimension);
 						processRecycleQueue();
 					}
 					LockSupport.unpark(flThread);
 				});
 			}
-			LockSupport.parkNanos(1000000000); // if for some reason unpark was never called, eventually unpark itself
+			LockSupport.parkNanos(1000000000); // if for some reason unpark was never called, unpark after 1 second
 		}
 		layerManager.clearInvalidatedLayers();
 	}
@@ -112,17 +112,7 @@ public class FragmentQueueProcessor {
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void recycleFragment(Fragment fragment) {
 		fragment.recycle();
-		removeFromLoadingQueue(fragment);
 		availableQueue.offer(fragment);
 	}
-
-	// TODO: Check performance with and without this. It is not needed, since
-	// loadFragment checks for isInitialized(). It helps to keep the
-	// loadingQueue small, but it costs time to remove fragments from the queue.
-	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private void removeFromLoadingQueue(Object fragment) {
-		while (loadingQueue.remove(fragment)) {
-			// noop
-		}
-	}
+	
 }
