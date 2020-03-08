@@ -14,6 +14,22 @@ import amidst.fragment.layer.LayerManager;
 import amidst.mojangapi.world.Dimension;
 import amidst.settings.Setting;
 
+/**
+ * The way multithreading is implemented here is pretty simple. First,
+ * the ThreadPoolExecutor {@link #fragWorkers} is created when the
+ * constructor of this class is made. Then, when
+ * {@link #processQueues()} is called, we make sure that we are only
+ * adding to the Executor queue when there are threads available to do
+ * it. Otherwise, this thread parks until one of the threads in
+ * fragWorkers notifies that it is ready to accept another request. If
+ * this thread is never unparked by a thread in the thread pool, we
+ * unpark after 1 second so the program doesn't hang.<br>
+ * <br>
+ * I'm very hesitant to remove the @NotThreadSafe annotation here due
+ * to some of the methods here not being able to be called by multiple
+ * threads. If someone in the future knows for sure that the methods
+ * here are thread safe, please remove the annotation.
+ */
 @NotThreadSafe
 public class FragmentQueueProcessor {
 	private final ConcurrentLinkedQueue<Fragment> availableQueue;
@@ -22,6 +38,10 @@ public class FragmentQueueProcessor {
 	private final FragmentCache cache;
 	private final LayerManager layerManager;
 	private final Setting<Dimension> dimensionSetting;
+	
+	/**
+	 * The thread pool used in fragment loading.
+	 */
 	private ThreadPoolExecutor fragWorkers;
 
 	@CalledByAny
@@ -40,7 +60,7 @@ public class FragmentQueueProcessor {
 		this.layerManager = layerManager;
 		this.dimensionSetting = dimensionSetting;
 		
-		fragWorkers = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadsSetting.get(), new ThreadFactory() {
+		this.fragWorkers = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadsSetting.get(), new ThreadFactory() {
 			private int num;
 		
 			@Override
@@ -56,7 +76,9 @@ public class FragmentQueueProcessor {
 	/**
 	 * It is important that the dimension setting is the same while a fragment
 	 * is loaded by different fragment loaders. This is why the dimension
-	 * setting is read by the fragment loader thread.
+	 * setting is read by the fragment loader thread.<br><br>
+	 * For information about how multithreading works here, see
+	 * {@link FragmentQueueProcessor}
 	 */
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void processQueues() {
