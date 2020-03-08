@@ -29,6 +29,7 @@ import amidst.gui.main.viewer.widget.Widget;
 import amidst.gui.main.viewer.widget.Widget.CornerAnchorPoint;
 import amidst.gui.main.viewer.widget.WidgetManager;
 import amidst.mojangapi.world.World;
+import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.export.WorldExporter;
 import amidst.mojangapi.world.export.WorldExporterConfiguration;
 import amidst.threading.WorkerExecutor;
@@ -50,11 +51,12 @@ public class PerViewerFacadeInjector {
 			Supplier<String> progressText) {
 		// @formatter:off
 		BiomeWidget biomeWidget = new BiomeWidget(CornerAnchorPoint.NONE, biomeSelection, layerReloader, settings.biomeProfileSelection);
+		WorldOptions worldOptions = world.getWorldOptions();
 		return Arrays.asList(
 				new ChangeableTextWidget(   CornerAnchorPoint.CENTER,        progressText),
 				new FpsWidget(              CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              settings.showFPS),
 				new ScaleWidget(            CornerAnchorPoint.BOTTOM_CENTER, zoom,                               settings.showScale),
-				new SeedAndWorldTypeWidget( CornerAnchorPoint.TOP_LEFT,      world.getWorldSeed(), world.getWorldType()),
+				new SeedAndWorldTypeWidget( CornerAnchorPoint.TOP_LEFT,      worldOptions.getWorldSeed(), worldOptions.getWorldType()),
 				new SelectedIconWidget(     CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
 				new DebugWidget(            CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, settings.showDebug, accelerationCounter),
 				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension),

@@ -15,8 +15,7 @@ import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerReloader;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.World;
-import amidst.mojangapi.world.WorldSeed;
-import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.export.WorldExporter;
 import amidst.mojangapi.world.export.WorldExporterConfiguration;
@@ -143,13 +142,8 @@ public class ViewerFacade {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public WorldSeed getWorldSeed() {
-		return world.getWorldSeed();
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public WorldType getWorldType() {
-		return world.getWorldType();
+	public WorldOptions getWorldOptions() {
+		return world.getWorldOptions();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -200,7 +194,7 @@ public class ViewerFacade {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean hasLayer(int layerId) {
-		return world.getVersionFeatures().hasLayer(layerId);
+		return world.getEnabledLayers().contains(layerId);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

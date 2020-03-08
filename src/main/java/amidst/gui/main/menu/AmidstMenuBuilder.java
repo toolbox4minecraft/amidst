@@ -133,7 +133,7 @@ public class AmidstMenuBuilder {
 		Menus.checkbox(result, settings.smoothScrolling,      "Smooth Scrolling");
 		Menus.checkbox(result, settings.fragmentFading,       "Fragment Fading");
 		Menus.checkbox(result, settings.maxZoom,              "Restrict Maximum Zoom");
-		Menus.checkbox(result, settings.showFPS,              "Show Framerate");
+		Menus.checkbox(result, settings.showFPS,              "Show Framerate & CPU");
 		Menus.checkbox(result, settings.showScale,            "Show Scale");
 		Menus.checkbox(result, settings.showDebug,            "Show Debug Information");
 		// @formatter:on
