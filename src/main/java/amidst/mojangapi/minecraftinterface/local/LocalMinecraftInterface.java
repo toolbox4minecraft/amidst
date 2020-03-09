@@ -1,6 +1,5 @@
 package amidst.mojangapi.minecraftinterface.local;
 
-import java.lang.invoke.WrongMethodTypeException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -146,14 +145,17 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 					}
 				}
 			}
-		} catch (Throwable e) {
+		} catch (IllegalAccessException
+				|IllegalArgumentException
+				| InvocationTargetException e) {
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
 		
 		return data;
 	}
 
-	private int getBiomeIdAt(int x, int y, boolean useQuarterResolution) throws Throwable {
+	private int getBiomeIdAt(int x, int y, boolean useQuarterResolution)
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		if(useQuarterResolution) {
 			return (int) getQuarterResBiomeMethod.invoke(threadedPixelTransformer.get(), x, y);
 		} else {
@@ -282,12 +284,12 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	}
 	
 	private int getIdFromBiome(Object biome)
-			throws WrongMethodTypeException, Throwable {
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		return (int) getIdFromBiomeMethod.invoke(biomeRegistry, biome);
 	}
 	
 	private Object getBiomeFromId(int id)
-			throws WrongMethodTypeException, Throwable {
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		return getBiomeFromIdMethod.invoke(biomeRegistry, id);
 	}
 }
