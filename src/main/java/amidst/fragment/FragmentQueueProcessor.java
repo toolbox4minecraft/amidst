@@ -95,8 +95,8 @@ public class FragmentQueueProcessor {
 						loadFragment(dimension, f);
 						updateLayerManager(dimension);
 						processRecycleQueue();
+						LockSupport.unpark(flThread);
 					}
-					LockSupport.unpark(flThread);
 				});
 			} else {
 				LockSupport.parkNanos(1000000000); // if for some reason unpark was never called, unpark after 1 second
