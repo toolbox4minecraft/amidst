@@ -31,8 +31,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass utilClass;
 	
 	/**
-	 * A PixelTransformer instance for the current world that is given to
-	 * each thread, giving direct access to the quarter-scale biome data.
+	 * A BiomeProvider instance for the current world that is given to
+	 * each thread, giving access to the quarter-scale biome data.
 	 */
 	private ThreadLocal<Object> threadedBiomeSource;
 	
@@ -44,23 +44,22 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	
 	/**
 	 * A method used to retrieve the full resolution biome data.
-	 * We create a SymbolicMethod for it so we dont lose performance
-	 * searching the SymbolicClass for it every time it's called.
+	 * We create a Method for it so we dont lose performance searching
+	 * the SymbolicClass for it every time it's called.
 	 */
 	private Method getFullResBiomeMethod;
 	
 	/**
 	 * A method used to retrieve the quarter resolution biome data.
-	 * We create a SymbolicMethod for it so we dont lose performance
-	 * searching the SymbolicClass for it every time it's called.
+	 * We create a Method for it so we dont lose performance searching
+	 * the SymbolicClass for it every time it's called.
 	 */
 	private Method getQuarterResBiomeMethod;
 	
 	/**
-	 * A method used to retrieve biome ids for the full resolution
-	 * biome data. We create a SymbolicMethod for it so we dont lose
-	 * performance searching the SymbolicClass for it every time it's
-	 * called.
+	 * A method used for converting between ints and biomes. We
+	 * create a Method for it so we dont lose performance searching
+	 * the SymbolicClass for it every time it's called.
 	 */
 	private Method getIdFromBiomeMethod;
 	
@@ -149,14 +148,6 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			return getIdFromBiome((Object) getQuarterResBiomeMethod.invoke(threadedBiomeSource.get(), x, 0, y));
 		} else {
 			return getIdFromBiome((Object) getFullResBiomeMethod.invoke(fuzzyColumnBiomeZoomer, seedForBiomeZoomer, x, 0, y, threadedBiomeSource.get()));
-		}
-	}
-
-	public int getBiomeIdAt(int x, int y) throws MinecraftInterfaceException {
-		try {
-			return getBiomeIdAt(x, y, false);
-		} catch (Throwable e) {
-			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
 	}
 

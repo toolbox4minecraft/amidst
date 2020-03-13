@@ -36,7 +36,6 @@ public enum SymbolicNames {
 	public static final String CONSTRUCTOR_BIOME_PROVIDER_SETTINGS = "<init>";
 
 	public static final String CLASS_NOISE_BIOME_PROVIDER = "NoiseBiomeProvider";
-	public static final String CONSTRUCTOR_NOISE_BIOME_PROVIDER = "<init>";
 	public static final String METHOD_NOISE_BIOME_PROVIDER_GET_BIOME = "getBiome";
 	
 	public static final String CLASS_OVERWORLD_BIOME_PROVIDER = "OverworldBiomeProvider";

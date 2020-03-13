@@ -100,7 +100,13 @@ public enum DefaultClassTranslator {
 					.requiredMethod(METHOD_NOISE_BIOME_PROVIDER_GET_BIOME, "b").real("int").real("int").real("int").end()
 			.next()
 				.ifDetect(c ->
-					c.getRealClassName().equals("bmy")
+					c.getNumberOfFields() == 2
+					&& c.getNumberOfMethods() == 2
+					&& c.getNumberOfConstructors() == 1
+					&& !c.getRealSuperClassName().contains("/")
+					&& c.searchForUtf8EqualTo("com/google/common/collect/ImmutableSet")
+					&& c.getField(0).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
+					&& c.getField(1).hasFlags(AccessFlags.PRIVATE | AccessFlags.STATIC | AccessFlags.FINAL)
 				)
 				.thenDeclareRequired(CLASS_OVERWORLD_BIOME_PROVIDER)
 					.requiredConstructor(CONSTRUCTOR_OVERWORLD_BIOME_PROVIDER).symbolic(CLASS_BIOME_PROVIDER_SETTINGS).end()
