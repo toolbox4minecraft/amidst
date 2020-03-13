@@ -36,7 +36,6 @@ public enum DefaultClassTranslator {
 		    		&& c.searchForUtf8EqualTo("debug")
 		    	)
 		    	.thenDeclareRequired(CLASS_MAPPED_REGISTRY)
-			    	.requiredMethod(METHOD_MAPPED_REGISTRY_BY_ID, "a").real("int").end()
 			    	.requiredMethod(METHOD_MAPPED_REGISTRY_GET_ID, "a").real("java.lang.Object").end()
             .next()
                 .ifDetect(c -> c.searchForStringContaining("default_1_1"))
