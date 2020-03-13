@@ -88,7 +88,7 @@ public class FragmentQueueProcessor {
 		processRecycleQueue();
 		int maxSize = fragWorkers.getMaximumPoolSize();
 		while (loadingQueue.isEmpty() == false) {
-			while (fragWorkers.getActiveCount() < maxSize) {
+			if (fragWorkers.getActiveCount() < maxSize) {
 				fragWorkers.execute(() -> {
 					Fragment f = loadingQueue.poll();
 					if (f != null && dimension.equals(dimensionSetting.get())) {
@@ -98,8 +98,9 @@ public class FragmentQueueProcessor {
 					}
 					LockSupport.unpark(flThread);
 				});
+			} else {
+				LockSupport.parkNanos(1000000000); // if for some reason unpark was never called, unpark after 1 second
 			}
-			LockSupport.parkNanos(1000000000); // if for some reason unpark was never called, unpark after 1 second
 		}
 		layerManager.clearInvalidatedLayers();
 	}
