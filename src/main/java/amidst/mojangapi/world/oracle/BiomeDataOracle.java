@@ -9,12 +9,10 @@ import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterface;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
-import amidst.mojangapi.minecraftinterface.LoggingMinecraftInterface;
 
 @ThreadSafe
 public class BiomeDataOracle {
@@ -177,27 +175,8 @@ public class BiomeDataOracle {
 	 * (uses the 1:1 scale biome-map)
 	 */
 	private Biome getBiomeAt(int x, int y) throws UnknownBiomeIndexException, MinecraftInterfaceException {
-		if (minecraftInterface instanceof LoggingMinecraftInterface) {
-			MinecraftInterface inner = ((LoggingMinecraftInterface) minecraftInterface).getInner();
-			
-			if (inner instanceof LocalMinecraftInterface) {
-				int biomeData = ((LocalMinecraftInterface) inner).getBiomeIdAt(x, y);
-				return Biome.getByIndex(biomeData);
-				
-			} else {
-				int[] biomeData = getFullResolutionBiomeData(x, y, 1, 1);
-				return Biome.getByIndex(biomeData[0]);
-				
-			}
-		} else if(minecraftInterface instanceof LocalMinecraftInterface) {
-			int biomeData = ((LocalMinecraftInterface) minecraftInterface).getBiomeIdAt(x, y);
-			return Biome.getByIndex(biomeData);
-			
-		} else {
-			int[] biomeData = getFullResolutionBiomeData(x, y, 1, 1);
-			return Biome.getByIndex(biomeData[0]);
-			
-		}
+		int[] biomeData = getFullResolutionBiomeData(x, y, 1, 1);
+		return Biome.getByIndex(biomeData[0]);
 	}
 
 	private int[] getQuarterResolutionBiomeData(int x, int y, int width, int height)
