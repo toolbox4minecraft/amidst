@@ -18,8 +18,6 @@ public class ImageLoader extends FragmentLoader {
 	private final Resolution resolution;
 	private final ColorProvider colorProvider;
 	private final int size;
-	private final ThreadLocal<int[]> rgbArray;
-	private final ThreadLocal<BufferedImage> bufferedImage;
 
 	@CalledByAny
 	public ImageLoader(LayerDeclaration declaration, Resolution resolution, ColorProvider colorProvider) {
@@ -27,8 +25,6 @@ public class ImageLoader extends FragmentLoader {
 		this.resolution = resolution;
 		this.colorProvider = colorProvider;
 		this.size = resolution.getStepsPerFragment();
-		rgbArray = ThreadLocal.withInitial(() -> new int[size * size]);
-		bufferedImage = ThreadLocal.withInitial(() -> createBufferedImage());
 	}
 
 	@CalledByAny
@@ -53,23 +49,15 @@ public class ImageLoader extends FragmentLoader {
 		CoordinatesInWorld corner = fragment.getCorner();
 		long cornerX = corner.getXAs(resolution);
 		long cornerY = corner.getYAs(resolution);
-		drawToCache(dimension, fragment, cornerX, cornerY);
-		bufferedImage.get().setRGB(0, 0, size, size, rgbArray.get(), 0, size);
-		bufferedImage.set(fragment.getAndSetImage(declaration.getLayerId(), bufferedImage.get()));
+		drawToImage(dimension, fragment, cornerX, cornerY, fragment.getImage(declaration.getLayerId()));
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private void drawToCache(Dimension dimension, Fragment fragment, long cornerX, long cornerY) {
+	private void drawToImage(Dimension dimension, Fragment fragment, long cornerX, long cornerY, BufferedImage bufferedImage) {
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
-				int index = getCacheIndex(x, y);
-				rgbArray.get()[index] = colorProvider.getColorAt(dimension, fragment, cornerX, cornerY, x, y);
+				bufferedImage.setRGB(x, y, colorProvider.getColorAt(dimension, fragment, cornerX, cornerY, x, y));
 			}
 		}
-	}
-
-	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	private int getCacheIndex(int x, int y) {
-		return x + y * size;
 	}
 }
