@@ -88,7 +88,7 @@ public class AmidstMenuBuilder {
 		Menus.item(result, actions::goToCoordinate,        "Go to Coordinate ...",     KeyEvent.VK_C, MenuShortcuts.GO_TO_COORDINATE);
 		Menus.item(result, actions::goToSpawn,             "Go to World Spawn",        KeyEvent.VK_S, MenuShortcuts.GO_TO_WORLD_SPAWN);
 		Menus.item(result, actions::goToStronghold,        "Go to Stronghold ...",     KeyEvent.VK_H, MenuShortcuts.GO_TO_STRONGHOLD);
-		Menus.item(result, actions::goToPlayer,            "Go to Player ...",             KeyEvent.VK_P, MenuShortcuts.GO_TO_PLAYER);
+		Menus.item(result, actions::goToPlayer,            "Go to Player ...",         KeyEvent.VK_P, MenuShortcuts.GO_TO_PLAYER);
 		result.addSeparator();
 		Menus.item(result, actions::zoomIn,                "Zoom In",                  KeyEvent.VK_I, MenuShortcuts.ZOOM_IN);
 		Menus.item(result, actions::zoomOut,               "Zoom Out",                 KeyEvent.VK_O, MenuShortcuts.ZOOM_OUT);
@@ -103,7 +103,16 @@ public class AmidstMenuBuilder {
 		result.addSeparator();
 		Menus.item(result, actions::copySeedToClipboard,   "Copy Seed to Clipboard",   KeyEvent.VK_B, MenuShortcuts.COPY_SEED_TO_CLIPBOARD);
 		Menus.item(result, actions::takeScreenshot,        "Take Screenshot ...",      KeyEvent.VK_T, MenuShortcuts.TAKE_SCREENSHOT);
+		result.addSeparator();
+		result.add(create_SaveBiomesToImage());
 		// @formatter:on
+		return result;
+	}
+	
+	private JMenuItem create_SaveBiomesToImage() {
+		JMenu result = new JMenu("Save Biomes to Image");
+		Menus.item(result, () -> actions.saveBiomesToImage(true),  "Save Quarter Resolution TIFF (Faster)", KeyEvent.VK_Y, MenuShortcuts.SAVE_QUARTER_RES_BIOMES);
+		Menus.item(result, () -> actions.saveBiomesToImage(false), "Save Full Resolution TIFF (Slower)",    KeyEvent.VK_U, MenuShortcuts.SAVE_FULL_RES_BIOMES);
 		return result;
 	}
 

@@ -30,6 +30,8 @@ public enum MenuShortcuts implements MenuShortcut {
 	RELOAD_PLAYER_LOCATIONS("F5"),
 	COPY_SEED_TO_CLIPBOARD("menu C"),
 	TAKE_SCREENSHOT("menu T"),
+	SAVE_QUARTER_RES_BIOMES("menu Y"),
+	SAVE_FULL_RES_BIOMES("menu U"),
 
 	DISPLAY_DIMENSION_OVERWORLD("menu shift 1"),
 	DISPLAY_DIMENSION_END("menu shift 2"),

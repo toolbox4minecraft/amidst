@@ -6,6 +6,8 @@ import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
@@ -70,14 +72,28 @@ public class MainWindowDialogs {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public File askForScreenshotSaveFile(String suggestedFilename) {
-		return showSaveDialogAndGetSelectedFileOrNull(createScreenshotSaveFileChooser(suggestedFilename));
+	public File askForPNGSaveFile(String suggestedFilename) {
+		return showSaveDialogAndGetSelectedFileOrNull(createPNGSaveFileChooser(suggestedFilename));
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public File askForTIFFSaveFile(String suggestedFilename) {
+		return showSaveDialogAndGetSelectedFileOrNull(createTIFFSaveFileChooser(suggestedFilename));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private JFileChooser createScreenshotSaveFileChooser(String suggestedFilename) {
+	private JFileChooser createPNGSaveFileChooser(String suggestedFilename) {
 		JFileChooser result = new JFileChooser();
 		result.setFileFilter(new PNGFileFilter());
+		result.setAcceptAllFileFilterUsed(false);
+		result.setSelectedFile(new File(suggestedFilename));
+		return result;
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	private JFileChooser createTIFFSaveFileChooser(String suggestedFilename) {
+		JFileChooser result = new JFileChooser();
+		result.setFileFilter(new FileNameExtensionFilter("TIFF File", "tiff"));
 		result.setAcceptAllFileFilterUsed(false);
 		result.setSelectedFile(new File(suggestedFilename));
 		return result;
