@@ -74,13 +74,6 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	 */
 	private long seedForBiomeZoomer;
 	
-	/**
-	 * An array used to return biome data. It's a ThreadLocal so
-	 * different threads don't try to access the same array at the same
-	 * time.
-	 */
-	private ThreadLocal<int[]> dataArray = ThreadLocal.withInitial(() -> new int[256]);
-	
 	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;
 		// @formatter:off
@@ -104,12 +97,10 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			throw new MinecraftInterfaceException("no world was created");
 		}
 		
-		int size = width * height;
-		
-		int[] data = ensureArrayCapacity(size);
+		int[] data = new int[width * height];
 		
 		try {
-			if (size == 1) {
+			if (data.length == 1) {
 				data[0] = getBiomeIdAt(x, y, useQuarterResolution);
 				
 			} else {
@@ -223,30 +214,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	public RecognisedVersion getRecognisedVersion() {
 		return recognisedVersion;
 	}
-	
-	private int[] ensureArrayCapacity(int length) throws MinecraftInterfaceException {
-		if (length > 1073741824) {
-			throw new MinecraftInterfaceException("Biome data array size exceeds maximum limit");
-		} else {
-			int[] currentArray = dataArray.get();
-			int cur;
-			if(length == 1) {
-				cur = 1;
-			} else {
-				cur = currentArray.length;
-				if (length <= cur)
-					return currentArray;
-	
-				while (cur < length)
-					cur *= 2;
-			}
-			
-			currentArray = new int[cur];
-			dataArray.set(currentArray);
-			return currentArray;
-		}
-	}
-	
+
 	private int getIdFromBiome(Object biome)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		return (int) getIdFromBiomeMethod.invoke(biomeRegistry, biome);
