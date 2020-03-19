@@ -169,9 +169,6 @@ public class ViewerFacade {
 		new Thread(() -> {
 			int factor = useQuarterResolution ? 4 : 1;
 			
-			JAI.getDefaultInstance().setTileCache(new DiskMemTileCache());
-			JAI.enableDefaultTileCache();
-			
 			TIFFEncodeParam tep = new TIFFEncodeParam();
 			tep.setTileSize(Fragment.SIZE, Fragment.SIZE);
 			tep.setWriteTiled(true);
