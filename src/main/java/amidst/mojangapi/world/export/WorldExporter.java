@@ -12,7 +12,9 @@ import amidst.threading.worker.ProgressReporter;
 @NotThreadSafe
 public class WorldExporter {
 	private final WorkerExecutor workerExecutor;
+	@SuppressWarnings("unused")
 	private final World world;
+	@SuppressWarnings("unused")
 	private final WorldExporterConfiguration configuration;
 	private final Consumer<String> progressListener;
 
