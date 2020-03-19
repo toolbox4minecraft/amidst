@@ -11,7 +11,10 @@ import java.io.File;
 import java.util.List;
 
 import javax.media.jai.JAI;
+import javax.media.jai.TileCache;
 import javax.media.jai.TiledImage;
+
+import org.jaitools.tilecache.DiskMemTileCache;
 
 import com.sun.media.jai.codec.TIFFEncodeParam;
 
@@ -24,6 +27,7 @@ import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerReloader;
+import amidst.gui.main.viewer.widget.StaticImageProgressWidget;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldOptions;
@@ -162,57 +166,76 @@ public class ViewerFacade {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void saveBiomesImage(File file, boolean useQuarterResolution) {
-		TIFFEncodeParam tep = new TIFFEncodeParam();
-		tep.setTileSize(Fragment.SIZE, Fragment.SIZE);
-		tep.setWriteTiled(true);
-		tep.setCompression(TIFFEncodeParam.COMPRESSION_DEFLATE);
-		tep.setDeflateLevel(5);
-		
-		CoordinatesInWorld topLeft = translator.screenToWorld(new Point(0, 0));
-		CoordinatesInWorld bottomRight = translator.screenToWorld(new Point((int) translator.getWidth(), (int) translator.getHeight()));
-		int x = (int) topLeft.getX();
-		int y = (int) topLeft.getY();
-		int width = (int) bottomRight.getX() - x;
-		int height = (int) bottomRight.getY() - y;
-		
-		int[] bitmasks = {
-			0xFF0000,
-			0x00FF00,
-			0x0000FF
-		};
-		
-		BiomeProfileSelection biomeColors = new BiomeProfileSelection(BiomeProfile.getDefaultProfile());
-		TiledImage tiledImage = new TiledImage(0, 0, width, height, 0, 0,
-					new SinglePixelPackedSampleModel(DataBuffer.TYPE_INT, Fragment.SIZE, Fragment.SIZE, bitmasks),
-					new DirectColorModel(32, bitmasks[0], bitmasks[1], bitmasks[2])
-				);
-		
-		short[][] dataArray;
-		for(int tx = 0; tx < tiledImage.getNumXTiles(); tx++) {
-			for(int ty = 0; ty < tiledImage.getNumYTiles(); ty++) {
-				Rectangle r = tiledImage.getTileRect(tx, ty);
-				r.setLocation(tiledImage.tileXToX(tx), tiledImage.tileYToY(ty));
-				dataArray = new short[r.width][r.height];
-				world.getBiomeDataOracle().populateArray(new CoordinatesInWorld((long) x + r.x, (long) y + r.y), dataArray, useQuarterResolution);
+		new Thread(() -> {
+			int factor = useQuarterResolution ? 4 : 1;
 			
-				try {
-					for(int i = 0; i < r.width; i++) {
-						for(int j = 0; j < r.height; j++) {
-							tiledImage.setSample(r.x + i, r.y + j, 0, biomeColors.getBiomeColor(dataArray[i][j]).getR());
-							tiledImage.setSample(r.x + i, r.y + j, 1, biomeColors.getBiomeColor(dataArray[i][j]).getG());
-							tiledImage.setSample(r.x + i, r.y + j, 2, biomeColors.getBiomeColor(dataArray[i][j]).getB());
+			JAI.getDefaultInstance().setTileCache(new DiskMemTileCache());
+			
+			TIFFEncodeParam tep = new TIFFEncodeParam();
+			tep.setTileSize(Fragment.SIZE, Fragment.SIZE);
+			tep.setWriteTiled(true);
+			tep.setCompression(TIFFEncodeParam.COMPRESSION_DEFLATE);
+			tep.setDeflateLevel(5);
+			
+			CoordinatesInWorld topLeft;
+			CoordinatesInWorld bottomRight;
+			
+			synchronized(translator) {
+				topLeft = translator.screenToWorld(new Point(0, 0));
+				bottomRight = translator.screenToWorld(new Point((int) translator.getWidth(), (int) translator.getHeight()));
+			}
+			
+			int x = (int) topLeft.getX();
+			int y = (int) topLeft.getY();
+			int width = (int) bottomRight.getX() - x;
+			int height = (int) bottomRight.getY() - y;
+			
+			int[] bitmasks = {
+				0xFF0000,
+				0x00FF00,
+				0x0000FF
+			};
+			
+			BiomeProfileSelection biomeColors = new BiomeProfileSelection(BiomeProfile.getDefaultProfile());
+			TiledImage tiledImage = new TiledImage(0, 0, width / factor, height / factor, 0, 0,
+						new SinglePixelPackedSampleModel(DataBuffer.TYPE_INT, 256, 256, bitmasks),
+						new DirectColorModel(32, bitmasks[0], bitmasks[1], bitmasks[2])
+					);
+			
+			StaticImageProgressWidget.setStaticMin(0);
+			StaticImageProgressWidget.setStaticMax(tiledImage.getNumXTiles() * tiledImage.getNumYTiles());
+			StaticImageProgressWidget.setStaticProgress(0);
+			int tilesProcessed = 0;
+			short[][] dataArray;
+			for(int tx = 0; tx < tiledImage.getNumXTiles(); tx++) {
+				for(int ty = 0; ty < tiledImage.getNumYTiles(); ty++) {
+					Rectangle r = tiledImage.getTileRect(tx, ty);
+					r.setLocation(tiledImage.tileXToX(tx), tiledImage.tileYToY(ty));
+					dataArray = new short[r.width][r.height];
+					world.getBiomeDataOracle().populateArray(new CoordinatesInWorld((long) x + r.x * factor, (long) y + r.y * factor), dataArray, useQuarterResolution);
+				
+					try {
+						for(int i = 0; i < r.width; i++) {
+							for(int j = 0; j < r.height; j++) {
+								tiledImage.setSample(r.x + i, r.y + j, 0, biomeColors.getBiomeColor(dataArray[i][j]).getR());
+								tiledImage.setSample(r.x + i, r.y + j, 1, biomeColors.getBiomeColor(dataArray[i][j]).getG());
+								tiledImage.setSample(r.x + i, r.y + j, 2, biomeColors.getBiomeColor(dataArray[i][j]).getB());
+							}
 						}
+					} catch (UnknownBiomeIndexException e) {
+						e.printStackTrace();
 					}
-				} catch (UnknownBiomeIndexException e) {
-					e.printStackTrace();
+					StaticImageProgressWidget.setStaticProgress(++tilesProcessed);
 				}
 			}
-		}
-		dataArray = null;
-		
-		JAI.create("filestore", tiledImage, file.getAbsolutePath(), "TIFF", tep);
-		
-		tiledImage.dispose();
+			dataArray = null;
+			
+			JAI.create("filestore", tiledImage, file.getAbsolutePath(), "TIFF", tep);
+			tiledImage.dispose();
+			tep = null;
+			tiledImage = null;
+			System.gc();
+		}, "ImageSaveThread").start();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

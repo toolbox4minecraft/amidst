@@ -247,7 +247,8 @@ public class Actions {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			WorldOptions worldOptions = viewerFacade.getWorldOptions();
-			String suggestedFilename = "biomes_" + worldOptions.getWorldType().getFilenameText() + "_"
+			String modifier = useQuarterResolution ? "quarter_" : "full_";
+			String suggestedFilename = modifier + "biomes_" + worldOptions.getWorldType().getFilenameText() + "_"
 					+ worldOptions.getWorldSeed().getLong() + ".tiff";
 			File file = dialogs.askForTIFFSaveFile(suggestedFilename);
 			if (file != null) {

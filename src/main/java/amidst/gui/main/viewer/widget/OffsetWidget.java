@@ -4,11 +4,19 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 
 public abstract class OffsetWidget extends Widget {
-	private int xOffset, yOffset;
+	private volatile int xOffset, yOffset;
 	
 	protected OffsetWidget(CornerAnchorPoint anchor, int xOffset, int yOffset) {
 		super(anchor);
 		this.xOffset = xOffset;
+		this.yOffset = yOffset;
+	}
+	
+	public void setXOffset(int xOffset) {
+		this.xOffset = xOffset;
+	}
+	
+	public void setYOffset(int yOffset) {
 		this.yOffset = yOffset;
 	}
 	

@@ -22,6 +22,7 @@ import amidst.gui.main.viewer.widget.CursorInformationWidget;
 import amidst.gui.main.viewer.widget.DebugWidget;
 import amidst.gui.main.viewer.widget.FpsWidget;
 import amidst.gui.main.viewer.widget.FramerateTimer;
+import amidst.gui.main.viewer.widget.StaticImageProgressWidget;
 import amidst.gui.main.viewer.widget.ScaleWidget;
 import amidst.gui.main.viewer.widget.SeedAndWorldTypeWidget;
 import amidst.gui.main.viewer.widget.SelectedIconWidget;
@@ -50,17 +51,20 @@ public class PerViewerFacadeInjector {
 			AmidstSettings settings,
 			Supplier<String> progressText) {
 		// @formatter:off
+		DebugWidget debugWidget = new DebugWidget(CornerAnchorPoint.BOTTOM_RIGHT, graph, fragmentManager, settings.showDebug, accelerationCounter);
 		BiomeWidget biomeWidget = new BiomeWidget(CornerAnchorPoint.NONE, biomeSelection, layerReloader, settings.biomeProfileSelection);
+		BiomeToggleWidget biomeToggleWidget = new BiomeToggleWidget(CornerAnchorPoint.BOTTOM_RIGHT, biomeWidget, biomeSelection);
 		WorldOptions worldOptions = world.getWorldOptions();
 		return Arrays.asList(
-				new ChangeableTextWidget(   CornerAnchorPoint.CENTER,        progressText),
-				new FpsWidget(              CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              settings.showFPS),
-				new ScaleWidget(            CornerAnchorPoint.BOTTOM_CENTER, zoom,                               settings.showScale),
-				new SeedAndWorldTypeWidget( CornerAnchorPoint.TOP_LEFT,      worldOptions.getWorldSeed(), worldOptions.getWorldType()),
-				new SelectedIconWidget(     CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
-				new DebugWidget(            CornerAnchorPoint.BOTTOM_RIGHT,  graph,             fragmentManager, settings.showDebug, accelerationCounter),
-				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension),
-				new BiomeToggleWidget(      CornerAnchorPoint.BOTTOM_RIGHT,  biomeWidget, biomeSelection),
+				new ChangeableTextWidget(     CornerAnchorPoint.CENTER,        progressText),
+				new FpsWidget(                CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              settings.showFPS),
+				new ScaleWidget(              CornerAnchorPoint.BOTTOM_CENTER, zoom,                               settings.showScale),
+				new SeedAndWorldTypeWidget(   CornerAnchorPoint.TOP_LEFT,      worldOptions.getWorldSeed(), worldOptions.getWorldType()),
+				new SelectedIconWidget(       CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
+				debugWidget,
+				new CursorInformationWidget(  CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension),
+				biomeToggleWidget,
+				new StaticImageProgressWidget(CornerAnchorPoint.BOTTOM_RIGHT,  -20, settings.showDebug, debugWidget, biomeToggleWidget.getWidth()),
 				biomeWidget
 		);
 		// @formatter:on
