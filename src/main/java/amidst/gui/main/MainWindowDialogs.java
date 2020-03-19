@@ -17,6 +17,7 @@ import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
+import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.export.WorldExporterConfiguration;
 import amidst.mojangapi.world.player.WorldPlayerType;
 
@@ -161,6 +162,10 @@ public class MainWindowDialogs {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public String askForCoordinates() {
 		return askForString("Go To", "Enter coordinates: (Ex. 123,456)");
+	}
+	
+	public CoordinatesInWorld askForCoordinatesOrNull(String message) {
+		return CoordinatesInWorld.tryParse(askForString("Enter Coordinates", message));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

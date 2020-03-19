@@ -254,19 +254,28 @@ public class Actions {
 			if (file != null) {
 				file = appendTIFFFileExtensionIfNecessary(file);
 				if (file.exists() && !file.isFile()) {
-					String message = "Unable to write screenshot, because the target exists but is not a file: "
+					String message = "Unable to set biome image path, because the target exists but is not a file: "
 							+ file.getAbsolutePath();
 					AmidstLogger.warn(message);
 					dialogs.displayError(message);
 				} else if (!canWriteToFile(file)) {
-					String message = "Unable to write screenshot, because you have no writing permissions: "
+					String message = "Unable to set biome image path, because you have no writing permissions: "
 							+ file.getAbsolutePath();
 					AmidstLogger.warn(message);
 					dialogs.displayError(message);
 				} else if (!file.exists() || dialogs.askToConfirmYesNo(
 						"Replace file?",
 						"File already exists. Do you want to replace it?\n" + file.getAbsolutePath() + "")) {
-					viewerFacade.saveBiomesImage(file, useQuarterResolution);
+					CoordinatesInWorld topLeft = dialogs.askForCoordinatesOrNull("Enter coordinates for the top left of the image,\nor leave blank for the window top left.\n(Ex. 123,456)");
+					CoordinatesInWorld bottomRight = dialogs.askForCoordinatesOrNull("Enter coordinates for the bottom right of the image,\nor leave blank for the window bottom right.\n(Ex. 123,456)");
+					if((topLeft != null && bottomRight != null) && 
+						(topLeft.getX() >= bottomRight.getX() || topLeft.getY() >= bottomRight.getY())) {
+						String message = "Invalid image coordinates detected, not creating image.";
+						AmidstLogger.warn(message);
+						dialogs.displayError(message);
+					} else {
+						viewerFacade.saveBiomesImage(file, useQuarterResolution, topLeft, bottomRight);
+					}
 				}
 			}
 		}

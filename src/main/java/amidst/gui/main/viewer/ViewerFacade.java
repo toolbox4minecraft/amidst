@@ -165,7 +165,7 @@ public class ViewerFacade {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void saveBiomesImage(File file, boolean useQuarterResolution) {
+	public void saveBiomesImage(File file, boolean useQuarterResolution, CoordinatesInWorld topLeftInput, CoordinatesInWorld bottomRightInput) {
 		new Thread(() -> {
 			int factor = useQuarterResolution ? 4 : 1;
 			
@@ -182,8 +182,8 @@ public class ViewerFacade {
 			CoordinatesInWorld bottomRight;
 			
 			synchronized(translator) {
-				topLeft = translator.screenToWorld(new Point(0, 0));
-				bottomRight = translator.screenToWorld(new Point((int) translator.getWidth(), (int) translator.getHeight()));
+				topLeft = (topLeftInput != null) ? topLeftInput : translator.screenToWorld(new Point(0, 0));
+				bottomRight = (bottomRightInput != null) ? bottomRightInput : translator.screenToWorld(new Point((int) translator.getWidth(), (int) translator.getHeight()));
 			}
 			
 			int x = (int) topLeft.getX();
