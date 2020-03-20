@@ -18,7 +18,7 @@ public class SettingBase<T> implements Setting<T> {
 	}
 
 	@Override
-	public T get() {
+	public synchronized T get() {
 		return value;
 	}
 

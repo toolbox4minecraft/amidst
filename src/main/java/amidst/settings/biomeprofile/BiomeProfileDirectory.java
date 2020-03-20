@@ -62,18 +62,22 @@ public class BiomeProfileDirectory {
 
 	private void visitProfiles(File directory, BiomeProfileVisitor visitor) {
 		boolean entered = false;
-		for (File file : directory.listFiles()) {
-			if (file.isFile()) {
-				BiomeProfile profile = createFromFile(file);
-				if (profile != null) {
-					if (!entered) {
-						entered = true;
-						visitor.enterDirectory(directory.getName());
+		File[] files = directory.listFiles();
+		
+		if (files != null) {
+			for (File file : files) {
+				if (file.isFile()) {
+					BiomeProfile profile = createFromFile(file);
+					if (profile != null) {
+						if (!entered) {
+							entered = true;
+							visitor.enterDirectory(directory.getName());
+						}
+						visitor.visitProfile(profile);
 					}
-					visitor.visitProfile(profile);
+				} else {
+					visitProfiles(file, visitor);
 				}
-			} else {
-				visitProfiles(file, visitor);
 			}
 		}
 		if (entered) {

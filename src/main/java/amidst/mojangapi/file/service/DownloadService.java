@@ -69,7 +69,9 @@ public class DownloadService {
 	}
 
 	private void download(URL from, Path to) throws IOException {
-		to.getParent().toFile().mkdirs();
+		Path parent = to.getParent();
+		if (parent != null) parent.toFile().mkdirs();
+		
 		if (to.toFile().exists()) {
 			return;
 		}

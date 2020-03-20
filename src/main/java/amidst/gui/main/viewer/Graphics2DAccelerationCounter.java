@@ -3,6 +3,7 @@ package amidst.gui.main.viewer;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
@@ -17,8 +18,8 @@ import amidst.documentation.NotThreadSafe;
 public class Graphics2DAccelerationCounter {
 	private static final int UPDATE_PERCENTAGE_AFTER = 1000;
 
-	private volatile int accelerated = 0;
-	private volatile int total = 0;
+	private AtomicInteger accelerated = new AtomicInteger(0);
+	private AtomicInteger total = new AtomicInteger(0);
 	private volatile float acceleratedPercentage = 0;
 
 	private static final GraphicsConfiguration GC = GraphicsEnvironment
@@ -33,13 +34,11 @@ public class Graphics2DAccelerationCounter {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void log(BufferedImage image) {
 		if (image.getCapabilities(GC).isAccelerated()) {
-			accelerated++;
+			accelerated.incrementAndGet();
 		}
-		total++;
-		if (total == UPDATE_PERCENTAGE_AFTER) {
-			acceleratedPercentage = 100f * accelerated / total;
-			accelerated = 0;
-			total = 0;
+		
+		if (total.incrementAndGet() == UPDATE_PERCENTAGE_AFTER) {
+			acceleratedPercentage = 100f * accelerated.getAndSet(0) / total.getAndSet(0);
 		}
 	}
 

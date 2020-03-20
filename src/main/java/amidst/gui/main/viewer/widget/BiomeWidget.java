@@ -204,13 +204,13 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Color getBiomeBackgroudColor(int i, Biome biome) {
 		if (biomeSelection.isSelected(biome.getIndex())) {
-			if (i % 2 == 1) {
+			if (i % 2 != 0) {
 				return BIOME_LIT_BG_COLOR_1;
 			} else {
 				return BIOME_LIT_BG_COLOR_2;
 			}
 		} else {
-			if (i % 2 == 1) {
+			if (i % 2 != 0) {
 				return BIOME_BG_COLOR_1;
 			} else {
 				return BIOME_BG_COLOR_2;
