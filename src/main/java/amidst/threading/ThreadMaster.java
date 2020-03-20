@@ -63,10 +63,13 @@ public class ThreadMaster {
 
 	private ExecutorService createWorkerExecutorService() {
 		return Executors.newCachedThreadPool(new ThreadFactory() {
+			int workerNum;
+			
 			@Override
 			public Thread newThread(Runnable r) {
 				Thread thread = new Thread(r);
 				thread.setPriority(Thread.MIN_PRIORITY);
+				thread.setName("WorkerExecutor-" + workerNum++);
 				return thread;
 			}
 		});

@@ -2,43 +2,26 @@ package amidst.gui.main.viewer;
 
 import java.awt.Component;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
-import java.awt.image.DirectColorModel;
-import java.awt.image.SinglePixelPackedSampleModel;
-import java.io.File;
 import java.util.List;
-
-import javax.media.jai.JAI;
-import javax.media.jai.TileCache;
-import javax.media.jai.TiledImage;
-
-import org.jaitools.tilecache.DiskMemTileCache;
-
-import com.sun.media.jai.codec.TIFFEncodeParam;
 
 import amidst.dependency.injection.Factory1;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
-import amidst.fragment.Fragment;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerReloader;
-import amidst.gui.main.viewer.widget.StaticImageProgressWidget;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldOptions;
-import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.export.WorldExportException;
 import amidst.mojangapi.world.export.WorldExporter;
 import amidst.mojangapi.world.export.WorldExporterConfiguration;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.MovablePlayerList;
-import amidst.settings.biomeprofile.BiomeProfile;
-import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.threading.WorkerExecutor;
 
 /**
@@ -163,77 +146,10 @@ public class ViewerFacade {
 	public WorldOptions getWorldOptions() {
 		return world.getWorldOptions();
 	}
-
+	
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void saveBiomesImage(File file, boolean useQuarterResolution, CoordinatesInWorld topLeftInput, CoordinatesInWorld bottomRightInput) {
-		new Thread(() -> {
-			int factor = useQuarterResolution ? 4 : 1;
-			
-			TIFFEncodeParam tep = new TIFFEncodeParam();
-			tep.setTileSize(Fragment.SIZE, Fragment.SIZE);
-			tep.setWriteTiled(true);
-			tep.setCompression(TIFFEncodeParam.COMPRESSION_DEFLATE);
-			tep.setDeflateLevel(5);
-			
-			CoordinatesInWorld topLeft;
-			CoordinatesInWorld bottomRight;
-			
-			synchronized(translator) {
-				topLeft = (topLeftInput != null) ? topLeftInput : translator.screenToWorld(new Point(0, 0));
-				bottomRight = (bottomRightInput != null) ? bottomRightInput : translator.screenToWorld(new Point((int) translator.getWidth(), (int) translator.getHeight()));
-			}
-			
-			int x = (int) topLeft.getX();
-			int y = (int) topLeft.getY();
-			int width = (int) bottomRight.getX() - x;
-			int height = (int) bottomRight.getY() - y;
-			
-			int[] bitmasks = {
-				0xFF0000,
-				0x00FF00,
-				0x0000FF
-			};
-			
-			BiomeProfileSelection biomeColors = new BiomeProfileSelection(BiomeProfile.getDefaultProfile());
-			TiledImage tiledImage = new TiledImage(0, 0, width / factor, height / factor, 0, 0,
-						new SinglePixelPackedSampleModel(DataBuffer.TYPE_INT, 256, 256, bitmasks),
-						new DirectColorModel(32, bitmasks[0], bitmasks[1], bitmasks[2])
-					);
-			
-			StaticImageProgressWidget.setStaticMin(0);
-			StaticImageProgressWidget.setStaticMax(tiledImage.getNumXTiles() * tiledImage.getNumYTiles());
-			StaticImageProgressWidget.setStaticProgress(0);
-			int tilesProcessed = 0;
-			short[][] dataArray;
-			for(int tx = 0; tx < tiledImage.getNumXTiles(); tx++) {
-				for(int ty = 0; ty < tiledImage.getNumYTiles(); ty++) {
-					Rectangle r = tiledImage.getTileRect(tx, ty);
-					r.setLocation(tiledImage.tileXToX(tx), tiledImage.tileYToY(ty));
-					dataArray = new short[r.width][r.height];
-					world.getBiomeDataOracle().populateArray(new CoordinatesInWorld((long) x + r.x * factor, (long) y + r.y * factor), dataArray, useQuarterResolution);
-				
-					try {
-						for(int i = 0; i < r.width; i++) {
-							for(int j = 0; j < r.height; j++) {
-								tiledImage.setSample(r.x + i, r.y + j, 0, biomeColors.getBiomeColor(dataArray[i][j]).getR());
-								tiledImage.setSample(r.x + i, r.y + j, 1, biomeColors.getBiomeColor(dataArray[i][j]).getG());
-								tiledImage.setSample(r.x + i, r.y + j, 2, biomeColors.getBiomeColor(dataArray[i][j]).getB());
-							}
-						}
-					} catch (UnknownBiomeIndexException e) {
-						e.printStackTrace();
-					}
-					StaticImageProgressWidget.setStaticProgress(++tilesProcessed);
-				}
-			}
-			dataArray = null;
-			
-			JAI.create("filestore", tiledImage, file.getAbsolutePath(), "TIFF", tep);
-			tiledImage.dispose();
-			tep = null;
-			tiledImage = null;
-			System.gc();
-		}, "ImageSaveThread").start();
+	public FragmentGraphToScreenTranslator getTranslator() {
+		return translator;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -288,7 +204,7 @@ public class ViewerFacade {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void export(WorldExporterConfiguration configuration) {
+	public void export(WorldExporterConfiguration configuration) throws WorldExportException {
 		worldExporterFactory.create(configuration).export();
 	}
 

@@ -48,6 +48,26 @@ public enum AmidstMessageBox {
 	public static void displayError(Component parent, String title, Throwable e, String message) {
 		displayMessageBox(parent, title, MessageFormatter.format(e, message), JOptionPane.ERROR_MESSAGE);
 	}
+	
+	public static void displayWarning(String title, String message) {
+		displayMessageBox(title, MessageFormatter.format(message), JOptionPane.WARNING_MESSAGE);
+	}
+
+	public static void displayWarning(String title, String message, Object part1, Object[] parts) {
+		displayMessageBox(title, MessageFormatter.format(message, part1, parts), JOptionPane.WARNING_MESSAGE);
+	}
+	
+	public static void displayWarning(Component parent, String title, String message) {
+		displayMessageBox(parent, title, MessageFormatter.format(message), JOptionPane.WARNING_MESSAGE);
+	}
+
+	public static void displayWarning(Component parent, String title, String message, Object part1, Object[] parts) {
+		displayMessageBox(
+				parent,
+				title,
+				MessageFormatter.format(message, part1, parts),
+				JOptionPane.WARNING_MESSAGE);
+	}
 
 	public static void displayError(
 			Component parent,

@@ -24,7 +24,6 @@ public class AmidstMenuBuilder {
 	private final Actions actions;
 	private final BiomeProfileDirectory biomeProfileDirectory;
 	private final JMenuBar menuBar;
-	private JMenuItem exportMenu;
 	private JMenu worldMenu;
 	private JMenuItem savePlayerLocationsMenu;
 	private JMenuItem reloadPlayerLocationsMenu;
@@ -40,7 +39,6 @@ public class AmidstMenuBuilder {
 	public AmidstMenu construct() {
 		return new AmidstMenu(
 				menuBar,
-				exportMenu,
 				worldMenu,
 				savePlayerLocationsMenu,
 				reloadPlayerLocationsMenu,
@@ -68,12 +66,6 @@ public class AmidstMenuBuilder {
 		}
 		Menus.item(result, actions::openSaveGame,          "Open Save Game ...",       KeyEvent.VK_O, MenuShortcuts.OPEN_SAVE_GAME);
 		result.addSeparator();
-		if (FeatureToggles.WORLD_EXPORTER) {
-			exportMenu =
-			Menus.item(result, actions::export,            "Export ...",               KeyEvent.VK_E, MenuShortcuts.EXPORT);
-			exportMenu.setEnabled(false);
-			result.addSeparator();
-		}
 		Menus.item(result, actions::switchProfile,         "Switch Profile ...",       KeyEvent.VK_P, MenuShortcuts.SWITCH_PROFILE);
 		Menus.item(result, actions::exit,                  "Exit",                     KeyEvent.VK_X, MenuShortcuts.EXIT);
 		// @formatter:on
@@ -104,15 +96,15 @@ public class AmidstMenuBuilder {
 		Menus.item(result, actions::copySeedToClipboard,   "Copy Seed to Clipboard",   KeyEvent.VK_B, MenuShortcuts.COPY_SEED_TO_CLIPBOARD);
 		Menus.item(result, actions::takeScreenshot,        "Take Screenshot ...",      KeyEvent.VK_T, MenuShortcuts.TAKE_SCREENSHOT);
 		result.addSeparator();
-		result.add(create_SaveBiomesToImage());
+		result.add(create_ExportBiomesToImage());
 		// @formatter:on
 		return result;
 	}
 	
-	private JMenuItem create_SaveBiomesToImage() {
-		JMenu result = new JMenu("Save Biomes to Image");
-		Menus.item(result, () -> actions.saveBiomesToImage(true),  "Save Quarter Resolution TIFF (Faster)", KeyEvent.VK_Y, MenuShortcuts.SAVE_QUARTER_RES_BIOMES);
-		Menus.item(result, () -> actions.saveBiomesToImage(false), "Save Full Resolution TIFF (Slower)",    KeyEvent.VK_U, MenuShortcuts.SAVE_FULL_RES_BIOMES);
+	private JMenuItem create_ExportBiomesToImage() {
+		JMenu result = new JMenu("Export Biomes to Image");
+		Menus.item(result, () -> actions.export(true),  "Export Quarter Resolution TIFF (Faster) ...", KeyEvent.VK_Y, MenuShortcuts.SAVE_QUARTER_RES_BIOMES);
+		Menus.item(result, () -> actions.export(false), "Export Full Resolution TIFF (Slower) ...",    KeyEvent.VK_U, MenuShortcuts.SAVE_FULL_RES_BIOMES);
 		return result;
 	}
 

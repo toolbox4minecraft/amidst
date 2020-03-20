@@ -22,7 +22,7 @@ import amidst.gui.main.viewer.widget.CursorInformationWidget;
 import amidst.gui.main.viewer.widget.DebugWidget;
 import amidst.gui.main.viewer.widget.FpsWidget;
 import amidst.gui.main.viewer.widget.FramerateTimer;
-import amidst.gui.main.viewer.widget.StaticImageProgressWidget;
+import amidst.gui.main.viewer.widget.WorldExporterProgressWidget;
 import amidst.gui.main.viewer.widget.ScaleWidget;
 import amidst.gui.main.viewer.widget.SeedAndWorldTypeWidget;
 import amidst.gui.main.viewer.widget.SelectedIconWidget;
@@ -56,21 +56,22 @@ public class PerViewerFacadeInjector {
 		BiomeToggleWidget biomeToggleWidget = new BiomeToggleWidget(CornerAnchorPoint.BOTTOM_RIGHT, biomeWidget, biomeSelection);
 		WorldOptions worldOptions = world.getWorldOptions();
 		return Arrays.asList(
-				new ChangeableTextWidget(     CornerAnchorPoint.CENTER,        progressText),
-				new FpsWidget(                CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              settings.showFPS),
-				new ScaleWidget(              CornerAnchorPoint.BOTTOM_CENTER, zoom,                               settings.showScale),
-				new SeedAndWorldTypeWidget(   CornerAnchorPoint.TOP_LEFT,      worldOptions.getWorldSeed(), worldOptions.getWorldType()),
-				new SelectedIconWidget(       CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
+				new ChangeableTextWidget(       CornerAnchorPoint.CENTER,        progressText),
+				new FpsWidget(                  CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              settings.showFPS),
+				new ScaleWidget(                CornerAnchorPoint.BOTTOM_CENTER, zoom,                               settings.showScale),
+				new SeedAndWorldTypeWidget(     CornerAnchorPoint.TOP_LEFT,      worldOptions.getWorldSeed(), worldOptions.getWorldType()),
+				new SelectedIconWidget(         CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
 				debugWidget,
-				new CursorInformationWidget(  CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension),
+				new CursorInformationWidget(    CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension),
 				biomeToggleWidget,
-				new StaticImageProgressWidget(CornerAnchorPoint.BOTTOM_RIGHT,  -20, settings.showDebug, debugWidget, biomeToggleWidget.getWidth()),
+				new WorldExporterProgressWidget(CornerAnchorPoint.BOTTOM_RIGHT,  -20, settings.showDebug, debugWidget, biomeToggleWidget.getWidth()),
 				biomeWidget
 		);
 		// @formatter:on
 	}
 
-	private final WorkerExecutor workerExecutor;
+	@SuppressWarnings("unused")
+	private final WorkerExecutor workerExecutor; // this is probably going to be used eventually
 	private final World world;
 	private final Graphics2DAccelerationCounter accelerationCounter;
 	private final Movement movement;
@@ -153,7 +154,8 @@ public class PerViewerFacadeInjector {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldExporter createWorldExporter(WorldExporterConfiguration configuration) {
-		return new WorldExporter(workerExecutor, world, configuration, progressMessageHolder::setProgressMessage);
+		WorldExporterProgressWidget widget = (WorldExporterProgressWidget) widgets.stream().filter(w -> w instanceof WorldExporterProgressWidget).findFirst().get();
+		return new WorldExporter(world, configuration, widget::acceptProgress);
 	}
 
 	@CalledOnlyBy(AmidstThread.REPAINTER)

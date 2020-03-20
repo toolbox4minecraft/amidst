@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 
 import amidst.Application;
 import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.crash.CrashWindow;
@@ -25,6 +26,9 @@ import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.export.WorldExportException;
+import amidst.mojangapi.world.export.WorldExporter;
+import amidst.mojangapi.world.export.WorldExporterConfiguration;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
@@ -60,7 +64,7 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromSeed() {
 		WorldSeed seed = dialogs.askForSeed();
-		if (seed != null) {
+		if (seed != null && confirmContinueIfWorldExporting()) {
 			newFromSeed(seed);
 		}
 	}
@@ -73,7 +77,7 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = dialogs.askForWorldType();
-		if (worldType != null) {
+		if (worldType != null && confirmContinueIfWorldExporting()) {
 			worldSwitcher.displayWorld(new WorldOptions(worldSeed, worldType));
 		}
 	}
@@ -86,22 +90,32 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void openSaveGame() {
 		File file = dialogs.askForSaveGame();
-		if (file != null) {
+		if (file != null && confirmContinueIfWorldExporting()) {
 			worldSwitcher.displayWorld(file);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void export() {
+	public void export(boolean useQuarterResolution) {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
-			viewerFacade.export(dialogs.askForExportConfiguration());
+			WorldExporterConfiguration config = dialogs.askForExportConfiguration(viewerFacade, useQuarterResolution, biomeProfileSelection);
+			if (config != null) {
+				try {
+					viewerFacade.export(config);
+				} catch (WorldExportException e) {
+					AmidstLogger.warn(e);
+					dialogs.displayError("Another world is already exporting!\nPlease wait until the current one has finished exporting.");
+				}
+			}
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void switchProfile() {
-		application.displayProfileSelectWindow();
+		if (confirmContinueIfWorldExporting()) {
+			application.displayProfileSelectWindow();
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -243,45 +257,6 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void saveBiomesToImage(boolean useQuarterResolution) {
-		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
-		if (viewerFacade != null) {
-			WorldOptions worldOptions = viewerFacade.getWorldOptions();
-			String modifier = useQuarterResolution ? "quarter_" : "full_";
-			String suggestedFilename = modifier + "biomes_" + worldOptions.getWorldType().getFilenameText() + "_"
-					+ worldOptions.getWorldSeed().getLong() + ".tiff";
-			File file = dialogs.askForTIFFSaveFile(suggestedFilename);
-			if (file != null) {
-				file = appendTIFFFileExtensionIfNecessary(file);
-				if (file.exists() && !file.isFile()) {
-					String message = "Unable to set biome image path, because the target exists but is not a file: "
-							+ file.getAbsolutePath();
-					AmidstLogger.warn(message);
-					dialogs.displayError(message);
-				} else if (!canWriteToFile(file)) {
-					String message = "Unable to set biome image path, because you have no writing permissions: "
-							+ file.getAbsolutePath();
-					AmidstLogger.warn(message);
-					dialogs.displayError(message);
-				} else if (!file.exists() || dialogs.askToConfirmYesNo(
-						"Replace file?",
-						"File already exists. Do you want to replace it?\n" + file.getAbsolutePath() + "")) {
-					CoordinatesInWorld topLeft = dialogs.askForCoordinatesOrNull("Enter coordinates for the top left of the image,\nor leave blank for the window top left.\n(Ex. 123,456)");
-					CoordinatesInWorld bottomRight = dialogs.askForCoordinatesOrNull("Enter coordinates for the bottom right of the image,\nor leave blank for the window bottom right.\n(Ex. 123,456)");
-					if((topLeft != null && bottomRight != null) && 
-						(topLeft.getX() >= bottomRight.getX() || topLeft.getY() >= bottomRight.getY())) {
-						String message = "Invalid image coordinates detected, not creating image.";
-						AmidstLogger.warn(message);
-						dialogs.displayError(message);
-					} else {
-						viewerFacade.saveBiomesImage(file, useQuarterResolution, topLeft, bottomRight);
-					}
-				}
-			}
-		}
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
 	public void selectBiomeProfile(BiomeProfile profile) {
 		biomeProfileSelection.set(profile);
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
@@ -382,8 +357,8 @@ public class Actions {
 		return false;
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	private long tryParseLong(String text, long defaultValue) {
+	@CalledByAny
+	public static long tryParseLong(String text, long defaultValue) {
 		try {
 			return Long.parseLong(text);
 		} catch (NumberFormatException e) {
@@ -391,8 +366,8 @@ public class Actions {
 		}
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	private boolean canWriteToFile(File file) {
+	@CalledByAny
+	public static boolean canWriteToFile(File file) {
 		File parentFile = file.getParentFile();
 		return file.canWrite() || (!file.exists() && parentFile != null && parentFile.canWrite());
 	}
@@ -407,8 +382,8 @@ public class Actions {
 		}
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	private File appendPNGFileExtensionIfNecessary(File file) {
+	@CalledByAny
+	public static File appendPNGFileExtensionIfNecessary(File file) {
 		String filename = file.getAbsolutePath();
 		if (!FileExtensionChecker.hasFileExtension(filename, "png")) {
 			filename += ".png";
@@ -416,12 +391,22 @@ public class Actions {
 		return new File(filename);
 	}
 	
-	@CalledOnlyBy(AmidstThread.EDT)
-	private File appendTIFFFileExtensionIfNecessary(File file) {
+	@CalledByAny
+	public static File appendTIFFFileExtensionIfNecessary(File file) {
 		String filename = file.getAbsolutePath();
 		if (!FileExtensionChecker.hasFileExtension(filename, "tiff")) {
 			filename += ".tiff";
 		}
 		return new File(filename);
 	}
+	
+	private boolean confirmContinueIfWorldExporting() {
+		if (WorldExporter.isExporterRunning()) {
+			dialogs.displayWarning("This world is still exporting.\nPlease wait until it is finished before performing this action.");
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
 }

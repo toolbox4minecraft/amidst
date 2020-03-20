@@ -75,4 +75,24 @@ public abstract class ProgressWidget extends OffsetWidget {
 		return (progress >= max || progress < min) ? false : true;
 	}
 	
+	public void acceptProgress(String progress) {
+		String[] array = progress.split(",");
+		
+		switch (array[0]) {
+			case "min":
+				setMin(Integer.parseInt(array[1]));
+				break;
+			case "max":
+				setMax(Integer.parseInt(array[1]));
+				break;
+			case "progress":
+				setProgress(Integer.parseInt(array[1]));
+				break;
+		}
+	}
+	
+	public enum ProgressEntryType {
+		MAX, MIN, PROGRESS
+	}
+	
 }

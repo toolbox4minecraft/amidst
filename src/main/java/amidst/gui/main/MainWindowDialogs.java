@@ -1,25 +1,30 @@
 package amidst.gui.main;
 
+import java.awt.Point;
 import java.io.File;
 import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
+import amidst.gui.main.viewer.ViewerFacade;
+import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.RunningLauncherProfile;
+import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.export.WorldExporterConfiguration;
 import amidst.mojangapi.world.player.WorldPlayerType;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @NotThreadSafe
 public class MainWindowDialogs {
@@ -123,6 +128,11 @@ public class MainWindowDialogs {
 	public void displayError(Exception e) {
 		AmidstMessageBox.displayError(frame, "Error", e);
 	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void displayWarning(String message) {
+		AmidstMessageBox.displayWarning(frame, "Warning", message);
+	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean askToConfirmSaveGameManipulation() {
@@ -164,7 +174,7 @@ public class MainWindowDialogs {
 		return askForString("Go To", "Enter coordinates: (Ex. 123,456)");
 	}
 	
-	public CoordinatesInWorld askForCoordinatesOrNull(String message) {
+	private CoordinatesInWorld askForCoordinatesOrNull(String message) {
 		return CoordinatesInWorld.tryParse(askForString("Enter Coordinates", message));
 	}
 
@@ -191,9 +201,47 @@ public class MainWindowDialogs {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public WorldExporterConfiguration askForExportConfiguration() {
-		// TODO: implement me!
-		// TODO: display gui to create configuration
-		return new WorldExporterConfiguration();
+	public WorldExporterConfiguration askForExportConfiguration(ViewerFacade viewerFacade, boolean useQuarterResolution, BiomeProfileSelection biomeProfileSelection) {
+		WorldOptions worldOptions = viewerFacade.getWorldOptions();
+		String modifier = useQuarterResolution ? "quarter_" : "full_";
+		String suggestedFilename = modifier + "biomes_" + worldOptions.getWorldType().getFilenameText() + "_"
+				+ worldOptions.getWorldSeed().getLong() + ".tiff";
+		File file = askForTIFFSaveFile(suggestedFilename);
+		if (file != null) {
+			file = Actions.appendTIFFFileExtensionIfNecessary(file);
+			if (file.exists() && !file.isFile()) {
+				String message = "Unable to set biome image path, because the target exists but is not a file: "
+						+ file.getAbsolutePath();
+				AmidstLogger.warn(message);
+				displayError(message);
+			} else if (!Actions.canWriteToFile(file)) {
+				String message = "Unable to set biome image path, because you have no writing permissions: "
+						+ file.getAbsolutePath();
+				AmidstLogger.warn(message);
+				displayError(message);
+			} else if (!file.exists() || askToConfirmYesNo(
+					"Replace file?",
+					"File already exists. Do you want to replace it?\n" + file.getAbsolutePath() + "")) {
+				CoordinatesInWorld topLeft = askForCoordinatesOrNull("Enter coordinates for the top left of the image,\n"
+						+ "or leave blank for the window top left.\n"
+						+ "(Ex. 123,456)");
+				CoordinatesInWorld bottomRight = askForCoordinatesOrNull("Enter coordinates for the bottom right of the image,\n"
+						+ "or leave blank for the window bottom right.\n"
+						+ "(Ex. 123,456)");
+				if((topLeft != null && bottomRight != null) && 
+					(topLeft.getX() >= bottomRight.getX() || topLeft.getY() >= bottomRight.getY())) {
+					String message = "Invalid image coordinates detected, not creating image.";
+					AmidstLogger.warn(message);
+					displayError(message);
+				} else {
+					FragmentGraphToScreenTranslator translator = viewerFacade.getTranslator();
+					topLeft = (topLeft != null) ? topLeft : translator.screenToWorld(new Point(0, 0));
+					bottomRight = (bottomRight != null) ? bottomRight : translator.screenToWorld(new Point((int) translator.getWidth(), (int) translator.getHeight()));
+					return new WorldExporterConfiguration(file, useQuarterResolution, topLeft, bottomRight, biomeProfileSelection);
+				}
+			}
+		}
+		return null;
 	}
+	
 }
