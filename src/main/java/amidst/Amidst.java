@@ -5,10 +5,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.prefs.Preferences;
 
-import javax.media.jai.JAI;
 import javax.swing.SwingUtilities;
 
-import org.jaitools.tilecache.DiskMemTileCache;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.ParserProperties;
@@ -82,7 +80,6 @@ public class Amidst {
 			logTimeAndProperties();
 			enableGraphicsAcceleration();
 			osxMenuProperties();
-			setJAITileCache();
 			startApplication(parameters, metadata, createSettings());
 		}
 	}
@@ -163,11 +160,6 @@ public class Amidst {
 
 	private static void applyLookAndFeel(AmidstSettings settings) {
     	settings.lookAndFeel.get().tryApply();
-	}
-	
-	private static void setJAITileCache() {
-		JAI.getDefaultInstance().setTileCache(new DiskMemTileCache());
-		JAI.enableDefaultTileCache();
 	}
 
 	private static void startApplication(

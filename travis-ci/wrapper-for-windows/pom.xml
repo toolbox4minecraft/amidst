@@ -51,7 +51,7 @@
 							<jre>
 								<minVersion>${amidst.build.jdk.version}.0</minVersion>
 								<initialHeapSize>512</initialHeapSize>
-								<maxHeapSize>1024</maxHeapSize>
+								<maxHeapSize>2048</maxHeapSize>
 							</jre>
 						</configuration>
 					</execution>

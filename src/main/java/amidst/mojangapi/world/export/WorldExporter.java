@@ -10,14 +10,15 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Consumer;
 import javax.media.jai.JAI;
-import javax.media.jai.TiledImage;
+
+import org.jaitools.tilecache.DiskMemTileCache;
+import org.jaitools.tiledimage.DiskMemImage;
 
 import com.sun.media.jai.codec.TIFFEncodeParam;
 
 import amidst.documentation.AmidstThread;
-import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
-import amidst.documentation.NotThreadSafe;
+import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.World;
@@ -27,8 +28,11 @@ import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.threading.WorkerExecutor;
 import amidst.threading.worker.ProgressReporter;
 
-@NotThreadSafe
+@ThreadSafe
 public class WorldExporter {
+	private static final int TILE_SIZE = Fragment.SIZE;
+	private static final int TILES_BETWEEN_FLUSHES = 30;
+	private static final DiskMemTileCache tileCache = new DiskMemTileCache();
 	private static final ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors.newCachedThreadPool(new ThreadFactory() {
 		private int threadNo;
 		
@@ -61,13 +65,9 @@ public class WorldExporter {
 
 	@CalledOnlyBy(AmidstThread.WORKER)
 	private void doExport(ProgressReporter<String> progressReporter) {
+		progressReporter.report("min,0");
+		progressReporter.report("progress,0");
 		int factor = configuration.isQuarterResolution() ? 4 : 1;
-		
-		TIFFEncodeParam tep = new TIFFEncodeParam();
-		tep.setTileSize(Fragment.SIZE, Fragment.SIZE);
-		tep.setWriteTiled(true);
-		tep.setCompression(TIFFEncodeParam.COMPRESSION_DEFLATE);
-		tep.setDeflateLevel(5);
 		
 		int x = (int) configuration.getTopLeftCoord().getX();
 		int y = (int) configuration.getTopLeftCoord().getY();
@@ -80,30 +80,34 @@ public class WorldExporter {
 			0x0000FF
 		};
 		
-		BiomeProfileSelection biomeColors = configuration.getBiomeProfileSelection();
-		TiledImage tiledImage = new TiledImage(0, 0, width / factor, height / factor, 0, 0,
-					new SinglePixelPackedSampleModel(DataBuffer.TYPE_INT, 256, 256, bitmasks),
+		DiskMemImage tiledImage = new DiskMemImage(0, 0, width / factor, height / factor, 0, 0,
+					new SinglePixelPackedSampleModel(DataBuffer.TYPE_INT, TILE_SIZE, TILE_SIZE, bitmasks),
 					new DirectColorModel(32, bitmasks[0], bitmasks[1], bitmasks[2])
 				);
+		tiledImage.setUseCommonCache(true);
 		
 		int tileMaxProgress = tiledImage.getNumXTiles() * tiledImage.getNumYTiles();
 		int imageMaxProgress = (int) Math.ceil(tiledImage.getNumXTiles() * tiledImage.getNumYTiles() * .05);
-		progressReporter.report("min,0");
 		progressReporter.report("max," + (tileMaxProgress + imageMaxProgress));
-		progressReporter.report("progress,0");
+		
+		BiomeProfileSelection biomeColors = configuration.getBiomeProfileSelection();
 		
 		short[][] dataArray;
 		int tilesProcessed = 0;
-		for(int tx = 0; tx < tiledImage.getNumXTiles(); tx++) {
-			for(int ty = 0; ty < tiledImage.getNumYTiles(); ty++) {
+		for (int tx = 0; tx < tiledImage.getNumXTiles(); tx++) {
+			for (int ty = 0; ty < tiledImage.getNumYTiles(); ty++) {
+				if (tilesProcessed % TILES_BETWEEN_FLUSHES == 0) {
+					tileCache.memoryControl();
+				}
+				
 				Rectangle r = tiledImage.getTileRect(tx, ty);
 				r.setLocation(tiledImage.tileXToX(tx), tiledImage.tileYToY(ty));
 				dataArray = new short[r.width][r.height];
 				world.getBiomeDataOracle().populateArray(new CoordinatesInWorld((long) x + r.x * factor, (long) y + r.y * factor), dataArray, configuration.isQuarterResolution());
 			
 				try {
-					for(int i = 0; i < r.width; i++) {
-						for(int j = 0; j < r.height; j++) {
+					for (int i = 0; i < r.width; i++) {
+						for (int j = 0; j < r.height; j++) {
 							tiledImage.setSample(r.x + i, r.y + j, 0, biomeColors.getBiomeColor(dataArray[i][j]).getR());
 							tiledImage.setSample(r.x + i, r.y + j, 1, biomeColors.getBiomeColor(dataArray[i][j]).getG());
 							tiledImage.setSample(r.x + i, r.y + j, 2, biomeColors.getBiomeColor(dataArray[i][j]).getB());
@@ -112,37 +116,47 @@ public class WorldExporter {
 				} catch (UnknownBiomeIndexException e) {
 					e.printStackTrace();
 				}
+				
 				progressReporter.report("progress," + ++tilesProcessed);
 			}
-			JAI.getDefaultInstance().getTileCache().memoryControl();
 		}
 		dataArray = null;
+		
+		TIFFEncodeParam tep = new TIFFEncodeParam();
+		tep.setTileSize(TILE_SIZE, TILE_SIZE);
+		tep.setWriteTiled(true);
+		tep.setCompression(TIFFEncodeParam.COMPRESSION_DEFLATE);
+		tep.setDeflateLevel(5);
 		
 		try {
 			JAI.create("filestore", tiledImage, configuration.getImageFile().getCanonicalPath(), "TIFF", tep);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+		tileCache.flush();
 		tiledImage.dispose();
 		// We nullify these objects and call the garbage collector so that JAI releases its lock on the newly created file.
-		// This is sadly the best way to do this, and is even reccomended by JAI when we want to unlock a file.
+		// This is sadly the best way to do this, and is even recommended by JAI when we want to unlock a file.
 		tep = null;
 		tiledImage = null;
 		System.gc();
 		progressReporter.report("progress," + (tileMaxProgress + imageMaxProgress));
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
 	private void onFinished(Exception e) {
 		AmidstLogger.warn(e);
 	}
 	
-	@CalledByAny
 	public static boolean isExporterRunning() {
 		if(pool.getActiveCount() > 0) {
 				return true;
 			}
 		return false;
+	}
+	
+	static {
+		DiskMemImage.setCommonTileCache(tileCache);
+		JAI.getDefaultInstance().setTileCache(tileCache);
 	}
 	
 }
