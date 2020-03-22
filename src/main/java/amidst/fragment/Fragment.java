@@ -3,6 +3,7 @@ package amidst.fragment;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import amidst.documentation.AmidstThread;
@@ -78,8 +79,8 @@ import amidst.mojangapi.world.oracle.EndIsland;
 public class Fragment {
 	public static final int SIZE = Resolution.FRAGMENT.getStep();
 
-	private volatile boolean isInitialized = false;
-	private volatile boolean isLoaded = false;
+	private final AtomicBoolean isInitialized;
+	private final AtomicBoolean isLoaded;
 	private volatile CoordinatesInWorld corner;
 
 	private volatile float alpha;
@@ -89,6 +90,8 @@ public class Fragment {
 	private final AtomicReferenceArray<List<WorldIcon>> worldIcons;
 
 	public Fragment(int numberOfLayers) {
+		this.isInitialized = new AtomicBoolean(false);
+		this.isLoaded = new AtomicBoolean(false);
 		this.images = new AtomicReferenceArray<>(numberOfLayers);
 		this.worldIcons = new AtomicReferenceArray<>(numberOfLayers);
 	}
@@ -139,7 +142,7 @@ public class Fragment {
 	}
 
 	public List<WorldIcon> getWorldIcons(int layerId) {
-		if (isLoaded) {
+		if (isLoaded.get()) {
 			List<WorldIcon> result = worldIcons.get(layerId);
 			if (result != null) {
 				return result;
@@ -150,26 +153,26 @@ public class Fragment {
 
 	@CalledByAny
 	public void setInitialized() {
-		this.isInitialized = true;
+		this.isInitialized.set(true);
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void setLoaded() {
-		this.isLoaded = true;
+		this.isLoaded.set(true);
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void recycle() {
-		this.isLoaded = false;
-		this.isInitialized = false;
+		this.isLoaded.set(false);
+		this.isInitialized.set(false);
 	}
 
 	public boolean isInitialized() {
-		return isInitialized;
+		return isInitialized.get();
 	}
 
 	public boolean isLoaded() {
-		return isLoaded;
+		return isLoaded.get();
 	}
 
 	public void setCorner(CoordinatesInWorld corner) {

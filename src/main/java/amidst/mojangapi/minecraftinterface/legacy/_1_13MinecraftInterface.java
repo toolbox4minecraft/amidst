@@ -119,10 +119,7 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 				try {
 					return createPixelTransformersArray(seed, worldType);
 				} catch (Exception e) {
-					MinecraftInterfaceException e1 = new MinecraftInterfaceException("unable to create pixel transformer", e);
-					AmidstLogger.error(e1);
-					System.exit(2);
-					return null;
+					throw new RuntimeException("unable to create pixel transformer", e);
 				}
 			});
 
