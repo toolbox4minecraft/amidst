@@ -52,7 +52,7 @@ public class ImageLoader extends FragmentLoader {
 			 long cornerY = corner.getYAs(resolution);
 			 BufferedImage tempImg = createBufferedImage();
 			 drawToImage(dimension, fragment, cornerX, cornerY, tempImg);
-			 fragment.setImage(declaration.getLayerId(), tempImg);
+			 fragment.putImage(declaration.getLayerId(), tempImg);
 		}
 	}
 
