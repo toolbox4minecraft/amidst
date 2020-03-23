@@ -46,10 +46,14 @@ public class ImageLoader extends FragmentLoader {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void doLoad(Dimension dimension, Fragment fragment) {
-		CoordinatesInWorld corner = fragment.getCorner();
-		long cornerX = corner.getXAs(resolution);
-		long cornerY = corner.getYAs(resolution);
-		drawToImage(dimension, fragment, cornerX, cornerY, fragment.getImage(declaration.getLayerId()));
+		synchronized(fragment) {
+			 CoordinatesInWorld corner = fragment.getCorner();
+			 long cornerX = corner.getXAs(resolution);
+			 long cornerY = corner.getYAs(resolution);
+			 BufferedImage tempImg = createBufferedImage();
+			 drawToImage(dimension, fragment, cornerX, cornerY, tempImg);
+			 fragment.setImage(declaration.getLayerId(), tempImg);
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
