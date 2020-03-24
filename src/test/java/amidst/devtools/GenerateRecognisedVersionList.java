@@ -44,15 +44,19 @@ public class GenerateRecognisedVersionList {
 	}
 
 	private void process(Version version) {
-		if (version.tryDownloadClient(prefix)) {
-			try {
-				process(version.getId());
-			} catch (ClassNotFoundException | NoClassDefFoundError | FormatException | IOException e) {
-				e.printStackTrace();
-				versionsWithError.add(version.getId());
-			}
-		} else {
+		try {
+			version.fetchRemoteVersion().downloadClient(prefix);
+		} catch (IOException | FormatException e) {
+			e.printStackTrace();
 			downloadFailed.add(version.getId());
+			return;
+		}
+
+		try {
+			process(version.getId());
+		} catch (ClassNotFoundException | NoClassDefFoundError | FormatException | IOException e) {
+			e.printStackTrace();
+			versionsWithError.add(version.getId());
 		}
 	}
 

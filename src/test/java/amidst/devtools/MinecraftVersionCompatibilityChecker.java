@@ -55,22 +55,27 @@ public class MinecraftVersionCompatibilityChecker {
 	}
 
 	private VersionStatus checkOne(Version version) {
-		if (version.tryDownloadClient(prefix)) {
-			try {
-				LauncherProfile launcherProfile = minecraftInstallation.newLauncherProfile(version.getId());
-				RecognisedVersion recognisedVersion = RecognisedVersion.from(launcherProfile.newClassLoader());
-				if(!recognisedVersion.isKnown())
-					return VersionStatus.UNRECOGNISED;
-
-				Path jarFile = version.getClientJarFile(Paths.get(prefix));
-				ClassTranslator translator = MinecraftInterfaces.getClassTranslatorFromVersion(recognisedVersion);
-				if(isSupported(Classes.countMatches(jarFile, translator)))
-					return VersionStatus.SUPPORTED;
-			} catch (JarFileParsingException | FormatException | IOException | ClassNotFoundException e) {
-				e.printStackTrace();
-				return VersionStatus.FAILED;
-			}
+		try {
+			version.fetchRemoteVersion().downloadClient(prefix);
+		} catch (IOException | FormatException e) {
+			return VersionStatus.UNSUPPORTED;
 		}
+
+		try {
+			LauncherProfile launcherProfile = minecraftInstallation.newLauncherProfile(version.getId());
+			RecognisedVersion recognisedVersion = RecognisedVersion.from(launcherProfile.newClassLoader());
+			if(!recognisedVersion.isKnown())
+				return VersionStatus.UNRECOGNISED;
+
+			Path jarFile = version.getClientJarFile(Paths.get(prefix));
+			ClassTranslator translator = MinecraftInterfaces.getClassTranslatorFromVersion(recognisedVersion);
+			if(isSupported(Classes.countMatches(jarFile, translator)))
+				return VersionStatus.SUPPORTED;
+		} catch (JarFileParsingException | FormatException | IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+			return VersionStatus.FAILED;
+		}
+
 		return VersionStatus.UNSUPPORTED;
 	}
 

@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Semaphore;
 import java.util.prefs.Preferences;
 
@@ -77,20 +78,17 @@ public class WorldGenerationBencher {
 	}
 
 	private void benchmarkOne(Application app, Version version) {
-		if(!version.tryDownloadClient(prefix)) {
-			failed.add(version);
-			return;
-		}
-
 		RunningLauncherProfile profile;
 		try {
+			version.fetchRemoteVersion().downloadClient(prefix);
 			LauncherProfile launcherProfile = minecraftInstallation.newLauncherProfile(version.getId());
 			profile = new RunningLauncherProfile(
 					WorldBuilder.createSilentPlayerless(),
 					launcherProfile,
 					new BenchmarkingMinecraftInterface(MinecraftInterfaces.fromLocalProfile(launcherProfile), records),
-					null);
+					Optional.empty());
 		} catch (FormatException | IOException | MinecraftInterfaceCreationException e) {
+			e.printStackTrace();
 			failed.add(version);
 			return;
 		}

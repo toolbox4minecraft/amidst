@@ -46,21 +46,18 @@ public class GenerateWorldTestData {
 	}
 
 	private void generate(TestWorldDeclaration declaration, Version version) {
-		if (version.tryDownloadClient(prefix)) {
-			try {
-				LauncherProfile launcherProfile = minecraftInstallation.newLauncherProfile(version.getId());
-				MinecraftInterface minecraftInterface = MinecraftInterfaces.fromLocalProfile(launcherProfile);
-				TestWorldCache.createAndPut(declaration, minecraftInterface);
-				successful.add(version.getId());
-			} catch (
-					MinecraftInterfaceCreationException
-					| MinecraftInterfaceException
-					| FormatException
-					| IOException e) {
-				e.printStackTrace();
-				failed.add(version.getId());
-			}
-		} else {
+		try {
+			version.fetchRemoteVersion().downloadClient(prefix);
+			LauncherProfile launcherProfile = minecraftInstallation.newLauncherProfile(version.getId());
+			MinecraftInterface minecraftInterface = MinecraftInterfaces.fromLocalProfile(launcherProfile);
+			TestWorldCache.createAndPut(declaration, minecraftInterface);
+			successful.add(version.getId());
+		} catch (
+				MinecraftInterfaceCreationException
+				| MinecraftInterfaceException
+				| FormatException
+				| IOException e) {
+			e.printStackTrace();
 			failed.add(version.getId());
 		}
 	}

@@ -6,13 +6,12 @@ import java.nio.file.Path;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.json.ReleaseType;
 import amidst.mojangapi.file.json.versionlist.VersionListEntryJson;
-import amidst.mojangapi.file.service.DownloadService;
 import amidst.mojangapi.file.service.FilenameService;
+import amidst.parsing.FormatException;
 
 @Immutable
 public class Version {
 	private final FilenameService filenameService = new FilenameService();
-	private final DownloadService downloadService = new DownloadService();
 	private final VersionListEntryJson versionListEntryJson;
 
 	public Version(VersionListEntryJson versionListEntryJson) {
@@ -27,20 +26,16 @@ public class Version {
 		return versionListEntryJson.getType();
 	}
 
-	public boolean hasServer() {
+	public RemoteVersion fetchRemoteVersion() throws FormatException, IOException {
+		return RemoteVersion.from(filenameService, versionListEntryJson.getMetaUrl());
+	}
+
+	/*public boolean hasServer() {
 		return downloadService.hasServer(versionListEntryJson.getId());
 	}
 
 	public boolean hasClient() {
 		return downloadService.hasClient(versionListEntryJson.getId());
-	}
-
-	public boolean tryDownloadServer(String prefix) {
-		return downloadService.tryDownloadServer(prefix, versionListEntryJson.getId());
-	}
-
-	public boolean tryDownloadClient(String prefix) {
-		return downloadService.tryDownloadClient(prefix, versionListEntryJson.getId());
 	}
 
 	public void downloadServer(String prefix) throws IOException {
@@ -49,7 +44,7 @@ public class Version {
 
 	public void downloadClient(String prefix) throws IOException {
 		downloadService.downloadClient(prefix, versionListEntryJson.getId());
-	}
+	}*/
 
 	public Path getClientJarFile(Path prefix) {
 		return filenameService.getClientJarFile(prefix, versionListEntryJson.getId());

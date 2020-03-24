@@ -23,21 +23,21 @@ public enum JsonReader {
 
 	@NotNull
 	public static <T> T readLocation(Path file, Class<T> class1) throws FormatException, IOException {
-		return readReader(Files.newBufferedReader(file), class1);
+		return read(Files.newBufferedReader(file), class1);
 	}
 
 	@NotNull
 	public static <T> T readLocation(URL location, Class<T> clazz) throws FormatException, IOException {
-		return readReader(URIUtils.newReader(location), clazz);
+		return read(URIUtils.newReader(location), clazz);
 	}
 
 	@NotNull
 	public static <T> T readLocation(String location, Class<T> clazz) throws FormatException, IOException {
-		return readReader(URIUtils.newReader(location), clazz);
+		return read(URIUtils.newReader(location), clazz);
 	}
 
 	@NotNull
-	private static <T> T readReader(Reader reader, Class<T> clazz) throws FormatException, IOException {
+	public static <T> T read(Reader reader, Class<T> clazz) throws FormatException, IOException {
 		try (Reader theReader = reader) {
 			T result = GSON.fromJson(theReader, clazz);
 			if (result != null) {

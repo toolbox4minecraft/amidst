@@ -1,9 +1,11 @@
 package amidst.parsing;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
 
@@ -25,15 +27,27 @@ public enum URIUtils {
 		return newURI(location).toURL();
 	}
 
-	public static Reader newReader(String location) throws IOException {
+	public static BufferedReader newReader(String location) throws IOException {
 		return newReader(newURL(location));
 	}
 
-	public static Reader newReader(URL url) throws IOException {
-		return new InputStreamReader(newInputStream(url));
+	public static BufferedReader newReader(URL url) throws IOException {
+		return new BufferedReader(new InputStreamReader(url.openStream()));
 	}
 
 	public static BufferedInputStream newInputStream(URL url) throws IOException {
 		return new BufferedInputStream(url.openStream());
+	}
+
+	public static byte[] readBytes(URL url) throws IOException {
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		byte buf[] = new byte[4096];
+		try (InputStream stream = url.openStream()) {
+			int read;
+			while((read = stream.read(buf)) >= 0) {
+				bytes.write(buf, 0, read);
+			}
+		}
+		return bytes.toByteArray();
 	}
 }

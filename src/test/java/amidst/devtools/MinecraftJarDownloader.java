@@ -1,8 +1,12 @@
 package amidst.devtools;
 
+import java.io.IOException;
+
 import amidst.devtools.utils.VersionStateRenderer;
+import amidst.mojangapi.file.RemoteVersion;
 import amidst.mojangapi.file.Version;
 import amidst.mojangapi.file.VersionList;
+import amidst.parsing.FormatException;
 
 public class MinecraftJarDownloader {
 	private VersionStateRenderer renderer = new VersionStateRenderer();
@@ -16,9 +20,34 @@ public class MinecraftJarDownloader {
 
 	public void run() {
 		for (Version version : versionList.getVersions()) {
-			boolean hasServer = version.tryDownloadServer(prefix);
-			boolean hasClient = version.tryDownloadClient(prefix);
-			System.out.println(renderer.render(version, hasServer, hasClient));
+			downloadVersion(version);
+		}
+	}
+
+	private void downloadVersion(Version version) {
+		boolean hasServer = false;
+		boolean hasClient = false;
+		try {
+			RemoteVersion remoteVersion = version.fetchRemoteVersion();
+			hasServer = tryDownload(remoteVersion, true);
+			hasClient = tryDownload(remoteVersion, false);
+		} catch (IOException | FormatException e) {
+			e.printStackTrace();
+		}
+		System.out.println(renderer.render(version, hasServer, hasClient));
+	}
+
+	private boolean tryDownload(RemoteVersion version, boolean server) {
+		try {
+			if (server) {
+				version.downloadServer(prefix);
+			} else {
+				version.downloadClient(prefix);
+			}
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 }
