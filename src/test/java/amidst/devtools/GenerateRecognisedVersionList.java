@@ -1,8 +1,8 @@
 package amidst.devtools;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URLClassLoader;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class GenerateRecognisedVersionList {
 		this.prefix = prefix;
 		this.versionList = versionList;
 		this.minecraftInstallation = MinecraftInstallation
-				.newCustomMinecraftInstallation(new File(libraries), null, new File(prefix), null);
+				.newCustomMinecraftInstallation(Paths.get(libraries), null, Paths.get(prefix), null);
 	}
 
 	public void run() {

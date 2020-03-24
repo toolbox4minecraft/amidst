@@ -1,10 +1,6 @@
 package amidst.parsing;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -35,10 +31,6 @@ public enum URIUtils {
 
 	public static Reader newReader(URL url) throws IOException {
 		return new InputStreamReader(newInputStream(url));
-	}
-
-	public static Reader newReader(File file) throws FileNotFoundException {
-		return new BufferedReader(new FileReader(file));
 	}
 
 	public static BufferedInputStream newInputStream(URL url) throws IOException {

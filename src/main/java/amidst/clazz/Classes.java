@@ -1,8 +1,8 @@
 package amidst.clazz;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,15 +24,15 @@ public enum Classes {
 	;
 
 	public static Map<String, SymbolicClass> createSymbolicClassMap(
-			File jarFile,
+			Path path,
 			URLClassLoader classLoader,
 			ClassTranslator translator)
 			throws FileNotFoundException,
 			JarFileParsingException,
 			SymbolicClassGraphCreationException,
 			ClassNotFoundException {
-		AmidstLogger.info("Reading {}", jarFile.getName());
-		List<RealClass> realClasses = RealClasses.fromJarFile(jarFile);
+		AmidstLogger.info("Reading {}", path.getFileName());
+		List<RealClass> realClasses = RealClasses.fromJarFile(path);
 		AmidstLogger.info("Jar load complete.");
 		AmidstLogger.info("Searching for classes...");
 		Map<SymbolicClassDeclaration, String> realClassNamesBySymbolicClassDeclaration = translator
@@ -44,10 +44,10 @@ public enum Classes {
 		return result;
 	}
 
-	public static Map<SymbolicClassDeclaration, Integer> countMatches(File jarFile, ClassTranslator translator)
+	public static Map<SymbolicClassDeclaration, Integer> countMatches(Path jarFile, ClassTranslator translator)
 			throws FileNotFoundException,
 			JarFileParsingException {
-		AmidstLogger.info("Checking {}", jarFile.getName());
+		AmidstLogger.info("Checking {}", jarFile.getFileName());
 		List<RealClass> realClasses = RealClasses.fromJarFile(jarFile);
 		Map<SymbolicClassDeclaration, List<RealClass>> map = translator.translateToAllMatching(realClasses);
 		Map<SymbolicClassDeclaration, Integer> result = new HashMap<>();

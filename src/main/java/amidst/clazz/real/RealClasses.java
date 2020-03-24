@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -19,8 +20,8 @@ public enum RealClasses {
 	private static final int MAXIMUM_CLASS_BYTES = 24 * 1024;
 	private static final RealClassBuilder REAL_CLASS_BUILDER = new RealClassBuilder();
 
-	public static List<RealClass> fromJarFile(File jarFile) throws FileNotFoundException, JarFileParsingException {
-		return readRealClassesFromJarFile(jarFile);
+	public static List<RealClass> fromJarFile(Path jarFile) throws FileNotFoundException, JarFileParsingException {
+		return readRealClassesFromJarFile(jarFile.toFile());
 	}
 
 	private static List<RealClass> readRealClassesFromJarFile(File jarFile)
@@ -29,6 +30,7 @@ public enum RealClasses {
 		if (!jarFile.exists()) {
 			throw new FileNotFoundException("Attempted to load jar file at: " + jarFile + " but it does not exist.");
 		}
+		// TODO use zip file provider
 		try (ZipFile zipFile = new ZipFile(jarFile)) {
 			return readJarFile(zipFile);
 		} catch (IOException e) {

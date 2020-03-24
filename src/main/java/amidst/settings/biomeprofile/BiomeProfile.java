@@ -1,9 +1,9 @@
 package amidst.settings.biomeprofile;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +61,7 @@ public class BiomeProfile {
 			AmidstLogger.info("Color map is missing in profile: {}", name);
 			return false;
 		}
-		
+
 		if(this.name == null) {
 			AmidstLogger.info("Name is missing in profile");
 			return false;
@@ -91,7 +91,7 @@ public class BiomeProfile {
 		}
 	}
 
-	public boolean save(File file) {
+	public boolean save(Path file) {
 		return writeToFile(file, serialize());
 	}
 
@@ -126,8 +126,8 @@ public class BiomeProfile {
 		return result.entrySet();
 	}
 
-	private boolean writeToFile(File file, String output) {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+	private boolean writeToFile(Path file, String output) {
+		try (BufferedWriter writer = Files.newBufferedWriter(file)) {
 			writer.write(output);
 			return true;
 		} catch (IOException e) {

@@ -1,6 +1,7 @@
 package amidst.mojangapi.file.directory;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 
 import amidst.documentation.Immutable;
@@ -12,35 +13,35 @@ public class DotMinecraftDirectory {
 	 * testing and the dev tools. Pass null to use default values.
 	 */
 	public static DotMinecraftDirectory newCustom(
-			File root,
-			File libraries,
-			File saves,
-			File versions,
-			File launcherProfilesJson) {
+			Path root,
+			Path libraries,
+			Path saves,
+			Path versions,
+			Path launcherProfilesJson) {
 		Objects.requireNonNull(root);
 		return new DotMinecraftDirectory(
 				root,
-				libraries != null ? libraries : new File(root, "libraries"),
-				saves != null ? saves : new File(root, "saves"),
-				versions != null ? versions : new File(root, "versions"),
-				launcherProfilesJson != null ? launcherProfilesJson : new File(root, "launcher_profiles.json"));
+				libraries != null ? libraries : root.resolve("libraries"),
+				saves != null ? saves : root.resolve("saves"),
+				versions != null ? versions : root.resolve("versions"),
+				launcherProfilesJson != null ? launcherProfilesJson : root.resolve("launcher_profiles.json"));
 	}
 
-	private final File root;
-	private final File libraries;
-	private final File saves;
-	private final File versions;
-	private final File launcherProfilesJson;
+	private final Path root;
+	private final Path libraries;
+	private final Path saves;
+	private final Path versions;
+	private final Path launcherProfilesJson;
 
-	public DotMinecraftDirectory(File root) {
+	public DotMinecraftDirectory(Path root) {
 		this.root = root;
-		this.libraries = new File(root, "libraries");
-		this.saves = new File(root, "saves");
-		this.versions = new File(root, "versions");
-		this.launcherProfilesJson = new File(root, "launcher_profiles.json");
+		this.libraries = root.resolve("libraries");
+		this.saves = root.resolve("saves");
+		this.versions = root.resolve("versions");
+		this.launcherProfilesJson = root.resolve("launcher_profiles.json");
 	}
 
-	private DotMinecraftDirectory(File root, File libraries, File saves, File versions, File launcherProfilesJson) {
+	private DotMinecraftDirectory(Path root, Path libraries, Path saves, Path versions, Path launcherProfilesJson) {
 		this.root = root;
 		this.libraries = libraries;
 		this.saves = saves;
@@ -49,30 +50,33 @@ public class DotMinecraftDirectory {
 	}
 
 	public boolean isValid() {
-		return root.isDirectory() && libraries.isDirectory() && versions.isDirectory() && launcherProfilesJson.isFile();
+		return Files.isDirectory(root)
+			&& Files.isDirectory(libraries)
+			&& Files.isDirectory(versions)
+			&& Files.isRegularFile(launcherProfilesJson);
 	}
 
 	public ProfileDirectory asProfileDirectory() {
 		return new ProfileDirectory(root);
 	}
 
-	public File getRoot() {
+	public Path getRoot() {
 		return root;
 	}
 
-	public File getLibraries() {
+	public Path getLibraries() {
 		return libraries;
 	}
 
-	public File getSaves() {
+	public Path getSaves() {
 		return saves;
 	}
 
-	public File getVersions() {
+	public Path getVersions() {
 		return versions;
 	}
 
-	public File getLauncherProfilesJson() {
+	public Path getLauncherProfilesJson() {
 		return launcherProfilesJson;
 	}
 }

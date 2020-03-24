@@ -1,12 +1,13 @@
 package amidst.mojangapi.file.service;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
@@ -31,17 +32,17 @@ public class DotMinecraftDirectoryService {
 
 	@NotNull
 	public DotMinecraftDirectory createCustomDotMinecraftDirectory(
-			File libraries,
-			File saves,
-			File versions,
-			File launcherProfilesJson) throws DotMinecraftDirectoryNotFoundException {
+			Path libraries,
+			Path saves,
+			Path versions,
+			Path launcherProfilesJson) throws DotMinecraftDirectoryNotFoundException {
 		return validate(
 				DotMinecraftDirectory
 						.newCustom(getMinecraftDirectory(), libraries, saves, versions, launcherProfilesJson));
 	}
 
 	@NotNull
-	public DotMinecraftDirectory createDotMinecraftDirectory(File dotMinecraftDirectory2)
+	public DotMinecraftDirectory createDotMinecraftDirectory(Path dotMinecraftDirectory2)
 			throws DotMinecraftDirectoryNotFoundException {
 		return validate(new DotMinecraftDirectory(findDotMinecraftDirectory(dotMinecraftDirectory2)));
 	}
@@ -58,9 +59,9 @@ public class DotMinecraftDirectoryService {
 	}
 
 	@NotNull
-	private File findDotMinecraftDirectory(File preferredDotMinecraftDirectory) {
+	private Path findDotMinecraftDirectory(Path preferredDotMinecraftDirectory) {
 		if (preferredDotMinecraftDirectory != null) {
-			if (preferredDotMinecraftDirectory.isDirectory()) {
+			if (Files.isDirectory(preferredDotMinecraftDirectory)) {
 				return preferredDotMinecraftDirectory;
 			} else {
 				AmidstLogger.warn(
@@ -74,17 +75,17 @@ public class DotMinecraftDirectoryService {
 	}
 
 	@NotNull
-	private File getMinecraftDirectory() {
-		File home = new File(System.getProperty("user.home", "."));
+	private Path getMinecraftDirectory() {
+		Path home = Paths.get(System.getProperty("user.home", "."));
 		if (OperatingSystemDetector.isWindows()) {
-			File appData = new File(System.getenv("APPDATA"));
-			if (appData.isDirectory()) {
-				return new File(appData, ".minecraft");
+			Path appData = Paths.get(System.getenv("APPDATA"));
+			if (Files.isDirectory(appData)) {
+				return appData.resolve(".minecraft");
 			}
 		} else if (OperatingSystemDetector.isMac()) {
-			return new File(home, "Library/Application Support/minecraft");
+			return home.resolve("Library/Application Support/minecraft");
 		}
-		return new File(home, ".minecraft");
+		return home.resolve(".minecraft");
 	}
 
 	@NotNull
@@ -112,7 +113,7 @@ public class DotMinecraftDirectoryService {
 	@NotNull
 	private ProfileDirectory createProfileDirectory(DotMinecraftDirectory dotMinecraftDirectory, String gameDir) {
 		if (gameDir != null) {
-			return new ProfileDirectory(new File(gameDir));
+			return new ProfileDirectory(Paths.get(gameDir));
 		} else {
 			return dotMinecraftDirectory.asProfileDirectory();
 		}
@@ -169,7 +170,7 @@ public class DotMinecraftDirectoryService {
 	}
 
 	@NotNull
-	public VersionDirectory createValidVersionDirectory(File jar, File json) throws FileNotFoundException {
+	public VersionDirectory createValidVersionDirectory(Path jar, Path json) throws FileNotFoundException {
 		VersionDirectory versionDirectory = new VersionDirectory(jar, json);
 		if (versionDirectory.isValid()) {
 			return versionDirectory;
@@ -192,28 +193,29 @@ public class DotMinecraftDirectoryService {
 
 	@NotNull
 	private VersionDirectory createVersionDirectory(DotMinecraftDirectory dotMinecraftDirectory, String versionId) {
-		File versions = dotMinecraftDirectory.getVersions();
-		File jar = filenameService.getClientJarFile(versions, versionId);
-		File json = filenameService.getClientJsonFile(versions, versionId);
+		Path versions = dotMinecraftDirectory.getVersions();
+		Path jar = filenameService.getClientJarFile(versions, versionId);
+		Path json = filenameService.getClientJsonFile(versions, versionId);
 		return new VersionDirectory(jar, json);
 	}
 
 	public List<VersionDirectory> findInstalledValidVersionDirectories(DotMinecraftDirectory dotMinecraftDirectory) {
 		return listFiles(dotMinecraftDirectory.getVersions())
-				.stream()
-				.filter(File::isDirectory)
-				.map(File::getName)
-				.map(id -> createVersionDirectory(dotMinecraftDirectory, id))
+				.filter(Files::isDirectory)
+				.map(Path::getFileName)
+				.map(id -> createVersionDirectory(dotMinecraftDirectory, id.toString()))
 				.filter(VersionDirectory::isValid)
 				.collect(Collectors.toList());
 	}
 
-	private List<File> listFiles(File file) {
-		File[] files = file.listFiles();
-		if (files != null) {
-			return Arrays.asList(files);
-		} else {
-			return Collections.emptyList();
+	private Stream<Path> listFiles(Path directory) {
+		if (Files.isDirectory(directory)) {
+			try {
+				return Files.list(directory);
+			} catch (IOException e) {
+				AmidstLogger.error(e, "Error while reading directory " + directory);
+			}
 		}
+		return Stream.empty();
 	}
 }

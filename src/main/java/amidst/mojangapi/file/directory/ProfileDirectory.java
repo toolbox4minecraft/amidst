@@ -1,28 +1,29 @@
 package amidst.mojangapi.file.directory;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import amidst.documentation.Immutable;
 
 @Immutable
 public class ProfileDirectory {
-	private final File root;
-	private final File saves;
+	private final Path root;
+	private final Path saves;
 
-	public ProfileDirectory(File root) {
+	public ProfileDirectory(Path root) {
 		this.root = root;
-		this.saves = new File(root, "saves");
+		this.saves = root.resolve("saves");
 	}
 
 	public boolean isValid() {
-		return root.isDirectory();
+		return Files.isDirectory(root);
 	}
 
-	public File getRoot() {
+	public Path getRoot() {
 		return root;
 	}
 
-	public File getSaves() {
+	public Path getSaves() {
 		return saves;
 	}
 }

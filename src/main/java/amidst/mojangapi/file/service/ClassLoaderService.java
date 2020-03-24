@@ -1,17 +1,18 @@
 package amidst.mojangapi.file.service;
 
-import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
@@ -26,30 +27,30 @@ public class ClassLoaderService {
 	private static final String ACTION_ALLOW = "allow";
 
 	@NotNull
-	public URLClassLoader createClassLoader(File librariesDirectory, List<LibraryJson> libraries, File versionJarFile)
+	public URLClassLoader createClassLoader(Path path, List<LibraryJson> libraries, Path path2)
 			throws MalformedURLException {
-		List<URL> classLoaderUrls = getAllClassLoaderUrls(librariesDirectory, libraries, versionJarFile);
+		List<URL> classLoaderUrls = getAllClassLoaderUrls(path, libraries, path2);
 		return new URLClassLoader(classLoaderUrls.toArray(new URL[classLoaderUrls.size()]));
 	}
 
 	@NotNull
-	private List<URL> getAllClassLoaderUrls(File librariesDirectory, List<LibraryJson> libraries, File versionJarFile)
+	private List<URL> getAllClassLoaderUrls(Path path, List<LibraryJson> libraries, Path path2)
 			throws MalformedURLException {
-		List<URL> result = new LinkedList<>(getLibraryUrls(librariesDirectory, libraries));
-		result.add(versionJarFile.toURI().toURL());
+		List<URL> result = new ArrayList<>(getLibraryUrls(path, libraries));
+		result.add(path2.toUri().toURL());
 		return Collections.unmodifiableList(result);
 	}
 
 	@NotNull
-	private List<URL> getLibraryUrls(File librariesDirectory, List<LibraryJson> libraries) {
+	private List<URL> getLibraryUrls(Path path, List<LibraryJson> libraries) {
 		List<URL> result = new ArrayList<>();
 		AmidstLogger.info("Loading libraries.");
 		for (LibraryJson library : libraries) {
 			if (isLibraryActive(library)) {
-				Optional<File> libraryFile = getLibraryFile(librariesDirectory, library);
+				Optional<Path> libraryFile = getLibraryFile(path, library);
 				if (libraryFile.isPresent()) {
 					try {
-						URL libraryUrl = libraryFile.get().toURI().toURL();
+						URL libraryUrl = libraryFile.get().toUri().toURL();
 						result.add(libraryUrl);
 						AmidstLogger.info("Found library " + library.getName() + " at " + libraryUrl);
 					} catch (MalformedURLException e) {
@@ -108,38 +109,41 @@ public class ClassLoaderService {
 		return Objects.equals(rule.getAction(), ACTION_ALLOW);
 	}
 
-	private Optional<File> getLibraryFile(File librariesDirectory, LibraryJson library) {
-		return Arrays
-				.stream(getLibrarySearchFiles(librariesDirectory, library))
+	private Optional<Path> getLibraryFile(Path path, LibraryJson library) {
+		return getLibrarySearchFiles(path, library)
 				.filter(f -> hasFileExtension(f, "jar"))
 				.findFirst()
-				.filter(File::exists);
+				.filter(Files::exists);
 	}
 
-	private File[] getLibrarySearchFiles(File librariesDirectory, LibraryJson library) {
-		return getLibrarySearchFiles(getLibrarySearchPath(librariesDirectory.getAbsolutePath(), library.getName()));
+	private Stream<Path> getLibrarySearchFiles(Path path, LibraryJson library) {
+		return getLibrarySearchFiles(getLibrarySearchPath(path, library.getName()));
 	}
 
-	private File getLibrarySearchPath(String librariesDirectory, String libraryName) {
-		String result = librariesDirectory + "/";
-		String[] split = libraryName.split(":");
-		split[0] = split[0].replace('.', '/');
-		for (String element : split) {
-			result += element + "/";
+	private Path getLibrarySearchPath(Path librariesDirectory, String libraryName) {
+		Path path = librariesDirectory.toAbsolutePath();
+		String separator = path.getFileSystem().getSeparator();
+		boolean firstPart = true;
+		for (String elem : libraryName.split(":")) {
+			path = path.resolve(firstPart ? elem.replace(".", separator) : elem);
+			firstPart = false;
 		}
-		return new File(result);
+		return path;
 	}
 
-	private File[] getLibrarySearchFiles(File librarySearchPath) {
-		if (librarySearchPath.isDirectory()) {
-			return librarySearchPath.listFiles();
-		} else {
-			return new File[0];
+	private Stream<Path> getLibrarySearchFiles(Path librarySearchPath) {
+		if (Files.isDirectory(librarySearchPath)) {
+			try {
+				return Files.list(librarySearchPath);
+			} catch (IOException e) {
+				AmidstLogger.error(e, "Error while reading library directory " + librarySearchPath);
+			}
 		}
+		return Stream.empty();
 	}
 
-	private boolean hasFileExtension(File file, String extension) {
-		return getFileExtension(file.getName()).equals(extension);
+	private boolean hasFileExtension(Path file, String extension) {
+		return getFileExtension(file.getFileName().toString()).equals(extension);
 	}
 
 	private String getFileExtension(String fileName) {

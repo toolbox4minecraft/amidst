@@ -1,8 +1,8 @@
 package amidst.mojangapi.file;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.directory.DotMinecraftDirectory;
@@ -65,11 +65,11 @@ public class LauncherProfile {
 		return profileName;
 	}
 
-	public File getJar() {
+	public Path getJar() {
 		return versionDirectory.getJar();
 	}
 
-	public File getSaves() {
+	public Path getSaves() {
 		return profileDirectory.getSaves();
 	}
 

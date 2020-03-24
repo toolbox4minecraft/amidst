@@ -1,6 +1,6 @@
 package amidst.mojangapi.file.service;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import amidst.documentation.Immutable;
 
@@ -12,16 +12,16 @@ public class FilenameService {
 	private static final String JAR_FILE_EXTENSION = ".jar";
 	private static final String JSON_FILE_EXTENSION = ".json";
 
-	public File getClientJsonFile(File prefix, String versionId) {
+	public Path getClientJsonFile(Path prefix, String versionId) {
 		return getClientFile(prefix, versionId, JSON_FILE_EXTENSION);
 	}
 
-	public File getClientJarFile(File prefix, String versionId) {
+	public Path getClientJarFile(Path prefix, String versionId) {
 		return getClientFile(prefix, versionId, JAR_FILE_EXTENSION);
 	}
 
-	private File getClientFile(File prefix, String versionId, String fileExtension) {
-		return new File(prefix, getClientLocation("", versionId, fileExtension));
+	private Path getClientFile(Path prefix, String versionId, String fileExtension) {
+		return prefix.resolve(getClientLocation("", versionId, fileExtension));
 	}
 
 	public String getRemoteClientJson(String versionId) {

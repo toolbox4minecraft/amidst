@@ -1,11 +1,11 @@
 package amidst.mojangapi.world.testworld.io;
 
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -48,7 +48,7 @@ public class TestWorldDirectoryWriter {
 			TestWorldDeclaration worldDeclaration,
 			TestWorldEntryDeclaration<?> entryDeclaration) throws IOException, FileNotFoundException {
 		String name = entryDeclaration.getName();
-		File zipFile = worldDeclaration.getZipFile(name);
+		Path zipFile = worldDeclaration.getZipFile(name);
 		try (ZipOutputStream zipOutputStream = createZipOutputStream(zipFile)) {
 			zipOutputStream.putNextEntry(createZipEntry(name));
 			entryDeclaration.writeToStream(zipOutputStream, data);
@@ -56,8 +56,8 @@ public class TestWorldDirectoryWriter {
 		}
 	}
 
-	private ZipOutputStream createZipOutputStream(File zipFile) throws FileNotFoundException {
-		return new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)), StandardCharsets.UTF_8);
+	private ZipOutputStream createZipOutputStream(Path zipFile) throws IOException {
+		return new ZipOutputStream(new BufferedOutputStream(Files.newOutputStream(zipFile)), StandardCharsets.UTF_8);
 	}
 
 	private ZipEntry createZipEntry(String name) {

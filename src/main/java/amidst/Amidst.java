@@ -1,6 +1,6 @@
 package amidst;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.prefs.Preferences;
@@ -84,7 +84,7 @@ public class Amidst {
 		}
 	}
 
-	private static void initFileLogger(File file) {
+	private static void initFileLogger(Path file) {
 		if (file != null) {
 			AmidstLogger.info("using log file: '" + file + "'");
 			AmidstLogger.addListener("file", new FileLogger(file));

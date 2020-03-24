@@ -1,9 +1,10 @@
 package amidst.parsing.json;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -21,8 +22,8 @@ public enum JsonReader {
 	private static final Gson GSON = new Gson();
 
 	@NotNull
-	public static <T> T readLocation(File location, Class<T> clazz) throws FormatException, IOException {
-		return readReader(URIUtils.newReader(location), clazz);
+	public static <T> T readLocation(Path file, Class<T> class1) throws FormatException, IOException {
+		return readReader(Files.newBufferedReader(file), class1);
 	}
 
 	@NotNull

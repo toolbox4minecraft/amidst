@@ -2,10 +2,9 @@ package amidst.mojangapi.file.nbt;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.jnbt.CompoundTag;
 import org.jnbt.NBTInputStream;
@@ -18,24 +17,24 @@ import amidst.documentation.Immutable;
 public enum NBTUtils {
 	;
 
-	public static CompoundTag readTagFromFile(File file) throws IOException {
+	public static CompoundTag readTagFromFile(Path file) throws IOException {
 		try (NBTInputStream stream = createNBTInputStream(file)) {
 			return (CompoundTag) stream.readTag();
 		}
 	}
 
-	public static NBTInputStream createNBTInputStream(File file) throws IOException {
-		return new NBTInputStream(new BufferedInputStream(new FileInputStream(file)));
+	public static NBTInputStream createNBTInputStream(Path file) throws IOException {
+		return new NBTInputStream(new BufferedInputStream(Files.newInputStream(file)));
 	}
 
-	public static void writeTagToFile(File out, CompoundTag root) throws IOException {
+	public static void writeTagToFile(Path out, CompoundTag root) throws IOException {
 		try (NBTOutputStream outStream = createNBTOutputStream(out)) {
 			outStream.writeTag(root);
 		}
 	}
 
-	public static NBTOutputStream createNBTOutputStream(File file) throws IOException {
-		return new NBTOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+	public static NBTOutputStream createNBTOutputStream(Path file) throws IOException {
+		return new NBTOutputStream(new BufferedOutputStream(Files.newOutputStream(file)));
 	}
 
 	public static long getLongValue(Tag tag) {

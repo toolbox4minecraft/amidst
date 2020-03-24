@@ -1,7 +1,7 @@
 package amidst.mojangapi.file;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -21,10 +21,10 @@ import amidst.parsing.json.JsonReader;
 @Immutable
 public class MinecraftInstallation {
 	public static MinecraftInstallation newCustomMinecraftInstallation(
-			File libraries,
-			File saves,
-			File versions,
-			File launcherProfilesJson) throws DotMinecraftDirectoryNotFoundException {
+			Path libraries,
+			Path saves,
+			Path versions,
+			Path launcherProfilesJson) throws DotMinecraftDirectoryNotFoundException {
 		DotMinecraftDirectory dotMinecraftDirectory = new DotMinecraftDirectoryService()
 				.createCustomDotMinecraftDirectory(libraries, saves, versions, launcherProfilesJson);
 		AmidstLogger.info("using '.minecraft' directory at: '" + dotMinecraftDirectory.getRoot() + "'");
@@ -35,7 +35,7 @@ public class MinecraftInstallation {
 		return newLocalMinecraftInstallation(null);
 	}
 
-	public static MinecraftInstallation newLocalMinecraftInstallation(File dotMinecraftDirectory2)
+	public static MinecraftInstallation newLocalMinecraftInstallation(Path dotMinecraftDirectory2)
 			throws DotMinecraftDirectoryNotFoundException {
 		DotMinecraftDirectory dotMinecraftDirectory = new DotMinecraftDirectoryService()
 				.createDotMinecraftDirectory(dotMinecraftDirectory2);
@@ -75,7 +75,7 @@ public class MinecraftInstallation {
 				dotMinecraftDirectoryService.createValidVersionDirectory(dotMinecraftDirectory, versionId));
 	}
 
-	public LauncherProfile newLauncherProfile(File jar, File json) throws FormatException, IOException {
+	public LauncherProfile newLauncherProfile(Path jar, Path json) throws FormatException, IOException {
 		return newLauncherProfile(dotMinecraftDirectoryService.createValidVersionDirectory(jar, json));
 	}
 
@@ -90,54 +90,14 @@ public class MinecraftInstallation {
 				versionJson.getId());
 	}
 
-	public SaveGame newSaveGame(File location) throws IOException, FormatException {
+	public SaveGame newSaveGame(Path location) throws IOException, FormatException {
 		SaveDirectory saveDirectory = saveDirectoryService.newSaveDirectory(location);
 		return new SaveGame(saveDirectory, saveDirectoryService.readLevelDat(saveDirectory));
 	}
 
-/*
-	public Optional<LauncherProfile> tryReadLauncherProfile(
-<<<<<<< Updated upstream
-			String preferredMinecraftJarFile,
-			String preferredMinecraftJsonFile,
-			String profileName) {
-		if (preferredMinecraftJarFile != null && preferredMinecraftJsonFile != null) {
-=======
-			File minecraftJarFile,
-			File minecraftJsonFile) {
-		if (minecraftJarFile != null && minecraftJsonFile != null) {
->>>>>>> Stashed changes
-			try {
-				return Optional.of(
-						newLauncherProfile(minecraftJarFile, minecraftJsonFile));
-			} catch (FormatException | IOException e) {
-				AmidstLogger.error(
-						e,
-<<<<<<< Updated upstream
-						"cannot read launcher profile. preferredMinecraftJarFile: '" + preferredMinecraftJarFile
-								+ "', preferredMinecraftJsonFile: '" + "'");
-=======
-						"cannot read launcher profile. preferredMinecraftJarFile: '" + minecraftJarFile
-								+ "', preferredMinecraftJsonFile: '" + minecraftJsonFile + "'");
-				return Optional.empty();
->>>>>>> Stashed changes
-			}
-		} else if (profileName != null) {
-			LauncherProfile profile = newLauncherProfileFromName(profileName);
-			if (profile != null) {
-				AmidstLogger.info("Selecting profile with name '" + profile.getProfileName() + "'");
-				return Optional.of(profile);
-			} else {
-				AmidstLogger.error("Cannot find profile matching name '" + profileName + "'");
-			}
-		}
-
-		return Optional.empty();
-	}
-*/
     public Optional<LauncherProfile> tryReadLauncherProfile(
-            File minecraftJarFile,
-            File minecraftJsonFile) {
+            Path minecraftJarFile,
+            Path minecraftJsonFile) {
         if (minecraftJarFile != null && minecraftJsonFile != null) {
             try {
                 return Optional.of(

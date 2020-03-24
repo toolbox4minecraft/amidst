@@ -2,8 +2,8 @@ package amidst.gui.main;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -72,7 +72,7 @@ public class WorldSwitcher {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void displayWorld(File file) {
+	public void displayWorld(Path file) {
 		try {
 			clearViewerFacade();
 			setWorld(runningLauncherProfile.createWorldFromSaveGame(minecraftInstallation.newSaveGame(file)));

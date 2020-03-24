@@ -1,6 +1,6 @@
 package amidst.gui.main;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 import javax.swing.JFileChooser;
@@ -46,13 +46,13 @@ public class MainWindowDialogs {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public File askForSaveGame() {
+	public Path askForSaveGame() {
 		return showOpenDialogAndGetSelectedFileOrNull(createSaveGameFileChooser());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JFileChooser createSaveGameFileChooser() {
-		JFileChooser result = new JFileChooser(runningLauncherProfile.getLauncherProfile().getSaves());
+		JFileChooser result = new JFileChooser(runningLauncherProfile.getLauncherProfile().getSaves().toFile());
 		result.setFileFilter(new LevelFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
 		result.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -61,16 +61,16 @@ public class MainWindowDialogs {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private File showOpenDialogAndGetSelectedFileOrNull(JFileChooser fileChooser) {
+	private Path showOpenDialogAndGetSelectedFileOrNull(JFileChooser fileChooser) {
 		if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-			return fileChooser.getSelectedFile();
+			return fileChooser.getSelectedFile().toPath();
 		} else {
 			return null;
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public File askForScreenshotSaveFile(String suggestedFilename) {
+	public Path askForScreenshotSaveFile(String suggestedFilename) {
 		return showSaveDialogAndGetSelectedFileOrNull(createScreenshotSaveFileChooser(suggestedFilename));
 	}
 
@@ -79,14 +79,14 @@ public class MainWindowDialogs {
 		JFileChooser result = new JFileChooser();
 		result.setFileFilter(new PNGFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
-		result.setSelectedFile(new File(suggestedFilename));
+		result.setSelectedFile(new java.io.File(suggestedFilename));
 		return result;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private File showSaveDialogAndGetSelectedFileOrNull(JFileChooser fileChooser) {
+	private Path showSaveDialogAndGetSelectedFileOrNull(JFileChooser fileChooser) {
 		if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
-			return fileChooser.getSelectedFile();
+			return fileChooser.getSelectedFile().toPath();
 		} else {
 			return null;
 		}

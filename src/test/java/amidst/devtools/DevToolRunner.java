@@ -1,7 +1,7 @@
 package amidst.devtools;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -65,9 +65,9 @@ public class DevToolRunner {
 	@Ignore
 	@Test
 	public void generateBiomeColorImages() throws IOException {
-		new GenerateBiomeColorImages(Biome.allBiomes(), new File(biomeColorImagesDirectory())).run();
+		new GenerateBiomeColorImages(Biome.allBiomes(), Paths.get(biomeColorImagesDirectory())).run();
 	}
-	
+
 	@Ignore
 	@Test
 	public void benchmarkWorldGeneration() throws FormatException, IOException {
@@ -89,7 +89,7 @@ public class DevToolRunner {
 	private String biomeColorImagesDirectory() {
 		return DevToolSettings.INSTANCE.getBiomeColorImagesDirectory();
 	}
-	
+
 	private String benchmarksDirectory() {
 		return DevToolSettings.INSTANCE.getBenchmarksDirectory();
 	}

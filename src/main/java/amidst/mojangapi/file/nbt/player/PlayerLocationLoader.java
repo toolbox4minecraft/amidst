@@ -1,7 +1,7 @@
 package amidst.mojangapi.file.nbt.player;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +20,7 @@ import amidst.mojangapi.world.player.PlayerCoordinates;
 public enum PlayerLocationLoader {
 	;
 
-	public static Optional<PlayerCoordinates> tryReadFromPlayerFile(File file) throws IOException {
+	public static Optional<PlayerCoordinates> tryReadFromPlayerFile(Path file) throws IOException {
 		try {
 			return Optional.of(readPlayerCoordinates(NBTUtils.readTagFromFile(file)));
 		} catch (NullPointerException e) {
@@ -29,12 +29,12 @@ public enum PlayerLocationLoader {
 		}
 	}
 
-	public static Optional<PlayerCoordinates> tryReadFromLevelDat(File file) throws IOException {
+	public static Optional<PlayerCoordinates> tryReadFromLevelDat(Path path) throws IOException {
 		try {
 			return Optional
-					.of(readPlayerCoordinates(getSinglePlayerPlayerTag(getTagRootTag(NBTUtils.readTagFromFile(file)))));
+					.of(readPlayerCoordinates(getSinglePlayerPlayerTag(getTagRootTag(NBTUtils.readTagFromFile(path)))));
 		} catch (NullPointerException e) {
-			AmidstLogger.warn(e, "cannot read player from level.dat: {}", file);
+			AmidstLogger.warn(e, "cannot read player from level.dat: {}", path);
 			return Optional.empty();
 		}
 	}

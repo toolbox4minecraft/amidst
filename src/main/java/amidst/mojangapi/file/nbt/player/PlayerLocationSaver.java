@@ -1,7 +1,7 @@
 package amidst.mojangapi.file.nbt.player;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +22,7 @@ import amidst.mojangapi.world.player.PlayerCoordinates;
 public enum PlayerLocationSaver {
 	;
 
-	public static boolean tryWriteToPlayerFile(PlayerCoordinates coordinates, File file) throws IOException {
+	public static boolean tryWriteToPlayerFile(PlayerCoordinates coordinates, Path file) throws IOException {
 		try {
 			CompoundTag dataTag = NBTUtils.readTagFromFile(file);
 			CompoundTag modifiedDataTag = modifyPositionInDataTagMultiPlayer(dataTag, coordinates);
@@ -34,14 +34,14 @@ public enum PlayerLocationSaver {
 		}
 	}
 
-	public static boolean tryWriteToLevelDat(PlayerCoordinates coordinates, File file) throws IOException {
+	public static boolean tryWriteToLevelDat(PlayerCoordinates coordinates, Path path) throws IOException {
 		try {
-			CompoundTag baseTag = NBTUtils.readTagFromFile(file);
+			CompoundTag baseTag = NBTUtils.readTagFromFile(path);
 			CompoundTag modifiedBaseTag = modifyPositionInBaseTagSinglePlayer(baseTag, coordinates);
-			NBTUtils.writeTagToFile(file, modifiedBaseTag);
+			NBTUtils.writeTagToFile(path, modifiedBaseTag);
 			return true;
 		} catch (NullPointerException e) {
-			AmidstLogger.warn(e, "cannot write player to level.dat: {}", file);
+			AmidstLogger.warn(e, "cannot write player to level.dat: {}", path);
 			return false;
 		}
 	}

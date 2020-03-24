@@ -1,27 +1,27 @@
 package amidst.mojangapi.file.directory;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public class SaveAmidstBackupDirectory {
-	private final File root;
-	private final File players;
-	private final File playerdata;
+	private final Path root;
+	private final Path players;
+	private final Path playerdata;
 
-	public SaveAmidstBackupDirectory(File root) {
+	public SaveAmidstBackupDirectory(Path root) {
 		this.root = root;
-		this.players = new File(root, "players");
-		this.playerdata = new File(root, "playerdata");
+		this.players = root.resolve("players");
+		this.playerdata = root.resolve("playerdata");
 	}
 
-	public File getRoot() {
+	public Path getRoot() {
 		return root;
 	}
 
-	public File getPlayers() {
+	public Path getPlayers() {
 		return players;
 	}
 
-	public File getPlayerdata() {
+	public Path getPlayerdata() {
 		return playerdata;
 	}
 }

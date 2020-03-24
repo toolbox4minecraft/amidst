@@ -1,7 +1,7 @@
 package amidst.mojangapi.file;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.json.ReleaseType;
@@ -51,11 +51,11 @@ public class Version {
 		downloadService.downloadClient(prefix, versionListEntryJson.getId());
 	}
 
-	public File getClientJarFile(File prefix) {
+	public Path getClientJarFile(Path prefix) {
 		return filenameService.getClientJarFile(prefix, versionListEntryJson.getId());
 	}
 
-	public File getClientJsonFile(File prefix) {
+	public Path getClientJsonFile(Path prefix) {
 		return filenameService.getClientJsonFile(prefix, versionListEntryJson.getId());
 	}
 }
