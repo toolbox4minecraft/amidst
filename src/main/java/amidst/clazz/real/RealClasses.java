@@ -1,15 +1,17 @@
 package amidst.clazz.real;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import amidst.documentation.Immutable;
 
@@ -21,45 +23,46 @@ public enum RealClasses {
 	private static final RealClassBuilder REAL_CLASS_BUILDER = new RealClassBuilder();
 
 	public static List<RealClass> fromJarFile(Path jarFile) throws FileNotFoundException, JarFileParsingException {
-		return readRealClassesFromJarFile(jarFile.toFile());
+		return readRealClassesFromJarFile(jarFile);
 	}
 
-	private static List<RealClass> readRealClassesFromJarFile(File jarFile)
+	private static List<RealClass> readRealClassesFromJarFile(Path jarFile)
 			throws JarFileParsingException,
 			FileNotFoundException {
-		if (!jarFile.exists()) {
+		if (!Files.exists(jarFile)) {
 			throw new FileNotFoundException("Attempted to load jar file at: " + jarFile + " but it does not exist.");
 		}
-		// TODO use zip file provider
-		try (ZipFile zipFile = new ZipFile(jarFile)) {
-			return readJarFile(zipFile);
-		} catch (IOException e) {
-			throw new JarFileParsingException("Error extracting jar data.", e);
-		} catch (RealClassCreationException e) {
+
+		try {
+			URI jarFileURI = jarFile.toUri();
+			URI jarURI = new URI("jar:" + jarFileURI.getScheme(), jarFileURI.getPath(), null);
+			return readJarFile(FileSystems.newFileSystem(jarURI, new HashMap<>()));
+		} catch (IOException | RealClassCreationException | URISyntaxException e) {
 			throw new JarFileParsingException("Error extracting jar data.", e);
 		}
 	}
 
-	private static List<RealClass> readJarFile(ZipFile zipFile) throws IOException, RealClassCreationException {
-		Enumeration<? extends ZipEntry> enu = zipFile.entries();
+	private static List<RealClass> readJarFile(FileSystem zipFile) throws IOException, RealClassCreationException {
 		List<RealClass> result = new ArrayList<>();
-		while (enu.hasMoreElements()) {
-			RealClass entry = readJarFileEntry(zipFile, enu.nextElement());
-			if (entry != null) {
-				result.add(entry);
-			}
+		for (Path root: zipFile.getRootDirectories()) {
+			readJarFileDirectory(root, result);
 		}
 		return result;
 	}
 
-	private static RealClass readJarFileEntry(ZipFile zipFile, ZipEntry entry)
+	private static void readJarFileDirectory(Path directory, List<RealClass> result)
 			throws IOException,
 			RealClassCreationException {
-		String realClassName = getFileNameWithoutExtension(entry.getName(), "class");
-		if (!entry.isDirectory() && realClassName != null) {
-			return readRealClass(realClassName, new BufferedInputStream(zipFile.getInputStream(entry)));
-		} else {
-			return null;
+		for (Path path: (Iterable<Path>) Files.list(directory)::iterator) {
+			String realClassName = getFileNameWithoutExtension(path.getFileName().toString(), "class");
+			if (Files.isDirectory(path)) {
+				readJarFileDirectory(path, result);
+			} else if (realClassName != null) {
+				RealClass realClass = readRealClass(realClassName, new BufferedInputStream(Files.newInputStream(path)));
+				if (realClass != null) {
+					result.add(realClass);
+				}
+			}
 		}
 	}
 
