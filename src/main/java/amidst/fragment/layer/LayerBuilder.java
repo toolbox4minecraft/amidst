@@ -6,7 +6,6 @@ import java.util.List;
 
 import amidst.AmidstSettings;
 import amidst.documentation.Immutable;
-import amidst.fragment.Fragment;
 import amidst.fragment.colorprovider.BackgroundColorProvider;
 import amidst.fragment.colorprovider.BiomeColorProvider;
 import amidst.fragment.colorprovider.SlimeColorProvider;
@@ -144,7 +143,14 @@ public class LayerBuilder {
 				new WorldIconLoader<>(declarations.get(LayerIds.WOODLAND_MANSION),world.getWoodlandMansionProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.OCEAN_FEATURES),  world.getOceanFeaturesProducer()),
 				new WorldIconLoader<>(declarations.get(LayerIds.NETHER_FORTRESS), world.getNetherFortressProducer()),
-				new WorldIconLoader<>(declarations.get(LayerIds.END_CITY),        world.getEndCityProducer(), Fragment::getEndIslands)
+				new WorldIconLoader<>(declarations.get(LayerIds.END_CITY),        world.getEndCityProducer(), f -> {
+					long stamp = f.readLock();
+					try {
+						return f.getEndIslands(stamp);
+					} finally {
+						f.unlock(stamp);
+					}
+				})
 		));
 		// @formatter:on
 	}

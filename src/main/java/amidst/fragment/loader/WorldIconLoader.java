@@ -42,8 +42,14 @@ public class WorldIconLoader<T> extends FragmentLoader {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void doLoad(Fragment fragment) {
-		fragment.putWorldIcons(
-				declaration.getLayerId(),
-				producer.getAt(fragment.getCorner(), additionalDataExtractor.apply(fragment)));
+		long stamp = fragment.writeLock();
+		try {
+			fragment.putWorldIcons(
+					stamp,
+					declaration.getLayerId(),
+					producer.getAt(fragment.getCorner(), additionalDataExtractor.apply(fragment)));
+		} finally {
+			fragment.unlock(stamp);
+		}
 	}
 }

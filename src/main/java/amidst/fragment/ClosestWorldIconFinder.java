@@ -36,8 +36,13 @@ public class ClosestWorldIconFinder {
 			for (LayerDeclaration declaration : declarations) {
 				if (declaration.isVisible()) {
 					int layerId = declaration.getLayerId();
-					for (WorldIcon icon : fragment.getWorldIcons(layerId)) {
-						updateClosest(icon);
+					long stamp = fragment.readLock();
+					try {
+						for (WorldIcon icon : fragment.getWorldIcons(stamp, layerId)) {
+							updateClosest(icon);
+						}
+					} finally {
+						fragment.unlock(stamp);
 					}
 				}
 			}

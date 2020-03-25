@@ -12,6 +12,11 @@ public class EndIslandsConstructor implements FragmentConstructor {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public void construct(Fragment fragment) {
-		fragment.setEndIslands(Collections.emptyList());
+		long stamp = fragment.writeLock();
+		try {
+			fragment.setEndIslands(stamp, Collections.emptyList());
+		} finally {
+			fragment.unlock(stamp);
+		}
 	}
 }

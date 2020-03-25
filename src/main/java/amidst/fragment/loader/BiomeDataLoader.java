@@ -31,6 +31,11 @@ public class BiomeDataLoader extends FragmentLoader {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void doLoad(Fragment fragment) {
-		fragment.populateBiomeData(biomeDataOracle);
+		long stamp = fragment.writeLock();
+		try {
+			fragment.populateBiomeData(stamp, biomeDataOracle);
+		} finally {
+			fragment.unlock(stamp);
+		}
 	}
 }

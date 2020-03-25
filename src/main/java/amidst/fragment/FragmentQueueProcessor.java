@@ -23,7 +23,8 @@ import amidst.settings.Setting;
  * it. Otherwise, this thread parks until one of the threads in
  * fragWorkers notifies that it is ready to accept another request. If
  * this thread is never unparked by a thread in the thread pool, we
- * unpark after 1 second so the program doesn't hang.<br>
+ * unpark after {@link #PARK_MILLIS} milliseconds so the program doesn't
+ * hang.<br>
  * <br>
  * I'm very hesitant to remove the @NotThreadSafe annotation here due
  * to some of the methods here not being able to be called by multiple
@@ -73,6 +74,8 @@ public class FragmentQueueProcessor {
 	);
 	}
 	
+	private static final int PARK_MILLIS = 1000;
+	
 	/**
 	 * It is important that the dimension setting is the same while a fragment
 	 * is loaded by different fragment loaders. This is why the dimension
@@ -99,7 +102,7 @@ public class FragmentQueueProcessor {
 					}
 				});
 			} else {
-				LockSupport.parkNanos(1000000000); // if for some reason unpark was never called, unpark after 1 second
+				LockSupport.parkNanos(PARK_MILLIS * 1000000); // if for some reason unpark was never called, unpark after 1 second
 			}
 		}
 		layerManager.clearInvalidatedLayers();

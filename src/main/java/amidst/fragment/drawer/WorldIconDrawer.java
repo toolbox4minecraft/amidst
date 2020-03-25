@@ -30,9 +30,15 @@ public class WorldIconDrawer extends FragmentDrawer {
 	public void draw(Fragment fragment, Graphics2D g2d, float time) {
 		double invZoom = 1.0 / zoom.getCurrentValue();
 		AffineTransform originalTransform = g2d.getTransform();
-		for (WorldIcon icon : fragment.getWorldIcons(declaration.getLayerId())) {
-			drawIcon(icon, invZoom, g2d);
-			g2d.setTransform(originalTransform);
+		
+		long stamp = fragment.readLock();
+		try {
+			for (WorldIcon icon : fragment.getWorldIcons(stamp, declaration.getLayerId())) {
+				drawIcon(icon, invZoom, g2d);
+				g2d.setTransform(originalTransform);
+			}
+		} finally {
+			fragment.unlock(stamp);
 		}
 	}
 
