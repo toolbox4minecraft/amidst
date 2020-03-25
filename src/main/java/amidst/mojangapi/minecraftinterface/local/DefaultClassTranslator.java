@@ -62,7 +62,7 @@ public enum DefaultClassTranslator {
                     && c.getField(1).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
                 )
                 .thenDeclareRequired(CLASS_WORLD_SETTINGS)
-                    .requiredConstructor(CONSTRUCTOR_WORLD_SETTINGS).real("long").symbolic(CLASS_GAME_TYPE).real("boolean").real("boolean").symbolic(CLASS_WORLD_TYPE).end()
+                    .optionalConstructor(CONSTRUCTOR_WORLD_SETTINGS).real("long").symbolic(CLASS_GAME_TYPE).real("boolean").real("boolean").symbolic(CLASS_WORLD_TYPE).end()
             .next()
                 .ifDetect(c -> c.getNumberOfFields() > 40
                     && c.searchForUtf8EqualTo("SizeOnDisk")
@@ -96,7 +96,7 @@ public enum DefaultClassTranslator {
                 )
                 .thenDeclareRequired(CLASS_BIOME)
             .next()
-				.ifDetect(c -> 
+				.ifDetect(c ->
 					(c.searchForStringContaining("Server-Worker-")
 					 || c.searchForStringContaining("Worker-"))
 					&& c.searchForStringContaining("os.name")
