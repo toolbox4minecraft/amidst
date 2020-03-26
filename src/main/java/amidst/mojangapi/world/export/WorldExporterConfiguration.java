@@ -22,7 +22,7 @@ public class WorldExporterConfiguration {
 		this.biomeProfileSelection = biomeProfileSelection;
 	}
 
-	public Path getImageFile() {
+	public Path getImagePath() {
 		return imageFile;
 	}
 

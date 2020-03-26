@@ -128,11 +128,7 @@ public class WorldExporter {
 		tep.setCompression(TIFFEncodeParam.COMPRESSION_DEFLATE);
 		tep.setDeflateLevel(5);
 		
-		try {
-			JAI.create("filestore", tiledImage, configuration.getImageFile().getCanonicalPath(), "TIFF", tep);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		JAI.create("filestore", tiledImage, configuration.getImagePath().toAbsolutePath().toString(), "TIFF", tep);
 		tileCache.flush();
 		tiledImage.dispose();
 		// We nullify these objects and call the garbage collector so that JAI releases its lock on the newly created file.
