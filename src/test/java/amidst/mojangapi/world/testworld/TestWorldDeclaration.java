@@ -1,6 +1,8 @@
 package amidst.mojangapi.world.testworld;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,32 +24,32 @@ public enum TestWorldDeclaration {
 	WORLD1(RecognisedVersion._1_8_9, "amidst-test-seed", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     ),
-    
+
 	WORLD2(RecognisedVersion._1_9_pre2, "4805355321235747910", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     ),
-    
+
     /**
      * This misses an ocean monument if the quarter-resolution map is used for the structure test.
      */
 	WORLD3(RecognisedVersion._1_9_pre2, "-1364077613", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     ),
-    
+
     /**
      * This illustrates the buggy stronghold generation mechanism of the 1.9 snapshots.
      */
 	WORLD4(RecognisedVersion._15w51b, "1", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     ),
-    
+
     /**
      * This illustrates the fixed stronghold generation mechanism of the 1.9 snapshots.
      */
 	WORLD5(RecognisedVersion._1_9_pre2, "1", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     ),
-    
+
     /**
 	 * This seed contains all biomes in a 1024 radius around spawn. Source:
 	 * http://www.minecraftforum.net/forums/minecraft-discussion/seeds/2500520-1-8-x-rare-seed-all-biomes-within-1024-blocks
@@ -55,7 +57,7 @@ public enum TestWorldDeclaration {
 	WORLD6(RecognisedVersion._1_9_pre2, "24922", WorldType.DEFAULT,
 			TestWorldEntryNames.ALL
     ),
-    
+
     /**
 	 * Similar to 24922
      */
@@ -70,7 +72,7 @@ public enum TestWorldDeclaration {
 	private final RecognisedVersion recognisedVersion;
 	private final WorldOptions worldOptions;
 	private final List<String> supportedEntryNames;
-	private final File directory;
+	private final java.nio.file.Path directory;
 	private final String directoryString;
 
 	private TestWorldDeclaration(
@@ -92,7 +94,7 @@ public enum TestWorldDeclaration {
 				"testworld",
 				"storage",
 				recognisedVersion.getName(),
-				"" + worldSeed.getLong()).toFile();
+				"" + worldSeed.getLong());
 		this.directoryString = RESOURCE_PREFIX + recognisedVersion.getName() + "/" + worldSeed.getLong() + "/";
 	}
 
@@ -113,15 +115,19 @@ public enum TestWorldDeclaration {
 	}
 
 	public void createDirectoryIfNecessary() {
-		directory.mkdirs();
+		try {
+			Files.createDirectories(directory);
+		} catch (IOException e) {
+			throw new RuntimeException("Couldn't create test worlds directory", e);
+		}
 	}
 
-	public File getDirectory() {
+	public Path getDirectory() {
 		return directory;
 	}
 
-	public File getZipFile(String name) {
-		return new File(directory, name + ZIP_FILE_EXTENSION);
+	public Path getZipFile(String name) {
+		return directory.resolve(name + ZIP_FILE_EXTENSION);
 	}
 
 	public String getZipResourceName(String name) {

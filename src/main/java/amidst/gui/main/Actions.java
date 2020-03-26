@@ -5,8 +5,11 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -89,7 +92,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void openSaveGame() {
-		File file = dialogs.askForSaveGame();
+		Path file = dialogs.askForSaveGame();
 		if (file != null && confirmContinueIfWorldExporting()) {
 			worldSwitcher.displayWorld(file);
 		}
@@ -233,22 +236,23 @@ public class Actions {
 			BufferedImage image = viewerFacade.createScreenshot();
 			String suggestedFilename = "screenshot_" + worldOptions.getWorldType().getFilenameText() + "_"
 					+ worldOptions.getWorldSeed().getLong() + ".png";
-			File file = dialogs.askForPNGSaveFile(suggestedFilename);
+			Path file = dialogs.askForPNGSaveFile(suggestedFilename);
 			if (file != null) {
 				file = appendPNGFileExtensionIfNecessary(file);
-				if (file.exists() && !file.isFile()) {
+				boolean fileExists = Files.exists(file);
+				if (fileExists && !Files.isRegularFile(file)) {
 					String message = "Unable to write screenshot, because the target exists but is not a file: "
-							+ file.getAbsolutePath();
+							+ file.toString();
 					AmidstLogger.warn(message);
 					dialogs.displayError(message);
 				} else if (!canWriteToFile(file)) {
 					String message = "Unable to write screenshot, because you have no writing permissions: "
-							+ file.getAbsolutePath();
+							+ file.toString();
 					AmidstLogger.warn(message);
 					dialogs.displayError(message);
-				} else if (!file.exists() || dialogs.askToConfirmYesNo(
+				} else if (!fileExists || dialogs.askToConfirmYesNo(
 						"Replace file?",
-						"File already exists. Do you want to replace it?\n" + file.getAbsolutePath() + "")) {
+						"File already exists. Do you want to replace it?\n" + file.toString() + "")) {
 					saveImageToFile(image, file);
 				}
 			}
@@ -367,15 +371,15 @@ public class Actions {
 	}
 
 	@CalledByAny
-	public static boolean canWriteToFile(File file) {
-		File parentFile = file.getParentFile();
-		return file.canWrite() || (!file.exists() && parentFile != null && parentFile.canWrite());
+	public static boolean canWriteToFile(Path file) {
+		Path parent = file.getParent();
+		return Files.isWritable(file) || (!Files.exists(file) && parent != null && Files.isWritable(parent));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void saveImageToFile(BufferedImage image, File file) {
+	private void saveImageToFile(BufferedImage image, Path file) {
 		try {
-			ImageIO.write(image, "png", file);
+			ImageIO.write(image, "png", new BufferedOutputStream(Files.newOutputStream(file)));
 		} catch (IOException e) {
 			AmidstLogger.warn(e);
 			dialogs.displayError(e);
@@ -383,21 +387,21 @@ public class Actions {
 	}
 
 	@CalledByAny
-	public static File appendPNGFileExtensionIfNecessary(File file) {
-		String filename = file.getAbsolutePath();
+	public static Path appendPNGFileExtensionIfNecessary(Path file) {
+		String filename = file.toAbsolutePath().toString();
 		if (!FileExtensionChecker.hasFileExtension(filename, "png")) {
 			filename += ".png";
 		}
-		return new File(filename);
+		return Paths.get(filename);
 	}
 	
 	@CalledByAny
-	public static File appendTIFFFileExtensionIfNecessary(File file) {
-		String filename = file.getAbsolutePath();
+	public static Path appendTIFFFileExtensionIfNecessary(Path file) {
+		String filename = file.toAbsolutePath().toString();
 		if (!FileExtensionChecker.hasFileExtension(filename, "tiff")) {
 			filename += ".tiff";
 		}
-		return new File(filename);
+		return Paths.get(filename);
 	}
 	
 	private boolean confirmContinueIfWorldExporting() {

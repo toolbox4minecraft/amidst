@@ -1,7 +1,8 @@
 package amidst.gui.main;
 
 import java.awt.Point;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import javax.swing.JFileChooser;
@@ -55,13 +56,13 @@ public class MainWindowDialogs {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public File askForSaveGame() {
+	public Path askForSaveGame() {
 		return showOpenDialogAndGetSelectedFileOrNull(createSaveGameFileChooser());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JFileChooser createSaveGameFileChooser() {
-		JFileChooser result = new JFileChooser(runningLauncherProfile.getLauncherProfile().getSaves());
+		JFileChooser result = new JFileChooser(runningLauncherProfile.getLauncherProfile().getSaves().toFile());
 		result.setFileFilter(new LevelFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
 		result.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -70,21 +71,21 @@ public class MainWindowDialogs {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private File showOpenDialogAndGetSelectedFileOrNull(JFileChooser fileChooser) {
+	private Path showOpenDialogAndGetSelectedFileOrNull(JFileChooser fileChooser) {
 		if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-			return fileChooser.getSelectedFile();
+			return fileChooser.getSelectedFile().toPath();
 		} else {
 			return null;
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public File askForPNGSaveFile(String suggestedFilename) {
+	public Path askForPNGSaveFile(String suggestedFilename) {
 		return showSaveDialogAndGetSelectedFileOrNull(createPNGSaveFileChooser(suggestedFilename));
 	}
 	
 	@CalledOnlyBy(AmidstThread.EDT)
-	public File askForTIFFSaveFile(String suggestedFilename) {
+	public Path askForTIFFSaveFile(String suggestedFilename) {
 		return showSaveDialogAndGetSelectedFileOrNull(createTIFFSaveFileChooser(suggestedFilename));
 	}
 
@@ -93,7 +94,7 @@ public class MainWindowDialogs {
 		JFileChooser result = new JFileChooser();
 		result.setFileFilter(new PNGFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
-		result.setSelectedFile(new File(suggestedFilename));
+		result.setSelectedFile(new java.io.File(suggestedFilename));
 		return result;
 	}
 	
@@ -102,14 +103,14 @@ public class MainWindowDialogs {
 		JFileChooser result = new JFileChooser();
 		result.setFileFilter(new FileNameExtensionFilter("TIFF File", "tiff"));
 		result.setAcceptAllFileFilterUsed(false);
-		result.setSelectedFile(new File(suggestedFilename));
+		result.setSelectedFile(new java.io.File(suggestedFilename));
 		return result;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private File showSaveDialogAndGetSelectedFileOrNull(JFileChooser fileChooser) {
+	private Path showSaveDialogAndGetSelectedFileOrNull(JFileChooser fileChooser) {
 		if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
-			return fileChooser.getSelectedFile();
+			return fileChooser.getSelectedFile().toPath();
 		} else {
 			return null;
 		}
@@ -208,22 +209,23 @@ public class MainWindowDialogs {
 			String modifier = useQuarterResolution ? "quarter_" : "full_";
 			String suggestedFilename = modifier + "biomes_" + worldOptions.getWorldType().getFilenameText() + "_"
 					+ worldOptions.getWorldSeed().getLong() + ".tiff";
-			File file = askForTIFFSaveFile(suggestedFilename);
+			Path file = askForTIFFSaveFile(suggestedFilename);
 			if (file != null) {
 				file = Actions.appendTIFFFileExtensionIfNecessary(file);
-				if (file.exists() && !file.isFile()) {
+				boolean fileExists = Files.exists(file);
+				if (fileExists && !Files.isRegularFile(file)) {
 					String message = "Unable to set biome image path, because the target exists but is not a file: "
-							+ file.getAbsolutePath();
+							+ file.toString();
 					AmidstLogger.warn(message);
 					displayError(message);
 				} else if (!Actions.canWriteToFile(file)) {
 					String message = "Unable to set biome image path, because you have no writing permissions: "
-							+ file.getAbsolutePath();
+							+ file.toString();
 					AmidstLogger.warn(message);
 					displayError(message);
-				} else if (!file.exists() || askToConfirmYesNo(
+				} else if (!fileExists || askToConfirmYesNo(
 						"Replace file?",
-						"File already exists. Do you want to replace it?\n" + file.getAbsolutePath() + "")) {
+						"File already exists. Do you want to replace it?\n" + file.toString() + "")) {
 					CoordinatesInWorld topLeft = askForCoordinatesOrNull("Enter coordinates for the top left of the image,\n"
 							+ "or leave blank for the window top left.\n"
 							+ "(Ex. 123,456)");

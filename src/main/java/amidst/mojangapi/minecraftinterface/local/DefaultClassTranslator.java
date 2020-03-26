@@ -98,7 +98,7 @@ public enum DefaultClassTranslator {
             .next()
 				.ifDetect(c -> 
 					(c.searchForStringContaining("Server-Worker-")
-					| c.searchForStringContaining("Worker-"))
+					 || c.searchForStringContaining("Worker-"))
 					&& c.searchForStringContaining("os.name")
 					&& c.searchForLong(1000000L)
 				)

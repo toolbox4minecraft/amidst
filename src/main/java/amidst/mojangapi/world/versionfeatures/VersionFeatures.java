@@ -33,7 +33,7 @@ public class VersionFeatures {
 		return new Builder();
 	}
 
-	public static class Builder {
+	public static class Builder implements Cloneable {
 		private final Map<FeatureKey<?>, Entry<?>> features;
 
 		private Builder() {

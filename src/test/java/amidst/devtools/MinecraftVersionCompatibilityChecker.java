@@ -1,7 +1,8 @@
 package amidst.devtools;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -37,16 +38,16 @@ public class MinecraftVersionCompatibilityChecker {
 		this.prefix = prefix;
 		this.versionList = versionList;
 		this.minecraftInstallation = MinecraftInstallation
-				.newCustomMinecraftInstallation(new File(libraries), null, new File(prefix), null);
+				.newCustomMinecraftInstallation(Paths.get(libraries), null, Paths.get(prefix), null);
 	}
 
 	public void run() {
 		Map<VersionStatus, List<Version>> statuses = new EnumMap<>(VersionStatus.class);
-		
+
 		for (Version version : versionList.getVersions()) {
 			statuses.computeIfAbsent(checkOne(version), k -> new ArrayList<>()).add(version);
 		}
-		
+
 		displayVersionList("============== SUPPORTED VERSIONS ==============", statuses.get(VersionStatus.SUPPORTED));
 		displayVersionList("============= UNSUPPORTED VERSIONS =============", statuses.get(VersionStatus.UNSUPPORTED));
 		displayVersionList("============= UNRECOGNISED VERSIONS ============", statuses.get(VersionStatus.UNRECOGNISED));
@@ -54,22 +55,27 @@ public class MinecraftVersionCompatibilityChecker {
 	}
 
 	private VersionStatus checkOne(Version version) {
-		if (version.tryDownloadClient(prefix)) {
-			try {
-				LauncherProfile launcherProfile = minecraftInstallation.newLauncherProfile(version.getId());
-				RecognisedVersion recognisedVersion = RecognisedVersion.from(launcherProfile.newClassLoader());
-				if(!recognisedVersion.isKnown())
-					return VersionStatus.UNRECOGNISED;
-				
-				File jarFile = version.getClientJarFile(new File(prefix));
-				ClassTranslator translator = MinecraftInterfaces.getClassTranslatorFromVersion(recognisedVersion);
-				if(isSupported(Classes.countMatches(jarFile, translator)))
-					return VersionStatus.SUPPORTED;
-			} catch (JarFileParsingException | FormatException | IOException | ClassNotFoundException e) {
-				e.printStackTrace();
-				return VersionStatus.FAILED;
-			}
+		try {
+			version.fetchRemoteVersion().downloadClient(prefix);
+		} catch (IOException | FormatException e) {
+			return VersionStatus.UNSUPPORTED;
 		}
+
+		try {
+			LauncherProfile launcherProfile = minecraftInstallation.newLauncherProfile(version.getId());
+			RecognisedVersion recognisedVersion = RecognisedVersion.from(launcherProfile.newClassLoader());
+			if(!recognisedVersion.isKnown())
+				return VersionStatus.UNRECOGNISED;
+
+			Path jarFile = version.getClientJarFile(Paths.get(prefix));
+			ClassTranslator translator = MinecraftInterfaces.getClassTranslatorFromVersion(recognisedVersion);
+			if(isSupported(Classes.countMatches(jarFile, translator)))
+				return VersionStatus.SUPPORTED;
+		} catch (JarFileParsingException | FormatException | IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+			return VersionStatus.FAILED;
+		}
+
 		return VersionStatus.UNSUPPORTED;
 	}
 
@@ -91,7 +97,7 @@ public class MinecraftVersionCompatibilityChecker {
 			System.out.println(version.getId());
 		}
 	}
-	
+
 	private static enum VersionStatus {
 		SUPPORTED,
 		UNSUPPORTED,

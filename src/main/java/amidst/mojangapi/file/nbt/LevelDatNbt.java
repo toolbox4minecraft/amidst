@@ -1,7 +1,7 @@
 package amidst.mojangapi.file.nbt;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import org.jnbt.CompoundTag;
 
@@ -12,9 +12,9 @@ import amidst.parsing.FormatException;
 
 @Immutable
 public class LevelDatNbt {
-	public static LevelDatNbt from(File file) throws IOException, FormatException {
+	public static LevelDatNbt from(Path path) throws IOException, FormatException {
 		try {
-			CompoundTag dataTag = readDataTag(NBTUtils.readTagFromFile(file));
+			CompoundTag dataTag = readDataTag(NBTUtils.readTagFromFile(path));
 			long seed = readRandomSeed(dataTag);
 			CoordinatesInWorld worldSpawn = readWorldSpawn(dataTag);
 			WorldType worldType = readWorldType(dataTag);
@@ -22,7 +22,7 @@ public class LevelDatNbt {
 			boolean hasPlayer = hasPlayerTag(dataTag);
 			return new LevelDatNbt(seed, worldSpawn, worldType, generatorOptions, hasPlayer);
 		} catch (NullPointerException e) {
-			throw new FormatException("cannot read level.dat: " + file);
+			throw new FormatException("cannot read level.dat: " + path);
 		}
 	}
 

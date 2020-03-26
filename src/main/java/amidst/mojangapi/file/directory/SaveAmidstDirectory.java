@@ -1,17 +1,17 @@
 package amidst.mojangapi.file.directory;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public class SaveAmidstDirectory {
-	private final File root;
+	private final Path root;
 	private final SaveAmidstBackupDirectory backup;
 
-	public SaveAmidstDirectory(File root) {
+	public SaveAmidstDirectory(Path root) {
 		this.root = root;
-		this.backup = new SaveAmidstBackupDirectory(new File(root, "backup"));
+		this.backup = new SaveAmidstBackupDirectory(root.resolve("backup"));
 	}
 
-	public File getRoot() {
+	public Path getRoot() {
 		return root;
 	}
 

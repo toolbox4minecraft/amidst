@@ -1,6 +1,6 @@
 package amidst;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Optional;
 
 import org.kohsuke.args4j.CmdLineException;
@@ -30,7 +30,7 @@ public class CommandLineParameters {
 	    usage = "location of the '.minecraft' directory.",
 	    metaVar = "<directory>"
 	)
-	public volatile File dotMinecraftDirectory;
+	public volatile Path dotMinecraftDirectory;
 
 	@Option(
 	    name = "-mcjar",
@@ -39,7 +39,7 @@ public class CommandLineParameters {
 	    depends = { "-mcjson" },
 	    forbids = { "-profile" }
 	)
-	public volatile File minecraftJarFile;
+	public volatile Path minecraftJarFile;
 
 	@Option(
 	    name = "-mcjson",
@@ -48,7 +48,7 @@ public class CommandLineParameters {
 	    depends = { "-mcjar" },
 	    forbids = { "-profile" }
 	)
-	public volatile File minecraftJsonFile;
+	public volatile Path minecraftJsonFile;
 
 	@Option(
 	    name = "-profile",
@@ -63,21 +63,21 @@ public class CommandLineParameters {
 	    usage = "location of the biome profile directory",
 	    metaVar = "<directory>"
 	)
-	public volatile File biomeProfilesDirectory;
+	public volatile Path biomeProfilesDirectory;
 
 	@Option(
 	    name = "-history",
 	    usage = "location of the seed history file",
 	    metaVar = "<file>"
 	)
-	public volatile File seedHistoryFile;
+	public volatile Path seedHistoryFile;
 
 	@Option(
 	    name = "-log",
 	    usage = "location of the log file",
 	    metaVar = "<file>"
 	)
-	public volatile File logFile;
+	public volatile Path logFile;
 
 	@Option(
 	    name = "-seed",

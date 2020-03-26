@@ -3,8 +3,10 @@ package amidst.devtools;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 
@@ -17,9 +19,9 @@ public class GenerateBiomeColorImages {
 	private static final int HEIGHT = 30;
 
 	private final Iterable<Biome> biomes;
-	private final File root;
+	private final Path root;
 
-	public GenerateBiomeColorImages(Iterable<Biome> biomes, File root) {
+	public GenerateBiomeColorImages(Iterable<Biome> biomes, Path root) {
 		this.biomes = biomes;
 		this.root = root;
 	}
@@ -52,7 +54,8 @@ public class GenerateBiomeColorImages {
 	}
 
 	private void createAndSaveImage(int index, Color color) throws IOException {
-		ImageIO.write(createImage(color), "png", new File(root, index + ".png"));
+		ImageIO.write(createImage(color), "png",
+			new BufferedOutputStream(Files.newOutputStream(root.resolve(index + ".png"))));
 	}
 
 	private BufferedImage createImage(Color color) {

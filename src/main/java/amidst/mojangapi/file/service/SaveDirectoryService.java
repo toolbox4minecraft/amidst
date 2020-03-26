@@ -1,15 +1,16 @@
 package amidst.mojangapi.file.service;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import amidst.documentation.Immutable;
 import amidst.documentation.NotNull;
@@ -32,21 +33,21 @@ public class SaveDirectoryService {
 	 * that is also not valid it will throw a FileNotFoundException.
 	 */
 	@NotNull
-	public SaveDirectory newSaveDirectory(File file) throws FileNotFoundException {
-		File currentFile = file;
+	public SaveDirectory newSaveDirectory(Path file) throws FileNotFoundException {
+		Path currentFile = file;
 		SaveDirectory result = null;
 		if (currentFile == null) {
 			// error
 		} else {
 			result = createValidSaveDirectory(currentFile);
-			currentFile = currentFile.getParentFile();
+			currentFile = currentFile.getParent();
 			if (result != null) {
 				return result;
 			} else if (currentFile == null) {
 				// error
 			} else {
 				result = createValidSaveDirectory(currentFile);
-				currentFile = currentFile.getParentFile();
+				currentFile = currentFile.getParent();
 				if (result != null) {
 					return result;
 				} else {
@@ -57,7 +58,7 @@ public class SaveDirectoryService {
 		throw new FileNotFoundException("unable to load save directory: " + file);
 	}
 
-	private SaveDirectory createValidSaveDirectory(File currentFile) {
+	private SaveDirectory createValidSaveDirectory(Path currentFile) {
 		SaveDirectory result = new SaveDirectory(currentFile);
 		if (result.isValid()) {
 			return result;
@@ -95,8 +96,7 @@ public class SaveDirectoryService {
 	@NotNull
 	public List<PlayerNbt> tryReadMultiplayerPlayerNbts(SaveDirectory saveDirectory) {
 		List<PlayerNbt> playerdataPlayers = listFiles(saveDirectory.getPlayerdata())
-				.stream()
-				.filter(File::isFile)
+				.filter(Files::isRegularFile)
 				.map(f -> createPlayerdataPlayerNbt(saveDirectory, f))
 				.filter(Optional::isPresent)
 				.map(Optional::get)
@@ -106,8 +106,7 @@ public class SaveDirectoryService {
 			return playerdataPlayers;
 		} else {
 			List<PlayerNbt> playersPlayers = listFiles(saveDirectory.getPlayers())
-					.stream()
-					.filter(File::isFile)
+					.filter(Files::isRegularFile)
 					.map(f -> createPlayersPlayerNbt(saveDirectory, f))
 					.filter(Optional::isPresent)
 					.map(Optional::get)
@@ -122,32 +121,34 @@ public class SaveDirectoryService {
 		}
 	}
 
-	private List<File> listFiles(File file) {
-		File[] files = file.listFiles();
-		if (files != null) {
-			return Arrays.asList(files);
-		} else {
-			return Collections.emptyList();
+	private Stream<Path> listFiles(Path directory) {
+		if (Files.isDirectory(directory)) {
+			try {
+				return Files.list(directory);
+			} catch (IOException e) {
+				AmidstLogger.error(e, "Error while reading directory " + directory);
+			}
 		}
+		return Stream.empty();
 	}
 
-	private Optional<PlayerNbt> createPlayerdataPlayerNbt(SaveDirectory saveDirectory, File playerdataFile) {
+	private Optional<PlayerNbt> createPlayerdataPlayerNbt(SaveDirectory saveDirectory, Path playerdataFile) {
 		String playerUUID = getPlayerUUIDFromPlayerdataFile(playerdataFile);
 		return tryReadCoordinatesFromPlayerdata(saveDirectory, playerUUID)
 				.map(c -> createPlayerdataPlayerNbt(playerUUID, c));
 	}
 
-	private String getPlayerUUIDFromPlayerdataFile(File playerdataFile) {
-		return playerdataFile.getName().split("\\.")[0];
+	private String getPlayerUUIDFromPlayerdataFile(Path playerdataFile) {
+		return playerdataFile.getFileName().toString().split("\\.")[0];
 	}
 
-	private Optional<PlayerNbt> createPlayersPlayerNbt(SaveDirectory saveDirectory, File playersFile) {
+	private Optional<PlayerNbt> createPlayersPlayerNbt(SaveDirectory saveDirectory, Path playersFile) {
 		String playerName = getPlayerNameFromPlayersFile(playersFile);
 		return tryReadCoordinatesFromPlayers(saveDirectory, playerName).map(c -> createPlayersPlayerNbt(playerName, c));
 	}
 
-	private String getPlayerNameFromPlayersFile(File playersFile) {
-		return playersFile.getName().split("\\.")[0];
+	private String getPlayerNameFromPlayersFile(Path playersFile) {
+		return playersFile.getFileName().toString().split("\\.")[0];
 	}
 
 	private PlayerNbt createLevelDatPlayerNbt(PlayerCoordinates playerCoordinates) {

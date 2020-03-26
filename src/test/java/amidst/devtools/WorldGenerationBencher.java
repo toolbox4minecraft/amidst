@@ -1,11 +1,13 @@
 package amidst.devtools;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Semaphore;
 import java.util.prefs.Preferences;
 
@@ -40,63 +42,60 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.parsing.FormatException;
 
 public class WorldGenerationBencher {
-	
+
 	private static final Gson GSON = new GsonBuilder().create();
 	private static final WorldOptions WORLD_OPTIONS = new WorldOptions(
 			WorldSeed.fromSaveGame(123456), WorldType.DEFAULT);
-	
+
 	private final String prefix;
 	private final VersionList versionList;
 	private final MinecraftInstallation minecraftInstallation;
-	private final File outDir;
+	private final Path outDir;
 	private final List<BiomeRequestRecordJson> records = new ArrayList<>();
 	private final List<Version> successful = new ArrayList<>();
 	private final List<Version> failed = new ArrayList<>();
-	
+
 	private final Semaphore fullyLoadedBarrier = new Semaphore(0);
-	
+
 	public WorldGenerationBencher(String outDir, String prefix, String libraries, VersionList versionList)
 			throws DotMinecraftDirectoryNotFoundException {
 		this.prefix = prefix;
 		this.versionList = versionList;
-		this.outDir = new File(outDir);
+		this.outDir = Paths.get(outDir);
 		this.minecraftInstallation = MinecraftInstallation
-				.newCustomMinecraftInstallation(new File(libraries), null, new File(prefix), null);
+				.newCustomMinecraftInstallation(Paths.get(libraries), null, Paths.get(prefix), null);
 	}
-	
+
 	public void run() throws FormatException, IOException {
 		Application app = startAmidst();
-		
+
 		for(Version version: versionList.getVersions()) {
 			benchmarkOne(app, version);
 		}
-		
+
 		displayVersionList("===== VERSIONS SUCCESSFUL =====", successful);
 		displayVersionList("======= VERSIONS FAILED =======", failed);
 	}
-	
+
 	private void benchmarkOne(Application app, Version version) {
-		if(!version.tryDownloadClient(prefix)) {
-			failed.add(version);
-			return;
-		}
-		
 		RunningLauncherProfile profile;
 		try {
+			version.fetchRemoteVersion().downloadClient(prefix);
 			LauncherProfile launcherProfile = minecraftInstallation.newLauncherProfile(version.getId());
 			profile = new RunningLauncherProfile(
 					WorldBuilder.createSilentPlayerless(),
 					launcherProfile,
 					new BenchmarkingMinecraftInterface(MinecraftInterfaces.fromLocalProfile(launcherProfile), records),
-					null);
+					Optional.empty());
 		} catch (FormatException | IOException | MinecraftInterfaceCreationException e) {
+			e.printStackTrace();
 			failed.add(version);
 			return;
 		}
-		
+
 		if(!version.getId().equals(profile.getRecognisedVersion().getName()))
 			return;
-		
+
 		//dummy run + real run, only the data gathered on the real run counts
 		for(int i = 0; i < 2; i++) {
 			records.clear();
@@ -105,7 +104,7 @@ public class WorldGenerationBencher {
 			fullyLoadedBarrier.acquireUninterruptibly();
 			adjustRecords(startTime);
 		}
-		
+
 		try {
 			saveRecords(version);
 		} catch (IOException e) {
@@ -114,7 +113,7 @@ public class WorldGenerationBencher {
 		}
 		successful.add(version);
 	}
-	
+
 	private void launchMainWindow(Application app, RunningLauncherProfile profile) {
 		MainWindow window = app.displayMainWindow(profile);
 		window.getWorldSwitcher().displayWorld(WORLD_OPTIONS);
@@ -123,7 +122,7 @@ public class WorldGenerationBencher {
 			window.getViewerFacade().adjustZoom(1);
 		}
 		window.getViewerFacade().centerOn(CoordinatesInWorld.origin());
-		
+
 		Timer timer = new Timer(1000, e -> {});
 		timer.setRepeats(true);
 		timer.setInitialDelay(1000);
@@ -135,27 +134,27 @@ public class WorldGenerationBencher {
 		});
 		timer.start();
 	}
-	
+
 	private Application startAmidst() throws FormatException, IOException {
 		AmidstSettings settings = new AmidstSettings(Preferences.userNodeForPackage(getClass()));
 		CommandLineParameters params = new CommandLineParameters();
 		AmidstMetaData metadata = Amidst.createMetadata();
 		return new PerApplicationInjector(params, metadata, settings).getApplication();
 	}
-	
+
 	private void adjustRecords(long startTime) {
 		for(BiomeRequestRecordJson record: records) {
 			record.startTime -= startTime;
 		}
 	}
-	
+
 	private void saveRecords(Version version) throws IOException {
-		File file = new File(outDir, "worldgen-" + version.getId() + ".json");
-		try (Writer writer = new FileWriter(file)) {
+		Path file = outDir.resolve("worldgen-" + version.getId() + ".json");
+		try (Writer writer = Files.newBufferedWriter(file)) {
 		    GSON.toJson(records, writer);
 		}
 	}
-	
+
 	private void displayVersionList(String message, List<Version> versions) {
 		System.out.println();
 		System.out.println(message);

@@ -1,7 +1,7 @@
 package amidst.devtools;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class GenerateWorldTestData {
 		this.prefix = prefix;
 		this.versionList = versionList;
 		this.minecraftInstallation = MinecraftInstallation
-				.newCustomMinecraftInstallation(new File(libraries), null, new File(prefix), null);
+				.newCustomMinecraftInstallation(Paths.get(libraries), null, Paths.get(prefix), null);
 	}
 
 	public void run() {
@@ -46,21 +46,18 @@ public class GenerateWorldTestData {
 	}
 
 	private void generate(TestWorldDeclaration declaration, Version version) {
-		if (version.tryDownloadClient(prefix)) {
-			try {
-				LauncherProfile launcherProfile = minecraftInstallation.newLauncherProfile(version.getId());
-				MinecraftInterface minecraftInterface = MinecraftInterfaces.fromLocalProfile(launcherProfile);
-				TestWorldCache.createAndPut(declaration, minecraftInterface);
-				successful.add(version.getId());
-			} catch (
-					MinecraftInterfaceCreationException
-					| MinecraftInterfaceException
-					| FormatException
-					| IOException e) {
-				e.printStackTrace();
-				failed.add(version.getId());
-			}
-		} else {
+		try {
+			version.fetchRemoteVersion().downloadClient(prefix);
+			LauncherProfile launcherProfile = minecraftInstallation.newLauncherProfile(version.getId());
+			MinecraftInterface minecraftInterface = MinecraftInterfaces.fromLocalProfile(launcherProfile);
+			TestWorldCache.createAndPut(declaration, minecraftInterface);
+			successful.add(version.getId());
+		} catch (
+				MinecraftInterfaceCreationException
+				| MinecraftInterfaceException
+				| FormatException
+				| IOException e) {
+			e.printStackTrace();
 			failed.add(version.getId());
 		}
 	}

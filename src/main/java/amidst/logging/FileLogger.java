@@ -1,8 +1,11 @@
 package amidst.logging;
 
-import java.io.File;
-import java.io.FileWriter;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -18,11 +21,11 @@ import amidst.documentation.NotThreadSafe;
 @NotThreadSafe
 public class FileLogger implements Logger {
 	private final ConcurrentLinkedQueue<String> logMessageQueue = new ConcurrentLinkedQueue<>();
-	private final File file;
+	private final Path file;
 	private final ScheduledExecutorService executor;
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
-	public FileLogger(File file) {
+	public FileLogger(Path file) {
 		this.file = file;
 		this.executor = createExecutor();
 		if (ensureFileExists()) {
@@ -46,27 +49,20 @@ public class FileLogger implements Logger {
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
 	private boolean ensureFileExists() {
-		if (!file.exists()) {
-			try {
-				if (!file.createNewFile()) {
-					disableBecauseFileCreationFailed();
-					return false;
-				}
-			} catch (IOException e) {
-				disableBecauseFileCreationThrowsException(e);
+		try {
+			Files.createFile(file);
+		} catch (FileAlreadyExistsException e){
+			if (Files.isDirectory(file)) {
+				disableBecauseFileIsDirectory();
 				return false;
+			} else {
+				// log file already exists; nothing to do
 			}
-		} else if (file.isDirectory()) {
-			disableBecauseFileIsDirectory();
+		} catch (IOException e) {
+			disableBecauseFileCreationThrowsException(e);
 			return false;
 		}
 		return true;
-	}
-
-	@CalledOnlyBy(AmidstThread.STARTUP)
-	private void disableBecauseFileCreationFailed() {
-		AmidstLogger
-				.warn("Unable to create new file at: {} disabling logging to file. (No exception thrown)", file);
 	}
 
 	@CalledOnlyBy(AmidstThread.STARTUP)
@@ -97,24 +93,19 @@ public class FileLogger implements Logger {
 
 	@CalledOnlyBy(AmidstThread.FILE_LOGGER)
 	private void processQueue() {
-		if (!logMessageQueue.isEmpty() && file.isFile()) {
-			writeLogMessage(getLogMessage());
+		if (!logMessageQueue.isEmpty() && Files.isRegularFile(file)) {
+			writeLogMessages();
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.FILE_LOGGER)
-	private String getLogMessage() {
-		StringBuilder builder = new StringBuilder();
-		while (!logMessageQueue.isEmpty()) {
-			builder.append(logMessageQueue.poll());
-		}
-		return builder.toString();
-	}
-
-	@CalledOnlyBy(AmidstThread.FILE_LOGGER)
-	private void writeLogMessage(String logMessage) {
-		try (FileWriter writer = new FileWriter(file, true)) {
-			writer.append(logMessage);
+	private void writeLogMessages() {
+		try (BufferedWriter writer = Files.newBufferedWriter(file,
+				StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
+			String msg = null;
+			while((msg = logMessageQueue.poll()) != null) {
+				writer.write(msg);
+			}
 		} catch (IOException e) {
 			AmidstLogger.warn(e, "Unable to write to log file.");
 		}
