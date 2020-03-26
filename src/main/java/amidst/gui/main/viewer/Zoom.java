@@ -11,8 +11,8 @@ import amidst.settings.Setting;
 public class Zoom {
 	private int remainingTicks = 0;
 	private int level = 0;
-	private double target = 0.25f;
-	private double current = 0.25f;
+	private double target = zoomFromLevel(0);
+	private double current = zoomFromLevel(0);
 
 	private Point mousePosition = new Point();
 
@@ -21,6 +21,10 @@ public class Zoom {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Zoom(Setting<Boolean> maxZoomSetting) {
 		this.maxZoomSetting = maxZoomSetting;
+	}
+
+	private static float zoomFromLevel(int level) {
+		return (float) (0.25 * Math.pow(2, -level / 8.0));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -44,24 +48,24 @@ public class Zoom {
 		this.mousePosition = mousePosition;
 		if (notches > 0) {
 			if (level < getMaxZoomLevel()) {
-				target /= 1.1;
 				level++;
 				remainingTicks = 100;
 			}
-		} else if (level > -20) {
-			target *= 1.1;
+		} else if (level > getMinZoomLevel()) {
 			level--;
 			remainingTicks = 100;
 		}
+		target = zoomFromLevel(level);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private int getMaxZoomLevel() {
-		if (maxZoomSetting.get()) {
-			return 10;
-		} else {
-			return 10000;
-		}
+		return maxZoomSetting.get() ? 12 : 10000;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
+	private int getMinZoomLevel() {
+		return -20;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
