@@ -18,6 +18,7 @@ import amidst.gui.main.viewer.ViewerFacade;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.RunningLauncherProfile;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
@@ -202,44 +203,50 @@ public class MainWindowDialogs {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldExporterConfiguration askForExportConfiguration(ViewerFacade viewerFacade, boolean useQuarterResolution, BiomeProfileSelection biomeProfileSelection) {
-		WorldOptions worldOptions = viewerFacade.getWorldOptions();
-		String modifier = useQuarterResolution ? "quarter_" : "full_";
-		String suggestedFilename = modifier + "biomes_" + worldOptions.getWorldType().getFilenameText() + "_"
-				+ worldOptions.getWorldSeed().getLong() + ".tiff";
-		File file = askForTIFFSaveFile(suggestedFilename);
-		if (file != null) {
-			file = Actions.appendTIFFFileExtensionIfNecessary(file);
-			if (file.exists() && !file.isFile()) {
-				String message = "Unable to set biome image path, because the target exists but is not a file: "
-						+ file.getAbsolutePath();
-				AmidstLogger.warn(message);
-				displayError(message);
-			} else if (!Actions.canWriteToFile(file)) {
-				String message = "Unable to set biome image path, because you have no writing permissions: "
-						+ file.getAbsolutePath();
-				AmidstLogger.warn(message);
-				displayError(message);
-			} else if (!file.exists() || askToConfirmYesNo(
-					"Replace file?",
-					"File already exists. Do you want to replace it?\n" + file.getAbsolutePath() + "")) {
-				CoordinatesInWorld topLeft = askForCoordinatesOrNull("Enter coordinates for the top left of the image,\n"
-						+ "or leave blank for the window top left.\n"
-						+ "(Ex. 123,456)");
-				CoordinatesInWorld bottomRight = askForCoordinatesOrNull("Enter coordinates for the bottom right of the image,\n"
-						+ "or leave blank for the window bottom right.\n"
-						+ "(Ex. 123,456)");
-				if((topLeft != null && bottomRight != null) && 
-					(topLeft.getX() >= bottomRight.getX() || topLeft.getY() >= bottomRight.getY())) {
-					String message = "Invalid image coordinates detected, not creating image.";
+		if (settings.dimension.get().equals(Dimension.OVERWORLD)) {
+			WorldOptions worldOptions = viewerFacade.getWorldOptions();
+			String modifier = useQuarterResolution ? "quarter_" : "full_";
+			String suggestedFilename = modifier + "biomes_" + worldOptions.getWorldType().getFilenameText() + "_"
+					+ worldOptions.getWorldSeed().getLong() + ".tiff";
+			File file = askForTIFFSaveFile(suggestedFilename);
+			if (file != null) {
+				file = Actions.appendTIFFFileExtensionIfNecessary(file);
+				if (file.exists() && !file.isFile()) {
+					String message = "Unable to set biome image path, because the target exists but is not a file: "
+							+ file.getAbsolutePath();
 					AmidstLogger.warn(message);
 					displayError(message);
-				} else {
-					FragmentGraphToScreenTranslator translator = viewerFacade.getTranslator();
-					topLeft = (topLeft != null) ? topLeft : translator.screenToWorld(new Point(0, 0));
-					bottomRight = (bottomRight != null) ? bottomRight : translator.screenToWorld(new Point((int) translator.getWidth(), (int) translator.getHeight()));
-					return new WorldExporterConfiguration(file, useQuarterResolution, topLeft, bottomRight, biomeProfileSelection);
+				} else if (!Actions.canWriteToFile(file)) {
+					String message = "Unable to set biome image path, because you have no writing permissions: "
+							+ file.getAbsolutePath();
+					AmidstLogger.warn(message);
+					displayError(message);
+				} else if (!file.exists() || askToConfirmYesNo(
+						"Replace file?",
+						"File already exists. Do you want to replace it?\n" + file.getAbsolutePath() + "")) {
+					CoordinatesInWorld topLeft = askForCoordinatesOrNull("Enter coordinates for the top left of the image,\n"
+							+ "or leave blank for the window top left.\n"
+							+ "(Ex. 123,456)");
+					CoordinatesInWorld bottomRight = askForCoordinatesOrNull("Enter coordinates for the bottom right of the image,\n"
+							+ "or leave blank for the window bottom right.\n"
+							+ "(Ex. 123,456)");
+					if((topLeft != null && bottomRight != null) && 
+						(topLeft.getX() >= bottomRight.getX() || topLeft.getY() >= bottomRight.getY())) {
+						String message = "Invalid image coordinates detected, not creating image.";
+						AmidstLogger.warn(message);
+						displayError(message);
+					} else {
+						FragmentGraphToScreenTranslator translator = viewerFacade.getTranslator();
+						topLeft = (topLeft != null) ? topLeft : translator.screenToWorld(new Point(0, 0));
+						bottomRight = (bottomRight != null) ? bottomRight : translator.screenToWorld(new Point((int) translator.getWidth(), (int) translator.getHeight()));
+						return new WorldExporterConfiguration(file, useQuarterResolution, topLeft, bottomRight, biomeProfileSelection);
+					}
 				}
 			}
+		} else {
+			String message = "Biome exporting is not supported for this dimension.";
+			AmidstLogger.warn(message);
+			displayError(message);
 		}
 		return null;
 	}
