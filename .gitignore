@@ -19,3 +19,4 @@ target/
 /dependency-reduced-pom.xml
 devtools.properties
 tests
+.settings/org.eclipse.jdt.core.prefs
