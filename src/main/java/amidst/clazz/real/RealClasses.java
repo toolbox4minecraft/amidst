@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,7 +37,13 @@ public enum RealClasses {
 		try {
 			URI jarFileURI = jarFile.toUri();
 			URI jarURI = new URI("jar:" + jarFileURI.getScheme(), jarFileURI.getPath(), null);
-			return readJarFile(FileSystems.newFileSystem(jarURI, new HashMap<>()));
+			FileSystem fs;
+			try {
+				fs = FileSystems.newFileSystem(jarURI, new HashMap<>());
+			} catch (FileSystemAlreadyExistsException e) {
+				fs = FileSystems.getFileSystem(jarURI);
+			}
+			return readJarFile(fs);
 		} catch (IOException | RealClassCreationException | URISyntaxException e) {
 			throw new JarFileParsingException("Error extracting jar data.", e);
 		}
