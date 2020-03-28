@@ -45,17 +45,24 @@ public class Zoom {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void adjustZoom(Point mousePosition, int notches) {
-		this.mousePosition = mousePosition;
+		int oldLevel = level;
+		int maxLevel = getMaxZoomLevel();
+		int minLevel = getMinZoomLevel();
+
 		if (notches > 0) {
-			if (level < getMaxZoomLevel()) {
-				level++;
-				remainingTicks = 100;
+			if (level < maxLevel) {
+				level = Math.min(level + notches, maxLevel);
 			}
-		} else if (level > getMinZoomLevel()) {
-			level--;
-			remainingTicks = 100;
+		} else if (notches < 0) {
+			if (level > minLevel) {
+				level = Math.max(level + notches, minLevel);
+			}
 		}
-		target = zoomFromLevel(level);
+		if (oldLevel != level) {
+			this.mousePosition = mousePosition;
+			target = zoomFromLevel(level);
+			remainingTicks = 100 * Math.abs(oldLevel - level);
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
