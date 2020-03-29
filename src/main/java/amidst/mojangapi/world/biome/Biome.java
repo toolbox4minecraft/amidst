@@ -54,7 +54,7 @@ public class Biome {
 	public static final Biome taiga                = new Biome(  5, BiomeColor.from( 11, 102,  89), BiomeType.PLAINS_TAIGA);
 	public static final Biome swampland            = new Biome(  6, BiomeColor.from(  7, 249, 178), BiomeType.SWAMPLAND);
 	public static final Biome river                = new Biome(  7, BiomeColor.from(  0,   0, 255), BiomeType.RIVER);
-	public static final Biome hell                 = new Biome(  8, BiomeColor.from(255,   0,   0), BiomeType.PLAINS);
+	public static final Biome hell                 = new Biome(  8, BiomeColor.from(191,  59,  59), BiomeType.PLAINS);
 	public static final Biome theEnd               = new Biome(  9, BiomeColor.from(128, 128, 255), BiomeType.PLAINS);
 	public static final Biome frozenOcean          = new Biome( 10, BiomeColor.from(112, 112, 214), BiomeType.OCEAN);
 	public static final Biome frozenRiver          = new Biome( 11, BiomeColor.from(160, 160, 255), BiomeType.RIVER);
@@ -126,7 +126,10 @@ public class Biome {
 	public static final Biome mesaPlateauM         = new Biome(mesaPlateau);
 
 	public static final Biome bambooJungle         = new Biome(168, BiomeColor.from(118, 142,  20), BiomeType.PLAINS);
-	public static final Biome bambooJungleHills    = new Biome(169, BiomeColor.from(59 ,  71,  10), BiomeType.HILLS);
+	public static final Biome bambooJungleHills    = new Biome(169, BiomeColor.from( 59,  71,  10), BiomeType.HILLS);
+	public static final Biome soulSandValley       = new Biome(170, BiomeColor.from( 82,  41,  33), BiomeType.PLAINS);
+	public static final Biome crimsonForest        = new Biome(171, BiomeColor.from(221,   8,   8), BiomeType.PLAINS);
+	public static final Biome warpedForest         = new Biome(172, BiomeColor.from( 73, 144, 123), BiomeType.PLAINS);
 	// @formatter:on
 
 	private static final BiomeIterable ITERABLE = new BiomeIterable();

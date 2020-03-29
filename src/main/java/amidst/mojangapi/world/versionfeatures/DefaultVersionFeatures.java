@@ -259,6 +259,11 @@ public enum DefaultVersionFeatures {
 				).sinceExtend(RecognisedVersion._18w43c, // Closest to 18w43a
 					entry(168,"Bamboo Jungle"),
 					entry(169,"Bamboo Jungle Hills")
+				).sinceExtend(RecognisedVersion._20w06a,
+					entry(8  ,"Nether Wastes"),
+					entry(170,"Soul Sand Valley"),
+					entry(171,"Crimson Forest"),
+					entry(172,"Warped Forest")
 				).construct()
 				.andThen(BiomeIdNameMap::new))
 
