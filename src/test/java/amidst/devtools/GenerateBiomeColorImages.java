@@ -11,7 +11,11 @@ import java.nio.file.Path;
 import javax.imageio.ImageIO;
 
 import amidst.documentation.NotThreadSafe;
+import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.world.biome.BiomeIdNameMap;
+import amidst.mojangapi.world.versionfeatures.FeatureKey;
+import amidst.mojangapi.world.versionfeatures.VersionFeatures;
 
 @NotThreadSafe
 public class GenerateBiomeColorImages {
@@ -30,9 +34,10 @@ public class GenerateBiomeColorImages {
 		StringBuilder b = new StringBuilder();
 		b.append("Biome name | Biome id | Biome color\n");
 		b.append("---------|-----------:|:----------:\n");
+		BiomeIdNameMap map = VersionFeatures.builder().create(RecognisedVersion.UNKNOWN).get(FeatureKey.BIOME_ID_NAME_MAP);
 		for (Biome biome : biomes) {
 			int index = biome.getIndex();
-			String name = biome.getName();
+			String name = map.getNameFromBiome(biome);
 			Color color = biome.getDefaultColor().getColor();
 			appendLine(b, index, name);
 			createAndSaveImage(index, color);

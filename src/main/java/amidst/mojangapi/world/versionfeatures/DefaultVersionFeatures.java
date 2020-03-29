@@ -1,12 +1,15 @@
 package amidst.mojangapi.world.versionfeatures;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import amidst.fragment.layer.LayerIds;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.world.biome.BiomeIdNameMap;
 import amidst.mojangapi.world.icon.locationchecker.BuriedTreasureLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.EndCityLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
@@ -93,6 +96,113 @@ public enum DefaultVersionFeatures {
 				).sinceExtend(RecognisedVersion._18w09a,
 					LayerIds.OCEAN_FEATURES
 				).construct())
+			
+			.with(FeatureKey.BIOME_ID_NAME_MAP, VersionFeature.<Integer, String> biMapBuilder()
+				.init( // Starts at beta 1.8
+					entry(0, "Ocean"),
+					entry(1, "Plains"),
+					entry(2, "Desert"),
+					entry(3, "Extreme Hills"),
+					entry(4, "Forest"),
+					entry(5, "Taiga"),
+					entry(6, "Swamp"),
+					entry(7, "River")
+				).sinceExtend(RecognisedVersion._b1_9_pre1,
+					entry(10, "Frozen Ocean"),
+					entry(11, "Frozen River"),
+					entry(12, "Ice Plains"),
+					entry(14, "Mushroom Island"),
+					entry(15, "Mushroom Island Shore")
+				).sinceExtend(RecognisedVersion._1_1, // closest to 12w01a
+					entry(13, "Ice Mountains"), // this biome was in the previous version, however there was a bug preventing it from showing up
+					entry(16, "Beach"),
+					entry(17, "Desert Hills"),
+					entry(18, "Forest Hills"),
+					entry(19, "Taiga Hills"),
+					entry(20, "Extreme Hills Edge")
+				).sinceExtend(RecognisedVersion._12w03a,
+					entry(21, "Jungle"),
+					entry(22, "Jungle Hills")
+				).sinceExtend(RecognisedVersion._13w36a,
+					entry(23, "Jungle Edge")
+				).sinceExtend(RecognisedVersion.UNKNOWN,
+					entry(0, "Ocean"),
+					entry(1, "Plains"),
+					entry(2, "Desert"),
+					entry(3, "Mountains"),
+					entry(4, "Forest"),
+					entry(5, "Taiga"),
+					entry(6, "Swamp"),
+					entry(7, "River"),
+					entry(8, "Nether"),
+					entry(9, "The End"),
+					entry(10, "Frozen Ocean"),
+					entry(11, "Frozen River"),
+					entry(12, "Snowy Tundra"),
+					entry(13, "Snowy Mountains"),
+					entry(14, "Mushroom Fields"),
+					entry(15, "Mushroom Field Shore"),
+					entry(16, "Beach"),
+					entry(17, "Desert Hills"),
+					entry(18, "Wooded Hills"),
+					entry(19, "Taiga Hills"),
+					entry(20, "Mountain Edge"),
+					entry(21, "Jungle"),
+					entry(22, "Jungle Hills"),
+					entry(23, "Jungle Edge"),
+					entry(24, "Deep Ocean"),
+					entry(25, "Stone Shore"),
+					entry(26, "Snowy Beach"),
+					entry(27, "Birch Forest"),
+					entry(28, "Birch Forest Hills"),
+					entry(29, "Dark Forest"),
+					entry(30, "Snowy Taiga"),
+					entry(31, "Snowy Taiga Hills"),
+					entry(32, "Giant Tree Taiga"),
+					entry(33, "Giant Tree Taiga Hills"),
+					entry(34, "Wooded Mountains"),
+					entry(35, "Savanna"),
+					entry(36, "Savanna Plateau"),
+					entry(37, "Badlands"),
+					entry(38, "Wooded Badlands Plateau"),
+					entry(39, "Badlands Plateau"),
+					entry(40, "Small End Islands"),
+					entry(41, "End Midlands"),
+					entry(42, "End Highlands"),
+					entry(43, "End Barrens"),
+					entry(44, "Warm Ocean"),
+					entry(45, "Lukewarm Ocean"),
+					entry(46, "Cold Ocean"),
+					entry(47, "Deep Warm Ocean"),
+					entry(48, "Deep Lukewarm Ocean"),
+					entry(49, "Deep Cold Ocean"),
+					entry(50, "Deep Frozen Ocean"),
+					entry(127, "The Void"),
+					entry(129, "Sunflower Plains"),
+					entry(130, "Desert Lakes"),
+					entry(131, "Gravelly Mountains"),
+					entry(132, "Flower Forest"),
+					entry(133, "Taiga Mountains"),
+					entry(134, "Swamp Hills"),
+					entry(140, "Ice Spikes"),
+					entry(149, "Modified Jungle"),
+					entry(151, "Modified Jungle Edge"),
+					entry(155, "Tall Birch Forest"),
+					entry(156, "Tall Birch Hills"),
+					entry(157, "Dark Forest Hills"),
+					entry(158, "Snowy Taiga Mountains"),
+					entry(160, "Giant Spruce Taiga"),
+					entry(161, "Giant Spruce Taiga Hills"),
+					entry(162, "Gravelly Mountains+"),
+					entry(163, "Shattered Savanna"),
+					entry(164, "Shattered Savanna Plateau"),
+					entry(165, "Eroded Badlands"),
+					entry(166, "Modified Wooded Badlands Plateau"),
+					entry(167, "Modified Badlands Plateau"),
+					entry(168, "Bamboo Jungle"),
+					entry(169, "Bamboo Jungle Hills")
+				).construct()
+				.andThen(BiomeIdNameMap::new))
 
 			.with(FeatureKey.END_ISLAND_ORACLE, VersionFeature.bind(features ->
 				VersionFeature.constant(EndIslandOracle.from(getWorldSeed(features)))
@@ -457,6 +567,10 @@ public enum DefaultVersionFeatures {
 				).since(RecognisedVersion._18w30b,
 						false
 				).construct());
+	
+	private static <K, V> Entry<K, V> entry(K key, V value) {
+		return new SimpleEntry<K, V>(key, value);
+	}
 
 	private static List<Biome> getValidBiomesForStrongholdSinceV13w36a() {
 		List<Biome> result = new ArrayList<>();

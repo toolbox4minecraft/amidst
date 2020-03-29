@@ -4,6 +4,7 @@ import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.WorldOptions;
+import amidst.mojangapi.world.biome.BiomeIdNameMap;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
@@ -37,6 +38,7 @@ public class FeatureKey<T> {
 	public static final FeatureKey<LocationChecker>  OCEAN_RUINS_LOCATION_CHECKER      = make();
 	public static final FeatureKey<LocationChecker>  SHIPWRECK_LOCATION_CHECKER        = make();
 	public static final FeatureKey<LocationChecker>  BURIED_TREASURE_LOCATION_CHECKER  = make();
+	public static final FeatureKey<BiomeIdNameMap>   BIOME_ID_NAME_MAP                 = make();
 	// @formatter:on
 
 

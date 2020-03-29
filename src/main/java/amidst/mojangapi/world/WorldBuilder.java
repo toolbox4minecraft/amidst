@@ -101,6 +101,7 @@ public class WorldBuilder {
 				versionFeatures.get(FeatureKey.WORLD_OPTIONS),
 				movablePlayerList,
 				recognisedVersion,
+				versionFeatures.get(FeatureKey.BIOME_ID_NAME_MAP),
 				versionFeatures.get(FeatureKey.ENABLED_LAYERS),
 				versionFeatures.get(FeatureKey.BIOME_DATA_ORACLE),
 				versionFeatures.get(FeatureKey.END_ISLAND_ORACLE),

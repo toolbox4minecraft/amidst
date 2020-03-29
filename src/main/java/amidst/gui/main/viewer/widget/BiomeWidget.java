@@ -15,6 +15,7 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.gui.main.viewer.BiomeSelection;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
+import amidst.mojangapi.world.biome.BiomeIdNameMap;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @NotThreadSafe
@@ -36,6 +37,7 @@ public class BiomeWidget extends Widget {
 	private final BiomeProfileSelection biomeProfileSelection;
 
 	private List<Biome> biomes = new ArrayList<>();
+	private BiomeIdNameMap biomeIdNameMap;
 	private int maxNameWidth = 0;
 	private int biomeListHeight;
 	private boolean isInitialized = false;
@@ -57,11 +59,13 @@ public class BiomeWidget extends Widget {
 			CornerAnchorPoint anchor,
 			BiomeSelection biomeSelection,
 			LayerReloader layerReloader,
-			BiomeProfileSelection biomeProfileSelection) {
+			BiomeProfileSelection biomeProfileSelection,
+			BiomeIdNameMap biomeIdNameMap) {
 		super(anchor);
 		this.biomeSelection = biomeSelection;
 		this.layerReloader = layerReloader;
 		this.biomeProfileSelection = biomeProfileSelection;
+		this.biomeIdNameMap = biomeIdNameMap;
 		setWidth(250);
 		setHeight(400);
 		setY(100);
@@ -92,9 +96,13 @@ public class BiomeWidget extends Widget {
 		if (!isInitialized) {
 			isInitialized = true;
 			for (Biome biome : Biome.allBiomes()) {
-				biomes.add(biome);
-				int width = fontMetrics.stringWidth(biome.getName());
-				maxNameWidth = Math.max(width, maxNameWidth);
+				int biomeId = biome.getIndex();
+				if (biomeIdNameMap.doesIdExist(biomeId)) {
+					biomes.add(biome);
+					int width;
+					width = fontMetrics.stringWidth(biomeIdNameMap.getNameFromId(biomeId));
+					maxNameWidth = Math.max(width, maxNameWidth);
+				}
 			}
 			biomeListHeight = biomes.size() * 16;
 		}
@@ -238,7 +246,7 @@ public class BiomeWidget extends Widget {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void drawBiomeName(Graphics2D g2d, int i, Biome biome) {
 		g2d.setColor(Color.white);
-		g2d.drawString(biome.getName(), innerBox.x + 25, innerBox.y + 13 + i * 16 + biomeListYOffset);
+		g2d.drawString(biomeIdNameMap.getNameFromId(biome.getIndex()), innerBox.x + 25, innerBox.y + 13 + i * 16 + biomeListYOffset);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

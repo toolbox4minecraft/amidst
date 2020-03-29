@@ -20,10 +20,10 @@ import amidst.mojangapi.world.biome.BiomeColor;
 
 @Immutable
 public class BiomeProfile {
-	private static Map<String, BiomeColorJson> createDefaultColorMap() {
-		Map<String, BiomeColorJson> result = new HashMap<>();
+	private static Map<Integer, BiomeColorJson> createDefaultColorMap() {
+		Map<Integer, BiomeColorJson> result = new HashMap<>();
 		for (Biome biome : Biome.allBiomes()) {
-			result.put(biome.getName(), biome.getDefaultColor().createBiomeColorJson());
+			result.put(biome.getIndex(), biome.getDefaultColor().createBiomeColorJson());
 		}
 		return result;
 	}
@@ -36,13 +36,13 @@ public class BiomeProfile {
 
 	private volatile String name;
 	private volatile String shortcut;
-	private volatile Map<String, BiomeColorJson> colorMap;
+	private volatile Map<Integer, BiomeColorJson> colorMap;
 
 	@GsonConstructor
 	public BiomeProfile() {
 	}
 
-	private BiomeProfile(String name, String shortcut, Map<String, BiomeColorJson> colorMap) {
+	private BiomeProfile(String name, String shortcut, Map<Integer, BiomeColorJson> colorMap) {
 		this.name = name;
 		this.shortcut = shortcut;
 		this.colorMap = colorMap;
@@ -67,9 +67,9 @@ public class BiomeProfile {
 			return false;
 		}
 
-		for (String biomeName : colorMap.keySet()) {
-			if (!Biome.exists(biomeName)) {
-				AmidstLogger.info("Failed to find biome for: {} in profile: {}", biomeName, name);
+		for (int biomeId : colorMap.keySet()) {
+			if (!Biome.exists(biomeId)) {
+				AmidstLogger.info("Failed to find biome for id: {} in profile: {}", biomeId, name);
 			}
 		}
 		return true;
@@ -84,8 +84,8 @@ public class BiomeProfile {
 	}
 
 	private BiomeColor getBiomeColor(Biome biome) {
-		if (colorMap != null && colorMap.containsKey(biome.getName())) {
-			return colorMap.get(biome.getName()).createBiomeColor();
+		if (colorMap != null && colorMap.containsKey(biome.getIndex())) {
+			return colorMap.get(biome.getIndex()).createBiomeColor();
 		} else {
 			return biome.getDefaultColor();
 		}
@@ -107,7 +107,7 @@ public class BiomeProfile {
 	 */
 	private String serializeColorMap() {
 		String output = "";
-		for (Map.Entry<String, BiomeColorJson> pairs : getSortedColorMapEntries()) {
+		for (Map.Entry<Integer, BiomeColorJson> pairs : getSortedColorMapEntries()) {
 			output += "[ \"" + pairs.getKey() + "\", { ";
 			output += "\"r\":" + pairs.getValue().getR() + ", ";
 			output += "\"g\":" + pairs.getValue().getG() + ", ";
@@ -116,12 +116,12 @@ public class BiomeProfile {
 		return output.substring(0, output.length() - 3);
 	}
 
-	private Set<Entry<String, BiomeColorJson>> getSortedColorMapEntries() {
+	private Set<Entry<Integer, BiomeColorJson>> getSortedColorMapEntries() {
 		if(colorMap == null) {
 			return Collections.emptySet();
 		}
 
-		SortedMap<String, BiomeColorJson> result = new TreeMap<>(Biome::compareByIndex);
+		SortedMap<Integer, BiomeColorJson> result = new TreeMap<>(Integer::compare);
 		result.putAll(colorMap);
 		return result.entrySet();
 	}
