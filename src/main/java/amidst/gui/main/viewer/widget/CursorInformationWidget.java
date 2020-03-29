@@ -77,6 +77,8 @@ public class CursorInformationWidget extends TextWidget {
 			String s = biomeIdNameMap.getNameFromId(biome);
 			if (s != null) {
 				return s;
+			} else if (biome != -1) {
+				return UNKNOWN_BIOME_NAME + " (ID: " + biome + ")";
 			}
 		}
 		return UNKNOWN_BIOME_NAME;
