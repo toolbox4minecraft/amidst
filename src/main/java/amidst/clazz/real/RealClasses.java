@@ -3,17 +3,15 @@ package amidst.clazz.real;
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import amidst.documentation.Immutable;
+import amidst.parsing.URIUtils;
 
 @Immutable
 public enum RealClasses {
@@ -33,10 +31,8 @@ public enum RealClasses {
 			throw new FileNotFoundException("Attempted to load jar file at: " + jarFile + " but it does not exist.");
 		}
 
-		try {
-			URI jarFileURI = jarFile.toUri();
-			URI jarURI = new URI("jar:" + jarFileURI.getScheme(), jarFileURI.getPath(), null);
-			return readJarFile(FileSystems.newFileSystem(jarURI, new HashMap<>()));
+		try (FileSystem jarContents = URIUtils.openZipFile(jarFile.toUri())){
+			return readJarFile(jarContents);
 		} catch (IOException | RealClassCreationException | URISyntaxException e) {
 			throw new JarFileParsingException("Error extracting jar data.", e);
 		}
