@@ -60,7 +60,7 @@ public class CursorInformationWidget extends TextWidget {
 		if (dimension.equals(Dimension.OVERWORLD)) {
 			return getOverworldBiomeNameAt(coordinates);
 		} else if (dimension.equals(Dimension.END)) {
-			return biomeList.getByIdOrNull(9).getName(); // Biome ID 9 is The End biome.
+			return biomeList.getByIdOrNull(Biome.theEnd).getName();
 		} else {
 			AmidstLogger.warn("unsupported dimension");
 			return UNKNOWN_BIOME_NAME;
