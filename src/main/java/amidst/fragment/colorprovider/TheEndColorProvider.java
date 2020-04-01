@@ -30,19 +30,14 @@ public class TheEndColorProvider implements ColorProvider {
 	public int getColorAt(Dimension dimension, Fragment fragment, long cornerX, long cornerY, int x, int y) {
 		long xAsQuarter = cornerX + x;
 		long yAsQuarter = cornerY + y;
-		long stamp = fragment.readLock();
-		try {
-			return getColorAt(
-					(int) (xAsQuarter << 2),
-					(int) (yAsQuarter << 2),
-					xAsQuarter >> 2,
-					yAsQuarter >> 2,
-					(int) (x % TEXTURES_WIDTH),
-					(int) (y % TEXTURES_HEIGHT),
-					fragment.getEndIslands(stamp));
-		} finally {
-			fragment.unlock(stamp);
-		}
+		return getColorAt(
+				(int) (xAsQuarter << 2),
+				(int) (yAsQuarter << 2),
+				xAsQuarter >> 2,
+				yAsQuarter >> 2,
+				(int) (x % TEXTURES_WIDTH),
+				(int) (y % TEXTURES_HEIGHT),
+				fragment.getEndIslands());
 	}
 
 	private int getColorAt(

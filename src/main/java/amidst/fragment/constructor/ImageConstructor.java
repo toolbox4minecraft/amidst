@@ -22,12 +22,7 @@ public class ImageConstructor implements FragmentConstructor {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public void construct(Fragment fragment) {
-		long stamp = fragment.writeLock();
-		try {
-			fragment.putImage(stamp, layerId, createBufferedImage());
-		} finally {
-			fragment.unlock(stamp);
-		}
+		fragment.putImage(layerId, createBufferedImage());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

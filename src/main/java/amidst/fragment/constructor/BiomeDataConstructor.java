@@ -18,11 +18,6 @@ public class BiomeDataConstructor implements FragmentConstructor {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public void construct(Fragment fragment) {
-		long stamp = fragment.writeLock();
-		try {
-			fragment.initBiomeData(stamp, size, size);
-		} finally {
-			fragment.unlock(stamp);
-		}
+		fragment.initBiomeData(size, size);
 	}
 }

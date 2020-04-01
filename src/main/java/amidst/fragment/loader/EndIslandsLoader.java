@@ -38,12 +38,7 @@ public class EndIslandsLoader extends FragmentLoader {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void doLoad(Fragment fragment) {
-		long stamp = fragment.writeLock();
-		try {
-			fragment.setEndIslands(stamp, getEndIslands(fragment.getCorner()));
-		} finally {
-			fragment.unlock(stamp);
-		}
+		fragment.setEndIslands(getEndIslands(fragment.getCorner()));
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)

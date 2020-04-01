@@ -34,14 +34,9 @@ public class ImageDrawer extends FragmentDrawer {
 		Object oldHint = g2d.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
 		Object newHint = getRenderingHint(g2d);
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, newHint);
-		long stamp = fragment.readLock();
-		try {
-			BufferedImage image = fragment.getImage(stamp, declaration.getLayerId());
-			accelerationCounter.log(image);
-			g2d.drawImage(image, 0, 0, null);
-		} finally {
-			fragment.unlock(stamp);
-		}
+		BufferedImage image = fragment.getImage(declaration.getLayerId());
+		accelerationCounter.log(image);
+		g2d.drawImage(image, 0, 0, null);
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, oldHint);
 	}
 
