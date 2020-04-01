@@ -4,8 +4,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -17,22 +17,25 @@ import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
+import amidst.parsing.FormatException;
+import amidst.parsing.json.JsonReader;
 
 @Immutable
 public class BiomeProfile {
-	private static Map<Integer, BiomeColorJson> createDefaultColorMap() {
-		Map<Integer, BiomeColorJson> result = new HashMap<>();
-		for (Biome biome : Biome.allBiomes()) {
-			result.put(biome.getIndex(), biome.getDefaultColor().createBiomeColorJson());
+	private static BiomeProfile createDefaultProfile() {
+		try {
+			String json = new String(Files.readAllBytes(Paths.get("src", "main", "resources", "amidst", "mojangapi", "default_biome_profile.json").toAbsolutePath()));
+			return JsonReader.readString(json, BiomeProfile.class);
+		} catch (IOException | FormatException e) {
+			throw new RuntimeException("Unable to create default biome profile", e);
 		}
-		return result;
 	}
 
 	public static BiomeProfile getDefaultProfile() {
 		return DEFAULT_PROFILE;
 	}
 
-	private static final BiomeProfile DEFAULT_PROFILE = new BiomeProfile("default", null, createDefaultColorMap());
+	private static final BiomeProfile DEFAULT_PROFILE = createDefaultProfile();
 
 	private volatile String name;
 	private volatile String shortcut;
@@ -40,12 +43,6 @@ public class BiomeProfile {
 
 	@GsonConstructor
 	public BiomeProfile() {
-	}
-
-	private BiomeProfile(String name, String shortcut, Map<Integer, BiomeColorJson> colorMap) {
-		this.name = name;
-		this.shortcut = shortcut;
-		this.colorMap = colorMap;
 	}
 
 	public String getName() {
@@ -76,18 +73,18 @@ public class BiomeProfile {
 	}
 
 	public BiomeColor[] createBiomeColorArray() {
-		BiomeColor[] result = new BiomeColor[Biome.getBiomesLength()];
+		BiomeColor[] result = new BiomeColor[Biome.totalBiomes()];
 		for (Biome biome : Biome.allBiomes()) {
-			result[biome.getIndex()] = getBiomeColor(biome);
+			result[biome.getId()] = getBiomeColor(biome);
 		}
 		return result;
 	}
 
 	private BiomeColor getBiomeColor(Biome biome) {
-		if (colorMap != null && colorMap.containsKey(biome.getIndex())) {
-			return colorMap.get(biome.getIndex()).createBiomeColor();
+		if (colorMap != null && colorMap.containsKey(biome.getId())) {
+			return colorMap.get(biome.getId()).createBiomeColor();
 		} else {
-			return biome.getDefaultColor();
+			return BiomeColor.unknown();
 		}
 	}
 

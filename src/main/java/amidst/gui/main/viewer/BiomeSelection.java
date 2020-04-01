@@ -3,19 +3,21 @@ package amidst.gui.main.viewer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import amidst.documentation.ThreadSafe;
-import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.world.versionfeatures.BiomeList;
 
 @ThreadSafe
 public class BiomeSelection {
+	private final BiomeList biomeList;
 	private final AtomicBoolean[] selectedBiomes;
 	private volatile AtomicBoolean isHighlightMode = new AtomicBoolean(false);
 
-	public BiomeSelection() {
+	public BiomeSelection(BiomeList biomeList) {
+		this.biomeList = biomeList;
 		this.selectedBiomes = createSelectedBiomes();
 	}
 
 	private AtomicBoolean[] createSelectedBiomes() {
-		AtomicBoolean[] result = new AtomicBoolean[Biome.getBiomesLength()];
+		AtomicBoolean[] result = new AtomicBoolean[biomeList.size()];
 		for (int i = 0; i < result.length; i++) {
 			result[i] = new AtomicBoolean(false);
 		}
@@ -50,7 +52,7 @@ public class BiomeSelection {
 
 	public void selectOnlySpecial() {
 		for (int i = 0; i < selectedBiomes.length; i++) {
-			selectedBiomes[i].set(Biome.isSpecialBiomeIndex(i));
+			selectedBiomes[i].set(biomeList.getByIdOrNull(i).isSpecialBiome());
 		}
 	}
 

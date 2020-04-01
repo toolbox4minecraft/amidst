@@ -11,11 +11,10 @@ import java.nio.file.Path;
 import javax.imageio.ImageIO;
 
 import amidst.documentation.NotThreadSafe;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
-import amidst.mojangapi.world.biome.BiomeIdNameMap;
-import amidst.mojangapi.world.versionfeatures.FeatureKey;
-import amidst.mojangapi.world.versionfeatures.VersionFeatures;
+import amidst.mojangapi.world.biome.UnknownBiomeIdException;
+import amidst.settings.biomeprofile.BiomeProfile;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @NotThreadSafe
 public class GenerateBiomeColorImages {
@@ -31,18 +30,22 @@ public class GenerateBiomeColorImages {
 	}
 
 	public void run() throws IOException {
-		StringBuilder b = new StringBuilder();
-		b.append("Biome name | Biome id | Biome color\n");
-		b.append("---------|-----------:|:----------:\n");
-		BiomeIdNameMap map = VersionFeatures.builder().create(RecognisedVersion.UNKNOWN).get(FeatureKey.BIOME_ID_NAME_MAP);
-		for (Biome biome : biomes) {
-			int index = biome.getIndex();
-			String name = map.getNameFromBiome(biome);
-			Color color = biome.getDefaultColor().getColor();
-			appendLine(b, index, name);
-			createAndSaveImage(index, color);
+		try {
+			StringBuilder b = new StringBuilder();
+			b.append("Biome name | Biome id | Biome color\n");
+			b.append("---------|-----------:|:----------:\n");
+			BiomeProfileSelection colorProvider = new BiomeProfileSelection(BiomeProfile.getDefaultProfile());
+			for (Biome biome : biomes) {
+				int index = biome.getId();
+				String name = biome.getName();
+				Color color = colorProvider.getBiomeColor(biome.getId()).getColor();
+				appendLine(b, index, name);
+				createAndSaveImage(index, color);
+			}
+			System.out.println(b.toString());
+		} catch (UnknownBiomeIdException e) {
+			e.printStackTrace();
 		}
-		System.out.println(b.toString());
 	}
 
 	private void appendLine(StringBuilder b, int index, String name) {

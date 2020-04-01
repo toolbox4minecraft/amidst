@@ -13,9 +13,9 @@ import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.biome.Biome;
-import amidst.mojangapi.world.biome.BiomeIdNameMap;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.versionfeatures.BiomeList;
 import amidst.settings.Setting;
 
 @NotThreadSafe
@@ -25,7 +25,7 @@ public class CursorInformationWidget extends TextWidget {
 	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
 	private final Setting<Dimension> dimensionSetting;
-	private final BiomeIdNameMap biomeIdNameMap;
+	private final BiomeList biomeList;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public CursorInformationWidget(
@@ -33,12 +33,12 @@ public class CursorInformationWidget extends TextWidget {
 			FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator,
 			Setting<Dimension> dimensionSetting,
-			BiomeIdNameMap biomeIdNameMap) {
+			BiomeList biomeList) {
 		super(anchor);
 		this.graph = graph;
 		this.translator = translator;
 		this.dimensionSetting = dimensionSetting;
-		this.biomeIdNameMap = biomeIdNameMap;
+		this.biomeList = biomeList;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -60,7 +60,7 @@ public class CursorInformationWidget extends TextWidget {
 		if (dimension.equals(Dimension.OVERWORLD)) {
 			return getOverworldBiomeNameAt(coordinates);
 		} else if (dimension.equals(Dimension.END)) {
-			return biomeIdNameMap.getNameFromBiome(Biome.theEnd);
+			return biomeList.getByIdOrNull(9).getName(); // Biome ID 9 is The End biome.
 		} else {
 			AmidstLogger.warn("unsupported dimension");
 			return UNKNOWN_BIOME_NAME;
@@ -74,9 +74,9 @@ public class CursorInformationWidget extends TextWidget {
 			long x = coordinates.getXRelativeToFragmentAs(Resolution.QUARTER);
 			long y = coordinates.getYRelativeToFragmentAs(Resolution.QUARTER);
 			short biome = fragment.getBiomeDataAt((int) x, (int) y);
-			String s = biomeIdNameMap.getNameFromId(biome);
-			if (s != null) {
-				return s;
+			Biome b = biomeList.getByIdOrNull(biome);
+			if (b != null) {
+				return b.getName();
 			} else if (biome != -1) {
 				return UNKNOWN_BIOME_NAME + " (ID: " + biome + ")";
 			}

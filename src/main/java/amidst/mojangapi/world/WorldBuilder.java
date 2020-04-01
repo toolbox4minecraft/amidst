@@ -85,8 +85,7 @@ public class WorldBuilder {
 			worldOptions.getWorldType(),
 			worldOptions.getGeneratorOptions());
 		seedHistoryLogger.log(recognisedVersion, worldOptions.getWorldSeed());
-		return DefaultVersionFeatures.builder(worldOptions, new BiomeDataOracle(minecraftInterface))
-				.create(recognisedVersion);
+		return DefaultVersionFeatures.builder(worldOptions, new BiomeDataOracle(minecraftInterface)).create(recognisedVersion);
 	}
 
 	private World create(
@@ -101,7 +100,7 @@ public class WorldBuilder {
 				versionFeatures.get(FeatureKey.WORLD_OPTIONS),
 				movablePlayerList,
 				recognisedVersion,
-				versionFeatures.get(FeatureKey.BIOME_ID_NAME_MAP),
+				versionFeatures.get(FeatureKey.BIOME_LIST),
 				versionFeatures.get(FeatureKey.ENABLED_LAYERS),
 				versionFeatures.get(FeatureKey.BIOME_DATA_ORACLE),
 				versionFeatures.get(FeatureKey.END_ISLAND_ORACLE),

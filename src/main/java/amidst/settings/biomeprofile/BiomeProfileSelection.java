@@ -4,7 +4,7 @@ import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.world.biome.BiomeColor;
-import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
+import amidst.mojangapi.world.biome.UnknownBiomeIdException;
 
 @ThreadSafe
 public class BiomeProfileSelection {
@@ -17,17 +17,17 @@ public class BiomeProfileSelection {
 	public BiomeColor getBiomeColorOrUnknown(int index) {
 		try {
 			return getBiomeColor(index);
-		} catch (UnknownBiomeIndexException e) {
+		} catch (UnknownBiomeIdException e) {
 			AmidstLogger.error(e);
 			AmidstMessageBox.displayError("Error", e);
 			return BiomeColor.unknown();
 		}
 	}
 
-	public BiomeColor getBiomeColor(int index) throws UnknownBiomeIndexException {
+	public BiomeColor getBiomeColor(int index) throws UnknownBiomeIdException {
 		BiomeColor[] biomeColors = this.biomeColors;
 		if (index < 0 || index >= biomeColors.length || biomeColors[index] == null) {
-			throw new UnknownBiomeIndexException("unsupported biome index detected: " + index);
+			throw new UnknownBiomeIdException("unsupported biome index detected: " + index);
 		} else {
 			return biomeColors[index];
 		}

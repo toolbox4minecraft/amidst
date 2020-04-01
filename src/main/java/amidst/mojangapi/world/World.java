@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.mojangapi.world.biome.BiomeIdNameMap;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
@@ -14,6 +13,7 @@ import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;
+import amidst.mojangapi.world.versionfeatures.BiomeList;
 
 @ThreadSafe
 public class World {
@@ -23,7 +23,7 @@ public class World {
 	private final MovablePlayerList movablePlayerList;
 	private final RecognisedVersion recognisedVersion;
 	private final List<Integer> enabledLayers;
-	private final BiomeIdNameMap biomeIdNameMap;
+	private final BiomeList biomeList;
 
 	private final BiomeDataOracle biomeDataOracle;
 	private final EndIslandOracle endIslandOracle;
@@ -45,7 +45,7 @@ public class World {
 			WorldOptions worldOptions,
 			MovablePlayerList movablePlayerList,
 			RecognisedVersion recognisedVersion,
-			BiomeIdNameMap biomeIdNameMap,
+			BiomeList biomeList,
 			List<Integer> enabledLayers,
 			BiomeDataOracle biomeDataOracle,
 			EndIslandOracle endIslandOracle,
@@ -65,7 +65,7 @@ public class World {
 		this.worldOptions = worldOptions;
 		this.movablePlayerList = movablePlayerList;
 		this.recognisedVersion = recognisedVersion;
-		this.biomeIdNameMap = biomeIdNameMap;
+		this.biomeList = biomeList;
 		this.enabledLayers = enabledLayers;
 		this.biomeDataOracle = biomeDataOracle;
 		this.endIslandOracle = endIslandOracle;
@@ -95,8 +95,8 @@ public class World {
 		return recognisedVersion;
 	}
 	
-	public BiomeIdNameMap getBiomeIdNameMap() {
-		return biomeIdNameMap;
+	public BiomeList getBiomeList() {
+		return biomeList;
 	}
 
 	public List<Integer> getEnabledLayers() {

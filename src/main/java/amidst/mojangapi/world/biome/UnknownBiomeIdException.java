@@ -4,8 +4,8 @@ import amidst.documentation.Immutable;
 
 @SuppressWarnings("serial")
 @Immutable
-public class UnknownBiomeIndexException extends Exception {
-	public UnknownBiomeIndexException(String message) {
+public class UnknownBiomeIdException extends Exception {
+	public UnknownBiomeIdException(String message) {
 		super(message);
 	}
 }

@@ -16,8 +16,8 @@ public interface VersionFeature<V> {
 		return new VersionFeatureListBuilder<>();
 	}
 	
-	public static<K, V> VersionFeatureBiMapBuilder<K, V, ?> biMapBuilder() {
-		return new VersionFeatureBiMapBuilder<>();
+	public static VersionFeatureBiomeListBuilder<?> biomeListBuilder() {
+		return new VersionFeatureBiomeListBuilder<>();
 	}
 
 	public static<V> VersionFeature<V> constant(V value) {
