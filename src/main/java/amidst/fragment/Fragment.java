@@ -81,8 +81,6 @@ import amidst.util.AtomicFloat;
 @NotThreadSafe
 public class Fragment {
 	public static final int SIZE = Resolution.FRAGMENT.getStep();
-	
-	private final StampedLock lock;
 
 	private final AtomicBoolean isInitialized;
 	private final AtomicBoolean isLoaded;
@@ -96,25 +94,12 @@ public class Fragment {
 
 	@SuppressWarnings("unchecked")
 	public Fragment(int numberOfLayers) {
-		this.lock = new StampedLock();
 		this.isInitialized = new AtomicBoolean();
 		this.isLoaded = new AtomicBoolean();
 		this.alpha = new AtomicFloat();
 		this.corner = new AtomicReference<CoordinatesInWorld>();
 		this.images = new BufferedImage[numberOfLayers];
 		this.worldIcons = new List[numberOfLayers];
-	}
-	
-	public long writeLock() {
-		return lock.writeLock();
-	}
-	
-	public long readLock() {
-		return lock.readLock();
-	}
-	
-	public void unlock(long stamp) {
-		lock.unlock(stamp);
 	}
 
 	public void setAlpha(float alpha) {
@@ -126,55 +111,45 @@ public class Fragment {
 	}
 
 	public void initBiomeData(long stamp, int width, int height) {
-		validateLock(stamp);
 		biomeData = new short[width][height];
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void populateBiomeData(long stamp, BiomeDataOracle biomeDataOracle) {
-		validateLock(stamp);
 		biomeDataOracle.populateArray(getCorner(), biomeData, true);
 	}
 
 	public short getBiomeDataAt(long stamp, int x, int y) {
-		validateLock(stamp);
 		return biomeData[x][y];
 	}
 
 	public void setEndIslands(long stamp, List<EndIsland> endIslands) {
-		validateLock(stamp);
 		this.endIslands = endIslands;
 	}
 
 	public List<EndIsland> getEndIslands(long stamp) {
-		validateLock(stamp);
 		return endIslands;
 	}
 
 	public BufferedImage getAndSetImage(long stamp, int layerId, BufferedImage image) {
-		validateLock(stamp);
 		BufferedImage old = images[layerId];
 		images[layerId] = image;
 		return old;
 	}
 
 	public void putImage(long stamp, int layerId, BufferedImage image) {
-		validateLock(stamp);
 		images[layerId] = image;
 	}
 
 	public BufferedImage getImage(long stamp, int layerId) {
-		validateLock(stamp);
 		return images[layerId];
 	} 
 
 	public void putWorldIcons(long stamp, int layerId, List<WorldIcon> icons) {
-		validateLock(stamp);
 		worldIcons[layerId] = icons;
 	}
 
 	public List<WorldIcon> getWorldIcons(long stamp, int layerId) {
-		validateLock(stamp);
 		if (isLoaded.get()) {
 			List<WorldIcon> result = worldIcons[layerId];
 			if (result != null) {
@@ -216,10 +191,6 @@ public class Fragment {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public CoordinatesInWorld getCorner() {
 		return corner.get();
-	}
-	
-	private void validateLock(long stamp) {
-		if (!lock.validate(stamp)) throw new ConcurrentModificationException("invalid lock stamp");
 	}
 	
 }
