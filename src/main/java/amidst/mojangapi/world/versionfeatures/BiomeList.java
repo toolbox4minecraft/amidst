@@ -16,9 +16,12 @@ public class BiomeList {
 	
 	public BiomeList(Biome[] biomes) {
 		this();
-		for (Biome b : biomes) {
-			add(b);
-		}
+		this.biomes = biomes;
+	}
+	
+	public BiomeList(BiomeList other) {
+		this();
+		this.biomes = other.biomes;
 	}
 	
 	public Biome getByIdOrNull(int id) {
@@ -95,6 +98,14 @@ public class BiomeList {
 			}
 		}
 		return biomeAmount;
+	}
+	
+	public BiomeList addAllToNew(BiomeList biomeList, Biome[] newBiomes) {
+		BiomeList newList = new BiomeList(this);
+		for(int i = 0; i < newBiomes.length; i++) {
+			newList.add(newBiomes[i]);
+		}
+		return newList;
 	}
 	
 	public static BiomeList construct(BiomeList biomeList) {

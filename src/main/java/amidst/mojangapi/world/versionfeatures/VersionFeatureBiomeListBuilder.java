@@ -21,12 +21,7 @@ public class VersionFeatureBiomeListBuilder<B extends VersionFeatureBiomeListBui
 
 	@SafeVarargs
 	public final B sinceExtend(RecognisedVersion since, Biome... additionalValues) {
-		return sinceUpdate(since, (features, oldValue) -> {
-			for (Biome additionalValue : additionalValues) {
-				oldValue.add(additionalValue);
-			}
-			return oldValue;
-		});
+		return sinceUpdate(since, (features, oldValue) -> oldValue.addAllToNew(oldValue, additionalValues));
 	}
 
 	@Override
