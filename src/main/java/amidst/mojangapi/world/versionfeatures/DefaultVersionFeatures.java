@@ -33,13 +33,13 @@ public enum DefaultVersionFeatures {
 	;
 
 	public static VersionFeatures.Builder builder(WorldOptions worldOptions, BiomeDataOracle biomeDataOracle) {
-		return FEATURES_BUILDER.clone()
-						.withValue(FeatureKey.WORLD_OPTIONS, worldOptions)
-						.withValue(FeatureKey.BIOME_DATA_ORACLE, biomeDataOracle);
-	}
-	
-	public static VersionFeatures.Builder builder() {
-		return FEATURES_BUILDER.clone();
+		if (worldOptions == null || biomeDataOracle == null) {
+			return FEATURES_BUILDER.clone();
+		} else {
+			return FEATURES_BUILDER.clone()
+							.withValue(FeatureKey.WORLD_OPTIONS, worldOptions)
+							.withValue(FeatureKey.BIOME_DATA_ORACLE, biomeDataOracle);
+		}
 	}
 
 	// @formatter:off

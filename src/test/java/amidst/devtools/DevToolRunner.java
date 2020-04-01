@@ -11,7 +11,9 @@ import amidst.ResourceLoader;
 import amidst.devtools.settings.DevToolSettings;
 import amidst.mojangapi.file.MinecraftInstallation;
 import amidst.mojangapi.file.VersionList;
-import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
+import amidst.mojangapi.world.versionfeatures.FeatureKey;
 import amidst.parsing.FormatException;
 
 /**
@@ -65,7 +67,7 @@ public class DevToolRunner {
 	@Ignore
 	@Test
 	public void generateBiomeColorImages() throws IOException {
-		new GenerateBiomeColorImages(Biome.allBiomes(), Paths.get(biomeColorImagesDirectory())).run();
+		new GenerateBiomeColorImages(DefaultVersionFeatures.builder(null, null).create(RecognisedVersion.UNKNOWN).get(FeatureKey.BIOME_LIST).iterable(), Paths.get(biomeColorImagesDirectory())).run();
 	}
 
 	@Ignore

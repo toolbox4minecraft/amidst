@@ -15,8 +15,12 @@ import java.util.TreeMap;
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
+import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
+import amidst.mojangapi.world.versionfeatures.BiomeList;
+import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
+import amidst.mojangapi.world.versionfeatures.FeatureKey;
 import amidst.parsing.FormatException;
 import amidst.parsing.json.JsonReader;
 
@@ -36,6 +40,8 @@ public class BiomeProfile {
 	}
 
 	private static final BiomeProfile DEFAULT_PROFILE = createDefaultProfile();
+	
+	private static final BiomeList defaultBiomeList = DefaultVersionFeatures.builder(null, null).create(RecognisedVersion.UNKNOWN).get(FeatureKey.BIOME_LIST);
 
 	private volatile String name;
 	private volatile String shortcut;
@@ -65,7 +71,7 @@ public class BiomeProfile {
 		}
 
 		for (int biomeId : colorMap.keySet()) {
-			if (!Biome.exists(biomeId)) {
+			if (!defaultBiomeList.doesIdExist(biomeId)) {
 				AmidstLogger.info("Failed to find biome for id: {} in profile: {}", biomeId, name);
 			}
 		}
@@ -73,8 +79,8 @@ public class BiomeProfile {
 	}
 
 	public BiomeColor[] createBiomeColorArray() {
-		BiomeColor[] result = new BiomeColor[Biome.totalBiomes()];
-		for (Biome biome : Biome.allBiomes()) {
+		BiomeColor[] result = new BiomeColor[defaultBiomeList.size()];
+		for (Biome biome : defaultBiomeList.iterable()) {
 			result[biome.getId()] = getBiomeColor(biome);
 		}
 		return result;

@@ -4,10 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import amidst.documentation.Immutable;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.versionfeatures.BiomeList;
-import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
-import amidst.mojangapi.world.versionfeatures.FeatureKey;
 
 @Immutable
 public class Biome {
@@ -97,32 +94,6 @@ public class Biome {
 	public static final int soulSandValley       = 170;
 	public static final int crimsonForest        = 171;
 	public static final int warpedForest         = 172;
-	
-	private static final BiomeList ALL_BIOMES = DefaultVersionFeatures.builder()
-															.create(RecognisedVersion.UNKNOWN)
-															.get(FeatureKey.BIOME_LIST);
-	
-	public static Iterable<Biome> allBiomes() {
-		return ALL_BIOMES.iterable();
-	}
-	
-	public static int totalBiomes() {
-		return ALL_BIOMES.size();
-	}
-	
-	public static boolean exists(int id) {
-		return getByIdOrNull(id) != null;
-	}
-	
-	@Deprecated
-	public static Biome getByIdOrNull(int id) {
-		return ALL_BIOMES.getByIdOrNull(id);
-	}
-	
-	@Deprecated
-	public static Biome getById(int id) throws UnknownBiomeIdException {
-		return ALL_BIOMES.getById(id);
-	}
 	
 	public static List<Biome> getBiomeListFromIdList(BiomeList biomeList, List<Integer> idList) {
 		return idList.stream().map(i -> biomeList.getByIdOrNull(i)).collect(Collectors.toList());
