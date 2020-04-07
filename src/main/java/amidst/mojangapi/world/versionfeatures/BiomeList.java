@@ -1,36 +1,37 @@
 package amidst.mojangapi.world.versionfeatures;
 
-import java.util.Arrays;
-
+import java.util.TreeMap;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIdException;
 import amidst.mojangapi.world.biome.UnknownBiomeNameException;
 
 public class BiomeList {
-	private Biome[] biomes = new Biome[1];
+	private TreeMap<Integer, Biome> biomes = new TreeMap<Integer, Biome>(Biome.biomeIdComparator());
 	private boolean isModifiable;
 
 	public BiomeList() {
 		this.isModifiable = true;
 	}
 	
-	public BiomeList(Biome[] biomes) {
+	public BiomeList(Biome[] biomeArray) {
 		this();
-		this.biomes = biomes;
+		for(Biome b : biomeArray) {
+			biomes.put(b.getId(), b);
+		}
 	}
 	
 	public BiomeList(BiomeList other) {
 		this();
-		this.biomes = other.biomes;
+		this.biomes.putAll(other.biomes);
 	}
 	
 	public Biome getByIdOrNull(int id) {
-		return biomes[id];
+		return biomes.get(id);
 	}
 	
 	public Biome getById(int id) throws UnknownBiomeIdException {
 		try {
-			Biome b = biomes[id];
+			Biome b = biomes.get(id);
 			if (b != null) {
 				return b;
 			}
@@ -39,7 +40,7 @@ public class BiomeList {
 	}
 	
 	public Biome getBiomeFromName(String name) throws UnknownBiomeNameException {
-		for (Biome biome : biomes) {
+		for (Biome biome : biomes.values()) {
 			if (biome.getName().equals(name)) {
 				return biome;
 			}
@@ -48,7 +49,7 @@ public class BiomeList {
 	}
 	
 	public boolean doesNameExist(String name) {
-		for (Biome biome : biomes) {
+		for (Biome biome : biomes.values()) {
 			if (biome.getName().equals(name)) {
 				return true;
 			}
@@ -67,37 +68,18 @@ public class BiomeList {
 
 	public void add(Biome newBiome) {
 		if (isModifiable) {
-			ensureArraySize(newBiome.getId());
-			biomes[newBiome.getId()] = newBiome;
+			biomes.put(newBiome.getId(), newBiome);
 		} else {
-			//throw new UnsupportedOperationException("List is locked");
-		}
-	}
-	
-	public void ensureArraySize(int newSize) {
-		if (biomes.length <= newSize) {
-			Biome[] newArray = new Biome[newSize + 1];
-			System.arraycopy(biomes, 0, newArray, 0, biomes.length);
-			biomes = newArray;
+			throw new UnsupportedOperationException("List is locked");
 		}
 	}
 	
 	public Iterable<Biome> iterable() {
-		return () -> Arrays.stream(biomes).filter(b -> b != null).iterator();
+		return biomes.values();
 	}
 	
 	public int size() {
-		return biomes.length;
-	}
-	
-	public int items() {
-		int biomeAmount = 0;
-		for(int i = 0; i < biomes.length; i++) {
-			if(biomes[i] != null) {
-				biomeAmount++;
-			}
-		}
-		return biomeAmount;
+		return biomes.values().size();
 	}
 	
 	public BiomeList addAllToNew(BiomeList biomeList, Biome[] newBiomes) {

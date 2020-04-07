@@ -92,7 +92,7 @@ public class BiomeProfileMenuFactory {
 					actions.selectBiomeProfile(profile);
 				}
 			};
-			if (defaultBiomeProfileSelector == null && profile.getName().equals("default")) {
+			if (defaultBiomeProfileSelector == null && profile.equals(BiomeProfile.getDefaultProfile())) {
 				defaultBiomeProfileSelector = () -> result.actionPerformed(null);
 			}
 			return result;
@@ -131,8 +131,9 @@ public class BiomeProfileMenuFactory {
 
 	private void initParentMenu() {
 		parentMenu.removeAll();
-		biomeProfileDirectory.saveDefaultProfileIfNecessary();
 		BiomeProfileVisitorImpl visitor = new BiomeProfileVisitorImpl(parentMenu, actions);
+		visitor.visitProfile(BiomeProfile.getDefaultProfile());
+		parentMenu.addSeparator();
 		biomeProfileDirectory.visitProfiles(visitor);
 		parentMenu.addSeparator();
 		Menus.item(parentMenu, this::doReload, reloadText, reloadMnemonic, reloadMenuShortcut);

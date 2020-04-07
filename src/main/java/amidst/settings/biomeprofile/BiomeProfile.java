@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
@@ -21,12 +22,7 @@ import com.google.common.io.CharStreams;
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
-import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
-import amidst.mojangapi.world.versionfeatures.BiomeList;
-import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
-import amidst.mojangapi.world.versionfeatures.FeatureKey;
 import amidst.parsing.FormatException;
 import amidst.parsing.json.JsonReader;
 
@@ -46,8 +42,6 @@ public class BiomeProfile {
 	}
 
 	private static final BiomeProfile DEFAULT_PROFILE = createDefaultProfile();
-	
-	private static final BiomeList defaultBiomeList = DefaultVersionFeatures.builder(null, null).create(RecognisedVersion.UNKNOWN).get(FeatureKey.BIOME_LIST);
 
 	private volatile String name;
 	private volatile String shortcut;
@@ -75,29 +69,14 @@ public class BiomeProfile {
 			AmidstLogger.info("Name is missing in profile");
 			return false;
 		}
-
-		for (int biomeId : colorMap.keySet()) {
-			if (!defaultBiomeList.doesIdExist(biomeId)) {
-				AmidstLogger.info("Failed to find biome for id: {} in profile: {}", biomeId, name);
-			}
-		}
+		
 		return true;
 	}
 
-	public BiomeColor[] createBiomeColorArray() {
-		BiomeColor[] result = new BiomeColor[defaultBiomeList.size()];
-		for (Biome biome : defaultBiomeList.iterable()) {
-			result[biome.getId()] = getBiomeColor(biome);
-		}
+	public ConcurrentHashMap<Integer, BiomeColor> createBiomeColorMap() {
+		ConcurrentHashMap<Integer, BiomeColor> result = new ConcurrentHashMap<Integer, BiomeColor>();
+		colorMap.forEach((k,v) -> result.put(k, v.createBiomeColor()));
 		return result;
-	}
-
-	private BiomeColor getBiomeColor(Biome biome) {
-		if (colorMap != null && colorMap.containsKey(biome.getId())) {
-			return colorMap.get(biome.getId()).createBiomeColor();
-		} else {
-			return BiomeColor.unknown();
-		}
 	}
 
 	public boolean save(Path file) {

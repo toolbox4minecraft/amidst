@@ -1,5 +1,6 @@
 package amidst.mojangapi.world.biome;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +52,6 @@ public class Biome {
 	public static final int mesaPlateauF         = 38;
 	public static final int mesaPlateau          = 39;
 
-	//TODO: find better colors for The End biomes
 	public static final int theEndLow            = 40;
 	public static final int theEndMedium         = 41;
 	public static final int theEndHigh           = 42;
@@ -97,6 +97,10 @@ public class Biome {
 	
 	public static List<Biome> getBiomeListFromIdList(BiomeList biomeList, List<Integer> idList) {
 		return idList.stream().map(i -> biomeList.getByIdOrNull(i)).collect(Collectors.toList());
+	}
+	
+	public static Comparator<Integer> biomeIdComparator() {
+		return (a,b) -> Integer.compare(Math.abs(a), Math.abs(b));
 	}
 
 	private final int id;

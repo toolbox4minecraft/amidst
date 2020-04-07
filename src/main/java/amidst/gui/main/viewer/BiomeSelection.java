@@ -1,14 +1,16 @@
 package amidst.gui.main.viewer;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.versionfeatures.BiomeList;
 
 @ThreadSafe
 public class BiomeSelection {
 	private final BiomeList biomeList;
-	private final AtomicBoolean[] selectedBiomes;
+	private final ConcurrentHashMap<Integer, AtomicBoolean> selectedBiomes;
 	private volatile AtomicBoolean isHighlightMode = new AtomicBoolean(false);
 
 	public BiomeSelection(BiomeList biomeList) {
@@ -16,16 +18,16 @@ public class BiomeSelection {
 		this.selectedBiomes = createSelectedBiomes();
 	}
 
-	private AtomicBoolean[] createSelectedBiomes() {
-		AtomicBoolean[] result = new AtomicBoolean[biomeList.size()];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = new AtomicBoolean(false);
+	private ConcurrentHashMap<Integer, AtomicBoolean> createSelectedBiomes() {
+		ConcurrentHashMap<Integer, AtomicBoolean> result = new ConcurrentHashMap<Integer, AtomicBoolean>(biomeList.size());
+		for (Biome b : biomeList.iterable()) {
+			result.put(b.getId(), new AtomicBoolean(false));
 		}
 		return result;
 	}
 
 	public boolean isSelected(int id) {
-		return selectedBiomes[id].get();
+		return selectedBiomes.get(id).get();
 	}
 
 	public boolean isVisible(int id) {
@@ -41,18 +43,18 @@ public class BiomeSelection {
 	}
 
 	public void toggle(int id) {
-		toggle(selectedBiomes[id]);
+		toggle(selectedBiomes.get(id));
 	}
 
 	private void setAll(boolean value) {
-		for (AtomicBoolean selectedBiome : selectedBiomes) {
+		for (AtomicBoolean selectedBiome : selectedBiomes.values()) {
 			selectedBiome.set(value);
 		}
 	}
 
 	public void selectOnlySpecial() {
-		for (int i = 0; i < selectedBiomes.length; i++) {
-			selectedBiomes[i].set(biomeList.getByIdOrNull(i).isSpecialBiome());
+		for (Biome b : biomeList.iterable()) {
+			selectedBiomes.get(b.getId()).set(b.isSpecialBiome());
 		}
 	}
 

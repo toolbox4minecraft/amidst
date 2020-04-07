@@ -1,5 +1,7 @@
 package amidst.settings.biomeprofile;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
@@ -8,7 +10,7 @@ import amidst.mojangapi.world.biome.UnknownBiomeIdException;
 
 @ThreadSafe
 public class BiomeProfileSelection {
-	private volatile BiomeColor[] biomeColors;
+	private ConcurrentHashMap<Integer, BiomeColor> biomeColors;
 
 	public BiomeProfileSelection(BiomeProfile biomeProfile) {
 		set(biomeProfile);
@@ -25,16 +27,16 @@ public class BiomeProfileSelection {
 	}
 
 	public BiomeColor getBiomeColor(int index) throws UnknownBiomeIdException {
-		BiomeColor[] biomeColors = this.biomeColors;
-		if (index < 0 || index >= biomeColors.length || biomeColors[index] == null) {
-			throw new UnknownBiomeIdException("unsupported biome index detected: " + index);
+		BiomeColor color = biomeColors.get(index);
+		if(color != null) {
+			return color;
 		} else {
-			return biomeColors[index];
+			throw new UnknownBiomeIdException("unsupported biome index detected: " + index);
 		}
 	}
 
 	public void set(BiomeProfile biomeProfile) {
-		this.biomeColors = biomeProfile.createBiomeColorArray();
+		this.biomeColors = biomeProfile.createBiomeColorMap();
 		AmidstLogger.info("Biome profile activated: " + biomeProfile.getName());
 	}
 }
