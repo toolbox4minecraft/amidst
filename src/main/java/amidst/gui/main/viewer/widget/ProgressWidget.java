@@ -3,6 +3,7 @@ package amidst.gui.main.viewer.widget;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.util.Map.Entry;
 
 import amidst.documentation.ThreadSafe;
 
@@ -75,18 +76,16 @@ public abstract class ProgressWidget extends OffsetWidget {
 		return (progress >= max || progress < min) ? false : true;
 	}
 	
-	public void acceptProgress(String progress) {
-		String[] array = progress.split(",");
-		
-		switch (array[0]) {
-			case "min":
-				setMin(Integer.parseInt(array[1]));
+	public void acceptProgress(Entry<ProgressEntryType, Integer> value) {
+		switch (value.getKey()) {
+			case MIN:
+				setMin(value.getValue());
 				break;
-			case "max":
-				setMax(Integer.parseInt(array[1]));
+			case MAX:
+				setMax(value.getValue());
 				break;
-			case "progress":
-				setProgress(Integer.parseInt(array[1]));
+			case PROGRESS:
+				setProgress(value.getValue());
 				break;
 		}
 	}

@@ -4,7 +4,8 @@ import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
 import java.awt.image.DirectColorModel;
 import java.awt.image.SinglePixelPackedSampleModel;
-import java.io.IOException;
+import java.util.AbstractMap;
+import java.util.Map.Entry;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -20,6 +21,7 @@ import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
+import amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
@@ -27,6 +29,8 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.threading.WorkerExecutor;
 import amidst.threading.worker.ProgressReporter;
+
+import static amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType.*;
 
 @ThreadSafe
 public class WorldExporter {
@@ -47,12 +51,12 @@ public class WorldExporter {
 	
 	private final World world;
 	private final WorldExporterConfiguration configuration;
-	private final Consumer<String> progressListener;
+	private final Consumer<Entry<ProgressEntryType, Integer>> progressListener;
 
 	public WorldExporter(
 			World world,
 			WorldExporterConfiguration configuration,
-			Consumer<String> progressListener) {
+			Consumer<Entry<ProgressEntryType, Integer>> progressListener) {
 		this.world = world;
 		this.configuration = configuration;
 		this.progressListener = progressListener;
@@ -60,13 +64,13 @@ public class WorldExporter {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void export() throws WorldExportException {
-		exporterExecutor.<String> run(this::doExport, progressListener, this::onFinished);
+		exporterExecutor.<Entry<ProgressEntryType, Integer>> run(this::doExport, progressListener, this::onFinished);
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
-	private void doExport(ProgressReporter<String> progressReporter) {
-		progressReporter.report("min,0");
-		progressReporter.report("progress,0");
+	private void doExport(ProgressReporter<Entry<ProgressEntryType, Integer>> progressReporter) {
+		progressReporter.report(entry(MIN, 0));
+		progressReporter.report(entry(PROGRESS, 0));
 		int factor = configuration.isQuarterResolution() ? 4 : 1;
 		
 		int x = (int) configuration.getTopLeftCoord().getX();
@@ -88,7 +92,7 @@ public class WorldExporter {
 		
 		int tileMaxProgress = tiledImage.getNumXTiles() * tiledImage.getNumYTiles();
 		int imageMaxProgress = (int) Math.ceil(tiledImage.getNumXTiles() * tiledImage.getNumYTiles() * .05);
-		progressReporter.report("max," + (tileMaxProgress + imageMaxProgress));
+		progressReporter.report(entry(MAX, tileMaxProgress + imageMaxProgress));
 		
 		BiomeProfileSelection biomeColors = configuration.getBiomeProfileSelection();
 		
@@ -117,7 +121,7 @@ public class WorldExporter {
 					e.printStackTrace();
 				}
 				
-				progressReporter.report("progress," + ++tilesProcessed);
+				progressReporter.report(entry(PROGRESS, ++tilesProcessed));
 			}
 		}
 		dataArray = null;
@@ -136,7 +140,11 @@ public class WorldExporter {
 		tep = null;
 		tiledImage = null;
 		System.gc();
-		progressReporter.report("progress," + (tileMaxProgress + imageMaxProgress));
+		progressReporter.report(entry(PROGRESS, tileMaxProgress + imageMaxProgress));
+	}
+	
+	private static <K, V> Entry<K, V> entry(K key, V value) {
+		return new AbstractMap.SimpleImmutableEntry<K, V>(key, value);
 	}
 
 	private void onFinished(Exception e) {
