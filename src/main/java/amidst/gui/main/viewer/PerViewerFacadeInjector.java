@@ -70,8 +70,7 @@ public class PerViewerFacadeInjector {
 		// @formatter:on
 	}
 
-	@SuppressWarnings("unused")
-	private final WorkerExecutor workerExecutor; // this is probably going to be used eventually
+	private final WorkerExecutor workerExecutor;
 	private final World world;
 	private final Graphics2DAccelerationCounter accelerationCounter;
 	private final Movement movement;
@@ -155,7 +154,7 @@ public class PerViewerFacadeInjector {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public WorldExporter createWorldExporter(WorldExporterConfiguration configuration) {
 		WorldExporterProgressWidget widget = (WorldExporterProgressWidget) widgets.stream().filter(w -> w instanceof WorldExporterProgressWidget).findFirst().get();
-		return new WorldExporter(world, configuration, widget::acceptProgress);
+		return new WorldExporter(workerExecutor, world, configuration, widget::acceptProgress);
 	}
 
 	@CalledOnlyBy(AmidstThread.REPAINTER)

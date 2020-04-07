@@ -6,9 +6,7 @@ import java.awt.image.DirectColorModel;
 import java.awt.image.SinglePixelPackedSampleModel;
 import java.util.AbstractMap;
 import java.util.Map.Entry;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import javax.media.jai.JAI;
 
@@ -37,26 +35,19 @@ public class WorldExporter {
 	private static final int TILE_SIZE = Fragment.SIZE;
 	private static final int TILES_BETWEEN_FLUSHES = 30;
 	private static final DiskMemTileCache tileCache = new DiskMemTileCache();
-	private static final ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors.newCachedThreadPool(new ThreadFactory() {
-		private int threadNo;
-		
-		@Override
-		public Thread newThread(Runnable r) {
-			Thread t = new Thread(r);
-			t.setName("WorldExporterThread-" + threadNo++);
-			return t;
-		}
-	});
-	private static final WorkerExecutor exporterExecutor = new WorkerExecutor(pool);
+	private static final AtomicLong ACTIVE_THREADS = new AtomicLong(0);
 	
+	private final WorkerExecutor workerExecutor;
 	private final World world;
 	private final WorldExporterConfiguration configuration;
 	private final Consumer<Entry<ProgressEntryType, Integer>> progressListener;
 
 	public WorldExporter(
+			WorkerExecutor workerExecutor,
 			World world,
 			WorldExporterConfiguration configuration,
 			Consumer<Entry<ProgressEntryType, Integer>> progressListener) {
+		this.workerExecutor = workerExecutor;
 		this.world = world;
 		this.configuration = configuration;
 		this.progressListener = progressListener;
@@ -64,7 +55,14 @@ public class WorldExporter {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void export() throws WorldExportException {
-		exporterExecutor.<Entry<ProgressEntryType, Integer>> run(this::doExport, progressListener, this::onFinished);
+		workerExecutor.<Entry<ProgressEntryType, Integer>> run((p) -> {
+				ACTIVE_THREADS.incrementAndGet();
+				try {
+					this.doExport(p);
+				} finally {
+					ACTIVE_THREADS.decrementAndGet();
+				}
+			}, progressListener, this::onFinished);
 	}
 
 	@CalledOnlyBy(AmidstThread.WORKER)
@@ -152,7 +150,7 @@ public class WorldExporter {
 	}
 	
 	public static boolean isExporterRunning() {
-		if(pool.getActiveCount() > 0) {
+		if(ACTIVE_THREADS.get() > 0) {
 				return true;
 			}
 		return false;
