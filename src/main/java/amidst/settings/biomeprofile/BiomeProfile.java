@@ -3,21 +3,17 @@ package amidst.settings.biomeprofile;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
@@ -31,7 +27,13 @@ public class BiomeProfile {
 	private static BiomeProfile createDefaultProfile() {
 		final String profileFile = "/amidst/mojangapi/default_biome_profile.json";
 		try (InputStream stream = BiomeProfile.class.getResourceAsStream(profileFile)) {
-			return JsonReader.readString(CharStreams.toString(new InputStreamReader(stream, Charsets.UTF_8)), BiomeProfile.class);
+			try (Scanner scanner = new Scanner(stream)) {
+				StringBuffer buffer = new StringBuffer();
+				while(scanner.hasNext()){
+					buffer.append(scanner.nextLine());
+				}
+				return JsonReader.readString(buffer.toString(), BiomeProfile.class);
+			}
 		} catch (IOException | FormatException e) {
 			throw new RuntimeException("Unable to create default biome profile", e);
 		}
