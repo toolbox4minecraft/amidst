@@ -196,11 +196,16 @@ public class RealClass {
 			String value = getStringValueOfConstant(entry.getValue2());
 			String[] args = readArgumentsAndReturn(value);
 
+			int argsTrue = -1;
 			if(arguments.length == args.length) {
+				argsTrue = 0;
 				for(int i = 0; i < args.length; i++) {
-					if(arguments[i] != null && !arguments[i].equals(args[i]))
-						return false;
+					if(arguments[i] == null || arguments[i].equals(args[i]))
+						argsTrue++;
 				}
+			}
+			
+			if (argsTrue == args.length) {
 				return true;
 			}
 		}
