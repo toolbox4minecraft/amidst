@@ -198,7 +198,7 @@ public enum RecognisedVersion {
 	_b1_9_pre4 ("b1.9-pre4",  "uh"),                                                                                      // matches the launcher version id:
 	_b1_9_pre3 ("b1.9-pre3",  "to"),                                                                                      // matches the launcher version id:
 	_b1_9_pre2 ("b1.9-pre2",  "sv"),                                                                                      // matches the launcher version id:
-	_b1_9_pre1 ("b1.9-pre1",  "sq"),                                                                                      // matches the launcher version id:
+	_b1_9_pre1 ("b1.9-pre1",  "[Biorvaaitdiryxqcfebwdlcrxhljqbtnkaddtfmvgjpgaeafd[J[Jafanhbe"),                           // matches the launcher version id: b1.9-pre1
 	_b1_8_1    ("b1.8.1",     "[Bhwqpyrrviqswdbzdqurkhqrgviwbomnabjrxmafvoeacfer[J[Jaddmkbb"),                            // matches the launcher version id: b1.8.1       b1.8
 	_b1_7_3    ("b1.7.3",     "[Bobcxpyfdndclsdngrjisjdamkpxczvuuqfhvfkvyovyik[J[Jxivscg"),                               // matches the launcher version id: b1.7.3       b1.7.2       b1.7
 	_b1_6_6    ("b1.6.6",     "[Bnxcvpufbmdalodlgpjfsecymgptcxvmukffuxkryfvqih[J[Jwzvkce"),                               // matches the launcher version id: b1.6.6       b1.6.5       b1.6.4       b1.6.3       b1.6.2       b1.6.1       b1.6

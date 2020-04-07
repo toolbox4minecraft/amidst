@@ -22,14 +22,24 @@ public class SymbolicParameterDeclarationList {
 			this.nextBuilder = nextBuilder;
 			this.executeOnEnd = executeOnEnd;
 		}
-
+		
 		public SymbolicParameterDeclarationListBuilder<T> real(String realType) {
 			declarations.add(new SymbolicParameterDeclaration(realType, false));
+			return this;
+		}
+		
+		public SymbolicParameterDeclarationListBuilder<T> realArray(String realType, int dimensions) {
+			declarations.add(new SymbolicParameterDeclaration(realType, false, dimensions));
 			return this;
 		}
 
 		public SymbolicParameterDeclarationListBuilder<T> symbolic(String symbolicType) {
 			declarations.add(new SymbolicParameterDeclaration(symbolicType, true));
+			return this;
+		}
+		
+		public SymbolicParameterDeclarationListBuilder<T> symbolicArray(String symbolicType, int dimensions) {
+			declarations.add(new SymbolicParameterDeclaration(symbolicType, true, dimensions));
 			return this;
 		}
 
