@@ -5,10 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +17,8 @@ import amidst.parsing.URIUtils;
 public enum RealClasses {
 	;
 
+	private static final int MAXIMUM_CLASS_BYTES = 24 * 1024;
 	private static final RealClassBuilder REAL_CLASS_BUILDER = new RealClassBuilder();
-	private static final PathMatcher classMatcher = FileSystems.getDefault().getPathMatcher("glob:*.class");
 
 	public static List<RealClass> fromJarFile(Path jarFile) throws FileNotFoundException, JarFileParsingException {
 		return readRealClassesFromJarFile(jarFile);
@@ -55,7 +53,7 @@ public enum RealClasses {
 			String realClassName = getFileNameWithoutExtension(path.getFileName().toString(), "class");
 			if (Files.isDirectory(path)) {
 				readJarFileDirectory(path, result);
-			} else if (realClassName != null && classMatcher.matches(path)) {
+			} else if (realClassName != null) {
 				RealClass realClass = readRealClass(realClassName, new BufferedInputStream(Files.newInputStream(path)));
 				if (realClass != null) {
 					result.add(realClass);
@@ -68,10 +66,14 @@ public enum RealClasses {
 			throws IOException,
 			RealClassCreationException {
 		try (BufferedInputStream theStream = stream) {
-			byte[] classData = new byte[theStream.available()];
-			theStream.read(classData);
-			return REAL_CLASS_BUILDER.construct(realClassName, classData);
+			// TODO: Double check that this filter won't mess anything up.
+			if (theStream.available() < MAXIMUM_CLASS_BYTES) {
+				byte[] classData = new byte[theStream.available()];
+				theStream.read(classData);
+				return REAL_CLASS_BUILDER.construct(realClassName, classData);
+			}
 		}
+		return null;
 	}
 
 	private static String getFileNameWithoutExtension(String fileName, String extension) {
