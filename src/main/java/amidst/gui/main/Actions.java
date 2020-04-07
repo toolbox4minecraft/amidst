@@ -182,12 +182,12 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void zoomIn() {
-		adjustZoom(-1);
+		adjustZoom(-4);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void zoomOut() {
-		adjustZoom(1);
+		adjustZoom(4);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
