@@ -1,5 +1,7 @@
 package amidst.mojangapi.minecraftinterface;
 
+import java.util.function.Function;
+
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.WorldType;
 
@@ -36,8 +38,13 @@ public interface MinecraftInterface {
 		 *            structures, as the noisy interpolation can change which biome
 		 *            a structure is located in (if the structure is located on a
 		 *            biome boundary).
+		 *
+		 * The biomeDataMapper callback is called with the biome data as an argument;
+		 * this array is only valid for the scope of the closure and should not escape it.
+		 * Any attempt to read the array once the callback returned may return wrong data.
 		 */
-		public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+		public<T> T getBiomeData(int x, int y, int width, int height,
+				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException;
 	}
 }

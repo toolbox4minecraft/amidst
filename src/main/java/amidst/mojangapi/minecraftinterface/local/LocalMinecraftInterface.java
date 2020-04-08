@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Function;
 
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
@@ -194,7 +195,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
 
 		@Override
-		public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+		public<T> T getBiomeData(int x, int y, int width, int height,
+				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException {
 			int size = width * height;
 		    int[] data = dataArray.getArray(size);
@@ -202,7 +204,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		    try {
 		    	if(size == 1) {
 		    		data[0] = getBiomeIdAt(x, y, useQuarterResolution);
-		    		return data;
+		    		return biomeDataMapper.apply(data);
 		    	}
 
 		        /**
@@ -228,7 +230,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		        throw new MinecraftInterfaceException("unable to get biome data", e);
 		    }
 
-		    return data;
+		    return biomeDataMapper.apply(data);
 		}
 
 		private int getBiomeIdAt(int x, int y, boolean useQuarterResolution) throws Throwable {

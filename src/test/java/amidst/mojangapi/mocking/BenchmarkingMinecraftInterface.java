@@ -2,6 +2,7 @@ package amidst.mojangapi.mocking;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
@@ -39,16 +40,16 @@ public class BenchmarkingMinecraftInterface implements MinecraftInterface {
 		}
 
 		@Override
-		public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
-				throws MinecraftInterfaceException {
+		public<T> T getBiomeData(int x, int y, int width, int height,
+				boolean useQuarterResolution, Function<int[], T> biomeDataMapper) throws MinecraftInterfaceException {
 			long start = System.nanoTime();
-			int[] biomeData = innerWorld.getBiomeData(x, y, width, height, useQuarterResolution);
-			long end = System.nanoTime();
+			return innerWorld.getBiomeData(x, y, width, height, useQuarterResolution, biomeData -> {
+				long end = System.nanoTime();
+				String thread = Thread.currentThread().getName();
+				records.add(new BiomeRequestRecordJson(x, y, width, height, useQuarterResolution, start, end-start, thread));
 
-			String thread = Thread.currentThread().getName();
-			records.add(new BiomeRequestRecordJson(x, y, width, height, useQuarterResolution, start, end-start, thread));
-
-			return biomeData;
+				return biomeDataMapper.apply(biomeData);
+			});
 		}
 	}
 }

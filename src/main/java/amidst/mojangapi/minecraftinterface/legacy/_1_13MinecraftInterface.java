@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
+import java.util.function.Function;
 
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
@@ -285,11 +286,13 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 		}
 
 		@Override
-		public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+		public<T> T getBiomeData(int x, int y, int width, int height,
+				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException {
 			SymbolicObject biomeGenerator = useQuarterResolution ? quarterResolutionBiomeGenerator : fullResolutionBiomeGenerator;
 			int[] data = dataArray.getArray(width * height);
-			return populateBiomeData(data, x, y, width, height, biomeGenerator);
+			populateBiomeData(data, x, y, width, height, biomeGenerator);
+			return biomeDataMapper.apply(data);
 		}
 	}
 }

@@ -2,6 +2,7 @@ package amidst.mojangapi.minecraftinterface.legacy;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import java.util.function.Function;
 
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
@@ -155,10 +156,12 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 		}
 
 		@Override
-		public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+		public<T> T getBiomeData(int x, int y, int width, int height,
+				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException {
 			SymbolicObject biomeGenerator = useQuarterResolution ? quarterResolutionBiomeGenerator : fullResolutionBiomeGenerator;
-			return LegacyMinecraftInterface.this.getBiomeData(x, y, width, height, biomeGenerator);
+			int[] data = LegacyMinecraftInterface.this.getBiomeData(x, y, width, height, biomeGenerator);
+			return biomeDataMapper.apply(data);
 		}
 	}
 }
