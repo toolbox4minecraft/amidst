@@ -14,6 +14,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
+import amidst.util.ArrayCache;
 
 public class _1_13MinecraftInterface implements MinecraftInterface {
     public static final RecognisedVersion LAST_COMPATIBLE_VERSION = RecognisedVersion._19w35a;
@@ -59,6 +60,11 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 	 */
 	private volatile SymbolicObject fullResolutionBiomeGenerator;
 
+	/**
+	 * An array used to return biome data
+	 */
+	private volatile ArrayCache<int[]> dataArray = ArrayCache.makeIntArrayCache(256);
+
 	public _1_13MinecraftInterface(
 			SymbolicClass bootstrapClass,
 			SymbolicClass worldTypeClass,
@@ -101,8 +107,8 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 			if (biomeGetIdMethod == null) {
 				biomeGetIdMethod = getBiomeGetIdHandle();
 			}
-			
-			int[] data = new int[width * height];
+
+			int[] data = dataArray.getArray(width * height);
 
 			/**
 			 * We break the region in 16x16 chunks, to get better performance

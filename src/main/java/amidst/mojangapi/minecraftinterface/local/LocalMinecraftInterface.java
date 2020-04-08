@@ -15,6 +15,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
+import amidst.util.ArrayCache;
 
 public class LocalMinecraftInterface implements MinecraftInterface {
 
@@ -55,6 +56,11 @@ public class LocalMinecraftInterface implements MinecraftInterface {
      */
 	private long seedForBiomeZoomer;
 
+    /**
+     * An array used to return biome data
+     */
+    private volatile ArrayCache<int[]> dataArray = ArrayCache.makeIntArrayCache(256);
+
 	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;
 		this.registryClass = symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY);
@@ -76,11 +82,10 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    }
 
 	    int size = width * height;
-
-	    int[] data = new int[size];
+	    int[] data = dataArray.getArray(width * height);
 
 	    try {
-	    	
+
 	    	if(size == 1) {
 	    		data[0] = getBiomeIdAt(x, y, useQuarterResolution);
 	    	} else {
@@ -91,10 +96,10 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	            int chunkSize = 16;
 	            for (int x0 = 0; x0 < width; x0 += chunkSize) {
 	                int w = Math.min(chunkSize, width - x0);
-	
+
 	                for (int y0 = 0; y0 < height; y0 += chunkSize) {
 	                    int h = Math.min(chunkSize, height - y0);
-	
+
 	                    for (int i = 0; i < w; i++) {
 	                        for (int j = 0; j < h; j++) {
 	                            int trueIdx = (x0 + i) + (y0 + j) * width;
@@ -203,7 +208,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			} catch (NullPointerException e) {
 				AmidstLogger.warn("Unable to shut down Server-Worker threads");
 			}
-			
+
             biomeRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome"));
             biomeProviderRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome_source_type"));
 
