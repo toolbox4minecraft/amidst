@@ -1,7 +1,6 @@
 package amidst.mojangapi.world;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -17,8 +16,6 @@ import amidst.mojangapi.world.player.MovablePlayerList;
 
 @ThreadSafe
 public class World {
-	private final Consumer<World> onDisposeWorld;
-
 	private final WorldOptions worldOptions;
 	private final MovablePlayerList movablePlayerList;
 	private final RecognisedVersion recognisedVersion;
@@ -41,7 +38,6 @@ public class World {
 	private final WorldIconProducer<List<EndIsland>> endCityProducer;
 
 	public World(
-			Consumer<World> onDisposeWorld,
 			WorldOptions worldOptions,
 			MovablePlayerList movablePlayerList,
 			RecognisedVersion recognisedVersion,
@@ -61,7 +57,6 @@ public class World {
 			WorldIconProducer<Void> oceanFeaturesProducer,
 			WorldIconProducer<Void> netherFortressProducer,
 			WorldIconProducer<List<EndIsland>> endCityProducer) {
-		this.onDisposeWorld = onDisposeWorld;
 		this.worldOptions = worldOptions;
 		this.movablePlayerList = movablePlayerList;
 		this.recognisedVersion = recognisedVersion;
@@ -173,14 +168,5 @@ public class World {
 
 	public void reloadPlayerWorldIcons() {
 		playerProducer.resetCache();
-	}
-
-	/**
-	 * Unlocks the RunningLauncherProfile to allow the creation of another
-	 * world. However, this does not actually prevent the usage of this world.
-	 * If you keep using it, something will break.
-	 */
-	public void dispose() {
-		onDisposeWorld.accept(this);
 	}
 }

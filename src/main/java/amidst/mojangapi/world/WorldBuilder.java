@@ -1,7 +1,6 @@
 package amidst.mojangapi.world;
 
 import java.io.IOException;
-import java.util.function.Consumer;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.ImmutablePlayerInformationProvider;
@@ -49,24 +48,21 @@ public class WorldBuilder {
 
 	public World from(
 			MinecraftInterface minecraftInterface,
-			Consumer<World> onDisposeWorld, // TODO: remove this, it shouldn't be necessary anymore
 			WorldOptions worldOptions) throws MinecraftInterfaceException {
 		VersionFeatures versionFeatures = initInterfaceAndGetFeatures(worldOptions, minecraftInterface);
 		return create(
 				minecraftInterface.getRecognisedVersion(),
-				onDisposeWorld,
 				MovablePlayerList.dummy(),
 				versionFeatures,
 				versionFeatures.get(FeatureKey.WORLD_SPAWN_ORACLE));
 	}
 
-	public World fromSaveGame(MinecraftInterface minecraftInterface, Consumer<World> onDisposeWorld, SaveGame saveGame)
+	public World fromSaveGame(MinecraftInterface minecraftInterface, SaveGame saveGame)
 			throws IOException,
 			MinecraftInterfaceException {
 		VersionFeatures versionFeatures = initInterfaceAndGetFeatures(WorldOptions.fromSaveGame(saveGame), minecraftInterface);
 		return create(
 				minecraftInterface.getRecognisedVersion(),
-				onDisposeWorld,
 				new MovablePlayerList(
 					playerInformationProvider,
 					saveGame,
@@ -89,13 +85,11 @@ public class WorldBuilder {
 
 	private World create(
 			RecognisedVersion recognisedVersion,
-			Consumer<World> onDisposeWorld,
 			MovablePlayerList movablePlayerList,
 			VersionFeatures versionFeatures,
 			WorldSpawnOracle worldSpawnOracle) throws MinecraftInterfaceException {
 
 		return new World(
-				onDisposeWorld,
 				versionFeatures.get(FeatureKey.WORLD_OPTIONS),
 				movablePlayerList,
 				recognisedVersion,
