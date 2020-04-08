@@ -45,6 +45,11 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 	 */
 	private Object biomeRegistry;
 
+	/**
+	 * An array used to return biome data
+	 */
+	private final ArrayCache<int[]> dataArray = ArrayCache.makeIntArrayCache(256);
+
 	public _1_13MinecraftInterface(
 			SymbolicClass bootstrapClass,
 			SymbolicClass worldTypeClass,
@@ -266,19 +271,14 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 		 * resolution when needed, this is the biome GenLayer before it is
 		 * interpolated.
 		 */
-		private volatile SymbolicObject quarterResolutionBiomeGenerator;
+		private final SymbolicObject quarterResolutionBiomeGenerator;
 
 		/**
 		 * A GenLayer instance, the biome layer. (1:1 scale) Minecraft calculates
 		 * biomes at quarter-resolution, then noisily interpolates the biome-map up
 		 * to 1:1 resolution when needed, this is the interpolated biome GenLayer.
 		 */
-		private volatile SymbolicObject fullResolutionBiomeGenerator;
-
-		/**
-		 * An array used to return biome data
-		 */
-		private volatile ArrayCache<int[]> dataArray = ArrayCache.makeIntArrayCache(256);
+		private final SymbolicObject fullResolutionBiomeGenerator;
 
 		private World(SymbolicObject quarterResolutionGen, SymbolicObject fullResolutionGen) {
 			this.quarterResolutionBiomeGenerator = quarterResolutionGen;
@@ -290,9 +290,10 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException {
 			SymbolicObject biomeGenerator = useQuarterResolution ? quarterResolutionBiomeGenerator : fullResolutionBiomeGenerator;
-			int[] data = dataArray.getArray(width * height);
-			populateBiomeData(data, x, y, width, height, biomeGenerator);
-			return biomeDataMapper.apply(data);
+			return dataArray.withArrayFaillible(width * height, data -> {
+				populateBiomeData(data, x, y, width, height, biomeGenerator);
+				return biomeDataMapper.apply(data);
+			});
 		}
 	}
 }
