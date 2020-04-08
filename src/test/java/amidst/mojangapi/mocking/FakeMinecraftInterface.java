@@ -13,7 +13,6 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	private final WorldMetadataJson worldMetadataJson;
 	private final BiomeDataJson quarterBiomeData;
 	private final BiomeDataJson fullBiomeData;
-	private volatile boolean isWorldCreated = false;
 
 	public FakeMinecraftInterface(
 			WorldMetadataJson worldMetadataJson,
@@ -25,31 +24,12 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
-			throws MinecraftInterfaceException {
-		if (isWorldCreated) {
-			return getBiomeData(useQuarterResolution).get(x, y, width, height);
-		} else {
-			throw new MinecraftInterfaceException("the world needs to be created first");
-		}
-	}
-
-	private BiomeDataJson getBiomeData(boolean useQuarterResolution) {
-		if (useQuarterResolution) {
-			return quarterBiomeData;
-		} else {
-			return fullBiomeData;
-		}
-	}
-
-	@Override
-	public void createWorld(long seed, WorldType worldType, String generatorOptions)
+	public MinecraftInterface.World createWorld(long seed, WorldType worldType, String generatorOptions)
 			throws MinecraftInterfaceException {
 		if (worldMetadataJson.getSeed() == seed && worldMetadataJson.getWorldType().equals(worldType)
 				&& generatorOptions.isEmpty()) {
-			isWorldCreated = true;
+			return new World();
 		} else {
-			isWorldCreated = false;
 			throw new MinecraftInterfaceException("the world has to match");
 		}
 	}
@@ -57,5 +37,17 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 	@Override
 	public RecognisedVersion getRecognisedVersion() {
 		return worldMetadataJson.getRecognisedVersion();
+	}
+
+	private class World implements MinecraftInterface.World {
+		private World() {
+		}
+
+		@Override
+		public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+				throws MinecraftInterfaceException {
+			BiomeDataJson biomes = useQuarterResolution ? quarterBiomeData : fullBiomeData;
+			return biomes.get(x, y, width, height);
+		}
 	}
 }

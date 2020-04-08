@@ -17,11 +17,13 @@ import amidst.mojangapi.world.coordinates.Resolution;
 
 @ThreadSafe
 public class BiomeDataOracle {
-	private final MinecraftInterface minecraftInterface;
+	private final MinecraftInterface.World minecraftWorld;
+	private final RecognisedVersion recognisedVersion;
 	private final BiomeList biomeList;
 
-	public BiomeDataOracle(MinecraftInterface minecraftInterface, BiomeList biomeList) {
-		this.minecraftInterface = minecraftInterface;
+	public BiomeDataOracle(MinecraftInterface.World minecraftWorld, RecognisedVersion recognisedVersion, BiomeList biomeList) {
+		this.minecraftWorld = minecraftWorld;
+		this.recognisedVersion = recognisedVersion;
 		this.biomeList = biomeList;
 	}
 
@@ -111,7 +113,7 @@ public class BiomeDataOracle {
 	}
 
 	public CoordinatesInWorld findValidLocation(int x, int y, int size, List<Biome> validBiomes, Random random) {
-		if(RecognisedVersion.isNewerOrEqualTo(minecraftInterface.getRecognisedVersion(), RecognisedVersion._18w06a)) {
+		if(RecognisedVersion.isNewerOrEqualTo(recognisedVersion, RecognisedVersion._18w06a)) {
 			return doFindValidLocation(x, y, size, validBiomes, random, true);
 		} else {
 			return doFindValidLocation(x, y, size, validBiomes, random, false);
@@ -197,6 +199,6 @@ public class BiomeDataOracle {
 
 	private int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
-		return minecraftInterface.getBiomeData(x, y, width, height, useQuarterResolution);
+		return minecraftWorld.getBiomeData(x, y, width, height, useQuarterResolution);
 	}
 }

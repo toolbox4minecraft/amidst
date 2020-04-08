@@ -16,26 +16,34 @@ public class RequestStoringMinecraftInterface implements MinecraftInterface {
 		this.builder = builder;
 	}
 
-	@Override
-	public synchronized int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
-			throws MinecraftInterfaceException {
-		int[] biomeData = realMinecraftInterface.getBiomeData(x, y, width, height, useQuarterResolution);
-		store(x, y, width, height, useQuarterResolution, biomeData);
-		return biomeData;
-	}
-
 	private void store(int x, int y, int width, int height, boolean useQuarterResolution, int[] biomeData) {
 		builder.store(x, y, width, height, useQuarterResolution, biomeData);
 	}
 
 	@Override
-	public synchronized void createWorld(long seed, WorldType worldType, String generatorOptions)
+	public synchronized MinecraftInterface.World createWorld(long seed, WorldType worldType, String generatorOptions)
 			throws MinecraftInterfaceException {
-		realMinecraftInterface.createWorld(seed, worldType, generatorOptions);
+		return new World(realMinecraftInterface.createWorld(seed, worldType, generatorOptions));
 	}
 
 	@Override
 	public synchronized RecognisedVersion getRecognisedVersion() {
 		return realMinecraftInterface.getRecognisedVersion();
+	}
+
+	private class World implements MinecraftInterface.World {
+		private final MinecraftInterface.World realMinecraftWorld;
+
+		private World(MinecraftInterface.World realMinecraftWorld) {
+			this.realMinecraftWorld = realMinecraftWorld;
+		}
+
+		@Override
+		public synchronized int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+				throws MinecraftInterfaceException {
+			int[] biomeData = realMinecraftWorld.getBiomeData(x, y, width, height, useQuarterResolution);
+			store(x, y, width, height, useQuarterResolution, biomeData);
+			return biomeData;
+		}
 	}
 }
