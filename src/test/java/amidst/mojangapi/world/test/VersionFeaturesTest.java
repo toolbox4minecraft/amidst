@@ -34,8 +34,8 @@ public class VersionFeaturesTest {
 
 	public VersionFeatures.Builder createVersionFeaturesBuilder() {
 		WorldOptions worldOptions = new WorldOptions(WorldSeed.fromSaveGame(0), WorldType.DEFAULT);
-		MinecraftInterface minecraftInterface = new MockMinecraftInterface();
-		return DefaultVersionFeatures.builder(worldOptions, minecraftInterface);
+		MinecraftInterface.World minecraftWorld = new MockMinecraftWorld();
+		return DefaultVersionFeatures.builder(worldOptions, minecraftWorld);
 	}
 
 	public List<FeatureKey<?>> getRequiredFeatures() throws IllegalAccessException {
@@ -51,19 +51,9 @@ public class VersionFeaturesTest {
 		return features;
 	}
 
-	private static class MockMinecraftInterface implements MinecraftInterface {
+	private static class MockMinecraftWorld implements MinecraftInterface.World {
 		@Override
 		public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void createWorld(long seed, WorldType worldType, String generatorOptions) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public RecognisedVersion getRecognisedVersion() {
 			throw new UnsupportedOperationException();
 		}
 	}

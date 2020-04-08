@@ -49,7 +49,7 @@ public class WorldBuilder {
 
 	public World from(
 			MinecraftInterface minecraftInterface,
-			Consumer<World> onDisposeWorld,
+			Consumer<World> onDisposeWorld, // TODO: remove this, it shouldn't be necessary anymore
 			WorldOptions worldOptions) throws MinecraftInterfaceException {
 		VersionFeatures versionFeatures = initInterfaceAndGetFeatures(worldOptions, minecraftInterface);
 		return create(
@@ -79,12 +79,12 @@ public class WorldBuilder {
 	private VersionFeatures initInterfaceAndGetFeatures(WorldOptions worldOptions, MinecraftInterface minecraftInterface)
 		throws MinecraftInterfaceException {
 		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
-		minecraftInterface.createWorld(
+		MinecraftInterface.World minecraftWorld = minecraftInterface.createWorld(
 			worldOptions.getWorldSeed().getLong(),
 			worldOptions.getWorldType(),
 			worldOptions.getGeneratorOptions());
 		seedHistoryLogger.log(recognisedVersion, worldOptions.getWorldSeed());
-		return DefaultVersionFeatures.builder(worldOptions, minecraftInterface).create(recognisedVersion);
+		return DefaultVersionFeatures.builder(worldOptions, minecraftWorld).create(recognisedVersion);
 	}
 
 	private World create(

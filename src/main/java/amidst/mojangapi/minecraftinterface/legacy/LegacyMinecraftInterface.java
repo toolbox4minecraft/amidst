@@ -18,9 +18,6 @@ import amidst.mojangapi.world.WorldType;
 public class LegacyMinecraftInterface implements MinecraftInterface {
     public static final RecognisedVersion LAST_COMPATIBLE_VERSION = RecognisedVersion._18w05a;
 
-	private volatile SymbolicObject quarterResolutionBiomeGenerator;
-	private volatile SymbolicObject fullResolutionBiomeGenerator;
-
 	private final SymbolicClass intCacheClass;
 	private final SymbolicClass blockInitClass;
 	private final SymbolicClass genLayerClass;
@@ -53,7 +50,7 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 			recognisedVersion);
 	}
 
-	@Override
+	/*@Override
 	public synchronized int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
 			throws MinecraftInterfaceException {
 		try {
@@ -63,24 +60,31 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
-	}
+	}*/
 
-	private SymbolicObject getBiomeGenerator(boolean useQuarterResolution) {
-		if (useQuarterResolution) {
-			return quarterResolutionBiomeGenerator;
-		} else {
-			return fullResolutionBiomeGenerator;
+	private int[] getBiomeData(int x, int y, int width, int height, SymbolicObject biomeGenerator)
+			throws MinecraftInterfaceException {
+		try {
+			// Only one thread can manipulate the Minecraft int cache at a time
+			synchronized (intCacheClass) {
+				intCacheClass.callStaticMethod(LegacySymbolicNames.METHOD_INT_CACHE_RESET_INT_CACHE);
+				return (int[]) biomeGenerator
+						.callMethod(LegacySymbolicNames.METHOD_GEN_LAYER_GET_INTS, x, y, width, height);
+			}
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
 	}
 
 	@Override
-	public synchronized void createWorld(long seed, WorldType worldType, String generatorOptions)
+	public synchronized World createWorld(long seed, WorldType worldType, String generatorOptions)
 			throws MinecraftInterfaceException {
 		try {
 			initializeBlock();
 			Object[] genLayers = getGenLayers(seed, worldType, generatorOptions);
-			quarterResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[0]);
-			fullResolutionBiomeGenerator = new SymbolicObject(genLayerClass, genLayers[1]);
+			SymbolicObject quarterResolutionGen = new SymbolicObject(genLayerClass, genLayers[0]);
+			SymbolicObject fullResolutionGen = new SymbolicObject(genLayerClass, genLayers[1]);
+			return new World(quarterResolutionGen, fullResolutionGen);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new MinecraftInterfaceException("unable to create world", e);
 		}
@@ -139,5 +143,22 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 	@Override
 	public RecognisedVersion getRecognisedVersion() {
 		return recognisedVersion;
+	}
+
+	private class World implements MinecraftInterface.World {
+		private final SymbolicObject quarterResolutionBiomeGenerator;
+		private final SymbolicObject fullResolutionBiomeGenerator;
+
+		private World(SymbolicObject quarterResolutionGen, SymbolicObject fullResolutionGen) {
+			this.quarterResolutionBiomeGenerator = quarterResolutionGen;
+			this.fullResolutionBiomeGenerator = fullResolutionGen;
+		}
+
+		@Override
+		public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+				throws MinecraftInterfaceException {
+			SymbolicObject biomeGenerator = useQuarterResolution ? quarterResolutionBiomeGenerator : fullResolutionBiomeGenerator;
+			return LegacyMinecraftInterface.this.getBiomeData(x, y, width, height, biomeGenerator);
+		}
 	}
 }
