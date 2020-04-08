@@ -101,7 +101,6 @@ public class ViewerFacade {
 		graph.dispose();
 		zoom.skipFading();
 		zoom.reset();
-		world.dispose();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
