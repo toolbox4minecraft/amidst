@@ -106,7 +106,7 @@ public class BiomeProfile implements Serializable {
 	private String serializeColorMap() {
 		String output = "";
 		for (Map.Entry<Integer, BiomeColorJson> pairs : getSortedColorMapEntries()) {
-			output += "[ \"" + pairs.getKey() + "\", { ";
+			output += "[ " + pairs.getKey() + ", { ";
 			output += "\"r\":" + pairs.getValue().getR() + ", ";
 			output += "\"g\":" + pairs.getValue().getG() + ", ";
 			output += "\"b\":" + pairs.getValue().getB() + " } ],\r\n";

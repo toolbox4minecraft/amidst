@@ -2,7 +2,6 @@ package amidst.settings.biomeprofile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -14,13 +13,13 @@ import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 
 @Immutable
-public class BiomeProfileOld {
+class BiomeProfileOld {
 	private volatile String name;
 	private volatile String shortcut;
 	private volatile Map<String, BiomeColorJson> colorMap;
 
 	@GsonConstructor
-	public BiomeProfileOld() {
+	BiomeProfileOld() {
 	}
 
 	public BiomeProfile convertToNewFormat() {

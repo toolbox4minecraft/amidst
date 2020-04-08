@@ -49,27 +49,27 @@ Warm Deep Ocean,47
 Lukewarm Deep Ocean,48
 Cold Deep Ocean,49
 Frozen Deep Ocean,50
-The Void,51
-Sunflower Plains,52
-Desert M,53
-Extreme Hills M,54
-Flower Forest,55
-Taiga M,56
-Swampland M,57
-Ice Plains Spikes,58
-Jungle M,59
-Jungle Edge M,60
-Birch Forest M,61
-Birch Forest Hills M,62
-Roofed Forest M,63
-Cold Taiga M,64
-Mega Spruce Taiga,65
-Mega Spruce Taiga (Hills),66
-Extreme Hills+ M,67
-Savanna M,68
-Savanna Plateau M,69
-Mesa (Bryce),70
-Mesa Plateau F M,71
-Mesa Plateau M,72
-Bamboo Jungle,73
-Bamboo Jungle Hills,74
+The Void,127
+Sunflower Plains,129
+Desert M,130
+Extreme Hills M,131
+Flower Forest,132
+Taiga M,133
+Swampland M,134
+Ice Plains Spikes,140
+Jungle M,149
+Jungle Edge M,151
+Birch Forest M,155
+Birch Forest Hills M,156
+Roofed Forest M,157
+Cold Taiga M,158
+Mega Spruce Taiga,160
+Mega Spruce Taiga (Hills),161
+Extreme Hills+ M,162
+Savanna M,163
+Savanna Plateau M,164
+Mesa (Bryce),165
+Mesa Plateau F M,166
+Mesa Plateau M,167
+Bamboo Jungle,168
+Bamboo Jungle Hills,169
