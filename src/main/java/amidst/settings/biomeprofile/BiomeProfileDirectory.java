@@ -76,7 +76,17 @@ public class BiomeProfileDirectory {
 			}
 			AmidstLogger.warn("Profile invalid, ignoring: {}", file);
 		} catch (IOException | FormatException e) {
-			AmidstLogger.warn(e, "Unable to load file: {}", file);
+			try {
+				BiomeProfile newProfile = JsonReader.readLocation(file, BiomeProfileOld.class).convertToNewFormat();
+				if(newProfile.validate()) {
+					newProfile.save(file);
+					AmidstLogger.info("Profile converted to new format: {}", file);
+					return newProfile;
+				}
+				AmidstLogger.warn("Profile invalid, ignoring: {}", file);
+			} catch (Exception e1) {
+				AmidstLogger.warn(e, "Unable to load file: {}", file);
+			}
 		}
 		return null;
 	}

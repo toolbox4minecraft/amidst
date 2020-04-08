@@ -3,9 +3,9 @@ package amidst.settings.biomeprofile;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,10 +23,12 @@ import amidst.parsing.FormatException;
 import amidst.parsing.json.JsonReader;
 
 @Immutable
-public class BiomeProfile {
+public class BiomeProfile implements Serializable {
+	private static final long serialVersionUID = 656038328314515511L;
+
 	private static BiomeProfile createDefaultProfile() {
 		final String profileFile = "/amidst/mojangapi/default_biome_profile.json";
-		try (InputStream stream = BiomeProfile.class.getResourceAsStream(profileFile)) {
+		try (InputStream stream = BiomeProfile.class.getResourceAsStream(profileFile)) { // For some reason this is the only way we can read the file from inside and outside the jar
 			try (Scanner scanner = new Scanner(stream)) {
 				StringBuffer buffer = new StringBuffer();
 				while(scanner.hasNext()){
@@ -51,6 +53,12 @@ public class BiomeProfile {
 
 	@GsonConstructor
 	public BiomeProfile() {
+	}
+	
+	BiomeProfile(String name, String shortcut, Map<Integer, BiomeColorJson> colorMap) {
+		this.name = name;
+		this.shortcut = shortcut;
+		this.colorMap = colorMap;
 	}
 
 	public String getName() {
