@@ -1,5 +1,7 @@
 package amidst.mojangapi.mocking;
 
+import java.util.function.Function;
+
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -39,11 +41,13 @@ public class RequestStoringMinecraftInterface implements MinecraftInterface {
 		}
 
 		@Override
-		public synchronized int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+		public synchronized<T> T getBiomeData(int x, int y, int width, int height,
+				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException {
-			int[] biomeData = realMinecraftWorld.getBiomeData(x, y, width, height, useQuarterResolution);
-			store(x, y, width, height, useQuarterResolution, biomeData);
-			return biomeData;
+			return realMinecraftWorld.getBiomeData(x, y, width, height, useQuarterResolution, biomeData -> {
+				store(x, y, width, height, useQuarterResolution, biomeData);
+				return biomeDataMapper.apply(biomeData);
+			});
 		}
 	}
 }

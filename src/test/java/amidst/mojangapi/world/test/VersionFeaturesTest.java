@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import org.junit.Test;
 
@@ -53,7 +54,8 @@ public class VersionFeaturesTest {
 
 	private static class MockMinecraftWorld implements MinecraftInterface.World {
 		@Override
-		public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution) {
+		public<T> T getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution,
+				Function<int[], T> biomeDataMapper) {
 			throw new UnsupportedOperationException();
 		}
 	}

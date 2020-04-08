@@ -1,5 +1,7 @@
 package amidst.mojangapi.mocking;
 
+import java.util.function.Function;
+
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -44,10 +46,11 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 		}
 
 		@Override
-		public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
+		public<T> T getBiomeData(int x, int y, int width, int height,
+				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException {
 			BiomeDataJson biomes = useQuarterResolution ? quarterBiomeData : fullBiomeData;
-			return biomes.get(x, y, width, height);
+			return biomeDataMapper.apply(biomes.get(x, y, width, height));
 		}
 	}
 }
