@@ -40,6 +40,11 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private Object biomeRegistry;
 	private Object biomeProviderRegistry;
 
+    /**
+     * An array used to return biome data
+     */
+    private final ArrayCache<int[]> dataArray = ArrayCache.makeIntArrayCache(256);
+
 	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;
 		this.registryClass = symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY);
@@ -182,11 +187,6 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	     */
 		private long seedForBiomeZoomer;
 
-	    /**
-	     * An array used to return biome data
-	     */
-	    private volatile ArrayCache<int[]> dataArray = ArrayCache.makeIntArrayCache(256);
-
 	    private World(Object biomeProvider, Object biomeZoomer, long seedForBiomeZoomer) {
 	    	this.biomeProvider = biomeProvider;
 	    	this.biomeZoomer = biomeZoomer;
@@ -198,39 +198,40 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		public<T> T getBiomeData(int x, int y, int width, int height,
 				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException {
+
 			int size = width * height;
-		    int[] data = dataArray.getArray(size);
+		    return dataArray.withArrayFaillible(size, data -> {
+			    try {
+			    	if(size == 1) {
+			    		data[0] = getBiomeIdAt(x, y, useQuarterResolution);
+			    		return biomeDataMapper.apply(data);
+			    	}
 
-		    try {
-		    	if(size == 1) {
-		    		data[0] = getBiomeIdAt(x, y, useQuarterResolution);
-		    		return biomeDataMapper.apply(data);
-		    	}
+			        /**
+			         * We break the region in 16x16 chunks, to get better performance out
+			         * of the LazyArea used by the game. This gives a ~2x improvement.
+		             */
+		            int chunkSize = 16;
+		            for (int x0 = 0; x0 < width; x0 += chunkSize) {
+		                int w = Math.min(chunkSize, width - x0);
 
-		        /**
-		         * We break the region in 16x16 chunks, to get better performance out
-		         * of the LazyArea used by the game. This gives a ~2x improvement.
-	             */
-	            int chunkSize = 16;
-	            for (int x0 = 0; x0 < width; x0 += chunkSize) {
-	                int w = Math.min(chunkSize, width - x0);
+		                for (int y0 = 0; y0 < height; y0 += chunkSize) {
+		                    int h = Math.min(chunkSize, height - y0);
 
-	                for (int y0 = 0; y0 < height; y0 += chunkSize) {
-	                    int h = Math.min(chunkSize, height - y0);
+		                    for (int i = 0; i < w; i++) {
+		                        for (int j = 0; j < h; j++) {
+		                            int trueIdx = (x0 + i) + (y0 + j) * width;
+		                            data[trueIdx] = getBiomeIdAt(x + x0 + i, y + y0 + j, useQuarterResolution);
+		                        }
+		                    }
+		                }
+		            }
+			    } catch (Throwable e) {
+			        throw new MinecraftInterfaceException("unable to get biome data", e);
+			    }
 
-	                    for (int i = 0; i < w; i++) {
-	                        for (int j = 0; j < h; j++) {
-	                            int trueIdx = (x0 + i) + (y0 + j) * width;
-	                            data[trueIdx] = getBiomeIdAt(x + x0 + i, y + y0 + j, useQuarterResolution);
-	                        }
-	                    }
-	                }
-	            }
-		    } catch (Throwable e) {
-		        throw new MinecraftInterfaceException("unable to get biome data", e);
-		    }
-
-		    return biomeDataMapper.apply(data);
+			    return biomeDataMapper.apply(data);
+		    });
 		}
 
 		private int getBiomeIdAt(int x, int y, boolean useQuarterResolution) throws Throwable {
