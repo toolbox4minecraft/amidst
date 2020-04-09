@@ -118,7 +118,7 @@ public enum DefaultVersionFeatures {
 					new Biome(13, "Ice Mountains", HILLS), // There was a bug causing this biome to not be generated until the next version
 					new Biome(14, "Mushroom Island", ISLAND),
 					new Biome(15, "Mushroom Island Shore", BEACH)
-				).sinceExtend(RecognisedVersion._1_1, // Closest to 12w01a
+				).sinceExtend(RecognisedVersion._12w01a,
 					new Biome(16, "Beach", BEACH),
 					new Biome(17, "Desert Hills", HILLS),
 					new Biome(18, "Forest Hills", HILLS),
@@ -169,22 +169,22 @@ public enum DefaultVersionFeatures {
 					new Biome("Mesa Plateau M", 39, PLATEAU)
 				).sinceExtend(RecognisedVersion._14w02a, // Need confirmation on version; this was changed sometime after 1.7.10 and before 1.8.8
 					new Biome(161,"Redwood Taiga Hills M", PLAINS_TAIGA.strengthen(), true)
-				).sinceExtend(RecognisedVersion._14w21b, // Closest to 14w17a
+				).sinceExtend(RecognisedVersion._14w17a,
 					new Biome(9,  "The End", PLAINS)
-				).sinceExtend(RecognisedVersion._15w31c, // Closest to 15w31a, need confirmation on this version. Was after 1.8.8 and before 1.9.4
+				).sinceExtend(RecognisedVersion._15w31c, // Need confirmation on this version. Was after 1.8.8 and before 1.9.4
 					new Biome("Sunflower Plains", 1, PLAINS),
 					new Biome("Flower Forest", 4, PLAINS),
 					new Biome("Ice Plains Spikes", 12, PLAINS_FLAT),
 					new Biome("Mega Spruce Taiga", 32, PLAINS_TAIGA),
 					new Biome("Mesa (Bryce)", 37, PLAINS)
-				).sinceExtend(RecognisedVersion._15w40b, // Closest to 15w37a
+				).sinceExtend(RecognisedVersion._15w40b, // Is actually 15w37a, but magic strings are identical
 					new Biome(127,"The Void", PLAINS)
 				).sinceExtend(RecognisedVersion._18w06a,
 					new Biome(40, "The End - Floating Island", PLAINS),
 					new Biome(41, "The End - Medium Island", PLAINS),
 					new Biome(42, "The End - High Island", PLAINS),
 					new Biome(43, "The End - Barren Island", PLAINS)
-				).sinceExtend(RecognisedVersion._18w08b, // Closest to 18w08a
+				).sinceExtend(RecognisedVersion._18w08a,
 					new Biome(44, "Warm Ocean", OCEAN),
 					new Biome(45, "Lukewarm Ocean", OCEAN),
 					new Biome(46, "Cold Ocean", OCEAN),
@@ -210,7 +210,7 @@ public enum DefaultVersionFeatures {
 					new Biome("Mutated Savanna Plateau", 36, PLATEAU),
 					new Biome("Mutated Mesa Forest Plateau", 38, PLATEAU),
 					new Biome("Mutated Mesa Plateau", 39, PLATEAU)
-				).sinceExtend(RecognisedVersion._18w19b, // Closest to 18w19a
+				).sinceExtend(RecognisedVersion._18w19a,
 					new Biome(3, "Mountains", MOUNTAINS),
 					new Biome(6, "Swamp", SWAMPLAND),
 					new Biome(12, "Snowy Tundra", PLAINS_FLAT),
@@ -257,7 +257,7 @@ public enum DefaultVersionFeatures {
 					new Biome("Eroded Badlands", 37, PLAINS),
 					new Biome("Modified Wooded Badlands Plateau", 38, PLATEAU),
 					new Biome("Modified Badlands Plateau", 39, PLATEAU)
-				).sinceExtend(RecognisedVersion._18w43c, // Closest to 18w43a
+				).sinceExtend(RecognisedVersion._18w43a,
 					new Biome(168, "Bamboo Jungle", PLAINS),
 					new Biome(169, "Bamboo Jungle Hills", HILLS)
 				).sinceExtend(RecognisedVersion._20w06a,
@@ -265,6 +265,8 @@ public enum DefaultVersionFeatures {
 					new Biome(170, "Soul Sand Valley", PLAINS),
 					new Biome(171, "Crimson Forest", PLAINS),
 					new Biome(172, "Warped Forest", PLAINS)
+				).sinceExtend(RecognisedVersion._20w15a,
+					new Biome(173, "Basalt Deltas", PLAINS)
 				).construct())
 
 			.with(FeatureKey.END_ISLAND_ORACLE, VersionFeature.bind(features ->

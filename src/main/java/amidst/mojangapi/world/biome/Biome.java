@@ -94,6 +94,7 @@ public class Biome {
 	public static final int soulSandValley       = 170;
 	public static final int crimsonForest        = 171;
 	public static final int warpedForest         = 172;
+	public static final int basaltDeltas         = 173;
 	
 	public static List<Biome> getBiomeListFromIdList(BiomeList biomeList, List<Integer> idList) {
 		return idList.stream().map(i -> biomeList.getByIdOrNull(i)).collect(Collectors.toList());
