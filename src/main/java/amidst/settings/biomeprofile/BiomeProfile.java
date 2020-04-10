@@ -44,6 +44,10 @@ public class BiomeProfile implements Serializable {
 	public static BiomeProfile getDefaultProfile() {
 		return DEFAULT_PROFILE;
 	}
+	
+	public static BiomeProfile createExampleProfile() {
+		return new BiomeProfile("example", "control E", DEFAULT_PROFILE.colorMap);
+	}
 
 	private static final BiomeProfile DEFAULT_PROFILE = createDefaultProfile();
 
@@ -93,9 +97,10 @@ public class BiomeProfile implements Serializable {
 		return writeToFile(file, serialize());
 	}
 
-	private String serialize() {
-		String output = "{ \"name\":\"" + name + "\", \"colorMap\":[\r\n";
-		output += serializeColorMap();
+	public String serialize() {
+		String output = "{ \"name\":\"" + name + "\", ";
+		output += shortcut != null ? "\"shortcut\":\"" + shortcut + "\", " : "";
+		output += "\"colorMap\":[\r\n" + serializeColorMap();
 		return output + " ] }\r\n";
 	}
 

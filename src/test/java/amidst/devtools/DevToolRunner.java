@@ -15,6 +15,7 @@ import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.versionfeatures.DefaultVersionFeatures;
 import amidst.mojangapi.world.versionfeatures.FeatureKey;
 import amidst.parsing.FormatException;
+import amidst.settings.biomeprofile.BiomeProfile;
 
 /**
  * Eclipse does not allow to run the main directly as a Java Application,
@@ -74,6 +75,12 @@ public class DevToolRunner {
 	@Test
 	public void benchmarkWorldGeneration() throws FormatException, IOException {
 		new WorldGenerationBencher(benchmarksDirectory(), versionsDirectory(), librariesDirectory(), versionList()).run();
+	}
+	
+	@Ignore
+	@Test
+	public void serializeBiomeProfile() {
+		new BiomeProfileSerializer(BiomeProfile.createExampleProfile()).run();
 	}
 
 	private VersionList versionList() throws FormatException, IOException {

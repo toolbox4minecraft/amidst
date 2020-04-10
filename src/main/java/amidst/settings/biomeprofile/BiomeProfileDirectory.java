@@ -36,12 +36,24 @@ public class BiomeProfileDirectory {
 	public boolean isValid() {
 		return Files.isDirectory(root);
 	}
-
-	public void visitProfiles(BiomeProfileVisitor visitor) {
-		visitProfiles(root, visitor);
+	
+	public void createExampleProfile() {
+		if (!isValid()) {
+			AmidstLogger.info("Unable to find biome profile directory.");
+		} else {
+			if (BiomeProfile.createExampleProfile().save(root.resolve("example.json"))) {
+				AmidstLogger.info("Saved example biome profile.");
+			} else {
+				AmidstLogger.info("Attempted to save example biome profile, but encountered an error.");
+			}
+		}
 	}
 
-	private void visitProfiles(Path directory, BiomeProfileVisitor visitor) {
+	public boolean visitProfiles(BiomeProfileVisitor visitor) {
+		return visitProfiles(root, visitor);
+	}
+
+	private boolean visitProfiles(Path directory, BiomeProfileVisitor visitor) {
 		boolean[] entered = new boolean[]{ false };
 
 		try {
@@ -66,6 +78,8 @@ public class BiomeProfileDirectory {
 		if (entered[0]) {
 			visitor.leaveDirectory();
 		}
+		
+		return entered[0];
 	}
 
 	private BiomeProfile createFromFile(Path file) {
