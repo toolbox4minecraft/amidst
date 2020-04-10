@@ -1,4 +1,4 @@
-{ "name":"Default", "colorMap":[
+{ "name":"Default", "shortcut":"control D", "colorMap":[
 [ 0, { "r":0, "g":0, "b":112 } ],
 [ 1, { "r":141, "g":179, "b":96 } ],
 [ 2, { "r":250, "g":148, "b":24 } ],
