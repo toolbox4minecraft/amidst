@@ -36,18 +36,6 @@ public class BiomeProfileDirectory {
 	public boolean isValid() {
 		return Files.isDirectory(root);
 	}
-	
-	public void createExampleProfile() {
-		if (!isValid()) {
-			AmidstLogger.info("Unable to find biome profile directory.");
-		} else {
-			if (BiomeProfile.createExampleProfile().save(root.resolve("example.json"))) {
-				AmidstLogger.info("Example biome profile created.");
-			} else {
-				AmidstLogger.info("Attempted to create example biome profile, but encountered an error.");
-			}
-		}
-	}
 
 	public boolean visitProfiles(BiomeProfileVisitor visitor) {
 		return visitProfiles(root, visitor);
