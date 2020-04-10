@@ -42,9 +42,9 @@ public class BiomeProfileDirectory {
 			AmidstLogger.info("Unable to find biome profile directory.");
 		} else {
 			if (BiomeProfile.createExampleProfile().save(root.resolve("example.json"))) {
-				AmidstLogger.info("Saved example biome profile.");
+				AmidstLogger.info("Example biome profile created.");
 			} else {
-				AmidstLogger.info("Attempted to save example biome profile, but encountered an error.");
+				AmidstLogger.info("Attempted to create example biome profile, but encountered an error.");
 			}
 		}
 	}
