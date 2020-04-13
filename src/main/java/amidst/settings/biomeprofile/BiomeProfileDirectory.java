@@ -24,45 +24,24 @@ public class BiomeProfileDirectory {
 	private static final Path DEFAULT_ROOT_DIRECTORY = Paths.get("biome");
 
 	private final Path root;
-	private final Path defaultProfile;
 
 	public BiomeProfileDirectory(Path root) {
 		this.root = root;
-		this.defaultProfile = root.resolve("default.json");
 	}
 
 	public Path getRoot() {
 		return root;
 	}
 
-	public Path getDefaultProfile() {
-		return defaultProfile;
-	}
-
 	public boolean isValid() {
 		return Files.isDirectory(root);
 	}
 
-	public void saveDefaultProfileIfNecessary() {
-		if (!isValid()) {
-			AmidstLogger.info("Unable to find biome profile directory.");
-		} else {
-			AmidstLogger.info("Found biome profile directory.");
-			if (Files.isRegularFile(defaultProfile)) {
-				AmidstLogger.info("Found default biome profile.");
-			} else if (BiomeProfile.getDefaultProfile().save(defaultProfile)) {
-				AmidstLogger.info("Saved default biome profile.");
-			} else {
-				AmidstLogger.info("Attempted to save default biome profile, but encountered an error.");
-			}
-		}
+	public boolean visitProfiles(BiomeProfileVisitor visitor) {
+		return visitProfiles(root, visitor);
 	}
 
-	public void visitProfiles(BiomeProfileVisitor visitor) {
-		visitProfiles(root, visitor);
-	}
-
-	private void visitProfiles(Path directory, BiomeProfileVisitor visitor) {
+	private boolean visitProfiles(Path directory, BiomeProfileVisitor visitor) {
 		boolean[] entered = new boolean[]{ false };
 
 		try {
@@ -87,6 +66,8 @@ public class BiomeProfileDirectory {
 		if (entered[0]) {
 			visitor.leaveDirectory();
 		}
+		
+		return entered[0];
 	}
 
 	private BiomeProfile createFromFile(Path file) {
@@ -97,7 +78,17 @@ public class BiomeProfileDirectory {
 			}
 			AmidstLogger.warn("Profile invalid, ignoring: {}", file);
 		} catch (IOException | FormatException e) {
-			AmidstLogger.warn(e, "Unable to load file: {}", file);
+			try {
+				BiomeProfile newProfile = JsonReader.readLocation(file, BiomeProfileOld.class).convertToNewFormat();
+				if(newProfile.validate()) {
+					newProfile.save(file);
+					AmidstLogger.info("Profile converted to new format: {}", file);
+					return newProfile;
+				}
+				AmidstLogger.warn("Profile invalid, ignoring: {}", file);
+			} catch (Exception e1) {
+				AmidstLogger.warn(e, "Unable to load file: {}", file);
+			}
 		}
 		return null;
 	}

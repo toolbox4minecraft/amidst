@@ -17,6 +17,7 @@ public class FeatureKey<T> {
 	// @formatter:off
 	public static final FeatureKey<WorldOptions>     WORLD_OPTIONS                     = make();
 	public static final FeatureKey<BiomeDataOracle>  BIOME_DATA_ORACLE                 = make();
+	public static final FeatureKey<BiomeList>        BIOME_LIST                        = make();
 
 	public static final FeatureKey<List<Integer>>    ENABLED_LAYERS                    = make();
 	public static final FeatureKey<SlimeChunkOracle> SLIME_CHUNK_ORACLE                = make();

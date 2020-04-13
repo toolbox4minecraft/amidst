@@ -1,14 +1,16 @@
 package amidst.settings.biomeprofile;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.world.biome.BiomeColor;
-import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
+import amidst.mojangapi.world.biome.UnknownBiomeIdException;
 
 @ThreadSafe
 public class BiomeProfileSelection {
-	private volatile BiomeColor[] biomeColors;
+	private ConcurrentHashMap<Integer, BiomeColor> biomeColors;
 
 	public BiomeProfileSelection(BiomeProfile biomeProfile) {
 		set(biomeProfile);
@@ -17,24 +19,24 @@ public class BiomeProfileSelection {
 	public BiomeColor getBiomeColorOrUnknown(int index) {
 		try {
 			return getBiomeColor(index);
-		} catch (UnknownBiomeIndexException e) {
+		} catch (UnknownBiomeIdException e) {
 			AmidstLogger.error(e);
 			AmidstMessageBox.displayError("Error", e);
 			return BiomeColor.unknown();
 		}
 	}
 
-	public BiomeColor getBiomeColor(int index) throws UnknownBiomeIndexException {
-		BiomeColor[] biomeColors = this.biomeColors;
-		if (index < 0 || index >= biomeColors.length || biomeColors[index] == null) {
-			throw new UnknownBiomeIndexException("unsupported biome index detected: " + index);
+	public BiomeColor getBiomeColor(int index) throws UnknownBiomeIdException {
+		BiomeColor color = biomeColors.get(index);
+		if(color != null) {
+			return color;
 		} else {
-			return biomeColors[index];
+			throw new UnknownBiomeIdException("unsupported biome index detected: " + index);
 		}
 	}
 
 	public void set(BiomeProfile biomeProfile) {
-		this.biomeColors = biomeProfile.createBiomeColorArray();
+		this.biomeColors = biomeProfile.createBiomeColorMap();
 		AmidstLogger.info("Biome profile activated: " + biomeProfile.getName());
 	}
 }

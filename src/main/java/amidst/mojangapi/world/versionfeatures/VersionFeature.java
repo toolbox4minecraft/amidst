@@ -15,6 +15,10 @@ public interface VersionFeature<V> {
 	public static<V> VersionFeatureListBuilder<V, ?> listBuilder() {
 		return new VersionFeatureListBuilder<>();
 	}
+	
+	public static VersionFeatureBiomeListBuilder<?> biomeListBuilder() {
+		return new VersionFeatureBiomeListBuilder<>();
+	}
 
 	public static<V> VersionFeature<V> constant(V value) {
 		return (version, features) -> value;

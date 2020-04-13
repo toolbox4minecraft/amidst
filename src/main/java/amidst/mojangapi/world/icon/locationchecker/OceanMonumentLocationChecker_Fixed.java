@@ -3,7 +3,6 @@ package amidst.mojangapi.world.icon.locationchecker;
 import java.util.List;
 
 import amidst.documentation.ThreadSafe;
-import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 /**
@@ -57,8 +56,8 @@ public class OceanMonumentLocationChecker_Fixed extends AllValidLocationChecker 
 	public OceanMonumentLocationChecker_Fixed(
 			long seed,
 			BiomeDataOracle biomeDataOracle,
-			List<Biome> validBiomesAtMiddleOfChunk,
-			List<Biome> validBiomesForStructure) {
+			List<Integer> validBiomeIdsAtMiddleOfChunk,
+			List<Integer> validBiomeIdsForStructure) {
 		super(
 				new StructureAlgorithm(
 						seed,
@@ -68,7 +67,7 @@ public class OceanMonumentLocationChecker_Fixed extends AllValidLocationChecker 
 						MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 						MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 						USE_TWO_VALUES_FOR_UPDATE),
-				new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_CENTER_SIZE, validBiomesAtMiddleOfChunk),
-				new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomesForStructure));
+				new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_CENTER_SIZE, validBiomeIdsAtMiddleOfChunk),
+				new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomeIdsForStructure));
 	}
 }

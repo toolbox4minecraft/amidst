@@ -1,0 +1,75 @@
+Ocean,0
+Plains,1
+Desert,2
+Extreme Hills,3
+Forest,4
+Taiga,5
+Swampland,6
+River,7
+Hell,8
+The End,9
+Frozen Ocean,10
+Frozen River,11
+Ice Plains,12
+Ice Mountains,13
+Mushroom Island,14
+Mushroom Island Shore,15
+Beach,16
+Desert Hills,17
+Forest Hills,18
+Taiga Hills,19
+Extreme Hills Edge,20
+Jungle,21
+Jungle Hills,22
+Jungle Edge,23
+Deep Ocean,24
+Stone Beach,25
+Cold Beach,26
+Birch Forest,27
+Birch Forest Hills,28
+Roofed Forest,29
+Cold Taiga,30
+Cold Taiga Hills,31
+Mega Taiga,32
+Mega Taiga Hills,33
+Extreme Hills+,34
+Savanna,35
+Savanna Plateau,36
+Mesa,37
+Mesa Plateau F,38
+Mesa Plateau,39
+The End - Floating islands,40
+The End - Medium island,41
+The End - High island,42
+The End - Barren island,43
+Warm Ocean,44
+Lukewarm Ocean,45
+Cold Ocean,46
+Warm Deep Ocean,47
+Lukewarm Deep Ocean,48
+Cold Deep Ocean,49
+Frozen Deep Ocean,50
+The Void,127
+Sunflower Plains,129
+Desert M,130
+Extreme Hills M,131
+Flower Forest,132
+Taiga M,133
+Swampland M,134
+Ice Plains Spikes,140
+Jungle M,149
+Jungle Edge M,151
+Birch Forest M,155
+Birch Forest Hills M,156
+Roofed Forest M,157
+Cold Taiga M,158
+Mega Spruce Taiga,160
+Mega Spruce Taiga (Hills),161
+Extreme Hills+ M,162
+Savanna M,163
+Savanna Plateau M,164
+Mesa (Bryce),165
+Mesa Plateau F M,166
+Mesa Plateau M,167
+Bamboo Jungle,168
+Bamboo Jungle Hills,169

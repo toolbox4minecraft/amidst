@@ -12,6 +12,9 @@ import javax.imageio.ImageIO;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.world.biome.UnknownBiomeIdException;
+import amidst.settings.biomeprofile.BiomeProfile;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @NotThreadSafe
 public class GenerateBiomeColorImages {
@@ -27,17 +30,22 @@ public class GenerateBiomeColorImages {
 	}
 
 	public void run() throws IOException {
-		StringBuilder b = new StringBuilder();
-		b.append("Biome name | Biome id | Biome color\n");
-		b.append("---------|-----------:|:----------:\n");
-		for (Biome biome : biomes) {
-			int index = biome.getIndex();
-			String name = biome.getName();
-			Color color = biome.getDefaultColor().getColor();
-			appendLine(b, index, name);
-			createAndSaveImage(index, color);
+		try {
+			StringBuilder b = new StringBuilder();
+			b.append("Biome name | Biome id | Biome color\n");
+			b.append("---------|-----------:|:----------:\n");
+			BiomeProfileSelection colorProvider = new BiomeProfileSelection(BiomeProfile.getDefaultProfile());
+			for (Biome biome : biomes) {
+				int index = biome.getId();
+				String name = biome.getName();
+				Color color = colorProvider.getBiomeColor(biome.getId()).getColor();
+				appendLine(b, index, name);
+				createAndSaveImage(index, color);
+			}
+			System.out.println(b.toString());
+		} catch (UnknownBiomeIdException e) {
+			e.printStackTrace();
 		}
-		System.out.println(b.toString());
 	}
 
 	private void appendLine(StringBuilder b, int index, String name) {

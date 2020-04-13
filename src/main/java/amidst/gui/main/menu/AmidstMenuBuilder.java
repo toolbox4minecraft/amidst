@@ -88,7 +88,7 @@ public class AmidstMenuBuilder {
 		Menus.item(result, actions::goToCoordinate,        "Go to Coordinate ...",     KeyEvent.VK_C, MenuShortcuts.GO_TO_COORDINATE);
 		Menus.item(result, actions::goToSpawn,             "Go to World Spawn",        KeyEvent.VK_S, MenuShortcuts.GO_TO_WORLD_SPAWN);
 		Menus.item(result, actions::goToStronghold,        "Go to Stronghold ...",     KeyEvent.VK_H, MenuShortcuts.GO_TO_STRONGHOLD);
-		Menus.item(result, actions::goToPlayer,            "Go to Player ...",             KeyEvent.VK_P, MenuShortcuts.GO_TO_PLAYER);
+		Menus.item(result, actions::goToPlayer,            "Go to Player ...",         KeyEvent.VK_P, MenuShortcuts.GO_TO_PLAYER);
 		result.addSeparator();
 		Menus.item(result, actions::zoomIn,                "Zoom In",                  KeyEvent.VK_I, MenuShortcuts.ZOOM_IN);
 		Menus.item(result, actions::zoomOut,               "Zoom Out",                 KeyEvent.VK_O, MenuShortcuts.ZOOM_OUT);
@@ -162,7 +162,8 @@ public class AmidstMenuBuilder {
 	private JMenu create_Settings_BiomeProfile() {
 		JMenu result = new JMenu("Biome Profile");
 		// @formatter:off
-		new BiomeProfileMenuFactory(result, actions, biomeProfileDirectory, "Reload Biome Profiles", KeyEvent.VK_R, MenuShortcuts.RELOAD_BIOME_PROFILES);
+		new BiomeProfileMenuFactory(result, actions, biomeProfileDirectory, "Reload Biome Profiles", KeyEvent.VK_R, MenuShortcuts.RELOAD_BIOME_PROFILES,
+																			"Create Example Profile", KeyEvent.VK_C);
 		// @formatter:on
 		return result;
 	}
