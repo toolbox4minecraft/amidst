@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -109,11 +108,11 @@ public class BiomeProfileMenuFactory {
 	private final JMenu parentMenu;
 	private final Actions actions;
 	private final BiomeProfileDirectory biomeProfileDirectory;
-	
+
 	private final String reloadText;
 	private final int reloadMnemonic;
 	private final MenuShortcut reloadMenuShortcut;
-	
+
 	private final String createExampleText;
 	private final int createExampleMnemonic;
 
@@ -147,8 +146,13 @@ public class BiomeProfileMenuFactory {
 			parentMenu.addSeparator();
 		}
 		Menus.item(parentMenu, this::doReload, reloadText, reloadMnemonic, reloadMenuShortcut);
-		Menus.item(parentMenu, () -> actions.createExampleProfile(biomeProfileDirectory), createExampleText, createExampleMnemonic);
+		Menus.item(parentMenu, this::doCreateExampleProfile, createExampleText, createExampleMnemonic);
 		visitor.selectDefaultBiomeProfile();
+	}
+
+	private void doCreateExampleProfile() {
+		actions.createExampleProfile(biomeProfileDirectory);
+		doReload();
 	}
 
 	private void doReload() {
