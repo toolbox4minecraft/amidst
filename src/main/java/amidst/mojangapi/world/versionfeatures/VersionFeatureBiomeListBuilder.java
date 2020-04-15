@@ -11,12 +11,12 @@ public class VersionFeatureBiomeListBuilder<B extends VersionFeatureBiomeListBui
 
 	@SafeVarargs
 	public final B init(Biome... defaultValues) {
-		return init(new BiomeList(defaultValues));
+		return init(version -> new BiomeList(defaultValues));
 	}
 
 	@SafeVarargs
 	public final B since(RecognisedVersion since, Biome... values) {
-		return since(since, new BiomeList(values));
+		return since(since, version -> new BiomeList(values));
 	}
 
 	@SafeVarargs
