@@ -2,7 +2,9 @@ package amidst.mojangapi.world.versionfeatures;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import amidst.fragment.layer.LayerIds;
+import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.biome.Biome;
@@ -32,18 +34,19 @@ import static amidst.mojangapi.world.biome.BiomeType.*;
 public enum DefaultVersionFeatures {
 	;
 
-	public static VersionFeatures.Builder builder(WorldOptions worldOptions, BiomeDataOracle biomeDataOracle) {
-		if (worldOptions == null || biomeDataOracle == null) {
+	public static VersionFeatures.Builder builder(WorldOptions worldOptions, MinecraftInterface minecraftInterface) {
+		if (worldOptions == null || minecraftInterface == null) {
 			return FEATURES_BUILDER.clone();
 		} else {
 			return FEATURES_BUILDER.clone()
 							.withValue(FeatureKey.WORLD_OPTIONS, worldOptions)
-							.withValue(FeatureKey.BIOME_DATA_ORACLE, biomeDataOracle);
+							.withValue(MINECRAFT_INTERFACE, minecraftInterface);
 		}
 	}
 
 	// @formatter:off
-	public static final FeatureKey<List<Integer>>  VALID_BIOMES_FOR_STRUCTURE_SPAWN                = FeatureKey.make();
+	private static final FeatureKey<MinecraftInterface> MINECRAFT_INTERFACE                        = FeatureKey.make();
+	private static final FeatureKey<List<Integer>> VALID_BIOMES_FOR_STRUCTURE_SPAWN                = FeatureKey.make();
 	private static final FeatureKey<List<Integer>> VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD      = FeatureKey.make();
 	private static final FeatureKey<List<Integer>> VALID_BIOMES_FOR_STRUCTURE_VILLAGE              = FeatureKey.make();
 	private static final FeatureKey<List<Integer>> VALID_BIOMES_FOR_STRUCTURE_PILLAGER_OUTPOST     = FeatureKey.make();
@@ -73,6 +76,9 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<Boolean>       BUGGY_STRUCTURE_COORDINATE_MATH                 = FeatureKey.make();
 
 	private static final VersionFeatures.Builder FEATURES_BUILDER = VersionFeatures.builder()
+			.with(FeatureKey.BIOME_DATA_ORACLE, VersionFeature.bind(features -> {
+				return VersionFeature.constant(new BiomeDataOracle(features.get(MINECRAFT_INTERFACE)));
+			}))
 			.with(FeatureKey.ENABLED_LAYERS, VersionFeature.<Integer> listBuilder()
 				.init(
 					LayerIds.ALPHA,
@@ -98,7 +104,7 @@ public enum DefaultVersionFeatures {
 				).sinceExtend(RecognisedVersion._18w09a,
 					LayerIds.OCEAN_FEATURES
 				).construct())
-			
+
 			.with(FeatureKey.BIOME_LIST, VersionFeature.biomeListBuilder()
 				.init( // Starts at beta 1.8
 					new Biome(0, "Ocean", OCEAN),
