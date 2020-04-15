@@ -1,5 +1,6 @@
 package amidst.mojangapi.world.versionfeatures;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -15,10 +16,6 @@ public interface VersionFeature<V> {
 	public static<V> VersionFeatureListBuilder<V, ?> listBuilder() {
 		return new VersionFeatureListBuilder<>();
 	}
-	
-	public static VersionFeatureBiomeListBuilder<?> biomeListBuilder() {
-		return new VersionFeatureBiomeListBuilder<>();
-	}
 
 	public static<V> VersionFeature<V> constant(V value) {
 		return (version, features) -> value;
@@ -30,5 +27,9 @@ public interface VersionFeature<V> {
 
 	public default<W> VersionFeature<W> andThen(Function<V, W> mapper) {
 		return (version, features) -> mapper.apply(this.getValue(version, features));
+	}
+
+	public default<W> VersionFeature<W> andThenBind(BiFunction<VersionFeatures, V, W> mapper) {
+		return (version, features) -> mapper.apply(features, this.getValue(version, features));
 	}
 }
