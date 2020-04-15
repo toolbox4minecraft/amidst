@@ -25,8 +25,7 @@ public enum RecognisedVersion {
 	UNKNOWN,
 	_20w15a    ("20w15a",     "boicye$aamfaktzctcaaw[Jaaszyzwcvblfackugcxyujcyrcyqudueacu"),                              // matches the launcher version id: 20w15a
 	_20w14a    ("20w14a",     "bobcxp$aameakszbtbaav[Jaarzxzvcvbkyacjufcxjuicyccybucudact"),                              // matches the launcher version id: 20w14a
-	_20w13b    ("20w13b",     "bnwcxfalyakmzbtbaav[Jaarzxzvcvbksaciufcwzuicxscxrucudacq"),                                // matches the launcher version id: 20w13b
-	_20w13a    ("20w13a",     "bnwcxfalyakmzbtbaav[Jaarzxzvcvbksaciufcwzuicxscxrucudacq"),                                // matches the launcher version id: 20w13a
+	_20w13a    ("20w13a",     "bnwcxfalyakmzbtbaav[Jaarzxzvcvbksaciufcwzuicxscxrucudacq"),                                // matches the launcher version id: 20w13a  20w13b
 	_20w12a    ("20w12a",     "bnkcwoalrakfyysyaas[Jaaozuzsctbkgacfuccwiufcxbcxatzuaacn"),                                // matches the launcher version id: 20w12a
 	_20w11a    ("20w11a",     "bnccwdaljajxyxsxaar[Jaanztzrcsbjyaceubcvxuecwqcwptytzacm"),                                // matches the launcher version id: 20w11a
 	_20w10a    ("20w10a",     "bnccvyalkajyyxsxaar[Jaanztzrcsbjzaceubcvsuecwlcwktytzacn"),                                // matches the launcher version id: 20w10a
