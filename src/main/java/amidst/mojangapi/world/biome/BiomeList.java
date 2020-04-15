@@ -1,11 +1,7 @@
-package amidst.mojangapi.world.versionfeatures;
+package amidst.mojangapi.world.biome;
 
 import java.util.Collection;
 import java.util.TreeMap;
-
-import amidst.mojangapi.world.biome.Biome;
-import amidst.mojangapi.world.biome.UnknownBiomeIdException;
-import amidst.mojangapi.world.biome.UnknownBiomeNameException;
 
 public class BiomeList {
 	private TreeMap<Integer, Biome> biomes = new TreeMap<Integer, Biome>(Biome.biomeIdComparator());

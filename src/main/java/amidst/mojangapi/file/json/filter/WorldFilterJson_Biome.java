@@ -9,9 +9,9 @@ import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
+import amidst.mojangapi.world.biome.BiomeList;
 import amidst.mojangapi.world.biome.UnknownBiomeNameException;
 import amidst.mojangapi.world.filter.WorldFilter_Biome;
-import amidst.mojangapi.world.versionfeatures.BiomeList;
 
 @Immutable
 public class WorldFilterJson_Biome {

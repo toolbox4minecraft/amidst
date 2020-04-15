@@ -4,6 +4,7 @@ import java.util.List;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.WorldOptions;
+import amidst.mojangapi.world.biome.BiomeList;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
