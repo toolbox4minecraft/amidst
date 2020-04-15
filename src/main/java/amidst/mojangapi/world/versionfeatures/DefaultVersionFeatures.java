@@ -46,7 +46,7 @@ public enum DefaultVersionFeatures {
 
 	// @formatter:off
 	private static final FeatureKey<MinecraftInterface> MINECRAFT_INTERFACE                        = FeatureKey.make();
-	private static final FeatureKey<List<Integer>> VALID_BIOMES_FOR_STRUCTURE_SPAWN                = FeatureKey.make();
+	public static final FeatureKey<List<Integer>>  VALID_BIOMES_FOR_STRUCTURE_SPAWN                = FeatureKey.make();
 	private static final FeatureKey<List<Integer>> VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD      = FeatureKey.make();
 	private static final FeatureKey<List<Integer>> VALID_BIOMES_FOR_STRUCTURE_VILLAGE              = FeatureKey.make();
 	private static final FeatureKey<List<Integer>> VALID_BIOMES_FOR_STRUCTURE_PILLAGER_OUTPOST     = FeatureKey.make();
@@ -76,9 +76,9 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<Boolean>       BUGGY_STRUCTURE_COORDINATE_MATH                 = FeatureKey.make();
 
 	private static final VersionFeatures.Builder FEATURES_BUILDER = VersionFeatures.builder()
-			.with(FeatureKey.BIOME_DATA_ORACLE, VersionFeature.bind(features -> {
-				return VersionFeature.constant(new BiomeDataOracle(features.get(MINECRAFT_INTERFACE)));
-			}))
+			.with(FeatureKey.BIOME_DATA_ORACLE, VersionFeature.bind(features ->
+				VersionFeature.constant(new BiomeDataOracle(features.get(MINECRAFT_INTERFACE)))
+			))
 			.with(FeatureKey.ENABLED_LAYERS, VersionFeature.<Integer> listBuilder()
 				.init(
 					LayerIds.ALPHA,
@@ -87,10 +87,12 @@ public enum DefaultVersionFeatures {
 					LayerIds.SLIME,
 					LayerIds.GRID,
 					LayerIds.SPAWN,
+					LayerIds.PLAYER
+				).sinceExtend(RecognisedVersion._b1_8_1, // Actually b1.8, but the version strings are identical
 					LayerIds.STRONGHOLD,
-					LayerIds.PLAYER,
 					LayerIds.VILLAGE,
-					LayerIds.MINESHAFT,
+					LayerIds.MINESHAFT
+				).sinceExtend(RecognisedVersion._b1_9_pre1,
 					LayerIds.NETHER_FORTRESS
 				).sinceExtend(RecognisedVersion._12w21a,
 					LayerIds.TEMPLE
@@ -294,14 +296,17 @@ public enum DefaultVersionFeatures {
 				.init(
 					Biome.forest,
 					Biome.plains,
-					Biome.taiga,
+					Biome.taiga
+				).sinceExtend(RecognisedVersion._12w01a,
 					Biome.taigaHills,
-					Biome.forestHills,
+					Biome.forestHills
+				).sinceExtend(RecognisedVersion._12w03a,
 					Biome.jungle,
 					Biome.jungleHills
 				).construct())
 
 			.with(FeatureKey.NETHER_FORTRESS_LOCATION_CHECKER, VersionFeature.bind(features ->
+				// TODO: add Nether biome checks when we implement Nether biomes
 				VersionFeature.constant(new NetherFortressAlgorithm(getWorldSeed(features)))
 			))
 
@@ -375,7 +380,8 @@ public enum DefaultVersionFeatures {
 			.with(VALID_BIOMES_FOR_STRUCTURE_VILLAGE, VersionFeature.<Integer> listBuilder()
 				.init(
 					Biome.plains,
-					Biome.desert,
+					Biome.desert
+				).sinceExtend(RecognisedVersion._13w36a,
 					Biome.savanna
 				).sinceExtend(RecognisedVersion._16w20a,
 					Biome.taiga
@@ -423,7 +429,8 @@ public enum DefaultVersionFeatures {
 				SEED_FOR_STRUCTURE_DESERT_TEMPLE))
 			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_DESERT_TEMPLE, VersionFeature.<Integer> listBuilder()
 				.init(
-					Biome.desert,
+					Biome.desert
+				).sinceExtend(RecognisedVersion._12w01a,
 					Biome.desertHills
 				).construct())
 			.with(SEED_FOR_STRUCTURE_DESERT_TEMPLE, VersionFeature.<Long> builder()
@@ -498,7 +505,8 @@ public enum DefaultVersionFeatures {
 			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_MONUMENT, VersionFeature.<Integer> listBuilder()
 				.init()
 				.sinceExtend(RecognisedVersion._1_8,
-					Biome.deepOcean,
+					Biome.deepOcean
+				).sinceExtend(RecognisedVersion._18w08a,
 					Biome.coldDeepOcean,
 					Biome.warmDeepOcean,
 					Biome.lukewarmDeepOcean,
@@ -510,7 +518,8 @@ public enum DefaultVersionFeatures {
 					Biome.deepOcean,
 					Biome.frozenOcean,
 					Biome.river,
-					Biome.frozenRiver,
+					Biome.frozenRiver
+				).sinceExtend(RecognisedVersion._18w08a,
 					Biome.coldOcean,
 					Biome.coldDeepOcean,
 					Biome.warmOcean,
@@ -529,7 +538,7 @@ public enum DefaultVersionFeatures {
 					)
 				)))
 			.with(VALID_BIOMES_FOR_STRUCTURE_WOODLAND_MANSION, VersionFeature.<Integer> listBuilder()
-				.init(
+				.init().sinceExtend(RecognisedVersion._16w43a, // Actually 16w39a, but version strings are identical
 					Biome.roofedForest,
 					Biome.roofedForestM
 				).construct())
