@@ -18,7 +18,6 @@ import amidst.mojangapi.world.icon.producer.StructureProducer;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.EndCityWorldIconTypeProvider;
 import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
-import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.ImmutableWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.WorldSpawnOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;
@@ -85,7 +84,7 @@ public class WorldBuilder {
 			worldOptions.getWorldType(),
 			worldOptions.getGeneratorOptions());
 		seedHistoryLogger.log(recognisedVersion, worldOptions.getWorldSeed());
-		return DefaultVersionFeatures.builder(worldOptions, new BiomeDataOracle(minecraftInterface)).create(recognisedVersion);
+		return DefaultVersionFeatures.builder(worldOptions, minecraftInterface).create(recognisedVersion);
 	}
 
 	private World create(
