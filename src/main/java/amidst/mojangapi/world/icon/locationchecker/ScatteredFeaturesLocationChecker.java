@@ -3,6 +3,7 @@ package amidst.mojangapi.world.icon.locationchecker;
 import java.util.List;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @ThreadSafe
@@ -15,22 +16,22 @@ public class ScatteredFeaturesLocationChecker extends AllValidLocationChecker {
 
 	public ScatteredFeaturesLocationChecker(
 			long seed, BiomeDataOracle biomeDataOracle,
-			List<Integer> validBiomeIdsAtMiddleOfChunk,
+			List<Biome> validBiomesAtMiddleOfChunk,
 			long magicNumber,
 			boolean buggyStructureCoordinateMath) {
-		
+
 		this(seed, biomeDataOracle,
 			MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 			MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-			validBiomeIdsAtMiddleOfChunk,
+			validBiomesAtMiddleOfChunk,
 			magicNumber,
 			buggyStructureCoordinateMath);
 	}
-	
+
 	public ScatteredFeaturesLocationChecker(
 			long seed, BiomeDataOracle biomeDataOracle,
 			byte maxDistanceBetweenFeatures, byte minDistanceBetweenFeatures,
-			List<Integer> validBiomeIdsAtMiddleOfChunk,
+			List<Biome> validBiomesAtMiddleOfChunk,
 			long magicNumber,
 			boolean buggyStructureCoordinateMath) {
 
@@ -44,6 +45,6 @@ public class ScatteredFeaturesLocationChecker extends AllValidLocationChecker {
 					minDistanceBetweenFeatures,
 					USE_TWO_VALUES_FOR_UPDATE,
 					buggyStructureCoordinateMath),
-				new BiomeLocationChecker(biomeDataOracle, validBiomeIdsAtMiddleOfChunk));
+				new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk));
 	}
 }

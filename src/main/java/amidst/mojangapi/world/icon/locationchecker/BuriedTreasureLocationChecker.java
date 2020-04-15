@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @ThreadSafe
@@ -11,10 +12,10 @@ public class BuriedTreasureLocationChecker extends AllValidLocationChecker {
 	private static final float BURIED_TREASURE_CHANCE = 0.01F;
 
 	public BuriedTreasureLocationChecker(
-			long seed, BiomeDataOracle biomeDataOracle, List<Integer> validBiomeIdsForStructure, long seedForStructure) {
+			long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomesForStructure, long seedForStructure) {
 		super(
 			new BuriedTreasureAlgorithm(seed + seedForStructure, BURIED_TREASURE_CHANCE),
-			new BiomeLocationChecker(biomeDataOracle, validBiomeIdsForStructure)
+			new BiomeLocationChecker(biomeDataOracle, validBiomesForStructure)
 		);
 	}
 

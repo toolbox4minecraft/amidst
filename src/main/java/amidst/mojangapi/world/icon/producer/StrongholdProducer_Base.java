@@ -6,6 +6,7 @@ import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.Dimension;
+import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
@@ -18,12 +19,12 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 
 	private final long seed;
 	private final BiomeDataOracle biomeDataOracle;
-	private final List<Integer> validBiomeIds;
+	private final List<Biome> validBiomes;
 
-	public StrongholdProducer_Base(long seed, BiomeDataOracle biomeDataOracle, List<Integer> validBiomeIds) {
+	public StrongholdProducer_Base(long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomes) {
 		this.seed = seed;
 		this.biomeDataOracle = biomeDataOracle;
-		this.validBiomeIds = validBiomeIds;
+		this.validBiomes = validBiomes;
 	}
 
 	@Override
@@ -67,7 +68,7 @@ public abstract class StrongholdProducer_Base extends CachedWorldIconProducer {
 	}
 
 	private CoordinatesInWorld findStronghold(Random random, int chunkX, int chunkY) {
-		return biomeDataOracle.findValidLocationAtMiddleOfChunk(chunkX, chunkY, 112, validBiomeIds, random);
+		return biomeDataOracle.findValidLocationAtMiddleOfChunk(chunkX, chunkY, 112, validBiomes, random);
 	}
 
 	private CoordinatesInWorld getStrongholdLocation(int x, int y, CoordinatesInWorld coordinates) {
