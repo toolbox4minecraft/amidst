@@ -15,7 +15,7 @@ import amidst.fragment.layer.LayerReloader;
 import amidst.gui.main.viewer.BiomeSelection;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeColor;
-import amidst.mojangapi.world.versionfeatures.BiomeList;
+import amidst.mojangapi.world.biome.BiomeList;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @NotThreadSafe
