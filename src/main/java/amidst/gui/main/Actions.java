@@ -36,6 +36,7 @@ import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
 import amidst.settings.biomeprofile.BiomeProfile;
+import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.util.FileExtensionChecker;
 
@@ -266,6 +267,20 @@ public class Actions {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
 			viewerFacade.reloadBackgroundLayer();
+		}
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void createExampleProfile(BiomeProfileDirectory dir) {
+		if (!dir.isValid()) {
+			dialogs.displayError("Unable to find biome profile directory.");
+		} else {
+			Path path = dir.getRoot().resolve("example.json");
+			if (BiomeProfile.createExampleProfile().save(path)) {
+				dialogs.displayInfo("Amidst", "Example biome profile created at:\n" + path.toAbsolutePath().toString());
+			} else {
+				dialogs.displayError("Error creating example biome profile.");
+			}
 		}
 	}
 

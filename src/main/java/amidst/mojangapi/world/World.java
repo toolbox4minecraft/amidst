@@ -13,6 +13,7 @@ import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.player.MovablePlayerList;
+import amidst.mojangapi.world.versionfeatures.BiomeList;
 
 @ThreadSafe
 public class World {
@@ -22,6 +23,7 @@ public class World {
 	private final MovablePlayerList movablePlayerList;
 	private final RecognisedVersion recognisedVersion;
 	private final List<Integer> enabledLayers;
+	private final BiomeList biomeList;
 
 	private final BiomeDataOracle biomeDataOracle;
 	private final EndIslandOracle endIslandOracle;
@@ -43,6 +45,7 @@ public class World {
 			WorldOptions worldOptions,
 			MovablePlayerList movablePlayerList,
 			RecognisedVersion recognisedVersion,
+			BiomeList biomeList,
 			List<Integer> enabledLayers,
 			BiomeDataOracle biomeDataOracle,
 			EndIslandOracle endIslandOracle,
@@ -62,6 +65,7 @@ public class World {
 		this.worldOptions = worldOptions;
 		this.movablePlayerList = movablePlayerList;
 		this.recognisedVersion = recognisedVersion;
+		this.biomeList = biomeList;
 		this.enabledLayers = enabledLayers;
 		this.biomeDataOracle = biomeDataOracle;
 		this.endIslandOracle = endIslandOracle;
@@ -89,6 +93,10 @@ public class World {
 
 	public RecognisedVersion getRecognisedVersion() {
 		return recognisedVersion;
+	}
+	
+	public BiomeList getBiomeList() {
+		return biomeList;
 	}
 
 	public List<Integer> getEnabledLayers() {

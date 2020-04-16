@@ -3,17 +3,16 @@ package amidst.mojangapi.world.icon.locationchecker;
 import java.util.List;
 
 import amidst.documentation.ThreadSafe;
-import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @ThreadSafe
 public class VillageAlgorithm implements LocationChecker {
 	private final BiomeDataOracle biomeDataOracle;
-	private final List<Biome> validBiomes;
+	private final List<Integer> validBiomeIds;
 
-	public VillageAlgorithm(BiomeDataOracle biomeDataOracle, List<Biome> validBiomes) {
+	public VillageAlgorithm(BiomeDataOracle biomeDataOracle, List<Integer> validBiomeIds) {
 		this.biomeDataOracle = biomeDataOracle;
-		this.validBiomes = validBiomes;
+		this.validBiomeIds = validBiomeIds;
 	}
 
 	@Override
@@ -92,11 +91,11 @@ public class VillageAlgorithm implements LocationChecker {
 		 */
 		// @formatter:on
 
-		return biomeDataOracle.isValidBiomeForStructure(wellX, wellY, wellStructureSize, validBiomes);
+		return biomeDataOracle.isValidBiomeForStructure(wellX, wellY, wellStructureSize, validBiomeIds);
 	}
 
 	@Override
 	public boolean hasValidLocations() {
-		return !validBiomes.isEmpty();
+		return !validBiomeIds.isEmpty();
 	}
 }

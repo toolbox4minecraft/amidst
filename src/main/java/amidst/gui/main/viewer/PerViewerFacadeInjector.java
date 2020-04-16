@@ -52,7 +52,7 @@ public class PerViewerFacadeInjector {
 			Supplier<String> progressText) {
 		// @formatter:off
 		DebugWidget debugWidget = new DebugWidget(CornerAnchorPoint.BOTTOM_RIGHT, graph, fragmentManager, settings.showDebug, accelerationCounter);
-		BiomeWidget biomeWidget = new BiomeWidget(CornerAnchorPoint.NONE, biomeSelection, layerReloader, settings.biomeProfileSelection);
+		BiomeWidget biomeWidget = new BiomeWidget(CornerAnchorPoint.NONE, biomeSelection, layerReloader, settings.biomeProfileSelection, world.getBiomeList());
 		BiomeToggleWidget biomeToggleWidget = new BiomeToggleWidget(CornerAnchorPoint.BOTTOM_RIGHT, biomeWidget, biomeSelection);
 		WorldOptions worldOptions = world.getWorldOptions();
 		return Arrays.asList(
@@ -62,7 +62,7 @@ public class PerViewerFacadeInjector {
 				new SeedAndWorldTypeWidget(     CornerAnchorPoint.TOP_LEFT,      worldOptions.getWorldSeed(), worldOptions.getWorldType()),
 				new SelectedIconWidget(         CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
 				debugWidget,
-				new CursorInformationWidget(    CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension),
+				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension, world.getBiomeList()),
 				biomeToggleWidget,
 				new WorldExporterProgressWidget(CornerAnchorPoint.BOTTOM_RIGHT,  -20, settings.showDebug, debugWidget, biomeToggleWidget.getWidth()),
 				biomeWidget
@@ -72,6 +72,7 @@ public class PerViewerFacadeInjector {
 
 	private final WorkerExecutor workerExecutor;
 	private final World world;
+	private final BiomeSelection biomeSelection;
 	private final Graphics2DAccelerationCounter accelerationCounter;
 	private final Movement movement;
 	private final WorldIconSelection worldIconSelection;
@@ -95,11 +96,11 @@ public class PerViewerFacadeInjector {
 			Zoom zoom,
 			LayerBuilder layerBuilder,
 			FragmentManager fragmentManager,
-			BiomeSelection biomeSelection,
 			World world,
 			Actions actions) {
 		this.workerExecutor = workerExecutor;
 		this.world = world;
+		this.biomeSelection = new BiomeSelection(world.getBiomeList());
 		this.accelerationCounter = new Graphics2DAccelerationCounter();
 		this.movement = new Movement(settings.smoothScrolling);
 		this.worldIconSelection = new WorldIconSelection();
