@@ -22,7 +22,7 @@ import amidst.fragment.Fragment;
 import amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.World;
-import amidst.mojangapi.world.biome.UnknownBiomeIndexException;
+import amidst.mojangapi.world.biome.UnknownBiomeIdException;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.threading.WorkerExecutor;
@@ -115,7 +115,7 @@ public class WorldExporter {
 							tiledImage.setSample(r.x + i, r.y + j, 2, biomeColors.getBiomeColor(dataArray[i][j]).getB());
 						}
 					}
-				} catch (UnknownBiomeIndexException e) {
+				} catch (UnknownBiomeIdException e) {
 					e.printStackTrace();
 				}
 				
