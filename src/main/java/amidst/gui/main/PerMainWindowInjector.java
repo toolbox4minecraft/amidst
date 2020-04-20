@@ -13,6 +13,7 @@ import amidst.dependency.injection.Factory2;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gui.exporter.WorldExporterDialog;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.menu.AmidstMenuBuilder;
 import amidst.gui.main.viewer.ViewerFacade;
@@ -99,6 +100,7 @@ public class PerMainWindowInjector {
 		this.menuBar = new AmidstMenuBuilder(settings, actions, biomeProfileDirectory).construct();
 		this.mainWindow = new MainWindow(frame, worldSwitcher, viewerFacadeReference::get, seedSearcherWindow);
 		this.mainWindow.initializeFrame(metadata, versionString, actions, menuBar, runningLauncherProfile.getInitialWorldOptions());
+		WorldExporterDialog.setMainFrame(frame);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

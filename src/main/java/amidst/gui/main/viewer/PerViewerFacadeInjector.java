@@ -32,7 +32,7 @@ import amidst.gui.main.viewer.widget.WidgetManager;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.export.WorldExporter;
-import amidst.mojangapi.world.export.WorldExporterConfiguration;
+import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -88,6 +88,8 @@ public class PerViewerFacadeInjector {
 	private final ViewerMouseListener viewerMouseListener;
 	private final Viewer viewer;
 	private final ViewerFacade viewerFacade;
+	private final Actions actions;
+	private final BiomeProfileSelection biomeProfileSelection;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public PerViewerFacadeInjector(
@@ -150,12 +152,14 @@ public class PerViewerFacadeInjector {
 				this::onRepainterTick,
 				this::onFragmentLoaderTick,
 				this::onPlayerFinishedLoading);
+		this.actions = actions;
+		this.biomeProfileSelection = settings.biomeProfileSelection;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public WorldExporter createWorldExporter(WorldExporterConfiguration configuration) {
+	public WorldExporter createWorldExporter() {
 		WorldExporterProgressWidget widget = (WorldExporterProgressWidget) widgets.stream().filter(w -> w instanceof WorldExporterProgressWidget).findFirst().get();
-		return new WorldExporter(workerExecutor, world, configuration, widget::acceptProgress);
+		return new WorldExporter(workerExecutor, world, actions, translator, biomeProfileSelection, widget::acceptProgress);
 	}
 
 	@CalledOnlyBy(AmidstThread.REPAINTER)

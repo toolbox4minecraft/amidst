@@ -1,6 +1,7 @@
 package amidst.gui.main;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Optional;
@@ -21,6 +22,8 @@ import amidst.mojangapi.world.WorldOptions;
 
 @NotThreadSafe
 public class MainWindow {
+	private static final Dimension WINDOW_DIMENSIONS = new Dimension(1000, 800);
+	
 	private final JFrame frame;
 	private final WorldSwitcher worldSwitcher;
 	private final Supplier<ViewerFacade> viewerFacadeSupplier;
@@ -38,7 +41,7 @@ public class MainWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void initializeFrame(AmidstMetaData metadata, String versionString, Actions actions, AmidstMenu menuBar,
 				 Optional<WorldOptions> initialWorldOptions) {
-		frame.setSize(1000, 800);
+		frame.setSize(WINDOW_DIMENSIONS);
 		frame.setIconImages(metadata.getIcons());
 		frame.setTitle(versionString);
 		frame.setJMenuBar(menuBar.getMenuBar());

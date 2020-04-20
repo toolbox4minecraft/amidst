@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -86,11 +85,12 @@ public class BiomeProfileMenuFactory {
 			ActionListener result = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					for (JCheckBoxMenuItem checkBox : allCheckBoxes) {
-						checkBox.setSelected(false);
+					if (actions.selectBiomeProfile(profile)) {
+						for (JCheckBoxMenuItem checkBox : allCheckBoxes) {
+							checkBox.setSelected(false);
+						}
+						selectedCheckBox.setSelected(true);
 					}
-					selectedCheckBox.setSelected(true);
-					actions.selectBiomeProfile(profile);
 				}
 			};
 			if (defaultBiomeProfileSelector == null && profile.equals(BiomeProfile.getDefaultProfile())) {

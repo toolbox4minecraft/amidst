@@ -16,7 +16,7 @@ public enum MenuShortcuts implements MenuShortcut {
 	NEW_FROM_RANDOM_SEED("menu R"),
 	SEARCH_FOR_RANDOM_SEED("menu F"),
 	OPEN_SAVE_GAME("menu O"),
-	EXPORT("menu X"),
+	EXPORT_BIOMES("menu X"),
 	SWITCH_PROFILE("menu W"),
 	EXIT("menu Q"),
 
@@ -30,8 +30,6 @@ public enum MenuShortcuts implements MenuShortcut {
 	RELOAD_PLAYER_LOCATIONS("F5"),
 	COPY_SEED_TO_CLIPBOARD("menu C"),
 	TAKE_SCREENSHOT("menu T"),
-	SAVE_QUARTER_RES_BIOMES("menu Y"),
-	SAVE_FULL_RES_BIOMES("menu U"),
 
 	DISPLAY_DIMENSION_OVERWORLD("menu shift 1"),
 	DISPLAY_DIMENSION_END("menu shift 2"),

@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -31,7 +32,6 @@ import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.export.WorldExportException;
 import amidst.mojangapi.world.export.WorldExporter;
-import amidst.mojangapi.world.export.WorldExporterConfiguration;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
@@ -68,7 +68,7 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromSeed() {
 		WorldSeed seed = dialogs.askForSeed();
-		if (seed != null && confirmContinueIfWorldExporting()) {
+		if (seed != null && checkIfWorldExporting()) {
 			newFromSeed(seed);
 		}
 	}
@@ -81,7 +81,7 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = dialogs.askForWorldType();
-		if (worldType != null && confirmContinueIfWorldExporting()) {
+		if (worldType != null && checkIfWorldExporting()) {
 			worldSwitcher.displayWorld(new WorldOptions(worldSeed, worldType));
 		}
 	}
@@ -94,30 +94,75 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void openSaveGame() {
 		Path file = dialogs.askForSaveGame();
-		if (file != null && confirmContinueIfWorldExporting()) {
+		if (file != null && checkIfWorldExporting()) {
 			worldSwitcher.displayWorld(file);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void export(boolean useQuarterResolution) {
+	public void export() {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
-			WorldExporterConfiguration config = dialogs.askForExportConfiguration(viewerFacade, useQuarterResolution, biomeProfileSelection);
-			if (config != null) {
-				try {
-					viewerFacade.export(config);
-				} catch (WorldExportException e) {
-					AmidstLogger.warn(e);
-					dialogs.displayError("Another world is already exporting!\nPlease wait until the current one has finished exporting.");
-				}
+			try {
+				viewerFacade.export();
+			} catch (WorldExportException e) {
+				AmidstLogger.warn(e);
+				dialogs.displayError("Another world is already exporting!\nPlease wait until the current one has finished exporting.");
 			}
+		}
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public Path getExportPath(WorldOptions worldOptions) {
+		String suggestedFilename = "biomes_" + worldOptions.getWorldType().getFilenameText() + "_"
+				+ worldOptions.getWorldSeed().getLong() + ".tiff";
+		Path file = dialogs.askForTIFFSaveFile(suggestedFilename);
+		if (file != null) {
+			file = Actions.appendTIFFFileExtensionIfNecessary(file);
+			boolean fileExists = Files.exists(file);
+			if (fileExists && !Files.isRegularFile(file)) {
+				String message = "Unable to set biome image path, because the target exists but is not a file: "
+						+ file.toString();
+				AmidstLogger.warn(message);
+				dialogs.displayError(message);
+			} else if (!Actions.canWriteToFile(file)) {
+				String message = "Unable to set biome image path, because you have no writing permissions: "
+						+ file.toString();
+				AmidstLogger.warn(message);
+				dialogs.displayError(message);
+			} else if (!fileExists || dialogs.askToConfirmYesNo("Replace file?",
+					"File already exists. Do you want to replace it?\n" + file.toString() + "")) {
+				return file;
+			}
+		}
+		return null;
+	}
+	
+	public boolean verifyImageCoordinates(CoordinatesInWorld topLeft, CoordinatesInWorld bottomRight) {
+		if((topLeft != null && bottomRight != null) && 
+		   (topLeft.getX() >= bottomRight.getX() || topLeft.getY() >= bottomRight.getY())) {
+			String message = "Unable to create image: Invalid image coordinates detected.";
+			AmidstLogger.warn(message);
+			dialogs.displayError(message);
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	public boolean verifyPathString(String path) {
+		try {
+			Paths.get(path);
+			return true;
+		} catch (InvalidPathException e) {
+			dialogs.displayError("Invalid path given.");
+			return false;
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void switchProfile() {
-		if (confirmContinueIfWorldExporting()) {
+		if (checkIfWorldExporting()) {
 			application.displayProfileSelectWindow();
 		}
 	}
@@ -262,12 +307,16 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void selectBiomeProfile(BiomeProfile profile) {
-		biomeProfileSelection.set(profile);
-		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
-		if (viewerFacade != null) {
-			viewerFacade.reloadBackgroundLayer();
+	public boolean selectBiomeProfile(BiomeProfile profile) {
+		if (checkIfWorldExporting()) {
+			biomeProfileSelection.set(profile);
+			ViewerFacade viewerFacade = viewerFacadeSupplier.get();
+			if (viewerFacade != null) {
+				viewerFacade.reloadBackgroundLayer();
+			}
+			return true;
 		}
+		return false;
 	}
 	
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -364,13 +413,15 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean tryChangeLookAndFeel(AmidstLookAndFeel lookAndFeel) {
-		if (dialogs.askToConfirmYesNo("Changing Look & Feel",
-				"Changing the look & feel will reload Amidst. Do you want to continue?")) {
-			if (lookAndFeel.tryApply()) {
-				application.restart();
-				return true;
-			} else {
-				dialogs.displayError("An error occured while trying to switch to " + lookAndFeel);
+		if (checkIfWorldExporting()) {
+			if (dialogs.askToConfirmYesNo("Changing Look & Feel",
+					"Changing the look & feel will reload Amidst. Do you want to continue?")) {
+				if (lookAndFeel.tryApply()) {
+					application.restart();
+					return true;
+				} else {
+					dialogs.displayError("An error occured while trying to switch to " + lookAndFeel);
+				}
 			}
 		}
 		return false;
@@ -419,7 +470,7 @@ public class Actions {
 		return Paths.get(filename);
 	}
 	
-	private boolean confirmContinueIfWorldExporting() {
+	private boolean checkIfWorldExporting() {
 		if (WorldExporter.isExporterRunning()) {
 			dialogs.displayWarning("This world is still exporting.\nPlease wait until it is finished before performing this action.");
 			return false;

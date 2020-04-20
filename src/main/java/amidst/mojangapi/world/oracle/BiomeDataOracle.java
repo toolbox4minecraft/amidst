@@ -159,6 +159,10 @@ public class BiomeDataOracle {
 			MinecraftInterfaceException {
 		return getBiomeAt(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY));
 	}
+	
+	public int getBiomeAt(int x, int y, boolean useQuarterResolution) throws UnknownBiomeIdException, MinecraftInterfaceException {
+		return getBiomeData(x, y, 1, 1, useQuarterResolution)[0];
+	}
 
 	/**
 	 * Gets the biome located at the block-coordinates. This is not a fast
