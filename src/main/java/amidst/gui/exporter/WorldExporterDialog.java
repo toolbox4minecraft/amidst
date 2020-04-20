@@ -4,7 +4,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
-import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,6 +12,8 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
@@ -30,12 +31,14 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
 import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
 import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldOptions;
@@ -52,8 +55,6 @@ import static java.awt.GridBagConstraints.*;
 public class WorldExporterDialog {
 	private static final int PREVIEW_SIZE = 100;
 	private static final Insets DEFAULT_INSETS = new Insets(10, 10, 10, 10);
-	
-	private static Frame mainFrame;
 	
 	private final ExecutorService previewUpdator = Executors.newSingleThreadExecutor(r -> new Thread(r));
 	
@@ -133,7 +134,7 @@ public class WorldExporterDialog {
 		exportButton.addActionListener((e) -> {
 			CoordinatesInWorld topLeft = getTopLeftCoordinates();
 			CoordinatesInWorld bottomRight = getBottomRightCoordinates();
-			if (actions.verifyImageCoordinates(topLeft, bottomRight) && actions.verifyPathString(pathField.getText())) {
+			if (verifyImageCoordinates(topLeft, bottomRight) && verifyPathString(pathField.getText())) {
 				futureConfiguration.complete(
 						new WorldExporterConfiguration(
 								Paths.get(pathField.getText()),
@@ -149,12 +150,40 @@ public class WorldExporterDialog {
 		return exportButton;
 	}
 	
+	private boolean verifyPathString(String path) {
+		try {
+			Path p = Paths.get(path);
+			if (Files.isWritable(p)) {
+				return true;
+			} else {
+				AmidstMessageBox.displayError(dialog, "Error", "Path is not able to be written to.");
+				return false;
+			}
+		} catch (InvalidPathException e) {
+			AmidstMessageBox.displayError(dialog, "Error", "Invalid path given.");
+		}
+		return false;
+	}
+	
+	public boolean verifyImageCoordinates(CoordinatesInWorld topLeft, CoordinatesInWorld bottomRight) {
+		if((topLeft != null && bottomRight != null) && 
+		   (topLeft.getX() >= bottomRight.getX() || topLeft.getY() >= bottomRight.getY())) {
+			String message = "Unable to create image: Invalid image coordinates detected.";
+			AmidstLogger.warn(message);
+			AmidstMessageBox.displayError(dialog, "Error", message);
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	
 	private JButton createBrowseButton() {
 		JButton newButton = new JButton("Browse...");
 		newButton.addActionListener(e -> {
-			Path exportPath = actions.getExportPath(worldOptions);
+			Path exportPath = actions.getExportPath(worldOptions, dialog);
 			if (exportPath != null) {
-				pathField.setText(actions.getExportPath(worldOptions).toAbsolutePath().toString());
+				pathField.setText(exportPath.toAbsolutePath().toString());
 			}
 		});
 		return newButton;
@@ -216,7 +245,7 @@ public class WorldExporterDialog {
 		setConstraints(10, 10, 20, 20, NONE, 4, 7, 1, 1, 0.0, 0.0, SOUTHEAST);
 		panel.add(exportButton, constraints);
 		
-		JDialog newDialog = new JDialog(mainFrame, "Export Biome Image") {
+		JDialog newDialog = new JDialog(actions.getFrame(), "Export Biome Image") {
 			private static final long serialVersionUID = 827399282059202834L;
 
 			public void dispose() {
@@ -276,8 +305,7 @@ public class WorldExporterDialog {
 				
 				previewIcon.setImage(previewImage.getScaledInstance(previewIcon.getIconWidth(), previewIcon.getIconHeight(), Image.SCALE_FAST));
 				
-				// Repaint is thread safe
-				previewLabel.repaint();
+				SwingUtilities.invokeLater(() -> previewLabel.repaint());
 			} catch(MinecraftInterfaceException | UnknownBiomeIdException e) {
 				AmidstLogger.error(e);
 			}
@@ -312,10 +340,6 @@ public class WorldExporterDialog {
 	
 	public Future<WorldExporterConfiguration> getWorldExporterConfiguration() {
 		return futureConfiguration;
-	}
-	
-	public static void setMainFrame(Frame mainFrame) {
-		WorldExporterDialog.mainFrame = mainFrame;
 	}
 	
 	private void setConstraints(int iTop, int iLeft, int iBottom, int iRight, int fillConst, int gridx,

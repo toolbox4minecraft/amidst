@@ -1,6 +1,7 @@
 package amidst.gui.main;
 
 import java.awt.Component;
+import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -8,7 +9,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -26,6 +26,7 @@ import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.logging.AmidstLogger;
+import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
@@ -113,10 +114,10 @@ public class Actions {
 	}
 	
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Path getExportPath(WorldOptions worldOptions) {
+	public Path getExportPath(WorldOptions worldOptions, Component parent) {
 		String suggestedFilename = "biomes_" + worldOptions.getWorldType().getFilenameText() + "_"
 				+ worldOptions.getWorldSeed().getLong() + ".tiff";
-		Path file = dialogs.askForTIFFSaveFile(suggestedFilename);
+		Path file = dialogs.askForTIFFSaveFile(suggestedFilename, parent);
 		if (file != null) {
 			file = Actions.appendTIFFFileExtensionIfNecessary(file);
 			boolean fileExists = Files.exists(file);
@@ -124,40 +125,18 @@ public class Actions {
 				String message = "Unable to set biome image path, because the target exists but is not a file: "
 						+ file.toString();
 				AmidstLogger.warn(message);
-				dialogs.displayError(message);
+				AmidstMessageBox.displayError(parent, "Error", message);
 			} else if (!Actions.canWriteToFile(file)) {
 				String message = "Unable to set biome image path, because you have no writing permissions: "
 						+ file.toString();
 				AmidstLogger.warn(message);
-				dialogs.displayError(message);
-			} else if (!fileExists || dialogs.askToConfirmYesNo("Replace file?",
+				AmidstMessageBox.displayError(parent, "Error", message);
+			} else if (!fileExists || AmidstMessageBox.askToConfirmYesNo(parent, "Replace file?",
 					"File already exists. Do you want to replace it?\n" + file.toString() + "")) {
 				return file;
 			}
 		}
 		return null;
-	}
-	
-	public boolean verifyImageCoordinates(CoordinatesInWorld topLeft, CoordinatesInWorld bottomRight) {
-		if((topLeft != null && bottomRight != null) && 
-		   (topLeft.getX() >= bottomRight.getX() || topLeft.getY() >= bottomRight.getY())) {
-			String message = "Unable to create image: Invalid image coordinates detected.";
-			AmidstLogger.warn(message);
-			dialogs.displayError(message);
-			return false;
-		} else {
-			return true;
-		}
-	}
-	
-	public boolean verifyPathString(String path) {
-		try {
-			Paths.get(path);
-			return true;
-		} catch (InvalidPathException e) {
-			dialogs.displayError("Invalid path given.");
-			return false;
-		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -282,7 +261,7 @@ public class Actions {
 			BufferedImage image = viewerFacade.createScreenshot();
 			String suggestedFilename = "screenshot_" + worldOptions.getWorldType().getFilenameText() + "_"
 					+ worldOptions.getWorldSeed().getLong() + ".png";
-			Path file = dialogs.askForPNGSaveFile(suggestedFilename);
+			Path file = dialogs.askForPNGSaveFile(suggestedFilename, null);
 			if (file != null) {
 				file = appendPNGFileExtensionIfNecessary(file);
 				boolean fileExists = Files.exists(file);
@@ -477,6 +456,10 @@ public class Actions {
 		} else {
 			return true;
 		}
+	}
+	
+	public Frame getFrame() {
+		return dialogs.getFrame();
 	}
 	
 }

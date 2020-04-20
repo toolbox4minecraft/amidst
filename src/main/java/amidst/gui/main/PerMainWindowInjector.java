@@ -100,7 +100,6 @@ public class PerMainWindowInjector {
 		this.menuBar = new AmidstMenuBuilder(settings, actions, biomeProfileDirectory).construct();
 		this.mainWindow = new MainWindow(frame, worldSwitcher, viewerFacadeReference::get, seedSearcherWindow);
 		this.mainWindow.initializeFrame(metadata, versionString, actions, menuBar, runningLauncherProfile.getInitialWorldOptions());
-		WorldExporterDialog.setMainFrame(frame);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
