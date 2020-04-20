@@ -4,7 +4,9 @@ import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
 import java.awt.image.DirectColorModel;
 import java.awt.image.SinglePixelPackedSampleModel;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.util.AbstractMap;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
@@ -96,85 +98,96 @@ public class WorldExporter {
 		}
 		
 	    if(configuration != null) {
-			progressReporter.report(entry(MIN, 0));
-			progressReporter.report(entry(PROGRESS, 0));
-			
-			int factor = configuration.isQuarterResolution() ? 4 : 1;
-			
-			int x = (int) configuration.getTopLeftCoord().getX();
-			int y = (int) configuration.getTopLeftCoord().getY();
-			int width = (int) configuration.getBottomRightCoord().getX() - x;
-			int height = (int) configuration.getBottomRightCoord().getY() - y;
-			
-			int[] bitmasks = {
-				0xFF0000,
-				0x00FF00,
-				0x0000FF
-			};
-			
-			DiskMemImage tiledImage = new DiskMemImage(0, 0, width / factor, height / factor, 0, 0,
-						new SinglePixelPackedSampleModel(DataBuffer.TYPE_INT, TILE_SIZE, TILE_SIZE, bitmasks),
-						new DirectColorModel(32, bitmasks[0], bitmasks[1], bitmasks[2])
-					);
-			tiledImage.setUseCommonCache(true);
-			
-			int tileMaxProgress = tiledImage.getNumXTiles() * tiledImage.getNumYTiles();
-			int imageMaxProgress = (int) Math.ceil(tiledImage.getNumXTiles() * tiledImage.getNumYTiles() * .05);
-			progressReporter.report(entry(MAX, tileMaxProgress + imageMaxProgress));
-			
-			BiomeProfileSelection biomeColors = configuration.getBiomeProfileSelection();
-			
-			short[][] dataArray;
-			int tilesProcessed = 0;
-			for (int tx = 0; tx < tiledImage.getNumXTiles(); tx++) {
-				for (int ty = 0; ty < tiledImage.getNumYTiles(); ty++) {
-					if (tilesProcessed % TILES_BETWEEN_FLUSHES == 0) {
-						TILE_CACHE.memoryControl();
-					}
-					
-					Rectangle r = tiledImage.getTileRect(tx, ty);
-					r.setLocation(tiledImage.tileXToX(tx), tiledImage.tileYToY(ty));
-					dataArray = new short[r.width][r.height];
-					world.getBiomeDataOracle().populateArray(new CoordinatesInWorld((long) x + r.x * factor, (long) y + r.y * factor), dataArray, configuration.isQuarterResolution());
+	    	try {
+				progressReporter.report(entry(MIN, 0));
+				progressReporter.report(entry(PROGRESS, 0));
 				
-					try {
-						for (int i = 0; i < r.width; i++) {
-							for (int j = 0; j < r.height; j++) {
-								tiledImage.setSample(r.x + i, r.y + j, 0, biomeColors.getBiomeColor(dataArray[i][j]).getR());
-								tiledImage.setSample(r.x + i, r.y + j, 1, biomeColors.getBiomeColor(dataArray[i][j]).getG());
-								tiledImage.setSample(r.x + i, r.y + j, 2, biomeColors.getBiomeColor(dataArray[i][j]).getB());
-							}
+				int factor = configuration.isQuarterResolution() ? 4 : 1;
+				
+				int x = (int) configuration.getTopLeftCoord().getX();
+				int y = (int) configuration.getTopLeftCoord().getY();
+				int width = (int) configuration.getBottomRightCoord().getX() - x;
+				int height = (int) configuration.getBottomRightCoord().getY() - y;
+				
+				int[] bitmasks = {
+					0xFF0000,
+					0x00FF00,
+					0x0000FF
+				};
+				
+				DiskMemImage tiledImage = new DiskMemImage(0, 0, width / factor, height / factor, 0, 0,
+							new SinglePixelPackedSampleModel(DataBuffer.TYPE_INT, TILE_SIZE, TILE_SIZE, bitmasks),
+							new DirectColorModel(32, bitmasks[0], bitmasks[1], bitmasks[2])
+						);
+				tiledImage.setUseCommonCache(true);
+				
+				int tileMaxProgress = tiledImage.getNumXTiles() * tiledImage.getNumYTiles();
+				int imageMaxProgress = (int) Math.ceil(tiledImage.getNumXTiles() * tiledImage.getNumYTiles() * .05);
+				progressReporter.report(entry(MAX, tileMaxProgress + imageMaxProgress));
+				
+				BiomeProfileSelection biomeColors = configuration.getBiomeProfileSelection();
+				
+				short[][] dataArray;
+				int tilesProcessed = 0;
+				for (int tx = 0; tx < tiledImage.getNumXTiles(); tx++) {
+					for (int ty = 0; ty < tiledImage.getNumYTiles(); ty++) {
+						if (tilesProcessed % TILES_BETWEEN_FLUSHES == 0) {
+							TILE_CACHE.memoryControl();
 						}
-					} catch (UnknownBiomeIdException e) {
-						e.printStackTrace();
-					}
+						
+						Rectangle r = tiledImage.getTileRect(tx, ty);
+						r.setLocation(tiledImage.tileXToX(tx), tiledImage.tileYToY(ty));
+						dataArray = new short[r.width][r.height];
+						world.getBiomeDataOracle().populateArray(new CoordinatesInWorld((long) x + r.x * factor, (long) y + r.y * factor), dataArray, configuration.isQuarterResolution());
 					
-					progressReporter.report(entry(PROGRESS, ++tilesProcessed));
+						try {
+							for (int i = 0; i < r.width; i++) {
+								for (int j = 0; j < r.height; j++) {
+									tiledImage.setSample(r.x + i, r.y + j, 0, biomeColors.getBiomeColor(dataArray[i][j]).getR());
+									tiledImage.setSample(r.x + i, r.y + j, 1, biomeColors.getBiomeColor(dataArray[i][j]).getG());
+									tiledImage.setSample(r.x + i, r.y + j, 2, biomeColors.getBiomeColor(dataArray[i][j]).getB());
+								}
+							}
+						} catch (UnknownBiomeIdException e) {
+							e.printStackTrace();
+						}
+						
+						progressReporter.report(entry(PROGRESS, ++tilesProcessed));
+					}
 				}
-			}
-			dataArray = null;
-			
-			TIFFEncodeParam tep = new TIFFEncodeParam();
-			tep.setTileSize(TILE_SIZE, TILE_SIZE);
-			tep.setWriteTiled(true);
-			tep.setCompression(TIFFEncodeParam.COMPRESSION_DEFLATE);
-			tep.setDeflateLevel(5);
-			
-			try {
-				JAI.create("filestore", tiledImage, configuration.getImagePath().toAbsolutePath().toString(), "TIFF", tep);
-	    	} catch (Exception e) {
-	    		AmidstLogger.error(e, "An error occured while trying to export the image");
-	    		AmidstMessageBox.displayError("Export Biome Images", e, "An error occured while trying to export the image");
+				dataArray = null;
+				
+				TIFFEncodeParam tep = new TIFFEncodeParam();
+				tep.setTileSize(TILE_SIZE, TILE_SIZE);
+				tep.setWriteTiled(true);
+				tep.setCompression(TIFFEncodeParam.COMPRESSION_DEFLATE);
+				tep.setDeflateLevel(5);
+				
+				try {
+					JAI.create("filestore", tiledImage, configuration.getImagePath().toAbsolutePath().toString(), "TIFF", tep);
+		    	} catch (Exception e) {
+		    		AmidstLogger.error(e, "An error occured while trying to export the image");
+		    		AmidstMessageBox.displayError("Export Biome Images", e, "An error occured while trying to export the image");
+		    	} finally {
+		    		TILE_CACHE.flush();
+					tiledImage.dispose();
+					// We nullify these objects and call the garbage collector so that JAI releases its lock on the newly created file.
+					// This is sadly the best way to do this, and it is even recommended by JAI for when we want to unlock the file.
+		    		tep = null;
+					tiledImage = null;
+					System.gc();
+					progressReporter.report(entry(PROGRESS, tileMaxProgress + imageMaxProgress));
+				}
 	    	} finally {
-	    		TILE_CACHE.flush();
-				tiledImage.dispose();
-				// We nullify these objects and call the garbage collector so that JAI releases its lock on the newly created file.
-				// This is sadly the best way to do this, and it is even recommended by JAI for when we want to unlock the file.
-	    		tep = null;
-				tiledImage = null;
-				System.gc();
-				progressReporter.report(entry(PROGRESS, tileMaxProgress + imageMaxProgress));
-			}
+	    		// delete file if we made it earlier and didn't write to it or closed out early
+	    		try {
+					if (Files.size(configuration.getImagePath()) == 0) {
+						Files.delete(configuration.getImagePath());
+					}
+				} catch (IOException e) {
+					AmidstLogger.error("Error accessing blank file: " + configuration.getImagePath().toAbsolutePath().toString());
+				}
+	    	}
 	    }
 	}
 	

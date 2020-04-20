@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -139,6 +140,14 @@ public class WorldExporterDialog {
 	private JButton createExportButton() {
 		JButton exportButton = new JButton("Export");
 		exportButton.addActionListener((e) -> {
+			try {
+				topSpinner.commitEdit();
+				leftSpinner.commitEdit();
+				bottomSpinner.commitEdit();
+				rightSpinner.commitEdit();
+			} catch (ParseException e1) {
+			}
+			
 			CoordinatesInWorld topLeft = getTopLeftCoordinates();
 			CoordinatesInWorld bottomRight = getBottomRightCoordinates();
 			if (verifyImageCoordinates(topLeft, bottomRight) && verifyPathString(pathField.getText())) {
