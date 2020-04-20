@@ -103,7 +103,7 @@ public class WorldExporterDialog {
 		this.rightSpinner          = createCoordinateSpinner(defaultBottomRight.getX());
 		this.bottomSpinner         = createCoordinateSpinner(defaultBottomRight.getY());
 		this.fullResCheckBox       = new JCheckBox("Full Resolution");
-		this.pathField             = new JTextField(Paths.get("").toAbsolutePath().toString());
+		this.pathField             = createPathField();
 		this.browseButton          = createBrowseButton();
 		this.exportButton          = createExportButton();
 		this.previewImage          = new BufferedImage(PREVIEW_SIZE, PREVIEW_SIZE, BufferedImage.TYPE_INT_ARGB);
@@ -111,6 +111,12 @@ public class WorldExporterDialog {
 		this.previewLabel          = createPreviewLabel();
 		this.dialog                = createDialog();
 		// @formatter:on
+	}
+	
+	private JTextField createPathField() {
+		JTextField newTextField = new JTextField(Paths.get("biomes_" + worldOptions.getWorldType().getFilenameText() + "_" + worldOptions.getWorldSeed().getLong() + ".tiff").toAbsolutePath().toString());
+		newTextField.setPreferredSize(new JTextField("___________________________________________________").getPreferredSize());
+		return newTextField;
 	}
 	
 	private JSpinner createCoordinateSpinner(long defaultValue) {
@@ -230,14 +236,14 @@ public class WorldExporterDialog {
 		
 		JPanel pathPanel = new JPanel(new GridBagLayout());
 		
-		setConstraints(0, 0, 0, 0, HORIZONTAL, 0, 0, 1, 1, 0.0, 0.0, CENTER);
-		pathPanel.add(pathField, constraints);
+		setConstraints(0, 0, 0, 0, HORIZONTAL, 0, 0, 1, 1, 0.0, 0.0, SOUTH);
+		pathPanel.add(createLabeledPanel("Path:", pathField, HORIZONTAL), constraints);
 		
-		setConstraints(0, 10, 0, 0, HORIZONTAL, 1, 0, 1, 1, 0.0, 0.0, CENTER);
+		setConstraints(0, 10, 0, 0, HORIZONTAL, 1, 0, 1, 1, 0.0, 0.0, SOUTH);
 		pathPanel.add(browseButton, constraints);
 		
 		setConstraints(10, 20, 20, 10, BOTH, 0, 6, 4, 2, 0.0, 0.0, SOUTHWEST);
-		panel.add(createLabeledPanel("Path:", pathPanel, HORIZONTAL), constraints);
+		panel.add(pathPanel, constraints);
 		
 		setConstraints(15, 10, 10, 20, BOTH, 4, 0, 1, 7, 0.0, 0.0, EAST);
 		panel.add(createLabeledPanel("Preview:", previewLabel, NONE), constraints);
