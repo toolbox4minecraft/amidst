@@ -26,7 +26,6 @@ import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
 import amidst.logging.AmidstLogger;
-import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
@@ -119,22 +118,7 @@ public class Actions {
 				+ worldOptions.getWorldSeed().getLong() + ".tiff";
 		Path file = dialogs.askForTIFFSaveFile(suggestedFilename, parent);
 		if (file != null) {
-			file = Actions.appendTIFFFileExtensionIfNecessary(file);
-			boolean fileExists = Files.exists(file);
-			if (fileExists && !Files.isRegularFile(file)) {
-				String message = "Unable to set biome image path, because the target exists but is not a file: "
-						+ file.toString();
-				AmidstLogger.warn(message);
-				AmidstMessageBox.displayError(parent, "Error", message);
-			} else if (!Actions.canWriteToFile(file)) {
-				String message = "Unable to set biome image path, because you have no writing permissions: "
-						+ file.toString();
-				AmidstLogger.warn(message);
-				AmidstMessageBox.displayError(parent, "Error", message);
-			} else if (!fileExists || AmidstMessageBox.askToConfirmYesNo(parent, "Replace file?",
-					"File already exists. Do you want to replace it?\n" + file.toString() + "")) {
-				return file;
-			}
+			return Actions.appendTIFFFileExtensionIfNecessary(file);
 		}
 		return null;
 	}

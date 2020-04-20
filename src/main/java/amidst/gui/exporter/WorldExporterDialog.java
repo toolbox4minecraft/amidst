@@ -12,6 +12,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -159,14 +160,29 @@ public class WorldExporterDialog {
 	private boolean verifyPathString(String path) {
 		try {
 			Path p = Paths.get(path);
-			if (Files.isWritable(p)) {
+			Files.createDirectories(p.getParent());
+			boolean fileExists = Files.exists(p);
+			if (fileExists && !Files.isRegularFile(p)) {
+				String message = "Unable to export to path: " + p.toString() + "\nReason: Not a file";
+				AmidstLogger.warn(message);
+				AmidstMessageBox.displayError(dialog, "Error", message);
+			} else if (!Actions.canWriteToFile(p)) {
+				String message = "Unable to export to path: " + p.toString() + "\nReason: No writing permissions";
+				AmidstLogger.warn(message);
+				AmidstMessageBox.displayError(dialog, "Error", message);
+			} else if (!fileExists || AmidstMessageBox.askToConfirmYesNo(dialog, "Replace file?",
+					"File already exists. Do you want to replace it?\n" + p.toString() + "")) {
 				return true;
-			} else {
-				AmidstMessageBox.displayError(dialog, "Error", "Path is not able to be written to.");
-				return false;
 			}
+			return false;
 		} catch (InvalidPathException e) {
-			AmidstMessageBox.displayError(dialog, "Error", "Invalid path given.");
+			String message = "Unable to export to path\nReason: Invalid path given";
+			AmidstLogger.warn(message);
+			AmidstMessageBox.displayError(dialog, "Error", message);
+		} catch (IOException e) {
+			String message = "Unable to export to path\nReason: Error creating directories";
+			AmidstLogger.warn(message);
+			AmidstMessageBox.displayError(dialog, "Error", message);
 		}
 		return false;
 	}
