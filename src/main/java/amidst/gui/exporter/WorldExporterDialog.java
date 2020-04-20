@@ -345,11 +345,6 @@ public class WorldExporterDialog {
 	public void show() {
 		dialog.setVisible(true);
 		renderPreview();
-		updateGUI();
-	}
-	
-	private void updateGUI() {
-		
 	}
 	
 	private CoordinatesInWorld getTopLeftCoordinates() {
