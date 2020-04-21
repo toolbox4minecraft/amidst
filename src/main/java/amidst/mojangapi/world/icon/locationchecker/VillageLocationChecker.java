@@ -3,6 +3,7 @@ package amidst.mojangapi.world.icon.locationchecker;
 import java.util.List;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @ThreadSafe
@@ -16,12 +17,12 @@ public class VillageLocationChecker extends AllValidLocationChecker {
 	private static final int STRUCTURE_SIZE = 0;
 
 	public VillageLocationChecker(
-			long seed, BiomeDataOracle biomeDataOracle, List<Integer> validBiomeIdsForStructure, boolean doComplexVillageCheck) {
-		super(getLocationCheckers(seed, biomeDataOracle, validBiomeIdsForStructure, doComplexVillageCheck));
+			long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomesForStructure, boolean doComplexVillageCheck) {
+		super(getLocationCheckers(seed, biomeDataOracle, validBiomesForStructure, doComplexVillageCheck));
 	}
-	
+
 	private static LocationChecker[] getLocationCheckers(
-			long seed, BiomeDataOracle biomeDataOracle, List<Integer> validBiomeIdsForStructure, boolean doComplexVillageCheck) {
+			long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomesForStructure, boolean doComplexVillageCheck) {
 		LocationChecker base = new StructureAlgorithm(
 				seed,
 				MAGIC_NUMBER_FOR_SEED_1,
@@ -31,10 +32,10 @@ public class VillageLocationChecker extends AllValidLocationChecker {
 				MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 				USE_TWO_VALUES_FOR_UPDATE
 			);
-		LocationChecker biome = new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomeIdsForStructure);
+		LocationChecker biome = new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomesForStructure);
 
 		if(doComplexVillageCheck) {
-			return new LocationChecker[] { base, biome, new VillageAlgorithm(biomeDataOracle, validBiomeIdsForStructure) };
+			return new LocationChecker[] { base, biome, new VillageAlgorithm(biomeDataOracle, validBiomesForStructure) };
 		} else {
 			return new LocationChecker[] { base, biome };
 		}

@@ -1,11 +1,19 @@
 package amidst.mojangapi.world.versionfeatures;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import amidst.fragment.layer.LayerIds;
+import amidst.logging.AmidstLogger;
+import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.world.biome.BiomeList;
+import amidst.mojangapi.world.biome.UnknownBiomeIdException;
 import amidst.mojangapi.world.icon.locationchecker.BuriedTreasureLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.EndCityLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
@@ -27,38 +35,37 @@ import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.HeuristicWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 
-import static amidst.mojangapi.world.biome.BiomeType.*;
-
 public enum DefaultVersionFeatures {
 	;
 
-	public static VersionFeatures.Builder builder(WorldOptions worldOptions, BiomeDataOracle biomeDataOracle) {
-		if (worldOptions == null || biomeDataOracle == null) {
+	public static VersionFeatures.Builder builder(WorldOptions worldOptions, MinecraftInterface minecraftInterface) {
+		if (worldOptions == null || minecraftInterface == null) {
 			return FEATURES_BUILDER.clone();
 		} else {
 			return FEATURES_BUILDER.clone()
 							.withValue(FeatureKey.WORLD_OPTIONS, worldOptions)
-							.withValue(FeatureKey.BIOME_DATA_ORACLE, biomeDataOracle);
+							.withValue(MINECRAFT_INTERFACE, minecraftInterface);
 		}
 	}
 
 	// @formatter:off
-	public static final FeatureKey<List<Integer>>  VALID_BIOMES_FOR_STRUCTURE_SPAWN                = FeatureKey.make();
-	private static final FeatureKey<List<Integer>> VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD      = FeatureKey.make();
-	private static final FeatureKey<List<Integer>> VALID_BIOMES_FOR_STRUCTURE_VILLAGE              = FeatureKey.make();
-	private static final FeatureKey<List<Integer>> VALID_BIOMES_FOR_STRUCTURE_PILLAGER_OUTPOST     = FeatureKey.make();
+	private static final FeatureKey<MinecraftInterface> MINECRAFT_INTERFACE                        = FeatureKey.make();
+	public static final FeatureKey<List<Biome>>    VALID_BIOMES_FOR_STRUCTURE_SPAWN                = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD      = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   VALID_BIOMES_FOR_STRUCTURE_VILLAGE              = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   VALID_BIOMES_FOR_STRUCTURE_PILLAGER_OUTPOST     = FeatureKey.make();
 	private static final FeatureKey<Boolean>       DO_COMPLEX_VILLAGE_CHECK                        = FeatureKey.make();
 	private static final FeatureKey<Integer>       OUTPOST_VILLAGE_AVOID_DISTANCE                  = FeatureKey.make();
-	private static final FeatureKey<List<Integer>> VALID_BIOMES_AT_MIDDLE_OF_CHUNK_DESERT_TEMPLE   = FeatureKey.make();
-	private static final FeatureKey<List<Integer>> VALID_BIOMES_AT_MIDDLE_OF_CHUNK_IGLOO           = FeatureKey.make();
-	private static final FeatureKey<List<Integer>> VALID_BIOMES_AT_MIDDLE_OF_CHUNK_JUNGLE_TEMPLE   = FeatureKey.make();
-	private static final FeatureKey<List<Integer>> VALID_BIOMES_AT_MIDDLE_OF_CHUNK_WITCH_HUT       = FeatureKey.make();
-	private static final FeatureKey<List<Integer>> VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_RUINS     = FeatureKey.make();
-	private static final FeatureKey<List<Integer>> VALID_BIOMES_AT_MIDDLE_OF_CHUNK_SHIPWRECK       = FeatureKey.make();
-	private static final FeatureKey<List<Integer>> VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_MONUMENT  = FeatureKey.make();
-	private static final FeatureKey<List<Integer>> VALID_BIOMES_AT_MIDDLE_OF_CHUNK_BURIED_TREASURE = FeatureKey.make();
-	private static final FeatureKey<List<Integer>> VALID_BIOMES_FOR_STRUCTURE_OCEAN_MONUMENT       = FeatureKey.make();
-	private static final FeatureKey<List<Integer>> VALID_BIOMES_FOR_STRUCTURE_WOODLAND_MANSION     = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_DESERT_TEMPLE   = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_IGLOO           = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_JUNGLE_TEMPLE   = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_WITCH_HUT       = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_RUINS     = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_SHIPWRECK       = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_MONUMENT  = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_BURIED_TREASURE = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   VALID_BIOMES_FOR_STRUCTURE_OCEAN_MONUMENT       = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   VALID_BIOMES_FOR_STRUCTURE_WOODLAND_MANSION     = FeatureKey.make();
 	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_DESERT_TEMPLE                = FeatureKey.make();
 	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_IGLOO                        = FeatureKey.make();
 	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_JUNGLE_TEMPLE                = FeatureKey.make();
@@ -73,6 +80,12 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<Boolean>       BUGGY_STRUCTURE_COORDINATE_MATH                 = FeatureKey.make();
 
 	private static final VersionFeatures.Builder FEATURES_BUILDER = VersionFeatures.builder()
+			.with(FeatureKey.BIOME_DATA_ORACLE, VersionFeature.bind(features ->
+				VersionFeature.constant(new BiomeDataOracle(
+					features.get(MINECRAFT_INTERFACE),
+					features.get(FeatureKey.BIOME_LIST)
+				))
+			))
 			.with(FeatureKey.ENABLED_LAYERS, VersionFeature.<Integer> listBuilder()
 				.init(
 					LayerIds.ALPHA,
@@ -81,10 +94,12 @@ public enum DefaultVersionFeatures {
 					LayerIds.SLIME,
 					LayerIds.GRID,
 					LayerIds.SPAWN,
+					LayerIds.PLAYER
+				).sinceExtend(RecognisedVersion._b1_8_1, // Actually b1.8, but the version strings are identical
 					LayerIds.STRONGHOLD,
-					LayerIds.PLAYER,
 					LayerIds.VILLAGE,
-					LayerIds.MINESHAFT,
+					LayerIds.MINESHAFT
+				).sinceExtend(RecognisedVersion._b1_9_pre1,
 					LayerIds.NETHER_FORTRESS
 				).sinceExtend(RecognisedVersion._12w21a,
 					LayerIds.TEMPLE
@@ -98,177 +113,8 @@ public enum DefaultVersionFeatures {
 				).sinceExtend(RecognisedVersion._18w09a,
 					LayerIds.OCEAN_FEATURES
 				).construct())
-			
-			.with(FeatureKey.BIOME_LIST, VersionFeature.biomeListBuilder()
-				.init( // Starts at beta 1.8
-					new Biome(0, "Ocean", OCEAN),
-					new Biome(1, "Plains", PLAINS),
-					new Biome(2, "Desert", PLAINS_FLAT),
-					new Biome(3, "Extreme Hills", MOUNTAINS),
-					new Biome(4, "Forest", PLAINS),
-					new Biome(5, "Taiga", PLAINS_TAIGA),
-					new Biome(6, "Swampland", SWAMPLAND),
-					new Biome(7, "River", RIVER),
-					new Biome(8, "Hell", PLAINS),
-					new Biome(9, "Sky", PLAINS)
-				).sinceExtend(RecognisedVersion._b1_9_pre1,
-					new Biome(10, "Frozen Ocean", OCEAN),
-					new Biome(11, "Frozen River", RIVER),
-					new Biome(12, "Ice Plains", PLAINS_FLAT),
-					new Biome(13, "Ice Mountains", HILLS), // There was a bug causing this biome to not be generated until the next version
-					new Biome(14, "Mushroom Island", ISLAND),
-					new Biome(15, "Mushroom Island Shore", BEACH)
-				).sinceExtend(RecognisedVersion._12w01a,
-					new Biome(16, "Beach", BEACH),
-					new Biome(17, "Desert Hills", HILLS),
-					new Biome(18, "Forest Hills", HILLS),
-					new Biome(19, "Taiga Hills", HILLS),
-					new Biome(20, "Extreme Hills Edge", MOUNTAINS.weaken())
-				).sinceExtend(RecognisedVersion._12w03a,
-					new Biome(21, "Jungle", PLAINS),
-					new Biome(22, "Jungle Hills", HILLS)
-				).sinceExtend(RecognisedVersion._13w36a,
-					new Biome(23, "Jungle Edge", PLAINS),
-					new Biome(24, "Deep Ocean", DEEP_OCEAN),
-					new Biome(25, "Stone Beach", BEACH_CLIFFS),
-					new Biome(26, "Cold Beach", BEACH),
-					new Biome(27, "Birch Forest", PLAINS),
-					new Biome(28, "Birch Forest Hills", HILLS),
-					new Biome(29, "Roofed Forest", PLAINS),
-					new Biome(30, "Cold Taiga", PLAINS_TAIGA),
-					new Biome(31, "Cold Taiga Hills", HILLS),
-					new Biome(32, "Mega Taiga", PLAINS_TAIGA),
-					new Biome(33, "Mega Taiga Hills", HILLS),
-					new Biome(34, "Extreme Hills+", MOUNTAINS),
-					new Biome(35, "Savanna", PLAINS_FLAT),
-					new Biome(36, "Savanna Plateau", PLATEAU),
-					new Biome(37, "Mesa", PLAINS),
-					new Biome(38, "Mesa Plateau F", PLATEAU),
-					new Biome(39, "Mesa Plateau", PLATEAU),
-					// All of the modified biomes in this version just had an M after their original biome name
-					new Biome("Plains M", 1, PLAINS),
-					new Biome("Desert M", 2, PLAINS_FLAT),
-					new Biome("Extreme Hills M", 3, MOUNTAINS),
-					new Biome("Forest M", 4, PLAINS),
-					new Biome("Taiga M", 5, PLAINS_TAIGA),
-					new Biome("Swampland M", 6, SWAMPLAND),
-					new Biome("Ice Plains M", 12, PLAINS_FLAT),
-					new Biome("Jungle M", 21, PLAINS),
-					new Biome("Jungle Edge M", 23, PLAINS),
-					new Biome("Birch Forest M", 27, PLAINS),
-					new Biome("Birch Forest Hills M", 28, HILLS),
-					new Biome("Roofed Forest M", 29, PLAINS),
-					new Biome("Cold Taiga M", 30, PLAINS_TAIGA),
-					new Biome("Mega Taiga M", 32, PLAINS_TAIGA),
-					new Biome(161, "Mega Taiga Hills M", PLAINS_TAIGA.strengthen(), true),
-					new Biome("Extreme Hills+ M", 34, MOUNTAINS),
-					new Biome("Savanna M", 35, PLAINS_FLAT),
-					new Biome("Savanna Plateau M", 36, PLATEAU),
-					new Biome("Mesa M", 37, PLAINS),
-					new Biome("Mesa Plateau F M", 38, PLATEAU),
-					new Biome("Mesa Plateau M", 39, PLATEAU)
-				).sinceExtend(RecognisedVersion._14w02a, // Need confirmation on version; this was changed sometime after 1.7.10 and before 1.8.8
-					new Biome(161,"Redwood Taiga Hills M", PLAINS_TAIGA.strengthen(), true)
-				).sinceExtend(RecognisedVersion._14w17a,
-					new Biome(9,  "The End", PLAINS)
-				).sinceExtend(RecognisedVersion._15w31c, // Need confirmation on this version. Was after 1.8.8 and before 1.9.4
-					new Biome("Sunflower Plains", 1, PLAINS),
-					new Biome("Flower Forest", 4, PLAINS),
-					new Biome("Ice Plains Spikes", 12, PLAINS_FLAT),
-					new Biome("Mega Spruce Taiga", 32, PLAINS_TAIGA),
-					new Biome("Mesa (Bryce)", 37, PLAINS)
-				).sinceExtend(RecognisedVersion._15w40b, // Is actually 15w37a, but magic strings are identical
-					new Biome(127,"The Void", PLAINS)
-				).sinceExtend(RecognisedVersion._18w06a,
-					new Biome(40, "The End - Floating Island", PLAINS),
-					new Biome(41, "The End - Medium Island", PLAINS),
-					new Biome(42, "The End - High Island", PLAINS),
-					new Biome(43, "The End - Barren Island", PLAINS)
-				).sinceExtend(RecognisedVersion._18w08a,
-					new Biome(44, "Warm Ocean", OCEAN),
-					new Biome(45, "Lukewarm Ocean", OCEAN),
-					new Biome(46, "Cold Ocean", OCEAN),
-					new Biome(47, "Warm Deep Ocean", OCEAN),
-					new Biome(48, "Lukewarm Deep Ocean", OCEAN),
-					new Biome(49, "Cold Deep Ocean", OCEAN),
-					new Biome(50, "Frozen Deep Ocean", OCEAN)
-				).sinceExtend(RecognisedVersion._18w16a,
-					new Biome(8, "Nether", PLAINS),
-					new Biome(38, "Mesa Forest Plateu", PLATEAU),
-					new Biome("Mutated Desert", 2, PLAINS_FLAT),
-					new Biome("Mutated Extreme Hills", 3, MOUNTAINS),
-					new Biome("Mutated Taiga", 5, PLAINS_TAIGA),
-					new Biome("Mutated Swampland", 6, SWAMPLAND),
-					new Biome("Mutated Jungle", 21, PLAINS),
-					new Biome("Mutated Jungle Edge", 23, PLAINS),
-					new Biome("Mutated Birch Forest", 27, PLAINS),
-					new Biome("Mutated Birch Forest Hills", 28, HILLS),
-					new Biome("Mutated Roofed Forest", 29, PLAINS),
-					new Biome("Mutated Cold Taiga", 30, PLAINS_TAIGA),
-					new Biome("Mutated Extreme Hills+", 34, MOUNTAINS),
-					new Biome("Mutated Savanna", 35, PLAINS_FLAT),
-					new Biome("Mutated Savanna Plateau", 36, PLATEAU),
-					new Biome("Mutated Mesa Forest Plateau", 38, PLATEAU),
-					new Biome("Mutated Mesa Plateau", 39, PLATEAU)
-				).sinceExtend(RecognisedVersion._18w19a,
-					new Biome(3, "Mountains", MOUNTAINS),
-					new Biome(6, "Swamp", SWAMPLAND),
-					new Biome(12, "Snowy Tundra", PLAINS_FLAT),
-					new Biome(13, "Snowy Mountains", HILLS),
-					new Biome(14, "Mushroom Fields", ISLAND),
-					new Biome(15, "Mushroom Field Shore", BEACH),
-					new Biome(18, "Wooded Hills", HILLS),
-					new Biome(20, "Mountain Edge", MOUNTAINS.weaken()),
-					new Biome(25, "Stone Shore", BEACH_CLIFFS),
-					new Biome(26, "Snowy Beach", BEACH),
-					new Biome(29, "Dark Forest", PLAINS),
-					new Biome(30, "Snowy Taiga", PLAINS_TAIGA),
-					new Biome(31, "Snowy Taiga Hills", HILLS),
-					new Biome(32, "Giant Tree Taiga", PLAINS_TAIGA),
-					new Biome(33, "Giant Tree Taiga Hills", HILLS),
-					new Biome(34, "Wooded Mountains", MOUNTAINS),
-					new Biome(37, "Badlands", PLAINS),
-					new Biome(38, "Wooded Badlands Plateau", PLATEAU),
-					new Biome(39, "Badlands Plateau", PLATEAU),
-					new Biome(40, "Small End Islands", PLAINS),
-					new Biome(41, "End Midlands", PLAINS),
-					new Biome(42, "End Highlands", PLAINS),
-					new Biome(43, "End Barrens", PLAINS),
-					new Biome(47, "Deep Warm Ocean", OCEAN),
-					new Biome(48, "Deep Lukewarm Ocean", OCEAN),
-					new Biome(49, "Deep Cold Ocean", OCEAN),
-					new Biome(50, "Deep Frozen Ocean", OCEAN),
-					new Biome("Desert Lakes", 2, PLAINS_FLAT),
-					new Biome("Gravelly Mountains", 3, MOUNTAINS),
-					new Biome("Taiga Mountains", 5, PLAINS_TAIGA),
-					new Biome("Swamp Hills", 6, SWAMPLAND),
-					new Biome("Ice Spikes", 12, PLAINS_FLAT),
-					new Biome("Modified Jungle", 21, PLAINS),
-					new Biome("Modified Jungle Edge", 23, PLAINS),
-					new Biome("Tall Birch Forest", 27, PLAINS),
-					new Biome("Tall Birch Hills", 28, HILLS),
-					new Biome("Dark Forest Hills", 29, PLAINS),
-					new Biome("Snowy Taiga Mountains", 30, PLAINS_TAIGA),
-					new Biome("Giant Spruce Taiga", 32, PLAINS_TAIGA),
-					new Biome(161, "Giant Spruce Taiga Hills", PLAINS_TAIGA, true), // Don't strengthen this in newer versions (might be wrong here)
-					new Biome("Gravelly Mountains+", 34, MOUNTAINS),
-					new Biome("Shattered Savanna", 35, PLAINS_FLAT),
-					new Biome("Shattered Savanna Plateau", 36, PLATEAU),
-					new Biome("Eroded Badlands", 37, PLAINS),
-					new Biome("Modified Wooded Badlands Plateau", 38, PLATEAU),
-					new Biome("Modified Badlands Plateau", 39, PLATEAU)
-				).sinceExtend(RecognisedVersion._18w43a,
-					new Biome(168, "Bamboo Jungle", PLAINS),
-					new Biome(169, "Bamboo Jungle Hills", HILLS)
-				).sinceExtend(RecognisedVersion._20w06a,
-					new Biome(8, "Nether Wastes", PLAINS),
-					new Biome(170, "Soul Sand Valley", PLAINS),
-					new Biome(171, "Crimson Forest", PLAINS),
-					new Biome(172, "Warped Forest", PLAINS)
-				).sinceExtend(RecognisedVersion._20w15a,
-					new Biome(173, "Basalt Deltas", PLAINS)
-				).construct())
 
+			.with(FeatureKey.BIOME_LIST, DefaultBiomes.DEFAULT_BIOMES)
 			.with(FeatureKey.END_ISLAND_ORACLE, VersionFeature.bind(features ->
 				VersionFeature.constant(EndIslandOracle.from(getWorldSeed(features)))
 			))
@@ -286,16 +132,19 @@ public enum DefaultVersionFeatures {
 				)))
 			.with(VALID_BIOMES_FOR_STRUCTURE_SPAWN, VersionFeature.<Integer> listBuilder()
 				.init(
-					Biome.forest,
-					Biome.plains,
-					Biome.taiga,
-					Biome.taigaHills,
-					Biome.forestHills,
-					Biome.jungle,
-					Biome.jungleHills
-				).construct())
+					DefaultBiomes.forest,
+					DefaultBiomes.plains,
+					DefaultBiomes.taiga
+				).sinceExtend(RecognisedVersion._12w01a,
+					DefaultBiomes.taigaHills,
+					DefaultBiomes.forestHills
+				).sinceExtend(RecognisedVersion._12w03a,
+					DefaultBiomes.jungle,
+					DefaultBiomes.jungleHills
+				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 
 			.with(FeatureKey.NETHER_FORTRESS_LOCATION_CHECKER, VersionFeature.bind(features ->
+				// TODO: add Nether biome checks when we implement Nether biomes
 				VersionFeature.constant(new NetherFortressAlgorithm(getWorldSeed(features)))
 			))
 
@@ -319,7 +168,7 @@ public enum DefaultVersionFeatures {
 			.with(FeatureKey.STRONGHOLD_PRODUCER, VersionFeature.bind(features -> {
 				long worldSeed = getWorldSeed(features);
 				BiomeDataOracle biomeOracle = features.get(FeatureKey.BIOME_DATA_ORACLE);
-				List<Integer> validBiomes = features.get(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD);
+				List<Biome> validBiomes = features.get(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD);
 				return VersionFeature.<CachedWorldIconProducer>builder()
 					.init(
 						new StrongholdProducer_Original(worldSeed, biomeOracle, validBiomes)
@@ -331,30 +180,29 @@ public enum DefaultVersionFeatures {
 						new StrongholdProducer_128Algorithm(worldSeed, biomeOracle, validBiomes)
 					).construct();
 			}))
-			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD, VersionFeature.bind(features ->
-				VersionFeature.<Integer> listBuilder()
-					.init().since(RecognisedVersion._b1_8_1,
-						Biome.desert,
-						Biome.forest,
-						Biome.extremeHills,
-						Biome.swampland
-					).sinceExtend(RecognisedVersion._b1_9_pre6,
-						Biome.taiga,
-						Biome.icePlains,
-						Biome.iceMountains
-					).sinceExtend(RecognisedVersion._1_1,
-						Biome.desertHills,
-						Biome.forestHills,
-						Biome.extremeHillsEdge
-					).sinceExtend(RecognisedVersion._12w03a,
-						Biome.jungle,
-						Biome.jungleHills
-					).since(RecognisedVersion._13w36a,
-						// this includes all the biomes above, except for the swampland
-						getValidBiomesForStrongholdSinceV13w36a(features.get(FeatureKey.BIOME_LIST))
-					).sinceExtend(RecognisedVersion._18w06a,
-						Biome.mushroomIslandShore
-					).construct()))
+			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD, VersionFeature.<Integer> listBuilder()
+				.init().since(RecognisedVersion._b1_8_1,
+					DefaultBiomes.desert,
+					DefaultBiomes.forest,
+					DefaultBiomes.extremeHills,
+					DefaultBiomes.swampland
+				).sinceExtend(RecognisedVersion._b1_9_pre6,
+					DefaultBiomes.taiga,
+					DefaultBiomes.icePlains,
+					DefaultBiomes.iceMountains
+				).sinceExtend(RecognisedVersion._1_1,
+					DefaultBiomes.desertHills,
+					DefaultBiomes.forestHills,
+					DefaultBiomes.extremeHillsEdge
+				).sinceExtend(RecognisedVersion._12w03a,
+					DefaultBiomes.jungle,
+					DefaultBiomes.jungleHills
+				).since(RecognisedVersion._13w36a,
+					// this includes all the biomes above, except for the swampland
+					features -> getValidBiomesForStrongholdSinceV13w36a(features.get(FeatureKey.BIOME_LIST))
+				).sinceExtend(RecognisedVersion._18w06a,
+					DefaultBiomes.mushroomIslandShore
+				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 
 
 			.with(FeatureKey.VILLAGE_LOCATION_CHECKER, VersionFeature.bind(features ->
@@ -368,14 +216,15 @@ public enum DefaultVersionFeatures {
 				)))
 			.with(VALID_BIOMES_FOR_STRUCTURE_VILLAGE, VersionFeature.<Integer> listBuilder()
 				.init(
-					Biome.plains,
-					Biome.desert,
-					Biome.savanna
+					DefaultBiomes.plains,
+					DefaultBiomes.desert
+				).sinceExtend(RecognisedVersion._13w36a,
+					DefaultBiomes.savanna
 				).sinceExtend(RecognisedVersion._16w20a,
-					Biome.taiga
+					DefaultBiomes.taiga
 				).sinceExtend(RecognisedVersion._18w49a,
-					Biome.icePlains
-				).construct())
+					DefaultBiomes.icePlains
+				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 			.with(DO_COMPLEX_VILLAGE_CHECK, VersionFeature.<Boolean> builder()
 				.init(
 					true
@@ -396,13 +245,13 @@ public enum DefaultVersionFeatures {
 			.with(VALID_BIOMES_FOR_STRUCTURE_PILLAGER_OUTPOST, VersionFeature.<Integer> listBuilder()
 				.init()
 				.sinceExtend(RecognisedVersion._18w47b,
-					Biome.plains,
-					Biome.desert,
-					Biome.savanna,
-					Biome.taiga
+					DefaultBiomes.plains,
+					DefaultBiomes.desert,
+					DefaultBiomes.savanna,
+					DefaultBiomes.taiga
 				).sinceExtend(RecognisedVersion._18w49a,
-					Biome.icePlains
-				).construct())
+					DefaultBiomes.icePlains
+				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 			.with(OUTPOST_VILLAGE_AVOID_DISTANCE, VersionFeature.<Integer> builder()
 				.init(
 					-1
@@ -417,9 +266,10 @@ public enum DefaultVersionFeatures {
 				SEED_FOR_STRUCTURE_DESERT_TEMPLE))
 			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_DESERT_TEMPLE, VersionFeature.<Integer> listBuilder()
 				.init(
-					Biome.desert,
-					Biome.desertHills
-				).construct())
+					DefaultBiomes.desert
+				).sinceExtend(RecognisedVersion._12w01a,
+					DefaultBiomes.desertHills
+				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 			.with(SEED_FOR_STRUCTURE_DESERT_TEMPLE, VersionFeature.<Long> builder()
 				.init(
 					14357617L
@@ -431,9 +281,9 @@ public enum DefaultVersionFeatures {
 			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_IGLOO, VersionFeature.<Integer> listBuilder()
 				.init()
 				.sinceExtend(RecognisedVersion._15w43c,
-					Biome.icePlains,
-					Biome.coldTaiga
-				).construct())
+					DefaultBiomes.icePlains,
+					DefaultBiomes.coldTaiga
+				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 
 			.with(SEED_FOR_STRUCTURE_IGLOO, VersionFeature.<Long> builder()
 				.init(
@@ -448,13 +298,13 @@ public enum DefaultVersionFeatures {
 			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_JUNGLE_TEMPLE, VersionFeature.<Integer> listBuilder()
 				.init()
 				.sinceExtend(RecognisedVersion._12w22a,
-					Biome.jungle
+					DefaultBiomes.jungle
 				).sinceExtend(RecognisedVersion._1_4_2,
-					Biome.jungleHills // TODO: jungle temples spawn only since 1.4.2 in jungle hills?
+					DefaultBiomes.jungleHills // TODO: jungle temples spawn only since 1.4.2 in jungle hills?
 				).sinceExtend(RecognisedVersion._19w06a,
-					Biome.bambooJungle,
-					Biome.bambooJungleHills
-				).construct())
+					DefaultBiomes.bambooJungle,
+					DefaultBiomes.bambooJungleHills
+				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 			.with(SEED_FOR_STRUCTURE_JUNGLE_TEMPLE,  VersionFeature.<Long> builder()
 				.init(
 						14357617L
@@ -468,8 +318,8 @@ public enum DefaultVersionFeatures {
 			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_WITCH_HUT, VersionFeature.<Integer> listBuilder()
 				.init()
 				.sinceExtend(RecognisedVersion._1_4_2,
-					Biome.swampland
-				).construct())
+					DefaultBiomes.swampland
+				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 			.with(SEED_FOR_STRUCTURE_WITCH_HUT, VersionFeature.<Long> builder()
 				.init(
 						14357617L
@@ -480,8 +330,8 @@ public enum DefaultVersionFeatures {
 			.with(FeatureKey.OCEAN_MONUMENT_LOCATION_CHECKER, VersionFeature.bind(features -> {
 				long worldSeed = getWorldSeed(features);
 				BiomeDataOracle biomeOracle = features.get(FeatureKey.BIOME_DATA_ORACLE);
-				List<Integer> validCenterBiomes = features.get(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_MONUMENT);
-				List<Integer> validBiomes = features.get(VALID_BIOMES_FOR_STRUCTURE_OCEAN_MONUMENT);
+				List<Biome> validCenterBiomes = features.get(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_MONUMENT);
+				List<Biome> validBiomes = features.get(VALID_BIOMES_FOR_STRUCTURE_OCEAN_MONUMENT);
 				return VersionFeature.<LocationChecker> builder()
 					.init(
 						new OceanMonumentLocationChecker_Original(worldSeed, biomeOracle, validCenterBiomes, validBiomes)
@@ -492,27 +342,29 @@ public enum DefaultVersionFeatures {
 			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_MONUMENT, VersionFeature.<Integer> listBuilder()
 				.init()
 				.sinceExtend(RecognisedVersion._1_8,
-					Biome.deepOcean,
-					Biome.coldDeepOcean,
-					Biome.warmDeepOcean,
-					Biome.lukewarmDeepOcean,
-					Biome.frozenDeepOcean
-				).construct())
+					DefaultBiomes.deepOcean
+				).sinceExtend(RecognisedVersion._18w08a,
+					DefaultBiomes.coldDeepOcean,
+					DefaultBiomes.warmDeepOcean,
+					DefaultBiomes.lukewarmDeepOcean,
+					DefaultBiomes.frozenDeepOcean
+				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 			.with(VALID_BIOMES_FOR_STRUCTURE_OCEAN_MONUMENT, VersionFeature.<Integer> listBuilder()
 				.init().sinceExtend(RecognisedVersion._1_8,
-					Biome.ocean,
-					Biome.deepOcean,
-					Biome.frozenOcean,
-					Biome.river,
-					Biome.frozenRiver,
-					Biome.coldOcean,
-					Biome.coldDeepOcean,
-					Biome.warmOcean,
-					Biome.warmDeepOcean,
-					Biome.lukewarmOcean,
-					Biome.lukewarmDeepOcean,
-					Biome.frozenDeepOcean
-				).construct())
+					DefaultBiomes.ocean,
+					DefaultBiomes.deepOcean,
+					DefaultBiomes.frozenOcean,
+					DefaultBiomes.river,
+					DefaultBiomes.frozenRiver
+				).sinceExtend(RecognisedVersion._18w08a,
+					DefaultBiomes.coldOcean,
+					DefaultBiomes.coldDeepOcean,
+					DefaultBiomes.warmOcean,
+					DefaultBiomes.warmDeepOcean,
+					DefaultBiomes.lukewarmOcean,
+					DefaultBiomes.lukewarmDeepOcean,
+					DefaultBiomes.frozenDeepOcean
+				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 
 			.with(FeatureKey.WOODLAND_MANSION_LOCATION_CHECKER, VersionFeature.bind(features ->
 				VersionFeature.constant(
@@ -523,10 +375,10 @@ public enum DefaultVersionFeatures {
 					)
 				)))
 			.with(VALID_BIOMES_FOR_STRUCTURE_WOODLAND_MANSION, VersionFeature.<Integer> listBuilder()
-				.init(
-					Biome.roofedForest,
-					Biome.roofedForestM
-				).construct())
+				.init().sinceExtend(RecognisedVersion._16w43a, // Actually 16w39a, but version strings are identical
+					DefaultBiomes.roofedForest,
+					DefaultBiomes.roofedForestM
+				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 
 			.with(FeatureKey.OCEAN_RUINS_LOCATION_CHECKER, scatteredFeature(
 				MAX_DISTANCE_SCATTERED_FEATURES_OCEAN_RUINS,
@@ -536,17 +388,17 @@ public enum DefaultVersionFeatures {
 			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_RUINS, VersionFeature.<Integer> listBuilder()
 				.init()
 				.sinceExtend(RecognisedVersion._18w09a,
-					Biome.ocean,
-					Biome.deepOcean,
-					Biome.coldOcean,
-					Biome.coldDeepOcean,
-					Biome.warmOcean,
-					Biome.warmDeepOcean,
-					Biome.lukewarmOcean,
-					Biome.lukewarmDeepOcean,
-					Biome.frozenOcean,
-					Biome.frozenDeepOcean
-				).construct())
+					DefaultBiomes.ocean,
+					DefaultBiomes.deepOcean,
+					DefaultBiomes.coldOcean,
+					DefaultBiomes.coldDeepOcean,
+					DefaultBiomes.warmOcean,
+					DefaultBiomes.warmDeepOcean,
+					DefaultBiomes.lukewarmOcean,
+					DefaultBiomes.lukewarmDeepOcean,
+					DefaultBiomes.frozenOcean,
+					DefaultBiomes.frozenDeepOcean
+				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 			.with(MIN_DISTANCE_SCATTERED_FEATURES_OCEAN_RUINS, VersionFeature.<Byte> builder()
 				.init(
 					(byte) 8
@@ -570,19 +422,19 @@ public enum DefaultVersionFeatures {
 			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_SHIPWRECK, VersionFeature.<Integer> listBuilder()
 				.init()
 				.sinceExtend(RecognisedVersion._18w11a,
-					Biome.beach,
-					Biome.coldBeach,
-					Biome.ocean,
-					Biome.deepOcean,
-					Biome.coldOcean,
-					Biome.coldDeepOcean,
-					Biome.warmOcean,
-					Biome.warmDeepOcean,
-					Biome.lukewarmOcean,
-					Biome.lukewarmDeepOcean,
-					Biome.frozenOcean,
-					Biome.frozenDeepOcean
-				).construct())
+					DefaultBiomes.beach,
+					DefaultBiomes.coldBeach,
+					DefaultBiomes.ocean,
+					DefaultBiomes.deepOcean,
+					DefaultBiomes.coldOcean,
+					DefaultBiomes.coldDeepOcean,
+					DefaultBiomes.warmOcean,
+					DefaultBiomes.warmDeepOcean,
+					DefaultBiomes.lukewarmOcean,
+					DefaultBiomes.lukewarmDeepOcean,
+					DefaultBiomes.frozenOcean,
+					DefaultBiomes.frozenDeepOcean
+				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 			.with(MAX_DISTANCE_SCATTERED_FEATURES_SHIPWRECK, VersionFeature.<Byte> builder()
 				.init(
 					(byte) 15
@@ -613,9 +465,9 @@ public enum DefaultVersionFeatures {
 				)))
 			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_BURIED_TREASURE, VersionFeature.<Integer> listBuilder()
 				.init().sinceExtend(RecognisedVersion._18w10d,
-					Biome.beach,
-					Biome.coldBeach
-				).construct())
+					DefaultBiomes.beach,
+					DefaultBiomes.coldBeach
+				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 			.with(SEED_FOR_STRUCTURE_BURIED_TREASURE, VersionFeature.<Long> builder()
 				.init(
 						10387320L
@@ -644,13 +496,28 @@ public enum DefaultVersionFeatures {
 		return result;
 	}
 
+	private static List<Biome> makeBiomeList(VersionFeatures features, List<Integer> biomeIds) {
+		BiomeList biomeList = features.get(FeatureKey.BIOME_LIST);
+		List<Biome> biomes = biomeIds.stream()
+			.flatMap(id -> {
+				try {
+					return Stream.of(biomeList.getById(id));
+				} catch (UnknownBiomeIdException e) {
+					AmidstLogger.warn("Unknown biome id found in version features: " + id + ", skipping");
+					return Stream.empty();
+				}
+			})
+			.collect(Collectors.toList());
+		return Collections.unmodifiableList(biomes);
+	}
+
 	private static long getWorldSeed(VersionFeatures features) {
 		return features.get(FeatureKey.WORLD_OPTIONS).getWorldSeed().getLong();
 	}
 
 	private static VersionFeature<LocationChecker> scatteredFeature(
 			FeatureKey<Byte> maxDistance, FeatureKey<Byte> minDistance,
-			FeatureKey<List<Integer>> validBiomes, FeatureKey<Long> structSeed) {
+			FeatureKey<List<Biome>> validBiomes, FeatureKey<Long> structSeed) {
 		return VersionFeature.bind(features ->
 			VersionFeature.constant(
 				new ScatteredFeaturesLocationChecker(
@@ -665,7 +532,7 @@ public enum DefaultVersionFeatures {
 	}
 
 	private static VersionFeature<LocationChecker> scatteredFeature(
-			FeatureKey<List<Integer>> validBiomes, FeatureKey<Long> structSeed) {
+			FeatureKey<List<Biome>> validBiomes, FeatureKey<Long> structSeed) {
 		return VersionFeature.bind(features ->
 			VersionFeature.constant(
 				new ScatteredFeaturesLocationChecker(

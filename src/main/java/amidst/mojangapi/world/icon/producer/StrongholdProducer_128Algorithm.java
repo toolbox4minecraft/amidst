@@ -4,18 +4,19 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 /**
  * This is the fixed version of the 128 stronghold algorithm. It introduced in
  * 16w06a.
- * 
+ *
  * see https://bugs.mojang.com/browse/MC-92289
  */
 @ThreadSafe
 public class StrongholdProducer_128Algorithm extends StrongholdProducer_Buggy128Algorithm {
-	public StrongholdProducer_128Algorithm(long seed, BiomeDataOracle biomeDataOracle, List<Integer> validBiomeIds) {
-		super(seed, biomeDataOracle, validBiomeIds);
+	public StrongholdProducer_128Algorithm(long seed, BiomeDataOracle biomeDataOracle, List<Biome> validBiomes) {
+		super(seed, biomeDataOracle, validBiomes);
 	}
 
 	@Override

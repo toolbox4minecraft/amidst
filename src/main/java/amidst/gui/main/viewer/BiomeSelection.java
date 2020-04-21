@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.biome.Biome;
-import amidst.mojangapi.world.versionfeatures.BiomeList;
+import amidst.mojangapi.world.biome.BiomeList;
 
 @ThreadSafe
 public class BiomeSelection {

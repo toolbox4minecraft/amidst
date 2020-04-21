@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @ThreadSafe
@@ -18,7 +19,7 @@ public class PillagerOutpostLocationChecker extends AllValidLocationChecker {
 
 
 	public PillagerOutpostLocationChecker(long seed, BiomeDataOracle biomeDataOracle,
-			LocationChecker villageLocationChecker, int avoidVillageRadius, List<Integer> validBiomeIdsForStructure) {
+			LocationChecker villageLocationChecker, int avoidVillageRadius, List<Biome> validBiomesForStructure) {
 		super(
 			new StructureAlgorithm(
 				seed,
@@ -29,7 +30,7 @@ public class PillagerOutpostLocationChecker extends AllValidLocationChecker {
 				MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
 				USE_TWO_VALUES_FOR_UPDATE),
 			new PillagerOutpostAlgorithm(seed),
-			new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomeIdsForStructure),
+			new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomesForStructure),
 			new SuppressAroundLocationChecker(villageLocationChecker, avoidVillageRadius)
 		);
 	}
