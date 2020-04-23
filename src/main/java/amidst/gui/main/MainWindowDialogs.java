@@ -1,7 +1,5 @@
 package amidst.gui.main;
 
-import java.awt.Component;
-import java.awt.Frame;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -72,13 +70,8 @@ public class MainWindowDialogs {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Path askForPNGSaveFile(String suggestedFilename, Component parent) {
-		return showSaveDialogAndGetSelectedFileOrNull(createPNGSaveFileChooser(suggestedFilename), parent);
-	}
-	
-	@CalledOnlyBy(AmidstThread.EDT)
-	public Path askForTIFFSaveFile(String suggestedFilename, Component parent) {
-		return showSaveDialogAndGetSelectedFileOrNull(createTIFFSaveFileChooser(suggestedFilename), parent);
+	public Path askForPNGSaveFile(String suggestedFilename) {
+		return showSaveDialogAndGetSelectedFileOrNull(createPNGSaveFileChooser(suggestedFilename));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -100,11 +93,8 @@ public class MainWindowDialogs {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private Path showSaveDialogAndGetSelectedFileOrNull(JFileChooser fileChooser, Component parent) {
-		if (parent == null) {
-			parent = this.frame;
-		}
-		if (fileChooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
+	private Path showSaveDialogAndGetSelectedFileOrNull(JFileChooser fileChooser) {
+		if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
 			return fileChooser.getSelectedFile().toPath();
 		} else {
 			return null;
@@ -191,10 +181,6 @@ public class MainWindowDialogs {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private String askForString(String title, String message) {
 		return JOptionPane.showInputDialog(frame, message, title, JOptionPane.QUESTION_MESSAGE);
-	}
-
-	public Frame getFrame() {
-		return frame;
 	}
 	
 }

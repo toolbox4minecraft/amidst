@@ -3,6 +3,7 @@ package amidst.gui.main.menu;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.MenuElement;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -34,6 +35,27 @@ public class AmidstMenu {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public JMenuBar getMenuBar() {
 		return menuBar;
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void setMenuItemsEnabled(String[] textRepresentations, boolean enabled) {
+		setMenuItemsEnabled(menuBar, textRepresentations, enabled);
+	}
+	
+	private static void setMenuItemsEnabled(MenuElement menuElement, String[] textRepresentations, boolean enabled) {
+		MenuElement[] elements = menuElement.getSubElements();
+		if(elements != null) {
+			for(MenuElement element : elements) {
+				if(element instanceof JMenuItem) {
+					for(String s : textRepresentations) {
+						if(((JMenuItem) element).getText().equals(s)) {
+							((JMenuItem) element).setEnabled(enabled);
+						}
+					}
+				}
+				setMenuItemsEnabled(element, textRepresentations, enabled);
+			}
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

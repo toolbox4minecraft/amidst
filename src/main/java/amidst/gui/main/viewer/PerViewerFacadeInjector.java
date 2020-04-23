@@ -2,6 +2,8 @@ package amidst.gui.main.viewer;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import amidst.AmidstSettings;
@@ -14,6 +16,7 @@ import amidst.fragment.FragmentQueueProcessor;
 import amidst.fragment.layer.LayerBuilder;
 import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerReloader;
+import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.main.Actions;
 import amidst.gui.main.viewer.widget.BiomeToggleWidget;
 import amidst.gui.main.viewer.widget.BiomeWidget;
@@ -22,17 +25,16 @@ import amidst.gui.main.viewer.widget.CursorInformationWidget;
 import amidst.gui.main.viewer.widget.DebugWidget;
 import amidst.gui.main.viewer.widget.FpsWidget;
 import amidst.gui.main.viewer.widget.FramerateTimer;
-import amidst.gui.main.viewer.widget.WorldExporterProgressWidget;
+import amidst.gui.main.viewer.widget.BiomeExporterProgressWidget;
 import amidst.gui.main.viewer.widget.ScaleWidget;
 import amidst.gui.main.viewer.widget.SeedAndWorldTypeWidget;
 import amidst.gui.main.viewer.widget.SelectedIconWidget;
 import amidst.gui.main.viewer.widget.Widget;
 import amidst.gui.main.viewer.widget.Widget.CornerAnchorPoint;
 import amidst.gui.main.viewer.widget.WidgetManager;
+import amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldOptions;
-import amidst.mojangapi.world.export.WorldExporter;
-import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.threading.WorkerExecutor;
 
 @NotThreadSafe
@@ -64,14 +66,12 @@ public class PerViewerFacadeInjector {
 				debugWidget,
 				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension, world.getBiomeList()),
 				biomeToggleWidget,
-				new WorldExporterProgressWidget(CornerAnchorPoint.BOTTOM_RIGHT,  -20, settings.showDebug, debugWidget, biomeToggleWidget.getWidth()),
+				new BiomeExporterProgressWidget(CornerAnchorPoint.BOTTOM_RIGHT,  -20, settings.showDebug, debugWidget, biomeToggleWidget.getWidth()),
 				biomeWidget
 		);
 		// @formatter:on
 	}
 
-	private final WorkerExecutor workerExecutor;
-	private final World world;
 	private final BiomeSelection biomeSelection;
 	private final Graphics2DAccelerationCounter accelerationCounter;
 	private final Movement movement;
@@ -88,8 +88,6 @@ public class PerViewerFacadeInjector {
 	private final ViewerMouseListener viewerMouseListener;
 	private final Viewer viewer;
 	private final ViewerFacade viewerFacade;
-	private final Actions actions;
-	private final BiomeProfileSelection biomeProfileSelection;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public PerViewerFacadeInjector(
@@ -98,10 +96,9 @@ public class PerViewerFacadeInjector {
 			Zoom zoom,
 			LayerBuilder layerBuilder,
 			FragmentManager fragmentManager,
+			BiomeExporterDialog biomeExporterDialog,
 			World world,
 			Actions actions) {
-		this.workerExecutor = workerExecutor;
-		this.world = world;
 		this.biomeSelection = new BiomeSelection(world.getBiomeList());
 		this.accelerationCounter = new Graphics2DAccelerationCounter();
 		this.movement = new Movement(settings.smoothScrolling);
@@ -148,18 +145,17 @@ public class PerViewerFacadeInjector {
 				worldIconSelection,
 				layerManager,
 				workerExecutor,
-				this::createWorldExporter,
+				biomeExporterDialog,
+				createProgressListener(),
 				this::onRepainterTick,
 				this::onFragmentLoaderTick,
 				this::onPlayerFinishedLoading);
-		this.actions = actions;
-		this.biomeProfileSelection = settings.biomeProfileSelection;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public WorldExporter createWorldExporter() {
-		WorldExporterProgressWidget widget = (WorldExporterProgressWidget) widgets.stream().filter(w -> w instanceof WorldExporterProgressWidget).findFirst().get();
-		return new WorldExporter(workerExecutor, world, actions, translator, biomeProfileSelection, widget::acceptProgress);
+	public Consumer<Entry<ProgressEntryType, Integer>> createProgressListener() {
+		BiomeExporterProgressWidget widget = (BiomeExporterProgressWidget) widgets.stream().filter(w -> w instanceof BiomeExporterProgressWidget).findFirst().get();
+		return widget::acceptProgress;
 	}
 
 	@CalledOnlyBy(AmidstThread.REPAINTER)

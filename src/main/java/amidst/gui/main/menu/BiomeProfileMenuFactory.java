@@ -85,12 +85,11 @@ public class BiomeProfileMenuFactory {
 			ActionListener result = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if (actions.selectBiomeProfile(profile)) {
-						for (JCheckBoxMenuItem checkBox : allCheckBoxes) {
-							checkBox.setSelected(false);
-						}
-						selectedCheckBox.setSelected(true);
+					actions.selectBiomeProfile(profile);
+					for (JCheckBoxMenuItem checkBox : allCheckBoxes) {
+						checkBox.setSelected(false);
 					}
+					selectedCheckBox.setSelected(true);
 				}
 			};
 			if (defaultBiomeProfileSelector == null && profile.equals(BiomeProfile.getDefaultProfile())) {

@@ -1,7 +1,6 @@
 package amidst.gui.main;
 
 import java.awt.Component;
-import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -30,8 +29,6 @@ import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
-import amidst.mojangapi.world.export.WorldExportException;
-import amidst.mojangapi.world.export.WorldExporter;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
@@ -68,7 +65,7 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromSeed() {
 		WorldSeed seed = dialogs.askForSeed();
-		if (seed != null && checkIfWorldExporting()) {
+		if (seed != null) {
 			newFromSeed(seed);
 		}
 	}
@@ -81,7 +78,7 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = dialogs.askForWorldType();
-		if (worldType != null && checkIfWorldExporting()) {
+		if (worldType != null) {
 			worldSwitcher.displayWorld(new WorldOptions(worldSeed, worldType));
 		}
 	}
@@ -94,40 +91,22 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void openSaveGame() {
 		Path file = dialogs.askForSaveGame();
-		if (file != null && checkIfWorldExporting()) {
+		if (file != null) {
 			worldSwitcher.displayWorld(file);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void export() {
+	public void openExportDialog() {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
-			try {
-				viewerFacade.export();
-			} catch (WorldExportException e) {
-				AmidstLogger.warn(e);
-				dialogs.displayError("Another world is already exporting!\nPlease wait until the current one has finished exporting.");
-			}
+			viewerFacade.openExportDialog();
 		}
-	}
-	
-	@CalledOnlyBy(AmidstThread.EDT)
-	public Path getExportPath(WorldOptions worldOptions, Component parent) {
-		String suggestedFilename = "biomes_" + worldOptions.getWorldType().getFilenameText() + "_"
-				+ worldOptions.getWorldSeed().getLong() + ".tiff";
-		Path file = dialogs.askForTIFFSaveFile(suggestedFilename, parent);
-		if (file != null) {
-			return Actions.appendTIFFFileExtensionIfNecessary(file);
-		}
-		return null;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void switchProfile() {
-		if (checkIfWorldExporting()) {
-			application.displayProfileSelectWindow();
-		}
+		application.displayProfileSelectWindow();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -245,9 +224,9 @@ public class Actions {
 			BufferedImage image = viewerFacade.createScreenshot();
 			String suggestedFilename = "screenshot_" + worldOptions.getWorldType().getFilenameText() + "_"
 					+ worldOptions.getWorldSeed().getLong() + ".png";
-			Path file = dialogs.askForPNGSaveFile(suggestedFilename, null);
+			Path file = dialogs.askForPNGSaveFile(suggestedFilename);
 			if (file != null) {
-				file = appendPNGFileExtensionIfNecessary(file);
+				file = appendFileExtensionIfNecessary(file, "png");
 				boolean fileExists = Files.exists(file);
 				if (fileExists && !Files.isRegularFile(file)) {
 					String message = "Unable to write screenshot, because the target exists but is not a file: "
@@ -270,16 +249,12 @@ public class Actions {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public boolean selectBiomeProfile(BiomeProfile profile) {
-		if (checkIfWorldExporting()) {
-			biomeProfileSelection.set(profile);
-			ViewerFacade viewerFacade = viewerFacadeSupplier.get();
-			if (viewerFacade != null) {
-				viewerFacade.reloadBackgroundLayer();
-			}
-			return true;
+	public void selectBiomeProfile(BiomeProfile profile) {
+		biomeProfileSelection.set(profile);
+		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
+		if (viewerFacade != null) {
+			viewerFacade.reloadBackgroundLayer();
 		}
-		return false;
 	}
 	
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -376,15 +351,13 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public boolean tryChangeLookAndFeel(AmidstLookAndFeel lookAndFeel) {
-		if (checkIfWorldExporting()) {
-			if (dialogs.askToConfirmYesNo("Changing Look & Feel",
-					"Changing the look & feel will reload Amidst. Do you want to continue?")) {
-				if (lookAndFeel.tryApply()) {
-					application.restart();
-					return true;
-				} else {
-					dialogs.displayError("An error occured while trying to switch to " + lookAndFeel);
-				}
+		if (dialogs.askToConfirmYesNo("Changing Look & Feel",
+				"Changing the look & feel will reload Amidst. Do you want to continue?")) {
+			if (lookAndFeel.tryApply()) {
+				application.restart();
+				return true;
+			} else {
+				dialogs.displayError("An error occured while trying to switch to " + lookAndFeel);
 			}
 		}
 		return false;
@@ -416,34 +389,12 @@ public class Actions {
 	}
 
 	@CalledByAny
-	public static Path appendPNGFileExtensionIfNecessary(Path file) {
+	public static Path appendFileExtensionIfNecessary(Path file, String fileExtension) {
 		String filename = file.toAbsolutePath().toString();
-		if (!FileExtensionChecker.hasFileExtension(filename, "png")) {
-			filename += ".png";
+		if (!FileExtensionChecker.hasFileExtension(filename, fileExtension)) {
+			filename += '.' + fileExtension;
 		}
 		return Paths.get(filename);
-	}
-	
-	@CalledByAny
-	public static Path appendTIFFFileExtensionIfNecessary(Path file) {
-		String filename = file.toAbsolutePath().toString();
-		if (!FileExtensionChecker.hasFileExtension(filename, "tiff")) {
-			filename += ".tiff";
-		}
-		return Paths.get(filename);
-	}
-	
-	private boolean checkIfWorldExporting() {
-		if (WorldExporter.isExporterRunning()) {
-			dialogs.displayWarning("This world is still exporting.\nPlease wait until it is finished before performing this action.");
-			return false;
-		} else {
-			return true;
-		}
-	}
-	
-	public Frame getFrame() {
-		return dialogs.getFrame();
 	}
 	
 }

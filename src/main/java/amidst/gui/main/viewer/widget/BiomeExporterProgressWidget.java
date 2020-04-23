@@ -4,13 +4,13 @@ import java.awt.FontMetrics;
 
 import amidst.settings.Setting;
 
-public class WorldExporterProgressWidget extends ProgressWidget {
+public class BiomeExporterProgressWidget extends ProgressWidget {
 	private volatile int xOffset;
 	private final Setting<Boolean> showDebug;
 	private final DebugWidget debugWidget;
 	private final int iconWidth;
 	
-	public WorldExporterProgressWidget(CornerAnchorPoint anchor, int xOffset, Setting<Boolean> showDebug, DebugWidget debugWidget, int iconWidth) {
+	public BiomeExporterProgressWidget(CornerAnchorPoint anchor, int xOffset, Setting<Boolean> showDebug, DebugWidget debugWidget, int iconWidth) {
 		super(anchor, xOffset, 0, 0, 100, -1, 150, 25);
 		this.xOffset = xOffset;
 		this.showDebug = showDebug;

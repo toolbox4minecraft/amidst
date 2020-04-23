@@ -1,9 +1,10 @@
-package amidst.gui.exporter;
+package amidst.gui.export;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
+import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -18,15 +19,18 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
-import java.util.concurrent.CompletableFuture;
+import java.util.Collections;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -35,10 +39,13 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
+import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
+import amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -46,7 +53,6 @@ import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.biome.UnknownBiomeIdException;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
-import amidst.mojangapi.world.export.WorldExporterConfiguration;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 import java.util.concurrent.Executors;
@@ -54,57 +60,45 @@ import java.util.concurrent.Executors;
 import static java.awt.GridBagConstraints.*;
 
 @NotThreadSafe
-public class WorldExporterDialog {
+public class BiomeExporterDialog {
 	private static final int PREVIEW_SIZE = 100;
 	private static final Insets DEFAULT_INSETS = new Insets(10, 10, 10, 10);
+	private static final ExecutorService previewUpdater = Executors.newSingleThreadExecutor(r -> new Thread(r, "BiomePreviewUpdater"));
 	
-	private final ExecutorService previewUpdator = Executors.newSingleThreadExecutor(r -> new Thread(r));
-	
-	private final WorldOptions worldOptions;
-	private final BiomeDataOracle biomeDataOracle;
-	private final Actions actions;
+	private final BiomeExporter biomeExporter;
+	private final Frame parentFrame;
+	private final AmidstMenu menuBar;
 	private final BiomeProfileSelection biomeProfileSelection;
-	private final CompletableFuture<WorldExporterConfiguration> futureConfiguration;
-	
 	private final GridBagConstraints constraints;
 	private final GridBagConstraints labelPaneConstraints;
-	
 	private final JSpinner leftSpinner, topSpinner, rightSpinner, bottomSpinner;
-	
 	private final JCheckBox fullResCheckBox;
-	
 	private final JTextField pathField;
 	private final JButton browseButton;
-	
 	private final JButton exportButton;
-	
 	private final BufferedImage previewImage;
 	private final ImageIcon previewIcon;
 	private final JLabel previewLabel;
-	
 	private final JDialog dialog;
 	
-	public WorldExporterDialog(World world,
-							 Actions actions,
-							 FragmentGraphToScreenTranslator translator,
-							 BiomeProfileSelection biomeProfileSelection) {
+	private WorldOptions worldOptions;
+	private BiomeDataOracle biomeDataOracle;
+	private Consumer<Entry<ProgressEntryType, Integer>> progressListener;
+	
+	public BiomeExporterDialog(BiomeExporter biomeExporter, Frame parentFrame, BiomeProfileSelection biomeProfileSelection, AmidstMenu menuBar) {
 		// @formatter:off
-		this.worldOptions          = world.getWorldOptions();
-		this.biomeDataOracle       = world.getBiomeDataOracle();
-		this.actions               = actions;
+		this.biomeExporter         = biomeExporter;
+		this.parentFrame           = parentFrame;
+		this.menuBar               = menuBar;
 		this.biomeProfileSelection = biomeProfileSelection;
-		this.futureConfiguration   = new CompletableFuture<WorldExporterConfiguration>();
 		this.constraints           = new GridBagConstraints();
 		this.labelPaneConstraints  = new GridBagConstraints();
 		
-		CoordinatesInWorld defaultTopLeft = translator.screenToWorld(new Point(0, 0));
-		CoordinatesInWorld defaultBottomRight = translator.screenToWorld(new Point((int) translator.getWidth(), (int) translator.getHeight()));
-		
-		this.leftSpinner           = createCoordinateSpinner(defaultTopLeft.getX());
-		this.topSpinner            = createCoordinateSpinner(defaultTopLeft.getY());
-		this.rightSpinner          = createCoordinateSpinner(defaultBottomRight.getX());
-		this.bottomSpinner         = createCoordinateSpinner(defaultBottomRight.getY());
-		this.fullResCheckBox       = new JCheckBox("Full Resolution");
+		this.leftSpinner           = createCoordinateSpinner();
+		this.topSpinner            = createCoordinateSpinner();
+		this.rightSpinner          = createCoordinateSpinner();
+		this.bottomSpinner         = createCoordinateSpinner();
+		this.fullResCheckBox       = createFullResCheckbox();
 		this.pathField             = createPathField();
 		this.browseButton          = createBrowseButton();
 		this.exportButton          = createExportButton();
@@ -115,14 +109,22 @@ public class WorldExporterDialog {
 		// @formatter:on
 	}
 	
+	private JCheckBox createFullResCheckbox() {
+		JCheckBox newCheckBox = new JCheckBox("Full Resolution");
+		newCheckBox.addChangeListener(e -> {
+			renderPreview();
+		});
+		return newCheckBox;
+	}
+	
 	private JTextField createPathField() {
-		JTextField newTextField = new JTextField(Paths.get("biomes_" + worldOptions.getWorldType().getFilenameText() + "_" + worldOptions.getWorldSeed().getLong() + ".tiff").toAbsolutePath().toString());
-		newTextField.setPreferredSize(new JTextField("___________________________________________________").getPreferredSize());
+		JTextField newTextField = new JTextField();
+		newTextField.setPreferredSize(new JTextField(String.join("", Collections.nCopies(50, "_"))).getPreferredSize());
 		return newTextField;
 	}
 	
-	private JSpinner createCoordinateSpinner(long defaultValue) {
-		JSpinner newSpinner = new JSpinner(new SpinnerNumberModel(defaultValue, -30000000, 30000000, 25));
+	private JSpinner createCoordinateSpinner() {
+		JSpinner newSpinner = new JSpinner(new SpinnerNumberModel(0, -30000000, 30000000, 25));
 		newSpinner.addChangeListener(e -> {
 			renderPreview();
 		});
@@ -151,14 +153,17 @@ public class WorldExporterDialog {
 			CoordinatesInWorld topLeft = getTopLeftCoordinates();
 			CoordinatesInWorld bottomRight = getBottomRightCoordinates();
 			if (verifyImageCoordinates(topLeft, bottomRight) && verifyPathString(pathField.getText())) {
-				futureConfiguration.complete(
-						new WorldExporterConfiguration(
+				biomeExporter.export(
+						biomeDataOracle,
+						new BiomeExporterConfiguration(
 								Paths.get(pathField.getText()),
 								!fullResCheckBox.isSelected(),
 								topLeft,
 								bottomRight,
 								biomeProfileSelection
-							)
+							),
+						progressListener,
+						menuBar
 					);
 				dialog.dispose();
 			}
@@ -212,12 +217,31 @@ public class WorldExporterDialog {
 	private JButton createBrowseButton() {
 		JButton newButton = new JButton("Browse...");
 		newButton.addActionListener(e -> {
-			Path exportPath = actions.getExportPath(worldOptions, dialog);
+			Path exportPath = getExportPath();
 			if (exportPath != null) {
 				pathField.setText(exportPath.toAbsolutePath().toString());
 			}
 		});
 		return newButton;
+	}
+	
+	private Path getExportPath() {
+		Path file = null;
+		String suggestedFilename = getSuggestedFilename();
+		
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileFilter(new FileNameExtensionFilter("TIFF File", "tiff"));
+		fileChooser.setAcceptAllFileFilterUsed(false);
+		fileChooser.setSelectedFile(new java.io.File(suggestedFilename));
+		if (fileChooser.showSaveDialog(dialog) == JFileChooser.APPROVE_OPTION) {
+			file = Actions.appendFileExtensionIfNecessary(fileChooser.getSelectedFile().toPath(), "tiff");
+		}
+		
+		return file;
+	}
+	
+	private String getSuggestedFilename() {
+		return "biomes_" + worldOptions.getWorldType().getFilenameText() + "_" + worldOptions.getWorldSeed().getLong() + ".tiff";
 	}
 	
 	private JPanel createLabeledPanel(String label, Component component, int fillConst) {
@@ -276,12 +300,14 @@ public class WorldExporterDialog {
 		setConstraints(10, 10, 20, 20, NONE, 4, 7, 1, 1, 0.0, 0.0, SOUTHEAST);
 		panel.add(exportButton, constraints);
 		
-		JDialog newDialog = new JDialog(actions.getFrame(), "Export Biome Image") {
-			private static final long serialVersionUID = 827399282059202834L;
+		JDialog newDialog = new JDialog(parentFrame, "Export Biome Image") {
+			private static final long serialVersionUID = -8581666109579998812L;
 
 			public void dispose() {
 				super.dispose();
-				futureConfiguration.complete(null);
+				if(!BiomeExporter.isExporterRunning()) {
+					menuBar.setMenuItemsEnabled(new String[] { "Export Biomes to Image ..." }, true);
+				}
 			}
 		};
 		newDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -298,8 +324,8 @@ public class WorldExporterDialog {
 			renderTask.cancel(true);
 		}
 		
-		renderTask = previewUpdator.submit(() -> {
-			final int quarterResFactor = 4;
+		renderTask = previewUpdater.submit(() -> {
+			final int quarterResFactor = fullResCheckBox.isSelected() ? 1 : 4;
 			try {
 				clearImage(previewImage);
 				
@@ -330,7 +356,7 @@ public class WorldExporterDialog {
 						
 						// we use imgY instead of (previewImage.getHeight() - imgY - 1) to mirror the y axis
 						int imgidx = imgY * previewImage.getWidth() + imgX;
-						pixels[imgidx] = biomeProfileSelection.getBiomeColorOrUnknown(biomeDataOracle.getBiomeAt(worldX, worldY, true)).getRGB();
+						pixels[imgidx] = biomeProfileSelection.getBiomeColorOrUnknown(biomeDataOracle.getBiomeAt(worldX, worldY, !fullResCheckBox.isSelected())).getRGB();
 					}
 				}
 				
@@ -351,21 +377,35 @@ public class WorldExporterDialog {
 		graphics.setComposite(tempComposite);
 	}
 	
-	public void show() {
+	public void createAndShow(World world, FragmentGraphToScreenTranslator translator,
+			Consumer<Entry<ProgressEntryType, Integer>> progressListener) {
+		
+		menuBar.setMenuItemsEnabled(new String[] { "Export Biomes to Image ..." }, false);
+		
+		this.worldOptions = world.getWorldOptions();
+		this.biomeDataOracle = world.getBiomeDataOracle();
+		this.progressListener = progressListener;
+		
+		CoordinatesInWorld defaultTopLeft = translator.screenToWorld(new Point(0, 0));
+		CoordinatesInWorld defaultBottomRight = translator
+				.screenToWorld(new Point((int) translator.getWidth(), (int) translator.getHeight()));
+		
+		leftSpinner.setValue(defaultTopLeft.getX());
+		topSpinner.setValue(defaultTopLeft.getY());
+		rightSpinner.setValue(defaultBottomRight.getX());
+		bottomSpinner.setValue(defaultBottomRight.getY());
+		pathField.setText(Paths.get(getSuggestedFilename()).toAbsolutePath().toString());
+		
 		dialog.setVisible(true);
 		renderPreview();
 	}
 	
 	private CoordinatesInWorld getTopLeftCoordinates() {
-		return new CoordinatesInWorld(((Double) leftSpinner.getValue()).intValue(), ((Double) topSpinner.getValue()).intValue());
+		return new CoordinatesInWorld(((Number) leftSpinner.getValue()).longValue(), ((Number) topSpinner.getValue()).longValue());
 	}
 	
 	private CoordinatesInWorld getBottomRightCoordinates() {
-		return new CoordinatesInWorld(((Double) rightSpinner.getValue()).intValue(), ((Double) bottomSpinner.getValue()).intValue());
-	}
-	
-	public Future<WorldExporterConfiguration> getWorldExporterConfiguration() {
-		return futureConfiguration;
+		return new CoordinatesInWorld(((Number) rightSpinner.getValue()).longValue(), ((Number) bottomSpinner.getValue()).longValue());
 	}
 	
 	private void setConstraints(int iTop, int iLeft, int iBottom, int iRight, int fillConst, int gridx,

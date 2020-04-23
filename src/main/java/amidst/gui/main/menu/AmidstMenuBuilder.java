@@ -96,7 +96,7 @@ public class AmidstMenuBuilder {
 		Menus.item(result, actions::copySeedToClipboard,   "Copy Seed to Clipboard",     KeyEvent.VK_B, MenuShortcuts.COPY_SEED_TO_CLIPBOARD);
 		Menus.item(result, actions::takeScreenshot,        "Take Screenshot ...",        KeyEvent.VK_T, MenuShortcuts.TAKE_SCREENSHOT);
 		result.addSeparator();
-		Menus.item(result, actions::export,                "Export Biomes to Image ...", KeyEvent.VK_X, MenuShortcuts.EXPORT_BIOMES);
+		Menus.item(result, actions::openExportDialog,      "Export Biomes to Image ...", KeyEvent.VK_X, MenuShortcuts.EXPORT_BIOMES);
 		// @formatter:on
 		return result;
 	}
