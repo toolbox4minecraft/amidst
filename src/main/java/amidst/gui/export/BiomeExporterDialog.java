@@ -11,6 +11,8 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
@@ -300,17 +302,20 @@ public class BiomeExporterDialog {
 		setConstraints(10, 10, 20, 20, NONE, 4, 7, 1, 1, 0.0, 0.0, SOUTHEAST);
 		panel.add(exportButton, constraints);
 		
-		JDialog newDialog = new JDialog(parentFrame, "Export Biome Image") {
-			private static final long serialVersionUID = -8581666109579998812L;
-
-			public void dispose() {
-				super.dispose();
-				if(!BiomeExporter.isExporterRunning()) {
-					menuBar.setMenuItemsEnabled(new String[] { "Export Biomes to Image ..." }, true);
-				}
+		JDialog newDialog = new JDialog(parentFrame, "Export Biome Image");
+		newDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		newDialog.addWindowListener(new WindowListener() {
+			public void windowOpened(WindowEvent e) {}
+			public void windowClosing(WindowEvent e) {
+				menuBar.setMenuItemsEnabled(new String[] { "Export Biomes to Image ..." }, true);
+				newDialog.dispose();
 			}
-		};
-		newDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			public void windowClosed(WindowEvent e) {}
+			public void windowIconified(WindowEvent e) {}
+			public void windowDeiconified(WindowEvent e) {}
+			public void windowActivated(WindowEvent e) {}
+			public void windowDeactivated(WindowEvent e) {}
+		});
 		newDialog.add(panel);
 		newDialog.pack();
 		newDialog.setResizable(false);
