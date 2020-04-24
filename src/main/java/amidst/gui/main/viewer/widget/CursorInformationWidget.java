@@ -16,6 +16,7 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeList;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.versionfeatures.DefaultBiomes;
 import amidst.settings.Setting;
 
 @NotThreadSafe
@@ -60,7 +61,7 @@ public class CursorInformationWidget extends TextWidget {
 		if (dimension.equals(Dimension.OVERWORLD)) {
 			return getOverworldBiomeNameAt(coordinates);
 		} else if (dimension.equals(Dimension.END)) {
-			return biomeList.getByIdOrNull(Biome.theEnd).getName();
+			return biomeList.getByIdOrNull(DefaultBiomes.theEnd).getName();
 		} else {
 			AmidstLogger.warn("unsupported dimension");
 			return UNKNOWN_BIOME_NAME;
