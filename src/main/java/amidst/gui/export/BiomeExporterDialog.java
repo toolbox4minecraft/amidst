@@ -41,10 +41,10 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
+import amidst.gui.main.PNGFileFilter;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.viewer.FragmentGraphToScreenTranslator;
 import amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType;
@@ -64,7 +64,6 @@ import static java.awt.GridBagConstraints.*;
 @NotThreadSafe
 public class BiomeExporterDialog {
 	private static final int PREVIEW_SIZE = 100;
-	private static final Insets DEFAULT_INSETS = new Insets(10, 10, 10, 10);
 	private static final ExecutorService previewUpdater = Executors.newSingleThreadExecutor(r -> new Thread(r, "BiomePreviewUpdater"));
 	
 	private final BiomeExporter biomeExporter;
@@ -232,18 +231,18 @@ public class BiomeExporterDialog {
 		String suggestedFilename = getSuggestedFilename();
 		
 		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setFileFilter(new FileNameExtensionFilter("TIFF File", "tiff"));
+		fileChooser.setFileFilter(new PNGFileFilter());
 		fileChooser.setAcceptAllFileFilterUsed(false);
 		fileChooser.setSelectedFile(new java.io.File(suggestedFilename));
 		if (fileChooser.showSaveDialog(dialog) == JFileChooser.APPROVE_OPTION) {
-			file = Actions.appendFileExtensionIfNecessary(fileChooser.getSelectedFile().toPath(), "tiff");
+			file = Actions.appendFileExtensionIfNecessary(fileChooser.getSelectedFile().toPath(), "png");
 		}
 		
 		return file;
 	}
 	
 	private String getSuggestedFilename() {
-		return "biomes_" + worldOptions.getWorldType().getFilenameText() + "_" + worldOptions.getWorldSeed().getLong() + ".tiff";
+		return "biomes_" + worldOptions.getWorldType().getFilenameText() + "_" + worldOptions.getWorldSeed().getLong() + ".png";
 	}
 	
 	private JPanel createLabeledPanel(String label, Component component, int fillConst) {
@@ -307,6 +306,11 @@ public class BiomeExporterDialog {
 		newDialog.addWindowListener(new WindowListener() {
 			public void windowOpened(WindowEvent e) {}
 			public void windowClosing(WindowEvent e) {
+				/* 
+				 *This executes only when it's closed with the x button, alt f4, etc.
+				 * When this happens we know that the user did not press the ok button
+				 * to continue, so we re enable the export biomes menu button.
+				 */
 				menuBar.setMenuItemsEnabled(new String[] { "Export Biomes to Image ..." }, true);
 				newDialog.dispose();
 			}
@@ -424,34 +428,6 @@ public class BiomeExporterDialog {
 		constraints.weightx = weightx;
 		constraints.weighty = weighty;
 		constraints.anchor = anchor;
-	}
-	
-	@SuppressWarnings("unused")
-	private void setConstraints(int fillConst, int gridx, int gridy, int gridw, int gridh,
-			double weightx, double weighty, int anchor) {
-		constraints.insets = DEFAULT_INSETS;
-		constraints.fill = fillConst;
-		constraints.gridx = gridx;
-		constraints.gridy = gridy;
-		constraints.gridwidth = gridw;
-		constraints.gridheight = gridh;
-		constraints.weightx = weightx;
-		constraints.weighty = weighty;
-		constraints.anchor = anchor;
-	}
-	
-	@SuppressWarnings("unused")
-	private void setLabelPaneConstraints(int fillConst, int gridx, int gridy, int gridw, int gridh,
-			double weightx, double weighty, int anchor) {
-		labelPaneConstraints.insets = DEFAULT_INSETS;
-		labelPaneConstraints.fill = fillConst;
-		labelPaneConstraints.gridx = gridx;
-		labelPaneConstraints.gridy = gridy;
-		labelPaneConstraints.gridwidth = gridw;
-		labelPaneConstraints.gridheight = gridh;
-		labelPaneConstraints.weightx = weightx;
-		labelPaneConstraints.weighty = weighty;
-		labelPaneConstraints.anchor = anchor;
 	}
 	
 	private void setLabelPaneConstraints(int iTop, int iLeft, int iBottom, int iRight, int fillConst, int gridx,

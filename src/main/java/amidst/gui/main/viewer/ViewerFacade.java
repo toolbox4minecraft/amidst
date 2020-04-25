@@ -14,7 +14,6 @@ import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerManager;
 import amidst.fragment.layer.LayerReloader;
-import amidst.gui.export.BiomeExportException;
 import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType;
 import amidst.mojangapi.world.Dimension;

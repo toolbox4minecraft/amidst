@@ -6,7 +6,6 @@ import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
@@ -78,15 +77,6 @@ public class MainWindowDialogs {
 	private JFileChooser createPNGSaveFileChooser(String suggestedFilename) {
 		JFileChooser result = new JFileChooser();
 		result.setFileFilter(new PNGFileFilter());
-		result.setAcceptAllFileFilterUsed(false);
-		result.setSelectedFile(new java.io.File(suggestedFilename));
-		return result;
-	}
-	
-	@CalledOnlyBy(AmidstThread.EDT)
-	private JFileChooser createTIFFSaveFileChooser(String suggestedFilename) {
-		JFileChooser result = new JFileChooser();
-		result.setFileFilter(new FileNameExtensionFilter("TIFF File", "tiff"));
 		result.setAcceptAllFileFilterUsed(false);
 		result.setSelectedFile(new java.io.File(suggestedFilename));
 		return result;
