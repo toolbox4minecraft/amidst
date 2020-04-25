@@ -121,6 +121,7 @@ public class BiomeExporterDialog {
 	private JTextField createPathField() {
 		JTextField newTextField = new JTextField();
 		newTextField.setPreferredSize(new JTextField(String.join("", Collections.nCopies(50, "_"))).getPreferredSize());
+		newTextField.setText("");
 		return newTextField;
 	}
 	
@@ -225,26 +226,25 @@ public class BiomeExporterDialog {
 		});
 		return newButton;
 	}
-	
+
 	private Path getExportPath() {
 		Path file = null;
-		String suggestedFilename = getSuggestedFilename();
 		
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(new PNGFileFilter());
 		fileChooser.setAcceptAllFileFilterUsed(false);
-		fileChooser.setSelectedFile(new java.io.File(suggestedFilename));
-		if (fileChooser.showSaveDialog(dialog) == JFileChooser.APPROVE_OPTION) {
+		fileChooser.setSelectedFile(new java.io.File(Paths.get(pathField.getText()).toAbsolutePath().toString()));
+		if (fileChooser.showDialog(dialog, "Confirm") == JFileChooser.APPROVE_OPTION) {
 			file = Actions.appendFileExtensionIfNecessary(fileChooser.getSelectedFile().toPath(), "png");
 		}
 		
 		return file;
 	}
-	
+
 	private String getSuggestedFilename() {
 		return "biomes_" + worldOptions.getWorldType().getFilenameText() + "_" + worldOptions.getWorldSeed().getLong() + ".png";
 	}
-	
+
 	private JPanel createLabeledPanel(String label, Component component, int fillConst) {
 		JPanel newPanel = new JPanel(new GridBagLayout());
 		
@@ -403,7 +403,13 @@ public class BiomeExporterDialog {
 		topSpinner.setValue(defaultTopLeft.getY());
 		rightSpinner.setValue(defaultBottomRight.getX());
 		bottomSpinner.setValue(defaultBottomRight.getY());
-		pathField.setText(Paths.get(getSuggestedFilename()).toAbsolutePath().toString());
+		String previousPath = null;
+		try {
+			previousPath = Paths.get(pathField.getText()).getParent().toString();
+		} catch (NullPointerException e) {
+			previousPath = "";
+		}
+		pathField.setText(Paths.get(previousPath, getSuggestedFilename()).toAbsolutePath().toString());
 		
 		dialog.setVisible(true);
 		renderPreview();
