@@ -21,6 +21,8 @@ import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.crash.CrashWindow;
+import amidst.gui.export.BiomeExporter;
+import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
@@ -43,6 +45,7 @@ public class Actions {
 	private final MainWindowDialogs dialogs;
 	private final WorldSwitcher worldSwitcher;
 	private final SeedSearcherWindow seedSearcherWindow;
+	private final BiomeExporterDialog biomeExporterDialog;
 	private final Supplier<ViewerFacade> viewerFacadeSupplier;
 	private final BiomeProfileSelection biomeProfileSelection;
 
@@ -52,12 +55,14 @@ public class Actions {
 			MainWindowDialogs dialogs,
 			WorldSwitcher worldSwitcher,
 			SeedSearcherWindow seedSearcherWindow,
+			BiomeExporterDialog biomeExporterDialog,
 			Supplier<ViewerFacade> viewerFacadeSupplier,
 			BiomeProfileSelection biomeProfileSelection) {
 		this.application = application;
 		this.dialogs = dialogs;
 		this.worldSwitcher = worldSwitcher;
 		this.seedSearcherWindow = seedSearcherWindow;
+		this.biomeExporterDialog = biomeExporterDialog;
 		this.viewerFacadeSupplier = viewerFacadeSupplier;
 		this.biomeProfileSelection = biomeProfileSelection;
 	}
@@ -72,6 +77,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromRandom() {
+		biomeExporterDialog.dispose();
 		newFromSeed(WorldSeed.random());
 	}
 
@@ -79,6 +85,7 @@ public class Actions {
 	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = dialogs.askForWorldType();
 		if (worldType != null) {
+			biomeExporterDialog.dispose();
 			worldSwitcher.displayWorld(new WorldOptions(worldSeed, worldType));
 		}
 	}
@@ -92,6 +99,7 @@ public class Actions {
 	public void openSaveGame() {
 		Path file = dialogs.askForSaveGame();
 		if (file != null) {
+			biomeExporterDialog.dispose();
 			worldSwitcher.displayWorld(file);
 		}
 	}
@@ -111,7 +119,13 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void exit() {
-		application.exitGracefully();
+		if (BiomeExporter.isExporterRunning()) {
+			if (dialogs.askToConfirmYesNo("Continue?", "A biome image is still exporting. Are you sure you want to continue?")) {
+				application.exitGracefully();
+			}
+		} else {
+			application.exitGracefully();
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

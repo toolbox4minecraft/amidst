@@ -58,12 +58,9 @@ public class BiomeExporter {
 					menuBar.setMenuItemsEnabled(new String[] {
 						"New From Seed ...",     
 						"New From Random Seed",
-						"Search for Random Seed",
 						"Open Save Game ...",
 						"Switch Profile ...",
-						"Exit",
-						"Select Look & Feel",
-						"Biome Profile"
+						"Select Look & Feel"
 					}, false);
 				});
 				ACTIVE_THREADS.incrementAndGet();
@@ -76,10 +73,8 @@ public class BiomeExporter {
 							"Export Biomes to Image ...",
 							"New From Seed ...",     
 							"New From Random Seed",
-							"Search for Random Seed",
 							"Open Save Game ...",
 							"Switch Profile ...",
-							"Exit",
 							"Select Look & Feel",
 							"Biome Profile"
 						}, true);

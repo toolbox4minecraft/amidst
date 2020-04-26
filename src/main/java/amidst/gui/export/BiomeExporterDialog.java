@@ -11,8 +11,8 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -68,7 +69,7 @@ public class BiomeExporterDialog {
 	
 	private final BiomeExporter biomeExporter;
 	private final Frame parentFrame;
-	private final AmidstMenu menuBar;
+	private final Supplier<AmidstMenu> menuBarSupplier;
 	private final BiomeProfileSelection biomeProfileSelection;
 	private final GridBagConstraints constraints;
 	private final GridBagConstraints labelPaneConstraints;
@@ -86,11 +87,11 @@ public class BiomeExporterDialog {
 	private BiomeDataOracle biomeDataOracle;
 	private Consumer<Entry<ProgressEntryType, Integer>> progressListener;
 	
-	public BiomeExporterDialog(BiomeExporter biomeExporter, Frame parentFrame, BiomeProfileSelection biomeProfileSelection, AmidstMenu menuBar) {
+	public BiomeExporterDialog(BiomeExporter biomeExporter, Frame parentFrame, BiomeProfileSelection biomeProfileSelection, Supplier<AmidstMenu> menuBarSupplier) {
 		// @formatter:off
 		this.biomeExporter         = biomeExporter;
 		this.parentFrame           = parentFrame;
-		this.menuBar               = menuBar;
+		this.menuBarSupplier       = menuBarSupplier;
 		this.biomeProfileSelection = biomeProfileSelection;
 		this.constraints           = new GridBagConstraints();
 		this.labelPaneConstraints  = new GridBagConstraints();
@@ -150,6 +151,7 @@ public class BiomeExporterDialog {
 				bottomSpinner.commitEdit();
 				rightSpinner.commitEdit();
 			} catch (ParseException e1) {
+				// resets itself to previous value
 			}
 			
 			CoordinatesInWorld topLeft = getTopLeftCoordinates();
@@ -165,7 +167,7 @@ public class BiomeExporterDialog {
 								biomeProfileSelection
 							),
 						progressListener,
-						menuBar
+						menuBarSupplier.get()
 					);
 				dialog.dispose();
 			}
@@ -303,22 +305,16 @@ public class BiomeExporterDialog {
 		
 		JDialog newDialog = new JDialog(parentFrame, "Export Biome Image");
 		newDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-		newDialog.addWindowListener(new WindowListener() {
-			public void windowOpened(WindowEvent e) {}
+		newDialog.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				/* 
-				 *This executes only when it's closed with the x button, alt f4, etc.
+				 * This executes only when it's closed with the x button, alt f4, etc.
 				 * When this happens we know that the user did not press the ok button
 				 * to continue, so we re enable the export biomes menu button.
 				 */
-				menuBar.setMenuItemsEnabled(new String[] { "Export Biomes to Image ..." }, true);
+				menuBarSupplier.get().setMenuItemsEnabled(new String[] { "Export Biomes to Image ...", "Biome Profile" }, true);
 				newDialog.dispose();
 			}
-			public void windowClosed(WindowEvent e) {}
-			public void windowIconified(WindowEvent e) {}
-			public void windowDeiconified(WindowEvent e) {}
-			public void windowActivated(WindowEvent e) {}
-			public void windowDeactivated(WindowEvent e) {}
 		});
 		newDialog.add(panel);
 		newDialog.pack();
@@ -389,7 +385,7 @@ public class BiomeExporterDialog {
 	public void createAndShow(World world, FragmentGraphToScreenTranslator translator,
 			Consumer<Entry<ProgressEntryType, Integer>> progressListener) {
 		
-		menuBar.setMenuItemsEnabled(new String[] { "Export Biomes to Image ..." }, false);
+		menuBarSupplier.get().setMenuItemsEnabled(new String[] { "Export Biomes to Image ...", "Biome Profile" }, false);
 		
 		this.worldOptions = world.getWorldOptions();
 		this.biomeDataOracle = world.getBiomeDataOracle();
@@ -411,8 +407,13 @@ public class BiomeExporterDialog {
 		}
 		pathField.setText(Paths.get(previousPath, getSuggestedFilename()).toAbsolutePath().toString());
 		
-		dialog.setVisible(true);
 		renderPreview();
+		dialog.setVisible(true);
+	}
+	
+	public void dispose() {
+		menuBarSupplier.get().setMenuItemsEnabled(new String[] { "Export Biomes to Image ...", "Biome Profile" }, true);
+		dialog.dispose();
 	}
 	
 	private CoordinatesInWorld getTopLeftCoordinates() {

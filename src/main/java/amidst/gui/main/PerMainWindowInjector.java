@@ -93,18 +93,19 @@ public class PerMainWindowInjector {
 			this.seedSearcher = null;
 			this.seedSearcherWindow = null;
 		}
+		this.biomeExporter = new BiomeExporter(threadMaster.getWorkerExecutor());
+		this.biomeExporterDialog = new BiomeExporterDialog(biomeExporter, frame, settings.biomeProfileSelection, this::getMenuBar);
 		this.actions = new Actions(
 				application,
 				dialogs,
 				worldSwitcher,
 				seedSearcherWindow,
+				biomeExporterDialog,
 				viewerFacadeReference::get,
 				settings.biomeProfileSelection);
 		this.menuBar = new AmidstMenuBuilder(settings, actions, biomeProfileDirectory).construct();
-		this.mainWindow = new MainWindow(frame, worldSwitcher, viewerFacadeReference::get, seedSearcherWindow);
+		this.mainWindow = new MainWindow(frame, worldSwitcher, viewerFacadeReference::get, seedSearcherWindow, biomeExporterDialog);
 		this.mainWindow.initializeFrame(metadata, versionString, actions, menuBar, runningLauncherProfile.getInitialWorldOptions());
-		this.biomeExporter = new BiomeExporter(threadMaster.getWorkerExecutor());
-		this.biomeExporterDialog = new BiomeExporterDialog(biomeExporter, frame, settings.biomeProfileSelection, menuBar);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -114,7 +115,8 @@ public class PerMainWindowInjector {
 
 	/**
 	 * This only exists to break the cyclic dependency between {@link #menuBar},
-	 * {@link #actions} and {@link #worldSwitcher}.
+	 * {@link #actions}, {@link #worldSwitcher}, aswell as the cyclic dependency
+	 * between {@link #menuBar}, {@link #actions}, {@link #biomeExporterDialog}.
 	 */
 	@CalledOnlyBy(AmidstThread.EDT)
 	private AmidstMenu getMenuBar() {

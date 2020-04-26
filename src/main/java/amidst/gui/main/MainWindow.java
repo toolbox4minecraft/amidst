@@ -14,6 +14,7 @@ import amidst.FeatureToggles;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
@@ -28,14 +29,16 @@ public class MainWindow {
 	private final WorldSwitcher worldSwitcher;
 	private final Supplier<ViewerFacade> viewerFacadeSupplier;
 	private final SeedSearcherWindow seedSearcherWindow;
+	private final BiomeExporterDialog biomeExporterDialog;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public MainWindow(JFrame frame, WorldSwitcher worldSwitcher, Supplier<ViewerFacade> viewerFacadeSupplier,
-			SeedSearcherWindow seedSearcherWindow) {
+			SeedSearcherWindow seedSearcherWindow, BiomeExporterDialog biomeExporterDialog) {
 		this.frame = frame;
 		this.worldSwitcher = worldSwitcher;
 		this.viewerFacadeSupplier = viewerFacadeSupplier;
 		this.seedSearcherWindow = seedSearcherWindow;
+		this.biomeExporterDialog = biomeExporterDialog;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -70,6 +73,7 @@ public class MainWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void dispose() {
+		biomeExporterDialog.dispose();
 		worldSwitcher.clearWorld();
 		if (FeatureToggles.SEED_SEARCH) {
 			seedSearcherWindow.dispose();

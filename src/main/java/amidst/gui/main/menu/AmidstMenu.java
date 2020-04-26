@@ -1,5 +1,7 @@
 package amidst.gui.main.menu;
 
+import java.util.function.Consumer;
+
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -39,21 +41,22 @@ public class AmidstMenu {
 	
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void setMenuItemsEnabled(String[] textRepresentations, boolean enabled) {
-		setMenuItemsEnabled(menuBar, textRepresentations, enabled);
+		runOnMenuItems(menuBar, textRepresentations, i -> i.setEnabled(enabled));
 	}
 	
-	private static void setMenuItemsEnabled(MenuElement menuElement, String[] textRepresentations, boolean enabled) {
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void runOnMenuItems(MenuElement menuElement, String[] textRepresentations, Consumer<JMenuItem> consumer) {
 		MenuElement[] elements = menuElement.getSubElements();
 		if(elements != null) {
 			for(MenuElement element : elements) {
 				if(element instanceof JMenuItem) {
 					for(String s : textRepresentations) {
 						if(((JMenuItem) element).getText().equals(s)) {
-							((JMenuItem) element).setEnabled(enabled);
+							consumer.accept((JMenuItem) element);
 						}
 					}
 				}
-				setMenuItemsEnabled(element, textRepresentations, enabled);
+				runOnMenuItems(element, textRepresentations, consumer);
 			}
 		}
 	}
