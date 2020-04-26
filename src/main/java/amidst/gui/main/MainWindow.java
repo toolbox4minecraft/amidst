@@ -49,6 +49,7 @@ public class MainWindow {
 		frame.setTitle(versionString);
 		frame.setJMenuBar(menuBar.getMenuBar());
 		frame.getContentPane().setLayout(new BorderLayout());
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
