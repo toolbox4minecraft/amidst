@@ -1,7 +1,7 @@
 package amidst;
 
 import java.nio.file.Path;
-import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.prefs.Preferences;
 
@@ -16,6 +16,7 @@ import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.crash.CrashWindow;
+import amidst.language.I18n;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.logging.FileLogger;
@@ -102,7 +103,7 @@ public class Amidst {
 	}
 
 	private static String getCurrentTimeStamp() {
-		return new Timestamp(new Date().getTime()).toString();
+		return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.LONG, I18n.getLocale()).format(new Date());
 	}
 
 	private static String createPropertyString(String key) {
