@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import amidst.documentation.ThreadSafe;
@@ -16,16 +15,13 @@ public abstract class ProgressWidget extends OffsetWidget {
 	
 	private final Supplier<Entry<ProgressEntryType, Integer>> progressEntrySupplier;
 	
-	private AtomicInteger min;
-	private AtomicInteger max;
-	private AtomicInteger progress;
+	private int min;
+	private int max;
+	private int progress;
 
 	public ProgressWidget(CornerAnchorPoint anchor, Supplier<Entry<ProgressEntryType, Integer>> progressEntrySupplier, int xOffset, int yOffset, int initialMin, int initialMax, int initialProgress, int width, int height) {
 		super(anchor, xOffset, yOffset);
 		this.progressEntrySupplier = progressEntrySupplier;
-		this.min = new AtomicInteger(initialMin);
-		this.max = new AtomicInteger(initialMax);
-		this.progress = new AtomicInteger(initialProgress);
 		setWidth(width);
 		setHeight(height);
 	}
@@ -54,7 +50,7 @@ public abstract class ProgressWidget extends OffsetWidget {
 	@Override
 	protected void doDraw(Graphics2D g2d) {
 		int widthMax = getWidth() - (HORIZONTAL_MARGIN * 2) - 2;
-		int calculatedWidth = (int) ((double) progress.get() / max.get() * widthMax);
+		int calculatedWidth = (int) ((double) progress / max * widthMax);
 		g2d.setColor(Color.GRAY);
 		g2d.drawRect(
 				getX() + HORIZONTAL_MARGIN,
@@ -72,21 +68,20 @@ public abstract class ProgressWidget extends OffsetWidget {
 	}
 
 	public void setMin(int min) {
-		this.min.set(min);
+		this.min = min;
 	}
 
 	public void setMax(int max) {
-		this.max.set(max);
+		this.max = max;
 	}
 
 	public void setProgress(int progress) {
-		this.progress.set(progress);
+		this.progress = progress;
 	}
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		int progress = this.progress.get();
-		return !(progress >= max.get() || progress < min.get());
+		return progress < max && progress >= min;
 	}
 	
 	public enum ProgressEntryType {
