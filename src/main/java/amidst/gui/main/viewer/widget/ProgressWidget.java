@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 import amidst.documentation.ThreadSafe;
 
@@ -11,26 +13,48 @@ import amidst.documentation.ThreadSafe;
 public abstract class ProgressWidget extends OffsetWidget {
 	private static final int VERTICAL_MARGIN = 4;
 	private static final int HORIZONTAL_MARGIN = 4;
-	private volatile int min;
-	private volatile int max;
-	private volatile int progress;
+	
+	private final Supplier<Entry<ProgressEntryType, Integer>> progressEntrySupplier;
+	
+	private AtomicInteger min;
+	private AtomicInteger max;
+	private AtomicInteger progress;
 
-	public ProgressWidget(CornerAnchorPoint anchor, int xOffset, int yOffset, int initialMin, int initialMax, int initialProgress, int width, int height) {
+	public ProgressWidget(CornerAnchorPoint anchor, Supplier<Entry<ProgressEntryType, Integer>> progressEntrySupplier, int xOffset, int yOffset, int initialMin, int initialMax, int initialProgress, int width, int height) {
 		super(anchor, xOffset, yOffset);
-		this.min = initialMin;
-		this.max = initialMax;
-		this.progress = initialProgress;
+		this.progressEntrySupplier = progressEntrySupplier;
+		this.min = new AtomicInteger(initialMin);
+		this.max = new AtomicInteger(initialMax);
+		this.progress = new AtomicInteger(initialProgress);
 		setWidth(width);
 		setHeight(height);
 	}
 
 	@Override
-	protected abstract void doUpdate(FontMetrics fontMetrics, float time);
+	protected void doUpdate(FontMetrics fontMetrics, float time) {
+		updateProgress(progressEntrySupplier.get());
+	}
+	
+	private void updateProgress(Entry<ProgressEntryType, Integer> value) {
+		if(value != null) {
+			switch (value.getKey()) {
+				case MIN:
+					setMin(value.getValue());
+					break;
+				case MAX:
+					setMax(value.getValue());
+					break;
+				case PROGRESS:
+					setProgress(value.getValue());
+					break;
+			}
+		}
+	}
 
 	@Override
 	protected void doDraw(Graphics2D g2d) {
 		int widthMax = getWidth() - (HORIZONTAL_MARGIN * 2) - 2;
-		int calculatedWidth = (int) ((double) progress / max * widthMax);
+		int calculatedWidth = (int) ((double) progress.get() / max.get() * widthMax);
 		g2d.setColor(Color.GRAY);
 		g2d.drawRect(
 				getX() + HORIZONTAL_MARGIN,
@@ -47,47 +71,22 @@ public abstract class ProgressWidget extends OffsetWidget {
 			);
 	}
 
-	public int getMin() {
-		return min;
-	}
-
 	public void setMin(int min) {
-		this.min = min;
-	}
-
-	public int getMax() {
-		return max;
+		this.min.set(min);
 	}
 
 	public void setMax(int max) {
-		this.max = max;
-	}
-
-	public int getProgress() {
-		return progress;
+		this.max.set(max);
 	}
 
 	public void setProgress(int progress) {
-		this.progress = progress;
+		this.progress.set(progress);
 	}
 
 	@Override
 	protected boolean onVisibilityCheck() {
-		return (progress >= max || progress < min) ? false : true;
-	}
-	
-	public void acceptProgress(Entry<ProgressEntryType, Integer> value) {
-		switch (value.getKey()) {
-			case MIN:
-				setMin(value.getValue());
-				break;
-			case MAX:
-				setMax(value.getValue());
-				break;
-			case PROGRESS:
-				setProgress(value.getValue());
-				break;
-		}
+		int progress = this.progress.get();
+		return !(progress >= max.get() || progress < min.get());
 	}
 	
 	public enum ProgressEntryType {

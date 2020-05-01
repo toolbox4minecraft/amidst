@@ -3,7 +3,7 @@ package amidst.gui.main.viewer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.function.Consumer;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import amidst.AmidstSettings;
@@ -20,7 +20,6 @@ import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.main.Actions;
 import amidst.gui.main.viewer.widget.BiomeToggleWidget;
 import amidst.gui.main.viewer.widget.BiomeWidget;
-import amidst.gui.main.viewer.widget.ChangeableTextWidget;
 import amidst.gui.main.viewer.widget.CursorInformationWidget;
 import amidst.gui.main.viewer.widget.DebugWidget;
 import amidst.gui.main.viewer.widget.FpsWidget;
@@ -51,22 +50,21 @@ public class PerViewerFacadeInjector {
 			FragmentManager fragmentManager,
 			Graphics2DAccelerationCounter accelerationCounter,
 			AmidstSettings settings,
-			Supplier<String> progressText) {
+			Supplier<Entry<ProgressEntryType, Integer>> progressEntrySupplier) {
 		// @formatter:off
 		DebugWidget debugWidget = new DebugWidget(CornerAnchorPoint.BOTTOM_RIGHT, graph, fragmentManager, settings.showDebug, accelerationCounter);
 		BiomeWidget biomeWidget = new BiomeWidget(CornerAnchorPoint.NONE, biomeSelection, layerReloader, settings.biomeProfileSelection, world.getBiomeList());
 		BiomeToggleWidget biomeToggleWidget = new BiomeToggleWidget(CornerAnchorPoint.BOTTOM_RIGHT, biomeWidget, biomeSelection);
 		WorldOptions worldOptions = world.getWorldOptions();
 		return Arrays.asList(
-				new ChangeableTextWidget(       CornerAnchorPoint.CENTER,        progressText),
 				new FpsWidget(                  CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              settings.showFPS),
 				new ScaleWidget(                CornerAnchorPoint.BOTTOM_CENTER, zoom,                               settings.showScale),
 				new SeedAndWorldTypeWidget(     CornerAnchorPoint.TOP_LEFT,      worldOptions.getWorldSeed(), worldOptions.getWorldType()),
 				new SelectedIconWidget(         CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
 				debugWidget,
-				new CursorInformationWidget(CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension, world.getBiomeList()),
+				new CursorInformationWidget(	CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension, world.getBiomeList()),
 				biomeToggleWidget,
-				new BiomeExporterProgressWidget(CornerAnchorPoint.BOTTOM_RIGHT,  -20, settings.showDebug, debugWidget, biomeToggleWidget.getWidth()),
+				new BiomeExporterProgressWidget(CornerAnchorPoint.BOTTOM_RIGHT,  progressEntrySupplier,    -20,      settings.showDebug, debugWidget, biomeToggleWidget.getWidth()),
 				biomeWidget
 		);
 		// @formatter:on
@@ -81,7 +79,7 @@ public class PerViewerFacadeInjector {
 	private final FragmentGraphToScreenTranslator translator;
 	private final FragmentQueueProcessor fragmentQueueProcessor;
 	private final LayerReloader layerReloader;
-	private final ProgressMessageHolder progressMessageHolder;
+	private final AtomicReference<Entry<ProgressEntryType, Integer>> progressEntryHolder;
 	private final List<Widget> widgets;
 	private final Drawer drawer;
 	private final WidgetManager widgetManager;
@@ -109,7 +107,7 @@ public class PerViewerFacadeInjector {
 		this.translator = new FragmentGraphToScreenTranslator(graph, zoom);
 		this.fragmentQueueProcessor = fragmentManager.createQueueProcessor(layerManager, settings.dimension);
 		this.layerReloader = layerManager.createLayerReloader(world);
-		this.progressMessageHolder = new ProgressMessageHolder();
+		this.progressEntryHolder = new AtomicReference<Entry<ProgressEntryType, Integer>>();
 		this.widgets = createWidgets(
 				world,
 				graph,
@@ -121,7 +119,7 @@ public class PerViewerFacadeInjector {
 				fragmentManager,
 				accelerationCounter,
 				settings,
-				progressMessageHolder::getProgressMessage);
+				progressEntryHolder::get);
 		this.drawer = new Drawer(
 				graph,
 				translator,
@@ -146,16 +144,10 @@ public class PerViewerFacadeInjector {
 				layerManager,
 				workerExecutor,
 				biomeExporterDialog,
-				createProgressListener(),
+				progressEntryHolder::set,
 				this::onRepainterTick,
 				this::onFragmentLoaderTick,
 				this::onPlayerFinishedLoading);
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public Consumer<Entry<ProgressEntryType, Integer>> createProgressListener() {
-		BiomeExporterProgressWidget widget = (BiomeExporterProgressWidget) widgets.stream().filter(w -> w instanceof BiomeExporterProgressWidget).findFirst().get();
-		return widget::acceptProgress;
 	}
 
 	@CalledOnlyBy(AmidstThread.REPAINTER)
