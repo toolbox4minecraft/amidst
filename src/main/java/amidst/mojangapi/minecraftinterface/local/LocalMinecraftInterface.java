@@ -193,7 +193,6 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    	this.seedForBiomeZoomer = seedForBiomeZoomer;
 	    }
 
-
 		@Override
 		public<T> T getBiomeData(int x, int y, int width, int height,
 				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
