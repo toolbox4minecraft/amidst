@@ -3,6 +3,7 @@ package amidst.gui.profileselect;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.HeadlessException;
 import java.io.IOException;
 import java.util.List;
 
@@ -68,7 +69,17 @@ public class ProfileSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private JFrame createFrame() {
-		JFrame frame = new JFrame("Profile Selector");
+		JFrame frame = null;
+		try {
+			frame = new JFrame("Profile Selector");
+		} catch (HeadlessException e) {
+			String s = "Caught a HeadlessException.\n"
+					+ "This exception is thrown when code that is dependent on a keyboard, "
+					+ "display, or mouse is called in an environment that does not support a keyboard, display, or mouse.\n\n"
+					+ "Some linux distros only come with openjdk headless preinstalled. Make sure java-1.8.0-openjdk is installed.";
+			AmidstLogger.error(e, s);
+			System.exit(1);
+		}
 		frame.setIconImages(metadata.getIcons());
 		frame.getContentPane().setLayout(new MigLayout());
 		frame.add(createTitleLabel(), "h 20!,w :400:, growx, pushx, wrap");
