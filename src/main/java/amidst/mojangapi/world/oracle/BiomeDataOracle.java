@@ -65,12 +65,8 @@ public class BiomeDataOracle {
 
 	private boolean isValidBiome(int x, int y, List<Biome> validBiomes) {
 		try {
-			return validBiomes.contains(getBiomeAt(x, y));
-		} catch (UnknownBiomeIdException e) {
-			AmidstLogger.error(e);
-			AmidstMessageBox.displayError("Error", e);
-			return false;
-		} catch (MinecraftInterfaceException e) {
+			return validBiomes.contains(getBiomeAt(x, y, true));
+		} catch (UnknownBiomeIdException | MinecraftInterfaceException e) {
 			AmidstLogger.error(e);
 			AmidstMessageBox.displayError("Error", e);
 			return false;
@@ -88,11 +84,11 @@ public class BiomeDataOracle {
 		int bottom = y + size >> 2;
 		int width = right - left + 1;
 		int height = bottom - top + 1;
-		int[] validBiomesIdx = getBiomeIndices(validBiomes);
 		try {
 			return getQuarterResolutionBiomeData(left, top, width, height, biomeData -> {
 				for (int i = 0; i < width * height; i++) {
-					if (!containsInt(validBiomesIdx, biomeData[i])) {
+					Biome biome = biomeList.getByIdOrNull(biomeData[i]);
+					if (!validBiomes.contains(biome)) {
 						return false;
 					}
 				}
@@ -135,13 +131,13 @@ public class BiomeDataOracle {
 		int bottom = y + size >> 2;
 		int width = right - left + 1;
 		int height = bottom - top + 1;
-		int[] validBiomesIdx = getBiomeIndices(validBiomes);
 		try {
 			return getQuarterResolutionBiomeData(left, top, width, height, biomeData -> {
 				CoordinatesInWorld result = null;
 				int numberOfValidLocations = 0;
 				for (int i = 0; i < width * height; i++) {
-					if (containsInt(validBiomesIdx, biomeData[i])) {
+					Biome biome = biomeList.getByIdOrNull(biomeData[i]);
+					if (validBiomes.contains(biome)) {
 						boolean updateResult = result == null || random.nextInt(numberOfValidLocations + 1) == 0;
 						result = updateResult ? createCoordinates(left, top, width, i) : result;
 
@@ -171,47 +167,18 @@ public class BiomeDataOracle {
 	}
 
 	public Biome getBiomeAtMiddleOfChunk(int chunkX, int chunkY)
-			throws UnknownBiomeIdException,
-			MinecraftInterfaceException {
-		return getBiomeAt(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY));
-	}
-
-	public int getBiomeAt(int x, int y, boolean useQuarterResolution)
 			throws UnknownBiomeIdException, MinecraftInterfaceException {
-		return minecraftWorld.getBiomeData(x, y, 1, 1, useQuarterResolution, data -> data[0]);
+		return getBiomeAt(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY), true);
 	}
 
-	private static int[] getBiomeIndices(List<Biome> biomes) {
-		return biomes.stream()
-			.mapToInt(Biome::getId)
-			.toArray();
-	}
-
-	private static boolean containsInt(int[] haystack, int needle) {
-		for (int elem: haystack) {
-			if (elem == needle) {
-				return true;
-			}
-		}
-		return false;
-	}
-	/**
-	 * Gets the biome located at the block-coordinates. This is not a fast
-	 * routine, it was added for rare things like accurately testing structures.
-	 * (uses the 1:1 scale biome-map)
-	 */
-	private Biome getBiomeAt(int x, int y) throws UnknownBiomeIdException, MinecraftInterfaceException {
-		int biomeIndex = getFullResolutionBiomeData(x, y, 1, 1, biomeData -> biomeData[0]);
+	public Biome getBiomeAt(int x, int y, boolean useQuarterResolution)
+			throws UnknownBiomeIdException, MinecraftInterfaceException {
+		int biomeIndex = minecraftWorld.getBiomeData(x, y, 1, 1, useQuarterResolution, biomeData -> biomeData[0]);
 		return biomeList.getById(biomeIndex);
 	}
 
 	private<T> T getQuarterResolutionBiomeData(int x, int y, int width, int height, Function<int[], T> biomeDataMapper)
 			throws MinecraftInterfaceException {
 		return minecraftWorld.getBiomeData(x, y, width, height, true, biomeDataMapper);
-	}
-
-	private<T> T getFullResolutionBiomeData(int x, int y, int width, int height, Function<int[], T> biomeDataMapper)
-			throws MinecraftInterfaceException {
-		return minecraftWorld.getBiomeData(x, y, width, height, false, biomeDataMapper);
 	}
 }
