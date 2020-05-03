@@ -235,7 +235,7 @@ public class BiomeExporterDialog {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(new PNGFileFilter());
 		fileChooser.setAcceptAllFileFilterUsed(false);
-		fileChooser.setSelectedFile(new java.io.File(Paths.get(pathField.getText()).toAbsolutePath().toString()));
+		fileChooser.setSelectedFile(Paths.get(pathField.getText()).toAbsolutePath().toFile());
 		if (fileChooser.showDialog(dialog, "Confirm") == JFileChooser.APPROVE_OPTION) {
 			file = Actions.appendFileExtensionIfNecessary(fileChooser.getSelectedFile().toPath(), "png");
 		}
