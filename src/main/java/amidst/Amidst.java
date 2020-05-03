@@ -1,5 +1,6 @@
 package amidst;
 
+import java.awt.GraphicsEnvironment;
 import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -80,6 +81,12 @@ public class Amidst {
 			logTimeAndProperties();
 			enableGraphicsAcceleration();
 			osxMenuProperties();
+			if (GraphicsEnvironment.isHeadless()) {
+				String s =  "Trying to run amidst in a headless environment that does not support a keyboard, display, or mouse.\n\n"
+						+ "Some linux distros only come with openjdk headless preinstalled. Make sure java-1.8.0-openjdk is installed.";
+				AmidstLogger.crash(s);
+				System.exit(1);
+			}
 			startApplication(parameters, metadata, createSettings());
 		}
 	}
