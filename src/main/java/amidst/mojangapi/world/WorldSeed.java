@@ -33,9 +33,14 @@ public class WorldSeed {
 	private static final SecureRandom random = new SecureRandom();
 
 	public static WorldSeed random() {
-		byte[] bytes = new byte[8];
-		random.nextBytes(bytes);
-		return new WorldSeed(ByteBuffer.wrap(bytes).getLong(), null, WorldSeedType.RANDOM);
+		/*
+		 * SecureRandom.nextLong() can generate 2^64 different results even
+		 * though it directly inherits it from Random. The key difference is
+		 * the nature of next() in the different classes. In Random it is
+		 * restricted to 2^48 bits, while SecureRandom uses (i think) 2^128
+		 * bits.
+		 */
+		return new WorldSeed(random.nextLong(), null, WorldSeedType.RANDOM);
 	}
 
 	public static WorldSeed fromUserInput(String input) {

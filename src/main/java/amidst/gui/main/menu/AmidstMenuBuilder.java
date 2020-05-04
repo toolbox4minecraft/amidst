@@ -24,7 +24,6 @@ public class AmidstMenuBuilder {
 	private final Actions actions;
 	private final BiomeProfileDirectory biomeProfileDirectory;
 	private final JMenuBar menuBar;
-	private JMenuItem exportMenu;
 	private JMenu worldMenu;
 	private JMenuItem savePlayerLocationsMenu;
 	private JMenuItem reloadPlayerLocationsMenu;
@@ -40,7 +39,6 @@ public class AmidstMenuBuilder {
 	public AmidstMenu construct() {
 		return new AmidstMenu(
 				menuBar,
-				exportMenu,
 				worldMenu,
 				savePlayerLocationsMenu,
 				reloadPlayerLocationsMenu,
@@ -61,21 +59,15 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("File");
 		result.setMnemonic(KeyEvent.VK_F);
 		// @formatter:off
-		Menus.item(result, actions::newFromSeed,           "New From Seed ...",        KeyEvent.VK_N, MenuShortcuts.NEW_FROM_SEED);
-		Menus.item(result, actions::newFromRandom,         "New From Random Seed",     KeyEvent.VK_R, MenuShortcuts.NEW_FROM_RANDOM_SEED);
+		Menus.item(result, actions::newFromSeed,           "New From Seed ...",          KeyEvent.VK_N, MenuShortcuts.NEW_FROM_SEED);
+		Menus.item(result, actions::newFromRandom,         "New From Random Seed",       KeyEvent.VK_R, MenuShortcuts.NEW_FROM_RANDOM_SEED);
 		if (FeatureToggles.SEED_SEARCH) {
-			Menus.item(result, actions::searchForRandom,   "Search for Random Seed",   KeyEvent.VK_F, MenuShortcuts.SEARCH_FOR_RANDOM_SEED);
+			Menus.item(result, actions::searchForRandom,   "Search for Random Seed",     KeyEvent.VK_F, MenuShortcuts.SEARCH_FOR_RANDOM_SEED);
 		}
-		Menus.item(result, actions::openSaveGame,          "Open Save Game ...",       KeyEvent.VK_O, MenuShortcuts.OPEN_SAVE_GAME);
+		Menus.item(result, actions::openSaveGame,          "Open Save Game ...",         KeyEvent.VK_O, MenuShortcuts.OPEN_SAVE_GAME);
 		result.addSeparator();
-		if (FeatureToggles.WORLD_EXPORTER) {
-			exportMenu =
-			Menus.item(result, actions::export,            "Export ...",               KeyEvent.VK_E, MenuShortcuts.EXPORT);
-			exportMenu.setEnabled(false);
-			result.addSeparator();
-		}
-		Menus.item(result, actions::switchProfile,         "Switch Profile ...",       KeyEvent.VK_P, MenuShortcuts.SWITCH_PROFILE);
-		Menus.item(result, actions::exit,                  "Exit",                     KeyEvent.VK_X, MenuShortcuts.EXIT);
+		Menus.item(result, actions::switchProfile,         "Switch Profile ...",         KeyEvent.VK_P, MenuShortcuts.SWITCH_PROFILE);
+		Menus.item(result, actions::exit,                  "Exit",                       KeyEvent.VK_X, MenuShortcuts.EXIT);
 		// @formatter:on
 		return result;
 	}
@@ -85,24 +77,26 @@ public class AmidstMenuBuilder {
 		result.setEnabled(false);
 		result.setMnemonic(KeyEvent.VK_W);
 		// @formatter:off
-		Menus.item(result, actions::goToCoordinate,        "Go to Coordinate ...",     KeyEvent.VK_C, MenuShortcuts.GO_TO_COORDINATE);
-		Menus.item(result, actions::goToSpawn,             "Go to World Spawn",        KeyEvent.VK_S, MenuShortcuts.GO_TO_WORLD_SPAWN);
-		Menus.item(result, actions::goToStronghold,        "Go to Stronghold ...",     KeyEvent.VK_H, MenuShortcuts.GO_TO_STRONGHOLD);
-		Menus.item(result, actions::goToPlayer,            "Go to Player ...",         KeyEvent.VK_P, MenuShortcuts.GO_TO_PLAYER);
+		Menus.item(result, actions::goToCoordinate,        "Go to Coordinate ...",       KeyEvent.VK_C, MenuShortcuts.GO_TO_COORDINATE);
+		Menus.item(result, actions::goToSpawn,             "Go to World Spawn",          KeyEvent.VK_S, MenuShortcuts.GO_TO_WORLD_SPAWN);
+		Menus.item(result, actions::goToStronghold,        "Go to Stronghold ...",       KeyEvent.VK_H, MenuShortcuts.GO_TO_STRONGHOLD);
+		Menus.item(result, actions::goToPlayer,            "Go to Player ...",           KeyEvent.VK_P, MenuShortcuts.GO_TO_PLAYER);
 		result.addSeparator();
-		Menus.item(result, actions::zoomIn,                "Zoom In",                  KeyEvent.VK_I, MenuShortcuts.ZOOM_IN);
-		Menus.item(result, actions::zoomOut,               "Zoom Out",                 KeyEvent.VK_O, MenuShortcuts.ZOOM_OUT);
+		Menus.item(result, actions::zoomIn,                "Zoom In",                    KeyEvent.VK_I, MenuShortcuts.ZOOM_IN);
+		Menus.item(result, actions::zoomOut,               "Zoom Out",                   KeyEvent.VK_O, MenuShortcuts.ZOOM_OUT);
 		result.addSeparator();
 		savePlayerLocationsMenu =
-		Menus.item(result, actions::savePlayerLocations,   "Save Player Locations",    KeyEvent.VK_V, MenuShortcuts.SAVE_PLAYER_LOCATIONS);
+		Menus.item(result, actions::savePlayerLocations,   "Save Player Locations",      KeyEvent.VK_V, MenuShortcuts.SAVE_PLAYER_LOCATIONS);
 		savePlayerLocationsMenu.setEnabled(false);
 		reloadPlayerLocationsMenu =
-		Menus.item(result, actions::reloadPlayerLocations, "Reload Player Locations",  KeyEvent.VK_R, MenuShortcuts.RELOAD_PLAYER_LOCATIONS);
+		Menus.item(result, actions::reloadPlayerLocations, "Reload Player Locations",    KeyEvent.VK_R, MenuShortcuts.RELOAD_PLAYER_LOCATIONS);
 		reloadPlayerLocationsMenu.setEnabled(false);
-		Menus.item(result, actions::howCanIMoveAPlayer,    "How Can I Move a Player?", KeyEvent.VK_M);
+		Menus.item(result, actions::howCanIMoveAPlayer,    "How Can I Move a Player?",   KeyEvent.VK_M);
 		result.addSeparator();
-		Menus.item(result, actions::copySeedToClipboard,   "Copy Seed to Clipboard",   KeyEvent.VK_B, MenuShortcuts.COPY_SEED_TO_CLIPBOARD);
-		Menus.item(result, actions::takeScreenshot,        "Take Screenshot ...",      KeyEvent.VK_T, MenuShortcuts.TAKE_SCREENSHOT);
+		Menus.item(result, actions::copySeedToClipboard,   "Copy Seed to Clipboard",     KeyEvent.VK_B, MenuShortcuts.COPY_SEED_TO_CLIPBOARD);
+		Menus.item(result, actions::takeScreenshot,        "Take Screenshot ...",        KeyEvent.VK_T, MenuShortcuts.TAKE_SCREENSHOT);
+		result.addSeparator();
+		Menus.item(result, actions::openExportDialog,      "Export Biomes to Image ...", KeyEvent.VK_X, MenuShortcuts.EXPORT_BIOMES);
 		// @formatter:on
 		return result;
 	}
@@ -172,10 +166,10 @@ public class AmidstMenuBuilder {
 		JMenu result = new JMenu("Help");
 		result.setMnemonic(KeyEvent.VK_H);
 		// @formatter:off
-		Menus.item(result, actions::displayLogMessages,    "Display Log Messages ...",     KeyEvent.VK_M);
-		Menus.item(result, actions::checkForUpdates,       "Check for Updates ...",        KeyEvent.VK_U);
-		Menus.item(result, actions::viewLicense,           "View Licenses ...",            KeyEvent.VK_L);
-		Menus.item(result, actions::about,                 "About ...",                    KeyEvent.VK_A);
+		Menus.item(result, actions::displayLogMessages,    "Display Log Messages ...",   KeyEvent.VK_M);
+		Menus.item(result, actions::checkForUpdates,       "Check for Updates ...",      KeyEvent.VK_U);
+		Menus.item(result, actions::viewLicense,           "View Licenses ...",          KeyEvent.VK_L);
+		Menus.item(result, actions::about,                 "About ...",                  KeyEvent.VK_A);
 		// @formatter:on
 		return result;
 	}
