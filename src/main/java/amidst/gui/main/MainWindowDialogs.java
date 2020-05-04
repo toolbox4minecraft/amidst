@@ -15,7 +15,6 @@ import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.world.WorldSeed;
 import amidst.mojangapi.world.WorldType;
-import amidst.mojangapi.world.export.WorldExporterConfiguration;
 import amidst.mojangapi.world.player.WorldPlayerType;
 
 @NotThreadSafe
@@ -70,12 +69,12 @@ public class MainWindowDialogs {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public Path askForScreenshotSaveFile(String suggestedFilename) {
-		return showSaveDialogAndGetSelectedFileOrNull(createScreenshotSaveFileChooser(suggestedFilename));
+	public Path askForPNGSaveFile(String suggestedFilename) {
+		return showSaveDialogAndGetSelectedFileOrNull(createPNGSaveFileChooser(suggestedFilename));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private JFileChooser createScreenshotSaveFileChooser(String suggestedFilename) {
+	private JFileChooser createPNGSaveFileChooser(String suggestedFilename) {
 		JFileChooser result = new JFileChooser();
 		result.setFileFilter(new PNGFileFilter());
 		result.setAcceptAllFileFilterUsed(false);
@@ -105,6 +104,11 @@ public class MainWindowDialogs {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void displayError(Exception e) {
 		AmidstMessageBox.displayError(frame, "Error", e);
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void displayWarning(String message) {
+		AmidstMessageBox.displayWarning(frame, "Warning", message);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -168,11 +172,5 @@ public class MainWindowDialogs {
 	private String askForString(String title, String message) {
 		return JOptionPane.showInputDialog(frame, message, title, JOptionPane.QUESTION_MESSAGE);
 	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	public WorldExporterConfiguration askForExportConfiguration() {
-		// TODO: implement me!
-		// TODO: display gui to create configuration
-		return new WorldExporterConfiguration();
-	}
+	
 }

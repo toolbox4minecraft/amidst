@@ -123,6 +123,14 @@ public class FragmentGraphToScreenTranslator {
 	public double getTopOnScreen() {
 		return topOnScreen;
 	}
+	
+	public double getWidth() {
+		return viewerWidth;
+	}
+	
+	public double getHeight() {
+		return viewerHeight;
+	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public CoordinatesInWorld screenToWorld(Point pointOnScreen) {

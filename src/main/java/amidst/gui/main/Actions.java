@@ -17,9 +17,12 @@ import javax.imageio.ImageIO;
 
 import amidst.Application;
 import amidst.documentation.AmidstThread;
+import amidst.documentation.CalledByAny;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.crash.CrashWindow;
+import amidst.gui.export.BiomeExporter;
+import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
@@ -42,6 +45,7 @@ public class Actions {
 	private final MainWindowDialogs dialogs;
 	private final WorldSwitcher worldSwitcher;
 	private final SeedSearcherWindow seedSearcherWindow;
+	private final BiomeExporterDialog biomeExporterDialog;
 	private final Supplier<ViewerFacade> viewerFacadeSupplier;
 	private final BiomeProfileSelection biomeProfileSelection;
 
@@ -51,12 +55,14 @@ public class Actions {
 			MainWindowDialogs dialogs,
 			WorldSwitcher worldSwitcher,
 			SeedSearcherWindow seedSearcherWindow,
+			BiomeExporterDialog biomeExporterDialog,
 			Supplier<ViewerFacade> viewerFacadeSupplier,
 			BiomeProfileSelection biomeProfileSelection) {
 		this.application = application;
 		this.dialogs = dialogs;
 		this.worldSwitcher = worldSwitcher;
 		this.seedSearcherWindow = seedSearcherWindow;
+		this.biomeExporterDialog = biomeExporterDialog;
 		this.viewerFacadeSupplier = viewerFacadeSupplier;
 		this.biomeProfileSelection = biomeProfileSelection;
 	}
@@ -71,6 +77,7 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromRandom() {
+		biomeExporterDialog.dispose();
 		newFromSeed(WorldSeed.random());
 	}
 
@@ -78,6 +85,7 @@ public class Actions {
 	private void newFromSeed(WorldSeed worldSeed) {
 		WorldType worldType = dialogs.askForWorldType();
 		if (worldType != null) {
+			biomeExporterDialog.dispose();
 			worldSwitcher.displayWorld(new WorldOptions(worldSeed, worldType));
 		}
 	}
@@ -91,15 +99,16 @@ public class Actions {
 	public void openSaveGame() {
 		Path file = dialogs.askForSaveGame();
 		if (file != null) {
+			biomeExporterDialog.dispose();
 			worldSwitcher.displayWorld(file);
 		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void export() {
+	public void openExportDialog() {
 		ViewerFacade viewerFacade = viewerFacadeSupplier.get();
 		if (viewerFacade != null) {
-			viewerFacade.export(dialogs.askForExportConfiguration());
+			viewerFacade.openExportDialog();
 		}
 	}
 
@@ -110,7 +119,13 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void exit() {
-		application.exitGracefully();
+		if (BiomeExporter.isExporterRunning()) {
+			if (dialogs.askToConfirmYesNo("Continue?", "A biome image is still exporting. Are you sure you want to continue?")) {
+				application.exitGracefully();
+			}
+		} else {
+			application.exitGracefully();
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -223,9 +238,9 @@ public class Actions {
 			BufferedImage image = viewerFacade.createScreenshot();
 			String suggestedFilename = "screenshot_" + worldOptions.getWorldType().getFilenameText() + "_"
 					+ worldOptions.getWorldSeed().getLong() + ".png";
-			Path file = dialogs.askForScreenshotSaveFile(suggestedFilename);
+			Path file = dialogs.askForPNGSaveFile(suggestedFilename);
 			if (file != null) {
-				file = appendPNGFileExtensionIfNecessary(file);
+				file = appendFileExtensionIfNecessary(file, "png");
 				boolean fileExists = Files.exists(file);
 				if (fileExists && !Files.isRegularFile(file)) {
 					String message = "Unable to write screenshot, because the target exists but is not a file: "
@@ -362,8 +377,8 @@ public class Actions {
 		return false;
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	private long tryParseLong(String text, long defaultValue) {
+	@CalledByAny
+	public static long tryParseLong(String text, long defaultValue) {
 		try {
 			return Long.parseLong(text);
 		} catch (NumberFormatException e) {
@@ -371,8 +386,8 @@ public class Actions {
 		}
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	private boolean canWriteToFile(Path file) {
+	@CalledByAny
+	public static boolean canWriteToFile(Path file) {
 		Path parent = file.getParent();
 		return Files.isWritable(file) || (!Files.exists(file) && parent != null && Files.isWritable(parent));
 	}
@@ -387,12 +402,13 @@ public class Actions {
 		}
 	}
 
-	@CalledOnlyBy(AmidstThread.EDT)
-	private Path appendPNGFileExtensionIfNecessary(Path file) {
+	@CalledByAny
+	public static Path appendFileExtensionIfNecessary(Path file, String fileExtension) {
 		String filename = file.toAbsolutePath().toString();
-		if (!FileExtensionChecker.hasFileExtension(filename, "png")) {
-			filename += ".png";
+		if (!FileExtensionChecker.hasFileExtension(filename, fileExtension)) {
+			filename += '.' + fileExtension;
 		}
 		return Paths.get(filename);
 	}
+	
 }

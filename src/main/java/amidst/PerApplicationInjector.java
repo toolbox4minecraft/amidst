@@ -8,6 +8,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentManager;
 import amidst.fragment.layer.LayerBuilder;
+import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.license.LicenseWindow;
 import amidst.gui.main.Actions;
 import amidst.gui.main.MainWindow;
@@ -123,13 +124,14 @@ public class PerApplicationInjector {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private ViewerFacade createViewerFacade(World world, Actions actions) {
+	private ViewerFacade createViewerFacade(World world, BiomeExporterDialog biomeExporterDialog, Actions actions) {
 		return new PerViewerFacadeInjector(
 				settings,
 				threadMaster.getWorkerExecutor(),
 				zoom,
 				layerBuilder,
 				fragmentManager,
+				biomeExporterDialog,
 				world,
 				actions).getViewerFacade();
 	}

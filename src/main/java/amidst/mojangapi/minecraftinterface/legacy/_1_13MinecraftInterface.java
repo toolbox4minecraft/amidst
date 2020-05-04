@@ -59,11 +59,6 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 	 */
 	private volatile SymbolicObject fullResolutionBiomeGenerator;
 
-	/**
-	 * An array used to return biome data
-	 */
-	private volatile int[] dataArray = new int[256];
-
 	public _1_13MinecraftInterface(
 			SymbolicClass bootstrapClass,
 			SymbolicClass worldTypeClass,
@@ -106,8 +101,8 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 			if (biomeGetIdMethod == null) {
 				biomeGetIdMethod = getBiomeGetIdHandle();
 			}
-
-			int[] data = ensureArrayCapacity(width * height);
+			
+			int[] data = new int[width * height];
 
 			/**
 			 * We break the region in 16x16 chunks, to get better performance
@@ -280,18 +275,6 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 			e.printStackTrace();
 			throw new MinecraftInterfaceException("unable to get biome data", e);
 		}
-	}
-
-	private int[] ensureArrayCapacity(int length) {
-		int cur = dataArray.length;
-		if (length <= cur)
-			return dataArray;
-
-		while (cur < length)
-			cur *= 2;
-
-		dataArray = new int[cur];
-		return dataArray;
 	}
 
 	@Override

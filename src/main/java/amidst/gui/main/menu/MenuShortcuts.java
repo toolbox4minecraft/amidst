@@ -16,7 +16,7 @@ public enum MenuShortcuts implements MenuShortcut {
 	NEW_FROM_RANDOM_SEED("menu R"),
 	SEARCH_FOR_RANDOM_SEED("menu F"),
 	OPEN_SAVE_GAME("menu O"),
-	EXPORT("menu X"),
+	EXPORT_BIOMES("menu X"),
 	SWITCH_PROFILE("menu W"),
 	EXIT("menu Q"),
 

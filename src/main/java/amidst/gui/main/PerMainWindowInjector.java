@@ -9,10 +9,12 @@ import amidst.AmidstMetaData;
 import amidst.AmidstSettings;
 import amidst.Application;
 import amidst.FeatureToggles;
-import amidst.dependency.injection.Factory2;
+import amidst.dependency.injection.Factory3;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gui.export.BiomeExporter;
+import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.menu.AmidstMenuBuilder;
 import amidst.gui.main.viewer.ViewerFacade;
@@ -40,7 +42,7 @@ public class PerMainWindowInjector {
 				.toString();
 	}
 
-	private final Factory2<World, Actions, ViewerFacade> viewerFacadeFactory;
+	private final Factory3<World, BiomeExporterDialog, Actions, ViewerFacade> viewerFacadeFactory;
 	private final String versionString;
 	private final JFrame frame;
 	private final Container contentPane;
@@ -49,6 +51,8 @@ public class PerMainWindowInjector {
 	private final WorldSwitcher worldSwitcher;
 	private final SeedSearcher seedSearcher;
 	private final SeedSearcherWindow seedSearcherWindow;
+	private final BiomeExporter biomeExporter;
+	private final BiomeExporterDialog biomeExporterDialog;
 	private final Actions actions;
 	private final AmidstMenu menuBar;
 	private final MainWindow mainWindow;
@@ -61,7 +65,7 @@ public class PerMainWindowInjector {
 			MinecraftInstallation minecraftInstallation,
 			RunningLauncherProfile runningLauncherProfile,
 			BiomeProfileDirectory biomeProfileDirectory,
-			Factory2<World, Actions, ViewerFacade> viewerFacadeFactory,
+			Factory3<World, BiomeExporterDialog, Actions, ViewerFacade> viewerFacadeFactory,
 			ThreadMaster threadMaster) {
 		this.viewerFacadeFactory = viewerFacadeFactory;
 		this.versionString = createVersionString(metadata, runningLauncherProfile);
@@ -89,26 +93,30 @@ public class PerMainWindowInjector {
 			this.seedSearcher = null;
 			this.seedSearcherWindow = null;
 		}
+		this.biomeExporter = new BiomeExporter(threadMaster.getWorkerExecutor());
+		this.biomeExporterDialog = new BiomeExporterDialog(biomeExporter, frame, settings.biomeProfileSelection, this::getMenuBar);
 		this.actions = new Actions(
 				application,
 				dialogs,
 				worldSwitcher,
 				seedSearcherWindow,
+				biomeExporterDialog,
 				viewerFacadeReference::get,
 				settings.biomeProfileSelection);
 		this.menuBar = new AmidstMenuBuilder(settings, actions, biomeProfileDirectory).construct();
-		this.mainWindow = new MainWindow(frame, worldSwitcher, viewerFacadeReference::get, seedSearcherWindow);
+		this.mainWindow = new MainWindow(frame, worldSwitcher, viewerFacadeReference::get, seedSearcherWindow, biomeExporterDialog);
 		this.mainWindow.initializeFrame(metadata, versionString, actions, menuBar, runningLauncherProfile.getInitialWorldOptions());
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private ViewerFacade createViewerFacade(World world) {
-		return viewerFacadeFactory.create(world, actions);
+		return viewerFacadeFactory.create(world, biomeExporterDialog, actions);
 	}
 
 	/**
 	 * This only exists to break the cyclic dependency between {@link #menuBar},
-	 * {@link #actions} and {@link #worldSwitcher}.
+	 * {@link #actions}, {@link #worldSwitcher}, aswell as the cyclic dependency
+	 * between {@link #menuBar}, {@link #actions}, {@link #biomeExporterDialog}.
 	 */
 	@CalledOnlyBy(AmidstThread.EDT)
 	private AmidstMenu getMenuBar() {
