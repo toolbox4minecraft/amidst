@@ -12,18 +12,20 @@ public class I18n {
 	private static Language currentLang;
 	private static Locale currentLocale;
 	
-	public static String getValue(String key) {
+	public static String get(String key) {
 		return currentLang.getValue(key);
 	}
 	
 	public static void setLocalization(String languageTag) throws IOException {
 		currentLocale = Locale.forLanguageTag(languageTag);
 		currentLang = Language.create(LANG_PATH + languageTag + FILE_EXTENSION);
+		Locale.setDefault(currentLocale);
 	}
 	
 	public static void setLocalization(Locale locale) throws IOException {
 		currentLocale = locale;
 		currentLang = Language.create(LANG_PATH + locale.toLanguageTag() + FILE_EXTENSION);
+		Locale.setDefault(currentLocale);
 	}
 	
 	public static Language getLanguage() {

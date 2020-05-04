@@ -1,6 +1,5 @@
 package amidst.mojangapi.world;
 
-import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 
 import amidst.documentation.Immutable;

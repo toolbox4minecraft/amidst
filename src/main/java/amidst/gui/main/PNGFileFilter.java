@@ -20,6 +20,6 @@ public class PNGFileFilter extends FileFilter {
 
 	@Override
 	public String getDescription() {
-		return "Portable Network Graphic (*.PNG)";
+		return "Portable Network Graphic (*.png)";
 	}
 }

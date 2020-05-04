@@ -11,7 +11,10 @@ import java.util.regex.Pattern;
 import amidst.settings.biomeprofile.BiomeProfile;
 
 public class Language {
-	private static final Pattern FILE_READ_REGEX = Pattern.compile("(.*?)\\:\\ ((?>.|\\n|\\r)*?)(?>\\,|\\Z)");
+	/**
+	 * <a href="https://regex101.com/r/aLdw5C/1" target="_top">Regex explanation</a>
+	 */
+	private static final Pattern FILE_READ_REGEX = Pattern.compile("(.*?)\\:\\s*\\\"((?:.|\\n|\\r)*?)(?:\\\"\\,\\s*$|\\\"\\s*\\Z)", Pattern.MULTILINE);
 	
 	private final String tag;
 	private final Map<String, String> translationMap;

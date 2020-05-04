@@ -17,15 +17,16 @@ import javax.swing.border.LineBorder;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.language.I18n;
 import amidst.logging.AmidstLogger;
 import net.miginfocom.swing.MigLayout;
 
 @NotThreadSafe
 public enum CrashWindow {
-	CRASHING("Amidst crashed!", true, () -> {
+	CRASHING(I18n.get("gui.crash.crashed.title"), true, () -> {
 		System.exit(4);
 	}),
-	INTEREST("Log Messages", false, () -> {
+	INTEREST(I18n.get("gui.crash.log.title"), false, () -> {
 		// noop
 	});
 
@@ -51,7 +52,7 @@ public enum CrashWindow {
 		this.isCrashing = isCrashing;
 		this.executeOnClose = executeOnClose;
 		if (isCrashing) {
-			this.pleaseReportLabel = new JLabel("Please report this bug on:");
+			this.pleaseReportLabel = new JLabel(I18n.get("gui.crash.label.pleaseReport"));
 			this.pleaseReportTextField = createReportingTextField();
 		} else {
 			this.pleaseReportLabel = null;
