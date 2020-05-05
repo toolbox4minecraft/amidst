@@ -17,6 +17,7 @@ import javax.swing.event.ListSelectionListener;
 
 import amidst.AmidstMetaData;
 import amidst.documentation.Immutable;
+import amidst.language.I18n;
 import net.miginfocom.swing.MigLayout;
 
 @Immutable
@@ -78,7 +79,7 @@ public class LicenseWindow {
 	}
 
 	private JFrame createFrame(JList<License> licenseList, JScrollPane scrollPane) {
-		JFrame frame = new JFrame("Licenses");
+		JFrame frame = new JFrame(I18n.get("gui.licenses.title"));
 		initContentPane(frame.getContentPane(), licenseList, scrollPane);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setIconImages(metadata.getIcons());

@@ -20,12 +20,14 @@ public class I18n {
 		currentLocale = Locale.forLanguageTag(languageTag);
 		currentLang = Language.create(LANG_PATH + languageTag + FILE_EXTENSION);
 		Locale.setDefault(currentLocale);
+		AmidstLogger.info("Localization set to " + languageTag);
 	}
 	
 	public static void setLocalization(Locale locale) throws IOException {
 		currentLocale = locale;
 		currentLang = Language.create(LANG_PATH + locale.toLanguageTag() + FILE_EXTENSION);
 		Locale.setDefault(currentLocale);
+		AmidstLogger.info("Localization set to " + locale.toLanguageTag());
 	}
 	
 	public static Language getLanguage() {

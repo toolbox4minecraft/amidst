@@ -113,7 +113,7 @@ public class BiomeExporterDialog {
 	}
 	
 	private JCheckBox createFullResCheckbox() {
-		JCheckBox newCheckBox = new JCheckBox(I18n.get("mojangapi.biome.fullResolution"));
+		JCheckBox newCheckBox = new JCheckBox(I18n.get("mojangapi.biome.full_resolution"));
 		newCheckBox.addChangeListener(e -> {
 			renderPreview();
 		});
@@ -144,7 +144,7 @@ public class BiomeExporterDialog {
 	}
 	
 	private JButton createExportButton() {
-		JButton exportButton = new JButton(I18n.get("gui.biomeexport.button.export"));
+		JButton exportButton = new JButton(I18n.get("gui.biomeexporter.export_button"));
 		exportButton.addActionListener((e) -> {
 			try {
 				topSpinner.commitEdit();
@@ -182,24 +182,24 @@ public class BiomeExporterDialog {
 			Files.createDirectories(p.getParent());
 			boolean fileExists = Files.exists(p);
 			if (fileExists && !Files.isRegularFile(p)) {
-				String message = I18n.get("error.biomeexport.path.notAFile");
+				String message = I18n.get("error.biomeexporter.not_a_file");
 				AmidstLogger.warn(message);
 				AmidstMessageBox.displayError(dialog, I18n.get("error.error"), message);
 			} else if (!Actions.canWriteToFile(p)) {
-				String message = I18n.get("error.biomeexport.path.noPerms");
+				String message = I18n.get("error.biomeexporter.no_perms");
 				AmidstLogger.warn(message);
 				AmidstMessageBox.displayError(dialog, I18n.get("error.error"), message);
-			} else if (!fileExists || AmidstMessageBox.askToConfirmYesNo(dialog, I18n.get("gui.file.replace.replaceTitle"),
-					I18n.get("gui.file.replace.replaceText") + '\n' + p.toString())) {
+			} else if (!fileExists || AmidstMessageBox.askToConfirmYesNo(dialog, I18n.get("gui.dialogs.file_replace_title"),
+					I18n.get("gui.dialogs.file_replace_text") + '\n' + p.toString())) {
 				return true;
 			}
 			return false;
 		} catch (InvalidPathException e) {
-			String message = I18n.get("error.biomeexport.path.invalid");
+			String message = I18n.get("error.biomeexporter.invalid_path");
 			AmidstLogger.warn(message);
 			AmidstMessageBox.displayError(dialog, I18n.get("error.error"), message);
 		} catch (IOException e) {
-			String message = I18n.get("error.biomeexport.path.directoryCreationError");
+			String message = I18n.get("error.biomeexporter.directory_creation_error");
 			AmidstLogger.warn(message);
 			AmidstMessageBox.displayError(dialog, I18n.get("error.error"), message);
 		}
@@ -209,7 +209,7 @@ public class BiomeExporterDialog {
 	public boolean verifyImageCoordinates(CoordinatesInWorld topLeft, CoordinatesInWorld bottomRight) {
 		if((topLeft != null && bottomRight != null) && 
 		   (topLeft.getX() >= bottomRight.getX() || topLeft.getY() >= bottomRight.getY())) {
-			String message = I18n.get("error.biomeexport.coordError");
+			String message = I18n.get("error.biomeexporter.coord_error");
 			AmidstLogger.warn(message);
 			AmidstMessageBox.displayError(dialog, I18n.get("error.error"), message);
 			return false;
@@ -219,7 +219,7 @@ public class BiomeExporterDialog {
 	}
 	
 	private JButton createBrowseButton() {
-		JButton newButton = new JButton(I18n.get("gui.biomeexport.button.browse"));
+		JButton newButton = new JButton(I18n.get("gui.biomeexporter.browse_button"));
 		newButton.addActionListener(e -> {
 			Path exportPath = getExportPath();
 			if (exportPath != null) {
@@ -236,9 +236,9 @@ public class BiomeExporterDialog {
 		fileChooser.setFileFilter(new PNGFileFilter());
 		fileChooser.setAcceptAllFileFilterUsed(false);
 		fileChooser.setSelectedFile(Paths.get(pathField.getText()).toAbsolutePath().toFile());
-		fileChooser.setApproveButtonText(I18n.get("gui.biomeexport.filechooser.button.confirm"));
-		fileChooser.setApproveButtonToolTipText(I18n.get("gui.biomeexport.filechooser.button.confirmTooltip"));
-		fileChooser.setDialogTitle(I18n.get("gui.biomeexport.filechooser.title"));
+		fileChooser.setApproveButtonText(I18n.get("gui.biomeexporter.filechooser.confirm_button"));
+		fileChooser.setApproveButtonToolTipText(I18n.get("gui.biomeexporter.filechooser.confirm_button_tooltip"));
+		fileChooser.setDialogTitle(I18n.get("gui.biomeexporter.filechooser.title"));
 		if (fileChooser.showDialog(dialog, null) == JFileChooser.APPROVE_OPTION) {
 			file = Actions.appendFileExtensionIfNecessary(fileChooser.getSelectedFile().toPath(), "png");
 		}
@@ -269,16 +269,16 @@ public class BiomeExporterDialog {
 		JPanel panel = new JPanel(new GridBagLayout());
 		
 		setConstraints(40, 0, 0, 0, NONE, 1, 1, 1, 1, 0.0, 0.0, SOUTH);
-		panel.add(createLabeledPanel(I18n.get("gui.biomeexport.spinner.top"), topSpinner, NONE), constraints);
+		panel.add(createLabeledPanel(I18n.get("gui.biomeexporter.top_spinner"), topSpinner, NONE), constraints);
 		
 		setConstraints(20, 20, 0, 0, NONE, 0, 2, 1, 1, 0.0, 0.0, SOUTH);
-		panel.add(createLabeledPanel(I18n.get("gui.biomeexport.spinner.left"), leftSpinner, NONE), constraints);
+		panel.add(createLabeledPanel(I18n.get("gui.biomeexporter.left_spinner"), leftSpinner, NONE), constraints);
 		
 		setConstraints(20, 0, 0, 0, NONE, 1, 3, 1, 1, 0.0, 0.0, SOUTH);
-		panel.add(createLabeledPanel(I18n.get("gui.biomeexport.spinner.bottom"), bottomSpinner, NONE), constraints);
+		panel.add(createLabeledPanel(I18n.get("gui.biomeexporter.bottom_spinner"), bottomSpinner, NONE), constraints);
 		
 		setConstraints(20, 0, 0, 0, NONE, 2, 2, 1, 1, 0.0, 0.0, SOUTH);
-		panel.add(createLabeledPanel(I18n.get("gui.biomeexport.spinner.right"), rightSpinner, NONE), constraints);
+		panel.add(createLabeledPanel(I18n.get("gui.biomeexporter.right_spinner"), rightSpinner, NONE), constraints);
 		
 		setConstraints(10, 20, 0, 0, NONE, 0, 5, 2, 1, 0.0, 0.0, SOUTHWEST);
 		panel.add(fullResCheckBox, constraints);
@@ -292,7 +292,7 @@ public class BiomeExporterDialog {
 		JPanel pathPanel = new JPanel(new GridBagLayout());
 		
 		setConstraints(0, 0, 0, 0, HORIZONTAL, 0, 0, 1, 1, 0.0, 0.0, SOUTH);
-		pathPanel.add(createLabeledPanel(I18n.get("gui.biomeexport.misc.path"), pathField, HORIZONTAL), constraints);
+		pathPanel.add(createLabeledPanel(I18n.get("gui.biomeexporter.path"), pathField, HORIZONTAL), constraints);
 		
 		setConstraints(0, 10, 0, 0, HORIZONTAL, 1, 0, 1, 1, 0.0, 0.0, SOUTH);
 		pathPanel.add(browseButton, constraints);
@@ -301,12 +301,12 @@ public class BiomeExporterDialog {
 		panel.add(pathPanel, constraints);
 		
 		setConstraints(15, 10, 10, 20, BOTH, 4, 0, 1, 7, 0.0, 0.0, EAST);
-		panel.add(createLabeledPanel(I18n.get("gui.biomeexport.misc.preview"), previewLabel, NONE), constraints);
+		panel.add(createLabeledPanel(I18n.get("gui.biomeexporter.preview"), previewLabel, NONE), constraints);
 		
 		setConstraints(10, 10, 20, 20, NONE, 4, 7, 1, 1, 0.0, 0.0, SOUTHEAST);
 		panel.add(exportButton, constraints);
 		
-		JDialog newDialog = new JDialog(parentFrame, I18n.get("gui.biomeexport.title"));
+		JDialog newDialog = new JDialog(parentFrame, I18n.get("gui.biomeexporter.title"));
 		newDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		newDialog.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {

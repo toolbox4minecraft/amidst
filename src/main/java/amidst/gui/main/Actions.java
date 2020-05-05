@@ -26,6 +26,7 @@ import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.main.menu.MovePlayerPopupMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.gui.seedsearcher.SeedSearcherWindow;
+import amidst.language.I18n;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.WorldSeed;
@@ -120,7 +121,7 @@ public class Actions {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void exit() {
 		if (BiomeExporter.isExporterRunning()) {
-			if (dialogs.askToConfirmYesNo("Continue?", "A biome image is still exporting. Are you sure you want to continue?")) {
+			if (dialogs.askToConfirmYesNo(I18n.get("gui.dialogs.confirm_export_exit_title"), I18n.get("gui.dialogs.confirm_export_exit_text"))) {
 				application.exitGracefully();
 			}
 		} else {
@@ -138,8 +139,9 @@ public class Actions {
 				if (coordinates != null) {
 					viewerFacade.centerOn(coordinates);
 				} else {
-					AmidstLogger.warn("Invalid location entered, ignoring.");
-					dialogs.displayError("You entered an invalid location.");
+					String message = I18n.get("error.dialogs.invalid_location");
+					AmidstLogger.warn(message);
+					dialogs.displayError(message);
 				}
 			}
 		}

@@ -27,6 +27,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.ThreadSafe;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType;
+import amidst.language.I18n;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
@@ -108,8 +109,9 @@ public class BiomeExporter {
 			try {
 				ImageIO.write(img, "png", configuration.getImagePath().toAbsolutePath().toFile());
 			} catch (Exception e) {
-	    		AmidstLogger.error(e, "An error occured while trying to export the image");
-	    		AmidstMessageBox.displayError("Export Biome Images", e, "An error occured while trying to export the image");
+				String message = I18n.get("error.biome_exporter.export_error");
+	    		AmidstLogger.error(e, message);
+	    		AmidstMessageBox.displayError(I18n.get("gui.biome_exporter.title"), e, message);
 			} finally {
 				System.gc();
 				progressReporter.report(entry(PROGRESS, height + 1));

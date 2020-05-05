@@ -11,6 +11,7 @@ import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.language.I18n;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.RunningLauncherProfile;
 import amidst.mojangapi.world.WorldSeed;
@@ -148,7 +149,7 @@ public class MainWindowDialogs {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public String askForCoordinates() {
-		return askForString("Go To", "Enter coordinates: (Ex. 123,456)");
+		return askForString(I18n.get("gui.dialogs.ask_for_coordinates_title"), I18n.get("gui.dialogs.ask_for_coordinates_text"));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

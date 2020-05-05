@@ -8,6 +8,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import amidst.logging.AmidstLogger;
 import amidst.settings.biomeprofile.BiomeProfile;
 
 public class Language {
@@ -64,6 +65,7 @@ public class Language {
 		String s = translationMap.get(key);
 		if (s == null) {
 			s = "";
+			AmidstLogger.warn("Translation not found for key " + key);
 		}
 		return s;
 	}
