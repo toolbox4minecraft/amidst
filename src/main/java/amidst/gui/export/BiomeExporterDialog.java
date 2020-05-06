@@ -68,6 +68,7 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.UnknownBiomeIdException;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
+import amidst.settings.Setting;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 
 @NotThreadSafe
@@ -75,6 +76,7 @@ public class BiomeExporterDialog {
 	private static final int PREVIEW_SIZE = 100;
 	private static final ExecutorService previewUpdater = Executors.newSingleThreadExecutor(r -> new Thread(r, "BiomePreviewUpdater"));
 
+	private final Setting<String> lastBiomeExportPath;
 	private final BiomeExporter biomeExporter;
 	private final Frame parentFrame;
 	private final Supplier<AmidstMenu> menuBarSupplier;
@@ -95,8 +97,10 @@ public class BiomeExporterDialog {
 	private BiomeDataOracle biomeDataOracle;
 	private Consumer<Entry<ProgressEntryType, Integer>> progressListener;
 
-	public BiomeExporterDialog(BiomeExporter biomeExporter, Frame parentFrame, BiomeProfileSelection biomeProfileSelection, Supplier<AmidstMenu> menuBarSupplier) {
+	public BiomeExporterDialog(BiomeExporter biomeExporter, Frame parentFrame, BiomeProfileSelection biomeProfileSelection,
+			Supplier<AmidstMenu> menuBarSupplier, Setting<String> lastBiomeExportPath) {
 		// @formatter:off
+		this.lastBiomeExportPath   = lastBiomeExportPath;
 		this.biomeExporter         = biomeExporter;
 		this.parentFrame           = parentFrame;
 		this.menuBarSupplier       = menuBarSupplier;
@@ -130,7 +134,6 @@ public class BiomeExporterDialog {
 	private JTextField createPathField() {
 		JTextField newTextField = new JTextField();
 		newTextField.setPreferredSize(new JTextField(String.join("", Collections.nCopies(50, "_"))).getPreferredSize());
-		newTextField.setText("");
 		return newTextField;
 	}
 
@@ -165,10 +168,12 @@ public class BiomeExporterDialog {
 			CoordinatesInWorld topLeft = getTopLeftCoordinates();
 			CoordinatesInWorld bottomRight = getBottomRightCoordinates();
 			if (verifyImageCoordinates(topLeft, bottomRight) && verifyPathString(pathField.getText())) {
+				Path path = Paths.get(pathField.getText());
+				lastBiomeExportPath.set(path.toAbsolutePath().getParent().toString());
 				biomeExporter.export(
 						biomeDataOracle,
 						new BiomeExporterConfiguration(
-								Paths.get(pathField.getText()),
+								path,
 								!fullResCheckBox.isSelected(),
 								topLeft,
 								bottomRight,
@@ -409,13 +414,7 @@ public class BiomeExporterDialog {
 		topSpinner.setValue(defaultTopLeft.getY());
 		rightSpinner.setValue(defaultBottomRight.getX());
 		bottomSpinner.setValue(defaultBottomRight.getY());
-		String previousPath = null;
-		try {
-			previousPath = Paths.get(pathField.getText()).getParent().toString();
-		} catch (NullPointerException e) {
-			previousPath = "";
-		}
-		pathField.setText(Paths.get(previousPath, getSuggestedFilename()).toAbsolutePath().toString());
+		pathField.setText(Paths.get(lastBiomeExportPath.get(), getSuggestedFilename()).toAbsolutePath().toString());
 
 		renderPreview();
 		dialog.setVisible(true);
