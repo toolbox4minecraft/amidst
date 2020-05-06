@@ -39,6 +39,9 @@ public class AmidstSettings {
 
 	public final Setting<String> lastProfile;
 	public final Setting<String> worldType;
+	
+	public final Setting<String> lastBiomeExportPath;
+	public final Setting<String> lastScreenshotPath;
 
 	/**
 	 * This is not persisted.
@@ -73,6 +76,10 @@ public class AmidstSettings {
 
 		lastProfile                = Setting.createString(   preferences, "profile",              "");
 		worldType                  = Setting.createString(   preferences, "worldType",            WorldType.PROMPT_EACH_TIME);
+		
+		lastBiomeExportPath        = Setting.createString(   preferences, "lastBiomeExportPath",  "");
+		lastScreenshotPath         = Setting.createString(   preferences, "lastScreenshotPath",   "");
+		
 		biomeProfileSelection = new BiomeProfileSelection(BiomeProfile.getDefaultProfile());
 		// @formatter:on
 	}
