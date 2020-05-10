@@ -1,7 +1,9 @@
 package amidst.mojangapi.minecraftinterface;
 
 import java.io.IOException;
+import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -44,6 +46,30 @@ public enum MinecraftInterfaces {
             throw new MinecraftInterfaceCreationException("unable to create local minecraft interface", e);
         }
     }
+    
+	/**
+	 * A method used for creating an external MinecraftInterface.
+	 * 
+	 * @param classDir A path object pointing to a directory which has all of
+	 * the class files required to create an external MinecraftInterface.
+	 * This includes the classes ExternalMinecraftInterface and
+	 * ExternalClassTranslator.
+	 * 
+	 * @return An instance of the provided ExternalMinecraftInterface.
+	 * @throws Exception
+	 */
+	public static MinecraftInterface createExternalMinecraftInterface(LauncherProfile launcherProfile, Path classDir) throws Exception {
+		URLClassLoader mcClassLoader = launcherProfile.newClassLoader();
+		
+		URLClassLoader interfaceClassLoader = URLClassLoader.newInstance(new URL[] { classDir.toUri().toURL() },
+				MinecraftInterfaces.class.getClassLoader());
+		ClassTranslator externalClassTranslator = (ClassTranslator) Class.forName("ExternalClassTranslator", true, interfaceClassLoader).getMethod("get").invoke(null);
+		
+		Map<String, SymbolicClass> symbolicClassMap = Classes
+                .createSymbolicClassMap(launcherProfile.getJar(), mcClassLoader, externalClassTranslator);
+		
+		return (MinecraftInterface) Class.forName("ExternalMinecraftInterface", true, interfaceClassLoader).getConstructor(new Class<?>[] { Map.class }).newInstance(symbolicClassMap);
+	}
 
     @NotNull
     public static ClassTranslator getClassTranslatorFromVersion(RecognisedVersion recognisedVersion) {
