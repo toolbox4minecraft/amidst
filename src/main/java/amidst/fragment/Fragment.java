@@ -79,6 +79,7 @@ public class Fragment {
 	public static final int SIZE = Resolution.FRAGMENT.getStep();
 
 	private volatile boolean isInitialized = false;
+	private volatile boolean isLoading = false;
 	private volatile boolean isLoaded = false;
 	private volatile CoordinatesInWorld corner;
 
@@ -152,20 +153,35 @@ public class Fragment {
 	public void setInitialized() {
 		this.isInitialized = true;
 	}
+	
+	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
+	public void setLoading() {
+		this.isLoading = true;
+	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void setLoaded() {
+		this.isLoading = false;
 		this.isLoaded = true;
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
-	public void recycle() {
-		this.isLoaded = false;
-		this.isInitialized = false;
+	public boolean recycle() {
+		if(!this.isLoading) {
+			this.isLoaded = false;
+			this.isInitialized = false;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public boolean isInitialized() {
 		return isInitialized;
+	}
+	
+	public boolean isLoading() {
+		return isLoading;
 	}
 
 	public boolean isLoaded() {

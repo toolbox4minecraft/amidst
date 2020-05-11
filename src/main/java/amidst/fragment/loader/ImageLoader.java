@@ -48,7 +48,7 @@ public class ImageLoader extends FragmentLoader {
 	
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void doLoad(Dimension dimension, Fragment fragment) {
-		// Slightly faster and uses less ram, but not thread safe.
+		// Slightly faster and uses less ram, but not as safe
 		CoordinatesInWorld corner = fragment.getCorner();
 		long cornerX = corner.getXAs(resolution);
 		long cornerY = corner.getYAs(resolution);

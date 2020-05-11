@@ -111,7 +111,8 @@ public class FragmentQueueProcessor {
 		if (fragment.isInitialized()) {
 			if (fragment.isLoaded()) {
 				layerManager.reloadInvalidated(dimension, fragment);
-			} else {
+			} else if (!fragment.isLoading()) {
+				fragment.setLoading();
 				layerManager.loadAll(dimension, fragment);
 				fragment.setLoaded();
 			}
@@ -120,9 +121,10 @@ public class FragmentQueueProcessor {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void recycleFragment(Fragment fragment) {
-		fragment.recycle();
-		removeFromLoadingQueue(fragment);
-		availableQueue.offer(fragment);
+		if (fragment.recycle()) {
+			removeFromLoadingQueue(fragment);
+			availableQueue.offer(fragment);
+		}
 	}
 
 	// TODO: Check performance with and without this. It is not needed, since

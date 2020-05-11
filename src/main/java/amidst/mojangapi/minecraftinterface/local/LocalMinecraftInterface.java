@@ -65,10 +65,17 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
 	    try {
 	        Object worldData = createWorldDataObject(seed, worldType, generatorOptions);
-	        Object biomeProvider = createBiomeProviderObject(worldData);
+	        ThreadLocal<Object> threadedBiomeProvider = ThreadLocal.withInitial(() -> {
+				try {
+					return createBiomeProviderObject(worldData);
+				} catch (IllegalArgumentException | IllegalAccessException | InstantiationException
+						| InvocationTargetException e) {
+					throw new RuntimeException(e);
+				}
+			});
 	        Object biomeZoomer = overworldBiomeZoomerClass.getClazz().getEnumConstants()[0];
             long seedForBiomeZoomer = (Long) worldDataClass.callStaticMethod(SymbolicNames.METHOD_WORLD_DATA_MAP_SEED, seed);
-            return new World(biomeProvider, biomeZoomer, seedForBiomeZoomer);
+            return new World(threadedBiomeProvider, biomeZoomer, seedForBiomeZoomer);
 
         } catch(IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new MinecraftInterfaceException("unable to create world", e);
@@ -171,10 +178,11 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
 	private class World implements MinecraftInterface.World {
 		/**
-		 * A BiomeProvider instance for the current world, giving
+		 * A ThreadLocal instance containing a BiomeProvider
+		 * instance for each thread of the current world, giving
 		 * access to the quarter-scale biome data.
 		 */
-	    private Object biomeProvider;
+	    private ThreadLocal<Object> threadedBiomeProvider;
 	    /**
 	     * The BiomeZoomer instance for the current world, which
 	     * interpolates the quarter-scale BiomeProvider to give
@@ -187,8 +195,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	     */
 		private long seedForBiomeZoomer;
 
-	    private World(Object biomeProvider, Object biomeZoomer, long seedForBiomeZoomer) {
-	    	this.biomeProvider = biomeProvider;
+	    private World(ThreadLocal<Object> threadedBiomeProvider, Object biomeZoomer, long seedForBiomeZoomer) {
+	    	this.threadedBiomeProvider = threadedBiomeProvider;
 	    	this.biomeZoomer = biomeZoomer;
 	    	this.seedForBiomeZoomer = seedForBiomeZoomer;
 	    }
@@ -238,9 +246,9 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	        // We don't care about the vertical component, so we pass a bogus value
 		    int height = -9999;
 		    if(useQuarterResolution) {
-		        biome = biomeProviderGetBiomeMethod.invoke(biomeProvider, x, height, y);
+		        biome = biomeProviderGetBiomeMethod.invoke(threadedBiomeProvider.get(), x, height, y);
 		    } else {
-		        biome = biomeZoomerGetBiomeMethod.invoke(biomeZoomer, seedForBiomeZoomer, x, height, y, biomeProvider);
+		        biome = biomeZoomerGetBiomeMethod.invoke(biomeZoomer, seedForBiomeZoomer, x, height, y, threadedBiomeProvider.get());
 		    }
 		    return (int) registryGetIdMethod.invoke(biomeRegistry, biome);
 		}
