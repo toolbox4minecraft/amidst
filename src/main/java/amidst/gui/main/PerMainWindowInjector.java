@@ -94,7 +94,7 @@ public class PerMainWindowInjector {
 			this.seedSearcherWindow = null;
 		}
 		this.biomeExporter = new BiomeExporter(threadMaster.getWorkerExecutor());
-		this.biomeExporterDialog = new BiomeExporterDialog(biomeExporter, frame, settings.biomeProfileSelection, this::getMenuBar);
+		this.biomeExporterDialog = new BiomeExporterDialog(biomeExporter, frame, settings.biomeProfileSelection, this::getMenuBar, settings.lastBiomeExportPath);
 		this.actions = new Actions(
 				application,
 				dialogs,
@@ -102,7 +102,8 @@ public class PerMainWindowInjector {
 				seedSearcherWindow,
 				biomeExporterDialog,
 				viewerFacadeReference::get,
-				settings.biomeProfileSelection);
+				settings.biomeProfileSelection,
+				settings.lastBiomeExportPath);
 		this.menuBar = new AmidstMenuBuilder(settings, actions, biomeProfileDirectory).construct();
 		this.mainWindow = new MainWindow(frame, worldSwitcher, viewerFacadeReference::get, seedSearcherWindow, biomeExporterDialog);
 		this.mainWindow.initializeFrame(metadata, versionString, actions, menuBar, runningLauncherProfile.getInitialWorldOptions());
