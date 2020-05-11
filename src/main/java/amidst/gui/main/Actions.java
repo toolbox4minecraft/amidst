@@ -377,6 +377,14 @@ public class Actions {
 		return false;
 	}
 
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void tryChangeThreads() {
+		if (dialogs.askToConfirmYesNo("Change Threads",
+				"This setting does not take effect until you restart the program. Restart now?")) {
+			application.restart();
+		}
+	}
+
 	@CalledByAny
 	public static long tryParseLong(String text, long defaultValue) {
 		try {
