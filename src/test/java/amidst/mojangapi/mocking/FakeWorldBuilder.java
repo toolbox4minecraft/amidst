@@ -1,7 +1,6 @@
 package amidst.mojangapi.mocking;
 
 import java.util.Map;
-import java.util.function.Consumer;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
@@ -21,8 +20,6 @@ public class FakeWorldBuilder {
 		return new FakeWorldBuilder(WorldBuilder.createSilentPlayerless(), directoryDeclaration);
 	}
 
-	private static final Consumer<World> NOOP = disposedWorld -> {
-	};
 	private final WorldBuilder builder;
 	private final TestWorldDirectoryDeclaration directoryDeclaration;
 
@@ -35,7 +32,6 @@ public class FakeWorldBuilder {
 			throws MinecraftInterfaceException {
 		return builder.from(
 				realMinecraftInterface,
-				NOOP,
 				worldDeclaration.getWorldOptions());
 	}
 
@@ -59,7 +55,6 @@ public class FakeWorldBuilder {
 			BiomeDataJson fullBiomeData) throws MinecraftInterfaceException {
 		return builder.from(
 				createFakeMinecraftInterface(worldMetadata, quarterBiomeData, fullBiomeData),
-				NOOP,
 				worldMetadata.intoWorldOptions());
 	}
 

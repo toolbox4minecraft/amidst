@@ -98,10 +98,8 @@ public class SeedSearcher {
 			World world = runningLauncherProfile.createWorld(worldOptions);
 			if (configuration.getWorldFilter().isValid(world)) {
 				reporter.report(worldOptions);
-				world.dispose();
 				break;
 			}
-			world.dispose();
 		}
 	}
 }
