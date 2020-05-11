@@ -1,7 +1,12 @@
 package amidst.gui.profileselect;
 
+import java.awt.Image;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Optional;
+
+import javax.imageio.ImageIO;
 
 import amidst.Application;
 import amidst.documentation.AmidstThread;
@@ -72,6 +77,24 @@ public class LocalProfileComponent extends ProfileComponent {
 		failedResolving = !launcherProfile.isPresent();
 		resolvedProfile = launcherProfile.orElse(null);
 		repaintComponent();
+	}
+	
+	@Override
+	protected Image getProfileIcon() {
+		String iconBase64 = unresolvedProfile.getIconBase64();
+		if(iconBase64 != null) {
+			final String prefix = "data:image/png;base64,";
+			if(iconBase64.startsWith(prefix)) {
+				iconBase64 = iconBase64.substring(prefix.length());
+				try(ByteArrayInputStream stream = new ByteArrayInputStream(Base64.getDecoder().decode(iconBase64))) {
+					return ImageIO.read(stream);
+				} catch (IOException e) {
+					AmidstLogger.warn("Unable to decode base64 icon");
+					return null;
+				}
+			}
+		}
+		return null;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

@@ -1,9 +1,16 @@
 package amidst.mojangapi.file.json.launcherprofiles;
 
+import java.awt.Image;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
+import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.json.ReleaseType;
 
 @Immutable
@@ -20,10 +27,11 @@ public class LauncherProfileJson {
 	 * launcher. I guess this is a bug in the minecraft launcher. However, the
 	 * minecraft launcher displays it with an empty string as name and it uses
 	 * the latest stable release for it, so we do the same.
-	 */
+	 */	
 	private volatile String name = "";
 	private volatile String lastVersionId;
 	private volatile String gameDir;
+	private volatile String icon;
 	private volatile List<ReleaseType> allowedReleaseTypes = ProfileType.LATEST_RELEASE.getAllowedReleaseTypes().get();
 	
 	private volatile ProfileType type = ProfileType.LEGACY;
@@ -42,6 +50,10 @@ public class LauncherProfileJson {
 
 	public String getGameDir() {
 		return gameDir;
+	}
+	
+	public String getIcon() {
+		return icon;
 	}
 
 	public List<ReleaseType> getAllowedReleaseTypes() {
