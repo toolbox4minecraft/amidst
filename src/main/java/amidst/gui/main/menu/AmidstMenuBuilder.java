@@ -1,6 +1,7 @@
 package amidst.gui.main.menu;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -156,7 +157,7 @@ public class AmidstMenuBuilder {
 		int cores = Runtime.getRuntime().availableProcessors();
 		JMenu submenu = new JMenu("Number of Threads Used");
 		JSlider slider = Menus.slider(submenu, settings.threads, 1, cores);
-		slider.addMouseListener(new MouseListener() {
+		slider.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (e.getSource() instanceof JSlider) {
@@ -166,12 +167,7 @@ public class AmidstMenuBuilder {
 						actions.tryChangeThreads();
 					}
 				}
-			}
-			public void mouseClicked(MouseEvent e) {}
-			public void mousePressed(MouseEvent e) {}
-			public void mouseEntered(MouseEvent e) {}
-			public void mouseExited(MouseEvent e) {}
-			
+			}			
 		});
 		slider.setMinorTickSpacing(1);
 		slider.setPaintTicks(true);
