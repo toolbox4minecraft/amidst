@@ -1,7 +1,6 @@
 package amidst.fragment.loader;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledByAny;
@@ -67,14 +66,9 @@ public class ImageLoader extends FragmentLoader {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	private void drawToImage(Dimension dimension, Fragment fragment, long cornerX, long cornerY, BufferedImage bufferedImage) {
-		// Using this approach for setting pixels directly is much, much faster than calling setRGB on the image every time.
-		int[] pixelArray = ((DataBufferInt) bufferedImage.getRaster().getDataBuffer()).getData();
-		
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				// we do this instead of (height - y - 1) * width + x to mirror the y axis
-				int imgidx = y * height + x;
-				pixelArray[imgidx] = colorProvider.getColorAt(dimension, fragment, cornerX, cornerY, x, y);
+				bufferedImage.setRGB(x, y, colorProvider.getColorAt(dimension, fragment, cornerX, cornerY, x, y));
 			}
 		}
 	}
