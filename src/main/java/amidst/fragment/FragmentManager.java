@@ -66,6 +66,14 @@ public class FragmentManager {
 	public int getRecycleQueueSize() {
 		return recycleQueue.size();
 	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public void clear() {
+		cache.clear();
+		availableQueue.clear();
+		loadingQueue.clear();
+		recycleQueue.clear();
+	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public int getCacheSize() {
