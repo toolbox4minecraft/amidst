@@ -29,7 +29,7 @@ public class UnresolvedLauncherProfile {
 		return launcherProfileJson.getName();
 	}
 	
-	public String getIconBase64() {
+	public String getIcon() {
 		return launcherProfileJson.getIcon();
 	}
 	
