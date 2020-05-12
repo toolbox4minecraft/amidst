@@ -146,7 +146,7 @@ public class AmidstMenuBuilder {
 	}
 
 	private JMenu create_Settings_LookAndFeel() {
-		JMenu result = new JMenu("Select Look & Feel");
+		JMenu result = new JMenu("Look & Feel");
 
 		List<AbstractButton> radios = new ArrayList<>();
 		Setting<AmidstLookAndFeel> lookAndFeelSetting = settings.lookAndFeel.withListener(
@@ -164,7 +164,7 @@ public class AmidstMenuBuilder {
 	private JMenu create_Settings_Threads() {
 		UIManager.put("Slider.focus", UIManager.get("Slider.background"));
 		int cores = Runtime.getRuntime().availableProcessors();
-		JMenu submenu = new JMenu("Number of Threads Used");
+		JMenu submenu = new JMenu("No. of Threads");
 		JSlider slider = new JSlider(JSlider.VERTICAL, 1, cores, settings.threads.get());
 		submenu.add(slider);
 		slider.addMouseListener(new MouseAdapter() {
