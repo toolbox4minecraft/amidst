@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.imageio.ImageIO;
 
 import amidst.Application;
+import amidst.ResourceLoader;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
@@ -81,16 +82,22 @@ public class LocalProfileComponent extends ProfileComponent {
 	
 	@Override
 	protected Image getProfileIcon() {
-		String iconBase64 = unresolvedProfile.getIconBase64();
-		if(iconBase64 != null) {
+		String icon = unresolvedProfile.getIcon();
+		if(icon != null && icon != "") {
 			final String prefix = "data:image/png;base64,";
-			if(iconBase64.startsWith(prefix)) {
-				iconBase64 = iconBase64.substring(prefix.length());
-				try(ByteArrayInputStream stream = new ByteArrayInputStream(Base64.getDecoder().decode(iconBase64))) {
+			if(icon.startsWith(prefix)) {
+				icon = icon.substring(prefix.length());
+				try(ByteArrayInputStream stream = new ByteArrayInputStream(Base64.getDecoder().decode(icon))) {
 					return ImageIO.read(stream);
 				} catch (IOException e) {
 					AmidstLogger.warn("Unable to decode base64 icon");
 					return null;
+				}
+			} else {
+				try {
+					return ImageIO.read(ResourceLoader.getResourceURL("/amidst/icon/profileicons/" + icon + ".png"));
+				} catch (IOException | IllegalArgumentException e) {
+					AmidstLogger.error("Error reading icon: " + icon);
 				}
 			}
 		}
