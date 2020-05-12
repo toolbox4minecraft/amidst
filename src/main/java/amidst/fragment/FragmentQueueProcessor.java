@@ -26,7 +26,7 @@ public class FragmentQueueProcessor {
 	/**
 	 * The thread pool used in fragment loading.
 	 */
-	private ThreadPoolExecutor fragWorkers;
+	private final ThreadPoolExecutor fragWorkers;
 
 	@CalledByAny
 	public FragmentQueueProcessor(
@@ -111,8 +111,7 @@ public class FragmentQueueProcessor {
 		if (fragment.isInitialized()) {
 			if (fragment.isLoaded()) {
 				layerManager.reloadInvalidated(dimension, fragment);
-			} else if (!fragment.isLoading()) {
-				fragment.setLoading();
+			} else if (!fragment.getAndSetLoading()) {
 				layerManager.loadAll(dimension, fragment);
 				fragment.setLoaded();
 			}
