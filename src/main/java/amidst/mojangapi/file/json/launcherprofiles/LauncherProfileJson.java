@@ -1,16 +1,9 @@
 package amidst.mojangapi.file.json.launcherprofiles;
 
-import java.awt.Image;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
-import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.json.ReleaseType;
 
 @Immutable
