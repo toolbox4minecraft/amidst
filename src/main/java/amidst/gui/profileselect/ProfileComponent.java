@@ -131,6 +131,7 @@ public abstract class ProfileComponent implements Comparable<ProfileComponent>{
 	private static final Color LOADING_BG_COLOR = new Color(112, 203, 91);
 	private static final Color DEFAULT_BG_COLOR = Color.white;
 	private static final Color FAILED_BG_COLOR = new Color(250, 160, 160);
+	private static final Color SELECTED_FAILED_BG_COLOR = new Color(205, 175, 208);
 
 	public static final int PREFERRED_WIDTH = 500;
 	public static final int PREFERRED_HEIGHT = 40;
@@ -207,11 +208,19 @@ public abstract class ProfileComponent implements Comparable<ProfileComponent>{
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Color getBackgroundColor() {
 		if (failedLoading()) {
-			return FAILED_BG_COLOR;
+			if(isSelected) {
+				return SELECTED_FAILED_BG_COLOR;
+			} else {
+				return FAILED_BG_COLOR;
+			}
 		} else if (isLoading()) {
 			return LOADING_BG_COLOR;
 		} else if (failedResolving()) {
-			return FAILED_BG_COLOR;
+			if(isSelected) {
+				return SELECTED_FAILED_BG_COLOR;
+			} else {
+				return FAILED_BG_COLOR;
+			}
 		} else if (isSelected) {
 			return SELECTED_BG_COLOR;
 		} else {
