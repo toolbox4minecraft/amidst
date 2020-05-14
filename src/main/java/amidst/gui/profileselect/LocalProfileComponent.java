@@ -31,6 +31,7 @@ public class LocalProfileComponent extends ProfileComponent {
 	private final VersionListProvider versionListProvider;
 	private final LauncherProfileRunner launcherProfileRunner;
 	private final UnresolvedLauncherProfile unresolvedProfile;
+	private final Image scaledProfileIcon;
 
 	private volatile boolean isResolving = false;
 	private volatile boolean failedResolving = false;
@@ -50,7 +51,35 @@ public class LocalProfileComponent extends ProfileComponent {
 		this.versionListProvider = versionListProvider;
 		this.launcherProfileRunner = launcherProfileRunner;
 		this.unresolvedProfile = unresolvedProfile;
+		this.scaledProfileIcon = createScaledProfileIcon();
 		initComponent();
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	public Image createScaledProfileIcon() {
+		String icon = unresolvedProfile.getIcon();
+		if(icon != null && icon != "") {
+			final String prefix = "data:image/png;base64,";
+			Image image = null;
+			if(icon.startsWith(prefix)) {
+				icon = icon.substring(prefix.length());
+				try(ByteArrayInputStream stream = new ByteArrayInputStream(Base64.getDecoder().decode(icon))) {
+					image = ImageIO.read(stream);
+				} catch (IOException e) {
+					AmidstLogger.warn("Unable to decode base64 icon");
+				}
+			} else {
+				try {
+					image = ImageIO.read(ResourceLoader.getResourceURL("/amidst/icon/profileicons/" + icon + ".png"));
+				} catch (IOException | IllegalArgumentException e) {
+					AmidstLogger.error("Error reading icon: " + icon);
+				}
+			}
+			if(image != null) {
+				return image.getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+			}
+		}
+		return null;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -81,27 +110,8 @@ public class LocalProfileComponent extends ProfileComponent {
 	}
 	
 	@Override
-	protected Image getProfileIcon() {
-		String icon = unresolvedProfile.getIcon();
-		if(icon != null && icon != "") {
-			final String prefix = "data:image/png;base64,";
-			if(icon.startsWith(prefix)) {
-				icon = icon.substring(prefix.length());
-				try(ByteArrayInputStream stream = new ByteArrayInputStream(Base64.getDecoder().decode(icon))) {
-					return ImageIO.read(stream);
-				} catch (IOException e) {
-					AmidstLogger.warn("Unable to decode base64 icon");
-					return null;
-				}
-			} else {
-				try {
-					return ImageIO.read(ResourceLoader.getResourceURL("/amidst/icon/profileicons/" + icon + ".png"));
-				} catch (IOException | IllegalArgumentException e) {
-					AmidstLogger.error("Error reading icon: " + icon);
-				}
-			}
-		}
-		return null;
+	protected Image getScaledProfileIcon() {
+		return scaledProfileIcon;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
