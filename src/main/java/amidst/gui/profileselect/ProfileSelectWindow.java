@@ -166,7 +166,7 @@ public class ProfileSelectWindow {
 							launcherProfileRunner,
 							p
 						)
-				).forEach(c -> profileSelectPanel.addProfile(c));
+				).sorted().forEach(c -> profileSelectPanel.addProfile(c));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

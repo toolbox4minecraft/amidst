@@ -41,12 +41,14 @@ public class ProfileSelectPanel {
 		@CalledOnlyBy(AmidstThread.EDT)
 		@Override
 		public void paintChildren(Graphics g) {
-			sort();
 			super.paintChildren(g);
 			Graphics2D g2d = (Graphics2D) g;
 			drawSeparatorLines(g2d);
 		}
 		
+		/**
+		 * Use to sort after all of the components have been added.
+		 */
 		@CalledOnlyBy(AmidstThread.EDT)
 		private void sort() {
 			profileComponents.sort((p1, p2) -> {
