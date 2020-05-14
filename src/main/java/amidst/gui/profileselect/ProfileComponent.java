@@ -83,10 +83,9 @@ public abstract class ProfileComponent implements Comparable<ProfileComponent>{
 		
 		@CalledOnlyBy(AmidstThread.EDT)
 		private void drawProfileIcon(Graphics2D g2d) {
-			Image icon = getProfileIcon();
+			Image icon = getScaledProfileIcon();
 			if(icon != null) {
-				Image scaledIcon = icon.getScaledInstance(32, 32, Image.SCALE_SMOOTH);
-				g2d.drawImage(scaledIcon, 4, 4, null);
+				g2d.drawImage(icon, 4, 4, null);
 			}
 		}
 
@@ -203,7 +202,9 @@ public abstract class ProfileComponent implements Comparable<ProfileComponent>{
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	protected abstract Image getProfileIcon();
+	protected Image getScaledProfileIcon() {
+		return null;
+	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private Color getBackgroundColor() {
