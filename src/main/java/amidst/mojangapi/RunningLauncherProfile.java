@@ -64,21 +64,11 @@ public class RunningLauncherProfile {
 		}
 	}
 
-	/**
-	 * Due to the limitation of the minecraft interface, you can only work with
-	 * one world at a time. Creating a new world will break all previously
-	 * created world objects.
-	 */
 	public synchronized World createWorld(WorldOptions worldOptions)
 			throws MinecraftInterfaceException {
 		return worldBuilder.from(minecraftInterface, worldOptions);
 	}
 
-	/**
-	 * Due to the limitation of the minecraft interface, you can only work with
-	 * one world at a time. Creating a new world will break all previously
-	 * created world objects.
-	 */
 	public synchronized World createWorldFromSaveGame(SaveGame saveGame)
 			throws IOException, MinecraftInterfaceException {
 		return worldBuilder.fromSaveGame(minecraftInterface, saveGame);
