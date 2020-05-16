@@ -201,9 +201,10 @@ public class WorldBuilder {
 				new StructureProducer<>(
 						Resolution.CHUNK,
 						8,
-						versionFeatures.get(FeatureKey.END_ISLAND_LOCATION_CHECKER),
+						versionFeatures.get(FeatureKey.END_CITY_LOCATION_CHECKER),
 						new EndCityWorldIconTypeProvider(),
 						Dimension.END,
-						false));
+						false),
+				versionFeatures.get(FeatureKey.END_GATEWAY_PRODUCER));
 	}
 }

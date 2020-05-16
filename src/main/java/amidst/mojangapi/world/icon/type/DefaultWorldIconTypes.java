@@ -16,24 +16,26 @@ import amidst.mojangapi.world.icon.WorldIconImage;
 @Immutable
 public enum DefaultWorldIconTypes {
 	// @formatter:off
-	NETHER_FORTRESS     ("nether_fortress",   "Nether Fortress"),
-	PLAYER              ("player",            "Player"),
-	STRONGHOLD          ("stronghold",        "Stronghold"),
-	JUNGLE              ("jungle",            "Jungle Temple"),
-	DESERT              ("desert",            "Desert Temple"),
-	VILLAGE             ("village",           "Village"),
-	SPAWN               ("spawn",             "World Spawn"),
-	WITCH               ("witch",             "Witch Hut"),
-	OCEAN_MONUMENT      ("ocean_monument",    "Ocean Monument"),
-	IGLOO               ("igloo",             "Igloo"),
-	MINESHAFT           ("mineshaft",         "Mineshaft"),
-	WOODLAND_MANSION    ("woodland_mansion",  "Woodland Mansion"),
-	END_CITY            ("end_city",          "Likely End City"),
-	POSSIBLE_END_CITY   ("possible_end_city", "Possible End City"),
-	OCEAN_RUINS         ("ocean_ruins",       "Ocean Ruins"),
-	SHIPWRECK           ("shipwreck",         "Shipwreck"),
-	BURIED_TREASURE     ("buried_treasure",   "Buried Treasure"),
-	PILLAGER_OUTPOST    ("pillager_outpost",  "Pillager Outpost");
+	NETHER_FORTRESS     ("nether_fortress",      "Nether Fortress"),
+	PLAYER              ("player",               "Player"),
+	STRONGHOLD          ("stronghold",           "Stronghold"),
+	JUNGLE              ("jungle",               "Jungle Temple"),
+	DESERT              ("desert",               "Desert Temple"),
+	VILLAGE             ("village",              "Village"),
+	SPAWN               ("spawn",                "World Spawn"),
+	WITCH               ("witch",                "Witch Hut"),
+	OCEAN_MONUMENT      ("ocean_monument",       "Ocean Monument"),
+	IGLOO               ("igloo",                "Igloo"),
+	MINESHAFT           ("mineshaft",            "Mineshaft"),
+	WOODLAND_MANSION    ("woodland_mansion",     "Woodland Mansion"),
+	END_CITY            ("end_city",             "Likely End City"),
+	POSSIBLE_END_CITY   ("possible_end_city",    "Possible End City"),
+	END_GATEWAY         ("end_gateway",          "End Gateway"),
+	POSSIBLE_END_GATEWAY("possible_end_gateway", "Possible End Gateway"),
+	OCEAN_RUINS         ("ocean_ruins",          "Ocean Ruins"),
+	SHIPWRECK           ("shipwreck",            "Shipwreck"),
+	BURIED_TREASURE     ("buried_treasure",      "Buried Treasure"),
+	PILLAGER_OUTPOST    ("pillager_outpost",     "Pillager Outpost");
 	// @formatter:on
 
 	private static final Map<String, DefaultWorldIconTypes> typeMap = createTypeMap();

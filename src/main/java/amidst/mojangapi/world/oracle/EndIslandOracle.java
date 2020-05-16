@@ -2,11 +2,11 @@ package amidst.mojangapi.world.oracle;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
+import kaptainwutax.seedutils.lcg.rand.JRand;
 
 @ThreadSafe
 public class EndIslandOracle {
@@ -18,36 +18,10 @@ public class EndIslandOracle {
 	 * Returns the noise function using the current seed.
 	 */
 	private static SimplexNoise createNoiseFunction(long seed) {
-		Random random = new Random(seed);
-		fakePerlin3dOctavesConstructor(random, 16);
-		fakePerlin3dOctavesConstructor(random, 16);
-		fakePerlin3dOctavesConstructor(random, 8);
-		fakePerlin3dOctavesConstructor(random, 10);
-		fakePerlin3dOctavesConstructor(random, 16);
+		JRand random = new JRand(seed);
+		// Mimics the side-effects to the random number generator caused by Minecraft.
+		random.advance(17292);
 		return new SimplexNoise(random);
-	}
-
-	/**
-	 * Mimics the side-effects to the random number generator caused by
-	 * constructing a Perlin3dOctaves instance.
-	 */
-	private static void fakePerlin3dOctavesConstructor(Random random, int octaveCount) {
-		for (int i = 0; i < octaveCount; i++) {
-			fakePerlin3dConstructor(random);
-		}
-	}
-
-	/**
-	 * Mimics the side-effects to the random number generator caused by
-	 * constructing a Perlin3d instance.
-	 */
-	private static void fakePerlin3dConstructor(Random random) {
-		random.nextDouble();
-		random.nextDouble();
-		random.nextDouble();
-		for (int i = 0; i < 256; i++) {
-			random.nextInt(256 - i);
-		}
 	}
 
 	/**
@@ -128,9 +102,7 @@ public class EndIslandOracle {
 	/**
 	 * The chunk is in the outer-islands band
 	 */
-	// TODO: check for threading, do we need synchonized or is the SimplexNoise
-	// class thread safe?
-	private synchronized EndIsland tryCreateEndIslandInOuterLands(int chunkX, int chunkY) {
+	private EndIsland tryCreateEndIslandInOuterLands(int chunkX, int chunkY) {
 		if (noiseFunction.noise(chunkX, chunkY) < ISLAND_DENSITY_THRESHOLD) {
 			return new EndIsland(chunkX, chunkY, getErosionFactor(chunkX, chunkY));
 		} else {

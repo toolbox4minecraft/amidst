@@ -27,6 +27,7 @@ import amidst.mojangapi.world.icon.locationchecker.ScatteredFeaturesLocationChec
 import amidst.mojangapi.world.icon.locationchecker.VillageLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.WoodlandMansionLocationChecker;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
+import amidst.mojangapi.world.icon.producer.EndGatewayProducer;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_128Algorithm;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Buggy128Algorithm;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Original;
@@ -110,7 +111,8 @@ public enum DefaultVersionFeatures {
 				).sinceExtend(RecognisedVersion._16w43a,
 					LayerIds.WOODLAND_MANSION
 				).sinceExtend(RecognisedVersion._18w09a,
-					LayerIds.OCEAN_FEATURES
+					LayerIds.OCEAN_FEATURES,
+					LayerIds.END_GATEWAY // were introduced in 16w39a, but we can only find them past here
 				).construct())
 
 			.with(FeatureKey.BIOME_LIST, DefaultBiomes.DEFAULT_BIOMES)
@@ -147,8 +149,12 @@ public enum DefaultVersionFeatures {
 				VersionFeature.constant(new NetherFortressAlgorithm(getWorldSeed(features)))
 			))
 
-			.with(FeatureKey.END_ISLAND_LOCATION_CHECKER, VersionFeature.bind(features ->
+			.with(FeatureKey.END_CITY_LOCATION_CHECKER, VersionFeature.bind(features ->
 				VersionFeature.constant(new EndCityLocationChecker(getWorldSeed(features)))
+			))
+			
+			.with(FeatureKey.END_GATEWAY_PRODUCER, VersionFeature.bind(features ->
+				VersionFeature.constant(new EndGatewayProducer(getWorldSeed(features)))
 			))
 
 			.with(FeatureKey.MINESHAFT_LOCATION_CHECKER, VersionFeature.bind(features ->

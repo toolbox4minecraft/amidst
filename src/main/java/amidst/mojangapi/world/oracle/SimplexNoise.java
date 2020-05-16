@@ -1,6 +1,6 @@
 package amidst.mojangapi.world.oracle;
 
-import java.util.Random;
+import kaptainwutax.seedutils.lcg.rand.JRand;
 
 /**
  * A speed-improved simplex noise algorithm for 2D, 3D and 4D in Java.
@@ -54,17 +54,15 @@ public class SimplexNoise {
 	private static final double F4 = (Math.sqrt(5.0) - 1.0) / 4.0;
 	private static final double G4 = (5.0 - Math.sqrt(5.0)) / 20.0;
 
-	public SimplexNoise(Random random) {
+	public SimplexNoise(JRand random) {
 		// To remove the need for index wrapping, double the permutation table
 		// length
 		perm = new short[512];
 		permMod12 = new short[512];
 
-		// Minecraft uses the PRNG 3 times before building the
-		// permutation table.
-		random.nextDouble();
-		random.nextDouble();
-		random.nextDouble();
+		// Minecraft calls nextDouble 3 times before building the permutation
+		// table, which is equivalent to 6 next calls.
+		random.advance(6);
 
 		// Build a permutation table using our seeded PRNG
 		for (short i = 0; i < 256; ++i) {
