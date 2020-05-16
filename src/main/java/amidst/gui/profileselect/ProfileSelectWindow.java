@@ -98,6 +98,7 @@ public class ProfileSelectWindow {
 		JScrollPane result = new JScrollPane(profileSelectPanel.getComponent());
 		result.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		result.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		result.getVerticalScrollBar().setUnitIncrement(14);
 		return result;
 	}
 
@@ -156,15 +157,16 @@ public class ProfileSelectWindow {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createProfileComponents(List<UnresolvedLauncherProfile> launcherProfiles) {
-		for (UnresolvedLauncherProfile profile : launcherProfiles) {
-			profileSelectPanel.addProfile(
+		launcherProfiles.stream()
+				.map(p ->
 					new LocalProfileComponent(
 							application,
 							workerExecutor,
 							versionListProvider,
 							launcherProfileRunner,
-							profile));
-		}
+							p
+						)
+				).forEach(c -> profileSelectPanel.addProfile(c));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

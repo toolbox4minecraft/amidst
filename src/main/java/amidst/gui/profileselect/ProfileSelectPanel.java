@@ -41,9 +41,26 @@ public class ProfileSelectPanel {
 		@CalledOnlyBy(AmidstThread.EDT)
 		@Override
 		public void paintChildren(Graphics g) {
+			sort();
 			super.paintChildren(g);
 			Graphics2D g2d = (Graphics2D) g;
 			drawSeparatorLines(g2d);
+		}
+		
+		@CalledOnlyBy(AmidstThread.EDT)
+		private void sort() {
+			profileComponents.sort((p1, p2) -> {
+				if(p1 == null) {
+					return -1;
+				} else if (p2 == null) {
+					return 1;
+				} else {
+					return p1.compareTo(p2);
+				}
+			});
+			for(int i = 0; i < profileComponents.size(); i++) {
+				setComponentZOrder(profileComponents.get(i).getComponent(), i);
+			}
 		}
 
 		@CalledOnlyBy(AmidstThread.EDT)
