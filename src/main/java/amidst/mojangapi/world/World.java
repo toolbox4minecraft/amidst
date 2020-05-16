@@ -61,9 +61,9 @@ public class World {
 			WorldIconProducer<Void> woodlandMansionProducer,
 			WorldIconProducer<Void> oceanFeaturesProducer,
 			WorldIconProducer<Void> netherFortressProducer,
-		this.onDisposeWorld = onDisposeWorld;
 			WorldIconProducer<List<EndIsland>> endCityProducer,
 			WorldIconProducer<List<EndIsland>> endGatewayProducer) {
+		this.onDisposeWorld = onDisposeWorld;
 		this.worldOptions = worldOptions;
 		this.movablePlayerList = movablePlayerList;
 		this.recognisedVersion = recognisedVersion;
