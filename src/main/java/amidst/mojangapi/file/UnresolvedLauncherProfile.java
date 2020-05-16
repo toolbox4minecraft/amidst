@@ -28,6 +28,14 @@ public class UnresolvedLauncherProfile {
 	public String getName() {
 		return launcherProfileJson.getName();
 	}
+	
+	public String getIcon() {
+		return launcherProfileJson.getIcon();
+	}
+	
+	public String getVersionId() {
+		return launcherProfileJson.getLastVersionId();
+	}
 
 	public LauncherProfile resolve(VersionList versionList) throws FormatException, IOException {
 		ProfileDirectory profileDirectory = dotMinecraftDirectoryService

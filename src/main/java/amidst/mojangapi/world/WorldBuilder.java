@@ -1,7 +1,6 @@
 package amidst.mojangapi.world;
 
 import java.io.IOException;
-import java.util.function.Consumer;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.file.ImmutablePlayerInformationProvider;
@@ -49,24 +48,21 @@ public class WorldBuilder {
 
 	public World from(
 			MinecraftInterface minecraftInterface,
-			Consumer<World> onDisposeWorld,
 			WorldOptions worldOptions) throws MinecraftInterfaceException {
 		VersionFeatures versionFeatures = initInterfaceAndGetFeatures(worldOptions, minecraftInterface);
 		return create(
 				minecraftInterface.getRecognisedVersion(),
-				onDisposeWorld,
 				MovablePlayerList.dummy(),
 				versionFeatures,
 				versionFeatures.get(FeatureKey.WORLD_SPAWN_ORACLE));
 	}
 
-	public World fromSaveGame(MinecraftInterface minecraftInterface, Consumer<World> onDisposeWorld, SaveGame saveGame)
+	public World fromSaveGame(MinecraftInterface minecraftInterface, SaveGame saveGame)
 			throws IOException,
 			MinecraftInterfaceException {
 		VersionFeatures versionFeatures = initInterfaceAndGetFeatures(WorldOptions.fromSaveGame(saveGame), minecraftInterface);
 		return create(
 				minecraftInterface.getRecognisedVersion(),
-				onDisposeWorld,
 				new MovablePlayerList(
 					playerInformationProvider,
 					saveGame,
@@ -79,23 +75,21 @@ public class WorldBuilder {
 	private VersionFeatures initInterfaceAndGetFeatures(WorldOptions worldOptions, MinecraftInterface minecraftInterface)
 		throws MinecraftInterfaceException {
 		RecognisedVersion recognisedVersion = minecraftInterface.getRecognisedVersion();
-		minecraftInterface.createWorld(
+		MinecraftInterface.World minecraftWorld = minecraftInterface.createWorld(
 			worldOptions.getWorldSeed().getLong(),
 			worldOptions.getWorldType(),
 			worldOptions.getGeneratorOptions());
 		seedHistoryLogger.log(recognisedVersion, worldOptions.getWorldSeed());
-		return DefaultVersionFeatures.builder(worldOptions, minecraftInterface).create(recognisedVersion);
+		return DefaultVersionFeatures.builder(worldOptions, minecraftWorld).create(recognisedVersion);
 	}
 
 	private World create(
 			RecognisedVersion recognisedVersion,
-			Consumer<World> onDisposeWorld,
 			MovablePlayerList movablePlayerList,
 			VersionFeatures versionFeatures,
 			WorldSpawnOracle worldSpawnOracle) throws MinecraftInterfaceException {
 
 		return new World(
-				onDisposeWorld,
 				versionFeatures.get(FeatureKey.WORLD_OPTIONS),
 				movablePlayerList,
 				recognisedVersion,

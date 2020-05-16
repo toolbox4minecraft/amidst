@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Function;
 
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
@@ -15,6 +16,7 @@ import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.WorldType;
+import amidst.util.ArrayCache;
 
 public class LocalMinecraftInterface implements MinecraftInterface {
 
@@ -38,22 +40,10 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private Object biomeRegistry;
 	private Object biomeProviderRegistry;
 
-	/**
-	 * A BiomeProvider instance for the current world, giving
-	 * access to the quarter-scale biome data.
-	 */
-    private Object biomeProvider;
     /**
-     * The BiomeZoomer instance for the current world, which
-     * interpolates the quarter-scale BiomeProvider to give
-     * full-scale biome data.
+     * An array used to return biome data
      */
-    private Object biomeZoomer;
-    /**
-     * The seed used by the BiomeZoomer during interpolation.
-     * It is derived from the world seed.
-     */
-	private long seedForBiomeZoomer;
+    private final ArrayCache<int[]> dataArray = ArrayCache.makeIntArrayCache(256);
 
 	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;
@@ -69,70 +59,16 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	}
 
 	@Override
-	public int[] getBiomeData(int x, int y, int width, int height, boolean useQuarterResolution)
-			throws MinecraftInterfaceException {
-	    if (!isInitialized || biomeProvider == null || biomeZoomer == null) {
-	        throw new MinecraftInterfaceException("no world was created");
-	    }
-
-	    int size = width * height;
-
-	    int[] data = new int[size];
-
-	    try {
-	    	
-	    	if(size == 1) {
-	    		data[0] = getBiomeIdAt(x, y, useQuarterResolution);
-	    	} else {
-		        /**
-		         * We break the region in 16x16 chunks, to get better performance out
-		         * of the LazyArea used by the game. This gives a ~2x improvement.
-	             */
-	            int chunkSize = 16;
-	            for (int x0 = 0; x0 < width; x0 += chunkSize) {
-	                int w = Math.min(chunkSize, width - x0);
-	
-	                for (int y0 = 0; y0 < height; y0 += chunkSize) {
-	                    int h = Math.min(chunkSize, height - y0);
-	
-	                    for (int i = 0; i < w; i++) {
-	                        for (int j = 0; j < h; j++) {
-	                            int trueIdx = (x0 + i) + (y0 + j) * width;
-	                            data[trueIdx] = getBiomeIdAt(x + x0 + i, y + y0 + j, useQuarterResolution);
-	                        }
-	                    }
-	                }
-	            }
-	    	}
-	    } catch (Throwable e) {
-	        throw new MinecraftInterfaceException("unable to get biome data", e);
-	    }
-
-	    return data;
-	}
-
-	private int getBiomeIdAt(int x, int y, boolean useQuarterResolution) throws Throwable {
-	    Object biome;
-        // We don't care about the vertical component, so we pass a bogus value
-	    int height = -9999;
-	    if(useQuarterResolution) {
-	        biome = biomeProviderGetBiomeMethod.invoke(biomeProvider, x, height, y);
-	    } else {
-	        biome = biomeZoomerGetBiomeMethod.invoke(biomeZoomer, seedForBiomeZoomer, x, height, y, biomeProvider);
-	    }
-	    return (int) registryGetIdMethod.invoke(biomeRegistry, biome);
-	}
-
-	@Override
-	public synchronized void createWorld(long seed, WorldType worldType, String generatorOptions)
+	public synchronized MinecraftInterface.World createWorld(long seed, WorldType worldType, String generatorOptions)
 			throws MinecraftInterfaceException {
 	    initializeIfNeeded();
 
 	    try {
 	        Object worldData = createWorldDataObject(seed, worldType, generatorOptions);
-	        biomeProvider = createBiomeProviderObject(worldData);
-	        biomeZoomer = overworldBiomeZoomerClass.getClazz().getEnumConstants()[0];
-            seedForBiomeZoomer = (Long) worldDataClass.callStaticMethod(SymbolicNames.METHOD_WORLD_DATA_MAP_SEED, seed);
+	        Object biomeProvider = createBiomeProviderObject(worldData);
+	        Object biomeZoomer = overworldBiomeZoomerClass.getClazz().getEnumConstants()[0];
+            long seedForBiomeZoomer = (Long) worldDataClass.callStaticMethod(SymbolicNames.METHOD_WORLD_DATA_MAP_SEED, seed);
+            return new World(biomeProvider, biomeZoomer, seedForBiomeZoomer);
 
         } catch(IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new MinecraftInterfaceException("unable to create world", e);
@@ -190,7 +126,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		return recognisedVersion;
 	}
 
-	private void initializeIfNeeded() throws MinecraftInterfaceException {
+	private synchronized void initializeIfNeeded() throws MinecraftInterfaceException {
 	    if (isInitialized) {
 	        return;
 	    }
@@ -203,7 +139,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			} catch (NullPointerException e) {
 				AmidstLogger.warn("Unable to shut down Server-Worker threads");
 			}
-			
+
             biomeRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome"));
             biomeProviderRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome_source_type"));
 
@@ -231,5 +167,82 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private MethodHandle getMethodHandle(SymbolicClass symbolicClass, String method) throws IllegalAccessException {
 	    Method rawMethod = symbolicClass.getMethod(method).getRawMethod();
 	    return MethodHandles.lookup().unreflect(rawMethod);
+	}
+
+	private class World implements MinecraftInterface.World {
+		/**
+		 * A BiomeProvider instance for the current world, giving
+		 * access to the quarter-scale biome data.
+		 */
+	    private Object biomeProvider;
+	    /**
+	     * The BiomeZoomer instance for the current world, which
+	     * interpolates the quarter-scale BiomeProvider to give
+	     * full-scale biome data.
+	     */
+	    private Object biomeZoomer;
+	    /**
+	     * The seed used by the BiomeZoomer during interpolation.
+	     * It is derived from the world seed.
+	     */
+		private long seedForBiomeZoomer;
+
+	    private World(Object biomeProvider, Object biomeZoomer, long seedForBiomeZoomer) {
+	    	this.biomeProvider = biomeProvider;
+	    	this.biomeZoomer = biomeZoomer;
+	    	this.seedForBiomeZoomer = seedForBiomeZoomer;
+	    }
+
+		@Override
+		public<T> T getBiomeData(int x, int y, int width, int height,
+				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
+				throws MinecraftInterfaceException {
+
+			int size = width * height;
+		    return dataArray.withArrayFaillible(size, data -> {
+			    try {
+			    	if(size == 1) {
+			    		data[0] = getBiomeIdAt(x, y, useQuarterResolution);
+			    		return biomeDataMapper.apply(data);
+			    	}
+
+			        /**
+			         * We break the region in 16x16 chunks, to get better performance out
+			         * of the LazyArea used by the game. This gives a ~2x improvement.
+		             */
+		            int chunkSize = 16;
+		            for (int x0 = 0; x0 < width; x0 += chunkSize) {
+		                int w = Math.min(chunkSize, width - x0);
+
+		                for (int y0 = 0; y0 < height; y0 += chunkSize) {
+		                    int h = Math.min(chunkSize, height - y0);
+
+		                    for (int i = 0; i < w; i++) {
+		                        for (int j = 0; j < h; j++) {
+		                            int trueIdx = (x0 + i) + (y0 + j) * width;
+		                            data[trueIdx] = getBiomeIdAt(x + x0 + i, y + y0 + j, useQuarterResolution);
+		                        }
+		                    }
+		                }
+		            }
+			    } catch (Throwable e) {
+			        throw new MinecraftInterfaceException("unable to get biome data", e);
+			    }
+
+			    return biomeDataMapper.apply(data);
+		    });
+		}
+
+		private int getBiomeIdAt(int x, int y, boolean useQuarterResolution) throws Throwable {
+		    Object biome;
+	        // We don't care about the vertical component, so we pass a bogus value
+		    int height = -9999;
+		    if(useQuarterResolution) {
+		        biome = biomeProviderGetBiomeMethod.invoke(biomeProvider, x, height, y);
+		    } else {
+		        biome = biomeZoomerGetBiomeMethod.invoke(biomeZoomer, seedForBiomeZoomer, x, height, y, biomeProvider);
+		    }
+		    return (int) registryGetIdMethod.invoke(biomeRegistry, biome);
+		}
 	}
 }

@@ -6,8 +6,8 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
-
 import javax.swing.JComponent;
 
 import amidst.ResourceLoader;
@@ -16,7 +16,7 @@ import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 
 @NotThreadSafe
-public abstract class ProfileComponent {
+public abstract class ProfileComponent implements Comparable<ProfileComponent>{
 	@SuppressWarnings("serial")
 	private class Component extends JComponent {
 		private final FontMetrics statusFontMetrics = getFontMetrics(STATUS_FONT);
@@ -40,10 +40,11 @@ public abstract class ProfileComponent {
 			Graphics2D g2d = (Graphics2D) g;
 			drawBackground(g2d);
 			updateIfNecessary();
+			drawProfileIcon(g2d);
 			drawVersionName(g2d);
 			drawProfileName(g2d);
 			drawStatus(g2d);
-			drawIcon(g2d);
+			drawStatusIcon(g2d);
 		}
 
 		@CalledOnlyBy(AmidstThread.EDT)
@@ -61,23 +62,31 @@ public abstract class ProfileComponent {
 				versionNameX = width - 40 - versionFontMetrics.stringWidth(versionName);
 				oldWidth = width;
 				oldVersionName = versionName;
-				oldProfileName = createProfileName(profileName, versionNameX - 25);
+				oldProfileName = createProfileName(profileName, versionNameX - 25, 40);
 			}
 		}
 
 		@CalledOnlyBy(AmidstThread.EDT)
-		private String createProfileName(String profileName, int maxWidth) {
+		private String createProfileName(String profileName, int maxWidth, int xOffset) {
 			String result = profileName;
-			if (profileFontMetrics.stringWidth(result) > maxWidth) {
+			if (profileFontMetrics.stringWidth(result) + xOffset > maxWidth) {
 				int widthSum = 0;
 				for (int i = 0; i < result.length(); i++) {
 					widthSum += profileFontMetrics.charWidth(result.charAt(i));
-					if (widthSum > maxWidth) {
+					if (widthSum + xOffset > maxWidth) {
 						return result.substring(0, i) + "...";
 					}
 				}
 			}
 			return result;
+		}
+		
+		@CalledOnlyBy(AmidstThread.EDT)
+		private void drawProfileIcon(Graphics2D g2d) {
+			Image icon = getScaledProfileIcon();
+			if(icon != null) {
+				g2d.drawImage(icon, 4, 4, null);
+			}
 		}
 
 		@CalledOnlyBy(AmidstThread.EDT)
@@ -91,7 +100,7 @@ public abstract class ProfileComponent {
 		private void drawProfileName(Graphics2D g2d) {
 			g2d.setColor(Color.black);
 			g2d.setFont(PROFILE_NAME_FONT);
-			g2d.drawString(oldProfileName, 5, 30);
+			g2d.drawString(oldProfileName, 40, 30);
 		}
 
 		@CalledOnlyBy(AmidstThread.EDT)
@@ -104,9 +113,9 @@ public abstract class ProfileComponent {
 		}
 
 		@CalledOnlyBy(AmidstThread.EDT)
-		private void drawIcon(Graphics2D g2d) {
-			BufferedImage icon = getIcon();
-			g2d.drawImage(icon, getWidth() - icon.getWidth() - 5, 4, null);
+		private void drawStatusIcon(Graphics2D g2d) {
+			Image icon = getStatusIcon();
+			g2d.drawImage(icon, getWidth() - icon.getWidth(null) - 5, 4, null);
 		}
 	}
 
@@ -121,6 +130,7 @@ public abstract class ProfileComponent {
 	private static final Color LOADING_BG_COLOR = new Color(112, 203, 91);
 	private static final Color DEFAULT_BG_COLOR = Color.white;
 	private static final Color FAILED_BG_COLOR = new Color(250, 160, 160);
+	private static final Color SELECTED_FAILED_BG_COLOR = new Color(205, 175, 208);
 
 	public static final int PREFERRED_WIDTH = 500;
 	public static final int PREFERRED_HEIGHT = 40;
@@ -177,7 +187,7 @@ public abstract class ProfileComponent {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
-	private BufferedImage getIcon() {
+	private Image getStatusIcon() {
 		if (failedLoading()) {
 			return INACTIVE_ICON;
 		} else if (isLoading()) {
@@ -192,13 +202,26 @@ public abstract class ProfileComponent {
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
+	protected Image getScaledProfileIcon() {
+		return null;
+	}
+
+	@CalledOnlyBy(AmidstThread.EDT)
 	private Color getBackgroundColor() {
 		if (failedLoading()) {
-			return FAILED_BG_COLOR;
+			if(isSelected) {
+				return SELECTED_FAILED_BG_COLOR;
+			} else {
+				return FAILED_BG_COLOR;
+			}
 		} else if (isLoading()) {
 			return LOADING_BG_COLOR;
 		} else if (failedResolving()) {
-			return FAILED_BG_COLOR;
+			if(isSelected) {
+				return SELECTED_FAILED_BG_COLOR;
+			} else {
+				return FAILED_BG_COLOR;
+			}
 		} else if (isSelected) {
 			return SELECTED_BG_COLOR;
 		} else {
@@ -232,4 +255,9 @@ public abstract class ProfileComponent {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public abstract void resolveLater();
+	
+	@Override
+	public int compareTo(ProfileComponent o) {
+		return this.getProfileName().compareToIgnoreCase(o.getProfileName());
+	}
 }

@@ -99,7 +99,6 @@ public class WorldSwitcher {
 		if (decideWorldPlayerType(world.getMovablePlayerList())) {
 			setViewerFacade(viewerFacadeFactory.create(world));
 		} else {
-			world.dispose();
 			frame.revalidate();
 			frame.repaint();
 		}
