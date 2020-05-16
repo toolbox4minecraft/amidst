@@ -27,6 +27,7 @@ import amidst.mojangapi.world.icon.locationchecker.ScatteredFeaturesLocationChec
 import amidst.mojangapi.world.icon.locationchecker.VillageLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.WoodlandMansionLocationChecker;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
+import amidst.mojangapi.world.icon.producer.EndGatewayProducer;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_128Algorithm;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Buggy128Algorithm;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Original;
@@ -38,18 +39,18 @@ import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 public enum DefaultVersionFeatures {
 	;
 
-	public static VersionFeatures.Builder builder(WorldOptions worldOptions, MinecraftInterface minecraftInterface) {
-		if (worldOptions == null || minecraftInterface == null) {
+	public static VersionFeatures.Builder builder(WorldOptions worldOptions, MinecraftInterface.World minecraftWorld) {
+		if (worldOptions == null || minecraftWorld == null) {
 			return FEATURES_BUILDER.clone();
 		} else {
 			return FEATURES_BUILDER.clone()
 							.withValue(FeatureKey.WORLD_OPTIONS, worldOptions)
-							.withValue(MINECRAFT_INTERFACE, minecraftInterface);
+							.withValue(MINECRAFT_WORLD, minecraftWorld);
 		}
 	}
 
 	// @formatter:off
-	private static final FeatureKey<MinecraftInterface> MINECRAFT_INTERFACE                        = FeatureKey.make();
+	private static final FeatureKey<MinecraftInterface.World> MINECRAFT_WORLD                      = FeatureKey.make();
 	public static final FeatureKey<List<Biome>>    VALID_BIOMES_FOR_STRUCTURE_SPAWN                = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD      = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>   VALID_BIOMES_FOR_STRUCTURE_VILLAGE              = FeatureKey.make();
@@ -80,11 +81,10 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<Boolean>       BUGGY_STRUCTURE_COORDINATE_MATH                 = FeatureKey.make();
 
 	private static final VersionFeatures.Builder FEATURES_BUILDER = VersionFeatures.builder()
-			.with(FeatureKey.BIOME_DATA_ORACLE, VersionFeature.bind(features ->
-				VersionFeature.constant(new BiomeDataOracle(
-					features.get(MINECRAFT_INTERFACE),
-					features.get(FeatureKey.BIOME_LIST)
-				))
+			.with(FeatureKey.BIOME_DATA_ORACLE, (recognisedVersion, features) -> new BiomeDataOracle(
+				features.get(MINECRAFT_WORLD),
+				recognisedVersion,
+				features.get(FeatureKey.BIOME_LIST)
 			))
 			.with(FeatureKey.ENABLED_LAYERS, VersionFeature.<Integer> listBuilder()
 				.init(
@@ -111,7 +111,8 @@ public enum DefaultVersionFeatures {
 				).sinceExtend(RecognisedVersion._16w43a,
 					LayerIds.WOODLAND_MANSION
 				).sinceExtend(RecognisedVersion._18w09a,
-					LayerIds.OCEAN_FEATURES
+					LayerIds.OCEAN_FEATURES,
+					LayerIds.END_GATEWAY // were introduced in 16w39a, but we can only find them past here
 				).construct())
 
 			.with(FeatureKey.BIOME_LIST, DefaultBiomes.DEFAULT_BIOMES)
@@ -148,8 +149,12 @@ public enum DefaultVersionFeatures {
 				VersionFeature.constant(new NetherFortressAlgorithm(getWorldSeed(features)))
 			))
 
-			.with(FeatureKey.END_ISLAND_LOCATION_CHECKER, VersionFeature.bind(features ->
+			.with(FeatureKey.END_CITY_LOCATION_CHECKER, VersionFeature.bind(features ->
 				VersionFeature.constant(new EndCityLocationChecker(getWorldSeed(features)))
+			))
+			
+			.with(FeatureKey.END_GATEWAY_PRODUCER, VersionFeature.bind(features ->
+				VersionFeature.constant(new EndGatewayProducer(getWorldSeed(features)))
 			))
 
 			.with(FeatureKey.MINESHAFT_LOCATION_CHECKER, VersionFeature.bind(features ->
