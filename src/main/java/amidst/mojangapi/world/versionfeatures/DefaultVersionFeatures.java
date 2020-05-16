@@ -39,18 +39,18 @@ import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 public enum DefaultVersionFeatures {
 	;
 
-	public static VersionFeatures.Builder builder(WorldOptions worldOptions, MinecraftInterface.World minecraftWorld) {
-		if (worldOptions == null || minecraftWorld == null) {
+	public static VersionFeatures.Builder builder(WorldOptions worldOptions, MinecraftInterface minecraftInterface) {
+		if (worldOptions == null || minecraftInterface == null) {
 			return FEATURES_BUILDER.clone();
 		} else {
 			return FEATURES_BUILDER.clone()
 							.withValue(FeatureKey.WORLD_OPTIONS, worldOptions)
-							.withValue(MINECRAFT_WORLD, minecraftWorld);
+							.withValue(MINECRAFT_INTERFACE, minecraftInterface);
 		}
 	}
 
 	// @formatter:off
-	private static final FeatureKey<MinecraftInterface.World> MINECRAFT_WORLD                      = FeatureKey.make();
+	private static final FeatureKey<MinecraftInterface> MINECRAFT_INTERFACE                        = FeatureKey.make();
 	public static final FeatureKey<List<Biome>>    VALID_BIOMES_FOR_STRUCTURE_SPAWN                = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD      = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>   VALID_BIOMES_FOR_STRUCTURE_VILLAGE              = FeatureKey.make();
@@ -81,10 +81,11 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<Boolean>       BUGGY_STRUCTURE_COORDINATE_MATH                 = FeatureKey.make();
 
 	private static final VersionFeatures.Builder FEATURES_BUILDER = VersionFeatures.builder()
-			.with(FeatureKey.BIOME_DATA_ORACLE, (recognisedVersion, features) -> new BiomeDataOracle(
-				features.get(MINECRAFT_WORLD),
-				recognisedVersion,
-				features.get(FeatureKey.BIOME_LIST)
+			.with(FeatureKey.BIOME_DATA_ORACLE, VersionFeature.bind(features ->
+				VersionFeature.constant(new BiomeDataOracle(
+					features.get(MINECRAFT_INTERFACE),
+					features.get(FeatureKey.BIOME_LIST)
+				))
 			))
 			.with(FeatureKey.ENABLED_LAYERS, VersionFeature.<Integer> listBuilder()
 				.init(
