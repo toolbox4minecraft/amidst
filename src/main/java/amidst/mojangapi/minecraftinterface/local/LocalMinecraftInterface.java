@@ -5,6 +5,10 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -55,7 +59,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
         this.worldSettingsClass = symbolicClassMap.get(SymbolicNames.CLASS_WORLD_SETTINGS);
         this.worldDataClass = symbolicClassMap.get(SymbolicNames.CLASS_WORLD_DATA);
         this.noiseBiomeProviderClass = symbolicClassMap.get(SymbolicNames.CLASS_NOISE_BIOME_PROVIDER);
-        this.overworldBiomeZoomerClass = symbolicClassMap.get(SymbolicNames.CLASS_BIOME_ZOOMER);
+        this.overworldBiomeZoomerClass = symbolicClassMap.get(SymbolicNames.CLASS_OVERWORLD_BIOME_ZOOMER);
         this.utilClass = symbolicClassMap.get(SymbolicNames.CLASS_UTIL);
 	}
 
@@ -67,12 +71,29 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    try {
 	        Object biomeProvider = createBiomeProviderObject(seed, worldType, generatorOptions);
 	        Object biomeZoomer = overworldBiomeZoomerClass.getClazz().getEnumConstants()[0];
-            long seedForBiomeZoomer = (Long) worldDataClass.callStaticMethod(SymbolicNames.METHOD_WORLD_DATA_MAP_SEED, seed);
+            long seedForBiomeZoomer = makeSeedForBiomeZoomer(seed);
             return new World(biomeProvider, biomeZoomer, seedForBiomeZoomer);
 
         } catch(IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new MinecraftInterfaceException("unable to create world", e);
         }
+	}
+
+	private static long makeSeedForBiomeZoomer(long seed) throws MinecraftInterfaceException {
+		try {
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			ByteBuffer buf = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN);
+			buf.putLong(seed);
+			byte[] bytes = digest.digest(buf.array());
+
+			long result = 0;
+			for (int i = 0; i < 8; i++) {
+				result |= (bytes[i] & 0xffL) << (i*8L);
+			}
+			return result;
+		} catch (NoSuchAlgorithmException e) {
+			throw new MinecraftInterfaceException("unable to hash seed", e);
+		}
 	}
 
 	private Object createWorldDataObject(long seed, WorldType worldType, String generatorOptions)
@@ -92,8 +113,15 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    SymbolicObject worldSettings = worldSettingsClass.callConstructor(SymbolicNames.CONSTRUCTOR_WORLD_SETTINGS,
 	            seed, gameType, false, false, getWorldTypeObject(worldType));
 
-	    SymbolicObject worldData = worldDataClass.callConstructor(SymbolicNames.CONSTRUCTOR_WORLD_DATA,
+	    SymbolicObject worldData;
+	    if(worldDataClass.hasConstructor(SymbolicNames.CONSTRUCTOR_WORLD_DATA)) {
+	    	worldData = worldDataClass.callConstructor(SymbolicNames.CONSTRUCTOR_WORLD_DATA,
 	            worldSettings.getObject(), "<amidst-world>");
+	    } else {
+	    	worldData = worldDataClass.callConstructor(SymbolicNames.CONSTRUCTOR_WORLD_DATA,
+	    		worldSettings.getObject());
+	    }
+
 
         return worldData.getObject();
 	}
