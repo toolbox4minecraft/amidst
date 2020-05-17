@@ -1,9 +1,9 @@
-package amidst.mojangapi.minecraftinterface.local;
+package amidst.mojangapi.minecraftinterface.legacy;
 
 import amidst.documentation.Immutable;
 
 @Immutable
-public enum SymbolicNames {
+public enum _1_15SymbolicNames {
 	;
 
     public static final String CLASS_REGISTRY = "Registry";
@@ -17,9 +17,22 @@ public enum SymbolicNames {
 	public static final String CLASS_UTIL = "Util";
 	public static final String FIELD_UTIL_SERVER_EXECUTOR = "SERVER_EXECUTOR";
 
-	public static final String CLASS_WORLD_GEN_SETTINGS = "WorldGenSettings";
-	public static final String METHOD_WORLD_GEN_SETTINGS_READ = "read";
-	public static final String METHOD_WORLD_GEN_SETTINGS_OVERWORLD = "overworld";
+	// TODO: correctly manage world types; remove duplication with legacy SymbolicNames
+	public static final String CLASS_WORLD_TYPE = "WorldType";
+	public static final String FIELD_WORLD_TYPE_DEFAULT = "default";
+	public static final String FIELD_WORLD_TYPE_FLAT = "flat";
+	public static final String FIELD_WORLD_TYPE_LARGE_BIOMES = "largeBiomes";
+	public static final String FIELD_WORLD_TYPE_AMPLIFIED = "amplified";
+	public static final String FIELD_WORLD_TYPE_CUSTOMIZED = "customized";
+
+	public static final String CLASS_WORLD_DATA = "WorldData";
+	public static final String CONSTRUCTOR_WORLD_DATA = "<init>";
+	public static final String CONSTRUCTOR_WORLD_DATA2 = "<init2>";
+
+	public static final String CLASS_WORLD_SETTINGS = "WorldSettings";
+	public static final String CONSTRUCTOR_WORLD_SETTINGS = "<init>";
+
+	public static final String CLASS_GAME_TYPE = "GameType";
 
 	public static final String CLASS_NOISE_BIOME_PROVIDER = "NoiseBiomeProvider";
 	public static final String METHOD_NOISE_BIOME_PROVIDER_GET_BIOME = "getBiome";

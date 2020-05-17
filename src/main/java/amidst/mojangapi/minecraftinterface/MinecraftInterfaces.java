@@ -17,6 +17,8 @@ import amidst.mojangapi.minecraftinterface.legacy.LegacyClassTranslator;
 import amidst.mojangapi.minecraftinterface.legacy.LegacyMinecraftInterface;
 import amidst.mojangapi.minecraftinterface.legacy._1_13ClassTranslator;
 import amidst.mojangapi.minecraftinterface.legacy._1_13MinecraftInterface;
+import amidst.mojangapi.minecraftinterface.legacy._1_15ClassTranslator;
+import amidst.mojangapi.minecraftinterface.legacy._1_15MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.local.DefaultClassTranslator;
 import amidst.mojangapi.minecraftinterface.local.LocalMinecraftInterface;
 
@@ -56,8 +58,10 @@ public enum MinecraftInterfaces {
             return new Factory(LegacyClassTranslator.get(), LegacyMinecraftInterface::new);
         } else if(RecognisedVersion.isOlderOrEqualTo(version, _1_13MinecraftInterface.LAST_COMPATIBLE_VERSION)) {
             return new Factory(_1_13ClassTranslator.get(), _1_13MinecraftInterface::new);
+        } else if(RecognisedVersion.isOlderOrEqualTo(version, _1_15MinecraftInterface.LAST_COMPATIBLE_VERSION)) {
+        	return new Factory(_1_15ClassTranslator.get(), _1_15MinecraftInterface::new);
         } else {
-            return new Factory(DefaultClassTranslator.get(), LocalMinecraftInterface::new);
+        	return new Factory(DefaultClassTranslator.get(), LocalMinecraftInterface::new);
         }
     }
 

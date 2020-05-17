@@ -1,11 +1,11 @@
-package amidst.mojangapi.minecraftinterface.local;
+package amidst.mojangapi.minecraftinterface.legacy;
 
-import static amidst.mojangapi.minecraftinterface.local.SymbolicNames.*;
+import static amidst.mojangapi.minecraftinterface.legacy._1_15SymbolicNames.*;
 
 import amidst.clazz.real.AccessFlags;
 import amidst.clazz.translator.ClassTranslator;
 
-public enum DefaultClassTranslator {
+public enum _1_15ClassTranslator {
     INSTANCE;
 
     private final ClassTranslator classTranslator = createClassTranslator();
@@ -25,7 +25,7 @@ public enum DefaultClassTranslator {
                         && c.searchForUtf8EqualTo("argument.id.invalid")
                         && c.searchForUtf8EqualTo("minecraft")
                 )
-                .thenDeclareRequired(CLASS_REGISTRY_KEY)
+                .thenDeclareOptional(CLASS_REGISTRY_KEY)
                     .requiredConstructor(CONSTRUCTOR_REGISTRY_KEY).real("java.lang.String").end()
             .next()
                 .ifDetect(c -> c.getNumberOfConstructors() <= 1
@@ -35,17 +35,43 @@ public enum DefaultClassTranslator {
                     && c.searchForUtf8EqualTo("biome")
                     && c.searchForUtf8EqualTo("item")
                 )
-                .thenDeclareRequired(CLASS_REGISTRY)
+                .thenDeclareOptional(CLASS_REGISTRY)
                     .requiredField(FIELD_REGISTRY_META_REGISTRY, "f")
                     .requiredMethod(METHOD_REGISTRY_GET_ID, "a").real("java.lang.Object").end()
                     .requiredMethod(METHOD_REGISTRY_GET_BY_KEY, "a").symbolic(CLASS_REGISTRY_KEY).end()
+
             .next()
-                .ifDetect(c -> c.searchForUtf8EqualTo("level-seed")
-                	&& c.searchForUtf8EqualTo("generator-settings")
+                .ifDetect(c -> c.searchForStringContaining("default_1_1"))
+                .thenDeclareRequired(CLASS_WORLD_TYPE)
+                    .requiredField(FIELD_WORLD_TYPE_DEFAULT,      "b")
+                    .requiredField(FIELD_WORLD_TYPE_FLAT,         "c")
+                    .requiredField(FIELD_WORLD_TYPE_LARGE_BIOMES, "d")
+                    .requiredField(FIELD_WORLD_TYPE_AMPLIFIED,    "e")
+                    .requiredField(FIELD_WORLD_TYPE_CUSTOMIZED,   "f")
+            .next()
+                .ifDetect(c -> c.getRealSuperClassName().equals("java/lang/Enum")
+                    && c.searchForUtf8EqualTo("gameMode.")
                 )
-                .thenDeclareRequired(CLASS_WORLD_GEN_SETTINGS)
-                	.requiredMethod(METHOD_WORLD_GEN_SETTINGS_READ, "a").real("java.util.Properties").end()
-                	.requiredMethod(METHOD_WORLD_GEN_SETTINGS_OVERWORLD, "g").end()
+                .thenDeclareRequired(CLASS_GAME_TYPE)
+            .next()
+                .ifDetect(c -> !c.getRealClassName().contains("$")
+                    && c.getRealSuperClassName().equals("java/lang/Object")
+                    && c.isFinal()
+                    && c.getNumberOfConstructors() <= 2
+                    && c.getNumberOfFields() >= 5
+                    && c.getNumberOfFields() <= 10
+                    && c.getField(1).hasFlags(AccessFlags.PRIVATE | AccessFlags.FINAL)
+                )
+                .thenDeclareRequired(CLASS_WORLD_SETTINGS)
+                    .optionalConstructor(CONSTRUCTOR_WORLD_SETTINGS).real("long").symbolic(CLASS_GAME_TYPE).real("boolean").real("boolean").symbolic(CLASS_WORLD_TYPE).end()
+            .next()
+                .ifDetect(c -> c.getNumberOfFields() > 30
+                    && c.searchForUtf8EqualTo("SizeOnDisk")
+                    && c.searchForUtf8EqualTo("DifficultyLocked")
+                )
+                .thenDeclareRequired(CLASS_WORLD_DATA)
+                    .optionalConstructor(CONSTRUCTOR_WORLD_DATA).symbolic(CLASS_WORLD_SETTINGS).real("java.lang.String").end()
+                    .optionalConstructor(CONSTRUCTOR_WORLD_DATA2).symbolic(CLASS_WORLD_SETTINGS).end() // after 20w17a
             .next()
                 .ifDetect(c -> c.getRealClassName().contains("$")
                     && c.isInterface()
