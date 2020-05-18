@@ -240,9 +240,10 @@ public class Actions {
 		if (viewerFacade != null) {
 			WorldOptions worldOptions = viewerFacade.getWorldOptions();
 			BufferedImage image = viewerFacade.createScreenshot();
-			String suggestedFilename = lastScreenshotPath.get() + java.io.File.separator + "screenshot_" + worldOptions.getWorldType().getFilenameText() + "_"
+			String suggestedFilename = "screenshot_" + worldOptions.getWorldType().getFilenameText() + "_"
 					+ worldOptions.getWorldSeed().getLong() + ".png";
-			Path file = dialogs.askForPNGSaveFile(suggestedFilename);
+			String suggestedFile = Paths.get(lastScreenshotPath.get(), suggestedFilename).toString();
+			Path file = dialogs.askForPNGSaveFile(suggestedFile);
 			if (file != null) {
 				file = appendFileExtensionIfNecessary(file, "png");
 				boolean fileExists = Files.exists(file);
@@ -275,7 +276,7 @@ public class Actions {
 			viewerFacade.reloadBackgroundLayer();
 		}
 	}
-	
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void createExampleProfile(BiomeProfileDirectory dir) {
 		if (!dir.isValid()) {
@@ -415,5 +416,5 @@ public class Actions {
 		}
 		return Paths.get(filename);
 	}
-	
+
 }
