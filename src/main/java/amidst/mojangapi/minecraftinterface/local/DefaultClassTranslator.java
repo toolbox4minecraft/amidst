@@ -19,14 +19,15 @@ public enum DefaultClassTranslator {
         return ClassTranslator
             .builder()
                 .ifDetect(c ->
-                        c.getNumberOfConstructors() == 3
+                        (c.getNumberOfConstructors() == 3
                         && c.getNumberOfFields() == 3
                         && c.getField(0).hasFlags(AccessFlags.PRIVATE | AccessFlags.STATIC | AccessFlags.FINAL)
                         && c.searchForUtf8EqualTo("argument.id.invalid")
-                        && c.searchForUtf8EqualTo("minecraft")
+                        && c.searchForUtf8EqualTo("minecraft")) // before 20w21a
+                        || c.searchForUtf8EqualTo("ResourceKey[") // from 20w21a
                 )
-                .thenDeclareRequired(CLASS_REGISTRY_KEY)
-                    .requiredConstructor(CONSTRUCTOR_REGISTRY_KEY).real("java.lang.String").end()
+                .thenDeclareRequired(CLASS_RESOURCE_KEY)
+                    .optionalConstructor(CONSTRUCTOR_RESOURCE_KEY).real("java.lang.String").end() // before 20w21a
             .next()
                 .ifDetect(c -> c.getNumberOfConstructors() <= 1
                     && c.getNumberOfFields() > 15
@@ -37,15 +38,18 @@ public enum DefaultClassTranslator {
                 )
                 .thenDeclareRequired(CLASS_REGISTRY)
                     .requiredField(FIELD_REGISTRY_META_REGISTRY, "f")
+                    .requiredField(FIELD_REGISTRY_META_REGISTRY2, "i")
+                	.optionalMethod(METHOD_REGISTRY_CREATE_KEY, "a").real("java.lang.String").end()
                     .requiredMethod(METHOD_REGISTRY_GET_ID, "a").real("java.lang.Object").end()
-                    .requiredMethod(METHOD_REGISTRY_GET_BY_KEY, "a").symbolic(CLASS_REGISTRY_KEY).end()
+                    .requiredMethod(METHOD_REGISTRY_GET_BY_KEY, "a").symbolic(CLASS_RESOURCE_KEY).end()
             .next()
                 .ifDetect(c -> c.searchForUtf8EqualTo("level-seed")
                 	&& c.searchForUtf8EqualTo("generator-settings")
                 )
                 .thenDeclareRequired(CLASS_WORLD_GEN_SETTINGS)
-                	.requiredMethod(METHOD_WORLD_GEN_SETTINGS_READ, "a").real("java.util.Properties").end()
+                	.requiredMethod(METHOD_WORLD_GEN_SETTINGS_CREATE, "a").real("java.util.Properties").end()
                 	.requiredMethod(METHOD_WORLD_GEN_SETTINGS_OVERWORLD, "g").end()
+                	.requiredMethod(METHOD_WORLD_GEN_SETTINGS_OVERWORLD2, "f").end()
             .next()
                 .ifDetect(c -> c.getRealClassName().contains("$")
                     && c.isInterface()
@@ -65,7 +69,7 @@ public enum DefaultClassTranslator {
                     .requiredMethod(METHOD_BIOME_ZOOMER_GET_BIOME, "a").real("long").real("int").real("int").real("int").symbolic(CLASS_NOISE_BIOME_PROVIDER).end()
             .next()
                 .ifDetect(c ->
-                    c.getNumberOfConstructors() == 1
+                    (c.getNumberOfConstructors() == 1 || c.getNumberOfConstructors() == 2)
                     && c.getNumberOfFields() > 0
                     && c.getField(0).hasFlags(AccessFlags.STATIC | AccessFlags.FINAL)
                     && (c.searchForFloat(0.62222224F) || c.searchForUtf8EqualTo("Feature placement"))

@@ -29,7 +29,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final RecognisedVersion recognisedVersion;
 
 	private final SymbolicClass registryClass;
-	private final SymbolicClass registryKeyClass;
+	private final SymbolicClass resourceKeyClass;
 	private final SymbolicClass worldGenSettingsClass;
 	private final SymbolicClass noiseBiomeProviderClass;
 	private final SymbolicClass overworldBiomeZoomerClass;
@@ -49,7 +49,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;
 		this.registryClass = symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY);
-        this.registryKeyClass = symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY_KEY);
+        this.resourceKeyClass = symbolicClassMap.get(SymbolicNames.CLASS_RESOURCE_KEY);
         this.worldGenSettingsClass = symbolicClassMap.get(SymbolicNames.CLASS_WORLD_GEN_SETTINGS);
         this.noiseBiomeProviderClass = symbolicClassMap.get(SymbolicNames.CLASS_NOISE_BIOME_PROVIDER);
         this.overworldBiomeZoomerClass = symbolicClassMap.get(SymbolicNames.CLASS_OVERWORLD_BIOME_ZOOMER);
@@ -97,9 +97,12 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		worldProperties.setProperty("generator-settings", generatorOptions);
 
 		SymbolicObject worldSettings = (SymbolicObject) worldGenSettingsClass.callStaticMethod(
-			SymbolicNames.METHOD_WORLD_GEN_SETTINGS_READ, worldProperties);
+			SymbolicNames.METHOD_WORLD_GEN_SETTINGS_CREATE, worldProperties);
 
 		Object chunkGenerator = worldSettings.callMethod(SymbolicNames.METHOD_WORLD_GEN_SETTINGS_OVERWORLD);
+		if (chunkGenerator instanceof Boolean) { // Oops, we called the wrong method
+			chunkGenerator = worldSettings.callMethod(SymbolicNames.METHOD_WORLD_GEN_SETTINGS_OVERWORLD2);
+		}
 
 		// This is more robust than declaring a symbolic method, if the name ever changes
 		for (Method meth: chunkGenerator.getClass().getMethods()) {
@@ -141,12 +144,16 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    }
 
 	    try {
-	        Object metaRegistry = ((SymbolicObject) registryClass
-	                .getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY)).getObject();
-			try {
+	    	Object metaRegistry = registryClass.getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY);
+	    	if (!(metaRegistry instanceof SymbolicObject)) { // Oops, we called the wrong method
+	    		metaRegistry = registryClass.getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY2);
+	    	}
+	    	metaRegistry = ((SymbolicObject) metaRegistry).getObject();
+
+	    	try {
 				((ExecutorService) utilClass.getStaticFieldValue(SymbolicNames.FIELD_UTIL_SERVER_EXECUTOR)).shutdownNow();
-			} catch (NullPointerException e) {
-				AmidstLogger.warn("Unable to shut down Server-Worker threads");
+			} catch (NullPointerException | ClassCastException e) {
+				AmidstLogger.warn("Unable to shut down Server-Worker threads", e);
 			}
 
             biomeRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome"));
@@ -163,10 +170,20 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	}
 
 	private Object getFromRegistryByKey(Object registry, String key)
-	        throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-	    Object registryKey = registryKeyClass
-                .callConstructor(SymbolicNames.CONSTRUCTOR_REGISTRY_KEY, key)
-                .getObject();
+	        throws MinecraftInterfaceException, InstantiationException,
+	        IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	    Object registryKey;
+	    if (resourceKeyClass.hasConstructor(SymbolicNames.CONSTRUCTOR_RESOURCE_KEY)) {
+	    	registryKey = resourceKeyClass
+	                .callConstructor(SymbolicNames.CONSTRUCTOR_RESOURCE_KEY, key)
+	                .getObject();
+	    } else if (registryClass.hasMethod(SymbolicNames.METHOD_REGISTRY_CREATE_KEY)) {
+	    	registryKey = ((SymbolicObject) registryClass
+	    			.callStaticMethod(SymbolicNames.METHOD_REGISTRY_CREATE_KEY, key))
+	    			.getObject();
+	    } else {
+	    	throw new MinecraftInterfaceException("couldn't create registry key");
+	    }
 
 	    Method getByKey = registryClass.getMethod(SymbolicNames.METHOD_REGISTRY_GET_BY_KEY).getRawMethod();
 	    return getByKey.invoke(registry, registryKey);
