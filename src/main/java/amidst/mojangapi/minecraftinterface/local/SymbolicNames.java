@@ -17,7 +17,6 @@ public enum SymbolicNames {
     public static final String CONSTRUCTOR_RESOURCE_KEY = "<init>";
 
 	public static final String CLASS_UTIL = "Util";
-	public static final String FIELD_UTIL_SERVER_EXECUTOR = "SERVER_EXECUTOR";
 
 	public static final String CLASS_WORLD_GEN_SETTINGS = "WorldGenSettings";
 	public static final String METHOD_WORLD_GEN_SETTINGS_CREATE = "create";

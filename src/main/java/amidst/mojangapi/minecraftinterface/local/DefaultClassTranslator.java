@@ -83,7 +83,6 @@ public enum DefaultClassTranslator {
                     && c.searchForLong(1000000L)
                 )
                 .thenDeclareOptional(CLASS_UTIL)
-                    .optionalField(FIELD_UTIL_SERVER_EXECUTOR, "c")
             .construct();
     }
     // @formatter:on

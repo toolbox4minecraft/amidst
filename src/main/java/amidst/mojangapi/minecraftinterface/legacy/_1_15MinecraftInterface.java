@@ -5,6 +5,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.MessageDigest;
@@ -211,11 +212,8 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 	    try {
 	        Object metaRegistry = ((SymbolicObject) registryClass
 	                .getStaticFieldValue(_1_15SymbolicNames.FIELD_REGISTRY_META_REGISTRY)).getObject();
-			try {
-				((ExecutorService) utilClass.getStaticFieldValue(_1_15SymbolicNames.FIELD_UTIL_SERVER_EXECUTOR)).shutdownNow();
-			} catch (NullPointerException e) {
-				AmidstLogger.warn("Unable to shut down Server-Worker threads");
-			}
+
+	        stopAllExecutors();
 
             biomeRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome"));
             biomeProviderRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome_source_type"));
@@ -229,6 +227,17 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
         }
 
 	    isInitialized = true;
+	}
+
+	private void stopAllExecutors() throws IllegalArgumentException, IllegalAccessException {
+		Class<?> clazz = utilClass.getClazz();
+		for (Field field: clazz.getDeclaredFields()) {
+			if ((field.getModifiers() & Modifier.STATIC) > 0 && field.getType().equals(ExecutorService.class)) {
+				field.setAccessible(true);
+				ExecutorService exec = (ExecutorService) field.get(null);
+				exec.shutdownNow();
+			}
+		}
 	}
 
 	private Object getFromRegistryByKey(Object registry, String key)
