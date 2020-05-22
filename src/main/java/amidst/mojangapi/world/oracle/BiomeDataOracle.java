@@ -65,7 +65,7 @@ public class BiomeDataOracle {
 
 	private boolean isValidBiome(int x, int y, List<Biome> validBiomes) {
 		try {
-			return validBiomes.contains(getBiomeAt(x, y, true));
+			return validBiomes.contains(getBiomeAt(x, y, false));
 		} catch (UnknownBiomeIdException | MinecraftInterfaceException e) {
 			AmidstLogger.error(e);
 			AmidstMessageBox.displayError("Error", e);
@@ -168,7 +168,7 @@ public class BiomeDataOracle {
 
 	public Biome getBiomeAtMiddleOfChunk(int chunkX, int chunkY)
 			throws UnknownBiomeIdException, MinecraftInterfaceException {
-		return getBiomeAt(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY), true);
+		return getBiomeAt(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY), false);
 	}
 
 	public Biome getBiomeAt(int x, int y, boolean useQuarterResolution)
