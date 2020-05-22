@@ -58,7 +58,7 @@ public class World {
 			WorldIconProducer<Void> oceanFeaturesProducer,
 			WorldIconProducer<Void> netherFortressProducer,
 			WorldIconProducer<List<EndIsland>> endCityProducer,
-      WorldIconProducer<List<EndIsland>> endGatewayProducer) {
+			WorldIconProducer<List<EndIsland>> endGatewayProducer) {
 		this.worldOptions = worldOptions;
 		this.movablePlayerList = movablePlayerList;
 		this.recognisedVersion = recognisedVersion;

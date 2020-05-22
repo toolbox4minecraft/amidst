@@ -5,14 +5,14 @@ import amidst.documentation.Immutable;
 // TODO: check sign of differences ... (this.chunkX - chunkX) vs (chunkX - this.chunkX)
 @Immutable
 public class EndIsland {
-	private static final int X_ADJUSTMENT = 1;
-	private static final int Y_ADJUSTMENT = 1;
+	private static final short X_ADJUSTMENT = 1;
+	private static final short Y_ADJUSTMENT = 1;
 
-	private final int chunkX;
-	private final int chunkY;
+	private final long chunkX;
+	private final long chunkY;
 	private final float erosionFactor;
 
-	protected EndIsland(int chunkX, int chunkY, float erosionFactor) {
+	protected EndIsland(long chunkX, long chunkY, float erosionFactor) {
 		this.chunkX = chunkX;
 		this.chunkY = chunkY;
 		this.erosionFactor = erosionFactor;
@@ -25,7 +25,7 @@ public class EndIsland {
 	 * rocky-island-shore, which might be solid ground (but that becomes less
 	 * likely the lower the value).
 	 */
-	public float influenceAtBlock(int x, int y) {
+	public float influenceAtBlock(long x, long y) {
 		// Add 8 blocks to both axis because all the Minecraft calculations are
 		// done using chunk coordinates and are converted as being the center of
 		// the chunk whenever translated to block coordinates, whereas Amidst
@@ -43,9 +43,9 @@ public class EndIsland {
 	 * A version of influenceAt() that more exactly adheres to Minecraft's
 	 * algorithm, for use in testing for End Cities.
 	 */
-	public float influenceAtChunk(int chunkX, int chunkY) {
-		int adjustedX = (chunkX - this.chunkX) * 2 + X_ADJUSTMENT;
-		int adjustedY = (chunkY - this.chunkY) * 2 + Y_ADJUSTMENT;
+	public float influenceAtChunk(long chunkX, long chunkY) {
+		long adjustedX = (chunkX - this.chunkX) * 2 + X_ADJUSTMENT;
+		long adjustedY = (chunkY - this.chunkY) * 2 + Y_ADJUSTMENT;
 		return getResult(adjustedX * adjustedX + adjustedY * adjustedY);
 	}
 
@@ -64,8 +64,8 @@ public class EndIsland {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + chunkX;
-		result = prime * result + chunkY;
+		result = (int) (prime * result + chunkX);
+		result = (int) (prime * result + chunkY);
 		result = prime * result + Float.floatToIntBits(erosionFactor);
 		return result;
 	}

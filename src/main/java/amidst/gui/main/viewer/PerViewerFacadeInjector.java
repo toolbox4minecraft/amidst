@@ -62,7 +62,7 @@ public class PerViewerFacadeInjector {
 				new SeedAndWorldTypeWidget(     CornerAnchorPoint.TOP_LEFT,      worldOptions.getWorldSeed(), worldOptions.getWorldType()),
 				new SelectedIconWidget(         CornerAnchorPoint.TOP_LEFT,      worldIconSelection),
 				debugWidget,
-				new CursorInformationWidget(	CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension, world.getBiomeList()),
+				new CursorInformationWidget(	CornerAnchorPoint.TOP_RIGHT,     graph, translator, world.getEndIslandOracle(), settings.dimension, world.getBiomeList()),
 				biomeToggleWidget,
 				new BiomeExporterProgressWidget(CornerAnchorPoint.BOTTOM_RIGHT,  progressEntrySupplier,    -20,      settings.showDebug, debugWidget, biomeToggleWidget.getWidth()),
 				biomeWidget

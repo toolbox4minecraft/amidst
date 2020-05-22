@@ -16,7 +16,7 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeList;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
-import amidst.mojangapi.world.versionfeatures.DefaultBiomes;
+import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.settings.Setting;
 
 @NotThreadSafe
@@ -25,6 +25,7 @@ public class CursorInformationWidget extends TextWidget {
 
 	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
+	private final EndIslandOracle endIslandOracle;
 	private final Setting<Dimension> dimensionSetting;
 	private final BiomeList biomeList;
 
@@ -33,11 +34,13 @@ public class CursorInformationWidget extends TextWidget {
 			CornerAnchorPoint anchor,
 			FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator,
+			EndIslandOracle endIslandOracle,
 			Setting<Dimension> dimensionSetting,
 			BiomeList biomeList) {
 		super(anchor);
 		this.graph = graph;
 		this.translator = translator;
+		this.endIslandOracle = endIslandOracle;
 		this.dimensionSetting = dimensionSetting;
 		this.biomeList = biomeList;
 	}
@@ -61,7 +64,7 @@ public class CursorInformationWidget extends TextWidget {
 		if (dimension.equals(Dimension.OVERWORLD)) {
 			return getOverworldBiomeNameAt(coordinates);
 		} else if (dimension.equals(Dimension.END)) {
-			return biomeList.getByIdOrNull(DefaultBiomes.theEnd).getName();
+			return biomeList.getByIdOrNull(endIslandOracle.getBiomeAtBlock(coordinates)).getName();
 		} else {
 			AmidstLogger.warn("unsupported dimension");
 			return UNKNOWN_BIOME_NAME;

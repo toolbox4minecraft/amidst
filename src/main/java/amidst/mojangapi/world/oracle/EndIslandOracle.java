@@ -1,11 +1,13 @@
 package amidst.mojangapi.world.oracle;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.versionfeatures.DefaultBiomes;
+
 import kaptainwutax.seedutils.lcg.rand.JRand;
 
 @ThreadSafe
@@ -47,11 +49,70 @@ public class EndIslandOracle {
 		this.noiseFunction = noiseFunction;
 	}
 
+	public int getBiomeAtBlock(long x, long y) {
+		if (x * x + y * y <= 4096L) {
+			return DefaultBiomes.theEnd;
+		} else {
+			float influence = getInfluenceAtBlock(x, y);
+			if (influence > 40.0F) {
+				return DefaultBiomes.theEndHigh;
+			} else if (influence >= 0.0F) {
+				return DefaultBiomes.theEndMedium;
+			} else {
+				return influence < -20.0F ? DefaultBiomes.theEndLow : DefaultBiomes.theEndBarren;
+			}
+		}
+	}
+	
+	public int getBiomeAtBlock(CoordinatesInWorld coords) {
+		long x = coords.getX();
+		long y = coords.getY();
+		
+		if (x * x + y * y <= 4096L) {
+			return DefaultBiomes.theEnd;
+		} else {
+			float influence = getInfluenceAtBlock(coords);
+			if (influence > 40.0F) {
+				return DefaultBiomes.theEndHigh;
+			} else if (influence >= 0.0F) {
+				return DefaultBiomes.theEndMedium;
+			} else {
+				return influence < -20.0F ? DefaultBiomes.theEndLow : DefaultBiomes.theEndBarren;
+			}
+		}
+	}
+	
+	public float getInfluenceAtBlock(long x, long y) {
+		float highestInfluence = -100.0f;
+		
+		for(EndIsland island : getAt(new CoordinatesInWorld(x, y))) {
+			float tempInfluence = island.influenceAtBlock(x, y);
+			if(tempInfluence > highestInfluence) {
+				highestInfluence = tempInfluence;
+			}
+		}
+		return highestInfluence;
+	}
+	
+	public float getInfluenceAtBlock(CoordinatesInWorld coords) {
+		float highestInfluence = -100.0f;
+		long x = coords.getX();
+		long y = coords.getY();
+		
+		for (EndIsland island : getAt(coords)) {
+			float tempInfluence = island.influenceAtBlock(x, y);
+			if (tempInfluence > highestInfluence) {
+				highestInfluence = tempInfluence;
+			}
+		}
+		return highestInfluence;
+	}
+
 	public List<EndIsland> getAt(CoordinatesInWorld corner) {
 		int steps = Resolution.CHUNK.getStepsPerFragment();
 		return findSurroundingIslands(
-				(int) corner.getXAs(Resolution.CHUNK),
-				(int) corner.getYAs(Resolution.CHUNK),
+				corner.getXAs(Resolution.CHUNK),
+				corner.getYAs(Resolution.CHUNK),
 				steps,
 				steps);
 	}
@@ -60,11 +121,11 @@ public class EndIslandOracle {
 	 * Returns a list of all islands that might be touching a chunk-area.
 	 */
 	private List<EndIsland> findSurroundingIslands(
-			int chunkX,
-			int chunkY,
+			long chunkX,
+			long chunkY,
 			int chunksPerFragmentX,
 			int chunksPerFragmentY) {
-		List<EndIsland> result = new LinkedList<>();
+		List<EndIsland> result = new ArrayList<>();
 		for (int y = -SURROUNDING_CHUNKS; y <= chunksPerFragmentY + SURROUNDING_CHUNKS; y++) {
 			for (int x = -SURROUNDING_CHUNKS; x <= chunksPerFragmentX + SURROUNDING_CHUNKS; x++) {
 				EndIsland island = tryCreateEndIsland(chunkX + x, chunkY + y);
@@ -80,7 +141,7 @@ public class EndIslandOracle {
 	 * Returns an EndIsland if one has 'grown out' from the chunk, otherwise
 	 * null
 	 */
-	private EndIsland tryCreateEndIsland(int chunkX, int chunkY) {
+	private EndIsland tryCreateEndIsland(long chunkX, long chunkY) {
 
 		if (chunkX == 0 && chunkY == 0) {
 			return createMainEndIsland(chunkX, chunkY);
@@ -95,14 +156,14 @@ public class EndIslandOracle {
 	 * The main island grows from the origin, with a hard-coded erosion factor
 	 * of 8
 	 */
-	private EndIsland createMainEndIsland(int chunkX, int chunkY) {
+	private EndIsland createMainEndIsland(long chunkX, long chunkY) {
 		return new EndIsland(chunkX, chunkY, 8.0f);
 	}
 
 	/**
 	 * The chunk is in the outer-islands band
 	 */
-	private EndIsland tryCreateEndIslandInOuterLands(int chunkX, int chunkY) {
+	private EndIsland tryCreateEndIslandInOuterLands(long chunkX, long chunkY) {
 		if (noiseFunction.noise(chunkX, chunkY) < ISLAND_DENSITY_THRESHOLD) {
 			return new EndIsland(chunkX, chunkY, getErosionFactor(chunkX, chunkY));
 		} else {
@@ -115,15 +176,15 @@ public class EndIslandOracle {
 	 * erosion factor between 9 and 21 (i.e. they will be smaller than the main
 	 * island).
 	 */
-	private int getErosionFactor(int chunkX, int chunkY) {
+	private int getErosionFactor(long chunkX, long chunkY) {
 	    // Convert coordinates to long to guard against overflow
-		return (int) ((Math.abs((long) chunkX) * 3439 + Math.abs((long) chunkY) * 147) % 13 + 9);
+		return (int) ((Math.abs(chunkX) * 3439 + Math.abs(chunkY) * 147) % 13 + 9);
 	}
 
     /**
      * Is the point (x, y) inside the disk of radius d centered at the origin?
      */
-    private boolean isInRange(int x, int y, int d) {
+    private boolean isInRange(long x, long y, int d) {
         // Guard against overflow
         if (x < -d || x > d || y < -d || y > d)
             return false;

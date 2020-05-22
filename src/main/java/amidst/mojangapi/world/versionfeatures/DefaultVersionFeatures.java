@@ -154,7 +154,7 @@ public enum DefaultVersionFeatures {
 			))
 			
 			.with(FeatureKey.END_GATEWAY_PRODUCER, VersionFeature.bind(features ->
-				VersionFeature.constant(new EndGatewayProducer(getWorldSeed(features)))
+				VersionFeature.constant(new EndGatewayProducer(getWorldSeed(features), features.get(FeatureKey.END_ISLAND_ORACLE)))
 			))
 
 			.with(FeatureKey.MINESHAFT_LOCATION_CHECKER, VersionFeature.bind(features ->
