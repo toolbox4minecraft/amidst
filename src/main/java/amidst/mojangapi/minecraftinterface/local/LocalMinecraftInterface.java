@@ -11,6 +11,7 @@ import java.util.function.Function;
 
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
+import amidst.fragment.Fragment;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -43,7 +44,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
     /**
      * An array used to return biome data
      */
-    private final ArrayCache<int[]> dataArray = ArrayCache.makeIntArrayCache(256);
+    private final ArrayCache<int[]> dataArray = ArrayCache.makeIntArrayCache(Fragment.SIZE * Fragment.SIZE);
 
 	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;

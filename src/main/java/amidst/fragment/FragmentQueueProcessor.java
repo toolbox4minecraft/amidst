@@ -1,8 +1,6 @@
 package amidst.fragment;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.locks.LockSupport;
 
@@ -21,12 +19,8 @@ public class FragmentQueueProcessor {
 	private final ConcurrentLinkedQueue<Fragment> recycleQueue;
 	private final FragmentCache cache;
 	private final LayerManager layerManager;
-	private final Setting<Dimension> dimensionSetting;
-	
-	/**
-	 * The thread pool used in fragment loading.
-	 */
 	private final ThreadPoolExecutor fragWorkers;
+	private final Setting<Dimension> dimensionSetting;
 
 	@CalledByAny
 	public FragmentQueueProcessor(
@@ -35,26 +29,15 @@ public class FragmentQueueProcessor {
 			ConcurrentLinkedQueue<Fragment> recycleQueue,
 			FragmentCache cache,
 			LayerManager layerManager,
-			Setting<Dimension> dimensionSetting,
-			Setting<Integer> threadsSetting) {
+			ThreadPoolExecutor fragWorkers,
+			Setting<Dimension> dimensionSetting) {
 		this.availableQueue = availableQueue;
 		this.loadingQueue = loadingQueue;
 		this.recycleQueue = recycleQueue;
 		this.cache = cache;
 		this.layerManager = layerManager;
 		this.dimensionSetting = dimensionSetting;
-		
-		this.fragWorkers = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadsSetting.get(), new ThreadFactory() {
-			private int num;
-		
-			@Override
-			public Thread newThread(Runnable r) {
-				Thread thread = new Thread(r);
-				thread.setName("Fragment-Worker-" + num++);
-				return thread;
-			}
-		}
-	);
+		this.fragWorkers = fragWorkers;
 	}
 	
 	private static final int PARK_MILLIS = 1000;
@@ -62,16 +45,22 @@ public class FragmentQueueProcessor {
 	/**
 	 * It is important that the dimension setting is the same while a fragment
 	 * is loaded by different fragment loaders. This is why the dimension
-	 * setting is read by the fragment loader thread.<br><br>
-	 * For information about how multithreading works here, see
-	 * {@link FragmentQueueProcessor}
+	 * setting is read by the fragment loader thread.
 	 */
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void processQueues() {
-		final Thread flThread = Thread.currentThread();
+		final Thread flThread = Thread.currentThread(); // the fragment loader thread
 		Dimension dimension = dimensionSetting.get();
 		updateLayerManager(dimension);
 		processRecycleQueue();
+		/*
+		 * We queue fragments to the thread pool only when a thread isn't working.
+		 * This keeps the thread pool queue small and doesn't make the fragment
+		 * loading thread think we're done when we're still processing fragments.
+		 * While the latter does happen a small amount with this setup, it's not
+		 * to the extent of if we were pushing to the thread pool queue as fast
+		 * as possible.
+		 */
 		int maxSize = fragWorkers.getMaximumPoolSize();
 		while (loadingQueue.isEmpty() == false) {
 			if (fragWorkers.getActiveCount() < maxSize) {
@@ -85,7 +74,7 @@ public class FragmentQueueProcessor {
 					}
 				});
 			} else {
-				LockSupport.parkNanos(PARK_MILLIS * 1000000); // if for some reason unpark was never called, unpark after 1 second
+				LockSupport.parkNanos(PARK_MILLIS * 1000000); // if for some reason unpark was never called, unpark after time expires
 			}
 		}
 		layerManager.clearInvalidatedLayers();
@@ -134,9 +123,5 @@ public class FragmentQueueProcessor {
 		while (loadingQueue.remove(fragment)) {
 			// noop
 		}
-	}
-	
-	public void finalize() {
-		fragWorkers.shutdownNow();
 	}
 }
