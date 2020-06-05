@@ -11,7 +11,6 @@ import java.util.function.Function;
 
 import amidst.clazz.symbolic.SymbolicClass;
 import amidst.clazz.symbolic.SymbolicObject;
-import amidst.fragment.Fragment;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
@@ -44,7 +43,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
     /**
      * An array used to return biome data
      */
-    private final ArrayCache<int[]> dataArray = ArrayCache.makeIntArrayCache(Fragment.SIZE * Fragment.SIZE);
+    private final ArrayCache<int[]> dataArray = ArrayCache.makeIntArrayCache(256);
 
 	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;
@@ -184,12 +183,14 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		 * access to the quarter-scale biome data.
 		 */
 	    private ThreadLocal<Object> threadedBiomeProvider;
+
 	    /**
 	     * The BiomeZoomer instance for the current world, which
 	     * interpolates the quarter-scale BiomeProvider to give
 	     * full-scale biome data.
 	     */
 	    private Object biomeZoomer;
+
 	    /**
 	     * The seed used by the BiomeZoomer during interpolation.
 	     * It is derived from the world seed.

@@ -34,6 +34,7 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.player.Player;
 import amidst.mojangapi.world.player.PlayerCoordinates;
+import amidst.settings.Setting;
 import amidst.settings.biomeprofile.BiomeProfile;
 import amidst.settings.biomeprofile.BiomeProfileDirectory;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
@@ -48,6 +49,7 @@ public class Actions {
 	private final BiomeExporterDialog biomeExporterDialog;
 	private final Supplier<ViewerFacade> viewerFacadeSupplier;
 	private final BiomeProfileSelection biomeProfileSelection;
+	private final Setting<String> lastScreenshotPath;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public Actions(
@@ -57,7 +59,8 @@ public class Actions {
 			SeedSearcherWindow seedSearcherWindow,
 			BiomeExporterDialog biomeExporterDialog,
 			Supplier<ViewerFacade> viewerFacadeSupplier,
-			BiomeProfileSelection biomeProfileSelection) {
+			BiomeProfileSelection biomeProfileSelection,
+			Setting<String> lastScreenshotPath) {
 		this.application = application;
 		this.dialogs = dialogs;
 		this.worldSwitcher = worldSwitcher;
@@ -65,6 +68,7 @@ public class Actions {
 		this.biomeExporterDialog = biomeExporterDialog;
 		this.viewerFacadeSupplier = viewerFacadeSupplier;
 		this.biomeProfileSelection = biomeProfileSelection;
+		this.lastScreenshotPath = lastScreenshotPath;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -238,7 +242,8 @@ public class Actions {
 			BufferedImage image = viewerFacade.createScreenshot();
 			String suggestedFilename = "screenshot_" + worldOptions.getWorldType().getFilenameText() + "_"
 					+ worldOptions.getWorldSeed().getLong() + ".png";
-			Path file = dialogs.askForPNGSaveFile(suggestedFilename);
+			String suggestedFile = Paths.get(lastScreenshotPath.get(), suggestedFilename).toString();
+			Path file = dialogs.askForPNGSaveFile(suggestedFile);
 			if (file != null) {
 				file = appendFileExtensionIfNecessary(file, "png");
 				boolean fileExists = Files.exists(file);
@@ -255,6 +260,7 @@ public class Actions {
 				} else if (!fileExists || dialogs.askToConfirmYesNo(
 						"Replace file?",
 						"File already exists. Do you want to replace it?\n" + file.toString() + "")) {
+					lastScreenshotPath.set(file.toAbsolutePath().getParent().toString());
 					saveImageToFile(image, file);
 				}
 			}
@@ -270,7 +276,7 @@ public class Actions {
 			viewerFacade.reloadBackgroundLayer();
 		}
 	}
-	
+
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void createExampleProfile(BiomeProfileDirectory dir) {
 		if (!dir.isValid()) {
@@ -418,5 +424,5 @@ public class Actions {
 		}
 		return Paths.get(filename);
 	}
-	
+
 }
