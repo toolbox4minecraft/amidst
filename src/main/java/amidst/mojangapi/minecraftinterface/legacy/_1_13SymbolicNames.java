@@ -18,6 +18,9 @@ public enum _1_13SymbolicNames {
 	public static final String METHOD_BOOTSTRAP_REGISTER = "register";
 	public static final String METHOD_BOOTSTRAP_REGISTER2 = "register2";
 	public static final String METHOD_BOOTSTRAP_REGISTER3 = "register3";
+	
+	public static final String CLASS_UTIL = "Util";
+	public static final String FIELD_UTIL_SERVER_EXECUTOR = "SERVER_EXECUTOR";
 
 	public static final String CLASS_LAYER_UTIL = "LayerUtil";
 	public static final String METHOD_LAYER_UTIL_INITIALIZE_ALL = "initializeAll";
@@ -40,4 +43,6 @@ public enum _1_13SymbolicNames {
 
 	public static final String CLASS_REGISTRY_KEY = "RegistryKey";
 	public static final String CONSTRUCTOR_REGISTRY_KEY = "<init>";
+	
+	
 }

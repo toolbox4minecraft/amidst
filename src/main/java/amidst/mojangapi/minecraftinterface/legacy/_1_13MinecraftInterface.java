@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 
 import amidst.clazz.symbolic.SymbolicClass;
@@ -28,6 +29,7 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 	private final SymbolicClass biomeClass;
 	private final SymbolicClass registryClass;
 	private final SymbolicClass registryKeyClass;
+	private final SymbolicClass utilClass;
 
 	private boolean isInitialized = false;
 
@@ -65,6 +67,7 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 			SymbolicClass biomeClass,
 			SymbolicClass registryClass,
 			SymbolicClass registryKeyClass,
+			SymbolicClass utilClass,
 			RecognisedVersion recognisedVersion) {
 		this.bootstrapClass = bootstrapClass;
 		this.worldTypeClass = worldTypeClass;
@@ -74,6 +77,7 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 		this.biomeClass = biomeClass;
 		this.registryClass = registryClass;
 		this.registryKeyClass = registryKeyClass;
+		this.utilClass = utilClass;
 
 		this.recognisedVersion = recognisedVersion;
 	}
@@ -88,6 +92,7 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 				symbolicClassMap.get(_1_13SymbolicNames.CLASS_BIOME),
 				symbolicClassMap.get(_1_13SymbolicNames.CLASS_REGISTRY),
 				symbolicClassMap.get(_1_13SymbolicNames.CLASS_REGISTRY_KEY),
+				symbolicClassMap.get(_1_13SymbolicNames.CLASS_UTIL),
 				recognisedVersion);
 	}
 
@@ -230,8 +235,28 @@ public class _1_13MinecraftInterface implements MinecraftInterface {
 		} else {
 			getBiomesMethod = getMethodHandle(genLayerClass, _1_13SymbolicNames.METHOD_GEN_LAYER_GET_BIOME_DATA2);
 		}
-
+		
 		bootstrapClass.callStaticMethod(register);
+		
+		// Minecraft's datafixers have been created during the initialization
+		// of the DataFixesManager class since 1.13 (I think). In our case,
+		// the class gets initialized during the bootstrapping stage. For our
+		// use case of the minecraft code, the datafixers are useless. The
+		// creation of the datafixers take valuable processor time and memory,
+		// so it's best to disable them in any way we can. Unfortunately, the
+		// only way to do this is to just shut down the thread pool that creates
+		// them. This doesn't work for versions before 1.14 because they use
+		// ForkJoinPool.commonPool(), which is unaffected by shutdown() and
+		// shutdownNow().
+		
+		if(RecognisedVersion.isNewer(recognisedVersion, RecognisedVersion._1_13_2)) {
+			try {
+				((ExecutorService) utilClass.getStaticFieldValue(_1_13SymbolicNames.FIELD_UTIL_SERVER_EXECUTOR)).shutdownNow();
+			} catch (NullPointerException e) {
+				AmidstLogger.warn("Unable to shut down Server-Worker threads");
+			}
+		}
+		
 		isInitialized = true;
 	}
 

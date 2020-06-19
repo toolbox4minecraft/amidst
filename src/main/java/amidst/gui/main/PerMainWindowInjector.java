@@ -42,7 +42,6 @@ public class PerMainWindowInjector {
 				.toString();
 	}
 
-	private final Factory3<World, BiomeExporterDialog, Actions, ViewerFacade> viewerFacadeFactory;
 	private final String versionString;
 	private final JFrame frame;
 	private final Container contentPane;
@@ -67,22 +66,13 @@ public class PerMainWindowInjector {
 			BiomeProfileDirectory biomeProfileDirectory,
 			Factory3<World, BiomeExporterDialog, Actions, ViewerFacade> viewerFacadeFactory,
 			ThreadMaster threadMaster) {
-		this.viewerFacadeFactory = viewerFacadeFactory;
 		this.versionString = createVersionString(metadata, runningLauncherProfile);
 		this.frame = new JFrame();
 		this.contentPane = frame.getContentPane();
 		this.viewerFacadeReference = new AtomicReference<>();
 		this.dialogs = new MainWindowDialogs(settings, runningLauncherProfile, frame);
-		this.worldSwitcher = new WorldSwitcher(
-				minecraftInstallation,
-				runningLauncherProfile,
-				this::createViewerFacade,
-				threadMaster,
-				frame,
-				contentPane,
-				viewerFacadeReference,
-				dialogs,
-				this::getMenuBar);
+		AtomicReference<AmidstMenu> menuBarReference = new AtomicReference<>();
+		AtomicReference<Actions> actionsReference = new AtomicReference<>();
 		if (FeatureToggles.SEED_SEARCH) {
 			this.seedSearcher = new SeedSearcher(
 					dialogs,
@@ -94,7 +84,19 @@ public class PerMainWindowInjector {
 			this.seedSearcherWindow = null;
 		}
 		this.biomeExporter = new BiomeExporter(threadMaster.getWorkerExecutor());
-		this.biomeExporterDialog = new BiomeExporterDialog(biomeExporter, frame, settings.biomeProfileSelection, this::getMenuBar, settings.lastBiomeExportPath);
+		this.biomeExporterDialog = new BiomeExporterDialog(biomeExporter, frame, settings.biomeProfileSelection, menuBarReference::get, settings.lastBiomeExportPath);
+		this.worldSwitcher = new WorldSwitcher(
+				minecraftInstallation,
+				runningLauncherProfile,
+				viewerFacadeFactory,
+				actionsReference::get,
+				biomeExporterDialog,
+				threadMaster,
+				frame,
+				contentPane,
+				viewerFacadeReference,
+				dialogs,
+				menuBarReference::get);
 		this.actions = new Actions(
 				application,
 				dialogs,
@@ -104,24 +106,11 @@ public class PerMainWindowInjector {
 				viewerFacadeReference::get,
 				settings.biomeProfileSelection,
 				settings.lastBiomeExportPath);
+		actionsReference.set(actions);
 		this.menuBar = new AmidstMenuBuilder(settings, actions, biomeProfileDirectory).construct();
+		menuBarReference.set(menuBar);
 		this.mainWindow = new MainWindow(frame, worldSwitcher, viewerFacadeReference::get, seedSearcherWindow, biomeExporterDialog);
 		this.mainWindow.initializeFrame(metadata, versionString, actions, menuBar, runningLauncherProfile.getInitialWorldOptions());
-	}
-
-	@CalledOnlyBy(AmidstThread.EDT)
-	private ViewerFacade createViewerFacade(World world) {
-		return viewerFacadeFactory.create(world, biomeExporterDialog, actions);
-	}
-
-	/**
-	 * This only exists to break the cyclic dependency between {@link #menuBar},
-	 * {@link #actions}, {@link #worldSwitcher}, aswell as the cyclic dependency
-	 * between {@link #menuBar}, {@link #actions}, {@link #biomeExporterDialog}.
-	 */
-	@CalledOnlyBy(AmidstThread.EDT)
-	private AmidstMenu getMenuBar() {
-		return this.menuBar;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

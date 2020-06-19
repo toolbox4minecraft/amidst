@@ -53,6 +53,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
+import amidst.Amidst;
 import amidst.documentation.NotThreadSafe;
 import amidst.gui.main.Actions;
 import amidst.gui.main.PNGFileFilter;
@@ -421,6 +422,11 @@ public class BiomeExporterDialog {
 	}
 
 	public void dispose() {
+		menuBarSupplier.get().setMenuItemsEnabled(new String[] { "Export Biomes to Image ...", "Biome Profile" }, true);
+		Amidst.destroyComponentTree(dialog);
+	}
+	
+	public void softDispose() {
 		menuBarSupplier.get().setMenuItemsEnabled(new String[] { "Export Biomes to Image ...", "Biome Profile" }, true);
 		dialog.dispose();
 	}

@@ -9,10 +9,12 @@ import java.util.function.Supplier;
 
 import javax.swing.JFrame;
 
-import amidst.dependency.injection.Factory1;
+import amidst.dependency.injection.Factory2;
+import amidst.dependency.injection.Factory3;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.gui.export.BiomeExporterDialog;
 import amidst.gui.main.menu.AmidstMenu;
 import amidst.gui.main.viewer.ViewerFacade;
 import amidst.logging.AmidstLogger;
@@ -30,7 +32,8 @@ import amidst.threading.ThreadMaster;
 public class WorldSwitcher {
 	private final MinecraftInstallation minecraftInstallation;
 	private final RunningLauncherProfile runningLauncherProfile;
-	private final Factory1<World, ViewerFacade> viewerFacadeFactory;
+	private final Factory2<World, Actions, ViewerFacade> viewerFacadeFactory;
+	private final Supplier<Actions> actionsSupplier;
 	private final ThreadMaster threadMaster;
 	private final JFrame frame;
 	private final Container contentPane;
@@ -42,7 +45,9 @@ public class WorldSwitcher {
 	public WorldSwitcher(
 			MinecraftInstallation minecraftInstallation,
 			RunningLauncherProfile runningLauncherProfile,
-			Factory1<World, ViewerFacade> viewerFacadeFactory,
+			Factory3<World, BiomeExporterDialog, Actions, ViewerFacade> viewerFacadeFactory,
+			Supplier<Actions> actionsSupplier,
+			BiomeExporterDialog biomeExporterDialog,
 			ThreadMaster threadMaster,
 			JFrame frame,
 			Container contentPane,
@@ -51,7 +56,8 @@ public class WorldSwitcher {
 			Supplier<AmidstMenu> menuBarSupplier) {
 		this.minecraftInstallation = minecraftInstallation;
 		this.runningLauncherProfile = runningLauncherProfile;
-		this.viewerFacadeFactory = viewerFacadeFactory;
+		this.viewerFacadeFactory = (w,a) -> viewerFacadeFactory.create(w, biomeExporterDialog, a);
+		this.actionsSupplier = actionsSupplier;
 		this.threadMaster = threadMaster;
 		this.frame = frame;
 		this.contentPane = contentPane;
@@ -97,7 +103,7 @@ public class WorldSwitcher {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void setWorld(World world) {
 		if (decideWorldPlayerType(world.getMovablePlayerList())) {
-			setViewerFacade(viewerFacadeFactory.create(world));
+			setViewerFacade(viewerFacadeFactory.create(world, actionsSupplier.get()));
 		} else {
 			frame.revalidate();
 			frame.repaint();

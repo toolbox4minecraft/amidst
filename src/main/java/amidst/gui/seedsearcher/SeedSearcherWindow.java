@@ -13,6 +13,7 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.LineBorder;
 
+import amidst.Amidst;
 import amidst.AmidstMetaData;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -165,5 +166,6 @@ public class SeedSearcherWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void dispose() {
 		seedSearcher.dispose();
+		Amidst.destroyComponentTree(frame);
 	}
 }

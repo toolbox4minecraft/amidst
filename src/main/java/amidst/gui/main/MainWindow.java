@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 
 import javax.swing.JFrame;
 
+import amidst.Amidst;
 import amidst.AmidstMetaData;
 import amidst.FeatureToggles;
 import amidst.documentation.AmidstThread;
@@ -78,7 +79,7 @@ public class MainWindow {
 		worldSwitcher.clearWorld();
 		if (FeatureToggles.SEED_SEARCH) {
 			seedSearcherWindow.dispose();
-		}
-		frame.dispose();
+		}		
+		Amidst.destroyComponentTree(frame);
 	}
 }

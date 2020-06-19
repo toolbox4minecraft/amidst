@@ -12,6 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
+import amidst.Amidst;
 import amidst.AmidstMetaData;
 import amidst.AmidstSettings;
 import amidst.Application;
@@ -189,6 +190,6 @@ public class ProfileSelectWindow {
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void dispose() {
 		isDisposed = true;
-		frame.dispose();
+		Amidst.destroyComponentTree(frame);
 	}
 }
