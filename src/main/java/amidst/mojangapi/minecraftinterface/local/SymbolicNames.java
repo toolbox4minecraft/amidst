@@ -9,6 +9,7 @@ public enum SymbolicNames {
     public static final String CLASS_REGISTRY = "Registry";
     public static final String FIELD_REGISTRY_META_REGISTRY = "metaRegistry";
     public static final String FIELD_REGISTRY_META_REGISTRY2 = "metaRegistry2";
+    public static final String FIELD_REGISTRY_META_REGISTRY3 = "metaRegistry3";
     public static final String METHOD_REGISTRY_CREATE_KEY = "createRegistryKey";
     public static final String METHOD_REGISTRY_GET_BY_KEY = "getByKey";
     public static final String METHOD_REGISTRY_GET_ID = "getId";

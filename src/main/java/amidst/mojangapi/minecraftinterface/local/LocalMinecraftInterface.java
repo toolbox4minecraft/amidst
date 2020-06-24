@@ -13,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 
@@ -102,7 +103,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			SymbolicNames.METHOD_WORLD_GEN_SETTINGS_CREATE, worldProperties);
 
 		Object chunkGenerator = worldSettings.callMethod(SymbolicNames.METHOD_WORLD_GEN_SETTINGS_OVERWORLD);
-		if (chunkGenerator instanceof Boolean) { // Oops, we called the wrong method
+		if (chunkGenerator instanceof Boolean || chunkGenerator instanceof Set<?>) {
+			 // Oops, we called the wrong method
 			chunkGenerator = worldSettings.callMethod(SymbolicNames.METHOD_WORLD_GEN_SETTINGS_OVERWORLD2);
 		}
 
@@ -148,7 +150,9 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    try {
 	    	Object metaRegistry = registryClass.getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY);
 	    	if (!(metaRegistry instanceof SymbolicObject)) { // Oops, we called the wrong method
-	    		metaRegistry = registryClass.getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY2);
+	    		String name = RecognisedVersion.isOlder(recognisedVersion, RecognisedVersion._1_16_pre1) ?
+						SymbolicNames.FIELD_REGISTRY_META_REGISTRY2 : SymbolicNames.FIELD_REGISTRY_META_REGISTRY3;
+		    	metaRegistry = registryClass.getStaticFieldValue(name);
 	    	}
 	    	metaRegistry = ((SymbolicObject) metaRegistry).getObject();
 

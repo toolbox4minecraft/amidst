@@ -39,6 +39,7 @@ public enum DefaultClassTranslator {
                 .thenDeclareRequired(CLASS_REGISTRY)
                     .requiredField(FIELD_REGISTRY_META_REGISTRY, "f")
                     .requiredField(FIELD_REGISTRY_META_REGISTRY2, "i")
+                    .requiredField(FIELD_REGISTRY_META_REGISTRY3, "h")
                 	.optionalMethod(METHOD_REGISTRY_CREATE_KEY, "a").real("java.lang.String").end()
                     .requiredMethod(METHOD_REGISTRY_GET_ID, "a").real("java.lang.Object").end()
                     .requiredMethod(METHOD_REGISTRY_GET_BY_KEY, "a").symbolic(CLASS_RESOURCE_KEY).end()
