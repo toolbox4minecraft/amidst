@@ -2,10 +2,18 @@ package amidst.mojangapi.minecraftinterface.local;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 
@@ -24,11 +32,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final RecognisedVersion recognisedVersion;
 
 	private final SymbolicClass registryClass;
-	private final SymbolicClass registryKeyClass;
-	private final SymbolicClass worldTypeClass;
-	private final SymbolicClass gameTypeClass;
-	private final SymbolicClass worldSettingsClass;
-	private final SymbolicClass worldDataClass;
+	private final SymbolicClass resourceKeyClass;
+	private final SymbolicClass worldGenSettingsClass;
 	private final SymbolicClass noiseBiomeProviderClass;
 	private final SymbolicClass overworldBiomeZoomerClass;
 	private final SymbolicClass utilClass;
@@ -38,7 +43,6 @@ public class LocalMinecraftInterface implements MinecraftInterface {
     private MethodHandle biomeZoomerGetBiomeMethod;
 
 	private Object biomeRegistry;
-	private Object biomeProviderRegistry;
 
     /**
      * An array used to return biome data
@@ -48,13 +52,10 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;
 		this.registryClass = symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY);
-        this.registryKeyClass = symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY_KEY);
-        this.worldTypeClass = symbolicClassMap.get(SymbolicNames.CLASS_WORLD_TYPE);
-        this.gameTypeClass = symbolicClassMap.get(SymbolicNames.CLASS_GAME_TYPE);
-        this.worldSettingsClass = symbolicClassMap.get(SymbolicNames.CLASS_WORLD_SETTINGS);
-        this.worldDataClass = symbolicClassMap.get(SymbolicNames.CLASS_WORLD_DATA);
+        this.resourceKeyClass = symbolicClassMap.get(SymbolicNames.CLASS_RESOURCE_KEY);
+        this.worldGenSettingsClass = symbolicClassMap.get(SymbolicNames.CLASS_WORLD_GEN_SETTINGS);
         this.noiseBiomeProviderClass = symbolicClassMap.get(SymbolicNames.CLASS_NOISE_BIOME_PROVIDER);
-        this.overworldBiomeZoomerClass = symbolicClassMap.get(SymbolicNames.CLASS_BIOME_ZOOMER);
+        this.overworldBiomeZoomerClass = symbolicClassMap.get(SymbolicNames.CLASS_OVERWORLD_BIOME_ZOOMER);
         this.utilClass = symbolicClassMap.get(SymbolicNames.CLASS_UTIL);
 	}
 
@@ -64,61 +65,76 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    initializeIfNeeded();
 
 	    try {
-	        Object worldData = createWorldDataObject(seed, worldType, generatorOptions);
-	        Object biomeProvider = createBiomeProviderObject(worldData);
+	        Object biomeProvider = createBiomeProviderObject(seed, worldType, generatorOptions);
 	        Object biomeZoomer = overworldBiomeZoomerClass.getClazz().getEnumConstants()[0];
-            long seedForBiomeZoomer = (Long) worldDataClass.callStaticMethod(SymbolicNames.METHOD_WORLD_DATA_MAP_SEED, seed);
+            long seedForBiomeZoomer = makeSeedForBiomeZoomer(seed);
             return new World(biomeProvider, biomeZoomer, seedForBiomeZoomer);
 
-        } catch(IllegalArgumentException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+        } catch(RuntimeException | IllegalAccessException | InvocationTargetException e) {
             throw new MinecraftInterfaceException("unable to create world", e);
         }
 	}
 
-	private Object createWorldDataObject(long seed, WorldType worldType, String generatorOptions)
-	        throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException {
-        if (!generatorOptions.isEmpty()) {
-            //TODO: fix me
-            AmidstLogger.warn("Custom generator options aren't supported in this version");
-        }
+	private static long makeSeedForBiomeZoomer(long seed) throws MinecraftInterfaceException {
+		try {
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			ByteBuffer buf = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN);
+			buf.putLong(seed);
+			byte[] bytes = digest.digest(buf.array());
 
-	    SymbolicObject worldTypeObj = (SymbolicObject) worldTypeClass
-	            .getStaticFieldValue(worldType.getSymbolicFieldName());
-
-	    // We don't care which GameType we pick
-	    Object gameType = gameTypeClass.getClazz().getEnumConstants()[0];
-
-	    SymbolicObject worldSettings = worldSettingsClass.callConstructor(SymbolicNames.CONSTRUCTOR_WORLD_SETTINGS,
-	            seed, gameType, false, false, worldTypeObj.getObject());
-
-	    SymbolicObject worldData = worldDataClass.callConstructor(SymbolicNames.CONSTRUCTOR_WORLD_DATA,
-	            worldSettings.getObject(), "<amidst-world>");
-
-        return worldData.getObject();
+			long result = 0;
+			for (int i = 0; i < 8; i++) {
+				result |= (bytes[i] & 0xffL) << (i*8L);
+			}
+			return result;
+		} catch (NoSuchAlgorithmException e) {
+			throw new MinecraftInterfaceException("unable to hash seed", e);
+		}
 	}
 
-	private Object createBiomeProviderObject(Object worldData)
-            throws IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException {
-	    Object providerType = getFromRegistryByKey(biomeProviderRegistry, "vanilla_layered");
+	private Object createBiomeProviderObject(long seed, WorldType worldType, String generatorOptions)
+            throws IllegalAccessException, InvocationTargetException, MinecraftInterfaceException {
+		Properties worldProperties = new Properties();
+		worldProperties.setProperty("level-seed", Long.toString(seed));
+		worldProperties.setProperty("level-type", getTrueWorldTypeName(worldType));
+		worldProperties.setProperty("generator-settings", generatorOptions);
 
-	    /*
-	     * The BiomeProviderType class is hard to properly detect with the ClassTranslator, so
-	     * we prefer working with it directly with the Java reflection API.
-	     */
-	    Method createMethod = null; // BiomeProvider create(BiomeProviderSettings settings)
-	    Method createSettingsMethod = null; // BiomeProviderSettings createSettings(WorldData world)
-	    for (Method meth: providerType.getClass().getDeclaredMethods()) {
-	        if (!meth.isSynthetic() && meth.getParameterCount() == 1) {
-	            if(meth.getParameterTypes()[0].equals(worldDataClass.getClazz())) {
-	                createSettingsMethod = meth;
-	            } else if (noiseBiomeProviderClass.getClazz().isAssignableFrom(meth.getReturnType())) {
-	                createMethod = meth;
-	            }
-	        }
-	    }
+		SymbolicObject worldSettings = (SymbolicObject) worldGenSettingsClass.callStaticMethod(
+			SymbolicNames.METHOD_WORLD_GEN_SETTINGS_CREATE, worldProperties);
 
-	    Object providerSettings = createSettingsMethod.invoke(providerType, worldData);
-	    return createMethod.invoke(providerType, providerSettings);
+		Object chunkGenerator = worldSettings.callMethod(SymbolicNames.METHOD_WORLD_GEN_SETTINGS_OVERWORLD);
+		if (chunkGenerator instanceof Boolean || chunkGenerator instanceof Set<?>) {
+			 // Oops, we called the wrong method
+			chunkGenerator = worldSettings.callMethod(SymbolicNames.METHOD_WORLD_GEN_SETTINGS_OVERWORLD2);
+		}
+
+		// This is more robust than declaring a symbolic method, if the name ever changes
+		for (Method meth: chunkGenerator.getClass().getMethods()) {
+			if (meth.getParameterCount() == 0
+			&& noiseBiomeProviderClass.getClazz().isAssignableFrom(meth.getReturnType())) {
+				return meth.invoke(chunkGenerator);
+			}
+		}
+
+		throw new MinecraftInterfaceException("Couldn't retrieve biome provider from chunk generator");
+	}
+
+	private static String getTrueWorldTypeName(WorldType worldType) {
+		switch (worldType) {
+		case DEFAULT:
+			return "default";
+		case FLAT:
+			return "flat";
+		case AMPLIFIED:
+			return "amplified";
+		case LARGE_BIOMES:
+			return "largeBiomes";
+		case CUSTOMIZED:
+			return "customized";
+		default:
+			AmidstLogger.warn("Unsupported world type for this version: " + worldType);
+			return "";
+		}
 	}
 
 	@Override
@@ -132,16 +148,17 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    }
 
 	    try {
-	        Object metaRegistry = ((SymbolicObject) registryClass
-	                .getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY)).getObject();
-			try {
-				((ExecutorService) utilClass.getStaticFieldValue(SymbolicNames.FIELD_UTIL_SERVER_EXECUTOR)).shutdownNow();
-			} catch (NullPointerException e) {
-				AmidstLogger.warn("Unable to shut down Server-Worker threads");
-			}
+	    	Object metaRegistry = registryClass.getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY);
+	    	if (!(metaRegistry instanceof SymbolicObject)) { // Oops, we called the wrong method
+	    		String name = RecognisedVersion.isOlder(recognisedVersion, RecognisedVersion._1_16_pre1) ?
+						SymbolicNames.FIELD_REGISTRY_META_REGISTRY2 : SymbolicNames.FIELD_REGISTRY_META_REGISTRY3;
+		    	metaRegistry = registryClass.getStaticFieldValue(name);
+	    	}
+	    	metaRegistry = ((SymbolicObject) metaRegistry).getObject();
+
+	    	stopAllExecutors();
 
             biomeRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome"));
-            biomeProviderRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome_source_type"));
 
             registryGetIdMethod = getMethodHandle(registryClass, SymbolicNames.METHOD_REGISTRY_GET_ID);
             biomeProviderGetBiomeMethod = getMethodHandle(noiseBiomeProviderClass, SymbolicNames.METHOD_NOISE_BIOME_PROVIDER_GET_BIOME);
@@ -154,11 +171,32 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    isInitialized = true;
 	}
 
+	private void stopAllExecutors() throws IllegalArgumentException, IllegalAccessException {
+		Class<?> clazz = utilClass.getClazz();
+		for (Field field: clazz.getDeclaredFields()) {
+			if ((field.getModifiers() & Modifier.STATIC) > 0 && field.getType().equals(ExecutorService.class)) {
+				field.setAccessible(true);
+				ExecutorService exec = (ExecutorService) field.get(null);
+				exec.shutdownNow();
+			}
+		}
+	}
+
 	private Object getFromRegistryByKey(Object registry, String key)
-	        throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-	    Object registryKey = registryKeyClass
-                .callConstructor(SymbolicNames.CONSTRUCTOR_REGISTRY_KEY, key)
-                .getObject();
+	        throws MinecraftInterfaceException, InstantiationException,
+	        IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	    Object registryKey;
+	    if (resourceKeyClass.hasConstructor(SymbolicNames.CONSTRUCTOR_RESOURCE_KEY)) {
+	    	registryKey = resourceKeyClass
+	                .callConstructor(SymbolicNames.CONSTRUCTOR_RESOURCE_KEY, key)
+	                .getObject();
+	    } else if (registryClass.hasMethod(SymbolicNames.METHOD_REGISTRY_CREATE_KEY)) {
+	    	registryKey = ((SymbolicObject) registryClass
+	    			.callStaticMethod(SymbolicNames.METHOD_REGISTRY_CREATE_KEY, key))
+	    			.getObject();
+	    } else {
+	    	throw new MinecraftInterfaceException("couldn't create registry key");
+	    }
 
 	    Method getByKey = registryClass.getMethod(SymbolicNames.METHOD_REGISTRY_GET_BY_KEY).getRawMethod();
 	    return getByKey.invoke(registry, registryKey);
