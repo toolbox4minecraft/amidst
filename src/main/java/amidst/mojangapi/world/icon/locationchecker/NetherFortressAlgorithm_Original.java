@@ -5,10 +5,10 @@ import java.util.Random;
 import amidst.documentation.Immutable;
 
 @Immutable
-public class NetherFortressAlgorithm implements LocationChecker {
+public class NetherFortressAlgorithm_Original implements LocationChecker {
 	private final long seed;
 
-	public NetherFortressAlgorithm(long seed) {
+	public NetherFortressAlgorithm_Original(long seed) {
 		this.seed = seed;
 	}
 

@@ -19,7 +19,7 @@ import amidst.mojangapi.world.icon.locationchecker.EndCityLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_ChanceBased;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Original;
-import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm;
+import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm_Original;
 import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker_Fixed;
 import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker_Original;
 import amidst.mojangapi.world.icon.locationchecker.PillagerOutpostLocationChecker;
@@ -147,7 +147,7 @@ public enum DefaultVersionFeatures {
 
 			.with(FeatureKey.NETHER_FORTRESS_LOCATION_CHECKER, (version, features) -> {
 				if(RecognisedVersion.isOlder(version, RecognisedVersion._20w16a)) {
-					return new NetherFortressAlgorithm(getWorldSeed(features));
+					return new NetherFortressAlgorithm_Original(getWorldSeed(features));
 				} else {
 					// TODO: add Nether biome checks when we implement Nether biomes
 					// Bastions replace Fortresses in Warped/Crimson Forest
