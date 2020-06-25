@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>amidst</groupId>
 	<artifactId>amidst</artifactId>
-	<version>4.4</version>
+	<version>4.5-beta1</version>
 	<repositories>
 		<repository>
 			<id>local-m2</id>
