@@ -144,7 +144,6 @@ public class BiomeDataOracle {
 						if(accurateLocationCount || updateResult) {
 							numberOfValidLocations++;
 						}
-						break;
 					}
 				}
 				return result;
