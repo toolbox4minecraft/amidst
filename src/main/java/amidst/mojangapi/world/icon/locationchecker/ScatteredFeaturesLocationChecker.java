@@ -34,17 +34,35 @@ public class ScatteredFeaturesLocationChecker extends AllValidLocationChecker {
 			List<Biome> validBiomesAtMiddleOfChunk,
 			long magicNumber,
 			boolean buggyStructureCoordinateMath) {
+		super(getLocationChecker(seed, biomeDataOracle,
+			maxDistanceBetweenFeatures,
+			minDistanceBetweenFeatures,
+			validBiomesAtMiddleOfChunk,
+			magicNumber,
+			buggyStructureCoordinateMath));
+	}
 
-		super(
-				new StructureAlgorithm(
-					seed,
-					MAGIC_NUMBER_FOR_SEED_1,
-					MAGIC_NUMBER_FOR_SEED_2,
-					magicNumber,
-					maxDistanceBetweenFeatures,
-					minDistanceBetweenFeatures,
-					USE_TWO_VALUES_FOR_UPDATE,
-					buggyStructureCoordinateMath),
-				new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk));
+	private static LocationChecker[] getLocationChecker(
+			long seed, BiomeDataOracle biomeDataOracle,
+			byte maxDistanceBetweenFeatures, byte minDistanceBetweenFeatures,
+			List<Biome> validBiomesAtMiddleOfChunk,
+			long magicNumber,
+			boolean buggyStructureCoordinateMath) {
+		LocationChecker structure = new StructureAlgorithm(
+			seed,
+			MAGIC_NUMBER_FOR_SEED_1,
+			MAGIC_NUMBER_FOR_SEED_2,
+			magicNumber,
+			maxDistanceBetweenFeatures,
+			minDistanceBetweenFeatures,
+			USE_TWO_VALUES_FOR_UPDATE,
+			buggyStructureCoordinateMath);
+
+		if (validBiomesAtMiddleOfChunk == null) {
+			return new LocationChecker[] { structure };
+		} else {
+			return new LocationChecker[] { structure,
+					new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk) };
+		}
 	}
 }
