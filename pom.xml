@@ -10,6 +10,10 @@
 			<id>local-m2</id>
 			<url>file://${project.basedir}/m2</url>
 		</repository>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
 	</repositories>
 	<properties>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
@@ -100,6 +104,11 @@
 			<groupId>jnbt</groupId>
 			<artifactId>jnbt</artifactId>
 			<version>1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.Querz</groupId>
+			<artifactId>NBT</artifactId>
+			<version>5.5</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

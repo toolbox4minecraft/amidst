@@ -15,9 +15,10 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import net.miginfocom.swing.MigLayout;
+
 import amidst.AmidstMetaData;
 import amidst.documentation.Immutable;
-import net.miginfocom.swing.MigLayout;
 
 @Immutable
 public class LicenseWindow {
@@ -40,6 +41,7 @@ public class LicenseWindow {
 				createLicense("Args4j", "args4j.txt"),
 				createLicense("Gson", "gson.txt"),
 				createLicense("JNBT", "jnbt.txt"),
+				createLicense("Querz-NBT", "querz-nbt.txt"),
 				createLicense("MiG Layout", "miglayout.txt"));
 		return result.toArray(new License[result.size()]);
 	}
