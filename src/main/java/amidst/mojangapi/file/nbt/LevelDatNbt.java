@@ -5,6 +5,7 @@ import java.nio.file.Path;
 
 import net.querz.nbt.tag.CompoundTag;
 import net.querz.nbt.tag.StringTag;
+import net.querz.nbt.tag.Tag;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.WorldType;
@@ -32,8 +33,13 @@ public class LevelDatNbt {
 	}
 
 	private static long readRandomSeed(CompoundTag dataTag) {
-		// TODO: RandomSeed doesn't exist in Minecraft 1.16: we must extract it from the generator options
-		return NBTUtils.getLongValue(dataTag.get(NBTTagKeys.TAG_KEY_RANDOM_SEED));
+		Tag<?> randomSeed = dataTag.get(NBTTagKeys.TAG_KEY_RANDOM_SEED);
+		if (randomSeed != null) {
+			return NBTUtils.getLongValue(randomSeed);
+		}
+		// Minecraft 1.16 format
+		CompoundTag worldGenSettings = dataTag.get(NBTTagKeys.TAG_KEY_WORLD_GEN_SETTINGS, CompoundTag.class);
+		return NBTUtils.getLongValue(worldGenSettings.get(NBTTagKeys.TAG_KEY_SEED));
 	}
 
 	private static CoordinatesInWorld readWorldSpawn(CompoundTag dataTag) {
@@ -49,6 +55,9 @@ public class LevelDatNbt {
 	}
 
 	private static WorldType readWorldType(CompoundTag dataTag) {
+		// Minecraft 1.16: the world type doesn't exist in the nbt data anymore
+		// so we'll always return Default
+		// TODO: Fix this
 		if (hasGeneratorName(dataTag)) {
 			return WorldType.from(readGeneratorName(dataTag));
 		} else {
@@ -61,9 +70,7 @@ public class LevelDatNbt {
 	}
 
 	private static String readGeneratorOptions(CompoundTag dataTag, WorldType worldType) {
-		// TODO: Minecraft 1.16: should we always load generator options?
 		if (worldType == WorldType.CUSTOMIZED) {
-			// TODO: check that CUSTOMIZED worlds still correctly load generator options
 			return readGeneratorOptions(dataTag);
 		} else {
 			return "";
