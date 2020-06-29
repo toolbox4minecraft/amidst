@@ -2,13 +2,11 @@ package amidst.mojangapi.file.nbt.player;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Optional;
 
-import org.jnbt.CompoundTag;
-import org.jnbt.IntTag;
-import org.jnbt.ListTag;
-import org.jnbt.Tag;
+import net.querz.nbt.tag.CompoundTag;
+import net.querz.nbt.tag.IntTag;
+import net.querz.nbt.tag.ListTag;
 
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
@@ -40,29 +38,28 @@ public enum PlayerLocationLoader {
 	}
 
 	private static CompoundTag getTagRootTag(CompoundTag rootTag) {
-		return (CompoundTag) rootTag.getValue().get(NBTTagKeys.TAG_KEY_DATA);
+		return rootTag.get(NBTTagKeys.TAG_KEY_DATA, CompoundTag.class);
 	}
 
 	private static CompoundTag getSinglePlayerPlayerTag(CompoundTag rootDataTag) {
-		return (CompoundTag) rootDataTag.getValue().get(NBTTagKeys.TAG_KEY_PLAYER);
-
+		return rootDataTag.get(NBTTagKeys.TAG_KEY_PLAYER, CompoundTag.class);
 	}
 
 	private static PlayerCoordinates readPlayerCoordinates(CompoundTag tag) {
-		int dimensionId = getTagDimension(tag).getValue();
-		List<Tag> posList = getTagPos(tag).getValue();
+		int dimensionId = getTagDimension(tag).asInt(); // TODO: this is not correct for Minecraft 1.16
+		ListTag<?> posList = getTagPos(tag);
 		return PlayerCoordinates.fromNBTFile(
-				(long) (double) (Double) posList.get(0).getValue(),
-				(long) (double) (Double) posList.get(1).getValue(),
-				(long) (double) (Double) posList.get(2).getValue(),
+				NBTUtils.getLongValue(posList.get(0)),
+				NBTUtils.getLongValue(posList.get(1)),
+				NBTUtils.getLongValue(posList.get(2)),
 				dimensionId);
 	}
 
 	private static IntTag getTagDimension(CompoundTag tag) {
-		return (IntTag) tag.getValue().get(NBTTagKeys.TAG_KEY_DIMENSION);
+		return tag.get(NBTTagKeys.TAG_KEY_DIMENSION, IntTag.class);
 	}
 
-	private static ListTag getTagPos(CompoundTag tag) {
-		return (ListTag) tag.getValue().get(NBTTagKeys.TAG_KEY_POS);
+	private static ListTag<?> getTagPos(CompoundTag tag) {
+		return tag.get(NBTTagKeys.TAG_KEY_POS, ListTag.class);
 	}
 }
