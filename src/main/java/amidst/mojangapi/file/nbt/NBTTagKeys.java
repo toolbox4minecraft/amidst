@@ -14,4 +14,6 @@ public class NBTTagKeys {
 	public static final String TAG_KEY_RANDOM_SEED = "RandomSeed";
 	public static final String TAG_KEY_GENERATOR_NAME = "generatorName";
 	public static final String TAG_KEY_GENERATOR_OPTIONS = "generatorOptions";
+	public static final String TAG_KEY_WORLD_GEN_SETTINGS = "WorldGenSettings";
+	public static final String TAG_KEY_SEED = "seed";
 }

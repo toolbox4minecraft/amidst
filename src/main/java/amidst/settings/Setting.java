@@ -34,7 +34,7 @@ public interface Setting<T> extends Supplier<T> {
 	public static Setting<Dimension> createDimension(Preferences preferences, String key, Dimension defaultValue) {
 		return new SettingBase<>(
 			defaultValue,
-			value -> Dimension.from(preferences.getInt(key, value.getId())),
+			value -> Dimension.fromId(preferences.getInt(key, value.getId())),
 			value -> preferences.putInt(key, value.getId()));
 	}
 
