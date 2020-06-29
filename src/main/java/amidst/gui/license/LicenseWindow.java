@@ -40,9 +40,8 @@ public class LicenseWindow {
 				createLicense("Amidst", "amidst.txt"),
 				createLicense("Args4j", "args4j.txt"),
 				createLicense("Gson", "gson.txt"),
-				createLicense("JNBT", "jnbt.txt"),
-				createLicense("Querz-NBT", "querz-nbt.txt"),
-				createLicense("MiG Layout", "miglayout.txt"));
+				createLicense("MiG Layout", "miglayout.txt"),
+				createLicense("Querz-NBT", "querz-nbt.txt"));
 		return result.toArray(new License[result.size()]);
 	}
 
