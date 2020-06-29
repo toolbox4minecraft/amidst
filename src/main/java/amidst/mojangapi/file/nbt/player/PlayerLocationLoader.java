@@ -5,13 +5,15 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 import net.querz.nbt.tag.CompoundTag;
-import net.querz.nbt.tag.IntTag;
 import net.querz.nbt.tag.ListTag;
+import net.querz.nbt.tag.NumberTag;
+import net.querz.nbt.tag.Tag;
 
 import amidst.documentation.Immutable;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.file.nbt.NBTTagKeys;
 import amidst.mojangapi.file.nbt.NBTUtils;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.player.PlayerCoordinates;
 
 @Immutable
@@ -46,17 +48,19 @@ public enum PlayerLocationLoader {
 	}
 
 	private static PlayerCoordinates readPlayerCoordinates(CompoundTag tag) {
-		int dimensionId = getTagDimension(tag).asInt(); // TODO: this is not correct for Minecraft 1.16
+		Tag<?> dimensionTag = tag.get(NBTTagKeys.TAG_KEY_DIMENSION);
+		Dimension dimension;
+		if (dimensionTag instanceof NumberTag<?>) {
+			dimension = Dimension.fromId(((NumberTag<?>) dimensionTag).asInt());
+		} else {
+			dimension = Dimension.fromName(dimensionTag.valueToString());
+		}
 		ListTag<?> posList = getTagPos(tag);
 		return PlayerCoordinates.fromNBTFile(
 				NBTUtils.getLongValue(posList.get(0)),
 				NBTUtils.getLongValue(posList.get(1)),
 				NBTUtils.getLongValue(posList.get(2)),
-				dimensionId);
-	}
-
-	private static IntTag getTagDimension(CompoundTag tag) {
-		return tag.get(NBTTagKeys.TAG_KEY_DIMENSION, IntTag.class);
+				dimension);
 	}
 
 	private static ListTag<?> getTagPos(CompoundTag tag) {
