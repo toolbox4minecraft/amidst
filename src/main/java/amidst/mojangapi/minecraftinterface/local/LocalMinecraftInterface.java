@@ -80,7 +80,6 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	        Object biomeZoomer = overworldBiomeZoomerClass.getClazz().getEnumConstants()[0];
             long seedForBiomeZoomer = makeSeedForBiomeZoomer(seed);
             return new World(threadedBiomeProvider, biomeZoomer, seedForBiomeZoomer);
-
         } catch(RuntimeException e) {
             throw new MinecraftInterfaceException("unable to create world", e);
         }
