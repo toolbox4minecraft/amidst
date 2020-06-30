@@ -1,13 +1,20 @@
 package amidst.fragment.colorprovider;
 
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 import amidst.ResourceLoader;
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
+import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Dimension;
-import amidst.mojangapi.world.oracle.EndIsland;
+import amidst.mojangapi.world.coordinates.CoordinateUtils;
+import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.oracle.end.EndIslandList;
+import amidst.mojangapi.world.oracle.end.EndIslandOracle;
+import amidst.mojangapi.world.oracle.end.LargeEndIsland;
+import amidst.mojangapi.world.oracle.end.SmallEndIsland;
+import amidst.mojangapi.world.versionfeatures.DefaultBiomes;
 
 @ThreadSafe
 public class TheEndColorProvider implements ColorProvider {
@@ -25,6 +32,12 @@ public class TheEndColorProvider implements ColorProvider {
 	private static final float INFLUENCE_FADE_START = 0;
 	private static final float INFLUENCE_FADE_FINISH = -8;
 	private static final float INFLUENCE_FADE_RANGE = INFLUENCE_FADE_START - INFLUENCE_FADE_FINISH;
+	
+	private final RecognisedVersion version;
+	
+	public TheEndColorProvider(RecognisedVersion version) {
+		this.version = version;
+	}
 
 	@Override
 	public int getColorAt(Dimension dimension, Fragment fragment, long cornerX, long cornerY, int x, int y) {
@@ -47,7 +60,19 @@ public class TheEndColorProvider implements ColorProvider {
 			long chunkY,
 			int textureX,
 			int textureY,
-			List<EndIsland> endIslands) {
+			EndIslandList endIslands) {
+		
+		// small islands
+		if (RecognisedVersion.isNewerOrEqualTo(version, RecognisedVersion._1_13)) {
+			if(EndIslandOracle.getBiomeAtBlock(x, y, endIslands.getLargeIslands()) == DefaultBiomes.theEndLow) {
+				for(SmallEndIsland smallIsland : endIslands.getSmallIslands()) {
+					if(new CoordinatesInWorld(x, y).getDistance(smallIsland.getX(), smallIsland.getY()) <= smallIsland.getSize()) {
+						return getEndStoneTextureAt(textureX, textureY);
+					}
+				}
+			}
+		}
+		
 		// Determine whether this
 		float maxInfluence = getMaxInfluence(x, y, endIslands);
 		if (maxInfluence >= INFLUENCE_FADE_START) {
@@ -58,9 +83,9 @@ public class TheEndColorProvider implements ColorProvider {
 		}
 	}
 
-	private float getMaxInfluence(int x, int y, List<EndIsland> endIslands) {
+	private float getMaxInfluence(int x, int y, EndIslandList endIslands) {
 		float result = -100.0f;
-		for (EndIsland island : endIslands) {
+		for (LargeEndIsland island : endIslands.getLargeIslands()) {
 			float influence = island.influenceAtBlock(x, y);
 			if (result < influence) {
 				result = influence;
@@ -71,9 +96,11 @@ public class TheEndColorProvider implements ColorProvider {
 
 	private int getFadingColorAt(long chunkX, long chunkY, int textureX, int textureY, float maxInfluence) {
 		int result = VOID_TRANSPARENT_BLACK;
+		
 		if (showRockyShores(chunkX, chunkY)) {
 			result = getRockyShoresTextureAt(textureX, textureY);
 		}
+		
 		if (maxInfluence > INFLUENCE_FADE_FINISH) {
 			// Fade out the endstone - this is the edge of an island
 			int pixelAlpha = result >>> 24;
@@ -88,15 +115,15 @@ public class TheEndColorProvider implements ColorProvider {
 		return result;
 	}
 
-	/**
-	 * Determine if the chunk may contain miniature islands.
-	 */
-	private boolean showRockyShores(long chunkX, long chunkY) {
-		return (chunkX * chunkX + chunkY * chunkY) > 4096;
-	}
-
 	private int getFadingIslandAlpha(float maxInfluence) {
 		return 255 - (int) (255 * (INFLUENCE_FADE_START - maxInfluence) / INFLUENCE_FADE_RANGE);
+	}
+	
+	/**
+	 * Determine whether to show the rocky shores texture.
+	 */
+	private boolean showRockyShores(long chunkX, long chunkY) {
+		return (chunkX * chunkX + chunkY * chunkY) > 4096 && RecognisedVersion.isOlder(version, RecognisedVersion._1_13);
 	}
 
 	private int getEndStoneTextureAt(int textureX, int textureY) {
@@ -108,6 +135,8 @@ public class TheEndColorProvider implements ColorProvider {
 	 * from the world seed, like chorus plants they are decorations whose PRNG
 	 * state depends on the order chunks are created/explored in. This makes me
 	 * sad :( Let's use a symbolic texture, since we can't plot them properly.
+	 * 
+	 * EDIT: This isn't true past 1.13 I think.
 	 */
 	private int getRockyShoresTextureAt(int textureX, int textureY) {
 		return TEXTURES.getRGB(textureX, textureY + TEXTURES_HEIGHT);

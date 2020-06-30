@@ -16,7 +16,7 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeList;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
-import amidst.mojangapi.world.oracle.EndIslandOracle;
+import amidst.mojangapi.world.oracle.end.EndIslandOracle;
 import amidst.settings.Setting;
 
 @NotThreadSafe
@@ -25,7 +25,6 @@ public class CursorInformationWidget extends TextWidget {
 
 	private final FragmentGraph graph;
 	private final FragmentGraphToScreenTranslator translator;
-	private final EndIslandOracle endIslandOracle;
 	private final Setting<Dimension> dimensionSetting;
 	private final BiomeList biomeList;
 
@@ -34,13 +33,11 @@ public class CursorInformationWidget extends TextWidget {
 			CornerAnchorPoint anchor,
 			FragmentGraph graph,
 			FragmentGraphToScreenTranslator translator,
-			EndIslandOracle endIslandOracle,
 			Setting<Dimension> dimensionSetting,
 			BiomeList biomeList) {
 		super(anchor);
 		this.graph = graph;
 		this.translator = translator;
-		this.endIslandOracle = endIslandOracle;
 		this.dimensionSetting = dimensionSetting;
 		this.biomeList = biomeList;
 	}
@@ -64,11 +61,19 @@ public class CursorInformationWidget extends TextWidget {
 		if (dimension.equals(Dimension.OVERWORLD)) {
 			return getOverworldBiomeNameAt(coordinates);
 		} else if (dimension.equals(Dimension.END)) {
-			return biomeList.getByIdOrNull(endIslandOracle.getBiomeAtBlock(coordinates)).getName();
+			return getEndBiomeNameAt(coordinates);
 		} else {
 			AmidstLogger.warn("unsupported dimension");
 			return UNKNOWN_BIOME_NAME;
 		}
+	}
+	
+	public String getEndBiomeNameAt(CoordinatesInWorld coordinates) {
+		Fragment fragment = graph.getFragmentAt(coordinates);
+		if (fragment != null && fragment.isLoaded()) {
+			return biomeList.getByIdOrNull(EndIslandOracle.getBiomeAtBlock(coordinates.getX(), coordinates.getY(), graph.getFragmentAt(coordinates).getLargeEndIslands())).getName();
+		}
+		return UNKNOWN_BIOME_NAME;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)

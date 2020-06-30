@@ -31,10 +31,12 @@ import amidst.mojangapi.world.icon.producer.EndGatewayProducer;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_128Algorithm;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Buggy128Algorithm;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Original;
+import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
-import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.HeuristicWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
+import amidst.mojangapi.world.oracle.end.EndIslandList;
+import amidst.mojangapi.world.oracle.end.EndIslandOracle;
 
 public enum DefaultVersionFeatures {
 	;
@@ -154,7 +156,13 @@ public enum DefaultVersionFeatures {
 			))
 			
 			.with(FeatureKey.END_GATEWAY_PRODUCER, VersionFeature.bind(features ->
-				VersionFeature.constant(new EndGatewayProducer(getWorldSeed(features), features.get(FeatureKey.END_ISLAND_ORACLE)))
+				VersionFeature.<WorldIconProducer<EndIslandList>> builder()
+					.init(
+						new EndGatewayProducer(getWorldSeed(features), 0, 3, features.get(FeatureKey.END_ISLAND_ORACLE))
+					).since(RecognisedVersion._20w06a, // TODO: confirm this version is correct; this changed after 1.15.2 and before 1.16
+						new EndGatewayProducer(getWorldSeed(features), 1, 4, features.get(FeatureKey.END_ISLAND_ORACLE))
+					)
+					.construct()
 			))
 
 			.with(FeatureKey.MINESHAFT_LOCATION_CHECKER, VersionFeature.bind(features ->

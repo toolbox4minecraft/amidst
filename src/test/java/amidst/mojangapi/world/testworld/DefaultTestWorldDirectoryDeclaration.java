@@ -166,7 +166,7 @@ public enum DefaultTestWorldDirectoryDeclaration {
 		return world -> CoordinatesCollectionJson.extractWorldIcons(
 				world.getEndCityProducer(),
 				worldIconType.getLabel(),
-				corner -> world.getEndIslandOracle().getAt(corner),
+				corner -> world.getEndIslandOracle().getLargeIslandsAt(corner),
 				END_FRAGMENTS_AROUND_ORIGIN,
 				MINIMAL_NUMBER_OF_COORDINATES);
 	}

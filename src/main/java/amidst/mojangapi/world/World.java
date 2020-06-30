@@ -9,9 +9,10 @@ import amidst.mojangapi.world.icon.WorldIcon;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
-import amidst.mojangapi.world.oracle.EndIsland;
-import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
+import amidst.mojangapi.world.oracle.end.EndIslandList;
+import amidst.mojangapi.world.oracle.end.EndIslandOracle;
+import amidst.mojangapi.world.oracle.end.LargeEndIsland;
 import amidst.mojangapi.world.player.MovablePlayerList;
 
 @ThreadSafe
@@ -35,8 +36,8 @@ public class World {
 	private final WorldIconProducer<Void> woodlandMansionProducer;
 	private final WorldIconProducer<Void> oceanFeaturesProducer;
 	private final WorldIconProducer<Void> netherFortressProducer;
-	private final WorldIconProducer<List<EndIsland>> endCityProducer;
-	private final WorldIconProducer<List<EndIsland>> endGatewayProducer;
+	private final WorldIconProducer<List<LargeEndIsland>> endCityProducer;
+	private final WorldIconProducer<EndIslandList> endGatewayProducer;
 
 	public World(
 			WorldOptions worldOptions,
@@ -57,8 +58,8 @@ public class World {
 			WorldIconProducer<Void> woodlandMansionProducer,
 			WorldIconProducer<Void> oceanFeaturesProducer,
 			WorldIconProducer<Void> netherFortressProducer,
-			WorldIconProducer<List<EndIsland>> endCityProducer,
-			WorldIconProducer<List<EndIsland>> endGatewayProducer) {
+			WorldIconProducer<List<LargeEndIsland>> endCityProducer,
+			WorldIconProducer<EndIslandList> endGatewayProducer) {
 		this.worldOptions = worldOptions;
 		this.movablePlayerList = movablePlayerList;
 		this.recognisedVersion = recognisedVersion;
@@ -145,11 +146,11 @@ public class World {
 		return netherFortressProducer;
 	}
 
-	public WorldIconProducer<List<EndIsland>> getEndCityProducer() {
+	public WorldIconProducer<List<LargeEndIsland>> getEndCityProducer() {
 		return endCityProducer;
 	}
 	
-	public WorldIconProducer<List<EndIsland>> getEndGatewayProducer() {
+	public WorldIconProducer<EndIslandList> getEndGatewayProducer() {
 		return endGatewayProducer;
 	}
 

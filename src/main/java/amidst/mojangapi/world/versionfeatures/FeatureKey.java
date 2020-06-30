@@ -9,10 +9,10 @@ import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
-import amidst.mojangapi.world.oracle.EndIsland;
-import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
 import amidst.mojangapi.world.oracle.WorldSpawnOracle;
+import amidst.mojangapi.world.oracle.end.EndIslandList;
+import amidst.mojangapi.world.oracle.end.EndIslandOracle;
 
 @Immutable
 public class FeatureKey<T> {
@@ -28,7 +28,7 @@ public class FeatureKey<T> {
 	public static final FeatureKey<WorldSpawnOracle> WORLD_SPAWN_ORACLE                     = make();
 	public static final FeatureKey<LocationChecker>  NETHER_FORTRESS_LOCATION_CHECKER       = make();
 	public static final FeatureKey<LocationChecker>  END_CITY_LOCATION_CHECKER              = make();
-	public static final FeatureKey<WorldIconProducer<List<EndIsland>>> END_GATEWAY_PRODUCER = make();
+	public static final FeatureKey<WorldIconProducer<EndIslandList>> END_GATEWAY_PRODUCER   = make();
 	public static final FeatureKey<LocationChecker>  MINESHAFT_LOCATION_CHECKER             = make();
 	public static final FeatureKey<CachedWorldIconProducer> STRONGHOLD_PRODUCER             = make();
 	public static final FeatureKey<LocationChecker>  VILLAGE_LOCATION_CHECKER               = make();
