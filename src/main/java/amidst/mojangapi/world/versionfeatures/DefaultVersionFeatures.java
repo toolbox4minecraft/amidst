@@ -19,7 +19,7 @@ import amidst.mojangapi.world.icon.locationchecker.EndCityLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_ChanceBased;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Original;
-import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm;
+import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm_Original;
 import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker_Fixed;
 import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker_Original;
 import amidst.mojangapi.world.icon.locationchecker.PillagerOutpostLocationChecker;
@@ -76,10 +76,13 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_OCEAN_RUINS                  = FeatureKey.make();
 	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_SHIPWRECK                    = FeatureKey.make();
 	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_BURIED_TREASURE              = FeatureKey.make();
+	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_NETHER_FORTRESS              = FeatureKey.make();
 	private static final FeatureKey<Byte>          MAX_DISTANCE_SCATTERED_FEATURES_SHIPWRECK       = FeatureKey.make();
 	private static final FeatureKey<Byte>          MIN_DISTANCE_SCATTERED_FEATURES_SHIPWRECK       = FeatureKey.make();
 	private static final FeatureKey<Byte>          MAX_DISTANCE_SCATTERED_FEATURES_OCEAN_RUINS     = FeatureKey.make();
 	private static final FeatureKey<Byte>          MIN_DISTANCE_SCATTERED_FEATURES_OCEAN_RUINS     = FeatureKey.make();
+	private static final FeatureKey<Byte>          MAX_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS = FeatureKey.make();
+	private static final FeatureKey<Byte>          MIN_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS = FeatureKey.make();
 	private static final FeatureKey<Boolean>       BUGGY_STRUCTURE_COORDINATE_MATH                 = FeatureKey.make();
 
 	private static final VersionFeatures.Builder FEATURES_BUILDER = VersionFeatures.builder()
@@ -146,10 +149,31 @@ public enum DefaultVersionFeatures {
 					DefaultBiomes.jungleHills
 				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 
-			.with(FeatureKey.NETHER_FORTRESS_LOCATION_CHECKER, VersionFeature.bind(features ->
-				// TODO: add Nether biome checks when we implement Nether biomes
-				VersionFeature.constant(new NetherFortressAlgorithm(getWorldSeed(features)))
-			))
+			.with(FeatureKey.NETHER_FORTRESS_LOCATION_CHECKER, (version, features) -> {
+				if(RecognisedVersion.isOlder(version, RecognisedVersion._20w16a)) {
+					return new NetherFortressAlgorithm_Original(getWorldSeed(features));
+				} else {
+					// TODO: add Nether biome checks when we implement Nether biomes
+					// Bastions replace Fortresses in Warped/Crimson Forest
+					return scatteredFeature(
+						MAX_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS,
+						MIN_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS,
+						null,
+						SEED_FOR_STRUCTURE_NETHER_FORTRESS
+					).getValue(version, features);
+				}
+			})
+			.with(SEED_FOR_STRUCTURE_NETHER_FORTRESS, VersionFeature.constant(30084232L))
+			.with(MAX_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS, VersionFeature.<Byte> builder()
+				.init(
+					(byte) 24
+				).since(RecognisedVersion._20w19a,
+					(byte) 30
+				).since(RecognisedVersion._1_16_pre3,
+					(byte) 27
+				).construct()
+			)
+			.with(MIN_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS, VersionFeature.constant((byte) 4))
 
 			.with(FeatureKey.END_CITY_LOCATION_CHECKER, VersionFeature.bind(features ->
 				VersionFeature.constant(new EndCityLocationChecker(getWorldSeed(features)))
@@ -537,8 +561,8 @@ public enum DefaultVersionFeatures {
 					getWorldSeed(features),
 					features.get(FeatureKey.BIOME_DATA_ORACLE),
 					features.get(maxDistance), features.get(minDistance),
-					features.get(validBiomes), features.get(structSeed),
-					features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
+					validBiomes == null ? null : features.get(validBiomes),
+					features.get(structSeed), features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
 				)
 			)
 		);
@@ -551,11 +575,10 @@ public enum DefaultVersionFeatures {
 				new ScatteredFeaturesLocationChecker(
 					getWorldSeed(features),
 					features.get(FeatureKey.BIOME_DATA_ORACLE),
-					features.get(validBiomes), features.get(structSeed),
-					features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
+					validBiomes == null ? null : features.get(validBiomes),
+					features.get(structSeed), features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
 				)
 			)
 		);
 	}
-
 }

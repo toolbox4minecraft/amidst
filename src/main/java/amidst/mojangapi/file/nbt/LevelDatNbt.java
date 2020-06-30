@@ -3,7 +3,9 @@ package amidst.mojangapi.file.nbt;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import org.jnbt.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
+import net.querz.nbt.tag.StringTag;
+import net.querz.nbt.tag.Tag;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.WorldType;
@@ -26,12 +28,18 @@ public class LevelDatNbt {
 		}
 	}
 
-	private static CompoundTag readDataTag(CompoundTag root) {
-		return (CompoundTag) root.getValue().get(NBTTagKeys.TAG_KEY_DATA);
+	private static CompoundTag readDataTag(CompoundTag root) throws IOException {
+		return root.get(NBTTagKeys.TAG_KEY_DATA, CompoundTag.class);
 	}
 
 	private static long readRandomSeed(CompoundTag dataTag) {
-		return NBTUtils.getLongValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_RANDOM_SEED));
+		Tag<?> randomSeed = dataTag.get(NBTTagKeys.TAG_KEY_RANDOM_SEED);
+		if (randomSeed != null) {
+			return NBTUtils.getLongValue(randomSeed);
+		}
+		// Minecraft 1.16 format
+		CompoundTag worldGenSettings = dataTag.get(NBTTagKeys.TAG_KEY_WORLD_GEN_SETTINGS, CompoundTag.class);
+		return NBTUtils.getLongValue(worldGenSettings.get(NBTTagKeys.TAG_KEY_SEED));
 	}
 
 	private static CoordinatesInWorld readWorldSpawn(CompoundTag dataTag) {
@@ -39,14 +47,17 @@ public class LevelDatNbt {
 	}
 
 	private static long readSpawnX(CompoundTag dataTag) {
-		return NBTUtils.getLongValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_SPAWN_X));
+		return NBTUtils.getLongValue(dataTag.get(NBTTagKeys.TAG_KEY_SPAWN_X));
 	}
 
 	private static long readSpawnZ(CompoundTag dataTag) {
-		return NBTUtils.getLongValue(dataTag.getValue().get(NBTTagKeys.TAG_KEY_SPAWN_Z));
+		return NBTUtils.getLongValue(dataTag.get(NBTTagKeys.TAG_KEY_SPAWN_Z));
 	}
 
 	private static WorldType readWorldType(CompoundTag dataTag) {
+		// Minecraft 1.16: the world type doesn't exist in the nbt data anymore
+		// so we'll always return Default
+		// TODO: Fix this
 		if (hasGeneratorName(dataTag)) {
 			return WorldType.from(readGeneratorName(dataTag));
 		} else {
@@ -55,7 +66,7 @@ public class LevelDatNbt {
 	}
 
 	private static boolean hasGeneratorName(CompoundTag dataTag) {
-		return dataTag.getValue().get(NBTTagKeys.TAG_KEY_GENERATOR_NAME) != null;
+		return dataTag.containsKey(NBTTagKeys.TAG_KEY_GENERATOR_NAME);
 	}
 
 	private static String readGeneratorOptions(CompoundTag dataTag, WorldType worldType) {
@@ -67,15 +78,15 @@ public class LevelDatNbt {
 	}
 
 	private static String readGeneratorName(CompoundTag dataTag) {
-		return (String) dataTag.getValue().get(NBTTagKeys.TAG_KEY_GENERATOR_NAME).getValue();
+		return dataTag.get(NBTTagKeys.TAG_KEY_GENERATOR_NAME, StringTag.class).getValue();
 	}
 
 	private static String readGeneratorOptions(CompoundTag dataTag) {
-		return (String) dataTag.getValue().get(NBTTagKeys.TAG_KEY_GENERATOR_OPTIONS).getValue();
+		return dataTag.get(NBTTagKeys.TAG_KEY_GENERATOR_OPTIONS, StringTag.class).getValue();
 	}
 
 	private static boolean hasPlayerTag(CompoundTag dataTag) {
-		return dataTag.getValue().containsKey(NBTTagKeys.TAG_KEY_PLAYER);
+		return dataTag.containsKey(NBTTagKeys.TAG_KEY_PLAYER);
 	}
 
 	private final long seed;

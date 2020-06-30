@@ -12,6 +12,8 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
+import net.miginfocom.swing.MigLayout;
+
 import amidst.AmidstMetaData;
 import amidst.AmidstSettings;
 import amidst.Application;
@@ -26,7 +28,6 @@ import amidst.mojangapi.file.UnresolvedLauncherProfile;
 import amidst.mojangapi.file.VersionListProvider;
 import amidst.parsing.FormatException;
 import amidst.threading.WorkerExecutor;
-import net.miginfocom.swing.MigLayout;
 
 @NotThreadSafe
 public class ProfileSelectWindow {
