@@ -55,15 +55,15 @@ public class WorldIcon {
 			if (multiline) {
 				// @formatter:off
 				return name
-						+ "\n    in the " + dimension.getName() + " " + coordinates.toString(dimension.getResolution())
+						+ "\n    in the " + dimension.getDisplayName() + " " + coordinates.toString(dimension.getResolution())
 						+ "\n    in the Overworld "                   + coordinates.toString();
 				// @formatter:on
 			} else {
-				return name + " in the " + dimension.getName() + " " + coordinates.toString(dimension.getResolution())
+				return name + " in the " + dimension.getDisplayName() + " " + coordinates.toString(dimension.getResolution())
 						+ " -> " + coordinates.toString() + " in the Overworld";
 			}
 		} else if (displayDimension) {
-			return name + " in the " + dimension.getName() + " " + coordinates.toString();
+			return name + " in the " + dimension.getDisplayName() + " " + coordinates.toString();
 		} else {
 			return name + " " + coordinates.toString();
 		}

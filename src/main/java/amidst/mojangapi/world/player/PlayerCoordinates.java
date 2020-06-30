@@ -6,8 +6,7 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 
 @Immutable
 public class PlayerCoordinates {
-	public static PlayerCoordinates fromNBTFile(long x, long y, long z, int dimensionId) {
-		Dimension dimension = Dimension.from(dimensionId);
+	public static PlayerCoordinates fromNBTFile(long x, long y, long z, Dimension dimension) {
 		return new PlayerCoordinates(CoordinatesInWorld.from(x, z, dimension.getResolution()), y, dimension);
 	}
 

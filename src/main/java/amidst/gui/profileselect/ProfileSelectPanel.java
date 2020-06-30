@@ -13,15 +13,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JPanel;
+
+import net.miginfocom.swing.MigLayout;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 import amidst.settings.Setting;
-import net.miginfocom.swing.MigLayout;
 
 @NotThreadSafe
 public class ProfileSelectPanel {
@@ -41,26 +43,9 @@ public class ProfileSelectPanel {
 		@CalledOnlyBy(AmidstThread.EDT)
 		@Override
 		public void paintChildren(Graphics g) {
-			sort();
 			super.paintChildren(g);
 			Graphics2D g2d = (Graphics2D) g;
 			drawSeparatorLines(g2d);
-		}
-		
-		@CalledOnlyBy(AmidstThread.EDT)
-		private void sort() {
-			profileComponents.sort((p1, p2) -> {
-				if(p1 == null) {
-					return -1;
-				} else if (p2 == null) {
-					return 1;
-				} else {
-					return p1.compareTo(p2);
-				}
-			});
-			for(int i = 0; i < profileComponents.size(); i++) {
-				setComponentZOrder(profileComponents.get(i).getComponent(), i);
-			}
 		}
 
 		@CalledOnlyBy(AmidstThread.EDT)
@@ -114,7 +99,6 @@ public class ProfileSelectPanel {
 	private final List<ProfileComponent> profileComponents = new ArrayList<>();
 
 	private ProfileComponent selected = null;
-	private int selectedIndex = INVALID_INDEX;
 	private String emptyMessage;
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -161,9 +145,9 @@ public class ProfileSelectPanel {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void doKeyPressed(int key) {
 		if (key == KeyEvent.VK_DOWN) {
-			select(selectedIndex + 1);
+			select(profileComponents.indexOf(selected) + 1);
 		} else if (key == KeyEvent.VK_UP) {
-			select(selectedIndex - 1);
+			select(profileComponents.indexOf(selected) - 1);
 		} else if (key == KeyEvent.VK_ENTER) {
 			loadSelectedProfile();
 		}
@@ -218,7 +202,6 @@ public class ProfileSelectPanel {
 		if (selected != null) {
 			selected.setSelected(false);
 			selected = null;
-			selectedIndex = INVALID_INDEX;
 		}
 	}
 
@@ -240,7 +223,6 @@ public class ProfileSelectPanel {
 		if (index != INVALID_INDEX) {
 			selected = profileComponents.get(index);
 			selected.setSelected(true);
-			selectedIndex = index;
 		}
 	}
 
@@ -254,8 +236,14 @@ public class ProfileSelectPanel {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void addProfile(ProfileComponent profile) {
-		component.add(profile.getComponent(), "growx, pushx, wrap");
 		profileComponents.add(profile);
+
+		// Sort and re-add all components
+		profileComponents.sort(Comparator.nullsFirst(Comparator.naturalOrder()));
+		component.removeAll();
+		for (ProfileComponent p: profileComponents) {
+			component.add(p.getComponent(), "growx, pushx, wrap");
+		}
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
