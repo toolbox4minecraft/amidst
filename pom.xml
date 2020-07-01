@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>amidst</groupId>
 	<artifactId>amidst</artifactId>
-	<version>4.5-beta1</version>
+	<version>4.5-beta3</version>
 	<repositories>
 		<repository>
 			<id>jitpack.io</id>
@@ -68,6 +68,15 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
+							<filters>
+								<filter>
+									<!-- This ends up being used by the Minecraft JAR, so makes sure we keep everything -->
+									<artifact>com.google.code.gson:gson</artifact>
+									<includes>
+										<include>**</include>
+									</includes>
+								</filter>
+							</filters>
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">

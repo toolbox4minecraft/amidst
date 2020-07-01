@@ -60,6 +60,18 @@ public enum NBTUtils {
 		}
 	}
 
+	public static Tag<?> getNestedTag(Tag<?> tag, String... path) {
+		Tag<?> currentTag = tag;
+		for (String key: path) {
+			if (currentTag == null || !(currentTag instanceof CompoundTag)) {
+				return null;
+			}
+
+			currentTag = ((CompoundTag) currentTag).get(key);
+		}
+		return currentTag;
+	}
+
 	public static CompoundTag shallowCopy(CompoundTag tag) {
 		CompoundTag result = new CompoundTag();
 		for (Entry<String, Tag<?>> entry: tag.entrySet()) {
