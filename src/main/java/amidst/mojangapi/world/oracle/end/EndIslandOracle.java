@@ -34,7 +34,12 @@ public class EndIslandOracle {
 	 * Minecraft checks 12 chunks either side of a chunk when assessing island
 	 * influence.
 	 */
-	private static final int SURROUNDING_CHUNKS = 12;
+	private static final int LARGE_ISLAND_SURROUNDING_CHUNKS = 12;
+	
+	/**
+	 * add some padding for small islands on fragment borders.
+	 */
+	private static final int SMALL_ISLAND_SURROUNDING_CHUNKS = 1;
 
 	/**
 	 * When cast to double, -0.9 will become -0.8999999761581421, which is why
@@ -74,37 +79,6 @@ public class EndIslandOracle {
 		float highestInfluence = -100.0f;
 		
 		for (LargeEndIsland island : largeIslands) {
-			if (island instanceof LargeEndIsland) {
-				float tempInfluence = ((LargeEndIsland) island).influenceAtBlock(x, y);
-				if (tempInfluence > highestInfluence) {
-					highestInfluence = tempInfluence;
-				}
-			}
-		}
-		return highestInfluence;
-	}
-	
-	@Deprecated
-	private int getBiomeAtBlock(long x, long y) {
-		if (x * x + y * y <= 1048576L) {
-			return DefaultBiomes.theEnd;
-		} else {
-			float influence = getInfluenceAtBlock(x, y);
-			if (influence > 40.0F) {
-				return DefaultBiomes.theEndHigh;
-			} else if (influence >= 0.0F) {
-				return DefaultBiomes.theEndMedium;
-			} else {
-				return influence < -20.0F ? DefaultBiomes.theEndLow : DefaultBiomes.theEndBarren;
-			}
-		}
-	}
-	
-	@Deprecated
-	private float getInfluenceAtBlock(long x, long y) {
-		float highestInfluence = -100.0f;
-		
-		for (LargeEndIsland island : getLargeIslandsAt(new CoordinatesInWorld(x, y))) {
 			if (island instanceof LargeEndIsland) {
 				float tempInfluence = ((LargeEndIsland) island).influenceAtBlock(x, y);
 				if (tempInfluence > highestInfluence) {
@@ -155,8 +129,8 @@ public class EndIslandOracle {
 			int chunksPerFragmentX,
 			int chunksPerFragmentY) {
 		List<LargeEndIsland> result = new ArrayList<>();
-		for (int y = -SURROUNDING_CHUNKS; y <= chunksPerFragmentY + SURROUNDING_CHUNKS; y++) {
-			for (int x = -SURROUNDING_CHUNKS; x <= chunksPerFragmentX + SURROUNDING_CHUNKS; x++) {
+		for (int y = -LARGE_ISLAND_SURROUNDING_CHUNKS; y <= chunksPerFragmentY + LARGE_ISLAND_SURROUNDING_CHUNKS; y++) {
+			for (int x = -LARGE_ISLAND_SURROUNDING_CHUNKS; x <= chunksPerFragmentX + LARGE_ISLAND_SURROUNDING_CHUNKS; x++) {
 				LargeEndIsland island = tryCreateLargeEndIsland(chunkX + x, chunkY + y);
 				if (island != null) {
 					result.add(island);
@@ -219,53 +193,6 @@ public class EndIslandOracle {
             return false;
         return x * x + y * y <= d * d;
     }
-    
-	public List<SmallEndIsland> getSmallIslandsAt(CoordinatesInWorld corner) {
-		int steps = Resolution.CHUNK.getStepsPerFragment();
-		return findSurroundingSmallIslands(
-				corner.getXAs(Resolution.CHUNK),
-				corner.getYAs(Resolution.CHUNK),
-				steps,
-				steps);
-	}
-    
-	@Deprecated
-	private List<SmallEndIsland> findSurroundingSmallIslands(
-			long chunkX,
-			long chunkY,
-			int chunksPerFragmentX,
-			int chunksPerFragmentY) {
-		List<SmallEndIsland> result = new ArrayList<>();
-		for (int y = 0; y <= chunksPerFragmentY; y++) {
-			for (int x = 0; x <= chunksPerFragmentX; x++) {
-				addSmallIslandsInChunk(chunkX + x, chunkY + y, result);
-			}
-		}
-		return result;
-	}
-
-	@Deprecated
-    private void addSmallIslandsInChunk(long chunkX, long chunkY, List<SmallEndIsland> islands) {
-		long blockX = chunkX << 4;
-		long blockY = chunkY << 4;
-		if (getBiomeAtBlock(blockX, blockY) == DefaultBiomes.theEndLow) {
-			ChunkRand rand = new ChunkRand();
-			rand.setDecoratorSeed(seed, (int) blockX, (int) blockY, 0, 3, MCVersion.v1_13);
-			
-			if (rand.nextInt(14) == 0) {
-				long resultX = blockX + rand.nextInt(16);
-				int resultH = 55 + rand.nextInt(16);
-				long rexultY = blockY + rand.nextInt(16);
-				islands.add(new SmallEndIsland(resultX, rexultY, resultH, 4));
-				if (rand.nextInt(4) == 0) {
-					resultX = blockX + rand.nextInt(16);
-					resultH = 55 + rand.nextInt(16);
-					rexultY = blockY + rand.nextInt(16);
-					islands.add(new SmallEndIsland(resultX, rexultY, resultH, 4));
-				}
-			}
-		}
-	}
 	
 	private List<SmallEndIsland> findSurroundingSmallIslands(
 			long chunkX,
@@ -274,34 +201,56 @@ public class EndIslandOracle {
 			int chunksPerFragmentY,
 			List<LargeEndIsland> largeIslands) {
 		List<SmallEndIsland> result = new ArrayList<>();
-		for (int y = 0; y <= chunksPerFragmentY; y++) {
-			for (int x = 0; x <= chunksPerFragmentX; x++) {
-				addSmallIslandsInChunk(chunkX + x, chunkY + y, result, largeIslands);
+		for (int y = -SMALL_ISLAND_SURROUNDING_CHUNKS; y <= chunksPerFragmentY + SMALL_ISLAND_SURROUNDING_CHUNKS; y++) {
+			for (int x = -SMALL_ISLAND_SURROUNDING_CHUNKS; x <= chunksPerFragmentX + SMALL_ISLAND_SURROUNDING_CHUNKS; x++) {
+				List<SmallEndIsland> smallIslands = getSmallIslandsInChunk(chunkX + x, chunkY + y, largeIslands);
+				if(smallIslands != null) {
+					result.addAll(smallIslands);
+				}
 			}
 		}
 		return result;
 	}
     
-    private void addSmallIslandsInChunk(long chunkX, long chunkY, List<SmallEndIsland> smallIslands, List<LargeEndIsland> largeIslands) {
+    private List<SmallEndIsland>  getSmallIslandsInChunk(long chunkX, long chunkY, List<LargeEndIsland> largeIslands) {
 		long blockX = chunkX << 4;
 		long blockY = chunkY << 4;
 		if (getBiomeAtBlock(blockX, blockY, largeIslands) == DefaultBiomes.theEndLow) {
 			ChunkRand rand = new ChunkRand();
 			rand.setDecoratorSeed(seed, (int) blockX, (int) blockY, 0, 0, MCVersion.v1_13);
 			
+			List<SmallEndIsland> smallIslands = new ArrayList<>();
+			
 			if (rand.nextInt(14) == 0) {
 				long resultX = blockX + rand.nextInt(16);
 				int resultH = 55 + rand.nextInt(16);
 				long rexultY = blockY + rand.nextInt(16);
-				smallIslands.add(new SmallEndIsland(resultX, rexultY, resultH, 4));
+				smallIslands.add(new SmallEndIsland(resultX, rexultY, resultH));
 				if (rand.nextInt(4) == 0) {
 					resultX = blockX + rand.nextInt(16);
 					resultH = 55 + rand.nextInt(16);
 					rexultY = blockY + rand.nextInt(16);
-					smallIslands.add(new SmallEndIsland(resultX, rexultY, resultH, 4));
+					smallIslands.add(new SmallEndIsland(resultX, rexultY, resultH));
 				}
 			}
+			
+			// mc calculates the sizes of the islands after their locations are generated
+			for(SmallEndIsland island : smallIslands) {
+				int size = rand.nextInt(3) + 4;
+				
+				island.setSize(size + 1); // the size gets padded with an extra block when generated in mc
+				
+				// we have to do this so the random gets set correctly for the next end island
+				float sizeFloat = (float) size;
+				
+				while(sizeFloat > 0.5F) {				
+					sizeFloat = (float) ((double) sizeFloat - ((double) rand.nextInt(2) + 0.5D));
+				}
+			}
+			
+			return smallIslands;
 		}
+		return null;
 	}
     
 }

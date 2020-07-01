@@ -184,7 +184,7 @@ public enum DefaultVersionFeatures {
 					.init(
 						new EndGatewayProducer(getWorldSeed(features), 0, 3, features.get(FeatureKey.END_ISLAND_ORACLE))
 					).since(RecognisedVersion._20w06a, // TODO: confirm this version is correct; this changed after 1.15.2 and before 1.16
-						new EndGatewayProducer(getWorldSeed(features), 1, 4, features.get(FeatureKey.END_ISLAND_ORACLE))
+						new EndGatewayProducer(getWorldSeed(features), 13, 4, features.get(FeatureKey.END_ISLAND_ORACLE))
 					)
 					.construct()
 			))

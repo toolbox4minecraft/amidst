@@ -1,8 +1,8 @@
 package amidst.mojangapi.world.icon.producer;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import amidst.documentation.ThreadSafe;
@@ -44,13 +44,13 @@ public class EndGatewayProducer extends WorldIconProducer<EndIslandList> {
 	/**
 	 * Used as a cache only for the spawn gateways.
 	 */
-	//private final EndSpawnGatewayProducer spawnProducer;
+	private final EndSpawnGatewayProducer spawnProducer;
 	private final long seed;
 	private final int featureIndex;
 	private final int generationStage;
 
 	public EndGatewayProducer(long seed, int featureIndex, int generationStage, EndIslandOracle oracle) {
-		//this.spawnProducer = new EndSpawnGatewayProducer(oracle);
+		this.spawnProducer = new EndSpawnGatewayProducer(oracle);
 		this.seed = seed;
 		this.featureIndex = featureIndex;
 		this.generationStage = generationStage;
@@ -64,7 +64,7 @@ public class EndGatewayProducer extends WorldIconProducer<EndIslandList> {
 				generateAt(corner, consumer, endIslands, xRelativeToFragment, yRelativeToFragment);
 			}
 		}
-		//spawnProducer.produce(corner, consumer, null);
+		spawnProducer.produce(corner, consumer, null);
 	}
 
 	private void generateAt(
@@ -115,7 +115,7 @@ public class EndGatewayProducer extends WorldIconProducer<EndIslandList> {
 							} else {
 								// If this check fails, there's a very small chance that it landed on a small island
 								for(SmallEndIsland smallIsland : endIslands.getSmallIslands()) {
-									if((int) coordinates.getDistance(smallIsland.getX(), smallIsland.getY()) <= smallIsland.getSize()) {
+									if(smallIsland.isOnIsland(gatewayX, gatewayY)) {
 										return coordinates;
 									}
 								}
@@ -129,136 +129,178 @@ public class EndGatewayProducer extends WorldIconProducer<EndIslandList> {
 		return null;
 	}
 	
-//	private static class EndSpawnGatewayProducer extends CachedWorldIconProducer {
-//		private static final int NUMBER_OF_SPAWN_GATEWAYS = 20;
-//		
-//		private final EndIslandOracle oracle;
-//		
-//		public EndSpawnGatewayProducer(EndIslandOracle oracle) {
-//			this.oracle = oracle;
-//		}
-//		
-//		@Override
-//		protected List<WorldIcon> doCreateCache() {
-//			List<WorldIcon> iconList = new ArrayList<WorldIcon>();
-//			for(int i = 0; i < NUMBER_OF_SPAWN_GATEWAYS; i++) {
-//				// Generate inner WorldIcon
-//				int x = floor(96.0D * Math.cos(2.0D * (-Math.PI + 0.15707963267948966D * (double) i)));
-//				int y = floor(96.0D * Math.sin(2.0D * (-Math.PI + 0.15707963267948966D * (double) i)));
-//				CoordinatesInWorld possibleCoordinates = new CoordinatesInWorld(x, y);
-//				iconList.add(new WorldIcon(
-//									possibleCoordinates,
-//									POSSIBLE_END_GATEWAY.getLabel(),
-//									POSSIBLE_END_GATEWAY.getImage(),
-//									Dimension.END,
-//									false
-//								)
-//							);
-//				
-//				// Generate outer WorldIcon
-//				// Normalize the coordinates the same way MC would
-//				double doubleX = 0;
-//				double doubleY = 0;
-//				double d0 = (double) ((float) (Math.sqrt((double) x * (double) x + (double) y * (double) y))); // There are this many casts in the MC code
-//				if (d0 >= 1.0E-4D) {
-//					doubleX = (double) x / d0;
-//					doubleY = (double) y / d0;
-//				}
-//				// Scale the coordinates
-//				CoordinatesInWorld coordinates = new CoordinatesInWorld((long) (doubleX * 1024.0D), (long) (doubleY * 1024.0D));
-//				
-//				// Check for closest land along vector
-//				for (int j = 16; !isChunkIslandlessSlow(coordinates) && j-- > 0; coordinates = coordinates.add((long) (doubleX * -16.0D), (long) (doubleY * -16.0D))) {
-//				}
-//				
-//				for (int k = 16; isChunkIslandlessSlow(coordinates) && k-- > 0; coordinates = coordinates.add((long) (doubleX * 16.0D), (long) (doubleY * 16.0D))) {
-//				}
-//				
-//				// Mess with the coords a bit more
-//				coordinates = findSpawnpoint(coordinates, true);
-//				coordinates = findHighestBlock(coordinates, 16);
-//				
-//				iconList.add(new WorldIcon(
-//						coordinates,
-//						POSSIBLE_END_GATEWAY.getLabel(),
-//						POSSIBLE_END_GATEWAY.getImage(),
-//						Dimension.END,
-//						false
-//					)
-//				);
-//			}
-//			return iconList;
-//		}
-//		
-//		/*
-//		 * This number is supposed to sort of guess whether end
-//		 * stone might be at a particular location. 
-//		 */
-//		private static final float ISLAND_INFLUENCE_THRESHOLD = -20.0F;
-//
-//		@SuppressWarnings("unused")
-//		private boolean isChunkIslandlessFast(CoordinatesInWorld blockCoords) {
-//			for(LargeEndIsland island : oracle.getLargeIslandsAt(blockCoords)) {
-//				if(island.influenceAtChunk(blockCoords.getX() >> 4, blockCoords.getY() >> 4) >= ISLAND_INFLUENCE_THRESHOLD) {
-//					return false;
-//				}
-//			}
-//			return true;
-//		}
-//
-//		private boolean isChunkIslandlessSlow(CoordinatesInWorld blockCoords) {
-//			EndIslandList endIslands = oracle.getAt(blockCoords);
-//			for(LargeEndIsland island : endIslands.getLargeIslands()) {
-//				for (long x = blockCoords.getX() & -16; x < (blockCoords.getX() | 15); x++) {
-//					for (long y = blockCoords.getY() & -16; y < (blockCoords.getY() | 15); y++) {
-//						if(island.influenceAtBlock(x, y) >= ISLAND_INFLUENCE_THRESHOLD) {
-//							return false; //FIXME
-//						}
-//					}
-//				}
-//			}
-//			return true;
-//		}
-//		
-//		private CoordinatesInWorld findSpawnpoint(CoordinatesInWorld blockCoords, boolean guaranteeEndStone) {
-//			for (long y = blockCoords.getY() & -16; y < (blockCoords.getY() | 15); y++) {
-//				for (long x = blockCoords.getX() & -16; x < (blockCoords.getX() | 15); x++) {
-//					for (LargeEndIsland island : oracle.getAt(blockCoords)) {//FIXME
-//						if (island.influenceAtBlock(x, y) >= (guaranteeEndStone ? 0.0F : ISLAND_INFLUENCE_THRESHOLD)) {
-//							return new CoordinatesInWorld(x, y);
-//						}
-//					}
-//				}
-//			}
-//			return blockCoords;
-//		}
-//
-//		private CoordinatesInWorld findHighestBlock(CoordinatesInWorld blockCoords, int radius) {
-//			return findHighestBlock(blockCoords, -radius, -radius, radius, radius);
-//		}
-//
-//		private CoordinatesInWorld findHighestBlock(CoordinatesInWorld blockCoords, int startX, int startY, int endX, int endY) {
-//			float highestInfluence = -100.0F;
-//			long highestX = blockCoords.getX();
-//			long highestY = blockCoords.getY();
-//			
-//			for (long x = blockCoords.getX() + startX; x <= blockCoords.getX() + endX; ++x) {
-//				for (long y = blockCoords.getY() + startY; y <= blockCoords.getY() + endY; ++y) {
-//					float coordInfluence = oracle.getInfluenceAtBlock(x, y);//FIXME
-//					if(coordInfluence > highestInfluence) {
-//						highestInfluence = coordInfluence;
-//						highestX = x;
-//						highestY = y;
-//					}
-//				}
-//			}
-//			return new CoordinatesInWorld(highestX, highestY);
-//		}
-//
-//		private static int floor(double value) {
-//			int i = (int) value;
-//			return value < (double) i ? i - 1 : i;
-//		}
-//	}
+	private static class EndSpawnGatewayProducer extends CachedWorldIconProducer {
+		private static final int NUMBER_OF_SPAWN_GATEWAYS = 20;
+		
+		private final EndIslandOracle oracle;
+		
+		public EndSpawnGatewayProducer(EndIslandOracle oracle) {
+			this.oracle = oracle;
+		}
+		
+		// I'm sorry for writing this. It's slow, ambiguous, and inaccurate.
+		// It's the best we have though, and I'm done with messing with this
+		// method.
+		@Override
+		protected List<WorldIcon> doCreateCache() {
+			List<WorldIcon> iconList = new ArrayList<WorldIcon>();
+			for(int i = 0; i < NUMBER_OF_SPAWN_GATEWAYS; i++) {
+				// Generate inner WorldIcon
+				int x = floor(96.0D * Math.cos(2.0D * (-Math.PI + 0.15707963267948966D * (double) i)));
+				int y = floor(96.0D * Math.sin(2.0D * (-Math.PI + 0.15707963267948966D * (double) i)));
+				CoordinatesInWorld possibleCoordinates = new CoordinatesInWorld(x, y);
+				iconList.add(new WorldIcon(
+									possibleCoordinates,
+									POSSIBLE_END_GATEWAY.getLabel(),
+									POSSIBLE_END_GATEWAY.getImage(),
+									Dimension.END,
+									false
+								)
+							);
+				
+				// Generate outer WorldIcon
+				// Normalize the coordinates the same way MC would
+				double doubleX = 0;
+				double doubleY = 0;
+				double d0 = (double) ((float) (Math.sqrt((double) x * (double) x + (double) y * (double) y))); // There are this many casts in the MC code
+				if (d0 >= 1.0E-4D) {
+					doubleX = (double) x / d0;
+					doubleY = (double) y / d0;
+				}
+				// Scale the coordinates
+				CoordinatesInWorld coordinates = new CoordinatesInWorld((long) (doubleX * 1024.0D), (long) (doubleY * 1024.0D));
+				
+				// Check for closest land along vector
+				for (int j = 16; !isChunkIslandlessSlow(coordinates) && j-- > 0; coordinates = coordinates.add((long) (doubleX * -16.0D), (long) (doubleY * -16.0D))) {
+				}
+				
+				for (int k = 16; isChunkIslandlessSlow(coordinates) && k-- > 0; coordinates = coordinates.add((long) (doubleX * 16.0D), (long) (doubleY * 16.0D))) {
+				}
+				
+				// Mess with the coords a bit more
+				coordinates = findSpawnpoint(coordinates, true);
+				coordinates = findHighestBlock(coordinates, 16);
+				
+				iconList.add(new WorldIcon(
+						coordinates,
+						POSSIBLE_END_GATEWAY.getLabel(),
+						POSSIBLE_END_GATEWAY.getImage(),
+						Dimension.END,
+						false
+					)
+				);
+			}
+			return iconList;
+		}
+		
+		/*
+		 * This number is supposed to sort of guess whether end
+		 * stone might be at a particular location. 
+		 */
+		private static final float ISLAND_INFLUENCE_THRESHOLD = -20.0F;
+
+		@SuppressWarnings("unused")
+		private boolean isChunkIslandlessFast(CoordinatesInWorld blockCoords) {
+			for(LargeEndIsland island : oracle.getLargeIslandsAt(blockCoords)) {
+				if(island.influenceAtChunk(blockCoords.getX() >> 4, blockCoords.getY() >> 4) >= ISLAND_INFLUENCE_THRESHOLD) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		private boolean isChunkIslandlessSlow(CoordinatesInWorld blockCoords) {
+			EndIslandList endIslands = oracle.getAt(blockCoords);
+			// Small Islands
+			for(SmallEndIsland island : endIslands.getSmallIslands()) {
+				for (long x = blockCoords.getX() & -16; x < (blockCoords.getX() | 15); x++) {
+					for (long y = blockCoords.getY() & -16; y < (blockCoords.getY() | 15); y++) {
+						if(island.isOnIsland(x, y)) {
+							return false;
+						}
+					}
+				}
+			}
+			
+			// Large Islands
+			for(LargeEndIsland island : endIslands.getLargeIslands()) {
+				for (long x = blockCoords.getX() & -16; x < (blockCoords.getX() | 15); x++) {
+					for (long y = blockCoords.getY() & -16; y < (blockCoords.getY() | 15); y++) {
+						if(island.influenceAtBlock(x, y) >= ISLAND_INFLUENCE_THRESHOLD) {
+							return false; //FIXME
+						}
+					}
+				}
+			}
+			return true;
+		}
+		
+		private CoordinatesInWorld findSpawnpoint(CoordinatesInWorld blockCoords, boolean guaranteeEndStone) {
+			EndIslandList endIslands = oracle.getAt(blockCoords);
+			for (long y = blockCoords.getY() & -16; y < (blockCoords.getY() | 15); y++) {
+				for (long x = blockCoords.getX() & -16; x < (blockCoords.getX() | 15); x++) {
+					// We do the large end islands first because they tend to be not as high
+					for (LargeEndIsland island : endIslands.getLargeIslands()) {
+						if (island.influenceAtBlock(x, y) >= (guaranteeEndStone ? 0.0F : ISLAND_INFLUENCE_THRESHOLD)) {
+							return new CoordinatesInWorld(x, y);
+						}
+					}
+					// We want the lowest small end islands first, so we sort them.
+					List<SmallEndIsland> smallIslands = endIslands.getSmallIslands();
+					smallIslands.sort(((Comparator<SmallEndIsland>)(e1, e2) -> Integer.compare(e1.getHeight(), e2.getHeight())).reversed());
+					for (SmallEndIsland island : endIslands.getSmallIslands()) {
+						if (island.isOnIsland(x, y)) {
+							return new CoordinatesInWorld(x, y);
+						}
+					}
+				}
+			}
+			return blockCoords;
+		}
+
+		private CoordinatesInWorld findHighestBlock(CoordinatesInWorld blockCoords, int radius) {
+			return findHighestBlock(blockCoords, -radius, -radius, radius, radius);
+		}
+
+		private CoordinatesInWorld findHighestBlock(CoordinatesInWorld blockCoords, int startX, int startY, int endX, int endY) {
+			float highestInfluence = -100.0F;
+			int highestBlock = 0;
+			long highestX = blockCoords.getX();
+			long highestY = blockCoords.getY();
+			EndIslandList endIslands = oracle.getAt(blockCoords);
+			
+			for (long x = blockCoords.getX() + startX; x <= blockCoords.getX() + endX; ++x) {
+				for (long y = blockCoords.getY() + startY; y <= blockCoords.getY() + endY; ++y) {
+					float coordInfluence = EndIslandOracle.getInfluenceAtBlock(x, y, endIslands.getLargeIslands());
+					if(coordInfluence > highestInfluence) {
+						highestInfluence = coordInfluence;
+						highestX = x;
+						highestY = y;
+					}
+				}
+			}
+			
+			for (long x = blockCoords.getX() + startX; x <= blockCoords.getX() + endX; ++x) {
+				for (long y = blockCoords.getY() + startY; y <= blockCoords.getY() + endY; ++y) {
+					for (SmallEndIsland island : endIslands.getSmallIslands()) {
+						if (island.isOnIsland(x, y)) {
+							int coordHeight = island.getHeight();
+							if(coordHeight > highestBlock) {
+								highestBlock = coordHeight;
+								highestX = x;
+								highestY = y;
+							}
+						}
+					}
+				}
+			}
+			return new CoordinatesInWorld(highestX, highestY);
+		}
+
+		private static int floor(double value) {
+			int i = (int) value;
+			return value < (double) i ? i - 1 : i;
+		}
+	}
 	
 }
