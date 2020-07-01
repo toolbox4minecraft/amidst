@@ -64,6 +64,15 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
+							<filters>
+								<filter>
+									<!-- This ends up being used by the Minecraft JAR, so makes sure we keep everything -->
+									<artifact>com.google.code.gson:gson</artifact>
+									<includes>
+										<include>**</include>
+									</includes>
+								</filter>
+							</filters>
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
