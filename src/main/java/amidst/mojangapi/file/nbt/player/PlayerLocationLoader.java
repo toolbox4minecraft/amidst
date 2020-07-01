@@ -23,7 +23,7 @@ public enum PlayerLocationLoader {
 	public static Optional<PlayerCoordinates> tryReadFromPlayerFile(Path file) throws IOException {
 		try {
 			return Optional.of(readPlayerCoordinates(NBTUtils.readTagFromFile(file)));
-		} catch (NullPointerException e) {
+		} catch (NullPointerException | ClassCastException e) {
 			AmidstLogger.warn(e, "cannot read player from file: {}", file);
 			return Optional.empty();
 		}
@@ -33,7 +33,7 @@ public enum PlayerLocationLoader {
 		try {
 			return Optional
 					.of(readPlayerCoordinates(getSinglePlayerPlayerTag(getTagRootTag(NBTUtils.readTagFromFile(path)))));
-		} catch (NullPointerException e) {
+		} catch (NullPointerException | ClassCastException e) {
 			AmidstLogger.warn(e, "cannot read player from level.dat: {}", path);
 			return Optional.empty();
 		}
