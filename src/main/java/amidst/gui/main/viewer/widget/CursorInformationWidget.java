@@ -17,6 +17,7 @@ import amidst.mojangapi.world.biome.BiomeList;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.oracle.end.EndIslandOracle;
+import amidst.mojangapi.world.versionfeatures.DefaultBiomes;
 import amidst.settings.Setting;
 
 @NotThreadSafe
@@ -71,7 +72,13 @@ public class CursorInformationWidget extends TextWidget {
 	public String getEndBiomeNameAt(CoordinatesInWorld coordinates) {
 		Fragment fragment = graph.getFragmentAt(coordinates);
 		if (fragment != null && fragment.isLoaded()) {
-			return biomeList.getByIdOrNull(EndIslandOracle.getBiomeAtBlock(coordinates.getX(), coordinates.getY(), graph.getFragmentAt(coordinates).getLargeEndIslands())).getName();
+			Biome biome = biomeList.getByIdOrNull(EndIslandOracle.getBiomeAtBlock(coordinates.getX(), coordinates.getY(), graph.getFragmentAt(coordinates).getLargeEndIslands()));
+			
+			if (biome != null) {
+				return biome.getName();
+			} else {
+				return biomeList.getByIdOrNull(DefaultBiomes.theEnd).getName();
+			}
 		}
 		return UNKNOWN_BIOME_NAME;
 	}
