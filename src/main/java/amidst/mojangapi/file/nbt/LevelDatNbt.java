@@ -3,6 +3,7 @@ package amidst.mojangapi.file.nbt;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import net.querz.nbt.tag.ByteTag;
 import net.querz.nbt.tag.CompoundTag;
 import net.querz.nbt.tag.StringTag;
 import net.querz.nbt.tag.Tag;
@@ -23,8 +24,8 @@ public class LevelDatNbt {
 			String generatorOptions = readGeneratorOptions(dataTag, worldType);
 			boolean hasPlayer = hasPlayerTag(dataTag);
 			return new LevelDatNbt(seed, worldSpawn, worldType, generatorOptions, hasPlayer);
-		} catch (NullPointerException e) {
-			throw new FormatException("cannot read level.dat: " + path);
+		} catch (NullPointerException | ClassCastException e) {
+			throw new FormatException("cannot read level.dat: " + path, e);
 		}
 	}
 
@@ -55,10 +56,10 @@ public class LevelDatNbt {
 	}
 
 	private static WorldType readWorldType(CompoundTag dataTag) {
-		// Minecraft 1.16: the world type doesn't exist in the nbt data anymore
-		// so we'll always return Default
-		// TODO: Fix this
-		if (hasGeneratorName(dataTag)) {
+		WorldType heuristicWorldType = tryGuessWorldType(dataTag);
+		if (heuristicWorldType != null) {
+			return heuristicWorldType;
+		} else if (hasGeneratorName(dataTag)) {
 			return WorldType.from(readGeneratorName(dataTag));
 		} else {
 			return WorldType.DEFAULT;
@@ -79,6 +80,33 @@ public class LevelDatNbt {
 
 	private static String readGeneratorName(CompoundTag dataTag) {
 		return dataTag.get(NBTTagKeys.TAG_KEY_GENERATOR_NAME, StringTag.class).getValue();
+	}
+
+	// Try to guess world type from Minecraft 1.16 generator settings
+	private static WorldType tryGuessWorldType(CompoundTag dataTag) {
+		// Be careful when handling null values, we don't want to trigger unwanted errors
+		Tag<?> generator = NBTUtils.getNestedTag(dataTag,
+			"WorldGenSettings", "dimensions", "minecraft:overworld", "generator");
+
+		Tag<?> generatorType = NBTUtils.getNestedTag(generator, "type");
+		if (new StringTag("minecraft:flat").equals(generatorType)) {
+			return WorldType.FLAT;
+		}
+
+		if (new StringTag("minecraft:noise").equals(generatorType)) {
+			Tag<?> settings = NBTUtils.getNestedTag(generator, "settings");
+			if (new StringTag("minecraft:amplified").equals(settings)) {
+				return WorldType.AMPLIFIED;
+			}
+			Tag<?> largeBiomes = NBTUtils.getNestedTag(settings, "biome_source", "large_biomes");
+			if (new ByteTag(true).equals(largeBiomes)) {
+				return WorldType.LARGE_BIOMES;
+			} else {
+				return WorldType.DEFAULT;
+			}
+		}
+
+		return null;
 	}
 
 	private static String readGeneratorOptions(CompoundTag dataTag) {

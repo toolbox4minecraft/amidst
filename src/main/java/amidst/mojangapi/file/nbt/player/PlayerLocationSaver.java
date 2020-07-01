@@ -24,7 +24,7 @@ public enum PlayerLocationSaver {
 			CompoundTag modifiedDataTag = modifyPositionInMultiPlayer(dataTag, coordinates);
 			NBTUtils.writeTagToFile(file, modifiedDataTag);
 			return true;
-		} catch (NullPointerException e) {
+		} catch (NullPointerException | ClassCastException e) {
 			AmidstLogger.warn(e, "cannot write player to file: {}", file);
 			return false;
 		}
@@ -36,7 +36,7 @@ public enum PlayerLocationSaver {
 			CompoundTag modifiedDataTag = modifyPositionInSinglePlayer(dataTag, coordinates);
 			NBTUtils.writeTagToFile(path, modifiedDataTag);
 			return true;
-		} catch (NullPointerException e) {
+		} catch (NullPointerException | ClassCastException e) {
 			AmidstLogger.warn(e, "cannot write player to level.dat: {}", path);
 			return false;
 		}
