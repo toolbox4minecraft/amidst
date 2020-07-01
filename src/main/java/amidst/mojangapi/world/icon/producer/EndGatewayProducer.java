@@ -227,7 +227,7 @@ public class EndGatewayProducer extends WorldIconProducer<EndIslandList> {
 				for (long x = blockCoords.getX() & -16; x < (blockCoords.getX() | 15); x++) {
 					for (long y = blockCoords.getY() & -16; y < (blockCoords.getY() | 15); y++) {
 						if(island.influenceAtBlock(x, y) >= ISLAND_INFLUENCE_THRESHOLD) {
-							return false; //FIXME
+							return false;
 						}
 					}
 				}
