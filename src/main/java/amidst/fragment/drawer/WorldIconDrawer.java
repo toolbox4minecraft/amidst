@@ -30,7 +30,6 @@ public class WorldIconDrawer extends FragmentDrawer {
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d, float time) {
 		Object oldHint = g2d.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
-		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		
 		double invZoom = 1.0 / zoom.getCurrentValue();
 		AffineTransform originalTransform = g2d.getTransform();
@@ -48,6 +47,7 @@ public class WorldIconDrawer extends FragmentDrawer {
 		int width = image.getWidth();
 		int height = image.getHeight();
 		if (worldIconSelection.isSelected(icon)) {
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 			width *= 1.5;
 			height *= 1.5;
 		}
