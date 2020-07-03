@@ -39,8 +39,7 @@ public class ImageDrawer extends FragmentDrawer {
 	
 	/**
 	 * This sets the amount of deviation in the pixels that nearest
-	 * neighbor can have. For no deviation allowed, this should be set to
-	 * 1.
+	 * neighbor can have.
 	 */
 	private static final double NEAREST_PIXEL_THRESHOLD = 1.0d;
 	
@@ -71,7 +70,7 @@ public class ImageDrawer extends FragmentDrawer {
 		int imageWidth = image.getWidth(null);
 		
 		// this checks to see if the scale lies within the amount that the scale can deviate before changing pixels
-		double threshold = (NEAREST_PIXEL_THRESHOLD / imageWidth) * nearestScale;
+		double threshold = ((NEAREST_PIXEL_THRESHOLD / imageWidth) * nearestScale) / scale;
 		double check = Math.abs(scaleX - Math.round(scaleX)); // works for checking above or below
 		
 		if(check > threshold) {
