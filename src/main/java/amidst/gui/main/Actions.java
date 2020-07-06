@@ -121,6 +121,11 @@ public class Actions {
 		application.displayProfileSelectWindow();
 	}
 
+    	@CalledOnlyBy(AmidstThread.EDT)
+	public void displayBookmarks() {
+                dialogs.displayBookmarks();
+	}
+    
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void exit() {
 		if (BiomeExporter.isExporterRunning()) {

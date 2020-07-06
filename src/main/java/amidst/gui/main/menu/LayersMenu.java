@@ -85,6 +85,7 @@ public class LayersMenu {
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void createOverworldLayers(Dimension dimension) {
 		// @formatter:off
+		overworldLayer(settings.showBookmarks,            "Bookmarks",              getIcon("bookmark-menu.png"),       MenuShortcuts.SHOW_BOOKMARKS,         dimension, LayerIds.BOOKMARKS);
 		overworldLayer(settings.showSlimeChunks,          "Slime Chunks",           getIcon("slime.png"),           MenuShortcuts.SHOW_SLIME_CHUNKS,      dimension, LayerIds.SLIME);
 		overworldLayer(settings.showSpawn,                "Spawn Location Icon",    getIcon("spawn.png"),           MenuShortcuts.SHOW_WORLD_SPAWN,       dimension, LayerIds.SPAWN);
 		overworldLayer(settings.showStrongholds,          "Stronghold Icons",       getIcon("stronghold.png"),      MenuShortcuts.SHOW_STRONGHOLDS,       dimension, LayerIds.STRONGHOLD);

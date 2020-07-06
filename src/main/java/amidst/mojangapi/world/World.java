@@ -35,7 +35,8 @@ public class World {
 	private final WorldIconProducer<Void> woodlandMansionProducer;
 	private final WorldIconProducer<Void> oceanFeaturesProducer;
 	private final WorldIconProducer<Void> netherFortressProducer;
-	private final WorldIconProducer<List<EndIsland>> endCityProducer;
+	private final WorldIconProducer<List<EndIsland>> endCityProducer;    
+	private final WorldIconProducer<Void> bookmarkProducer;
 
 	public World(
 			WorldOptions worldOptions,
@@ -56,7 +57,8 @@ public class World {
 			WorldIconProducer<Void> woodlandMansionProducer,
 			WorldIconProducer<Void> oceanFeaturesProducer,
 			WorldIconProducer<Void> netherFortressProducer,
-			WorldIconProducer<List<EndIsland>> endCityProducer) {
+			WorldIconProducer<List<EndIsland>> endCityProducer,
+                        WorldIconProducer<Void> bookmarkProducer) {
 		this.worldOptions = worldOptions;
 		this.movablePlayerList = movablePlayerList;
 		this.recognisedVersion = recognisedVersion;
@@ -76,6 +78,7 @@ public class World {
 		this.oceanFeaturesProducer = oceanFeaturesProducer;
 		this.netherFortressProducer = netherFortressProducer;
 		this.endCityProducer = endCityProducer;
+                this.bookmarkProducer = bookmarkProducer;
 	}
 
 	public WorldOptions getWorldOptions() {
@@ -152,6 +155,10 @@ public class World {
 
 	public WorldIconProducer<Void> getOceanFeaturesProducer() {
 		return oceanFeaturesProducer;
+	}
+
+	public WorldIconProducer<Void> getBookmarkProducer() {
+		return bookmarkProducer;
 	}
 
 	public WorldIcon getSpawnWorldIcon() {

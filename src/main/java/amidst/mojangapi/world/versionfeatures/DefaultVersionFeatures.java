@@ -93,6 +93,7 @@ public enum DefaultVersionFeatures {
 					LayerIds.ALPHA,
 					LayerIds.BIOME_DATA,
 					LayerIds.BACKGROUND,
+                                        LayerIds.BOOKMARKS,
 					LayerIds.SLIME,
 					LayerIds.GRID,
 					LayerIds.SPAWN,

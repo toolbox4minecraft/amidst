@@ -91,6 +91,16 @@
 		</plugins>
 	</build>
 	<dependencies>
+          <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>27.0.1-jre</version>
+          </dependency>
+          <dependency>
+            <groupId>org.dishevelled</groupId>
+            <artifactId>dsh-eventlist-view</artifactId>
+            <version>2.2</version>
+          </dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
