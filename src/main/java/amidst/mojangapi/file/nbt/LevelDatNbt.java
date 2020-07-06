@@ -98,7 +98,7 @@ public class LevelDatNbt {
 			if (new StringTag("minecraft:amplified").equals(settings)) {
 				return WorldType.AMPLIFIED;
 			}
-			Tag<?> largeBiomes = NBTUtils.getNestedTag(settings, "biome_source", "large_biomes");
+			Tag<?> largeBiomes = NBTUtils.getNestedTag(generator, "biome_source", "large_biomes");
 			if (new ByteTag(true).equals(largeBiomes)) {
 				return WorldType.LARGE_BIOMES;
 			} else {
