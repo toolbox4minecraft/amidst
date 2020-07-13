@@ -18,7 +18,7 @@ public enum WorldType {
 	V5                   ("v5",                         "v5",                  null),
 	V6                   ("v6",                         "v6",                  null),
 	V7                   ("v7",                         "v7",                  null),
-	V7_FLOATLANDS        ("v7 Floatlands",              "v7floatlands",        null),
+	V7_FLOATLANDS        ("early v7 Floatlands (MT5.1.0 or earlier)", "v7floatlands", null),
 	// FLAT - can reuse the minecraft FLAT
 	FRACTAL              ("Fractal",                    "fractal",             null),
 	CARPATHIAN           ("Carpathian",                 "carpathian",          null),

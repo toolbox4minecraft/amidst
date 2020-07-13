@@ -356,7 +356,7 @@ public class Actions {
 				"Amidst - Advanced Minecraft Interfacing and Data/Structure Tracking\n"
 						+ (FeatureToggles.MINETEST_SUPPORT ? "Amidst for Minetest - The Amidst project adapted to support Minetest\n\n" : "\n")
 						+ amidstVersion.createVersionString() + "\n"
-						+ "Project page: https://github.com/Treer/amidstest\n"
+						+ "Project page: https://github.com/Treer/Amidst-for-Minetest\n"
 						+ "Forum thread: https://forum.minetest.net/viewtopic.php?t=19869");
 	}
 
