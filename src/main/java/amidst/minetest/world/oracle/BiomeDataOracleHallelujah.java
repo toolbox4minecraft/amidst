@@ -175,7 +175,7 @@ public class BiomeDataOracleHallelujah extends MinetestBiomeDataOracle {
 	}
 		
 	@Override
-	public short populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
+	public short populateArray_unbounded(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
 		
 		int width = result.length;
 		if (width > 0) {

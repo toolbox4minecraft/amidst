@@ -13,6 +13,8 @@ import amidst.minetest.world.mapgen.MapgenParams;
 import amidst.minetest.world.mapgen.MinetestBiome;
 import amidst.minetest.world.mapgen.MinetestBiomeProfileImpl;
 import amidst.minetest.world.mapgen.Noise;
+import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.settings.biomeprofile.BiomeProfile;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.settings.biomeprofile.BiomeProfileUpdateListener;
@@ -30,8 +32,8 @@ public abstract class MinetestBiomeDataOracle implements IBiomeDataOracle, Biome
 	public static final int BITPLANE_OCEAN       = 0x2000;
 	public static final int BITPLANE_MOUNTAIN    = 0x1000;
 	public static final int MASK_BITPLANES       = ~(BITPLANE_RIVER | BITPLANE_OCEAN | BITPLANE_MOUNTAIN);
-	
-	
+
+
 	public MinetestBiomeDataOracle(MapgenParams params, BiomeProfileSelection biomeProfileSelection, long seed) {
 		//this.seed = (int)(seed & 0xFFFFFFFFL);
 		this.seed = (int)seed;		
@@ -47,11 +49,68 @@ public abstract class MinetestBiomeDataOracle implements IBiomeDataOracle, Biome
 			biomeProfileSelection.addUpdateListener(this);			
 		}		
 	}
-	
+
+	/**
+	 * The same as populateArray(), but if a subclass implements this instead of overriding
+	 * populateArray() then clipping to Minetest world boundaries will get handled by the superclass.
+	 */
+	protected abstract short populateArray_unbounded(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution);
+
+
+	public short populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
+
+		// invoke populateArray_unbounded() then clip the results to world boundaries
+		short ret = MASK_BITPLANES;
+
+		int width = result.length;
+		if (width > 0) {
+			// Minetest world boundaries are X=30927, X=−30912, Z=30927 and Z=−30912
+			Resolution resolution = Resolution.from(useQuarterResolution);
+			int height = result[0].length;
+			int left   = (int) corner.getX();
+			int top    = (int) corner.getY();
+			int step   = resolution.getStep();
+			int right  = left + (width - 1) * step;
+			int bottom = top + (height - 1) * step;
+
+			// Use -top and -bottom because Minetest uses left-handed coordinates, while Amidst uses
+			// right-handed coordinates, and we want to compare against Minetest boundaries
+			top = -top;
+			bottom = -bottom;
+
+			if (right >= -30912 && left <= 30927 && top >= -30912 && bottom <= 30927) {
+				ret = populateArray_unbounded(corner, result, useQuarterResolution);
+
+				if (left < -30912 || right > 30927 || bottom < -30912 || top > 30927) {
+					// part of this fragment is outside the world-bounds, erase that part
+					short blank_index = (short) MinetestBiome.VOID.getIndex();
+					int world_z = top;
+					for (int z = 0; z < height; z++, world_z -= step) {
+						int world_x = left;						
+						for (int x = 0; x < width; x++, world_x += step) {
+							if (world_x < -30912 || world_x > 30927 || world_z < -30912 || world_z > 30927) {
+								result[x][z] = blank_index;
+							}
+						}
+					}
+				}
+			} else {
+				// the entire fragment is outside the world-bounds
+				short blank_index = (short) MinetestBiome.VOID.getIndex();
+				for (int y = 0; y < height; y++) {
+					for (int x = 0; x < width; x++) {
+						result[x][y] = blank_index;
+					}
+				}
+			}
+		}
+		return ret;
+	}
+
 	public MapgenParams getMapgenParams() {
 		return params;
 	}
-	
+
 	protected MinetestBiome[] getBiomeArray() {
 		
 		MinetestBiome[] result;

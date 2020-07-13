@@ -180,7 +180,7 @@ public class BiomeDataOracleV6 extends MinetestBiomeDataOracle {
 	}
 	
 	@Override
-	public short populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
+	public short populateArray_unbounded(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
 		
 		// The v6 mapgen has been officially stable since 2012
 		// See https://forum.minetest.net/viewtopic.php?f=18&t=19132						

@@ -190,7 +190,7 @@ public class BiomeDataOracleV7 extends MinetestBiomeDataOracle {
 	}
 	
 	@Override
-	public short populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
+	public short populateArray_unbounded(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
 		return isFloatlands ? 
 				populateArray_floatlands(corner, result, useQuarterResolution) :
 				populateArray_groundlevel(corner, result, useQuarterResolution);

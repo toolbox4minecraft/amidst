@@ -157,7 +157,7 @@ public class BiomeDataOracleCarpathian extends MinetestBiomeDataOracle {
 	}
 		
 	@Override
-	public short populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
+	public short populateArray_unbounded(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
 		
 		// The Carpathian mapgen terrain is not yet stable.
 		// See https://forum.minetest.net/viewtopic.php?f=18&t=19132						

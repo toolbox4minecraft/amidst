@@ -29,7 +29,7 @@ public class BiomeDataOracleFlat extends MinetestBiomeDataOracle {
 	}
 
 	@Override
-	public short populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
+	public short populateArray_unbounded(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
 		
 		// FYI: at the time of writing this, the mapgen for Flat is not yet officially stable
 		// See https://forum.minetest.net/viewtopic.php?f=18&t=19132				
