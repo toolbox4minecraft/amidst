@@ -13,9 +13,8 @@ import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.producer.MultiProducer;
 import amidst.mojangapi.world.icon.producer.PlayerProducer;
 import amidst.mojangapi.world.icon.producer.SpawnProducer;
-import amidst.mojangapi.world.icon.producer.StructureProducer;
+import amidst.mojangapi.world.icon.producer.DefaultStructureProducer;
 import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
-import amidst.mojangapi.world.icon.type.EndCityWorldIconTypeProvider;
 import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.ImmutableWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.WorldSpawnOracle;
@@ -102,108 +101,96 @@ public class WorldBuilder {
 				versionFeatures.get(FeatureKey.STRONGHOLD_PRODUCER),
 				new PlayerProducer(movablePlayerList),
 				new MultiProducer<>(
-						new StructureProducer<>(
+						new DefaultStructureProducer<>(
 							Resolution.CHUNK,
 							4,
-							versionFeatures.get(FeatureKey.VILLAGE_LOCATION_CHECKER),
+							versionFeatures.get(FeatureKey.VILLAGE_PRODUCER),
 							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
 							Dimension.OVERWORLD,
 							false),
-						new StructureProducer<>(
+						new DefaultStructureProducer<>(
 							Resolution.CHUNK,
 							4,
-							versionFeatures.get(FeatureKey.PILLAGER_OUTPOST_LOCATION_CHECKER),
+							versionFeatures.get(FeatureKey.PILLAGER_OUTPOST_PRODUCER),
 							new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.PILLAGER_OUTPOST),
 							Dimension.OVERWORLD,
 							false)
 				),
 				new MultiProducer<>(
-						new StructureProducer<>(
+						new DefaultStructureProducer<>(
 								Resolution.CHUNK,
 								8,
-								versionFeatures.get(FeatureKey.DESERT_TEMPLE_LOCATION_CHECKER),
+								versionFeatures.get(FeatureKey.DESERT_TEMPLE_PRODUCER),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.DESERT),
 								Dimension.OVERWORLD,
 								false),
-						new StructureProducer<>(
+						new DefaultStructureProducer<>(
 								Resolution.CHUNK,
 								8,
-								versionFeatures.get(FeatureKey.IGLOO_LOCATION_CHECKER),
+								versionFeatures.get(FeatureKey.IGLOO_PRODUCER),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.IGLOO),
 								Dimension.OVERWORLD,
 								false),
-						new StructureProducer<>(
+						new DefaultStructureProducer<>(
 								Resolution.CHUNK,
 								8,
-								versionFeatures.get(FeatureKey.JUNGLE_TEMPLE_LOCATION_CHECKER),
+								versionFeatures.get(FeatureKey.JUNGLE_TEMPLE_PRODUCER),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.JUNGLE),
 								Dimension.OVERWORLD,
 								false),
-						new StructureProducer<>(
+						new DefaultStructureProducer<>(
 								Resolution.CHUNK,
 								8,
-								versionFeatures.get(FeatureKey.WITCH_HUT_LOCATION_CHECKER),
+								versionFeatures.get(FeatureKey.WITCH_HUT_PRODUCER),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.WITCH),
 								Dimension.OVERWORLD,
 								false)
 				),
-				new StructureProducer<>(
+				new DefaultStructureProducer<>(
 						Resolution.CHUNK,
 						8,
-						versionFeatures.get(FeatureKey.MINESHAFT_LOCATION_CHECKER),
+						versionFeatures.get(FeatureKey.MINESHAFT_PRODUCER),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.MINESHAFT),
 						Dimension.OVERWORLD,
 						false),
-				new StructureProducer<>(
+				new DefaultStructureProducer<>(
 						Resolution.CHUNK,
 						8,
-						versionFeatures.get(FeatureKey.OCEAN_MONUMENT_LOCATION_CHECKER),
+						versionFeatures.get(FeatureKey.OCEAN_MONUMENT_PRODUCER),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
 						Dimension.OVERWORLD,
 						false),
-				new StructureProducer<>(
+				new DefaultStructureProducer<>(
 						Resolution.CHUNK,
 						8,
-						versionFeatures.get(FeatureKey.WOODLAND_MANSION_LOCATION_CHECKER),
+						versionFeatures.get(FeatureKey.WOODLAND_MANSION_PRODUCER),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.WOODLAND_MANSION),
 						Dimension.OVERWORLD,
 						false),
 				new MultiProducer<>(
-						new StructureProducer<>(
+						new DefaultStructureProducer<>(
 								Resolution.CHUNK,
 								8,
-								versionFeatures.get(FeatureKey.OCEAN_RUINS_LOCATION_CHECKER),
+								versionFeatures.get(FeatureKey.OCEAN_RUINS_PRODUCER),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_RUINS),
 								Dimension.OVERWORLD,
 								false),
-						new StructureProducer<>(
+						new DefaultStructureProducer<>(
 								Resolution.CHUNK,
 								8,
-								versionFeatures.get(FeatureKey.SHIPWRECK_LOCATION_CHECKER),
+								versionFeatures.get(FeatureKey.SHIPWRECK_PRODUCER),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.SHIPWRECK),
 								Dimension.OVERWORLD,
 								false),
-						new StructureProducer<>(
+						new DefaultStructureProducer<>(
 								Resolution.CHUNK,
 								9,
-								versionFeatures.get(FeatureKey.BURIED_TREASURE_LOCATION_CHECKER),
+								versionFeatures.get(FeatureKey.BURIED_TREASURE_PRODUCER),
 								new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.BURIED_TREASURE),
 								Dimension.OVERWORLD,
 								false)
 				),
-				new StructureProducer<>(
-						Resolution.NETHER_CHUNK,
-						88,
-						versionFeatures.get(FeatureKey.NETHER_FORTRESS_LOCATION_CHECKER),
-						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
-						Dimension.NETHER,
-						false),
-				new StructureProducer<>(
-						Resolution.CHUNK,
-						8,
-						versionFeatures.get(FeatureKey.END_ISLAND_LOCATION_CHECKER),
-						new EndCityWorldIconTypeProvider(),
-						Dimension.END,
-						false));
+				versionFeatures.get(FeatureKey.NETHER_FORTRESS_PRODUCER),
+				versionFeatures.get(FeatureKey.END_CITY_PRODUCER));
 	}
 }

@@ -1,9 +1,14 @@
-package amidst.mojangapi.world.icon.locationchecker;
+package amidst.mojangapi.world.icon.producer;
 
 import java.util.List;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.icon.locationchecker.AllValidLocationChecker;
+import amidst.mojangapi.world.icon.locationchecker.StructureBiomeLocationChecker;
+import amidst.mojangapi.world.icon.type.WorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 /**
@@ -44,31 +49,39 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
  *
  */
 @ThreadSafe
-public class OceanMonumentLocationChecker_Fixed extends AllValidLocationChecker {
-	private static final long MAGIC_NUMBER_FOR_SEED_1 = 341873128712L;
-	private static final long MAGIC_NUMBER_FOR_SEED_2 = 132897987541L;
-	private static final long MAGIC_NUMBER_FOR_SEED_3 = 10387313L;
-	private static final byte MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES = 32;
-	private static final byte MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES = 5;
-	private static final boolean USE_TWO_VALUES_FOR_UPDATE = true;
+public class OceanMonumentProducer_Fixed extends RegionalStructureProducer<Void> {
+	private static final long SALT = 10387313L;
+	private static final byte SPACING = 32;
+	private static final byte SEPARATION = 5;
+	private static final boolean IS_TRIANGULAR = true;
 	private static final int STRUCTURE_SIZE = 29;
 	private static final int STRUCTURE_CENTER_SIZE = 16;
 
-	public OceanMonumentLocationChecker_Fixed(
-			long seed,
+	public OceanMonumentProducer_Fixed(
+			Resolution resolution,
+			int offsetInWorld,
+			WorldIconTypeProvider<Void> provider,
+			Dimension dimension,
+			boolean displayDimension,
+			long worldSeed,
 			BiomeDataOracle biomeDataOracle,
 			List<Biome> validBiomesAtMiddleOfChunk,
 			List<Biome> validBiomesForStructure) {
 		super(
-				new StructureAlgorithm(
-						seed,
-						MAGIC_NUMBER_FOR_SEED_1,
-						MAGIC_NUMBER_FOR_SEED_2,
-						MAGIC_NUMBER_FOR_SEED_3,
-						MAX_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-						MIN_DISTANCE_BETWEEN_SCATTERED_FEATURES,
-						USE_TWO_VALUES_FOR_UPDATE),
-				new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_CENTER_SIZE, validBiomesAtMiddleOfChunk),
-				new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomesForStructure));
+			  resolution,
+			  offsetInWorld,
+			  new AllValidLocationChecker(
+				  new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_CENTER_SIZE, validBiomesAtMiddleOfChunk),
+				  new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomesForStructure)
+			  ),
+			  provider,
+			  dimension,
+			  displayDimension,
+			  worldSeed,
+			  SALT,
+			  SPACING,
+			  SEPARATION,
+			  IS_TRIANGULAR
+			);
 	}
 }

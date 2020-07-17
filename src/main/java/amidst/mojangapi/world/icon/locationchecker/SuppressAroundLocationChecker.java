@@ -1,15 +1,19 @@
 package amidst.mojangapi.world.icon.locationchecker;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 
+/**
+ * Only use for non regional checks.
+ */
 @ThreadSafe
-public class SuppressAroundLocationChecker implements LocationChecker {
+public class SuppressAroundLocationChecker<T> implements LocationChecker {
 
-	private final LocationChecker locationChecker;
+	private final WorldIconProducer<T> worldIconProducer;
 	private final int distance;
 
-	public SuppressAroundLocationChecker(LocationChecker locationChecker, int distance) {
-		this.locationChecker = locationChecker;
+	public SuppressAroundLocationChecker(WorldIconProducer<T> worldIconProducer, int distance) {
+		this.worldIconProducer = worldIconProducer;
 		this.distance = distance;
 	}
 
@@ -26,7 +30,7 @@ public class SuppressAroundLocationChecker implements LocationChecker {
 
 		for (int i = xMin; i < xMax; i++) {
 			for (int j = yMin; j < yMax; j++) {
-				if (locationChecker.isValidLocation(i, j)) {
+				if (worldIconProducer.isValidLocation(i, j)) {
 					return false;
 				}
 			}

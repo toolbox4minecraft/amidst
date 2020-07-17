@@ -10,27 +10,33 @@ import amidst.fragment.layer.LayerIds;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeList;
 import amidst.mojangapi.world.biome.UnknownBiomeIdException;
+import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.locationchecker.BuriedTreasureLocationChecker;
-import amidst.mojangapi.world.icon.locationchecker.EndCityLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_ChanceBased;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_Original;
-import amidst.mojangapi.world.icon.locationchecker.NetherFortressAlgorithm_Original;
-import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker_Fixed;
-import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker_Original;
-import amidst.mojangapi.world.icon.locationchecker.PillagerOutpostLocationChecker;
-import amidst.mojangapi.world.icon.locationchecker.ScatteredFeaturesLocationChecker;
-import amidst.mojangapi.world.icon.locationchecker.VillageLocationChecker;
-import amidst.mojangapi.world.icon.locationchecker.WoodlandMansionLocationChecker;
+import amidst.mojangapi.world.icon.locationchecker.StructureBiomeLocationChecker;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
+import amidst.mojangapi.world.icon.producer.NetherFortressProducer_Original;
+import amidst.mojangapi.world.icon.producer.OceanMonumentProducer_Fixed;
+import amidst.mojangapi.world.icon.producer.RegionalStructureProducer;
+import amidst.mojangapi.world.icon.producer.ScatteredFeaturesProducer;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_128Algorithm;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Buggy128Algorithm;
 import amidst.mojangapi.world.icon.producer.StrongholdProducer_Original;
+import amidst.mojangapi.world.icon.producer.VillageProducer;
+import amidst.mojangapi.world.icon.producer.WorldIconProducer;
+import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
+import amidst.mojangapi.world.icon.type.EndCityWorldIconTypeProvider;
+import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
+import amidst.mojangapi.world.icon.type.WorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
+import amidst.mojangapi.world.oracle.EndIsland;
 import amidst.mojangapi.world.oracle.EndIslandOracle;
 import amidst.mojangapi.world.oracle.HeuristicWorldSpawnOracle;
 import amidst.mojangapi.world.oracle.SlimeChunkOracle;
@@ -49,38 +55,38 @@ public enum DefaultVersionFeatures {
 	}
 
 	// @formatter:off
-	private static final FeatureKey<MinecraftInterface.World> MINECRAFT_WORLD                      = FeatureKey.make();
-	public static final FeatureKey<List<Biome>>    VALID_BIOMES_FOR_STRUCTURE_SPAWN                = FeatureKey.make();
-	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD      = FeatureKey.make();
-	private static final FeatureKey<List<Biome>>   VALID_BIOMES_FOR_STRUCTURE_VILLAGE              = FeatureKey.make();
-	private static final FeatureKey<List<Biome>>   VALID_BIOMES_FOR_STRUCTURE_PILLAGER_OUTPOST     = FeatureKey.make();
-	private static final FeatureKey<Boolean>       DO_COMPLEX_VILLAGE_CHECK                        = FeatureKey.make();
-	private static final FeatureKey<Integer>       OUTPOST_VILLAGE_AVOID_DISTANCE                  = FeatureKey.make();
-	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_DESERT_TEMPLE   = FeatureKey.make();
-	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_IGLOO           = FeatureKey.make();
-	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_JUNGLE_TEMPLE   = FeatureKey.make();
-	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_WITCH_HUT       = FeatureKey.make();
-	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_RUINS     = FeatureKey.make();
-	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_SHIPWRECK       = FeatureKey.make();
-	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_MONUMENT  = FeatureKey.make();
-	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_BURIED_TREASURE = FeatureKey.make();
-	private static final FeatureKey<List<Biome>>   VALID_BIOMES_FOR_STRUCTURE_OCEAN_MONUMENT       = FeatureKey.make();
-	private static final FeatureKey<List<Biome>>   VALID_BIOMES_FOR_STRUCTURE_WOODLAND_MANSION     = FeatureKey.make();
-	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_DESERT_TEMPLE                = FeatureKey.make();
-	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_IGLOO                        = FeatureKey.make();
-	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_JUNGLE_TEMPLE                = FeatureKey.make();
-	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_WITCH_HUT                    = FeatureKey.make();
-	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_OCEAN_RUINS                  = FeatureKey.make();
-	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_SHIPWRECK                    = FeatureKey.make();
-	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_BURIED_TREASURE              = FeatureKey.make();
-	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_NETHER_FORTRESS              = FeatureKey.make();
-	private static final FeatureKey<Byte>          MAX_DISTANCE_SCATTERED_FEATURES_SHIPWRECK       = FeatureKey.make();
-	private static final FeatureKey<Byte>          MIN_DISTANCE_SCATTERED_FEATURES_SHIPWRECK       = FeatureKey.make();
-	private static final FeatureKey<Byte>          MAX_DISTANCE_SCATTERED_FEATURES_OCEAN_RUINS     = FeatureKey.make();
-	private static final FeatureKey<Byte>          MIN_DISTANCE_SCATTERED_FEATURES_OCEAN_RUINS     = FeatureKey.make();
-	private static final FeatureKey<Byte>          MAX_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS = FeatureKey.make();
-	private static final FeatureKey<Byte>          MIN_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS = FeatureKey.make();
-	private static final FeatureKey<Boolean>       BUGGY_STRUCTURE_COORDINATE_MATH                 = FeatureKey.make();
+	private static final FeatureKey<MinecraftInterface.World> MINECRAFT_WORLD                = FeatureKey.make();
+	public static final FeatureKey<List<Biome>>    SPAWN_VALID_BIOMES                        = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   STRONGHOLD_VALID_MIDDLE_CHUNK_BIOMES      = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   VILLAGE_VALID_BIOMES                      = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   PILLAGER_OUTPOST_VALID_BIOMES             = FeatureKey.make();
+	private static final FeatureKey<Boolean>       DO_COMPLEX_VILLAGE_CHECK                  = FeatureKey.make();
+	private static final FeatureKey<Integer>       OUTPOST_VILLAGE_AVOID_DISTANCE            = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   DESERT_TEMPLE_VALID_MIDDLE_CHUNK_BIOMES   = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   IGLOO_VALID_MIDDLE_CHUNK_BIOMES           = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   JUNGLE_TEMPLE_VALID_MIDDLE_CHUNK_BIOMES   = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   WITCH_HUT_VALID_MIDDLE_CHUNK_BIOMES       = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   OCEAN_RUINS_VALID_MIDDLE_CHUNK_BIOMES     = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   SHIPWRECK_VALID_MIDDLE_CHUNK_BIOMES       = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   OCEAN_MONUMENT_VALID_MIDDLE_CHUNK_BIOMES  = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   BURIED_TREASURE_VALID_MIDDLE_CHUNK_BIOMES = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   OCEAN_MONUMENT_VALID_BIOMES               = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   WOODLAND_MANSION_VALID_BIOMES             = FeatureKey.make();
+	private static final FeatureKey<Long>          DESERT_TEMPLE_SALT                        = FeatureKey.make();
+	private static final FeatureKey<Long>          IGLOO_SALT                                = FeatureKey.make();
+	private static final FeatureKey<Long>          JUNGLE_TEMPLE_SALT                        = FeatureKey.make();
+	private static final FeatureKey<Long>          WITCH_HUT_SALT                            = FeatureKey.make();
+	private static final FeatureKey<Long>          OCEAN_RUINS_SALT                          = FeatureKey.make();
+	private static final FeatureKey<Long>          SHIPWRECK_SALT                            = FeatureKey.make();
+	private static final FeatureKey<Long>          BURIED_TREASURE_SALT                      = FeatureKey.make();
+	private static final FeatureKey<Long>          NETHER_FORTRESS_SALT                      = FeatureKey.make();
+	private static final FeatureKey<Byte>          SHIPWRECK_SPACING                         = FeatureKey.make();
+	private static final FeatureKey<Byte>          SHIPWRECK_SEPARATION                      = FeatureKey.make();
+	private static final FeatureKey<Byte>          OCEAN_RUINS_SPACING                       = FeatureKey.make();
+	private static final FeatureKey<Byte>          OCEAN_RUINS_SEPARATION                    = FeatureKey.make();
+	private static final FeatureKey<Byte>          NETHER_FORTRESS_SPACING                   = FeatureKey.make();
+	private static final FeatureKey<Byte>          NETHER_FORTRESS_SEPARATION                = FeatureKey.make();
+	private static final FeatureKey<Boolean>       BUGGY_STRUCTURE_COORDINATE_MATH           = FeatureKey.make();
 
 	private static final VersionFeatures.Builder FEATURES_BUILDER = VersionFeatures.builder()
 			.with(FeatureKey.BIOME_DATA_ORACLE, (recognisedVersion, features) -> new BiomeDataOracle(
@@ -130,9 +136,9 @@ public enum DefaultVersionFeatures {
 					new HeuristicWorldSpawnOracle(
 						getWorldSeed(features),
 						features.get(FeatureKey.BIOME_DATA_ORACLE),
-						features.get(VALID_BIOMES_FOR_STRUCTURE_SPAWN))
+						features.get(SPAWN_VALID_BIOMES))
 				)))
-			.with(VALID_BIOMES_FOR_STRUCTURE_SPAWN, VersionFeature.<Integer> listBuilder()
+			.with(SPAWN_VALID_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init(
 					DefaultBiomes.forest,
 					DefaultBiomes.plains,
@@ -145,22 +151,25 @@ public enum DefaultVersionFeatures {
 					DefaultBiomes.jungleHills
 				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 
-			.with(FeatureKey.NETHER_FORTRESS_LOCATION_CHECKER, (version, features) -> {
+			.with(FeatureKey.NETHER_FORTRESS_PRODUCER, (version, features) -> {
 				if(RecognisedVersion.isOlder(version, RecognisedVersion._20w16a)) {
-					return new NetherFortressAlgorithm_Original(getWorldSeed(features));
+					return new NetherFortressProducer_Original(getWorldSeed(features));
 				} else {
 					// TODO: add Nether biome checks when we implement Nether biomes
 					// Bastions replace Fortresses in Warped/Crimson Forest
+					// EDIT: THIS IS NOT TRUE, it instead does a random check beforehand
+					// that we'll have to implement. Also the biome restrictions are
+					// different, but I can't remember exactly what biomes.
 					return scatteredFeature(
-						MAX_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS,
-						MIN_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS,
+						NETHER_FORTRESS_SPACING,
+						NETHER_FORTRESS_SEPARATION,
 						null,
-						SEED_FOR_STRUCTURE_NETHER_FORTRESS
+						NETHER_FORTRESS_SALT
 					).getValue(version, features);
 				}
 			})
-			.with(SEED_FOR_STRUCTURE_NETHER_FORTRESS, VersionFeature.constant(30084232L))
-			.with(MAX_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS, VersionFeature.<Byte> builder()
+			.with(NETHER_FORTRESS_SALT, VersionFeature.constant(30084232L))
+			.with(NETHER_FORTRESS_SPACING, VersionFeature.<Byte> builder()
 				.init(
 					(byte) 24
 				).since(RecognisedVersion._20w19a,
@@ -169,13 +178,27 @@ public enum DefaultVersionFeatures {
 					(byte) 27
 				).construct()
 			)
-			.with(MIN_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS, VersionFeature.constant((byte) 4))
+			.with(NETHER_FORTRESS_SEPARATION, VersionFeature.constant((byte) 4))
 
-			.with(FeatureKey.END_ISLAND_LOCATION_CHECKER, VersionFeature.bind(features ->
-				VersionFeature.constant(new EndCityLocationChecker(getWorldSeed(features)))
+			.with(FeatureKey.END_CITY_PRODUCER, VersionFeature.bind(features ->
+				VersionFeature.constant(
+					new RegionalStructureProducer<List<EndIsland>>(
+							Resolution.CHUNK,
+							8,
+							null,
+							new EndCityWorldIconTypeProvider(),
+							Dimension.END,
+							false,
+							getWorldSeed(features),
+							10387313L,
+							(byte) 20,
+							(byte) 11,
+							true
+						)
+				)
 			))
 
-			.with(FeatureKey.MINESHAFT_LOCATION_CHECKER, VersionFeature.bind(features ->
+			.with(FeatureKey.MINESHAFT_PRODUCER, VersionFeature.bind(features ->
 				VersionFeature.<LocationChecker> builder()
 					.init(
 						new MineshaftAlgorithm_Original(getWorldSeed(features))
@@ -191,7 +214,7 @@ public enum DefaultVersionFeatures {
 			.with(FeatureKey.STRONGHOLD_PRODUCER, VersionFeature.bind(features -> {
 				long worldSeed = getWorldSeed(features);
 				BiomeDataOracle biomeOracle = features.get(FeatureKey.BIOME_DATA_ORACLE);
-				List<Biome> validBiomes = features.get(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD);
+				List<Biome> validBiomes = features.get(STRONGHOLD_VALID_MIDDLE_CHUNK_BIOMES);
 				return VersionFeature.<CachedWorldIconProducer>builder()
 					.init(
 						new StrongholdProducer_Original(worldSeed, biomeOracle, validBiomes)
@@ -203,7 +226,7 @@ public enum DefaultVersionFeatures {
 						new StrongholdProducer_128Algorithm(worldSeed, biomeOracle, validBiomes)
 					).construct();
 			}))
-			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD, VersionFeature.<Integer> listBuilder()
+			.with(STRONGHOLD_VALID_MIDDLE_CHUNK_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init().since(RecognisedVersion._b1_8_1,
 					DefaultBiomes.desert,
 					DefaultBiomes.forest,
@@ -228,16 +251,16 @@ public enum DefaultVersionFeatures {
 				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 
 
-			.with(FeatureKey.VILLAGE_LOCATION_CHECKER, VersionFeature.bind(features ->
+			.with(FeatureKey.VILLAGE_PRODUCER, VersionFeature.bind(features ->
 				VersionFeature.constant(
-					new VillageLocationChecker(
+					new VillageProducer(
 						getWorldSeed(features),
 						features.get(FeatureKey.BIOME_DATA_ORACLE),
-						features.get(VALID_BIOMES_FOR_STRUCTURE_VILLAGE),
+						features.get(VILLAGE_VALID_BIOMES),
 						features.get(DO_COMPLEX_VILLAGE_CHECK)
 					)
 				)))
-			.with(VALID_BIOMES_FOR_STRUCTURE_VILLAGE, VersionFeature.<Integer> listBuilder()
+			.with(VILLAGE_VALID_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init(
 					DefaultBiomes.plains,
 					DefaultBiomes.desert
@@ -255,17 +278,17 @@ public enum DefaultVersionFeatures {
 					false
 				).construct())
 
-			.with(FeatureKey.PILLAGER_OUTPOST_LOCATION_CHECKER, VersionFeature.bind(features ->
+			.with(FeatureKey.PILLAGER_OUTPOST_PRODUCER, VersionFeature.bind(features ->
 				VersionFeature.constant(
-					new PillagerOutpostLocationChecker(
+					new PillagerOutpostProducer(
 						getWorldSeed(features),
 						features.get(FeatureKey.BIOME_DATA_ORACLE),
-						features.get(FeatureKey.VILLAGE_LOCATION_CHECKER),
+						features.get(FeatureKey.VILLAGE_PRODUCER),
 						features.get(OUTPOST_VILLAGE_AVOID_DISTANCE),
-						features.get(VALID_BIOMES_FOR_STRUCTURE_PILLAGER_OUTPOST)
+						features.get(PILLAGER_OUTPOST_VALID_BIOMES)
 					)
 				)))
-			.with(VALID_BIOMES_FOR_STRUCTURE_PILLAGER_OUTPOST, VersionFeature.<Integer> listBuilder()
+			.with(PILLAGER_OUTPOST_VALID_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init()
 				.sinceExtend(RecognisedVersion._18w47b,
 					DefaultBiomes.plains,
@@ -284,41 +307,41 @@ public enum DefaultVersionFeatures {
 					10
 				).construct())
 
-			.with(FeatureKey.DESERT_TEMPLE_LOCATION_CHECKER, scatteredFeature(
-				VALID_BIOMES_AT_MIDDLE_OF_CHUNK_DESERT_TEMPLE,
-				SEED_FOR_STRUCTURE_DESERT_TEMPLE))
-			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_DESERT_TEMPLE, VersionFeature.<Integer> listBuilder()
+			.with(FeatureKey.DESERT_TEMPLE_PRODUCER, scatteredFeature(
+				DESERT_TEMPLE_VALID_MIDDLE_CHUNK_BIOMES,
+				DESERT_TEMPLE_SALT))
+			.with(DESERT_TEMPLE_VALID_MIDDLE_CHUNK_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init(
 					DefaultBiomes.desert
 				).sinceExtend(RecognisedVersion._12w01a,
 					DefaultBiomes.desertHills
 				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
-			.with(SEED_FOR_STRUCTURE_DESERT_TEMPLE, VersionFeature.<Long> builder()
+			.with(DESERT_TEMPLE_SALT, VersionFeature.<Long> builder()
 				.init(
 					14357617L
 				).construct())
 
-			.with(FeatureKey.IGLOO_LOCATION_CHECKER, scatteredFeature(
-				VALID_BIOMES_AT_MIDDLE_OF_CHUNK_IGLOO,
-				SEED_FOR_STRUCTURE_IGLOO))
-			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_IGLOO, VersionFeature.<Integer> listBuilder()
+			.with(FeatureKey.IGLOO_PRODUCER, scatteredFeature(
+				IGLOO_VALID_MIDDLE_CHUNK_BIOMES,
+				IGLOO_SALT))
+			.with(IGLOO_VALID_MIDDLE_CHUNK_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init()
 				.sinceExtend(RecognisedVersion._15w43c,
 					DefaultBiomes.icePlains,
 					DefaultBiomes.coldTaiga
 				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 
-			.with(SEED_FOR_STRUCTURE_IGLOO, VersionFeature.<Long> builder()
+			.with(IGLOO_SALT, VersionFeature.<Long> builder()
 				.init(
 					14357617L
 				).since(RecognisedVersion._18w06a,
 					14357618L
 				).construct())
 
-			.with(FeatureKey.JUNGLE_TEMPLE_LOCATION_CHECKER, scatteredFeature(
-				VALID_BIOMES_AT_MIDDLE_OF_CHUNK_JUNGLE_TEMPLE,
-				SEED_FOR_STRUCTURE_JUNGLE_TEMPLE))
-			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_JUNGLE_TEMPLE, VersionFeature.<Integer> listBuilder()
+			.with(FeatureKey.JUNGLE_TEMPLE_PRODUCER, scatteredFeature(
+				JUNGLE_TEMPLE_VALID_MIDDLE_CHUNK_BIOMES,
+				JUNGLE_TEMPLE_SALT))
+			.with(JUNGLE_TEMPLE_VALID_MIDDLE_CHUNK_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init()
 				.sinceExtend(RecognisedVersion._12w22a,
 					DefaultBiomes.jungle
@@ -328,41 +351,41 @@ public enum DefaultVersionFeatures {
 					DefaultBiomes.bambooJungle,
 					DefaultBiomes.bambooJungleHills
 				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
-			.with(SEED_FOR_STRUCTURE_JUNGLE_TEMPLE,  VersionFeature.<Long> builder()
+			.with(JUNGLE_TEMPLE_SALT,  VersionFeature.<Long> builder()
 				.init(
 						14357617L
 				).since(RecognisedVersion._18w06a,
 						14357619L
 				).construct())
 
-			.with(FeatureKey.WITCH_HUT_LOCATION_CHECKER, scatteredFeature(
-				VALID_BIOMES_AT_MIDDLE_OF_CHUNK_WITCH_HUT,
-				SEED_FOR_STRUCTURE_WITCH_HUT))
-			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_WITCH_HUT, VersionFeature.<Integer> listBuilder()
+			.with(FeatureKey.WITCH_HUT_PRODUCER, scatteredFeature(
+				WITCH_HUT_VALID_MIDDLE_CHUNK_BIOMES,
+				WITCH_HUT_SALT))
+			.with(WITCH_HUT_VALID_MIDDLE_CHUNK_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init()
 				.sinceExtend(RecognisedVersion._1_4_2,
 					DefaultBiomes.swampland
 				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
-			.with(SEED_FOR_STRUCTURE_WITCH_HUT, VersionFeature.<Long> builder()
+			.with(WITCH_HUT_SALT, VersionFeature.<Long> builder()
 				.init(
 						14357617L
 				).since(RecognisedVersion._18w06a,
 						14357620L
 				).construct())
 
-			.with(FeatureKey.OCEAN_MONUMENT_LOCATION_CHECKER, VersionFeature.bind(features -> {
+			.with(FeatureKey.OCEAN_MONUMENT_PRODUCER, VersionFeature.bind(features -> {
 				long worldSeed = getWorldSeed(features);
 				BiomeDataOracle biomeOracle = features.get(FeatureKey.BIOME_DATA_ORACLE);
-				List<Biome> validCenterBiomes = features.get(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_MONUMENT);
-				List<Biome> validBiomes = features.get(VALID_BIOMES_FOR_STRUCTURE_OCEAN_MONUMENT);
+				List<Biome> validCenterBiomes = features.get(OCEAN_MONUMENT_VALID_MIDDLE_CHUNK_BIOMES);
+				List<Biome> validBiomes = features.get(OCEAN_MONUMENT_VALID_BIOMES);
 				return VersionFeature.<LocationChecker> builder()
 					.init(
 						new OceanMonumentLocationChecker_Original(worldSeed, biomeOracle, validCenterBiomes, validBiomes)
 					).since(RecognisedVersion._15w46a,
-						new OceanMonumentLocationChecker_Fixed(worldSeed, biomeOracle, validCenterBiomes, validBiomes)
+						new OceanMonumentProducer_Fixed(worldSeed, biomeOracle, validCenterBiomes, validBiomes)
 					).construct();
 			}))
-			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_MONUMENT, VersionFeature.<Integer> listBuilder()
+			.with(OCEAN_MONUMENT_VALID_MIDDLE_CHUNK_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init()
 				.sinceExtend(RecognisedVersion._1_8,
 					DefaultBiomes.deepOcean
@@ -372,7 +395,7 @@ public enum DefaultVersionFeatures {
 					DefaultBiomes.lukewarmDeepOcean,
 					DefaultBiomes.frozenDeepOcean
 				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
-			.with(VALID_BIOMES_FOR_STRUCTURE_OCEAN_MONUMENT, VersionFeature.<Integer> listBuilder()
+			.with(OCEAN_MONUMENT_VALID_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init().sinceExtend(RecognisedVersion._1_8,
 					DefaultBiomes.ocean,
 					DefaultBiomes.deepOcean,
@@ -389,26 +412,34 @@ public enum DefaultVersionFeatures {
 					DefaultBiomes.frozenDeepOcean
 				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 
-			.with(FeatureKey.WOODLAND_MANSION_LOCATION_CHECKER, VersionFeature.bind(features ->
+			.with(FeatureKey.WOODLAND_MANSION_PRODUCER, VersionFeature.bind(features ->
 				VersionFeature.constant(
-					new WoodlandMansionLocationChecker(
+					new RegionalStructureProducer<>(
+						Resolution.CHUNK,
+						8,
+						new StructureBiomeLocationChecker(features.get(FeatureKey.BIOME_DATA_ORACLE), 32, features.get(WOODLAND_MANSION_VALID_BIOMES)),
+						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.WOODLAND_MANSION),
+						Dimension.OVERWORLD,
+						false,
 						getWorldSeed(features),
-						features.get(FeatureKey.BIOME_DATA_ORACLE),
-						features.get(VALID_BIOMES_FOR_STRUCTURE_WOODLAND_MANSION)
+						10387319L,
+						(byte) 80,
+						(byte) 20,
+						true
 					)
 				)))
-			.with(VALID_BIOMES_FOR_STRUCTURE_WOODLAND_MANSION, VersionFeature.<Integer> listBuilder()
+			.with(WOODLAND_MANSION_VALID_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init().sinceExtend(RecognisedVersion._16w43a, // Actually 16w39a, but version strings are identical
 					DefaultBiomes.roofedForest,
 					DefaultBiomes.roofedForestM
 				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
 
-			.with(FeatureKey.OCEAN_RUINS_LOCATION_CHECKER, scatteredFeature(
-				MAX_DISTANCE_SCATTERED_FEATURES_OCEAN_RUINS,
-				MIN_DISTANCE_SCATTERED_FEATURES_OCEAN_RUINS,
-				VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_RUINS,
-				SEED_FOR_STRUCTURE_OCEAN_RUINS))
-			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_RUINS, VersionFeature.<Integer> listBuilder()
+			.with(FeatureKey.OCEAN_RUINS_PRODUCER, scatteredFeature(
+				OCEAN_RUINS_SPACING,
+				OCEAN_RUINS_SEPARATION,
+				OCEAN_RUINS_VALID_MIDDLE_CHUNK_BIOMES,
+				OCEAN_RUINS_SALT))
+			.with(OCEAN_RUINS_VALID_MIDDLE_CHUNK_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init()
 				.sinceExtend(RecognisedVersion._18w09a,
 					DefaultBiomes.ocean,
@@ -422,27 +453,27 @@ public enum DefaultVersionFeatures {
 					DefaultBiomes.frozenOcean,
 					DefaultBiomes.frozenDeepOcean
 				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
-			.with(MIN_DISTANCE_SCATTERED_FEATURES_OCEAN_RUINS, VersionFeature.<Byte> builder()
+			.with(OCEAN_RUINS_SEPARATION, VersionFeature.<Byte> builder()
 				.init(
 					(byte) 8
 				).construct())
-			.with(MAX_DISTANCE_SCATTERED_FEATURES_OCEAN_RUINS, VersionFeature.<Byte> builder()
+			.with(OCEAN_RUINS_SPACING, VersionFeature.<Byte> builder()
 				.init(
 					(byte) 16
 				).since(RecognisedVersion._20w06a,
 					(byte) 20
 				).construct())
-			.with(SEED_FOR_STRUCTURE_OCEAN_RUINS, VersionFeature.<Long> builder()
+			.with(OCEAN_RUINS_SALT, VersionFeature.<Long> builder()
 				.init(
 						14357621L
 				).construct())
 
-			.with(FeatureKey.SHIPWRECK_LOCATION_CHECKER, scatteredFeature(
-				MAX_DISTANCE_SCATTERED_FEATURES_SHIPWRECK,
-				MIN_DISTANCE_SCATTERED_FEATURES_SHIPWRECK,
-				VALID_BIOMES_AT_MIDDLE_OF_CHUNK_SHIPWRECK,
-				SEED_FOR_STRUCTURE_SHIPWRECK))
-			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_SHIPWRECK, VersionFeature.<Integer> listBuilder()
+			.with(FeatureKey.SHIPWRECK_PRODUCER, scatteredFeature(
+				SHIPWRECK_SPACING,
+				SHIPWRECK_SEPARATION,
+				SHIPWRECK_VALID_MIDDLE_CHUNK_BIOMES,
+				SHIPWRECK_SALT))
+			.with(SHIPWRECK_VALID_MIDDLE_CHUNK_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init()
 				.sinceExtend(RecognisedVersion._18w11a,
 					DefaultBiomes.beach,
@@ -458,7 +489,7 @@ public enum DefaultVersionFeatures {
 					DefaultBiomes.frozenOcean,
 					DefaultBiomes.frozenDeepOcean
 				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
-			.with(MAX_DISTANCE_SCATTERED_FEATURES_SHIPWRECK, VersionFeature.<Byte> builder()
+			.with(SHIPWRECK_SPACING, VersionFeature.<Byte> builder()
 				.init(
 					(byte) 15
 				).since(RecognisedVersion._1_13_pre7,
@@ -466,32 +497,32 @@ public enum DefaultVersionFeatures {
 				).since(RecognisedVersion._20w06a,
 					(byte) 24
 				).construct())
-			.with(MIN_DISTANCE_SCATTERED_FEATURES_SHIPWRECK, VersionFeature.<Byte> builder()
+			.with(SHIPWRECK_SEPARATION, VersionFeature.<Byte> builder()
 				.init(
 					(byte) 8
 				).since(RecognisedVersion._20w06a,
 					(byte) 4
 				).construct())
-			.with(SEED_FOR_STRUCTURE_SHIPWRECK, VersionFeature.<Long> builder()
+			.with(SHIPWRECK_SALT, VersionFeature.<Long> builder()
 				.init(
 						165745295L
 				).construct())
 
-			.with(FeatureKey.BURIED_TREASURE_LOCATION_CHECKER, VersionFeature.bind(features ->
+			.with(FeatureKey.BURIED_TREASURE_PRODUCER, VersionFeature.bind(features ->
 				VersionFeature.constant(
 					new BuriedTreasureLocationChecker(
 						getWorldSeed(features),
 						features.get(FeatureKey.BIOME_DATA_ORACLE),
-						features.get(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_BURIED_TREASURE),
+						features.get(BURIED_TREASURE_VALID_MIDDLE_CHUNK_BIOMES),
 						features.get(SEED_FOR_STRUCTURE_BURIED_TREASURE)
 					)
 				)))
-			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_BURIED_TREASURE, VersionFeature.<Integer> listBuilder()
+			.with(BURIED_TREASURE_VALID_MIDDLE_CHUNK_BIOMES, VersionFeature.<Integer> listBuilder()
 				.init().sinceExtend(RecognisedVersion._18w10d,
 					DefaultBiomes.beach,
 					DefaultBiomes.coldBeach
 				).construct().andThenBind(DefaultVersionFeatures::makeBiomeList))
-			.with(SEED_FOR_STRUCTURE_BURIED_TREASURE, VersionFeature.<Long> builder()
+			.with(BURIED_TREASURE_SALT, VersionFeature.<Long> builder()
 				.init(
 						10387320L
 				).construct())
@@ -538,31 +569,57 @@ public enum DefaultVersionFeatures {
 		return features.get(FeatureKey.WORLD_OPTIONS).getWorldSeed().getLong();
 	}
 
-	private static VersionFeature<LocationChecker> scatteredFeature(
-			FeatureKey<Byte> maxDistance, FeatureKey<Byte> minDistance,
-			FeatureKey<List<Biome>> validBiomes, FeatureKey<Long> structSeed) {
+	private static VersionFeature<WorldIconProducer<Void>> scatteredFeature(
+			Resolution resolution,
+			int offsetInWorld,
+			FeatureKey<List<Biome>> validBiomes,
+			WorldIconTypeProvider<Void> provider,
+			Dimension dimension,
+			boolean displayDimension,
+			FeatureKey<Long> salt,
+			FeatureKey<Byte> spacing,
+			FeatureKey<Byte> separation) {
 		return VersionFeature.bind(features ->
 			VersionFeature.constant(
-				new ScatteredFeaturesLocationChecker(
-					getWorldSeed(features),
+				new ScatteredFeaturesProducer(
+					resolution,
+					offsetInWorld,
 					features.get(FeatureKey.BIOME_DATA_ORACLE),
-					features.get(maxDistance), features.get(minDistance),
 					validBiomes == null ? null : features.get(validBiomes),
-					features.get(structSeed), features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
+					provider,
+					dimension,
+					displayDimension,
+					getWorldSeed(features),
+					features.get(salt),
+					features.get(spacing),
+					features.get(separation),
+					features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
 				)
 			)
 		);
 	}
 
-	private static VersionFeature<LocationChecker> scatteredFeature(
-			FeatureKey<List<Biome>> validBiomes, FeatureKey<Long> structSeed) {
+	private static VersionFeature<WorldIconProducer<Void>> scatteredFeature(
+			Resolution resolution,
+			int offsetInWorld,
+			FeatureKey<List<Biome>> validBiomes,
+			WorldIconTypeProvider<Void> provider,
+			Dimension dimension,
+			boolean displayDimension,
+			FeatureKey<Long> salt) {
 		return VersionFeature.bind(features ->
 			VersionFeature.constant(
-				new ScatteredFeaturesLocationChecker(
-					getWorldSeed(features),
+				new ScatteredFeaturesProducer(
+					resolution,
+					offsetInWorld,
 					features.get(FeatureKey.BIOME_DATA_ORACLE),
 					validBiomes == null ? null : features.get(validBiomes),
-					features.get(structSeed), features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
+					provider,
+					dimension,
+					displayDimension,
+					getWorldSeed(features),
+					features.get(salt),
+					features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
 				)
 			)
 		);
