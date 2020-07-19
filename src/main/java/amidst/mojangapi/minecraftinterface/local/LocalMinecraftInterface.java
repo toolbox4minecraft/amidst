@@ -28,6 +28,8 @@ import amidst.util.ArrayCache;
 
 public class LocalMinecraftInterface implements MinecraftInterface {
 
+	private static String STRING_WITH_ZERO_HASHCODE = "drumwood boulderhead";
+
     private boolean isInitialized = false;
 	private final RecognisedVersion recognisedVersion;
 
@@ -88,14 +90,15 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			}
 			return result;
 		} catch (NoSuchAlgorithmException e) {
-			throw new MinecraftInterfaceException("unable to hash seed", e);
+			throw new MinecraftInterfaceException("unable to hash seed for biome zoomer", e);
 		}
 	}
 
 	private Object createBiomeProviderObject(long seed, WorldType worldType, String generatorOptions)
             throws IllegalAccessException, InvocationTargetException, MinecraftInterfaceException {
 		Properties worldProperties = new Properties();
-		worldProperties.setProperty("level-seed", Long.toString(seed));
+		// Minecraft interprets "0" as a random seed, so provide a string hashing to 0 instead
+		worldProperties.setProperty("level-seed", seed == 0 ? STRING_WITH_ZERO_HASHCODE : Long.toString(seed));
 		worldProperties.setProperty("level-type", getTrueWorldTypeName(worldType));
 		worldProperties.setProperty("generator-settings", generatorOptions);
 
