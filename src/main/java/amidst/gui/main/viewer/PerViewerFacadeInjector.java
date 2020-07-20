@@ -6,6 +6,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
+import javax.swing.JComponent;
+
 import amidst.AmidstSettings;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -50,10 +52,11 @@ public class PerViewerFacadeInjector {
 			FragmentManager fragmentManager,
 			Graphics2DAccelerationCounter accelerationCounter,
 			AmidstSettings settings,
-			Supplier<Entry<ProgressEntryType, Integer>> progressEntrySupplier) {
+			Supplier<Entry<ProgressEntryType, Integer>> progressEntrySupplier,
+			Supplier<JComponent> parentComponentSupplier) {
 		// @formatter:off
 		DebugWidget debugWidget = new DebugWidget(CornerAnchorPoint.BOTTOM_RIGHT, graph, fragmentManager, settings.showDebug, accelerationCounter);
-		BiomeWidget biomeWidget = new BiomeWidget(CornerAnchorPoint.NONE, biomeSelection, layerReloader, settings.biomeProfileSelection, world.getBiomeList());
+		BiomeWidget biomeWidget = new BiomeWidget(CornerAnchorPoint.NONE, biomeSelection, layerReloader, settings.biomeProfileSelection, world.getBiomeList(), parentComponentSupplier);
 		BiomeToggleWidget biomeToggleWidget = new BiomeToggleWidget(CornerAnchorPoint.BOTTOM_RIGHT, biomeWidget, biomeSelection);
 		WorldOptions worldOptions = world.getWorldOptions();
 		return Arrays.asList(
@@ -108,6 +111,7 @@ public class PerViewerFacadeInjector {
 		this.fragmentQueueProcessor = fragmentManager.createQueueProcessor(layerManager, settings.dimension);
 		this.layerReloader = layerManager.createLayerReloader(world);
 		this.progressEntryHolder = new AtomicReference<Entry<ProgressEntryType, Integer>>();
+		AtomicReference<JComponent> parentComponentReference = new AtomicReference<>();
 		this.widgets = createWidgets(
 				world,
 				graph,
@@ -119,7 +123,8 @@ public class PerViewerFacadeInjector {
 				fragmentManager,
 				accelerationCounter,
 				settings,
-				progressEntryHolder::get);
+				progressEntryHolder::get,
+				parentComponentReference::get);
 		this.drawer = new Drawer(
 				graph,
 				translator,
@@ -132,6 +137,7 @@ public class PerViewerFacadeInjector {
 		this.widgetManager = new WidgetManager(widgets);
 		this.viewerMouseListener = new ViewerMouseListener(widgetManager, graph, translator, zoom, movement, actions);
 		this.viewer = new Viewer(viewerMouseListener, drawer);
+		parentComponentReference.set((JComponent) viewer.getComponent());
 		this.viewerFacade = new ViewerFacade(
 				world,
 				fragmentManager,
