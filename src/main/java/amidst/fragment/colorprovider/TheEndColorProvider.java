@@ -6,7 +6,6 @@ import java.util.List;
 import amidst.ResourceLoader;
 import amidst.documentation.ThreadSafe;
 import amidst.fragment.Fragment;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.oracle.end.EndIslandList;
 import amidst.mojangapi.world.oracle.end.LargeEndIsland;
@@ -28,12 +27,6 @@ public class TheEndColorProvider implements ColorProvider {
 	private static final float INFLUENCE_FADE_START = 0;
 	private static final float INFLUENCE_FADE_FINISH = -8;
 	private static final float INFLUENCE_FADE_RANGE = INFLUENCE_FADE_START - INFLUENCE_FADE_FINISH;
-	
-	private final RecognisedVersion version;
-	
-	public TheEndColorProvider(RecognisedVersion version) {
-		this.version = version;
-	}
 
 	@Override
 	public int getColorAt(Dimension dimension, Fragment fragment, long cornerX, long cornerY, int x, int y) {
@@ -90,16 +83,14 @@ public class TheEndColorProvider implements ColorProvider {
 			EndIslandList endIslands) {
 		int result = VOID_TRANSPARENT_BLACK;
 		
-		if (showOldRockyShores(chunkX, chunkY)) {
-			result = getRockyShoresTextureAt(textureX, textureY);
-		}
-		
-		// small islands
-		if (RecognisedVersion.isNewerOrEqualTo(version, RecognisedVersion._1_13)) {
+		// The small islands list is null if the version doesn't support them
+		if (endIslands.getSmallIslands() != null) {
 			// Small islands can leak into other biomes if they spawn close enough, so we want to set this to when large islands start fading so they merge smoothly
 			if(maxInfluence <= INFLUENCE_FADE_START) {
 				result = getSmallIslandSSAAPixel(x, y, textureX, textureY, endIslands.getSmallIslands());
 			}
+		} else if (showOldRockyShores(chunkX, chunkY)) {
+			result = getRockyShoresTextureAt(textureX, textureY);
 		}
 		
 		if (maxInfluence > INFLUENCE_FADE_FINISH) {
@@ -141,7 +132,7 @@ public class TheEndColorProvider implements ColorProvider {
 	 * Determine whether to show the rocky shores texture.
 	 */
 	private boolean showOldRockyShores(long chunkX, long chunkY) {
-		return RecognisedVersion.isOlder(version, RecognisedVersion._1_13) && (chunkX * chunkX + chunkY * chunkY) > 4096L;
+		return (chunkX * chunkX + chunkY * chunkY) > 4096L;
 	}
 
 	private int getEndStoneTextureAt(int textureX, int textureY) {

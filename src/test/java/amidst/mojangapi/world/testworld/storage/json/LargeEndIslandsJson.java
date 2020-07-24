@@ -1,5 +1,6 @@
 package amidst.mojangapi.world.testworld.storage.json;
 
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -7,25 +8,25 @@ import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
 import amidst.mojangapi.mocking.FragmentCornerWalker;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
-import amidst.mojangapi.world.oracle.end.EndIslandList;
 import amidst.mojangapi.world.oracle.end.EndIslandOracle;
+import amidst.mojangapi.world.oracle.end.LargeEndIsland;
 
 @Immutable
-public class EndIslandsJson {
-	public static EndIslandsJson extract(EndIslandOracle oracle, int fragmentsAroundOrigin) {
-		SortedMap<CoordinatesInWorld, EndIslandList> result = new TreeMap<>();
+public class LargeEndIslandsJson {
+	public static LargeEndIslandsJson extract(EndIslandOracle oracle, int fragmentsAroundOrigin) {
+		SortedMap<CoordinatesInWorld, List<LargeEndIsland>> result = new TreeMap<>();
 		FragmentCornerWalker.walkFragmentsAroundOrigin(fragmentsAroundOrigin).walk(
-				corner -> result.put(corner, oracle.getAt(corner)));
-		return new EndIslandsJson(result);
+				corner -> result.put(corner, oracle.getLargeIslandsAt(corner)));
+		return new LargeEndIslandsJson(result);
 	}
 
-	private volatile SortedMap<CoordinatesInWorld, EndIslandList> endIslands;
+	private volatile SortedMap<CoordinatesInWorld, List<LargeEndIsland>> endIslands;
 
 	@GsonConstructor
-	public EndIslandsJson() {
+	public LargeEndIslandsJson() {
 	}
 
-	public EndIslandsJson(SortedMap<CoordinatesInWorld, EndIslandList> endIslands) {
+	public LargeEndIslandsJson(SortedMap<CoordinatesInWorld, List<LargeEndIsland>> endIslands) {
 		this.endIslands = endIslands;
 	}
 
@@ -45,10 +46,10 @@ public class EndIslandsJson {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof EndIslandsJson)) {
+		if (!(obj instanceof LargeEndIslandsJson)) {
 			return false;
 		}
-		EndIslandsJson other = (EndIslandsJson) obj;
+		LargeEndIslandsJson other = (LargeEndIslandsJson) obj;
 		if (endIslands == null) {
 			if (other.endIslands != null) {
 				return false;

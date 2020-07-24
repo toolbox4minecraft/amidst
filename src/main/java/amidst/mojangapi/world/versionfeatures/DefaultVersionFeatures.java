@@ -121,9 +121,9 @@ public enum DefaultVersionFeatures {
 				).construct())
 
 			.with(FeatureKey.BIOME_LIST, DefaultBiomes.DEFAULT_BIOMES)
-			.with(FeatureKey.END_ISLAND_ORACLE, VersionFeature.bind(features ->
-				VersionFeature.constant(EndIslandOracle.from(getWorldSeed(features)))
-			))
+			.with(FeatureKey.END_ISLAND_ORACLE, (recognisedVersion, features) ->
+				EndIslandOracle.from(getWorldSeed(features), recognisedVersion)
+			)
 
 			.with(FeatureKey.SLIME_CHUNK_ORACLE, VersionFeature.bind(features ->
 				VersionFeature.constant(new SlimeChunkOracle(getWorldSeed(features)))

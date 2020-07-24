@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amidst.documentation.ThreadSafe;
+import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.oracle.SimplexNoise;
@@ -15,8 +16,8 @@ import kaptainwutax.seedutils.mc.MCVersion;
 
 @ThreadSafe
 public class EndIslandOracle {
-	public static EndIslandOracle from(long seed) {
-		return new EndIslandOracle(createNoiseFunction(seed), seed);
+	public static EndIslandOracle from(long seed, RecognisedVersion recognisedVersion) {
+		return new EndIslandOracle(createNoiseFunction(seed), seed, recognisedVersion);
 	}
 
 	/**
@@ -54,10 +55,12 @@ public class EndIslandOracle {
 
 	private final SimplexNoise noiseFunction;
 	private final long seed;
+	private final RecognisedVersion recognisedVersion;
 
-	public EndIslandOracle(SimplexNoise noiseFunction, long seed) {
+	public EndIslandOracle(SimplexNoise noiseFunction, long seed, RecognisedVersion recognisedVersion) {
 		this.noiseFunction = noiseFunction;
 		this.seed = seed;
+		this.recognisedVersion = recognisedVersion;
 	}
 	
 	public static int getBiomeAtBlock(long x, long y, List<LargeEndIsland> largeIslands) {		
@@ -200,12 +203,15 @@ public class EndIslandOracle {
 			int chunksPerFragmentX,
 			int chunksPerFragmentY,
 			List<LargeEndIsland> largeIslands) {
-		List<SmallEndIsland> result = new ArrayList<>();
-		for (int y = -SMALL_ISLAND_SURROUNDING_CHUNKS; y <= chunksPerFragmentY + SMALL_ISLAND_SURROUNDING_CHUNKS; y++) {
-			for (int x = -SMALL_ISLAND_SURROUNDING_CHUNKS; x <= chunksPerFragmentX + SMALL_ISLAND_SURROUNDING_CHUNKS; x++) {
-				List<SmallEndIsland> smallIslands = getSmallIslandsInChunk(chunkX + x, chunkY + y, largeIslands);
-				if(smallIslands != null) {
-					result.addAll(smallIslands);
+		List<SmallEndIsland> result = null;
+		if(RecognisedVersion.isNewerOrEqualTo(recognisedVersion, RecognisedVersion._1_13)) { // TODO: need confirmation on this version
+			result = new ArrayList<>();
+			for (int y = -SMALL_ISLAND_SURROUNDING_CHUNKS; y <= chunksPerFragmentY + SMALL_ISLAND_SURROUNDING_CHUNKS; y++) {
+				for (int x = -SMALL_ISLAND_SURROUNDING_CHUNKS; x <= chunksPerFragmentX + SMALL_ISLAND_SURROUNDING_CHUNKS; x++) {
+					List<SmallEndIsland> smallIslands = getSmallIslandsInChunk(chunkX + x, chunkY + y, largeIslands);
+					if(smallIslands != null) {
+						result.addAll(smallIslands);
+					}
 				}
 			}
 		}
@@ -252,5 +258,9 @@ public class EndIslandOracle {
 		}
 		return null;
 	}
+    
+    public RecognisedVersion getRecognisedVersion() {
+    	return recognisedVersion;
+    }
     
 }
