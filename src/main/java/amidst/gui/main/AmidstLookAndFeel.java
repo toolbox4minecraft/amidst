@@ -5,6 +5,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import amidst.logging.AmidstLogger;
+import amidst.util.OperatingSystemDetector;
 
 public enum AmidstLookAndFeel {
 	DEFAULT("Default Look & Feel", UIManager.getCrossPlatformLookAndFeelClassName()),
@@ -36,16 +37,22 @@ public enum AmidstLookAndFeel {
 
 	public boolean tryApply() {
 		String currentLookAndFeel = getCurrent();
+		boolean success = true;
 		try {
 			UIManager.setLookAndFeel(lookAndFeelClassName);
 			AmidstLogger.info("Using look & feel: " + lookAndFeelClassName);
-			return true;
 		} catch(ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e) {
 			AmidstLogger.error(e, "Couldn't apply look & feel: " + lookAndFeelClassName +
 					"; falling back to: " + currentLookAndFeel);
-			return false;
+			success = false;
 		}
+
+		if (OperatingSystemDetector.isMac()) {
+			OsXWorkarounds.applyWorkarounds();
+		}
+
+		return success;
 	}
 
 	@Override
