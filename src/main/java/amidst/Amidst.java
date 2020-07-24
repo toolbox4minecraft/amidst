@@ -83,7 +83,6 @@ public class Amidst {
 			AmidstLogger.info(versionString);
 			logTimeAndProperties();
 			enableGraphicsAcceleration();
-			osxMenuProperties();
 			startApplication(parameters, metadata, createSettings());
 		}
 	}
@@ -155,11 +154,6 @@ public class Amidst {
 
 	private static void forceGraphicsToVRAM() {
 		System.setProperty("sun.java2d.accthreshold", "0");
-	}
-
-	private static void osxMenuProperties() {
-		System.setProperty("apple.laf.useScreenMenuBar", "true");
-		System.setProperty("com.apple.macos.useScreenMenuBar", "true");
 	}
 
 	private static void applyLookAndFeel(AmidstSettings settings) {
