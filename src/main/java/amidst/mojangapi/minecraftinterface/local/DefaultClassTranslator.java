@@ -64,7 +64,7 @@ public enum DefaultClassTranslator {
                 .ifDetect(c -> !c.getRealClassName().contains("$")
                     && c.getRealSuperClassName().equals("java/lang/Enum")
                     && c.hasMethodWithRealArgsReturning("long", "int", "int", "int", null, null)
-                    && c.getNumberOfMethods() == 4
+                    && c.hasMethodWithRealArgsReturning("double", "double")
                 )
                 .thenDeclareRequired(CLASS_OVERWORLD_BIOME_ZOOMER)
                     .requiredMethod(METHOD_BIOME_ZOOMER_GET_BIOME, "a").real("long").real("int").real("int").real("int").symbolic(CLASS_NOISE_BIOME_PROVIDER).end()
