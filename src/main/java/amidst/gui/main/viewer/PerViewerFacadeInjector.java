@@ -32,6 +32,7 @@ import amidst.gui.main.viewer.widget.Widget;
 import amidst.gui.main.viewer.widget.Widget.CornerAnchorPoint;
 import amidst.gui.main.viewer.widget.WidgetManager;
 import amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType;
+import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.World;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.threading.WorkerExecutor;
@@ -53,8 +54,7 @@ public class PerViewerFacadeInjector {
 			Supplier<Entry<ProgressEntryType, Integer>> progressEntrySupplier) {
 		// @formatter:off
 		DebugWidget debugWidget = new DebugWidget(CornerAnchorPoint.BOTTOM_RIGHT, graph, fragmentManager, settings.showDebug, accelerationCounter);
-		BiomeWidget biomeWidget = new BiomeWidget(CornerAnchorPoint.NONE, biomeSelection, layerReloader, settings.biomeProfileSelection, world.getBiomeList());
-		BiomeToggleWidget biomeToggleWidget = new BiomeToggleWidget(CornerAnchorPoint.BOTTOM_RIGHT, biomeWidget, biomeSelection);
+		BiomeToggleWidget biomeToggleWidget = new BiomeToggleWidget(CornerAnchorPoint.BOTTOM_RIGHT, biomeSelection);
 		WorldOptions worldOptions = world.getWorldOptions();
 		return Arrays.asList(
 				new FpsWidget(                  CornerAnchorPoint.BOTTOM_LEFT,   new FramerateTimer(2),              settings.showFPS),
@@ -65,12 +65,14 @@ public class PerViewerFacadeInjector {
 				new CursorInformationWidget(	CornerAnchorPoint.TOP_RIGHT,     graph,             translator,      settings.dimension, world.getBiomeList()),
 				biomeToggleWidget,
 				new BiomeExporterProgressWidget(CornerAnchorPoint.BOTTOM_RIGHT,  progressEntrySupplier,    -20,      settings.showDebug, debugWidget, biomeToggleWidget.getWidth()),
-				biomeWidget
+				new BiomeWidget(CornerAnchorPoint.NONE, biomeSelection, layerReloader, settings.biomeProfileSelection, world.getBiomeList())
 		);
 		// @formatter:on
 	}
 
-	private final BiomeSelection biomeSelection;
+	private static BiomeSelection biomeSelection = null;
+	private static RecognisedVersion lastUsedVersion = null;
+	
 	private final Graphics2DAccelerationCounter accelerationCounter;
 	private final Movement movement;
 	private final WorldIconSelection worldIconSelection;
@@ -97,7 +99,10 @@ public class PerViewerFacadeInjector {
 			BiomeExporterDialog biomeExporterDialog,
 			World world,
 			Actions actions) {
-		this.biomeSelection = new BiomeSelection(world.getBiomeList());
+		if(biomeSelection == null || lastUsedVersion == null || !lastUsedVersion.equals(world.getRecognisedVersion())) {
+			biomeSelection = new BiomeSelection(world.getBiomeList());
+		}
+		
 		this.accelerationCounter = new Graphics2DAccelerationCounter();
 		this.movement = new Movement(settings.smoothScrolling);
 		this.worldIconSelection = new WorldIconSelection();
@@ -148,6 +153,7 @@ public class PerViewerFacadeInjector {
 				this::onRepainterTick,
 				this::onFragmentLoaderTick,
 				this::onPlayerFinishedLoading);
+		lastUsedVersion = world.getRecognisedVersion();
 	}
 
 	@CalledOnlyBy(AmidstThread.REPAINTER)

@@ -81,7 +81,6 @@ public class Actions {
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public void newFromRandom() {
-		biomeExporterDialog.dispose();
 		newFromSeed(WorldSeed.random());
 	}
 
