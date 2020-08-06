@@ -2,7 +2,7 @@ package amidst.gui.main.viewer;
 
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
-import java.awt.image.BufferedImage;
+import java.awt.Image;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import amidst.documentation.AmidstThread;
@@ -32,7 +32,7 @@ public class Graphics2DAccelerationCounter {
 	 * image, so that 2D hardware acceleration metrics can be calculated
 	 */
 	@CalledOnlyBy(AmidstThread.EDT)
-	public void log(BufferedImage image) {
+	public void log(Image image) {
 		if (image.getCapabilities(GC).isAccelerated()) {
 			accelerated.incrementAndGet();
 		}
