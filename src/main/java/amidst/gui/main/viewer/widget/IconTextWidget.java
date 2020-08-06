@@ -2,6 +2,7 @@ package amidst.gui.main.viewer.widget;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
@@ -42,7 +43,9 @@ public abstract class IconTextWidget extends TextWidget {
 	@Override
 	protected void doDraw(Graphics2D g2d) {
 		super.doDraw(g2d);
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		g2d.drawImage(icon.getImage(), getX() + 5, getY() + 5 - iconOffsetY, iconWidth, iconHeight, null);
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
