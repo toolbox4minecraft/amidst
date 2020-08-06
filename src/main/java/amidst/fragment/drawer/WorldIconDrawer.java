@@ -1,6 +1,7 @@
 package amidst.fragment.drawer;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
@@ -28,12 +29,16 @@ public class WorldIconDrawer extends FragmentDrawer {
 	@CalledOnlyBy(AmidstThread.EDT)
 	@Override
 	public void draw(Fragment fragment, Graphics2D g2d, float time) {
+		Object oldHint = g2d.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
+		
 		double invZoom = 1.0 / zoom.getCurrentValue();
 		AffineTransform originalTransform = g2d.getTransform();
 		for (WorldIcon icon : fragment.getWorldIcons(declaration.getLayerId())) {
 			drawIcon(icon, invZoom, g2d);
 			g2d.setTransform(originalTransform);
 		}
+		
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, oldHint);
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -42,6 +47,7 @@ public class WorldIconDrawer extends FragmentDrawer {
 		int width = image.getWidth();
 		int height = image.getHeight();
 		if (worldIconSelection.isSelected(icon)) {
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 			width *= 1.5;
 			height *= 1.5;
 		}

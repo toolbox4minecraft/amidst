@@ -53,7 +53,7 @@ public class PerViewerFacadeInjector {
 			AmidstSettings settings,
 			Supplier<Entry<ProgressEntryType, Integer>> progressEntrySupplier) {
 		// @formatter:off
-		DebugWidget debugWidget = new DebugWidget(CornerAnchorPoint.BOTTOM_RIGHT, graph, fragmentManager, settings.showDebug, accelerationCounter);
+		DebugWidget debugWidget = new DebugWidget(CornerAnchorPoint.BOTTOM_RIGHT, graph, fragmentManager, settings.showDebug, accelerationCounter, zoom);
 		BiomeToggleWidget biomeToggleWidget = new BiomeToggleWidget(CornerAnchorPoint.BOTTOM_RIGHT, biomeSelection);
 		WorldOptions worldOptions = world.getWorldOptions();
 		return Arrays.asList(
