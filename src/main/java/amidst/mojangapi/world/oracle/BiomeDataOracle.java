@@ -21,11 +21,13 @@ public class BiomeDataOracle {
 	private final MinecraftInterface.World minecraftWorld;
 	private final RecognisedVersion recognisedVersion;
 	private final BiomeList biomeList;
+	private final boolean quarterResOverride; // Minecraft stopped using full resolution biomes with structures around 1.16, so we have to account for it.
 
 	public BiomeDataOracle(MinecraftInterface.World minecraftWorld, RecognisedVersion recognisedVersion, BiomeList biomeList) {
 		this.minecraftWorld = minecraftWorld;
 		this.recognisedVersion = recognisedVersion;
 		this.biomeList = biomeList;
+		this.quarterResOverride = RecognisedVersion.isNewerOrEqualTo(recognisedVersion, RecognisedVersion._1_16); // TODO: confirm version
 	}
 
 	public void populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
@@ -65,7 +67,11 @@ public class BiomeDataOracle {
 
 	private boolean isValidBiome(int x, int y, List<Biome> validBiomes) {
 		try {
-			return validBiomes.contains(getBiomeAt(x, y, false));
+			if(quarterResOverride) {
+				return validBiomes.contains(getBiomeAt(x >> 2, y >> 2, true));
+			} else {
+				return validBiomes.contains(getBiomeAt(x, y, false));
+			}
 		} catch (UnknownBiomeIdException | MinecraftInterfaceException e) {
 			AmidstLogger.error(e);
 			AmidstMessageBox.displayError("Error", e);
@@ -161,13 +167,17 @@ public class BiomeDataOracle {
 		return CoordinatesInWorld.from(x, y);
 	}
 
-	private int getMiddleOfChunk(int coordinate) {
-		return coordinate * 16 + 8;
+	private int getMiddleOfChunk(int chunkCoord) {
+		if(RecognisedVersion.isNewerOrEqualTo(recognisedVersion, RecognisedVersion._1_13)) { // TODO: confirm version
+			return (chunkCoord << 4) + 9;
+		} else {
+			return (chunkCoord << 4) + 8;
+		}
 	}
 
 	public Biome getBiomeAtMiddleOfChunk(int chunkX, int chunkY)
 			throws UnknownBiomeIdException, MinecraftInterfaceException {
-		return getBiomeAt(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY), false);
+		return getBiomeAt(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY), quarterResOverride);
 	}
 
 	public Biome getBiomeAt(int x, int y, boolean useQuarterResolution)
