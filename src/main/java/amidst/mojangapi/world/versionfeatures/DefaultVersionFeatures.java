@@ -100,7 +100,7 @@ public enum DefaultVersionFeatures {
 			.with(BIOME_DATA_ORACLE_QUARTER_RES_OVERRIDE, VersionFeature.<Boolean> builder()
 				.init(
 					false
-				).since(RecognisedVersion._1_16, // TODO: confirm version
+				).since(RecognisedVersion._20w21a,
 					true
 				).construct()
 			)
@@ -114,7 +114,7 @@ public enum DefaultVersionFeatures {
 			.with(BIOME_DATA_ORACLE_MIDDLE_OF_CHUNK_OFFSET, VersionFeature.<Integer> builder()
 				.init(
 					8
-				).since(RecognisedVersion._1_13, // TODO: confirm version
+				).since(RecognisedVersion._18w06a,
 					9
 				).construct()
 			)
