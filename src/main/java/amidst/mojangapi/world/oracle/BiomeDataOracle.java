@@ -9,7 +9,6 @@ import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeList;
 import amidst.mojangapi.world.biome.UnknownBiomeIdException;
@@ -19,15 +18,23 @@ import amidst.mojangapi.world.coordinates.Resolution;
 @ThreadSafe
 public class BiomeDataOracle {
 	private final MinecraftInterface.World minecraftWorld;
-	private final RecognisedVersion recognisedVersion;
 	private final BiomeList biomeList;
-	private final boolean quarterResOverride; // Minecraft stopped using full resolution biomes with structures around 1.16, so we have to account for it.
+	private final boolean quarterResOverride;
+	private final int middleOfChunkOffset;
+	private final boolean accurateLocationCount;
 
-	public BiomeDataOracle(MinecraftInterface.World minecraftWorld, RecognisedVersion recognisedVersion, BiomeList biomeList) {
+	public static class Config {
+		public boolean quarterResOverride = true;
+		public int middleOfChunkOffset = 9;
+		public boolean accurateLocationCount = true;
+	}
+
+	public BiomeDataOracle(MinecraftInterface.World minecraftWorld, BiomeList biomeList, Config config) {
 		this.minecraftWorld = minecraftWorld;
-		this.recognisedVersion = recognisedVersion;
 		this.biomeList = biomeList;
-		this.quarterResOverride = RecognisedVersion.isNewerOrEqualTo(recognisedVersion, RecognisedVersion._1_16); // TODO: confirm version
+		this.quarterResOverride = config.quarterResOverride;
+		this.middleOfChunkOffset = config.middleOfChunkOffset;
+		this.accurateLocationCount = config.accurateLocationCount;
 	}
 
 	public void populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
@@ -118,14 +125,10 @@ public class BiomeDataOracle {
 	}
 
 	public CoordinatesInWorld findValidLocation(int x, int y, int size, List<Biome> validBiomes, Random random) {
-		if(RecognisedVersion.isNewerOrEqualTo(recognisedVersion, RecognisedVersion._18w06a)) {
-			return doFindValidLocation(x, y, size, validBiomes, random, true);
-		} else {
-			return doFindValidLocation(x, y, size, validBiomes, random, false);
-		}
+		return doFindValidLocation(x, y, size, validBiomes, random, accurateLocationCount);
 	}
 
-	// This algorithm slightly changed in 18w06: prior to this version,
+	// This algorithm slightly changed in the 1.13 snapshots: before,
 	// numberOfValidLocations was only incremented if the random check
 	// succeeded; it is now always incremented.
 	private CoordinatesInWorld doFindValidLocation(
@@ -168,11 +171,7 @@ public class BiomeDataOracle {
 	}
 
 	private int getMiddleOfChunk(int chunkCoord) {
-		if(RecognisedVersion.isNewerOrEqualTo(recognisedVersion, RecognisedVersion._1_13)) { // TODO: confirm version
-			return (chunkCoord << 4) + 9;
-		} else {
-			return (chunkCoord << 4) + 8;
-		}
+		return (chunkCoord << 4) + middleOfChunkOffset;
 	}
 
 	public Biome getBiomeAtMiddleOfChunk(int chunkX, int chunkY)
