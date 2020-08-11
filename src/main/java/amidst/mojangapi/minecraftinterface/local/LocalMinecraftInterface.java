@@ -276,8 +276,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
 		private int getBiomeIdAt(int x, int y, boolean useQuarterResolution) throws Throwable {
 		    Object biome;
-	        // We don't care about the vertical component, so we pass a bogus value
-		    int height = -9999;
+	        // The height has to be 0 because we aren't using the constant column biome zoomer
+		    final int height = 0;
 		    if(useQuarterResolution) {
 		        biome = biomeProviderGetBiomeMethod.invoke(biomeProvider, x, height, y);
 		    } else {

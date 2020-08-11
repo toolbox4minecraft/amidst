@@ -9,7 +9,6 @@ import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
-import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeList;
 import amidst.mojangapi.world.biome.UnknownBiomeIdException;
@@ -19,13 +18,23 @@ import amidst.mojangapi.world.coordinates.Resolution;
 @ThreadSafe
 public class BiomeDataOracle {
 	private final MinecraftInterface.World minecraftWorld;
-	private final RecognisedVersion recognisedVersion;
 	private final BiomeList biomeList;
+	private final boolean quarterResOverride;
+	private final int middleOfChunkOffset;
+	private final boolean accurateLocationCount;
 
-	public BiomeDataOracle(MinecraftInterface.World minecraftWorld, RecognisedVersion recognisedVersion, BiomeList biomeList) {
+	public static class Config {
+		public boolean quarterResOverride = true;
+		public int middleOfChunkOffset = 9;
+		public boolean accurateLocationCount = true;
+	}
+
+	public BiomeDataOracle(MinecraftInterface.World minecraftWorld, BiomeList biomeList, Config config) {
 		this.minecraftWorld = minecraftWorld;
-		this.recognisedVersion = recognisedVersion;
 		this.biomeList = biomeList;
+		this.quarterResOverride = config.quarterResOverride;
+		this.middleOfChunkOffset = config.middleOfChunkOffset;
+		this.accurateLocationCount = config.accurateLocationCount;
 	}
 
 	public void populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
@@ -65,7 +74,11 @@ public class BiomeDataOracle {
 
 	private boolean isValidBiome(int x, int y, List<Biome> validBiomes) {
 		try {
-			return validBiomes.contains(getBiomeAt(x, y, false));
+			if(quarterResOverride) {
+				return validBiomes.contains(getBiomeAt(x >> 2, y >> 2, true));
+			} else {
+				return validBiomes.contains(getBiomeAt(x, y, false));
+			}
 		} catch (UnknownBiomeIdException | MinecraftInterfaceException e) {
 			AmidstLogger.error(e);
 			AmidstMessageBox.displayError("Error", e);
@@ -112,14 +125,10 @@ public class BiomeDataOracle {
 	}
 
 	public CoordinatesInWorld findValidLocation(int x, int y, int size, List<Biome> validBiomes, Random random) {
-		if(RecognisedVersion.isNewerOrEqualTo(recognisedVersion, RecognisedVersion._18w06a)) {
-			return doFindValidLocation(x, y, size, validBiomes, random, true);
-		} else {
-			return doFindValidLocation(x, y, size, validBiomes, random, false);
-		}
+		return doFindValidLocation(x, y, size, validBiomes, random, accurateLocationCount);
 	}
 
-	// This algorithm slightly changed in 18w06: prior to this version,
+	// This algorithm slightly changed in the 1.13 snapshots: before,
 	// numberOfValidLocations was only incremented if the random check
 	// succeeded; it is now always incremented.
 	private CoordinatesInWorld doFindValidLocation(
@@ -161,13 +170,13 @@ public class BiomeDataOracle {
 		return CoordinatesInWorld.from(x, y);
 	}
 
-	private int getMiddleOfChunk(int coordinate) {
-		return coordinate * 16 + 8;
+	private int getMiddleOfChunk(int chunkCoord) {
+		return (chunkCoord << 4) + middleOfChunkOffset;
 	}
 
 	public Biome getBiomeAtMiddleOfChunk(int chunkX, int chunkY)
 			throws UnknownBiomeIdException, MinecraftInterfaceException {
-		return getBiomeAt(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY), false);
+		return getBiomeAt(getMiddleOfChunk(chunkX), getMiddleOfChunk(chunkY), quarterResOverride);
 	}
 
 	public Biome getBiomeAt(int x, int y, boolean useQuarterResolution)
