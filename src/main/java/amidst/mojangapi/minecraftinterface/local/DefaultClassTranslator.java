@@ -69,6 +69,7 @@ public enum DefaultClassTranslator {
                     && c.getNumberOfMethods() == 1
                     && c.hasMethodWithRealArgsReturning("int", "int", "int", null)
                     && !c.hasMethodWithRealArgsReturning("int", "int", "int", "boolean")
+                    && !c.searchForUtf8EqualTo("fetch")
                 )
                 .thenDeclareRequired(CLASS_NOISE_BIOME_PROVIDER)
                     .requiredMethod(METHOD_NOISE_BIOME_PROVIDER_GET_BIOME, "b").real("int").real("int").real("int").end()
