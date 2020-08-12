@@ -13,6 +13,7 @@ import amidst.ResourceLoader;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
+import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
 public abstract class Widget {
@@ -91,8 +92,10 @@ public abstract class Widget {
 	private void updateAlpha(float time) {
 		if (alpha < targetAlpha) {
 			alpha = Math.min(targetAlpha, alpha + time * 4.0f);
+			ThreadMaster.theThreadMaster().setNeedsRepaint();
 		} else if (alpha > targetAlpha) {
 			alpha = Math.max(targetAlpha, alpha - time * 4.0f);
+			ThreadMaster.theThreadMaster().setNeedsRepaint();
 		}
 	}
 

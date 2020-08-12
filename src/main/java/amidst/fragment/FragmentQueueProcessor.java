@@ -9,6 +9,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.layer.LayerManager;
 import amidst.mojangapi.world.Dimension;
 import amidst.settings.Setting;
+import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
 public class FragmentQueueProcessor {
@@ -53,6 +54,8 @@ public class FragmentQueueProcessor {
 			processRecycleQueue();
 		}
 		layerManager.clearInvalidatedLayers();
+		if (!(loadingQueue.isEmpty() && recycleQueue.isEmpty()))
+			ThreadMaster.theThreadMaster().needToProcessFragments();
 	}
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
@@ -79,6 +82,7 @@ public class FragmentQueueProcessor {
 				layerManager.loadAll(dimension, fragment);
 				fragment.setLoaded();
 			}
+			ThreadMaster.theThreadMaster().setNeedsRepaint();
 		}
 	}
 

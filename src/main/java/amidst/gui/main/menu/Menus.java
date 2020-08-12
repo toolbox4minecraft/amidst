@@ -13,6 +13,7 @@ import javax.swing.JRadioButtonMenuItem;
 
 import amidst.documentation.Immutable;
 import amidst.settings.Setting;
+import amidst.threading.ThreadMaster;
 
 /**
  * This creates only a one way data binding. If the setting is updated, this
@@ -79,7 +80,9 @@ public enum Menus {
 			JRadioButtonMenuItem menuItem,
 			T value) {
 		Objects.requireNonNull(value);
-		menuItem.addActionListener(e -> setting.set(value));
+		menuItem.addActionListener(e -> { setting.set(value);
+										  ThreadMaster.theThreadMaster().setNeedsRepaint();
+		});
 		menuItem.setSelected(value.equals(setting.get()));
 		group.add(menuItem);
 		menu.add(menuItem);
@@ -117,7 +120,8 @@ public enum Menus {
 
 	private static JCheckBoxMenuItem checkbox(JMenu menu, Setting<Boolean> setting, JCheckBoxMenuItem menuItem) {
 		menuItem.setSelected(setting.get());
-		menuItem.addActionListener(e -> setting.set(menuItem.isSelected()));
+		menuItem.addActionListener(e -> { setting.set(menuItem.isSelected());
+										  ThreadMaster.theThreadMaster().setNeedsRepaint(); });
 		menu.add(menuItem);
 		return menuItem;
 	}
@@ -135,7 +139,8 @@ public enum Menus {
 
 	private static JMenuItem item(JMenu menu, Runnable runnable, JMenuItem menuItem, int mnemonic) {
 		menuItem.setMnemonic(mnemonic);
-		menuItem.addActionListener(e -> runnable.run());
+		menuItem.addActionListener(e -> { runnable.run();
+										  ThreadMaster.theThreadMaster().setNeedsRepaint(); });
 		menu.add(menuItem);
 		return menuItem;
 	}

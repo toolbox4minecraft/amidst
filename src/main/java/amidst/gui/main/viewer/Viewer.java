@@ -73,6 +73,7 @@ public class Viewer {
 	private ViewerComponent createComponent(Drawer drawer) {
 		ViewerComponent result = new ViewerComponent(drawer);
 		result.addMouseListener(mouseListener);
+		result.addMouseMotionListener(mouseListener);
 		result.addMouseWheelListener(mouseListener);
 		result.setFocusable(true);
 		return result;

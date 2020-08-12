@@ -10,6 +10,7 @@ import amidst.fragment.layer.LayerManager;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.settings.Setting;
+import amidst.threading.ThreadMaster;
 
 @NotThreadSafe
 public class FragmentManager {
@@ -32,6 +33,7 @@ public class FragmentManager {
 		fragment.setCorner(coordinates);
 		fragment.setInitialized();
 		loadingQueue.offer(fragment);
+		ThreadMaster.theThreadMaster().needToProcessFragments();
 		return fragment;
 	}
 
