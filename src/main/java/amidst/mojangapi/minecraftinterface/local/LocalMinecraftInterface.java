@@ -230,7 +230,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
 	private MethodHandle getMethodHandle(SymbolicClass symbolicClass, String method) throws IllegalAccessException {
 	    Method rawMethod = symbolicClass.getMethod(method).getRawMethod();
-	    return MethodHandles.lookup().unreflect(rawMethod);
+	    MethodHandle mh = MethodHandles.lookup().unreflect(rawMethod);
+	    return mh.asType(mh.type().erase());
 	}
 
 	private class World implements MinecraftInterface.World {
@@ -302,11 +303,11 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	        // The height has to be 0 because we aren't using the constant column biome zoomer
 		    final int height = 0;
 		    if(useQuarterResolution) {
-		        biome = biomeProviderGetBiomeMethod.invoke(biomeProvider, x, height, y);
+		        biome = biomeProviderGetBiomeMethod.invokeExact(biomeProvider, x, height, y);
 		    } else {
-		        biome = biomeZoomerGetBiomeMethod.invoke(biomeZoomer, seedForBiomeZoomer, x, height, y, biomeProvider);
+		        biome = biomeZoomerGetBiomeMethod.invokeExact(biomeZoomer, seedForBiomeZoomer, x, height, y, biomeProvider);
 		    }
-		    return (int) registryGetIdMethod.invoke(biomeRegistry, biome);
+		    return (int) registryGetIdMethod.invokeExact(biomeRegistry, biome);
 		}
 	}
 }
