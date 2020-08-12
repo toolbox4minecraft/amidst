@@ -34,6 +34,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private final RecognisedVersion recognisedVersion;
 
 	private final SymbolicClass registryClass;
+	private final SymbolicClass registryAccessClass;
 	private final SymbolicClass resourceKeyClass;
 	private final SymbolicClass worldGenSettingsClass;
 	private final SymbolicClass noiseBiomeProviderClass;
@@ -44,6 +45,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
     private MethodHandle biomeProviderGetBiomeMethod;
     private MethodHandle biomeZoomerGetBiomeMethod;
 
+    private Object registryAccess; // Default registry to use when creating worlds (after 20w28a)
 	private Object biomeRegistry;
 
     /**
@@ -54,6 +56,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	public LocalMinecraftInterface(Map<String, SymbolicClass> symbolicClassMap, RecognisedVersion recognisedVersion) {
 		this.recognisedVersion = recognisedVersion;
 		this.registryClass = symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY);
+		this.registryAccessClass = symbolicClassMap.get(SymbolicNames.CLASS_REGISTRY_ACCESS);
         this.resourceKeyClass = symbolicClassMap.get(SymbolicNames.CLASS_RESOURCE_KEY);
         this.worldGenSettingsClass = symbolicClassMap.get(SymbolicNames.CLASS_WORLD_GEN_SETTINGS);
         this.noiseBiomeProviderClass = symbolicClassMap.get(SymbolicNames.CLASS_NOISE_BIOME_PROVIDER);
@@ -102,13 +105,22 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		worldProperties.setProperty("level-type", getTrueWorldTypeName(worldType));
 		worldProperties.setProperty("generator-settings", generatorOptions);
 
-		SymbolicObject worldSettings = (SymbolicObject) worldGenSettingsClass.callStaticMethod(
-			SymbolicNames.METHOD_WORLD_GEN_SETTINGS_CREATE, worldProperties);
+		SymbolicObject worldSettings;
+		if (worldGenSettingsClass.hasMethod(SymbolicNames.METHOD_WORLD_GEN_SETTINGS_CREATE)) {
+			worldSettings = (SymbolicObject) worldGenSettingsClass.callStaticMethod(
+				SymbolicNames.METHOD_WORLD_GEN_SETTINGS_CREATE, worldProperties);
+		} else {
+			Objects.requireNonNull(registryAccess);
+			worldSettings = (SymbolicObject) worldGenSettingsClass.callStaticMethod(
+				SymbolicNames.METHOD_WORLD_GEN_SETTINGS_CREATE2, registryAccess, worldProperties);
+		}
 
 		Object chunkGenerator = worldSettings.callMethod(SymbolicNames.METHOD_WORLD_GEN_SETTINGS_OVERWORLD);
-		if (chunkGenerator instanceof Boolean || chunkGenerator instanceof Set<?>) {
-			 // Oops, we called the wrong method
+		if (chunkGenerator instanceof Boolean || chunkGenerator instanceof Set<?>) { // Oops, we called the wrong method
 			chunkGenerator = worldSettings.callMethod(SymbolicNames.METHOD_WORLD_GEN_SETTINGS_OVERWORLD2);
+			if (chunkGenerator instanceof Set<?>) { // Still the wrong method
+				chunkGenerator = worldSettings.callMethod(SymbolicNames.METHOD_WORLD_GEN_SETTINGS_OVERWORLD3);
+			}
 		}
 
 		// This is more robust than declaring a symbolic method, if the name ever changes
@@ -151,17 +163,19 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    }
 
 	    try {
-	    	Object metaRegistry = registryClass.getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY);
-	    	if (!(metaRegistry instanceof SymbolicObject)) { // Oops, we called the wrong method
-	    		String name = RecognisedVersion.isOlder(recognisedVersion, RecognisedVersion._1_16_pre1) ?
-						SymbolicNames.FIELD_REGISTRY_META_REGISTRY2 : SymbolicNames.FIELD_REGISTRY_META_REGISTRY3;
-		    	metaRegistry = registryClass.getStaticFieldValue(name);
-	    	}
-	    	metaRegistry = ((SymbolicObject) metaRegistry).getObject();
+        	if (registryAccessClass == null) {
+        		registryAccess = null;
+        		biomeRegistry = getLegacyBiomeRegistry().getObject();
+        	} else {
+        		// We don't use symbolic calls, because they are inconsistently wrapped in SymbolicObject.
+        		registryAccess = registryAccessClass.getMethod(SymbolicNames.METHOD_REGISTRY_ACCESS_BUILTIN)
+        			.getRawMethod().invoke(null);
+        		biomeRegistry = registryAccessClass.getMethod(SymbolicNames.METHOD_REGISTRY_ACCESS_GET_REGISTRY)
+        			.getRawMethod().invoke(registryAccess, createRegistryKey("worldgen/biome"));
+        		biomeRegistry = Objects.requireNonNull(biomeRegistry);
+        	}
 
-	    	stopAllExecutors();
-
-            biomeRegistry = Objects.requireNonNull(getFromRegistryByKey(metaRegistry, "biome"));
+        	stopAllExecutors();
 
             registryGetIdMethod = getMethodHandle(registryClass, SymbolicNames.METHOD_REGISTRY_GET_ID);
             biomeProviderGetBiomeMethod = getMethodHandle(noiseBiomeProviderClass, SymbolicNames.METHOD_NOISE_BIOME_PROVIDER_GET_BIOME);
@@ -174,6 +188,20 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    isInitialized = true;
 	}
 
+	private SymbolicObject getLegacyBiomeRegistry() throws IllegalArgumentException, IllegalAccessException,
+    	InstantiationException, InvocationTargetException, MinecraftInterfaceException {
+    	Object rawMetaRegistry = registryClass.getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY);
+    	if (!(rawMetaRegistry instanceof SymbolicObject)) { // Oops, we called the wrong method
+    		String name = RecognisedVersion.isOlder(recognisedVersion, RecognisedVersion._1_16_pre1) ?
+    				SymbolicNames.FIELD_REGISTRY_META_REGISTRY2 : SymbolicNames.FIELD_REGISTRY_META_REGISTRY3;
+        	rawMetaRegistry = registryClass.getStaticFieldValue(name);
+        }
+
+        SymbolicObject metaRegistry = (SymbolicObject) rawMetaRegistry;
+        return (SymbolicObject) metaRegistry.callMethod(
+            SymbolicNames.METHOD_REGISTRY_GET_BY_KEY, createRegistryKey("biome"));
+    }
+
 	private void stopAllExecutors() throws IllegalArgumentException, IllegalAccessException {
 		Class<?> clazz = utilClass.getClazz();
 		for (Field field: clazz.getDeclaredFields()) {
@@ -185,24 +213,20 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		}
 	}
 
-	private Object getFromRegistryByKey(Object registry, String key)
-	        throws MinecraftInterfaceException, InstantiationException,
-	        IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-	    Object registryKey;
-	    if (resourceKeyClass.hasConstructor(SymbolicNames.CONSTRUCTOR_RESOURCE_KEY)) {
-	    	registryKey = resourceKeyClass
+	private Object createRegistryKey(String key)
+			throws InstantiationException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, MinecraftInterfaceException {
+		if (resourceKeyClass.hasConstructor(SymbolicNames.CONSTRUCTOR_RESOURCE_KEY)) {
+	        return resourceKeyClass
 	                .callConstructor(SymbolicNames.CONSTRUCTOR_RESOURCE_KEY, key)
 	                .getObject();
 	    } else if (registryClass.hasMethod(SymbolicNames.METHOD_REGISTRY_CREATE_KEY)) {
-	    	registryKey = ((SymbolicObject) registryClass
+	        return ((SymbolicObject) registryClass
 	    			.callStaticMethod(SymbolicNames.METHOD_REGISTRY_CREATE_KEY, key))
 	    			.getObject();
 	    } else {
-	    	throw new MinecraftInterfaceException("couldn't create registry key");
+	        throw new MinecraftInterfaceException("couldn't create registry key");
 	    }
-
-	    Method getByKey = registryClass.getMethod(SymbolicNames.METHOD_REGISTRY_GET_BY_KEY).getRawMethod();
-	    return getByKey.invoke(registry, registryKey);
 	}
 
 	private MethodHandle getMethodHandle(SymbolicClass symbolicClass, String method) throws IllegalAccessException {
