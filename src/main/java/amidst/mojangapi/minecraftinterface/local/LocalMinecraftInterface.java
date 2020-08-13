@@ -165,7 +165,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    try {
         	if (registryAccessClass == null) {
         		registryAccess = null;
-        		biomeRegistry = getLegacyBiomeRegistry().getObject();
+        		biomeRegistry = getLegacyBiomeRegistry();
         	} else {
         		// We don't use symbolic calls, because they are inconsistently wrapped in SymbolicObject.
         		registryAccess = registryAccessClass.getMethod(SymbolicNames.METHOD_REGISTRY_ACCESS_BUILTIN)
@@ -188,17 +188,16 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	    isInitialized = true;
 	}
 
-	private SymbolicObject getLegacyBiomeRegistry() throws IllegalArgumentException, IllegalAccessException,
+	private Object getLegacyBiomeRegistry() throws IllegalArgumentException, IllegalAccessException,
     	InstantiationException, InvocationTargetException, MinecraftInterfaceException {
-    	Object rawMetaRegistry = registryClass.getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY);
-    	if (!(rawMetaRegistry instanceof SymbolicObject)) { // Oops, we called the wrong method
+    	Object metaRegistry = registryClass.getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY);
+    	if (!(metaRegistry instanceof SymbolicObject)) { // Oops, we called the wrong method
     		String name = RecognisedVersion.isOlder(recognisedVersion, RecognisedVersion._1_16_pre1) ?
     				SymbolicNames.FIELD_REGISTRY_META_REGISTRY2 : SymbolicNames.FIELD_REGISTRY_META_REGISTRY3;
-        	rawMetaRegistry = registryClass.getStaticFieldValue(name);
+        	metaRegistry = registryClass.getStaticFieldValue(name);
         }
 
-        SymbolicObject metaRegistry = (SymbolicObject) rawMetaRegistry;
-        return (SymbolicObject) metaRegistry.callMethod(
+        return ((SymbolicObject) metaRegistry).callMethod(
             SymbolicNames.METHOD_REGISTRY_GET_BY_KEY, createRegistryKey("biome"));
     }
 
