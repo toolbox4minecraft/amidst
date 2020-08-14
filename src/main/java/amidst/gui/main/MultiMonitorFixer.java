@@ -30,7 +30,7 @@ public class MultiMonitorFixer implements ComponentListener {
 	
 	private static MethodHandle getGCHandle() {
 		try {
-			Method m1 = Window.class.getDeclaredMethod("setGCHandle", GraphicsConfiguration.class);
+			Method m1 = Window.class.getDeclaredMethod("setGraphicsConfiguration", GraphicsConfiguration.class);
 			m1.setAccessible(true);
 			MethodHandle mh1 = MethodHandles.lookup().unreflect(m1);
 			return mh1.asType(MethodType.methodType(void.class, JFrame.class, GraphicsConfiguration.class)); // change to allow invokeExact
