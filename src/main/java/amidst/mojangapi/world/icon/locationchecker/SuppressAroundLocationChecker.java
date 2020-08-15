@@ -52,7 +52,7 @@ public class SuppressAroundLocationChecker<T> implements LocationChecker {
 		if (nwRegionX != seRegionX && nwRegionZ != seRegionZ) {
 			structPos = this.regionalProducer.getCheckedLocation(seChunkX, seChunkZ);
 			
-			if (structPos.getDistanceChebyshev(outpostPos) <= distance) {
+			if (structPos != null && structPos.getDistanceChebyshev(outpostPos) <= distance) { // TODO: why was this null check not here?
 				return true;
 			}
 			

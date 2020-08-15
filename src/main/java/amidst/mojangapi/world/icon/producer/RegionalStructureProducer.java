@@ -87,7 +87,7 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 
 	@Override
 	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer, T additionalData) {
-		if(!checker.hasValidLocations()) {
+		if(checker != null && !checker.hasValidLocations()) {
 			return; // No need to check if the LocationChecker will never accept anything
 		}
 
