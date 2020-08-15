@@ -59,7 +59,7 @@ public class ScatteredFeaturesProducer extends RegionalStructureProducer<Void> {
 		
 		super(resolution,
 			  offsetInWorld,
-			  new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk),
+			  validBiomesAtMiddleOfChunk == null ? null : new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk),
 			  provider,
 			  dimension,
 			  displayDimension,
