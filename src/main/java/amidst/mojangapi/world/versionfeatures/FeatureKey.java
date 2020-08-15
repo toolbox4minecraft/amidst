@@ -6,6 +6,7 @@ import amidst.documentation.Immutable;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.biome.BiomeList;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
+import amidst.mojangapi.world.icon.producer.VillageProducer;
 import amidst.mojangapi.world.icon.producer.WorldIconProducer;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.mojangapi.world.oracle.EndIsland;
@@ -29,7 +30,7 @@ public class FeatureKey<T> {
 	public static final FeatureKey<WorldIconProducer<List<EndIsland>>> END_CITY_PRODUCER  = make();
 	public static final FeatureKey<WorldIconProducer<Void>> MINESHAFT_PRODUCER            = make();
 	public static final FeatureKey<CachedWorldIconProducer> STRONGHOLD_PRODUCER           = make();
-	public static final FeatureKey<WorldIconProducer<Void>> VILLAGE_PRODUCER              = make();
+	public static final FeatureKey<VillageProducer> VILLAGE_PRODUCER                      = make();
 	public static final FeatureKey<WorldIconProducer<Void>> PILLAGER_OUTPOST_PRODUCER     = make();
 	public static final FeatureKey<WorldIconProducer<Void>> DESERT_TEMPLE_PRODUCER        = make();
 	public static final FeatureKey<WorldIconProducer<Void>> IGLOO_PRODUCER                = make();

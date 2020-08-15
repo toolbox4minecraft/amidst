@@ -31,8 +31,7 @@ public class OceanMonumentProducer_Original extends RegionalStructureProducer<Vo
 			List<Biome> validBiomesAtMiddleOfChunk,
 			List<Biome> validBiomesForStructure) {
 		
-		super(
-			  resolution,
+		super(resolution,
 			  offsetInWorld,
 			  new AllValidLocationChecker(
 					  new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk),

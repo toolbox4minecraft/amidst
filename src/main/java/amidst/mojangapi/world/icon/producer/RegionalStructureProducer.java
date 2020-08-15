@@ -32,17 +32,17 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 	private static final long MAGIC_NUMBER_1 = 341873128712L;
 	private static final long MAGIC_NUMBER_2 = 132897987541L;
 	
-	private final long worldSeed;
-	private final long salt;
-	private final byte spacing; // spacing in chunks
-	private final int separation; // offset in chunks
-	private final boolean isTriangular;
-	private final boolean buggyStructureCoordinateMath;
+	public final long worldSeed;
+	public final long salt;
+	public final byte spacing; // spacing in chunks
+	public final int separation; // offset in chunks
+	public final boolean isTriangular;
+	public final boolean buggyStructureCoordinateMath;
 	
 	/**
-	 * Amount of structure regions that can fit in a fragment. It always
-	 * Even if a region is intersecting the fragment by only a bit, it's
-	 * still counted just in case.
+	 * Amount of structure regions that can fit in a fragment. Even if a
+	 * region is intersecting the fragment by only a bit, it's still
+	 * counted just in case.
 	 */
 	private final int fragmentRegionCount;
 	
@@ -108,16 +108,15 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 		int x = xRelativeToFragment + (int) corner.getXAs(resolution);
 		int y = yRelativeToFragment + (int) corner.getYAs(resolution);
 		
-		// The coordinates for the structure start within a region
-		CoordinatesInWorld possibleLocation = getPossibleLocation(x, y);
-		int possibleX = (int) possibleLocation.getX();
-		int possibleY = (int) possibleLocation.getY();
+		CoordinatesInWorld checkedLocation = getCheckedLocation(x, y);
 		
-		// if there is no checker provided, skip it
-		if (checker == null || checker.isValidLocation(possibleX, possibleY)) {
-			DefaultWorldIconTypes worldIconType = provider.get(possibleX, possibleY, additionalData);
+		if (checkedLocation != null) {
+			int checkedX = (int) checkedLocation.getX();
+			int checkedY = (int) checkedLocation.getY();
+			
+			DefaultWorldIconTypes worldIconType = provider.get(checkedX, checkedY, additionalData);
 			if (worldIconType != null) {
-				CoordinatesInWorld coordinates = createCoordinates(corner, possibleX - (int) corner.getXAs(resolution), possibleY - (int) corner.getYAs(resolution));
+				CoordinatesInWorld coordinates = createCoordinates(corner, checkedX - (int) corner.getXAs(resolution), checkedY - (int) corner.getYAs(resolution));
 				
 				if(coordinates.isInBoundsOf(corner, Fragment.SIZE)) { // FIXME idk if this is nessecary
 					consumer.accept(
@@ -140,10 +139,23 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 		long yInWorld = resolution.convertFromThisToWorld(yRelativeToFragment);
 		return corner.add(xInWorld + offsetInWorld, yInWorld + offsetInWorld);
 	}
-	
-	private CoordinatesInWorld getPossibleLocation(int x, int y) {
-		int value1 = getRegionCoord(x);
-		int value2 = getRegionCoord(y);
+
+	public CoordinatesInWorld getCheckedLocation(int chunkX, int chunkY) {
+		CoordinatesInWorld possibleLocation = getPossibleLocation(chunkX, chunkY);
+		
+		// if there is no checker provided, skip it
+		if (checker == null || checker.isValidLocation((int) possibleLocation.getX(), (int) possibleLocation.getY())) {
+			return possibleLocation;
+		}
+		return null;
+	}
+
+	/**
+	 * This returns the equivalent of a StructureStart's position.
+	 */
+	public CoordinatesInWorld getPossibleLocation(int chunkX, int chunkY) {	// TODO: is this always normal chunks or can this be nether chunks?
+		int value1 = getRegionCoord(chunkX);
+		int value2 = getRegionCoord(chunkY);
 		// JRand is faster than normal Random
 		JRand random = new JRand(getRegionSeed(value1, value2));
 		value1 = getStructCoordInRegion(random, value1);
@@ -151,7 +163,7 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 		return new CoordinatesInWorld(value1, value2);
 	}
 
-	private int getRegionCoord(int coordinate) {
+	public int getRegionCoord(int coordinate) {
 		return getModifiedCoord(coordinate) / spacing;
 	}
 

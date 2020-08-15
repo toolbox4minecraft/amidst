@@ -11,8 +11,7 @@ import amidst.mojangapi.world.icon.locationchecker.AllValidLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.StructureBiomeLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.SuppressAroundLocationChecker;
-import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
-import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
+import amidst.mojangapi.world.icon.type.WorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @ThreadSafe
@@ -24,25 +23,34 @@ public class PillagerOutpostProducer extends RegionalStructureProducer<Void> {
 	private static final int STRUCTURE_SIZE = 0;
 
 
-	public PillagerOutpostProducer(long seed, BiomeDataOracle biomeDataOracle,
-			WorldIconProducer<Void> villageLocationChecker, int avoidVillageRadius, List<Biome> validBiomesForStructure) {
-		super(
-			Resolution.CHUNK,
-			4,
-			new AllValidLocationChecker(
-					new PillagerOutpostAlgorithm(seed),
-					new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomesForStructure),
-					new SuppressAroundLocationChecker(villageLocationChecker, avoidVillageRadius)
-				),
-			new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.PILLAGER_OUTPOST),
-			Dimension.OVERWORLD,
-			false,
-			seed,
-			SALT,
-			SPACING,
-			SEPARATION,
-			IS_TRIANGULAR
-		);
+	public PillagerOutpostProducer(
+			Resolution resolution,
+			int offsetInWorld,
+			BiomeDataOracle biomeDataOracle,
+			List<Biome> validBiomesForStructure,
+			WorldIconTypeProvider<Void> provider,
+			Dimension dimension,
+			boolean displayDimension,
+			long seed,
+			RegionalStructureProducer<Void> villageProducer,
+			int avoidVillageRadius) {
+		
+		super(resolution,
+			  offsetInWorld,
+			  new AllValidLocationChecker(
+					  new PillagerOutpostAlgorithm(seed),
+					  new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomesForStructure),
+					  new SuppressAroundLocationChecker<>(villageProducer, avoidVillageRadius)
+			  ),
+			  provider,
+			  dimension,
+			  displayDimension,
+			  seed,
+			  SALT,
+			  SPACING,
+			  SEPARATION,
+			  IS_TRIANGULAR
+		     );
 	}
 
 	private static class PillagerOutpostAlgorithm implements LocationChecker {

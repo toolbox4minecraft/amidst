@@ -31,6 +31,7 @@ public class VillageProducer extends RegionalStructureProducer<Void> {
 			boolean displayDimension,
 			long seed,
 			boolean doComplexVillageCheck) {
+		
 		super(resolution,
 			  offsetInWorld,
 			  getLocationCheckers(seed, biomeDataOracle, validBiomesForStructure, doComplexVillageCheck),

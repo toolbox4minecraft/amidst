@@ -67,8 +67,8 @@ public class OceanMonumentProducer_Fixed extends RegionalStructureProducer<Void>
 			BiomeDataOracle biomeDataOracle,
 			List<Biome> validBiomesAtMiddleOfChunk,
 			List<Biome> validBiomesForStructure) {
-		super(
-			  resolution,
+		
+		super(resolution,
 			  offsetInWorld,
 			  new AllValidLocationChecker(
 				  new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_CENTER_SIZE, validBiomesAtMiddleOfChunk),
