@@ -9,6 +9,7 @@ import amidst.documentation.NotThreadSafe;
 import amidst.fragment.FragmentGraph;
 import amidst.fragment.FragmentManager;
 import amidst.gui.main.viewer.Graphics2DAccelerationCounter;
+import amidst.gui.main.viewer.Zoom;
 import amidst.settings.Setting;
 
 @NotThreadSafe
@@ -17,6 +18,7 @@ public class DebugWidget extends TextWidget {
 	private final FragmentManager fragmentManager;
 	private final Setting<Boolean> isVisibleSetting;
 	private final Graphics2DAccelerationCounter accelerationCounter;
+	private final Zoom zoom;
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public DebugWidget(
@@ -24,12 +26,14 @@ public class DebugWidget extends TextWidget {
 			FragmentGraph graph,
 			FragmentManager fragmentManager,
 			Setting<Boolean> isVisibleSetting,
-			Graphics2DAccelerationCounter accelerationCounter) {
+			Graphics2DAccelerationCounter accelerationCounter,
+			Zoom zoom) {
 		super(anchor);
 		this.graph = graph;
 		this.fragmentManager = fragmentManager;
 		this.isVisibleSetting = isVisibleSetting;
 		this.accelerationCounter = accelerationCounter;
+		this.zoom = zoom;
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -47,6 +51,7 @@ public class DebugWidget extends TextWidget {
 					"",
 					"Viewer:",
 					"Size: " + columns + "x" + rows + " [" + (columns * rows) + "]",
+					String.format("Pixel Scale: %1$.3fx", zoom.getCurrentValue() * 4),
 					String.format("Acceleration: %1$.1f%%", accelerationCounter.getAcceleratedPercentage()));
 		} else {
 			return null;

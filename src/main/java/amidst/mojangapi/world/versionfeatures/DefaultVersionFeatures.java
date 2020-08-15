@@ -58,7 +58,7 @@ public enum DefaultVersionFeatures {
 	}
 
 	// @formatter:off
-	private static final FeatureKey<MinecraftInterface.World> MINECRAFT_WORLD                = FeatureKey.make();
+	private static final FeatureKey<MinecraftInterface.World> MINECRAFT_WORLD                  = FeatureKey.make();
 	public static final FeatureKey<List<Biome>>      SPAWN_VALID_BIOMES                        = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>     STRONGHOLD_VALID_MIDDLE_CHUNK_BIOMES      = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>     VILLAGE_VALID_BIOMES                      = FeatureKey.make();
@@ -91,13 +91,44 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<Byte>            NETHER_FORTRESS_SPACING                   = FeatureKey.make();
 	private static final FeatureKey<Byte>            NETHER_FORTRESS_SEPARATION                = FeatureKey.make();
 	private static final FeatureKey<Boolean>         BUGGY_STRUCTURE_COORDINATE_MATH           = FeatureKey.make();
+	private static final FeatureKey<Boolean>        BIOME_DATA_ORACLE_QUARTER_RES_OVERRIDE     = FeatureKey.make();
+	private static final FeatureKey<Boolean>        BIOME_DATA_ORACLE_ACCURATE_LOCATION_COUNT  = FeatureKey.make();
+	private static final FeatureKey<Integer>        BIOME_DATA_ORACLE_MIDDLE_OF_CHUNK_OFFSET   = FeatureKey.make();
 
 	private static final VersionFeatures.Builder FEATURES_BUILDER = VersionFeatures.builder()
-			.with(FeatureKey.BIOME_DATA_ORACLE, (recognisedVersion, features) -> new BiomeDataOracle(
-				features.get(MINECRAFT_WORLD),
-				recognisedVersion,
-				features.get(FeatureKey.BIOME_LIST)
-			))
+			.with(FeatureKey.BIOME_DATA_ORACLE, VersionFeature.bind(features -> {
+				BiomeDataOracle.Config config = new BiomeDataOracle.Config();
+				config.quarterResOverride = features.get(BIOME_DATA_ORACLE_QUARTER_RES_OVERRIDE);
+				config.middleOfChunkOffset = features.get(BIOME_DATA_ORACLE_MIDDLE_OF_CHUNK_OFFSET);
+				config.accurateLocationCount = features.get(BIOME_DATA_ORACLE_ACCURATE_LOCATION_COUNT);
+				return VersionFeature.constant(new BiomeDataOracle(
+					features.get(MINECRAFT_WORLD),
+					features.get(FeatureKey.BIOME_LIST),
+					config
+				));
+			}))
+			.with(BIOME_DATA_ORACLE_QUARTER_RES_OVERRIDE, VersionFeature.<Boolean> builder()
+				.init(
+					false
+				).since(RecognisedVersion._20w21a,
+					true
+				).construct()
+			)
+			.with(BIOME_DATA_ORACLE_ACCURATE_LOCATION_COUNT, VersionFeature.<Boolean> builder()
+				.init(
+					false
+				).since(RecognisedVersion._18w06a,
+					true
+				).construct()
+			)
+			.with(BIOME_DATA_ORACLE_MIDDLE_OF_CHUNK_OFFSET, VersionFeature.<Integer> builder()
+				.init(
+					8
+				).since(RecognisedVersion._18w06a,
+					9
+				).construct()
+			)
+
 			.with(FeatureKey.ENABLED_LAYERS, VersionFeature.<Integer> listBuilder()
 				.init(
 					LayerIds.ALPHA,
