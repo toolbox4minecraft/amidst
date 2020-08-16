@@ -2,9 +2,12 @@ package amidst.mojangapi.world.testworld.storage.json;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
+import amidst.mojangapi.world.Dimension;
 
 @Immutable
 public class AreaJson implements Comparable<AreaJson> {
+	// Default to Overworld, to support old areas
+	private volatile int dimension = Dimension.OVERWORLD.getId();
 	private volatile long x;
 	private volatile long y;
 	private volatile long width;
@@ -14,11 +17,16 @@ public class AreaJson implements Comparable<AreaJson> {
 	public AreaJson() {
 	}
 
-	public AreaJson(long x, long y, long width, long height) {
+	public AreaJson(Dimension dimension, long x, long y, long width, long height) {
+		this.dimension = dimension.getId();
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
+	}
+
+	public Dimension getDimension() {
+		return Dimension.fromId(dimension);
 	}
 
 	public long getX() {
@@ -41,6 +49,10 @@ public class AreaJson implements Comparable<AreaJson> {
 	public int compareTo(AreaJson o) {
 		if (this == o) {
 			return 0;
+		} else if (this.dimension < o.dimension) {
+			return -1;
+		} else if (this.dimension > o.dimension) {
+			return 1;
 		} else if (this.x < o.x) {
 			return -1;
 		} else if (this.x > o.x) {
@@ -66,6 +78,7 @@ public class AreaJson implements Comparable<AreaJson> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + dimension;
 		result = prime * result + (int) (height ^ (height >>> 32));
 		result = prime * result + (int) (width ^ (width >>> 32));
 		result = prime * result + (int) (x ^ (x >>> 32));
@@ -85,6 +98,9 @@ public class AreaJson implements Comparable<AreaJson> {
 			return false;
 		}
 		AreaJson other = (AreaJson) obj;
+		if (dimension != other.dimension) {
+			return false;
+		}
 		if (height != other.height) {
 			return false;
 		}

@@ -10,8 +10,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 
@@ -21,6 +23,8 @@ import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.minecraftinterface.UnsupportedDimensionException;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
 import amidst.util.ArrayCache;
 
@@ -280,9 +284,13 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 	    }
 
 		@Override
-		public<T> T getBiomeData(int x, int y, int width, int height,
+		public<T> T getBiomeData(
+				Dimension dimension,
+				int x, int y, int width, int height,
 				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException {
+			if (dimension != Dimension.OVERWORLD)
+				throw new UnsupportedDimensionException(dimension);
 
 			int size = width * height;
 		    return dataArray.withArrayFaillible(size, data -> {
@@ -329,6 +337,12 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 		        biome = biomeZoomerGetBiomeMethod.invoke(biomeZoomer, seedForBiomeZoomer, x, height, y, biomeProvider);
 		    }
 		    return (int) registryGetIdMethod.invoke(biomeRegistry, biome);
+		}
+
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			// TODO: support nether biomes for relevant versions
+			return Collections.singleton(Dimension.OVERWORLD);
 		}
 	}
 }

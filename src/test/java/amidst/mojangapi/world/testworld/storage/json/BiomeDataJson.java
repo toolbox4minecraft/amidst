@@ -4,6 +4,7 @@ import java.util.SortedMap;
 
 import amidst.documentation.GsonConstructor;
 import amidst.documentation.Immutable;
+import amidst.mojangapi.world.Dimension;
 
 @Immutable
 public class BiomeDataJson {
@@ -33,8 +34,8 @@ public class BiomeDataJson {
 		this.biomeData = biomeData;
 	}
 
-	public int[] get(int x, int y, int width, int height) {
-		AreaJson area = new AreaJson(x, y, width, height);
+	public int[] get(Dimension dimension, int x, int y, int width, int height) {
+		AreaJson area = new AreaJson(dimension, x, y, width, height);
 		short[] result = biomeData.get(area);
 		if (result != null) {
 			return short2int(result);

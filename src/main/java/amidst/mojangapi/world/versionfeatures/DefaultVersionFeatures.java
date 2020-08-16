@@ -10,6 +10,7 @@ import amidst.fragment.layer.LayerIds;
 import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldOptions;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeList;
@@ -93,6 +94,7 @@ public enum DefaultVersionFeatures {
 				config.accurateLocationCount = features.get(BIOME_DATA_ORACLE_ACCURATE_LOCATION_COUNT);
 				return VersionFeature.constant(new BiomeDataOracle(
 					features.get(MINECRAFT_WORLD),
+					Dimension.OVERWORLD,
 					features.get(FeatureKey.BIOME_LIST),
 					config
 				));

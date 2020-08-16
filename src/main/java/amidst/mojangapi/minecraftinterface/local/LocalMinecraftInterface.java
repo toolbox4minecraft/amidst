@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
@@ -23,6 +24,8 @@ import amidst.logging.AmidstLogger;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.minecraftinterface.UnsupportedDimensionException;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
 import amidst.util.ArrayCache;
 
@@ -236,38 +239,54 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
 	private class World implements MinecraftInterface.World {
 		/**
-		 * A BiomeProvider instance for the current world, giving
+		 * A BiomeProvider instance for the current overworld, giving
 		 * access to the quarter-scale biome data.
 		 */
-	    private Object biomeProvider;
+	    private Object overworldBiomeProvider;
 	    /**
-	     * The BiomeZoomer instance for the current world, which
+	     * The BiomeZoomer instance for the current overworld, which
 	     * interpolates the quarter-scale BiomeProvider to give
 	     * full-scale biome data.
 	     */
-	    private Object biomeZoomer;
+	    private Object overworldBiomeZoomer;
 	    /**
 	     * The seed used by the BiomeZoomer during interpolation.
 	     * It is derived from the world seed.
 	     */
 		private long seedForBiomeZoomer;
 
-	    private World(Object biomeProvider, Object biomeZoomer, long seedForBiomeZoomer) {
-	    	this.biomeProvider = biomeProvider;
-	    	this.biomeZoomer = biomeZoomer;
+	    private World(Object overworldBiomeProvider, Object overworldBiomeZoomer, long seedForBiomeZoomer) {
+	    	this.overworldBiomeProvider = Objects.requireNonNull(overworldBiomeProvider);
+	    	this.overworldBiomeZoomer = Objects.requireNonNull(overworldBiomeZoomer);
 	    	this.seedForBiomeZoomer = seedForBiomeZoomer;
 	    }
 
 		@Override
-		public<T> T getBiomeData(int x, int y, int width, int height,
+		public<T> T getBiomeData(
+				Dimension dimension,
+				int x, int y, int width, int height,
 				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException {
+			Object biomeProvider;
+			Object biomeZoomer;
+
+			// TODO: support nether biomes
+			switch (dimension) {
+			case OVERWORLD:
+				biomeProvider = this.overworldBiomeProvider;
+				biomeZoomer = this.overworldBiomeZoomer;
+				break;
+			default:
+				throw new UnsupportedDimensionException(dimension);
+			}
+
+			Object actualBiomeZoomer = useQuarterResolution ? null : biomeZoomer;
 
 			int size = width * height;
 		    return dataArray.withArrayFaillible(size, data -> {
 			    try {
 			    	if(size == 1) {
-			    		data[0] = getBiomeIdAt(x, y, useQuarterResolution);
+			    		data[0] = getBiomeIdAt(biomeProvider, actualBiomeZoomer, x, y);
 			    		return biomeDataMapper.apply(data);
 			    	}
 
@@ -285,7 +304,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		                    for (int i = 0; i < w; i++) {
 		                        for (int j = 0; j < h; j++) {
 		                            int trueIdx = (x0 + i) + (y0 + j) * width;
-		                            data[trueIdx] = getBiomeIdAt(x + x0 + i, y + y0 + j, useQuarterResolution);
+		                            data[trueIdx] = getBiomeIdAt(biomeProvider, actualBiomeZoomer, x + x0 + i, y + y0 + j);
 		                        }
 		                    }
 		                }
@@ -298,11 +317,16 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		    });
 		}
 
-		private int getBiomeIdAt(int x, int y, boolean useQuarterResolution) throws Throwable {
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			return Collections.singleton(Dimension.OVERWORLD);
+		}
+
+		private int getBiomeIdAt(Object biomeProvider, Object biomeZoomer, int x, int y) throws Throwable {
 		    Object biome;
 	        // The height has to be 0 because we aren't using the constant column biome zoomer
 		    final int height = 0;
-		    if(useQuarterResolution) {
+		    if(biomeZoomer == null) {
 		        biome = biomeProviderGetBiomeMethod.invokeExact(biomeProvider, x, height, y);
 		    } else {
 		        biome = biomeZoomerGetBiomeMethod.invokeExact(biomeZoomer, seedForBiomeZoomer, x, height, y, biomeProvider);

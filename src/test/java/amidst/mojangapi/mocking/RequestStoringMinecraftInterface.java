@@ -1,11 +1,13 @@
 package amidst.mojangapi.mocking;
 
+import java.util.Set;
 import java.util.function.Function;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
 
 @ThreadSafe
@@ -18,8 +20,8 @@ public class RequestStoringMinecraftInterface implements MinecraftInterface {
 		this.builder = builder;
 	}
 
-	private void store(int x, int y, int width, int height, boolean useQuarterResolution, int[] biomeData) {
-		builder.store(x, y, width, height, useQuarterResolution, biomeData);
+	private void store(Dimension dimension, int x, int y, int width, int height, boolean useQuarterResolution, int[] biomeData) {
+		builder.store(dimension, x, y, width, height, useQuarterResolution, biomeData);
 	}
 
 	@Override
@@ -41,13 +43,18 @@ public class RequestStoringMinecraftInterface implements MinecraftInterface {
 		}
 
 		@Override
-		public synchronized<T> T getBiomeData(int x, int y, int width, int height,
+		public synchronized<T> T getBiomeData(Dimension dimension, int x, int y, int width, int height,
 				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException {
-			return realMinecraftWorld.getBiomeData(x, y, width, height, useQuarterResolution, biomeData -> {
-				store(x, y, width, height, useQuarterResolution, biomeData);
+			return realMinecraftWorld.getBiomeData(dimension, x, y, width, height, useQuarterResolution, biomeData -> {
+				store(dimension, x, y, width, height, useQuarterResolution, biomeData);
 				return biomeDataMapper.apply(biomeData);
 			});
+		}
+
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			return realMinecraftWorld.supportedDimensions();
 		}
 	}
 }
