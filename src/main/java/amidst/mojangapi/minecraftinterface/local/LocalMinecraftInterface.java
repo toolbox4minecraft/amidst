@@ -170,11 +170,14 @@ public class LocalMinecraftInterface implements MinecraftInterface {
         		registryAccess = null;
         		biomeRegistry = getLegacyBiomeRegistry();
         	} else {
+        		Object key = ((SymbolicObject) registryClass
+    	    			.callStaticMethod(SymbolicNames.METHOD_REGISTRY_CREATE_KEY, "worldgen/biome"))
+    	    			.getObject();
         		// We don't use symbolic calls, because they are inconsistently wrapped in SymbolicObject.
         		registryAccess = registryAccessClass.getMethod(SymbolicNames.METHOD_REGISTRY_ACCESS_BUILTIN)
         			.getRawMethod().invoke(null);
         		biomeRegistry = registryAccessClass.getMethod(SymbolicNames.METHOD_REGISTRY_ACCESS_GET_REGISTRY)
-        			.getRawMethod().invoke(registryAccess, createRegistryKey("worldgen/biome"));
+        			.getRawMethod().invoke(registryAccess, key);
         		biomeRegistry = Objects.requireNonNull(biomeRegistry);
         	}
 
@@ -201,7 +204,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
         }
 
         return ((SymbolicObject) metaRegistry).callMethod(
-            SymbolicNames.METHOD_REGISTRY_GET_BY_KEY, createRegistryKey("biome"));
+            SymbolicNames.METHOD_REGISTRY_GET_BY_KEY, createResourceKey("biome"));
     }
 
 	private void stopAllExecutors() throws IllegalArgumentException, IllegalAccessException {
@@ -215,20 +218,10 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		}
 	}
 
-	private Object createRegistryKey(String key)
+	private Object createResourceKey(String key)
 			throws InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, MinecraftInterfaceException {
-		if (resourceKeyClass.hasConstructor(SymbolicNames.CONSTRUCTOR_RESOURCE_KEY)) {
-	        return resourceKeyClass
-	                .callConstructor(SymbolicNames.CONSTRUCTOR_RESOURCE_KEY, key)
-	                .getObject();
-	    } else if (registryClass.hasMethod(SymbolicNames.METHOD_REGISTRY_CREATE_KEY)) {
-	        return ((SymbolicObject) registryClass
-	    			.callStaticMethod(SymbolicNames.METHOD_REGISTRY_CREATE_KEY, key))
-	    			.getObject();
-	    } else {
-	        throw new MinecraftInterfaceException("couldn't create registry key");
-	    }
+		return resourceKeyClass.callConstructor(SymbolicNames.CONSTRUCTOR_RESOURCE_KEY, key).getObject();
 	}
 
 	private MethodHandle getMethodHandle(SymbolicClass symbolicClass, String method) throws IllegalAccessException {

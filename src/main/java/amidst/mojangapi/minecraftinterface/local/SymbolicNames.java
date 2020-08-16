@@ -21,6 +21,8 @@ public enum SymbolicNames {
     public static final String CLASS_RESOURCE_KEY = "ResourceKey";
     public static final String CONSTRUCTOR_RESOURCE_KEY = "<init>";
 
+    public static final String CLASS_REGISTRY_ACCESS_KEY = "RegistryKey";
+
 	public static final String CLASS_UTIL = "Util";
 
 	public static final String CLASS_WORLD_GEN_SETTINGS = "WorldGenSettings";

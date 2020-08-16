@@ -18,16 +18,17 @@ public enum DefaultClassTranslator {
     private ClassTranslator createClassTranslator() {
         return ClassTranslator
             .builder()
-                .ifDetect(c ->
-                        (c.getNumberOfConstructors() == 3
-                        && c.getNumberOfFields() == 3
-                        && c.getField(0).hasFlags(AccessFlags.PRIVATE | AccessFlags.STATIC | AccessFlags.FINAL)
+                .ifDetect(c -> c.getNumberOfConstructors() == 3
+                        && (c.getNumberOfFields() == 3 || c.getNumberOfFields() == 4)
+                        && c.getField(0).hasFlags(AccessFlags.STATIC | AccessFlags.FINAL)
+                        && c.searchForUtf8EqualTo("minecraft")
                         && c.searchForUtf8EqualTo("argument.id.invalid")
-                        && c.searchForUtf8EqualTo("minecraft")) // before 20w21a
-                        || c.searchForUtf8EqualTo("ResourceKey[") // from 20w21a
                 )
                 .thenDeclareRequired(CLASS_RESOURCE_KEY)
-                    .optionalConstructor(CONSTRUCTOR_RESOURCE_KEY).real("java.lang.String").end() // before 20w21a
+                    .requiredConstructor(CONSTRUCTOR_RESOURCE_KEY).real("java.lang.String").end()
+            .next()
+            	.ifDetect(c -> c.searchForUtf8EqualTo("ResourceKey["))
+            	.thenDeclareOptional(CLASS_REGISTRY_ACCESS_KEY) // since 20w21a
             .next()
                 .ifDetect(c -> c.getNumberOfConstructors() <= 1
                     && c.getNumberOfFields() > 15
@@ -47,7 +48,7 @@ public enum DefaultClassTranslator {
                 .ifDetect(c -> c.searchForUtf8EqualTo("Missing builtin registry: ")) // since 20w28a
                 .thenDeclareOptional(CLASS_REGISTRY_ACCESS)
                     .requiredMethod(METHOD_REGISTRY_ACCESS_BUILTIN, "b").end()
-                    .requiredMethod(METHOD_REGISTRY_ACCESS_GET_REGISTRY, "b").symbolic(CLASS_RESOURCE_KEY).end()
+                    .requiredMethod(METHOD_REGISTRY_ACCESS_GET_REGISTRY, "b").symbolic(CLASS_REGISTRY_ACCESS_KEY).end()
             .next()
                 .ifDetect(c -> c.searchForUtf8EqualTo("level-seed")
                 	&& c.searchForUtf8EqualTo("generator-settings")
