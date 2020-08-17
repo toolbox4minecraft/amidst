@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Objects;
@@ -32,6 +33,7 @@ import amidst.util.ArrayCache;
 public class LocalMinecraftInterface implements MinecraftInterface {
 
 	private static String STRING_WITH_ZERO_HASHCODE = "drumwood boulderhead";
+	private static Set<Dimension> SUPPORTED_DIMENSIONS = Collections.unmodifiableSet(EnumSet.of(Dimension.OVERWORLD, Dimension.NETHER));
 
     private boolean isInitialized = false;
 	private final RecognisedVersion recognisedVersion;
@@ -280,22 +282,22 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		 * A BiomeProvider instance for the current overworld, giving
 		 * access to the quarter-scale biome data.
 		 */
-	    private Object overworldBiomeProvider;
+	    private final Object overworldBiomeProvider;
 	    /**
 	     * A Biome provider instance for the current nether.
 	     */
-	    private Object netherBiomeProvider;
+	    private final Object netherBiomeProvider;
 	    /**
 	     * The BiomeZoomer instance for the current world, which
 	     * interpolates the quarter-scale BiomeProvider to give
 	     * full-scale biome data.
 	     */
-	    private Object biomeZoomer;
+	    private final Object biomeZoomer;
 	    /**
 	     * The seed used by the BiomeZoomer during interpolation.
 	     * It is derived from the world seed.
 	     */
-		private long seedForBiomeZoomer;
+		private final long seedForBiomeZoomer;
 
 	    private World(Object overworldBiomeProvider, Object netherBiomeProvider, Object biomeZoomer, long seedForBiomeZoomer) {
 	    	this.seedForBiomeZoomer = seedForBiomeZoomer;
@@ -316,11 +318,11 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 			switch (dimension) {
 			case OVERWORLD:
 				biomeProvider = this.overworldBiomeProvider;
-				biomeHeight = useQuarterResolution ? -1 : 0; // The overworld use y=0 for all heights
+				biomeHeight = 0; // The overworld uses y=0 for all heights
 				break;
 			case NETHER:
 				biomeProvider = this.netherBiomeProvider;
-				biomeHeight = useQuarterResolution ? -1 : 63; // Pick an arbitrary value
+				biomeHeight = 63; // Pick an arbitrary value
 				break;
 			default:
 				throw new UnsupportedDimensionException(dimension);
@@ -330,7 +332,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		    return dataArray.withArrayFaillible(size, data -> {
 			    try {
 			    	if(size == 1) {
-			    		data[0] = getBiomeIdAt(biomeProvider, biomeHeight, x, y);
+			    		data[0] = getBiomeIdAt(biomeProvider, biomeHeight, x, y, useQuarterResolution);
 			    		return biomeDataMapper.apply(data);
 			    	}
 
@@ -348,7 +350,7 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 		                    for (int i = 0; i < w; i++) {
 		                        for (int j = 0; j < h; j++) {
 		                            int trueIdx = (x0 + i) + (y0 + j) * width;
-		                            data[trueIdx] = getBiomeIdAt(biomeProvider, biomeHeight, x + x0 + i, y + y0 + j);
+		                            data[trueIdx] = getBiomeIdAt(biomeProvider, biomeHeight, x + x0 + i, y + y0 + j, useQuarterResolution);
 		                        }
 		                    }
 		                }
@@ -363,12 +365,12 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 
 		@Override
 		public Set<Dimension> supportedDimensions() {
-			return EnumSet.of(Dimension.OVERWORLD, Dimension.NETHER);
+			return SUPPORTED_DIMENSIONS;
 		}
 
-		private int getBiomeIdAt(Object biomeProvider, int biomeHeight, int x, int y) throws Throwable {
+		private int getBiomeIdAt(Object biomeProvider, int biomeHeight, int x, int y, boolean useQuarterResolution) throws Throwable {
 		    Object biome;
-		    if(biomeHeight < 0) {
+		    if(useQuarterResolution) {
 		        biome = biomeProviderGetBiomeMethod.invokeExact(biomeProvider, x, biomeHeight, y);
 		    } else {
 		        biome = biomeZoomerGetBiomeMethod.invokeExact(biomeZoomer, seedForBiomeZoomer, x, biomeHeight, y, biomeProvider);
