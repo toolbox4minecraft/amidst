@@ -3,7 +3,7 @@ package amidst.mojangapi.world.test;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -64,7 +64,7 @@ public class VersionFeaturesTest {
 
 		@Override
 		public Set<Dimension> supportedDimensions() {
-			return Collections.emptySet();
+			return EnumSet.allOf(Dimension.class);
 		}
 	}
 }
