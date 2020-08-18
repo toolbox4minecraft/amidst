@@ -3,6 +3,7 @@ package amidst.mojangapi.world.versionfeatures;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -87,17 +88,26 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<Integer>       BIOME_DATA_ORACLE_MIDDLE_OF_CHUNK_OFFSET        = FeatureKey.make();
 
 	private static final VersionFeatures.Builder FEATURES_BUILDER = VersionFeatures.builder()
-			.with(FeatureKey.BIOME_DATA_ORACLE, VersionFeature.bind(features -> {
-				BiomeDataOracle.Config config = new BiomeDataOracle.Config();
-				config.quarterResOverride = features.get(BIOME_DATA_ORACLE_QUARTER_RES_OVERRIDE);
-				config.middleOfChunkOffset = features.get(BIOME_DATA_ORACLE_MIDDLE_OF_CHUNK_OFFSET);
-				config.accurateLocationCount = features.get(BIOME_DATA_ORACLE_ACCURATE_LOCATION_COUNT);
-				return VersionFeature.constant(new BiomeDataOracle(
+			.with(FeatureKey.OVERWORLD_BIOME_DATA_ORACLE, VersionFeature.bind(
+				features -> VersionFeature.constant(new BiomeDataOracle(
 					features.get(MINECRAFT_WORLD),
 					Dimension.OVERWORLD,
 					features.get(FeatureKey.BIOME_LIST),
-					config
-				));
+					getBiomeOracleConfig(features)
+				))
+			))
+			.with(FeatureKey.NETHER_BIOME_DATA_ORACLE, VersionFeature.bind(features -> {
+				MinecraftInterface.World world = features.get(MINECRAFT_WORLD);
+				if (world.supportedDimensions().contains(Dimension.NETHER)) {
+					return VersionFeature.constant(Optional.of(new BiomeDataOracle(
+						features.get(MINECRAFT_WORLD),
+						Dimension.NETHER,
+						features.get(FeatureKey.BIOME_LIST),
+						getBiomeOracleConfig(features)
+					)));
+				} else {
+					return VersionFeature.constant(Optional.empty());
+				}
 			}))
 			.with(BIOME_DATA_ORACLE_QUARTER_RES_OVERRIDE, VersionFeature.<Boolean> builder()
 				.init(
@@ -162,7 +172,7 @@ public enum DefaultVersionFeatures {
 				VersionFeature.constant(
 					new HeuristicWorldSpawnOracle(
 						getWorldSeed(features),
-						features.get(FeatureKey.BIOME_DATA_ORACLE),
+						features.get(FeatureKey.OVERWORLD_BIOME_DATA_ORACLE),
 						features.get(VALID_BIOMES_FOR_STRUCTURE_SPAWN))
 				)))
 			.with(VALID_BIOMES_FOR_STRUCTURE_SPAWN, VersionFeature.<Integer> listBuilder()
@@ -223,7 +233,7 @@ public enum DefaultVersionFeatures {
 
 			.with(FeatureKey.STRONGHOLD_PRODUCER, VersionFeature.bind(features -> {
 				long worldSeed = getWorldSeed(features);
-				BiomeDataOracle biomeOracle = features.get(FeatureKey.BIOME_DATA_ORACLE);
+				BiomeDataOracle biomeOracle = features.get(FeatureKey.OVERWORLD_BIOME_DATA_ORACLE);
 				List<Biome> validBiomes = features.get(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD);
 				return VersionFeature.<CachedWorldIconProducer>builder()
 					.init(
@@ -265,7 +275,7 @@ public enum DefaultVersionFeatures {
 				VersionFeature.constant(
 					new VillageLocationChecker(
 						getWorldSeed(features),
-						features.get(FeatureKey.BIOME_DATA_ORACLE),
+						features.get(FeatureKey.OVERWORLD_BIOME_DATA_ORACLE),
 						features.get(VALID_BIOMES_FOR_STRUCTURE_VILLAGE),
 						features.get(DO_COMPLEX_VILLAGE_CHECK)
 					)
@@ -292,7 +302,7 @@ public enum DefaultVersionFeatures {
 				VersionFeature.constant(
 					new PillagerOutpostLocationChecker(
 						getWorldSeed(features),
-						features.get(FeatureKey.BIOME_DATA_ORACLE),
+						features.get(FeatureKey.OVERWORLD_BIOME_DATA_ORACLE),
 						features.get(FeatureKey.VILLAGE_LOCATION_CHECKER),
 						features.get(OUTPOST_VILLAGE_AVOID_DISTANCE),
 						features.get(VALID_BIOMES_FOR_STRUCTURE_PILLAGER_OUTPOST)
@@ -385,7 +395,7 @@ public enum DefaultVersionFeatures {
 
 			.with(FeatureKey.OCEAN_MONUMENT_LOCATION_CHECKER, VersionFeature.bind(features -> {
 				long worldSeed = getWorldSeed(features);
-				BiomeDataOracle biomeOracle = features.get(FeatureKey.BIOME_DATA_ORACLE);
+				BiomeDataOracle biomeOracle = features.get(FeatureKey.OVERWORLD_BIOME_DATA_ORACLE);
 				List<Biome> validCenterBiomes = features.get(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_MONUMENT);
 				List<Biome> validBiomes = features.get(VALID_BIOMES_FOR_STRUCTURE_OCEAN_MONUMENT);
 				return VersionFeature.<LocationChecker> builder()
@@ -426,7 +436,7 @@ public enum DefaultVersionFeatures {
 				VersionFeature.constant(
 					new WoodlandMansionLocationChecker(
 						getWorldSeed(features),
-						features.get(FeatureKey.BIOME_DATA_ORACLE),
+						features.get(FeatureKey.OVERWORLD_BIOME_DATA_ORACLE),
 						features.get(VALID_BIOMES_FOR_STRUCTURE_WOODLAND_MANSION)
 					)
 				)))
@@ -514,7 +524,7 @@ public enum DefaultVersionFeatures {
 				VersionFeature.constant(
 					new BuriedTreasureLocationChecker(
 						getWorldSeed(features),
-						features.get(FeatureKey.BIOME_DATA_ORACLE),
+						features.get(FeatureKey.OVERWORLD_BIOME_DATA_ORACLE),
 						features.get(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_BURIED_TREASURE),
 						features.get(SEED_FOR_STRUCTURE_BURIED_TREASURE)
 					)
@@ -541,6 +551,14 @@ public enum DefaultVersionFeatures {
 				).since(RecognisedVersion._18w30b,
 						false
 				).construct());
+
+	private static BiomeDataOracle.Config getBiomeOracleConfig(VersionFeatures features) {
+		BiomeDataOracle.Config config = new BiomeDataOracle.Config();
+		config.quarterResOverride = features.get(BIOME_DATA_ORACLE_QUARTER_RES_OVERRIDE);
+		config.middleOfChunkOffset = features.get(BIOME_DATA_ORACLE_MIDDLE_OF_CHUNK_OFFSET);
+		config.accurateLocationCount = features.get(BIOME_DATA_ORACLE_ACCURATE_LOCATION_COUNT);
+		return config;
+	}
 
 	private static List<Integer> getValidBiomesForStrongholdSinceV13w36a(BiomeList biomeList) {
 		List<Integer> result = new ArrayList<>();
@@ -578,7 +596,7 @@ public enum DefaultVersionFeatures {
 			VersionFeature.constant(
 				new ScatteredFeaturesLocationChecker(
 					getWorldSeed(features),
-					features.get(FeatureKey.BIOME_DATA_ORACLE),
+					features.get(FeatureKey.OVERWORLD_BIOME_DATA_ORACLE),
 					features.get(maxDistance), features.get(minDistance),
 					validBiomes == null ? null : features.get(validBiomes),
 					features.get(structSeed), features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
@@ -593,7 +611,7 @@ public enum DefaultVersionFeatures {
 			VersionFeature.constant(
 				new ScatteredFeaturesLocationChecker(
 					getWorldSeed(features),
-					features.get(FeatureKey.BIOME_DATA_ORACLE),
+					features.get(FeatureKey.OVERWORLD_BIOME_DATA_ORACLE),
 					validBiomes == null ? null : features.get(validBiomes),
 					features.get(structSeed), features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
 				)
