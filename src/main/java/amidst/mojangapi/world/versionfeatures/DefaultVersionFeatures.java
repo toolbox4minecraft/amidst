@@ -17,6 +17,7 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeList;
 import amidst.mojangapi.world.biome.UnknownBiomeIdException;
 import amidst.mojangapi.world.icon.locationchecker.BuriedTreasureLocationChecker;
+import amidst.mojangapi.world.icon.locationchecker.EmptyLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.EndCityLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.MineshaftAlgorithm_ChanceBased;
@@ -49,6 +50,8 @@ public enum DefaultVersionFeatures {
 							.withValue(MINECRAFT_WORLD, minecraftWorld);
 		}
 	}
+
+	private static final VersionFeature<LocationChecker> EMPTY_LOCATION_CHECKER = VersionFeature.constant(new EmptyLocationChecker());
 
 	// @formatter:off
 	private static final FeatureKey<MinecraftInterface.World> MINECRAFT_WORLD                      = FeatureKey.make();
@@ -187,7 +190,8 @@ public enum DefaultVersionFeatures {
 				).construct().andThenFixed(DefaultVersionFeatures::makeBiomeList))
 
 			.with(FeatureKey.NETHER_FORTRESS_LOCATION_CHECKER, VersionFeature.<LocationChecker> builder()
-				.init(
+				.init(EMPTY_LOCATION_CHECKER)
+				.since(RecognisedVersion._b1_9_pre1,
 					VersionFeature.fixed(features -> new NetherFortressAlgorithm_Original(getWorldSeed(features)))
 				).since(RecognisedVersion._20w16a,
 					// TODO: add Nether biome checks when we implement Nether biomes
@@ -212,12 +216,14 @@ public enum DefaultVersionFeatures {
 			)
 			.with(MIN_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS, VersionFeature.constant((byte) 4))
 
-			.with(FeatureKey.END_ISLAND_LOCATION_CHECKER, VersionFeature.fixed(features ->
-				new EndCityLocationChecker(getWorldSeed(features))
-			))
+			.with(FeatureKey.END_ISLAND_LOCATION_CHECKER, VersionFeature.<LocationChecker> builder()
+				.init(EMPTY_LOCATION_CHECKER)
+				.since(RecognisedVersion._15w31c,
+					VersionFeature.fixed(features -> new EndCityLocationChecker(getWorldSeed(features)))
+				).construct())
 
 			.with(FeatureKey.MINESHAFT_LOCATION_CHECKER, VersionFeature.<LocationChecker> builder()
-				.init(
+				.init( // Actually starts at beta 1.8
 					VersionFeature.fixed(features -> new MineshaftAlgorithm_Original(getWorldSeed(features)))
 				).since(RecognisedVersion._1_4_2,
 					VersionFeature.fixed(features -> new MineshaftAlgorithm_ChanceBased(getWorldSeed(features), 0.01D, true))
@@ -225,11 +231,10 @@ public enum DefaultVersionFeatures {
 					VersionFeature.fixed(features -> new MineshaftAlgorithm_ChanceBased(getWorldSeed(features), 0.004D, true))
 				).since(RecognisedVersion._18w06a,
 					VersionFeature.fixed(features -> new MineshaftAlgorithm_ChanceBased(getWorldSeed(features), 0.01D, false))
-				).construct()
-			)
+				).construct())
 
 			.with(FeatureKey.STRONGHOLD_PRODUCER, VersionFeature.<CachedWorldIconProducer>builder()
-				.init(
+				.init( // Actually starts at beta 1.8, with a single stronghold per world
 					VersionFeature.fixed(features -> new StrongholdProducer_Original(
 						getWorldSeed(features), getBiomeOracle(features, Dimension.OVERWORLD),
 						features.get(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD)
@@ -249,7 +254,7 @@ public enum DefaultVersionFeatures {
 				)
 				.construct())
 			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_STRONGHOLD, VersionFeature.<Integer> listBuilder()
-				.init().since(RecognisedVersion._b1_8_1,
+				.init(
 					DefaultBiomes.desert,
 					DefaultBiomes.forest,
 					DefaultBiomes.extremeHills,
@@ -274,6 +279,7 @@ public enum DefaultVersionFeatures {
 
 
 			.with(FeatureKey.VILLAGE_LOCATION_CHECKER, VersionFeature.fixed(features ->
+					// Actually starts at beta 1.8
 					new VillageLocationChecker(
 						getWorldSeed(features), getBiomeOracle(features, Dimension.OVERWORLD),
 						features.get(VALID_BIOMES_FOR_STRUCTURE_VILLAGE),
@@ -330,9 +336,9 @@ public enum DefaultVersionFeatures {
 				VALID_BIOMES_AT_MIDDLE_OF_CHUNK_DESERT_TEMPLE,
 				SEED_FOR_STRUCTURE_DESERT_TEMPLE))
 			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_DESERT_TEMPLE, VersionFeature.<Integer> listBuilder()
-				.init(
-					DefaultBiomes.desert
-				).sinceExtend(RecognisedVersion._12w01a,
+				.init()
+				.sinceExtend(RecognisedVersion._12w21a,
+					DefaultBiomes.desert,
 					DefaultBiomes.desertHills
 				).construct().andThenFixed(DefaultVersionFeatures::makeBiomeList))
 			.with(SEED_FOR_STRUCTURE_DESERT_TEMPLE, VersionFeature.<Long> builder()
@@ -443,7 +449,8 @@ public enum DefaultVersionFeatures {
 					)
 				))
 			.with(VALID_BIOMES_FOR_STRUCTURE_WOODLAND_MANSION, VersionFeature.<Integer> listBuilder()
-				.init().sinceExtend(RecognisedVersion._16w43a, // Actually 16w39a, but version strings are identical
+				.init()
+				.sinceExtend(RecognisedVersion._16w43a, // Actually 16w39a, but version strings are identical
 					DefaultBiomes.roofedForest,
 					DefaultBiomes.roofedForestM
 				).construct().andThenFixed(DefaultVersionFeatures::makeBiomeList))
@@ -532,7 +539,8 @@ public enum DefaultVersionFeatures {
 					)
 				))
 			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_BURIED_TREASURE, VersionFeature.<Integer> listBuilder()
-				.init().sinceExtend(RecognisedVersion._18w10d,
+				.init()
+				.sinceExtend(RecognisedVersion._18w10d,
 					DefaultBiomes.beach,
 					DefaultBiomes.coldBeach
 				).construct().andThenFixed(DefaultVersionFeatures::makeBiomeList))
