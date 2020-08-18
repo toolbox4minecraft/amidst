@@ -206,7 +206,7 @@ public enum DefaultVersionFeatures {
 						SEED_FOR_STRUCTURE_NETHER_BUILDING
 					)
 				).construct())
-			.with(FeatureKey.BASTION_REMNANTS_LOCATION_CHECKER, VersionFeature.<LocationChecker> builder()
+			.with(FeatureKey.BASTION_REMNANT_LOCATION_CHECKER, VersionFeature.<LocationChecker> builder()
 				.init(EMPTY_LOCATION_CHECKER)
 				.since(RecognisedVersion._20w16a,
 					twinScatteredFeature(

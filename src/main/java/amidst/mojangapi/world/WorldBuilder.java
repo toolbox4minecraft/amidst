@@ -203,8 +203,8 @@ public class WorldBuilder {
 					new StructureProducer<>(
 						Resolution.NETHER_CHUNK,
 						88,
-						versionFeatures.get(FeatureKey.BASTION_REMNANTS_LOCATION_CHECKER),
-						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.BASTION_REMANNTS),
+						versionFeatures.get(FeatureKey.BASTION_REMNANT_LOCATION_CHECKER),
+						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.BASTION_REMANNT),
 						Dimension.NETHER,
 						false)
 				),
