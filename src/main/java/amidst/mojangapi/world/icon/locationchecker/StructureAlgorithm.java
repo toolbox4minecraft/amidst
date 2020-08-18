@@ -34,13 +34,13 @@ public class StructureAlgorithm implements LocationChecker {
 
 	public StructureAlgorithm(
 			long seed,
-			long magicNumberForSeed3,
+			long structureSalt,
 			byte maxDistanceBetweenScatteredFeatures,
 			byte minDistanceBetweenScatteredFeatures,
 			boolean useTwoValuesForUpdate,
 			boolean buggyStructureCoordinateMath) {
 		this.seed = seed;
-		this.structureSalt = magicNumberForSeed3;
+		this.structureSalt = structureSalt;
 		this.maxDistanceBetweenScatteredFeatures = maxDistanceBetweenScatteredFeatures;
 		this.distanceBetweenScatteredFeaturesRange = maxDistanceBetweenScatteredFeatures
 				- minDistanceBetweenScatteredFeatures;
@@ -55,7 +55,11 @@ public class StructureAlgorithm implements LocationChecker {
 		Random random = new Random(getSeed(value1, value2));
 		value1 = updateValue(random, value1);
 		value2 = updateValue(random, value2);
-		return x == value1 && y == value2;
+		return x == value1 && y == value2 && doExtraCheck(random);
+	}
+
+	protected boolean doExtraCheck(Random random) {
+		return true;
 	}
 
 	private int getInitialValue(int coordinate) {

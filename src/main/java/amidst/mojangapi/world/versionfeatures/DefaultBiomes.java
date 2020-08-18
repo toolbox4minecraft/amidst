@@ -1,10 +1,22 @@
 package amidst.mojangapi.world.versionfeatures;
 
+import static amidst.mojangapi.world.biome.BiomeType.BEACH;
+import static amidst.mojangapi.world.biome.BiomeType.BEACH_CLIFFS;
+import static amidst.mojangapi.world.biome.BiomeType.DEEP_OCEAN;
+import static amidst.mojangapi.world.biome.BiomeType.HILLS;
+import static amidst.mojangapi.world.biome.BiomeType.ISLAND;
+import static amidst.mojangapi.world.biome.BiomeType.MOUNTAINS;
+import static amidst.mojangapi.world.biome.BiomeType.OCEAN;
+import static amidst.mojangapi.world.biome.BiomeType.PLAINS;
+import static amidst.mojangapi.world.biome.BiomeType.PLAINS_FLAT;
+import static amidst.mojangapi.world.biome.BiomeType.PLAINS_TAIGA;
+import static amidst.mojangapi.world.biome.BiomeType.PLATEAU;
+import static amidst.mojangapi.world.biome.BiomeType.RIVER;
+import static amidst.mojangapi.world.biome.BiomeType.SWAMPLAND;
+
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
 import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.biome.BiomeList;
-
-import static amidst.mojangapi.world.biome.BiomeType.*;
 
 public enum DefaultBiomes {
 	;

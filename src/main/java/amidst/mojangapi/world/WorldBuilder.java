@@ -202,7 +202,7 @@ public class WorldBuilder {
 						false),
 					new StructureProducer<>(
 						Resolution.NETHER_CHUNK,
-						0, // TODO: put correct offset
+						88,
 						versionFeatures.get(FeatureKey.BASTION_REMNANTS_LOCATION_CHECKER),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.BASTION_REMANNTS),
 						Dimension.NETHER,

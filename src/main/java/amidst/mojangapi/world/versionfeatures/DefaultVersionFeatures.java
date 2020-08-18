@@ -27,6 +27,7 @@ import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker_
 import amidst.mojangapi.world.icon.locationchecker.OceanMonumentLocationChecker_Original;
 import amidst.mojangapi.world.icon.locationchecker.PillagerOutpostLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.ScatteredFeaturesLocationChecker;
+import amidst.mojangapi.world.icon.locationchecker.TwinScatteredFeaturesLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.VillageLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.WoodlandMansionLocationChecker;
 import amidst.mojangapi.world.icon.producer.CachedWorldIconProducer;
@@ -69,6 +70,7 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_SHIPWRECK       = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_OCEAN_MONUMENT  = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_BURIED_TREASURE = FeatureKey.make();
+	private static final FeatureKey<List<Biome>>   VALID_BIOMES_AT_MIDDLE_OF_CHUNK_BASTION_REMNANT = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>   VALID_BIOMES_FOR_STRUCTURE_OCEAN_MONUMENT       = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>   VALID_BIOMES_FOR_STRUCTURE_WOODLAND_MANSION     = FeatureKey.make();
 	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_DESERT_TEMPLE                = FeatureKey.make();
@@ -78,13 +80,14 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_OCEAN_RUINS                  = FeatureKey.make();
 	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_SHIPWRECK                    = FeatureKey.make();
 	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_BURIED_TREASURE              = FeatureKey.make();
-	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_NETHER_FORTRESS              = FeatureKey.make();
+	private static final FeatureKey<Long>          SEED_FOR_STRUCTURE_NETHER_BUILDING              = FeatureKey.make();
 	private static final FeatureKey<Byte>          MAX_DISTANCE_SCATTERED_FEATURES_SHIPWRECK       = FeatureKey.make();
 	private static final FeatureKey<Byte>          MIN_DISTANCE_SCATTERED_FEATURES_SHIPWRECK       = FeatureKey.make();
 	private static final FeatureKey<Byte>          MAX_DISTANCE_SCATTERED_FEATURES_OCEAN_RUINS     = FeatureKey.make();
 	private static final FeatureKey<Byte>          MIN_DISTANCE_SCATTERED_FEATURES_OCEAN_RUINS     = FeatureKey.make();
-	private static final FeatureKey<Byte>          MAX_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS = FeatureKey.make();
-	private static final FeatureKey<Byte>          MIN_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS = FeatureKey.make();
+	private static final FeatureKey<Byte>          MAX_DISTANCE_SCATTERED_FEATURES_NETHER_BUILDING = FeatureKey.make();
+	private static final FeatureKey<Byte>          MIN_DISTANCE_SCATTERED_FEATURES_NETHER_BUILDING = FeatureKey.make();
+	private static final FeatureKey<Integer>       ALTERNATE_ABUNDANCE_NETHER_BUILDING             = FeatureKey.make();
 	private static final FeatureKey<Boolean>       BUGGY_STRUCTURE_COORDINATE_MATH                 = FeatureKey.make();
 	private static final FeatureKey<Boolean>       BIOME_DATA_ORACLE_QUARTER_RES_OVERRIDE          = FeatureKey.make();
 	private static final FeatureKey<Boolean>       BIOME_DATA_ORACLE_ACCURATE_LOCATION_COUNT       = FeatureKey.make();
@@ -194,18 +197,37 @@ public enum DefaultVersionFeatures {
 				.since(RecognisedVersion._b1_9_pre1,
 					VersionFeature.fixed(features -> new NetherFortressAlgorithm_Original(getWorldSeed(features)))
 				).since(RecognisedVersion._20w16a,
-					// TODO: add Nether biome checks when we implement Nether biomes
-					// Bastions replace Fortresses in Warped/Crimson Forest
-					scatteredFeature(
-						Dimension.OVERWORLD,
-						MAX_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS,
-						MIN_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS,
+					twinScatteredFeature(
+						Dimension.NETHER,
+						MAX_DISTANCE_SCATTERED_FEATURES_NETHER_BUILDING,
+						MIN_DISTANCE_SCATTERED_FEATURES_NETHER_BUILDING,
+						ALTERNATE_ABUNDANCE_NETHER_BUILDING, false,
 						null,
-						SEED_FOR_STRUCTURE_NETHER_FORTRESS
+						SEED_FOR_STRUCTURE_NETHER_BUILDING
 					)
 				).construct())
-			.with(SEED_FOR_STRUCTURE_NETHER_FORTRESS, VersionFeature.constant(30084232L))
-			.with(MAX_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS, VersionFeature.<Byte> builder()
+			.with(FeatureKey.BASTION_REMNANTS_LOCATION_CHECKER, VersionFeature.<LocationChecker> builder()
+				.init(EMPTY_LOCATION_CHECKER)
+				.since(RecognisedVersion._20w16a,
+					twinScatteredFeature(
+						Dimension.NETHER,
+						MAX_DISTANCE_SCATTERED_FEATURES_NETHER_BUILDING,
+						MIN_DISTANCE_SCATTERED_FEATURES_NETHER_BUILDING,
+						ALTERNATE_ABUNDANCE_NETHER_BUILDING, true,
+						VALID_BIOMES_AT_MIDDLE_OF_CHUNK_BASTION_REMNANT,
+						SEED_FOR_STRUCTURE_NETHER_BUILDING
+					)
+				).construct())
+			.with(VALID_BIOMES_AT_MIDDLE_OF_CHUNK_BASTION_REMNANT, VersionFeature.<Integer> listBuilder()
+				.init()
+				.sinceExtend(RecognisedVersion._20w16a,
+					DefaultBiomes.hell,
+					DefaultBiomes.soulSandValley,
+					DefaultBiomes.crimsonForest,
+					DefaultBiomes.warpedForest
+				).construct().andThenFixed(DefaultVersionFeatures::makeBiomeList))
+			.with(SEED_FOR_STRUCTURE_NETHER_BUILDING, VersionFeature.constant(30084232L))
+			.with(MAX_DISTANCE_SCATTERED_FEATURES_NETHER_BUILDING, VersionFeature.<Byte> builder()
 				.init(
 					(byte) 24
 				).since(RecognisedVersion._20w19a,
@@ -214,9 +236,13 @@ public enum DefaultVersionFeatures {
 					(byte) 27
 				).construct()
 			)
-			.with(MIN_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS, VersionFeature.constant((byte) 4))
-
-			.with(FeatureKey.BASTION_REMNANTS_LOCATION_CHECKER, EMPTY_LOCATION_CHECKER) // TODO: add actual algorithms
+			.with(MIN_DISTANCE_SCATTERED_FEATURES_NETHER_BUILDING, VersionFeature.constant((byte) 4))
+			.with(ALTERNATE_ABUNDANCE_NETHER_BUILDING, VersionFeature.<Integer> builder()
+				.init(
+					6
+				).since(RecognisedVersion._1_16_pre3,
+					5
+				).construct())
 
 			.with(FeatureKey.END_ISLAND_LOCATION_CHECKER, VersionFeature.<LocationChecker> builder()
 				.init(EMPTY_LOCATION_CHECKER)
@@ -620,8 +646,7 @@ public enum DefaultVersionFeatures {
 			FeatureKey<List<Biome>> validBiomes, FeatureKey<Long> structSeed) {
 		return VersionFeature.fixed(features ->
 			new ScatteredFeaturesLocationChecker(
-				getWorldSeed(features),
-				getBiomeOracle(features, dimension),
+				getWorldSeed(features), getBiomeOracle(features, dimension),
 				features.get(maxDistance), features.get(minDistance),
 				validBiomes == null ? null : features.get(validBiomes),
 				features.get(structSeed), features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
@@ -633,9 +658,23 @@ public enum DefaultVersionFeatures {
 			Dimension dimension, FeatureKey<List<Biome>> validBiomes, FeatureKey<Long> structSeed) {
 		return VersionFeature.fixed(features ->
 			new ScatteredFeaturesLocationChecker(
-				getWorldSeed(features),
-				getBiomeOracle(features, dimension),
+				getWorldSeed(features), getBiomeOracle(features, dimension),
 				validBiomes == null ? null : features.get(validBiomes),
+				features.get(structSeed), features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
+			)
+		);
+	}
+
+	private static VersionFeature<LocationChecker> twinScatteredFeature(
+			Dimension dimension, FeatureKey<Byte> maxDistance, FeatureKey<Byte> minDistance,
+			FeatureKey<Integer> alternateVersionAbundance, boolean selectAlternate,
+			FeatureKey<List<Biome>> validBiomes, FeatureKey<Long> structSeed) {
+		return VersionFeature.fixed(features ->
+			new TwinScatteredFeaturesLocationChecker(
+				getWorldSeed(features), getBiomeOracle(features, dimension),
+				features.get(maxDistance), features.get(minDistance),
+				validBiomes == null ? null : features.get(validBiomes),
+				features.get(alternateVersionAbundance), selectAlternate,
 				features.get(structSeed), features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
 			)
 		);
