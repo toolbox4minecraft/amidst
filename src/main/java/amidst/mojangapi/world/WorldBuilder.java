@@ -192,13 +192,22 @@ public class WorldBuilder {
 								Dimension.OVERWORLD,
 								false)
 				),
-				new StructureProducer<>(
+				new MultiProducer<>(
+					new StructureProducer<>(
 						Resolution.NETHER_CHUNK,
 						88,
 						versionFeatures.get(FeatureKey.NETHER_FORTRESS_LOCATION_CHECKER),
 						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.NETHER_FORTRESS),
 						Dimension.NETHER,
 						false),
+					new StructureProducer<>(
+						Resolution.NETHER_CHUNK,
+						0, // TODO: put correct offset
+						versionFeatures.get(FeatureKey.BASTION_REMNANTS_LOCATION_CHECKER),
+						new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.BASTION_REMANNTS),
+						Dimension.NETHER,
+						false)
+				),
 				new StructureProducer<>(
 						Resolution.CHUNK,
 						8,

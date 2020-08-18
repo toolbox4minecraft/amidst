@@ -148,7 +148,7 @@ public enum DefaultVersionFeatures {
 					LayerIds.VILLAGE,
 					LayerIds.MINESHAFT
 				).sinceExtend(RecognisedVersion._b1_9_pre1,
-					LayerIds.NETHER_FORTRESS
+					LayerIds.NETHER_FEATURES
 				).sinceExtend(RecognisedVersion._12w21a,
 					LayerIds.TEMPLE
 				).sinceExtend(RecognisedVersion._1_8,
@@ -215,6 +215,8 @@ public enum DefaultVersionFeatures {
 				).construct()
 			)
 			.with(MIN_DISTANCE_SCATTERED_FEATURES_NETHER_FORTRESS, VersionFeature.constant((byte) 4))
+
+			.with(FeatureKey.BASTION_REMNANTS_LOCATION_CHECKER, EMPTY_LOCATION_CHECKER) // TODO: add actual algorithms
 
 			.with(FeatureKey.END_ISLAND_LOCATION_CHECKER, VersionFeature.<LocationChecker> builder()
 				.init(EMPTY_LOCATION_CHECKER)

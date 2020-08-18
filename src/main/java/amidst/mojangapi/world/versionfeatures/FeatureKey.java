@@ -27,6 +27,7 @@ public class FeatureKey<T> {
 	public static final FeatureKey<EndIslandOracle>  END_ISLAND_ORACLE                 = make();
 	public static final FeatureKey<WorldSpawnOracle>  WORLD_SPAWN_ORACLE               = make();
 	public static final FeatureKey<LocationChecker>  NETHER_FORTRESS_LOCATION_CHECKER  = make();
+	public static final FeatureKey<LocationChecker>  BASTION_REMNANTS_LOCATION_CHECKER = make();
 	public static final FeatureKey<LocationChecker>  END_ISLAND_LOCATION_CHECKER       = make();
 	public static final FeatureKey<LocationChecker>  MINESHAFT_LOCATION_CHECKER        = make();
 	public static final FeatureKey<CachedWorldIconProducer> STRONGHOLD_PRODUCER        = make();
