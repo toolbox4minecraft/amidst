@@ -222,7 +222,8 @@ public class LocalMinecraftInterface implements MinecraftInterface {
 	private Object getLegacyBiomeRegistry() throws IllegalArgumentException, IllegalAccessException,
     	InstantiationException, InvocationTargetException, MinecraftInterfaceException {
     	Object metaRegistry = registryClass.getStaticFieldValue(SymbolicNames.FIELD_REGISTRY_META_REGISTRY);
-    	if (!(metaRegistry instanceof SymbolicObject)) { // Oops, we called the wrong method
+    	if (!(metaRegistry instanceof SymbolicObject && ((SymbolicObject) metaRegistry).getType().equals(registryClass))) {
+    		// Oops, we called the wrong method
     		String name = RecognisedVersion.isOlder(recognisedVersion, RecognisedVersion._1_16_pre1) ?
     				SymbolicNames.FIELD_REGISTRY_META_REGISTRY2 : SymbolicNames.FIELD_REGISTRY_META_REGISTRY3;
         	metaRegistry = registryClass.getStaticFieldValue(name);
