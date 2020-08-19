@@ -1,5 +1,9 @@
 package amidst.gui.export;
 
+import static amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType.MAX;
+import static amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType.MIN;
+import static amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType.PROGRESS;
+
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.ColorModel;
@@ -14,8 +18,8 @@ import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.AbstractMap;
-import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.Vector;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
@@ -35,12 +39,10 @@ import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.threading.WorkerExecutor;
 import amidst.threading.worker.ProgressReporter;
 
-import static amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType.*;
-
 @ThreadSafe
 public class BiomeExporter {
 	private static final AtomicLong ACTIVE_THREADS = new AtomicLong(0);
-	
+
 	private final WorkerExecutor workerExecutor;
 
 	public BiomeExporter(WorkerExecutor workerExecutor) {
@@ -52,11 +54,11 @@ public class BiomeExporter {
 			BiomeExporterConfiguration configuration,
 			Consumer<Entry<ProgressEntryType, Integer>> progressListener,
 			AmidstMenu menuBar) {
-		
+
 		workerExecutor.<Entry<ProgressEntryType, Integer>> run((p) -> {
 				SwingUtilities.invokeLater(() -> {
 					menuBar.setMenuItemsEnabled(new String[] {
-						"New From Seed ...",     
+						"New From Seed ...",
 						"New From Random Seed",
 						"Open Save Game ...",
 						"Switch Profile ...",
@@ -71,7 +73,7 @@ public class BiomeExporter {
 					SwingUtilities.invokeLater(() -> {
 						menuBar.setMenuItemsEnabled(new String[] {
 							"Export Biomes to Image ...",
-							"New From Seed ...",     
+							"New From Seed ...",
 							"New From Random Seed",
 							"Open Save Game ...",
 							"Switch Profile ...",
@@ -87,24 +89,24 @@ public class BiomeExporter {
 	private void doExport(BiomeDataOracle biomeDataOracle,
 			BiomeExporterConfiguration configuration,
 			ProgressReporter<Entry<ProgressEntryType, Integer>> progressReporter) {
-		
+
     	try {
 			progressReporter.report(entry(MIN, 0));
 			progressReporter.report(entry(PROGRESS, 0));
-			
+
 			int resolutionFactor = configuration.isQuarterResolution() ? 4 : 1;
-			
+
 			int x = (int) configuration.getTopLeftCoord().getX();
 			int y = (int) configuration.getTopLeftCoord().getY();
 			int width = ((int) configuration.getBottomRightCoord().getX() - x) / resolutionFactor;
 			int height = ((int) configuration.getBottomRightCoord().getY() - y) / resolutionFactor;
-			
+
 			progressReporter.report(entry(MAX, height + 1));
-			
+
 			RenderedImage img = new CustomRenderedImage(x, y, width, height,
 					configuration.getBiomeProfileSelection(), biomeDataOracle, configuration.isQuarterResolution(),
 					progressReporter);
-			
+
 			try {
 				ImageIO.write(img, "png", configuration.getImagePath().toAbsolutePath().toFile());
 			} catch (Exception e) {
@@ -125,7 +127,7 @@ public class BiomeExporter {
 			}
     	}
 	}
-	
+
 	private static <K, V> Entry<K, V> entry(K key, V value) {
 		return new AbstractMap.SimpleImmutableEntry<K, V>(key, value);
 	}
@@ -133,14 +135,14 @@ public class BiomeExporter {
 	private void onException(Exception e) {
 		AmidstLogger.error(e);
 	}
-	
+
 	public static boolean isExporterRunning() {
 		if(ACTIVE_THREADS.get() > 0) {
 				return true;
 			}
 		return false;
 	}
-	
+
 	private static class CustomRenderedImage implements RenderedImage {
 
 		private final static int[] BITMASKS = {
@@ -179,7 +181,7 @@ public class BiomeExporter {
 			this.biomeDataOracle = biomeDataOracle;
 			this.progressReporter = progressReporter;
 		}
-		
+
 		@Override
 		public ColorModel getColorModel() {
 			return colorModel;
@@ -209,35 +211,23 @@ public class BiomeExporter {
 		public int getHeight() {
 			return height;
 		}
-		
+
 		@Override
 		public Raster getData(Rectangle rect) {
 			DataBufferInt buffer = new DataBufferInt(Math.multiplyExact(rect.width, rect.height));
-			
 			int[] pixelArray = buffer.getData();
-			
-			short[][] dataArray;
-			
-			dataArray = new short[rect.width][rect.height];
-			biomeDataOracle.populateArray(new CoordinatesInWorld((long) worldX + rect.x * resolutionFactor, (long) worldY + rect.y * resolutionFactor), dataArray, useQuarterResolution);
-		
-			try {
-				for (int imgY = 0; imgY < rect.height; imgY++) {
-					for (int imgX = 0; imgX < rect.width; imgX++) {
-						int imgidx = (rect.height - imgY - 1) * rect.width + imgX;
-						pixelArray[imgidx] = biomeProfileSelection.getBiomeColor(dataArray[imgX][imgY]).getRGB();
-					}
+
+			CoordinatesInWorld corner = CoordinatesInWorld.from((long) worldX + rect.x * resolutionFactor, (long) worldY + rect.y * resolutionFactor);
+			biomeDataOracle.getBiomeData(corner, rect.width, rect.height, useQuarterResolution, data -> {
+				for (int i = 0; i < pixelArray.length; i++) {
+					pixelArray[i] = biomeProfileSelection.getBiomeColorOrUnknown(data[i]).getRGB();
 				}
-			} catch (Exception e) {
-				AmidstLogger.error(e);
-			}
-			
-			dataArray = null;
-			
+			});
+
 			Raster r = Raster.createPackedRaster(buffer, rect.width, rect.height, rect.width, BITMASKS, new Point(rect.x, rect.y));
-			
+
 			progressReporter.report(entry(PROGRESS, rect.y));
-			
+
 			return r;
 		}
 
@@ -311,5 +301,5 @@ public class BiomeExporter {
 			throw new UnsupportedOperationException();
 		}
 	}
-	
+
 }
