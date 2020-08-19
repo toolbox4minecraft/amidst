@@ -40,11 +40,10 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 	public final boolean buggyStructureCoordinateMath;
 	
 	/**
-	 * Amount of structure regions that can fit in a fragment. Even if a
-	 * region is intersecting the fragment by only a bit, it's still
-	 * counted just in case.
+	 * Length of chunks needed to cover all of this structure's regions
+	 * that intersect a fragment.
 	 */
-	private final int fragmentRegionCount;
+	private final int intersectingRegionChunks;
 	
 	public RegionalStructureProducer(Resolution resolution, int offsetInWorld, LocationChecker checker,
 			WorldIconTypeProvider<T> provider, Dimension dimension, boolean displayDimension, long worldSeed, long salt,
@@ -81,8 +80,7 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 		this.isTriangular = isTriangular;
 		this.buggyStructureCoordinateMath = buggyStructureCoordinateMath;
 		
-		// this assumes that the spacing resolution changes to nether chunks, otherwise we need to change resolution to Resolution.CHUNK
-		this.fragmentRegionCount = (int) Math.ceil((double) resolution.getStepsPerFragment() / spacing);
+		this.intersectingRegionChunks = getIntersectingRegionChunks();
 	}
 
 	@Override
@@ -91,8 +89,8 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 			return; // No need to check if the LocationChecker will never accept anything
 		}
 
-		for (int xRelativeToFragment = 0; xRelativeToFragment < fragmentRegionCount; xRelativeToFragment += spacing) {
-			for (int yRelativeToFragment = 0; yRelativeToFragment < fragmentRegionCount; yRelativeToFragment += spacing) {
+		for (int xRelativeToFragment = 0; xRelativeToFragment <= intersectingRegionChunks; xRelativeToFragment += spacing) {
+			for (int yRelativeToFragment = 0; yRelativeToFragment <= intersectingRegionChunks; yRelativeToFragment += spacing) {
 				generateAt(corner, consumer, additionalData, xRelativeToFragment, yRelativeToFragment);
 			}
 		}
@@ -198,5 +196,9 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 			result += random.nextInt(spacing - separation);
 		}
 		return result;
+	}
+	
+	private int getIntersectingRegionChunks() {
+		return (resolution.getStepsPerFragment() + spacing - 1) / spacing * spacing;
 	}
 }

@@ -65,6 +65,7 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<List<Biome>>     PILLAGER_OUTPOST_VALID_BIOMES             = FeatureKey.make();
 	private static final FeatureKey<Boolean>         DO_COMPLEX_VILLAGE_CHECK                  = FeatureKey.make();
 	private static final FeatureKey<Integer>         OUTPOST_VILLAGE_AVOID_DISTANCE            = FeatureKey.make();
+	private static final FeatureKey<Boolean>         OUTPOST_USE_CHECKED_VILLAGES              = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>     DESERT_TEMPLE_VALID_MIDDLE_CHUNK_BIOMES   = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>     IGLOO_VALID_MIDDLE_CHUNK_BIOMES           = FeatureKey.make();
 	private static final FeatureKey<List<Biome>>     JUNGLE_TEMPLE_VALID_MIDDLE_CHUNK_BIOMES   = FeatureKey.make();
@@ -91,9 +92,9 @@ public enum DefaultVersionFeatures {
 	private static final FeatureKey<Byte>            NETHER_FORTRESS_SPACING                   = FeatureKey.make();
 	private static final FeatureKey<Byte>            NETHER_FORTRESS_SEPARATION                = FeatureKey.make();
 	private static final FeatureKey<Boolean>         BUGGY_STRUCTURE_COORDINATE_MATH           = FeatureKey.make();
-	private static final FeatureKey<Boolean>        BIOME_DATA_ORACLE_QUARTER_RES_OVERRIDE     = FeatureKey.make();
-	private static final FeatureKey<Boolean>        BIOME_DATA_ORACLE_ACCURATE_LOCATION_COUNT  = FeatureKey.make();
-	private static final FeatureKey<Integer>        BIOME_DATA_ORACLE_MIDDLE_OF_CHUNK_OFFSET   = FeatureKey.make();
+	private static final FeatureKey<Boolean>         BIOME_DATA_ORACLE_QUARTER_RES_OVERRIDE    = FeatureKey.make();
+	private static final FeatureKey<Boolean>         BIOME_DATA_ORACLE_ACCURATE_LOCATION_COUNT = FeatureKey.make();
+	private static final FeatureKey<Integer>         BIOME_DATA_ORACLE_MIDDLE_OF_CHUNK_OFFSET  = FeatureKey.make();
 
 	private static final VersionFeatures.Builder FEATURES_BUILDER = VersionFeatures.builder()
 			.with(FeatureKey.BIOME_DATA_ORACLE, VersionFeature.bind(features -> {
@@ -346,7 +347,8 @@ public enum DefaultVersionFeatures {
 						false,
 						getWorldSeed(features),
 						features.get(FeatureKey.VILLAGE_PRODUCER),
-						features.get(OUTPOST_VILLAGE_AVOID_DISTANCE)
+						features.get(OUTPOST_VILLAGE_AVOID_DISTANCE),
+						features.get(OUTPOST_USE_CHECKED_VILLAGES)
 					)
 				)))
 			.with(PILLAGER_OUTPOST_VALID_BIOMES, VersionFeature.<Integer> listBuilder()
@@ -366,6 +368,12 @@ public enum DefaultVersionFeatures {
 				// to villages, but the structure is still reported by `/locate`.
 				).since(RecognisedVersion._19w13b,
 					10
+				).construct())
+			.with(OUTPOST_USE_CHECKED_VILLAGES, VersionFeature.<Boolean> builder()
+				.init(
+					true
+				).since(RecognisedVersion._20w21a,
+					false
 				).construct())
 
 			.with(FeatureKey.DESERT_TEMPLE_PRODUCER, scatteredFeature(

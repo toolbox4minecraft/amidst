@@ -9,10 +9,12 @@ public class SuppressAroundLocationChecker<T> implements LocationChecker {
 	
 	private final RegionalStructureProducer<T> regionalProducer;
 	private final int distance;
+	private final boolean checkLocations;
 	
-	public SuppressAroundLocationChecker(RegionalStructureProducer<T> regionalProducer, int distance) {
+	public SuppressAroundLocationChecker(RegionalStructureProducer<T> regionalProducer, int distance, boolean checkLocations) {
 		this.regionalProducer = regionalProducer;
 		this.distance = distance;
+		this.checkLocations = checkLocations;
 	}
 	
 	/**
@@ -25,16 +27,16 @@ public class SuppressAroundLocationChecker<T> implements LocationChecker {
 			return true;
 		}
 		
-		CoordinatesInWorld outpostPos = new CoordinatesInWorld(chunkX, chunkZ);
+		CoordinatesInWorld thisStructPos = new CoordinatesInWorld(chunkX, chunkZ);
 		
 		int nwChunkX = chunkX - distance;
 		int nwChunkZ = chunkZ - distance;
 		int seChunkX = chunkX + distance;
 		int seChunkZ = chunkZ + distance;
 		
-		CoordinatesInWorld structPos = this.regionalProducer.getCheckedLocation(nwChunkX, nwChunkZ);
+		CoordinatesInWorld otherStructPos = getLocation(nwChunkX, nwChunkZ);
 		
-		if (structPos != null && structPos.getDistanceChebyshev(outpostPos) <= distance) {
+		if (otherStructPos != null && otherStructPos.getDistanceChebyshev(thisStructPos) <= distance) {
 			return true;
 		}
 		
@@ -45,30 +47,37 @@ public class SuppressAroundLocationChecker<T> implements LocationChecker {
 		
 		//The area is contained within one region.
 		if (nwRegionX == seRegionX && nwRegionZ == seRegionZ) {
-			return false;
+			return true;
 		}
 		
 		//The area intersects 4 regions.
 		if (nwRegionX != seRegionX && nwRegionZ != seRegionZ) {
-			structPos = this.regionalProducer.getCheckedLocation(seChunkX, seChunkZ);
 			
-			if (structPos != null && structPos.getDistanceChebyshev(outpostPos) <= distance) { // TODO: why was this null check not here?
-				return true;
+			otherStructPos = getLocation(seChunkX, seChunkZ);
+			if (otherStructPos != null && otherStructPos.getDistanceChebyshev(thisStructPos) <= distance) {
+				return false;
 			}
 			
-			structPos = this.regionalProducer.getCheckedLocation(nwChunkX, seChunkZ);
-			
-			if (structPos != null && structPos.getDistanceChebyshev(outpostPos) <= distance) {
-				return true;
+			otherStructPos = getLocation(nwChunkX, seChunkZ);
+			if (otherStructPos != null && otherStructPos.getDistanceChebyshev(thisStructPos) <= distance) {
+				return false;
 			}
 			
-			structPos = this.regionalProducer.getCheckedLocation(seChunkX, nwChunkZ);
-			return structPos != null && structPos.getDistanceChebyshev(outpostPos) <= distance;
+			otherStructPos = getLocation(seChunkX, nwChunkZ);
+			return !(otherStructPos != null && otherStructPos.getDistanceChebyshev(thisStructPos) <= distance);
 		}
 		
 		//The area intersects 2 regions.
-		structPos = this.regionalProducer.getCheckedLocation(seChunkX, seChunkZ);
-		return structPos != null && structPos.getDistanceChebyshev(outpostPos) <= distance;
+		otherStructPos = getLocation(seChunkX, seChunkZ);
+		return !(otherStructPos != null && otherStructPos.getDistanceChebyshev(thisStructPos) <= distance);
+	}
+	
+	private CoordinatesInWorld getLocation(int chunkX, int chunkZ) {
+		if (checkLocations) {
+			return regionalProducer.getCheckedLocation(chunkX, chunkZ);
+		} else {
+			return regionalProducer.getPossibleLocation(chunkX, chunkZ);
+		}
 	}
 	
 }

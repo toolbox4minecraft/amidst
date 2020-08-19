@@ -33,14 +33,15 @@ public class PillagerOutpostProducer extends RegionalStructureProducer<Void> {
 			boolean displayDimension,
 			long seed,
 			RegionalStructureProducer<Void> villageProducer,
-			int avoidVillageRadius) {
+			int avoidVillageRadius,
+			boolean checkVillageLocations) {
 		
 		super(resolution,
 			  offsetInWorld,
 			  new AllValidLocationChecker(
 					  new PillagerOutpostAlgorithm(seed),
 					  new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomesForStructure),
-					  new SuppressAroundLocationChecker<>(villageProducer, avoidVillageRadius)
+					  new SuppressAroundLocationChecker<>(villageProducer, avoidVillageRadius, checkVillageLocations)
 			  ),
 			  provider,
 			  dimension,
