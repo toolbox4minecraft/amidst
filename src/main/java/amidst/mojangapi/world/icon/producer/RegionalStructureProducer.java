@@ -40,8 +40,8 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 	public final boolean buggyStructureCoordinateMath;
 	
 	/**
-	 * Length of chunks needed to cover all of this structure's regions
-	 * that intersect a fragment.
+	 * Length of chunks needed to cover the maximum possible regions
+	 * intersecting a fragment.
 	 */
 	private final int intersectingRegionChunks;
 	
@@ -116,7 +116,8 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 			if (worldIconType != null) {
 				CoordinatesInWorld coordinates = createCoordinates(corner, checkedX - (int) corner.getXAs(resolution), checkedY - (int) corner.getYAs(resolution));
 				
-				if(coordinates.isInBoundsOf(corner, Fragment.SIZE)) { // FIXME idk if this is nessecary
+				// This is needed to avoid duplicate world icons.
+				if(coordinates.isInBoundsOf(corner, Fragment.SIZE)) {
 					consumer.accept(
 							new WorldIcon(
 									coordinates,
@@ -151,7 +152,7 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 	/**
 	 * This returns the equivalent of a StructureStart's position.
 	 */
-	public CoordinatesInWorld getPossibleLocation(int chunkX, int chunkY) {	// TODO: is this always normal chunks or can this be nether chunks?
+	public CoordinatesInWorld getPossibleLocation(int chunkX, int chunkY) {
 		int value1 = getRegionCoord(chunkX);
 		int value2 = getRegionCoord(chunkY);
 		// JRand is faster than normal Random

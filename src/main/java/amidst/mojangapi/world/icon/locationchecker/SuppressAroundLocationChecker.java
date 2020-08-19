@@ -37,7 +37,7 @@ public class SuppressAroundLocationChecker<T> implements LocationChecker {
 		CoordinatesInWorld otherStructPos = getLocation(nwChunkX, nwChunkZ);
 		
 		if (otherStructPos != null && otherStructPos.getDistanceChebyshev(thisStructPos) <= distance) {
-			return true;
+			return false;
 		}
 		
 		int nwRegionX = regionalProducer.getRegionCoord(nwChunkX);
