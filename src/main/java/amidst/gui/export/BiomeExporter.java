@@ -34,6 +34,7 @@ import amidst.gui.main.viewer.widget.ProgressWidget.ProgressEntryType;
 import amidst.logging.AmidstLogger;
 import amidst.logging.AmidstMessageBox;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
+import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 import amidst.settings.biomeprofile.BiomeProfileSelection;
 import amidst.threading.WorkerExecutor;
@@ -94,7 +95,7 @@ public class BiomeExporter {
 			progressReporter.report(entry(MIN, 0));
 			progressReporter.report(entry(PROGRESS, 0));
 
-			int resolutionFactor = configuration.isQuarterResolution() ? 4 : 1;
+			int resolutionFactor = Resolution.from(configuration.isQuarterResolution()).getStep();
 
 			int x = (int) configuration.getTopLeftCoord().getX();
 			int y = (int) configuration.getTopLeftCoord().getY();
@@ -146,10 +147,11 @@ public class BiomeExporter {
 	private static class CustomRenderedImage implements RenderedImage {
 
 		private final static int[] BITMASKS = {
-				0xFF0000,
-				0x00FF00,
-				0x0000FF
-			};
+			0xFF0000,
+			0x00FF00,
+			0x0000FF
+		};
+		private final static int DEFAULT_BATCH_HEIGHT = 16;
 
 		private final int worldX, worldY, width, height;
 		private final ColorModel colorModel;
@@ -159,6 +161,13 @@ public class BiomeExporter {
 		private final boolean useQuarterResolution;
 		private final int resolutionFactor;
 		private final ProgressReporter<Entry<ProgressEntryType, Integer>> progressReporter;
+
+		// The PNG renderer asks for data scanline by scanline, but the BiomeDataOracle has better
+		// performance when computing biome data for "thicker" regions.
+		// So we calculate several lines at once and cache the pixels in this array.
+		private int[] cachedPixels;
+		private int cachedY;
+		private int cachedHeight;
 
 		public CustomRenderedImage(
 				int worldX,
@@ -170,7 +179,7 @@ public class BiomeExporter {
 				boolean useQuarterResolution,
 				ProgressReporter<Entry<ProgressEntryType, Integer>> progressReporter) {
 			this.useQuarterResolution = useQuarterResolution;
-			this.resolutionFactor = useQuarterResolution ? 4 : 1;
+			this.resolutionFactor = Resolution.from(useQuarterResolution).getStep();
 			this.worldX = worldX;
 			this.worldY = worldY;
 			this.width = width;
@@ -180,6 +189,7 @@ public class BiomeExporter {
 			this.biomeProfileSelection = biomeProfileSelection;
 			this.biomeDataOracle = biomeDataOracle;
 			this.progressReporter = progressReporter;
+			this.cachedHeight = DEFAULT_BATCH_HEIGHT;
 		}
 
 		@Override
@@ -214,18 +224,30 @@ public class BiomeExporter {
 
 		@Override
 		public Raster getData(Rectangle rect) {
-			DataBufferInt buffer = new DataBufferInt(Math.multiplyExact(rect.width, rect.height));
-			int[] pixelArray = buffer.getData();
+			if (rect.x != getMinX() || rect.width != getWidth() || rect.height != 1) {
+				throw new IllegalArgumentException("this RenderedImage only supports producing Rasters for horizontal slices");
+			}
 
-			CoordinatesInWorld corner = CoordinatesInWorld.from((long) worldX + rect.x * resolutionFactor, (long) worldY + rect.y * resolutionFactor);
-			biomeDataOracle.getBiomeData(corner, rect.width, rect.height, useQuarterResolution, data -> {
-				for (int i = 0; i < pixelArray.length; i++) {
-					pixelArray[i] = biomeProfileSelection.getBiomeColorOrUnknown(data[i]).getRGB();
-				}
-			});
+			if (cachedPixels == null) {
+				cachedPixels = new int[Math.multiplyExact(getWidth(), cachedHeight)];
+				cachedY = Integer.MIN_VALUE;
+			}
 
-			Raster r = Raster.createPackedRaster(buffer, rect.width, rect.height, rect.width, BITMASKS, new Point(rect.x, rect.y));
+			// New batch, calculate the new pixels
+			if (rect.y < cachedY || rect.y >= cachedY + cachedHeight) {
+				CoordinatesInWorld corner = CoordinatesInWorld.from((long) worldX + rect.x * resolutionFactor, (long) worldY + rect.y * resolutionFactor);
+				biomeDataOracle.getBiomeData(corner, getWidth(), cachedHeight, useQuarterResolution, data -> {
+					for (int i = 0; i < cachedPixels.length; i++) {
+						cachedPixels[i] = biomeProfileSelection.getBiomeColorOrUnknown(data[i]).getRGB();
+					}
+				});
+				cachedY = rect.y;
+			}
 
+			int bufSize = Math.multiplyExact(getWidth(), rect.height);
+			int bufOffset = Math.multiplyExact(getWidth(), rect.y - cachedY);
+			DataBufferInt buffer = new DataBufferInt(cachedPixels, bufSize, bufOffset);
+			Raster r = Raster.createPackedRaster(buffer, getWidth(), rect.height, getWidth(), BITMASKS, new Point(rect.x, rect.y));
 			progressReporter.report(entry(PROGRESS, rect.y));
 
 			return r;
