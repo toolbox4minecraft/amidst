@@ -3,6 +3,7 @@ package amidst.mojangapi.world.icon.producer;
 import java.util.function.Consumer;
 
 import amidst.documentation.Immutable;
+import amidst.fragment.Fragment;
 import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.coordinates.Resolution;
@@ -17,7 +18,11 @@ public class NetherFortressProducer_Original extends WorldIconProducer<Void> {
 	private static final Resolution RESOLUTION = Resolution.NETHER_CHUNK;
 	private static final int OFFSET_IN_WORLD = 88;
 	private static final int SPACING = 16; // nether chunks (i think) because of the "coord >> 4" bit shift
-	private static final int FRAGMENT_REGION_COUNT = (int) Math.ceil((double) RESOLUTION.getStepsPerFragment() / SPACING);
+	/**
+	 * Length of chunks needed to cover the maximum possible regions
+	 * intersecting a fragment.
+	 */
+	private static final int INTERSECTING_REGION_CHUNKS = (RESOLUTION.getStepsPerFragment() + SPACING - 1) / SPACING * SPACING;
 	
 	private final long seed;
 
@@ -27,8 +32,8 @@ public class NetherFortressProducer_Original extends WorldIconProducer<Void> {
 	
 	@Override
 	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer, Void additionalData) {
-		for (int xRelativeToFragment = 0; xRelativeToFragment < FRAGMENT_REGION_COUNT; xRelativeToFragment += SPACING) {
-			for (int yRelativeToFragment = 0; yRelativeToFragment < FRAGMENT_REGION_COUNT; yRelativeToFragment += SPACING) {
+		for (int xRelativeToFragment = 0; xRelativeToFragment <= INTERSECTING_REGION_CHUNKS; xRelativeToFragment += SPACING) {
+			for (int yRelativeToFragment = 0; yRelativeToFragment <= INTERSECTING_REGION_CHUNKS; yRelativeToFragment += SPACING) {
 				generateAt(corner, consumer, xRelativeToFragment, yRelativeToFragment);
 			}
 		}
@@ -50,13 +55,15 @@ public class NetherFortressProducer_Original extends WorldIconProducer<Void> {
 			int possibleY = (int) possibleLocation.getY();
 			
 			CoordinatesInWorld coordinates = createCoordinates(corner, possibleX - (int) corner.getXAs(RESOLUTION), possibleY - (int) corner.getYAs(RESOLUTION));
-			consumer.accept(
-					new WorldIcon(
-							coordinates,
-							ICON_TYPE.getLabel(),
-							ICON_TYPE.getImage(),
-							DIMENSION,
-							false));
+			if(coordinates.isInBoundsOf(corner, Fragment.SIZE)) {
+				consumer.accept(
+						new WorldIcon(
+								coordinates,
+								ICON_TYPE.getLabel(),
+								ICON_TYPE.getImage(),
+								DIMENSION,
+								false));
+			}
 		}
 	}
 

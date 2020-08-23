@@ -257,7 +257,7 @@ public enum DefaultVersionFeatures {
 				.init(
 					r -> r.nextInt(6) >= 2
 				).since(RecognisedVersion._1_16_pre3,
-					r -> r.nextInt(6) >= 2
+					r -> r.nextInt(5) >= 2
 				).construct())
 			
 			.with(NETHER_BUILDING_SALT, VersionFeature.constant(30084232L))
@@ -291,7 +291,6 @@ public enum DefaultVersionFeatures {
 						)
 					)
 				).construct())
-			
 
 			.with(MINESHAFT_LOCATION_CHECKER, VersionFeature.<LocationChecker> builder()
 				.init( // Actually starts at beta 1.8
