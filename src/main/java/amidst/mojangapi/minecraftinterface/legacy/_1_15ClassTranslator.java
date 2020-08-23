@@ -98,6 +98,23 @@ public enum _1_15ClassTranslator {
                 )
                 .thenDeclareRequired(CLASS_BIOME)
             .next()
+                .ifDetect(c -> c.hasConstructorWithRealArgs("long")
+                	&& (c.hasMethodWithRealArgsReturning("java/util/Set", c.getRealClassName())
+        		    || c.hasMethodWithRealArgsReturning("java/util/List", c.getRealClassName()))
+                )
+                .thenDeclareOptional(CLASS_NETHER_BIOME_SETTINGS)
+                	.requiredConstructor(CONSTRUCTOR_NETHER_BIOME_SETTINGS).real("long").end()
+                	.optionalMethod(METHOD_NETHER_BIOME_SETTINGS_SET_BIOMES1, "a").real("java.util.Set").end()
+                	.optionalMethod(METHOD_NETHER_BIOME_SETTINGS_SET_BIOMES2, "a").real("java.util.List").end()
+            .next()
+                .ifDetect(c -> c.searchForLong(2L)
+                	&& c.searchForLong(3L)
+                	&& c.getNumberOfConstructors() == 1
+                	&& c.getNumberOfMethods() == 2
+                )
+                .thenDeclareOptional(CLASS_NETHER_BIOME_PROVIDER)
+                	.requiredConstructor(CONSTRUCTOR_NETHER_BIOME_PROVIDER).symbolic(CLASS_NETHER_BIOME_SETTINGS).end()
+            .next()
                 .ifDetect(c ->
                     (c.searchForStringContaining("Server-Worker-")
                      || c.searchForStringContaining("Worker-"))

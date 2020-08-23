@@ -1,11 +1,14 @@
 package amidst.mojangapi.mocking;
 
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.function.Function;
 
 import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
 import amidst.mojangapi.world.testworld.storage.json.BiomeDataJson;
 import amidst.mojangapi.world.testworld.storage.json.WorldMetadataJson;
@@ -46,11 +49,16 @@ public class FakeMinecraftInterface implements MinecraftInterface {
 		}
 
 		@Override
-		public<T> T getBiomeData(int x, int y, int width, int height,
+		public<T> T getBiomeData(Dimension dimension, int x, int y, int width, int height,
 				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException {
 			BiomeDataJson biomes = useQuarterResolution ? quarterBiomeData : fullBiomeData;
-			return biomeDataMapper.apply(biomes.get(x, y, width, height));
+			return biomeDataMapper.apply(biomes.get(dimension, x, y, width, height));
+		}
+
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			return EnumSet.allOf(Dimension.class);
 		}
 	}
 }

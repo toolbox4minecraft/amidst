@@ -3,7 +3,6 @@ package amidst.mojangapi.world.versionfeatures;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import amidst.documentation.Immutable;
@@ -28,9 +27,9 @@ public class VersionFeatureImpl<V> implements VersionFeature<V> {
 	public V getValue(RecognisedVersion version, VersionFeatures features) {
 		Iterator<Entry<V>> entries = getEntriesToApply(version);
 
-		V value = entries.next().createValue(features);
+		V value = entries.next().createValue(version, features);
 		while (entries.hasNext()) {
-			value = entries.next().updateValue(features, value);
+			value = entries.next().updateValue(version, features, value);
 		}
 
 		return value;
@@ -55,24 +54,24 @@ public class VersionFeatureImpl<V> implements VersionFeature<V> {
 	@Immutable
 	public static class Entry<V> {
 		private final RecognisedVersion version;
-		private final Function<VersionFeatures, V> valueSupplier;
-		private final BiFunction<VersionFeatures, V, V> valueUpdater;
+		private final VersionFeature<V> valueSupplier;
+		private final Function<V, VersionFeature<V>> valueUpdater;
 
-		private Entry(RecognisedVersion version, Function<VersionFeatures, V> supplier, BiFunction<VersionFeatures, V, V> updater) {
+		private Entry(RecognisedVersion version, VersionFeature<V> supplier, Function<V, VersionFeature<V>> updater) {
 			this.version = version;
 			this.valueSupplier = supplier;
 			this.valueUpdater = updater;
 		}
 
-		public static<V> Entry<V> defaultValue(Function<VersionFeatures, V> valueSupplier) {
+		public static<V> Entry<V> defaultValue(VersionFeature<V> valueSupplier) {
 			return new Entry<>(null, Objects.requireNonNull(valueSupplier), null);
 		}
 
-		public static<V> Entry<V> since(RecognisedVersion version, Function<VersionFeatures, V> valueSupplier) {
+		public static<V> Entry<V> since(RecognisedVersion version, VersionFeature<V> valueSupplier) {
 			return new Entry<>(Objects.requireNonNull(version), Objects.requireNonNull(valueSupplier), null);
 		}
 
-		public static<V> Entry<V> sinceUpdate(RecognisedVersion version, BiFunction<VersionFeatures, V, V> valueUpdater) {
+		public static<V> Entry<V> sinceUpdate(RecognisedVersion version, Function<V, VersionFeature<V>> valueUpdater) {
 			return new Entry<>(Objects.requireNonNull(version), null, Objects.requireNonNull(valueUpdater));
 		}
 
@@ -88,13 +87,13 @@ public class VersionFeatureImpl<V> implements VersionFeature<V> {
 			return this.valueSupplier == null;
 		}
 
-		public V createValue(VersionFeatures features) {
-			V value = this.valueSupplier.apply(features);
+		public V createValue(RecognisedVersion version, VersionFeatures features) {
+			V value = this.valueSupplier.getValue(version, features);
 			return Objects.requireNonNull(value, "feature value cannot be null");
 		}
 
-		public V updateValue(VersionFeatures features, V oldValue) {
-			V value = this.valueUpdater.apply(features, oldValue);
+		public V updateValue(RecognisedVersion version, VersionFeatures features, V oldValue) {
+			V value = this.valueUpdater.apply(oldValue).getValue(version, features);
 			return Objects.requireNonNull(value, "feature value cannot be null");
 		}
 	}

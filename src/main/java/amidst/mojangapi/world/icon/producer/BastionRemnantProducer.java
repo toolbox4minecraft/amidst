@@ -1,0 +1,49 @@
+package amidst.mojangapi.world.icon.producer;
+
+import java.util.List;
+
+import amidst.mojangapi.world.Dimension;
+import amidst.mojangapi.world.biome.Biome;
+import amidst.mojangapi.world.coordinates.Resolution;
+import amidst.mojangapi.world.icon.locationchecker.AllValidLocationChecker;
+import amidst.mojangapi.world.icon.locationchecker.BiomeLocationChecker;
+import amidst.mojangapi.world.icon.locationchecker.RandomLocationChecker;
+import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
+import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
+import amidst.mojangapi.world.oracle.BiomeDataOracle;
+ 
+public class BastionRemnantProducer extends RegionalStructureProducer<Void> {
+	private static final Resolution RESOLUTION = Resolution.NETHER_CHUNK;
+	private static final int OFFSET_IN_WORLD = 88;
+	private static final Dimension DIMENSION = Dimension.NETHER;
+	private static final boolean DISPLAY_DIMENSION = false;
+	
+	private static final boolean IS_TRIANGULAR = false;
+	
+	public BastionRemnantProducer(
+			long worldSeed,
+			BiomeDataOracle biomeDataOracle,
+			List<Biome> validBiomesAtMiddleOfChunk,
+			long salt,
+			byte spacing,
+			byte separation,
+			int randomBound) {
+		
+		super(RESOLUTION,
+			  OFFSET_IN_WORLD,
+			  new AllValidLocationChecker(
+					  new BiomeLocationChecker(biomeDataOracle, validBiomesAtMiddleOfChunk),
+					  new RandomLocationChecker(this, r -> r.nextInt(5) >= 2)
+			  ),
+			  new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.BASTION_REMNANT),
+			  DIMENSION,
+			  DISPLAY_DIMENSION,
+			  worldSeed,
+			  salt,
+			  spacing,
+			  separation,
+			  IS_TRIANGULAR
+			);
+	}
+	
+}

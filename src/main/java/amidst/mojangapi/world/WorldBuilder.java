@@ -90,7 +90,8 @@ public class WorldBuilder {
 				recognisedVersion,
 				versionFeatures.get(FeatureKey.BIOME_LIST),
 				versionFeatures.get(FeatureKey.ENABLED_LAYERS),
-				versionFeatures.get(FeatureKey.BIOME_DATA_ORACLE),
+				versionFeatures.get(FeatureKey.OVERWORLD_BIOME_DATA_ORACLE),
+				versionFeatures.get(FeatureKey.NETHER_BIOME_DATA_ORACLE),
 				versionFeatures.get(FeatureKey.END_ISLAND_ORACLE),
 				versionFeatures.get(FeatureKey.SLIME_CHUNK_ORACLE),
 				new SpawnProducer(worldSpawnOracle),
@@ -114,7 +115,10 @@ public class WorldBuilder {
 						versionFeatures.get(FeatureKey.SHIPWRECK_PRODUCER),
 						versionFeatures.get(FeatureKey.BURIED_TREASURE_PRODUCER)
 				),
-				versionFeatures.get(FeatureKey.NETHER_FORTRESS_PRODUCER),
+				new MultiProducer<>(
+						versionFeatures.get(FeatureKey.NETHER_FORTRESS_PRODUCER),
+						versionFeatures.get(FeatureKey.BASTION_REMNANT_PRODUCER)
+				),
 				versionFeatures.get(FeatureKey.END_CITY_PRODUCER));
 	}
 }

@@ -43,7 +43,7 @@ public enum MenuShortcuts implements MenuShortcut {
 	SHOW_OCEAN_MONUMENTS("menu 7"),
 	SHOW_WOODLAND_MANSIONS("menu 8"),
 	SHOW_OCEAN_FEATURES("menu 9"),
-	SHOW_NETHER_FORTRESSES("menu 0"),
+	SHOW_NETHER_FEATURES("menu 0"),
 
 	// It's okay to duplicate the Overworld layers shortcuts here, because
 	// the End layers will never be active at the same time.

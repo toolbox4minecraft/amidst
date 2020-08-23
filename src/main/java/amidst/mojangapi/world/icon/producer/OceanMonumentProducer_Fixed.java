@@ -8,13 +8,14 @@ import amidst.mojangapi.world.biome.Biome;
 import amidst.mojangapi.world.coordinates.Resolution;
 import amidst.mojangapi.world.icon.locationchecker.AllValidLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.StructureBiomeLocationChecker;
-import amidst.mojangapi.world.icon.type.WorldIconTypeProvider;
+import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
+import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 /**
  * Bug https://bugs.mojang.com/browse/MC-65214 was fixed in 15w46a, and the fix
  * changes where Ocean Monuments can appear. This class implements the
- * LocationChecker for after the fix was implemented.
+ * RegionalStructureProducer for after the fix was implemented.
  *
  * The fix is described here:
  * https://bugs.mojang.com/browse/MC-65214?focusedCommentId
@@ -50,33 +51,34 @@ import amidst.mojangapi.world.oracle.BiomeDataOracle;
  */
 @ThreadSafe
 public class OceanMonumentProducer_Fixed extends RegionalStructureProducer<Void> {
+	private static final Resolution RESOLUTION = Resolution.CHUNK;
+	private static final int OFFSET_IN_WORLD = 8;
+	private static final Dimension DIMENSION = Dimension.OVERWORLD;
+	private static final boolean DISPLAY_DIMENSION = false;
+	
 	private static final long SALT = 10387313L;
 	private static final byte SPACING = 32;
 	private static final byte SEPARATION = 5;
 	private static final boolean IS_TRIANGULAR = true;
+	
 	private static final int STRUCTURE_SIZE = 29;
 	private static final int STRUCTURE_CENTER_SIZE = 16;
 
 	public OceanMonumentProducer_Fixed(
-			Resolution resolution,
-			int offsetInWorld,
-			WorldIconTypeProvider<Void> provider,
-			Dimension dimension,
-			boolean displayDimension,
 			long worldSeed,
 			BiomeDataOracle biomeDataOracle,
 			List<Biome> validBiomesAtMiddleOfChunk,
 			List<Biome> validBiomesForStructure) {
 		
-		super(resolution,
-			  offsetInWorld,
+		super(RESOLUTION,
+			  OFFSET_IN_WORLD,
 			  new AllValidLocationChecker(
 				  new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_CENTER_SIZE, validBiomesAtMiddleOfChunk),
 				  new StructureBiomeLocationChecker(biomeDataOracle, STRUCTURE_SIZE, validBiomesForStructure)
 			  ),
-			  provider,
-			  dimension,
-			  displayDimension,
+			  new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.OCEAN_MONUMENT),
+			  DIMENSION,
+			  DISPLAY_DIMENSION,
 			  worldSeed,
 			  SALT,
 			  SPACING,

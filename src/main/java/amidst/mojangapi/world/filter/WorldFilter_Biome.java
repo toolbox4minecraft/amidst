@@ -18,7 +18,7 @@ public class WorldFilter_Biome extends WorldFilter {
 
 	@Override
 	public boolean isValid(World world) {
-		world.getBiomeDataOracle().populateArray(corner, region, true);
+		world.getOverworldBiomeDataOracle().populateArray(corner, region, true);
 		for (short[] row : region) {
 			for (short entry : row) {
 				if (validBiomeIndexes.contains(entry)) {

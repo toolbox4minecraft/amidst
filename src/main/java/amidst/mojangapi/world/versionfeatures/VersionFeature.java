@@ -21,15 +21,15 @@ public interface VersionFeature<V> {
 		return (version, features) -> value;
 	}
 
-	public static<V> VersionFeature<V> bind(Function<VersionFeatures, VersionFeature<V>> factory) {
-		return (version, features) -> factory.apply(features).getValue(version, features);
+	public static<V> VersionFeature<V> fixed(Function<VersionFeatures, V> factory) {
+		return (version, features) -> factory.apply(features);
 	}
 
 	public default<W> VersionFeature<W> andThen(Function<V, W> mapper) {
 		return (version, features) -> mapper.apply(this.getValue(version, features));
 	}
 
-	public default<W> VersionFeature<W> andThenBind(BiFunction<VersionFeatures, V, W> mapper) {
+	public default<W> VersionFeature<W> andThenFixed(BiFunction<VersionFeatures, V, W> mapper) {
 		return (version, features) -> mapper.apply(features, this.getValue(version, features));
 	}
 }

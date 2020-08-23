@@ -2,8 +2,8 @@ package amidst.mojangapi.world.versionfeatures;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import amidst.documentation.NotThreadSafe;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
@@ -24,16 +24,16 @@ public class VersionFeatureBuilder<V, B extends VersionFeatureBuilder<V, B>> {
 		return (B) this;
 	}
 
-	public B init(Function<VersionFeatures, V> defaultValueSupplier) {
+	public B init(VersionFeature<V> defaultValue) {
 		if (!this.entriesOldestFirst.isEmpty()) {
 			throw new IllegalStateException("only one default value is allowed");
 		}
-		this.entriesOldestFirst.add(Entry.defaultValue(defaultValueSupplier));
+		this.entriesOldestFirst.add(Entry.defaultValue(defaultValue));
 		return self();
 	}
 
 	public B init(V defaultValue) {
-		return init(features -> defaultValue);
+		return init(VersionFeature.constant(defaultValue));
 	}
 
 	private B addEntry(Entry<V> entry) {
@@ -49,20 +49,20 @@ public class VersionFeatureBuilder<V, B extends VersionFeatureBuilder<V, B>> {
 		return self();
 	}
 
-	public B since(RecognisedVersion version, Function<VersionFeatures, V> valueSupplier) {
-		return addEntry(Entry.since(version, valueSupplier));
+	public B since(RecognisedVersion version, VersionFeature<V> value) {
+		return addEntry(Entry.since(version, value));
 	}
 
 	public B since(RecognisedVersion version, V value) {
-		return since(version, feature -> value);
+		return since(version, VersionFeature.constant(value));
 	}
 
-	public B sinceUpdate(RecognisedVersion version, BiFunction<VersionFeatures, V, V> valueUpdater) {
+	public B sinceUpdateFeature(RecognisedVersion version, Function<V, VersionFeature<V>> valueUpdater) {
 		return addEntry(Entry.sinceUpdate(version, valueUpdater));
 	}
 
-	public B sinceUpdate(RecognisedVersion version, Function<V, V> valueUpdater) {
-		return sinceUpdate(version, (features, oldValue) -> valueUpdater.apply(oldValue));
+	public B sinceUpdate(RecognisedVersion version, UnaryOperator<V> valueUpdater) {
+		return sinceUpdateFeature(version, oldValue -> VersionFeature.constant(valueUpdater.apply(oldValue)));
 	}
 
 	public VersionFeature<V> construct() {

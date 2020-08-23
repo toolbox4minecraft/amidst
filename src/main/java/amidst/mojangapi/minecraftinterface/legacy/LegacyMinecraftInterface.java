@@ -1,7 +1,9 @@
 package amidst.mojangapi.minecraftinterface.legacy;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import amidst.clazz.symbolic.SymbolicClass;
@@ -10,6 +12,8 @@ import amidst.documentation.ThreadSafe;
 import amidst.mojangapi.minecraftinterface.MinecraftInterface;
 import amidst.mojangapi.minecraftinterface.MinecraftInterfaceException;
 import amidst.mojangapi.minecraftinterface.RecognisedVersion;
+import amidst.mojangapi.minecraftinterface.UnsupportedDimensionException;
+import amidst.mojangapi.world.Dimension;
 import amidst.mojangapi.world.WorldType;
 
 @ThreadSafe
@@ -150,12 +154,21 @@ public class LegacyMinecraftInterface implements MinecraftInterface {
 		}
 
 		@Override
-		public<T> T getBiomeData(int x, int y, int width, int height,
+		public<T> T getBiomeData(Dimension dimension,
+				int x, int y, int width, int height,
 				boolean useQuarterResolution, Function<int[], T> biomeDataMapper)
 				throws MinecraftInterfaceException {
+			if (dimension != Dimension.OVERWORLD)
+				throw new UnsupportedDimensionException(dimension);
+
 			SymbolicObject biomeGenerator = useQuarterResolution ? quarterResolutionBiomeGenerator : fullResolutionBiomeGenerator;
 			int[] data = LegacyMinecraftInterface.this.getBiomeData(x, y, width, height, biomeGenerator);
 			return biomeDataMapper.apply(data);
+		}
+
+		@Override
+		public Set<Dimension> supportedDimensions() {
+			return Collections.singleton(Dimension.OVERWORLD);
 		}
 	}
 }
