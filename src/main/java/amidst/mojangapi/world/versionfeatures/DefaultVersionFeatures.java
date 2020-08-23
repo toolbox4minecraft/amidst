@@ -208,8 +208,8 @@ public enum DefaultVersionFeatures {
 					DefaultBiomes.jungleHills
 				).construct().andThenFixed(DefaultVersionFeatures::makeBiomeList))
 
-			.with(FeatureKey.NETHER_FORTRESS_PRODUCER, VersionFeature.<WorldIconProducer<?>> builder()
-				.init(NOOP_PRODUCER)
+			.with(FeatureKey.NETHER_FORTRESS_PRODUCER, VersionFeature.<WorldIconProducer<Void>> builder()
+				.init((WorldIconProducer<Void>) NOOP_PRODUCER)
 				.since(RecognisedVersion._b1_9_pre1,
 					VersionFeature.fixed(features -> new NetherFortressProducer_Original(getWorldSeed(features)))
 				).since(RecognisedVersion._20w16a,
@@ -230,8 +230,8 @@ public enum DefaultVersionFeatures {
 					r -> r.nextInt(5) < 2
 				).construct())
 			
-			.with(FeatureKey.BASTION_REMNANT_PRODUCER, VersionFeature.<WorldIconProducer<?>> builder()
-				.init(NOOP_PRODUCER)
+			.with(FeatureKey.BASTION_REMNANT_PRODUCER, VersionFeature.<WorldIconProducer<Void>> builder()
+				.init((WorldIconProducer<Void>) NOOP_PRODUCER)
 				.since(RecognisedVersion._20w16a,
 					VersionFeature.fixed(features ->
 						BastionRemnantProducer.create(
@@ -506,7 +506,7 @@ public enum DefaultVersionFeatures {
 						14357620L
 				).construct())
 
-			.with(FeatureKey.OCEAN_MONUMENT_PRODUCER, VersionFeature.<WorldIconProducer<?>> builder()
+			.with(FeatureKey.OCEAN_MONUMENT_PRODUCER, VersionFeature.<WorldIconProducer<Void>> builder()
 				.init(
 					VersionFeature.fixed(features -> new OceanMonumentProducer_Original(
 						getWorldSeed(features), getBiomeOracle(features, Dimension.OVERWORLD),
@@ -741,7 +741,7 @@ public enum DefaultVersionFeatures {
 		}
 	}
 
-	private static VersionFeature<WorldIconProducer<?>> scatteredFeature(
+	private static VersionFeature<WorldIconProducer<Void>> scatteredFeature(
 			Resolution resolution,
 			int offsetInWorld,
 			FeatureKey<List<Biome>> validBiomes,
@@ -769,7 +769,7 @@ public enum DefaultVersionFeatures {
 		);
 	}
 
-	private static VersionFeature<WorldIconProducer<?>> scatteredFeature(
+	private static VersionFeature<WorldIconProducer<Void>> scatteredFeature(
 			Resolution resolution,
 			int offsetInWorld,
 			FeatureKey<List<Biome>> validBiomes,
