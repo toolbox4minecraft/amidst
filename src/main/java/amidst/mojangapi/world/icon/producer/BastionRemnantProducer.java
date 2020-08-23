@@ -29,6 +29,7 @@ public class BastionRemnantProducer extends RegionalStructureProducer<Void> {
 			long salt,
 			byte spacing,
 			byte separation,
+			boolean buggyStructureCoordinateMath,
 			Function<JRand, Boolean> randomFunction) {
 		
 		RegionRandomLocationChecker regionRandomChecker = new RegionRandomLocationChecker(randomFunction);
@@ -39,6 +40,7 @@ public class BastionRemnantProducer extends RegionalStructureProducer<Void> {
 				salt,
 				spacing,
 				separation,
+				buggyStructureCoordinateMath,
 				regionRandomChecker
 		);
 		regionRandomChecker.setRegionalProducer(producer);
@@ -52,6 +54,7 @@ public class BastionRemnantProducer extends RegionalStructureProducer<Void> {
 			long salt,
 			byte spacing,
 			byte separation,
+			boolean buggyStructureCoordinateMath,
 			RegionRandomLocationChecker regionRandomChecker) {
 		
 		super(RESOLUTION,
@@ -67,7 +70,8 @@ public class BastionRemnantProducer extends RegionalStructureProducer<Void> {
 			  salt,
 			  spacing,
 			  separation,
-			  IS_TRIANGULAR
+			  IS_TRIANGULAR,
+			  buggyStructureCoordinateMath
 			);
 	}
 	

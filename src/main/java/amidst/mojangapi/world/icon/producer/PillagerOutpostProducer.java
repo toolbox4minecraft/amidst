@@ -36,7 +36,8 @@ public class PillagerOutpostProducer extends RegionalStructureProducer<Void> {
 			long worldSeed,
 			RegionalStructureProducer<Void> villageProducer,
 			int avoidVillageRadius,
-			boolean checkVillageLocations) {
+			boolean checkVillageLocations,
+			boolean buggyStructureCoordinateMath) {
 		
 		super(RESOLUTION,
 			  OFFSET_IN_WORLD,
@@ -52,7 +53,8 @@ public class PillagerOutpostProducer extends RegionalStructureProducer<Void> {
 			  SALT,
 			  SPACING,
 			  SEPARATION,
-			  IS_TRIANGULAR
+			  IS_TRIANGULAR,
+			  buggyStructureCoordinateMath
 		     );
 	}
 

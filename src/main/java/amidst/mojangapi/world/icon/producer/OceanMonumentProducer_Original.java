@@ -31,7 +31,8 @@ public class OceanMonumentProducer_Original extends RegionalStructureProducer<Vo
 			long worldSeed,
 			BiomeDataOracle biomeDataOracle,
 			List<Biome> validBiomesAtMiddleOfChunk,
-			List<Biome> validBiomesForStructure) {
+			List<Biome> validBiomesForStructure,
+			boolean buggyStructureCoordinateMath) {
 		
 		super(RESOLUTION,
 			  OFFSET_IN_WORLD,
@@ -46,7 +47,8 @@ public class OceanMonumentProducer_Original extends RegionalStructureProducer<Vo
 			  SALT,
 			  SPACING,
 			  SEPARATION,
-			  IS_TRIANGULAR
+			  IS_TRIANGULAR,
+			  buggyStructureCoordinateMath
 			);
 	}
 }

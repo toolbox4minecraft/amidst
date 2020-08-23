@@ -22,6 +22,7 @@ public class NetherFortressProducer_Scattered extends RegionalStructureProducer<
 			long salt,
 			byte spacing,
 			byte separation,
+			boolean buggyStructureCoordinateMath,
 			Function<JRand, Boolean> randomFunction) {
 		
 		RegionRandomLocationChecker regionRandomChecker = new RegionRandomLocationChecker(randomFunction);
@@ -30,6 +31,7 @@ public class NetherFortressProducer_Scattered extends RegionalStructureProducer<
 				salt,
 				spacing,
 				separation,
+				buggyStructureCoordinateMath,
 				regionRandomChecker
 		);
 		regionRandomChecker.setRegionalProducer(producer);
@@ -41,6 +43,7 @@ public class NetherFortressProducer_Scattered extends RegionalStructureProducer<
 			long salt,
 			byte spacing,
 			byte separation,
+			boolean buggyStructureCoordinateMath,
 			RegionRandomLocationChecker regionRandomChecker) {
 		
 		super(RESOLUTION,
@@ -53,7 +56,8 @@ public class NetherFortressProducer_Scattered extends RegionalStructureProducer<
 			  salt,
 			  spacing,
 			  separation,
-			  IS_TRIANGULAR
+			  IS_TRIANGULAR,
+			  buggyStructureCoordinateMath
 			);
 	}
 }

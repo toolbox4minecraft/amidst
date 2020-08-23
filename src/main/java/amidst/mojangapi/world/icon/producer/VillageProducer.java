@@ -32,7 +32,8 @@ public class VillageProducer extends RegionalStructureProducer<Void> {
 			BiomeDataOracle biomeDataOracle,
 			List<Biome> validBiomesForStructure,
 			long worldSeed,
-			boolean doComplexVillageCheck) {
+			boolean doComplexVillageCheck,
+			boolean buggyStructureCoordinateMath) {
 		
 		super(RESOLUTION,
 			  OFFSET_IN_WORLD,
@@ -44,7 +45,8 @@ public class VillageProducer extends RegionalStructureProducer<Void> {
 			  SALT,
 			  SPACING,
 			  SEPARATION,
-			  IS_TRIANGULAR
+			  IS_TRIANGULAR,
+			  buggyStructureCoordinateMath
 			 );
 	}
 

@@ -219,6 +219,7 @@ public enum DefaultVersionFeatures {
 							features.get(NETHER_BUILDING_SALT),
 							features.get(NETHER_BUILDING_SPACING),
 							features.get(NETHER_BUILDING_SEPARATION),
+							features.get(BUGGY_STRUCTURE_COORDINATE_MATH),
 							features.get(NETHER_FORTRESS_FUNCTION)
 						)
 					)
@@ -241,6 +242,7 @@ public enum DefaultVersionFeatures {
 							features.get(NETHER_BUILDING_SALT),
 							features.get(NETHER_BUILDING_SPACING),
 							features.get(NETHER_BUILDING_SEPARATION),
+							features.get(BUGGY_STRUCTURE_COORDINATE_MATH),
 							features.get(BASTION_REMNANT_FUNCTION)
 						)
 					)
@@ -287,7 +289,8 @@ public enum DefaultVersionFeatures {
 							10387313L,
 							(byte) 20,
 							(byte) 11,
-							true
+							true,
+							features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
 						)
 					)
 				).construct())
@@ -363,7 +366,8 @@ public enum DefaultVersionFeatures {
 						getBiomeOracle(features, Dimension.OVERWORLD),
 						features.get(VILLAGE_VALID_BIOMES),
 						getWorldSeed(features),
-						features.get(DO_COMPLEX_VILLAGE_CHECK)
+						features.get(DO_COMPLEX_VILLAGE_CHECK),
+						features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
 					)
 				))
 			.with(VILLAGE_VALID_BIOMES, VersionFeature.<Integer> listBuilder()
@@ -391,7 +395,8 @@ public enum DefaultVersionFeatures {
 						getWorldSeed(features),
 						features.get(FeatureKey.VILLAGE_PRODUCER),
 						features.get(OUTPOST_VILLAGE_AVOID_DISTANCE),
-						features.get(OUTPOST_USE_CHECKED_VILLAGES)
+						features.get(OUTPOST_USE_CHECKED_VILLAGES),
+						features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
 					)
 				))
 			.with(PILLAGER_OUTPOST_VALID_BIOMES, VersionFeature.<Integer> listBuilder()
@@ -510,13 +515,15 @@ public enum DefaultVersionFeatures {
 					VersionFeature.fixed(features -> new OceanMonumentProducer_Original(
 						getWorldSeed(features), getBiomeOracle(features, Dimension.OVERWORLD),
 						features.get(OCEAN_MONUMENT_VALID_MIDDLE_CHUNK_BIOMES),
-						features.get(OCEAN_MONUMENT_VALID_BIOMES)
+						features.get(OCEAN_MONUMENT_VALID_BIOMES),
+						features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
 					))
 				).since(RecognisedVersion._15w46a,
 					VersionFeature.fixed(features -> new OceanMonumentProducer_Fixed(
 						getWorldSeed(features), getBiomeOracle(features, Dimension.OVERWORLD),
 						features.get(OCEAN_MONUMENT_VALID_MIDDLE_CHUNK_BIOMES),
-						features.get(OCEAN_MONUMENT_VALID_BIOMES)
+						features.get(OCEAN_MONUMENT_VALID_BIOMES),
+						features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
 					))
 				).construct())
 			.with(OCEAN_MONUMENT_VALID_MIDDLE_CHUNK_BIOMES, VersionFeature.<Integer> listBuilder()
@@ -558,7 +565,8 @@ public enum DefaultVersionFeatures {
 							10387319L,
 							(byte) 80,
 							(byte) 20,
-							true
+							true,
+							features.get(BUGGY_STRUCTURE_COORDINATE_MATH)
 					)
 				))
 			.with(WOODLAND_MANSION_VALID_BIOMES, VersionFeature.<Integer> listBuilder()
@@ -685,7 +693,7 @@ public enum DefaultVersionFeatures {
 						false
 				).since(RecognisedVersion._1_13_pre7,
 						true  // Bug MC-131462, again.
-				).since(RecognisedVersion._18w30b,
+				).since(RecognisedVersion._18w30b, // actually 18w30a
 						false
 				).construct());
 

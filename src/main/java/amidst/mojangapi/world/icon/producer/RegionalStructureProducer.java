@@ -45,14 +45,6 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 	 */
 	private final int intersectingRegionChunks;
 	
-	public RegionalStructureProducer(Resolution resolution, int offsetInWorld, LocationChecker checker,
-			WorldIconTypeProvider<T> provider, Dimension dimension, boolean displayDimension, long worldSeed, long salt,
-			byte spacing, byte separation, boolean isTriangular) {
-		
-		this(resolution, offsetInWorld, checker, provider, dimension, displayDimension, worldSeed, salt, spacing,
-				separation, isTriangular, false);
-	}
-	
 	public RegionalStructureProducer(
 			Resolution resolution,
 			int offsetInWorld,

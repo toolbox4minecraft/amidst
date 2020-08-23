@@ -68,7 +68,8 @@ public class OceanMonumentProducer_Fixed extends RegionalStructureProducer<Void>
 			long worldSeed,
 			BiomeDataOracle biomeDataOracle,
 			List<Biome> validBiomesAtMiddleOfChunk,
-			List<Biome> validBiomesForStructure) {
+			List<Biome> validBiomesForStructure,
+			boolean buggyStructureCoordinateMath) {
 		
 		super(RESOLUTION,
 			  OFFSET_IN_WORLD,
@@ -83,7 +84,8 @@ public class OceanMonumentProducer_Fixed extends RegionalStructureProducer<Void>
 			  SALT,
 			  SPACING,
 			  SEPARATION,
-			  IS_TRIANGULAR
+			  IS_TRIANGULAR,
+			  buggyStructureCoordinateMath
 			);
 	}
 }
