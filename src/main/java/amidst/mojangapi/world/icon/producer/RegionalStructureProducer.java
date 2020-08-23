@@ -179,7 +179,7 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 		}
 	}
 
-	private long getRegionSeed(int value1, int value2) {
+	public long getRegionSeed(int value1, int value2) {
 		// @formatter:off
 		return value1 * MAGIC_NUMBER_1
 		     + value2 * MAGIC_NUMBER_2

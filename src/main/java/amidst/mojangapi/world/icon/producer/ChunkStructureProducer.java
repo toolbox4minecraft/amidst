@@ -12,7 +12,7 @@ import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
 import amidst.mojangapi.world.icon.type.WorldIconTypeProvider;
 
 @ThreadSafe
-public class DefaultStructureProducer<T> extends WorldIconProducer<T> {
+public class ChunkStructureProducer<T> extends WorldIconProducer<T> {
 	private final Resolution resolution;
 	private final int size;
 	private final int offsetInWorld;
@@ -21,7 +21,7 @@ public class DefaultStructureProducer<T> extends WorldIconProducer<T> {
 	private final Dimension dimension;
 	private final boolean displayDimension;
 
-	public DefaultStructureProducer(
+	public ChunkStructureProducer(
 			Resolution resolution,
 			int offsetInWorld,
 			LocationChecker checker,
@@ -39,7 +39,7 @@ public class DefaultStructureProducer<T> extends WorldIconProducer<T> {
 
 	@Override
 	public void produce(CoordinatesInWorld corner, Consumer<WorldIcon> consumer, T additionalData) {
-		if(!checker.hasValidLocations()) {
+		if(checker != null && !checker.hasValidLocations()) {
 			return; // No need to check if the LocationChecker will never accept anything
 		}
 

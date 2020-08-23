@@ -10,35 +10,37 @@ import amidst.mojangapi.world.icon.locationchecker.AllValidLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.LocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.StructureBiomeLocationChecker;
 import amidst.mojangapi.world.icon.locationchecker.VillageAlgorithm;
-import amidst.mojangapi.world.icon.type.WorldIconTypeProvider;
+import amidst.mojangapi.world.icon.type.DefaultWorldIconTypes;
+import amidst.mojangapi.world.icon.type.ImmutableWorldIconTypeProvider;
 import amidst.mojangapi.world.oracle.BiomeDataOracle;
 
 @ThreadSafe
 public class VillageProducer extends RegionalStructureProducer<Void> {
+	private static final Resolution RESOLUTION = Resolution.CHUNK;
+	private static final int OFFSET_IN_WORLD = 4;
+	private static final Dimension DIMENSION = Dimension.OVERWORLD;
+	private static final boolean DISPLAY_DIMENSION = false;
+	
 	private static final long SALT = 10387312L;
 	private static final byte SPACING = 32;
 	private static final byte SEPARATION = 8;
 	private static final boolean IS_TRIANGULAR = false;
+	
 	private static final int STRUCTURE_SIZE = 0;
 
 	public VillageProducer(
-			Resolution resolution,
-			int offsetInWorld,
 			BiomeDataOracle biomeDataOracle,
 			List<Biome> validBiomesForStructure,
-			WorldIconTypeProvider<Void> provider,
-			Dimension dimension,
-			boolean displayDimension,
-			long seed,
+			long worldSeed,
 			boolean doComplexVillageCheck) {
 		
-		super(resolution,
-			  offsetInWorld,
-			  getLocationCheckers(seed, biomeDataOracle, validBiomesForStructure, doComplexVillageCheck),
-			  provider,
-			  dimension,
-			  displayDimension,
-			  seed,
+		super(RESOLUTION,
+			  OFFSET_IN_WORLD,
+			  getLocationCheckers(worldSeed, biomeDataOracle, validBiomesForStructure, doComplexVillageCheck),
+			  new ImmutableWorldIconTypeProvider(DefaultWorldIconTypes.VILLAGE),
+			  DIMENSION,
+			  DISPLAY_DIMENSION,
+			  worldSeed,
 			  SALT,
 			  SPACING,
 			  SEPARATION,

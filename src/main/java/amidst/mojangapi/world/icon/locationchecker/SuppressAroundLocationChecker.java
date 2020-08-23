@@ -5,13 +5,13 @@ import amidst.mojangapi.world.coordinates.CoordinatesInWorld;
 import amidst.mojangapi.world.icon.producer.RegionalStructureProducer;
 
 @ThreadSafe
-public class SuppressAroundLocationChecker<T> implements LocationChecker {
+public class SuppressAroundLocationChecker implements LocationChecker {
 	
-	private final RegionalStructureProducer<T> regionalProducer;
+	private final RegionalStructureProducer<?> regionalProducer;
 	private final int distance;
 	private final boolean checkLocations;
 	
-	public SuppressAroundLocationChecker(RegionalStructureProducer<T> regionalProducer, int distance, boolean checkLocations) {
+	public SuppressAroundLocationChecker(RegionalStructureProducer<?> regionalProducer, int distance, boolean checkLocations) {
 		this.regionalProducer = regionalProducer;
 		this.distance = distance;
 		this.checkLocations = checkLocations;
@@ -19,7 +19,7 @@ public class SuppressAroundLocationChecker<T> implements LocationChecker {
 	
 	/**
 	 * Adaptation of <a
-	 * href=https://github.com/KaptainWutax/FeatureUtils/blob/a751c57c7efdd3cc97114efb06de10033f50cfb0/src/main/java/kaptainwutax/featureutils/structure/PillagerOutpost.java#L90>this</a>
+	 * href=https://github.com/KaptainWutax/FeatureUtils/blob/master/src/main/java/kaptainwutax/featureutils/structure/PillagerOutpost.java#L96>this</a>
 	 */
 	@Override
 	public boolean isValidLocation(int chunkX, int chunkZ) {

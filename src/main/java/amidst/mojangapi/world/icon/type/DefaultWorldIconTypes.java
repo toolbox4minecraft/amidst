@@ -17,7 +17,7 @@ import amidst.mojangapi.world.icon.WorldIconImage;
 public enum DefaultWorldIconTypes {
 	// @formatter:off
 	NETHER_FORTRESS     ("nether_fortress",   "Nether Fortress"),
-	BASTION_REMANNT     ("bastion_remnant",   "Bastion Remnant"),
+	BASTION_REMNANT     ("bastion_remnant",   "Bastion Remnant"),
 	PLAYER              ("player",            "Player"),
 	STRONGHOLD          ("stronghold",        "Stronghold"),
 	JUNGLE              ("jungle",            "Jungle Temple"),
