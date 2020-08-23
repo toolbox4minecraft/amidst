@@ -103,24 +103,29 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 			T additionalData,
 			int xRelativeToFragment,
 			int yRelativeToFragment) {
+		
 		int x = xRelativeToFragment + (int) corner.getXAs(resolution);
 		int y = yRelativeToFragment + (int) corner.getYAs(resolution);
 		
-		CoordinatesInWorld checkedLocation = getCheckedLocation(x, y);
+		CoordinatesInWorld structLocation = getPossibleLocation(x, y);
 		
-		if (checkedLocation != null) {
-			int checkedX = (int) checkedLocation.getX();
-			int checkedY = (int) checkedLocation.getY();
+		int structX = (int) structLocation.getX();
+		int structY = (int) structLocation.getY();
+		
+		CoordinatesInWorld resultCoordinates = createCoordinates(structX, structY);
+		
+		// This is needed to avoid duplicate world icons.
+		// Calling this before isValidLocation gives a huge speedup.
+		if(resultCoordinates.isInBoundsOf(corner, Fragment.SIZE)) {
 			
-			DefaultWorldIconTypes worldIconType = provider.get(checkedX, checkedY, additionalData);
-			if (worldIconType != null) {
-				CoordinatesInWorld coordinates = createCoordinates(corner, checkedX - (int) corner.getXAs(resolution), checkedY - (int) corner.getYAs(resolution));
+			// if there is no checker provided, skip it
+			if (checker == null || checker.isValidLocation(structX, structY)) {
 				
-				// This is needed to avoid duplicate world icons.
-				if(coordinates.isInBoundsOf(corner, Fragment.SIZE)) {
+				DefaultWorldIconTypes worldIconType = provider.get(structX, structY, additionalData);
+				if (worldIconType != null) {
 					consumer.accept(
 							new WorldIcon(
-									coordinates,
+									resultCoordinates,
 									worldIconType.getLabel(),
 									worldIconType.getImage(),
 									dimension,
@@ -130,13 +135,10 @@ public class RegionalStructureProducer<T> extends WorldIconProducer<T> {
 		}
 	}
 
-	private CoordinatesInWorld createCoordinates(
-			CoordinatesInWorld corner,
-			int xRelativeToFragment,
-			int yRelativeToFragment) {
-		long xInWorld = resolution.convertFromThisToWorld(xRelativeToFragment);
-		long yInWorld = resolution.convertFromThisToWorld(yRelativeToFragment);
-		return corner.add(xInWorld + offsetInWorld, yInWorld + offsetInWorld);
+	private CoordinatesInWorld createCoordinates(int structX, int structY) {
+		long xInWorld = resolution.convertFromThisToWorld(structX);
+		long yInWorld = resolution.convertFromThisToWorld(structY);
+		return new CoordinatesInWorld(xInWorld + offsetInWorld, yInWorld + offsetInWorld);
 	}
 
 	public CoordinatesInWorld getCheckedLocation(int chunkX, int chunkY) {

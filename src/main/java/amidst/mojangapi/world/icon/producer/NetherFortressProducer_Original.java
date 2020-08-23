@@ -45,16 +45,17 @@ public class NetherFortressProducer_Original extends WorldIconProducer<Void> {
 			Consumer<WorldIcon> consumer,
 			int xRelativeToFragment,
 			int yRelativeToFragment) {
+		
 		int x = xRelativeToFragment + (int) corner.getXAs(RESOLUTION);
 		int y = yRelativeToFragment + (int) corner.getYAs(RESOLUTION);
 		
-		CoordinatesInWorld possibleLocation = getPossibleLocation(x, y);
+		CoordinatesInWorld checkedLocation = getCheckedLocation(x, y);
 		
-		if(possibleLocation != null) {
-			int possibleX = (int) possibleLocation.getX();
-			int possibleY = (int) possibleLocation.getY();
+		if(checkedLocation != null) {
+			int possibleX = (int) checkedLocation.getX();
+			int possibleY = (int) checkedLocation.getY();
 			
-			CoordinatesInWorld coordinates = createCoordinates(corner, possibleX - (int) corner.getXAs(RESOLUTION), possibleY - (int) corner.getYAs(RESOLUTION));
+			CoordinatesInWorld coordinates = createCoordinates(possibleX, possibleY);
 			if(coordinates.isInBoundsOf(corner, Fragment.SIZE)) {
 				consumer.accept(
 						new WorldIcon(
@@ -67,16 +68,13 @@ public class NetherFortressProducer_Original extends WorldIconProducer<Void> {
 		}
 	}
 
-	private CoordinatesInWorld createCoordinates(
-			CoordinatesInWorld corner,
-			int xRelativeToFragment,
-			int yRelativeToFragment) {
-		long xInWorld = RESOLUTION.convertFromThisToWorld(xRelativeToFragment);
-		long yInWorld = RESOLUTION.convertFromThisToWorld(yRelativeToFragment);
-		return corner.add(xInWorld + OFFSET_IN_WORLD, yInWorld + OFFSET_IN_WORLD);
+	private CoordinatesInWorld createCoordinates(int structX, int structY) {
+		long xInWorld = RESOLUTION.convertFromThisToWorld(structX);
+		long yInWorld = RESOLUTION.convertFromThisToWorld(structY);
+		return new CoordinatesInWorld(xInWorld + OFFSET_IN_WORLD, yInWorld + OFFSET_IN_WORLD);
 	}
 	
-	private CoordinatesInWorld getPossibleLocation(int x, int y) {
+	private CoordinatesInWorld getCheckedLocation(int x, int y) {
 		int i = x >> 4;
 		int j = y >> 4;
 		
