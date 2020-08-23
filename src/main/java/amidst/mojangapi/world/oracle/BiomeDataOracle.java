@@ -2,7 +2,9 @@ package amidst.mojangapi.world.oracle;
 
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import amidst.documentation.ThreadSafe;
 import amidst.logging.AmidstLogger;
@@ -40,35 +42,28 @@ public class BiomeDataOracle {
 		this.accurateLocationCount = config.accurateLocationCount;
 	}
 
-	public void populateArray(CoordinatesInWorld corner, short[][] result, boolean useQuarterResolution) {
+	public void getBiomeData(CoordinatesInWorld corner, int width, int height, boolean useQuarterResolution,
+			Consumer<int[]> biomeDataConsumer) {
+		getBiomeData(corner, width, height, useQuarterResolution, data -> {
+			biomeDataConsumer.accept(data);
+			return null;
+		}, () -> null);
+	}
+
+	// Pass biome data to the mapper as a row-major int array; or return the default value if an error occured.
+	// width and height represent the number of samples, NOT the size of the region in the world.
+	public<T> T getBiomeData(CoordinatesInWorld corner, int width, int height, boolean useQuarterResolution,
+			Function<int[], T> biomeDataMapper, Supplier<T> defaultValue) {
 		Resolution resolution = Resolution.from(useQuarterResolution);
-		int width = result.length;
-		if (width > 0) {
-			int height = result[0].length;
-			int left = (int) corner.getXAs(resolution);
-			int top = (int) corner.getYAs(resolution);
-			try {
-				minecraftWorld.getBiomeData(dimension, left, top, width, height, useQuarterResolution, biomeData -> {
-					copyToResult(result, width, height, biomeData);
-					return null;
-				});
-			} catch (MinecraftInterfaceException e) {
-				AmidstLogger.error(e);
-				AmidstMessageBox.displayError("Error", e);
-			}
+		int left = (int) corner.getXAs(resolution);
+		int top = (int) corner.getYAs(resolution);
+		try {
+			return minecraftWorld.getBiomeData(dimension, left, top, width, height, useQuarterResolution, biomeDataMapper);
+		} catch (MinecraftInterfaceException e) {
+			AmidstLogger.error(e);
+			AmidstMessageBox.displayError("Error", e);
+			return defaultValue.get();
 		}
-	}
-
-	public static void copyToResult(short[][] result, int width, int height, int[] biomeData) {
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				result[x][y] = (short) biomeData[getBiomeDataIndex(x, y, width)];
-			}
-		}
-	}
-
-	public static int getBiomeDataIndex(int x, int y, int width) {
-		return x + y * width;
 	}
 
 	public boolean isValidBiomeAtMiddleOfChunk(int chunkX, int chunkY, List<Biome> validBiomes) {

@@ -24,6 +24,7 @@ public class GenerateUpdateInformationJson {
 		UpdateInformationJson json = new UpdateInformationJson(
 				version.getMajor(),
 				version.getMinor(),
+				version.getPatch(),
 				"",
 				DOWNLOAD_URL);
 		System.out.println(GSON.toJson(json));

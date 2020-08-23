@@ -236,7 +236,7 @@ public class _1_15MinecraftInterface implements MinecraftInterface {
 		if (netherBiomeSettingsClass.hasMethod(_1_15SymbolicNames.METHOD_NETHER_BIOME_SETTINGS_SET_BIOMES1)) {
 			Set<Object> biomes = new HashSet<>();
 			addNetherBiomesToCollection(biomes);
-			biomeSettings.callMethod(_1_15SymbolicNames.METHOD_NETHER_BIOME_SETTINGS_SET_BIOMES2, biomes);
+			biomeSettings.callMethod(_1_15SymbolicNames.METHOD_NETHER_BIOME_SETTINGS_SET_BIOMES1, biomes);
 		} else if (netherBiomeSettingsClass.hasMethod(_1_15SymbolicNames.METHOD_NETHER_BIOME_SETTINGS_SET_BIOMES2)) {
 			List<Object> biomes = new ArrayList<>();
 			addNetherBiomesToCollection(biomes);
