@@ -45,7 +45,7 @@ public class BiomeWidget extends Widget {
 	private static final Color SCROLLBAR_COLOR = 		new Color(0.6f, 0.6f, 0.6f, 0.8f);
 	private static final Color SCROLLBAR_LIT_COLOR = 	new Color(0.6f, 0.6f, 0.8f, 0.8f);
 	private static final Color SELECT_BUTTON_COLOR = 	new Color(0.6f, 0.6f, 0.8f, 1.0f);
-	//private static final Color SEARCH_HIGHLIGHT_COLOR = new Color(0.4f, 0.8f, 0.4f, 0.5f);
+	private static final Color SEARCH_HIGHLIGHT_COLOR = new Color(0.4f, 0.8f, 0.4f, 0.5f);
 	// @formatter:on
 	private static final BufferedImage SEARCH_IMAGE = ResourceLoader.getImage("/amidst/gui/main/search.png");
 
@@ -57,10 +57,12 @@ public class BiomeWidget extends Widget {
 
 	private List<Biome> biomes = new ArrayList<>();
 	private List<Biome> displayedBiomes = new ArrayList<>();
+	private List<Rectangle> highlightRects = new ArrayList<>();
 	private BiomeList biomeList;
 	private int maxNameWidth = 0;
 	private boolean isInitialized = false;
 	private boolean isVisible = false;
+	private FontMetrics fontMetrics;
 
 	private Rectangle innerBox = new Rectangle(0, 0, 1, 1);
 
@@ -73,7 +75,9 @@ public class BiomeWidget extends Widget {
 	private int mouseYOnGrab = 0;
 	private int scrollbarYOnGrab;
 	
-	private String lastDrawSearchText = "sample text";
+	private boolean updateHighlightRects = false;
+	
+	private String lastUpdateSearchText = "\0"; // can be anything the user can't type
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	public BiomeWidget(
@@ -116,25 +120,28 @@ public class BiomeWidget extends Widget {
 		updateX();
 		updateHeight();
 		updateInnerBoxPositionAndSize();
-		updateBiomeListYOffset();
-		updateScrollbarVisibility();
+		if(tryUpdateSearch()) {
+			updateBiomeListYOffset();
+			updateScrollbarVisibility();
+		}
 		if (scrollbarVisible) {
 			updateInnerBoxWidth();
 			updateScrollbarParameter(getMousePosition());
 		}
-		updateSearchField();
+		tryUpdateHighlightRects();
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
 	private void initializeIfNecessary(FontMetrics fontMetrics) {
 		if (!isInitialized) {
-			isInitialized = true;
+			this.fontMetrics = fontMetrics;
 			setupSearchField(fontMetrics);
 			for (Biome biome : biomeList.iterable()) {
 				biomes.add(biome);
 				int width = fontMetrics.stringWidth(biome.getName());
 				maxNameWidth = Math.max(width, maxNameWidth);
 			}
+			isInitialized = true;
 		}
 	}
 	
@@ -175,12 +182,12 @@ public class BiomeWidget extends Widget {
 	}
 	
 	@CalledOnlyBy(AmidstThread.EDT)
-	private void updateSearchField() {
+	private boolean tryUpdateSearch() {
 		searchField.setVisible(isVisible());
 		String currentText = searchField.getText().toLowerCase();
-		if(!currentText.equals(lastDrawSearchText)) {
+		if(!currentText.equals(lastUpdateSearchText)) {
 			// optimization for if the text gets added to
-			if(currentText.length() > lastDrawSearchText.length() && currentText.contains(lastDrawSearchText)) {
+			if(currentText.length() > lastUpdateSearchText.length() && currentText.contains(lastUpdateSearchText)) {
 				Set<Biome> biomesToRemove = new HashSet<>();
 				for (Biome biome : displayedBiomes) {
 					if(!biome.getName().toLowerCase().contains(currentText)) {
@@ -204,8 +211,11 @@ public class BiomeWidget extends Widget {
 				}
 				sortBiomeList(displayedBiomes, currentText);
 			}
-			lastDrawSearchText = currentText;
+			lastUpdateSearchText = currentText;
+			updateHighlightRects = true;
+			return true;
 		}
+		return false;
 	}
 	
 	/*
@@ -221,6 +231,32 @@ public class BiomeWidget extends Widget {
 				return firstCompare;
 			}
 		});
+	}
+	
+	@CalledOnlyBy(AmidstThread.EDT)
+	private void tryUpdateHighlightRects() {
+		if (updateHighlightRects) {
+			// pad size so we can use set()
+			while (highlightRects.size() < displayedBiomes.size()) highlightRects.add(null);
+			
+			for (int i = 0; i < displayedBiomes.size(); i++) {
+				Biome biome = displayedBiomes.get(i);
+				String biomeName = biome.getName();
+				
+				int stringX = innerBox.x + 25;
+				int startY = innerBox.y + i * 16 + biomeListYOffset;
+				
+				int startIndex = biomeName.toLowerCase().indexOf(lastUpdateSearchText);
+				int startX = stringX + fontMetrics.stringWidth(biomeName.substring(0, startIndex));
+				
+				int endIndex = startIndex + lastUpdateSearchText.length();
+				int width = fontMetrics.stringWidth(biomeName.substring(startIndex, endIndex));
+				
+				highlightRects.set(i, new Rectangle(startX, startY, width, 16));
+			}
+			
+			updateHighlightRects = false;
+		}
 	}
 	
 	private static Color multiplyTransparency(Color c, float alpha) {
@@ -277,6 +313,7 @@ public class BiomeWidget extends Widget {
 				biomeListYOffset = (int) ((listHeight / boxHeight)
 						* (-scrollbarYOnGrab - (mousePosition.y - mouseYOnGrab)));
 				updateBiomeListYOffset();
+				updateHighlightRects = true;
 			} else {
 				scrollbarGrabbed = false;
 			}
@@ -377,6 +414,9 @@ public class BiomeWidget extends Widget {
 	private void drawBiomeName(Graphics2D g2d, int i, Biome biome) {
 		g2d.setColor(Color.white);
 		g2d.drawString(biome.getName(), innerBox.x + 25, innerBox.y + 13 + i * 16 + biomeListYOffset);
+		
+		g2d.setColor(SEARCH_HIGHLIGHT_COLOR);
+		g2d.fill(highlightRects.get(i));
 	}
 
 	@CalledOnlyBy(AmidstThread.EDT)
@@ -424,6 +464,7 @@ public class BiomeWidget extends Widget {
 		if (isInBoundsOfInnerBox(mouseX, mouseY)) {
 			biomeListYOffset = Math
 					.min(0, Math.max(-getBiomeListHeight() + innerBox.height, biomeListYOffset - notches * 35));
+			updateHighlightRects = true;
 		}
 		return true;
 	}
