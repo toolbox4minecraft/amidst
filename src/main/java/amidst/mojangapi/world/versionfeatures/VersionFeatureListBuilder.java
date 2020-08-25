@@ -15,17 +15,17 @@ public class VersionFeatureListBuilder<V, B extends VersionFeatureListBuilder<V,
 
 	@SafeVarargs
 	public final B init(V... defaultValues) {
-		return init(version -> new ArrayList<>(Arrays.asList(defaultValues)));
+		return init((version, features) -> new ArrayList<>(Arrays.asList(defaultValues)));
 	}
 
 	@SafeVarargs
 	public final B since(RecognisedVersion since, V... values) {
-		return since(since, version -> new ArrayList<>(Arrays.asList(values)));
+		return since(since, (version, features) -> new ArrayList<>(Arrays.asList(values)));
 	}
 
 	@SafeVarargs
 	public final B sinceExtend(RecognisedVersion since, V... additionalValues) {
-		return sinceUpdate(since, (features, oldValue) -> {
+		return sinceUpdate(since, oldValue -> {
 			for (V additionalValue: additionalValues) {
 				oldValue.add(additionalValue);
 			}

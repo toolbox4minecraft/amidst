@@ -19,7 +19,7 @@ import amidst.mojangapi.world.oracle.EndIsland;
 /**
  * This class contains nearly no logic but only simple and atomic getters and
  * setters.
- * 
+ *
  * The life-cycle of a Fragment is quite complex to prevent the garbage
  * collection from running too often. When a fragment is no longer needed it
  * will be kept available in a queue, so it can be reused later on. The
@@ -30,14 +30,14 @@ import amidst.mojangapi.world.oracle.EndIsland;
  * setInitialized(true) will only be called again after setInitialized(false)
  * was called. It is not possible that isLoaded is true while isInitialized is
  * false.
- * 
+ *
  * It is possible that a thread that uses the data in the fragment continues to
  * use them after isLoaded is set to false. However, all write operations are
  * only called from the fragment loading thread or during the construction of
  * the fragment. While the fragment is constructed it will only be accessible by
  * one thread. An exception to that rule is the instance variable alpha. It is
  * altered from the drawing thread, however this should not cause any issues.
- * 
+ *
  * Immediately after a new instance of this class is created, it is passed to
  * all FragmentConstructors. At that point in time, no other thread can access
  * the fragment, so the whole construction process is single-threaded. After the
@@ -107,7 +107,15 @@ public class Fragment {
 
 	@CalledOnlyBy(AmidstThread.FRAGMENT_LOADER)
 	public void populateBiomeData(BiomeDataOracle biomeDataOracle) {
-		biomeDataOracle.populateArray(corner, biomeData, true);
+		int width = biomeData.length;
+		int height = width == 0 ? 0 : biomeData[0].length;
+		biomeDataOracle.getBiomeData(corner, width, height, true, data -> {
+			for (int i = 0; i < width; i++) {
+				for (int j = 0; j < height; j++) {
+					biomeData[i][j] = (short) data[j * width + i];
+				}
+			}
+		});
 	}
 
 	public short getBiomeDataAt(int x, int y) {

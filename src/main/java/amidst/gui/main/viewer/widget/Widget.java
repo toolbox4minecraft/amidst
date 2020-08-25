@@ -9,13 +9,15 @@ import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 
+import javax.swing.JComponent;
+
 import amidst.ResourceLoader;
 import amidst.documentation.AmidstThread;
 import amidst.documentation.CalledOnlyBy;
 import amidst.documentation.NotThreadSafe;
 
 @NotThreadSafe
-public abstract class Widget {
+public abstract class Widget extends JComponent {
 	public static enum CornerAnchorPoint {
 		TOP_LEFT,
 		TOP_RIGHT,

@@ -194,21 +194,30 @@ public class RealClass {
 
 	public boolean hasMethodWithRealArgsReturning(String... arguments) {
 		for (ReferenceIndex entry : methodIndices) {
-			String value = getStringValueOfConstant(entry.getValue2());
-			String[] args = readArgumentsAndReturn(value);
-
-			int argsTrue = -1;
-			if(arguments.length == args.length) {
-				argsTrue = 0;
-				for(int i = 0; i < args.length; i++) {
-					if(arguments[i] == null || arguments[i].equals(args[i]))
-						argsTrue++;
+			// Skip constructors
+			if (!getStringValueOfConstant(entry.getValue1()).equals("<init>")) {
+				String value = getStringValueOfConstant(entry.getValue2());
+				String[] args = readArgumentsAndReturn(value);
+				if (matchSignatureWithRealArgs(args, arguments, true)) {
+					return true;
 				}
 			}
 
-			if (argsTrue == args.length) {
-				return true;
+		}
+		return false;
+	}
+
+	public boolean hasConstructorWithRealArgs(String... arguments) {
+		for (ReferenceIndex entry : methodIndices) {
+			// Only constructors
+			if (getStringValueOfConstant(entry.getValue1()).equals("<init>")) {
+				String value = getStringValueOfConstant(entry.getValue2());
+				String[] args = readArgumentsAndReturn(value);
+				if (matchSignatureWithRealArgs(args, arguments, false)) {
+					return true;
+				}
 			}
+
 		}
 		return false;
 	}
@@ -241,22 +250,20 @@ public class RealClass {
 		return AccessFlags.hasFlags(accessFlags, AccessFlags.FINAL);
 	}
 
-	public String getArgumentsForConstructor(int constructorId) {
-		int i = 0;
-		for (ReferenceIndex entry : methodIndices) {
-			if (getStringValueOfConstant(entry.getValue1()).equals("<init>")) {
-				if (i == constructorId) {
-					String arguments = getStringValueOfConstant(entry.getValue2());
-					return toArgumentString(readArgumentsAndReturn(arguments));
-				}
-				i++;
-			}
-		}
-		return "";
-	}
-
 	private String getStringValueOfConstant(int value) {
 		return (String) constants[value - 1].getValue();
+	}
+
+	private static boolean matchSignatureWithRealArgs(String[] argsAndReturn, String[] requiredArgs, boolean withReturn) {
+		int len = withReturn ? argsAndReturn.length : argsAndReturn.length - 1;
+		if (requiredArgs.length != len) {
+			return false;
+		}
+		for(int i = 0; i < len; i++) {
+			if (requiredArgs[i] != null && !requiredArgs[i].equals(argsAndReturn[i]))
+				return false;
+		}
+		return true;
 	}
 
 	private String[] readArgumentsAndReturn(String arguments) {
@@ -284,19 +291,6 @@ public class RealClass {
 		} else {
 			return "";
 		}
-	}
-
-	private String toArgumentString(String[] arguments) {
-		StringBuilder result = new StringBuilder();
-		result.append("(");
-		if (arguments.length > 1) { // Skip return value
-			result.append(arguments[0]);
-			for (int i = 1; i < arguments.length - 1; i++) {
-				result.append(",").append(arguments[i]);
-			}
-		}
-		result.append(")");
-		return result.toString();
 	}
 
 	@Override

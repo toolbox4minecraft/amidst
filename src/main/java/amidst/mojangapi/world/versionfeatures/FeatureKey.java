@@ -1,6 +1,7 @@
 package amidst.mojangapi.world.versionfeatures;
 
 import java.util.List;
+import java.util.Optional;
 
 import amidst.documentation.Immutable;
 import amidst.mojangapi.world.WorldOptions;
@@ -17,7 +18,8 @@ public class FeatureKey<T> {
 
 	// @formatter:off
 	public static final FeatureKey<WorldOptions>     WORLD_OPTIONS                     = make();
-	public static final FeatureKey<BiomeDataOracle>  BIOME_DATA_ORACLE                 = make();
+	public static final FeatureKey<BiomeDataOracle>  OVERWORLD_BIOME_DATA_ORACLE       = make();
+	public static final FeatureKey<Optional<BiomeDataOracle>> NETHER_BIOME_DATA_ORACLE = make();
 	public static final FeatureKey<BiomeList>        BIOME_LIST                        = make();
 
 	public static final FeatureKey<List<Integer>>    ENABLED_LAYERS                    = make();
@@ -25,6 +27,7 @@ public class FeatureKey<T> {
 	public static final FeatureKey<EndIslandOracle>  END_ISLAND_ORACLE                 = make();
 	public static final FeatureKey<WorldSpawnOracle>  WORLD_SPAWN_ORACLE               = make();
 	public static final FeatureKey<LocationChecker>  NETHER_FORTRESS_LOCATION_CHECKER  = make();
+	public static final FeatureKey<LocationChecker>  BASTION_REMNANT_LOCATION_CHECKER  = make();
 	public static final FeatureKey<LocationChecker>  END_ISLAND_LOCATION_CHECKER       = make();
 	public static final FeatureKey<LocationChecker>  MINESHAFT_LOCATION_CHECKER        = make();
 	public static final FeatureKey<CachedWorldIconProducer> STRONGHOLD_PRODUCER        = make();
